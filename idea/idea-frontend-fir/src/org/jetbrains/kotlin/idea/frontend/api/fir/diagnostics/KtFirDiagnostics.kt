@@ -1219,11 +1219,11 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = SetterVisibilityInconsistentWithPropertyVisibility::class
     }
 
-    abstract class WrongSetterReturnType : KtFirDiagnostic<KtProperty>() {
+    abstract class WrongSetterReturnType : KtFirDiagnostic<KtTypeReference>() {
         override val diagnosticClass get() = WrongSetterReturnType::class
     }
 
-    abstract class WrongGetterReturnType : KtFirDiagnostic<KtProperty>() {
+    abstract class WrongGetterReturnType : KtFirDiagnostic<KtTypeReference>() {
         override val diagnosticClass get() = WrongGetterReturnType::class
         abstract val expectedType: KtType
         abstract val actualType: KtType

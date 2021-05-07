@@ -5,7 +5,7 @@ class A() {
             field = value
         }
     val y: Int
-        get(): String = "s"
+        get(): <error descr="[WRONG_GETTER_RETURN_TYPE] Getter return type must be equal to the type of the property, i.e. 'kotlin/Int'">String</error> = "s"
     val z: Int
         get() {
             return "s"
@@ -16,7 +16,7 @@ class A() {
             field = v
         }
     val b: Int
-        get(): Any = "s"
+        get(): <error descr="[WRONG_GETTER_RETURN_TYPE] Getter return type must be equal to the type of the property, i.e. 'kotlin/Int'">Any</error> = "s"
     val c: Int
         get() {
             return 1
@@ -26,7 +26,7 @@ class A() {
             return field
         }
     val e = 1
-        get(): String {
+        get(): <error descr="[WRONG_GETTER_RETURN_TYPE] Getter return type must be equal to the type of the property, i.e. 'kotlin/Int'">String</error> {
             return field
         }
 
