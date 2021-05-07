@@ -58,6 +58,10 @@ internal class OperatorExpressionGenerator(
             )
         }
 
+        if (comparisonExpression.compareToCall.toResolvedCallableSymbol()?.fir?.receiverTypeRef != null) {
+            return fallbackToRealCall()
+        }
+
         val comparisonInfo = comparisonExpression.inferPrimitiveNumericComparisonInfo() ?: return fallbackToRealCall()
         val comparisonType = comparisonInfo.comparisonType
 
