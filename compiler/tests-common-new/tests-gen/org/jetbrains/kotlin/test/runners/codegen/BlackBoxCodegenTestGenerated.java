@@ -2059,6 +2059,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("kt46389.kt")
+        public void testKt46389() throws Exception {
+            runTest("compiler/testData/codegen/box/bridges/kt46389.kt");
+        }
+
+        @Test
+        @TestMetadata("kt46389_jvmDefault.kt")
+        public void testKt46389_jvmDefault() throws Exception {
+            runTest("compiler/testData/codegen/box/bridges/kt46389_jvmDefault.kt");
+        }
+
+        @Test
         @TestMetadata("longChainOneBridge.kt")
         public void testLongChainOneBridge() throws Exception {
             runTest("compiler/testData/codegen/box/bridges/longChainOneBridge.kt");
