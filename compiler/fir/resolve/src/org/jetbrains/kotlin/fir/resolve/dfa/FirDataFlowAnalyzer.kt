@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBod
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.CallableId
@@ -44,8 +43,7 @@ class DataFlowAnalyzerContext<FLOW : Flow>(
     val graphBuilder: ControlFlowGraphBuilder,
     variableStorage: VariableStorage,
     flowOnNodes: MutableMap<CFGNode<*>, FLOW>,
-    val variablesForWhenConditions: MutableMap<WhenBranchConditionExitNode, DataFlowVariable>,
-    val preliminaryLoopVisitor: PreliminaryLoopVisitor
+    val variablesForWhenConditions: MutableMap<WhenBranchConditionExitNode, DataFlowVariable>
 ) {
     var flowOnNodes = flowOnNodes
         private set
@@ -64,15 +62,13 @@ class DataFlowAnalyzerContext<FLOW : Flow>(
 
         variableStorage = variableStorage.clear()
         flowOnNodes = mutableMapOf()
-
-        preliminaryLoopVisitor.resetState()
     }
 
     companion object {
         fun <FLOW : Flow> empty(session: FirSession): DataFlowAnalyzerContext<FLOW> =
             DataFlowAnalyzerContext<FLOW>(
                 ControlFlowGraphBuilder(), VariableStorage(session),
-                mutableMapOf(), mutableMapOf(), PreliminaryLoopVisitor()
+                mutableMapOf(), mutableMapOf()
             )
     }
 }
@@ -245,14 +241,12 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         // TODO: questionable
         postponedLambdaExitNode?.mergeIncomingFlow()
         functionExitNode.mergeIncomingFlow()
-        exitCapturingStatement(anonymousFunction)
         return FirControlFlowGraphReferenceImpl(graph)
     }
 
     fun visitPostponedAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
         val (enterNode, exitNode) = graphBuilder.visitPostponedAnonymousFunction(anonymousFunction)
         enterNode.mergeIncomingFlow()
-        enterCapturingStatement(enterNode, anonymousFunction)
         exitNode.mergeIncomingFlow()
         enterNode.flow = enterNode.flow.fork()
     }
@@ -640,13 +634,11 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                 shouldRemoveSynthetics = true
             )
         }
-        exitCapturingStatement(exitNode.fir)
     }
 
     fun enterWhileLoop(loop: FirLoop) {
         val (loopEnterNode, loopConditionEnterNode) = graphBuilder.enterWhileLoop(loop)
         loopEnterNode.mergeIncomingFlow()
-        enterCapturingStatement(loopEnterNode, loop)
         loopConditionEnterNode.mergeIncomingFlow()
     }
 
@@ -671,30 +663,11 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         exitCommonLoop(exitNode)
     }
 
-    private fun enterCapturingStatement(node: CFGNode<*>, statement: FirStatement) {
-        val reassignedNames = context.preliminaryLoopVisitor.enterCapturingStatement(statement)
-        if (reassignedNames.isEmpty()) return
-        val possiblyChangedVariables = variableStorage.realVariables.filterKeys {
-            val fir = (it.symbol as? FirVariableSymbol<*>)?.fir ?: return@filterKeys false
-            fir.isVar && fir.name in reassignedNames
-        }.values
-        if (possiblyChangedVariables.isEmpty()) return
-        val flow = node.flow
-        for (variable in possiblyChangedVariables) {
-            flow.removeAllAboutVariable(variable)
-        }
-    }
-
-    private fun exitCapturingStatement(statement: FirStatement) {
-        context.preliminaryLoopVisitor.exitCapturingStatement(statement)
-    }
-
     // ----------------------------------- Do while Loop -----------------------------------
 
     fun enterDoWhileLoop(loop: FirLoop) {
         val (loopEnterNode, loopBlockEnterNode) = graphBuilder.enterDoWhileLoop(loop)
         loopEnterNode.mergeIncomingFlow()
-        enterCapturingStatement(loopEnterNode, loop)
         loopBlockEnterNode.mergeIncomingFlow()
     }
 
