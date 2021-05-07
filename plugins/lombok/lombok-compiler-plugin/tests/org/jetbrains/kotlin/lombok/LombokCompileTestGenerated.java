@@ -64,6 +64,11 @@ public class LombokCompileTestGenerated extends AbstractLombokCompileTest {
         runTest("plugins/lombok/lombok-compiler-plugin/testData/compile/configAccessorsOverride.kt");
     }
 
+    @TestMetadata("configCaseInsensitive.kt")
+    public void testConfigCaseInsensitive() throws Exception {
+        runTest("plugins/lombok/lombok-compiler-plugin/testData/compile/configCaseInsensitive.kt");
+    }
+
     @TestMetadata("configSimple.kt")
     public void testConfigSimple() throws Exception {
         runTest("plugins/lombok/lombok-compiler-plugin/testData/compile/configSimple.kt");

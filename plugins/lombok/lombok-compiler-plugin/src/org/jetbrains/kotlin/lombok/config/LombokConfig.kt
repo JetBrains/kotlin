@@ -9,11 +9,13 @@ import java.io.File
 
 class LombokConfig(private val config: Map<String, List<String>>) {
 
-    fun getString(key: String): String? = config[key]?.firstOrNull()
+    fun getString(key: String): String? = getValue(key)?.firstOrNull()
 
     fun getBoolean(key: String): Boolean? = getString(key)?.toBoolean()
 
-    fun getMultiString(key: String): List<String>? = config[key]
+    fun getMultiString(key: String): List<String>? = getValue(key)
+
+    private fun getValue(key: String): List<String>? = config[normalizeKey(key)]
 
     companion object {
 
@@ -67,22 +69,25 @@ class ConfigBuilder {
     private val state: MutableMap<String, List<String>> = mutableMapOf()
 
     fun setValue(name: String, value: String) {
-        state[name] = listOf(value)
+        state[normalizeKey(name)] = listOf(value)
     }
 
     fun clearValue(name: String) {
-        state.remove(name)
+        state.remove(normalizeKey(name))
     }
 
     fun plusValue(name: String, value: String) {
-        state.merge(name, listOf(value)) { a, b -> a + b }
+        state.merge(normalizeKey(name), listOf(value)) { a, b -> a + b }
     }
 
     fun minusValue(name: String, value: String) {
-        state.merge(name, listOf(value)) { a, b -> a - b }
+        state.merge(normalizeKey(name), listOf(value)) { a, b -> a - b }
     }
 
     fun build(): LombokConfig = LombokConfig(state)
 }
+
+//lombok config keys are case insensitive
+private fun normalizeKey(key: String): String = key.lowercase()
 
 
