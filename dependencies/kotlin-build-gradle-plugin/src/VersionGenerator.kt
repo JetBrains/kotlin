@@ -94,6 +94,7 @@ open class VersionGenerator: DefaultTask() {
         val minor = matcher.group(2).toInt()
         val maintenanceStr = matcher.group(3)
         val maintenance = maintenanceStr?.toInt() ?: 0
+        val milestone = -1
         project.logger.info("BUILD_NUMBER: $buildNumber")
         var build = -1
         if (buildNumber != null) {
@@ -101,7 +102,7 @@ open class VersionGenerator: DefaultTask() {
             build = buildNumberSplit[buildNumberSplit.size - 1].toInt() // //7-dev-buildcount
         }
 
-        val versionObject = CompilerVersionImpl(meta, major, minor, maintenance, build)
+        val versionObject = CompilerVersionImpl(meta, major, minor, maintenance, milestone, build)
         versionObject.serialize()
     }
 
@@ -114,7 +115,7 @@ open class VersionGenerator: DefaultTask() {
                     """|package org.jetbrains.kotlin.konan
                        |internal val currentCompilerVersion: CompilerVersion =
                        |CompilerVersionImpl($meta, $major, $minor,
-                       |                    $maintenance, $build)
+                       |                    $maintenance, $milestone, $build)
                        |val CompilerVersion.Companion.CURRENT: CompilerVersion
                        |get() = currentCompilerVersion""".trimMargin()
                 )
