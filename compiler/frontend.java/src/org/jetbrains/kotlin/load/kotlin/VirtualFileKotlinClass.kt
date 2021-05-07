@@ -79,8 +79,9 @@ class VirtualFileKotlinClass private constructor(
         }
 
         private fun logFileReadingErrorMessage(e: Throwable, file: VirtualFile): Throwable {
-            LOG.warn(renderFileReadingErrorMessage(file), e)
-            return e
+            val errorMessage = renderFileReadingErrorMessage(file)
+            LOG.warn(errorMessage, e)
+            return IllegalStateException(errorMessage, e)
         }
 
         private fun renderFileReadingErrorMessage(file: VirtualFile): String =
