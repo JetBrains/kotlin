@@ -81,6 +81,15 @@ class MavenResolverTest : ResolversTestBase() {
         }
     }
 
+    fun testCustomRepositoryId() {
+        val resolver = MavenDependenciesResolver()
+        resolver.addRepository("https://repo.osgeo.org/repository/release/")
+        val files = runBlocking {
+            resolver.resolve("org.geotools:gt-shapefile:[23,)")
+        }.valueOrThrow()
+        assertTrue(files.any { it.name.startsWith("gt-shapefile") })
+    }
+
     // Ignored - tests with custom repos often break the CI due to the caching issues
     // TODO: find a way to enable iut back
     @Ignore
