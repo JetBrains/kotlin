@@ -25,6 +25,14 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
         const val CURIOUS_ABOUT_DIRECTIVE = "// CURIOUS_ABOUT "
         const val LOCAL_VARIABLE_TABLE_DIRECTIVE = "// LOCAL_VARIABLE_TABLE"
         const val RENDER_ANNOTATIONS_DIRECTIVE = "// RENDER_ANNOTATIONS"
+
+        val IGNORED_CLASS_VISIBLE_ANNOTATIONS = setOf(
+            "Lkotlin/Metadata;",
+            "Lkotlin/annotation/Target;",
+            "Lkotlin/annotation/Retention;",
+            "Ljava/lang/annotation/Retention;",
+            "Ljava/lang/annotation/Target;"
+        )
     }
 
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
@@ -80,6 +88,32 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
             }
 
             appendLine(" {")
+
+            if (renderAnnotations) {
+                val textifier = Textifier()
+                val visitor = TraceMethodVisitor(textifier)
+
+                clazz.visibleAnnotations?.forEach {
+                    if (it.desc !in IGNORED_CLASS_VISIBLE_ANNOTATIONS) {
+                        it.accept(visitor.visitAnnotation(it.desc, true))
+                    }
+                }
+                clazz.invisibleAnnotations?.forEach {
+                    it.accept(visitor.visitAnnotation(it.desc, false))
+                }
+
+                clazz.visibleTypeAnnotations?.forEach {
+                    it.accept(visitor.visitTypeAnnotation(it.typeRef, it.typePath, it.desc, true))
+                }
+                clazz.invisibleTypeAnnotations?.forEach {
+                    it.accept(visitor.visitTypeAnnotation(it.typeRef, it.typePath, it.desc, false))
+                }
+
+                textifier.getText().takeIf { it.isNotEmpty() }?.let {
+                    appendLine(textifier.getText().joinToString("").trimEnd())
+                    appendLine("")
+                }
+            }
 
             fields.joinTo(this, LINE_SEPARATOR.repeat(2)) { renderField(it, renderAnnotations).withMargin() }
 
@@ -226,7 +260,7 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
 
     private fun getParameterName(index: Int, method: MethodNode): String {
         val localVariableIndexOffset = when {
-            (method.access and Opcodes.ACC_STATIC) != 0 -> 0
+            (method.access and ACC_STATIC) != 0 -> 0
             method.isJvmOverloadsGenerated() -> 0
             else -> 1
         }
