@@ -296,7 +296,7 @@ class BodyResolveContext(
     @OptIn(PrivateForInline::class)
     inline fun <T> withAnonymousFunctionTowerDataContext(symbol: FirAnonymousFunctionSymbol, f: () -> T): T {
         return withTowerModeCleanup {
-            towerDataContextsForClassParts.setAnonymousFunctionContext(symbol)
+            towerDataContextsForClassParts.setAnonymousFunctionContextIfAny(symbol)
             f()
         }
     }

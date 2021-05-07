@@ -185,9 +185,12 @@ class FirTowerDataContextsForClassParts(
             modeMap[mode] = value
         }
 
-    fun setAnonymousFunctionContext(symbol: FirAnonymousFunctionSymbol) {
-        mode = SPECIAL
-        modeMap[SPECIAL] = towerDataContextForAnonymousFunctions.getValue(symbol)
+    fun setAnonymousFunctionContextIfAny(symbol: FirAnonymousFunctionSymbol) {
+        val context = towerDataContextForAnonymousFunctions[symbol]
+        if (context != null) {
+            mode = SPECIAL
+            modeMap[SPECIAL] = context
+        }
     }
 
     fun setCallableReferenceContextIfAny(access: FirCallableReferenceAccess) {
