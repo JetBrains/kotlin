@@ -16,11 +16,12 @@ import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cgen.*
 import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenFunctions
+import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.ir.companionObject
 import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
-import org.jetbrains.kotlin.backend.konan.ir.isReal
 import org.jetbrains.kotlin.backend.konan.llvm.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.llvm.tryGetIntrinsicType
+import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.descriptors.isFinalClass
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -75,10 +77,6 @@ private class BackendChecker(val context: Context, val irFile: IrFile) : IrEleme
     }
 
     override fun visitDeclaration(declaration: IrDeclarationBase) {
-        if (declaration is IrClass && declaration.isKotlinObjCClass()) {
-            checkKotlinObjCClass(declaration)
-        }
-
         outerDeclarations.push(declaration)
         try {
             super.visitDeclaration(declaration)
@@ -587,6 +585,46 @@ private class BackendChecker(val context: Context, val irFile: IrFile) : IrEleme
         typeParameter.superTypes.forEach { checkIrKType(irElement, it, seenTypeParameters) }
         seenTypeParameters.remove(typeParameter)
     }
+
+    override fun visitClass(declaration: IrClass) {
+        super.visitClass(declaration)
+
+        if (declaration.isKotlinObjCClass()) {
+            checkKotlinObjCClass(declaration)
+        }
+        checkNotImplementsMultipleSuspendLambdas(declaration)
+    }
+}
+
+// TODO: remove this check in KT-46775
+private fun BackendChecker.checkNotImplementsMultipleSuspendLambdas(clazz: IrClass) {
+    var suspendFunctionClassSymbol: IrClassSymbol? = null // Can be null (no suspend function supertypes) or non-null (the single one).
+
+    fun checkSupertype(superType: IrType): Boolean {
+        val superTypeClassSymbol = superType.classOrNull
+                ?: return true // This is not a class. Continue with others.
+
+        return when {
+            superTypeClassSymbol.isFunctionMarker() -> true // Continue with others.
+            superTypeClassSymbol.isFunction() -> {
+                // Mixing suspend and non-suspend function supertypes is not allowed by the frontend. So can stop here.
+                false
+            }
+            superTypeClassSymbol.isSuspendFunction() -> {
+                suspendFunctionClassSymbol = when (suspendFunctionClassSymbol) {
+                    null, superTypeClassSymbol -> superTypeClassSymbol
+                    else -> reportError(clazz, "Multiple suspend function types as supertypes are not supported yet")
+                }
+                true // Continue with others.
+            }
+            else -> {
+                // Recurse with supertypes.
+                superTypeClassSymbol.owner.superTypes.all(::checkSupertype)
+            }
+        }
+    }
+
+    clazz.superTypes.all(::checkSupertype)
 }
 
 private fun BackendChecker.checkCanGenerateCCall(expression: IrCall, isInvoke: Boolean) {
