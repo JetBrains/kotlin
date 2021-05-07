@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 
@@ -29,14 +30,16 @@ object FirTopLevelPropertiesChecker : FirFileChecker() {
         // So, our source of truth should be the full modifier list retrieved from the source.
         val modifierList = source.getModifierList()
 
-        checkPropertyInitializer(
-            containingClass = null,
-            property,
-            modifierList,
-            isInitialized = property.initializer != null,
-            reporter,
-            context
-        )
-        checkExpectDeclarationVisibilityAndBody(property, source, reporter, context)
+        withSuppressedDiagnostics(property, context) {
+            checkPropertyInitializer(
+                containingClass = null,
+                property,
+                modifierList,
+                isInitialized = property.initializer != null,
+                reporter,
+                context
+            )
+            checkExpectDeclarationVisibilityAndBody(property, source, reporter, context)
+        }
     }
 }

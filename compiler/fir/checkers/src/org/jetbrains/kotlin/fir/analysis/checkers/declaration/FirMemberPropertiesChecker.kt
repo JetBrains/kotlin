@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -150,76 +151,78 @@ object FirMemberPropertiesChecker : FirRegularClassChecker() {
         // So, our source of truth should be the full modifier list retrieved from the source.
         val modifierList = property.source.getModifierList()
 
-        checkPropertyInitializer(
-            containingDeclaration,
-            property,
-            modifierList,
-            isInitialized,
-            reporter,
-            context
-        )
-        checkExpectDeclarationVisibilityAndBody(property, source, reporter, context)
+        withSuppressedDiagnostics(property, context) {
+            checkPropertyInitializer(
+                containingDeclaration,
+                property,
+                modifierList,
+                isInitialized,
+                reporter,
+                context
+            )
+            checkExpectDeclarationVisibilityAndBody(property, source, reporter, context)
 
-        val hasAbstractModifier = KtTokens.ABSTRACT_KEYWORD in modifierList
-        val isAbstract = property.isAbstract || hasAbstractModifier
-        if (containingDeclaration.isInterface &&
-            Visibilities.isPrivate(property.visibility) &&
-            !isAbstract &&
-            (property.getter == null || property.getter is FirDefaultPropertyAccessor)
-        ) {
-            property.source?.let {
-                reporter.reportOn(it, FirErrors.PRIVATE_PROPERTY_IN_INTERFACE, context)
-            }
-        }
-
-        if (isAbstract) {
-            if (!containingDeclaration.canHaveAbstractDeclaration) {
+            val hasAbstractModifier = KtTokens.ABSTRACT_KEYWORD in modifierList
+            val isAbstract = property.isAbstract || hasAbstractModifier
+            if (containingDeclaration.isInterface &&
+                Visibilities.isPrivate(property.visibility) &&
+                !isAbstract &&
+                (property.getter == null || property.getter is FirDefaultPropertyAccessor)
+            ) {
                 property.source?.let {
-                    reporter.reportOn(
-                        it,
-                        FirErrors.ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS,
-                        property,
-                        containingDeclaration,
-                        context
-                    )
-                    return
+                    reporter.reportOn(it, FirErrors.PRIVATE_PROPERTY_IN_INTERFACE, context)
                 }
             }
-            property.initializer?.source?.let {
-                reporter.reportOn(it, FirErrors.ABSTRACT_PROPERTY_WITH_INITIALIZER, context)
-            }
-            property.delegate?.source?.let {
-                reporter.reportOn(it, FirErrors.ABSTRACT_DELEGATED_PROPERTY, context)
-            }
 
-            checkAccessor(property.getter, property.delegate) { src, _, hasBody ->
-                if (hasBody) reporter.reportOn(src, FirErrors.ABSTRACT_PROPERTY_WITH_GETTER, context)
-            }
-            checkAccessor(property.setter, property.delegate) { src, symbol, hasBody ->
-                when {
-                    symbol.fir.visibility == Visibilities.Private && property.visibility != Visibilities.Private ->
-                        reporter.reportOn(src, FirErrors.PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY, context)
-                    hasBody -> reporter.reportOn(src, FirErrors.ABSTRACT_PROPERTY_WITH_SETTER, context)
+            if (isAbstract) {
+                if (!containingDeclaration.canHaveAbstractDeclaration) {
+                    property.source?.let {
+                        reporter.reportOn(
+                            it,
+                            FirErrors.ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS,
+                            property,
+                            containingDeclaration,
+                            context
+                        )
+                        return
+                    }
+                }
+                property.initializer?.source?.let {
+                    reporter.reportOn(it, FirErrors.ABSTRACT_PROPERTY_WITH_INITIALIZER, context)
+                }
+                property.delegate?.source?.let {
+                    reporter.reportOn(it, FirErrors.ABSTRACT_DELEGATED_PROPERTY, context)
+                }
+
+                checkAccessor(property.getter, property.delegate) { src, _, hasBody ->
+                    if (hasBody) reporter.reportOn(src, FirErrors.ABSTRACT_PROPERTY_WITH_GETTER, context)
+                }
+                checkAccessor(property.setter, property.delegate) { src, symbol, hasBody ->
+                    when {
+                        symbol.fir.visibility == Visibilities.Private && property.visibility != Visibilities.Private ->
+                            reporter.reportOn(src, FirErrors.PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY, context)
+                        hasBody -> reporter.reportOn(src, FirErrors.ABSTRACT_PROPERTY_WITH_SETTER, context)
+                    }
                 }
             }
-        }
 
-        val hasOpenModifier = KtTokens.OPEN_KEYWORD in modifierList
-        if (hasOpenModifier &&
-            containingDeclaration.isInterface &&
-            !hasAbstractModifier &&
-            property.isAbstract &&
-            !isInsideExpectClass(containingDeclaration, context)
-        ) {
-            property.source?.let {
-                reporter.reportOn(it, FirErrors.REDUNDANT_OPEN_IN_INTERFACE, context)
+            val hasOpenModifier = KtTokens.OPEN_KEYWORD in modifierList
+            if (hasOpenModifier &&
+                containingDeclaration.isInterface &&
+                !hasAbstractModifier &&
+                property.isAbstract &&
+                !isInsideExpectClass(containingDeclaration, context)
+            ) {
+                property.source?.let {
+                    reporter.reportOn(it, FirErrors.REDUNDANT_OPEN_IN_INTERFACE, context)
+                }
             }
-        }
-        val isOpen = property.isOpen || hasOpenModifier
-        if (isOpen) {
-            checkAccessor(property.setter, property.delegate) { src, symbol, _ ->
-                if (symbol.fir.visibility == Visibilities.Private && property.visibility != Visibilities.Private) {
-                    reporter.reportOn(src, FirErrors.PRIVATE_SETTER_FOR_OPEN_PROPERTY, context)
+            val isOpen = property.isOpen || hasOpenModifier
+            if (isOpen) {
+                checkAccessor(property.setter, property.delegate) { src, symbol, _ ->
+                    if (symbol.fir.visibility == Visibilities.Private && property.visibility != Visibilities.Private) {
+                        reporter.reportOn(src, FirErrors.PRIVATE_SETTER_FOR_OPEN_PROPERTY, context)
+                    }
                 }
             }
         }
