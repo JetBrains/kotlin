@@ -171,8 +171,7 @@ open class JvmIrCodegenFactory(
         val result = LinkedHashSet<ModuleDescriptor>()
         fun collectImpl(descriptor: ModuleDescriptor) {
             val dependencies = descriptor.allDependencyModules
-            dependencies.forEach { if (it !in result) collectImpl(it) }
-            result += dependencies
+            dependencies.forEach { if (result.add(it)) collectImpl(it) }
         }
         collectImpl(this)
         return result.toList()
