@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.visibility
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.coneType
@@ -24,19 +26,42 @@ object FirPropertyAccessorChecker : FirPropertyChecker() {
 
     private fun checkGetter(property: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
         val getter = property.getter ?: return
+        val propertyType = property.returnTypeRef.coneType
+
         withSuppressedDiagnostics(getter, context) {
+            checkAccessorForDelegatedProperty(property, getter, context, reporter)
             if (getter.visibility != property.visibility) {
                 reporter.reportOn(getter.source, FirErrors.GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY, context)
+            }
+            val getterReturnTypeRef = getter.returnTypeRef
+            if (getterReturnTypeRef.source?.kind is FirFakeSourceElementKind) {
+                return
+            }
+            val getterReturnType = getterReturnTypeRef.coneType
+            if (propertyType is ConeClassErrorType || getterReturnType is ConeClassErrorType) {
+                return
+            }
+            if (getterReturnType != property.returnTypeRef.coneType) {
+                val getterReturnTypeSource = getterReturnTypeRef.source
+                withSuppressedDiagnostics(getterReturnTypeRef, context) {
+                    reporter.reportOn(getterReturnTypeSource, FirErrors.WRONG_GETTER_RETURN_TYPE, propertyType, getterReturnType, context)
+                }
             }
         }
     }
 
     private fun checkSetter(property: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
         val setter = property.setter ?: return
+        val propertyType = property.returnTypeRef.coneType
 
         withSuppressedDiagnostics(setter, context) {
             if (property.isVal) {
                 reporter.reportOn(setter.source, FirErrors.VAL_WITH_SETTER, context)
+            }
+            checkAccessorForDelegatedProperty(property, setter, context, reporter)
+            val visibilityCompareResult = setter.visibility.compareTo(property.visibility)
+            if (visibilityCompareResult == null || visibilityCompareResult > 0) {
+                reporter.reportOn(setter.source, FirErrors.SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY, context)
             }
 
             val valueSetterParameter = setter.valueParameters.first()
@@ -45,7 +70,6 @@ object FirPropertyAccessorChecker : FirPropertyChecker() {
             }
             val valueSetterType = valueSetterParameter.returnTypeRef.coneType
             val valueSetterTypeSource = valueSetterParameter.returnTypeRef.source
-            val propertyType = property.returnTypeRef.coneType
             if (propertyType is ConeClassErrorType || valueSetterType is ConeClassErrorType) {
                 return
             }
@@ -62,8 +86,23 @@ object FirPropertyAccessorChecker : FirPropertyChecker() {
             }
 
             if (!setterReturnType.isUnit) {
-                reporter.reportOn(setter.returnTypeRef.source, FirErrors.WRONG_SETTER_RETURN_TYPE, context)
+                withSuppressedDiagnostics(setter.returnTypeRef, context) {
+                    reporter.reportOn(setter.returnTypeRef.source, FirErrors.WRONG_SETTER_RETURN_TYPE, context)
+                }
             }
+        }
+    }
+
+    private fun checkAccessorForDelegatedProperty(
+        property: FirProperty,
+        accessor: FirPropertyAccessor,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ) {
+        if (property.delegateFieldSymbol != null && accessor.body != null &&
+            accessor.source?.kind != FirFakeSourceElementKind.DelegatedPropertyAccessor
+        ) {
+            reporter.reportOn(accessor.source, FirErrors.ACCESSOR_FOR_DELEGATED_PROPERTY, context)
         }
     }
 }

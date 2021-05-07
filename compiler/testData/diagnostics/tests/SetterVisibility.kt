@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class My {
     var x: Int = 0
         // Ok

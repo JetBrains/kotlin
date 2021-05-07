@@ -360,7 +360,10 @@ object FirErrors {
     val WRONG_SETTER_PARAMETER_TYPE by error2<KtTypeReference, ConeKotlinType, ConeKotlinType>()
     val INITIALIZER_TYPE_MISMATCH by error2<KtProperty, ConeKotlinType, ConeKotlinType>(SourceElementPositioningStrategies.ASSIGNMENT_VALUE)
     val GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY by error0<KtModifierListOwner>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
+    val SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY by error0<KtModifierListOwner>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
     val WRONG_SETTER_RETURN_TYPE by error0<KtProperty>()
+    val WRONG_GETTER_RETURN_TYPE by error2<KtProperty, ConeKotlinType, ConeKotlinType>()
+    val ACCESSOR_FOR_DELEGATED_PROPERTY by error0<KtPropertyAccessor>()
 
     // Multi-platform projects
     val EXPECTED_DECLARATION_WITH_BODY by error0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)

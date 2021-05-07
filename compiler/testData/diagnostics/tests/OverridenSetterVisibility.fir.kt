@@ -17,7 +17,7 @@ class Test: ATest(), ITest {
 
     override var prop2 : Int
         get() = 14
-        internal set(value) {}
+        <!SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY!>internal<!> set(value) {}
 }
 
 fun main() {
