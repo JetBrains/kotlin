@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.isLateInit
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirInapplicableLateinitChecker : FirPropertyChecker() {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -38,7 +37,7 @@ object FirInapplicableLateinitChecker : FirPropertyChecker() {
             declaration.isNullable() ->
                 reporter.reportOn(declaration.source, "is not allowed on properties of a type with nullable upper bound", context)
 
-            declaration.returnTypeRef.coneType.classId in StandardClassIds.primitiveTypes -> if (declaration.isLocal) {
+            declaration.returnTypeRef.coneType.isPrimitiveOrNullablePrimitive -> if (declaration.isLocal) {
                 reporter.reportOn(declaration.source, "is not allowed on local variables of primitive types", context)
             } else {
                 reporter.reportOn(declaration.source, "is not allowed on properties of primitive types", context)

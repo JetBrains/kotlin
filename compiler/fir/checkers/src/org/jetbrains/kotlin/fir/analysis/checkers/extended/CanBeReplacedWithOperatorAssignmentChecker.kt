@@ -19,9 +19,8 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.isPrimitive
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
@@ -35,10 +34,9 @@ object CanBeReplacedWithOperatorAssignmentChecker : FirVariableAssignmentChecker
         val rValue = expression.rValue as? FirFunctionCall ?: return
         if (rValue.source?.kind is FirFakeSourceElementKind) return
 
-        val rValueClassId = rValue.explicitReceiver?.typeRef?.coneType?.classId
-        if (rValueClassId !in StandardClassIds.primitiveTypes) return
+        if (rValue.explicitReceiver?.typeRef?.coneType?.isPrimitive != true) return
         val rValueResolvedSymbol = rValue.toResolvedCallableSymbol() ?: return
-        if (rValueResolvedSymbol.dispatchReceiverClassOrNull()?.classId !in StandardClassIds.primitiveTypes) return
+        if (rValueResolvedSymbol.dispatchReceiverTypeOrNull()?.isPrimitive != true) return
 
         var needToReport = false
         val assignmentSource = expression.source

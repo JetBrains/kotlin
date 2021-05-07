@@ -63,17 +63,13 @@ object StandardClassIds {
     fun reflectByName(name: String) = name.reflectId()
 
 
-    val primitiveTypes = listOf(
-        Boolean, Char,
-        Byte, Short, Int, Long,
-        Float, Double
-    )
+    val primitiveTypes = setOf(Boolean, Char, Byte, Short, Int, Long, Float, Double)
 
-    val primitiveArrayTypeByElementType = primitiveTypes.associate { id -> id to id.shortClassName.primitiveArrayId() }
+    val primitiveArrayTypeByElementType = primitiveTypes.associateWith { id -> id.shortClassName.primitiveArrayId() }
     val elementTypeByPrimitiveArrayType = primitiveArrayTypeByElementType.inverseMap()
 
-    val unsignedTypes = listOf(UByte, UShort, UInt, ULong)
-    val unsignedArrayTypeByElementType = unsignedTypes.associate { id -> id to id.shortClassName.primitiveArrayId() }
+    val unsignedTypes = setOf(UByte, UShort, UInt, ULong)
+    val unsignedArrayTypeByElementType = unsignedTypes.associateWith { id -> id.shortClassName.primitiveArrayId() }
     val elementTypeByUnsignedArrayType = unsignedArrayTypeByElementType.inverseMap()
 
     val constantAllowedTypes = primitiveTypes + unsignedTypes + String

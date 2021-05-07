@@ -11,6 +11,10 @@ import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeIntersectionType
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+
+fun FirCallableSymbol<*>.dispatchReceiverTypeOrNull(): ConeKotlinType? =
+    (fir as? FirCallableMemberDeclaration<*>)?.dispatchReceiverType
 
 fun FirCallableSymbol<*>.dispatchReceiverClassOrNull(): ConeClassLikeLookupTag? =
     (fir as? FirCallableMemberDeclaration<*>)?.dispatchReceiverClassOrNull()

@@ -70,7 +70,7 @@ internal object ConeTypeCompatibilityChecker {
         // Next can simply focus on the type hierarchy and don't need to worry about nullability.
         val compatibilityUpperBound = when {
             all {
-                it.classId in StandardClassIds.primitiveTypes
+                it.isPrimitive
             } -> Compatibility.SOFT_INCOMPATIBLE // TODO: remove after KT-46383 is fixed
             all {
                 it.isConcreteType()

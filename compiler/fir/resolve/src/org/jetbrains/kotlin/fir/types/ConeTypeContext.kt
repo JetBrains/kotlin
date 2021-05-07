@@ -369,7 +369,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun SimpleTypeMarker.isPrimitiveType(): Boolean {
         if (this is ConeClassLikeType) {
-            return StandardClassIds.primitiveTypes.contains(this.lookupTag.classId)
+            return isPrimitive
         }
         return false
     }

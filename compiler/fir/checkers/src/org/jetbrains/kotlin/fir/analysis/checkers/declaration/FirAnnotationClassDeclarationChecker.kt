@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds.primitiveArrayTypeByElementType
-import org.jetbrains.kotlin.name.StandardClassIds.primitiveTypes
-import org.jetbrains.kotlin.name.StandardClassIds.unsignedTypes
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 
@@ -52,10 +50,10 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker() {
                             coneType.isNullable -> {
                                 reporter.reportOn(typeRef.source, FirErrors.NULLABLE_TYPE_OF_ANNOTATION_MEMBER, context)
                             }
-                            classId in primitiveTypes -> {
+                            coneType.isPrimitiveOrNullablePrimitive -> {
                                 // DO NOTHING: primitives are allowed as annotation class parameter
                             }
-                            classId in unsignedTypes -> {
+                            coneType.isUnsignedTypeOrNullableUnsignedType -> {
                                 // TODO: replace with EXPERIMENTAL_UNSIGNED_LITERALS check
                             }
                             classId == StandardClassIds.KClass -> {
