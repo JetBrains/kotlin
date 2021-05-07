@@ -1,3 +1,3 @@
 idePluginDependency {
-    publishTestJar(":kotlin-build-common")
+    publishTestJar(listOf(":kotlin-build-common"))
 }

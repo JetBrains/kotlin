@@ -968,6 +968,7 @@ tasks {
                 ":prepare:ide-plugin-dependencies:compiler-components-for-jps:publish",
                 ":prepare:ide-plugin-dependencies:parcelize-compiler-plugin-for-ide:publish",
                 ":prepare:ide-plugin-dependencies:lombok-compiler-plugin-for-ide:publish",
+                ":prepare:ide-plugin-dependencies:kotlin-compiler-tests-for-ide:publish",
                 ":kotlin-script-runtime:publish",
                 ":kotlin-script-util:publish",
                 ":kotlin-scripting-common:publish",

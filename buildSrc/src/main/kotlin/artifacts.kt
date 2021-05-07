@@ -274,13 +274,15 @@ fun Project.publishProjectJars(projects: List<String>, libraryDependencies: List
     javadocJar()
 }
 
-fun Project.publishTestJar(projectName: String) {
+fun Project.publishTestJar(projects: List<String>) {
     apply<JavaPlugin>()
 
     val fatJarContents by configurations.creating
 
     dependencies {
-        fatJarContents(project(projectName, configuration = "tests-jar")) { isTransitive = false }
+        for (projectName in projects) {
+            fatJarContents(project(projectName, configuration = "tests-jar")) { isTransitive = false }
+        }
     }
 
     publish()
@@ -297,7 +299,7 @@ fun Project.publishTestJar(projectName: String) {
 
     sourcesJar {
         from {
-            project(projectName).testSourceSet.allSource
+            projects.map { project(it).testSourceSet.allSource }
         }
     }
 
