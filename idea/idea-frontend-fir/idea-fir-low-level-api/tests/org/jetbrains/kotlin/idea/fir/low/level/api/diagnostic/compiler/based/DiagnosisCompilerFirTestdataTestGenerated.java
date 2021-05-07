@@ -4770,6 +4770,11 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
             }
 
+            @TestMetadata("capturedTypeInEquality.kt")
+            public void testCapturedTypeInEquality() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/capturedTypeInEquality.kt");
+            }
+
             @TestMetadata("DeepCopyIrTree.kt")
             public void testDeepCopyIrTree() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/DeepCopyIrTree.kt");
