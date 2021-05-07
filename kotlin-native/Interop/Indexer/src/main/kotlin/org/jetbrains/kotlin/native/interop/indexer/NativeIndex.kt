@@ -153,16 +153,16 @@ abstract class StructDecl(val spelling: String) : TypeDeclaration {
  * @param hasNaturalLayout must be `false` if the struct has unnatural layout, e.g. it is `packed`.
  * May be `false` even if the struct has natural layout.
  */
-abstract class StructDef(val size: Long, val align: Int, val decl: StructDecl) {
+abstract class StructDef(val size: Long, val align: Int) {
 
     enum class Kind {
         STRUCT, UNION, CLASS
     }
 
-    abstract val methods: List<FunctionDecl>
-    abstract val members: List<StructMember>
-    abstract val staticFields: List<GlobalDecl>
     abstract val kind: Kind
+    abstract val members: List<StructMember>
+    abstract val methods: List<FunctionDecl>
+    abstract val staticFields: List<GlobalDecl>
 
     val fields: List<Field> get() = members.filterIsInstance<Field>()
     val bitFields: List<BitField> get() = members.filterIsInstance<BitField>()
