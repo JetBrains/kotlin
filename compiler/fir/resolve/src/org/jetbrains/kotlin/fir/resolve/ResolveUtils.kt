@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
+import org.jetbrains.kotlin.types.SmartcastStability
 
 fun List<FirQualifierPart>.toTypeProjections(): Array<ConeTypeProjection> =
     asReversed().flatMap { it.typeArgumentList.typeArguments.map { typeArgument -> typeArgument.toConeTypeProjection() } }.toTypedArray()
@@ -267,7 +268,7 @@ fun BodyResolveComponents.transformQualifiedAccessUsingSmartcastInfo(
         return buildExpressionWithSmartcastToNull {
             originalExpression = qualifiedAccessExpression
             // TODO: Use Nothing? during resolution?
-            typeRef = intersectedTypeRefWithoutNullableNothing
+            smartcastType = intersectedTypeRefWithoutNullableNothing
             // NB: Nothing? in types from smartcast in DFA is recorded here (and the expression kind itself).
             this.typesFromSmartCast = typesFromSmartCast
         }
@@ -285,8 +286,9 @@ fun BodyResolveComponents.transformQualifiedAccessUsingSmartcastInfo(
     }
     return buildExpressionWithSmartcast {
         originalExpression = qualifiedAccessExpression
-        typeRef = intersectedTypeRef
+        smartcastType = intersectedTypeRef
         this.typesFromSmartCast = typesFromSmartCast
+        smartcastStability = SmartcastStability.STABLE_VALUE
     }
 }
 

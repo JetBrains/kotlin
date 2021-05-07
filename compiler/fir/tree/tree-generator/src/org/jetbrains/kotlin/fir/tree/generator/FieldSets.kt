@@ -83,4 +83,6 @@ object FieldSets {
     val modality = field(modalityType, nullable = true)
 
     val scopeProvider = field("scopeProvider", firScopeProviderType)
+
+    val smartcastStability = field(smartcastStabilityType)
 }

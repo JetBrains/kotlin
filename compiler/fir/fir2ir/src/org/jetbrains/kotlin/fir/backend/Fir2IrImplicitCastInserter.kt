@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.SmartcastStability
 
 class Fir2IrImplicitCastInserter(
     private val components: Fir2IrComponents
@@ -270,7 +271,11 @@ class Fir2IrImplicitCastInserter(
     }
 
     override fun visitExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast, data: IrElement): IrExpression {
-        return implicitCastOrExpression(data as IrExpression, expressionWithSmartcast.typeRef)
+        return if (expressionWithSmartcast.smartcastStability == SmartcastStability.STABLE_VALUE) {
+            implicitCastOrExpression(data as IrExpression, expressionWithSmartcast.typeRef)
+        } else {
+            data as IrExpression
+        }
     }
 
     override fun visitExpressionWithSmartcastToNull(
