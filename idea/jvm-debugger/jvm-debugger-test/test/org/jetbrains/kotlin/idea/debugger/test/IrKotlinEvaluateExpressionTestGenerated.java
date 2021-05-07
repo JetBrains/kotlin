@@ -713,6 +713,11 @@ public class IrKotlinEvaluateExpressionTestGenerated extends AbstractIrKotlinEva
                 runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/eeir/functionParameter.kt");
             }
 
+            @TestMetadata("inlineReifiedBug.kt")
+            public void testInlineReifiedBug() throws Exception {
+                runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/eeir/inlineReifiedBug.kt");
+            }
+
             @TestMetadata("nonprimitiveDependencies.kt")
             public void testNonprimitiveDependencies() throws Exception {
                 runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/eeir/nonprimitiveDependencies.kt");
