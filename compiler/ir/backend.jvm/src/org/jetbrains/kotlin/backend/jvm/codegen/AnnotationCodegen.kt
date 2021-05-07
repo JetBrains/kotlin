@@ -43,9 +43,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.org.objectweb.asm.AnnotationVisitor
-import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.TypePath
+import org.jetbrains.org.objectweb.asm.*
 import java.lang.annotation.RetentionPolicy
 
 abstract class AnnotationCodegen(
@@ -107,10 +105,10 @@ abstract class AnnotationCodegen(
         generateTypeAnnotations(annotated, typeForTypeAnnotations)
     }
 
-    abstract fun visitAnnotation(descr: String?, visible: Boolean): AnnotationVisitor
+    abstract fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor
 
     open fun visitTypeAnnotation(
-        descr: String?,
+        descr: String,
         path: TypePath?,
         visible: Boolean,
     ): AnnotationVisitor {
@@ -287,6 +285,64 @@ abstract class AnnotationCodegen(
     }
 
     companion object {
+
+        fun genAnnotationsOnTypeParametersAndBounds(
+            context: JvmBackendContext,
+            typeParameterContainer: IrTypeParametersContainer,
+            classCodegen: ClassCodegen,
+            referenceType: Int,
+            boundType: Int,
+            visitor: (typeRef: Int, typePath: TypePath?, descriptor: String, visible: Boolean) -> AnnotationVisitor
+        ) {
+            if (context.state.target != JVM_1_6) {
+                typeParameterContainer.typeParameters.forEachIndexed { index, typeParameter ->
+                    object : AnnotationCodegen(classCodegen, context, true) {
+                        override fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor {
+
+                            return visitor(
+                                TypeReference.newTypeParameterReference(referenceType, index).value,
+                                null,
+                                descr,
+                                visible
+                            )
+                        }
+
+                        override fun visitTypeAnnotation(descr: String, path: TypePath?, visible: Boolean): AnnotationVisitor {
+                            throw RuntimeException(
+                                "Error during generation: type annotation shouldn't be presented on type parameter: " +
+                                        "${ir2string(typeParameter)} in ${ir2string(typeParameterContainer)}"
+                            )
+                        }
+                    }.genAnnotations(typeParameter, null, null)
+
+                    if (context.state.configuration.getBoolean(JVMConfigurationKeys.EMIT_JVM_TYPE_ANNOTATIONS)) {
+                        var superInterfaceIndex = 1
+                        typeParameter.superTypes.forEach { superType ->
+                            val isClassOrTypeParameter = !superType.isInterface() && !superType.isAnnotation()
+                            val superIndex = if (isClassOrTypeParameter) 0 else superInterfaceIndex++
+                            object : AnnotationCodegen(classCodegen, context, true) {
+                                override fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor {
+                                    throw RuntimeException(
+                                        "Error during generation: only type annotations should be presented on type parameters bounds: " +
+                                                "${ir2string(typeParameter)} in ${ir2string(typeParameter)}"
+                                    )
+                                }
+
+                                override fun visitTypeAnnotation(descr: String, path: TypePath?, visible: Boolean): AnnotationVisitor {
+                                    return visitor(
+                                        TypeReference.newTypeParameterBoundReference(boundType, index, superIndex).value,
+                                        path,
+                                        descr,
+                                        visible
+                                    )
+                                }
+                            }.generateTypeAnnotations(typeParameterContainer, superType)
+                        }
+                    }
+                }
+            }
+        }
+
         private fun isInvisibleForNullabilityAnalysis(declaration: IrDeclaration): Boolean =
             when {
                 declaration.origin.isSynthetic ->

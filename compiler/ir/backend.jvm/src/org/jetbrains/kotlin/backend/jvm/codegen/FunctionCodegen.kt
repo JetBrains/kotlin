@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.codegen.inline.wrapWithMaxLocalCalc
 import org.jetbrains.kotlin.codegen.mangleNameIfNeeded
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.visitAnnotableParameterCount
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -39,7 +37,6 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.*
-import org.jetbrains.org.objectweb.asm.TypeReference.METHOD_TYPE_PARAMETER_BOUND
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
@@ -49,7 +46,6 @@ class FunctionCodegen(
     private val inlinedInto: ExpressionCodegen? = null
 ) {
     private val context = classCodegen.context
-    val emitTypeAnnotations = context.state.configuration.getBoolean(JVMConfigurationKeys.EMIT_JVM_TYPE_ANNOTATIONS)
 
     fun generate(): SMAPAndMethodNode =
         try {
@@ -83,62 +79,25 @@ class FunctionCodegen(
         if (irFunction.origin !in methodOriginsWithoutAnnotations) {
             val skipNullabilityAnnotations = flags and Opcodes.ACC_PRIVATE != 0 || flags and Opcodes.ACC_SYNTHETIC != 0
             object : AnnotationCodegen(classCodegen, context, skipNullabilityAnnotations) {
-                override fun visitAnnotation(descr: String?, visible: Boolean): AnnotationVisitor {
+                override fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor {
                     return methodVisitor.visitAnnotation(descr, visible)
                 }
 
-                override fun visitTypeAnnotation(descr: String?, path: TypePath?, visible: Boolean): AnnotationVisitor {
+                override fun visitTypeAnnotation(descr: String, path: TypePath?, visible: Boolean): AnnotationVisitor {
                     return methodVisitor.visitTypeAnnotation(
                         TypeReference.newTypeReference(TypeReference.METHOD_RETURN).value, path, descr, visible
                     )
                 }
             }.genAnnotations(irFunction, signature.asmMethod.returnType, irFunction.returnType)
 
-            if (context.state.target != JvmTarget.JVM_1_6) {
-                irFunction.typeParameters.forEachIndexed { index, typeParameter ->
-                    object : AnnotationCodegen(classCodegen, context, true) {
-                        override fun visitAnnotation(descr: String?, visible: Boolean): AnnotationVisitor {
-                            return methodVisitor.visitTypeAnnotation(
-                                TypeReference.newTypeParameterReference(TypeReference.METHOD_TYPE_PARAMETER, index).value,
-                                null,
-                                descr,
-                                visible
-                            )
-                        }
-
-                        override fun visitTypeAnnotation(descr: String?, path: TypePath?, visible: Boolean): AnnotationVisitor {
-                            throw RuntimeException(
-                                "Error during generation: type annotation shouldn't be presented on type parameter: " +
-                                        "${ir2string(typeParameter)} in ${ir2string(irFunction)}"
-                            )
-                        }
-                    }.genAnnotations(typeParameter, null, null)
-
-                    if (emitTypeAnnotations) {
-                        var superInterfaceIndex = 1
-                        typeParameter.superTypes.forEach { superType ->
-                            val isClassOrTypeParameter = !superType.isInterface() && !superType.isAnnotation()
-                            val superIndex = if (isClassOrTypeParameter) 0 else superInterfaceIndex++
-                            object : AnnotationCodegen(classCodegen, context, true) {
-                                override fun visitAnnotation(descr: String?, visible: Boolean): AnnotationVisitor {
-                                    throw RuntimeException(
-                                        "Error during generation: only type annotations should be presented on type parameters bounds: " +
-                                                "${ir2string(typeParameter)} in ${ir2string(typeParameter)}"
-                                    )
-                                }
-
-                                override fun visitTypeAnnotation(descr: String?, path: TypePath?, visible: Boolean): AnnotationVisitor {
-                                    return methodVisitor.visitTypeAnnotation(
-                                        TypeReference.newTypeParameterBoundReference(METHOD_TYPE_PARAMETER_BOUND, index, superIndex).value,
-                                        path,
-                                        descr,
-                                        visible
-                                    )
-                                }
-                            }.generateTypeAnnotations(irFunction, superType)
-                        }
-                    }
-                }
+            AnnotationCodegen.genAnnotationsOnTypeParametersAndBounds(
+                context,
+                irFunction,
+                classCodegen,
+                TypeReference.METHOD_TYPE_PARAMETER,
+                TypeReference.METHOD_TYPE_PARAMETER_BOUND
+            ) { typeRef: Int, typePath: TypePath?, descriptor: String, visible: Boolean ->
+                methodVisitor.visitTypeAnnotation(typeRef, typePath, descriptor, visible)
             }
 
             if (shouldGenerateAnnotationsOnValueParameters()) {
@@ -270,7 +229,7 @@ class FunctionCodegen(
     private fun generateAnnotationDefaultValueIfNeeded(methodVisitor: MethodVisitor) {
         getAnnotationDefaultValueExpression()?.let { defaultValueExpression ->
             val annotationCodegen = object : AnnotationCodegen(classCodegen, context) {
-                override fun visitAnnotation(descr: String?, visible: Boolean): AnnotationVisitor {
+                override fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor {
                     return methodVisitor.visitAnnotationDefault()
                 }
             }
@@ -331,7 +290,7 @@ class FunctionCodegen(
 
             if (annotated != null && !kind.isSkippedInGenericSignature && !annotated.isSyntheticMarkerParameter()) {
                 object : AnnotationCodegen(innerClassConsumer, context, skipNullabilityAnnotations) {
-                    override fun visitAnnotation(descr: String?, visible: Boolean): AnnotationVisitor {
+                    override fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor {
                         return mv.visitParameterAnnotation(
                             i - syntheticParameterCount,
                             descr,
@@ -339,7 +298,7 @@ class FunctionCodegen(
                         )
                     }
 
-                    override fun visitTypeAnnotation(descr: String?, path: TypePath?, visible: Boolean): AnnotationVisitor {
+                    override fun visitTypeAnnotation(descr: String, path: TypePath?, visible: Boolean): AnnotationVisitor {
                         return mv.visitTypeAnnotation(
                             TypeReference.newFormalParameterReference(i - syntheticParameterCount).value,
                             path, descr, visible
