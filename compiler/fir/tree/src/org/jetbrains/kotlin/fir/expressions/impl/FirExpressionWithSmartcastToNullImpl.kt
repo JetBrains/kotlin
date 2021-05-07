@@ -16,11 +16,13 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.types.SmartcastStability
 
 class FirExpressionWithSmartcastToNullImpl(
     override var originalExpression: FirQualifiedAccessExpression,
-    override val typeRef: FirTypeRef,
-    override val typesFromSmartCast: Collection<ConeKotlinType>
+    override val smartcastType: FirTypeRef,
+    override val typesFromSmartCast: Collection<ConeKotlinType>,
+    override val smartcastStability: SmartcastStability
 ) : FirExpressionWithSmartcastToNull() {
     init {
         assert(originalExpression.typeRef is FirResolvedTypeRef)
@@ -34,6 +36,10 @@ class FirExpressionWithSmartcastToNullImpl(
     override val extensionReceiver: FirExpression get() = originalExpression.extensionReceiver
     override val calleeReference: FirReference get() = originalExpression.calleeReference
     override val originalType: FirTypeRef get() = originalExpression.typeRef
+    // A FirExpressionWithSmartcast is only an effective smartcast if `smartcastStability == SmartcastStability.STABLE_VALUE`. Otherwise,
+    // it's the same as the `originalExpression` under the hood. The reason we still create such a smartcast expression is for diagnostics
+    // purpose only.
+    override val typeRef: FirTypeRef get() = if (smartcastStability == SmartcastStability.STABLE_VALUE) smartcastType else originalType
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcastToNull {
         originalExpression = originalExpression.transformSingle(transformer, data)

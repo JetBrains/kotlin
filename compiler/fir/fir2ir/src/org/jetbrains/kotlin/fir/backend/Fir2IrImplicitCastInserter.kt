@@ -274,7 +274,11 @@ class Fir2IrImplicitCastInserter(
     }
 
     override fun visitExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast, data: IrElement): IrExpression {
-        return implicitCastOrExpression(data as IrExpression, expressionWithSmartcast.typeRef)
+        return if (expressionWithSmartcast.smartcastStability == SmartcastStability.STABLE_VALUE) {
+            implicitCastOrExpression(data as IrExpression, expressionWithSmartcast.typeRef)
+        } else {
+            data as IrExpression
+        }
     }
 
     override fun visitExpressionWithSmartcastToNull(
