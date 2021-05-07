@@ -543,7 +543,8 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun A(y: Any?, %composer: Composer?, %changed: Int, %default: Int) {
-              %composer = %composer.startRestartGroup(<>, "C(A)<A()>,<A(Empt...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Doub...>,<A(Doub...>,<A(Doub...>,<A(Doub...>,<A(X(li...>,<A(X(li...>,<A(NonB...>,<A(NonB...>,<A(Stab...>,<A(Unst...>:Test.kt")
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(A)<A()>,<A(Empt...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Doub...>,<A(Doub...>,<A(Doub...>,<A(Doub...>,<A(X(li...>,<A(X(li...>,<A(NonB...>,<A(NonB...>,<A(Stab...>,<A(Unst...>:Test.kt")
               val %dirty = %changed
               if (%default and 0b0001 !== 0) {
                 %dirty = %dirty or 0b0010
@@ -674,7 +675,8 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
             }
             @Composable
             fun A(y: Any, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>, "C(A)<A(X(li...>,<A(Stab...>,<A(Unst...>:Test.kt")
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(A)<A(X(li...>,<A(Stab...>,<A(Unst...>:Test.kt")
               used(y)
               A(X(listOf(StableClass())), %composer, 0b1000)
               A(StableDelegateProp(), %composer, 0)
@@ -708,7 +710,8 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun A(y: Any, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>, "C(A)<A(Wrap...>:Test.kt")
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(A)<A(Wrap...>:Test.kt")
               used(y)
               A(Wrapper(Foo()), %composer, Wrapper.%stable)
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
@@ -746,7 +749,8 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun <V> B(value: V, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>, "C(B)<A(Wrap...>:Test.kt")
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(B)<A(Wrap...>:Test.kt")
               val %dirty = %changed
               if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(value)) 0b0100 else 0b0010
@@ -762,7 +766,8 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
             }
             @Composable
             fun <T> X(items: List<T>, itemContent: Function3<T, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>, "C(X)P(1)*<itemCo...>:Test.kt")
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(X)P(1)*<itemCo...>:Test.kt")
               val %dirty = %changed
               val tmp0_iterator = items.iterator()
               while (tmp0_iterator.hasNext()) {
@@ -775,14 +780,16 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
             }
             @Composable
             fun C(items: List<String>, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>, "C(C)<X(item...>:Test.kt")
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(C)<X(item...>:Test.kt")
               X(items, ComposableSingletons%TestKt.lambda-1, %composer, 0b1000)
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 C(items, %composer, %changed or 0b0001)
               }
             }
             internal object ComposableSingletons%TestKt {
-              val lambda-1: Function3<String, Composer, Int, Unit> = composableLambdaInstance(<>, false, "C<A(item...>,<A(Wrap...>:Test.kt") { item: String, %composer: Composer?, %changed: Int ->
+              val lambda-1: Function3<String, Composer, Int, Unit> = composableLambdaInstance(<>, false) { item: String, %composer: Composer?, %changed: Int ->
+                sourceInformation(%composer, "C<A(item...>,<A(Wrap...>:Test.kt")
                 val %dirty = %changed
                 if (%changed and 0b1110 === 0) {
                   %dirty = %dirty or if (%composer.changed(item)) 0b0100 else 0b0010
@@ -837,7 +844,8 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
             }
             @Composable
             fun A(y: Int, x: Any, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>, "C(A)P(1)<B(x)>:Test.kt")
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(A)P(1)<B(x)>:Test.kt")
               used(y)
               B(x, %composer, 0b1000)
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
@@ -846,7 +854,8 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
             }
             @Composable
             fun B(x: Any, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>, "C(B):Test.kt")
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(B):Test.kt")
               used(x)
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 B(x, %composer, %changed or 0b0001)
@@ -876,7 +885,8 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
             }
             @Composable
             fun A(y: Int, x: Foo, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>, "C(A)P(1)<B(x)>:Test.kt")
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(A)P(1)<B(x)>:Test.kt")
               used(y)
               B(x, %composer, 0b1000)
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
@@ -885,7 +895,8 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
             }
             @Composable
             fun B(x: Any, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>, "C(B):Test.kt")
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(B):Test.kt")
               used(x)
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 B(x, %composer, %changed or 0b0001)
