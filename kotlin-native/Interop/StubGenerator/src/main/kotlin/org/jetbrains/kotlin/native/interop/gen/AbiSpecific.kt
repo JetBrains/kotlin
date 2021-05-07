@@ -95,16 +95,35 @@ class DarwinArm64AbiInfo : ObjCAbiInfo {
     }
 }
 
+/*
+Consider edge cases with anonymous inner:
+hasIntegerLikeLayout
+1   N   struct X { struct {}; int v1; };                // despite the offset(v1) == 0 and sizeof(X) == 4
+2   N   struct X { struct {}; char v1; };               // same with char
+3   N   struct X { struct {} v1; short v2; };           // same with named empty field; sizeof == 2, offset(v2) == 0
+4   N   struct X { int v1; struct {}; };                // despite there is only one field but empty struct has offset == 4
+5   N   struct X { char v1; struct {}; };               // same, sizeof is 1
+6   N   struct X { char v1; struct {char v2:4;}; };     // despite v2 is bitfield
+7   Y   struct X { char v1; char v2:4; };               // but this is OK (bitfield)
+8   Y   struct X { struct {char v1;}; char v2:4; };     // same,  bitfield is OK
+9   Y   struct X { struct {char v1;} v1; char v2:4; };  // same, OK v2 is bitfield
+10  Y   struct X { struct {} v1; char v2:4; };          // OK, v2 is bitfield
+11  Y   struct X { struct {char v1;}; short v2:16; };   // OK, v2 is bitfield even if it has full size
+
+#1..3: the field offset == 0 but still not eligible for `hasIntegerLikeLayout`
+Looks like we have to use the field' sequential number instead of offset
+ */
 private fun StructDef.hasIntegerLikeLayout(): Boolean {
     return size <= 4 &&
-            members.all {
+            members.mapIndexed { index, it ->
+                // Assuming the member order has not been changed
                 when (it) {
                     is BitField -> it.type.isIntegerLikeType()
-                    is Field -> it.offset == 0L && it.type.isIntegerLikeType()
-                    is AnonymousInnerRecord -> it.offset == 0L && it.def.hasIntegerLikeLayout()
-                    is IncompleteField, -> false
+                    is Field -> index == 0 && it.type.isIntegerLikeType() // assert(offset == 0)
+                    is AnonymousInnerRecord -> index == 0 && it.def.hasIntegerLikeLayout()
+                    is IncompleteField -> false
                 }
-            }
+            }.all {it}
 }
 
 private fun Type.isIntegerLikeType(): Boolean = when (this) {
