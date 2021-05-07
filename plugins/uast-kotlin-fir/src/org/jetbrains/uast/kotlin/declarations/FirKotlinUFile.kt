@@ -5,12 +5,15 @@
 
 package org.jetbrains.uast.kotlin
 
+import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiRecursiveElementWalkingVisitor
 import org.jetbrains.kotlin.asJava.findFacadeClass
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.uast.*
+import java.util.ArrayList
 
 class FirKotlinUFile(
     override val psi: KtFile,
@@ -30,7 +33,15 @@ class FirKotlinUFile(
         sourcePsi.packageFqName.asString()
     }
 
-    override val allCommentsInFile: List<UComment> = comments
+    override val allCommentsInFile by lz {
+        val comments = ArrayList<UComment>(0)
+        psi.accept(object : PsiRecursiveElementWalkingVisitor() {
+            override fun visitComment(comment: PsiComment) {
+                comments += UComment(comment, this@FirKotlinUFile)
+            }
+        })
+        comments
+    }
 
     override val imports: List<UImportStatement> by lz {
         sourcePsi.importDirectives.map { FirKotlinUImportStatement(it, this) }
