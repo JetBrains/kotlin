@@ -21,8 +21,8 @@ abstract class ManagedType<T> (val cpp: T)
     init {
         println("ManagedType INIT")
     }
-    val cleaner = createCleaner(cpp) {
-        println("RUNNING CLEANER for $it")
-        it.__destroy__()
-    }
+    //val cleaner = createCleaner(cpp) {
+    //    println("RUNNING CLEANER for $it")
+    //    it.__destroy__()
+    //}
 }

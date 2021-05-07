@@ -319,7 +319,7 @@ internal class StructStubBuilder(
                 modality = MemberStubModality.FINAL,
                 origin = StubOrigin.Other
         )
-/*
+
         val cleaner = PropertyStub(
                 name = "cleaner",
                 type = ClassifierStubType(Classifier.topLevel("kotlin.native.internal", "Cleaner")),
@@ -327,7 +327,7 @@ internal class StructStubBuilder(
                 modality = MemberStubModality.FINAL,
                 origin = StubOrigin.Other
         )
-*/
+
         val copier = DeepCopyForManagedWrapper(classStub)
 
         val constructors = classStub.constructors.map { copier.visitConstructor(it) }
@@ -345,7 +345,7 @@ internal class StructStubBuilder(
                         listOf( GetConstructorParameter(constructors.single { it.isPrimary }.parameters.single()) )
                 ),
                 interfaces = emptyList(),
-                properties = listOf(wrappee/*, cleaner*/) + classStub.properties.map { copier.visitProperty(it) },
+                properties = listOf(wrappee, cleaner) + classStub.properties.map { copier.visitProperty(it) },
                 classStub.origin,
                 annotations = listOf(AnnotationStub.CStruct.ManagedType),
                 childrenClasses = emptyList(),

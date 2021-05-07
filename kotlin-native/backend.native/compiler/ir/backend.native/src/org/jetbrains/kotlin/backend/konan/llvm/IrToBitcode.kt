@@ -230,7 +230,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
      * During function code generation [FunctionScope] should be set up.
      */
     private object TopLevelCodeContext : CodeContext {
-        private fun unsupported(any: Any? = null): Nothing = throw UnsupportedOperationException(any?.toString() ?: "")
+        private fun unsupported(any: Any? = null): Nothing = throw UnsupportedOperationException(if (any is IrElement) any.render() else any?.toString() ?: "")
 
         override fun genReturn(target: IrSymbolOwner, value: LLVMValueRef?) = unsupported(target)
 

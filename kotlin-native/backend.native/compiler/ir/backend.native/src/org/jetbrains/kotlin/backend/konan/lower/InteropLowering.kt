@@ -979,6 +979,8 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
         }
 
         if (expression.dispatchReceiver?.type?.classOrNull?.owner?.hasAnnotation(RuntimeNames.managedType) ?: false) {
+            println("EXPR: ${expression.render()}")
+            println("EXPR DISP RE: ${expression.dispatchReceiver?.render()}")
             return transformManagedCall(expression)
         }
 
@@ -1129,6 +1131,10 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
     private fun transformManagedCall(expression: IrCall): IrExpression {
         val function = expression.symbol.owner
 
+        println("FUNCTION: ${function.render()}")
+        println("RECEIVER PARAM: ${function.dispatchReceiverParameter?.render()}")
+        println("CLASSORULL: ${function.dispatchReceiverParameter?.type?.classOrNull?.owner?.render()}")
+        println("EXPR RECEIVER: ${expression.dispatchReceiver?.type?.classOrNull?.owner?.render()}")
         val irClass = function.dispatchReceiverParameter!!.type.classOrNull!!.owner
         val cppProperty = irClass.declarations
                 .filterIsInstance<IrProperty>()

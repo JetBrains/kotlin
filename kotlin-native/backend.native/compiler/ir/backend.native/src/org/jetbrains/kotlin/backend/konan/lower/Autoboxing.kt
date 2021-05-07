@@ -141,7 +141,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
         }
 
     override fun IrExpression.useAsDispatchReceiver(expression: IrFunctionAccessExpression): IrExpression {
-        return this.useAsArgument(expression.target.dispatchReceiverParameter!!)
+        return this.useAsArgument(expression.target.dispatchReceiverParameter ?: error("EXPR NO DISP: ${expression.render()}"))
     }
 
     override fun IrExpression.useAsExtensionReceiver(expression: IrFunctionAccessExpression): IrExpression {
