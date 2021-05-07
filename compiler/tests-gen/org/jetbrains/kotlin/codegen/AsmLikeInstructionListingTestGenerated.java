@@ -115,6 +115,11 @@ public class AsmLikeInstructionListingTestGenerated extends AbstractAsmLikeInstr
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/asmLike/typeAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
         }
 
+        @TestMetadata("classTypeParameter.kt")
+        public void testClassTypeParameter() throws Exception {
+            runTest("compiler/testData/codegen/asmLike/typeAnnotations/classTypeParameter.kt");
+        }
+
         @TestMetadata("complex.kt")
         public void testComplex() throws Exception {
             runTest("compiler/testData/codegen/asmLike/typeAnnotations/complex.kt");

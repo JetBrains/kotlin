@@ -153,10 +153,21 @@ class ClassCodegen private constructor(
         }
 
         object : AnnotationCodegen(this@ClassCodegen, context) {
-            override fun visitAnnotation(descr: String?, visible: Boolean): AnnotationVisitor {
+            override fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor {
                 return visitor.visitor.visitAnnotation(descr, visible)
             }
         }.genAnnotations(irClass, null, null)
+
+        AnnotationCodegen.genAnnotationsOnTypeParametersAndBounds(
+            context,
+            irClass,
+            this,
+            TypeReference.CLASS_TYPE_PARAMETER,
+            TypeReference.CLASS_TYPE_PARAMETER_BOUND
+        ) { typeRef: Int, typePath: TypePath?, descriptor: String, visible: Boolean ->
+            visitor.visitor.visitTypeAnnotation(typeRef, typePath, descriptor, visible)
+        }
+
         generateKotlinMetadataAnnotation()
 
         generateInnerAndOuterClasses()
@@ -306,11 +317,11 @@ class ClassCodegen private constructor(
                 flags and (Opcodes.ACC_SYNTHETIC or Opcodes.ACC_ENUM) != 0 ||
                         field.origin == JvmLoweredDeclarationOrigin.FIELD_FOR_STATIC_CALLABLE_REFERENCE_INSTANCE
             object : AnnotationCodegen(this@ClassCodegen, context, skipNullabilityAnnotations) {
-                override fun visitAnnotation(descr: String?, visible: Boolean): AnnotationVisitor {
+                override fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor {
                     return fv.visitAnnotation(descr, visible)
                 }
 
-                override fun visitTypeAnnotation(descr: String?, path: TypePath?, visible: Boolean): AnnotationVisitor {
+                override fun visitTypeAnnotation(descr: String, path: TypePath?, visible: Boolean): AnnotationVisitor {
                     return fv.visitTypeAnnotation(TypeReference.newTypeReference(TypeReference.FIELD).value, path, descr, visible)
                 }
             }.genAnnotations(field, fieldType, field.type)

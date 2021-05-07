@@ -74,3 +74,8 @@ public final class foo/Outer$Inner : java/lang/Object {
 public final class foo/Outer : java/lang/Object {
     public void <init>()
 }
+
+<T:Lfoo/Bar<Lfoo/Outer$Inner<Lfoo/Outer;>;>;>Ljava/lang/Object;
+public final class foo/WithBound : java/lang/Object {
+    public void <init>()
+}

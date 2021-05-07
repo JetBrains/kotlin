@@ -430,6 +430,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("classTypeParameterBound.kt")
+            public void testClassTypeParameterBound() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/typeAnnotations/classTypeParameterBound.kt");
+            }
+
+            @Test
+            @TestMetadata("classTypeParameterBoundsJava.kt")
+            public void testClassTypeParameterBoundsJava() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/typeAnnotations/classTypeParameterBoundsJava.kt");
+            }
+
+            @Test
             @TestMetadata("functionTypeParameterBound.kt")
             public void testFunctionTypeParameterBound() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/typeAnnotations/functionTypeParameterBound.kt");
