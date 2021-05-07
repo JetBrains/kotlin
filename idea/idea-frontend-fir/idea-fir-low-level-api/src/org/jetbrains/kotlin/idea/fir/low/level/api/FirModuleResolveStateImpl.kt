@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
@@ -60,19 +59,17 @@ internal class FirModuleResolveStateImpl(
     override fun getOrBuildFirFor(element: KtElement): FirElement =
         elementBuilder.getOrBuildFirFor(element, firFileBuilder, rootModuleSession.cache, fileStructureCache)
 
-    override fun getFirFile(ktFile: KtFile): FirFile =
+    override fun getOrBuildFirFile(ktFile: KtFile): FirFile =
         firFileBuilder.buildRawFirFileWithCaching(ktFile, rootModuleSession.cache, lazyBodiesMode = false)
+
+    override fun tryGetCachedFirFile(declaration: FirDeclaration, cache: ModuleFileCache): FirFile? =
+        cache.getContainerFirFile(declaration)
 
     override fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<FirPsiDiagnostic<*>> =
         diagnosticsCollector.getDiagnosticsFor(element, filter)
 
     override fun collectDiagnosticsForFile(ktFile: KtFile, filter: DiagnosticCheckerFilter): Collection<FirPsiDiagnostic<*>> =
         diagnosticsCollector.collectDiagnosticsForFile(ktFile, filter)
-
-    internal fun getBuiltFirFileOrNull(ktFile: KtFile): FirFile? {
-        val cache = sessionProvider.getModuleCache(ktFile.getModuleInfo() as ModuleSourceInfo)
-        return firFileBuilder.getBuiltFirFileOrNull(ktFile, cache)
-    }
 
     @OptIn(InternalForInline::class)
     override fun findSourceFirDeclaration(ktDeclaration: KtDeclaration): FirDeclaration =
@@ -117,7 +114,7 @@ internal class FirModuleResolveStateImpl(
             ?: error("FirDeclaration was not found for\n${ktDeclaration.getElementTextInContext()}")
     }
 
-    override fun <D : FirDeclaration> resolvedFirToPhase(declaration: D, toPhase: FirResolvePhase): D {
+    override fun <D : FirDeclaration> resolveFirToPhase(declaration: D, toPhase: FirResolvePhase): D {
         val fileCache = when (val session = declaration.moduleData.session) {
             is FirIdeSourcesSession -> session.cache
             else -> return declaration
@@ -127,11 +124,7 @@ internal class FirModuleResolveStateImpl(
             fileCache,
             toPhase,
             checkPCE = true,
-            towerDataContextCollector = null,
         )
         return declaration
     }
-
-    override fun getFirFile(declaration: FirDeclaration, cache: ModuleFileCache): FirFile? =
-        cache.getContainerFirFile(declaration)
 }

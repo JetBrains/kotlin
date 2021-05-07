@@ -58,13 +58,13 @@ internal class FirModuleResolveStateDepended(
         )
     }
 
-    override fun getFirFile(ktFile: KtFile): FirFile =
-        originalState.getFirFile(ktFile)
+    override fun getOrBuildFirFile(ktFile: KtFile): FirFile =
+        originalState.getOrBuildFirFile(ktFile)
 
-    override fun <D : FirDeclaration> resolvedFirToPhase(declaration: D, toPhase: FirResolvePhase): D =
-        originalState.resolvedFirToPhase(declaration, toPhase)
+    override fun <D : FirDeclaration> resolveFirToPhase(declaration: D, toPhase: FirResolvePhase): D =
+        originalState.resolveFirToPhase(declaration, toPhase)
 
-    override fun getFirFile(declaration: FirDeclaration, cache: ModuleFileCache): FirFile? {
+    override fun tryGetCachedFirFile(declaration: FirDeclaration, cache: ModuleFileCache): FirFile? {
         val ktFile = declaration.containingKtFileIfAny ?: return null
         cache.getCachedFirFile(ktFile)?.let { return it }
         ktFile.originalKtFile?.let(cache::getCachedFirFile)?.let { return it }

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.getFirFile
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.withFirDeclarationOfType
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
@@ -41,7 +41,7 @@ internal class KtFirSymbolProvider(
     }
 
     override fun getFileSymbol(psi: KtFile): KtFileSymbol = withValidityAssertion {
-        firSymbolBuilder.buildFileSymbol(psi.getFirFile(resolveState))
+        firSymbolBuilder.buildFileSymbol(psi.getOrBuildFirFile(resolveState))
     }
 
     override fun getFunctionLikeSymbol(psi: KtNamedFunction): KtFunctionLikeSymbol = withValidityAssertion {

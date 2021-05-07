@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.transformers
 
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignationWithFile
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignation
 
 internal interface FirLazyTransformerForIDE {
     fun transformDeclaration()
@@ -16,7 +16,7 @@ internal interface FirLazyTransformerForIDE {
             override fun transformDeclaration() = Unit
         }
 
-        fun FirDeclarationDesignationWithFile.ensurePathPhase(firResolvePhase: FirResolvePhase) {
+        fun FirDeclarationDesignation.ensurePathPhase(firResolvePhase: FirResolvePhase) {
             toSequence(includeTarget = false).forEach { firDeclaration ->
                 check(firDeclaration.resolvePhase >= firResolvePhase) {
                     "Designation element phase required to be $firResolvePhase but element resolved to ${firDeclaration.resolvePhase}"
@@ -24,18 +24,12 @@ internal interface FirLazyTransformerForIDE {
             }
         }
 
-        fun FirDeclarationDesignationWithFile.ensureTargetPhase(firResolvePhase: FirResolvePhase) =
+        fun FirDeclarationDesignation.ensureTargetPhase(firResolvePhase: FirResolvePhase) =
             check(declaration.resolvePhase >= firResolvePhase) { "Expected $firResolvePhase but found ${declaration.resolvePhase}" }
 
-        fun FirDeclarationDesignationWithFile.ensureTargetPhaseIfClass(firResolvePhase: FirResolvePhase) = when (declaration) {
+        fun FirDeclarationDesignation.ensureTargetPhaseIfClass(firResolvePhase: FirResolvePhase) = when (declaration) {
             is FirProperty, is FirSimpleFunction -> Unit
             is FirClass<*>, is FirTypeAlias -> ensureTargetPhase(firResolvePhase)
-            else -> error("Unexpected target")
-        }
-
-        fun FirDeclarationDesignationWithFile.ensureTargetPhaseIfMember(firResolvePhase: FirResolvePhase) = when (declaration) {
-            is FirProperty, is FirSimpleFunction -> ensureTargetPhase(firResolvePhase)
-            is FirClass<*>, is FirTypeAlias -> Unit
             else -> error("Unexpected target")
         }
     }

@@ -43,7 +43,7 @@ class FirSupertypeResolverProcessor(session: FirSession, scopeSession: ScopeSess
 /**
  * Interceptor needed by IDE to resolve in-air created declarations.
  */
-interface FirProviderInterceptorForSupertypeResolver {
+interface FirProviderInterceptor {
     fun getFirClassifierContainerFileIfAny(symbol: FirClassLikeSymbol<*>): FirFile?
     fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration<*>?
 }
@@ -74,7 +74,7 @@ fun <F : FirClassLikeDeclaration<F>> F.runSupertypeResolvePhaseForLocalClass(
     scopeSession: ScopeSession,
     currentScopeList: List<FirScope>,
     localClassesNavigationInfo: LocalClassesNavigationInfo,
-    firProviderInterceptor: FirProviderInterceptorForSupertypeResolver?,
+    firProviderInterceptor: FirProviderInterceptor?,
 ): F {
     val supertypeComputationSession = SupertypeComputationSession()
     val supertypeResolverVisitor = FirSupertypeResolverVisitor(
@@ -189,7 +189,7 @@ class FirSupertypeResolverVisitor(
     private val scopeSession: ScopeSession,
     private val scopeForLocalClass: PersistentList<FirScope>? = null,
     private val localClassesNavigationInfo: LocalClassesNavigationInfo? = null,
-    private val firProviderInterceptor: FirProviderInterceptorForSupertypeResolver? = null,
+    private val firProviderInterceptor: FirProviderInterceptor? = null,
 ) : FirDefaultVisitor<Unit, Any?>() {
     private val supertypeGenerationExtensions = session.extensionService.supertypeGenerators
 

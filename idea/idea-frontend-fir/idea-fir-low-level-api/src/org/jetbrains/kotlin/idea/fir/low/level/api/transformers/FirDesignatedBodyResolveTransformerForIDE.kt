@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.transformers.FirProviderInterceptorForSupertypeResolver
+import org.jetbrains.kotlin.fir.resolve.transformers.FirProviderInterceptor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignationWithFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculator
@@ -23,7 +23,7 @@ internal class FirDesignatedBodyResolveTransformerForIDE(
     session: FirSession,
     scopeSession: ScopeSession,
     towerDataContextCollector: FirTowerDataContextCollector? = null,
-    firProviderInterceptor: FirProviderInterceptorForSupertypeResolver? = null,
+    firProviderInterceptor: FirProviderInterceptor? = null,
 ) : FirLazyTransformerForIDE, FirBodyResolveTransformer(
     session,
     phase = FirResolvePhase.BODY_RESOLVE,

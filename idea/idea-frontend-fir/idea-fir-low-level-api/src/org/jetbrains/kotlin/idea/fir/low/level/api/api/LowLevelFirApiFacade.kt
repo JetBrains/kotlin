@@ -8,15 +8,10 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.api
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirIdeResolveStateService
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.InternalForInline
-import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSourcesSession
-import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -118,12 +113,14 @@ fun <D : FirDeclaration, R> D.withFirDeclarationInWriteLock(
 
 /**
  * Returns a list of Diagnostics compiler finds for given [KtElement]
+ * This operation could be performance affective
  */
 fun KtElement.getDiagnostics(resolveState: FirModuleResolveState, filter: DiagnosticCheckerFilter): Collection<FirPsiDiagnostic<*>> =
     resolveState.getDiagnostics(this, filter)
 
 /**
  * Returns a list of Diagnostics compiler finds for given [KtFile]
+ * This operation could be performance affective
  */
 fun KtFile.collectDiagnosticsForFile(
     resolveState: FirModuleResolveState,
@@ -140,12 +137,13 @@ fun <D : FirDeclaration> D.resolvedFirToPhase(
     phase: FirResolvePhase,
     resolveState: FirModuleResolveState
 ): D =
-    resolveState.resolvedFirToPhase(this, phase)
+    resolveState.resolveFirToPhase(this, phase)
 
 
 /**
  * Get a [FirElement] which was created by [KtElement]
  * Returned [FirElement] is guaranteed to be resolved to [FirResolvePhase.BODY_RESOLVE] phase
+ * This operation could be performance affective
  */
 fun KtElement.getOrBuildFir(
     resolveState: FirModuleResolveState,
@@ -154,6 +152,7 @@ fun KtElement.getOrBuildFir(
 /**
  * Get a [FirElement] which was created by [KtElement], but only if it is subtype of [E], `null` otherwise
  * Returned [FirElement] is guaranteed to be resolved to [FirResolvePhase.BODY_RESOLVE] phase
+ * This operation could be performance affective
  */
 inline fun <reified E : FirElement> KtElement.getOrBuildFirSafe(
     resolveState: FirModuleResolveState,
@@ -162,6 +161,7 @@ inline fun <reified E : FirElement> KtElement.getOrBuildFirSafe(
 /**
  * Get a [FirElement] which was created by [KtElement], but only if it is subtype of [E], throws [InvalidFirElementTypeException] otherwise
  * Returned [FirElement] is guaranteed to be resolved to [FirResolvePhase.BODY_RESOLVE] phase
+ * This operation could be performance affective
  */
 inline fun <reified E : FirElement> KtElement.getOrBuildFirOfType(
     resolveState: FirModuleResolveState,
@@ -175,8 +175,8 @@ inline fun <reified E : FirElement> KtElement.getOrBuildFirOfType(
  * Get a [FirFile] which was created by [KtElement]
  * Returned [FirFile] can be resolved to any phase from [FirResolvePhase.RAW_FIR] to [FirResolvePhase.BODY_RESOLVE]
  */
-fun KtFile.getFirFile(resolveState: FirModuleResolveState): FirFile =
-    resolveState.getFirFile(this)
+fun KtFile.getOrBuildFirFile(resolveState: FirModuleResolveState): FirFile =
+    resolveState.getOrBuildFirFile(this)
 
 class InvalidFirElementTypeException(
     ktElement: KtElement,

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.getFirFile
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.createResolveStateForNoCaching
 import org.jetbrains.kotlin.idea.project.withLanguageVersionSettings
 import org.jetbrains.kotlin.idea.test.*
@@ -76,7 +76,7 @@ abstract class AbstractCompilerBasedTest : KotlinLightCodeInsightFixtureTestCase
             val resolveState = createResolveState(moduleInfo, module.languageVersionSettings)
             val allFirFiles = files.mapNotNull { (testFile, psiFile) ->
                 if (psiFile !is KtFile) return@mapNotNull null
-                testFile to psiFile.getFirFile(resolveState)
+                testFile to psiFile.getOrBuildFirFile(resolveState)
             }.toMap()
 
             val diagnosticCheckerFilter = if (FirDiagnosticsDirectives.WITH_EXTENDED_CHECKERS in module.directives) {

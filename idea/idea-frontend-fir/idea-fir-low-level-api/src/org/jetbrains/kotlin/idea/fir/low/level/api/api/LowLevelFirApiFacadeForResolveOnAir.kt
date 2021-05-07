@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.api
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentsOfType
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.builder.RawFirFragmentForLazyBodiesBuilder
 import org.jetbrains.kotlin.fir.builder.RawFirReplacement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.realPsi
@@ -24,7 +25,6 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FileTowerProv
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FirElementsRecorder
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSourcesSession
-import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirProviderInterceptorForIDE
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.originalDeclaration
 import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.*
@@ -72,8 +72,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         val declaration = runBodyResolveOnAir(
             state = state,
             replacement = RawFirReplacement(place, elementToResolve),
-            collector = null,
-            useFirProviderInterceptor = true
+            isOnAirResolve = true,
         )
 
         val expressionLocator = object : FirVisitorVoid() {
@@ -101,8 +100,17 @@ object LowLevelFirApiFacadeForResolveOnAir {
         return if (place is KtFile) {
             FileTowerProvider(place, onAirGetTowerContextForFile(state, place))
         } else {
+            val validPlace = PsiTreeUtil.findFirstParent(place, false) {
+                RawFirFragmentForLazyBodiesBuilder.elementIsApplicable(it as KtElement)
+            } as KtElement
+
             FirTowerDataContextAllElementsCollector().also {
-                runBodyResolveOnAir(state, collector = it, replacement = RawFirReplacement(place, place))
+                runBodyResolveOnAir(
+                    state = state,
+                    collector = it,
+                    replacement = RawFirReplacement(validPlace, validPlace),
+                    isOnAirResolve = false //isOnAirResolve can be little faster because node resolved in it's context
+                )
             }
         }
     }
@@ -154,9 +162,9 @@ object LowLevelFirApiFacadeForResolveOnAir {
         val collector = FirTowerDataContextAllElementsCollector()
         val copiedFirDeclaration = runBodyResolveOnAir(
             originalState,
-            collector = collector,
             replacement = RawFirReplacement(sameDeclarationInOriginalFile, dependencyNonLocalDeclaration),
-            useFirProviderInterceptor = true
+            isOnAirResolve = true,
+            collector = collector,
         )
 
         val recordedMap = FirElementsRecorder.recordElementsFrom(copiedFirDeclaration, FirElementsRecorder())
@@ -166,8 +174,8 @@ object LowLevelFirApiFacadeForResolveOnAir {
     private fun <T : KtElement> runBodyResolveOnAir(
         state: FirModuleResolveStateImpl,
         replacement: RawFirReplacement<T>,
+        isOnAirResolve: Boolean,
         collector: FirTowerDataContextCollector? = null,
-        useFirProviderInterceptor: Boolean = false
     ): FirDeclaration {
 
         val nonLocalDeclaration = findEnclosingNonLocalDeclaration(replacement.from)
@@ -179,30 +187,18 @@ object LowLevelFirApiFacadeForResolveOnAir {
             replacement = replacement,
         )
 
-        val originalFirFile = state.getBuiltFirFileOrNull(replacement.from.containingKtFile)
-            ?: error("Original fir file should be already built")
+        val originalFirFile = state.getOrBuildFirFile(nonLocalDeclaration.containingKtFile)
 
-        val firProviderInterceptor =
-            if (useFirProviderInterceptor) FirProviderInterceptorForIDE.createForFirElement(
-                session = originalFirFile.declarationSiteSession,
-                firFile = originalFirFile,
-                element = copiedFirDeclaration
-            ) else null
-
-        state.firFileBuilder.runCustomResolveWithPCECheck(originalFirFile, state.rootModuleSession.cache) {
-            state.firLazyDeclarationResolver.runLazyResolveWithoutLock(
-                copiedFirDeclaration,
-                state.rootModuleSession.cache,
-                originalFirFile,
-                originalFirFile.declarationSiteSession.firIdeProvider,
-                fromPhase = copiedFirDeclaration.resolvePhase,
-                toPhase = FirResolvePhase.BODY_RESOLVE,
-                towerDataContextCollector = collector,
-                checkPCE = true,
-                lastNonLazyPhase = FirResolvePhase.IMPORTS,
-                firProviderInterceptor = firProviderInterceptor,
-            )
-        }
+        state.firLazyDeclarationResolver.lazyDesignatedResolveDeclaration(
+            firDeclarationToResolve = copiedFirDeclaration,
+            moduleFileCache = state.rootModuleSession.cache,
+            containerFirFile = originalFirFile,
+            provider = originalFirFile.declarationSiteSession.firIdeProvider,
+            toPhase = FirResolvePhase.BODY_RESOLVE,
+            checkPCE = true,
+            isOnAirResolve = isOnAirResolve,
+            towerDataContextCollector = collector,
+        )
 
         return copiedFirDeclaration
     }

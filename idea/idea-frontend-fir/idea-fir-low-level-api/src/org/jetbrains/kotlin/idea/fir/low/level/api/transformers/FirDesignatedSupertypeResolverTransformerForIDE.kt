@@ -10,26 +10,25 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirApplySupertypesTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.FirProviderInterceptorForSupertypeResolver
+import org.jetbrains.kotlin.fir.resolve.transformers.FirProviderInterceptor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSupertypeResolverVisitor
 import org.jetbrains.kotlin.fir.resolve.transformers.SupertypeComputationSession
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignationWithFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.ensurePathPhase
-import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.ensureTargetPhase
 import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.ensureTargetPhaseIfClass
 
 internal class FirDesignatedSupertypeResolverTransformerForIDE(
     private val designation: FirDeclarationDesignationWithFile,
     private val session: FirSession,
     private val scopeSession: ScopeSession,
-    private val firProviderInterceptor: FirProviderInterceptorForSupertypeResolver?,
+    private val firProviderInterceptor: FirProviderInterceptor?
 ) : FirLazyTransformerForIDE {
-
-    private val supertypeComputationSession = SupertypeComputationSession()
 
     override fun transformDeclaration() {
         if (designation.declaration.resolvePhase >= FirResolvePhase.SUPER_TYPES) return
         designation.ensurePathPhase(FirResolvePhase.SUPER_TYPES)
+
+        val supertypeComputationSession = SupertypeComputationSession()
 
         val resolver = FirSupertypeResolverVisitor(
             session = session,

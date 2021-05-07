@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.firProvider
-import org.jetbrains.kotlin.fir.resolve.transformers.FirProviderInterceptorForSupertypeResolver
+import org.jetbrains.kotlin.fir.resolve.transformers.FirProviderInterceptor
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
@@ -20,7 +20,7 @@ internal class FirProviderInterceptorForIDE private constructor(
     private val session: FirSession,
     private val symbolSet: Set<FirClassLikeSymbol<*>>,
     private val classIdToElementMap: Map<ClassId, FirClassLikeDeclaration<*>>
-) : FirProviderInterceptorForSupertypeResolver {
+) : FirProviderInterceptor {
 
     override fun getFirClassifierContainerFileIfAny(symbol: FirClassLikeSymbol<*>): FirFile? =
         if (symbolSet.contains(symbol)) firFile else session.firProvider.getFirClassifierContainerFileIfAny(symbol)
@@ -29,7 +29,7 @@ internal class FirProviderInterceptorForIDE private constructor(
         classIdToElementMap[classId] ?: session.firProvider.getFirClassifierByFqName(classId)
 
     companion object {
-        fun createForFirElement(session: FirSession, firFile: FirFile, element: FirElement): FirProviderInterceptorForSupertypeResolver {
+        fun createForFirElement(session: FirSession, firFile: FirFile, element: FirElement): FirProviderInterceptor {
             val nodeInfoCollector = object : FirVisitorVoid() {
                 val symbolSet = mutableSetOf<FirClassLikeSymbol<*>>()
                 val classIdToElementMap = mutableMapOf<ClassId, FirClassLikeDeclaration<*>>()

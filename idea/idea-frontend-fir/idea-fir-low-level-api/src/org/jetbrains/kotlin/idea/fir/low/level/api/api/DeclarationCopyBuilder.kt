@@ -58,11 +58,11 @@ object DeclarationCopyBuilder {
         val originalFunction = rootNonLocalDeclaration.getOrBuildFirOfType<FirSimpleFunction>(state)
         val builtFunction = createCopy(rootNonLocalDeclaration, originalFunction, replacement)
 
-        //TODO Check do we really need this optimisation? Maybe it is not optimisation at all because of Kt travers?
         val functionBlock = rootNonLocalDeclaration.bodyBlockExpression
         if (functionBlock == null || !PsiTreeUtil.isAncestor(functionBlock, replacement.from, true)) {
             return builtFunction
         }
+        //TODO Check do we really need this optimisation? Maybe it is not optimisation at all because of Kt travers?
 
         // right now we can't resolve builtFunction header properly, as it built right in air,
         // without file, which is now required for running stages other then body resolve, so we
@@ -82,11 +82,11 @@ object DeclarationCopyBuilder {
         val originalFirClass = rootNonLocalDeclaration.getOrBuildFirOfType<FirRegularClass>(state)
         val builtClass = createCopy(rootNonLocalDeclaration, originalFirClass, replacement)
 
-        //TODO Check do we really need this optimisation? Maybe it is not optimisation at all because of Kt travers?
         val classBody = rootNonLocalDeclaration.body
         if (classBody == null || !PsiTreeUtil.isAncestor(classBody, replacement.from, true)) {
             return builtClass
         }
+        //TODO Check do we really need this optimisation? Maybe it is not optimisation at all because of Kt travers?
 
         return buildRegularClassCopy(originalFirClass) {
             declarations.clear()
@@ -102,16 +102,8 @@ object DeclarationCopyBuilder {
         state: FirModuleResolveState,
         replacement: RawFirReplacement<T>,
     ): FirTypeAlias {
-
         val originalFirTypeAlias = rootNonLocalDeclaration.getOrBuildFirOfType<FirTypeAlias>(state)
-        val builtTypeAlias = createCopy(rootNonLocalDeclaration, originalFirTypeAlias, replacement)
-        return builtTypeAlias
-
-//        return buildTypeAliasCopy(originalFirTypeAlias) {
-//            expandedTypeRef = builtTypeAlias.expandedTypeRef
-//            symbol = builtTypeAlias.symbol
-//            initDeclaration(originalFirTypeAlias, builtTypeAlias, state)
-//        }
+        return createCopy(rootNonLocalDeclaration, originalFirTypeAlias, replacement)
     }
 
     private fun <T : KtElement> createPropertyCopy(
@@ -122,7 +114,6 @@ object DeclarationCopyBuilder {
         val originalProperty = rootNonLocalDeclaration.getOrBuildFirOfType<FirProperty>(state)
         val builtProperty = createCopy(rootNonLocalDeclaration, originalProperty, replacement)
 
-        //TODO Check do we really need this optimisation? Maybe it is not optimisation at all because of Kt travers?
         val insideGetterBody = rootNonLocalDeclaration.getter?.bodyBlockExpression?.let {
             PsiTreeUtil.isAncestor(it, replacement.from, true)
         } ?: false
@@ -133,6 +124,8 @@ object DeclarationCopyBuilder {
 
             if (!insideSetterBody) return builtProperty
         }
+        //TODO Check do we really need this optimisation? Maybe it is not optimisation at all because of Kt travers?
+
 
         val originalSetter = originalProperty.setter
         val builtSetter = builtProperty.setter

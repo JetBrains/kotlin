@@ -29,9 +29,22 @@ abstract class FirModuleResolveState {
 
     internal abstract fun getSessionFor(moduleInfo: IdeaModuleInfo): FirSession
 
+    /**
+     * Build fully resolved FIR node for requested element.
+     * This operation could be performance affective, use
+     * @see tryGetCachedFirFile to get [FirFile] in undefined phase
+     */
     internal abstract fun getOrBuildFirFor(element: KtElement): FirElement
 
-    internal abstract fun getFirFile(ktFile: KtFile): FirFile
+    /**
+     * Get or build or get cached [FirFile] for requested file in undefined phase
+     */
+    internal abstract fun getOrBuildFirFile(ktFile: KtFile): FirFile
+
+    /**
+     * Try get [FirFile] from the cache in undefined phase
+     */
+    internal abstract fun tryGetCachedFirFile(declaration: FirDeclaration, cache: ModuleFileCache): FirFile?
 
     internal abstract fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<FirPsiDiagnostic<*>>
 
@@ -41,11 +54,9 @@ abstract class FirModuleResolveState {
         val originalDeclaration = (declaration as? FirCallableDeclaration<*>)?.unwrapFakeOverrides() ?: declaration
         val session = originalDeclaration.moduleData.session
         return when {
-            originalDeclaration.origin == FirDeclarationOrigin.Source
-                    && session is FirIdeSourcesSession
-            -> {
+            originalDeclaration.origin == FirDeclarationOrigin.Source && session is FirIdeSourcesSession -> {
                 val cache = session.cache
-                val file = getFirFile(declaration, cache)
+                val file = tryGetCachedFirFile(declaration, cache)
                     ?: error("Fir file was not found for\n${declaration.render()}\n${(declaration.psi as? KtElement)?.getElementTextInContext()}")
                 cache.firFileLockProvider.withLock(file, declarationLockType) { action(declaration) }
             }
@@ -63,7 +74,5 @@ abstract class FirModuleResolveState {
         ktDeclaration: KtLambdaExpression,
     ): FirDeclaration
 
-    internal abstract fun <D : FirDeclaration> resolvedFirToPhase(declaration: D, toPhase: FirResolvePhase): D
-
-    internal abstract fun getFirFile(declaration: FirDeclaration, cache: ModuleFileCache): FirFile?
+    internal abstract fun <D : FirDeclaration> resolveFirToPhase(declaration: D, toPhase: FirResolvePhase): D
 }

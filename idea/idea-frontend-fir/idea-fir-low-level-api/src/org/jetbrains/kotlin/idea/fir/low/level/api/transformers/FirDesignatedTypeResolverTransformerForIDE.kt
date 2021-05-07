@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransform
 import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.ensureTargetPhase
 import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.ensureTargetPhaseIfClass
 
-class FirDesignatedTypeResolverTransformerForIDE(
+internal class FirDesignatedTypeResolverTransformerForIDE(
     private val designation: FirDeclarationDesignationWithFile,
     session: FirSession,
     scopeSession: ScopeSession,

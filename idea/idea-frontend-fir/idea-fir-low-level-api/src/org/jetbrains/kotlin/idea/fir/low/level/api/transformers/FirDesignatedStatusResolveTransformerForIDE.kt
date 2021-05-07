@@ -17,41 +17,11 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignation
 import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.ensurePathPhase
 import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.ensureTargetPhase
 
-class FirDesignatedStatusResolveTransformerForIDE(
+internal class FirDesignatedStatusResolveTransformerForIDE(
     private val designation: FirDeclarationDesignationWithFile,
     private val session: FirSession,
     private val scopeSession: ScopeSession,
 ) : FirLazyTransformerForIDE {
-
-    private val firstItemInDesignation = designation.path.firstOrNull() ?: designation.declaration
-
-    private fun resolveClass(targetClass: FirClass<*>) {
-        val transformer = FirDesignatedStatusResolveTransformer(
-            session = session,
-            scopeSession = scopeSession,
-            designation = designation.toSequence(includeTarget = true).iterator(),
-            targetClass = targetClass,
-            statusComputationSession = StatusComputationSession.Regular(),
-            designationMapForLocalClasses = emptyMap(),
-            scopeForLocalClass = null
-        )
-
-        firstItemInDesignation.transformSingle(transformer, null)
-    }
-
-    private fun resolveTypeAlias(targetClass: FirTypeAlias) {
-        val transformer = FirDesignatedStatusResolveTransformer(
-            session = session,
-            scopeSession = scopeSession,
-            designation = designation.toSequence(includeTarget = true).iterator(),
-            targetClass = targetClass,
-            statusComputationSession = StatusComputationSession.Regular(),
-            designationMapForLocalClasses = emptyMap(),
-            scopeForLocalClass = null
-        )
-
-        firstItemInDesignation.transformSingle(transformer, null)
-    }
 
     private fun resolveTopLevelDeclaration(declaration: FirDeclaration) {
         val transformer = FirStatusResolveTransformer(
@@ -62,13 +32,13 @@ class FirDesignatedStatusResolveTransformerForIDE(
         declaration.transformSingle(transformer, null)
     }
 
-    private fun resolveClassMember(containingClass: FirClass<*>, targetCallable: FirDeclaration) {
+    private fun resolveClassMember(containingClass: FirClass<*>, targetDeclaration: FirDeclaration) {
 
         val transformer = object : FirDesignatedStatusResolveTransformer(
             session = session,
             scopeSession = scopeSession,
             designation = designation.toSequence(includeTarget = true).iterator(),
-            targetClass = if (targetCallable is FirRegularClass) targetCallable else containingClass,
+            targetClass = if (targetDeclaration is FirRegularClass) targetDeclaration else containingClass,
             statusComputationSession = StatusComputationSession.Regular(),
             designationMapForLocalClasses = emptyMap(),
             scopeForLocalClass = null
@@ -77,12 +47,13 @@ class FirDesignatedStatusResolveTransformerForIDE(
             override fun <F : FirClass<F>> transformClass(klass: FirClass<F>, data: FirResolvedDeclarationStatus?): FirStatement {
                 if (klass != containingClass) return super.transformClass(klass, data)
                 val result = storeClass(klass) {
-                    targetCallable.transformSingle(this, data)
+                    targetDeclaration.transformSingle(this, data)
                 }
                 return result as FirStatement
             }
         }
 
+        val firstItemInDesignation = designation.path.firstOrNull() ?: designation.declaration
         firstItemInDesignation.transformSingle(transformer, null)
     }
 
@@ -95,7 +66,7 @@ class FirDesignatedStatusResolveTransformerForIDE(
         if (containingClass == null) {
             resolveTopLevelDeclaration(designation.declaration)
         } else {
-            check(containingClass is FirClass<*>) { "Invalid designation - the parent is a class" }
+            check(containingClass is FirClass<*>) { "Invalid designation - the parent is not a class" }
             resolveClassMember(containingClass, designation.declaration)
         }
 

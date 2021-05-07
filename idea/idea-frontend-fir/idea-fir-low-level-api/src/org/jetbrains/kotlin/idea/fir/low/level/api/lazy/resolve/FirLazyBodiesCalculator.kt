@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtSecondaryConstructor
 
 internal object FirLazyBodiesCalculator {
-    fun calculateLazyBodiesInside(element: FirElement, designation: FirDeclarationDesignation) {
-        element.transform<FirElement, MutableList<FirDeclaration>>(
+    fun calculateLazyBodiesInside(designation: FirDeclarationDesignation) {
+        designation.declaration.transform<FirElement, MutableList<FirDeclaration>>(
             FirLazyBodiesCalculatorTransformer,
             designation.toSequence(includeTarget = true).toMutableList()
         )
