@@ -13,7 +13,7 @@ dependencies {
     compile(project(":compiler:light-classes"))
     compile(project(":plugins:uast-kotlin-base"))
 
-    // BEWARE: Uast should not depend on IDEA.
+    // BEWARE: UAST should not depend on IJ platform so that it can work in Android Lint CLI mode (where IDE is not available)
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "asm-all", rootProject = rootProject) }
 
     testCompileOnly(intellijDep())
