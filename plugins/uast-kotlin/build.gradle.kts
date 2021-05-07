@@ -1,8 +1,15 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     kotlin("jvm")
     id("jps-compatible")
 }
+
+val shadows by configurations.creating {
+    isTransitive = false
+}
+configurations.getByName("compileOnly").extendsFrom(shadows)
+configurations.getByName("testCompile").extendsFrom(shadows)
 
 dependencies {
     compile(kotlinStdlib())
@@ -11,7 +18,7 @@ dependencies {
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:light-classes"))
-    compile(project(":plugins:uast-kotlin-base"))
+    shadows(project(":plugins:uast-kotlin-base"))
 
     // BEWARE: Uast should not depend on IDEA.
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "asm-all", rootProject = rootProject) }
@@ -62,6 +69,13 @@ dependencies {
 sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
+}
+
+noDefaultJar()
+
+runtimeJar(tasks.register<ShadowJar>("shadowJar")) {
+    from(mainSourceSet.output)
+    configurations = listOf(shadows)
 }
 
 testsJar {}

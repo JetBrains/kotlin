@@ -1,13 +1,21 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     kotlin("jvm")
     id("jps-compatible")
 }
 
+val shadows by configurations.creating {
+    isTransitive = false
+}
+configurations.getByName("compileOnly").extendsFrom(shadows)
+configurations.getByName("testCompile").extendsFrom(shadows)
+
 dependencies {
     implementation(kotlinStdlib())
     implementation(project(":compiler:psi"))
     implementation(project(":compiler:light-classes"))
-    implementation(project(":plugins:uast-kotlin-base"))
+    shadows(project(":plugins:uast-kotlin-base"))
 
     // BEWARE: Uast should not depend on IDEA.
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "asm-all", rootProject = rootProject) }
@@ -33,6 +41,15 @@ sourceSets {
     "test" { projectDefault() }
 }
 
+noDefaultJar()
+
+runtimeJar(tasks.register<ShadowJar>("shadowJar")) {
+    from(mainSourceSet.output)
+    configurations = listOf(shadows)
+}
+
+testsJar ()
+
 projectTest(parallel = true) {
     workingDir = rootDir
     val useFirIdeaPlugin = kotlinBuildProperties.useFirIdeaPlugin
@@ -42,5 +59,3 @@ projectTest(parallel = true) {
         }
     }
 }
-
-testsJar ()
