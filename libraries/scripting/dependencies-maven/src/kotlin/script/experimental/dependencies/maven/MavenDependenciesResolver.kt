@@ -88,11 +88,8 @@ class MavenDependenciesResolver : ExternalDependenciesResolver {
     ): ResultWithDiagnostics<Boolean> {
         val url = repositoryCoordinates.toRepositoryUrlOrNull()
             ?: return false.asSuccess()
-        val repo = RemoteRepository.Builder(
-            repositoryCoordinates.string,
-            "default",
-            url.toString()
-        )
+        val repoId = repositoryCoordinates.string.replace(FORBIDDEN_CHARS, "_")
+        val repo = RemoteRepository.Builder(repoId, "default", url.toString())
         if (repositoryCoordinates is MavenRepositoryCoordinates) {
             val username = repositoryCoordinates.username?.let(::tryResolveEnvironmentVariable)
             val password = repositoryCoordinates.password?.let(::tryResolveEnvironmentVariable)
@@ -108,5 +105,15 @@ class MavenDependenciesResolver : ExternalDependenciesResolver {
         }
         repos.add(repo.build())
         return true.asSuccess()
+    }
+
+    companion object {
+        /**
+         * These characters are forbidden in Windows, Linux or Mac file names.
+         * As the repository ID is used in metadata filename generation
+         * (see [org.eclipse.aether.internal.impl.SimpleLocalRepositoryManager.getRepositoryKey]),
+         * they should be replaced with an allowed character.
+         */
+        private val FORBIDDEN_CHARS = Regex("[/\\\\:<>\"|?*]")
     }
 }
