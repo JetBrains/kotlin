@@ -56,3 +56,5 @@ class Kotlin {
     }
 
 }
+
+class WithBound<T: Bar<Outer.Inner<@Ann Outer>>>()

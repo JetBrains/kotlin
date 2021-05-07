@@ -372,6 +372,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class TypeAnnotations extends AbstractLightAnalysisModeTest {
+            @TestMetadata("classTypeParameterBoundsJava.kt")
+            public void ignoreClassTypeParameterBoundsJava() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/typeAnnotations/classTypeParameterBoundsJava.kt");
+            }
+
             @TestMetadata("methodTypeParameters.kt")
             public void ignoreMethodTypeParameters() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/typeAnnotations/methodTypeParameters.kt");
@@ -388,6 +393,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("checkingNotincorporatedInputTypes.kt")
             public void testCheckingNotincorporatedInputTypes() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/typeAnnotations/checkingNotincorporatedInputTypes.kt");
+            }
+
+            @TestMetadata("classTypeParameterBound.kt")
+            public void testClassTypeParameterBound() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/typeAnnotations/classTypeParameterBound.kt");
             }
 
             @TestMetadata("functionTypeParameterBound.kt")
