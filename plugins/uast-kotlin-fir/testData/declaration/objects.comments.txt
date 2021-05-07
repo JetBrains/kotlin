@@ -1,0 +1,5 @@
+UFile(allCommentsInFile:
+UComment(// file comment)
+UComment(// Single-line comment bound to top-level property)
+UComment(// Single-line comment bound to object)
+)

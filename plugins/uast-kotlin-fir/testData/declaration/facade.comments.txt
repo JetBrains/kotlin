@@ -1,0 +1,6 @@
+UFile(allCommentsInFile:
+UComment(// Single-line comment bound to fun foo)
+UComment(/*
+ * Multi-line comment bound to extension fun buzz
+ */)
+)

@@ -5,8 +5,8 @@
 
 package org.jetbrains.uast.common.kotlin
 
-private const val FE10_SUFFIX = ".fe10"
-private const val FIR_SUFFIX = ".fir"
+import org.jetbrains.uast.common.kotlin.FirUastTestSuffix.FE10_SUFFIX
+import org.jetbrains.uast.common.kotlin.FirUastTestSuffix.FIR_SUFFIX
 
 interface FirUastPluginSelection {
     // Whether this is FIR UAST plugin or FE 1.0 UAST plugin
