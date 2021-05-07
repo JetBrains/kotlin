@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.description.ConeBooleanConstantReference
@@ -36,7 +37,9 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
+import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 class DataFlowAnalyzerContext<FLOW : Flow>(
@@ -224,7 +227,88 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         if (graphBuilder.isTopLevel()) {
             context.reset()
         }
+
+        val visibility = (function as? FirMemberDeclaration)?.status?.visibility
+        if (visibility != null && visibility != Visibilities.Local) {
+            // A non local member function has self-contained control flow graph
+            validateSmartcast(graph)
+        }
         return FirControlFlowGraphReferenceImpl(graph, DataFlowInfo(variableStorage, flowOnNodes))
+    }
+
+    private fun validateSmartcast(graph: ControlFlowGraph) {
+        LocalAssignmentRecorder().traverse(graph, mutableListOf())
+        val smartcastValidator = SmartcastValidator(components.session)
+        smartcastValidator.traverse(graph, mutableMapOf())
+        smartcastValidator.undecidedLocalVariables.forEach { it.replaceSmartcastStability(SmartcastStability.STABLE_VALUE) }
+    }
+
+    class LocalAssignmentRecorder : BackEdgeOnceExecutionPathTraverser<MutableList<MutableMap<FirProperty, MutableSet<ConeKotlinType>>>>() {
+        override fun handleEdge(
+            src: CFGNode<*>,
+            dst: CFGNode<*>,
+            edge: Edge,
+            data: MutableList<MutableMap<FirProperty, MutableSet<ConeKotlinType>>>
+        ): MutableList<MutableMap<FirProperty, MutableSet<ConeKotlinType>>> {
+            if (src is VariableAssignmentNode) {
+                val fir = src.fir
+                val property = (fir.lValue as? FirResolvedNamedReference)?.resolvedSymbol?.fir as? FirProperty
+                if (property != null && property.isLocal && property.isVar) {
+                    for (map in data) {
+                        map.computeIfAbsent(property) { mutableSetOf() } += fir.rValue.coneType
+                    }
+                }
+            }
+            if (src !is PossibleConcurrentForkingNode<*> || !src.isConcurrentFork) {
+                return data
+            }
+            return data.toMutableList().apply {
+                add(src.assignedLocalVariablesByExecutionPath.computeIfAbsent(dst) { mutableMapOf() })
+            }
+        }
+    }
+
+    class SmartcastValidator(private val session: FirSession) :
+        BackEdgeOnceExecutionPathTraverser<MutableMap<FirProperty, MutableSet<ConeKotlinType>>>() {
+        val undecidedLocalVariables: MutableSet<FirExpressionWithSmartcast> = mutableSetOf()
+
+        @OptIn(ExperimentalStdlibApi::class)
+        override fun handleEdge(
+            src: CFGNode<*>,
+            dst: CFGNode<*>,
+            edge: Edge,
+            data: MutableMap<FirProperty, MutableSet<ConeKotlinType>>
+        ): MutableMap<FirProperty, MutableSet<ConeKotlinType>> {
+            val fir = src.fir
+            if (fir is FirExpressionWithSmartcast && fir.smartcastStability == null) {
+                val firProperty = (fir.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol?.fir as? FirProperty
+                if (firProperty == null) {
+                    // treat unresolved smart cast as stable
+                    fir.replaceSmartcastStability(SmartcastStability.STABLE_VALUE)
+                } else {
+                    // Stability can't be inferred from property itself. In this case we check if the property is concurrently assigned
+                    val assignedTypes = data[firProperty]
+                    if (assignedTypes != null && !assignedTypes.all { assignedType ->
+                            AbstractTypeChecker.isSubtypeOf(session.typeContext, assignedType, fir.smartcastType.coneType)
+                        }) {
+                        fir.replaceSmartcastStability(SmartcastStability.CAPTURED_VARIABLE)
+                        undecidedLocalVariables -= fir
+                    } else {
+                        // The smartcast is stable for the current execution path.
+                        undecidedLocalVariables += fir
+                    }
+                }
+            }
+            if (src is PossibleConcurrentForkingNode && src.isConcurrentFork) {
+                return mutableMapOf<FirProperty, MutableSet<ConeKotlinType>>().apply {
+                    putAll(data)
+                    for (assignments in src.assignedLocalVariablesByExecutionPath.filter { (node, _) -> node != dst }.values) {
+                        putAll(assignments)
+                    }
+                }
+            }
+            return data
+        }
     }
 
     // ----------------------------------- Anonymous function -----------------------------------
