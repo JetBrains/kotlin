@@ -139,16 +139,22 @@ abstract class AbstractIntentionTest : KotlinLightCodeInsightFixtureTestCase() {
     private fun <T> computeUnderProgressIndicatorAndWait(compute: () -> T): T {
         val result = CompletableFuture<T>()
         val progressIndicator = ProgressIndicatorBase()
+        var exceptionDuringCompute: Throwable? = null
         try {
             val task = object : Task.Backgroundable(project, "isApplicable", false) {
                 override fun run(indicator: ProgressIndicator) {
-                    result.complete(compute())
+                    try {
+                        result.complete(compute())
+                    } catch(e: Throwable) {
+                        exceptionDuringCompute = e
+                    }
                 }
             }
             ProgressManager.getInstance().runProcessWithProgressAsynchronously(task, progressIndicator)
             return result.get(10, TimeUnit.SECONDS)
         } finally {
             progressIndicator.cancel()
+            exceptionDuringCompute?.let { throw it }
         }
     }
 
