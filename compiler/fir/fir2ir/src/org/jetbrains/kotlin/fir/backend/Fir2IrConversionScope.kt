@@ -95,21 +95,20 @@ class Fir2IrConversionScope {
     }
 
     fun returnTarget(expression: FirReturnExpression, declarationStorage: Fir2IrDeclarationStorage): IrFunction {
-        val firTarget = expression.target.labeledElement
-        val irTarget = (firTarget as? FirFunction)?.let {
-            when (it) {
-                is FirConstructor -> declarationStorage.getCachedIrConstructor(it)
-                is FirPropertyAccessor -> {
-                    for ((property, firProperty) in propertyStack.asReversed()) {
-                        if (firProperty?.getter === firTarget) {
-                            return@let property.getter
-                        } else if (firProperty?.setter === firTarget) {
-                            return@let property.setter
-                        }
+        val irTarget = when (val firTarget = expression.target.labeledElement) {
+            is FirConstructor -> declarationStorage.getCachedIrConstructor(firTarget)
+            is FirPropertyAccessor -> {
+                var answer: IrFunction? = null
+                for ((property, firProperty) in propertyStack.asReversed()) {
+                    if (firProperty?.getter === firTarget) {
+                        answer = property.getter
+                    } else if (firProperty?.setter === firTarget) {
+                        answer = property.setter
                     }
                 }
-                else -> declarationStorage.getCachedIrFunction(it)
+                answer
             }
+            else -> declarationStorage.getCachedIrFunction(firTarget)
         }
         for (potentialTarget in functionStack.asReversed()) {
             if (potentialTarget == irTarget) {
