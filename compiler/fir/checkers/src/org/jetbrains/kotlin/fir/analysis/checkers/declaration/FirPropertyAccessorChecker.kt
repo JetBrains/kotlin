@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.findClosestClassOrObject
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
-import org.jetbrains.kotlin.fir.declarations.visibility
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isUnit
@@ -32,6 +32,11 @@ object FirPropertyAccessorChecker : FirPropertyChecker() {
             checkAccessorForDelegatedProperty(property, getter, context, reporter)
             if (getter.visibility != property.visibility) {
                 reporter.reportOn(getter.source, FirErrors.GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY, context)
+            }
+            if (property.symbol.callableId.classId != null && getter.body != null && property.delegate == null) {
+                if (isLegallyAbstract(property, context)) {
+                    reporter.reportOn(getter.source, FirErrors.ABSTRACT_PROPERTY_WITH_GETTER, context)
+                }
             }
             val getterReturnTypeRef = getter.returnTypeRef
             if (getterReturnTypeRef.source?.kind is FirFakeSourceElementKind) {
@@ -62,6 +67,19 @@ object FirPropertyAccessorChecker : FirPropertyChecker() {
             val visibilityCompareResult = setter.visibility.compareTo(property.visibility)
             if (visibilityCompareResult == null || visibilityCompareResult > 0) {
                 reporter.reportOn(setter.source, FirErrors.SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY, context)
+            }
+            if (property.symbol.callableId.classId != null && property.delegate == null) {
+                val isLegallyAbstract = isLegallyAbstract(property, context)
+                if (setter.visibility == Visibilities.Private && property.visibility != Visibilities.Private) {
+                    if (isLegallyAbstract) {
+                        reporter.reportOn(setter.source, FirErrors.PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY, context)
+                    } else if (property.isOpen) {
+                        reporter.reportOn(setter.source, FirErrors.PRIVATE_SETTER_FOR_OPEN_PROPERTY, context)
+                    }
+                }
+                if (isLegallyAbstract && setter.body != null) {
+                    reporter.reportOn(setter.source, FirErrors.ABSTRACT_PROPERTY_WITH_SETTER, context)
+                }
             }
 
             val valueSetterParameter = setter.valueParameters.first()
@@ -104,5 +122,9 @@ object FirPropertyAccessorChecker : FirPropertyChecker() {
         ) {
             reporter.reportOn(accessor.source, FirErrors.ACCESSOR_FOR_DELEGATED_PROPERTY, context)
         }
+    }
+
+    private fun isLegallyAbstract(property: FirProperty, context: CheckerContext): Boolean {
+        return property.isAbstract && context.findClosestClassOrObject().let { it is FirRegularClass && it.canHaveAbstractDeclaration }
     }
 }

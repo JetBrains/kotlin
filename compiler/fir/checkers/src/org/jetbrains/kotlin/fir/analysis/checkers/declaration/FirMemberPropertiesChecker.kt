@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.cfa.PropertyInitializationInfo
 import org.jetbrains.kotlin.fir.analysis.cfa.PropertyInitializationInfoCollector
 import org.jetbrains.kotlin.fir.analysis.checkers.contains
@@ -21,11 +20,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
-import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.NormalPath
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.lexer.KtTokens
 
@@ -193,17 +190,6 @@ object FirMemberPropertiesChecker : FirRegularClassChecker() {
                 property.delegate?.source?.let {
                     reporter.reportOn(it, FirErrors.ABSTRACT_DELEGATED_PROPERTY, context)
                 }
-
-                checkAccessor(property.getter, property.delegate) { src, _, hasBody ->
-                    if (hasBody) reporter.reportOn(src, FirErrors.ABSTRACT_PROPERTY_WITH_GETTER, context)
-                }
-                checkAccessor(property.setter, property.delegate) { src, symbol, hasBody ->
-                    when {
-                        symbol.fir.visibility == Visibilities.Private && property.visibility != Visibilities.Private ->
-                            reporter.reportOn(src, FirErrors.PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY, context)
-                        hasBody -> reporter.reportOn(src, FirErrors.ABSTRACT_PROPERTY_WITH_SETTER, context)
-                    }
-                }
             }
 
             val hasOpenModifier = KtTokens.OPEN_KEYWORD in modifierList
@@ -216,26 +202,6 @@ object FirMemberPropertiesChecker : FirRegularClassChecker() {
                 property.source?.let {
                     reporter.reportOn(it, FirErrors.REDUNDANT_OPEN_IN_INTERFACE, context)
                 }
-            }
-            val isOpen = property.isOpen || hasOpenModifier
-            if (isOpen) {
-                checkAccessor(property.setter, property.delegate) { src, symbol, _ ->
-                    if (symbol.fir.visibility == Visibilities.Private && property.visibility != Visibilities.Private) {
-                        reporter.reportOn(src, FirErrors.PRIVATE_SETTER_FOR_OPEN_PROPERTY, context)
-                    }
-                }
-            }
-        }
-    }
-
-    private fun checkAccessor(
-        accessor: FirPropertyAccessor?,
-        delegate: FirExpression?,
-        report: (FirSourceElement, FirPropertyAccessorSymbol, hasBody: Boolean) -> Unit,
-    ) {
-        if (accessor != null && delegate == null) {
-            accessor.source?.let {
-                report.invoke(it, accessor.symbol, accessor.hasBody)
             }
         }
     }
