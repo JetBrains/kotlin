@@ -335,6 +335,7 @@ extra["tasksWithWarnings"] = listOf(
     ":kotlin-stdlib:compileTestKotlin",
     ":kotlin-stdlib-jdk7:compileTestKotlin",
     ":kotlin-stdlib-jdk8:compileTestKotlin",
+    ":plugins:uast-kotlin-base:compileKotlin",
     ":plugins:uast-kotlin:compileKotlin",
     ":plugins:uast-kotlin:compileTestKotlin",
     ":plugins:uast-kotlin-fir:compileKotlin",

@@ -58,7 +58,7 @@ internal object FirKotlinConverter {
                     convertKtFile(original, givenParent, requiredTypes).firstOrNull()
                 }
                 is FakeFileForLightClass -> {
-                    el<UFile> { FirKotlinUFile(original.navigationElement) }
+                    el<UFile> { KotlinUFile(original.navigationElement, firKotlinUastPlugin) }
                 }
 
                 is KtLightClass -> {
@@ -112,7 +112,7 @@ internal object FirKotlinConverter {
     ): Sequence<UElement> {
         return requiredTypes.accommodate(
             // File
-            alternative { FirKotlinUFile(element) },
+            alternative { KotlinUFile(element, firKotlinUastPlugin) },
             // Facade
             alternative { element.findFacadeClass()?.let { AbstractFirKotlinUClass.create(it, givenParent) } }
         )
