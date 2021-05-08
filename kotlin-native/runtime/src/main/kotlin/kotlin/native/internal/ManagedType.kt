@@ -11,18 +11,9 @@ import kotlinx.cinterop.CStructVar
 import kotlin.native.internal.Cleaner
 import kotlin.native.internal.createCleaner
 
-interface CPlusPlusClass {
-    fun __destroy__()
-}
+interface SkiaRefCnt
+interface CPlusPlusClass
 
-abstract class ManagedType<T> (val cpp: T)
-    where T : CStructVar, T: CPlusPlusClass
-{
-    init {
-        println("ManagedType INIT")
-    }
-    //val cleaner = createCleaner(cpp) {
-    //    println("RUNNING CLEANER for $it")
-    //    it.__destroy__()
-    //}
-}
+abstract class ManagedType<T : CStructVar> (val cpp: T)
+
+val <T: CStructVar> ManagedType<T>.ptr: CPointer<T> get() = this.cpp.ptr

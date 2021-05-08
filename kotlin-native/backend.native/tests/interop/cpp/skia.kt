@@ -4,6 +4,8 @@ import kotlin.test.*
 import skia.*
 
 fun main() {
+    kotlin.native.internal.Debugging.forceCheckedShutdown = true
+
     val f = Foo()
     val a = nativeHeap.alloc<Value>()
     a.data = 17

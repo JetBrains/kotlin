@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionExpressionImpl
+import org.jetbrains.kotlin.ir.interpreter.toIrConst
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.defaultType
@@ -103,11 +104,6 @@ internal class CStructVarClassGenerator(
                     .filter { it.name.toString() == "__destroy__" }
                     .single()
 
-            //val rawPtr = irClass.declarations
-            //        .filterIsInstance<IrProperty>()
-            //        .filter { it.name.toString() == "rawPtr" }
-            //        .single()
-
             val getPtr = symbols.interopGetPtr
 
             destroy.body = irBuilder(irBuiltIns, destroy.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
@@ -124,7 +120,25 @@ internal class CStructVarClassGenerator(
         }
     }
 
+    // TODO: move me to InteropLowering.kt?
     private fun setupManagedClass(irClass: IrClass) {
+
+        // class Wrapper(cpp: CppClass) : ManagedType(cpp) {
+        //     val cpp = cpp
+        //     val cleaner = createCleaner(cpp) { it ->
+        //          $Inner.Companion.__destroy__(it) // For general CPlusPlusClass
+        //          or
+        //          cpp.unref() // for SkiaRefCnt
+        //     }
+        // }
+
+        val superClassFqNames = irClass.superTypes.map {
+            it.classOrNull?.owner?.fqNameWhenAvailable
+        }.filterNotNull()
+
+        val isSkiaRefCnt = superClassFqNames.contains(RuntimeNames.skiaRefCnt)
+        val getPtr = symbols.interopGetPtr
+
         val cppVal = irClass.declarations
                 .filterIsInstance<IrProperty>()
                 .filter { it.name.toString() == "cpp" }
@@ -198,11 +212,36 @@ internal class CStructVarClassGenerator(
                             }
                     )
                     body = irBlockBody {
-                        val destroy = cppValType.classOrNull!!.owner.declarations
-                                .filterIsInstance<IrSimpleFunction>()
-                                .single { it.name.toString() == "__destroy__" }
-                        +irCall(destroy).apply {
-                            dispatchReceiver = irGet(valueParameters.single())
+                        +irCall(symbols.println).apply {
+                            putValueArgument(0,
+                                    "Cleaning ${irClass.name} with ${if (isSkiaRefCnt) "unref" else "__destroy__"}"
+                                            .toIrConst(irBuiltIns.stringType)
+                            )
+                        }
+                        if (isSkiaRefCnt) {
+                            val unref = cppValType.classOrNull!!.owner.declarations
+                                    .filterIsInstance<IrSimpleFunction>()
+                                    .single { it.name.toString() == "unref" }
+                            +irCall(unref).apply {
+                                dispatchReceiver = irGet(valueParameters.single())
+                            }
+                        } else {
+                            // TODO: Should we call companion's __destroy__?
+                            // Or should we rather do the opposite to placement new?
+                            val companion = cppValType.classOrNull!!.owner.declarations
+                                    .filterIsInstance<IrClass>()
+                                    .single { it.isCompanion }
+                            val destroy = companion.declarations
+                                    .filterIsInstance<IrSimpleFunction>()
+                                    .single { it.name.toString() == "__destroy__" }
+                            +irCall(destroy).apply {
+                                dispatchReceiver = irGetObject(companion.symbol)
+                                putValueArgument(0,
+                                        irCall(getPtr).apply {
+                                            extensionReceiver = irGet(valueParameters.single())
+                                        }
+                                )
+                            }
                         }
                     }
                 }
@@ -218,7 +257,6 @@ internal class CStructVarClassGenerator(
                             IrFunctionExpressionImpl(
                                     startOffset = SYNTHETIC_OFFSET,
                                     endOffset = SYNTHETIC_OFFSET,
-                                    // type = irBuiltIns.function(1).defaultType,
                                     type = irBuiltIns.function(1).typeWith(cppValType, irBuiltIns.unitType),
                                     origin = IrStatementOrigin.LAMBDA,
                                     function = lambda

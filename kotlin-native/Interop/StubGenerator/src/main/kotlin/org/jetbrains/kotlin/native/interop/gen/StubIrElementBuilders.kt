@@ -266,6 +266,19 @@ internal class StructStubBuilder(
             properties = classFields,
             methods = classMethods
         )
+
+        val interfaces = if (context.configuration.library.language == Language.CPP && def.kind == StructDef.Kind.CLASS) {
+            listOfNotNull(
+                    ClassifierStubType(Classifier.topLevel("kotlinx.cinterop", "CPlusPlusClass")),
+                    // TODO: Only if skia plugin is active!
+                    if (methods.any { it.name == "unref" }) {
+                        ClassifierStubType(Classifier.topLevel("kotlinx.cinterop", "SkiaRefCnt"))
+                    } else {
+                        null
+                    }
+            )
+        } else emptyList()
+
         val classStub = ClassStub.Simple(
                 classifier,
                 origin = origin,
@@ -276,15 +289,9 @@ internal class StructStubBuilder(
                 annotations = structAnnotations,
                 superClassInit = superClassInit,
                 companion = companion,
-                interfaces = if (context.configuration.library.language == Language.CPP && def.kind == StructDef.Kind.CLASS) {
-                    listOf(
-                            ClassifierStubType(
-                                    Classifier.topLevel("kotlinx.cinterop", "CPlusPlusClass")
-                            )
-                    )
-                } else emptyList()
-
+                interfaces = interfaces
         )
+
         return if (context.configuration.library.language == Language.CPP && def.kind == StructDef.Kind.CLASS) {
             try {
                 listOfNotNull(classStub, buildManagedWrapper(classStub))

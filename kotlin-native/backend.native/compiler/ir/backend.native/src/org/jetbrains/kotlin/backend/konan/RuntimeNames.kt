@@ -16,6 +16,7 @@ object RuntimeNames {
     val cStruct = FqName("kotlinx.cinterop.internal.CStruct")
     val cppClass = FqName("kotlinx.cinterop.internal.CStruct.CPlusPlusClass")
     val managedType = FqName("kotlinx.cinterop.internal.CStruct.ManagedType")
+    val skiaRefCnt = FqName("kotlinx.cinterop.internal.CStruct.SkiaRefCnt") // TODO: move me to the plugin?
     val objCMethodAnnotation = FqName("kotlinx.cinterop.ObjCMethod")
     val objCMethodImp = FqName("kotlinx.cinterop.ObjCMethodImp")
     val independent = FqName("kotlin.native.internal.Independent")
