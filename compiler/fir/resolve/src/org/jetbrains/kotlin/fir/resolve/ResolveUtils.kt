@@ -10,7 +10,10 @@ import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.diagnostics.*
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
@@ -23,12 +26,12 @@ import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
-import org.jetbrains.kotlin.fir.resolve.providers.*
+import org.jetbrains.kotlin.fir.resolve.providers.getSymbolByTypeRef
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolved
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectData
-import org.jetbrains.kotlin.fir.symbols.*
+import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -247,7 +250,8 @@ private fun BodyResolveComponents.typeFromSymbol(symbol: AbstractFirBasedSymbol<
 fun BodyResolveComponents.transformQualifiedAccessUsingSmartcastInfo(
     qualifiedAccessExpression: FirQualifiedAccessExpression
 ): FirQualifiedAccessExpression {
-    val typesFromSmartCast = dataFlowAnalyzer.getTypeUsingSmartcastInfo(qualifiedAccessExpression) ?: return qualifiedAccessExpression
+    val (stability, typesFromSmartCast) = dataFlowAnalyzer.getTypeUsingSmartcastInfo(qualifiedAccessExpression)
+        ?: return qualifiedAccessExpression
     val originalType = qualifiedAccessExpression.resultType.coneType
     // For example, if (x == null) { ... },
     //   we don't want to smartcast to Nothing?, but we want to record the nullability to its own kind of node.
@@ -271,6 +275,8 @@ fun BodyResolveComponents.transformQualifiedAccessUsingSmartcastInfo(
             smartcastType = intersectedTypeRefWithoutNullableNothing
             // NB: Nothing? in types from smartcast in DFA is recorded here (and the expression kind itself).
             this.typesFromSmartCast = typesFromSmartCast
+            // TODO: differentiate capture local variable
+            this.smartcastStability = stability.impliedSmartcastStability ?: SmartcastStability.STABLE_VALUE
         }
     }
     val allTypes = typesFromSmartCast.also {
@@ -288,7 +294,8 @@ fun BodyResolveComponents.transformQualifiedAccessUsingSmartcastInfo(
         originalExpression = qualifiedAccessExpression
         smartcastType = intersectedTypeRef
         this.typesFromSmartCast = typesFromSmartCast
-        smartcastStability = SmartcastStability.STABLE_VALUE
+        // TODO: differentiate capture local variable
+        this.smartcastStability = stability.impliedSmartcastStability ?: SmartcastStability.STABLE_VALUE
     }
 }
 
