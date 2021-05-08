@@ -33,7 +33,7 @@ fun case_3(x: Int) = ""
 fun case_3(x: Int?) = 10
 fun case_3() {
     if (case_3_prop != null) {
-        val z = case_3(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>case_3_prop<!>)
+        val z = case_3(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int?")!>case_3_prop<!>)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>z<!>
     }
 }
@@ -89,7 +89,7 @@ fun case_7(x: Int) = ""
 fun case_7(x: Int?) = 10
 fun case_7() {
     if (case_7_prop != null) {
-        val z = case_7(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>case_7_prop<!>)
+        val z = case_7(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int?")!>case_7_prop<!>)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>z<!>
     }
 }
