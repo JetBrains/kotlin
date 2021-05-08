@@ -467,6 +467,8 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("originalExpression", qualifiedAccessExpression)
             +field("typesFromSmartCast", "Collection<ConeKotlinType>", null, customType = coneKotlinTypeType)
             +field("originalType", typeRef)
+            +field("smartcastType", typeRef)
+            +smartcastStability
         }
 
         safeCallExpression.configure {

@@ -162,7 +162,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
     // ----------------------------------- Requests -----------------------------------
 
-    fun getTypeUsingSmartcastInfo(qualifiedAccessExpression: FirQualifiedAccessExpression): MutableList<ConeKotlinType>? {
+    fun getTypeUsingSmartcastInfo(qualifiedAccessExpression: FirQualifiedAccessExpression): Pair<PropertyStability, MutableList<ConeKotlinType>>? {
         /*
          * DataFlowAnalyzer holds variables only for declarations that have some smartcast (or can have)
          * If there is no useful information there is no data flow variable also
@@ -170,13 +170,14 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         val symbol: AbstractFirBasedSymbol<*> = qualifiedAccessExpression.symbol ?: return null
         val flow = graphBuilder.lastNode.flow
         var variable = variableStorage.getRealVariableWithoutUnwrappingAlias(symbol, qualifiedAccessExpression, flow) ?: return null
+        val stability = variable.stability
         val result = mutableListOf<ConeKotlinType>()
         flow.directAliasMap[variable]?.let {
             result.addIfNotNull(it.originalType)
             variable = it.variable
         }
         flow.getTypeStatement(variable)?.exactType?.let { result += it }
-        return result.takeIf { it.isNotEmpty() }
+        return result.takeIf { it.isNotEmpty() }?.let { stability to it }
     }
 
     fun returnExpressionsOfAnonymousFunction(function: FirAnonymousFunction): Collection<FirStatement> {
@@ -1009,7 +1010,12 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         assignment: FirVariableAssignment?
     ) {
         val flow = node.flow
-        val propertyVariable = variableStorage.getOrCreateRealVariableWithoutUnwrappingAlias(flow, property.symbol, assignment ?: property)
+        val propertyVariable = variableStorage.getOrCreateRealVariableWithoutUnwrappingAlias(
+            flow,
+            property.symbol,
+            assignment ?: property,
+            if (property.isVal) PropertyStability.STABLE_VALUE else PropertyStability.LOCAL_VAR
+        )
         val isAssignment = assignment != null
         if (isAssignment) {
             logicSystem.removeLocalVariableAlias(flow, propertyVariable)
@@ -1017,13 +1023,21 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             logicSystem.recordNewAssignment(flow, propertyVariable, context.newAssignmentIndex())
         }
 
-        variableStorage.getOrCreateRealVariable(flow, initializer.symbol, initializer)?.let { initializerVariable ->
-            logicSystem.addLocalVariableAlias(
-                flow, propertyVariable,
-                RealVariableAndType(initializerVariable, initializer.coneType)
-            )
-            // node.flow.addImplication((propertyVariable notEq null) implies (initializerVariable notEq null))
-        }
+        variableStorage.getOrCreateRealVariable(flow, initializer.symbol, initializer)
+            ?.let { initializerVariable ->
+                // TODO: handle capture variable
+                if ((initializerVariable.stability == PropertyStability.STABLE_VALUE || initializerVariable.stability == PropertyStability.LOCAL_VAR) &&
+                    (propertyVariable.stability == PropertyStability.STABLE_VALUE || propertyVariable.stability == PropertyStability.LOCAL_VAR)
+                ) {
+                    logicSystem.addLocalVariableAlias(
+                        flow, propertyVariable,
+                        RealVariableAndType(initializerVariable, initializer.coneType)
+                    )
+                    // node.flow.addImplication((propertyVariable notEq null) implies (initializerVariable notEq null))
+                } else {
+                    logicSystem.replaceVariableFromConditionInStatements(flow, initializerVariable, propertyVariable)
+                }
+            }
 
         variableStorage.getSyntheticVariable(initializer)?.let { initializerVariable ->
             /*
