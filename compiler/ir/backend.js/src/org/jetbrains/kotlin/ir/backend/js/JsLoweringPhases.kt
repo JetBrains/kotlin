@@ -17,12 +17,13 @@ import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorI
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.lower.*
+import org.jetbrains.kotlin.ir.backend.js.lower.StringConcatenationLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.calls.CallsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.cleanup.CleanupLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.CopyInlineFunctionBodyLowering
-import org.jetbrains.kotlin.ir.backend.js.lower.inline.jsRecordExtractedLocalClasses
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsWithReifiedTypeParametersLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.inline.jsRecordExtractedLocalClasses
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
@@ -278,6 +279,7 @@ private val enumClassConstructorBodyLoweringPhase = makeBodyLoweringPhase(
     name = "EnumClassConstructorBodyLowering",
     description = "Transform Enum Class into regular Class"
 )
+
 
 private val enumEntryInstancesLoweringPhase = makeDeclarationTransformerPhase(
     ::EnumEntryInstancesLowering,
@@ -660,6 +662,20 @@ private val blockDecomposerLoweringPhase = makeBodyLoweringPhase(
     prerequisite = setOf(typeOperatorLoweringPhase, suspendFunctionsLoweringPhase)
 )
 
+private val stringConcatenationLowering = makeBodyLoweringPhase(
+    ::StringConcatenationLowering,
+    name = "StringConcatenationLowering",
+    description = "Lowers String concatenation to a chain of String::plus",
+    prerequisite = setOf(blockDecomposerLoweringPhase)
+)
+
+private val stringPlusLongLowering = makeBodyLoweringPhase(
+    ::StringPlusLongLowering,
+    name = "StringPlusLongLowering",
+    description = "Lowers String::plus(Long) to String::plus(Long::toString) to prevent precision loss caused by Long::valueOf",
+    prerequisite = setOf(stringConcatenationLowering)
+)
+
 private val classReferenceLoweringPhase = makeBodyLoweringPhase(
     ::ClassReferenceLowering,
     name = "ClassReferenceLowering",
@@ -675,7 +691,8 @@ private val primitiveCompanionLoweringPhase = makeBodyLoweringPhase(
 private val callsLoweringPhase = makeBodyLoweringPhase(
     ::CallsLowering,
     name = "CallsLowering",
-    description = "Handle intrinsics"
+    description = "Handle intrinsics",
+    prerequisite = setOf(stringPlusLongLowering)
 )
 
 private val staticMembersLoweringPhase = makeDeclarationTransformerPhase(
@@ -797,6 +814,8 @@ private val loweringList = listOf<Lowering>(
     inlineClassUsageLoweringPhase,
     autoboxingTransformerPhase,
     blockDecomposerLoweringPhase,
+    stringConcatenationLowering,
+    stringPlusLongLowering,
     objectDeclarationLoweringPhase,
     invokeStaticInitializersPhase,
     objectUsageLoweringPhase,
