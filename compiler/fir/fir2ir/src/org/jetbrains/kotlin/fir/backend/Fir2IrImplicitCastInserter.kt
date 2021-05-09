@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.coerceToUnitIfNeeded
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.SmartcastStability
 
 class Fir2IrImplicitCastInserter(
     private val components: Fir2IrComponents,

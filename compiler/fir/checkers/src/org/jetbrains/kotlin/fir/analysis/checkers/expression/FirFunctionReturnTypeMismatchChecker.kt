@@ -10,13 +10,16 @@ import org.jetbrains.kotlin.fir.analysis.checkers.isSubtypeForTypeMismatch
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NULL_FOR_NONNULL_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_TYPE_MISMATCH
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SMARTCAST_IMPOSSIBLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.isExhaustive
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.types.SmartcastStability
 
 object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker() {
     override fun check(expression: FirReturnExpression, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -36,10 +39,23 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker() {
             if (resultExpression.isNullLiteral && functionReturnType.nullability == ConeNullability.NOT_NULL) {
                 reporter.reportOn(resultExpression.source, NULL_FOR_NONNULL_TYPE, context)
             } else {
-                reporter.report(
-                    RETURN_TYPE_MISMATCH.on(returnExpressionSource, functionReturnType, returnExpressionType, targetElement),
-                    context
-                )
+                if (resultExpression is FirExpressionWithSmartcast && resultExpression.smartcastStability != SmartcastStability.STABLE_VALUE &&
+                    isSubtypeForTypeMismatch(typeContext, subtype = resultExpression.smartcastType.coneType, supertype = functionReturnType)
+                ) {
+                    reporter.reportOn(
+                        returnExpressionSource,
+                        SMARTCAST_IMPOSSIBLE,
+                        functionReturnType,
+                        resultExpression,
+                        resultExpression.smartcastStability.description,
+                        context
+                    )
+                } else {
+                    reporter.report(
+                        RETURN_TYPE_MISMATCH.on(returnExpressionSource, functionReturnType, returnExpressionType, targetElement),
+                        context
+                    )
+                }
             }
         }
     }

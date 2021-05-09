@@ -67,8 +67,8 @@ fun test_5(q: Q?) {
     // `q.data` is a property that has an open getter, so we can NOT smartcast it to non-nullable MyData.
     if (q?.data?.s?.inc() != null) {
         q.data // good
-        q.data<!UNSAFE_CALL!>.<!>s // should be bad
-        q.data<!UNSAFE_CALL!>.<!>s.inc() // should be bad
+        <!SMARTCAST_IMPOSSIBLE!>q.data<!>.s // should be bad
+        <!SMARTCAST_IMPOSSIBLE!>q.data<!>.s.inc() // should be bad
     }
 }
 
@@ -76,8 +76,8 @@ fun test_6(q: Q?) {
     // `q.data` is a property that has an open getter, so we can NOT smartcast it to non-nullable MyData.
     q?.data?.s?.inc() ?: return
     q.data // good
-    q.data<!UNSAFE_CALL!>.<!>s // should be bad
-    q.data<!UNSAFE_CALL!>.<!>s.inc() // should be bad
+    <!SMARTCAST_IMPOSSIBLE!>q.data<!>.s // should be bad
+    <!SMARTCAST_IMPOSSIBLE!>q.data<!>.s.inc() // should be bad
 }
 
 fun test_7(q: Q?) {
@@ -162,8 +162,8 @@ fun test_12(q: QImplWithCustomGetter?) {
     // `q.data` is a property that has an open getter, so we can NOT smartcast it to non-nullable MyData.
     if (q?.data?.s?.inc() != null) {
         q.data // good
-        q.data<!UNSAFE_CALL!>.<!>s // should be bad
-        q.data<!UNSAFE_CALL!>.<!>s.inc() // should be bad
+        <!SMARTCAST_IMPOSSIBLE!>q.data<!>.s // should be bad
+        <!SMARTCAST_IMPOSSIBLE!>q.data<!>.s.inc() // should be bad
     }
 }
 
@@ -171,7 +171,7 @@ fun test_13(q: QImplMutable?) {
     // `q.data` is a property that is mutable, so we can NOT smartcast it to non-nullable MyData.
     if (q?.data?.s?.inc() != null) {
         q.data // good
-        q.data<!UNSAFE_CALL!>.<!>s // should be bad
-        q.data<!UNSAFE_CALL!>.<!>s.inc() // should be bad
+        <!SMARTCAST_IMPOSSIBLE!>q.data<!>.s // should be bad
+        <!SMARTCAST_IMPOSSIBLE!>q.data<!>.s.inc() // should be bad
     }
 }

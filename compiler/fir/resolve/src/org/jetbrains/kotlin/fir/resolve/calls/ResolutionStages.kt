@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
 import org.jetbrains.kotlin.types.AbstractNullabilityChecker
+import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.SmartcastStability
 
 abstract class ResolutionStage {
     abstract suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext)
@@ -102,6 +104,19 @@ object CheckDispatchReceiver : ResolutionStage() {
             val status = candidate.symbol.fir as? FirMemberDeclaration
             if (status?.modality == Modality.ABSTRACT) {
                 sink.reportDiagnostic(ResolvedWithLowPriority)
+            }
+        }
+
+        if (explicitReceiverExpression is FirExpressionWithSmartcast && explicitReceiverExpression.smartcastStability != SmartcastStability.STABLE_VALUE) {
+            val expectedDispatchReceiverType = (candidate.symbol.fir as? FirCallableMemberDeclaration)?.dispatchReceiverType
+            if (expectedDispatchReceiverType != null &&
+                !AbstractTypeChecker.isSubtypeOf(
+                    context.session.typeContext,
+                    explicitReceiverExpression.originalType.coneType,
+                    expectedDispatchReceiverType
+                )
+            ) {
+                sink.yieldDiagnostic(UnstableSmartCast(explicitReceiverExpression, expectedDispatchReceiverType))
             }
         }
 

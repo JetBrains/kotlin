@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class Foo(var x: Int?) {
     init {
         if (x != null) {

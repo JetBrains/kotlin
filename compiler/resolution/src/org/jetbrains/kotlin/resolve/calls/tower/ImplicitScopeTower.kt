@@ -120,7 +120,7 @@ object ErrorDescriptorDiagnostic : ResolutionDiagnostic(RESOLVED) // todo discus
 object LowPriorityDescriptorDiagnostic : ResolutionDiagnostic(RESOLVED_LOW_PRIORITY)
 object DynamicDescriptorDiagnostic : ResolutionDiagnostic(RESOLVED_LOW_PRIORITY)
 object ResolvedUsingNewFeatures : ResolutionDiagnostic(RESOLVED_NEED_PRESERVE_COMPATIBILITY)
-object UnstableSmartCastDiagnostic : ResolutionDiagnostic(MAY_THROW_RUNTIME_ERROR)
+object UnstableSmartCastDiagnostic : ResolutionDiagnostic(UNSTABLE_SMARTCAST)
 object HiddenExtensionRelatedToDynamicTypes : ResolutionDiagnostic(HIDDEN)
 object HiddenDescriptor : ResolutionDiagnostic(HIDDEN)
 

@@ -234,13 +234,13 @@ class Mutable(var x: String?) {
 
     fun foo(): String {
         if (x is String) {
-            return <error descr="[RETURN_TYPE_MISMATCH] Return type mismatch: expected kotlin/String, actual kotlin/String?">x</error>
+            return <error descr="[SMARTCAST_IMPOSSIBLE] Smart cast to 'kotlin/String' is impossible, because 'this@R|/Mutable|.R|/Mutable.x|' is a mutable property that could have been changed by this time">x</error>
         }
         if (x != null) {
-            return <error descr="[RETURN_TYPE_MISMATCH] Return type mismatch: expected kotlin/String, actual kotlin/String?">x</error>
+            return <error descr="[SMARTCAST_IMPOSSIBLE] Smart cast to 'kotlin/String' is impossible, because 'this@R|/Mutable|.R|/Mutable.x|' is a mutable property that could have been changed by this time">x</error>
         }
         if (xx is String) {
-            return <error descr="[RETURN_TYPE_MISMATCH] Return type mismatch: expected kotlin/String, actual kotlin/String?">xx</error>
+            return <error descr="[SMARTCAST_IMPOSSIBLE] Smart cast to 'kotlin/String' is impossible, because 'this@R|/Mutable|.R|/Mutable.xx|' is a property that has open or custom getter">xx</error>
         }
         return ""
     }
@@ -248,7 +248,7 @@ class Mutable(var x: String?) {
     fun bar(other: Mutable): String {
         var y = other
         if (y.x is String) {
-            return <error descr="[RETURN_TYPE_MISMATCH] Return type mismatch: expected kotlin/String, actual kotlin/String?">y.x</error>
+            return <error descr="[SMARTCAST_IMPOSSIBLE] Smart cast to 'kotlin/String' is impossible, because 'R|<local>/y|.R|/Mutable.x|' is a mutable property that could have been changed by this time">y.x</error>
         }
         return ""
     }
