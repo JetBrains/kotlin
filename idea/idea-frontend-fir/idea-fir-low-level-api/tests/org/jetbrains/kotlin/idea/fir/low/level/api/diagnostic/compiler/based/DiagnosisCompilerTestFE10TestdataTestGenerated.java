@@ -23320,6 +23320,11 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 public void testStabilityOfSmartcastsAgainstGenericFunctions() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/smartCasts/inference/stabilityOfSmartcastsAgainstGenericFunctions.kt");
                 }
+
+                @TestMetadata("unneededUnstableSmartcast.kt")
+                public void testUnneededUnstableSmartcast() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/inference/unneededUnstableSmartcast.kt");
+                }
             }
 
             @TestMetadata("compiler/testData/diagnostics/tests/smartCasts/intersectionScope")

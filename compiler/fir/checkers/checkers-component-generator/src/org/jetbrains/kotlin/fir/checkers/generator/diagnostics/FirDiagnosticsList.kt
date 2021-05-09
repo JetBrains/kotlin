@@ -475,6 +475,12 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Variance>("variance")
             parameter<ConeKotlinType>("containingType")
         }
+
+        val SMARTCAST_IMPOSSIBLE by error<KtExpression> {
+            parameter<ConeKotlinType>("desiredType")
+            parameter<FirExpression>("subject")
+            parameter<String>("description")
+        }
     }
 
     val REFLECTION by object : DiagnosticGroup("Reflection") {

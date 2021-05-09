@@ -102,8 +102,8 @@ FILE: nullability.kt
         when () {
             !=(R|<local>/q|?.{ $subj$.R|/Q.data| }?.{ $subj$.R|/MyData.s| }?.{ $subj$.R|kotlin/Int.inc|() }, Null(null)) ->  {
                 R|<local>/q|.R|/Q.data|
-                R|<local>/q|.R|/Q.data|.<Inapplicable(UNSAFE_CALL): /MyData.s>#
-                R|<local>/q|.R|/Q.data|.<Inapplicable(UNSAFE_CALL): /MyData.s>#.R|kotlin/Int.inc|()
+                R|<local>/q|.R|/Q.data|.<Inapplicable(UNSTABLE_SMARTCAST): /MyData.s>#
+                R|<local>/q|.R|/Q.data|.<Inapplicable(UNSTABLE_SMARTCAST): /MyData.s>#.R|kotlin/Int.inc|()
             }
         }
 
@@ -111,8 +111,8 @@ FILE: nullability.kt
     public final fun test_6(q: R|Q?|): R|kotlin/Unit| {
         R|<local>/q|?.{ $subj$.R|/Q.data| }?.{ $subj$.R|/MyData.s| }?.{ $subj$.R|kotlin/Int.inc|() } ?: ^test_6 Unit
         R|<local>/q|.R|/Q.data|
-        R|<local>/q|.R|/Q.data|.<Inapplicable(UNSAFE_CALL): /MyData.s>#
-        R|<local>/q|.R|/Q.data|.<Inapplicable(UNSAFE_CALL): /MyData.s>#.R|kotlin/Int.inc|()
+        R|<local>/q|.R|/Q.data|.<Inapplicable(UNSTABLE_SMARTCAST): /MyData.s>#
+        R|<local>/q|.R|/Q.data|.<Inapplicable(UNSTABLE_SMARTCAST): /MyData.s>#.R|kotlin/Int.inc|()
     }
     public final fun test_7(q: R|Q?|): R|kotlin/Unit| {
         when () {
@@ -216,8 +216,8 @@ FILE: nullability.kt
         when () {
             !=(R|<local>/q|?.{ $subj$.R|/QImplWithCustomGetter.data| }?.{ $subj$.R|/MyData.s| }?.{ $subj$.R|kotlin/Int.inc|() }, Null(null)) ->  {
                 R|<local>/q|.R|/QImplWithCustomGetter.data|
-                R|<local>/q|.R|/QImplWithCustomGetter.data|.<Inapplicable(UNSAFE_CALL): /MyData.s>#
-                R|<local>/q|.R|/QImplWithCustomGetter.data|.<Inapplicable(UNSAFE_CALL): /MyData.s>#.R|kotlin/Int.inc|()
+                R|<local>/q|.R|/QImplWithCustomGetter.data|.<Inapplicable(UNSTABLE_SMARTCAST): /MyData.s>#
+                R|<local>/q|.R|/QImplWithCustomGetter.data|.<Inapplicable(UNSTABLE_SMARTCAST): /MyData.s>#.R|kotlin/Int.inc|()
             }
         }
 
@@ -226,8 +226,8 @@ FILE: nullability.kt
         when () {
             !=(R|<local>/q|?.{ $subj$.R|/QImplMutable.data| }?.{ $subj$.R|/MyData.s| }?.{ $subj$.R|kotlin/Int.inc|() }, Null(null)) ->  {
                 R|<local>/q|.R|/QImplMutable.data|
-                R|<local>/q|.R|/QImplMutable.data|.<Inapplicable(UNSAFE_CALL): /MyData.s>#
-                R|<local>/q|.R|/QImplMutable.data|.<Inapplicable(UNSAFE_CALL): /MyData.s>#.R|kotlin/Int.inc|()
+                R|<local>/q|.R|/QImplMutable.data|.<Inapplicable(UNSTABLE_SMARTCAST): /MyData.s>#
+                R|<local>/q|.R|/QImplMutable.data|.<Inapplicable(UNSTABLE_SMARTCAST): /MyData.s>#.R|kotlin/Int.inc|()
             }
         }
 

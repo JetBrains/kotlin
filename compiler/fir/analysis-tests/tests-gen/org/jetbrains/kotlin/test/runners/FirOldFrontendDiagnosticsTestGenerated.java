@@ -26663,6 +26663,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 public void testStabilityOfSmartcastsAgainstGenericFunctions() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/smartCasts/inference/stabilityOfSmartcastsAgainstGenericFunctions.kt");
                 }
+
+                @Test
+                @TestMetadata("unneededUnstableSmartcast.kt")
+                public void testUnneededUnstableSmartcast() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/inference/unneededUnstableSmartcast.kt");
+                }
             }
 
             @Nested

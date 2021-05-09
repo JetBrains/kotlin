@@ -10,9 +10,11 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolved
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.FirUnstableSmartcastTypeScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirScopeWithFakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
@@ -25,6 +27,25 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.types.SmartcastStability
+
+fun FirExpressionWithSmartcast.smartcastScope(
+    useSiteSession: FirSession,
+    scopeSession: ScopeSession
+): FirTypeScope? {
+    val smartcastType = smartcastType.coneType
+    val smartcastScope = smartcastType.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing)
+    if (smartcastStability == SmartcastStability.STABLE_VALUE) {
+        return smartcastScope
+    }
+    val originalScope = originalType.coneType.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing)
+        ?: return smartcastScope
+
+    if (smartcastScope == null) {
+        return originalScope
+    }
+    return FirUnstableSmartcastTypeScope(smartcastScope, originalScope)
+}
 
 fun ConeKotlinType.scope(
     useSiteSession: FirSession,

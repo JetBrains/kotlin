@@ -28,7 +28,7 @@ class UnstableReceiver {
             x<!UNSAFE_CALL!>.<!>inc()
         }
         else {
-            x<!UNSAFE_CALL!>.<!>dec()
+            <!SMARTCAST_IMPOSSIBLE!>x<!>.dec()
         }
     }
 }

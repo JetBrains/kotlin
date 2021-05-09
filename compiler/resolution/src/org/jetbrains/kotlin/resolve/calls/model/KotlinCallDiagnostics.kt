@@ -161,7 +161,7 @@ sealed class UnstableSmartCast(
 class UnstableSmartCastResolutionError(
     argument: ExpressionKotlinCallArgument,
     targetType: UnwrappedType,
-) : UnstableSmartCast(argument, targetType, MAY_THROW_RUNTIME_ERROR)
+) : UnstableSmartCast(argument, targetType, UNSTABLE_SMARTCAST)
 
 class UnstableSmartCastDiagnosticError(
     argument: ExpressionKotlinCallArgument,
@@ -214,11 +214,11 @@ class NonApplicableCallForBuilderInferenceDiagnostic(val kotlinCall: KotlinCall)
     }
 }
 
-class ArgumentTypeMismatchDiagnostic(
+class ArgumentNullabilityMismatchDiagnostic(
     val expectedType: UnwrappedType,
     val actualType: UnwrappedType,
     val expressionArgument: ExpressionKotlinCallArgument
-) : KotlinCallDiagnostic(MAY_THROW_RUNTIME_ERROR) {
+) : KotlinCallDiagnostic(UNSAFE_CALL) {
     override fun report(reporter: DiagnosticReporter) {
         reporter.onCallArgument(expressionArgument, this)
     }

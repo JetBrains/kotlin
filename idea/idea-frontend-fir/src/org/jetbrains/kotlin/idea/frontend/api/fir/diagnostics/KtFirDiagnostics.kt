@@ -999,6 +999,13 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val containingType: KtType
     }
 
+    abstract class SmartcastImpossible : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = SmartcastImpossible::class
+        abstract val desiredType: KtType
+        abstract val subject: KtExpression
+        abstract val description: String
+    }
+
     abstract class ExtensionInClassReferenceNotAllowed : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = ExtensionInClassReferenceNotAllowed::class
         abstract val referencedDeclaration: KtCallableSymbol

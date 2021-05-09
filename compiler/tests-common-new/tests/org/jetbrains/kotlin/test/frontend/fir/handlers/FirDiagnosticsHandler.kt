@@ -9,7 +9,6 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.checkers.diagnostics.factories.DebugInfoDiagnosticFactory1
 import org.jetbrains.kotlin.checkers.utils.TypeOfCall
-import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
@@ -43,6 +42,7 @@ import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.utils.AbstractTwoAttributesMetaInfoProcessor
+import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -176,7 +176,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         diagnosedRangesToDiagnosticNames: Map<IntRange, Set<String>>
     ): FirDiagnosticWithParameters1<FirSourceElement, String>? =
         DebugInfoDiagnosticFactory1.EXPRESSION_TYPE.createDebugInfoDiagnostic(element, diagnosedRangesToDiagnosticNames) {
-            element.typeRef.renderAsString((element as? FirExpressionWithSmartcast)?.originalType)
+            element.typeRef.renderAsString((element as? FirExpressionWithSmartcast)?.takeIf { it.smartcastStability == SmartcastStability.STABLE_VALUE }?.originalType)
         }
 
     private fun FirTypeRef.renderAsString(originalTypeRef: FirTypeRef?): String {

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -74,21 +75,7 @@ object LowerPriorityToPreserveCompatibilityDiagnostic : ResolutionDiagnostic(RES
 
 object CandidateChosenUsingOverloadResolutionByLambdaAnnotation : ResolutionDiagnostic(RESOLVED)
 
-sealed class UnstableSmartCast(
-    val argument: FirExpression,
-    val targetType: ConeKotlinType,
-    applicability: CandidateApplicability
-) : ResolutionDiagnostic(applicability) {
-    class ResolutionError(
-        argument: FirExpression,
-        targetType: ConeKotlinType,
-    ) : UnstableSmartCast(argument, targetType, MAY_THROW_RUNTIME_ERROR)
-
-    class DiagnosticError(
-        argument: FirExpression,
-        targetType: ConeKotlinType,
-    ) : UnstableSmartCast(argument, targetType, RESOLVED_WITH_ERROR)
-}
+class UnstableSmartCast(val argument: FirExpressionWithSmartcast, val targetType: ConeKotlinType) : ResolutionDiagnostic(UNSTABLE_SMARTCAST)
 
 class ArgumentTypeMismatch(
     val expectedType: ConeKotlinType,

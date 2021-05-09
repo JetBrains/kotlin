@@ -492,11 +492,11 @@ digraph nullability_kt {
                     176 [label="Access variable R|/Q.data|"];
                     177 [label="Access variable R|<local>/q|"];
                     178 [label="Access variable R|/Q.data|"];
-                    179 [label="Access variable <Inapplicable(UNSAFE_CALL): /MyData.s>#"];
+                    179 [label="Access variable <Inapplicable(UNSTABLE_SMARTCAST): /MyData.s>#"];
                     180 [label="Access variable R|<local>/q|"];
                     181 [label="Access variable R|/Q.data|"];
-                    182 [label="Access variable <Inapplicable(UNSAFE_CALL): /MyData.s>#"];
-                    183 [label="Function call: R|<local>/q|.R|/Q.data|.<Inapplicable(UNSAFE_CALL): /MyData.s>#.R|kotlin/Int.inc|()"];
+                    182 [label="Access variable <Inapplicable(UNSTABLE_SMARTCAST): /MyData.s>#"];
+                    183 [label="Function call: R|<local>/q|.R|/Q.data|.<Inapplicable(UNSTABLE_SMARTCAST): /MyData.s>#.R|kotlin/Int.inc|()"];
                     184 [label="Exit block"];
                 }
                 185 [label="Exit when branch result"];
@@ -566,11 +566,11 @@ digraph nullability_kt {
             208 [label="Access variable R|/Q.data|"];
             209 [label="Access variable R|<local>/q|"];
             210 [label="Access variable R|/Q.data|"];
-            211 [label="Access variable <Inapplicable(UNSAFE_CALL): /MyData.s>#"];
+            211 [label="Access variable <Inapplicable(UNSTABLE_SMARTCAST): /MyData.s>#"];
             212 [label="Access variable R|<local>/q|"];
             213 [label="Access variable R|/Q.data|"];
-            214 [label="Access variable <Inapplicable(UNSAFE_CALL): /MyData.s>#"];
-            215 [label="Function call: R|<local>/q|.R|/Q.data|.<Inapplicable(UNSAFE_CALL): /MyData.s>#.R|kotlin/Int.inc|()"];
+            214 [label="Access variable <Inapplicable(UNSTABLE_SMARTCAST): /MyData.s>#"];
+            215 [label="Function call: R|<local>/q|.R|/Q.data|.<Inapplicable(UNSTABLE_SMARTCAST): /MyData.s>#.R|kotlin/Int.inc|()"];
             216 [label="Exit block"];
         }
         217 [label="Exit function test_6" style="filled" fillcolor=red];
@@ -1280,11 +1280,11 @@ digraph nullability_kt {
                     490 [label="Access variable R|/QImplWithCustomGetter.data|"];
                     491 [label="Access variable R|<local>/q|"];
                     492 [label="Access variable R|/QImplWithCustomGetter.data|"];
-                    493 [label="Access variable <Inapplicable(UNSAFE_CALL): /MyData.s>#"];
+                    493 [label="Access variable <Inapplicable(UNSTABLE_SMARTCAST): /MyData.s>#"];
                     494 [label="Access variable R|<local>/q|"];
                     495 [label="Access variable R|/QImplWithCustomGetter.data|"];
-                    496 [label="Access variable <Inapplicable(UNSAFE_CALL): /MyData.s>#"];
-                    497 [label="Function call: R|<local>/q|.R|/QImplWithCustomGetter.data|.<Inapplicable(UNSAFE_CALL): /MyData.s>#.R|kotlin/Int.inc|()"];
+                    496 [label="Access variable <Inapplicable(UNSTABLE_SMARTCAST): /MyData.s>#"];
+                    497 [label="Function call: R|<local>/q|.R|/QImplWithCustomGetter.data|.<Inapplicable(UNSTABLE_SMARTCAST): /MyData.s>#.R|kotlin/Int.inc|()"];
                     498 [label="Exit block"];
                 }
                 499 [label="Exit when branch result"];
@@ -1363,11 +1363,11 @@ digraph nullability_kt {
                     524 [label="Access variable R|/QImplMutable.data|"];
                     525 [label="Access variable R|<local>/q|"];
                     526 [label="Access variable R|/QImplMutable.data|"];
-                    527 [label="Access variable <Inapplicable(UNSAFE_CALL): /MyData.s>#"];
+                    527 [label="Access variable <Inapplicable(UNSTABLE_SMARTCAST): /MyData.s>#"];
                     528 [label="Access variable R|<local>/q|"];
                     529 [label="Access variable R|/QImplMutable.data|"];
-                    530 [label="Access variable <Inapplicable(UNSAFE_CALL): /MyData.s>#"];
-                    531 [label="Function call: R|<local>/q|.R|/QImplMutable.data|.<Inapplicable(UNSAFE_CALL): /MyData.s>#.R|kotlin/Int.inc|()"];
+                    530 [label="Access variable <Inapplicable(UNSTABLE_SMARTCAST): /MyData.s>#"];
+                    531 [label="Function call: R|<local>/q|.R|/QImplMutable.data|.<Inapplicable(UNSTABLE_SMARTCAST): /MyData.s>#.R|kotlin/Int.inc|()"];
                     532 [label="Exit block"];
                 }
                 533 [label="Exit when branch result"];
