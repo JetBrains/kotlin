@@ -180,8 +180,8 @@ class DiagnosticReporterByTrackingStrategy(
                 }
             }
 
-            ArgumentTypeMismatchDiagnostic::class.java -> {
-                require(diagnostic is ArgumentTypeMismatchDiagnostic)
+            ArgumentNullabilityMismatchDiagnostic::class.java -> {
+                require(diagnostic is ArgumentNullabilityMismatchDiagnostic)
                 val expression = callArgument.safeAs<PSIKotlinCallArgument>()?.valueArgument?.getArgumentExpression()?.let {
                     KtPsiUtil.deparenthesize(it) ?: it
                 }
