@@ -39,8 +39,8 @@ internal class FirExpressionWithSmartcastImpl(
     override val extensionReceiver: FirExpression get() = originalExpression.extensionReceiver
     override val calleeReference: FirReference get() = originalExpression.calleeReference
     override val originalType: FirTypeRef get() = originalExpression.typeRef
-    override val typeRef: FirTypeRef get() = if (smartcastStability == SmartcastStability.STABLE_VALUE || smartcastStability == null) smartcastType else originalType
-    override var isRequiredToResolve: Boolean = false
+    override val typeRef: FirTypeRef get() = if (smartcastStability == SmartcastStability.STABLE_VALUE) smartcastType else originalType
+    override var isRequiredToResolve: Boolean = smartcastStability == SmartcastStability.STABLE_VALUE
         private set
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcast {
@@ -94,6 +94,9 @@ internal class FirExpressionWithSmartcastImpl(
 
     override fun replaceSmartcastStability(newSmartcastStability: SmartcastStability?) {
         smartcastStability = newSmartcastStability
+        if (smartcastStability == SmartcastStability.STABLE_VALUE) {
+            isRequiredToResolve = true
+        }
     }
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}

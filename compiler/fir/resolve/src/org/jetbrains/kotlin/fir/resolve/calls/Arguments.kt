@@ -6,11 +6,15 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.lookupTracker
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.createFunctionalType
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.*
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
@@ -18,15 +22,14 @@ import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedTypeDeclarati
 import org.jetbrains.kotlin.fir.returnExpressions
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
-import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.CaptureStatus
@@ -342,17 +345,7 @@ private fun checkApplicabilityForArgumentType(
 ) {
     if (expectedType == null) return
 
-    fun unstableSmartCastOrSubtypeError(
-        unstableType: ConeKotlinType?,
-        actualExpectedType: ConeKotlinType,
-        position: ConstraintPosition
-    ): ResolutionDiagnostic {
-        if (unstableType != null) {
-            if (csBuilder.addSubtypeConstraintIfCompatible(unstableType, actualExpectedType, position)) {
-                return UnstableSmartCast.ResolutionError(argument, unstableType)
-            }
-        }
-
+    fun subtypeError(actualExpectedType: ConeKotlinType): ResolutionDiagnostic {
         if (argument.isNullLiteral && actualExpectedType.nullability == ConeNullability.NOT_NULL) {
             return NullForNotNullType(argument)
         }
@@ -386,14 +379,17 @@ private fun checkApplicabilityForArgumentType(
     }
 
     if (!csBuilder.addSubtypeConstraintIfCompatible(argumentType, expectedType, position)) {
+        val smartcastExpression = argument as? FirExpressionWithSmartcast
+        if (smartcastExpression != null) {
+            val unstableType = smartcastExpression.smartcastType.coneType
+            if (csBuilder.addSubtypeConstraintIfCompatible(unstableType, expectedType, position)) {
+                sink.reportDiagnosticIfNotNull(UnstableSmartCast.DiagnosticError(smartcastExpression, expectedType))
+            }
+            return
+        }
+
         if (!isReceiver) {
-            sink.reportDiagnosticIfNotNull(
-                unstableSmartCastOrSubtypeError(
-                    unstableType = null, // TODO: handle unstable smartcasts
-                    expectedType,
-                    position
-                )
-            )
+            sink.reportDiagnosticIfNotNull(subtypeError(expectedType))
             return
         }
 

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.expressions.builder.buildThisReceiverExpression
@@ -37,7 +38,11 @@ interface ReceiverValue : Receiver {
     val receiverExpression: FirExpression
 
     fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? =
-        type.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing)
+        ((receiverExpression as? FirExpressionWithSmartcast)?.smartcastType?.coneType ?: type).scope(
+            useSiteSession,
+            scopeSession,
+            FakeOverrideTypeCalculator.DoNothing
+        )
 }
 
 // TODO: should inherit just Receiver, not ReceiverValue

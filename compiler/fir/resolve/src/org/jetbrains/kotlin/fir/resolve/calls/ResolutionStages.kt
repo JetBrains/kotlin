@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.FirVisibilityChecker
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.references.FirSuperReference
@@ -27,6 +28,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
 import org.jetbrains.kotlin.types.AbstractNullabilityChecker
+import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.SmartcastStability
 
 abstract class ResolutionStage {
     abstract suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext)
@@ -103,6 +106,21 @@ object CheckDispatchReceiver : ResolutionStage() {
             val status = candidate.symbol.fir as? FirMemberDeclaration
             if (status?.modality == Modality.ABSTRACT) {
                 sink.reportDiagnostic(ResolvedWithLowPriority)
+            }
+        }
+
+        if (explicitReceiverExpression is FirExpressionWithSmartcast) {
+            val expectedDispatchReceiverType = (candidate.symbol.fir as? FirCallableMemberDeclaration)?.dispatchReceiverType
+            if (expectedDispatchReceiverType != null &&
+                !AbstractTypeChecker.isSubtypeOf(
+                    context.session.typeContext,
+                    explicitReceiverExpression.originalType.coneType,
+                    expectedDispatchReceiverType
+                )
+            ) {
+                if (explicitReceiverExpression.smartcastStability != SmartcastStability.STABLE_VALUE) {
+                    sink.yieldDiagnostic(UnstableSmartCast.DiagnosticError(explicitReceiverExpression, expectedDispatchReceiverType))
+                }
             }
         }
 
