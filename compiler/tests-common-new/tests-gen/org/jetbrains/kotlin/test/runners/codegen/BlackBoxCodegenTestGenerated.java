@@ -20394,6 +20394,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
+            @TestMetadata("serializableSam1.kt")
+            public void testSerializableSam1() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/serializableSam1.kt");
+            }
+
+            @Test
+            @TestMetadata("serializableSam2.kt")
+            public void testSerializableSam2() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/serializableSam2.kt");
+            }
+
+            @Test
             @TestMetadata("simpleFunInterfaceConstructor.kt")
             public void testSimpleFunInterfaceConstructor() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/simpleFunInterfaceConstructor.kt");
