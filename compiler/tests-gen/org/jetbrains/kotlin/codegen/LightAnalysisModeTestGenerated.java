@@ -2742,6 +2742,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/callableReference/function/argumentTypes.kt");
             }
 
+            @TestMetadata("argumentTypesNoinline.kt")
+            public void testArgumentTypesNoinline() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/function/argumentTypesNoinline.kt");
+            }
+
             @TestMetadata("booleanNotIntrinsic.kt")
             public void testBooleanNotIntrinsic() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/function/booleanNotIntrinsic.kt");
@@ -2795,6 +2800,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("constructorFromTopLevelOneStringArg.kt")
             public void testConstructorFromTopLevelOneStringArg() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/function/constructorFromTopLevelOneStringArg.kt");
+            }
+
+            @TestMetadata("dispatchReceiverType.kt")
+            public void testDispatchReceiverType() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/function/dispatchReceiverType.kt");
             }
 
             @TestMetadata("enumValueOfMethod.kt")

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
@@ -126,18 +127,8 @@ private class InlineCallableReferenceToLambdaTransformer(
     private fun expandInlineFunctionReferenceToLambda(expression: IrCallableReference<*>, referencedFunction: IrFunction): IrExpression {
         val irBuilder = context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
         return irBuilder.irBlock(expression, IrStatementOrigin.LAMBDA) {
-            // We find the number of parameters for constructed lambda from the type of the function reference,
-            // but the actual types have to be copied from referencedFunction; function reference argument type may be too
-            // specific because of approximation. See compiler/testData/codegen/box/callableReference/function/argumentTypes.kt
             val boundReceiver: Pair<IrValueParameter, IrExpression>? = expression.getArgumentsWithIr().singleOrNull()
-            val nParams = (expression.type as IrSimpleType).arguments.size - 1
-            val toDropAtStart = if (boundReceiver != null) 1 else 0
-            val argumentTypes = referencedFunction.explicitParameters.drop(toDropAtStart).take(nParams).map { parameter ->
-                parameter.type.substitute(
-                    referencedFunction.typeParameters,
-                    referencedFunction.typeParameters.indices.map { expression.getTypeArgument(it)!! }
-                )
-            }
+            val argumentTypes = (expression.type as IrSimpleType).arguments.dropLast(1).map { (it as IrTypeProjection).type }
 
             val function = context.irFactory.buildFun {
                 setSourceRange(expression)
