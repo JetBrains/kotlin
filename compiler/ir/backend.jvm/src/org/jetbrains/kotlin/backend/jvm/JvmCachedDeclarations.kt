@@ -196,6 +196,7 @@ class JvmCachedDeclarations(
             isSuspend = target.isSuspend
         }.apply proxy@{
             parent = this@makeProxy
+            copyAttributes(target)
             copyTypeParametersFrom(target)
             copyAnnotationsFrom(target)
             if (!isStatic) {

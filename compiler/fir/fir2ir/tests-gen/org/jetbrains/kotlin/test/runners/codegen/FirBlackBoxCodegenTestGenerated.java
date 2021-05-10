@@ -9091,6 +9091,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("jvmStaticAndJvmInline.kt")
+        public void testJvmStaticAndJvmInline() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/jvmStaticAndJvmInline.kt");
+        }
+
+        @Test
         @TestMetadata("kt12958.kt")
         public void testKt12958() throws Exception {
             runTest("compiler/testData/codegen/box/coroutines/kt12958.kt");
