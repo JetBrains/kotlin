@@ -146,22 +146,6 @@ private class KotlinWithNameReferenceCompletionProvider(
     private val shouldCompleteTopLevelCallablesFromIndex: Boolean
         get() = prefixMatcher.prefix.isNotEmpty()
 
-    private fun KtAnalysisSession.addSymbolToCompletion(completionResultSet: CompletionResultSet, expectedType: KtType?, symbol: KtSymbol) {
-        if (symbol !is KtNamedSymbol) return
-        with(lookupElementFactory) {
-            createLookupElement(symbol)
-                ?.let { applyWeighers(it, symbol, expectedType) }
-                ?.let(completionResultSet::addElement)
-        }
-    }
-
-    private fun KtAnalysisSession.applyWeighers(
-        lookupElement: LookupElement,
-        symbol: KtSymbol,
-        expectedType: KtType?
-    ): LookupElement = lookupElement.apply {
-        with(Weighers) { applyWeighsToLookupElement(lookupElement, symbol, expectedType) }
-    }
 
     fun KtAnalysisSession.addCompletions(
         positionContext: FirNameReferencePositionContext
