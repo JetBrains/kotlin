@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.idea.completion.context.FirBasicCompletionContext
 import org.jetbrains.kotlin.idea.completion.context.FirNameReferencePositionContext
 import org.jetbrains.kotlin.idea.completion.context.FirPositionCompletionContext
 import org.jetbrains.kotlin.idea.completion.context.FirUnknownPositionContext
+import org.jetbrains.kotlin.idea.completion.contributors.keywords.OverrideKeywordHandler
 import org.jetbrains.kotlin.idea.completion.contributors.keywords.ReturnKeywordHandler
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.platform.jvm.isJvm
@@ -72,7 +73,8 @@ internal class FirKeywordCompletionContributor(basicContext: FirBasicCompletionC
 
 private object ResolveDependentCompletionKeywordHandlers {
     val handlers = CompletionKeywordHandlers(
-        ReturnKeywordHandler
+        ReturnKeywordHandler,
+        OverrideKeywordHandler,
     )
 }
 
