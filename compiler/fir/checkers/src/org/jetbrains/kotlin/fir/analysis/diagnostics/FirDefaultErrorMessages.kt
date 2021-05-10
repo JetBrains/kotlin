@@ -550,7 +550,7 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(
                 CONFLICTING_PROJECTION,
                 "Projection is conflicting with variance of the corresponding type parameter of {0}. Remove the projection or replace it with ''*''",
-                TO_STRING
+                RENDER_TYPE
             )
             map.put(
                 VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED,
