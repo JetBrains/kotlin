@@ -17508,6 +17508,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/samExtFunWithCapturingLambda.kt");
             }
 
+            @TestMetadata("serializableSam1.kt")
+            public void testSerializableSam1() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/serializableSam1.kt");
+            }
+
+            @TestMetadata("serializableSam2.kt")
+            public void testSerializableSam2() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/serializableSam2.kt");
+            }
+
             @TestMetadata("simpleFunInterfaceConstructor.kt")
             public void testSimpleFunInterfaceConstructor() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/simpleFunInterfaceConstructor.kt");
