@@ -654,6 +654,8 @@ class ExpressionCodegen(
     // bridge to unbox it. Instead, we unbox it in the non-mangled function manually.
     private fun unboxResultIfNeeded(arg: IrGetValue) {
         if (arg.type.erasedUpperBound.fqNameWhenAvailable != StandardNames.RESULT_FQ_NAME) return
+        // Unlike inline callable reference arguments, nullable Result arguments are unboxed during coercion to not-null Result
+        if (arg.type.isNullable()) return
         // Do not unbox arguments of lambda, but unbox arguments of callable references
         if (irFunction.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) return
         if (!onlyResultInlineClassParameters()) return
