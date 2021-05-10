@@ -375,8 +375,8 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER by error<KtTypeParameter>()
 
         val RETURN_TYPE_MISMATCH by error<KtExpression>(PositioningStrategy.WHOLE_ELEMENT) {
-            parameter<ConeKotlinType>("expected")
-            parameter<ConeKotlinType>("actual")
+            parameter<ConeKotlinType>("expectedType")
+            parameter<ConeKotlinType>("actualType")
         }
 
         val CYCLIC_GENERIC_UPPER_BOUND by error<PsiElement>()
@@ -591,8 +591,8 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
             parameter<ConeKotlinType>("actualType")
         }
         val INITIALIZER_TYPE_MISMATCH by error<KtProperty>(PositioningStrategy.ASSIGNMENT_VALUE) {
-            parameter<ConeKotlinType>("expected")
-            parameter<ConeKotlinType>("actual")
+            parameter<ConeKotlinType>("expectedType")
+            parameter<ConeKotlinType>("actualType")
         }
         val GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY by error<KtModifierListOwner>(PositioningStrategy.VISIBILITY_MODIFIER)
         val SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY by error<KtModifierListOwner>(PositioningStrategy.VISIBILITY_MODIFIER)
@@ -760,8 +760,8 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         }
         val DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH by error<KtExpression> {
             parameter<String>("delegateFunction")
-            parameter<ConeKotlinType>("expected")
-            parameter<ConeKotlinType>("actual")
+            parameter<ConeKotlinType>("expectedType")
+            parameter<ConeKotlinType>("actualType")
         }
 
         val UNDERSCORE_IS_RESERVED by error<KtExpression>(PositioningStrategy.RESERVED_UNDERSCORE)
