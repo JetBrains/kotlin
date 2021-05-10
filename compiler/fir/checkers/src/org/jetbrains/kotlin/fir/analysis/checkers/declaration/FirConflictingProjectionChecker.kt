@@ -66,7 +66,7 @@ object FirConflictingProjectionChecker : FirBasicDeclarationChecker() {
                 actual is ConeKotlinTypeProjectionIn && protoVariance == Variance.OUT_VARIANCE ||
                 actual is ConeKotlinTypeProjectionOut && protoVariance == Variance.IN_VARIANCE
             ) {
-                reporter.reportOn(typeRef.source, FirErrors.CONFLICTING_PROJECTION, typeRef.coneType.toString(), context)
+                reporter.reportOn(typeRef.source, FirErrors.CONFLICTING_PROJECTION, typeRef.coneType, context)
                 return
             }
         }

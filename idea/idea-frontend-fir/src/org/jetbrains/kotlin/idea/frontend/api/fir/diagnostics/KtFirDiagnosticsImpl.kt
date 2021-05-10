@@ -1196,7 +1196,7 @@ internal class TypeParametersInEnumImpl(
 }
 
 internal class ConflictingProjectionImpl(
-    override val type: String,
+    override val type: KtType,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.ConflictingProjection(), KtAbstractFirDiagnostic<PsiElement> {
