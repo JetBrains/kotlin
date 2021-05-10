@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
+import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -115,8 +116,8 @@ private fun mapInapplicableCandidateError(
     source: FirSourceElement,
     qualifiedAccessSource: FirSourceElement?,
 ): List<FirDiagnostic<FirSourceElement>> {
-    // TODO: Need to distinguish SMARTCAST_IMPOSSIBLE
-    return diagnostic.candidate.diagnostics.filter { it.applicability == diagnostic.applicability }.mapNotNull { rootCause ->
+    val genericDiagnostic = FirErrors.INAPPLICABLE_CANDIDATE.on(source, diagnostic.candidate.symbol)
+    val diagnostics = diagnostic.candidate.diagnostics.filter { it.applicability == diagnostic.applicability }.mapNotNull { rootCause ->
         when (rootCause) {
             is VarargArgumentOutsideParentheses -> FirErrors.VARARG_OUTSIDE_PARENTHESES.on(
                 rootCause.argument.source ?: qualifiedAccessSource
@@ -143,9 +144,27 @@ private fun mapInapplicableCandidateError(
             )
             is UnsafeCall -> mapUnsafeCallError(diagnostic.candidate, rootCause, source, qualifiedAccessSource)
             is ManyLambdaExpressionArguments -> FirErrors.MANY_LAMBDA_EXPRESSION_ARGUMENTS.on(rootCause.argument.source ?: source)
-            else -> null
+            is UnstableSmartCast.ResolutionError -> {
+                if (rootCause.argument.smartcastStability == SmartcastStability.STABLE_VALUE) {
+                    null
+                } else {
+                    FirErrors.SMARTCAST_IMPOSSIBLE.on(
+                        rootCause.argument.source,
+                        rootCause.targetType,
+                        rootCause.argument,
+                        rootCause.argument.smartcastStability!!.description
+                    )
+                }
+            }
+            else -> genericDiagnostic
         }
-    }.ifEmpty { listOf(FirErrors.INAPPLICABLE_CANDIDATE.on(source, diagnostic.candidate.symbol)) }
+    }.distinct()
+    return if (diagnostics.size > 1) {
+        // If there are more specific diagnostics, filter out the generic diagnostic.
+        diagnostics.filter { it != genericDiagnostic }
+    } else {
+        diagnostics
+    }
 }
 
 private fun ConeSimpleDiagnostic.getFactory(source: FirSourceElement): FirDiagnosticFactory0<*> {

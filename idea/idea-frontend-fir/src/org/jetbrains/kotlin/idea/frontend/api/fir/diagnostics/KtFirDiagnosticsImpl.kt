@@ -1287,6 +1287,16 @@ internal class IncompatibleTypesWarningImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
+internal class SmartcastImpossibleImpl(
+    override val desiredType: KtType,
+    override val subject: KtExpression,
+    override val description: String,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.SmartcastImpossible(), KtAbstractFirDiagnostic<KtExpression> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
 internal class ExtensionInClassReferenceNotAllowedImpl(
     override val referencedDeclaration: KtCallableSymbol,
     firDiagnostic: FirPsiDiagnostic<*>,

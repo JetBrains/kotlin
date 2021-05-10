@@ -370,6 +370,13 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
             parameter<ConeKotlinType>("typeA")
             parameter<ConeKotlinType>("typeB")
         }
+
+        val SMARTCAST_IMPOSSIBLE by error<KtExpression> {
+            parameter<ConeKotlinType>("desiredType")
+            parameter<FirExpression>("subject")
+            parameter<String>("description")
+//            parameter<Boolean>("isNullabilityMismatch")
+        }
     }
 
     val REFLECTION by object : DiagnosticGroup("Reflection") {

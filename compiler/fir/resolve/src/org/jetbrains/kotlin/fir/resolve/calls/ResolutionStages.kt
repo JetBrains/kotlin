@@ -119,7 +119,7 @@ object CheckDispatchReceiver : ResolutionStage() {
                 )
             ) {
                 if (explicitReceiverExpression.smartcastStability != SmartcastStability.STABLE_VALUE) {
-                    sink.yieldDiagnostic(UnstableSmartCast.DiagnosticError(explicitReceiverExpression, expectedDispatchReceiverType))
+                    sink.yieldDiagnostic(UnstableSmartCast.ResolutionError(explicitReceiverExpression, expectedDispatchReceiverType))
                 }
             }
         }

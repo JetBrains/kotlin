@@ -33,7 +33,6 @@ abstract class FirExpressionWithSmartcast : FirQualifiedAccessExpression() {
     abstract val typesFromSmartCast: Collection<ConeKotlinType>
     abstract val originalType: FirTypeRef
     abstract val smartcastType: FirTypeRef
-    abstract val isRequiredToResolve: Boolean
     abstract val smartcastStability: SmartcastStability?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitExpressionWithSmartcast(this, data)
@@ -52,8 +51,6 @@ abstract class FirExpressionWithSmartcast : FirQualifiedAccessExpression() {
     abstract override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
 
     abstract override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?)
-
-    abstract fun replaceIsRequiredToResolve(newIsRequiredToResolve: Boolean)
 
     abstract fun replaceSmartcastStability(newSmartcastStability: SmartcastStability?)
 

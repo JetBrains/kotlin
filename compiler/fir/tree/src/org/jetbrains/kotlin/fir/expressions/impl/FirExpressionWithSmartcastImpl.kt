@@ -40,8 +40,6 @@ internal class FirExpressionWithSmartcastImpl(
     override val calleeReference: FirReference get() = originalExpression.calleeReference
     override val originalType: FirTypeRef get() = originalExpression.typeRef
     override val typeRef: FirTypeRef get() = if (smartcastStability == SmartcastStability.STABLE_VALUE) smartcastType else originalType
-    override var isRequiredToResolve: Boolean = smartcastStability == SmartcastStability.STABLE_VALUE
-        private set
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcast {
         originalExpression = originalExpression.transformSingle(transformer, data)
@@ -88,15 +86,8 @@ internal class FirExpressionWithSmartcastImpl(
         throw IllegalStateException()
     }
 
-    override fun replaceIsRequiredToResolve(newIsRequiredToResolve: Boolean) {
-        isRequiredToResolve = newIsRequiredToResolve
-    }
-
     override fun replaceSmartcastStability(newSmartcastStability: SmartcastStability?) {
         smartcastStability = newSmartcastStability
-        if (smartcastStability == SmartcastStability.STABLE_VALUE) {
-            isRequiredToResolve = true
-        }
     }
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}

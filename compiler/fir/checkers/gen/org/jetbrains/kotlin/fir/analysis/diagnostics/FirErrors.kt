@@ -261,6 +261,7 @@ object FirErrors {
     val DYNAMIC_UPPER_BOUND by error0<KtTypeReference>()
     val INCOMPATIBLE_TYPES by error2<KtElement, ConeKotlinType, ConeKotlinType>()
     val INCOMPATIBLE_TYPES_WARNING by warning2<KtElement, ConeKotlinType, ConeKotlinType>()
+    val SMARTCAST_IMPOSSIBLE by error3<KtExpression, ConeKotlinType, FirExpression, String>()
 
     // Reflection
     val EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED by error1<KtExpression, FirCallableDeclaration<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)

@@ -383,7 +383,7 @@ private fun checkApplicabilityForArgumentType(
         if (smartcastExpression != null) {
             val unstableType = smartcastExpression.smartcastType.coneType
             if (csBuilder.addSubtypeConstraintIfCompatible(unstableType, expectedType, position)) {
-                sink.reportDiagnosticIfNotNull(UnstableSmartCast.DiagnosticError(smartcastExpression, expectedType))
+                sink.reportDiagnosticIfNotNull(UnstableSmartCast.ResolutionError(smartcastExpression, expectedType))
             }
             return
         }
