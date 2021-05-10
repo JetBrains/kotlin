@@ -201,27 +201,30 @@ class IrExpressionLambdaImpl(
 
     private val loweredMethod = codegen.methodSignatureMapper.mapAsmMethod(function)
 
-    val capturedParamsInDesc: List<Type> = when {
-        isBoundCallableReference -> loweredMethod.argumentTypes.take(1)
-        isExtensionLambda -> loweredMethod.argumentTypes.drop(1).take(capturedVars.size)
-        else -> loweredMethod.argumentTypes.take(capturedVars.size)
-    }
+    private val captureParameterIndices: Pair<Int, Int>
+        get() = when {
+            isBoundCallableReference -> 0 to 1 // (bound receiver, real parameters...)
+            isExtensionLambda -> 1 to capturedVars.size + 1 // (unbound receiver, captures..., real parameters...)
+            else -> 0 to capturedVars.size // (captures..., real parameters...)
+        }
+
+    val capturedParamsInDesc: List<Type> =
+        captureParameterIndices.let { (from, to) -> loweredMethod.argumentTypes.take(to).drop(from) }
 
     override val invokeMethod: Method = loweredMethod.let {
-        val nonCapturedParameters = when {
-            isBoundCallableReference -> it.argumentTypes.drop(1)
-            isExtensionLambda -> it.argumentTypes.take(1) + it.argumentTypes.drop(capturedVars.size + 1)
-            else -> it.argumentTypes.drop(capturedVars.size)
-        }.toTypedArray()
-        Method(it.name, it.returnType, nonCapturedParameters)
+        val (startCapture, endCapture) = captureParameterIndices
+        Method(it.name, it.returnType, (it.argumentTypes.take(startCapture) + it.argumentTypes.drop(endCapture)).toTypedArray())
     }
 
-    // TODO: no extension receiver if bound
     override val invokeMethodParameters: List<KotlinType?>
-        get() = function.originalFunction.explicitParameters.map { it.type.toIrBasedKotlinType() }
+        get() {
+            val allParameters = function.explicitParameters.map { it.type.toIrBasedKotlinType() }
+            val (startCapture, endCapture) = captureParameterIndices
+            return allParameters.take(startCapture) + allParameters.drop(endCapture)
+        }
 
     override val invokeMethodReturnType: KotlinType
-        get() = function.originalFunction.returnType.toIrBasedKotlinType() // not including COROUTINE_SUSPENDED
+        get() = function.returnType.toIrBasedKotlinType()
 
     override val hasDispatchReceiver: Boolean = false
 
