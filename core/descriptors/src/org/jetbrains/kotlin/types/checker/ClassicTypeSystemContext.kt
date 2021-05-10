@@ -610,7 +610,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     }
 
     override fun TypeConstructorMarker.isTypeParameterTypeConstructor(): Boolean {
-        return this is AbstractTypeConstructor && this.declarationDescriptor is AbstractTypeParameterDescriptor
+        return this is ClassifierBasedTypeConstructor && this.declarationDescriptor is AbstractTypeParameterDescriptor
     }
 
     override fun arrayType(componentType: KotlinTypeMarker): SimpleTypeMarker {

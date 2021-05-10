@@ -24,12 +24,8 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.checker.refineTypes
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
 
-abstract class AbstractTypeConstructor(storageManager: StorageManager) : TypeConstructor {
-    private var hashCode = 0
-
+abstract class AbstractTypeConstructor(storageManager: StorageManager) : ClassifierBasedTypeConstructor() {
     override fun getSupertypes() = supertypes().supertypesWithoutCycles
-
-    abstract override fun getDeclarationDescriptor(): ClassifierDescriptor
 
     @TypeRefinement
     override fun refine(kotlinTypeRefiner: KotlinTypeRefiner): TypeConstructor = ModuleViewTypeConstructor(kotlinTypeRefiner)
@@ -134,65 +130,4 @@ abstract class AbstractTypeConstructor(storageManager: StorageManager) : TypeCon
     // Only for debugging
     fun renderAdditionalDebugInformation(): String = "supertypes=${supertypes.renderDebugInformation()}"
 
-    override fun hashCode(): Int {
-        val cachedHashCode = hashCode
-        if (cachedHashCode != 0) return cachedHashCode
-
-        val descriptor = declarationDescriptor
-        val computedHashCode = if (hasMeaningfulFqName(descriptor)) {
-            DescriptorUtils.getFqName(descriptor).hashCode()
-        } else {
-            System.identityHashCode(this)
-        }
-
-        return computedHashCode.also { hashCode = it }
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is TypeConstructor) return false
-
-        // performance optimization: getFqName is slow method
-        // Cast to Any is needed as a workaround for KT-45008.
-        if ((other as Any).hashCode() != hashCode()) return false
-
-        // Sometimes we can get two classes from different modules with different counts of type parameters.
-        // To avoid problems in type checker we suppose that it is different type constructors.
-        if (other.parameters.size != parameters.size) return false
-
-        val myDescriptor = declarationDescriptor
-        val otherDescriptor = other.declarationDescriptor ?: return false
-        if (!hasMeaningfulFqName(myDescriptor) || !hasMeaningfulFqName(otherDescriptor)) {
-            // All error types and local classes have the same descriptor,
-            // but we've already checked identity equality in the beginning of the method
-            return false
-        }
-
-        return isSameClassifier(otherDescriptor)
-    }
-
-    protected abstract fun isSameClassifier(classifier: ClassifierDescriptor): Boolean
-
-    protected fun areFqNamesEqual(first: ClassifierDescriptor, second: ClassifierDescriptor): Boolean {
-        if (first.name != second.name) return false
-        var a: DeclarationDescriptor? = first.containingDeclaration
-        var b: DeclarationDescriptor? = second.containingDeclaration
-        while (a != null && b != null) {
-            when {
-                a is ModuleDescriptor -> return b is ModuleDescriptor
-                b is ModuleDescriptor -> return false
-                a is PackageFragmentDescriptor -> return b is PackageFragmentDescriptor && a.fqName == b.fqName
-                b is PackageFragmentDescriptor -> return false
-                a.name != b.name -> return false
-                else -> {
-                    a = a.containingDeclaration
-                    b = b.containingDeclaration
-                }
-            }
-        }
-        return true
-    }
-
-    private fun hasMeaningfulFqName(descriptor: ClassifierDescriptor): Boolean =
-        !ErrorUtils.isError(descriptor) && !DescriptorUtils.isLocal(descriptor)
 }
