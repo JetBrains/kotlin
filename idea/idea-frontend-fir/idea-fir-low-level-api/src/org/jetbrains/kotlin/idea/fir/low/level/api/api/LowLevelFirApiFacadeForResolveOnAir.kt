@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.api
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentsOfType
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.builder.RawFirFragmentForLazyBodiesBuilder
-import org.jetbrains.kotlin.fir.builder.RawFirReplacement
+import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.RawFirNonLocalDeclarationBuilder
+import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.RawFirReplacement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.*
@@ -101,7 +101,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
             FileTowerProvider(place, onAirGetTowerContextForFile(state, place))
         } else {
             val validPlace = PsiTreeUtil.findFirstParent(place, false) {
-                RawFirFragmentForLazyBodiesBuilder.elementIsApplicable(it as KtElement)
+                RawFirNonLocalDeclarationBuilder.elementIsApplicable(it as KtElement)
             } as KtElement
 
             FirTowerDataContextAllElementsCollector().also {

@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.api
 
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.builder.RawFirFragmentForLazyBodiesBuilder
-import org.jetbrains.kotlin.fir.builder.RawFirReplacement
+import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.RawFirNonLocalDeclarationBuilder
+import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.RawFirReplacement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.psi.*
 
-object DeclarationCopyBuilder {
+internal object DeclarationCopyBuilder {
     fun <T : KtElement> createDeclarationCopy(
         state: FirModuleResolveState,
         nonLocalDeclaration: KtDeclaration,
@@ -62,7 +62,6 @@ object DeclarationCopyBuilder {
         if (functionBlock == null || !PsiTreeUtil.isAncestor(functionBlock, replacement.from, true)) {
             return builtFunction
         }
-        //TODO Check do we really need this optimisation? Maybe it is not optimisation at all because of Kt travers?
 
         // right now we can't resolve builtFunction header properly, as it built right in air,
         // without file, which is now required for running stages other then body resolve, so we
@@ -86,7 +85,6 @@ object DeclarationCopyBuilder {
         if (classBody == null || !PsiTreeUtil.isAncestor(classBody, replacement.from, true)) {
             return builtClass
         }
-        //TODO Check do we really need this optimisation? Maybe it is not optimisation at all because of Kt travers?
 
         return buildRegularClassCopy(originalFirClass) {
             declarations.clear()
@@ -124,8 +122,6 @@ object DeclarationCopyBuilder {
 
             if (!insideSetterBody) return builtProperty
         }
-        //TODO Check do we really need this optimisation? Maybe it is not optimisation at all because of Kt travers?
-
 
         val originalSetter = originalProperty.setter
         val builtSetter = builtProperty.setter
@@ -167,7 +163,7 @@ object DeclarationCopyBuilder {
         originalFirDeclaration: D,
         replacement: RawFirReplacement<T>? = null,
     ): D {
-        return RawFirFragmentForLazyBodiesBuilder.buildWithReplacement(
+        return RawFirNonLocalDeclarationBuilder.buildWithReplacement(
             session = originalFirDeclaration.moduleData.session,
             baseScopeProvider = originalFirDeclaration.moduleData.session.firIdeProvider.kotlinScopeProvider,
             designation = originalFirDeclaration.collectDesignation().path,

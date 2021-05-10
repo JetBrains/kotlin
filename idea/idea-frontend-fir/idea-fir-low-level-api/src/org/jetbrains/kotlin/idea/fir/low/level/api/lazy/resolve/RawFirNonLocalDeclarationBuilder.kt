@@ -3,10 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.builder
+package org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.builder.RawFirBuilder
+import org.jetbrains.kotlin.fir.builder.RawFirBuilderMode
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -14,9 +16,9 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.psi.*
 
-data class RawFirReplacement<T : KtElement>(val from: T, val to: T)
+internal data class RawFirReplacement<T : KtElement>(val from: T, val to: T)
 
-class RawFirFragmentForLazyBodiesBuilder<T : KtElement> private constructor(
+internal class RawFirNonLocalDeclarationBuilder<T : KtElement> private constructor(
     session: FirSession,
     baseScopeProvider: FirScopeProvider,
     private val declarationToBuild: KtDeclaration,
@@ -56,7 +58,7 @@ class RawFirFragmentForLazyBodiesBuilder<T : KtElement> private constructor(
                 }
             }
 
-            val builder = RawFirFragmentForLazyBodiesBuilder(session, baseScopeProvider, declarationToBuild, replacement)
+            val builder = RawFirNonLocalDeclarationBuilder(session, baseScopeProvider, declarationToBuild, replacement)
             builder.context.packageFqName = declarationToBuild.containingKtFile.packageFqName
 
             val result = builder.moveNext(designation.iterator(), containingClass = null)
@@ -72,7 +74,7 @@ class RawFirFragmentForLazyBodiesBuilder<T : KtElement> private constructor(
             designation: List<FirDeclaration>,
             rootNonLocalDeclaration: KtDeclaration
         ): FirDeclaration {
-            val builder = RawFirFragmentForLazyBodiesBuilder<KtElement>(session, baseScopeProvider, rootNonLocalDeclaration)
+            val builder = RawFirNonLocalDeclarationBuilder<KtElement>(session, baseScopeProvider, rootNonLocalDeclaration)
             builder.context.packageFqName = rootNonLocalDeclaration.containingKtFile.packageFqName
             return builder.moveNext(designation.iterator(), containingClass = null)
         }

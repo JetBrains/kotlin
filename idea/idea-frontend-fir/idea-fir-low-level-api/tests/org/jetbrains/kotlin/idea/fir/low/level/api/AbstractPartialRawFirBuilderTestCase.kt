@@ -3,24 +3,36 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.builder
+package org.jetbrains.kotlin.idea.fir.low.level.api
 
+import com.intellij.openapi.util.io.FileUtilRt
+import com.intellij.util.PathUtil
 import junit.framework.TestCase
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirRenderer
+import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.RawFirNonLocalDeclarationBuilder
+import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.testFramework.KtParsingTestCase
 import java.io.File
 
-abstract class AbstractPartialRawFirBuilderTestCase : AbstractRawFirBuilderTestCase() {
-    override fun doRawFirTest(filePath: String) {
+abstract class AbstractPartialRawFirBuilderTestCase : KtParsingTestCase(
+    "",
+    "kt",
+    KotlinParserDefinition()
+) {
+
+    fun doRawFirTest(filePath: String) {
         val fileText = File(filePath).readText()
         val functionName = InTextDirectivesUtils.findStringWithPrefixes(fileText, FUNCTION_DIRECTIVE)
         val propertyName = InTextDirectivesUtils.findStringWithPrefixes(fileText, PROPERTY_DIRECTIVE)
@@ -75,6 +87,18 @@ abstract class AbstractPartialRawFirBuilderTestCase : AbstractRawFirBuilderTestC
         }
     }
 
+    private fun createKtFile(filePath: String): KtFile {
+        val name = PathUtil.getFileName(filePath)
+        val extension = FileUtilRt.getExtension(name)
+        val fileDirectory = PathUtil.getParentPath(filePath)
+
+        myFileExt = extension
+        val fileText = loadFileDefault(fileDirectory, name)
+        val ktFile = createPsiFile(name, fileText) as KtFile
+        myFile = ktFile
+        return ktFile
+    }
+
     private fun <T : KtElement> testPartialBuilding(
         filePath: String,
         findPsiElement: (KtFile) -> T
@@ -82,17 +106,32 @@ abstract class AbstractPartialRawFirBuilderTestCase : AbstractRawFirBuilderTestC
         val file = createKtFile(filePath)
         val elementToBuild = findPsiElement(file) as KtDeclaration
 
+        val scopeProvider = object : FirScopeProvider() {
+            override fun getUseSiteMemberScope(klass: FirClass<*>, useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope =
+                error("Should not be called")
+
+            override fun getStaticMemberScopeForCallables(
+                klass: FirClass<*>,
+                useSiteSession: FirSession,
+                scopeSession: ScopeSession
+            ): FirScope? =
+                error("Should not be called")
+
+            override fun getNestedClassifierScope(klass: FirClass<*>, useSiteSession: FirSession, scopeSession: ScopeSession): FirScope? =
+                error("Should not be called")
+        }
+
         val session = FirSessionFactory.createEmptySession()
-        val firBuilder = RawFirBuilder(session, StubFirScopeProvider)
+        val firBuilder = RawFirBuilder(session, scopeProvider)
         val original = firBuilder.buildFirFile(file)
 
         val designationBuilder = DesignationBuilder(elementToBuild)
         original.accept(designationBuilder)
         TestCase.assertTrue(designationBuilder.built)
 
-        val firElement = RawFirFragmentForLazyBodiesBuilder.build(
+        val firElement = RawFirNonLocalDeclarationBuilder.build(
             session,
-            StubFirScopeProvider,
+            scopeProvider,
             designationBuilder.designation,
             elementToBuild
         )
