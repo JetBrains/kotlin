@@ -9,11 +9,12 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.transformers.FirAbstractPhaseTransformer
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignation
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationUntypedDesignation
 
-internal class IDEDeclarationTransformer(private val designation: FirDeclarationDesignation) {
+internal class IDEDeclarationTransformer(private val designation: FirDeclarationUntypedDesignation) {
     private val designationWithoutTargetIterator = designation.toSequence(includeTarget = false).iterator()
     private var isInsideTargetDeclaration: Boolean = false
+    private var designationPassed: Boolean = false
 
     inline fun <K, D> transformDeclarationContent(
         transformer: FirAbstractPhaseTransformer<D>,
@@ -21,11 +22,12 @@ internal class IDEDeclarationTransformer(private val designation: FirDeclaration
         data: D,
         defaultCallTransform: () -> K
     ): K {
-
+        //It means that we are inside the target declaration
         if (isInsideTargetDeclaration) {
             return defaultCallTransform()
         }
 
+        //It means that we already transform target declaration and now can skip all others
         if (designationPassed) {
             return declaration
         }
@@ -46,7 +48,6 @@ internal class IDEDeclarationTransformer(private val designation: FirDeclaration
     }
 
     val needReplacePhase: Boolean get() = isInsideTargetDeclaration
-    private var designationPassed: Boolean = false
 
     fun ensureDesignationPassed() {
         check(designationPassed) { "Designation not passed for declaration ${designation.declaration::class.simpleName}" }

@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.FirProviderInterceptor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignation
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignationWithFile
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationUntypedDesignation
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationUntypedDesignationWithFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.collectDesignation
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
@@ -137,7 +137,7 @@ internal class FirLazyDeclarationResolver(
         }
     }
 
-    private fun createLazyBodiesCalculator(designation: FirDeclarationDesignation): (FirResolvePhase) -> Unit {
+    private fun createLazyBodiesCalculator(designation: FirDeclarationUntypedDesignation): (FirResolvePhase) -> Unit {
         var calculated = false
         return { phase: FirResolvePhase ->
             if (!calculated && phase >= FirResolvePhase.CONTRACTS) {
@@ -308,7 +308,7 @@ internal class FirLazyDeclarationResolver(
     private fun runLazyResolvePhase(
         phase: FirResolvePhase,
         scopeSession: ScopeSession,
-        designation: FirDeclarationDesignationWithFile,
+        designation: FirDeclarationUntypedDesignationWithFile,
         towerDataContextCollector: FirTowerDataContextCollector?,
         firProviderInterceptor: FirProviderInterceptor?
     ) {
@@ -327,7 +327,7 @@ internal class FirLazyDeclarationResolver(
     }
 
     private fun FirResolvePhase.createLazyTransformer(
-        designation: FirDeclarationDesignationWithFile,
+        designation: FirDeclarationUntypedDesignationWithFile,
         scopeSession: ScopeSession,
         towerDataContextCollector: FirTowerDataContextCollector?,
         firProviderInterceptor: FirProviderInterceptor?,
@@ -338,7 +338,7 @@ internal class FirLazyDeclarationResolver(
             scopeSession,
             firProviderInterceptor,
         )
-        FirResolvePhase.SEALED_CLASS_INHERITORS -> FirLazyTransformerForIDE.EMPTY
+        FirResolvePhase.SEALED_CLASS_INHERITORS -> FirLazyTransformerForIDE.DUMMY
         FirResolvePhase.TYPES -> FirDesignatedTypeResolverTransformerForIDE(
             designation,
             designation.firFile.moduleData.session,

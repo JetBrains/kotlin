@@ -12,12 +12,15 @@ import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 
-class FirDeclarationDesignationWithFile(
+typealias FirDeclarationUntypedDesignation = FirDeclarationDesignation<FirDeclaration>
+typealias FirDeclarationUntypedDesignationWithFile = FirDeclarationDesignationWithFile<FirDeclaration>
+
+class FirDeclarationDesignationWithFile<out T : FirDeclaration>(
     path: List<FirDeclaration>,
-    declaration: FirDeclaration,
+    declaration: T,
     isLocalDesignation: Boolean,
     val firFile: FirFile
-) : FirDeclarationDesignation(
+) : FirDeclarationDesignation<T>(
     path,
     declaration,
     isLocalDesignation
@@ -29,9 +32,9 @@ class FirDeclarationDesignationWithFile(
     }
 }
 
-open class FirDeclarationDesignation(
+open class FirDeclarationDesignation<out T : FirDeclaration>(
     val path: List<FirDeclaration>,
-    val declaration: FirDeclaration,
+    val declaration: T,
     val isLocalDesignation: Boolean
 ) {
     fun toSequence(includeTarget: Boolean): Sequence<FirDeclaration> = sequence {
@@ -86,12 +89,12 @@ private fun FirRegularClass.collectForLocal(): List<FirClassLikeDeclaration<*>> 
 }
 
 
-fun FirDeclaration.collectDesignation(firFile: FirFile): FirDeclarationDesignationWithFile =
+fun FirDeclaration.collectDesignation(firFile: FirFile): FirDeclarationUntypedDesignationWithFile =
     collectDesignationAndIsLocal(this).let {
-        FirDeclarationDesignationWithFile(it.first, this, it.second, firFile)
+        FirDeclarationUntypedDesignationWithFile(it.first, this, it.second, firFile)
     }
 
-fun FirDeclaration.collectDesignation(): FirDeclarationDesignation =
+fun FirDeclaration.collectDesignation(): FirDeclarationUntypedDesignation =
     collectDesignationAndIsLocal(this).let {
-        FirDeclarationDesignation(it.first, this, it.second)
+        FirDeclarationUntypedDesignation(it.first, this, it.second)
     }

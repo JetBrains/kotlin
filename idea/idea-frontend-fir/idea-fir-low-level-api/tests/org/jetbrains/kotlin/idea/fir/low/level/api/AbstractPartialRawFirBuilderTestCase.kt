@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignation
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationUntypedDesignation
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.RawFirNonLocalDeclarationBuilder
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.*
@@ -58,26 +60,26 @@ abstract class AbstractPartialRawFirBuilderTestCase : KtParsingTestCase(
     }
 
     private class DesignationBuilder(private val elementToBuild: KtDeclaration) : FirVisitorVoid() {
-        val designation = mutableListOf<FirDeclaration>()
-        var originalDeclaration: FirDeclaration? = null
-        var built = false
+        private val path = mutableListOf<FirDeclaration>()
+        var resultDesignation: FirDeclarationUntypedDesignation? = null
+            private set
 
         override fun visitElement(element: FirElement) {
-            if (built) return
+            if (resultDesignation != null) return
             when (element) {
                 is FirSimpleFunction, is FirProperty -> {
                     if (element.psi == elementToBuild) {
-                        originalDeclaration = element as FirDeclaration
-                        built = true
+                        val originalDeclaration = element as FirDeclaration
+                        resultDesignation = FirDeclarationDesignation(path, originalDeclaration, false)
                     } else {
                         element.acceptChildren(this)
                     }
                 }
                 is FirRegularClass -> {
-                    designation.add(element)
+                    path.add(element)
                     element.acceptChildren(this)
-                    if (!built) {
-                        designation.removeLast()
+                    if (resultDesignation == null) {
+                        path.removeLast()
                     }
                 }
                 else -> {
@@ -114,10 +116,10 @@ abstract class AbstractPartialRawFirBuilderTestCase : KtParsingTestCase(
                 klass: FirClass<*>,
                 useSiteSession: FirSession,
                 scopeSession: ScopeSession
-            ): FirScope? =
+            ): FirScope =
                 error("Should not be called")
 
-            override fun getNestedClassifierScope(klass: FirClass<*>, useSiteSession: FirSession, scopeSession: ScopeSession): FirScope? =
+            override fun getNestedClassifierScope(klass: FirClass<*>, useSiteSession: FirSession, scopeSession: ScopeSession): FirScope =
                 error("Should not be called")
         }
 
@@ -127,12 +129,13 @@ abstract class AbstractPartialRawFirBuilderTestCase : KtParsingTestCase(
 
         val designationBuilder = DesignationBuilder(elementToBuild)
         original.accept(designationBuilder)
-        TestCase.assertTrue(designationBuilder.built)
+        val designation = designationBuilder.resultDesignation
+        TestCase.assertTrue(designation != null)
 
         val firElement = RawFirNonLocalDeclarationBuilder.build(
             session,
             scopeProvider,
-            designationBuilder.designation,
+            designation!!,
             elementToBuild
         )
 

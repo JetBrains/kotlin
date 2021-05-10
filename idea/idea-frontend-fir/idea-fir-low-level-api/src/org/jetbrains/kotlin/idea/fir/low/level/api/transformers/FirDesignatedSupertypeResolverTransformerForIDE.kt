@@ -13,12 +13,12 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirApplySupertypesTransform
 import org.jetbrains.kotlin.fir.resolve.transformers.FirProviderInterceptor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSupertypeResolverVisitor
 import org.jetbrains.kotlin.fir.resolve.transformers.SupertypeComputationSession
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignationWithFile
-import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.ensurePathPhase
-import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.ensureTargetPhaseIfClass
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationUntypedDesignationWithFile
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.ensurePathPhase
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.ensureTargetPhaseIfClass
 
 internal class FirDesignatedSupertypeResolverTransformerForIDE(
-    private val designation: FirDeclarationDesignationWithFile,
+    private val designation: FirDeclarationUntypedDesignationWithFile,
     private val session: FirSession,
     private val scopeSession: ScopeSession,
     private val firProviderInterceptor: FirProviderInterceptor?

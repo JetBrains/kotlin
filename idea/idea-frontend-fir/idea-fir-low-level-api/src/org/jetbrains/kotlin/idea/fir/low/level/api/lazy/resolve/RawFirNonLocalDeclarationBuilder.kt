@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationUntypedDesignation
 import org.jetbrains.kotlin.psi.*
 
 internal data class RawFirReplacement<T : KtElement>(val from: T, val to: T)
@@ -45,10 +46,11 @@ internal class RawFirNonLocalDeclarationBuilder<T : KtElement> private construct
         fun <T : KtElement> buildWithReplacement(
             session: FirSession,
             baseScopeProvider: FirScopeProvider,
-            designation: List<FirDeclaration>,
+            designation: FirDeclarationUntypedDesignation,
             declarationToBuild: KtDeclaration,
             replacement: RawFirReplacement<T>? = null
         ): FirDeclaration {
+
             if (replacement != null) {
                 require(elementIsApplicable(replacement.from)) {
                     "Build with replacement is possible for applicable type but given ${replacement.from::class.simpleName}"
@@ -61,7 +63,7 @@ internal class RawFirNonLocalDeclarationBuilder<T : KtElement> private construct
             val builder = RawFirNonLocalDeclarationBuilder(session, baseScopeProvider, declarationToBuild, replacement)
             builder.context.packageFqName = declarationToBuild.containingKtFile.packageFqName
 
-            val result = builder.moveNext(designation.iterator(), containingClass = null)
+            val result = builder.moveNext(designation.path.iterator(), containingClass = null)
             check(replacement == null || builder.replacementApplied) {
                 "Replacement requested but was not applied for ${replacement!!.from::class.simpleName}"
             }
@@ -71,12 +73,12 @@ internal class RawFirNonLocalDeclarationBuilder<T : KtElement> private construct
         fun build(
             session: FirSession,
             baseScopeProvider: FirScopeProvider,
-            designation: List<FirDeclaration>,
+            designation: FirDeclarationUntypedDesignation,
             rootNonLocalDeclaration: KtDeclaration
         ): FirDeclaration {
             val builder = RawFirNonLocalDeclarationBuilder<KtElement>(session, baseScopeProvider, rootNonLocalDeclaration)
             builder.context.packageFqName = rootNonLocalDeclaration.containingKtFile.packageFqName
-            return builder.moveNext(designation.iterator(), containingClass = null)
+            return builder.moveNext(designation.path.iterator(), containingClass = null)
         }
     }
 

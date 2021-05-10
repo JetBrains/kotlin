@@ -113,14 +113,14 @@ fun <D : FirDeclaration, R> D.withFirDeclarationInWriteLock(
 
 /**
  * Returns a list of Diagnostics compiler finds for given [KtElement]
- * This operation could be performance affective
+ * This operation could be performance affective because it create FIleStructureElement and resolve non-local declaration into BODY phase
  */
 fun KtElement.getDiagnostics(resolveState: FirModuleResolveState, filter: DiagnosticCheckerFilter): Collection<FirPsiDiagnostic<*>> =
     resolveState.getDiagnostics(this, filter)
 
 /**
  * Returns a list of Diagnostics compiler finds for given [KtFile]
- * This operation could be performance affective
+ * This operation could be performance affective because it create FIleStructureElement and resolve non-local declaration into BODY phase
  */
 fun KtFile.collectDiagnosticsForFile(
     resolveState: FirModuleResolveState,
@@ -143,7 +143,7 @@ fun <D : FirDeclaration> D.resolvedFirToPhase(
 /**
  * Get a [FirElement] which was created by [KtElement]
  * Returned [FirElement] is guaranteed to be resolved to [FirResolvePhase.BODY_RESOLVE] phase
- * This operation could be performance affective
+ * This operation could be performance affective because it create FIleStructureElement and resolve non-local declaration into BODY phase
  */
 fun KtElement.getOrBuildFir(
     resolveState: FirModuleResolveState,
@@ -152,7 +152,7 @@ fun KtElement.getOrBuildFir(
 /**
  * Get a [FirElement] which was created by [KtElement], but only if it is subtype of [E], `null` otherwise
  * Returned [FirElement] is guaranteed to be resolved to [FirResolvePhase.BODY_RESOLVE] phase
- * This operation could be performance affective
+ * This operation could be performance affective because it create FIleStructureElement and resolve non-local declaration into BODY phase
  */
 inline fun <reified E : FirElement> KtElement.getOrBuildFirSafe(
     resolveState: FirModuleResolveState,
@@ -161,7 +161,7 @@ inline fun <reified E : FirElement> KtElement.getOrBuildFirSafe(
 /**
  * Get a [FirElement] which was created by [KtElement], but only if it is subtype of [E], throws [InvalidFirElementTypeException] otherwise
  * Returned [FirElement] is guaranteed to be resolved to [FirResolvePhase.BODY_RESOLVE] phase
- * This operation could be performance affective
+ * This operation could be performance affective because it create FIleStructureElement and resolve non-local declaration into BODY phase
  */
 inline fun <reified E : FirElement> KtElement.getOrBuildFirOfType(
     resolveState: FirModuleResolveState,

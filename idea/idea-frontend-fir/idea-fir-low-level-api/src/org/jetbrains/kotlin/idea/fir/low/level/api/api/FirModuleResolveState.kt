@@ -31,7 +31,7 @@ abstract class FirModuleResolveState {
 
     /**
      * Build fully resolved FIR node for requested element.
-     * This operation could be performance affective, use
+     * This operation could be performance affective because it create FIleStructureElement and resolve non-local declaration into BODY phase, use
      * @see tryGetCachedFirFile to get [FirFile] in undefined phase
      */
     internal abstract fun getOrBuildFirFor(element: KtElement): FirElement

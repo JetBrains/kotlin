@@ -13,12 +13,13 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirDesignatedStatusResolveT
 import org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.StatusComputationSession
 import org.jetbrains.kotlin.fir.visitors.transformSingle
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignationWithFile
-import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.ensurePathPhase
-import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.ensureTargetPhase
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationUntypedDesignationWithFile
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.targetContainingDeclaration
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.ensurePathPhase
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.ensureTargetPhase
 
 internal class FirDesignatedStatusResolveTransformerForIDE(
-    private val designation: FirDeclarationDesignationWithFile,
+    private val designation: FirDeclarationUntypedDesignationWithFile,
     private val session: FirSession,
     private val scopeSession: ScopeSession,
 ) : FirLazyTransformerForIDE {
@@ -62,7 +63,7 @@ internal class FirDesignatedStatusResolveTransformerForIDE(
         designation.ensurePathPhase(FirResolvePhase.TYPES)
         designation.ensureTargetPhase(FirResolvePhase.TYPES)
 
-        val containingClass = designation.path.lastOrNull()
+        val containingClass = designation.targetContainingDeclaration()
         if (containingClass == null) {
             resolveTopLevelDeclaration(designation.declaration)
         } else {

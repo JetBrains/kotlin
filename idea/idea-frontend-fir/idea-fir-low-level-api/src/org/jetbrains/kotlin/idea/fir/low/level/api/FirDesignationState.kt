@@ -6,11 +6,9 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api
 
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignation
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignationWithFile
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationUntypedDesignation
 
-abstract class ContextByDesignationCollector<C : Any>(private val designation: FirDeclarationDesignation) {
+abstract class ContextByDesignationCollector<C : Any>(private val designation: FirDeclarationUntypedDesignation) {
     private var context: C? = null
     private val designationState = FirDesignationState(designation)
 
@@ -38,7 +36,7 @@ abstract class ContextByDesignationCollector<C : Any>(private val designation: F
     }
 }
 
-private class FirDesignationState(val designation: FirDeclarationDesignation) {
+private class FirDesignationState(val designation: FirDeclarationUntypedDesignation) {
     /**
      * Holds current declaration index
      * if `currentIndex in [0, designation.path.lastIndex]` then current declaration is in path
