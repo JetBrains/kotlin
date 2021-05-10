@@ -55,21 +55,15 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
 
         val keywordContributor = FirKeywordCompletionContributor(basicContext)
 
-        if (positionContext is FirUnknownPositionContext) {
-            // TODO unify when LL API will be able to handle more context for completion
-            keywordContributor.completeDefaultKeywordsWithoutResolve(positionContext.position, expression = null)
-        } else {
-            FirPositionCompletionContextDetector.analyseInContext(basicContext, positionContext) {
-                with(keywordContributor) { completeKeywords(positionContext) }
-                when (positionContext) {
-                    is FirNameReferencePositionContext -> with(
-                        KotlinWithNameReferenceCompletionProvider(basicContext, indexHelper)
-                    ) {
-                        addCompletions(positionContext)
-                    }
-                    is FirUnknownPositionContext -> {
-                        // TODO remove when hack when LL API will be able to handle more context for completion
-                    }
+        FirPositionCompletionContextDetector.analyseInContext(basicContext, positionContext) {
+            with(keywordContributor) { completeKeywords(positionContext) }
+            when (positionContext) {
+                is FirNameReferencePositionContext -> with(
+                    KotlinWithNameReferenceCompletionProvider(basicContext, indexHelper)
+                ) {
+                    addCompletions(positionContext)
+                }
+                is FirUnknownPositionContext -> {
                 }
             }
         }
@@ -137,7 +131,6 @@ private class KotlinWithNameReferenceCompletionProvider(
     basicContext: FirBasicCompletionContext,
     private val indexHelper: IndexHelper
 ) : FirCompletionContributorBase(basicContext) {
-    private val lookupElementFactory = KotlinFirLookupElementFactory()
     private val typeNamesProvider = TypeNamesProvider(indexHelper)
 
     private val scopeNameFilter: KtScopeNameFilter =
@@ -198,13 +191,13 @@ private class KotlinWithNameReferenceCompletionProvider(
             .getClassifierSymbols(scopeNameFilter)
             .filter { visibilityChecker.isVisible(it) }
 
-        classesFromScopes.forEach { addSymbolToCompletion(result, expectedType, it) }
+        classesFromScopes.forEach { addSymbolToCompletion(expectedType, it) }
 
         val kotlinClassesFromIndices = indexHelper.getKotlinClasses(scopeNameFilter, psiFilter = { it !is KtEnumEntry })
         kotlinClassesFromIndices.asSequence()
             .map { it.getSymbol() as KtClassifierSymbol }
             .filter { visibilityChecker.isVisible(it) }
-            .forEach { addSymbolToCompletion(result, expectedType, it) }
+            .forEach { addSymbolToCompletion(expectedType, it) }
     }
 
     private fun KtAnalysisSession.collectDotCompletion(
@@ -220,11 +213,11 @@ private class KotlinWithNameReferenceCompletionProvider(
         val nonExtensionMembers = possibleReceiverScope.collectNonExtensions(visibilityChecker)
         val extensionNonMembers = implicitScopes.collectSuitableExtensions(extensionChecker, visibilityChecker)
 
-        nonExtensionMembers.forEach { addSymbolToCompletion(result, expectedType, it) }
-        extensionNonMembers.forEach { addSymbolToCompletion(result, expectedType, it) }
+        nonExtensionMembers.forEach { addSymbolToCompletion(expectedType, it) }
+        extensionNonMembers.forEach { addSymbolToCompletion(expectedType, it) }
 
         collectTopLevelExtensionsFromIndices(listOf(typeOfPossibleReceiver), extensionChecker, visibilityChecker)
-            .forEach { addSymbolToCompletion(result, expectedType, it) }
+            .forEach { addSymbolToCompletion(expectedType, it) }
     }
 
     private fun KtAnalysisSession.collectDefaultCompletion(
@@ -238,19 +231,19 @@ private class KotlinWithNameReferenceCompletionProvider(
         val availableNonExtensions = implicitScopes.collectNonExtensions(visibilityChecker)
         val extensionsWhichCanBeCalled = implicitScopes.collectSuitableExtensions(extensionChecker, visibilityChecker)
 
-        availableNonExtensions.forEach { addSymbolToCompletion(result, expectedType, it) }
-        extensionsWhichCanBeCalled.forEach { addSymbolToCompletion(result, expectedType, it) }
+        availableNonExtensions.forEach { addSymbolToCompletion(expectedType, it) }
+        extensionsWhichCanBeCalled.forEach { addSymbolToCompletion(expectedType, it) }
 
         if (shouldCompleteTopLevelCallablesFromIndex) {
             val topLevelCallables = indexHelper.getTopLevelCallables(scopeNameFilter)
             topLevelCallables.asSequence()
                 .map { it.getSymbol() as KtCallableSymbol }
                 .filter { visibilityChecker.isVisible(it) }
-                .forEach { addSymbolToCompletion(result, expectedType, it) }
+                .forEach { addSymbolToCompletion(expectedType, it) }
         }
 
         collectTopLevelExtensionsFromIndices(implicitReceiversTypes, extensionChecker, visibilityChecker)
-            .forEach { addSymbolToCompletion(result, expectedType, it) }
+            .forEach { addSymbolToCompletion(expectedType, it) }
 
         collectTypesCompletion(implicitScopes, expectedType, visibilityChecker)
     }

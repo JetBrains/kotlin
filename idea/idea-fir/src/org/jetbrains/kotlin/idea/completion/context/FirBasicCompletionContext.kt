@@ -9,6 +9,7 @@ import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.PrefixMatcher
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.completion.KotlinFirLookupElementFactory
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtFile
@@ -21,6 +22,7 @@ internal class FirBasicCompletionContext(
     val fakeKtFile: KtFile,
     val project: Project,
     val targetPlatform: TargetPlatform,
+    val lookupElementFactory: KotlinFirLookupElementFactory = KotlinFirLookupElementFactory(),
 ) {
     companion object {
         fun createFromParameters(parameters: CompletionParameters, result: CompletionResultSet): FirBasicCompletionContext? {

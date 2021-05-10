@@ -26,6 +26,8 @@ internal class FirKeywordCompletionContributor(basicContext: FirBasicCompletionC
         override fun getLanguageVersionSetting(module: Module) = LanguageVersionSettingsImpl.DEFAULT // TODO
     })
 
+    private val resolveDependentCompletionKeywordHandlers = ResolveDependentCompletionKeywordHandlers(basicContext)
+
     fun KtAnalysisSession.completeKeywords(
         positionContext: FirPositionCompletionContext
     ) {
@@ -43,10 +45,10 @@ internal class FirKeywordCompletionContributor(basicContext: FirBasicCompletionC
     }
 
     fun KtAnalysisSession.completeWithResolve(position: PsiElement, expression: KtExpression?) {
-        complete(position, expression) { lookupElement, keyword ->
+        complete(position) { lookupElement, keyword ->
             val lookups = DefaultCompletionKeywordHandlers.defaultHandlers.getHandlerForKeyword(keyword)
                 ?.createLookups(parameters, expression, lookupElement, project)
-                ?: ResolveDependentCompletionKeywordHandlers.handlers.getHandlerForKeyword(keyword)?.run {
+                ?: resolveDependentCompletionKeywordHandlers.handlers.getHandlerForKeyword(keyword)?.run {
                     createLookups(parameters, expression, lookupElement, project)
                 }
                 ?: listOf(lookupElement)
@@ -54,16 +56,7 @@ internal class FirKeywordCompletionContributor(basicContext: FirBasicCompletionC
         }
     }
 
-    fun completeDefaultKeywordsWithoutResolve(position: PsiElement, expression: KtExpression?) {
-        complete(position, expression) { lookupElement, keyword ->
-            val lookups = DefaultCompletionKeywordHandlers.defaultHandlers.getHandlerForKeyword(keyword)
-                ?.createLookups(parameters, expression, lookupElement, project)
-                ?: listOf(lookupElement)
-            result.addAllElements(lookups)
-        }
-    }
-
-    private inline fun complete(position: PsiElement, expression: KtExpression?, crossinline complete: (LookupElement, String) -> Unit) {
+    private inline fun complete(position: PsiElement, crossinline complete: (LookupElement, String) -> Unit) {
         keywordCompletion.complete(position, prefixMatcher, targetPlatform.isJvm()) { lookupElement ->
             val keyword = lookupElement.lookupString
             complete(lookupElement, keyword)
@@ -71,10 +64,9 @@ internal class FirKeywordCompletionContributor(basicContext: FirBasicCompletionC
     }
 }
 
-private object ResolveDependentCompletionKeywordHandlers {
+private class ResolveDependentCompletionKeywordHandlers(basicContext: FirBasicCompletionContext) {
     val handlers = CompletionKeywordHandlers(
         ReturnKeywordHandler,
-        OverrideKeywordHandler,
+        OverrideKeywordHandler(basicContext),
     )
 }
-

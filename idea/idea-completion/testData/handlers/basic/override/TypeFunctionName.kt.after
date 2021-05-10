@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 class A {
     override fun equals(other: Any?): Boolean {
         <caret><selection>return super.equals(other)</selection>

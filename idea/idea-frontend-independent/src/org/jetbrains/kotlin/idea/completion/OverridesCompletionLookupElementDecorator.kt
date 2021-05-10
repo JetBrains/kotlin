@@ -30,9 +30,8 @@ class OverridesCompletionLookupElementDecorator(
     private val baseClassName: String,
     private val baseClassIcon: Icon?,
     private val isConstructorParameter: Boolean,
-    private val classOrObject: KtClassOrObject,
     private val isSuspend: Boolean,
-    private val generateMember: (targetClass: KtClassOrObject, copyDoc: Boolean) -> KtCallableDeclaration,
+    private val generateMember: () -> KtCallableDeclaration,
     private val shortenReferences: (KtElement) -> Unit,
 ) : LookupElementDecorator<LookupElement>(lookupElement) {
     override fun getLookupString() =
@@ -85,7 +84,7 @@ class OverridesCompletionLookupElementDecorator(
         // keep original modifiers
         val modifierList = KtPsiFactory(context.project).createModifierList(dummyMember.modifierList!!.text)
 
-        val prototype = generateMember(classOrObject, false)
+        val prototype = generateMember()
         prototype.modifierList!!.replace(modifierList)
         val insertedMember = dummyMember.replaced(prototype)
         if (isSuspend) insertedMember.addModifier(KtTokens.SUSPEND_KEYWORD)

@@ -43,8 +43,8 @@ internal data class KtClassMemberInfo(
     val isProperty: Boolean get() = symbol is KtPropertySymbol
 }
 
-internal class KtClassMember(
-    private val memberInfo: KtClassMemberInfo,
+internal data class KtClassMember(
+    val memberInfo: KtClassMemberInfo,
     val bodyType: BodyType,
     val preferConstructorParameter: Boolean
 ) : MemberChooserObjectBase(

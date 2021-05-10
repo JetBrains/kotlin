@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.idea.frontend.api.tokens.hackyAllowRunningOnEdt
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
-internal class KtOverrideMembersHandler : KtGenerateMembersHandler() {
+internal open class KtOverrideMembersHandler : KtGenerateMembersHandler() {
     @OptIn(HackToForceAllowRunningAnalyzeOnEDT::class)
     override fun collectMembersToGenerate(classOrObject: KtClassOrObject): Collection<KtClassMember> {
         return hackyAllowRunningOnEdt {
@@ -29,7 +29,7 @@ internal class KtOverrideMembersHandler : KtGenerateMembersHandler() {
         }
     }
 
-    private fun KtAnalysisSession.collectMembers(classOrObject: KtClassOrObject): List<KtClassMember> {
+    fun KtAnalysisSession.collectMembers(classOrObject: KtClassOrObject): List<KtClassMember> {
         val classOrObjectSymbol = classOrObject.getClassOrObjectSymbol()
         return getOverridableMembers(classOrObjectSymbol).map { (symbol, bodyType, containingSymbol) ->
             KtClassMember(

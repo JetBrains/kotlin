@@ -29,9 +29,7 @@ internal abstract class FirCompletionContributorBase(protected val basicContext:
     protected val fakeKtFile: KtFile get() = basicContext.fakeKtFile
     protected val project: Project get() = basicContext.project
     protected val targetPlatform: TargetPlatform get() = basicContext.targetPlatform
-
-
-    protected val lookupElementFactory = KotlinFirLookupElementFactory()
+    protected val lookupElementFactory: KotlinFirLookupElementFactory get() = basicContext.lookupElementFactory
 
     protected fun KtAnalysisSession.addSymbolToCompletion(expectedType: KtType?, symbol: KtSymbol) {
         if (symbol !is KtNamedSymbol) return

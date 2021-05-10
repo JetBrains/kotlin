@@ -16,34 +16,21 @@
 
 package org.jetbrains.kotlin.idea.completion
 
-import com.intellij.codeInsight.completion.InsertionContext
-import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.codeInsight.lookup.LookupElementDecorator
-import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.icons.AllIcons
-import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.ui.RowIcon
 import org.jetbrains.kotlin.backend.common.descriptors.isSuspend
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.KotlinDescriptorIconProvider
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.completion.handlers.indexOfSkippingSpace
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
-import org.jetbrains.kotlin.idea.core.moveCaret
-import org.jetbrains.kotlin.idea.core.moveCaretIntoGeneratedElement
-import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMembersHandler
 import org.jetbrains.kotlin.idea.core.overrideImplement.generateMember
-import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import javax.swing.Icon
 
 class OverridesCompletion(
     private val collector: LookupElementsCollector,
@@ -96,10 +83,9 @@ class OverridesCompletion(
                 baseClassName,
                 baseClassIcon,
                 isConstructorParameter,
-                classOrObject,
                 memberObject.descriptor.isSuspend,
-                memberObject::generateMember,
-                ShortenReferences.DEFAULT::process,
+                generateMember = { memberObject.generateMember(classOrObject, copyDoc = false) },
+                shortenReferences = ShortenReferences.DEFAULT::process,
             )
 
             lookupElement.assignPriority(if (isImplement) ItemPriority.IMPLEMENT else ItemPriority.OVERRIDE)
