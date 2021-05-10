@@ -329,14 +329,6 @@ class FakeOverrideGenerator(
                     @Suppress("UNCHECKED_CAST")
                     irProducer(fakeOverrideInClass.symbol as F)
                 }
-            }.run {
-                // TODO: Get rid of this hack
-                //  It's only needed for built-in super classes, because they are built via descriptors and
-                //  don't register fake overrides at org.jetbrains.kotlin.fir.backend.Fir2IrDeclarationStorage.fakeOverridesInClass
-                if (isEmpty())
-                    listOf(irProducer(overridden))
-                else
-                    this
             }
         }
     }

@@ -156,6 +156,27 @@ class SymbolTable(
             }
         }
 
+        inline fun declareIfNotExists(sig: IdSignature, d: D?, createSymbol: () -> S, createOwner: (S) -> B): B {
+            synchronized(lock) {
+                @Suppress("UNCHECKED_CAST")
+                val d0 = d?.original as D
+                assert(d0 === d) {
+                    "Non-original descriptor in declaration: $d\n\tExpected: $d0"
+                }
+                val existing = get(sig)
+                val symbol = if (existing == null) {
+                    val new = createSymbol()
+                    set(new)
+                    new
+                } else {
+                    if (!existing.isBound) unboundSymbols.remove(existing)
+                    existing
+                }
+                return if (symbol.isBound) symbol.owner else createOwner(symbol)
+            }
+        }
+
+
         inline fun referenced(d: D, orElse: () -> S): S {
             synchronized(lock) {
                 @Suppress("UNCHECKED_CAST")
@@ -481,6 +502,13 @@ class SymbolTable(
 
     override fun referenceClass(descriptor: ClassDescriptor) =
         classSymbolTable.referenced(descriptor) { createClassSymbol(descriptor) }
+
+    fun referenceClass(
+        sig: IdSignature,
+        symbolFactory: () -> IrClassSymbol,
+        classFactory: (IrClassSymbol) -> IrClass
+    ) =
+        classSymbolTable.referenced(sig) { declareClass(sig, symbolFactory, classFactory).symbol }
 
     fun referenceClassIfAny(sig: IdSignature): IrClassSymbol? =
         classSymbolTable.get(sig)

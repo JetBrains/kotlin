@@ -100,6 +100,6 @@ class IrConstTransformer(private val interpreter: IrInterpreter, private val irF
     private fun IrExpression.convertToConstIfPossible(type: IrType): IrExpression {
         if (this !is IrConst<*> || type is IrErrorType) return this
         if (type.isArray()) return this.convertToConstIfPossible((type as IrSimpleType).arguments.single().typeOrNull!!)
-        return this.value.toIrConst(type, this.startOffset, this.endOffset)
+        return this.value.toIrConst(type, interpreter.irBuiltIns, this.startOffset, this.endOffset)
     }
 }

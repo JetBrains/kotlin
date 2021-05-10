@@ -31,8 +31,6 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitBooleanTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitIntTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitNullableAnyTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitStringTypeRef
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.IrGeneratorContextBase
 import org.jetbrains.kotlin.ir.declarations.*
@@ -59,7 +57,6 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.TO_STRING
  * fir own logic that traverses class hierarchies in fir elements. Also, this one creates and passes IR elements, instead of providing how
  * to declare them, to [DataClassMembersGenerator].
  */
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 class DataClassMembersGenerator(val components: Fir2IrComponents) {
 
     fun generateInlineClassMembers(klass: FirClass, irClass: IrClass): List<FirDeclaration> =
@@ -313,12 +310,12 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
             }.apply {
                 parent = irClass
                 dispatchReceiverParameter = generateDispatchReceiverParameter(this)
-                components.irBuiltIns.anyClass.descriptor.unsubstitutedMemberScope
-                    .getContributedFunctions(this.name, NoLookupLocation.FROM_BACKEND)
-                    .singleOrNull { function -> function.name == this.name }
-                    ?.let {
-                        overriddenSymbols = listOf(components.symbolTable.referenceSimpleFunction(it))
-                    }
+                components.irBuiltIns.findBuiltInClassMemberFunctions(
+                    components.irBuiltIns.anyClass,
+                    this.name
+                ).singleOrNull()?.let {
+                    overriddenSymbols = listOf(it)
+                }
             }
         }
 

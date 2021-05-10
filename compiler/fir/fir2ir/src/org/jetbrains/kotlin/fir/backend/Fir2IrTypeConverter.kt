@@ -31,7 +31,7 @@ class Fir2IrTypeConverter(
     private val components: Fir2IrComponents
 ) : Fir2IrComponents by components {
 
-    internal val classIdToSymbolMap = mapOf(
+    internal val classIdToSymbolMap by lazy { mapOf(
         StandardClassIds.Nothing to irBuiltIns.nothingClass,
         StandardClassIds.Unit to irBuiltIns.unitClass,
         StandardClassIds.Boolean to irBuiltIns.booleanClass,
@@ -45,9 +45,9 @@ class Fir2IrTypeConverter(
         StandardClassIds.Double to irBuiltIns.doubleClass,
         StandardClassIds.Char to irBuiltIns.charClass,
         StandardClassIds.Array to irBuiltIns.arrayClass
-    )
+    )}
 
-    internal val classIdToTypeMap = mapOf(
+    internal val classIdToTypeMap by lazy { mapOf(
         StandardClassIds.Nothing to irBuiltIns.nothingType,
         StandardClassIds.Unit to irBuiltIns.unitType,
         StandardClassIds.Boolean to irBuiltIns.booleanType,
@@ -60,7 +60,7 @@ class Fir2IrTypeConverter(
         StandardClassIds.Float to irBuiltIns.floatType,
         StandardClassIds.Double to irBuiltIns.doubleType,
         StandardClassIds.Char to irBuiltIns.charType
-    )
+    )}
 
     private val capturedTypeCache = mutableMapOf<ConeCapturedType, IrType>()
     private val errorTypeForCapturedTypeStub by lazy { createErrorType() }

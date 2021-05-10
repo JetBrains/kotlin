@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.interpreter
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.UnsignedType
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -79,7 +80,7 @@ internal fun Any?.toState(irType: IrType): State {
     }
 }
 
-fun Any?.toIrConst(irType: IrType, startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET): IrConst<*> {
+fun Any?.toIrConstOrNull(irType: IrType, startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET): IrConst<*>? {
     if (this == null) return IrConstImpl.constNull(startOffset, endOffset, irType)
 
     val constType = irType.makeNotNull()
@@ -99,11 +100,24 @@ fun Any?.toIrConst(irType: IrType, startOffset: Int = UNDEFINED_OFFSET, endOffse
             UnsignedType.ULONG -> IrConstImpl.long(startOffset, endOffset, constType, (this as Number).toLong())
             null -> when {
                 constType.isString() -> IrConstImpl.string(startOffset, endOffset, constType, this as String)
-                else -> throw UnsupportedOperationException("Unsupported const element type ${constType.render()}")
+                else -> null
             }
         }
     }
 }
+
+fun Any?.toIrConst(irType: IrType, startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET): IrConst<*> =
+    toIrConstOrNull(irType, startOffset, endOffset)
+        ?: throw UnsupportedOperationException("Unsupported const element type ${irType.makeNotNull().render()}")
+
+fun Any?.toIrConst(
+    irType: IrType, irBuiltIns: IrBuiltIns,
+    startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET
+): IrConst<*> =
+    toIrConstOrNull(irType, startOffset, endOffset) ?: run {
+        if (irType == irBuiltIns.stringType) IrConstImpl.string(startOffset, endOffset, irType.makeNotNull(), this as String)
+        else throw UnsupportedOperationException("Unsupported const element type ${irType.makeNotNull().render()}")
+    }
 
 @Suppress("UNCHECKED_CAST")
 internal fun <T> IrConst<T>.toPrimitive(): Primitive<T> = when {

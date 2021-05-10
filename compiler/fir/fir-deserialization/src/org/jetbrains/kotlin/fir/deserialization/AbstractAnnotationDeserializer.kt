@@ -297,6 +297,6 @@ abstract class AbstractAnnotationDeserializer(
     }
 
     private fun <T> const(kind: ConstantValueKind<T>, value: T, typeRef: FirResolvedTypeRef): FirConstExpression<T> {
-        return buildConstExpression(null, kind, value).apply { this.replaceTypeRef(typeRef) }
+        return buildConstExpression(null, kind, value, setType = true).apply { this.replaceTypeRef(typeRef) }
     }
 }
