@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.checkers.diagnostics.TextDiagnostic
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
@@ -74,17 +75,24 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
         //For BuiltIns, registered in sessionProvider automatically
         val allProjectScope = GlobalSearchScope.allScope(project)
 
-        FirSessionFactory.createLibrarySession(
-            builtInsModuleInfo, sessionProvider, allProjectScope, project,
-            environment.createPackagePartProvider(allProjectScope)
-        )
-
         val configToSession = modules.mapValues { (config, info) ->
             val moduleFiles = groupedByModule.getValue(config)
             val scope = TopDownAnalyzerFacadeForJVM.newModuleSearchScope(
                 project,
                 moduleFiles.mapNotNull { it.ktFile })
-            FirSessionFactory.createJavaModuleBasedSession(info, sessionProvider, scope, project) {
+            createSessionWithDependencies(
+                Name.identifier(info.name.asString().removeSurrounding("<", ">")),
+                info.platform,
+                info.analyzerServices,
+                externalSessionProvider = sessionProvider,
+                project,
+                config?.languageVersionSettings ?: LanguageVersionSettingsImpl.DEFAULT,
+                sourceScope = scope,
+                librariesScope = allProjectScope,
+                lookupTracker = null,
+                getPackagePartProvider = { environment.createPackagePartProvider(it) },
+                getProviderAndScopeForIncrementalCompilation = { null },
+            ) {
                 configureSession()
                 getFirExtensions()?.let {
                     registerExtensions(it)
