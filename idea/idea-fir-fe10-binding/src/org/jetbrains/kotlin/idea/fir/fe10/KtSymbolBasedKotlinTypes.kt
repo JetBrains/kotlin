@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtTypeAndAnnotatio
 import org.jetbrains.kotlin.idea.frontend.api.types.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.*
@@ -29,7 +30,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 abstract class KtSymbolBasedAbstractTypeConstructor<T> internal constructor(
     val ktSBDescriptor: T
-) : TypeConstructor where T : KtSymbolBasedDeclarationDescriptor, T : ClassifierDescriptor {
+) : ClassifierBasedTypeConstructor() where T : KtSymbolBasedDeclarationDescriptor, T : ClassifierDescriptor {
     override fun getDeclarationDescriptor(): ClassifierDescriptor = ktSBDescriptor
 
     // TODO: captured types
@@ -53,6 +54,12 @@ class KtSymbolBasedClassTypeConstructor(ktSBDescriptor: KtSymbolBasedClassDescri
 
     override fun getSupertypes(): Collection<KotlinType> =
         ktSBDescriptor.ktSymbol.superTypes.map { it.toKotlinType(ktSBDescriptor.context) }
+
+    override fun isSameClassifier(classifier: ClassifierDescriptor): Boolean {
+        return classifier is ClassDescriptor && areFqNamesEqual(declarationDescriptor, classifier)
+    }
+
+    override fun toString() = DescriptorUtils.getFqName(ktSBDescriptor).asString()
 }
 
 class KtSymbolBasedTypeParameterTypeConstructor(ktSBDescriptor: KtSymbolBasedTypeParameterDescriptor) :
@@ -61,6 +68,11 @@ class KtSymbolBasedTypeParameterTypeConstructor(ktSBDescriptor: KtSymbolBasedTyp
 
     override fun getSupertypes(): Collection<KotlinType> =
         ktSBDescriptor.ktSymbol.upperBounds.map { it.toKotlinType(ktSBDescriptor.context) }
+
+    // TODO overrides: see AbstractTypeParameterDescriptor.TypeParameterTypeConstructor.isSameClassifier
+    override fun isSameClassifier(classifier: ClassifierDescriptor): Boolean = ktSBDescriptor == classifier
+
+    override fun toString(): String = ktSBDescriptor.name.asString()
 }
 
 // This class is not suppose to be used as "is instance of" because scopes could be wrapped into other scopes

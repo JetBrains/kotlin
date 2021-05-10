@@ -1,4 +1,3 @@
-// IGNORE_FE10_BINDING_BY_FIR
 @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
 public operator fun CharSequence.contains(other: CharSequence, ignoreCase: Boolean = false): Boolean = false
 fun test() {
