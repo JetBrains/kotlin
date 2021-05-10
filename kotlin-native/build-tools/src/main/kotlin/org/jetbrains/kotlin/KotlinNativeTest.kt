@@ -88,6 +88,7 @@ abstract class KonanTest : DefaultTask(), KonanTestExecutable {
     @Suppress("UnstableApiUsage")
     override fun configure(config: Closure<*>): Task {
         super.configure(config)
+        dependsOnDist()
 
         // Set Gradle properties for the better navigation
         group = LifecycleBasePlugin.VERIFICATION_GROUP

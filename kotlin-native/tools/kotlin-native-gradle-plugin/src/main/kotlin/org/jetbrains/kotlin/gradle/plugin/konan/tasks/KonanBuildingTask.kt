@@ -23,6 +23,7 @@ import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.gradle.plugin.konan.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
+import org.jetbrains.kotlin.dependsOnDist
 
 /** Base class for both interop and compiler tasks. */
 abstract class KonanBuildingTask: KonanArtifactWithLibrariesTask(), KonanBuildingSpec {
@@ -31,7 +32,7 @@ abstract class KonanBuildingTask: KonanArtifactWithLibrariesTask(), KonanBuildin
     internal abstract val toolRunner: KonanToolRunner
 
     override fun init(config: KonanBuildingConfig<*>, destinationDir: File, artifactName: String, target: KonanTarget) {
-        dependsOn(project.konanCompilerDownloadTask)
+        dependsOnDist()
         super.init(config, destinationDir, artifactName, target)
     }
 

@@ -59,7 +59,7 @@ val Project.platformManager
     get() = findProperty("platformManager") as PlatformManager
 
 val Project.testTarget
-    get() = findProperty("target") as KonanTarget
+    get() = findProperty("target") as? KonanTarget ?: HostManager.host
 
 val Project.testTargetSuffix
     get() = (findProperty("target") as KonanTarget).name.capitalize()
