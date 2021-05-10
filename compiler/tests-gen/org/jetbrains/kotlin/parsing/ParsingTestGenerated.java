@@ -2787,6 +2787,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/stringTemplates"), Pattern.compile("^(.*)\\.kts?$"), null, true);
             }
 
+            @TestMetadata("kt46455.kt")
+            public void testKt46455() throws Exception {
+                runTest("compiler/testData/psi/stringTemplates/kt46455.kt");
+            }
+
             @TestMetadata("RawStringsWithManyQuotes.kt")
             public void testRawStringsWithManyQuotes() throws Exception {
                 runTest("compiler/testData/psi/stringTemplates/RawStringsWithManyQuotes.kt");
