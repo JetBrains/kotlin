@@ -20,11 +20,11 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
@@ -201,26 +201,29 @@ class IrExpressionLambdaImpl(
 
     private val loweredMethod = codegen.methodSignatureMapper.mapAsmMethod(function)
 
-    val capturedParamsInDesc: List<Type> = if (isBoundCallableReference) {
-        loweredMethod.argumentTypes.take(1)
-    } else loweredMethod.argumentTypes.drop(if (isExtensionLambda) 1 else 0).take(capturedVars.size)
-
-    override val invokeMethod: Method = loweredMethod.let {
-        Method(
-            it.name,
-            it.returnType,
-            (if (isBoundCallableReference) it.argumentTypes.drop(1)
-            else (if (isExtensionLambda) it.argumentTypes.take(1) else emptyList()) +
-                    it.argumentTypes.drop((if (isExtensionLambda) 1 else 0) + capturedVars.size)).toTypedArray()
-        )
+    val capturedParamsInDesc: List<Type> = when {
+        isBoundCallableReference -> loweredMethod.argumentTypes.take(1)
+        isExtensionLambda -> loweredMethod.argumentTypes.drop(1).take(capturedVars.size)
+        else -> loweredMethod.argumentTypes.take(capturedVars.size)
     }
 
-    // Need the descriptor without captured parameters here.
-    override val invokeMethodDescriptor: FunctionDescriptor = function.originalFunction.toIrBasedDescriptor()
+    override val invokeMethod: Method = loweredMethod.let {
+        val nonCapturedParameters = when {
+            isBoundCallableReference -> it.argumentTypes.drop(1)
+            isExtensionLambda -> it.argumentTypes.take(1) + it.argumentTypes.drop(capturedVars.size + 1)
+            else -> it.argumentTypes.drop(capturedVars.size)
+        }.toTypedArray()
+        Method(it.name, it.returnType, nonCapturedParameters)
+    }
+
+    // TODO: no extension receiver if bound
+    override val invokeMethodParameters: List<KotlinType?>
+        get() = function.originalFunction.explicitParameters.map { it.type.toIrBasedKotlinType() }
+
+    override val invokeMethodReturnType: KotlinType
+        get() = function.originalFunction.returnType.toIrBasedKotlinType() // not including COROUTINE_SUSPENDED
 
     override val hasDispatchReceiver: Boolean = false
-
-    override fun getInlineSuspendLambdaViewDescriptor(): FunctionDescriptor = function.toIrBasedDescriptor()
 
     override fun isCapturedSuspend(desc: CapturedParamDesc): Boolean =
         capturedParameters[desc]?.let { it.isInlineParameter() && it.type.isSuspendFunctionTypeOrSubtype() } == true
@@ -229,23 +232,20 @@ class IrExpressionLambdaImpl(
 class IrDefaultLambda(
     lambdaClassType: Type,
     capturedArgs: Array<Type>,
-    private val irValueParameter: IrValueParameter,
+    irValueParameter: IrValueParameter,
     offset: Int,
     needReification: Boolean
 ) : DefaultLambda(
     lambdaClassType, capturedArgs, irValueParameter.toIrBasedDescriptor() as ValueParameterDescriptor, offset, needReification
 ) {
+    private val invoke =
+        (irValueParameter.type.classifierOrFail.owner as IrClass).functions.single { it.name == OperatorNameConventions.INVOKE }
 
-    override fun mapAsmSignature(sourceCompiler: SourceCompilerForInline): Method {
-        val invoke =
-            irValueParameter.type.classOrNull!!.owner.declarations.filterIsInstance<IrFunction>().single { it.name.asString() == "invoke" }
-        return (sourceCompiler as IrSourceCompilerForInline).codegen.context.methodSignatureMapper.mapSignatureSkipGeneric(invoke).asmMethod
-    }
+    override fun mapAsmSignature(sourceCompiler: SourceCompilerForInline, descriptor: FunctionDescriptor): Method =
+        (sourceCompiler as IrSourceCompilerForInline).codegen.context.methodSignatureMapper.mapSignatureSkipGeneric(invoke).asmMethod
 
-    override fun findInvokeMethodDescriptor(): FunctionDescriptor =
-        (irValueParameter.type.classifierOrFail.owner as IrClass).functions.single {
-            it.name == OperatorNameConventions.INVOKE
-        }.toIrBasedDescriptor()
+    override fun findInvokeMethodDescriptor(isPropertyReference: Boolean): FunctionDescriptor =
+        invoke.toIrBasedDescriptor()
 }
 
 fun IrExpression.isInlineIrExpression() =
