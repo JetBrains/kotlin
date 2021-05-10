@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.isInlineClassFieldGetter
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -35,6 +34,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.createType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
@@ -42,7 +43,6 @@ import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
@@ -354,11 +354,15 @@ private class PropertyReferenceLowering(val context: JvmBackendContext) : IrElem
                 val receiverFromField = boundReceiver?.let { irImplicitCast(irGetField(irGet(arguments[0]), backingField), it.type) }
                 call.copyTypeArgumentsFrom(expression)
                 call.dispatchReceiver = call.symbol.owner.dispatchReceiverParameter?.let {
-                    // TODO: in `C::x`, the receiver must be cast to `C` in order to put accessors for protected
-                    //   properties in the correct class (box/syntheticAccessors/accessorForProtectedPropertyReference.kt).
-                    //   Since there is no information about `C` in `IrPropertyReference`, we rely on fake overrides here
-                    //   (expecting that the getter is `C.getX` and not `<some superclass>.getX`) and that does not work with FIR.
-                    receiverFromField ?: irImplicitCast(irGet(arguments[1]), call.symbol.owner.parentAsClass.defaultType)
+                    receiverFromField ?: irImplicitCast(
+                        irGet(arguments[1]),
+                        // In `C::x`, the receiver must be cast to `C` in order to put accessors for protected
+                        // properties in the correct class (box/syntheticAccessors/accessorForProtectedPropertyReference.kt).
+                        // However, if `x` is a property of C's superclass, the type of `dispatchReceiverParameter` is not `C`.
+                        // Since the receiver is not bound, the type of the property must be `KProperty1<C, ReturnType>` or
+                        // `KProperty2<C, ExtensionReceiver, ReturnType>`.
+                        ((expression.type as IrSimpleType).arguments.first() as IrTypeProjection).type
+                    )
                 }
                 call.extensionReceiver = call.symbol.owner.extensionReceiverParameter?.let {
                     if (call.symbol.owner.dispatchReceiverParameter == null)
