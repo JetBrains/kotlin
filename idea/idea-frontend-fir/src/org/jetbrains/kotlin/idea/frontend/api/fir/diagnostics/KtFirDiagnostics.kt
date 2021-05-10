@@ -818,8 +818,8 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class ReturnTypeMismatch : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = ReturnTypeMismatch::class
-        abstract val expected: KtType
-        abstract val actual: KtType
+        abstract val expectedType: KtType
+        abstract val actualType: KtType
     }
 
     abstract class CyclicGenericUpperBound : KtFirDiagnostic<PsiElement>() {
@@ -1207,8 +1207,8 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class InitializerTypeMismatch : KtFirDiagnostic<KtProperty>() {
         override val diagnosticClass get() = InitializerTypeMismatch::class
-        abstract val expected: KtType
-        abstract val actual: KtType
+        abstract val expectedType: KtType
+        abstract val actualType: KtType
     }
 
     abstract class GetterVisibilityDiffersFromPropertyVisibility : KtFirDiagnostic<KtModifierListOwner>() {
@@ -1485,8 +1485,8 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
     abstract class DelegateSpecialFunctionReturnTypeMismatch : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = DelegateSpecialFunctionReturnTypeMismatch::class
         abstract val delegateFunction: String
-        abstract val expected: KtType
-        abstract val actual: KtType
+        abstract val expectedType: KtType
+        abstract val actualType: KtType
     }
 
     abstract class UnderscoreIsReserved : KtFirDiagnostic<KtExpression>() {

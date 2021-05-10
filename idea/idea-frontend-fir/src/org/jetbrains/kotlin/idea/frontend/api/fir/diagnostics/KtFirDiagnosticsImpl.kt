@@ -1325,8 +1325,8 @@ internal class TypeParameterOfPropertyNotUsedInReceiverImpl(
 }
 
 internal class ReturnTypeMismatchImpl(
-    override val expected: KtType,
-    override val actual: KtType,
+    override val expectedType: KtType,
+    override val actualType: KtType,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.ReturnTypeMismatch(), KtAbstractFirDiagnostic<KtExpression> {
@@ -1963,8 +1963,8 @@ internal class WrongSetterParameterTypeImpl(
 }
 
 internal class InitializerTypeMismatchImpl(
-    override val expected: KtType,
-    override val actual: KtType,
+    override val expectedType: KtType,
+    override val actualType: KtType,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.InitializerTypeMismatch(), KtAbstractFirDiagnostic<KtProperty> {
@@ -2412,8 +2412,8 @@ internal class DelegateSpecialFunctionNoneApplicableImpl(
 
 internal class DelegateSpecialFunctionReturnTypeMismatchImpl(
     override val delegateFunction: String,
-    override val expected: KtType,
-    override val actual: KtType,
+    override val expectedType: KtType,
+    override val actualType: KtType,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.DelegateSpecialFunctionReturnTypeMismatch(), KtAbstractFirDiagnostic<KtExpression> {
