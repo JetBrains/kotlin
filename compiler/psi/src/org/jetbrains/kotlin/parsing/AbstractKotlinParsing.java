@@ -105,7 +105,7 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
         IElementType tt = tt();
         if (recoverySet == null ||
             recoverySet.contains(tt) ||
-            tt == LBRACE || tt == RBRACE || tt == LONG_TEMPLATE_ENTRY_END ||
+            tt == LBRACE || tt == RBRACE ||
             (recoverySet.contains(EOL_OR_SEMICOLON) && (eof() || tt == SEMICOLON || myBuilder.newlineBeforeCurrentToken()))) {
             error(message);
         }

@@ -682,7 +682,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         else if (!parseLiteralConstant()) {
             ok = false;
             // TODO: better recovery if FIRST(element) did not match
-            errorWithRecovery("Expecting an element", EXPRESSION_FOLLOW);
+            errorWithRecovery("Expecting an element", TokenSet.orSet(EXPRESSION_FOLLOW, TokenSet.create(LONG_TEMPLATE_ENTRY_END)));
         }
 
         return ok;
