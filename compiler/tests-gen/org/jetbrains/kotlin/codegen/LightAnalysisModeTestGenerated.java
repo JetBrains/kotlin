@@ -12517,6 +12517,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/fullJdk/kt434.kt");
         }
 
+        @TestMetadata("kt46540.kt")
+        public void testKt46540() throws Exception {
+            runTest("compiler/testData/codegen/box/fullJdk/kt46540.kt");
+        }
+
         @TestMetadata("platformTypeAssertionStackTrace.kt")
         public void testPlatformTypeAssertionStackTrace() throws Exception {
             runTest("compiler/testData/codegen/box/fullJdk/platformTypeAssertionStackTrace.kt");
