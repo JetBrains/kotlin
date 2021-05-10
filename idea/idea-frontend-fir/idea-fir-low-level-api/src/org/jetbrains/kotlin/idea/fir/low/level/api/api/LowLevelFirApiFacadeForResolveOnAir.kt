@@ -45,12 +45,6 @@ object LowLevelFirApiFacadeForResolveOnAir {
             ktDeclaration.canBeEnclosingDeclaration()
         }
 
-    private fun <T : KtElement> locateDeclarationInFileByOffset(offsetElement: T, file: KtFile): T? {
-        val elementOffset = offsetElement.textOffset
-        val elementAtOffset = file.findElementAt(elementOffset) ?: return null
-        return PsiTreeUtil.getParentOfType(elementAtOffset, offsetElement::class.java, false)?.takeIf { it.textOffset == elementOffset }
-    }
-
     private fun recordOriginalDeclaration(targetDeclaration: KtNamedDeclaration, originalDeclaration: KtNamedDeclaration) {
         require(!targetDeclaration.isPhysical)
         require(originalDeclaration.containingKtFile !== targetDeclaration.containingKtFile)
@@ -151,7 +145,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
             )
 
 
-        val sameDeclarationInOriginalFile = locateDeclarationInFileByOffset(dependencyNonLocalDeclaration, originalKtFile)
+        val sameDeclarationInOriginalFile = PsiTreeUtil.findSameElementInCopy(dependencyNonLocalDeclaration, originalKtFile)
             ?: error("Cannot find original function matching to ${dependencyNonLocalDeclaration.getElementTextInContext()} in $originalKtFile")
 
         recordOriginalDeclaration(
