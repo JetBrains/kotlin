@@ -144,6 +144,7 @@ private fun IrFunction.isStaticInlineClassReplacementDelegatingCall(): Boolean =
 
 private val BRIDGE_ORIGINS = setOf(
     IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
+    JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER,
     JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER,
     JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
     JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR,
