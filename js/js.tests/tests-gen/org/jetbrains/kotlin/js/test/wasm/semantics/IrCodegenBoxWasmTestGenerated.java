@@ -7829,6 +7829,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                     runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/ifaceChild.kt");
                 }
 
+                @TestMetadata("nullableResult.kt")
+                public void testNullableResult() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/nullableResult.kt");
+                }
+
                 @TestMetadata("primitive.kt")
                 public void testPrimitive() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/primitive.kt");
@@ -7880,6 +7885,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                 @TestMetadata("ifaceChild.kt")
                 public void testIfaceChild() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/ifaceChild.kt");
+                }
+
+                @TestMetadata("nullableResult.kt")
+                public void testNullableResult() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/nullableResult.kt");
                 }
 
                 @TestMetadata("primitive.kt")
