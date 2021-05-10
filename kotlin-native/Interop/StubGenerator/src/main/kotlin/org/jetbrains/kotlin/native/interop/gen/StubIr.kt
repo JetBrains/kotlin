@@ -113,6 +113,11 @@ sealed class StubOrigin {
          * E.CEnumVar.value.
          */
         class EnumVarValueField(val enum: EnumDef) : Synthetic()
+
+        /**
+         * Other synthetic values.
+         */
+        object Other : StubOrigin() // TODO: what do we need here?
     }
 
     class ObjCCategoryInitMethod(
@@ -158,8 +163,6 @@ sealed class StubOrigin {
     class TypeDef(val typedefDef: TypedefDef) : StubOrigin()
 
     class VarOf(val typeOrigin: StubOrigin) : StubOrigin()
-
-    object Other : StubOrigin() // TODO: what do we need here?
 }
 
 interface StubElementWithOrigin : StubIrElement {
@@ -341,7 +344,7 @@ sealed class ClassStub : StubContainer(), StubElementWithOrigin, AnnotationHolde
 
     class Companion(
             override val classifier: Classifier,
-            methods: List<FunctionStub> = emptyList(),
+            val methods: List<FunctionStub> = emptyList(),
             override val superClassInit: SuperClassInit? = null,
             override val interfaces: List<StubType> = emptyList(),
             override val properties: List<PropertyStub> = emptyList(),

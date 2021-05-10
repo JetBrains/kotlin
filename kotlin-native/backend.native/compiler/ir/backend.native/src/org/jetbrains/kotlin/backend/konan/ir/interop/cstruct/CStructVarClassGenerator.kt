@@ -5,9 +5,11 @@
 package org.jetbrains.kotlin.backend.konan.ir.interop.cstruct
 
 import org.jetbrains.kotlin.backend.common.ir.ir2stringWhole
+import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.konan.InteropBuiltIns
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.konan.ir.companionObject
 import org.jetbrains.kotlin.backend.konan.ir.interop.DescriptorToIrTranslationMixin
 import org.jetbrains.kotlin.backend.konan.ir.interop.irInstanceInitializer
 import org.jetbrains.kotlin.descriptors.*
@@ -15,16 +17,13 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionExpressionImpl
 import org.jetbrains.kotlin.ir.interpreter.toIrConst
-import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
@@ -57,9 +56,7 @@ internal class CStructVarClassGenerator(
     private fun provideIrClassForCStruct(descriptor: ClassDescriptor): IrClass =
             createClass(descriptor) { irClass ->
                 irClass.addMember(createPrimaryConstructor(irClass))
-                if (!descriptor.annotations.hasAnnotation(RuntimeNames.managedType)) { // TODO: we need a companion here, but later
-                    irClass.addMember(companionGenerator.generate(descriptor))
-                }
+                irClass.addMember(companionGenerator.generate(descriptor))
                 descriptor.constructors
                         .filterNot { it.isPrimary }
                         .map {
@@ -123,8 +120,10 @@ internal class CStructVarClassGenerator(
     // TODO: move me to InteropLowering.kt?
     private fun setupManagedClass(irClass: IrClass) {
 
-        // class Wrapper(cpp: CppClass) : ManagedType(cpp) {
+        println(irClass.render())
+        // class Wrapper(cpp: CppClass, managed: Boolean) : ManagedType(cpp) {
         //     val cpp = cpp
+        //     val managed = managed
         //     val cleaner = createCleaner(cpp) { it ->
         //          $Inner.Companion.__destroy__(it) // For general CPlusPlusClass
         //          or
@@ -137,7 +136,6 @@ internal class CStructVarClassGenerator(
         }.filterNotNull()
 
         val isSkiaRefCnt = superClassFqNames.contains(RuntimeNames.skiaRefCnt)
-        val getPtr = symbols.interopGetPtr
 
         val cppVal = irClass.declarations
                 .filterIsInstance<IrProperty>()
@@ -145,6 +143,7 @@ internal class CStructVarClassGenerator(
                 .single()
 
         val cppValType = cppVal.getter!!.returnType
+        val cppValClass = cppValType.classOrNull!!.owner
 
         cppVal.backingField = symbolTable.declareField(
                 SYNTHETIC_OFFSET,
@@ -156,7 +155,7 @@ internal class CStructVarClassGenerator(
         ).also {
             it.parent = irClass
             it.initializer = irBuilder(irBuiltIns, it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).run {
-                irExprBody(irGet(irClass.primaryConstructor!!.valueParameters.single()))
+                irExprBody(irGet(irClass.primaryConstructor!!.valueParameters.first()))
             }
         }
 
@@ -165,7 +164,35 @@ internal class CStructVarClassGenerator(
                     +irReturn(irGetField(irGet(cppVal.getter!!.dispatchReceiverParameter!!), cppVal.backingField!!))
 
                 }
+println("got CPP")
+        val managedVal = irClass.declarations
+                .filterIsInstance<IrProperty>()
+                .filter { it.name.toString() == "managed" }
+                .single()
 
+        val managedValType = managedVal.getter!!.returnType
+
+        managedVal.backingField = symbolTable.declareField(
+                SYNTHETIC_OFFSET,
+                SYNTHETIC_OFFSET,
+                IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
+                managedVal.descriptor,
+                managedValType,
+                DescriptorVisibilities.PRIVATE
+        ).also {
+            it.parent = irClass
+            it.initializer = irBuilder(irBuiltIns, it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).run {
+                irExprBody(irGet(irClass.primaryConstructor!!.valueParameters[1]))
+            }
+        }
+
+        managedVal.getter!!.body = irBuilder(irBuiltIns, managedVal.getter!!.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
+                .irBlockBody {
+                    +irReturn(irGetField(irGet(managedVal.getter!!.dispatchReceiverParameter!!), managedVal.backingField!!))
+
+                }
+
+        println("got MANAGED")
         val cleanerVal = irClass.declarations
                 .filterIsInstance<IrProperty>()
                 .filter { it.name.toString() == "cleaner" }
@@ -194,6 +221,9 @@ internal class CStructVarClassGenerator(
             //                    CALL 'public final fun println (message: kotlin.String): kotlin.Unit [external] declared in kotlin.io' type=kotlin.Unit origin=null
             //                      message: GET_VAR 'field: kotlin.String declared in <root>.Upper.cleaner.<anonymous>' type=kotlin.String origin=null
             field.initializer = irBuilder(irBuiltIns, field.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).run {
+                //val managedValue = irCall(managedVal.getter!!).apply {
+                //    dispatchReceiver = irGet(irClass.thisReceiver!!)
+                //}
                 val lambda = context.irFactory.buildFun {
                     startOffset = SYNTHETIC_OFFSET
                     endOffset = SYNTHETIC_OFFSET
@@ -212,6 +242,7 @@ internal class CStructVarClassGenerator(
                             }
                     )
                     body = irBlockBody {
+                        val itCpp = irGet(valueParameters.single())
                         +irCall(symbols.println).apply {
                             putValueArgument(0,
                                     "Cleaning ${irClass.name} with ${if (isSkiaRefCnt) "unref" else "__destroy__"}"
@@ -219,29 +250,44 @@ internal class CStructVarClassGenerator(
                             )
                         }
                         if (isSkiaRefCnt) {
-                            val unref = cppValType.classOrNull!!.owner.declarations
+                            val unref = cppValClass.declarations
                                     .filterIsInstance<IrSimpleFunction>()
                                     .single { it.name.toString() == "unref" }
                             +irCall(unref).apply {
-                                dispatchReceiver = irGet(valueParameters.single())
+                                dispatchReceiver = itCpp
                             }
                         } else {
-                            // TODO: Should we call companion's __destroy__?
-                            // Or should we rather do the opposite to placement new?
-                            val companion = cppValType.classOrNull!!.owner.declarations
+                            // TODO: if (managed) {
+                            val companion = cppValClass.declarations
                                     .filterIsInstance<IrClass>()
                                     .single { it.isCompanion }
                             val destroy = companion.declarations
                                     .filterIsInstance<IrSimpleFunction>()
-                                    .single { it.name.toString() == "__destroy__" }
-                            +irCall(destroy).apply {
-                                dispatchReceiver = irGetObject(companion.symbol)
+                                    .singleOrNull { it.name.toString() == "__destroy__" }
+                            if (destroy!= null) {
+                                +irCall(destroy).apply {
+                                    dispatchReceiver = irGetObject(companion.symbol)
+                                    putValueArgument(0,
+                                            irCall(symbols.interopGetPtr).apply {
+                                                extensionReceiver = itCpp
+                                            }
+                                    )
+                                }
+                            }
+                            val nativeHeap = symbols.nativeHeap
+                            val free = nativeHeap.owner.declarations
+                                    .filterIsInstance<IrSimpleFunction>()
+                                    .single { it.name.toString() == "free" }
+                            +irCall(free).apply {
+                                dispatchReceiver = irGetObject(nativeHeap)
                                 putValueArgument(0,
-                                        irCall(getPtr).apply {
-                                            extensionReceiver = irGet(valueParameters.single())
+                                        irCall(symbols.interopNativePointedGetRawPointer).apply {
+                                            extensionReceiver = itCpp
                                         }
                                 )
                             }
+                            // TODO: need to nativePlacement.free(cpp.rawPtr)
+                            // TODO: } // managed
                         }
                     }
                 }
@@ -263,7 +309,7 @@ internal class CStructVarClassGenerator(
                             )
                     )
                 }
-                irExprBody(callCreateCleaner)
+                irExprBody(irIfThenElse(callCreateCleaner.type.makeNullable(), irGet(irClass.primaryConstructor!!.valueParameters[1]), callCreateCleaner, irNull()))
             }
         }
 
@@ -273,7 +319,7 @@ internal class CStructVarClassGenerator(
 
     private fun createPrimaryConstructor(irClass: IrClass): IrConstructor {
         if (!irClass.descriptor.annotations.hasAnnotation(RuntimeNames.managedType)) {
-            val enumVarConstructorSymbol = symbolTable.referenceConstructor(
+            val cStructVarConstructorSymbol = symbolTable.referenceConstructor(
                     interopBuiltIns.cStructVar.unsubstitutedPrimaryConstructor!!
             )
             return createConstructor(irClass.descriptor.unsubstitutedPrimaryConstructor!!).also { irConstructor ->
@@ -281,7 +327,7 @@ internal class CStructVarClassGenerator(
                     irConstructor.body = irBuilder(irBuiltIns, irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
                         +IrDelegatingConstructorCallImpl.fromSymbolOwner(
                                 startOffset, endOffset,
-                                context.irBuiltIns.unitType, enumVarConstructorSymbol
+                                context.irBuiltIns.unitType, cStructVarConstructorSymbol
                         ).also {
                             it.putValueArgument(0, irGet(irConstructor.valueParameters[0]))
                         }

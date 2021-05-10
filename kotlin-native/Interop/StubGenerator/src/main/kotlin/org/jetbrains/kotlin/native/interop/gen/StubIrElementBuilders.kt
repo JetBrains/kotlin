@@ -104,7 +104,7 @@ internal class StructStubBuilder(
                         name = "__destroy__",
                         returnType = ClassifierStubType(Classifier("kotlin", "Unit")),
                         parameters = emptyList(),
-                        origin = StubOrigin.Other,
+                        origin = StubOrigin.Synthetic.Other,
                         annotations = emptyList(),
                         receiver = null, // ReceiverParameterStub()
                         modality = MemberStubModality.FINAL
@@ -305,16 +305,10 @@ internal class StructStubBuilder(
         }
     }
 
-    private fun managedWrapperClassifier(cppClassifier: Classifier): Classifier? {
-        if (!(cppClassifier.topLevelName.startsWith("Sk") || cppClassifier.topLevelName.startsWith("Gr"))) return null
-        if (cppClassifier.topLevelName == "SkString") return null
-
-        return Classifier.topLevel(cppClassifier.pkg, cppClassifier.topLevelName.drop(2))
-    }
-
     private fun buildManagedWrapper(classStub: ClassStub.Simple): ClassStub.Simple? {
+        val copier = DeepCopyForManagedWrapper(classStub)
 
-        val managedName = managedWrapperClassifier(classStub.classifier) ?: run {
+        val managedName = copier.managedWrapperClassifier(classStub.classifier) ?: run {
             println("BAD CLASSIFIER: ${classStub.classifier.topLevelName}")
             return null
         }
@@ -324,18 +318,24 @@ internal class StructStubBuilder(
                 type = ClassifierStubType(classStub.classifier),
                 kind = PropertyStub.Kind.Val(getter = PropertyAccessor.Getter.SimpleGetter()),
                 modality = MemberStubModality.FINAL,
-                origin = StubOrigin.Other
+                origin = StubOrigin.Synthetic.Other
+        )
+
+        val managed = PropertyStub(
+                name = "managed",
+                type = ClassifierStubType(Classifier.topLevel("kotlin", "Boolean")),
+                kind = PropertyStub.Kind.Val(getter = PropertyAccessor.Getter.SimpleGetter()),
+                modality = MemberStubModality.FINAL,
+                origin = StubOrigin.Synthetic.Other
         )
 
         val cleaner = PropertyStub(
                 name = "cleaner",
-                type = ClassifierStubType(Classifier.topLevel("kotlin.native.internal", "Cleaner")),
+                type = ClassifierStubType(Classifier.topLevel("kotlin.native.internal", "Cleaner"), nullable=true),
                 kind = PropertyStub.Kind.Val(getter = PropertyAccessor.Getter.SimpleGetter()),
                 modality = MemberStubModality.FINAL,
-                origin = StubOrigin.Other
+                origin = StubOrigin.Synthetic.Other
         )
-
-        val copier = DeepCopyForManagedWrapper(classStub)
 
         val constructors = classStub.constructors.map { copier.visitConstructor(it) }
 
@@ -349,14 +349,20 @@ internal class StructStubBuilder(
                                 Classifier.topLevel("kotlinx.cinterop", "ManagedType"),
                                 listOf(TypeArgumentStub(ClassifierStubType(classStub.classifier)))
                         ),
-                        listOf( GetConstructorParameter(constructors.single { it.isPrimary }.parameters.single()) )
+                        listOf( GetConstructorParameter(constructors.single { it.isPrimary }.parameters.first()) )
                 ),
                 interfaces = emptyList(),
-                properties = listOf(wrappee, cleaner) + classStub.properties.map { copier.visitProperty(it) },
+                properties = listOf(wrappee, managed, cleaner) + classStub.properties.map { copier.visitProperty(it) },
                 classStub.origin,
                 annotations = listOf(AnnotationStub.CStruct.ManagedType),
                 childrenClasses = emptyList(),
-                companion = null
+                companion = ClassStub.Companion(
+                        classifier = managedName.nested("Companion"),
+                        methods = classStub.companion!!.methods
+                                .filterNot { it.name == "__init__" || it.name == "__destroy__" }
+                                .map { copier.visitFunction(it) },
+                        //superClassInit = SuperClassInit(ClassifierStubType(Classifier.topLevel("kotlin", "Any")))
+                )
         )
         return managedWrapper
     }

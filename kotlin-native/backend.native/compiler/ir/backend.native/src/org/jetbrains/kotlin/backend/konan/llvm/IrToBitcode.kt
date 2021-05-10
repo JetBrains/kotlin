@@ -924,13 +924,15 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateGetObjectValue(value: IrGetObjectValue): LLVMValueRef =
-            functionGenerationContext.getObjectValue(
-                    value.symbol.owner,
-                    currentCodeContext.exceptionHandler,
-                    value.startLocation,
-                    value.endLocation
-            )
+    private fun evaluateGetObjectValue(value: IrGetObjectValue): LLVMValueRef {
+        println("GET OBJ: ${value.render()}")
+        return functionGenerationContext.getObjectValue(
+                value.symbol.owner,
+                currentCodeContext.exceptionHandler,
+                value.startLocation,
+                value.endLocation
+        )
+    }
 
 
     //-------------------------------------------------------------------------//

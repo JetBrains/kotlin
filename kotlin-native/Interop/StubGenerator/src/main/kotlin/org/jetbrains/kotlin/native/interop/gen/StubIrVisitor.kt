@@ -42,6 +42,7 @@ interface StubIrTransformer<T> {
     fun visitAnnotation(element: AnnotationStub): AnnotationStub
 
     fun visitReceiverParameter(element: ReceiverParameterStub): ReceiverParameterStub
+
 }
 
 class DeepCopyForManagedWrapper(val originalClass: ClassStub) : StubIrTransformer<Unit> {
@@ -52,7 +53,7 @@ class DeepCopyForManagedWrapper(val originalClass: ClassStub) : StubIrTransforme
     override fun visitFunction(element: FunctionStub): FunctionStub {
         return FunctionStub(
                 name = element.name,
-                returnType = element.returnType,
+                returnType = transformCPointerToManaged(element.returnType),
                 parameters = element.parameters.map { visitFunctionParameter(it) },
                 origin = element.origin,
                 annotations = emptyList(),
@@ -94,6 +95,10 @@ class DeepCopyForManagedWrapper(val originalClass: ClassStub) : StubIrTransforme
                             FunctionParameterStub(
                                     name = "cpp",
                                     type = ClassifierStubType(originalClass.classifier)
+                            ),
+                            FunctionParameterStub(
+                                    name = "managed",
+                                    type = ClassifierStubType(Classifier.topLevel("kotlin", "Boolean"))
                             )
                     ),
                     isPrimary = true,
@@ -135,10 +140,24 @@ class DeepCopyForManagedWrapper(val originalClass: ClassStub) : StubIrTransforme
 
     override fun visitSimpleStubContainer(simpleStubContainer: SimpleStubContainer): SimpleStubContainer = SimpleStubContainer()
 
+    private fun transformCPointerToManaged(type: StubType): StubType {
+        if (type !is ClassifierStubType) return type
+        if (type.classifier.topLevelName != "CPointer") return type
+        if (type.classifier.pkg != "kotlinx.cinterop") return type
+        val argument = type.typeArguments.single() as? TypeArgumentStub ?: return type
+        if (argument.type !is ClassifierStubType) return type
+        // TODO: it'd be nice to check inheritance from SkiaRefCnt or CPlusPlusClass,
+        // but unable to do that at StubType level.
+        if (!argument.type.classifier.topLevelName.let { it.startsWith("Sk") || it.startsWith("Gr")}) return type
+        if (argument.type.classifier.pkg != "org.jetbrains.skiko.skia.native") return type
+        println("API TRANSFORM: CPointer(${(argument.type as? ClassifierStubType)?.classifier?.topLevelName?:argument.type})")
+        return ClassifierStubType(managedWrapperClassifier(argument.type.classifier) ?: return type)
+    }
+
     override fun visitFunctionParameter(element: FunctionParameterStub): FunctionParameterStub {
         return FunctionParameterStub(
                 name = element.name,
-                type = element.type,
+                type = transformCPointerToManaged(element.type),
                 annotations = element.annotations.map { visitAnnotation(it) },
                 isVararg = element.isVararg
         )
@@ -150,4 +169,17 @@ class DeepCopyForManagedWrapper(val originalClass: ClassStub) : StubIrTransforme
     }
 
     override fun visitAnnotation(element: AnnotationStub): AnnotationStub = element
+
+
+    fun managedWrapperClassifier(cppClassifier: Classifier): Classifier? {
+        if (!(cppClassifier.topLevelName.startsWith("Sk") || cppClassifier.topLevelName.startsWith("Gr"))) return null
+        if (cppClassifier.topLevelName == "SkString") return null
+        // TODO: Need to skip all structs as opposed to classes.
+        if (cppClassifier.topLevelName == "SkRect" ||
+            cppClassifier.topLevelName == "SkImageInfo" ||
+            cppClassifier.topLevelName == "GrGLInterface") return null
+
+        return Classifier.topLevel(cppClassifier.pkg, cppClassifier.topLevelName.drop(2))
+    }
+
 }

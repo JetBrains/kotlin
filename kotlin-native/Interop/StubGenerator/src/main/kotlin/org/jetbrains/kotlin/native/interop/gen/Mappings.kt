@@ -133,7 +133,7 @@ sealed class TypeMirror(val pointedType: KotlinClassifierType, val info: TypeInf
     ) : TypeMirror(pointedType, info) {
 
         override val argType: KotlinType
-            get() = pointedType
+            get() = KotlinTypes.cPointer.typeWith(pointedType)
     }
 }
 
