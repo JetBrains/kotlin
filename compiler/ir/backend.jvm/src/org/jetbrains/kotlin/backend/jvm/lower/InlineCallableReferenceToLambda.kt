@@ -112,7 +112,7 @@ private class InlineCallableReferenceToLambdaTransformer(
             +IrFunctionReferenceImpl.fromSymbolOwner(
                 expression.startOffset,
                 expression.endOffset,
-                field.type,
+                expression.type,
                 function.symbol,
                 typeArgumentsCount = 0,
                 reflectionTarget = null,
@@ -184,7 +184,7 @@ private class InlineCallableReferenceToLambdaTransformer(
             +IrFunctionReferenceImpl.fromSymbolOwner(
                 expression.startOffset,
                 expression.endOffset,
-                function.returnType,
+                expression.type,
                 function.symbol,
                 typeArgumentsCount = function.typeParameters.size,
                 reflectionTarget = null,
