@@ -66,6 +66,14 @@ class Fir2IrTypeConverter(
 
     private val typeApproximator = ConeTypeApproximator(session.typeContext, session.languageVersionSettings)
 
+    private val typeApproximatorConfiguration =
+        object : TypeApproximatorConfiguration.AllFlexibleSameValue() {
+            override val allFlexible: Boolean get() = true
+            override val errorType: Boolean get() = true
+            override val integerLiteralType: Boolean get() = true
+            override val intersectionTypesInContravariantPositions: Boolean get() = true
+        }
+
     fun FirTypeRef.toIrType(typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT): IrType {
         capturedTypeCache.clear()
         return when (this) {
@@ -228,11 +236,9 @@ class Fir2IrTypeConverter(
                 } else null
             }
         }
-        val typeWithSpecifiedIntersectionTypes = substitutor.substituteOrSelf(type)
-        return typeApproximator.approximateToSuperType(
-            typeWithSpecifiedIntersectionTypes,
-            TypeApproximatorConfiguration.PublicDeclaration
-        ) ?: type
+        return substitutor.substituteOrSelf(type).let {
+            typeApproximator.approximateToSuperType(it, typeApproximatorConfiguration) ?: it
+        }
     }
 }
 
