@@ -1630,7 +1630,7 @@ internal class LocalInterfaceNotAllowedImpl(
 
 internal class AbstractFunctionInNonAbstractClassImpl(
     override val function: KtSymbol,
-    override val containingClass: KtSymbol,
+    override val containingClass: KtClassLikeSymbol,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.AbstractFunctionInNonAbstractClass(), KtAbstractFirDiagnostic<KtFunction> {
@@ -1770,7 +1770,7 @@ internal class FunInterfaceWithSuspendFunctionImpl(
 
 internal class AbstractPropertyInNonAbstractClassImpl(
     override val property: KtSymbol,
-    override val containingClass: KtSymbol,
+    override val containingClass: KtClassLikeSymbol,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.AbstractPropertyInNonAbstractClass(), KtAbstractFirDiagnostic<KtModifierListOwner> {

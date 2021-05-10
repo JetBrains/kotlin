@@ -499,7 +499,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
     val FUNCTIONS by object : DiagnosticGroup("Functions") {
         val ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS by error<KtFunction>(PositioningStrategy.MODALITY_MODIFIER) {
             parameter<FirMemberDeclaration>("function")
-            parameter<FirMemberDeclaration>("containingClass") // TODO use FirClass instead of FirMemberDeclaration
+            parameter<FirClass<*>>("containingClass")
         }
         val ABSTRACT_FUNCTION_WITH_BODY by error<KtFunction>(PositioningStrategy.MODALITY_MODIFIER) {
             parameter<FirMemberDeclaration>("function")
@@ -541,7 +541,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
     val PROPERTIES_AND_ACCESSORS by object : DiagnosticGroup("Properties & accessors") {
         val ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS by error<KtModifierListOwner>(PositioningStrategy.MODALITY_MODIFIER) {
             parameter<FirMemberDeclaration>("property")
-            parameter<FirMemberDeclaration>("containingClass") // TODO use FirClass instead of FirMemberDeclaration
+            parameter<FirClass<*>>("containingClass")
         }
         val PRIVATE_PROPERTY_IN_INTERFACE by error<KtProperty>(PositioningStrategy.VISIBILITY_MODIFIER)
 

@@ -1012,7 +1012,7 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
     abstract class AbstractFunctionInNonAbstractClass : KtFirDiagnostic<KtFunction>() {
         override val diagnosticClass get() = AbstractFunctionInNonAbstractClass::class
         abstract val function: KtSymbol
-        abstract val containingClass: KtSymbol
+        abstract val containingClass: KtClassLikeSymbol
     }
 
     abstract class AbstractFunctionWithBody : KtFirDiagnostic<KtFunction>() {
@@ -1095,7 +1095,7 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
     abstract class AbstractPropertyInNonAbstractClass : KtFirDiagnostic<KtModifierListOwner>() {
         override val diagnosticClass get() = AbstractPropertyInNonAbstractClass::class
         abstract val property: KtSymbol
-        abstract val containingClass: KtSymbol
+        abstract val containingClass: KtClassLikeSymbol
     }
 
     abstract class PrivatePropertyInInterface : KtFirDiagnostic<KtProperty>() {

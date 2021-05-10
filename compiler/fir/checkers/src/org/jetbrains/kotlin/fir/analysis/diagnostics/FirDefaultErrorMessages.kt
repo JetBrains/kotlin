@@ -762,7 +762,7 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
                 ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS,
                 "Abstract function ''{0}'' in non-abstract class ''{1}''",
                 DECLARATION_NAME,
-                DECLARATION_NAME
+                NAME
             )
             map.put(ABSTRACT_FUNCTION_WITH_BODY, "A function ''{0}'' with body cannot be abstract", DECLARATION_NAME)
             map.put(NON_ABSTRACT_FUNCTION_WITH_NO_BODY, "Function ''{0}'' without a body must be abstract", DECLARATION_NAME)
@@ -798,7 +798,7 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
                 ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS,
                 "Abstract property ''{0}'' in non-abstract class ''{1}''",
                 DECLARATION_NAME,
-                DECLARATION_NAME
+                NAME
             )
             map.put(PRIVATE_PROPERTY_IN_INTERFACE, "Abstract property in an interface cannot be private")
 
