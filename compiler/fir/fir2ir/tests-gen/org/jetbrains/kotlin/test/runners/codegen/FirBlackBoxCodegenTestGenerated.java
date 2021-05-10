@@ -15549,6 +15549,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("kt46540.kt")
+        public void testKt46540() throws Exception {
+            runTest("compiler/testData/codegen/box/fullJdk/kt46540.kt");
+        }
+
+        @Test
         @TestMetadata("platformTypeAssertionStackTrace.kt")
         public void testPlatformTypeAssertionStackTrace() throws Exception {
             runTest("compiler/testData/codegen/box/fullJdk/platformTypeAssertionStackTrace.kt");
