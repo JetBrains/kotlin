@@ -167,15 +167,17 @@ internal class FirWrapperResolvedCall(val firSimpleWrapperCall: FirSimpleWrapper
         val firArguments = firCall.withFir { it.argumentMapping } ?: context.implementationPostponed()
         val argumentExpression = valueArgument.getArgumentExpression() ?: context.implementationPostponed()
 
+        fun FirExpression.isMyArgument() = realPsi === valueArgument || realPsi === argumentExpression
+
         var targetFirParameter: FirValueParameter? = null
         outer@ for ((firExpression, firValueParameter) in firArguments.entries) {
             if (firExpression is FirVarargArgumentsExpression) {
                 for (subExpression in firExpression.arguments)
-                    if (subExpression.realPsi === argumentExpression) {
+                    if (subExpression.isMyArgument()) {
                         targetFirParameter = firValueParameter
                         break@outer
                     }
-            } else if (firExpression.realPsi === argumentExpression) {
+            } else if (firExpression.isMyArgument()) {
                 targetFirParameter = firValueParameter
                 break@outer
             }
