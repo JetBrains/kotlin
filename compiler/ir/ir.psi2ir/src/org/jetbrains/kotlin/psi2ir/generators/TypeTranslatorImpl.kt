@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.types.CommonSupertypes
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeApproximator
+import org.jetbrains.kotlin.types.*
 
 class TypeTranslatorImpl(
     symbolTable: ReferenceSymbolTable,
@@ -25,8 +23,18 @@ class TypeTranslatorImpl(
 
     private val typeApproximatorForNI = TypeApproximator(moduleDescriptor.builtIns, languageVersionSettings)
 
+    private val typeApproximatorConfiguration =
+        object : TypeApproximatorConfiguration.AllFlexibleSameValue() {
+            override val allFlexible: Boolean get() = true
+            override val errorType: Boolean get() = true
+            override val integerLiteralType: Boolean get() = true
+            override val intersectionTypesInContravariantPositions: Boolean get() = true
+        }
+
     override fun approximateType(type: KotlinType): KotlinType =
-        typeApproximatorForNI.approximateDeclarationType(type, local = false)
+        substituteAlternativesInPublicType(type).let {
+            typeApproximatorForNI.approximateToSuperType(it, typeApproximatorConfiguration) ?: it
+        }
 
     override fun commonSupertype(types: Collection<KotlinType>): KotlinType =
         CommonSupertypes.commonSupertype(types)
