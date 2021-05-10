@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.backend.common.lower.parentsWithSelf
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.*
-import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.isInlineCallableReference
-import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.isMappedToPrimitive
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
 import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -62,7 +60,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
     fun mapFieldSignature(field: IrField): String? {
         val sw = BothSignatureWriter(BothSignatureWriter.Mode.TYPE)
         if (field.correspondingPropertySymbol?.owner?.isVar == true) {
-            writeParameterType(sw, field.type, field, false)
+            writeParameterType(sw, field.type, field)
         } else {
             mapReturnType(field, field.type, sw)
         }
@@ -221,13 +219,6 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
                 function.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_INLINE_CLASS_MEMBER &&
                 function.name.asString() == "box-impl"
 
-    private fun forceBoxedInlineClassParametersForInliner(function: IrDeclaration, type: IrType, isBoundReceiver: Boolean): Boolean {
-        if (isBoundReceiver) return false
-        if (function !is IrSimpleFunction) return false
-        if (!function.isInlineCallableReference) return false
-        return type.isInlineClassType() && !type.isMappedToPrimitive
-    }
-
     fun mapSignatureSkipGeneric(function: IrFunction): JvmMethodSignature =
         mapSignature(function, true)
 
@@ -252,7 +243,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
 
         val receiverParameter = function.extensionReceiverParameter
         if (receiverParameter != null) {
-            writeParameter(sw, JvmMethodParameterKind.RECEIVER, receiverParameter.type, function, true)
+            writeParameter(sw, JvmMethodParameterKind.RECEIVER, receiverParameter.type, function)
         }
 
         for (parameter in function.valueParameters) {
@@ -265,7 +256,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
                 if (shouldBoxSingleValueParameterForSpecialCaseOfRemove(function))
                     parameter.type.makeNullable()
                 else parameter.type
-            writeParameter(sw, kind, type, function, parameter.symbol == function.extensionReceiverParameter?.symbol)
+            writeParameter(sw, kind, type, function)
         }
 
         sw.writeReturnType()
@@ -331,19 +322,16 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         sw: JvmSignatureWriter,
         kind: JvmMethodParameterKind,
         type: IrType,
-        function: IrFunction,
-        isReceiver: Boolean
+        function: IrFunction
     ) {
         sw.writeParameterType(kind)
-        writeParameterType(sw, type, function, isReceiver)
+        writeParameterType(sw, type, function)
         sw.writeParameterTypeEnd()
     }
 
-    private fun writeParameterType(sw: JvmSignatureWriter, type: IrType, declaration: IrDeclaration, isReceiver: Boolean) {
+    private fun writeParameterType(sw: JvmSignatureWriter, type: IrType, declaration: IrDeclaration) {
         if (sw.skipGenericSignature()) {
-            if (type.isInlineClassType() &&
-                (declaration.isFromJava() || forceBoxedInlineClassParametersForInliner(declaration, type, isReceiver))
-            ) {
+            if (type.isInlineClassType() && declaration.isFromJava()) {
                 typeMapper.mapType(type, TypeMappingMode.GENERIC_ARGUMENT, sw)
             } else {
                 typeMapper.mapType(type, TypeMappingMode.DEFAULT, sw)
