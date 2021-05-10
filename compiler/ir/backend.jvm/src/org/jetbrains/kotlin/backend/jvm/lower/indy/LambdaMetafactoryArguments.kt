@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -57,6 +58,11 @@ internal class LambdaMetafactoryArgumentsBuilder(
         // Can't use JDK LambdaMetafactory for function references by default (because of 'equals').
         // TODO special mode that would generate indy everywhere?
         if (!reference.origin.isLambda && !samClass.isFromJava())
+            return null
+
+        // Don't use JDK LambdaMetafactory for serializable lambdas
+        // TODO implement support for serializable lambdas with LambdaMetafactory (requires additional code for deserialization)
+        if (samClass.isInheritedFromSerializable())
             return null
 
         val samMethod = samClass.getSingleAbstractMethod()
@@ -121,6 +127,12 @@ internal class LambdaMetafactoryArgumentsBuilder(
         // If this results in conflicting requirements, we can't use INVOKEDYNAMIC with LambdaMetafactory for creating a closure.
         return getLambdaMetafactoryArgsOrNullInner(reference, samMethod, samType, implFun)
     }
+
+    private val javaIoSerializableFqn =
+        FqName("java.io").child(Name.identifier("Serializable"))
+
+    private fun IrClass.isInheritedFromSerializable(): Boolean =
+        getAllSuperclasses().any { it.fqNameWhenAvailable == javaIoSerializableFqn }
 
     private fun IrClass.requiresDelegationToDefaultImpls(): Boolean {
         for (irMemberFun in functions) {
