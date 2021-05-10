@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.references
 
 import com.intellij.psi.tree.TokenSet
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
@@ -27,6 +28,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.idea.fir.getCandidateSymbols
 import org.jetbrains.kotlin.idea.fir.isImplicitFunctionCall
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacadeForResolveOnAir
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
@@ -165,7 +168,7 @@ internal object FirReferenceResolveHelper {
         val fir = expression.getOrBuildFir(analysisSession.firResolveState)
         val session = analysisSession.firResolveState.rootModuleSession
         return when (fir) {
-            is FirResolvedTypeRef -> getSymbolsForResolvedTypeRef(fir, expression, session, symbolBuilder)
+            is FirResolvedTypeRef -> getSymbolsForResolvedTypeRef(fir, expression, session, symbolBuilder, analysisSession.firResolveState)
             is FirResolvedQualifier ->
                 getSymbolsForResolvedQualifier(fir, expression, session, symbolBuilder, analysisSession)
             is FirAnnotationCall -> getSymbolsForAnnotationCall(fir, session, symbolBuilder)
@@ -345,18 +348,40 @@ internal object FirReferenceResolveHelper {
         }
     }
 
+    private fun tryResolvePartiallyCorrectReference(
+        expression: KtSimpleNameExpression,
+        resolveState: FirModuleResolveState
+    ): FirResolvedTypeRef? {
+        val expressionUserType = expression.parent as? KtUserType ?: return null
+        val typeReference = PsiTreeUtil.getParentOfType(expressionUserType, KtTypeReference::class.java) ?: return null
+
+        return LowLevelFirApiFacadeForResolveOnAir.onAirResolveElement(
+            state = resolveState,
+            place = typeReference,
+            elementToResolve = KtPsiFactory(expression.project).createType(expressionUserType),
+        ) as? FirResolvedTypeRef
+    }
+
     private fun getSymbolsForResolvedTypeRef(
         fir: FirResolvedTypeRef,
         expression: KtSimpleNameExpression,
         session: FirSession,
-        symbolBuilder: KtSymbolByFirBuilder
+        symbolBuilder: KtSymbolByFirBuilder,
+        resolveState: FirModuleResolveState,
     ): Collection<KtSymbol> {
         if (expression.isPartOfUserTypeRefQualifier()) {
             val typeQualifier = findPossibleTypeQualifier(expression, fir)?.toTargetPsi(session, symbolBuilder)
             val typeOrPackageQualifier =
                 typeQualifier ?: getPackageSymbolFor(expression, symbolBuilder, forQualifiedType = true)
 
-            return listOfNotNull(typeOrPackageQualifier)
+            if (typeOrPackageQualifier != null) return listOf(typeOrPackageQualifier)
+
+            val resolvedPartType = tryResolvePartiallyCorrectReference(
+                expression,
+                resolveState
+            )?.toTargetSymbol(session, symbolBuilder)
+
+            return listOfNotNull(resolvedPartType)
         }
         return listOfNotNull(fir.toTargetSymbol(session, symbolBuilder))
     }
