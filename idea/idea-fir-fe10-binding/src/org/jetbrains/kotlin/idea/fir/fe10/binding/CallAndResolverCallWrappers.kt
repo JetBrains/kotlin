@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.realPsi
+import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
 import org.jetbrains.kotlin.idea.fir.fe10.*
@@ -77,8 +78,12 @@ internal class FirWrapperResolvedCall(val firSimpleWrapperCall: FirSimpleWrapper
     private val firCall get() = firSimpleWrapperCall.firCall
     private val context get() = firSimpleWrapperCall.context
 
-    private val ktFunctionSymbol = firCall.withFir {
-        context.ktAnalysisSessionFacade.buildSymbol((it.calleeReference as FirResolvedNamedReference).resolvedSymbol.fir) as KtFunctionLikeSymbol
+    private val ktFunctionSymbol: KtFunctionLikeSymbol = firCall.withFir {
+        when (val calleeReference = it.calleeReference) {
+            is FirResolvedNamedReference -> context.ktAnalysisSessionFacade.buildSymbol(calleeReference.resolvedSymbol.fir) as KtFunctionLikeSymbol
+            is FirErrorNamedReference -> context.ktAnalysisSessionFacade.buildSymbol(calleeReference.candidateSymbol!!.fir) as KtFunctionLikeSymbol
+            else -> context.noImplementation("calleeReferenceType: ${calleeReference::class.java}")
+        }
     }
 
     private val _typeArguments: Map<TypeParameterDescriptor, KotlinType> by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -210,7 +215,7 @@ class CallAndResolverCallWrappers(bindingContext: KtSymbolBasedBindingContext) {
 
     private fun getCall(element: KtElement): Call {
         val ktCall = element.parent.safeAs<KtCallExpression>() ?: context.implementationPostponed()
-        val firCall = when (val fir = element.getOrBuildFir(context.ktAnalysisSessionFacade.firResolveState)) {
+        val firCall = when (val fir = ktCall.getOrBuildFir(context.ktAnalysisSessionFacade.firResolveState)) {
             is FirFunctionCall -> fir
             is FirSafeCallExpression -> fir.regularQualifiedAccess as? FirFunctionCall
             else -> null
