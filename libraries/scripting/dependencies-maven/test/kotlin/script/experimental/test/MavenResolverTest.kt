@@ -82,7 +82,7 @@ class MavenResolverTest : ResolversTestBase() {
     }
 
     // Ignored - tests with custom repos often break the CI due to the caching issues
-    // TODO: find a way to enable iut back
+    // TODO: find a way to enable it back
     @Ignore
     fun ignore_testResolveFromAnnotationsWillResolveTheSameRegardlessOfAnnotationOrder() {
         val dependsOnConstructor = DependsOn::class.primaryConstructor!!
