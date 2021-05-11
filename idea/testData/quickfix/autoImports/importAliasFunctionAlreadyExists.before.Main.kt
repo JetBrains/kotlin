@@ -6,3 +6,4 @@ fun context() {
     val funA = 42
     <caret>importedFunA()
 }
+/* IGNORE_FIR */

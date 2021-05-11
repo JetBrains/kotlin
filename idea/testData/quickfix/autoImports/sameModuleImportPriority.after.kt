@@ -8,3 +8,4 @@ import some.Delegates
 fun foo() {
     val d = <caret>Delegates()
 }
+/* IGNORE_FIR */

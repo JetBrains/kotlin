@@ -1,5 +1,4 @@
 // "Import" "true"
-// FIR_IGNORE
 // ERROR: Unresolved reference: TestTrait
 
 fun test() {

@@ -8,3 +8,4 @@ interface H
 fun f(h: H?) {
     <caret>-h
 }
+/* IGNORE_FIR */

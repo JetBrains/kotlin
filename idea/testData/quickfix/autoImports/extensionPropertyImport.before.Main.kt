@@ -5,3 +5,5 @@ package test
 fun some() {
     "".<caret>someVal
 }
+
+/* IGNORE_FIR */

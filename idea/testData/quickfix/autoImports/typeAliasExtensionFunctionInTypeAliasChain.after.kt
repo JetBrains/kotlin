@@ -7,3 +7,4 @@ import dep.ext
 fun use(taa: TTA) {
     taa.ext<caret>()
 }
+/* IGNORE_FIR */

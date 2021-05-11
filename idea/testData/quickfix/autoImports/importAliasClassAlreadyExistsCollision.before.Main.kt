@@ -6,3 +6,4 @@ fun context() {
     class Class2
     val c: <caret>ImportedClass
 }
+/* IGNORE_FIR */

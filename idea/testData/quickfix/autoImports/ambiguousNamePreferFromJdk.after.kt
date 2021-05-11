@@ -7,3 +7,5 @@ import java.util.Date
 
 fun foo(d: Date<caret>) {
 }
+
+/* IGNORE_FIR */

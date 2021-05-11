@@ -12,3 +12,4 @@ fun test() {
         }
     }
 }
+/* IGNORE_FIR */

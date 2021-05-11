@@ -15,3 +15,5 @@ class X {
         foo(<caret>p, )
     }
 }
+
+/* IGNORE_FIR */

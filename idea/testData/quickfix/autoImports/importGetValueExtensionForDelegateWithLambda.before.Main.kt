@@ -7,3 +7,4 @@ package import
 import base.MyDelegate
 
 val myVal by <caret>MyDelegate { false }
+/* IGNORE_FIR */

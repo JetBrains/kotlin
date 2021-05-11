@@ -8,3 +8,4 @@ import base.MyDelegate
 import base.getValue
 
 val myVal by MyDelegate { false }
+/* IGNORE_FIR */

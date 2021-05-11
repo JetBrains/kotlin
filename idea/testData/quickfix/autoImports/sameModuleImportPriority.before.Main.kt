@@ -6,3 +6,4 @@ package testing
 fun foo() {
     val d = <caret>Delegates()
 }
+/* IGNORE_FIR */

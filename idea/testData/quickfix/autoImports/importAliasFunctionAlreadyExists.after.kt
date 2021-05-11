@@ -6,3 +6,4 @@ fun context() {
     val funA = 42
     funA()
 }
+/* IGNORE_FIR */

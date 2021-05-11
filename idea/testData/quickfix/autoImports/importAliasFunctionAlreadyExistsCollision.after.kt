@@ -6,3 +6,4 @@ fun context() {
     fun funA() {}
     editor.completion.apx.importedFunA()
 }
+/* IGNORE_FIR */

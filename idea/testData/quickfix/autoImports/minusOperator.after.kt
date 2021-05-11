@@ -16,3 +16,4 @@ fun f(h: H?) {
 fun String.minus(str: String) = ""
 
 fun String.minus(i: Integer) = ""
+/* IGNORE_FIR */

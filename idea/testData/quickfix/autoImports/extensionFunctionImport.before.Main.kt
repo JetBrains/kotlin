@@ -6,3 +6,5 @@ fun some() {
     val str = ""
     str.<caret>someFun()
 }
+
+/* IGNORE_FIR */

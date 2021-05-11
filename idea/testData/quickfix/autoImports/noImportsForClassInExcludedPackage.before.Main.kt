@@ -7,3 +7,4 @@
 // ERROR: Unresolved reference: SomeClass
 
 val x = <caret>SomeClass()
+/* IGNORE_FIR */

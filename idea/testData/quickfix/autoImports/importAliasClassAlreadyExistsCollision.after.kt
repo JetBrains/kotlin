@@ -6,3 +6,4 @@ fun context() {
     class Class2
     val c: editor.completion.apx.ImportedClass
 }
+/* IGNORE_FIR */
