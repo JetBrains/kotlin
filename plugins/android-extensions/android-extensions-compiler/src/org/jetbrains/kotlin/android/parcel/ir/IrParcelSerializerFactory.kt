@@ -119,7 +119,10 @@ class IrParcelSerializerFactory(symbols: AndroidSymbols) {
 
                 val arrayType =
                     if (classifier.defaultType.isPrimitiveArray()) classifier.defaultType else irBuiltIns.arrayClass.typeWith(elementType)
-                return IrArrayParcelSerializer(arrayType, elementType, get(elementType, scope, parcelizeType, strict()))
+                return wrapNullableSerializerIfNeeded(
+                    irType,
+                    IrArrayParcelSerializer(arrayType, elementType, get(elementType, scope, parcelizeType, strict()))
+                )
             }
 
             // This will only be hit if we have a custom serializer for booleans
