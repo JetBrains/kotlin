@@ -1,7 +1,7 @@
 package kotlin
 
 @Deprecated("")
-@DeprecatedSinceKotlin
+<!DEPRECATED_SINCE_KOTLIN_WITHOUT_ARGUMENTS!>@DeprecatedSinceKotlin<!>
 fun foo() {}
 
 fun test() {

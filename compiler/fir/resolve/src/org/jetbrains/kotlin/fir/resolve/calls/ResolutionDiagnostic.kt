@@ -102,5 +102,3 @@ class NullForNotNullType(
 class ManyLambdaExpressionArguments(
     val argument: FirExpression
 ) : ResolutionDiagnostic(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR)
-
-object DeprecatedSinceKotlinWithUnorderedVersions : ResolutionDiagnostic(INAPPLICABLE)

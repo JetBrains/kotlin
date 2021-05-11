@@ -5,23 +5,23 @@ package kotlin.sub
 @DeprecatedSinceKotlin(warningSince = "1.0", errorSince = "1.1", hiddenSince = "1.2")
 fun good() {}
 
-@DeprecatedSinceKotlin()
+<!DEPRECATED_SINCE_KOTLIN_WITHOUT_ARGUMENTS!>@DeprecatedSinceKotlin()<!>
 class Clazz
 
 @Deprecated("", level = DeprecationLevel.WARNING)
-@DeprecatedSinceKotlin()
+<!DEPRECATED_SINCE_KOTLIN_WITHOUT_ARGUMENTS!>@DeprecatedSinceKotlin()<!>
 fun fooWarning() {}
 
 @Deprecated("", ReplaceWith(""), DeprecationLevel.WARNING)
-@DeprecatedSinceKotlin()
+<!DEPRECATED_SINCE_KOTLIN_WITHOUT_ARGUMENTS!>@DeprecatedSinceKotlin()<!>
 fun fooDefaultWarning() {}
 
 @Deprecated("", level = DeprecationLevel.ERROR)
-@DeprecatedSinceKotlin()
+<!DEPRECATED_SINCE_KOTLIN_WITHOUT_ARGUMENTS!>@DeprecatedSinceKotlin()<!>
 fun fooError() {}
 
 @Deprecated("", level = DeprecationLevel.HIDDEN)
-@DeprecatedSinceKotlin()
+<!DEPRECATED_SINCE_KOTLIN_WITHOUT_ARGUMENTS!>@DeprecatedSinceKotlin()<!>
 fun fooHidden() {}
 
 @Deprecated("")
