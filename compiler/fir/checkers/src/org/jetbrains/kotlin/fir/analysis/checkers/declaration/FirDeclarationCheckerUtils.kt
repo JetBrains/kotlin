@@ -87,7 +87,8 @@ internal fun checkPropertyInitializer(
     modifierList: FirModifierList?,
     isInitialized: Boolean,
     reporter: DiagnosticReporter,
-    context: CheckerContext
+    context: CheckerContext,
+    reachable: Boolean = true
 ) {
     val inInterface = containingClass?.isInterface == true
     val hasAbstractModifier = KtTokens.ABSTRACT_KEYWORD in modifierList
@@ -147,7 +148,7 @@ internal fun checkPropertyInitializer(
             if (backingFieldRequired && !inInterface && !property.isLateInit && !isExpect && !isInitialized && !isExternal) {
                 if (property.receiverTypeRef != null && !property.hasAccessorImplementation) {
                     reporter.reportOn(propertySource, FirErrors.EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT, context)
-                } else { // TODO: can be suppressed not to report diagnostics about no body
+                } else if (reachable) { // TODO: can be suppressed not to report diagnostics about no body
                     if (containingClass == null || property.hasAccessorImplementation) {
                         reporter.reportOn(propertySource, FirErrors.MUST_BE_INITIALIZED, context)
                     } else {

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.cfa.PropertyInitializationInfo
 import org.jetbrains.kotlin.fir.analysis.cfa.PropertyInitializationInfoCollector
@@ -20,6 +21,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.BlockExitNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.NormalPath
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
@@ -40,13 +43,18 @@ object FirMemberPropertiesChecker : FirRegularClassChecker() {
             collectPropertyInitialization(declaration, memberPropertySymbols, initializedInConstructor, initializedInInitOrOtherProperty)
         }
 
-        for (propertySymbol in memberPropertySymbols) {
-            val property = propertySymbol.fir
-            val isInitialized =
-                property.initializer != null ||
-                        initializedInConstructor.getValue(propertySymbol).isDefinitelyVisited() ||
-                        initializedInInitOrOtherProperty.getValue(propertySymbol).isDefinitelyVisited()
-            checkProperty(declaration, property, isInitialized, context, reporter)
+        val deadEnds = declaration.collectDeadEndDeclarations()
+        var reachedDeadEnd = false
+        for (innerDeclaration in declaration.declarations) {
+            if (innerDeclaration is FirProperty) {
+                val symbol = innerDeclaration.symbol
+                val isInitialized =
+                    innerDeclaration.initializer != null ||
+                            initializedInConstructor.getValue(symbol).isDefinitelyVisited() ||
+                            initializedInInitOrOtherProperty.getValue(symbol).isDefinitelyVisited()
+                checkProperty(declaration, innerDeclaration, isInitialized, context, reporter, !reachedDeadEnd)
+            }
+            reachedDeadEnd = reachedDeadEnd || deadEnds.contains(innerDeclaration)
         }
     }
 
@@ -140,7 +148,8 @@ object FirMemberPropertiesChecker : FirRegularClassChecker() {
         property: FirProperty,
         isInitialized: Boolean,
         context: CheckerContext,
-        reporter: DiagnosticReporter
+        reporter: DiagnosticReporter,
+        reachable: Boolean
     ) {
         val source = property.source ?: return
         if (source.kind is FirFakeSourceElementKind) return
@@ -155,7 +164,8 @@ object FirMemberPropertiesChecker : FirRegularClassChecker() {
                 modifierList,
                 isInitialized,
                 reporter,
-                context
+                context,
+                reachable
             )
             checkExpectDeclarationVisibilityAndBody(property, source, reporter, context)
 
@@ -204,5 +214,28 @@ object FirMemberPropertiesChecker : FirRegularClassChecker() {
                 }
             }
         }
+    }
+
+    private fun FirRegularClass.collectDeadEndDeclarations(): Set<FirElement> {
+        val cfg = controlFlowGraphReference?.controlFlowGraph ?: return emptySet()
+        return cfg.exitNode.incomingEdges.keys
+            .map { it.fir }
+            .filter { it.isDeadEnd() }
+            .toSet()
+    }
+
+    /**
+     * The idea is to find presumably exit node is dead one
+     * 1. in the case of block expression, it is BlockExitNode
+     * 2. in other cases treat any dead node that leads to exitNode as evidence of deadness
+     * This is all a workaround because ideally exit node itself should be dead if it is unreachable
+     */
+    private fun FirElement.isDeadEnd(): Boolean {
+        val cfg = (this as? FirControlFlowGraphOwner)?.controlFlowGraphReference?.controlFlowGraph ?: return false
+        cfg.exitNode.incomingEdges.keys.find { it is BlockExitNode }?.let {
+            return it.isDead
+        }
+
+        return cfg.exitNode.incomingEdges.keys.any { it.isDead }
     }
 }
