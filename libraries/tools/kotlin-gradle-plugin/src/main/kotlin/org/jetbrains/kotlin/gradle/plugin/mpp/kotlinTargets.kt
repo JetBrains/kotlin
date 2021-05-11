@@ -225,10 +225,16 @@ abstract class AbstractKotlinTarget(
                     .disambiguateName(
                         DukatCompilationResolverPlugin.GENERATE_EXTERNALS_INTEGRATED_TASK_SIMPLE_NAME
                     )
-                producingCompilation.target.project.afterEvaluate {
-                    sourcesJarTask.dependsOn(
-                        producingCompilation.target.project.tasks.named(dukatGenerateExternalsTaskName)
-                    )
+
+                with(producingCompilation.target.project) {
+                    val dukatTask = tasks.named(dukatGenerateExternalsTaskName)
+                    sourcesJarTask.dependsOn(dukatTask)
+
+                    plugins.withId("maven-publish") {
+                        tasks
+                            .matching { it.name == "sourcesJar" }
+                            .configureEach { it.dependsOn(dukatTask) }
+                    }
                 }
             }
 

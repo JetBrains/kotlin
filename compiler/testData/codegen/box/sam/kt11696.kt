@@ -36,7 +36,7 @@ fun box(): String {
             }
     )
 
-    if (result != "Consumer<java.lang.Object>") return "fail: $result"
+    if (result != "interface Consumer") return "fail: $result"
 
     return "OK"
 }

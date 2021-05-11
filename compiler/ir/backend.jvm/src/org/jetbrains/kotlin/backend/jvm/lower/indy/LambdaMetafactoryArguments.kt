@@ -21,14 +21,16 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.overrides.buildFakeOverrideMember
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal class LambdaMetafactoryArguments(
@@ -55,7 +57,12 @@ internal class LambdaMetafactoryArgumentsBuilder(
 
         // Can't use JDK LambdaMetafactory for function references by default (because of 'equals').
         // TODO special mode that would generate indy everywhere?
-        if (reference.origin != IrStatementOrigin.LAMBDA && !samClass.isFromJava())
+        if (!reference.origin.isLambda && !samClass.isFromJava())
+            return null
+
+        // Don't use JDK LambdaMetafactory for serializable lambdas
+        // TODO implement support for serializable lambdas with LambdaMetafactory (requires additional code for deserialization)
+        if (samClass.isInheritedFromSerializable())
             return null
 
         val samMethod = samClass.getSingleAbstractMethod()
@@ -70,6 +77,10 @@ internal class LambdaMetafactoryArgumentsBuilder(
             return null
 
         val implFun = reference.symbol.owner
+
+        // Don't generate references to intrinsic functions as invokedynamic (no such method exists at run-time).
+        if (context.irIntrinsics.getIntrinsic(implFun.symbol) != null)
+            return null
 
         if (implFun is IrConstructor && implFun.visibility.isPrivate) {
             // Kotlin generates constructor accessors differently from Java.
@@ -90,7 +101,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         // JDK LambdaMetafactory doesn't copy annotations from implementation method to an instance method in a
         // corresponding synthetic class, which doesn't look like a binary compatible change.
         // TODO relaxed mode?
-        if (implFun.annotations.isNotEmpty())
+        if (reference.origin.isLambda && implFun.annotations.isNotEmpty())
             return null
 
         // Don't use JDK LambdaMetafactory for big arity lambdas.
@@ -105,11 +116,23 @@ internal class LambdaMetafactoryArgumentsBuilder(
         if (implFun.parents.any { it.isInlineFunction() || it.isCrossinlineLambda() })
             return null
 
+        // Don't try to use indy on SAM types with non-invariant projections because buildFakeOverrideMember doesn't support such supertypes
+        // (and rightly so: supertypes in Kotlin can't have projections in immediate type arguments). This can happen for example in case
+        // the SAM type is instantiated with an intersection type in arguments, which is approximated to an out-projection in psi2ir.
+        if (samType is IrSimpleType && samType.arguments.any { it is IrTypeProjection && it.variance != Variance.INVARIANT })
+            return null
+
         // Do the hard work of matching Kotlin functional interface hierarchy against LambdaMetafactory constraints.
         // Briefly: sometimes we have to force boxing on the primitive and inline class values, sometimes we have to keep them unboxed.
         // If this results in conflicting requirements, we can't use INVOKEDYNAMIC with LambdaMetafactory for creating a closure.
         return getLambdaMetafactoryArgsOrNullInner(reference, samMethod, samType, implFun)
     }
+
+    private val javaIoSerializableFqn =
+        FqName("java.io").child(Name.identifier("Serializable"))
+
+    private fun IrClass.isInheritedFromSerializable(): Boolean =
+        getAllSuperclasses().any { it.fqNameWhenAvailable == javaIoSerializableFqn }
 
     private fun IrClass.requiresDelegationToDefaultImpls(): Boolean {
         for (irMemberFun in functions) {
@@ -434,7 +457,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         if (adapteeType.isPrimitiveType()) {
             return if (
                 expectedType.isPrimitiveType() &&
-                !expectedType.hasAnnotation(context.ir.symbols.enhancedNullabilityAnnotationFqName)
+                !expectedType.hasAnnotation(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION)
             )
                 TypeAdaptationConstraint.KEEP_UNBOXED
             else

@@ -51,6 +51,9 @@ class FirJvmTypeMapper(val session: FirSession) : TypeMappingContext<JvmSignatur
         return typeConstructor.classId.asString().replace(".", "$").replace("/", ".")
     }
 
+    override fun getScriptInternalName(typeConstructor: TypeConstructorMarker): String =
+        TODO("Not yet implemented")
+
     override fun JvmSignatureWriter.writeGenericType(type: SimpleTypeMarker, asmType: Type, mode: TypeMappingMode) {
         if (type !is ConeClassLikeType) return
         if (skipGenericSignature() || hasNothingInNonContravariantPosition(type) || type.typeArguments.isEmpty()) {

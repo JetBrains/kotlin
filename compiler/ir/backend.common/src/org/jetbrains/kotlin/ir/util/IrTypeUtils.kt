@@ -141,8 +141,24 @@ private fun collectAllSupertypes(irType: IrSimpleType, result: MutableSet<IrSimp
 // for the class C, this function constructs:
 //      { B<List<Z>>, A<List<List<Z>>, Any }
 // where Z is a type parameter of class C.
-fun getAllSubstitutedSupertypes(irClass: IrClass): MutableSet<IrSimpleType> {
+fun getAllSubstitutedSupertypes(irClass: IrClass): Set<IrSimpleType> {
     val result = HashSet<IrSimpleType>()
     collectAllSupertypes(irClass.defaultType, result)
+    return result
+}
+
+private fun collectAllSuperclasses(irClass: IrClass, set: MutableSet<IrClass>) {
+    for (superType in irClass.superTypes) {
+        val classifier = superType.classifierOrNull as? IrClassSymbol ?: continue
+        val superClass = classifier.owner
+        if (set.add(superClass)) {
+            collectAllSuperclasses(superClass, set)
+        }
+    }
+}
+
+fun IrClass.getAllSuperclasses(): Set<IrClass> {
+    val result = HashSet<IrClass>()
+    collectAllSuperclasses(this, result)
     return result
 }

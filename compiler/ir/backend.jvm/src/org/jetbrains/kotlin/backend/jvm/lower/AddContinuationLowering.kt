@@ -226,6 +226,44 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
             copyMetadata = false
         )
         static.body = irFunction.moveBodyTo(static)
+        // Fixup dispatch parameter to outer class
+        if (irFunction.parentAsClass.isInner) {
+            val movedDispatchParameter = static.valueParameters[0]
+            assert(movedDispatchParameter.origin == IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER) {
+                "MOVED_DISPATCH_RECEIVER should be the first parameter in ${static.render()}"
+            }
+            static.body!!.transformChildrenVoid(object : IrElementTransformerVoid() {
+                override fun visitGetValue(expression: IrGetValue): IrExpression {
+                    val owner = expression.symbol.owner
+                    if (owner is IrValueParameter && isInstanceReceiverOfOuterClass(owner)) {
+                        // If inner class has inner classes, we need to traverse this$0 chain to get to captured dispatch receivers
+                        var cursor = irFunction.parentAsClass
+                        var value: IrExpression = IrGetValueImpl(expression.startOffset, expression.endOffset, movedDispatchParameter.symbol)
+                        while (cursor != owner.parent) {
+                            val outerThisField = context.innerClassesSupport.getOuterThisField(cursor)
+                            value = IrGetFieldImpl(
+                                expression.startOffset, expression.endOffset, outerThisField.symbol, outerThisField.type, value
+                            )
+                            cursor = cursor.parentAsClass
+                        }
+                        return value
+                    }
+                    return super.visitGetValue(expression)
+                }
+
+                private fun isInstanceReceiverOfOuterClass(param: IrValueParameter): Boolean {
+                    if (param.origin != IrDeclarationOrigin.INSTANCE_RECEIVER) return false
+                    if (param.parent !is IrClass) return false
+
+                    var cursor = irFunction.parentAsClass.parent
+                    while (cursor is IrClass) {
+                        if (cursor == param.parent) return true
+                        cursor = (cursor as IrClass).parent
+                    }
+                    return false
+                }
+            })
+        }
         static.copyAttributes(irFunction)
         // Rewrite the body of the original suspend method to forward to the new static method.
         irFunction.body = context.createIrBuilder(irFunction.symbol).irBlockBody {

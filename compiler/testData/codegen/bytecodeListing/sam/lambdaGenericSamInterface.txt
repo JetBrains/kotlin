@@ -1,5 +1,5 @@
 @kotlin.Metadata
-final class<<T:Ljava/lang/Object;>Ljava/lang/Object;LSam<TT;>;>  TKt$genericSam$1 {
+final class<<T:Ljava/lang/Object;>Ljava/lang/Object;LSam;>  TKt$genericSam$1 {
     // source: 't.kt'
     public final <()TT;> method get(): java.lang.Object
     <null> method <init>(p0: kotlin.jvm.functions.Function0): void
@@ -9,7 +9,7 @@ final class<<T:Ljava/lang/Object;>Ljava/lang/Object;LSam<TT;>;>  TKt$genericSam$
 }
 
 @kotlin.Metadata
-final class<<T:Ljava/lang/Object;>Ljava/lang/Object;LSam<TT;>;>  TKt$genericSamGet$1 {
+final class<<T:Ljava/lang/Object;>Ljava/lang/Object;LSam;>  TKt$genericSamGet$1 {
     // source: 't.kt'
     public final <()TT;> method get(): java.lang.Object
     <null> method <init>(p0: kotlin.jvm.functions.Function0): void

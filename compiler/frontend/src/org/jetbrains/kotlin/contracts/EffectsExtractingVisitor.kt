@@ -33,6 +33,8 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.inference.components.EmptySubstitutor
+import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutorByConstructorMap
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
@@ -43,6 +45,8 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeConstructor
+import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 /**
@@ -121,7 +125,7 @@ class EffectsExtractingVisitor(
         val arg = extractOrGetCached(expression.leftHandSide)
         return CallComputation(
             ESBooleanType,
-            IsFunctor(rightType, expression.isNegated).invokeWithArguments(listOf(arg), emptyMap(), reducer)
+            IsFunctor(rightType, expression.isNegated).invokeWithArguments(listOf(arg), ESTypeSubstitution.empty(builtIns), reducer)
         )
     }
 
@@ -146,10 +150,22 @@ class EffectsExtractingVisitor(
         val args = listOf(left, right)
 
         return when (expression.operationToken) {
-            KtTokens.EXCLEQ -> CallComputation(ESBooleanType, EqualsFunctor(true).invokeWithArguments(args, emptyMap(), reducer))
-            KtTokens.EQEQ -> CallComputation(ESBooleanType, EqualsFunctor(false).invokeWithArguments(args, emptyMap(), reducer))
-            KtTokens.ANDAND -> CallComputation(ESBooleanType, AndFunctor().invokeWithArguments(args, emptyMap(), reducer))
-            KtTokens.OROR -> CallComputation(ESBooleanType, OrFunctor().invokeWithArguments(args, emptyMap(), reducer))
+            KtTokens.EXCLEQ -> CallComputation(
+                ESBooleanType,
+                EqualsFunctor(true).invokeWithArguments(args, ESTypeSubstitution.empty(builtIns), reducer)
+            )
+            KtTokens.EQEQ -> CallComputation(
+                ESBooleanType,
+                EqualsFunctor(false).invokeWithArguments(args, ESTypeSubstitution.empty(builtIns), reducer)
+            )
+            KtTokens.ANDAND -> CallComputation(
+                ESBooleanType,
+                AndFunctor().invokeWithArguments(args, ESTypeSubstitution.empty(builtIns), reducer)
+            )
+            KtTokens.OROR -> CallComputation(
+                ESBooleanType,
+                OrFunctor().invokeWithArguments(args, ESTypeSubstitution.empty(builtIns), reducer)
+            )
             else -> UNKNOWN_COMPUTATION
         }
     }
@@ -214,11 +230,16 @@ class EffectsExtractingVisitor(
     }
 
     private fun ResolvedCall<*>.getTypeSubstitution(): ESTypeSubstitution {
-        val result = mutableMapOf<ESKotlinType, ESKotlinType>()
+        val substitution = mutableMapOf<TypeConstructor, UnwrappedType>()
         for ((typeParameter, typeArgument) in typeArguments) {
-            result[ESKotlinType(typeParameter.defaultType)] = ESKotlinType(typeArgument)
+            substitution[typeParameter.typeConstructor] = typeArgument.unwrap()
         }
-        return result
+        val substitutor = if (substitution.isNotEmpty()) {
+            NewTypeSubstitutorByConstructorMap(substitution)
+        } else {
+            EmptySubstitutor
+        }
+        return ESTypeSubstitution(substitutor, builtIns)
     }
 
     private fun ResolvedValueArgument.toComputation(): Computation? {

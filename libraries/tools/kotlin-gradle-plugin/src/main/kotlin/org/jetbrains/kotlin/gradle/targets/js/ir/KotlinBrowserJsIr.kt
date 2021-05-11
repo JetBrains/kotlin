@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackDevtool
-import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion.Companion.choose
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
@@ -112,10 +111,21 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     )()
                     task.description = "start ${mode.name.toLowerCase()} webpack dev server"
 
-                    task.devServer = KotlinWebpackConfig.DevServer(
-                        open = true,
-                        contentBase = listOf(compilation.output.resourcesDir.canonicalPath)
-                    )
+                    webpackMajorVersion.choose(
+                        {
+                            task.devServer = KotlinWebpackConfig.DevServer(
+                                open = true,
+                                static = mutableListOf(compilation.output.resourcesDir.canonicalPath)
+                            )
+                        },
+                        {
+                            task.devServer = KotlinWebpackConfig.DevServer(
+                                open = true,
+                                contentBase = mutableListOf(compilation.output.resourcesDir.canonicalPath)
+                            )
+                        }
+                    )()
+
 
                     task.outputs.upToDateWhen { false }
 

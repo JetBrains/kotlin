@@ -182,7 +182,11 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             }
         }
 
-        return FunctionReferenceBuilder(reference, samSuperType).build()
+        // Erase generic arguments in the SAM type, because they are not easy to approximate correctly otherwise,
+        // and LambdaMetafactory also uses erased type.
+        val erasedSamSuperType = samSuperType.erasedUpperBound.rawType(context)
+
+        return FunctionReferenceBuilder(reference, erasedSamSuperType).build()
     }
 
     private fun canGenerateIndySamConversionOnFunctionalExpression(samSuperType: IrType, expression: IrExpression): Boolean {

@@ -110,6 +110,21 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         runTest("compiler/testData/codegen/bytecodeListing/fileClassWithPrivateDeclarationsOnly_before.kt");
     }
 
+    @TestMetadata("genericClass.kt")
+    public void testGenericClass() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/genericClass.kt");
+    }
+
+    @TestMetadata("genericInnerClass.kt")
+    public void testGenericInnerClass() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/genericInnerClass.kt");
+    }
+
+    @TestMetadata("genericLocalClass.kt")
+    public void testGenericLocalClass() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/genericLocalClass.kt");
+    }
+
     @TestMetadata("immutableCollection.kt")
     public void testImmutableCollection() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/immutableCollection.kt");
@@ -355,6 +370,24 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         @TestMetadata("unsignedTypes.kt")
         public void testUnsignedTypes() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/annotations/unsignedTypes.kt");
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/bytecodeListing/callableReference")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CallableReference extends AbstractBytecodeListingTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+        }
+
+        @TestMetadata("adaptedReference.kt")
+        public void testAdaptedReference() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/callableReference/adaptedReference.kt");
+        }
+
+        public void testAllFilesPresentInCallableReference() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
         }
     }
 
@@ -752,6 +785,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         @TestMetadata("privateSuspendFun.kt")
         public void testPrivateSuspendFun() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/coroutines/privateSuspendFun.kt");
+        }
+
+        @TestMetadata("suspendConversion.kt")
+        public void testSuspendConversion() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/coroutines/suspendConversion.kt");
         }
 
         @TestMetadata("suspendImpl.kt")

@@ -1,5 +1,5 @@
 @kotlin.Metadata
-final class<<T:Ljava/lang/Object;>Ljava/lang/Object;LSam<Ljava/lang/String;>;>  TKt$specializedSam$1 {
+final class<<T:Ljava/lang/Object;>Ljava/lang/Object;LSam;>  TKt$specializedSam$1 {
     // source: 't.kt'
     <null> method <init>(p0: kotlin.jvm.functions.Function0): void
     public synthetic bridge <null> method get(): java.lang.Object

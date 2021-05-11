@@ -49,7 +49,6 @@ import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.library.impl.isKotlinLibrary
 import org.jetbrains.kotlin.utils.JsLibraryUtils
 import java.io.File
-import java.util.zip.ZipFile
 import javax.inject.Inject
 
 const val KOTLIN_BUILD_DIR_NAME = "kotlin"
@@ -331,24 +330,11 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
 
     internal open fun compilerRunner(): GradleCompilerRunner = GradleCompilerRunner(GradleCompileTaskProvider(this))
 
+    private val systemPropertiesService = CompilerSystemPropertiesService.registerIfAbsent(project.gradle)
+
     @TaskAction
     fun execute(inputs: IncrementalTaskInputs) {
-        CompilerSystemProperties.systemPropertyGetter = {
-            if (it in kotlinDaemonProperties) kotlinDaemonProperties[it] else System.getProperty(it)
-        }
-        CompilerSystemProperties.systemPropertySetter = setter@{ key, value ->
-            val oldValue = kotlinDaemonProperties[key]
-            if (oldValue == value) return@setter oldValue
-            kotlinDaemonProperties[key] = value
-            System.setProperty(key, value)
-            oldValue
-        }
-        CompilerSystemProperties.systemPropertyCleaner = {
-            val oldValue = kotlinDaemonProperties[it]
-            kotlinDaemonProperties.remove(it)
-            System.clearProperty(it)
-            oldValue
-        }
+        systemPropertiesService.get().startIntercept()
         CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.value = "true"
 
         // If task throws exception, but its outputs are changed during execution,
@@ -441,15 +427,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     protected fun hasFilesInTaskBuildDirectory(): Boolean {
         val taskBuildDir = taskBuildDirectory
         return taskBuildDir.walk().any { it != taskBuildDir && it.isFile }
-    }
-
-    @get:Internal
-    val kotlinDaemonProperties: MutableMap<String, String?> by lazy {
-        if (isGradleVersionAtLeast(6, 5)) {
-            CompilerSystemProperties.values()
-                .associate { it.property to project.providers.systemProperty(it.property).forUseAtConfigurationTime().orNull }
-                .toMutableMap()
-        } else mutableMapOf()
     }
 }
 
