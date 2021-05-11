@@ -392,6 +392,10 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = DeprecatedSinceKotlinWithoutDeprecated::class
     }
 
+    abstract class DeprecatedSinceKotlinWithDeprecatedLevel : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = DeprecatedSinceKotlinWithDeprecatedLevel::class
+    }
+
     abstract class ExposedTypealiasExpandedType : KtFirDiagnostic<KtNamedDeclaration>() {
         override val diagnosticClass get() = ExposedTypealiasExpandedType::class
         abstract val elementVisibility: EffectiveVisibility

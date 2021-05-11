@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.argumentMapping
 import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.name.FqName
 
@@ -25,6 +26,7 @@ object FirAnnotationChecker : FirAnnotatedDeclarationChecker() {
     ) {
         var deprecatedCall: FirAnnotationCall? = null
         var deprecatedSinceKotlinCall: FirAnnotationCall? = null
+
         for (annotation in declaration.annotations) {
             val fqName = annotation.fqName(context.session)
             if (fqName == deprecatedClassId) {
@@ -34,8 +36,25 @@ object FirAnnotationChecker : FirAnnotatedDeclarationChecker() {
             }
         }
 
-        if (deprecatedSinceKotlinCall != null && deprecatedCall == null) {
-            reporter.reportOn(deprecatedSinceKotlinCall.source, FirErrors.DEPRECATED_SINCE_KOTLIN_WITHOUT_DEPRECATED, context)
+        if (deprecatedSinceKotlinCall != null) {
+            if (deprecatedCall == null) {
+                reporter.reportOn(deprecatedSinceKotlinCall.source, FirErrors.DEPRECATED_SINCE_KOTLIN_WITHOUT_DEPRECATED, context)
+            } else {
+                val argumentMapping = deprecatedCall.argumentMapping ?: return
+                var report = false
+                for ((_, value) in argumentMapping) {
+                    report = value.name.identifier == "level"
+                    if (report)
+                        break
+                }
+                if (report) {
+                    reporter.reportOn(
+                        deprecatedSinceKotlinCall.source,
+                        FirErrors.DEPRECATED_SINCE_KOTLIN_WITH_DEPRECATED_LEVEL,
+                        context
+                    )
+                }
+            }
         }
     }
 }

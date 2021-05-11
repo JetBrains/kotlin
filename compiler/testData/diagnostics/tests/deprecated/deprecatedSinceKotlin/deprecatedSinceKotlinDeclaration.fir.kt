@@ -9,19 +9,19 @@ fun good() {}
 class Clazz
 
 @Deprecated("", level = DeprecationLevel.WARNING)
-<!DEPRECATED_SINCE_KOTLIN_WITHOUT_ARGUMENTS!>@DeprecatedSinceKotlin()<!>
+<!DEPRECATED_SINCE_KOTLIN_WITHOUT_ARGUMENTS, DEPRECATED_SINCE_KOTLIN_WITH_DEPRECATED_LEVEL!>@DeprecatedSinceKotlin()<!>
 fun fooWarning() {}
 
 @Deprecated("", ReplaceWith(""), DeprecationLevel.WARNING)
-<!DEPRECATED_SINCE_KOTLIN_WITHOUT_ARGUMENTS!>@DeprecatedSinceKotlin()<!>
+<!DEPRECATED_SINCE_KOTLIN_WITHOUT_ARGUMENTS, DEPRECATED_SINCE_KOTLIN_WITH_DEPRECATED_LEVEL!>@DeprecatedSinceKotlin()<!>
 fun fooDefaultWarning() {}
 
 @Deprecated("", level = DeprecationLevel.ERROR)
-<!DEPRECATED_SINCE_KOTLIN_WITHOUT_ARGUMENTS!>@DeprecatedSinceKotlin()<!>
+<!DEPRECATED_SINCE_KOTLIN_WITHOUT_ARGUMENTS, DEPRECATED_SINCE_KOTLIN_WITH_DEPRECATED_LEVEL!>@DeprecatedSinceKotlin()<!>
 fun fooError() {}
 
 @Deprecated("", level = DeprecationLevel.HIDDEN)
-<!DEPRECATED_SINCE_KOTLIN_WITHOUT_ARGUMENTS!>@DeprecatedSinceKotlin()<!>
+<!DEPRECATED_SINCE_KOTLIN_WITHOUT_ARGUMENTS, DEPRECATED_SINCE_KOTLIN_WITH_DEPRECATED_LEVEL!>@DeprecatedSinceKotlin()<!>
 fun fooHidden() {}
 
 @Deprecated("")

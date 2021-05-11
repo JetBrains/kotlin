@@ -88,6 +88,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATION_SUPER_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_MODIFIER_PAIR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_SINCE_KOTLIN_WITHOUT_ARGUMENTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_SINCE_KOTLIN_WITHOUT_DEPRECATED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_SINCE_KOTLIN_WITH_DEPRECATED_LEVEL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_SINCE_KOTLIN_WITH_UNORDERED_VERSIONS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_TYPE_PARAMETER_SYNTAX
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DESERIALIZATION_ERROR
@@ -442,6 +443,10 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(
                 DEPRECATED_SINCE_KOTLIN_WITHOUT_DEPRECATED,
                 " DeprecatedSinceKotlin annotation can be used only together with Deprecated annotation"
+            )
+            map.put(
+                DEPRECATED_SINCE_KOTLIN_WITH_DEPRECATED_LEVEL,
+                "DeprecatedSinceKotlin annotation can be used only with unspecified deprecation level of Deprecated annotation"
             )
 
             // Exposed visibility group // #
