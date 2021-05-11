@@ -5,13 +5,12 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.FirVisibilityChecker
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.resolve.inference.*
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -22,6 +21,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visibilityChecker
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -144,6 +144,7 @@ internal object CheckArguments : CheckerStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         val argumentMapping =
             candidate.argumentMapping ?: error("Argument should be already mapped while checking arguments!")
+
         for (argument in callInfo.arguments) {
             val parameter = argumentMapping[argument]
             candidate.resolveArgument(
@@ -155,8 +156,68 @@ internal object CheckArguments : CheckerStage() {
                 context = context
             )
         }
+
+        checkDeprecatedSinceKotlinArgs(candidate, argumentMapping, sink)
+
         if (candidate.system.hasContradiction && callInfo.arguments.isNotEmpty()) {
             sink.yieldDiagnostic(InapplicableCandidate)
+        }
+    }
+
+    private val deprecatedSinceKotlin = CallableId(
+        FqName("kotlin"),
+        FqName("DeprecatedSinceKotlin"),
+        Name.identifier("DeprecatedSinceKotlin")
+    )
+
+    private suspend fun checkDeprecatedSinceKotlinArgs(
+        candidate: Candidate,
+        argumentMapping: LinkedHashMap<FirExpression, FirValueParameter>,
+        sink: CheckerSink
+    ) {
+        val symbol = candidate.symbol
+        if (symbol is FirFunctionSymbol<*>) {
+            if (symbol.callableId == deprecatedSinceKotlin) {
+                var warningSince: ApiVersion? = null
+                var errorSince: ApiVersion? = null
+                var hiddenSince: ApiVersion? = null
+                for (argument in argumentMapping) {
+                    val identifier = argument.value.name.identifier
+                    if (identifier == "warningSince" || identifier == "errorSince" || identifier == "hiddenSince") {
+                        val argKey = argument.key
+                        val constExpression = (argKey as? FirConstExpression<*>)
+                            ?: ((argKey as? FirNamedArgumentExpression)?.expression as? FirConstExpression<*>)
+                        val stringValue = constExpression?.value as? String
+                        if (stringValue != null) {
+                            val version = ApiVersion.parse(stringValue)
+                            when (identifier) {
+                                "warningSince" -> warningSince = version
+                                "errorSince" -> errorSince = version
+                                "hiddenSince" -> hiddenSince = version
+                            }
+                        }
+                    }
+                }
+
+                var isReportDeprecatedSinceKotlinWithUnorderedVersions = false
+                if (warningSince != null) {
+                    if (errorSince != null) {
+                        isReportDeprecatedSinceKotlinWithUnorderedVersions = warningSince > errorSince
+                    }
+
+                    if (hiddenSince != null && !isReportDeprecatedSinceKotlinWithUnorderedVersions) {
+                        isReportDeprecatedSinceKotlinWithUnorderedVersions = warningSince > hiddenSince
+                    }
+                }
+
+                if (errorSince != null && hiddenSince != null && !isReportDeprecatedSinceKotlinWithUnorderedVersions) {
+                    isReportDeprecatedSinceKotlinWithUnorderedVersions = errorSince > hiddenSince
+                }
+
+                if (isReportDeprecatedSinceKotlinWithUnorderedVersions) {
+                    sink.yieldDiagnostic(DeprecatedSinceKotlinWithUnorderedVersions)
+                }
+            }
         }
     }
 }

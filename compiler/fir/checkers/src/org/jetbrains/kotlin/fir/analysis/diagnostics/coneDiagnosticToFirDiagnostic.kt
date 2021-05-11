@@ -143,6 +143,7 @@ private fun mapInapplicableCandidateError(
             )
             is UnsafeCall -> mapUnsafeCallError(diagnostic.candidate, rootCause, source, qualifiedAccessSource)
             is ManyLambdaExpressionArguments -> FirErrors.MANY_LAMBDA_EXPRESSION_ARGUMENTS.on(rootCause.argument.source ?: source)
+            is DeprecatedSinceKotlinWithUnorderedVersions -> FirErrors.DEPRECATED_SINCE_KOTLIN_WITH_UNORDERED_VERSIONS.on(source)
             else -> null
         }
     }.ifEmpty { listOf(FirErrors.INAPPLICABLE_CANDIDATE.on(source, diagnostic.candidate.symbol)) }

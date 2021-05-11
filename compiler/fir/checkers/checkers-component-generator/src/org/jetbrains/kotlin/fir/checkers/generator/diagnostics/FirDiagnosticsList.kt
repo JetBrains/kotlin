@@ -157,6 +157,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val NEWER_VERSION_IN_SINCE_KOTLIN by warning<KtExpression> {
             parameter<String>("specifiedVersion")
         }
+        val DEPRECATED_SINCE_KOTLIN_WITH_UNORDERED_VERSIONS by error<PsiElement>()
     }
 
     val EXPOSED_VISIBILITY by object : DiagnosticGroup("Exposed visibility") {

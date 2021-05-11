@@ -25,19 +25,19 @@ fun fooError() {}
 fun fooHidden() {}
 
 @Deprecated("")
-@DeprecatedSinceKotlin(warningSince = "1.1", errorSince = "1.0")
+<!DEPRECATED_SINCE_KOTLIN_WITH_UNORDERED_VERSIONS!>@DeprecatedSinceKotlin(warningSince = "1.1", errorSince = "1.0")<!>
 fun fooWarningIsGreater1() {}
 
 @Deprecated("")
-@DeprecatedSinceKotlin(warningSince = "1.1", hiddenSince = "1.0")
+<!DEPRECATED_SINCE_KOTLIN_WITH_UNORDERED_VERSIONS!>@DeprecatedSinceKotlin(warningSince = "1.1", hiddenSince = "1.0")<!>
 fun fooWarningIsGreater2() {}
 
 @Deprecated("")
-@DeprecatedSinceKotlin(warningSince = "1.1", errorSince = "1.3", hiddenSince = "1.2")
+<!DEPRECATED_SINCE_KOTLIN_WITH_UNORDERED_VERSIONS!>@DeprecatedSinceKotlin(warningSince = "1.1", errorSince = "1.3", hiddenSince = "1.2")<!>
 fun fooErrorIsGreater() {}
 
 @Deprecated("")
-@DeprecatedSinceKotlin("1.2", "1.1", "1.1")
+<!DEPRECATED_SINCE_KOTLIN_WITH_UNORDERED_VERSIONS!>@DeprecatedSinceKotlin("1.2", "1.1", "1.1")<!>
 fun fooDefault() {}
 
 @Deprecated("")

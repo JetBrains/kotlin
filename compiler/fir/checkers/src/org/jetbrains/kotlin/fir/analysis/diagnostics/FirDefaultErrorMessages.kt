@@ -86,6 +86,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATE_SPECIAL_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATION_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_MODIFIER_PAIR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_SINCE_KOTLIN_WITH_UNORDERED_VERSIONS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_TYPE_PARAMETER_SYNTAX
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DESERIALIZATION_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DYNAMIC_UPPER_BOUND
@@ -423,8 +424,15 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(VAR_ANNOTATION_PARAMETER, "An annotation parameter cannot be 'var'")
             map.put(NOT_AN_ANNOTATION_CLASS, "Illegal annotation class: {0}", NULLABLE_STRING)
             map.put(SUPERTYPES_FOR_ANNOTATION_CLASS, "Annotation class cannot have supertypes")
-            map.put(ILLEGAL_KOTLIN_VERSION_STRING_VALUE, "Invalid value in version annotation (should be 'major.minor' or 'major.minor.patch')")
+            map.put(
+                ILLEGAL_KOTLIN_VERSION_STRING_VALUE,
+                "Invalid value in version annotation (should be 'major.minor' or 'major.minor.patch')"
+            )
             map.put(NEWER_VERSION_IN_SINCE_KOTLIN, "The version is greater than the specified API version {0}", NULLABLE_STRING)
+            map.put(
+                DEPRECATED_SINCE_KOTLIN_WITH_UNORDERED_VERSIONS,
+                "Values of DeprecatedSinceKotlin annotation should be ordered so 'warningSince' <= 'errorSince' <= 'hiddenSince' if specified"
+            )
 
             // Exposed visibility group // #
             map.put(
