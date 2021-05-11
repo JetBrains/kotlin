@@ -220,6 +220,8 @@ private class ObjCExportNamingHelper(
     private fun <T> T.canBeSwiftInner(provider: ClassInfoProvider<T>): Boolean = when {
         objcGenerics && provider.hasGenerics(this) -> {
             // Swift compiler doesn't seem to handle this case properly.
+            // See https://bugs.swift.org/browse/SR-14607.
+            // This behaviour of Kotlin is reported as https://youtrack.jetbrains.com/issue/KT-46518.
             false
         }
 
