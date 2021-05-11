@@ -23,13 +23,10 @@ import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.isCheckParameterIsNotNull
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -233,35 +230,31 @@ class MethodInliner(
                         return
                     }
 
-                    val valueParameters = info.invokeMethodParameters
-                    // If suspend lambda has no continuation at the end, add it here. (In the IR backend, suspend lambdas
-                    // always come pre-lowered with the continuation parameter.)
-                    var coroutineDesc = desc
-                    if (!inliningContext.root.state.isIrBackend && info.isSuspend) {
-                        val argumentTypes = Type.getArgumentTypes(desc)
-                        if (argumentTypes.size != valueParameters.size) {
+                    val nullableAnyType = inliningContext.root.sourceCompilerForInline.compilationContextDescriptor.builtIns.nullableAnyType
+                    val expectedParameters = info.invokeMethod.argumentTypes
+                    val expectedKotlinParameters = info.invokeMethodParameters
+                    val argumentCount = Type.getArgumentTypes(desc).size.let {
+                        if (!inliningContext.root.state.isIrBackend && info.isSuspend && it < expectedParameters.size) {
+                            // Inlining suspend lambda into a function that takes a non-suspend lambda.
+                            // In the IR backend, this cannot happen as inline lambdas are not lowered.
                             addFakeContinuationMarker(this)
-                            coroutineDesc = Type.getMethodDescriptor(Type.getReturnType(desc), *argumentTypes, AsmTypes.OBJECT_TYPE)
-                        }
+                            it + 1
+                        } else it
+                    }
+                    assert(argumentCount == expectedParameters.size && argumentCount == expectedKotlinParameters.size) {
+                        "inconsistent lambda arguments: $argumentCount on stack, ${expectedParameters.size} expected, " +
+                                "${expectedKotlinParameters.size} Kotlin types"
                     }
 
-                    // TODO: this is a weird way to get N instances of `Any?`
-                    val moduleBuiltIns = inliningContext.root.sourceCompilerForInline.compilationContextDescriptor.builtIns
-                    val erasedFunctionType = moduleBuiltIns.getFunction(valueParameters.size).defaultType
-                    val erasedInvokeFunction = erasedFunctionType.memberScope
-                        .getContributedFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.FROM_BACKEND).first()
-                    val invokeParameters = erasedInvokeFunction.valueParameters.map { it.returnType }
-
-                    val valueParamShift = max(nextLocalIndex, markerShift)//NB: don't inline cause it changes
-                    val parameterTypesFromDesc = info.invokeMethod.argumentTypes
-                    putStackValuesIntoLocalsForLambdaOnInvoke(
-                        listOf(*parameterTypesFromDesc), valueParameters, invokeParameters, valueParamShift, this, coroutineDesc
-                    )
-
-                    if (parameterTypesFromDesc.isEmpty()) {
-                        // There won't be no parameters processing and line call can be left without actual instructions.
-                        // Note: if function is called on the line with other instructions like 1 + foo(), 'nop' will still be generated.
-                        visitInsn(Opcodes.NOP)
+                    var valueParamShift = max(nextLocalIndex, markerShift) + expectedParameters.sumOf { it.size }
+                    for (index in argumentCount - 1 downTo 0) {
+                        val type = expectedParameters[index]
+                        StackValue.coerce(AsmTypes.OBJECT_TYPE, nullableAnyType, type, expectedKotlinParameters[index], this)
+                        valueParamShift -= type.size
+                        store(valueParamShift, type)
+                    }
+                    if (expectedParameters.isEmpty()) {
+                        nop() // add something for a line number to bind onto
                     }
 
                     inlineOnlySmapSkipper?.onInlineLambdaStart(remappingMethodAdapter, info.node.node, sourceMapper.parent)
@@ -291,9 +284,7 @@ class MethodInliner(
                     result.reifiedTypeParametersUsages.mergeAll(lambdaResult.reifiedTypeParametersUsages)
                     result.reifiedTypeParametersUsages.mergeAll(info.reifiedTypeParametersUsages)
 
-                    StackValue
-                        .onStack(info.invokeMethod.returnType, info.invokeMethodReturnType)
-                        .put(OBJECT_TYPE, erasedInvokeFunction.returnType, this)
+                    StackValue.coerce(info.invokeMethod.returnType, info.invokeMethodReturnType, OBJECT_TYPE, nullableAnyType, this)
                     setLambdaInlining(false)
                     addInlineMarker(this, false)
                     inlineOnlySmapSkipper?.onInlineLambdaEnd(remappingMethodAdapter)
@@ -1057,46 +1048,6 @@ class MethodInliner(
                         insn ->
                     add(insn)
                 }
-            }
-        }
-
-        private fun putStackValuesIntoLocalsForLambdaOnInvoke(
-            directOrder: List<Type>,
-            directOrderOfArguments: List<KotlinType?>,
-            directOrderOfInvokeParameters: List<KotlinType?>,
-            shift: Int,
-            iv: InstructionAdapter,
-            descriptor: String
-        ) {
-            val actualParams = Type.getArgumentTypes(descriptor)
-            assert(actualParams.size == directOrder.size) {
-                "Number of expected and actual parameters should be equal, but ${actualParams.size} != ${directOrder.size}!"
-            }
-
-            var currentShift = shift + directOrder.sumOf { it.size }
-
-            val safeToUseArgumentKotlinType =
-                directOrder.size == directOrderOfArguments.size && directOrderOfArguments.size == directOrderOfInvokeParameters.size
-
-            for (index in directOrder.lastIndex downTo 0) {
-                val type = directOrder[index]
-                currentShift -= type.size
-                val typeOnStack = actualParams[index]
-
-                val argumentKotlinType: KotlinType?
-                val invokeParameterKotlinType: KotlinType?
-                if (safeToUseArgumentKotlinType) {
-                    argumentKotlinType = directOrderOfArguments[index]
-                    invokeParameterKotlinType = directOrderOfInvokeParameters[index]
-                } else {
-                    argumentKotlinType = null
-                    invokeParameterKotlinType = null
-                }
-
-                if (typeOnStack != type || invokeParameterKotlinType != argumentKotlinType) {
-                    StackValue.onStack(typeOnStack, invokeParameterKotlinType).put(type, argumentKotlinType, iv)
-                }
-                iv.store(currentShift, type)
             }
         }
 
