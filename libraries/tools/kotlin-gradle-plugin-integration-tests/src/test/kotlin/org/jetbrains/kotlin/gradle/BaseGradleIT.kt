@@ -242,7 +242,7 @@ abstract class BaseGradleIT {
         val usePreciseJavaTracking: Boolean? = null,
         val withBuildCache: Boolean = false,
         val kaptOptions: KaptOptions? = null,
-        val parallelTasksInProject: Boolean? = null,
+        val parallelTasksInProject: Boolean = false,
         val jsCompilerType: KotlinJsCompilerType? = null,
         val configurationCache: Boolean = false,
         val configurationCacheProblems: ConfigurationCacheProblems = ConfigurationCacheProblems.FAIL,
@@ -928,9 +928,7 @@ Finished executing task ':$taskName'|
                 }
             }
 
-            options.parallelTasksInProject?.let {
-                add("-Pkotlin.parallel.tasks.in.project=$it")
-            }
+            if (options.parallelTasksInProject) add("--parallel") else add("--no-parallel")
 
             options.jsCompilerType?.let {
                 add("-Pkotlin.js.compiler=$it")

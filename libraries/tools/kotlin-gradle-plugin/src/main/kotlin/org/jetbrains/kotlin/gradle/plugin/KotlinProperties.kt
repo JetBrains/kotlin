@@ -140,13 +140,28 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val ignoreIncorrectNativeDependencies: Boolean?
         get() = booleanProperty(KOTLIN_NATIVE_IGNORE_INCORRECT_DEPENDENCIES)
 
+    private val parallelTasksInProjectPropName = "kotlin.parallel.tasks.in.project"
+
     /**
      * Enables parallel tasks execution within a project with Workers API.
      * Does not enable using actual worker proccesses
      * (Kotlin Daemon can be shared which uses less memory)
      */
     val parallelTasksInProject: Boolean?
-        get() = booleanProperty("kotlin.parallel.tasks.in.project")
+        get() {
+            return if (property(parallelTasksInProjectPropName) != null) {
+                SingleWarningPerBuild.show(
+                    project,
+                    """
+                    Project property '$parallelTasksInProjectPropName' is deprecated.
+                    By default it depends on Gradle parallel project execution option value.
+                    """.trimIndent()
+                )
+                booleanProperty(parallelTasksInProjectPropName)
+            } else {
+                return project.gradle.startParameter.isParallelProjectExecutionEnabled
+            }
+        }
 
     /**
      * Enables individual test task reporting for aggregated test tasks.
