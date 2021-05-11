@@ -261,7 +261,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
     // All offsets are calculated relative to this named parent
     private fun getMembers(cursor: CValue<CXCursor>, structType: CValue<CXType>): List<StructMember> =
             // TODO: We don't exactly preserve C++ layout here, but we don't allow general case C++ classes by value at the moment.
-            getFields(cursor.type).map { fieldCursor ->
+            getFields(cursor.type).filter { library.language != Language.CPP || it.isCxxPublic }.map { fieldCursor ->
                 // clang_Cursor_isAnonymous is always false for a fieldCursor. Use declaration cursor
                 val declCursor = clang_getTypeDeclaration(fieldCursor.type)
                 val isAnonymous = clang_Cursor_isAnonymous(declCursor) == 1
