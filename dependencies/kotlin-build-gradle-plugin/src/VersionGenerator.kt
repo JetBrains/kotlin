@@ -89,7 +89,7 @@ open class VersionGenerator: DefaultTask() {
     @TaskAction
     open fun generateVersion() {
         val matcher = versionPattern.matcher(konanVersion)
-        require(matcher.matches()) { "Cannot parse Kotlin/Native version: \$konanVersion" }
+        require(matcher.matches()) { "Cannot parse Kotlin/Native version: $konanVersion" }
         val major = matcher.group(1).toInt()
         val minor = matcher.group(2).toInt()
         val maintenanceStr = matcher.group(3)
