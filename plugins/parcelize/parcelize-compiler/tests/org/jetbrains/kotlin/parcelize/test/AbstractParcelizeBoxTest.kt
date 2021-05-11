@@ -163,9 +163,14 @@ abstract class AbstractParcelizeBoxTest : CodegenTestCase() {
                 JUNIT_GENERATED_TEST_CLASS_FQNAME
             ).start()
 
+            val out = process.inputStream.bufferedReader().lineSequence().joinToString("\n")
+            val err = process.errorStream.bufferedReader().lineSequence().joinToString("\n")
+
             process.waitFor(3, TimeUnit.MINUTES)
             if (process.exitValue() != 0) {
-                println(process.inputStream.bufferedReader().lineSequence().joinToString("\n"))
+                println(out)
+                println(err)
+
                 throw AssertionError("Process exited with exit code ${process.exitValue()} \n" + classFileFactory.createText())
             }
         } finally {
