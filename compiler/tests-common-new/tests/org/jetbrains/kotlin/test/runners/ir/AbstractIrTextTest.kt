@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.*
-import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_KT_IR
@@ -70,6 +69,7 @@ abstract class AbstractIrTextTestBase(
 
         useBackendHandlers(
             ::IrTextDumpHandler,
+            ::IrTreeVerifierHandler,
             ::IrPrettyKotlinDumpHandler
         )
     }

@@ -53,7 +53,7 @@ fun <R : ResultingArtifact.FrontendOutput<R>> TestConfigurationBuilder.commonCon
 }
 
 fun TestConfigurationBuilder.dumpHandlersForCodegenTest() {
-    useBackendHandlers(::IrTextDumpHandler)
+    useBackendHandlers(::IrTreeVerifierHandler, ::IrTextDumpHandler)
     useArtifactsHandlers(::BytecodeListingHandler)
 }
 
