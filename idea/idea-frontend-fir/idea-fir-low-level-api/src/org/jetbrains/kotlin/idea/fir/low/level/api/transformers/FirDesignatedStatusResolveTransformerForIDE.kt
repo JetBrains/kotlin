@@ -5,72 +5,76 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.transformers
 
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.transformers.FirDesignatedStatusResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.StatusComputationSession
-import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationUntypedDesignationWithFile
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.targetContainingDeclaration
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.ensurePathPhase
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.ensureTargetPhase
+import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.isResolvedForAllDeclarations
+import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.updateResolvedPhaseForDeclarationAndChildren
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.ensureDesignation
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.ensurePhase
 
+/**
+ * Transform designation into STATUS phase. Affects only for designation, target declaration, it's children and dependents
+ */
 internal class FirDesignatedStatusResolveTransformerForIDE(
     private val designation: FirDeclarationUntypedDesignationWithFile,
     private val session: FirSession,
     private val scopeSession: ScopeSession,
+    private val declarationPhaseDowngraded: Boolean,
 ) : FirLazyTransformerForIDE {
+    private inner class FirDesignatedStatusResolveTransformerForIDE :
+        FirStatusResolveTransformer(session, scopeSession, StatusComputationSession.Regular()) {
 
-    private fun resolveTopLevelDeclaration(declaration: FirDeclaration) {
-        val transformer = FirStatusResolveTransformer(
-            session = session,
-            scopeSession = scopeSession,
-            statusComputationSession = StatusComputationSession.Regular()
-        )
-        declaration.transformSingle(transformer, null)
-    }
+        val designationTransformer = IDEDeclarationTransformer(designation)
 
-    private fun resolveClassMember(containingClass: FirClass<*>, targetDeclaration: FirDeclaration) {
+        override fun needReplacePhase(firDeclaration: FirDeclaration): Boolean =
+            firDeclaration !is FirFile && super.needReplacePhase(firDeclaration)
 
-        val transformer = object : FirDesignatedStatusResolveTransformer(
-            session = session,
-            scopeSession = scopeSession,
-            designation = designation.toSequence(includeTarget = true).iterator(),
-            targetClass = if (targetDeclaration is FirRegularClass) targetDeclaration else containingClass,
-            statusComputationSession = StatusComputationSession.Regular(),
-            designationMapForLocalClasses = emptyMap(),
-            scopeForLocalClass = null
-        ) {
-
-            override fun <F : FirClass<F>> transformClass(klass: FirClass<F>, data: FirResolvedDeclarationStatus?): FirStatement {
-                if (klass != containingClass) return super.transformClass(klass, data)
-                val result = storeClass(klass) {
-                    targetDeclaration.transformSingle(this, data)
-                }
-                return result as FirStatement
+        override fun transformDeclarationContent(declaration: FirDeclaration, data: FirResolvedDeclarationStatus?): FirDeclaration =
+            designationTransformer.transformDeclarationContent(this, declaration, data) {
+                super.transformDeclarationContent(declaration, data)
             }
-        }
-
-        val firstItemInDesignation = designation.path.firstOrNull() ?: designation.declaration
-        firstItemInDesignation.transformSingle(transformer, null)
     }
 
-    override fun transformDeclaration() {
-        if (designation.declaration.resolvePhase >= FirResolvePhase.STATUS) return
-        designation.ensurePathPhase(FirResolvePhase.TYPES)
-        designation.ensureTargetPhase(FirResolvePhase.TYPES)
+    override fun transformDeclaration(phaseRunner: FirPhaseRunner) {
+        if (designation.isResolvedForAllDeclarations(FirResolvePhase.STATUS, declarationPhaseDowngraded)) return
+        designation.declaration.updateResolvedPhaseForDeclarationAndChildren(FirResolvePhase.STATUS)
+        designation.ensureDesignation(FirResolvePhase.TYPES)
 
-        val containingClass = designation.targetContainingDeclaration()
-        if (containingClass == null) {
-            resolveTopLevelDeclaration(designation.declaration)
-        } else {
-            check(containingClass is FirClass<*>) { "Invalid designation - the parent is not a class" }
-            resolveClassMember(containingClass, designation.declaration)
+        val transformer = FirDesignatedStatusResolveTransformerForIDE()
+        phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.STATUS) {
+            designation.firFile.transform<FirElement, FirResolvedDeclarationStatus?>(transformer, null)
         }
 
-        designation.ensureTargetPhase(FirResolvePhase.STATUS)
+        transformer.designationTransformer.ensureDesignationPassed()
+        designation.path.forEach(::ensureResolved)
+        ensureResolved(designation.declaration)
+        ensureResolvedDeep(designation.declaration)
+    }
+
+    override fun ensureResolved(declaration: FirDeclaration) {
+        if (declaration !is FirAnonymousInitializer) {
+            declaration.ensurePhase(FirResolvePhase.STATUS)
+        }
+        when (declaration) {
+            is FirSimpleFunction -> check(declaration.status is FirResolvedDeclarationStatus)
+            is FirConstructor -> check(declaration.status is FirResolvedDeclarationStatus)
+            is FirTypeAlias -> check(declaration.status is FirResolvedDeclarationStatus)
+            is FirEnumEntry -> check(declaration.status is FirResolvedDeclarationStatus)
+            is FirField -> check(declaration.status is FirResolvedDeclarationStatus)
+            is FirProperty -> {
+                check(declaration.status is FirResolvedDeclarationStatus)
+                check(declaration.getter?.status?.let { it is FirResolvedDeclarationStatus } ?: true)
+                check(declaration.setter?.status?.let { it is FirResolvedDeclarationStatus } ?: true)
+            }
+            is FirRegularClass -> check(declaration.status is FirResolvedDeclarationStatus)
+            is FirAnonymousInitializer -> Unit
+            else -> error("Unexpected type: ${declaration::class.simpleName}")
+        }
     }
 }

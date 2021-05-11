@@ -378,6 +378,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         typeAlias.transformAnnotations(transformer, data)
         transformer.firTowerDataContextCollector?.addDeclarationContext(typeAlias, context.towerDataContext)
         typeAlias.transformExpandedTypeRef(transformer, data)
+        transformer.replaceDeclarationResolvePhaseIfNeeded(typeAlias, transformerPhase)
         return typeAlias
     }
 

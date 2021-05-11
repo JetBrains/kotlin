@@ -3,4 +3,7 @@ var x = 2
         /*PLACE*/val inside = ""
     }
 
-/*ONAIR*/val inSetter = value
+var y = 2
+    set(value) {
+        /*ONAIR*/val inSetter = value
+    }

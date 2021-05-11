@@ -53,20 +53,29 @@ internal class FirElementBuilder {
         firFileBuilder: FirFileBuilder,
         moduleFileCache: ModuleFileCache,
         fileStructureCache: FileStructureCache,
+        firLazyDeclarationResolver: FirLazyDeclarationResolver,
         state: FirModuleResolveState,
     ): FirElement = when (element) {
-        is KtFile -> getOrBuildFirForKtFile(element, firFileBuilder, moduleFileCache)
+        is KtFile -> getOrBuildFirForKtFile(element, firFileBuilder, moduleFileCache, firLazyDeclarationResolver)
         else -> getOrBuildFirForNonKtFileElement(element, fileStructureCache, moduleFileCache, state)
     }
 
-    private fun getOrBuildFirForKtFile(ktFile: KtFile, firFileBuilder: FirFileBuilder, moduleFileCache: ModuleFileCache): FirFile =
-        firFileBuilder.getFirFileResolvedToPhaseWithCaching(
-            ktFile,
-            moduleFileCache,
-            FirResolvePhase.BODY_RESOLVE,
+    private fun getOrBuildFirForKtFile(
+        ktFile: KtFile,
+        firFileBuilder: FirFileBuilder,
+        moduleFileCache: ModuleFileCache,
+        firLazyDeclarationResolver: FirLazyDeclarationResolver
+    ): FirFile {
+        val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile, moduleFileCache, lazyBodiesMode = false)
+        firLazyDeclarationResolver.lazyResolveFileDeclaration(
+            firFile = firFile,
+            moduleFileCache = moduleFileCache,
+            toPhase = FirResolvePhase.BODY_RESOLVE,
             scopeSession = ScopeSession(),
             checkPCE = true
         )
+        return firFile
+    }
 
     private fun getOrBuildFirForNonKtFileElement(
         element: KtElement,

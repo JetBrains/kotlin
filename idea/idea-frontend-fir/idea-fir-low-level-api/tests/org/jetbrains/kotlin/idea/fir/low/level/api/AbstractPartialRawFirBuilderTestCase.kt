@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignation
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationUntypedDesignation
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.RawFirNonLocalDeclarationBuilder
+import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
@@ -132,11 +133,12 @@ abstract class AbstractPartialRawFirBuilderTestCase : KtParsingTestCase(
         val designation = designationBuilder.resultDesignation
         TestCase.assertTrue(designation != null)
 
-        val firElement = RawFirNonLocalDeclarationBuilder.build(
-            session,
-            scopeProvider,
+        val firElement = RawFirNonLocalDeclarationBuilder.buildWithReplacement(
+            session = session,
+            scopeProvider = scopeProvider,
             designation!!,
-            elementToBuild
+            elementToBuild,
+            null
         )
 
         val firDump = firElement.render(FirRenderer.RenderMode.WithFqNames)

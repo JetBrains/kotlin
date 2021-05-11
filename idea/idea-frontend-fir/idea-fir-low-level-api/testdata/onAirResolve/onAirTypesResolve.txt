@@ -3,15 +3,15 @@ public final [BODY_RESOLVE] class Y : R|kotlin/Any| {
         super<R|kotlin/Any|>()
     }
 
-    public? open [BODY_RESOLVE] class BASE : R|X| {
-        public? [BODY_RESOLVE] constructor(): R|X.Y.BASE| {
+    public open [BODY_RESOLVE] class BASE : R|X| {
+        public [BODY_RESOLVE] constructor(): R|X.Y.BASE| {
             super<R|X|>()
         }
 
     }
 
-    public? final? [BODY_RESOLVE] class DERIVED : R|X.Y.BASE| {
-        public? [BODY_RESOLVE] constructor(): R|X.Y.DERIVED| {
+    public final [BODY_RESOLVE] class DERIVED : R|X.Y.BASE| {
+        public [BODY_RESOLVE] constructor(): R|X.Y.DERIVED| {
             super<R|X.Y.BASE|>()
         }
 

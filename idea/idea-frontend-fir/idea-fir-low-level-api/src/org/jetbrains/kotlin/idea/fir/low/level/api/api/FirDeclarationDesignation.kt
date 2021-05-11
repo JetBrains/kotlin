@@ -50,6 +50,7 @@ private fun FirClassLikeDeclaration<*>.containingClass(): FirClassLikeDeclaratio
 private fun collectDesignationAndIsLocal(declaration: FirDeclaration): Pair<List<FirDeclaration>, Boolean> {
     val containingClass = when (declaration) {
         is FirCallableDeclaration<*> -> declaration.containingClass()?.toFirRegularClass(declaration.moduleData.session)
+        is FirAnonymousObject -> return emptyList<FirDeclaration>() to true
         is FirClassLikeDeclaration<*> -> declaration.containingClass()
         else -> error("Invalid declaration ${declaration.renderWithType()}")
     } ?: return emptyList<FirDeclaration>() to false

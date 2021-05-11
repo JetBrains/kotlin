@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.withFirDeclaration
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.withFirDeclarationInWriteLock
+import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.ResolveType
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.tokens.assertIsValidAndAccessible
@@ -85,6 +86,29 @@ internal class FirRefWithValidityCheck<out D : FirDeclaration>(fir: D, resolveSt
     inline fun <R> withFirAndCache(phase: FirResolvePhase = FirResolvePhase.RAW_FIR, crossinline createValue: (fir: D) -> R) =
         ValidityAwareCachedValue(token) {
             withFir(phase) { fir -> createValue(fir) }
+        }
+
+    inline fun <R> withFir(type: ResolveType, crossinline action: (fir: D) -> R): R {
+        token.assertIsValidAndAccessible()
+        val fir = firWeakRef.get()
+            ?: throw EntityWasGarbageCollectedException("FirElement")
+        val resolveState = resolveStateWeakRef.get()
+            ?: throw EntityWasGarbageCollectedException("FirModuleResolveState")
+        return when (type) {
+            ResolveType.CallableBodyResolve -> {
+                /*
+                 The CallableBodyResolve type is the maximum possible phase we can resolve our declaration to
+                 So there is not need to run whole `action` under read lock
+                 */
+                action(fir.withFirDeclaration(type, resolveState) { it })
+            }
+            else -> fir.withFirDeclaration(type, resolveState) { action(it) }
+        }
+    }
+
+    inline fun <R> withFirAndCache(type: ResolveType, crossinline createValue: (fir: D) -> R) =
+        ValidityAwareCachedValue(token) {
+            withFir(type) { fir -> createValue(fir) }
         }
 }
 

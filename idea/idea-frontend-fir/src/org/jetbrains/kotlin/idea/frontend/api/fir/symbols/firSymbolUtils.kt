@@ -12,11 +12,14 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.renderWithType
+import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
+import org.jetbrains.kotlin.idea.frontend.api.fir.buildSymbol
 import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -48,10 +51,3 @@ internal fun <F : FirMemberDeclaration> KtFirSymbol<F>.getVisibility(phase: FirR
 
 internal fun KtFirSymbol<FirCallableDeclaration<*>>.getCallableIdIfNonLocal(): CallableId? =
     firRef.withFir { fir -> fir.symbol.callableId.takeUnless { it.isLocal } }
-
-internal fun ConeClassLikeType.expandTypeAliasIfNeeded(session: FirSession): ConeClassLikeType {
-    val firTypeAlias = lookupTag.toSymbol(session) as? FirTypeAliasSymbol ?: return this
-    val expandedType = firTypeAlias.fir.expandedTypeRef.coneType
-    return expandedType.fullyExpandedType(session) as? ConeClassLikeType
-        ?: return this
-}

@@ -105,9 +105,9 @@ internal class FileStructure(
             firFile
         )
         firLazyDeclarationResolver.lazyResolveDeclaration(
-            firDeclaration,
-            moduleFileCache,
-            FirResolvePhase.BODY_RESOLVE,
+            firDeclarationToResolve = firDeclaration,
+            moduleFileCache = moduleFileCache,
+            toPhase = FirResolvePhase.BODY_RESOLVE,
             checkPCE = true,
         )
         return moduleFileCache.firFileLockProvider.withReadLock(firFile) {
@@ -117,15 +117,14 @@ internal class FileStructure(
 
     private fun createStructureElement(container: KtAnnotated): FileStructureElement = when (container) {
         is KtFile -> {
-            val scopeSession = ScopeSession()
-            val firFile = firFileBuilder.getFirFileResolvedToPhaseWithCaching(
-                container,
-                moduleFileCache,
-                FirResolvePhase.IMPORTS,
-                scopeSession,
+            val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile, moduleFileCache, lazyBodiesMode = true)
+            firLazyDeclarationResolver.resolveFileAnnotations(
+                firFile = firFile,
+                annotations = firFile.annotations,
+                moduleFileCache = moduleFileCache,
+                scopeSession = ScopeSession(),
                 checkPCE = true
             )
-            firLazyDeclarationResolver.resolveFileAnnotations(firFile, firFile.annotations, moduleFileCache, scopeSession)
             RootStructureElement(
                 firFile,
                 container,

@@ -26,7 +26,14 @@ internal class IdeFirPhaseManager(
     ) {
         val fir = symbol.fir as FirDeclaration
         try {
-            lazyDeclarationResolver.lazyResolveDeclaration(fir, cache, requiredPhase, checkPCE = true)
+            if (fir.resolvePhase < requiredPhase) { //TODO Make thread safe
+                lazyDeclarationResolver.lazyResolveDeclaration(
+                    firDeclarationToResolve = fir,
+                    moduleFileCache = cache,
+                    toPhase = requiredPhase,
+                    checkPCE = true
+                )
+            }
         } catch (e: Throwable) {
             sessionInvalidator.invalidate(fir.moduleData.session)
             throw e

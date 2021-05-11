@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.idea.fir.findPsi
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.*
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.FirRefWithValidityCheck
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.convertConstantExpression
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.mapAnnotationParameters
@@ -33,8 +34,10 @@ internal class KtFirAnnotationCall(
         fir.findPsi(fir.moduleData.session) as? KtCallElement
     }
 
-    override val classId: ClassId? by containingDeclaration.withFirAndCache(AnnotationPhases.PHASE_FOR_ANNOTATION_CLASS_ID) { fir ->
-        annotationCallRef.getClassId(fir.moduleData.session)
+    override val classId: ClassId? by cached {
+        containingDeclaration.withFirWithPossibleResolveInside(AnnotationPhases.PHASE_FOR_ANNOTATION_CLASS_ID) { fir ->
+            annotationCallRef.getClassId(fir.moduleData.session)
+        }
     }
 
     override val useSiteTarget: AnnotationUseSiteTarget? get() = annotationCallRef.useSiteTarget

@@ -5,4 +5,8 @@ val x: Int get() {
     2
 }
 
-/*ONAIR*/val z = qqq
+val y: String get() {
+    /*ONAIR*/val z = qqq
+    ""
+}
+

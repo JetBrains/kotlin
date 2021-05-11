@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildDefaultSetterValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
@@ -40,7 +37,7 @@ abstract class FirDefaultPropertyAccessor(
 ) : FirPropertyAccessorImpl(
     source,
     moduleData,
-    resolvePhase = FirResolvePhase.BODY_RESOLVE,
+    resolvePhase = if (effectiveVisibility != null) FirResolvePhase.BODY_RESOLVE else FirResolvePhase.TYPES,
     origin,
     FirDeclarationAttributes(),
     propertyTypeRef,
@@ -59,7 +56,7 @@ abstract class FirDefaultPropertyAccessor(
     typeParameters = mutableListOf(),
 ) {
     override var resolvePhase
-        get() = FirResolvePhase.BODY_RESOLVE
+        get() = if (status is FirResolvedDeclarationStatus) FirResolvePhase.BODY_RESOLVE else FirResolvePhase.TYPES
         set(_) {}
 
     final override var body: FirBlock?

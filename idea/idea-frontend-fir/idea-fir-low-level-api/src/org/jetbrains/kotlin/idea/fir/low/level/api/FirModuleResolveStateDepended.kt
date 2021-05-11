@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.KtToFirMapping
+import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.ResolveType
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.containingKtFileIfAny
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.originalKtFile
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -50,6 +51,7 @@ internal class FirModuleResolveStateDepended(
             firFileBuilder = originalState.firFileBuilder,
             moduleFileCache = originalState.rootModuleSession.cache,
             fileStructureCache = fileStructureCache,
+            firLazyDeclarationResolver = originalState.firLazyDeclarationResolver,
             state = this,
         )
     }
@@ -59,6 +61,9 @@ internal class FirModuleResolveStateDepended(
 
     override fun <D : FirDeclaration> resolveFirToPhase(declaration: D, toPhase: FirResolvePhase): D =
         originalState.resolveFirToPhase(declaration, toPhase)
+
+    override fun <D : FirDeclaration> resolveFirToResolveType(declaration: D, type: ResolveType): D =
+        originalState.resolveFirToResolveType(declaration, type)
 
     override fun tryGetCachedFirFile(declaration: FirDeclaration, cache: ModuleFileCache): FirFile? {
         val ktFile = declaration.containingKtFileIfAny ?: return null

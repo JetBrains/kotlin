@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolved
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -108,7 +109,10 @@ fun ConeKotlinType.scopeForSupertype(
     if (this is ConeClassErrorType) return null
     val symbol = lookupTag.toSymbol(useSiteSession)
     return if (symbol is FirRegularClassSymbol) {
-        val delegateField = delegateFields?.find { useSiteSession.typeContext.equalTypes(it.returnTypeRef.coneType, this) }
+        val delegateField = delegateFields?.find {
+            it.ensureResolved(FirResolvePhase.TYPES, useSiteSession)
+            useSiteSession.typeContext.equalTypes(it.returnTypeRef.coneType, this)
+        }
         symbol.fir.scopeForSupertype(
             substitutor(symbol, this, useSiteSession),
             useSiteSession, scopeSession, delegateField,

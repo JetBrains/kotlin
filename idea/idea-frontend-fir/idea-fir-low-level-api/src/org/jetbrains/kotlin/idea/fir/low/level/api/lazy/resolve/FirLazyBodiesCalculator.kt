@@ -28,21 +28,30 @@ internal object FirLazyBodiesCalculator {
         )
     }
 
+    fun calculateLazyBodiesInsideIfNeeded(designation: FirDeclarationUntypedDesignation, phase: FirResolvePhase) {
+        if (phase == FIRST_PHASE_WHICH_NEEDS_BODIES) {
+            calculateLazyBodiesInside(designation)
+        }
+    }
+
     fun calculateLazyBodiesIfPhaseRequires(firFile: FirFile, phase: FirResolvePhase) {
         if (phase == FIRST_PHASE_WHICH_NEEDS_BODIES) {
             firFile.transform<FirElement, MutableList<FirDeclaration>>(FirLazyBodiesCalculatorTransformer, mutableListOf())
         }
     }
 
+    fun calculateLazyBodies(firFile: FirFile) {
+        firFile.transform<FirElement, MutableList<FirDeclaration>>(FirLazyBodiesCalculatorTransformer, mutableListOf())
+    }
+
     fun calculateLazyBodiesForFunction(designation: FirDeclarationDesignation<FirSimpleFunction>) {
-        require(!designation.isLocalDesignation) { "Not supported for local designations" }
         val simpleFunction = designation.declaration
         if (simpleFunction.body !is FirLazyBlock) return
-        val newFunction = RawFirNonLocalDeclarationBuilder.build(
+        val newFunction = RawFirNonLocalDeclarationBuilder.buildWithRebind(
             session = simpleFunction.moduleData.session,
-            baseScopeProvider = simpleFunction.moduleData.session.firIdeProvider.kotlinScopeProvider,
+            scopeProvider = simpleFunction.moduleData.session.firIdeProvider.kotlinScopeProvider,
             designation = designation,
-            rootNonLocalDeclaration = simpleFunction.psi as KtNamedFunction
+            rootNonLocalDeclaration = simpleFunction.psi as KtNamedFunction,
         ) as FirSimpleFunction
         simpleFunction.apply {
             replaceBody(newFunction.body)
@@ -56,11 +65,11 @@ internal object FirLazyBodiesCalculator {
         require(!secondaryConstructor.isPrimary)
         if (secondaryConstructor.body !is FirLazyBlock) return
 
-        val newFunction = RawFirNonLocalDeclarationBuilder.build(
+        val newFunction = RawFirNonLocalDeclarationBuilder.buildWithRebind(
             session = secondaryConstructor.moduleData.session,
-            baseScopeProvider = secondaryConstructor.moduleData.session.firIdeProvider.kotlinScopeProvider,
+            scopeProvider = secondaryConstructor.moduleData.session.firIdeProvider.kotlinScopeProvider,
             designation = designation,
-            rootNonLocalDeclaration = secondaryConstructor.psi as KtSecondaryConstructor
+            rootNonLocalDeclaration = secondaryConstructor.psi as KtSecondaryConstructor,
         ) as FirSimpleFunction
 
         secondaryConstructor.apply {
@@ -73,9 +82,9 @@ internal object FirLazyBodiesCalculator {
         val firProperty = designation.declaration
         if (!needCalculatingLazyBodyForProperty(firProperty)) return
 
-        val newProperty = RawFirNonLocalDeclarationBuilder.build(
+        val newProperty = RawFirNonLocalDeclarationBuilder.buildWithRebind(
             session = firProperty.moduleData.session,
-            baseScopeProvider = firProperty.moduleData.session.firIdeProvider.kotlinScopeProvider,
+            scopeProvider = firProperty.moduleData.session.firIdeProvider.kotlinScopeProvider,
             designation = designation,
             rootNonLocalDeclaration = firProperty.psi as KtProperty
         ) as FirProperty

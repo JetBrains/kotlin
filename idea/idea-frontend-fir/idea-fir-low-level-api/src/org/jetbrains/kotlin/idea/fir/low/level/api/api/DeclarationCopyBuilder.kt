@@ -5,171 +5,72 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.api
 
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
-import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.RawFirNonLocalDeclarationBuilder
-import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.RawFirReplacement
-import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
-import org.jetbrains.kotlin.psi.*
 
 internal object DeclarationCopyBuilder {
-    fun createDeclarationCopy(
-        state: FirModuleResolveState,
-        nonLocalDeclaration: KtDeclaration,
-        replacement: RawFirReplacement
-    ): FirDeclaration {
+    fun FirSimpleFunction.withBodyFrom(
+        functionWithBody: FirSimpleFunction,
+    ): FirSimpleFunction = buildSimpleFunctionCopy(this) {
+        body = functionWithBody.body
+        symbol = functionWithBody.symbol
+        initDeclaration(this@withBodyFrom, functionWithBody)
+    }.apply { reassignAllReturnTargets(functionWithBody) }
 
-        return when (nonLocalDeclaration) {
-            is KtNamedFunction -> createFunctionCopy(
-                nonLocalDeclaration,
-                state,
-                replacement
-            )
-            is KtProperty -> createPropertyCopy(
-                nonLocalDeclaration,
-                state,
-                replacement
-            )
-            is KtClassOrObject -> createClassCopy(
-                nonLocalDeclaration,
-                state,
-                replacement
-            )
-            is KtTypeAlias -> createTypeAliasCopy(
-                nonLocalDeclaration,
-                state,
-                replacement
-            )
-            else -> error("Unsupported declaration ${nonLocalDeclaration::class.simpleName}")
-        }
+    fun FirRegularClass.withBodyFrom(
+        classWithBody: FirRegularClass,
+    ): FirRegularClass = buildRegularClassCopy(this) {
+        declarations.clear()
+        declarations.addAll(classWithBody.declarations)
+        symbol = classWithBody.symbol
+        initDeclaration(this@withBodyFrom, classWithBody)
+        resolvePhase = minOf(this.resolvePhase, FirResolvePhase.IMPORTS) //TODO move into initDeclaration?
     }
 
-    private fun createFunctionCopy(
-        rootNonLocalDeclaration: KtNamedFunction,
-        state: FirModuleResolveState,
-        replacement: RawFirReplacement,
-    ): FirSimpleFunction {
-
-        val originalFunction = rootNonLocalDeclaration.getOrBuildFirOfType<FirSimpleFunction>(state)
-        val builtFunction = createCopy(rootNonLocalDeclaration, originalFunction, replacement)
-
-        val functionBlock = rootNonLocalDeclaration.bodyBlockExpression
-        if (functionBlock == null || !PsiTreeUtil.isAncestor(functionBlock, replacement.from, true)) {
-            return builtFunction
-        }
-
-        // right now we can't resolve builtFunction header properly, as it built right in air,
-        // without file, which is now required for running stages other then body resolve, so we
-        // take original function header (which is resolved) and copy replacing body with body from builtFunction
-        return buildSimpleFunctionCopy(originalFunction) {
-            body = builtFunction.body
-            symbol = builtFunction.symbol
-            initDeclaration(originalFunction, builtFunction, state)
-        }.apply { reassignAllReturnTargets(builtFunction) }
-    }
-
-    private fun createClassCopy(
-        rootNonLocalDeclaration: KtClassOrObject,
-        state: FirModuleResolveState,
-        replacement: RawFirReplacement,
-    ): FirRegularClass {
-        val originalFirClass = rootNonLocalDeclaration.getOrBuildFirOfType<FirRegularClass>(state)
-        val builtClass = createCopy(rootNonLocalDeclaration, originalFirClass, replacement)
-
-        val classBody = rootNonLocalDeclaration.body
-        if (classBody == null || !PsiTreeUtil.isAncestor(classBody, replacement.from, true)) {
-            return builtClass
-        }
-
-        return buildRegularClassCopy(originalFirClass) {
-            declarations.clear()
-            declarations.addAll(builtClass.declarations)
-            symbol = builtClass.symbol
-            initDeclaration(originalFirClass, builtClass, state)
-            resolvePhase = minOf(originalFirClass.resolvePhase, FirResolvePhase.IMPORTS) //TODO move into initDeclaration?
-        }
-    }
-
-    private fun createTypeAliasCopy(
-        rootNonLocalDeclaration: KtTypeAlias,
-        state: FirModuleResolveState,
-        replacement: RawFirReplacement,
-    ): FirTypeAlias {
-        val originalFirTypeAlias = rootNonLocalDeclaration.getOrBuildFirOfType<FirTypeAlias>(state)
-        return createCopy(rootNonLocalDeclaration, originalFirTypeAlias, replacement)
-    }
-
-    private fun createPropertyCopy(
-        rootNonLocalDeclaration: KtProperty,
-        state: FirModuleResolveState,
-        replacement: RawFirReplacement,
-    ): FirProperty {
-        val originalProperty = rootNonLocalDeclaration.getOrBuildFirOfType<FirProperty>(state)
-        val builtProperty = createCopy(rootNonLocalDeclaration, originalProperty, replacement)
-
-        val insideGetterBody = rootNonLocalDeclaration.getter?.bodyBlockExpression?.let {
-            PsiTreeUtil.isAncestor(it, replacement.from, true)
-        } ?: false
-        if (!insideGetterBody) {
-            val insideSetterBody = rootNonLocalDeclaration.setter?.bodyBlockExpression?.let {
-                PsiTreeUtil.isAncestor(it, replacement.from, true)
-            } ?: false
-
-            if (!insideSetterBody) return builtProperty
-        }
-
-        val originalSetter = originalProperty.setter
-        val builtSetter = builtProperty.setter
+    fun FirProperty.withBodyFrom(propertyWithBody: FirProperty): FirProperty {
+        val originalSetter = this@withBodyFrom.setter
+        val replacementSetter = propertyWithBody.setter
 
         // setter has a header with `value` parameter, and we want it type to be resolved
-        val copySetter = if (originalSetter != null && builtSetter != null) {
+        val copySetter = if (originalSetter != null && replacementSetter != null) {
             buildPropertyAccessorCopy(originalSetter) {
-                body = builtSetter.body
-                symbol = builtSetter.symbol
-                initDeclaration(originalSetter, builtSetter, state)
-            }.apply { reassignAllReturnTargets(builtSetter) }
+                body = replacementSetter.body
+                symbol = replacementSetter.symbol
+                initDeclaration(originalSetter, replacementSetter)
+            }.apply { reassignAllReturnTargets(replacementSetter) }
         } else {
-            builtSetter
+            replacementSetter
         }
 
-        return buildPropertyCopy(originalProperty) {
-            symbol = builtProperty.symbol
-            initializer = builtProperty.initializer
+        val propertyResolvePhase = minOf(
+            this@withBodyFrom.resolvePhase,
+            FirResolvePhase.DECLARATIONS,
+            copySetter?.resolvePhase ?: FirResolvePhase.BODY_RESOLVE,
+            propertyWithBody.getter?.resolvePhase ?: FirResolvePhase.BODY_RESOLVE,
+        )
 
-            getter = builtProperty.getter
+        return buildPropertyCopy(this@withBodyFrom) {
+            symbol = propertyWithBody.symbol
+            initializer = propertyWithBody.initializer
+
+            getter = propertyWithBody.getter
             setter = copySetter
 
-            initDeclaration(originalProperty, builtProperty, state)
+            initDeclaration(this@withBodyFrom, propertyWithBody)
+            resolvePhase = propertyResolvePhase
         }
     }
 
     private fun FirDeclarationBuilder.initDeclaration(
         originalDeclaration: FirDeclaration,
         builtDeclaration: FirDeclaration,
-        state: FirModuleResolveState
     ) {
         resolvePhase = minOf(originalDeclaration.resolvePhase, FirResolvePhase.DECLARATIONS)
         source = builtDeclaration.source
-        moduleData = state.rootModuleSession.moduleData
-    }
-
-    internal inline fun <reified D : FirDeclaration> createCopy(
-        rootNonLocalDeclaration: KtDeclaration,
-        originalFirDeclaration: D,
-        replacement: RawFirReplacement? = null,
-    ): D {
-        return RawFirNonLocalDeclarationBuilder.build(
-            session = originalFirDeclaration.moduleData.session,
-            baseScopeProvider = originalFirDeclaration.moduleData.session.firIdeProvider.kotlinScopeProvider,
-            designation = originalFirDeclaration.collectDesignation(),
-            rootNonLocalDeclaration = rootNonLocalDeclaration,
-            replacement = replacement,
-        ) as D
+        moduleData = originalDeclaration.moduleData
     }
 
     private fun FirFunction<*>.reassignAllReturnTargets(from: FirFunction<*>) {

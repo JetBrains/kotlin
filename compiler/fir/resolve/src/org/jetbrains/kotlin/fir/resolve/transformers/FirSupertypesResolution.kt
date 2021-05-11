@@ -95,23 +95,31 @@ fun <F : FirClassLikeDeclaration<F>> F.runSupertypeResolvePhaseForLocalClass(
     return this.transform<F, Nothing?>(applySupertypesTransformer, null)
 }
 
-class FirApplySupertypesTransformer(
+open class FirApplySupertypesTransformer(
     private val supertypeComputationSession: SupertypeComputationSession
 ) : FirDefaultTransformer<Any?>() {
     override fun <E : FirElement> transformElement(element: E, data: Any?): E {
         return element
     }
 
-    override fun transformFile(file: FirFile, data: Any?): FirDeclaration {
-        file.replaceResolvePhase(FirResolvePhase.SUPER_TYPES)
+    protected open fun needReplacePhase(firDeclaration: FirDeclaration) = FirResolvePhase.SUPER_TYPES > firDeclaration.resolvePhase
 
-        return (file.transformChildren(this, null) as FirFile)
+    protected open fun transformDeclarationContent(declaration: FirDeclaration, data: Any?): FirDeclaration {
+        return declaration.transformChildren(this, null) as FirDeclaration
+    }
+
+    override fun transformFile(file: FirFile, data: Any?): FirDeclaration {
+        if (needReplacePhase(file)) {
+            file.replaceResolvePhase(FirResolvePhase.SUPER_TYPES)
+        }
+
+        return transformDeclarationContent(file, null) as FirFile
     }
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: Any?): FirStatement {
         applyResolvedSupertypesToClass(regularClass)
 
-        return (regularClass.transformChildren(this, null) as FirRegularClass)
+        return transformDeclarationContent(regularClass, null) as FirRegularClass
     }
 
     private fun applyResolvedSupertypesToClass(firClass: FirClass<*>) {
@@ -121,7 +129,9 @@ class FirApplySupertypesTransformer(
             // TODO: Replace with an immutable version or transformer
             firClass.replaceSuperTypeRefs(supertypeRefs)
         }
-        firClass.replaceResolvePhase(FirResolvePhase.SUPER_TYPES)
+        if (needReplacePhase(firClass)) {
+            firClass.replaceResolvePhase(FirResolvePhase.SUPER_TYPES)
+        }
     }
 
     override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: Any?): FirStatement {
@@ -139,7 +149,12 @@ class FirApplySupertypesTransformer(
     }
 
     override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Any?): FirDeclaration {
-        if (typeAlias.expandedTypeRef is FirResolvedTypeRef) return typeAlias
+        if (typeAlias.expandedTypeRef is FirResolvedTypeRef) {
+            if (needReplacePhase(typeAlias)) {
+                typeAlias.replaceResolvePhase(FirResolvePhase.SUPER_TYPES)
+            }
+            return typeAlias
+        }
         val supertypeRefs = getResolvedSupertypeRefs(typeAlias)
 
         assert(supertypeRefs.size == 1) {
@@ -148,8 +163,9 @@ class FirApplySupertypesTransformer(
 
         // TODO: Replace with an immutable version or transformer
         typeAlias.replaceExpandedTypeRef(supertypeRefs[0])
-        typeAlias.replaceResolvePhase(FirResolvePhase.SUPER_TYPES)
-
+        if (needReplacePhase(typeAlias)) {
+            typeAlias.replaceResolvePhase(FirResolvePhase.SUPER_TYPES)
+        }
         return typeAlias
     }
 }
@@ -187,7 +203,7 @@ fun FirRegularClass.resolveSupertypesInTheAir(session: FirSession): List<FirType
         .resolveSpecificClassLikeSupertypes(this, superTypeRefs)
 }
 
-class FirSupertypeResolverVisitor(
+open class FirSupertypeResolverVisitor(
     private val session: FirSession,
     private val supertypeComputationSession: SupertypeComputationSession,
     private val scopeSession: ScopeSession,
@@ -295,14 +311,18 @@ class FirSupertypeResolverVisitor(
         return resolvedTypesRefs
     }
 
+    open fun visitDeclarationContent(declaration: FirDeclaration, data: Any?) {
+        declaration.acceptChildren(this, null)
+    }
+
     override fun visitRegularClass(regularClass: FirRegularClass, data: Any?) {
         resolveSpecificClassLikeSupertypes(regularClass, regularClass.superTypeRefs)
-        regularClass.acceptChildren(this, null)
+        visitDeclarationContent(regularClass, null)
     }
 
     override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: Any?) {
         resolveSpecificClassLikeSupertypes(anonymousObject, anonymousObject.superTypeRefs)
-        anonymousObject.acceptChildren(this, null)
+        visitDeclarationContent(anonymousObject, null)
     }
 
     fun resolveSpecificClassLikeSupertypes(
@@ -397,7 +417,7 @@ class FirSupertypeResolverVisitor(
     }
 
     override fun visitFile(file: FirFile, data: Any?) {
-        file.acceptChildren(this, null)
+        visitDeclarationContent(file, null)
     }
 }
 
@@ -409,7 +429,7 @@ private fun createErrorTypeRef(fir: FirElement, message: String, kind: Diagnosti
 class SupertypeComputationSession {
     private val fileScopesMap = hashMapOf<FirFile, ScopePersistentList>()
     private val scopesForNestedClassesMap = hashMapOf<FirClass<*>, ScopePersistentList>()
-    private val supertypeStatusMap = linkedMapOf<FirClassLikeDeclaration<*>, SupertypeComputationStatus>()
+    val supertypeStatusMap = linkedMapOf<FirClassLikeDeclaration<*>, SupertypeComputationStatus>()
 
     val supertypesSupplier: SupertypeSupplier = object : SupertypeSupplier() {
         override fun forClass(firClass: FirClass<*>, useSiteSession: FirSession): List<ConeClassLikeType> {

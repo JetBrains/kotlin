@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirIdeResolveStateService
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.InternalForInline
+import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.ResolveType
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -110,6 +111,19 @@ fun <D : FirDeclaration, R> D.withFirDeclaration(
 }
 
 /**
+ * Executes [action] with given [FirDeclaration] under read action, so resolve **is not possible** inside [action]
+ * [FirDeclaration] passed to [action] will be resolved at least to [phase] when executing [action] on it
+ */
+fun <D : FirDeclaration, R> D.withFirDeclaration(
+    type: ResolveType,
+    resolveState: FirModuleResolveState,
+    action: (D) -> R,
+): R {
+    resolvedFirToType(type, resolveState)
+    return resolveState.withLock(this, DeclarationLockType.READ_LOCK, action)
+}
+
+/**
  * Executes [action] with given [FirDeclaration] under write lock, so resolve **is possible** inside [action]
  */
 fun <D : FirDeclaration, R> D.withFirDeclarationInWriteLock(
@@ -148,6 +162,17 @@ fun <D : FirDeclaration> D.resolvedFirToPhase(
     resolveState: FirModuleResolveState
 ): D =
     resolveState.resolveFirToPhase(this, phase)
+
+/**
+ * Resolves a given [FirDeclaration] to [phase] and returns resolved declaration
+ *
+ * Should not be called form [withFirDeclaration], [withFirDeclarationOfType] functions, as it it may cause deadlock
+ */
+fun <D : FirDeclaration> D.resolvedFirToType(
+    type: ResolveType,
+    resolveState: FirModuleResolveState
+): D =
+    resolveState.resolveFirToResolveType(this, type)
 
 
 /**

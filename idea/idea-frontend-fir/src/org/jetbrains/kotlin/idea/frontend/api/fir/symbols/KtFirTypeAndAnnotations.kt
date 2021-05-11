@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.transformers.resolveSupertypesInTheAir
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.ResolveType
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.annotations.KtFirAnnotationCall
@@ -28,7 +29,7 @@ internal class KtFirTypeAndAnnotations<T : FirDeclaration>(
 
     override val token: ValidityToken get() = containingDeclaration.token
 
-    override val type: KtType by containingDeclaration.withFirAndCache(typeResolvePhase) { fir ->
+    override val type: KtType by containingDeclaration.withFirAndCache(ResolveType.CallableReturnType) { fir ->
         builder.typeBuilder.buildKtType(typeRef(fir))
     }
 

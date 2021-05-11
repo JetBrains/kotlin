@@ -43,7 +43,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
 
     final override val session: FirSession get() = components.session
 
-    protected open fun needReplacePhase(firDeclaration: FirDeclaration) = true
+    protected open fun needReplacePhase(firDeclaration: FirDeclaration) = transformerPhase > firDeclaration.resolvePhase
 
     fun replaceDeclarationResolvePhaseIfNeeded(firDeclaration: FirDeclaration, newResolvePhase: FirResolvePhase) {
         if (needReplacePhase(firDeclaration) && newResolvePhase > firDeclaration.resolvePhase) {

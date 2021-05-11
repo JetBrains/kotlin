@@ -67,7 +67,7 @@ abstract class ResolvedStatusCalculator {
     }
 }
 
-class FirStatusResolveTransformer(
+open class FirStatusResolveTransformer(
     session: FirSession,
     scopeSession: ScopeSession,
     statusComputationSession: StatusComputationSession,
@@ -253,22 +253,13 @@ abstract class AbstractFirStatusResolveTransformer(
     protected abstract fun FirDeclaration.needResolveMembers(): Boolean
     protected abstract fun FirDeclaration.needResolveNestedClassifiers(): Boolean
 
+    protected open fun needReplacePhase(firDeclaration: FirDeclaration) = transformerPhase > firDeclaration.resolvePhase
+
     override fun transformFile(file: FirFile, data: FirResolvedDeclarationStatus?): FirFile {
-        file.replaceResolvePhase(transformerPhase)
-        if (file.needResolveMembers()) {
-            for (declaration in file.declarations) {
-                if (declaration !is FirClassLikeDeclaration<*>) {
-                    declaration.transformSingle(this, data)
-                }
-            }
+        if (needReplacePhase(file)) {
+            file.replaceResolvePhase(transformerPhase)
         }
-        if (file.needResolveNestedClassifiers()) {
-            for (declaration in file.declarations) {
-                if (declaration is FirClassLikeDeclaration<*>) {
-                    declaration.transformSingle(this, data)
-                }
-            }
-        }
+        transformDeclarationContent(file, data)
         return file
     }
 
@@ -293,7 +284,9 @@ abstract class AbstractFirStatusResolveTransformer(
         declaration: FirDeclaration,
         data: FirResolvedDeclarationStatus?
     ): FirDeclaration {
-        declaration.replaceResolvePhase(transformerPhase)
+        if (needReplacePhase(declaration)) {
+            declaration.replaceResolvePhase(transformerPhase)
+        }
         return when (declaration) {
             is FirCallableDeclaration<*> -> {
                 when (declaration) {
@@ -333,6 +326,36 @@ abstract class AbstractFirStatusResolveTransformer(
         return transformClass(anonymousObject, data)
     }
 
+    open fun transformDeclarationContent(
+        declaration: FirDeclaration,
+        data: FirResolvedDeclarationStatus?
+    ): FirDeclaration {
+
+        val declarations = when (declaration) {
+            is FirRegularClass -> declaration.declarations
+            is FirAnonymousObject -> declaration.declarations
+            is FirFile -> declaration.declarations
+            else -> error("Not supported declaration ${declaration::class.simpleName}")
+        }
+
+        if (declaration.needResolveMembers()) {
+            val members = declarations.filter { it !is FirClassLikeDeclaration<*> }
+            members.forEach { member ->
+                if (needReplacePhase(member)) {
+                    member.replaceResolvePhase(transformerPhase)
+                }
+            }
+            members.forEach { member -> member.transformSingle(this, data) }
+        }
+        if (declaration.needResolveNestedClassifiers()) {
+            val members = declarations.filterIsInstance<FirClassLikeDeclaration<*>>()
+            for (klass in members) {
+                klass.transformSingle(this, data)
+            }
+        }
+        return declaration
+    }
+
     @Suppress("UNCHECKED_CAST")
     override fun <F : FirClass<F>> transformClass(
         klass: FirClass<F>,
@@ -340,27 +363,19 @@ abstract class AbstractFirStatusResolveTransformer(
     ): FirStatement {
         return storeClass(klass) {
             klass.typeParameters.forEach { it.transformSingle(this, data) }
-            klass.replaceResolvePhase(transformerPhase)
-            if (klass.needResolveMembers()) {
-                val members = klass.declarations.filter { it !is FirClassLikeDeclaration<*> }
-                members.forEach { it.replaceResolvePhase(transformerPhase) }
-                members.forEach { it.transformSingle(this, data) }
+            if (needReplacePhase(klass)) {
+                klass.replaceResolvePhase(transformerPhase)
             }
-            if (klass.needResolveNestedClassifiers()) {
-                for (declaration in klass.declarations) {
-                    if (declaration is FirClassLikeDeclaration<*>) {
-                        declaration.transformSingle(this, data)
-                    }
-                }
-            }
-            klass
+            transformDeclarationContent(klass, data)
         } as FirStatement
     }
 
     protected fun updateResolvePhaseOfMembers(regularClass: FirRegularClass) {
         for (declaration in regularClass.declarations) {
             if (declaration is FirProperty || declaration is FirSimpleFunction) {
-                declaration.replaceResolvePhase(transformerPhase)
+                if (needReplacePhase(declaration)) {
+                    declaration.replaceResolvePhase(transformerPhase)
+                }
             }
         }
     }
@@ -372,7 +387,9 @@ abstract class AbstractFirStatusResolveTransformer(
     }
 
     private fun forceResolveStatusOfCorrespondingClass(typeRef: FirTypeRef) {
-        when (val superClass = typeRef.coneType.toSymbol(session)?.fir) {
+        val superClass = typeRef.coneType.toSymbol(session)?.fir
+        superClass?.ensureResolved(FirResolvePhase.SUPER_TYPES, session)
+        when (superClass) {
             is FirRegularClass -> forceResolveStatusesOfClass(superClass)
             is FirTypeAlias -> forceResolveStatusOfCorrespondingClass(superClass.expandedTypeRef)
         }
@@ -439,7 +456,9 @@ abstract class AbstractFirStatusResolveTransformer(
             statusResolver.resolveStatus(propertyAccessor, containingClass, containingProperty, isLocal = false)
         )
 
-        propertyAccessor.replaceResolvePhase(transformerPhase)
+        if (needReplacePhase(propertyAccessor)) {
+            propertyAccessor.replaceResolvePhase(transformerPhase)
+        }
     }
 
     override fun transformConstructor(
@@ -454,7 +473,9 @@ abstract class AbstractFirStatusResolveTransformer(
         simpleFunction: FirSimpleFunction,
         data: FirResolvedDeclarationStatus?
     ): FirDeclaration {
-        simpleFunction.replaceResolvePhase(transformerPhase)
+        if (needReplacePhase(simpleFunction)) {
+            simpleFunction.replaceResolvePhase(transformerPhase)
+        }
         simpleFunction.transformStatus(this, statusResolver.resolveStatus(simpleFunction, containingClass, isLocal = false))
         return transformDeclaration(simpleFunction, data)
     }
@@ -463,7 +484,9 @@ abstract class AbstractFirStatusResolveTransformer(
         property: FirProperty,
         data: FirResolvedDeclarationStatus?
     ): FirDeclaration {
-        property.replaceResolvePhase(transformerPhase)
+        if (needReplacePhase(property)) {
+            property.replaceResolvePhase(transformerPhase)
+        }
         property.transformStatus(this, statusResolver.resolveStatus(property, containingClass, isLocal = false))
 
         property.getter?.let { transformPropertyAccessor(it, property) }

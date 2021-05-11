@@ -15,30 +15,70 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationUntypedDesignation
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.collectDesignation
+import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
+import org.jetbrains.kotlin.idea.util.ifTrue
 import org.jetbrains.kotlin.psi.*
 
 internal class RawFirNonLocalDeclarationBuilder private constructor(
     session: FirSession,
     baseScopeProvider: FirScopeProvider,
     private val declarationToBuild: KtDeclaration,
+    private val functionsToRebind: Set<FirFunction<*>>? = null,
     private val replacementApplier: RawFirReplacement.Applier? = null
 ) : RawFirBuilder(session, baseScopeProvider, RawFirBuilderMode.NORMAL) {
 
     companion object {
-        fun build(
+        fun buildWithReplacement(
             session: FirSession,
-            baseScopeProvider: FirScopeProvider,
+            scopeProvider: FirScopeProvider,
             designation: FirDeclarationUntypedDesignation,
             rootNonLocalDeclaration: KtDeclaration,
-            replacement: RawFirReplacement? = null
+            replacement: RawFirReplacement?
         ): FirDeclaration {
+            require(!designation.isLocalDesignation) { "Local declaration is not allowed here" }
+
             val replacementApplier = replacement?.Applier()
-            val builder = RawFirNonLocalDeclarationBuilder(session, baseScopeProvider, rootNonLocalDeclaration, replacementApplier)
+            val builder = RawFirNonLocalDeclarationBuilder(
+                session = session,
+                baseScopeProvider = scopeProvider,
+                declarationToBuild = rootNonLocalDeclaration,
+                replacementApplier = replacementApplier
+            )
             builder.context.packageFqName = rootNonLocalDeclaration.containingKtFile.packageFqName
             return builder.moveNext(designation.path.iterator(), containingClass = null).also {
                 replacementApplier?.ensureApplied()
             }
         }
+
+        fun buildWithRebind(
+            session: FirSession,
+            scopeProvider: FirScopeProvider,
+            designation: FirDeclarationUntypedDesignation,
+            rootNonLocalDeclaration: KtDeclaration,
+        ): FirDeclaration {
+            require(!designation.isLocalDesignation) { "Local declaration is not allowed here" }
+
+            val functionsToRebind = when (val originalDeclaration = designation.declaration) {
+                is FirSimpleFunction -> setOf(originalDeclaration)
+                is FirProperty -> setOfNotNull(originalDeclaration.getter, originalDeclaration.setter)
+                else -> null
+            }
+
+            val builder = RawFirNonLocalDeclarationBuilder(
+                session = session,
+                baseScopeProvider = scopeProvider,
+                declarationToBuild = rootNonLocalDeclaration,
+                functionsToRebind = functionsToRebind,
+            )
+            builder.context.packageFqName = rootNonLocalDeclaration.containingKtFile.packageFqName
+            return builder.moveNext(designation.path.iterator(), containingClass = null)
+        }
+    }
+
+    override fun bindFunctionTarget(target: FirFunctionTarget, function: FirFunction<*>) {
+        val rewrittenTarget = functionsToRebind?.firstOrNull { it.realPsi == function.realPsi } ?: function
+        super.bindFunctionTarget(target, rewrittenTarget)
     }
 
     private inner class VisitorWithReplacement : Visitor() {
