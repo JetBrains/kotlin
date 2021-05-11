@@ -4,6 +4,8 @@
  */
 package org.jetbrains.kotlin.native.interop.gen
 
+import org.jetbrains.kotlin.native.interop.indexer.StructDef
+
 interface StubIrVisitor<T, R> {
 
     fun visitClass(element: ClassStub, data: T): R
@@ -45,7 +47,7 @@ interface StubIrTransformer<T> {
 
 }
 
-class DeepCopyForManagedWrapper(val originalClass: ClassStub) : StubIrTransformer<Unit> {
+class DeepCopyForManagedWrapper(val originalClass: ClassStub, val context: StubsBuildingContext) : StubIrTransformer<Unit> {
     override fun visitClass(element: ClassStub): ClassStub = error("Not implemented")
 
     override fun visitTypealias(element: TypealiasStub): TypealiasStub = error("Not implemented")
@@ -142,7 +144,7 @@ class DeepCopyForManagedWrapper(val originalClass: ClassStub) : StubIrTransforme
 
     private fun transformCPointerToManaged(type: StubType): StubType {
         if (type !is ClassifierStubType) return type
-        if (type.classifier.topLevelName != "CPointer") return type
+        if (type.classifier.topLevelName != "CPointer" && type.classifier.topLevelName != "CValuesRef") return type
         if (type.classifier.pkg != "kotlinx.cinterop") return type
         val argument = type.typeArguments.single() as? TypeArgumentStub ?: return type
         if (argument.type !is ClassifierStubType) return type
@@ -151,7 +153,7 @@ class DeepCopyForManagedWrapper(val originalClass: ClassStub) : StubIrTransforme
         if (!argument.type.classifier.topLevelName.let { it.startsWith("Sk") || it.startsWith("Gr")}) return type
         if (argument.type.classifier.pkg != "org.jetbrains.skiko.skia.native") return type
         println("API TRANSFORM: CPointer(${(argument.type as? ClassifierStubType)?.classifier?.topLevelName?:argument.type})")
-        return ClassifierStubType(managedWrapperClassifier(argument.type.classifier) ?: return type)
+        return ClassifierStubType(managedWrapperClassifier(argument.type.classifier) ?: return type, nullable = type.nullable)
     }
 
     override fun visitFunctionParameter(element: FunctionParameterStub): FunctionParameterStub {
@@ -174,10 +176,8 @@ class DeepCopyForManagedWrapper(val originalClass: ClassStub) : StubIrTransforme
     fun managedWrapperClassifier(cppClassifier: Classifier): Classifier? {
         if (!(cppClassifier.topLevelName.startsWith("Sk") || cppClassifier.topLevelName.startsWith("Gr"))) return null
         if (cppClassifier.topLevelName == "SkString") return null
-        // TODO: Need to skip all structs as opposed to classes.
-        if (cppClassifier.topLevelName == "SkRect" ||
-            cppClassifier.topLevelName == "SkImageInfo" ||
-            cppClassifier.topLevelName == "GrGLInterface") return null
+        // TODO: We only managed C++ classes, not structs for now.
+        if (!(context as StubsBuildingContextImpl).isClass(cppClassifier.topLevelName)) return null
 
         return Classifier.topLevel(cppClassifier.pkg, cppClassifier.topLevelName.drop(2))
     }

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.AbstractValueUsageTransformer
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.common.ir.copyTo
+import org.jetbrains.kotlin.backend.common.ir.ir2stringWhole
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cgen.hasCCallAnnotation
@@ -195,6 +196,8 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
 
                 assert(oldType.computePrimitiveBinaryTypeOrNull() == newType.computePrimitiveBinaryTypeOrNull())
 
+                println("CALL: ${ir2stringWhole(expression)}")
+                println("EXTR: ${expression.extensionReceiver?.render()}")
                 expression.extensionReceiver = expression.extensionReceiver!!.useAs(oldType)
 
                 expression

@@ -306,7 +306,7 @@ internal class StructStubBuilder(
     }
 
     private fun buildManagedWrapper(classStub: ClassStub.Simple): ClassStub.Simple? {
-        val copier = DeepCopyForManagedWrapper(classStub)
+        val copier = DeepCopyForManagedWrapper(classStub, context)
 
         val managedName = copier.managedWrapperClassifier(classStub.classifier) ?: run {
             println("BAD CLASSIFIER: ${classStub.classifier.topLevelName}")

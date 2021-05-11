@@ -10,6 +10,7 @@ import llvm.*
 import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.common.ir.allParameters
 import org.jetbrains.kotlin.backend.common.ir.allParametersCount
+import org.jetbrains.kotlin.backend.common.ir.ir2stringWhole
 import org.jetbrains.kotlin.backend.common.lower.inline.InlinerExpressionLocationHint
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cgen.CBridgeOrigin
@@ -1189,6 +1190,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     private fun evaluateWhen(expression: IrWhen): LLVMValueRef {
         context.log{"evaluateWhen                   : ${ir2string(expression)}"}
+
+        println("WHEN: ${ir2stringWhole(expression)}")
 
         val whenEmittingContext = WhenEmittingContext(expression)
 

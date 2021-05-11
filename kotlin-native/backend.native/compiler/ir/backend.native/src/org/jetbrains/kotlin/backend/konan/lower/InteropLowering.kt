@@ -767,6 +767,36 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
     private fun generateCFunctionPointer(function: IrSimpleFunction, expression: IrExpression): IrExpression =
             generateWithStubs { generateCFunctionPointer(function, function, expression) }
 
+    // ?.foo()
+    fun IrBuilderWithScope.irNullOrCall(extensionReceiverExpression: IrExpression, typeArguments: List<IrTypeArgument>, callee: IrSimpleFunctionSymbol): IrExpression =
+            /*irIfThenElse(callee.owner.returnType.makeNullable(),
+                    irEqeqeq(extensionReceiverExpression, irNull()),
+                    irNull(),
+                    irCall(callee).apply {
+                        extensionReceiver = extensionReceiverExpression
+                    }
+            )*/
+            irIfThenElse(callee.owner.returnType.makeNullable(),
+                    irEqeqeq(extensionReceiverExpression, irNull()),
+                    irNull(),
+                    irCall(callee).apply {
+                        extensionReceiver = extensionReceiverExpression
+                        typeArguments.forEachIndexed { index, arg ->
+                            putTypeArgument(index, arg.typeOrNull!!)
+                        }
+                    }
+            ).also{
+                println("NULL OR CALL: ${ir2stringWhole(it)}")
+            }
+            //irCall(callee).apply {
+            //    extensionReceiver = extensionReceiverExpression
+            //}
+
+    fun IrBuilderWithScope.irTmpCall(extensionReceiverExpression: IrExpression, callee: IrSimpleFunctionSymbol): IrExpression =
+            irCall(callee).apply {
+                extensionReceiver = extensionReceiverExpression
+            }
+
     override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
         expression.transformChildrenVoid(this)
 
@@ -810,6 +840,8 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
 
     private fun transformSecondaryCppConstructorCall(expression: IrConstructorCall): IrExpression {
         val irConstructor = expression.symbol.owner
+        if (irConstructor.isPrimary) return expression
+
         val irClass = irConstructor.constructedClass
         val primaryConstructor = irClass.primaryConstructor!!.symbol
 
@@ -844,9 +876,7 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
                     val tmp = irTemporary(call)
                     val initCall = irCall(correspondingInit.symbol).apply {
                         putValueArgument(0,
-                                irCall(interopGetPtr).apply {
-                                    extensionReceiver = irGet(tmp)
-                                }
+                                irNullOrCall(irGet(tmp), listOf((correspondingInit.valueParameters.first().type as IrSimpleType).arguments.single()), interopGetPtr)
                         )
                         for (index in 0 until expression.valueArgumentsCount) {
                             putValueArgument(index+1, expression.getValueArgument(index)!!)
@@ -862,6 +892,8 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
 
     private fun transformManagedSecondaryCppConstructorCall(expression: IrConstructorCall): IrExpression {
         val irConstructor = expression.symbol.owner
+        if (irConstructor.isPrimary) return expression
+
         val irClass = irConstructor.constructedClass
         val primaryConstructor = irClass.primaryConstructor!!.symbol
 
@@ -871,17 +903,25 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
                 .declarations
                 .filterIsInstance<IrConstructor>()
                 .filter { it.valueParameters.size == irConstructor.valueParameters.size}
-                .single {
+                .singleOrNull {
                     it.valueParameters.mapIndexed() { index, initParameter ->
-                        initParameter.type == irConstructor.valueParameters[index].type
+                         managedTypeMatch(irConstructor.valueParameters[index].type, initParameter.type)
                     }.all{ it }
-                }
+                } ?: error("Could not find a match for ${irConstructor.render()}")
 
         val irBlock = builder.at(expression)
                 .irBlock {
                     val cppConstructorCall = irCall(correspondingCppConstructor.symbol).apply {
                         for (index in 0 until expression.valueArgumentsCount) {
-                            putValueArgument(index, expression.getValueArgument(index)!!)
+                            val newArgument = irBlock {
+                                val oldArgument = irTemporary(expression.getValueArgument(index)!!)
+                                if (irConstructor.valueParameters[index].type.isManagedType()) {
+                                    +irNullOrCall(irGet(oldArgument), listOf((irConstructor.valueParameters[index].type as IrSimpleType).arguments.single()), symbols.interopGetPtr)
+                                } else {
+                                    +irGet(oldArgument)
+                                }
+                            }
+                            putValueArgument(index, newArgument)
                         }
                     }
                     val call = irCall(primaryConstructor).also {
@@ -889,11 +929,7 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
                         it.putValueArgument(1, true.toIrConst(context.irBuiltIns.booleanType))
                     }
                     +call
-                }.also {
-                    println("CONSTRUCTOR CALL")
-                    println(ir2stringWhole(it))
                 }
-
         return irBlock
     }
 
@@ -1143,7 +1179,17 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
                 .filter { it.name.toString() == "cpp" }
                 .single()
 
-        if (function == cppProperty.getter) return expression
+        val managedProperty = irClass.declarations
+                .filterIsInstance<IrProperty>()
+                .filter { it.name.toString() == "managed" }
+                .single()
+
+        val cleanerProperty = irClass.declarations
+                .filterIsInstance<IrProperty>()
+                .filter { it.name.toString() == "cleaner" }
+                .single()
+
+        if (function == cppProperty.getter || function == managedProperty.getter || function == cleanerProperty.getter ) return expression
 
         val cppField = cppProperty.backingField!!
 
@@ -1163,13 +1209,13 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
             irCall(newFunction).apply {
                 dispatchReceiver = irGetField(expression.dispatchReceiver, cppField)
                 for (index in 0 until expression.valueArgumentsCount) {
-                    val oldArgument = expression.getValueArgument(index)!!
-                    val newArgument = if (function.valueParameters[index].type.isManagedType()) {
-                        irCall(symbols.interopGetPtr).apply {
-                            extensionReceiver = oldArgument
+                    val newArgument = irBlock {
+                        val oldArgument = irTemporary(expression.getValueArgument(index)!!)
+                        if (function.valueParameters[index].type.isManagedType()) {
+                            +irNullOrCall(irGet(oldArgument), listOf((newFunction.valueParameters[index].type as IrSimpleType).arguments.single()), symbols.interopGetPtr)
+                        } else {
+                            +irGet(oldArgument)
                         }
-                    } else {
-                        oldArgument
                     }
                     putValueArgument(index, newArgument)
                 }
@@ -1209,7 +1255,7 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
     private fun managedTypeMatch(one: IrType, another: IrType): Boolean {
         if (one == another) return true
         if (one.classOrNull?.owner?.hasAnnotation(RuntimeNames.managedType) != true) return false
-        if (!another.isCPointer(symbols)) return false
+        if (!another.isCPointer(symbols) && !another.isCValuesRef(symbols)) return false
 
         val cppType = one.classOrNull!!.owner.primaryConstructor?.valueParameters?.first()?.type ?: return false
         val pointedType = (another as? IrSimpleType)?.arguments?.single() as? IrSimpleType ?: return false
@@ -1248,13 +1294,13 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
             irCall(newFunction).apply {
                 dispatchReceiver = irGetObject(cppCompanion.symbol)
                 for (index in 0 until expression.valueArgumentsCount) {
-                    val oldArgument = expression.getValueArgument(index)!!
-                    val newArgument = if (function.valueParameters[index].type.isManagedType()) {
-                        irCall(symbols.interopGetPtr).apply {
-                            extensionReceiver = oldArgument
+                    val newArgument = irBlock {
+                        val oldArgument = irTemporary(expression.getValueArgument(index)!!)
+                        if (function.valueParameters[index].type.isManagedType()) {
+                            +irNullOrCall(irGet(oldArgument), listOf((newFunction.valueParameters[index].type as IrSimpleType).arguments.single()), symbols.interopGetPtr)
+                        } else {
+                            +irGet(oldArgument)
                         }
-                    } else {
-                        oldArgument
                     }
                     putValueArgument(index, newArgument)
                 }

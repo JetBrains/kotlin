@@ -1,6 +1,9 @@
 language = C++
 compilerOpts = -std=c++17
 plugin = org.jetbrains.kotlin.native.interop.skia
+package = org.jetbrains.skiko.skia.native
+headers = stdio.h
+seaderFilter = 
 
 ---
 // TODO: this one checks the syntactic aspect for now.
@@ -22,20 +25,47 @@ template <typename T> sk_sp<T> sk_ref_sp(T* obj) {
     return sk_sp<T>(obj);
 }
 
-class Value {
-public:
-    int data;
+class SkValue {
+    public:
+        SkValue() {
+            printf("SkValue()\n");
+        };
+        ~SkValue() {
+            printf("~SkValue()\n");
+        };
+        int data;
+        int refcount = 0;
+        void setData(int val) {
+            data = val;
+        }
+        void ref() {
+            printf("ref\n");
+            refcount ++;
+        }
+        void unref() {
+            printf("unref\n");
+            refcount --;
+        }
 };
 
-class Foo {
+class SkFoo {
 public:
-    Foo() { }
+    SkFoo() {
+        printf("SkFoo()\n");
+    };
 
-    virtual sk_sp<Value> foo(Value *obj) {
-        return sk_sp<Value>(obj);
+    ~SkFoo() {
+        printf("~SkFoo()\n");
+    };
+    virtual sk_sp<SkValue> foo(SkValue *obj) {
+        return sk_sp<SkValue>(obj);
     }
 
-    virtual Value* bar(sk_sp<Value> obj) {
+    virtual SkValue* bar(sk_sp<SkValue> obj) {
         return obj.release();
+    }
+
+    virtual SkValue* qux() {
+        return new SkValue();
     }
 };

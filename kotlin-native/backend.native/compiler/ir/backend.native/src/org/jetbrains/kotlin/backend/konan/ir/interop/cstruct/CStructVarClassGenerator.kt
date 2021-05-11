@@ -257,7 +257,6 @@ println("got CPP")
                                 dispatchReceiver = itCpp
                             }
                         } else {
-                            // TODO: if (managed) {
                             val companion = cppValClass.declarations
                                     .filterIsInstance<IrClass>()
                                     .single { it.isCompanion }
@@ -312,6 +311,12 @@ println("got CPP")
                 irExprBody(irIfThenElse(callCreateCleaner.type.makeNullable(), irGet(irClass.primaryConstructor!!.valueParameters[1]), callCreateCleaner, irNull()))
             }
         }
+
+        cleanerVal.getter!!.body = irBuilder(irBuiltIns, cleanerVal.getter!!.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
+                .irBlockBody {
+                    +irReturn(irGetField(irGet(cleanerVal.getter!!.dispatchReceiverParameter!!), cleanerVal.backingField!!))
+
+                }
 
         println("GENERATED IR FOR ${irClass.name}")
         println(ir2stringWhole(irClass))

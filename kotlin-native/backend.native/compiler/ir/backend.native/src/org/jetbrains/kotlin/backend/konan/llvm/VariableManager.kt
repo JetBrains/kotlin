@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 
 internal fun IrElement.needDebugInfo(context: Context) = context.shouldContainDebugInfo() || (this is IrVariable && this.isVar)
@@ -70,7 +71,9 @@ internal class VariableManager(val functionGenerationContext: FunctionGeneration
 
     internal fun createMutable(valueDeclaration: IrValueDeclaration,
                                isVar: Boolean, value: LLVMValueRef? = null, variableLocation: VariableDebugLocation?) : Int {
-        assert(!contextVariablesToIndex.contains(valueDeclaration))
+        assert(!contextVariablesToIndex.contains(valueDeclaration)) {
+            "Could not find ${valueDeclaration.render()} in contextVariablesToIndex"
+        }
         val index = variables.size
         val type = functionGenerationContext.getLLVMType(valueDeclaration.type)
         val slot = functionGenerationContext.alloca(type, valueDeclaration.name.asString(), variableLocation)
