@@ -15,12 +15,11 @@ import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
@@ -233,16 +232,14 @@ class IrExpressionLambdaImpl(
 }
 
 class IrDefaultLambda(
-    lambdaClassType: Type,
+    override val lambdaClassType: Type,
     capturedArgs: Array<Type>,
     irValueParameter: IrValueParameter,
     offset: Int,
     needReification: Boolean
-) : DefaultLambda(
-    lambdaClassType, capturedArgs, irValueParameter.toIrBasedDescriptor() as ValueParameterDescriptor, offset, needReification
-) {
-    private val invoke =
-        (irValueParameter.type.classifierOrFail.owner as IrClass).functions.single { it.name == OperatorNameConventions.INVOKE }
+) : DefaultLambda(capturedArgs, irValueParameter.isCrossinline, offset, needReification) {
+    // TODO: this always produces an erased signature, but it should be non-erased if this isn't a property reference
+    private val invoke = irValueParameter.type.classOrNull!!.owner.functions.single { it.name == OperatorNameConventions.INVOKE }
 
     override fun mapAsmSignature(sourceCompiler: SourceCompilerForInline, descriptor: FunctionDescriptor): Method =
         (sourceCompiler as IrSourceCompilerForInline).codegen.context.methodSignatureMapper.mapSignatureSkipGeneric(invoke).asmMethod
