@@ -97,7 +97,7 @@ object IgnoreTests {
         } catch (e: Throwable) {
             if (testIsEnabled) {
                 if (directive is EnableOrDisableTestDirective.Disable) {
-                    handleTestWithWrongDirective(testFile, directive, directivePosition, additionalFiles)
+                    handleTestWithWrongDirective(testPasses = false, testFile, directive, directivePosition, additionalFiles)
                 }
                 throw e
             }
@@ -105,23 +105,33 @@ object IgnoreTests {
         }
 
         if (!testIsEnabled) {
-            handleTestWithWrongDirective(testFile, directive, directivePosition, additionalFiles)
+            handleTestWithWrongDirective(testPasses = true, testFile, directive, directivePosition, additionalFiles)
         }
     }
 
 
     @OptIn(ExperimentalStdlibApi::class)
     private fun handleTestWithWrongDirective(
+        testPasses: Boolean,
         testFile: Path,
         directive: EnableOrDisableTestDirective,
         directivePosition: DirectivePosition,
         additionalFiles: List<Path>,
     ) {
-        val verb = when (directive) {
-            is EnableOrDisableTestDirective.Disable -> "do not pass"
-            is EnableOrDisableTestDirective.Enable -> "passes"
+        val verb = when (testPasses) {
+            false -> "do not pass"
+            true -> "passes"
         }
-        if (INSERT_DIRECTIVE_AUTOMATICALLY) {
+
+        val directiveIsOutdated = when {
+            !testPasses && directive is EnableOrDisableTestDirective.Enable -> true
+            testPasses && directive is EnableOrDisableTestDirective.Disable -> true
+            else -> false
+        }
+
+        val directiveIsMissing = !directiveIsOutdated
+
+        if (directiveIsMissing && INSERT_DIRECTIVE_AUTOMATICALLY) {
             testFile.insertDirectivesToFileAndAdditionalFile(directive, additionalFiles, directivePosition)
             val filesWithDirectiveAdded = buildList {
                 add(testFile.fileName.toString())
@@ -131,7 +141,8 @@ object IgnoreTests {
                 "Looks like the test $verb, ${directive.directiveText} was added to the ${filesWithDirectiveAdded.joinToString()}"
             )
         }
-        if (directive is EnableOrDisableTestDirective.Enable) {
+
+        if (directiveIsOutdated) {
             throw AssertionError(
                 "Looks like the test $verb, please ${directive.fixDirectiveMessage} the ${testFile.fileName}"
             )
