@@ -5,32 +5,15 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.DescriptorAsmUtil
-import org.jetbrains.kotlin.codegen.PropertyReferenceCodegen
-import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.codegen.binding.CalculatedClosure
-import org.jetbrains.kotlin.codegen.binding.CodegenBinding.*
-import org.jetbrains.kotlin.codegen.binding.MutableClosure
 import org.jetbrains.kotlin.codegen.context.EnclosedValueDescriptor
-import org.jetbrains.kotlin.codegen.coroutines.getOrCreateJvmSuspendFunctionView
-import org.jetbrains.kotlin.codegen.coroutines.isCapturedSuspendLambda
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.isReleaseCoroutines
-import org.jetbrains.kotlin.coroutines.isSuspendLambda
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtLambdaExpression
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCallWithAssert
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.org.objectweb.asm.*
+import org.jetbrains.org.objectweb.asm.ClassReader
+import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
 import kotlin.properties.Delegates
@@ -103,9 +86,6 @@ abstract class ExpressionLambda(isCrossInline: Boolean) : LambdaInfo(isCrossInli
     abstract fun isCapturedSuspend(desc: CapturedParamDesc): Boolean
 }
 
-private val FunctionDescriptor.explicitParameters
-    get() = listOfNotNull(extensionReceiverParameter) + valueParameters
-
 abstract class DefaultLambda(
     private val capturedArgs: Array<Type>,
     isCrossinline: Boolean,
@@ -124,7 +104,7 @@ abstract class DefaultLambda(
     private lateinit var invokeMethodDescriptor: FunctionDescriptor
 
     override val invokeMethodParameters: List<KotlinType?>
-        get() = invokeMethodDescriptor.explicitParameters.map { it.returnType }
+        get() = invokeMethodDescriptor.valueParameters.map { it.returnType }
 
     override val invokeMethodReturnType: KotlinType?
         get() = invokeMethodDescriptor.returnType
@@ -185,142 +165,4 @@ abstract class DefaultLambda(
             ).plus(OPTIMIZED_PROPERTY_REFERENCE_SUPERTYPES)
                 .mapTo(HashSet(), Type::getInternalName)
     }
-}
-
-internal fun Type.boxReceiverForBoundReference() =
-    AsmUtil.boxType(this)
-
-class PsiExpressionLambda(
-    expression: KtExpression,
-    private val typeMapper: KotlinTypeMapper,
-    private val languageVersionSettings: LanguageVersionSettings,
-    isCrossInline: Boolean,
-    override val isBoundCallableReference: Boolean
-) : ExpressionLambda(isCrossInline) {
-
-    override val lambdaClassType: Type
-
-    override val invokeMethod: Method
-
-    val invokeMethodDescriptor: FunctionDescriptor
-
-    override val invokeMethodParameters: List<KotlinType?>
-        get() {
-            val actualInvokeDescriptor = if (isSuspend)
-                getOrCreateJvmSuspendFunctionView(
-                    invokeMethodDescriptor,
-                    languageVersionSettings.isReleaseCoroutines(),
-                    typeMapper.bindingContext
-                )
-            else
-                invokeMethodDescriptor
-            val valueParameters = actualInvokeDescriptor.valueParameters.map { it.returnType }
-            return actualInvokeDescriptor.extensionReceiverParameter?.let { listOf(it.returnType) + valueParameters } ?: valueParameters
-        }
-
-    override val invokeMethodReturnType: KotlinType?
-        get() = invokeMethodDescriptor.returnType
-
-    val classDescriptor: ClassDescriptor
-
-    val propertyReferenceInfo: PropertyReferenceInfo?
-
-    val functionWithBodyOrCallableReference: KtExpression = (expression as? KtLambdaExpression)?.functionLiteral ?: expression
-
-    override val returnLabels: Map<String, Label?>
-
-    override val isSuspend: Boolean
-
-    val closure: CalculatedClosure
-
-    init {
-        val bindingContext = typeMapper.bindingContext
-        val function = bindingContext.get(BindingContext.FUNCTION, functionWithBodyOrCallableReference)
-        if (function == null && expression is KtCallableReferenceExpression) {
-            val variableDescriptor =
-                bindingContext.get(BindingContext.VARIABLE, functionWithBodyOrCallableReference) as? VariableDescriptorWithAccessors
-                    ?: throw AssertionError("Reference expression not resolved to variable descriptor with accessors: ${expression.getText()}")
-            classDescriptor = bindingContext.get(CLASS_FOR_CALLABLE, variableDescriptor)
-                ?: throw IllegalStateException("Class for callable not found: $variableDescriptor\n${expression.text}")
-            lambdaClassType = typeMapper.mapClass(classDescriptor)
-            val getFunction = PropertyReferenceCodegen.findGetFunction(variableDescriptor)
-            invokeMethodDescriptor = PropertyReferenceCodegen.createFakeOpenDescriptor(getFunction, classDescriptor)
-            val resolvedCall = expression.callableReference.getResolvedCallWithAssert(bindingContext)
-            propertyReferenceInfo = PropertyReferenceInfo(
-                resolvedCall.resultingDescriptor as VariableDescriptor, getFunction
-            )
-        } else {
-            propertyReferenceInfo = null
-            invokeMethodDescriptor = function ?: throw AssertionError("Function is not resolved to descriptor: " + expression.text)
-            classDescriptor = bindingContext.get(CLASS_FOR_CALLABLE, invokeMethodDescriptor)
-                ?: throw IllegalStateException("Class for invoke method not found: $invokeMethodDescriptor\n${expression.text}")
-            lambdaClassType = asmTypeForAnonymousClass(bindingContext, invokeMethodDescriptor)
-        }
-
-        closure = bindingContext.get(CLOSURE, classDescriptor)
-            ?: throw AssertionError("null closure for lambda ${expression.text}")
-        returnLabels = InlineCodegen.getDeclarationLabels(expression, invokeMethodDescriptor).associateWith { null }
-        invokeMethod = typeMapper.mapAsmMethod(invokeMethodDescriptor)
-        isSuspend = invokeMethodDescriptor.isSuspend
-    }
-
-    override val capturedVars: List<CapturedParamDesc> by lazy {
-        arrayListOf<CapturedParamDesc>().apply {
-            val captureThis = closure.capturedOuterClassDescriptor
-            if (captureThis != null) {
-                val kotlinType = captureThis.defaultType
-                val type = typeMapper.mapType(kotlinType)
-                val descriptor = EnclosedValueDescriptor(
-                    AsmUtil.CAPTURED_THIS_FIELD, null,
-                    StackValue.field(type, lambdaClassType, AsmUtil.CAPTURED_THIS_FIELD, false, StackValue.LOCAL_0),
-                    type, kotlinType
-                )
-                add(getCapturedParamInfo(descriptor))
-            }
-
-            val capturedReceiver = closure.capturedReceiverFromOuterContext
-            if (capturedReceiver != null) {
-                val type = typeMapper.mapType(capturedReceiver).let {
-                    if (isBoundCallableReference) AsmUtil.boxType(it) else it
-                }
-
-                val fieldName = closure.getCapturedReceiverFieldName(typeMapper.bindingContext, languageVersionSettings)
-                val descriptor = EnclosedValueDescriptor(
-                    fieldName, null,
-                    StackValue.field(type, capturedReceiver, lambdaClassType, fieldName, false, StackValue.LOCAL_0),
-                    type, capturedReceiver
-                )
-                add(getCapturedParamInfo(descriptor))
-            }
-
-            closure.captureVariables.values.forEach { descriptor ->
-                add(getCapturedParamInfo(descriptor))
-            }
-        }
-    }
-
-    val isPropertyReference: Boolean
-        get() = propertyReferenceInfo != null
-
-    override fun isCapturedSuspend(desc: CapturedParamDesc): Boolean =
-        isCapturedSuspendLambda(closure, desc.fieldName, typeMapper.bindingContext)
-}
-
-class PsiDefaultLambda(
-    override val lambdaClassType: Type,
-    capturedArgs: Array<Type>,
-    private val parameterDescriptor: ValueParameterDescriptor,
-    offset: Int,
-    needReification: Boolean
-) : DefaultLambda(capturedArgs, parameterDescriptor.isCrossinline, offset, needReification) {
-    override fun mapAsmSignature(sourceCompiler: SourceCompilerForInline, descriptor: FunctionDescriptor): Method =
-        sourceCompiler.state.typeMapper.mapSignatureSkipGeneric(descriptor).asmMethod
-
-    override fun findInvokeMethodDescriptor(isPropertyReference: Boolean): FunctionDescriptor =
-        parameterDescriptor.type.memberScope
-            .getContributedFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.FROM_BACKEND)
-            .single().let {
-                // property reference generates erased 'get' method
-                if (isPropertyReference) it.original else it
-            }
 }
