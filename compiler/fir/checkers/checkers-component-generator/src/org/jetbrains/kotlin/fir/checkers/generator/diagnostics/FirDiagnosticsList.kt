@@ -161,6 +161,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val DEPRECATED_SINCE_KOTLIN_WITHOUT_ARGUMENTS by error<PsiElement>()
         val DEPRECATED_SINCE_KOTLIN_WITHOUT_DEPRECATED by error<PsiElement>()
         val DEPRECATED_SINCE_KOTLIN_WITH_DEPRECATED_LEVEL by error<PsiElement>()
+        val DEPRECATED_SINCE_KOTLIN_OUTSIDE_KOTLIN_SUBPACKAGE by error<PsiElement>()
     }
 
     val EXPOSED_VISIBILITY by object : DiagnosticGroup("Exposed visibility") {

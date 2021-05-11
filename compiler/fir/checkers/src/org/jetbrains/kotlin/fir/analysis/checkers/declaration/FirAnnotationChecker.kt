@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.argumentMapping
 import org.jetbrains.kotlin.fir.resolve.fqName
@@ -37,6 +39,18 @@ object FirAnnotationChecker : FirAnnotatedDeclarationChecker() {
         }
 
         if (deprecatedSinceKotlinCall != null) {
+            val closestFirFile = context.findClosest<FirFile>()
+            if (closestFirFile != null) {
+                val packageName = closestFirFile.packageFqName.asString()
+                if (packageName != "kotlin" && !packageName.startsWith("kotlin.")) {
+                    reporter.reportOn(
+                        deprecatedSinceKotlinCall.source,
+                        FirErrors.DEPRECATED_SINCE_KOTLIN_OUTSIDE_KOTLIN_SUBPACKAGE,
+                        context
+                    )
+                }
+            }
+
             if (deprecatedCall == null) {
                 reporter.reportOn(deprecatedSinceKotlinCall.source, FirErrors.DEPRECATED_SINCE_KOTLIN_WITHOUT_DEPRECATED, context)
             } else {
