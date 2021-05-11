@@ -7141,6 +7141,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/reflection/kClassOnReifiedTypeInLambda-advanced.kt");
         }
 
+        @TestMetadata("kClassReifiedWithJsCall.kt")
+        public void testKClassReifiedWithJsCall() throws Exception {
+            runTest("js/js.translator/testData/box/reflection/kClassReifiedWithJsCall.kt");
+        }
+
         @TestMetadata("kClassSimpleName.kt")
         public void testKClassSimpleName() throws Exception {
             runTest("js/js.translator/testData/box/reflection/kClassSimpleName.kt");
@@ -7154,6 +7159,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("kClassWithJsCall.kt")
         public void testKClassWithJsCall() throws Exception {
             runTest("js/js.translator/testData/box/reflection/kClassWithJsCall.kt");
+        }
+
+        @TestMetadata("kTypeWithJsCall.kt")
+        public void testKTypeWithJsCall() throws Exception {
+            runTest("js/js.translator/testData/box/reflection/kTypeWithJsCall.kt");
         }
 
         @TestMetadata("primitiveKClassOnReifiedType.kt")
