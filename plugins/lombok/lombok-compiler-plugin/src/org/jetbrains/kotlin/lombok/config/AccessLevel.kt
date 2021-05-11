@@ -24,9 +24,8 @@ enum class AccessLevel {
             val visibility = when (v) {
                 PUBLIC -> Visibilities.Public
                 PROTECTED -> Visibilities.Protected
+                PACKAGE, MODULE -> JavaVisibilities.PackageVisibility
                 PRIVATE -> Visibilities.Private
-                PACKAGE -> JavaVisibilities.PackageVisibility
-                MODULE -> Visibilities.Internal
                 NONE -> Visibilities.Private
             }
             return JavaDescriptorVisibilities.toDescriptorVisibility(visibility)
