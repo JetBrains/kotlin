@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.context.EnclosedValueDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -101,14 +100,6 @@ abstract class DefaultLambda(
     final override lateinit var invokeMethod: Method
         private set
 
-    private lateinit var invokeMethodDescriptor: FunctionDescriptor
-
-    override val invokeMethodParameters: List<KotlinType?>
-        get() = invokeMethodDescriptor.valueParameters.map { it.returnType }
-
-    override val invokeMethodReturnType: KotlinType?
-        get() = invokeMethodDescriptor.returnType
-
     final override lateinit var capturedVars: List<CapturedParamDesc>
         private set
 
@@ -123,10 +114,10 @@ abstract class DefaultLambda(
         val isPropertyReference = superName in PROPERTY_REFERENCE_SUPER_CLASSES
         val isFunctionReference = superName == FUNCTION_REFERENCE.internalName || superName == FUNCTION_REFERENCE_IMPL.internalName
 
-        val descriptor = Type.getMethodDescriptor(Type.VOID_TYPE, *capturedArgs)
-        val constructor = getMethodNode(classBytes, "<init>", descriptor, lambdaClassType)?.node
+        val constructorDescriptor = Type.getMethodDescriptor(Type.VOID_TYPE, *capturedArgs)
+        val constructor = getMethodNode(classBytes, "<init>", constructorDescriptor, lambdaClassType)?.node
         assert(constructor != null || capturedArgs.isEmpty()) {
-            "Can't find non-default constructor <init>$descriptor for default lambda $lambdaClassType"
+            "Can't find non-default constructor <init>$constructorDescriptor for default lambda $lambdaClassType"
         }
         capturedVars =
             if (isFunctionReference || isPropertyReference)
@@ -140,11 +131,12 @@ abstract class DefaultLambda(
                 }?.toList() ?: emptyList()
         isBoundCallableReference = (isFunctionReference || isPropertyReference) && capturedVars.isNotEmpty()
 
-        invokeMethodDescriptor = findInvokeMethodDescriptor(isPropertyReference)
-        val methodName = (if (isPropertyReference) OperatorNameConventions.GET else OperatorNameConventions.INVOKE).asString()
-        val signature = mapAsmSignature(sourceCompiler, invokeMethodDescriptor)
-        node = getMethodNode(classBytes, methodName, signature.descriptor, lambdaClassType, signatureAmbiguity = true)
-            ?: error("Can't find method '$signature' in '${lambdaClassType.internalName}'")
+        val invokeName = (if (isPropertyReference) OperatorNameConventions.GET else OperatorNameConventions.INVOKE).asString()
+        val invokeDescriptor = mapAsmDescriptor(sourceCompiler, isPropertyReference)
+        // TODO: `signatureAmbiguity = true` ignores the argument types from `invokeDescriptor` and only looks at the count.
+        //   This effectively masks incorrect results from `mapAsmDescriptor`, which hopefully won't manifest in another way.
+        node = getMethodNode(classBytes, invokeName, invokeDescriptor, lambdaClassType, signatureAmbiguity = true)
+            ?: error("Can't find method '$invokeName$invokeDescriptor' in '${lambdaClassType.internalName}'")
         invokeMethod = Method(node.node.name, node.node.desc)
         if (needReification) {
             //nested classes could also require reification
@@ -152,10 +144,7 @@ abstract class DefaultLambda(
         }
     }
 
-    protected abstract fun mapAsmSignature(sourceCompiler: SourceCompilerForInline, descriptor: FunctionDescriptor): Method
-
-    // TODO: get rid of this; descriptors should *only* be used by PsiDefaultLambda
-    protected abstract fun findInvokeMethodDescriptor(isPropertyReference: Boolean): FunctionDescriptor
+    protected abstract fun mapAsmDescriptor(sourceCompiler: SourceCompilerForInline, isPropertyReference: Boolean): String
 
     private companion object {
         val PROPERTY_REFERENCE_SUPER_CLASSES =
