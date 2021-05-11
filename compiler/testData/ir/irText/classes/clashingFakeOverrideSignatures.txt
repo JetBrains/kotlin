@@ -61,6 +61,8 @@ FILE fqName:<root> fileName:/clashingFakeOverrideSignatures.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.Base<kotlin.String>
       VALUE_PARAMETER name:y index:0 type:kotlin.String
     PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final bar: kotlin.Int [val]
       FUN FAKE_OVERRIDE name:<get-bar> visibility:public modality:FINAL <> ($this:<root>.Base<kotlin.String>, $receiver:kotlin.String) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -68,6 +70,8 @@ FILE fqName:<root> fileName:/clashingFakeOverrideSignatures.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Base<kotlin.String>
         $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
     PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final bar: kotlin.Int [val]
       FUN FAKE_OVERRIDE name:<get-bar> visibility:public modality:FINAL <> ($this:<root>.Base<kotlin.String>, $receiver:kotlin.String) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -104,6 +108,8 @@ FILE fqName:<root> fileName:/clashingFakeOverrideSignatures.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.Base<kotlin.String>
       VALUE_PARAMETER name:y index:0 type:kotlin.String
     PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final bar: kotlin.Int [fake_override,val]
       FUN FAKE_OVERRIDE name:<get-bar> visibility:public modality:FINAL <> ($this:<root>.Base<kotlin.String>, $receiver:kotlin.String) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -111,6 +117,8 @@ FILE fqName:<root> fileName:/clashingFakeOverrideSignatures.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Base<kotlin.String>
         $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
     PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final bar: kotlin.Int [fake_override,val]
       FUN FAKE_OVERRIDE name:<get-bar> visibility:public modality:FINAL <> ($this:<root>.Base<kotlin.String>, $receiver:kotlin.String) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -281,6 +289,8 @@ FILE fqName:<root> fileName:/clashingFakeOverrideSignatures.kt
           $this: VALUE_PARAMETER name:<this> type:<root>.outerFun.LocalBase<kotlin.String>
           VALUE_PARAMETER name:y index:0 type:kotlin.String
         PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:FINAL [fake_override,val]
+          overridden:
+            public final bar: kotlin.Int [val]
           FUN FAKE_OVERRIDE name:<get-bar> visibility:public modality:FINAL <> ($this:<root>.outerFun.LocalBase<kotlin.String>, $receiver:kotlin.String) returnType:kotlin.Int [fake_override]
             correspondingProperty: PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:FINAL [fake_override,val]
             overridden:
@@ -288,6 +298,8 @@ FILE fqName:<root> fileName:/clashingFakeOverrideSignatures.kt
             $this: VALUE_PARAMETER name:<this> type:<root>.outerFun.LocalBase<kotlin.String>
             $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
         PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:FINAL [fake_override,val]
+          overridden:
+            public final bar: kotlin.Int [val]
           FUN FAKE_OVERRIDE name:<get-bar> visibility:public modality:FINAL <> ($this:<root>.outerFun.LocalBase<kotlin.String>, $receiver:kotlin.String) returnType:kotlin.Int [fake_override]
             correspondingProperty: PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:FINAL [fake_override,val]
             overridden:
@@ -324,6 +336,8 @@ FILE fqName:<root> fileName:/clashingFakeOverrideSignatures.kt
           $this: VALUE_PARAMETER name:<this> type:<root>.outerFun.LocalBase<kotlin.String>
           VALUE_PARAMETER name:y index:0 type:kotlin.String
         PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:FINAL [fake_override,val]
+          overridden:
+            public final bar: kotlin.Int [fake_override,val]
           FUN FAKE_OVERRIDE name:<get-bar> visibility:public modality:FINAL <> ($this:<root>.outerFun.LocalBase<kotlin.String>, $receiver:kotlin.String) returnType:kotlin.Int [fake_override]
             correspondingProperty: PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:FINAL [fake_override,val]
             overridden:
@@ -331,6 +345,8 @@ FILE fqName:<root> fileName:/clashingFakeOverrideSignatures.kt
             $this: VALUE_PARAMETER name:<this> type:<root>.outerFun.LocalBase<kotlin.String>
             $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
         PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:FINAL [fake_override,val]
+          overridden:
+            public final bar: kotlin.Int [fake_override,val]
           FUN FAKE_OVERRIDE name:<get-bar> visibility:public modality:FINAL <> ($this:<root>.outerFun.LocalBase<kotlin.String>, $receiver:kotlin.String) returnType:kotlin.Int [fake_override]
             correspondingProperty: PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:FINAL [fake_override,val]
             overridden:

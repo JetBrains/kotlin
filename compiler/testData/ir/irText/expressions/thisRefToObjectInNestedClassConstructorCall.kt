@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 open class Base(val x: Any)
 
 object Host {

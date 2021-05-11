@@ -89,6 +89,8 @@ FILE fqName:<root> fileName:/inheritingDeprecation.kt
     PROPERTY FAKE_OVERRIDE name:extProp visibility:public modality:OPEN [fake_override,val]
       annotations:
         Deprecated(message = '', replaceWith = <null>, level = <null>)
+      overridden:
+        public open extProp: kotlin.String [val]
       FUN FAKE_OVERRIDE name:<get-extProp> visibility:public modality:OPEN <> ($this:<root>.IFoo, $receiver:kotlin.String) returnType:kotlin.String [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:extProp visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -98,6 +100,8 @@ FILE fqName:<root> fileName:/inheritingDeprecation.kt
     PROPERTY FAKE_OVERRIDE name:prop visibility:public modality:OPEN [fake_override,val]
       annotations:
         Deprecated(message = '', replaceWith = <null>, level = <null>)
+      overridden:
+        public open prop: kotlin.String [val]
       FUN FAKE_OVERRIDE name:<get-prop> visibility:public modality:OPEN <> ($this:<root>.IFoo) returnType:kotlin.String [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:prop visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -123,6 +127,8 @@ FILE fqName:<root> fileName:/inheritingDeprecation.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ExplicitOverride modality:FINAL visibility:public superTypes:[<root>.IFoo]'
     PROPERTY name:prop visibility:public modality:OPEN [val]
+      overridden:
+        public open prop: kotlin.String [val]
       FUN name:<get-prop> visibility:public modality:OPEN <> ($this:<root>.ExplicitOverride) returnType:kotlin.String
         correspondingProperty: PROPERTY name:prop visibility:public modality:OPEN [val]
         overridden:
@@ -132,6 +138,8 @@ FILE fqName:<root> fileName:/inheritingDeprecation.kt
           RETURN type=kotlin.Nothing from='public open fun <get-prop> (): kotlin.String declared in <root>.ExplicitOverride'
             CONST String type=kotlin.String value=""
     PROPERTY name:extProp visibility:public modality:OPEN [val]
+      overridden:
+        public open extProp: kotlin.String [val]
       FUN name:<get-extProp> visibility:public modality:OPEN <> ($this:<root>.ExplicitOverride, $receiver:kotlin.String) returnType:kotlin.String
         correspondingProperty: PROPERTY name:extProp visibility:public modality:OPEN [val]
         overridden:

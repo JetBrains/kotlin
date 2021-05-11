@@ -152,6 +152,9 @@ internal object PersistentIrGenerator {
     val simpleFunctionProto = Proto("int64", "simpleFunction", +"Long", IrSimpleFunctionSymbol)
     val simpleFunctionSymbolListProto =
         Proto("int64", "simpleFunctionSymbol", +"Long", IrSimpleFunctionSymbol, fieldKind = FieldKind.REPEATED)
+    val propertySymbolListProto =
+        Proto("int64", "propertySymbol", +"Long", IrPropertySymbol, fieldKind = FieldKind.REPEATED)
+
     val fieldProto = Proto("int64", "field", +"Long", IrFieldSymbol)
 
     val visibilityProto = Proto(null, "visibility", +"Long", DescriptorVisibility)

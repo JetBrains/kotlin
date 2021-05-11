@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.PropertyCarrier
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -99,6 +100,17 @@ internal abstract class PersistentIrPropertyCommon(
             if (setter !== v) {
                 setCarrier()
                 setterField = v
+            }
+        }
+
+    override var overriddenSymbolsField: List<IrPropertySymbol> = emptyList()
+
+    override var overriddenSymbols: List<IrPropertySymbol>
+        get() = getCarrier().overriddenSymbolsField
+        set(v) {
+            if (overriddenSymbols !== v) {
+                setCarrier()
+                overriddenSymbolsField = v
             }
         }
 

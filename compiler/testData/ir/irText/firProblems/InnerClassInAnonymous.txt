@@ -48,6 +48,8 @@ FILE fqName:<root> fileName:/InnerClassInAnonymous.kt
                       other: CALL 'public final fun <get-end> (): kotlin.String declared in <root>.box.<no name provided>' type=kotlin.String origin=GET_PROPERTY
                         $this: GET_VAR '<this>: <root>.box.<no name provided> declared in <root>.box.<no name provided>' type=<root>.box.<no name provided> origin=null
               PROPERTY FAKE_OVERRIDE name:s visibility:public modality:FINAL [fake_override,val]
+                overridden:
+                  public final s: kotlin.String [val]
                 FUN FAKE_OVERRIDE name:<get-s> visibility:public modality:FINAL <> ($this:<root>.box.<no name provided>.Base) returnType:kotlin.String [fake_override]
                   correspondingProperty: PROPERTY FAKE_OVERRIDE name:s visibility:public modality:FINAL [fake_override,val]
                   overridden:

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 
@@ -22,6 +23,7 @@ internal interface PropertyCarrier : DeclarationCarrier{
     val getterSymbolField: IrSimpleFunctionSymbol?
     val setterField: IrSimpleFunction?
     val setterSymbolField: IrSimpleFunctionSymbol?
+    val overriddenSymbolsField: List<IrPropertySymbol>
 
     override fun clone(): PropertyCarrier {
         return PropertyCarrierImpl(
@@ -31,7 +33,8 @@ internal interface PropertyCarrier : DeclarationCarrier{
             annotationsField,
             backingFieldSymbolField,
             getterSymbolField,
-            setterSymbolField
+            setterSymbolField,
+            overriddenSymbolsField
         )
     }
 }
@@ -43,7 +46,8 @@ internal class PropertyCarrierImpl(
     override val annotationsField: List<IrConstructorCall>,
     override val backingFieldSymbolField: IrFieldSymbol?,
     override val getterSymbolField: IrSimpleFunctionSymbol?,
-    override val setterSymbolField: IrSimpleFunctionSymbol?
+    override val setterSymbolField: IrSimpleFunctionSymbol?,
+    override val overriddenSymbolsField: List<IrPropertySymbol>
 ) : PropertyCarrier {
 
     override val backingFieldField: IrField?

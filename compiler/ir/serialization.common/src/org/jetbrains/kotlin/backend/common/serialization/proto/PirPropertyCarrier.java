@@ -91,6 +91,27 @@ public final class PirPropertyCarrier extends
             setter_ = input.readInt64();
             break;
           }
+          case 64: {
+            if (!((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
+              overriddenSymbols_ = new java.util.ArrayList<java.lang.Long>();
+              mutable_bitField0_ |= 0x00000080;
+            }
+            overriddenSymbols_.add(input.readInt64());
+            break;
+          }
+          case 66: {
+            int length = input.readRawVarint32();
+            int limit = input.pushLimit(length);
+            if (!((mutable_bitField0_ & 0x00000080) == 0x00000080) && input.getBytesUntilLimit() > 0) {
+              overriddenSymbols_ = new java.util.ArrayList<java.lang.Long>();
+              mutable_bitField0_ |= 0x00000080;
+            }
+            while (input.getBytesUntilLimit() > 0) {
+              overriddenSymbols_.add(input.readInt64());
+            }
+            input.popLimit(limit);
+            break;
+          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -101,6 +122,9 @@ public final class PirPropertyCarrier extends
     } finally {
       if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
         annotation_ = java.util.Collections.unmodifiableList(annotation_);
+      }
+      if (((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
+        overriddenSymbols_ = java.util.Collections.unmodifiableList(overriddenSymbols_);
       }
       try {
         unknownFieldsCodedOutput.flush();
@@ -253,6 +277,28 @@ public final class PirPropertyCarrier extends
     return setter_;
   }
 
+  public static final int OVERRIDDENSYMBOLS_FIELD_NUMBER = 8;
+  private java.util.List<java.lang.Long> overriddenSymbols_;
+  /**
+   * <code>repeated int64 overriddenSymbols = 8;</code>
+   */
+  public java.util.List<java.lang.Long>
+      getOverriddenSymbolsList() {
+    return overriddenSymbols_;
+  }
+  /**
+   * <code>repeated int64 overriddenSymbols = 8;</code>
+   */
+  public int getOverriddenSymbolsCount() {
+    return overriddenSymbols_.size();
+  }
+  /**
+   * <code>repeated int64 overriddenSymbols = 8;</code>
+   */
+  public long getOverriddenSymbols(int index) {
+    return overriddenSymbols_.get(index);
+  }
+
   private void initFields() {
     lastModified_ = 0;
     parentSymbol_ = 0L;
@@ -261,6 +307,7 @@ public final class PirPropertyCarrier extends
     backingField_ = 0L;
     getter_ = 0L;
     setter_ = 0L;
+    overriddenSymbols_ = java.util.Collections.emptyList();
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -306,6 +353,9 @@ public final class PirPropertyCarrier extends
     if (((bitField0_ & 0x00000020) == 0x00000020)) {
       output.writeInt64(7, setter_);
     }
+    for (int i = 0; i < overriddenSymbols_.size(); i++) {
+      output.writeInt64(8, overriddenSymbols_.get(i));
+    }
     output.writeRawBytes(unknownFields);
   }
 
@@ -342,6 +392,15 @@ public final class PirPropertyCarrier extends
     if (((bitField0_ & 0x00000020) == 0x00000020)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeInt64Size(7, setter_);
+    }
+    {
+      int dataSize = 0;
+      for (int i = 0; i < overriddenSymbols_.size(); i++) {
+        dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeInt64SizeNoTag(overriddenSymbols_.get(i));
+      }
+      size += dataSize;
+      size += 1 * getOverriddenSymbolsList().size();
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -451,6 +510,8 @@ public final class PirPropertyCarrier extends
       bitField0_ = (bitField0_ & ~0x00000020);
       setter_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000040);
+      overriddenSymbols_ = java.util.Collections.emptyList();
+      bitField0_ = (bitField0_ & ~0x00000080);
       return this;
     }
 
@@ -503,6 +564,11 @@ public final class PirPropertyCarrier extends
         to_bitField0_ |= 0x00000020;
       }
       result.setter_ = setter_;
+      if (((bitField0_ & 0x00000080) == 0x00000080)) {
+        overriddenSymbols_ = java.util.Collections.unmodifiableList(overriddenSymbols_);
+        bitField0_ = (bitField0_ & ~0x00000080);
+      }
+      result.overriddenSymbols_ = overriddenSymbols_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -536,6 +602,16 @@ public final class PirPropertyCarrier extends
       }
       if (other.hasSetter()) {
         setSetter(other.getSetter());
+      }
+      if (!other.overriddenSymbols_.isEmpty()) {
+        if (overriddenSymbols_.isEmpty()) {
+          overriddenSymbols_ = other.overriddenSymbols_;
+          bitField0_ = (bitField0_ & ~0x00000080);
+        } else {
+          ensureOverriddenSymbolsIsMutable();
+          overriddenSymbols_.addAll(other.overriddenSymbols_);
+        }
+        
       }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
@@ -888,6 +964,72 @@ public final class PirPropertyCarrier extends
     public Builder clearSetter() {
       bitField0_ = (bitField0_ & ~0x00000040);
       setter_ = 0L;
+      
+      return this;
+    }
+
+    private java.util.List<java.lang.Long> overriddenSymbols_ = java.util.Collections.emptyList();
+    private void ensureOverriddenSymbolsIsMutable() {
+      if (!((bitField0_ & 0x00000080) == 0x00000080)) {
+        overriddenSymbols_ = new java.util.ArrayList<java.lang.Long>(overriddenSymbols_);
+        bitField0_ |= 0x00000080;
+       }
+    }
+    /**
+     * <code>repeated int64 overriddenSymbols = 8;</code>
+     */
+    public java.util.List<java.lang.Long>
+        getOverriddenSymbolsList() {
+      return java.util.Collections.unmodifiableList(overriddenSymbols_);
+    }
+    /**
+     * <code>repeated int64 overriddenSymbols = 8;</code>
+     */
+    public int getOverriddenSymbolsCount() {
+      return overriddenSymbols_.size();
+    }
+    /**
+     * <code>repeated int64 overriddenSymbols = 8;</code>
+     */
+    public long getOverriddenSymbols(int index) {
+      return overriddenSymbols_.get(index);
+    }
+    /**
+     * <code>repeated int64 overriddenSymbols = 8;</code>
+     */
+    public Builder setOverriddenSymbols(
+        int index, long value) {
+      ensureOverriddenSymbolsIsMutable();
+      overriddenSymbols_.set(index, value);
+      
+      return this;
+    }
+    /**
+     * <code>repeated int64 overriddenSymbols = 8;</code>
+     */
+    public Builder addOverriddenSymbols(long value) {
+      ensureOverriddenSymbolsIsMutable();
+      overriddenSymbols_.add(value);
+      
+      return this;
+    }
+    /**
+     * <code>repeated int64 overriddenSymbols = 8;</code>
+     */
+    public Builder addAllOverriddenSymbols(
+        java.lang.Iterable<? extends java.lang.Long> values) {
+      ensureOverriddenSymbolsIsMutable();
+      org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+          values, overriddenSymbols_);
+      
+      return this;
+    }
+    /**
+     * <code>repeated int64 overriddenSymbols = 8;</code>
+     */
+    public Builder clearOverriddenSymbols() {
+      overriddenSymbols_ = java.util.Collections.emptyList();
+      bitField0_ = (bitField0_ & ~0x00000080);
       
       return this;
     }

@@ -1,0 +1,32 @@
+open class Base {
+  constructor(f1: Function0<Any>) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val f1: Function0<Any>
+    field = f1
+    get
+
+}
+
+object Thing : Base {
+  private constructor() /* primary */ {
+    super/*Base*/(f1 = local fun <anonymous>(): Any {
+      return Thing
+    }
+)
+    /* <init>() */
+
+  }
+
+  fun test1(): Thing {
+    return Thing
+  }
+
+  fun test2(): Thing {
+    return <this>
+  }
+
+}

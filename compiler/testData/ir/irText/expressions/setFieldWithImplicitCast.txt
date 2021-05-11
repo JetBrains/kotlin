@@ -19,6 +19,8 @@ FILE fqName:<root> fileName:/Derived.kt
                 value: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
                   GET_VAR 'v: kotlin.Any declared in <root>.Derived.setValue' type=kotlin.Any origin=null
     PROPERTY FAKE_OVERRIDE name:value visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final value: @[FlexibleNullability] kotlin.String? [var]
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.Base

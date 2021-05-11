@@ -59,14 +59,22 @@ class IrLazyProperty(
     }
 
     override var getter: IrSimpleFunction? by lazyVar(stubGenerator.lock) {
-        descriptor.getter?.let { stubGenerator.generateFunctionStub(it, createPropertyIfNeeded = false) }?.apply {
-            correspondingPropertySymbol = this@IrLazyProperty.symbol
+        descriptor.getter?.let {
+            stubGenerator.generateFunctionStub(it, createPropertyIfNeeded = false)
+                .apply { correspondingPropertySymbol = this@IrLazyProperty.symbol }
         }
     }
 
     override var setter: IrSimpleFunction? by lazyVar(stubGenerator.lock) {
-        descriptor.setter?.let { stubGenerator.generateFunctionStub(it, createPropertyIfNeeded = false) }?.apply {
-            correspondingPropertySymbol = this@IrLazyProperty.symbol
+        descriptor.setter?.let {
+            stubGenerator.generateFunctionStub(it, createPropertyIfNeeded = false)
+                .apply { correspondingPropertySymbol = this@IrLazyProperty.symbol }
+        }
+    }
+
+    override var overriddenSymbols: List<IrPropertySymbol> by lazyVar(stubGenerator.lock) {
+        descriptor.overriddenDescriptors.mapTo(ArrayList()) {
+            stubGenerator.generatePropertyStub(it).symbol
         }
     }
 

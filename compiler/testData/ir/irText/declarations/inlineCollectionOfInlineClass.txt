@@ -84,6 +84,8 @@ FILE fqName:<root> fileName:/inlineCollectionOfInlineClass.kt
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ms type:kotlin.collections.MutableSet<<root>.IT> visibility:private [final]' type=kotlin.collections.MutableSet<<root>.IT> origin=null
               receiver: GET_VAR '<this>: <root>.InlineMutableSet declared in <root>.InlineMutableSet.<get-ms>' type=<root>.InlineMutableSet origin=null
     PROPERTY name:size visibility:public modality:OPEN [val]
+      overridden:
+        public abstract size: kotlin.Int [val]
       FUN name:<get-size> visibility:public modality:OPEN <> ($this:<root>.InlineMutableSet) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:size visibility:public modality:OPEN [val]
         overridden:

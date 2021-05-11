@@ -60,6 +60,8 @@ FILE fqName:foo fileName:/main.kt
               GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] foo.A? visibility:protected/*protected and package*/' type=@[FlexibleNullability] foo.A? origin=GET_PROPERTY
                 receiver: GET_VAR '<this>: foo.Derived declared in foo.Derived.box' type=foo.Derived origin=null
     PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final a: @[FlexibleNullability] foo.A? [var]
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in bar.Base

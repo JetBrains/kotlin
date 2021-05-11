@@ -30,6 +30,11 @@ internal fun PersistentIrGenerator.generateProperty() {
         symbolToDeclaration = +"?.owner",
         declarationToSymbol = +"?.symbol"
     )
+    val overriddenSymbolsField = Field(
+        "overriddenSymbols",
+        +"List<" + IrPropertySymbol + ">",
+        propertySymbolListProto
+    )
 
     writeFile("PersistentIrPropertyCommon.kt", renderFile("org.jetbrains.kotlin.ir.declarations.persistent") {
         lines(
@@ -55,6 +60,7 @@ internal fun PersistentIrGenerator.generateProperty() {
                 backingFieldField.toPersistentField(+"null"),
                 getterField.toPersistentField(+"null"),
                 setterField.toPersistentField(+"null"),
+                overriddenSymbolsField.toPersistentField(+"emptyList()"),
                 +"override var metadata: " + MetadataSource + "? = null",
                 lines(
                     +"@Suppress(\"LeakingThis\")",
@@ -71,6 +77,7 @@ internal fun PersistentIrGenerator.generateProperty() {
             backingFieldField,
             getterField,
             setterField,
+            overriddenSymbolsField,
         )()
     })
 
@@ -79,5 +86,6 @@ internal fun PersistentIrGenerator.generateProperty() {
         backingFieldField,
         getterField,
         setterField,
+        overriddenSymbolsField,
     )
 }
