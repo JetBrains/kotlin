@@ -164,8 +164,8 @@ abstract class AbstractParcelizeBoxTest : CodegenTestCase() {
             ).start()
 
             process.waitFor(3, TimeUnit.MINUTES)
-            println(process.inputStream.bufferedReader().lineSequence().joinToString("\n"))
             if (process.exitValue() != 0) {
+                println(process.inputStream.bufferedReader().lineSequence().joinToString("\n"))
                 throw AssertionError("Process exited with exit code ${process.exitValue()} \n" + classFileFactory.createText())
             }
         } finally {
