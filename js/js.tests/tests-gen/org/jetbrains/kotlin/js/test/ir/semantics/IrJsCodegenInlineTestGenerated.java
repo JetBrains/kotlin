@@ -3025,6 +3025,16 @@ public class IrJsCodegenInlineTestGenerated extends AbstractIrJsCodegenInlineTes
             runTest("compiler/testData/codegen/boxInline/reified/kt35511_try_values.kt");
         }
 
+        @TestMetadata("kt46584.kt")
+        public void testKt46584() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/reified/kt46584.kt");
+        }
+
+        @TestMetadata("kt46584_2.kt")
+        public void testKt46584_2() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/reified/kt46584_2.kt");
+        }
+
         @TestMetadata("kt7017.kt")
         public void testKt7017() throws Exception {
             runTest("compiler/testData/codegen/boxInline/reified/kt7017.kt");

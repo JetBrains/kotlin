@@ -48,7 +48,7 @@ interface SourceCompilerForInline {
 
     val lazySourceMapper: SourceMapper
 
-    fun generateLambdaBody(lambdaInfo: ExpressionLambda): SMAPAndMethodNode
+    fun generateLambdaBody(lambdaInfo: ExpressionLambda, reifiedTypeParameters: ReifiedTypeParametersUsages): SMAPAndMethodNode
 
     fun doCreateMethodNodeFromSource(
         callableDescriptor: FunctionDescriptor,
@@ -130,7 +130,7 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
     override val lazySourceMapper
         get() = codegen.parentCodegen.orCreateSourceMapper
 
-    override fun generateLambdaBody(lambdaInfo: ExpressionLambda): SMAPAndMethodNode {
+    override fun generateLambdaBody(lambdaInfo: ExpressionLambda, reifiedTypeParameters: ReifiedTypeParametersUsages): SMAPAndMethodNode {
         lambdaInfo as? PsiExpressionLambda ?: error("TODO")
         val invokeMethodDescriptor = lambdaInfo.invokeMethodDescriptor
         val jvmMethodSignature = state.typeMapper.mapSignatureSkipGeneric(invokeMethodDescriptor)
