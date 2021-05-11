@@ -59,26 +59,30 @@ object FirAnnotationArgumentChecker : FirAnnotationCallChecker() {
         reporter: DiagnosticReporter,
         context: CheckerContext
     ): FirDiagnosticFactory0<KtExpression>? {
-        when (expression) {
-            is FirArrayOfCall -> {
-                var usedNonConst = false
 
-                for (arg in expression.argumentList.arguments) {
-                    val sourceForReport = arg.source
+        fun checkArgumentList(args: FirArgumentList): FirDiagnosticFactory0<KtExpression>? {
+            var usedNonConst = false
 
-                    when (val err = checkAnnotationArgumentWithSubElements(arg, fqName, session, reporter, context)) {
-                        null -> {
-                            //DO NOTHING
-                        }
-                        else -> {
-                            if (err != FirErrors.ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL) usedNonConst = true
-                            reporter.reportOn(sourceForReport, err, context)
-                        }
+            for (arg in args.arguments) {
+                val sourceForReport = arg.source
+
+                when (val err = checkAnnotationArgumentWithSubElements(arg, fqName, session, reporter, context)) {
+                    null -> {
+                        //DO NOTHING
+                    }
+                    else -> {
+                        if (err != FirErrors.ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL) usedNonConst = true
+                        reporter.reportOn(sourceForReport, err, context)
                     }
                 }
-
-                if (usedNonConst) return FirErrors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION
             }
+
+            return if (usedNonConst) FirErrors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION
+            else null
+        }
+
+        when (expression) {
+            is FirArrayOfCall -> return checkArgumentList(expression.argumentList)
             is FirVarargArgumentsExpression -> {
                 for (arg in expression.arguments) {
                     val unwrappedArg = if (arg is FirSpreadArgumentExpression) arg.expression else arg
@@ -93,7 +97,11 @@ object FirAnnotationArgumentChecker : FirAnnotationCallChecker() {
                     ConstantArgumentKind.NOT_KCLASS_LITERAL -> FirErrors.ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL
                     ConstantArgumentKind.KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR -> FirErrors.ANNOTATION_ARGUMENT_KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR
                     ConstantArgumentKind.NOT_CONST_VAL_IN_CONST_EXPRESSION -> FirErrors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION
-                    null -> null
+                    null ->
+                        //try to go deeper if we are not sure about this function call
+                        //to report non-constant val in not fully resolved calls
+                        if (expression is FirFunctionCall) checkArgumentList(expression.argumentList)
+                        else null
                 }
                 if (error != null) {
                     return error
