@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 val property: Int
     get() {
         <caret>

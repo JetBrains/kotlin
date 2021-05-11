@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 class A {
     seal<caret>inner class B
 }

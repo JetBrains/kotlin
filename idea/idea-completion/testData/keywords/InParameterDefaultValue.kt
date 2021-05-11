@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 fun foo(p: Int = <caret>)
 
 // EXIST: do

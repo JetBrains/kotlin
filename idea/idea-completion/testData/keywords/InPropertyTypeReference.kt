@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 val e.<caret>
 
 // NUMBER: 0

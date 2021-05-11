@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 P<caret>
 
 // NUMBER: 0

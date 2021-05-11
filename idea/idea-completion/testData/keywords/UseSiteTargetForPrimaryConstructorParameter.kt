@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 annotation class Ann
 
 class Completion(@get:Ann val p1: String, @<caret>)

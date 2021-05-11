@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 // COMPILER_ARGUMENTS: -XXLanguage:+SealedInterfaces -XXLanguage:+MultiPlatformProjects
 
 annotation class Test {

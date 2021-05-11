@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 fun foo(v: String) {
     if (v !<caret>)
 }

@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 var a : Int = <caret>
 
 // EXIST: do

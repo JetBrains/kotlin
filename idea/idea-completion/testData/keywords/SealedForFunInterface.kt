@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 seal<caret> fun interface A {
     fun aFunction()
 }

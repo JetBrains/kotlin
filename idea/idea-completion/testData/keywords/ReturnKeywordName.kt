@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 fun foo() {
     `fun` {
         `val`({ ret<caret> })
