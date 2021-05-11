@@ -53,6 +53,7 @@ public class Usage {
             appendln(sb, "Advanced options are non-standard and may be changed or removed without any notice.");
         }
         else {
+            renderOptionJUsage(sb);
             renderArgfileUsage(sb);
         }
 
@@ -101,6 +102,15 @@ public class Usage {
 
         sb.append(" ");
         appendln(sb, argument.description().replace("\n", "\n" + StringsKt.repeat(" ", OPTION_NAME_PADDING_WIDTH)));
+    }
+
+    private static void renderOptionJUsage(@NotNull StringBuilder sb) {
+        int descriptionStart = sb.length() + OPTION_NAME_PADDING_WIDTH;
+        sb.append("  -J<option>");
+        while (sb.length() < descriptionStart) {
+            sb.append(" ");
+        }
+        appendln(sb, "Pass an option directly to JVM");
     }
 
     private static void renderArgfileUsage(@NotNull StringBuilder sb) {
