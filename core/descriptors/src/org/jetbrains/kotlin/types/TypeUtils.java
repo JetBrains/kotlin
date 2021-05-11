@@ -303,6 +303,11 @@ public class TypeUtils {
         if (isTypeParameter(type)) {
             return hasNullableSuperType(type);
         }
+        if (type instanceof AbstractStubType) {
+            NewTypeVariableConstructor typeVariableConstructor = (NewTypeVariableConstructor) ((AbstractStubType) type).getOriginalTypeVariable();
+            TypeParameterDescriptor typeParameter = typeVariableConstructor.getOriginalTypeParameter();
+            return typeParameter == null || hasNullableSuperType(typeParameter.getDefaultType());
+        }
 
         TypeConstructor constructor = type.getConstructor();
         if (constructor instanceof IntersectionTypeConstructor) {
