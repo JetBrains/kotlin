@@ -80,9 +80,11 @@ object FirAnnotationArgumentChecker : FirAnnotationCallChecker() {
                 if (usedNonConst) return FirErrors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION
             }
             is FirVarargArgumentsExpression -> {
-                for (arg in expression.arguments)
-                    checkAnnotationArgumentWithSubElements(arg, fqName, session, reporter, context)
-                        ?.let { reporter.reportOn(arg.source, it, context) }
+                for (arg in expression.arguments) {
+                    val unwrappedArg = if (arg is FirSpreadArgumentExpression) arg.expression else arg
+                    checkAnnotationArgumentWithSubElements(unwrappedArg, fqName, session, reporter, context)
+                        ?.let { reporter.reportOn(unwrappedArg.source, it, context) }
+                }
             }
             else -> {
                 val error = when (checkConstantArguments(expression, session)) {

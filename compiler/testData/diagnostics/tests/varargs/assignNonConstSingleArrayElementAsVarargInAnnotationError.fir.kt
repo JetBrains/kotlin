@@ -22,5 +22,5 @@ fun foo4() {}
 @Anno(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>value = *nonConstArray<!>)
 fun bar1() {}
 
-@Anno(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>*nonConstArray<!>)
+@Anno(*<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>nonConstArray<!>)
 fun bar2() {}
