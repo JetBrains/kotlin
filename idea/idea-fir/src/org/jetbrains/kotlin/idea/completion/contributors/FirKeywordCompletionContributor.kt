@@ -17,18 +17,20 @@ import org.jetbrains.kotlin.idea.completion.context.FirUnknownPositionContext
 import org.jetbrains.kotlin.idea.completion.contributors.keywords.OverrideKeywordHandler
 import org.jetbrains.kotlin.idea.completion.contributors.keywords.ReturnKeywordHandler
 import org.jetbrains.kotlin.idea.completion.contributors.keywords.ReturnKeywordHandler.createLookups
+import org.jetbrains.kotlin.idea.completion.contributors.keywords.ThisKeywordHandler
 import org.jetbrains.kotlin.idea.completion.keywords.CompletionKeywordHandlerProvider
 import org.jetbrains.kotlin.idea.completion.keywords.CompletionKeywordHandlers
 import org.jetbrains.kotlin.idea.completion.keywords.DefaultCompletionKeywordHandlerProvider
 import org.jetbrains.kotlin.idea.completion.keywords.createLookups
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.*
 
 internal class FirKeywordCompletionContributor(basicContext: FirBasicCompletionContext) : FirCompletionContributorBase(basicContext) {
     private val keywordCompletion = KeywordCompletion(object : KeywordCompletion.LanguageVersionSettingProvider {
-        override fun getLanguageVersionSetting(element: PsiElement) = LanguageVersionSettingsImpl.DEFAULT // TODO
-        override fun getLanguageVersionSetting(module: Module) = LanguageVersionSettingsImpl.DEFAULT // TODO
+        override fun getLanguageVersionSetting(element: PsiElement) = element.languageVersionSettings
+        override fun getLanguageVersionSetting(module: Module) = module.languageVersionSettings
     })
 
     private val resolveDependentCompletionKeywordHandlers = ResolveDependentCompletionKeywordHandlerProvider(basicContext)
@@ -75,5 +77,6 @@ private class ResolveDependentCompletionKeywordHandlerProvider(
     override val handlers = CompletionKeywordHandlers(
         ReturnKeywordHandler,
         OverrideKeywordHandler(basicContext),
+        ThisKeywordHandler(basicContext),
     )
 }
