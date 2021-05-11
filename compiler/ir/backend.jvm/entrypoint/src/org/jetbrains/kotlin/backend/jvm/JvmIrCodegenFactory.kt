@@ -23,10 +23,8 @@ import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrLinker
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
-import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.descriptors.IrFunctionFactory
@@ -187,16 +185,6 @@ open class JvmIrCodegenFactory(
         )
         /* JvmBackendContext creates new unbound symbols, have to resolve them. */
         ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
-
-        if (state.configuration.getBoolean(JVMConfigurationKeys.SERIALIZE_IR)) {
-            for (irFile in irModuleFragment.files) {
-                (irFile.metadata as? MetadataSource.File)?.serializedIr = serializeIrFile(context, irFile)
-
-                for (irClass in irFile.declarations.filterIsInstance<IrClass>()) {
-                    (irClass.metadata as? MetadataSource.Class)?.serializedIr = serializeTopLevelIrClass(context, irClass)
-                }
-            }
-        }
 
         context.state.factory.registerSourceFiles(irModuleFragment.files.map(IrFile::getKtFile))
 
