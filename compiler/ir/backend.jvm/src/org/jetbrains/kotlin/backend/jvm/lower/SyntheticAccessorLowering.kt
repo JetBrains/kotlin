@@ -232,11 +232,11 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
 
     override fun visitGetField(expression: IrGetField): IrExpression {
         val dispatchReceiverType = expression.receiver?.type
+        val dispatchReceiverClassSymbol = dispatchReceiverType?.classifierOrNull as? IrClassSymbol
         return super.visitExpression(
-            if (!expression.symbol.isAccessible(false, dispatchReceiverType?.classifierOrNull as? IrClassSymbol)) {
+            if (!expression.symbol.isAccessible(false, dispatchReceiverClassSymbol)) {
                 val symbol = expression.symbol
-                val parent =
-                    symbol.owner.accessorParent(dispatchReceiverType?.classOrNull?.owner ?: symbol.owner.parent) as IrClass
+                val parent = symbol.owner.accessorParent(dispatchReceiverClassSymbol?.owner ?: symbol.owner.parent) as IrClass
                 modifyGetterExpression(
                     expression,
                     getterMap.getOrPut(FieldKey(symbol, parent, expression.superQualifierSymbol)) {
@@ -251,11 +251,11 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
 
     override fun visitSetField(expression: IrSetField): IrExpression {
         val dispatchReceiverType = expression.receiver?.type
+        val dispatchReceiverClassSymbol = dispatchReceiverType?.classifierOrNull as? IrClassSymbol
         return super.visitExpression(
-            if (!expression.symbol.isAccessible(false, dispatchReceiverType?.classifierOrNull as? IrClassSymbol)) {
+            if (!expression.symbol.isAccessible(false, dispatchReceiverClassSymbol)) {
                 val symbol = expression.symbol
-                val parent =
-                    symbol.owner.accessorParent(dispatchReceiverType?.classOrNull?.owner ?: symbol.owner.parent) as IrClass
+                val parent = symbol.owner.accessorParent(dispatchReceiverClassSymbol?.owner ?: symbol.owner.parent) as IrClass
                 modifySetterExpression(
                     expression,
                     setterMap.getOrPut(FieldKey(symbol, parent, expression.superQualifierSymbol)) {
@@ -725,8 +725,26 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
         if (symbolOwner is IrConstructor && symbolOwner.parentClassOrNull?.isEnumEntry == true)
             return true
 
-        val declaration =
-            (declarationRaw as? IrSimpleFunction)?.resolveFakeOverride(allowAbstract = true) ?: declarationRaw
+        val declaration = when (declarationRaw) {
+            is IrSimpleFunction ->
+                declarationRaw.resolveFakeOverride(allowAbstract = true)
+                    ?: declarationRaw
+            is IrField -> {
+                val correspondingProperty = declarationRaw.correspondingPropertySymbol?.owner
+                if (correspondingProperty != null && correspondingProperty.isFakeOverride) {
+                    val realProperty = correspondingProperty.resolveFakeOverrideForProperty()
+                    realProperty.backingField
+                        ?: throw AssertionError(
+                            "Fake override property ${correspondingProperty.render()} with backing field " +
+                                    "overrides a real property with no backing field: ${realProperty.render()}"
+                        )
+                } else {
+                    declarationRaw
+                }
+            }
+            else ->
+                declarationRaw
+        }
 
         // If local variables are accessible by Kotlin rules, they also are by Java rules.
         val ownerClass = declaration.parent as? IrClass ?: return true
@@ -745,6 +763,16 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
             withSuper && !fromSubclassOfReceiversClass -> false
             else -> true
         }
+    }
+
+    private fun IrProperty.resolveFakeOverrideForProperty(): IrProperty {
+        if (!isFakeOverride) return this
+
+        return this.overriddenSymbols
+            .map { it.owner }
+            .collectAndFilterRealOverrides()
+            .firstOrNull() as? IrProperty
+            ?: throw AssertionError("No real override for ${this.render()}")
     }
 
     private class OuterClassInfo(val outerClass: IrClass, val throughCrossinlineLambda: Boolean)
