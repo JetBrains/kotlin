@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 
-internal object ReturnKeywordHandler: CompletionKeywordHandler<KtAnalysisSession>(KtTokens.RETURN_KEYWORD) {
+internal object ReturnKeywordHandler : CompletionKeywordHandler<KtAnalysisSession>(KtTokens.RETURN_KEYWORD) {
     @OptIn(ExperimentalStdlibApi::class)
     override fun KtAnalysisSession.createLookups(
         parameters: CompletionParameters,
@@ -61,31 +61,35 @@ internal object ReturnKeywordHandler: CompletionKeywordHandler<KtAnalysisSession
         val isUnit = returnType.isUnit
         result.add(createKeywordElementWithSpace("return", tail = label?.labelNameToTail().orEmpty(), addSpaceAfter = !isUnit))
         getExpressionsToReturnByType(returnType).mapTo(result) { returnTarget ->
-            createKeywordElement("return", tail = "${label.labelNameToTail()} $returnTarget")
+            if (label != null || returnTarget.addToLookupElementTail) {
+                createKeywordElement("return", tail = "${label.labelNameToTail()} ${returnTarget.expressionText}")
+            } else {
+                createKeywordElement("return ${returnTarget.expressionText}")
+            }
         }
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    private fun KtAnalysisSession.getExpressionsToReturnByType(returnType: KtType): List<String> = buildList {
+    private fun KtAnalysisSession.getExpressionsToReturnByType(returnType: KtType): List<ExpressionTarget> = buildList {
         if (returnType.canBeNull) {
-            add("null")
+            add(ExpressionTarget("null", addToLookupElementTail = false))
         }
 
         fun emptyListShouldBeSuggested(): Boolean =
             returnType.isClassTypeWithClassId(StandardClassIds.Collection)
-                || returnType.isClassTypeWithClassId(StandardClassIds.List)
-                || returnType.isClassTypeWithClassId(StandardClassIds.Iterable)
+                    || returnType.isClassTypeWithClassId(StandardClassIds.List)
+                    || returnType.isClassTypeWithClassId(StandardClassIds.Iterable)
 
         when {
             returnType.isClassTypeWithClassId(StandardClassIds.Boolean) -> {
-                add("true")
-                add("false")
+                add(ExpressionTarget("true", addToLookupElementTail = false))
+                add(ExpressionTarget("false", addToLookupElementTail = false))
             }
             emptyListShouldBeSuggested() -> {
-                add("emptyList()")
+                add(ExpressionTarget("emptyList()", addToLookupElementTail = true))
             }
             returnType.isClassTypeWithClassId(StandardClassIds.Set) -> {
-                add("emptySet()")
+                add(ExpressionTarget("emptySet()", addToLookupElementTail = true))
             }
         }
     }
@@ -95,3 +99,12 @@ internal object ReturnKeywordHandler: CompletionKeywordHandler<KtAnalysisSession
         return (callee.mainReference.resolveToSymbol() as? KtFunctionSymbol)?.isInline == true
     }
 }
+
+private data class ExpressionTarget(
+    val expressionText: String,
+    /**
+     * FE10 completion sometimes add return target to LookupElement tails and sometimes not,
+     * To ensure consistency (at least for tests) we need to do it to
+     */
+    val addToLookupElementTail: Boolean
+)
