@@ -26481,6 +26481,19 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         public void testSuperCallFromMultipleSubclasses() throws Exception {
             runTest("compiler/testData/codegen/box/syntheticAccessors/superCallFromMultipleSubclasses.kt");
         }
+
+        @TestMetadata("compiler/testData/codegen/box/syntheticAccessors/kt46578")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Kt46578 extends AbstractJsCodegenBoxTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInKt46578() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/syntheticAccessors/kt46578"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/syntheticExtensions")

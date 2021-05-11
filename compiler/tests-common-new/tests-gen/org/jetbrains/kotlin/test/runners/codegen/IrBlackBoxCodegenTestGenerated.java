@@ -40279,6 +40279,52 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         public void testSyntheticAccessorNames() throws Exception {
             runTest("compiler/testData/codegen/box/syntheticAccessors/syntheticAccessorNames.kt");
         }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/syntheticAccessors/kt46578")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Kt46578 {
+            @Test
+            public void testAllFilesPresentInKt46578() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/syntheticAccessors/kt46578"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @Test
+            @TestMetadata("kt46578_anonObject.kt")
+            public void testKt46578_anonObject() throws Exception {
+                runTest("compiler/testData/codegen/box/syntheticAccessors/kt46578/kt46578_anonObject.kt");
+            }
+
+            @Test
+            @TestMetadata("kt46578_delegated.kt")
+            public void testKt46578_delegated() throws Exception {
+                runTest("compiler/testData/codegen/box/syntheticAccessors/kt46578/kt46578_delegated.kt");
+            }
+
+            @Test
+            @TestMetadata("kt46578_kotlin_delegated.kt")
+            public void testKt46578_kotlin_delegated() throws Exception {
+                runTest("compiler/testData/codegen/box/syntheticAccessors/kt46578/kt46578_kotlin_delegated.kt");
+            }
+
+            @Test
+            @TestMetadata("kt46578_kotlin_propertyRef.kt")
+            public void testKt46578_kotlin_propertyRef() throws Exception {
+                runTest("compiler/testData/codegen/box/syntheticAccessors/kt46578/kt46578_kotlin_propertyRef.kt");
+            }
+
+            @Test
+            @TestMetadata("kt46578_lambda.kt")
+            public void testKt46578_lambda() throws Exception {
+                runTest("compiler/testData/codegen/box/syntheticAccessors/kt46578/kt46578_lambda.kt");
+            }
+
+            @Test
+            @TestMetadata("kt46578_propertyRef.kt")
+            public void testKt46578_propertyRef() throws Exception {
+                runTest("compiler/testData/codegen/box/syntheticAccessors/kt46578/kt46578_propertyRef.kt");
+            }
+        }
     }
 
     @Nested
