@@ -16,6 +16,11 @@ import org.jetbrains.kotlin.idea.completion.context.FirPositionCompletionContext
 import org.jetbrains.kotlin.idea.completion.context.FirUnknownPositionContext
 import org.jetbrains.kotlin.idea.completion.contributors.keywords.OverrideKeywordHandler
 import org.jetbrains.kotlin.idea.completion.contributors.keywords.ReturnKeywordHandler
+import org.jetbrains.kotlin.idea.completion.contributors.keywords.ReturnKeywordHandler.createLookups
+import org.jetbrains.kotlin.idea.completion.keywords.CompletionKeywordHandlerProvider
+import org.jetbrains.kotlin.idea.completion.keywords.CompletionKeywordHandlers
+import org.jetbrains.kotlin.idea.completion.keywords.DefaultCompletionKeywordHandlerProvider
+import org.jetbrains.kotlin.idea.completion.keywords.createLookups
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.*
@@ -26,7 +31,7 @@ internal class FirKeywordCompletionContributor(basicContext: FirBasicCompletionC
         override fun getLanguageVersionSetting(module: Module) = LanguageVersionSettingsImpl.DEFAULT // TODO
     })
 
-    private val resolveDependentCompletionKeywordHandlers = ResolveDependentCompletionKeywordHandlers(basicContext)
+    private val resolveDependentCompletionKeywordHandlers = ResolveDependentCompletionKeywordHandlerProvider(basicContext)
 
     fun KtAnalysisSession.completeKeywords(
         positionContext: FirPositionCompletionContext
@@ -46,9 +51,9 @@ internal class FirKeywordCompletionContributor(basicContext: FirBasicCompletionC
 
     fun KtAnalysisSession.completeWithResolve(position: PsiElement, expression: KtExpression?) {
         complete(position) { lookupElement, keyword ->
-            val lookups = DefaultCompletionKeywordHandlers.defaultHandlers.getHandlerForKeyword(keyword)
+            val lookups = DefaultCompletionKeywordHandlerProvider.getHandlerForKeyword(keyword)
                 ?.createLookups(parameters, expression, lookupElement, project)
-                ?: resolveDependentCompletionKeywordHandlers.handlers.getHandlerForKeyword(keyword)?.run {
+                ?: resolveDependentCompletionKeywordHandlers.getHandlerForKeyword(keyword)?.run {
                     createLookups(parameters, expression, lookupElement, project)
                 }
                 ?: listOf(lookupElement)
@@ -64,8 +69,10 @@ internal class FirKeywordCompletionContributor(basicContext: FirBasicCompletionC
     }
 }
 
-private class ResolveDependentCompletionKeywordHandlers(basicContext: FirBasicCompletionContext) {
-    val handlers = CompletionKeywordHandlers(
+private class ResolveDependentCompletionKeywordHandlerProvider(
+    basicContext: FirBasicCompletionContext
+) : CompletionKeywordHandlerProvider<KtAnalysisSession>() {
+    override val handlers = CompletionKeywordHandlers(
         ReturnKeywordHandler,
         OverrideKeywordHandler(basicContext),
     )

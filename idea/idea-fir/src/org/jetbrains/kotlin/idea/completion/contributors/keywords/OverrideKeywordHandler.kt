@@ -13,6 +13,7 @@ import com.intellij.ui.RowIcon
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.completion.context.FirBasicCompletionContext
+import org.jetbrains.kotlin.idea.completion.keywords.CompletionKeywordHandler
 import org.jetbrains.kotlin.idea.core.overrideImplement.*
 import org.jetbrains.kotlin.idea.core.overrideImplement.KtClassMember
 import org.jetbrains.kotlin.idea.core.overrideImplement.KtGenerateMembersHandler

@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.idea.completion.contributors.keywords
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.idea.completion.CompletionKeywordHandler
 import org.jetbrains.kotlin.idea.completion.createKeywordElement
 import org.jetbrains.kotlin.idea.completion.createKeywordElementWithSpace
+import org.jetbrains.kotlin.idea.completion.keywords.CompletionKeywordHandler
 import org.jetbrains.kotlin.idea.completion.labelNameToTail
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol

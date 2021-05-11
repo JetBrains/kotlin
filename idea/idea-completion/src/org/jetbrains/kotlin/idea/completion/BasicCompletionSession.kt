@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.util.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
+import org.jetbrains.kotlin.idea.completion.keywords.DefaultCompletionKeywordHandlerProvider
+import org.jetbrains.kotlin.idea.completion.keywords.createLookups
 import org.jetbrains.kotlin.idea.completion.smart.ExpectedInfoMatch
 import org.jetbrains.kotlin.idea.completion.smart.SMART_COMPLETION_ITEM_PRIORITY_KEY
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
@@ -583,7 +585,7 @@ class BasicCompletionSession(
                 val keyword = lookupElement.lookupString
                 if (keyword in keywordsToSkip) return@complete
 
-                val completionKeywordHandler = DefaultCompletionKeywordHandlers.defaultHandlers.getHandlerForKeyword(keyword)
+                val completionKeywordHandler = DefaultCompletionKeywordHandlerProvider.getHandlerForKeyword(keyword)
                 if (completionKeywordHandler != null) {
                     val lookups = completionKeywordHandler.createLookups(parameters, expression, lookupElement, project)
                     collector.addElements(lookups)
