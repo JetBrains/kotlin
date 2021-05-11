@@ -120,4 +120,9 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirReifiedTypeParameterChecker,
             FirTypeParameterSyntaxChecker,
         )
+
+    override val annotatedDeclarationCheckers: Set<FirAnnotatedDeclarationChecker>
+        get() = setOf(
+            FirAnnotationChecker,
+        )
 }
