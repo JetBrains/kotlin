@@ -54,7 +54,7 @@ object JUnit5Assertions : AssertionsService() {
 
     override fun assertAll(exceptions: List<Throwable>) {
         exceptions.singleOrNull()?.let { throw it }
-        JUnit5PlatformAssertions.assertAll(exceptions.map { Executable { throw it } })
+        JUnit5PlatformAssertions.assertAll(exceptions.sortedWith(FileComparisonFailureFirst).map { Executable { throw it } })
     }
 
     override fun assertNotNull(value: Any?, message: (() -> String)?) {
@@ -67,5 +67,11 @@ object JUnit5Assertions : AssertionsService() {
 
     override fun fail(message: () -> String): Nothing {
         org.junit.jupiter.api.fail(message)
+    }
+
+    private object FileComparisonFailureFirst : Comparator<Throwable> {
+        override fun compare(o1: Throwable?, o2: Throwable?): Int {
+            return if (o1 is FileComparisonFailure) -1 else 0
+        }
     }
 }
