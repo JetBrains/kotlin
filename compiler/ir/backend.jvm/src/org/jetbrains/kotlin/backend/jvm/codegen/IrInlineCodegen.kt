@@ -14,17 +14,16 @@ import org.jetbrains.kotlin.codegen.ValueKind
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
@@ -234,18 +233,33 @@ class IrExpressionLambdaImpl(
 class IrDefaultLambda(
     override val lambdaClassType: Type,
     capturedArgs: Array<Type>,
-    irValueParameter: IrValueParameter,
+    private val irValueParameter: IrValueParameter,
     offset: Int,
     needReification: Boolean
 ) : DefaultLambda(capturedArgs, irValueParameter.isCrossinline, offset, needReification) {
-    // TODO: this always produces an erased signature, but it should be non-erased if this isn't a property reference
-    private val invoke = irValueParameter.type.classOrNull!!.owner.functions.single { it.name == OperatorNameConventions.INVOKE }
+    private lateinit var typeArguments: List<IrType>
 
-    override fun mapAsmSignature(sourceCompiler: SourceCompilerForInline, descriptor: FunctionDescriptor): Method =
-        (sourceCompiler as IrSourceCompilerForInline).codegen.context.methodSignatureMapper.mapSignatureSkipGeneric(invoke).asmMethod
+    override val invokeMethodParameters: List<KotlinType>
+        get() = typeArguments.dropLast(1).map { it.toIrBasedKotlinType() }
 
-    override fun findInvokeMethodDescriptor(isPropertyReference: Boolean): FunctionDescriptor =
-        invoke.toIrBasedDescriptor()
+    override val invokeMethodReturnType: KotlinType
+        get() = typeArguments.last().toIrBasedKotlinType()
+
+    override fun mapAsmDescriptor(sourceCompiler: SourceCompilerForInline, isPropertyReference: Boolean): String {
+        val context = (sourceCompiler as IrSourceCompilerForInline).codegen.context
+        typeArguments = (irValueParameter.type as IrSimpleType).arguments.let {
+            // Property references only have an erased `get` method, while function references and lambdas
+            // have a non-erased `invoke` with an erased synthetic bridge, and we want to inline the former.
+            if (isPropertyReference) {
+                List(it.size) { context.irBuiltIns.anyNType }
+            } else {
+                it.map { argument -> (argument as IrTypeProjection).type }
+            }
+        }
+        // TODO: while technically only the number of arguments here matters right now (see DefaultLambdaInfo.generateLambdaBody),
+        //       it would be better to map to a non-erased signature if not a property reference.
+        return Type.getMethodDescriptor(AsmTypes.OBJECT_TYPE, *Array(typeArguments.size - 1) { AsmTypes.OBJECT_TYPE })
+    }
 }
 
 fun IrExpression.isInlineIrExpression() =

@@ -343,14 +343,22 @@ class PsiDefaultLambda(
     offset: Int,
     needReification: Boolean
 ) : DefaultLambda(capturedArgs, parameterDescriptor.isCrossinline, offset, needReification) {
-    override fun mapAsmSignature(sourceCompiler: SourceCompilerForInline, descriptor: FunctionDescriptor): Method =
-        sourceCompiler.state.typeMapper.mapSignatureSkipGeneric(descriptor).asmMethod
+    private lateinit var invokeMethodDescriptor: FunctionDescriptor
 
-    override fun findInvokeMethodDescriptor(isPropertyReference: Boolean): FunctionDescriptor =
-        parameterDescriptor.type.memberScope
+    override val invokeMethodParameters: List<KotlinType?>
+        get() = invokeMethodDescriptor.explicitParameters.map { it.returnType }
+
+    override val invokeMethodReturnType: KotlinType?
+        get() = invokeMethodDescriptor.returnType
+
+    override fun mapAsmDescriptor(sourceCompiler: SourceCompilerForInline, isPropertyReference: Boolean): String {
+        invokeMethodDescriptor = parameterDescriptor.type.memberScope
             .getContributedFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.FROM_BACKEND)
             .single().let {
-                // property reference generates erased 'get' method
+                // Property references only have an erased `get` method, while function references and lambdas
+                // have a non-erased `invoke` with an erased synthetic bridge, and we want to inline the former.
                 if (isPropertyReference) it.original else it
             }
+        return sourceCompiler.state.typeMapper.mapSignatureSkipGeneric(invokeMethodDescriptor).asmMethod.descriptor
+    }
 }
