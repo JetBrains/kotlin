@@ -140,9 +140,9 @@ class PsiInlineCodegen(
                 val receiverKotlinType = receiver.kotlinType
                 val boxedReceiver =
                     if (receiverKotlinType != null)
-                        receiver.type.boxReceiverForBoundReference(receiverKotlinType, state.typeMapper)
+                        DescriptorAsmUtil.boxType(receiver.type, receiverKotlinType, state.typeMapper)
                     else
-                        receiver.type.boxReceiverForBoundReference()
+                        AsmUtil.boxType(receiver.type)
 
                 putClosureParametersOnStack(
                     lambdaInfo,
