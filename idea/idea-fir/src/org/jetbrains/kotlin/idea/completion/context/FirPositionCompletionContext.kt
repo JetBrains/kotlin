@@ -37,16 +37,12 @@ internal class FirUnknownPositionContext(
 internal object FirPositionCompletionContextDetector {
     fun detect(basicContext: FirBasicCompletionContext): FirPositionCompletionContext {
         val position = basicContext.parameters.position
-
-        return when (val reference = (position.parent as? KtSimpleNameExpression)?.mainReference) {
-            null -> FirUnknownPositionContext(position)
-            else -> {
-                val nameExpression = reference.expression.takeIf { it !is KtLabelReferenceExpression }
-                    ?: return FirUnknownPositionContext(position)
-                val explicitReceiver = nameExpression.getReceiverExpression()
-                FirNameReferencePositionContext(position, reference, nameExpression, explicitReceiver)
-            }
-        }
+        val reference = (position.parent as? KtSimpleNameExpression)?.mainReference
+            ?: return FirUnknownPositionContext(position)
+        val nameExpression = reference.expression.takeIf { it !is KtLabelReferenceExpression }
+            ?: return FirUnknownPositionContext(position)
+        val explicitReceiver = nameExpression.getReceiverExpression()
+        return FirNameReferencePositionContext(position, reference, nameExpression, explicitReceiver)
     }
 
     inline fun analyseInContext(
