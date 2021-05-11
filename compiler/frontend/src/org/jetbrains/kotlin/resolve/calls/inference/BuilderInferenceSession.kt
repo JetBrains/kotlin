@@ -131,6 +131,22 @@ class BuilderInferenceSession(
         if (skipCall(callInfo.callResolutionResult)) return
 
         commonCalls.add(callInfo)
+
+        val resultingDescriptor = callInfo.resolvedCall.resultingDescriptor
+
+        // This check is similar to one for old inference, see getCoroutineInferenceData() function
+        val checkCall = resultingDescriptor is LocalVariableDescriptor || anyReceiverContainStubType(resultingDescriptor)
+
+        if (!checkCall) return
+
+        val isApplicableCall = callComponents.statelessCallbacks.isApplicableCallForBuilderInference(
+            resultingDescriptor,
+            callComponents.languageVersionSettings
+        )
+
+        if (!isApplicableCall) {
+            hasInapplicableCall = true
+        }
     }
 
     private fun anyReceiverContainStubType(descriptor: CallableDescriptor): Boolean {
