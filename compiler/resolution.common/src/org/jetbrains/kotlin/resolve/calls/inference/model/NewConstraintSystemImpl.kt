@@ -497,7 +497,7 @@ class NewConstraintSystemImpl(
     override fun bindingStubsForPostponedVariables(): Map<TypeVariableMarker, StubTypeMarker> {
         checkState(State.BUILDING, State.COMPLETION)
         // TODO: SUB
-        return storage.postponedTypeVariables.associateWith { createStubType(it) }
+        return storage.postponedTypeVariables.associateWith { createStubTypeForBuilderInference(it) }
     }
 
     override fun currentStorage(): ConstraintStorage {

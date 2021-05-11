@@ -168,7 +168,7 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
         captureStatus: CaptureStatus
     ): CapturedTypeMarker
 
-    fun createStubType(typeVariable: TypeVariableMarker): StubTypeMarker
+    fun createStubTypeForBuilderInference(typeVariable: TypeVariableMarker): StubTypeMarker
     fun createStubTypeForTypeVariablesInSubtyping(typeVariable: TypeVariableMarker): StubTypeMarker
 
     fun KotlinTypeMarker.removeAnnotations(): KotlinTypeMarker

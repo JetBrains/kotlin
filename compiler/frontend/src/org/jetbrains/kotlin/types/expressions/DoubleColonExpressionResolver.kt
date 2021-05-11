@@ -114,7 +114,7 @@ class DoubleColonExpressionResolver(
         } else {
             val result = resolveDoubleColonLHS(expression, c)
 
-            if (c.inferenceSession is BuilderInferenceSession && result?.type?.contains { it is StubType } == true) {
+            if (c.inferenceSession is BuilderInferenceSession && result?.type?.contains { it is StubTypeForBuilderInference } == true) {
                 c.inferenceSession.addOldCallableReferenceCalls(expression)
             }
 
@@ -548,7 +548,7 @@ class DoubleColonExpressionResolver(
         val result = getCallableReferenceType(expression, lhs, resolutionResults, c)
         val doesSomeExtensionReceiverContainsStubType =
             resolutionResults != null && resolutionResults.resultingCalls.any { resolvedCall ->
-                resolvedCall.extensionReceiver?.type?.contains { it is StubType } == true
+                resolvedCall.extensionReceiver?.type?.contains { it is StubTypeForBuilderInference } == true
             }
 
         if (doesSomeExtensionReceiverContainsStubType) {
@@ -558,7 +558,7 @@ class DoubleColonExpressionResolver(
 
         val dataFlowInfo = (lhs as? DoubleColonLHS.Expression)?.dataFlowInfo ?: c.dataFlowInfo
 
-        if (c.inferenceSession is BuilderInferenceSession && result?.contains { it is StubType } == true) {
+        if (c.inferenceSession is BuilderInferenceSession && result?.contains { it is StubTypeForBuilderInference } == true) {
             c.inferenceSession.addOldCallableReferenceCalls(expression)
         }
 

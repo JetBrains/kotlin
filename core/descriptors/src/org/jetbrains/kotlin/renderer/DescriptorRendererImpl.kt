@@ -249,7 +249,7 @@ internal class DescriptorRendererImpl(
                 }
                 append(renderTypeArguments(type.arguments))
             }
-            type is StubType -> append(type.originalTypeVariable.toString())
+            type is StubTypeForBuilderInference -> append(type.originalTypeVariable.toString())
             else -> renderTypeConstructorAndArguments(type)
         }
 
@@ -290,7 +290,7 @@ internal class DescriptorRendererImpl(
         is TypeParameterDescriptor, is ClassDescriptor, is TypeAliasDescriptor -> renderClassifierName(cd)
         null -> {
             if (typeConstructor is IntersectionTypeConstructor) {
-                typeConstructor.makeDebugNameForIntersectionType { if (it is StubType) it.originalTypeVariable else it }
+                typeConstructor.makeDebugNameForIntersectionType { if (it is StubTypeForBuilderInference) it.originalTypeVariable else it }
             } else typeConstructor.toString()
         }
         else -> error("Unexpected classifier: " + cd::class.java)

@@ -45,7 +45,7 @@ class BuilderInferenceSession(
     callComponents: KotlinCallComponents,
     builtIns: KotlinBuiltIns,
     private val topLevelCallContext: BasicCallResolutionContext,
-    private val stubsForPostponedVariables: Map<NewTypeVariable, StubType>,
+    private val stubsForPostponedVariables: Map<NewTypeVariable, StubTypeForBuilderInference>,
     private val trace: BindingTrace,
     private val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer,
     private val expressionTypingServices: ExpressionTypingServices,
@@ -117,7 +117,7 @@ class BuilderInferenceSession(
 
     private fun KotlinType.containsStubType(): Boolean {
         return this.contains {
-            it is StubType
+            it is StubTypeForBuilderInference
         }
     }
 
@@ -134,8 +134,8 @@ class BuilderInferenceSession(
     }
 
     private fun anyReceiverContainStubType(descriptor: CallableDescriptor): Boolean {
-        return descriptor.dispatchReceiverParameter?.type?.contains { it is StubType } == true ||
-                descriptor.extensionReceiverParameter?.type?.contains { it is StubType } == true
+        return descriptor.dispatchReceiverParameter?.type?.contains { it is StubTypeForBuilderInference } == true ||
+                descriptor.extensionReceiverParameter?.type?.contains { it is StubTypeForBuilderInference } == true
     }
 
     private fun isTopLevelBuilderInferenceCall() = findParentBuildInferenceSession() == null

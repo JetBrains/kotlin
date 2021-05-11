@@ -415,7 +415,7 @@ class ResolvedAtomCompleter(
 
         val rawExtensionReceiver = callableCandidate.extensionReceiver
 
-        if (rawExtensionReceiver != null && rawExtensionReceiver.receiver.receiverValue.type.contains { it is StubType }) {
+        if (rawExtensionReceiver != null && rawExtensionReceiver.receiver.receiverValue.type.contains { it is StubTypeForBuilderInference }) {
             topLevelTrace.reportDiagnosticOnce(Errors.TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE.on(callableReferenceExpression))
             return
         }

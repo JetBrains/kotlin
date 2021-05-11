@@ -989,7 +989,7 @@ private fun CallableMemberDescriptor.isNotSimpleCall(): Boolean =
                     it is NewCapturedType ||
                             it.constructor is IntegerLiteralTypeConstructor ||
                             it is DefinitelyNotNullType ||
-                            it is StubType
+                            it is StubTypeForBuilderInference
                 }
             } ?: false)
 

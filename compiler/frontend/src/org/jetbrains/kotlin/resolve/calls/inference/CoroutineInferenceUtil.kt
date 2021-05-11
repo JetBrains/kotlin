@@ -296,7 +296,7 @@ class CoroutineInferenceSupport(
     }
 }
 
-private fun KotlinType.containsTypeTemplate() = contains { it is TypeTemplate || it is StubType }
+private fun KotlinType.containsTypeTemplate() = contains { it is TypeTemplate || it is StubTypeForBuilderInference }
 
 fun isApplicableCallForBuilderInference(descriptor: CallableDescriptor, languageVersionSettings: LanguageVersionSettings): Boolean {
     if (!languageVersionSettings.supportsFeature(LanguageFeature.ExperimentalBuilderInference)) {

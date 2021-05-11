@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.resolve.calls.results.SimpleConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.StubType
+import org.jetbrains.kotlin.types.StubTypeForBuilderInference
 import org.jetbrains.kotlin.types.UnwrappedType
 
 // stateless component
@@ -73,7 +73,7 @@ interface KotlinResolutionCallbacks {
         parameters: List<UnwrappedType>,
         expectedReturnType: UnwrappedType?, // null means, that return type is not proper i.e. it depends on some type variables
         annotations: Annotations,
-        stubsForPostponedVariables: Map<NewTypeVariable, StubType>,
+        stubsForPostponedVariables: Map<NewTypeVariable, StubTypeForBuilderInference>,
     ): ReturnArgumentsAnalysisResult
 
     fun bindStubResolvedCallForCandidate(candidate: ResolvedCallAtom)

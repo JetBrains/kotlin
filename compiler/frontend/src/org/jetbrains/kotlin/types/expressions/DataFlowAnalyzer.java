@@ -286,7 +286,7 @@ public class DataFlowAnalyzer {
             @NotNull Ref<Boolean> hasError,
             boolean reportErrorForTypeMismatch
     ) {
-        if (!noExpectedType(c.expectedType) && TypeUtilsKt.contains(expressionType, (type) -> type instanceof StubType)) {
+        if (!noExpectedType(c.expectedType) && TypeUtilsKt.contains(expressionType, (type) -> type instanceof StubTypeForBuilderInference)) {
             if (c.inferenceSession instanceof BuilderInferenceSession) {
                 ((BuilderInferenceSession) c.inferenceSession).addExpectedTypeConstraint(expression, expressionType, c.expectedType);
             }
