@@ -40,6 +40,7 @@ internal class FirLazyDeclarationResolver(
         annotations: List<FirAnnotationCall>,
         moduleFileCache: ModuleFileCache,
         scopeSession: ScopeSession,
+        collector: FirTowerDataContextCollector? = null,
     ) {
         lazyResolveDeclaration(
             declaration = firFile,
@@ -49,7 +50,7 @@ internal class FirLazyDeclarationResolver(
             reresolveFile = false
         )
         firFileBuilder.runCustomResolveUnderLock(firFile, moduleFileCache) {
-            resolveFileAnnotationsWithoutLock(firFile, annotations, scopeSession)
+            resolveFileAnnotationsWithoutLock(firFile, annotations, scopeSession, collector)
         }
     }
 
@@ -61,12 +62,14 @@ internal class FirLazyDeclarationResolver(
         firFile: FirFile,
         annotations: List<FirAnnotationCall>,
         scopeSession: ScopeSession,
+        collector: FirTowerDataContextCollector? = null,
     ) {
         FirFileAnnotationsResolveTransformer(
             firFile = firFile,
             annotations = annotations,
             session = firFile.moduleData.session,
-            scopeSession = scopeSession
+            scopeSession = scopeSession,
+            firTowerDataContextCollector = collector,
         ).transformDeclaration()
     }
 

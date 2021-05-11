@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
+import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.KtToFirMapping
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.containingKtFileIfAny
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.originalKtFile
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -29,7 +30,7 @@ import org.jetbrains.kotlin.psi.KtLambdaExpression
 internal class FirModuleResolveStateDepended(
     private val originalState: FirModuleResolveStateImpl,
     val towerProviderBuiltUponElement: FirTowerContextProvider,
-    private val ktToFirMapping: Map<KtElement, FirElement>,
+    private val ktToFirMapping: KtToFirMapping?,
 ) : FirModuleResolveState() {
 
     override val project: Project get() = originalState.project
@@ -43,18 +44,14 @@ internal class FirModuleResolveStateDepended(
     override fun getOrBuildFirFor(element: KtElement): FirElement {
         val psi = originalState.elementBuilder.getPsiAsFirElementSource(element)
 
-        //TODO It return invalid elements for elements with invalid code, but try to return the most closest ones
-        var currentElement: PsiElement = psi
-        while (currentElement !is KtFile) {
-            ktToFirMapping[currentElement]?.let { return it }
-            currentElement = currentElement.parent
-        }
+        ktToFirMapping?.getFirOfClosestParent(psi, this)?.let { return it }
 
         return originalState.elementBuilder.getOrBuildFirFor(
-            element,
-            originalState.firFileBuilder,
-            originalState.rootModuleSession.cache,
-            fileStructureCache,
+            element = element,
+            firFileBuilder = originalState.firFileBuilder,
+            moduleFileCache = originalState.rootModuleSession.cache,
+            fileStructureCache = fileStructureCache,
+            state = this,
         )
     }
 

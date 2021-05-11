@@ -12,10 +12,12 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.ThreadSafe
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FileStructureCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FileStructureElement
+import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.KtToFirMapping
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.isNonAnonymousClassOrObject
 import org.jetbrains.kotlin.idea.util.getElementTextInContext
@@ -51,9 +53,10 @@ internal class FirElementBuilder {
         firFileBuilder: FirFileBuilder,
         moduleFileCache: ModuleFileCache,
         fileStructureCache: FileStructureCache,
+        state: FirModuleResolveState,
     ): FirElement = when (element) {
         is KtFile -> getOrBuildFirForKtFile(element, firFileBuilder, moduleFileCache)
-        else -> getOrBuildFirForNonKtFileElement(element, fileStructureCache, moduleFileCache)
+        else -> getOrBuildFirForNonKtFileElement(element, fileStructureCache, moduleFileCache, state)
     }
 
     private fun getOrBuildFirForKtFile(ktFile: KtFile, firFileBuilder: FirFileBuilder, moduleFileCache: ModuleFileCache): FirFile =
@@ -68,16 +71,17 @@ internal class FirElementBuilder {
     private fun getOrBuildFirForNonKtFileElement(
         element: KtElement,
         fileStructureCache: FileStructureCache,
-        moduleFileCache: ModuleFileCache
+        moduleFileCache: ModuleFileCache,
+        state: FirModuleResolveState,
     ): FirElement {
         require(element !is KtFile)
-        val fileStructure = fileStructureCache.getFileStructure(element.containingKtFile, moduleFileCache)
+        val firFile = element.containingKtFile
+        val fileStructure = fileStructureCache.getFileStructure(firFile, moduleFileCache)
 
         val mappings = fileStructure.getStructureElementFor(element).mappings
         val psi = getPsiAsFirElementSource(element)
-        mappings[psi]?.let { return it }
-        return psi.getFirOfClosestParent(mappings)?.second
-            ?: error("FirElement is not found for:\n${element.getElementTextInContext()}")
+        return mappings.getFirOfClosestParent(psi, state)
+            ?: state.getOrBuildFirFile(firFile)
     }
 
     @TestOnly
@@ -90,20 +94,6 @@ internal class FirElementBuilder {
         return fileStructure.getStructureElementFor(element)
     }
 }
-
-private fun KtElement.getFirOfClosestParent(cache: Map<KtElement, FirElement>): Pair<KtElement, FirElement>? {
-    var current: PsiElement? = this
-    while (current is KtElement) {
-        val mappedFir = cache[current]
-        if (mappedFir != null) {
-            return current to mappedFir
-        }
-        current = current.parent
-    }
-
-    return null
-}
-
 
 // TODO: simplify
 internal inline fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDeclaration) -> Boolean = { true }): KtNamedDeclaration? {

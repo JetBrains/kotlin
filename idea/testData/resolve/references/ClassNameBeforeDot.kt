@@ -1,4 +1,3 @@
-// IGNORE_FIR
 
 class Foo
 

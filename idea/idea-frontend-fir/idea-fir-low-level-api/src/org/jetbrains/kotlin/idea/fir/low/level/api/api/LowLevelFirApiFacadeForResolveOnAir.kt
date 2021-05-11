@@ -10,15 +10,25 @@ import com.intellij.psi.util.parentOfType
 import com.intellij.psi.util.parentsOfType
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.asTowerDataElement
+import org.jetbrains.kotlin.fir.resolve.transformers.FirTypeResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
+import org.jetbrains.kotlin.fir.resolve.typeResolver
+import org.jetbrains.kotlin.fir.scopes.FirCompositeScope
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
+import org.jetbrains.kotlin.fir.toFirPsiSourceElement
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveStateDepended
@@ -27,8 +37,10 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FileTowerProv
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextAllElementsCollector
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FirElementsRecorder
+import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.KtToFirMapping
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.RawFirReplacement
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.buildFileFirAnnotation
+import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.buildFirUserTypeRef
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSourcesSession
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.originalDeclaration
@@ -129,7 +141,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
             checkPCE = false
         )
 
-        val importingScopes = createImportingScopes(firFile, firFile.declarationSiteSession, ScopeSession(), useCaching = false)
+        val importingScopes = createImportingScopes(firFile, firFile.moduleData.session, ScopeSession(), useCaching = false)
         val fileScopeElements = importingScopes.map { it.asTowerDataElement(isLocal = false) }
         return FirTowerDataContext().addNonLocalTowerDataElements(fileScopeElements)
     }
@@ -147,7 +159,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
             ?: return FirModuleResolveStateDepended(
                 originalState,
                 FileTowerProvider(elementToAnalyze.containingKtFile, onAirGetTowerContextForFile(originalState, originalKtFile)),
-                emptyMap()
+                ktToFirMapping = null
             )
 
 
@@ -167,8 +179,8 @@ object LowLevelFirApiFacadeForResolveOnAir {
             collector = collector,
         )
 
-        val recordedMap = FirElementsRecorder.recordElementsFrom(copiedFirDeclaration, FirElementsRecorder())
-        return FirModuleResolveStateDepended(originalState, collector, recordedMap)
+        val mapping = KtToFirMapping(copiedFirDeclaration, FirElementsRecorder())
+        return FirModuleResolveStateDepended(originalState, collector, mapping)
     }
 
     private fun tryResolveAsFileAnnotation(
@@ -176,10 +188,11 @@ object LowLevelFirApiFacadeForResolveOnAir {
         state: FirModuleResolveStateImpl,
         replacement: RawFirReplacement,
         firFile: FirFile,
+        collector: FirTowerDataContextCollector? = null,
     ): FirAnnotationCall {
         val annotationCall = buildFileFirAnnotation(
-            firFile.declarationSiteSession,
-            firFile.declarationSiteSession.firIdeProvider.kotlinScopeProvider,
+            firFile.moduleData.session,
+            firFile.moduleData.session.firIdeProvider.kotlinScopeProvider,
             annotationEntry,
             replacement
         )
@@ -187,7 +200,8 @@ object LowLevelFirApiFacadeForResolveOnAir {
             firFile,
             listOf(annotationCall),
             state.rootModuleSession.cache,
-            ScopeSession()
+            ScopeSession(),
+            collector
         )
 
         return annotationCall
@@ -211,7 +225,8 @@ object LowLevelFirApiFacadeForResolveOnAir {
                     annotationEntry = annotationCall,
                     state = state,
                     replacement = replacement,
-                    firFile = originalFirFile
+                    firFile = originalFirFile,
+                    collector = collector,
                 )
             } else {
                 error("Cannot find enclosing declaration for ${replacement.from.getElementTextInContext()}")
@@ -228,7 +243,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
             firDeclarationToResolve = copiedFirDeclaration,
             moduleFileCache = state.rootModuleSession.cache,
             containerFirFile = originalFirFile,
-            provider = originalFirFile.declarationSiteSession.firIdeProvider,
+            provider = originalFirFile.moduleData.session.firIdeProvider,
             toPhase = FirResolvePhase.BODY_RESOLVE,
             checkPCE = true,
             isOnAirResolve = isOnAirResolve,
@@ -236,6 +251,28 @@ object LowLevelFirApiFacadeForResolveOnAir {
         )
 
         return copiedFirDeclaration
+    }
+
+    fun onAirResolveTypeInPlace(
+        place: KtElement,
+        typeReference: KtTypeReference,
+        state: FirModuleResolveState
+    ): FirResolvedTypeRef {
+        val context = state.getTowerContextProvider().getClosestAvailableParentContext(place)
+            ?: error("TowerContext not found for ${place.getElementTextInContext()}")
+
+        val session = state.rootModuleSession
+        val firTypeReference = buildFirUserTypeRef(
+            typeReference = typeReference,
+            session = session,
+            baseScopeProvider = session.firIdeProvider.kotlinScopeProvider
+        )
+
+        return FirTypeResolveTransformer(
+            session = session,
+            scopeSession = ScopeSession(),
+            initialScopes = context.towerDataElements.asReversed().mapNotNull { it.scope }
+        ).transformTypeRef(firTypeReference, null)
     }
 
     private class TowerProviderForElementForState(private val state: FirModuleResolveState) : FirTowerContextProvider {

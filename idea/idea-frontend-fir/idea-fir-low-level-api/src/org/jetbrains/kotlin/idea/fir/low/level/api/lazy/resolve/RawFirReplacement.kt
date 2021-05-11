@@ -28,7 +28,7 @@ internal data class RawFirReplacement(val from: KtElement, val to: KtElement) {
         private var replacementApplied = false
 
         private fun ensureReplacementIsValid() {
-            require(isApplicableForReplacement(from)) {
+            require(from == to || isApplicableForReplacement(from)) {
                 "Replacement is possible for applicable type but given ${from::class.simpleName}"
             }
             require(from::class == to::class) {
@@ -44,7 +44,7 @@ internal data class RawFirReplacement(val from: KtElement, val to: KtElement) {
         }
 
         fun ensureApplied() {
-            check(replacementApplied) {
+            check(from == to || replacementApplied) {
                 "Replacement requested but was not applied for ${from::class.simpleName}"
             }
         }
