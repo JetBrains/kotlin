@@ -106,8 +106,16 @@ The Gradle plugin allows configuring the functions which should be transformed
 with a list of fully-qualified function names.
 
 ```kotlin
+// Kotlin DSL
 configure<com.bnorm.power.PowerAssertGradleExtension> {
   functions = listOf("kotlin.assert", "kotlin.test.assertTrue")
+}
+```
+
+```groovy
+// Groovy
+kotlinPowerAssert {
+  functions = ["kotlin.assert", "kotlin.test.assertTrue"]
 }
 ```
 
