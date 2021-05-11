@@ -14,11 +14,13 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.java.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.*
+import org.jetbrains.kotlin.fir.session.FirModuleInfoBasedModuleData
 import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
@@ -30,6 +32,7 @@ import org.jetbrains.kotlin.idea.multiplatform.setupMppProjectFromDirStructure
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -55,12 +58,25 @@ abstract class AbstractFirMultiModuleResolveTest : AbstractMultiModuleTest() {
 
     private fun createSession(module: Module, provider: FirProjectSessionProvider): FirSession {
         val moduleInfo = module.productionSourceInfo()!!
-        return FirSessionFactory.createJavaModuleBasedSession(moduleInfo, provider, moduleInfo.contentScope(), project)
+        return FirSessionFactory.createJavaModuleBasedSession(
+            FirModuleInfoBasedModuleData(moduleInfo),
+            provider,
+            moduleInfo.contentScope(),
+            project,
+            providerAndScopeForIncrementalCompilation = null
+        )
     }
 
     private fun createLibrarySession(moduleInfo: IdeaModuleInfo, provider: FirProjectSessionProvider): FirSession {
         val contentScope = moduleInfo.contentScope()
-        return FirSessionFactory.createLibrarySession(moduleInfo, provider, contentScope, project, IDEPackagePartProvider(contentScope))
+        return FirSessionFactory.createLibrarySession(
+            mainModuleName = Name.identifier(moduleInfo.moduleOrigin.name),
+            provider,
+            SingleModuleDataProvider(FirModuleInfoBasedModuleData(moduleInfo)),
+            contentScope,
+            project,
+            IDEPackagePartProvider(contentScope)
+        )
     }
 
     private fun doFirResolveTest(dirPath: String) {
