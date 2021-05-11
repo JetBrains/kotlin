@@ -13,10 +13,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.inline.MethodBodyVisitor
-import org.jetbrains.kotlin.codegen.inline.SMAP
-import org.jetbrains.kotlin.codegen.inline.SMAPAndMethodNode
-import org.jetbrains.kotlin.codegen.inline.wrapWithMaxLocalCalc
+import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.mangleNameIfNeeded
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.visitAnnotableParameterCount
@@ -40,21 +37,20 @@ import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
-class FunctionCodegen(
-    private val irFunction: IrFunction,
-    private val classCodegen: ClassCodegen,
-    private val inlinedInto: ExpressionCodegen? = null
-) {
+class FunctionCodegen(private val irFunction: IrFunction, private val classCodegen: ClassCodegen) {
     private val context = classCodegen.context
 
-    fun generate(): SMAPAndMethodNode =
+    fun generate(
+        inlinedInto: ExpressionCodegen? = null,
+        reifiedTypeParameters: ReifiedTypeParametersUsages = classCodegen.reifiedTypeParametersUsages
+    ): SMAPAndMethodNode =
         try {
-            doGenerate()
+            doGenerate(inlinedInto, reifiedTypeParameters)
         } catch (e: Throwable) {
             throw RuntimeException("Exception while generating code for:\n${irFunction.dump()}", e)
         }
 
-    private fun doGenerate(): SMAPAndMethodNode {
+    private fun doGenerate(inlinedInto: ExpressionCodegen?, reifiedTypeParameters: ReifiedTypeParametersUsages): SMAPAndMethodNode {
         val signature = context.methodSignatureMapper.mapSignatureWithGeneric(irFunction)
         val flags = irFunction.calculateMethodFlags()
         val isSynthetic = flags.and(Opcodes.ACC_SYNTHETIC) != 0
@@ -121,7 +117,9 @@ class FunctionCodegen(
             context.state.globalInlineContext.enterDeclaration(irFunction.suspendFunctionOriginal().toIrBasedDescriptor())
             try {
                 val adapter = InstructionAdapter(methodVisitor)
-                ExpressionCodegen(irFunction, signature, frameMap, adapter, classCodegen, inlinedInto, sourceMapper).generate()
+                ExpressionCodegen(
+                    irFunction, signature, frameMap, adapter, classCodegen, inlinedInto, sourceMapper, reifiedTypeParameters
+                ).generate()
             } finally {
                 context.state.globalInlineContext.exitDeclaration()
             }

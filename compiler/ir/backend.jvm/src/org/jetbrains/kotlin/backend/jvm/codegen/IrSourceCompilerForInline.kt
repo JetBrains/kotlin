@@ -95,8 +95,15 @@ class IrSourceCompilerForInline(
     override val lazySourceMapper: SourceMapper
         get() = codegen.smap
 
-    override fun generateLambdaBody(lambdaInfo: ExpressionLambda): SMAPAndMethodNode =
-        FunctionCodegen((lambdaInfo as IrExpressionLambdaImpl).function, codegen.classCodegen, codegen).generate()
+    override fun generateLambdaBody(lambdaInfo: ExpressionLambda, reifiedTypeParameters: ReifiedTypeParametersUsages): SMAPAndMethodNode {
+        require(lambdaInfo is IrExpressionLambdaImpl)
+        for (typeParameter in lambdaInfo.function.typeParameters) {
+            if (typeParameter.isReified) {
+                reifiedTypeParameters.addUsedReifiedParameter(typeParameter.name.asString())
+            }
+        }
+        return FunctionCodegen(lambdaInfo.function, codegen.classCodegen).generate(codegen, reifiedTypeParameters)
+    }
 
     override fun doCreateMethodNodeFromSource(
         callableDescriptor: FunctionDescriptor,
@@ -116,7 +123,7 @@ class IrSourceCompilerForInline(
     override fun createCodegenForExternalFinallyBlockGenerationOnNonLocalReturn(finallyNode: MethodNode, curFinallyDepth: Int) =
         ExpressionCodegen(
             codegen.irFunction, codegen.signature, codegen.frameMap, InstructionAdapter(finallyNode), codegen.classCodegen,
-            codegen.inlinedInto, codegen.smap
+            codegen.inlinedInto, codegen.smap, codegen.reifiedTypeParametersUsages
         ).also {
             it.finallyDepth = curFinallyDepth
         }
