@@ -24,11 +24,12 @@ val IrSimpleFunction.target: IrSimpleFunction
     else
         resolveFakeOverride() ?: error("Could not resolveFakeOverride() for ${this.render()}")
 
-val IrFunction.target: IrFunction get() = when (this) {
-    is IrSimpleFunction -> this.target
-    is IrConstructor -> this
-    else -> error(this)
-}
+val IrFunction.target: IrFunction
+    get() = when (this) {
+        is IrSimpleFunction -> this.target
+        is IrConstructor -> this
+        else -> error(this)
+    }
 
 fun IrSimpleFunction.collectRealOverrides(
     toSkip: (IrSimpleFunction) -> Boolean = { false },
@@ -98,7 +99,10 @@ fun Collection<IrOverridableMember>.collectAndFilterRealOverrides(
 }
 
 // TODO: use this implementation instead of any other
-fun IrSimpleFunction.resolveFakeOverride(allowAbstract: Boolean = false, toSkip: (IrSimpleFunction) -> Boolean = { false }): IrSimpleFunction? {
+fun IrSimpleFunction.resolveFakeOverride(
+    allowAbstract: Boolean = false,
+    toSkip: (IrSimpleFunction) -> Boolean = { false }
+): IrSimpleFunction? {
     return if (allowAbstract) {
         val reals = collectRealOverrides(toSkip)
         if (reals.isEmpty()) error("No real overrides for ${this.render()}")

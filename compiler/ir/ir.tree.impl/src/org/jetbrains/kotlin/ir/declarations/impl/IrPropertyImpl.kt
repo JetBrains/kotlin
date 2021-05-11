@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
@@ -52,6 +53,8 @@ abstract class IrPropertyCommonImpl(
     override var getter: IrSimpleFunction? = null
 
     override var setter: IrSimpleFunction? = null
+
+    override var overriddenSymbols: List<IrPropertySymbol> = emptyList()
 
     override var metadata: MetadataSource? = null
 
