@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getChildren
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -28,6 +29,7 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker() {
         reporter: DiagnosticReporter,
         data: Map<CFGNode<*>, PathAwarePropertyInitializationInfo>,
         properties: Set<FirPropertySymbol>,
+        capturedWrites: Set<FirVariableAssignment>,
         context: CheckerContext
     ) {
         val unprocessedProperties = mutableSetOf<FirPropertySymbol>()

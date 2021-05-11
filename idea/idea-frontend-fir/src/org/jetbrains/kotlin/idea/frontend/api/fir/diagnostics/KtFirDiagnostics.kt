@@ -1395,6 +1395,16 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val property: KtVariableSymbol
     }
 
+    abstract class CapturedValInitialization : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = CapturedValInitialization::class
+        abstract val property: KtVariableSymbol
+    }
+
+    abstract class CapturedMemberValInitialization : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = CapturedMemberValInitialization::class
+        abstract val property: KtVariableSymbol
+    }
+
     abstract class WrongInvocationKind : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = WrongInvocationKind::class
         abstract val declaration: KtSymbol

@@ -2269,6 +2269,22 @@ internal class ValReassignmentViaBackingFieldErrorImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
+internal class CapturedValInitializationImpl(
+    override val property: KtVariableSymbol,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.CapturedValInitialization(), KtAbstractFirDiagnostic<KtExpression> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
+internal class CapturedMemberValInitializationImpl(
+    override val property: KtVariableSymbol,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.CapturedMemberValInitialization(), KtAbstractFirDiagnostic<KtExpression> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
 internal class WrongInvocationKindImpl(
     override val declaration: KtSymbol,
     override val requiredRange: EventOccurrencesRange,

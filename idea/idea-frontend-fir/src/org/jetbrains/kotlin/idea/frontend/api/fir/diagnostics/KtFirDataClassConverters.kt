@@ -1988,6 +1988,20 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.CAPTURED_VAL_INITIALIZATION) { firDiagnostic ->
+        CapturedValInitializationImpl(
+            firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(firDiagnostic.a.fir),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.CAPTURED_MEMBER_VAL_INITIALIZATION) { firDiagnostic ->
+        CapturedMemberValInitializationImpl(
+            firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(firDiagnostic.a.fir),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.WRONG_INVOCATION_KIND) { firDiagnostic ->
         WrongInvocationKindImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a.fir as FirDeclaration),

@@ -2,7 +2,7 @@ fun test1() {
     val x: Int
 
     fun func() {
-        x = 0
+        <!CAPTURED_VAL_INITIALIZATION!>x<!> = 0
     }
 
     println(<!UNINITIALIZED_VARIABLE!>x<!>)

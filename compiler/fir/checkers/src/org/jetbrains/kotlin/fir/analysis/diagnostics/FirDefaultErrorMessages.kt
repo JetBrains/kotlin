@@ -58,6 +58,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CANNOT_INFER_PARA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CANNOT_WEAKEN_ACCESS_PRIVILEGE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CAN_BE_VAL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CAPTURED_MEMBER_VAL_INITIALIZATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CAPTURED_VAL_INITIALIZATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CATCH_PARAMETER_WITH_DEFAULT_VALUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CLASS_IN_SUPERTYPE_FOR_ENUM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CLASS_LITERAL_LHS_NOT_A_CLASS
@@ -941,6 +943,16 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(VAL_REASSIGNMENT, "Val cannot be reassigned", VARIABLE_NAME)
             map.put(VAL_REASSIGNMENT_VIA_BACKING_FIELD, "Reassignment of read-only property via backing field is deprecated", VARIABLE_NAME)
             map.put(VAL_REASSIGNMENT_VIA_BACKING_FIELD_ERROR, "Reassignment of read-only property via backing field", VARIABLE_NAME)
+            map.put(
+                CAPTURED_VAL_INITIALIZATION,
+                "Captured values initialization is forbidden due to possible reassignment",
+                VARIABLE_NAME
+            )
+            map.put(
+                CAPTURED_MEMBER_VAL_INITIALIZATION,
+                "Captured member values initialization is forbidden due to possible reassignment",
+                VARIABLE_NAME
+            )
             map.put(
                 WRONG_INVOCATION_KIND,
                 "{2} wrong invocation kind: given {3} case, but {4} case is possible",
