@@ -58,6 +58,8 @@ abstract class LambdaInfo(@JvmField val isCrossInline: Boolean) : FunctionalArgu
 
     lateinit var node: SMAPAndMethodNode
 
+    val reifiedTypeParametersUsages = ReifiedTypeParametersUsages()
+
     abstract fun generateLambdaBody(sourceCompiler: SourceCompilerForInline, reifiedTypeInliner: ReifiedTypeInliner<*>)
 
     open val hasDispatchReceiver = true
@@ -198,7 +200,7 @@ abstract class DefaultLambda(
 
         if (needReification) {
             //nested classes could also require reification
-            reifiedTypeInliner.reifyInstructions(node.node)
+            reifiedTypeParametersUsages.mergeAll(reifiedTypeInliner.reifyInstructions(node.node))
         }
     }
 
@@ -225,7 +227,7 @@ internal fun Type.boxReceiverForBoundReference(kotlinType: KotlinType, typeMappe
 
 abstract class ExpressionLambda(isCrossInline: Boolean) : LambdaInfo(isCrossInline) {
     override fun generateLambdaBody(sourceCompiler: SourceCompilerForInline, reifiedTypeInliner: ReifiedTypeInliner<*>) {
-        node = sourceCompiler.generateLambdaBody(this)
+        node = sourceCompiler.generateLambdaBody(this, reifiedTypeParametersUsages)
         node.node.preprocessSuspendMarkers(forInline = true, keepFakeContinuation = false)
     }
 

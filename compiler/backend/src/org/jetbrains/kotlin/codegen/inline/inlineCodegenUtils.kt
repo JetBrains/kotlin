@@ -579,8 +579,8 @@ class InlineOnlySmapSkipper(codegen: BaseExpressionCodegen) {
         const val LOCAL_VARIABLE_INLINE_ARGUMENT_SYNTHETIC_LINE_NUMBER = 1
     }
 
-    fun onInlineLambdaStart(mv: MethodVisitor, info: LambdaInfo, smap: SourceMapper) {
-        val firstLine = info.node.node.instructions.asSequence().mapNotNull { it as? LineNumberNode }.firstOrNull()?.line ?: -1
+    fun onInlineLambdaStart(mv: MethodVisitor, lambda: MethodNode, smap: SourceMapper) {
+        val firstLine = lambda.instructions.asSequence().mapNotNull { it as? LineNumberNode }.firstOrNull()?.line ?: -1
         if (callLineNumber >= 0 && firstLine == callLineNumber) {
             // We want the debugger to be able to break both on the inline call itself, plus on each
             // invocation of the inline lambda passed to it. For that to happen there needs to be at least
