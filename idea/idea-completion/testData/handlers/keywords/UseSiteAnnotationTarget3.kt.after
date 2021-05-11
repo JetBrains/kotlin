@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 class C(@set:<caret>Ann var p: String)
 
 // ELEMENT: set

@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 val v: Int
     get() = <caret>
 
