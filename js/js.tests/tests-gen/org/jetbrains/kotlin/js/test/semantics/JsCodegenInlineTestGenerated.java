@@ -1584,6 +1584,11 @@ public class JsCodegenInlineTestGenerated extends AbstractJsCodegenInlineTest {
                 public void testPropertyReferenceFromObject() throws Exception {
                     runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/propertyReferenceFromObject.kt");
                 }
+
+                @TestMetadata("withInlineClassParameter.kt")
+                public void testWithInlineClassParameter() throws Exception {
+                    runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/withInlineClassParameter.kt");
+                }
             }
         }
 
