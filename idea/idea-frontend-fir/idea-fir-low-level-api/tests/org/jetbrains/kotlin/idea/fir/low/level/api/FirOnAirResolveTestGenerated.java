@@ -34,6 +34,11 @@ public class FirOnAirResolveTestGenerated extends AbstractFirOnAirResolveTest {
         runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/onAirResolve/classInClass.kt");
     }
 
+    @TestMetadata("fileAnnotation.kt")
+    public void testFileAnnotation() throws Exception {
+        runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/onAirResolve/fileAnnotation.kt");
+    }
+
     @TestMetadata("identifierInContext.kt")
     public void testIdentifierInContext() throws Exception {
         runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/onAirResolve/identifierInContext.kt");

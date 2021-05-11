@@ -125,7 +125,7 @@ internal class FileStructure(
                 scopeSession,
                 checkPCE = true
             )
-            firLazyDeclarationResolver.resolveFileAnnotations(firFile, moduleFileCache, scopeSession)
+            firLazyDeclarationResolver.resolveFileAnnotations(firFile, firFile.annotations, moduleFileCache, scopeSession)
             RootStructureElement(
                 firFile,
                 container,

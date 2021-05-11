@@ -6,27 +6,36 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api
 
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacadeForResolveOnAir
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.psi.KtAnnotated
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtFileAnnotationList
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.findElementByCommentPrefix
 import java.io.File
 
-abstract class AbstractFirOnAirResolveTest  : KotlinLightCodeInsightFixtureTestCase() {
+abstract class AbstractFirOnAirResolveTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun isFirPlugin(): Boolean = true
 
     fun doTest(path: String) {
         val testDataFile = File(path)
         val ktFile = myFixture.configureByText(testDataFile.name, FileUtil.loadFile(testDataFile)) as KtFile
 
-        val place = ktFile.findElementByCommentPrefix("/*PLACE*/") as KtElement
-        val onAir = ktFile.findElementByCommentPrefix("/*ONAIR*/") as KtElement
+        fun fixUpAnnotations(element: KtElement): KtElement = when (element) {
+            is KtAnnotated -> element.annotationEntries.firstOrNull() ?: element
+            is KtFileAnnotationList -> element.annotationEntries.first()
+            else -> element
+        }
+
+        val place = (ktFile.findElementByCommentPrefix("/*PLACE*/") as KtElement).let(::fixUpAnnotations)
+        val onAir = (ktFile.findElementByCommentPrefix("/*ONAIR*/") as KtElement).let(::fixUpAnnotations)
 
         check(place::class == onAir::class)
 

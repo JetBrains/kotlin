@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.references
 
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
@@ -353,8 +354,7 @@ internal object FirReferenceResolveHelper {
         resolveState: FirModuleResolveState
     ): FirResolvedTypeRef? {
         val expressionUserType = expression.parent as? KtUserType ?: return null
-        val typeReference = PsiTreeUtil.getParentOfType(expressionUserType, KtTypeReference::class.java) ?: return null
-
+        val typeReference = expressionUserType.parentOfType<KtTypeReference>(withSelf = false) ?: return null
         return LowLevelFirApiFacadeForResolveOnAir.onAirResolveElement(
             state = resolveState,
             place = typeReference,

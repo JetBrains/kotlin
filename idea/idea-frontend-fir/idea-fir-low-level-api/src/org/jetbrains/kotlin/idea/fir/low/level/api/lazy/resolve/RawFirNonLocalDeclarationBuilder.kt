@@ -17,87 +17,40 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationUntypedDesignation
 import org.jetbrains.kotlin.psi.*
 
-internal data class RawFirReplacement<T : KtElement>(val from: T, val to: T)
-
-internal class RawFirNonLocalDeclarationBuilder<T : KtElement> private constructor(
+internal class RawFirNonLocalDeclarationBuilder private constructor(
     session: FirSession,
     baseScopeProvider: FirScopeProvider,
     private val declarationToBuild: KtDeclaration,
-    private val replacement: RawFirReplacement<T>? = null
+    private val replacementApplier: RawFirReplacement.Applier? = null
 ) : RawFirBuilder(session, baseScopeProvider, RawFirBuilderMode.NORMAL) {
 
-    private var replacementApplied = false
-
     companion object {
-        fun elementIsApplicable(element: KtElement) = when (element) {
-            is KtFile, is KtClassInitializer, is KtClassOrObject, is KtObjectLiteralExpression, is KtTypeAlias,
-            is KtNamedFunction, is KtLambdaExpression, is KtAnonymousInitializer, is KtProperty, is KtTypeReference,
-            is KtAnnotationEntry, is KtTypeParameter, is KtTypeProjection, is KtParameter, is KtBlockExpression,
-            is KtSimpleNameExpression, is KtConstantExpression, is KtStringTemplateExpression, is KtReturnExpression,
-            is KtTryExpression, is KtIfExpression, is KtWhenExpression, is KtDoWhileExpression, is KtWhileExpression,
-            is KtForExpression, is KtBreakExpression, is KtContinueExpression, is KtBinaryExpression, is KtBinaryExpressionWithTypeRHS,
-            is KtIsExpression, is KtUnaryExpression, is KtCallExpression, is KtArrayAccessExpression, is KtQualifiedExpression,
-            is KtThisExpression, is KtSuperExpression, is KtParenthesizedExpression, is KtLabeledExpression, is KtAnnotatedExpression,
-            is KtThrowExpression, is KtDestructuringDeclaration, is KtClassLiteralExpression, is KtCallableReferenceExpression,
-            is KtCollectionLiteralExpression -> true
-            else -> false
-        }
-
-        fun <T : KtElement> buildWithReplacement(
-            session: FirSession,
-            baseScopeProvider: FirScopeProvider,
-            designation: FirDeclarationUntypedDesignation,
-            declarationToBuild: KtDeclaration,
-            replacement: RawFirReplacement<T>? = null
-        ): FirDeclaration {
-
-            if (replacement != null) {
-                require(elementIsApplicable(replacement.from)) {
-                    "Build with replacement is possible for applicable type but given ${replacement.from::class.simpleName}"
-                }
-                require(replacement.from::class == replacement.to::class) {
-                    "Build with replacement is possible for same type in replacements but given\n${replacement.from::class.simpleName} and ${replacement.to::class.simpleName}"
-                }
-            }
-
-            val builder = RawFirNonLocalDeclarationBuilder(session, baseScopeProvider, declarationToBuild, replacement)
-            builder.context.packageFqName = declarationToBuild.containingKtFile.packageFqName
-
-            val result = builder.moveNext(designation.path.iterator(), containingClass = null)
-            check(replacement == null || builder.replacementApplied) {
-                "Replacement requested but was not applied for ${replacement!!.from::class.simpleName}"
-            }
-            return result
-        }
-
         fun build(
             session: FirSession,
             baseScopeProvider: FirScopeProvider,
             designation: FirDeclarationUntypedDesignation,
-            rootNonLocalDeclaration: KtDeclaration
+            rootNonLocalDeclaration: KtDeclaration,
+            replacement: RawFirReplacement? = null
         ): FirDeclaration {
-            val builder = RawFirNonLocalDeclarationBuilder<KtElement>(session, baseScopeProvider, rootNonLocalDeclaration)
+            val replacementApplier = replacement?.Applier()
+            val builder = RawFirNonLocalDeclarationBuilder(session, baseScopeProvider, rootNonLocalDeclaration, replacementApplier)
             builder.context.packageFqName = rootNonLocalDeclaration.containingKtFile.packageFqName
-            return builder.moveNext(designation.path.iterator(), containingClass = null)
+            return builder.moveNext(designation.path.iterator(), containingClass = null).also {
+                replacementApplier?.ensureApplied()
+            }
         }
-    }
-
-    private fun KtElement.replaced(): KtElement {
-        if (replacement == null || replacement.from != this) return this
-        replacementApplied = true
-        return replacement.to
     }
 
     private inner class VisitorWithReplacement : Visitor() {
         override fun convertElement(element: KtElement): FirElement? =
-            super.convertElement(element.replaced())
+            super.convertElement(replacementApplier?.tryReplace(element) ?: element)
 
         override fun convertProperty(
             property: KtProperty,
             ownerRegularOrAnonymousObjectSymbol: FirClassSymbol<*>?,
             ownerRegularClassTypeParametersCount: Int?
         ): FirProperty {
-            val replacementProperty = property.replaced()
+            val replacementProperty = replacementApplier?.tryReplace(property) ?: property
             check(replacementProperty is KtProperty)
             return super.convertProperty(
                 property = replacementProperty,
@@ -107,7 +60,7 @@ internal class RawFirNonLocalDeclarationBuilder<T : KtElement> private construct
         }
 
         override fun convertValueParameter(valueParameter: KtParameter, defaultTypeRef: FirTypeRef?): FirValueParameter {
-            val replacementParameter = valueParameter.replaced()
+            val replacementParameter = replacementApplier?.tryReplace(valueParameter) ?: valueParameter
             check(replacementParameter is KtParameter)
             return super.convertValueParameter(
                 valueParameter = replacementParameter,

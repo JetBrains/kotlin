@@ -7,21 +7,21 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.api
 
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.RawFirNonLocalDeclarationBuilder
-import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.RawFirReplacement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.RawFirNonLocalDeclarationBuilder
+import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.RawFirReplacement
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.psi.*
 
 internal object DeclarationCopyBuilder {
-    fun <T : KtElement> createDeclarationCopy(
+    fun createDeclarationCopy(
         state: FirModuleResolveState,
         nonLocalDeclaration: KtDeclaration,
-        replacement: RawFirReplacement<T>
+        replacement: RawFirReplacement
     ): FirDeclaration {
 
         return when (nonLocalDeclaration) {
@@ -49,10 +49,10 @@ internal object DeclarationCopyBuilder {
         }
     }
 
-    private fun <T : KtElement> createFunctionCopy(
+    private fun createFunctionCopy(
         rootNonLocalDeclaration: KtNamedFunction,
         state: FirModuleResolveState,
-        replacement: RawFirReplacement<T>,
+        replacement: RawFirReplacement,
     ): FirSimpleFunction {
 
         val originalFunction = rootNonLocalDeclaration.getOrBuildFirOfType<FirSimpleFunction>(state)
@@ -73,10 +73,10 @@ internal object DeclarationCopyBuilder {
         }.apply { reassignAllReturnTargets(builtFunction) }
     }
 
-    private fun <T : KtElement> createClassCopy(
+    private fun createClassCopy(
         rootNonLocalDeclaration: KtClassOrObject,
         state: FirModuleResolveState,
-        replacement: RawFirReplacement<T>,
+        replacement: RawFirReplacement,
     ): FirRegularClass {
         val originalFirClass = rootNonLocalDeclaration.getOrBuildFirOfType<FirRegularClass>(state)
         val builtClass = createCopy(rootNonLocalDeclaration, originalFirClass, replacement)
@@ -95,19 +95,19 @@ internal object DeclarationCopyBuilder {
         }
     }
 
-    private fun <T : KtElement> createTypeAliasCopy(
+    private fun createTypeAliasCopy(
         rootNonLocalDeclaration: KtTypeAlias,
         state: FirModuleResolveState,
-        replacement: RawFirReplacement<T>,
+        replacement: RawFirReplacement,
     ): FirTypeAlias {
         val originalFirTypeAlias = rootNonLocalDeclaration.getOrBuildFirOfType<FirTypeAlias>(state)
         return createCopy(rootNonLocalDeclaration, originalFirTypeAlias, replacement)
     }
 
-    private fun <T : KtElement> createPropertyCopy(
+    private fun createPropertyCopy(
         rootNonLocalDeclaration: KtProperty,
         state: FirModuleResolveState,
-        replacement: RawFirReplacement<T>,
+        replacement: RawFirReplacement,
     ): FirProperty {
         val originalProperty = rootNonLocalDeclaration.getOrBuildFirOfType<FirProperty>(state)
         val builtProperty = createCopy(rootNonLocalDeclaration, originalProperty, replacement)
@@ -158,16 +158,16 @@ internal object DeclarationCopyBuilder {
         moduleData = state.rootModuleSession.moduleData
     }
 
-    internal inline fun <reified D : FirDeclaration, T : KtElement> createCopy(
+    internal inline fun <reified D : FirDeclaration> createCopy(
         rootNonLocalDeclaration: KtDeclaration,
         originalFirDeclaration: D,
-        replacement: RawFirReplacement<T>? = null,
+        replacement: RawFirReplacement? = null,
     ): D {
-        return RawFirNonLocalDeclarationBuilder.buildWithReplacement(
+        return RawFirNonLocalDeclarationBuilder.build(
             session = originalFirDeclaration.moduleData.session,
             baseScopeProvider = originalFirDeclaration.moduleData.session.firIdeProvider.kotlinScopeProvider,
             designation = originalFirDeclaration.collectDesignation(),
-            declarationToBuild = rootNonLocalDeclaration,
+            rootNonLocalDeclaration = rootNonLocalDeclaration,
             replacement = replacement,
         ) as D
     }

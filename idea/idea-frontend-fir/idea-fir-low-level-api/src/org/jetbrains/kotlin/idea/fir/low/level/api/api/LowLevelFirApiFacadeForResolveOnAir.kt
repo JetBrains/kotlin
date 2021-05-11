@@ -6,23 +6,29 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.api
 
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.parentOfType
 import com.intellij.psi.util.parentsOfType
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.RawFirNonLocalDeclarationBuilder
-import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.RawFirReplacement
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.realPsi
-import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.asTowerDataElement
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveStateDepended
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveStateImpl
+import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FileTowerProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextAllElementsCollector
-import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FileTowerProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FirElementsRecorder
+import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.RawFirReplacement
+import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.buildFileFirAnnotation
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSourcesSession
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.originalDeclaration
@@ -48,9 +54,9 @@ object LowLevelFirApiFacadeForResolveOnAir {
     private fun recordOriginalDeclaration(targetDeclaration: KtNamedDeclaration, originalDeclaration: KtNamedDeclaration) {
         require(!targetDeclaration.isPhysical)
         require(originalDeclaration.containingKtFile !== targetDeclaration.containingKtFile)
-        val originalDeclrationParents = originalDeclaration.parentsOfType<KtDeclaration>().toList()
+        val originalDeclarationParents = originalDeclaration.parentsOfType<KtDeclaration>().toList()
         val fakeDeclarationParents = targetDeclaration.parentsOfType<KtDeclaration>().toList()
-        originalDeclrationParents.zip(fakeDeclarationParents) { original, fake ->
+        originalDeclarationParents.zip(fakeDeclarationParents) { original, fake ->
             fake.originalDeclaration = original
         }
     }
@@ -95,7 +101,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
             FileTowerProvider(place, onAirGetTowerContextForFile(state, place))
         } else {
             val validPlace = PsiTreeUtil.findFirstParent(place, false) {
-                RawFirNonLocalDeclarationBuilder.elementIsApplicable(it as KtElement)
+                RawFirReplacement.isApplicableForReplacement(it as KtElement)
             } as KtElement
 
             FirTowerDataContextAllElementsCollector().also {
@@ -165,23 +171,58 @@ object LowLevelFirApiFacadeForResolveOnAir {
         return FirModuleResolveStateDepended(originalState, collector, recordedMap)
     }
 
-    private fun <T : KtElement> runBodyResolveOnAir(
+    private fun tryResolveAsFileAnnotation(
+        annotationEntry: KtAnnotationEntry,
         state: FirModuleResolveStateImpl,
-        replacement: RawFirReplacement<T>,
+        replacement: RawFirReplacement,
+        firFile: FirFile,
+    ): FirAnnotationCall {
+        val annotationCall = buildFileFirAnnotation(
+            firFile.declarationSiteSession,
+            firFile.declarationSiteSession.firIdeProvider.kotlinScopeProvider,
+            annotationEntry,
+            replacement
+        )
+        state.firLazyDeclarationResolver.resolveFileAnnotations(
+            firFile,
+            listOf(annotationCall),
+            state.rootModuleSession.cache,
+            ScopeSession()
+        )
+
+        return annotationCall
+    }
+
+    private fun runBodyResolveOnAir(
+        state: FirModuleResolveStateImpl,
+        replacement: RawFirReplacement,
         isOnAirResolve: Boolean,
         collector: FirTowerDataContextCollector? = null,
-    ): FirDeclaration {
+    ): FirElement {
 
         val nonLocalDeclaration = findEnclosingNonLocalDeclaration(replacement.from)
-            ?: error("Cannot find enclosing declaration for ${replacement.from.getElementTextInContext()}")
+        val originalFirFile = state.getOrBuildFirFile(replacement.from.containingKtFile)
+
+        if (nonLocalDeclaration == null) {
+            //It is possible that it is file annotation is going to resolve
+            val annotationCall = replacement.from.parentOfType<KtAnnotationEntry>(withSelf = true)
+            if (annotationCall != null) {
+                return tryResolveAsFileAnnotation(
+                    annotationEntry = annotationCall,
+                    state = state,
+                    replacement = replacement,
+                    firFile = originalFirFile
+                )
+            } else {
+                error("Cannot find enclosing declaration for ${replacement.from.getElementTextInContext()}")
+            }
+        }
 
         val copiedFirDeclaration = DeclarationCopyBuilder.createDeclarationCopy(
             state = state,
             nonLocalDeclaration = nonLocalDeclaration,
             replacement = replacement,
         )
-
-        val originalFirFile = state.getOrBuildFirFile(nonLocalDeclaration.containingKtFile)
 
         state.firLazyDeclarationResolver.lazyDesignatedResolveDeclaration(
             firDeclarationToResolve = copiedFirDeclaration,
