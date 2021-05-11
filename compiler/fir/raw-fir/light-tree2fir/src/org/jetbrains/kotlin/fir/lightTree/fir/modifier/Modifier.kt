@@ -146,10 +146,10 @@ class Modifier(
         }
     }
 
-    fun getModality(): Modality? {
+    fun getModality(isClassOrObject: Boolean): Modality? {
         return when {
             inheritanceModifiers.contains(InheritanceModifier.FINAL) -> Modality.FINAL
-            inheritanceModifiers.contains(InheritanceModifier.SEALED) -> Modality.SEALED
+            inheritanceModifiers.contains(InheritanceModifier.SEALED) -> if (isClassOrObject) Modality.SEALED else null
             inheritanceModifiers.contains(InheritanceModifier.ABSTRACT) -> Modality.ABSTRACT
             inheritanceModifiers.contains(InheritanceModifier.OPEN) -> Modality.OPEN
             else -> null

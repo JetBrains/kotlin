@@ -8,7 +8,7 @@ interface B {
     abstract var bar: Unit
 }
 
-<!MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED!>interface C<!> : A, B
+interface C : A, B
 
 abstract class D(sealed var x: Int) {
     abstract var y: Unit

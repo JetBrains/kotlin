@@ -66,7 +66,7 @@ class ValueParameter(
             symbol = FirPropertySymbol(callableId)
             dispatchReceiverType = currentDispatchReceiver
             isLocal = false
-            status = FirDeclarationStatusImpl(modifiers.getVisibility(), modifiers.getModality()).apply {
+            status = FirDeclarationStatusImpl(modifiers.getVisibility(), modifiers.getModality(isClassOrObject = false)).apply {
                 this.isExpect = isExpect
                 isActual = modifiers.hasActual()
                 isOverride = modifiers.hasOverride()

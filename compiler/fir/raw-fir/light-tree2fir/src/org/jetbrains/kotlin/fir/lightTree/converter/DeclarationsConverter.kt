@@ -397,7 +397,7 @@ class DeclarationsConverter(
             withCapturedTypeParameters {
                 val status = FirDeclarationStatusImpl(
                     if (isLocal) Visibilities.Local else modifiers.getVisibility(),
-                    modifiers.getModality()
+                    modifiers.getModality(isClassOrObject = true)
                 ).apply {
                     isExpect = modifiers.hasExpect()
                     isActual = modifiers.hasActual()
@@ -1070,7 +1070,7 @@ class DeclarationsConverter(
 
                     fun defaultAccessorStatus() =
                         // Downward propagation of `inline` and `external` modifiers (from property to its accessors)
-                        FirDeclarationStatusImpl(propertyVisibility, modifiers.getModality()).apply {
+                        FirDeclarationStatusImpl(propertyVisibility, modifiers.getModality(isClassOrObject = false)).apply {
                             isInline = modifiers.hasInline()
                             isExternal = modifiers.hasExternal()
                         }
@@ -1097,7 +1097,7 @@ class DeclarationsConverter(
                     // Upward propagation of `inline` and `external` modifiers (from accessors to property)
                     // Note that, depending on `var` or `val`, checking setter's modifiers should be careful: for `val`, setter doesn't
                     // exist (null); for `var`, the retrieval of the specific modifier is supposed to be `true`
-                    status = FirDeclarationStatusImpl(propertyVisibility, modifiers.getModality()).apply {
+                    status = FirDeclarationStatusImpl(propertyVisibility, modifiers.getModality(isClassOrObject = false)).apply {
                         isExpect = modifiers.hasExpect() || classWrapper?.hasExpect() == true
                         isActual = modifiers.hasActual()
                         isOverride = modifiers.hasOverride()
@@ -1218,7 +1218,7 @@ class DeclarationsConverter(
         }
         val status =
             // Downward propagation of `inline` and `external` modifiers (from property to its accessors)
-            FirDeclarationStatusImpl(accessorVisibility, modifiers.getModality()).apply {
+            FirDeclarationStatusImpl(accessorVisibility, modifiers.getModality(isClassOrObject = false)).apply {
                 isInline = propertyModifiers.hasInline() || modifiers.hasInline()
                 isExternal = propertyModifiers.hasExternal() || modifiers.hasExternal()
             }
@@ -1388,7 +1388,7 @@ class DeclarationsConverter(
                 name = functionName
                 status = FirDeclarationStatusImpl(
                     if (isLocal) Visibilities.Local else modifiers.getVisibility(),
-                    modifiers.getModality()
+                    modifiers.getModality(isClassOrObject = false)
                 ).apply {
                     isExpect = modifiers.hasExpect() || classWrapper?.hasExpect() == true
                     isActual = modifiers.hasActual()
