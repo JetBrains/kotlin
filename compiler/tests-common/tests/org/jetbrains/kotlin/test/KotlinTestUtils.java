@@ -606,6 +606,8 @@ public class KotlinTestUtils {
 
                 if (PRINT_STACKTRACE_FOR_IGNORED_TESTS) {
                     e.printStackTrace();
+                } else {
+                    System.err.println("MUTED TEST with `" + ignoreDirective + "`");
                 }
                 return;
             }
