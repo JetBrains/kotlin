@@ -27,7 +27,7 @@ object IgnoreTests {
             testFile,
             EnableOrDisableTestDirective.Enable(enableTestDirective),
             directivePosition,
-            additionalFilesExtensions.toList(),
+            computeAdditionalFilesByExtensions(testFile, additionalFilesExtensions.asList()),
             test
         )
     }
@@ -41,7 +41,7 @@ object IgnoreTests {
             testFile,
             EnableOrDisableTestDirective.Disable(DIRECTIVES.FIX_ME),
             directivePosition,
-            additionalFilesExtensions = emptyList(),
+            additionalFiles = emptyList(),
             test = test
         )
     }
@@ -53,11 +53,27 @@ object IgnoreTests {
         directivePosition: DirectivePosition = DirectivePosition.FIRST_LINE_IN_FILE,
         test: () -> Unit
     ) {
+        runTestIfNotDisabledByFileDirective(
+            testFile,
+            disableTestDirective,
+            { mainTestFile -> computeAdditionalFilesByExtensions(mainTestFile, additionalFilesExtensions.asList()) },
+            directivePosition,
+            test
+        )
+    }
+
+    fun runTestIfNotDisabledByFileDirective(
+        testFile: Path,
+        disableTestDirective: String,
+        computeAdditionalFiles: (mainTestFile: Path) -> List<Path>,
+        directivePosition: DirectivePosition = DirectivePosition.FIRST_LINE_IN_FILE,
+        test: () -> Unit
+    ) {
         runTestIfEnabledByDirective(
             testFile,
             EnableOrDisableTestDirective.Disable(disableTestDirective),
             directivePosition,
-            additionalFilesExtensions.toList(),
+            computeAdditionalFiles(testFile),
             test
         )
     }
@@ -66,7 +82,7 @@ object IgnoreTests {
         testFile: Path,
         directive: EnableOrDisableTestDirective,
         directivePosition: DirectivePosition,
-        additionalFilesExtensions: List<String>,
+        additionalFiles: List<Path>,
         test: () -> Unit
     ) {
         if (ALWAYS_CONSIDER_TEST_AS_PASSING) {
@@ -81,7 +97,7 @@ object IgnoreTests {
         } catch (e: Throwable) {
             if (testIsEnabled) {
                 if (directive is EnableOrDisableTestDirective.Disable) {
-                    handleTestWithWrongDirective(testFile, directive, directivePosition, additionalFilesExtensions)
+                    handleTestWithWrongDirective(testFile, directive, directivePosition, additionalFiles)
                 }
                 throw e
             }
@@ -89,7 +105,7 @@ object IgnoreTests {
         }
 
         if (!testIsEnabled) {
-            handleTestWithWrongDirective(testFile, directive, directivePosition, additionalFilesExtensions)
+            handleTestWithWrongDirective(testFile, directive, directivePosition, additionalFiles)
         }
     }
 
@@ -99,17 +115,17 @@ object IgnoreTests {
         testFile: Path,
         directive: EnableOrDisableTestDirective,
         directivePosition: DirectivePosition,
-        additionalFilesExtensions: List<String>,
+        additionalFiles: List<Path>,
     ) {
         val verb = when (directive) {
             is EnableOrDisableTestDirective.Disable -> "do not pass"
             is EnableOrDisableTestDirective.Enable -> "passes"
         }
         if (INSERT_DIRECTIVE_AUTOMATICALLY) {
-            testFile.insertDirectivesToFileAndAdditionalFile(directive, additionalFilesExtensions, directivePosition)
+            testFile.insertDirectivesToFileAndAdditionalFile(directive, additionalFiles, directivePosition)
             val filesWithDirectiveAdded = buildList {
                 add(testFile.fileName.toString())
-                additionalFilesExtensions.mapTo(this) { extension -> testFile.getSiblingFile(extension) }
+                addAll(additionalFiles)
             }
             throw AssertionError(
                 "Looks like the test $verb, ${directive.directiveText} was added to the ${filesWithDirectiveAdded.joinToString()}"
@@ -122,15 +138,17 @@ object IgnoreTests {
         }
     }
 
+    private fun computeAdditionalFilesByExtensions(mainTestFile: Path, additionalFilesExtensions: List<String>): List<Path> {
+        return additionalFilesExtensions.mapNotNull { mainTestFile.getSiblingFile(it) }
+    }
+
     private fun Path.insertDirectivesToFileAndAdditionalFile(
         directive: EnableOrDisableTestDirective,
-        additionalFilesExtensions: List<String>,
+        additionalFiles: List<Path>,
         directivePosition: DirectivePosition,
     ) {
         insertDirective(directive, directivePosition)
-        additionalFilesExtensions.forEach { extension ->
-            getSiblingFile(extension)?.insertDirective(directive, directivePosition)
-        }
+        additionalFiles.forEach { it.insertDirective(directive, directivePosition) }
     }
 
     private fun Path.getSiblingFile(extension: String): Path? {
