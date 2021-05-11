@@ -103,6 +103,7 @@ message PirPropertyCarrier {
     optional int64 backingField = 5;
     optional int64 getter = 6;
     optional int64 setter = 7;
+    repeated int64 overriddenSymbols = 8;
 }
 
 message PirTypeAliasCarrier {

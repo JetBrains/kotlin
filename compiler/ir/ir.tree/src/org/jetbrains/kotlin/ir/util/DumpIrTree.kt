@@ -99,9 +99,7 @@ class DumpIrTreeVisitor(
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
             declaration.correspondingPropertySymbol?.dumpInternal("correspondingProperty")
-            declaration.overriddenSymbols.dumpItems<IrSymbol>("overridden") {
-                it.dump()
-            }
+            declaration.overriddenSymbols.dumpItems("overridden") { it.dump() }
             declaration.typeParameters.dumpElements()
             declaration.dispatchReceiverParameter?.accept(this, "\$this")
             declaration.extensionReceiverParameter?.accept(this, "\$receiver")
@@ -136,6 +134,7 @@ class DumpIrTreeVisitor(
     override fun visitProperty(declaration: IrProperty, data: String) {
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
+            declaration.overriddenSymbols.dumpItems("overridden") { it.dump() }
             declaration.backingField?.accept(this, "")
             declaration.getter?.accept(this, "")
             declaration.setter?.accept(this, "")

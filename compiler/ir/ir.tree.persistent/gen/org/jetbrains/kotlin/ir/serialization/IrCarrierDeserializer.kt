@@ -230,7 +230,8 @@ internal abstract class IrCarrierDeserializer {
             proto.annotationList.map { deserializeAnnotation(it) },
             if (proto.hasBackingField()) deserializeField(proto.backingField) else null,
             if (proto.hasGetter()) deserializeSimpleFunction(proto.getter) else null,
-            if (proto.hasSetter()) deserializeSimpleFunction(proto.setter) else null
+            if (proto.hasSetter()) deserializeSimpleFunction(proto.setter) else null,
+            proto.overriddenSymbolsList.map { deserializePropertySymbol(it) }
         )
     }
 

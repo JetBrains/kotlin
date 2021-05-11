@@ -21,6 +21,8 @@ FILE fqName:<root> fileName:/jvmFieldWithIntersectionTypes.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.JFieldOwner'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived1 modality:FINAL visibility:public superTypes:[<root>.JFieldOwner; <root>.IFoo]'
     PROPERTY FAKE_OVERRIDE name:f visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final f: kotlin.Int [var]
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.JFieldOwner
@@ -44,6 +46,8 @@ FILE fqName:<root> fileName:/jvmFieldWithIntersectionTypes.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.JFieldOwner'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived2 modality:FINAL visibility:public superTypes:[<root>.JFieldOwner; <root>.IFoo]'
     PROPERTY FAKE_OVERRIDE name:f visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final f: kotlin.Int [var]
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.JFieldOwner
@@ -67,6 +71,8 @@ FILE fqName:<root> fileName:/jvmFieldWithIntersectionTypes.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.JFieldOwner'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Mid modality:OPEN visibility:public superTypes:[<root>.JFieldOwner]'
     PROPERTY FAKE_OVERRIDE name:f visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final f: kotlin.Int [var]
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.JFieldOwner
@@ -87,6 +93,8 @@ FILE fqName:<root> fileName:/jvmFieldWithIntersectionTypes.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Mid'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DerivedThroughMid1 modality:FINAL visibility:public superTypes:[<root>.Mid; <root>.IFoo]'
     PROPERTY FAKE_OVERRIDE name:f visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final f [fake_override,var]
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.Mid
@@ -110,6 +118,8 @@ FILE fqName:<root> fileName:/jvmFieldWithIntersectionTypes.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Mid'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DerivedThroughMid2 modality:FINAL visibility:public superTypes:[<root>.Mid; <root>.IFoo]'
     PROPERTY FAKE_OVERRIDE name:f visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final f [fake_override,var]
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.Mid

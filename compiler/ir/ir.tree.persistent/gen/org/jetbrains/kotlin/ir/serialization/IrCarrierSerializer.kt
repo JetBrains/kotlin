@@ -207,6 +207,7 @@ internal abstract class IrCarrierSerializer {
         carrier.backingFieldSymbolField?.let { proto.setBackingField(serializeField(it)) }
         carrier.getterSymbolField?.let { proto.setGetter(serializeSimpleFunction(it)) }
         carrier.setterSymbolField?.let { proto.setSetter(serializeSimpleFunction(it)) }
+        proto.addAllOverriddenSymbols(carrier.overriddenSymbolsField.map { serializePropertySymbol(it) })
         return proto.build().toByteArray()
     }
 

@@ -18,6 +18,8 @@ FILE fqName:<root> fileName:/javaInnerClass.kt
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test type:<root>.J.JInner visibility:private [final]' type=<root>.J.JInner origin=null
               receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.<get-test>' type=<root>.Test1 origin=null
     PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final x: kotlin.Int [var]
     FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:<root>.J) returnType:kotlin.Unit [fake_override]
       overridden:
         public open fun bar (): kotlin.Unit declared in <root>.J

@@ -426,7 +426,11 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         }
     }
 
-    private class DelegatedPropertySymbols(val propertySymbol: IrPropertySymbol, val getterSymbol: IrSimpleFunctionSymbol?, val setterSymbol: IrSimpleFunctionSymbol?)
+    private class DelegatedPropertySymbols(
+        val propertySymbol: IrPropertySymbol,
+        val getterSymbol: IrSimpleFunctionSymbol?,
+        val setterSymbol: IrSimpleFunctionSymbol?
+    )
 
     private class IrSyntheticJavaProperty(
         @ObsoleteDescriptorBasedAPI
@@ -453,6 +457,9 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
             get() = descriptor.isExpect
         override val isFakeOverride: Boolean
             get() = false
+        override var overriddenSymbols: List<IrPropertySymbol>
+            get() = emptyList()
+            set(_) {}
         override var backingField: IrField?
             get() = null
             set(_) {}

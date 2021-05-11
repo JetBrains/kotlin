@@ -1509,6 +1509,12 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         }
 
         @Test
+        @TestMetadata("protectedJavaFieldRef.kt")
+        public void testProtectedJavaFieldRef() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/protectedJavaFieldRef.kt");
+        }
+
+        @Test
         @TestMetadata("references.kt")
         public void testReferences() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/references.kt");

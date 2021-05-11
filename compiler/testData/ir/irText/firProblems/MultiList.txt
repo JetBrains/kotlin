@@ -151,6 +151,8 @@ FILE fqName:<root> fileName:/MultiList.kt
       VALUE_PARAMETER name:fromIndex index:0 type:kotlin.Int
       VALUE_PARAMETER name:toIndex index:1 type:kotlin.Int
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:ABSTRACT [fake_override,val]
+      overridden:
+        public abstract size: kotlin.Int [val]
       FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.List<<root>.Some<T of <root>.MyList>>) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
@@ -195,6 +197,8 @@ FILE fqName:<root> fileName:/MultiList.kt
           <E>: @[FlexibleNullability] <root>.Some<T of <root>.SomeList>?
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:SomeList modality:OPEN visibility:public superTypes:[<root>.MyList<T of <root>.SomeList>; java.util.ArrayList<<root>.Some<T of <root>.SomeList>>]'
     PROPERTY FAKE_OVERRIDE name:modCount visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final modCount: kotlin.Int [var]
     FUN FAKE_OVERRIDE name:removeRange visibility:protected/*protected and package*/ modality:OPEN <> ($this:java.util.ArrayList<<root>.Some<T of <root>.SomeList>>, p0:kotlin.Int, p1:kotlin.Int) returnType:kotlin.Unit [fake_override]
       overridden:
         protected/*protected and package*/ open fun removeRange (p0: kotlin.Int, p1: kotlin.Int): kotlin.Unit declared in java.util.ArrayList
@@ -387,6 +391,9 @@ FILE fqName:<root> fileName:/MultiList.kt
         public open fun toString (): @[EnhancedNullability] kotlin.String [fake_override] declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
+      overridden:
+        public abstract size: kotlin.Int [fake_override,val]
+        public open size: kotlin.Int [val]
       FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:OPEN <> ($this:kotlin.collections.List<<root>.Some<T of <root>.SomeList>>) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -401,6 +408,8 @@ FILE fqName:<root> fileName:/MultiList.kt
           <T>: kotlin.String
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FinalList modality:FINAL visibility:public superTypes:[<root>.SomeList<kotlin.String>]'
     PROPERTY FAKE_OVERRIDE name:modCount visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final modCount [fake_override,var]
     FUN FAKE_OVERRIDE name:removeRange visibility:protected/*protected and package*/ modality:OPEN <> ($this:java.util.ArrayList<<root>.Some<kotlin.String>>, p0:kotlin.Int, p1:kotlin.Int) returnType:kotlin.Unit [fake_override]
       overridden:
         protected/*protected and package*/ open fun removeRange (p0: kotlin.Int, p1: kotlin.Int): kotlin.Unit [fake_override] declared in <root>.SomeList
@@ -576,6 +585,8 @@ FILE fqName:<root> fileName:/MultiList.kt
         public open fun trimToSize (): kotlin.Unit [fake_override] declared in <root>.SomeList
       $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<<root>.Some<kotlin.String>>
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
+      overridden:
+        public open size: kotlin.Int [fake_override,val]
       FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:OPEN <> ($this:kotlin.collections.List<<root>.Some<kotlin.String>>) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
         overridden:

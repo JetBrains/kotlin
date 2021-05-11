@@ -94,12 +94,16 @@ FILE fqName:<root> fileName:/kt16904.kt
                 $this: GET_VAR 'val tmp_1: <root>.Test1 [val] declared in <root>.Test1.<init>' type=<root>.Test1 origin=null
               other: CONST Int type=kotlin.Int value=42
     PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final x: <root>.B [val]
       FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.A) returnType:<root>.B [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
         overridden:
           public final fun <get-x> (): <root>.B declared in <root>.A
         $this: VALUE_PARAMETER name:<this> type:<root>.A
     PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final y: kotlin.Int [var]
       FUN FAKE_OVERRIDE name:<get-y> visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,var]
         overridden:
@@ -136,6 +140,8 @@ FILE fqName:<root> fileName:/kt16904.kt
           receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2' type=<root>.Test2 origin=null
           value: CONST Int type=kotlin.Int value=42
     PROPERTY FAKE_OVERRIDE name:field visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final field: kotlin.Int [var]
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.J

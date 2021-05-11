@@ -246,6 +246,9 @@ open class DeepCopyIrTreeWithSymbols(
             this.setter = declaration.setter?.transform()?.also {
                 it.correspondingPropertySymbol = symbol
             }
+            this.overriddenSymbols = declaration.overriddenSymbols.map {
+                symbolRemapper.getReferencedProperty(it)
+            }
         }
 
     override fun visitField(declaration: IrField): IrField =

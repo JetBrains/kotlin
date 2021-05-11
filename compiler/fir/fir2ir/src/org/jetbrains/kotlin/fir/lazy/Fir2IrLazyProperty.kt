@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.fir.backend.ConversionTypeContext
 import org.jetbrains.kotlin.fir.backend.ConversionTypeOrigin
 import org.jetbrains.kotlin.fir.symbols.Fir2IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 
 class Fir2IrLazyProperty(
     components: Fir2IrComponents,
@@ -181,6 +182,10 @@ class Fir2IrLazyProperty(
                 )
             }
         }
+    }
+
+    override var overriddenSymbols: List<IrPropertySymbol> by lazyVar(lock) {
+        emptyList() // TODO calculate overridden symbols for property
     }
 
     override var metadata: MetadataSource?

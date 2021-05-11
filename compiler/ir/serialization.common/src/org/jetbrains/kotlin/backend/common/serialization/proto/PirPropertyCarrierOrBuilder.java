@@ -74,4 +74,17 @@ public interface PirPropertyCarrierOrBuilder extends
    * <code>optional int64 setter = 7;</code>
    */
   long getSetter();
+
+  /**
+   * <code>repeated int64 overriddenSymbols = 8;</code>
+   */
+  java.util.List<java.lang.Long> getOverriddenSymbolsList();
+  /**
+   * <code>repeated int64 overriddenSymbols = 8;</code>
+   */
+  int getOverriddenSymbolsCount();
+  /**
+   * <code>repeated int64 overriddenSymbols = 8;</code>
+   */
+  long getOverriddenSymbols(int index);
 }
