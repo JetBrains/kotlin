@@ -52,6 +52,8 @@ FILE fqName:<root> fileName:/objectByNameInsideObject.kt
         RETURN type=kotlin.Nothing from='public final fun test2 (): <root>.Thing declared in <root>.Thing'
           GET_VAR '<this>: <root>.Thing declared in <root>.Thing.test2' type=<root>.Thing origin=null
     PROPERTY FAKE_OVERRIDE name:f1 visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final f1: kotlin.Function0<kotlin.Any> [val]
       FUN FAKE_OVERRIDE name:<get-f1> visibility:public modality:FINAL <> ($this:<root>.Base) returnType:kotlin.Function0<kotlin.Any> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:f1 visibility:public modality:FINAL [fake_override,val]
         overridden:

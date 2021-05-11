@@ -44,6 +44,8 @@ FILE fqName:<root> fileName:/thisRefToObjectInNestedClassConstructorCall.kt
             x: GET_OBJECT 'CLASS OBJECT name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Host
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived1 modality:FINAL visibility:public superTypes:[<root>.Base]'
       PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final x: kotlin.Any [val]
         FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Base) returnType:kotlin.Any [fake_override]
           correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
           overridden:
@@ -70,6 +72,8 @@ FILE fqName:<root> fileName:/thisRefToObjectInNestedClassConstructorCall.kt
             x: GET_OBJECT 'CLASS OBJECT name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Host
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived2 modality:FINAL visibility:public superTypes:[<root>.Base]'
       PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final x: kotlin.Any [val]
         FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Base) returnType:kotlin.Any [fake_override]
           correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
           overridden:

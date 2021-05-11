@@ -42,6 +42,8 @@ FILE fqName:<root> fileName:/objectReferenceInClosureInSuperConstructorCall.kt
                   GET_OBJECT 'CLASS OBJECT name:Test modality:FINAL visibility:public superTypes:[<root>.Base]' type=<root>.Test
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Test modality:FINAL visibility:public superTypes:[<root>.Base]'
     PROPERTY FAKE_OVERRIDE name:lambda visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final lambda: kotlin.Function0<kotlin.Any> [val]
       FUN FAKE_OVERRIDE name:<get-lambda> visibility:public modality:FINAL <> ($this:<root>.Base) returnType:kotlin.Function0<kotlin.Any> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:lambda visibility:public modality:FINAL [fake_override,val]
         overridden:

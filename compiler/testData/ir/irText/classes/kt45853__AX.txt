@@ -22,6 +22,8 @@ CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:AX modality:ABSTRACT visibility:pu
       public abstract fun getA (): <root>.X? declared in <root>.X
     $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:<root>.X
   PROPERTY IR_EXTERNAL_DECLARATION_STUB name:a visibility:public modality:OPEN [val]
+    overridden:
+      public abstract a: <root>.A? [val]
     FUN IR_EXTERNAL_DECLARATION_STUB name:<get-a> visibility:public modality:OPEN <> ($this:<root>.AX) returnType:<root>.AX?
       annotations:
         <unbound>

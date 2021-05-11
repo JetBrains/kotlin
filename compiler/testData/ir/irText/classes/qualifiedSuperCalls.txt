@@ -66,6 +66,9 @@ FILE fqName:<root> fileName:/qualifiedSuperCalls.kt
         CALL 'public open fun foo (): kotlin.Unit declared in <root>.IRight' superQualifier='CLASS INTERFACE name:IRight modality:ABSTRACT visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit origin=null
           $this: GET_VAR '<this>: <root>.CBoth declared in <root>.CBoth.foo' type=<root>.CBoth origin=null
     PROPERTY name:bar visibility:public modality:OPEN [val]
+      overridden:
+        public open bar: kotlin.Int [val]
+        public open bar: kotlin.Int [val]
       FUN name:<get-bar> visibility:public modality:OPEN <> ($this:<root>.CBoth) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:bar visibility:public modality:OPEN [val]
         overridden:
