@@ -20,7 +20,6 @@ import androidx.compose.compiler.plugins.kotlin.KtxNameConventions
 import androidx.compose.compiler.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.compiler.plugins.kotlin.hasComposableAnnotation
 import androidx.compose.compiler.plugins.kotlin.irTrace
-import androidx.compose.compiler.plugins.kotlin.isComposableCallable
 import androidx.compose.compiler.plugins.kotlin.lower.decoys.isDecoy
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.copyTo
@@ -155,7 +154,8 @@ class ComposerParamTransformer(
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun IrCall.withComposerParamIfNeeded(composerParam: IrValueParameter): IrCall {
         val isComposableLambda = isComposableLambdaInvoke()
-        if (!symbol.descriptor.isComposableCallable() && !isComposableLambda)
+
+        if (!symbol.owner.hasComposableAnnotation() && !isComposableLambda)
             return this
         val ownerFn = when {
             isComposableLambda -> {
@@ -312,7 +312,7 @@ class ComposerParamTransformer(
         }
 
         // if not a composable fn, nothing we need to do
-        if (!descriptor.isComposableCallable(context.bindingContext)) {
+        if (!this.hasComposableAnnotation()) {
             return this
         }
 
