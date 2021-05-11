@@ -12,7 +12,7 @@ import com.intellij.refactoring.rename.ResolveSnapshotProvider
 import com.intellij.util.containers.HashMap
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.core.ShortenReferencesImpl
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.refactoring.explicateAsTextForReceiver
@@ -60,7 +60,7 @@ class KotlinResolveSnapshotProvider : ResolveSnapshotProvider() {
                 val qualifiedRefExpr = KtPsiFactory(project).createExpression(qualifiedRefText)
                 elementsToShorten += refExpr.replaced(qualifiedRefExpr)
             }
-            ShortenReferences { ShortenReferences.Options.ALL_ENABLED }.process(elementsToShorten)
+            ShortenReferencesImpl { ShortenReferencesImpl.Options.ALL_ENABLED }.process(elementsToShorten)
         }
     }
 }

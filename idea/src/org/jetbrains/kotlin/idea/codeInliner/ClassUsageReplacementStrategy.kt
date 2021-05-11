@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.codeInliner
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
-import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.core.ShortenReferencesImpl
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -61,7 +61,7 @@ class ClassUsageReplacementStrategy(
                         newArgumentList.replace(oldArgumentList)
                     }
 
-                    ShortenReferences.DEFAULT.process(replaced)
+                    ShortenReferencesImpl.DEFAULT.processElement(replaced)
                 }
             }
 
@@ -127,6 +127,6 @@ class ClassUsageReplacementStrategy(
             expressionToReplace
         }
 
-        return ShortenReferences.DEFAULT.process(result)
+        return ShortenReferencesImpl.DEFAULT.processElement(result)
     }
 }

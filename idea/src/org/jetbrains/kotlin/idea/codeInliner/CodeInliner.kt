@@ -454,19 +454,19 @@ class CodeInliner<TCallElement : KtElement>(
 
         val shortenFilter = { element: PsiElement ->
             if (element[USER_CODE_KEY]) {
-                ShortenReferences.FilterResult.SKIP
+                ShortenReferencesImpl.FilterResult.SKIP
             } else {
                 val thisReceiver = (element as? KtQualifiedExpression)?.receiverExpression as? KtThisExpression
                 if (thisReceiver != null && thisReceiver[USER_CODE_KEY]) // don't remove explicit 'this' coming from user's code
-                    ShortenReferences.FilterResult.GO_INSIDE
+                    ShortenReferencesImpl.FilterResult.GO_INSIDE
                 else
-                    ShortenReferences.FilterResult.PROCESS
+                    ShortenReferencesImpl.FilterResult.PROCESS
             }
         }
 
         val newElements = pointers.mapNotNull {
             it.element?.let { element ->
-                ShortenReferences { ShortenReferences.Options(removeThis = true) }.process(element, elementFilter = shortenFilter)
+                ShortenReferencesImpl { ShortenReferencesImpl.Options(removeThis = true) }.processElement(element, elementFilter = shortenFilter)
             }
         }
 

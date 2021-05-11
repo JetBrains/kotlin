@@ -240,7 +240,7 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
             }
         }
 
-        ShortenReferences { ShortenReferences.Options.ALL_ENABLED }.process(elementsToShorten)
+        ShortenReferencesImpl { ShortenReferencesImpl.Options.ALL_ENABLED }.process(elementsToShorten)
 
         runTemplateForInstanceParam(newDeclaration, nameSuggestions, editor)
     }

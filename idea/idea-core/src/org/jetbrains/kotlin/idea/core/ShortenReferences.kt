@@ -39,7 +39,31 @@ import org.jetbrains.kotlin.resolve.scopes.utils.findFirstClassifierWithDeprecat
 import org.jetbrains.kotlin.resolve.scopes.utils.findPackage
 import org.jetbrains.kotlin.resolve.source.getPsi
 
-class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT }) {
+interface ShortenReferences {
+    companion object {
+        @JvmField
+        val DEFAULT: ShortenReferences = ShortenReferencesImpl()
+    }
+
+    fun process(
+        element: KtElement,
+        actionRunningMode: ActionRunningMode = ActionRunningMode.RUN_IN_CURRENT_THREAD
+    )
+
+    fun process(
+        elements: Collection<KtElement>,
+        actionRunningMode: ActionRunningMode = ActionRunningMode.RUN_IN_CURRENT_THREAD
+    )
+
+    fun process(
+        file: KtFile,
+        startOffset: Int,
+        endOffset: Int,
+        actionRunningMode: ActionRunningMode = ActionRunningMode.RUN_IN_CURRENT_THREAD
+    )
+}
+
+class ShortenReferencesImpl(val options: (KtElement) -> Options = { Options.DEFAULT }) : ShortenReferences {
     data class Options(
         val removeThisLabels: Boolean = false,
         val removeThis: Boolean = false,
@@ -54,10 +78,9 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
     }
 
     companion object {
-        @JvmField
-        val DEFAULT = ShortenReferences()
+        val DEFAULT = ShortenReferencesImpl()
 
-        val RETAIN_COMPANION = ShortenReferences { Options(removeExplicitCompanion = false) }
+        val RETAIN_COMPANION = ShortenReferencesImpl { Options(removeExplicitCompanion = false) }
 
         fun canBePossibleToDropReceiver(element: KtDotQualifiedExpression, bindingContext: BindingContext): Boolean {
             val nameRef = when (val receiver = element.receiverExpression) {
@@ -95,20 +118,33 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
         }
     }
 
-    fun process(
+
+    override fun process(element: KtElement, actionRunningMode: ActionRunningMode) {
+        processElement(element, actionRunningMode = actionRunningMode)
+    }
+
+    override fun process(elements: Collection<KtElement>, actionRunningMode: ActionRunningMode) {
+        processElements(elements, { FilterResult.PROCESS }, actionRunningMode)
+    }
+
+    override fun process(file: KtFile, startOffset: Int, endOffset: Int, actionRunningMode: ActionRunningMode) =
+        process(file, startOffset, endOffset, { FilterResult.PROCESS }, actionRunningMode)
+
+
+    fun processElement(
         element: KtElement,
         elementFilter: (PsiElement) -> FilterResult = { FilterResult.PROCESS },
         actionRunningMode: ActionRunningMode = ActionRunningMode.RUN_IN_CURRENT_THREAD
     ): KtElement {
-        return process(listOf(element), elementFilter, actionRunningMode).single()
+        return processElements(listOf(element), elementFilter, actionRunningMode).single()
     }
 
     @JvmOverloads
-    fun process(
+    fun processElement(
         element: KtElement,
         elementFilter: (PsiElement) -> FilterResult = { FilterResult.PROCESS },
     ): KtElement {
-        return process(element, elementFilter, ActionRunningMode.RUN_IN_CURRENT_THREAD)
+        return processElement(element, elementFilter, ActionRunningMode.RUN_IN_CURRENT_THREAD)
     }
 
     @JvmOverloads
@@ -159,7 +195,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             val filter = { element: PsiElement ->
                 minOf(rangeFilter(element), additionalFilter(element))
             }
-            process(listOf(file), filter, actionRunningMode)
+            processElements(listOf(file), filter, actionRunningMode)
         } finally {
             runReadAction { rangeMarker.dispose() }
         }
@@ -171,8 +207,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
         PROCESS
     }
 
-    @JvmOverloads
-    fun process(
+    private fun processElements(
         elements: Iterable<KtElement>,
         elementFilter: (PsiElement) -> FilterResult = { FilterResult.PROCESS },
         actionRunningMode: ActionRunningMode = ActionRunningMode.RUN_IN_CURRENT_THREAD

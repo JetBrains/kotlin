@@ -25,7 +25,7 @@ import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
-import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.core.ShortenReferencesImpl
 import org.jetbrains.kotlin.idea.core.moveFunctionLiteralOutsideParentheses
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeInfo
@@ -509,7 +509,7 @@ class KotlinFunctionCallUsage(
             }
         }
 
-        private val SHORTEN_ARGUMENTS_OPTIONS = ShortenReferences.Options(removeThisLabels = true, removeThis = true)
+        private val SHORTEN_ARGUMENTS_OPTIONS = ShortenReferencesImpl.Options(removeThisLabels = true, removeThis = true)
 
         private fun updateJavaPropertyCall(changeInfo: KotlinChangeInfo, element: KtCallElement): KtElement {
             val newReceiverInfo = changeInfo.receiverParameterInfo

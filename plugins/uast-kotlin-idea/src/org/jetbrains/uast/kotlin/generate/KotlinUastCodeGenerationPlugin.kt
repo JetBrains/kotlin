@@ -16,7 +16,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
-import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.core.ShortenReferencesImpl
 import org.jetbrains.kotlin.idea.refactoring.fqName.fqName
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.util.resolveToKotlinType
@@ -73,7 +73,7 @@ class KotlinUastCodeGenerationPlugin : UastCodeGenerationPlugin {
                 oldPsi to newPsi
         }
 
-        return when (val replaced = updOldPsi.replace(updNewPsi)?.safeAs<KtElement>()?.let { ShortenReferences.DEFAULT.process(it) }) {
+        return when (val replaced = updOldPsi.replace(updNewPsi)?.safeAs<KtElement>()?.let { ShortenReferencesImpl.DEFAULT.processElement(it) }) {
             is KtCallExpression, is KtQualifiedExpression -> replaced.cast<KtExpression>().getPossiblyQualifiedCallExpression()
             else -> replaced
         }?.toUElementOfExpectedTypes(elementType)

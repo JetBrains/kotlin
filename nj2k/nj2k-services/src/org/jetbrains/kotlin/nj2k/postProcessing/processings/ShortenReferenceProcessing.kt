@@ -5,10 +5,9 @@
 
 package org.jetbrains.kotlin.nj2k.postProcessing.processings
 
-import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.RangeMarker
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.core.ShortenReferencesImpl
 import org.jetbrains.kotlin.idea.util.ActionRunningMode
 import org.jetbrains.kotlin.nj2k.JKImportStorage
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
@@ -20,17 +19,17 @@ class ShortenReferenceProcessing : FileBasedPostProcessing() {
     private val filter = filter@{ element: PsiElement ->
         when (element) {
             is KtQualifiedExpression -> when {
-                JKImportStorage.isImportNeededForCall(element) -> ShortenReferences.FilterResult.PROCESS
-                else -> ShortenReferences.FilterResult.SKIP
+                JKImportStorage.isImportNeededForCall(element) -> ShortenReferencesImpl.FilterResult.PROCESS
+                else -> ShortenReferencesImpl.FilterResult.SKIP
             }
-            else -> ShortenReferences.FilterResult.PROCESS
+            else -> ShortenReferencesImpl.FilterResult.PROCESS
         }
     }
 
     override fun runProcessing(file: KtFile, allFiles: List<KtFile>, rangeMarker: RangeMarker?, converterContext: NewJ2kConverterContext) {
         if (rangeMarker != null) {
             if (rangeMarker.isValid) {
-                ShortenReferences.DEFAULT.process(
+                ShortenReferencesImpl.DEFAULT.process(
                     file,
                     rangeMarker.startOffset,
                     rangeMarker.endOffset,
@@ -39,7 +38,7 @@ class ShortenReferenceProcessing : FileBasedPostProcessing() {
                 )
             }
         } else {
-            ShortenReferences.DEFAULT.process(file, filter, actionRunningMode = ActionRunningMode.RUN_IN_EDT)
+            ShortenReferencesImpl.DEFAULT.processElement(file, filter, actionRunningMode = ActionRunningMode.RUN_IN_EDT)
         }
     }
 }

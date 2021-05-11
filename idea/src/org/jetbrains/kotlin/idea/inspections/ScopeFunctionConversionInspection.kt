@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.core.ShortenReferencesImpl
 import org.jetbrains.kotlin.idea.refactoring.getThisLabelName
 import org.jetbrains.kotlin.idea.refactoring.rename.KotlinVariableInplaceRenameHandler
 import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
@@ -240,12 +241,12 @@ class ConvertScopeFunctionToParameter(counterpartName: String) : ConvertScopeFun
     override fun postprocessLambda(lambda: KtLambdaArgument) {
         val filter = { element: PsiElement ->
             if (element is KtThisExpression && element.getLabelName() != null)
-                ShortenReferences.FilterResult.PROCESS
+                ShortenReferencesImpl.FilterResult.PROCESS
             else
-                ShortenReferences.FilterResult.GO_INSIDE
+                ShortenReferencesImpl.FilterResult.GO_INSIDE
         }
 
-        ShortenReferences{ ShortenReferences.Options(removeThisLabels = true) }.process(lambda, filter)
+        ShortenReferencesImpl { ShortenReferencesImpl.Options(removeThisLabels = true) }.processElement(lambda, filter)
     }
 
     private fun needUniqueNameForParameter(
@@ -346,13 +347,13 @@ class ConvertScopeFunctionToReceiver(counterpartName: String) : ConvertScopeFunc
     override fun postprocessLambda(lambda: KtLambdaArgument) {
         val filter = { element: PsiElement ->
             if (element is KtThisExpression && element.getLabelName() != null)
-                ShortenReferences.FilterResult.PROCESS
+                ShortenReferencesImpl.FilterResult.PROCESS
             else if (element is KtQualifiedExpression && element.receiverExpression is KtThisExpression)
-                ShortenReferences.FilterResult.PROCESS
+                ShortenReferencesImpl.FilterResult.PROCESS
             else
-                ShortenReferences.FilterResult.GO_INSIDE
+                ShortenReferencesImpl.FilterResult.GO_INSIDE
         }
-        ShortenReferences { ShortenReferences.Options(removeThis = true, removeThisLabels = true) }.process(lambda, filter)
+        ShortenReferencesImpl { ShortenReferencesImpl.Options(removeThis = true, removeThisLabels = true) }.processElement(lambda, filter)
     }
 }
 

@@ -10,7 +10,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
-import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.core.ShortenReferencesImpl
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -103,7 +103,7 @@ fun applyMarking(
 ) {
     val psiFactory = KtPsiFactory(declaration)
     val targetThis = psiFactory.createExpression("this@${targetClassDescriptor.name.asString().quoteIfNeeded()}")
-    val shorteningOptionsForThis = ShortenReferences.Options(removeThisLabels = true, removeThis = true)
+    val shorteningOptionsForThis = ShortenReferencesImpl.Options(removeThisLabels = true, removeThis = true)
 
     declaration.accept(
         object : KtVisitorVoid() {

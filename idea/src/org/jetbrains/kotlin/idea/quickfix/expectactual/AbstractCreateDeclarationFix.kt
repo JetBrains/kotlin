@@ -5,16 +5,14 @@
 
 package org.jetbrains.kotlin.idea.quickfix.expectactual
 
-import com.intellij.codeInsight.actions.ReformatCodeAction
 import com.intellij.ide.util.EditorHelper
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.psi.codeStyle.CodeStyleManager
-import com.intellij.psi.formatter.FormatterUtil
 import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.core.ShortenReferencesImpl
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.TypeAccessibilityChecker
 import org.jetbrains.kotlin.idea.refactoring.introduce.showErrorHint
@@ -96,7 +94,7 @@ abstract class AbstractCreateDeclarationFix<D : KtNamedDeclaration>(
                     else -> targetFile.add(generated) as KtElement
                 }
                 val reformatted = CodeStyleManager.getInstance(project).reformat(generatedDeclaration)
-                val shortened = ShortenReferences.DEFAULT.process(reformatted as KtElement)
+                val shortened = ShortenReferencesImpl.DEFAULT.processElement(reformatted as KtElement)
                 EditorHelper.openInEditor(shortened)?.caretModel?.moveToOffset(
                     (shortened as? KtNamedDeclaration)?.nameIdentifier?.startOffset ?: shortened.startOffset,
                     true

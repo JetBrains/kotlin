@@ -11,7 +11,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMember
 import com.intellij.psi.SmartPointerManager
-import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.core.ShortenReferencesImpl
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.j2k.ExternalCodeProcessing
 import org.jetbrains.kotlin.j2k.ProgressPortionReporter
@@ -60,15 +60,15 @@ class NewExternalCodeProcessing(
 
     private fun List<KtFile>.shortenJvmAnnotationsFqNames() {
         val filter = filter@{ element: PsiElement ->
-            if (element !is KtUserType) return@filter ShortenReferences.FilterResult.GO_INSIDE
+            if (element !is KtUserType) return@filter ShortenReferencesImpl.FilterResult.GO_INSIDE
             val isJvmAnnotation = ExternalUsagesFixer.USED_JVM_ANNOTATIONS.any { annotation ->
                 element.textMatches(annotation.asString())
             }
-            if (isJvmAnnotation) ShortenReferences.FilterResult.PROCESS
-            else ShortenReferences.FilterResult.SKIP
+            if (isJvmAnnotation) ShortenReferencesImpl.FilterResult.PROCESS
+            else ShortenReferencesImpl.FilterResult.SKIP
         }
         for (file in this) {
-            ShortenReferences.DEFAULT.process(file, filter)
+            ShortenReferencesImpl.DEFAULT.processElement(file, filter)
         }
     }
 

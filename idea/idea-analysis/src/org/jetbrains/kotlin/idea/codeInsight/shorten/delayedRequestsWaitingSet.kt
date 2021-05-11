@@ -24,8 +24,8 @@ import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMemberDescriptor
-import org.jetbrains.kotlin.idea.core.ShortenReferences
-import org.jetbrains.kotlin.idea.core.ShortenReferences.Options
+import org.jetbrains.kotlin.idea.core.ShortenReferencesImpl
+import org.jetbrains.kotlin.idea.core.ShortenReferencesImpl.Options
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
@@ -101,7 +101,7 @@ fun performDelayedRefactoringRequests(project: Project) {
         val elementToOptions = shorteningRequests.mapNotNull { req -> req.pointer.element?.let { it to req.options } }.toMap()
         val elements = elementToOptions.keys
         //TODO: this is not correct because it should not shorten deep into the elements!
-        ShortenReferences { elementToOptions[it] ?: Options.DEFAULT }.process(elements)
+        ShortenReferencesImpl { elementToOptions[it] ?: Options.DEFAULT }.process(elements)
 
         val importInsertHelper = ImportInsertHelper.getInstance(project)
 

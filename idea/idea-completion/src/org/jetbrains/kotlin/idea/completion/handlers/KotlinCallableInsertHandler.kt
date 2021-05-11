@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.completion.isArtificialImportAliasedDescriptor
 import org.jetbrains.kotlin.idea.completion.shortenReferences
 import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.core.ShortenReferencesImpl
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.core.withRootPrefixIfNeeded
 import org.jetbrains.kotlin.idea.imports.importableFqName
@@ -23,7 +24,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 abstract class KotlinCallableInsertHandler(val callType: CallType<*>) : BaseDeclarationInsertHandler() {
     companion object {
-        val SHORTEN_REFERENCES = ShortenReferences { ShortenReferences.Options.DEFAULT.copy(dropBracesInStringTemplates = false) }
+        val SHORTEN_REFERENCES = ShortenReferencesImpl { ShortenReferencesImpl.Options.DEFAULT.copy(dropBracesInStringTemplates = false) }
     }
 
     override fun handleInsert(context: InsertionContext, item: LookupElement) {

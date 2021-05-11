@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.core.ShortenReferencesImpl
 import org.jetbrains.kotlin.idea.core.compareDescriptors
 import org.jetbrains.kotlin.idea.core.unwrapIfFakeOverride
 import org.jetbrains.kotlin.idea.imports.importableFqName
@@ -129,7 +130,7 @@ private fun KtDotQualifiedExpression.applicableExpression(
     originalDescriptor: DeclarationDescriptor,
     unwrapFakeOverrides: Boolean
 ): KtDotQualifiedExpression? {
-    if (!receiverExpression.isApplicableReceiver(oldContext) || !ShortenReferences.canBePossibleToDropReceiver(this, oldContext)) {
+    if (!receiverExpression.isApplicableReceiver(oldContext) || !ShortenReferencesImpl.canBePossibleToDropReceiver(this, oldContext)) {
         return null
     }
 

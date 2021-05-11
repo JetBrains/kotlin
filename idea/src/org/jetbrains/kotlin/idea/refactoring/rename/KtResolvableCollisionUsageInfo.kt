@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.refactoring.rename
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.rename.ResolvableCollisionUsageInfo
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
-import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.core.ShortenReferencesImpl
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.name.FqName
@@ -31,7 +31,7 @@ class UsageInfoWithReplacement(
     private val replacement: KtElement
 ) : KtResolvableCollisionUsageInfo(element, referencedElement) {
     override fun apply() {
-        element?.replaced(replacement)?.addToShorteningWaitSet(ShortenReferences.Options.ALL_ENABLED)
+        element?.replaced(replacement)?.addToShorteningWaitSet(ShortenReferencesImpl.Options.ALL_ENABLED)
     }
 }
 

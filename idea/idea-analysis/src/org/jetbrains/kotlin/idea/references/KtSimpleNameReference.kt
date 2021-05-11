@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.references
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiReference
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.IncorrectOperationException
 import com.intellij.util.SmartList
@@ -190,7 +189,7 @@ class KtSimpleNameReferenceDescriptorsImpl(
         }
 
         return when (shorteningMode) {
-            ShorteningMode.FORCED_SHORTENING -> ShortenReferences.DEFAULT.process(newQualifiedElement)
+            ShorteningMode.FORCED_SHORTENING -> ShortenReferencesImpl.DEFAULT.processElement(newQualifiedElement)
             else -> {
                 newQualifiedElement.addToShorteningWaitSet()
                 newExpression
