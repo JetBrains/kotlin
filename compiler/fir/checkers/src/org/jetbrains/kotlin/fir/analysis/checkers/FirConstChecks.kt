@@ -134,7 +134,7 @@ internal fun checkConstantArguments(
 
                         if (calleeReference.name == OperatorNameConventions.PLUS
                             && expClassId != receiverClassId
-                            && (expClassId !in StandardClassIds.primitiveTypesAndString || receiverClassId !in StandardClassIds.primitiveTypesAndString)
+                            && (expClassId !in StandardClassIds.constantAllowedTypes || receiverClassId !in StandardClassIds.constantAllowedTypes)
                         ) {
                             return ConstantArgumentKind.NOT_CONST
                         }

@@ -1,5 +1,4 @@
 // WITH_RUNTIME
-// IGNORE_BACKEND_FIR: JVM_IR
 
 const val a = "INT " + 0x8fffffffU
 const val b = "BYTE " + 0x8ffU

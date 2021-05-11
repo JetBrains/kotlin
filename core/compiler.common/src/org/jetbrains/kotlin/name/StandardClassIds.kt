@@ -68,7 +68,6 @@ object StandardClassIds {
         Byte, Short, Int, Long,
         Float, Double
     )
-    val primitiveTypesAndString = primitiveTypes + String
 
     val primitiveArrayTypeByElementType = primitiveTypes.associate { id -> id to id.shortClassName.primitiveArrayId() }
     val elementTypeByPrimitiveArrayType = primitiveArrayTypeByElementType.inverseMap()
@@ -76,6 +75,8 @@ object StandardClassIds {
     val unsignedTypes = listOf(UByte, UShort, UInt, ULong)
     val unsignedArrayTypeByElementType = unsignedTypes.associate { id -> id to id.shortClassName.primitiveArrayId() }
     val elementTypeByUnsignedArrayType = unsignedArrayTypeByElementType.inverseMap()
+
+    val constantAllowedTypes = primitiveTypes + unsignedTypes + String
 
     val Continuation =
         ClassId(StandardNames.COROUTINES_PACKAGE_FQ_NAME_RELEASE, StandardNames.CONTINUATION_INTERFACE_FQ_NAME_RELEASE.shortName())
