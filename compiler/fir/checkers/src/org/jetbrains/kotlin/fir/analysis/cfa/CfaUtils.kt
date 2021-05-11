@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.util.SetMultimap
@@ -60,21 +59,58 @@ class PropertyInitializationInfo(
         ::EMPTY
 }
 
-class LocalPropertyCollector private constructor() : ControlFlowGraphVisitorVoid() {
+class LocalPropertyAndCapturedWriteCollector private constructor() : ControlFlowGraphVisitorVoid() {
     companion object {
-        fun collect(graph: ControlFlowGraph): MutableSet<FirPropertySymbol> {
-            val collector = LocalPropertyCollector()
+        fun collect(graph: ControlFlowGraph): Pair<Set<FirPropertySymbol>, Set<FirVariableAssignment>> {
+            val collector = LocalPropertyAndCapturedWriteCollector()
             graph.traverse(TraverseDirection.Forward, collector)
-            return collector.symbols
+            return collector.symbols.keys to collector.capturedWrites
         }
     }
 
-    private val symbols: MutableSet<FirPropertySymbol> = mutableSetOf()
+    // Mapping from a property symbol to its declaration context
+    // `true` if the (local) property is declared in the currently visited function.
+    // `false` if it is declared in a lambda or a local function (inside the currently visited function).
+    private val symbols: MutableMap<FirPropertySymbol, Boolean> = mutableMapOf()
+
+    private val lambdaOrLocalFunctionStack: MutableList<FirFunction<*>> = mutableListOf()
+    private val capturedWrites: MutableSet<FirVariableAssignment> = mutableSetOf()
 
     override fun visitNode(node: CFGNode<*>) {}
 
     override fun visitVariableDeclarationNode(node: VariableDeclarationNode) {
-        symbols += node.fir.symbol
+        symbols[node.fir.symbol] = lambdaOrLocalFunctionStack.lastOrNull() == null
+    }
+
+    override fun visitPostponedLambdaEnterNode(node: PostponedLambdaEnterNode) {
+        lambdaOrLocalFunctionStack.add(node.fir)
+    }
+
+    override fun visitPostponedLambdaExitNode(node: PostponedLambdaExitNode) {
+        lambdaOrLocalFunctionStack.remove(node.fir)
+    }
+
+    override fun visitLocalFunctionDeclarationNode(node: LocalFunctionDeclarationNode, data: Nothing?) {
+        lambdaOrLocalFunctionStack.add(node.fir)
+    }
+
+    override fun visitFunctionExitNode(node: FunctionExitNode) {
+        lambdaOrLocalFunctionStack.remove(node.fir)
+    }
+
+    override fun visitVariableAssignmentNode(node: VariableAssignmentNode) {
+        // Check if this variable assignment is inside a lambda or a local function.
+        if (lambdaOrLocalFunctionStack.isEmpty()) return
+
+        // Check if the assigned variable doesn't belong to any lambda or local function.
+        val symbol = node.fir.referredPropertySymbol ?: return
+        if (symbol !in symbols || symbols[symbol] == false) return
+
+        // If all nested declarations are lambdas that are invoked in-place (according to the contract),
+        // this variable assignment is not a captured write.
+        if (lambdaOrLocalFunctionStack.all { it is FirAnonymousFunction && it.invocationKind.isInPlace }) return
+
+        capturedWrites.add(node.fir)
     }
 }
 
@@ -110,8 +146,7 @@ class PropertyInitializationInfoCollector(
         data: Collection<Pair<EdgeLabel, PathAwarePropertyInitializationInfo>>
     ): PathAwarePropertyInitializationInfo {
         val dataForNode = visitNode(node, data)
-        val reference = node.fir.lValue as? FirResolvedNamedReference ?: return dataForNode
-        val symbol = reference.resolvedSymbol as? FirPropertySymbol ?: return dataForNode
+        val symbol = node.fir.referredPropertySymbol ?: return dataForNode
         return if (symbol !in localProperties) {
             dataForNode
         } else {

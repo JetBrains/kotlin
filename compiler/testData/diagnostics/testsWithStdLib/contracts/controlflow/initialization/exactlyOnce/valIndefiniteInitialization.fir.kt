@@ -36,7 +36,7 @@ fun branchingIndetermineFlow(a: Any?) {
 
 fun nonAnonymousLambdas() {
     val x: Int
-    val initializer = { x = 42 }
+    val initializer = { <!CAPTURED_VAL_INITIALIZATION!>x<!> = 42 }
     myRun(initializer)
     <!UNINITIALIZED_VARIABLE!>x<!>.inc()
 }
@@ -55,7 +55,7 @@ fun funWithUnknownInvocations(block: () -> Unit) = block()
 fun nestedIndefiniteAssignment() {
     val x: Int
     // Captured val initialization reported, because we don't know anything about funWithUnknownInvocations
-    funWithUnknownInvocations { myRun { x = 42 } }
+    funWithUnknownInvocations { myRun { <!CAPTURED_VAL_INITIALIZATION!>x<!> = 42 } }
     <!UNINITIALIZED_VARIABLE!>x<!>.inc()
 }
 

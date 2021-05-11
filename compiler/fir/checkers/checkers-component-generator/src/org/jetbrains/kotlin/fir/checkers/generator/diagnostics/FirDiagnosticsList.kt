@@ -655,6 +655,12 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val VAL_REASSIGNMENT_VIA_BACKING_FIELD_ERROR by error<KtExpression> {
             parameter<FirPropertySymbol>("property")
         }
+        val CAPTURED_VAL_INITIALIZATION by error<KtExpression> {
+            parameter<FirPropertySymbol>("property")
+        }
+        val CAPTURED_MEMBER_VAL_INITIALIZATION by error<KtExpression> {
+            parameter<FirPropertySymbol>("property")
+        }
         val WRONG_INVOCATION_KIND by warning<PsiElement> {
             parameter<Symbol>("declaration")
             parameter<EventOccurrencesRange>("requiredRange")

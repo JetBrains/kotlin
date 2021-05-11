@@ -306,9 +306,6 @@ class ControlFlowGraphBuilder {
             else -> false
         }
 
-    private val EventOccurrencesRange?.isInPlace: Boolean
-        get() = this != null
-
     fun exitAnonymousFunction(anonymousFunction: FirAnonymousFunction): Triple<FunctionExitNode, PostponedLambdaExitNode?, ControlFlowGraph> {
         val symbol = anonymousFunction.symbol
         val exitNode = exitsOfAnonymousFunctions.remove(symbol)!!.also {
