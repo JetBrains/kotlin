@@ -92,7 +92,7 @@ internal class MemberScopeTowerLevel(
     ): Collection<CandidateWithBoundDispatchReceiver> {
         val receiverValue = dispatchReceiver.receiverValue
 
-        if (receiverValue.type is StubType) {
+        if (receiverValue.type is AbstractStubType && receiverValue.type.memberScope is ErrorUtils.ErrorScope) {
             return arrayListOf()
         }
 

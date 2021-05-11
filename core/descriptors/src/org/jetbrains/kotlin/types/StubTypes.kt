@@ -17,6 +17,8 @@ class StubTypeForBuilderInference(
     override fun materialize(newNullability: Boolean): AbstractStubType =
         StubTypeForBuilderInference(originalTypeVariable, newNullability)
 
+    override val memberScope = originalTypeVariable.builtIns.anyType.memberScope
+
     override fun toString(): String {
         // BI means builder inference
         return "Stub (BI): $originalTypeVariable${if (isMarkedNullable) "?" else ""}"
