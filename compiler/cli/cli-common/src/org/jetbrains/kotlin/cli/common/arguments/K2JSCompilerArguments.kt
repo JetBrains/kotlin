@@ -154,6 +154,9 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xir-legacy-property-access", description = "Force property access via JS properties (requires -Xir-export-all)")
     var irLegacyPropertyAccess: Boolean by FreezableVar(false)
 
+    @Argument(value = "-Xir-base-class-in-metadata", description = "Write base class into metadata")
+    var irBaseClassInMetadata: Boolean by FreezableVar(false)
+
     @Argument(value = "-Xir-per-module", description = "Splits generated .js per-module")
     var irPerModule: Boolean by FreezableVar(false)
 
