@@ -180,6 +180,16 @@ public class ParcelIrBoxTestGenerated extends AbstractParcelIrBoxTest {
         runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/kt39981.kt");
     }
 
+    @TestMetadata("kt41553.kt")
+    public void testKt41553() throws Exception {
+        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/kt41553.kt");
+    }
+
+    @TestMetadata("kt41553_2.kt")
+    public void testKt41553_2() throws Exception {
+        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/kt41553_2.kt");
+    }
+
     @TestMetadata("listKinds.kt")
     public void testListKinds() throws Exception {
         runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/listKinds.kt");
