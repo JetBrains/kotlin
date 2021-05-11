@@ -885,6 +885,7 @@ object PositioningStrategies {
                 is KtSuperTypeCallEntry -> element.calleeExpression
                 is KtOperationExpression -> element.operationReference
                 is KtWhenConditionInRange -> element.operationReference
+                is KtAnnotationEntry -> element.calleeExpression ?: element
                 else -> element
             }
             while (locateReferencedName && result is KtParenthesizedExpression) {

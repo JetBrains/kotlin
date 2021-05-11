@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 @file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 package test
 

@@ -501,6 +501,15 @@ object LightTreePositioningStrategies {
             if (node.tokenType == KtNodeTypes.PROPERTY_DELEGATE) {
                 return markElement(tree.findExpressionDeep(node) ?: node, startOffset, endOffset, tree, node)
             }
+            if (node.tokenType == KtNodeTypes.ANNOTATION_ENTRY) {
+                return markElement(
+                    tree.findDescendantByType(node, KtNodeTypes.CONSTRUCTOR_CALLEE) ?: node,
+                    startOffset,
+                    endOffset,
+                    tree,
+                    node
+                )
+            }
             if (node.tokenType in nodeTypesWithOperation) {
                 return markElement(tree.operationReference(node) ?: node, startOffset, endOffset, tree, node)
             }

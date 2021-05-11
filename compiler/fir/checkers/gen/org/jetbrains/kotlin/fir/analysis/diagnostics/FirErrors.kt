@@ -165,9 +165,9 @@ object FirErrors {
     val NEWER_VERSION_IN_SINCE_KOTLIN by warning1<KtExpression, String>()
     val DEPRECATED_SINCE_KOTLIN_WITH_UNORDERED_VERSIONS by error0<PsiElement>()
     val DEPRECATED_SINCE_KOTLIN_WITHOUT_ARGUMENTS by error0<PsiElement>()
-    val DEPRECATED_SINCE_KOTLIN_WITHOUT_DEPRECATED by error0<PsiElement>()
-    val DEPRECATED_SINCE_KOTLIN_WITH_DEPRECATED_LEVEL by error0<PsiElement>()
-    val DEPRECATED_SINCE_KOTLIN_OUTSIDE_KOTLIN_SUBPACKAGE by error0<PsiElement>()
+    val DEPRECATED_SINCE_KOTLIN_WITHOUT_DEPRECATED by error0<PsiElement>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
+    val DEPRECATED_SINCE_KOTLIN_WITH_DEPRECATED_LEVEL by error0<PsiElement>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
+    val DEPRECATED_SINCE_KOTLIN_OUTSIDE_KOTLIN_SUBPACKAGE by error0<PsiElement>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
 
     // Exposed visibility
     val EXPOSED_TYPEALIAS_EXPANDED_TYPE by error3<KtNamedDeclaration, EffectiveVisibility, FirMemberDeclaration, EffectiveVisibility>(SourceElementPositioningStrategies.DECLARATION_NAME)

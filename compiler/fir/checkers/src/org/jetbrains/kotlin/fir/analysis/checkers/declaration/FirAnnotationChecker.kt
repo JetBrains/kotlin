@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.argumentMapping
 import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirAnnotationChecker : FirAnnotatedDeclarationChecker() {
     private val deprecatedClassId = FqName("kotlin.Deprecated")
@@ -40,33 +41,27 @@ object FirAnnotationChecker : FirAnnotatedDeclarationChecker() {
 
         if (deprecatedSinceKotlinCall != null) {
             val closestFirFile = context.findClosest<FirFile>()
-            if (closestFirFile != null) {
-                val packageName = closestFirFile.packageFqName.asString()
-                if (packageName != "kotlin" && !packageName.startsWith("kotlin.")) {
-                    reporter.reportOn(
-                        deprecatedSinceKotlinCall.source,
-                        FirErrors.DEPRECATED_SINCE_KOTLIN_OUTSIDE_KOTLIN_SUBPACKAGE,
-                        context
-                    )
-                }
+            if (closestFirFile != null && !closestFirFile.packageFqName.startsWith(StandardClassIds.BASE_KOTLIN_PACKAGE.shortName())) {
+                reporter.reportOn(
+                    deprecatedSinceKotlinCall.source,
+                    FirErrors.DEPRECATED_SINCE_KOTLIN_OUTSIDE_KOTLIN_SUBPACKAGE,
+                    context
+                )
             }
 
             if (deprecatedCall == null) {
                 reporter.reportOn(deprecatedSinceKotlinCall.source, FirErrors.DEPRECATED_SINCE_KOTLIN_WITHOUT_DEPRECATED, context)
             } else {
                 val argumentMapping = deprecatedCall.argumentMapping ?: return
-                var report = false
-                for ((_, value) in argumentMapping) {
-                    report = value.name.identifier == "level"
-                    if (report)
+                for (value in argumentMapping.values) {
+                    if (value.name.identifier == "level") {
+                        reporter.reportOn(
+                            deprecatedSinceKotlinCall.source,
+                            FirErrors.DEPRECATED_SINCE_KOTLIN_WITH_DEPRECATED_LEVEL,
+                            context
+                        )
                         break
-                }
-                if (report) {
-                    reporter.reportOn(
-                        deprecatedSinceKotlinCall.source,
-                        FirErrors.DEPRECATED_SINCE_KOTLIN_WITH_DEPRECATED_LEVEL,
-                        context
-                    )
+                    }
                 }
             }
         }
