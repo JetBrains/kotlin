@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 import kotlin.reflect.KClass
 
 const val CONST = 1

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.KtNodeTypes.VALUE_PARAMETER
 import org.jetbrains.kotlin.descriptors.ClassKind.ANNOTATION_CLASS
 import org.jetbrains.kotlin.descriptors.ClassKind.ENUM_CLASS
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.checkConstantArguments
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -37,6 +38,10 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker() {
                             reporter.reportOn(source, FirErrors.MISSING_VAL_ON_ANNOTATION_PARAMETER, context)
                         } else if (source.hasVar()) {
                             reporter.reportOn(source, FirErrors.VAR_ANNOTATION_PARAMETER, context)
+                        }
+                        val defaultValue = parameter.defaultValue
+                        if (defaultValue != null && checkConstantArguments(defaultValue, context.session) != null) {
+                            reporter.reportOn(defaultValue.source, FirErrors.ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT, context)
                         }
 
                         val typeRef = parameter.returnTypeRef

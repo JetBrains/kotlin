@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 const val iConst = 42
 val iVal = 42
 fun iFun() = 42
