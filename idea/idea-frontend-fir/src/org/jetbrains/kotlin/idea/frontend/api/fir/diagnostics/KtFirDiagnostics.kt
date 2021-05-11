@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.psi.KtAnnotation
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtBinaryExpressionWithTypeRHS
+import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -372,6 +373,10 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class NonConstValUsedInConstantExpression : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = NonConstValUsedInConstantExpression::class
+    }
+
+    abstract class AnnotationClassConstructorCall : KtFirDiagnostic<KtCallExpression>() {
+        override val diagnosticClass get() = AnnotationClassConstructorCall::class
     }
 
     abstract class NotAnAnnotationClass : KtFirDiagnostic<PsiElement>() {

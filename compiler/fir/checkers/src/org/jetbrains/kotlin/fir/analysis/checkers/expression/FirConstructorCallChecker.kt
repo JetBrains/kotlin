@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.isAbstract
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
@@ -23,8 +25,20 @@ object FirConstructorCallChecker : FirFunctionCallChecker() {
             (expression.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirConstructorSymbol ?: return
         val declarationClass = constructorSymbol.fir.returnTypeRef.coneType.toRegularClass(context.session)
 
-        if (declarationClass != null && declarationClass.isAbstract && declarationClass.classKind == ClassKind.CLASS) {
-            reporter.reportOn(expression.source, FirErrors.CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS, context)
+        if (declarationClass != null) {
+            if (declarationClass.isAbstract && declarationClass.classKind == ClassKind.CLASS) {
+                reporter.reportOn(expression.source, FirErrors.CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS, context)
+            }
+            if (declarationClass.classKind == ClassKind.ANNOTATION_CLASS &&
+                context.qualifiedAccessOrAnnotationCalls.all { call ->
+                    call !is FirAnnotationCall
+                } &&
+                context.containingDeclarations.all { klass ->
+                    klass !is FirRegularClass || klass.classKind != ClassKind.ANNOTATION_CLASS
+                }
+            ) {
+                reporter.reportOn(expression.source, FirErrors.ANNOTATION_CLASS_CONSTRUCTOR_CALL, context)
+            }
         }
     }
 }
