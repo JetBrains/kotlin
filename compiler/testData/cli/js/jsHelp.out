@@ -32,6 +32,7 @@ where possible options include:
   -nowarn                    Generate no warnings
   -verbose                   Enable verbose logging output
   -version                   Display compiler version
+  -J<option>                 Pass an option directly to JVM
   @<argfile>                 Read compiler arguments and file paths from the given file
 
 For details, see https://kotl.in/cli
