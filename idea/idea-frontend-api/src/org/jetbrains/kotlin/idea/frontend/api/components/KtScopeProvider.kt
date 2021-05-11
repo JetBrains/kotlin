@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.components
 
+import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.scopes.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFileSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPackageSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithDeclarations
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithMembers
+import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -55,4 +58,10 @@ interface KtScopeProviderMixIn : KtAnalysisSessionMixIn {
         analysisSession.scopeProvider.getScopeContextForPosition(this, this)
 }
 
-data class KtScopeContext(val scopes: KtCompositeScope, val implicitReceiversTypes: List<KtType>)
+data class KtScopeContext(val scopes: KtCompositeScope, val implicitReceivers: List<KtImplicitReceiver>)
+
+class KtImplicitReceiver(
+    override val token: ValidityToken,
+    val type: KtType,
+    val ownerSymbol: KtSymbol
+): ValidityTokenOwner

@@ -226,7 +226,8 @@ private class KotlinWithNameReferenceCompletionProvider(
         extensionChecker: ExtensionApplicabilityChecker,
         visibilityChecker: CompletionVisibilityChecker,
     ) {
-        val (implicitScopes, implicitReceiversTypes) = implicitScopesContext
+        val (implicitScopes, implicitReceivers) = implicitScopesContext
+        val implicitReceiversTypes = implicitReceivers.map { it.type }
 
         val availableNonExtensions = implicitScopes.collectNonExtensions(visibilityChecker)
         val extensionsWhichCanBeCalled = implicitScopes.collectSuitableExtensions(extensionChecker, visibilityChecker)

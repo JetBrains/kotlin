@@ -18,31 +18,6 @@ import org.jetbrains.kotlin.types.FlexibleType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
-fun KtFunctionLiteral.findLabelAndCall(): Pair<Name?, KtCallExpression?> {
-    val literalParent = (this.parent as KtLambdaExpression).parent
-
-    fun KtValueArgument.callExpression(): KtCallExpression? {
-        val parent = parent
-        return (if (parent is KtValueArgumentList) parent else this).parent as? KtCallExpression
-    }
-
-    when (literalParent) {
-        is KtLabeledExpression -> {
-            val callExpression = (literalParent.parent as? KtValueArgument)?.callExpression()
-            return Pair(literalParent.getLabelNameAsName(), callExpression)
-        }
-
-        is KtValueArgument -> {
-            val callExpression = literalParent.callExpression()
-            val label = (callExpression?.calleeExpression as? KtSimpleNameExpression)?.getReferencedNameAsName()
-            return Pair(label, callExpression)
-        }
-
-        else -> {
-            return Pair(null, null)
-        }
-    }
-}
 
 fun SmartCastManager.getSmartCastVariantsWithLessSpecificExcluded(
     receiverToCast: ReceiverValue,
