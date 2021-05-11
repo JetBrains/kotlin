@@ -231,12 +231,15 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
     }
 
     override fun visitGetField(expression: IrGetField): IrExpression {
+        if (expression.symbol.owner.name.asString() == "jpf") {
+            println("|visitGetField> ${expression.dump()}")
+        }
         val dispatchReceiverType = expression.receiver?.type
+        val dispatchReceiverClassSymbol = dispatchReceiverType?.classifierOrNull as? IrClassSymbol
         return super.visitExpression(
-            if (!expression.symbol.isAccessible(false, dispatchReceiverType?.classifierOrNull as? IrClassSymbol)) {
+            if (!expression.symbol.isAccessible(false, dispatchReceiverClassSymbol)) {
                 val symbol = expression.symbol
-                val parent =
-                    symbol.owner.accessorParent(dispatchReceiverType?.classOrNull?.owner ?: symbol.owner.parent) as IrClass
+                val parent = symbol.owner.accessorParent(dispatchReceiverClassSymbol?.owner ?: symbol.owner.parent) as IrClass
                 modifyGetterExpression(
                     expression,
                     getterMap.getOrPut(FieldKey(symbol, parent, expression.superQualifierSymbol)) {
@@ -251,11 +254,11 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
 
     override fun visitSetField(expression: IrSetField): IrExpression {
         val dispatchReceiverType = expression.receiver?.type
+        val dispatchReceiverClassSymbol = dispatchReceiverType?.classifierOrNull as? IrClassSymbol
         return super.visitExpression(
-            if (!expression.symbol.isAccessible(false, dispatchReceiverType?.classifierOrNull as? IrClassSymbol)) {
+            if (!expression.symbol.isAccessible(false, dispatchReceiverClassSymbol)) {
                 val symbol = expression.symbol
-                val parent =
-                    symbol.owner.accessorParent(dispatchReceiverType?.classOrNull?.owner ?: symbol.owner.parent) as IrClass
+                val parent = symbol.owner.accessorParent(dispatchReceiverClassSymbol?.owner ?: symbol.owner.parent) as IrClass
                 modifySetterExpression(
                     expression,
                     setterMap.getOrPut(FieldKey(symbol, parent, expression.superQualifierSymbol)) {
@@ -725,8 +728,22 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
         if (symbolOwner is IrConstructor && symbolOwner.parentClassOrNull?.isEnumEntry == true)
             return true
 
-        val declaration =
-            (declarationRaw as? IrSimpleFunction)?.resolveFakeOverride(allowAbstract = true) ?: declarationRaw
+        val declaration = when (declarationRaw) {
+            is IrSimpleFunction ->
+                declarationRaw.resolveFakeOverride(allowAbstract = true)
+                    ?: declarationRaw
+            is IrField -> {
+                val correspondingProperty = declarationRaw.correspondingPropertySymbol?.owner
+                if (correspondingProperty != null && correspondingProperty.isFakeOverride) {
+                    correspondingProperty.resolveFakeOverride()
+                        ?: declarationRaw
+                } else {
+                    declarationRaw
+                }
+            }
+            else ->
+                declarationRaw
+        }
 
         // If local variables are accessible by Kotlin rules, they also are by Java rules.
         val ownerClass = declaration.parent as? IrClass ?: return true
