@@ -1,4 +1,4 @@
-// !LANGUAGE: -ExperimentalBuilderInference
+// !LANGUAGE: +StableBuilderInference
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 class Builder<T> {

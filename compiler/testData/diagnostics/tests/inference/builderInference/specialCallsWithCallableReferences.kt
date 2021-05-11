@@ -30,7 +30,7 @@ fun foo7() = null as Foo7<Int>
 
 interface FlowCollector<in T> {}
 
-fun <L> flow(@BuilderInference block: suspend FlowCollector<L>.() -> Unit) = Flow(block)
+fun <L> flow(@BuilderInference block: suspend FlowCollector<L>.() -> Unit): Flow<L> = Flow(block)
 
 class Flow<out R>(private val block: suspend FlowCollector<R>.() -> Unit)
 
@@ -38,7 +38,7 @@ fun <R> select(vararg x: R) = x[0]
 
 fun poll0(): Flow<String> {
     return flow {
-        val inv = select(<!TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>bar<!><!>, <!TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!><!>)
+        val inv = select(::bar, ::foo)
         inv()
     }
 }
@@ -52,7 +52,7 @@ fun poll01(): Flow<String> {
 
 fun poll02(): Flow<String> {
     return flow {
-        val inv = select(<!TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>bar3<!><!>, <!TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo3<!><!>)
+        val inv = select(::bar3, ::foo3)
         inv()
     }
 }
@@ -66,7 +66,7 @@ fun poll03(): Flow<String> {
 
 fun poll04(): Flow<String> {
     return flow {
-        val inv = select(<!TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>bar5<!><!>, <!TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo5<!><!>)
+        val inv = select(::bar5, ::foo5)
         inv
     }
 }
@@ -143,7 +143,7 @@ fun poll17(flag: Boolean): Flow<String> {
 
 fun poll2(flag: Boolean): Flow<String> {
     return flow {
-        val inv = when (flag) { true -> <!TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>bar<!><!> else -> <!TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!><!> }
+        val inv = when (flag) { true -> ::bar else -> ::foo }
         inv()
     }
 }
@@ -157,7 +157,7 @@ fun poll21(flag: Boolean): Flow<String> {
 
 fun poll22(flag: Boolean): Flow<String> {
     return flow {
-        val inv = when (flag) { true -> <!TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>bar3<!><!> else -> <!TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo3<!><!> }
+        val inv = when (flag) { true -> ::bar3 else -> ::foo3 }
         inv()
     }
 }
@@ -171,7 +171,7 @@ fun poll23(flag: Boolean): Flow<String> {
 
 fun poll24(flag: Boolean): Flow<String> {
     return flow {
-        val inv = when (flag) { true -> <!TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>bar5<!><!> else -> <!TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo5<!><!> }
+        val inv = when (flag) { true -> ::bar5 else -> ::foo5 }
         inv
     }
 }
@@ -192,7 +192,7 @@ fun poll26(flag: Boolean): Flow<String> {
 
 fun poll3(flag: Boolean): Flow<String> {
     return flow {
-        val inv = when (flag) { true -> <!TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>bar<!><!> false -> <!TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!><!> }
+        val inv = when (flag) { true -> ::bar false -> ::foo }
         inv()
     }
 }
@@ -206,7 +206,7 @@ fun poll31(flag: Boolean): Flow<String> {
 
 fun poll32(flag: Boolean): Flow<String> {
     return flow {
-        val inv = when (flag) { true -> <!TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>bar3<!><!> false -> <!TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo3<!><!> }
+        val inv = when (flag) { true -> ::bar3 false -> ::foo3 }
         inv()
     }
 }
@@ -220,7 +220,7 @@ fun poll33(flag: Boolean): Flow<String> {
 
 fun poll34(flag: Boolean): Flow<String> {
     return flow {
-        val inv = when (flag) { true -> <!TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>bar5<!><!> false -> <!TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo5<!><!> }
+        val inv = when (flag) { true -> ::bar5 false -> ::foo5 }
         inv
     }
 }

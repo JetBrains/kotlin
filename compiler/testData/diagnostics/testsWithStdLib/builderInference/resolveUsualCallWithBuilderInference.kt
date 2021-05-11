@@ -1,3 +1,4 @@
+// !LANGUAGE: +StableBuilderInference
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // FILE: annotation.kt
 

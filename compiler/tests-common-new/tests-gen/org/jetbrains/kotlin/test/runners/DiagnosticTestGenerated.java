@@ -12772,6 +12772,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                     }
 
                     @Test
+                    @TestMetadata("memberScope.kt")
+                    public void testMemberScope() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/memberScope.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("nullability.kt")
+                    public void testNullability() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/nullability.kt");
+                    }
+
+                    @Test
                     @TestMetadata("renderingStubTypes.kt")
                     public void testRenderingStubTypes() throws Exception {
                         runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/renderingStubTypes.kt");
@@ -32418,6 +32430,48 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             public void testCompleteIrrelevantCalls() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/completeIrrelevantCalls.kt");
             }
+
+            @Test
+            @TestMetadata("incorrectCalls.kt")
+            public void testIncorrectCalls() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/incorrectCalls.kt");
+            }
+
+            @Test
+            @TestMetadata("incorrectCallsWithRestrictions.kt")
+            public void testIncorrectCallsWithRestrictions() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/incorrectCallsWithRestrictions.kt");
+            }
+
+            @Test
+            @TestMetadata("inferCoroutineTypeInOldVersion.kt")
+            public void testInferCoroutineTypeInOldVersion() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/inferCoroutineTypeInOldVersion.kt");
+            }
+
+            @Test
+            @TestMetadata("resolveUsualCallWithBuilderInference.kt")
+            public void testResolveUsualCallWithBuilderInference() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/resolveUsualCallWithBuilderInference.kt");
+            }
+
+            @Test
+            @TestMetadata("resolveUsualCallWithBuilderInferenceWithRestrictions.kt")
+            public void testResolveUsualCallWithBuilderInferenceWithRestrictions() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/resolveUsualCallWithBuilderInferenceWithRestrictions.kt");
+            }
+
+            @Test
+            @TestMetadata("useInferenceInformationFromExtension.kt")
+            public void testUseInferenceInformationFromExtension() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/useInferenceInformationFromExtension.kt");
+            }
+
+            @Test
+            @TestMetadata("useInferenceInformationFromExtensionWithRestrictions.kt")
+            public void testUseInferenceInformationFromExtensionWithRestrictions() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/useInferenceInformationFromExtensionWithRestrictions.kt");
+            }
         }
 
         @Nested
@@ -33609,18 +33663,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
-                @TestMetadata("incorrectCalls.kt")
-                public void testIncorrectCalls() throws Exception {
-                    runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/incorrectCalls.kt");
-                }
-
-                @Test
-                @TestMetadata("inferCoroutineTypeInOldVersion.kt")
-                public void testInferCoroutineTypeInOldVersion() throws Exception {
-                    runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/inferCoroutineTypeInOldVersion.kt");
-                }
-
-                @Test
                 @TestMetadata("inferenceFromMethodInsideLocalVariable.kt")
                 public void testInferenceFromMethodInsideLocalVariable() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/inferenceFromMethodInsideLocalVariable.kt");
@@ -33765,12 +33807,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
-                @TestMetadata("resolveUsualCallWithBuilderInference.kt")
-                public void testResolveUsualCallWithBuilderInference() throws Exception {
-                    runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/resolveUsualCallWithBuilderInference.kt");
-                }
-
-                @Test
                 @TestMetadata("returnTypeInference.kt")
                 public void testReturnTypeInference() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/returnTypeInference.kt");
@@ -33816,12 +33852,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 @TestMetadata("typeFromReceiver.kt")
                 public void testTypeFromReceiver() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/typeFromReceiver.kt");
-                }
-
-                @Test
-                @TestMetadata("useInferenceInformationFromExtension.kt")
-                public void testUseInferenceInformationFromExtension() throws Exception {
-                    runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/useInferenceInformationFromExtension.kt");
                 }
 
                 @Test

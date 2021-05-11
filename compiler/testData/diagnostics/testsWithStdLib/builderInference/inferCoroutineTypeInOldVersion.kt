@@ -1,4 +1,4 @@
-// !LANGUAGE: -ExperimentalBuilderInference
+// !LANGUAGE: +StableBuilderInference
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 class Builder<T> {
@@ -12,7 +12,7 @@ fun <S> Builder<S>.extensionAdd(s: S) {}
 
 suspend fun <S> Builder<S>.safeExtensionAdd(s: S) {}
 
-val member = build {
+val member = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
     add(42)
 }
 
@@ -24,6 +24,6 @@ val extension = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
     extensionAdd("foo")
 }
 
-val safeExtension = build {
+val safeExtension = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
     safeExtensionAdd("foo")
 }
