@@ -20,6 +20,7 @@ final class User$Companion : java/lang/Object, kotlinx/android/parcel/Parceler {
 
     public java.lang.Object[] newArray(int size) {
         LABEL (L0)
+        LINENUMBER (10)
           ALOAD (0)
           ILOAD (1)
           INVOKEVIRTUAL (User$Companion, newArray, (I)[LUser;)
@@ -40,7 +41,7 @@ public final class User$Creator : java/lang/Object, android/os/Parcelable$Creato
           ALOAD (1)
           LDC (parcel)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
-          INVOKESTATIC (User, access$getCompanion$p$s2645995, ()LUser$Companion;)
+          INVOKESTATIC (User, access$getCompanion$p, ()LUser$Companion;)
           ALOAD (1)
           INVOKEVIRTUAL (User$Companion, create, (Landroid/os/Parcel;)LUser;)
           ARETURN
@@ -89,7 +90,7 @@ public final class User : java/lang/Object, android/os/Parcelable {
 
     public void <init>(java.lang.String firstName, java.lang.String lastName, int age)
 
-    public final static User$Companion access$getCompanion$p$s2645995()
+    public final static User$Companion access$getCompanion$p()
 
     public int describeContents()
 
