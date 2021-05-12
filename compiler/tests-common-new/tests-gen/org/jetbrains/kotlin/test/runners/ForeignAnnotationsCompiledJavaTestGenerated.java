@@ -1016,6 +1016,12 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
             }
 
             @Test
+            @TestMetadata("useTypeParameterAnnotationToEnhanceItsUsages.kt")
+            public void testUseTypeParameterAnnotationToEnhanceItsUsages() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/useTypeParameterAnnotationToEnhanceItsUsages.kt");
+            }
+
+            @Test
             @TestMetadata("valueParameter.kt")
             public void testValueParameter() throws Exception {
                 runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/valueParameter.kt");
