@@ -21,12 +21,12 @@ fun main(
             b: WildcardsWithDefault
 ): Unit {
     b.noBoundsNotNull(aNotNullNotNullNotNull)
-    // jspecify_nullness_mismatch{mute}
-    b.noBoundsNotNull(aNotNullNotNullNull)
-    // jspecify_nullness_mismatch{mute}
-    b.noBoundsNotNull(aNotNullNullNotNull)
-    // jspecify_nullness_mismatch{mute}
-    b.noBoundsNotNull(aNotNullNullNull)
+    // jspecify_nullness_mismatch
+    b.noBoundsNotNull(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>aNotNullNotNullNull<!>)
+    // jspecify_nullness_mismatch
+    b.noBoundsNotNull(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>aNotNullNullNotNull<!>)
+    // jspecify_nullness_mismatch
+    b.noBoundsNotNull(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>aNotNullNullNull<!>)
 
     b.noBoundsNullable(aNotNullNotNullNotNull)
     b.noBoundsNullable(aNotNullNotNullNull)
