@@ -351,7 +351,7 @@ class PsiDefaultLambda(
     override val invokeMethodReturnType: KotlinType?
         get() = invokeMethodDescriptor.returnType
 
-    override fun mapAsmDescriptor(sourceCompiler: SourceCompilerForInline, isPropertyReference: Boolean): String {
+    override fun mapAsmMethod(sourceCompiler: SourceCompilerForInline, isPropertyReference: Boolean): Method {
         invokeMethodDescriptor = parameterDescriptor.type.memberScope
             .getContributedFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.FROM_BACKEND)
             .single().let {
@@ -359,6 +359,6 @@ class PsiDefaultLambda(
                 // have a non-erased `invoke` with an erased synthetic bridge, and we want to inline the former.
                 if (isPropertyReference) it.original else it
             }
-        return sourceCompiler.state.typeMapper.mapSignatureSkipGeneric(invokeMethodDescriptor).asmMethod.descriptor
+        return sourceCompiler.state.typeMapper.mapSignatureSkipGeneric(invokeMethodDescriptor).asmMethod
     }
 }
