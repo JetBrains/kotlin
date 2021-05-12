@@ -22,7 +22,11 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -109,5 +113,9 @@ class WasmBackendContext(
     override fun report(element: IrElement?, irFile: IrFile?, message: String, isError: Boolean) {
         /*TODO*/
         print(message)
+    }
+
+    fun createArrayOfExpression(startOffset: Int, endOffset: Int, type: IrType, initializers: List<IrExpression>): IrExpression {
+        return IrVarargImpl(startOffset, endOffset, irBuiltIns.arrayClass.typeWith(type), type, initializers)
     }
 }

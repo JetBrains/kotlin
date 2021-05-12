@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -140,6 +142,20 @@ class WasmSymbols(
 
     val wasmThrow = getInternalFunction("wasmThrow")
 
+    // KProperty implementations
+    val kLocalDelegatedPropertyImpl: IrClassSymbol = getInternalClass("KLocalDelegatedPropertyImpl")
+    val kLocalDelegatedMutablePropertyImpl: IrClassSymbol = getInternalClass("KLocalDelegatedMutablePropertyImpl")
+    val kProperty0Impl: IrClassSymbol = getInternalClass("KProperty0Impl")
+    val kProperty1Impl: IrClassSymbol = getInternalClass("KProperty1Impl")
+    val kProperty2Impl: IrClassSymbol = getInternalClass("KProperty2Impl")
+    val kMutableProperty0Impl: IrClassSymbol = getInternalClass("KMutableProperty0Impl")
+    val kMutableProperty1Impl: IrClassSymbol = getInternalClass("KMutableProperty1Impl")
+    val kMutableProperty2Impl: IrClassSymbol = getInternalClass("KMutableProperty2Impl")
+
+    val kMutableProperty0: IrClassSymbol = getIrClass(FqName("kotlin.reflect.KMutableProperty0"))
+    val kMutableProperty1: IrClassSymbol = getIrClass(FqName("kotlin.reflect.KMutableProperty1"))
+    val kMutableProperty2: IrClassSymbol = getIrClass(FqName("kotlin.reflect.KMutableProperty2"))
+
     private val functionNInterfaces = (0..22).map { arity ->
         getIrClass(FqName("kotlin.wasm.internal.Function$arity"))
     }
@@ -176,4 +192,8 @@ class WasmSymbols(
     }
 
     private fun getIrClass(fqName: FqName): IrClassSymbol = symbolTable.referenceClass(getClass(fqName))
+    private fun getInternalClass(name: String): IrClassSymbol = getIrClass(FqName("kotlin.wasm.internal.$name"))
+    fun getKFunctionType(type: IrType, list: List<IrType>): IrType {
+        return irBuiltIns.function(list.size).typeWith(list + type)
+    }
 }

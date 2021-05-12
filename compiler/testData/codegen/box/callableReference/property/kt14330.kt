@@ -1,5 +1,3 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: PROPERTY_REFERENCES
 data class Foo(var bar: Int?)
 
 fun box(): String {

@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: WASM
-
 // WITH_RUNTIME
 // FILE: b.kt
 import a.A

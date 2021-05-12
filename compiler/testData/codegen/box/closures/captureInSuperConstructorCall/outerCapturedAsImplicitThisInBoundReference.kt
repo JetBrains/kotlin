@@ -1,5 +1,5 @@
 // DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: PROPERTY_REFERENCES
+// WASM_MUTE_REASON: BINDING_RECEIVERS
 abstract class Base(val fn: () -> String)
 
 class Outer {

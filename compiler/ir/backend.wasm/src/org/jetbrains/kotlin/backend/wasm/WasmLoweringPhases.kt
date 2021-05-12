@@ -179,6 +179,12 @@ private val sharedVariablesLoweringPhase = makeWasmModulePhase(
     description = "Box captured mutable variables"
 )
 
+private val propertyReferenceLowering = makeWasmModulePhase(
+    ::WasmPropertyReferenceLowering,
+    name = "WasmPropertyReferenceLowering",
+    description = "Lower property references"
+)
+
 private val callableReferencePhase = makeWasmModulePhase(
     ::WasmCallableReferenceLowering,
     name = "WasmCallableReferenceLowering",
@@ -441,6 +447,7 @@ val wasmPhases = NamedCompilerPhase(
             enumClassConstructorBodyLoweringPhase then
 
             sharedVariablesLoweringPhase then
+            propertyReferenceLowering then
             callableReferencePhase then
             localDelegatedPropertiesLoweringPhase then
             localDeclarationsLoweringPhase then
