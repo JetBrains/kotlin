@@ -1,3 +1,4 @@
+// SKIP_DCE_DRIVEN
 enum class ContentType {
 
     PLAIN_TEXT {

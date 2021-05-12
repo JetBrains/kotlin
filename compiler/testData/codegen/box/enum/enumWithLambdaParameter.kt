@@ -1,3 +1,4 @@
+// SKIP_DCE_DRIVEN
 // KT-4423 Enum with function not compiled
 
 enum class Sign(val str: String, val func: (x: Int, y: Int) -> Int){
