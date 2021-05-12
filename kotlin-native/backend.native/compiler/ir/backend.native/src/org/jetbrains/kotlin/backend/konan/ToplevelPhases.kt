@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.serialization.*
-import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.IrElement
@@ -378,6 +377,7 @@ internal val bitcodePhase = NamedCompilerPhase(
                                                  // from dependencies can be changed during lowerings.
                 escapeAnalysisPhase then
                 localEscapeAnalysisPhase then
+                slotsAnalysisPhase then
                 codegenPhase then
                 finalizeDebugInfoPhase then
                 cStubsPhase

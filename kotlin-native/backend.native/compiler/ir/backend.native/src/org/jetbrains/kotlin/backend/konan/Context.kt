@@ -436,6 +436,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     lateinit var lifetimes: MutableMap<IrElement, Lifetime>
     lateinit var codegenVisitor: CodeGeneratorVisitor
     var devirtualizationAnalysisResult: Devirtualization.AnalysisResult? = null
+    val expectedSlotsCount = mutableMapOf<IrFunction, Int>()
 
     var referencedFunctions: Set<IrFunction>? = null
 

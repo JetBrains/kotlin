@@ -116,7 +116,7 @@ internal interface IntrinsicGeneratorEnvironment {
 internal fun tryGetIntrinsicType(callSite: IrFunctionAccessExpression): IntrinsicType? =
         if (callSite.symbol.owner.isTypedIntrinsic) getIntrinsicType(callSite) else null
 
-private fun getIntrinsicType(callSite: IrFunctionAccessExpression): IntrinsicType {
+internal fun getIntrinsicType(callSite: IrFunctionAccessExpression): IntrinsicType {
     val function = callSite.symbol.owner
     val annotation = function.annotations.findAnnotation(RuntimeNames.typedIntrinsicAnnotation)!!
     val value = annotation.getAnnotationStringValue()!!

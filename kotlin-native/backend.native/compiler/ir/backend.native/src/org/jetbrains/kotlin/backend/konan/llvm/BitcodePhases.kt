@@ -270,6 +270,15 @@ internal val codegenPhase = makeKonanModuleOpPhase(
         }
 )
 
+internal val slotsAnalysisPhase = makeKonanModuleOpPhase(
+        name = "SlotAnalysis",
+        description = "Code generation",
+        op = { context, irModule ->
+            val functionsSlotsAnalysis = FunctionSlotsAnalysisVisitor(context, context.expectedSlotsCount, context.lifetimes)
+            irModule.acceptVoid(functionsSlotsAnalysis)
+        }
+)
+
 internal val finalizeDebugInfoPhase = makeKonanModuleOpPhase(
         name = "FinalizeDebugInfo",
         description = "Finalize debug info",

@@ -379,7 +379,14 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     private val stackLocalsInitBb = basicBlockInFunction("stack_locals_init", startLocation)
     private val entryBb = basicBlockInFunction("entry", startLocation)
     private val epilogueBb = basicBlockInFunction("epilogue", endLocation)
-    private val cleanupLandingpad = basicBlockInFunction("cleanup_landingpad", endLocation)
+    private var cleanupLandingpad: LLVMBasicBlockRef? = null
+
+    private fun getOrCreatecleanupLandingpad(): LLVMBasicBlockRef {
+        if (cleanupLandingpad == null) {
+            cleanupLandingpad = basicBlockInFunction("cleanup_landingpad", endLocation)
+        }
+        return cleanupLandingpad!!
+    }
 
     val stackLocalsManager = StackLocalsManagerImpl(this, stackLocalsInitBb)
 
@@ -584,12 +591,15 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     private fun callRaw(llvmFunction: LLVMValueRef, args: List<LLVMValueRef>,
                         exceptionHandler: ExceptionHandler): LLVMValueRef {
         val rargs = args.toCValues()
-        if (LLVMIsAFunction(llvmFunction) != null /* the function declaration */ &&
-                isFunctionNoUnwind(llvmFunction)) {
+        val shouldHaveLandingpad = expectedNeedSlots || exceptionHandler != ExceptionHandler.Caller ||
+                forwardingForeignExceptionsTerminatedWith != null
+
+        if ((LLVMIsAFunction(llvmFunction) != null /* the function declaration */ &&
+                        isFunctionNoUnwind(llvmFunction)) || !shouldHaveLandingpad) {
             return LLVMBuildCall(builder, llvmFunction, rargs, args.size, "")!!
         } else {
             val unwind = when (exceptionHandler) {
-                ExceptionHandler.Caller -> cleanupLandingpad
+                ExceptionHandler.Caller -> getOrCreatecleanupLandingpad()
                 is ExceptionHandler.Local -> exceptionHandler.unwind
 
                 ExceptionHandler.None -> {
@@ -1305,6 +1315,11 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                                 Int32(slotCount * codegen.runtime.pointerSize).llvm,
                                 Int1(0).llvm))
                 call(context.llvm.enterFrameFunction, listOf(slots, Int32(vars.skipSlots).llvm, Int32(slotCount).llvm))
+                assert(expectedNeedSlots) {
+                    """Need slots in ${irFunction?.name?.asString()} but slots weren't expected by analysis.
+                       Please try to use -Xdisable-phases=SlotAnalysis and create ticket on https://youtrack.jetbrains.com/issues/KT
+                    """.trimMargin()
+                }
             }
             addPhiIncoming(slotsPhi!!, prologueBb to slots)
             memScoped {
@@ -1355,14 +1370,15 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             }
         }
 
-        appendingTo(cleanupLandingpad) {
-            val landingpad = gxxLandingpad(numClauses = 0)
-            LLVMSetCleanup(landingpad, 1)
+        cleanupLandingpad?.let {
+            appendingTo(it) {
+                val landingpad = gxxLandingpad(numClauses = 0)
+                LLVMSetCleanup(landingpad, 1)
 
-            forwardingForeignExceptionsTerminatedWith?.let { terminator ->
-                // Catch all but Kotlin exceptions.
-                val clause = ConstArray(int8TypePtr, listOf(kotlinExceptionRtti))
-                LLVMAddClause(landingpad, clause.llvm)
+                forwardingForeignExceptionsTerminatedWith?.let { terminator ->
+                    // Catch all but Kotlin exceptions.
+                    val clause = ConstArray(int8TypePtr, listOf(kotlinExceptionRtti))
+                    LLVMAddClause(landingpad, clause.llvm)
 
                 val bbCleanup = basicBlock("forwardException", position()?.end)
                 val bbUnexpected = basicBlock("unexpectedException", position()?.end)
@@ -1537,6 +1553,9 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         }
         stackLocalsManager.clean(refsOnly = true) // Only bother about not leaving any dangling references.
     }
+
+    val expectedNeedSlots = irFunction?.let { context.expectedSlotsCount[it] } != 0
+
 }
 
 
