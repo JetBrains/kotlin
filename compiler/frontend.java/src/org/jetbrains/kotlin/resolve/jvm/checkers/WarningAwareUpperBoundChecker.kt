@@ -49,7 +49,7 @@ class WarningAwareUpperBoundChecker : UpperBoundChecker() {
         typeParameterDescriptor: TypeParameterDescriptor,
         substitutor: TypeSubstitutor,
         trace: BindingTrace,
-        typeAliasUsageElement: KtElement?,
+        typeAliasUsageElement: KtElement? = null,
         withOnlyCheckForWarning: Boolean = false
     ) {
         if (typeParameterDescriptor.upperBounds.isEmpty()) return
@@ -71,8 +71,12 @@ class WarningAwareUpperBoundChecker : UpperBoundChecker() {
             }
 
             val enhancedBound = bound.getEnhancementDeeply() ?: continue
+            val argumentTypeEnhancement = argumentType.getEnhancementDeeply() ?: argumentType
 
-            checkBound(enhancedBound, argumentType, argumentReference, substitutor, typeAliasUsageElement, diagnosticsReporterForWarnings)
+            checkBound(
+                enhancedBound, argumentTypeEnhancement, argumentReference,
+                substitutor, typeAliasUsageElement, diagnosticsReporterForWarnings
+            )
         }
     }
 }
