@@ -74,7 +74,15 @@ object InlineClassAbi {
             return Name.identifier("constructor-impl")
         }
 
-        val suffix = hashSuffix(irFunction, mangleReturnTypes, useOldMangleRules) ?: return irFunction.name
+        val suffix = hashSuffix(
+            useOldMangleRules,
+            irFunction.fullValueParameterList.map { it.type },
+            irFunction.returnType.takeIf { mangleReturnTypes && irFunction.hasMangledReturnType },
+            irFunction.isSuspend
+        )
+        if (suffix == null && ((irFunction.parent as? IrClass)?.isInline != true || irFunction.origin == IrDeclarationOrigin.IR_BUILTINS_STUB)) {
+            return irFunction.name
+        }
 
         val base = when {
             irFunction.isGetter ->
@@ -87,47 +95,28 @@ object InlineClassAbi {
                 irFunction.name.asString()
         }
 
-        return Name.identifier("$base-$suffix")
+        return Name.identifier("$base-${suffix ?: "impl"}")
     }
 
-    private fun hashSuffix(
-        irFunction: IrFunction,
-        mangleReturnTypes: Boolean,
+    fun hashSuffix(
         useOldMangleRules: Boolean,
-        alwaysMangleReturnType: Boolean = false
-    ): String? {
-        val signatureForMangling = collectFunctionSignatureForManglingSuffix(
-            useOldManglingRules = useOldMangleRules,
-            requiresFunctionNameManglingForParameterTypes = irFunction.fullValueParameterList.any { it.type.requiresMangling },
-            fqNamesForMangling = irFunction.fullValueParameterList.map {
-                it.type.asInfoForMangling()
-            } + listOfNotNull(
-                // The JVM backend computes mangled names after creating suspend function views, but before default argument
-                // stub insertion. It would be nice if this part of the continuation lowering happened earlier in the pipeline.
-                // TODO: Move suspend function view creation before JvmInlineClassLowering.
-                if (irFunction.isSuspend)
-                    InfoForMangling(FqNameUnsafe("kotlin.coroutines.Continuation"), isInline = false, isNullable = false)
-                else null
-            ),
-            returnTypeInfo = if (alwaysMangleReturnType || (mangleReturnTypes && irFunction.hasMangledReturnType)) {
-                irFunction.returnType.asInfoForMangling()
-            } else null
-        )
-
-        return when {
-            signatureForMangling != null -> md5base64(signatureForMangling)
-            (irFunction.parent as? IrClass)?.isInline == true && irFunction.origin != IrDeclarationOrigin.IR_BUILTINS_STUB -> "impl"
-            else -> null
-        }
-    }
-
-    fun hashReturnSuffix(irFunction: IrFunction): String =
-        hashSuffix(
-            irFunction,
-            mangleReturnTypes = true,
-            useOldMangleRules = false,
-            alwaysMangleReturnType = true
-        )!!
+        valueParameters: List<IrType>,
+        returnType: IrType?,
+        addContinuation: Boolean = false
+    ): String? =
+        collectFunctionSignatureForManglingSuffix(
+            useOldMangleRules,
+            valueParameters.any { it.requiresMangling },
+            // The JVM backend computes mangled names after creating suspend function views, but before default argument
+            // stub insertion. It would be nice if this part of the continuation lowering happened earlier in the pipeline.
+            // TODO: Move suspend function view creation before JvmInlineClassLowering.
+            if (addContinuation)
+                valueParameters.map { it.asInfoForMangling() } +
+                        InfoForMangling(FqNameUnsafe("kotlin.coroutines.Continuation"), isInline = false, isNullable = false)
+            else
+                valueParameters.map { it.asInfoForMangling() },
+            returnType?.asInfoForMangling()
+        )?.let(::md5base64)
 
     private fun IrType.asInfoForMangling(): InfoForMangling =
         InfoForMangling(
