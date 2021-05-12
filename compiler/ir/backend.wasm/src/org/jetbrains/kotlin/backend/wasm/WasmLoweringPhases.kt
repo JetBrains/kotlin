@@ -328,6 +328,13 @@ private val wasmNullSpecializationLowering = makeWasmModulePhase(
     description = "Specialize assigning Nothing? values to other types."
 )
 
+private val wasmFunctionInterfaceReplacer = makeWasmModulePhase(
+    ::WasmFunctionInterfaceReplacer,
+    name = "WasmFunctionInterfaceReplacer",
+    description = "Replace function interface with concrete runtime interfaces"
+)
+
+
 private val staticMembersLoweringPhase = makeWasmModulePhase(
     ::StaticMembersLowering,
     name = "StaticMembersLowering",
@@ -498,6 +505,7 @@ val wasmPhases = NamedCompilerPhase(
             virtualDispatchReceiverExtractionPhase then
             wasmThrowDebugLoweringPhase then
             staticMembersLoweringPhase then
+            wasmFunctionInterfaceReplacer then
             wasmNullSpecializationLowering then
             validateIrAfterLowering
 )
