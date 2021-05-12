@@ -87,7 +87,9 @@ private class SingletonObjectJvmStaticTransformer(val context: JvmBackendContext
                     // dispatch receiver parameter is already null for synthetic property annotation methods
                     function.dispatchReceiverParameter?.let { oldDispatchReceiverParameter ->
                         function.dispatchReceiverParameter = null
-                        function.replaceThisByStaticReference(context.cachedDeclarations, declaration, oldDispatchReceiverParameter)
+                        function.replaceThisByStaticReference(
+                            context.cachedDeclarations.fieldsForObjectInstances, declaration, oldDispatchReceiverParameter
+                        )
                     }
                 }
             }

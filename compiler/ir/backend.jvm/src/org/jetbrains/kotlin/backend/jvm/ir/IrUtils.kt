@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.ir
 
 import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.common.lower.IrLoweringContext
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmCachedDeclarations
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.JvmSymbols
+import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineOnly
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.codegen.representativeUpperBound
@@ -232,7 +229,7 @@ fun IrExpression.isSmartcastFromHigherThanNullable(context: JvmBackendContext): 
 }
 
 fun IrElement.replaceThisByStaticReference(
-    cachedDeclarations: JvmCachedDeclarations,
+    cachedFields: CachedFieldsForObjectInstances,
     irClass: IrClass,
     oldThisReceiverParameter: IrValueParameter
 ) {
@@ -242,7 +239,7 @@ fun IrElement.replaceThisByStaticReference(
                 IrGetFieldImpl(
                     expression.startOffset,
                     expression.endOffset,
-                    cachedDeclarations.getPrivateFieldForObjectInstance(irClass).symbol,
+                    cachedFields.getPrivateFieldForObjectInstance(irClass).symbol,
                     irClass.defaultType
                 )
             } else super.visitGetValue(expression)

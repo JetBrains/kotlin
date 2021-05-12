@@ -32,10 +32,9 @@ import java.util.concurrent.ConcurrentHashMap
 
 class JvmCachedDeclarations(
     private val context: JvmBackendContext,
-    private val languageVersionSettings: LanguageVersionSettings
+    val fieldsForObjectInstances: CachedFieldsForObjectInstances,
 ) {
     private val singletonFieldDeclarations = ConcurrentHashMap<IrSymbolOwner, IrField>()
-    private val interfaceCompanionFieldDeclarations = ConcurrentHashMap<IrSymbolOwner, IrField>()
     private val staticBackingFields = ConcurrentHashMap<IrProperty, IrField>()
     private val staticCompanionDeclarations = ConcurrentHashMap<IrSimpleFunction, Pair<IrSimpleFunction, IrSimpleFunction>>()
 
@@ -58,50 +57,9 @@ class JvmCachedDeclarations(
             }
         }
 
-    fun getFieldForObjectInstance(singleton: IrClass): IrField =
-        singletonFieldDeclarations.getOrPut(singleton) {
-            val originalVisibility = singleton.visibility
-            val isNotMappedCompanion = singleton.isCompanion && !singleton.isMappedIntrinsicCompanionObject()
-            val useProperVisibilityForCompanion =
-                languageVersionSettings.supportsFeature(LanguageFeature.ProperVisibilityForCompanionObjectInstanceField)
-                        && singleton.isCompanion
-                        && !singleton.parentAsClass.isInterface
-            context.irFactory.buildField {
-                name = if (isNotMappedCompanion) singleton.name else Name.identifier(JvmAbi.INSTANCE_FIELD)
-                type = singleton.defaultType
-                origin = IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE
-                isFinal = true
-                isStatic = true
-                visibility = when {
-                    !useProperVisibilityForCompanion -> DescriptorVisibilities.PUBLIC
-                    originalVisibility == DescriptorVisibilities.PROTECTED -> JavaDescriptorVisibilities.PROTECTED_STATIC_VISIBILITY
-                    else -> originalVisibility
-                }
+    fun getFieldForObjectInstance(singleton: IrClass): IrField = fieldsForObjectInstances.getFieldForObjectInstance(singleton)
 
-            }.apply {
-                parent = if (isNotMappedCompanion) singleton.parent else singleton
-            }
-        }
-
-    private fun IrClass.isMappedIntrinsicCompanionObject() =
-        isCompanion && classId?.let { CompanionObjectMapping.isMappedIntrinsicCompanionObjectClassId(it) } == true
-
-    fun getPrivateFieldForObjectInstance(singleton: IrClass): IrField =
-        if (singleton.isCompanion && singleton.parentAsClass.isJvmInterface)
-            interfaceCompanionFieldDeclarations.getOrPut(singleton) {
-                context.irFactory.buildField {
-                    name = Name.identifier("\$\$INSTANCE")
-                    type = singleton.defaultType
-                    origin = JvmLoweredDeclarationOrigin.INTERFACE_COMPANION_PRIVATE_INSTANCE
-                    isFinal = true
-                    isStatic = true
-                    visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY
-                }.apply {
-                    parent = singleton
-                }
-            }
-        else
-            getFieldForObjectInstance(singleton)
+    fun getPrivateFieldForObjectInstance(singleton: IrClass): IrField = fieldsForObjectInstances.getPrivateFieldForObjectInstance(singleton)
 
     fun getStaticBackingField(irProperty: IrProperty): IrField? {
         // Only fields defined directly in objects should be made static.
@@ -136,7 +94,7 @@ class JvmCachedDeclarations(
                 }
 
                 initializer = oldField.initializer?.patchDeclarationParents(this)
-                oldField.replaceThisByStaticReference(this@JvmCachedDeclarations, oldParent, oldParent.thisReceiver!!)
+                oldField.replaceThisByStaticReference(fieldsForObjectInstances, oldParent, oldParent.thisReceiver!!)
                 origin = if (irProperty.parentAsClass.isCompanion) JvmLoweredDeclarationOrigin.COMPANION_PROPERTY_BACKING_FIELD else origin
             }
         }
@@ -314,4 +272,61 @@ class JvmCachedDeclarations(
                 copyCorrespondingPropertyFrom(fakeOverride)
             }
         }
+}
+
+/*
+    This class keeps track of singleton fields for instances of object classes.
+ */
+class CachedFieldsForObjectInstances(
+    private val irFactory: IrFactory,
+    private val languageVersionSettings: LanguageVersionSettings,
+) {
+    private val singletonFieldDeclarations = ConcurrentHashMap<IrSymbolOwner, IrField>()
+    private val interfaceCompanionFieldDeclarations = ConcurrentHashMap<IrSymbolOwner, IrField>()
+
+    fun getFieldForObjectInstance(singleton: IrClass): IrField =
+        singletonFieldDeclarations.getOrPut(singleton) {
+            val originalVisibility = singleton.visibility
+            val isNotMappedCompanion = singleton.isCompanion && !singleton.isMappedIntrinsicCompanionObject()
+            val useProperVisibilityForCompanion =
+                languageVersionSettings.supportsFeature(LanguageFeature.ProperVisibilityForCompanionObjectInstanceField)
+                        && singleton.isCompanion
+                        && !singleton.parentAsClass.isInterface
+            irFactory.buildField {
+                name = if (isNotMappedCompanion) singleton.name else Name.identifier(JvmAbi.INSTANCE_FIELD)
+                type = singleton.defaultType
+                origin = IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE
+                isFinal = true
+                isStatic = true
+                visibility = when {
+                    !useProperVisibilityForCompanion -> DescriptorVisibilities.PUBLIC
+                    originalVisibility == DescriptorVisibilities.PROTECTED -> JavaDescriptorVisibilities.PROTECTED_STATIC_VISIBILITY
+                    else -> originalVisibility
+                }
+
+            }.apply {
+                parent = if (isNotMappedCompanion) singleton.parent else singleton
+            }
+        }
+
+    private fun IrClass.isMappedIntrinsicCompanionObject() =
+        isCompanion && classId?.let { CompanionObjectMapping.isMappedIntrinsicCompanionObjectClassId(it) } == true
+
+    fun getPrivateFieldForObjectInstance(singleton: IrClass): IrField =
+        if (singleton.isCompanion && singleton.parentAsClass.isJvmInterface)
+            interfaceCompanionFieldDeclarations.getOrPut(singleton) {
+                irFactory.buildField {
+                    name = Name.identifier("\$\$INSTANCE")
+                    type = singleton.defaultType
+                    origin = JvmLoweredDeclarationOrigin.INTERFACE_COMPANION_PRIVATE_INSTANCE
+                    isFinal = true
+                    isStatic = true
+                    visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY
+                }.apply {
+                    parent = singleton
+                }
+            }
+        else
+            getFieldForObjectInstance(singleton)
+
 }

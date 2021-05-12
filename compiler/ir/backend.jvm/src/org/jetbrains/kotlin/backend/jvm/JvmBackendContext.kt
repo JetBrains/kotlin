@@ -67,7 +67,7 @@ class JvmBackendContext(
     val methodSignatureMapper = MethodSignatureMapper(this)
 
     internal val innerClassesSupport = JvmInnerClassesSupport(irFactory)
-    internal val cachedDeclarations = JvmCachedDeclarations(this, state.languageVersionSettings)
+    internal val cachedDeclarations = JvmCachedDeclarations(this, CachedFieldsForObjectInstances(irFactory, state.languageVersionSettings))
 
     override val mapping: Mapping = DefaultMapping()
 
