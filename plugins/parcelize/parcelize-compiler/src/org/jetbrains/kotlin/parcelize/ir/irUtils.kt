@@ -42,34 +42,36 @@ val IrClass.hasCreatorField: Boolean
 
 // object P : Parceler<T> { fun T.write(parcel: Parcel, flags: Int) ...}
 fun IrBuilderWithScope.parcelerWrite(
-    parceler: IrClass, parcel: IrValueDeclaration,
-    flags: IrValueDeclaration, value: IrExpression
-): IrCall {
-    return irCall(parceler.parcelerSymbolByName("write")!!).apply {
-        dispatchReceiver = irGetObject(parceler.symbol)
-        extensionReceiver = value
-        putValueArgument(0, irGet(parcel))
-        putValueArgument(1, irGet(flags))
-    }
+    parceler: IrClass,
+    parcel: IrValueDeclaration,
+    flags: IrValueDeclaration,
+    value: IrExpression,
+) = irCall(parceler.parcelerSymbolByName("write")!!).apply {
+    dispatchReceiver = irGetObject(parceler.symbol)
+    extensionReceiver = value
+    putValueArgument(0, irGet(parcel))
+    putValueArgument(1, irGet(flags))
 }
 
 // object P : Parceler<T> { fun create(parcel: Parcel): T }
-fun IrBuilderWithScope.parcelerCreate(parceler: IrClass, parcel: IrValueDeclaration): IrExpression {
-    return irCall(parceler.parcelerSymbolByName("create")!!).apply {
+fun IrBuilderWithScope.parcelerCreate(parceler: IrClass, parcel: IrValueDeclaration): IrExpression =
+    irCall(parceler.parcelerSymbolByName("create")!!).apply {
         dispatchReceiver = irGetObject(parceler.symbol)
         putValueArgument(0, irGet(parcel))
     }
-}
 
 // object P: Parceler<T> { fun newArray(size: Int): Array<T> }
-fun IrBuilderWithScope.parcelerNewArray(parceler: IrClass?, size: IrValueDeclaration): IrExpression? {
-    return parceler?.parcelerSymbolByName("newArray")?.let { newArraySymbol ->
+fun IrBuilderWithScope.parcelerNewArray(parceler: IrClass?, size: IrValueDeclaration): IrExpression? =
+    parceler?.parcelerSymbolByName("newArray")?.takeIf {
+        // The `newArray` method in `kotlinx.parcelize.Parceler` is stubbed out and we
+        // have to produce a new implementation, unless the user overrides it.
+        !it.owner.isFakeOverride || it.owner.resolveFakeOverride()?.parentClassOrNull?.fqNameWhenAvailable != PARCELER_FQNAME
+    }?.let { newArraySymbol ->
         irCall(newArraySymbol).apply {
             dispatchReceiver = irGetObject(parceler.symbol)
             putValueArgument(0, irGet(size))
         }
     }
-}
 
 // class Parcelable { fun writeToParcel(parcel: Parcel, flags: Int) ...}
 fun IrBuilderWithScope.parcelableWriteToParcel(
@@ -104,34 +106,29 @@ fun IrBuilderWithScope.parcelableCreatorCreateFromParcel(creator: IrExpression, 
 // Find a named function declaration which overrides the corresponding function in [Parceler].
 // This is more reliable than trying to match the functions signature ourselves, since the frontend
 // has already done the work.
-private fun IrClass.parcelerSymbolByName(name: String): IrSimpleFunctionSymbol? {
-    return functions.firstOrNull { function ->
-        !function.isFakeOverride && function.name.asString() == name && function.overridesFunctionIn(PARCELER_FQNAME)
+private fun IrClass.parcelerSymbolByName(name: String): IrSimpleFunctionSymbol? =
+    functions.firstOrNull { function ->
+        function.name.asString() == name && function.overridesFunctionIn(PARCELER_FQNAME)
     }?.symbol
-}
 
-fun IrSimpleFunction.overridesFunctionIn(fqName: FqName): Boolean {
-    return parentClassOrNull?.fqNameWhenAvailable == fqName || allOverridden().any { it.parentClassOrNull?.fqNameWhenAvailable == fqName }
-}
+fun IrSimpleFunction.overridesFunctionIn(fqName: FqName): Boolean =
+    parentClassOrNull?.fqNameWhenAvailable == fqName || allOverridden().any { it.parentClassOrNull?.fqNameWhenAvailable == fqName }
 
-private fun IrBuilderWithScope.kClassReference(classType: IrType): IrClassReferenceImpl {
-    return IrClassReferenceImpl(
+private fun IrBuilderWithScope.kClassReference(classType: IrType): IrClassReferenceImpl =
+    IrClassReferenceImpl(
         startOffset, endOffset, context.irBuiltIns.kClassClass.starProjectedType, context.irBuiltIns.kClassClass, classType
     )
-}
 
-private fun AndroidIrBuilder.kClassToJavaClass(kClassReference: IrExpression): IrCall {
-    return irGet(androidSymbols.javaLangClass.starProjectedType, null, androidSymbols.kotlinKClassJava.owner.getter!!.symbol).apply {
+private fun AndroidIrBuilder.kClassToJavaClass(kClassReference: IrExpression): IrCall =
+    irGet(androidSymbols.javaLangClass.starProjectedType, null, androidSymbols.kotlinKClassJava.owner.getter!!.symbol).apply {
         extensionReceiver = kClassReference
     }
-}
 
 // Produce a static reference to the java class of the given type.
 fun AndroidIrBuilder.javaClassReference(classType: IrType): IrCall = kClassToJavaClass(kClassReference(classType))
 
-fun IrClass.isSubclassOfFqName(fqName: String): Boolean {
-    return fqNameWhenAvailable?.asString() == fqName || superTypes.any { it.erasedUpperBound.isSubclassOfFqName(fqName) }
-}
+fun IrClass.isSubclassOfFqName(fqName: String): Boolean =
+    fqNameWhenAvailable?.asString() == fqName || superTypes.any { it.erasedUpperBound.isSubclassOfFqName(fqName) }
 
 inline fun IrBlockBuilder.forUntil(upperBound: IrExpression, loopBody: IrBlockBuilder.(IrValueDeclaration) -> Unit) {
     val indexTemporary = irTemporary(irInt(0), isMutable = true)
