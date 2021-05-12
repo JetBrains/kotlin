@@ -68,11 +68,13 @@ import java.io.File
 @Suppress("LeakingThis")
 abstract class ComposeIrTransformTest : AbstractIrTransformTest() {
     open val liveLiteralsEnabled get() = false
+    open val liveLiteralsV2Enabled get() = false
     open val sourceInformationEnabled get() = true
     open val decoysEnabled get() = false
 
     private val extension = ComposeIrGenerationExtension(
         liveLiteralsEnabled,
+        liveLiteralsV2Enabled,
         sourceInformationEnabled,
         intrinsicRememberEnabled = true,
         decoysEnabled
