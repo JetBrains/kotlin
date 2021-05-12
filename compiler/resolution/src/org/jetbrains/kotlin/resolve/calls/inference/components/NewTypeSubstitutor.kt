@@ -54,8 +54,9 @@ interface NewTypeSubstitutor : TypeSubstitutorMarker {
             } else {
                 val lowerBound = substitute(type.lowerBound, keepAnnotation, runCapturedChecks)
                 val upperBound = substitute(type.upperBound, keepAnnotation, runCapturedChecks)
-                val enhancement =
-                    if (type is TypeWithEnhancement) substituteTypeEnhancement(type, keepAnnotation, runCapturedChecks) else null
+                val enhancement = if (type is TypeWithEnhancement) {
+                    substituteTypeEnhancement(type.enhancement, keepAnnotation, runCapturedChecks)
+                } else null
 
                 if (lowerBound == null && upperBound == null) {
                     null
