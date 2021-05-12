@@ -46,7 +46,9 @@ abstract class LibraryPathFilter {
         }
     }
 
-    class LibraryList(val libs: Set<Path>) : LibraryPathFilter() {
+    class LibraryList(libs: Set<Path>) : LibraryPathFilter() {
+        val libs: Set<Path> = libs.mapTo(mutableSetOf()) { it.normalize() }
+
         override fun accepts(path: Path?): Boolean {
             if (path == null) return false
             return libs.any { path.startsWith(it) }

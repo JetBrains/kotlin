@@ -169,6 +169,6 @@ class KotlinDeserializedJvmSymbolsProvider(
     }
 
     private fun String?.toPath(): Path? {
-        return this?.let { Paths.get(it) }
+        return this?.let { Paths.get(it).normalize() }
     }
 }
