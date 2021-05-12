@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.core
 
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
@@ -41,8 +42,10 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 
 interface ShortenReferences {
     companion object {
-        @JvmField
-        val DEFAULT: ShortenReferences = ShortenReferencesImpl()
+        val DEFAULT: ShortenReferences get() = EP_NAME.point.extensionList.singleOrNull() ?: ShortenReferencesImpl.DEFAULT
+
+        private val EP_NAME: ExtensionPointName<ShortenReferences> =
+            ExtensionPointName.create("org.jetbrains.kotlin.idea.core.shortenReferences")
     }
 
     fun process(

@@ -11,6 +11,9 @@
                     dynamic="true"/>
     <extensionPoint qualifiedName="org.jetbrains.kotlin.newFileHook"
                     interface="org.jetbrains.kotlin.idea.actions.NewKotlinFileHook"/>
+
+    <extensionPoint qualifiedName="org.jetbrains.kotlin.idea.core.shortenReferences"
+                      interface="org.jetbrains.kotlin.idea.core.ShortenReferences"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">

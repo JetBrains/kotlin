@@ -1,4 +1,9 @@
 <idea-plugin>
+
+  <extensions defaultExtensionNs="org.jetbrains.kotlin.idea.core">
+    <shortenReferences implementation="org.jetbrains.kotlin.idea.fir.ShortenReferencesByFirImpl"/>
+  </extensions>
+
   <extensions defaultExtensionNs="com.intellij">
 
     <projectService serviceInterface="org.jetbrains.kotlin.caches.resolve.KotlinCacheService"
