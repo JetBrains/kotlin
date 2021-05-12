@@ -200,6 +200,11 @@ public class ParcelizeIrBoxTestGenerated extends AbstractParcelizeIrBoxTest {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/kt41553_2.kt");
     }
 
+    @TestMetadata("kt46567.kt")
+    public void testKt46567() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/box/kt46567.kt");
+    }
+
     @TestMetadata("listKinds.kt")
     public void testListKinds() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/listKinds.kt");
@@ -258,6 +263,11 @@ public class ParcelizeIrBoxTestGenerated extends AbstractParcelizeIrBoxTest {
     @TestMetadata("newArray.kt")
     public void testNewArray() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/newArray.kt");
+    }
+
+    @TestMetadata("newArrayParceler.kt")
+    public void testNewArrayParceler() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/box/newArrayParceler.kt");
     }
 
     @TestMetadata("nullableTypes.kt")
