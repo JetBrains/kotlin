@@ -195,6 +195,7 @@ targetList.each { target ->
                 '-Xopt-in=kotlin.contracts.ExperimentalContracts',
                 '-Xopt-in=kotlin.ExperimentalMultiplatform',
                 '-Xopt-in=kotlin.native.internal.InternalForKotlinNative',
+                '-Xopt-in=kotlin.native.SymbolNameIsDeprecated',
                 '-Xallow-result-return-type',
                 *commonSrc.toList(),
                 *testAnnotationCommon.toList(),
