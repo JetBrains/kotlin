@@ -92,7 +92,27 @@ repositories {
     }
 }
 
-val generateCompilerVersion by tasks.registering(VersionGenerator::class) {
+/*
+ A special case for the build.number that doesn't have a number in it.
+ This means that this is a final release artifacts
+ */
+open class VersionGeneratorNullableBuild : VersionGenerator() {
+    override val buildNumber: String?
+        @Optional
+        @Input
+        get() {
+            val number = project.findProperty("build.number")?.toString()
+            val buildNumberSplit = number!!
+                .split("-".toRegex())
+                .toTypedArray() as Array<String>
+            if (buildNumberSplit[buildNumberSplit.size - 1].toIntOrNull() == null) {
+                return null
+            }
+            return number
+        }
+}
+
+val generateCompilerVersion by tasks.registering(VersionGeneratorNullableBuild::class) {
     kotlinNativeVersionInResources=true
     defaultVersionFileLocation()
 }
