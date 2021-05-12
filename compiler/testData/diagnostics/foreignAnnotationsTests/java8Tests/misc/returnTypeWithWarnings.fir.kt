@@ -4,6 +4,8 @@
 // MUTE_FOR_PSI_CLASS_FILES_READING
 
 // FILE: ReturnTypeWithWarnings.java
+// We've already had errors in source mode, so it's relevant only for binaries for now
+// INCLUDE_JAVA_AS_BINARY
 
 import org.jetbrains.annotations.*;
 
