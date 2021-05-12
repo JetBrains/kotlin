@@ -4952,6 +4952,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/enum/ordinal.kt");
         }
 
+        @TestMetadata("overloadedEnumValues.kt")
+        public void testOverloadedEnumValues() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/overloadedEnumValues.kt");
+        }
+
         @TestMetadata("refToThis.kt")
         public void testRefToThis() throws Exception {
             runTest("compiler/testData/codegen/box/enum/refToThis.kt");
