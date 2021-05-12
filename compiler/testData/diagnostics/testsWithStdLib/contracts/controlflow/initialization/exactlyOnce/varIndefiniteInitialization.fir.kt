@@ -46,6 +46,6 @@ fun funWithUnknownInvocations(block: () -> Unit) = block()
 
 fun nestedIndefiniteAssignment() {
     val x: Int
-    funWithUnknownInvocations { myRun { x = 42 } }
+    funWithUnknownInvocations { myRun { <!VAL_REASSIGNMENT!>x<!> = 42 } }
     <!UNINITIALIZED_VARIABLE!>x<!>.inc()
 }

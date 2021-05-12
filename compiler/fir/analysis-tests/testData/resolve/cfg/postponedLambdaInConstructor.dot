@@ -85,6 +85,7 @@ digraph postponedLambdaInConstructor_kt {
     23 -> {24};
     24 -> {25};
     25 -> {26};
+    26 -> {22} [color=green style=dashed];
 
     subgraph cluster_8 {
         color=red

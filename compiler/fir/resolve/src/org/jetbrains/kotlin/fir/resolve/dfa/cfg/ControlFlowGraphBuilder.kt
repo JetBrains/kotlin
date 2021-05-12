@@ -302,6 +302,8 @@ class ControlFlowGraphBuilder {
 
     private val EventOccurrencesRange?.hasBackEdge: Boolean
         get() = when (this) {
+            // no contract, hence the function may be called multiple times.
+            null -> true
             EventOccurrencesRange.AT_LEAST_ONCE, EventOccurrencesRange.UNKNOWN -> true
             else -> false
         }

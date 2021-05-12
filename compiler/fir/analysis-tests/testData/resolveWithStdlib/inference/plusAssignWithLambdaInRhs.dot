@@ -150,6 +150,7 @@ digraph plusAssignWithLambdaInRhs_kt {
     40 -> {41};
     41 -> {42};
     42 -> {43};
+    43 -> {36} [color=green style=dashed];
     44 -> {49 45};
     45 -> {46};
     46 -> {47};

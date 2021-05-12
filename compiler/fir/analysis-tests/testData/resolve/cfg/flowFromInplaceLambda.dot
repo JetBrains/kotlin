@@ -447,6 +447,7 @@ digraph flowFromInplaceLambda_kt {
     156 -> {157};
     157 -> {158};
     158 -> {159};
+    159 -> {152} [color=green style=dashed];
     160 -> {161};
     161 -> {162};
     162 -> {163};
@@ -455,6 +456,7 @@ digraph flowFromInplaceLambda_kt {
     165 -> {166};
     166 -> {167};
     167 -> {168};
+    168 -> {160} [color=green style=dashed];
 
     subgraph cluster_32 {
         color=red
@@ -586,6 +588,7 @@ digraph flowFromInplaceLambda_kt {
     206 -> {207};
     207 -> {208};
     208 -> {209};
+    209 -> {203} [color=green style=dashed];
     210 -> {211};
     211 -> {212};
     212 -> {213};

@@ -242,6 +242,7 @@ digraph delegateWithAnonymousObject_kt {
     30 -> {35 38 45 33} [color=green];
     30 -> {35 38 45 33} [style=dashed];
     31 -> {32};
+    32 -> {28} [color=green style=dashed];
     33 -> {34} [color=green];
 
 }

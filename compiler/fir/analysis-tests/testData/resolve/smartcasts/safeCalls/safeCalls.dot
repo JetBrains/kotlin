@@ -193,6 +193,7 @@ digraph safeCalls_kt {
     67 -> {68};
     68 -> {69};
     69 -> {70};
+    70 -> {65} [color=green style=dashed];
 
     subgraph cluster_16 {
         color=red

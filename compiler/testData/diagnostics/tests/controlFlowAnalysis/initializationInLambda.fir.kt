@@ -17,7 +17,7 @@ fun foo() {
 fun bar() {
     val x: Int
     exec {
-        x = 13
+        <!VAL_REASSIGNMENT!>x<!> = 13
     }
 }
 
@@ -60,7 +60,7 @@ class Your {
     val y = if (true) {
         val xx: Int
         exec {
-            xx = 42
+            <!VAL_REASSIGNMENT!>xx<!> = 42
         }
         24
     }
@@ -70,7 +70,7 @@ class Your {
 val z = if (true) {
     val xx: Int
     exec {
-        xx = 24
+        <!VAL_REASSIGNMENT!>xx<!> = 24
     }
     42
 }

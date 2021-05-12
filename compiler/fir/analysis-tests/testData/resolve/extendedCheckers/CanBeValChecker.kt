@@ -153,7 +153,7 @@ fun lambda() {
 }
 
 fun lambdaInitialization() {
-    <!CAN_BE_VAL!>var<!> <!VARIABLE_NEVER_READ!>a<!>: Int
+    var <!VARIABLE_NEVER_READ!>a<!>: Int
 
     run {
         <!ASSIGNED_VALUE_IS_NEVER_READ!>a<!> = 20

@@ -491,5 +491,6 @@ digraph returns_kt {
     172 -> {173};
     173 -> {174};
     174 -> {175};
+    175 -> {170} [color=green style=dashed];
 
 }
