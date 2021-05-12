@@ -543,7 +543,7 @@ public class ForeignAnnotationsCompiledJavaWithPsiClassReadingTestGenerated exte
     public class Java8Tests {
         @Test
         public void testAllFilesPresentInJava8Tests() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests"), Pattern.compile("^(.+)\\.kt$"), null, true, "jspecify", "typeEnhancement/onCompiled");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -562,6 +562,276 @@ public class ForeignAnnotationsCompiledJavaWithPsiClassReadingTestGenerated exte
         @TestMetadata("typeUseOnObject.kt")
         public void testTypeUseOnObject() throws Exception {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/typeUseOnObject.kt");
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Jspecify {
+            @Test
+            public void testAllFilesPresentInJspecify() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode")
+            @TestDataPath("$PROJECT_ROOT")
+            public class StrictMode {
+                @Test
+                public void testAllFilesPresentInStrictMode() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                }
+
+                @Test
+                @TestMetadata("AnnotatedBoundsOfWildcard.kt")
+                public void testAnnotatedBoundsOfWildcard() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/AnnotatedBoundsOfWildcard.kt");
+                }
+
+                @Test
+                @TestMetadata("AnnotatedBoundsOfWildcard.fir.kt")
+                public void testAnnotatedBoundsOfWildcard_fir() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/AnnotatedBoundsOfWildcard.fir.kt");
+                }
+
+                @Test
+                @TestMetadata("Defaults.kt")
+                public void testDefaults() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/Defaults.kt");
+                }
+
+                @Test
+                @TestMetadata("Defaults.fir.kt")
+                public void testDefaults_fir() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/Defaults.fir.kt");
+                }
+
+                @Test
+                @TestMetadata("IgnoreAnnotations.kt")
+                public void testIgnoreAnnotations() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/IgnoreAnnotations.kt");
+                }
+
+                @Test
+                @TestMetadata("IgnoreAnnotations.fir.kt")
+                public void testIgnoreAnnotations_fir() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/IgnoreAnnotations.fir.kt");
+                }
+
+                @Test
+                @TestMetadata("NonPlatformTypeParameter.kt")
+                public void testNonPlatformTypeParameter() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NonPlatformTypeParameter.kt");
+                }
+
+                @Test
+                @TestMetadata("NonPlatformTypeParameter.fir.kt")
+                public void testNonPlatformTypeParameter_fir() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NonPlatformTypeParameter.fir.kt");
+                }
+
+                @Test
+                @TestMetadata("NullnessUnspecifiedTypeParameter.kt")
+                public void testNullnessUnspecifiedTypeParameter() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullnessUnspecifiedTypeParameter.kt");
+                }
+
+                @Test
+                @TestMetadata("NullnessUnspecifiedTypeParameter.fir.kt")
+                public void testNullnessUnspecifiedTypeParameter_fir() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullnessUnspecifiedTypeParameter.fir.kt");
+                }
+
+                @Test
+                @TestMetadata("SelfType.kt")
+                public void testSelfType() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/SelfType.kt");
+                }
+
+                @Test
+                @TestMetadata("SelfType.fir.kt")
+                public void testSelfType_fir() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/SelfType.fir.kt");
+                }
+
+                @Test
+                @TestMetadata("Simple.kt")
+                public void testSimple() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/Simple.kt");
+                }
+
+                @Test
+                @TestMetadata("Simple.fir.kt")
+                public void testSimple_fir() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/Simple.fir.kt");
+                }
+
+                @Test
+                @TestMetadata("TypeArgumentsFromParameterBounds.kt")
+                public void testTypeArgumentsFromParameterBounds() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/TypeArgumentsFromParameterBounds.kt");
+                }
+
+                @Test
+                @TestMetadata("TypeArgumentsFromParameterBounds.fir.kt")
+                public void testTypeArgumentsFromParameterBounds_fir() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/TypeArgumentsFromParameterBounds.fir.kt");
+                }
+
+                @Test
+                @TestMetadata("TypeParameterBounds.kt")
+                public void testTypeParameterBounds() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/TypeParameterBounds.kt");
+                }
+
+                @Test
+                @TestMetadata("TypeParameterBounds.fir.kt")
+                public void testTypeParameterBounds_fir() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/TypeParameterBounds.fir.kt");
+                }
+
+                @Test
+                @TestMetadata("WildcardsWithDefault.kt")
+                public void testWildcardsWithDefault() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/WildcardsWithDefault.kt");
+                }
+
+                @Test
+                @TestMetadata("WildcardsWithDefault.fir.kt")
+                public void testWildcardsWithDefault_fir() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/WildcardsWithDefault.fir.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode")
+            @TestDataPath("$PROJECT_ROOT")
+            public class WarnMode {
+                @Test
+                public void testAllFilesPresentInWarnMode() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                }
+
+                @Test
+                @TestMetadata("AnnotatedBoundsOfWildcard.kt")
+                public void testAnnotatedBoundsOfWildcard() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/AnnotatedBoundsOfWildcard.kt");
+                }
+
+                @Test
+                @TestMetadata("AnnotatedBoundsOfWildcard.fir.kt")
+                public void testAnnotatedBoundsOfWildcard_fir() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/AnnotatedBoundsOfWildcard.fir.kt");
+                }
+
+                @Test
+                @TestMetadata("Defaults.kt")
+                public void testDefaults() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/Defaults.kt");
+                }
+
+                @Test
+                @TestMetadata("Defaults.fir.kt")
+                public void testDefaults_fir() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/Defaults.fir.kt");
+                }
+
+                @Test
+                @TestMetadata("IgnoreAnnotations.kt")
+                public void testIgnoreAnnotations() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/IgnoreAnnotations.kt");
+                }
+
+                @Test
+                @TestMetadata("IgnoreAnnotations.fir.kt")
+                public void testIgnoreAnnotations_fir() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/IgnoreAnnotations.fir.kt");
+                }
+
+                @Test
+                @TestMetadata("NonPlatformTypeParameter.kt")
+                public void testNonPlatformTypeParameter() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NonPlatformTypeParameter.kt");
+                }
+
+                @Test
+                @TestMetadata("NonPlatformTypeParameter.fir.kt")
+                public void testNonPlatformTypeParameter_fir() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NonPlatformTypeParameter.fir.kt");
+                }
+
+                @Test
+                @TestMetadata("NullnessUnspecifiedTypeParameter.kt")
+                public void testNullnessUnspecifiedTypeParameter() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullnessUnspecifiedTypeParameter.kt");
+                }
+
+                @Test
+                @TestMetadata("NullnessUnspecifiedTypeParameter.fir.kt")
+                public void testNullnessUnspecifiedTypeParameter_fir() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullnessUnspecifiedTypeParameter.fir.kt");
+                }
+
+                @Test
+                @TestMetadata("SelfType.kt")
+                public void testSelfType() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/SelfType.kt");
+                }
+
+                @Test
+                @TestMetadata("SelfType.fir.kt")
+                public void testSelfType_fir() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/SelfType.fir.kt");
+                }
+
+                @Test
+                @TestMetadata("Simple.kt")
+                public void testSimple() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/Simple.kt");
+                }
+
+                @Test
+                @TestMetadata("Simple.fir.kt")
+                public void testSimple_fir() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/Simple.fir.kt");
+                }
+
+                @Test
+                @TestMetadata("TypeArgumentsFromParameterBounds.kt")
+                public void testTypeArgumentsFromParameterBounds() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/TypeArgumentsFromParameterBounds.kt");
+                }
+
+                @Test
+                @TestMetadata("TypeArgumentsFromParameterBounds.fir.kt")
+                public void testTypeArgumentsFromParameterBounds_fir() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/TypeArgumentsFromParameterBounds.fir.kt");
+                }
+
+                @Test
+                @TestMetadata("TypeParameterBounds.kt")
+                public void testTypeParameterBounds() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/TypeParameterBounds.kt");
+                }
+
+                @Test
+                @TestMetadata("TypeParameterBounds.fir.kt")
+                public void testTypeParameterBounds_fir() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/TypeParameterBounds.fir.kt");
+                }
+
+                @Test
+                @TestMetadata("WildcardsWithDefault.kt")
+                public void testWildcardsWithDefault() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/WildcardsWithDefault.kt");
+                }
+
+                @Test
+                @TestMetadata("WildcardsWithDefault.fir.kt")
+                public void testWildcardsWithDefault_fir() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/WildcardsWithDefault.fir.kt");
+                }
+            }
         }
 
         @Nested
@@ -605,106 +875,168 @@ public class ForeignAnnotationsCompiledJavaWithPsiClassReadingTestGenerated exte
         }
 
         @Nested
-        @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/typeEnhancement")
+        @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc")
         @TestDataPath("$PROJECT_ROOT")
-        public class TypeEnhancement {
+        public class Misc {
             @Test
-            public void testAllFilesPresentInTypeEnhancement() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/typeEnhancement"), Pattern.compile("^(.+)\\.kt$"), null, true, "onCompiled");
+            public void testAllFilesPresentInMisc() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
-            @Nested
-            @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/typeEnhancement/onSources")
-            @TestDataPath("$PROJECT_ROOT")
-            public class OnSources {
-                @Test
-                public void testAllFilesPresentInOnSources() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/typeEnhancement/onSources"), Pattern.compile("^(.+)\\.kt$"), null, true);
-                }
+            @Test
+            @TestMetadata("annotatedTypeArguments.kt")
+            public void testAnnotatedTypeArguments() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/annotatedTypeArguments.kt");
+            }
 
-                @Test
-                @TestMetadata("annotatedTypeArguments.kt")
-                public void testAnnotatedTypeArguments() throws Exception {
-                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/typeEnhancement/onSources/annotatedTypeArguments.kt");
-                }
+            @Test
+            @TestMetadata("annotatedTypeArguments.fir.kt")
+            public void testAnnotatedTypeArguments_fir() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/annotatedTypeArguments.fir.kt");
+            }
 
-                @Test
-                @TestMetadata("annotatedTypeArguments.fir.kt")
-                public void testAnnotatedTypeArguments_fir() throws Exception {
-                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/typeEnhancement/onSources/annotatedTypeArguments.fir.kt");
-                }
+            @Test
+            @TestMetadata("classTypeParameterBound.kt")
+            public void testClassTypeParameterBound() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/classTypeParameterBound.kt");
+            }
 
-                @Test
-                @TestMetadata("methodWithTypeParameter.kt")
-                public void testMethodWithTypeParameter() throws Exception {
-                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/typeEnhancement/onSources/methodWithTypeParameter.kt");
-                }
+            @Test
+            @TestMetadata("classTypeParameterBoundWithWarnings.kt")
+            public void testClassTypeParameterBoundWithWarnings() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/classTypeParameterBoundWithWarnings.kt");
+            }
 
-                @Test
-                @TestMetadata("methodWithTypeParameter.fir.kt")
-                public void testMethodWithTypeParameter_fir() throws Exception {
-                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/typeEnhancement/onSources/methodWithTypeParameter.fir.kt");
-                }
+            @Test
+            @TestMetadata("classTypeParameterBoundWithWarnings.fir.kt")
+            public void testClassTypeParameterBoundWithWarnings_fir() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/classTypeParameterBoundWithWarnings.fir.kt");
+            }
 
-                @Test
-                @TestMetadata("notNullVarargsOverrides.kt")
-                public void testNotNullVarargsOverrides() throws Exception {
-                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/typeEnhancement/onSources/notNullVarargsOverrides.kt");
-                }
+            @Test
+            @TestMetadata("classTypeParameterBound.fir.kt")
+            public void testClassTypeParameterBound_fir() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/classTypeParameterBound.fir.kt");
+            }
 
-                @Test
-                @TestMetadata("notNullVarargsOverrides.fir.kt")
-                public void testNotNullVarargsOverrides_fir() throws Exception {
-                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/typeEnhancement/onSources/notNullVarargsOverrides.fir.kt");
-                }
+            @Test
+            @TestMetadata("methodWithTypeParameter.kt")
+            public void testMethodWithTypeParameter() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/methodWithTypeParameter.kt");
+            }
 
-                @Test
-                @TestMetadata("nullableVarargsOverrides.kt")
-                public void testNullableVarargsOverrides() throws Exception {
-                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/typeEnhancement/onSources/nullableVarargsOverrides.kt");
-                }
+            @Test
+            @TestMetadata("methodWithTypeParameter.fir.kt")
+            public void testMethodWithTypeParameter_fir() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/methodWithTypeParameter.fir.kt");
+            }
 
-                @Test
-                @TestMetadata("nullableVarargsOverrides.fir.kt")
-                public void testNullableVarargsOverrides_fir() throws Exception {
-                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/typeEnhancement/onSources/nullableVarargsOverrides.fir.kt");
-                }
+            @Test
+            @TestMetadata("notNullVarargsOverrides.kt")
+            public void testNotNullVarargsOverrides() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/notNullVarargsOverrides.kt");
+            }
 
-                @Test
-                @TestMetadata("returnTypeDifferentConstructor.kt")
-                public void testReturnTypeDifferentConstructor() throws Exception {
-                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/typeEnhancement/onSources/returnTypeDifferentConstructor.kt");
-                }
+            @Test
+            @TestMetadata("notNullVarargsOverrides.fir.kt")
+            public void testNotNullVarargsOverrides_fir() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/notNullVarargsOverrides.fir.kt");
+            }
 
-                @Test
-                @TestMetadata("returnTypeDifferentConstructor.fir.kt")
-                public void testReturnTypeDifferentConstructor_fir() throws Exception {
-                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/typeEnhancement/onSources/returnTypeDifferentConstructor.fir.kt");
-                }
+            @Test
+            @TestMetadata("nullableVarargsOverrides.kt")
+            public void testNullableVarargsOverrides() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/nullableVarargsOverrides.kt");
+            }
 
-                @Test
-                @TestMetadata("returnTypeOverrideInKotlin.kt")
-                public void testReturnTypeOverrideInKotlin() throws Exception {
-                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/typeEnhancement/onSources/returnTypeOverrideInKotlin.kt");
-                }
+            @Test
+            @TestMetadata("nullableVarargsOverrides.fir.kt")
+            public void testNullableVarargsOverrides_fir() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/nullableVarargsOverrides.fir.kt");
+            }
 
-                @Test
-                @TestMetadata("returnTypeOverrideInKotlin.fir.kt")
-                public void testReturnTypeOverrideInKotlin_fir() throws Exception {
-                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/typeEnhancement/onSources/returnTypeOverrideInKotlin.fir.kt");
-                }
+            @Test
+            @TestMetadata("returnType.kt")
+            public void testReturnType() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/returnType.kt");
+            }
 
-                @Test
-                @TestMetadata("simple.kt")
-                public void testSimple() throws Exception {
-                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/typeEnhancement/onSources/simple.kt");
-                }
+            @Test
+            @TestMetadata("returnTypeDifferentConstructor.kt")
+            public void testReturnTypeDifferentConstructor() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/returnTypeDifferentConstructor.kt");
+            }
 
-                @Test
-                @TestMetadata("simple.fir.kt")
-                public void testSimple_fir() throws Exception {
-                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/typeEnhancement/onSources/simple.fir.kt");
-                }
+            @Test
+            @TestMetadata("returnTypeDifferentConstructor.fir.kt")
+            public void testReturnTypeDifferentConstructor_fir() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/returnTypeDifferentConstructor.fir.kt");
+            }
+
+            @Test
+            @TestMetadata("returnTypeOverrideInKotlin.kt")
+            public void testReturnTypeOverrideInKotlin() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/returnTypeOverrideInKotlin.kt");
+            }
+
+            @Test
+            @TestMetadata("returnTypeOverrideInKotlin.fir.kt")
+            public void testReturnTypeOverrideInKotlin_fir() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/returnTypeOverrideInKotlin.fir.kt");
+            }
+
+            @Test
+            @TestMetadata("returnTypeWithWarnings.kt")
+            public void testReturnTypeWithWarnings() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/returnTypeWithWarnings.kt");
+            }
+
+            @Test
+            @TestMetadata("returnTypeWithWarnings.fir.kt")
+            public void testReturnTypeWithWarnings_fir() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/returnTypeWithWarnings.fir.kt");
+            }
+
+            @Test
+            @TestMetadata("returnType.fir.kt")
+            public void testReturnType_fir() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/returnType.fir.kt");
+            }
+
+            @Test
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/simple.kt");
+            }
+
+            @Test
+            @TestMetadata("simple.fir.kt")
+            public void testSimple_fir() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/simple.fir.kt");
+            }
+
+            @Test
+            @TestMetadata("valueParameter.kt")
+            public void testValueParameter() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/valueParameter.kt");
+            }
+
+            @Test
+            @TestMetadata("valueParameterWithWarnings.kt")
+            public void testValueParameterWithWarnings() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/valueParameterWithWarnings.kt");
+            }
+
+            @Test
+            @TestMetadata("valueParameterWithWarnings.fir.kt")
+            public void testValueParameterWithWarnings_fir() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/valueParameterWithWarnings.fir.kt");
+            }
+
+            @Test
+            @TestMetadata("valueParameter.fir.kt")
+            public void testValueParameter_fir() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/valueParameter.fir.kt");
             }
         }
     }

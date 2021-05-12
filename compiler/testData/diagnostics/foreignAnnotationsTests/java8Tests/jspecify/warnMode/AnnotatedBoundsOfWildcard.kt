@@ -1,3 +1,5 @@
+// MUTE_FOR_PSI_CLASS_FILES_READING
+
 // FILE: AnnotatedBoundsOfWildcard.java
 import org.jspecify.nullness.*;
 

@@ -1,9 +1,9 @@
 // !LANGUAGE: +TypeEnhancementImprovementsInStrictMode +ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
 // !DIAGNOSTICS: -UNUSED_PARAMETER -CAST_NEVER_SUCCEEDS
 // SKIP_TXT
+// MUTE_FOR_PSI_CLASS_FILES_READING
 
 // FILE: ValueParameter.java
-// INCLUDE_JAVA_AS_BINARY
 
 import org.jetbrains.annotations.*;
 
