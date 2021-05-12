@@ -38,10 +38,10 @@ fun main(
     // jspecify_nullness_mismatch
     a.bar(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>aNotNullNullNull<!>)
 
-    // jspecify_nullness_mismatch{mute}
-    b.bar(aNotNullNotNullNotNull)
-    // jspecify_nullness_mismatch{mute}
-    b.bar(aNotNullNotNullNull)
+    // jspecify_nullness_mismatch
+    b.bar(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>aNotNullNotNullNotNull<!>)
+    // jspecify_nullness_mismatch
+    b.bar(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>aNotNullNotNullNull<!>)
     b.bar(aNotNullNullNotNull)
     b.bar(aNotNullNullNull)
 }

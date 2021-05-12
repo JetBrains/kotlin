@@ -411,23 +411,24 @@ class SignatureEnhancement(
                     }
 
             val boundsFromTypeParameterForArgument = typeParameterForArgument?.boundsNullability() ?: return result
-            if (result == null) return NullabilityQualifierWithMigrationStatus(boundsFromTypeParameterForArgument)
+            if (result == null) return boundsFromTypeParameterForArgument
 
-            return NullabilityQualifierWithMigrationStatus(
-                mostSpecific(boundsFromTypeParameterForArgument, result.qualifier)
-            )
+            return mostSpecific(boundsFromTypeParameterForArgument, result)
         }
 
-        private fun mostSpecific(a: NullabilityQualifier, b: NullabilityQualifier): NullabilityQualifier {
-            if (a == NullabilityQualifier.FORCE_FLEXIBILITY) return b
-            if (b == NullabilityQualifier.FORCE_FLEXIBILITY) return a
-            if (a == NullabilityQualifier.NULLABLE) return b
-            if (b == NullabilityQualifier.NULLABLE) return a
-            assert(a == b && a == NullabilityQualifier.NOT_NULL) {
+        private fun mostSpecific(
+            a: NullabilityQualifierWithMigrationStatus,
+            b: NullabilityQualifierWithMigrationStatus
+        ): NullabilityQualifierWithMigrationStatus {
+            if (a.qualifier == NullabilityQualifier.FORCE_FLEXIBILITY) return b
+            if (b.qualifier == NullabilityQualifier.FORCE_FLEXIBILITY) return a
+            if (a.qualifier == NullabilityQualifier.NULLABLE) return b
+            if (b.qualifier == NullabilityQualifier.NULLABLE) return a
+            assert(a.qualifier == b.qualifier && a.qualifier == NullabilityQualifier.NOT_NULL) {
                 "Expected everything is NOT_NULL, but $a and $b are found"
             }
 
-            return NullabilityQualifier.NOT_NULL
+            return NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL)
         }
 
         private fun KotlinType.nullabilityInfoBoundsForTypeParameterUsage(): Pair<NullabilityQualifierWithMigrationStatus?, Boolean> {
@@ -440,20 +441,31 @@ class SignatureEnhancement(
             //      void foo(T t); // should be loaded as "fun foo(t: T)" but not as "fun foo(t: T?)"
             // }
             return Pair(
-                NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL),
-                typeParameterBoundsNullability == NullabilityQualifier.NOT_NULL
+                NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL, typeParameterBoundsNullability.isForWarningOnly),
+                typeParameterBoundsNullability.qualifier == NullabilityQualifier.NOT_NULL
             )
         }
 
-        private fun TypeParameterDescriptor.boundsNullability(): NullabilityQualifier? {
+        private fun TypeParameterDescriptor.boundsNullability(): NullabilityQualifierWithMigrationStatus? {
             // Do not use bounds from Kotlin-defined type parameters
-            if (this !is LazyJavaTypeParameterDescriptor) return null
-            return when {
-                upperBounds.all(KotlinType::isError) -> null
-                upperBounds.all(KotlinType::isNullabilityFlexible) -> null
-                upperBounds.any { !it.isNullable() } -> NullabilityQualifier.NOT_NULL
-                else -> NullabilityQualifier.NULLABLE
+            if (this !is LazyJavaTypeParameterDescriptor || upperBounds.all(KotlinType::isError)) return null
+
+            if (upperBounds.all(KotlinType::isNullabilityFlexible)) {
+                if (upperBounds.any { it is FlexibleTypeWithEnhancement && !it.enhancement.isNullable() }) {
+                    return NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL, isForWarningOnly = true)
+                }
+
+                if (upperBounds.any { it is FlexibleTypeWithEnhancement && it.enhancement.isNullable() }) {
+                    return NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE, isForWarningOnly = true)
+                }
+
+                return null
             }
+
+            val resultingQualifier =
+                if (upperBounds.any { !it.isNullable() }) NullabilityQualifier.NOT_NULL else NullabilityQualifier.NULLABLE
+
+            return NullabilityQualifierWithMigrationStatus(resultingQualifier)
         }
 
         private fun Annotations.extractNullability(
