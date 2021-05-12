@@ -14,4 +14,3 @@ fun foo() {
        3 -> { /* some other code */ }
    }
 }
-/* IGNORE_FIR */
