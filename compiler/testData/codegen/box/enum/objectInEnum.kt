@@ -1,3 +1,4 @@
+// SKIP_DCE_DRIVEN
 // !LANGUAGE: -NestedClassesInEnumEntryShouldBeInner
 // IGNORE_BACKEND: NATIVE
 

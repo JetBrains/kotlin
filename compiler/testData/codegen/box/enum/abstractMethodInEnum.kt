@@ -1,3 +1,4 @@
+// SKIP_DCE_DRIVEN
 enum class A() {
     ENTRY(){ override fun t() = "OK"};
 

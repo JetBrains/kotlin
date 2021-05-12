@@ -1,3 +1,4 @@
+// SKIP_DCE_DRIVEN
 // KT-44050
 
 enum class Enum {
