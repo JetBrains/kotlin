@@ -21,8 +21,7 @@ import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetEnumValueImpl
-import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.types.getClass
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -113,7 +112,14 @@ private class MappedEnumWhenLowering(context: CommonBackendContext) : EnumWhenLo
         for ((enum, mappingAndField) in state!!.mappings) {
             val (mapping, field) = mappingAndField
             val builder = context.createIrBuilder(state!!.mappingsClass.symbol)
-            val enumValues = enum.functions.single { it.name.toString() == "values" }
+            val enumValues = enum.functions.single {
+                it.name.toString() == "values"
+                        && it.dispatchReceiverParameter == null
+                        && it.extensionReceiverParameter == null
+                        && it.valueParameters.isEmpty()
+                        && it.returnType.isBoxedArray
+                        && it.returnType.getArrayElementType(context.irBuiltIns).classOrNull == enum.symbol
+            }
             field.initializer = builder.irExprBody(builder.irBlock {
                 val enumSize = irCall(refArraySize).apply { dispatchReceiver = irCall(enumValues) }
                 val result = irTemporary(irCall(intArrayConstructor).apply { putValueArgument(0, enumSize) })
