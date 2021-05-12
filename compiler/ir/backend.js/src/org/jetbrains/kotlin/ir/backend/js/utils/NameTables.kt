@@ -33,7 +33,12 @@ import kotlin.math.abs
 private fun <T> mapToKey(declaration: T): String {
     return with(JsManglerIr) {
         if (declaration is IrDeclaration) {
-            declaration.hashedMangle().toString()
+            try {
+                declaration.hashedMangle().toString()
+            } catch (e: Throwable) {
+                // FIXME: We can't mangle some local declarations. But
+                "wrong_key"
+            }
         } else if (declaration is String) {
             declaration.hashMangle.toString()
         } else {
