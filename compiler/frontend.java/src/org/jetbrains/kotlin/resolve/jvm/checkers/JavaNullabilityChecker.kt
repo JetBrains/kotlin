@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.UpperBoundChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
+import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
@@ -48,9 +49,7 @@ class JavaNullabilityChecker(val upperBoundChecker: UpperBoundChecker) : Additio
         expressionTypeWithSmartCast: KotlinType,
         c: ResolutionContext<*>
     ) {
-        if (expressionType is AbbreviatedType) {
-            upperBoundChecker.checkBoundsOfExpandedTypeAlias(expressionType.expandedType, expression, c.trace)
-        }
+        checkTypeParameterBounds(expression, expressionType, c)
 
         val dataFlowValue by lazy(LazyThreadSafetyMode.NONE) {
             c.dataFlowValueFactory.createDataFlowValue(expression, expressionType, c)
@@ -119,6 +118,29 @@ class JavaNullabilityChecker(val upperBoundChecker: UpperBoundChecker) : Additio
                         }
                     }
                 }
+        }
+    }
+
+    private fun checkTypeParameterBounds(
+        expression: KtExpression,
+        expressionType: KotlinType,
+        c: ResolutionContext<*>
+    ) {
+        if (expressionType is AbbreviatedType) {
+            upperBoundChecker.checkBoundsOfExpandedTypeAlias(expressionType.expandedType, expression, c.trace)
+        }
+
+        if (c !is BasicCallResolutionContext || upperBoundChecker !is WarningAwareUpperBoundChecker) return
+
+        val resolvedCall = c.trace.bindingContext[BindingContext.RESOLVED_CALL, c.call] ?: return
+
+        for ((typeParameter, typeArgument) in resolvedCall.typeArguments) {
+            // continue if we don't have explicit type arguments
+            val typeReference = c.call.typeArguments.getOrNull(typeParameter.index)?.typeReference ?: continue
+
+            upperBoundChecker.checkBounds(
+                typeReference, typeArgument, typeParameter, TypeSubstitutor.create(typeArgument), c.trace, withOnlyCheckForWarning = true
+            )
         }
     }
 
