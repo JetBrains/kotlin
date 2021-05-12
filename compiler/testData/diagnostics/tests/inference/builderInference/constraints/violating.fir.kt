@@ -1,4 +1,4 @@
-// !LANGUAGE: +StableBuilderInference
+// !LANGUAGE: +UnrestrictedBuilderInference
 // WITH_RUNTIME
 
 interface A {

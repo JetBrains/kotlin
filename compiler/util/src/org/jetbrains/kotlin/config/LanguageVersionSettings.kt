@@ -206,7 +206,7 @@ enum class LanguageFeature(
     AbstractClassMemberNotImplementedWithIntermediateAbstractClass(KOTLIN_1_6, kind = BUG_FIX),
 
     SuspendFunctionAsSupertype(KOTLIN_1_6),
-    StableBuilderInference(KOTLIN_1_6),
+    UnrestrictedBuilderInference(KOTLIN_1_6),
     ProperTypeInferenceConstraintsProcessing(KOTLIN_1_6, kind = BUG_FIX),
 
     // Temporarily disabled, see KT-27084/KT-22379

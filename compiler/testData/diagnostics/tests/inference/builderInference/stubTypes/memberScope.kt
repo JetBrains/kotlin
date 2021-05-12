@@ -1,4 +1,4 @@
-// !LANGUAGE: +StableBuilderInference
+// !LANGUAGE: +UnrestrictedBuilderInference
 // !DIAGNOSTICS: -DEPRECATION -EXPERIMENTAL_IS_NOT_ENABLED
 // WITH_RUNTIME
 

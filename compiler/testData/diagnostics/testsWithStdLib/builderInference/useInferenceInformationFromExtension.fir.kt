@@ -1,4 +1,4 @@
-// !LANGUAGE: +StableBuilderInference
+// !LANGUAGE: +UnrestrictedBuilderInference
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // !WITH_NEW_INFERENCE
 
