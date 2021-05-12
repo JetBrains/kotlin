@@ -888,16 +888,22 @@ class GeneralNativeIT : BaseGradleIT() {
                 assertNotContains(NO_NATIVE_STDLIB_PROPERTY_WARNING)
             }
 
-            build("tasks", "-Pkotlin.native.version=1.3-eap-10779") {
+            build("tasks", "-Pkotlin.native.version=1.5.20-dev-5613") {
                 assertSuccessful()
-                assertContainsRegex("Kotlin/Native distribution: .*kotlin-native-(macos|linux|windows)-1\\.3-eap-10779".toRegex())
+                assertContainsRegex(
+                    "Kotlin/Native distribution: .*kotlin-native-prebuilt-(macos|linux|windows)-1\\.5\\.20-dev-5613"
+                        .toRegex()
+                )
                 assertNotContains("Project property 'org.jetbrains.kotlin.native.version' is deprecated")
             }
 
             // Deprecated property
-            build("tasks", "-Porg.jetbrains.kotlin.native.version=1.3-eap-10779") {
+            build("tasks", "-Porg.jetbrains.kotlin.native.version=1.5.20-dev-5613") {
                 assertSuccessful()
-                assertContainsRegex("Kotlin/Native distribution: .*kotlin-native-(macos|linux|windows)-1\\.3-eap-10779".toRegex())
+                assertContainsRegex(
+                    "Kotlin/Native distribution: .*kotlin-native-prebuilt-(macos|linux|windows)-1\\.5\\.20-dev-5613"
+                        .toRegex()
+                )
                 assertContains("Project property 'org.jetbrains.kotlin.native.version' is deprecated")
             }
         }
