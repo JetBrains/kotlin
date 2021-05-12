@@ -264,10 +264,12 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
             getFields(cursor.type).filter { library.language != Language.CPP || it.isCxxPublic }.map { fieldCursor ->
                 // clang_Cursor_isAnonymous is always false for a fieldCursor. Use declaration cursor
                 val declCursor = clang_getTypeDeclaration(fieldCursor.type)
-                val isAnonymous = clang_Cursor_isAnonymous(declCursor) == 1
+
+                // Behavior of clang_Cursor_isAnonymous is changing starting from LLVM 8.
+                // Use lately introduced clang_Cursor_isAnonymousRecordDecl when available (LLVM 9)
+                val isAnonymousRecordType = (fieldCursor.type.kind == CXType_Record) && (clang_Cursor_isAnonymous(declCursor) == 1)
                 when {
-                    isAnonymous -> {
-                        assert(fieldCursor.type.kind == CXType_Record)
+                    isAnonymousRecordType -> {
                         // TODO: clang_Cursor_getOffsetOfField is OK for anonymous, but only for the 1st level of such nesting
                         AnonymousInnerRecord(
                                 createStructDef(clang_getCursorDefinition(declCursor), structType))
