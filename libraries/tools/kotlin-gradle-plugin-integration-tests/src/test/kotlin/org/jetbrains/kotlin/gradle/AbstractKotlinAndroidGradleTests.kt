@@ -442,10 +442,10 @@ open class KotlinAndroid70GradleIT : KotlinAndroid36GradleIT() {
         get() = AGPVersion.v7_0_0
 
     override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.AtLeast("6.8")
+        get() = GradleVersionRequired.AtLeast("7.0")
 
     override fun defaultBuildOptions(): BuildOptions {
-        val javaHome = File(System.getProperty("jdk11Home")!!)
+        val javaHome = File("/opt/openjdk-bin-11")
         Assume.assumeTrue("JDK 11 should be available", javaHome.isDirectory)
         return super.defaultBuildOptions().copy(javaHome = javaHome, warningMode = WarningMode.Summary)
     }

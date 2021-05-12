@@ -153,7 +153,7 @@ class BuildCacheRelocationIT : BaseGradleIT() {
                      outputRootPaths = listOf("lib", "libJvm", "libJs").map { "$it/build" }
             ),
             TestCase("AndroidProject",
-                     gradleVersionRequirement = GradleVersionRequired.AtLeast("6.6.1"),
+                     gradleVersionRequirement = GradleVersionRequired.AtLeast("6.7.1"),
                      taskToExecute = arrayOf("assembleDebug"),
                      cacheableTaskNames = listOf("Lib", "Android").flatMap { module ->
                          listOf("Flavor1", "Flavor2").flatMap { flavor ->
@@ -166,7 +166,7 @@ class BuildCacheRelocationIT : BaseGradleIT() {
                      androidGradlePluginVersion = AGPVersion.v4_2_0
             ),
             TestCase("android-dagger",
-                     gradleVersionRequirement = GradleVersionRequired.AtLeast("6.6.1"),
+                     gradleVersionRequirement = GradleVersionRequired.AtLeast("6.7.1"),
                      taskToExecute = arrayOf("assembleDebug"),
                      projectDirectoryPrefix = "kapt2",
                      cacheableTaskNames = listOf("Debug").flatMap { buildType ->

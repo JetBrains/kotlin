@@ -76,7 +76,7 @@ class Kapt3Android70IT : Kapt3AndroidIT() {
         get() = AGPVersion.v7_0_0
 
     override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.AtLeast("6.8")
+        get() = GradleVersionRequired.AtLeast("7.0")
 
     override fun defaultBuildOptions(): BuildOptions {
         val javaHome = File(System.getProperty("jdk11Home")!!)
@@ -95,11 +95,48 @@ class Kapt3Android70IT : Kapt3AndroidIT() {
 
     @Ignore("KT-44350")
     override fun testButterKnife() = Unit
+
+    @Test
+    override fun testInterProjectIC() {
+        with(Project("android-inter-project-ic", directoryPrefix = "kapt2")) {
+            setupWorkingDir()
+            // includeCompileClasspath was removed in AGP 7
+            projectDir.resolve("app").getFileByName("build.gradle").modify { originalContent ->
+                originalContent
+                    .lines()
+                    .filter { !it.contains("javaCompileOptions") }
+                    .joinToString(separator = "\n")
+            }
+            build("assembleDebug") {
+                assertSuccessful()
+                assertKaptSuccessful()
+            }
+
+            fun modifyAndCheck(utilFileName: String, useUtilFileName: String) {
+                val utilKt = projectDir.getFileByName(utilFileName)
+                utilKt.modify {
+                    it.checkedReplace("Int", "Number")
+                }
+
+                build("assembleDebug") {
+                    assertSuccessful()
+                    val affectedFile = projectDir.getFileByName(useUtilFileName)
+                    assertCompiledKotlinSources(
+                        relativize(affectedFile),
+                        tasks = listOf("app:kaptGenerateStubsDebugKotlin", "app:compileDebugKotlin")
+                    )
+                }
+            }
+
+            modifyAndCheck("libAndroidUtil.kt", "useLibAndroidUtil.kt")
+            modifyAndCheck("libJvmUtil.kt", "useLibJvmUtil.kt")
+        }
+    }
 }
 
 class Kapt3Android42IT : Kapt3BaseIT() {
     override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.AtLeast("6.7")
+        get() = GradleVersionRequired.AtLeast("6.7.1")
 
     override fun defaultBuildOptions(): BuildOptions =
         super.defaultBuildOptions().copy(androidGradlePluginVersion = AGPVersion.v4_2_0)
@@ -205,7 +242,7 @@ abstract class Kapt3AndroidIT : Kapt3BaseIT() {
     }
 
     @Test
-    fun testInterProjectIC() = with(Project("android-inter-project-ic", directoryPrefix = "kapt2")) {
+    open fun testInterProjectIC() = with(Project("android-inter-project-ic", directoryPrefix = "kapt2")) {
         build("assembleDebug") {
             assertSuccessful()
             assertKaptSuccessful()

@@ -33,7 +33,7 @@ class ConfigurationAvoidanceIT : BaseGradleIT() {
     fun testAndroidUnrelatedTaskNotConfigured() = with(
         Project(
             "AndroidProject",
-            gradleVersionRequirement = GradleVersionRequired.AtLeast("6.6.1")
+            gradleVersionRequirement = GradleVersionRequired.AtLeast("6.7.1")
         )
     ) {
         setupWorkingDir()

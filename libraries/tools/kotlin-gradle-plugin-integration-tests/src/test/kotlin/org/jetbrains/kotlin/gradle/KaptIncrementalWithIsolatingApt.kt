@@ -266,7 +266,7 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
 
         val project = Project(
             projectName = "kaptIncrementalWithParceler",
-            gradleVersionRequirement = GradleVersionRequired.AtLeast("6.6.1")
+            gradleVersionRequirement = GradleVersionRequired.AtLeast("6.7.1")
         ).apply {
             setupWorkingDir()
         }
