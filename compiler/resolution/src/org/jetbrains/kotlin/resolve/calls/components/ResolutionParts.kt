@@ -171,18 +171,26 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
         }
     }
 
-    fun TypeParameterDescriptor.shouldBeFlexible(): Boolean {
+    fun TypeParameterDescriptor.shouldBeFlexible(flexibleCheck: (KotlinType) -> Boolean = { it.isFlexible() }): Boolean {
         return upperBounds.any {
-            it.isFlexible() || ((it.constructor.declarationDescriptor as? TypeParameterDescriptor)?.run { shouldBeFlexible() } ?: false)
+            flexibleCheck(it) || ((it.constructor.declarationDescriptor as? TypeParameterDescriptor)?.run { shouldBeFlexible() } ?: false)
         }
     }
 
     private fun getTypePreservingFlexibilityWrtTypeVariable(
         type: KotlinType,
         typeVariable: TypeVariableFromCallableDescriptor
-    ) = if (typeVariable.originalTypeParameter.shouldBeFlexible()) {
-        KotlinTypeFactory.flexibleType(type.makeNotNullable().lowerIfFlexible(), type.makeNullable().upperIfFlexible())
-    } else type
+    ): KotlinType {
+        fun createFlexibleType() =
+            KotlinTypeFactory.flexibleType(type.makeNotNullable().lowerIfFlexible(), type.makeNullable().upperIfFlexible())
+
+        return when {
+            typeVariable.originalTypeParameter.shouldBeFlexible { it is FlexibleTypeWithEnhancement } ->
+                createFlexibleType().wrapEnhancement(type)
+            typeVariable.originalTypeParameter.shouldBeFlexible() -> createFlexibleType()
+            else -> type
+        }
+    }
 
     private fun createKnownParametersFromFreshVariablesSubstitutor(
         freshVariableSubstitutor: FreshVariableNewTypeSubstitutor,
