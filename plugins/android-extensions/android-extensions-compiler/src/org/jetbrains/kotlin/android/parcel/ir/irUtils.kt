@@ -59,7 +59,11 @@ fun IrBuilderWithScope.parcelerCreate(parceler: IrClass, parcel: IrValueDeclarat
 
 // object P: Parceler<T> { fun newArray(size: Int): Array<T> }
 fun IrBuilderWithScope.parcelerNewArray(parceler: IrClass?, size: IrValueDeclaration): IrExpression? =
-    parceler?.parcelerSymbolByName("newArray")?.let { newArraySymbol ->
+    parceler?.parcelerSymbolByName("newArray")?.takeIf {
+        // The `newArray` method in `kotlinx.parcelize.Parceler` is stubbed out and we
+        // have to produce a new implementation, unless the user overrides it.
+        !it.owner.isFakeOverride || it.owner.resolveFakeOverride()?.parentClassOrNull?.fqNameWhenAvailable != PARCELER_FQNAME
+    }?.let { newArraySymbol ->
         irCall(newArraySymbol).apply {
             dispatchReceiver = irGetObject(parceler.symbol)
             putValueArgument(0, irGet(size))
@@ -101,7 +105,7 @@ fun IrBuilderWithScope.parcelableCreatorCreateFromParcel(creator: IrExpression, 
 // has already done the work.
 private fun IrClass.parcelerSymbolByName(name: String): IrSimpleFunctionSymbol? =
     functions.firstOrNull { function ->
-        !function.isFakeOverride && function.name.asString() == name && function.overridesFunctionIn(PARCELER_FQNAME)
+        function.name.asString() == name && function.overridesFunctionIn(PARCELER_FQNAME)
     }?.symbol
 
 fun IrSimpleFunction.overridesFunctionIn(fqName: FqName): Boolean =
