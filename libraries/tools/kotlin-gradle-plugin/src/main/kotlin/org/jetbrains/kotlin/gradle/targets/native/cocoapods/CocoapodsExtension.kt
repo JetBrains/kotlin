@@ -12,7 +12,9 @@ import org.gradle.api.NamedDomainObjectSet
 import org.gradle.api.Project
 import org.gradle.api.tasks.*
 import org.gradle.util.ConfigureUtil
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency.PodLocation.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import java.io.File
 import java.net.URI
 
@@ -68,6 +70,7 @@ open class CocoapodsExtension(private val project: Project) {
      */
     fun useDynamicFramework() {
         useDynamicFramework = true
+        configureDynamicFrameworkLinking()
     }
 
     @get:Input
@@ -208,6 +211,35 @@ open class CocoapodsExtension(private val project: Project) {
      */
     fun specRepos(configure: Closure<*>) = specRepos {
         ConfigureUtil.configure(configure, this)
+    }
+
+    private fun configureDynamicFrameworkLinking() {
+        pods.all { pod ->
+            project.multiplatformExtension.supportedTargets().all { target ->
+                target.binaries.withType(Framework::class.java) { framework ->
+                    framework.linkTaskProvider.configure { task ->
+                        if (project.shouldUseSyntheticProjectSettings &&
+                            KotlinCocoapodsPlugin.isAvailableToProduceSynthetic
+                        ) {
+                            val podBuildTaskProvider = project.getPodBuildTaskProvider(target, pod)
+                            task.inputs.file(podBuildTaskProvider.get().buildSettingsFile)
+                            task.dependsOn(podBuildTaskProvider)
+
+                            task.doFirst { _ ->
+                                val podBuildSettings = project.getPodBuildSettingsProperties(target, pod)
+                                framework.linkerOpts.addAll(podBuildSettings.frameworkSearchPaths.map { "-F$it" })
+                            }
+                        }
+
+                        framework.linkerOpts("-framework", pod.moduleName)
+
+                        project.findProperty(KotlinCocoapodsPlugin.FRAMEWORK_PATHS_PROPERTY)?.toString()?.let { args ->
+                            framework.linkerOpts.addAll(args.splitQuotedArgs().map { "-F$it" })
+                        }
+                    }
+                }
+            }
+        }
     }
 
     data class CocoapodsDependency(

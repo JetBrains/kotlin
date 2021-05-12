@@ -88,57 +88,63 @@ private val CocoapodsDependency.toPodDownloadTaskName: String
         name.asValidTaskName()
     )
 
-open class KotlinCocoapodsPlugin : Plugin<Project> {
-    private fun KotlinMultiplatformExtension.supportedTargets() = targets
-        .withType(KotlinNativeTarget::class.java)
-        .matching { it.konanTarget.family.isAppleFamily }
+internal val Project.shouldUseSyntheticProjectSettings: Boolean
+    get() = (findProperty(KotlinCocoapodsPlugin.TARGET_PROPERTY) == null &&
+            findProperty(KotlinCocoapodsPlugin.CONFIGURATION_PROPERTY) == null)
 
-    private val KotlinNativeTarget.toValidSDK: String
-        get() = when (konanTarget) {
-            IOS_X64 -> "iphonesimulator"
-            IOS_ARM32, IOS_ARM64 -> "iphoneos"
-            WATCHOS_X86, WATCHOS_X64 -> "watchsimulator"
-            WATCHOS_ARM32, WATCHOS_ARM64 -> "watchos"
-            TVOS_X64 -> "appletvsimulator"
-            TVOS_ARM64 -> "appletvos"
-            MACOS_X64 -> "macosx"
-            else -> throw IllegalArgumentException("Bad target ${konanTarget.name}.")
-        }
-
-    private val Project.shouldUseSyntheticProjectSettings: Boolean
-        get() = (findProperty(KotlinCocoapodsPlugin.TARGET_PROPERTY) == null &&
-                findProperty(KotlinCocoapodsPlugin.CONFIGURATION_PROPERTY) == null)
-
-    private val PodBuildSettingsProperties.frameworkSearchPaths: List<String>
-        get() {
-            val frameworkPathsSelfIncluding = mutableListOf<String>()
-            frameworkPathsSelfIncluding += configurationBuildDir.trimQuotes()
-            frameworkPaths?.let { frameworkPathsSelfIncluding.addAll(it.splitQuotedArgs()) }
-            return frameworkPathsSelfIncluding
-        }
-
-    private fun Project.getPodBuildSettingsProperties(
-        target: KotlinNativeTarget,
-        pod: CocoapodsExtension.CocoapodsDependency
-    ): PodBuildSettingsProperties {
-        val podBuildTaskProvider =
-            tasks.named(target.toValidSDK.toBuildDependenciesTaskName(pod), PodBuildTask::class.java)
-        return podBuildTaskProvider.get().buildSettingsFile.get()
-            .reader()
-            .use {
-                PodBuildSettingsProperties.readSettingsFromReader(it)
-            }
+private val KotlinNativeTarget.toValidSDK: String
+    get() = when (konanTarget) {
+        IOS_X64 -> "iphonesimulator"
+        IOS_ARM32, IOS_ARM64 -> "iphoneos"
+        WATCHOS_X86, WATCHOS_X64 -> "watchsimulator"
+        WATCHOS_ARM32, WATCHOS_ARM64 -> "watchos"
+        TVOS_X64 -> "appletvsimulator"
+        TVOS_ARM64 -> "appletvos"
+        MACOS_X64 -> "macosx"
+        else -> throw IllegalArgumentException("Bad target ${konanTarget.name}.")
     }
 
-    /**
-     * Splits a string using a whitespace characters as delimiters.
-     * Ignores whitespaces in quotes and drops quotes, e.g. a string
-     * `foo "bar baz" qux="quux"` will be split into ["foo", "bar baz", "qux=quux"].
-     */
-    private fun String.splitQuotedArgs(): List<String> =
-        Regex("""(?:[^\s"]|(?:"[^"]*"))+""").findAll(this).map {
-            it.value.replace("\"", "")
-        }.toList()
+internal fun Project.getPodBuildTaskProvider(
+    target: KotlinNativeTarget,
+    pod: CocoapodsDependency
+): TaskProvider<PodBuildTask> {
+    return tasks.named(target.toValidSDK.toBuildDependenciesTaskName(pod), PodBuildTask::class.java)
+}
+
+internal fun Project.getPodBuildSettingsProperties(
+    target: KotlinNativeTarget,
+    pod: CocoapodsDependency
+): PodBuildSettingsProperties {
+    return getPodBuildTaskProvider(target, pod).get().buildSettingsFile.get()
+        .reader()
+        .use {
+            PodBuildSettingsProperties.readSettingsFromReader(it)
+        }
+}
+
+internal val PodBuildSettingsProperties.frameworkSearchPaths: List<String>
+    get() {
+        val frameworkPathsSelfIncluding = mutableListOf<String>()
+        frameworkPathsSelfIncluding += configurationBuildDir.trimQuotes()
+        frameworkPaths?.let { frameworkPathsSelfIncluding.addAll(it.splitQuotedArgs()) }
+        return frameworkPathsSelfIncluding
+    }
+
+/**
+ * Splits a string using a whitespace characters as delimiters.
+ * Ignores whitespaces in quotes and drops quotes, e.g. a string
+ * `foo "bar baz" qux="quux"` will be split into ["foo", "bar baz", "qux=quux"].
+ */
+internal fun String.splitQuotedArgs(): List<String> =
+    Regex("""(?:[^\s"]|(?:"[^"]*"))+""").findAll(this).map {
+        it.value.replace("\"", "")
+    }.toList()
+
+internal fun KotlinMultiplatformExtension.supportedTargets() = targets
+    .withType(KotlinNativeTarget::class.java)
+    .matching { it.konanTarget.family.isAppleFamily }
+
+open class KotlinCocoapodsPlugin : Plugin<Project> {
 
     private fun KotlinMultiplatformExtension.targetsForPlatform(requestedPlatform: KonanTarget) =
         supportedTargets().matching { it.konanTarget == requestedPlatform }
@@ -274,8 +280,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                     if (project.shouldUseSyntheticProjectSettings &&
                         isAvailableToProduceSynthetic
                     ) {
-                        val podBuildTaskProvider =
-                            project.tasks.named(target.toValidSDK.toBuildDependenciesTaskName(pod), PodBuildTask::class.java)
+                        val podBuildTaskProvider = project.getPodBuildTaskProvider(target, pod)
                         interopTask.inputs.file(podBuildTaskProvider.get().buildSettingsFile)
                         interopTask.dependsOn(podBuildTaskProvider)
                     }
@@ -311,40 +316,6 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                             }
 
                             interop.compilerOpts.addAll(podBuildSettings.frameworkSearchPaths.map { "-F$it" })
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private fun configureLinkingTask(
-        project: Project,
-        kotlinExtension: KotlinMultiplatformExtension,
-        cocoapodsExtension: CocoapodsExtension
-    ) {
-        cocoapodsExtension.pods.all { pod ->
-            kotlinExtension.supportedTargets().all { target ->
-                target.binaries.withType(Framework::class.java) { framework ->
-                    framework.linkTaskProvider.configure { task ->
-                        task.doFirst { _ ->
-                            if (cocoapodsExtension.useDynamicFramework.not()) {
-                                //No need for additional linker setup if static framework is used
-                                return@doFirst
-                            }
-
-                            framework.linkerOpts("-framework", pod.moduleName)
-
-                            project.findProperty(FRAMEWORK_PATHS_PROPERTY)?.toString()?.let { args ->
-                                framework.linkerOpts.addAll(args.splitQuotedArgs().map { "-F$it" })
-                            }
-
-                            if (project.shouldUseSyntheticProjectSettings &&
-                                isAvailableToProduceSynthetic
-                            ) {
-                                val podBuildSettings = project.getPodBuildSettingsProperties(target, pod)
-                                framework.linkerOpts.addAll(podBuildSettings.frameworkSearchPaths.map { "-F$it" })
-                            }
                         }
                     }
                 }
@@ -591,7 +562,6 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                 )
             }
             createInterops(project, kotlinExtension, cocoapodsExtension)
-            configureLinkingTask(project, kotlinExtension, cocoapodsExtension)
         }
     }
 
