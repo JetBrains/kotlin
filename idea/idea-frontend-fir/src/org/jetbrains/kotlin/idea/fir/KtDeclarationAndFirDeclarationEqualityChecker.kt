@@ -17,12 +17,13 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.createEmptySession
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.types.Variance
 
-// TODO replace with structural type comparision?
+// TODO replace with structural type comparison?
 object KtDeclarationAndFirDeclarationEqualityChecker {
     fun representsTheSameDeclaration(psi: KtFunction, fir: FirFunction<*>): Boolean {
         if ((fir.receiverTypeRef != null) != (psi.receiverTypeReference != null)) return false
@@ -30,7 +31,6 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
             && !isTheSameTypes(
                 psi.receiverTypeReference!!,
                 fir.receiverTypeRef!!,
-                fir.moduleData.session,
                 isVararg = false
             )
         ) {
@@ -44,7 +44,6 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
             if (!isTheSameTypes(
                     candidateParameterType,
                     expectedParameter.returnTypeRef,
-                    fir.moduleData.session,
                     isVararg = expectedParameter.isVararg
                 )
             ) {
@@ -126,14 +125,18 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
     private fun isTheSameTypes(
         psiTypeReference: KtTypeReference,
         coneTypeReference: FirTypeRef,
-        session: FirSession,
         isVararg: Boolean
     ): Boolean =
-        psiTypeReference.toKotlinTypReference(session).renderTypeAsKotlinType(isVararg) == coneTypeReference.renderTypeAsKotlinType()
+        psiTypeReference.toKotlinTypReference().renderTypeAsKotlinType(isVararg) == coneTypeReference.renderTypeAsKotlinType()
 
-    private fun KtTypeReference.toKotlinTypReference(session: FirSession): FirTypeRef {
+    @Suppress("DEPRECATION_ERROR")
+    private fun KtTypeReference.toKotlinTypReference(): FirTypeRef {
         // Maybe resolve all types here to not to work with FirTypeRef directly
-        return RawFirBuilder(session, DummyScopeProvider, RawFirBuilderMode.STUBS).buildTypeReference(this)
+        return RawFirBuilder(
+            createEmptySession(),
+            DummyScopeProvider,
+            RawFirBuilderMode.STUBS
+        ).buildTypeReference(this)
     }
 
     private fun ConeKotlinType.renderTypeAsKotlinType(): String {
@@ -163,12 +166,12 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
     }
 
     @TestOnly
-    internal fun renderPsi(ktFunction: KtFunction, session: FirSession): String = buildString {
-        appendLine("receiver: ${ktFunction.receiverTypeReference?.toKotlinTypReference(session)?.renderTypeAsKotlinType()}")
+    internal fun renderPsi(ktFunction: KtFunction): String = buildString {
+        appendLine("receiver: ${ktFunction.receiverTypeReference?.toKotlinTypReference()?.renderTypeAsKotlinType()}")
         ktFunction.valueParameters.forEach { parameter ->
-            appendLine("${parameter.name}: ${parameter.typeReference?.toKotlinTypReference(session)?.renderTypeAsKotlinType()}")
+            appendLine("${parameter.name}: ${parameter.typeReference?.toKotlinTypReference()?.renderTypeAsKotlinType()}")
         }
-        appendLine("return: ${ktFunction.typeReference?.toKotlinTypReference(session)?.renderTypeAsKotlinType()}")
+        appendLine("return: ${ktFunction.typeReference?.toKotlinTypReference()?.renderTypeAsKotlinType()}")
     }
 
     @TestOnly

@@ -255,3 +255,23 @@ internal object FirIdeSessionFactory {
         register(SealedClassInheritorsProvider::class, SealedClassInheritorsProviderIdeImpl())
     }
 }
+
+@Deprecated(
+    "This is a dirty hack used only for one usage (building fir for psi from stubs) and it should be removed after fix of that usage",
+    level = DeprecationLevel.ERROR
+)
+@OptIn(PrivateSessionConstructor::class)
+fun createEmptySession(): FirSession {
+    return object : FirSession(null) {}.apply {
+        val moduleData = FirModuleDataImpl(
+            Name.identifier("<stub module>"),
+            dependencies = emptyList(),
+            dependsOnDependencies = emptyList(),
+            friendDependencies = emptyList(),
+            platform = JvmPlatforms.unspecifiedJvmPlatform,
+            analyzerServices = JvmPlatformAnalyzerServices
+        )
+        registerModuleData(moduleData)
+        moduleData.bindSession(this)
+    }
+}
