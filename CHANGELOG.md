@@ -1,6 +1,13 @@
 Change Log
 ==========
 
+## Version 0.8.1
+
+_2021-05-12_
+
+**Fixes**
+* Fix diagramming of expressions which contain lambdas (#44)
+
 ## Version 0.8.0
 
 _2021-05-06_
