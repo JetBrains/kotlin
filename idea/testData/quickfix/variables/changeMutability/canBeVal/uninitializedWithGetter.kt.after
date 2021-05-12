@@ -3,4 +3,3 @@ class Test {
     val foo
         get() = 1
 }
-/* IGNORE_FIR */

@@ -12,5 +12,3 @@ abstract class IterablePipeline<T> : Pipeline<T> {
     override fun pipe(block: Pipeline<T>) {
     }
 }
-
-/* IGNORE_FIR */

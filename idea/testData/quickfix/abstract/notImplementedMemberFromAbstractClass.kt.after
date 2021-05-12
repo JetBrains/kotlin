@@ -5,5 +5,3 @@ abstract class A {
 
 abstract class B : A() {
 }
-
-/* IGNORE_FIR */

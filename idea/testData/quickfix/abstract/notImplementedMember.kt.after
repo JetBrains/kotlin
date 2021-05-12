@@ -5,5 +5,3 @@ interface I {
 
 abstract class A : I {
 }
-
-/* IGNORE_FIR */

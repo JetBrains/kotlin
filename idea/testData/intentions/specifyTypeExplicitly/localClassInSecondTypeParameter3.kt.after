@@ -1,4 +1,3 @@
-// IGNORE_FIR
 open class F
 class TestClass<V, out K>
 

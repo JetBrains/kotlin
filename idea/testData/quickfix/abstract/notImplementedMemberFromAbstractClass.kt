@@ -5,5 +5,3 @@ abstract class A {
 
 <caret>class B : A() {
 }
-
-/* IGNORE_FIR */
