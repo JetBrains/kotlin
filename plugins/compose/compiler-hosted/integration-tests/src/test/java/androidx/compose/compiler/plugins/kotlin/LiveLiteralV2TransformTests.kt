@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.junit.Test
 
-class LiveLiteralTransformTests : AbstractIrTransformTest() {
+class LiveLiteralV2TransformTests : AbstractIrTransformTest() {
 
     fun testSiblingCallArgs() = assertNoDuplicateKeys(
         """
@@ -366,11 +366,12 @@ class LiveLiteralTransformTests : AbstractIrTransformTest() {
             }
             @LiveLiteralFileInfo(file = "/Test.kt")
             internal object LiveLiterals%TestKt {
+              val enabled: Boolean = false
               val Int%fun-bar%class-%no-name-provided%%fun-a: Int = 1
               var State%Int%fun-bar%class-%no-name-provided%%fun-a: State<Int>?
               @LiveLiteralInfo(key = "Int%fun-bar%class-%no-name-provided%%fun-a", offset = 159)
               fun Int%fun-bar%class-%no-name-provided%%fun-a(): Int {
-                if (!isLiveLiteralsEnabled) {
+                if (!enabled) {
                   return Int%fun-bar%class-%no-name-provided%%fun-a
                 }
                 val tmp0 = State%Int%fun-bar%class-%no-name-provided%%fun-a
@@ -418,11 +419,12 @@ class LiveLiteralTransformTests : AbstractIrTransformTest() {
             }
             @LiveLiteralFileInfo(file = "/Test.kt")
             internal object LiveLiterals%TestKt {
+              val enabled: Boolean = false
               val Int%arg-0%call-print%fun-A: Int = 1
               var State%Int%arg-0%call-print%fun-A: State<Int>?
               @LiveLiteralInfo(key = "Int%arg-0%call-print%fun-A", offset = 62)
               fun Int%arg-0%call-print%fun-A(): Int {
-                if (!isLiveLiteralsEnabled) {
+                if (!enabled) {
                   return Int%arg-0%call-print%fun-A
                 }
                 val tmp0 = State%Int%arg-0%call-print%fun-A
@@ -439,7 +441,7 @@ class LiveLiteralTransformTests : AbstractIrTransformTest() {
               var State%String%arg-0%call-print-1%fun-A: State<String>?
               @LiveLiteralInfo(key = "String%arg-0%call-print-1%fun-A", offset = 74)
               fun String%arg-0%call-print-1%fun-A(): String {
-                if (!isLiveLiteralsEnabled) {
+                if (!enabled) {
                   return String%arg-0%call-print-1%fun-A
                 }
                 val tmp0 = State%String%arg-0%call-print-1%fun-A
@@ -456,7 +458,7 @@ class LiveLiteralTransformTests : AbstractIrTransformTest() {
               var State%Boolean%cond%if%fun-A: State<Boolean>?
               @LiveLiteralInfo(key = "Boolean%cond%if%fun-A", offset = 94)
               fun Boolean%cond%if%fun-A(): Boolean {
-                if (!isLiveLiteralsEnabled) {
+                if (!enabled) {
                   return Boolean%cond%if%fun-A
                 }
                 val tmp0 = State%Boolean%cond%if%fun-A
@@ -473,7 +475,7 @@ class LiveLiteralTransformTests : AbstractIrTransformTest() {
               var State%Int%%this%call-plus%arg-0%call-print%branch%if%fun-A: State<Int>?
               @LiveLiteralInfo(key = "Int%%this%call-plus%arg-0%call-print%branch%if%fun-A", offset = 112)
               fun Int%%this%call-plus%arg-0%call-print%branch%if%fun-A(): Int {
-                if (!isLiveLiteralsEnabled) {
+                if (!enabled) {
                   return Int%%this%call-plus%arg-0%call-print%branch%if%fun-A
                 }
                 val tmp0 = State%Int%%this%call-plus%arg-0%call-print%branch%if%fun-A
@@ -490,7 +492,7 @@ class LiveLiteralTransformTests : AbstractIrTransformTest() {
               var State%Int%arg-0%call-plus%arg-0%call-print%branch%if%fun-A: State<Int>?
               @LiveLiteralInfo(key = "Int%arg-0%call-plus%arg-0%call-print%branch%if%fun-A", offset = 116)
               fun Int%arg-0%call-plus%arg-0%call-print%branch%if%fun-A(): Int {
-                if (!isLiveLiteralsEnabled) {
+                if (!enabled) {
                   return Int%arg-0%call-plus%arg-0%call-print%branch%if%fun-A
                 }
                 val tmp0 = State%Int%arg-0%call-plus%arg-0%call-print%branch%if%fun-A
@@ -507,7 +509,7 @@ class LiveLiteralTransformTests : AbstractIrTransformTest() {
               var State%Boolean%cond%if-1%fun-A: State<Boolean>?
               @LiveLiteralInfo(key = "Boolean%cond%if-1%fun-A", offset = 129)
               fun Boolean%cond%if-1%fun-A(): Boolean {
-                if (!isLiveLiteralsEnabled) {
+                if (!enabled) {
                   return Boolean%cond%if-1%fun-A
                 }
                 val tmp0 = State%Boolean%cond%if-1%fun-A
@@ -524,7 +526,7 @@ class LiveLiteralTransformTests : AbstractIrTransformTest() {
               var State%Float%arg-0%call-print%branch%if-1%fun-A: State<Float>?
               @LiveLiteralInfo(key = "Float%arg-0%call-print%branch%if-1%fun-A", offset = 147)
               fun Float%arg-0%call-print%branch%if-1%fun-A(): Float {
-                if (!isLiveLiteralsEnabled) {
+                if (!enabled) {
                   return Float%arg-0%call-print%branch%if-1%fun-A
                 }
                 val tmp0 = State%Float%arg-0%call-print%branch%if-1%fun-A
@@ -541,7 +543,7 @@ class LiveLiteralTransformTests : AbstractIrTransformTest() {
               var State%Int%arg-0%call-print-2%fun-A: State<Int>?
               @LiveLiteralInfo(key = "Int%arg-0%call-print-2%fun-A", offset = 165)
               fun Int%arg-0%call-print-2%fun-A(): Int {
-                if (!isLiveLiteralsEnabled) {
+                if (!enabled) {
                   return Int%arg-0%call-print-2%fun-A
                 }
                 val tmp0 = State%Int%arg-0%call-print-2%fun-A
@@ -582,7 +584,7 @@ class LiveLiteralTransformTests : AbstractIrTransformTest() {
         val keyVisitor = DurableKeyVisitor(builtKeys)
         val transformer = object : LiveLiteralTransformer(
             true,
-            false,
+            true,
             keyVisitor,
             pluginContext,
             symbolRemapper,
