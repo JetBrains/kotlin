@@ -26,9 +26,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrPublicSymbolBase
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
-import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.withScope
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
@@ -320,15 +318,19 @@ class IrDeclarationDeserializer(
 
                     superTypes = proto.superTypeList.map { deserializeIrType(it) }
 
-                    withExternalValue(isExternal) {proto.declarationList
-                        .filterNot { isSkippableFakeOverride(it, this) }
-                        .mapTo(declarations) { deserializeDeclaration(it) }}
+                    withExternalValue(isExternal) {
+                        proto.declarationList
+                            .filterNot { isSkippableFakeOverride(it, this) }
+                            .mapTo(declarations) { deserializeDeclaration(it) }
+                    }
 
                     thisReceiver = deserializeIrValueParameter(proto.thisReceiver, -1)
 
-                    inlineClassRepresentation =
-                        if (proto.hasInlineClassRepresentation()) deserializeInlineClassRepresentation(proto.inlineClassRepresentation)
-                        else null
+                    inlineClassRepresentation = when {
+                        !flags.isInline -> null
+                        proto.hasInlineClassRepresentation() -> deserializeInlineClassRepresentation(proto.inlineClassRepresentation)
+                        else -> computeMissingInlineClassRepresentationForCompatibility(this)
+                    }
 
                     fakeOverrideBuilder.enqueueClass(this, signature)
                 }
@@ -340,6 +342,16 @@ class IrDeclarationDeserializer(
             deserializeName(proto.underlyingPropertyName),
             deserializeIrType(proto.underlyingPropertyType) as IrSimpleType,
         )
+
+    private fun computeMissingInlineClassRepresentationForCompatibility(irClass: IrClass): InlineClassRepresentation<IrSimpleType> {
+        // For inline classes compiled with 1.5.20 or earlier, try to reconstruct inline class representation from the single parameter of
+        // the primary constructor. Something similar is happening in `DeserializedClassDescriptor.computeInlineClassRepresentation`.
+        // This code will be unnecessary as soon as klibs compiled with Kotlin 1.5.20 are no longer supported.
+        val ctor = irClass.primaryConstructor ?: error("Inline class has no primary constructor: ${irClass.render()}")
+        val parameter =
+            ctor.valueParameters.singleOrNull() ?: error("Failed to get single parameter of inline class constructor: ${ctor.render()}")
+        return InlineClassRepresentation(parameter.name, parameter.type as IrSimpleType)
+    }
 
     private fun deserializeIrTypeAlias(proto: ProtoTypeAlias): IrTypeAlias =
         withDeserializedIrDeclarationBase(proto.base) { symbol, uniqId, startOffset, endOffset, origin, fcode ->
