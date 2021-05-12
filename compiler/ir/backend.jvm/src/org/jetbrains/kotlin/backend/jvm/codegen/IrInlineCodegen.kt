@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
+import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.codegen.IrExpressionLambda
 import org.jetbrains.kotlin.codegen.JvmKotlinType
 import org.jetbrains.kotlin.codegen.StackValue
@@ -24,6 +26,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
@@ -245,7 +248,7 @@ class IrDefaultLambda(
     override val invokeMethodReturnType: KotlinType
         get() = typeArguments.last().toIrBasedKotlinType()
 
-    override fun mapAsmDescriptor(sourceCompiler: SourceCompilerForInline, isPropertyReference: Boolean): String {
+    override fun mapAsmMethod(sourceCompiler: SourceCompilerForInline, isPropertyReference: Boolean): Method {
         val context = (sourceCompiler as IrSourceCompilerForInline).codegen.context
         typeArguments = (irValueParameter.type as IrSimpleType).arguments.let {
             // Property references only have an erased `get` method, while function references and lambdas
@@ -256,9 +259,15 @@ class IrDefaultLambda(
                 it.map { argument -> (argument as IrTypeProjection).type }
             }
         }
+        val base = if (isPropertyReference) OperatorNameConventions.GET.asString() else OperatorNameConventions.INVOKE.asString()
+        val name = InlineClassAbi.hashSuffix(
+            context.state.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures,
+            typeArguments.dropLast(1),
+            typeArguments.last().takeIf { it.isInlineClassType() }
+        )?.let { "$base-$it" } ?: base
         // TODO: while technically only the number of arguments here matters right now (see DefaultLambdaInfo.generateLambdaBody),
         //       it would be better to map to a non-erased signature if not a property reference.
-        return Type.getMethodDescriptor(AsmTypes.OBJECT_TYPE, *Array(typeArguments.size - 1) { AsmTypes.OBJECT_TYPE })
+        return Method(name, AsmTypes.OBJECT_TYPE, Array(typeArguments.size - 1) { AsmTypes.OBJECT_TYPE })
     }
 }
 

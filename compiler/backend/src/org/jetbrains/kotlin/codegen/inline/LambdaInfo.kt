@@ -131,20 +131,21 @@ abstract class DefaultLambda(
                 }?.toList() ?: emptyList()
         isBoundCallableReference = (isFunctionReference || isPropertyReference) && capturedVars.isNotEmpty()
 
-        val invokeName = (if (isPropertyReference) OperatorNameConventions.GET else OperatorNameConventions.INVOKE).asString()
-        val invokeDescriptor = mapAsmDescriptor(sourceCompiler, isPropertyReference)
+        val invokeNameFallback = (if (isPropertyReference) OperatorNameConventions.GET else OperatorNameConventions.INVOKE).asString()
+        val invokeMethod = mapAsmMethod(sourceCompiler, isPropertyReference)
         // TODO: `signatureAmbiguity = true` ignores the argument types from `invokeDescriptor` and only looks at the count.
         //   This effectively masks incorrect results from `mapAsmDescriptor`, which hopefully won't manifest in another way.
-        node = getMethodNode(classBytes, invokeName, invokeDescriptor, lambdaClassType, signatureAmbiguity = true)
-            ?: error("Can't find method '$invokeName$invokeDescriptor' in '${lambdaClassType.internalName}'")
-        invokeMethod = Method(node.node.name, node.node.desc)
+        node = getMethodNode(classBytes, invokeMethod.name, invokeMethod.descriptor, lambdaClassType, signatureAmbiguity = true)
+            ?: getMethodNode(classBytes, invokeNameFallback, invokeMethod.descriptor, lambdaClassType, signatureAmbiguity = true)
+                    ?: error("Can't find method '$invokeMethod' in '${lambdaClassType.internalName}'")
+        this.invokeMethod = Method(node.node.name, node.node.desc)
         if (needReification) {
             //nested classes could also require reification
             reifiedTypeParametersUsages.mergeAll(reifiedTypeInliner.reifyInstructions(node.node))
         }
     }
 
-    protected abstract fun mapAsmDescriptor(sourceCompiler: SourceCompilerForInline, isPropertyReference: Boolean): String
+    protected abstract fun mapAsmMethod(sourceCompiler: SourceCompilerForInline, isPropertyReference: Boolean): Method
 
     private companion object {
         val PROPERTY_REFERENCE_SUPER_CLASSES =
