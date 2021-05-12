@@ -264,7 +264,7 @@ class IrToJs(
         args: List<JsExpression> = emptyList()
     ): Pair<JsStatement, JsExpression> {
         val name = guid(function)
-        val importPath = "../" + pathToJsModule(function.file)
+        val importPath = if (granularity == WHOLE_PROGRAM) "./$indexFileName" else "../" + pathToJsModule(function.file)
         return Pair(
             JsImport(importPath, mutableListOf(JsImport.Element(name, null))),
             JsInvocation(JsNameRef(name), args)
