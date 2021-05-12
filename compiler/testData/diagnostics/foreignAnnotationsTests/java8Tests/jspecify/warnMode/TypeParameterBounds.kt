@@ -31,14 +31,14 @@ fun <T : Test> main(a1: A<<!UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS!>Any?
     a2.bar<<!UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS!>T?<!>>(null)
     a2.bar<T>(x)
 
-    // jspecify_nullness_mismatch{mute}
-    b1.foo(null)
+    // jspecify_nullness_mismatch
+    b1.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
     // jspecify_nullness_mismatch
     b1.bar<<!UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS!>T?<!>>(null)
     b1.bar<T>(x)
 
-    // jspecify_nullness_mismatch{mute}
-    b2.foo(null)
+    // jspecify_nullness_mismatch
+    b2.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
     // jspecify_nullness_mismatch
     b2.bar<<!UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS!>T?<!>>(null)
     b2.bar<T>(x)
