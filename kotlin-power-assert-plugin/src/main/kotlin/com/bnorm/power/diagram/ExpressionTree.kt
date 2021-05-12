@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrWhen
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
@@ -84,6 +85,8 @@ fun buildTree(expression: IrExpression): Node? {
     }
 
     override fun visitExpression(expression: IrExpression, data: Node) {
+      if (expression is IrFunctionExpression) return // Do not transform lambda expressions, especially their body
+
       val node = data as? ExpressionNode ?: ExpressionNode().also { data.addChild(it) }
       node.add(expression)
       expression.acceptChildren(this, node)
