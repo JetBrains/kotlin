@@ -98,14 +98,18 @@ class FromZipIrLibraryImpl(zipped: IrLibraryLayoutImpl, zipFileSystem: FileSyste
  * This class and its children automatically extracts pieces of the library on first access. Use it if you need
  * to pass extracted files to an external tool. Otherwise, stick to [FromZipBaseLibraryImpl].
  */
-fun KotlinLibraryLayoutImpl.extract(file: File): File = this.klib.withZipFileSystem { zipFileSystem ->
+fun KotlinLibraryLayoutImpl.extract(file: File): File = extract(this.klib, file)
+
+private fun extract(zipFile: File, file: File) = zipFile.withZipFileSystem { zipFileSystem ->
     val temporary = org.jetbrains.kotlin.konan.file.createTempFile(file.name)
     zipFileSystem.file(file).copyTo(temporary)
     temporary.deleteOnExit()
     temporary
 }
 
-fun KotlinLibraryLayoutImpl.extractDir(directory: File): File = this.klib.withZipFileSystem { zipFileSystem ->
+fun KotlinLibraryLayoutImpl.extractDir(directory: File): File = extractDir(this.klib, directory)
+
+private fun extractDir(zipFile: File, directory: File): File = zipFile.withZipFileSystem { zipFileSystem ->
     val temporary = org.jetbrains.kotlin.konan.file.createTempDir(directory.name)
     zipFileSystem.file(directory).recursiveCopyTo(temporary)
     temporary.deleteOnExitRecursively()
