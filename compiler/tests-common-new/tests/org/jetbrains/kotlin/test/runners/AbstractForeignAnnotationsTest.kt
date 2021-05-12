@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.preprocessors.JspecifyMarksCleanupPreprocessor
 import org.jetbrains.kotlin.test.services.configuration.*
 import org.jetbrains.kotlin.test.services.jvm.ForeignAnnotationAgainstCompiledJavaTestSuppressor
+import org.jetbrains.kotlin.test.services.jvm.PsiClassFilesReadingForCompiledJavaTestSuppressor
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 
@@ -116,6 +117,8 @@ abstract class AbstractForeignAnnotationsCompiledJavaWithPsiClassReadingTest : A
             defaultDirectives {
                 +USE_PSI_CLASS_FILES_READING
             }
+
+            useMetaTestConfigurators(::PsiClassFilesReadingForCompiledJavaTestSuppressor)
         }
     }
 }

@@ -1,4 +1,5 @@
 // JSPECIFY_STATE: strict
+// MUTE_FOR_PSI_CLASS_FILES_READING
 
 // FILE: TypeArgumentsFromParameterBounds.java
 import org.jspecify.nullness.*;

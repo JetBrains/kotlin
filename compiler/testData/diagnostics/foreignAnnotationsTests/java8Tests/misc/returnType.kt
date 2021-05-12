@@ -1,9 +1,9 @@
 // !LANGUAGE: +TypeEnhancementImprovementsInStrictMode +ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // SKIP_TXT
+// MUTE_FOR_PSI_CLASS_FILES_READING
 
 // FILE: ReturnType.java
-// INCLUDE_JAVA_AS_BINARY
 
 import org.jetbrains.annotations.*;
 

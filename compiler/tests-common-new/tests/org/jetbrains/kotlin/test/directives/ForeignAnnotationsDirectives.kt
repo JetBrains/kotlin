@@ -37,4 +37,8 @@ object ForeignAnnotationsDirectives : SimpleDirectivesContainer() {
     val SOURCE_RETENTION_ANNOTATIONS by directive(
         description = "Skip test against compiled annotation because of their Source retention"
     )
+
+    val MUTE_FOR_PSI_CLASS_FILES_READING by directive(
+        description = "Skip test if psi class files reading is used"
+    )
 }
