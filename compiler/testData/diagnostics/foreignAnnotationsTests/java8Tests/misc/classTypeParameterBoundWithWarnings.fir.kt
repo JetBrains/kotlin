@@ -17,7 +17,7 @@ fun main(x: ClassTypeParameterBoundWithWarnings<<!UPPER_BOUND_VIOLATED_BASED_ON_
     val x2 = ClassTypeParameterBoundWithWarnings<String?>()
     val y2 = ClassTypeParameterBoundWithWarnings<String>()
 
-    val x3 = ClassTypeParameterBoundWithWarnings(a)
+    val x3 = ClassTypeParameterBoundWithWarnings(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a<!>)
     val y3 = ClassTypeParameterBoundWithWarnings(b)
 
     val x4: ClassTypeParameterBoundWithWarnings<<!UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS!>String?<!>> = ClassTypeParameterBoundWithWarnings()
