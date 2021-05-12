@@ -8,6 +8,21 @@ package kotlin.native
 import kotlin.reflect.KClass
 
 /**
+ * [SymbolName] annotation is deprecated.
+ * See [KT-46649](https://youtrack.jetbrains.com/issue/KT-46649).
+ */
+@RequiresOptIn(
+        message = "@SymbolName annotation is deprecated. See https://youtrack.jetbrains.com/issue/KT-46649",
+        level = RequiresOptIn.Level.WARNING
+)
+@Target(AnnotationTarget.ANNOTATION_CLASS)
+@Retention(value = AnnotationRetention.BINARY)
+internal annotation class SymbolNameIsDeprecated
+
+/**
+ * This annotation is deprecated.
+ * See [KT-46649](https://youtrack.jetbrains.com/issue/KT-46649).
+ *
  * Forces the compiler to use specified symbol name for the target `external` function.
  *
  * TODO: changing symbol name breaks the binary compatibility,
@@ -15,6 +30,7 @@ import kotlin.reflect.KClass
  */
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
+@SymbolNameIsDeprecated
 public annotation class SymbolName(val name: String)
 
 /**
