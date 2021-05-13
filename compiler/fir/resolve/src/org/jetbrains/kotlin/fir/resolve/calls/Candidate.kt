@@ -105,6 +105,9 @@ class Candidate(
         set(value) {
             field = value
             usesSuspendConversion = value?.suspendConversionStrategy == SuspendConversionStrategy.SUSPEND_CONVERSION
+            if (value != null) {
+                numDefaults = value.defaults
+            }
         }
 
     var usesSuspendConversion: Boolean = false

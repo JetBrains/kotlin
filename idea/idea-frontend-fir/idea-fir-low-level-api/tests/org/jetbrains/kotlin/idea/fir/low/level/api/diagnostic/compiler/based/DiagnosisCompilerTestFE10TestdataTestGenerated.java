@@ -2010,6 +2010,11 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 runTest("compiler/testData/diagnostics/tests/callableReference/noExceptionOnRedCodeWithArrayLikeCall.kt");
             }
 
+            @TestMetadata("overloadResolutionWithDefaults.kt")
+            public void testOverloadResolutionWithDefaults() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/overloadResolutionWithDefaults.kt");
+            }
+
             @TestMetadata("packageInLhs.kt")
             public void testPackageInLhs() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/packageInLhs.kt");

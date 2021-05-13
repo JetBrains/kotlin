@@ -2346,6 +2346,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("overloadResolutionWithDefaults.kt")
+            public void testOverloadResolutionWithDefaults() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/overloadResolutionWithDefaults.kt");
+            }
+
+            @Test
             @TestMetadata("packageInLhs.kt")
             public void testPackageInLhs() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/packageInLhs.kt");
