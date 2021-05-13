@@ -13,16 +13,14 @@ import com.intellij.psi.ResolveResult
 import com.intellij.psi.infos.CandidateInfo
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.uast.UMultiResolvable
-import org.jetbrains.uast.UResolvable
 import org.jetbrains.uast.kotlin.KotlinUastResolveProviderService
-import org.jetbrains.uast.kotlin.resolveToDeclaration
+import org.jetbrains.uast.kotlin.resolveToDeclarationImpl
 
 
 internal fun getReferenceVariants(ktElement: KtExpression, nameHint: String): Sequence<PsiElement> =
     ServiceManager.getService(ktElement.project, KotlinUastResolveProviderService::class.java)
         .getReferenceVariants(ktElement, nameHint)
-        .mapNotNull { resolveToDeclaration(ktElement, it) }
+        .mapNotNull { resolveToDeclarationImpl(ktElement, it) }
 
 internal fun getResolveResultVariants(ktExpression: KtExpression?): Iterable<ResolveResult> {
     ktExpression ?: return emptyList()
@@ -40,10 +38,6 @@ internal fun KtElement.multiResolveResults(): Sequence<ResolveResult> =
             else -> (ref.resolve()?.let { sequenceOf(CandidateInfo(it, PsiSubstitutor.EMPTY)) }).orEmpty()
         }
     }
-
-interface DelegatedMultiResolve : UMultiResolvable, UResolvable {
-    override fun multiResolve(): Iterable<ResolveResult> = listOfNotNull(resolve()?.let { CandidateInfo(it, PsiSubstitutor.EMPTY) })
-}
 
 class TypedResolveResult<T : PsiElement>(element: T) : CandidateInfo(element, PsiSubstitutor.EMPTY) {
     @Suppress("UNCHECKED_CAST")

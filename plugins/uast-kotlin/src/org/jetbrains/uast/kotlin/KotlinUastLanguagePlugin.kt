@@ -62,6 +62,10 @@ interface KotlinUastResolveProviderService : BaseKotlinUastResolveProviderServic
     override fun convertParent(uElement: UElement): UElement? {
         return convertParentImpl(uElement)
     }
+
+    override fun resolveToDeclaration(ktExpression: KtExpression): PsiElement? {
+        return resolveToDeclarationImpl(ktExpression)
+    }
 }
 
 var PsiElement.destructuringDeclarationInitializer: Boolean? by UserDataProperty(Key.create("kotlin.uast.destructuringDeclarationInitializer"))
