@@ -146,7 +146,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
         if (klass.getWasmArrayAnnotation() != null) {
             require(expression.valueArgumentsCount == 1) { "@WasmArrayOf constructs must have exactly one argument" }
             generateExpression(expression.getValueArgument(0)!!)
-            body.buildRttCanon(context.transformType(klass.defaultType))
+            body.buildRttCanon(wasmGcType)
             body.buildInstr(
                 WasmOp.ARRAY_NEW_DEFAULT_WITH_RTT,
                 WasmImmediate.GcType(wasmGcType)
@@ -246,7 +246,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
             val resT = context.transformResultType(function.returnType)
             if (resT is WasmRefNullType) {
                 generateTypeRTT(function.returnType)
-                body.buildRefCast(fromType = WasmEqRef, toType = resT)
+                body.buildRefCast()
             }
         }
     }
@@ -282,10 +282,9 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
             }
 
             wasmSymbols.wasmRefCast -> {
-                val fromType = call.getTypeArgument(0)!!
-                val toType = call.getTypeArgument(1)!!
+                val toType = call.getTypeArgument(0)!!
                 generateTypeRTT(toType)
-                body.buildRefCast(context.transformType(fromType), context.transformType(toType))
+                body.buildRefCast()
             }
 
             wasmSymbols.wasmFloatNaN -> {
@@ -315,7 +314,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
                 val field = getInlineClassBackingField(klass)
 
                 generateTypeRTT(toType)
-                body.buildRefCast(context.transformType(fromType), context.transformBoxedType(toType))
+                body.buildRefCast()
                 generateInstanceFieldAccess(field)
             }
             else -> {
@@ -517,6 +516,15 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
             var immediates = emptyArray<WasmImmediate>()
             when (op.immediates.size) {
                 0 -> {
+                    when (op) {
+                        WasmOp.REF_TEST -> {
+                            val toIrType = call.getTypeArgument(0)!!
+                            // ref.test takes RTT as a second operand
+                            generateTypeRTT(toIrType)
+                        }
+                        else -> {
+                        }
+                    }
                 }
                 1 -> {
                     immediates = arrayOf(
@@ -529,25 +537,6 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
                                 error("Immediate $imm is unsupported")
                         }
                     )
-                }
-                2 -> {
-                    when (op) {
-                        WasmOp.REF_TEST -> {
-                            val fromIrType = call.getValueArgument(0)!!.type
-                            val fromWasmType = context.transformBoxedType(fromIrType)
-                            val toIrType = call.getTypeArgument(0)!!
-                            val toWasmType = context.transformBoxedType(toIrType)
-                            immediates = arrayOf(
-                                WasmImmediate.HeapType(fromWasmType),
-                                WasmImmediate.HeapType(toWasmType),
-                            )
-
-                            // ref.test takes RTT as a second operand
-                            generateTypeRTT(toIrType)
-                        }
-                        else ->
-                            error("Op $opString is unsupported")
-                    }
                 }
                 else ->
                     error("Op $opString is unsupported")

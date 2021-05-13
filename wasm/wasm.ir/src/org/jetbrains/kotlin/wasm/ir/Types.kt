@@ -31,10 +31,10 @@ class WasmRefType(val heapType: WasmHeapType) : WasmType("ref", -0x15)
 
 @Suppress("unused")
 object WasmI31Ref : WasmType("i31ref", -0x16)
-class WasmRtt(val depth: Int, val heapType: WasmHeapType) : WasmType("rtt", -0x17)
+class WasmRtt(val depth: Int, val type: WasmSymbolReadOnly<WasmTypeDeclaration>) : WasmType("rtt", -0x17)
 
 @Suppress("unused")
-object WasmExnRef : WasmType("exnref", -0x18)
+object WasmDataRef : WasmType("dataref", -0x19)
 
 sealed class WasmHeapType {
     class Type(val type: WasmSymbolReadOnly<WasmTypeDeclaration>) : WasmHeapType() {

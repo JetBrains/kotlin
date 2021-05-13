@@ -442,7 +442,7 @@ class WasmIrToText : SExpressionBuilder() {
             is WasmRtt ->
                 sameLineList("rtt") {
                     appendElement(type.depth.toString())
-                    appendHeapType(type.heapType)
+                    appendModuleFieldReference(type.type.owner)
                 }
 
             WasmUnreachableType -> {
