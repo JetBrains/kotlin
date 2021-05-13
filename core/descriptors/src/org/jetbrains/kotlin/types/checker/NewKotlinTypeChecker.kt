@@ -61,9 +61,8 @@ object ErrorTypesAreEqualToAnything : KotlinTypeChecker {
 
 interface NewKotlinTypeChecker : KotlinTypeChecker {
     val kotlinTypeRefiner: KotlinTypeRefiner
+    val kotlinTypePreparator: KotlinTypePreparator
     val overridingUtil: OverridingUtil
-
-    fun transformToNewType(type: UnwrappedType): UnwrappedType
 
     companion object {
         val Default = NewKotlinTypeCheckerImpl(KotlinTypeRefiner.Default)
@@ -71,7 +70,10 @@ interface NewKotlinTypeChecker : KotlinTypeChecker {
 }
 
 
-class NewKotlinTypeCheckerImpl(override val kotlinTypeRefiner: KotlinTypeRefiner) : NewKotlinTypeChecker {
+class NewKotlinTypeCheckerImpl(
+    override val kotlinTypeRefiner: KotlinTypeRefiner,
+    override val kotlinTypePreparator: KotlinTypePreparator = KotlinTypePreparator.Default
+) : NewKotlinTypeChecker {
     override val overridingUtil: OverridingUtil = OverridingUtil.createWithTypeRefiner(kotlinTypeRefiner)
 
     override fun isSubtypeOf(subtype: KotlinType, supertype: KotlinType): Boolean =
@@ -88,60 +90,6 @@ class NewKotlinTypeCheckerImpl(override val kotlinTypeRefiner: KotlinTypeRefiner
     fun ClassicTypeCheckerContext.isSubtypeOf(subType: UnwrappedType, superType: UnwrappedType): Boolean {
         return AbstractTypeChecker.isSubtypeOf(this as AbstractTypeCheckerContext, subType, superType)
     }
-
-    fun transformToNewType(type: SimpleType): SimpleType {
-        val constructor = type.constructor
-        when (constructor) {
-            // Type itself can be just SimpleTypeImpl, not CapturedType. see KT-16147
-            is CapturedTypeConstructorImpl -> {
-                val lowerType = constructor.projection.takeIf { it.projectionKind == Variance.IN_VARIANCE }?.type?.unwrap()
-
-                // it is incorrect calculate this type directly because of recursive star projections
-                if (constructor.newTypeConstructor == null) {
-                    constructor.newTypeConstructor =
-                        NewCapturedTypeConstructor(constructor.projection, constructor.supertypes.map { it.unwrap() })
-                }
-                return NewCapturedType(
-                    CaptureStatus.FOR_SUBTYPING, constructor.newTypeConstructor!!,
-                    lowerType, type.annotations, type.isMarkedNullable
-                )
-            }
-
-            is IntegerValueTypeConstructor -> {
-                val newConstructor =
-                    IntersectionTypeConstructor(constructor.supertypes.map { TypeUtils.makeNullableAsSpecified(it, type.isMarkedNullable) })
-                return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
-                    type.annotations,
-                    newConstructor,
-                    listOf(),
-                    false,
-                    type.memberScope
-                )
-            }
-
-            is IntersectionTypeConstructor -> if (type.isMarkedNullable) {
-                val newConstructor = constructor.transformComponents(transform = { it.makeNullable() }) ?: constructor
-                return newConstructor.createType()
-
-            }
-        }
-
-        return type
-    }
-
-    override fun transformToNewType(type: UnwrappedType): UnwrappedType =
-        when (type) {
-            is SimpleType -> transformToNewType(type)
-            is FlexibleType -> {
-                val newLower = transformToNewType(type.lowerBound)
-                val newUpper = transformToNewType(type.upperBound)
-                if (newLower !== type.lowerBound || newUpper !== type.upperBound) {
-                    KotlinTypeFactory.flexibleType(newLower, newUpper)
-                } else {
-                    type
-                }
-            }
-        }.inheritEnhancement(type)
 }
 
 object NullabilityChecker {

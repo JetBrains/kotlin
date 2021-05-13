@@ -74,8 +74,8 @@ fun <T> SimpleConstraintSystem.isSignatureNotLessSpecific(
              * Here, when we try solve this CS(Y is variables) then Array<out X> <: Array<out Y> and this system impossible to solve,
              * so we capture types from receiver and value parameters.
              */
-            val specificCapturedType =
-                context.prepareType(specificType).let { if (captureFromArgument) context.captureFromExpression(it) ?: it else it }
+            val specificCapturedType = AbstractTypeChecker.prepareType(context, specificType)
+                .let { if (captureFromArgument) context.captureFromExpression(it) ?: it else it }
             addSubtypeConstraint(specificCapturedType, substitutedGeneralType)
         }
     }

@@ -173,11 +173,11 @@ private fun captureArguments(type: UnwrappedType, status: CaptureStatus): List<T
 
         if (oldProjection.projectionKind == Variance.INVARIANT) continue
         val capturedTypeSupertypes = type.constructor.parameters[index].upperBounds.mapTo(mutableListOf()) {
-            NewKotlinTypeChecker.Default.transformToNewType(substitutor.safeSubstitute(it, Variance.INVARIANT).unwrap())
+            KotlinTypePreparator.Default.prepareType(substitutor.safeSubstitute(it, Variance.INVARIANT).unwrap())
         }
 
         if (!oldProjection.isStarProjection && oldProjection.projectionKind == Variance.OUT_VARIANCE) {
-            capturedTypeSupertypes += NewKotlinTypeChecker.Default.transformToNewType(oldProjection.type.unwrap())
+            capturedTypeSupertypes += KotlinTypePreparator.Default.prepareType(oldProjection.type.unwrap())
         }
 
         val capturedType = newProjection.type as NewCapturedType

@@ -412,8 +412,6 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
 
     fun KotlinTypeMarker.isSimpleType(): Boolean = asSimpleType() != null
 
-    fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker
-
     fun SimpleTypeMarker.isPrimitiveType(): Boolean
 
     fun KotlinTypeMarker.getAnnotations(): List<AnnotationMarker>
