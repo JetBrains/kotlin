@@ -22,10 +22,10 @@ class WrongIncDec() {
 
 fun testWrongIncDec() {
   var x = WrongIncDec()
-  <error descr="[RESULT_TYPE_MISMATCH] WrongIncDec, kotlin/Int">x++</error>
-  <error descr="[RESULT_TYPE_MISMATCH] WrongIncDec, kotlin/Int">++x</error>
-  <error descr="[RESULT_TYPE_MISMATCH] WrongIncDec, kotlin/Int">x--</error>
-  <error descr="[RESULT_TYPE_MISMATCH] WrongIncDec, kotlin/Int">--x</error>
+  <error descr="[RESULT_TYPE_MISMATCH] Function return type mismatch: actual type is kotlin/Int but WrongIncDec was expected">x++</error>
+  <error descr="[RESULT_TYPE_MISMATCH] Function return type mismatch: actual type is kotlin/Int but WrongIncDec was expected">++x</error>
+  <error descr="[RESULT_TYPE_MISMATCH] Function return type mismatch: actual type is kotlin/Int but WrongIncDec was expected">x--</error>
+  <error descr="[RESULT_TYPE_MISMATCH] Function return type mismatch: actual type is kotlin/Int but WrongIncDec was expected">--x</error>
 }
 
 class UnitIncDec() {
@@ -35,12 +35,12 @@ class UnitIncDec() {
 
 fun testUnitIncDec() {
   var x = UnitIncDec()
-  <error descr="[RESULT_TYPE_MISMATCH] UnitIncDec, kotlin/Unit">x++</error>
-  <error descr="[RESULT_TYPE_MISMATCH] UnitIncDec, kotlin/Unit">++x</error>
-  <error descr="[RESULT_TYPE_MISMATCH] UnitIncDec, kotlin/Unit">x--</error>
-  <error descr="[RESULT_TYPE_MISMATCH] UnitIncDec, kotlin/Unit">--x</error>
-  x = <error descr="[RESULT_TYPE_MISMATCH] UnitIncDec, kotlin/Unit">x++</error>
-  x = <error descr="[RESULT_TYPE_MISMATCH] UnitIncDec, kotlin/Unit">x--</error>
-  x = <error descr="[RESULT_TYPE_MISMATCH] UnitIncDec, kotlin/Unit">++x</error>
-  x = <error descr="[RESULT_TYPE_MISMATCH] UnitIncDec, kotlin/Unit">--x</error>
+  <error descr="[RESULT_TYPE_MISMATCH] Function return type mismatch: actual type is kotlin/Unit but UnitIncDec was expected">x++</error>
+  <error descr="[RESULT_TYPE_MISMATCH] Function return type mismatch: actual type is kotlin/Unit but UnitIncDec was expected">++x</error>
+  <error descr="[RESULT_TYPE_MISMATCH] Function return type mismatch: actual type is kotlin/Unit but UnitIncDec was expected">x--</error>
+  <error descr="[RESULT_TYPE_MISMATCH] Function return type mismatch: actual type is kotlin/Unit but UnitIncDec was expected">--x</error>
+  x = <error descr="[RESULT_TYPE_MISMATCH] Function return type mismatch: actual type is kotlin/Unit but UnitIncDec was expected">x++</error>
+  x = <error descr="[RESULT_TYPE_MISMATCH] Function return type mismatch: actual type is kotlin/Unit but UnitIncDec was expected">x--</error>
+  x = <error descr="[RESULT_TYPE_MISMATCH] Function return type mismatch: actual type is kotlin/Unit but UnitIncDec was expected">++x</error>
+  x = <error descr="[RESULT_TYPE_MISMATCH] Function return type mismatch: actual type is kotlin/Unit but UnitIncDec was expected">--x</error>
 }

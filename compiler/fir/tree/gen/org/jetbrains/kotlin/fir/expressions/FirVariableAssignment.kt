@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 
@@ -27,6 +28,7 @@ abstract class FirVariableAssignment : FirPureAbstractElement(), FirQualifiedAcc
     abstract override val extensionReceiver: FirExpression
     abstract override val source: FirSourceElement?
     abstract val lValue: FirReference
+    abstract val lValueTypeRef: FirTypeRef
     abstract val rValue: FirExpression
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitVariableAssignment(this, data)
@@ -43,6 +45,8 @@ abstract class FirVariableAssignment : FirPureAbstractElement(), FirQualifiedAcc
 
     @FirImplementationDetail
     abstract override fun replaceSource(newSource: FirSourceElement?)
+
+    abstract fun replaceLValueTypeRef(newLValueTypeRef: FirTypeRef)
 
     abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirVariableAssignment
 

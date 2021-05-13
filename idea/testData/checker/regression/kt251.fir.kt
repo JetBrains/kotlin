@@ -2,7 +2,7 @@ class A() {
     var x: Int = 0
         get() = "s"
         set(value: <error descr="[WRONG_SETTER_PARAMETER_TYPE] Setter parameter type must be equal to the type of the property, i.e. 'kotlin/Int'">String</error>) {
-            field = value
+            field = <error descr="[ASSIGNMENT_TYPE_MISMATCH] Assignment type mismatch: actual type is kotlin/String but kotlin/Int was expected">value</error>
         }
     val y: Int
         get(): <error descr="[WRONG_GETTER_RETURN_TYPE] Getter return type must be equal to the type of the property, i.e. 'kotlin/Int'">String</error> = "s"

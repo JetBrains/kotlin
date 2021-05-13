@@ -521,6 +521,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         variableAssignment.configure {
             +field("lValue", reference)
+            +field("lValueTypeRef", typeRef).withReplace()
             +field("rValue", expression).withTransform()
         }
 

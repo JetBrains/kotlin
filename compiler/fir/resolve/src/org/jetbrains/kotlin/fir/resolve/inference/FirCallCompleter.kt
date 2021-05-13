@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
@@ -56,7 +57,12 @@ class FirCallCompleter(
             where T : FirResolvable, T : FirStatement {
         val typeRef = components.typeFromCallee(call)
 
+        if (call is FirVariableAssignment) {
+            call.replaceLValueTypeRef(typeRef)
+        }
+
         val reference = call.calleeReference as? FirNamedReferenceWithCandidate ?: return CompletionResult(call, true)
+
         val candidate = reference.candidate
         val initialType = components.initialTypeOfCandidate(candidate, call)
 

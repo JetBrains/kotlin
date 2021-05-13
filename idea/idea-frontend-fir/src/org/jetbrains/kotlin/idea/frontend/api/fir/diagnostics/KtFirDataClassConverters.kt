@@ -908,12 +908,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.MANY_LAMBDA_EXPRESSION_ARGUMENTS) { firDiagnostic ->
-        ManyLambdaExpressionArgumentsImpl(
-            firDiagnostic as FirPsiDiagnostic<*>,
-            token,
-        )
-    }
     add(FirErrors.ASSIGNMENT_TYPE_MISMATCH) { firDiagnostic ->
         AssignmentTypeMismatchImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
@@ -926,6 +920,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
         ResultTypeMismatchImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.MANY_LAMBDA_EXPRESSION_ARGUMENTS) { firDiagnostic ->
+        ManyLambdaExpressionArgumentsImpl(
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )

@@ -25,5 +25,5 @@ fun main() {
     Test.rawAField.second = rawA.first.second
 
     rawA.listOfDoubles = strList
-    rawA.listOfDoubles = "" // first should be List
+    rawA.listOfDoubles = <!ASSIGNMENT_TYPE_MISMATCH!>""<!> // first should be List
 }

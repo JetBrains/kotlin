@@ -66,7 +66,7 @@ class FirCallCompletionResultsWriterTransformer(
         }
     }
 
-    private fun <T : FirQualifiedAccessExpression> prepareQualifiedTransform(
+    private fun <T : FirQualifiedAccess> prepareQualifiedTransform(
         qualifiedAccessExpression: T, calleeReference: FirNamedReferenceWithCandidate
     ): T {
         val subCandidate = calleeReference.candidate
@@ -111,7 +111,13 @@ class FirCallCompletionResultsWriterTransformer(
             )
             .transformDispatchReceiver(StoreReceiver, subCandidate.dispatchReceiverExpression())
             .transformExtensionReceiver(StoreReceiver, subCandidate.extensionReceiverExpression()) as T
-        result.replaceTypeRef(typeRef)
+
+        if (result is FirQualifiedAccessExpression) {
+            result.replaceTypeRef(typeRef)
+        } else if (result is FirVariableAssignment) {
+            result.replaceLValueTypeRef(typeRef)
+        }
+
         if (declaration !is FirErrorFunction) {
             result.replaceTypeArguments(typeArguments)
         }
@@ -354,13 +360,19 @@ class FirCallCompletionResultsWriterTransformer(
     ): FirStatement {
         val calleeReference = variableAssignment.calleeReference as? FirNamedReferenceWithCandidate
             ?: return variableAssignment
-        val typeArguments = computeTypeArguments(variableAssignment, calleeReference.candidate)
+
+        // Initialize lValueTypeRef
+        val qualifiedTransform = prepareQualifiedTransform(variableAssignment, calleeReference)
+        val lValueTypeRef = qualifiedTransform.lValueTypeRef as FirResolvedTypeRef
+        val resultLValueType = lValueTypeRef.substituteTypeRef(calleeReference.candidate)
+        resultLValueType.ensureResolvedTypeDeclaration(session)
+        variableAssignment.replaceLValueTypeRef(resultLValueType)
+        session.lookupTracker?.recordTypeResolveAsLookup(resultLValueType, variableAssignment.lValue.source, null)
+
         return variableAssignment.transformCalleeReference(
             StoreCalleeReference,
             calleeReference.toResolvedReference(),
-        ).apply {
-            replaceTypeArguments(typeArguments)
-        }
+        )
     }
 
     private inner class TypeUpdaterForDelegateArguments : FirTransformer<Any?>() {

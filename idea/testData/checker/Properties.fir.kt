@@ -2,7 +2,7 @@
    get() : Int = 1
    set(value : <error descr="[WRONG_SETTER_PARAMETER_TYPE] Setter parameter type must be equal to the type of the property, i.e. 'kotlin/Int'">Long</error>) {
       field = value.toInt()
-      field = 1.toLong()
+      field = <error descr="[ASSIGNMENT_TYPE_MISMATCH] Assignment type mismatch: actual type is kotlin/Long but kotlin/Int was expected">1.toLong()</error>
     }
 
  val xx : Int = <error descr="[PROPERTY_INITIALIZER_NO_BACKING_FIELD] Initializer is not allowed here because this property has no backing field">1 + x</error>

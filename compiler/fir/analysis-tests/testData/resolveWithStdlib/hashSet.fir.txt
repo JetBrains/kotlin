@@ -18,5 +18,5 @@ FILE: hashSet.kt
     public final fun foo(): R|kotlin/Unit| {
         lvar c: R|kotlin/collections/MutableSet<kotlin/String>?| = Null(null)
         R|<local>/c| = R|java/util/HashSet.HashSet|<R|ft<kotlin/String, kotlin/String?>|>()
-        R|<local>/c|!!.R|/d| = R|/produce|<R|T?|>()
+        R|<local>/c|!!.R|/d| = R|/produce|<R|kotlin/String?|>()
     }

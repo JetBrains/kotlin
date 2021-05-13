@@ -28,7 +28,7 @@ fun main() {
     val raw = Test.rawAField
 
     raw.charSequences = arrayOf<String>()
-    raw.charSequences = arrayOf<Double>()
+    raw.charSequences = <!ASSIGNMENT_TYPE_MISMATCH!>arrayOf<Double>()<!>
 
     raw.maps = arrayOf<Map<Int, Int>>()
     raw.maps = arrayOf<MutableMap<Int, Int>>()

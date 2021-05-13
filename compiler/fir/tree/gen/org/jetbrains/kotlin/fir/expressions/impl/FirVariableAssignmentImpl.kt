@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 
@@ -34,6 +36,7 @@ internal class FirVariableAssignmentImpl(
         set(value) {
             calleeReference = value
         }
+    override var lValueTypeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         calleeReference.accept(visitor, data)
@@ -46,6 +49,7 @@ internal class FirVariableAssignmentImpl(
         if (extensionReceiver !== explicitReceiver && extensionReceiver !== dispatchReceiver) {
             extensionReceiver.accept(visitor, data)
         }
+        lValueTypeRef.accept(visitor, data)
         rValue.accept(visitor, data)
     }
 
@@ -60,6 +64,7 @@ internal class FirVariableAssignmentImpl(
         if (extensionReceiver !== explicitReceiver && extensionReceiver !== dispatchReceiver) {
             extensionReceiver = extensionReceiver.transform(transformer, data)
         }
+        lValueTypeRef = lValueTypeRef.transform(transformer, data)
         transformRValue(transformer, data)
         return this
     }
@@ -115,5 +120,9 @@ internal class FirVariableAssignmentImpl(
     @FirImplementationDetail
     override fun replaceSource(newSource: FirSourceElement?) {
         source = newSource
+    }
+
+    override fun replaceLValueTypeRef(newLValueTypeRef: FirTypeRef) {
+        lValueTypeRef = newLValueTypeRef
     }
 }

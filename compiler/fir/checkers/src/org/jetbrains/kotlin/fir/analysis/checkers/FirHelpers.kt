@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.overrideModifier
 import org.jetbrains.kotlin.fir.analysis.diagnostics.visibilityModifier
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
@@ -521,15 +522,33 @@ private val FirSimpleFunction.matchesToStringSignature: Boolean
     get() = valueParameters.isEmpty()
 
 fun checkTypeMismatch(
-    lValueType: ConeKotlinType,
+    lValueOriginalType: ConeKotlinType,
     rValue: FirExpression,
     context: CheckerContext,
     source: FirSourceElement,
     reporter: DiagnosticReporter,
     isInitializer: Boolean
 ) {
-    val rValueType = rValue.typeRef.coneType
+    var lValueType = lValueOriginalType
+    var rValueType = rValue.typeRef.coneType
     val typeContext = context.session.typeContext
+
+    val diagnosticFactory = when {
+        isInitializer -> {
+            FirErrors.INITIALIZER_TYPE_MISMATCH
+        }
+        source.kind is FirFakeSourceElementKind.DesugaredIncrementOrDecrement -> {
+            if (!lValueType.isNullable && rValueType.isNullable) {
+                val tempType = rValueType
+                rValueType = lValueType
+                lValueType = tempType
+            }
+            FirErrors.RESULT_TYPE_MISMATCH
+        }
+        else -> {
+            FirErrors.ASSIGNMENT_TYPE_MISMATCH
+        }
+    }
 
     if (!isSubtypeForTypeMismatch(typeContext, subtype = rValueType, supertype = lValueType)) {
         if (rValueType is ConeClassLikeType &&
@@ -548,15 +567,6 @@ fun checkTypeMismatch(
         if (rValue.isNullLiteral && lValueType.nullability == ConeNullability.NOT_NULL) {
             reporter.reportOn(rValue.source, FirErrors.NULL_FOR_NONNULL_TYPE, context)
         } else {
-            val diagnosticFactory = when {
-                isInitializer ->
-                    FirErrors.INITIALIZER_TYPE_MISMATCH
-                source.kind is FirFakeSourceElementKind.DesugaredIncrementOrDecrement ->
-                    FirErrors.RESULT_TYPE_MISMATCH
-                else ->
-                    FirErrors.ASSIGNMENT_TYPE_MISMATCH
-            }
-
             reporter.report(diagnosticFactory.on(source, lValueType, rValueType), context)
         }
     }

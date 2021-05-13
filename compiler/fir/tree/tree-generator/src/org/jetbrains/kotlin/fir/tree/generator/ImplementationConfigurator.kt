@@ -495,5 +495,14 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             default(it, "FirImplicitTypeRefImpl(null)")
             useTypes(implicitTypeRefType)
         }
+
+        configureFieldInAllImplementations(
+            field = "lValueTypeRef",
+            implementationPredicate = { it.type in "FirVariableAssignmentImpl" },
+            fieldPredicate = { it.defaultValueInImplementation == null }
+        ) {
+            default(it, "FirImplicitTypeRefImpl(null)")
+            useTypes(implicitTypeRefType)
+        }
     }
 }

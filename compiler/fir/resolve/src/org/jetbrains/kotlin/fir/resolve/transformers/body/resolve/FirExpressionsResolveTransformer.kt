@@ -677,8 +677,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         val resolvedAssignment = callResolver.resolveVariableAccessAndSelectCandidate(variableAssignment)
         val result = if (resolvedAssignment is FirVariableAssignment) {
             val completeAssignment = callCompleter.completeCall(resolvedAssignment, noExpectedType).result // TODO: check
-            val expectedType = components.typeFromCallee(completeAssignment)
-            completeAssignment.transformRValue(transformer, withExpectedType(expectedType))
+            completeAssignment.transformRValue(transformer, withExpectedType(variableAssignment.lValueTypeRef))
         } else {
             // This can happen in erroneous code only
             resolvedAssignment

@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ARGUMENT_PASSED_T
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ARGUMENT_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_EQUALS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ASSIGNED_VALUE_IS_NEVER_READ
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ASSIGNMENT_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ASSIGN_OPERATOR_AMBIGUITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.BACKING_FIELD_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER
@@ -248,6 +249,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REIFIED_TYPE_PARA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REPEATED_BOUND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REPEATED_MODIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RESERVED_MEMBER_INSIDE_INLINE_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RESULT_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_TYPE_MISMATCH
@@ -522,7 +524,14 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(NAMED_PARAMETER_NOT_FOUND, "Cannot find a parameter with this name: {0}", TO_STRING)
             map.put(MANY_LAMBDA_EXPRESSION_ARGUMENTS, "Only one lambda expression is allowed outside a parenthesized argument list")
 
-            map.put(ARGUMENT_TYPE_MISMATCH, "Argument type mismatch: actual type is {1} but {0} was expected", TO_STRING, TO_STRING)
+            map.put(ARGUMENT_TYPE_MISMATCH, "Argument type mismatch: actual type is {1} but {0} was expected", RENDER_TYPE, RENDER_TYPE)
+            map.put(ASSIGNMENT_TYPE_MISMATCH, "Assignment type mismatch: actual type is {1} but {0} was expected", RENDER_TYPE, RENDER_TYPE)
+            map.put(
+                RESULT_TYPE_MISMATCH,
+                "Function return type mismatch: actual type is {1} but {0} was expected",
+                RENDER_TYPE,
+                RENDER_TYPE
+            )
 
             // Ambiguity
             map.put(OVERLOAD_RESOLUTION_AMBIGUITY, "Overload resolution ambiguity between candidates: {0}", SYMBOLS)
@@ -834,7 +843,10 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             )
             map.put(INITIALIZER_TYPE_MISMATCH, "Initializer type mismatch: expected {0}, actual {1}", RENDER_TYPE, RENDER_TYPE)
             map.put(GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY, "Getter visibility must be the same as property visibility")
-            map.put(SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY, "Setter visibility must be the same or less permissive than property visibility")
+            map.put(
+                SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY,
+                "Setter visibility must be the same or less permissive than property visibility"
+            )
             map.put(WRONG_SETTER_RETURN_TYPE, "Setter return type must be Unit")
             map.put(
                 WRONG_GETTER_RETURN_TYPE,

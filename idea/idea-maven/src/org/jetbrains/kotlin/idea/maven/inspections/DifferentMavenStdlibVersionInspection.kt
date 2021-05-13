@@ -72,7 +72,7 @@ class DifferentMavenStdlibVersionInspection : DomElementsInspection<MavenDomProj
             }
     }
 
-    private fun createFixes(project: MavenProject, versionElement: GenericDomValue<*>, versions: List<String>): List<SetVersionQuickFix> {
+    private fun createFixes(project: MavenProject, versionElement: GenericDomValue<String>, versions: List<String>): List<SetVersionQuickFix> {
         val bestVersion = versions.maxByOrNull(::MavenVersionComparable)!!
         if (bestVersion == versionElement.stringValue) {
             return emptyList()
@@ -84,7 +84,7 @@ class DifferentMavenStdlibVersionInspection : DomElementsInspection<MavenDomProj
                 SetVersionQuickFix(versionElement, bestVersion, null)
     }
 
-    private class SetVersionQuickFix(val versionElement: GenericDomValue<*>, val newVersion: String, val versionResolved: String?) :
+    private class SetVersionQuickFix(val versionElement: GenericDomValue<String>, val newVersion: String, val versionResolved: String?) :
         LocalQuickFix {
         override fun getName() = when (versionResolved) {
             null -> KotlinMavenBundle.message("fix.set.version.name", newVersion)

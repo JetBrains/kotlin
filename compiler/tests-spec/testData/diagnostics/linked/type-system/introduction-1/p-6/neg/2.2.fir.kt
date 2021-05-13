@@ -38,7 +38,7 @@ class Case8 {
     var x: Any = 0
         get() = 0
         set(value) {
-            field = null
+            field = <!NULL_FOR_NONNULL_TYPE!>null<!>
         }
 }
 
