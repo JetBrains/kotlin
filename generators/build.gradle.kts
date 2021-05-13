@@ -24,6 +24,8 @@ fun extraSourceSet(name: String, extendMain: Boolean = true): Pair<SourceSet, Co
 val (builtinsSourceSet, builtinsApi) = extraSourceSet("builtins", extendMain = false)
 val (evaluateSourceSet, evaluateApi) = extraSourceSet("evaluate")
 val (interpreterSourceSet, interpreterApi) = extraSourceSet("interpreter")
+val (protobufSourceSet, protobufApi) = extraSourceSet("protobuf")
+val (protobufCompareSourceSet, protobufCompareApi) = extraSourceSet("protobufCompare")
 val (wasmSourceSet, wasmApi) = extraSourceSet("wasm")
 
 dependencies {
@@ -38,10 +40,14 @@ dependencies {
     interpreterApi(project(":compiler:ir.tree"))
     interpreterApi(project(":compiler:ir.tree.impl"))
     interpreterApi(project(":compiler:ir.psi2ir"))
+    protobufApi(kotlinStdlib())
+    protobufCompareApi(projectTests(":kotlin-build-common"))
 
     testCompile(builtinsSourceSet.output)
     testCompile(evaluateSourceSet.output)
     testCompile(interpreterSourceSet.output)
+    testCompile(protobufSourceSet.output)
+    testCompile(protobufCompareSourceSet.output)
 
     testCompile(projectTests(":compiler:cli"))
     testCompile(projectTests(":idea:idea-maven"))
@@ -96,8 +102,8 @@ projectTest(parallel = true) {
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateTestsKt")
 
-val generateProtoBuf by generator("org.jetbrains.kotlin.generators.protobuf.GenerateProtoBufKt")
-val generateProtoBufCompare by generator("org.jetbrains.kotlin.generators.protobuf.GenerateProtoBufCompare")
+val generateProtoBuf by generator("org.jetbrains.kotlin.generators.protobuf.GenerateProtoBufKt", protobufSourceSet)
+val generateProtoBufCompare by generator("org.jetbrains.kotlin.generators.protobuf.GenerateProtoBufCompare", protobufCompareSourceSet)
 
 val generateGradleOptions by generator("org.jetbrains.kotlin.generators.arguments.GenerateGradleOptionsKt")
 val generateKeywordStrings by generator("org.jetbrains.kotlin.generators.frontend.GenerateKeywordStrings")

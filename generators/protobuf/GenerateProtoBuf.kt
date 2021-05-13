@@ -1,13 +1,10 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.generators.protobuf
 
-import com.intellij.execution.configurations.GeneralCommandLine
-import com.intellij.execution.util.ExecUtil
-import com.intellij.util.LineSeparator
 import java.io.File
 import java.util.regex.Pattern
 import kotlin.system.exitProcess
@@ -78,19 +75,27 @@ fun main() {
         println("Do not forget to run GenerateProtoBufCompare")
     } catch (e: Throwable) {
         e.printStackTrace()
-        throw e
     } finally {
         // Workaround for JVM hanging: IDEA's process handler creates thread pool
         exitProcess(0)
     }
 }
 
-private fun checkVersion() {
-    val processOutput = ExecUtil.execAndGetOutput(GeneralCommandLine(PROTOC_EXE, "--version"))
+private data class ProcessOutput(val stdout: String, val stderr: String)
 
-    val version = processOutput.stdout.trim()
+private fun execAndGetOutput(vararg args: String): ProcessOutput {
+    val process = ProcessBuilder().command(*args).redirectErrorStream(true).start()
+    val stdout = process.inputStream.reader().readText()
+    val stderr = process.errorStream.reader().readText()
+    return ProcessOutput(stdout, stderr).also { process.waitFor() }
+}
+
+private fun checkVersion() {
+    val (stdout, stderr) = execAndGetOutput(PROTOC_EXE, "--version")
+
+    val version = stdout.trim()
     if (version.isEmpty()) {
-        throw AssertionError("Output is empty, stderr: ${processOutput.stderr}")
+        throw AssertionError("Output is empty, stderr: $stderr")
     }
     if (version != "libprotoc 2.6.1") {
         throw AssertionError("Expected protoc 2.6.1, but was: $version")
@@ -98,15 +103,14 @@ private fun checkVersion() {
 }
 
 private fun execProtoc(protoPath: String, outPath: String) {
-    val commandLine = GeneralCommandLine(
+    val commandLine =
         listOf(PROTOC_EXE, protoPath, "--java_out=$outPath") +
                 PROTOBUF_PROTO_PATHS.map { "--proto_path=$it" }
-    )
-    println("running $commandLine")
-    val processOutput = ExecUtil.execAndGetOutput(commandLine)
-    print(processOutput.stdout)
-    if (processOutput.stderr.isNotEmpty()) {
-        throw AssertionError(processOutput.stderr)
+    println("running ${commandLine.joinToString(" ")}")
+    val (stdout, stderr) = execAndGetOutput(*commandLine.toTypedArray())
+    print(stdout)
+    if (stderr.isNotEmpty()) {
+        throw AssertionError(stderr)
     }
 }
 
@@ -145,7 +149,7 @@ private fun renamePackagesInSingleFile(javaFile: File) {
     }
 
     javaFile.writeText(
-        javaFile.readLines().joinToString(LineSeparator.getSystemLineSeparator().separatorString) { line ->
+        javaFile.readLines().joinToString(System.lineSeparator()) { line ->
             line.replace("com.google.protobuf", "org.jetbrains.kotlin.protobuf")
                 // Memory footprint optimizations: do not allocate too big bytes buffers that effectively remain unused
                 .replace("            unknownFieldsOutput);", "            unknownFieldsOutput, 1);")
