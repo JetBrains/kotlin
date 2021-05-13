@@ -218,6 +218,9 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
             ).apply {
                 parent = this@FunctionReferenceBuilder.parent
                 createParameterDeclarations()
+
+                // copy the generated name for IrClass, partially solves KT-47194
+                context.copyLocalClassName(functionReference, this)
             }
 
         private val functionReferenceThis = functionReferenceClass.thisReceiver!!
