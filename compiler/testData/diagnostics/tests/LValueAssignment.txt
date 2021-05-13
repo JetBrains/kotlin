@@ -24,6 +24,13 @@ package lvalue_assignment {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
+    @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.EXPRESSION}) public final annotation class Ann : kotlin.Annotation {
+        public constructor Ann()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
     public open class B {
         public constructor B()
         public final var b: kotlin.Int

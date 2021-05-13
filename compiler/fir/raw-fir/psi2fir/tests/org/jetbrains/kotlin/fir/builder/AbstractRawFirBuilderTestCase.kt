@@ -83,18 +83,29 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
         if (!result.add(this)) {
             return result
         }
-        propertyLoop@ for (property in this::class.memberProperties) {
-            val childElement = property.getter.apply { isAccessible = true }.call(this)
+        for (property in this::class.memberProperties) {
+            if (hasNoAcceptAndTransform(this::class.simpleName, property.name)) continue
 
-            when (childElement) {
-                is FirNoReceiverExpression -> continue@propertyLoop
+            when (val childElement = property.getter.apply { isAccessible = true }.call(this)) {
+                is FirNoReceiverExpression -> continue
                 is FirElement -> childElement.traverseChildren(result)
                 is List<*> -> childElement.filterIsInstance<FirElement>().forEach { it.traverseChildren(result) }
-                else -> continue@propertyLoop
+                else -> continue
             }
 
         }
         return result
+    }
+
+    private val firImplClassPropertiesWithNoAcceptAndTransform = mapOf(
+        "FirResolvedImportImpl" to "delegate",
+        "FirErrorTypeRefImpl" to "delegatedTypeRef",
+        "FirResolvedTypeRefImpl" to "delegatedTypeRef"
+    )
+
+    private fun hasNoAcceptAndTransform(className: String?, propertyName: String): Boolean {
+        if (className == null) return false
+        return firImplClassPropertiesWithNoAcceptAndTransform[className] == propertyName
     }
 
     private fun FirFile.visitChildren(): Set<FirElement> =

@@ -208,9 +208,9 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.RETURN_WITH_LABEL
     )
 
-    val ASSIGNMENT_VALUE = SourceElementPositioningStrategy(
+    val PROPERTY_INITIALIZER = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.LAST_CHILD,
-        PositioningStrategies.ASSIGNMENT_VALUE
+        PositioningStrategies.PROPERTY_INITIALIZER
     )
 
     val WHOLE_ELEMENT = SourceElementPositioningStrategy(
@@ -246,5 +246,10 @@ object SourceElementPositioningStrategies {
     val ANNOTATION_USE_SITE = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.ANNOTATION_USE_SITE,
         PositioningStrategies.ANNOTATION_USE_SITE
+    )
+
+    val ASSIGNMENT_LHS = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.ASSIGNMENT_LHS,
+        PositioningStrategies.ASSIGNMENT_LHS
     )
 }

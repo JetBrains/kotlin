@@ -47,7 +47,7 @@ class R {
 fun test() {
     val o = object {
         fun run() {
-            <!UNRESOLVED_REFERENCE!>p<!>.<!UNRESOLVED_REFERENCE!>x<!> = 43
+            <!UNRESOLVED_REFERENCE!>p<!>.x = 43
         }
     }
 }

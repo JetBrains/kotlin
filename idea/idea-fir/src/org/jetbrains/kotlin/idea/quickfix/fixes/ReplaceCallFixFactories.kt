@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.idea.frontend.api.types.KtTypeNullability
 import org.jetbrains.kotlin.idea.frontend.api.types.KtTypeWithNullability
 import org.jetbrains.kotlin.idea.quickfix.ReplaceImplicitReceiverCallFix
 import org.jetbrains.kotlin.idea.quickfix.ReplaceWithSafeCallFix
-import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtNameReferenceExpression
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.unwrapParenthesesLabelsAndAnnotations
 
 object ReplaceCallFixFactories {
     val unsafeCallFactory =
@@ -25,14 +25,23 @@ object ReplaceCallFixFactories {
                 return expectedType?.nullability == KtTypeNullability.NON_NULLABLE
             }
 
-            when (val psi = diagnostic.psi) {
-                is KtDotQualifiedExpression -> listOf(ReplaceWithSafeCallFix(psi, psi.shouldHaveNotNullType()))
+            val psi = diagnostic.psi
+            val target = if (psi is KtBinaryExpression && psi.operationToken in KtTokens.ALL_ASSIGNMENTS) {
+                // UNSAFE_CALL for assignments (e.g., `foo.bar = value`) is reported on the entire statement (KtBinaryExpression).
+                // The unsafe call is on the LHS of the assignment.
+                psi.left
+            } else {
+                psi
+            }.unwrapParenthesesLabelsAndAnnotations()
+
+            when (target) {
+                is KtDotQualifiedExpression -> listOf(ReplaceWithSafeCallFix(target, target.shouldHaveNotNullType()))
                 is KtNameReferenceExpression -> {
                     // TODO: As a safety precaution, resolve the expression to determine if it is a call with an implicit receiver.
                     // This is a defensive check to ensure that the diagnostic was reported on such a call and not some other name reference.
                     // This isn't strictly needed because FIR checkers aren't reporting on wrong elements, but ReplaceWithSafeCallFixFactory
                     // in FE1.0 does so.
-                    listOf(ReplaceImplicitReceiverCallFix(psi, psi.shouldHaveNotNullType()))
+                    listOf(ReplaceImplicitReceiverCallFix(target, target.shouldHaveNotNullType()))
                 }
                 else -> emptyList()
             }

@@ -47,9 +47,9 @@ class ErrorNodeDiagnosticCollectorComponent(
     override fun visitErrorNamedReference(errorNamedReference: FirErrorNamedReference, data: CheckerContext) {
         val source = errorNamedReference.source ?: return
         val qualifiedAccessOrAnnotationCall = data.qualifiedAccessOrAnnotationCalls.lastOrNull()?.takeIf {
-            // Use the source of the enclosing FirQualifiedAccessExpression if it is exactly the call to the erroneous callee.
+            // Use the source of the enclosing FirQualifiedAccess if it is exactly the call to the erroneous callee.
             when (it) {
-                is FirQualifiedAccessExpression -> it.calleeReference == errorNamedReference
+                is FirQualifiedAccess -> it.calleeReference == errorNamedReference
                 is FirAnnotationCall -> it.calleeReference == errorNamedReference
                 else -> false
             }
