@@ -19,7 +19,7 @@ internal fun wasm_float_nan(): Float =
 internal fun wasm_double_nan(): Double =
     implementedAsIntrinsic
 
-internal fun <From, To> wasm_ref_cast(a: From): To =
+internal fun <To> wasm_ref_cast(a: Any?): To =
     implementedAsIntrinsic
 
 @WasmOp(WasmOp.I32_EQ)

@@ -194,8 +194,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
                     subject = cachedValue(),
                     thenPart = builder.irNull(toType),
                     elsePart = builder.irCall(symbols.wasmRefCast, type = toType).apply {
-                        putTypeArgument(0, fromType)
-                        putTypeArgument(1, toType)
+                        putTypeArgument(0, toType)
                         putValueArgument(0, cachedValue())
                     }
                 )
@@ -203,8 +202,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         }
 
         return builder.irCall(symbols.wasmRefCast, type = toType).apply {
-            putTypeArgument(0, fromType)
-            putTypeArgument(1, toType)
+            putTypeArgument(0, toType)
             putValueArgument(0, value)
         }
     }

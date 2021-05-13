@@ -84,6 +84,15 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
             }
 
             irBuiltins.checkNotNullSymbol -> {
+
+                // Workaround: v8 doesnt support ref.cast-ing unreachable very well.
+                run {
+                    val arg = call.getValueArgument(0)!!
+                    if (arg.isNullConst()) {
+                        return builder.irCall(symbols.wasmUnreachable, irBuiltins.nothingType)
+                    }
+                }
+
                 return irCall(call, symbols.ensureNotNull).also {
                     it.putTypeArgument(0, call.type)
                 }

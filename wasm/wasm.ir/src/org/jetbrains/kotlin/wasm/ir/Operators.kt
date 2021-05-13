@@ -62,7 +62,7 @@ sealed class WasmImmediate {
         constructor(value: WasmGlobal) : this(WasmSymbol(value))
     }
 
-    class TypeIdx(val value: WasmSymbol<WasmTypeDeclaration>) : WasmImmediate() {
+    class TypeIdx(val value: WasmSymbolReadOnly<WasmTypeDeclaration>) : WasmImmediate() {
         constructor(value: WasmTypeDeclaration) : this(WasmSymbol(value))
     }
 
@@ -352,14 +352,12 @@ enum class WasmOp(
     I31_GET_S("i31.get_s", 0xFB_21),
     I31_GET_U("i31.get_u", 0xFB_22),
 
-    RTT_CANON("rtt.canon", 0xFB_30, HEAP_TYPE),
+    RTT_CANON("rtt.canon", 0xFB_30, TYPE_IDX),
 
-    // TODO: GC spec also has "depth" and "input heap type" immediates. V8 currently implements without them.
-    RTT_SUB("rtt.sub", 0xFB_31, HEAP_TYPE),
-    REF_TEST("ref.test", 0xFB_40, listOf(HEAP_TYPE, HEAP_TYPE)),
-    REF_CAST("ref.cast", 0xFB_41, listOf(HEAP_TYPE, HEAP_TYPE)),
+    RTT_SUB("rtt.sub", 0xFB_31, TYPE_IDX),
+    REF_TEST("ref.test", 0xFB_40),
+    REF_CAST("ref.cast", 0xFB_41),
 
-    // TODO: GC spec also has two heap type immediates. V8 currently implements without them.
     BR_ON_CAST("br_on_cast", 0xFB_42, listOf(LABEL_IDX)),
     ;
 
