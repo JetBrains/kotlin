@@ -197,14 +197,14 @@ internal class WasmPropertyReferenceLowering(val context: WasmBackendContext) : 
                     if (it != null && expression.dispatchReceiver == null)
                         receiverTypes.add(it.type)
                 }
-                val getterKFunctionType = symbols.getKFunctionType(
+                val getterFunctionType = symbols.getFunctionType(
                     returnType,
                     receiverTypes
                 )
                 IrFunctionReferenceImpl(
                     startOffset = startOffset,
                     endOffset = endOffset,
-                    type = getterKFunctionType,
+                    type = getterFunctionType,
                     symbol = expression.getter!!,
                     typeArgumentsCount = getter.typeParameters.size,
                     valueArgumentsCount = getter.valueParameters.size,
@@ -220,14 +220,14 @@ internal class WasmPropertyReferenceLowering(val context: WasmBackendContext) : 
             val setterCallableReference = expression.setter?.owner?.let { setter ->
                 if (!isKMutablePropertyType(expression.type)) null
                 else {
-                    val setterKFunctionType = symbols.getKFunctionType(
+                    val setterFunctionType = symbols.getFunctionType(
                         context.irBuiltIns.unitType,
                         receiverTypes + returnType
                     )
                     IrFunctionReferenceImpl(
                         startOffset = startOffset,
                         endOffset = endOffset,
-                        type = setterKFunctionType,
+                        type = setterFunctionType,
                         symbol = expression.setter!!,
                         typeArgumentsCount = setter.typeParameters.size,
                         valueArgumentsCount = setter.valueParameters.size,

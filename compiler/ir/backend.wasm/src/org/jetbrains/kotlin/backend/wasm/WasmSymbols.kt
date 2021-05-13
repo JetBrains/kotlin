@@ -193,7 +193,7 @@ class WasmSymbols(
 
     private fun getIrClass(fqName: FqName): IrClassSymbol = symbolTable.referenceClass(getClass(fqName))
     private fun getInternalClass(name: String): IrClassSymbol = getIrClass(FqName("kotlin.wasm.internal.$name"))
-    fun getKFunctionType(type: IrType, list: List<IrType>): IrType {
+    fun getFunctionType(type: IrType, list: List<IrType>): IrType {
         return irBuiltIns.function(list.size).typeWith(list + type)
     }
 }
