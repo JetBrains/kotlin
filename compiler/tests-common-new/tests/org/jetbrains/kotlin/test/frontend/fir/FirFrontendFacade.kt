@@ -84,8 +84,9 @@ class FirFrontendFacade(
 
                 friendDependencies(configuration[JVMConfigurationKeys.FRIEND_PATHS] ?: emptyList())
 
-                sourceDependencies(moduleInfoProvider.getDependentSourceModules(module))
+                sourceDependencies(moduleInfoProvider.getRegularDependentSourceModules(module))
                 sourceFriendsDependencies(moduleInfoProvider.getDependentFriendSourceModules(module))
+                sourceDependsOnDependencies(moduleInfoProvider.getDependentDependsOnSourceModules(module))
             },
             sessionConfigurator = {
                 if (FirDiagnosticsDirectives.WITH_EXTENDED_CHECKERS in module.directives) {

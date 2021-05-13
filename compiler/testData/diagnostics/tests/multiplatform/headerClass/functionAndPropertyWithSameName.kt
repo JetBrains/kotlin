@@ -7,7 +7,7 @@ expect class Foo {
     val bar: String
 }
 
-// MODULE: m1-jvm(m1-common)
+// MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
 
 actual class Foo {

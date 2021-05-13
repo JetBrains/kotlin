@@ -17,7 +17,7 @@ fun testCommon(base: Base) {
     }
 }
 
-// MODULE: m1-jvm(m1-common)
+// MODULE: m1-jvm()()(m1-common)
 // FILE: main.kt
 
 fun testPlatform(base: Base) {

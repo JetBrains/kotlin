@@ -23,7 +23,7 @@ expect class E {
     class N
 }
 
-// MODULE: m1-jvm(m1-common)
+// MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
 
 actual class B {

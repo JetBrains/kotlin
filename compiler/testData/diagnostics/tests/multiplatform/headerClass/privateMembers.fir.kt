@@ -10,7 +10,7 @@ expect class A {
     private class Nested
 }
 
-// MODULE: m1-jvm(m1-common)
+// MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
 
 actual class A {

@@ -6,7 +6,7 @@ expect class A {
     fun foo()
 }
 
-// MODULE: m1-jvm(m1-common)
+// MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
 
 class A {

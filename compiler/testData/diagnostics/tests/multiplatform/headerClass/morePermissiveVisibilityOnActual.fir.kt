@@ -18,7 +18,7 @@ expect open class Container {
     open fun openPublicFun()
 }
 
-// MODULE: m2-jvm(m1-common)
+// MODULE: m2-jvm()()(m1-common)
 
 // FILE: jvm.kt
 

@@ -5,7 +5,7 @@
 
 expect fun foo(x: String, y: Int = -1)
 
-// MODULE: m2-jvm(m1-common)
+// MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
 @JvmOverloads

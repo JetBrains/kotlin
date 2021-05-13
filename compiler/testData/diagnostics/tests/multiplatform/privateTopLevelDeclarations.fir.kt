@@ -8,7 +8,7 @@
 
 private expect class Foo
 
-// MODULE: m2-jvm(m1-common)
+// MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
 private actual fun foo() {}

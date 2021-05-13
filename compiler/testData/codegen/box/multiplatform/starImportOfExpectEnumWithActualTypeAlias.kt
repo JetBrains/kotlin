@@ -11,7 +11,7 @@ package test
 
 expect enum class E
 
-// MODULE: lib-jvm(lib-common)
+// MODULE: lib-jvm()()(lib-common)
 // FILE: jvm.kt
 
 package test

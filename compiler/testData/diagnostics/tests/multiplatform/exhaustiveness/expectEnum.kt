@@ -15,7 +15,7 @@ fun testCommon(base: Base) {
     }
 }
 
-// MODULE: m1-jvm(m1-common)
+// MODULE: m1-jvm()()(m1-common)
 // FILE: Base.kt
 actual enum class Base {
     A, B, C

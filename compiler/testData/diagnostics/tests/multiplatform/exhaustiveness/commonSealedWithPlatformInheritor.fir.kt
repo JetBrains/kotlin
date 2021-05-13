@@ -10,7 +10,7 @@ fun test_1(b: Base) = when (b) {
     is Derived -> 1
 }
 
-// MODULE: m1-jvm(m1-common)
+// MODULE: m1-jvm()()(m1-common)
 
 class PlatfromDerived : Base() // must be an error
 

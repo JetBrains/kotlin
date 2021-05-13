@@ -11,7 +11,7 @@ expect class NoArgConstructor()
 expect fun foo3(): Int
 expect fun foo4(): Int
 
-// MODULE: m2-jvm(m1-common)
+// MODULE: m2-jvm()()(m1-common)
 
 // FILE: jvm.kt
 

@@ -28,12 +28,16 @@ class FirModuleInfoProvider(private val testServices: TestServices) : TestServic
         return firModuleDataByModule[module] ?: error("module data for module $module is not registered")
     }
 
-    fun getDependentSourceModules(module: TestModule): List<FirModuleData> {
-        return getDependentModulesImpl(module.dependencies)
+    fun getRegularDependentSourceModules(module: TestModule): List<FirModuleData> {
+        return getDependentModulesImpl(module.regularDependencies)
     }
 
     fun getDependentFriendSourceModules(module: TestModule): List<FirModuleData> {
-        return getDependentModulesImpl(module.friends)
+        return getDependentModulesImpl(module.friendDependencies)
+    }
+
+    fun getDependentDependsOnSourceModules(module: TestModule): List<FirModuleData> {
+        return getDependentModulesImpl(module.dependsOnDependencies)
     }
 
     private fun getDependentModulesImpl(dependencies: List<DependencyDescription>): List<FirModuleData> {

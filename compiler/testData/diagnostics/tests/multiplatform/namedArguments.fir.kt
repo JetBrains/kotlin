@@ -18,7 +18,7 @@ fun testCommon() {
     f2(<!NAMED_ARGUMENTS_NOT_ALLOWED!>xxx<!> = 42)
 }
 
-// MODULE: m2-jvm(m1-common)
+// MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
 actual class Foo actual constructor(val aaa: Boolean) {

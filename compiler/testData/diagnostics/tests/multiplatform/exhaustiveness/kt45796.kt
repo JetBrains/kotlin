@@ -15,7 +15,7 @@ fun whenForExpectSealed(s: SealedClass): Int {
     }
 }
 
-// MODULE: m1-jvm(m1-common)
+// MODULE: m1-jvm()()(m1-common)
 actual sealed class SealedClass {
     actual class Nested : SealedClass() {
         actual class NestedDeeper : SealedClass()

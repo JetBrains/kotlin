@@ -28,7 +28,7 @@ class TestModuleStructureImpl(
     private val targetArtifactsByModule: Map<String, List<BinaryKind<*>>> = buildMap {
         for (module in modules) {
             val result = mutableListOf<BinaryKind<*>>()
-            for (dependency in module.dependencies) {
+            for (dependency in module.allDependencies) {
                 if (dependency.kind == DependencyKind.KLib) {
                     result += ArtifactKinds.KLib
                 }

@@ -8,7 +8,7 @@ expect sealed class SealedClass()
 
 class Derived1 : SealedClass()
 
-// MODULE: m1-jvm(m1-common)
+// MODULE: m1-jvm()()(m1-common)
 actual typealias SealedClass = MySealedClass
 
 sealed class MySealedClass

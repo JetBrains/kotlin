@@ -14,7 +14,7 @@ header enum class E {
     FIRST
 }
 
-// MODULE: m2-jvm(m1-common)
+// MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
 impl class My

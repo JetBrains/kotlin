@@ -23,7 +23,7 @@ fun test(foo: Foo) {
     foo.ok(42, "OK")
 }
 
-// MODULE: m2-jvm(m1-common)
+// MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
 actual fun ok(x: Int, y: String) {}

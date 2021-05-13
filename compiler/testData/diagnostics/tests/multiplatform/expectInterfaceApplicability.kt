@@ -12,7 +12,7 @@ expect interface My {
     abstract val abstractVal: Int
 }
 
-// MODULE: m1-jvm(m1-common)
+// MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
 actual interface My {
     actual fun openFunPositive() = Unit

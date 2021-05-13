@@ -187,7 +187,7 @@ class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(testSe
             }
             result.addIfNotNull(testServices.compiledClassesManager.getCompiledJavaDirForModule(module))
 
-            for (dependency in module.dependencies + module.friends) {
+            for (dependency in module.allDependencies) {
                 if (dependency.kind == DependencyKind.Binary) {
                     computeClasspath(testServices.dependencyProvider.getTestModule(dependency.moduleName), false)
                 }

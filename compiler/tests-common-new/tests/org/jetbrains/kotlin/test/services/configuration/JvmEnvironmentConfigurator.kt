@@ -275,7 +275,7 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
         module: TestModule,
         bySources: Boolean
     ) {
-        val moduleDependencies = module.dependencies.map { testServices.dependencyProvider.getTestModule(it.moduleName) }
+        val moduleDependencies = module.allDependencies.map { testServices.dependencyProvider.getTestModule(it.moduleName) }
         val filterJavaModuleInfoFiles = { testFile: TestFile ->
             val binaryFilesFilter = INCLUDE_JAVA_AS_BINARY in testFile.directives || ALL_JAVA_AS_BINARY in module.directives
             val includeOrExcludeBinaryFilesFilter = (bySources && !binaryFilesFilter) || (!bySources && binaryFilesFilter)
@@ -350,7 +350,7 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
 
     private fun CompilerConfiguration.registerModuleDependencies(module: TestModule) {
         val dependencyProvider = testServices.dependencyProvider
-        val modulesFromDependencies = module.dependencies
+        val modulesFromDependencies = module.allDependencies
             .filter { it.kind == DependencyKind.Binary }
             .map { dependencyProvider.getTestModule(it.moduleName) }
             .takeIf { it.isNotEmpty() }
@@ -365,8 +365,8 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
         module: TestModule,
         configuration: CompilerConfiguration,
     ) {
-        val binaryDependencies = module.dependencies.filter { it.kind == DependencyKind.Binary }
-        val binaryFriends = module.friends.filter { it.kind == DependencyKind.Binary }
+        val binaryDependencies = module.allDependencies.filter { it.kind == DependencyKind.Binary }
+        val binaryFriends = module.friendDependencies.filter { it.kind == DependencyKind.Binary }
         val dependencyProvider = testServices.dependencyProvider
         val compiledClassesManager = testServices.compiledClassesManager
         val compilerConfigurationProvider = testServices.compilerConfigurationProvider

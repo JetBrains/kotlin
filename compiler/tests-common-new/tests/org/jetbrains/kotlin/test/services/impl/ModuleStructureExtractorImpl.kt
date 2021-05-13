@@ -49,9 +49,9 @@ class ModuleStructureExtractorImpl(
         /*
          * ([\w-]+) module name
          * \((.*?)\) module dependencies
-         * (\((.*?)\))? module friends
+         * (\((.*?)\)(\((.*?)\))?)? module friendDependencies and dependsOnDependencies
          */
-        private val moduleDirectiveRegex = """([\w-]+)(\((.*?)\)(\((.*?)\))?)?""".toRegex()
+        private val moduleDirectiveRegex = """([\w-]+)(\((.*?)\)(\((.*?)\)(\((.*?)\))?)?)?""".toRegex()
     }
 
     override fun splitTestDataByModules(
@@ -95,7 +95,6 @@ class ModuleStructureExtractorImpl(
         private var currentModuleTargetBackend: TargetBackend? = null
         private var currentModuleLanguageVersionSettingsBuilder: LanguageVersionSettingsBuilder = initLanguageSettingsBuilder()
         private var dependenciesOfCurrentModule = mutableListOf<DependencyDescription>()
-        private var friendsOfCurrentModule = mutableListOf<DependencyDescription>()
         private var filesOfCurrentModule = mutableListOf<TestFile>()
 
         private var currentFileName: String? = null
@@ -138,7 +137,7 @@ class ModuleStructureExtractorImpl(
                 modules.singleOrNull() ?: error("Duplicated modules with name $name")
             }
             return DFS.topologicalOrder(modules) { module ->
-                module.dependencies.map {
+                module.allDependencies.map {
                     val moduleName = it.moduleName
                     moduleByName[moduleName] ?: error("Module \"$moduleName\" not found while observing dependencies of \"${module.name}\"")
                 }
@@ -150,7 +149,7 @@ class ModuleStructureExtractorImpl(
             for (module in modules) {
                 val moduleName = module.name
                 visited.add(moduleName)
-                for (dependency in module.dependencies) {
+                for (dependency in module.allDependencies) {
                     val dependencyName = dependency.moduleName
                     if (dependencyName == moduleName) {
                         error("Module $moduleName has dependency to itself")
@@ -178,19 +177,17 @@ class ModuleStructureExtractorImpl(
                     } else {
                         finishGlobalDirectives()
                     }
-                    val (moduleName, dependencies, friends) = splitRawModuleStringToNameAndDependencies(values.joinToString(separator = " "))
+                    val (moduleName, dependencies, friends, dependsOn) = splitRawModuleStringToNameAndDependencies(values.joinToString(separator = " "))
                     currentModuleName = moduleName
+                    val kind = defaultsProvider.defaultDependencyKind
                     dependencies.mapTo(dependenciesOfCurrentModule) { name ->
-                        val dependentModule = modules.firstOrNull { it.name == name }
-                        if (dependentModule?.targetPlatform.isCommon()) {
-                            return@mapTo DependencyDescription(name, DependencyKind.Source, DependencyRelation.DependsOn)
-                        }
-                        val kind = defaultsProvider.defaultDependencyKind
-                        DependencyDescription(name, kind, DependencyRelation.Dependency)
+                        DependencyDescription(name, kind, DependencyRelation.RegularDependency)
                     }
-                    friends.mapTo(friendsOfCurrentModule) { name ->
-                        val kind = defaultsProvider.defaultDependencyKind
-                        DependencyDescription(name, kind, DependencyRelation.Dependency)
+                    friends.mapTo(dependenciesOfCurrentModule) { name ->
+                        DependencyDescription(name, kind, DependencyRelation.FriendDependency)
+                    }
+                    dependsOn.mapTo(dependenciesOfCurrentModule) { name ->
+                        DependencyDescription(name, DependencyKind.Source, DependencyRelation.DependsOnDependency)
                     }
                 }
                 ModuleStructureDirectives.DEPENDENCY,
@@ -198,8 +195,8 @@ class ModuleStructureExtractorImpl(
                     val name = values.first() as String
                     val kind = values.getOrNull(1)?.let { valueOfOrNull(it as String) } ?: defaultsProvider.defaultDependencyKind
                     val relation = when (directive) {
-                        ModuleStructureDirectives.DEPENDENCY -> DependencyRelation.Dependency
-                        ModuleStructureDirectives.DEPENDS_ON -> DependencyRelation.DependsOn
+                        ModuleStructureDirectives.DEPENDENCY -> DependencyRelation.RegularDependency
+                        ModuleStructureDirectives.DEPENDS_ON -> DependencyRelation.DependsOnDependency
                         else -> error("Should not be here")
                     }
                     dependenciesOfCurrentModule.add(DependencyDescription(name, kind, relation))
@@ -232,7 +229,7 @@ class ModuleStructureExtractorImpl(
         private fun splitRawModuleStringToNameAndDependencies(moduleDirectiveString: String): ModuleNameAndDependencies {
             val matchResult = moduleDirectiveRegex.matchEntire(moduleDirectiveString)
                 ?: error("\"$moduleDirectiveString\" doesn't matches with pattern \"moduleName(dep1, dep2)\"")
-            val (name, _, dependencies, _, friends) = matchResult.destructured
+            val (name, _, dependencies, _, friends, _, dependsOn) = matchResult.destructured
             var dependenciesNames = dependencies.takeIf { it.isNotBlank() }?.split(" ") ?: emptyList()
             globalDirectives?.let { directives ->
                 /*
@@ -248,6 +245,7 @@ class ModuleStructureExtractorImpl(
                 name,
                 dependenciesNames,
                 friends.takeIf { it.isNotBlank() }?.split(" ") ?: emptyList(),
+                dependsOn.takeIf { it.isNotBlank() }?.split(" ") ?: emptyList(),
             )
         }
 
@@ -295,8 +293,7 @@ class ModuleStructureExtractorImpl(
                 frontendKind = currentModuleFrontendKind ?: defaultsProvider.defaultFrontend,
                 binaryKind = defaultsProvider.defaultArtifactKind ?: targetPlatform.toArtifactKind(),
                 files = filesOfCurrentModule,
-                dependencies = dependenciesOfCurrentModule,
-                friends = friendsOfCurrentModule,
+                allDependencies = dependenciesOfCurrentModule,
                 directives = moduleDirectives,
                 languageVersionSettings = currentModuleLanguageVersionSettingsBuilder.build()
             )
@@ -371,7 +368,6 @@ class ModuleStructureExtractorImpl(
             currentModuleLanguageVersionSettingsBuilder = initLanguageSettingsBuilder()
             filesOfCurrentModule = mutableListOf()
             dependenciesOfCurrentModule = mutableListOf()
-            friendsOfCurrentModule = mutableListOf()
             resetDirectivesBuilder()
             moduleDirectivesBuilder = directivesBuilder
         }
@@ -414,7 +410,8 @@ class ModuleStructureExtractorImpl(
     private data class ModuleNameAndDependencies(
         val name: String,
         val dependencies: List<String>,
-        val friends: List<String>
+        val friends: List<String>,
+        val dependsOn: List<String>
     )
 }
 

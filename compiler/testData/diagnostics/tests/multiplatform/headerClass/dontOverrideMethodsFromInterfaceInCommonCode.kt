@@ -15,7 +15,7 @@ expect class ExplicitFoo : Foo {
 
 expect class ImplicitFooCheck : Foo
 
-// MODULE: m2-jvm(m1-common)
+// MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
 actual class ImplicitFoo : Foo {

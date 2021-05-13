@@ -14,7 +14,7 @@ expect inline fun f6(crossinline s: () -> String)
 expect fun f7<!NO_ACTUAL_FOR_EXPECT{JVM}!>(x: Any)<!>
 expect fun f8<!NO_ACTUAL_FOR_EXPECT{JVM}!>(vararg x: Any)<!>
 
-// MODULE: m2-jvm(m1-common)
+// MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
 actual inline fun f1(noinline s: () -> String) {}

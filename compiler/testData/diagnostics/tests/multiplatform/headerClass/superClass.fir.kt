@@ -10,13 +10,13 @@ expect class Foo : I, C, J
 
 expect class Bar : C()
 
-// MODULE: m2-jvm(m1-common)
+// MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 actual class Foo : I, C(), J
 
 actual class Bar
 
-// MODULE: m3-js(m1-common)
+// MODULE: m3-js()()(m1-common)
 // FILE: js.kt
 actual class Foo : I, J, C()
 
