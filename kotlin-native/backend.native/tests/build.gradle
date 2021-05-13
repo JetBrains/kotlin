@@ -1262,6 +1262,12 @@ task localClass_localHierarchy(type: KonanLocalTest) {
     source = "codegen/localClass/localHierarchy.kt"
 }
 
+standaloneTest("objectDeclaration_globalConstants") {
+    disabled = (cacheTesting != null) // Cache is not compatible with -opt.
+    flags = ["-opt", "-Xopt-in=kotlin.native.internal.InternalForKotlinNative", "-tr"]
+    source = "codegen/objectDeclaration/globalConstants.kt"
+}
+
 task localClass_objectExpressionInProperty(type: KonanLocalTest) {
     goldValue = "OK\n"
     source = "codegen/localClass/objectExpressionInProperty.kt"
