@@ -16,6 +16,7 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.fir.api.fixes.diagnosticFixFactory
@@ -77,6 +78,21 @@ internal class ImportQuickFix(
         )
 
         return true
+    }
+
+    private val modificationCountOnCreate: Long = PsiModificationTracker.SERVICE.getInstance(element.project).modificationCount
+
+    /**
+     * This is a safe-guard against showing hint after the quickfix have been applied.
+     *
+     * Inspired by the org.jetbrains.kotlin.idea.quickfix.ImportFixBase.isOutdated
+     */
+    private fun isOutdated(project: Project): Boolean {
+        return modificationCountOnCreate != PsiModificationTracker.SERVICE.getInstance(project).modificationCount
+    }
+
+    override fun isAvailableImpl(project: Project, editor: Editor?, file: PsiFile): Boolean {
+        return super.isAvailableImpl(project, editor, file) && !isOutdated(project)
     }
 
     private class ImportQuestionAction(
