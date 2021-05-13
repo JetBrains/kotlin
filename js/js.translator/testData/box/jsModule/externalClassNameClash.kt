@@ -1,7 +1,6 @@
-// EXPECTED_REACHABLE_NODES: 1284
+// DONT_TARGET_EXACT_BACKEND: JS
 // FILE: a.kt
-// MODULE_KIND: AMD
-@file:JsModule("a")
+@file:JsModule("./a.mjs")
 package a
 
 external class A {
@@ -13,8 +12,7 @@ external fun bar(): Int
 external val prop: Int
 
 // FILE: b.kt
-// MODULE_KIND: AMD
-@file:JsModule("b")
+@file:JsModule("./b.mjs")
 package b
 
 external class A {
@@ -38,3 +36,26 @@ fun box(): String {
 
     return O().foo() + K().foo()
 }
+
+// FILE: a.mjs
+export function A() {}
+
+A.prototype.foo = function () {
+   return "O";
+};
+
+export function bar() { return 1; }
+
+export let prop = 10
+
+
+// FILE: b.mjs
+export function A() {}
+
+A.prototype.foo = function () {
+    return "K";
+};
+
+export function bar() { return 2; }
+
+export let prop = 20;
