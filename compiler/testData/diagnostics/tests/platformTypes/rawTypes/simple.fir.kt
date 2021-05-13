@@ -28,12 +28,12 @@ val strMap: Map<String, String> = null!!
 fun main() {
     val rawA = Test.rawAField
     rawA.x = strList
-    rawA.y = strMap
+    rawA.y = <!ASSIGNMENT_TYPE_MISMATCH!>strMap<!>
     rawA.foo("", strList, <!ARGUMENT_TYPE_MISMATCH!>strList<!>)
 
     val barResult = rawA.bar()
 
-    barResult.x = strList
-    barResult.y = strMap
+    barResult.x = <!ASSIGNMENT_TYPE_MISMATCH!>strList<!>
+    barResult.y = <!ASSIGNMENT_TYPE_MISMATCH!>strMap<!>
     barResult.foo(<!ARGUMENT_TYPE_MISMATCH!>""<!>, <!ARGUMENT_TYPE_MISMATCH!>strList<!>, null)
 }
