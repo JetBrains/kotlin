@@ -126,12 +126,16 @@ abstract class KaptTask @Inject constructor(
     @get:Internal
     var useBuildCache: Boolean = false
 
+    private val sourceRootsFromKotlinTask by project.provider {
+        kotlinCompileTask.sourceRootsContainer.sourceRoots
+    }
+
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val source: FileCollection = objectFactory
         .fileCollection()
         .from(
-            { kotlinCompileTask.sourceRootsContainer.sourceRoots },
+            { sourceRootsFromKotlinTask },
             stubsDir
         )
         .asFileTree

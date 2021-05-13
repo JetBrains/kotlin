@@ -143,21 +143,11 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
         java.allSource.srcDirs(kotlinSrcDirsToAdd)
     }
 
-    private fun filterOutJavaSrcDirsIfPossible(sourceDirectorySet: SourceDirectorySet): FileCollection {
-        val java = javaSourceSet ?: return sourceDirectorySet
-
-        // If the API used below is not available, fall back to not filtering the Java sources.
-        if (SourceDirectorySet::class.java.methods.none { it.name == "getSourceDirectories" }) {
-            return sourceDirectorySet
-        }
-
-        fun getSourceDirectories(sourceDirectorySet: SourceDirectorySet): FileCollection {
-            val method = SourceDirectorySet::class.java.getMethod("getSourceDirectories")
-            return method(sourceDirectorySet) as FileCollection
-        }
+    private fun filterOutJavaSrcDirsIfPossible(sourceDirectories: SourceDirectorySet): FileCollection {
+        val java = javaSourceSet ?: return sourceDirectories
 
         // Build a lazily-resolved file collection that filters out Java sources from sources of this sourceDirectorySet
-        return getSourceDirectories(sourceDirectorySet).minus(getSourceDirectories(java.java))
+        return sourceDirectories.sourceDirectories.minus(java.java.sourceDirectories)
     }
 
     private fun createAdditionalClassesTaskForIdeRunner() {

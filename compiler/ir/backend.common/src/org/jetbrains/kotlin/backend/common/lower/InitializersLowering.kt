@@ -35,7 +35,8 @@ class InitializersLowering(context: CommonBackendContext) : InitializersLowering
 
         val irClass = container.constructedClass
         val instanceInitializerStatements = extractInitializers(irClass) {
-            (it is IrField && !it.isStatic) || (it is IrAnonymousInitializer && !it.isStatic)
+            (it is IrField && !it.isStatic && (container.isPrimary || !it.primaryConstructorParameter)) ||
+                    (it is IrAnonymousInitializer && !it.isStatic)
         }
         val block = IrBlockImpl(irClass.startOffset, irClass.endOffset, context.irBuiltIns.unitType, null, instanceInitializerStatements)
         // Check that the initializers contain no local classes. Deep-copying them is a disaster for code size, and liable to break randomly.
@@ -53,6 +54,9 @@ class InitializersLowering(context: CommonBackendContext) : InitializersLowering
         })
     }
 }
+
+private val IrField.primaryConstructorParameter: Boolean
+    get() = (initializer?.expression as? IrGetValue)?.origin == IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER
 
 abstract class InitializersLoweringBase(open val context: CommonBackendContext) {
     protected fun extractInitializers(irClass: IrClass, filter: (IrDeclaration) -> Boolean) =

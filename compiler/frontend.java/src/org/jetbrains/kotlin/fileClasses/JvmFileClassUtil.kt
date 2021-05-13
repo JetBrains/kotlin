@@ -98,7 +98,7 @@ object JvmFileClassUtil {
             it.calleeExpression?.constructorReferenceExpression?.getReferencedName() == shortName
         }
 
-    private fun getLiteralStringFromAnnotation(annotation: KtAnnotationEntry): String? {
+    fun getLiteralStringFromAnnotation(annotation: KtAnnotationEntry): String? {
         val argumentExpression = annotation.valueArguments.firstOrNull()?.getArgumentExpression() ?: return null
         val stringTemplate = argumentExpression as? KtStringTemplateExpression ?: return null
         val singleEntry = stringTemplate.entries.singleOrNull() as? KtLiteralStringTemplateEntry ?: return null

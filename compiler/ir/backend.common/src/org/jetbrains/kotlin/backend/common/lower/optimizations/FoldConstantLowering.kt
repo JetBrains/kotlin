@@ -105,18 +105,17 @@ class FoldConstantLowering(
         }
 
     private fun buildIrConstant(startOffset: Int, endOffset: Int, type: IrType, v: Any?): IrConst<*> {
-        val constType = type.makeNotNull()
         return when (type.getPrimitiveType()) {
-            PrimitiveType.BOOLEAN -> IrConstImpl.boolean(startOffset, endOffset, constType, v as Boolean)
-            PrimitiveType.CHAR -> IrConstImpl.char(startOffset, endOffset, constType, v as Char)
-            PrimitiveType.BYTE -> IrConstImpl.byte(startOffset, endOffset, constType, (v as Number).toByte())
-            PrimitiveType.SHORT -> IrConstImpl.short(startOffset, endOffset, constType, (v as Number).toShort())
-            PrimitiveType.INT -> IrConstImpl.int(startOffset, endOffset, constType, (v as Number).toInt())
-            PrimitiveType.FLOAT -> fromFloatConstSafe(startOffset, endOffset, type, v)
-            PrimitiveType.LONG -> IrConstImpl.long(startOffset, endOffset, constType, (v as Number).toLong())
-            PrimitiveType.DOUBLE -> IrConstImpl.double(startOffset, endOffset, constType, (v as Number).toDouble())
+            PrimitiveType.BOOLEAN -> IrConstImpl.boolean(startOffset, endOffset, context.irBuiltIns.booleanType, v as Boolean)
+            PrimitiveType.CHAR -> IrConstImpl.char(startOffset, endOffset, context.irBuiltIns.charType, v as Char)
+            PrimitiveType.BYTE -> IrConstImpl.byte(startOffset, endOffset, context.irBuiltIns.byteType, (v as Number).toByte())
+            PrimitiveType.SHORT -> IrConstImpl.short(startOffset, endOffset, context.irBuiltIns.shortType, (v as Number).toShort())
+            PrimitiveType.INT -> IrConstImpl.int(startOffset, endOffset, context.irBuiltIns.intType, (v as Number).toInt())
+            PrimitiveType.FLOAT -> fromFloatConstSafe(startOffset, endOffset, context.irBuiltIns.floatType, v)
+            PrimitiveType.LONG -> IrConstImpl.long(startOffset, endOffset, context.irBuiltIns.longType, (v as Number).toLong())
+            PrimitiveType.DOUBLE -> IrConstImpl.double(startOffset, endOffset, context.irBuiltIns.doubleType, (v as Number).toDouble())
             else -> when {
-                constType.isString() -> IrConstImpl.string(startOffset, endOffset, constType, v as String)
+                type.isStringClassType() -> IrConstImpl.string(startOffset, endOffset, context.irBuiltIns.stringType, v as String)
                 else -> throw IllegalArgumentException("Unexpected IrCall return type")
             }
         }

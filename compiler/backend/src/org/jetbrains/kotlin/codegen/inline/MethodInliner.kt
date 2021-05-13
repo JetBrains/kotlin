@@ -23,13 +23,13 @@ import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.isCheckParameterIsNotNull
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.ParameterDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -233,38 +233,24 @@ class MethodInliner(
                         return
                     }
 
-                    // in case of inlining suspend lambda reference as ordinary parameter of inline function:
-                    //   suspend fun foo (...) ...
-                    //   inline fun inlineMe(c: (...) -> ...) ...
-                    //   builder {
-                    //     inlineMe(::foo)
-                    //   }
-                    // we should create additional parameter for continuation.
+                    val valueParameters = info.invokeMethodParameters
+                    // If suspend lambda has no continuation at the end, add it here. (In the IR backend, suspend lambdas
+                    // always come pre-lowered with the continuation parameter.)
                     var coroutineDesc = desc
-                    val actualInvokeDescriptor: FunctionDescriptor
-                    if (info.isSuspend) {
-                        actualInvokeDescriptor = (info as ExpressionLambda).getInlineSuspendLambdaViewDescriptor()
-                        val parametersSize = actualInvokeDescriptor.valueParameters.size +
-                                (if (actualInvokeDescriptor.extensionReceiverParameter != null) 1 else 0)
-                        // And here we expect invoke(...Ljava/lang/Object;) be replaced with invoke(...Lkotlin/coroutines/Continuation;)
-                        // if this does not happen, insert fake continuation, since we could not have one yet.
+                    if (!inliningContext.root.state.isIrBackend && info.isSuspend) {
                         val argumentTypes = Type.getArgumentTypes(desc)
-                        if (argumentTypes.size != parametersSize &&
-                            // But do not add it in IR. In IR we already have lowered lambdas with additional parameter, while in Old BE we don't.
-                            !inliningContext.root.state.isIrBackend
-                        ) {
+                        if (argumentTypes.size != valueParameters.size) {
                             addFakeContinuationMarker(this)
                             coroutineDesc = Type.getMethodDescriptor(Type.getReturnType(desc), *argumentTypes, AsmTypes.OBJECT_TYPE)
                         }
-                    } else {
-                        actualInvokeDescriptor = info.invokeMethodDescriptor
                     }
 
-                    val valueParameters =
-                        listOfNotNull(actualInvokeDescriptor.extensionReceiverParameter) + actualInvokeDescriptor.valueParameters
-
-                    val erasedInvokeFunction = ClosureCodegen.getErasedInvokeFunction(actualInvokeDescriptor)
-                    val invokeParameters = erasedInvokeFunction.valueParameters
+                    // TODO: this is a weird way to get N instances of `Any?`
+                    val moduleBuiltIns = inliningContext.root.sourceCompilerForInline.compilationContextDescriptor.builtIns
+                    val erasedFunctionType = moduleBuiltIns.getFunction(valueParameters.size).defaultType
+                    val erasedInvokeFunction = erasedFunctionType.memberScope
+                        .getContributedFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.FROM_BACKEND).first()
+                    val invokeParameters = erasedInvokeFunction.valueParameters.map { it.returnType }
 
                     val valueParamShift = max(nextLocalIndex, markerShift)//NB: don't inline cause it changes
                     val parameterTypesFromDesc = info.invokeMethod.argumentTypes
@@ -305,7 +291,7 @@ class MethodInliner(
                     result.reifiedTypeParametersUsages.mergeAll(lambdaResult.reifiedTypeParametersUsages)
 
                     StackValue
-                        .onStack(info.invokeMethod.returnType, info.invokeMethodDescriptor.returnType)
+                        .onStack(info.invokeMethod.returnType, info.invokeMethodReturnType)
                         .put(OBJECT_TYPE, erasedInvokeFunction.returnType, this)
                     setLambdaInlining(false)
                     addInlineMarker(this, false)
@@ -1075,8 +1061,8 @@ class MethodInliner(
 
         private fun putStackValuesIntoLocalsForLambdaOnInvoke(
             directOrder: List<Type>,
-            directOrderOfArguments: List<ParameterDescriptor>,
-            directOrderOfInvokeParameters: List<ValueParameterDescriptor>,
+            directOrderOfArguments: List<KotlinType?>,
+            directOrderOfInvokeParameters: List<KotlinType?>,
             shift: Int,
             iv: InstructionAdapter,
             descriptor: String
@@ -1099,8 +1085,8 @@ class MethodInliner(
                 val argumentKotlinType: KotlinType?
                 val invokeParameterKotlinType: KotlinType?
                 if (safeToUseArgumentKotlinType) {
-                    argumentKotlinType = directOrderOfArguments[index].type
-                    invokeParameterKotlinType = directOrderOfInvokeParameters[index].type
+                    argumentKotlinType = directOrderOfArguments[index]
+                    invokeParameterKotlinType = directOrderOfInvokeParameters[index]
                 } else {
                     argumentKotlinType = null
                     invokeParameterKotlinType = null

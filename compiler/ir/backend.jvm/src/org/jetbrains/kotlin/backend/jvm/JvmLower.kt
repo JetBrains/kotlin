@@ -65,7 +65,7 @@ private val provisionalFunctionExpressionPhase = makeIrFilePhase<CommonBackendCo
 )
 
 private val arrayConstructorPhase = makeIrFilePhase(
-    ::JvmArrayConstructorLowering,
+    ::ArrayConstructorLowering,
     name = "ArrayConstructor",
     description = "Transform `Array(size) { index -> value }` into a loop"
 )
@@ -287,7 +287,6 @@ private val jvmFilePhases = listOf(
     annotationPhase,
     polymorphicSignaturePhase,
     varargPhase,
-    arrayConstructorPhase,
     checkNotNullPhase,
 
     lateinitNullableFieldsPhase,
@@ -298,6 +297,7 @@ private val jvmFilePhases = listOf(
     functionReferencePhase,
     suspendLambdaPhase,
     propertyReferencePhase,
+    arrayConstructorPhase,
     constPhase1,
     // TODO: merge the next three phases together, as visitors behave incorrectly between them
     //  (backing fields moved out of companion objects are reachable by two paths):

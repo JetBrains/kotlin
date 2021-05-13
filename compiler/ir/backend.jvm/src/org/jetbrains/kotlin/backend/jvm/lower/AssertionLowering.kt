@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.ir.asSimpleLambda
+import org.jetbrains.kotlin.backend.common.ir.asInlinable
 import org.jetbrains.kotlin.backend.common.ir.inline
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
@@ -27,12 +27,10 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
-import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal val assertionPhase = makeIrFilePhase(
     ::AssertionLowering,
@@ -102,23 +100,12 @@ private class AssertionLowering(private val context: JvmBackendContext) :
 
     private fun IrBuilderWithScope.checkAssertion(assertCondition: IrExpression, lambdaArgument: IrExpression?) =
         irBlock {
-            val lambda = lambdaArgument?.asSimpleLambda()
-            val invokeVar = if (lambda == null && lambdaArgument != null) irTemporary(lambdaArgument) else null
-
+            val generator = lambdaArgument?.asInlinable(this)
             val constructor = this@AssertionLowering.context.ir.symbols.assertionErrorConstructor
             val throwError = irThrow(irCall(constructor).apply {
-                putValueArgument(
-                    0,
-                    when {
-                        lambda != null -> lambda.inline(parent)
-                        lambdaArgument != null -> {
-                            val invoke =
-                                lambdaArgument.type.getClass()!!.functions.single { it.name == OperatorNameConventions.INVOKE }
-                            irCallOp(invoke.symbol, invoke.returnType, irGet(invokeVar!!))
-                        }
-                        else -> irString("Assertion failed")
-                    }
-                )
+                val message = generator?.inline(parent)?.patchDeclarationParents(scope.getLocalDeclarationParent())
+                    ?: irString("Assertion failed")
+                putValueArgument(0, message)
             })
             +irIfThen(irNot(assertCondition), throwError)
         }
