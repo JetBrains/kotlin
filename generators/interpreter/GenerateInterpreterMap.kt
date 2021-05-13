@@ -49,6 +49,7 @@ fun generateMap(): String {
     generateInterpretUnaryFunction(p, getOperationMap(1).apply {
         val irNullCheck = irBuiltIns.checkNotNullSymbol.owner
         this += Operation(irNullCheck.name.asString(), listOf("T0?"), customExpression = "a!!")
+        this += Operation("toString", listOf("Any?"), customExpression = "a?.toString() ?: \"null\"")
     })
 
     generateInterpretBinaryFunction(p, getOperationMap(2) + getBinaryIrOperationMap(irBuiltIns))
