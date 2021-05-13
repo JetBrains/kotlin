@@ -5,9 +5,9 @@
 annotation class TestRetentionSource
 
 @Target(AnnotationTarget.EXPRESSION)
-@Retention(AnnotationRetention.BINARY)
+<!RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION!>@Retention(AnnotationRetention.BINARY)<!>
 annotation class TestRetentionBinary
 
 @Target(AnnotationTarget.EXPRESSION)
-@Retention(AnnotationRetention.RUNTIME)
+<!RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION!>@Retention(AnnotationRetention.RUNTIME)<!>
 annotation class TestRetentionRuntime

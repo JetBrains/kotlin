@@ -172,6 +172,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val DEPRECATED_SINCE_KOTLIN_OUTSIDE_KOTLIN_SUBPACKAGE by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
 
         val ANNOTATION_ON_SUPERCLASS by error<KtAnnotationEntry>()
+        val RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION by error<PsiElement>()
     }
 
     val EXPOSED_VISIBILITY by object : DiagnosticGroup("Exposed visibility") {
