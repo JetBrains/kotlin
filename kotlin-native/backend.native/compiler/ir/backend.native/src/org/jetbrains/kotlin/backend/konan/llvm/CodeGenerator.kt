@@ -592,7 +592,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                         exceptionHandler: ExceptionHandler): LLVMValueRef {
         val rargs = args.toCValues()
         val shouldHaveLandingpad = expectedNeedSlots || exceptionHandler != ExceptionHandler.Caller ||
-                forwardingForeignExceptionsTerminatedWith != null
+                forwardingForeignExceptionsTerminatedWith != null || irFunction?.origin == CBridgeOrigin.C_TO_KOTLIN_BRIDGE
 
         if ((LLVMIsAFunction(llvmFunction) != null /* the function declaration */ &&
                         isFunctionNoUnwind(llvmFunction)) || !shouldHaveLandingpad) {
@@ -617,7 +617,6 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             val endLocation = position?.end
             val success = basicBlock("call_success", endLocation)
             val result = LLVMBuildInvoke(builder, llvmFunction, rargs, args.size, success, unwind, "")!!
-            update(success, endLocation)
             positionAtEnd(success)
             return result
         }
@@ -1403,9 +1402,10 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                     positionAtEnd(bbCleanup)
                 }
 
-            releaseVars()
-            handleEpilogueForExperimentalMM(context.llvm.Kotlin_mm_safePointExceptionUnwind)
-            LLVMBuildResume(builder, landingpad)
+                releaseVars()
+                handleEpilogueForExperimentalMM(context.llvm.Kotlin_mm_safePointExceptionUnwind)
+                LLVMBuildResume(builder, landingpad)
+            }
         }
 
         returns.clear()
