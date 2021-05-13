@@ -77,11 +77,14 @@ class NewKotlinTypeCheckerImpl(
     override val overridingUtil: OverridingUtil = OverridingUtil.createWithTypeRefiner(kotlinTypeRefiner)
 
     override fun isSubtypeOf(subtype: KotlinType, supertype: KotlinType): Boolean =
-        ClassicTypeCheckerContext(true, kotlinTypeRefiner = kotlinTypeRefiner)
-            .isSubtypeOf(subtype.unwrap(), supertype.unwrap()) // todo fix flag errorTypeEqualsToAnything
+        ClassicTypeCheckerContext(
+            true, kotlinTypeRefiner = kotlinTypeRefiner, kotlinTypePreparator = kotlinTypePreparator
+        ).isSubtypeOf(subtype.unwrap(), supertype.unwrap()) // todo fix flag errorTypeEqualsToAnything
 
     override fun equalTypes(a: KotlinType, b: KotlinType): Boolean =
-        ClassicTypeCheckerContext(false, kotlinTypeRefiner = kotlinTypeRefiner).equalTypes(a.unwrap(), b.unwrap())
+        ClassicTypeCheckerContext(
+            false, kotlinTypeRefiner = kotlinTypeRefiner, kotlinTypePreparator = kotlinTypePreparator
+        ).equalTypes(a.unwrap(), b.unwrap())
 
     fun ClassicTypeCheckerContext.equalTypes(a: UnwrappedType, b: UnwrappedType): Boolean {
         return AbstractTypeChecker.equalTypes(this as AbstractTypeCheckerContext, a, b)
