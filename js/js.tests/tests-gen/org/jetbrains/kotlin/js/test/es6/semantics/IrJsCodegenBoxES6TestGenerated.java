@@ -30,11 +30,6 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
     }
 
-    @TestMetadata("boxImplDoesNotExecuteInSecondaryConstructor.kt")
-    public void testBoxImplDoesNotExecuteInSecondaryConstructor() throws Exception {
-        runTest("compiler/testData/codegen/box/boxImplDoesNotExecuteInSecondaryConstructor.kt");
-    }
-
     @TestMetadata("compiler/testData/codegen/box/annotations")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -12739,6 +12734,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
         @TestMetadata("boundCallableReferencePassedToInlineFunction.kt")
         public void testBoundCallableReferencePassedToInlineFunction() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/boundCallableReferencePassedToInlineFunction.kt");
+        }
+
+        @TestMetadata("boxImplDoesNotExecuteInSecondaryConstructor.kt")
+        public void testBoxImplDoesNotExecuteInSecondaryConstructor() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxImplDoesNotExecuteInSecondaryConstructor.kt");
         }
 
         @TestMetadata("boxImplDoesNotExecuteInitBlock.kt")

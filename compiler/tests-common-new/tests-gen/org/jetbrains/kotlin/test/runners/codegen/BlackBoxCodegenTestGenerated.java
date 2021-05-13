@@ -25,12 +25,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
     }
 
-    @Test
-    @TestMetadata("boxImplDoesNotExecuteInSecondaryConstructor.kt")
-    public void testBoxImplDoesNotExecuteInSecondaryConstructor() throws Exception {
-        runTest("compiler/testData/codegen/box/boxImplDoesNotExecuteInSecondaryConstructor.kt");
-    }
-
     @Nested
     @TestMetadata("compiler/testData/codegen/box/annotations")
     @TestDataPath("$PROJECT_ROOT")
@@ -17562,6 +17556,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("boundCallableReferencePassedToInlineFunction.kt")
         public void testBoundCallableReferencePassedToInlineFunction() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/boundCallableReferencePassedToInlineFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("boxImplDoesNotExecuteInSecondaryConstructor.kt")
+        public void testBoxImplDoesNotExecuteInSecondaryConstructor() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxImplDoesNotExecuteInSecondaryConstructor.kt");
         }
 
         @Test

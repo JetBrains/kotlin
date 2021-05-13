@@ -30,11 +30,6 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true, "toArray", "classLiteral", "reflection", "contracts", "platformTypes", "ranges/stepped/unsigned", "coroutines", "parametersMetadata", "finally", "deadCodeElimination", "controlStructures/tryCatchInExpressions", "delegatedProperty", "compileKotlinAgainstKotlin");
     }
 
-    @TestMetadata("boxImplDoesNotExecuteInSecondaryConstructor.kt")
-    public void testBoxImplDoesNotExecuteInSecondaryConstructor() throws Exception {
-        runTest("compiler/testData/codegen/box/boxImplDoesNotExecuteInSecondaryConstructor.kt");
-    }
-
     @TestMetadata("compiler/testData/codegen/box/annotations")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -6450,6 +6445,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
         @TestMetadata("boundCallableReferencePassedToInlineFunction.kt")
         public void testBoundCallableReferencePassedToInlineFunction() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/boundCallableReferencePassedToInlineFunction.kt");
+        }
+
+        @TestMetadata("boxImplDoesNotExecuteInSecondaryConstructor.kt")
+        public void testBoxImplDoesNotExecuteInSecondaryConstructor() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxImplDoesNotExecuteInSecondaryConstructor.kt");
         }
 
         @TestMetadata("boxImplDoesNotExecuteInitBlock.kt")

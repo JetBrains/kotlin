@@ -30,11 +30,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true, "compileKotlinAgainstKotlin");
     }
 
-    @TestMetadata("boxImplDoesNotExecuteInSecondaryConstructor.kt")
-    public void testBoxImplDoesNotExecuteInSecondaryConstructor() throws Exception {
-        runTest("compiler/testData/codegen/box/boxImplDoesNotExecuteInSecondaryConstructor.kt");
-    }
-
     @TestMetadata("compiler/testData/codegen/box/annotations")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -12210,6 +12205,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("boundCallableReferencePassedToInlineFunction.kt")
         public void testBoundCallableReferencePassedToInlineFunction() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/boundCallableReferencePassedToInlineFunction.kt");
+        }
+
+        @TestMetadata("boxImplDoesNotExecuteInSecondaryConstructor.kt")
+        public void testBoxImplDoesNotExecuteInSecondaryConstructor() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxImplDoesNotExecuteInSecondaryConstructor.kt");
         }
 
         @TestMetadata("boxImplDoesNotExecuteInitBlock.kt")
