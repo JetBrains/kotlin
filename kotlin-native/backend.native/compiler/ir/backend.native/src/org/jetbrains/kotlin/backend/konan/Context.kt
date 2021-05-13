@@ -258,6 +258,18 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
         lazyValues[member] = newValue
     }
 
+    private val localClassNames = mutableMapOf<IrAttributeContainer, String>()
+
+    fun getLocalClassName(container: IrAttributeContainer): String? = localClassNames[container.attributeOwnerId]
+
+    fun putLocalClassName(container: IrAttributeContainer, name: String) {
+        localClassNames[container.attributeOwnerId] = name
+    }
+
+    fun copyLocalClassName(source: IrAttributeContainer, destination: IrAttributeContainer) {
+        getLocalClassName(source)?.let { name -> putLocalClassName(destination, name) }
+    }
+
     val reflectionTypes: KonanReflectionTypes by lazy(PUBLICATION) {
         KonanReflectionTypes(moduleDescriptor, KonanFqNames.internalPackageName)
     }

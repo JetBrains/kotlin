@@ -56,6 +56,8 @@ enum Konan_TypeFlags {
   TF_SUSPEND_FUNCTION = 1 << 5,
   TF_HAS_FINALIZER = 1 << 6,
   TF_HAS_FREEZE_HOOK = 1 << 7,
+  TF_REFLECTION_SHOW_PKG_NAME = 1 << 8, // If package name is available in reflection, e.g. in `KClass.qualifiedName`.
+  TF_REFLECTION_SHOW_REL_NAME = 1 << 9 // If relative name is available in reflection, e.g. in `KClass.simpleName`.
 };
 
 // Flags per object instance.
@@ -115,13 +117,12 @@ struct TypeInfo {
     int32_t interfaceTableSize_;
     InterfaceTableRecord const* interfaceTable_;
 
-    // String for the fully qualified dot-separated name of the package containing class,
-    // or `null` if the class is local or anonymous.
+    // String for the fully qualified dot-separated name of the package containing class.
     ObjHeader* packageName_;
 
     // String for the qualified class name relative to the containing package
-    // (e.g. TopLevel.Nested1.Nested2), or simple class name if it is local,
-    // or `null` if the class is anonymous.
+    // (e.g. TopLevel.Nested1.Nested2) or the effective class name computed for
+    // local class or anonymous object (e.g. listOf$1).
     ObjHeader* relativeName_;
 
     // Various flags.

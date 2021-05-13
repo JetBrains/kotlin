@@ -121,6 +121,12 @@ internal val sharedVariablesPhase = makeKonanModuleLoweringPhase(
         prerequisite = setOf(lateinitPhase)
 )
 
+internal val inventNamesForLocalClasses = makeKonanModuleLoweringPhase(
+        ::NativeInventNamesForLocalClasses,
+        name = "InventNamesForLocalClasses",
+        description = "Invent names for local classes and anonymous objects"
+)
+
 internal val extractLocalClassesFromInlineBodies = NamedCompilerPhase(
         lower = object : SameTypeCompilerPhase<Context, IrModuleFragment> {
             override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment): IrModuleFragment {
@@ -138,7 +144,7 @@ internal val extractLocalClassesFromInlineBodies = NamedCompilerPhase(
         },
         name = "ExtractLocalClassesFromInlineBodies",
         description = "Extraction of local classes from inline bodies",
-        prerequisite = setOf(sharedVariablesPhase),
+        prerequisite = setOf(sharedVariablesPhase), // TODO: add "soft" dependency on inventNamesForLocalClasses
         nlevels = 0,
         actions = modulePhaseActions
 )
@@ -217,7 +223,7 @@ internal val localFunctionsPhase = makeKonanFileOpPhase(
         },
         name = "LocalFunctions",
         description = "Local function lowering",
-        prerequisite = setOf(sharedVariablesPhase)
+        prerequisite = setOf(sharedVariablesPhase) // TODO: add "soft" dependency on inventNamesForLocalClasses
 )
 
 internal val tailrecPhase = makeKonanFileLoweringPhase(

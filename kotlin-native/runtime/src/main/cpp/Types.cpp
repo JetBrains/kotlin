@@ -55,12 +55,22 @@ KBoolean Kotlin_TypeInfo_isInstance(KConstRef obj, KNativePtr typeInfo) {
   return IsInstance(obj, reinterpret_cast<const TypeInfo*>(typeInfo));
 }
 
-OBJ_GETTER(Kotlin_TypeInfo_getPackageName, KNativePtr typeInfo) {
-  RETURN_OBJ(reinterpret_cast<const TypeInfo*>(typeInfo)->packageName_);
+OBJ_GETTER(Kotlin_TypeInfo_getPackageName, KNativePtr typeInfo, KBoolean checkFlags) {
+  const TypeInfo* type_info = reinterpret_cast<const TypeInfo*>(typeInfo);
+  if (!checkFlags || type_info->flags_ & TF_REFLECTION_SHOW_PKG_NAME) {
+    RETURN_OBJ(type_info->packageName_);
+  } else {
+    return NULL;
+  }
 }
 
-OBJ_GETTER(Kotlin_TypeInfo_getRelativeName, KNativePtr typeInfo) {
-  RETURN_OBJ(reinterpret_cast<const TypeInfo*>(typeInfo)->relativeName_);
+OBJ_GETTER(Kotlin_TypeInfo_getRelativeName, KNativePtr typeInfo, KBoolean checkFlags) {
+  const TypeInfo* type_info = reinterpret_cast<const TypeInfo*>(typeInfo);
+  if (!checkFlags || type_info->flags_ & TF_REFLECTION_SHOW_REL_NAME) {
+    RETURN_OBJ(type_info->relativeName_);
+  } else {
+    return NULL;
+  }
 }
 
 struct AssociatedObjectTableRecord {
