@@ -91,12 +91,14 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrStringConcatenationImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
+import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
@@ -157,6 +159,7 @@ import org.jetbrains.kotlin.resolve.BindingTrace
  */
 open class LiveLiteralTransformer(
     private val liveLiteralsEnabled: Boolean,
+    private val usePerFileEnabledFlag: Boolean,
     private val keyVisitor: DurableKeyVisitor,
     context: IrPluginContext,
     symbolRemapper: DeepCopySymbolRemapper,
@@ -192,6 +195,7 @@ open class LiveLiteralTransformer(
     private fun <T> siblings(key: String, block: () -> T) = keyVisitor.siblings(key, block)
     private fun <T> siblings(block: () -> T) = keyVisitor.siblings(block)
     private var liveLiteralsClass: IrClass? = null
+    private var liveLiteralsEnabledSymbol: IrSimpleFunctionSymbol? = null
     private var currentFile: IrFile? = null
 
     private fun irGetLiveLiteralsClass(): IrExpression {
@@ -330,8 +334,14 @@ open class LiveLiteralTransformer(
                 //     c
                 // } else a
                 // return b.value
+                val condition = if (usePerFileEnabledFlag)
+                    irNot(
+                        irGet(builtIns.booleanType, irGet(thisParam), liveLiteralsEnabledSymbol!!)
+                    )
+                else
+                    irNot(irCall(isLiveLiteralsEnabled))
                 +irIf(
-                    condition = irNot(irCall(isLiveLiteralsEnabled)),
+                    condition = condition,
                     body = irReturn(
                         irGet(
                             literalType,
@@ -461,6 +471,8 @@ open class LiveLiteralTransformer(
         val fileName = filePath.split('/').last()
         val keys = makeKeySet()
         return keyVisitor.root(keys) {
+            val prevEnabledSymbol = liveLiteralsEnabledSymbol
+            var nextEnabledSymbol: IrSimpleFunctionSymbol? = null
             val prevClass = liveLiteralsClass
             val nextClass = context.irFactory.buildClass {
                 kind = ClassKind.OBJECT
@@ -489,10 +501,45 @@ open class LiveLiteralTransformer(
                         )
                     }
                 }
+
+                if (usePerFileEnabledFlag) {
+                    val enabledProp = it.addProperty {
+                        name = Name.identifier("enabled")
+                        visibility = DescriptorVisibilities.PRIVATE
+                    }.also { p ->
+                        p.backingField = context.irFactory.buildField {
+                            name = Name.identifier("enabled")
+                            isStatic = true
+                            type = builtIns.booleanType
+                            visibility = DescriptorVisibilities.PRIVATE
+                        }.also { f ->
+                            f.correspondingPropertySymbol = p.symbol
+                            f.parent = it
+                            f.initializer = IrExpressionBodyImpl(
+                                SYNTHETIC_OFFSET,
+                                SYNTHETIC_OFFSET,
+                                irConst(false)
+                            )
+                        }
+                        p.addGetter {
+                            returnType = builtIns.booleanType
+                            visibility = DescriptorVisibilities.PRIVATE
+                            origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+                        }.also { fn ->
+                            val thisParam = it.thisReceiver!!.copyTo(fn)
+                            fn.dispatchReceiverParameter = thisParam
+                            fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
+                                +irReturn(irGetField(irGet(thisParam), p.backingField!!))
+                            }
+                        }
+                    }
+                    nextEnabledSymbol = enabledProp.getter?.symbol
+                }
             }
             try {
                 liveLiteralsClass = nextClass
                 currentFile = declaration
+                liveLiteralsEnabledSymbol = nextEnabledSymbol
                 val file = super.visitFile(declaration)
                 // if there were no constants found in the entire file, then we don't need to
                 // create this class at all
@@ -502,6 +549,7 @@ open class LiveLiteralTransformer(
                 file
             } finally {
                 liveLiteralsClass = prevClass
+                liveLiteralsEnabledSymbol = prevEnabledSymbol
             }
         }
     }
