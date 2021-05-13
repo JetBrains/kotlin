@@ -22,15 +22,15 @@ public interface FileEntryOrBuilder extends
       getNameBytes();
 
   /**
-   * <code>repeated int32 line_start_offsets = 2 [packed = true];</code>
+   * <code>repeated int32 line_start_offset = 2 [packed = true];</code>
    */
-  java.util.List<java.lang.Integer> getLineStartOffsetsList();
+  java.util.List<java.lang.Integer> getLineStartOffsetList();
   /**
-   * <code>repeated int32 line_start_offsets = 2 [packed = true];</code>
+   * <code>repeated int32 line_start_offset = 2 [packed = true];</code>
    */
-  int getLineStartOffsetsCount();
+  int getLineStartOffsetCount();
   /**
-   * <code>repeated int32 line_start_offsets = 2 [packed = true];</code>
+   * <code>repeated int32 line_start_offset = 2 [packed = true];</code>
    */
-  int getLineStartOffsets(int index);
+  int getLineStartOffset(int index);
 }

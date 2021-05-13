@@ -97,31 +97,31 @@ public final class PirBodyCarrier extends
   }
 
   private int bitField0_;
-  public static final int LASTMODIFIED_FIELD_NUMBER = 1;
+  public static final int LAST_MODIFIED_FIELD_NUMBER = 1;
   private int lastModified_;
   /**
-   * <code>required int32 lastModified = 1;</code>
+   * <code>required int32 last_modified = 1;</code>
    */
   public boolean hasLastModified() {
     return ((bitField0_ & 0x00000001) == 0x00000001);
   }
   /**
-   * <code>required int32 lastModified = 1;</code>
+   * <code>required int32 last_modified = 1;</code>
    */
   public int getLastModified() {
     return lastModified_;
   }
 
-  public static final int CONTAINERFIELDSYMBOL_FIELD_NUMBER = 2;
+  public static final int CONTAINER_FIELD_SYMBOL_FIELD_NUMBER = 2;
   private long containerFieldSymbol_;
   /**
-   * <code>optional int64 containerFieldSymbol = 2;</code>
+   * <code>optional int64 container_field_symbol = 2;</code>
    */
   public boolean hasContainerFieldSymbol() {
     return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
-   * <code>optional int64 containerFieldSymbol = 2;</code>
+   * <code>optional int64 container_field_symbol = 2;</code>
    */
   public long getContainerFieldSymbol() {
     return containerFieldSymbol_;
@@ -346,19 +346,19 @@ public final class PirBodyCarrier extends
 
     private int lastModified_ ;
     /**
-     * <code>required int32 lastModified = 1;</code>
+     * <code>required int32 last_modified = 1;</code>
      */
     public boolean hasLastModified() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required int32 lastModified = 1;</code>
+     * <code>required int32 last_modified = 1;</code>
      */
     public int getLastModified() {
       return lastModified_;
     }
     /**
-     * <code>required int32 lastModified = 1;</code>
+     * <code>required int32 last_modified = 1;</code>
      */
     public Builder setLastModified(int value) {
       bitField0_ |= 0x00000001;
@@ -367,7 +367,7 @@ public final class PirBodyCarrier extends
       return this;
     }
     /**
-     * <code>required int32 lastModified = 1;</code>
+     * <code>required int32 last_modified = 1;</code>
      */
     public Builder clearLastModified() {
       bitField0_ = (bitField0_ & ~0x00000001);
@@ -378,19 +378,19 @@ public final class PirBodyCarrier extends
 
     private long containerFieldSymbol_ ;
     /**
-     * <code>optional int64 containerFieldSymbol = 2;</code>
+     * <code>optional int64 container_field_symbol = 2;</code>
      */
     public boolean hasContainerFieldSymbol() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>optional int64 containerFieldSymbol = 2;</code>
+     * <code>optional int64 container_field_symbol = 2;</code>
      */
     public long getContainerFieldSymbol() {
       return containerFieldSymbol_;
     }
     /**
-     * <code>optional int64 containerFieldSymbol = 2;</code>
+     * <code>optional int64 container_field_symbol = 2;</code>
      */
     public Builder setContainerFieldSymbol(long value) {
       bitField0_ |= 0x00000002;
@@ -399,7 +399,7 @@ public final class PirBodyCarrier extends
       return this;
     }
     /**
-     * <code>optional int64 containerFieldSymbol = 2;</code>
+     * <code>optional int64 container_field_symbol = 2;</code>
      */
     public Builder clearContainerFieldSymbol() {
       bitField0_ = (bitField0_ & ~0x00000002);

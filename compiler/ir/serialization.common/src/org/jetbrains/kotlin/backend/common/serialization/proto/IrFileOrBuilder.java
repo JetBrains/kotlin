@@ -70,16 +70,16 @@ public interface IrFileOrBuilder extends
   long getExplicitlyExportedToCompiler(int index);
 
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.Actual actuals = 6;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.Actual actual = 6;</code>
    */
   java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.Actual> 
-      getActualsList();
+      getActualList();
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.Actual actuals = 6;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.Actual actual = 6;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.Actual getActuals(int index);
+  org.jetbrains.kotlin.backend.common.serialization.proto.Actual getActual(int index);
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.Actual actuals = 6;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.Actual actual = 6;</code>
    */
-  int getActualsCount();
+  int getActualCount();
 }

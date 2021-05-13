@@ -1259,7 +1259,7 @@ open class IrFileSerializer(
 
     private fun serializeFileEntry(entry: IrFileEntry): ProtoFileEntry = ProtoFileEntry.newBuilder()
         .setName(entry.name)
-        .addAllLineStartOffsets(entry.lineStartOffsets.asIterable())
+        .addAllLineStartOffset(entry.lineStartOffsets.asIterable())
         .build()
 
     open fun backendSpecificExplicitRoot(node: IrAnnotationContainer): Boolean = false
@@ -1404,7 +1404,7 @@ open class IrFileSerializer(
         expectActualTable.table.forEach next@{ (expect, actualSymbol) ->
             val expectSymbol = expectDescriptorToSymbol[expect] ?: error("Could not find expect symbol for expect descriptor $expect")
 
-            proto.addActuals(
+            proto.addActual(
                 ProtoActual.newBuilder()
                     .setExpectSymbol(serializeIrSymbol(expectSymbol))
                     .setActualSymbol(serializeIrSymbol(actualSymbol))

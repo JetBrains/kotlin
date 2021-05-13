@@ -35,11 +35,11 @@ public interface IrFunctionReferenceOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon getMemberAccess();
 
   /**
-   * <code>optional int64 reflectionTargetSymbol = 4;</code>
+   * <code>optional int64 reflection_target_symbol = 4;</code>
    */
   boolean hasReflectionTargetSymbol();
   /**
-   * <code>optional int64 reflectionTargetSymbol = 4;</code>
+   * <code>optional int64 reflection_target_symbol = 4;</code>
    */
   long getReflectionTargetSymbol();
 }

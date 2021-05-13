@@ -8,20 +8,20 @@ public interface PirBodyCarrierOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>required int32 lastModified = 1;</code>
+   * <code>required int32 last_modified = 1;</code>
    */
   boolean hasLastModified();
   /**
-   * <code>required int32 lastModified = 1;</code>
+   * <code>required int32 last_modified = 1;</code>
    */
   int getLastModified();
 
   /**
-   * <code>optional int64 containerFieldSymbol = 2;</code>
+   * <code>optional int64 container_field_symbol = 2;</code>
    */
   boolean hasContainerFieldSymbol();
   /**
-   * <code>optional int64 containerFieldSymbol = 2;</code>
+   * <code>optional int64 container_field_symbol = 2;</code>
    */
   long getContainerFieldSymbol();
 }

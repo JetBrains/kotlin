@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
@@ -67,7 +69,9 @@ class FileDeserializationState(
 ) {
 
     val symbolDeserializer =
-        IrSymbolDeserializer(linker.symbolTable, fileReader, fileProto.actualsList, ::addIdSignature, linker::handleExpectActualMapping) { idSig, symbolKind ->
+        IrSymbolDeserializer(
+            linker.symbolTable, fileReader, fileProto.actualList, ::addIdSignature, linker::handleExpectActualMapping
+        ) { idSig, symbolKind ->
             assert(idSig.isPublic)
 
             val topLevelSig = idSig.topLevelSignature()
@@ -155,7 +159,7 @@ internal fun IrLibraryFile.deserializeFqName(fqn: List<Int>): String =
 
 internal fun IrLibraryFile.createFile(module: IrModuleFragment, fileProto: ProtoFile): IrFile {
     val fileName = fileProto.fileEntry.name
-    val fileEntry = NaiveSourceBasedFileEntryImpl(fileName, fileProto.fileEntry.lineStartOffsetsList.toIntArray())
+    val fileEntry = NaiveSourceBasedFileEntryImpl(fileName, fileProto.fileEntry.lineStartOffsetList.toIntArray())
     val fqName = FqName(deserializeFqName(fileProto.fqNameList))
     val packageFragmentDescriptor = EmptyPackageFragmentDescriptor(module.descriptor, fqName)
     val symbol = IrFileSymbolImpl(packageFragmentDescriptor)

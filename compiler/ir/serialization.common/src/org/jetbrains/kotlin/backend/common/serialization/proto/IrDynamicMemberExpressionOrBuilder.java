@@ -8,11 +8,11 @@ public interface IrDynamicMemberExpressionOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>required int32 memberName = 1;</code>
+   * <code>required int32 member_name = 1;</code>
    */
   boolean hasMemberName();
   /**
-   * <code>required int32 memberName = 1;</code>
+   * <code>required int32 member_name = 1;</code>
    */
   int getMemberName();
 

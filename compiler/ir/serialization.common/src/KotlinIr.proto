@@ -9,7 +9,7 @@ option optimize_for = LITE_RUNTIME;
 
 message FileEntry {
   required string name = 1;
-  repeated int32 line_start_offsets = 2 [packed=true];
+  repeated int32 line_start_offset = 2 [packed=true];
 }
 
 message IrFile {
@@ -18,7 +18,7 @@ message IrFile {
   repeated int32 fq_name = 3 [packed=true];
   repeated IrConstructorCall annotation = 4;
   repeated int64 explicitly_exported_to_compiler = 5 [packed=true];
-  repeated Actual actuals = 6;
+  repeated Actual actual = 6;
 }
 
 /* ------ IdSignature -------------------------------------------- */
@@ -131,7 +131,7 @@ message IrFunctionReference {
   required int64 symbol = 1;
   optional int32 origin_name = 2;
   required MemberAccessCommon member_access = 3;
-  optional int64 reflectionTargetSymbol = 4;
+  optional int64 reflection_target_symbol = 4;
 }
 
 message IrLocalDelegatedPropertyReference {
@@ -316,7 +316,7 @@ message IrErrorCallExpression {
 /* ------ Dynamic expression --------------------------------------------- */
 
 message IrDynamicMemberExpression {
-  required int32 memberName = 1;
+  required int32 member_name = 1;
   required IrExpression receiver = 2;
 }
 
@@ -483,7 +483,7 @@ message IrProperty {
 
 message IrVariable {
   required IrDeclarationBase base = 1;
-  required int64 name_type =2;
+  required int64 name_type = 2;
   optional IrExpression initializer = 3;
 }
 
@@ -597,6 +597,6 @@ message IrInlineClassRepresentation {
 }
 
 message PirBodyCarrier {
-  required int32 lastModified = 1;
-  optional int64 containerFieldSymbol = 2;
+  required int32 last_modified = 1;
+  optional int64 container_field_symbol = 2;
 }
