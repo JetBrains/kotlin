@@ -112,6 +112,9 @@ FILE fqName:<root> fileName:/DelegationAndInheritanceFromJava.kt
             $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.Foo.B visibility:local [final]' type=<root>.Foo.B origin=null
               receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.isEmpty' type=<root>.Impl origin=null
     PROPERTY DELEGATED_MEMBER name:size visibility:public modality:OPEN [val]
+      overridden:
+        public abstract size: kotlin.Int [fake_override,val]
+        public abstract size: kotlin.Int [fake_override,val]
       FUN DELEGATED_MEMBER name:<get-size> visibility:public modality:OPEN <> ($this:<root>.Impl) returnType:kotlin.Int
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:size visibility:public modality:OPEN [val]
         overridden:

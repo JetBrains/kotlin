@@ -106,6 +106,8 @@ FILE fqName:<root> fileName:/candidateSymbol.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FirCallableMemberDeclaration<F of <root>.FirCallableMemberDeclaration>
     TYPE_PARAMETER name:F index:0 variance: superTypes:[<root>.FirCallableMemberDeclaration<F of <root>.FirCallableMemberDeclaration>]
     PROPERTY name:symbol visibility:public modality:ABSTRACT [val]
+      overridden:
+        public abstract symbol: <root>.AbstractFirBasedSymbol<E of <root>.FirSymbolOwner> [val]
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-symbol> visibility:public modality:ABSTRACT <> ($this:<root>.FirCallableMemberDeclaration<F of <root>.FirCallableMemberDeclaration>) returnType:<root>.AbstractFirBasedSymbol<F of <root>.FirCallableMemberDeclaration>
         correspondingProperty: PROPERTY name:symbol visibility:public modality:ABSTRACT [val]
         overridden:

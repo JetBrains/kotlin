@@ -31,6 +31,8 @@ FILE fqName:<root> fileName:/kt35550.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[<root>.I]'
     PROPERTY DELEGATED_MEMBER name:id visibility:public modality:OPEN [val]
+      overridden:
+        public open id: T of <root>.I.<get-id> [val]
       FUN DELEGATED_MEMBER name:<get-id> visibility:public modality:OPEN <T> ($this:<root>.A, $receiver:T of <root>.A.<get-id>) returnType:T of <root>.A.<get-id>
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:id visibility:public modality:OPEN [val]
         overridden:

@@ -117,6 +117,8 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
                 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
                 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.IOther]'
             PROPERTY name:x visibility:public modality:FINAL [val]
+              overridden:
+                public abstract x: kotlin.String [val]
               FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]
                 EXPRESSION_BODY
                   GET_VAR 'x0: kotlin.String declared in <root>.otherImpl' type=kotlin.String origin=null
@@ -130,6 +132,8 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
                     GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
                       receiver: GET_VAR '<this>: <root>.otherImpl.<no name provided> declared in <root>.otherImpl.<no name provided>.<get-x>' type=<root>.otherImpl.<no name provided> origin=null
             PROPERTY name:y visibility:public modality:FINAL [var]
+              overridden:
+                public abstract y: kotlin.Int [var]
               FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private
                 EXPRESSION_BODY
                   GET_VAR 'y0: kotlin.Int declared in <root>.otherImpl' type=kotlin.Int origin=null
@@ -153,6 +157,8 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
                     receiver: GET_VAR '<this>: <root>.otherImpl.<no name provided> declared in <root>.otherImpl.<no name provided>.<set-y>' type=<root>.otherImpl.<no name provided> origin=null
                     value: GET_VAR '<set-?>: kotlin.Int declared in <root>.otherImpl.<no name provided>.<set-y>' type=kotlin.Int origin=null
             PROPERTY name:z1 visibility:public modality:FINAL [val]
+              overridden:
+                public abstract z1: kotlin.Int [val]
               FUN name:<get-z1> visibility:public modality:FINAL <> ($this:<root>.otherImpl.<no name provided>, $receiver:kotlin.Byte) returnType:kotlin.Int
                 correspondingProperty: PROPERTY name:z1 visibility:public modality:FINAL [val]
                 overridden:
@@ -163,6 +169,8 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
                   RETURN type=kotlin.Nothing from='public final fun <get-z1> (): kotlin.Int declared in <root>.otherImpl.<no name provided>'
                     CONST Int type=kotlin.Int value=1
             PROPERTY name:z2 visibility:public modality:FINAL [var]
+              overridden:
+                public abstract z2: kotlin.Int [var]
               FUN name:<get-z2> visibility:public modality:FINAL <> ($this:<root>.otherImpl.<no name provided>, $receiver:kotlin.Byte) returnType:kotlin.Int
                 correspondingProperty: PROPERTY name:z2 visibility:public modality:FINAL [var]
                 overridden:
@@ -288,6 +296,8 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
       EXPRESSION_BODY
         GET_OBJECT 'CLASS OBJECT name:BaseImpl modality:FINAL visibility:public superTypes:[<root>.IBase]' type=<root>.BaseImpl
     PROPERTY DELEGATED_MEMBER name:x visibility:public modality:OPEN [val]
+      overridden:
+        public abstract x: kotlin.String [val]
       FUN DELEGATED_MEMBER name:<get-x> visibility:public modality:OPEN <> ($this:<root>.Test2) returnType:kotlin.String
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:x visibility:public modality:OPEN [val]
         overridden:
@@ -299,6 +309,8 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
               $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_1> type:<root>.IOther visibility:local [final]' type=<root>.IOther origin=null
                 receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<get-x>' type=<root>.Test2 origin=null
     PROPERTY DELEGATED_MEMBER name:y visibility:public modality:OPEN [var]
+      overridden:
+        public abstract y: kotlin.Int [var]
       FUN DELEGATED_MEMBER name:<get-y> visibility:public modality:OPEN <> ($this:<root>.Test2) returnType:kotlin.Int
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:y visibility:public modality:OPEN [var]
         overridden:
@@ -321,6 +333,8 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
               receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<set-y>' type=<root>.Test2 origin=null
             <set-?>: GET_VAR '<set-?>: kotlin.Int declared in <root>.Test2.<set-y>' type=kotlin.Int origin=null
     PROPERTY DELEGATED_MEMBER name:z1 visibility:public modality:OPEN [val]
+      overridden:
+        public abstract z1: kotlin.Int [val]
       FUN DELEGATED_MEMBER name:<get-z1> visibility:public modality:OPEN <> ($this:<root>.Test2, $receiver:kotlin.Byte) returnType:kotlin.Int
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:z1 visibility:public modality:OPEN [val]
         overridden:
@@ -334,6 +348,8 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
                 receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<get-z1>' type=<root>.Test2 origin=null
               $receiver: GET_VAR '<this>: kotlin.Byte declared in <root>.Test2.<get-z1>' type=kotlin.Byte origin=null
     PROPERTY DELEGATED_MEMBER name:z2 visibility:public modality:OPEN [var]
+      overridden:
+        public abstract z2: kotlin.Int [var]
       FUN DELEGATED_MEMBER name:<get-z2> visibility:public modality:OPEN <> ($this:<root>.Test2, $receiver:kotlin.Byte) returnType:kotlin.Int
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:z2 visibility:public modality:OPEN [var]
         overridden:

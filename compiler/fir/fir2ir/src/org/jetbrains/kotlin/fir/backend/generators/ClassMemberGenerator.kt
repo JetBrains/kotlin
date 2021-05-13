@@ -156,6 +156,11 @@ internal class ClassMemberGenerator(
         val delegate = property.delegate
         val propertyType = property.returnTypeRef.toIrType()
         irProperty.initializeBackingField(property, initializerExpression = initializer ?: delegate)
+        if (containingClass != null) {
+            irProperty.overriddenSymbols = property.generateOverriddenPropertySymbols(
+                containingClass, session, scopeSession, declarationStorage, fakeOverrideGenerator
+            )
+        }
         irProperty.getter?.setPropertyAccessorContent(
             property, property.getter, irProperty, propertyType,
             property.getter is FirDefaultPropertyGetter,

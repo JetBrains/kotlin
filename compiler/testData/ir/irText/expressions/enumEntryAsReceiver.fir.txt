@@ -27,6 +27,8 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
                 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value2 type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
                   receiver: GET_VAR '<this>: <root>.X.B declared in <root>.X.B.<get-value2>' type=<root>.X.B origin=null
         PROPERTY name:value visibility:public modality:FINAL [val]
+          overridden:
+            public abstract value: kotlin.Function0<kotlin.String> [val]
           FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Function0<kotlin.String> visibility:private [final]
             EXPRESSION_BODY
               FUN_EXPR type=kotlin.Function0<kotlin.String> origin=LAMBDA

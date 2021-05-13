@@ -66,6 +66,8 @@ FILE fqName:<root> fileName:/kt44814.kt
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:psi type:<root>.PsiElement visibility:private [final]' type=<root>.PsiElement origin=null
               receiver: GET_VAR '<this>: <root>.FirPsiSourceElement declared in <root>.FirPsiSourceElement.<get-psi>' type=<root>.FirPsiSourceElement origin=null
     PROPERTY name:lighterASTNode visibility:public modality:FINAL [val]
+      overridden:
+        public abstract lighterASTNode: <root>.LighterASTNode [val]
       FIELD PROPERTY_BACKING_FIELD name:lighterASTNode type:<root>.LighterASTNode visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'lighterASTNode: <root>.LighterASTNode declared in <root>.FirPsiSourceElement.<init>' type=<root>.LighterASTNode origin=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -79,6 +81,8 @@ FILE fqName:<root> fileName:/kt44814.kt
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:lighterASTNode type:<root>.LighterASTNode visibility:private [final]' type=<root>.LighterASTNode origin=null
               receiver: GET_VAR '<this>: <root>.FirPsiSourceElement declared in <root>.FirPsiSourceElement.<get-lighterASTNode>' type=<root>.FirPsiSourceElement origin=null
     PROPERTY name:treeStructure visibility:public modality:FINAL [val]
+      overridden:
+        public abstract treeStructure: <root>.FlyweightCapableTreeStructure [val]
       FIELD PROPERTY_BACKING_FIELD name:treeStructure type:<root>.FlyweightCapableTreeStructure visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'treeStructure: <root>.FlyweightCapableTreeStructure declared in <root>.FirPsiSourceElement.<init>' type=<root>.FlyweightCapableTreeStructure origin=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -113,6 +117,8 @@ FILE fqName:<root> fileName:/kt44814.kt
         DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () [primary] declared in <root>.FirSourceElement'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirLightSourceElement modality:FINAL visibility:public superTypes:[<root>.FirSourceElement]'
     PROPERTY name:lighterASTNode visibility:public modality:FINAL [val]
+      overridden:
+        public abstract lighterASTNode: <root>.LighterASTNode [val]
       FIELD PROPERTY_BACKING_FIELD name:lighterASTNode type:<root>.LighterASTNode visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'lighterASTNode: <root>.LighterASTNode declared in <root>.FirLightSourceElement.<init>' type=<root>.LighterASTNode origin=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -126,6 +132,8 @@ FILE fqName:<root> fileName:/kt44814.kt
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:lighterASTNode type:<root>.LighterASTNode visibility:private [final]' type=<root>.LighterASTNode origin=null
               receiver: GET_VAR '<this>: <root>.FirLightSourceElement declared in <root>.FirLightSourceElement.<get-lighterASTNode>' type=<root>.FirLightSourceElement origin=null
     PROPERTY name:treeStructure visibility:public modality:FINAL [val]
+      overridden:
+        public abstract treeStructure: <root>.FlyweightCapableTreeStructure [val]
       FIELD PROPERTY_BACKING_FIELD name:treeStructure type:<root>.FlyweightCapableTreeStructure visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'treeStructure: <root>.FlyweightCapableTreeStructure declared in <root>.FirLightSourceElement.<init>' type=<root>.FlyweightCapableTreeStructure origin=INITIALIZE_PROPERTY_FROM_PARAMETER

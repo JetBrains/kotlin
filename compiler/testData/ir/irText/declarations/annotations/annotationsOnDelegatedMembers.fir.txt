@@ -84,6 +84,8 @@ FILE fqName:<root> fileName:/annotationsOnDelegatedMembers.kt
     PROPERTY DELEGATED_MEMBER name:testVal visibility:public modality:OPEN [val]
       annotations:
         Ann
+      overridden:
+        public abstract testVal: kotlin.String [val]
       FUN DELEGATED_MEMBER name:<get-testVal> visibility:public modality:OPEN <> ($this:<root>.DFoo) returnType:kotlin.String
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:testVal visibility:public modality:OPEN [val]
         overridden:
@@ -97,6 +99,8 @@ FILE fqName:<root> fileName:/annotationsOnDelegatedMembers.kt
     PROPERTY DELEGATED_MEMBER name:testExtVal visibility:public modality:OPEN [val]
       annotations:
         Ann
+      overridden:
+        public abstract testExtVal: kotlin.String [val]
       FUN DELEGATED_MEMBER name:<get-testExtVal> visibility:public modality:OPEN <> ($this:<root>.DFoo, $receiver:kotlin.String) returnType:kotlin.String
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:testExtVal visibility:public modality:OPEN [val]
         overridden:
