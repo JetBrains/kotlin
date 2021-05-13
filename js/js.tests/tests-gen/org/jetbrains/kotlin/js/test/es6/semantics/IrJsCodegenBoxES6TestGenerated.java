@@ -15791,6 +15791,54 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/box/ir/privateSignatures")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class PrivateSignatures extends AbstractIrJsCodegenBoxES6Test {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR_ES6, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInPrivateSignatures() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ir/privateSignatures"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+            }
+
+            @TestMetadata("deepLocalClassProperties.kt")
+            public void testDeepLocalClassProperties() throws Exception {
+                runTest("compiler/testData/codegen/box/ir/privateSignatures/deepLocalClassProperties.kt");
+            }
+
+            @TestMetadata("deepLocalClassProperties2.kt")
+            public void testDeepLocalClassProperties2() throws Exception {
+                runTest("compiler/testData/codegen/box/ir/privateSignatures/deepLocalClassProperties2.kt");
+            }
+
+            @TestMetadata("deepLocalDefaultArgumentWithLocalClass.kt")
+            public void testDeepLocalDefaultArgumentWithLocalClass() throws Exception {
+                runTest("compiler/testData/codegen/box/ir/privateSignatures/deepLocalDefaultArgumentWithLocalClass.kt");
+            }
+
+            @TestMetadata("deepLocalFakeOverride.kt")
+            public void testDeepLocalFakeOverride() throws Exception {
+                runTest("compiler/testData/codegen/box/ir/privateSignatures/deepLocalFakeOverride.kt");
+            }
+
+            @TestMetadata("enumEntryArguments.kt")
+            public void testEnumEntryArguments() throws Exception {
+                runTest("compiler/testData/codegen/box/ir/privateSignatures/enumEntryArguments.kt");
+            }
+
+            @TestMetadata("localFakeOverride.kt")
+            public void testLocalFakeOverride() throws Exception {
+                runTest("compiler/testData/codegen/box/ir/privateSignatures/localFakeOverride.kt");
+            }
+
+            @TestMetadata("topLevelPrivateDelegate.kt")
+            public void testTopLevelPrivateDelegate() throws Exception {
+                runTest("compiler/testData/codegen/box/ir/privateSignatures/topLevelPrivateDelegate.kt");
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/box/ir/serializationRegressions")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
