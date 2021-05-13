@@ -6,8 +6,6 @@
 package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.frontend.api.analyse
-import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtReferenceExpression
@@ -15,20 +13,22 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UImportStatement
 import org.jetbrains.uast.USimpleNameReferenceExpression
+import org.jetbrains.uast.kotlin.internal.DelegatedMultiResolve
 
-class FirKotlinUImportStatement(
+class KotlinUImportStatement(
     override val psi: KtImportDirective,
     givenParent: UElement?
-) : KotlinAbstractUElement(givenParent), UImportStatement {
+) : KotlinAbstractUElement(givenParent), UImportStatement, DelegatedMultiResolve {
+
     override val javaPsi: PsiElement? = null
 
     override val sourcePsi: KtImportDirective = psi
 
     override val isOnDemand: Boolean = sourcePsi.isAllUnder
 
-    private val importRef: FirImportReference? by lz {
+    private val importRef: ImportReference? by lz {
         sourcePsi.importedReference?.let {
-            FirImportReference(it, sourcePsi.name ?: sourcePsi.text, this, sourcePsi)
+            ImportReference(it, sourcePsi.name ?: sourcePsi.text, this, sourcePsi)
         }
     }
 
@@ -36,7 +36,7 @@ class FirKotlinUImportStatement(
 
     override fun resolve(): PsiElement? = importRef?.resolve()
 
-    private class FirImportReference(
+    private class ImportReference(
         override val psi: KtExpression,
         override val identifier: String,
         givenParent: UElement?,
@@ -50,9 +50,7 @@ class FirKotlinUImportStatement(
 
         override fun resolve(): PsiElement? {
             val reference = sourcePsi.getQualifiedElementSelector() as? KtReferenceExpression ?: return null
-            analyse(reference) {
-                return reference.mainReference.resolve()
-            }
+            return baseResolveProviderService?.resolveToDeclaration(reference)
         }
     }
 }
