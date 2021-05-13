@@ -58,7 +58,7 @@ enum class PositioningStrategy(private val strategy: String? = null) {
     VALUE_ARGUMENTS,
     SUPERTYPES_LIST,
     RETURN_WITH_LABEL,
-    ASSIGNMENT_VALUE,
+    PROPERTY_INITIALIZER,
     WHOLE_ELEMENT,
     INT_LITERAL_OUT_OF_RANGE,
     FLOAT_LITERAL_OUT_OF_RANGE,
@@ -70,6 +70,7 @@ enum class PositioningStrategy(private val strategy: String? = null) {
     FUN_INTERFACE,
     RESERVED_UNDERSCORE,
     QUESTION_MARK_BY_TYPE,
+    ASSIGNMENT_LHS,
 
     ;
 

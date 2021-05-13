@@ -52,7 +52,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val ASSIGNMENT_IN_EXPRESSION_CONTEXT by error<KtBinaryExpression>()
         val BREAK_OR_CONTINUE_OUTSIDE_A_LOOP by error<PsiElement>()
         val NOT_A_LOOP_LABEL by error<PsiElement>()
-        val VARIABLE_EXPECTED by error<PsiElement>()
+        val VARIABLE_EXPECTED by error<PsiElement>(PositioningStrategy.ASSIGNMENT_LHS)
         val DELEGATION_IN_INTERFACE by error<PsiElement>()
         val NESTED_CLASS_NOT_ALLOWED by error<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME) {
             parameter<String>("declaration")
@@ -590,7 +590,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
         }
-        val INITIALIZER_TYPE_MISMATCH by error<KtProperty>(PositioningStrategy.ASSIGNMENT_VALUE) {
+        val INITIALIZER_TYPE_MISMATCH by error<KtProperty>(PositioningStrategy.PROPERTY_INITIALIZER) {
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
         }

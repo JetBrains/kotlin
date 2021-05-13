@@ -499,3 +499,15 @@ fun KtExpression.isNull(): Boolean {
     }
     return this is KtConstantExpression && this.node.elementType == KtNodeTypes.NULL
 }
+
+fun PsiElement?.unwrapParenthesesLabelsAndAnnotations(): PsiElement? {
+    var unwrapped = this
+    while (true) {
+        unwrapped = when (unwrapped) {
+            is KtParenthesizedExpression -> unwrapped.expression
+            is KtLabeledExpression -> unwrapped.baseExpression
+            is KtAnnotatedExpression -> unwrapped.baseExpression
+            else -> return unwrapped
+        }
+    }
+}

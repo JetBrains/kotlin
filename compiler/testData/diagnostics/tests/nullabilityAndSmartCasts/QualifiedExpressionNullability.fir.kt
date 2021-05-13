@@ -1,6 +1,7 @@
 // !DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
 class Foo {
     fun foo(a: Foo): Foo = a
+    var f: Foo? = null
 }
 
 fun main() {
@@ -27,4 +28,14 @@ fun main() {
 
     val z: Foo? = null
     z!!.foo(z<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
+
+    val w: Foo? = null
+    w<!UNSAFE_CALL!>.<!>f = z
+    (w<!UNSAFE_CALL!>.<!>f) = z
+    (label@ w<!UNSAFE_CALL!>.<!>f) = z
+    w!!.f = z
+    w.f = z
+    w<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.f = z
+    w.f<!UNSAFE_CALL!>.<!>f = z
+    w.f!!.f = z
 }

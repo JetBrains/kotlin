@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.diagnostics.KtFirDiagnostic
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.idea.quickfix.AddExclExclCallFix
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.unwrapParenthesesLabelsAndAnnotations
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object AddExclExclCallFixFactories {
@@ -29,46 +30,51 @@ object AddExclExclCallFixFactories {
     }
 
     private fun KtAnalysisSession.getFixForUnsafeCall(psi: PsiElement): List<IntentionAction> {
-        val (target, hasImplicitReceiver) = when (psi) {
+        val (target, hasImplicitReceiver) = when (val unwrapped = psi.unwrapParenthesesLabelsAndAnnotations()) {
             // `foo.bar` -> `foo!!.bar`
-            is KtDotQualifiedExpression -> psi.receiverExpression to false
+            is KtDotQualifiedExpression -> unwrapped.receiverExpression to false
 
             // `foo[bar]` -> `foo!![bar]`
-            is KtArrayAccessExpression -> psi.arrayExpression to false
+            is KtArrayAccessExpression -> unwrapped.arrayExpression to false
 
-            is KtCallableReferenceExpression -> psi.lhs.let { lhs ->
+            is KtCallableReferenceExpression -> unwrapped.lhs.let { lhs ->
                 if (lhs != null) {
                     // `foo::bar` -> `foo!!::bar`
                     lhs to false
                 } else {
                     // `::bar -> this!!::bar`
-                    psi to true
+                    unwrapped to true
                 }
             }
 
             // `bar` -> `this!!.bar`
-            is KtNameReferenceExpression -> psi to true
+            is KtNameReferenceExpression -> unwrapped to true
 
             // `bar()` -> `this!!.bar()`
-            is KtCallExpression -> psi to true
+            is KtCallExpression -> unwrapped to true
 
             // `-foo` -> `-foo!!`
             // NOTE: Unsafe unary operator call is reported as UNSAFE_CALL, _not_ UNSAFE_OPERATOR_CALL
-            is KtUnaryExpression -> psi.baseExpression to false
+            is KtUnaryExpression -> unwrapped.baseExpression to false
 
             is KtBinaryExpression -> {
-                val receiver = if (KtPsiUtil.isInOrNotInOperation(psi)) {
-                    // `bar in foo` -> `bar in foo!!`
-                    psi.right
-                } else {
-                    // `foo + bar` -> `foo!! + bar` OR `foo infixFun bar` -> `foo!! infixFun bar`
-                    psi.left
+                val receiver = when {
+                    KtPsiUtil.isInOrNotInOperation(unwrapped) ->
+                        // `bar in foo` -> `bar in foo!!`
+                        unwrapped.right
+                    KtPsiUtil.isAssignment(unwrapped) ->
+                        // UNSAFE_CALL for assignments (e.g., `foo.bar = value`) is reported on the entire statement (KtBinaryExpression).
+                        // The unsafe call is on the LHS of the assignment.
+                        return getFixForUnsafeCall(unwrapped.left ?: return emptyList())
+                    else ->
+                        // `foo + bar` -> `foo!! + bar` OR `foo infixFun bar` -> `foo!! infixFun bar`
+                        unwrapped.left
                 }
                 receiver to false
             }
 
             // UNSAFE_INFIX_CALL/UNSAFE_OPERATOR_CALL on KtBinaryExpression is reported on the child KtOperationReferenceExpression
-            is KtOperationReferenceExpression -> return getFixForUnsafeCall(psi.parent)
+            is KtOperationReferenceExpression -> return getFixForUnsafeCall(unwrapped.parent)
 
             else -> return emptyList()
         }
