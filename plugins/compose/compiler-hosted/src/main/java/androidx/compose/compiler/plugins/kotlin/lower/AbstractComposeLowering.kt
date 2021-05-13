@@ -24,7 +24,6 @@ import androidx.compose.compiler.plugins.kotlin.analysis.Stability
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.analysis.knownStable
 import androidx.compose.compiler.plugins.kotlin.irTrace
-import androidx.compose.compiler.plugins.kotlin.isComposableCallable
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
@@ -396,11 +395,6 @@ abstract class AbstractComposeLowering(
 
     fun KotlinType.isFinal(): Boolean = (constructor.declarationDescriptor as? ClassDescriptor)
         ?.modality == Modality.FINAL
-
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
-    fun FunctionDescriptor.isComposableCallable(): Boolean {
-        return isComposableCallable(context.bindingContext)
-    }
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun FunctionDescriptor.allowsComposableCalls(): Boolean {
