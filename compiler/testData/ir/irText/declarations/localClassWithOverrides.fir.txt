@@ -46,6 +46,8 @@ FILE fqName:<root> fileName:/localClassWithOverrides.kt
           $this: VALUE_PARAMETER name:<this> type:<root>.outer.Local
           BLOCK_BODY
         PROPERTY name:aval visibility:public modality:FINAL [val]
+          overridden:
+            public abstract aval: kotlin.Int [val]
           FIELD PROPERTY_BACKING_FIELD name:aval type:kotlin.Int visibility:private [final]
             EXPRESSION_BODY
               CONST Int type=kotlin.Int value=1
@@ -59,6 +61,8 @@ FILE fqName:<root> fileName:/localClassWithOverrides.kt
                 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:aval type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
                   receiver: GET_VAR '<this>: <root>.outer.Local declared in <root>.outer.Local.<get-aval>' type=<root>.outer.Local origin=null
         PROPERTY name:avar visibility:public modality:FINAL [var]
+          overridden:
+            public abstract avar: kotlin.Int [var]
           FIELD PROPERTY_BACKING_FIELD name:avar type:kotlin.Int visibility:private
             EXPRESSION_BODY
               CONST Int type=kotlin.Int value=2

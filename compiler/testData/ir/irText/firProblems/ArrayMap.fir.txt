@@ -61,6 +61,8 @@ FILE fqName:<root> fileName:/ArrayMap.kt
           <T>: kotlin.Nothing
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:EmptyArrayMap modality:FINAL visibility:internal superTypes:[<root>.ArrayMap<kotlin.Nothing>]'
     PROPERTY name:size visibility:public modality:FINAL [val]
+      overridden:
+        public abstract size: kotlin.Int [val]
       FUN name:<get-size> visibility:public modality:FINAL <> ($this:<root>.EmptyArrayMap) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:size visibility:public modality:FINAL [val]
         overridden:
@@ -182,6 +184,8 @@ FILE fqName:<root> fileName:/ArrayMap.kt
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:index type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.OneElementArrayMap<T of <root>.OneElementArrayMap> declared in <root>.OneElementArrayMap.<get-index>' type=<root>.OneElementArrayMap<T of <root>.OneElementArrayMap> origin=null
     PROPERTY name:size visibility:public modality:FINAL [val]
+      overridden:
+        public abstract size: kotlin.Int [val]
       FUN name:<get-size> visibility:public modality:FINAL <> ($this:<root>.OneElementArrayMap<T of <root>.OneElementArrayMap>) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:size visibility:public modality:FINAL [val]
         overridden:
@@ -395,6 +399,8 @@ FILE fqName:<root> fileName:/ArrayMap.kt
             size: CALL 'private final fun <get-DEFAULT_SIZE> (): kotlin.Int declared in <root>.ArrayMapImpl.Companion' type=kotlin.Int origin=GET_PROPERTY
               $this: GET_OBJECT 'CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=<root>.ArrayMapImpl.Companion
     PROPERTY name:size visibility:public modality:FINAL [var]
+      overridden:
+        public abstract size: kotlin.Int [val]
       FIELD PROPERTY_BACKING_FIELD name:size type:kotlin.Int visibility:private
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=0
@@ -681,6 +687,8 @@ FILE fqName:<root> fileName:/ArrayMap.kt
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Entry modality:FINAL visibility:public [data] superTypes:[kotlin.collections.Map.Entry<kotlin.Int, T of <root>.ArrayMapImpl.Entry>]'
       PROPERTY name:key visibility:public modality:FINAL [val]
+        overridden:
+          public abstract key: K of kotlin.collections.Map.Entry [val]
         FIELD PROPERTY_BACKING_FIELD name:key type:kotlin.Int visibility:private [final]
           EXPRESSION_BODY
             GET_VAR 'key: kotlin.Int declared in <root>.ArrayMapImpl.Entry.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -694,6 +702,8 @@ FILE fqName:<root> fileName:/ArrayMap.kt
               GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:key type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
                 receiver: GET_VAR '<this>: <root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> declared in <root>.ArrayMapImpl.Entry.<get-key>' type=<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> origin=null
       PROPERTY name:value visibility:public modality:FINAL [val]
+        overridden:
+          public abstract value: V of kotlin.collections.Map.Entry [val]
         FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.ArrayMapImpl.Entry visibility:private [final]
           EXPRESSION_BODY
             GET_VAR 'value: T of <root>.ArrayMapImpl.Entry declared in <root>.ArrayMapImpl.Entry.<init>' type=T of <root>.ArrayMapImpl.Entry origin=INITIALIZE_PROPERTY_FROM_PARAMETER

@@ -71,6 +71,8 @@ FILE fqName:<root> fileName:/ImplicitReceiverStack.kt
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:boundSymbol type:S of <root>.ImplicitReceiverValue? visibility:private [final]' type=S of <root>.ImplicitReceiverValue? origin=null
               receiver: GET_VAR '<this>: <root>.ImplicitReceiverValue<S of <root>.ImplicitReceiverValue> declared in <root>.ImplicitReceiverValue.<get-boundSymbol>' type=<root>.ImplicitReceiverValue<S of <root>.ImplicitReceiverValue> origin=null
     PROPERTY name:type visibility:public modality:FINAL [val]
+      overridden:
+        public abstract type: kotlin.String [val]
       FIELD PROPERTY_BACKING_FIELD name:type type:kotlin.String visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'type: kotlin.String declared in <root>.ImplicitReceiverValue.<init>' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER

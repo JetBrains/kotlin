@@ -127,6 +127,8 @@ FILE fqName:<root> fileName:/typeVariableAfterBuildMap.kt
             isPublicAPI: CONST Boolean type=kotlin.Boolean value=false
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:PrivateToThis modality:FINAL visibility:public superTypes:[<root>.Visibility]'
       PROPERTY name:internalDisplayName visibility:public modality:FINAL [val]
+        overridden:
+          public open internalDisplayName: kotlin.String [val]
         FUN name:<get-internalDisplayName> visibility:public modality:FINAL <> ($this:<root>.Visibilities.PrivateToThis) returnType:kotlin.String
           correspondingProperty: PROPERTY name:internalDisplayName visibility:public modality:FINAL [val]
           overridden:
@@ -450,6 +452,8 @@ FILE fqName:<root> fileName:/typeVariableAfterBuildMap.kt
           RETURN type=kotlin.Nothing from='public final fun mustCheckInImports (): kotlin.Boolean declared in <root>.Visibilities.InvisibleFake'
             CONST Boolean type=kotlin.Boolean value=true
       PROPERTY name:externalDisplayName visibility:public modality:FINAL [val]
+        overridden:
+          public open externalDisplayName: kotlin.String [val]
         FUN name:<get-externalDisplayName> visibility:public modality:FINAL <> ($this:<root>.Visibilities.InvisibleFake) returnType:kotlin.String
           correspondingProperty: PROPERTY name:externalDisplayName visibility:public modality:FINAL [val]
           overridden:

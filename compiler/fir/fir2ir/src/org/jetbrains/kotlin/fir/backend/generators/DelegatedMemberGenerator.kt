@@ -161,6 +161,14 @@ internal class DelegatedMemberGenerator(
                 firDelegateProperty, subClass, origin = IrDeclarationOrigin.DELEGATED_MEMBER,
                 containingClass = firSubClass.symbol.toLookupTag()
             )
+        delegateProperty.overriddenSymbols =
+            firDelegateProperty.generateOverriddenPropertySymbols(
+                firSubClass,
+                session,
+                scopeSession,
+                declarationStorage,
+                fakeOverrideGenerator
+            )
         annotationGenerator.generate(delegateProperty, firDelegateProperty)
 
         delegateProperty.getter!!.body = createDelegateBody(irField, delegateProperty.getter!!, superProperty.getter!!)

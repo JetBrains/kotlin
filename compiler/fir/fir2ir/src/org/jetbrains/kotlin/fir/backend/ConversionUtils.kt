@@ -352,6 +352,33 @@ private fun FirClass<*>.getSuperTypesAsIrClasses(
     return irClass.superTypes.mapNotNull { it.classifierOrNull?.owner as? IrClass }.toSet()
 }
 
+internal fun FirProperty.generateOverriddenPropertySymbols(
+    containingClass: FirClass<*>,
+    session: FirSession,
+    scopeSession: ScopeSession,
+    declarationStorage: Fir2IrDeclarationStorage,
+    fakeOverrideGenerator: FakeOverrideGenerator,
+): List<IrPropertySymbol> {
+    val superClasses = containingClass.getSuperTypesAsIrClasses(declarationStorage) ?: return emptyList()
+
+    val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true)
+    scope.processPropertiesByName(name) {}
+    val overriddenSet = mutableSetOf<IrPropertySymbol>()
+    scope.processOverriddenPropertiesFromSuperClasses(symbol, containingClass) {
+        if (it.fir.visibility == Visibilities.Private) {
+            return@processOverriddenPropertiesFromSuperClasses ProcessorAction.NEXT
+        }
+
+        for (overridden in fakeOverrideGenerator.getOverriddenSymbolsInSupertypes(it, superClasses)) {
+            overriddenSet += overridden
+        }
+
+        ProcessorAction.NEXT
+    }
+
+    return overriddenSet.toList()
+}
+
 internal fun FirProperty.generateOverriddenAccessorSymbols(
     containingClass: FirClass<*>,
     isGetter: Boolean,

@@ -20,6 +20,9 @@ FILE fqName:<root> fileName:/AbstractMutableMap.kt
         RETURN type=kotlin.Nothing from='public final fun put (key: K of <root>.MyMap, value: V of <root>.MyMap): V of <root>.MyMap? declared in <root>.MyMap'
           CONST Null type=kotlin.Nothing? value=null
     PROPERTY name:entries visibility:public modality:FINAL [val]
+      overridden:
+        public abstract entries: @[FlexibleNullability] kotlin.collections.Set<@[FlexibleNullability] kotlin.collections.Map.Entry<@[FlexibleNullability] K of kotlin.collections.AbstractMutableMap?, @[FlexibleNullability] V of kotlin.collections.AbstractMutableMap?>?>? [fake_override,val]
+        public abstract entries: @[FlexibleNullability] kotlin.collections.Set<@[FlexibleNullability] kotlin.collections.Map.Entry<@[FlexibleNullability] K of java.util.AbstractMap?, @[FlexibleNullability] V of java.util.AbstractMap?>?>? [val]
       FUN name:<get-entries> visibility:public modality:FINAL <> ($this:<root>.MyMap<K of <root>.MyMap, V of <root>.MyMap>) returnType:kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K of <root>.MyMap, V of <root>.MyMap>>
         correspondingProperty: PROPERTY name:entries visibility:public modality:FINAL [val]
         overridden:

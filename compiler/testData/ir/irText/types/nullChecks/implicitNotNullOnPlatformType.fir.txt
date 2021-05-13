@@ -9,6 +9,8 @@ FILE fqName:<root> fileName:/implicitNotNullOnPlatformType.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MySet modality:FINAL visibility:public superTypes:[kotlin.collections.Set<kotlin.String>]'
     PROPERTY name:size visibility:public modality:FINAL [val]
+      overridden:
+        public abstract size: kotlin.Int [val]
       FUN name:<get-size> visibility:public modality:FINAL <> ($this:<root>.MySet) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:size visibility:public modality:FINAL [val]
         overridden:
