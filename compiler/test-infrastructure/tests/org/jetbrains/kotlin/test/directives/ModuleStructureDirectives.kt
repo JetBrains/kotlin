@@ -52,4 +52,8 @@ object ModuleStructureDirectives : SimpleDirectivesContainer() {
             Declares backend for analyzing current module 
         """.trimIndent()
     )
+
+    val TARGET_PLATFORM by enumDirective<TargetPlatformEnum>(
+        "Declares target platform for current module"
+    )
 }

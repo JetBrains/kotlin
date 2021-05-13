@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.test.services.impl
 
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
@@ -17,6 +16,7 @@ import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
 import org.jetbrains.kotlin.test.directives.ModuleStructureDirectives
+import org.jetbrains.kotlin.test.directives.TargetPlatformEnum
 import org.jetbrains.kotlin.test.directives.model.ComposedRegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -219,6 +219,22 @@ class ModuleStructureExtractorImpl(
                         resetFileCaches()
                     }
                     currentFileName = (values.first() as String).also(::validateFileName)
+                }
+                ModuleStructureDirectives.TARGET_PLATFORM -> {
+                    if (currentModuleTargetPlatform != null) {
+                        assertions.fail { "Target platform already specified twice for module $currentModuleName" }
+                    }
+                    val platforms = values.map { (it as TargetPlatformEnum).targetPlatform }
+                    currentModuleTargetPlatform = when (platforms.size) {
+                        0 -> assertions.fail { "Target platform specified incorrectly\nUsage: ${directive.description}" }
+                        1 -> platforms.single()
+                        else -> {
+                            if (TargetPlatformEnum.Common in values) {
+                                assertions.fail { "You can't specify `Common` platform in combination with others" }
+                            }
+                            TargetPlatform(platforms.flatMapTo(mutableSetOf()) { it.componentPlatforms })
+                        }
+                    }
                 }
                 else -> return false
             }
