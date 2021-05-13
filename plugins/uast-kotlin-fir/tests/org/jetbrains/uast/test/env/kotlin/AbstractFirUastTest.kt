@@ -19,6 +19,7 @@ import org.jetbrains.uast.UFile
 import org.jetbrains.uast.UastFacade
 import org.jetbrains.uast.UastLanguagePlugin
 import org.jetbrains.uast.common.kotlin.FirUastPluginSelection
+import org.jetbrains.uast.kotlin.BaseKotlinUastResolveProviderService
 import org.jetbrains.uast.kotlin.FirKotlinUastResolveProviderService
 import org.jetbrains.uast.kotlin.firKotlinUastPlugin
 import org.jetbrains.uast.kotlin.internal.FirCliKotlinUastResolveProviderService
@@ -45,9 +46,14 @@ abstract class AbstractFirUastTest : KotlinLightCodeInsightFixtureTestCase(), Fi
         )
         area.getExtensionPoint(UastLanguagePlugin.extensionPointName)
             .registerExtension(firKotlinUastPlugin, testRootDisposable)
+        val service = FirCliKotlinUastResolveProviderService()
+        project.registerServiceInstance(
+            BaseKotlinUastResolveProviderService::class.java,
+            service
+        )
         project.registerServiceInstance(
             FirKotlinUastResolveProviderService::class.java,
-            FirCliKotlinUastResolveProviderService()
+            service
         )
     }
 

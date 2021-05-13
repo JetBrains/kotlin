@@ -18,7 +18,7 @@ open class FirKotlinUMethod(
     psi: PsiMethod,
     final override val sourcePsi: KtDeclaration?,
     givenParent: UElement?
-) : FirKotlinAbstractUElement(givenParent), UMethod, UAnchorOwner, PsiMethod by psi {
+) : KotlinAbstractUElement(givenParent), UMethod, UAnchorOwner, PsiMethod by psi {
     constructor(
         psi: KtLightMethod,
         givenParent: UElement?

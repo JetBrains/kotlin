@@ -137,6 +137,8 @@
             displayName="Incompatible API usage"
             implementationClass="org.jetbrains.kotlin.idea.inspections.api.IncompatibleAPIInspection"/>
 
+        <projectService serviceInterface="org.jetbrains.uast.kotlin.BaseKotlinUastResolveProviderService"
+                        serviceImplementation="org.jetbrains.uast.kotlin.internal.IdeaKotlinUastResolveProviderService"/>
         <projectService serviceInterface="org.jetbrains.uast.kotlin.KotlinUastResolveProviderService"
                         serviceImplementation="org.jetbrains.uast.kotlin.internal.IdeaKotlinUastResolveProviderService"/>
 

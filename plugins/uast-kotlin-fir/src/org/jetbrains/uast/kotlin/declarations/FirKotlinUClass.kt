@@ -18,7 +18,7 @@ import org.jetbrains.uast.visitor.UastVisitor
 
 sealed class AbstractFirKotlinUClass(
     givenParent: UElement?
-) : FirKotlinAbstractUElement(givenParent), UClass, UAnchorOwner {
+) : KotlinAbstractUElement(givenParent), UClass, UAnchorOwner {
     override val uAnnotations: List<UAnnotation>
         get() {
             // TODO: Not yet implemented

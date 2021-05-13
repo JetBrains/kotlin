@@ -33,122 +33,104 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.expressions.KotlinLocalFunctionULambdaExpression
 import org.jetbrains.uast.kotlin.expressions.KotlinUElvisExpression
-import org.jetbrains.uast.kotlin.internal.KotlinUElementWithComments
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
 
-abstract class KotlinAbstractUElement(private val givenParent: UElement?) : KotlinUElementWithComments {
+fun convertParentImpl(uElement: UElement): UElement? {
+    @Suppress("DEPRECATION")
+    val psi = uElement.psi //TODO: `psi` is deprecated but it seems that it couldn't be simply replaced for this case
+    var parent = psi?.parent ?: uElement.sourcePsi?.parent ?: psi?.containingFile
 
-    final override val uastParent: UElement? by lz {
-        givenParent ?: convertParent()
+    if (psi is PsiMethod && psi !is KtLightMethod) { // handling of synthetic things not represented in lightclasses directly
+        when (parent) {
+            is KtClassBody -> {
+                val grandParent = parent.parent
+                doConvertParent(uElement, grandParent)?.let { return it }
+                parent = grandParent
+            }
+            is KtFile -> {
+                parent.toUElementOfType<UClass>()?.let { return it } // mutlifile facade class
+            }
+        }
+
     }
 
-    protected open fun convertParent(): UElement? {
-        @Suppress("DEPRECATION")
-        val psi = psi //TODO: `psi` is deprecated but it seems that it couldn't be simply replaced for this case
-        var parent = psi?.parent ?: sourcePsi?.parent ?: psi?.containingFile
-
-        if (psi is PsiMethod && psi !is KtLightMethod) { // handling of synthetic things not represented in lightclasses directly
-            when (parent) {
-                is KtClassBody -> {
-                    val grandParent = parent.parent
-                    doConvertParent(this, grandParent)?.let { return it }
-                    parent = grandParent
-                }
-                is KtFile -> {
-                    parent.toUElementOfType<UClass>()?.let { return it } // mutlifile facade class
-                }
-            }
-
+    if (psi is KtLightElement<*, *> && uElement.sourcePsi.safeAs<KtClassOrObject>()?.isLocal == true) {
+        val originParent = psi.kotlinOrigin?.parent
+        parent = when (originParent) {
+            null -> parent
+            is KtClassBody -> originParent.parent
+            else -> originParent
         }
-
-        if (psi is KtLightElement<*, *> && sourcePsi.safeAs<KtClassOrObject>()?.isLocal == true) {
-            val originParent = psi.kotlinOrigin?.parent
-            parent = when (originParent) {
-                null -> parent
-                is KtClassBody -> originParent.parent
-                else -> originParent
-            }
-        }
-
-        if (psi is KtAnnotationEntry) {
-            val parentUnwrapped = KotlinConverter.unwrapElements(parent) ?: return null
-            val target = psi.useSiteTarget?.getAnnotationUseSiteTarget()
-            when (target) {
-                AnnotationUseSiteTarget.PROPERTY_GETTER ->
-                    parent = (parentUnwrapped as? KtProperty)?.getter
-                             ?: (parentUnwrapped as? KtParameter)?.toLightGetter()
-                             ?: parent
-
-                AnnotationUseSiteTarget.PROPERTY_SETTER ->
-                    parent = (parentUnwrapped as? KtProperty)?.setter
-                             ?: (parentUnwrapped as? KtParameter)?.toLightSetter()
-                             ?: parent
-                AnnotationUseSiteTarget.FIELD ->
-                    parent = (parentUnwrapped as? KtProperty)
-                        ?: (parentUnwrapped as? KtParameter)
-                            ?.takeIf { it.isPropertyParameter() }
-                            ?.let(LightClassUtil::getLightClassBackingField)
-                                ?: parent
-                AnnotationUseSiteTarget.SETTER_PARAMETER ->
-                    parent = (parentUnwrapped as? KtParameter)
-                        ?.toLightSetter()?.parameterList?.parameters?.firstOrNull() ?: parent
-            }
-        }
-        if ((psi is UastKotlinPsiVariable || psi is UastKotlinPsiParameter) && parent != null) {
-            parent = parent.parent
-        }
-
-        if (KotlinConverter.forceUInjectionHost) {
-            if (parent is KtBlockStringTemplateEntry) {
-                parent = parent.parent
-            }
-        } else
-            while (parent is KtStringTemplateEntryWithExpression || parent is KtStringTemplateExpression && parent.entries.size == 1) {
-                parent = parent.parent
-            }
-
-        if (parent is KtWhenConditionWithExpression) {
-            parent = parent.parent
-        }
-
-        if (parent is KtImportList) {
-            parent = parent.parent
-        }
-
-        if (psi is KtFunctionLiteral && parent is KtLambdaExpression) {
-            parent = parent.parent
-        }
-
-        if (parent is KtLambdaArgument) {
-            parent = parent.parent
-        }
-
-        if (psi is KtSuperTypeCallEntry) {
-            parent = parent?.parent
-        }
-
-        if (parent is KtPropertyDelegate) {
-            parent = parent.parent
-        }
-
-        val result = doConvertParent(this, parent)
-        if (result == this) {
-            throw IllegalStateException("Loop in parent structure when converting a $psi of type ${psi?.javaClass} with parent $parent of type ${parent?.javaClass} text: [${parent?.text}], result = $result")
-        }
-
-        return result
     }
 
-    override fun equals(other: Any?): Boolean {
-        if (other !is UElement) {
-            return false
-        }
+    if (psi is KtAnnotationEntry) {
+        val parentUnwrapped = KotlinConverter.unwrapElements(parent) ?: return null
+        val target = psi.useSiteTarget?.getAnnotationUseSiteTarget()
+        when (target) {
+            AnnotationUseSiteTarget.PROPERTY_GETTER ->
+                parent = (parentUnwrapped as? KtProperty)?.getter
+                         ?: (parentUnwrapped as? KtParameter)?.toLightGetter()
+                         ?: parent
 
-        return this.psi == other.psi
+            AnnotationUseSiteTarget.PROPERTY_SETTER ->
+                parent = (parentUnwrapped as? KtProperty)?.setter
+                         ?: (parentUnwrapped as? KtParameter)?.toLightSetter()
+                         ?: parent
+            AnnotationUseSiteTarget.FIELD ->
+                parent = (parentUnwrapped as? KtProperty)
+                    ?: (parentUnwrapped as? KtParameter)
+                        ?.takeIf { it.isPropertyParameter() }
+                        ?.let(LightClassUtil::getLightClassBackingField)
+                            ?: parent
+            AnnotationUseSiteTarget.SETTER_PARAMETER ->
+                parent = (parentUnwrapped as? KtParameter)
+                    ?.toLightSetter()?.parameterList?.parameters?.firstOrNull() ?: parent
+        }
+    }
+    if ((psi is UastKotlinPsiVariable || psi is UastKotlinPsiParameter) && parent != null) {
+        parent = parent.parent
     }
 
-    override fun hashCode() = psi?.hashCode() ?: 0
+    if (KotlinConverter.forceUInjectionHost) {
+        if (parent is KtBlockStringTemplateEntry) {
+            parent = parent.parent
+        }
+    } else
+        while (parent is KtStringTemplateEntryWithExpression || parent is KtStringTemplateExpression && parent.entries.size == 1) {
+            parent = parent.parent
+        }
+
+    if (parent is KtWhenConditionWithExpression) {
+        parent = parent.parent
+    }
+
+    if (parent is KtImportList) {
+        parent = parent.parent
+    }
+
+    if (psi is KtFunctionLiteral && parent is KtLambdaExpression) {
+        parent = parent.parent
+    }
+
+    if (parent is KtLambdaArgument) {
+        parent = parent.parent
+    }
+
+    if (psi is KtSuperTypeCallEntry) {
+        parent = parent?.parent
+    }
+
+    if (parent is KtPropertyDelegate) {
+        parent = parent.parent
+    }
+
+    val result = doConvertParent(uElement, parent)
+    if (result == uElement) {
+        throw IllegalStateException("Loop in parent structure when converting a $psi of type ${psi?.javaClass} with parent $parent of type ${parent?.javaClass} text: [${parent?.text}], result = $result")
+    }
+
+    return result
 }
 
 fun doConvertParent(element: UElement, parent: PsiElement?): UElement? {
@@ -247,20 +229,3 @@ private fun findAnnotationClassFromConstructorParameter(parameter: KtParameter):
     }
     return null
 }
-
-abstract class KotlinAbstractUExpression(givenParent: UElement?) :
-    KotlinAbstractUElement(givenParent),
-    UExpression {
-
-    override val javaPsi: PsiElement? = null
-
-    override val psi
-        get() = sourcePsi
-
-    override val annotations: List<UAnnotation>
-        get() {
-            val annotatedExpression = sourcePsi?.parent as? KtAnnotatedExpression ?: return emptyList()
-            return annotatedExpression.annotationEntries.map { KotlinUAnnotation(it, this) }
-        }
-}
-

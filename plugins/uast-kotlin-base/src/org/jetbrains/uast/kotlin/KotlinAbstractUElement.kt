@@ -5,21 +5,30 @@
 
 package org.jetbrains.uast.kotlin
 
-import com.intellij.psi.PsiElement
+import com.intellij.openapi.components.ServiceManager
 import org.jetbrains.uast.UElement
-import org.jetbrains.uast.UExpression
+import org.jetbrains.uast.UastFacade
+import org.jetbrains.uast.UastLanguagePlugin
 import org.jetbrains.uast.kotlin.internal.KotlinUElementWithComments
 
-abstract class FirKotlinAbstractUElement(
-    private val givenParent: UElement?
+abstract class KotlinAbstractUElement(
+    givenParent: UElement?
 ) : KotlinUElementWithComments {
+
+    protected val languagePlugin: UastLanguagePlugin? by lz {
+        psi?.let { UastFacade.findPlugin(it) }
+    }
+
+    protected val baseResolveProviderService: BaseKotlinUastResolveProviderService? by lz {
+        psi?.project?.let { ServiceManager.getService(it, BaseKotlinUastResolveProviderService::class.java) }
+    }
 
     final override val uastParent: UElement? by lz {
         givenParent ?: convertParent()
     }
 
     protected open fun convertParent(): UElement? {
-        TODO("Not yet implemented")
+        return baseResolveProviderService?.convertParent(this)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -27,21 +36,10 @@ abstract class FirKotlinAbstractUElement(
             return false
         }
 
-        return this.sourcePsi == other.sourcePsi
+        return this.psi == other.psi
     }
 
     override fun hashCode(): Int {
-        return sourcePsi?.hashCode() ?: 0
+        return psi?.hashCode() ?: 0
     }
-}
-
-abstract class FirKotlinAbstractUExpression(
-    givenParent: UElement?
-) : FirKotlinAbstractUElement(givenParent), UExpression {
-    override val javaPsi: PsiElement? = null
-
-    override val psi: PsiElement?
-        get() = sourcePsi
-
-    // TODO: annotations
 }
