@@ -1380,28 +1380,28 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                     val clause = ConstArray(int8TypePtr, listOf(kotlinExceptionRtti))
                     LLVMAddClause(landingpad, clause.llvm)
 
-                val bbCleanup = basicBlock("forwardException", position()?.end)
-                val bbUnexpected = basicBlock("unexpectedException", position()?.end)
+                    val bbCleanup = basicBlock("forwardException", position()?.end)
+                    val bbUnexpected = basicBlock("unexpectedException", position()?.end)
 
-                val selector = extractValue(landingpad, 1)
-                condBr(
-                        icmpLt(selector, Int32(0).llvm),
-                        bbUnexpected,
-                        bbCleanup
-                )
+                    val selector = extractValue(landingpad, 1)
+                    condBr(
+                            icmpLt(selector, Int32(0).llvm),
+                            bbUnexpected,
+                            bbCleanup
+                    )
 
-                appendingTo(bbUnexpected) {
-                    val exceptionRecord = extractValue(landingpad, 0)
+                    appendingTo(bbUnexpected) {
+                        val exceptionRecord = extractValue(landingpad, 0)
 
-                    val beginCatch = context.llvm.cxaBeginCatchFunction
-                    // So `terminator` is called from C++ catch block:
-                    call(beginCatch, listOf(exceptionRecord))
-                    call(terminator, emptyList())
-                    unreachable()
+                        val beginCatch = context.llvm.cxaBeginCatchFunction
+                        // So `terminator` is called from C++ catch block:
+                        call(beginCatch, listOf(exceptionRecord))
+                        call(terminator, emptyList())
+                        unreachable()
+                    }
+
+                    positionAtEnd(bbCleanup)
                 }
-
-                positionAtEnd(bbCleanup)
-            }
 
             releaseVars()
             handleEpilogueForExperimentalMM(context.llvm.Kotlin_mm_safePointExceptionUnwind)
