@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.types.KotlinTypeRefinerImpl
+import org.jetbrains.kotlin.types.checker.KotlinTypePreparator
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeCheckerImpl
 import org.jetbrains.kotlin.types.expressions.DeclarationScopeProviderForLocalClassifierAnalyzer
@@ -88,6 +89,8 @@ fun StorageComponentContainer.configureModule(
     } else {
         useInstance(KotlinTypeRefiner.Default)
     }
+
+    useInstance(KotlinTypePreparator.Default)
 
     configurePlatformIndependentComponents()
 }

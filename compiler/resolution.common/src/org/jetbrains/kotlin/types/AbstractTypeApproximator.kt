@@ -86,7 +86,7 @@ abstract class AbstractTypeApproximator(
 
         return cachedValue(type, conf, toSuper = true) {
             approximateTo(
-                prepareType(type), conf, { upperBound() },
+                AbstractTypeChecker.prepareType(ctx, type), conf, { upperBound() },
                 referenceApproximateToSuperType, depth
             )
         }
@@ -97,7 +97,7 @@ abstract class AbstractTypeApproximator(
 
         return cachedValue(type, conf, toSuper = false) {
             approximateTo(
-                prepareType(type), conf, { lowerBound() },
+                AbstractTypeChecker.prepareType(ctx, type), conf, { lowerBound() },
                 referenceApproximateToSubType, depth
             )
         }

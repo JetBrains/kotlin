@@ -34,7 +34,7 @@ class OverridingUtilTypeSystemContext(
             stubTypesEqualToAnything,
             allowedTypeVariable = true,
             kotlinTypeRefiner,
-            this
+            typeSystemContext = this
         )
     }
 

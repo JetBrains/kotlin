@@ -257,6 +257,8 @@ class ConstraintInjector(
             }
         }
 
+        override fun prepareType(type: KotlinTypeMarker) = baseContext.prepareType(type)
+
         fun runIsSubtypeOf(
             lowerType: KotlinTypeMarker,
             upperType: KotlinTypeMarker,

@@ -26,6 +26,7 @@ open class ClassicTypeCheckerContext(
     val stubTypeEqualsToAnything: Boolean = true,
     val allowedTypeVariable: Boolean = true,
     val kotlinTypeRefiner: KotlinTypeRefiner = KotlinTypeRefiner.Default,
+    val kotlinTypePreparator: KotlinTypePreparator = KotlinTypePreparator.Default,
     override val typeSystemContext: ClassicTypeSystemContext = SimpleClassicTypeSystemContext
 ) : AbstractTypeCheckerContext() {
 
@@ -33,6 +34,11 @@ open class ClassicTypeCheckerContext(
     override fun refineType(type: KotlinTypeMarker): KotlinTypeMarker {
         require(type is KotlinType, type::errorMessage)
         return kotlinTypeRefiner.refineType(type)
+    }
+
+    override fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker {
+        require(type is KotlinType, type::errorMessage)
+        return kotlinTypePreparator.prepareType(type.unwrap())
     }
 
     override val isErrorTypeEqualsToAnything: Boolean

@@ -519,10 +519,6 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun SimpleTypeMarker.makeSimpleTypeDefinitelyNotNullOrNotNull(): SimpleTypeMarker {
         error("makeSimpleTypeDefinitelyNotNullOrNotNull is not yet supported in IR")
     }
-
-    override fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker {
-        return type
-    }
 }
 
 fun extractTypeParameters(parent: IrDeclarationParent): List<IrTypeParameter> {

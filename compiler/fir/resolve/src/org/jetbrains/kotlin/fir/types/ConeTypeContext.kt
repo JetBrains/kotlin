@@ -393,22 +393,6 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return ConeTypeIntersector.intersectTypes(this as ConeInferenceContext, types as List<ConeKotlinType>)
     }
 
-    override fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker {
-        return when (type) {
-            is ConeClassLikeType -> type.fullyExpandedType(session)
-            is ConeFlexibleType -> {
-                val lowerBound = prepareType(type.lowerBound)
-                if (lowerBound === type.lowerBound) return type
-
-                ConeFlexibleType(
-                    lowerBound as ConeKotlinType,
-                    prepareType(type.upperBound) as ConeKotlinType
-                )
-            }
-            else -> type
-        }
-    }
-
     override fun KotlinTypeMarker.isNullableType(): Boolean {
         require(this is ConeKotlinType)
         if (this.isMarkedNullable)
@@ -551,7 +535,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 class ConeTypeCheckerContext(
     override val isErrorTypeEqualsToAnything: Boolean,
     override val isStubTypeEqualsToAnything: Boolean,
-    override val typeSystemContext: ConeInferenceContext
+    override val typeSystemContext: ConeInferenceContext,
+    val kotlinTypePreparator: ConeTypePreparator = ConeTypePreparator.getDefault(typeSystemContext.session),
 ) : AbstractTypeCheckerContext() {
 
     val session: FirSession = typeSystemContext.session
@@ -585,7 +570,11 @@ class ConeTypeCheckerContext(
     }
 
     override fun refineType(type: KotlinTypeMarker): KotlinTypeMarker {
-        return typeSystemContext.prepareType(type)
+        return kotlinTypePreparator.prepareType(type)
+    }
+
+    override fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker {
+        return kotlinTypePreparator.prepareType(type)
     }
 
     override val KotlinTypeMarker.isAllowedTypeVariable: Boolean

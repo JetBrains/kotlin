@@ -507,11 +507,6 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return this.replace(newArguments as List<TypeProjection>)
     }
 
-    override fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker {
-        require(type is KotlinType, type::errorMessage)
-        return NewKotlinTypeChecker.Default.transformToNewType(type.unwrap())
-    }
-
     override fun DefinitelyNotNullTypeMarker.original(): SimpleTypeMarker {
         require(this is DefinitelyNotNullType, this::errorMessage)
         return this.original

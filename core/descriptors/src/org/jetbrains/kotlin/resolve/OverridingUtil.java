@@ -392,7 +392,7 @@ public class OverridingUtil {
         assert firstParameters.size() == secondParameters.size() :
                 "Should be the same number of type parameters: " + firstParameters + " vs " + secondParameters;
 
-        NewKotlinTypeCheckerImpl typeChecker = new NewKotlinTypeCheckerImpl(kotlinTypeRefiner);
+        NewKotlinTypeCheckerImpl typeChecker = new NewKotlinTypeCheckerImpl(kotlinTypeRefiner, KotlinTypePreparator.Default.INSTANCE);
         ClassicTypeCheckerContext context = createTypeCheckerContext(firstParameters, secondParameters);
 
         return new Pair<NewKotlinTypeCheckerImpl, ClassicTypeCheckerContext>(typeChecker, context);
