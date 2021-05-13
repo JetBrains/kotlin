@@ -1,50 +1,38 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.jvm.lower
+package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
-import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.org.objectweb.asm.Type
 
-val inventNamesForLocalClassesPhase = makeIrFilePhase(
-    { context -> InventNamesForLocalClasses(context) },
-    name = "InventNamesForLocalClasses",
-    description = "Invent names for local classes and anonymous objects",
-    // MainMethodGeneration introduces lambdas, needing names for their local classes.
-    prerequisite = setOf(mainMethodGenerationPhase)
-)
+abstract class InventNamesForLocalClasses() : FileLoweringPass {
 
-class InventNamesForLocalClasses(private val context: JvmBackendContext) : FileLoweringPass {
+    protected abstract fun computeTopLevelClassName(clazz: IrClass): String
+    protected abstract fun sanitizeNameIfNeeded(name: String): String
+
+    protected abstract fun putLocalClassName(declaration: IrAttributeContainer, localClassName: String)
+
     override fun lower(irFile: IrFile) {
         irFile.accept(NameInventor(), Data(null, false))
     }
 
     /**
-     * @property enclosingName JVM internal name of the enclosing class (including anonymous classes, local objects and callable references)
+     * @property enclosingName internal name of the enclosing class (including anonymous classes, local objects and callable references)
      * @property isLocal true if the next declaration to be encountered in the IR tree is local
      */
-    private class Data(val enclosingName: String?, val isLocal: Boolean) {
-        fun withName(newName: String): Data =
-            Data(newName, isLocal)
-
-        fun makeLocal(): Data =
-            if (isLocal) this else Data(enclosingName, true)
+    private data class Data(val enclosingName: String?, val isLocal: Boolean) {
+        fun makeLocal(): Data = if (isLocal) this else copy(isLocal = true)
     }
 
     private inner class NameInventor : IrElementVisitor<Unit, Data> {
@@ -59,25 +47,16 @@ class InventNamesForLocalClasses(private val context: JvmBackendContext) : FileL
                 val internalName = if (enclosingName != null) {
                     "$enclosingName$${declaration.name.asString()}"
                 } else {
-                    val file = declaration.parent as? IrFile
-                        ?: throw AssertionError("Top-level class expected: ${declaration.render()}")
-                    val classFqn =
-                        if (declaration.origin == IrDeclarationOrigin.FILE_CLASS ||
-                            declaration.origin == IrDeclarationOrigin.SYNTHETIC_FILE_CLASS
-                        )
-                            file.getFileClassInfo().fileClassFqName
-                        else
-                            file.fqName.child(declaration.name)
-                    JvmClassName.byFqNameWithoutInnerClasses(classFqn).internalName
+                    computeTopLevelClassName(declaration)
                 }
-                declaration.acceptChildren(this, data.withName(internalName))
+                declaration.acceptChildren(this, data.copy(enclosingName = internalName))
                 return
             }
 
             val internalName = inventName(declaration.name, data)
-            context.putLocalClassType(declaration, Type.getObjectType(internalName))
+            putLocalClassName(declaration, internalName)
 
-            val newData = data.withName(internalName)
+            val newData = data.copy(enclosingName = internalName)
 
             // Old backend doesn't add the anonymous object name to the stack when traversing its super constructor arguments.
             // E.g. a lambda in the super call of an object literal "foo$1" will get the name "foo$2", not "foo$1$1".
@@ -122,7 +101,7 @@ class InventNamesForLocalClasses(private val context: JvmBackendContext) : FileL
                 else -> simpleName
             }
 
-            val newData = data.withName(internalName).makeLocal()
+            val newData = data.copy(enclosingName = internalName, isLocal = true)
             if ((declaration is IrProperty && declaration.isDelegated) || declaration is IrLocalDelegatedProperty) {
                 // Old backend currently reserves a name here, in case a property reference-like anonymous object will need
                 // to be generated in the codegen later, which is now happening for local delegated properties in inline functions.
@@ -135,14 +114,14 @@ class InventNamesForLocalClasses(private val context: JvmBackendContext) : FileL
 
         override fun visitFunctionReference(expression: IrFunctionReference, data: Data) {
             val internalName = localFunctionNames[expression.symbol] ?: inventName(null, data)
-            context.putLocalClassType(expression, Type.getObjectType(internalName))
+            putLocalClassName(expression, internalName)
 
             expression.acceptChildren(this, data)
         }
 
         override fun visitPropertyReference(expression: IrPropertyReference, data: Data) {
             val internalName = inventName(null, data)
-            context.putLocalClassType(expression, Type.getObjectType(internalName))
+            putLocalClassName(expression, internalName)
 
             expression.acceptChildren(this, data)
         }
@@ -167,9 +146,9 @@ class InventNamesForLocalClasses(private val context: JvmBackendContext) : FileL
             }
             if (declaration.isSuspend && declaration.body != null && declaration.origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) {
                 // Suspend functions have a continuation, which is essentially a local class
-                val newData = data.withName(inventName(declaration.name, data))
+                val newData = data.copy(enclosingName = inventName(declaration.name, data))
                 val internalName = inventName(null, newData)
-                context.putLocalClassType(declaration, Type.getObjectType(internalName))
+                putLocalClassName(declaration, internalName)
             }
 
             super.visitSimpleFunction(declaration, data)
@@ -192,7 +171,13 @@ class InventNamesForLocalClasses(private val context: JvmBackendContext) : FileL
 
         private fun inventName(sourceName: Name?, data: Data): String {
             val enclosingName = data.enclosingName
-            check(enclosingName != null) { "There should be at least one name in the stack for every local declaration that needs a name" }
+            check(enclosingName != null) {
+                """
+                    There should be at least one name in the stack for every local declaration that needs a name
+                    Source name: $sourceName
+                    Data: $data
+                """.trimIndent()
+            }
 
             val simpleName = if (sourceName == null || sourceName.isSpecial) {
                 val count = (anonymousClassesCount[enclosingName] ?: 0) + 1
@@ -202,7 +187,7 @@ class InventNamesForLocalClasses(private val context: JvmBackendContext) : FileL
                 sourceName
             }
 
-            return JvmCodegenUtil.sanitizeNameIfNeeded("$enclosingName$$simpleName", context.state.languageVersionSettings)
+            return sanitizeNameIfNeeded("$enclosingName$$simpleName")
         }
     }
 }
