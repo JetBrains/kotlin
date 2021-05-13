@@ -22,6 +22,9 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
+import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -71,6 +74,12 @@ fun KotlinType.makeComposable(module: ModuleDescriptor): KotlinType {
     val annotation = ComposeFqNames.makeComposableAnnotation(module)
     return replaceAnnotations(Annotations.create(annotations + annotation))
 }
+
+fun IrType.hasComposableAnnotation(): Boolean =
+    hasAnnotation(ComposeFqNames.Composable)
+
+fun IrAnnotationContainer.hasComposableAnnotation(): Boolean =
+    hasAnnotation(ComposeFqNames.Composable)
 
 fun KotlinType.hasComposableAnnotation(): Boolean =
     !isSpecialType && annotations.findAnnotation(ComposeFqNames.Composable) != null
