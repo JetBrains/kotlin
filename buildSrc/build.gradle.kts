@@ -102,10 +102,10 @@ open class VersionGeneratorNullableBuild : VersionGenerator() {
         @Input
         get() {
             val number = project.findProperty("build.number")?.toString()
-            val buildNumberSplit = number!!
-                .split("-".toRegex())
-                .toTypedArray() as Array<String>
-            if (buildNumberSplit[buildNumberSplit.size - 1].toIntOrNull() == null) {
+            val buildNumberSplit = number
+                ?.split("-".toRegex())
+                ?.toTypedArray()
+            if (buildNumberSplit?.get(buildNumberSplit.size - 1)?.toIntOrNull() == null) {
                 return null
             }
             return number
