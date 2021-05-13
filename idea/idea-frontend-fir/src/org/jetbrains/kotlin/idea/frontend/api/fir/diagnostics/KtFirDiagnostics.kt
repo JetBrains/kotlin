@@ -438,6 +438,11 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = RestrictedRetentionForExpressionAnnotation::class
     }
 
+    abstract class WrongAnnotationTarget : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = WrongAnnotationTarget::class
+        abstract val actualTarget: String
+    }
+
     abstract class ExposedTypealiasExpandedType : KtFirDiagnostic<KtNamedDeclaration>() {
         override val diagnosticClass get() = ExposedTypealiasExpandedType::class
         abstract val elementVisibility: EffectiveVisibility

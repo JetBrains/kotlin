@@ -75,7 +75,7 @@ import test.AnnotationTargets.*
     ): @fieldann @parameter Int {
 
         @local @base @multiple @fieldann val j = i + 1
-        @base @multiple return j
+        <!WRONG_ANNOTATION_TARGET!>@base<!> <!WRONG_ANNOTATION_TARGET!>@multiple<!> return j
     }
 
     @base @method @konstructor constructor(): this(0)

@@ -18,4 +18,4 @@
     return local
 }
 
-@empty val z = @empty 0
+@empty val z = <!WRONG_ANNOTATION_TARGET!>@empty<!> 0

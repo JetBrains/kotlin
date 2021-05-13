@@ -179,6 +179,7 @@ object FirErrors {
     val DEPRECATED_SINCE_KOTLIN_OUTSIDE_KOTLIN_SUBPACKAGE by error0<PsiElement>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val ANNOTATION_ON_SUPERCLASS by error0<KtAnnotationEntry>()
     val RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION by error0<PsiElement>()
+    val WRONG_ANNOTATION_TARGET by error1<KtAnnotationEntry, String>()
 
     // Exposed visibility
     val EXPOSED_TYPEALIAS_EXPANDED_TYPE by error3<KtNamedDeclaration, EffectiveVisibility, FirMemberDeclaration, EffectiveVisibility>(SourceElementPositioningStrategies.DECLARATION_NAME)

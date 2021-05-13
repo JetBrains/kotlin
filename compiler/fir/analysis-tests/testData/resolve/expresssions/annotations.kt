@@ -1,3 +1,7 @@
+// WITH_RUNTIME
+
+@Retention(AnnotationRetention.SOURCE)
+@Target(AnnotationTarget.EXPRESSION)
 annotation class MyAnn
 
 fun bar(x: Int) {}

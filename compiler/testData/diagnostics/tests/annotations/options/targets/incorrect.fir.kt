@@ -18,4 +18,4 @@
     return local
 }
 
-@incorrect val z = @incorrect 0
+@incorrect val z = <!WRONG_ANNOTATION_TARGET!>@incorrect<!> 0

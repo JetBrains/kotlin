@@ -1,5 +1,5 @@
 FILE: annotations.kt
-    public final annotation class MyAnn : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Retention|(Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE|) @R|kotlin/annotation/Target|(vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|)) public final annotation class MyAnn : R|kotlin/Annotation| {
         public constructor(): R|MyAnn| {
             super<R|kotlin/Any|>()
         }

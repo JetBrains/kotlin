@@ -8,7 +8,7 @@
  * annotations, annotation-targets -> paragraph 1 -> sentence 1
  */
 fun foo(a: Int) {
-    @ann
+    <!WRONG_ANNOTATION_TARGET!>@ann<!>
     when (a) {
         1 -> {}
     }

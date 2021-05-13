@@ -173,6 +173,9 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
 
         val ANNOTATION_ON_SUPERCLASS by error<KtAnnotationEntry>()
         val RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION by error<PsiElement>()
+        val WRONG_ANNOTATION_TARGET by error<KtAnnotationEntry> {
+            parameter<String>("actualTarget")
+        }
     }
 
     val EXPOSED_VISIBILITY by object : DiagnosticGroup("Exposed visibility") {

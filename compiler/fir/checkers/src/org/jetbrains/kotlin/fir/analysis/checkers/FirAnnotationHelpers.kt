@@ -9,13 +9,11 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
-import org.jetbrains.kotlin.fir.expressions.argumentMapping
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -30,12 +28,8 @@ fun FirAnnotationCall.getRetention(session: FirSession): AnnotationRetention {
 
 fun FirRegularClass.getRetention(): AnnotationRetention {
     val retentionAnnotation = getRetentionAnnotation() ?: return AnnotationRetention.RUNTIME
-    val argumentMapping = retentionAnnotation.argumentMapping ?: return AnnotationRetention.RUNTIME
-    val retentionArgument = argumentMapping.keys.firstOrNull() as? FirQualifiedAccessExpression
+    val retentionArgument = retentionAnnotation.findSingleArgumentByName(RETENTION_PARAMETER_NAME) as? FirQualifiedAccessExpression
         ?: return AnnotationRetention.RUNTIME
-    if (argumentMapping[retentionArgument]?.name != RETENTION_PARAMETER_NAME) {
-        return AnnotationRetention.RUNTIME
-    }
     val retentionName = (retentionArgument.calleeReference as? FirResolvedNamedReference)?.name?.asString()
         ?: return AnnotationRetention.RUNTIME
     return AnnotationRetention.values().firstOrNull { it.name == retentionName } ?: AnnotationRetention.RUNTIME
@@ -54,19 +48,20 @@ private val defaultAnnotationTargets = listOf(
 )
 
 fun FirAnnotationCall.getAllowedAnnotationTargets(session: FirSession): List<AnnotationTarget> {
+    if (annotationTypeRef is FirErrorTypeRef) return AnnotationTarget.values().toList()
     val annotationClass = (this.annotationTypeRef.coneType as? ConeClassLikeType)?.lookupTag?.toSymbol(session)?.fir as? FirRegularClass
     return annotationClass?.getAllowedAnnotationTargets() ?: defaultAnnotationTargets
 }
 
 fun FirRegularClass.getAllowedAnnotationTargets(): List<AnnotationTarget> {
     val targetAnnotation = getTargetAnnotation() ?: return defaultAnnotationTargets
-    val argumentMapping = targetAnnotation.argumentMapping ?: return defaultAnnotationTargets
-    val targetArgument = argumentMapping.keys.firstOrNull() as? FirVarargArgumentsExpression
-        ?: return defaultAnnotationTargets
-    if (argumentMapping[targetArgument]?.name != TARGET_PARAMETER_NAME) {
-        return defaultAnnotationTargets
+    val arguments = when (val targetArgument = targetAnnotation.findSingleArgumentByName(TARGET_PARAMETER_NAME)) {
+        is FirVarargArgumentsExpression -> targetArgument.arguments
+        is FirArrayOfCall -> targetArgument.arguments
+        else -> return defaultAnnotationTargets
     }
-    return targetArgument.arguments.mapNotNull { argument ->
+
+    return arguments.mapNotNull { argument ->
         val targetExpression = argument as? FirQualifiedAccessExpression
         val targetName = (targetExpression?.calleeReference as? FirResolvedNamedReference)?.name?.asString() ?: return@mapNotNull null
         AnnotationTarget.values().firstOrNull { target -> target.name == targetName }
@@ -85,5 +80,15 @@ fun FirAnnotatedDeclaration.getAnnotationByFqName(fqName: FqName): FirAnnotation
     return annotations.find {
         (it.annotationTypeRef.coneType as? ConeClassLikeType)?.lookupTag?.classId?.asSingleFqName() == fqName
     }
+}
+
+fun FirAnnotationCall.findSingleArgumentByName(name: Name): FirExpression? {
+    val argumentMapping = argumentMapping
+    if (argumentMapping != null) {
+        return argumentMapping.keys.firstOrNull()?.takeIf { argumentMapping[it]?.name == name }
+    }
+    // NB: we have to consider both cases, because deserializer does not create argument mapping
+    val firstArgument = argumentList.arguments.firstOrNull() as? FirNamedArgumentExpression ?: return null
+    return firstArgument.takeIf { it.name == name }?.expression
 }
 
