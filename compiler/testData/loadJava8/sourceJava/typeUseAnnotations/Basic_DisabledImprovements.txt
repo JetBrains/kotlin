@@ -11,7 +11,7 @@ public open class Basic_DisabledImprovements</*0*/ T : @org.jetbrains.annotation
         }
     }
 
-    public/*package*/ interface G</*0*/ T : kotlin.Any!> : test.Basic_DisabledImprovements.G2<@org.jetbrains.annotations.NotNull T!, @org.jetbrains.annotations.NotNull kotlin.String!> {
+    public/*package*/ interface G</*0*/ T : kotlin.Any!> : test.Basic_DisabledImprovements.G2<@org.jetbrains.annotations.NotNull T, @org.jetbrains.annotations.NotNull kotlin.String> {
     }
 
     public/*package*/ interface G2</*0*/ A : kotlin.Any!, /*1*/ B : kotlin.Any!> {

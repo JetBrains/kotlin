@@ -1044,6 +1044,12 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
             public void testValueParameter_fir() throws Exception {
                 runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/valueParameter.fir.kt");
             }
+
+            @Test
+            @TestMetadata("warningsBasedOnEnhancedBasedType.kt")
+            public void testWarningsBasedOnEnhancedBasedType() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/warningsBasedOnEnhancedBasedType.kt");
+            }
         }
     }
 
