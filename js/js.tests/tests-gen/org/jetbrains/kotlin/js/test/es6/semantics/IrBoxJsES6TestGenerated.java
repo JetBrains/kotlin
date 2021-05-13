@@ -5133,6 +5133,11 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
             runTest("js/js.translator/testData/box/jsModule/externalClass.kt");
         }
 
+        @TestMetadata("externalClassNameClash.kt")
+        public void testExternalClassNameClash() throws Exception {
+            runTest("js/js.translator/testData/box/jsModule/externalClassNameClash.kt");
+        }
+
         @TestMetadata("externalClassWithDefaults.kt")
         public void testExternalClassWithDefaults() throws Exception {
             runTest("js/js.translator/testData/box/jsModule/externalClassWithDefaults.kt");
