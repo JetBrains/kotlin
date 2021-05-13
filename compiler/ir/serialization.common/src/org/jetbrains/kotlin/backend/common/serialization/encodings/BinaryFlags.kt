@@ -36,7 +36,7 @@ value class ClassFlags(val flags: Long) {
         fun encode(clazz: IrClass): Long {
             return clazz.run {
                 val hasAnnotation = annotations.isNotEmpty()
-                val visibility = ProtoEnumFlags.descriptorVisibility(visibility)
+                val visibility = ProtoEnumFlags.descriptorVisibility(visibility.normalize())
                 val modality = ProtoEnumFlags.modality(modality)
                 val kind = ProtoEnumFlags.classKind(kind, isCompanion)
 
@@ -74,7 +74,7 @@ value class FunctionFlags(val flags: Long) {
         fun encode(function: IrSimpleFunction): Long {
             function.run {
                 val hasAnnotation = annotations.isNotEmpty()
-                val visibility = ProtoEnumFlags.descriptorVisibility(visibility)
+                val visibility = ProtoEnumFlags.descriptorVisibility(visibility.normalize())
                 val modality = ProtoEnumFlags.modality(modality)
                 val kind = if (isFakeOverride) ProtoBuf.MemberKind.FAKE_OVERRIDE else ProtoBuf.MemberKind.DECLARATION
 
@@ -91,7 +91,7 @@ value class FunctionFlags(val flags: Long) {
         fun encode(constructor: IrConstructor): Long {
             constructor.run {
                 val hasAnnotation = annotations.isNotEmpty()
-                val visibility = ProtoEnumFlags.descriptorVisibility(visibility)
+                val visibility = ProtoEnumFlags.descriptorVisibility(visibility.normalize())
                 val flags = IrFlags.getConstructorFlags(hasAnnotation, visibility, isInline, isExternal, isExpect, isPrimary)
 
                 return flags.toLong()
@@ -122,7 +122,7 @@ value class PropertyFlags(val flags: Long) {
         fun encode(property: IrProperty): Long {
             return property.run {
                 val hasAnnotation = annotations.isNotEmpty()
-                val visibility = ProtoEnumFlags.descriptorVisibility(visibility)
+                val visibility = ProtoEnumFlags.descriptorVisibility(visibility.normalize())
                 val modality = ProtoEnumFlags.modality(modality)
                 val kind = if (isFakeOverride) ProtoBuf.MemberKind.FAKE_OVERRIDE else ProtoBuf.MemberKind.DECLARATION
                 val hasGetter = getter != null
@@ -176,7 +176,7 @@ value class TypeAliasFlags(val flags: Long) {
     companion object {
         fun encode(typeAlias: IrTypeAlias): Long {
             return typeAlias.run {
-                val visibility = ProtoEnumFlags.descriptorVisibility(visibility)
+                val visibility = ProtoEnumFlags.descriptorVisibility(visibility.normalize())
                 IrFlags.getTypeAliasFlags(annotations.isNotEmpty(), visibility, isActual).toLong()
             }
         }
@@ -214,7 +214,7 @@ value class FieldFlags(val flags: Long) {
     companion object {
         fun encode(field: IrField): Long {
             return field.run {
-                val visibility = ProtoEnumFlags.descriptorVisibility(visibility)
+                val visibility = ProtoEnumFlags.descriptorVisibility(visibility.normalize())
                 IrFlags.getFieldFlags(annotations.isNotEmpty(), visibility, isFinal, isExternal, isStatic).toLong()
             }
         }
