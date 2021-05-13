@@ -2413,6 +2413,11 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
                 runTest("compiler/fir/analysis-tests/testData/resolve/inference/definitelyNotNullIntersectionType.kt");
             }
 
+            @TestMetadata("elvisAndUnit.kt")
+            public void testElvisAndUnit() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/inference/elvisAndUnit.kt");
+            }
+
             @TestMetadata("extensionCallableReferences.kt")
             public void testExtensionCallableReferences() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/inference/extensionCallableReferences.kt");
@@ -2481,6 +2486,11 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             @TestMetadata("typeDepthForTypeAlias.kt")
             public void testTypeDepthForTypeAlias() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/inference/typeDepthForTypeAlias.kt");
+            }
+
+            @TestMetadata("unitUpperBound.kt")
+            public void testUnitUpperBound() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/inference/unitUpperBound.kt");
             }
         }
 
@@ -3451,6 +3461,11 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             @TestMetadata("castToBareType.kt")
             public void testCastToBareType() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/types/castToBareType.kt");
+            }
+
+            @TestMetadata("typeAliasInArguments.kt")
+            public void testTypeAliasInArguments() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/types/typeAliasInArguments.kt");
             }
         }
 
