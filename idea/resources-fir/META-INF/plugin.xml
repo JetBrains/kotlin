@@ -128,6 +128,8 @@ The Kotlin FIR plugin provides language support in IntelliJ IDEA and Android Stu
     <projectService serviceInterface="org.jetbrains.kotlin.psi.KtFileClassProvider"
                     serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.KtFileClassProviderImpl"/>
 
+    <projectService serviceInterface="org.jetbrains.uast.kotlin.BaseKotlinUastResolveProviderService"
+                    serviceImplementation="org.jetbrains.uast.kotlin.internal.FirIdeaKotlinUastResolveProviderService"/>
     <projectService serviceInterface="org.jetbrains.uast.kotlin.FirKotlinUastResolveProviderService"
                     serviceImplementation="org.jetbrains.uast.kotlin.internal.FirIdeaKotlinUastResolveProviderService"/>
 

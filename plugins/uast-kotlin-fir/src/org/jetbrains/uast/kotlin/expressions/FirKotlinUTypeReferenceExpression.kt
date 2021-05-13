@@ -15,7 +15,7 @@ class FirKotlinUTypeReferenceExpression(
     override val sourcePsi: KtTypeReference,
     givenParent: UElement?,
     private val typeSupplier: (() -> PsiType)? = null,
-) : FirKotlinAbstractUExpression(givenParent), UTypeReferenceExpression {
+) : KotlinAbstractUExpression(givenParent), UTypeReferenceExpression {
     override val type: PsiType by lz {
         typeSupplier?.invoke() ?: sourcePsi.toPsiType(uastParent ?: this)
     }

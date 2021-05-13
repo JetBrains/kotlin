@@ -78,6 +78,7 @@ dependencies {
     compile(project(":idea:idea-jps-common"))
     compile(project(":idea:kotlin-gradle-tooling"))
     compile(project(":idea:line-indent-provider"))
+    compile(project(":plugins:uast-kotlin-base"))
     compile(project(":plugins:uast-kotlin"))
     compile(project(":plugins:uast-kotlin-idea"))
     compile(project(":plugins:uast-kotlin-idea-base"))

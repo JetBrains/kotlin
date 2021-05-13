@@ -53,12 +53,15 @@ import org.jetbrains.uast.kotlin.declarations.KotlinUMethodWithFakeLightDelegate
 import org.jetbrains.uast.kotlin.expressions.*
 import org.jetbrains.uast.kotlin.psi.*
 
-interface KotlinUastResolveProviderService {
+interface KotlinUastResolveProviderService : BaseKotlinUastResolveProviderService {
     fun getBindingContext(element: KtElement): BindingContext
     fun getTypeMapper(element: KtElement): KotlinTypeMapper?
     fun getLanguageVersionSettings(element: KtElement): LanguageVersionSettings
-    fun isJvmElement(psiElement: PsiElement): Boolean
     fun getReferenceVariants(ktElement: KtElement, nameHint: String): Sequence<DeclarationDescriptor>
+
+    override fun convertParent(uElement: UElement): UElement? {
+        return convertParentImpl(uElement)
+    }
 }
 
 var PsiElement.destructuringDeclarationInitializer: Boolean? by UserDataProperty(Key.create("kotlin.uast.destructuringDeclarationInitializer"))

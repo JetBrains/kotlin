@@ -8,11 +8,10 @@ package org.jetbrains.uast.kotlin
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UExpression
-import org.jetbrains.uast.kotlin.FirKotlinAbstractUExpression
 
 class FirUnknownKotlinExpression(
     override val sourcePsi: KtExpression,
     givenParent: UElement?
-) : FirKotlinAbstractUExpression(givenParent), UExpression {
+) : KotlinAbstractUExpression(givenParent), UExpression {
     override fun asLogString() = "[!] FirUnknownKotlinExpression ($sourcePsi)"
 }

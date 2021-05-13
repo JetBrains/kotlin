@@ -14,7 +14,7 @@ import org.jetbrains.uast.visitor.UastVisitor
 
 sealed class AbstractFirKotlinUVariable(
     givenParent: UElement?
-) : FirKotlinAbstractUElement(givenParent), PsiVariable, UVariableEx, UAnchorOwner {
+) : KotlinAbstractUElement(givenParent), PsiVariable, UVariableEx, UAnchorOwner {
     override val uAnnotations: List<UAnnotation>
         get() {
             // TODO: Not yet implemented

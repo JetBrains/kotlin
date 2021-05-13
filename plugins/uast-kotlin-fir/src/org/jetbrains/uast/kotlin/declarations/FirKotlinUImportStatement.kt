@@ -19,7 +19,7 @@ import org.jetbrains.uast.USimpleNameReferenceExpression
 class FirKotlinUImportStatement(
     override val psi: KtImportDirective,
     givenParent: UElement?
-): FirKotlinAbstractUElement(givenParent), UImportStatement {
+) : KotlinAbstractUElement(givenParent), UImportStatement {
     override val javaPsi: PsiElement? = null
 
     override val sourcePsi: KtImportDirective = psi
@@ -41,7 +41,7 @@ class FirKotlinUImportStatement(
         override val identifier: String,
         givenParent: UElement?,
         private val importDirective: KtImportDirective
-    ) : FirKotlinAbstractUExpression(givenParent), USimpleNameReferenceExpression {
+    ) : KotlinAbstractUExpression(givenParent), USimpleNameReferenceExpression {
         override val sourcePsi: KtExpression = psi
 
         override val resolvedName: String = identifier
