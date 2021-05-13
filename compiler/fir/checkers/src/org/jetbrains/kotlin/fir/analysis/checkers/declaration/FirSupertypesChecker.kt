@@ -72,6 +72,14 @@ object FirSupertypesChecker : FirClassChecker() {
                         singletonInSupertypeReported = true
                     }
                 }
+
+                for (annotation in superTypeRef.annotations) {
+                    withSuppressedDiagnostics(annotation, context) {
+                        if (annotation.useSiteTarget != null) {
+                            reporter.reportOn(annotation.source, FirErrors.ANNOTATION_ON_SUPERCLASS, context)
+                        }
+                    }
+                }
             }
         }
     }
