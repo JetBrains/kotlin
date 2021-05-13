@@ -184,7 +184,7 @@ internal class ImportQuickFix(
             val isVisible: (KtNamedClassOrObjectSymbol) -> Boolean =
                 { isVisible(it, firFile, null, element) }
 
-            val acceptableClasses = collectTypesCandidates(indexHelper, unresolvedName, isVisible)
+            val acceptableClasses = collectTypesCandidates(indexHelper, unresolvedName, isVisible).distinct()
             if (acceptableClasses.isEmpty()) return null
 
             return ImportQuickFix(element, acceptableClasses)
