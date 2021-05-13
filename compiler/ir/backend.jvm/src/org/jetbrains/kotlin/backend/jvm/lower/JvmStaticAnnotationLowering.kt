@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
+import org.jetbrains.kotlin.backend.jvm.CachedFieldsForObjectInstances
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isEffectivelyInlineOnly
@@ -41,7 +42,9 @@ internal val jvmStaticInCompanionPhase = makeIrFilePhase(
 
 private class JvmStaticInObjectLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) =
-        irFile.transformChildrenVoid(SingletonObjectJvmStaticTransformer(context))
+        irFile.transformChildrenVoid(
+            SingletonObjectJvmStaticTransformer(context.irBuiltIns, context.cachedDeclarations.fieldsForObjectInstances)
+        )
 }
 
 private class JvmStaticInCompanionLowering(val context: JvmBackendContext) : FileLoweringPass {
@@ -64,7 +67,7 @@ internal fun IrDeclaration.isJvmStaticInObject(): Boolean =
 private fun IrExpression.coerceToUnit(irBuiltIns: IrBuiltIns) =
     IrTypeOperatorCallImpl(startOffset, endOffset, irBuiltIns.unitType, IrTypeOperator.IMPLICIT_COERCION_TO_UNIT, irBuiltIns.unitType, this)
 
-private fun IrMemberAccessExpression<*>.makeStatic(context: JvmBackendContext, replaceCallee: IrSimpleFunction?) =
+private fun IrMemberAccessExpression<*>.makeStatic(irBuiltIns: IrBuiltIns, replaceCallee: IrSimpleFunction?) =
     dispatchReceiver?.let { receiver ->
         dispatchReceiver = null
         val newCall = if (replaceCallee != null) irCall(this@makeStatic as IrCall, replaceCallee) else this@makeStatic
@@ -73,13 +76,16 @@ private fun IrMemberAccessExpression<*>.makeStatic(context: JvmBackendContext, r
             newCall
         } else {
             IrBlockImpl(startOffset, endOffset, newCall.type).apply {
-                statements += receiver.coerceToUnit(context.irBuiltIns) // evaluate for side effects
+                statements += receiver.coerceToUnit(irBuiltIns) // evaluate for side effects
                 statements += newCall
             }
         }
     } ?: this
 
-private class SingletonObjectJvmStaticTransformer(val context: JvmBackendContext) : IrElementTransformerVoid() {
+class SingletonObjectJvmStaticTransformer(
+    private val irBuiltIns: IrBuiltIns,
+    private val cachedFields: CachedFieldsForObjectInstances
+) : IrElementTransformerVoid() {
     override fun visitClass(declaration: IrClass): IrStatement {
         if (declaration.isNonCompanionObject) {
             for (function in declaration.simpleFunctions()) {
@@ -87,9 +93,7 @@ private class SingletonObjectJvmStaticTransformer(val context: JvmBackendContext
                     // dispatch receiver parameter is already null for synthetic property annotation methods
                     function.dispatchReceiverParameter?.let { oldDispatchReceiverParameter ->
                         function.dispatchReceiverParameter = null
-                        function.replaceThisByStaticReference(
-                            context.cachedDeclarations.fieldsForObjectInstances, declaration, oldDispatchReceiverParameter
-                        )
+                        function.replaceThisByStaticReference(cachedFields, declaration, oldDispatchReceiverParameter)
                     }
                 }
             }
@@ -102,7 +106,7 @@ private class SingletonObjectJvmStaticTransformer(val context: JvmBackendContext
         expression.transformChildrenVoid(this)
         val callee = expression.symbol.owner
         if (callee is IrDeclaration && callee.isJvmStaticInObject()) {
-            return expression.makeStatic(context, replaceCallee = null)
+            return expression.makeStatic(irBuiltIns, replaceCallee = null)
         }
         return expression
     }
@@ -146,7 +150,7 @@ private class CompanionObjectJvmStaticTransformer(val context: JvmBackendContext
         return when {
             shouldReplaceWithStaticCall(callee) -> {
                 val (staticProxy, _) = context.cachedDeclarations.getStaticAndCompanionDeclaration(callee)
-                expression.makeStatic(context, staticProxy)
+                expression.makeStatic(context.irBuiltIns, staticProxy)
             }
             callee.symbol == context.ir.symbols.indyLambdaMetafactoryIntrinsic -> {
                 val implFunRef = expression.getValueArgument(1) as? IrFunctionReference

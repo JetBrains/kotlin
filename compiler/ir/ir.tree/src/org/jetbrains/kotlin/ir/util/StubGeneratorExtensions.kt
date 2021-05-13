@@ -34,18 +34,14 @@ open class StubGeneratorExtensions {
 
     open fun deserializeLazyClass(
         irClass: IrLazyClass,
-        moduleDescriptor: ModuleDescriptor,
-        irBuiltIns: IrBuiltIns,
-        symbolTable: SymbolTable,
+        stubGenerator: DeclarationStubGenerator,
         parent: IrDeclarationParent,
         allowErrorNodes: Boolean,
     ): Boolean = false
 
     open fun deserializeFacadeClass(
         irClass: IrClass,
-        moduleDescriptor: ModuleDescriptor,
-        irBuiltIns: IrBuiltIns,
-        symbolTable: SymbolTable,
+        stubGenerator: DeclarationStubGenerator,
         parent: IrDeclarationParent,
         allowErrorNodes: Boolean,
     ): Boolean = false

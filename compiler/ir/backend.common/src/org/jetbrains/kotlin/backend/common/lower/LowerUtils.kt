@@ -25,8 +25,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
-class IrLoweringContext(backendContext: BackendContext) : IrGeneratorContextBase(backendContext.irBuiltIns)
-
 class DeclarationIrBuilder(
     generatorContext: IrGeneratorContext,
     symbol: IrSymbol,
@@ -59,12 +57,19 @@ open class VariableRemapper(val mapping: Map<IrValueParameter, IrValueDeclaratio
         mapping[value]
 }
 
+fun IrBuiltIns.createIrBuilder(
+    symbol: IrSymbol,
+    startOffset: Int = UNDEFINED_OFFSET,
+    endOffset: Int = UNDEFINED_OFFSET
+) =
+    DeclarationIrBuilder(IrGeneratorContextBase(this), symbol, startOffset, endOffset)
+
 fun BackendContext.createIrBuilder(
     symbol: IrSymbol,
     startOffset: Int = UNDEFINED_OFFSET,
     endOffset: Int = UNDEFINED_OFFSET
 ) =
-    DeclarationIrBuilder(IrLoweringContext(this), symbol, startOffset, endOffset)
+    irBuiltIns.createIrBuilder(symbol, startOffset, endOffset)
 
 
 fun <T : IrBuilder> T.at(element: IrElement) = this.at(element.startOffset, element.endOffset)
