@@ -37,6 +37,10 @@ import org.jetbrains.kotlin.serialization.DescriptorSerializerPlugin
 object ComposeConfiguration {
     val LIVE_LITERALS_ENABLED_KEY =
         CompilerConfigurationKey<Boolean>("Enable Live Literals code generation")
+    val LIVE_LITERALS_V2_ENABLED_KEY =
+        CompilerConfigurationKey<Boolean>(
+            "Enable Live Literals code generation (with per-file enabled flags)"
+        )
     val SOURCE_INFORMATION_ENABLED_KEY =
         CompilerConfigurationKey<Boolean>("Include source information in generated code")
     val INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_KEY =
@@ -54,6 +58,13 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             "liveLiterals",
             "<true|false>",
             "Enable Live Literals code generation",
+            required = false,
+            allowMultipleOccurrences = false
+        )
+        val LIVE_LITERALS_V2_ENABLED_OPTION = CliOption(
+            "liveLiteralsEnabled",
+            "<true|false>",
+            "Enable Live Literals code generation (with per-file enabled flags)",
             required = false,
             allowMultipleOccurrences = false
         )
@@ -90,6 +101,7 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
     override val pluginId = PLUGIN_ID
     override val pluginOptions = listOf(
         LIVE_LITERALS_ENABLED_OPTION,
+        LIVE_LITERALS_V2_ENABLED_OPTION,
         SOURCE_INFORMATION_ENABLED_OPTION,
         INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_OPTION,
         SUPPRESS_KOTLIN_VERSION_CHECK_ENABLED_OPTION,
@@ -102,6 +114,10 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
         configuration: CompilerConfiguration
     ) = when (option) {
         LIVE_LITERALS_ENABLED_OPTION -> configuration.put(
+            ComposeConfiguration.LIVE_LITERALS_ENABLED_KEY,
+            value == "true"
+        )
+        LIVE_LITERALS_V2_ENABLED_OPTION -> configuration.put(
             ComposeConfiguration.LIVE_LITERALS_ENABLED_KEY,
             value == "true"
         )
@@ -172,6 +188,10 @@ class ComposeComponentRegistrar : ComponentRegistrar {
                 ComposeConfiguration.LIVE_LITERALS_ENABLED_KEY,
                 false
             )
+            val liveLiteralsV2Enabled = configuration.get(
+                ComposeConfiguration.LIVE_LITERALS_V2_ENABLED_KEY,
+                false
+            )
             val sourceInformationEnabled = configuration.get(
                 ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY,
                 false
@@ -206,6 +226,7 @@ class ComposeComponentRegistrar : ComponentRegistrar {
                 project,
                 ComposeIrGenerationExtension(
                     liveLiteralsEnabled = liveLiteralsEnabled,
+                    liveLiteralsV2Enabled = liveLiteralsV2Enabled,
                     sourceInformationEnabled = sourceInformationEnabled,
                     intrinsicRememberEnabled = intrinsicRememberEnabled,
                     decoysEnabled = decoysEnabled,
