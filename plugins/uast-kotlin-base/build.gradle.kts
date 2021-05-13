@@ -8,7 +8,7 @@ dependencies {
     implementation(project(":compiler:psi"))
     implementation(project(":compiler:light-classes"))
 
-    // BEWARE: Uast should not depend on IDEA.
+    // BEWARE: UAST should not depend on IJ platform so that it can work in Android Lint CLI mode (where IDE is not available)
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "asm-all", rootProject = rootProject) }
     compileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl") }
 }
