@@ -1,9 +1,9 @@
 public final class PropertyWithAnnotationKt {
-    private static final var prop1: int = [!] FirUnknownKotlinExpression (INTEGER_CONSTANT)
+    private static final var prop1: int = [!] UnknownKotlinExpression (INTEGER_CONSTANT)
     public static final fun getProp1() : int = UastEmptyExpression
-    public static final fun getProp2() : int = [!] FirUnknownKotlinExpression (INTEGER_CONSTANT)
-    public static final fun getProp3() : int = [!] FirUnknownKotlinExpression (INTEGER_CONSTANT)
-    public static final fun setProp3(value: int) : void = [!] FirUnknownKotlinExpression (BLOCK)
+    public static final fun getProp2() : int = [!] UnknownKotlinExpression (INTEGER_CONSTANT)
+    public static final fun getProp3() : int = [!] UnknownKotlinExpression (INTEGER_CONSTANT)
+    public static final fun setProp3(value: int) : void = [!] UnknownKotlinExpression (BLOCK)
 }
 
 public abstract annotation TestAnnotation {

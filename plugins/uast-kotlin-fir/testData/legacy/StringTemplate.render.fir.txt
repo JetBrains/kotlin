@@ -1,8 +1,8 @@
 public final class StringTemplateKt {
-    private static final var foo: java.lang.String = [!] FirUnknownKotlinExpression (STRING_TEMPLATE)
-    private static final var bar: java.lang.String = [!] FirUnknownKotlinExpression (STRING_TEMPLATE)
-    private static final var baz: java.lang.String = [!] FirUnknownKotlinExpression (STRING_TEMPLATE)
-    private static final var foobarbaz: java.lang.String = [!] FirUnknownKotlinExpression (STRING_TEMPLATE)
+    private static final var foo: java.lang.String = [!] UnknownKotlinExpression (STRING_TEMPLATE)
+    private static final var bar: java.lang.String = [!] UnknownKotlinExpression (STRING_TEMPLATE)
+    private static final var baz: java.lang.String = [!] UnknownKotlinExpression (STRING_TEMPLATE)
+    private static final var foobarbaz: java.lang.String = [!] UnknownKotlinExpression (STRING_TEMPLATE)
     public static final fun getFoo() : java.lang.String = UastEmptyExpression
     public static final fun getBar() : java.lang.String = UastEmptyExpression
     public static final fun getBaz() : java.lang.String = UastEmptyExpression

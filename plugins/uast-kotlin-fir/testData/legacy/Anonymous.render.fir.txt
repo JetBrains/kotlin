@@ -2,6 +2,6 @@ import java.io.Closeable
 import java.io.InputStream
 
 public final class AnonymousKt {
-    public static final fun foo() : void = [!] FirUnknownKotlinExpression (BLOCK)
-    public static final fun withErr() : void = [!] FirUnknownKotlinExpression (BLOCK)
+    public static final fun foo() : void = [!] UnknownKotlinExpression (BLOCK)
+    public static final fun withErr() : void = [!] UnknownKotlinExpression (BLOCK)
 }

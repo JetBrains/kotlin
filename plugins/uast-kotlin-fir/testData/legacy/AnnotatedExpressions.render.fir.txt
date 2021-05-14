@@ -1,4 +1,4 @@
 public final class AnnotatedExpressionsKt {
-    public static final fun foo() : void = [!] FirUnknownKotlinExpression (BLOCK)
-    public static final fun annotatedSwitch(str: java.lang.String) : java.lang.Integer = [!] FirUnknownKotlinExpression (WHEN)
+    public static final fun foo() : void = [!] UnknownKotlinExpression (BLOCK)
+    public static final fun annotatedSwitch(str: java.lang.String) : java.lang.Integer = [!] UnknownKotlinExpression (WHEN)
 }

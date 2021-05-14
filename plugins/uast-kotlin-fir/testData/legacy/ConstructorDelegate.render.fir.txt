@@ -1,5 +1,5 @@
 public final class ConstructorDelegateKt {
-    public static final fun createBase(i: int) : Base = [!] FirUnknownKotlinExpression (BLOCK)
+    public static final fun createBase(i: int) : Base = [!] UnknownKotlinExpression (BLOCK)
 }
 
 public abstract interface Base {
@@ -10,7 +10,7 @@ public final class BaseImpl : null {
     private final var x: int
     public fun BaseImpl(x: int) = UastEmptyExpression
     public final fun getX() : int = UastEmptyExpression
-    public fun print() : void = [!] FirUnknownKotlinExpression (BLOCK)
+    public fun print() : void = [!] UnknownKotlinExpression (BLOCK)
 }
 
 public final class Derived : null, null {

@@ -9,8 +9,8 @@ public final class MyColor {
 }
 
 public final class Some {
-    private final var lambda: kotlin.Lazy<? extends MyColor> = [!] FirUnknownKotlinExpression (CALL_EXPRESSION)
-    private final var nonLazy: MyColor = [!] FirUnknownKotlinExpression (CALL_EXPRESSION)
+    private final var lambda: kotlin.Lazy<? extends MyColor> = [!] UnknownKotlinExpression (CALL_EXPRESSION)
+    private final var nonLazy: MyColor = [!] UnknownKotlinExpression (CALL_EXPRESSION)
     public fun Some() = UastEmptyExpression
     public final fun getDelegate() : MyColor = UastEmptyExpression
     public final fun getLambda() : kotlin.Lazy<? extends MyColor> = UastEmptyExpression

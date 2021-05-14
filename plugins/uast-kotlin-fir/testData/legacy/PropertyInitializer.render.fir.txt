@@ -1,5 +1,5 @@
 public final class TestPropertyInitializer {
     public fun TestPropertyInitializer() = UastEmptyExpression
-    public final fun getWithSetter() : java.lang.String = [!] FirUnknownKotlinExpression (REFERENCE_EXPRESSION)
-    public final fun setWithSetter(p: java.lang.String) : void = [!] FirUnknownKotlinExpression (BLOCK)
+    public final fun getWithSetter() : java.lang.String = [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+    public final fun setWithSetter(p: java.lang.String) : void = [!] UnknownKotlinExpression (BLOCK)
 }

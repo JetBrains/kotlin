@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UExpression
 
-class FirUnknownKotlinExpression(
+class UnknownKotlinExpression(
     override val sourcePsi: KtExpression,
     givenParent: UElement?
 ) : KotlinAbstractUExpression(givenParent), UExpression {
-    override fun asLogString() = "[!] FirUnknownKotlinExpression ($sourcePsi)"
+    override fun asLogString() = "[!] UnknownKotlinExpression ($sourcePsi)"
 }

@@ -1,6 +1,6 @@
 public final class NameContainingFileKt {
-    private static final var xyzzy: int = [!] FirUnknownKotlinExpression (INTEGER_CONSTANT)
-    public static final fun bar() : void = [!] FirUnknownKotlinExpression (BLOCK)
+    private static final var xyzzy: int = [!] UnknownKotlinExpression (INTEGER_CONSTANT)
+    public static final fun bar() : void = [!] UnknownKotlinExpression (BLOCK)
     public static final fun getXyzzy() : int = UastEmptyExpression
 }
 

@@ -1,7 +1,7 @@
 import java.util.stream.Stream
 
 public final class LambdasKt {
-    public static final fun foo() : void = [!] FirUnknownKotlinExpression (BLOCK)
-    public static final fun doSelectItem(selectItemFunction: kotlin.jvm.functions.Function0<? extends kotlin.Unit>) : void = [!] FirUnknownKotlinExpression (BLOCK)
-    public static final fun lambdaInPlaceCall() : void = [!] FirUnknownKotlinExpression (BLOCK)
+    public static final fun foo() : void = [!] UnknownKotlinExpression (BLOCK)
+    public static final fun doSelectItem(selectItemFunction: kotlin.jvm.functions.Function0<? extends kotlin.Unit>) : void = [!] UnknownKotlinExpression (BLOCK)
+    public static final fun lambdaInPlaceCall() : void = [!] UnknownKotlinExpression (BLOCK)
 }

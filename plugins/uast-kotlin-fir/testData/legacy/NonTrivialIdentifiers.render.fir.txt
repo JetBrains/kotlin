@@ -1,9 +1,9 @@
 public final class NonTrivialIdentifiersKt {
-    public static final fun main(a: A) : void = [!] FirUnknownKotlinExpression (BLOCK)
+    public static final fun main(a: A) : void = [!] UnknownKotlinExpression (BLOCK)
 }
 
 public final class A {
     public fun A() = UastEmptyExpression
-    public final fun invoke() : void = [!] FirUnknownKotlinExpression (BLOCK)
-    public final fun invoke(f: kotlin.jvm.functions.Function0<? extends kotlin.Unit>) : void = [!] FirUnknownKotlinExpression (BLOCK)
+    public final fun invoke() : void = [!] UnknownKotlinExpression (BLOCK)
+    public final fun invoke(f: kotlin.jvm.functions.Function0<? extends kotlin.Unit>) : void = [!] UnknownKotlinExpression (BLOCK)
 }

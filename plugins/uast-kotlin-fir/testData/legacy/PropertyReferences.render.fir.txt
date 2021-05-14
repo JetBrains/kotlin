@@ -1,13 +1,13 @@
 public final class PropertyReferencesKt {
-    public static final fun properties() : void = [!] FirUnknownKotlinExpression (BLOCK)
-    public static final fun ext($this$ext: A) : void = [!] FirUnknownKotlinExpression (BLOCK)
+    public static final fun properties() : void = [!] UnknownKotlinExpression (BLOCK)
+    public static final fun ext($this$ext: A) : void = [!] UnknownKotlinExpression (BLOCK)
 }
 
 public final class A {
-    private var privateProp: int = [!] FirUnknownKotlinExpression (INTEGER_CONSTANT)
+    private var privateProp: int = [!] UnknownKotlinExpression (INTEGER_CONSTANT)
     private var mutableProp: int
     public fun A(init: int) = UastEmptyExpression
     public final fun getMutableProp() : int = UastEmptyExpression
     public final fun setMutableProp(value: int) : void = UastEmptyExpression
-    public final fun add(x: int) : int = [!] FirUnknownKotlinExpression (BLOCK)
+    public final fun add(x: int) : int = [!] UnknownKotlinExpression (BLOCK)
 }

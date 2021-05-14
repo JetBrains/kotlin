@@ -1,6 +1,6 @@
 public final class PropertyTest {
     public fun PropertyTest() = UastEmptyExpression
-    public final fun getStringRepresentation() : java.lang.String = [!] FirUnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
-    public final fun setStringRepresentation(value: java.lang.String) : void = [!] FirUnknownKotlinExpression (BLOCK)
-    public final fun setDataFromString(data: java.lang.String) : void = [!] FirUnknownKotlinExpression (BLOCK)
+    public final fun getStringRepresentation() : java.lang.String = [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+    public final fun setStringRepresentation(value: java.lang.String) : void = [!] UnknownKotlinExpression (BLOCK)
+    public final fun setDataFromString(data: java.lang.String) : void = [!] UnknownKotlinExpression (BLOCK)
 }

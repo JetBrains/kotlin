@@ -2,16 +2,16 @@ import java.lang.Runnable
 import java.lang.Thread
 
 public final class ObjectsKt {
-    private static final var topRunnable: java.lang.Runnable = [!] FirUnknownKotlinExpression (OBJECT_LITERAL)
+    private static final var topRunnable: java.lang.Runnable = [!] UnknownKotlinExpression (OBJECT_LITERAL)
     public static final fun getTopRunnable() : java.lang.Runnable = UastEmptyExpression
-    public static final fun main() : void = [!] FirUnknownKotlinExpression (BLOCK)
+    public static final fun main() : void = [!] UnknownKotlinExpression (BLOCK)
 }
 
 public final class RunnableManager {
     public static final var INSTANCE: RunnableManager
-    private final var tasks: java.util.List<java.lang.Runnable> = [!] FirUnknownKotlinExpression (CALL_EXPRESSION)
+    private final var tasks: java.util.List<java.lang.Runnable> = [!] UnknownKotlinExpression (CALL_EXPRESSION)
     private fun RunnableManager() = UastEmptyExpression
     public final fun getTasks() : java.util.List<java.lang.Runnable> = UastEmptyExpression
-    public final fun register(runnable: java.lang.Runnable) : void = [!] FirUnknownKotlinExpression (BLOCK)
-    public final fun runAll() : void = [!] FirUnknownKotlinExpression (BLOCK)
+    public final fun register(runnable: java.lang.Runnable) : void = [!] UnknownKotlinExpression (BLOCK)
+    public final fun runAll() : void = [!] UnknownKotlinExpression (BLOCK)
 }
