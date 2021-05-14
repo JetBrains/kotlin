@@ -14,7 +14,9 @@ import org.jetbrains.kotlin.idea.completion.context.FirBasicCompletionContext
 import org.jetbrains.kotlin.idea.completion.context.FirNameReferencePositionContext
 import org.jetbrains.kotlin.idea.completion.context.FirPositionCompletionContextDetector
 import org.jetbrains.kotlin.idea.completion.context.FirUnknownPositionContext
+import org.jetbrains.kotlin.idea.completion.contributors.FirClassifierCompletionContributor
 import org.jetbrains.kotlin.idea.completion.contributors.FirCompletionContributorBase
+import org.jetbrains.kotlin.idea.completion.contributors.FirContextCompletionContributorBase
 import org.jetbrains.kotlin.idea.completion.contributors.FirKeywordCompletionContributor
 import org.jetbrains.kotlin.idea.completion.weighers.Weighers
 import org.jetbrains.kotlin.idea.fir.low.level.api.IndexHelper
@@ -127,12 +129,9 @@ internal fun interface CompletionVisibilityChecker {
  */
 private class KotlinWithNameReferenceCompletionProvider(
     basicContext: FirBasicCompletionContext,
-    private val indexHelper: IndexHelper
-) : FirCompletionContributorBase(basicContext) {
+    indexHelper: IndexHelper
+) : FirContextCompletionContributorBase(basicContext, indexHelper) {
     private val typeNamesProvider = TypeNamesProvider(indexHelper)
-
-    private val scopeNameFilter: KtScopeNameFilter =
-        { name -> !name.isSpecial && prefixMatcher.prefixMatches(name.identifier) }
 
     private val shouldCompleteTopLevelCallablesFromIndex: Boolean
         get() = prefixMatcher.prefix.isNotEmpty()
@@ -160,11 +159,13 @@ private class KotlinWithNameReferenceCompletionProvider(
         }
 
         when {
-            nameExpression.parent is KtUserType -> collectTypesCompletion(
-                scopesContext.scopes,
-                expectedType,
-                visibilityChecker
-            )
+            nameExpression.parent is KtUserType -> with(FirClassifierCompletionContributor(basicContext, indexHelper)) {
+                collectTypesCompletion(
+                    scopesContext.scopes,
+                    expectedType,
+                    visibilityChecker
+                )
+            }
             explicitReceiver != null -> {
                 collectDotCompletion(
                     scopesContext.scopes,
@@ -179,24 +180,6 @@ private class KotlinWithNameReferenceCompletionProvider(
         }
     }
 
-
-    private fun KtAnalysisSession.collectTypesCompletion(
-        implicitScopes: KtScope,
-        expectedType: KtType?,
-        visibilityChecker: CompletionVisibilityChecker,
-    ) {
-        val classesFromScopes = implicitScopes
-            .getClassifierSymbols(scopeNameFilter)
-            .filter { visibilityChecker.isVisible(it) }
-
-        classesFromScopes.forEach { addSymbolToCompletion(expectedType, it) }
-
-        val kotlinClassesFromIndices = indexHelper.getKotlinClasses(scopeNameFilter, psiFilter = { it !is KtEnumEntry })
-        kotlinClassesFromIndices.asSequence()
-            .map { it.getSymbol() as KtClassifierSymbol }
-            .filter { visibilityChecker.isVisible(it) }
-            .forEach { addSymbolToCompletion(expectedType, it) }
-    }
 
     private fun KtAnalysisSession.collectDotCompletion(
         implicitScopes: KtCompositeScope,
@@ -244,7 +227,9 @@ private class KotlinWithNameReferenceCompletionProvider(
         collectTopLevelExtensionsFromIndices(implicitReceiversTypes, extensionChecker, visibilityChecker)
             .forEach { addSymbolToCompletion(expectedType, it) }
 
-        collectTypesCompletion(implicitScopes, expectedType, visibilityChecker)
+        with(FirClassifierCompletionContributor(basicContext, indexHelper)) {
+            collectTypesCompletion(implicitScopes, expectedType, visibilityChecker)
+        }
     }
 
     private fun KtAnalysisSession.collectTopLevelExtensionsFromIndices(
