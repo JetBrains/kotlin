@@ -1,0 +1,8 @@
+package
+
+@kotlin.Suppress(names = {"EXPERIMENTAL_API_USAGE_ERROR"}) public fun foo(/*0*/ f1: () -> kotlin.Unit, /*1*/ f2: () -> kotlin.Unit): kotlin.Unit
+    CallsInPlace(f1, EXACTLY_ONCE)
+    CallsInPlace(f2, EXACTLY_ONCE)
+
+public fun test(): kotlin.Unit
+

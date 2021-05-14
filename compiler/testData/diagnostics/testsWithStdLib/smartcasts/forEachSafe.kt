@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // KT-7186: False "Type mismatch" error
 
 fun indexOfMax(a: IntArray): Int? {

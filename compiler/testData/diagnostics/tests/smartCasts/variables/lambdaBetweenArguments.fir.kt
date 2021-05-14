@@ -5,5 +5,5 @@ fun foo(x: Int, f: () -> Unit, y: Int) {}
 fun bar() {
     var x: Int?
     x = 4
-    foo(x, { x = null; x<!UNSAFE_CALL!>.<!>hashCode() }, <!ARGUMENT_TYPE_MISMATCH!>x<!>)
+    foo(x, { x = null; x<!UNSAFE_CALL!>.<!>hashCode() }, <!SMARTCAST_IMPOSSIBLE!>x<!>)
 }

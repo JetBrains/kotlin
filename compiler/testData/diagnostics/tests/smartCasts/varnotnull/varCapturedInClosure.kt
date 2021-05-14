@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 public fun foo() {
     var s: String? = ""
     fun closure(): Int {

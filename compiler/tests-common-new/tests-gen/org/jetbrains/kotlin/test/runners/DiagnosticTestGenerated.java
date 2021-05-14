@@ -27601,6 +27601,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("capturedByAtLeastOnce.kt")
+                public void testCapturedByAtLeastOnce() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/variables/capturedByAtLeastOnce.kt");
+                }
+
+                @Test
+                @TestMetadata("capturedByMultipleLambdas.kt")
+                public void testCapturedByMultipleLambdas() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/variables/capturedByMultipleLambdas.kt");
+                }
+
+                @Test
                 @TestMetadata("doWhileWithMiddleBreak.kt")
                 public void testDoWhileWithMiddleBreak() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/smartCasts/variables/doWhileWithMiddleBreak.kt");
@@ -35815,6 +35827,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             @TestMetadata("kt10463.kt")
             public void testKt10463() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/smartcasts/kt10463.kt");
+            }
+
+            @Test
+            @TestMetadata("lambdaInCallArgs.kt")
+            public void testLambdaInCallArgs() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/smartcasts/lambdaInCallArgs.kt");
             }
 
             @Test
