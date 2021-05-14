@@ -11,6 +11,7 @@ import org.apache.maven.settings.Settings
 import org.apache.maven.settings.SettingsUtils
 import org.apache.maven.settings.TrackableBase
 import org.apache.maven.settings.building.*
+import org.codehaus.plexus.DefaultPlexusContainer
 import org.eclipse.aether.RepositorySystem
 import org.eclipse.aether.RepositorySystemSession
 import org.eclipse.aether.artifact.Artifact
@@ -19,6 +20,8 @@ import org.eclipse.aether.collection.CollectRequest
 import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory
 import org.eclipse.aether.graph.Dependency
 import org.eclipse.aether.graph.DependencyFilter
+import org.eclipse.aether.internal.transport.wagon.PlexusWagonConfigurator
+import org.eclipse.aether.internal.transport.wagon.PlexusWagonProvider
 import org.eclipse.aether.repository.LocalRepository
 import org.eclipse.aether.repository.Proxy
 import org.eclipse.aether.repository.RemoteRepository
@@ -29,7 +32,9 @@ import org.eclipse.aether.resolution.DependencyResult
 import org.eclipse.aether.spi.connector.RepositoryConnectorFactory
 import org.eclipse.aether.spi.connector.transport.TransporterFactory
 import org.eclipse.aether.transport.file.FileTransporterFactory
-import org.eclipse.aether.transport.http.HttpTransporterFactory
+import org.eclipse.aether.transport.wagon.WagonConfigurator
+import org.eclipse.aether.transport.wagon.WagonProvider
+import org.eclipse.aether.transport.wagon.WagonTransporterFactory
 import org.eclipse.aether.util.filter.DependencyFilterUtils
 import org.eclipse.aether.util.repository.AuthenticationBuilder
 import org.eclipse.aether.util.repository.DefaultMirrorSelector
@@ -48,7 +53,7 @@ class AetherResolveSession(
     val remotes by lazy {
         val proxySelector = settings.getActiveProxy()?.let { proxy ->
             val selector = DefaultProxySelector()
-            val auth = with (AuthenticationBuilder()) {
+            val auth = with(AuthenticationBuilder()) {
                 addUsername(proxy.username)
                 addPassword(proxy.password)
                 build()
@@ -95,8 +100,19 @@ class AetherResolveSession(
         )
         locator.addService(
             TransporterFactory::class.java,
-            HttpTransporterFactory::class.java
+            WagonTransporterFactory::class.java
         )
+
+        val container = DefaultPlexusContainer()
+        locator.setServices(
+            WagonProvider::class.java,
+            PlexusWagonProvider(container)
+        )
+        locator.setServices(
+            WagonConfigurator::class.java,
+            PlexusWagonConfigurator(container)
+        )
+
         locator.getService(RepositorySystem::class.java)
     }
 
