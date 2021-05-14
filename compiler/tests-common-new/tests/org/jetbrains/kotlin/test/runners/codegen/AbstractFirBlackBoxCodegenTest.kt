@@ -9,9 +9,11 @@ import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_FIR_DIAGNOSTICS_DIFF
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
+import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirCfgDumpHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDumpHandler
@@ -45,6 +47,11 @@ open class AbstractFirBlackBoxCodegenTest : AbstractJvmBlackBoxCodegenTestBase<F
                 ::FirCfgDumpHandler,
                 ::FirNoImplicitTypesHandler,
             )
+
+            useAfterAnalysisCheckers(
+                ::FirMetaInfoDiffSuppressor
+            )
+
             dumpHandlersForCodegenTest()
         }
     }

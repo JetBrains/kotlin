@@ -12,7 +12,12 @@ import org.jetbrains.kotlin.test.backend.handlers.BytecodeListingHandler
 import org.jetbrains.kotlin.test.backend.handlers.BytecodeTextHandler
 import org.jetbrains.kotlin.test.bind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
+import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.runners.AbstractDiagnosticTest.Companion.DISABLED_BY_DEFAULT_UNUSED_DIAGNOSTICS
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 
 abstract class AbstractJvmBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendOutput<R>>(
@@ -25,9 +30,26 @@ abstract class AbstractJvmBlackBoxCodegenTestBase<R : ResultingArtifact.Frontend
 
     override fun TestConfigurationBuilder.configuration() {
         commonConfigurationForCodegenTest(targetFrontend, frontendFacade, frontendToBackendConverter, backendFacade)
+
+        useFrontendHandlers(
+            ::ClassicDiagnosticsHandler,
+            ::FirDiagnosticsHandler
+        )
         commonHandlersForBoxTest()
         useArtifactsHandlers(::BytecodeListingHandler)
         useArtifactsHandlers(::BytecodeTextHandler.bind(true))
         useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
+
+        defaultDirectives {
+            +REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
+        }
+
+        forTestsNotMatching("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/*") {
+            defaultDirectives {
+                DIAGNOSTICS with "-warnings"
+            }
+        }
+
+        enableMetaInfoHandler()
     }
 }

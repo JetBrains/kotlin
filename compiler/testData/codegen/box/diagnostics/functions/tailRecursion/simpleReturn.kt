@@ -5,6 +5,7 @@
 // TODO: muted automatically, investigate should it be ran for JS or not
 // DONT_RUN_GENERATED_CODE: JS
 // IGNORE_BACKEND: JS
+// IGNORE_FIR_DIAGNOSTICS_DIFF
 
 tailrec fun test(x : Int) : Int {
     if (x == 10) {

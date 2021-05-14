@@ -91,6 +91,10 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         description = "Run backend even FIR reported some diagnostics with ERROR severity"
     )
 
+    val IGNORE_FIR_DIAGNOSTICS_DIFF by directive(
+        description = "Don't compare diagnostics in testdata for FIR codegen tests"
+    )
+
     val DUMP_IR by directive(
         description = "Dumps generated backend IR (enables ${IrTextDumpHandler::class})"
     )
