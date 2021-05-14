@@ -114,9 +114,8 @@ internal open class KtUltraLightFieldImpl protected constructor(
     private val kotlinType: KotlinType?
         get() = when {
             declaration is KtProperty && declaration.hasDelegate() ->
-                (variableDescriptor as? PropertyDescriptor)?.let {
-                    val context = LightClassGenerationSupport.getInstance(project).analyze(declaration)
-                    PropertyCodegen.getDelegateTypeForProperty(it, context)
+                declaration.delegateExpression?.let {
+                    LightClassGenerationSupport.getInstance(project).analyze(it).getType(it)
                 }
             declaration is KtObjectDeclaration ->
                 (declaration.resolve() as? ClassDescriptor)?.defaultType
