@@ -3,8 +3,8 @@ fun foo(arg: Int?) {
     var x = arg
     if (x == null) return
     run {
-        // Unsafe because of owner modification
-        x<!UNSAFE_CALL!>.<!>hashCode()
+        // Stable because `run` is in-place
+        x.hashCode()
         x = null
     }
     if (x != null) x = 42

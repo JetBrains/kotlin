@@ -38,7 +38,7 @@ fun case_3(x: Interface1?) {
     var y = x
     y as Interface2
     fun foo() {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface1 & Interface2")!>y<!>.itest2()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1?"), SMARTCAST_IMPOSSIBLE!>y<!>.itest2()
     }
     y = null
     foo()

@@ -283,6 +283,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         functionCall.transformAnnotations(transformer, data)
         functionCall.transformSingle(InvocationKindTransformer, null)
         functionCall.transformTypeArguments(transformer, ResolutionMode.ContextIndependent)
+        dataFlowAnalyzer.enterFunctionCall(functionCall)
         val (completeInference, callCompleted) =
             try {
                 val initialExplicitReceiver = functionCall.explicitReceiver
@@ -421,12 +422,14 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         val lhsIsVar = lhsVariable?.isVar == true
 
         fun chooseAssign(): FirStatement {
+            dataFlowAnalyzer.enterFunctionCall(resolvedAssignCall)
             callCompleter.completeCall(resolvedAssignCall, noExpectedType)
             dataFlowAnalyzer.exitFunctionCall(resolvedAssignCall, callCompleted = true)
             return resolvedAssignCall
         }
 
         fun chooseOperator(): FirStatement {
+            dataFlowAnalyzer.enterFunctionCall(resolvedAssignCall)
             callCompleter.completeCall(
                 resolvedOperatorCall,
                 lhsVariable?.returnTypeRef ?: noExpectedType,

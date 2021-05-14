@@ -27,10 +27,10 @@ fun baz(s: String?) {
     var x = s
     if (x != null) {
         run {
-            x.hashCode()
+            <!SMARTCAST_IMPOSSIBLE!>x<!>.hashCode()
         }
         run {
-            x<!UNSAFE_CALL!>.<!>hashCode()
+            <!SMARTCAST_IMPOSSIBLE!>x<!>.hashCode()
             x = null
         }
     }
@@ -40,11 +40,11 @@ fun gaz(s: String?) {
     var x = s
     if (x != null) {
         run {
-            x<!UNSAFE_CALL!>.<!>hashCode()
+            <!SMARTCAST_IMPOSSIBLE!>x<!>.hashCode()
             x = null
         }
         run {
-            x<!UNSAFE_CALL!>.<!>hashCode()
+            <!SMARTCAST_IMPOSSIBLE!>x<!>.hashCode()
         }
     }
 }
@@ -53,7 +53,7 @@ fun gav(s: String?) {
     var x = s
     if (x != null) {
         run {
-            x.hashCode()
+            <!SMARTCAST_IMPOSSIBLE!>x<!>.hashCode()
         }
         x = null
     }

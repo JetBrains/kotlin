@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // See also KT-7186
 
 fun IntArray.forEachIndexed( op: (i: Int, value: Int) -> Unit) {

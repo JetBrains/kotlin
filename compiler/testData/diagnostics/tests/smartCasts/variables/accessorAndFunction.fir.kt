@@ -1,6 +1,6 @@
 class My {
 
-    val y: Int 
+    val y: Int
         get() {
             var x: Int?
             x = 3
