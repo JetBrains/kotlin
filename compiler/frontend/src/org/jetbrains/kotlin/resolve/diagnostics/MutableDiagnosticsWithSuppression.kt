@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.diagnostics
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.CompositeModificationTracker
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
@@ -48,8 +49,10 @@ class MutableDiagnosticsWithSuppression(
     override fun noSuppression() = readonlyView().noSuppression()
 
     override fun setCallback(callback: DiagnosticSink.DiagnosticsCallback) {
-        // TODO: [VD] temporary dirty patch, proper investigation is required
-        // assert(diagnosticsCallback == null) { "diagnostic callback has been already registered" }
+        diagnosticsCallback?.let {
+            Logger.getInstance(MutableDiagnosticsWithSuppression::class.java).error("diagnostic callback has been already registered")
+            return
+        }
         diagnosticsCallback = callback
         delegateDiagnostics.setCallback(callback)
     }
