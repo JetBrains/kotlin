@@ -49,20 +49,17 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
 
             val importedScripts = descriptor.implicitReceivers.filterIsInstanceTo(HashSet<ScriptDescriptor>())
 
-            val startOffset = ktScript.pureStartOffset
-            val endOffset = ktScript.pureEndOffset
-
             fun makeParameter(descriptor: ParameterDescriptor, origin: IrDeclarationOrigin, index: Int = -1): IrValueParameter {
                 val type = descriptor.type.toIrType()
                 val varargElementType = descriptor.varargElementType?.toIrType()
                 return context.symbolTable.declareValueParameter(
-                    startOffset, endOffset,
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                     origin,
                     descriptor,
                     type
                 ) { symbol ->
                     context.irFactory.createValueParameter(
-                        startOffset, endOffset,
+                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                         origin, symbol, context.symbolTable.nameProvider.nameForDeclaration(descriptor),
                         if (index != -1) index else descriptor.indexOrMinusOne,
                         type, varargElementType,
@@ -102,7 +99,8 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
 
             irScript.explicitCallParameters = descriptor.explicitConstructorParameters.map { valueParameterDescriptor ->
                 context.irFactory.createValueParameter(
-                    startOffset, endOffset, IrDeclarationOrigin.SCRIPT_CALL_PARAMETER, IrValueParameterSymbolImpl(),
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                    IrDeclarationOrigin.SCRIPT_CALL_PARAMETER, IrValueParameterSymbolImpl(),
                     valueParameterDescriptor.name, parametersIndex++,
                     valueParameterDescriptor.type.toIrType(), valueParameterDescriptor.varargElementType?.toIrType(),
                     valueParameterDescriptor.isCrossinline, valueParameterDescriptor.isNoinline,
@@ -120,10 +118,12 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
                     // TODO: do not keep direct links
                     val type = providedProperty.type.toIrType()
                     val valueParameter = context.symbolTable.declareValueParameter(
-                        startOffset, endOffset, IrDeclarationOrigin.SCRIPT_PROVIDED_PROPERTY, parameter, type
+                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                        IrDeclarationOrigin.SCRIPT_PROVIDED_PROPERTY, parameter, type
                     ) { symbol ->
                         context.irFactory.createValueParameter(
-                            startOffset, endOffset, IrDeclarationOrigin.SCRIPT_PROVIDED_PROPERTY, symbol, descriptor.name,
+                            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                            IrDeclarationOrigin.SCRIPT_PROVIDED_PROPERTY, symbol, descriptor.name,
                             parametersIndex, type, null, isCrossinline = false, isNoinline = false, isHidden = false, isAssignable = false
                         ).also { it.parent = irScript }
                     }

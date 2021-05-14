@@ -32,6 +32,7 @@ class PsiIrFileEntry(val psiFile: PsiFile) : IrFileEntry {
     override fun getColumnNumber(offset: Int): Int {
         if (offset < 0) return -1
         val lineNumber = getLineNumber(offset)
+        if (lineNumber < 0) return -1
         return offset - lineStartOffsets[lineNumber]
     }
 
