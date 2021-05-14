@@ -17,13 +17,14 @@ import kotlin.script.experimental.api.SourceCode
 import kotlin.script.experimental.api.asSuccess
 import kotlin.script.experimental.dependencies.ExternalDependenciesResolver
 import kotlin.script.experimental.dependencies.RepositoryCoordinates
-import kotlin.script.experimental.dependencies.impl.makeResolveFailureResult
-import kotlin.script.experimental.dependencies.impl.toRepositoryUrlOrNull
+import kotlin.script.experimental.dependencies.impl.*
 import kotlin.script.experimental.dependencies.maven.impl.AetherResolveSession
 import kotlin.script.experimental.dependencies.maven.impl.mavenCentral
-import kotlin.script.experimental.dependencies.impl.dependencyScopes
 
-
+@Deprecated(
+    "This class is not functional and left only for compatibility reasons. Use kotlin.script.experimental.dependencies.ExternalDependenciesResolver.Options for passing authorization options",
+    replaceWith = ReplaceWith("RepositoryCoordinates(url)", "kotlin.script.experimental.dependencies.RepositoryCoordinates")
+)
 class MavenRepositoryCoordinates(
     url: String,
     val username: String?,
@@ -89,21 +90,31 @@ class MavenDependenciesResolver : ExternalDependenciesResolver {
         val url = repositoryCoordinates.toRepositoryUrlOrNull()
             ?: return false.asSuccess()
         val repoId = repositoryCoordinates.string.replace(FORBIDDEN_CHARS, "_")
-        val repo = RemoteRepository.Builder(repoId, "default", url.toString())
-        if (repositoryCoordinates is MavenRepositoryCoordinates) {
-            val username = repositoryCoordinates.username?.let(::tryResolveEnvironmentVariable)
-            val password = repositoryCoordinates.password?.let(::tryResolveEnvironmentVariable)
-            if (username != null) {
-                val auth = AuthenticationBuilder().apply {
-                    addUsername(username)
-                    if (password != null) {
-                        addPassword(password)
-                    }
-                }
-                repo.setAuthentication(auth.build())
-            }
-        }
-        repos.add(repo.build())
+        val repo = RemoteRepository.Builder(repoId, "default", url.toString()).apply {
+            /**
+             * Here we set all the authentication information we have, unconditionally.
+             * Actual information that will be used (as well as lower-level checks,
+             * such as nullability or emptiness) is determined by implementation.
+             *
+             * @see org.eclipse.aether.transport.wagon.WagonTransporter.getProxy
+             * @see org.apache.maven.wagon.shared.http.AbstractHttpClientWagon.openConnectionInternal
+             */
+            setAuthentication(
+                AuthenticationBuilder().apply {
+                    val mavenRepo = repositoryCoordinates as? MavenRepositoryCoordinates
+                    val username = options.username ?: mavenRepo?.username
+                    val password = options.password ?: mavenRepo?.password
+                    addUsername(username?.let(::tryResolveEnvironmentVariable))
+                    addPassword(password?.let(::tryResolveEnvironmentVariable))
+                    addPrivateKey(
+                        options.privateKeyFile?.let(::tryResolveEnvironmentVariable),
+                        options.privateKeyPassphrase?.let(::tryResolveEnvironmentVariable)
+                    )
+                }.build()
+            )
+        }.build()
+
+        repos.add(repo)
         return true.asSuccess()
     }
 
