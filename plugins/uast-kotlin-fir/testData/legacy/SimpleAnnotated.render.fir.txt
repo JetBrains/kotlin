@@ -1,6 +1,6 @@
 public final class SimpleAnnotated {
-    private final var property: java.lang.String = [!] FirUnknownKotlinExpression (STRING_TEMPLATE)
+    private final var property: java.lang.String = [!] UnknownKotlinExpression (STRING_TEMPLATE)
     public fun SimpleAnnotated() = UastEmptyExpression
-    public final fun method() : void = [!] FirUnknownKotlinExpression (BLOCK)
+    public final fun method() : void = [!] UnknownKotlinExpression (BLOCK)
     public final fun getProperty() : java.lang.String = UastEmptyExpression
 }

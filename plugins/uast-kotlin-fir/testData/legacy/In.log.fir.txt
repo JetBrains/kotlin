@@ -1,4 +1,4 @@
 UFile (package = )
     UClass (name = InKt)
         UMethod (name = foo)
-            [!] FirUnknownKotlinExpression (BLOCK)
+            [!] UnknownKotlinExpression (BLOCK)

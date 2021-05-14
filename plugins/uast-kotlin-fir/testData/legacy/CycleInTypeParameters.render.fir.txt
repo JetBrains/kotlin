@@ -1,5 +1,5 @@
 public final class CycleInTypeParametersKt {
-    private static final var a: Device<?> = [!] FirUnknownKotlinExpression (BINARY_WITH_TYPE)
+    private static final var a: Device<?> = [!] UnknownKotlinExpression (BINARY_WITH_TYPE)
     public static final fun getA() : Device<?> = UastEmptyExpression
 }
 

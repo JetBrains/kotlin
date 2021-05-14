@@ -1,4 +1,4 @@
 UFile (package = )
     UClass (name = ReifiedResolveKt)
         UMethod (name = resolve)
-            [!] FirUnknownKotlinExpression (BLOCK)
+            [!] UnknownKotlinExpression (BLOCK)

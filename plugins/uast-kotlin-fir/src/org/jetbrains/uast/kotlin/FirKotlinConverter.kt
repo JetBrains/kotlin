@@ -212,7 +212,7 @@ internal object FirKotlinConverter {
 
         return with(requiredTypes) {
             when (expression) {
-                else -> expr<UExpression>(build(::FirUnknownKotlinExpression))
+                else -> expr<UExpression>(build(::UnknownKotlinExpression))
             }
         }
     }

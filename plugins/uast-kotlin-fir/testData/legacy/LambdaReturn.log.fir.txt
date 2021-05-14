@@ -1,4 +1,4 @@
 UFile (package = org.jetbrains.uast.kotlin)
     UClass (name = LambdaReturnKt)
         UMethod (name = foo)
-            [!] FirUnknownKotlinExpression (BLOCK)
+            [!] UnknownKotlinExpression (BLOCK)

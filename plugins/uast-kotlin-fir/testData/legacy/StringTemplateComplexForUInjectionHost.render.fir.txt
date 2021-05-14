@@ -1,16 +1,16 @@
 public final class StringTemplateComplexForUInjectionHostKt {
-    private static final var muchRecur: java.lang.String = [!] FirUnknownKotlinExpression (STRING_TEMPLATE)
-    private static final var case4: java.lang.String = [!] FirUnknownKotlinExpression (STRING_TEMPLATE)
-    private static final var case5: java.lang.String = [!] FirUnknownKotlinExpression (STRING_TEMPLATE)
-    private static final var literalInLiteral: java.lang.String = [!] FirUnknownKotlinExpression (STRING_TEMPLATE)
-    private static final var literalInLiteral2: java.lang.String = [!] FirUnknownKotlinExpression (STRING_TEMPLATE)
-    private static final var empty: java.lang.String = [!] FirUnknownKotlinExpression (STRING_TEMPLATE)
+    private static final var muchRecur: java.lang.String = [!] UnknownKotlinExpression (STRING_TEMPLATE)
+    private static final var case4: java.lang.String = [!] UnknownKotlinExpression (STRING_TEMPLATE)
+    private static final var case5: java.lang.String = [!] UnknownKotlinExpression (STRING_TEMPLATE)
+    private static final var literalInLiteral: java.lang.String = [!] UnknownKotlinExpression (STRING_TEMPLATE)
+    private static final var literalInLiteral2: java.lang.String = [!] UnknownKotlinExpression (STRING_TEMPLATE)
+    private static final var empty: java.lang.String = [!] UnknownKotlinExpression (STRING_TEMPLATE)
     public static final fun getMuchRecur() : java.lang.String = UastEmptyExpression
     public static final fun getCase4() : java.lang.String = UastEmptyExpression
     public static final fun getCase5() : java.lang.String = UastEmptyExpression
     public static final fun getLiteralInLiteral() : java.lang.String = UastEmptyExpression
     public static final fun getLiteralInLiteral2() : java.lang.String = UastEmptyExpression
     public static final fun getEmpty() : java.lang.String = UastEmptyExpression
-    public static final fun simpleForTemplate(i: int) : java.lang.String = [!] FirUnknownKotlinExpression (STRING_TEMPLATE)
-    public static final fun foo() : void = [!] FirUnknownKotlinExpression (BLOCK)
+    public static final fun simpleForTemplate(i: int) : java.lang.String = [!] UnknownKotlinExpression (STRING_TEMPLATE)
+    public static final fun foo() : void = [!] UnknownKotlinExpression (BLOCK)
 }

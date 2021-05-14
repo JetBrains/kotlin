@@ -1,6 +1,6 @@
 public final class ClassA {
     private final var paramAndProp: java.lang.String
-    private var writebleProp: int = [!] FirUnknownKotlinExpression (INTEGER_CONSTANT)
+    private var writebleProp: int = [!] UnknownKotlinExpression (INTEGER_CONSTANT)
     public fun ClassA(justParam: int, paramAndProp: java.lang.String) = UastEmptyExpression
     public final fun getParamAndProp() : java.lang.String = UastEmptyExpression
     public final fun getWritebleProp() : int = UastEmptyExpression

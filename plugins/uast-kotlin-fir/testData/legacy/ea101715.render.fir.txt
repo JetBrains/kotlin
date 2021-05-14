@@ -1,5 +1,5 @@
 public final class Ea101715Kt {
-    public static final fun a() : void = [!] FirUnknownKotlinExpression (BLOCK)
+    public static final fun a() : void = [!] UnknownKotlinExpression (BLOCK)
 }
 
 public final class Obj {

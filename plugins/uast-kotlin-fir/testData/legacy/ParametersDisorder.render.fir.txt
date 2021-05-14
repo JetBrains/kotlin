@@ -1,14 +1,14 @@
 public final class ParametersDisorderKt {
-    public static final fun global(a: int, b: float) : void = [!] FirUnknownKotlinExpression (BLOCK)
-    public static final fun withDefault(c: int, d: java.lang.String) : void = [!] FirUnknownKotlinExpression (BLOCK)
-    public static final fun withReceiver($this$withReceiver: java.lang.String, a: int, b: float) : void = [!] FirUnknownKotlinExpression (BLOCK)
-    public static final fun call() : void = [!] FirUnknownKotlinExpression (BLOCK)
-    public static final fun objectLiteral() : void = [!] FirUnknownKotlinExpression (BLOCK)
+    public static final fun global(a: int, b: float) : void = [!] UnknownKotlinExpression (BLOCK)
+    public static final fun withDefault(c: int, d: java.lang.String) : void = [!] UnknownKotlinExpression (BLOCK)
+    public static final fun withReceiver($this$withReceiver: java.lang.String, a: int, b: float) : void = [!] UnknownKotlinExpression (BLOCK)
+    public static final fun call() : void = [!] UnknownKotlinExpression (BLOCK)
+    public static final fun objectLiteral() : void = [!] UnknownKotlinExpression (BLOCK)
 }
 
 public final class A {
     public fun A() = UastEmptyExpression
-    public final fun with2Receivers($this$with2Receivers: java.lang.String, a: int, b: float) : void = [!] FirUnknownKotlinExpression (BLOCK)
+    public final fun with2Receivers($this$with2Receivers: java.lang.String, a: int, b: float) : void = [!] UnknownKotlinExpression (BLOCK)
 }
 
 public class Parent {

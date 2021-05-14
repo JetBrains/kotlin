@@ -1,10 +1,10 @@
 public final class ResolveKt {
-    public static final fun bar() : void = [!] FirUnknownKotlinExpression (BLOCK)
-    public static final fun barT(t: T) : void = [!] FirUnknownKotlinExpression (BLOCK)
-    public static final fun barTL(listT: T) : void = [!] FirUnknownKotlinExpression (BLOCK)
+    public static final fun bar() : void = [!] UnknownKotlinExpression (BLOCK)
+    public static final fun barT(t: T) : void = [!] UnknownKotlinExpression (BLOCK)
+    public static final fun barTL(listT: T) : void = [!] UnknownKotlinExpression (BLOCK)
 }
 
 public class A {
     public fun A() = UastEmptyExpression
-    public final fun foo() : void = [!] FirUnknownKotlinExpression (BLOCK)
+    public final fun foo() : void = [!] UnknownKotlinExpression (BLOCK)
 }

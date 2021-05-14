@@ -1,4 +1,4 @@
 UFile (package = )
     UClass (name = LocalDeclarationsKt)
         UMethod (name = foo)
-            [!] FirUnknownKotlinExpression (BLOCK)
+            [!] UnknownKotlinExpression (BLOCK)

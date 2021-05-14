@@ -1,3 +1,3 @@
 public final class InKt {
-    public static final fun foo() : boolean = [!] FirUnknownKotlinExpression (BLOCK)
+    public static final fun foo() : boolean = [!] UnknownKotlinExpression (BLOCK)
 }

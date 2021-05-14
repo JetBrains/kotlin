@@ -1,6 +1,6 @@
 public final class ReceiverFunKt {
-    public static final fun foo($this$foo: java.lang.String) : int = [!] FirUnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
-    public static final fun getRx($this$rx: java.lang.String) : kotlin.text.Regex = [!] FirUnknownKotlinExpression (BLOCK)
+    public static final fun foo($this$foo: java.lang.String) : int = [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+    public static final fun getRx($this$rx: java.lang.String) : kotlin.text.Regex = [!] UnknownKotlinExpression (BLOCK)
 }
 
 public abstract annotation MyReceiverAnnotation {
