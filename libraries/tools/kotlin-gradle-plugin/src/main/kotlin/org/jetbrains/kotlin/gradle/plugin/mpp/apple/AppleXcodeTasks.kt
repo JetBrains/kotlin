@@ -5,19 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple
 
-import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHost
-import org.jetbrains.kotlin.gradle.tasks.dependsOn
-import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -72,8 +66,8 @@ private object XcodeEnvironment {
     val sign: String? get() = System.getenv("EXPANDED_CODE_SIGN_IDENTITY")
 }
 
-internal fun Project.registerAssembleAppleFrameworkTask(framework: Framework) {
-    if (!framework.konanTarget.family.isAppleFamily || !framework.konanTarget.enabledOnCurrentHost) return
+private fun Project.registerAssembleAppleFrameworkTask(framework: Framework): TaskProvider<Copy>? {
+    if (!framework.konanTarget.family.isAppleFamily || !framework.konanTarget.enabledOnCurrentHost) return null
 
     val frameworkBuildType = framework.buildType
     val frameworkTarget = framework.target
@@ -102,55 +96,46 @@ internal fun Project.registerAssembleAppleFrameworkTask(framework: Framework) {
                         "('SDK_NAME' and 'CONFIGURATION' not provided)"
             )
         }
-        return
+        return null
     }
 
-    if (frameworkBuildType != envBuildType || frameworkTarget.konanTarget != envTarget) return
+    if (frameworkBuildType != envBuildType || frameworkTarget.konanTarget != envTarget) return null
 
-    umbrellaAssembleAppleFrameworkTask.dependsOn(
-        registerTask<Copy>(frameworkTaskName) { task ->
-            task.group = BasePlugin.BUILD_GROUP
-            task.description = "Packs $frameworkBuildType ${frameworkTarget.name} framework for Xcode"
-            task.dependsOn(framework.linkTaskName)
-            task.from(framework.outputDirectory)
-            task.into(appleFrameworkDir(envFrameworkSearchDir))
-        }
-    )
+    return registerTask(frameworkTaskName) { task ->
+        task.group = BasePlugin.BUILD_GROUP
+        task.description = "Packs $frameworkBuildType ${frameworkTarget.name} framework for Xcode"
+        task.dependsOn(framework.linkTaskName)
+        task.from(framework.outputDirectory)
+        task.into(appleFrameworkDir(envFrameworkSearchDir))
+    }
 }
 
-private const val UMBRELLA_ASSEMBLE_APPLE_FRAMEWORK = "assembleAppleFrameworkForXcode"
-private val Project.umbrellaAssembleAppleFrameworkTask: TaskProvider<Task>
-    get() = locateOrRegisterTask(UMBRELLA_ASSEMBLE_APPLE_FRAMEWORK) {
-        it.group = "build"
-        it.description = "Build all frameworks as requested by Xcode's environment variables"
-    }
+internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework) {
+    val assembleTask = registerAssembleAppleFrameworkTask(framework) ?: return
 
-private const val EMBED_AND_SIGN_APPLE_FRAMEWORK = "embedAndSignAppleFrameworkForXcode"
-internal fun Project.registerEmbedAndSignAppleFrameworkTask() {
     val envBuildType = XcodeEnvironment.buildType
     val envTarget = XcodeEnvironment.target
     val envEmbeddedFrameworksDir = XcodeEnvironment.embeddedFrameworksDir
     val envFrameworkSearchDir = XcodeEnvironment.frameworkSearchDir
     val envSign = XcodeEnvironment.sign
 
+    val frameworkTaskName = lowerCamelCaseName("embedAndSign", framework.baseName, "AppleFrameworkForXcode")
+
     if (envBuildType == null || envTarget == null || envEmbeddedFrameworksDir == null || envFrameworkSearchDir == null) {
         logger.debug(
-            "Not registering $EMBED_AND_SIGN_APPLE_FRAMEWORK, since not called from Xcode " +
+            "Not registering $frameworkTaskName, since not called from Xcode " +
                     "('SDK_NAME', 'CONFIGURATION', 'TARGET_BUILD_DIR' and 'FRAMEWORKS_FOLDER_PATH' not provided)"
         )
         return
     }
 
-    registerTask<Copy>(EMBED_AND_SIGN_APPLE_FRAMEWORK) { task ->
+    if (framework.buildType != envBuildType || framework.konanTarget != envTarget) return
+
+    registerTask<Copy>(frameworkTaskName) { task ->
         task.group = "build"
-        task.description = "Embed and sign all frameworks as requested by Xcode's environment variables"
+        task.description = "Embed and sign ${framework.baseName} framework as requested by Xcode's environment variables"
 
-        val appleTargets: NamedDomainObjectCollection<KotlinNativeTarget>? =
-            multiplatformExtensionOrNull?.targets
-                ?.withType(KotlinNativeTarget::class.java)
-                ?.matching { it.konanTarget == envTarget }
-
-        task.dependsOn(UMBRELLA_ASSEMBLE_APPLE_FRAMEWORK)
+        task.dependsOn(assembleTask)
         task.inputs.apply {
             property("type", envBuildType)
             property("target", envTarget)
@@ -158,33 +143,19 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask() {
             property("sign", envSign)
         }
 
-        task.onlyIf { !appleTargets.isNullOrEmpty() }
-
         task.from(appleFrameworkDir(envFrameworkSearchDir)) { spec ->
-            appleTargets?.all { target ->
-                target.binaries.withType(Framework::class.java)
-                    .matching { f -> f.buildType == envBuildType }
-                    .all { framework ->
-                        spec.include(framework.outputFile.name + "/**")
-                    }
-            }
+            spec.include(framework.outputFile.name + "/**")
         }
 
         task.into(envEmbeddedFrameworksDir)
 
         if (envSign != null) {
             task.doLast {
-                appleTargets?.all { target ->
-                    target.binaries.withType(Framework::class.java)
-                        .matching { f -> f.buildType == envBuildType }
-                        .all { framework ->
-                            val binary = envEmbeddedFrameworksDir
-                                .resolve(framework.outputFile.name)
-                                .resolve(framework.outputFile.nameWithoutExtension)
-                            exec {
-                                it.commandLine("codesign", "--force", "--sign", envSign, "--", binary)
-                            }
-                        }
+                val binary = envEmbeddedFrameworksDir
+                    .resolve(framework.outputFile.name)
+                    .resolve(framework.outputFile.nameWithoutExtension)
+                exec {
+                    it.commandLine("codesign", "--force", "--sign", envSign, "--", binary)
                 }
             }
         }

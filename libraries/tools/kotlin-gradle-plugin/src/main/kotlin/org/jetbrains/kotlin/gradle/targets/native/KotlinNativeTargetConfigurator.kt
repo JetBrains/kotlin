@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPI
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.KOTLIN_NATIVE_IGNORE_INCORRECT_DEPENDENCIES
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.registerAssembleAppleFrameworkTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.registerEmbedAndSignAppleFrameworkTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.*
@@ -243,7 +243,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
         configureCInterops(target)
 
         if (target.konanTarget.family.isAppleFamily) {
-            registerAssembleAppleFrameworkTasks(target)
+            registerEmbedAndSignAppleFrameworkTasks(target)
         }
 
         if (PropertiesProvider(target.project).ignoreIncorrectNativeDependencies != true) {
@@ -360,10 +360,10 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
         }
     }
 
-    private fun registerAssembleAppleFrameworkTasks(target: KotlinNativeTarget) {
+    private fun registerEmbedAndSignAppleFrameworkTasks(target: KotlinNativeTarget) {
         val project = target.project
         target.binaries.withType(Framework::class.java).all { framework ->
-            project.registerAssembleAppleFrameworkTask(framework)
+            project.registerEmbedAndSignAppleFrameworkTask(framework)
         }
     }
 
