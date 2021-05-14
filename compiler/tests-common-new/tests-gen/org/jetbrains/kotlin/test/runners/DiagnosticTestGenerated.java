@@ -21311,6 +21311,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("superTypeErasion.kt")
+                public void testSuperTypeErasion() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/superTypeErasion.kt");
+                }
+
+                @Test
                 @TestMetadata("typeEnhancement.kt")
                 public void testTypeEnhancement() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/typeEnhancement.kt");
