@@ -8,6 +8,10 @@ package org.jetbrains.kotlin.gradle.targets.js
 import org.gradle.api.DefaultTask
 import org.gradle.api.Task
 import org.gradle.api.attributes.Usage
+import org.gradle.api.plugins.BasePlugin
+import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.bundling.Jar
+import org.gradle.api.tasks.bundling.Zip
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -69,6 +73,18 @@ open class KotlinJsTargetConfigurator :
             configureResourceProcessing(compilation, project.files(Callable { compilation.allKotlinSourceSets.map { it.resources } }))
 
             createLifecycleTaskInternal(compilation)
+        }
+    }
+
+    override fun createArchiveTasks(target: KotlinJsTarget): TaskProvider<out Zip> {
+        return target.project.registerTask<Jar>(target.artifactsTaskName) {
+            it.description = "Assembles an archive containing the main classes."
+            it.group = BasePlugin.BUILD_GROUP
+            val output = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).output
+            it.from(output.classesDirs)
+            it.from(Callable { output.resourcesDir }) { spec ->
+                spec.into("resources")
+            }
         }
     }
 
