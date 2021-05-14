@@ -64,7 +64,7 @@ class ClassicDiagnosticsHandler(testServices: TestServices) : ClassicFrontendAna
             val diagnostics = diagnosticsPerFile[ktFile] ?: emptyList()
             for (diagnostic in diagnostics) {
                 if (!diagnostic.isValid) continue
-                if (!diagnosticsService.shouldRenderDiagnostic(module, diagnostic.factory.name)) continue
+                if (!diagnosticsService.shouldRenderDiagnostic(module, diagnostic.factory.name, diagnostic.severity)) continue
                 reporter.reportDiagnostic(diagnostic, module, file, configuration, withNewInferenceModeEnabled)
             }
             for (errorElement in AnalyzingUtils.getSyntaxErrorRanges(ktFile)) {
@@ -120,7 +120,8 @@ class ClassicDiagnosticsHandler(testServices: TestServices) : ClassicFrontendAna
             diagnosedRanges = diagnosedRanges
         )
         debugAnnotations.mapNotNull { debugAnnotation ->
-            if (!diagnosticsService.shouldRenderDiagnostic(module, debugAnnotation.diagnostic.factory.name)) return@mapNotNull null
+            val factory = debugAnnotation.diagnostic.factory
+            if (!diagnosticsService.shouldRenderDiagnostic(module, factory.name, factory.severity)) return@mapNotNull null
             reporter.reportDiagnostic(debugAnnotation.diagnostic, module, file, configuration, withNewInferenceModeEnabled)
         }
     }

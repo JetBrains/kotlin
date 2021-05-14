@@ -26,6 +26,11 @@ object DiagnosticsDirectives : SimpleDirectivesContainer() {
                     '-' means 'exclude'
               '+' May be used in case if some diagnostic was disabled by default in test runner
                 and it should be enabled in specific test
+                
+            Also you can enable/disable all diagnostics with specific severity using following syntax:
+              [+-]infos
+              [+-]warnings
+              [+-]errors
         """.trimIndent()
     )
 

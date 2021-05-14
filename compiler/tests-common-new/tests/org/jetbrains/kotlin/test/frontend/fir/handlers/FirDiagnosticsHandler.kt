@@ -81,7 +81,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                 diagnostics = diagnostics.filter { it.factory.name != FirErrors.NEWER_VERSION_IN_SINCE_KOTLIN.name }
             }
             val diagnosticsMetadataInfos = diagnostics.mapNotNull { diagnostic ->
-                if (!diagnosticsService.shouldRenderDiagnostic(module, diagnostic.factory.name)) return@mapNotNull null
+                if (!diagnosticsService.shouldRenderDiagnostic(module, diagnostic.factory.name, diagnostic.severity)) return@mapNotNull null
                 // SYNTAX errors will be reported later
                 if (diagnostic.factory == FirErrors.SYNTAX) return@mapNotNull null
                 if (!diagnostic.isValid) return@mapNotNull null
