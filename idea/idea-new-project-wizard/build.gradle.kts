@@ -34,6 +34,7 @@ dependencies {
     testRuntimeOnly(project(":kotlinx-serialization-ide-plugin"))
     testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":plugins:annotation-based-compiler-plugins-ide-support"))
+    testRuntimeOnly(project(":plugins:base-compiler-plugins-ide-support"))
     testRuntimeOnly(project(":kotlin-gradle-statistics"))
     testRuntimeOnly(project(":kotlin-scripting-idea"))
     testRuntimeOnly(project(":plugins:parcelize:parcelize-ide"))
