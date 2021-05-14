@@ -118,7 +118,7 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             value == "true"
         )
         LIVE_LITERALS_V2_ENABLED_OPTION -> configuration.put(
-            ComposeConfiguration.LIVE_LITERALS_ENABLED_KEY,
+            ComposeConfiguration.LIVE_LITERALS_V2_ENABLED_KEY,
             value == "true"
         )
         SOURCE_INFORMATION_ENABLED_OPTION -> configuration.put(
