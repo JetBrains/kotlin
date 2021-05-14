@@ -43,12 +43,14 @@ open class FirDeclarationDesignation<out T : FirDeclaration>(
     }
 }
 
-private fun collectDesignationAndIsLocal(declaration: FirDeclaration): Pair<List<FirDeclaration>, Boolean> {
-    val firProvider = declaration.moduleData.session.firProvider
+private fun FirClassLikeDeclaration<*>.containingClass(): FirClassLikeDeclaration<*>? =
+    if (isLocal) (this as? FirRegularClass)?.containingClassForLocal()?.toFirRegularClass(moduleData.session)
+    else symbol.classId.outerClassId?.let(moduleData.session.firProvider::getFirClassifierByFqName)
 
+private fun collectDesignationAndIsLocal(declaration: FirDeclaration): Pair<List<FirDeclaration>, Boolean> {
     val containingClass = when (declaration) {
         is FirCallableDeclaration<*> -> declaration.containingClass()?.toFirRegularClass(declaration.moduleData.session)
-        is FirClassLikeDeclaration<*> -> declaration.symbol.classId.outerClassId?.let(firProvider::getFirClassifierByFqName)
+        is FirClassLikeDeclaration<*> -> declaration.containingClass()
         else -> error("Invalid declaration ${declaration.renderWithType()}")
     } ?: return emptyList<FirDeclaration>() to false
 

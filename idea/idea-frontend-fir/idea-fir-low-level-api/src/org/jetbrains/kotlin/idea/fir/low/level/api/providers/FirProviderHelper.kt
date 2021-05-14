@@ -34,6 +34,7 @@ internal class FirProviderHelper(
     private val packageExistenceChecker: PackageExistenceChecker,
 ) {
     fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration<*>? {
+        if (classId.isLocal) return null
         return executeOrReturnDefaultValueOnPCE(null) {
             cache.classifierByClassId.computeIfAbsent(classId) {
                 val ktClass = when (val klass = indexHelper.classFromIndexByClassId(classId)) {
