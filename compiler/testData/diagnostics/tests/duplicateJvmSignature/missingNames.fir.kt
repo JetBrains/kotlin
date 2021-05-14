@@ -21,9 +21,9 @@ interface<!SYNTAX!><!> {
 
 }
 
-enum class<!SYNTAX!><!> {
+<!UPPER_BOUND_VIOLATED!>enum class<!SYNTAX!><!> {
 
-}
+}<!>
 
 annotation class<!SYNTAX!><!> {
 
@@ -48,9 +48,9 @@ class Outer {
 
     }
 
-    enum class<!SYNTAX!><!> {
+    <!UPPER_BOUND_VIOLATED!>enum class<!SYNTAX!><!> {
 
-    }
+    }<!>
 
     annotation class<!SYNTAX!><!> {
 

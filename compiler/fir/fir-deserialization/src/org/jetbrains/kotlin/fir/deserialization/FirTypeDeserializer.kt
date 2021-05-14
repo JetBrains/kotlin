@@ -80,7 +80,7 @@ class FirTypeDeserializer(
             for ((index, proto) in typeParameterProtos.withIndex()) {
                 val builder = builders[index]
                 builder.apply {
-                    proto.upperBoundList.mapTo(bounds) {
+                    proto.upperBounds(typeTable).mapTo(bounds) {
                         buildResolvedTypeRef { type = type(it) }
                     }
                     addDefaultBoundIfNecessary()
