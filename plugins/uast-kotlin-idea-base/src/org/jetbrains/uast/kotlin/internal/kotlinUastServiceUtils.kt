@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtFile
 
-internal val PsiElement.isJvmElement: Boolean
+val PsiElement.isJvmElement: Boolean
     get() {
         if (allModulesSupportJvm(project)) return true
 

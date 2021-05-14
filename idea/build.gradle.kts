@@ -79,6 +79,7 @@ dependencies {
     compile(project(":idea:line-indent-provider"))
     compile(project(":plugins:uast-kotlin"))
     compile(project(":plugins:uast-kotlin-idea"))
+    compile(project(":plugins:uast-kotlin-idea-base"))
     compile(project(":kotlin-script-util")) { isTransitive = false }
     compile(project(":kotlin-scripting-intellij"))
     compile(project(":compiler:backend.jvm")) // Do not delete, for Pill

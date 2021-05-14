@@ -11,6 +11,9 @@ dependencies {
     compile(intellijCoreDep())
     implementation(project(":idea:idea-fir-fe10-binding"))
 
+    compile(project(":plugins:uast-kotlin-idea-fir"))
+    compile(project(":plugins:uast-kotlin-idea-base"))
+
 // <temp>
     compile(project(":idea:idea-core"))
     compile(project(":idea"))

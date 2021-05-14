@@ -91,6 +91,8 @@ val projectsToShadow by extra(listOf(
         ":plugins:lint",
         ":plugins:uast-kotlin",
         ":plugins:uast-kotlin-idea",
+        ":plugins:uast-kotlin-idea-fir",
+        ":plugins:uast-kotlin-idea-base",
         ":j2k",
         ":nj2k",
         ":nj2k:nj2k-services",

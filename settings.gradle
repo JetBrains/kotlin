@@ -213,7 +213,6 @@ include ":benchmarks",
         ":plugins:uast-kotlin",
         ":plugins:uast-kotlin-base",
         ":plugins:uast-kotlin-fir",
-        ":plugins:uast-kotlin-idea",
         ":plugins:annotation-based-compiler-plugins-ide-support",
         ":plugins:base-compiler-plugins-ide-support",
         ":kotlin-script-runtime",
@@ -354,6 +353,10 @@ include ":plugins:parcelize:parcelize-compiler",
 include ":plugins:lombok:lombok-compiler-plugin",
         ":plugins:lombok:lombok-ide-plugin",
         ":kotlin-lombok"
+
+include ":plugins:uast-kotlin-idea",
+        ":plugins:uast-kotlin-idea-base",
+        ":plugins:uast-kotlin-idea-fir"
 
 include ":prepare:ide-plugin-dependencies:android-extensions-compiler-plugin-for-ide",
         ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-for-ide",
