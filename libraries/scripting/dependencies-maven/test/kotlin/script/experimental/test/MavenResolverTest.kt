@@ -10,12 +10,15 @@ import org.junit.Assert
 import org.junit.Ignore
 import java.io.File
 import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import kotlin.reflect.full.primaryConstructor
 import kotlin.script.experimental.dependencies.maven.MavenDependenciesResolver
 import kotlin.script.experimental.api.ResultWithDiagnostics
 import kotlin.script.experimental.api.valueOrThrow
 import kotlin.script.experimental.dependencies.*
 import kotlin.script.experimental.dependencies.impl.DependenciesResolverOptionsName
+import kotlin.script.experimental.dependencies.impl.SimpleExternalDependenciesResolverOptionsParser
 import kotlin.script.experimental.dependencies.impl.makeExternalDependenciesResolverOptions
 import kotlin.script.experimental.dependencies.impl.set
 
@@ -27,6 +30,9 @@ class MavenResolverTest : ResolversTestBase() {
         options: ExternalDependenciesResolver.Options = ExternalDependenciesResolver.Options.Empty,
         checkBody: (Iterable<File>) -> Boolean = { true }
     ) {
+        contract {
+            callsInPlace(checkBody, InvocationKind.EXACTLY_ONCE)
+        }
         val resolver = MavenDependenciesResolver()
         val result = runBlocking { resolver.resolve(coordinates, options) }
         if (result is ResultWithDiagnostics.Failure) {
@@ -72,6 +78,31 @@ class MavenResolverTest : ResolversTestBase() {
             "Compile only ($compileOnlyCount) dependencies count should be less than compile/runtime ($compileRuntimeCount) one",
             compileOnlyCount < compileRuntimeCount
         )
+    }
+
+    fun testTransitiveOption() {
+        val dependency = "junit:junit:4.11"
+
+        var transitiveFiles: Iterable<File>
+        fun parseOptions(options: String) = SimpleExternalDependenciesResolverOptionsParser(options).valueOrThrow()
+
+        resolveAndCheck(dependency, options = parseOptions("transitive=true")) { files ->
+            transitiveFiles = files
+            true
+        }
+
+        var nonTransitiveFiles: Iterable<File>
+        resolveAndCheck(dependency, options = parseOptions("transitive=false")) { files ->
+            nonTransitiveFiles = files
+            true
+        }
+
+        val tCount = transitiveFiles.count()
+        val ntCount = nonTransitiveFiles.count()
+        val artifact = nonTransitiveFiles.single()
+
+        assertTrue(ntCount < tCount)
+        assertEquals("jar", artifact.extension)
     }
 
     fun testResolveVersionsRange() {

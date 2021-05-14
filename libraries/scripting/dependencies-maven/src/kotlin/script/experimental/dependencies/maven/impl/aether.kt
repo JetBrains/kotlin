@@ -25,10 +25,7 @@ import org.eclipse.aether.internal.transport.wagon.PlexusWagonProvider
 import org.eclipse.aether.repository.LocalRepository
 import org.eclipse.aether.repository.Proxy
 import org.eclipse.aether.repository.RemoteRepository
-import org.eclipse.aether.resolution.ArtifactResult
-import org.eclipse.aether.resolution.DependencyRequest
-import org.eclipse.aether.resolution.DependencyResolutionException
-import org.eclipse.aether.resolution.DependencyResult
+import org.eclipse.aether.resolution.*
 import org.eclipse.aether.spi.connector.RepositoryConnectorFactory
 import org.eclipse.aether.spi.connector.transport.TransporterFactory
 import org.eclipse.aether.transport.file.FileTransporterFactory
@@ -123,22 +120,54 @@ class AetherResolveSession(
         }
     }
 
-    fun resolve(coordinates: String, scope: String, filter: DependencyFilter? = null): List<Artifact>? =
+    fun resolve(coordinates: String, scope: String, filter: DependencyFilter? = null): List<Artifact> =
         resolve(DefaultArtifact(coordinates), scope, filter)
 
-    fun resolve(root: Artifact, scope: String, filter: DependencyFilter? = null): List<Artifact>? {
+    fun resolve(root: Artifact, scope: String, transitive: Boolean, filter: DependencyFilter?): List<Artifact> {
+        return if (transitive) resolve(root, scope, filter)
+        else resolveArtifact(root)
+    }
 
+    fun resolve(root: Artifact, scope: String, filter: DependencyFilter? = null): List<Artifact> {
         return fetch(
-            repositorySystem,
-            repositorySystemSession,
             DependencyRequest(
                 request(Dependency(root, scope)),
                 filter ?: DependencyFilterUtils.classpathFilter(scope)
-            )
+            ),
+            { req -> repositorySystem.resolveDependencies(repositorySystemSession, req).artifactResults },
+            { req, ex ->
+                DependencyResolutionException(
+                    DependencyResult(req),
+                    IllegalArgumentException( //Logger.format(
+                        //        "failed to load '%s' from %[list]s into %s",
+                        //        req.getCollectRequest().getRoot(),
+                        //        Aether.reps(req.getCollectRequest().getRepositories()),
+                        //        session.getLocalRepositoryManager()
+                        //                .getRepository()
+                        //                .getBasedir()
+                        //),
+                        ex
+                    )
+                )
+            }
         )
     }
 
-    private fun request(root: Dependency): CollectRequest? {
+    private fun resolveArtifact(artifact: Artifact): List<Artifact> {
+        val request = ArtifactRequest()
+        request.artifact = artifact
+        for (repo in remotes) {
+            request.addRepository(repo)
+        }
+
+        return fetch(
+            request,
+            { req -> listOf(repositorySystem.resolveArtifact(repositorySystemSession, req)) },
+            { req, ex -> ArtifactResolutionException(listOf(ArtifactResult(req)), ex.message, IllegalArgumentException(ex)) }
+        )
+    }
+
+    private fun request(root: Dependency): CollectRequest {
         val request = CollectRequest()
         request.root = root
         for (repo in remotes) {
@@ -147,32 +176,23 @@ class AetherResolveSession(
         return request
     }
 
-    private fun fetch(system: RepositorySystem, session: RepositorySystemSession, dreq: DependencyRequest): List<Artifact>? {
+    private fun <RequestT> fetch(
+        request: RequestT,
+        fetchBody: (RequestT) -> Collection<ArtifactResult>,
+        wrapException: (RequestT, Exception) -> Exception
+    ): List<Artifact> {
         val deps: MutableList<Artifact> = LinkedList()
         try {
             var results: Collection<ArtifactResult>
             synchronized(this) {
-                results = system.resolveDependencies(session, dreq)
-                    .artifactResults
+                results = fetchBody(request)
             }
             for (res in results) {
                 deps.add(res.artifact)
             }
             // @checkstyle IllegalCatch (1 line)
         } catch (ex: Exception) {
-            throw DependencyResolutionException(
-                DependencyResult(dreq),
-                IllegalArgumentException( //Logger.format(
-                    //        "failed to load '%s' from %[list]s into %s",
-                    //        dreq.getCollectRequest().getRoot(),
-                    //        Aether.reps(dreq.getCollectRequest().getRepositories()),
-                    //        session.getLocalRepositoryManager()
-                    //                .getRepository()
-                    //                .getBasedir()
-                    //),
-                    ex
-                )
-            )
+            throw wrapException(request, ex)
         }
         return deps
     }
