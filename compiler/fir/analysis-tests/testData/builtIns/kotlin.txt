@@ -12,9 +12,9 @@ public final fun doubleArrayOf(vararg elements: R|kotlin/DoubleArray|): R|kotlin
 
 public final inline fun <reified T> emptyArray(): R|kotlin/Array<T>|
 
-@R|kotlin/SinceKotlin|(version = String(1.1)) public final inline fun <reified T> enumValueOf(name: R|kotlin/String|): R|T|
+@R|kotlin/SinceKotlin|(version = String(1.1)) public final inline fun <reified T : R|kotlin/Enum<T>|> enumValueOf(name: R|kotlin/String|): R|T|
 
-@R|kotlin/SinceKotlin|(version = String(1.1)) public final inline fun <reified T> enumValues(): R|kotlin/Array<T>|
+@R|kotlin/SinceKotlin|(version = String(1.1)) public final inline fun <reified T : R|kotlin/Enum<T>|> enumValues(): R|kotlin/Array<T>|
 
 public final fun floatArrayOf(vararg elements: R|kotlin/FloatArray|): R|kotlin/FloatArray|
 
@@ -529,7 +529,7 @@ public final class DoubleArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/S
 
 }
 
-public abstract class Enum<E> : R|kotlin/Comparable<E>|, R|java/io/Serializable| {
+public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|java/io/Serializable| {
     public final companion object Companion : R|kotlin/Any| {
         private constructor(): R|kotlin/Enum.Companion|
 
@@ -551,7 +551,7 @@ public abstract class Enum<E> : R|kotlin/Comparable<E>|, R|java/io/Serializable|
     public final val ordinal: R|kotlin/Int|
         public get(): R|kotlin/Int|
 
-    public constructor<E>(name: R|kotlin/String| = STUB, ordinal: R|kotlin/Int| = STUB): R|kotlin/Enum<E>|
+    public constructor<E : R|kotlin/Enum<E>|>(name: R|kotlin/String| = STUB, ordinal: R|kotlin/Int| = STUB): R|kotlin/Enum<E>|
 
 }
 
