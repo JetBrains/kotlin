@@ -386,11 +386,19 @@ fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendConte
                             val ref = expression.getTypeArgument(0)!!.classifierOrFail.owner as IrDeclaration
                             ref.enqueue("intrinsic: jsClass")
                             referencedJsClasses += ref
-                            if (expression.origin == ClassReferenceLowering.Companion.CLASS_REFERENCE) {
+                            // When class reference provided as parameter to external function
+                            // It can be instantiated by external JS script
+                            // Need to leave constructor for this
+                            // https://youtrack.jetbrains.com/issue/KT-46672
+                            // TODO: Possibly solution with origin is not so good
+                            //  There is option with applying this hack to jsGetKClass
+                            if (expression.origin == JsLoweredDeclarationOrigin.CLASS_REFERENCE) {
+                                // Maybe we need to filter primary constructor
+                                // Although at this time, we should have only primary constructor
                                 (ref as IrClass)
                                     .constructors
                                     .forEach {
-                                        it.enqueue("intrinsic: jsClass constructor")
+                                        it.enqueue("intrinsic: jsClass (constructor)")
                                     }
                             }
                         }

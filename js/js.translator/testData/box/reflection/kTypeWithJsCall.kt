@@ -4,7 +4,6 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
-// MODULE: main
 // FILE: main.kt
 external abstract open class A(
     o: String

@@ -19,10 +19,8 @@ external fun test(
     klazz: Any
 ) : B
 
-inline fun <reified T : Any> toJsClass() = T::class.js
-
 fun box(): String {
-    return test(toJsClass<B>()).test()
+    return test(B::class.js).test()
 }
 
 // FILE: test.js

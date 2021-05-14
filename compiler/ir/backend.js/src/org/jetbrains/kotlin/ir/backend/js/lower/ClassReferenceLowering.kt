@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.toJsArrayLiteral
 import org.jetbrains.kotlin.ir.declarations.*
@@ -130,7 +131,7 @@ class ClassReferenceLowering(val context: JsIrBackendContext) : BodyLoweringPass
         JsIrBuilder.buildCall(
             intrinsics.jsClass,
             typeArguments = listOf(type),
-            origin = CLASS_REFERENCE
+            origin = JsLoweredDeclarationOrigin.CLASS_REFERENCE
         )
 
     private fun buildCall(name: IrSimpleFunctionSymbol, vararg args: IrExpression): IrExpression =
@@ -255,10 +256,6 @@ class ClassReferenceLowering(val context: JsIrBackendContext) : BodyLoweringPass
                     super.visitCall(expression)
                 }
         })
-    }
-
-    companion object {
-        object CLASS_REFERENCE : IrStatementOriginImpl("CLASS_REFERENCE")
     }
 }
 
