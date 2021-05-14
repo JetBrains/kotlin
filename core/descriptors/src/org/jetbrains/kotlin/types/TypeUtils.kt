@@ -232,7 +232,7 @@ private fun KotlinType.containsSelfTypeParameter(
 
     val typeParameters = (constructor.declarationDescriptor as? ClassifierDescriptorWithTypeParameters)?.declaredTypeParameters
     return arguments.withIndex().any { (i, argument) ->
-        val typeParameter = typeParameters?.get(i)
+        val typeParameter = typeParameters?.getOrNull(i)
         if ((typeParameter != null && typeParameter == upperBoundOfTypeParameter) || argument.isStarProjection) return@any false
         argument.type.containsSelfTypeParameter(baseConstructor, upperBoundOfTypeParameter)
     }
