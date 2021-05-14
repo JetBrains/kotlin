@@ -14,7 +14,7 @@ dependencies {
 }
 
 
-val testSuiteRevision = "18f8340"
+val testSuiteRevision = "01efde8"
 val testSuiteDir = File(buildDir, "testsuite")
 val testSuiteZip = File(testSuiteDir, testSuiteRevision + ".zip")
 
@@ -31,7 +31,7 @@ val unzipTestSuite by task<Copy> {
 }
 
 val wabtDir = File(buildDir, "wabt")
-val wabtVersion = "1.0.19"
+val wabtVersion = "1.0.23"
 
 val downloadWabt by task<de.undercouch.gradle.tasks.download.Download> {
     val gradleOs = org.gradle.internal.os.OperatingSystem.current()
