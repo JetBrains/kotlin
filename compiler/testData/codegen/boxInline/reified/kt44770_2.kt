@@ -16,6 +16,7 @@ inline fun <reified T : Any> test(): String {
     return ((object : S<S<T>> {
 
     }::class.java.genericInterfaces[0] as ParameterizedType).actualTypeArguments[0] as ParameterizedType).actualTypeArguments[0].getTypeName()
+}
 
 // FILE: 2.kt
 import test.*
