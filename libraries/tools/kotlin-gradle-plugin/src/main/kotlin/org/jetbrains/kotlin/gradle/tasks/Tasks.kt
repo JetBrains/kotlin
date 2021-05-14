@@ -691,6 +691,12 @@ abstract class Kotlin2JsCompile @Inject constructor(
             "-Xir-produce-klib-file"
         ).any(freeCompilerArgs::contains)
 
+    @get:Internal
+    val dependencies
+        get() = classpath
+            .filter { it.exists() && libraryFilter(it) }
+            .map { it.canonicalPath }
+
     // Kotlin/JS can operate in 3 modes:
     //  1) purely pre-IR backend
     //  2) purely IR backend
@@ -719,10 +725,6 @@ abstract class Kotlin2JsCompile @Inject constructor(
         if (kotlinOptions.isIrBackendEnabled()) {
             logger.info(USING_JS_IR_BACKEND_MESSAGE)
         }
-
-        val dependencies = classpath
-            .filter { it.exists() && libraryFilter(it) }
-            .map { it.canonicalPath }
 
         args.libraries = dependencies.distinct().let {
             if (it.isNotEmpty())
