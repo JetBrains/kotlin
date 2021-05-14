@@ -49,8 +49,6 @@ class MavenDependenciesResolver : ExternalDependenciesResolver {
 
     private fun remoteRepositories() = if (repos.isEmpty()) arrayListOf(mavenCentral) else repos
 
-    private fun allRepositories() = remoteRepositories() + localRepo
-
     private fun String.toMavenArtifact(): DefaultArtifact? =
         if (this.isNotBlank() && this.count { it == ':' } >= 2) DefaultArtifact(this)
         else null
@@ -63,19 +61,18 @@ class MavenDependenciesResolver : ExternalDependenciesResolver {
 
         val artifactId = artifactCoordinates.toMavenArtifact()!!
 
-        try {
+        return try {
             val dependencyScopes = options.dependencyScopes ?: listOf(JavaScopes.COMPILE, JavaScopes.RUNTIME)
+            val transitive = options.transitive ?: true
             val deps = AetherResolveSession(
                 localRepo, remoteRepositories()
             ).resolve(
-                artifactId, dependencyScopes.joinToString(",")
+                artifactId, dependencyScopes.joinToString(","), transitive, null
             )
-            if (deps != null)
-                return ResultWithDiagnostics.Success(deps.map { it.file })
+            ResultWithDiagnostics.Success(deps.map { it.file })
         } catch (e: DependencyResolutionException) {
-            return makeResolveFailureResult(e.message ?: "unknown error", sourceCodeLocation)
+            makeResolveFailureResult(e.message ?: "unknown error", sourceCodeLocation)
         }
-        return makeResolveFailureResult(allRepositories().map { "$it: $artifactId not found" }, sourceCodeLocation)
     }
 
     private fun tryResolveEnvironmentVariable(str: String) =

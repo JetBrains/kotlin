@@ -21,7 +21,7 @@ private val equalsRegex = Regex("^[^\\S\\r\\n]*=")
  * And additionally supports flags without any equality statement:
  * `foo bar`
  */
-internal object SimpleExternalDependenciesResolverOptionsParser {
+object SimpleExternalDependenciesResolverOptionsParser {
     private sealed class Token {
         data class Name(val name: String) : Token()
         data class Value(val value: String) : Token()
