@@ -119,9 +119,13 @@ class ClassicDiagnosticsHandler(testServices: TestServices) : ClassicFrontendAna
             info.analysisResult.moduleDescriptor as ModuleDescriptorImpl,
             diagnosedRanges = diagnosedRanges
         )
-        debugAnnotations.mapNotNull { debugAnnotation ->
+        val onlyExplicitlyDefined = DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO in module.directives
+        for (debugAnnotation in debugAnnotations) {
             val factory = debugAnnotation.diagnostic.factory
-            if (!diagnosticsService.shouldRenderDiagnostic(module, factory.name, factory.severity)) return@mapNotNull null
+            if (!diagnosticsService.shouldRenderDiagnostic(module, factory.name, factory.severity)) continue
+            if (onlyExplicitlyDefined && !debugAnnotation.diagnostic.textRanges.any { it.startOffset..it.endOffset in diagnosedRanges }) {
+                continue
+            }
             reporter.reportDiagnostic(debugAnnotation.diagnostic, module, file, configuration, withNewInferenceModeEnabled)
         }
     }

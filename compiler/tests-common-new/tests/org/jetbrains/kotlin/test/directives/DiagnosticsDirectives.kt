@@ -70,4 +70,11 @@ object DiagnosticsDirectives : SimpleDirectivesContainer() {
               (additional to root package)
         """.trimIndent()
     )
+
+    val REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO by directive(
+        description = """
+            If this directive enabled then `DEBUG_INFO_...` diagnostics will be reported
+              only if they are defined in testdata.
+        """.trimIndent()
+    )
 }
