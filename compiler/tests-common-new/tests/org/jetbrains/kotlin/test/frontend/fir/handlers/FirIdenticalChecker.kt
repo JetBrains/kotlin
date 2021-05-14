@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.frontend.fir.handlers
 
+import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
@@ -25,7 +26,7 @@ class FirIdenticalChecker(testServices: TestServices) : AfterAnalysisChecker(tes
         }
     }
 
-    override fun check(failedAssertions: List<Throwable>) {
+    override fun check(failedAssertions: List<WrappedException>) {
         if (failedAssertions.isNotEmpty()) return
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
         if (testDataFile.isFirTestData) {

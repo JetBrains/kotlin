@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.backend
 
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_FIR
@@ -24,7 +25,7 @@ class BlackBoxCodegenSuppressor(
         get() = listOf(CodegenTestDirectives)
 
     @OptIn(ExperimentalStdlibApi::class)
-    override fun suppressIfNeeded(failedAssertions: List<Throwable>): List<Throwable> {
+    override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
         val moduleStructure = testServices.moduleStructure
         val targetBackends = buildList {
             testServices.defaultsProvider.defaultTargetBackend?.let {
@@ -45,8 +46,8 @@ class BlackBoxCodegenSuppressor(
         moduleStructure: TestModuleStructure,
         directive: ValueDirective<TargetBackend>,
         targetBackends: List<TargetBackend>,
-        failedAssertions: List<Throwable>
-    ): List<Throwable> {
+        failedAssertions: List<WrappedException>
+    ): List<WrappedException> {
         val ignoredBackends = moduleStructure.allDirectives[directive]
         if (ignoredBackends.isEmpty()) return failedAssertions
         val matchedBackend = ignoredBackends.intersect(targetBackends)
@@ -61,10 +62,10 @@ class BlackBoxCodegenSuppressor(
 
 
     private fun processAssertions(
-        failedAssertions: List<Throwable>,
+        failedAssertions: List<WrappedException>,
         directive: ValueDirective<TargetBackend>,
         additionalMessage: String = ""
-    ): List<Throwable> {
+    ): List<WrappedException> {
         return if (failedAssertions.isNotEmpty()) emptyList()
         else {
             val message = buildString {
@@ -74,7 +75,7 @@ class BlackBoxCodegenSuppressor(
                     append(additionalMessage)
                 }
             }
-            listOf(AssertionError(message))
+            listOf(AssertionError(message).wrap())
         }
     }
 }

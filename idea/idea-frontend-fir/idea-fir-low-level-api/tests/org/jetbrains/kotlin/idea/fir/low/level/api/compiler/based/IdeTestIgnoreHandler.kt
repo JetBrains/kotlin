@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.compiler.based
 
+import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.services.TestServices
@@ -20,7 +21,7 @@ class IdeTestIgnoreHandler(testServices: TestServices) : AfterAnalysisChecker(te
     override val directives: List<DirectivesContainer>
         get() = listOf(FirIdeDirectives)
 
-    override fun check(failedAssertions: List<Throwable>) {
+    override fun check(failedAssertions: List<WrappedException>) {
         if (!isFirIdeIgnoreDirectivePresent()) return
         if (failedAssertions.isNotEmpty()) return
         val moduleStructure = testServices.moduleStructure
@@ -45,9 +46,9 @@ class IdeTestIgnoreHandler(testServices: TestServices) : AfterAnalysisChecker(te
     }
 
 
-    override fun suppressIfNeeded(failedAssertions: List<Throwable>): List<Throwable> {
+    override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
         return if (isFirIdeIgnoreDirectivePresent())
-            failedAssertions.filterIsInstance<TestWithFirIdeIgnoreAnnotationPassesException>()
+            failedAssertions.filter{ it.cause is TestWithFirIdeIgnoreAnnotationPassesException }
         else failedAssertions
     }
 

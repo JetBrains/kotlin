@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.IOException
 
 class TestRunner(private val testConfiguration: TestConfiguration) {
-    private val failedAssertions = mutableListOf<Throwable>()
+    private val failedAssertions = mutableListOf<WrappedException>()
 
     fun runTest(@TestDataFile testDataFileName: String, beforeDispose: (TestConfiguration) -> Unit = {}) {
         try {
@@ -46,7 +46,9 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
             }
         } catch (e: ExceptionFromModuleStructureTransformer) {
             services.register(TestModuleStructure::class, e.alreadyParsedModuleStructure)
-            val exception = filterFailedExceptions(listOf(e.cause)).singleOrNull() ?: return
+            val exception = filterFailedExceptions(
+                listOf(WrappedException.FromModuleStructureTransformer(e.cause))
+            ).singleOrNull() ?: return
             throw exception
         }
 
@@ -60,18 +62,26 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
         val modules = moduleStructure.modules
         val dependencyProvider = DependencyProviderImpl(services, modules)
         services.registerDependencyProvider(dependencyProvider)
-        var failedException: Throwable? = null
+        var failedException: WrappedException? = null
         try {
             for (module in modules) {
                 val shouldProcessNextModules = processModule(services, module, dependencyProvider, moduleStructure)
                 if (!shouldProcessNextModules) break
             }
-        } catch (e: Throwable) {
+        } catch (e: WrappedException) {
             failedException = e
+        } catch (e: Exception) {
+            throw IllegalStateException("Unexpected exception type. Only WrappedException are expected here", e)
         }
 
         for (handler in testConfiguration.getAllHandlers()) {
-            withAssertionCatching {
+            val wrapperFactory = when (handler) {
+                is FrontendOutputHandler -> WrappedException::FromFrontendHandler
+                is BackendInputHandler -> WrappedException::FromBackendHandler
+                is BinaryArtifactHandler -> WrappedException::FromBinaryHandler
+                else -> WrappedException::FromUnknownHandler
+            }
+            withAssertionCatching(wrapperFactory) {
                 val thereWasAnException = failedException != null || failedAssertions.isNotEmpty()
                 if (handler.shouldRun(thereWasAnException)) {
                     handler.processAfterAllModules(thereWasAnException)
@@ -79,32 +89,35 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
             }
         }
         if (testConfiguration.metaInfoHandlerEnabled) {
-            withAssertionCatching(insertExceptionInStart = true) {
+            withAssertionCatching(WrappedException::FromMetaInfoHandler) {
                 globalMetadataInfoHandler.compareAllMetaDataInfos()
             }
         }
         if (failedException != null) {
-            failedAssertions.add(0, ExceptionFromTestError(failedException))
+            failedAssertions.add(0, failedException)
         }
 
         testConfiguration.afterAnalysisCheckers.forEach {
-            withAssertionCatching {
+            withAssertionCatching(WrappedException::FromAfterAnalysisChecker) {
                 it.check(failedAssertions)
             }
         }
 
         val filteredFailedAssertions = filterFailedExceptions(failedAssertions)
-        filteredFailedAssertions.firstIsInstanceOrNull<ExceptionFromTestError>()?.let {
+        filteredFailedAssertions.firstIsInstanceOrNull<WrappedException.FromFacade>()?.let {
             throw it
         }
         services.assertions.assertAll(filteredFailedAssertions)
     }
 
-    private fun filterFailedExceptions(failedExceptions: List<Throwable>): List<Throwable> = testConfiguration.afterAnalysisCheckers
-        .fold(failedExceptions) { assertions, checker ->
-            checker.suppressIfNeeded(assertions)
-        }
-        .map { if (it is ExceptionFromTestError) it.cause else it }
+    private fun filterFailedExceptions(failedExceptions: List<WrappedException>): List<Throwable> {
+        return testConfiguration.afterAnalysisCheckers
+            .fold(failedExceptions) { assertions, checker ->
+                checker.suppressIfNeeded(assertions)
+            }
+            .sorted()
+            .map { it.cause }
+    }
 
     /*
      * If there was failure from handler with `failureDisablesNextSteps=true` then `processModule`
@@ -121,11 +134,14 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
         val frontendKind = module.frontendKind
         if (!frontendKind.shouldRunAnalysis) return true
 
-        val frontendArtifacts: ResultingArtifact.FrontendOutput<*> = testConfiguration.getFacade(SourcesKind, frontendKind)
-            .transform(module, sourcesArtifact)?.also { dependencyProvider.registerArtifact(module, it) } ?: return true
+        val frontendArtifacts: ResultingArtifact.FrontendOutput<*> = withExceptionWrapping(WrappedException.FromFacade::Frontend) {
+            testConfiguration.getFacade(SourcesKind, frontendKind)
+                .transform(module, sourcesArtifact)?.also { dependencyProvider.registerArtifact(module, it) }
+                ?: return true
+        }
         val frontendHandlers: List<AnalysisHandler<*>> = testConfiguration.getHandlers(frontendKind)
         for (frontendHandler in frontendHandlers) {
-            val thereWasAnException = withAssertionCatching {
+            val thereWasAnException = withAssertionCatching(WrappedException::FromFrontendHandler) {
                 if (frontendHandler.shouldRun(failedAssertions.isNotEmpty())) {
                     frontendHandler.hackyProcess(module, frontendArtifacts)
                 }
@@ -136,12 +152,14 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
         val backendKind = services.backendKindExtractor.backendKind(module.targetBackend)
         if (!backendKind.shouldRunAnalysis) return true
 
-        val backendInputInfo = testConfiguration.getFacade(frontendKind, backendKind)
-            .hackyTransform(module, frontendArtifacts)?.also { dependencyProvider.registerArtifact(module, it) } ?: return true
+        val backendInputInfo = withExceptionWrapping(WrappedException.FromFacade::Converter) {
+            testConfiguration.getFacade(frontendKind, backendKind)
+                .hackyTransform(module, frontendArtifacts)?.also { dependencyProvider.registerArtifact(module, it) } ?: return true
+        }
 
         val backendHandlers: List<AnalysisHandler<*>> = testConfiguration.getHandlers(backendKind)
         for (backendHandler in backendHandlers) {
-            val thereWasAnException = withAssertionCatching {
+            val thereWasAnException = withAssertionCatching(WrappedException::FromBackendHandler) {
                 if (backendHandler.shouldRun(failedAssertions.isNotEmpty())) {
                     backendHandler.hackyProcess(module, backendInputInfo)
                 }
@@ -151,14 +169,16 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
 
         for (artifactKind in moduleStructure.getTargetArtifactKinds(module)) {
             if (!artifactKind.shouldRunAnalysis) continue
-            val binaryArtifact = testConfiguration.getFacade(backendKind, artifactKind)
-                .hackyTransform(module, backendInputInfo)?.also {
-                    dependencyProvider.registerArtifact(module, it)
-                } ?: return true
+            val binaryArtifact = withExceptionWrapping(WrappedException.FromFacade::Backend) {
+                testConfiguration.getFacade(backendKind, artifactKind)
+                    .hackyTransform(module, backendInputInfo)?.also {
+                        dependencyProvider.registerArtifact(module, it)
+                    } ?: return true
+            }
 
             val binaryHandlers: List<AnalysisHandler<*>> = testConfiguration.getHandlers(artifactKind)
             for (binaryHandler in binaryHandlers) {
-                val thereWasAnException = withAssertionCatching {
+                val thereWasAnException = withAssertionCatching(WrappedException::FromBinaryHandler) {
                     if (binaryHandler.shouldRun(failedAssertions.isNotEmpty())) {
                         binaryHandler.hackyProcess(module, binaryArtifact)
                     }
@@ -173,17 +193,21 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
     /*
      * Returns true if there was an exception in block
      */
-    private inline fun withAssertionCatching(insertExceptionInStart: Boolean = false, block: () -> Unit): Boolean {
+    private inline fun withAssertionCatching(exceptionWrapper: (Throwable) -> WrappedException, block: () -> Unit): Boolean {
         return try {
             block()
             false
         } catch (e: Throwable) {
-            if (insertExceptionInStart) {
-                failedAssertions.add(0, e)
-            } else {
-                failedAssertions += e
-            }
+            failedAssertions += exceptionWrapper(e)
             true
+        }
+    }
+
+    private inline fun <R> withExceptionWrapping(exceptionWrapper: (Throwable) -> WrappedException, block: () -> R): R {
+        return try {
+            block()
+        } catch (e: Throwable) {
+            throw exceptionWrapper(e)
         }
     }
 

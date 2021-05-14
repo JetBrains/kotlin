@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.frontend.classic.handlers
 
 import org.jetbrains.kotlin.codeMetaInfo.clearTextFromDiagnosticMarkup
+import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
@@ -21,7 +22,7 @@ class FirTestDataConsistencyHandler(testServices: TestServices) : AfterAnalysisC
     override val directives: List<DirectivesContainer>
         get() = listOf(FirDiagnosticsDirectives)
 
-    override fun check(failedAssertions: List<Throwable>) {
+    override fun check(failedAssertions: List<WrappedException>) {
         val moduleStructure = testServices.moduleStructure
         val testData = moduleStructure.originalTestDataFiles.first()
         if (testData.extension == "kts") return

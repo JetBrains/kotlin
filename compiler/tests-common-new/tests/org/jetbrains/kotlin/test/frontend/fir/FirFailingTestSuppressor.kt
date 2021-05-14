@@ -5,20 +5,20 @@
 
 package org.jetbrains.kotlin.test.frontend.fir
 
-import org.jetbrains.kotlin.test.ExceptionFromTestError
+import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 
 class FirFailingTestSuppressor(testServices: TestServices) : AfterAnalysisChecker(testServices) {
-    override fun suppressIfNeeded(failedAssertions: List<Throwable>): List<Throwable> {
+    override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
         val testFile = testServices.moduleStructure.originalTestDataFiles.first()
         val failFile = testFile.parentFile.resolve("${testFile.nameWithoutExtension}.fail")
-        val exceptionFromFir = failedAssertions.firstOrNull { it is ExceptionFromTestError }
+        val exceptionFromFir = failedAssertions.firstOrNull { it is WrappedException.FromFacade.Frontend }
         return when {
             failFile.exists() && exceptionFromFir != null -> emptyList()
             failFile.exists() && exceptionFromFir == null -> {
-                failedAssertions + AssertionError("Fail file exists but no exception was throw. Please remove ${failFile.name}")
+                failedAssertions + AssertionError("Fail file exists but no exception was throw. Please remove ${failFile.name}").wrap()
             }
             else -> failedAssertions
         }
