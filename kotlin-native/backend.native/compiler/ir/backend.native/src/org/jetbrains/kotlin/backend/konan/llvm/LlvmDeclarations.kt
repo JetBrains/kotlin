@@ -393,6 +393,7 @@ internal class CodegenClassMetadata(irClass: IrClass)
     : KonanMetadata(irClass.metadata?.name, irClass.konanLibrary), MetadataSource.Class {
     var layoutBuilder: ClassLayoutBuilder? = null
     var llvm: ClassLlvmDeclarations? = null
+    override var serializedIr: ByteArray? = null
 }
 
 private class CodegenFunctionMetadata(

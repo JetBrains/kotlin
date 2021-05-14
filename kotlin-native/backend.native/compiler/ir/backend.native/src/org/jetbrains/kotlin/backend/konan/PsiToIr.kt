@@ -58,7 +58,7 @@ internal fun Context.psiToIr(
     generatorContext.irBuiltIns.functionFactory = functionIrClassFactory
     val stubGenerator = DeclarationStubGeneratorImpl(
             moduleDescriptor, symbolTable,
-            config.configuration.languageVersionSettings
+            generatorContext.irBuiltIns
     )
     val symbols = KonanSymbols(this, generatorContext.irBuiltIns, symbolTable, symbolTable.lazyWrapper, functionIrClassFactory)
 

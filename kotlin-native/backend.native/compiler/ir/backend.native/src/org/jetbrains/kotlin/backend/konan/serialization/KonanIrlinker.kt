@@ -260,4 +260,5 @@ fun IrModuleFragment.toKonanModule() = KonanIrModuleFragmentImpl(descriptor, irB
 
 class KonanFileMetadataSource(val module: KonanIrModuleFragmentImpl) : MetadataSource.File {
     override val name: Name? = null
+    override var serializedIr: ByteArray? = null
 }
