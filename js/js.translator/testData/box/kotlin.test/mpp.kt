@@ -2,7 +2,6 @@
 // !LANGUAGE: +MultiPlatformProjects
 // KJS_WITH_FULL_RUNTIME
 // SKIP_DCE_DRIVEN
-// CALL_MAIN
 
 // FILE: lib.kt
 import kotlin.test.Test
