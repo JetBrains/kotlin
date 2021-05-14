@@ -39,6 +39,7 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         CheckDispatchReceiver,
         CheckExtensionReceiver,
         CheckArguments,
+        CheckInfixCall,
         EagerResolveOfCallableReferences,
         CheckLowPriorityInOverloadResolution,
         PostponedVariablesInitializerResolutionStage

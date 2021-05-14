@@ -176,7 +176,12 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             useTypes(emptyArgumentListType)
         }
 
-        builder(functionCall, init = configurationForFunctionCallBuilder)
+        builder(functionCall) {
+            configurationForFunctionCallBuilder()
+            default("origin") {
+                value = "FirFunctionCallOrigin.REGULAR"
+            }
+        }
         builder(implicitInvokeCall, init = configurationForFunctionCallBuilder)
 
         builder(qualifiedAccessExpression) {

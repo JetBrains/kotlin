@@ -9,15 +9,14 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.FirVisibilityChecker
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.resolve.inference.*
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
@@ -262,6 +261,19 @@ internal object PostponedVariablesInitializerResolutionStage : ResolutionStage()
                 }
                 if (typeHasVariable) {
                     candidate.csBuilder.markPostponedVariable(freshVariable)
+                }
+            }
+        }
+    }
+}
+
+internal object CheckInfixCall : CheckerStage() {
+    override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
+        if (callInfo.callSite is FirFunctionCall) {
+            if (callInfo.callSite.origin == FirFunctionCallOrigin.INFIX) {
+                val functionSymbol = candidate.symbol as? FirNamedFunctionSymbol ?: return
+                if (!functionSymbol.fir.isInfix) {
+                    sink.reportDiagnostic(InfixCallOfNonInfixFunction(functionSymbol))
                 }
             }
         }

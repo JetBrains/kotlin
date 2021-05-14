@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCallOrigin
 import org.jetbrains.kotlin.fir.expressions.builder.FirAbstractFunctionCallBuilder
 import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirFunctionCallImpl
@@ -42,6 +43,7 @@ open class FirFunctionCallBuilder : FirAbstractFunctionCallBuilder, FirAnnotatio
     override var extensionReceiver: FirExpression = FirNoReceiverExpression
     override var argumentList: FirArgumentList = FirEmptyArgumentList
     override lateinit var calleeReference: FirNamedReference
+    override var origin: FirFunctionCallOrigin = FirFunctionCallOrigin.REGULAR
 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirFunctionCall {
@@ -55,6 +57,7 @@ open class FirFunctionCallBuilder : FirAbstractFunctionCallBuilder, FirAnnotatio
             extensionReceiver,
             argumentList,
             calleeReference,
+            origin,
         )
     }
 

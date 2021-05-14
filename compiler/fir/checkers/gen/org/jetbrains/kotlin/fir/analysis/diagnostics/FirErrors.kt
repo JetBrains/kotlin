@@ -209,6 +209,7 @@ object FirErrors {
     val REDUNDANT_OPEN_IN_INTERFACE by warning0<KtModifierListOwner>(SourceElementPositioningStrategies.OPEN_MODIFIER)
     val WRONG_MODIFIER_TARGET by error2<PsiElement, KtModifierKeywordToken, String>()
     val OPERATOR_MODIFIER_REQUIRED by error2<PsiElement, FirNamedFunctionSymbol, String>()
+    val INFIX_MODIFIER_REQUIRED by error1<PsiElement, FirNamedFunctionSymbol>()
 
     // Inline classes
     val INLINE_CLASS_NOT_TOP_LEVEL by error0<KtDeclaration>(SourceElementPositioningStrategies.INLINE_OR_VALUE_MODIFIER)

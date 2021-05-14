@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCallOrigin
 import org.jetbrains.kotlin.fir.expressions.builder.FirCallBuilder
 import org.jetbrains.kotlin.fir.expressions.builder.FirQualifiedAccessBuilder
 import org.jetbrains.kotlin.fir.references.FirNamedReference
@@ -34,5 +35,6 @@ interface FirAbstractFunctionCallBuilder : FirQualifiedAccessBuilder, FirCallBui
     abstract override var argumentList: FirArgumentList
     abstract var typeRef: FirTypeRef
     abstract var calleeReference: FirNamedReference
+    abstract var origin: FirFunctionCallOrigin
     override fun build(): FirFunctionCall
 }

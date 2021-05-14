@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCallOrigin
 import org.jetbrains.kotlin.fir.expressions.FirImplicitInvokeCall
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
@@ -34,6 +35,7 @@ internal class FirImplicitInvokeCallImpl(
     override var calleeReference: FirNamedReference,
 ) : FirImplicitInvokeCall() {
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
+    override val origin: FirFunctionCallOrigin = FirFunctionCallOrigin.REGULAR
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)

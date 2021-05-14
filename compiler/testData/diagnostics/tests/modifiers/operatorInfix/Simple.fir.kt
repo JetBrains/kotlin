@@ -37,7 +37,7 @@ fun test() {
 
     consumeExample2(<!ARGUMENT_TYPE_MISMATCH!>++a<!>)
 
-    consumeString(<!ARGUMENT_TYPE_MISMATCH!>a plus b<!>)
+    consumeString(a plus b)
 }
 
 fun consumeInt(i: Int) {}

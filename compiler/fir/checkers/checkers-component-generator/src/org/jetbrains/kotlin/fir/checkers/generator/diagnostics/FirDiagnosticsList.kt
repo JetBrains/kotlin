@@ -233,6 +233,9 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
             parameter<FirNamedFunctionSymbol>("functionSymbol")
             parameter<String>("name")
         }
+        val INFIX_MODIFIER_REQUIRED by error<PsiElement> {
+            parameter<FirNamedFunctionSymbol>("functionSymbol")
+        }
     }
 
     val INLINE_CLASSES by object : DiagnosticGroup("Inline classes") {

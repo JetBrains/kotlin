@@ -82,9 +82,11 @@ object FirInlineDeclarationChecker : FirMemberDeclarationChecker() {
 
         override fun visitFunctionCall(functionCall: FirFunctionCall, data: CheckerContext) {
             val targetSymbol = functionCall.toResolvedCallableSymbol()
-            checkReceiversOfQualifiedAccessExpression(functionCall, targetSymbol, data)
-            checkArgumentsOfCall(functionCall, targetSymbol, data)
-            checkQualifiedAccess(functionCall, targetSymbol, data)
+            if (targetSymbol != null) {
+                checkReceiversOfQualifiedAccessExpression(functionCall, targetSymbol, data)
+                checkArgumentsOfCall(functionCall, targetSymbol, data)
+                checkQualifiedAccess(functionCall, targetSymbol, data)
+            }
         }
 
         override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: CheckerContext) {

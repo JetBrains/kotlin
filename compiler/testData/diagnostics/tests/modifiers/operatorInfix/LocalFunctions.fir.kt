@@ -24,13 +24,13 @@ fun a() {
             consumeInt(<!ARGUMENT_TYPE_MISMATCH!>a - b<!>)
 
             consumeString(a plus b)
-            consumeInt(<!ARGUMENT_TYPE_MISMATCH!>a minus b<!>)
+            consumeInt(a minus b)
 
             a * b
             a / b
 
             a times b
-            a div b
+            a <!INFIX_MODIFIER_REQUIRED!>div<!> b
         }
     }
 }

@@ -28,6 +28,7 @@ abstract class FirComponentCall : FirFunctionCall() {
     abstract override val extensionReceiver: FirExpression
     abstract override val argumentList: FirArgumentList
     abstract override val calleeReference: FirNamedReference
+    abstract override val origin: FirFunctionCallOrigin
     abstract override val explicitReceiver: FirExpression
     abstract val componentIndex: Int
 

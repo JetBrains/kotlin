@@ -12,7 +12,7 @@ fun test(a: Any) {
     1ffoo a
     1doo a
     1ddoo a
-    1contains a
+    1<!INFIX_MODIFIER_REQUIRED!>contains<!> a
 
     1Lfoo a
     1L<!UNRESOLVED_REFERENCE!>oo<!> a

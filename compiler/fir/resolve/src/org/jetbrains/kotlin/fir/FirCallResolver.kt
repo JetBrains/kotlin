@@ -153,13 +153,26 @@ class FirCallResolver(
         towerResolver.reset()
         val result = towerResolver.runResolver(info, transformer.resolutionContext)
         val bestCandidates = result.bestCandidates()
-        var reducedCandidates = if (!result.currentApplicability.isSuccess) {
-            bestCandidates.toSet()
-        } else {
+
+        fun chooseMostSpecific(): Set<Candidate> {
             val onSuperReference = (explicitReceiver as? FirQualifiedAccessExpression)?.calleeReference is FirSuperReference
-            conflictResolver.chooseMaximallySpecificCandidates(
+            return conflictResolver.chooseMaximallySpecificCandidates(
                 bestCandidates, discriminateGenerics = true, discriminateAbstracts = onSuperReference
             )
+        }
+
+        var reducedCandidates = if (!result.currentApplicability.isSuccess) {
+            val distinctApplicabilities = bestCandidates.flatMapTo(mutableSetOf()) { candidate ->
+                candidate.diagnostics.map { it.applicability }
+            }
+            //if all candidates have the same kind on inApplicability - try to choose the most specific one
+            if (distinctApplicabilities.size == 1 && distinctApplicabilities.single() > CandidateApplicability.INAPPLICABLE) {
+                chooseMostSpecific()
+            } else {
+                bestCandidates.toSet()
+            }
+        } else {
+            chooseMostSpecific()
         }
 
         reducedCandidates = overloadByLambdaReturnTypeResolver.reduceCandidates(qualifiedAccess, bestCandidates, reducedCandidates)

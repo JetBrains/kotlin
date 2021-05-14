@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCallOrigin
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
@@ -32,6 +33,7 @@ open class FirFunctionCallImpl @FirImplementationDetail constructor(
     override var extensionReceiver: FirExpression,
     override var argumentList: FirArgumentList,
     override var calleeReference: FirNamedReference,
+    override val origin: FirFunctionCallOrigin,
 ) : FirFunctionCall() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)

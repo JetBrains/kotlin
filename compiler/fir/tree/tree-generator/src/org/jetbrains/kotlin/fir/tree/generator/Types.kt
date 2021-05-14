@@ -86,3 +86,5 @@ val annotationResolveStatusType = generatedType("expressions", "FirAnnotationRes
 val exhaustivenessStatusType = generatedType("expressions", "ExhaustivenessStatus")
 
 val callableReferenceMappedArgumentsType = type("fir.resolve.calls", "CallableReferenceMappedArguments")
+
+val functionCallOrigin = type("fir.expressions", "FirFunctionCallOrigin")

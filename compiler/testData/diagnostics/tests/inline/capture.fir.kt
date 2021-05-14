@@ -25,7 +25,7 @@ inline fun inlineFunWithInvoke(s: (p: Int) -> Unit) {
     {
         s(11)
         s.invoke(11)
-        s invoke 11
+        s <!INFIX_MODIFIER_REQUIRED!>invoke<!> 11
     }()
 }
 
@@ -33,7 +33,7 @@ inline fun inlineFunWithInvokeNonInline(noinline s: (p: Int) -> Unit) {
     {
         s(11)
         s.invoke(11)
-        s invoke 11
+        s <!INFIX_MODIFIER_REQUIRED!>invoke<!> 11
     }()
 }
 

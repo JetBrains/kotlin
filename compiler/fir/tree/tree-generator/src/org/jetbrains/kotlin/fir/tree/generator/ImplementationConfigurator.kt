@@ -153,6 +153,18 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             kind = OpenClass
         }
 
+        fun ImplementationContext.defaultFunctionOrigin() {
+            default("origin", "FirFunctionCallOrigin.REGULAR")
+        }
+
+        impl(implicitInvokeCall) {
+            defaultFunctionOrigin()
+        }
+
+        impl(componentCall) {
+            defaultFunctionOrigin()
+        }
+
         impl(qualifiedAccessExpression)
 
         noImpl(expressionWithSmartcast)

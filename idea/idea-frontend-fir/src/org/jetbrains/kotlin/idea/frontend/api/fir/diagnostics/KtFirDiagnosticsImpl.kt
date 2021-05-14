@@ -938,6 +938,14 @@ internal class OperatorModifierRequiredImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
+internal class InfixModifierRequiredImpl(
+    override val functionSymbol: KtFunctionLikeSymbol,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.InfixModifierRequired(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
 internal class InlineClassNotTopLevelImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,

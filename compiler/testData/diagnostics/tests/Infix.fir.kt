@@ -18,21 +18,21 @@ fun Example.withLambda(f: () -> Unit) = Pair(this, f)
 
 fun test() {
     Example() to Example()
-    Example() toNonInfix Example()
+    Example() <!INFIX_MODIFIER_REQUIRED!>toNonInfix<!> Example()
     Example().toNonInfix(Example())
 
     val a = Example()
     val b = Example()
 
     a toExt b
-    a toExtNonInfix b
+    a <!INFIX_MODIFIER_REQUIRED!>toExtNonInfix<!> b
     a.toExtNonInfix(b)
 
     a toExtWithExtraParams b
-    a toExtNonInfixWithExtraParams b
+    a <!INFIX_MODIFIER_REQUIRED!>toExtNonInfixWithExtraParams<!> b
 
     a toExtDefaultValues b
-    a toExtNonInfixDefaultValues b
+    a <!INFIX_MODIFIER_REQUIRED!>toExtNonInfixDefaultValues<!> b
 
-    a withLambda { }
+    a <!INFIX_MODIFIER_REQUIRED!>withLambda<!> { }
 }
