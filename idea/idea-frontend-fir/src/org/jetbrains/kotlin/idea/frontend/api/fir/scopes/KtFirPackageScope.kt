@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelClassByPackageIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionByPackageIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelPropertyByPackageIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelTypeAliasByPackageIndex
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -43,6 +44,9 @@ internal class KtFirPackageScope(
 
     override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
         KotlinTopLevelClassByPackageIndex.getInstance()[fqName.asString(), project, firScope.session.searchScope]
+            .mapNotNullTo(hashSetOf()) { it.nameAsName }
+
+        KotlinTopLevelTypeAliasByPackageIndex.getInstance()[fqName.asString(), project, firScope.session.searchScope]
             .mapNotNullTo(hashSetOf()) { it.nameAsName }
     }
 
