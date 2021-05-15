@@ -21,19 +21,18 @@ internal class FirClassifierCompletionContributor(
 
     fun KtAnalysisSession.collectTypesCompletion(
         implicitScopes: KtScope,
-        expectedType: KtType?,
         visibilityChecker: CompletionVisibilityChecker,
     ) {
         val classesFromScopes = implicitScopes
             .getClassifierSymbols(scopeNameFilter)
             .filter { with(visibilityChecker) { isVisible(it) } }
 
-        classesFromScopes.forEach { addSymbolToCompletion(expectedType, it) }
+        classesFromScopes.forEach { addSymbolToCompletion(expectedType = null, it) }
 
         val kotlinClassesFromIndices = indexHelper.getKotlinClasses(scopeNameFilter, psiFilter = { it !is KtEnumEntry })
         kotlinClassesFromIndices.asSequence()
             .map { it.getSymbol() as KtClassifierSymbol }
             .filter { with(visibilityChecker) { isVisible(it) } }
-            .forEach { addSymbolToCompletion(expectedType, it) }
+            .forEach { addSymbolToCompletion(expectedType = null, it) }
     }
 }
