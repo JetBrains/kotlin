@@ -38,10 +38,6 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
         if (shouldSuppressCompletion(parameters, result.prefixMatcher)) return
 
         val resultSet = createResultSet(parameters, result)
-        val indexHelper = IndexHelper(
-            parameters.position.project,
-            parameters.position.getModuleInfo().contentScope()
-        )
 
         val basicContext = FirBasicCompletionContext.createFromParameters(parameters, resultSet) ?: return
         recordOriginalFile(basicContext)
@@ -49,18 +45,18 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
         val positionContext = FirPositionCompletionContextDetector.detect(basicContext)
 
         FirPositionCompletionContextDetector.analyseInContext(basicContext, positionContext) {
-            complete(basicContext, positionContext, indexHelper)
+            complete(basicContext, positionContext)
         }
     }
+
 
     private fun KtAnalysisSession.complete(
         basicContext: FirBasicCompletionContext,
         positionContext: FirRawPositionCompletionContext,
-        indexHelper: IndexHelper,
     ) {
         val keywordContributor = FirKeywordCompletionContributor(basicContext)
-        val callableContributor = FirCallableCompletionContributor(basicContext, indexHelper)
-        val classifierContributor = FirClassifierCompletionContributor(basicContext, indexHelper)
+        val callableContributor = FirCallableCompletionContributor(basicContext)
+        val classifierContributor = FirClassifierCompletionContributor(basicContext)
 
         when (positionContext) {
             is FirExpressionNameReferencePositionContext -> {

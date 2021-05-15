@@ -13,8 +13,7 @@ import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScopeNameFilter
 
 internal abstract class FirContextCompletionContributorBase<C : FirNameReferenceRawPositionContext>(
-    basicContext: FirBasicCompletionContext,
-    protected val indexHelper: IndexHelper
+    basicContext: FirBasicCompletionContext
 ) : FirCompletionContributorBase<C>(basicContext) {
 
     protected val scopeNameFilter: KtScopeNameFilter =

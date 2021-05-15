@@ -17,8 +17,7 @@ import org.jetbrains.kotlin.psi.KtEnumEntry
 
 internal class FirClassifierCompletionContributor(
     basicContext: FirBasicCompletionContext,
-    indexHelper: IndexHelper
-) : FirContextCompletionContributorBase<FirNameReferenceRawPositionContext>(basicContext, indexHelper) {
+) : FirContextCompletionContributorBase<FirNameReferenceRawPositionContext>(basicContext) {
 
     override fun KtAnalysisSession.complete(positionContext: FirNameReferenceRawPositionContext) {
         val implicitScopes = originalKtFile.getScopeContextForPosition(positionContext.nameExpression).scopes

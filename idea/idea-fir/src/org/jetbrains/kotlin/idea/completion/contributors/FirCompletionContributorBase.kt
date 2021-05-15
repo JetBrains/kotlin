@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.idea.completion.KotlinFirLookupElementFactory
 import org.jetbrains.kotlin.idea.completion.context.FirBasicCompletionContext
 import org.jetbrains.kotlin.idea.completion.context.FirRawPositionCompletionContext
 import org.jetbrains.kotlin.idea.completion.weighers.Weighers
+import org.jetbrains.kotlin.idea.fir.low.level.api.IndexHelper
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
@@ -29,6 +30,7 @@ internal abstract class FirCompletionContributorBase<C : FirRawPositionCompletio
     protected val fakeKtFile: KtFile get() = basicContext.fakeKtFile
     protected val project: Project get() = basicContext.project
     protected val targetPlatform: TargetPlatform get() = basicContext.targetPlatform
+    protected val indexHelper: IndexHelper get() = basicContext.indexHelper
     protected val lookupElementFactory: KotlinFirLookupElementFactory get() = basicContext.lookupElementFactory
 
     abstract fun KtAnalysisSession.complete(positionContext: C)
