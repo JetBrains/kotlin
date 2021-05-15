@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
+import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.getContainingCallableNamesIfPresent
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.Name
 
-class FirOnlyCallablesScope(val delegate: FirScope) : FirScope() {
+class FirOnlyCallablesScope(val delegate: FirScope) : FirScope(), FirContainingNamesAwareScope {
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         return delegate.processFunctionsByName(name, processor)
     }
@@ -21,4 +23,8 @@ class FirOnlyCallablesScope(val delegate: FirScope) : FirScope() {
 
     override val scopeOwnerLookupNames: List<String>
         get() = delegate.scopeOwnerLookupNames
+
+    override fun getCallableNames(): Set<Name> = delegate.getContainingCallableNamesIfPresent()
+
+    override fun getClassifierNames(): Set<Name> = emptySet()
 }
