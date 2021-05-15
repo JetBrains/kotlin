@@ -32,12 +32,24 @@ import org.jetbrains.kotlin.test.Directives
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.test.TestFiles
 import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 import java.io.Closeable
 import java.io.File
 import java.lang.Boolean.getBoolean
 
 private val wasmRuntimeKlib =
     loadKlib(System.getProperty("kotlin.wasm.stdlib.path"))
+
+
+private val enableBinaryen: Boolean =
+    System.getProperty("kotlin.wasm.binaryen.enable").toBoolean()
+
+private val binaryenWasmOptTool: ExternalTool by lazy {
+    val propertyName = "kotlin.wasm.binaryen.bin"
+    val binaryenBin: String = System.getProperty(propertyName) ?: error("Please specify $propertyName")
+    ExternalTool("$binaryenBin/wasm-opt")
+}
+
 
 abstract class BasicWasmBoxTest(
     private val pathToTestDir: String,
@@ -148,8 +160,38 @@ abstract class BasicWasmBoxTest(
         outputWatFile.write(compilerResult.wat)
         outputWasmFile.writeBytes(compilerResult.wasm)
 
+        var wasmFileToRun = outputWasmFile
+
+        if (enableBinaryen) {
+            val outputOptWasmFile = outputWasmFile.withReplacedExtensionOrNull(".wasm", ".opt.wasm")!!
+            val outputOptWatFile = outputWasmFile.withReplacedExtensionOrNull(".wasm", ".opt.wat")!!
+
+            val commonArgs = arrayOf(
+                "--enable-nontrapping-float-to-int",
+                "--enable-gc",
+                "--enable-reference-types",
+                "--enable-typed-function-references",
+                "-O3",
+                outputWasmFile.absolutePath,
+            )
+
+            binaryenWasmOptTool.run(
+                *commonArgs,
+                "-o", outputOptWasmFile.absolutePath,
+            )
+
+            binaryenWasmOptTool.run(
+                *commonArgs,
+                "-S",
+                "-o", outputOptWatFile.absolutePath,
+            )
+
+            wasmFileToRun = outputOptWasmFile
+        }
+
+
         val testRunner = """
-            const wasmBinary = read(String.raw`${outputWasmFile.absoluteFile}`, 'binary');
+            const wasmBinary = read(String.raw`${wasmFileToRun.absoluteFile}`, 'binary');
             const wasmModule = new WebAssembly.Module(wasmBinary);
             const wasmInstance = new WebAssembly.Instance(wasmModule, { runtime, js_code });
 
