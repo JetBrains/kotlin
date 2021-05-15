@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 class AAA {
     class Nested
     inner class Inner

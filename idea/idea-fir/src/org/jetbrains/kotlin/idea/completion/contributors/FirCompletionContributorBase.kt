@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.idea.completion.context.FirRawPositionCompletionCont
 import org.jetbrains.kotlin.idea.completion.weighers.Weighers
 import org.jetbrains.kotlin.idea.fir.low.level.api.IndexHelper
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -42,6 +42,17 @@ internal abstract class FirCompletionContributorBase<C : FirRawPositionCompletio
                 ?.let { applyWeighers(it, symbol, expectedType) }
                 ?.let(result::addElement)
         }
+    }
+
+    protected fun KtAnalysisSession.addClassifierSymbolToCompletion(symbol: KtClassifierSymbol, insertFqName: Boolean) {
+        if (symbol !is KtNamedSymbol) return
+        val lookup = with(lookupElementFactory) {
+            when (symbol) {
+                is KtClassLikeSymbol -> createLookupElementForClassLikeSymbol(symbol, insertFqName)
+                is KtTypeParameterSymbol -> createLookupElement(symbol)
+            }
+        } ?: return
+        result.addElement(lookup)
     }
 
     private fun KtAnalysisSession.applyWeighers(

@@ -13,15 +13,12 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.diagnostic.logger
-import com.intellij.openapi.editor.Document
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.completion.handlers.isTextAt
-import com.intellij.psi.util.PsiUtil
 import org.jetbrains.kotlin.idea.core.asFqNameWithRootPrefixIfNeeded
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.analyse
-import org.jetbrains.kotlin.idea.frontend.api.analyseInDependedAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.addImportToFile
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
@@ -54,6 +51,13 @@ internal class KotlinFirLookupElementFactory {
             .withPsiElement(symbol.psi) // TODO check if it is a heavy operation and should be postponed
             .withIcon(KotlinFirIconProvider.getIconFor(symbol))
     }
+
+    fun KtAnalysisSession.createLookupElementForClassLikeSymbol(symbol: KtClassLikeSymbol, insertFqName: Boolean = true): LookupElement? {
+        if (symbol !is KtNamedSymbol) return null
+        return classLookupElementFactory.createLookup(symbol, insertFqName)
+            .withPsiElement(symbol.psi) // TODO check if it is a heavy operation and should be postponed
+            .withIcon(KotlinFirIconProvider.getIconFor(symbol))
+    }
 }
 
 private sealed class CallableImportStrategy {
@@ -71,7 +75,7 @@ private interface KotlinLookupObject {
     val shortName: Name
 }
 
-private data class ClassifierLookupObject(override val shortName: Name, val classId: ClassId?) : KotlinLookupObject
+private data class ClassifierLookupObject(override val shortName: Name, val classId: ClassId?, val insertFqName: Boolean) : KotlinLookupObject
 
 /**
  * Simplest lookup object so two lookup elements for the same function will clash.
@@ -93,10 +97,10 @@ private data class VariableLookupObject(
     val importStrategy: CallableImportStrategy
 ) : KotlinLookupObject
 
-private class ClassLookupElementFactory {
-    fun createLookup(symbol: KtClassLikeSymbol): LookupElementBuilder {
+class ClassLookupElementFactory {
+    fun createLookup(symbol: KtClassLikeSymbol, insertFqName: Boolean = true): LookupElementBuilder {
         val name = symbol.nameOrAnonymous
-        return LookupElementBuilder.create(ClassifierLookupObject(name, symbol.classIdIfNonLocal), name.asString())
+        return LookupElementBuilder.create(ClassifierLookupObject(name, symbol.classIdIfNonLocal, insertFqName), name.asString())
             .withInsertHandler(ClassifierInsertionHandler)
     }
 }
@@ -202,7 +206,7 @@ private object ClassifierInsertionHandler : InsertHandler<LookupElement> {
         val targetFile = context.file as? KtFile ?: return
         val lookupObject = item.`object` as ClassifierLookupObject
 
-        if (lookupObject.classId != null) {
+        if (lookupObject.classId != null && lookupObject.insertFqName) {
             val fqName = lookupObject.classId.asSingleFqName()
 
             context.document.replaceString(context.startOffset, context.tailOffset, fqName.render())
