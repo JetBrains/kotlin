@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.idea.completion.handlers.isTextAt
 import org.jetbrains.kotlin.idea.core.asFqNameWithRootPrefixIfNeeded
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.analyse
+import org.jetbrains.kotlin.idea.frontend.api.components.KtTypeRendererOptions
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.addImportToFile
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
@@ -119,7 +120,7 @@ private class VariableLookupElementFactory {
         )
 
         return LookupElementBuilder.create(lookupObject, symbol.name.asString())
-            .withTypeText(symbol.annotatedType.type.render())
+            .withTypeText(symbol.annotatedType.type.render(WITH_TYPE_RENDERING_OPTIONS))
             .markIfSyntheticJavaProperty(symbol)
             .withInsertHandler(VariableInsertionHandler)
     }
@@ -163,7 +164,7 @@ private class FunctionLookupElementFactory {
         return try {
             LookupElementBuilder.create(lookupObject, symbol.name.asString())
                 .withTailText(getTailText(symbol), true)
-                .withTypeText(symbol.annotatedType.type.render())
+                .withTypeText(symbol.annotatedType.type.render(WITH_TYPE_RENDERING_OPTIONS))
                 .withInsertHandler(FunctionInsertionHandler)
         } catch (e: Throwable) {
             if (e is ControlFlowException) throw e
@@ -197,6 +198,8 @@ private class FunctionLookupElementFactory {
         private val LOG = logger<FunctionLookupElementFactory>()
     }
 }
+
+private val WITH_TYPE_RENDERING_OPTIONS = KtTypeRendererOptions.SHORT_NAMES
 
 /**
  * The simplest implementation of the insertion handler for a classifiers.
@@ -399,7 +402,7 @@ private object ShortNamesRenderer {
         function.valueParameters.joinToString(", ", "(", ")") { renderFunctionParameter(it) }
 
     private fun KtAnalysisSession.renderFunctionParameter(param: KtValueParameterSymbol): String =
-        "${if (param.isVararg) "vararg " else ""}${param.name.asString()}: ${param.annotatedType.type.render()}"
+        "${if (param.isVararg) "vararg " else ""}${param.name.asString()}: ${param.annotatedType.type.render(WITH_TYPE_RENDERING_OPTIONS)}"
 }
 
 

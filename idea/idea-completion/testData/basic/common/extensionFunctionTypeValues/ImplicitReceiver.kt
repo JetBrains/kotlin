@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 class C
 
 fun C.test(foo: C.() -> Unit) {

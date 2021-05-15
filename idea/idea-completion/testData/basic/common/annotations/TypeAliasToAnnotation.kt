@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 annotation class Anno
 typealias TypedAnno = Anno
 

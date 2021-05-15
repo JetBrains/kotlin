@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 @kotlin.concurrent.<caret>
 
 // INVOCATION_COUNT: 2
