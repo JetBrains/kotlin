@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.completion.contributors
 
-import org.jetbrains.kotlin.idea.completion.CompletionVisibilityChecker
+import org.jetbrains.kotlin.idea.completion.checkers.CompletionVisibilityChecker
 import org.jetbrains.kotlin.idea.completion.context.FirBasicCompletionContext
 import org.jetbrains.kotlin.idea.fir.low.level.api.IndexHelper
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession

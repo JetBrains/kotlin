@@ -10,6 +10,8 @@ import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PsiJavaPatterns
 import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
+import org.jetbrains.kotlin.idea.completion.checkers.CompletionVisibilityChecker
+import org.jetbrains.kotlin.idea.completion.checkers.ExtensionApplicabilityChecker
 import org.jetbrains.kotlin.idea.completion.context.FirBasicCompletionContext
 import org.jetbrains.kotlin.idea.completion.context.FirNameReferencePositionContext
 import org.jetbrains.kotlin.idea.completion.context.FirPositionCompletionContextDetector
@@ -25,7 +27,6 @@ import org.jetbrains.kotlin.idea.frontend.api.components.KtScopeContext
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtCompositeScope
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScope
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.idea.frontend.api.types.KtClassType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -101,22 +102,6 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
         if (invocationCount == 0 && prefixMatcher.prefix.isEmpty() && AFTER_INTEGER_LITERAL_AND_DOT.accepts(position)) return true
 
         return false
-    }
-}
-
-internal fun interface ExtensionApplicabilityChecker {
-    fun KtAnalysisSession.isApplicable(symbol: KtCallableSymbol): Boolean
-}
-
-internal fun interface CompletionVisibilityChecker {
-    fun KtAnalysisSession.isVisible(symbol: KtSymbolWithVisibility): Boolean
-
-    fun KtAnalysisSession.isVisible(symbol: KtCallableSymbol): Boolean {
-        return symbol !is KtSymbolWithVisibility || isVisible(symbol as KtSymbolWithVisibility)
-    }
-
-    fun KtAnalysisSession.isVisible(symbol: KtClassifierSymbol): Boolean {
-        return symbol !is KtSymbolWithVisibility || isVisible(symbol as KtSymbolWithVisibility)
     }
 }
 
