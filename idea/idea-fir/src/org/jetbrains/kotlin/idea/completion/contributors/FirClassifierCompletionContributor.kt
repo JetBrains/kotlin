@@ -26,14 +26,14 @@ internal class FirClassifierCompletionContributor(
     ) {
         val classesFromScopes = implicitScopes
             .getClassifierSymbols(scopeNameFilter)
-            .filter { visibilityChecker.isVisible(it) }
+            .filter { with(visibilityChecker) { isVisible(it) } }
 
         classesFromScopes.forEach { addSymbolToCompletion(expectedType, it) }
 
         val kotlinClassesFromIndices = indexHelper.getKotlinClasses(scopeNameFilter, psiFilter = { it !is KtEnumEntry })
         kotlinClassesFromIndices.asSequence()
             .map { it.getSymbol() as KtClassifierSymbol }
-            .filter { visibilityChecker.isVisible(it) }
+            .filter { with(visibilityChecker) { isVisible(it) } }
             .forEach { addSymbolToCompletion(expectedType, it) }
     }
 }

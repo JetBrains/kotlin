@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.idea.completion.context.FirNameReferencePositionCont
 import org.jetbrains.kotlin.idea.completion.context.FirPositionCompletionContextDetector
 import org.jetbrains.kotlin.idea.completion.context.FirUnknownPositionContext
 import org.jetbrains.kotlin.idea.completion.contributors.FirClassifierCompletionContributor
-import org.jetbrains.kotlin.idea.completion.contributors.FirCompletionContributorBase
 import org.jetbrains.kotlin.idea.completion.contributors.FirContextCompletionContributorBase
 import org.jetbrains.kotlin.idea.completion.contributors.FirKeywordCompletionContributor
 import org.jetbrains.kotlin.idea.completion.weighers.Weighers
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.components.KtScopeContext
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtCompositeScope
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScope
-import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.idea.frontend.api.types.KtClassType
@@ -107,17 +105,17 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
 }
 
 internal fun interface ExtensionApplicabilityChecker {
-    fun isApplicable(symbol: KtCallableSymbol): Boolean
+    fun KtAnalysisSession.isApplicable(symbol: KtCallableSymbol): Boolean
 }
 
 internal fun interface CompletionVisibilityChecker {
-    fun isVisible(symbol: KtSymbolWithVisibility): Boolean
+    fun KtAnalysisSession.isVisible(symbol: KtSymbolWithVisibility): Boolean
 
-    fun isVisible(symbol: KtCallableSymbol): Boolean {
+    fun KtAnalysisSession.isVisible(symbol: KtCallableSymbol): Boolean {
         return symbol !is KtSymbolWithVisibility || isVisible(symbol as KtSymbolWithVisibility)
     }
 
-    fun isVisible(symbol: KtClassifierSymbol): Boolean {
+    fun KtAnalysisSession.isVisible(symbol: KtClassifierSymbol): Boolean {
         return symbol !is KtSymbolWithVisibility || isVisible(symbol as KtSymbolWithVisibility)
     }
 }
@@ -191,8 +189,8 @@ private class KotlinWithNameReferenceCompletionProvider(
         val typeOfPossibleReceiver = explicitReceiver.getKtType()
         val possibleReceiverScope = typeOfPossibleReceiver.getTypeScope() ?: return
 
-        val nonExtensionMembers = possibleReceiverScope.collectNonExtensions(visibilityChecker)
-        val extensionNonMembers = implicitScopes.collectSuitableExtensions(extensionChecker, visibilityChecker)
+        val nonExtensionMembers = collectNonExtensions(possibleReceiverScope, visibilityChecker)
+        val extensionNonMembers = collectSuitableExtensions(implicitScopes, extensionChecker, visibilityChecker)
 
         nonExtensionMembers.forEach { addSymbolToCompletion(expectedType, it) }
         extensionNonMembers.forEach { addSymbolToCompletion(expectedType, it) }
@@ -210,8 +208,8 @@ private class KotlinWithNameReferenceCompletionProvider(
         val (implicitScopes, implicitReceivers) = implicitScopesContext
         val implicitReceiversTypes = implicitReceivers.map { it.type }
 
-        val availableNonExtensions = implicitScopes.collectNonExtensions(visibilityChecker)
-        val extensionsWhichCanBeCalled = implicitScopes.collectSuitableExtensions(extensionChecker, visibilityChecker)
+        val availableNonExtensions = collectNonExtensions(implicitScopes, visibilityChecker)
+        val extensionsWhichCanBeCalled = collectSuitableExtensions(implicitScopes, extensionChecker, visibilityChecker)
 
         availableNonExtensions.forEach { addSymbolToCompletion(expectedType, it) }
         extensionsWhichCanBeCalled.forEach { addSymbolToCompletion(expectedType, it) }
@@ -220,7 +218,7 @@ private class KotlinWithNameReferenceCompletionProvider(
             val topLevelCallables = indexHelper.getTopLevelCallables(scopeNameFilter)
             topLevelCallables.asSequence()
                 .map { it.getSymbol() as KtCallableSymbol }
-                .filter { visibilityChecker.isVisible(it) }
+                .filter { with(visibilityChecker) { isVisible(it) } }
                 .forEach { addSymbolToCompletion(expectedType, it) }
         }
 
@@ -242,23 +240,24 @@ private class KotlinWithNameReferenceCompletionProvider(
 
         return topLevelExtensions.asSequence()
             .map { it.getSymbol() as KtCallableSymbol }
-            .filter { visibilityChecker.isVisible(it) }
-            .filter { extensionChecker.isApplicable(it) }
+            .filter { with(visibilityChecker) { isVisible(it) } }
+            .filter { with(extensionChecker) { isApplicable(it) } }
     }
 
-    private fun KtScope.collectNonExtensions(visibilityChecker: CompletionVisibilityChecker) =
-        getCallableSymbols(scopeNameFilter)
+    private fun KtAnalysisSession.collectNonExtensions(scope: KtScope, visibilityChecker: CompletionVisibilityChecker) =
+        scope.getCallableSymbols(scopeNameFilter)
             .filterNot { it.isExtension }
-            .filter { visibilityChecker.isVisible(it) }
+            .filter { with(visibilityChecker) { isVisible(it) } }
 
-    private fun KtCompositeScope.collectSuitableExtensions(
+    private fun KtAnalysisSession.collectSuitableExtensions(
+        scope: KtCompositeScope,
         hasSuitableExtensionReceiver: ExtensionApplicabilityChecker,
         visibilityChecker: CompletionVisibilityChecker,
     ): Sequence<KtCallableSymbol> =
-        getCallableSymbols(scopeNameFilter)
+        scope.getCallableSymbols(scopeNameFilter)
             .filter { it.isExtension }
-            .filter { visibilityChecker.isVisible(it) }
-            .filter { hasSuitableExtensionReceiver.isApplicable(it) }
+            .filter { with(visibilityChecker) { isVisible(it) } }
+            .filter { with(hasSuitableExtensionReceiver) { isApplicable(it) } }
 
     private fun KtAnalysisSession.findAllNamesOfTypes(implicitReceiversTypes: List<KtType>) =
         implicitReceiversTypes.flatMapTo(hashSetOf()) { with(typeNamesProvider) { findAllNames(it) } }
