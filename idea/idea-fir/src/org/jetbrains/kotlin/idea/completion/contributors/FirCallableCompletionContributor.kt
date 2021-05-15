@@ -19,40 +19,41 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtClassType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtUserType
 
 internal class FirCallableCompletionContributor(
     basicContext: FirBasicCompletionContext,
     indexHelper: IndexHelper
-) : FirContextCompletionContributorBase(basicContext, indexHelper) {
+) : FirContextCompletionContributorBase<FirNameReferencePositionContext>(basicContext, indexHelper) {
     private val typeNamesProvider = TypeNamesProvider(indexHelper)
 
     private val shouldCompleteTopLevelCallablesFromIndex: Boolean
         get() = prefixMatcher.prefix.isNotEmpty()
 
-    fun KtAnalysisSession.complete(positionContext: FirNameReferencePositionContext, visibilityChecker: CompletionVisibilityChecker) =
-        with(positionContext) {
-            val expectedType = nameExpression.getExpectedType()
-            val scopesContext = originalKtFile.getScopeContextForPosition(nameExpression)
+    override fun KtAnalysisSession.complete(positionContext: FirNameReferencePositionContext): Unit = with(positionContext) {
+        val visibilityChecker = CompletionVisibilityChecker.create(basicContext, positionContext)
+        val expectedType = nameExpression.getExpectedType()
+        val scopesContext = originalKtFile.getScopeContextForPosition(nameExpression)
 
-            val extensionChecker = ExtensionApplicabilityChecker {
-                it.checkExtensionIsSuitable(originalKtFile, nameExpression, explicitReceiver)
-            }
-
-            when {
-                explicitReceiver != null -> {
-                    collectDotCompletion(
-                        scopesContext.scopes,
-                        explicitReceiver,
-                        expectedType,
-                        extensionChecker,
-                        visibilityChecker,
-                    )
-                }
-
-                else -> completeWithoutReceiver(scopesContext, expectedType, extensionChecker, visibilityChecker)
-            }
+        val extensionChecker = ExtensionApplicabilityChecker {
+            it.checkExtensionIsSuitable(originalKtFile, nameExpression, explicitReceiver)
         }
+
+        val receiver = explicitReceiver
+
+        when {
+            receiver != null -> {
+                collectDotCompletion(
+                    scopesContext.scopes,
+                    receiver,
+                    expectedType,
+                    extensionChecker,
+                    visibilityChecker,
+                )
+            }
+
+            else -> completeWithoutReceiver(scopesContext, expectedType, extensionChecker, visibilityChecker)
+        }
+    }
 
 
     private fun KtAnalysisSession.completeWithoutReceiver(

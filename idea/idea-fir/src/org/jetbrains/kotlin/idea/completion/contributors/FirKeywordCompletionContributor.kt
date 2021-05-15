@@ -8,15 +8,13 @@ package org.jetbrains.kotlin.idea.completion.contributors
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.openapi.module.Module
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.completion.context.FirBasicCompletionContext
 import org.jetbrains.kotlin.idea.completion.context.FirNameReferencePositionContext
-import org.jetbrains.kotlin.idea.completion.context.FirPositionCompletionContext
+import org.jetbrains.kotlin.idea.completion.context.FirRawPositionCompletionContext
 import org.jetbrains.kotlin.idea.completion.context.FirUnknownPositionContext
 import org.jetbrains.kotlin.idea.completion.contributors.keywords.OverrideKeywordHandler
 import org.jetbrains.kotlin.idea.completion.contributors.keywords.ReturnKeywordHandler
-import org.jetbrains.kotlin.idea.completion.contributors.keywords.ReturnKeywordHandler.createLookups
 import org.jetbrains.kotlin.idea.completion.contributors.keywords.ThisKeywordHandler
 import org.jetbrains.kotlin.idea.completion.keywords.CompletionKeywordHandlerProvider
 import org.jetbrains.kotlin.idea.completion.keywords.CompletionKeywordHandlers
@@ -27,7 +25,8 @@ import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.*
 
-internal class FirKeywordCompletionContributor(basicContext: FirBasicCompletionContext) : FirCompletionContributorBase(basicContext) {
+internal class FirKeywordCompletionContributor(basicContext: FirBasicCompletionContext) :
+    FirCompletionContributorBase<FirRawPositionCompletionContext>(basicContext) {
     private val keywordCompletion = KeywordCompletion(object : KeywordCompletion.LanguageVersionSettingProvider {
         override fun getLanguageVersionSetting(element: PsiElement) = element.languageVersionSettings
         override fun getLanguageVersionSetting(module: Module) = module.languageVersionSettings
@@ -35,9 +34,7 @@ internal class FirKeywordCompletionContributor(basicContext: FirBasicCompletionC
 
     private val resolveDependentCompletionKeywordHandlers = ResolveDependentCompletionKeywordHandlerProvider(basicContext)
 
-    fun KtAnalysisSession.completeKeywords(
-        positionContext: FirPositionCompletionContext
-    ) {
+    override fun KtAnalysisSession.complete(positionContext: FirRawPositionCompletionContext) {
         val expression = when (positionContext) {
             is FirNameReferencePositionContext -> {
                 val reference = positionContext.reference
@@ -50,6 +47,7 @@ internal class FirKeywordCompletionContributor(basicContext: FirBasicCompletionC
         }
         completeWithResolve(expression ?: positionContext.position, expression)
     }
+
 
     fun KtAnalysisSession.completeWithResolve(position: PsiElement, expression: KtExpression?) {
         complete(position) { lookupElement, keyword ->

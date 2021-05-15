@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.completion.contributors
 
 import org.jetbrains.kotlin.idea.completion.checkers.CompletionVisibilityChecker
 import org.jetbrains.kotlin.idea.completion.context.FirBasicCompletionContext
+import org.jetbrains.kotlin.idea.completion.context.FirNameReferenceRawPositionContext
 import org.jetbrains.kotlin.idea.fir.low.level.api.IndexHelper
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScope
@@ -17,12 +18,11 @@ import org.jetbrains.kotlin.psi.KtEnumEntry
 internal class FirClassifierCompletionContributor(
     basicContext: FirBasicCompletionContext,
     indexHelper: IndexHelper
-) : FirContextCompletionContributorBase(basicContext, indexHelper) {
+) : FirContextCompletionContributorBase<FirNameReferenceRawPositionContext>(basicContext, indexHelper) {
 
-    fun KtAnalysisSession.collectTypesCompletion(
-        implicitScopes: KtScope,
-        visibilityChecker: CompletionVisibilityChecker,
-    ) {
+    override fun KtAnalysisSession.complete(positionContext: FirNameReferenceRawPositionContext) {
+        val implicitScopes = originalKtFile.getScopeContextForPosition(positionContext.nameExpression).scopes
+        val visibilityChecker = CompletionVisibilityChecker.create(basicContext, positionContext)
         val classesFromScopes = implicitScopes
             .getClassifierSymbols(scopeNameFilter)
             .filter { with(visibilityChecker) { isVisible(it) } }

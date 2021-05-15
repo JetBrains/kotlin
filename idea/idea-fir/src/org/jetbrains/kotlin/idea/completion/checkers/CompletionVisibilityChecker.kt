@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.idea.completion.checkers
 
+import org.jetbrains.kotlin.idea.completion.context.FirBasicCompletionContext
+import org.jetbrains.kotlin.idea.completion.context.FirNameReferenceRawPositionContext
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassifierSymbol
@@ -19,5 +21,19 @@ internal fun interface CompletionVisibilityChecker {
 
     fun KtAnalysisSession.isVisible(symbol: KtClassifierSymbol): Boolean {
         return symbol !is KtSymbolWithVisibility || isVisible(symbol as KtSymbolWithVisibility)
+    }
+
+    companion object {
+        fun create(
+            basicContext: FirBasicCompletionContext,
+            positionContext: FirNameReferenceRawPositionContext
+        ): CompletionVisibilityChecker = CompletionVisibilityChecker {
+            basicContext.parameters.invocationCount > 1 || isVisible(
+                it,
+                basicContext.originalKtFile.getFileSymbol(),
+                positionContext.explicitReceiver,
+                positionContext.position
+            )
+        }
     }
 }
