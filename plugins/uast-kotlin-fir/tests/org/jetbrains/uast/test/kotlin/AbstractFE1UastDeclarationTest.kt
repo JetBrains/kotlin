@@ -6,7 +6,7 @@
 package org.jetbrains.uast.test.kotlin
 
 import org.jetbrains.uast.UFile
-import org.jetbrains.uast.common.kotlin.FirUastRenderLogTestBase
+import org.jetbrains.uast.test.common.kotlin.FirUastRenderLogTestBase
 import java.io.File
 
 abstract class AbstractFE1UastDeclarationTest : AbstractKotlinUastTest(), FirUastRenderLogTestBase {
