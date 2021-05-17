@@ -28,11 +28,6 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
         }
 
-        @TestMetadata("companionConstantChanged")
-        public void testCompanionConstantChanges() throws Exception {
-            runTest("jps-plugin/testData/incremental/pureKotlin/companionConstantChanged/");
-        }
-
         @TestMetadata("accessingFunctionsViaPackagePart")
         public void testAccessingFunctionsViaPackagePart() throws Exception {
             runTest("jps-plugin/testData/incremental/pureKotlin/accessingFunctionsViaPackagePart/");
@@ -120,6 +115,11 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
         @TestMetadata("classSignatureUnchanged")
         public void testClassSignatureUnchanged() throws Exception {
             runTest("jps-plugin/testData/incremental/pureKotlin/classSignatureUnchanged/");
+        }
+
+        @TestMetadata("companionConstantChanged")
+        public void testCompanionConstantChanged() throws Exception {
+            runTest("jps-plugin/testData/incremental/pureKotlin/companionConstantChanged/");
         }
 
         @TestMetadata("compilationErrorThenFixedOtherPackage")
