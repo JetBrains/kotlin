@@ -25,15 +25,17 @@ dependencies {
     implementation(project(":idea:idea-frontend-api"))
     implementation(project(":idea:idea-frontend-fir"))
 
-    testImplementation(toolsJar())
     testImplementation(commonDep("junit:junit"))
     testCompileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl") }
     testImplementation(projectTests(":compiler:tests-common"))
     testImplementation(projectTests(":idea:idea-test-framework"))
     testImplementation(projectTests(":idea"))
     testImplementation(projectTests(":idea:idea-fir"))
+    testImplementation(projectTests(":plugins:uast-kotlin-base"))
     // To compare various aspects (e.g., render, log, type, value, etc.) against legacy UAST Kotlin
     testImplementation(projectTests(":plugins:uast-kotlin"))
+
+    testRuntimeOnly(toolsJar())
 }
 
 sourceSets {

@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.uast.common.kotlin
+package org.jetbrains.uast.test.common.kotlin
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.test.KtAssert

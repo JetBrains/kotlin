@@ -18,11 +18,11 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.uast.UFile
 import org.jetbrains.uast.UastFacade
 import org.jetbrains.uast.UastLanguagePlugin
-import org.jetbrains.uast.common.kotlin.FirUastPluginSelection
 import org.jetbrains.uast.kotlin.BaseKotlinUastResolveProviderService
 import org.jetbrains.uast.kotlin.FirKotlinUastResolveProviderService
 import org.jetbrains.uast.kotlin.firKotlinUastPlugin
 import org.jetbrains.uast.kotlin.internal.FirCliKotlinUastResolveProviderService
+import org.jetbrains.uast.test.common.kotlin.FirUastPluginSelection
 import java.io.File
 
 abstract class AbstractFirUastTest : KotlinLightCodeInsightFixtureTestCase(), FirUastPluginSelection {

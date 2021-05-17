@@ -5,6 +5,6 @@
 
 package org.jetbrains.uast.test.kotlin
 
-import org.jetbrains.uast.common.kotlin.FirLegacyUastRenderLogTestBase
+import org.jetbrains.uast.test.common.kotlin.FirLegacyUastRenderLogTestBase
 
 abstract class AbstractFirLegacyUastDeclarationTest : AbstractFirUastDeclarationTest(), FirLegacyUastRenderLogTestBase

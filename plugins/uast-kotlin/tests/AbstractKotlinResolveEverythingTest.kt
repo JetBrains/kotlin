@@ -11,16 +11,13 @@ import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.uast.*
 import org.jetbrains.uast.test.common.kotlin.IndentedPrintingVisitor
-import org.jetbrains.uast.test.common.kotlin.visitUFileAndGetResult
 import org.jetbrains.uast.test.env.kotlin.assertEqualsToFile
 import java.io.File
-
 
 abstract class AbstractKotlinResolveEverythingTest : AbstractKotlinUastTest() {
 
     private fun getTestFile(testName: String, ext: String) =
         File(File(TEST_KOTLIN_MODEL_DIR, testName).canonicalPath + '.' + ext)
-
 
     private fun UFile.resolvableWithTargets() = object : IndentedPrintingVisitor(KtBlockExpression::class) {
         override fun render(element: PsiElement) =

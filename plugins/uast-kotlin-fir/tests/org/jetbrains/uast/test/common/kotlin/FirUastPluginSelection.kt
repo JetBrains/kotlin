@@ -3,10 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.uast.common.kotlin
+package org.jetbrains.uast.test.common.kotlin
 
-import org.jetbrains.uast.common.kotlin.FirUastTestSuffix.FE10_SUFFIX
-import org.jetbrains.uast.common.kotlin.FirUastTestSuffix.FIR_SUFFIX
+import org.jetbrains.uast.test.common.kotlin.FirUastTestSuffix.FE10_SUFFIX
+import org.jetbrains.uast.test.common.kotlin.FirUastTestSuffix.FIR_SUFFIX
 
 interface FirUastPluginSelection {
     // Whether this is FIR UAST plugin or FE 1.0 UAST plugin

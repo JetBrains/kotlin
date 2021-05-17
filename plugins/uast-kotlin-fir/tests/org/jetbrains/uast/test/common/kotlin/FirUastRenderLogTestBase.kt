@@ -3,12 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.uast.common.kotlin
+package org.jetbrains.uast.test.common.kotlin
 
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.uast.UFile
 import org.jetbrains.uast.asRecursiveLogString
-import org.jetbrains.uast.common.kotlin.FirUastTestSuffix.TXT
+import org.jetbrains.uast.test.common.kotlin.FirUastTestSuffix.TXT
 import java.io.File
 
 interface FirUastRenderLogTestBase : FirUastPluginSelection, FirUastFileComparisonTestBase {
