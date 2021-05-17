@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
+import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
@@ -251,12 +252,19 @@ class IrDefaultLambda(
     override fun mapAsmMethod(sourceCompiler: SourceCompilerForInline, isPropertyReference: Boolean): Method {
         val context = (sourceCompiler as IrSourceCompilerForInline).codegen.context
         typeArguments = (irValueParameter.type as IrSimpleType).arguments.let {
-            // Property references only have an erased `get` method, while function references and lambdas
-            // have a non-erased `invoke` with an erased synthetic bridge, and we want to inline the former.
             if (isPropertyReference) {
+                // Property references: `(A) -> B` => `get(Any?): Any?`
                 List(it.size) { context.irBuiltIns.anyNType }
             } else {
-                it.map { argument -> (argument as IrTypeProjection).type }
+                // Non-suspend function references and lambdas: `(A) -> B` => `invoke(A): B`
+                // Suspend function references: `suspend (A) -> B` => `invoke(A, Continuation<B>): Any?`
+                // TODO: default suspend lambdas are currently uninlinable
+                it.mapTo(mutableListOf()) { argument -> (argument as IrTypeProjection).type }.apply {
+                    if (irValueParameter.type.isSuspendFunction()) {
+                        set(size - 1, context.ir.symbols.continuationClass.typeWith(get(size - 1)))
+                        add(context.irBuiltIns.anyNType)
+                    }
+                }
             }
         }
         val base = if (isPropertyReference) OperatorNameConventions.GET.asString() else OperatorNameConventions.INVOKE.asString()

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
+import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.builtins.isSuspendFunctionTypeOrSubtype
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.DescriptorAsmUtil.getMethodAsmFlags
@@ -352,13 +353,23 @@ class PsiDefaultLambda(
         get() = invokeMethodDescriptor.returnType
 
     override fun mapAsmMethod(sourceCompiler: SourceCompilerForInline, isPropertyReference: Boolean): Method {
-        invokeMethodDescriptor = parameterDescriptor.type.memberScope
+        val substitutedDescriptor = parameterDescriptor.type.memberScope
             .getContributedFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.FROM_BACKEND)
-            .single().let {
-                // Property references only have an erased `get` method, while function references and lambdas
-                // have a non-erased `invoke` with an erased synthetic bridge, and we want to inline the former.
-                if (isPropertyReference) it.original else it
-            }
+            .single()
+        invokeMethodDescriptor = when {
+            // Property references: `(A) -> B` => `get(Any?): Any?`
+            isPropertyReference -> substitutedDescriptor.original
+            // Suspend function references: `suspend (A) -> B` => `invoke(A, Continuation<B>): Any?`
+            // TODO: default suspend lambdas are currently uninlinable
+            parameterDescriptor.type.isSuspendFunctionType ->
+                getOrCreateJvmSuspendFunctionView(
+                    substitutedDescriptor,
+                    sourceCompiler.state.languageVersionSettings.isReleaseCoroutines(),
+                    sourceCompiler.state.bindingContext
+                )
+            // Non-suspend function references and lambdas: `(A) -> B` => `invoke(A): B`
+            else -> substitutedDescriptor
+        }
         return sourceCompiler.state.typeMapper.mapSignatureSkipGeneric(invokeMethodDescriptor).asmMethod
     }
 }
