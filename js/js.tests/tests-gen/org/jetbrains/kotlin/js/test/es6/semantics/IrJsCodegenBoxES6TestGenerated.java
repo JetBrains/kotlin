@@ -13579,6 +13579,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
             runTest("compiler/testData/codegen/box/inlineClasses/unboxReceiverOnCallingMethodFromInlineClass.kt");
         }
 
+        @TestMetadata("unboxResultParameterWhenCapturingToCrossinlineLambda.kt")
+        public void testUnboxResultParameterWhenCapturingToCrossinlineLambda() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxResultParameterWhenCapturingToCrossinlineLambda.kt");
+        }
+
         @TestMetadata("unboxValueFromPlatformType.kt")
         public void testUnboxValueFromPlatformType() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/unboxValueFromPlatformType.kt");
