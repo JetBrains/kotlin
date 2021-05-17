@@ -265,7 +265,7 @@ class RunExternalTestGroup extends JavaExec implements CompilerRunner {
         return text
     }
 
-    List<TestFile> createTestFiles(String src) {
+    List<TestFile> createTestFiles(String src, TestModule defaultModule) {
         def identifier = /[a-zA-Z_][a-zA-Z0-9_]/
         def fullQualified = /[a-zA-Z_][a-zA-Z0-9_.]/
         def importRegex = /(?m)^\s*import\s+/
@@ -279,8 +279,12 @@ class RunExternalTestGroup extends JavaExec implements CompilerRunner {
         def imports = []
         def classes = []
         def vars = new HashSet<String>()  // variables that has the same name as a package
-        TestModule mainModule = null
-        def testFiles = TestDirectivesKt.buildCompileList(project.rootProject.file(src).toPath(), "$outputDirectory/${project.rootProject.file(src).name}")
+        TestModule mainModule = defaultModule
+        def testFiles = TestDirectivesKt.buildCompileList(
+                project.rootProject.file(src).toPath(),
+                "$outputDirectory/${project.rootProject.file(src).name}",
+                mainModule
+        )
         for (TestFile testFile : testFiles) {
             def text = testFile.text
             def filePath = testFile.path
@@ -380,8 +384,7 @@ class RunExternalTestGroup extends JavaExec implements CompilerRunner {
                         "_launcher.kt",
                         "$outputDirectory/$src/_launcher.kt".toString(),
                         launcherText,
-                        mainModule ?: testFiles.collect { it.module }.find { it.isDefaultModule() }
-                                ?: TestModule.default()
+                        mainModule
                 )
         )
         return testFiles
@@ -505,6 +508,8 @@ fun runTest() {
             }
         }
 
+        def defaultModule = TestModule.default()
+
         testGroupReporter.suite(name) { suite ->
             // Build tests in the group
             flags = (flags ?: []) + "-tr"
@@ -514,8 +519,13 @@ fun runTest() {
                 if (isEnabledForNativeBackend(src)) {
                     // Create separate output directory for each test in the group.
                     parseLanguageFlags(src)
-                    compileList.addAll(createTestFiles(src))
+                    compileList.addAll(createTestFiles(src, defaultModule))
                 }
+            }
+            if (compileList.any { it.module.dependencies.contains("support") }) {
+                def supportModule = TestModule.support()
+                compileList.add(new TestFile("helpers.kt", "$outputDirectory/helpers.kt",
+                        CoroutineTestUtilKt.createTextForHelpers(), supportModule))
             }
             compileList*.writeTextToFile()
             try {
@@ -532,7 +542,9 @@ fun runTest() {
                 } else {
                     // Regular compilation with modules.
                     Map<String, TestModule> modules = compileList.stream()
-                            .map { it.module }
+                            .map {
+                                println(it.module)
+                                it.module }
                             .distinct()
                             .collect(Collectors.toMap({ it.name }, UnaryOperator.identity()))
 
@@ -542,6 +554,7 @@ fun runTest() {
                     def compiler = new MultiModuleCompilerInvocations(this, outputDirectory, executablePath(), modules, flags)
 
                     orderedModules.reverse().each { module ->
+                        println("${module.name}  ${module.dependencies}")
                         if (!module.isDefaultModule()) {
                             compiler.produceLibrary(module)
                         }
