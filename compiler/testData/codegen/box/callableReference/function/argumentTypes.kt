@@ -1,13 +1,7 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: CALLABLE_REFERENCES_FAIL
-inline fun <TT> id(x: TT): TT = x
-inline fun <TT> String.extId(x: TT): String = this
+fun <T> id(x: T): T = x
+fun <T> String.extId(x: T): T = x
 
-private fun <T> ff(value: T?): String {
-    // In PSI2IR, the funcref is approximated to Function1<Nothing, Pair<String, T>>
-    value?.let(::id)
-    return value?.let("OK"::extId)!!
-}
+fun <T> foo(value: T?): T? = value?.let(::id) // ::id = KFunction1<T!!, T!!>
+fun <T> bar(value: T?): T? = value?.let(""::extId)
 
-fun box() = ff("arg")
-
+fun box() = foo("O")!! + bar("K")!!

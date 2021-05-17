@@ -191,16 +191,22 @@ class TypeTranslator(
 
     private val isWithNewInference = languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
 
+    private val typeApproximatorConfiguration =
+        object : TypeApproximatorConfiguration.AllFlexibleSameValue() {
+            override val allFlexible: Boolean get() = true
+            override val errorType: Boolean get() = true
+            override val integerLiteralType: Boolean get() = true
+            override val intersectionTypesInContravariantPositions: Boolean get() = true
+        }
+
     private fun approximateByKotlinRules(ktType: KotlinType): KotlinType =
         if (isWithNewInference) {
             if (ktType.constructor.isDenotable && ktType.arguments.isEmpty())
                 ktType
             else
-                typeApproximatorForNI.approximateDeclarationType(
-                    ktType,
-                    local = false,
-                    languageVersionSettings = languageVersionSettings
-                )
+                substituteAlternativesInPublicType(ktType).let {
+                    typeApproximatorForNI.approximateToSuperType(it, typeApproximatorConfiguration) ?: it
+                }
         } else {
             // Hack to preserve *-projections in arguments in OI.
             // Expected to be removed as soon as OI is deprecated.

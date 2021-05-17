@@ -116,6 +116,7 @@ class ExpressionCodegen(
     val classCodegen: ClassCodegen,
     val inlinedInto: ExpressionCodegen?,
     val smap: SourceMapper,
+    val reifiedTypeParametersUsages: ReifiedTypeParametersUsages,
 ) : IrElementVisitor<PromisedValue, BlockInfo>, BaseExpressionCodegen {
 
     var finallyDepth = 0
@@ -1391,32 +1392,13 @@ class ExpressionCodegen(
 
     override fun consumeReifiedOperationMarker(typeParameter: TypeParameterMarker) {
         require(typeParameter is IrTypeParameterSymbol)
-        // This is a hack to work around the problem in LocalDeclarationsLowering. Specifically, suppose an inline
-        // lambda uses a reified type parameter declared by a function:
-        //
-        //     object {
-        //         inline fun <reified T : Any> f() = run { T::class.java.getName() }
-        //     }
-        //
-        // LocalDeclarationsLowering would extract that lambda into a method of the enclosing type, but will not create
-        // a reified type parameter in it (in fact, the lambda method isn't even marked as inline):
-        //
-        //     object {
-        //         /* static */ private fun `f$lambda-0`() = T::class.java.getName()
-        //         inline fun <reified T : Any> f() = run(::`f$lambda-0`)
-        //     }
-        //
-        // The parent of the type parameter then is not `irFunction` (i.e. the lambda itself), but the function
-        // it is inlined into.
-        //
-        // TODO make LocalDeclarationsLowering handle captured type parameters and only compare with `irFunction`.
-        if (generateSequence(this) { it.inlinedInto }.none { it.irFunction == typeParameter.owner.parent }) {
-            classCodegen.reifiedTypeParametersUsages.addUsedReifiedParameter(typeParameter.owner.name.asString())
+        if (irFunction != typeParameter.owner.parent) {
+            reifiedTypeParametersUsages.addUsedReifiedParameter(typeParameter.owner.name.asString())
         }
     }
 
     override fun propagateChildReifiedTypeParametersUsages(reifiedTypeParametersUsages: ReifiedTypeParametersUsages) {
-        classCodegen.reifiedTypeParametersUsages.propagateChildUsagesWithinContext(reifiedTypeParametersUsages) {
+        this.reifiedTypeParametersUsages.propagateChildUsagesWithinContext(reifiedTypeParametersUsages) {
             irFunction.typeParameters.filter { it.isReified }.map { it.name.asString() }.toSet()
         }
     }

@@ -264,7 +264,7 @@ class MethodInliner(
                         visitInsn(Opcodes.NOP)
                     }
 
-                    inlineOnlySmapSkipper?.onInlineLambdaStart(remappingMethodAdapter, info, sourceMapper.parent)
+                    inlineOnlySmapSkipper?.onInlineLambdaStart(remappingMethodAdapter, info.node.node, sourceMapper.parent)
                     addInlineMarker(this, true)
                     val lambdaParameters = info.addAllParameters(nodeRemapper)
 
@@ -289,6 +289,7 @@ class MethodInliner(
                     val lambdaResult = inliner.doInline(localVariablesSorter, varRemapper, true, info.returnLabels, invokeCall.finallyDepthShift)
                     result.mergeWithNotChangeInfo(lambdaResult)
                     result.reifiedTypeParametersUsages.mergeAll(lambdaResult.reifiedTypeParametersUsages)
+                    result.reifiedTypeParametersUsages.mergeAll(info.reifiedTypeParametersUsages)
 
                     StackValue
                         .onStack(info.invokeMethod.returnType, info.invokeMethodReturnType)
