@@ -1,4 +1,3 @@
-// SKIP_DCE_DRIVEN
 interface IFoo {
     fun foo(): String
 }

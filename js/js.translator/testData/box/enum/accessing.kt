@@ -1,4 +1,3 @@
-// SKIP_DCE_DRIVEN
 // EXPECTED_REACHABLE_NODES: 1309
 package foo
 

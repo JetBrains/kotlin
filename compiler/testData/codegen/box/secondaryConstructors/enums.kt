@@ -1,4 +1,3 @@
-// SKIP_DCE_DRIVEN
 
 enum class A1(val prop1: String) {
     X("asd"),

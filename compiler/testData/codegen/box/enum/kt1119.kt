@@ -1,4 +1,3 @@
-// SKIP_DCE_DRIVEN
 enum class Direction() {
     NORTH {
         val someSpecialValue = "OK"

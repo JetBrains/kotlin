@@ -1,4 +1,3 @@
-// SKIP_DCE_DRIVEN
 enum class A(val b: String) {
     E1("OK"){ override fun t() = b };
 
