@@ -143,7 +143,7 @@ extern "C" struct SourceInfo Kotlin_getSourceInfo(void* addr) {
     CSSymbolRef symbol = CSSymbolOwnerGetSymbolWithAddress(symbolOwner, address);
     if (CSIsNull(symbol))
       return result;
-    SYM_LOG("Kotlin_getSourceInfo: address: %p\n", addr);
+    SYM_LOG("Kotlin_getSourceInfo: address: (%p) {\n", addr);
     SYM_DUMP(symbol);
 
 
@@ -175,8 +175,10 @@ extern "C" struct SourceInfo Kotlin_getSourceInfo(void* addr) {
           int32_t lineNumber = CSSourceInfoGetLineNumber(ref);
           if (lineNumber == 0)
             return 0;
-          SYM_DUMP(ref);
           CSRange range = CSSourceInfoGetRange(ref);
+          SYM_LOG("ref(%p .. %p) [{\n", (void *)rangeRef.location,  (void *)(range.location + range.length));
+          SYM_DUMP(ref);
+          SYM_DUMP(CSSourceInfoGetSymbol(ref));
           const char* fileName = CSSourceInfoGetPath(ref);
           /**
            * We need to change API fo Kotlin_getSourceInfo to return information about inlines,
@@ -197,10 +199,11 @@ extern "C" struct SourceInfo Kotlin_getSourceInfo(void* addr) {
           if (continueUpdateResult &&  (address >= range.location
                                         && address < range.location + range.length))
              continueUpdateResult = false;
-
+          SYM_LOG("}]\n");
           return 0;
    });
   }
+  SYM_LOG("}\n");
   return result;
 }
 
