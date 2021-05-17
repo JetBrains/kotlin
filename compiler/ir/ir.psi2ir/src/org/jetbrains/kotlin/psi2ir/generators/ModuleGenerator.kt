@@ -89,7 +89,7 @@ class ModuleGenerator(
             referenceExpectsForUsedActuals(expectDescriptorToSymbol, context.symbolTable, irFile)
         }
 
-        irFile.acceptChildrenVoid(IrSyntheticDeclarationGenerator(context))
+        IrSyntheticDeclarationGenerator(context).generateSyntheticDeclarations(irFile)
 
         insertImplicitCasts(irFile, context)
         context.callToSubstitutedDescriptorMap.clear()
