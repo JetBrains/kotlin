@@ -83,7 +83,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                     }
                 }
                 is IrClass -> {
-                    classBlock.statements += JsClassGenerator(declaration, context).generate()
+//                    classBlock.statements += JsClassGenerator(declaration, context).generate()
                 }
                 is IrField -> {
                 }
