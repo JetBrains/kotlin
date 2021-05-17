@@ -1,0 +1,7 @@
+ClassA -> UClass (name = ClassA)
+justParam -> UParameter (name = justParam)
+Int -> [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+paramAndProp -> UParameter (name = paramAndProp)
+String -> [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+writebleProp -> UField (name = writebleProp)
+Int -> [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)

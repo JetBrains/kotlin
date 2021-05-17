@@ -1,0 +1,3 @@
+withoutSetter -> UField (name = withoutSetter)
+get -> [!] UnknownKotlinExpression (PROPERTY_ACCESSOR)
+field -> [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)

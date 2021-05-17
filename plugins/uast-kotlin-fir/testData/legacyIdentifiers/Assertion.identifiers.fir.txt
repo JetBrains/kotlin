@@ -1,0 +1,6 @@
+foo -> UMethod (name = foo)
+String -> [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+    s -> [!] UnknownKotlinExpression (PROPERTY)
+    String -> [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+    s -> [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+    !! -> [!] UnknownKotlinExpression (OPERATION_REFERENCE)
