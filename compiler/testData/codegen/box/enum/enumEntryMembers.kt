@@ -1,5 +1,4 @@
 // WITH_RUNTIME
-// SKIP_DCE_DRIVEN
 // MODULE: lib
 // FILE: lib.kt
 enum class Foo {

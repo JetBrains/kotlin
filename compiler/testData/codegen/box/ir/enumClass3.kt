@@ -1,4 +1,3 @@
-// SKIP_DCE_DRIVEN
 //WITH_RUNTIME
 import kotlin.test.assertEquals
 

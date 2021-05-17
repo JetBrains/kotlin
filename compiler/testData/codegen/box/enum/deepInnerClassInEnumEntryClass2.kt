@@ -1,4 +1,3 @@
-// SKIP_DCE_DRIVEN
 enum class A {
     X {
         val k = "K"

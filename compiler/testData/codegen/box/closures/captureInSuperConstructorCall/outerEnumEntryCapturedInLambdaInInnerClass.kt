@@ -1,4 +1,3 @@
-// SKIP_DCE_DRIVEN
 abstract class Base(val fn: () -> Test)
 
 enum class Test(val ok: String) {

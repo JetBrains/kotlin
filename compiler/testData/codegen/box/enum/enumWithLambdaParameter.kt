@@ -1,4 +1,3 @@
-// SKIP_DCE_DRIVEN
 // KT-4423 Enum with function not compiled
 // SKIP_MANGLE_VERIFICATION
 

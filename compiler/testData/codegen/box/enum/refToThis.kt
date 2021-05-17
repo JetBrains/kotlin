@@ -1,4 +1,3 @@
-// SKIP_DCE_DRIVEN
 enum class Enum {
     ENUM_VALUE {
         override fun test() = ENUM_VALUE

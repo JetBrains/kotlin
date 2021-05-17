@@ -1,4 +1,3 @@
-// SKIP_DCE_DRIVEN
 fun <T, R> T.letNoInline(fn: (T) -> R) =
         fn(this)
 
