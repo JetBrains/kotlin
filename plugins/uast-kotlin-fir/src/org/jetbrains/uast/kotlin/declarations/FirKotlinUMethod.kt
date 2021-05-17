@@ -61,7 +61,7 @@ open class FirKotlinUMethod(
             is KtPropertyAccessor -> sourcePsi.namePlaceholder
             else -> sourcePsi?.navigationElement
         }
-        FirKotlinUIdentifier(nameIdentifier, identifierSourcePsi, this)
+        KotlinUIdentifier(nameIdentifier, identifierSourcePsi, this)
     }
 
     override val uastBody: UExpression? by lz {
@@ -139,7 +139,7 @@ class FirKotlinConstructorUMethod(
         get() = sourcePsi is KtPrimaryConstructor || sourcePsi is KtClassOrObject
 
     override val uastAnchor: UIdentifier? by lz {
-        FirKotlinUIdentifier(
+        KotlinUIdentifier(
             javaPsi.nameIdentifier,
             if (isPrimary) ktClass?.nameIdentifier else (sourcePsi as? KtSecondaryConstructor)?.getConstructorKeyword(),
             this

@@ -20,7 +20,6 @@ import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtPostfixExpression
 import org.jetbrains.uast.*
-import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 import org.jetbrains.uast.kotlin.internal.DelegatedMultiResolve
 
 class KotlinUPostfixExpression(

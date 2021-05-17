@@ -23,7 +23,7 @@ sealed class AbstractFirKotlinUVariable(
 
     override fun getNameIdentifier(): PsiIdentifier {
         val kotlinOrigin = (sourcePsi as? KtLightElement<*, *>)?.kotlinOrigin
-        return FirUastLightIdentifier(psi, kotlinOrigin as? KtDeclaration)
+        return UastLightIdentifier(psi, kotlinOrigin as? KtDeclaration)
     }
 
     override fun getContainingFile(): PsiFile = unwrapFakeFileForLightClass(psi.containingFile)
@@ -41,7 +41,7 @@ sealed class AbstractFirKotlinUVariable(
             is KtLambdaExpression -> sourcePsi.functionLiteral.lBrace
             else -> sourcePsi
         } ?: return@lz null
-        FirKotlinUIdentifier(nameIdentifier, identifierSourcePsi, this)
+        KotlinUIdentifier(nameIdentifier, identifierSourcePsi, this)
     }
 
     override val typeReference: UTypeReferenceExpression? by lz {

@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.uast.*
 import org.jetbrains.uast.internal.acceptList
-import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 import org.jetbrains.uast.kotlin.internal.TypedResolveResult
 import org.jetbrains.uast.kotlin.internal.getReferenceVariants
 import org.jetbrains.uast.visitor.UastVisitor

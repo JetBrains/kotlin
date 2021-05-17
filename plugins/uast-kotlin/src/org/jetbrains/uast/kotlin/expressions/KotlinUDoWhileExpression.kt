@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.psi.KtDoWhileExpression
 import org.jetbrains.uast.UDoWhileExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UIdentifier
-import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 
 class KotlinUDoWhileExpression(
         override val sourcePsi: KtDoWhileExpression,

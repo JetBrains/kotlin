@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.psi.KtLabeledExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UIdentifier
 import org.jetbrains.uast.ULabeledExpression
-import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 
 class KotlinULabeledExpression(
         override val sourcePsi: KtLabeledExpression,

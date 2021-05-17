@@ -201,11 +201,11 @@ internal object FirKotlinConverter {
                             if (element.elementType != KtTokens.OBJECT_KEYWORD ||
                                 element.getParentOfType<KtObjectDeclaration>(false)?.nameIdentifier == null
                             )
-                                el<UIdentifier>(build(::FirKotlinUIdentifier))
+                                el<UIdentifier>(build(::KotlinUIdentifier))
                             else null
                         }
                         element.elementType in KtTokens.OPERATIONS && element.parent is KtOperationReferenceExpression -> {
-                            el<UIdentifier>(build(::FirKotlinUIdentifier))
+                            el<UIdentifier>(build(::KotlinUIdentifier))
                         }
                         element.elementType == KtTokens.LBRACKET && element.parent is KtCollectionLiteralExpression -> {
                             // TODO: need counterpart of UCollectionLiteralExpression
