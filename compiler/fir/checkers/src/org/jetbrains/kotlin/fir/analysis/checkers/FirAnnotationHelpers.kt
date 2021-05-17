@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers
 
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -35,25 +36,15 @@ fun FirRegularClass.getRetention(): AnnotationRetention {
     return AnnotationRetention.values().firstOrNull { it.name == retentionName } ?: AnnotationRetention.RUNTIME
 }
 
-private val defaultAnnotationTargets = listOf(
-    AnnotationTarget.CLASS,
-    AnnotationTarget.PROPERTY,
-    AnnotationTarget.FIELD,
-    AnnotationTarget.LOCAL_VARIABLE,
-    AnnotationTarget.VALUE_PARAMETER,
-    AnnotationTarget.CONSTRUCTOR,
-    AnnotationTarget.FUNCTION,
-    AnnotationTarget.PROPERTY_GETTER,
-    AnnotationTarget.PROPERTY_SETTER,
-)
+private val defaultAnnotationTargets = KotlinTarget.DEFAULT_TARGET_SET
 
-fun FirAnnotationCall.getAllowedAnnotationTargets(session: FirSession): List<AnnotationTarget> {
-    if (annotationTypeRef is FirErrorTypeRef) return AnnotationTarget.values().toList()
+fun FirAnnotationCall.getAllowedAnnotationTargets(session: FirSession): Set<KotlinTarget> {
+    if (annotationTypeRef is FirErrorTypeRef) return KotlinTarget.values().toSet()
     val annotationClass = (this.annotationTypeRef.coneType as? ConeClassLikeType)?.lookupTag?.toSymbol(session)?.fir as? FirRegularClass
     return annotationClass?.getAllowedAnnotationTargets() ?: defaultAnnotationTargets
 }
 
-fun FirRegularClass.getAllowedAnnotationTargets(): List<AnnotationTarget> {
+fun FirRegularClass.getAllowedAnnotationTargets(): Set<KotlinTarget> {
     val targetAnnotation = getTargetAnnotation() ?: return defaultAnnotationTargets
     val arguments = when (val targetArgument = targetAnnotation.findSingleArgumentByName(TARGET_PARAMETER_NAME)) {
         is FirVarargArgumentsExpression -> targetArgument.arguments
@@ -61,10 +52,10 @@ fun FirRegularClass.getAllowedAnnotationTargets(): List<AnnotationTarget> {
         else -> return defaultAnnotationTargets
     }
 
-    return arguments.mapNotNull { argument ->
+    return arguments.mapNotNullTo(mutableSetOf()) { argument ->
         val targetExpression = argument as? FirQualifiedAccessExpression
-        val targetName = (targetExpression?.calleeReference as? FirResolvedNamedReference)?.name?.asString() ?: return@mapNotNull null
-        AnnotationTarget.values().firstOrNull { target -> target.name == targetName }
+        val targetName = (targetExpression?.calleeReference as? FirResolvedNamedReference)?.name?.asString() ?: return@mapNotNullTo null
+        KotlinTarget.values().firstOrNull { target -> target.name == targetName }
     }
 }
 

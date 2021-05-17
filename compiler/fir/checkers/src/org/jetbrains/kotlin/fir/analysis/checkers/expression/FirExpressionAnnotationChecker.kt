@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
@@ -27,7 +28,7 @@ object FirExpressionAnnotationChecker : FirBasicExpressionChecker() {
         ) return
         for (annotation in expression.annotations) {
             withSuppressedDiagnostics(annotation, context) {
-                if (AnnotationTarget.EXPRESSION !in annotation.getAllowedAnnotationTargets(context.session)) {
+                if (KotlinTarget.EXPRESSION !in annotation.getAllowedAnnotationTargets(context.session)) {
                     reporter.reportOn(annotation.source, FirErrors.WRONG_ANNOTATION_TARGET, "expression", context)
                 }
             }

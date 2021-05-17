@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtNodeTypes.FUN
 import org.jetbrains.kotlin.KtNodeTypes.VALUE_PARAMETER
 import org.jetbrains.kotlin.descriptors.ClassKind.ANNOTATION_CLASS
 import org.jetbrains.kotlin.descriptors.ClassKind.ENUM_CLASS
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.checkConstantArguments
@@ -35,7 +36,7 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker() {
         }
 
         if (declaration.getRetention() != AnnotationRetention.SOURCE &&
-            AnnotationTarget.EXPRESSION in declaration.getAllowedAnnotationTargets()
+            KotlinTarget.EXPRESSION in declaration.getAllowedAnnotationTargets()
         ) {
             val target = declaration.getRetentionAnnotation() ?: declaration.getTargetAnnotation() ?: declaration
             reporter.reportOn(target.source, FirErrors.RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION, context)
