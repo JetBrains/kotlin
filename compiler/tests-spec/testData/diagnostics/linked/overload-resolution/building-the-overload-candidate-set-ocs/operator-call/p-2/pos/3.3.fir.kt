@@ -55,9 +55,9 @@ class Case() {
         /*operator*/ fun E.plus(value: Int) = Case()
 
         run {
-            <!DEBUG_INFO_CALL("fqName: testPackCase1.Case.E.plus; typeCall: function")!>e + 1<!>
+            <!DEBUG_INFO_CALL("fqName: libPackage1.plus; typeCall: operator extension function")!>e + 1<!>
         }
-        <!DEBUG_INFO_CALL("fqName: testPackCase1.Case.E.plus; typeCall: function")!>e + 1<!>
+        <!DEBUG_INFO_CALL("fqName: libPackage1.plus; typeCall: operator extension function")!>e + 1<!>
 
     }
 }
@@ -105,9 +105,9 @@ class Case() {
         run {
             /*operator*/ fun E.plus(value: Int) = Case()
 
-            <!DEBUG_INFO_CALL("fqName: testPackCase2.Case.E.plus; typeCall: function")!>e + 1<!>
+            <!DEBUG_INFO_CALL("fqName: libPackage1.plus; typeCall: operator extension function")!>e + 1<!>
         }
-        <!DEBUG_INFO_CALL("fqName: testPackCase2.Case.E.plus; typeCall: function")!>e + 1<!>
+        <!DEBUG_INFO_CALL("fqName: libPackage1.plus; typeCall: operator extension function")!>e + 1<!>
     }
 }
 

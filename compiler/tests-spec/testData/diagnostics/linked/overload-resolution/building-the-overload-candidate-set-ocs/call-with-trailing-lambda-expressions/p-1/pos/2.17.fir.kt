@@ -95,17 +95,17 @@ class A() {
 
     fun bar(a: A) {
         //todo: add info if function is infix one
-        <!DEBUG_INFO_CALL("fqName: testPackNew.A.foo; typeCall: function")!>a foo {1}<!>
+        <!DEBUG_INFO_CALL("fqName: testPackNew.A.foo; typeCall: infix extension function")!>a foo {1}<!>
     }
 
     fun buz(a: A) {
         fun foo(i: ()->Int) {}
         //todo: add info if function is infix one
-        <!DEBUG_INFO_CALL("fqName: testPackNew.A.foo; typeCall: function")!>a foo {1}<!>
+        <!DEBUG_INFO_CALL("fqName: testPackNew.A.foo; typeCall: infix extension function")!>a foo {1}<!>
     }
 
     fun boo(a: A) {
         infix fun A.foo(i: ()->Int) {}
-        <!DEBUG_INFO_CALL("fqName: testPackNew.A.foo; typeCall: function")!>a foo {1}<!>
+        <!DEBUG_INFO_CALL("fqName: testPackNew.A.boo.foo; typeCall: infix extension function")!>a foo {1}<!>
     }
 }

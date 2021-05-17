@@ -267,6 +267,7 @@ class ExpressionsConverter(
                 }
                 explicitReceiver = leftArgAsFir
                 argumentList = buildUnaryArgumentList(rightArgAsFir)
+                origin = if (conventionCallName != null) FirFunctionCallOrigin.OPERATOR else FirFunctionCallOrigin.INFIX
             }
         } else {
             val firOperation = operationToken.toFirOperation()

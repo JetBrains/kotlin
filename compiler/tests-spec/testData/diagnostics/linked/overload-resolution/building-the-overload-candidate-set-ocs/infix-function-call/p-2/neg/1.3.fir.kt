@@ -27,7 +27,7 @@ import libPackage.contains
 
 fun case1() {
     val regex = Regex("")
-   "" contains  regex
+   "" <!INFIX_MODIFIER_REQUIRED!>contains<!>  regex
 }
 
 // FILE: TestCase2.kt
@@ -44,5 +44,6 @@ fun case2() {
     }
 
     val regex = Regex("")
-    "" contains  regex
+    "" <!INFIX_MODIFIER_REQUIRED!>contains<!>  regex
 }
+

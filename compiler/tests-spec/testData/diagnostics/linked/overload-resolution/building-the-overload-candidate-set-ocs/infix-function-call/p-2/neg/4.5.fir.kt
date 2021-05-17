@@ -17,5 +17,5 @@ import libPackage.* //nothing to import, extension is private
 // TESTCASE NUMBER: 1
 fun case1() {
     val regex = Regex("")
-    "" contains regex
+    "" <!INFIX_MODIFIER_REQUIRED!>contains<!> regex
 }
