@@ -41,9 +41,13 @@ internal open class FirClassifierCompletionContributor(
         receiver: KtExpression,
         visibilityChecker: CompletionVisibilityChecker
     ) {
-        val reference = receiver.mainReference ?: return
-        val symbol = reference.resolveToSymbol() as? KtSymbolWithMembers ?: return
-        symbol.getMemberScope()
+        val reference = receiver.reference() ?: return
+        val scope = when (val symbol = reference.resolveToSymbol()) {
+            is KtSymbolWithMembers -> symbol.getMemberScope()
+            is KtPackageSymbol -> symbol.getPackageScope()
+            else -> return
+        }
+        scope
             .getClassifierSymbols(scopeNameFilter)
             .filter { filterClassifiers(it) }
             .filter { with(visibilityChecker) { isVisible(it) } }

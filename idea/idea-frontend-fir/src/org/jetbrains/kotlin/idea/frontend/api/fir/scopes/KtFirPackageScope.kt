@@ -48,19 +48,21 @@ internal class KtFirPackageScope(
 
     override fun getPossibleCallableNames() = withValidityAssertion {
         hashSetOf<Name>().apply {
-            KotlinTopLevelPropertyByPackageIndex.getInstance()[fqName.asString(), project, firScope.session.searchScope]
+            KotlinTopLevelPropertyByPackageIndex.getInstance()[fqName.asString(), project, searchScope]
                 .mapNotNullTo(this) { it.nameAsName }
-            KotlinTopLevelFunctionByPackageIndex.getInstance()[fqName.asString(), project, firScope.session.searchScope]
+            KotlinTopLevelFunctionByPackageIndex.getInstance()[fqName.asString(), project, searchScope]
                 .mapNotNullTo(this) { it.nameAsName }
         }
     }
 
     override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
-        KotlinTopLevelClassByPackageIndex.getInstance()[fqName.asString(), project, firScope.session.searchScope]
-            .mapNotNullTo(hashSetOf()) { it.nameAsName }
+        hashSetOf<Name>().apply {
+            KotlinTopLevelClassByPackageIndex.getInstance()[fqName.asString(), project, searchScope]
+                .mapNotNullTo(this) { it.nameAsName }
 
-        KotlinTopLevelTypeAliasByPackageIndex.getInstance()[fqName.asString(), project, firScope.session.searchScope]
-            .mapNotNullTo(hashSetOf()) { it.nameAsName }
+            KotlinTopLevelTypeAliasByPackageIndex.getInstance()[fqName.asString(), project, searchScope]
+                .mapNotNullTo(this) { it.nameAsName }
+        }
     }
 
     override fun getCallableSymbols(nameFilter: KtScopeNameFilter): Sequence<KtCallableSymbol> = withValidityAssertion {

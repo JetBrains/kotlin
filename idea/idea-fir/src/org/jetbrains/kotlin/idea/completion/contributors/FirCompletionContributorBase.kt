@@ -20,8 +20,11 @@ import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 
 internal abstract class FirCompletionContributorBase<C : FirRawPositionCompletionContext>(protected val basicContext: FirBasicCompletionContext) {
@@ -59,6 +62,11 @@ internal abstract class FirCompletionContributorBase<C : FirRawPositionCompletio
             }
         } ?: return
         result.addElement(lookup)
+    }
+
+    protected fun KtExpression.reference() = when (this) {
+        is KtDotQualifiedExpression -> selectorExpression?.mainReference
+        else -> mainReference
     }
 
     private fun KtAnalysisSession.applyWeighers(

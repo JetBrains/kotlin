@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.idea.frontend.api.scopes.KtCompositeScope
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScope
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPackageSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtClassType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.psi.KtExpression
@@ -83,6 +84,35 @@ internal class FirCallableCompletionContributor(
     }
 
     private fun KtAnalysisSession.collectDotCompletion(
+        implicitScopes: KtCompositeScope,
+        explicitReceiver: KtExpression,
+        expectedType: KtType?,
+        extensionChecker: ExtensionApplicabilityChecker,
+        visibilityChecker: CompletionVisibilityChecker,
+    ) {
+        val packageSymbol = explicitReceiver.reference()?.resolveToSymbol() as? KtPackageSymbol
+        if (packageSymbol == null) {
+            collectDotCompletionForCallableReceiver(implicitScopes, explicitReceiver, expectedType, extensionChecker, visibilityChecker)
+        } else {
+            collectDotCompletionForPackageReceiver(packageSymbol, expectedType, visibilityChecker)
+        }
+    }
+
+    private fun KtAnalysisSession.collectDotCompletionForPackageReceiver(
+        packageSymbol: KtPackageSymbol,
+        expectedType: KtType?,
+        visibilityChecker: CompletionVisibilityChecker
+    ) {
+        packageSymbol.getPackageScope()
+            .getCallableSymbols(scopeNameFilter)
+            .filterNot { it.isExtension }
+            .filter { with(visibilityChecker) { isVisible(it) } }
+            .forEach { callable ->
+                addSymbolToCompletion(expectedType, callable)
+            }
+    }
+
+    private fun KtAnalysisSession.collectDotCompletionForCallableReceiver(
         implicitScopes: KtCompositeScope,
         explicitReceiver: KtExpression,
         expectedType: KtType?,
