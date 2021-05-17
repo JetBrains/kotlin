@@ -145,57 +145,48 @@ class IncrementalCompilationFirJvmMultiProjectIT : IncrementalCompilationJvmMult
     }
 }
 
-abstract class BaseIncrementalCompilationMultiProjectIT : BaseGradleIT() {
+abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilationBaseIT() {
     override fun defaultBuildOptions(): BuildOptions =
         super.defaultBuildOptions().copy(withDaemon = true, incremental = true)
 
-    protected abstract fun defaultProject(): Project
-
     @Test
-    fun testMoveFunctionFromLib() {
-        val project = defaultProject()
-        project.build("build") {
-            assertSuccessful()
-        }
-
-        val barUseABKt = project.projectDir.getFileByName("barUseAB.kt")
-        val barInApp = File(project.projectDir, "app/src/main/kotlin/bar").apply { mkdirs() }
-        barUseABKt.copyTo(File(barInApp, barUseABKt.name))
-        barUseABKt.delete()
-
-        project.build("build") {
-            assertSuccessful()
-            val affectedSources = project.projectDir.getFilesByNames("fooCallUseAB.kt", "barUseAB.kt")
-            val relativePaths = project.relativize(affectedSources)
-            assertCompiledKotlinSources(relativePaths)
-        }
+    fun testAbiChangeInLib_changeMethodSignature() {
+        doTest(
+            "A.kt",
+            { it.replace("fun a() {}", "fun a(): Int = 1") },
+            expectedAffectedFileNames = listOf("A.kt", "B.kt", "AA.kt", "AAA.kt", "BB.kt", "barUseA.kt", "fooUseA.kt")
+        )
     }
 
     @Test
-    fun testAddNewMethodToLib() {
-        val project = defaultProject()
-        project.build("build") {
-            assertSuccessful()
-        }
-
-        val aKt = project.projectDir.getFileByName("A.kt")
-        aKt.writeText(
-            """
-package bar
-
-open class A {
-    fun a() {}
-    fun newA() {}
-}
-"""
+    fun testAbiChangeInLib_addNewMethod() {
+        doTest(
+            "A.kt",
+            { it.replace("fun a() {}", "fun a() {}\nfun newA() {}") },
+            expectedAffectedFileNames = listOf("A.kt", "B.kt", "AA.kt", "AAA.kt", "BB.kt")
         )
+    }
 
-        project.build("build") {
-            assertSuccessful()
-            val affectedSources = project.projectDir.getFilesByNames("A.kt", "B.kt", "AA.kt", "AAA.kt", "BB.kt")
-            val relativePaths = project.relativize(affectedSources)
-            assertCompiledKotlinSources(relativePaths)
-        }
+    @Test
+    fun testNonAbiChangeInLib_changeMethodBody() {
+        doTest(
+            "A.kt",
+            { it.replace("fun a() {}", "fun a() { println() }") },
+            expectedAffectedFileNames = listOf("A.kt")
+        )
+    }
+
+    @Test
+    fun testMoveFunctionFromLibToApp() {
+        doTest(
+            { project ->
+                val barUseABKt = project.projectDir.getFileByName("barUseAB.kt")
+                val barInApp = File(project.projectDir, "app/src/main/kotlin/bar").apply { mkdirs() }
+                barUseABKt.copyTo(File(barInApp, barUseABKt.name))
+                barUseABKt.delete()
+            },
+            expectedAffectedFileNames = listOf("fooCallUseAB.kt", "barUseAB.kt")
+        )
     }
 
     @Test
