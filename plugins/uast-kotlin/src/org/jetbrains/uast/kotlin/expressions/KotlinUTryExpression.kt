@@ -18,7 +18,6 @@ package org.jetbrains.uast.kotlin
 
 import org.jetbrains.kotlin.psi.KtTryExpression
 import org.jetbrains.uast.*
-import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 
 class KotlinUTryExpression(
         override val sourcePsi: KtTryExpression,

@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.psi.KtWhileExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UIdentifier
 import org.jetbrains.uast.UWhileExpression
-import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 
 class KotlinUWhileExpression(
         override val sourcePsi: KtWhileExpression,

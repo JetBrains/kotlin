@@ -23,7 +23,6 @@ import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UIdentifier
 import org.jetbrains.uast.UPrefixExpression
 import org.jetbrains.uast.UastPrefixOperator
-import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 
 class KotlinUPrefixExpression(
         override val sourcePsi: KtPrefixExpression,

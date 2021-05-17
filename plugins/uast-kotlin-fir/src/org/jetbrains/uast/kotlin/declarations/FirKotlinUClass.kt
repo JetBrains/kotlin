@@ -75,13 +75,13 @@ class FirKotlinUClass(
 
     override fun getOriginalElement(): PsiElement? = sourcePsi?.originalElement
 
-    override fun getNameIdentifier(): PsiIdentifier = FirUastLightIdentifier(psi, ktClass)
+    override fun getNameIdentifier(): PsiIdentifier = UastLightIdentifier(psi, ktClass)
 
     override fun getContainingFile(): PsiFile = unwrapFakeFileForLightClass(psi.containingFile)
 
     override val uastAnchor: UIdentifier? by lz {
         getIdentifierSourcePsi()?.let {
-            FirKotlinUIdentifier(nameIdentifier, it, this)
+            KotlinUIdentifier(nameIdentifier, it, this)
         }
     }
 
