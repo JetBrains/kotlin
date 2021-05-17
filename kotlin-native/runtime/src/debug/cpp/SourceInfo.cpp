@@ -192,10 +192,27 @@ extern "C" struct SourceInfo Kotlin_getSourceInfo(void* addr) {
           }
           /**
            * if found right inlined function don't bother with
-           * updating high level inlined _at_ source info
+           * updating high level inlined _at_ source info.
+           * TODO: Not obvious range check and definitely not accurate, but makes stack trace the same as in lldb,
+           * for border of inlined functions, e.g. for test.output/local/kt-37572/kt-37572.kt
+           *
+           * 13: fun foo() {
+           * 14:     myRun {
+           * 15:         //platform.darwin.NSObject()
+           * 16:         throwException()                  //...1000fa848        callq   "_kfun:#throwException(){}"
+           * 17:     }                                     //...1000fa84d        jmp     0x1000fa84f
+           * 18: }                                         //...1000fa84f        jmp     0x1000fa851
+           * lldb shows for `callq ...`:
+           * frame #1: 0x00000001000fa8e7 program.kexe`kfun:#throwException(){} at kt-37572.kt:25:18
+           *      frame #2: 0x00000001000fa84d program.kexe`kfun:#foo(){} [inlined] <anonymous> at kt-37572.kt:16:9
+           *      frame #3: 0x00000001000fa848 program.kexe`kfun:#foo(){} [inlined] myRun at kt-37572.kt:21
+           * but dwarfdump:
+           * dwarfdump --lookup 0x1000fa84d program.kexe.dSYM/Contents/Resources/DWARF/program.kexe
+           * ...
+           * Line info: file 'kt-37572.kt', line 17, column 6, start line 20
            */
           if (continueUpdateResult &&  (address >= range.location
-                                        && address < range.location + range.length))
+                                        && address <= range.location + range.length))
              continueUpdateResult = false;
 
           return 0;
