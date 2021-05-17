@@ -5,6 +5,7 @@
 
 package org.jetbrains.uast.kotlin
 
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.uast.DEFAULT_EXPRESSION_TYPES_LIST
 import org.jetbrains.uast.DEFAULT_TYPES_LIST
 import org.jetbrains.uast.UElement
@@ -40,3 +41,9 @@ fun <U : UElement> Array<out Class<out UElement>>.accommodate(vararg makers: UEl
 inline fun <reified U : UElement> alternative(noinline make: () -> U?) = UElementAlternative(U::class.java, make)
 
 class UElementAlternative<U : UElement>(val uType: Class<U>, val make: () -> U?)
+
+val identifiersTokens = setOf(
+    KtTokens.IDENTIFIER, KtTokens.CONSTRUCTOR_KEYWORD, KtTokens.OBJECT_KEYWORD,
+    KtTokens.THIS_KEYWORD, KtTokens.SUPER_KEYWORD,
+    KtTokens.GET_KEYWORD, KtTokens.SET_KEYWORD
+)

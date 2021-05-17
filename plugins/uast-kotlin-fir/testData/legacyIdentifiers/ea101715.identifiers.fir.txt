@@ -1,0 +1,4 @@
+a -> UMethod (name = a)
+    a -> [!] UnknownKotlinExpression (PROPERTY)
+    Obj -> [!] UnknownKotlinExpression (CALL_EXPRESSION)
+Obj -> UClass (name = Obj)

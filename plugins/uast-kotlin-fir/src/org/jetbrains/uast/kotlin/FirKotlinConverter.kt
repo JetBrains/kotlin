@@ -6,13 +6,16 @@
 package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.asJava.findFacadeClass
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.toPsiParameters
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.uast.*
 
@@ -191,6 +194,25 @@ internal object FirKotlinConverter {
                 }
                 is KtImportDirective -> {
                     el<UImportStatement>(build(::KotlinUImportStatement))
+                }
+                is LeafPsiElement -> {
+                    when {
+                        element.elementType in identifiersTokens -> {
+                            if (element.elementType != KtTokens.OBJECT_KEYWORD ||
+                                element.getParentOfType<KtObjectDeclaration>(false)?.nameIdentifier == null
+                            )
+                                el<UIdentifier>(build(::FirKotlinUIdentifier))
+                            else null
+                        }
+                        element.elementType in KtTokens.OPERATIONS && element.parent is KtOperationReferenceExpression -> {
+                            el<UIdentifier>(build(::FirKotlinUIdentifier))
+                        }
+                        element.elementType == KtTokens.LBRACKET && element.parent is KtCollectionLiteralExpression -> {
+                            // TODO: need counterpart of UCollectionLiteralExpression
+                            null
+                        }
+                        else -> null
+                    }
                 }
                 else -> null
             }

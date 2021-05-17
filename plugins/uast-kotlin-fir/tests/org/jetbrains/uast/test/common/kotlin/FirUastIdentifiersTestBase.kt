@@ -55,6 +55,9 @@ interface FirUastIdentifiersTestBase : FirUastPluginSelection, FirUastFileCompar
             }
         } catch (e: AssertionError) {
             if (!isExpectedToFail(filePath)) throw e
+        } catch (e: NotImplementedError) {
+            // TODO: Remove this catch once parent conversion in FIR UAST is implemented
+            if (!isExpectedToFail(filePath)) throw e
         }
 
         cleanUpIdenticalFile(

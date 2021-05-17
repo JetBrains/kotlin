@@ -1,0 +1,5 @@
+Foo -> UClass (name = Foo)
+bar -> UMethod (name = bar)
+x -> UField (name = x)
+Foo -> [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+bar -> [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)

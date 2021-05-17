@@ -50,4 +50,6 @@ class FirKotlinUIdentifier(
         }
         return null
     }
+
+    constructor(sourcePsi: PsiElement?, uastParent: UElement?) : this(null, sourcePsi, uastParent)
 }

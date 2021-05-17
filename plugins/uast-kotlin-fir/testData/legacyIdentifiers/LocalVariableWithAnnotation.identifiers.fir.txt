@@ -1,0 +1,4 @@
+TestAnnotation -> UClass (name = TestAnnotation)
+foo -> UMethod (name = foo)
+    TestAnnotation -> [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+    bar -> [!] UnknownKotlinExpression (PROPERTY)

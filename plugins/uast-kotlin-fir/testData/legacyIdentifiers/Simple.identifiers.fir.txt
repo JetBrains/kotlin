@@ -1,0 +1,5 @@
+Simple -> UClass (name = Simple)
+method -> UMethod (name = method)
+    println -> [!] UnknownKotlinExpression (CALL_EXPRESSION)
+property -> UField (name = property)
+String -> [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)

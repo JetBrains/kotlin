@@ -1,0 +1,7 @@
+Device -> UClass (name = Device)
+D -> [!] UnknownKotlinExpression (TYPE_PARAMETER)
+Device -> [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+D -> [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+a -> UField (name = a)
+as? -> [!] UnknownKotlinExpression (OPERATION_REFERENCE)
+Device -> [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)

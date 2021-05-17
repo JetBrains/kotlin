@@ -1,0 +1,8 @@
+SimpleAnnotated -> UClass (name = SimpleAnnotated)
+Suppress -> [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+method -> UMethod (name = method)
+    println -> [!] UnknownKotlinExpression (CALL_EXPRESSION)
+kotlin -> [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+SinceKotlin -> [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+property -> UField (name = property)
+String -> [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)

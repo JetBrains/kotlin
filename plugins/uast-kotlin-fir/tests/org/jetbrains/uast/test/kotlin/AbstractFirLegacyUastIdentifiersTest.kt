@@ -10,7 +10,7 @@ import org.jetbrains.uast.test.common.kotlin.FirLegacyUastIdentifiersTestBase
 
 abstract class AbstractFirLegacyUastIdentifiersTest : AbstractFirUastIdentifiersTest(), FirLegacyUastIdentifiersTestBase {
     override fun isExpectedToFail(filePath: String): Boolean {
-        // TODO: investigate why everything is failing!
+        // TODO: Implement parent conversion in FIR UAST
         return true
     }
 

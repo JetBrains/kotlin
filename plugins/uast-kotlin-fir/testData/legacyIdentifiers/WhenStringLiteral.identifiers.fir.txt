@@ -1,0 +1,7 @@
+a -> UField (name = a)
+readLine -> [!] UnknownKotlinExpression (CALL_EXPRESSION)
+b -> UField (name = b)
+a -> [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+a -> null
+    println -> null
+    println -> null
