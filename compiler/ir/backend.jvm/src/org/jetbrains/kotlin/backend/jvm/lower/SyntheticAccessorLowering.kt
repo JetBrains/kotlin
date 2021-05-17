@@ -70,7 +70,13 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
 
     private data class FieldKey(val fieldSymbol: IrFieldSymbol, val parent: IrDeclarationParent, val superQualifierSymbol: IrClassSymbol?)
 
-    private val functionMap = mutableMapOf<Pair<IrFunctionSymbol, IrDeclarationParent>, IrFunctionSymbol>()
+    private data class FunctionKey(
+        val functionSymbol: IrFunctionSymbol,
+        val parent: IrDeclarationParent,
+        val superQualifierSymbol: IrClassSymbol?
+    )
+
+    private val functionMap = mutableMapOf<FunctionKey, IrFunctionSymbol>()
     private val getterMap = mutableMapOf<FieldKey, IrSimpleFunctionSymbol>()
     private val setterMap = mutableMapOf<FieldKey, IrSimpleFunctionSymbol>()
 
@@ -157,7 +163,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
         // For the call to super.g in function i, the accessor to A.g must be produced in C. Therefore, we
         // cannot use the function symbol (A.g in the example) by itself as the key since there should be
         // one accessor per dispatch receiver (i.e., parent of the accessor).
-        return functionMap.getOrPut(symbol to parent) {
+        return functionMap.getOrPut(FunctionKey(symbol, parent, superQualifierSymbol)) {
             when (symbol) {
                 is IrConstructorSymbol ->
                     symbol.owner.makeConstructorAccessor()
