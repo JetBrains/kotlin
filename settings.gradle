@@ -382,7 +382,7 @@ include ":prepare:ide-plugin-dependencies:android-extensions-compiler-plugin-for
         ":prepare:ide-plugin-dependencies:compiler-components-for-jps",
         ":prepare:ide-plugin-dependencies:kotlin-compiler-tests-for-ide"
 
-if (buildProperties.getBoolean("attachedIntellijVersion", false)) {
+if (buildProperties.getOrNull("attachedIntellijVersion") != null) {
     logger.info("Including kotlin-ide modules in settings.gradle")
     new File(rootDir, "kotlin-ide").eachFileRecurse {
         String fileName = it.name
