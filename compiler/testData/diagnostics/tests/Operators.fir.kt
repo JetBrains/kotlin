@@ -64,7 +64,7 @@ fun test() {
     a.get(1)
     a.get("str")
 
-    c += d
+    <!OPERATOR_MODIFIER_REQUIRED!>c += d<!>
     c -= d
 
     a<!OPERATOR_MODIFIER_REQUIRED!>..<!>b
