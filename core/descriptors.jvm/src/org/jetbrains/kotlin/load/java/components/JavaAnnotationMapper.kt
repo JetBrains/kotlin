@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.*
 import org.jetbrains.kotlin.load.java.descriptors.PossiblyExternalAnnotationDescriptor
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext

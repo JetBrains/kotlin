@@ -22,18 +22,15 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.resolve.AnnotationChecker
-import org.jetbrains.kotlin.resolve.AnnotationChecker.Companion.TargetLists.EMPTY
-import org.jetbrains.kotlin.resolve.AnnotationChecker.Companion.TargetLists.T_CLASSIFIER
-import org.jetbrains.kotlin.resolve.AnnotationChecker.Companion.TargetLists.T_CONSTRUCTOR
-import org.jetbrains.kotlin.resolve.AnnotationChecker.Companion.TargetLists.T_EXPRESSION
-import org.jetbrains.kotlin.resolve.AnnotationChecker.Companion.TargetLists.T_LOCAL_VARIABLE
-import org.jetbrains.kotlin.resolve.AnnotationChecker.Companion.TargetLists.T_MEMBER_FUNCTION
-import org.jetbrains.kotlin.resolve.AnnotationChecker.Companion.TargetLists.T_MEMBER_PROPERTY
-import org.jetbrains.kotlin.resolve.AnnotationChecker.Companion.TargetLists.T_VALUE_PARAMETER_WITHOUT_VAL
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingTraceContext
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.AnnotationTargetLists.EMPTY
+import org.jetbrains.kotlin.resolve.AnnotationTargetLists.T_CLASSIFIER
+import org.jetbrains.kotlin.resolve.AnnotationTargetLists.T_CONSTRUCTOR
+import org.jetbrains.kotlin.resolve.AnnotationTargetLists.T_EXPRESSION
+import org.jetbrains.kotlin.resolve.AnnotationTargetLists.T_LOCAL_VARIABLE
+import org.jetbrains.kotlin.resolve.AnnotationTargetLists.T_MEMBER_FUNCTION
+import org.jetbrains.kotlin.resolve.AnnotationTargetLists.T_MEMBER_PROPERTY
+import org.jetbrains.kotlin.resolve.AnnotationTargetLists.T_VALUE_PARAMETER_WITHOUT_VAL
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class AddAnnotationTargetFix(annotationEntry: KtAnnotationEntry) : KotlinQuickFixAction<KtAnnotationEntry>(annotationEntry) {
@@ -100,7 +97,7 @@ private fun KtAnnotationEntry.getRequiredAnnotationTargets(annotationClass: KtCl
         .toList()
 }
 
-private fun getActualTargetList(annotated: PsiTarget): AnnotationChecker.Companion.TargetList {
+private fun getActualTargetList(annotated: PsiTarget): AnnotationTargetList {
     return when (annotated) {
         is PsiClass -> T_CLASSIFIER
         is PsiMethod ->

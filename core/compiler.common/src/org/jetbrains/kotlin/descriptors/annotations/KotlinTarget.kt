@@ -1,13 +1,11 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.descriptors.annotations
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import java.util.*
 
 // NOTE: this enum must have the same entries with kotlin.annotation.AnnotationTarget,
@@ -33,8 +31,11 @@ enum class KotlinTarget(val description: String, val isDefault: Boolean = true) 
     STAR_PROJECTION("star projection", false),
     PROPERTY_PARAMETER("property constructor parameter", false),
 
-    CLASS_ONLY("class", false),  // includes only top level classes and nested/inner classes (but not enums, objects, interfaces and local classes)
-    OBJECT("object", false),     // does not include OBJECT_LITERAL but DOES include COMPANION_OBJECT
+    // includes only top level classes and nested/inner classes (but not enums, objects, interfaces and local classes)
+    CLASS_ONLY("class", false),
+
+    // does not include OBJECT_LITERAL but DOES include COMPANION_OBJECT
+    OBJECT("object", false),
     COMPANION_OBJECT("companion object", false),
     INTERFACE("interface", false),
     ENUM_CLASS("enum class", false),
@@ -59,7 +60,7 @@ enum class KotlinTarget(val description: String, val isDefault: Boolean = true) 
     DESTRUCTURING_DECLARATION("destructuring declaration", false),
     LAMBDA_EXPRESSION("lambda expression", false),
     ANONYMOUS_FUNCTION("anonymous function", false),
-    OBJECT_LITERAL("object literal", false)
+    OBJECT_LITERAL("object literal", false),
     ;
 
     companion object {
@@ -67,7 +68,7 @@ enum class KotlinTarget(val description: String, val isDefault: Boolean = true) 
         private val map = HashMap<String, KotlinTarget>()
 
         init {
-            for (target in KotlinTarget.values()) {
+            for (target in values()) {
                 map[target.name] = target
             }
         }
@@ -78,44 +79,46 @@ enum class KotlinTarget(val description: String, val isDefault: Boolean = true) 
 
         val ALL_TARGET_SET: Set<KotlinTarget> = values().toSet()
 
-        fun classActualTargets(descriptor: ClassDescriptor): List<KotlinTarget> = when (descriptor.kind) {
+        fun classActualTargets(
+            kind: ClassKind,
+            isInnerClass: Boolean,
+            isCompanionObject: Boolean,
+            isLocalClass: Boolean
+        ): List<KotlinTarget> = when (kind) {
             ClassKind.ANNOTATION_CLASS -> listOf(ANNOTATION_CLASS, CLASS)
             ClassKind.CLASS ->
                 // inner local classes should be CLASS_ONLY, not LOCAL_CLASS
-                if (!descriptor.isInner && DescriptorUtils.isLocal(descriptor)) {
+                if (!isInnerClass && isLocalClass) {
                     listOf(LOCAL_CLASS, CLASS)
-                }
-                else {
+                } else {
                     listOf(CLASS_ONLY, CLASS)
                 }
             ClassKind.OBJECT ->
-                if (descriptor.isCompanionObject) {
+                if (isCompanionObject) {
                     listOf(COMPANION_OBJECT, OBJECT, CLASS)
-                }
-                else {
+                } else {
                     listOf(OBJECT, CLASS)
                 }
             ClassKind.INTERFACE -> listOf(INTERFACE, CLASS)
             ClassKind.ENUM_CLASS ->
-                if (DescriptorUtils.isLocal(descriptor)) {
+                if (isLocalClass) {
                     listOf(LOCAL_CLASS, CLASS)
-                }
-                else {
+                } else {
                     listOf(ENUM_CLASS, CLASS)
                 }
             ClassKind.ENUM_ENTRY -> listOf(ENUM_ENTRY, PROPERTY, FIELD)
         }
 
         val USE_SITE_MAPPING: Map<AnnotationUseSiteTarget, KotlinTarget> = mapOf(
-                AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER to VALUE_PARAMETER,
-                AnnotationUseSiteTarget.FIELD to FIELD,
-                AnnotationUseSiteTarget.PROPERTY to PROPERTY,
-                AnnotationUseSiteTarget.FILE to FILE,
-                AnnotationUseSiteTarget.PROPERTY_GETTER to PROPERTY_GETTER,
-                AnnotationUseSiteTarget.PROPERTY_SETTER to PROPERTY_SETTER,
-                AnnotationUseSiteTarget.RECEIVER to VALUE_PARAMETER,
-                AnnotationUseSiteTarget.SETTER_PARAMETER to VALUE_PARAMETER,
-                AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD to FIELD)
-
+            AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER to VALUE_PARAMETER,
+            AnnotationUseSiteTarget.FIELD to FIELD,
+            AnnotationUseSiteTarget.PROPERTY to PROPERTY,
+            AnnotationUseSiteTarget.FILE to FILE,
+            AnnotationUseSiteTarget.PROPERTY_GETTER to PROPERTY_GETTER,
+            AnnotationUseSiteTarget.PROPERTY_SETTER to PROPERTY_SETTER,
+            AnnotationUseSiteTarget.RECEIVER to VALUE_PARAMETER,
+            AnnotationUseSiteTarget.SETTER_PARAMETER to VALUE_PARAMETER,
+            AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD to FIELD
+        )
     }
 }
