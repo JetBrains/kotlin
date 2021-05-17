@@ -18,6 +18,7 @@ plugins {
 val intellijUltimateEnabled: Boolean by rootProject.extra
 val intellijReleaseType: String by rootProject.extra
 val intellijVersion = rootProject.extra["versions.intellijSdk"] as String
+val intellijVersionForIde = rootProject.intellijSdkVersionForIde()
 val asmVersion = rootProject.findProperty("versions.jar.asm-all") as String?
 val androidStudioRelease = rootProject.findProperty("versions.androidStudioRelease") as String?
 val androidStudioBuild = rootProject.findProperty("versions.androidStudioBuild") as String?
@@ -25,13 +26,18 @@ val intellijSeparateSdks: Boolean by rootProject.extra
 val installIntellijCommunity = !intellijUltimateEnabled || intellijSeparateSdks
 val installIntellijUltimate = intellijUltimateEnabled && androidStudioRelease == null
 
-val intellijVersionDelimiterIndex = intellijVersion.indexOfAny(charArrayOf('.', '-'))
-if (intellijVersionDelimiterIndex == -1) {
-    error("Invalid IDEA version $intellijVersion")
+fun checkIntellijVersion(intellijVersion: String) {
+    val intellijVersionDelimiterIndex = intellijVersion.indexOfAny(charArrayOf('.', '-'))
+    if (intellijVersionDelimiterIndex == -1) {
+        error("Invalid IDEA version $intellijVersion")
+    }
 }
+checkIntellijVersion(intellijVersion)
+intellijVersionForIde?.let { checkIntellijVersion(it) }
 
 logger.info("intellijUltimateEnabled: $intellijUltimateEnabled")
 logger.info("intellijVersion: $intellijVersion")
+logger.info("intellijVersionForIde: $intellijVersionForIde")
 logger.info("androidStudioRelease: $androidStudioRelease")
 logger.info("androidStudioBuild: $androidStudioBuild")
 logger.info("intellijSeparateSdks: $intellijSeparateSdks")
@@ -71,11 +77,16 @@ repositories {
 }
 
 val intellij by configurations.creating
+val intellijForIde by configurations.creating
 val intellijUltimate by configurations.creating
+val intellijUltimateForIde by configurations.creating
 val androidStudio by configurations.creating
 val sources by configurations.creating
+val sourcesForIde by configurations.creating
 val jpsStandalone by configurations.creating
+val jpsStandaloneForIde by configurations.creating
 val intellijCore by configurations.creating
+val intellijCoreForIde by configurations.creating
 val nodeJSPlugin by configurations.creating
 
 /**
@@ -104,9 +115,11 @@ dependencies {
     } else {
         if (installIntellijCommunity) {
             intellij("com.jetbrains.intellij.idea:ideaIC:$intellijVersion")
+            intellijVersionForIde?.let { intellijForIde("com.jetbrains.intellij.idea:ideaIC:$it") }
         }
         if (installIntellijUltimate) {
             intellijUltimate("com.jetbrains.intellij.idea:ideaIU:$intellijVersion")
+            intellijVersionForIde.let { intellijUltimateForIde("com.jetbrains.intellij.idea:ideaIU:$it") }
         }
     }
 
@@ -115,102 +128,111 @@ dependencies {
     }
 
     sources("com.jetbrains.intellij.idea:ideaIC:$intellijVersion:sources@jar")
+    intellijVersionForIde?.let { sourcesForIde("com.jetbrains.intellij.idea:ideaIC:$it:sources@jar") }
     jpsStandalone("com.jetbrains.intellij.idea:jps-standalone:$intellijVersion")
+    intellijVersionForIde?.let { jpsStandaloneForIde("com.jetbrains.intellij.idea:jps-standalone:$it") }
     intellijCore("com.jetbrains.intellij.idea:intellij-core:$intellijVersion")
+    intellijVersionForIde?.let { intellijCoreForIde("com.jetbrains.intellij.idea:intellij-core:$it") }
     if (intellijUltimateEnabled) {
         nodeJSPlugin("com.jetbrains.plugins:NodeJS:${rootProject.extra["versions.idea.NodeJS"]}@zip")
     }
 }
 
-val makeIntellijCore = buildIvyRepositoryTask(intellijCore, customDepsOrg, customDepsRepoDir)
+fun prepareDeps(intellij: Configuration, intellijCore: Configuration, sources: Configuration, intellijUltimate: Configuration, jpsStandalone: Configuration, intellijVersion: String) {
+    val makeIntellijCore = buildIvyRepositoryTask(intellijCore, customDepsOrg, customDepsRepoDir)
 
-val makeIntellijAnnotations by tasks.registering(Copy::class) {
-    dependsOn(makeIntellijCore)
+    val makeIntellijAnnotations = tasks.register("makeIntellijAnnotations${intellij.name.capitalize()}", Copy::class) {
+        dependsOn(makeIntellijCore)
 
-    val intellijCoreRepo = CleanableStore[repoDir.resolve("intellij-core").absolutePath][intellijVersion].use()
-    from(intellijCoreRepo.resolve("artifacts/annotations.jar"))
+        val intellijCoreRepo = CleanableStore[repoDir.resolve("intellij-core").absolutePath][intellijVersion].use()
+        from(intellijCoreRepo.resolve("artifacts/annotations.jar"))
 
-    val annotationsStore = CleanableStore[repoDir.resolve(intellijRuntimeAnnotations).absolutePath]
-    val targetDir = annotationsStore[intellijVersion].use()
-    into(targetDir)
+        val annotationsStore = CleanableStore[repoDir.resolve(intellijRuntimeAnnotations).absolutePath]
+        val targetDir = annotationsStore[intellijVersion].use()
+        into(targetDir)
 
-    val ivyFile = File(targetDir, "$intellijRuntimeAnnotations.ivy.xml")
-    outputs.files(ivyFile)
+        val ivyFile = File(targetDir, "$intellijRuntimeAnnotations.ivy.xml")
+        outputs.files(ivyFile)
 
-    doFirst {
-        annotationsStore.cleanStore()
+        doFirst {
+            annotationsStore.cleanStore()
+        }
+
+        doLast {
+            writeIvyXml(
+                customDepsOrg,
+                intellijRuntimeAnnotations,
+                intellijVersion,
+                intellijRuntimeAnnotations,
+                targetDir,
+                targetDir,
+                targetDir,
+                allowAnnotations = true
+            )
+        }
     }
 
-    doLast {
-        writeIvyXml(
+    val mergeSources = tasks.create("mergeSources${intellij.name.capitalize()}", Jar::class.java) {
+        dependsOn(sources)
+        isPreserveFileTimestamps = false
+        isReproducibleFileOrder = true
+        isZip64 = true
+        if (!kotlinBuildProperties.isTeamcityBuild) {
+            from(provider { sources.map(::zipTree) })
+        }
+        destinationDirectory.set(File(repoDir, sources.name))
+        archiveBaseName.set("intellij")
+        archiveClassifier.set("sources")
+        archiveVersion.set(intellijVersion)
+    }
+
+    val sourcesFile = mergeSources.outputs.files.singleFile
+
+    val makeIde = if (androidStudioBuild != null) {
+        buildIvyRepositoryTask(
+            androidStudio,
             customDepsOrg,
-            intellijRuntimeAnnotations,
-            intellijVersion,
-            intellijRuntimeAnnotations,
-            targetDir,
-            targetDir,
-            targetDir,
-            allowAnnotations = true
+            customDepsRepoDir,
+            if (androidStudioOs == "mac")
+                ::skipContentsDirectory
+            else
+                ::skipToplevelDirectory
+        )
+    } else {
+        val task = if (installIntellijUltimate) {
+            buildIvyRepositoryTask(intellijUltimate, customDepsOrg, customDepsRepoDir, null, sourcesFile)
+        } else {
+            buildIvyRepositoryTask(intellij, customDepsOrg, customDepsRepoDir, null, sourcesFile)
+        }
+
+        task.configure {
+            dependsOn(mergeSources)
+        }
+
+        task
+    }
+
+    val buildJpsStandalone = buildIvyRepositoryTask(jpsStandalone, customDepsOrg, customDepsRepoDir, null, sourcesFile)
+
+    tasks.named("build") {
+        dependsOn(
+            makeIntellijCore,
+            makeIde,
+            buildJpsStandalone,
+            makeIntellijAnnotations
         )
     }
-}
 
-val mergeSources by tasks.creating(Jar::class.java) {
-    dependsOn(sources)
-    isPreserveFileTimestamps = false
-    isReproducibleFileOrder = true
-    isZip64 = true
-    if (!kotlinBuildProperties.isTeamcityBuild) {
-        from(provider { sources.map(::zipTree) })
+    if (installIntellijUltimate) {
+        val buildNodeJsPlugin =
+            buildIvyRepositoryTask(nodeJSPlugin, customDepsOrg, customDepsRepoDir, ::skipToplevelDirectory, sourcesFile)
+        tasks.named("build") { dependsOn(buildNodeJsPlugin) }
     }
-    destinationDirectory.set(File(repoDir, sources.name))
-    archiveBaseName.set("intellij")
-    archiveClassifier.set("sources")
-    archiveVersion.set(intellijVersion)
 }
 
-val sourcesFile = mergeSources.outputs.files.singleFile
-
-val makeIde = if (androidStudioBuild != null) {
-    buildIvyRepositoryTask(
-        androidStudio,
-        customDepsOrg,
-        customDepsRepoDir,
-        if (androidStudioOs == "mac")
-            ::skipContentsDirectory
-        else
-            ::skipToplevelDirectory
-    )
-} else {
-    val task = if (installIntellijUltimate) {
-        buildIvyRepositoryTask(intellijUltimate, customDepsOrg, customDepsRepoDir, null, sourcesFile)
-    } else {
-        buildIvyRepositoryTask(intellij, customDepsOrg, customDepsRepoDir, null, sourcesFile)
-    }
-
-    task.configure {
-        dependsOn(mergeSources)
-    }
-
-    task
-}
-
-val buildJpsStandalone = buildIvyRepositoryTask(jpsStandalone, customDepsOrg, customDepsRepoDir, null, sourcesFile)
-
-tasks.named("build") {
-    dependsOn(
-        makeIntellijCore,
-        makeIde,
-        buildJpsStandalone,
-        makeIntellijAnnotations
-    )
-
-}
-
-if (installIntellijUltimate) {
-    val buildNodeJsPlugin =
-        buildIvyRepositoryTask(nodeJSPlugin, customDepsOrg, customDepsRepoDir, ::skipToplevelDirectory, sourcesFile)
-    tasks.named("build") { dependsOn(buildNodeJsPlugin) }
+prepareDeps(intellij, intellijCore, sources, intellijUltimate, jpsStandalone, intellijVersion)
+if (intellijVersionForIde != null) {
+    prepareDeps(intellijForIde, intellijCoreForIde, sourcesForIde, intellijUltimateForIde, jpsStandaloneForIde, intellijVersionForIde)
 }
 
 tasks.named<Delete>("clean") {
@@ -396,6 +418,11 @@ fun writeIvyXml(
 fun skipToplevelDirectory(path: String) = path.substringAfter('/')
 
 fun skipContentsDirectory(path: String) = path.substringAfter("Contents/")
+
+fun Project.intellijSdkVersionForIde(): String? {
+    val majorVersion = kotlinBuildProperties.getOrNull("attachedIntellijVersion") as? String ?: return null
+    return rootProject.findProperty("versions.intellijSdk.forIde.$majorVersion") as? String
+}
 
 class XMLWriter(private val outputStreamWriter: OutputStreamWriter) : Closeable {
 
