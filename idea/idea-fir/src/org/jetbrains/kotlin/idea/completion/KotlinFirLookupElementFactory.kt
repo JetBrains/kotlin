@@ -53,6 +53,16 @@ internal class KotlinFirLookupElementFactory {
             .withIcon(KotlinFirIconProvider.getIconFor(symbol))
     }
 
+    fun createPackageLookupElement(packageFqName: FqName): LookupElement {
+        return LookupElementBuilder.create(PackageLookupObject(packageFqName), packageFqName.shortName().asString())
+            .withInsertHandler(QuotedNamesAwareInsertionHandler())
+            .let {
+                if (!packageFqName.parent().isRoot) {
+                    it.appendTailText(" (${packageFqName.asString()})", true)
+                } else it
+            }
+    }
+
     fun KtAnalysisSession.createLookupElementForClassLikeSymbol(symbol: KtClassLikeSymbol, insertFqName: Boolean = true): LookupElement? {
         if (symbol !is KtNamedSymbol) return null
         return classLookupElementFactory.createLookup(symbol, insertFqName)
@@ -75,6 +85,13 @@ private class UniqueLookupObject
 private interface KotlinLookupObject {
     val shortName: Name
 }
+
+private data class PackageLookupObject(
+    val packageFqName: FqName,
+) : KotlinLookupObject {
+    override val shortName: Name = packageFqName.shortName()
+}
+
 
 private data class ClassifierLookupObject(override val shortName: Name, val classId: ClassId?, val insertFqName: Boolean) : KotlinLookupObject
 

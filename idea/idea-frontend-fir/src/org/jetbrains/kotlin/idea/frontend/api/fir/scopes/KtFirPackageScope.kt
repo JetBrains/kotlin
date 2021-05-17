@@ -6,32 +6,45 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.scopes
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.searchScope
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.idea.frontend.api.fir.components.KtFirScopeProvider
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.lazyThreadUnsafeWeakRef
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtPackageScope
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtConstructorSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPackageSymbol
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
-import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelClassByPackageIndex
-import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionByPackageIndex
-import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelPropertyByPackageIndex
-import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelTypeAliasByPackageIndex
+import org.jetbrains.kotlin.idea.search.getKotlinFqName
+import org.jetbrains.kotlin.idea.stubindex.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.jvm.isJvm
 
 internal class KtFirPackageScope(
-    firScope: FirPackageMemberScope,
+    override val fqName: FqName,
     private val project: Project,
     private val builder: KtSymbolByFirBuilder,
+    _scopeProvider: KtFirScopeProvider,
     override val token: ValidityToken,
+    private val searchScope: GlobalSearchScope,
+    private val targetPlatform: TargetPlatform,
 ) : KtPackageScope {
-    private val firScope by weakRef(firScope)
-    override val fqName: FqName get() = firScope.fqName
+    private val scopeProvider by weakRef(_scopeProvider)
+
+    private val firScope: FirPackageMemberScope by lazyThreadUnsafeWeakRef {
+        val scope = FirPackageMemberScope(fqName, builder.rootSession)
+        scopeProvider.registerScope(scope)
+        scope
+    }
 
     override fun getPossibleCallableNames() = withValidityAssertion {
         hashSetOf<Name>().apply {
@@ -58,5 +71,22 @@ internal class KtFirPackageScope(
         firScope.getClassifierSymbols(getPossibleClassifierNames().filter(nameFilter), builder)
     }
 
-    override fun getConstructors(): Sequence<KtConstructorSymbol> = emptySequence()
+    override fun getPackageSymbols(nameFilter: KtScopeNameFilter): Sequence<KtPackageSymbol> = withValidityAssertion {
+        sequence {
+            PackageIndexUtil
+                .getSubPackageFqNames(fqName, searchScope, project, nameFilter)
+                .forEach {
+                    yield(builder.createPackageSymbol(it))
+                }
+
+            if (targetPlatform.isJvm()) {
+                JavaPsiFacade.getInstance(project).findPackage(fqName.asString())?.getSubPackages(searchScope)?.forEach { psiPackage ->
+                    val fqName = psiPackage.getKotlinFqName() ?: return@forEach
+                    if (nameFilter(fqName.shortName())) {
+                        yield(builder.createPackageSymbol(fqName))
+                    }
+                }
+            }
+        }
+    }
 }

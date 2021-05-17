@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.psi.KtElement
 
 
 class KtAnalysisSessionFe10BindingHolder private constructor(
@@ -46,8 +47,8 @@ class KtAnalysisSessionFe10BindingHolder private constructor(
 
     companion object {
         @InvalidWayOfUsingAnalysisSession
-        fun create(firResolveState: FirModuleResolveState, token: ValidityToken): KtAnalysisSessionFe10BindingHolder {
-            val firAnalysisSession = KtFirAnalysisSession.createAnalysisSessionByResolveState(firResolveState, token)
+        fun create(firResolveState: FirModuleResolveState, token: ValidityToken, ktElement: KtElement): KtAnalysisSessionFe10BindingHolder {
+            val firAnalysisSession = KtFirAnalysisSession.createAnalysisSessionByResolveState(firResolveState, token, ktElement)
             return KtAnalysisSessionFe10BindingHolder(firAnalysisSession)
         }
     }

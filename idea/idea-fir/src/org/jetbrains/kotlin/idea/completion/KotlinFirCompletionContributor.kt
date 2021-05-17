@@ -60,20 +60,24 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
         val callableContributor = FirCallableCompletionContributor(basicContext)
         val classifierContributor = FirClassifierCompletionContributor(basicContext)
         val annotationsContributor = FirAnnotationCompletionContributor(basicContext)
+        val packageCompletionContributor = FirPackageCompletionContributor(basicContext)
 
         when (positionContext) {
             is FirExpressionNameReferencePositionContext -> {
                 complete(keywordContributor, positionContext)
+                complete(packageCompletionContributor, positionContext)
                 complete(callableContributor, positionContext)
                 complete(classifierContributor, positionContext)
             }
             is FirTypeNameReferencePositionContext -> {
                 complete(keywordContributor, positionContext)
+                complete(packageCompletionContributor, positionContext)
                 complete(classifierContributor, positionContext)
             }
 
             is FirAnnotationTypeNameReferencePositionContext -> {
                 complete(keywordContributor, positionContext)
+                complete(packageCompletionContributor, positionContext)
                 complete(annotationsContributor, positionContext)
             }
 

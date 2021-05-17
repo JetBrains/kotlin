@@ -86,7 +86,7 @@ class FE10BindingContextImpl(
     private val moduleInfo = ktElement.getModuleInfo()
 
     @OptIn(InvalidWayOfUsingAnalysisSession::class)
-    override val ktAnalysisSessionFacade = KtAnalysisSessionFe10BindingHolder.create(ktElement.getResolveState(), token)
+    override val ktAnalysisSessionFacade = KtAnalysisSessionFe10BindingHolder.create(ktElement.getResolveState(), token, ktElement)
 
     override val moduleDescriptor: ModuleDescriptor = KtSymbolBasedModuleDescriptorImpl(this, moduleInfo)
 

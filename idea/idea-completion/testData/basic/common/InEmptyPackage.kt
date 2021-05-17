@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 package <caret>
 
 // EXIST: kotlin

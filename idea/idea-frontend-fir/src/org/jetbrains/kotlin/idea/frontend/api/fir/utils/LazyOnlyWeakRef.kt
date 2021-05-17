@@ -10,23 +10,21 @@ import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import java.lang.ref.WeakReference
 import kotlin.reflect.KProperty
 
-internal class LazyThreadUnsafeWeakRef<V : Any>
-constructor(_createValue: () -> V, val token: ValidityToken) {
-    private var createValue: (() -> V)? = _createValue
-    private var weakRef: WeakReference<V>? = null
+class ReadOnlyWeakRef<V : Any>
+@Deprecated("Consider suing ValidityTokenOwner.weakRef instead")
+constructor(value: V, val token: ValidityToken) {
+    val weakRef = WeakReference(value)
 
     @Suppress("NOTHING_TO_INLINE")
-    inline operator fun getValue(thisRef: Any, property: KProperty<*>): V {
-        if (weakRef == null) {
-            weakRef = WeakReference(createValue!!())
-            createValue = null
-        }
-        return weakRef!!.get() ?: if (token.isValid()) {
+    inline operator fun getValue(thisRef: Any, property: KProperty<*>): V =
+        weakRef.get() ?: if (token.isValid()) {
             throw EntityWasGarbageCollectedException(property.toString())
         } else {
             error("Accessing the invalid value of $property")
         }
-    }
 }
 
-internal fun <V : Any> ValidityTokenOwner.lazyThreadUnsafeWeakRef(createValue: () -> V) = LazyThreadUnsafeWeakRef(createValue, token)
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun <V : Any> ValidityTokenOwner.weakRef(value: V) = ReadOnlyWeakRef(value, token)
+
+internal inline fun <V : Any> ValidityTokenOwner.weakRef(value: () -> V) = ReadOnlyWeakRef(value(), token)

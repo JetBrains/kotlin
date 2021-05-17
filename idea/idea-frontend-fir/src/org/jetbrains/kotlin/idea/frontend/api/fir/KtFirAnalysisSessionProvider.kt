@@ -31,7 +31,7 @@ class KtFirAnalysisSessionProvider(private val project: Project) : KtAnalysisSes
         return cache.getAnalysisSession(resolveState to factory.identifier) {
             val validityToken = factory.create(project)
             @Suppress("DEPRECATION")
-            KtFirAnalysisSession.createAnalysisSessionByResolveState(resolveState, validityToken)
+            KtFirAnalysisSession.createAnalysisSessionByResolveState(resolveState, validityToken, contextElement)
         }
     }
 

@@ -48,6 +48,9 @@ abstract class KtSymbolProvider : KtAnalysisSessionComponent() {
     abstract fun getClassOrObjectSymbolByClassId(classId: ClassId): KtClassOrObjectSymbol?
 
     abstract fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): Sequence<KtSymbol>
+
+    @Suppress("PropertyName")
+    abstract val ROOT_PACKAGE_SYMBOL: KtPackageSymbol
 }
 
 interface KtSymbolProviderMixIn : KtAnalysisSessionMixIn {
@@ -111,4 +114,7 @@ interface KtSymbolProviderMixIn : KtAnalysisSessionMixIn {
     fun FqName.getContainingCallableSymbolsWithName(name: Name): Sequence<KtSymbol> =
         analysisSession.symbolProvider.getTopLevelCallableSymbols(this, name)
 
+    @Suppress("PropertyName")
+    val ROOT_PACKAGE_SYMBOL: KtPackageSymbol
+        get() = analysisSession.symbolProvider.ROOT_PACKAGE_SYMBOL
 }

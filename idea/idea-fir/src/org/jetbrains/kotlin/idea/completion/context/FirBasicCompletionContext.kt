@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.completion.KotlinFirLookupElementFactory
 import org.jetbrains.kotlin.idea.fir.low.level.api.IndexHelper
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
+import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -27,6 +28,8 @@ internal class FirBasicCompletionContext(
     val indexHelper: IndexHelper,
     val lookupElementFactory: KotlinFirLookupElementFactory = KotlinFirLookupElementFactory(),
 ) {
+    val visibleScope = KotlinSourceFilterScope.projectSourceAndClassFiles(originalKtFile.resolveScope, project)
+
     companion object {
         fun createFromParameters(parameters: CompletionParameters, result: CompletionResultSet): FirBasicCompletionContext? {
             val prefixMatcher = result.prefixMatcher

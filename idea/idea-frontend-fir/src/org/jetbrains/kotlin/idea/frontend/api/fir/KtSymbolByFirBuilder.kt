@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir
 
 import com.google.common.collect.MapMaker
 import com.intellij.openapi.project.Project
+import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.fir.*
@@ -112,10 +113,16 @@ internal class KtSymbolByFirBuilder private constructor(
 
 
     fun createPackageSymbolIfOneExists(packageFqName: FqName): KtFirPackageSymbol? {
-        val exists = PackageIndexUtil.packageExists(packageFqName, GlobalSearchScope.allScope(project), project)
+        val exists =
+            PackageIndexUtil.packageExists(packageFqName, GlobalSearchScope.allScope(project), project)
+                    || JavaPsiFacade.getInstance(project).findPackage(packageFqName.asString()) != null
         if (!exists) {
             return null
         }
+        return createPackageSymbol(packageFqName)
+    }
+
+    fun createPackageSymbol(packageFqName: FqName): KtFirPackageSymbol {
         return KtFirPackageSymbol(packageFqName, project, token)
     }
 

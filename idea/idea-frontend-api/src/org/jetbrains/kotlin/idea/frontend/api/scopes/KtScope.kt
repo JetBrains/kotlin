@@ -92,4 +92,12 @@ interface KtDeclarationScope<out T : KtSymbolWithDeclarations> : KtScope {
 
 interface KtPackageScope : KtScope {
     val fqName: FqName
+
+    fun getPackageSymbols(nameFilter: KtScopeNameFilter = { true }): Sequence<KtPackageSymbol>
+
+    override fun getAllSymbols(): Sequence<KtSymbol> = withValidityAssertion {
+        super.getAllSymbols() + getPackageSymbols()
+    }
+
+    override fun getConstructors(): Sequence<KtConstructorSymbol> = withValidityAssertion { emptySequence() }
 }
