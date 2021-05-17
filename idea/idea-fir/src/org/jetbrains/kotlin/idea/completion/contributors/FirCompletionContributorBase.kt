@@ -16,9 +16,11 @@ import org.jetbrains.kotlin.idea.completion.context.FirRawPositionCompletionCont
 import org.jetbrains.kotlin.idea.completion.weighers.Weighers
 import org.jetbrains.kotlin.idea.fir.low.level.api.IndexHelper
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
+import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -32,6 +34,10 @@ internal abstract class FirCompletionContributorBase<C : FirRawPositionCompletio
     protected val targetPlatform: TargetPlatform get() = basicContext.targetPlatform
     protected val indexHelper: IndexHelper get() = basicContext.indexHelper
     protected val lookupElementFactory: KotlinFirLookupElementFactory get() = basicContext.lookupElementFactory
+    protected val visibleScope = basicContext.visibleScope
+
+    protected val scopeNameFilter: KtScopeNameFilter =
+        { name -> !name.isSpecial && prefixMatcher.prefixMatches(name.identifier) }
 
     abstract fun KtAnalysisSession.complete(positionContext: C)
 

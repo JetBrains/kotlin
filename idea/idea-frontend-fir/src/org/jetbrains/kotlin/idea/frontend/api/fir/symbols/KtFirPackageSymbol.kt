@@ -26,7 +26,8 @@ class KtFirPackageSymbol(
     override val token: ValidityToken
 ) : KtPackageSymbol(), ValidityTokenOwner {
     override val psi: PsiElement? by cached {
-        KtPackage(PsiManager.getInstance(project), fqName, GlobalSearchScope.allScope(project)/*TODO*/)
+        JavaPsiFacade.getInstance(project).findPackage(fqName.asString())
+            ?: KtPackage(PsiManager.getInstance(project), fqName, GlobalSearchScope.allScope(project)/*TODO*/)
     }
 
     override val origin: KtSymbolOrigin

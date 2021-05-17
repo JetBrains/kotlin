@@ -366,7 +366,7 @@ internal object FirReferenceResolveHelper {
         analysisSession: KtFirAnalysisSession
     ): Collection<KtSymbol> {
         // TODO refactor that block
-        val classId = fir.classId ?: return emptyList()
+        val classId = fir.classId ?: return listOfNotNull(getPackageSymbolFor(expression, symbolBuilder, forQualifiedType = false))
 
         var parent = expression.parent as? KtDotQualifiedExpression
         // Distinguish A.foo() from A(.Companion).foo()

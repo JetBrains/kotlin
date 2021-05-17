@@ -14,8 +14,4 @@ import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScopeNameFilter
 
 internal abstract class FirContextCompletionContributorBase<C : FirNameReferenceRawPositionContext>(
     basicContext: FirBasicCompletionContext
-) : FirCompletionContributorBase<C>(basicContext) {
-
-    protected val scopeNameFilter: KtScopeNameFilter =
-        { name -> !name.isSpecial && prefixMatcher.prefixMatches(name.identifier) }
-}
+) : FirCompletionContributorBase<C>(basicContext)
