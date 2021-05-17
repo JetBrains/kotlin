@@ -74,11 +74,6 @@ class ConeValReassignmentError(val variable: FirVariableSymbol<*>) : ConeDiagnos
     override val reason: String get() = "Re-assigning a val variable"
 }
 
-class ConeTypeMismatchError(val expectedType: ConeKotlinType, val actualType: ConeKotlinType) : ConeDiagnostic() {
-    override val reason: String
-        get() = "Type mismatch. Expected: $expectedType, Actual: $actualType"
-}
-
 class ConeContractDescriptionError(override val reason: String) : ConeDiagnostic()
 
 class ConeIllegalAnnotationError(val name: Name) : ConeDiagnostic() {

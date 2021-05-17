@@ -46,7 +46,6 @@ private fun ConeDiagnostic.toFirDiagnostic(
         is FirBackingFieldSymbol -> FirErrors.VAL_REASSIGNMENT_VIA_BACKING_FIELD_ERROR.on(source, symbol.fir.symbol)
         else -> FirErrors.VAL_REASSIGNMENT.on(source, symbol)
     }
-    is ConeTypeMismatchError -> FirErrors.TYPE_MISMATCH.on(qualifiedAccessSource ?: source, this.expectedType, this.actualType)
     is ConeUnexpectedTypeArgumentsError -> FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED.on(this.source.safeAs() ?: source)
     is ConeIllegalAnnotationError -> FirErrors.NOT_AN_ANNOTATION_CLASS.on(source, this.name.asString())
     is ConeWrongNumberOfTypeArgumentsError ->
