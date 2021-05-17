@@ -1,0 +1,4 @@
+String -> USimpleNameReferenceExpression (identifier = String) from KtNameReferenceExpression
+Style -> UClass (name = Style) from KtEnumEntrySuperclassReferenceExpression
+String -> USimpleNameReferenceExpression (identifier = String) from KtNameReferenceExpression
+String -> USimpleNameReferenceExpression (identifier = String) from KtNameReferenceExpression
