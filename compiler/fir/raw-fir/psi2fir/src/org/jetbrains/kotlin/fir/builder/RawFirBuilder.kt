@@ -1889,7 +1889,7 @@ open class RawFirBuilder(
                     }
                     explicitReceiver = leftArgument
                     argumentList = buildUnaryArgumentList(rightArgument)
-                    origin = if (conventionCallName != null) FirFunctionCallOrigin.REGULAR else FirFunctionCallOrigin.INFIX
+                    origin = if (conventionCallName != null) FirFunctionCallOrigin.OPERATOR else FirFunctionCallOrigin.INFIX
                 }
             } else {
                 val firOperation = operationToken.toFirOperation()

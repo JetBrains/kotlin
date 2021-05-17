@@ -49,9 +49,9 @@ fun test() {
     a == b
     c != d
 
-    Example() + Example()
+    Example() <!OPERATOR_MODIFIER_REQUIRED!>+<!> Example()
 
-    a + b
+    a <!OPERATOR_MODIFIER_REQUIRED!>+<!> b
     a - b
     a[1]
     a["str"]
@@ -67,10 +67,10 @@ fun test() {
     c += d
     c -= d
 
-    a..b
+    a<!OPERATOR_MODIFIER_REQUIRED!>..<!>b
     c..d
 
-    Example()..Example()
+    Example()<!OPERATOR_MODIFIER_REQUIRED!>..<!>Example()
     Example2()..Example2()
 
     a < b
@@ -109,7 +109,7 @@ class Anc2 : Anc()
 
 fun test2() {
     Anc() + Anc()
-    Anc() - Anc()
+    Anc() <!OPERATOR_MODIFIER_REQUIRED!>-<!> Anc()
     Anc2() + Anc2()
 }
 

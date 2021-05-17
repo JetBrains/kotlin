@@ -267,14 +267,15 @@ internal object PostponedVariablesInitializerResolutionStage : ResolutionStage()
     }
 }
 
-internal object CheckInfixCall : CheckerStage() {
+internal object CheckCallModifiers : CheckerStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         if (callInfo.callSite is FirFunctionCall) {
-            if (callInfo.callSite.origin == FirFunctionCallOrigin.INFIX) {
-                val functionSymbol = candidate.symbol as? FirNamedFunctionSymbol ?: return
-                if (!functionSymbol.fir.isInfix) {
+            val functionSymbol = candidate.symbol as? FirNamedFunctionSymbol ?: return
+            when {
+                callInfo.callSite.origin == FirFunctionCallOrigin.INFIX && !functionSymbol.fir.isInfix ->
                     sink.reportDiagnostic(InfixCallOfNonInfixFunction(functionSymbol))
-                }
+                callInfo.callSite.origin == FirFunctionCallOrigin.OPERATOR && !functionSymbol.fir.isOperator ->
+                    sink.reportDiagnostic(OperatorCallOfNonOperatorFunction(functionSymbol))
             }
         }
     }
