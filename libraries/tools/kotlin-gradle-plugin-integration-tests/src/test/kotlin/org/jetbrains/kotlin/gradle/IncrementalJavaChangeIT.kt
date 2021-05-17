@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.junit.Test
 
-class IncrementalJavaChangeDefaultIT : IncrementalCompilationJavaChangesBase(usePreciseJavaTracking = null) {
+open class IncrementalJavaChangeDefaultIT : IncrementalCompilationJavaChangesBase(usePreciseJavaTracking = null) {
     @Test
     override fun testAbiChangeInLib_changeMethodSignature_tracked() {
         doTest(trackedJavaClass, changeSignature, expectedAffectedFileNames = listOf("TrackedJavaClassChild.kt", "useTrackedJavaClass.kt"))
@@ -17,6 +17,10 @@ class IncrementalJavaChangeDefaultIT : IncrementalCompilationJavaChangesBase(use
     override fun testNonAbiChangeInLib_changeMethodBody_tracked() {
         doTest(trackedJavaClass, changeBody, expectedAffectedFileNames = listOf())
     }
+}
+
+class IncrementalJavaChangeClasspathSnapshotIT : IncrementalJavaChangeDefaultIT() {
+    override fun defaultBuildOptions() = super.defaultBuildOptions().copy(useClasspathSnapshot = true)
 }
 
 class IncrementalJavaChangePreciseIT : IncrementalCompilationJavaChangesBase(usePreciseJavaTracking = true) {
@@ -63,9 +67,7 @@ class IncrementalFirJavaChangeDisablePreciseIT : IncrementalJavaChangeDisablePre
 
 abstract class IncrementalCompilationJavaChangesBase(val usePreciseJavaTracking: Boolean?) : IncrementalCompilationBaseIT() {
     override fun defaultProject() = Project("incrementalMultiproject")
-
-    override fun defaultBuildOptions(): BuildOptions =
-        super.defaultBuildOptions().copy(withDaemon = true, incremental = true, usePreciseJavaTracking = usePreciseJavaTracking)
+    override fun defaultBuildOptions() = super.defaultBuildOptions().copy(usePreciseJavaTracking = usePreciseJavaTracking)
 
     protected val trackedJavaClass = "TrackedJavaClass.java"
     private val javaClass = "JavaClass.java"

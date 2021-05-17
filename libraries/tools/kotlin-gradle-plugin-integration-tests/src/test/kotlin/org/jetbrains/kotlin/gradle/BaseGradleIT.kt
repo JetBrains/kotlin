@@ -240,6 +240,7 @@ abstract class BaseGradleIT {
         val kotlinVersion: String = KOTLIN_VERSION,
         val kotlinDaemonDebugPort: Int? = null,
         val usePreciseJavaTracking: Boolean? = null,
+        val useClasspathSnapshot: Boolean? = null,
         val withBuildCache: Boolean = false,
         val kaptOptions: KaptOptions? = null,
         val parallelTasksInProject: Boolean = false,
@@ -900,6 +901,7 @@ Finished executing task ':$taskName'|
             options.incrementalJsKlib?.let { add("-Pkotlin.incremental.js.klib=$it") }
             options.jsIrBackend?.let { add("-Pkotlin.js.useIrBackend=$it") }
             options.usePreciseJavaTracking?.let { add("-Pkotlin.incremental.usePreciseJavaTracking=$it") }
+            options.useClasspathSnapshot?.let { add("-Pkotlin.incremental.useClasspathSnapshot=$it") }
             options.androidGradlePluginVersion?.let { add("-Pandroid_tools_version=$it") }
             if (options.debug) {
                 add("-Dorg.gradle.debug=true")
