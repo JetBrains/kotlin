@@ -15,7 +15,6 @@ import org.codehaus.plexus.DefaultPlexusContainer
 import org.eclipse.aether.RepositorySystem
 import org.eclipse.aether.RepositorySystemSession
 import org.eclipse.aether.artifact.Artifact
-import org.eclipse.aether.artifact.DefaultArtifact
 import org.eclipse.aether.collection.CollectRequest
 import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory
 import org.eclipse.aether.graph.Dependency
@@ -42,13 +41,13 @@ import java.util.*
 
 val mavenCentral: RemoteRepository = RemoteRepository.Builder("maven central", "default", "https://repo.maven.apache.org/maven2/").build()
 
-class AetherResolveSession(
-    val localRepo: File = File(File(System.getProperty("user.home")!!, ".m2"), "repository"),
+internal class AetherResolveSession(
+    private val localRepo: File = File(File(System.getProperty("user.home")!!, ".m2"), "repository"),
     remoteRepos: List<RemoteRepository> = listOf(mavenCentral)
 ) {
 
-    val remotes by lazy {
-        val proxySelector = settings.getActiveProxy()?.let { proxy ->
+    private val remotes by lazy {
+        val proxySelector = settings.activeProxy?.let { proxy ->
             val selector = DefaultProxySelector()
             val auth = with(AuthenticationBuilder()) {
                 addUsername(proxy.username)
@@ -120,15 +119,12 @@ class AetherResolveSession(
         }
     }
 
-    fun resolve(coordinates: String, scope: String, filter: DependencyFilter? = null): List<Artifact> =
-        resolve(DefaultArtifact(coordinates), scope, filter)
-
     fun resolve(root: Artifact, scope: String, transitive: Boolean, filter: DependencyFilter?): List<Artifact> {
-        return if (transitive) resolve(root, scope, filter)
+        return if (transitive) resolveDependencies(root, scope, filter)
         else resolveArtifact(root)
     }
 
-    fun resolve(root: Artifact, scope: String, filter: DependencyFilter? = null): List<Artifact> {
+    private fun resolveDependencies(root: Artifact, scope: String, filter: DependencyFilter? = null): List<Artifact> {
         return fetch(
             DependencyRequest(
                 request(Dependency(root, scope)),
@@ -227,8 +223,7 @@ class AetherResolveSession(
         if (global != null) {
             request.globalSettingsFile = File(global)
         }
-        val result: SettingsBuildingResult
-        result = try {
+        val result: SettingsBuildingResult = try {
             builder.build(request)
         } catch (ex: SettingsBuildingException) {
             throw IllegalStateException(ex)
@@ -245,10 +240,11 @@ class AetherResolveSession(
             .parentFile.listFiles(
                 NameFileFilter("interpolated-settings.xml") as FileFilter
             )
-        if (files.size == 1) {
+        val settingsFile = files?.singleOrNull()
+        if (settingsFile != null) {
             val irequest =
                 DefaultSettingsBuildingRequest()
-            irequest.userSettingsFile = files[0]
+            irequest.userSettingsFile = settingsFile
             main = try {
                 val isettings = builder.build(irequest)
                     .effectiveSettings
