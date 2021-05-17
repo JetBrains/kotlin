@@ -177,10 +177,7 @@ import org.jetbrains.kotlin.tools.projectWizard.wizard.AbstractProjectTemplateNe
 import org.jetbrains.kotlin.tools.projectWizard.wizard.AbstractYamlNewWizardProjectImportTest
 import org.jetbrains.kotlinx.serialization.idea.AbstractSerializationPluginIdeDiagnosticTest
 import org.jetbrains.kotlinx.serialization.idea.AbstractSerializationQuickFixTest
-import org.jetbrains.uast.test.kotlin.AbstractFE1LegacyUastDeclarationTest
-import org.jetbrains.uast.test.kotlin.AbstractFE1UastDeclarationTest
-import org.jetbrains.uast.test.kotlin.AbstractFirLegacyUastDeclarationTest
-import org.jetbrains.uast.test.kotlin.AbstractFirUastDeclarationTest
+import org.jetbrains.uast.test.kotlin.*
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -1641,6 +1638,10 @@ fun main(args: Array<String>) {
             testClass<AbstractFirLegacyUastDeclarationTest> {
                 model("")
             }
+
+            testClass<AbstractFirLegacyUastIdentifiersTest> {
+                model("")
+            }
         }
 
         testGroup("plugins/uast-kotlin-fir/tests", "plugins/uast-kotlin-fir/testData") {
@@ -1651,6 +1652,10 @@ fun main(args: Array<String>) {
 
         testGroup("plugins/uast-kotlin-fir/tests", "plugins/uast-kotlin/testData") {
             testClass<AbstractFE1LegacyUastDeclarationTest> {
+                model("")
+            }
+
+            testClass<AbstractFE1LegacyUastIdentifiersTest> {
                 model("")
             }
         }

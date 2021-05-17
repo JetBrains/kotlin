@@ -1,0 +1,2 @@
+readLine -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) from KtNameReferenceExpression
+a -> USimpleNameReferenceExpression (identifier = a) from KtNameReferenceExpression

@@ -1,0 +1,5 @@
+foo -> UMethod (name = foo)
+a -> UParameter (name = a)
+Int -> USimpleNameReferenceExpression (identifier = Int)
+foo -> UParameter (name = foo)
+String -> USimpleNameReferenceExpression (identifier = String)

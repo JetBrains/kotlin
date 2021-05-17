@@ -1,0 +1,3 @@
+String -> USimpleNameReferenceExpression (identifier = String) from KtNameReferenceExpression
+String -> USimpleNameReferenceExpression (identifier = String) from KtNameReferenceExpression
+s -> USimpleNameReferenceExpression (identifier = s) from KtNameReferenceExpression

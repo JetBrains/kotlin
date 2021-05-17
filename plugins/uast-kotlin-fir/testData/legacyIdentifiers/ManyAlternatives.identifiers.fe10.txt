@@ -1,0 +1,7 @@
+ClassA -> UClass (name = ClassA)
+justParam -> UParameter (name = justParam)
+Int -> USimpleNameReferenceExpression (identifier = Int)
+paramAndProp -> UParameter (name = paramAndProp)
+String -> USimpleNameReferenceExpression (identifier = String)
+writebleProp -> UField (name = writebleProp)
+Int -> USimpleNameReferenceExpression (identifier = Int)

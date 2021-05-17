@@ -1,0 +1,3 @@
+C -> UClass (name = C)
+Test -> UAnnotation (fqName = null)
+foo -> UMethod (name = foo)

@@ -1,0 +1,63 @@
+foo -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) from KtDotQualifiedExpression
+A -> UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) from KtNameReferenceExpression
+foo -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) from KtNameReferenceExpression
+inlineFoo -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) from KtDotQualifiedExpression
+A -> UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) from KtNameReferenceExpression
+inlineFoo -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) from KtNameReferenceExpression
+forEach -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) from KtDotQualifiedExpression
+listOf -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) from KtNameReferenceExpression
+A -> UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) from KtNameReferenceExpression
+forEach -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) from KtNameReferenceExpression
+println -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) from KtNameReferenceExpression
+it -> USimpleNameReferenceExpression (identifier = it) from KtNameReferenceExpression
+joinToString -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) from KtDotQualifiedExpression
+listOf -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) from KtNameReferenceExpression
+joinToString -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) from KtNameReferenceExpression
+size -> USimpleNameReferenceExpression (identifier = size) from KtDotQualifiedExpression
+listOf -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) from KtNameReferenceExpression
+size -> USimpleNameReferenceExpression (identifier = size) from KtNameReferenceExpression
+indices -> USimpleNameReferenceExpression (identifier = indices) from KtDotQualifiedExpression
+listOf -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) from KtNameReferenceExpression
+indices -> USimpleNameReferenceExpression (identifier = indices) from KtNameReferenceExpression
+java -> USimpleNameReferenceExpression (identifier = java) from KtNameReferenceExpression
+util -> USimpleNameReferenceExpression (identifier = util) from KtNameReferenceExpression
+Date -> USimpleNameReferenceExpression (identifier = Date) from KtNameReferenceExpression
+Date -> UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) from KtDotQualifiedExpression
+util -> USimpleNameReferenceExpression (identifier = util) from KtDotQualifiedExpression
+java -> USimpleNameReferenceExpression (identifier = java) from KtNameReferenceExpression
+util -> USimpleNameReferenceExpression (identifier = util) from KtNameReferenceExpression
+Date -> UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) from KtNameReferenceExpression
+time -> USimpleNameReferenceExpression (identifier = time) from KtDotQualifiedExpression
+date -> USimpleNameReferenceExpression (identifier = date) from KtNameReferenceExpression
+time -> USimpleNameReferenceExpression (identifier = time) from KtNameReferenceExpression
+last -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) from KtDotQualifiedExpression
+listOf -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) from KtNameReferenceExpression
+last -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) from KtNameReferenceExpression
+setValue -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) from KtDotQualifiedExpression
+first -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) from KtDotQualifiedExpression
+entries -> USimpleNameReferenceExpression (identifier = entries) from KtDotQualifiedExpression
+mutableMapOf -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) from KtNameReferenceExpression
+to -> USimpleNameReferenceExpression (identifier = to) from KtOperationReferenceExpression
+entries -> USimpleNameReferenceExpression (identifier = entries) from KtNameReferenceExpression
+first -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) from KtNameReferenceExpression
+setValue -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) from KtNameReferenceExpression
+contains -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) from KtDotQualifiedExpression
+intRange -> USimpleNameReferenceExpression (identifier = intRange) from KtNameReferenceExpression
+contains -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) from KtNameReferenceExpression
+Int -> USimpleNameReferenceExpression (identifier = Int) from KtNameReferenceExpression
+IntRange -> UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 2)) from KtNameReferenceExpression
+A -> USimpleNameReferenceExpression (identifier = A) from KtNameReferenceExpression
+T -> USimpleNameReferenceExpression (identifier = T) from KtNameReferenceExpression
+foo -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) from KtDotQualifiedExpression
+t -> USimpleNameReferenceExpression (identifier = t) from KtNameReferenceExpression
+foo -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) from KtNameReferenceExpression
+List -> USimpleNameReferenceExpression (identifier = List) from KtNameReferenceExpression
+A -> USimpleNameReferenceExpression (identifier = A) from KtNameReferenceExpression
+T -> USimpleNameReferenceExpression (identifier = T) from KtNameReferenceExpression
+isEmpty -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) from KtDotQualifiedExpression
+listT -> USimpleNameReferenceExpression (identifier = listT) from KtNameReferenceExpression
+isEmpty -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) from KtNameReferenceExpression
+listT -> USimpleNameReferenceExpression (identifier = listT) from KtNameReferenceExpression
+foo -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) from KtDotQualifiedExpression
+a -> USimpleNameReferenceExpression (identifier = a) from KtNameReferenceExpression
+foo -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) from KtNameReferenceExpression
