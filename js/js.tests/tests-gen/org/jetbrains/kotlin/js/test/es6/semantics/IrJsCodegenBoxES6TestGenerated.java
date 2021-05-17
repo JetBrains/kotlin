@@ -10628,6 +10628,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
             runTest("compiler/testData/codegen/box/enum/kt44744_innerClass.kt");
         }
 
+        @TestMetadata("kt46605.kt")
+        public void testKt46605() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/kt46605.kt");
+        }
+
         @TestMetadata("kt7257.kt")
         public void testKt7257() throws Exception {
             runTest("compiler/testData/codegen/box/enum/kt7257.kt");
