@@ -145,9 +145,11 @@ class IncrementalCompilationFirJvmMultiProjectIT : IncrementalCompilationJvmMult
     }
 }
 
+class IncrementalCompilationClasspathSnapshotJvmMultiProjectIT : IncrementalCompilationJvmMultiProjectIT() {
+    override fun defaultBuildOptions() = super.defaultBuildOptions().copy(useClasspathSnapshot = true)
+}
+
 abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilationBaseIT() {
-    override fun defaultBuildOptions(): BuildOptions =
-        super.defaultBuildOptions().copy(withDaemon = true, incremental = true)
 
     @Test
     fun testAbiChangeInLib_changeMethodSignature() {

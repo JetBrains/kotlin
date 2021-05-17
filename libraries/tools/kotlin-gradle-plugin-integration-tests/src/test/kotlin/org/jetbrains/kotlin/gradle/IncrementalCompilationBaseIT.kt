@@ -13,6 +13,8 @@ abstract class IncrementalCompilationBaseIT : BaseGradleIT() {
 
     protected abstract fun defaultProject(): Project
 
+    override fun defaultBuildOptions() = super.defaultBuildOptions().copy(incremental = true)
+
     protected fun doTest(
         fileToModify: String,
         modifyFileContents: (String) -> String,
