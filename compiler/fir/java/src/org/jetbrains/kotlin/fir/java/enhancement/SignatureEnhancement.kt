@@ -37,7 +37,12 @@ class FirSignatureEnhancement(
     private val session: FirSession,
     private val overridden: FirSimpleFunction.() -> List<FirCallableMemberDeclaration<*>>
 ) {
-    private val moduleData = session.moduleData
+    /*
+     * FirSignatureEnhancement may be created with library session which doesn't have single module data,
+     *   so owner is a only place where module data can be obtained. However it's guaranteed that `owner`
+     *   was created for same session as one passed to constructor, so it's safe to use owners module data
+     */
+    private val moduleData = owner.moduleData
 
     private val javaTypeParameterStack: JavaTypeParameterStack =
         if (owner is FirJavaClass) owner.javaTypeParameterStack else JavaTypeParameterStack.EMPTY
