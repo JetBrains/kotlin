@@ -119,6 +119,11 @@ public class SymbolByPsiTestGenerated extends AbstractSymbolByPsiTest {
         runTest("idea/idea-frontend-fir/testData/symbols/symbolByPsi/topLevelProperties.kt");
     }
 
+    @TestMetadata("typeAlias.kt")
+    public void testTypeAlias() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/symbols/symbolByPsi/typeAlias.kt");
+    }
+
     @TestMetadata("typeAnnotations.kt")
     public void testTypeAnnotations() throws Exception {
         runTest("idea/idea-frontend-fir/testData/symbols/symbolByPsi/typeAnnotations.kt");

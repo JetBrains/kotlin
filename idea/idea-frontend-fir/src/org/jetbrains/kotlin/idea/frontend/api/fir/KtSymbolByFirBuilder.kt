@@ -154,7 +154,7 @@ internal class KtSymbolByFirBuilder private constructor(
         }
 
         fun buildTypeAliasSymbol(fir: FirTypeAlias): KtFirTypeAliasSymbol {
-            return symbolsCache.cache(fir) { KtFirTypeAliasSymbol(fir, resolveState, token) }
+            return symbolsCache.cache(fir) { KtFirTypeAliasSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder) }
         }
 
         fun buildTypeParameterSymbol(fir: FirTypeParameter): KtFirTypeParameterSymbol {

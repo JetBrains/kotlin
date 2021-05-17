@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 annotation class SHello
 val v = 1
 

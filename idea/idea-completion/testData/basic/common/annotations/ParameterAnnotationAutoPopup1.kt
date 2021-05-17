@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 val v = 1
 
 fun foo(@[S<caret>) { }

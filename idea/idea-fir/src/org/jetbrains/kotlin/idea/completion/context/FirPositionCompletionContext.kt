@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.idea.frontend.api.analyse
 import org.jetbrains.kotlin.idea.frontend.api.analyseInDependedAnalysisSession
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtLabelReferenceExpression
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
-import org.jetbrains.kotlin.psi.KtUserType
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 
 internal sealed class FirRawPositionCompletionContext {
@@ -33,6 +30,15 @@ internal class FirTypeNameReferencePositionContext(
     override val nameExpression: KtSimpleNameExpression,
     override val explicitReceiver: KtExpression?
 ) : FirNameReferencePositionContext()
+
+internal class FirAnnotationTypeNameReferencePositionContext(
+    override val position: PsiElement,
+    override val reference: KtSimpleNameReference,
+    override val nameExpression: KtSimpleNameExpression,
+    override val explicitReceiver: KtExpression?,
+    val annotationEntry: KtAnnotationEntry,
+) : FirNameReferencePositionContext()
+
 
 internal class FirExpressionNameReferencePositionContext(
     override val position: PsiElement,
@@ -55,11 +61,32 @@ internal object FirPositionCompletionContextDetector {
             ?: return FirUnknownPositionContext(position)
         val explicitReceiver = nameExpression.getReceiverExpression()
 
-        return if (nameExpression.parent is KtUserType) {
-            FirTypeNameReferencePositionContext(position, reference, nameExpression, explicitReceiver)
-        } else {
-            FirExpressionNameReferencePositionContext(position, reference, nameExpression, explicitReceiver)
+        return when (val parent = nameExpression.parent) {
+            is KtUserType -> {
+                detectForTypeContext(parent, position, reference, nameExpression, explicitReceiver)
+            }
+            else -> {
+                FirExpressionNameReferencePositionContext(position, reference, nameExpression, explicitReceiver)
+            }
         }
+    }
+
+    private fun detectForTypeContext(
+        userType: KtUserType,
+        position: PsiElement,
+        reference: KtSimpleNameReference,
+        nameExpression: KtSimpleNameExpression,
+        explicitReceiver: KtExpression?
+    ): FirNameReferencePositionContext {
+        val annotationEntry = userType.annotationEntry()
+            ?: return FirTypeNameReferencePositionContext(position, reference, nameExpression, explicitReceiver)
+        return FirAnnotationTypeNameReferencePositionContext(position, reference, nameExpression, explicitReceiver, annotationEntry)
+    }
+
+    private fun KtUserType.annotationEntry(): KtAnnotationEntry? {
+        val typeReference = (parent as? KtTypeReference)?.takeIf { it.typeElement == this }
+        val constructorCall = (typeReference?.parent as? KtConstructorCalleeExpression)?.takeIf { it.typeReference == typeReference }
+        return (constructorCall?.parent as? KtAnnotationEntry)?.takeIf { it.calleeExpression == constructorCall }
     }
 
     inline fun analyseInContext(

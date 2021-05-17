@@ -33,9 +33,13 @@ sealed class KtClassLikeSymbol : KtClassifierSymbol(), KtSymbolWithKind {
 }
 
 abstract class KtTypeAliasSymbol : KtClassLikeSymbol(), KtNamedSymbol {
-    abstract override val classIdIfNonLocal: ClassId
-
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.TOP_LEVEL
+
+    /**
+     * Returns type from right-hand site of type alias
+     * If type alias has type parameters, then those type parameters will be present in result type
+     */
+    abstract val expandedType: KtType
 
     abstract override fun createPointer(): KtSymbolPointer<KtTypeAliasSymbol>
 }
