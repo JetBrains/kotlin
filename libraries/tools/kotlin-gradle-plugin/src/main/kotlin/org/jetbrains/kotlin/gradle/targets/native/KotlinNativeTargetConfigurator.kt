@@ -640,16 +640,15 @@ class KotlinNativeTargetWithSimulatorTestsConfigurator :
         get() = KotlinNativeSimulatorTestRun::class.java
 
     override fun isTestTaskEnabled(target: KotlinNativeTargetWithSimulatorTests): Boolean =
-        HostManager.hostIsMac
+        HostManager.hostIsMac && HostManager.host.architecture == target.konanTarget.architecture
 
     override fun configureTestTask(target: KotlinNativeTargetWithSimulatorTests, testTask: KotlinNativeSimulatorTest) {
         super.configureTestTask(target, testTask)
 
         testTask.deviceId = when (target.konanTarget) {
-            KonanTarget.IOS_X64 -> "iPhone 8"
-            KonanTarget.WATCHOS_X86 -> "Apple Watch Series 5 - 44mm"
-            KonanTarget.WATCHOS_X64 -> "Apple Watch Series 5 - 44mm"
-            KonanTarget.TVOS_X64 -> "Apple TV"
+            KonanTarget.IOS_X64, KonanTarget.IOS_SIMULATOR_ARM64 -> "iPhone 8"
+            KonanTarget.WATCHOS_X86, KonanTarget.WATCHOS_X64, KonanTarget.WATCHOS_SIMULATOR_ARM64 -> "Apple Watch Series 5 - 44mm"
+            KonanTarget.TVOS_X64, KonanTarget.TVOS_SIMULATOR_ARM64 -> "Apple TV"
             else -> error("Simulator tests are not supported for platform ${target.konanTarget.name}")
         }
     }

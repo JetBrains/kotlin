@@ -48,9 +48,20 @@ internal val androidPresetEntry = KotlinPresetEntry(
 )
 
 // Note: modifying these sets should also be reflected in the MPP plugin code, see 'setupDefaultPresets'
-private val nativeTargetsWithHostTests = setOf(KonanTarget.LINUX_X64, KonanTarget.MACOS_X64, KonanTarget.MINGW_X64)
+private val nativeTargetsWithHostTests =
+    setOf(KonanTarget.LINUX_X64, KonanTarget.MACOS_X64, KonanTarget.MACOS_ARM64, KonanTarget.MINGW_X64)
 private val nativeTargetsWithSimulatorTests =
-        setOf(KonanTarget.IOS_X64, KonanTarget.WATCHOS_X86, KonanTarget.WATCHOS_X64, KonanTarget.TVOS_X64)
+    setOf(
+        KonanTarget.IOS_X64,
+        KonanTarget.IOS_SIMULATOR_ARM64,
+
+        KonanTarget.WATCHOS_X86,
+        KonanTarget.WATCHOS_X64,
+        KonanTarget.WATCHOS_SIMULATOR_ARM64,
+
+        KonanTarget.TVOS_X64,
+        KonanTarget.TVOS_SIMULATOR_ARM64
+    )
 
 internal val nativePresetEntries = HostManager().targets
     .map { (_, target) ->

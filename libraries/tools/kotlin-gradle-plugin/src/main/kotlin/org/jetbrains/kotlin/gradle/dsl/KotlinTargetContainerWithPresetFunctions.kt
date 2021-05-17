@@ -153,6 +153,21 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
     fun iosX64(name: String, configure: Closure<*>) = iosX64(name) { ConfigureUtil.configure(configure, this) }
     fun iosX64(configure: Closure<*>) = iosX64 { ConfigureUtil.configure(configure, this) }
 
+    fun iosSimulatorArm64(
+        name: String = "iosSimulatorArm64",
+        configure: KotlinNativeTargetWithSimulatorTests.() -> Unit = { }
+    ): KotlinNativeTargetWithSimulatorTests =
+        configureOrCreate(
+            name,
+            presets.getByName("iosSimulatorArm64") as KotlinNativeTargetWithSimulatorTestsPreset,
+            configure
+        )
+
+    fun iosSimulatorArm64() = iosSimulatorArm64("iosSimulatorArm64") { }
+    fun iosSimulatorArm64(name: String) = iosSimulatorArm64(name) { }
+    fun iosSimulatorArm64(name: String, configure: Closure<*>) = iosSimulatorArm64(name) { ConfigureUtil.configure(configure, this) }
+    fun iosSimulatorArm64(configure: Closure<*>) = iosSimulatorArm64 { ConfigureUtil.configure(configure, this) }
+
     fun watchosArm32(
         name: String = "watchosArm32",
         configure: KotlinNativeTarget.() -> Unit = { }
@@ -213,6 +228,21 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
     fun watchosX64(name: String, configure: Closure<*>) = watchosX64(name) { ConfigureUtil.configure(configure, this) }
     fun watchosX64(configure: Closure<*>) = watchosX64 { ConfigureUtil.configure(configure, this) }
 
+    fun watchosSimulatorArm64(
+        name: String = "watchosSimulatorArm64",
+        configure: KotlinNativeTargetWithSimulatorTests.() -> Unit = { }
+    ): KotlinNativeTargetWithSimulatorTests =
+        configureOrCreate(
+            name,
+            presets.getByName("watchosSimulatorArm64") as KotlinNativeTargetWithSimulatorTestsPreset,
+            configure
+        )
+
+    fun watchosSimulatorArm64() = watchosSimulatorArm64("watchosSimulatorArm64") { }
+    fun watchosSimulatorArm64(name: String) = watchosSimulatorArm64(name) { }
+    fun watchosSimulatorArm64(name: String, configure: Closure<*>) = watchosSimulatorArm64(name) { ConfigureUtil.configure(configure, this) }
+    fun watchosSimulatorArm64(configure: Closure<*>) = watchosSimulatorArm64 { ConfigureUtil.configure(configure, this) }
+
     fun tvosArm64(
         name: String = "tvosArm64",
         configure: KotlinNativeTarget.() -> Unit = { }
@@ -242,6 +272,21 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
     fun tvosX64(name: String) = tvosX64(name) { }
     fun tvosX64(name: String, configure: Closure<*>) = tvosX64(name) { ConfigureUtil.configure(configure, this) }
     fun tvosX64(configure: Closure<*>) = tvosX64 { ConfigureUtil.configure(configure, this) }
+
+    fun tvosSimulatorArm64(
+        name: String = "tvosSimulatorArm64",
+        configure: KotlinNativeTargetWithSimulatorTests.() -> Unit = { }
+    ): KotlinNativeTargetWithSimulatorTests =
+        configureOrCreate(
+            name,
+            presets.getByName("tvosSimulatorArm64") as KotlinNativeTargetWithSimulatorTestsPreset,
+            configure
+        )
+
+    fun tvosSimulatorArm64() = tvosSimulatorArm64("tvosSimulatorArm64") { }
+    fun tvosSimulatorArm64(name: String) = tvosSimulatorArm64(name) { }
+    fun tvosSimulatorArm64(name: String, configure: Closure<*>) = tvosSimulatorArm64(name) { ConfigureUtil.configure(configure, this) }
+    fun tvosSimulatorArm64(configure: Closure<*>) = tvosSimulatorArm64 { ConfigureUtil.configure(configure, this) }
 
     fun linuxX64(
         name: String = "linuxX64",
@@ -302,6 +347,21 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
     fun macosX64(name: String) = macosX64(name) { }
     fun macosX64(name: String, configure: Closure<*>) = macosX64(name) { ConfigureUtil.configure(configure, this) }
     fun macosX64(configure: Closure<*>) = macosX64 { ConfigureUtil.configure(configure, this) }
+
+    fun macosArm64(
+        name: String = "macosArm64",
+        configure: KotlinNativeTargetWithHostTests.() -> Unit = { }
+    ): KotlinNativeTargetWithHostTests =
+        configureOrCreate(
+            name,
+            presets.getByName("macosArm64") as KotlinNativeTargetWithHostTestsPreset,
+            configure
+        )
+
+    fun macosArm64() = macosArm64("macosArm64") { }
+    fun macosArm64(name: String) = macosArm64(name) { }
+    fun macosArm64(name: String, configure: Closure<*>) = macosArm64(name) { ConfigureUtil.configure(configure, this) }
+    fun macosArm64(configure: Closure<*>) = macosArm64 { ConfigureUtil.configure(configure, this) }
 
     fun linuxArm64(
         name: String = "linuxArm64",
