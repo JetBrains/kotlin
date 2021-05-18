@@ -104,6 +104,15 @@ internal class SpecialDeclarationsFactory(val context: Context) {
             }
         }
 
+    fun getLoweredEnumOrNull(enumClass: IrClass): LoweredEnumAccess? {
+        assert(enumClass.kind == ClassKind.ENUM_CLASS) { "Expected enum class but was: ${enumClass.descriptor}" }
+        return if (!context.llvmModuleSpecification.containsDeclaration(enumClass)) {
+            externalLoweredEnums[enumClass]
+        } else {
+            internalLoweredEnums[enumClass]
+        }
+    }
+
     fun getLoweredEnum(enumClass: IrClass): LoweredEnumAccess {
         assert(enumClass.kind == ClassKind.ENUM_CLASS) { "Expected enum class but was: ${enumClass.descriptor}" }
         return if (!context.llvmModuleSpecification.containsDeclaration(enumClass)) {
