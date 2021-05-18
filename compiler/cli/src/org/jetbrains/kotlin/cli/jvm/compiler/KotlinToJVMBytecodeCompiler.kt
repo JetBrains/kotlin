@@ -332,7 +332,7 @@ object KotlinToJVMBytecodeCompiler {
 
             val moduleConfiguration = projectConfiguration.applyModuleProperties(module, buildFile)
 
-            val sourceScope = GlobalSearchScope.filesScope(project, ktFiles.map { it.virtualFile })
+            val sourceScope = GlobalSearchScope.filesWithoutLibrariesScope(project, ktFiles.map { it.virtualFile })
                 .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
 
             val librariesScope = ProjectScope.getLibrariesScope(project)
