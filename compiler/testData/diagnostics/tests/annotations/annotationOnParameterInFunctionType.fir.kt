@@ -12,7 +12,7 @@ fun inParamNested(fn1: (fn2: (@Ann n: Int)->Unit)->Unit) {}
 
 fun inReturn(): (@Ann x: Int)->Unit = {}
 
-class A : (@Ann Int)->Unit {
+class A : (<!WRONG_ANNOTATION_TARGET!>@Ann<!> Int)->Unit {
     override fun invoke(p1: Int) {
         var lambda: (@Ann x: Int)->Unit = {}
     }

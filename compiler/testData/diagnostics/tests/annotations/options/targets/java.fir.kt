@@ -64,15 +64,15 @@ import test.AnnotationTargets.*
 
 @base <!WRONG_ANNOTATION_TARGET!>@meta<!> @type <!WRONG_ANNOTATION_TARGET!>@method<!> <!WRONG_ANNOTATION_TARGET!>@multiple<!> class KClass(
         @base @fieldann @parameter val y:
-        @base @type Int) {
+        <!WRONG_ANNOTATION_TARGET!>@base<!> <!WRONG_ANNOTATION_TARGET!>@type<!> Int) {
 
     @base @multiple @fieldann <!WRONG_ANNOTATION_TARGET!>@local<!> val x = 0
     @method @konstructor @type get
 
     @base @method @multiple <!WRONG_ANNOTATION_TARGET!>@konstructor<!>
     fun foo(@parameter <!WRONG_ANNOTATION_TARGET!>@type<!> i:
-    @base @multiple Int
-    ): @fieldann @parameter Int {
+    <!WRONG_ANNOTATION_TARGET!>@base<!> <!WRONG_ANNOTATION_TARGET!>@multiple<!> Int
+    ): <!WRONG_ANNOTATION_TARGET!>@fieldann<!> <!WRONG_ANNOTATION_TARGET!>@parameter<!> Int {
 
         @local @base <!WRONG_ANNOTATION_TARGET!>@multiple<!> <!WRONG_ANNOTATION_TARGET!>@fieldann<!> val j = i + 1
         <!WRONG_ANNOTATION_TARGET!>@base<!> <!WRONG_ANNOTATION_TARGET!>@multiple<!> return j

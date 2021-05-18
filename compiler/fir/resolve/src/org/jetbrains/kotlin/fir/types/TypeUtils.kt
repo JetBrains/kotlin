@@ -323,7 +323,8 @@ private fun FirTypeRef.hideLocalTypeIfNeeded(
         }
         val superType = firClass.superTypeRefs.single()
         if (superType is FirResolvedTypeRef) {
-            return superType
+            val newKind = source?.kind
+            return if (newKind is FirFakeSourceElementKind) superType.copyWithNewSourceKind(newKind) else superType
         }
     }
     return this

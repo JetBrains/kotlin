@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
@@ -40,12 +41,14 @@ private val defaultAnnotationTargets = KotlinTarget.DEFAULT_TARGET_SET
 
 fun FirAnnotationCall.getAllowedAnnotationTargets(session: FirSession): Set<KotlinTarget> {
     if (annotationTypeRef is FirErrorTypeRef) return KotlinTarget.values().toSet()
-    val annotationClass = (this.annotationTypeRef.coneType as? ConeClassLikeType)?.lookupTag?.toSymbol(session)?.fir as? FirRegularClass
+    val annotationClass = (this.annotationTypeRef.coneType as? ConeClassLikeType)
+        ?.fullyExpandedType(session)?.lookupTag?.toSymbol(session)?.fir as? FirRegularClass
     return annotationClass?.getAllowedAnnotationTargets() ?: defaultAnnotationTargets
 }
 
 fun FirRegularClass.getAllowedAnnotationTargets(): Set<KotlinTarget> {
     val targetAnnotation = getTargetAnnotation() ?: return defaultAnnotationTargets
+    if (targetAnnotation.argumentList.arguments.isEmpty()) return emptySet()
     val arguments = when (val targetArgument = targetAnnotation.findSingleArgumentByName(TARGET_PARAMETER_NAME)) {
         is FirVarargArgumentsExpression -> targetArgument.arguments
         is FirArrayOfCall -> targetArgument.arguments

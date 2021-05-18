@@ -30,7 +30,7 @@ abstract class First {
 }
 
 @WithString("xyz")
-class Second(val y: Char) : @WithInt(0) First() {
+class Second(val y: Char) : <!WRONG_ANNOTATION_TARGET!>@WithInt(0)<!> First() {
     override fun foo(arg: Double) {
     }
 

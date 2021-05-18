@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 annotation class base
 
 @Target(AnnotationTarget.TYPE)

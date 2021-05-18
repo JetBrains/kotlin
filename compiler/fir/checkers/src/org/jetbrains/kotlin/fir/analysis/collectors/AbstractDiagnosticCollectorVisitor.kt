@@ -171,6 +171,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
         if (resolvedTypeRef.type is ConeClassErrorType) {
             super.visitResolvedTypeRef(resolvedTypeRef, data)
         }
+        if (resolvedTypeRef.source?.kind is FirFakeSourceElementKind) return
         resolvedTypeRef.delegatedTypeRef?.accept(this, data)
     }
 

@@ -26,10 +26,10 @@ class Class2 {
 
 <!WRONG_ANNOTATION_TARGET!>@A<!> fun foo() {}
 <!WRONG_ANNOTATION_TARGET!>@A<!> class D
-fun foo(i: @A Int) {
+fun foo(i: <!WRONG_ANNOTATION_TARGET!>@A<!> Int) {
     <!WRONG_ANNOTATION_TARGET!>@A<!> val i = 1
 }
-fun <T> test(t: @A T): T = t
+fun <T> test(t: <!WRONG_ANNOTATION_TARGET!>@A<!> T): T = t
 
 
 @Target(AnnotationTarget.TYPE)

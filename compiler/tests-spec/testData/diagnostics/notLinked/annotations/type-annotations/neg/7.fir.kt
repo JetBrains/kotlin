@@ -18,4 +18,4 @@ val case_1 = object : TypeToken<@Ann(unresolved_reference) String>() {}
  */
 interface A
 
-val case_2 = object: @Ann(<!TOO_MANY_ARGUMENTS, TOO_MANY_ARGUMENTS, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>unresolved_reference<!>) A {}
+val case_2 = object: @Ann(<!TOO_MANY_ARGUMENTS, UNRESOLVED_REFERENCE!>unresolved_reference<!>) A {}

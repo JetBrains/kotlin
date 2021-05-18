@@ -5,18 +5,14 @@
 
 package org.jetbrains.kotlin.fir.checkers
 
-import org.jetbrains.kotlin.fir.analysis.cfa.AbstractFirPropertyInitializationChecker
-import org.jetbrains.kotlin.fir.analysis.cfa.FirCallsEffectAnalyzer
-import org.jetbrains.kotlin.fir.analysis.cfa.FirPropertyInitializationAnalyzer
-import org.jetbrains.kotlin.fir.analysis.cfa.FirReturnsImpliesAnalyzer
-import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.checkers.type.FirSuspendModifierChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.type.FirTypeAnnotationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.type.FirTypeRefChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckers
 
 object CommonTypeCheckers : TypeCheckers() {
     override val typeRefCheckers: Set<FirTypeRefChecker> = setOf(
-        FirSuspendModifierChecker
+        FirTypeAnnotationChecker,
+        FirSuspendModifierChecker,
     )
 }
