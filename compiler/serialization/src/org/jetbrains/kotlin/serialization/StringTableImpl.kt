@@ -89,4 +89,7 @@ open class StringTableImpl : DescriptorAwareStringTable {
 
         return Pair(strings.build(), qualifiedNames.build())
     }
+
+    override val isLocalClassIdReplacementKeptGeneric: Boolean
+        get() = false
 }

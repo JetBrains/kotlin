@@ -29,4 +29,7 @@ class JvmCodegenStringTable @JvmOverloads constructor(
                 ClassId(fqName.parent(), FqName.topLevel(fqName.shortName()), true)
             }
         }
+
+    override val isLocalClassIdReplacementKeptGeneric: Boolean
+        get() = true
 }

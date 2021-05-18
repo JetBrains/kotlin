@@ -1,2 +1,0 @@
-// TODO: See KT-13618
-// IGNORE_BACKEND: JS
