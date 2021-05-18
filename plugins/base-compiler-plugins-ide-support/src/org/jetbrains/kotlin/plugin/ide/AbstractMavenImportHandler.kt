@@ -30,6 +30,12 @@ abstract class AbstractMavenImportHandler : MavenProjectImportHandler {
 
     abstract fun getOptions(enabledCompilerPlugins: List<String>, compilerPluginOptions: List<String>): List<PluginOption>?
 
+    protected open fun getOptions(
+        mavenProject: MavenProject,
+        enabledCompilerPlugins: List<String>,
+        compilerPluginOptions: List<String>
+    ): List<PluginOption>? = getOptions(enabledCompilerPlugins, compilerPluginOptions)
+
     private fun getPluginSetup(mavenProject: MavenProject): CompilerPluginSetup? {
         val kotlinPlugin = mavenProject.plugins.firstOrNull {
             it.groupId == KOTLIN_PLUGIN_GROUP_ID && it.artifactId == KOTLIN_PLUGIN_ARTIFACT_ID
@@ -51,7 +57,7 @@ abstract class AbstractMavenImportHandler : MavenProjectImportHandler {
         // We can't use the plugin from Gradle as it may have the incompatible version
         val classpath = listOf(pluginJarFileFromIdea.absolutePath)
 
-        val options = getOptions(enabledCompilerPlugins, compilerPluginOptions) ?: return null
+        val options = getOptions(mavenProject, enabledCompilerPlugins, compilerPluginOptions) ?: return null
         return CompilerPluginSetup(options, classpath)
     }
 
