@@ -34,7 +34,7 @@ class KotlinUQualifiedReferenceExpression(
     override val selector by lz { KotlinConverter.convertOrEmpty(sourcePsi.selectorExpression, this) }
     override val accessType = UastQualifiedExpressionAccessType.SIMPLE
 
-    override fun resolve(): PsiElement? = sourcePsi.selectorExpression?.let { baseResolveProviderService?.resolveToDeclaration(it) }
+    override fun resolve(): PsiElement? = sourcePsi.selectorExpression?.let { baseResolveProviderService.resolveToDeclaration(it) }
 
     override val resolvedName: String?
         get() = (resolve() as? PsiNamedElement)?.name

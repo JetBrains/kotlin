@@ -211,7 +211,8 @@ internal object KotlinConverter {
 
         return with (expectedTypes) { when (element) {
             is KtParameterList -> el<UDeclarationsExpression> {
-                val declarationsExpression = KotlinUDeclarationsExpression(givenParent)
+                val resolveProviderService = ServiceManager.getService(element.project, KotlinUastResolveProviderService::class.java)
+                val declarationsExpression = KotlinUDeclarationsExpression(null, givenParent, null) { resolveProviderService }
                 declarationsExpression.apply {
                     declarations = element.parameters.mapIndexed { i, p ->
                         KotlinUParameter(UastKotlinPsiParameter.create(p, element, declarationsExpression, i), p, this)

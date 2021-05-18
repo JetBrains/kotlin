@@ -16,14 +16,16 @@
 package org.jetbrains.uast
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.uast.kotlin.BaseResolveProviderServiceSupplier
 import org.jetbrains.uast.kotlin.KotlinAbstractUExpression
 import org.jetbrains.uast.kotlin.doConvertParent
 
 open class KotlinUDeclarationsExpression(
-        override val psi: PsiElement?,
-        givenParent: UElement?,
-        val psiAnchor: PsiElement? = null
-) : KotlinAbstractUExpression(givenParent), UDeclarationsExpression {
+    override val psi: PsiElement?,
+    givenParent: UElement?,
+    val psiAnchor: PsiElement? = null,
+    baseResolveProviderServiceSupplier: BaseResolveProviderServiceSupplier? = null,
+) : KotlinAbstractUExpression(givenParent, baseResolveProviderServiceSupplier), UDeclarationsExpression {
 
     override val sourcePsi: PsiElement?
         get() = psiAnchor
