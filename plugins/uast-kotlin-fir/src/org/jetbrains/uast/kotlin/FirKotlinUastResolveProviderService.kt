@@ -6,7 +6,8 @@
 package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.frontend.api.analyse
+import org.jetbrains.kotlin.idea.frontend.api.analyseWithCustomToken
+import org.jetbrains.kotlin.idea.frontend.api.tokens.AlwaysAccessibleValidityTokenFactory
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtReferenceExpression
@@ -20,7 +21,7 @@ interface FirKotlinUastResolveProviderService : BaseKotlinUastResolveProviderSer
     override fun resolveToDeclaration(ktExpression: KtExpression): PsiElement? {
         when (ktExpression) {
             is KtReferenceExpression -> {
-                analyse(ktExpression) {
+                analyseWithCustomToken(ktExpression, AlwaysAccessibleValidityTokenFactory) {
                     return ktExpression.mainReference.resolve()
                 }
             }
