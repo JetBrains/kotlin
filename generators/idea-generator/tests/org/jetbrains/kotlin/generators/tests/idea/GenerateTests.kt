@@ -1072,6 +1072,9 @@ fun main(args: Array<String>) {
             testClass<AbstractFirLazyDeclarationResolveTest> {
                 model("lazyResolve")
             }
+            testClass<AbstractFirLibraryModuleDeclarationResolveTest> {
+                model("libraryModuleResolve", recursive = false)
+            }
             testClass<AbstractProjectWideOutOfBlockKotlinModificationTrackerTest> {
                 model("outOfBlockProjectWide")
             }

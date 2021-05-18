@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSession
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelPropertyFqnNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelTypeAliasFqNameIndex
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -55,7 +56,7 @@ object FirIdeDeserializedDeclarationSourceProvider {
 
     private fun provideSourceForProperty(property: FirProperty, project: Project): PsiElement? {
         val candidates = if (property.isTopLevel) {
-            KotlinTopLevelFunctionFqnNameIndex.getInstance().get(
+            KotlinTopLevelPropertyFqnNameIndex.getInstance().get(
                 property.symbol.callableId.asSingleFqName().asString(),
                 project,
                 property.scope(project)
