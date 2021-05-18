@@ -9,7 +9,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.*
@@ -119,9 +118,9 @@ object FirSessionFactory {
                     this,
                     listOfNotNull(
                         firProvider.symbolProvider,
-                        symbolProviderForBinariesFromIncrementalCompilation,
                         JavaSymbolProvider(this, moduleData, project, scope),
-                        FirDependenciesSymbolProviderImpl(this)
+                        FirDependenciesSymbolProviderImpl(this),
+                        symbolProviderForBinariesFromIncrementalCompilation,
                     )
                 )
             )
@@ -158,7 +157,7 @@ object FirSessionFactory {
 
             val kotlinScopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
 
-            val deserializedJvmSymbolsProvider = makeDeserializedJvmSymbolsProvider(
+            val deserializedProviderForIncrementalCompilation = makeDeserializedJvmSymbolsProvider(
                 librarySession = this,
                 moduleDataProvider,
                 project,
@@ -177,7 +176,7 @@ object FirSessionFactory {
             val symbolProvider = FirCompositeSymbolProvider(
                 this,
                 listOf(
-                    deserializedJvmSymbolsProvider,
+                    deserializedProviderForIncrementalCompilation,
                     FirBuiltinSymbolProvider(this, builtinsModuleData, kotlinScopeProvider),
                     FirCloneableSymbolProvider(this, builtinsModuleData, kotlinScopeProvider),
                     javaSymbolProvider, // TODO: looks like it can be removed
