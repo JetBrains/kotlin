@@ -262,7 +262,22 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
     private fun getMembers(cursor: CValue<CXCursor>, structType: CValue<CXType>): List<StructMember> =
             // TODO: We don't exactly preserve C++ layout here, but we don't allow general case C++ classes by value at the moment.
             getFields(cursor.type).filter { library.language != Language.CPP || it.isCxxPublic }.map { fieldCursor ->
-                // clang_Cursor_isAnonymous is always false for a fieldCursor. Use declaration cursor
+
+                /*
+                 * We want to identify anonymous struct/union member, according with definition (ISO/IEC 9899):
+                 *  "An unnamed member whose type specifier is a structure specifier with no tag is called an anonymous structure"
+                 * `clang_Cursor_isAnonymous` intended to identify such entity and distinguish with cases alike:
+                 *     struct {
+                 *         struct {int x; } f;  // named member of anonymous type "struct with no tag"
+                 *         int : 16;            // anonymous bitfield
+                 *         typedef struct { int z; } foo;  // c++ only; anon struct but the struct tag is implicitly assigned by the compiler; clang_getTypeSpelling still empty
+                 *         struct { int a; };   // this is the only one that we are looking for, i.e. anonymous struct member
+                 *     }
+                 *   `clang_Cursor_isAnonymous` implementation has been changed since LLVM 8 so we have to additionally check type.kind == CXType_Record
+                 *   Starting from LLVM 9 a new function `clang_Cursor_isAnonymousRecordDecl` provided specifically for that.
+                 *   Also, both `clang_Cursor_isAnonymous` and `clang_Cursor_isAnonymousRecordDecl` expect StructDecl cursor but we got
+                 *   FieldDecl cursor now, so we have to convert cursor to type declaration cursor first (e.g. StructDecl))
+                 */
                 val declCursor = clang_getTypeDeclaration(fieldCursor.type)
 
                 // Behavior of clang_Cursor_isAnonymous is changing starting from LLVM 8.

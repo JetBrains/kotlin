@@ -2,17 +2,6 @@ import kotlinx.cinterop.*
 import kotlin.test.*
 import structAnonym.*
 
-fun test_simple() {
-    val c = retByValue()
-    c.useContents {
-        assertEquals(37, x)
-        assertEquals(42L + 0x100000000, b)
-
-        a[0] = 2
-        a[1] = 5
-        assertEquals(12, sendByValue(this.readValue()))
-    }
-}
 
 fun test_GLKVector3() {
     get_GLKVector3().useContents {
@@ -31,8 +20,8 @@ fun test_GLKVector3() {
     }
 }
 
-fun test_Trivial() {
-    get_Trivial()
+fun test_StructAnonRecordMember_ImplicitAlignment() {
+    retByValue_StructAnonRecordMember_ImplicitAlignment()
             .useContents {
                 assertEquals(1, a[0])
                 assertEquals(4, a[3])
@@ -40,16 +29,30 @@ fun test_Trivial() {
             }
 }
 
-fun test_S() {
-    get_S()
+fun test_StructAnonRecordMember_ExplicitAlignment() {
+    retByValue_StructAnonRecordMember_ExplicitAlignment()
             .useContents {
                 assertEquals('a', a.toInt().toChar())
                 assertEquals('x', x.toInt().toChar())
             }
 }
 
-fun test_S1() {
-    ret_S1()
+fun test_StructAnonRecordMember_Nested() {
+    retByValue_StructAnonRecordMember_Nested()
+            .useContents {
+                assertEquals(37, x)
+                assertEquals(42, b)
+                assertEquals('z', z.toInt().toChar())
+                assertEquals(3.14, y)
+
+                a[0] = 3
+                a[1] = 5
+                assertEquals(3 + 2*5, sendByValue_StructAnonRecordMember_Nested(this.readValue()))
+            }
+}
+
+fun test_StructAnonym_Complicate() {
+    retByValue_StructAnonRecordMember_Complicate()
             .useContents{
                 assertEquals('a', first.toInt().toChar())
                 assertEquals('s', second.toInt().toChar())
@@ -61,8 +64,8 @@ fun test_S1() {
             }
 }
 
-fun test_S2() {
-    ret_S2()
+fun test_StructAnonym_Packed() {
+    retByValue_StructAnonRecordMember_Packed2()
             .useContents{
                 assertEquals('a', first.toInt().toChar())
                 assertEquals('s', second.toInt().toChar())
@@ -74,8 +77,8 @@ fun test_S2() {
             }
 }
 
-fun test_S3() {
-    ret_S3()
+fun test_StructAnonym_PragmaPacked() {
+    retByValue_StructAnonRecordMember_PragmaPacked()
             .useContents{
                 assertEquals('a', first.toInt().toChar())
                 assertEquals('s', second.toInt().toChar())
@@ -87,8 +90,8 @@ fun test_S3() {
             }
 }
 
-fun test_S4() {
-    ret_S4()
+fun test_StructAnonym_Packed2() {
+    retByValue_StructAnonRecordMember_Packed2()
             .useContents{
                 assertEquals('a', first.toInt().toChar())
                 assertEquals('s', second.toInt().toChar())
@@ -101,13 +104,13 @@ fun test_S4() {
 }
 
 fun main() {
-    test_simple()
     test_GLKVector3()
-    test_Trivial()
-    test_S()
+    test_StructAnonRecordMember_ImplicitAlignment()
+    test_StructAnonRecordMember_ExplicitAlignment()
+    test_StructAnonRecordMember_Nested()
 
-    test_S1()
-    test_S2()
-    test_S3()
-    test_S4()
+    test_StructAnonym_Complicate()
+    test_StructAnonym_Packed()
+    test_StructAnonym_PragmaPacked()
+    test_StructAnonym_Packed2()
 }

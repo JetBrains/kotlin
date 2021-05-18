@@ -1,5 +1,10 @@
 ---
-//#include <stddef.h>
+
+/*
+ *  Test of return/send-by-value for aggregate type (struct or union) with anonymous inner struct or union member.
+ *  Specific issues: alignment, packed, nested named and anon struct/union, other anon types (named field  of anon struct type; anon bitfield)
+ */
+
 #include <inttypes.h>
 
 #pragma clang diagnostic push
@@ -23,23 +28,23 @@ static float hash_GLKVector3(union _GLKVector3 x) {
     return x.x + 2.0f * x.y + 4.0f * x.z;
 }
 
-// trivial alignment: member is already aligned, but this implies explicit alignment of the root struct
-struct Trivial {
+// trivial alignment: member is already aligned, but this implies implicit larger alignment of the root struct
+struct StructAnonRecordMember_ImplicitAlignment {
     int32_t a[4];
     struct {
         int b  __attribute__((aligned(16)));
     };
 };
 
-static struct Trivial get_Trivial() {
-    struct Trivial t = {
+static struct StructAnonRecordMember_ImplicitAlignment retByValue_StructAnonRecordMember_ImplicitAlignment() {
+    struct StructAnonRecordMember_ImplicitAlignment t = {
         .a = {1,2,3,4},
         .b = 42
     };
     return t;
 }
 
-struct S {
+struct StructAnonRecordMember_ExplicitAlignment {
     char a;
     struct {
         __attribute__((aligned(4)))
@@ -47,8 +52,8 @@ struct S {
     };
 };
 
-static struct S get_S() {
-    struct S t = {
+static struct StructAnonRecordMember_ExplicitAlignment retByValue_StructAnonRecordMember_ExplicitAlignment() {
+    struct StructAnonRecordMember_ExplicitAlignment t = {
         .a = 'a',
         .x = 'x'
     };
@@ -56,10 +61,9 @@ static struct S get_S() {
 }
 
 // Deep nesting
-
-struct S0 {
+struct StructAnonRecordMember_Nested {
     int x;
-    union { // implicitly aligned to 8 bytes
+    union { // implicitly aligned to 8 bytes due to int64, or 4 bytes at 32-bit arch
         int a[2];
         struct {
             int64_t b;
@@ -69,22 +73,23 @@ struct S0 {
     double y;
 };
 
-static struct S0 retByValue() {
-	struct S0 c = {
+static struct StructAnonRecordMember_Nested retByValue_StructAnonRecordMember_Nested() {
+	struct StructAnonRecordMember_Nested c = {
+	    .x = 37,
+	    .b = 42,
+	    .z = 'z',
+	    .y = 3.14
 	};
-	c.x = 37;
-	c.b = 42;
-	c.a[1] = 1;
 	return c;
 }
 
-static int sendByValue(struct S0 c) {
+static int sendByValue_StructAnonRecordMember_Nested(struct StructAnonRecordMember_Nested c) {
 	return c.a[0] + 2 * c.a[1];
 }
 
 // Basic, 2 levels
 
-struct S1 {
+struct StructAnonRecordMember_Complicate {
 	char first; // __attribute__((aligned(16)));
 	union {
 		int a[2];
@@ -111,12 +116,12 @@ struct S1 {
     .Y2 = {11, 12} \
 }
 
-static struct S1 ret_S1() {
-	INIT(S1, c);
+static struct StructAnonRecordMember_Complicate retByValue_StructAnonRecordMember_Complicate() {
+	INIT(StructAnonRecordMember_Complicate, c);
 	return c;
 }
 
-struct S2 {
+struct StructAnonRecordMember_Packed {
 	char first;
 	union {
 		int a[2];
@@ -132,14 +137,14 @@ struct S2 {
 	char last;
 } __attribute__ ((packed));
 
-static struct S2 ret_S2() {
-	INIT(S2, c);
+static struct StructAnonRecordMember_Packed retByValue_StructAnonRecordMember_Packed() {
+	INIT(StructAnonRecordMember_Packed, c);
 	return c;
 }
 
 // Nested struct may be packed too
 #pragma pack(1)
-struct S3 {
+struct StructAnonRecordMember_PragmaPacked {
 	char first;
 	union {
 		int a[2];
@@ -156,13 +161,13 @@ struct S3 {
 } __attribute__ ((packed));
 #pragma pack()
 
-static struct S3 ret_S3() {
-	INIT(S3, c);
+static struct StructAnonRecordMember_PragmaPacked retByValue_StructAnonRecordMember_PragmaPacked() {
+	INIT(StructAnonRecordMember_PragmaPacked, c);
 	return c;
 }
 
 #pragma pack(2)
-struct S4 {
+struct StructAnonRecordMember_Packed2 {
 	char first;
 	union {
 		int a[2];
@@ -179,8 +184,8 @@ struct S4 {
 } __attribute__ ((packed));
 #pragma pack()
 
-static struct S4 ret_S4() {
-	INIT(S4, c);
+static struct StructAnonRecordMember_Packed2 retByValue_StructAnonRecordMember_Packed2() {
+	INIT(StructAnonRecordMember_Packed2, c);
 	return c;
 }
 
