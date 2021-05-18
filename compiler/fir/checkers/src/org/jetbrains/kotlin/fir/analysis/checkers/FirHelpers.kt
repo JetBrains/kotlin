@@ -292,10 +292,8 @@ fun FirClass<*>.findNonInterfaceSupertype(context: CheckerContext): FirTypeRef? 
 val FirFunctionCall.isIterator
     get() = this.calleeReference.name.asString() == "<iterator>"
 
-internal fun throwableClassLikeType(session: FirSession) = session.builtinTypes.throwableType.type
-
 fun ConeKotlinType.isSubtypeOfThrowable(session: FirSession) =
-    throwableClassLikeType(session).isSupertypeOf(session.typeContext, this.fullyExpandedType(session))
+    session.builtinTypes.throwableType.type.isSupertypeOf(session.typeContext, this.fullyExpandedType(session))
 
 val FirValueParameter.hasValOrVar: Boolean
     get() {

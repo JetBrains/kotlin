@@ -9,15 +9,15 @@ fun <T : Throwable> test() {
 
     try {} catch (<!TYPE_PARAMETER_IN_CATCH_CLAUSE!>e: T<!>) {}
 
-    try {} catch (<!TYPE_MISMATCH!>e: () -> Int<!>) {}
+    try {} catch (<!THROWABLE_TYPE_MISMATCH!>e: () -> Int<!>) {}
 
-    try {} catch (<!TYPE_MISMATCH!>e: StringType<!>) {}
+    try {} catch (<!THROWABLE_TYPE_MISMATCH!>e: StringType<!>) {}
 
-    try {} catch (<!CATCH_PARAMETER_WITH_DEFAULT_VALUE, TYPE_MISMATCH!>e: Int = 5<!>) {}
+    try {} catch (<!CATCH_PARAMETER_WITH_DEFAULT_VALUE, THROWABLE_TYPE_MISMATCH!>e: Int = 5<!>) {}
 
     try {} catch (e: Throwable) {}
 }
 
 inline fun <reified T> anotherTest() {
-    try {} catch (<!REIFIED_TYPE_IN_CATCH_CLAUSE, TYPE_MISMATCH!>e: T<!>) {}
+    try {} catch (<!REIFIED_TYPE_IN_CATCH_CLAUSE, THROWABLE_TYPE_MISMATCH!>e: T<!>) {}
 }

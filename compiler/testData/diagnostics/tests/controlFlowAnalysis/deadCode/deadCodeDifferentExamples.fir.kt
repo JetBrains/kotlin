@@ -109,7 +109,7 @@ fun t7() : Int {
     return 1
     2
   }
-  catch (<!TYPE_MISMATCH!>e : Any<!>) {
+  catch (<!THROWABLE_TYPE_MISMATCH!>e : Any<!>) {
     2
   }
   return 1 // this is OK, like in Java
@@ -120,7 +120,7 @@ fun t8() : Int {
     return 1
     2
   }
-  catch (<!TYPE_MISMATCH!>e : Any<!>) {
+  catch (<!THROWABLE_TYPE_MISMATCH!>e : Any<!>) {
     return 1
     2
   }

@@ -602,6 +602,22 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val candidate: KtSymbol
     }
 
+    abstract class TypeMismatch : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = TypeMismatch::class
+        abstract val expectedType: KtType
+        abstract val actualType: KtType
+    }
+
+    abstract class ThrowableTypeMismatch : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = ThrowableTypeMismatch::class
+        abstract val actualType: KtType
+    }
+
+    abstract class ConditionTypeMismatch : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = ConditionTypeMismatch::class
+        abstract val actualType: KtType
+    }
+
     abstract class ArgumentTypeMismatch : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = ArgumentTypeMismatch::class
         abstract val expectedType: KtType
@@ -688,12 +704,6 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
     abstract class NextAmbiguity : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = NextAmbiguity::class
         abstract val candidates: List<KtSymbol>
-    }
-
-    abstract class TypeMismatch : KtFirDiagnostic<PsiElement>() {
-        override val diagnosticClass get() = TypeMismatch::class
-        abstract val expectedType: KtType
-        abstract val actualType: KtType
     }
 
     abstract class RecursionInImplicitTypes : KtFirDiagnostic<PsiElement>() {

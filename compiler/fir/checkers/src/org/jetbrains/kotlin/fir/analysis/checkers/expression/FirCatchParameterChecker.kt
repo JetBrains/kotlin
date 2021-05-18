@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isSubtypeOfThrowable
-import org.jetbrains.kotlin.fir.analysis.checkers.throwableClassLikeType
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
@@ -37,7 +36,7 @@ object FirCatchParameterChecker : FirTryExpressionChecker() {
 
             val session = context.session
             if (!coneType.isSubtypeOfThrowable(session)) {
-                reporter.reportOn(catchParameter.source, FirErrors.TYPE_MISMATCH, throwableClassLikeType(session), coneType, context)
+                reporter.reportOn(catchParameter.source, FirErrors.THROWABLE_TYPE_MISMATCH, coneType, context)
             }
         }
     }

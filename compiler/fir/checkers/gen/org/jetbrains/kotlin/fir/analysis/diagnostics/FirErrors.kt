@@ -216,6 +216,9 @@ object FirErrors {
     // Applicability
     val NONE_APPLICABLE by error1<PsiElement, Collection<AbstractFirBasedSymbol<*>>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val INAPPLICABLE_CANDIDATE by error1<PsiElement, AbstractFirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val TYPE_MISMATCH by error2<PsiElement, ConeKotlinType, ConeKotlinType>()
+    val THROWABLE_TYPE_MISMATCH by error1<PsiElement, ConeKotlinType>()
+    val CONDITION_TYPE_MISMATCH by error1<PsiElement, ConeKotlinType>()
     val ARGUMENT_TYPE_MISMATCH by error2<PsiElement, ConeKotlinType, ConeKotlinType>()
     val NULL_FOR_NONNULL_TYPE by error0<PsiElement>()
     val INAPPLICABLE_LATEINIT_MODIFIER by error1<KtModifierListOwner, String>(SourceElementPositioningStrategies.LATEINIT_MODIFIER)
@@ -238,7 +241,6 @@ object FirErrors {
     val NEXT_AMBIGUITY by error1<PsiElement, Collection<AbstractFirBasedSymbol<*>>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
 
     // Types & type parameters
-    val TYPE_MISMATCH by error2<PsiElement, ConeKotlinType, ConeKotlinType>()
     val RECURSION_IN_IMPLICIT_TYPES by error0<PsiElement>()
     val INFERENCE_ERROR by error0<PsiElement>()
     val PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT by error0<PsiElement>()

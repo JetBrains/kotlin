@@ -242,6 +242,19 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
             parameter<Symbol>("candidate")
         }
 
+        val TYPE_MISMATCH by error<PsiElement> {
+            parameter<ConeKotlinType>("expectedType")
+            parameter<ConeKotlinType>("actualType")
+        }
+
+        val THROWABLE_TYPE_MISMATCH by error<PsiElement> {
+            parameter<ConeKotlinType>("actualType")
+        }
+
+        val CONDITION_TYPE_MISMATCH by error<PsiElement> {
+            parameter<ConeKotlinType>("actualType")
+        }
+
         val ARGUMENT_TYPE_MISMATCH by error<PsiElement> {
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
@@ -304,10 +317,6 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
     }
 
     val TYPES_AND_TYPE_PARAMETERS by object : DiagnosticGroup("Types & type parameters") {
-        val TYPE_MISMATCH by error<PsiElement> {
-            parameter<ConeKotlinType>("expectedType")
-            parameter<ConeKotlinType>("actualType")
-        }
         val RECURSION_IN_IMPLICIT_TYPES by error<PsiElement>()
         val INFERENCE_ERROR by error<PsiElement>()
         val PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT by error<PsiElement>()
