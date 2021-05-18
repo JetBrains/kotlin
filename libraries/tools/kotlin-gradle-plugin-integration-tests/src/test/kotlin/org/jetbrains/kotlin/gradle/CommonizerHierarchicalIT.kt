@@ -61,11 +61,12 @@ class CommonizerHierarchicalIT : BaseGradleIT() {
     fun `test commonizeHierarchically Klibrary compilations`() {
         with(Project("commonizeHierarchically")) {
             if (Os.canCompileApple) {
-                build(":p1:iosArm64MainKlibrary", ":p1:iosX64MainKlibrary", ":p1:macosMainKlibrary") {
+                build(":p1:iosArm64MainKlibrary", ":p1:iosX64MainKlibrary", ":p1:macosX64MainKlibrary", ":p1:macosArm64MainKLibrary") {
                     assertSuccessful()
                     assertFileExists("p1/build/classes/kotlin/iosArm64/main/klib/p1.klib")
                     assertFileExists("p1/build/classes/kotlin/iosX64/main/klib/p1.klib")
-                    assertFileExists("p1/build/classes/kotlin/macos/main/klib/p1.klib")
+                    assertFileExists("p1/build/classes/kotlin/macosX64/main/klib/p1.klib")
+                    assertFileExists("p1/build/classes/kotlin/macosArm64/main/klib/p1.klib")
                 }
             }
 

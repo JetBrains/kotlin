@@ -21,7 +21,7 @@ kotlin {
     linuxX64()
     linuxArm64()
 
-    macosX64("macos")
+    macos()
     ios()
 
     mingwX64("windowsX64")
