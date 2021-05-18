@@ -1,0 +1,532 @@
+[
+  {
+    "moduleName": "intellij.platform.util.rt",
+    "path": "util.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.util",
+    "path": "util.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.util.classLoader",
+    "path": "util.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.util.text.matching",
+    "path": "util.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.util.collections",
+    "path": "util.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.util.strings",
+    "path": "util.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.util.diagnostic",
+    "path": "util.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.jps.build.launcher",
+    "path": "jps-launcher.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.jps.model",
+    "path": "jps-model.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.jps.model.impl",
+    "path": "jps-model.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.jps.model.serialization",
+    "path": "jps-model.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.java.guiForms.rt",
+    "path": "jps-builders.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.java.guiForms.compiler",
+    "path": "jps-builders.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.java.compiler.instrumentationUtil",
+    "path": "jps-builders.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.java.compiler.instrumentationUtil.java8",
+    "path": "jps-builders.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.java.jps.javacRefScanner8",
+    "path": "jps-builders.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.jps.build",
+    "path": "jps-builders.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.tools.jps.build.standalone",
+    "path": "jps-builders.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.java.rt",
+    "path": "idea_rt.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.jps.build.javac.rt",
+    "path": "jps-builders-6.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.groovy.jps",
+    "path": "groovy-jps-plugin.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.groovy.rt",
+    "path": "groovy_rt.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.groovy.constants.rt",
+    "path": "groovy-rt-constants.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.java.guiForms.jps",
+    "path": "ui-designer-jps-plugin.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.maven.jps",
+    "path": "maven-jps-plugin.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.java.aetherDependencyResolver",
+    "path": "aether-dependency-resolver.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.gradle.jps",
+    "path": "gradle-jps-plugin.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.eclipse.common",
+    "path": "eclipse-jps-plugin.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.eclipse.jps",
+    "path": "eclipse-jps-plugin.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.devkit.jps",
+    "path": "devkit-jps-plugin.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.java.langInjection.jps",
+    "path": "intellilang-jps-plugin.jar",
+    "type": "module-output"
+  },
+  {
+    "libraryName": "JDOM",
+    "path": "jdom-2.0.6.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "jna",
+    "path": "jna-platform-5.6.0.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "jna",
+    "path": "jna-5.6.0.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "OroMatcher",
+    "path": "oro-2.0.8.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "Trove4j",
+    "path": "trove4j-1.0.20200330.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "ASM",
+    "path": "asm-all-8.0.1.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "NanoXML",
+    "path": "nanoxml-2.2.3.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "protobuf",
+    "path": "protobuf-java-3.5.1.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "cli-parser",
+    "path": "cli-parser-1.1.5.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "Log4J",
+    "path": "log4j-1.2.17.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "jgoodies-forms",
+    "path": "forms-1.1-preview.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "Eclipse",
+    "path": "ecj-4.13.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "netty-codec-http",
+    "path": "netty-codec-http2-4.1.47.Final.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "netty-codec-http",
+    "path": "netty-common-4.1.47.Final.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "netty-codec-http",
+    "path": "netty-buffer-4.1.47.Final.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "netty-codec-http",
+    "path": "netty-transport-4.1.47.Final.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "netty-codec-http",
+    "path": "netty-resolver-4.1.47.Final.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "netty-codec-http",
+    "path": "netty-codec-4.1.47.Final.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "netty-codec-http",
+    "path": "netty-handler-4.1.47.Final.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "netty-codec-http",
+    "path": "netty-codec-http-4.1.47.Final.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "lz4-java",
+    "path": "lz4-java-1.7.1.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "commons-codec",
+    "path": "commons-codec-1.14.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "commons-logging",
+    "path": "commons-logging-1.2.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "http-client",
+    "path": "httpmime-4.5.12.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "http-client",
+    "path": "httpclient-4.5.12.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "http-client",
+    "path": "httpcore-4.4.13.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "Slf4j",
+    "path": "slf4j-log4j12-1.7.25.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "Slf4j",
+    "path": "slf4j-api-1.7.25.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "Guava",
+    "path": "guava-29.0-jre.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "Guava",
+    "path": "failureaccess-1.0.1.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "Guava",
+    "path": "j2objc-annotations-1.3.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "plexus-utils",
+    "path": "plexus-utils-3.2.0.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "jetbrains-annotations-java5",
+    "path": "annotations-java5-19.0.0.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "qdox-java-parser",
+    "path": "qdox-2.0-M10.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "gson",
+    "path": "gson-2.8.6.jar",
+    "type": "project-library"
+  },
+  {
+    "filePath": "$MAVEN_REPOSITORY$/org/apache/maven/resolver/maven-resolver-transport-file/1.3.3/maven-resolver-transport-file-1.3.3.jar",
+    "path": "maven-resolver-transport-file-1.3.3.jar",
+    "type": "module-library-file"
+  },
+  {
+    "filePath": "$MAVEN_REPOSITORY$/org/apache/maven/resolver/maven-resolver-transport-http/1.3.3/maven-resolver-transport-http-1.3.3.jar",
+    "path": "maven-resolver-transport-http-1.3.3.jar",
+    "type": "module-library-file"
+  },
+  {
+    "filePath": "$MAVEN_REPOSITORY$/org/apache/maven/resolver/maven-resolver-connector-basic/1.3.3/maven-resolver-connector-basic-1.3.3.jar",
+    "path": "maven-resolver-connector-basic-1.3.3.jar",
+    "type": "module-library-file"
+  },
+  {
+    "moduleName": "intellij.ant.jps",
+    "path": "ant-jps-plugin.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.aspectj.jps",
+    "path": "aspectj-jps-plugin.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.groovy.grails.jps",
+    "path": "grails-jps-plugin.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.groovy.grails.compilerPatch",
+    "path": "grails-compiler-patch.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.javaee.jps",
+    "path": "javaee-jps-plugin.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.javaee.jpa.jps",
+    "path": "jpa-jps-plugin.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.javaee.appServers.weblogic.jps",
+    "path": "weblogic-jps-plugin.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.javaee.appServers.websphere.jps",
+    "path": "webSphere-jps-plugin.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.osgi.jps",
+    "path": "osmorc-jps-plugin.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.javaee.appServers.dmServer.jps",
+    "path": "dmServer-jps-plugin.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.flex.jps",
+    "path": "flex-jps-plugin.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.flex.shared",
+    "path": "flex-jps-plugin.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.gwt.jps",
+    "path": "gwt-jps-plugin.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.java.googleAppEngine.jps",
+    "path": "google-app-engine-jps-plugin.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.java.googleAppEngine.runtime",
+    "path": "google-app-engine-jps-plugin.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.android.jps",
+    "path": "android-jps-plugin.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.android.common",
+    "path": "android-jps-plugin.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.android.rt",
+    "path": "android-jps-plugin.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.android.buildCommon",
+    "path": "android-jps-plugin.jar",
+    "type": "module-output"
+  },
+  {
+    "filePath": "$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/android/tools/base/studio.android.sdktools.layoutlib-api/27.0.0.0/studio.android.sdktools.layoutlib-api-27.0.0.0.jar",
+    "path": "studio.android.sdktools.layoutlib-api-27.0.0.0.jar",
+    "type": "module-library-file"
+  },
+  {
+    "filePath": "$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/android/tools/base/studio.android.sdktools.sdklib/27.0.0.0/studio.android.sdktools.sdklib-27.0.0.0.jar",
+    "path": "studio.android.sdktools.sdklib-27.0.0.0.jar",
+    "type": "module-library-file"
+  },
+  {
+    "filePath": "$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/android/tools/base/studio.android.sdktools.manifest-merger/27.0.0.0/studio.android.sdktools.manifest-merger-27.0.0.0.jar",
+    "path": "studio.android.sdktools.manifest-merger-27.0.0.0.jar",
+    "type": "module-library-file"
+  },
+  {
+    "filePath": "$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/android/tools/base/studio.android.sdktools.sdk-common/27.0.0.0/studio.android.sdktools.sdk-common-27.0.0.0.jar",
+    "path": "studio.android.sdktools.sdk-common-27.0.0.0.jar",
+    "type": "module-library-file"
+  },
+  {
+    "filePath": "$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/android/tools/base/studio.android.sdktools.common/27.0.0.0/studio.android.sdktools.common-27.0.0.0.jar",
+    "path": "studio.android.sdktools.common-27.0.0.0.jar",
+    "type": "module-library-file"
+  },
+  {
+    "filePath": "$MAVEN_REPOSITORY$/com/android/tools/build/apkzlib/4.0.0/apkzlib-4.0.0.jar",
+    "path": "apkzlib-4.0.0.jar",
+    "type": "module-library-file"
+  },
+  {
+    "filePath": "$MAVEN_REPOSITORY$/com/android/tools/build/apksig/4.0.0/apksig-4.0.0.jar",
+    "path": "apksig-4.0.0.jar",
+    "type": "module-library-file"
+  },
+  {
+    "filePath": "$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/android/tools/base/studio.android.sdktools.repository/27.0.0.0/studio.android.sdktools.repository-27.0.0.0.jar",
+    "path": "studio.android.sdktools.repository-27.0.0.0.jar",
+    "type": "module-library-file"
+  },
+  {
+    "libraryName": "gson",
+    "path": "gson-2.8.6.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "plexus-utils",
+    "path": "plexus-utils-3.2.0.jar",
+    "type": "project-library"
+  },
+  {
+    "filePath": "$MAVEN_REPOSITORY$/biz/aQute/bnd/biz.aQute.bndlib/5.0.0/biz.aQute.bndlib-5.0.0.jar",
+    "path": "biz.aQute.bndlib-5.0.0.jar",
+    "type": "module-library-file"
+  },
+  {
+    "filePath": "$MAVEN_REPOSITORY$/biz/aQute/bnd/biz.aQute.repository/5.0.0/biz.aQute.repository-5.0.0.jar",
+    "path": "biz.aQute.repository-5.0.0.jar",
+    "type": "module-library-file"
+  },
+  {
+    "filePath": "$MAVEN_REPOSITORY$/biz/aQute/bnd/biz.aQute.resolve/5.0.0/biz.aQute.resolve-5.0.0.jar",
+    "path": "biz.aQute.resolve-5.0.0.jar",
+    "type": "module-library-file"
+  },
+  {
+    "filePath": "$PROJECT_DIR$/contrib/osmorc/lib/bundlor-all.jar",
+    "path": "bundlor-all.jar",
+    "type": "module-library-file"
+  },
+  {
+    "filePath": "$PROJECT_DIR$/contrib/osmorc/lib/org.osgi.namespace.contract-1.0.0.jar",
+    "path": "org.osgi.namespace.contract-1.0.0.jar",
+    "type": "module-library-file"
+  },
+  {
+    "filePath": "$PROJECT_DIR$/contrib/osmorc/lib/org.osgi.namespace.implementation-1.0.0.jar",
+    "path": "org.osgi.namespace.implementation-1.0.0.jar",
+    "type": "module-library-file"
+  },
+  {
+    "filePath": "$PROJECT_DIR$/contrib/osmorc/lib/org.osgi.namespace.extender-1.0.1.jar",
+    "path": "org.osgi.namespace.extender-1.0.1.jar",
+    "type": "module-library-file"
+  },
+  {
+    "filePath": "$PROJECT_DIR$/contrib/osmorc/lib/org.osgi.namespace.service-1.0.0.jar",
+    "path": "org.osgi.namespace.service-1.0.0.jar",
+    "type": "module-library-file"
+  }
+]
