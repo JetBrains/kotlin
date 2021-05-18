@@ -120,23 +120,28 @@ interface TypeDeclaration {
     val location: Location
 }
 
-sealed class StructMember(val name: String, val type: Type) {
+sealed class StructMember(val name: String) {
     abstract val offset: Long?
 }
 
 /**
  * C struct field.
  */
-class Field(name: String, type: Type, override val offset: Long, val typeSize: Long, val typeAlign: Long)
-    : StructMember(name, type)
+class Field(name: String, val type: Type, override val offset: Long, val typeSize: Long, val typeAlign: Long)
+    : StructMember(name)
 
 val Field.isAligned: Boolean
     get() = offset % (typeAlign * 8) == 0L
 
-class BitField(name: String, type: Type, override val offset: Long, val size: Int) : StructMember(name, type)
+class BitField(name: String, val type: Type, override val offset: Long, val size: Int) : StructMember(name)
 
-class IncompleteField(name: String, type: Type) : StructMember(name, type) {
+class IncompleteField(name: String) : StructMember(name) {
     override val offset: Long? get() = null
+}
+
+class AnonymousInnerRecord(val def: StructDef) : StructMember("") {
+    override val offset: Long? get() = null
+    val typeSize: Long = def.size
 }
 
 /**
@@ -153,19 +158,36 @@ abstract class StructDecl(val spelling: String) : TypeDeclaration {
  * @param hasNaturalLayout must be `false` if the struct has unnatural layout, e.g. it is `packed`.
  * May be `false` even if the struct has natural layout.
  */
-abstract class StructDef(val size: Long, val align: Int, val decl: StructDecl) {
+abstract class StructDef(val size: Long, val align: Int) {
 
     enum class Kind {
         STRUCT, UNION, CLASS
     }
 
-    abstract val methods: List<FunctionDecl>
-    abstract val members: List<StructMember>
-    abstract val staticFields: List<GlobalDecl>
     abstract val kind: Kind
+    abstract val members: List<StructMember>
+    abstract val methods: List<FunctionDecl>
+    abstract val staticFields: List<GlobalDecl>
 
-    val fields: List<Field> get() = members.filterIsInstance<Field>()
-    val bitFields: List<BitField> get() = members.filterIsInstance<BitField>()
+    val fields: List<Field>
+        get() = mutableListOf<Field>().apply {
+            members.forEach {
+                when (it) {
+                    is Field -> add(it)
+                    is AnonymousInnerRecord -> addAll(it.def.fields)
+                }
+            }
+        }
+
+    val bitFields: List<BitField>
+        get() = mutableListOf<BitField>().apply {
+            members.forEach {
+                when (it) {
+                    is BitField -> add(it)
+                    is AnonymousInnerRecord -> addAll(it.def.bitFields)
+                }
+            }
+        }
 }
 
 /**
