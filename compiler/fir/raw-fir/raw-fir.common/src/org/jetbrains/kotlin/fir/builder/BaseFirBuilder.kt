@@ -438,7 +438,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
 
         if (unwrappedArgument == null) {
             return buildErrorExpression {
-                source = unwrappedArgument
+                source = null
                 diagnostic = ConeSimpleDiagnostic("Inc/dec without operand", DiagnosticKind.Syntax)
             }
         }
