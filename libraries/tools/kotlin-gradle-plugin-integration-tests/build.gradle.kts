@@ -70,24 +70,21 @@ val cleanTestKitCacheTask = tasks.register<Delete>("cleanTestKitCache") {
     delete(project.file(".testKitDir"))
 }
 
-fun Test.includeMppAndAndroid(include: Boolean) {
-    if (isTeamcityBuild) {
-        val mppAndAndroidTestPatterns = listOf("*Multiplatform*", "*Mpp*", "*Android*")
-        val filter = if (include)
-            filter.includePatterns
-        else
-            filter.excludePatterns
-        filter.addAll(mppAndAndroidTestPatterns)
-    }
+fun Test.includeMppAndAndroid(include: Boolean) = includeTestsWithPattern(include) {
+    addAll(listOf("*Multiplatform*", "*Mpp*", "*Android*"))
 }
 
-fun Test.includeNative(include: Boolean) {
+fun Test.includeNative(include: Boolean) = includeTestsWithPattern(include) {
+    add("org.jetbrains.kotlin.gradle.native.*")
+}
+
+fun Test.includeTestsWithPattern(include: Boolean, patterns: (MutableSet<String>).() -> Unit) {
     if (isTeamcityBuild) {
         val filter = if (include)
             filter.includePatterns
         else
             filter.excludePatterns
-        filter.add("org.jetbrains.kotlin.gradle.native.*")
+        filter.patterns()
     }
 }
 
