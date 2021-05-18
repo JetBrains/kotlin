@@ -29,7 +29,7 @@ buildscript {
     }
 
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.28")
+        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.29")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
     }
 }
@@ -75,7 +75,7 @@ tasks.withType<KotlinCompile>().configureEach {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.28")
+    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.29")
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
     api("org.jetbrains.kotlin:kotlin-native-utils:${project.bootstrapKotlinVersion}")
     api("org.jetbrains.kotlin:kotlin-util-klib:${project.bootstrapKotlinVersion}")
