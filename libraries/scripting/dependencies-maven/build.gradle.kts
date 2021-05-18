@@ -8,9 +8,6 @@ jvmTarget = "1.6"
 dependencies {
     compile(kotlinStdlib())
     compile(project(":kotlin-scripting-dependencies"))
-    compile("org.eclipse.aether:aether-api:1.1.0")
-    compile("org.eclipse.aether:aether-impl:1.1.0")
-    compile("org.eclipse.aether:aether-util:1.1.0")
     compile("org.eclipse.aether:aether-connector-basic:1.1.0")
     compile("org.eclipse.aether:aether-transport-wagon:1.1.0")
     compile("org.eclipse.aether:aether-transport-file:1.1.0")
