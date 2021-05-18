@@ -27,6 +27,7 @@ private val intellijModuleNameToGradleDependencyNotationsMappingManual: List<Pai
     "intellij.platform.structuralSearch" to IntellijDepGradleDependencyNotation("structuralsearch") // for some reason it's absent in json mapping
 )
 
+// These modules are used in Kotlin plugin and IDEA doesn't publish artifact of these modules
 private val intellijModulesForWhichGenerateBuildGradle = listOf(
     "intellij.platform.debugger.testFramework",
     "intellij.gradle.tests",
@@ -35,6 +36,11 @@ private val intellijModulesForWhichGenerateBuildGradle = listOf(
     "intellij.platform.testExtensions",
     "intellij.java.compiler.tests",
     "intellij.gradle.toolingExtension.tests"
+)
+
+val jsonUrlPrefixes = mapOf(
+    "202" to "https://buildserver.labs.intellij.net/guestAuth/repository/download/ijplatform_IjPlatform202_IntellijArtifactMappings/113235432:id",
+    "203" to "https://buildserver.labs.intellij.net/guestAuth/repository/download/ijplatform_IjPlatform203_IntellijArtifactMappings/117989041:id",
 )
 
 fun main() {
@@ -52,16 +58,9 @@ fun main() {
         ?.inputStream()
         ?.use { Properties().apply { load(it) }.getProperty("attachedIntellijVersion") }
         ?: error("Can't find 'attachedIntellijVersion' in 'local.properties'")
-    check(ideaMajorVersion.length == 3 && ideaMajorVersion.all { it.isDigit() }) {
-        "attachedIntellijVersion='$ideaMajorVersion' must be 3 length all digit string"
-    }
 
-    intellijModuleNameToGradleDependencyNotationsMapping = listOf(
-        object {}.javaClass.getResource("/$ideaMajorVersion/ideaIU-project-structure-mapping.json"),
-        object {}.javaClass.getResource("/$ideaMajorVersion/intellij-core-project-structure-mapping.json")
-    )
-        .flatMap { jsonUrl ->
-            val jsonStr = File(jsonUrl!!.toURI()).readText()
+    intellijModuleNameToGradleDependencyNotationsMapping = fetchJsonsFromBuildserver(ideaMajorVersion)
+        .flatMap { jsonStr ->
             JsonParser.parseString(jsonStr).asJsonArray.mapNotNull { jsonElement ->
                 val jsonObject = jsonElement.asJsonObject
                 val moduleName = jsonObject.get("moduleName")?.asString ?: return@mapNotNull null
@@ -69,6 +68,7 @@ fun main() {
                 moduleName to jarPath
             }
         }
+        .filter { (_, jarPath) -> !jarPath.contains("DatabaseTools") && !jarPath.contains("lib/openapi.jar") }
         .groupBy(
             keySelector = { (_, jarPath) -> jarPath },
             valueTransform = { (moduleName, _) -> moduleName }
@@ -158,7 +158,7 @@ fun convertJpsModuleDependency(dep: JpsModuleDependency): List<JpsLikeDependency
         moduleName.startsWith("intellij.") -> {
             dep.module.orElse { error("Cannot resolve dependency ${dep.moduleReference.moduleName}") }
                 .flattenExportedTransitiveDependencies()
-                .map { JpsDependencyDescriptor(it.moduleOrLibrary, it.scope intersectCompileClasspath dep.scope) }
+                .map { it.copy(scope = it.scope intersectCompileClasspath dep.scope) }
                 .filter { it.scope != JpsJavaDependencyScope.RUNTIME } // We are interested only in transitive dependencies which affect compilation
                 .flatMap { convertIntellijDependencyNotFollowingTransitive(it, dep.isExported).asSequence() }
                 .mapIndexed { index, jpsLikeDependency ->

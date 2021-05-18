@@ -49,7 +49,7 @@ fun JpsModule.flattenExportedTransitiveDependencies(): Sequence<JpsDependencyDes
                 val elements = jpsModule.dependencies
                     .filter { it.isExported }
                     .map { JpsDependencyDescriptor.from(it)!! }
-                    .map { JpsDependencyDescriptor(it.moduleOrLibrary, it.scope intersectCompileClasspath current.scope) }
+                    .map { it.copy(scope = it.scope intersectCompileClasspath current.scope) }
                 toVisit.addAll(elements)
                 while (toVisit.isNotEmpty()) {
                     visit(toVisit.poll())
