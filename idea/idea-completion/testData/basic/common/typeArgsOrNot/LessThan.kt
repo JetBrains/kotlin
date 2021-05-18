@@ -1,4 +1,3 @@
-// FIR_COMPARISON
 val v = 1
 fun f() = 2
 

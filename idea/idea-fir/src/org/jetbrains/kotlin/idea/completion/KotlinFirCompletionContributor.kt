@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.completion
 
 import com.intellij.codeInsight.completion.*
+import com.intellij.openapi.components.service
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PsiJavaPatterns
 import com.intellij.util.ProcessingContext
@@ -28,10 +29,18 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.IndexHelper
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.originalKtFile
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtFile
 
 class KotlinFirCompletionContributor : CompletionContributor() {
     init {
         extend(CompletionType.BASIC, PlatformPatterns.psiElement(), KotlinFirCompletionProvider)
+    }
+
+    override fun beforeCompletion(context: CompletionInitializationContext) {
+        val psiFile = context.file
+        if (psiFile !is KtFile) return
+
+        context.dummyIdentifier = service<CompletionDummyIdentifierProviderService>().provideDummyIdentifier(context)
     }
 }
 

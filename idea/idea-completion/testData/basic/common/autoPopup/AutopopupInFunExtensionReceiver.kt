@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 class Xyz
 
 fun X<caret>

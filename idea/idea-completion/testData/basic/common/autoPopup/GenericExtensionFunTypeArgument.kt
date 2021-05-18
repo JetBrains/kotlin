@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 fun Strange(){}
 
 fun Annotations<S<caret>

@@ -218,6 +218,8 @@ The Kotlin FIR plugin provides language support in IntelliJ IDEA and Android Stu
 
 
   <extensions defaultExtensionNs="com.intellij">
+    <applicationService serviceImplementation="org.jetbrains.kotlin.idea.completion.FirCompletionDummyIdentifierProviderService"
+                        serviceInterface="org.jetbrains.kotlin.idea.completion.CompletionDummyIdentifierProviderService"/>
 
     <postStartupActivity implementation="org.jetbrains.kotlin.idea.PluginStartupActivity"/>
     <projectService serviceImplementation="org.jetbrains.kotlin.idea.PluginStartupService"/>
