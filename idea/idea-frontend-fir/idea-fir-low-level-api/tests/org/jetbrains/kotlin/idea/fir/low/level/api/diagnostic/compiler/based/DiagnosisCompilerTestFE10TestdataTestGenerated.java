@@ -18663,6 +18663,11 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                     runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/substituteSeveralOtherErasedTypeArguments.kt");
                 }
 
+                @TestMetadata("superTypeErasion.kt")
+                public void testSuperTypeErasion() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/superTypeErasion.kt");
+                }
+
                 @TestMetadata("typeEnhancement.kt")
                 public void testTypeEnhancement() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/typeEnhancement.kt");
