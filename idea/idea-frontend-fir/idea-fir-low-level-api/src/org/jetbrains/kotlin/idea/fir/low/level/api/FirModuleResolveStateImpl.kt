@@ -85,6 +85,10 @@ internal class FirModuleResolveStateImpl(
      * [ktDeclaration] should be either [KtDeclaration] or [KtLambdaExpression]
      */
     private fun findSourceFirDeclarationByExpression(ktDeclaration: KtExpression): FirDeclaration {
+        require(ktDeclaration.getModuleInfo() is ModuleSourceInfo) {
+            "Declaration should have ModuleSourceInfo, instead it had ${ktDeclaration.getModuleInfo()}"
+        }
+
         val nonLocalNamedDeclaration = ktDeclaration.getNonLocalContainingOrThisDeclaration()
             ?: error("Declaration should have non-local container${ktDeclaration.getElementTextInContext()}")
 
