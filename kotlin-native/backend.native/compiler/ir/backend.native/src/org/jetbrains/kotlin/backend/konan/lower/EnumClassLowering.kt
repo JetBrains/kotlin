@@ -120,14 +120,6 @@ internal class EnumUsageLowering(val context: Context)
 
 internal class EnumClassLowering(val context: Context) : FileLoweringPass {
 
-    fun run(irFile: IrFile) {
-        // EnumWhenLowering should be performed before EnumUsageLowering because
-        // the latter performs lowering of IrGetEnumValue
-        NativeEnumWhenLowering(context).lower(irFile)
-        lower(irFile)
-        EnumUsageLowering(context).lower(irFile)
-    }
-
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitClass(declaration: IrClass): IrStatement {
