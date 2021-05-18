@@ -1017,7 +1017,19 @@ public actual fun CharArray?.contentToString(): String {
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun <T> Array<out T>.copyInto(destination: Array<T>, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): Array<T> {
-    TODO("Wasm stdlib: copyInto(destination: Array<T>, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size)")
+    AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)
+    val rangeSize = endIndex - startIndex
+    AbstractList.checkRangeIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
+    if (this !== destination || destinationOffset <= startIndex) {
+        for (index in 0 until rangeSize) {
+            destination[destinationOffset + index] = this[startIndex + index]
+        }
+    } else {
+        for (index in rangeSize - 1 downTo 0) {
+            destination[destinationOffset + index] = this[startIndex + index]
+        }
+    }
+    return destination
 }
 
 /**
@@ -1039,7 +1051,19 @@ public actual fun <T> Array<out T>.copyInto(destination: Array<T>, destinationOf
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun ByteArray.copyInto(destination: ByteArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): ByteArray {
-    TODO("Wasm stdlib: copyInto(destination: ByteArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size)")
+    AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)
+    val rangeSize = endIndex - startIndex
+    AbstractList.checkRangeIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
+    if (this !== destination || destinationOffset <= startIndex) {
+        for (index in 0 until rangeSize) {
+            destination[destinationOffset + index] = this[startIndex + index]
+        }
+    } else {
+        for (index in rangeSize - 1 downTo 0) {
+            destination[destinationOffset + index] = this[startIndex + index]
+        }
+    }
+    return destination
 }
 
 /**
@@ -1061,7 +1085,19 @@ public actual fun ByteArray.copyInto(destination: ByteArray, destinationOffset: 
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun ShortArray.copyInto(destination: ShortArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): ShortArray {
-    TODO("Wasm stdlib: copyInto(destination: ShortArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size)")
+    AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)
+    val rangeSize = endIndex - startIndex
+    AbstractList.checkRangeIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
+    if (this !== destination || destinationOffset <= startIndex) {
+        for (index in 0 until rangeSize) {
+            destination[destinationOffset + index] = this[startIndex + index]
+        }
+    } else {
+        for (index in rangeSize - 1 downTo 0) {
+            destination[destinationOffset + index] = this[startIndex + index]
+        }
+    }
+    return destination
 }
 
 /**
@@ -1083,7 +1119,19 @@ public actual fun ShortArray.copyInto(destination: ShortArray, destinationOffset
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun IntArray.copyInto(destination: IntArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): IntArray {
-    TODO("Wasm stdlib: copyInto(destination: IntArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size)")
+    AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)
+    val rangeSize = endIndex - startIndex
+    AbstractList.checkRangeIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
+    if (this !== destination || destinationOffset <= startIndex) {
+        for (index in 0 until rangeSize) {
+            destination[destinationOffset + index] = this[startIndex + index]
+        }
+    } else {
+        for (index in rangeSize - 1 downTo 0) {
+            destination[destinationOffset + index] = this[startIndex + index]
+        }
+    }
+    return destination
 }
 
 /**
@@ -1105,7 +1153,19 @@ public actual fun IntArray.copyInto(destination: IntArray, destinationOffset: In
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun LongArray.copyInto(destination: LongArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): LongArray {
-    TODO("Wasm stdlib: copyInto(destination: LongArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size)")
+    AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)
+    val rangeSize = endIndex - startIndex
+    AbstractList.checkRangeIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
+    if (this !== destination || destinationOffset <= startIndex) {
+        for (index in 0 until rangeSize) {
+            destination[destinationOffset + index] = this[startIndex + index]
+        }
+    } else {
+        for (index in rangeSize - 1 downTo 0) {
+            destination[destinationOffset + index] = this[startIndex + index]
+        }
+    }
+    return destination
 }
 
 /**
@@ -1127,7 +1187,19 @@ public actual fun LongArray.copyInto(destination: LongArray, destinationOffset: 
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun FloatArray.copyInto(destination: FloatArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): FloatArray {
-    TODO("Wasm stdlib: copyInto(destination: FloatArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size)")
+    AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)
+    val rangeSize = endIndex - startIndex
+    AbstractList.checkRangeIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
+    if (this !== destination || destinationOffset <= startIndex) {
+        for (index in 0 until rangeSize) {
+            destination[destinationOffset + index] = this[startIndex + index]
+        }
+    } else {
+        for (index in rangeSize - 1 downTo 0) {
+            destination[destinationOffset + index] = this[startIndex + index]
+        }
+    }
+    return destination
 }
 
 /**
@@ -1149,7 +1221,19 @@ public actual fun FloatArray.copyInto(destination: FloatArray, destinationOffset
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun DoubleArray.copyInto(destination: DoubleArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): DoubleArray {
-    TODO("Wasm stdlib: copyInto(destination: DoubleArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size)")
+    AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)
+    val rangeSize = endIndex - startIndex
+    AbstractList.checkRangeIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
+    if (this !== destination || destinationOffset <= startIndex) {
+        for (index in 0 until rangeSize) {
+            destination[destinationOffset + index] = this[startIndex + index]
+        }
+    } else {
+        for (index in rangeSize - 1 downTo 0) {
+            destination[destinationOffset + index] = this[startIndex + index]
+        }
+    }
+    return destination
 }
 
 /**
@@ -1171,7 +1255,19 @@ public actual fun DoubleArray.copyInto(destination: DoubleArray, destinationOffs
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun BooleanArray.copyInto(destination: BooleanArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): BooleanArray {
-    TODO("Wasm stdlib: copyInto(destination: BooleanArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size)")
+    AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)
+    val rangeSize = endIndex - startIndex
+    AbstractList.checkRangeIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
+    if (this !== destination || destinationOffset <= startIndex) {
+        for (index in 0 until rangeSize) {
+            destination[destinationOffset + index] = this[startIndex + index]
+        }
+    } else {
+        for (index in rangeSize - 1 downTo 0) {
+            destination[destinationOffset + index] = this[startIndex + index]
+        }
+    }
+    return destination
 }
 
 /**
@@ -1193,7 +1289,19 @@ public actual fun BooleanArray.copyInto(destination: BooleanArray, destinationOf
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun CharArray.copyInto(destination: CharArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): CharArray {
-    TODO("Wasm stdlib: copyInto(destination: CharArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size)")
+    AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)
+    val rangeSize = endIndex - startIndex
+    AbstractList.checkRangeIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
+    if (this !== destination || destinationOffset <= startIndex) {
+        for (index in 0 until rangeSize) {
+            destination[destinationOffset + index] = this[startIndex + index]
+        }
+    } else {
+        for (index in rangeSize - 1 downTo 0) {
+            destination[destinationOffset + index] = this[startIndex + index]
+        }
+    }
+    return destination
 }
 
 /**
@@ -1527,7 +1635,13 @@ public actual fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): CharArray
  * either throwing exception or returning some kind of implementation-specific default value.
  */
 internal fun <T> Array<T>.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): Array<T> {
-    TODO("Wasm stdlib: copyOfUninitializedElements(fromIndex: Int, toIndex: Int)")
+    val newSize = toIndex - fromIndex
+    if (newSize < 0) {
+        throw IllegalArgumentException("$fromIndex > $toIndex")
+    }
+    val result = arrayOfUninitializedElements<T>(newSize)
+    this.copyInto(result, 0, fromIndex, toIndex.coerceAtMost(size))
+    return result
 }
 
 /**
@@ -1537,7 +1651,13 @@ internal fun <T> Array<T>.copyOfUninitializedElements(fromIndex: Int, toIndex: I
  * either throwing exception or returning some kind of implementation-specific default value.
  */
 internal fun ByteArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): ByteArray {
-    TODO("Wasm stdlib: copyOfUninitializedElements(fromIndex: Int, toIndex: Int)")
+    val newSize = toIndex - fromIndex
+    if (newSize < 0) {
+        throw IllegalArgumentException("$fromIndex > $toIndex")
+    }
+    val result = ByteArray(newSize)
+    this.copyInto(result, 0, fromIndex, toIndex.coerceAtMost(size))
+    return result
 }
 
 /**
@@ -1547,7 +1667,13 @@ internal fun ByteArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int)
  * either throwing exception or returning some kind of implementation-specific default value.
  */
 internal fun ShortArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): ShortArray {
-    TODO("Wasm stdlib: copyOfUninitializedElements(fromIndex: Int, toIndex: Int)")
+    val newSize = toIndex - fromIndex
+    if (newSize < 0) {
+        throw IllegalArgumentException("$fromIndex > $toIndex")
+    }
+    val result = ShortArray(newSize)
+    this.copyInto(result, 0, fromIndex, toIndex.coerceAtMost(size))
+    return result
 }
 
 /**
@@ -1557,7 +1683,13 @@ internal fun ShortArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int
  * either throwing exception or returning some kind of implementation-specific default value.
  */
 internal fun IntArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): IntArray {
-    TODO("Wasm stdlib: copyOfUninitializedElements(fromIndex: Int, toIndex: Int)")
+    val newSize = toIndex - fromIndex
+    if (newSize < 0) {
+        throw IllegalArgumentException("$fromIndex > $toIndex")
+    }
+    val result = IntArray(newSize)
+    this.copyInto(result, 0, fromIndex, toIndex.coerceAtMost(size))
+    return result
 }
 
 /**
@@ -1567,7 +1699,13 @@ internal fun IntArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int):
  * either throwing exception or returning some kind of implementation-specific default value.
  */
 internal fun LongArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): LongArray {
-    TODO("Wasm stdlib: copyOfUninitializedElements(fromIndex: Int, toIndex: Int)")
+    val newSize = toIndex - fromIndex
+    if (newSize < 0) {
+        throw IllegalArgumentException("$fromIndex > $toIndex")
+    }
+    val result = LongArray(newSize)
+    this.copyInto(result, 0, fromIndex, toIndex.coerceAtMost(size))
+    return result
 }
 
 /**
@@ -1577,7 +1715,13 @@ internal fun LongArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int)
  * either throwing exception or returning some kind of implementation-specific default value.
  */
 internal fun FloatArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): FloatArray {
-    TODO("Wasm stdlib: copyOfUninitializedElements(fromIndex: Int, toIndex: Int)")
+    val newSize = toIndex - fromIndex
+    if (newSize < 0) {
+        throw IllegalArgumentException("$fromIndex > $toIndex")
+    }
+    val result = FloatArray(newSize)
+    this.copyInto(result, 0, fromIndex, toIndex.coerceAtMost(size))
+    return result
 }
 
 /**
@@ -1587,7 +1731,13 @@ internal fun FloatArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int
  * either throwing exception or returning some kind of implementation-specific default value.
  */
 internal fun DoubleArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): DoubleArray {
-    TODO("Wasm stdlib: copyOfUninitializedElements(fromIndex: Int, toIndex: Int)")
+    val newSize = toIndex - fromIndex
+    if (newSize < 0) {
+        throw IllegalArgumentException("$fromIndex > $toIndex")
+    }
+    val result = DoubleArray(newSize)
+    this.copyInto(result, 0, fromIndex, toIndex.coerceAtMost(size))
+    return result
 }
 
 /**
@@ -1597,7 +1747,13 @@ internal fun DoubleArray.copyOfUninitializedElements(fromIndex: Int, toIndex: In
  * either throwing exception or returning some kind of implementation-specific default value.
  */
 internal fun BooleanArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): BooleanArray {
-    TODO("Wasm stdlib: copyOfUninitializedElements(fromIndex: Int, toIndex: Int)")
+    val newSize = toIndex - fromIndex
+    if (newSize < 0) {
+        throw IllegalArgumentException("$fromIndex > $toIndex")
+    }
+    val result = BooleanArray(newSize)
+    this.copyInto(result, 0, fromIndex, toIndex.coerceAtMost(size))
+    return result
 }
 
 /**
@@ -1607,7 +1763,13 @@ internal fun BooleanArray.copyOfUninitializedElements(fromIndex: Int, toIndex: I
  * either throwing exception or returning some kind of implementation-specific default value.
  */
 internal fun CharArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): CharArray {
-    TODO("Wasm stdlib: copyOfUninitializedElements(fromIndex: Int, toIndex: Int)")
+    val newSize = toIndex - fromIndex
+    if (newSize < 0) {
+        throw IllegalArgumentException("$fromIndex > $toIndex")
+    }
+    val result = CharArray(newSize)
+    this.copyInto(result, 0, fromIndex, toIndex.coerceAtMost(size))
+    return result
 }
 
 /**
@@ -1703,7 +1865,9 @@ internal fun CharArray.copyOfUninitializedElements(newSize: Int): CharArray {
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun <T> Array<T>.fill(element: T, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    TODO("Wasm stdlib: fill(element: T, fromIndex: Int = 0, toIndex: Int = size)")
+    for (index in fromIndex..toIndex) {
+        this[index] = element    
+    }
 }
 
 /**
@@ -1718,7 +1882,9 @@ public actual fun <T> Array<T>.fill(element: T, fromIndex: Int = 0, toIndex: Int
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun ByteArray.fill(element: Byte, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    TODO("Wasm stdlib: fill(element: Byte, fromIndex: Int = 0, toIndex: Int = size)")
+    for (index in fromIndex..toIndex) {
+        this[index] = element    
+    }
 }
 
 /**
@@ -1733,7 +1899,9 @@ public actual fun ByteArray.fill(element: Byte, fromIndex: Int = 0, toIndex: Int
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun ShortArray.fill(element: Short, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    TODO("Wasm stdlib: fill(element: Short, fromIndex: Int = 0, toIndex: Int = size)")
+    for (index in fromIndex..toIndex) {
+        this[index] = element    
+    }
 }
 
 /**
@@ -1748,7 +1916,9 @@ public actual fun ShortArray.fill(element: Short, fromIndex: Int = 0, toIndex: I
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun IntArray.fill(element: Int, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    TODO("Wasm stdlib: fill(element: Int, fromIndex: Int = 0, toIndex: Int = size)")
+    for (index in fromIndex..toIndex) {
+        this[index] = element    
+    }
 }
 
 /**
@@ -1763,7 +1933,9 @@ public actual fun IntArray.fill(element: Int, fromIndex: Int = 0, toIndex: Int =
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun LongArray.fill(element: Long, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    TODO("Wasm stdlib: fill(element: Long, fromIndex: Int = 0, toIndex: Int = size)")
+    for (index in fromIndex..toIndex) {
+        this[index] = element    
+    }
 }
 
 /**
@@ -1778,7 +1950,9 @@ public actual fun LongArray.fill(element: Long, fromIndex: Int = 0, toIndex: Int
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun FloatArray.fill(element: Float, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    TODO("Wasm stdlib: fill(element: Float, fromIndex: Int = 0, toIndex: Int = size)")
+    for (index in fromIndex..toIndex) {
+        this[index] = element    
+    }
 }
 
 /**
@@ -1793,7 +1967,9 @@ public actual fun FloatArray.fill(element: Float, fromIndex: Int = 0, toIndex: I
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun DoubleArray.fill(element: Double, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    TODO("Wasm stdlib: fill(element: Double, fromIndex: Int = 0, toIndex: Int = size)")
+    for (index in fromIndex..toIndex) {
+        this[index] = element    
+    }
 }
 
 /**
@@ -1808,7 +1984,9 @@ public actual fun DoubleArray.fill(element: Double, fromIndex: Int = 0, toIndex:
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun BooleanArray.fill(element: Boolean, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    TODO("Wasm stdlib: fill(element: Boolean, fromIndex: Int = 0, toIndex: Int = size)")
+    for (index in fromIndex..toIndex) {
+        this[index] = element    
+    }
 }
 
 /**
@@ -1823,7 +2001,9 @@ public actual fun BooleanArray.fill(element: Boolean, fromIndex: Int = 0, toInde
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun CharArray.fill(element: Char, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    TODO("Wasm stdlib: fill(element: Char, fromIndex: Int = 0, toIndex: Int = size)")
+    for (index in fromIndex..toIndex) {
+        this[index] = element    
+    }
 }
 
 /**

@@ -9,12 +9,4 @@ package kotlin.collections
  * Calculate the initial capacity of a map.
  */
 @PublishedApi
-internal actual fun mapCapacity(expectedSize: Int): Int = TODO("Wasm stdlib: Maps")
-
-/**
- * Checks a collection builder function capacity argument.
- */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
-@PublishedApi
-internal fun checkBuilderCapacity(capacity: Int) { TODO("Wasm stdlib: Maps") }
+internal actual fun mapCapacity(expectedSize: Int): Int = expectedSize

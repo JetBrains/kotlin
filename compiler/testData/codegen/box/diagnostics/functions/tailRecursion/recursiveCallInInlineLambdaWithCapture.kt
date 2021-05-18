@@ -1,5 +1,5 @@
 // KT-14961
-// IGNORE_BACKEND: JVM, JS_IR, WASM
+// IGNORE_BACKEND: JVM, JS_IR
 // WITH_RUNTIME
 
 fun listOfFactor(number: Int): List<Int> {

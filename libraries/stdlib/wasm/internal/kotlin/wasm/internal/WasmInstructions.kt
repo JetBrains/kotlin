@@ -309,3 +309,12 @@ public external fun wasm_i64_trunc_sat_f64_s(a: Double): Long
 
 @WasmOp(WasmOp.I32_LOAD)
 public external fun wasm_i32_load(x: Int): Int
+
+@WasmOp(WasmOp.I64_POPCNT)
+public external fun wasm_i64_popcnt(x: Long): Long
+
+@WasmOp(WasmOp.I64_CLZ)
+public external fun wasm_i64_clz(x: Long): Long
+
+@WasmOp(WasmOp.I64_CTZ)
+public external fun wasm_i64_ctz(x: Long): Long

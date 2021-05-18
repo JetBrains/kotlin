@@ -14,9 +14,9 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.erasedUpperBound
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -54,6 +54,22 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         }
     }
 
+    override fun visitVariable(declaration: IrVariable): IrStatement {
+        // Some IR passes, notable for-loops-lowering assumes implicit cast during
+        val initializer = declaration.initializer
+        if (initializer != null &&
+            initializer.type != declaration.type &&
+            // There are some problems with delegated initializer call and Unit
+            // TODO: Remove this workaround
+            !initializer.type.isUnit()
+        ) {
+            builder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol).at(declaration)
+            declaration.initializer = narrowType(initializer.type, declaration.type, initializer)
+        }
+
+        return super.visitVariable(declaration)
+    }
+
     private fun lowerInstanceOf(
         expression: IrTypeOperatorCall,
         inverted: Boolean
@@ -82,6 +98,9 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
 
     private val IrType.erasedType: IrType
         get() = this.erasedUpperBound?.defaultType ?: builtIns.anyType
+
+    private val IrType.erasedClass: IrClass
+        get() = this.erasedUpperBound ?: builtIns.anyClass.owner
 
     private fun generateTypeCheck(
         valueProvider: () -> IrExpression,
@@ -173,7 +192,11 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
             }
         }
 
-        if (fromType.erasedType.isSubtypeOf(toType.erasedType, context.irBuiltIns)) {
+        if (fromType.erasedClass.isSubclassOf(toType.erasedClass)) {
+            return value
+        }
+
+        if (fromType.isNullableNothing()) {
             return value
         }
         if (toType.isNothing()) {

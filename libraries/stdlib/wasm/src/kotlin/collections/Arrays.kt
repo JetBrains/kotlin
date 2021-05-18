@@ -1,11 +1,9 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the LICENSE file.
  */
 
 package kotlin.collections
-
-import kotlin.internal.PureReifiable
 
 // Array Utils copied from K/N
 
@@ -21,8 +19,9 @@ internal fun checkCopyOfRangeArguments(fromIndex: Int, toIndex: Int, size: Int) 
 /**
  * Returns a string representation of the contents of the subarray of the specified array as if it is [List].
  */
-@SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
+@Deprecated("This function will become internal soon.")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 public inline fun <T> Array<out T>.subarrayContentToString(offset: Int, length: Int): String {
     val sb = StringBuilder(2 + length * 3)
     sb.append("[")
@@ -44,7 +43,7 @@ public inline fun <T> Array<out T>.subarrayContentToString(offset: Int, length: 
  * If any of arrays contains itself on any nesting level the behavior is undefined.
  */
 @SinceKotlin("1.1")
-@UseExperimental(ExperimentalUnsignedTypes::class)
+@OptIn(ExperimentalUnsignedTypes::class)
 internal fun <T> Array<out T>?.contentDeepHashCodeImpl(): Int {
     if (this == null) return 0
     var result = 1
