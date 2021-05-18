@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.components
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.SmartPsiElementPointer
+import com.intellij.psi.impl.source.PostprocessReformattingAspect
 import com.intellij.psi.util.parentsOfType
 import com.intellij.util.containers.addIfNotNull
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -144,7 +145,11 @@ private class FirShorteningContext(val firResolveState: FirModuleResolveState) {
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    fun findScopesAtPosition(position: KtElement, newImports: List<FqName>, towerContextProvider: FirTowerContextProvider): List<FirScope>? {
+    fun findScopesAtPosition(
+        position: KtElement,
+        newImports: List<FqName>,
+        towerContextProvider: FirTowerContextProvider
+    ): List<FirScope>? {
         val towerDataContext = towerContextProvider.getClosestAvailableParentContext(position) ?: return null
         val result = buildList<FirScope> {
             addAll(towerDataContext.nonLocalTowerDataElements.mapNotNull { it.scope })
@@ -185,7 +190,10 @@ private sealed class ElementToShorten
 private class ShortenType(val element: KtUserType, val nameToImport: FqName? = null) : ElementToShorten()
 private class ShortenQualifier(val element: KtDotQualifiedExpression, val nameToImport: FqName? = null) : ElementToShorten()
 
-private class ElementsToShortenCollector(private val shorteningContext: FirShorteningContext, private val towerContextProvider: FirTowerContextProvider) :
+private class ElementsToShortenCollector(
+    private val shorteningContext: FirShorteningContext,
+    private val towerContextProvider: FirTowerContextProvider
+) :
     FirVisitorVoid() {
     val namesToImport: MutableList<FqName> = mutableListOf()
     val typesToShorten: MutableList<KtUserType> = mutableListOf()
@@ -285,7 +293,8 @@ private class ElementsToShortenCollector(private val shorteningContext: FirShort
         wholeClassQualifier: ClassId,
         wholeQualifierElement: KtDotQualifiedExpression
     ): ShortenQualifier? {
-        val positionScopes = shorteningContext.findScopesAtPosition(wholeQualifierElement, namesToImport, towerContextProvider) ?: return null
+        val positionScopes =
+            shorteningContext.findScopesAtPosition(wholeQualifierElement, namesToImport, towerContextProvider) ?: return null
 
         val allClassIds = wholeClassQualifier.outerClassesWithSelf
         val allQualifiers = wholeQualifierElement.qualifiersWithSelf
@@ -439,14 +448,16 @@ private class ShortenCommandImpl(
             addImportToFile(targetFile.project, targetFile, nameToImport)
         }
 
-        for (typePointer in typesToShorten) {
-            val type = typePointer.element ?: continue
-            type.deleteQualifier()
-        }
+        PostprocessReformattingAspect.getInstance(targetFile.project).disablePostprocessFormattingInside {
+            for (typePointer in typesToShorten) {
+                val type = typePointer.element ?: continue
+                type.deleteQualifier()
+            }
 
-        for (callPointer in qualifiersToShorten) {
-            val call = callPointer.element ?: continue
-            call.deleteQualifier()
+            for (callPointer in qualifiersToShorten) {
+                val call = callPointer.element ?: continue
+                call.deleteQualifier()
+            }
         }
     }
 }
