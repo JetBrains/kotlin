@@ -24,10 +24,10 @@ class Class2 {
 }
 
 
-@A fun foo() {}
-@A class D
+<!WRONG_ANNOTATION_TARGET!>@A<!> fun foo() {}
+<!WRONG_ANNOTATION_TARGET!>@A<!> class D
 fun foo(i: @A Int) {
-    @A val i = 1
+    <!WRONG_ANNOTATION_TARGET!>@A<!> val i = 1
 }
 fun <T> test(t: @A T): T = t
 
@@ -35,4 +35,4 @@ fun <T> test(t: @A T): T = t
 @Target(AnnotationTarget.TYPE)
 internal annotation class C
 
-fun <@C T> test2(t: T): T = t
+fun <<!WRONG_ANNOTATION_TARGET!>@C<!> T> test2(t: T): T = t

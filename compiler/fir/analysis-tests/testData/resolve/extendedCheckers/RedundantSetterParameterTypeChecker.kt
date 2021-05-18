@@ -1,5 +1,5 @@
 
-@Target(AnnotationTarget.CLASS)
+@Target(AnnotationTarget.VALUE_PARAMETER)
 annotation class Ann
 
 <!REDECLARATION!>var x: Int

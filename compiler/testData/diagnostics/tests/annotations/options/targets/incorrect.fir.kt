@@ -1,21 +1,21 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 @Target(AnnotationTarget.<!UNRESOLVED_REFERENCE!>INIT<!>) annotation class incorrect
 
-@incorrect annotation class derived
+<!WRONG_ANNOTATION_TARGET!>@incorrect<!> annotation class derived
 
-@incorrect class correct(@incorrect val x: Int, @incorrect w: @incorrect Int) {
-    @incorrect constructor(): this(0, 0)
+<!WRONG_ANNOTATION_TARGET!>@incorrect<!> class correct(<!WRONG_ANNOTATION_TARGET!>@incorrect<!> val x: Int, <!WRONG_ANNOTATION_TARGET!>@incorrect<!> w: @incorrect Int) {
+    <!WRONG_ANNOTATION_TARGET!>@incorrect<!> constructor(): this(0, 0)
 }
 
-@incorrect enum class My @incorrect constructor() {
-    @incorrect FIRST,
-    @incorrect SECOND
+<!WRONG_ANNOTATION_TARGET!>@incorrect<!> enum class My <!WRONG_ANNOTATION_TARGET!>@incorrect<!> constructor() {
+    <!WRONG_ANNOTATION_TARGET!>@incorrect<!> FIRST,
+    <!WRONG_ANNOTATION_TARGET!>@incorrect<!> SECOND
 }
 
-@incorrect fun foo(@incorrect y: @incorrect Int): Int {
-    @incorrect fun bar(@incorrect z: @incorrect Int) = z + 1
-    @incorrect val local = bar(y)
+<!WRONG_ANNOTATION_TARGET!>@incorrect<!> fun foo(<!WRONG_ANNOTATION_TARGET!>@incorrect<!> y: @incorrect Int): Int {
+    <!WRONG_ANNOTATION_TARGET!>@incorrect<!> fun bar(<!WRONG_ANNOTATION_TARGET!>@incorrect<!> z: @incorrect Int) = z + 1
+    <!WRONG_ANNOTATION_TARGET!>@incorrect<!> val local = bar(y)
     return local
 }
 
-@incorrect val z = <!WRONG_ANNOTATION_TARGET!>@incorrect<!> 0
+<!WRONG_ANNOTATION_TARGET!>@incorrect<!> val z = <!WRONG_ANNOTATION_TARGET!>@incorrect<!> 0

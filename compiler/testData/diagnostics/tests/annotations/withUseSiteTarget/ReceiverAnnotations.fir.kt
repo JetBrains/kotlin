@@ -1,9 +1,9 @@
 annotation class Ann
 
-@receiver:Ann
+<!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@receiver:Ann<!>
 class SomeClass {
 
-    @receiver:Ann
+    <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@receiver:Ann<!>
     constructor(@receiver:Ann a: String)
 
     @receiver:Ann

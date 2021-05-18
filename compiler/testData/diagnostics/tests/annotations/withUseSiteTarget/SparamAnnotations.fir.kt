@@ -7,10 +7,10 @@ class CustomDelegate {
     operator fun setValue(thisRef: Any?, prop: KProperty<*>, value: String) {}
 }
 
-@setparam:Ann
+<!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@setparam:Ann<!>
 class SomeClass {
 
-    @setparam:Ann
+    <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@setparam:Ann<!>
     constructor()
 
     @setparam:Ann

@@ -7,7 +7,7 @@ annotation class MyAnn
 fun bar(x: Int) {}
 
 fun foo() {
-    @MyAnn
+    <!WRONG_ANNOTATION_TARGET!>@MyAnn<!>
     val x: Int
     @MyAnn
     x = @MyAnn 42

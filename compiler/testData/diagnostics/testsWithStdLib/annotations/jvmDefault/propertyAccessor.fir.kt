@@ -5,10 +5,10 @@ interface B {
 
     @JvmDefault
     val prop1: String
-    @JvmDefault get() = ""
+    <!WRONG_ANNOTATION_TARGET!>@JvmDefault<!> get() = ""
 
 
     var prop2: String
-        @JvmDefault get() = ""
-        @JvmDefault set(value) {}
+        <!WRONG_ANNOTATION_TARGET!>@JvmDefault<!> get() = ""
+        <!WRONG_ANNOTATION_TARGET!>@JvmDefault<!> set(value) {}
 }

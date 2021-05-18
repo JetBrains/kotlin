@@ -60,23 +60,23 @@ package test
 
 import test.AnnotationTargets.*
 
-@base @meta @type @konstructor annotation class KMeta
+@base @meta @type <!WRONG_ANNOTATION_TARGET!>@konstructor<!> annotation class KMeta
 
-@base @meta @type @method @multiple class KClass(
+@base <!WRONG_ANNOTATION_TARGET!>@meta<!> @type <!WRONG_ANNOTATION_TARGET!>@method<!> <!WRONG_ANNOTATION_TARGET!>@multiple<!> class KClass(
         @base @fieldann @parameter val y:
         @base @type Int) {
 
-    @base @multiple @fieldann @local val x = 0
+    @base @multiple @fieldann <!WRONG_ANNOTATION_TARGET!>@local<!> val x = 0
     @method @konstructor @type get
 
-    @base @method @multiple @konstructor
-    fun foo(@parameter @type i:
+    @base @method @multiple <!WRONG_ANNOTATION_TARGET!>@konstructor<!>
+    fun foo(@parameter <!WRONG_ANNOTATION_TARGET!>@type<!> i:
     @base @multiple Int
     ): @fieldann @parameter Int {
 
-        @local @base @multiple @fieldann val j = i + 1
+        @local @base <!WRONG_ANNOTATION_TARGET!>@multiple<!> <!WRONG_ANNOTATION_TARGET!>@fieldann<!> val j = i + 1
         <!WRONG_ANNOTATION_TARGET!>@base<!> <!WRONG_ANNOTATION_TARGET!>@multiple<!> return j
     }
 
-    @base @method @konstructor constructor(): this(0)
+    @base <!WRONG_ANNOTATION_TARGET!>@method<!> @konstructor constructor(): this(0)
 }

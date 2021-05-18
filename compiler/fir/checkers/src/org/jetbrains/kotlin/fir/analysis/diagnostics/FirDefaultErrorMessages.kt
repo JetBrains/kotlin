@@ -329,6 +329,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_ANNOTATION_PA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_OVERRIDDEN_BY_VAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_TYPE_MISMATCH_ON_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_ANNOTATION_TARGET
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_GETTER_RETURN_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_INVOCATION_KIND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_MODIFIER_TARGET
@@ -478,6 +479,12 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             )
             map.put(ANNOTATION_ON_SUPERCLASS, "Annotations on superclass are meaningless")
             map.put(WRONG_ANNOTATION_TARGET, "This annotation is not applicable to target ''{0}''", TO_STRING);
+            map.put(
+                WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET,
+                "This annotation is not applicable to target ''{0}'' and use site target ''@{1}''",
+                TO_STRING,
+                TO_STRING
+            );
 
             // Exposed visibility group // #
             map.put(

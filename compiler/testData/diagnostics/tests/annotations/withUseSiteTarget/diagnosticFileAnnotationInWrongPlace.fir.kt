@@ -1,12 +1,12 @@
 package bar
 
-<!MUST_BE_INITIALIZED!>@file:foo
+<!MUST_BE_INITIALIZED!><!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@file:foo<!>
 val prop<!>
 
-@file:[bar baz]
+@file:[<!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>bar<!> <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>baz<!>]
 fun func() {}
 
-@file:[baz]
+@file:[<!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>baz<!>]
 class C
 
 <!SYNTAX!>@file:<!>

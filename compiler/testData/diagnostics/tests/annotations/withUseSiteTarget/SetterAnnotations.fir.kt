@@ -7,7 +7,7 @@ class CustomDelegate {
     operator fun setValue(thisRef: Any?, prop: KProperty<*>, value: String) {}
 }
 
-@set:Ann
+<!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@set:Ann<!>
 class SomeClass {
 
     @set:Ann
@@ -27,7 +27,7 @@ class SomeClass {
         get() = 5
         set(v) {}
 
-    @set:Ann
+    <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@set:Ann<!>
     fun annotationOnFunction(a: Int) = a + 5
 
     fun anotherFun() {

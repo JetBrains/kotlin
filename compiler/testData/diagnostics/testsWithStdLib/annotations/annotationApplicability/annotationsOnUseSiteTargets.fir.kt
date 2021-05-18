@@ -8,6 +8,6 @@ interface Test {
     @get:Synchronized
     val c: Int
 
-    @get:JvmOverloads
+    <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@get:JvmOverloads<!>
     val d: Int
 }

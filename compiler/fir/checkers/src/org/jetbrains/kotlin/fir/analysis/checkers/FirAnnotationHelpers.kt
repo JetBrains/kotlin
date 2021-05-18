@@ -79,7 +79,8 @@ fun FirAnnotationCall.findSingleArgumentByName(name: Name): FirExpression? {
         return argumentMapping.keys.firstOrNull()?.takeIf { argumentMapping[it]?.name == name }
     }
     // NB: we have to consider both cases, because deserializer does not create argument mapping
-    val firstArgument = argumentList.arguments.firstOrNull() as? FirNamedArgumentExpression ?: return null
+    val arguments = argumentList.arguments
+    val firstArgument = arguments.firstOrNull() as? FirNamedArgumentExpression ?: return arguments.singleOrNull()
     return firstArgument.takeIf { it.name == name }?.expression
 }
 

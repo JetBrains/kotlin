@@ -8,7 +8,7 @@ fun foo(block: (A) -> Unit) { }
 annotation class Ann
 
 fun bar() {
-    foo { (private inline a, @Ann b) ->
+    foo { (private inline a, <!WRONG_ANNOTATION_TARGET!>@Ann<!> b) ->
         a checkType { _<Int>() }
         b checkType { _<String>() }
     }

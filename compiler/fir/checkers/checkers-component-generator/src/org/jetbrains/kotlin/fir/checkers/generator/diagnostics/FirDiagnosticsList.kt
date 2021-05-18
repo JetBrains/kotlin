@@ -176,6 +176,10 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val WRONG_ANNOTATION_TARGET by error<KtAnnotationEntry> {
             parameter<String>("actualTarget")
         }
+        val WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET by error<KtAnnotationEntry> {
+            parameter<String>("actualTarget")
+            parameter<String>("useSiteTarget")
+        }
     }
 
     val EXPOSED_VISIBILITY by object : DiagnosticGroup("Exposed visibility") {

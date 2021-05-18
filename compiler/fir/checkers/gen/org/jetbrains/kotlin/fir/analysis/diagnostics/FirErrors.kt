@@ -180,6 +180,7 @@ object FirErrors {
     val ANNOTATION_ON_SUPERCLASS by error0<KtAnnotationEntry>()
     val RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION by error0<PsiElement>()
     val WRONG_ANNOTATION_TARGET by error1<KtAnnotationEntry, String>()
+    val WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET by error2<KtAnnotationEntry, String, String>()
 
     // Exposed visibility
     val EXPOSED_TYPEALIAS_EXPANDED_TYPE by error3<KtNamedDeclaration, EffectiveVisibility, FirMemberDeclaration, EffectiveVisibility>(SourceElementPositioningStrategies.DECLARATION_NAME)

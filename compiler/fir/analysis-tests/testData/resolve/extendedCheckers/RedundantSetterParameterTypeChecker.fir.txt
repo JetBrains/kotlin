@@ -1,5 +1,5 @@
 FILE: RedundantSetterParameterTypeChecker.kt
-    @R|kotlin/annotation/Target|(vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|)) public final annotation class Ann : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|)) public final annotation class Ann : R|kotlin/Annotation| {
         public constructor(): R|Ann| {
             super<R|kotlin/Any|>()
         }

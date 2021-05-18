@@ -41,6 +41,6 @@ class Second(val y: Char) : @WithInt(0) First() {
     constructor(): this('\n')
 }
 
-@WithInt(24)
-@VeryComplex(3.14f, 6.67e-11, false, 123456789012345L, null)
+<!WRONG_ANNOTATION_TARGET!>@WithInt(24)<!>
+<!WRONG_ANNOTATION_TARGET!>@VeryComplex(3.14f, 6.67e-11, false, 123456789012345L, null)<!>
 typealias Third = @Simple Second

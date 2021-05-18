@@ -1,21 +1,21 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 @Target(AnnotationTarget.VALUE_PARAMETER) annotation class base
 
-@base annotation class derived
+<!WRONG_ANNOTATION_TARGET!>@base<!> annotation class derived
 
-@base class correct(@base val x: Int, @base w: Int) {
-    @base constructor(): this(0, 0)
+<!WRONG_ANNOTATION_TARGET!>@base<!> class correct(@base val x: Int, @base w: Int) {
+    <!WRONG_ANNOTATION_TARGET!>@base<!> constructor(): this(0, 0)
 }
 
-@base enum class My {
-    @base FIRST,
-    @base SECOND
+<!WRONG_ANNOTATION_TARGET!>@base<!> enum class My {
+    <!WRONG_ANNOTATION_TARGET!>@base<!> FIRST,
+    <!WRONG_ANNOTATION_TARGET!>@base<!> SECOND
 }
 
-@base fun foo(@base y: @base Int): Int {
-    @base fun bar(@base z: @base Int) = z + 1
-    @base val local = bar(y)
+<!WRONG_ANNOTATION_TARGET!>@base<!> fun foo(@base y: @base Int): Int {
+    <!WRONG_ANNOTATION_TARGET!>@base<!> fun bar(@base z: @base Int) = z + 1
+    <!WRONG_ANNOTATION_TARGET!>@base<!> val local = bar(y)
     return local
 }
 
-@base val z = 0
+<!WRONG_ANNOTATION_TARGET!>@base<!> val z = 0

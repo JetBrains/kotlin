@@ -1,10 +1,10 @@
 annotation class Ann
 annotation class Second
 
-@param:Ann
+<!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@param:Ann<!>
 class SomeClass {
 
-    @param:Ann
+    <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@param:Ann<!>
     constructor(@param:Ann a: String)
 
     @param:Ann

@@ -3,19 +3,19 @@
 
 @base annotation class derived
 
-@base class correct(@base val x: Int, @base w: @base Int) {
-    @base constructor(): this(0, 0)
+@base class correct(<!WRONG_ANNOTATION_TARGET!>@base<!> val x: Int, <!WRONG_ANNOTATION_TARGET!>@base<!> w: @base Int) {
+    <!WRONG_ANNOTATION_TARGET!>@base<!> constructor(): this(0, 0)
 }
 
-@base enum class My @base constructor() {
-    @base FIRST,
-    @base SECOND
+@base enum class My <!WRONG_ANNOTATION_TARGET!>@base<!> constructor() {
+    <!WRONG_ANNOTATION_TARGET!>@base<!> FIRST,
+    <!WRONG_ANNOTATION_TARGET!>@base<!> SECOND
 }
 
-@base fun foo(@base y: @base Int): Int {
-    @base fun bar(@base z: @base Int) = z + 1
-    @base val local = bar(y)
+<!WRONG_ANNOTATION_TARGET!>@base<!> fun foo(<!WRONG_ANNOTATION_TARGET!>@base<!> y: @base Int): Int {
+    <!WRONG_ANNOTATION_TARGET!>@base<!> fun bar(<!WRONG_ANNOTATION_TARGET!>@base<!> z: @base Int) = z + 1
+    <!WRONG_ANNOTATION_TARGET!>@base<!> val local = bar(y)
     return local
 }
 
-@base val z = 0
+<!WRONG_ANNOTATION_TARGET!>@base<!> val z = 0

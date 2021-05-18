@@ -1,27 +1,27 @@
 // !LANGUAGE: +NestedClassesInAnnotations +InlineClasses -JvmInlineValueClasses +ProhibitJvmFieldOnOverrideFromInterfaceInPrimaryConstructor
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
-@kotlin.jvm.JvmField
+<!WRONG_ANNOTATION_TARGET!>@kotlin.jvm.JvmField<!>
 fun foo() {
-    @kotlin.jvm.JvmField val x = "A"
+    <!WRONG_ANNOTATION_TARGET!>@kotlin.jvm.JvmField<!> val x = "A"
 }
 
 annotation class DemoAnnotation
 
-@JvmField
+<!WRONG_ANNOTATION_TARGET!>@JvmField<!>
 abstract class C : I{
 
-    @kotlin.jvm.JvmField constructor(s: String) {
+    <!WRONG_ANNOTATION_TARGET!>@kotlin.jvm.JvmField<!> constructor(s: String) {
     }
 
-    @kotlin.jvm.JvmField private fun foo(s: String = "OK") {
+    <!WRONG_ANNOTATION_TARGET!>@kotlin.jvm.JvmField<!> private fun foo(s: String = "OK") {
     }
 
-    @JvmField val a: String by lazy { "A" }
+    <!WRONG_ANNOTATION_TARGET!>@JvmField<!> val a: String by lazy { "A" }
 
     @JvmField open val b: Int = 3
 
-    @JvmField abstract val c: Int
+    <!WRONG_ANNOTATION_TARGET!>@JvmField<!> abstract val c: Int
 
     @JvmField
     val customGetter: String = ""
@@ -49,7 +49,7 @@ abstract class C : I{
             field = s
         }
 
-    @JvmField
+    <!WRONG_ANNOTATION_TARGET!>@JvmField<!>
     val noBackingField: String
         get() = "a"
 
@@ -61,8 +61,8 @@ abstract class C : I{
 }
 
 interface I {
-    @JvmField val ai: Int
-    @JvmField val bi: Int
+    <!WRONG_ANNOTATION_TARGET!>@JvmField<!> val ai: Int
+    <!WRONG_ANNOTATION_TARGET!>@JvmField<!> val bi: Int
         get() = 5
 }
 

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // WITH_RUNTIME
 import kotlin.annotation.AnnotationTarget.*
 

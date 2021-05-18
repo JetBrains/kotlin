@@ -5,4 +5,4 @@ annotation class Ann
 
 var x: Int
     get() = 1
-    set(@Ann private x) { }
+    set(<!WRONG_ANNOTATION_TARGET!>@Ann<!> private x) { }

@@ -1,6 +1,6 @@
-@file:foo
+<!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@file:foo<!>
 @foo @bar
-@file: baz
+<!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@file: baz<!>
 fun test() {}
 
 annotation class foo
