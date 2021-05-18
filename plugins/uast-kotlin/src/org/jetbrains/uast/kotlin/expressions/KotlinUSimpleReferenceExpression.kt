@@ -38,7 +38,7 @@ open class KotlinUSimpleReferenceExpression(
     override val sourcePsi: KtSimpleNameExpression,
     givenParent: UElement?
 ) : KotlinAbstractUExpression(givenParent), USimpleNameReferenceExpression, KotlinUElementWithType, KotlinEvaluatableUElement {
-    private val resolvedDeclaration: PsiElement? by lz { baseResolveProviderService?.resolveToDeclaration(sourcePsi) }
+    private val resolvedDeclaration: PsiElement? by lz { baseResolveProviderService.resolveToDeclaration(sourcePsi) }
 
     override val identifier get() = sourcePsi.getReferencedName()
 

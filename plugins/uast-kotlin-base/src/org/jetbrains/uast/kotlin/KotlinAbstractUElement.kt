@@ -12,15 +12,18 @@ import org.jetbrains.uast.UastLanguagePlugin
 import org.jetbrains.uast.kotlin.internal.KotlinUElementWithComments
 
 abstract class KotlinAbstractUElement(
-    givenParent: UElement?
+    givenParent: UElement?,
+    baseResolveProviderServiceSupplier: BaseResolveProviderServiceSupplier? = null,
 ) : KotlinUElementWithComments {
 
     protected val languagePlugin: UastLanguagePlugin? by lz {
         psi?.let { UastFacade.findPlugin(it) }
     }
 
-    protected val baseResolveProviderService: BaseKotlinUastResolveProviderService? by lz {
-        psi?.project?.let { ServiceManager.getService(it, BaseKotlinUastResolveProviderService::class.java) }
+    protected val baseResolveProviderService: BaseKotlinUastResolveProviderService by lz {
+        baseResolveProviderServiceSupplier?.get()
+            ?: psi?.project?.let { ServiceManager.getService(it, BaseKotlinUastResolveProviderService::class.java) }
+            ?: error("${BaseKotlinUastResolveProviderService::class.java.name} is not available")
     }
 
     final override val uastParent: UElement? by lz {
@@ -28,7 +31,7 @@ abstract class KotlinAbstractUElement(
     }
 
     protected open fun convertParent(): UElement? {
-        return baseResolveProviderService?.convertParent(this)
+        return baseResolveProviderService.convertParent(this)
     }
 
     override fun equals(other: Any?): Boolean {

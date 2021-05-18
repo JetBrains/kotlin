@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMember
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.uast.UDeclaration
 import org.jetbrains.uast.UElement
+import java.util.function.Supplier
+
+typealias BaseResolveProviderServiceSupplier = Supplier<BaseKotlinUastResolveProviderService>
 
 fun <T> lz(initializer: () -> T) =
     lazy(LazyThreadSafetyMode.SYNCHRONIZED, initializer)

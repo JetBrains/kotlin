@@ -13,8 +13,9 @@ import org.jetbrains.uast.UExpression
 import org.jetbrains.uast.convertOpt
 
 abstract class KotlinAbstractUExpression(
-    givenParent: UElement?
-) : KotlinAbstractUElement(givenParent), UExpression {
+    givenParent: UElement?,
+    baseResolveProviderServiceSupplier: BaseResolveProviderServiceSupplier? = null,
+) : KotlinAbstractUElement(givenParent, baseResolveProviderServiceSupplier), UExpression {
 
     override val javaPsi: PsiElement? = null
 

@@ -37,6 +37,6 @@ class KotlinUSafeQualifiedExpression(
     override val resolvedName: String?
         get() = (resolve() as? PsiNamedElement)?.name
 
-    override fun resolve(): PsiElement? = sourcePsi.selectorExpression?.let { baseResolveProviderService?.resolveToDeclaration(it) }
+    override fun resolve(): PsiElement? = sourcePsi.selectorExpression?.let { baseResolveProviderService.resolveToDeclaration(it) }
     override fun multiResolve(): Iterable<ResolveResult> = getResolveResultVariants(sourcePsi.selectorExpression)
 }

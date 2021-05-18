@@ -145,7 +145,7 @@ class KotlinUFunctionCallExpression(
 
             val ktNameReferenceExpression = sourcePsi.calleeExpression as? KtNameReferenceExpression ?: return null
             val localCallableDeclaration =
-                baseResolveProviderService?.resolveToDeclaration(ktNameReferenceExpression) as? PsiVariable ?: return null
+                baseResolveProviderService.resolveToDeclaration(ktNameReferenceExpression) as? PsiVariable ?: return null
             if (localCallableDeclaration !is PsiLocalVariable && localCallableDeclaration !is PsiParameter) return null
 
             // an implicit receiver for variables calls (KT-25524)

@@ -46,7 +46,7 @@ class KotlinUCallableReferenceExpression(
     override val resolvedName: String?
         get() = (resolve() as? PsiNamedElement)?.name
 
-    override fun resolve(): PsiElement? = baseResolveProviderService?.resolveToDeclaration(sourcePsi.callableReference)
+    override fun resolve(): PsiElement? = baseResolveProviderService.resolveToDeclaration(sourcePsi.callableReference)
 
     override fun multiResolve(): Iterable<ResolveResult> = getResolveResultVariants(sourcePsi.callableReference)
 
