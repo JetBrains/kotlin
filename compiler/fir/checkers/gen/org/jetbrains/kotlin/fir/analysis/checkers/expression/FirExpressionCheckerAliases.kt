@@ -12,12 +12,14 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirBinaryLogicExpression
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirCheckNotNullCall
 import org.jetbrains.kotlin.fir.expressions.FirElvisExpression
 import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
+import org.jetbrains.kotlin.fir.expressions.FirLoop
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
@@ -35,6 +37,8 @@ typealias FirFunctionCallChecker = FirExpressionChecker<FirFunctionCall>
 typealias FirVariableAssignmentChecker = FirExpressionChecker<FirVariableAssignment>
 typealias FirTryExpressionChecker = FirExpressionChecker<FirTryExpression>
 typealias FirWhenExpressionChecker = FirExpressionChecker<FirWhenExpression>
+typealias FirLoopExpressionChecker = FirExpressionChecker<FirLoop>
+typealias FirLogicExpressionChecker = FirExpressionChecker<FirBinaryLogicExpression>
 typealias FirReturnExpressionChecker = FirExpressionChecker<FirReturnExpression>
 typealias FirBlockChecker = FirExpressionChecker<FirBlock>
 typealias FirAnnotationCallChecker = FirExpressionChecker<FirAnnotationCall>

@@ -56,7 +56,18 @@ object CommonExpressionCheckers : ExpressionCheckers() {
 
     override val whenExpressionCheckers: Set<FirWhenExpressionChecker>
         get() = setOf(
-            FirExhaustiveWhenChecker
+            FirExhaustiveWhenChecker,
+            FirWhenConditionChecker,
+        )
+
+    override val loopExpressionCheckers: Set<FirLoopExpressionChecker>
+        get() = setOf(
+            FirLoopConditionChecker,
+        )
+
+    override val logicExpressionCheckers: Set<FirLogicExpressionChecker>
+        get() = setOf(
+            FirLogicExpressionTypeChecker,
         )
 
     override val returnExpressionCheckers: Set<FirReturnExpressionChecker>

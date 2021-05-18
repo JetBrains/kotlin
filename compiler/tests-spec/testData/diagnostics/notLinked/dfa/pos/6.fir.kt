@@ -613,7 +613,7 @@ fun case_30(a: ((Float) -> Int?)?, b: Float?) {
 
 // TESTCASE NUMBER: 31
 fun case_31(z1: Boolean?, z: Nothing?) {
-    if (false || EnumClassWithNullableProperty.A.prop_1 != z && z1 !== z && z1) {
+    if (false || EnumClassWithNullableProperty.A.prop_1 != z && z1 !== z && <!CONDITION_TYPE_MISMATCH!>z1<!>) {
         EnumClassWithNullableProperty.A.prop_1
         EnumClassWithNullableProperty.A.prop_1<!UNSAFE_CALL!>.<!>equals(null)
         EnumClassWithNullableProperty.A.prop_1.propT

@@ -26,7 +26,7 @@ import checkSubtype
  */
 fun case1() {
     val a: Any = true
-    if (a) { "true" } else "false"
+    if (<!CONDITION_TYPE_MISMATCH!>a<!>) { "true" } else "false"
     <!NONE_APPLICABLE!>checkSubtype<!><Boolean>(a)
 }
 
@@ -37,7 +37,7 @@ fun case1() {
  */
 fun case2() {
     val a = JavaContainer.aO
-    if (a) { "true" } else "false"
+    if (<!CONDITION_TYPE_MISMATCH!>a<!>) { "true" } else "false"
     <!NONE_APPLICABLE!>checkSubtype<!><Boolean>(a)
 }
 
@@ -54,7 +54,7 @@ public class JavaClassCase3{
 fun case3() {
     val x = JavaClassCase3.id(null) // Nothing!
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>
-    val a = if (x) {
+    val a = if (<!CONDITION_TYPE_MISMATCH!>x<!>) {
         "NOK"
     } else "NOK"
 }

@@ -25,6 +25,10 @@ class ComposedExpressionCheckers : ExpressionCheckers() {
         get() = _tryExpressionCheckers
     override val whenExpressionCheckers: Set<FirWhenExpressionChecker>
         get() = _whenExpressionCheckers
+    override val loopExpressionCheckers: Set<FirLoopExpressionChecker>
+        get() = _loopExpressionCheckers
+    override val logicExpressionCheckers: Set<FirLogicExpressionChecker>
+        get() = _logicExpressionCheckers
     override val returnExpressionCheckers: Set<FirReturnExpressionChecker>
         get() = _returnExpressionCheckers
     override val blockCheckers: Set<FirBlockChecker>
@@ -56,6 +60,8 @@ class ComposedExpressionCheckers : ExpressionCheckers() {
     private val _variableAssignmentCheckers: MutableSet<FirVariableAssignmentChecker> = mutableSetOf()
     private val _tryExpressionCheckers: MutableSet<FirTryExpressionChecker> = mutableSetOf()
     private val _whenExpressionCheckers: MutableSet<FirWhenExpressionChecker> = mutableSetOf()
+    private val _loopExpressionCheckers: MutableSet<FirLoopExpressionChecker> = mutableSetOf()
+    private val _logicExpressionCheckers: MutableSet<FirLogicExpressionChecker> = mutableSetOf()
     private val _returnExpressionCheckers: MutableSet<FirReturnExpressionChecker> = mutableSetOf()
     private val _blockCheckers: MutableSet<FirBlockChecker> = mutableSetOf()
     private val _annotationCallCheckers: MutableSet<FirAnnotationCallChecker> = mutableSetOf()
@@ -77,6 +83,8 @@ class ComposedExpressionCheckers : ExpressionCheckers() {
         _variableAssignmentCheckers += checkers.variableAssignmentCheckers
         _tryExpressionCheckers += checkers.tryExpressionCheckers
         _whenExpressionCheckers += checkers.whenExpressionCheckers
+        _loopExpressionCheckers += checkers.loopExpressionCheckers
+        _logicExpressionCheckers += checkers.logicExpressionCheckers
         _returnExpressionCheckers += checkers.returnExpressionCheckers
         _blockCheckers += checkers.blockCheckers
         _annotationCallCheckers += checkers.annotationCallCheckers

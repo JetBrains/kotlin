@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.checkersComponent
-import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.*
@@ -63,8 +62,20 @@ class ExpressionCheckersDiagnosticComponent(
         checkers.allWhenExpressionCheckers.check(whenExpression, data, reporter)
     }
 
+    override fun visitWhileLoop(whileLoop: FirWhileLoop, data: CheckerContext) {
+        checkers.allLoopExpressionCheckers.check(whileLoop, data, reporter)
+    }
+
+    override fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: CheckerContext) {
+        checkers.allLoopExpressionCheckers.check(doWhileLoop, data, reporter)
+    }
+
+    override fun visitErrorLoop(errorLoop: FirErrorLoop, data: CheckerContext) {
+        checkers.allLoopExpressionCheckers.check(errorLoop, data, reporter)
+    }
+
     override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: CheckerContext) {
-        checkers.allBasicExpressionCheckers.check(binaryLogicExpression, data, reporter)
+        checkers.allLogicExpressionCheckers.check(binaryLogicExpression, data, reporter)
     }
 
     override fun visitArrayOfCall(arrayOfCall: FirArrayOfCall, data: CheckerContext) {

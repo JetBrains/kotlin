@@ -28,6 +28,8 @@ fun main(args: Array<String>) {
         alias<FirVariableAssignment>("VariableAssignmentChecker")
         alias<FirTryExpression>("TryExpressionChecker")
         alias<FirWhenExpression>("WhenExpressionChecker")
+        alias<FirLoop>("LoopExpressionChecker")
+        alias<FirBinaryLogicExpression>("LogicExpressionChecker")
         alias<FirReturnExpression>("ReturnExpressionChecker")
         alias<FirBlock>("BlockChecker")
         alias<FirAnnotationCall>("AnnotationCallChecker")

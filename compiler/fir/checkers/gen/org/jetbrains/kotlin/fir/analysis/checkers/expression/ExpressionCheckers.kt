@@ -23,6 +23,8 @@ abstract class ExpressionCheckers {
     open val variableAssignmentCheckers: Set<FirVariableAssignmentChecker> = emptySet()
     open val tryExpressionCheckers: Set<FirTryExpressionChecker> = emptySet()
     open val whenExpressionCheckers: Set<FirWhenExpressionChecker> = emptySet()
+    open val loopExpressionCheckers: Set<FirLoopExpressionChecker> = emptySet()
+    open val logicExpressionCheckers: Set<FirLogicExpressionChecker> = emptySet()
     open val returnExpressionCheckers: Set<FirReturnExpressionChecker> = emptySet()
     open val blockCheckers: Set<FirBlockChecker> = emptySet()
     open val annotationCallCheckers: Set<FirAnnotationCallChecker> = emptySet()
@@ -42,6 +44,8 @@ abstract class ExpressionCheckers {
     @CheckersComponentInternal internal val allVariableAssignmentCheckers: Set<FirVariableAssignmentChecker> get() = variableAssignmentCheckers + basicExpressionCheckers
     @CheckersComponentInternal internal val allTryExpressionCheckers: Set<FirTryExpressionChecker> get() = tryExpressionCheckers + basicExpressionCheckers
     @CheckersComponentInternal internal val allWhenExpressionCheckers: Set<FirWhenExpressionChecker> get() = whenExpressionCheckers + basicExpressionCheckers
+    @CheckersComponentInternal internal val allLoopExpressionCheckers: Set<FirLoopExpressionChecker> get() = loopExpressionCheckers + basicExpressionCheckers
+    @CheckersComponentInternal internal val allLogicExpressionCheckers: Set<FirLogicExpressionChecker> get() = logicExpressionCheckers + basicExpressionCheckers
     @CheckersComponentInternal internal val allReturnExpressionCheckers: Set<FirReturnExpressionChecker> get() = returnExpressionCheckers + basicExpressionCheckers
     @CheckersComponentInternal internal val allBlockCheckers: Set<FirBlockChecker> get() = blockCheckers + basicExpressionCheckers
     @CheckersComponentInternal internal val allAnnotationCallCheckers: Set<FirAnnotationCallChecker> get() = annotationCallCheckers + basicExpressionCheckers

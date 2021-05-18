@@ -12,7 +12,7 @@ fun isString(x: Any?): Boolean {
 }
 
 fun incorrectPartDoesntMatter(x: Any?) {
-    if (isString(x) && 1) {
+    if (isString(x) && <!CONDITION_TYPE_MISMATCH!>1<!>) {
         x.length
     }
     else {

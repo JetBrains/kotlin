@@ -108,7 +108,7 @@ fun case_11(x: Any?) {
  * ISSUES: KT-30376
  */
 fun case_12(x: Any?) {
-    if (x!! as Boolean?) {
+    if (<!CONDITION_TYPE_MISMATCH!>x!! as Boolean?<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.<!UNRESOLVED_REFERENCE!>not<!>()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>select(x)<!>.<!UNRESOLVED_REFERENCE!>not<!>()
     }
