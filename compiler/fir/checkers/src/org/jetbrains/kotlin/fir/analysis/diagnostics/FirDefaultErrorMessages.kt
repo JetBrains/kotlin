@@ -141,8 +141,14 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_CONST_EXP
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_KOTLIN_VERSION_STRING_VALUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_UNDERSCORE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_CANDIDATE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_FILE_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_INFIX_MODIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_LATEINIT_MODIFIER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_PARAM_TARGET
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_TARGET_ON_PROPERTY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_TARGET_PROPERTY_HAS_NO_BACKING_FIELD
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_TARGET_PROPERTY_HAS_NO_DELEGATE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_ENUM_COMPARISON_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_MODIFIERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_TYPES
@@ -238,6 +244,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RECURSION_IN_IMPL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RECURSION_IN_INLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RECURSION_IN_SUPERTYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDECLARATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_ANNOTATION_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_CALL_OF_CONVERSION_METHOD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_EXPLICIT_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_MODALITY_MODIFIER
@@ -449,7 +456,7 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(NULLABLE_TYPE_OF_ANNOTATION_MEMBER, "An annotation parameter cannot be nullable")
             map.put(INVALID_TYPE_OF_ANNOTATION_MEMBER, "Invalid type of annotation member")
             map.put(VAR_ANNOTATION_PARAMETER, "An annotation parameter cannot be 'var'")
-            map.put(ANNOTATION_CLASS_CONSTRUCTOR_CALL, "Annotation class cannot be instantiated");
+            map.put(ANNOTATION_CLASS_CONSTRUCTOR_CALL, "Annotation class cannot be instantiated")
             map.put(NOT_AN_ANNOTATION_CLASS, "Illegal annotation class: {0}", NULLABLE_STRING)
             map.put(SUPERTYPES_FOR_ANNOTATION_CLASS, "Annotation class cannot have supertypes")
             map.put(
@@ -478,13 +485,23 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
                 "DeprecatedSinceKotlin annotation cannot be used outside 'kotlin' subpackages"
             )
             map.put(ANNOTATION_ON_SUPERCLASS, "Annotations on superclass are meaningless")
-            map.put(WRONG_ANNOTATION_TARGET, "This annotation is not applicable to target ''{0}''", TO_STRING);
+            map.put(WRONG_ANNOTATION_TARGET, "This annotation is not applicable to target ''{0}''", TO_STRING)
+            map.put(INAPPLICABLE_TARGET_ON_PROPERTY, "''@{0}:'' annotations could be applied only to property declarations", TO_STRING)
+            map.put(INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE, "''@{0}:'' annotations could be applied only to mutable properties", TO_STRING)
+            map.put(INAPPLICABLE_TARGET_PROPERTY_HAS_NO_DELEGATE, "'@delegate:' annotations could be applied only to delegated properties")
+            map.put(
+                INAPPLICABLE_TARGET_PROPERTY_HAS_NO_BACKING_FIELD,
+                "'@field:' annotations could be applied only to properties with backing fields"
+            )
+            map.put(INAPPLICABLE_PARAM_TARGET, "'@param:' annotations could be applied only to primary constructor parameters")
+            map.put(REDUNDANT_ANNOTATION_TARGET, "Redundant annotation target ''{0}''", TO_STRING)
+            map.put(INAPPLICABLE_FILE_TARGET, "'@file:' annotations can only be applied before package declaration")
             map.put(
                 WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET,
                 "This annotation is not applicable to target ''{0}'' and use site target ''@{1}''",
                 TO_STRING,
                 TO_STRING
-            );
+            )
 
             // Exposed visibility group // #
             map.put(

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -77,6 +78,10 @@ object FirAnnotationChecker : FirAnnotatedDeclarationChecker() {
             return actualTargets.onlyWithUseSiteTarget.any { it in applicableTargets && it == useSiteMapping }
         }
 
+        if (useSiteTarget != null) {
+            checkAnnotationUseSiteTarget(declaration, annotation, useSiteTarget, context, reporter)
+        }
+
         if (check(actualTargets.defaultTargets) || check(actualTargets.canBeSubstituted) || checkWithUseSiteTargets()) {
             return
         }
@@ -97,6 +102,64 @@ object FirAnnotationChecker : FirAnnotatedDeclarationChecker() {
                 targetDescription,
                 context
             )
+        }
+    }
+
+    private fun checkAnnotationUseSiteTarget(
+        annotated: FirAnnotatedDeclaration,
+        annotation: FirAnnotationCall,
+        target: AnnotationUseSiteTarget,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ) {
+        when (target) {
+            AnnotationUseSiteTarget.PROPERTY,
+            AnnotationUseSiteTarget.PROPERTY_GETTER -> {
+            }
+            AnnotationUseSiteTarget.FIELD -> {
+                if (annotated is FirProperty && annotated.delegateFieldSymbol != null && !annotated.hasBackingField) {
+                    reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_TARGET_PROPERTY_HAS_NO_BACKING_FIELD, context)
+                }
+            }
+            AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD -> {
+                if (annotated is FirProperty && annotated.delegateFieldSymbol == null) {
+                    reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_TARGET_PROPERTY_HAS_NO_DELEGATE, context)
+                }
+            }
+            AnnotationUseSiteTarget.PROPERTY_SETTER,
+            AnnotationUseSiteTarget.SETTER_PARAMETER -> {
+                if (annotated !is FirProperty || annotated.isLocal) {
+                    reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_TARGET_ON_PROPERTY, target.renderName, context)
+                } else if (!annotated.isVar) {
+                    reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE, target.renderName, context)
+                }
+            }
+            AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER -> when {
+                annotated is FirValueParameter -> {
+                    val container = context.containingDeclarations.lastOrNull()
+                    if (container is FirConstructor && container.isPrimary) {
+                        reporter.reportOn(annotation.source, FirErrors.REDUNDANT_ANNOTATION_TARGET, target.renderName, context)
+                    } else {
+                        reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_PARAM_TARGET, context)
+                    }
+                }
+                annotated is FirProperty && annotated.source?.kind == FirFakeSourceElementKind.PropertyFromParameter -> {
+                }
+                else -> reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_PARAM_TARGET, context)
+            }
+            AnnotationUseSiteTarget.FILE -> {
+                // NB: report once?
+                if (annotated !is FirFile) {
+                    reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_FILE_TARGET, context)
+                }
+            }
+            AnnotationUseSiteTarget.RECEIVER -> {
+                // NB: report once?
+                // annotation with use-site target `receiver` can be only on type reference, but not on declaration
+                reporter.reportOn(
+                    annotation.source, FirErrors.WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET, "declaration", target.renderName, context
+                )
+            }
         }
     }
 

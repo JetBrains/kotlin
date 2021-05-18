@@ -628,6 +628,51 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.INAPPLICABLE_TARGET_ON_PROPERTY) { firDiagnostic ->
+        InapplicableTargetOnPropertyImpl(
+            firDiagnostic.a,
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE) { firDiagnostic ->
+        InapplicableTargetPropertyImmutableImpl(
+            firDiagnostic.a,
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.INAPPLICABLE_TARGET_PROPERTY_HAS_NO_DELEGATE) { firDiagnostic ->
+        InapplicableTargetPropertyHasNoDelegateImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.INAPPLICABLE_TARGET_PROPERTY_HAS_NO_BACKING_FIELD) { firDiagnostic ->
+        InapplicableTargetPropertyHasNoBackingFieldImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.INAPPLICABLE_PARAM_TARGET) { firDiagnostic ->
+        InapplicableParamTargetImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.REDUNDANT_ANNOTATION_TARGET) { firDiagnostic ->
+        RedundantAnnotationTargetImpl(
+            firDiagnostic.a,
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.INAPPLICABLE_FILE_TARGET) { firDiagnostic ->
+        InapplicableFileTargetImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.EXPOSED_TYPEALIAS_EXPANDED_TYPE) { firDiagnostic ->
         ExposedTypealiasExpandedTypeImpl(
             firDiagnostic.a,

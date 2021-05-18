@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 import kotlin.reflect.KProperty
 
 @Target(AnnotationTarget.FIELD) annotation class Field

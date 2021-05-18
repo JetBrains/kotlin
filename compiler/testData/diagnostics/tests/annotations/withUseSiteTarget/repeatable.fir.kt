@@ -55,5 +55,5 @@ public class B(<!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@param:fieldOrPro
     var w: Int
         @getSetAndParamAnn @get:getSetAndParamAnn get() = 0
         // See KT-15470: fake INAPPLICABLE_TARGET_ON_PROPERTY
-        @getSetAndParamAnn @set:getSetAndParamAnn set(arg) {}
+        @getSetAndParamAnn <!INAPPLICABLE_TARGET_ON_PROPERTY!>@set:getSetAndParamAnn<!> set(arg) {}
 }

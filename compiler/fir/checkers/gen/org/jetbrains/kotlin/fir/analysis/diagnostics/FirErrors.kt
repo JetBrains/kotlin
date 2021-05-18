@@ -181,6 +181,13 @@ object FirErrors {
     val RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION by error0<PsiElement>()
     val WRONG_ANNOTATION_TARGET by error1<KtAnnotationEntry, String>()
     val WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET by error2<KtAnnotationEntry, String, String>()
+    val INAPPLICABLE_TARGET_ON_PROPERTY by error1<PsiElement, String>()
+    val INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE by error1<PsiElement, String>()
+    val INAPPLICABLE_TARGET_PROPERTY_HAS_NO_DELEGATE by error0<PsiElement>()
+    val INAPPLICABLE_TARGET_PROPERTY_HAS_NO_BACKING_FIELD by error0<PsiElement>()
+    val INAPPLICABLE_PARAM_TARGET by error0<PsiElement>()
+    val REDUNDANT_ANNOTATION_TARGET by warning1<PsiElement, String>()
+    val INAPPLICABLE_FILE_TARGET by error0<PsiElement>()
 
     // Exposed visibility
     val EXPOSED_TYPEALIAS_EXPANDED_TYPE by error3<KtNamedDeclaration, EffectiveVisibility, FirMemberDeclaration, EffectiveVisibility>(SourceElementPositioningStrategies.DECLARATION_NAME)

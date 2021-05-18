@@ -449,6 +449,37 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val useSiteTarget: String
     }
 
+    abstract class InapplicableTargetOnProperty : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = InapplicableTargetOnProperty::class
+        abstract val useSiteDescription: String
+    }
+
+    abstract class InapplicableTargetPropertyImmutable : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = InapplicableTargetPropertyImmutable::class
+        abstract val useSiteDescription: String
+    }
+
+    abstract class InapplicableTargetPropertyHasNoDelegate : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = InapplicableTargetPropertyHasNoDelegate::class
+    }
+
+    abstract class InapplicableTargetPropertyHasNoBackingField : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = InapplicableTargetPropertyHasNoBackingField::class
+    }
+
+    abstract class InapplicableParamTarget : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = InapplicableParamTarget::class
+    }
+
+    abstract class RedundantAnnotationTarget : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = RedundantAnnotationTarget::class
+        abstract val useSiteDescription: String
+    }
+
+    abstract class InapplicableFileTarget : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = InapplicableFileTarget::class
+    }
+
     abstract class ExposedTypealiasExpandedType : KtFirDiagnostic<KtNamedDeclaration>() {
         override val diagnosticClass get() = ExposedTypealiasExpandedType::class
         abstract val elementVisibility: EffectiveVisibility

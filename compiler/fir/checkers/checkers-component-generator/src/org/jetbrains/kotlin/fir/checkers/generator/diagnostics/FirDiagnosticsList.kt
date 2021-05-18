@@ -180,6 +180,19 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
             parameter<String>("actualTarget")
             parameter<String>("useSiteTarget")
         }
+        val INAPPLICABLE_TARGET_ON_PROPERTY by error<PsiElement> {
+            parameter<String>("useSiteDescription")
+        }
+        val INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE by error<PsiElement> {
+            parameter<String>("useSiteDescription")
+        }
+        val INAPPLICABLE_TARGET_PROPERTY_HAS_NO_DELEGATE by error<PsiElement>()
+        val INAPPLICABLE_TARGET_PROPERTY_HAS_NO_BACKING_FIELD by error<PsiElement>()
+        val INAPPLICABLE_PARAM_TARGET by error<PsiElement>()
+        val REDUNDANT_ANNOTATION_TARGET by warning<PsiElement> {
+            parameter<String>("useSiteDescription")
+        }
+        val INAPPLICABLE_FILE_TARGET by error<PsiElement>()
     }
 
     val EXPOSED_VISIBILITY by object : DiagnosticGroup("Exposed visibility") {

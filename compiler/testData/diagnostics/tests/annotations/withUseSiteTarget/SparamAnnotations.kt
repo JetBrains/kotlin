@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 import kotlin.reflect.KProperty
 
 annotation class Ann
