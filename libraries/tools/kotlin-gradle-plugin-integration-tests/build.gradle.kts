@@ -60,7 +60,9 @@ val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild ||
         try {
             project.providers.gradleProperty("gradle.integration.tests.split.tasks").forUseAtConfigurationTime().orNull
                 ?.toBoolean() ?: false
-        } catch (_: Exception) { false }
+        } catch (_: Exception) {
+            false
+        }
 
 
 val cleanTestKitCacheTask = tasks.register<Delete>("cleanTestKitCache") {
@@ -75,7 +77,7 @@ fun Test.includeMppAndAndroid(include: Boolean) = includeTestsWithPattern(includ
 }
 
 fun Test.includeNative(include: Boolean) = includeTestsWithPattern(include) {
-    add("org.jetbrains.kotlin.gradle.native.*")
+    addAll(listOf("org.jetbrains.kotlin.gradle.native.*", "*Commonizer*"))
 }
 
 fun Test.includeTestsWithPattern(include: Boolean, patterns: (MutableSet<String>).() -> Unit) {
@@ -249,7 +251,8 @@ tasks.withType<Test> {
         addTestListener(object : TestListener {
             override fun afterSuite(desc: TestDescriptor, result: TestResult) {
                 if (desc.parent == null) { // will match the outermost suite
-                    val output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
+                    val output =
+                        "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
                     val startItem = "|  "
                     val endItem = "  |"
                     val repeatLength = startItem.length + output.length + endItem.length
