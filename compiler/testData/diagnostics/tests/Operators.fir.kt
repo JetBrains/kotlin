@@ -53,10 +53,10 @@ fun test() {
 
     a <!OPERATOR_MODIFIER_REQUIRED!>+<!> b
     a - b
-    a[1]
+    <!OPERATOR_MODIFIER_REQUIRED!>a[1]<!>
     a["str"]
 
-    a[1] = "A"
+    <!OPERATOR_MODIFIER_REQUIRED!>a[1]<!> = "A"
     a["str"] = "str"
 
     a.plus(b)
@@ -73,25 +73,25 @@ fun test() {
     Example()<!OPERATOR_MODIFIER_REQUIRED!>..<!>Example()
     Example2()..Example2()
 
-    a < b
-    a >= b
+    a <!OPERATOR_MODIFIER_REQUIRED!><<!> b
+    a <!OPERATOR_MODIFIER_REQUIRED!>>=<!> b
     c > d
 
-    a in b
+    a <!OPERATOR_MODIFIER_REQUIRED!>in<!> b
     c in d
 
-    a++
-    a--
+    a<!OPERATOR_MODIFIER_REQUIRED!>++<!>
+    a<!OPERATOR_MODIFIER_REQUIRED!>--<!>
     c++
     c--
 
-    !a
+    <!OPERATOR_MODIFIER_REQUIRED!>!<!>a
     !c
 
-    a()
+    <!OPERATOR_MODIFIER_REQUIRED!>a<!>()
     c()
 
-    Example()()
+    <!OPERATOR_MODIFIER_REQUIRED!>Example()()<!>
     Example2()()
 }
 

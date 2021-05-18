@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 import kotlin.reflect.KProperty0
 
 val a: Int by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>A()<!>

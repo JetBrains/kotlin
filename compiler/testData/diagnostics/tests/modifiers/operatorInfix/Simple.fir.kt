@@ -28,14 +28,14 @@ fun test() {
     var a = Example()
     val b = Example()
 
-    consumeString(<!ARGUMENT_TYPE_MISMATCH!>a()<!>)
-    consumeString(<!ARGUMENT_TYPE_MISMATCH!>a[1]<!>)
+    consumeString(a())
+    consumeString(a[1])
 
     val (x, y) = Example()
     consumeString(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
     consumeString(<!ARGUMENT_TYPE_MISMATCH!>y<!>)
 
-    consumeExample2(<!ARGUMENT_TYPE_MISMATCH!>++a<!>)
+    consumeExample2(++a)
 
     consumeString(a plus b)
 }

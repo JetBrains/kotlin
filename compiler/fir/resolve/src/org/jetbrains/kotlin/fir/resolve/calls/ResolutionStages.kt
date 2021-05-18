@@ -276,6 +276,8 @@ internal object CheckCallModifiers : CheckerStage() {
                     sink.reportDiagnostic(InfixCallOfNonInfixFunction(functionSymbol))
                 callInfo.callSite.origin == FirFunctionCallOrigin.OPERATOR && !functionSymbol.fir.isOperator ->
                     sink.reportDiagnostic(OperatorCallOfNonOperatorFunction(functionSymbol))
+                callInfo.isImplicitInvoke && !functionSymbol.fir.isOperator ->
+                    sink.reportDiagnostic(OperatorCallOfNonOperatorFunction(functionSymbol))
             }
         }
     }

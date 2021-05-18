@@ -1968,6 +1968,7 @@ open class RawFirBuilder(
                             name = conventionCallName
                         }
                         explicitReceiver = receiver
+                        origin = FirFunctionCallOrigin.OPERATOR
                     }
                 }
                 else -> throw IllegalStateException("Unexpected expression: ${expression.text}")
@@ -2064,6 +2065,7 @@ open class RawFirBuilder(
                         arguments += getArgument
                     }
                 }
+                origin = FirFunctionCallOrigin.OPERATOR
             }
         }
 

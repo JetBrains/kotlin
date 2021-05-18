@@ -388,10 +388,11 @@ class ExpressionsConverter(
                 buildFunctionCall {
                     source = unaryExpression.toFirSourceElement()
                     calleeReference = buildSimpleNamedReference {
-                        source = this@buildFunctionCall.source
+                        source = operationReference?.toFirSourceElement() ?: this@buildFunctionCall.source
                         name = conventionCallName
                     }
                     explicitReceiver = receiver
+                    origin = FirFunctionCallOrigin.OPERATOR
                 }
             }
             else -> throw IllegalStateException("Unexpected expression: ${unaryExpression.asText}")
@@ -843,6 +844,7 @@ class ExpressionsConverter(
                 arguments += indices
                 getArgument?.let { arguments += it }
             }
+            origin = FirFunctionCallOrigin.OPERATOR
         }
     }
 
