@@ -40,6 +40,7 @@ internal abstract class AbstractSourceToOutputMap<Name>(
         remove(pathConverter.toPath(sourceFile))
     }
 
+    @Synchronized
     fun add(sourceFile: File, className: Name) {
         storage.append(pathConverter.toPath(sourceFile), listOf(nameTransformer.asString(className)))
     }
@@ -56,6 +57,7 @@ internal abstract class AbstractSourceToOutputMap<Name>(
     override fun dumpValue(value: Collection<String>) =
         value.dumpCollection()
 
+    @Synchronized
     private fun remove(path: String) {
         storage.remove(path)
     }
