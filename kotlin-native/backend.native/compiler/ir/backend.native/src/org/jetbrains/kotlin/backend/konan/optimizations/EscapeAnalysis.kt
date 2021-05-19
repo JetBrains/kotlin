@@ -182,13 +182,14 @@ internal object EscapeAnalysis {
                 fun computeDepths(node: DataFlowIR.Node, depth: Int) {
                     if (node is DataFlowIR.Node.Scope)
                         node.nodes.forEach { computeDepths(it, depth + 1) }
-                    else
+                    else if (node != DataFlowIR.Node.Null)
                         nodesRoles[node] = NodeInfo(depth)
                 }
                 computeDepths(body.rootScope, Depths.ROOT_SCOPE - 1)
 
                 fun assignRole(node: DataFlowIR.Node, role: Role, infoEntry: RoleInfoEntry?) {
-                    nodesRoles[node]!!.add(role, infoEntry)
+                    if (node != DataFlowIR.Node.Null && infoEntry?.node != DataFlowIR.Node.Null)
+                        nodesRoles[node]!!.add(role, infoEntry)
                 }
 
                 body.returns.values.forEach { assignRole(it.node, Role.RETURN_VALUE, null) }
