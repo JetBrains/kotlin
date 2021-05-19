@@ -15,9 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isAny
-import org.jetbrains.kotlin.ir.types.isNullableAny
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.Name
 
 internal interface Complex: State {
     var superWrapperClass: Wrapper?
@@ -27,10 +25,10 @@ internal interface Complex: State {
         return irClass.fqNameForIrSerialization.toString()
     }
 
-    private fun IrClass.getIrFunction(symbol: IrFunctionSymbol): IrFunction? {
-        val propertyGetters = this.declarations.filterIsInstance<IrProperty>().mapNotNull { it.getter }
-        val propertySetters = this.declarations.filterIsInstance<IrProperty>().mapNotNull { it.setter }
-        val functions = this.declarations.filterIsInstance<IrFunction>()
+    private fun getIrFunctionFromGivenClass(irClass: IrClass, symbol: IrFunctionSymbol): IrFunction? {
+        val propertyGetters = irClass.declarations.filterIsInstance<IrProperty>().mapNotNull { it.getter }
+        val propertySetters = irClass.declarations.filterIsInstance<IrProperty>().mapNotNull { it.setter }
+        val functions = irClass.declarations.filterIsInstance<IrFunction>()
         return (propertyGetters + propertySetters + functions).firstOrNull {
             val owner = symbol.owner
             when {
@@ -58,7 +56,7 @@ internal interface Complex: State {
 
     override fun getIrFunctionByIrCall(expression: IrCall): IrFunction? {
         val receiver = getThisOrSuperReceiver(expression.superQualifierSymbol?.owner) ?: return null
-        val irFunction = receiver.getIrFunction(expression.symbol) ?: return null
+        val irFunction = getIrFunctionFromGivenClass(receiver, expression.symbol) ?: return null
         return getOverridden(irFunction as IrSimpleFunction)
     }
 }

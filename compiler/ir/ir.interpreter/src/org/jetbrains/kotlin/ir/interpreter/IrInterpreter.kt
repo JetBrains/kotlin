@@ -369,7 +369,7 @@ class IrInterpreter private constructor(
             field.origin == IrDeclarationOrigin.PROPERTY_BACKING_FIELD && field.correspondingPropertySymbol?.owner?.isConst == true -> {
                 callStack.addInstruction(CompoundInstruction(field.initializer?.expression))
             }
-            expression.receiver.let { it == null || it.type.classOrNull?.owner?.isObject == true } -> {
+            expression.accessesTopLevelOrObjectField() -> {
                 // receiver is null, for example, for top level fields
                 val propertyOwner = field.correspondingPropertySymbol?.owner
                 val isConst = propertyOwner?.isConst == true || propertyOwner?.backingField?.initializer?.expression is IrConst<*>

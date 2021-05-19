@@ -267,3 +267,7 @@ internal fun IrType.getOnlyName(): String {
     if (this !is IrSimpleType) return this.render()
     return (this.classifierOrFail.owner as IrDeclarationWithName).name.asString() + (if (this.hasQuestionMark) "?" else "")
 }
+
+internal fun IrFieldAccessExpression.accessesTopLevelOrObjectField(): Boolean {
+    return this.receiver == null || (this.receiver?.type?.classifierOrNull?.owner as? IrClass)?.isObject == true
+}

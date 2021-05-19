@@ -211,9 +211,7 @@ private fun unfoldReturn(expression: IrReturn, callStack: CallStack) {
 
 private fun unfoldSetField(expression: IrSetField, callStack: CallStack) {
     // receiver is null, for example, for top level fields; cannot interpret set on top level var
-    if (expression.receiver.let { it == null || (it.type.classifierOrNull?.owner as? IrClass)?.isObject == true }) {
-        error("Cannot interpret set method on top level properties")
-    }
+    if (expression.accessesTopLevelOrObjectField()) error("Cannot interpret set method on top level properties")
 
     callStack.addInstruction(SimpleInstruction(expression))
     callStack.addInstruction(CompoundInstruction(expression.value))

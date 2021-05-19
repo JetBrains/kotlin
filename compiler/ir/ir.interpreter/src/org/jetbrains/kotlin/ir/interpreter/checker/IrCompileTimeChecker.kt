@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.interpreter.accessesTopLevelOrObjectField
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -131,18 +132,16 @@ class IrCompileTimeChecker(
         val owner = expression.symbol.owner
         val property = owner.correspondingPropertySymbol?.owner
         val fqName = owner.fqNameForIrSerialization
+        fun isJavaStaticWithPrimitiveOrString(): Boolean {
+            return owner.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && owner.isStatic &&
+                    (owner.type.isPrimitiveType() || owner.type.isStringClassType())
+        }
         return when {
             // TODO fix later; used it here because java boolean resolves very strange,
             //  its type is flexible (so its not primitive) and there is no initializer at backing field
             fqName.toString().let { it == "java.lang.Boolean.FALSE" || it == "java.lang.Boolean.TRUE" } -> true
-            owner.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && owner.isStatic &&
-                    (owner.type.isPrimitiveType() || owner.type.isStringClassType()) -> {
-                // if is java primitive static
-                owner.initializer?.accept(this, data) == true
-            }
-            expression.receiver == null -> {
-                property?.isConst == true && owner.initializer?.accept(this, null) == true
-            }
+            isJavaStaticWithPrimitiveOrString() -> owner.initializer?.accept(this, data) == true
+            expression.receiver == null -> property?.isConst == true && owner.initializer?.accept(this, null) == true
             owner.origin == IrDeclarationOrigin.PROPERTY_BACKING_FIELD && property?.isConst == true -> {
                 val receiverComputable = expression.receiver?.accept(this, null) ?: true
                 val initializerComputable = owner.initializer?.accept(this, null) ?: false
@@ -157,9 +156,7 @@ class IrCompileTimeChecker(
     }
 
     override fun visitSetField(expression: IrSetField, data: Nothing?): Boolean {
-        if (expression.receiver.let { it == null || it.type.classOrNull?.owner?.isObject == true }) {
-            return false
-        }
+        if (expression.accessesTopLevelOrObjectField()) return false
         //todo check receiver?
         val property = expression.symbol.owner.correspondingPropertySymbol?.owner
         val parent = expression.symbol.owner.parent as IrDeclarationContainer
