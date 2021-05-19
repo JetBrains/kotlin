@@ -17,7 +17,8 @@ import org.jetbrains.kotlin.idea.configuration.IdeBuiltInsLoadingState
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.vfilefinder.KotlinStdlibIndex
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 // TODO(kirpichenkov): works only for JVM (see KT-44552)
@@ -101,9 +102,30 @@ class KotlinStdlibCacheImpl(val project: Project) : KotlinStdlibCache {
 
     override fun findStdlibInModuleDependencies(module: IdeaModuleInfo): LibraryInfo? {
         val stdlibDependency = moduleStdlibDependencyCache.getOrPut(module) {
-            module.dependencies().lazyClosure { it.dependencies() }.firstOrNull {
-                it is LibraryInfo && isStdlib(it)
-            }.let { StdlibDependency(it as? LibraryInfo?) }
+
+            fun IdeaModuleInfo.asStdLibInfo() = this.safeAs<LibraryInfo>()?.takeIf { isStdlib(it) }
+
+            val stdLib: LibraryInfo? = module.asStdLibInfo() ?: run {
+                val checkedLibraryInfo = mutableSetOf<IdeaModuleInfo>()
+                val stack = ArrayDeque<IdeaModuleInfo>()
+                stack.add(module)
+
+                // bfs
+                while (stack.isNotEmpty()) {
+                    val poll = stack.poll()
+                    if (!checkedLibraryInfo.add(poll)) continue
+
+                    val dependencies = poll.dependencies().filter { !checkedLibraryInfo.contains(it) }
+                    dependencies
+                        .filterIsInstance<LibraryInfo>()
+                        .firstOrNull { isStdlib(it) }
+                        ?.let { return@run it }
+
+                    stack += dependencies
+                }
+                null
+            }
+            StdlibDependency(stdLib)
         }
 
         return stdlibDependency.libraryInfo
