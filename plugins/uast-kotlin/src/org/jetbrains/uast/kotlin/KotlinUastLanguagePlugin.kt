@@ -31,10 +31,7 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.asJava.findFacadeClass
 import org.jetbrains.kotlin.asJava.toLightClass
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -52,21 +49,6 @@ import org.jetbrains.uast.kotlin.declarations.KotlinUMethod
 import org.jetbrains.uast.kotlin.declarations.KotlinUMethodWithFakeLightDelegate
 import org.jetbrains.uast.kotlin.expressions.*
 import org.jetbrains.uast.kotlin.psi.*
-
-interface KotlinUastResolveProviderService : BaseKotlinUastResolveProviderService {
-    fun getBindingContext(element: KtElement): BindingContext
-    fun getTypeMapper(element: KtElement): KotlinTypeMapper?
-    fun getLanguageVersionSettings(element: KtElement): LanguageVersionSettings
-    fun getReferenceVariants(ktElement: KtElement, nameHint: String): Sequence<DeclarationDescriptor>
-
-    override fun convertParent(uElement: UElement): UElement? {
-        return convertParentImpl(uElement)
-    }
-
-    override fun resolveToDeclaration(ktExpression: KtExpression): PsiElement? {
-        return resolveToDeclarationImpl(ktExpression)
-    }
-}
 
 var PsiElement.destructuringDeclarationInitializer: Boolean? by UserDataProperty(Key.create("kotlin.uast.destructuringDeclarationInitializer"))
 
