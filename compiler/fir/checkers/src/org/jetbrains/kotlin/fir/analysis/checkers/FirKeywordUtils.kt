@@ -11,10 +11,13 @@ import com.intellij.psi.tree.TokenSet
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.analysis.diagnostics.valOrVarKeyword
+import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.psi.KtModifierListOwner
+import org.jetbrains.kotlin.psi.KtValVarKeywordOwner
 
 // DO
 // - use this to retrieve modifiers on the source and confirm a certain modifier indeed appears
@@ -96,3 +99,10 @@ operator fun FirModifierList?.contains(token: KtModifierKeywordToken): Boolean =
 fun FirElement.getModifier(token: KtModifierKeywordToken): FirModifier<*>? = source.getModifierList()?.get(token)
 
 fun FirElement.hasModifier(token: KtModifierKeywordToken): Boolean = token in source.getModifierList()
+
+internal val FirSourceElement?.valOrVarKeyword: KtKeywordToken?
+    get() = when (this) {
+        null -> null
+        is FirPsiSourceElement<*> -> (psi as? KtValVarKeywordOwner)?.valOrVarKeyword?.let { it.node?.elementType as? KtKeywordToken }
+        is FirLightSourceElement -> treeStructure.valOrVarKeyword(lighterASTNode)?.tokenType as? KtKeywordToken
+    }

@@ -194,6 +194,34 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.VAL_OR_VAR_ON_LOOP_PARAMETER) { firDiagnostic ->
+        ValOrVarOnLoopParameterImpl(
+            firDiagnostic.a,
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.VAL_OR_VAR_ON_FUN_PARAMETER) { firDiagnostic ->
+        ValOrVarOnFunParameterImpl(
+            firDiagnostic.a,
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.VAL_OR_VAR_ON_CATCH_PARAMETER) { firDiagnostic ->
+        ValOrVarOnCatchParameterImpl(
+            firDiagnostic.a,
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER) { firDiagnostic ->
+        ValOrVarOnSecondaryConstructorParameterImpl(
+            firDiagnostic.a,
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.INVISIBLE_REFERENCE) { firDiagnostic ->
         InvisibleReferenceImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a.fir as FirDeclaration),

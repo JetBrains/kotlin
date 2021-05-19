@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class Pair {
     operator fun component1(): Int = null!!
     operator fun component2(): Int = null!!

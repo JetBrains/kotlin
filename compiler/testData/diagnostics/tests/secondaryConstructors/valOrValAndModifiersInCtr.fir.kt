@@ -1,7 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 class A {
     constructor(
-        val x: Int, y: Int,
-        var z: Int,
+        <!VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER!>val<!> x: Int, y: Int,
+        <!VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER!>var<!> z: Int,
         public a: Int)
 }
