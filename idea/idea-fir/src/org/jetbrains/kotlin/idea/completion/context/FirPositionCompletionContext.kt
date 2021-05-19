@@ -39,6 +39,14 @@ internal class FirAnnotationTypeNameReferencePositionContext(
     val annotationEntry: KtAnnotationEntry,
 ) : FirNameReferencePositionContext()
 
+internal class FirSuperTypeCallNameReferencePositionContext(
+    override val position: PsiElement,
+    override val reference: KtSimpleNameReference,
+    override val nameExpression: KtSimpleNameExpression,
+    override val explicitReceiver: KtExpression?,
+    val superExpression: KtSuperExpression,
+) : FirNameReferencePositionContext()
+
 
 internal class FirExpressionNameReferencePositionContext(
     override val position: PsiElement,
@@ -78,15 +86,23 @@ internal object FirPositionCompletionContextDetector {
         nameExpression: KtSimpleNameExpression,
         explicitReceiver: KtExpression?
     ): FirNameReferencePositionContext {
-        val annotationEntry = userType.annotationEntry()
-            ?: return FirTypeNameReferencePositionContext(position, reference, nameExpression, explicitReceiver)
-        return FirAnnotationTypeNameReferencePositionContext(position, reference, nameExpression, explicitReceiver, annotationEntry)
-    }
-
-    private fun KtUserType.annotationEntry(): KtAnnotationEntry? {
-        val typeReference = (parent as? KtTypeReference)?.takeIf { it.typeElement == this }
-        val constructorCall = (typeReference?.parent as? KtConstructorCalleeExpression)?.takeIf { it.typeReference == typeReference }
-        return (constructorCall?.parent as? KtAnnotationEntry)?.takeIf { it.calleeExpression == constructorCall }
+        val typeReference = (userType.parent as? KtTypeReference)?.takeIf { it.typeElement == userType }
+        return when (val typeReferenceOwner = typeReference?.parent) {
+            is KtConstructorCalleeExpression -> {
+                val constructorCall = typeReferenceOwner.takeIf { it.typeReference == typeReference }
+                val annotationEntry = (constructorCall?.parent as? KtAnnotationEntry)?.takeIf { it.calleeExpression == constructorCall }
+                annotationEntry?.let {
+                    FirAnnotationTypeNameReferencePositionContext(position, reference, nameExpression, explicitReceiver, it)
+                }
+            }
+            is KtSuperExpression -> {
+                val superTypeCallEntry = typeReferenceOwner.takeIf { it.superTypeQualifier == typeReference }
+                superTypeCallEntry?.let {
+                    FirSuperTypeCallNameReferencePositionContext(position, reference, nameExpression, explicitReceiver, it)
+                }
+            }
+            else -> null
+        } ?: FirTypeNameReferencePositionContext(position, reference, nameExpression, explicitReceiver)
     }
 
     inline fun analyseInContext(

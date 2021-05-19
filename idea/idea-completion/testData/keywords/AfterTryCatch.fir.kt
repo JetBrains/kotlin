@@ -1,11 +1,16 @@
 // FIR_COMPARISON
-fun foo(p: Int) {
-    if (p > 0)
-        foo()
+fun foo() {
+    try {
+
+    }
+    catch(e: Exception) {
+
+    }
     <caret>
 }
 
-// EXIST: else
+// EXIST: catch
+// EXIST: finally
 // EXIST: class
 // EXIST: do
 // EXIST: false
@@ -15,7 +20,6 @@ fun foo(p: Int) {
 // EXIST: null
 // EXIST: object
 // EXIST: return
-// EXIST: super
 // EXIST: throw
 // EXIST: interface
 // EXIST: true
@@ -24,6 +28,6 @@ fun foo(p: Int) {
 // EXIST: var
 // EXIST: when
 // EXIST: while
-// EXIST: typealias
 // EXIST: as
+// EXIST:  typealias
 // NOTHING_ELSE

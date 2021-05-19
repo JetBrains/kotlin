@@ -1,10 +1,15 @@
 // FIR_COMPARISON
 fun foo(p: Int) {
     if (p > 0)
-        foo()
-    <caret>
+        try {
+        }
+        catch (e: Exception) {
+        }
+        <caret>
 }
 
+// EXIST: catch
+// EXIST: finally
 // EXIST: else
 // EXIST: class
 // EXIST: do
@@ -15,7 +20,6 @@ fun foo(p: Int) {
 // EXIST: null
 // EXIST: object
 // EXIST: return
-// EXIST: super
 // EXIST: throw
 // EXIST: interface
 // EXIST: true

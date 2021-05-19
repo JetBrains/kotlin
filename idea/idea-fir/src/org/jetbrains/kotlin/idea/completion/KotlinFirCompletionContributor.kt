@@ -78,6 +78,7 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
                 complete(callableContributor, positionContext)
                 complete(classifierContributor, positionContext)
             }
+
             is FirTypeNameReferencePositionContext -> {
                 complete(keywordContributor, positionContext)
                 complete(packageCompletionContributor, positionContext)
@@ -88,6 +89,10 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
                 complete(keywordContributor, positionContext)
                 complete(packageCompletionContributor, positionContext)
                 complete(annotationsContributor, positionContext)
+            }
+
+            is FirSuperTypeCallNameReferencePositionContext -> {
+                complete(FirSuperEntryContributor(basicContext), positionContext)
             }
 
             is FirUnknownPositionContext -> {

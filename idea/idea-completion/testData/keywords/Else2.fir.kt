@@ -15,7 +15,6 @@ fun foo(p: Int) {
 // EXIST: null
 // EXIST: object
 // EXIST: return
-// EXIST: super
 // EXIST: throw
 // EXIST: interface
 // EXIST: true

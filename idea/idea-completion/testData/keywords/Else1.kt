@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // FIR_COMPARISON
 fun foo(p: Int) {
     if (p > 0) {

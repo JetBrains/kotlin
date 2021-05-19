@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.idea.completion.context.FirRawPositionCompletionCont
 import org.jetbrains.kotlin.idea.completion.context.FirUnknownPositionContext
 import org.jetbrains.kotlin.idea.completion.contributors.keywords.OverrideKeywordHandler
 import org.jetbrains.kotlin.idea.completion.contributors.keywords.ReturnKeywordHandler
+import org.jetbrains.kotlin.idea.completion.contributors.keywords.SuperKeywordHandler
 import org.jetbrains.kotlin.idea.completion.contributors.keywords.ThisKeywordHandler
 import org.jetbrains.kotlin.idea.completion.keywords.CompletionKeywordHandlerProvider
 import org.jetbrains.kotlin.idea.completion.keywords.CompletionKeywordHandlers
@@ -76,5 +77,6 @@ private class ResolveDependentCompletionKeywordHandlerProvider(
         ReturnKeywordHandler,
         OverrideKeywordHandler(basicContext),
         ThisKeywordHandler(basicContext),
+        SuperKeywordHandler,
     )
 }

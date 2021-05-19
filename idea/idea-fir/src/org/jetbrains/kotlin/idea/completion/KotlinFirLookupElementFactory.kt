@@ -232,7 +232,7 @@ private object ClassifierInsertionHandler : InsertHandler<LookupElement> {
             context.document.replaceString(context.startOffset, context.tailOffset, fqName.render())
             context.commitDocument()
 
-            shortenReferences(targetFile, TextRange(context.startOffset, context.tailOffset))
+            shortenReferencesForFirCompletion(targetFile, TextRange(context.startOffset, context.tailOffset))
         }
     }
 }
@@ -338,7 +338,7 @@ private object FunctionInsertionHandler : QuotedNamesAwareInsertionHandler() {
             addArguments(context, element, lookupObject)
             context.commitDocument()
 
-            shortenReferences(targetFile, TextRange(context.startOffset, context.tailOffset))
+            shortenReferencesForFirCompletion(targetFile, TextRange(context.startOffset, context.tailOffset))
         } else {
             addArguments(context, element, lookupObject)
             context.commitDocument()
@@ -368,7 +368,7 @@ private object VariableInsertionHandler : InsertHandler<LookupElement> {
                 )
 
                 context.commitDocument()
-                shortenReferences(targetFile, TextRange(context.startOffset, context.tailOffset))
+                shortenReferencesForFirCompletion(targetFile, TextRange(context.startOffset, context.tailOffset))
             }
 
             is CallableImportStrategy.DoNothing -> {}
@@ -435,7 +435,7 @@ private fun CharSequence.indexOfSkippingSpace(c: Char, startIndex: Int): Int? {
     return null
 }
 
-private fun shortenReferences(targetFile: KtFile, textRange: TextRange) {
+internal fun shortenReferencesForFirCompletion(targetFile: KtFile, textRange: TextRange) {
     val shortenings = withAllowedResolve {
         analyse(targetFile) {
             collectPossibleReferenceShortenings(targetFile, textRange)

@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 open class AA
 
 interface AI
