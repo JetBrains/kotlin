@@ -163,66 +163,70 @@ private fun mapSystemHasContradictionError(
     diagnostic: ConeConstraintSystemHasContradiction,
     source: FirSourceElement,
     qualifiedAccessSource: FirSourceElement?,
-): List<FirDiagnostic<FirSourceElement>> = buildList<FirDiagnostic<FirSourceElement>> {
-    for (error in diagnostic.candidate.system.errors) {
-        addIfNotNull(error.toDiagnostic(source, qualifiedAccessSource, diagnostic.candidate.callInfo.session.typeContext))
-    }
-}.ifEmpty {
-    listOfNotNull(
-        diagnostic.candidate.system.errors.firstNotNullOfOrNull {
-            val message = when (it) {
-                is NewConstraintError -> "NewConstraintError at ${it.position}: ${it.lowerType} <!: ${it.upperType}"
-                // Error should be reported on the error type itself
-                is ConstrainingTypeIsError -> return@firstNotNullOfOrNull null
-                else -> "Inference error: ${it::class.simpleName}"
-            }
-            FirErrors.NEW_INFERENCE_ERROR.on(qualifiedAccessSource ?: source, message)
+): List<FirDiagnostic<FirSourceElement>> {
+    return buildList<FirDiagnostic<FirSourceElement>> {
+        for (error in diagnostic.candidate.system.errors) {
+            addIfNotNull(error.toDiagnostic(source, qualifiedAccessSource, diagnostic.candidate.callInfo.session.typeContext))
         }
-    )
+    }.ifEmpty {
+        listOfNotNull(
+            diagnostic.candidate.system.errors.firstNotNullOfOrNull {
+                val message = when (it) {
+                    is NewConstraintError -> "NewConstraintError at ${it.position}: ${it.lowerType} <!: ${it.upperType}"
+                    // Error should be reported on the error type itself
+                    is ConstrainingTypeIsError -> return@firstNotNullOfOrNull null
+                    else -> "Inference error: ${it::class.simpleName}"
+                }
+                FirErrors.NEW_INFERENCE_ERROR.on(qualifiedAccessSource ?: source, message)
+            }
+        )
+    }
 }
 
 private fun ConstraintSystemError.toDiagnostic(
     source: FirSourceElement,
     qualifiedAccessSource: FirSourceElement?,
     typeContext: ConeTypeContext,
-): FirDiagnostic<FirSourceElement>? = when (this) {
-    is NewConstraintError -> {
-        val position = position.from
-        val argument =
+): FirDiagnostic<FirSourceElement>? {
+    return when (this) {
+        is NewConstraintError -> {
+            val position = position.from
+            val argument =
+                when (position) {
+                    // TODO: Support other ReceiverConstraintPositionImpl, LHSArgumentConstraintPositionImpl
+                    is ConeArgumentConstraintPosition -> position.argument
+                    is ConeLambdaArgumentConstraintPosition -> position.lambda
+                    else -> null
+                }
+
+            argument?.let {
+                return FirErrors.TYPE_MISMATCH.on(it.source ?: source, lowerConeType, upperConeType)
+            }
+
             when (position) {
-                // TODO: Support other ReceiverConstraintPositionImpl, LHSArgumentConstraintPositionImpl
-                is ConeArgumentConstraintPosition -> position.argument
-                is ConeLambdaArgumentConstraintPosition -> position.lambda
+                is ExpectedTypeConstraintPosition<*> -> {
+                    val inferredType =
+                        if (!lowerConeType.isNullableNothing)
+                            lowerConeType
+                        else
+                            upperConeType.withNullability(ConeNullability.NULLABLE, typeContext)
+
+                    FirErrors.TYPE_MISMATCH.on(qualifiedAccessSource ?: source, upperConeType, inferredType)
+                }
+                is ExplicitTypeParameterConstraintPosition<*> -> {
+                    val conePosition = position as ConeExplicitTypeParameterConstraintPosition
+                    val typeArgument = conePosition.typeArgument
+
+                    FirErrors.UPPER_BOUND_VIOLATED.on(
+                        typeArgument.source ?: qualifiedAccessSource ?: source,
+                        upperConeType,
+                    )
+                }
                 else -> null
             }
-
-        argument?.let {
-            return FirErrors.TYPE_MISMATCH.on(it.source ?: source, lowerConeType, upperConeType)
         }
-
-        when (position) {
-            is ExpectedTypeConstraintPosition<*> -> {
-                val inferredType =
-                    if (!lowerConeType.isNullableNothing)
-                        lowerConeType
-                    else
-                        upperConeType.withNullability(ConeNullability.NULLABLE, typeContext)
-
-                FirErrors.TYPE_MISMATCH.on(qualifiedAccessSource ?: source, upperConeType, inferredType)
-            }
-            is ExplicitTypeParameterConstraintPosition<*> -> {
-                val conePosition = position as ConeExplicitTypeParameterConstraintPosition
-                val typeArgument = conePosition.typeArgument
-
-                FirErrors.UPPER_BOUND_VIOLATED.on(
-                    typeArgument.source ?: qualifiedAccessSource ?: source,
-                    upperConeType,
-                )
-            }
-            else -> null
-        }
+        else -> null
     }
-    else -> null
 }
 
 private val NewConstraintError.lowerConeType: ConeKotlinType get() = lowerType as ConeKotlinType
