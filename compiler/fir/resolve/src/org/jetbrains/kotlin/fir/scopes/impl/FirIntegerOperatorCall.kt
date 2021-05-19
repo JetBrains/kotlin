@@ -44,7 +44,7 @@ class FirIntegerOperatorCall @FirImplementationDetail constructor(
     extensionReceiver,
     argumentList,
     calleeReference,
-    FirFunctionCallOrigin.OPERATOR
+    FirFunctionCallOrigin.Operator
 )
 
 @FirBuilderDsl

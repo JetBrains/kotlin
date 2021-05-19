@@ -154,11 +154,11 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(implicitInvokeCall) {
-            default("origin", "FirFunctionCallOrigin.OPERATOR")
+            default("origin", "FirFunctionCallOrigin.Operator")
         }
 
         impl(componentCall) {
-            default("origin", "FirFunctionCallOrigin.REGULAR")
+            default("origin", "FirFunctionCallOrigin.Operator")
         }
 
         impl(qualifiedAccessExpression)

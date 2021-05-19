@@ -162,9 +162,7 @@ class FirCallResolver(
         }
 
         var reducedCandidates = if (!result.currentApplicability.isSuccess) {
-            val distinctApplicabilities = bestCandidates.flatMapTo(mutableSetOf()) { candidate ->
-                candidate.diagnostics.map { it.applicability }
-            }
+            val distinctApplicabilities = bestCandidates.mapTo(mutableSetOf()) { it.currentApplicability }
             //if all candidates have the same kind on inApplicability - try to choose the most specific one
             if (distinctApplicabilities.size == 1 && distinctApplicabilities.single() > CandidateApplicability.INAPPLICABLE) {
                 chooseMostSpecific()

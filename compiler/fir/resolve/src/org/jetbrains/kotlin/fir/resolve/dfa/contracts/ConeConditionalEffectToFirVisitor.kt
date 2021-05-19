@@ -51,7 +51,7 @@ private class ConeConditionalEffectToFirVisitor(
         return buildFunctionCall {
             calleeReference = buildSimpleNamedReference { name = OperatorNameConventions.NOT }
             this.explicitReceiver = explicitReceiver
-            origin = FirFunctionCallOrigin.OPERATOR
+            origin = FirFunctionCallOrigin.Operator
         }
     }
 

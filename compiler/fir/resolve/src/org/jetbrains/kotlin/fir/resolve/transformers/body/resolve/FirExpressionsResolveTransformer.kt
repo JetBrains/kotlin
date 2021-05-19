@@ -370,7 +370,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                 this.name = name
                 candidateSymbol = null
             }
-            origin = FirFunctionCallOrigin.OPERATOR
+            origin = FirFunctionCallOrigin.Operator
         }
 
         // x.plusAssign(y)

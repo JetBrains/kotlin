@@ -179,7 +179,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
         builder(functionCall) {
             configurationForFunctionCallBuilder()
             default("origin") {
-                value = "FirFunctionCallOrigin.REGULAR"
+                value = "FirFunctionCallOrigin.Regular"
             }
         }
         builder(implicitInvokeCall, init = configurationForFunctionCallBuilder)

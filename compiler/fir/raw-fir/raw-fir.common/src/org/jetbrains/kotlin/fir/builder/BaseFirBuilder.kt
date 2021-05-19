@@ -520,7 +520,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 } else {
                     generateResolvedAccessExpression(desugaredSource, initialValueVar)
                 }
-                origin = FirFunctionCallOrigin.OPERATOR
+                origin = FirFunctionCallOrigin.Operator
             }
 
             // resultVar is only used for prefix increment/decrement.
@@ -644,7 +644,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 } else {
                     generateResolvedAccessExpression(desugaredSource, initialValueVar)
                 }
-                origin = FirFunctionCallOrigin.OPERATOR
+                origin = FirFunctionCallOrigin.Operator
             }
 
             // resultVar is only used for prefix increment/decrement.
@@ -761,7 +761,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                         arguments += generateResolvedAccessExpression(indexVar.source, indexVar)
                     }
                 }
-                origin = FirFunctionCallOrigin.OPERATOR
+                origin = FirFunctionCallOrigin.Operator
             }
 
             // initialValueVar is only used for postfix increment/decrement (stores the argument value before increment/decrement).
@@ -784,7 +784,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 } else {
                     generateResolvedAccessExpression(desugaredSource, initialValueVar)
                 }
-                origin = FirFunctionCallOrigin.OPERATOR
+                origin = FirFunctionCallOrigin.Operator
             }
 
             // resultVar is only used for prefix increment/decrement.
@@ -813,7 +813,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                             resultInitializer
                         }
                     }
-                    origin = FirFunctionCallOrigin.OPERATOR
+                    origin = FirFunctionCallOrigin.Operator
                 }
             }
 
@@ -984,7 +984,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                     ConeSimpleDiagnostic("No value for array set", DiagnosticKind.Syntax)
                 )
             }
-            origin = FirFunctionCallOrigin.OPERATOR
+            origin = FirFunctionCallOrigin.Operator
         }
     }
 
@@ -1027,7 +1027,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 calleeReference = buildSimpleNamedReference {
                     name = OperatorNameConventions.SET
                 }
-                origin = FirFunctionCallOrigin.OPERATOR
+                origin = FirFunctionCallOrigin.Operator
                 argumentList = buildArgumentList {
                     for (indexVariable in indexVariables) {
                         arguments += indexVariable.toQualifiedAccess()
@@ -1043,7 +1043,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                                 arguments += indexVariable.toQualifiedAccess()
                             }
                         }
-                        origin = FirFunctionCallOrigin.OPERATOR
+                        origin = FirFunctionCallOrigin.Operator
                     }
 
                     val operatorCall = buildFunctionCall {
@@ -1060,7 +1060,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                                 )
                             )
                         }
-                        origin = FirFunctionCallOrigin.OPERATOR
+                        origin = FirFunctionCallOrigin.Operator
                     }
                     arguments += operatorCall
                 }

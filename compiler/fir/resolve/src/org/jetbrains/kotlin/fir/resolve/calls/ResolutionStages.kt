@@ -272,9 +272,9 @@ internal object CheckCallModifiers : CheckerStage() {
         if (callInfo.callSite is FirFunctionCall) {
             val functionSymbol = candidate.symbol as? FirNamedFunctionSymbol ?: return
             when {
-                callInfo.callSite.origin == FirFunctionCallOrigin.INFIX && !functionSymbol.fir.isInfix ->
+                callInfo.callSite.origin == FirFunctionCallOrigin.Infix && !functionSymbol.fir.isInfix ->
                     sink.reportDiagnostic(InfixCallOfNonInfixFunction(functionSymbol))
-                callInfo.callSite.origin == FirFunctionCallOrigin.OPERATOR && !functionSymbol.fir.isOperator ->
+                callInfo.callSite.origin == FirFunctionCallOrigin.Operator && !functionSymbol.fir.isOperator ->
                     sink.reportDiagnostic(OperatorCallOfNonOperatorFunction(functionSymbol))
                 callInfo.isImplicitInvoke && !functionSymbol.fir.isOperator ->
                     sink.reportDiagnostic(OperatorCallOfNonOperatorFunction(functionSymbol))

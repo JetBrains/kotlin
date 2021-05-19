@@ -35,7 +35,7 @@ internal class FirImplicitInvokeCallImpl(
     override var calleeReference: FirNamedReference,
 ) : FirImplicitInvokeCall() {
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
-    override val origin: FirFunctionCallOrigin = FirFunctionCallOrigin.OPERATOR
+    override val origin: FirFunctionCallOrigin = FirFunctionCallOrigin.Operator
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)

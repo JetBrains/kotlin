@@ -267,7 +267,7 @@ class ExpressionsConverter(
                 }
                 explicitReceiver = leftArgAsFir
                 argumentList = buildUnaryArgumentList(rightArgAsFir)
-                origin = if (conventionCallName != null) FirFunctionCallOrigin.OPERATOR else FirFunctionCallOrigin.INFIX
+                origin = if (conventionCallName != null) FirFunctionCallOrigin.Operator else FirFunctionCallOrigin.Infix
             }
         } else {
             val firOperation = operationToken.toFirOperation()
@@ -392,7 +392,7 @@ class ExpressionsConverter(
                         name = conventionCallName
                     }
                     explicitReceiver = receiver
-                    origin = FirFunctionCallOrigin.OPERATOR
+                    origin = FirFunctionCallOrigin.Operator
                 }
             }
             else -> throw IllegalStateException("Unexpected expression: ${unaryExpression.asText}")
@@ -844,7 +844,7 @@ class ExpressionsConverter(
                 arguments += indices
                 getArgument?.let { arguments += it }
             }
-            origin = FirFunctionCallOrigin.OPERATOR
+            origin = FirFunctionCallOrigin.Operator
         }
     }
 

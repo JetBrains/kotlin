@@ -43,7 +43,7 @@ open class FirFunctionCallBuilder : FirAbstractFunctionCallBuilder, FirAnnotatio
     override var extensionReceiver: FirExpression = FirNoReceiverExpression
     override var argumentList: FirArgumentList = FirEmptyArgumentList
     override lateinit var calleeReference: FirNamedReference
-    override var origin: FirFunctionCallOrigin = FirFunctionCallOrigin.REGULAR
+    override var origin: FirFunctionCallOrigin = FirFunctionCallOrigin.Regular
 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirFunctionCall {
