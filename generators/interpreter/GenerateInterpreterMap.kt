@@ -186,7 +186,9 @@ private fun getOperationMap(argumentsCount: Int): MutableList<Operation> {
     val operationMap = mutableListOf<Operation>()
     val allPrimitiveTypes = PrimitiveType.values().map { builtIns.getBuiltInClassByFqName(it.typeFqName) }
     val arrays = PrimitiveType.values().map { builtIns.getPrimitiveArrayClassDescriptor(it) } + builtIns.array
-    val additionalBuiltIns = listOf(builtIns.string, builtIns.any, builtIns.charSequence, builtIns.number, builtIns.comparable)
+    val additionalBuiltIns = listOf(
+        builtIns.string, builtIns.any, builtIns.charSequence, builtIns.number, builtIns.comparable, builtIns.throwable
+    )
 
     fun CallableDescriptor.isFakeOverride(classDescriptor: ClassDescriptor): Boolean {
         val isPrimitive = KotlinBuiltIns.isPrimitiveClass(classDescriptor) || KotlinBuiltIns.isString(classDescriptor.defaultType)

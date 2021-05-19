@@ -165,6 +165,12 @@ internal fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
             "String" -> return (a as String).length
             "CharSequence" -> return (a as CharSequence).length
         }
+        "cause" -> when (type) {
+            "Throwable" -> return (a as Throwable).cause
+        }
+        "message" -> when (type) {
+            "Throwable" -> return (a as Throwable).message
+        }
         "size" -> when (type) {
             "BooleanArray" -> return (a as BooleanArray).size
             "CharArray" -> return (a as CharArray).size
