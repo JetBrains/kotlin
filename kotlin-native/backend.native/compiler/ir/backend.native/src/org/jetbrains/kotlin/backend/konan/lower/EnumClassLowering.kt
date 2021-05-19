@@ -101,10 +101,10 @@ internal class EnumUsageLowering(val context: Context)
 
     private fun IrBuilderWithScope.loadEnumEntry(enumClass: IrClass, name: Name): IrExpression {
         val loweredEnum = this@EnumUsageLowering.context.specialDeclarationsFactory.getLoweredEnum(enumClass)
-        val ordinal = loweredEnum.entriesMap.getValue(name)
+        val getterId = loweredEnum.entriesMap.getValue(name).getterId
         return irCall(loweredEnum.itemGetterSymbol, enumClass.defaultType).apply {
             dispatchReceiver = irCall(loweredEnum.valuesGetter)
-            putValueArgument(0, irInt(ordinal))
+            putValueArgument(0, irInt(getterId))
         }
     }
 }

@@ -1189,7 +1189,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         val enumClass = enumEntry.parentAsClass
         val loweredEnum = context.specialDeclarationsFactory.getLoweredEnum(enumClass)
 
-        val ordinal = loweredEnum.entriesMap[enumEntry.name]!!
+        val getterId = loweredEnum.entriesMap[enumEntry.name]!!.getterId
         val values = call(
                 loweredEnum.valuesGetter.llvmFunction,
                 emptyList(),
@@ -1199,7 +1199,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
 
         return call(
                 loweredEnum.itemGetterSymbol.owner.llvmFunction,
-                listOf(values, Int32(ordinal).llvm),
+                listOf(values, Int32(getterId).llvm),
                 Lifetime.GLOBAL,
                 exceptionHandler
         )

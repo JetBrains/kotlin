@@ -39,6 +39,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 internal object DECLARATION_ORIGIN_ENUM : IrDeclarationOriginImpl("ENUM")
 
+internal data class LoweredEnumEntryDescription(val ordinal: Int, val getterId: Int)
+
 /**
  * Common interface for both [InternalLoweredEnum] and [ExternalLoweredEnum]
  * that allows to work with lowered enum regardless of its location.
@@ -46,7 +48,7 @@ internal object DECLARATION_ORIGIN_ENUM : IrDeclarationOriginImpl("ENUM")
 internal interface LoweredEnumAccess {
     val valuesGetter: IrSimpleFunction
     val itemGetterSymbol: IrSimpleFunctionSymbol
-    val entriesMap: Map<Name, Int>
+    val entriesMap: Map<Name, LoweredEnumEntryDescription>
     fun getValuesField(startOffset: Int, endOffset: Int): IrExpression
 }
 
@@ -59,7 +61,7 @@ internal data class InternalLoweredEnum(
         val valuesGetterWrapper: IrSimpleFunction,
         override val valuesGetter: IrSimpleFunction,
         override val itemGetterSymbol: IrSimpleFunctionSymbol,
-        override val entriesMap: Map<Name, Int>
+        override val entriesMap: Map<Name, LoweredEnumEntryDescription>
 ) : LoweredEnumAccess {
     private fun internalObjectGetter(startOffset: Int, endOffset: Int) =
             IrGetObjectValueImpl(startOffset, endOffset,
@@ -82,7 +84,7 @@ internal data class InternalLoweredEnum(
 internal data class ExternalLoweredEnum(
         override val valuesGetter: IrSimpleFunction,
         override val itemGetterSymbol: IrSimpleFunctionSymbol,
-        override val entriesMap: Map<Name, Int>
+        override val entriesMap: Map<Name, LoweredEnumEntryDescription>
 ) : LoweredEnumAccess {
     override fun getValuesField(startOffset: Int, endOffset: Int): IrExpression =
             IrCallImpl(startOffset, endOffset, valuesGetter.returnType, valuesGetter.symbol, valuesGetter.typeParameters.size, valuesGetter.valueParameters.size)
@@ -91,13 +93,16 @@ internal data class ExternalLoweredEnum(
 internal class EnumSpecialDeclarationsFactory(val context: Context) {
     private val symbols = context.ir.symbols
 
-    private fun enumEntriesMap(enumClass: IrClass): Map<Name, Int> =
-            enumClass.declarations
-                    .filterIsInstance<IrEnumEntry>()
-                    .sortedBy { it.name }
-                    .withIndex()
-                    .associate { it.value.name to it.index }
-                    .toMap()
+    private fun enumEntriesMap(enumClass: IrClass): Map<Name, LoweredEnumEntryDescription> {
+        data class NameWithOrdinal(val name: Name, val ordinal: Int)
+        return enumClass.declarations.asSequence()
+                .filterIsInstance<IrEnumEntry>()
+                .mapIndexed { index, it -> NameWithOrdinal(it.name, index) }
+                .sortedBy { it.name }
+                .withIndex()
+                .associate { it.value.name to LoweredEnumEntryDescription(it.value.ordinal, it.index) }
+                .toMap()
+    }
 
     private fun findItemGetterSymbol(): IrSimpleFunctionSymbol =
             symbols.array.functions.single { it.descriptor.name == Name.identifier("get") }
