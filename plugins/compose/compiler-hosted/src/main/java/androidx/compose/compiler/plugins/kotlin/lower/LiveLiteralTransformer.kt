@@ -58,9 +58,6 @@ import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunction
-import org.jetbrains.kotlin.ir.descriptors.WrappedFunctionDescriptorWithContainerSource
-import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrBody
@@ -884,18 +881,12 @@ open class LiveLiteralTransformer(
         }
 
     fun IrFactory.buildFunction(builder: IrFunctionBuilder): IrSimpleFunction = with(builder) {
-        val withContainerSource = originalDeclaration is IrLazyFunction || containerSource != null
-        val wrappedDescriptor = if (withContainerSource)
-            WrappedFunctionDescriptorWithContainerSource()
-        else WrappedSimpleFunctionDescriptor()
         createFunction(
             startOffset, endOffset, origin,
-            IrSimpleFunctionSymbolImpl(wrappedDescriptor),
+            IrSimpleFunctionSymbolImpl(),
             name, visibility, modality, returnType,
             isInline, isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect,
             isFakeOverride, containerSource,
-        ).also {
-            wrappedDescriptor.bind(it)
-        }
+        )
     }
 }
