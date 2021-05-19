@@ -1,0 +1,6 @@
+{
+  "greeting" : {
+    "salutation" : "Hello",
+    "name": "World"
+  }
+}
