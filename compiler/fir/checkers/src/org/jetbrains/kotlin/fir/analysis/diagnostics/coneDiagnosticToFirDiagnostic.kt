@@ -219,7 +219,7 @@ private fun ConstraintSystemError.toDiagnostic(
                 }
 
             argument?.let {
-                return FirErrors.TYPE_MISMATCH.on(it.source ?: source, lowerConeType, upperConeType)
+                return FirErrors.ARGUMENT_TYPE_MISMATCH.on(it.source ?: source, lowerConeType, upperConeType)
             }
 
             when (position) {
