@@ -103,7 +103,11 @@ class CachingLazyStorage<K, V>(
 
     @Synchronized
     override fun close() {
-        storage?.close()
+        try {
+            storage?.close()
+        } finally {
+            storage = null
+        }
     }
 
     private fun createMap(): PersistentHashMap<K, V> = PersistentHashMap(storageFile, keyDescriptor, valueExternalizer)

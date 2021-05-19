@@ -47,7 +47,8 @@ abstract class BasicMap<K : Comparable<K>, V>(
         storage.flush(memoryCachesOnly)
     }
 
-    fun close() {
+    // avoid unsynchronized close
+    internal fun close() {
         storage.close()
     }
 
