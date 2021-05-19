@@ -134,7 +134,7 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
 
         val variables = flows.flatMap { it.approvedTypeStatements.keys }.toSet()
         for (variable in variables) {
-            val info = mergeOperation(flows.map { it.getApprovedTypeStatements(variable, commonFlow) }) ?: continue
+            val info = mergeOperation(flows.map { it.getApprovedTypeStatements(variable) }) ?: continue
             removeTypeStatementsAboutVariable(commonFlow, variable)
             val thereWereReassignments = variable.hasDifferentReassignments(flows)
             if (thereWereReassignments) {
@@ -210,23 +210,13 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
     }
 
     @OptIn(DfaInternals::class)
-    private fun PersistentFlow.getApprovedTypeStatements(variable: RealVariable, parentFlow: PersistentFlow): MutableTypeStatement {
+    private fun PersistentFlow.getApprovedTypeStatements(variable: RealVariable): MutableTypeStatement {
         var flow = this
         val result = MutableTypeStatement(variable)
         val variableUnderAlias = directAliasMap[variable]
         if (variableUnderAlias == null) {
-            // get approved type statement even though the starting flow == parent flow
-            if (flow == parentFlow) {
-                flow.approvedTypeStatements[variable]?.let {
-                    result += it
-                }
-            } else {
-                while (flow != parentFlow) {
-                    flow.approvedTypeStatements[variable]?.let {
-                        result += it
-                    }
-                    flow = flow.previousFlow!!
-                }
+            flow.approvedTypeStatements[variable]?.let {
+                result += it
             }
         } else {
             result.exactType.addIfNotNull(variableUnderAlias.originalType)
