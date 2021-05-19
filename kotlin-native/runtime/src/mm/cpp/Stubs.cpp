@@ -9,30 +9,6 @@
 
 extern "C" {
 
-void Kotlin_native_internal_GC_suspend(ObjHeader*) {
-    TODO();
-}
-
-void Kotlin_native_internal_GC_resume(ObjHeader*) {
-    TODO();
-}
-
-void Kotlin_native_internal_GC_stop(ObjHeader*) {
-    TODO();
-}
-
-void Kotlin_native_internal_GC_start(ObjHeader*) {
-    TODO();
-}
-
-void Kotlin_native_internal_GC_setTuneThreshold(ObjHeader*, int32_t value) {
-    TODO();
-}
-
-bool Kotlin_native_internal_GC_getTuneThreshold(ObjHeader*) {
-    TODO();
-}
-
 bool TryAddHeapRef(const ObjHeader* object) {
     TODO();
 }

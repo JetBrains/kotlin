@@ -264,6 +264,25 @@ extern "C" void Kotlin_native_internal_GC_collectCyclic(ObjHeader*) {
     ThrowIllegalArgumentException();
 }
 
+// TODO: Maybe a pair of suspend/resume or start/stop may be useful in the future?
+//       The other pair is likely to be removed.
+
+extern "C" void Kotlin_native_internal_GC_suspend(ObjHeader*) {
+    // Nothing to do
+}
+
+extern "C" void Kotlin_native_internal_GC_resume(ObjHeader*) {
+    // Nothing to do
+}
+
+extern "C" void Kotlin_native_internal_GC_stop(ObjHeader*) {
+    // Nothing to do
+}
+
+extern "C" void Kotlin_native_internal_GC_start(ObjHeader*) {
+    // Nothing to do
+}
+
 extern "C" void Kotlin_native_internal_GC_setThreshold(ObjHeader*, int32_t value) {
     if (value < 0) {
         ThrowIllegalArgumentException();
@@ -304,6 +323,14 @@ extern "C" int64_t Kotlin_native_internal_GC_getThresholdAllocations(ObjHeader*)
         return maxValue;
     }
     return static_cast<int64_t>(maxValue);
+}
+
+extern "C" void Kotlin_native_internal_GC_setTuneThreshold(ObjHeader*, KBoolean value) {
+    mm::GlobalData::Instance().gc().SetAutoTune(value);
+}
+
+extern "C" KBoolean Kotlin_native_internal_GC_getTuneThreshold(ObjHeader*) {
+    return mm::GlobalData::Instance().gc().GetAutoTune();
 }
 
 extern "C" OBJ_GETTER(Kotlin_native_internal_GC_detectCycles, ObjHeader*) {

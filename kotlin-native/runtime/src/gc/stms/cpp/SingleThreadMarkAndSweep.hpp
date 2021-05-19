@@ -63,6 +63,9 @@ public:
     void SetAllocationThresholdBytes(size_t value) noexcept { allocationThresholdBytes_ = value; }
     size_t GetAllocationThresholdBytes() noexcept { return allocationThresholdBytes_; }
 
+    void SetAutoTune(bool value) noexcept { autoTune_ = value; }
+    bool GetAutoTune() noexcept { return autoTune_; }
+
 private:
     void PerformFullGC() noexcept;
 
@@ -70,6 +73,7 @@ private:
 
     size_t threshold_ = 1000;
     size_t allocationThresholdBytes_ = 10000;
+    bool autoTune_ = false;
 };
 
 } // namespace gc
