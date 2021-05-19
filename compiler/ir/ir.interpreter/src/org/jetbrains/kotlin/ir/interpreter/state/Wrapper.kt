@@ -6,20 +6,13 @@
 package org.jetbrains.kotlin.ir.interpreter.state
 
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.interpreter.*
-import org.jetbrains.kotlin.ir.interpreter.evaluateIntrinsicAnnotation
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.isInterface
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.lang.invoke.MethodHandle
 import java.lang.invoke.MethodHandles
@@ -54,7 +47,12 @@ internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex 
                 javaClassToIrClass += AbstractMap.SimpleImmutableEntry::class.java to irClass.declarations.filterIsInstance<IrClass>().single()
             }
         }
-        javaClassToIrClass += value::class.java to irClass
+        if (javaClassToIrClass[value::class.java].let { it == null || irClass.isSubclassOf(it) }) {
+            // second condition guarantees that implementation class will not be replaced with its interface
+            // for example: map will store ArrayList instead of just List
+            // this is needed for parallel calculations
+            javaClassToIrClass[value::class.java] = irClass
+        }
     }
 
     constructor(value: Any) : this(value, javaClassToIrClass[value::class.java]!!)
@@ -62,7 +60,6 @@ internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex 
     override fun getIrFunctionByIrCall(expression: IrCall): IrFunction? = null
 
     fun getMethod(irFunction: IrFunction): MethodHandle? {
-        if (irFunction.getEvaluateIntrinsicValue()?.isEmpty() == true) return null // this method will handle IntrinsicEvaluator
         // if function is actually a getter, then use "get${property.name.capitalize()}" as method name
         val propertyName = (irFunction as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.name?.asString()
         val propertyCall = listOfNotNull(propertyName, "get${propertyName?.capitalizeAsciiOnly()}")
@@ -93,8 +90,45 @@ internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex 
         private val companionObjectValue = mapOf<String, Any>("kotlin.text.Regex\$Companion" to Regex.Companion)
         private val javaClassToIrClass = mutableMapOf<Class<*>, IrClass>()
 
+        // TODO remove later; used for tests only
+        private val intrinsicClasses = setOf(
+            "kotlin.text.StringBuilder", "kotlin.Pair", "kotlin.collections.HashMap",
+            "kotlin.text.RegexOption", "kotlin.text.Regex", "kotlin.text.Regex.Companion", "kotlin.text.MatchGroup",
+        )
+
+        private val intrinsicFunctionToHandler = mapOf(
+            "Array.kotlin.collections.asList()" to "kotlin.collections.ArraysKt",
+            "kotlin.collections.mutableListOf(Array)" to "kotlin.collections.CollectionsKt",
+            "kotlin.collections.arrayListOf(Array)" to "kotlin.collections.CollectionsKt",
+            "Char.kotlin.text.isWhitespace()" to "kotlin.text.CharsKt",
+            "Array.kotlin.collections.toMutableList()" to "kotlin.collections.ArraysKt",
+        )
+
         fun associateJavaClassWithIrClass(javaClass: Class<*>, irClass: IrClass) {
             javaClassToIrClass += javaClass to irClass
+        }
+
+        private fun IrDeclarationWithName.getSignature(): String? {
+            val fqName = this.fqNameWhenAvailable?.asString()
+            return when (this) {
+                is IrFunction -> {
+                    val receiver = (dispatchReceiverParameter ?: extensionReceiverParameter)?.type?.getOnlyName()?.let { "$it." } ?: ""
+                    this.valueParameters.joinToString(prefix = "$receiver$fqName(", postfix = ")") { it.type.getOnlyName() }
+                }
+                else -> fqName
+            }
+        }
+
+        private fun IrFunction.getJvmClassName(): String? {
+            return intrinsicFunctionToHandler[this.getSignature()]
+        }
+
+        fun mustBeHandledWithWrapper(declaration: IrDeclarationWithName): Boolean {
+            val fqName = declaration.fqNameWhenAvailable?.asString()
+            return when (declaration) {
+                is IrFunction -> declaration.getSignature() in intrinsicFunctionToHandler
+                else -> fqName in intrinsicClasses || fqName?.startsWith("java") == true
+            }
         }
 
         fun getReflectionMethod(irFunction: IrFunction): MethodHandle {
@@ -115,41 +149,40 @@ internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex 
         }
 
         fun getCompanionObject(irClass: IrClass): Wrapper {
-            val objectName = irClass.getEvaluateIntrinsicValue()!!
+            val objectName = irClass.internalName()
             val objectValue = companionObjectValue[objectName] ?: throw InternalError("Companion object $objectName cannot be interpreted")
             return Wrapper(objectValue, irClass)
         }
 
         fun getConstructorMethod(irConstructor: IrFunction): MethodHandle? {
-            val intrinsicValue = irConstructor.parentAsClass.getEvaluateIntrinsicValue()
-            if (intrinsicValue == "kotlin.Char" || intrinsicValue == "kotlin.Long") return null
+            val intrinsicValue = irConstructor.parentAsClass.internalName()
+            if (intrinsicValue == "kotlin.Char" || intrinsicValue == "kotlin.Long") return null // used in JS, must be handled as intrinsics
 
             val methodType = irConstructor.getMethodType()
             return MethodHandles.lookup().findConstructor(irConstructor.returnType.getClass(true), methodType)
         }
 
         fun getStaticMethod(irFunction: IrFunction): MethodHandle? {
-            val intrinsicName = irFunction.getEvaluateIntrinsicValue()
-            if (intrinsicName?.isEmpty() == true) return null
-            val jvmClassName = Class.forName(intrinsicName!!)
+            val intrinsicName = irFunction.getJvmClassName()
+            if (intrinsicName?.isEmpty() != false) return null
+            val jvmClass = Class.forName(intrinsicName)
 
             val methodType = irFunction.getMethodType()
-            return MethodHandles.lookup().findStatic(jvmClassName, irFunction.name.asString(), methodType)
+            return MethodHandles.lookup().findStatic(jvmClass, irFunction.name.asString(), methodType)
         }
 
-        fun getStaticGetter(field: IrField): MethodHandle? {
+        fun getStaticGetter(field: IrField): MethodHandle {
             val jvmClass = field.parentAsClass.defaultType.getClass(true)
             val returnType = field.type.let { it.getClass((it as IrSimpleType).hasQuestionMark) }
             return MethodHandles.lookup().findStaticGetter(jvmClass, field.name.asString(), returnType)
         }
 
-        fun getEnumEntry(enumClass: IrClass): MethodHandle? {
-            val intrinsicName = enumClass.getEvaluateIntrinsicValue()
-            if (intrinsicName?.isEmpty() == true) return null
-            val enumClassName = Class.forName(intrinsicName!!)
+        fun getEnumEntry(irEnumClass: IrClass): MethodHandle {
+            val intrinsicName = irEnumClass.internalName()
+            val jvmEnumClass = Class.forName(intrinsicName)
 
-            val methodType = MethodType.methodType(enumClassName, String::class.java)
-            return MethodHandles.lookup().findStatic(enumClassName, "valueOf", methodType)
+            val methodType = MethodType.methodType(jvmEnumClass, String::class.java)
+            return MethodHandles.lookup().findStatic(jvmEnumClass, "valueOf", methodType)
         }
 
         private fun IrFunction.getMethodType(): MethodType {
@@ -207,10 +240,6 @@ internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex 
                 fqName == "kotlin.collections.ListIterator" || fqName == "kotlin.collections.MutableListIterator" -> ListIterator::class.java
                 fqName == "kotlin.collections.Iterator" || fqName == "kotlin.collections.MutableIterator" -> Iterator::class.java
                 fqName == "kotlin.collections.Map.Entry" || fqName == "kotlin.collections.MutableMap.MutableEntry" -> Map.Entry::class.java
-                fqName == "kotlin.collections.ListIterator" || fqName == "kotlin.collections.MutableListIterator" -> ListIterator::class.java
-                fqName == "kotlin.collections.HashMap" -> HashMap::class.java
-
-                owner.hasAnnotation(evaluateIntrinsicAnnotation) -> Class.forName(owner!!.getEvaluateIntrinsicValue())
                 fqName == null -> Any::class.java // null if this.isTypeParameter()
                 else -> Class.forName(owner.internalName())
             }
