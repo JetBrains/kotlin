@@ -25,7 +25,7 @@ fun f(): Unit {
   x in 1..2
 
   val y : Boolean? = true
-  false || y
-  y && true
-  y && 1
+  false || <error descr="[CONDITION_TYPE_MISMATCH] Condition type mismatch: inferred type is kotlin/Boolean? but Boolean was expected">y</error>
+  <error descr="[CONDITION_TYPE_MISMATCH] Condition type mismatch: inferred type is kotlin/Boolean? but Boolean was expected">y</error> && true
+  <error descr="[CONDITION_TYPE_MISMATCH] Condition type mismatch: inferred type is kotlin/Boolean? but Boolean was expected">y</error> && <error descr="[CONDITION_TYPE_MISMATCH] Condition type mismatch: inferred type is kotlin/Int but Boolean was expected">1</error>
 }

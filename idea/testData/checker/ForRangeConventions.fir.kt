@@ -72,9 +72,9 @@ fun test(notRange1: NotRange1, notRange2: NotRange2, notRange3: NotRange3, notRa
   for (i in <error descr="[HAS_NEXT_MISSING] "><error descr="[NEXT_MISSING] ">notRange2</error></error>);
   for (i in <error descr="[NEXT_MISSING] ">notRange3</error>);
   for (i in <error descr="[HAS_NEXT_MISSING] ">notRange4</error>);
-  for (i in notRange5);
+  <error descr="[CONDITION_TYPE_MISMATCH] Condition type mismatch: inferred type is kotlin/Int but Boolean was expected">for (i in notRange5)</error>;
   for (i in notRange6);
-  for (i in notRange7);
+  <error descr="[CONDITION_TYPE_MISMATCH] Condition type mismatch: inferred type is kotlin/Int but Boolean was expected">for (i in notRange7)</error>;
   for (i in range0);
   for (i in range1);
 

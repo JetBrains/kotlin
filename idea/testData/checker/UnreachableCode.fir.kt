@@ -107,7 +107,7 @@ fun t7() : Int {
     return 1
     2
   }
-  catch (<error descr="[TYPE_MISMATCH] Type mismatch: inferred type is kotlin/Any but kotlin/Throwable was expected">e : Any</error>) {
+  catch (<error descr="[THROWABLE_TYPE_MISMATCH] Throwable type mismatch: actual type is kotlin/Any">e : Any</error>) {
     2
   }
   return 1 // this is OK, like in Java
@@ -118,7 +118,7 @@ fun t8() : Int {
     return 1
     2
   }
-  catch (<error descr="[TYPE_MISMATCH] Type mismatch: inferred type is kotlin/Any but kotlin/Throwable was expected">e : Any</error>) {
+  catch (<error descr="[THROWABLE_TYPE_MISMATCH] Throwable type mismatch: actual type is kotlin/Any">e : Any</error>) {
     return 1
     2
   }
