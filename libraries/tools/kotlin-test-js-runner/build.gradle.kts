@@ -19,7 +19,7 @@ dependencies {
 }
 
 node {
-    version.set("11.9.0")
+    version.set("16.2.0")
     download.set(true)
     nodeProjectDir.set(projectDir)
 }
