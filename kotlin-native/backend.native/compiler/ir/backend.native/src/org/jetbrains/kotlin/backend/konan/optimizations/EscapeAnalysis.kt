@@ -1359,14 +1359,17 @@ internal object EscapeAnalysis {
                     drainFactory: () -> CompressedPointsToGraph.Node
             ) {
                 // Here we try to find this subgraph within one component: [v -> d; w -> d; v !-> w; w !-> v].
-                // In most cases such a node [d] is just the drain of the component,
-                // but it may have been optimized away.
                 // This is needed because components are built with edges being considered undirected, so
                 // this implicit connection between [v] and [w] may be needed. Note, however, that the
                 // opposite subgraph: [d -> v; d -> w; v !-> w; w !-> v] is not interesting, because [d]
                 // can't hold both values simultaneously, but two references can hold the same value
                 // at the same time, that's the difference.
                 // For concrete example see [codegen/escapeAnalysis/test10.kt].
+                // Note: it is possible to search not for all such nodes, but for drains only, here's why:
+                // Assume a node [v] which is referenced from the two fixed nodes is found, then consider
+                // the [v]'s drain, by construction all drains are reachable from all nodes within the corresponding
+                // component, including [v]; this implies that the drain also is referenced from these two nodes,
+                // and therefore it is possible to check only drains rather than all nodes.
                 val connectedNodes = mutableSetOf<Pair<PointsToGraphNode, PointsToGraphNode>>()
                 allNodes.filter { nodeIds[it] != null && nodeIds[it.drain] == null /* The drain has been optimized away */ }
                         .forEach { node ->
@@ -1379,27 +1382,24 @@ internal object EscapeAnalysis {
                                     connectedNodes.add(Pair(secondNode, firstNode))
                                 }
                         }
-                allNodes.filter { nodeIds[it] == null && it.drain in interestingDrains && nodeIds[it.drain] == null }
-                        .forEach { node ->
-                            val referencingNodes = findReferencing(node).filter { nodeIds[it] != null }
-                            for (i in referencingNodes.indices)
+
+                interestingDrains
+                        .filter { nodeIds[it] == null } // Was optimized away.
+                        .forEach { drain ->
+                            val referencingNodes = findReferencing(drain).filter { nodeIds[it] != null }
+                            var needDrain = false
+                            outerLoop@ for (i in referencingNodes.indices)
                                 for (j in i + 1 until referencingNodes.size) {
                                     val firstNode = referencingNodes[i]
                                     val secondNode = referencingNodes[j]
                                     val pair = Pair(firstNode, secondNode)
-                                    if (pair in connectedNodes) continue
-
-                                    // It is not an actual drain, but a temporary node to reflect the found constraint.
-                                    val additionalDrain = newDrain()
-                                    // For consistency.
-                                    additionalDrain.depth = min(firstNode.depth, secondNode.depth)
-
-                                    firstNode.addAssignmentEdge(additionalDrain)
-                                    secondNode.addAssignmentEdge(additionalDrain)
-                                    nodeIds[additionalDrain] = drainFactory()
-                                    connectedNodes.add(pair)
-                                    connectedNodes.add(Pair(secondNode, firstNode))
+                                    if (pair !in connectedNodes) {
+                                        needDrain = true
+                                        break@outerLoop
+                                    }
                                 }
+                            if (needDrain)
+                                nodeIds[drain] = drainFactory()
                         }
             }
 
