@@ -164,9 +164,9 @@ object FirSessionFactory {
                     this,
                     listOfNotNull(
                         firProvider.symbolProvider,
+                        symbolProviderForBinariesFromIncrementalCompilation,
                         JavaSymbolProvider(this, moduleData, project, scope),
                         FirDependenciesSymbolProviderImpl(this),
-                        symbolProviderForBinariesFromIncrementalCompilation,
                     )
                 )
             )

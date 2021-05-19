@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.fir.session.FirSessionFactory.createSessionWithDependencies
+import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvider
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.TargetId
@@ -88,15 +89,30 @@ object FirKotlinToJvmBytecodeCompiler {
             val sourceScope = GlobalSearchScope.filesWithoutLibrariesScope(project, ktFiles.map { it.virtualFile })
                 .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
 
-            val librariesScope = ProjectScope.getLibrariesScope(project)
+            var librariesScope = ProjectScope.getLibrariesScope(project)
 
             val providerAndScopeForIncrementalCompilation = run {
                 if (targetIds == null || incrementalComponents == null) return@run null
+                val fileSystem = environment.projectEnvironment.environment.localFileSystem
+                val directoryWithIncrementalPartsFromPreviousCompilation =
+                    moduleConfiguration[JVMConfigurationKeys.OUTPUT_DIRECTORY]
+                        ?: return@run null
+                val previouslyCompiledFiles = directoryWithIncrementalPartsFromPreviousCompilation.walk()
+                    .filter { it.extension == "class" }
+                    .mapNotNull { fileSystem.findFileByIoFile(it) }
+                    .toList()
+                    .takeIf { it.isNotEmpty() }
+                    ?: return@run null
                 val packagePartProvider = IncrementalPackagePartProvider(
                     environment.createPackagePartProvider(sourceScope),
                     targetIds.map(incrementalComponents::getIncrementalCache)
                 )
-                FirSessionFactory.ProviderAndScopeForIncrementalCompilation(packagePartProvider, librariesScope)
+                val incrementalCompilationScope = GlobalSearchScope.filesWithoutLibrariesScope(
+                    project,
+                    previouslyCompiledFiles
+                )
+                librariesScope = librariesScope.intersectWith(GlobalSearchScope.notScope(incrementalCompilationScope))
+                FirSessionFactory.ProviderAndScopeForIncrementalCompilation(packagePartProvider, incrementalCompilationScope)
             }
 
             val languageVersionSettings = moduleConfiguration.languageVersionSettings
