@@ -969,8 +969,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
                   }
                 }
                 val foo = remember({
-                  val tmp0_return = Foo()
-                  tmp0_return
+                  Foo()
                 }, %composer, 0)
                 used(foo)
                 used(a)
