@@ -76,8 +76,8 @@ class FirFrontendFacade(
             sourcesScope,
             librariesScope,
             lookupTracker = null,
+            providerAndScopeForIncrementalCompilation = null,
             getPackagePartProvider = packagePartProviderFactory,
-            getProviderAndScopeForIncrementalCompilation = { null },
             dependenciesConfigurator = {
                 dependencies(configuration.jvmModularRoots.map { it.toPath() })
                 dependencies(configuration.jvmClasspathRoots.map { it.toPath() })

@@ -90,8 +90,8 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
                 sourceScope = scope,
                 librariesScope = allProjectScope,
                 lookupTracker = null,
+                providerAndScopeForIncrementalCompilation = null,
                 getPackagePartProvider = { environment.createPackagePartProvider(it) },
-                getProviderAndScopeForIncrementalCompilation = { null },
             ) {
                 configureSession()
                 getFirExtensions()?.let {

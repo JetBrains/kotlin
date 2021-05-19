@@ -52,8 +52,8 @@ fun createSessionForTests(
         sourceScope,
         librariesScope,
         lookupTracker = null,
+        providerAndScopeForIncrementalCompilation = null,
         getPackagePartProvider,
-        getProviderAndScopeForIncrementalCompilation = { null },
         dependenciesConfigurator = {
             friendDependencies(friendsPaths)
         }

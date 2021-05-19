@@ -84,8 +84,8 @@ object FirSessionFactory {
         sourceScope: GlobalSearchScope,
         librariesScope: GlobalSearchScope,
         lookupTracker: LookupTracker?,
+        providerAndScopeForIncrementalCompilation: ProviderAndScopeForIncrementalCompilation?,
         getPackagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
-        getProviderAndScopeForIncrementalCompilation: () -> ProviderAndScopeForIncrementalCompilation?,
         dependenciesConfigurator: DependencyListForCliModule.Builder.() -> Unit = {},
         noinline sessionConfigurator: FirSessionConfigurator.() -> Unit = {},
     ): FirSession {
@@ -113,7 +113,7 @@ object FirSessionFactory {
             sessionProvider,
             sourceScope,
             project,
-            providerAndScopeForIncrementalCompilation = getProviderAndScopeForIncrementalCompilation(),
+            providerAndScopeForIncrementalCompilation,
             languageVersionSettings = languageVersionSettings,
             lookupTracker = lookupTracker,
             init = sessionConfigurator

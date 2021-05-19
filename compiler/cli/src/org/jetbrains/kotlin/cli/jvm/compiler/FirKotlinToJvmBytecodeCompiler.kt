@@ -90,6 +90,15 @@ object FirKotlinToJvmBytecodeCompiler {
 
             val librariesScope = ProjectScope.getLibrariesScope(project)
 
+            val providerAndScopeForIncrementalCompilation = run {
+                if (targetIds == null || incrementalComponents == null) return@run null
+                val packagePartProvider = IncrementalPackagePartProvider(
+                    environment.createPackagePartProvider(sourceScope),
+                    targetIds.map(incrementalComponents::getIncrementalCache)
+                )
+                FirSessionFactory.ProviderAndScopeForIncrementalCompilation(packagePartProvider, librariesScope)
+            }
+
             val languageVersionSettings = moduleConfiguration.languageVersionSettings
             val session = createSessionWithDependencies(
                 Name.identifier(module.getModuleName()),
@@ -101,15 +110,8 @@ object FirKotlinToJvmBytecodeCompiler {
                 sourceScope,
                 librariesScope,
                 lookupTracker = environment.configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER),
+                providerAndScopeForIncrementalCompilation,
                 getPackagePartProvider = { environment.createPackagePartProvider(it) },
-                getProviderAndScopeForIncrementalCompilation = get@{
-                    if (targetIds == null || incrementalComponents == null) return@get null
-                    val packagePartProvider = IncrementalPackagePartProvider(
-                        environment.createPackagePartProvider(sourceScope),
-                        targetIds.map(incrementalComponents::getIncrementalCache)
-                    )
-                    FirSessionFactory.ProviderAndScopeForIncrementalCompilation(packagePartProvider, librariesScope)
-                },
                 dependenciesConfigurator = {
                     dependencies(moduleConfiguration.jvmClasspathRoots.map { it.toPath() })
                     friendDependencies(moduleConfiguration[JVMConfigurationKeys.FRIEND_PATHS] ?: emptyList())
