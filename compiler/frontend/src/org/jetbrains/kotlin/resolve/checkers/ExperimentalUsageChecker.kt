@@ -214,8 +214,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             if (this !is KtDeclaration) return false
 
             val descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, this)
-            return descriptor != null && !DescriptorUtils.isLocal(descriptor) &&
-                    descriptor.annotations.hasAnnotation(annotationFqName)
+            return descriptor != null && descriptor.annotations.hasAnnotation(annotationFqName)
         }
 
         private fun PsiElement.isElementAnnotatedWithUseExperimentalOf(annotationFqName: FqName, bindingContext: BindingContext): Boolean {
