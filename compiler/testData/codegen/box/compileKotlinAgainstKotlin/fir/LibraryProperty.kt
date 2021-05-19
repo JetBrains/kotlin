@@ -11,6 +11,7 @@ class FqName(val s: String)
 val VOLATILE_ANNOTATION_FQ_NAME = FqName("volatile")
 
 // MODULE: main(lib)
+// WITH_RUNTIME
 // FILE: B.kt
 
 import first.second.VOLATILE_ANNOTATION_FQ_NAME

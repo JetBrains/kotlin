@@ -83,6 +83,7 @@ interface IrElementVisitor<out R, in D>
 interface IrElementTransformer<in D> : IrElementVisitor<IrElement, D>
 
 // MODULE: main(lib)
+// WITH_RUNTIME
 // FILE: B.kt
 
 fun foo(cases: Collection<IrConst<*>>, exprTransformer: IrElementTransformer<Any>, context: Any) {
@@ -94,6 +95,3 @@ fun foo(cases: Collection<IrConst<*>>, exprTransformer: IrElementTransformer<Any
 fun box(): String {
     return "OK"
 }
-
-
-

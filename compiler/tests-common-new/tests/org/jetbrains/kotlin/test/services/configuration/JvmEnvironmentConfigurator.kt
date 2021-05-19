@@ -13,7 +13,10 @@ import org.jetbrains.kotlin.cli.jvm.addModularRootIfNotNull
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.configureStandardLibs
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.MockLibraryUtil
@@ -50,7 +53,6 @@ import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.util.joinToArrayString
 import org.jetbrains.kotlin.utils.PathUtil
-import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
 import kotlin.io.path.ExperimentalPathApi
 
@@ -244,8 +246,6 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
         if (JvmEnvironmentConfigurationDirectives.ALLOW_KOTLIN_PACKAGE in module.directives) {
             configuration.put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, true)
         }
-
-        initBinaryDependencies(module, configuration)
     }
 
     private fun addJavaSourceRootsByJavaModules(configuration: CompilerConfiguration, moduleInfoFiles: List<TestFile>) {
@@ -347,55 +347,20 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
         }
     }
 
-
     private fun CompilerConfiguration.registerModuleDependencies(module: TestModule) {
-        val dependencyProvider = testServices.dependencyProvider
-        val modulesFromDependencies = module.allDependencies
-            .filter { it.kind == DependencyKind.Binary }
-            .map { dependencyProvider.getTestModule(it.moduleName) }
-            .takeIf { it.isNotEmpty() }
-            ?: return
-        val jarManager = testServices.compiledClassesManager
-        val dependenciesClassPath = modulesFromDependencies.map { jarManager.getCompiledKotlinDirForModule(it) }
-        addJvmClasspathRoots(dependenciesClassPath)
+        addJvmClasspathRoots(module.allDependencies.filter { it.kind == DependencyKind.Binary }.toFileList())
+
+        val binaryFriends = module.friendDependencies.filter { it.kind == DependencyKind.Binary }
+        if (binaryFriends.isNotEmpty()) {
+            put(JVMConfigurationKeys.FRIEND_PATHS, binaryFriends.toFileList().map { it.absolutePath })
+        }
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
-    private fun initBinaryDependencies(
-        module: TestModule,
-        configuration: CompilerConfiguration,
-    ) {
-        val binaryDependencies = module.allDependencies.filter { it.kind == DependencyKind.Binary }
-        val binaryFriends = module.friendDependencies.filter { it.kind == DependencyKind.Binary }
-        val dependencyProvider = testServices.dependencyProvider
-        val compiledClassesManager = testServices.compiledClassesManager
-        val compilerConfigurationProvider = testServices.compilerConfigurationProvider
-
-        fun addDependenciesToClasspath(dependencies: List<DependencyDescription>): List<File> {
-            val jvmClasspathRoots = buildList<File> {
-                dependencies.forEach {
-                    val dependencyModule = dependencyProvider.getTestModule(it.moduleName)
-
-                    add(compiledClassesManager.getCompiledKotlinDirForModule(dependencyModule))
-                    addIfNotNull(compiledClassesManager.getCompiledJavaDirForModule(dependencyModule))
-                    addAll(compilerConfigurationProvider.getCompilerConfiguration(dependencyModule).jvmClasspathRoots)
-                }
-            }
-            configuration.addJvmClasspathRoots(jvmClasspathRoots)
-            return jvmClasspathRoots
-        }
-
-        addDependenciesToClasspath(binaryDependencies)
-        addDependenciesToClasspath(binaryFriends)
-
-        if (binaryFriends.isNotEmpty()) {
-            configuration.put(JVMConfigurationKeys.FRIEND_PATHS, binaryFriends.flatMap {
-                val friendModule = dependencyProvider.getTestModule(it.moduleName)
-                listOfNotNull(
-                    compiledClassesManager.getCompiledKotlinDirForModule(friendModule),
-                    compiledClassesManager.getCompiledJavaDirForModule(friendModule)
-                )
-            }.map { it.absolutePath })
-        }
+    private fun List<DependencyDescription>.toFileList(): List<File> = this.flatMap { dependency ->
+        val friendModule = testServices.dependencyProvider.getTestModule(dependency.moduleName)
+        listOfNotNull(
+            testServices.compiledClassesManager.getCompiledKotlinDirForModule(friendModule),
+            testServices.compiledClassesManager.getCompiledJavaDirForModule(friendModule)
+        )
     }
 }

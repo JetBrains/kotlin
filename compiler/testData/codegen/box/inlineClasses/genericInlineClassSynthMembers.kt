@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS
 // MODULE: lib1
 // FILE: lib1.kt
 
@@ -13,10 +12,8 @@ inline class IC<TT>(val c: C<TT>) {
     fun foo(): Int = c.hashCode()
 }
 
-
-// MODULE: main(lib2)
+// MODULE: main(lib1, lib2)
 // FILE: main.kt
-
 
 fun box(): String {
     val ic = IC<Int>(C(42))

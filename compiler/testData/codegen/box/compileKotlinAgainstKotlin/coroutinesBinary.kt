@@ -29,6 +29,7 @@ fun builder(c: suspend Controller.() -> Unit) {
 }
 
 // MODULE: main(lib)
+// WITH_RUNTIME
 // FILE: B.kt
 import a.builder
 
