@@ -17,143 +17,42 @@
 package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.vfs.*
-import com.intellij.psi.PsiElementFinder
+import com.intellij.openapi.vfs.StandardFileSystems
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.asJava.FilteredJvmDiagnostics
-import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
-import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
-import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
-import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsage
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
-import org.jetbrains.kotlin.cli.common.output.writeAll
 import org.jetbrains.kotlin.cli.common.toLogger
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
-import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.DefaultCodegenFactory
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.codegen.state.GenerationStateEventCallback
-import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.container.get
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.fir.analysis.FirAnalyzerFacade
-import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
-import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
-import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
-import org.jetbrains.kotlin.fir.session.FirSessionFactory
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
-import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
-import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvider
 import org.jetbrains.kotlin.modules.Module
-import org.jetbrains.kotlin.modules.TargetId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.CompilerEnvironment
-import org.jetbrains.kotlin.resolve.diagnostics.SimpleGenericDiagnostics
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
-import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.utils.newLinkedHashMapWithExpectedSize
 import java.io.File
+import kotlin.collections.set
 
 object KotlinToJVMBytecodeCompiler {
-    private fun writeOutput(
-        configuration: CompilerConfiguration,
-        outputFiles: OutputFileCollection,
-        mainClassFqName: FqName?
-    ) {
-        val reportOutputFiles = configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES)
-        val jarPath = configuration.get(JVMConfigurationKeys.OUTPUT_JAR)
-        val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
-        if (jarPath != null) {
-            val includeRuntime = configuration.get(JVMConfigurationKeys.INCLUDE_RUNTIME, false)
-            val noReflect = configuration.get(JVMConfigurationKeys.NO_REFLECT, false)
-            val resetJarTimestamps = !configuration.get(JVMConfigurationKeys.NO_RESET_JAR_TIMESTAMPS, false)
-            CompileEnvironmentUtil.writeToJar(jarPath, includeRuntime, noReflect, resetJarTimestamps, mainClassFqName, outputFiles, messageCollector)
-            if (reportOutputFiles) {
-                val message = OutputMessageUtil.formatOutputMessage(outputFiles.asList().flatMap { it.sourceFiles }.distinct(), jarPath)
-                messageCollector.report(OUTPUT, message)
-            }
-            return
-        }
-
-        val outputDir = configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY) ?: File(".")
-        outputFiles.writeAll(outputDir, messageCollector, reportOutputFiles)
-    }
-
-    private fun createOutputFilesFlushingCallbackIfPossible(configuration: CompilerConfiguration): GenerationStateEventCallback {
-        if (configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY) == null) {
-            return GenerationStateEventCallback.DO_NOTHING
-        }
-        return GenerationStateEventCallback { state ->
-            val currentOutput = SimpleOutputFileCollection(state.factory.currentOutput)
-            writeOutput(configuration, currentOutput, null)
-            if (!configuration.get(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, false)) {
-                state.factory.releaseGeneratedOutput()
-            }
-        }
-    }
-
-    private fun Module.getSourceFiles(
-        environment: KotlinCoreEnvironment,
-        localFileSystem: VirtualFileSystem,
-        multiModuleChunk: Boolean,
-        buildFile: File?
-    ): List<KtFile> {
-        return if (multiModuleChunk) {
-            // filter out source files from other modules
-            assert(buildFile != null) { "Compiling multiple modules, but build file is null" }
-            val (moduleSourceDirs, moduleSourceFiles) =
-                getBuildFilePaths(buildFile, getSourceFiles())
-                    .mapNotNull(localFileSystem::findFileByPath)
-                    .partition(VirtualFile::isDirectory)
-
-            environment.getSourceFiles().filter { file ->
-                val virtualFile = file.virtualFile
-                virtualFile in moduleSourceFiles || moduleSourceDirs.any { dir ->
-                    VfsUtilCore.isAncestor(dir, virtualFile, true)
-                }
-            }
-        } else {
-            environment.getSourceFiles()
-        }
-    }
-
-    private fun CompilerConfiguration.applyModuleProperties(module: Module, buildFile: File?): CompilerConfiguration {
-        return copy().apply {
-            if (buildFile != null) {
-                fun checkKeyIsNull(key: CompilerConfigurationKey<*>, name: String) {
-                    assert(get(key) == null) { "$name should be null, when buildFile is used" }
-                }
-
-                checkKeyIsNull(JVMConfigurationKeys.OUTPUT_DIRECTORY, "OUTPUT_DIRECTORY")
-                checkKeyIsNull(JVMConfigurationKeys.OUTPUT_JAR, "OUTPUT_JAR")
-                put(JVMConfigurationKeys.OUTPUT_DIRECTORY, File(module.getOutputDirectory()))
-            }
-        }
-    }
-
     internal fun compileModules(
         environment: KotlinCoreEnvironment,
         buildFile: File?,
@@ -185,7 +84,7 @@ object KotlinToJVMBytecodeCompiler {
         val projectConfiguration = environment.configuration
         if (projectConfiguration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
             val extendedAnalysisMode = projectConfiguration.getBoolean(CommonConfigurationKeys.USE_FIR_EXTENDED_CHECKERS)
-            return compileModulesUsingFrontendIR(environment, buildFile, chunk, extendedAnalysisMode)
+            return FirKotlinToJvmBytecodeCompiler.compileModulesUsingFrontendIR(environment, buildFile, chunk, extendedAnalysisMode)
         }
 
         val result = repeatAnalysisIfNeeded(analyze(environment), environment)
@@ -217,40 +116,6 @@ object KotlinToJVMBytecodeCompiler {
         return writeOutputs(environment, projectConfiguration, chunk, outputs, mainClassFqName)
     }
 
-    private fun writeOutputs(
-        environment: KotlinCoreEnvironment,
-        projectConfiguration: CompilerConfiguration,
-        chunk: List<Module>,
-        outputs: Map<Module, GenerationState>,
-        mainClassFqName: FqName?
-    ): Boolean {
-        try {
-            for ((_, state) in outputs) {
-                ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-                writeOutput(state.configuration, state.factory, mainClassFqName)
-            }
-        } finally {
-            outputs.values.forEach(GenerationState::destroy)
-        }
-
-        if (projectConfiguration.getBoolean(JVMConfigurationKeys.COMPILE_JAVA)) {
-            val singleModule = chunk.singleOrNull()
-            if (singleModule != null) {
-                return JavacWrapper.getInstance(environment.project).use {
-                    it.compile(File(singleModule.getOutputDirectory()))
-                }
-            } else {
-                projectConfiguration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(
-                    WARNING,
-                    "A chunk contains multiple modules (${chunk.joinToString { it.getModuleName() }}). " +
-                            "-Xuse-javac option couldn't be used to compile java files"
-                )
-                JavacWrapper.getInstance(environment.project).close()
-            }
-        }
-
-        return true
-    }
 
     internal fun configureSourceRoots(configuration: CompilerConfiguration, chunk: List<Module>, buildFile: File? = null) {
         for (module in chunk) {
@@ -297,171 +162,6 @@ object KotlinToJVMBytecodeCompiler {
 
         configuration.addAll(JVMConfigurationKeys.MODULES, chunk)
     }
-
-    private fun compileModulesUsingFrontendIR(
-        environment: KotlinCoreEnvironment,
-        buildFile: File?,
-        chunk: List<Module>,
-        extendedAnalysisMode: Boolean
-    ): Boolean {
-        val project = environment.project
-        val performanceManager = environment.configuration.get(CLIConfigurationKeys.PERF_MANAGER)
-
-        environment.messageCollector.report(
-            STRONG_WARNING,
-            "ATTENTION!\n This build uses in-dev FIR: \n  -Xuse-fir"
-        )
-
-        PsiElementFinder.EP.getPoint(project).unregisterExtension(JavaElementFinder::class.java)
-
-        val projectConfiguration = environment.configuration
-        val localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
-        val outputs = newLinkedHashMapWithExpectedSize<Module, GenerationState>(chunk.size)
-        val targetIds = environment.configuration.get(JVMConfigurationKeys.MODULES)?.map(::TargetId)
-        val incrementalComponents = environment.configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)
-        for (module in chunk) {
-            performanceManager?.notifyAnalysisStarted()
-            ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-
-            val ktFiles = module.getSourceFiles(environment, localFileSystem, chunk.size > 1, buildFile)
-            if (!checkKotlinPackageUsage(environment, ktFiles)) return false
-
-            val syntaxErrors = ktFiles.fold(false) { errorsFound, ktFile ->
-                AnalyzerWithCompilerReport.reportSyntaxErrors(ktFile, environment.messageCollector).isHasErrors or errorsFound
-            }
-
-            val moduleConfiguration = projectConfiguration.applyModuleProperties(module, buildFile)
-
-            val sourceScope = GlobalSearchScope.filesWithoutLibrariesScope(project, ktFiles.map { it.virtualFile })
-                .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
-
-            val librariesScope = ProjectScope.getLibrariesScope(project)
-
-            val languageVersionSettings = moduleConfiguration.languageVersionSettings
-            val session = FirSessionFactory.createSessionWithDependencies(
-                Name.identifier(module.getModuleName()),
-                JvmPlatforms.unspecifiedJvmPlatform,
-                JvmPlatformAnalyzerServices,
-                externalSessionProvider = null,
-                project,
-                languageVersionSettings,
-                sourceScope,
-                librariesScope,
-                lookupTracker = environment.configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER),
-                getPackagePartProvider = { environment.createPackagePartProvider(it) },
-                getProviderAndScopeForIncrementalCompilation = get@{
-                    if (targetIds == null || incrementalComponents == null) return@get null
-                    val packagePartProvider = IncrementalPackagePartProvider(
-                        environment.createPackagePartProvider(sourceScope),
-                        targetIds.map(incrementalComponents::getIncrementalCache)
-                    )
-                    FirSessionFactory.ProviderAndScopeForIncrementalCompilation(packagePartProvider, librariesScope)
-                },
-                dependenciesConfigurator = {
-                    dependencies(moduleConfiguration.jvmClasspathRoots.map { it.toPath() })
-                    friendDependencies(moduleConfiguration[JVMConfigurationKeys.FRIEND_PATHS] ?: emptyList())
-                },
-                sessionConfigurator = {
-                    if (extendedAnalysisMode) {
-                        registerExtendedCommonCheckers()
-                    }
-                }
-            )
-
-            val firAnalyzerFacade = FirAnalyzerFacade(session, languageVersionSettings, ktFiles)
-
-            firAnalyzerFacade.runResolution()
-            val firDiagnostics = firAnalyzerFacade.runCheckers().values.flatten()
-            AnalyzerWithCompilerReport.reportDiagnostics(
-                SimpleGenericDiagnostics(firDiagnostics),
-                environment.messageCollector
-            )
-            performanceManager?.notifyAnalysisFinished()
-
-            if (syntaxErrors || firDiagnostics.any { it.severity == Severity.ERROR }) {
-                return false
-            }
-
-            performanceManager?.notifyGenerationStarted()
-
-            performanceManager?.notifyIRTranslationStarted()
-            val extensions = JvmGeneratorExtensionsImpl()
-            val (moduleFragment, symbolTable, components) = firAnalyzerFacade.convertToIr(extensions)
-
-            performanceManager?.notifyIRTranslationFinished()
-
-            val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
-
-            val codegenFactory = JvmIrCodegenFactory(moduleConfiguration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases))
-
-            // Create and initialize the module and its dependencies
-            val container = TopDownAnalyzerFacadeForJVM.createContainer(
-                project, ktFiles, NoScopeRecordCliBindingTrace(), environment.configuration, environment::createPackagePartProvider,
-                ::FileBasedDeclarationProviderFactory, CompilerEnvironment,
-                TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, ktFiles), emptyList()
-            )
-
-            val generationState = GenerationState.Builder(
-                environment.project, ClassBuilderFactories.BINARIES,
-                container.get<ModuleDescriptor>(), dummyBindingContext, ktFiles,
-                moduleConfiguration
-            ).codegenFactory(
-                codegenFactory
-            ).withModule(
-                module
-            ).onIndependentPartCompilationEnd(
-                createOutputFilesFlushingCallbackIfPossible(moduleConfiguration)
-            ).isIrBackend(
-                true
-            ).jvmBackendClassResolver(
-                FirJvmBackendClassResolver(components)
-            ).build()
-
-            ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-
-            performanceManager?.notifyIRLoweringStarted()
-            generationState.beforeCompile()
-            codegenFactory.generateModuleInFrontendIRMode(
-                generationState, moduleFragment, symbolTable, extensions, FirJvmBackendExtension(session, components)
-            ) {
-                performanceManager?.notifyIRLoweringFinished()
-                performanceManager?.notifyIRGenerationStarted()
-            }
-            CodegenFactory.doCheckCancelled(generationState)
-            generationState.factory.done()
-
-            ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-
-            AnalyzerWithCompilerReport.reportDiagnostics(
-                FilteredJvmDiagnostics(
-                    generationState.collectedExtraJvmDiagnostics,
-                    dummyBindingContext.diagnostics
-                ),
-                environment.messageCollector
-            )
-
-            performanceManager?.notifyIRGenerationFinished()
-            performanceManager?.notifyGenerationFinished()
-            ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-            outputs[module] = generationState
-
-            PsiElementFinder.EP.getPoint(project).unregisterExtension(JavaElementFinder::class.java)
-            Disposer.dispose(environment.project)
-        }
-
-        val mainClassFqName: FqName? =
-            if (chunk.size == 1 && projectConfiguration.get(JVMConfigurationKeys.OUTPUT_JAR) != null)
-                TODO(".jar output is not yet supported for -Xuse-fir: KT-42868")
-            else null
-
-        return writeOutputs(environment, projectConfiguration, chunk, outputs, mainClassFqName)
-    }
-
-    private fun getBuildFilePaths(buildFile: File?, sourceFilePaths: List<String>): List<String> =
-        if (buildFile == null) sourceFilePaths
-        else sourceFilePaths.map { path ->
-            (File(path).takeIf(File::isAbsolute) ?: buildFile.resolveSibling(path)).absolutePath
-        }
 
     fun compileBunchOfSources(environment: KotlinCoreEnvironment): Boolean {
         val moduleVisibilityManager = ModuleVisibilityManager.SERVICE.getInstance(environment.project)
@@ -589,15 +289,6 @@ object KotlinToJVMBytecodeCompiler {
         override fun toString() = "All files under: $directories"
     }
 
-    private fun GenerationState.Builder.withModule(module: Module?) =
-        apply {
-            if (module != null) {
-                targetId(TargetId(module))
-                moduleName(module.getModuleName())
-                outDirectory(File(module.getOutputDirectory()))
-            }
-        }
-
     private fun generate(
         environment: KotlinCoreEnvironment,
         configuration: CompilerConfiguration,
@@ -644,7 +335,4 @@ object KotlinToJVMBytecodeCompiler {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
         return generationState
     }
-
-    private val KotlinCoreEnvironment.messageCollector: MessageCollector
-        get() = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 }
