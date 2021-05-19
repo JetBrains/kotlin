@@ -1,6 +1,7 @@
 // FILE: api.kt
 
 @RequiresOptIn
+@Retention(AnnotationRetention.BINARY)
 annotation class Marker
 
 @Marker

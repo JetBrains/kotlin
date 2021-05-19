@@ -5,6 +5,7 @@
 package feature.experimental.self
 
 @RequiresOptIn
+@Retention(AnnotationRetention.BINARY)
 annotation class ImportedMarker
 
 @ImportedMarker

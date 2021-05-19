@@ -4,6 +4,7 @@
 package api
 
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
+@Retention(AnnotationRetention.BINARY)
 annotation class E
 
 open class Base {

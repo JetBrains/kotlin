@@ -8,6 +8,7 @@ import kotlin.annotation.AnnotationTarget.*
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
 @Target(CLASS, ANNOTATION_CLASS, TYPE_PARAMETER, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER, CONSTRUCTOR, FUNCTION,
         PROPERTY_GETTER, PROPERTY_SETTER, TYPE, TYPEALIAS)
+@Retention(AnnotationRetention.BINARY)
 annotation class E1
 
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)

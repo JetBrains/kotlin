@@ -4,6 +4,7 @@
 package test.abc
 
 @RequiresOptIn
+@Retention(AnnotationRetention.BINARY)
 annotation class E
 
 @OptIn(test.abc.E::class)

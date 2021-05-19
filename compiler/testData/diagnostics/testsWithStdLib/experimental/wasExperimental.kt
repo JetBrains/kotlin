@@ -7,6 +7,7 @@ fun newPublishedFun() {}
 
 
 @RequiresOptIn
+@Retention(AnnotationRetention.BINARY)
 annotation class Marker
 
 @SinceKotlin("1.4")

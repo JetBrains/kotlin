@@ -1,8 +1,11 @@
 // !USE_EXPERIMENTAL: kotlin.RequiresOptIn
 
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
+@Retention(AnnotationRetention.BINARY)
 annotation class E1
+
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
+@Retention(AnnotationRetention.BINARY)
 annotation class E3
 
 interface Base1 {

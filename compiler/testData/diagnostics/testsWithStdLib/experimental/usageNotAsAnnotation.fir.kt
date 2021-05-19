@@ -15,6 +15,7 @@ import kotlin.RequiresOptIn
 // Usages with FQ names should be OK
 
 @kotlin.RequiresOptIn(level = kotlin.RequiresOptIn.Level.ERROR)
+@Retention(AnnotationRetention.BINARY)
 annotation class M
 
 

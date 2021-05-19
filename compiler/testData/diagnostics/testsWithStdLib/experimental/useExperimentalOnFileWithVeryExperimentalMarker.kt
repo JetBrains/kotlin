@@ -5,10 +5,12 @@
 package api
 
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
+@Retention(AnnotationRetention.BINARY)
 annotation class ExperimentalAPI
 
 @ExperimentalAPI
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
+@Retention(AnnotationRetention.BINARY)
 annotation class VeryExperimentalAPI
 
 @ExperimentalAPI

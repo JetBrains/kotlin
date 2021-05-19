@@ -7,6 +7,7 @@ package api
 
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
 @Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.BINARY)
 annotation class E
 
 @E

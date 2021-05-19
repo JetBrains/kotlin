@@ -207,9 +207,11 @@ fun Annotated.isDocumentedAnnotation(): Boolean =
     annotations.findAnnotation(StandardNames.FqNames.mustBeDocumented) != null
 
 fun Annotated.getAnnotationRetention(): KotlinRetention? {
-    val retentionArgumentValue =
-        annotations.findAnnotation(StandardNames.FqNames.retention)?.allValueArguments?.get(RETENTION_PARAMETER_NAME)
-                as? EnumValue ?: return null
+    return annotations.findAnnotation(StandardNames.FqNames.retention)?.getAnnotationRetention()
+}
+
+fun AnnotationDescriptor.getAnnotationRetention(): KotlinRetention? {
+    val retentionArgumentValue = allValueArguments[RETENTION_PARAMETER_NAME] as? EnumValue ?: return null
 
     val retentionArgumentValueName = retentionArgumentValue.enumEntryName.asString()
     return KotlinRetention.values().firstOrNull { it.name == retentionArgumentValueName }

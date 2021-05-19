@@ -5,6 +5,7 @@
 package api
 
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
+@Retention(AnnotationRetention.BINARY)
 annotation class ExperimentalAPI
 
 interface I

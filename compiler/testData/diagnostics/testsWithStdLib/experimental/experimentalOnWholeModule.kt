@@ -7,6 +7,7 @@
 package api
 
 @RequiresOptIn
+@Retention(AnnotationRetention.BINARY)
 annotation class ExperimentalAPI
 
 @ExperimentalAPI

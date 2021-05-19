@@ -4,6 +4,7 @@
 package api
 
 @RequiresOptIn
+@Retention(AnnotationRetention.BINARY)
 annotation class E
 
 open class Base {
