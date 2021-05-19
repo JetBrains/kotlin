@@ -48,7 +48,7 @@ internal interface Complex: State {
         }
     }
 
-    private fun getOverridden(owner: IrSimpleFunction): IrSimpleFunction {
+    fun getOverridden(owner: IrSimpleFunction): IrSimpleFunction {
         if (owner.parent == superWrapperClass?.irClass) return owner
         if (!owner.isFakeOverride || owner.body != null || owner.parentAsClass.defaultType.isAny()) return owner
 
@@ -60,29 +60,5 @@ internal interface Complex: State {
         val receiver = getThisOrSuperReceiver(expression.superQualifierSymbol?.owner) ?: return null
         val irFunction = receiver.getIrFunction(expression.symbol) ?: return null
         return getOverridden(irFunction as IrSimpleFunction)
-    }
-
-    fun getEqualsFunction(): IrSimpleFunction {
-        val equalsFun = irClass.declarations
-            .filterIsInstance<IrSimpleFunction>()
-            .single {
-                it.name == Name.identifier("equals") && it.dispatchReceiverParameter != null
-                        && it.valueParameters.size == 1 && it.valueParameters[0].type.isNullableAny()
-            }
-        return getOverridden(equalsFun)
-    }
-
-    fun getHashCodeFunction(): IrSimpleFunction {
-        return irClass.declarations.filterIsInstance<IrSimpleFunction>()
-            .filter { it.name.asString() == "hashCode" }
-            .first { it.valueParameters.isEmpty() }
-            .let { getOverridden(it) }
-    }
-
-    fun getToStringFunction(): IrSimpleFunction {
-        return irClass.declarations.filterIsInstance<IrSimpleFunction>()
-            .filter { it.name.asString() == "toString" }
-            .first { it.valueParameters.isEmpty() }
-            .let { getOverridden(it) }
     }
 }

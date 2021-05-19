@@ -211,9 +211,6 @@ internal fun IrClass.internalName(): String {
 internal inline fun withExceptionHandler(environment: IrInterpreterEnvironment, block: () -> Unit) {
     try {
         block()
-        // check if during proxy interpretation was an exception
-        val possibleException = environment.callStack.peekState() as? ExceptionState
-        if (possibleException != null) environment.callStack.dropFramesUntilTryCatch()
     } catch (e: Throwable) {
         e.handleUserException(environment)
     }
@@ -264,4 +261,9 @@ internal fun IrFunction.getArgsForMethodInvocation(
     }
 
     return argsValues
+}
+
+internal fun IrType.getOnlyName(): String {
+    if (this !is IrSimpleType) return this.render()
+    return (this.classifierOrFail.owner as IrDeclarationWithName).name.asString() + (if (this.hasQuestionMark) "?" else "")
 }

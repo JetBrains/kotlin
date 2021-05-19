@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.ir.interpreter.state.reflection.ReflectionState
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.name.FqName
@@ -183,7 +182,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
     }
 
     private fun MethodHandle?.invokeMethod(irFunction: IrFunction, args: List<State>) {
-        this ?: return handleIntrinsicMethods(irFunction)
+        this ?: return assert(handleIntrinsicMethods(irFunction)) { "Unsupported intrinsic function: ${irFunction.render()}" }
         val argsForMethodInvocation = irFunction.getArgsForMethodInvocation(this@DefaultCallInterceptor, this.type(), args)
         withExceptionHandler(environment) {
             val result = this.invokeWithArguments(argsForMethodInvocation) // TODO if null return Unit
@@ -191,8 +190,10 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
         }
     }
 
-    private fun handleIntrinsicMethods(irFunction: IrFunction) {
-        IntrinsicEvaluator.unwindInstructions(irFunction, environment).forEach { callStack.addInstruction(it) }
+    private fun handleIntrinsicMethods(irFunction: IrFunction): Boolean {
+        val instructions = IntrinsicEvaluator.unwindInstructions(irFunction, environment) ?: return false
+        instructions.forEach { callStack.addInstruction(it) }
+        return true
     }
 
     private fun calculateBuiltIns(irFunction: IrFunction, args: List<State>) {
@@ -201,17 +202,9 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
             else -> property.owner.name.asString()
         }
 
-        val receiverType = irFunction.dispatchReceiverParameter?.type
+        val receiverType = irFunction.dispatchReceiverParameter?.type ?: irFunction.extensionReceiverParameter?.type
         val argsType = listOfNotNull(receiverType) + irFunction.valueParameters.map { it.type }
         val argsValues = args.wrap(this, irFunction)
-
-        fun IrType.getOnlyName(): String {
-            return when {
-                this.originalKotlinType != null -> this.originalKotlinType.toString()
-                this is IrSimpleType -> (this.classifierOrFail.owner as IrDeclarationWithName).name.asString() + (if (this.hasQuestionMark) "?" else "")
-                else -> this.render()
-            }
-        }
 
         // TODO replace unary, binary, ternary functions with vararg
         withExceptionHandler(environment) {
@@ -227,7 +220,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
                     methodName, argsType[0].getOnlyName(), argsType[1].getOnlyName(), argsType[2].getOnlyName(),
                     argsValues[0], argsValues[1], argsValues[2]
                 )
-                else -> throw InterpreterError("Unsupported number of arguments for invocation as builtin functions")
+                else -> throw InterpreterError("Unsupported number of arguments for invocation as builtin function: $methodName")
             }
             // TODO check "result is Unit"
             callStack.pushState(result.toState(result.getType(irFunction.returnType)))

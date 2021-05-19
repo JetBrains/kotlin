@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.ir.interpreter.intrinsics
 
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.interpreter.*
@@ -23,12 +20,15 @@ import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.ir.types.isCharArray
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.types.Variance
 
 internal sealed class IntrinsicBase {
-    abstract fun equalTo(irFunction: IrFunction): Boolean
+    abstract fun canHandleFunctionWithName(fqName: String, origin: IrDeclarationOrigin): Boolean
     abstract fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment)
-    abstract fun unwind(irFunction: IrFunction, environment: IrInterpreterEnvironment): List<Instruction>
+    open fun unwind(irFunction: IrFunction, environment: IrInterpreterEnvironment): List<Instruction> {
+        return listOf(customEvaluateInstruction(irFunction, environment))
+    }
 
     fun customEvaluateInstruction(irFunction: IrFunction, environment: IrInterpreterEnvironment): CustomInstruction {
         return CustomInstruction {
@@ -39,13 +39,8 @@ internal sealed class IntrinsicBase {
 }
 
 internal object EmptyArray : IntrinsicBase() {
-    override fun equalTo(irFunction: IrFunction): Boolean {
-        val fqName = irFunction.fqNameWhenAvailable.toString()
+    override fun canHandleFunctionWithName(fqName: String, origin: IrDeclarationOrigin): Boolean {
         return fqName in setOf("kotlin.emptyArray", "kotlin.ArrayIntrinsicsKt.emptyArray")
-    }
-
-    override fun unwind(irFunction: IrFunction, environment: IrInterpreterEnvironment): List<Instruction> {
-        return listOf(customEvaluateInstruction(irFunction, environment))
     }
 
     override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {
@@ -55,13 +50,8 @@ internal object EmptyArray : IntrinsicBase() {
 }
 
 internal object ArrayOf : IntrinsicBase() {
-    override fun equalTo(irFunction: IrFunction): Boolean {
-        val fqName = irFunction.fqNameWhenAvailable.toString()
-        return fqName == "kotlin.arrayOf"
-    }
-
-    override fun unwind(irFunction: IrFunction, environment: IrInterpreterEnvironment): List<Instruction> {
-        return listOf(customEvaluateInstruction(irFunction, environment))
+    override fun canHandleFunctionWithName(fqName: String, origin: IrDeclarationOrigin): Boolean {
+        return fqName == "kotlin.arrayOf" || fqName.matches("kotlin\\.(byte|char|short|int|long|float|double|boolean|)ArrayOf".toRegex())
     }
 
     override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {
@@ -72,13 +62,8 @@ internal object ArrayOf : IntrinsicBase() {
 }
 
 internal object ArrayOfNulls : IntrinsicBase() {
-    override fun equalTo(irFunction: IrFunction): Boolean {
-        val fqName = irFunction.fqNameWhenAvailable.toString()
+    override fun canHandleFunctionWithName(fqName: String, origin: IrDeclarationOrigin): Boolean {
         return fqName == "kotlin.arrayOfNulls"
-    }
-
-    override fun unwind(irFunction: IrFunction, environment: IrInterpreterEnvironment): List<Instruction> {
-        return listOf(customEvaluateInstruction(irFunction, environment))
     }
 
     override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {
@@ -94,9 +79,8 @@ internal object ArrayOfNulls : IntrinsicBase() {
 }
 
 internal object EnumValues : IntrinsicBase() {
-    override fun equalTo(irFunction: IrFunction): Boolean {
-        val fqName = irFunction.fqNameWhenAvailable.toString()
-        return (fqName == "kotlin.enumValues" || fqName.endsWith(".values")) && irFunction.valueParameters.isEmpty()
+    override fun canHandleFunctionWithName(fqName: String, origin: IrDeclarationOrigin): Boolean {
+        return fqName == "kotlin.enumValues"
     }
 
     private fun getEnumClass(irFunction: IrFunction, environment: IrInterpreterEnvironment): IrClass {
@@ -113,7 +97,7 @@ internal object EnumValues : IntrinsicBase() {
         val enumClass = getEnumClass(irFunction, environment)
         val enumEntries = enumClass.declarations.filterIsInstance<IrEnumEntry>()
 
-        return listOf(customEvaluateInstruction(irFunction, environment)) + enumEntries.reversed().map { SimpleInstruction(it) }
+        return super.unwind(irFunction, environment) + enumEntries.reversed().map { SimpleInstruction(it) }
     }
 
     override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {
@@ -125,9 +109,8 @@ internal object EnumValues : IntrinsicBase() {
 }
 
 internal object EnumValueOf : IntrinsicBase() {
-    override fun equalTo(irFunction: IrFunction): Boolean {
-        val fqName = irFunction.fqNameWhenAvailable.toString()
-        return (fqName == "kotlin.enumValueOf" || fqName.endsWith(".valueOf")) && irFunction.valueParameters.size == 1
+    override fun canHandleFunctionWithName(fqName: String, origin: IrDeclarationOrigin): Boolean {
+        return fqName == "kotlin.enumValueOf"
     }
 
     private fun getEnumClass(irFunction: IrFunction, environment: IrInterpreterEnvironment): IrClass {
@@ -161,30 +144,57 @@ internal object EnumValueOf : IntrinsicBase() {
     }
 }
 
-internal object EnumHashCode : IntrinsicBase() {
-    override fun equalTo(irFunction: IrFunction): Boolean {
-        val fqName = irFunction.fqNameWhenAvailable.toString()
-        return fqName == "kotlin.Enum.hashCode"
+internal object EnumIntrinsics : IntrinsicBase() {
+    override fun canHandleFunctionWithName(fqName: String, origin: IrDeclarationOrigin): Boolean {
+        if (origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER) return true
+        return fqName.startsWith("kotlin.Enum.")
     }
 
     override fun unwind(irFunction: IrFunction, environment: IrInterpreterEnvironment): List<Instruction> {
-        return listOf(customEvaluateInstruction(irFunction, environment))
+        return when (irFunction.name.asString()) {
+            "values" -> EnumValues.unwind(irFunction, environment)
+            "valueOf" -> EnumValueOf.unwind(irFunction, environment)
+            else -> super.unwind(irFunction, environment)
+        }
     }
 
     override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {
-        val hashCode = environment.callStack.getState(irFunction.dispatchReceiverParameter!!.symbol).hashCode()
-        environment.callStack.pushState(hashCode.toState(irFunction.returnType))
+        val callStack = environment.callStack
+        val enumEntry = callStack.getState(irFunction.dispatchReceiverParameter!!.symbol)
+        when (irFunction.name.asString()) {
+            "<get-name>", "<get-ordinal>" -> {
+                val symbol = (irFunction as IrSimpleFunction).correspondingPropertySymbol!!
+                callStack.pushState(enumEntry.getField(symbol)!!)
+            }
+            "compareTo" -> {
+                val ordinal = enumEntry.irClass.declarations.filterIsInstance<IrProperty>()
+                    .first { it.name.asString() == "ordinal" }
+                    .resolveFakeOverride()!!
+                val other = callStack.getState(irFunction.valueParameters.single().symbol)
+                val compareTo = enumEntry.getField(ordinal.symbol)!!.asInt().compareTo(other.getField(ordinal.symbol)!!.asInt())
+                callStack.pushState(compareTo.toState(irFunction.returnType))
+            }
+            // TODO "clone" -> throw exception
+            "equals" -> {
+                val other = callStack.getState(irFunction.valueParameters.single().symbol)
+                callStack.pushState((enumEntry === other).toState(irFunction.returnType))
+            }
+            "hashCode" -> callStack.pushState(enumEntry.hashCode().toState(irFunction.returnType))
+            "toString" -> {
+                val name = enumEntry.irClass.declarations.filterIsInstance<IrProperty>()
+                    .first { it.name.asString() == "name" }
+                    .resolveFakeOverride()!!
+                callStack.pushState(enumEntry.getField(name.symbol)!!)
+            }
+            "values" -> EnumValues.evaluate(irFunction, environment)
+            "valueOf" -> EnumValueOf.evaluate(irFunction, environment)
+        }
     }
 }
 
 internal object JsPrimitives : IntrinsicBase() {
-    override fun equalTo(irFunction: IrFunction): Boolean {
-        val fqName = irFunction.fqNameWhenAvailable.toString()
+    override fun canHandleFunctionWithName(fqName: String, origin: IrDeclarationOrigin): Boolean {
         return fqName == "kotlin.Long.<init>" || fqName == "kotlin.Char.<init>"
-    }
-
-    override fun unwind(irFunction: IrFunction, environment: IrInterpreterEnvironment): List<Instruction> {
-        return listOf(customEvaluateInstruction(irFunction, environment))
     }
 
     override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {
@@ -203,8 +213,7 @@ internal object JsPrimitives : IntrinsicBase() {
 }
 
 internal object ArrayConstructor : IntrinsicBase() {
-    override fun equalTo(irFunction: IrFunction): Boolean {
-        val fqName = irFunction.fqNameWhenAvailable.toString()
+    override fun canHandleFunctionWithName(fqName: String, origin: IrDeclarationOrigin): Boolean {
         return fqName.matches("kotlin\\.(Byte|Char|Short|Int|Long|Float|Double|Boolean|)Array\\.<init>".toRegex())
     }
 
@@ -220,7 +229,7 @@ internal object ArrayConstructor : IntrinsicBase() {
         environment.callStack.loadUpValues(initLambda)
         val function = initLambda.irFunction as IrSimpleFunction
         val index = initLambda.irFunction.valueParameters.single()
-        for (i in 0 until size) {
+        for (i in size - 1 downTo 0) {
             val call = IrCallImpl.fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, function.returnType, function.symbol)
             call.putValueArgument(0, IrConstImpl.int(UNDEFINED_OFFSET, UNDEFINED_OFFSET, index.type, i))
             instructions += CompoundInstruction(call)
@@ -235,9 +244,9 @@ internal object ArrayConstructor : IntrinsicBase() {
         val arrayValue = MutableList<Any?>(size) { if (irFunction.returnType.isCharArray()) 0.toChar() else 0 }
 
         if (irFunction.valueParameters.size == 2) {
-            for (i in 0 until size) {
+            for (i in size - 1 downTo 0) {
                 arrayValue[i] = environment.callStack.popState().let {
-                    // TODO wrap
+                    // TODO may be use wrap
                     when (it) {
                         is Wrapper -> it.value
                         is Primitive<*> -> if (it.type.isArray() || it.type.isPrimitiveArray()) it else it.value
@@ -253,13 +262,8 @@ internal object ArrayConstructor : IntrinsicBase() {
 }
 
 internal object SourceLocation : IntrinsicBase() {
-    override fun equalTo(irFunction: IrFunction): Boolean {
-        val fqName = irFunction.fqNameWhenAvailable.toString()
+    override fun canHandleFunctionWithName(fqName: String, origin: IrDeclarationOrigin): Boolean {
         return fqName == "kotlin.experimental.sourceLocation" || fqName == "kotlin.experimental.SourceLocationKt.sourceLocation"
-    }
-
-    override fun unwind(irFunction: IrFunction, environment: IrInterpreterEnvironment): List<Instruction> {
-        return listOf(customEvaluateInstruction(irFunction, environment))
     }
 
     override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {
@@ -268,8 +272,7 @@ internal object SourceLocation : IntrinsicBase() {
 }
 
 internal object AssertIntrinsic : IntrinsicBase() {
-    override fun equalTo(irFunction: IrFunction): Boolean {
-        val fqName = irFunction.fqNameWhenAvailable.toString()
+    override fun canHandleFunctionWithName(fqName: String, origin: IrDeclarationOrigin): Boolean {
         return fqName == "kotlin.PreconditionsKt.assert"
     }
 
