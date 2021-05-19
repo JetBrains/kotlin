@@ -4584,7 +4584,8 @@ dynamicTest("interop_cleaners_second_thread") {
 }
 
 dynamicTest("interop_cleaners_leak") {
-    disabled = (project.target.name != project.hostName)
+    disabled = (project.target.name != project.hostName) ||
+        isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     source = "interop/cleaners/cleaners.kt"
     cSource = "$projectDir/interop/cleaners/leak.cpp"
     clangTool = "clang++"
