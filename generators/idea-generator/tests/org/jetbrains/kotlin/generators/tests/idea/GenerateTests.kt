@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.generators.TestGroup
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.KT_OR_KTS
+import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.KT_WITHOUT_FIR_PREFIX
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.KT_OR_KTS_WITHOUT_DOTS_IN_NAME
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME
 import org.jetbrains.kotlin.idea.AbstractExpressionSelectionTest
@@ -1217,6 +1218,12 @@ fun main(args: Array<String>) {
 
             testClass<AbstractFirKeywordCompletionTest> {
                 model("keywords", recursive = false, pattern = KT_WITHOUT_FIR_PREFIX)
+                model(
+                    "../../idea-fir/testData/completion/keywords",
+                    testClassName = "KeywordsFir",
+                    recursive = false,
+                    pattern = KT_WITHOUT_FIR_PREFIX
+                )
             }
         }
 
