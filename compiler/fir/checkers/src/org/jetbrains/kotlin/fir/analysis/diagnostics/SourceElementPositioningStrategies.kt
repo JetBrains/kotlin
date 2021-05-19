@@ -242,4 +242,9 @@ object SourceElementPositioningStrategies {
         LightTreePositioningStrategies.QUESTION_MARK_BY_TYPE,
         PositioningStrategies.QUESTION_MARK_BY_TYPE
     )
+
+    val ANNOTATION_USE_SITE = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.ANNOTATION_USE_SITE,
+        PositioningStrategies.ANNOTATION_USE_SITE
+    )
 }

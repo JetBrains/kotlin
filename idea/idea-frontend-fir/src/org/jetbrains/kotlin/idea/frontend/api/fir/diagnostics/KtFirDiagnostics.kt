@@ -449,34 +449,34 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val useSiteTarget: String
     }
 
-    abstract class InapplicableTargetOnProperty : KtFirDiagnostic<PsiElement>() {
+    abstract class InapplicableTargetOnProperty : KtFirDiagnostic<KtAnnotationEntry>() {
         override val diagnosticClass get() = InapplicableTargetOnProperty::class
         abstract val useSiteDescription: String
     }
 
-    abstract class InapplicableTargetPropertyImmutable : KtFirDiagnostic<PsiElement>() {
+    abstract class InapplicableTargetPropertyImmutable : KtFirDiagnostic<KtAnnotationEntry>() {
         override val diagnosticClass get() = InapplicableTargetPropertyImmutable::class
         abstract val useSiteDescription: String
     }
 
-    abstract class InapplicableTargetPropertyHasNoDelegate : KtFirDiagnostic<PsiElement>() {
+    abstract class InapplicableTargetPropertyHasNoDelegate : KtFirDiagnostic<KtAnnotationEntry>() {
         override val diagnosticClass get() = InapplicableTargetPropertyHasNoDelegate::class
     }
 
-    abstract class InapplicableTargetPropertyHasNoBackingField : KtFirDiagnostic<PsiElement>() {
+    abstract class InapplicableTargetPropertyHasNoBackingField : KtFirDiagnostic<KtAnnotationEntry>() {
         override val diagnosticClass get() = InapplicableTargetPropertyHasNoBackingField::class
     }
 
-    abstract class InapplicableParamTarget : KtFirDiagnostic<PsiElement>() {
+    abstract class InapplicableParamTarget : KtFirDiagnostic<KtAnnotationEntry>() {
         override val diagnosticClass get() = InapplicableParamTarget::class
     }
 
-    abstract class RedundantAnnotationTarget : KtFirDiagnostic<PsiElement>() {
+    abstract class RedundantAnnotationTarget : KtFirDiagnostic<KtAnnotationEntry>() {
         override val diagnosticClass get() = RedundantAnnotationTarget::class
         abstract val useSiteDescription: String
     }
 
-    abstract class InapplicableFileTarget : KtFirDiagnostic<PsiElement>() {
+    abstract class InapplicableFileTarget : KtFirDiagnostic<KtAnnotationEntry>() {
         override val diagnosticClass get() = InapplicableFileTarget::class
     }
 

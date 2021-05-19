@@ -706,6 +706,21 @@ object LightTreePositioningStrategies {
             return super.mark(node, startOffset, endOffset, tree)
         }
     }
+
+    val ANNOTATION_USE_SITE: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            val useSiteTarget = tree.findChildByType(node, KtNodeTypes.ANNOTATION_TARGET)
+            if (useSiteTarget != null) {
+                return markElement(useSiteTarget, startOffset, endOffset, tree, node)
+            }
+            return super.mark(node, startOffset, endOffset, tree)
+        }
+    }
 }
 
 fun FirSourceElement.hasValOrVar(): Boolean =

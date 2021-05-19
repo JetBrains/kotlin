@@ -865,6 +865,12 @@ object PositioningStrategies {
         }
     }
 
+    val ANNOTATION_USE_SITE: PositioningStrategy<KtAnnotationEntry> = object : PositioningStrategy<KtAnnotationEntry>() {
+        override fun mark(element: KtAnnotationEntry): List<TextRange> {
+            return markElement(element.useSiteTarget ?: element)
+        }
+    }
+
 
     /**
      * @param locateReferencedName whether to remove any nested parentheses while locating the reference element. This is useful for

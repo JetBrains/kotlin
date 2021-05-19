@@ -70,6 +70,7 @@ enum class PositioningStrategy(private val strategy: String? = null) {
     FUN_INTERFACE,
     RESERVED_UNDERSCORE,
     QUESTION_MARK_BY_TYPE,
+    ANNOTATION_USE_SITE,
 
     ;
 
