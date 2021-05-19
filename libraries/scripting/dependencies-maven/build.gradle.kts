@@ -5,7 +5,7 @@ plugins {
 
 jvmTarget = "1.6"
 
-configurations.compile {
+configurations.implementation {
     /**
      * Files with the same FQNs may exist both in these excluded artifacts and in dependencies of
      * `org.apache.maven:maven-core`. If these classes fall into classpath together, it
@@ -22,15 +22,15 @@ configurations.compile {
 }
 
 dependencies {
-    compile(kotlinStdlib())
-    compile(project(":kotlin-scripting-dependencies"))
-    compile("org.eclipse.aether:aether-connector-basic:1.1.0")
-    compile("org.eclipse.aether:aether-transport-wagon:1.1.0")
-    compile("org.eclipse.aether:aether-transport-file:1.1.0")
-    compile("org.apache.maven:maven-core:3.8.1")
-    compile("org.apache.maven.wagon:wagon-http:3.4.3")
-    testCompile(projectTests(":kotlin-scripting-dependencies"))
-    testCompile(commonDep("junit"))
+    implementation(kotlinStdlib())
+    implementation(project(":kotlin-scripting-dependencies"))
+    implementation("org.eclipse.aether:aether-connector-basic:1.1.0")
+    implementation("org.eclipse.aether:aether-transport-wagon:1.1.0")
+    implementation("org.eclipse.aether:aether-transport-file:1.1.0")
+    implementation("org.apache.maven:maven-core:3.8.1")
+    implementation("org.apache.maven.wagon:wagon-http:3.4.3")
+    testImplementation(projectTests(":kotlin-scripting-dependencies"))
+    testImplementation(commonDep("junit"))
     testRuntimeOnly("org.slf4j:slf4j-nop:1.7.30")
     testImplementation(kotlin("reflect"))
 }
