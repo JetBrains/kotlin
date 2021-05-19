@@ -2317,6 +2317,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/innerConstructorWithVararg.kt");
             }
 
+            @TestMetadata("jvmStatic.kt")
+            public void testJvmStatic() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/jvmStatic.kt");
+            }
+
             @TestMetadata("largeVararg.kt")
             public void testLargeVararg() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/largeVararg.kt");
@@ -24586,6 +24591,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 @TestMetadata("innerSubclass.kt")
                 public void testInnerSubclass() throws Exception {
                     runTest("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/innerSubclass.kt");
+                }
+
+                @TestMetadata("jvmStatic.kt")
+                public void testJvmStatic() throws Exception {
+                    runTest("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/jvmStatic.kt");
                 }
 
                 @TestMetadata("nonInlineLambda.kt")

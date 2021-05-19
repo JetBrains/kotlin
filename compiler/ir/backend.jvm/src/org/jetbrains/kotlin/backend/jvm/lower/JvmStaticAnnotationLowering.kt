@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.*
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
@@ -17,10 +16,10 @@ import org.jetbrains.kotlin.backend.jvm.codegen.isInlineFunctionCall
 import org.jetbrains.kotlin.backend.jvm.ir.replaceThisByStaticReference
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.util.*
@@ -68,10 +67,15 @@ private fun IrExpression.coerceToUnit(irBuiltIns: IrBuiltIns) =
 private fun IrMemberAccessExpression<*>.makeStatic(context: JvmBackendContext, replaceCallee: IrSimpleFunction?) =
     dispatchReceiver?.let { receiver ->
         dispatchReceiver = null
-        // Not really the right symbol, but we don't use the scope here anyway.
-        context.createIrBuilder(symbol).irBlock(startOffset, endOffset) {
-            +receiver.coerceToUnit(context.irBuiltIns) // evaluate for side effects
-            +if (replaceCallee != null) irCall(this@makeStatic as IrCall, replaceCallee) else this@makeStatic
+        val newCall = if (replaceCallee != null) irCall(this@makeStatic as IrCall, replaceCallee) else this@makeStatic
+        if (receiver.isTrivial()) {
+            // Receiver has no side effects (aside from maybe class initialization) so discard it.
+            newCall
+        } else {
+            IrBlockImpl(startOffset, endOffset, newCall.type).apply {
+                statements += receiver.coerceToUnit(context.irBuiltIns) // evaluate for side effects
+                statements += newCall
+            }
         }
     } ?: this
 

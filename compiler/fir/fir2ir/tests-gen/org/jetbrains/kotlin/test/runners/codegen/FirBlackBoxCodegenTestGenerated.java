@@ -2642,6 +2642,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Test
+            @TestMetadata("jvmStatic.kt")
+            public void testJvmStatic() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/jvmStatic.kt");
+            }
+
+            @Test
             @TestMetadata("largeVararg.kt")
             public void testLargeVararg() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/largeVararg.kt");
@@ -28964,6 +28970,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 @TestMetadata("isInitializedMultiFile.kt")
                 public void testIsInitializedMultiFile() throws Exception {
                     runTest("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/isInitializedMultiFile.kt");
+                }
+
+                @Test
+                @TestMetadata("jvmStatic.kt")
+                public void testJvmStatic() throws Exception {
+                    runTest("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/jvmStatic.kt");
                 }
 
                 @Test
