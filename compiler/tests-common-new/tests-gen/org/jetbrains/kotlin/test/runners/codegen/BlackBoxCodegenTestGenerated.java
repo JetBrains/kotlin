@@ -9241,6 +9241,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("kt46813.kt")
+        public void testKt46813() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/kt46813.kt");
+        }
+
+        @Test
         @TestMetadata("lastExpressionIsLoop.kt")
         public void testLastExpressionIsLoop() throws Exception {
             runTest("compiler/testData/codegen/box/coroutines/lastExpressionIsLoop.kt");

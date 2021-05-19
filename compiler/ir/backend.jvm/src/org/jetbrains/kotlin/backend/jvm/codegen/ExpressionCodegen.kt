@@ -59,6 +59,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.keysToMap
@@ -628,7 +629,7 @@ class ExpressionCodegen(
 
         val initializer = declaration.initializer
         if (initializer != null) {
-            var value = initializer.accept(this, data)
+            val value = initializer.accept(this, data)
             initializer.markLineNumber(startOffset = true)
             value.materializeAt(varType, declaration.type)
             declaration.markLineNumber(startOffset = true)
@@ -675,6 +676,13 @@ class ExpressionCodegen(
 
         // Result parameter of SAM-wrapper to Java SAM is already unboxed in visitGetValue, do not unbox it anymore
         if (irFunction.parentAsClass.superTypes.any { it.getClass()?.isFromJava() == true }) return
+
+        // Do not unbox Results in suspend lambda `invoke` methods. These just forward to `invokeSuspend`,
+        // where the arguments are unboxed.
+        if (
+            irFunction.parentAsClass.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA &&
+            irFunction.name == OperatorNameConventions.INVOKE
+        ) return
 
         StackValue.unboxInlineClass(OBJECT_TYPE, arg.type.erasedUpperBound.defaultType, mv, typeMapper)
     }
