@@ -5,6 +5,22 @@ plugins {
 
 jvmTarget = "1.6"
 
+configurations.compile {
+    /**
+     * Files with the same FQNs may exist both in these excluded artifacts and in dependencies of
+     * `org.apache.maven:maven-core`. If these classes fall into classpath together, it
+     * may lead to unpredictable errors, especially if these classes have different APIs.
+     *
+     * Example. Class `org.eclipse.aether.repository.RemoteRepository` is presented in both
+     * `maven-resolver-api-1.6.2` (which is resolved transitively from `maven-core`)
+     * and `aether-api-1.1.0` artifacts. One of the implementations has `isBlocked()`
+     * method, and another one lacks it. It leads to `NoSuchMethodError` in runtime.
+     */
+    exclude("org.eclipse.aether", "aether-api")
+    exclude("org.eclipse.aether", "aether-util")
+    exclude("org.eclipse.aether", "aether-spi")
+}
+
 dependencies {
     compile(kotlinStdlib())
     compile(project(":kotlin-scripting-dependencies"))
@@ -12,9 +28,6 @@ dependencies {
     compile("org.eclipse.aether:aether-transport-wagon:1.1.0")
     compile("org.eclipse.aether:aether-transport-file:1.1.0")
     compile("org.apache.maven:maven-core:3.8.1")
-    compile("org.apache.maven:maven-settings-builder:3.8.1")
-    compile("org.apache.maven:maven-aether-provider:3.3.9")
-    compile("org.apache.maven.wagon:wagon-provider-api:3.4.3")
     compile("org.apache.maven.wagon:wagon-http:3.4.3")
     testCompile(projectTests(":kotlin-scripting-dependencies"))
     testCompile(commonDep("junit"))
