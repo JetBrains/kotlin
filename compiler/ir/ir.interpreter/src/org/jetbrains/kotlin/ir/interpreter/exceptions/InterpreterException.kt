@@ -5,4 +5,4 @@
 
 package org.jetbrains.kotlin.ir.interpreter.exceptions
 
-abstract class InterpreterException : Exception()
+abstract class InterpreterException(message: String) : Exception(message)

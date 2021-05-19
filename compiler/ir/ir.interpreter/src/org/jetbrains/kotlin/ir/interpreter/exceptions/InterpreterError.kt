@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.ir.interpreter.exceptions
 
-open class InterpreterError(override val message: String) : InterpreterException()
+open class InterpreterError(message: String) : InterpreterException(message)
 
-class InterpreterMethodNotFoundError(override val message: String) : InterpreterError(message)
+class InterpreterMethodNotFoundError(message: String) : InterpreterError(message)
 
 class InterpreterTimeOutError : InterpreterError("Exceeded execution limit of constexpr expression")
 
