@@ -96,16 +96,15 @@ private val CompilerConfiguration.expectActualLinker: Boolean
 class KotlinFileSerializedData(val metadata: ByteArray, val irData: SerializedIrFile)
 
 fun generateKLib(
-    project: Project,
-    files: List<KtFile>,
-    analyzer: AbstractAnalyzerWithCompilerReport,
-    configuration: CompilerConfiguration,
-    allDependencies: KotlinLibraryResolveResult,
-    friendDependencies: List<KotlinLibrary>,
+    depsDescriptors: ModulesStructure,
     irFactory: IrFactory,
     outputKlibPath: String,
     nopack: Boolean
 ) {
+    val project = depsDescriptors.project
+    val files = (depsDescriptors.mainModule as MainModule.SourceFiles).files
+    val configuration = depsDescriptors.compilerConfiguration
+    val allDependencies = depsDescriptors.allDependencies
     val incrementalDataProvider = configuration.get(JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER)
     val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
     val messageLogger = configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None
@@ -140,10 +139,7 @@ fun generateKLib(
         serializedIrFiles = null
     }
 
-    val depsDescriptors =
-        ModulesStructure(project, MainModule.SourceFiles(files), analyzer, configuration, allDependencies, friendDependencies)
-
-    val (psi2IrContext, hasErrors) = runAnalysisAndPreparePsi2Ir(depsDescriptors, irFactory, errorPolicy)
+    val (psi2IrContext, hasErrors) = preparePsi2Ir(depsDescriptors, irFactory, errorPolicy)
     val irBuiltIns = psi2IrContext.irBuiltIns
     val functionFactory = IrFunctionFactory(irBuiltIns, psi2IrContext.symbolTable)
     irBuiltIns.functionFactory = functionFactory
@@ -216,21 +212,19 @@ private fun sortDependencies(dependencies: List<KotlinLibrary>, mapping: Map<Kot
 }
 
 fun loadIr(
-    project: Project,
-    mainModule: MainModule,
-    analyzer: AbstractAnalyzerWithCompilerReport,
-    configuration: CompilerConfiguration,
-    allDependencies: KotlinLibraryResolveResult,
-    friendDependencies: List<KotlinLibrary>,
+    depsDescriptors: ModulesStructure,
     irFactory: IrFactory,
 ): IrModuleInfo {
-    val depsDescriptors = ModulesStructure(project, mainModule, analyzer, configuration, allDependencies, friendDependencies)
+    val project = depsDescriptors.project
+    val mainModule = depsDescriptors.mainModule
+    val configuration = depsDescriptors.compilerConfiguration
+    val allDependencies = depsDescriptors.allDependencies
     val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
     val messageLogger = configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None
 
     when (mainModule) {
         is MainModule.SourceFiles -> {
-            val (psi2IrContext, _) = runAnalysisAndPreparePsi2Ir(depsDescriptors, irFactory, errorPolicy)
+            val (psi2IrContext, _) = preparePsi2Ir(depsDescriptors, irFactory, errorPolicy)
             val irBuiltIns = psi2IrContext.irBuiltIns
             val symbolTable = psi2IrContext.symbolTable
             val functionFactory = IrFunctionFactory(irBuiltIns, symbolTable)
@@ -293,12 +287,28 @@ fun loadIr(
     }
 }
 
-private fun runAnalysisAndPreparePsi2Ir(
+fun prepareAnalyzedSourceModule(
+    project: Project,
+    files: List<KtFile>,
+    configuration: CompilerConfiguration,
+    allDependencies: KotlinLibraryResolveResult,
+    friendDependencies: List<KotlinLibrary>,
+    analyzer: AbstractAnalyzerWithCompilerReport,
+    errorPolicy: ErrorTolerancePolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT,
+): ModulesStructure {
+    val mainModule = MainModule.SourceFiles(files)
+    val sourceModule = ModulesStructure(project, mainModule, configuration, allDependencies, friendDependencies)
+    return sourceModule.apply {
+        runAnalysis(errorPolicy, analyzer)
+    }
+}
+
+private fun preparePsi2Ir(
     depsDescriptors: ModulesStructure,
     irFactory: IrFactory,
     errorIgnorancePolicy: ErrorTolerancePolicy
 ): Pair<GeneratorContext, Boolean> {
-    val analysisResult = depsDescriptors.runAnalysis(errorIgnorancePolicy)
+    val analysisResult = depsDescriptors.jsFrontEndResult
     val psi2Ir = Psi2IrTranslator(
         depsDescriptors.compilerConfiguration.languageVersionSettings,
         Psi2IrConfiguration(errorIgnorancePolicy.allowErrors)
@@ -366,10 +376,9 @@ sealed class MainModule {
     class Klib(val lib: KotlinLibrary) : MainModule()
 }
 
-private class ModulesStructure(
-    private val project: Project,
-    private val mainModule: MainModule,
-    private val analyzer: AbstractAnalyzerWithCompilerReport,
+class ModulesStructure(
+    val project: Project,
+    val mainModule: MainModule,
     val compilerConfiguration: CompilerConfiguration,
     val allDependencies: KotlinLibraryResolveResult,
     private val friendDependencies: List<KotlinLibrary>
@@ -383,9 +392,17 @@ private class ModulesStructure(
 
     val builtInsDep = allDependencies.getFullList().find { it.isBuiltIns }
 
-    class JsFrontEndResult(val moduleDescriptor: ModuleDescriptor, val bindingContext: BindingContext, val hasErrors: Boolean)
+    class JsFrontEndResult(val jsAnalysisResult: AnalysisResult, val hasErrors: Boolean) {
+        val moduleDescriptor: ModuleDescriptor
+            get() = jsAnalysisResult.moduleDescriptor
 
-    fun runAnalysis(errorPolicy: ErrorTolerancePolicy): JsFrontEndResult {
+        val bindingContext: BindingContext
+            get() = jsAnalysisResult.bindingContext
+    }
+
+    lateinit var jsFrontEndResult: JsFrontEndResult
+
+    fun runAnalysis(errorPolicy: ErrorTolerancePolicy, analyzer: AbstractAnalyzerWithCompilerReport) {
         require(mainModule is MainModule.SourceFiles)
         val files = mainModule.files
 
@@ -419,7 +436,7 @@ private class ModulesStructure(
 
         hasErrors = TopDownAnalyzerFacadeForJSIR.checkForErrors(files, analysisResult.bindingContext, errorPolicy) || hasErrors
 
-        return JsFrontEndResult(analysisResult.moduleDescriptor, analysisResult.bindingContext, hasErrors)
+        jsFrontEndResult = JsFrontEndResult(analysisResult, hasErrors)
     }
 
     private val languageVersionSettings: LanguageVersionSettings = compilerConfiguration.languageVersionSettings

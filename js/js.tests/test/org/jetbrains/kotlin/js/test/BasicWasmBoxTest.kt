@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.backend.js.MainModule
+import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.loadKlib
+import org.jetbrains.kotlin.ir.backend.js.prepareAnalyzedSourceModule
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.TranslationUnit
@@ -132,16 +134,20 @@ abstract class BasicWasmBoxTest(
             PhaseConfig(wasmPhases)
         }
 
+        val sourceModule = prepareAnalyzedSourceModule(
+            config.project,
+            filesToCompile,
+            config.configuration,
+            // TODO: Bypass the resolver fow wasm.
+            KotlinLibraryResolverResultImpl(listOf(KotlinResolvedLibraryImpl(wasmRuntimeKlib))),
+            emptyList(),
+            AnalyzerWithCompilerReport(config.configuration)
+        )
+
         val compilerResult = compileWasm(
-            project = config.project,
-            mainModule = MainModule.SourceFiles(filesToCompile),
-            analyzer = AnalyzerWithCompilerReport(config.configuration),
-            configuration = config.configuration,
+            sourceModule,
             phaseConfig = phaseConfig,
             irFactory = IrFactoryImpl,
-            // TODO: Bypass the resolver fow wasm.
-            allDependencies = KotlinLibraryResolverResultImpl(listOf(KotlinResolvedLibraryImpl(wasmRuntimeKlib))),
-            friendDependencies = emptyList(),
             exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction)))
         )
 

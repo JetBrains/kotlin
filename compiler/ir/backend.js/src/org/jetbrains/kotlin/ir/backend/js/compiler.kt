@@ -34,14 +34,9 @@ class CompilerResult(
 class JsCode(val mainModule: String, val dependencies: Iterable<Pair<String, String>> = emptyList())
 
 fun compile(
-    project: Project,
-    mainModule: MainModule,
-    analyzer: AbstractAnalyzerWithCompilerReport,
-    configuration: CompilerConfiguration,
+    depsDescriptors: ModulesStructure,
     phaseConfig: PhaseConfig,
     irFactory: IrFactory,
-    allDependencies: KotlinLibraryResolveResult,
-    friendDependencies: List<KotlinLibrary>,
     mainArguments: List<String>?,
     exportedDeclarations: Set<FqName> = emptySet(),
     generateFullJs: Boolean = true,
@@ -53,8 +48,10 @@ fun compile(
     relativeRequirePath: Boolean = false,
     propertyLazyInitialization: Boolean,
 ): CompilerResult {
+    val mainModule = depsDescriptors.mainModule
+    val configuration = depsDescriptors.compilerConfiguration
     val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) =
-        loadIr(project, mainModule, analyzer, configuration, allDependencies, friendDependencies, irFactory)
+        loadIr(depsDescriptors, irFactory)
 
     val moduleDescriptor = moduleFragment.descriptor
 

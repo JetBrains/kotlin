@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.generateStringLiteralsSupport
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.MainModule
+import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.loadIr
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
@@ -29,18 +30,14 @@ import java.io.ByteArrayOutputStream
 class WasmCompilerResult(val wat: String, val js: String, val wasm: ByteArray)
 
 fun compileWasm(
-    project: Project,
-    mainModule: MainModule,
-    analyzer: AbstractAnalyzerWithCompilerReport,
-    configuration: CompilerConfiguration,
+    depsDescriptors: ModulesStructure,
     phaseConfig: PhaseConfig,
     irFactory: IrFactory,
-    allDependencies: KotlinLibraryResolveResult,
-    friendDependencies: List<KotlinLibrary>,
     exportedDeclarations: Set<FqName> = emptySet()
 ): WasmCompilerResult {
-    val (moduleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) =
-        loadIr(project, mainModule, analyzer, configuration, allDependencies, friendDependencies, irFactory)
+    val mainModule = depsDescriptors.mainModule
+    val configuration = depsDescriptors.compilerConfiguration
+    val (moduleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) = loadIr(depsDescriptors, irFactory)
 
     val allModules = when (mainModule) {
         is MainModule.SourceFiles -> dependencyModules + listOf(moduleFragment)

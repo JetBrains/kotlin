@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.facade.TranslationUnit
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.parsing.parseBoolean
+import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 import java.io.File
@@ -110,6 +111,15 @@ abstract class BasicIrBoxTest(
             if (!isMainModule) it.replace("_v5.js", "/") else it
         }
 
+        val sourceModule = prepareAnalyzedSourceModule(
+            config.project,
+            filesToCompile,
+            config.configuration,
+            resolvedLibraries,
+            emptyList(),
+            AnalyzerWithCompilerReport(config.configuration)
+        )
+
         if (isMainModule) {
             logger.logFile("Output JS", outputFile)
 
@@ -132,14 +142,9 @@ abstract class BasicIrBoxTest(
 
             if (!skipRegularMode) {
                 val compiledModule = compile(
-                    project = config.project,
-                    mainModule = MainModule.SourceFiles(filesToCompile),
-                    analyzer = AnalyzerWithCompilerReport(config.configuration),
-                    configuration = config.configuration,
+                    sourceModule,
                     phaseConfig = phaseConfig,
                     irFactory = IrFactoryImpl,
-                    allDependencies = resolvedLibraries,
-                    friendDependencies = emptyList(),
                     mainArguments = mainCallParameters.run { if (shouldBeGenerated()) arguments() else null },
                     exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction))),
                     generateFullJs = true,
@@ -162,14 +167,9 @@ abstract class BasicIrBoxTest(
 
             if (runIrPir && !skipDceDriven) {
                 compile(
-                    project = config.project,
-                    mainModule = MainModule.SourceFiles(filesToCompile),
-                    analyzer = AnalyzerWithCompilerReport(config.configuration),
-                    configuration = config.configuration,
+                    sourceModule,
                     phaseConfig = phaseConfig,
                     irFactory = PersistentIrFactory(),
-                    allDependencies = resolvedLibraries,
-                    friendDependencies = emptyList(),
                     mainArguments = mainCallParameters.run { if (shouldBeGenerated()) arguments() else null },
                     exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction))),
                     dceDriven = true,
@@ -180,12 +180,7 @@ abstract class BasicIrBoxTest(
             }
         } else {
             generateKLib(
-                project = config.project,
-                files = filesToCompile,
-                analyzer = AnalyzerWithCompilerReport(config.configuration),
-                configuration = config.configuration,
-                allDependencies = resolvedLibraries,
-                friendDependencies = emptyList(),
+                sourceModule,
                 irFactory = IrFactoryImpl,
                 outputKlibPath = actualOutputFile,
                 nopack = true
