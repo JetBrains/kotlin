@@ -990,7 +990,7 @@ tasks {
 
     register("publishIdeArtifacts") {
         idePluginDependency {
-            dependsOn((rootProject.extra["compilerArtifactsForIde"] as List<String>).map { "$it:prepare" })
+            dependsOn((rootProject.extra["compilerArtifactsForIde"] as List<String>).map { "$it:publish" })
         }
     }
 
