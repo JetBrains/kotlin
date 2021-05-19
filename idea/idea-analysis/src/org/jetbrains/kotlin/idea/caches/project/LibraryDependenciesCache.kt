@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.idea.core.util.getValue
 import org.jetbrains.kotlin.idea.project.isHMPPEnabled
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
 internal typealias LibrariesAndSdks = Pair<List<LibraryInfo>, List<SdkInfo>>
@@ -43,55 +44,62 @@ class LibraryDependenciesCacheImpl(private val project: Project) : LibraryDepend
         )
     }
 
+    private val moduleDependenciesCache by CachedValue(project) {
+        CachedValueProvider.Result(
+            ContainerUtil.createConcurrentWeakMap<Module, LibrariesAndSdks>(),
+            ProjectRootManager.getInstance(project)
+        )
+    }
+
     override fun getLibrariesAndSdksUsedWith(libraryInfo: LibraryInfo): LibrariesAndSdks =
         cache.getOrPut(libraryInfo) { computeLibrariesAndSdksUsedWith(libraryInfo) }
 
+    private fun computeLibrariesAndSdksUsedIn(module: Module): LibrariesAndSdks {
+        val libraries = LinkedHashSet<LibraryInfo>()
+        val sdks = LinkedHashSet<SdkInfo>()
+
+        val processedModules = HashSet<Module>()
+        val condition = Condition<OrderEntry> { orderEntry ->
+            orderEntry.safeAs<ModuleOrderEntry>()?.let {
+                it.module?.run { this !in processedModules } ?: false
+            } ?: true
+        }
+
+        ModuleRootManager.getInstance(module).orderEntries().recursively().satisfying(condition).process(object : RootPolicy<Unit>() {
+            override fun visitModuleSourceOrderEntry(moduleSourceOrderEntry: ModuleSourceOrderEntry, value: Unit) {
+                processedModules.add(moduleSourceOrderEntry.ownerModule)
+            }
+
+            override fun visitLibraryOrderEntry(libraryOrderEntry: LibraryOrderEntry, value: Unit) {
+                libraryOrderEntry.library.safeAs<LibraryEx>()?.takeIf { !it.isDisposed }?.let {
+                    libraries += createLibraryInfo(project, it)
+                }
+            }
+
+            override fun visitJdkOrderEntry(jdkOrderEntry: JdkOrderEntry, value: Unit) {
+                jdkOrderEntry.jdk?.let { jdk ->
+                    sdks += SdkInfo(project, jdk)
+                }
+            }
+        }, Unit)
+
+        return Pair(libraries.toList(), sdks.toList())
+    }
 
     //NOTE: used LibraryRuntimeClasspathScope as reference
     private fun computeLibrariesAndSdksUsedWith(libraryInfo: LibraryInfo): LibrariesAndSdks {
-        val processedModules = HashSet<Module>()
-        val condition = Condition<OrderEntry> { orderEntry ->
-            if (orderEntry is ModuleOrderEntry) {
-                val module = orderEntry.module
-                module != null && module !in processedModules
-            } else {
-                true
-            }
-        }
-
         val libraries = LinkedHashSet<LibraryInfo>()
         val sdks = LinkedHashSet<SdkInfo>()
 
         val platform = libraryInfo.platform
 
         for (module in getLibraryUsageIndex().getModulesLibraryIsUsedIn(libraryInfo)) {
-            if (!processedModules.add(module)) continue
+            val (moduleLibraries, moduleSdks) = moduleDependenciesCache.getOrPut(module) {
+                computeLibrariesAndSdksUsedIn(module)
+            }
 
-            ModuleRootManager.getInstance(module).orderEntries().recursively().satisfying(condition).process(object : RootPolicy<Unit>() {
-                override fun visitModuleSourceOrderEntry(moduleSourceOrderEntry: ModuleSourceOrderEntry, value: Unit) {
-                    processedModules.add(moduleSourceOrderEntry.ownerModule)
-                }
-
-                override fun visitLibraryOrderEntry(libraryOrderEntry: LibraryOrderEntry, value: Unit) {
-                    val otherLibrary = libraryOrderEntry.library
-                    if (otherLibrary is LibraryEx && !otherLibrary.isDisposed) {
-                        val otherLibraryInfos = createLibraryInfo(project, otherLibrary)
-                        otherLibraryInfos.firstOrNull()?.let { otherLibraryInfo ->
-                            if (compatiblePlatforms(platform, otherLibraryInfo.platform)) {
-                                libraries.addAll(otherLibraryInfos)
-                            }
-                        }
-                    }
-                }
-
-                override fun visitJdkOrderEntry(jdkOrderEntry: JdkOrderEntry, value: Unit) {
-                    val jdk = jdkOrderEntry.jdk ?: return
-                    SdkInfo(project, jdk).also { sdkInfo ->
-                        if (compatiblePlatforms(platform, sdkInfo.platform))
-                            sdks += sdkInfo
-                    }
-                }
-            }, Unit)
+            moduleLibraries.filter { compatiblePlatforms(platform, it.platform) }.forEach { libraries.add(it) }
+            moduleSdks.filter { compatiblePlatforms(platform, it.platform) }.forEach { sdks.add(it) }
         }
 
         val filteredLibraries = filterForBuiltins(libraryInfo, libraries)
