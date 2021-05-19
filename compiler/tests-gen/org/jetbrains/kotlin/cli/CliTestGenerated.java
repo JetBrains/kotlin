@@ -316,6 +316,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/firHello.args");
         }
 
+        @TestMetadata("firStdlibDependency.args")
+        public void testFirStdlibDependency() throws Exception {
+            runTest("compiler/testData/cli/jvm/firStdlibDependency.args");
+        }
+
         @TestMetadata("flagAllowingResultAsReturnType.args")
         public void testFlagAllowingResultAsReturnType() throws Exception {
             runTest("compiler/testData/cli/jvm/flagAllowingResultAsReturnType.args");

@@ -66,6 +66,7 @@ import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvid
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
@@ -339,7 +340,7 @@ object KotlinToJVMBytecodeCompiler {
 
             val languageVersionSettings = moduleConfiguration.languageVersionSettings
             val session = createSessionWithDependencies(
-                module,
+                Name.identifier(module.getModuleName()),
                 JvmPlatforms.unspecifiedJvmPlatform,
                 JvmPlatformAnalyzerServices,
                 externalSessionProvider = null,
@@ -356,6 +357,10 @@ object KotlinToJVMBytecodeCompiler {
                         targetIds.map(incrementalComponents::getIncrementalCache)
                     )
                     FirSessionFactory.ProviderAndScopeForIncrementalCompilation(packagePartProvider, librariesScope)
+                },
+                dependenciesConfigurator = {
+                    dependencies(moduleConfiguration.jvmClasspathRoots.map { it.toPath() })
+                    friendDependencies(moduleConfiguration[JVMConfigurationKeys.FRIEND_PATHS] ?: emptyList())
                 },
                 sessionConfigurator = {
                     if (extendedAnalysisMode) {
