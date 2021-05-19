@@ -1216,7 +1216,7 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractFirKeywordCompletionTest> {
-                model("keywords", recursive = false)
+                model("keywords", recursive = false, pattern = KT_WITHOUT_FIR_PREFIX)
             }
         }
 
@@ -1413,7 +1413,7 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractKeywordCompletionTest> {
-                model("keywords", recursive = false)
+                model("keywords", recursive = false, pattern = KT_WITHOUT_FIR_PREFIX)
             }
 
             testClass<AbstractJvmWithLibBasicCompletionTest> {

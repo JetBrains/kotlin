@@ -14,6 +14,7 @@ object TestGeneratorUtil {
     @Language("RegExp") const val KT_OR_KTS_WITHOUT_DOTS_IN_NAME = """^([^.]+)\.(kt|kts)$"""
 
     @Language("RegExp") const val KT_WITHOUT_DOTS_IN_NAME = """^([^.]+)\.kt$"""
+    @Language("RegExp") const val KT_WITHOUT_FIR_PREFIX = """^(.+)(?<!\.fir)\.kt$"""
 
     @JvmStatic
     fun escapeForJavaIdentifier(fileName: String): String {

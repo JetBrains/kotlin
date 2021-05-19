@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FIR_COMPARISON
 fun foo() {
     Math.pow(2.0 <caret>)

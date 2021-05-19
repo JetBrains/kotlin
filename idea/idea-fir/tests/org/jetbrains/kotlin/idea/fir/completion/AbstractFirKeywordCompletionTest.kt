@@ -7,13 +7,21 @@ package org.jetbrains.kotlin.idea.fir.completion
 
 import org.jetbrains.kotlin.idea.completion.test.AbstractKeywordCompletionTest
 import org.jetbrains.kotlin.test.utils.IgnoreTests
+import java.io.File
 
 abstract class AbstractFirKeywordCompletionTest : AbstractKeywordCompletionTest() {
     override val captureExceptions: Boolean = false
 
+    override fun handleTestPath(path: String): String =
+        IgnoreTests.getFirTestFileIfFirPassing(
+            File(path),
+            IgnoreTests.DIRECTIVES.FIR_COMPARISON
+        ).path
+
     override fun executeTest(test: () -> Unit) {
         IgnoreTests.runTestIfEnabledByFileDirective(testDataFile().toPath(), IgnoreTests.DIRECTIVES.FIR_COMPARISON, ".after") {
             super.executeTest(test)
+            IgnoreTests.cleanUpIdenticalFirTestFile(testDataFile())
         }
     }
 }

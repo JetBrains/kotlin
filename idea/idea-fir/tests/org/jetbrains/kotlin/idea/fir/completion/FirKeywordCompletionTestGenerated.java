@@ -96,7 +96,7 @@ public class FirKeywordCompletionTestGenerated extends AbstractFirKeywordComplet
     }
 
     public void testAllFilesPresentInKeywords() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-completion/testData/keywords"), Pattern.compile("^(.+)\\.kt$"), null, false);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-completion/testData/keywords"), Pattern.compile("^(.+)(?<!\\.fir)\\.kt$"), null, false);
     }
 
     @TestMetadata("BeforeClass.kt")

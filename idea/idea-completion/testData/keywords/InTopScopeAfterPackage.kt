@@ -1,4 +1,5 @@
 // FIR_COMPARISON
+// FIR_IDENTICAL
 // COMPILER_ARGUMENTS: -XXLanguage:+SealedInterfaces -XXLanguage:+MultiPlatformProjects
 
 package Test

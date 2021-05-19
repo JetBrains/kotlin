@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FIR_COMPARISON
 fun<T> foo(): Set<T> {
     ret<caret>
