@@ -56,7 +56,7 @@ fun compile(
     baseClassIntoMetadata: Boolean = false,
 ): CompilerResult {
     val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer, moduleToName) =
-        loadIr(project, mainModule, analyzer, configuration, allDependencies, friendDependencies, irFactory, forceAllJs)
+        loadIr(project, mainModule, analyzer, configuration, allDependencies, friendDependencies, irFactory)
 
     val moduleDescriptor = moduleFragment.descriptor
 
