@@ -99,7 +99,6 @@ public class A extends AImpl implements List<String> {
 
 fun main() {
     val x = X()
-    //todo get only one candidate - AImpl.get, no kotlin.collection.List for some reason
     <!OPERATOR_MODIFIER_REQUIRED!>x[0]<!>
     x.size
     x.remove("")

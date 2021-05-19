@@ -1,15 +1,15 @@
 var x : Int <caret>by Baz()
 
 interface Foo {
-  fun getValue(p1: Any?, p2: Any?): Int = 1
+  operator fun getValue(p1: Any?, p2: Any?): Int = 1
 }
 
 interface Bar {
-  fun getValue(p1: Any?, p2: Any?): Int
+  operator fun getValue(p1: Any?, p2: Any?): Int
 }
 
 interface Zoo {
-  fun setValue(p1: Any?, p2: Any?, p3: Any?)
+  operator fun setValue(p1: Any?, p2: Any?, p3: Any?)
 }
 
 class Baz: Foo, Bar, Zoo

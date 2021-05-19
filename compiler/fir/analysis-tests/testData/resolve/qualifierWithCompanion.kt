@@ -15,5 +15,5 @@ fun test() {
 
     fun A.invoke() {}
 
-    my.xx()
+    my.<!OPERATOR_MODIFIER_REQUIRED!>xx<!>()
 }

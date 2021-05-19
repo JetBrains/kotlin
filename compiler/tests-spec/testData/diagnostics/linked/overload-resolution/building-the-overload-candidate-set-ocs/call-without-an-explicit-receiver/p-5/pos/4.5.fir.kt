@@ -71,8 +71,8 @@ class A : I
 class B : I
 
 fun case3(){
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>A()<!>
-    <!DEBUG_INFO_CALL("fqName: lib.case3.B.invoke; typeCall: variable&invoke")!>A()<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("tests.case3.A")!>A()<!>
+    <!DEBUG_INFO_CALL("fqName: tests.case3.A.A; typeCall: function")!>A()<!>
 
     A.invoke()
     A.<!DEBUG_INFO_CALL("fqName: lib.case3.B.invoke; typeCall: function")!>invoke()<!>
