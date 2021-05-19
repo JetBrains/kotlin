@@ -21,8 +21,4 @@ RUNTIME_NOTHROW void ReleaseHeapRefNoCollect(const ObjHeader* object) {
     TODO();
 }
 
-ForeignRefContext InitLocalForeignRef(ObjHeader* object) {
-    TODO();
-}
-
 } // extern "C"

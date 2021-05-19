@@ -444,6 +444,12 @@ extern "C" void EnsureNeverFrozen(ObjHeader* obj) {
     }
 }
 
+extern "C" ForeignRefContext InitLocalForeignRef(ObjHeader* object) {
+    // TODO: Remove when legacy MM is gone.
+    // Nothing to do.
+    return nullptr;
+}
+
 extern "C" ForeignRefContext InitForeignRef(ObjHeader* object) {
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     auto* node = mm::StableRefRegistry::Instance().RegisterStableRef(threadData, object);
@@ -451,6 +457,7 @@ extern "C" ForeignRefContext InitForeignRef(ObjHeader* object) {
 }
 
 extern "C" void DeinitForeignRef(ObjHeader* object, ForeignRefContext context) {
+    RuntimeAssert(context != nullptr, "DeinitForeignRef must not be called for InitLocalForeignRef");
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     auto* node = FromForeignRefManager(context);
     RuntimeAssert(object == **node, "Must correspond to the same object");
