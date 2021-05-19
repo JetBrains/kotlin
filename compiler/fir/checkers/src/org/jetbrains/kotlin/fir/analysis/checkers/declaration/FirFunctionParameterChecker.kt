@@ -6,12 +6,13 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirRealSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isInline
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOnWithSuppression
+import org.jetbrains.kotlin.fir.analysis.checkers.valOrVarKeyword
+import org.jetbrains.kotlin.fir.analysis.diagnostics.*
+import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -31,10 +32,11 @@ object FirFunctionParameterChecker : FirFunctionChecker() {
         checkVarargParameters(declaration, context, reporter)
         checkParameterTypes(declaration, context, reporter)
         checkUninitializedParameter(declaration, context, reporter)
+        checkValOrVarParameter(declaration, context, reporter)
     }
 
-    private fun checkParameterTypes(declaration: FirFunction<*>, context: CheckerContext, reporter: DiagnosticReporter) {
-        for (valueParameter in declaration.valueParameters) {
+    private fun checkParameterTypes(function: FirFunction<*>, context: CheckerContext, reporter: DiagnosticReporter) {
+        for (valueParameter in function.valueParameters) {
             val returnTypeRef = valueParameter.returnTypeRef
             if (returnTypeRef !is FirErrorTypeRef) continue
             // type problems on real source are already reported by ConeDiagnostic.toFirDiagnostics
@@ -103,6 +105,25 @@ object FirFunctionParameterChecker : FirFunctionChecker() {
                     }
                 }
             })
+        }
+    }
+
+    private fun checkValOrVarParameter(function: FirFunction<*>, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (function is FirConstructor && function.isPrimary) {
+            // `val/var` is valid for primary constructors, but not for secondary constructors
+            return
+        }
+
+        for (valueParameter in function.valueParameters) {
+            val source = valueParameter.source
+            if (source?.kind is FirFakeSourceElementKind) continue
+            source.valOrVarKeyword?.let {
+                if (function is FirConstructor) {
+                    reporter.reportOn(source, FirErrors.VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER, it, context)
+                } else {
+                    reporter.reportOn(source, FirErrors.VAL_OR_VAR_ON_FUN_PARAMETER, it, context)
+                }
+            }
         }
     }
 }

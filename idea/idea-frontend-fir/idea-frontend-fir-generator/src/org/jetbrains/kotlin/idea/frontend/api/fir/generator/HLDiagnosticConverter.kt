@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
+import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtExpression
@@ -235,6 +236,7 @@ private object FirToKtConversionCreator {
         Int::class,
         Name::class,
         EventOccurrencesRange::class,
+        KtKeywordToken::class,
         KtModifierKeywordToken::class,
         Visibility::class,
         EffectiveVisibility::class,

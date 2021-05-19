@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtVariableLikeSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtVariableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
+import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotation
@@ -155,6 +156,26 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class DivisionByZero : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = DivisionByZero::class
+    }
+
+    abstract class ValOrVarOnLoopParameter : KtFirDiagnostic<KtParameter>() {
+        override val diagnosticClass get() = ValOrVarOnLoopParameter::class
+        abstract val valOrVar: KtKeywordToken
+    }
+
+    abstract class ValOrVarOnFunParameter : KtFirDiagnostic<KtParameter>() {
+        override val diagnosticClass get() = ValOrVarOnFunParameter::class
+        abstract val valOrVar: KtKeywordToken
+    }
+
+    abstract class ValOrVarOnCatchParameter : KtFirDiagnostic<KtParameter>() {
+        override val diagnosticClass get() = ValOrVarOnCatchParameter::class
+        abstract val valOrVar: KtKeywordToken
+    }
+
+    abstract class ValOrVarOnSecondaryConstructorParameter : KtFirDiagnostic<KtParameter>() {
+        override val diagnosticClass get() = ValOrVarOnSecondaryConstructorParameter::class
+        abstract val valOrVar: KtKeywordToken
     }
 
     abstract class InvisibleReference : KtFirDiagnostic<PsiElement>() {
