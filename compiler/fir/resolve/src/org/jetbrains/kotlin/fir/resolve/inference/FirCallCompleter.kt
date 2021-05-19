@@ -31,8 +31,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.typeFromCallee
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
@@ -56,13 +54,26 @@ class FirCallCompleter(
 
     data class CompletionResult<T>(val result: T, val callCompleted: Boolean)
 
-    fun <T> completeCall(call: T, expectedTypeRef: FirTypeRef?): CompletionResult<T> where T : FirResolvable, T : FirStatement =
-        completeCall(call, expectedTypeRef, mayBeCoercionToUnitApplied = false)
+    fun <T> completeCall(
+        call: T,
+        expectedTypeRef: FirTypeRef?,
+        expectedTypeMismatchIsReportedInChecker: Boolean = false,
+    ): CompletionResult<T> where T : FirResolvable, T : FirStatement =
+        completeCall(call, expectedTypeRef, mayBeCoercionToUnitApplied = false, expectedTypeMismatchIsReportedInChecker)
 
     fun <T> completeCall(call: T, data: ResolutionMode): CompletionResult<T> where T : FirResolvable, T : FirStatement =
-        completeCall(call, data.expectedType(components), (data as? ResolutionMode.WithExpectedType)?.mayBeCoercionToUnitApplied == true)
+        completeCall(
+            call,
+            data.expectedType(components),
+            (data as? ResolutionMode.WithExpectedType)?.mayBeCoercionToUnitApplied == true,
+            (data as? ResolutionMode.WithExpectedType)?.expectedTypeMismatchIsReportedInChecker == true,
+        )
 
-    fun <T> completeCall(call: T, expectedTypeRef: FirTypeRef?, mayBeCoercionToUnitApplied: Boolean): CompletionResult<T>
+    private fun <T> completeCall(
+        call: T, expectedTypeRef: FirTypeRef?,
+        mayBeCoercionToUnitApplied: Boolean,
+        expectedTypeMismatchIsReportedInChecker: Boolean,
+    ): CompletionResult<T>
             where T : FirResolvable, T : FirStatement {
         val typeRef = components.typeFromCallee(call)
 
@@ -82,14 +93,15 @@ class FirCallCompleter(
         }
 
         if (expectedTypeRef is FirResolvedTypeRef) {
+            val expectedTypeConstraintPosition = ConeExpectedTypeConstraintPosition(expectedTypeMismatchIsReportedInChecker)
             if (expectedTypeRef.coneType.isUnitOrFlexibleUnit && mayBeCoercionToUnitApplied) {
                 if (candidate.system.notFixedTypeVariables.isNotEmpty()) {
                     candidate.system.addSubtypeConstraintIfCompatible(
-                        initialType, expectedTypeRef.type, ConeExpectedTypeConstraintPosition()
+                        initialType, expectedTypeRef.type, expectedTypeConstraintPosition
                     )
                 }
             } else {
-                candidate.system.addSubtypeConstraint(initialType, expectedTypeRef.type, ConeExpectedTypeConstraintPosition())
+                candidate.system.addSubtypeConstraint(initialType, expectedTypeRef.type, expectedTypeConstraintPosition)
             }
         }
 

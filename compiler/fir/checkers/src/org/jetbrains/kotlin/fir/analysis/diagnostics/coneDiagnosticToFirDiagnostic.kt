@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
+import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParameterConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
@@ -164,19 +165,36 @@ private fun mapSystemHasContradictionError(
     source: FirSourceElement,
     qualifiedAccessSource: FirSourceElement?,
 ): List<FirDiagnostic<FirSourceElement>> {
+    val errorsToIgnore = mutableSetOf<ConstraintSystemError>()
     return buildList<FirDiagnostic<FirSourceElement>> {
         for (error in diagnostic.candidate.system.errors) {
-            addIfNotNull(error.toDiagnostic(source, qualifiedAccessSource, diagnostic.candidate.callInfo.session.typeContext))
+            addIfNotNull(
+                error.toDiagnostic(
+                    source,
+                    qualifiedAccessSource,
+                    diagnostic.candidate.callInfo.session.typeContext,
+                    errorsToIgnore,
+                )
+            )
         }
     }.ifEmpty {
         listOfNotNull(
             diagnostic.candidate.system.errors.firstNotNullOfOrNull {
+                if (it in errorsToIgnore) return@firstNotNullOfOrNull null
                 val message = when (it) {
                     is NewConstraintError -> "NewConstraintError at ${it.position}: ${it.lowerType} <!: ${it.upperType}"
                     // Error should be reported on the error type itself
                     is ConstrainingTypeIsError -> return@firstNotNullOfOrNull null
                     else -> "Inference error: ${it::class.simpleName}"
                 }
+
+                if (it is NewConstraintError && it.position.from is FixVariableConstraintPosition<*>) {
+                    val morePreciseDiagnosticExists = diagnostic.candidate.system.errors.any { other ->
+                        other is NewConstraintError && other.position.from !is FixVariableConstraintPosition<*>
+                    }
+                    if (morePreciseDiagnosticExists) return@firstNotNullOfOrNull null
+                }
+
                 FirErrors.NEW_INFERENCE_ERROR.on(qualifiedAccessSource ?: source, message)
             }
         )
@@ -187,6 +205,7 @@ private fun ConstraintSystemError.toDiagnostic(
     source: FirSourceElement,
     qualifiedAccessSource: FirSourceElement?,
     typeContext: ConeTypeContext,
+    errorsToIgnore: MutableSet<ConstraintSystemError>,
 ): FirDiagnostic<FirSourceElement>? {
     return when (this) {
         is NewConstraintError -> {
@@ -204,7 +223,11 @@ private fun ConstraintSystemError.toDiagnostic(
             }
 
             when (position) {
-                is ExpectedTypeConstraintPosition<*> -> {
+                is ConeExpectedTypeConstraintPosition -> {
+                    if (position.expectedTypeMismatchIsReportedInChecker) {
+                        errorsToIgnore.add(this)
+                        return null
+                    }
                     val inferredType =
                         if (!lowerConeType.isNullableNothing)
                             lowerConeType

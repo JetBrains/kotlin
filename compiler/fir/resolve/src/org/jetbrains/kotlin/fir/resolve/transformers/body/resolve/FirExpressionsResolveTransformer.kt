@@ -423,7 +423,11 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         }
 
         fun chooseOperator(): FirStatement {
-            callCompleter.completeCall(resolvedOperatorCall, lhsVariable?.returnTypeRef ?: noExpectedType)
+            callCompleter.completeCall(
+                resolvedOperatorCall,
+                lhsVariable?.returnTypeRef ?: noExpectedType,
+                expectedTypeMismatchIsReportedInChecker = true
+            )
             dataFlowAnalyzer.exitFunctionCall(resolvedOperatorCall, callCompleted = true)
             val assignment =
                 buildVariableAssignment {
@@ -684,7 +688,10 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         val resolvedAssignment = callResolver.resolveVariableAccessAndSelectCandidate(variableAssignment)
         val result = if (resolvedAssignment is FirVariableAssignment) {
             val completeAssignment = callCompleter.completeCall(resolvedAssignment, noExpectedType).result // TODO: check
-            completeAssignment.transformRValue(transformer, withExpectedType(variableAssignment.lValueTypeRef))
+            completeAssignment.transformRValue(
+                transformer,
+                withExpectedType(variableAssignment.lValueTypeRef, expectedTypeMismatchIsReportedInChecker = true),
+            )
         } else {
             // This can happen in erroneous code only
             resolvedAssignment

@@ -15,8 +15,13 @@ sealed class ResolutionMode {
     object ContextDependent : ResolutionMode()
     object ContextDependentDelegate : ResolutionMode()
     object ContextIndependent : ResolutionMode()
+
     // TODO: it's better not to use WithExpectedType(FirImplicitTypeRef)
-    class WithExpectedType(val expectedTypeRef: FirTypeRef, val mayBeCoercionToUnitApplied: Boolean = false) : ResolutionMode()
+    class WithExpectedType(
+        val expectedTypeRef: FirTypeRef,
+        val mayBeCoercionToUnitApplied: Boolean = false,
+        val expectedTypeMismatchIsReportedInChecker: Boolean = false,
+    ) : ResolutionMode()
 
     class WithStatus(val status: FirDeclarationStatus) : ResolutionMode()
 
@@ -29,8 +34,13 @@ fun ResolutionMode.expectedType(components: BodyResolveComponents): FirTypeRef? 
     else -> null
 }
 
-fun withExpectedType(expectedTypeRef: FirTypeRef?): ResolutionMode =
-    expectedTypeRef?.let { ResolutionMode.WithExpectedType(it) } ?: ResolutionMode.ContextDependent
+fun withExpectedType(expectedTypeRef: FirTypeRef?, expectedTypeMismatchIsReportedInChecker: Boolean = false): ResolutionMode =
+    expectedTypeRef?.let {
+        ResolutionMode.WithExpectedType(
+            it,
+            expectedTypeMismatchIsReportedInChecker = expectedTypeMismatchIsReportedInChecker
+        )
+    } ?: ResolutionMode.ContextDependent
 
 @JvmName("withExpectedTypeNullable")
 fun withExpectedType(coneType: ConeKotlinType?, mayBeCoercionToUnitApplied: Boolean = false): ResolutionMode {
