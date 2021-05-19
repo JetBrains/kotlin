@@ -57,7 +57,6 @@ import org.jetbrains.kotlin.fir.analysis.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
-import org.jetbrains.kotlin.fir.createSessionWithDependencies
 import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
 import org.jetbrains.kotlin.javac.JavacWrapper
@@ -339,7 +338,7 @@ object KotlinToJVMBytecodeCompiler {
             val librariesScope = ProjectScope.getLibrariesScope(project)
 
             val languageVersionSettings = moduleConfiguration.languageVersionSettings
-            val session = createSessionWithDependencies(
+            val session = FirSessionFactory.createSessionWithDependencies(
                 Name.identifier(module.getModuleName()),
                 JvmPlatforms.unspecifiedJvmPlatform,
                 JvmPlatformAnalyzerServices,

@@ -74,6 +74,52 @@ object FirSessionFactory {
         val scope: GlobalSearchScope
     )
 
+    inline fun createSessionWithDependencies(
+        moduleName: Name,
+        platform: TargetPlatform,
+        analyzerServices: PlatformDependentAnalyzerServices,
+        externalSessionProvider: FirProjectSessionProvider?,
+        project: Project,
+        languageVersionSettings: LanguageVersionSettings,
+        sourceScope: GlobalSearchScope,
+        librariesScope: GlobalSearchScope,
+        lookupTracker: LookupTracker?,
+        getPackagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
+        getProviderAndScopeForIncrementalCompilation: () -> ProviderAndScopeForIncrementalCompilation?,
+        dependenciesConfigurator: DependencyListForCliModule.Builder.() -> Unit = {},
+        noinline sessionConfigurator: FirSessionConfigurator.() -> Unit = {},
+    ): FirSession {
+        val dependencyList = DependencyListForCliModule.build(moduleName, platform, analyzerServices, dependenciesConfigurator)
+        val sessionProvider = externalSessionProvider ?: FirProjectSessionProvider()
+        createLibrarySession(
+            moduleName,
+            sessionProvider,
+            dependencyList.moduleDataProvider,
+            librariesScope,
+            project,
+            getPackagePartProvider(librariesScope)
+        )
+
+        val mainModuleData = FirModuleDataImpl(
+            moduleName,
+            dependencyList.regularDependencies,
+            dependencyList.dependsOnDependencies,
+            dependencyList.friendsDependencies,
+            dependencyList.platform,
+            dependencyList.analyzerServices
+        )
+        return createJavaModuleBasedSession(
+            mainModuleData,
+            sessionProvider,
+            sourceScope,
+            project,
+            providerAndScopeForIncrementalCompilation = getProviderAndScopeForIncrementalCompilation(),
+            languageVersionSettings = languageVersionSettings,
+            lookupTracker = lookupTracker,
+            init = sessionConfigurator
+        )
+    }
+
     fun createJavaModuleBasedSession(
         moduleData: FirModuleData,
         sessionProvider: FirProjectSessionProvider,

@@ -10,6 +10,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -41,7 +42,7 @@ fun createSessionForTests(
     friendsPaths: List<Path> = emptyList(),
     getPackagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
 ): FirSession {
-    return createSessionWithDependencies(
+    return FirSessionFactory.createSessionWithDependencies(
         Name.identifier(moduleName),
         JvmPlatforms.unspecifiedJvmPlatform,
         JvmPlatformAnalyzerServices,

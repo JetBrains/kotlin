@@ -80,7 +80,7 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
             val scope = TopDownAnalyzerFacadeForJVM.newModuleSearchScope(
                 project,
                 moduleFiles.mapNotNull { it.ktFile })
-            createSessionWithDependencies(
+            FirSessionFactory.createSessionWithDependencies(
                 Name.identifier(info.name.asString().removeSurrounding("<", ">")),
                 info.platform,
                 info.analyzerServices,
