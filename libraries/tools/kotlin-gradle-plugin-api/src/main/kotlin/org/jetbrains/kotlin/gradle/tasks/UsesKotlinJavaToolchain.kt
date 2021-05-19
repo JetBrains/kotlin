@@ -10,6 +10,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
+import org.gradle.jvm.toolchain.JavaLauncher
 import java.io.File
 
 interface UsesKotlinJavaToolchain {
@@ -25,27 +26,44 @@ interface KotlinJavaToolchain {
     @get:Input
     val javaVersion: Provider<JavaVersion>
 
-    /**
-     * Set JDK to use for Kotlin compilation.
-     *
-     * Major JDK version is considered as compile task input.
-     *
-     * @param jdkHomeLocation path to JDK.
-     * *Note*: project build will fail on providing here JRE instead of JDK!
-     * @param jdkVersion provided JDK version
-     */
-    fun setJdkHome(
-        jdkHomeLocation: File,
-        jdkVersion: JavaVersion
-    )
+    @get:Internal
+    val jdk: JdkSetter
 
-    /**
-     * Set JDK to use for Kotlin compilation.
-     *
-     * @see [setJdkHome]
-     */
-    fun setJdkHome(
-        jdkHomeLocation: String,
-        jdkVersion: JavaVersion
-    ) = setJdkHome(File(jdkHomeLocation), jdkVersion)
+    @get:Internal
+    val toolchain: JavaToolchainSetter
+
+    interface JdkSetter {
+        /**
+         * Set JDK to use for Kotlin compilation.
+         *
+         * Major JDK version is considered as compile task input.
+         *
+         * @param jdkHomeLocation path to JDK.
+         * *Note*: project build will fail on providing here JRE instead of JDK!
+         * @param jdkVersion provided JDK version
+         */
+        fun use(
+            jdkHomeLocation: File,
+            jdkVersion: JavaVersion
+        )
+
+        /**
+         * Set JDK to use for Kotlin compilation.
+         *
+         * @see [use]
+         */
+        fun use(
+            jdkHomeLocation: String,
+            jdkVersion: JavaVersion
+        ) = use(File(jdkHomeLocation), jdkVersion)
+    }
+
+    interface JavaToolchainSetter {
+        /**
+         * Set JDK obtained from [org.gradle.jvm.toolchain.JavaToolchainService] to use for Kotlin compilation.
+         */
+        fun use(
+            javaLauncher: Provider<JavaLauncher>
+        )
+    }
 }

@@ -14,6 +14,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Internal
 import org.gradle.internal.jvm.Jvm
+import org.gradle.jvm.toolchain.JavaLauncher
 import org.jetbrains.kotlin.gradle.utils.chainedFinalizeValueOnRead
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.gradle.utils.propertyWithConvention
@@ -82,14 +83,38 @@ abstract class KotlinJavaToolchainProvider @Inject constructor(
             objects.propertyWithConvention<File?>(null)
         })
 
-    override fun setJdkHome(
-        jdkHomeLocation: File,
-        jdkVersion: JavaVersion
-    ) {
-        val jvm = Jvm.forHome(jdkHomeLocation) as Jvm
+    override val jdk: KotlinJavaToolchain.JdkSetter = DefaultJdkSetter()
 
-        javaExecutable.set(jvm.javaExecutable)
-        _jdkToolsJar.set(jvm.toolsJar)
-        _javaVersion.set(jdkVersion)
+    override val toolchain: KotlinJavaToolchain.JavaToolchainSetter = DefaultJavaToolchainSetter()
+
+    private inner class DefaultJdkSetter : KotlinJavaToolchain.JdkSetter {
+        override fun use(
+            jdkHomeLocation: File,
+            jdkVersion: JavaVersion
+        ) {
+            val jvm = Jvm.forHome(jdkHomeLocation) as Jvm
+
+            javaExecutable.set(jvm.javaExecutable)
+            _jdkToolsJar.set(jvm.toolsJar)
+            _javaVersion.set(jdkVersion)
+        }
+    }
+
+    private inner class DefaultJavaToolchainSetter : KotlinJavaToolchain.JavaToolchainSetter {
+        override fun use(
+            javaLauncher: Provider<JavaLauncher>
+        ) {
+            javaExecutable.set(javaLauncher.map { it.executablePath })
+            _javaVersion.set(
+                javaLauncher.map {
+                    JavaVersion.toVersion(it.metadata.languageVersion)
+                }
+            )
+            _jdkToolsJar.set(
+                javaLauncher.map {
+                    Jvm.forHome(it.metadata.installationPath.asFile).toolsJar
+                }
+            )
+        }
     }
 }

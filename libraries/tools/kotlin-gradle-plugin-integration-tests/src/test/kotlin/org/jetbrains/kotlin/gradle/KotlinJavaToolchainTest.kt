@@ -243,6 +243,22 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @DisplayName("Should allow to set JDK version for tasks via Java toolchain")
+    @GradleTestVersions(minVersion = "6.7")
+    @GradleTest
+    internal fun setJdkUsingJavaToolchain(gradleVersion: GradleVersion) {
+        project(
+            projectName = "simple".fullProjectName,
+            gradleVersion = gradleVersion,
+            forceOutput = true
+        ) {
+            useToolchainToCompile(11)
+            build("assemble") {
+                assertDaemonIsUsingJdk(getToolchainExecPathFromLogs())
+            }
+        }
+    }
+
     private fun BuildResult.assertDaemonIsUsingJdk(
         javaexecPath: String
     ) = assertOutputContains("i: connected to the daemon. Daemon is using following 'java' executable to run itself: $javaexecPath")
@@ -270,7 +286,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             project.tasks
                  .withType(UsesKotlinJavaToolchain.class)
                  .configureEach {
-                      it.kotlinJavaToolchain.setJdkHome(
+                      it.kotlinJavaToolchain.jdk.use(
                            "${getJdk9Path()}",
                            JavaVersion.VERSION_1_9
                       )
@@ -278,4 +294,42 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             """.trimIndent()
         )
     }
+
+    private fun TestProject.useToolchainToCompile(
+        jdkVersion: Int
+    ) {
+        //language=Groovy
+        rootBuildGradle.append(
+            """
+            import org.jetbrains.kotlin.gradle.tasks.UsesKotlinJavaToolchain
+            
+            java {
+                toolchain {
+                    languageVersion.set(JavaLanguageVersion.of($jdkVersion))
+                }
+            }
+            
+            def toolchain = project.extensions.getByType(JavaPluginExtension.class).toolchain
+            def service = project.extensions.getByType(JavaToolchainService.class)
+            def defaultLauncher = service.launcherFor(toolchain)
+                    
+            project.tasks
+                 .withType(UsesKotlinJavaToolchain.class)
+                 .configureEach {
+                      it.kotlinJavaToolchain.toolchain.use(
+                          defaultLauncher
+                      )
+                 }
+            
+            afterEvaluate {
+                logger.info("Toolchain exec path: ${'$'}{defaultLauncher.get().executablePath.asFile.absolutePath}")
+            }
+            """.trimIndent()
+        )
+    }
+
+    private fun BuildResult.getToolchainExecPathFromLogs() = output
+        .lineSequence()
+        .first { it.startsWith("Toolchain exec path:") }
+        .substringAfter("Toolchain exec path: ")
 }
