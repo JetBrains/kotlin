@@ -10,6 +10,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.*
 import org.gradle.api.invocation.Gradle
+import org.gradle.api.attributes.Attribute
 import org.gradle.api.logging.Logger
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
@@ -43,6 +44,8 @@ import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.tasks.TaskConfigurator
 import org.jetbrains.kotlin.gradle.internal.tasks.TaskWithLocalState
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
+import org.jetbrains.kotlin.gradle.internal.transforms.CLASSPATH_ENTRY_SNAPSHOT_FILE_NAME
+import org.jetbrains.kotlin.gradle.internal.transforms.ClasspathEntrySnapshotTransform
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
@@ -193,13 +196,17 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
                     project.plugins.any { it is KotlinPlatformPluginBase || it is KotlinMultiplatformPluginWrapper || it is KotlinPm20PluginWrapper }
                 }
             ).disallowChanges()
-            task.taskBuildDirectory.value(
-                project.layout.buildDirectory.dir("$KOTLIN_BUILD_DIR_NAME/${task.name}")
-            ).disallowChanges()
+            task.taskBuildDirectory.value(getKotlinBuildDir(task)).disallowChanges()
             task.localStateDirectories.from(task.taskBuildDirectory).disallowChanges()
 
             PropertiesProvider(task.project).mapKotlinDaemonProperties(task)
         }
+
+        private fun getKotlinBuildDir(task: T): Provider<Directory> =
+            task.project.layout.buildDirectory.dir("$KOTLIN_BUILD_DIR_NAME/${task.name}")
+
+        protected open fun getClasspathSnapshotDir(task: T): Provider<Directory> =
+            task.project.layout.buildDirectory.dir("$KOTLIN_BUILD_DIR_NAME/classpath-snapshot/${task.name}")
     }
 
     init {
@@ -432,8 +439,53 @@ abstract class KotlinCompile @Inject constructor(
     KotlinJvmCompile,
     UsesKotlinJavaToolchain {
 
-    class Configurator(kotlinCompilation: KotlinCompilationData<*>) : AbstractKotlinCompile.Configurator<KotlinCompile>(kotlinCompilation) {
-        override fun configure(task: KotlinCompile) {
+    internal open class Configurator<T : KotlinCompile>(
+        kotlinCompilation: KotlinCompilationData<*>,
+        private val properties: PropertiesProvider
+    ) : AbstractKotlinCompile.Configurator<T>(kotlinCompilation) {
+
+        companion object {
+            private const val TRANSFORMS_REGISTERED = "_kgp_internal_kotlin_compile_transforms_registered"
+
+            val ARTIFACT_TYPE_ATTRIBUTE: Attribute<String> = Attribute.of("artifactType", String::class.java)
+            private const val DIRECTORY_ARTIFACT_TYPE = "directory"
+            private const val JAR_ARTIFACT_TYPE = "jar"
+            const val CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE = "classpath-entry-snapshot"
+        }
+
+        /**
+         * Prepares for configuration of the task. This method must be called during build configuration, not during task configuration
+         * (which typically happens after build configuration). The reason is that some actions must be performed early (e.g., creating
+         * configurations should be done early to avoid issues with composite builds (https://issuetracker.google.com/183952598)).
+         */
+        fun runAtConfigurationTime(taskProvider: TaskProvider<T>, project: Project) {
+            if (properties.useClasspathSnapshot) {
+                registerTransformsOnce(project)
+                project.configurations.create(classpathSnapshotConfigurationName(taskProvider.name)).apply {
+                    project.dependencies.add(name, project.files(project.provider { taskProvider.get().classpath }))
+                }
+            }
+        }
+
+        private fun registerTransformsOnce(project: Project) {
+            if (project.extensions.extraProperties.has(TRANSFORMS_REGISTERED)) {
+                return
+            }
+            project.extensions.extraProperties[TRANSFORMS_REGISTERED] = true
+
+            project.dependencies.registerTransform(ClasspathEntrySnapshotTransform::class.java) {
+                it.from.attribute(ARTIFACT_TYPE_ATTRIBUTE, JAR_ARTIFACT_TYPE)
+                it.to.attribute(ARTIFACT_TYPE_ATTRIBUTE, CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE)
+            }
+            project.dependencies.registerTransform(ClasspathEntrySnapshotTransform::class.java) {
+                it.from.attribute(ARTIFACT_TYPE_ATTRIBUTE, DIRECTORY_ARTIFACT_TYPE)
+                it.to.attribute(ARTIFACT_TYPE_ATTRIBUTE, CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE)
+            }
+        }
+
+        private fun classpathSnapshotConfigurationName(taskName: String) = "_kgp_internal_${taskName}_classpath_snapshot"
+
+        override fun configure(task: T) {
             super.configure(task)
 
             val compileJavaTaskProvider = when (compilation) {
@@ -450,6 +502,16 @@ abstract class KotlinCompile @Inject constructor(
                 task.associatedJavaCompileTaskName.set(
                     compileJavaTaskProvider.map { it.name }
                 )
+            }
+
+            if (properties.useClasspathSnapshot) {
+                val classpathSnapshot = task.project.configurations.getByName(classpathSnapshotConfigurationName(task.name))
+                task.classpathSnapshotProperties.classpathSnapshot.from(
+                    classpathSnapshot.incoming.artifactView {
+                        it.attributes.attribute(ARTIFACT_TYPE_ATTRIBUTE, CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE)
+                    }.files
+                )
+                task.classpathSnapshotProperties.classpathSnapshotDir.value(getClasspathSnapshotDir(task)).disallowChanges()
             }
         }
     }
@@ -481,8 +543,22 @@ abstract class KotlinCompile @Inject constructor(
             logger.kotlinDebug { "Set $this.usePreciseJavaTracking=$value" }
         }
 
-    @get:Input
-    abstract val useClasspathSnapshot: Property<Boolean>
+    @get:Nested
+    abstract val classpathSnapshotProperties: ClasspathSnapshotProperties
+
+    /** Properties related to the `kotlin.incremental.useClasspathSnapshot` feature. */
+    abstract class ClasspathSnapshotProperties {
+        @get:Input
+        abstract val useClasspathSnapshot: Property<Boolean>
+
+        @get:Classpath
+        @get:Optional // Set if useClasspathSnapshot == true
+        abstract val classpathSnapshot: ConfigurableFileCollection
+
+        @get:OutputDirectory
+        @get:Optional // Set if useClasspathSnapshot == true
+        abstract val classpathSnapshotDir: DirectoryProperty
+    }
 
     @get:Internal
     internal val defaultKotlinJavaToolchain: Provider<DefaultKotlinJavaToolchain> = objects
@@ -551,6 +627,9 @@ abstract class KotlinCompile @Inject constructor(
         val outputItemCollector = OutputItemsCollectorImpl()
         val compilerRunner = compilerRunner.get()
 
+        if (classpathSnapshotProperties.useClasspathSnapshot.get()) {
+            getClasspathChanges()
+        }
         val icEnv = if (isIncrementalCompilationEnabled()) {
             logger.info(USING_JVM_INCREMENTAL_COMPILATION_MESSAGE)
             IncrementalCompilationEnvironment(
@@ -578,6 +657,12 @@ abstract class KotlinCompile @Inject constructor(
             environment,
             defaultKotlinJavaToolchain.get().providedJvm.get().javaHome
         )
+
+        with(classpathSnapshotProperties) {
+            if (useClasspathSnapshot.get()) {
+                copyClasspathSnapshotFilesToDir(classpathSnapshot.files.toList(), classpathSnapshotDir.get().asFile)
+            }
+        }
     }
 
     private fun validateKotlinAndJavaHasSameTargetCompatibility(args: K2JVMCompilerArguments) {
@@ -635,6 +720,39 @@ abstract class KotlinCompile @Inject constructor(
     override fun source(vararg sources: Any): SourceTask {
         sourceRootsContainer.add(*sources)
         return super.source(*sources)
+    }
+
+    private fun getClasspathChanges() {
+        // TODO WORK-IN-PROGRESS
+        val currentClasspathSnapshotFiles = classpathSnapshotProperties.classpathSnapshot.files.toList()
+        val previousClasspathSnapshotFiles = getClasspathSnapshotFilesInDir(classpathSnapshotProperties.classpathSnapshotDir.get().asFile)
+    }
+
+    /**
+     * Copies classpath snapshot files to the given directory.
+     *
+     * To preserve their order, we put them in subdirectories with names being their indices in the original list, as shown below:
+     *     classpathSnapshotDir/0/snapshotFileName
+     *     classpathSnapshotDir/1/snapshotFileName
+     *     ...
+     *     classpathSnapshotDir/N-1/snapshotFileName
+     */
+    private fun copyClasspathSnapshotFilesToDir(classpathSnapshotFiles: List<File>, classpathSnapshotDir: File) {
+        classpathSnapshotDir.deleteRecursively()
+        classpathSnapshotDir.mkdirs()
+        for ((index, file) in classpathSnapshotFiles.withIndex()) {
+            file.copyTo(File("$classpathSnapshotDir/$index/$CLASSPATH_ENTRY_SNAPSHOT_FILE_NAME"), overwrite = true)
+        }
+    }
+
+    /**
+     * Returns all classpath snapshot files in the given directory, sorted by their original indices (the subdirectories' names).
+     *
+     * See [copyClasspathSnapshotFilesToDir] for the structure of the classpath snapshot directory.
+     */
+    private fun getClasspathSnapshotFilesInDir(classpathSnapshotDir: File): List<File> {
+        val subDirs = classpathSnapshotDir.listFiles() ?: return emptyList()
+        return subDirs.toList().sortedBy { it.name.toInt() }.map { File(it, CLASSPATH_ENTRY_SNAPSHOT_FILE_NAME) }
     }
 }
 
