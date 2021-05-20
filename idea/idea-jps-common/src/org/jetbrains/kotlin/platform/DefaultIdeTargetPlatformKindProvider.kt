@@ -5,10 +5,9 @@
 
 package org.jetbrains.kotlin.platform
 
-import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.kotlin.config.isJps
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.platform.TargetPlatform
 
 interface DefaultIdeTargetPlatformKindProvider {
     val defaultPlatform: TargetPlatform
@@ -21,7 +20,7 @@ interface DefaultIdeTargetPlatformKindProvider {
                     return JvmPlatforms.defaultJvmPlatform
                 }
 
-                return ServiceManager.getService(DefaultIdeTargetPlatformKindProvider::class.java).defaultPlatform
+                return ApplicationManager.getApplication().getService(DefaultIdeTargetPlatformKindProvider::class.java).defaultPlatform
             }
     }
 }
