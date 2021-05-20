@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 abstract class IrProperty :
     IrDeclarationBase(),
     IrPossiblyExternalDeclaration,
-    IrOverridableMember,
     IrOverridableDeclaration<IrPropertySymbol>,
     IrMetadataSourceOwner,
     IrAttributeContainer,
@@ -40,7 +39,7 @@ abstract class IrProperty :
     abstract val isLateinit: Boolean
     abstract val isDelegated: Boolean
     abstract val isExpect: Boolean
-    abstract val isFakeOverride: Boolean
+    abstract override val isFakeOverride: Boolean
 
     abstract var backingField: IrField?
     abstract var getter: IrSimpleFunction?
