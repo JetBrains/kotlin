@@ -39,6 +39,9 @@ fun KtDeclaration.resolveToDescriptorIfAny(
     val context = analyze(resolutionFacade, bodyResolveMode)
     return if (this is KtParameter && hasValOrVar()) {
         context.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, this)
+        // It is incorrect to have `val/var` parameters outside the primary constructor (e.g., `fun foo(val x: Int)`)
+        // but we still want to try to resolve in such cases.
+            ?: context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, this)
     } else {
         context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, this)
     }
