@@ -426,6 +426,12 @@ private val propertyAccessorInlinerLoweringPhase = makeWasmModulePhase(
     description = "[Optimization] Inline property accessors"
 )
 
+private val wasmTryCatchLowering = makeWasmModulePhase(
+    ::WasmTryCatchLowering,
+    name = "WasmTryCatchLowering",
+    description = "Lower try-catch expressions"
+)
+
 val wasmPhases = NamedCompilerPhase(
     name = "IrModuleLowering",
     description = "IR module lowering",
@@ -514,5 +520,6 @@ val wasmPhases = NamedCompilerPhase(
             staticMembersLoweringPhase then
             wasmFunctionInterfaceReplacer then
             wasmNullSpecializationLowering then
+            wasmTryCatchLowering then
             validateIrAfterLowering
 )
