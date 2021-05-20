@@ -164,11 +164,9 @@ abstract class TypeTranslator(
         return translateType(approximate(commonSupertype.replaceArgumentsWithStarProjections()), variance)
     }
 
-    private fun SimpleType.toIrTypeAbbreviation(): IrTypeAbbreviation {
-        val typeAliasDescriptor = constructor.declarationDescriptor.let {
-            it as? TypeAliasDescriptor
-                ?: throw AssertionError("TypeAliasDescriptor expected: $it")
-        }
+    private fun SimpleType.toIrTypeAbbreviation(): IrTypeAbbreviation? {
+        // Abbreviated type's classifier might not be TypeAliasDescriptor in case it's MockClassDescriptor (not found in dependencies).
+        val typeAliasDescriptor = constructor.declarationDescriptor as? TypeAliasDescriptor ?: return null
         return IrTypeAbbreviationImpl(
             symbolTable.referenceTypeAlias(typeAliasDescriptor),
             isMarkedNullable,
