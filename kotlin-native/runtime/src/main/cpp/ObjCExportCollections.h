@@ -47,6 +47,7 @@ static inline OBJ_GETTER(refFromObjCOrNSNull, id obj) {
 
 static inline OBJ_GETTER(invokeAndAssociate, KRef (*func)(KRef* result), id obj) {
   Kotlin_initRuntimeIfNeeded();
+  // TODO: Does this need a switch to runnable state?
 
   KRef kotlinObj = func(OBJ_RESULT);
 

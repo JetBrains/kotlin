@@ -1276,6 +1276,8 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                 irFunction?.origin == CBridgeOrigin.C_TO_KOTLIN_BRIDGE) {
             check(!forbidRuntime) { "Attempt to switch the thread state when runtime is forbidden" }
             positionAtEnd(prologueBb)
+            // TODO: Do we need to do it for every c->kotlin bridge?
+            call(context.llvm.initRuntimeIfNeeded, emptyList())
             switchThreadState(Runnable)
         }
 
@@ -1292,6 +1294,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             if (needsRuntimeInit) {
                 check(!forbidRuntime) { "Attempt to init runtime where runtime usage is forbidden" }
                 call(context.llvm.initRuntimeIfNeeded, emptyList())
+                // TODO: Do we also need to switch to runnable mode?
             }
             val slots = if (needSlotsPhi)
                 LLVMBuildArrayAlloca(builder, kObjHeaderPtr, Int32(slotCount).llvm, "")!!

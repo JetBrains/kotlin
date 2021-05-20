@@ -7,6 +7,7 @@ import kotlinx.cinterop.*
 val global = AtomicInt(0)
 
 fun ensureInititalized() {
+    // Only needed with the legacy MM. TODO: Remove when legacy MM is gone.
     kotlin.native.initRuntimeIfNeeded()
     // Leak memory
     StableRef.create(Any())

@@ -881,6 +881,7 @@ void* workerRoutine(void* argument) {
   // to see there's already a worker created for this thread.
   ::g_worker = worker;
   Kotlin_initRuntimeIfNeeded();
+  SwitchThreadState(worker->memoryState(), ThreadState::kRunnable);
 
   do {
     if (worker->processQueueElement(true) == JOB_TERMINATE) break;

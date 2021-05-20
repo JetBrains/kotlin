@@ -53,6 +53,7 @@ extern "C" RUNTIME_USED int Init_and_run_start(int argc, const char** argv, int 
 #endif
 
   Kotlin_initRuntimeIfNeeded();
+  Kotlin_mm_switchThreadStateRunnable();
 
   KInt exitStatus = Konan_run_start(argc, argv);
 

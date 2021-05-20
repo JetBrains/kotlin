@@ -140,6 +140,9 @@ RuntimeState* initRuntime() {
   InitOrDeinitGlobalVariables(INIT_THREAD_LOCAL_GLOBALS, result->memoryState);
   RuntimeAssert(result->status == RuntimeStatus::kUninitialized, "Runtime must still be in the uninitialized state");
   result->status = RuntimeStatus::kRunning;
+
+  kotlin::SwitchThreadState(result->memoryState, kotlin::ThreadState::kNative);
+
   return result;
 }
 
@@ -172,6 +175,8 @@ void deinitRuntime(RuntimeState* state, bool destroyRuntime) {
 
 void Kotlin_deinitRuntimeCallback(void* argument) {
   auto* state = reinterpret_cast<RuntimeState*>(argument);
+  // This callback may be called from any state, make sure it runs in the runnable state.
+  kotlin::SwitchThreadState(state->memoryState, kotlin::ThreadState::kRunnable, /* reentrant = */ true);
   deinitRuntime(state, false);
 }
 
@@ -378,9 +383,18 @@ KBoolean Kotlin_Debugging_isThreadStateNative() {
     return kotlin::GetThreadState() == kotlin::ThreadState::kNative;
 }
 
-
 KBoolean Kotlin_Debugging_isPermanent(KRef obj) {
     return obj->permanent();
+}
+
+RUNTIME_NOTHROW void Kotlin_initRuntimeIfNeededFromKotlin() {
+    switch (CurrentMemoryModel) {
+        case MemoryModel::kExperimental:
+            return;
+        case MemoryModel::kStrict:
+        case MemoryModel::kRelaxed:
+            Kotlin_initRuntimeIfNeeded();
+    }
 }
 
 }  // extern "C"

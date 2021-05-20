@@ -327,6 +327,7 @@ static inline id KSet_getElement(KRef set, id object) {
 -(instancetype)init {
   if (self = [super init]) {
     Kotlin_initRuntimeIfNeeded();
+    // TODO: Does this need a switch to runnable state?
     ObjHolder holder;
     KRef set = Kotlin_MutableSet_createWithCapacity(8, holder.slot());
     self->setHolder.init(set);
@@ -338,6 +339,7 @@ static inline id KSet_getElement(KRef set, id object) {
 - (instancetype)initWithCapacity:(NSUInteger)numItems {
   if (self = [super init]) {
     Kotlin_initRuntimeIfNeeded();
+    // TODO: Does this need a switch to runnable state?
     ObjHolder holder;
     KRef set = Kotlin_MutableSet_createWithCapacity(objCCapacityToKotlin(numItems), holder.slot());
     self->setHolder.init(set);
@@ -483,6 +485,7 @@ static inline id KMap_get(KRef map, id aKey) {
 -(instancetype)init {
   if (self = [super init]) {
     Kotlin_initRuntimeIfNeeded();
+    // TODO: Does this need a switch to runnable state?
     ObjHolder holder;
     KRef map = Kotlin_MutableMap_createWithCapacity(8, holder.slot());
     self->mapHolder.init(map);
@@ -499,6 +502,7 @@ static inline id KMap_get(KRef map, id aKey) {
 - (instancetype)initWithCapacity:(NSUInteger)numItems {
   if (self = [super init]) {
     Kotlin_initRuntimeIfNeeded();
+    // TODO: Does this need a switch to runnable state?
     ObjHolder holder;
     KRef map = Kotlin_MutableMap_createWithCapacity(objCCapacityToKotlin(numItems), holder.slot());
     self->mapHolder.init(map);

@@ -61,6 +61,7 @@ static void injectToRuntime();
 
 +(instancetype)allocWithZone:(NSZone*)zone {
   Kotlin_initRuntimeIfNeeded();
+  // TODO: Does this need a switch to runnable state?
 
   KotlinBase* result = [super allocWithZone:zone];
 

@@ -74,6 +74,7 @@ namespace {
 
 void launchMain() {
   Kotlin_initRuntimeIfNeeded();
+  Kotlin_mm_switchThreadStateRunnable();
 
   {
     ObjHolder args;

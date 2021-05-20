@@ -19,6 +19,7 @@ inline bool isForeignRefAccessible(ObjHeader* object, ForeignRefContext context)
     // If runtime has not been initialized on this thread, then the object is either unowned or shared.
     // In the former case initialized runtime is required to throw exceptions
     // in the latter case -- to provide proper execution context for caller.
+    // TODO: Can this be called in uninitialized state in the new MM?
     Kotlin_initRuntimeIfNeeded();
 
     return IsForeignRefAccessible(object, context);
