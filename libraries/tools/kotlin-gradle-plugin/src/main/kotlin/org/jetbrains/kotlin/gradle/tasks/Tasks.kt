@@ -120,10 +120,17 @@ class GradleCompileTaskProvider(task: Task) {
     val projectName: String = task.project.rootProject.name.normalizeForFlagFile()
     val buildModulesInfo: Provider<out IncrementalModuleInfoProvider> = run {
         val modulesInfo = GradleCompilerRunner.buildModulesInfo(task.project.gradle)
-        task.project.gradle.sharedServices.registerIfAbsent(
-            IncrementalModuleInfoBuildService.getServiceName(), IncrementalModuleInfoBuildService::class.java
-        ) {
-            it.parameters.info.set(modulesInfo)
+        /**
+         * See https://youtrack.jetbrains.com/issue/KT-46820. Build service that holds the incremental info may
+         * be instantiated during execution phase and there could be multiple threads trying to do that. Because the
+         * underlying mechanism does not support multi-threaded access, we need to add external synchronization.
+         */
+        synchronized(task.project.gradle.sharedServices) {
+            task.project.gradle.sharedServices.registerIfAbsent(
+                IncrementalModuleInfoBuildService.getServiceName(), IncrementalModuleInfoBuildService::class.java
+            ) {
+                it.parameters.info.set(modulesInfo)
+            }
         }
     }
 }
