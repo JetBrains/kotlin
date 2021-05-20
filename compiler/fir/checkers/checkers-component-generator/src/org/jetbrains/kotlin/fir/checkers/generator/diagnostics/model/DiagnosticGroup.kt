@@ -12,7 +12,7 @@ import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.typeOf
 
-abstract class DiagnosticGroup @PrivateForInline constructor(val name: String) {
+abstract class AbstractDiagnosticGroup @PrivateForInline constructor(val name: String, internal val containingObjectName: String) {
     @Suppress("PropertyName")
     @PrivateForInline
     val _diagnostics = mutableListOf<DiagnosticData>()
@@ -22,26 +22,27 @@ abstract class DiagnosticGroup @PrivateForInline constructor(val name: String) {
         get() = _diagnostics
 
     @OptIn(PrivateForInline::class)
-    inline fun <reified P : PsiElement> error(
+    internal inline fun <reified P : PsiElement> error(
         positioningStrategy: PositioningStrategy = PositioningStrategy.DEFAULT,
         crossinline init: DiagnosticBuilder.() -> Unit = {}
     ) = diagnosticDelegateProvider<P>(Severity.ERROR, positioningStrategy, init)
 
 
     @OptIn(PrivateForInline::class)
-    inline fun <reified P : PsiElement> warning(
+    internal inline fun <reified P : PsiElement> warning(
         positioningStrategy: PositioningStrategy = PositioningStrategy.DEFAULT,
         crossinline init: DiagnosticBuilder.() -> Unit = {}
     ) = diagnosticDelegateProvider<P>(Severity.WARNING, positioningStrategy, init)
 
     @PrivateForInline
     @OptIn(ExperimentalStdlibApi::class)
-    inline fun <reified P : PsiElement> diagnosticDelegateProvider(
+    internal inline fun <reified P : PsiElement> diagnosticDelegateProvider(
         severity: Severity,
         positioningStrategy: PositioningStrategy,
         crossinline init: DiagnosticBuilder.() -> Unit = {}
-    ) = PropertyDelegateProvider<Any?, ReadOnlyProperty<DiagnosticGroup, DiagnosticData>> { _, property ->
+    ) = PropertyDelegateProvider<Any?, ReadOnlyProperty<AbstractDiagnosticGroup, DiagnosticData>> { _, property ->
         val diagnostic = DiagnosticBuilder(
+            containingObjectName,
             severity,
             name = property.name,
             psiType = typeOf<P>(),
@@ -49,5 +50,16 @@ abstract class DiagnosticGroup @PrivateForInline constructor(val name: String) {
         ).apply(init).build()
         _diagnostics += diagnostic
         ReadOnlyProperty { _, _ -> diagnostic }
+    }
+
+    @OptIn(PrivateForInline::class)
+    operator fun plus(other: AbstractDiagnosticGroup): AbstractDiagnosticGroup {
+        require(name == other.name)
+        return object : AbstractDiagnosticGroup(name, "#Stub") {
+            init {
+                _diagnostics.addAll(this.diagnostics)
+                _diagnostics.addAll(other.diagnostics)
+            }
+        }
     }
 }

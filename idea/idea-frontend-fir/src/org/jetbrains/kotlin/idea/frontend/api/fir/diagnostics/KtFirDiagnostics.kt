@@ -1743,4 +1743,8 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val symbol: KtSymbol
     }
 
+    abstract class ConflictingJvmDeclarations : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = ConflictingJvmDeclarations::class
+    }
+
 }

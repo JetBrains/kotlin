@@ -25,6 +25,7 @@ dependencies {
     testCompile(project(":compiler:fir:cones"))
     testCompile(project(":compiler:fir:resolve"))
     testCompile(project(":compiler:fir:checkers"))
+    testCompile(project(":compiler:fir:checkers:checkers.jvm"))
     testCompile(project(":compiler:fir:java"))
     testCompile(project(":compiler:fir:entrypoint"))
     testCompile(project(":compiler:ir.ir2cfg"))

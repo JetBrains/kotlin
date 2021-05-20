@@ -8,12 +8,11 @@ package org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model
 import org.jetbrains.kotlin.fir.checkers.generator.getGenerationPath
 import java.io.File
 
-fun generateDiagnostics(rootPath: File, packageName: String, containingObjectName: String, diagnosticList: DiagnosticList) {
+fun generateDiagnostics(rootPath: File, packageName: String, diagnosticList: DiagnosticList) {
     val generationPath = getGenerationPath(rootPath, packageName)
     ErrorListDiagnosticListRenderer.render(
-        generationPath.resolve("$containingObjectName.kt"),
+        generationPath.resolve("${diagnosticList.objectName}.kt"),
         diagnosticList,
-        packageName,
-        containingObjectName
+        packageName
     )
 }

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.*
 
 @Suppress("UNUSED_VARIABLE", "LocalVariableName", "ClassName", "unused")
 @OptIn(PrivateForInline::class)
-object FIR_JVM_DIAGNOSTICS_LIST : DiagnosticList() {
+object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
     val DECLARATIONS by object : DiagnosticGroup("Declarations") {
         val CONFLICTING_JVM_DECLARATIONS by error<PsiElement>()
     }

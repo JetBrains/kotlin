@@ -18,23 +18,23 @@ import kotlin.reflect.KTypeProjection
 object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
     private const val BASE_PACKAGE = "org.jetbrains.kotlin.fir.analysis.diagnostics"
 
-    override fun render(file: File, diagnosticList: DiagnosticList, packageName: String, containingObjectName: String) {
+    override fun render(file: File, diagnosticList: DiagnosticList, packageName: String) {
         file.writeToFileUsingSmartPrinterIfFileContentChanged {
-            render(diagnosticList, packageName, containingObjectName)
+            render(diagnosticList, packageName)
         }
     }
 
-    private fun SmartPrinter.render(diagnosticList: DiagnosticList, packageName: String, containingObjectName: String) {
+    private fun SmartPrinter.render(diagnosticList: DiagnosticList, packageName: String) {
         printCopyright()
         println("package $packageName")
         println()
         collectAndPrintImports(diagnosticList, packageName)
         printGeneratedMessage()
-        printErrorsObject(diagnosticList, containingObjectName)
+        printErrorsObject(diagnosticList)
     }
 
-    private fun SmartPrinter.printErrorsObject(diagnosticList: DiagnosticList, containingObjectName: String) {
-        inBracketsWithIndent("object $containingObjectName") {
+    private fun SmartPrinter.printErrorsObject(diagnosticList: DiagnosticList) {
+        inBracketsWithIndent("object ${diagnosticList.objectName}") {
             for (group in diagnosticList.groups) {
                 printDiagnosticGroup(group.name, group.diagnostics)
                 println()

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.diagnostics.Severity
 import kotlin.reflect.KType
 
 data class DiagnosticData(
+    val containingObjectName: String,
     val severity: Severity,
     val name: String,
     val psiType: KType,

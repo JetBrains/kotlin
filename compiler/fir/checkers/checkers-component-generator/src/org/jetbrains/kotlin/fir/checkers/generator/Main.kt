@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.checkers.generator
 
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.DIAGNOSTICS_LIST
-import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.FIR_JVM_DIAGNOSTICS_LIST
+import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.JVM_DIAGNOSTICS_LIST
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.generateDiagnostics
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -75,8 +75,8 @@ fun main(args: Array<String>) {
 
     val jvmGenerationPath = File(arguments.getOrElse(1) { "compiler/fir/checkers/checkers.jvm/gen" })
 
-    generateDiagnostics(generationPath, "$basePackage.diagnostics", "FirErrors", DIAGNOSTICS_LIST)
-    generateDiagnostics(jvmGenerationPath, "$basePackage.diagnostics.jvm", "FirJvmErrors", FIR_JVM_DIAGNOSTICS_LIST)
+    generateDiagnostics(generationPath, "$basePackage.diagnostics", DIAGNOSTICS_LIST)
+    generateDiagnostics(jvmGenerationPath, "$basePackage.diagnostics.jvm", JVM_DIAGNOSTICS_LIST)
 }
 
 /*

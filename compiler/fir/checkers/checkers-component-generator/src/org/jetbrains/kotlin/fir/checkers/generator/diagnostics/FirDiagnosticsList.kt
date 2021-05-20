@@ -30,7 +30,7 @@ import kotlin.properties.ReadOnlyProperty
 
 @Suppress("UNUSED_VARIABLE", "LocalVariableName", "ClassName", "unused")
 @OptIn(PrivateForInline::class)
-object DIAGNOSTICS_LIST : DiagnosticList() {
+object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
     val MetaErrors by object : DiagnosticGroup("Meta-errors") {
         val UNSUPPORTED by error<PsiElement> {
             parameter<String>("unsupported")
@@ -908,15 +908,15 @@ private val exposedVisibilityDiagnosticInit: DiagnosticBuilder.() -> Unit = {
     parameter<EffectiveVisibility>("restrictingVisibility")
 }
 
-private inline fun <reified P : PsiElement> DiagnosticGroup.exposedVisibilityError(
+private inline fun <reified P : PsiElement> AbstractDiagnosticGroup.exposedVisibilityError(
     positioningStrategy: PositioningStrategy = PositioningStrategy.DEFAULT
-): PropertyDelegateProvider<Any?, ReadOnlyProperty<DiagnosticGroup, DiagnosticData>> {
+): PropertyDelegateProvider<Any?, ReadOnlyProperty<AbstractDiagnosticGroup, DiagnosticData>> {
     return error<P>(positioningStrategy, exposedVisibilityDiagnosticInit)
 }
 
-private inline fun <reified P : PsiElement> DiagnosticGroup.exposedVisibilityWarning(
+private inline fun <reified P : PsiElement> AbstractDiagnosticGroup.exposedVisibilityWarning(
     positioningStrategy: PositioningStrategy = PositioningStrategy.DEFAULT
-): PropertyDelegateProvider<Any?, ReadOnlyProperty<DiagnosticGroup, DiagnosticData>> {
+): PropertyDelegateProvider<Any?, ReadOnlyProperty<AbstractDiagnosticGroup, DiagnosticData>> {
     return warning<P>(positioningStrategy, exposedVisibilityDiagnosticInit)
 }
 

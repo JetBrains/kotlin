@@ -30,6 +30,7 @@ dependencies {
     compile(project(":compiler:fir:fir2ir"))
     compile(project(":compiler:fir:fir2ir:jvm-backend"))
     compile(project(":compiler:fir:checkers"))
+    compile(project(":compiler:fir:checkers:checkers.jvm"))
     compile(project(":kotlin-util-klib"))
     compile(project(":kotlin-util-io"))
 

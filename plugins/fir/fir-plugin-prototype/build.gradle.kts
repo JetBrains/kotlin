@@ -20,6 +20,7 @@ dependencies {
     testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(project(":compiler:fir:checkers"))
+    testCompile(project(":compiler:fir:checkers:checkers.jvm"))
     testCompile(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
     testCompile(project(":compiler:frontend"))
 

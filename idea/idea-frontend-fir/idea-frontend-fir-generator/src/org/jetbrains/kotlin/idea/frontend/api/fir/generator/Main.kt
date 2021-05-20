@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.generator
 
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.DIAGNOSTICS_LIST
+import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.JVM_DIAGNOSTICS_LIST
 import java.nio.file.Paths
 
 fun main() {
     val rootPath = Paths.get("idea/idea-frontend-fir/src").toAbsolutePath()
     val packageName = "org.jetbrains.kotlin.idea.frontend.api.fir.diagnostics"
-    DiagnosticClassGenerator.generate(rootPath, DIAGNOSTICS_LIST, packageName)
+    DiagnosticClassGenerator.generate(rootPath, DIAGNOSTICS_LIST + JVM_DIAGNOSTICS_LIST, packageName)
 }

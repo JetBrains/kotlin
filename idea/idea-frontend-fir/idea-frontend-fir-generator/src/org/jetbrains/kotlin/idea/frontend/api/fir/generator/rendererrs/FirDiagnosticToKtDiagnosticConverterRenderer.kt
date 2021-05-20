@@ -25,7 +25,7 @@ object FirDiagnosticToKtDiagnosticConverterRenderer : AbstractDiagnosticsDataCla
     }
 
     private fun SmartPrinter.printConverter(diagnostic: HLDiagnostic) {
-        println("add(FirErrors.${diagnostic.original.name}) { firDiagnostic ->")
+        println("add(${diagnostic.original.containingObjectName}.${diagnostic.original.name}) { firDiagnostic ->")
         withIndent {
             println("${diagnostic.implClassName}(")
             withIndent {
@@ -63,5 +63,6 @@ object FirDiagnosticToKtDiagnosticConverterRenderer : AbstractDiagnosticsDataCla
     override val defaultImports = listOf(
         "org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic",
         "org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors",
+        "org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors",
     )
 }
