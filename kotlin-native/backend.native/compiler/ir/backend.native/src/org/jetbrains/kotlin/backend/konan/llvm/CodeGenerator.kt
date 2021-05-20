@@ -228,6 +228,8 @@ internal class StackLocalsManagerImpl(
 
     private val stackLocals = mutableListOf<StackLocal>()
 
+    fun isEmpty() = stackLocals.isEmpty()
+
     override fun alloc(irClass: IrClass, cleanFieldsExplicitly: Boolean): LLVMValueRef = with(functionGenerationContext) {
         val type = context.llvmDeclarations.forClass(irClass).bodyType
         val stackLocal = appendingTo(bbInitStackLocals) {
@@ -385,6 +387,11 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     private val cleanupLandingpad = basicBlockInFunction("cleanup_landingpad", endLocation)
 
     val stackLocalsManager = StackLocalsManagerImpl(this, stackLocalsInitBb)
+
+    data class FunctionInvokeInformation(val invokeInstruction: LLVMValueRef, val llvmFunction: LLVMValueRef, val rargs: CValues<CPointerVar<LLVMOpaqueValue>>,
+                                         val argsNumber: Int, val success: LLVMBasicBlockRef)
+
+    private val invokeInstructions = mutableListOf<FunctionInvokeInformation>()
 
     /**
      * TODO: consider merging this with [ExceptionHandler].
@@ -610,7 +617,13 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             val endLocation = position?.end
             val success = basicBlock("call_success", endLocation)
             val result = LLVMBuildInvoke(builder, llvmFunction, rargs, args.size, success, unwind, "")!!
+            // Store invoke instruction and its success block in reverse order.
+            // Reverse order allows save arguments valid during all work with invokes
+            // because other invokes processed before can be inside arguments list.
+            if (exceptionHandler == ExceptionHandler.Caller)
+                invokeInstructions.add(0, FunctionInvokeInformation(result, llvmFunction, rargs, args.size, success))
             positionAtEnd(success)
+
             return result
         }
     }
@@ -1358,41 +1371,60 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             }
         }
 
-        appendingTo(cleanupLandingpad) {
-            val landingpad = gxxLandingpad(numClauses = 0)
-            LLVMSetCleanup(landingpad, 1)
+        val shouldHaveCleanupLandingpad = forwardingForeignExceptionsTerminatedWith != null ||
+                needSlots ||
+                !stackLocalsManager.isEmpty() ||
+                (context.memoryModel == MemoryModel.EXPERIMENTAL && irFunction?.origin == CBridgeOrigin.C_TO_KOTLIN_BRIDGE)
 
-            forwardingForeignExceptionsTerminatedWith?.let { terminator ->
-                // Catch all but Kotlin exceptions.
-                val clause = ConstArray(int8TypePtr, listOf(kotlinExceptionRtti))
-                LLVMAddClause(landingpad, clause.llvm)
+        if (shouldHaveCleanupLandingpad) {
+            appendingTo(cleanupLandingpad) {
+                val landingpad = gxxLandingpad(numClauses = 0)
+                LLVMSetCleanup(landingpad, 1)
 
-                val bbCleanup = basicBlock("forwardException", position()?.end)
-                val bbUnexpected = basicBlock("unexpectedException", position()?.end)
+                forwardingForeignExceptionsTerminatedWith?.let { terminator ->
+                    // Catch all but Kotlin exceptions.
+                    val clause = ConstArray(int8TypePtr, listOf(kotlinExceptionRtti))
+                    LLVMAddClause(landingpad, clause.llvm)
 
-                val selector = extractValue(landingpad, 1)
-                condBr(
-                        icmpLt(selector, Int32(0).llvm),
-                        bbUnexpected,
-                        bbCleanup
-                )
+                    val bbCleanup = basicBlock("forwardException", position()?.end)
+                    val bbUnexpected = basicBlock("unexpectedException", position()?.end)
 
-                appendingTo(bbUnexpected) {
-                    val exceptionRecord = extractValue(landingpad, 0)
+                    val selector = extractValue(landingpad, 1)
+                    condBr(
+                            icmpLt(selector, Int32(0).llvm),
+                            bbUnexpected,
+                            bbCleanup
+                    )
 
-                    val beginCatch = context.llvm.cxaBeginCatchFunction
-                    // So `terminator` is called from C++ catch block:
-                    call(beginCatch, listOf(exceptionRecord))
-                    call(terminator, emptyList())
-                    unreachable()
+                    appendingTo(bbUnexpected) {
+                        val exceptionRecord = extractValue(landingpad, 0)
+
+                        val beginCatch = context.llvm.cxaBeginCatchFunction
+                        // So `terminator` is called from C++ catch block:
+                        call(beginCatch, listOf(exceptionRecord))
+                        call(terminator, emptyList())
+                        unreachable()
+                    }
+
+                    positionAtEnd(bbCleanup)
                 }
 
-                positionAtEnd(bbCleanup)
+                releaseVars()
+                handleEpilogueForExperimentalMM(context.llvm.Kotlin_mm_safePointExceptionUnwind)
+                LLVMBuildResume(builder, landingpad)
             }
-
-            releaseVars()
-            handleEpilogueForExperimentalMM(context.llvm.Kotlin_mm_safePointExceptionUnwind)
-            LLVMBuildResume(builder, landingpad)
+        } else {
+            // Replace invokes with calls and branches.
+            invokeInstructions.forEach { functionInvokeInfo ->
+                positionBefore(functionInvokeInfo.invokeInstruction)
+                val newResult = LLVMBuildCall(builder, functionInvokeInfo.llvmFunction, functionInvokeInfo.rargs,
+                        functionInvokeInfo.argsNumber, "")
+                // Have to generate `br` instruction because of current scheme of debug info.
+                br(functionInvokeInfo.success)
+                LLVMReplaceAllUsesWith(functionInvokeInfo.invokeInstruction, newResult)
+                LLVMInstructionEraseFromParent(functionInvokeInfo.invokeInstruction)
+            }
+            LLVMDeleteBasicBlock(cleanupLandingpad)
         }
 
         returns.clear()
@@ -1468,6 +1500,12 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             isAfterTerminator = lastInstr != null && (LLVMIsATerminatorInst(lastInstr) != null)
         }
 
+        fun positionBefore(instruction: LLVMValueRef) {
+            LLVMPositionBuilderBefore(builder, instruction)
+            val previousInstr = LLVMGetPreviousInstruction(instruction)
+            isAfterTerminator = previousInstr != null && (LLVMIsATerminatorInst(previousInstr) != null)
+        }
+
         fun dispose() {
             LLVMDisposeBuilder(builder)
         }
@@ -1503,6 +1541,8 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         get() = currentPositionHolder.getBuilder()
 
     fun positionAtEnd(bbLabel: LLVMBasicBlockRef) = currentPositionHolder.positionAtEnd(bbLabel)
+
+    fun positionBefore(instruction: LLVMValueRef) = currentPositionHolder.positionBefore(instruction)
 
     inline private fun <R> preservingPosition(code: () -> R): R {
         val oldPositionHolder = currentPositionHolder
