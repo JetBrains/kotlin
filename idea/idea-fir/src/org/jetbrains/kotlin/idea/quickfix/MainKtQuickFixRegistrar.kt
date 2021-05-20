@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.idea.quickfix.fixes.ChangeTypeQuickFix
 import org.jetbrains.kotlin.idea.quickfix.fixes.ReplaceCallFixFactories
 
 class MainKtQuickFixRegistrar : KtQuickFixRegistrar() {
-    private val modifiers = KtQuickFixesListBuilder.registerPsiQuickFix {
+    private val keywords = KtQuickFixesListBuilder.registerPsiQuickFix {
         registerPsiQuickFixes(KtFirDiagnostic.RedundantModifier::class, RemoveModifierFix.removeRedundantModifier)
         registerPsiQuickFixes(KtFirDiagnostic.IncompatibleModifiers::class, RemoveModifierFix.removeNonRedundantModifier)
         registerPsiQuickFixes(KtFirDiagnostic.RepeatedModifier::class, RemoveModifierFix.removeNonRedundantModifier)
@@ -65,6 +65,10 @@ class MainKtQuickFixRegistrar : KtQuickFixRegistrar() {
             KtFirDiagnostic.AbstractClassMemberNotImplemented::class,
             AddModifierFix.addAbstractModifier
         )
+        registerPsiQuickFixes(KtFirDiagnostic.ValOrVarOnLoopParameter::class, RemoveValVarFromParameterFix)
+        registerPsiQuickFixes(KtFirDiagnostic.ValOrVarOnFunParameter::class, RemoveValVarFromParameterFix)
+        registerPsiQuickFixes(KtFirDiagnostic.ValOrVarOnCatchParameter::class, RemoveValVarFromParameterFix)
+        registerPsiQuickFixes(KtFirDiagnostic.ValOrVarOnSecondaryConstructorParameter::class, RemoveValVarFromParameterFix)
     }
 
     private val propertyInitialization = KtQuickFixesListBuilder.registerPsiQuickFix {
@@ -121,7 +125,7 @@ class MainKtQuickFixRegistrar : KtQuickFixRegistrar() {
     }
 
     override val list: KtQuickFixesList = KtQuickFixesList.createCombined(
-        modifiers,
+        keywords,
         propertyInitialization,
         overrides,
         imports,
