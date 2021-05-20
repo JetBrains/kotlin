@@ -38,9 +38,9 @@ class TypeDeserializer(
             computeTypeAliasDescriptor(fqNameIndex)
         }
 
-    private val typeParameterDescriptors =
+    private val typeParameterDescriptors: Map<Int, TypeParameterDescriptor> =
         if (typeParameterProtos.isEmpty()) {
-            mapOf<Int, TypeParameterDescriptor>()
+            emptyMap()
         } else {
             val result = LinkedHashMap<Int, TypeParameterDescriptor>()
             for ((index, proto) in typeParameterProtos.withIndex()) {
@@ -133,22 +133,24 @@ class TypeDeserializer(
             return c.components.notFoundClasses.getClass(classId, typeParametersCount)
         }
 
-        return when {
-            proto.hasClassName() -> (classifierDescriptors(proto.className) ?: notFoundClass(proto.className)).typeConstructor
+        val classifier = when {
+            proto.hasClassName() ->
+                classifierDescriptors(proto.className) ?: notFoundClass(proto.className)
             proto.hasTypeParameter() ->
-                typeParameterTypeConstructor(proto.typeParameter)
-                    ?: ErrorUtils.createErrorTypeConstructor(
+                loadTypeParameter(proto.typeParameter)
+                    ?: return ErrorUtils.createErrorTypeConstructor(
                         "Unknown type parameter ${proto.typeParameter}. Please try recompiling module containing \"$containerPresentableName\""
                     )
             proto.hasTypeParameterName() -> {
-                val container = c.containingDeclaration
                 val name = c.nameResolver.getString(proto.typeParameterName)
-                val parameter = ownTypeParameters.find { it.name.asString() == name }
-                parameter?.typeConstructor ?: ErrorUtils.createErrorTypeConstructor("Deserialized type parameter $name in $container")
+                ownTypeParameters.find { it.name.asString() == name }
+                    ?: return ErrorUtils.createErrorTypeConstructor("Deserialized type parameter $name in ${c.containingDeclaration}")
             }
-            proto.hasTypeAliasName() -> (typeAliasDescriptors(proto.typeAliasName) ?: notFoundClass(proto.typeAliasName)).typeConstructor
-            else -> ErrorUtils.createErrorTypeConstructor("Unknown type")
+            proto.hasTypeAliasName() ->
+                typeAliasDescriptors(proto.typeAliasName) ?: notFoundClass(proto.typeAliasName)
+            else -> return ErrorUtils.createErrorTypeConstructor("Unknown type")
         }
+        return classifier.typeConstructor
     }
 
     private fun createSuspendFunctionType(
@@ -233,8 +235,8 @@ class TypeDeserializer(
         ).makeNullableAsSpecified(funType.isMarkedNullable)
     }
 
-    private fun typeParameterTypeConstructor(typeParameterId: Int): TypeConstructor? =
-        typeParameterDescriptors[typeParameterId]?.typeConstructor ?: parent?.typeParameterTypeConstructor(typeParameterId)
+    private fun loadTypeParameter(typeParameterId: Int): TypeParameterDescriptor? =
+        typeParameterDescriptors[typeParameterId] ?: parent?.loadTypeParameter(typeParameterId)
 
     private fun computeClassifierDescriptor(fqNameIndex: Int): ClassifierDescriptor? {
         val id = c.nameResolver.getClassId(fqNameIndex)
