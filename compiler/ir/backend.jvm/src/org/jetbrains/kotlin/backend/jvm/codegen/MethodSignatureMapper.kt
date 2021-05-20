@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunction
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
+import org.jetbrains.kotlin.ir.declarations.lazy.IrMaybeDeserializedClass
 import org.jetbrains.kotlin.ir.descriptors.IrBasedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
@@ -149,7 +150,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         } else null
 
     private fun getModuleName(function: IrSimpleFunction): String =
-        (if (function is IrLazyFunction)
+        (if (function is IrLazyFunctionBase)
             getJvmModuleNameForDeserialized(function)
         else null) ?: context.state.moduleName
 
@@ -494,11 +495,11 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
     }
 
     // From org.jetbrains.kotlin.load.kotlin.getJvmModuleNameForDeserializedDescriptor
-    private fun getJvmModuleNameForDeserialized(function: IrLazyFunction): String? {
+    private fun getJvmModuleNameForDeserialized(function: IrLazyFunctionBase): String? {
         var current: IrDeclarationParent? = function.parent
         while (current != null) {
             when (current) {
-                is IrLazyClass -> {
+                is IrMaybeDeserializedClass -> {
                     val classProto = current.classProto ?: return null
                     val nameResolver = current.nameResolver ?: return null
                     return classProto.getExtensionOrNull(JvmProtoBuf.classModuleName)

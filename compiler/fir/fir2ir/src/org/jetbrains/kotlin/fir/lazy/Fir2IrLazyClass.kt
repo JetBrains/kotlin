@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.isNullableAny
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.lazy.IrMaybeDeserializedClass
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.types.IrSimpleType
@@ -27,6 +28,8 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.Name
 
 class Fir2IrLazyClass(
@@ -36,7 +39,7 @@ class Fir2IrLazyClass(
     override var origin: IrDeclarationOrigin,
     override val fir: FirRegularClass,
     override val symbol: Fir2IrClassSymbol,
-) : IrClass(), AbstractFir2IrLazyDeclaration<FirRegularClass, IrClass>, Fir2IrComponents by components {
+) : IrClass(), AbstractFir2IrLazyDeclaration<FirRegularClass, IrClass>, IrMaybeDeserializedClass, Fir2IrComponents by components {
     init {
         symbol.bind(this)
         classifierStorage.preCacheTypeParameters(fir)
@@ -200,6 +203,12 @@ class Fir2IrLazyClass(
     override var metadata: MetadataSource?
         get() = null
         set(_) = error("We should never need to store metadata of external declarations.")
+
+    override val classProto: ProtoBuf.Class?
+        get() = fir.proto?.classProto
+
+    override val nameResolver: NameResolver?
+        get() = fir.proto?.nameResolver
 
     private fun FirNamedFunctionSymbol.isAbstractMethodOfAny(): Boolean {
         val fir = fir
