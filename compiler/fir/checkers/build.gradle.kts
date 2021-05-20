@@ -35,6 +35,11 @@ dependencies {
 
 val generationRoot = projectDir.resolve("gen")
 
+// Add modules for js and native checkers here
+val platformGenerationRoots = listOf(
+    "checkers.jvm"
+).map { projectDir.resolve(it).resolve("gen") }
+
 val generateCheckersComponents by tasks.registering(NoDebugJavaExec::class) {
 
     val generatorRoot = "$projectDir/checkers-component-generator/src/"
@@ -44,9 +49,9 @@ val generateCheckersComponents by tasks.registering(NoDebugJavaExec::class) {
     }
 
     inputs.files(generatorConfigurationFiles)
-    outputs.dirs(generationRoot)
+    outputs.dirs(generationRoot, *platformGenerationRoots.toTypedArray())
 
-    args(generationRoot)
+    args(generationRoot, *platformGenerationRoots.toTypedArray())
     workingDir = rootDir
     classpath = generatorClasspath
     main = "org.jetbrains.kotlin.fir.checkers.generator.MainKt"

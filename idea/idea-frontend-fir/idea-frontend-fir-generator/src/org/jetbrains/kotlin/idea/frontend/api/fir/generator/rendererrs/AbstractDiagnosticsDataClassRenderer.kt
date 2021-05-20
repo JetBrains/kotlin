@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.util.SmartPrinter
 import java.io.File
 
 abstract class AbstractDiagnosticsDataClassRenderer : DiagnosticListRenderer() {
-    override fun render(file: File, diagnosticList: DiagnosticList, packageName: String) {
+    override fun render(file: File, diagnosticList: DiagnosticList, packageName: String, containingObjectName: String) {
         val hlDiagnosticsList = HLDiagnosticConverter.convert(diagnosticList)
         file.writeToFileUsingSmartPrinterIfFileContentChanged { render(hlDiagnosticsList, packageName) }
     }

@@ -16,23 +16,25 @@ import kotlin.reflect.KType
 import kotlin.reflect.KTypeProjection
 
 object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
-    override fun render(file: File, diagnosticList: DiagnosticList, packageName: String) {
+    private const val BASE_PACKAGE = "org.jetbrains.kotlin.fir.analysis.diagnostics"
+
+    override fun render(file: File, diagnosticList: DiagnosticList, packageName: String, containingObjectName: String) {
         file.writeToFileUsingSmartPrinterIfFileContentChanged {
-            render(diagnosticList, packageName)
+            render(diagnosticList, packageName, containingObjectName)
         }
     }
 
-    private fun SmartPrinter.render(diagnosticList: DiagnosticList, packageName: String) {
+    private fun SmartPrinter.render(diagnosticList: DiagnosticList, packageName: String, containingObjectName: String) {
         printCopyright()
         println("package $packageName")
         println()
-        collectAndPrintImports(diagnosticList)
+        collectAndPrintImports(diagnosticList, packageName)
         printGeneratedMessage()
-        printErrorsObject(diagnosticList)
+        printErrorsObject(diagnosticList, containingObjectName)
     }
 
-    private fun SmartPrinter.printErrorsObject(diagnosticList: DiagnosticList) {
-        inBracketsWithIndent("object FirErrors") {
+    private fun SmartPrinter.printErrorsObject(diagnosticList: DiagnosticList, containingObjectName: String) {
+        inBracketsWithIndent("object $containingObjectName") {
             for (group in diagnosticList.groups) {
                 printDiagnosticGroup(group.name, group.diagnostics)
                 println()
@@ -103,14 +105,17 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
         }
     }
 
-    private fun SmartPrinter.collectAndPrintImports(diagnosticList: DiagnosticList) {
-        val imports = collectImports(diagnosticList)
+    private fun SmartPrinter.collectAndPrintImports(diagnosticList: DiagnosticList, packageName: String) {
+        val imports = collectImports(diagnosticList, packageName)
         printImports(imports)
         println()
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    private fun collectImports(diagnosticList: DiagnosticList): Collection<String> = buildSet {
+    private fun collectImports(diagnosticList: DiagnosticList, packageName: String): Collection<String> = buildSet {
+        if (packageName != BASE_PACKAGE) {
+            add("$BASE_PACKAGE.*")
+        }
         diagnosticList.allDiagnostics.forEach { diagnostic ->
             for (typeArgument in diagnostic.getAllTypeArguments()) {
                 typeArgument.collectClassNamesTo(this)
