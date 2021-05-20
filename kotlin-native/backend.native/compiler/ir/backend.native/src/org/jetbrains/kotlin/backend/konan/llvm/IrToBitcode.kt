@@ -106,7 +106,7 @@ internal class RTTIGeneratorVisitor(context: Context) : IrElementVisitorVoid {
 /**
  * Defines how to generate context-dependent operations.
  */
-internal interface CodeContext {
+private interface CodeContext {
 
     /**
      * Generates `return` [value] operation.
@@ -120,8 +120,6 @@ internal interface CodeContext {
     fun genContinue(destination: IrContinue)
 
     val exceptionHandler: ExceptionHandler
-
-    fun genThrow(exception: LLVMValueRef)
 
     val stackLocalsManager: StackLocalsManager
 
@@ -239,8 +237,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         override fun genContinue(destination: IrContinue) = unsupported()
 
         override val exceptionHandler get() = unsupported()
-
-        override fun genThrow(exception: LLVMValueRef) = unsupported()
 
         override val stackLocalsManager: StackLocalsManager get() = unsupported()
 
@@ -677,16 +673,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         override val exceptionHandler: ExceptionHandler
             get() = ExceptionHandler.Caller
 
-        override fun genThrow(exception: LLVMValueRef) {
-            val objHeaderPtr = functionGenerationContext.bitcast(codegen.kObjHeaderPtr, exception)
-            val args = listOf(objHeaderPtr)
-
-            functionGenerationContext.call(
-                    context.llvm.throwExceptionFunction, args, Lifetime.IRRELEVANT, this.exceptionHandler
-            )
-            functionGenerationContext.unreachable()
-        }
-
         override val stackLocalsManager get() = functionGenerationContext.stackLocalsManager
 
         override fun functionScope(): CodeContext = this
@@ -942,7 +928,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         // however such optimization can lead to phi functions with zero entries, which is not allowed by LLVM;
         // TODO: find the better solution.
 
-        jump(destination, result)
+        functionGenerationContext.jump(destination, result)
     }
 
     //-------------------------------------------------------------------------//
@@ -964,11 +950,11 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     /**
      * Jumps to [target] passing [value].
      */
-    private fun jump(target: ContinuationBlock, value: LLVMValueRef?) {
+    private fun FunctionGenerationContext.jump(target: ContinuationBlock, value: LLVMValueRef?) {
         val entry = target.block
-        functionGenerationContext.br(entry)
+        br(entry)
         if (target.valuePhi != null) {
-            functionGenerationContext.assignPhis(target.valuePhi to value!!)
+            assignPhis(target.valuePhi to value!!)
         }
     }
 
@@ -1020,7 +1006,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     private fun evaluateThrow(expression: IrThrow): LLVMValueRef {
         val exception = evaluateExpression(expression.value)
-        currentCodeContext.genThrow(exception)
+        currentCodeContext.exceptionHandler.genThrow(functionGenerationContext, exception)
         return codegen.kNothingFakeValue
     }
 
@@ -1063,8 +1049,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             return irFunction?.endLocation
         }
 
-        private fun jumpToHandler(exception: LLVMValueRef) {
-            jump(this.handler, exception)
+        private fun FunctionGenerationContext.jumpToHandler(exception: LLVMValueRef) {
+            jump(handler, exception)
         }
 
         /**
@@ -1092,11 +1078,13 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         override val exceptionHandler: ExceptionHandler
             get() = object : ExceptionHandler.Local() {
                 override val unwind get() = landingpad
-            }
 
-        override fun genThrow(exception: LLVMValueRef) {
-            jumpToHandler(exception)
-        }
+                override fun genThrow(functionGenerationContext: FunctionGenerationContext, kotlinException: LLVMValueRef) {
+                    // Super class implementation would do too, so this is just an optimization:
+                    // use local jump instead of wrapping to C++ exception, throwing, catching and unwrapping it:
+                    functionGenerationContext.jumpToHandler(kotlinException)
+                }
+            }
 
         protected abstract fun genHandler(exception: LLVMValueRef)
     }
@@ -1137,7 +1125,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 }
             }
             // rethrow the exception if no clause can handle it.
-            outerContext.genThrow(exception)
+            outerContext.exceptionHandler.genThrow(functionGenerationContext, exception)
         }
     }
 
@@ -2148,11 +2136,11 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         using (SuspensionPointScope(expression.suspensionPointIdParameter, bbResume, id)) {
             continuationBlock(expression.type, expression.result.startLocation).run {
                 val normalResult = evaluateExpression(expression.result)
-                jump(this, normalResult)
+                functionGenerationContext.jump(this, normalResult)
 
                 functionGenerationContext.positionAtEnd(bbResume)
                 val resumeResult = evaluateExpression(expression.resumeResult)
-                jump(this, resumeResult)
+                functionGenerationContext.jump(this, resumeResult)
 
                 functionGenerationContext.positionAtEnd(this.block)
                 return this.value
@@ -2354,7 +2342,11 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         val needsNativeThreadState = function.needsNativeThreadState
         val exceptionHandler = function.annotations.findAnnotation(RuntimeNames.filterExceptions)?.let {
             val foreignExceptionMode = ForeignExceptionMode.byValue(it.getAnnotationValueOrNull<String>("mode"))
-            functionGenerationContext.filteringExceptionHandler(currentCodeContext, foreignExceptionMode, needsNativeThreadState)
+            functionGenerationContext.filteringExceptionHandler(
+                    currentCodeContext.exceptionHandler,
+                    foreignExceptionMode,
+                    needsNativeThreadState
+            )
         } ?: currentCodeContext.exceptionHandler
 
         if (needsNativeThreadState) {
