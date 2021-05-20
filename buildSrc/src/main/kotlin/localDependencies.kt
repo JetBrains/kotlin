@@ -81,6 +81,7 @@ fun RepositoryHandler.kotlinBuildLocalRepo(project: Project): IvyArtifactReposit
     }
 }
 
+@JvmOverloads
 fun Project.intellijDep(module: String? = null, forIde: Boolean = false) =
     "kotlin.build:${module ?: ideModuleName()}:${ideModuleVersion(forIde)}"
 
