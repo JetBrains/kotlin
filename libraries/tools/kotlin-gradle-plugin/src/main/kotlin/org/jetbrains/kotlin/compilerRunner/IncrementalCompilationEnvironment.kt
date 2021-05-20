@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.compilerRunner
 
 import org.jetbrains.kotlin.daemon.common.MultiModuleICSettings
 import org.jetbrains.kotlin.incremental.ChangedFiles
+import org.jetbrains.kotlin.incremental.ClasspathChanges
 import java.io.File
 import java.io.Serializable
 
 internal class IncrementalCompilationEnvironment(
     val changedFiles: ChangedFiles,
+    val classpathChanges: ClasspathChanges,
     val workingDir: File,
     val usePreciseJavaTracking: Boolean = false,
     val disableMultiModuleIC: Boolean = false,
