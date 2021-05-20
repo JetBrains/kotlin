@@ -1493,6 +1493,54 @@ public class HighLevelQuickFixTestGenerated extends AbstractHighLevelQuickFixTes
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/variables/removeValVarFromParameter")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RemoveValVarFromParameter extends AbstractHighLevelQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInRemoveValVarFromParameter() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/variables/removeValVarFromParameter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("catchParameter.kt")
+        public void testCatchParameter() throws Exception {
+            runTest("idea/testData/quickfix/variables/removeValVarFromParameter/catchParameter.kt");
+        }
+
+        @TestMetadata("constructorParameter.kt")
+        public void testConstructorParameter() throws Exception {
+            runTest("idea/testData/quickfix/variables/removeValVarFromParameter/constructorParameter.kt");
+        }
+
+        @TestMetadata("funParameter.kt")
+        public void testFunParameter() throws Exception {
+            runTest("idea/testData/quickfix/variables/removeValVarFromParameter/funParameter.kt");
+        }
+
+        @TestMetadata("loopMultiParameter.kt")
+        public void testLoopMultiParameter() throws Exception {
+            runTest("idea/testData/quickfix/variables/removeValVarFromParameter/loopMultiParameter.kt");
+        }
+
+        @TestMetadata("loopParameter.kt")
+        public void testLoopParameter() throws Exception {
+            runTest("idea/testData/quickfix/variables/removeValVarFromParameter/loopParameter.kt");
+        }
+
+        @TestMetadata("parameterWithComment.kt")
+        public void testParameterWithComment() throws Exception {
+            runTest("idea/testData/quickfix/variables/removeValVarFromParameter/parameterWithComment.kt");
+        }
+
+        @TestMetadata("secondaryConstructorParameter.kt")
+        public void testSecondaryConstructorParameter() throws Exception {
+            runTest("idea/testData/quickfix/variables/removeValVarFromParameter/secondaryConstructorParameter.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/when")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

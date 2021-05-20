@@ -1146,6 +1146,7 @@ fun main(args: Array<String>) {
                 model("quickfix/replaceWithDotCall", pattern = pattern, filenameStartsLowerCase = true)
                 model("quickfix/replaceWithSafeCall", pattern = pattern, filenameStartsLowerCase = true)
                 model("quickfix/variables/changeMutability", pattern = pattern, filenameStartsLowerCase = true)
+                model("quickfix/variables/removeValVarFromParameter", pattern = pattern, filenameStartsLowerCase = true)
                 model("quickfix/when", pattern = pattern, filenameStartsLowerCase = true)
                 model("quickfix/wrapWithSafeLetCall", pattern = pattern, filenameStartsLowerCase = true)
                 model("quickfix/typeMismatch/componentFunctionReturnTypeMismatch", pattern = pattern, filenameStartsLowerCase = true)
