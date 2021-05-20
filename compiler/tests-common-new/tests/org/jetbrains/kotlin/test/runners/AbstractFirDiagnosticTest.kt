@@ -73,10 +73,6 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration() {
 
     useMetaInfoProcessors(::PsiLightTreeMetaInfoProcessor)
 
-    defaultDirectives {
-        +COMPARE_WITH_LIGHT_TREE
-    }
-
     forTestsMatching("compiler/testData/diagnostics/*") {
         useAfterAnalysisCheckers(
             ::FirIdenticalChecker,

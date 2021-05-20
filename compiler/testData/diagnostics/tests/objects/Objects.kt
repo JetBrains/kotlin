@@ -1,3 +1,4 @@
+// COMPARE_WITH_LIGHT_TREE
 package toplevelObjectDeclarations
 
   open class Foo(y : Int) {

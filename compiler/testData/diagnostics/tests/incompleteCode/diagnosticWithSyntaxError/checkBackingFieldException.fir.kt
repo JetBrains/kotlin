@@ -1,3 +1,4 @@
+// COMPARE_WITH_LIGHT_TREE
 package h
 
 class Square() {
