@@ -22,7 +22,7 @@ val inventNamesForLocalClassesPhase = makeIrFilePhase(
     prerequisite = setOf(mainMethodGenerationPhase)
 )
 
-class JvmInventNamesForLocalClasses(private val context: JvmBackendContext) : InventNamesForLocalClasses() {
+class JvmInventNamesForLocalClasses(private val context: JvmBackendContext) : InventNamesForLocalClasses(allowTopLevelCallables = false) {
     override fun computeTopLevelClassName(clazz: IrClass): String {
         val file = clazz.parent as? IrFile
             ?: throw AssertionError("Top-level class expected: ${clazz.render()}")
