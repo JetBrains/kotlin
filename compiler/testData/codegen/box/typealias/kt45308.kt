@@ -1,5 +1,7 @@
-// KT-45308 Psi2ir: "AssertionError: TypeAliasDescriptor expected" caused by using typealias from one module as a type in another module without a transitive dependency
-// IGNORE_BACKEND: JVM_IR
+// This test checks that unresolved typealias in an abbreviated type does not crash the compiler or result in a compilation error.
+// Apparently, there's some demand for this behavior, see KT-45308.
+
+// FIR reports RETURN_TYPE_MISMATCH: Return type mismatch: expected kotlin/String, actual a/A
 // IGNORE_BACKEND_FIR: JVM_IR
 
 // MODULE: a
