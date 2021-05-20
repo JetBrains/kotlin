@@ -13,6 +13,7 @@ dependencies {
     compile(project(":compiler:ir.serialization.common"))
     compile(project(":compiler:fir:resolve"))
     compile(project(":compiler:fir:checkers"))
+    compile(project(":compiler:fir:checkers:checkers.jvm"))
     compile(project(":compiler:fir:java"))
     compile(project(":compiler:fir:jvm"))
     implementation(project(":compiler:ir.psi2ir"))
