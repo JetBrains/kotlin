@@ -7,7 +7,7 @@ import kotlin.annotation.AnnotationTarget.*
 
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
 @Target(CLASS, ANNOTATION_CLASS, TYPE_PARAMETER, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER, CONSTRUCTOR, FUNCTION,
-        PROPERTY_GETTER, PROPERTY_SETTER, TYPE, TYPEALIAS)
+        PROPERTY_SETTER, TYPE, TYPEALIAS)
 @Retention(AnnotationRetention.BINARY)
 annotation class E1
 
@@ -21,6 +21,20 @@ annotation class E2
 annotation class E3
 
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
-@Target(FILE, EXPRESSION)
-@Retention(AnnotationRetention.SOURCE)
+@Target(PROPERTY_GETTER)
+@Retention(AnnotationRetention.BINARY)
 annotation class E4
+
+@RequiresOptIn(level = RequiresOptIn.Level.WARNING)
+@Target(PROPERTY_SETTER)
+@Retention(AnnotationRetention.BINARY)
+annotation class E5
+
+var some: Int
+    @E4
+    get() = 42
+    @E5
+    set(value) {}
+
+@get:E4
+val another: Int = 42

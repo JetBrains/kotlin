@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.resolve.checkers
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -19,12 +20,15 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAnnotationRetention
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class ExperimentalMarkerDeclarationAnnotationChecker(private val module: ModuleDescriptor) : AdditionalAnnotationChecker {
-    private val WRONG_TARGETS_FOR_MARKER = setOf(KotlinTarget.EXPRESSION, KotlinTarget.FILE)
+    companion object {
+        private val WRONG_TARGETS_FOR_MARKER = setOf(KotlinTarget.EXPRESSION, KotlinTarget.FILE)
+    }
 
     override fun checkEntries(
         entries: List<KtAnnotationEntry>,
@@ -34,16 +38,23 @@ class ExperimentalMarkerDeclarationAnnotationChecker(private val module: ModuleD
         var isAnnotatedWithExperimental = false
 
         for (entry in entries) {
-            val annotation = trace.bindingContext.get(BindingContext.ANNOTATION, entry)
-            when (annotation?.fqName) {
+            val annotation = trace.bindingContext.get(BindingContext.ANNOTATION, entry) ?: continue
+            when (annotation.fqName) {
                 in ExperimentalUsageChecker.USE_EXPERIMENTAL_FQ_NAMES -> {
                     val annotationClasses =
-                        annotation!!.allValueArguments[ExperimentalUsageChecker.USE_EXPERIMENTAL_ANNOTATION_CLASS]
+                        annotation.allValueArguments[ExperimentalUsageChecker.USE_EXPERIMENTAL_ANNOTATION_CLASS]
                             .safeAs<ArrayValue>()?.value.orEmpty()
                     checkUseExperimentalUsage(annotationClasses, trace, entry)
                 }
                 in ExperimentalUsageChecker.EXPERIMENTAL_FQ_NAMES -> {
                     isAnnotatedWithExperimental = true
+                }
+            }
+            if (annotation.annotationClass?.annotations?.any { it.fqName in ExperimentalUsageChecker.EXPERIMENTAL_FQ_NAMES } == true) {
+                if (KotlinTarget.PROPERTY_GETTER in actualTargets ||
+                    entry.useSiteTarget?.getAnnotationUseSiteTarget() == AnnotationUseSiteTarget.PROPERTY_GETTER
+                ) {
+                    trace.report(Errors.EXPERIMENTAL_ANNOTATION_ON_GETTER.on(entry))
                 }
             }
         }
