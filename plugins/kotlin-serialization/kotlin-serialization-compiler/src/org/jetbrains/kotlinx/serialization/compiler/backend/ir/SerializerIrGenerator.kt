@@ -166,7 +166,8 @@ open class SerializerIrGenerator(
                     ?: error("No constructor args found for SerialInfo annotation Impl class: ${implClass.render()}")
                 irCall(ctor).apply {
                     for (i in 0 until annotationCall.valueArgumentsCount) {
-                        putValueArgument(i, annotationCall.getValueArgument(i)!!.deepCopyWithVariables())
+                        val argument = annotationCall.getValueArgument(i) ?: annotationClass.primaryConstructor!!.valueParameters[i].defaultValue?.expression
+                        putValueArgument(i, argument!!.deepCopyWithVariables())
                     }
                 }
             } else {
