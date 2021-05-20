@@ -333,6 +333,18 @@ private fun Candidate.captureTypeFromExpressionOrNull(argumentType: ConeKotlinTy
     ) as? ConeKotlinType
 }
 
+fun isArgumentTypeMismatchDueToNullability(
+    argumentType: ConeKotlinType,
+    actualExpectedType: ConeKotlinType,
+    typeContext: ConeTypeContext
+): Boolean {
+    return AbstractTypeChecker.isSubtypeOf(
+        typeContext,
+        argumentType,
+        actualExpectedType.withNullability(ConeNullability.NULLABLE, typeContext)
+    )
+}
+
 private fun checkApplicabilityForArgumentType(
     csBuilder: ConstraintSystemBuilder,
     argument: FirExpression,
@@ -375,18 +387,14 @@ private fun checkApplicabilityForArgumentType(
             return type
         }
 
-        // Reaching here means argument types mismatch, and we want to record whether it's due to the nullability by checking a subtype
-        // relation with nullable expected type.
-        val isMismatchDueToNullability = argumentType.canBeNull && !actualExpectedType.isNullable && AbstractTypeChecker.isSubtypeOf(
-            context.session.typeContext,
-            argumentType,
-            actualExpectedType.withNullability(ConeNullability.NULLABLE, context.session.typeContext)
-        )
+
         return ArgumentTypeMismatch(
             tryGetConeTypeThatCompatibleWithKtType(actualExpectedType),
             tryGetConeTypeThatCompatibleWithKtType(argumentType),
             argument,
-            isMismatchDueToNullability
+            // Reaching here means argument types mismatch, and we want to record whether it's due to the nullability by checking a subtype
+            // relation with nullable expected type.
+            isArgumentTypeMismatchDueToNullability(argumentType, actualExpectedType, context.session.typeContext)
         )
     }
 

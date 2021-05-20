@@ -8,15 +8,14 @@ package org.jetbrains.kotlin.fir.resolve.inference
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
-import org.jetbrains.kotlin.fir.resolve.calls.ArgumentTypeMismatch
-import org.jetbrains.kotlin.fir.resolve.calls.Candidate
-import org.jetbrains.kotlin.fir.resolve.calls.CheckerSink
-import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
+import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.createFunctionalType
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun Candidate.preprocessLambdaArgument(
@@ -57,7 +56,14 @@ fun Candidate.preprocessLambdaArgument(
             csBuilder.addSubtypeConstraint(lambdaType, expectedType, position)
         } else {
             if (!csBuilder.addSubtypeConstraintIfCompatible(lambdaType, expectedType, position)) {
-                sink.reportDiagnostic(ArgumentTypeMismatch(lambdaType, expectedType, argument))
+                sink.reportDiagnostic(
+                    ArgumentTypeMismatch(
+                        lambdaType,
+                        expectedType,
+                        argument,
+                        isArgumentTypeMismatchDueToNullability(lambdaType, expectedType, context.session.typeContext)
+                    )
+                )
             }
         }
     }

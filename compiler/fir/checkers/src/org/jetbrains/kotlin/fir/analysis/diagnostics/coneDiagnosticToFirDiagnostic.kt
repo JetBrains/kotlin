@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -230,7 +231,12 @@ private fun ConstraintSystemError.toDiagnostic(
                 }
 
             argument?.let {
-                return FirErrors.ARGUMENT_TYPE_MISMATCH.on(it.source ?: source, lowerConeType, upperConeType)
+                return FirErrors.ARGUMENT_TYPE_MISMATCH.on(
+                    it.source ?: source,
+                    lowerConeType,
+                    upperConeType,
+                    isArgumentTypeMismatchDueToNullability(lowerConeType, upperConeType, typeContext)
+                )
             }
 
             when (position) {
