@@ -1,0 +1,12 @@
+// HIGHLIGHT: INFORMATION
+fun test(): Int {
+    return try {
+        foo()
+    } finally {
+        bar()
+    }
+}
+
+fun foo() = 1
+
+fun bar() {}

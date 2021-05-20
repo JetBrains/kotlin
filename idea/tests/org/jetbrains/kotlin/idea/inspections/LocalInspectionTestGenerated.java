@@ -14083,9 +14083,44 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/unnecessaryVariable/copyOfVar.kt");
         }
 
+        @TestMetadata("ifElse.kt")
+        public void testIfElse() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unnecessaryVariable/ifElse.kt");
+        }
+
+        @TestMetadata("ifElse2.kt")
+        public void testIfElse2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unnecessaryVariable/ifElse2.kt");
+        }
+
+        @TestMetadata("ifElse3.kt")
+        public void testIfElse3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unnecessaryVariable/ifElse3.kt");
+        }
+
+        @TestMetadata("ifElse4.kt")
+        public void testIfElse4() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unnecessaryVariable/ifElse4.kt");
+        }
+
+        @TestMetadata("ifElse5.kt")
+        public void testIfElse5() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unnecessaryVariable/ifElse5.kt");
+        }
+
         @TestMetadata("it.kt")
         public void testIt() throws Exception {
             runTest("idea/testData/inspectionsLocal/unnecessaryVariable/it.kt");
+        }
+
+        @TestMetadata("lambda.kt")
+        public void testLambda() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unnecessaryVariable/lambda.kt");
+        }
+
+        @TestMetadata("lambda2.kt")
+        public void testLambda2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unnecessaryVariable/lambda2.kt");
         }
 
         @TestMetadata("override.kt")
@@ -14118,9 +14153,19 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/unnecessaryVariable/topLevelCopy.kt");
         }
 
+        @TestMetadata("try.kt")
+        public void testTry() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unnecessaryVariable/try.kt");
+        }
+
         @TestMetadata("varCopy.kt")
         public void testVarCopy() throws Exception {
             runTest("idea/testData/inspectionsLocal/unnecessaryVariable/varCopy.kt");
+        }
+
+        @TestMetadata("when.kt")
+        public void testWhen() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unnecessaryVariable/when.kt");
         }
 
         @TestMetadata("whenSubject.kt")
