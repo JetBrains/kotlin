@@ -151,4 +151,31 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
             assertSuccessful()
         }
     }
+
+    // Should not produce kotlin-stdlib version conflict on Kotlin files compilation in 'buildSrc' module"
+    @Test
+    internal fun testKotlinDslStdlibVersionConflict() {
+        val project = Project(projectName = "buildSrcUsingKotlinCompilationAndKotlinPlugin")
+        listOf(
+            "compileClasspath",
+            "compileOnly",
+            "runtimeClasspath"
+        ).forEach { configuration ->
+            project.build("-p", "buildSrc", "dependencies", "--configuration", configuration) {
+                assertSuccessful()
+                listOf(
+                    "org.jetbrains.kotlin:kotlin-stdlib:${defaultBuildOptions().kotlinVersion}",
+                    "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${defaultBuildOptions().kotlinVersion}",
+                    "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${defaultBuildOptions().kotlinVersion}",
+                    "org.jetbrains.kotlin:kotlin-stdlib-common:${defaultBuildOptions().kotlinVersion}",
+                    "org.jetbrains.kotlin:kotlin-reflect:${defaultBuildOptions().kotlinVersion}",
+                    "org.jetbrains.kotlin:kotlin-script-runtime:${defaultBuildOptions().kotlinVersion}"
+                ).forEach {
+                    assertNotContains(it)
+                }
+            }
+        }
+
+        project.build("assemble") { assertSuccessful() }
+    }
 }

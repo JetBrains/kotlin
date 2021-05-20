@@ -13,9 +13,9 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.plugin.*
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
+import org.junit.Assert.assertEquals
+import org.junit.Assert.fail
+import org.junit.Test
 
 class SourceSetVisibilityTest {
     @Test
@@ -56,22 +56,28 @@ class SourceSetVisibilityTest {
 
         checkInferredSourceSetsVisibility("jvmTest", *arrayOf())
 
-        assertFailsWith<UnsatisfiedSourceSetVisibilityException> {
+        try {
             checkSourceSetVisibilityRequirements(setOf(jvmTest), compilationsBySourceSets)
-        }.apply {
-            assertEquals(jvmTest, sourceSet)
-            assertEquals(emptyList(), visibleSourceSets)
-            assertEquals(setOf(jvmMain), requiredButNotVisible)
-            assertEquals(setOf(jvmTestCompilation), compilations)
+            fail()
+        } catch (e: UnsatisfiedSourceSetVisibilityException) {
+            with(e) {
+                assertEquals(jvmTest, sourceSet)
+                assertEquals(emptyList<KotlinSourceSet>(), visibleSourceSets)
+                assertEquals(setOf(jvmMain), requiredButNotVisible)
+                assertEquals(setOf(jvmTestCompilation), compilations)
+            }
         }
 
-        assertFailsWith<UnsatisfiedSourceSetVisibilityException> {
+        try {
             checkSourceSetVisibilityRequirements(setOf(commonTest), compilationsBySourceSets)
-        }.apply {
-            assertEquals(commonTest, sourceSet)
-            assertEquals(emptyList(), visibleSourceSets)
-            assertEquals(setOf(commonMain), requiredButNotVisible)
-            assertEquals(setOf(jvmTestCompilation), compilations)
+            fail()
+        } catch (e: UnsatisfiedSourceSetVisibilityException) {
+            with(e) {
+                assertEquals(commonTest, sourceSet)
+                assertEquals(emptyList<KotlinSourceSet>(), visibleSourceSets)
+                assertEquals(setOf(commonMain), requiredButNotVisible)
+                assertEquals(setOf(jvmTestCompilation), compilations)
+            }
         }
     }
 
@@ -151,13 +157,16 @@ class SourceSetVisibilityTest {
         val commonIntegrationTest = sourceSetsByName.getValue("commonIntegrationTest")
         commonIntegrationTest.requiresVisibilityOf(sourceSetsByName.getValue("commonMain"))
 
-        assertFailsWith<UnsatisfiedSourceSetVisibilityException> {
+        try {
             checkSourceSetVisibilityRequirements(setOf(commonIntegrationTest), compilationsBySourceSets)
-        }.apply {
-            assertEquals(commonIntegrationTest, this.sourceSet)
-            assertEquals(setOf("commonTest"), visibleSourceSets.map { it.name }.toSet())
-            assertEquals(setOf("commonMain"), requiredButNotVisible.map { it.name }.toSet())
-            assertEquals(setOf("jvm / IntegrationTest", "js / IntegrationTest"), compilations.map { it.name }.toSet())
+            fail()
+        } catch (e: UnsatisfiedSourceSetVisibilityException) {
+            with(e) {
+                assertEquals(commonIntegrationTest, this.sourceSet)
+                assertEquals(setOf("commonTest"), visibleSourceSets.map { it.name }.toSet())
+                assertEquals(setOf("commonMain"), requiredButNotVisible.map { it.name }.toSet())
+                assertEquals(setOf("jvm / IntegrationTest", "js / IntegrationTest"), compilations.map { it.name }.toSet())
+            }
         }
     }
 
@@ -182,13 +191,16 @@ class SourceSetVisibilityTest {
         val jvmTestCompilation = compilation("jvm / test", jvmTest, jvmMainCompilation)
         val jsTestCompilation = compilation("js / test", jsTest, jsMainCompilation)
 
-        assertFailsWith<UnsatisfiedSourceSetVisibilityException> {
+        try {
             checkSourceSetVisibilityRequirements(setOf(commonTest), compilationsBySourceSets)
-        }.apply {
-            assertEquals(commonTest, this.sourceSet)
-            assertEquals(listOf(commonMain), visibleSourceSets)
-            assertEquals(setOf(jvmMain), requiredButNotVisible)
-            assertEquals(setOf(jvmTestCompilation, jsTestCompilation), compilations)
+            fail()
+        } catch (e: UnsatisfiedSourceSetVisibilityException) {
+            with(e) {
+                assertEquals(commonTest, this.sourceSet)
+                assertEquals(listOf(commonMain), visibleSourceSets)
+                assertEquals(setOf(jvmMain), requiredButNotVisible)
+                assertEquals(setOf(jvmTestCompilation, jsTestCompilation), compilations)
+            }
         }
     }
 }

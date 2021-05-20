@@ -10,11 +10,11 @@ package org.jetbrains.kotlin.gradle
 import com.android.build.gradle.LibraryExtension
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
+import org.hamcrest.MatcherAssert.assertThat
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import kotlin.test.Test
-import kotlin.test.assertEquals
+import org.junit.Test
 
 class KotlinAndroidDependsOnEdgesTest {
     @Test
@@ -41,19 +41,19 @@ class KotlinAndroidDependsOnEdgesTest {
         val androidTest = kotlin.sourceSets.getByName("androidTest")
         val androidAndroidTest = kotlin.sourceSets.getByName("androidAndroidTest")
 
-        assertEquals(
-            setOf(commonMain), androidMain.dependsOn,
-            "Expected androidMain to dependOn commonMain"
+        assertThat(
+            "Expected androidMain to dependOn commonMain",
+            setOf(commonMain) == androidMain.dependsOn
         )
 
-        assertEquals(
-            setOf(commonTest), androidTest.dependsOn,
-            "Expected androidTest to dependOn commonTest"
+        assertThat(
+            "Expected androidTest to dependOn commonTest",
+            setOf(commonTest) == androidTest.dependsOn
         )
 
-        assertEquals(
-            setOf(commonTest), androidAndroidTest.dependsOn,
-            "Expected androidAndroidTest to dependOn commonTest"
+        assertThat(
+            "Expected androidAndroidTest to dependOn commonTest",
+            setOf(commonTest) == androidAndroidTest.dependsOn
         )
     }
 
@@ -90,19 +90,19 @@ class KotlinAndroidDependsOnEdgesTest {
         val androidTest = kotlin.sourceSets.getByName("androidTest")
         val androidAndroidTest = kotlin.sourceSets.getByName("androidAndroidTest")
 
-        assertEquals(
-            setOf(commonMain, jvmMain).sorted(), androidMain.dependsOn.sorted(),
-            "Expected androidMain to depend on commonMain and jvmMain"
+        assertThat(
+            "Expected androidMain to depend on commonMain and jvmMain",
+            setOf(commonMain, jvmMain).sorted() == androidMain.dependsOn.sorted()
         )
 
-        assertEquals(
-            setOf(commonTest), androidTest.dependsOn,
-            "Expected androidTest to only depend on commonTest"
+        assertThat(
+            "Expected androidTest to only depend on commonTest",
+            setOf(commonTest) == androidTest.dependsOn
         )
 
-        assertEquals(
-            setOf(commonTest), androidAndroidTest.dependsOn,
-            "Expected androidAndroidTest to only depend on commonTest"
+        assertThat(
+            "Expected androidAndroidTest to only depend on commonTest",
+            setOf(commonTest) == androidAndroidTest.dependsOn
         )
     }
 }

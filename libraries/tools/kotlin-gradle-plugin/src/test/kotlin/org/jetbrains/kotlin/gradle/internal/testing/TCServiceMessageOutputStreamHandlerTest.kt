@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.gradle.internal.testing
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessage
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessageParserCallback
 import jetbrains.buildServer.messages.serviceMessages.TestFailed
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.slf4j.event.EventRecodingLogger
 import org.slf4j.event.SubstituteLoggingEvent
 import org.slf4j.helpers.SubstituteLogger
 import java.text.ParseException
 import java.util.concurrent.ArrayBlockingQueue
-import kotlin.test.assertEquals
 
 class TCServiceMessageOutputStreamHandlerTest {
     private val client = Mock()

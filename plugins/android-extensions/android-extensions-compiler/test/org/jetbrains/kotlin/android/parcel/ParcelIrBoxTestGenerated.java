@@ -190,6 +190,11 @@ public class ParcelIrBoxTestGenerated extends AbstractParcelIrBoxTest {
         runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/kt41553_2.kt");
     }
 
+    @TestMetadata("kt46567.kt")
+    public void testKt46567() throws Exception {
+        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/kt46567.kt");
+    }
+
     @TestMetadata("listKinds.kt")
     public void testListKinds() throws Exception {
         runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/listKinds.kt");
@@ -248,6 +253,11 @@ public class ParcelIrBoxTestGenerated extends AbstractParcelIrBoxTest {
     @TestMetadata("newArray.kt")
     public void testNewArray() throws Exception {
         runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/newArray.kt");
+    }
+
+    @TestMetadata("newArrayParceler.kt")
+    public void testNewArrayParceler() throws Exception {
+        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/newArrayParceler.kt");
     }
 
     @TestMetadata("nullableTypes.kt")

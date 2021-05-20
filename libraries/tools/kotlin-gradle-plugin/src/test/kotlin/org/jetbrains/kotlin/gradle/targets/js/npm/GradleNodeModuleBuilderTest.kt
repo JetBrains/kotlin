@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
+import org.junit.Assert.assertNotNull
 import org.junit.Test
 import java.io.File
-import kotlin.test.assertNotNull
 
 class GradleNodeModuleBuilderTest {
 
@@ -18,7 +18,10 @@ class GradleNodeModuleBuilderTest {
         val packageJson = fromSrcPackageJson(
             File("libraries/tools/kotlin-gradle-plugin/src/test/resources/org/jetbrains/kotlin/gradle/targets/js/npm/GradleNodeModuleBuilderTest/package.json")
         )
-        assertNotNull(packageJson, "package.json should be deserialized")
+        assertNotNull(
+            "package.json should be deserialized",
+            packageJson
+        )
 
         with(packageJson!!) {
             listOf(
@@ -28,7 +31,10 @@ class GradleNodeModuleBuilderTest {
                 optionalDependencies,
                 bundledDependencies
             ).forEach {
-                assertNotNull(it, "Dependencies should deserialized correctly without null")
+                assertNotNull(
+                    "Dependencies should deserialized correctly without null",
+                    it
+                )
             }
         }
     }

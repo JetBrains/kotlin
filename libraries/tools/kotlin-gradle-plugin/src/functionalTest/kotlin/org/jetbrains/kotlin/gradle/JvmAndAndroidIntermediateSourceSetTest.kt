@@ -9,17 +9,19 @@
 package org.jetbrains.kotlin.gradle
 
 import com.android.build.gradle.LibraryExtension
-import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.testfixtures.ProjectBuilder
+import org.hamcrest.MatcherAssert.assertThat
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.buildKotlinProjectStructureMetadata
-import kotlin.test.*
+import org.junit.Before
+import org.junit.Test
+
 
 class JvmAndAndroidIntermediateSourceSetTest {
 
@@ -27,7 +29,7 @@ class JvmAndAndroidIntermediateSourceSetTest {
     private lateinit var kotlin: KotlinMultiplatformExtension
     private lateinit var jvmAndAndroidMain: KotlinSourceSet
 
-    @BeforeTest
+    @Before
     fun setup() {
         project = ProjectBuilder.builder().build() as ProjectInternal
         project.extensions.getByType(ExtraPropertiesExtension::class.java).set("kotlin.mpp.enableGranularSourceSetsMetadata", "true")
@@ -66,34 +68,60 @@ class JvmAndAndroidIntermediateSourceSetTest {
             .filterIsInstance<KotlinMetadataCompilation<*>>()
             .filter { it.name == jvmAndAndroidMain.name }
 
-        assertEquals(
-            1, jvmAndAndroidMainMetadataCompilations.size,
-            "Expected exactly one metadata compilation created for jvmAndAndroidMain source set"
+        assertThat(
+            "Expected exactly one metadata compilation created for jvmAndAndroidMain source set",
+            1 == jvmAndAndroidMainMetadataCompilations.size
         )
 
         val compilation = jvmAndAndroidMainMetadataCompilations.single()
-        assertFalse(
-            compilation.compileKotlinTaskProvider.get().enabled,
-            "Expected compilation task to be disabled, because not supported yet"
+        assertThat(
+            "Expected compilation task to be disabled, because not supported yet",
+            !compilation.compileKotlinTaskProvider.get().enabled
         )
     }
 
     @Test
     fun `KotlinProjectStructureMetadata jvmAndAndroidMain exists in jvm variants`() {
         project.evaluate()
-        val metadata = assertNotNull(buildKotlinProjectStructureMetadata(project))
-        assertTrue("jvmAndAndroidMain" in metadata.sourceSetNamesByVariantName["jvmApiElements"].orEmpty())
-        assertTrue("jvmAndAndroidMain" in metadata.sourceSetNamesByVariantName["jvmRuntimeElements"].orEmpty())
+        val metadata = buildKotlinProjectStructureMetadata(project)
+        assertThat(
+            "Kotlin project structure metadata is null",
+            metadata != null
+        )
+        assertThat(
+            "'jvmAndAndroidMain' source set is not included into 'jvmApiElements' variant metadata",
+            "jvmAndAndroidMain" in metadata!!.sourceSetNamesByVariantName["jvmApiElements"].orEmpty()
+        )
+        assertThat(
+            "'jvmAndAndroidName' source set is not included into 'jvmRuntimeElements' variant metadata",
+            "jvmAndAndroidMain" in metadata.sourceSetNamesByVariantName["jvmRuntimeElements"].orEmpty()
+        )
     }
 
     @Test
     fun `KotlinProjectStructureMetadata jvmAndAndroidMain exists in android variants`() {
         project.evaluate()
-        val metadata = assertNotNull(buildKotlinProjectStructureMetadata(project))
-        assertTrue("jvmAndAndroidMain" in metadata.sourceSetNamesByVariantName["debugApiElements"].orEmpty())
-        assertTrue("jvmAndAndroidMain" in metadata.sourceSetNamesByVariantName["debugRuntimeElements"].orEmpty())
-        assertTrue("jvmAndAndroidMain" in metadata.sourceSetNamesByVariantName["releaseApiElements"].orEmpty())
-        assertTrue("jvmAndAndroidMain" in metadata.sourceSetNamesByVariantName["releaseRuntimeElements"].orEmpty())
+        val metadata = buildKotlinProjectStructureMetadata(project)
+        assertThat(
+            "Kotlin project structure metadata is null",
+            metadata != null
+        )
+        assertThat(
+            "'jvmAndAndroidMain' source set is not included into 'debugApiElements' variant metadata",
+            "jvmAndAndroidMain" in metadata!!.sourceSetNamesByVariantName["debugApiElements"].orEmpty()
+        )
+        assertThat(
+            "'jvmAndAndroidMain' source set is not included into 'debugRuntimeElements' variant metadata",
+            "jvmAndAndroidMain" in metadata.sourceSetNamesByVariantName["debugRuntimeElements"].orEmpty()
+        )
+        assertThat(
+            "'jvmAndAndroidMain' source set is not included into 'releaseApiElements' variant metadata",
+            "jvmAndAndroidMain" in metadata.sourceSetNamesByVariantName["releaseApiElements"].orEmpty()
+        )
+        assertThat(
+            "'jvmAndAndroidMain' source set is not included into 'releaseRuntimeElements' variant metadata",
+            "jvmAndAndroidMain" in metadata.sourceSetNamesByVariantName["releaseRuntimeElements"].orEmpty()
+        )
     }
 
     @Test
@@ -102,10 +130,16 @@ class JvmAndAndroidIntermediateSourceSetTest {
         target.publishLibraryVariants = emptyList()
         project.evaluate()
         val kotlinComponents = target.kotlinComponents
-        assertTrue(kotlinComponents.isNotEmpty(), "Expected at least one KotlinComponent to be present")
+        assertThat(
+            "Expected at least one KotlinComponent to be present",
+            kotlinComponents.isNotEmpty()
+        )
 
         kotlinComponents.forEach { component ->
-            assertFalse(component.publishable, "Expected component to not publishable, because no publication is configured")
+            assertThat(
+                "Expected component to not publishable, because no publication is configured",
+                !component.publishable
+            )
         }
     }
 
@@ -115,14 +149,23 @@ class JvmAndAndroidIntermediateSourceSetTest {
         target.publishLibraryVariants = listOf("release")
         project.evaluate()
         val kotlinComponents = target.kotlinComponents
-        assertTrue(kotlinComponents.isNotEmpty(), "Expected at least one KotlinComponent to be present")
+        assertThat(
+            "Expected at least one KotlinComponent to be present",
+            kotlinComponents.isNotEmpty()
+        )
 
         kotlinComponents.forEach { component ->
             val isReleaseComponent = "release" in component.name.toLowerCase()
             if (isReleaseComponent) {
-                assertTrue(component.publishable, "Expected release component to be marked as publishable")
+                assertThat(
+                    "Expected release component to be marked as publishable",
+                    component.publishable
+                )
             } else {
-                assertFalse(component.publishable, "Expected non-release component to be marked as not publishable")
+                assertThat(
+                    "Expected non-release component to be marked as not publishable",
+                    !component.publishable
+                )
             }
         }
     }

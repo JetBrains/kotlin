@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.gradle.internal.testing.tcsmc
 
 import jetbrains.buildServer.messages.serviceMessages.TestStarted
 import jetbrains.buildServer.messages.serviceMessages.TestSuiteStarted
+import org.junit.Assert.assertEquals
 import org.junit.Test
-import kotlin.test.assertEquals
 
 class TestCrash : TCServiceMessagesClientTest() {
     @Test

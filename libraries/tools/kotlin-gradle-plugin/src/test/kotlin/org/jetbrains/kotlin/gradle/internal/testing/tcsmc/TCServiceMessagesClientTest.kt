@@ -6,8 +6,8 @@ import org.jetbrains.kotlin.gradle.internal.testing.RecordingTestResultProcessor
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClient
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespaces
+import org.junit.Assert.assertEquals
 import org.slf4j.LoggerFactory
-import kotlin.test.assertEquals
 
 open class TCServiceMessagesClientTest {
     protected var rootNodeName: String = "root"

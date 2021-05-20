@@ -5,23 +5,24 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
-import kotlin.test.Test
-import kotlin.test.assertTrue
-
+import org.junit.Assert.assertTrue
+import org.junit.Test
 
 class NpmRangeTest {
     @Test
     fun intersectTest() {
         fun assertIntersect(range1: NpmRange, range2: NpmRange, expected: NpmRange?) {
             val intersection = range1 intersect range2
-            assertTrue("Range $range1 and $range2 expected to have intersection $expected, but actual is $intersection") {
+            assertTrue(
+                "Range $range1 and $range2 expected to have intersection $expected, but actual is $intersection",
                 intersection == expected
-            }
+            )
 
             val symIntersection = range2 intersect range1
-            assertTrue("Range $range2 and $range1 expected to have union $expected, but actual is $symIntersection") {
+            assertTrue(
+                "Range $range2 and $range1 expected to have union $expected, but actual is $symIntersection",
                 symIntersection == expected
-            }
+            )
         }
 
         val range1 = npmRange(startMajor = 1, endMajor = 2)
@@ -91,14 +92,16 @@ class NpmRangeTest {
     fun unionTest() {
         fun assertUnion(range1: NpmRange, range2: NpmRange, expected: Set<NpmRange>) {
             val union = (range1 union range2)
-            assertTrue("Range $range1 and $range2 expected to have union $expected, but actual is $union") {
+            assertTrue(
+                "Range $range1 and $range2 expected to have union $expected, but actual is $union",
                 union == expected
-            }
+            )
 
             val symUnion = range2 union range1
-            assertTrue("Range $range2 and $range1 expected to have union $expected, but actual is $symUnion") {
+            assertTrue(
+                "Range $range2 and $range1 expected to have union $expected, but actual is $symUnion",
                 symUnion == expected
-            }
+            )
         }
 
         val range1 = npmRange(startMajor = 1, endMajor = 2)
@@ -185,9 +188,10 @@ class NpmRangeTest {
     fun rangeInvertTest() {
         fun assertInvert(invertible: NpmRange, expected: Set<NpmRange>) {
             val invert = invertible.invert()
-            assertTrue("Inverted $invertible should be $expected but found $invert") {
+            assertTrue(
+                "Inverted $invertible should be $expected but found $invert",
                 invert == expected
-            }
+            )
         }
 
         assertInvert(npmRange(), emptySet())
@@ -209,9 +213,10 @@ class NpmRangeTest {
     @Test
     fun hasIntersectionTest() {
         fun assertHasIntersection(range1: NpmRange, range2: NpmRange) =
-            assertTrue("Range $range1 and $range2 expected to have intersection, but actual is not") {
+            assertTrue(
+                "Range $range1 and $range2 expected to have intersection, but actual is not",
                 (range1 hasIntersection range2) && (range2 hasIntersection range1)
-            }
+            )
 
         assertHasIntersection(npmRange(endMajor = 1), npmRange(endMajor = 2))
         assertHasIntersection(npmRange(startMajor = 1), npmRange(startMajor = 2))
@@ -234,9 +239,10 @@ class NpmRangeTest {
     @Test
     fun hasNoIntersectionTest() {
         fun assertHasNoIntersection(range1: NpmRange, range2: NpmRange) =
-            assertTrue("Range $range1 and $range2 expected to not have intersection, but actual is") {
+            assertTrue(
+                "Range $range1 and $range2 expected to not have intersection, but actual is",
                 !(range1 hasIntersection range2) && !(range2 hasIntersection range1)
-            }
+            )
 
         assertHasNoIntersection(npmRange(endMajor = 1), npmRange(startMajor = 2))
         assertHasNoIntersection(npmRange(startMajor = 1, endMajor = 2), npmRange(startMajor = 3, endMajor = 4))
@@ -288,9 +294,10 @@ class NpmRangeTest {
             nullRange1,
             nullRange2
         )
-        assertTrue("Max start should be ${nullRange2.startVersion} but $maxStart1 found") {
+        assertTrue(
+            "Max start should be ${nullRange2.startVersion} but $maxStart1 found",
             maxStart1 == nullRange2.startVersion
-        }
+        )
 
         val startRange1 = npmRange(
             startMajor = 1
@@ -299,18 +306,20 @@ class NpmRangeTest {
             startRange1,
             npmRange()
         )
-        assertTrue("Max start should be ${startRange1.startVersion} but $maxStart2 found") {
+        assertTrue(
+            "Max start should be ${startRange1.startVersion} but $maxStart2 found",
             maxStart2 == startRange1.startVersion
-        }
+        )
 
         val startRange2 = npmRange(startMajor = 2)
         val maxStart3 = maxStart(
             startRange1,
             startRange2
         )
-        assertTrue("Max start should be ${startRange2.startVersion} but $maxStart3 found") {
+        assertTrue(
+            "Max start should be ${startRange2.startVersion} but $maxStart3 found",
             maxStart3 == startRange2.startVersion
-        }
+        )
     }
 
     @Test
@@ -321,9 +330,10 @@ class NpmRangeTest {
             nullRange1,
             nullRange2
         )
-        assertTrue("Min start should be ${null} but $minStart1 found") {
+        assertTrue(
+            "Min start should be ${null} but $minStart1 found",
             minStart1 == null
-        }
+        )
 
         val startRange1 = npmRange(
             startMajor = 1
@@ -332,18 +342,20 @@ class NpmRangeTest {
             startRange1,
             npmRange()
         )
-        assertTrue("Min start should be ${null} but $minStart2 found") {
+        assertTrue(
+            "Min start should be ${null} but $minStart2 found",
             minStart2 == null
-        }
+        )
 
         val startRange2 = npmRange(startMajor = 2)
         val minStart3 = minStart(
             startRange1,
             startRange2
         )
-        assertTrue("Min start should be ${startRange1.startVersion} but $minStart3 found") {
+        assertTrue(
+            "Min start should be ${startRange1.startVersion} but $minStart3 found",
             minStart3 == startRange1.startVersion
-        }
+        )
     }
 
     @Test
@@ -354,9 +366,10 @@ class NpmRangeTest {
             nullRange1,
             nullRange2
         )
-        assertTrue("Max end should be ${null} but $maxEnd1 found") {
+        assertTrue(
+            "Max end should be ${null} but $maxEnd1 found",
             maxEnd1 == null
-        }
+        )
 
         val endRange1 = npmRange(
             endMajor = 1
@@ -365,18 +378,20 @@ class NpmRangeTest {
             endRange1,
             npmRange()
         )
-        assertTrue("Max end should be ${null} but $maxEnd2 found") {
+        assertTrue(
+            "Max end should be ${null} but $maxEnd2 found",
             maxEnd2 == null
-        }
+        )
 
         val endRange2 = npmRange(endMajor = 2)
         val maxEnd3 = maxEnd(
             endRange1,
             endRange2
         )
-        assertTrue("Max end should be ${endRange2.endVersion} but $maxEnd3 found") {
+        assertTrue(
+            "Max end should be ${endRange2.endVersion} but $maxEnd3 found",
             maxEnd3 == endRange2.endVersion
-        }
+        )
     }
 
     @Test
@@ -387,9 +402,10 @@ class NpmRangeTest {
             nullRange1,
             nullRange2
         )
-        assertTrue("Min end should be ${nullRange1.endVersion} but $minEnd1 found") {
+        assertTrue(
+            "Min end should be ${nullRange1.endVersion} but $minEnd1 found",
             minEnd1 == nullRange1.endVersion
-        }
+        )
 
         val endRange1 = npmRange(
             endMajor = 1
@@ -398,18 +414,20 @@ class NpmRangeTest {
             endRange1,
             npmRange()
         )
-        assertTrue("Min end should be ${endRange1.endVersion} but $minEnd2 found") {
+        assertTrue(
+            "Min end should be ${endRange1.endVersion} but $minEnd2 found",
             minEnd2 == endRange1.endVersion
-        }
+        )
 
         val endRange2 = npmRange(endMajor = 2)
         val minEnd3 = minEnd(
             endRange1,
             endRange2
         )
-        assertTrue("Min end should be ${endRange1.endVersion} but $minEnd3 found") {
+        assertTrue(
+            "Min end should be ${endRange1.endVersion} but $minEnd3 found",
             minEnd3 == endRange1.endVersion
-        }
+        )
     }
 }
 
