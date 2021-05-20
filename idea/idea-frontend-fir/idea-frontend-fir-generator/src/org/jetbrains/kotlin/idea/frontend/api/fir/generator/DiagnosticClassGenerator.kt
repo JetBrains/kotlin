@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.generator
 
-import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.DiagnosticList
+import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
 import org.jetbrains.kotlin.fir.checkers.generator.getGenerationPath
 import org.jetbrains.kotlin.idea.frontend.api.fir.generator.rendererrs.FirDiagnosticToKtDiagnosticConverterRenderer
 import org.jetbrains.kotlin.idea.frontend.api.fir.generator.rendererrs.KtDiagnosticClassImplementationRenderer

@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
+package org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model
 
 import org.jetbrains.kotlin.fir.checkers.generator.*
 import org.jetbrains.kotlin.fir.tree.generator.printer.printCopyright

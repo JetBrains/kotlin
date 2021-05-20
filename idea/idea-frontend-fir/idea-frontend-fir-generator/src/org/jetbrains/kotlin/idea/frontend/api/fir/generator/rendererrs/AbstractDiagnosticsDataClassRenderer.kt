@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.generator.rendererrs
 
 import org.jetbrains.kotlin.fir.checkers.generator.collectClassNamesTo
-import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.DiagnosticList
-import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.DiagnosticListRenderer
+import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
+import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticListRenderer
 import org.jetbrains.kotlin.fir.checkers.generator.printImports
 import org.jetbrains.kotlin.fir.tree.generator.printer.printCopyright
 import org.jetbrains.kotlin.fir.tree.generator.printer.printGeneratedMessage

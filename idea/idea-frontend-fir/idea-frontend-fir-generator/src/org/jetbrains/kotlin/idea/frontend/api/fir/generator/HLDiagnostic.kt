@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.generator
 
-import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.DiagnosticData
-import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.DiagnosticParameter
+import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticData
+import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticParameter
 import kotlin.reflect.KType
 
 data class HLDiagnostic(
