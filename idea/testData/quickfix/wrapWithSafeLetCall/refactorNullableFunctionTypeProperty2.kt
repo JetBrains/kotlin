@@ -1,4 +1,7 @@
 // "Wrap with '?.let { ... }' call" "true"
+// ERROR: Expression 'it' of type 'Unit' cannot be invoked as a function. The function 'invoke()' is not found
+// ERROR: Function invocation 'foo2()' expected
+// ERROR: Reference has a nullable type '(Str.() -> Unit)?', use explicit '?.invoke()' to make a function-like call instead
 // WITH_RUNTIME
 
 interface Str {
