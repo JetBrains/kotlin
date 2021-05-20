@@ -9,11 +9,17 @@ import org.jetbrains.kotlin.diagnostics.rendering.*
 
 interface FirDiagnosticRenderer<D : FirDiagnostic<*>> : DiagnosticRenderer<D> {
     override fun render(diagnostic: D): String
+
+    override fun renderParameters(diagnostic: D): Array<out Any?>
 }
 
 class SimpleFirDiagnosticRenderer(private val message: String) : FirDiagnosticRenderer<FirSimpleDiagnostic<*>> {
     override fun render(diagnostic: FirSimpleDiagnostic<*>): String {
         return message
+    }
+
+    override fun renderParameters(diagnostic: FirSimpleDiagnostic<*>): Array<out Any?> {
+        return arrayOf()
     }
 }
 

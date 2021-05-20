@@ -31,4 +31,10 @@ public class SimpleDiagnosticRenderer implements DiagnosticRenderer<Diagnostic> 
     public String render(@NotNull Diagnostic diagnostic) {
         return message;
     }
+
+    @NotNull
+    @Override
+    public Object[] renderParameters(@NotNull Diagnostic diagnostic) {
+        return new Object[0];
+    }
 }

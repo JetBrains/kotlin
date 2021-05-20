@@ -6,7 +6,7 @@ class A() {
             field = <!ASSIGNMENT_TYPE_MISMATCH!>value<!>
         }
     val y: Int
-        get(): <!WRONG_GETTER_RETURN_TYPE("Getter return type must be equal to the type of the property, i.e. 'kotlin/Int'")!>String<!> = "s"
+        get(): <!WRONG_GETTER_RETURN_TYPE("kotlin/Int; kotlin/String")!>String<!> = "s"
     val z: Int
         get() {
             return "s"

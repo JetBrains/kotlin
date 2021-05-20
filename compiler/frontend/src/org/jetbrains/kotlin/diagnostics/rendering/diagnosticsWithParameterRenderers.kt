@@ -27,10 +27,10 @@ abstract class AbstractDiagnosticWithParametersRenderer<in D : UnboundDiagnostic
         return messageFormat.format(renderParameters(diagnostic))
     }
 
-    abstract fun renderParameters(diagnostic: D): Array<out Any?>
-
+    override fun renderParameters(diagnostic: D): Array<out Any?> {
+        return arrayOf()
+    }
 }
-
 
 class DiagnosticWithParameters1Renderer<A>(
     message: String,
@@ -83,7 +83,7 @@ class DiagnosticWithParameters4Renderer<A : Any, B : Any, C : Any, D : Any>(
     private val rendererForD: DiagnosticParameterRenderer<D>?,
 ) : AbstractDiagnosticWithParametersRenderer<DiagnosticWithParameters4<*, A, B, C, D>>(message) {
 
-    override fun renderParameters(diagnostic: DiagnosticWithParameters4<*, A, B, C, D>): Array<out Any> {
+    override fun renderParameters(diagnostic: DiagnosticWithParameters4<*, A, B, C, D>): Array<out Any?> {
         val context = RenderingContext.of(diagnostic.a, diagnostic.b, diagnostic.c, diagnostic.d)
         return arrayOf(
             renderParameter(diagnostic.a, rendererForA, context),
