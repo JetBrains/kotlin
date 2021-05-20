@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
@@ -37,72 +37,36 @@ import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
 
 class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
-    private val kotlinJvm = FqName("kotlin.jvm")
-    private val kotlinJvmInternalUnsafe = FqName("kotlin.jvm.internal.unsafe")
+    private val kotlinFqn = StandardNames.BUILT_INS_PACKAGE_FQ_NAME
+    private val kotlinJvmFqn = FqName("kotlin.jvm")
+    private val kotlinJvmInternalUnsafeFqn = FqName("kotlin.jvm.internal.unsafe")
+
+    private val anyFqn = StandardNames.FqNames.any.toSafe()
+    private val arrayFqn = StandardNames.FqNames.array.toSafe()
+    private val cloneableFqn = StandardNames.FqNames.cloneable.toSafe()
+    private val intFqn = StandardNames.FqNames._int.toSafe()
+    private val kClassFqn = StandardNames.FqNames.kClass.toSafe()
+    private val stringFqn = StandardNames.FqNames.string.toSafe()
 
     private val intrinsicsMap = (
             listOf(
-                Key(kotlinJvm, FqName("T"), "<get-javaClass>", emptyList()) to JavaClassProperty,
-                Key(kotlinJvm, StandardNames.FqNames.kClass.toSafe(), "<get-javaObjectType>", emptyList()) to GetJavaObjectType,
-                Key(kotlinJvm, StandardNames.FqNames.kClass.toSafe(), "<get-javaPrimitiveType>", emptyList()) to GetJavaPrimitiveType,
-                Key(
-                    kotlinJvm,
-                    StandardNames.FqNames.kClass.toSafe(),
-                    "<get-java>",
-                    emptyList()
-                ) to KClassJavaProperty,
-                Key(
-                    kotlinJvmInternalUnsafe,
-                    null,
-                    "access\$monitorEnter",
-                    listOf(StandardNames.FqNames.any.toSafe())
-                ) to MonitorInstruction.MONITOR_ENTER,
-                Key(
-                    kotlinJvmInternalUnsafe,
-                    null,
-                    "access\$monitorExit",
-                    listOf(StandardNames.FqNames.any.toSafe())
-                ) to MonitorInstruction.MONITOR_EXIT,
-                Key(
-                    kotlinJvm,
-                    StandardNames.FqNames.array.toSafe(),
-                    "isArrayOf",
-                    emptyList()
-                ) to IsArrayOf,
-                Key(
-                    StandardNames.BUILT_INS_PACKAGE_FQ_NAME,
-                    null,
-                    "arrayOfNulls",
-                    listOf(StandardNames.FqNames._int.toSafe())
-                ) to NewArray,
-                Key(
-                    StandardNames.FqNames.cloneable.toSafe(),
-                    null,
-                    "clone",
-                    emptyList()
-                ) to Clone,
-                Key(
-                    StandardNames.BUILT_INS_PACKAGE_FQ_NAME,
-                    null,
-                    "enumValues",
-                    listOf()
-                ) to EnumValues,
-                Key(
-                    StandardNames.BUILT_INS_PACKAGE_FQ_NAME,
-                    null,
-                    "enumValueOf",
-                    listOf(StandardNames.FqNames.string.toSafe())
-                ) to EnumValueOf,
-                Key(
-                    StandardNames.BUILT_INS_PACKAGE_FQ_NAME,
-                    StandardNames.FqNames.string.toSafe(),
-                    "plus",
-                    listOf(StandardNames.FqNames.any.toSafe())
-                ) to StringPlus,
+                Key(kotlinJvmFqn, FqName("T"), "<get-javaClass>", emptyList()) to JavaClassProperty,
+                Key(kotlinJvmFqn, kClassFqn, "<get-javaObjectType>", emptyList()) to GetJavaObjectType,
+                Key(kotlinJvmFqn, kClassFqn, "<get-javaPrimitiveType>", emptyList()) to GetJavaPrimitiveType,
+                Key(kotlinJvmFqn, kClassFqn, "<get-java>", emptyList()) to KClassJavaProperty,
+                Key(kotlinJvmInternalUnsafeFqn, null, "access\$monitorEnter", listOf(anyFqn)) to MonitorInstruction.MONITOR_ENTER,
+                Key(kotlinJvmInternalUnsafeFqn, null, "access\$monitorExit", listOf(anyFqn)) to MonitorInstruction.MONITOR_EXIT,
+                Key(kotlinJvmFqn, arrayFqn, "isArrayOf", emptyList()) to IsArrayOf,
+                Key(kotlinFqn, null, "arrayOfNulls", listOf(intFqn)) to NewArray,
+                Key(cloneableFqn, null, "clone", emptyList()) to Clone,
+                Key(kotlinFqn, null, "enumValues", listOf()) to EnumValues,
+                Key(kotlinFqn, null, "enumValueOf", listOf(stringFqn)) to EnumValueOf,
+                Key(kotlinFqn, stringFqn, "plus", listOf(anyFqn)) to StringPlus,
                 irBuiltIns.eqeqSymbol.toKey()!! to Equals(KtTokens.EQEQ),
                 irBuiltIns.eqeqeqSymbol.toKey()!! to Equals(KtTokens.EQEQEQ),
                 irBuiltIns.ieee754equalsFunByOperandType[irBuiltIns.floatClass]!!.toKey()!! to Ieee754Equals(Type.FLOAT_TYPE),
@@ -156,8 +120,21 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                     primitiveComparisonIntrinsics(irBuiltIns.lessFunByOperandType, KtTokens.LT) +
                     primitiveComparisonIntrinsics(irBuiltIns.lessOrEqualFunByOperandType, KtTokens.LTEQ) +
                     primitiveComparisonIntrinsics(irBuiltIns.greaterFunByOperandType, KtTokens.GT) +
-                    primitiveComparisonIntrinsics(irBuiltIns.greaterOrEqualFunByOperandType, KtTokens.GTEQ)
+                    primitiveComparisonIntrinsics(irBuiltIns.greaterOrEqualFunByOperandType, KtTokens.GTEQ) +
+
+                    intrinsicsThatShouldHaveBeenLowered()
             ).toMap()
+
+    private fun intrinsicsThatShouldHaveBeenLowered() =
+        (symbols.primitiveArrays.values.map { primitiveClassSymbol ->
+            val name = primitiveClassSymbol.owner.name.asString()
+            // IntArray -> intArrayOf
+            val arrayOfFunName = name.decapitalizeAsciiOnly() + "Of"
+            Key(kotlinFqn, null, arrayOfFunName, listOf(primitiveClassSymbol.owner.fqNameWhenAvailable))
+        } + listOf(
+            Key(kotlinFqn, anyFqn, "toString", emptyList()),
+            Key(kotlinFqn, null, "arrayOf", listOf(arrayFqn)),
+        )).map { it to IntrinsicShouldHaveBeenLowered }
 
     private val PrimitiveType.symbol
         get() = irBuiltIns.primitiveTypeToIrType[this]!!.classOrNull!!
@@ -181,28 +158,18 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
         parameter: IrClassifierSymbol
     ): List<Pair<Key, IntrinsicMethod>> =
         PrimitiveType.values().map { type ->
-            createKeyMapping(
-                intrinsic,
-                type.symbol,
-                name,
-                parameter
-            )
+            createKeyMapping(intrinsic, type.symbol, name, parameter)
         }
 
     private fun binaryOp(methodName: String, opcode: Int) = binaryFunForPrimitivesAcrossPrimitives(methodName, BinaryOp(opcode))
 
     private fun numberConversionMethods(): List<Pair<Key, IntrinsicMethod>> =
-        PrimitiveType.NUMBER_TYPES.flatMap { type ->
-            numberConversionMethods(type.symbol)
-        } + numberConversionMethods(irBuiltIns.numberClass)
+        PrimitiveType.NUMBER_TYPES.flatMap { type -> numberConversionMethods(type.symbol) } +
+                numberConversionMethods(irBuiltIns.numberClass)
 
     private fun arrayMethods(): List<Pair<Key, IntrinsicMethod>> =
-        symbols.primitiveArrays.flatMap { (key, value) ->
-            arrayMethods(
-                key.symbol,
-                value
-            )
-        } + arrayMethods(symbols.array.owner.typeParameters.single().symbol, symbols.array)
+        symbols.primitiveArrays.flatMap { (key, value) -> arrayMethods(key.symbol, value) } +
+                arrayMethods(symbols.array.owner.typeParameters.single().symbol, symbols.array)
 
     private fun arrayMethods(elementClass: IrClassifierSymbol, arrayClass: IrClassSymbol) =
         listOf(
@@ -269,9 +236,8 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
             name: String,
             vararg args: IrClassifierSymbol
         ): Pair<Key, IntrinsicMethod> =
-            Key(klass.owner.fqNameWhenAvailable!!, null, name, args.map {
-                getParameterFqName(it)
-            }) to intrinsic
+            Key(klass.owner.fqNameWhenAvailable!!, null, name, args.map { getParameterFqName(it) }) to
+                    intrinsic
 
         private fun numberConversionMethods(numberClass: IrClassSymbol) =
             OperatorConventions.NUMBER_CONVERSIONS.map { method ->
