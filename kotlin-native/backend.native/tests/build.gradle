@@ -1667,6 +1667,10 @@ task lateinit_innerIsInitialized(type: KonanLocalTest) {
     source = "codegen/lateinit/innerIsInitialized.kt"
 }
 
+task sanity_assertions_enabled_for_local_tests(type: KonanLocalTest) {
+    source = "sanity/assertions_enabled_for_local_tests.kt"
+}
+
 task kclass0(type: KonanLocalTest) {
     source = "codegen/kclass/kclass0.kt"
 }
@@ -5215,7 +5219,7 @@ private void configureStdlibTest(KonanGTest task, boolean inWorker) {
  * Builds tests into a single binary with TestRunner
  */
 task buildKonanTests { t ->
-    def compileList = [ "codegen", "datagen", "lower", "runtime", "serialization" ]
+    def compileList = [ "codegen", "datagen", "lower", "runtime", "serialization", "sanity" ]
 
     // These tests should not be built into the TestRunner's test executable
     def excludeList = [ "codegen/inline/returnLocalClassFromBlock.kt" ]
@@ -5236,6 +5240,8 @@ task buildKonanTests { t ->
         program('localTest', targets: [target.name]) {
             srcFiles sources
             baseDir testOutputLocal
+            extraOpts '-ea' // Without this option assertions would remain inactive.
+            extraOpts '-g' // To include line numbers in stack trace.
             extraOpts '-tr'
             extraOpts '-Xverify-ir'
             extraOpts project.globalTestArgs
