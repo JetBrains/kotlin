@@ -54,6 +54,18 @@ fun <P : PsiElement, A : Any, B : Any, C : Any> DiagnosticReporter.reportOn(
     source?.let { report(factory.on(it, a, b, c), context) }
 }
 
+fun <P : PsiElement, A : Any, B : Any, C : Any, D : Any> DiagnosticReporter.reportOn(
+    source: FirSourceElement?,
+    factory: FirDiagnosticFactory4<P, A, B, C, D>,
+    a: A,
+    b: B,
+    c: C,
+    d: D,
+    context: CheckerContext
+) {
+    source?.let { report(factory.on(it, a, b, c, d), context) }
+}
+
 inline fun withSuppressedDiagnostics(
     element: FirElement,
     context: CheckerContext,
@@ -117,6 +129,20 @@ fun <P : PsiElement, A : Any, B : Any, C : Any> DiagnosticReporter.reportOnWithS
 ) {
     withSuppressedDiagnostics(element, context) {
         reportOn(element.source, factory, a, b, c, it)
+    }
+}
+
+fun <P : PsiElement, A : Any, B : Any, C : Any, D : Any> DiagnosticReporter.reportOnWithSuppression(
+    element: FirElement,
+    factory: FirDiagnosticFactory4<P, A, B, C, D>,
+    a: A,
+    b: B,
+    c: C,
+    d: D,
+    context: CheckerContext
+) {
+    withSuppressedDiagnostics(element, context) {
+        reportOn(element.source, factory, a, b, c, d, it)
     }
 }
 

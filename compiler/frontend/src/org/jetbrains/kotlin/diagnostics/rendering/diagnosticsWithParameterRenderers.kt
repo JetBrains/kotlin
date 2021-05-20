@@ -75,6 +75,25 @@ class DiagnosticWithParameters3Renderer<A, B, C>(
     }
 }
 
+class DiagnosticWithParameters4Renderer<A : Any, B : Any, C : Any, D : Any>(
+    message: String,
+    private val rendererForA: DiagnosticParameterRenderer<A>?,
+    private val rendererForB: DiagnosticParameterRenderer<B>?,
+    private val rendererForC: DiagnosticParameterRenderer<C>?,
+    private val rendererForD: DiagnosticParameterRenderer<D>?,
+) : AbstractDiagnosticWithParametersRenderer<DiagnosticWithParameters4<*, A, B, C, D>>(message) {
+
+    override fun renderParameters(diagnostic: DiagnosticWithParameters4<*, A, B, C, D>): Array<out Any> {
+        val context = RenderingContext.of(diagnostic.a, diagnostic.b, diagnostic.c, diagnostic.d)
+        return arrayOf(
+            renderParameter(diagnostic.a, rendererForA, context),
+            renderParameter(diagnostic.b, rendererForB, context),
+            renderParameter(diagnostic.c, rendererForC, context),
+            renderParameter(diagnostic.d, rendererForD, context),
+        )
+    }
+}
+
 class DiagnosticWithParametersMultiRenderer<A>(
     message: String,
     private val renderer: MultiRenderer<A>
