@@ -601,7 +601,8 @@ abstract class CompileServiceImplBase(
             outputFiles = incrementalCompilationOptions.outputFiles,
             usePreciseJavaTracking = incrementalCompilationOptions.usePreciseJavaTracking,
             modulesApiHistory = modulesApiHistory,
-            kotlinSourceFilesExtensions = allKotlinExtensions
+            kotlinSourceFilesExtensions = allKotlinExtensions,
+            classpathChanges = incrementalCompilationOptions.classpathChanges
         )
         return try {
             compiler.compile(allKotlinFiles, k2jvmArgs, compilerMessageCollector, changedFiles, projectRoot)

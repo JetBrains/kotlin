@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.daemon.common
 
+import org.jetbrains.kotlin.incremental.ClasspathChanges
 import org.jetbrains.kotlin.incremental.IncrementalModuleInfo
 import java.io.File
 import java.io.Serializable
@@ -52,6 +53,7 @@ class IncrementalCompilationOptions(
     val areFileChangesKnown: Boolean,
     val modifiedFiles: List<File>?,
     val deletedFiles: List<File>?,
+    val classpathChanges: ClasspathChanges,
     val workingDir: File,
     compilerMode: CompilerMode,
     targetPlatform: CompileService.TargetPlatform,
@@ -87,6 +89,7 @@ class IncrementalCompilationOptions(
                "areFileChangesKnown=$areFileChangesKnown, " +
                "modifiedFiles=$modifiedFiles, " +
                "deletedFiles=$deletedFiles, " +
+               "classpathChanges=$classpathChanges, " +
                "workingDir=$workingDir, " +
                "multiModuleICSettings=$multiModuleICSettings, " +
                "usePreciseJavaTracking=$usePreciseJavaTracking" +

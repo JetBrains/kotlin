@@ -24,10 +24,7 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
-import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
-import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
-import org.jetbrains.kotlin.build.report.metrics.BuildTime
-import org.jetbrains.kotlin.build.report.metrics.measure
+import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
@@ -56,6 +53,7 @@ import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.report.ReportingSettings
 import org.jetbrains.kotlin.gradle.targets.js.ir.isProduceUnzippedKlib
 import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.incremental.ClasspathChanges
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.IncrementalCompilerRunner
 import org.jetbrains.kotlin.library.impl.isKotlinLibrary
@@ -627,14 +625,20 @@ abstract class KotlinCompile @Inject constructor(
         val outputItemCollector = OutputItemsCollectorImpl()
         val compilerRunner = compilerRunner.get()
 
-        if (classpathSnapshotProperties.useClasspathSnapshot.get()) {
-            getClasspathChanges()
-        }
         val icEnv = if (isIncrementalCompilationEnabled()) {
+            val classpathChanges = when {
+                !classpathSnapshotProperties.useClasspathSnapshot.get() -> ClasspathChanges.NotAvailable.ClasspathSnapshotIsDisabled
+                else -> when (changedFiles) {
+                    is ChangedFiles.Known -> getClasspathChanges()
+                    is ChangedFiles.Unknown -> ClasspathChanges.NotAvailable.ForNonIncrementalRun
+                    is ChangedFiles.Dependencies -> error("Unexpected type: ${changedFiles.javaClass.name}")
+                }
+            }
             logger.info(USING_JVM_INCREMENTAL_COMPILATION_MESSAGE)
             IncrementalCompilationEnvironment(
-                changedFiles,
-                taskBuildDirectory.get().asFile,
+                changedFiles = changedFiles,
+                classpathChanges = classpathChanges,
+                workingDir = taskBuildDirectory.get().asFile,
                 usePreciseJavaTracking = usePreciseJavaTracking,
                 disableMultiModuleIC = disableMultiModuleIC,
                 multiModuleICSettings = multiModuleICSettings
@@ -659,7 +663,7 @@ abstract class KotlinCompile @Inject constructor(
         )
 
         with(classpathSnapshotProperties) {
-            if (useClasspathSnapshot.get()) {
+            if (isIncrementalCompilationEnabled() && useClasspathSnapshot.get()) {
                 copyClasspathSnapshotFilesToDir(classpathSnapshot.files.toList(), classpathSnapshotDir.get().asFile)
             }
         }
@@ -722,10 +726,12 @@ abstract class KotlinCompile @Inject constructor(
         return super.source(*sources)
     }
 
-    private fun getClasspathChanges() {
+    private fun getClasspathChanges(): ClasspathChanges {
+        val currentSnapshotFiles = classpathSnapshotProperties.classpathSnapshot.files.toList()
+        val previousSnapshotFiles = getClasspathSnapshotFilesInDir(classpathSnapshotProperties.classpathSnapshotDir.get().asFile)
+
         // TODO WORK-IN-PROGRESS
-        val currentClasspathSnapshotFiles = classpathSnapshotProperties.classpathSnapshot.files.toList()
-        val previousClasspathSnapshotFiles = getClasspathSnapshotFilesInDir(classpathSnapshotProperties.classpathSnapshotDir.get().asFile)
+        return ClasspathChanges.NotAvailable.UnableToCompute
     }
 
     /**
@@ -1034,6 +1040,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
             logger.info(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
             IncrementalCompilationEnvironment(
                 changedFiles,
+                ClasspathChanges.NotAvailable.ForJSCompiler,
                 taskBuildDirectory.get().asFile,
                 multiModuleICSettings = multiModuleICSettings
             )
