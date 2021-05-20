@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.addExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency.PodLocation.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.native.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.*
@@ -29,7 +30,6 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import java.io.File
-import java.util.*
 
 internal val Project.cocoapodsBuildDirs: CocoapodsBuildDirs
     get() = CocoapodsBuildDirs(this)
@@ -57,8 +57,8 @@ internal class CocoapodsBuildDirs(val project: Project) {
 
     fun externalSources(fileName: String) = externalSources.resolve(fileName)
 
-    fun fatFramework(buildType: String) =
-        root.resolve("fat-frameworks/${buildType.toLowerCase()}")
+    fun fatFramework(buildType: NativeBuildType) =
+        root.resolve("fat-frameworks/${buildType.toString().toLowerCase()}")
 }
 
 internal fun String.asValidFrameworkName() = replace('-', '_')
@@ -139,7 +139,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
     private fun createSyncForFatFramework(
         project: Project,
         kotlinExtension: KotlinMultiplatformExtension,
-        requestedBuildType: String,
+        requestedBuildType: NativeBuildType,
         requestedPlatforms: List<KonanTarget>
     ) {
         val fatTargets = requestedPlatforms.associate { it to kotlinExtension.targetsForPlatform(it) }
@@ -172,7 +172,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
     private fun createSyncForRegularFramework(
         project: Project,
         kotlinExtension: KotlinMultiplatformExtension,
-        requestedBuildType: String,
+        requestedBuildType: NativeBuildType,
         requestedPlatform: KonanTarget
     ) {
         val targets = kotlinExtension.targetsForPlatform(requestedPlatform)
@@ -186,10 +186,20 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
 
     private fun createSyncTask(
         project: Project,
-        kotlinExtension: KotlinMultiplatformExtension
+        kotlinExtension: KotlinMultiplatformExtension,
+        cocoapodsExtension: CocoapodsExtension
     ) = project.whenEvaluated {
         val requestedTargetName = project.findProperty(TARGET_PROPERTY)?.toString() ?: return@whenEvaluated
-        val requestedBuildType = project.findProperty(CONFIGURATION_PROPERTY)?.toString()?.toUpperCase() ?: return@whenEvaluated
+        val xcodeConfiguration = project.findProperty(CONFIGURATION_PROPERTY)?.toString() ?: return@whenEvaluated
+
+        val requestedBuildType = cocoapodsExtension.xcodeConfigurationToNativeBuildType[xcodeConfiguration]
+
+        check(requestedBuildType != null) {
+            """
+            Could not identify build type for Kotlin framework '${cocoapodsExtension.frameworkName}' built via cocoapods plugin with CONFIGURATION=$xcodeConfiguration.
+            Add xcodeConfigurationToNativeBuildType["$xcodeConfiguration"]=NativeBuildType.DEBUG or xcodeConfigurationToNativeBuildType["$xcodeConfiguration"]=NativeBuildType.RELEASE to cocoapods plugin configuration
+        """.trimIndent()
+        }
 
         // We create a fat framework only for device platforms which have several
         // device architectures: iosArm64, iosArm32, watchosArm32 and watchosArm64.
@@ -524,7 +534,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             kotlinExtension.addExtension(COCOAPODS_EXTENSION_NAME, cocoapodsExtension)
             createDefaultFrameworks(kotlinExtension, cocoapodsExtension)
             registerDummyFrameworkTask(project, cocoapodsExtension)
-            createSyncTask(project, kotlinExtension)
+            createSyncTask(project, kotlinExtension, cocoapodsExtension)
             registerPodspecTask(project, cocoapodsExtension)
 
             registerPodDownloadTask(project, cocoapodsExtension)

@@ -781,6 +781,18 @@ class CocoaPodsIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun testCustomXcodeConfiguration() {
+        with(project) {
+            gradleBuildScript().appendToCocoapodsBlock("xcodeConfigurationToNativeBuildType[\"CUSTOM\"] = org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType.DEBUG\n")
+            test(
+                "syncFramework",
+                "-Pkotlin.native.cocoapods.target=ios_x64",
+                "-Pkotlin.native.cocoapods.configuration=CUSTOM"
+            )
+        }
+    }
+
     // paths
 
     private fun CompiledProject.url() = externalSources().resolve("url")
