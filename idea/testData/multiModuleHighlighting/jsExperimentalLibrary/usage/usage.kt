@@ -4,7 +4,7 @@ import lib.*
 
 fun fail(foo: <error>Foo</error>): <error>Foo</error> {
     <error>bar</error>()
-    return foo
+    return <error>foo</error>
 }
 
 @ExperimentalAPI
