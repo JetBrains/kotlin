@@ -215,7 +215,9 @@ fun deserializeClassToSymbol(
 
         it.sourceElement = containerSource
 
-        it.proto = FirClassProto(classProto, nameResolver)
+        classProto.getExtensionOrNull(JvmProtoBuf.classModuleName)?.let { idx ->
+            it.moduleName = nameResolver.getString(idx)
+        }
     }
 }
 

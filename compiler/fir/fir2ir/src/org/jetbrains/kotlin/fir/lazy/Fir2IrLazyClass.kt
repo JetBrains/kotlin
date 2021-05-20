@@ -28,8 +28,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.Name
 
 class Fir2IrLazyClass(
@@ -204,11 +202,8 @@ class Fir2IrLazyClass(
         get() = null
         set(_) = error("We should never need to store metadata of external declarations.")
 
-    override val classProto: ProtoBuf.Class?
-        get() = fir.proto?.classProto
-
-    override val nameResolver: NameResolver?
-        get() = fir.proto?.nameResolver
+    override val moduleName: String?
+        get() = fir.moduleName
 
     private fun FirNamedFunctionSymbol.isAbstractMethodOfAny(): Boolean {
         val fir = fir

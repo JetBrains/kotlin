@@ -499,13 +499,15 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         var current: IrDeclarationParent? = function.parent
         while (current != null) {
             when (current) {
-                is IrMaybeDeserializedClass -> {
+                is IrLazyClass -> {
                     val classProto = current.classProto ?: return null
                     val nameResolver = current.nameResolver ?: return null
                     return classProto.getExtensionOrNull(JvmProtoBuf.classModuleName)
                         ?.let(nameResolver::getString)
                         ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
                 }
+                is IrMaybeDeserializedClass ->
+                    return current.moduleName
                 is IrExternalPackageFragment -> {
                     val source = current.containerSource ?: return null
                     return (source as? JvmPackagePartSource)?.moduleName

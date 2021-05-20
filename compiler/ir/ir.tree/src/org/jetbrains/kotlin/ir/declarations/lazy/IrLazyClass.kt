@@ -40,7 +40,7 @@ class IrLazyClass(
     override val isFun: Boolean,
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator
-) : IrClass(), IrLazyDeclarationBase, IrMaybeDeserializedClass {
+) : IrClass(), IrLazyDeclarationBase {
     init {
         symbol.bind(this)
     }
@@ -103,8 +103,8 @@ class IrLazyClass(
 
     override var attributeOwnerId: IrAttributeContainer = this
 
-    override val classProto: ProtoBuf.Class? get() = (descriptor as? DeserializedClassDescriptor)?.classProto
-    override val nameResolver: NameResolver? get() = (descriptor as? DeserializedClassDescriptor)?.c?.nameResolver
+    val classProto: ProtoBuf.Class? get() = (descriptor as? DeserializedClassDescriptor)?.classProto
+    val nameResolver: NameResolver? get() = (descriptor as? DeserializedClassDescriptor)?.c?.nameResolver
     override val source: SourceElement get() = descriptor.source
 
     override var metadata: MetadataSource?

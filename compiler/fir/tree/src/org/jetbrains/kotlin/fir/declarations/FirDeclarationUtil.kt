@@ -184,11 +184,9 @@ private object SourceElementKey : FirDeclarationDataKey()
 
 var FirRegularClass.sourceElement: SourceElement? by FirDeclarationDataRegistry.data(SourceElementKey)
 
-private object ClassProtoKey : FirDeclarationDataKey()
+private object ModuleNameKey : FirDeclarationDataKey()
 
-class FirClassProto(val classProto: ProtoBuf.Class, val nameResolver: NameResolver)
-
-var FirRegularClass.proto: FirClassProto? by FirDeclarationDataRegistry.data(ClassProtoKey)
+var FirRegularClass.moduleName: String? by FirDeclarationDataRegistry.data(ModuleNameKey)
 
 var FirTypeAlias.sourceElement: SourceElement? by FirDeclarationDataRegistry.data(SourceElementKey)
 

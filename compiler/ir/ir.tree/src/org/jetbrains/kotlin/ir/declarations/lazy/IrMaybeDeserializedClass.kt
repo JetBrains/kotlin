@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.ir.declarations.lazy
 
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 
 interface IrMaybeDeserializedClass : IrDeclaration {
-    val classProto: ProtoBuf.Class?
-    val nameResolver: NameResolver?
+    val moduleName: String?
 }
