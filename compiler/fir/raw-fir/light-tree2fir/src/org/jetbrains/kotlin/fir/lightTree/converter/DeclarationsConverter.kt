@@ -1584,7 +1584,7 @@ class DeclarationsConverter(
                 origin = FirDeclarationOrigin.Synthetic
                 name = delegateName
                 returnTypeRef = firTypeRef
-                symbol = FirFieldSymbol(@OptIn(LocalCallableIdConstructor::class) CallableId(name))
+                symbol = FirFieldSymbol(CallableId(name))
                 isVar = false
                 status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                 initializer = firExpression

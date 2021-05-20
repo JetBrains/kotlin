@@ -40,7 +40,6 @@ data class CallableId(
 
     constructor(packageName: FqName, callableName: Name) : this(packageName, null, callableName)
 
-    @LocalCallableIdConstructor
     constructor(
         callableName: Name,
         // Currently, it's only used for debug info
@@ -73,6 +72,3 @@ data class CallableId(
         }
     }
 }
-
-@RequiresOptIn("TODO: Better solution for local callables?")
-annotation class LocalCallableIdConstructor

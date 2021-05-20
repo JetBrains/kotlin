@@ -12,19 +12,18 @@ import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.LocalCallableIdConstructor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 open class FirVariableSymbol<D : FirVariable<D>>(override val callableId: CallableId) : FirCallableSymbol<D>() {
-    constructor(name: Name) : this(@OptIn(LocalCallableIdConstructor::class) CallableId(name))  // TODO?
+    constructor(name: Name) : this(CallableId(name))  // TODO?
 }
 
 open class FirPropertySymbol(
     callableId: CallableId,
 ) : FirVariableSymbol<FirProperty>(callableId) {
     // TODO: should we use this constructor for local variables?
-    constructor(name: Name) : this(@OptIn(LocalCallableIdConstructor::class) CallableId(name))
+    constructor(name: Name) : this(CallableId(name))
 }
 
 class FirIntersectionOverridePropertySymbol(
