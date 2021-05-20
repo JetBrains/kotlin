@@ -610,7 +610,6 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             val endLocation = position?.end
             val success = basicBlock("call_success", endLocation)
             val result = LLVMBuildInvoke(builder, llvmFunction, rargs, args.size, success, unwind, "")!!
-            update(success, endLocation)
             positionAtEnd(success)
             return result
         }
