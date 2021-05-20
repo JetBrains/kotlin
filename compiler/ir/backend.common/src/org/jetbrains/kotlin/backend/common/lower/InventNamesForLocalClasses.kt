@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
 
-abstract class InventNamesForLocalClasses() : FileLoweringPass {
+abstract class InventNamesForLocalClasses(private val allowTopLevelCallables: Boolean) : FileLoweringPass {
 
     protected abstract fun computeTopLevelClassName(clazz: IrClass): String
     protected abstract fun sanitizeNameIfNeeded(name: String): String
@@ -146,7 +146,12 @@ abstract class InventNamesForLocalClasses() : FileLoweringPass {
             }
             if (declaration.isSuspend && declaration.body != null && declaration.origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) {
                 // Suspend functions have a continuation, which is essentially a local class
-                val newData = data.copy(enclosingName = inventName(declaration.name, data))
+                val newData = data.copy(
+                    enclosingName = inventName(
+                        declaration.name,
+                        if (data.enclosingName == null && allowTopLevelCallables) data.copy(enclosingName = "") else data
+                    )
+                )
                 val internalName = inventName(null, newData)
                 putLocalClassName(declaration, internalName)
             }
