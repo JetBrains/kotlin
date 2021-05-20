@@ -18,7 +18,6 @@ fun FirSessionFactory.FirSessionConfigurator.registerExtendedCommonCheckers() {
     useCheckers(ExtendedDeclarationCheckers)
 }
 
-// TODO: Move this to different, JVM-specific module?
 fun FirSessionFactory.FirSessionConfigurator.registerJvmCheckers() {
     useCheckers(JvmDeclarationCheckers)
 }

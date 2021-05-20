@@ -3,12 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.checkers
+package org.jetbrains.kotlin.fir.analysis.jvm.checkers
 
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.jvm.FirJvmExternalDeclarationChecker
+import org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration.FirJvmExternalDeclarationChecker
 
-// TODO: Move this to different, JVM-specific module?
 object JvmDeclarationCheckers : DeclarationCheckers() {
     override val memberDeclarationCheckers: Set<FirMemberDeclarationChecker>
         get() = setOf(

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.psi.KtModifierListOwner
 // - use this to retrieve modifiers on the source and confirm a certain modifier indeed appears
 // DON'T
 // - don't use this to report an error or warning *on* that specific modifier. Use positioning strategies instead.
-internal sealed class FirModifierList {
+sealed class FirModifierList {
     abstract val modifiers: List<FirModifier<*>>
 
     class FirPsiModifierList(val modifierList: KtModifierList) : FirModifierList() {
@@ -51,7 +51,7 @@ internal sealed class FirModifierList {
 
 private val MODIFIER_KEYWORD_SET = TokenSet.orSet(KtTokens.SOFT_KEYWORDS, TokenSet.create(KtTokens.IN_KEYWORD, KtTokens.FUN_KEYWORD))
 
-internal sealed class FirModifier<Node : Any>(val node: Node, val token: KtModifierKeywordToken) {
+sealed class FirModifier<Node : Any>(val node: Node, val token: KtModifierKeywordToken) {
 
     class FirPsiModifier(
         node: ASTNode,
@@ -78,7 +78,7 @@ internal sealed class FirModifier<Node : Any>(val node: Node, val token: KtModif
     abstract val source: FirSourceElement
 }
 
-internal fun FirSourceElement?.getModifierList(): FirModifierList? {
+fun FirSourceElement?.getModifierList(): FirModifierList? {
     return when (this) {
         null -> null
         is FirPsiSourceElement<*> -> (psi as? KtModifierListOwner)?.modifierList?.let { FirModifierList.FirPsiModifierList(it) }
@@ -91,8 +91,8 @@ internal fun FirSourceElement?.getModifierList(): FirModifierList? {
     }
 }
 
-internal operator fun FirModifierList?.contains(token: KtModifierKeywordToken): Boolean = this?.contains(token) == true
+operator fun FirModifierList?.contains(token: KtModifierKeywordToken): Boolean = this?.contains(token) == true
 
-internal fun FirElement.getModifier(token: KtModifierKeywordToken): FirModifier<*>? = source.getModifierList()?.get(token)
+fun FirElement.getModifier(token: KtModifierKeywordToken): FirModifier<*>? = source.getModifierList()?.get(token)
 
-internal fun FirElement.hasModifier(token: KtModifierKeywordToken): Boolean = token in source.getModifierList()
+fun FirElement.hasModifier(token: KtModifierKeywordToken): Boolean = token in source.getModifierList()
