@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.isFacadeClass
-import org.jetbrains.kotlin.ir.util.isVararg
-import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.types.Variance
@@ -234,7 +231,14 @@ abstract class IrMangleComputer(protected val builder: StringBuilder, private va
         typeParameterContainer.add(declaration)
         declaration.parent.acceptVoid(this)
 
-        val isStaticProperty = accessor != null && accessor.dispatchReceiverParameter == null && declaration.parent !is IrPackageFragment
+        val isStaticProperty = if (accessor != null)
+            accessor.let { it.dispatchReceiverParameter == null && declaration.parent !is IrPackageFragment }
+        else {
+            // Fake override for a Java field
+            val backingField = declaration.resolveFakeOverride()?.backingField
+                ?: error("Expected at least one accessor or a backing field for property ${declaration.render()}")
+            backingField.isStatic
+        }
 
         if (isStaticProperty) {
             builder.appendSignature(MangleConstant.STATIC_MEMBER_MARK)
