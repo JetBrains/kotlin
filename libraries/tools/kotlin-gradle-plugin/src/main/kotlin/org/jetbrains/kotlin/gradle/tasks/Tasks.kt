@@ -353,11 +353,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
             compilerArgumentsConfigurationFlags(defaultsOnly, ignoreClasspathResolutionErrors)
         )
     }
-
-    protected fun hasFilesInTaskBuildDirectory(): Boolean {
-        val taskBuildDir = taskBuildDirectory.get().asFile
-        return taskBuildDir.walk().any { it != taskBuildDir && it.isFile }
-    }
 }
 
 open class KotlinCompileArgumentsProvider<T : AbstractKotlinCompile<out CommonCompilerArguments>>(taskProvider: T) {
@@ -455,7 +450,7 @@ abstract class KotlinCompile @Inject constructor(
         val icEnv = if (isIncrementalCompilationEnabled()) {
             logger.info(USING_JVM_INCREMENTAL_COMPILATION_MESSAGE)
             IncrementalCompilationEnvironment(
-                if (hasFilesInTaskBuildDirectory()) changedFiles else ChangedFiles.Unknown(),
+                changedFiles,
                 taskBuildDirectory.get().asFile,
                 usePreciseJavaTracking = usePreciseJavaTracking,
                 disableMultiModuleIC = disableMultiModuleIC,
@@ -745,7 +740,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
         val icEnv = if (isIncrementalCompilationEnabled()) {
             logger.info(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
             IncrementalCompilationEnvironment(
-                if (hasFilesInTaskBuildDirectory()) changedFiles else ChangedFiles.Unknown(),
+                changedFiles,
                 taskBuildDirectory.get().asFile,
                 multiModuleICSettings = multiModuleICSettings
             )
