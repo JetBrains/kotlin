@@ -1,8 +1,7 @@
 // "Create extension function 'A.Companion.foo'" "true"
 
 class A {
-    companion object {
-    }
+    companion object
 }
 
 fun test() {

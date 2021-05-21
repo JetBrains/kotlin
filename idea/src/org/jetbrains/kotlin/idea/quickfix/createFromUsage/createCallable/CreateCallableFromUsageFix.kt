@@ -247,7 +247,9 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
                 runBuilder {
                     val receiverClass = it.second as? KtClass
                     if (callableInfo.isForCompanion && receiverClass?.isWritable == true) {
+                        val hasCompanionObject = receiverClass.companionObjects.isNotEmpty()
                         val companionObject = receiverClass.getOrCreateCompanionObject()
+                        if (!hasCompanionObject && this@CreateCallableFromUsageFixBase.isExtension) companionObject.body?.delete()
                         val classValueType = (companionObject.descriptor as? ClassDescriptor)?.classValueType
                         val receiverTypeCandidate = if (classValueType != null) TypeCandidate(classValueType) else it.first
                         CallablePlacement.WithReceiver(receiverTypeCandidate)

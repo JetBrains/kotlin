@@ -5,8 +5,7 @@ private val A.Companion.foo: Int
 
 // "Create extension property 'A.Companion.foo'" "true"
 class A {
-    companion object {
-    }
+    companion object
 }
 
 fun test() {
