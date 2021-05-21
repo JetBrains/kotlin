@@ -16,6 +16,7 @@
 
 package org.jetbrains.uast.kotlin
 
+import com.intellij.openapi.util.Key
 import com.intellij.psi.*
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
@@ -33,6 +34,8 @@ import org.jetbrains.uast.internal.log
 import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 import org.jetbrains.uast.kotlin.internal.DelegatedMultiResolve
 import org.jetbrains.uast.visitor.UastVisitor
+
+var PsiElement.destructuringDeclarationInitializer: Boolean? by UserDataProperty(Key.create("kotlin.uast.destructuringDeclarationInitializer"))
 
 open class KotlinUSimpleReferenceExpression(
     override val sourcePsi: KtSimpleNameExpression,

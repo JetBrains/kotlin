@@ -18,7 +18,6 @@ package org.jetbrains.uast.kotlin
 
 import com.intellij.lang.Language
 import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
@@ -32,8 +31,6 @@ import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.KotlinConverter.convertDeclaration
 import org.jetbrains.uast.kotlin.KotlinConverter.convertDeclarationOrElement
 import org.jetbrains.uast.kotlin.psi.UastFakeLightPrimaryConstructor
-
-var PsiElement.destructuringDeclarationInitializer: Boolean? by UserDataProperty(Key.create("kotlin.uast.destructuringDeclarationInitializer"))
 
 class KotlinUastLanguagePlugin : UastLanguagePlugin {
     override val priority = 10
@@ -65,9 +62,9 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
     }
 
     override fun getMethodCallExpression(
-            element: PsiElement,
-            containingClassFqName: String?,
-            methodName: String
+        element: PsiElement,
+        containingClassFqName: String?,
+        methodName: String
     ): UastLanguagePlugin.ResolvedMethod? {
         if (element !is KtCallExpression) return null
         val resolvedCall = element.getResolvedCall(element.analyze()) ?: return null
@@ -84,14 +81,15 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
     }
 
     override fun getConstructorCallExpression(
-            element: PsiElement,
-            fqName: String
+        element: PsiElement,
+        fqName: String
     ): UastLanguagePlugin.ResolvedConstructor? {
         if (element !is KtCallExpression) return null
         val resolvedCall = element.getResolvedCall(element.analyze()) ?: return null
         val resultingDescriptor = resolvedCall.resultingDescriptor
         if (resultingDescriptor !is ConstructorDescriptor
-                || resultingDescriptor.returnType.constructor.declarationDescriptor?.name?.asString() != fqName) {
+            || resultingDescriptor.returnType.constructor.declarationDescriptor?.name?.asString() != fqName
+        ) {
             return null
         }
 
@@ -139,9 +137,4 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
                 KotlinConverter.convertFakeLightConstructorAlternatives(element, null, requiredTypes) as Sequence<T>
             else -> sequenceOf(convertElementWithParent(element, requiredTypes.nonEmptyOr(DEFAULT_TYPES_LIST)) as? T).filterNotNull()
         }
-}
-
-val kotlinUastPlugin: UastLanguagePlugin by lz {
-    UastLanguagePlugin.getInstances().find { it.language == KotlinLanguage.INSTANCE }
-        ?: KotlinUastLanguagePlugin()
 }
