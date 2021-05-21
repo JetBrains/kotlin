@@ -26,7 +26,7 @@ class ReplaceInfixOrOperatorCallFix(
     private val notNullNeeded: Boolean
 ) : KotlinQuickFixAction<KtExpression>(element) {
 
-    override fun getText() = KotlinBundle.message("replace.with.safe.call1")
+    override fun getText() = KotlinBundle.message("replace.with.safe.call")
 
     override fun getFamilyName() = text
 
