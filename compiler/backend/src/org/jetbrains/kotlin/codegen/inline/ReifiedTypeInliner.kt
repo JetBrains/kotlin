@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.codegen.generateAsCast
 import org.jetbrains.kotlin.codegen.generateIsCheck
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.common.intConstant
+import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
@@ -63,6 +64,8 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
     }
 
     interface IntrinsicsSupport<KT : KotlinTypeMarker> {
+        val state: GenerationState
+
         fun putClassInstance(v: InstructionAdapter, type: KT)
 
         fun generateTypeParameterContainer(v: InstructionAdapter, typeParameter: TypeParameterMarker)

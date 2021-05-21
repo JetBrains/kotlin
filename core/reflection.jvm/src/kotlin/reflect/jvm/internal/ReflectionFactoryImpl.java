@@ -146,6 +146,11 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
         // Do nothing. KTypeParameterImpl implementation will load upper bounds from the metadata.
     }
 
+    // @Override // JPS
+    public KType platformType(KType lowerBound, KType upperBound) {
+        return TypeOfImplKt.createPlatformKType(lowerBound, upperBound);
+    }
+
     // Misc
 
     public static void clearCaches() {

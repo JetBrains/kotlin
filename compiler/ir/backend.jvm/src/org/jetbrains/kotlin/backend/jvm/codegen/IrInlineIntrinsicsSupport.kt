@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.jvm.intrinsics.SignatureString
 import org.jetbrains.kotlin.backend.jvm.lower.FunctionReferenceLowering
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
+import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -29,6 +30,9 @@ class IrInlineIntrinsicsSupport(
     private val context: JvmBackendContext,
     private val typeMapper: IrTypeMapper
 ) : ReifiedTypeInliner.IntrinsicsSupport<IrType> {
+    override val state: GenerationState
+        get() = context.state
+
     override fun putClassInstance(v: InstructionAdapter, type: IrType) {
         ExpressionCodegen.generateClassInstance(v, type, typeMapper)
     }

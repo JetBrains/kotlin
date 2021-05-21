@@ -19,7 +19,7 @@ import org.jetbrains.org.objectweb.asm.Type.INT_TYPE
 import org.jetbrains.org.objectweb.asm.Type.VOID_TYPE
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-class PsiInlineIntrinsicsSupport(private val state: GenerationState) : ReifiedTypeInliner.IntrinsicsSupport<KotlinType> {
+class PsiInlineIntrinsicsSupport(override val state: GenerationState) : ReifiedTypeInliner.IntrinsicsSupport<KotlinType> {
     override fun putClassInstance(v: InstructionAdapter, type: KotlinType) {
         DescriptorAsmUtil.putJavaLangClassInstance(v, state.typeMapper.mapType(type), type, state.typeMapper)
     }

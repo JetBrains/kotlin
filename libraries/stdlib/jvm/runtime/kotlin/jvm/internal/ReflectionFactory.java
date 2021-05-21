@@ -93,4 +93,9 @@ public class ReflectionFactory {
     public void setUpperBounds(KTypeParameter typeParameter, List<KType> bounds) {
         ((TypeParameterReference) typeParameter).setUpperBounds(bounds);
     }
+
+    @SinceKotlin(version = "1.6")
+    public KType platformType(KType lowerBound, KType upperBound) {
+        return new TypeReference(lowerBound.getClassifier(), lowerBound.getArguments(), lowerBound.isMarkedNullable(), upperBound);
+    }
 }

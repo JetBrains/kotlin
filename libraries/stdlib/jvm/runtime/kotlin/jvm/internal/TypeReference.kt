@@ -3,22 +3,32 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
+
 package kotlin.jvm.internal
 
 import kotlin.reflect.*
 
 @SinceKotlin("1.4")
-public class TypeReference(
+public class TypeReference /* @SinceKotlin("1.6") constructor */(
     override val classifier: KClassifier,
     override val arguments: List<KTypeProjection>,
-    override val isMarkedNullable: Boolean
+    override val isMarkedNullable: Boolean,
+    private val platformTypeUpperBound: KType?,
 ) : KType {
+    constructor(
+        classifier: KClassifier,
+        arguments: List<KTypeProjection>,
+        isMarkedNullable: Boolean,
+    ) : this(classifier, arguments, isMarkedNullable, null)
+
     override val annotations: List<Annotation>
         get() = emptyList()
 
     override fun equals(other: Any?): Boolean =
         other is TypeReference &&
-                classifier == other.classifier && arguments == other.arguments && isMarkedNullable == other.isMarkedNullable
+                classifier == other.classifier && arguments == other.arguments && isMarkedNullable == other.isMarkedNullable &&
+                platformTypeUpperBound == other.platformTypeUpperBound
 
     override fun hashCode(): Int =
         (classifier.hashCode() * 31 + arguments.hashCode()) * 31 + isMarkedNullable.hashCode()
