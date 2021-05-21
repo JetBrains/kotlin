@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.components.SuspendConversionStrategy
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
+import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSession
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutorByConstructorMap
 import org.jetbrains.kotlin.resolve.calls.model.*
@@ -46,9 +47,7 @@ import org.jetbrains.kotlin.types.expressions.CoercionStrategy
 import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
-import org.jetbrains.kotlin.types.typeUtil.contains
-import org.jetbrains.kotlin.types.typeUtil.isUnit
-import org.jetbrains.kotlin.types.typeUtil.shouldBeUpdated
+import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class ResolvedAtomCompleter(
@@ -89,7 +88,20 @@ class ResolvedAtomCompleter(
             is ResolvedLambdaAtom -> completeLambda(resolvedAtom)
             is ResolvedCallAtom -> completeResolvedCall(resolvedAtom, emptyList())
             is ResolvedSubCallArgument -> completeSubCallArgument(resolvedAtom)
+            is ResolvedExpressionAtom -> completeExpression(resolvedAtom)
         }
+    }
+
+    // We run completion on expressions only for last statements of block expression to substitute freshly inferred stub types variables
+    fun completeExpression(resolvedAtom: ResolvedExpressionAtom) {
+        val argumentExpression = resolvedAtom.atom.psiExpression
+        val inferenceSession = topLevelCallContext.inferenceSession
+
+        if (argumentExpression !is KtBlockExpression || inferenceSession !is BuilderInferenceSession) return
+
+        val callableReference = argumentExpression.statements.lastOrNull() as? KtCallableReferenceExpression ?: return
+
+        inferenceSession.completeDoubleColonExpression(callableReference, inferenceSession.getNotFixedToInferredTypesSubstitutor())
     }
 
     fun completeAll(resolvedAtom: ResolvedAtom) {
@@ -140,6 +152,14 @@ class ResolvedAtomCompleter(
             // PARTIAL_CALL_RESOLUTION_CONTEXT has been written for the baseCall
             is PSIKotlinCallForInvoke -> atom.baseCall.psiCall
             else -> atom.psiKotlinCall.psiCall
+        }
+
+        val callElement = psiCallForResolutionContext.callElement
+        if (callElement is KtExpression) {
+            val recordedType = topLevelCallContext.trace.getType(callElement)
+            if ((recordedType.shouldBeUpdated()) && resolvedCall.resultingDescriptor.returnType != null) {
+                topLevelCallContext.trace.recordType(callElement, resolvedCall.resultingDescriptor.returnType)
+            }
         }
 
         val resolutionContextForPartialCall =
