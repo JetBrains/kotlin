@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHost
@@ -73,8 +74,8 @@ private fun Project.registerAssembleAppleFrameworkTask(framework: Framework): Ta
     val frameworkTarget = framework.target
     val frameworkTaskName = lowerCamelCaseName(
         "assemble",
-        framework.baseName,
-        frameworkBuildType.name.toLowerCaseAsciiOnly(),
+        framework.namePrefix,
+        frameworkBuildType.getName(),
         "AppleFrameworkForXcode",
         frameworkTarget.name
     )
@@ -119,7 +120,7 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
     val envFrameworkSearchDir = XcodeEnvironment.frameworkSearchDir
     val envSign = XcodeEnvironment.sign
 
-    val frameworkTaskName = lowerCamelCaseName("embedAndSign", framework.baseName, "AppleFrameworkForXcode")
+    val frameworkTaskName = lowerCamelCaseName("embedAndSign", framework.namePrefix, "AppleFrameworkForXcode")
 
     if (envBuildType == null || envTarget == null || envEmbeddedFrameworksDir == null || envFrameworkSearchDir == null) {
         logger.debug(
@@ -133,7 +134,7 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
 
     registerTask<Copy>(frameworkTaskName) { task ->
         task.group = "build"
-        task.description = "Embed and sign ${framework.baseName} framework as requested by Xcode's environment variables"
+        task.description = "Embed and sign ${framework.namePrefix} framework as requested by Xcode's environment variables"
 
         task.dependsOn(assembleTask)
         task.inputs.apply {
@@ -161,6 +162,13 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
         }
     }
 }
+
+private val Framework.namePrefix: String
+    get() = KotlinNativeBinaryContainer.extractPrefixFromBinaryName(
+        name,
+        buildType,
+        outputKind.taskNameClassifier
+    )
 
 private fun Project.appleFrameworkDir(frameworkSearchDir: File) =
     buildDir.resolve("xcode-frameworks").resolve(frameworkSearchDir)

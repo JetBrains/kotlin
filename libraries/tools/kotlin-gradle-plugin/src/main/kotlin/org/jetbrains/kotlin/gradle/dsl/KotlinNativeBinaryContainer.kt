@@ -160,6 +160,14 @@ open class KotlinNativeBinaryContainer @Inject constructor(
         internal fun generateBinaryName(prefix: String, buildType: NativeBuildType, outputKindClassifier: String) =
             lowerCamelCaseName(prefix, buildType.getName(), outputKindClassifier)
 
+        internal fun extractPrefixFromBinaryName(name: String, buildType: NativeBuildType, outputKindClassifier: String): String {
+            val suffix = lowerCamelCaseName(buildType.getName(), outputKindClassifier)
+            return if (name == suffix)
+                ""
+            else
+                name.substringBeforeLast(suffix.capitalize())
+        }
+
         // TODO: Remove in 1.3.50.
         private val GET_TEST_DEPRECATION_WARNING = """
             |
