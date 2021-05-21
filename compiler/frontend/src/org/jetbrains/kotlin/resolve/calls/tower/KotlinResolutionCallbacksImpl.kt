@@ -167,7 +167,7 @@ class KotlinResolutionCallbacksImpl(
                     callComponents, builtIns, topLevelCallContext, stubsForPostponedVariables, trace,
                     kotlinToResolvedCallTransformer, expressionTypingServices, argumentTypeResolver,
                     doubleColonExpressionResolver, deprecationResolver, moduleDescriptor, typeApproximator,
-                    missingSupertypesResolver
+                    missingSupertypesResolver, lambdaArgument
                 )
             } else {
                 null

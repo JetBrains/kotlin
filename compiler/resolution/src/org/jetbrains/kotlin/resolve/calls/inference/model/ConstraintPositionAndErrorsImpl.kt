@@ -15,6 +15,9 @@ class ExplicitTypeParameterConstraintPositionImpl(
     typeArgument: SimpleTypeArgument
 ) : ExplicitTypeParameterConstraintPosition<SimpleTypeArgument>(typeArgument)
 
+class InjectedAnotherStubTypeConstraintPositionImpl(builderInferenceLambdaOfInjectedStubType: LambdaKotlinCallArgument) :
+    InjectedAnotherStubTypeConstraintPosition<LambdaKotlinCallArgument>(builderInferenceLambdaOfInjectedStubType)
+
 class ExpectedTypeConstraintPositionImpl(topLevelCall: KotlinCall) : ExpectedTypeConstraintPosition<KotlinCall>(topLevelCall)
 
 class DeclaredUpperBoundConstraintPositionImpl(
