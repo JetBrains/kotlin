@@ -46,8 +46,6 @@ internal abstract class AbstractValueUsageTransformer(
     protected open fun IrExpression.useAsValue(value: IrValueDeclaration): IrExpression = this.useAs(value.type)
 
     protected open fun IrExpression.useAsArgument(parameter: IrValueParameter): IrExpression {
-        println("PARAMETER: ${parameter.render()}")
-        println("PARENT: ${parameter.parent.render()}")
         return this.useAsValue(parameter)
     }
 

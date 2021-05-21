@@ -926,7 +926,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     //-------------------------------------------------------------------------//
 
     private fun evaluateGetObjectValue(value: IrGetObjectValue): LLVMValueRef {
-        println("GET OBJ: ${value.render()}")
         return functionGenerationContext.getObjectValue(
                 value.symbol.owner,
                 currentCodeContext.exceptionHandler,
@@ -1190,8 +1189,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     private fun evaluateWhen(expression: IrWhen): LLVMValueRef {
         context.log{"evaluateWhen                   : ${ir2string(expression)}"}
-
-        println("WHEN: ${ir2stringWhole(expression)}")
 
         val whenEmittingContext = WhenEmittingContext(expression)
 

@@ -152,7 +152,7 @@ class DeepCopyForManagedWrapper(val originalClass: ClassStub, val context: Stubs
         // but unable to do that at StubType level.
         if (!argument.type.classifier.topLevelName.let { it.startsWith("Sk") || it.startsWith("Gr")}) return type
         if (argument.type.classifier.pkg != "org.jetbrains.skiko.skia.native") return type
-        println("API TRANSFORM: CPointer(${(argument.type as? ClassifierStubType)?.classifier?.topLevelName?:argument.type})")
+
         return ClassifierStubType(managedWrapperClassifier(argument.type.classifier) ?: return type, nullable = type.nullable)
     }
 

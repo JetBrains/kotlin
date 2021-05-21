@@ -296,8 +296,6 @@ internal class StructStubBuilder(
             try {
                 listOfNotNull(classStub, buildManagedWrapper(classStub))
             } catch (e: Throwable) {
-                println("AN EXCEPTION: ${classStub.classifier.topLevelName}")
-                println("\t${e.message}")
                 emptyList()
             }
         } else {
@@ -309,7 +307,6 @@ internal class StructStubBuilder(
         val copier = DeepCopyForManagedWrapper(classStub, context)
 
         val managedName = copier.managedWrapperClassifier(classStub.classifier) ?: run {
-            println("BAD CLASSIFIER: ${classStub.classifier.topLevelName}")
             return null
         }
 

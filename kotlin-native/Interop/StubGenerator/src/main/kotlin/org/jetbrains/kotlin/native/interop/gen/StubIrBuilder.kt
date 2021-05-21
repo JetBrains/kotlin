@@ -248,9 +248,6 @@ open class StubsBuildingContextImpl(
 
     fun isClass(spelling: String): Boolean {
         val decl = nativeIndex.structs.firstOrNull { it.spelling == spelling } ?: return false
-
-        println("FOUND: $spelling IT IS ${decl.def?.kind}")
-
         return decl.def?.kind == StructDef.Kind.CLASS
     }
 

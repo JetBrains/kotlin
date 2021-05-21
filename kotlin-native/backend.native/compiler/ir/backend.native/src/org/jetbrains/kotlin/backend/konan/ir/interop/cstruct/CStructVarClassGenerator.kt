@@ -120,7 +120,6 @@ internal class CStructVarClassGenerator(
     // TODO: move me to InteropLowering.kt?
     private fun setupManagedClass(irClass: IrClass) {
 
-        println(irClass.render())
         // class Wrapper(cpp: CppClass, managed: Boolean) : ManagedType(cpp) {
         //     val cpp = cpp
         //     val managed = managed
@@ -164,7 +163,6 @@ internal class CStructVarClassGenerator(
                     +irReturn(irGetField(irGet(cppVal.getter!!.dispatchReceiverParameter!!), cppVal.backingField!!))
 
                 }
-println("got CPP")
         val managedVal = irClass.declarations
                 .filterIsInstance<IrProperty>()
                 .filter { it.name.toString() == "managed" }
@@ -192,7 +190,6 @@ println("got CPP")
 
                 }
 
-        println("got MANAGED")
         val cleanerVal = irClass.declarations
                 .filterIsInstance<IrProperty>()
                 .filter { it.name.toString() == "cleaner" }
@@ -243,12 +240,13 @@ println("got CPP")
                     )
                     body = irBlockBody {
                         val itCpp = irGet(valueParameters.single())
-                        +irCall(symbols.println).apply {
-                            putValueArgument(0,
-                                    "Cleaning ${irClass.name} with ${if (isSkiaRefCnt) "unref" else "__destroy__"}"
-                                            .toIrConst(irBuiltIns.stringType)
-                            )
-                        }
+                        // Uncomment if you want to trace cleaner lambda calls.
+                        // +irCall(symbols.println).apply {
+                        //    putValueArgument(0,
+                        //            "Cleaning ${irClass.name} with ${if (isSkiaRefCnt) "unref" else "__destroy__"}"
+                        //                    .toIrConst(irBuiltIns.stringType)
+                        //    )
+                        //}
                         if (isSkiaRefCnt) {
                             val unref = cppValClass.declarations
                                     .filterIsInstance<IrSimpleFunction>()
@@ -318,8 +316,6 @@ println("got CPP")
 
                 }
 
-        println("GENERATED IR FOR ${irClass.name}")
-        println(ir2stringWhole(irClass))
     }
 
     private fun createPrimaryConstructor(irClass: IrClass): IrConstructor {
