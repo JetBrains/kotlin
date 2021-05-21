@@ -252,10 +252,32 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             List<KtTypeParameter> typeParameters = typeParameterList.getParameters();
             if (typeParameters.isEmpty()) return Collections.emptyList();
 
+            boolean supportClassTypeParameterAnnotations = c.getLanguageVersionSettings().supportsFeature(LanguageFeature.ClassTypeParameterAnnotations);
             List<TypeParameterDescriptor> parameters = new ArrayList<>(typeParameters.size());
-
+            
             for (int i = 0; i < typeParameters.size(); i++) {
-                parameters.add(new LazyTypeParameterDescriptor(c, this, typeParameters.get(i), i));
+                KtTypeParameter parameter = typeParameters.get(i);
+                Annotations lazyAnnotations;
+                if (supportClassTypeParameterAnnotations) {
+                    lazyAnnotations = new LazyAnnotations(
+                            new LazyAnnotationsContext(
+                                    c.getAnnotationResolver(),
+                                    storageManager,
+                                    c.getTrace()
+                            ) {
+                                @NotNull
+                                @Override
+                                public LexicalScope getScope() {
+                                    return getOuterScope();
+                                }
+                            },
+                            parameter.getAnnotationEntries()
+                    );
+                } else {
+                    lazyAnnotations = Annotations.Companion.getEMPTY();
+                }
+
+                parameters.add(new LazyTypeParameterDescriptor(c, this, parameter, lazyAnnotations, i));
             }
 
             return parameters;

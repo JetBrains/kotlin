@@ -208,6 +208,7 @@ enum class LanguageFeature(
     SuspendFunctionAsSupertype(KOTLIN_1_6),
     UnrestrictedBuilderInference(KOTLIN_1_6),
     ProperTypeInferenceConstraintsProcessing(KOTLIN_1_6, kind = BUG_FIX),
+    ClassTypeParameterAnnotations(KOTLIN_1_6),
 
     // Temporarily disabled, see KT-27084/KT-22379
     SoundSmartcastFromLoopConditionForLoopAssignedVariables(sinceVersion = null, kind = BUG_FIX),

@@ -1,0 +1,62 @@
+package
+
+public final annotation class A1 : kotlin.Annotation {
+    public constructor A1()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class A2 : kotlin.Annotation {
+    public constructor A2(/*0*/ some: kotlin.Int = ...)
+    public final val some: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) public final annotation class TA1 : kotlin.Annotation {
+    public constructor TA1()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE_PARAMETER}) public final annotation class TA2 : kotlin.Annotation {
+    public constructor TA2(/*0*/ some: kotlin.Int = ...)
+    public final val some: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TTopLevelClass</*0*/ @TA1 @TA2(some = 3) @TA2 @TA1 @TA2(some = "Test") T> {
+    public constructor TTopLevelClass</*0*/ @TA1 @TA2(some = 3) @TA2 @TA1 @TA2(some = "Test") T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final class TInnerClass</*0*/ @TA1 @TA2(some = 3) @TA2 @TA1 @TA2(some = "Test") T> {
+        public constructor TInnerClass</*0*/ @TA1 @TA2(some = 3) @TA2 @TA1 @TA2(some = "Test") T>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final fun test(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public final class TopLevelClass</*0*/ @A1 @A2(some = 3) @A2 @A1 @A2(some = "Test") T> {
+    public constructor TopLevelClass</*0*/ @A1 @A2(some = 3) @A2 @A1 @A2(some = "Test") T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final class InnerClass</*0*/ @A1 @A2(some = 3) @A2 @A1 @A2(some = "Test") T> {
+        public constructor InnerClass</*0*/ @A1 @A2(some = 3) @A2 @A1 @A2(some = "Test") T>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final fun test(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+

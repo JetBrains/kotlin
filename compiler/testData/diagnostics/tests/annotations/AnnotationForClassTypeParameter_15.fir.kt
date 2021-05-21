@@ -1,3 +1,4 @@
+// !LANGUAGE: -ClassTypeParameterAnnotations
 annotation class A1
 annotation class A2(val some: Int = 12)
 

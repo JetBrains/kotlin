@@ -3,6 +3,7 @@
 // IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
 // EMIT_JVM_TYPE_ANNOTATIONS
+// !LANGUAGE: +ClassTypeParameterAnnotations
 // JVM_TARGET: 1.8
 // WITH_REFLECT
 // FULL_JDK
@@ -29,41 +30,36 @@ class SimpleClass
 interface Generic<G>
 class GenericClass<G>
 
-@Suppress("UNSUPPORTED")
 class SimpleParameter<@TypeParameterAnn @TypeParameterAnnBinary T> {}
 
-@Suppress("UNSUPPORTED")
 class InterfaceBound<@TypeParameterAnn T : @TypeAnn("Simple") Simple> {}
 
-@Suppress("UNSUPPORTED")
 class ClassBound<@TypeParameterAnn T : @TypeAnn("Simple") SimpleClass>
 
 class InterfaceBoundGeneric<T : @TypeAnn("Generic") Generic<@TypeAnn("Simple") Simple>> {}
 
 class ClassBoundGeneric<T : @TypeAnn("GenericClass") GenericClass<@TypeAnn("SimpleClass") SimpleClass>>
 
-@Suppress("UNSUPPORTED")
 class TypeParameterAsBound<Y, @TypeParameterAnn T : @TypeAnn("Y as Bound") Y>
-
 
 fun box(): String {
 
     //foo
-//    checkTypeParameterAnnotation(
-//        SimpleParameter::class.java.typeParameters.single(),
-//        "T",
-//        "@foo.TypeParameterAnn()",
-//        "foo"
-//    )
+    checkTypeParameterAnnotation(
+        SimpleParameter::class.java.typeParameters.single(),
+        "T",
+        "@foo.TypeParameterAnn()",
+        "foo"
+    )
 
     //interfaceBound
     val interfaceBound = InterfaceBound::class.java
-//    checkTypeParameterAnnotation(
-//        InterfaceBound.typeParameters.single(),
-//        "T",
-//        "@foo.TypeParameterAnn()",
-//        "interfaceBound type parameter"
-//    )
+    checkTypeParameterAnnotation(
+        interfaceBound.typeParameters.single(),
+        "T",
+        "@foo.TypeParameterAnn()",
+        "interfaceBound type parameter"
+    )
 
     checkTypeAnnotation(
         interfaceBound.typeParameters.single().annotatedBounds.single(),
@@ -74,12 +70,12 @@ fun box(): String {
 
     //classBound
     val classBound = ClassBound::class.java
-//    checkTypeParameterAnnotation(
-//        classBound.typeParameters.single(),
-//        "T",
-//        "@foo.TypeParameterAnn()",
-//        "classBound type parameter"
-//    )
+    checkTypeParameterAnnotation(
+        classBound.typeParameters.single(),
+        "T",
+        "@foo.TypeParameterAnn()",
+        "classBound type parameter"
+    )
 
     checkTypeAnnotation(
         classBound.typeParameters.single().annotatedBounds.single(),
@@ -91,12 +87,12 @@ fun box(): String {
 
     //interfaceBoundGeneric
     val interfaceBoundGeneric = InterfaceBoundGeneric::class.java
-//    checkTypeAnnotation(
-//        interfaceBoundGeneric.typeParameters.single().annotatedBounds.single(),
-//        "foo.Generic<foo.Simple>",
-//        "@foo.TypeAnn(name=Generic)",
-//        "interfaceBoundGeneric bound"
-//    )
+    checkTypeAnnotation(
+        interfaceBoundGeneric.typeParameters.single().annotatedBounds.single(),
+        "foo.Generic<foo.Simple>",
+        "@foo.TypeAnn(name=Generic)",
+        "interfaceBoundGeneric bound"
+    )
 
     checkTypeAnnotation(
         (interfaceBoundGeneric.typeParameters.single().annotatedBounds.single() as AnnotatedParameterizedType).getAnnotatedActualTypeArguments().single(),
@@ -124,12 +120,12 @@ fun box(): String {
 
     //typeParameterTypeParameterBound
     val typeParameterTypeParameterBound = TypeParameterAsBound::class.java
-//    checkTypeParameterAnnotation(
-//        typeParameterTypeParameterBound.typeParameters[1]!!,
-//        "T",
-//        "@foo.TypeParameterAnn()",
-//        "typeParameterTypeParameterBound type parameter"
-//    )
+    checkTypeParameterAnnotation(
+        typeParameterTypeParameterBound.typeParameters[1]!!,
+        "T",
+        "@foo.TypeParameterAnn()",
+        "typeParameterTypeParameterBound type parameter"
+    )
     // Works on JDK 15
 //    checkTypeAnnotation(
 //        typeParameterTypeParameterBound.typeParameters[1]!!.annotatedBounds.single(),

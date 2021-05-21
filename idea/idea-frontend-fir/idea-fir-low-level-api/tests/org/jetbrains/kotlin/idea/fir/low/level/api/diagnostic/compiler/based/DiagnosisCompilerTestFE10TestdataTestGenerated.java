@@ -838,9 +838,14 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 runTest("compiler/testData/diagnostics/tests/annotations/AnnotationAsDefaultParameter.kt");
             }
 
-            @TestMetadata("AnnotationForClassTypeParameter.kt")
-            public void testAnnotationForClassTypeParameter() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/annotations/AnnotationForClassTypeParameter.kt");
+            @TestMetadata("AnnotationForClassTypeParameter_15.kt")
+            public void testAnnotationForClassTypeParameter_15() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/AnnotationForClassTypeParameter_15.kt");
+            }
+
+            @TestMetadata("AnnotationForClassTypeParameter_16.kt")
+            public void testAnnotationForClassTypeParameter_16() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/AnnotationForClassTypeParameter_16.kt");
             }
 
             @TestMetadata("AnnotationForFunctionTypeParameter.kt")
