@@ -89,6 +89,15 @@ internal fun checkConstantArguments(
             )
                 return ConstantArgumentKind.NOT_CONST
         }
+        expressionSymbol is FirConstructor -> {
+            if (expression.typeRef.coneType.isUnsignedType) {
+                (expression as FirFunctionCall).arguments.forEach { argumentExpression ->
+                    checkConstantArguments(argumentExpression, session)?.let { return it }
+                }
+            } else {
+                return ConstantArgumentKind.NOT_CONST
+            }
+        }
         expression is FirFunctionCall -> {
             val calleeReference = expression.calleeReference
             if (calleeReference is FirErrorNamedReference) {
@@ -102,6 +111,7 @@ internal fun checkConstantArguments(
             if (expression.dispatchReceiver is FirThisReceiverExpression) {
                 return null
             }
+
 
             when (calleeReference.name) {
                 in OperatorNameConventions.BINARY_OPERATION_NAMES, in OperatorNameConventions.UNARY_OPERATION_NAMES,
