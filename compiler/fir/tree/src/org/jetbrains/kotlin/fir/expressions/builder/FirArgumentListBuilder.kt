@@ -5,18 +5,14 @@
 
 package org.jetbrains.kotlin.fir.expressions.builder
 
-import kotlin.contracts.*
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirArgumentListImpl
-import org.jetbrains.kotlin.fir.visitors.*
-
-/*
- * This file was generated automatically
- * DO NOT MODIFY IT MANUALLY
- */
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 @FirBuilderDsl
 class FirArgumentListBuilder {
@@ -35,7 +31,7 @@ class FirArgumentListBuilder {
 @OptIn(ExperimentalContracts::class)
 inline fun buildArgumentList(init: FirArgumentListBuilder.() -> Unit = {}): FirArgumentList {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirArgumentListBuilder().apply(init).build()
 }
