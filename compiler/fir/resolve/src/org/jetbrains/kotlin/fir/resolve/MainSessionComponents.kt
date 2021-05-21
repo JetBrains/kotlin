@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirDependenciesSymbolProviderImpl
 import org.jetbrains.kotlin.fir.scopes.impl.FirDeclaredMemberScopeProvider
 import org.jetbrains.kotlin.fir.types.FirCorrespondingSupertypesCache
 
 val FirSession.symbolProvider: FirSymbolProvider by FirSession.sessionComponentAccessor()
+val FirSession.dependenciesSymbolProvider: FirSymbolProvider by FirSession.sessionComponentAccessor<FirDependenciesSymbolProviderImpl>()
 val FirSession.firProvider: FirProvider by FirSession.sessionComponentAccessor()
 val FirSession.correspondingSupertypesCache: FirCorrespondingSupertypesCache by FirSession.sessionComponentAccessor()
 val FirSession.declaredMemberScopeProvider: FirDeclaredMemberScopeProvider by FirSession.sessionComponentAccessor()
