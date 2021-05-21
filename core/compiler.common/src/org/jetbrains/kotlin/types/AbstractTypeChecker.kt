@@ -461,6 +461,17 @@ object AbstractTypeChecker {
         return null
     }
 
+    private fun TypeSystemContext.isStubTypeSubtypeOfAnother(a: SimpleTypeMarker, b: SimpleTypeMarker): Boolean {
+        val originalA = a.asDefinitelyNotNullType()?.original() ?: a
+        val originalB = b.asDefinitelyNotNullType()?.original() ?: b
+
+        if (originalA.typeConstructor() !== originalB.typeConstructor()) return false
+        if (!a.isDefinitelyNotNullType() && b.isDefinitelyNotNullType()) return false
+        if (a.isMarkedNullable() && !b.isMarkedNullable()) return false
+
+        return true // A!! == B!!, A? == B? or A == B
+    }
+
     private fun checkSubtypeForSpecialCases(
         context: AbstractTypeCheckerContext,
         subType: SimpleTypeMarker,
@@ -478,10 +489,10 @@ object AbstractTypeChecker {
             )
         }
 
-        if (subType.isStubType() && superType.isStubType())
-            return subType.typeConstructor() === superType.typeConstructor()
+        if (subType.isStubTypeForBuilderInference() && superType.isStubTypeForBuilderInference())
+            return isStubTypeSubtypeOfAnother(subType, superType)
 
-        if (subType.isStubType() || superType.isStubType() || subType.isStubTypeForVariableInSubtyping() || superType.isStubTypeForVariableInSubtyping())
+        if (subType.isStubType() || superType.isStubType())
             return context.isStubTypeEqualsToAnything
 
         // superType might be a definitely notNull type (see KT-42824)
@@ -746,7 +757,7 @@ object AbstractNullabilityChecker {
             if (type.isNothing()) return true
             if (type.isMarkedNullable()) return false
 
-            if (context.isStubTypeEqualsToAnything && (type.isStubTypeForVariableInSubtyping() || type.isStubType())) return true
+            if (context.isStubTypeEqualsToAnything && type.isStubType()) return true
 
             return areEqualTypeConstructors(type.typeConstructor(), end)
         }

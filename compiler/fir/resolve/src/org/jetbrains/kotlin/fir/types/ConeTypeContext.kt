@@ -387,6 +387,10 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return this is ConeStubType // TODO: distinguish stub types for builder inference and for subtyping
     }
 
+    override fun SimpleTypeMarker.isStubTypeForBuilderInference(): Boolean {
+        return this is ConeStubType // TODO: distinguish stub types for builder inference and for subtyping
+    }
+
     override fun intersectTypes(types: List<SimpleTypeMarker>): SimpleTypeMarker {
         @Suppress("UNCHECKED_CAST")
         return ConeTypeIntersector.intersectTypes(this as ConeInferenceContext, types as List<ConeKotlinType>) as SimpleTypeMarker

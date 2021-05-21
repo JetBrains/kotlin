@@ -125,6 +125,8 @@ class DefinitelyNotNullType private constructor(
         ): Boolean {
             if (!type.canHaveUndefinedNullability()) return false
 
+            if (type is StubTypeForBuilderInference) return TypeUtils.isNullableType(type)
+
             // Replacing `useCorrectedNullabilityForFlexibleTypeParameters` with true for all call-sites seems to be correct
             // But it seems that it should be a new feature: KT-28785 would be automatically fixed then
             // (see the tests org.jetbrains.kotlin.spec.checkers.DiagnosticsTestSpecGenerated.NotLinked.Dfa.Pos.test12/13)
@@ -142,9 +144,10 @@ class DefinitelyNotNullType private constructor(
         }
 
         private fun UnwrappedType.canHaveUndefinedNullability(): Boolean =
-            constructor is NewTypeVariableConstructor ||
-                    constructor.declarationDescriptor is TypeParameterDescriptor ||
-                    this is NewCapturedType
+            constructor is NewTypeVariableConstructor
+                    || constructor.declarationDescriptor is TypeParameterDescriptor
+                    || this is NewCapturedType
+                    || this is StubTypeForBuilderInference
 
     }
 
@@ -159,13 +162,13 @@ class DefinitelyNotNullType private constructor(
                 delegate.constructor.declarationDescriptor is TypeParameterDescriptor
 
     override fun substitutionResult(replacement: KotlinType): KotlinType =
-            replacement.unwrap().makeDefinitelyNotNullOrNotNull(useCorrectedNullabilityForTypeParameters)
+        replacement.unwrap().makeDefinitelyNotNullOrNotNull(useCorrectedNullabilityForTypeParameters)
 
     override fun replaceAnnotations(newAnnotations: Annotations): DefinitelyNotNullType =
-            DefinitelyNotNullType(delegate.replaceAnnotations(newAnnotations), useCorrectedNullabilityForTypeParameters)
+        DefinitelyNotNullType(delegate.replaceAnnotations(newAnnotations), useCorrectedNullabilityForTypeParameters)
 
     override fun makeNullableAsSpecified(newNullability: Boolean): SimpleType =
-            if (newNullability) delegate.makeNullableAsSpecified(newNullability) else this
+        if (newNullability) delegate.makeNullableAsSpecified(newNullability) else this
 
     override fun toString(): String = "$delegate!!"
 

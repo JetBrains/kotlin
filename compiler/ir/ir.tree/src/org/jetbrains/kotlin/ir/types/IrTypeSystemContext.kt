@@ -53,6 +53,8 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun SimpleTypeMarker.isStubTypeForVariableInSubtyping() = false
 
+    override fun SimpleTypeMarker.isStubTypeForBuilderInference() = false
+
     override fun FlexibleTypeMarker.asDynamicType() = this as? IrDynamicType
 
     override fun FlexibleTypeMarker.asRawType(): RawTypeMarker? = null

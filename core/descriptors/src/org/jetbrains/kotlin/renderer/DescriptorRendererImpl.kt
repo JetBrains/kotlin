@@ -236,6 +236,8 @@ internal class DescriptorRendererImpl(
     private fun StringBuilder.renderDefaultType(type: KotlinType) {
         this.renderAnnotations(type)
 
+        val originalTypeOfDefNotNullType = (type as? DefinitelyNotNullType)?.original
+
         when {
             type.isError -> {
                 if (type is UnresolvedType && presentableUnresolvedTypes) {
@@ -249,7 +251,10 @@ internal class DescriptorRendererImpl(
                 }
                 append(renderTypeArguments(type.arguments))
             }
-            type is StubTypeForBuilderInference -> append(type.originalTypeVariable.toString())
+            type is StubTypeForBuilderInference ->
+                append(type.originalTypeVariable.toString())
+            originalTypeOfDefNotNullType is StubTypeForBuilderInference ->
+                append(originalTypeOfDefNotNullType.originalTypeVariable.toString())
             else -> renderTypeConstructorAndArguments(type)
         }
 
