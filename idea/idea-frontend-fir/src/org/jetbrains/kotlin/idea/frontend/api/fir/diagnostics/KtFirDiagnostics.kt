@@ -1895,6 +1895,12 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = OperatorRenamedOnImport::class
     }
 
+    abstract class JavaTypeMismatch : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = JavaTypeMismatch::class
+        abstract val expectedType: KtType
+        abstract val actualType: KtType
+    }
+
     abstract class ConflictingJvmDeclarations : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = ConflictingJvmDeclarations::class
     }

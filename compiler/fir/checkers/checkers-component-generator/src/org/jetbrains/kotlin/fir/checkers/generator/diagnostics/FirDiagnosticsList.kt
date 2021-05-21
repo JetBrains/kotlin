@@ -1002,6 +1002,13 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
         val OPERATOR_RENAMED_ON_IMPORT by error<KtImportDirective>(PositioningStrategy.IMPORT_LAST_NAME)
     }
+
+    val JVM by object : DiagnosticGroup("jvm") {
+        val JAVA_TYPE_MISMATCH by error<KtExpression> {
+            parameter<ConeKotlinType>("expectedType")
+            parameter<ConeKotlinType>("actualType")
+        }
+    }
 }
 
 private val exposedVisibilityDiagnosticInit: DiagnosticBuilder.() -> Unit = {
