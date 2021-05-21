@@ -441,6 +441,8 @@ ALWAYS_INLINE inline R CallWithThreadState(R(*function)(Args...), Args... args) 
     return function(std::forward<Args>(args)...);
 }
 
+extern const bool kSupportsMultipleMutators;
+
 } // namespace kotlin
 
 #endif // RUNTIME_MEMORY_H

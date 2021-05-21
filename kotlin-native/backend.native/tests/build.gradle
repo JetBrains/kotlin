@@ -1092,8 +1092,11 @@ standaloneTest("leakMemoryWithWorkerTermination") {
     disabled = (project.testTarget == 'wasm32') || // Needs pthreads.
         isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     source = "runtime/workers/leak_memory_with_worker_termination.kt"
-    expectedExitStatusChecker = { it != 0 }
-    outputChecker = { s -> s.contains("Memory leaks detected, 1 objects leaked!") }
+
+    if (!isExperimentalMM) { // Experimental MM will not report memory leaks.
+        expectedExitStatusChecker = { it != 0 }
+        outputChecker = { s -> s.contains("Memory leaks detected, 1 objects leaked!") }
+    }
 }
 
 task superFunCall(type: KonanLocalTest) {
@@ -4494,9 +4497,15 @@ standaloneTest("interop_objc_illegal_sharing") {
         isExperimentalMM  // Experimental MM doesn't support multiple mutators and thread state switching for ObjC interop yet.
     source = "interop/objc/illegal_sharing.kt"
     UtilsKt.dependsOnPlatformLibs(it)
-    expectedExitStatusChecker = { it != 0 }
-    outputChecker = {
-      it.startsWith("Before") && !it.contains("After")
+    if (isExperimentalMM) {
+        outputChecker = {
+            it.startsWith("Before") && it.contains("After")
+        }
+    } else {
+        expectedExitStatusChecker = { it != 0 }
+        outputChecker = {
+            it.startsWith("Before") && !it.contains("After")
+        }
     }
 }
 
@@ -4614,6 +4623,9 @@ dynamicTest("interop_migrating_main_thread") {
         isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     source = "interop/migrating_main_thread/lib.kt"
     flags = ['-Xdestroy-runtime-mode=on-shutdown']
+    if (isExperimentalMM) {
+        clangFlags = ['-DEXPERIMENTAL_MM']
+    }
     cSource = "$projectDir/interop/migrating_main_thread/main.cpp"
     clangTool = "clang++"
 }

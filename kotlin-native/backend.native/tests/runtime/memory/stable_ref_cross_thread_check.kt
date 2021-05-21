@@ -10,17 +10,24 @@ import kotlin.test.*
 import kotlin.native.concurrent.*
 import kotlinx.cinterop.*
 
+class Holder(val value: Int)
+
 @Test
 fun runTest1() {
     val worker = Worker.start()
 
     val future = worker.execute(TransferMode.SAFE, { }) {
-        StableRef.create(Any())
+        StableRef.create(Holder(42))
     }
     val ref = future.result
-    assertFailsWith<IncorrectDereferenceException> {
+    if (kotlin.native.Platform.memoryModel == kotlin.native.MemoryModel.EXPERIMENTAL) {
         val value = ref.get()
-        println(value.toString())
+        assertEquals(value.value, 42)
+    } else {
+        assertFailsWith<IncorrectDereferenceException> {
+            val value = ref.get()
+            println(value.value)
+        }
     }
 
     worker.requestTermination().result
@@ -30,15 +37,20 @@ fun runTest1() {
 fun runTest2() {
     val worker = Worker.start()
 
-    val mainThreadRef = StableRef.create(Any())
+    val mainThreadRef = StableRef.create(Holder(42))
     // Simulate this going through interop as raw C pointer.
     val pointerValue: Long = mainThreadRef.asCPointer().toLong()
     val future = worker.execute(TransferMode.SAFE, { pointerValue }) {
         val pointer: COpaquePointer = it.toCPointer()!!
-        assertFailsWith<IncorrectDereferenceException> {
-            // Even attempting to convert a pointer to StableRef should fail.
-            val otherThreadRef: StableRef<Any> = pointer.asStableRef()
-            println(otherThreadRef.toString())
+        if (kotlin.native.Platform.memoryModel == kotlin.native.MemoryModel.EXPERIMENTAL) {
+            val otherThreadRef: StableRef<Holder> = pointer.asStableRef()
+            assertEquals(otherThreadRef.get().value, 42)
+        } else {
+            assertFailsWith<IncorrectDereferenceException> {
+                // Even attempting to convert a pointer to StableRef should fail.
+                val otherThreadRef: StableRef<Holder> = pointer.asStableRef()
+                println(otherThreadRef.get().value)
+            }
         }
         Unit
     }

@@ -107,8 +107,9 @@ RuntimeState* initRuntime() {
           result->memoryState = InitMemory(false); // The argument will be ignored for legacy DestroyRuntimeMode
           result->worker = WorkerInit(result->memoryState, true);
           firstRuntime = atomicAdd(&aliveRuntimesCount, 1) == 1;
-          if (CurrentMemoryModel == MemoryModel::kExperimental) {
-              RuntimeCheck(firstRuntime, "Experimental MM does not support multiple mutator threads yet");
+          if (!kotlin::kSupportsMultipleMutators && !firstRuntime) {
+              konan::consoleErrorf("This GC implementation does not support multiple mutator threads.");
+              konan::abort();
           }
           break;
       case DESTROY_RUNTIME_ON_SHUTDOWN:
@@ -120,8 +121,9 @@ RuntimeState* initRuntime() {
               RuntimeAssert(lastStatus != kGlobalRuntimeShutdown, "Kotlin runtime was shut down. Cannot create new runtimes.");
           }
           firstRuntime = lastStatus == kGlobalRuntimeUninitialized;
-          if (CurrentMemoryModel == MemoryModel::kExperimental) {
-              RuntimeCheck(firstRuntime, "Experimental MM does not support multiple mutator threads yet");
+          if (!kotlin::kSupportsMultipleMutators && !firstRuntime) {
+              konan::consoleErrorf("This GC implementation does not support multiple mutator threads.");
+              konan::abort();
           }
           result->memoryState = InitMemory(firstRuntime);
           result->worker = WorkerInit(result->memoryState, true);

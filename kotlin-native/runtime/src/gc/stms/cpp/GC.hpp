@@ -13,6 +13,8 @@ namespace gc {
 
 using GC = kotlin::gc::SingleThreadMarkAndSweep;
 
+inline constexpr bool kSupportsMultipleMutators = false;
+
 } // namespace gc
 } // namespace kotlin
 

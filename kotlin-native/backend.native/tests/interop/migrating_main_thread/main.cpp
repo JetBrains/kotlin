@@ -24,6 +24,9 @@ int main() {
 #if defined(IS_LEGACY)
         // Globals were reinitialized.
         assert(testlib_symbols()->kotlin.root.tryReadFromA(kErrorValue) == kInitialValue);
+#elif defined(EXPERIMENTAL_MM)
+        // Globals are preserved.
+        assert(testlib_symbols()->kotlin.root.tryReadFromA(kErrorValue) == kNewValue);
 #else
         // Globals are not accessible.
         assert(testlib_symbols()->kotlin.root.tryReadFromA(kErrorValue) == kErrorValue);

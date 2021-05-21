@@ -28,10 +28,15 @@ val int2 = 77
     int1++
     withWorker {
         executeAfter(0, {
-            assertFailsWith<IncorrectDereferenceException> {
+            if (kotlin.native.Platform.memoryModel == kotlin.native.MemoryModel.EXPERIMENTAL) {
                 int1++
+                assertEquals(3, int1)
+            } else {
+                assertFailsWith<IncorrectDereferenceException> {
+                    int1++
+                }
+                assertEquals(2, int1)
             }
-            assertEquals(2, int1)
             assertEquals(77, int2)
         }.freeze())
     }

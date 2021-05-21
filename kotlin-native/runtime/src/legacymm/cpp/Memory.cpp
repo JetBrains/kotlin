@@ -3737,3 +3737,5 @@ kotlin::ThreadState kotlin::GetThreadState(MemoryState* thread) noexcept {
     // Assume that we are always in the Runnable thread state.
     return ThreadState::kRunnable;
 }
+
+const bool kotlin::kSupportsMultipleMutators = true;

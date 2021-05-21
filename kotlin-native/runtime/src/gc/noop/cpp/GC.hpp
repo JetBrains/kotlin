@@ -13,6 +13,8 @@ namespace gc {
 
 using GC = kotlin::gc::NoOpGC;
 
+inline constexpr bool kSupportsMultipleMutators = true;
+
 } // namespace gc
 } // namespace kotlin
 

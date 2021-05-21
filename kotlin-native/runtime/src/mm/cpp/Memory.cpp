@@ -9,6 +9,7 @@
 #include "Exceptions.h"
 #include "ExtraObjectData.hpp"
 #include "Freezing.hpp"
+#include "GC.hpp"
 #include "GlobalsRegistry.hpp"
 #include "InitializationScheme.hpp"
 #include "KAssert.h"
@@ -509,3 +510,5 @@ extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnabl
 MemoryState* kotlin::mm::GetMemoryState() {
     return ToMemoryState(ThreadRegistry::Instance().CurrentThreadDataNode());
 }
+
+const bool kotlin::kSupportsMultipleMutators = kotlin::gc::kSupportsMultipleMutators;
