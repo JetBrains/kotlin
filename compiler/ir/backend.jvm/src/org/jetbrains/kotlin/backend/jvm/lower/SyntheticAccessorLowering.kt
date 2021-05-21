@@ -738,7 +738,8 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
             is IrField -> {
                 val correspondingProperty = declarationRaw.correspondingPropertySymbol?.owner
                 if (correspondingProperty != null && correspondingProperty.isFakeOverride) {
-                    val realProperty = correspondingProperty.resolveFakeOverrideForProperty()
+                    val realProperty = correspondingProperty.resolveFakeOverride()
+                        ?: throw AssertionError("No real override for ${correspondingProperty.render()}")
                     realProperty.backingField
                         ?: throw AssertionError(
                             "Fake override property ${correspondingProperty.render()} with backing field " +
@@ -769,16 +770,6 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
             withSuper && !fromSubclassOfReceiversClass -> false
             else -> true
         }
-    }
-
-    private fun IrProperty.resolveFakeOverrideForProperty(): IrProperty {
-        if (!isFakeOverride) return this
-
-        return this.overriddenSymbols
-            .map { it.owner }
-            .collectAndFilterRealOverrides()
-            .firstOrNull()
-            ?: throw AssertionError("No real override for ${this.render()}")
     }
 
     private class OuterClassInfo(val outerClass: IrClass, val throughCrossinlineLambda: Boolean)
