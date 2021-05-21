@@ -551,7 +551,9 @@ class DoubleColonExpressionResolver(
                 resolvedCall.extensionReceiver?.type?.contains { it is StubTypeForBuilderInference } == true
             }
 
-        if (doesSomeExtensionReceiverContainsStubType) {
+        val unrestrictedBuilderInferenceSupported = languageVersionSettings.supportsFeature(LanguageFeature.UnrestrictedBuilderInference)
+
+        if (doesSomeExtensionReceiverContainsStubType && !unrestrictedBuilderInferenceSupported) {
             c.trace.reportDiagnosticOnce(TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE.on(expression))
             return noTypeInfo(c)
         }
