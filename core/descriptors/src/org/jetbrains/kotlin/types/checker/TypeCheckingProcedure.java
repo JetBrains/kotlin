@@ -143,6 +143,13 @@ public class TypeCheckingProcedure {
         }
     }
 
+    public static EnrichedProjectionKind getEffectiveProjectionKind(
+            @NotNull TypeParameterDescriptor typeParameter,
+            @NotNull TypeProjection typeArgument
+    ) {
+        return getEffectiveProjectionKind(typeParameter.getVariance(), typeArgument.getProjectionKind());
+    }
+
     // If class C<out T> then C<T> and C<out T> mean the same
     // out * out = out
     // out * in  = *
@@ -156,11 +163,11 @@ public class TypeCheckingProcedure {
     // inv * in  = out
     // inv * inv = inv
     public static EnrichedProjectionKind getEffectiveProjectionKind(
-            @NotNull TypeParameterDescriptor typeParameter,
-            @NotNull TypeProjection typeArgument
+            @NotNull Variance typeParameterVariance,
+            @NotNull Variance typeArgumentVariance
     ) {
-        Variance a = typeParameter.getVariance();
-        Variance b = typeArgument.getProjectionKind();
+        Variance a = typeParameterVariance;
+        Variance b = typeArgumentVariance;
 
         // If they are not both invariant, let's make b not invariant for sure
         if (b == INVARIANT) {

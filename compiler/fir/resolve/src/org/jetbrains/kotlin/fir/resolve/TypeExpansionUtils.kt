@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.utils.WeakPair
 import org.jetbrains.kotlin.fir.utils.component1
 import org.jetbrains.kotlin.fir.utils.component2
@@ -93,8 +94,18 @@ private fun mapTypeAliasArguments(
             val type = (projection as? ConeKotlinTypeProjection)?.type ?: return null
             val symbol = (type as? ConeTypeParameterType)?.lookupTag?.symbol ?: return super.substituteArgument(projection)
             val mappedProjection = typeAliasMap[symbol] ?: return super.substituteArgument(projection)
-            val mappedType = (mappedProjection as? ConeKotlinTypeProjection)?.type.updateNullabilityIfNeeded(type)
-                ?: return mappedProjection
+            var mappedType = (mappedProjection as? ConeKotlinTypeProjection)?.type.updateNullabilityIfNeeded(type)
+            mappedType = when (mappedType) {
+                is ConeClassErrorType,
+                is ConeClassLikeTypeImpl,
+                is ConeDefinitelyNotNullType,
+                is ConeTypeParameterTypeImpl,
+                is ConeFlexibleType -> {
+                    mappedType.withAttributes(type.attributes, useSiteSession.typeContext)
+                }
+                null -> return mappedProjection
+                else -> mappedType
+            }
 
             return when (mappedProjection.kind + projection.kind) {
                 ProjectionKind.STAR -> ConeStarProjection

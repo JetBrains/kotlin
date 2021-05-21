@@ -1333,6 +1333,26 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.TYPE_VARIANCE_CONFLICT) { firDiagnostic ->
+        TypeVarianceConflictImpl(
+            firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(firDiagnostic.a.fir),
+            firDiagnostic.b,
+            firDiagnostic.c,
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.d),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.TYPE_VARIANCE_CONFLICT_IN_EXPANDED_TYPE) { firDiagnostic ->
+        TypeVarianceConflictInExpandedTypeImpl(
+            firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(firDiagnostic.a.fir),
+            firDiagnostic.b,
+            firDiagnostic.c,
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.d),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED) { firDiagnostic ->
         ExtensionInClassReferenceNotAllowedImpl(
             firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a as FirCallableDeclaration),

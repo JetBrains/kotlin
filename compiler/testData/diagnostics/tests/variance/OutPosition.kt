@@ -15,7 +15,7 @@ interface Test<in I, out O, P> {
     fun ok7(): Out<P>
     fun ok8(): Out<In<P>>
     fun ok9(): Pair<In<I>, O>
-    
+
     fun ok10(): Inv<in I>
     fun ok11(): Inv<out O>
     fun ok12(): Inv<in P>
@@ -29,7 +29,7 @@ interface Test<in I, out O, P> {
     fun neOk6(): Pair<In<<!TYPE_VARIANCE_CONFLICT("O; out; in; Pair<In<O>, I>")!>O<!>>, <!TYPE_VARIANCE_CONFLICT("I; in; out; Pair<In<O>, I>")!>I<!>>
     fun neOk7(): Inv<in <!TYPE_VARIANCE_CONFLICT("O; out; in; Inv<in O>")!>O<!>>
     fun neOk8(): Out<<!CONFLICTING_PROJECTION("Out")!>in<!> I>
-    
+
     fun neOk10(): Inv<in <!TYPE_VARIANCE_CONFLICT("O; out; in; Inv<in O>")!>O<!>>
     fun neOk11(): Inv<out <!TYPE_VARIANCE_CONFLICT("I; in; out; Inv<out I>")!>I<!>>
 

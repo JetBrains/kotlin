@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface In<in I>
 interface Out<out O>
 interface Inv<P>

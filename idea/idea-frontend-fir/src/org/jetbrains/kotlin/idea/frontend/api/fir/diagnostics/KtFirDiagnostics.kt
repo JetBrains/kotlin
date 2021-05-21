@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.psi.KtWhenEntry
 import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
+import org.jetbrains.kotlin.types.Variance
 
 /*
  * This file was generated automatically
@@ -937,6 +938,22 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = IncompatibleTypesWarning::class
         abstract val typeA: KtType
         abstract val typeB: KtType
+    }
+
+    abstract class TypeVarianceConflict : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = TypeVarianceConflict::class
+        abstract val typeParameter: KtTypeParameterSymbol
+        abstract val typeParameterVariance: Variance
+        abstract val variance: Variance
+        abstract val containingType: KtType
+    }
+
+    abstract class TypeVarianceConflictInExpandedType : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = TypeVarianceConflictInExpandedType::class
+        abstract val typeParameter: KtTypeParameterSymbol
+        abstract val typeParameterVariance: Variance
+        abstract val variance: Variance
+        abstract val containingType: KtType
     }
 
     abstract class ExtensionInClassReferenceNotAllowed : KtFirDiagnostic<KtExpression>() {

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
+import org.jetbrains.kotlin.types.Variance
 import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadOnlyProperty
 
@@ -435,6 +436,20 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val INCOMPATIBLE_TYPES_WARNING by warning<KtElement> {
             parameter<ConeKotlinType>("typeA")
             parameter<ConeKotlinType>("typeB")
+        }
+
+        val TYPE_VARIANCE_CONFLICT by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<FirTypeParameterSymbol>("typeParameter")
+            parameter<Variance>("typeParameterVariance")
+            parameter<Variance>("variance")
+            parameter<ConeKotlinType>("containingType")
+        }
+
+        val TYPE_VARIANCE_CONFLICT_IN_EXPANDED_TYPE by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<FirTypeParameterSymbol>("typeParameter")
+            parameter<Variance>("typeParameterVariance")
+            parameter<Variance>("variance")
+            parameter<ConeKotlinType>("containingType")
         }
     }
 

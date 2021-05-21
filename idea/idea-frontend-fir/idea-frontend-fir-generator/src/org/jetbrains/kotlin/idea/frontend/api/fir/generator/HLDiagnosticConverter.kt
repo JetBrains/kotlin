@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
+import org.jetbrains.kotlin.types.Variance
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.full.createType
@@ -188,6 +189,11 @@ private object FirToKtConversionCreator {
             KtTypeParameterSymbol::class.createType(),
             importsToAdd = listOf("org.jetbrains.kotlin.fir.declarations.FirTypeParameter")
         ),
+        FirTypeParameter::class to HLFunctionCallConversion(
+            "firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol({0}.fir)",
+            KtTypeParameterSymbol::class.createType(),
+            importsToAdd = listOf("org.jetbrains.kotlin.fir.declarations.FirTypeParameter")
+        ),
         ConeKotlinType::class to HLFunctionCallConversion(
             "firSymbolBuilder.typeBuilder.buildKtType({0})",
             KtType::class.createType()
@@ -215,7 +221,7 @@ private object FirToKtConversionCreator {
             "firSymbolBuilder.functionLikeBuilder.buildFunctionSymbol({0}.fir)",
             KtFunctionLikeSymbol::class.createType(),
             importsToAdd = listOf("org.jetbrains.kotlin.fir.declarations.FirSimpleFunction")
-        ),
+        )
     )
 
     private val allowedTypesWithoutTypeParams = setOf(
@@ -231,6 +237,7 @@ private object FirToKtConversionCreator {
         ForbiddenNamedArgumentsTarget::class,
         LanguageFeature::class,
         LanguageVersionSettings::class,
+        Variance::class
     )
 
     private val KType.kClass: KClass<*>
