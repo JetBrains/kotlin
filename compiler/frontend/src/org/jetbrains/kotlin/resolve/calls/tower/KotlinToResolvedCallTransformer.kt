@@ -355,6 +355,7 @@ class KotlinToResolvedCallTransformer(
         } ?: return null
 
         val recordedType = context.trace.getType(deparenthesized)
+        val recordedTypeForParenthesized = context.trace.getType(expression)
 
         var updatedType = convertedArgumentType ?: getResolvedCallForArgumentExpression(deparenthesized, context)?.run {
             makeNullableTypeIfSafeReceiver(resultingDescriptor.returnType, context)
@@ -384,7 +385,7 @@ class KotlinToResolvedCallTransformer(
             context.trace.report(Errors.SIGNED_CONSTANT_CONVERTED_TO_UNSIGNED.on(deparenthesized))
         }
 
-        updatedType = updateRecordedTypeForArgument(updatedType, recordedType, expression, context)
+        updatedType = updateRecordedTypeForArgument(updatedType, recordedType, recordedTypeForParenthesized, expression, context)
 
         dataFlowAnalyzer.checkType(updatedType, deparenthesized, context, reportErrorDuringTypeCheck)
 
@@ -410,10 +411,12 @@ class KotlinToResolvedCallTransformer(
     private fun updateRecordedTypeForArgument(
         updatedType: KotlinType?,
         recordedType: KotlinType?,
+        recordedTypeForParenthesized: KotlinType?,
         argumentExpression: KtExpression,
         context: BasicCallResolutionContext,
     ): KotlinType? {
-        if ((!ErrorUtils.containsErrorType(recordedType) && recordedType == updatedType) || updatedType == null) return updatedType
+        if ((!ErrorUtils.containsErrorType(recordedType) && recordedType == updatedType && recordedType == recordedTypeForParenthesized) || updatedType == null)
+            return updatedType
 
         val expressions = ArrayList<KtExpression>().also { expressions ->
             var expression: KtExpression? = argumentExpression
