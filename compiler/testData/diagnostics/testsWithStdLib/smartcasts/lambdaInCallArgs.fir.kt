@@ -32,7 +32,7 @@ fun test_3() {
         foo(
             x.length, // stable smartcast
             { x = "" },
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.length  // stable smartcast
+            x.length  // stable smartcast
         )
     }
 }

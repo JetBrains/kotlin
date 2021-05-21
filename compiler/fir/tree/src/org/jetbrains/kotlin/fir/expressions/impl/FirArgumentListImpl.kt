@@ -5,15 +5,13 @@
 
 package org.jetbrains.kotlin.fir.expressions.impl
 
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.visitors.*
-
-/*
- * This file was generated automatically
- * DO NOT MODIFY IT MANUALLY
- */
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 internal class FirArgumentListImpl(
     override val source: FirSourceElement?,
@@ -29,7 +27,22 @@ internal class FirArgumentListImpl(
     }
 
     override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirArgumentListImpl {
-        arguments.transformInplace(transformer, data)
+        // Transform all normal arguments first and then lambda to make CFG correct. See KT-46825
+        val postponedFunctionArgs = mutableListOf<Pair<Int, FirAnonymousFunction>>()
+        val iterator = arguments.listIterator()
+        while (iterator.hasNext()) {
+            val index = iterator.nextIndex()
+            val next = iterator.next() as FirPureAbstractElement
+            if (next is FirAnonymousFunction) {
+                postponedFunctionArgs += (index to next)
+                continue
+            }
+            val result = next.transform<FirExpression, D>(transformer, data)
+            iterator.set(result)
+        }
+        for ((index, lambda) in postponedFunctionArgs) {
+            arguments[index] = lambda.transform(transformer, data)
+        }
         return this
     }
 }
