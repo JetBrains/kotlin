@@ -405,7 +405,7 @@ private external fun ffiTypeStruct0(elements: Long): Long
  * @param elements types of the struct elements
  */
 private fun ffiTypeStruct(elementTypes: List<ffi_type>): ffi_type {
-    val elements = nativeHeap.allocArrayOfPointersTo(*elementTypes.toTypedArray(), null)
+    val elements = persistentHeap.allocArrayOfPointersTo(*elementTypes.toTypedArray(), null)
     val res = ffiTypeStruct0(elements.rawValue)
     if (res == 0L) {
         throw OutOfMemoryError()
@@ -425,7 +425,7 @@ private external fun ffiCreateCif0(nArgs: Int, rType: Long, argTypes: Long): Lon
  */
 private fun ffiCreateCif(returnType: ffi_type, paramTypes: List<ffi_type>): ffi_cif {
     val nArgs = paramTypes.size
-    val argTypes = nativeHeap.allocArrayOfPointersTo(*paramTypes.toTypedArray(), null)
+    val argTypes = persistentHeap.allocArrayOfPointersTo(*paramTypes.toTypedArray(), null)
     val res = ffiCreateCif0(nArgs, returnType.rawPtr, argTypes.rawValue)
 
     when (res) {
@@ -454,6 +454,26 @@ private fun ffiCreateClosure(ffiCif: ffi_cif, impl: FfiClosureImpl): NativePtr {
     }
 
     return res
+}
+
+// Callbacks are globally cached and outlive the memory allocated by nativeHeap,
+// which gets forcibly reclaimed at the end of the compiler invocation.
+// So use an ad hoc allocator that is not affected.
+// Note: this is mostly a workaround, but proper solution would require a significant rework of this machinery.
+private object persistentHeap : NativeFreeablePlacement {
+    override fun alloc(size: Long, align: Int): NativePointed {
+        return interpretOpaquePointed(
+                nativeMemUtils.allocRaw(
+                        if (size == 0L) 1L else size, // It is a hack: `nativeMemUtils.allocRaw` can't allocate zero bytes
+                        align
+                )
+        )
+    }
+
+    override fun free(mem: NativePtr) {
+        nativeMemUtils.freeRaw(mem)
+    }
+
 }
 
 private external fun newGlobalRef(any: Any): Long
