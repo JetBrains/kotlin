@@ -1,4 +1,5 @@
 // IGNORE_BACKEND_FIR: JVM_IR
+// For reasons this test is ignored, go to KT-46419
 
 fun box(): String {
     val a: Long = 2147483647 + 1

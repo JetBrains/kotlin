@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_FIR: JVM_IR
+// For reasons this test is ignored, go to KT-46419
 // SKIP_JDK6
 // FULL_JDK
 
