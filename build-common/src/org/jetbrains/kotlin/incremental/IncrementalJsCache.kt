@@ -48,6 +48,7 @@ open class IncrementalJsCache(
         private const val INLINE_FUNCTIONS = "inline-functions"
         private const val HEADER_FILE_NAME = "header.meta"
         private const val PACKAGE_META_FILE = "packages-meta"
+        private const val SOURCE_TO_OUTPUT = "source-to-output"
 
         fun hasHeaderFile(cachesDir: File) = File(cachesDir, HEADER_FILE_NAME).exists()
     }
@@ -60,6 +61,7 @@ open class IncrementalJsCache(
     private val irTranslationResults = registerMap(IrTranslationResultMap(IR_TRANSLATION_RESULT_MAP.storageFile, pathConverter))
     private val inlineFunctions = registerMap(InlineFunctionsMap(INLINE_FUNCTIONS.storageFile, pathConverter))
     private val packageMetadata = registerMap(PackageMetadataMap(PACKAGE_META_FILE.storageFile))
+    private val sourceToKjsmMap = registerMap(SourceToKjsmMap(SOURCE_TO_OUTPUT.storageFile, pathConverter))
 
     private val dirtySources = hashSetOf<File>()
 
@@ -76,6 +78,7 @@ open class IncrementalJsCache(
     override fun markDirty(removedAndCompiledSources: Collection<File>) {
         removedAndCompiledSources.forEach { sourceFile ->
             // The common prefix of all FQN parents has to be the file package
+            sourceToKjsmMap.remove(sourceFile)
             sourceToClassesMap[sourceFile].map { it.parentOrNull()?.asString() ?: "" }.minByOrNull { it.length }?.let {
                 packageMetadata.remove(it)
             }
@@ -95,6 +98,14 @@ open class IncrementalJsCache(
         }
     }
 
+    fun getKjsmBySource(sourceFile: File): String? {
+        return sourceToKjsmMap.get(sourceFile)
+    }
+
+    fun setKjsmBySource(sourceFile: File, kjsmFile: File) {
+        sourceToKjsmMap[sourceFile] = kjsmFile
+    }
+
     fun compareAndUpdate(incrementalResults: IncrementalResultsConsumerImpl, changesCollector: ChangesCollector) {
         val translatedFiles = incrementalResults.packageParts
 
@@ -107,7 +118,6 @@ open class IncrementalJsCache(
 
             for ((classId, protoData) in newProtoMap) {
                 registerOutputForFile(srcFile, classId.asSingleFqName())
-
                 if (protoData is ClassProtoData) {
                     addToClassStorage(protoData.proto, protoData.nameResolver, srcFile)
                 }
