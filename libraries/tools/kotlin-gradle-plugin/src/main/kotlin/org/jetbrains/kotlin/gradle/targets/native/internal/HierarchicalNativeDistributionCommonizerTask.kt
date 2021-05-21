@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.tasks.*
-import org.jetbrains.kotlin.commonizer.CommonizerLogLevel
+import org.jetbrains.kotlin.commonizer.HierarchicalCommonizerOutputLayout.fileName
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.commonizer.identityString
 import org.jetbrains.kotlin.commonizer.isAncestorOf
@@ -21,8 +21,7 @@ import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_COMMON_LIBS_DIR
 import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_KLIB_DIR
 import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR
 import java.io.File
-import java.nio.charset.StandardCharsets
-import java.util.*
+import java.net.URLEncoder
 
 internal open class HierarchicalNativeDistributionCommonizerTask : DefaultTask() {
 
@@ -78,16 +77,11 @@ internal open class HierarchicalNativeDistributionCommonizerTask : DefaultTask()
     internal fun getRootOutputDirectory(target: SharedCommonizerTarget): File {
         val kotlinVersion = project.getKotlinPluginVersion()
 
-        val discriminator = buildString {
-            append(target.identityString)
-            append("-")
-            append(kotlinVersion.toLowerCase().base64)
-        }
-
         return project.file(konanHome)
             .resolve(KONAN_DISTRIBUTION_KLIB_DIR)
             .resolve(KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR)
-            .resolve(discriminator)
+            .resolve(urlEncode(kotlinVersion))
+            .resolve(target.fileName)
     }
 
     @TaskAction
@@ -121,8 +115,4 @@ private fun Project.getRootCommonizerTargets(): Set<SharedCommonizerTarget> {
     return allTargets.filter { target -> allTargets.none { otherTarget -> otherTarget isAncestorOf target } }.toSet()
 }
 
-private val String.base64
-    get() = base64Encoder.encodeToString(toByteArray(StandardCharsets.UTF_8))
-
-private val base64Encoder = Base64.getEncoder().withoutPadding()
-
+private fun urlEncode(value: String): String = URLEncoder.encode(value, Charsets.UTF_8.name())
