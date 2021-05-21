@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.types.TypeSubstitutor;
 import org.jetbrains.kotlin.types.Variance;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.INCOMPLETE_TYPE_INFERENCE;
 import static org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.UNKNOWN_STATUS;
@@ -68,7 +69,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
     private final TypeSubstitutor knownTypeParametersSubstitutor;
 
     @NotNull
-    private final Map<TypeParameterDescriptor, KotlinType> typeArguments;
+    private Map<TypeParameterDescriptor, KotlinType> typeArguments;
     @NotNull
     private final Map<ValueParameterDescriptor, ResolvedValueArgument> valueArguments;
     private final MutableDataFlowInfoForArguments dataFlowInfoForArguments;
@@ -212,6 +213,9 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
                 typeArguments.put(typeParameter, typeArgumentProjection.getType());
             }
         }
+
+        typeArguments = typeArguments.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> substitutor.safeSubstitute(e.getValue(), e.getKey().getVariance())));
 
         if (dispatchReceiver instanceof ExpressionReceiver) {
             dispatchReceiver = dispatchReceiver.replaceType(substitutor.safeSubstitute(dispatchReceiver.getType(), Variance.IN_VARIANCE));
