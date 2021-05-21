@@ -9,7 +9,10 @@ kotlin {
     ios() {
         binaries {
             framework {
-                baseName = "shared"
+                baseName = "sdk"
+            }
+            framework("custom") {
+                baseName = "lib"
             }
         }
     }
