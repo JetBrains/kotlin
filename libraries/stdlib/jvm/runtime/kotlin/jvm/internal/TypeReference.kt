@@ -14,13 +14,14 @@ public class TypeReference /* @SinceKotlin("1.6") constructor */(
     override val classifier: KClassifier,
     override val arguments: List<KTypeProjection>,
     override val isMarkedNullable: Boolean,
-    private val platformTypeUpperBound: KType?,
+    internal val platformTypeUpperBound: KType?,
+    internal val mutableCollectionType: Boolean,
 ) : KType {
     constructor(
         classifier: KClassifier,
         arguments: List<KTypeProjection>,
         isMarkedNullable: Boolean,
-    ) : this(classifier, arguments, isMarkedNullable, null)
+    ) : this(classifier, arguments, isMarkedNullable, null, false)
 
     override val annotations: List<Annotation>
         get() = emptyList()
@@ -28,7 +29,7 @@ public class TypeReference /* @SinceKotlin("1.6") constructor */(
     override fun equals(other: Any?): Boolean =
         other is TypeReference &&
                 classifier == other.classifier && arguments == other.arguments && isMarkedNullable == other.isMarkedNullable &&
-                platformTypeUpperBound == other.platformTypeUpperBound
+                platformTypeUpperBound == other.platformTypeUpperBound && mutableCollectionType == other.mutableCollectionType
 
     override fun hashCode(): Int =
         (classifier.hashCode() * 31 + arguments.hashCode()) * 31 + isMarkedNullable.hashCode()

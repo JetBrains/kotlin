@@ -16,6 +16,7 @@
 
 package kotlin.reflect.jvm.internal;
 
+import kotlin.SinceKotlin;
 import kotlin.jvm.internal.*;
 import kotlin.reflect.*;
 import kotlin.reflect.full.KClassifiers;
@@ -149,6 +150,11 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
     // @Override // JPS
     public KType platformType(KType lowerBound, KType upperBound) {
         return TypeOfImplKt.createPlatformKType(lowerBound, upperBound);
+    }
+
+    // @Override // JPS
+    public KType mutableCollectionType(KType type) {
+        return TypeOfImplKt.createMutableCollectionKType(type);
     }
 
     // Misc

@@ -70,6 +70,8 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
 
         fun generateTypeParameterContainer(v: InstructionAdapter, typeParameter: TypeParameterMarker)
 
+        fun isMutableCollectionType(type: KT): Boolean
+
         fun toKotlinType(type: KT): KotlinType
     }
 

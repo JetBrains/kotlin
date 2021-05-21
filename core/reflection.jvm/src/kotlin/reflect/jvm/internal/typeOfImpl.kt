@@ -5,6 +5,10 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.SimpleType
 import kotlin.reflect.KType
@@ -18,4 +22,20 @@ internal fun createPlatformKType(lowerBound: KType, upperBound: KType): KType {
             (upperBound as KTypeImpl).type as SimpleType,
         )
     )
+}
+
+internal fun createMutableCollectionKType(type: KType): KType {
+    val kotlinType = (type as KTypeImpl).type
+    require(kotlinType is SimpleType) { "Non-simple type cannot be a mutable collection type: $type" }
+    val classifier = kotlinType.constructor.declarationDescriptor as? ClassDescriptor
+        ?: throw IllegalArgumentException("Non-class type cannot be a mutable collection type: $type")
+    return KTypeImpl(
+        KotlinTypeFactory.simpleType(kotlinType, constructor = classifier.readOnlyToMutable().typeConstructor)
+    )
+}
+
+private fun ClassDescriptor.readOnlyToMutable(): ClassDescriptor {
+    val fqName = JavaToKotlinClassMap.readOnlyToMutable(fqNameUnsafe)
+        ?: throw IllegalArgumentException("Not a readonly collection: $this")
+    return builtIns.getBuiltInClassByFqName(fqName)
 }

@@ -90,13 +90,19 @@ fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.generateTypeOf(
 
     v.invokestatic(REFLECTION, methodName, signature, false)
 
-    if (type.isFlexible() && intrinsicsSupport.state.stableTypeOf) {
-        // If this is a flexible type, we've just generated its lower bound and have it on the stack.
-        // Let's generate the upper bound now and call the method that takes lower and upper bound and constructs a flexible KType.
-        @Suppress("UNCHECKED_CAST")
-        generateTypeOf(v, type.upperBoundIfFlexible() as KT, intrinsicsSupport)
+    if (intrinsicsSupport.state.stableTypeOf) {
+        if (intrinsicsSupport.isMutableCollectionType(type)) {
+            v.invokestatic(REFLECTION, "mutableCollectionType", Type.getMethodDescriptor(K_TYPE, K_TYPE), false)
+        }
 
-        v.invokestatic(REFLECTION, "platformType", Type.getMethodDescriptor(K_TYPE, K_TYPE, K_TYPE), false)
+        if (type.isFlexible()) {
+            // If this is a flexible type, we've just generated its lower bound and have it on the stack.
+            // Let's generate the upper bound now and call the method that takes lower and upper bound and constructs a flexible KType.
+            @Suppress("UNCHECKED_CAST")
+            generateTypeOf(v, type.upperBoundIfFlexible() as KT, intrinsicsSupport)
+
+            v.invokestatic(REFLECTION, "platformType", Type.getMethodDescriptor(K_TYPE, K_TYPE, K_TYPE), false)
+        }
     }
 }
 

@@ -3987,6 +3987,7 @@ public class kotlin/jvm/internal/Reflection {
 	public static fun getOrCreateKotlinClasses ([Ljava/lang/Class;)[Lkotlin/reflect/KClass;
 	public static fun getOrCreateKotlinPackage (Ljava/lang/Class;)Lkotlin/reflect/KDeclarationContainer;
 	public static fun getOrCreateKotlinPackage (Ljava/lang/Class;Ljava/lang/String;)Lkotlin/reflect/KDeclarationContainer;
+	public static fun mutableCollectionType (Lkotlin/reflect/KType;)Lkotlin/reflect/KType;
 	public static fun mutableProperty0 (Lkotlin/jvm/internal/MutablePropertyReference0;)Lkotlin/reflect/KMutableProperty0;
 	public static fun mutableProperty1 (Lkotlin/jvm/internal/MutablePropertyReference1;)Lkotlin/reflect/KMutableProperty1;
 	public static fun mutableProperty2 (Lkotlin/jvm/internal/MutablePropertyReference2;)Lkotlin/reflect/KMutableProperty2;
@@ -4019,6 +4020,7 @@ public class kotlin/jvm/internal/ReflectionFactory {
 	public fun getOrCreateKotlinClass (Ljava/lang/Class;)Lkotlin/reflect/KClass;
 	public fun getOrCreateKotlinClass (Ljava/lang/Class;Ljava/lang/String;)Lkotlin/reflect/KClass;
 	public fun getOrCreateKotlinPackage (Ljava/lang/Class;Ljava/lang/String;)Lkotlin/reflect/KDeclarationContainer;
+	public fun mutableCollectionType (Lkotlin/reflect/KType;)Lkotlin/reflect/KType;
 	public fun mutableProperty0 (Lkotlin/jvm/internal/MutablePropertyReference0;)Lkotlin/reflect/KMutableProperty0;
 	public fun mutableProperty1 (Lkotlin/jvm/internal/MutablePropertyReference1;)Lkotlin/reflect/KMutableProperty1;
 	public fun mutableProperty2 (Lkotlin/jvm/internal/MutablePropertyReference2;)Lkotlin/reflect/KMutableProperty2;
@@ -4122,11 +4124,13 @@ public final class kotlin/jvm/internal/TypeParameterReference$Companion {
 
 public final class kotlin/jvm/internal/TypeReference : kotlin/reflect/KType {
 	public fun <init> (Lkotlin/reflect/KClassifier;Ljava/util/List;Z)V
-	public fun <init> (Lkotlin/reflect/KClassifier;Ljava/util/List;ZLkotlin/reflect/KType;)V
+	public fun <init> (Lkotlin/reflect/KClassifier;Ljava/util/List;ZLkotlin/reflect/KType;Z)V
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getAnnotations ()Ljava/util/List;
 	public fun getArguments ()Ljava/util/List;
 	public fun getClassifier ()Lkotlin/reflect/KClassifier;
+	public final fun getMutableCollectionType$kotlin_stdlib ()Z
+	public final fun getPlatformTypeUpperBound$kotlin_stdlib ()Lkotlin/reflect/KType;
 	public fun hashCode ()I
 	public fun isMarkedNullable ()Z
 	public fun toString ()Ljava/lang/String;

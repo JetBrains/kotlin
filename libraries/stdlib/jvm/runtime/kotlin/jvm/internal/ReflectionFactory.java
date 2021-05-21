@@ -96,6 +96,19 @@ public class ReflectionFactory {
 
     @SinceKotlin(version = "1.6")
     public KType platformType(KType lowerBound, KType upperBound) {
-        return new TypeReference(lowerBound.getClassifier(), lowerBound.getArguments(), lowerBound.isMarkedNullable(), upperBound);
+        return new TypeReference(
+                lowerBound.getClassifier(), lowerBound.getArguments(), lowerBound.isMarkedNullable(),
+                upperBound,
+                ((TypeReference) lowerBound).getMutableCollectionType$kotlin_stdlib()
+        );
+    }
+
+    @SinceKotlin(version = "1.6")
+    public KType mutableCollectionType(KType type) {
+        return new TypeReference(
+                type.getClassifier(), type.getArguments(), type.isMarkedNullable(),
+                ((TypeReference) type).getPlatformTypeUpperBound$kotlin_stdlib(),
+                true
+        );
     }
 }

@@ -37392,6 +37392,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
+            @TestMetadata("mutableCollections_after.kt")
+            public void testMutableCollections_after() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/typeOf/mutableCollections_after.kt");
+            }
+
+            @Test
+            @TestMetadata("mutableCollections_before.kt")
+            public void testMutableCollections_before() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/typeOf/mutableCollections_before.kt");
+            }
+
+            @Test
             @TestMetadata("typeOfCapturedStar.kt")
             public void testTypeOfCapturedStar() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/typeOf/typeOfCapturedStar.kt");
@@ -37438,6 +37450,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 @TestMetadata("inlineClasses.kt")
                 public void testInlineClasses() throws Exception {
                     runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/inlineClasses.kt");
+                }
+
+                @Test
+                @TestMetadata("mutableCollections_after.kt")
+                public void testMutableCollections_after() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/mutableCollections_after.kt");
+                }
+
+                @Test
+                @TestMetadata("mutableCollections_before.kt")
+                public void testMutableCollections_before() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/mutableCollections_before.kt");
                 }
 
                 @Test

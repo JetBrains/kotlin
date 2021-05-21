@@ -1,6 +1,8 @@
 // !API_VERSION: LATEST
 // !USE_EXPERIMENTAL: kotlin.ExperimentalStdlibApi
 // TARGET_BACKEND: JVM
+// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND_FIR: JVM_IR
 // WITH_REFLECT
 // FILE: box.kt
 
@@ -14,12 +16,10 @@ fun box(): String {
     if (v1 != "kotlin.String!") return "Fail 1: $v1"
 
     val v2 = returnTypeOf { J.mutabilityFlexible() }.toString()
-    // TODO: should be (Mutable)List after KT-35877.
-    if (v2 != "kotlin.collections.List<kotlin.String!>") return "Fail 2: $v2"
+    if (v2 != "kotlin.collections.(Mutable)List<kotlin.String!>") return "Fail 2: $v2"
 
     val v3 = returnTypeOf { J.bothFlexible() }.toString()
-    // TODO: should be (Mutable)List after KT-35877.
-    if (v3 != "kotlin.collections.List<kotlin.String!>!") return "Fail 3: $v3"
+    if (v3 != "kotlin.collections.(Mutable)List<kotlin.String!>!") return "Fail 3: $v3"
 
     return "OK"
 }

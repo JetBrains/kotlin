@@ -190,4 +190,9 @@ public class Reflection {
     public static KType platformType(KType lowerBound, KType upperBound) {
         return factory.platformType(lowerBound, upperBound);
     }
+
+    @SinceKotlin(version = "1.6")
+    public static KType mutableCollectionType(KType type) {
+        return factory.mutableCollectionType(type);
+    }
 }
