@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.receivers.*;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeProjection;
@@ -197,7 +198,10 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
     @Override
     @SuppressWarnings("unchecked")
     public void setResultingSubstitutor(@NotNull TypeSubstitutor substitutor) {
-        resultingDescriptor = (D) candidateDescriptor.substitute(substitutor);
+        D descriptorToSubstitute = resultingDescriptor != null && DescriptorUtilsKt.shouldBeUsedToSubstitute(resultingDescriptor)
+                                   ? resultingDescriptor
+                                   : candidateDescriptor;
+        resultingDescriptor = (D) descriptorToSubstitute.substitute(substitutor);
         //noinspection ConstantConditions
         if (resultingDescriptor == null) {
             throw new AssertionError(
