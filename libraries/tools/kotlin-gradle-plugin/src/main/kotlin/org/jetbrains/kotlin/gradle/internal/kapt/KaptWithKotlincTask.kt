@@ -114,8 +114,8 @@ abstract class KaptWithKotlincTask @Inject constructor(
 
         val compilerRunner = GradleCompilerRunner(
             taskProvider,
-            kotlinJavaToolchainProvider.get().javaExecutable.get().asFile,
-            kotlinJavaToolchainProvider.get().jdkToolsJar.orNull
+            kotlinJavaToolchainProvider.get().jdkProvider.javaExecutable.get().asFile,
+            kotlinJavaToolchainProvider.get().jdkProvider.jdkToolsJar.orNull
         )
         compilerRunner.runJvmCompilerAsync(
             sourcesToCompile = emptyList(),

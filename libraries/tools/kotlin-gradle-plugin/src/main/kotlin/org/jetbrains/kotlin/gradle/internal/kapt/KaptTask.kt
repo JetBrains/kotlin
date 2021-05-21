@@ -7,7 +7,6 @@ import org.gradle.api.internal.ConventionTask
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
@@ -121,8 +120,10 @@ abstract class KaptTask @Inject constructor(
     @get:Internal
     abstract val classpath: ConfigurableFileCollection
 
-    final override val kotlinJavaToolchainProvider: Provider<KotlinJavaToolchainProvider> =
-        objectFactory.propertyWithNewInstance()
+    final override val kotlinJavaToolchainProvider: Provider<KotlinJavaToolchainProvider> = objectFactory
+        .propertyWithNewInstance(
+            project.gradle
+        )
 
     @Suppress("unused", "DeprecatedCallableAddReplaceWith")
     @Deprecated(

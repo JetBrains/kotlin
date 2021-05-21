@@ -11,6 +11,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.jvm.toolchain.JavaLauncher
+import org.gradle.util.GradleVersion
 import java.io.File
 
 interface UsesKotlinJavaToolchain {
@@ -65,5 +66,9 @@ interface KotlinJavaToolchain {
         fun use(
             javaLauncher: Provider<JavaLauncher>
         )
+    }
+
+    companion object {
+        val TOOLCHAIN_SUPPORTED_VERSION: GradleVersion = GradleVersion.version("6.7")
     }
 }

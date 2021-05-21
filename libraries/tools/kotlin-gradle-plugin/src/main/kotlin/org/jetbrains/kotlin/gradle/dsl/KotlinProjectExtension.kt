@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.gradle.dsl
 
 import groovy.lang.Closure
+import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.internal.plugins.DslObject
+import org.gradle.jvm.toolchain.JavaToolchainSpec
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
@@ -53,12 +55,22 @@ internal val Project.multiplatformExtension: KotlinMultiplatformExtension
 internal val Project.pm20Extension: KotlinPm20ProjectExtension
     get() = extensions.getByName(KOTLIN_PROJECT_EXTENSION_NAME) as KotlinPm20ProjectExtension
 
-
 open class KotlinTopLevelExtension (internal val project: Project) {
     val experimental: ExperimentalExtension
         get() = DslObject(this).extensions.getByType(ExperimentalExtension::class.java)
 
     lateinit var coreLibrariesVersion: String
+
+    private val toolchainSupport = ToolchainSupport.createToolchain(project)
+
+    /**
+     * Configures [Java toolchain](https://docs.gradle.org/current/userguide/toolchains.html) both for Kotlin and Java tasks.
+     *
+     * @param action - action to configure [JavaToolchainSpec]. You could safely cast `Any` into `JavaToolchainSpec`.
+     */
+    fun toolchain(action: Action<Any>) {
+        toolchainSupport.applyToolchain(action)
+    }
 
     var explicitApi: ExplicitApiMode? = null
 

@@ -12,12 +12,14 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 import java.io.File
 
 @SimpleGradlePluginPTests
 @DisplayName("Kotlin Java Toolchain support")
 class KotlinJavaToolchainTest : KGPBaseTest() {
 
+    @GradleTestVersions(additionalVersions = ["6.7.1"])
     @GradleTest
     @DisplayName("Should use by default same jvm as Gradle daemon")
     internal fun byDefaultShouldUseGradleJDK(gradleVersion: GradleVersion) {
@@ -31,6 +33,28 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @GradleTestVersions(minVersion = "6.7.1")
+    @GradleTest
+    @DisplayName("Default Kotlin toolchain should still allow to set Java source and target compatibility")
+    internal fun shouldNotFailWithDefaultJdkAndCompatibility(gradleVersion: GradleVersion) {
+        project(
+            projectName = "simple".fullProjectName,
+            gradleVersion = gradleVersion
+        ) {
+            //lang=Groovy
+            rootBuildGradle.append(
+                """
+                
+                sourceCompatibility = JavaVersion.VERSION_1_8
+                targetCompatibility = JavaVersion.VERSION_1_8
+                """.trimIndent()
+            )
+
+            build("assemble")
+        }
+    }
+
+    @GradleTestVersions(maxVersion = "6.6.1")
     @GradleTest
     @DisplayName("Should use provided jdk location to compile Kotlin sources")
     internal fun customJdkHomeLocation(gradleVersion: GradleVersion) {
@@ -46,6 +70,18 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @Test
+    @DisplayName("Should fail the build on setting custom JDK when toolchain is available")
+    internal fun errorOnSettingJdkWhenToolchainIsAvailable() {
+        project(
+            projectName = "simple".fullProjectName,
+            gradleVersion = GradleVersion.version("6.7.1"),
+        ) {
+            useJdk9ToCompile()
+            buildAndFail("assemble")
+        }
+    }
+
     @GradleTest
     @DisplayName("KotlinCompile task should use build cache when using provided JDK")
     internal fun customJdkBuildCache(gradleVersion: GradleVersion) {
@@ -57,7 +93,11 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(buildCacheEnabled = true)
         ) {
             enableLocalBuildCache(buildCache)
-            useJdk9ToCompile()
+            if (shouldUseToolchain(gradleVersion)) {
+                useToolchainExtension(11)
+            } else {
+                useJdk9ToCompile()
+            }
 
             build("assemble")
         }
@@ -69,7 +109,11 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(buildCacheEnabled = true)
         ) {
             enableLocalBuildCache(buildCache)
-            useJdk9ToCompile()
+            if (shouldUseToolchain(gradleVersion)) {
+                useToolchainExtension(11)
+            } else {
+                useJdk9ToCompile()
+            }
 
             build("assemble") {
                 assertTasksFromCache(":compileKotlin")
@@ -90,7 +134,11 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         ) {
             enableLocalBuildCache(buildCache)
             enableBuildCacheDebug()
-            useJdk9ToCompile()
+            if (shouldUseToolchain(gradleVersion)) {
+                useToolchainExtension(11)
+            } else {
+                useJdk9ToCompile()
+            }
             build("assemble")
         }
 
@@ -116,13 +164,23 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             projectName = "simpleWithKapt".fullProjectName,
             gradleVersion = gradleVersion,
         ) {
-            useJdk9ToCompile()
+            if (shouldUseToolchain(gradleVersion)) {
+                useToolchainExtension(11)
+            } else {
+                useJdk9ToCompile()
+            }
             gradleProperties.append(
                 "kapt.workers.isolation = none"
             )
 
             build("assemble") {
-                assertDaemonIsUsingJdk(getJdk9().javaExecutableRealPath)
+                assertDaemonIsUsingJdk(
+                    if (shouldUseToolchain(gradleVersion)) {
+                        getToolchainExecPathFromLogs()
+                    } else {
+                        getJdk9().javaExecutableRealPath
+                    }
+                )
 
                 assertOutputContains("Using workers PROCESS isolation mode to run kapt")
                 assertOutputContains("Using non-default Kotlin java toolchain - 'kapt.workers.isolation == none' property is ignored!")
@@ -155,7 +213,11 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(buildCacheEnabled = true)
         ) {
             enableLocalBuildCache(buildCache)
-            useJdk9ToCompile()
+            if (shouldUseToolchain(gradleVersion)) {
+                useToolchainExtension(11)
+            } else {
+                useJdk9ToCompile()
+            }
 
             build("assemble")
         }
@@ -167,7 +229,11 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(buildCacheEnabled = true),
         ) {
             enableLocalBuildCache(buildCache)
-            useJdk9ToCompile()
+            if (shouldUseToolchain(gradleVersion)) {
+                useToolchainExtension(11)
+            } else {
+                useJdk9ToCompile()
+            }
 
             build("assemble") {
                 assertTasksFromCache(
@@ -244,7 +310,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
     }
 
     @DisplayName("Should allow to set JDK version for tasks via Java toolchain")
-    @GradleTestVersions(minVersion = "6.7")
+    @GradleTestVersions(minVersion = "6.7.1")
     @GradleTest
     internal fun setJdkUsingJavaToolchain(gradleVersion: GradleVersion) {
         project(
@@ -253,6 +319,22 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             forceOutput = true
         ) {
             useToolchainToCompile(11)
+            build("assemble") {
+                assertDaemonIsUsingJdk(getToolchainExecPathFromLogs())
+            }
+        }
+    }
+
+    @DisplayName("Should allow to set Java toolchain via extension")
+    @GradleTestVersions(minVersion = "6.7.1")
+    @GradleTest
+    internal fun setJdkUsingJavaToolchainViaExtension(gradleVersion: GradleVersion) {
+        project(
+            projectName = "simple".fullProjectName,
+            gradleVersion = gradleVersion,
+            forceOutput = true
+        ) {
+            useToolchainExtension(11)
             build("assemble") {
                 assertDaemonIsUsingJdk(getToolchainExecPathFromLogs())
             }
@@ -303,13 +385,8 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             """
             import org.jetbrains.kotlin.gradle.tasks.UsesKotlinJavaToolchain
             
-            java {
-                toolchain {
-                    languageVersion.set(JavaLanguageVersion.of($jdkVersion))
-                }
-            }
-            
             def toolchain = project.extensions.getByType(JavaPluginExtension.class).toolchain
+            toolchain.languageVersion.set(JavaLanguageVersion.of($jdkVersion))
             def service = project.extensions.getByType(JavaToolchainService.class)
             def defaultLauncher = service.launcherFor(toolchain)
                     
@@ -327,6 +404,34 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             """.trimIndent()
         )
     }
+
+    private fun TestProject.useToolchainExtension(
+        jdkVersion: Int
+    ) {
+        //language=Groovy
+        rootBuildGradle.append(
+            """
+            import org.gradle.api.plugins.JavaPluginExtension
+            import org.gradle.jvm.toolchain.JavaLanguageVersion
+            import org.gradle.jvm.toolchain.JavaToolchainService
+            
+            kotlin {
+                toolchain {
+                    languageVersion.set(JavaLanguageVersion.of($jdkVersion))
+                }
+            }
+            
+            afterEvaluate {
+                def toolchain = project.extensions.getByType(JavaPluginExtension.class).toolchain
+                def service = project.extensions.getByType(JavaToolchainService.class)
+                def defaultLauncher = service.launcherFor(toolchain)
+                logger.info("Toolchain exec path: ${'$'}{defaultLauncher.get().executablePath.asFile.absolutePath}")
+            }
+            """.trimIndent()
+        )
+    }
+
+    private fun shouldUseToolchain(gradleVersion: GradleVersion) = gradleVersion >= GradleVersion.version("6.7")
 
     private fun BuildResult.getToolchainExecPathFromLogs() = output
         .lineSequence()
