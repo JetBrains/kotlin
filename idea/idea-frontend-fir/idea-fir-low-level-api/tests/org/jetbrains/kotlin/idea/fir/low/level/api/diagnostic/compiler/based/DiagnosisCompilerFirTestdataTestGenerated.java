@@ -977,6 +977,11 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             public void testConstValWithGetterOrDelegate() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/constVal/constValWithGetterOrDelegate.kt");
             }
+
+            @TestMetadata("constValWithTypealiasType.kt")
+            public void testConstValWithTypealiasType() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/constVal/constValWithTypealiasType.kt");
+            }
         }
 
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/constructors")
