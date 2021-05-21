@@ -379,6 +379,10 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
                 .apply { stack.peekReturnValue().addTypeArguments(typeArguments) }
         }
 
+        if (irClass.defaultType.isUnsignedType()) {
+            return stack.newFrame(initPool = valueArguments) { handleIntrinsicMethods(owner) }
+        }
+
         val state = Common(irClass).apply { this.addTypeArguments(typeArguments) }
         if (irClass.isLocal) state.fields.addAll(stack.getAll()) // TODO save only necessary declarations
         if (irClass.isInner) {

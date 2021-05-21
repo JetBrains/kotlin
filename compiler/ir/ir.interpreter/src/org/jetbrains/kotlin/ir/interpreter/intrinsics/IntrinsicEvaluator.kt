@@ -23,6 +23,7 @@ internal class IntrinsicEvaluator {
             EnumHashCode.equalTo(irFunction) -> EnumHashCode.evaluate(irFunction, stack, interpret)
             JsPrimitives.equalTo(irFunction) -> JsPrimitives.evaluate(irFunction, stack, interpret)
             ArrayConstructor.equalTo(irFunction) -> ArrayConstructor.evaluate(irFunction, stack, interpret)
+            UnsignedConstructor.equalTo(irFunction) -> UnsignedConstructor.evaluate(irFunction, stack, interpret)
             else -> throw InterpreterMethodNotFoundException("Method ${irFunction.name} hasn't implemented")
         }
     }

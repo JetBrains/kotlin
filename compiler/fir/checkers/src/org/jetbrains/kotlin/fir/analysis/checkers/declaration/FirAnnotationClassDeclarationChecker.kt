@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds.primitiveArrayTypeByElementType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds.unsignedArrayTypeByElementType
 
 object FirAnnotationClassDeclarationChecker : FirRegularClassChecker() {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -83,6 +84,9 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker() {
                         }
                         classId in primitiveArrayTypeByElementType.values -> {
                             // DO NOTHING: primitive arrays are allowed
+                        }
+                        classId in unsignedArrayTypeByElementType.values -> {
+                            // DO NOTHING: arrays of unsigned types are allowed
                         }
                         classId == StandardClassIds.Array -> {
                             if (!isAllowedArray(typeRef, context.session))

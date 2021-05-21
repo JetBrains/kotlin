@@ -46,6 +46,7 @@ class IrCompileTimeChecker(
             parentType?.isString() == true -> (this as IrDeclarationWithName).name.asString() !in setOf("subSequence", "hashCode")
             parentType?.isAny() == true -> (this as IrFunction).name.asString() == "toString" && expression?.dispatchReceiver !is IrGetObjectValue
             parent?.isObject == true -> parent.parentClassOrNull?.defaultType?.let { it.isPrimitiveType() || it.isUnsignedType() } == true
+            parentType?.isUnsignedType() == true && (this is IrConstructor) -> true
             else -> false
         }
     }
