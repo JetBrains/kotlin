@@ -17,7 +17,7 @@ fun Any.test() {}
 fun Any?.test2() {}
 
 fun test() {
-    val ret = build {
+    val ret1 = build {
         emit(1)
         emit(null)
         get()?.test()
@@ -26,11 +26,32 @@ fun test() {
         get()?.hashCode()
         get()?.equals(1)
         // there is `String?.equals` extension
-        <!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>get()<!>.equals("")
+        <!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>get()<!>.equals("")
+    }
+    val ret2 = build {
+        emit(1)
+        emit(null)
+        get()?.test()
+        get()?.test2()
+        get().test2()
+        get()?.hashCode()
+        get()?.equals(1)
         val x = get()
         x?.hashCode()
         x?.equals(1)
-        x.equals("")
+        x<!UNSAFE_CALL!>.<!>equals("")
+    }
+    val ret3 = build {
+        emit(1)
+        emit(null)
+        get()?.test()
+        get()?.test2()
+        get().test2()
+        get()?.hashCode()
+        get()?.equals(1)
+        val x = get()
+        x?.hashCode()
+        x?.equals(1)
 
         if (get() == null) {}
         if (get() === null) {}
@@ -38,21 +59,38 @@ fun test() {
         if (x != null) {
             x<!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()
             x<!UNNECESSARY_SAFE_CALL!>?.<!>equals(1)
-            x.equals("")
-            x.hashCode()
-            x.toString()
-            x.test()
+            <!DEBUG_INFO_SMARTCAST!>x<!>.equals("")
+            <!DEBUG_INFO_SMARTCAST!>x<!>.hashCode()
+            <!DEBUG_INFO_SMARTCAST!>x<!>.toString()
+            <!DEBUG_INFO_SMARTCAST!>x<!>.test()
             x<!UNNECESSARY_SAFE_CALL!>?.<!>test2()
             x.test2()
         }
 
+        ""
+    }
+    val ret4 = build {
+        emit(1)
+        emit(null)
+        get()?.test()
+        get()?.test2()
+        get().test2()
+        get()?.hashCode()
+        get()?.equals(1)
+        val x = get()
+        x?.hashCode()
+        x?.equals(1)
+
+        if (get() == null) {}
+        if (get() === null) {}
+
         if (x == null) {
             <!DEBUG_INFO_CONSTANT!>x<!>?.hashCode()
             <!DEBUG_INFO_CONSTANT!>x<!>?.equals(1)
-            x.equals("")
+            x.equals("") // TODO: is it correct?
             x.hashCode()
             x.toString()
-            x.test()
+            x<!UNSAFE_CALL!>.<!>test()
             <!DEBUG_INFO_CONSTANT!>x<!>?.test2()
             x.test2()
         }
@@ -63,7 +101,35 @@ fun test() {
             x.equals("")
             x.hashCode()
             x.toString()
-            x.test()
+            x<!UNSAFE_CALL!>.<!>test()
+            <!DEBUG_INFO_CONSTANT!>x<!>?.test2()
+            x.test2()
+        }
+
+        ""
+    }
+    val ret5 = build {
+        emit(1)
+        emit(null)
+        get()?.test()
+        get()?.test2()
+        get().test2()
+        get()?.hashCode()
+        get()?.equals(1)
+        val x = get()
+        x?.hashCode()
+        x?.equals(1)
+
+        if (get() == null) {}
+        if (get() === null) {}
+
+        if (x == null) {
+            <!DEBUG_INFO_CONSTANT!>x<!>?.hashCode()
+            <!DEBUG_INFO_CONSTANT!>x<!>?.equals(1)
+            x.equals("")
+            x.hashCode()
+            x.toString()
+            x<!UNSAFE_CALL!>.<!>test()
             <!DEBUG_INFO_CONSTANT!>x<!>?.test2()
             x.test2()
         }

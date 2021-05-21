@@ -22,7 +22,7 @@ fun test(nullableSample: ISample, any: Any) {
     )
 
     elvisSimple(
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>elvisExact(nullableSample, materialize())<!>,
+        <!DEBUG_INFO_EXPRESSION_TYPE("ISample")!>elvisExact(nullableSample, <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>materialize<!>())<!>,
         any
     )
 }

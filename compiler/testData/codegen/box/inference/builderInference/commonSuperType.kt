@@ -4,10 +4,7 @@
 
 // FILE: Test.java
 
-import org.jetbrains.annotations.*;
-
 class Test {
-    @Nullable
     static <T> T foo(T x) { return x; }
 }
 
@@ -15,10 +12,10 @@ class Test {
 import kotlin.experimental.ExperimentalTypeInference
 
 @UseExperimental(ExperimentalTypeInference::class)
-fun <R> build(@BuilderInference block: TestInterface<R>.() -> Unit): R = TODO()
+fun <R> build(@BuilderInference block: TestInterface<R>.() -> Unit) {}
 
 @UseExperimental(ExperimentalTypeInference::class)
-fun <R> build2(@BuilderInference block: TestInterface<R>.() -> Unit): R = TODO()
+fun <R> build2(@BuilderInference block: TestInterface<R>.() -> Unit) {}
 
 class Inv<K>
 
@@ -28,10 +25,10 @@ interface TestInterface<R> {
     fun getInv(): Inv<R>
 }
 
-fun <U> id(x: U): U? = x
-fun <E> select(vararg x: E): E? = x[0]
+fun <U> id(x: U) = x
+fun <E> select(vararg x: E) = x[0]
 
-fun test() {
+fun box(): String {
     val ret = build {
         emit("1")
         Test.foo(get())
@@ -57,26 +54,6 @@ fun test() {
         }
         ""
     }
-    val ret2 = build {
-        emit("1")
-        select(get(), null)
-        select(Test.foo(null), Test.foo(get()))
-        select(Test.foo(get()), null)
-        select(null, getInv())
-        select(Test.foo(getInv()), Test.foo(null))
-        select(Test.foo(null), getInv())
-        select(getInv(), Test.foo(null))
-        select(id(null), id(get()))
-        build2 {
-            emit(1)
-            select(this@build.get(), get(), null)
-            select(Test.foo(this@build.get()), Test.foo(get()), null)
-            select(this@build.getInv(), getInv(), null)
-            select(Test.foo(this@build.getInv()), Test.foo(getInv()), null)
-            select(Test.foo(this@build.getInv()), getInv(), null)
-            select(id(this@build.get()), id(get()), null)
-            ""
-        }
-        ""
-    }
+
+    return "OK"
 }

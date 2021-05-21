@@ -34,24 +34,24 @@ fun <E> select4(x: E?, y: Out<E>): E = x!!
 fun test() {
     val ret = build {
         emit("1")
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R1)?")!>select1(get(), getOut())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R1)?")!>select1(get(), Test.foo(getOut()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R1)?")!>select1(Test.foo(get()), Test.foo(getOut()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R1)?")!>select1(Test.foo(get()), getOut())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R1)")!>select2(get(), getOut())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R1)")!>select2(get(), Test.foo(getOut()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("(TypeVariable(R1)..TypeVariable(R1)?)")!>select2(Test.foo(get()), Test.foo(getOut()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("(TypeVariable(R1)..TypeVariable(R1)?)")!>select2(Test.foo(get()), getOut())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R1)")!>select3(get(), getOut())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R1)")!>select3(get(), Test.foo(getOut()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R1)")!>select3(Test.foo(get()), Test.foo(getOut()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R1)")!>select3(Test.foo(get()), getOut())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R1)")!>select4(get(), getOut())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R1)")!>select4(get(), Test.foo(getOut()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R1)")!>select4(Test.foo(get()), Test.foo(getOut()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R1)")!>select4(Test.foo(get()), getOut())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select1(get(), getOut())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select1(get(), Test.foo(getOut()))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select1(Test.foo(get()), Test.foo(getOut()))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select1(Test.foo(get()), getOut())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select2(get(), getOut())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select2(get(), Test.foo(getOut()))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String..kotlin.String?)")!>select2(Test.foo(get()), Test.foo(getOut()))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String..kotlin.String?)")!>select2(Test.foo(get()), getOut())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select3(get(), getOut())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select3(get(), Test.foo(getOut()))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select3(Test.foo(get()), Test.foo(getOut()))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select3(Test.foo(get()), getOut())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select4(get(), getOut())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select4(get(), Test.foo(getOut()))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select4(Test.foo(get()), Test.foo(getOut()))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select4(Test.foo(get()), getOut())<!>
 
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R1)")!>select4(id(Test.foo(get())), getOut())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select4(id(Test.foo(get())), getOut())<!>
 
         build2 {
             emit(1)

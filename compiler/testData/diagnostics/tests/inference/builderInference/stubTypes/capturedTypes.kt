@@ -28,12 +28,12 @@ fun <K> capture(x: Inv<K>): K = null as K
 fun main() {
     build {
         emit("")
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<TypeVariable(R)>")!>getInv()<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R)")!>captureOut(<!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.String>")!>getInv()<!>)<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R)")!>captureIn(<!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.String>")!>getInv()<!>)<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.String>")!>getInv()<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>captureOut(<!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.String>")!>getInv()<!>)<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>captureIn(<!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.String>")!>getInv()<!>)<!>
 
         // K is fixed into CapturedType(out NotFixed: TypeVariable(R))
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R)")!>capture(<!DEBUG_INFO_EXPRESSION_TYPE("Inv<out kotlin.String>")!>getOut()<!>)<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>capture(<!DEBUG_INFO_EXPRESSION_TYPE("Inv<out kotlin.String>")!>getOut()<!>)<!>
         ""
     }
     build {

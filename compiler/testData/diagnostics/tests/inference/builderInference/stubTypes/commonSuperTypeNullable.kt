@@ -4,7 +4,7 @@
 
 // FILE: Test.java
 
-import org.jetbrains.annotations.*
+import org.jetbrains.annotations.*;
 
 class Test {
     @Nullable
@@ -36,15 +36,15 @@ fun test() {
         emit("1")
         <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R)?")!>Test.foo(get())<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Inv<TypeVariable(R)>?")!>Test.foo(getInv())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R)?")!>id(get())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R)?")!>select(get(), get())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R)?")!>select(Test.foo(get()), Test.foo(get()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R)?")!>select(Test.foo(get()), get())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<TypeVariable(R)>?")!>select(getInv(), getInv())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<TypeVariable(R)>?")!>select(Test.foo(getInv()), Test.foo(getInv()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<TypeVariable(R)>?")!>select(Test.foo(getInv()), getInv())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<TypeVariable(R)>?")!>select(getInv(), Test.foo(getInv()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R)?")!>select(id(get()), id(get()))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>id(get())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select(get(), get())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select(Test.foo(get()), Test.foo(get()))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select(Test.foo(get()), get())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.String>?")!>select(getInv(), getInv())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.String>?")!>select(Test.foo(getInv()), Test.foo(getInv()))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.String>?")!>select(Test.foo(getInv()), getInv())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.String>?")!>select(getInv(), Test.foo(getInv()))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select(id(get()), id(get()))<!>
         build2 {
             emit(1)
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>select(this@build.get(), get())<!>
@@ -59,14 +59,14 @@ fun test() {
     }
     val ret2 = build {
         emit("1")
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R)?")!>select(get(), null)<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R)?")!>select(Test.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>foo<!>(null), Test.foo(get()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R)?")!>select(Test.foo(get()), null)<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<TypeVariable(R)>?")!>select(null, getInv())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<TypeVariable(R)>?")!>select(Test.foo(getInv()), Test.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>foo<!>(null))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<TypeVariable(R)>?")!>select(Test.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>foo<!>(null), getInv())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<TypeVariable(R)>?")!>select(getInv(), Test.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>foo<!>(null))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R)?")!>select(<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>id<!>(null), id(get()))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select(get(), null)<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select(Test.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>foo<!>(null), Test.foo(get()))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select(Test.foo(get()), null)<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.String>?")!>select(null, getInv())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.String>?")!>select(Test.foo(getInv()), Test.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>foo<!>(null))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.String>?")!>select(Test.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>foo<!>(null), getInv())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.String>?")!>select(getInv(), Test.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>foo<!>(null))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select(<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>id<!>(null), id(get()))<!>
         build2 {
             emit(1)
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>select(this@build.get(), get(), null)<!>

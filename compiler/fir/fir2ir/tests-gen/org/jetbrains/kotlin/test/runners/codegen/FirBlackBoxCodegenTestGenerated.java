@@ -17588,15 +17588,75 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Test
+            @TestMetadata("capturedTypes.kt")
+            public void testCapturedTypes() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/capturedTypes.kt");
+            }
+
+            @Test
+            @TestMetadata("commonSuperType.kt")
+            public void testCommonSuperType() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/commonSuperType.kt");
+            }
+
+            @Test
+            @TestMetadata("commonSuperTypeContravariant.kt")
+            public void testCommonSuperTypeContravariant() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/commonSuperTypeContravariant.kt");
+            }
+
+            @Test
+            @TestMetadata("commonSuperTypeCovariant.kt")
+            public void testCommonSuperTypeCovariant() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/commonSuperTypeCovariant.kt");
+            }
+
+            @Test
+            @TestMetadata("commonSuperTypeInvariant.kt")
+            public void testCommonSuperTypeInvariant() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/commonSuperTypeInvariant.kt");
+            }
+
+            @Test
+            @TestMetadata("commonSuperTypeNullable.kt")
+            public void testCommonSuperTypeNullable() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/commonSuperTypeNullable.kt");
+            }
+
+            @Test
+            @TestMetadata("intersect.kt")
+            public void testIntersect() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/intersect.kt");
+            }
+
+            @Test
             @TestMetadata("kt41164.kt")
             public void testKt41164() throws Exception {
                 runTest("compiler/testData/codegen/box/inference/builderInference/kt41164.kt");
             }
 
             @Test
+            @TestMetadata("labaledCall.kt")
+            public void testLabaledCall() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/labaledCall.kt");
+            }
+
+            @Test
             @TestMetadata("lackOfNullCheckOnNullableInsideBuild.kt")
             public void testLackOfNullCheckOnNullableInsideBuild() throws Exception {
                 runTest("compiler/testData/codegen/box/inference/builderInference/lackOfNullCheckOnNullableInsideBuild.kt");
+            }
+
+            @Test
+            @TestMetadata("memberScope.kt")
+            public void testMemberScope() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/memberScope.kt");
+            }
+
+            @Test
+            @TestMetadata("nullability.kt")
+            public void testNullability() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/nullability.kt");
             }
 
             @Test
@@ -17615,6 +17675,18 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             @TestMetadata("specialCallsWithCallableReferencesDontCareTypeInBlockExpression.kt")
             public void testSpecialCallsWithCallableReferencesDontCareTypeInBlockExpression() throws Exception {
                 runTest("compiler/testData/codegen/box/inference/builderInference/specialCallsWithCallableReferencesDontCareTypeInBlockExpression.kt");
+            }
+
+            @Test
+            @TestMetadata("specialCallsWithCallableReferencesDontCareTypeInBlockExression.kt")
+            public void testSpecialCallsWithCallableReferencesDontCareTypeInBlockExression() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/specialCallsWithCallableReferencesDontCareTypeInBlockExression.kt");
+            }
+
+            @Test
+            @TestMetadata("specialCallsWithCallableReferencesDontRewriteAtSlice.kt")
+            public void testSpecialCallsWithCallableReferencesDontRewriteAtSlice() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/specialCallsWithCallableReferencesDontRewriteAtSlice.kt");
             }
 
             @Test
@@ -17681,6 +17753,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             @TestMetadata("topDownCompletionWithTwoBuilderInferenceCalls.kt")
             public void testTopDownCompletionWithTwoBuilderInferenceCalls() throws Exception {
                 runTest("compiler/testData/codegen/box/inference/builderInference/topDownCompletionWithTwoBuilderInferenceCalls.kt");
+            }
+
+            @Test
+            @TestMetadata("withExpectedType.kt")
+            public void testWithExpectedType() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/withExpectedType.kt");
             }
         }
     }

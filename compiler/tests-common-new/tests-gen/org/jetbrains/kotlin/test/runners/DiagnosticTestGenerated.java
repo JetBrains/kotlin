@@ -12687,9 +12687,21 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("specialCallsWithCallableReferencesErrorTypeUnrestricted.kt")
+                public void testSpecialCallsWithCallableReferencesErrorTypeUnrestricted() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/specialCallsWithCallableReferencesErrorTypeUnrestricted.kt");
+                }
+
+                @Test
                 @TestMetadata("specialCallsWithCallableReferencesNonStrictOnlyInputTypes.kt")
                 public void testSpecialCallsWithCallableReferencesNonStrictOnlyInputTypes() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/specialCallsWithCallableReferencesNonStrictOnlyInputTypes.kt");
+                }
+
+                @Test
+                @TestMetadata("specialCallsWithCallableReferencesUnrestricted.kt")
+                public void testSpecialCallsWithCallableReferencesUnrestricted() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/specialCallsWithCallableReferencesUnrestricted.kt");
                 }
 
                 @Test
@@ -12711,12 +12723,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                     @TestMetadata("violating.kt")
                     public void testViolating() throws Exception {
                         runTest("compiler/testData/diagnostics/tests/inference/builderInference/constraints/violating.kt");
-                    }
-
-                    @Test
-                    @TestMetadata("withExpectedType.kt")
-                    public void testWithExpectedType() throws Exception {
-                        runTest("compiler/testData/diagnostics/tests/inference/builderInference/constraints/withExpectedType.kt");
                     }
                 }
 

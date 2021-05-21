@@ -31,17 +31,17 @@ fun <E> intersect(vararg x: In<E>): E = null as E
 fun test() {
     val ret = build {
         emit("1")
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R1)")!>intersect(getIn(), getIn())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R1)")!>intersect(getIn(), Test.foo(getIn()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R1)")!>intersect(Test.foo(getIn()), Test.foo(getIn()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R1)")!>intersect(Test.foo(getIn()), getIn())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>intersect(getIn(), getIn())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>intersect(getIn(), Test.foo(getIn()))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>intersect(Test.foo(getIn()), Test.foo(getIn()))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>intersect(Test.foo(getIn()), getIn())<!>
 
         build2 {
             emit(1)
-            <!DEBUG_INFO_EXPRESSION_TYPE("{TypeVariable(R1) & TypeVariable(R2)}")!>intersect(this@build.getIn(), getIn())<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("{TypeVariable(R1) & TypeVariable(R2)}")!>intersect(getIn(), Test.foo(this@build.getIn()))<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("{TypeVariable(R1) & TypeVariable(R2)}")!>intersect(Test.foo(this@build.getIn()), Test.foo(getIn()))<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("{TypeVariable(R1) & TypeVariable(R2)}")!>intersect(Test.foo(getIn()), this@build.getIn())<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("{Int & String}")!>intersect(this@build.getIn(), getIn())<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("{Int & String}")!>intersect(getIn(), Test.foo(this@build.getIn()))<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("{Int & String}")!>intersect(Test.foo(this@build.getIn()), Test.foo(getIn()))<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("{Int & String}")!>intersect(Test.foo(getIn()), this@build.getIn())<!>
             ""
         }
         ""

@@ -15,10 +15,10 @@ class Test {
 import kotlin.experimental.ExperimentalTypeInference
 
 @UseExperimental(ExperimentalTypeInference::class)
-fun <R> build(@BuilderInference block: TestInterface<R>.() -> Unit): R = TODO()
+fun <R> build(@BuilderInference block: TestInterface<R>.() -> Unit) {}
 
 @UseExperimental(ExperimentalTypeInference::class)
-fun <R> build2(@BuilderInference block: TestInterface<R>.() -> Unit): R = TODO()
+fun <R> build2(@BuilderInference block: TestInterface<R>.() -> Unit) {}
 
 class Inv<K>
 
@@ -31,7 +31,7 @@ interface TestInterface<R> {
 fun <U> id(x: U): U? = x
 fun <E> select(vararg x: E): E? = x[0]
 
-fun test() {
+fun box(): String {
     val ret = build {
         emit("1")
         Test.foo(get())
@@ -79,4 +79,5 @@ fun test() {
         }
         ""
     }
+    return "OK"
 }

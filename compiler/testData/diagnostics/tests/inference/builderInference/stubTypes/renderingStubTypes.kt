@@ -22,8 +22,8 @@ fun <U> id(x: U) = x
 fun test() {
     val ret = build {
         emit("1")
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R)")!>get()<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<TypeVariable(R)>")!>getInv()<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>get()<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.String>")!>getInv()<!>
         ""
     }
 }

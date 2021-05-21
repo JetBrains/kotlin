@@ -12,10 +12,10 @@ class Test {
 import kotlin.experimental.ExperimentalTypeInference
 
 @UseExperimental(ExperimentalTypeInference::class)
-fun <R1> build(@BuilderInference block: TestInterface<R1>.() -> Unit): R1 = TODO()
+fun <R1> build(@BuilderInference block: TestInterface<R1>.() -> Unit) {}
 
 @UseExperimental(ExperimentalTypeInference::class)
-fun <R2> build2(@BuilderInference block: TestInterface<R2>.() -> Unit): R2 = TODO()
+fun <R2> build2(@BuilderInference block: TestInterface<R2>.() -> Unit) {}
 
 class Inv<K>
 
@@ -31,7 +31,7 @@ fun <E> select2(x: E, y: Inv<E?>): E = x
 fun <E> select3(x: E?, y: Inv<E?>): E = x!!
 fun <E> select4(x: E?, y: Inv<E>): E = x!!
 
-fun test() {
+fun box(): String {
     val ret1 = build {
         emit("1")
         select1(get(), getInv())
@@ -44,21 +44,6 @@ fun test() {
         select4(Test.foo(get()), getInv())
 
         select4(id(Test.foo(get())), getInv())
-
-        build2 {
-            emit(1)
-            select1(this@build.get(), getInv())
-            select1(get(), Test.foo(this@build.getInv()))
-            select1(Test.foo(this@build.get()), Test.foo(getInv()))
-            select1(Test.foo(get()), this@build.getInv())
-            select4(this@build.get(), getInv())
-            select4(get(), Test.foo(this@build.getInv()))
-            select4(Test.foo(this@build.get()), Test.foo(getInv()))
-            select4(Test.foo(get()), this@build.getInv())
-
-            select4(id(Test.foo(this@build.get())), getInv())
-            ""
-        }
         ""
     }
 
@@ -66,28 +51,14 @@ fun test() {
         emit(if (true) "1" else null)
         select2(get(), getInv())
         select2(get(), Test.foo(getInv()))
-        getInv()
-        Test.foo(getInv())
-        Test.foo(get())
         select2(Test.foo(get()), Test.foo(getInv()))
         select2(Test.foo(get()), getInv())
         select3(get(), getInv())
         select3(get(), Test.foo(getInv()))
         select3(Test.foo(get()), Test.foo(getInv()))
         select3(Test.foo(get()), getInv())
-
-        build2 {
-            emit(1)
-            select2(this@build.get(), getInv())
-            select2(get(), Test.foo(this@build.getInv()))
-            select2(Test.foo(this@build.get()), Test.foo(getInv()))
-            select2(Test.foo(get()), this@build.getInv())
-            select3(this@build.get(), getInv())
-            select3(get(), Test.foo(this@build.getInv()))
-            select3(Test.foo(this@build.get()), Test.foo(getInv()))
-            select3(Test.foo(get()), this@build.getInv())
-            ""
-        }
         ""
     }
+
+    return "OK"
 }

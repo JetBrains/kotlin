@@ -33,15 +33,15 @@ fun test() {
         emit("1")
         <!DEBUG_INFO_EXPRESSION_TYPE("(TypeVariable(R)..TypeVariable(R)?)")!>Test.foo(get())<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("(Inv<TypeVariable(R)>..Inv<TypeVariable(R)>?)")!>Test.foo(getInv())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R)")!>id(get())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R)")!>select(get(), get())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("(TypeVariable(R)..TypeVariable(R)?)")!>select(Test.foo(get()), Test.foo(get()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("(TypeVariable(R)..TypeVariable(R)?)")!>select(Test.foo(get()), get())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<TypeVariable(R)>")!>select(getInv(), getInv())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("(Inv<TypeVariable(R)>..Inv<TypeVariable(R)>?)")!>select(Test.foo(getInv()), Test.foo(getInv()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("(Inv<TypeVariable(R)>..Inv<TypeVariable(R)>?)")!>select(Test.foo(getInv()), getInv())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("(Inv<TypeVariable(R)>..Inv<TypeVariable(R)>?)")!>select(getInv(), Test.foo(getInv()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R)")!>select(id(get()), id(get()))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>id(get())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select(get(), get())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String..kotlin.String?)")!>select(Test.foo(get()), Test.foo(get()))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String..kotlin.String?)")!>select(Test.foo(get()), get())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.String>")!>select(getInv(), getInv())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("(Inv<kotlin.String>..Inv<kotlin.String>?)")!>select(Test.foo(getInv()), Test.foo(getInv()))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("(Inv<kotlin.String>..Inv<kotlin.String>?)")!>select(Test.foo(getInv()), getInv())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("(Inv<kotlin.String>..Inv<kotlin.String>?)")!>select(getInv(), Test.foo(getInv()))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select(id(get()), id(get()))<!>
         build2 {
             emit(1)
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>select(this@build.get(), get())<!>
