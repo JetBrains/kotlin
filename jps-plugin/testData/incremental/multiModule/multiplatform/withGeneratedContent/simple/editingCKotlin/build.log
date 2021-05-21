@@ -48,12 +48,12 @@ Exit code: OK
 Building c
 Exit code: NOTHING_DONE
 ------------------------------------------
+Building pJs
 Cleaning output files:
   out/production/pJs/pJs.js
   out/production/pJs/pJs.meta.js
   out/production/pJs/pJs/root-package.kjsm
 End of files
-Building pJs
 Compiling files:
 End of files
 Exit code: OK

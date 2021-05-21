@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.jps.targets
 
 import org.jetbrains.jps.builders.storage.BuildDataPaths
 import org.jetbrains.jps.incremental.ModuleBuildTarget
+import org.jetbrains.jps.incremental.ModuleLevelBuilder
 import org.jetbrains.jps.model.library.JpsOrderRootType
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.util.JpsPathUtil
@@ -224,7 +225,20 @@ class KotlinJsModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleBu
         val jsCache = jpsIncrementalCache as IncrementalJsCache
         jsCache.header = incrementalResults.headerMetadata
 
+        jsCache.updateSourceToOutputMap(files)
         jsCache.compareAndUpdate(incrementalResults, changesCollector)
         jsCache.clearCacheForRemovedClasses(changesCollector)
+    }
+
+    override fun registerOutputItems(outputConsumer: ModuleLevelBuilder.OutputConsumer, outputItems: List<GeneratedFile>) {
+        if (isIncrementalCompilationEnabled) {
+            for (output in outputItems) {
+                for (source in output.sourceFiles) {
+                    outputConsumer.registerOutputFile(jpsModuleBuildTarget, File("${source.path.hashCode()}"), listOf(source.path))
+                }
+            }
+        } else {
+            super.registerOutputItems(outputConsumer, outputItems)
+        }
     }
 }

@@ -32,12 +32,12 @@ Exit code: NOTHING_DONE
 ================ Step #3 delete new service =================
 
 Building c
+Building pJs
 Cleaning output files:
   out/production/pJs/pJs.js
   out/production/pJs/pJs.meta.js
   out/production/pJs/pJs/root-package.kjsm
 End of files
-Building pJs
 Compiling files:
 End of files
 Exit code: OK

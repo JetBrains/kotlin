@@ -25,6 +25,7 @@ import org.jetbrains.jps.builders.java.JavaBuilderUtil
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor
 import org.jetbrains.jps.builders.storage.BuildDataCorruptedException
 import org.jetbrains.jps.incremental.*
+import org.jetbrains.jps.incremental.BuildOperations.deleteRecursively
 import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.*
 import org.jetbrains.jps.incremental.java.JavaBuilder
 import org.jetbrains.jps.model.JpsProject
@@ -32,8 +33,8 @@ import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.config.IncrementalCompilation
@@ -291,7 +292,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         if (chunk.modules.any { it.kotlinKind == KotlinModuleKind.SOURCE_SET_HOLDER }) {
             if (chunk.modules.size > 1) {
                 messageCollector.report(
-                    CompilerMessageSeverity.ERROR,
+                    ERROR,
                     "Cyclically dependent modules are not supported in multiplatform projects"
                 )
                 return ABORT
@@ -410,6 +411,8 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             kotlinDirtyFilesHolder.allRemovedFilesFiles
         )
 
+        cleanJsOutputs(context, kotlinChunk, incrementalCaches, kotlinDirtyFilesHolder)
+
         if (LOG.isDebugEnabled) {
             LOG.debug("Compiling files: ${kotlinDirtyFilesHolder.allDirtyFiles}")
         }
@@ -507,6 +510,43 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         }
 
         return OK
+    }
+
+    private fun cleanJsOutputs(
+        context: CompileContext,
+        kotlinChunk: KotlinChunk,
+        incrementalCaches: Map<KotlinModuleBuildTarget<*>, JpsIncrementalCache>,
+        kotlinDirtyFilesHolder: KotlinDirtySourceFilesHolder
+    ) {
+        for (target in kotlinChunk.targets) {
+            val cache = incrementalCaches[target] ?: continue
+
+            if (cache is IncrementalJsCache) {
+                val filesToDelete = mutableListOf<File>()
+                val dirtyFiles = kotlinDirtyFilesHolder.getDirtyFiles(target.jpsModuleBuildTarget).keys
+                val removedFiles = kotlinDirtyFilesHolder.getRemovedFiles(target.jpsModuleBuildTarget)
+
+                for (file: File in dirtyFiles + removedFiles) {
+                    filesToDelete.addAll(cache.getOutputsBySource(file).filter { it !in filesToDelete })
+                }
+
+                if (filesToDelete.isNotEmpty()) {
+                    val deletedForThisSource = mutableSetOf<String>()
+                    val parentDirs = mutableSetOf<File>()
+
+                    for (kjsmFile in filesToDelete) {
+                        deleteRecursively(kjsmFile.path, deletedForThisSource, parentDirs)
+                    }
+
+                    FSOperations.pruneEmptyDirs(context, parentDirs)
+
+                    val logger = context.loggingManager.projectBuilderLogger
+                    if (logger.isEnabled && deletedForThisSource.isNotEmpty()) {
+                        logger.logDeletedFiles(deletedForThisSource)
+                    }
+                }
+            }
+        }
     }
 
     // todo(1.2.80): got rid of ModuleChunk (replace with KotlinChunk)
