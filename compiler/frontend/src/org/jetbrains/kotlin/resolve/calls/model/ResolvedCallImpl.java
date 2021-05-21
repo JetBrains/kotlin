@@ -213,6 +213,14 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
             }
         }
 
+        if (dispatchReceiver instanceof ExpressionReceiver) {
+            dispatchReceiver = dispatchReceiver.replaceType(substitutor.safeSubstitute(dispatchReceiver.getType(), Variance.IN_VARIANCE));
+        }
+        if (extensionReceiver instanceof ExtensionReceiver) {
+            extensionReceiver =
+                    extensionReceiver.replaceType(substitutor.safeSubstitute(extensionReceiver.getType(), Variance.IN_VARIANCE));
+        }
+
         if (candidateDescriptor.getValueParameters().isEmpty()) return;
 
         List<ValueParameterDescriptor> substitutedParameters = resultingDescriptor.getValueParameters();
@@ -238,14 +246,6 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
             ValueParameterDescriptor substitutedVersion = substitutedParameters.get(valueParameterDescriptor.getIndex());
             assert substitutedVersion != null : valueParameterDescriptor;
             argumentToParameterMap.put(entry.getKey(), argumentMatch.replaceValueParameter(substitutedVersion));
-        }
-
-        if (dispatchReceiver instanceof ExpressionReceiver) {
-            dispatchReceiver = dispatchReceiver.replaceType(substitutor.safeSubstitute(dispatchReceiver.getType(), Variance.IN_VARIANCE));
-        }
-        if (extensionReceiver instanceof ExtensionReceiver) {
-            extensionReceiver =
-                    extensionReceiver.replaceType(substitutor.safeSubstitute(extensionReceiver.getType(), Variance.IN_VARIANCE));
         }
     }
 
