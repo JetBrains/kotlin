@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtVariableDeclaration
 import org.jetbrains.kotlin.resolve.DescriptorResolver.transformAnonymousTypeIfNeeded
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
+import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSession
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
@@ -175,8 +176,13 @@ class VariableTypeAndInitializerResolver(
         val inferredType = expressionTypingServices.safeGetType(
             scope, initializer, TypeUtils.NO_EXPECTED_TYPE, dataFlowInfo, inferenceSession, trace
         )
-        val approximatedType = approximateType(inferredType, local)
-        return declarationReturnTypeSanitizer.sanitizeReturnType(approximatedType, wrappedTypeFactory, trace, languageVersionSettings)
+        val preparedType = approximateType(
+            if (inferenceSession is BuilderInferenceSession) {
+                inferenceSession.getNotFixedToInferredTypesSubstitutor().safeSubstitute(inferredType.unwrap())
+            } else inferredType,
+            local
+        )
+        return declarationReturnTypeSanitizer.sanitizeReturnType(preparedType, wrappedTypeFactory, trace, languageVersionSettings)
     }
 
     private fun approximateType(type: KotlinType, local: Boolean): UnwrappedType =
