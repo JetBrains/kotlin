@@ -34,7 +34,7 @@ val varargPhase = makeIrFilePhase(
     prerequisite = setOf(polymorphicSignaturePhase)
 )
 
-private class VarargLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
+internal class VarargLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
 
     // Ignore annotations
@@ -65,7 +65,7 @@ private class VarargLowering(val context: JvmBackendContext) : FileLoweringPass,
         return when {
             // Lower `arrayOf` calls. When `isArrayOf` returns true we know that the function has exactly one
             // vararg parameter. Meanwhile, the code above ensures that the corresponding argument is not null.
-            function.isArrayOf ->
+            function.owner.isArrayOf() ->
                 expression.getValueArgument(0)!!
             function.isEmptyArray ->
                 createBuilder(expression.startOffset, expression.endOffset).irArrayOf(expression.type)
@@ -83,7 +83,7 @@ private class VarargLowering(val context: JvmBackendContext) : FileLoweringPass,
                 is IrExpression -> +element.transform(this@VarargLowering, null)
                 is IrSpreadElement -> {
                     val spread = element.expression
-                    if (spread is IrFunctionAccessExpression && spread.symbol.isArrayOf) {
+                    if (spread is IrFunctionAccessExpression && spread.symbol.owner.isArrayOf()) {
                         // Skip empty arrays and don't copy immediately created arrays
                         val argument = spread.getValueArgument(0) ?: continue@loop
                         if (argument is IrVararg) {
@@ -101,33 +101,28 @@ private class VarargLowering(val context: JvmBackendContext) : FileLoweringPass,
     private fun createBuilder(startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET) =
         context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol, startOffset, endOffset)
 
-    private val IrFunctionSymbol.isArrayOf: Boolean
-        get() = owner.isArrayOf
-
     private val IrFunctionSymbol.isEmptyArray: Boolean
         get() = owner.name.asString() == "emptyArray" &&
                 (owner.parent as? IrPackageFragment)?.fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME
-
-    companion object {
-        private val PRIMITIVE_ARRAY_OF_NAMES: Set<String> =
-            (PrimitiveType.values().map { type -> type.name } + UnsignedType.values().map { type -> type.typeName.asString() })
-                .map { name -> name.toLowerCaseAsciiOnly() + "ArrayOf" }.toSet()
-        private const val ARRAY_OF_NAME = "arrayOf"
-
-
-        private val IrFunction.isArrayOf: Boolean
-            get() {
-                val parent = when (val directParent = parent) {
-                    is IrClass -> directParent.getPackageFragment() ?: return false
-                    is IrPackageFragment -> directParent
-                    else -> return false
-                }
-                return parent.fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME &&
-                        name.asString().let { it in PRIMITIVE_ARRAY_OF_NAMES || it == ARRAY_OF_NAME } &&
-                        extensionReceiverParameter == null &&
-                        dispatchReceiverParameter == null &&
-                        valueParameters.size == 1 &&
-                        valueParameters[0].isVararg
-            }
-    }
 }
+
+internal val PRIMITIVE_ARRAY_OF_NAMES: Set<String> =
+    (PrimitiveType.values().map { type -> type.name } + UnsignedType.values().map { type -> type.typeName.asString() })
+        .map { name -> name.toLowerCaseAsciiOnly() + "ArrayOf" }.toSet()
+
+internal const val ARRAY_OF_NAME = "arrayOf"
+
+internal fun IrFunction.isArrayOf(): Boolean {
+    val parent = when (val directParent = parent) {
+        is IrClass -> directParent.getPackageFragment() ?: return false
+        is IrPackageFragment -> directParent
+        else -> return false
+    }
+    return parent.fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME &&
+            name.asString().let { it in PRIMITIVE_ARRAY_OF_NAMES || it == ARRAY_OF_NAME } &&
+            extensionReceiverParameter == null &&
+            dispatchReceiverParameter == null &&
+            valueParameters.size == 1 &&
+            valueParameters[0].isVararg
+}
+

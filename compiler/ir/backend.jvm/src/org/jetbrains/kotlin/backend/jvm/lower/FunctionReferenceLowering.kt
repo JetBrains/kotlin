@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.backend.jvm.lower.indy.LambdaMetafactoryArguments
 import org.jetbrains.kotlin.backend.jvm.lower.indy.LambdaMetafactoryArgumentsBuilder
 import org.jetbrains.kotlin.backend.jvm.lower.indy.SamDelegatingLambdaBlock
 import org.jetbrains.kotlin.backend.jvm.lower.indy.SamDelegatingLambdaBuilder
-import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.config.JvmClosureGenerationScheme
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -704,7 +703,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
 
             body = context.createJvmIrBuilder(symbol, startOffset, endOffset).run {
                 var unboundIndex = 0
-                irExprBody(irCall(callee).apply {
+                val call = irCall(callee).apply {
                     for (typeParameter in irFunctionReference.symbol.owner.allTypeParameters) {
                         putTypeArgument(typeParameter.index, typeArgumentsMap[typeParameter.symbol])
                     }
@@ -735,7 +734,13 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                                 irGet(valueParameters[unboundIndex++])
                         }?.let { putArgument(callee, parameter, it) }
                     }
-                })
+                }
+                irExprBody(
+                    if (irFunctionReference.symbol.owner.isArrayOf())
+                        call.transform(VarargLowering(this@FunctionReferenceLowering.context), null)
+                    else
+                        call
+                )
             }
         }
 
