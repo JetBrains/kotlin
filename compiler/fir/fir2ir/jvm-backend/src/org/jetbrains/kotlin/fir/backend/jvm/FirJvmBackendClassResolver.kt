@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.org.objectweb.asm.Type
 
 class FirJvmBackendClassResolver(val components: Fir2IrComponents) : JvmBackendClassResolver {
-    @ObsoleteDescriptorBasedAPI
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun resolveToClassDescriptors(type: Type): List<ClassDescriptor> {
         if (type.sort != Type.OBJECT) return emptyList()
 

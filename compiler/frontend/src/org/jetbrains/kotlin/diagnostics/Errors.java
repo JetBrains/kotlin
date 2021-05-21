@@ -287,6 +287,7 @@ public interface Errors {
     DiagnosticFactory0<PsiElement> EXPERIMENTAL_ANNOTATION_WITH_WRONG_RETENTION = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<KtAnnotationEntry> EXPERIMENTAL_ANNOTATION_ON_GETTER = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtAnnotationEntry> EXPERIMENTAL_ANNOTATION_ON_OVERRIDE = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory1<PsiElement, String> EXPERIMENTAL_UNSIGNED_LITERALS = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory1<PsiElement, String> EXPERIMENTAL_UNSIGNED_LITERALS_ERROR = DiagnosticFactory1.create(ERROR);

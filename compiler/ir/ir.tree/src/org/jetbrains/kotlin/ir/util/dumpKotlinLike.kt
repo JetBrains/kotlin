@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.util
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -139,6 +140,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         declaration.acceptChildren(this, null)
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun visitFile(declaration: IrFile, data: IrDeclaration?) {
         if (options.printRegionsPerFile) p.println("//region block: ${declaration.name}")
 

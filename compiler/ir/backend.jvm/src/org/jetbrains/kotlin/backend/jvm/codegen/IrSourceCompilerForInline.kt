@@ -128,7 +128,7 @@ class IrSourceCompilerForInline(
             it.finallyDepth = curFinallyDepth
         }
 
-    @ObsoleteDescriptorBasedAPI
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun isCallInsideSameModuleAsDeclared(functionDescriptor: FunctionDescriptor): Boolean {
         require(functionDescriptor is IrBasedSimpleFunctionDescriptor) {
             "expected an IrBasedSimpleFunctionDescriptor, got $functionDescriptor"

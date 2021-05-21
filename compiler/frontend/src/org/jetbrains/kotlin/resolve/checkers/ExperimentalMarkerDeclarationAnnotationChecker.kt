@@ -6,13 +6,20 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtAnnotated
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtPropertyAccessor
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.AdditionalAnnotationChecker
 import org.jetbrains.kotlin.resolve.AnnotationChecker
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -50,11 +57,26 @@ class ExperimentalMarkerDeclarationAnnotationChecker(private val module: ModuleD
                     isAnnotatedWithExperimental = true
                 }
             }
-            if (annotation.annotationClass?.annotations?.any { it.fqName in ExperimentalUsageChecker.EXPERIMENTAL_FQ_NAMES } == true) {
+            val annotationClass = annotation.annotationClass ?: continue
+            if (annotationClass.annotations.any { it.fqName in ExperimentalUsageChecker.EXPERIMENTAL_FQ_NAMES }) {
                 if (KotlinTarget.PROPERTY_GETTER in actualTargets ||
                     entry.useSiteTarget?.getAnnotationUseSiteTarget() == AnnotationUseSiteTarget.PROPERTY_GETTER
                 ) {
                     trace.report(Errors.EXPERIMENTAL_ANNOTATION_ON_GETTER.on(entry))
+                }
+                val annotated = entry.getStrictParentOfType<KtAnnotated>() ?: continue
+                val useSiteTarget = entry.useSiteTarget?.getAnnotationUseSiteTarget()
+                if (annotated is KtCallableDeclaration &&
+                    annotated !is KtPropertyAccessor &&
+                    useSiteTarget == null &&
+                    annotated.hasModifier(KtTokens.OVERRIDE_KEYWORD)
+                ) {
+                    val descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, annotated)
+                    if (descriptor is CallableMemberDescriptor &&
+                        !descriptor.hasExperimentalOverriddenDescriptors(annotationClass.fqNameSafe)
+                    ) {
+                        trace.report(Errors.EXPERIMENTAL_ANNOTATION_ON_OVERRIDE.on(entry))
+                    }
                 }
             }
         }
@@ -62,6 +84,25 @@ class ExperimentalMarkerDeclarationAnnotationChecker(private val module: ModuleD
         if (isAnnotatedWithExperimental) {
             checkMarkerTargetsAndRetention(entries, trace)
         }
+    }
+
+    private fun CallableMemberDescriptor.hasExperimentalOverriddenDescriptors(
+        experimentalFqName: FqName,
+        visited: MutableSet<CallableMemberDescriptor> = mutableSetOf()
+    ): Boolean {
+        if (this in visited) return false
+        visited += this
+        for (overridden in overriddenDescriptors) {
+            if (overridden.annotations.any { it.fqName == experimentalFqName }) {
+                return true
+            }
+            if (overridden.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE &&
+                overridden.hasExperimentalOverriddenDescriptors(experimentalFqName)
+            ) {
+                return true
+            }
+        }
+        return false
     }
 
     private fun checkUseExperimentalUsage(annotationClasses: List<ConstantValue<*>>, trace: BindingTrace, entry: KtAnnotationEntry) {
