@@ -3845,4 +3845,33 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             fun Text(text: String) { }
         """
     )
+
+    @Test
+    fun testReadOnlyComposableWithEarlyReturn() = controlFlow(
+        source = """
+            import androidx.compose.runtime.ReadOnlyComposable
+
+            @ReadOnlyComposable
+            @Composable
+            fun getSomeValue(a: Int): Int {
+                if (a < 100) return 0
+                return 1
+            }
+        """,
+        """
+            @ReadOnlyComposable
+            @Composable
+            fun getSomeValue(a: Int, %composer: Composer?, %changed: Int): Int {
+              sourceInformationMarkerStart(%composer, <>, "C(getSomeValue):Test.kt")
+              if (a < 100) {
+                val tmp1_return = 0
+                sourceInformationMarkerEnd(%composer)
+                return tmp1_return
+              }
+              val tmp0 = 1
+              sourceInformationMarkerEnd(%composer)
+              return tmp0
+            }
+        """
+    )
 }
