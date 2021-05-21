@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.tower
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.createFunctionType
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
@@ -14,10 +15,7 @@ import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.MissingSupertypesResolver
-import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.resolve.calls.callUtil.toOldSubstitution
@@ -403,7 +401,7 @@ class ResolvedAtomCompleter(
 
     private fun extractCallableReferenceResultTypeInfoFromDescriptor(
         callableCandidate: CallableReferenceCandidate,
-        recorderDescriptor: CallableDescriptor
+        recordedDescriptor: CallableDescriptor
     ): CallableReferenceResultTypeInfo {
         val explicitCallableReceiver = when (callableCandidate.explicitReceiverKind) {
             ExplicitReceiverKind.DISPATCH_RECEIVER -> callableCandidate.dispatchReceiver
@@ -411,13 +409,30 @@ class ResolvedAtomCompleter(
             else -> null
         }
         return CallableReferenceResultTypeInfo(
-            recorderDescriptor.dispatchReceiverParameter?.value,
-            recorderDescriptor.extensionReceiverParameter?.value,
+            recordedDescriptor.dispatchReceiverParameter?.value,
+            recordedDescriptor.extensionReceiverParameter?.value,
             explicitCallableReceiver?.receiver?.receiverValue,
             TypeSubstitutor.EMPTY,
-            callableCandidate.reflectionCandidateType
+            callableCandidate.reflectionCandidateType.replaceFunctionTypeArgumentsByDescriptor(recordedDescriptor)
         )
     }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    private fun KotlinType.replaceFunctionTypeArgumentsByDescriptor(descriptor: CallableDescriptor) =
+        when (descriptor) {
+            is CallableMemberDescriptor -> {
+                val newArgumentTypes = buildList {
+                    descriptor.extensionReceiverParameter?.let { add(it.type) }
+                    addAll(descriptor.valueParameters.map { it.type })
+                    add(descriptor.returnType)
+                }
+                if (newArgumentTypes.size == arguments.size) {
+                    replace(arguments.mapIndexed { i, type -> newArgumentTypes[i]?.let { type.replaceType(it) } ?: type })
+                } else this
+            }
+            is ValueDescriptor -> replace(descriptor.type.arguments)
+            else -> this
+        }
 
     private fun completeCallableReference(resolvedAtom: ResolvedCallableReferenceAtom) {
         val psiCallArgument = resolvedAtom.atom.psiCallArgument as CallableReferenceKotlinCallArgumentImpl
