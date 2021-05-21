@@ -150,8 +150,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 expression.acceptChildrenVoid(this)
 
                 if (expression.isSuspend) {
-                    val old = suspendLambdas.put(expression.symbol.owner, expression)
-                    if (old != null) error("Rewriting $old")
+                    suspendLambdas[expression.symbol.owner] = expression
                 }
             }
         })
@@ -283,8 +282,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
     private fun buildCoroutine(irFunction: IrSimpleFunction, functionReference: IrFunctionReference?): IrClass {
         val coroutine = CoroutineBuilder(irFunction, functionReference).build()
-        val old = builtCoroutines.put(irFunction, coroutine)
-        if (old != null) error("Rewriting $old")
+        builtCoroutines[irFunction] = coroutine
 
         if (functionReference == null) {
             // It is not a lambda - replace original function with a call to constructor of the built coroutine.
