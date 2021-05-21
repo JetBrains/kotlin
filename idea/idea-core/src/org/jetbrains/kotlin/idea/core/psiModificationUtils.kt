@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.addRemoveModifier.MODIFIERS_ORDER
 import org.jetbrains.kotlin.psi.psiUtil.*
-import org.jetbrains.kotlin.psi.synthetics.findClassDescriptor
 import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.OverridingUtil
@@ -516,12 +515,6 @@ fun KtParameter.dropDefaultValue() {
     val from = equalsToken ?: return
     val to = defaultValue ?: from
     deleteChildRange(from, to)
-}
-
-fun dropEnclosingParenthesesIfPossible(expression: KtExpression): KtExpression {
-    val parent = expression.parent as? KtParenthesizedExpression ?: return expression
-    if (!KtPsiUtil.areParenthesesUseless(parent)) return expression
-    return parent.replaced(expression)
 }
 
 fun KtTypeParameterListOwner.addTypeParameter(typeParameter: KtTypeParameter): KtTypeParameter? {

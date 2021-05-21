@@ -6,12 +6,19 @@
 package org.jetbrains.kotlin.idea.core
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtParenthesizedExpression
 import org.jetbrains.kotlin.psi.KtPsiUtil
 
 inline fun <reified T : PsiElement> PsiElement.replaced(newElement: T): T {
     val result = replace(newElement)
     return result as? T ?: (result as KtParenthesizedExpression).expression as T
+}
+
+fun KtExpression.dropEnclosingParenthesesIfPossible(): KtExpression {
+    val parent = parent as? KtParenthesizedExpression ?: return this
+    if (!KtPsiUtil.areParenthesesUseless(parent)) return this
+    return parent.replaced(this)
 }
 
 //todo make inline

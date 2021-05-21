@@ -690,6 +690,11 @@ public class HighLevelQuickFixTestGenerated extends AbstractHighLevelQuickFixTes
         public void testUselessElvis() throws Exception {
             runTest("idea/testData/quickfix/expressions/uselessElvis.kt");
         }
+
+        @TestMetadata("uselessElvisRightIsNull.kt")
+        public void testUselessElvisRightIsNull() throws Exception {
+            runTest("idea/testData/quickfix/expressions/uselessElvisRightIsNull.kt");
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/lateinit")
