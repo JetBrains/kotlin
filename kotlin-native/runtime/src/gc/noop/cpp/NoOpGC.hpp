@@ -11,6 +11,11 @@
 #include "Utils.hpp"
 
 namespace kotlin {
+
+namespace mm {
+class ThreadData;
+}
+
 namespace gc {
 
 // No-op GC is a GC that does not free memory.
@@ -23,7 +28,7 @@ public:
     public:
         using ObjectData = NoOpGC::ObjectData;
 
-        explicit ThreadData(NoOpGC& gc) noexcept {}
+        explicit ThreadData(NoOpGC& gc, mm::ThreadData& threadData) noexcept {}
         ~ThreadData() = default;
 
         void SafePointFunctionEpilogue() noexcept {}

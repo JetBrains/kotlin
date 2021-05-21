@@ -33,7 +33,8 @@ kotlin::test_support::TypeInfoHolder theObjCObjectWrapperTypeInfoHolder{
         kotlin::test_support::TypeInfoHolder::ObjectBuilder<EmptyPayload>()};
 kotlin::test_support::TypeInfoHolder theOpaqueFunctionTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ObjectBuilder<EmptyPayload>()};
 kotlin::test_support::TypeInfoHolder theShortArrayTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ArrayBuilder<KShort>()};
-kotlin::test_support::TypeInfoHolder theStringTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ArrayBuilder<KChar>()};
+kotlin::test_support::TypeInfoHolder theStringTypeInfoHolder{
+        kotlin::test_support::TypeInfoHolder::ArrayBuilder<KChar>().addFlag(TF_IMMUTABLE)};
 kotlin::test_support::TypeInfoHolder theThrowableTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ObjectBuilder<EmptyPayload>()};
 kotlin::test_support::TypeInfoHolder theUnitTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ObjectBuilder<EmptyPayload>()};
 kotlin::test_support::TypeInfoHolder theWorkerBoundReferenceTypeInfoHolder{

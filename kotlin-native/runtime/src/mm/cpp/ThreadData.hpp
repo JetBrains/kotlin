@@ -33,7 +33,7 @@ public:
         threadId_(threadId),
         globalsThreadQueue_(GlobalsRegistry::Instance()),
         stableRefThreadQueue_(StableRefRegistry::Instance()),
-        gc_(GlobalData::Instance().gc()),
+        gc_(GlobalData::Instance().gc(), *this),
         objectFactoryThreadQueue_(GlobalData::Instance().objectFactory(), gc_),
         suspensionData_(ThreadState::kRunnable) {}
 

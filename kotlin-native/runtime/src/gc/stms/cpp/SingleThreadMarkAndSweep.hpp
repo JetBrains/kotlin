@@ -8,13 +8,20 @@
 
 #include <cstddef>
 
+#include "ObjectFactory.hpp"
 #include "Types.h"
 #include "Utils.hpp"
 
 namespace kotlin {
+
+namespace mm {
+class ThreadData;
+}
+
 namespace gc {
 
-// Stop-the-world Mark-and-Sweep for a single mutator
+// Stop-the-world Mark-and-Sweep that runs on mutator threads. Can support targets that do not have threads.
+// TODO: Rename it away from SingleThreadMarkAndSweep, but keep it STMS.
 class SingleThreadMarkAndSweep : private Pinned {
 public:
     class ObjectData {
@@ -36,7 +43,7 @@ public:
     public:
         using ObjectData = SingleThreadMarkAndSweep::ObjectData;
 
-        explicit ThreadData(SingleThreadMarkAndSweep& gc) noexcept : gc_(gc) {}
+        explicit ThreadData(SingleThreadMarkAndSweep& gc, mm::ThreadData& threadData) noexcept : gc_(gc), threadData_(threadData) {}
         ~ThreadData() = default;
 
         void SafePointFunctionEpilogue() noexcept;
@@ -49,7 +56,10 @@ public:
         void OnOOM(size_t size) noexcept;
 
     private:
+        void SafePointRegular(size_t weight) noexcept;
+
         SingleThreadMarkAndSweep& gc_;
+        mm::ThreadData& threadData_;
         size_t allocatedBytes_ = 0;
         size_t safePointsCounter_ = 0;
     };
@@ -67,9 +77,7 @@ public:
     bool GetAutoTune() noexcept { return autoTune_; }
 
 private:
-    void PerformFullGC() noexcept;
-
-    bool running_ = false;
+    mm::ObjectFactory<SingleThreadMarkAndSweep>::FinalizerQueue PerformFullGC() noexcept;
 
     size_t threshold_ = 1000;
     size_t allocationThresholdBytes_ = 10000;

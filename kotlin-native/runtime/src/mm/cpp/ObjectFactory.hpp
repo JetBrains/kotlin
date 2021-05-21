@@ -515,6 +515,7 @@ public:
             auto* heapObject = new (node.Data()) HeapObjHeader();
             auto* object = &heapObject->object;
             object->typeInfoOrMeta_ = const_cast<TypeInfo*>(typeInfo);
+            // TODO: Consider supporting TF_IMMUTABLE: mark instance as frozen upon creation.
             return object;
         }
 
@@ -528,6 +529,7 @@ public:
             auto* array = &heapArray->array;
             array->typeInfoOrMeta_ = const_cast<TypeInfo*>(typeInfo);
             array->count_ = count;
+            // TODO: Consider supporting TF_IMMUTABLE: mark instance as frozen upon creation.
             return array;
         }
 

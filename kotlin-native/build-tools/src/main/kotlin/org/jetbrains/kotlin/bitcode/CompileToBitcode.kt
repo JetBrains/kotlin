@@ -44,7 +44,7 @@ open class CompileToBitcode @Inject constructor(
 
     // Source files and headers are registered as inputs by the `inputFiles` and `headers` properties.
     var srcDirs: FileCollection = project.files(srcRoot.resolve("cpp"))
-    var headersDirs: FileCollection = project.files(srcRoot.resolve("headers"))
+    var headersDirs: FileCollection = srcDirs + project.files(srcRoot.resolve("headers"))
 
     @Input
     var language = Language.CPP

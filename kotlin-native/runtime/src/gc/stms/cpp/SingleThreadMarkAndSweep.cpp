@@ -12,6 +12,7 @@
 #include "Runtime.h"
 #include "ThreadData.hpp"
 #include "ThreadRegistry.hpp"
+#include "ThreadSuspension.hpp"
 
 using namespace kotlin;
 
@@ -49,49 +50,76 @@ struct FinalizeTraits {
 } // namespace
 
 void gc::SingleThreadMarkAndSweep::ThreadData::SafePointFunctionEpilogue() noexcept {
-    if (gc_.GetThreshold() == 0 || safePointsCounter_ % gc_.GetThreshold() == 0) {
-        PerformFullGC();
-    }
-    ++safePointsCounter_;
+    SafePointRegular(1);
 }
 
 void gc::SingleThreadMarkAndSweep::ThreadData::SafePointLoopBody() noexcept {
-    if (gc_.GetThreshold() == 0 || safePointsCounter_ % gc_.GetThreshold() == 0) {
-        PerformFullGC();
-    }
-    ++safePointsCounter_;
+    SafePointRegular(1);
 }
 
 void gc::SingleThreadMarkAndSweep::ThreadData::SafePointExceptionUnwind() noexcept {
-    if (gc_.GetThreshold() == 0 || safePointsCounter_ % gc_.GetThreshold() == 0) {
-        PerformFullGC();
-    }
-    ++safePointsCounter_;
+    SafePointRegular(1);
 }
 
 void gc::SingleThreadMarkAndSweep::ThreadData::SafePointAllocation(size_t size) noexcept {
     size_t allocationOverhead =
             gc_.GetAllocationThresholdBytes() == 0 ? allocatedBytes_ : allocatedBytes_ % gc_.GetAllocationThresholdBytes();
-    if (allocationOverhead + size >= gc_.GetAllocationThresholdBytes()) {
+    if (threadData_.suspensionData().suspendIfRequested()) {
+        allocatedBytes_ = 0;
+    } else if (allocationOverhead + size >= gc_.GetAllocationThresholdBytes()) {
+        allocatedBytes_ = 0;
         PerformFullGC();
     }
     allocatedBytes_ += size;
 }
 
 void gc::SingleThreadMarkAndSweep::ThreadData::PerformFullGC() noexcept {
-    gc_.PerformFullGC();
+    mm::ObjectFactory<gc::SingleThreadMarkAndSweep>::FinalizerQueue finalizerQueue;
+    {
+        // Switch state to native to simulate this thread being a GC thread.
+        // As a bonus, if we failed to suspend threads (which means some other thread asked for a GC),
+        // we will automatically suspend at the scope exit.
+        // TODO: Cannot use `threadData_` here, because there's no way to transform `mm::ThreadData` into `MemoryState*`.
+        ThreadStateGuard guard(ThreadState::kNative);
+        finalizerQueue = gc_.PerformFullGC();
+    }
+
+    // Finalizers are run after threads are resumed, because finalizers may request GC themselves, which would
+    // try to suspend threads again. Also, we run finalizers in the runnable state, because they may be executing
+    // kotlin code.
+
+    // TODO: These will actually need to be run on a separate thread.
+    // TODO: Cannot use `threadData_` here, because there's no way to transform `mm::ThreadData` into `MemoryState*`.
+    AssertThreadState(ThreadState::kRunnable);
+    finalizerQueue.Finalize();
 }
 
 void gc::SingleThreadMarkAndSweep::ThreadData::OnOOM(size_t size) noexcept {
     PerformFullGC();
 }
 
-void gc::SingleThreadMarkAndSweep::PerformFullGC() noexcept {
-    RuntimeAssert(running_ == false, "Cannot have been called during another collection");
-    running_ = true;
+void gc::SingleThreadMarkAndSweep::ThreadData::SafePointRegular(size_t weight) noexcept {
+    size_t counterOverhead = gc_.GetThreshold() == 0 ? safePointsCounter_ : safePointsCounter_ % gc_.GetThreshold();
+    if (threadData_.suspensionData().suspendIfRequested()) {
+        safePointsCounter_ = 0;
+    } else if (counterOverhead + weight >= gc_.GetThreshold()) {
+        safePointsCounter_ = 0;
+        PerformFullGC();
+    }
+    safePointsCounter_ += weight;
+}
+
+mm::ObjectFactory<gc::SingleThreadMarkAndSweep>::FinalizerQueue gc::SingleThreadMarkAndSweep::PerformFullGC() noexcept {
+    bool didSuspend = mm::SuspendThreads();
+    if (!didSuspend) {
+        // Somebody else suspended the threads, and so ran a GC.
+        // TODO: This breaks if suspension is used by something apart from GC.
+        return {};
+    }
 
     KStdVector<ObjHeader*> graySet;
     for (auto& thread : mm::GlobalData::Instance().threadRegistry().Iter()) {
+        // TODO: Maybe it's more efficient to do by the suspending thread?
         thread.Publish();
         for (auto* object : mm::ThreadRootSet(thread)) {
             if (!isNullOrMarker(object)) {
@@ -109,10 +137,7 @@ void gc::SingleThreadMarkAndSweep::PerformFullGC() noexcept {
     gc::Mark<MarkTraits>(std::move(graySet));
     auto finalizerQueue = gc::Sweep<SweepTraits>(mm::GlobalData::Instance().objectFactory());
 
-    running_ = false;
+    mm::ResumeThreads();
 
-    // TODO: These will actually need to be run on a separate thread.
-    // TODO: This probably should check for the existence of runtime itself, but unit tests initialize only memory.
-    RuntimeAssert(mm::ThreadRegistry::Instance().CurrentThreadData() != nullptr, "Finalizers need a Kotlin runtime");
-    finalizerQueue.Finalize();
+    return finalizerQueue;
 }
