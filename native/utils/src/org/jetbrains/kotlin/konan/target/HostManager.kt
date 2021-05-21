@@ -169,7 +169,14 @@ open class HostManager(
         @JvmStatic
         fun simpleOsName(): String {
             val hostOs = hostOs()
-            return if (hostOs == "osx") "macos" else hostOs
+            val arch = hostArch()
+            return when (hostOs) {
+                "osx" -> {
+                    if (arch == "aarch64") "macosArm64"
+                    else "macosX64"
+                }
+                else -> hostOs
+            }
         }
 
         val jniHostPlatformIncludeDir: String
