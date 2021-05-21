@@ -234,6 +234,7 @@ private class TranslationResultMap(
     override fun dumpValue(value: TranslationResultValue): String =
         "Metadata: ${value.metadata.md5()}, Binary AST: ${value.binaryAst.md5()}, InlineData: ${value.inlineData.md5()}"
 
+    @Synchronized
     fun put(sourceFile: File, newMetadata: ByteArray, newBinaryAst: ByteArray, newInlineData: ByteArray) {
         storage[pathConverter.toPath(sourceFile)] =
             TranslationResultValue(metadata = newMetadata, binaryAst = newBinaryAst, inlineData = newInlineData)
@@ -245,6 +246,7 @@ private class TranslationResultMap(
     fun keys(): Collection<File> =
         storage.keys.map { pathConverter.toFile(it) }
 
+    @Synchronized
     fun remove(sourceFile: File, changesCollector: ChangesCollector) {
         val path = pathConverter.toPath(sourceFile)
         val protoBytes = storage[path]!!.metadata
