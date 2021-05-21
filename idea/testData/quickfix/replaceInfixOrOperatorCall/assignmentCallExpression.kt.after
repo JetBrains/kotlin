@@ -6,3 +6,5 @@ fun bar() {
     var i: Int = 1
     i = fff?.invoke() ?: <caret>
 }
+
+/* IGNORE_FIR */

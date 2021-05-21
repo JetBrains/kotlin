@@ -2,3 +2,5 @@
 fun test(a : Int?) : Int? {
     return a?.compareTo(6);
 }
+
+/* IGNORE_FIR */

@@ -4,3 +4,5 @@
 fun foo(bar: Int?) {
     bar +<caret> 1
 }
+
+/* IGNORE_FIR */

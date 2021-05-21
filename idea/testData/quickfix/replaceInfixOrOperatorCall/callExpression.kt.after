@@ -7,3 +7,5 @@ fun bar() {
     val fff: (() -> Unit)? = ::foo
     fff?.invoke()
 }
+
+/* IGNORE_FIR */

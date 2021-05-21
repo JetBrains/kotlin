@@ -5,3 +5,5 @@ fun foo(array: Array<String>?) {
     var s = ""
     s = array?.get(0) ?: <caret>
 }
+
+/* IGNORE_FIR */

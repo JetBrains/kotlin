@@ -7,3 +7,5 @@ fun foo(b: A) {
     var a: A? = A()
     a?.plusAssign(b)
 }
+
+/* IGNORE_FIR */

@@ -6,3 +6,5 @@ fun bar() {
     var i: Int = 1
     i = fff<caret>()
 }
+
+/* IGNORE_FIR */

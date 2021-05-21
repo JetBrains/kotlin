@@ -2,3 +2,5 @@
 fun test(a : Int?) : Int? {
     return a <caret>compareTo 6;
 }
+
+/* IGNORE_FIR */

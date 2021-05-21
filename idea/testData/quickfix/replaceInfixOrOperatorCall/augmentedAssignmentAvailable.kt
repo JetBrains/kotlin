@@ -7,3 +7,5 @@ fun foo(b: A) {
     var a: A? = A()
     a <caret>+= b
 }
+
+/* IGNORE_FIR */
