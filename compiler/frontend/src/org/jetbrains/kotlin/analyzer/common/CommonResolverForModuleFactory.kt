@@ -112,7 +112,10 @@ class CommonResolverForModuleFactory(
                     container.get<MetadataPackageFragmentProvider>()
                 )
 
-        return ResolverForModule(CompositePackageFragmentProvider(packageFragmentProviders), container)
+        return ResolverForModule(
+            CompositePackageFragmentProvider(packageFragmentProviders, "CompositeProvider@CommonResolver for $moduleDescriptor"),
+            container
+        )
     }
 
     companion object {

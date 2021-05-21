@@ -66,7 +66,10 @@ class JsResolverForModuleFactory(
         val libraryProviders = createPackageFragmentProvider(moduleInfo, container, moduleContext, moduleDescriptor)
 
         if (libraryProviders.isNotEmpty()) {
-            packageFragmentProvider = CompositePackageFragmentProvider(listOf(packageFragmentProvider) + libraryProviders)
+            packageFragmentProvider = CompositePackageFragmentProvider(
+                listOf(packageFragmentProvider) + libraryProviders,
+                "CompositeProvider@JsResolver for $moduleDescriptor"
+            )
         }
 
         return ResolverForModule(packageFragmentProvider, container)

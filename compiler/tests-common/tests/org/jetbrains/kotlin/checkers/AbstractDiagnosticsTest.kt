@@ -437,7 +437,8 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                 listOf(
                     container.get<KotlinCodeAnalyzer>().packageFragmentProvider,
                     container.get<JavaDescriptorResolver>().packageFragmentProvider
-                )
+                ),
+                "CompositeProvider@AbstractDiagnosticsTest for $moduleDescriptor"
             )
         )
 

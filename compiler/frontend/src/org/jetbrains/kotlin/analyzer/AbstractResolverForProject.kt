@@ -269,6 +269,10 @@ private class DelegatingPackageFragmentProvider<M : ModuleInfo>(
 
         return !packageOracle.packageExists(fqName) && fqName !in syntheticFilePackages
     }
+
+    override fun toString(): String {
+        return "DelegatingProvider for $module in ${resolverForProject.name}"
+    }
 }
 
 private object DiagnoseUnknownModuleInfoReporter {

@@ -209,7 +209,8 @@ object TopDownAnalyzerFacadeForJVM {
                         moduleClassResolver.compiledCodeResolver.packageFragmentProvider,
                         dependenciesContainer.get<JvmBuiltInsPackageFragmentProvider>(),
                         dependenciesContainer.get<OptionalAnnotationPackageFragmentProvider>()
-                    )
+                    ),
+                    "CompositeProvider@TopDownAnalyzerForJvm for dependencies ${dependenciesContext.module}"
                 )
             )
             dependenciesContext.module
@@ -283,7 +284,8 @@ object TopDownAnalyzerFacadeForJVM {
                 listOf(
                     container.get<KotlinCodeAnalyzer>().packageFragmentProvider,
                     container.get<OptionalAnnotationPackageFragmentProvider>()
-                ) + additionalProviders
+                ) + additionalProviders,
+                "CompositeProvider@TopDownAnalzyerForJvm for $module"
             )
         )
 

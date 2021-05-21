@@ -55,9 +55,12 @@ class KotlinMetadataDeserializerForDecompiler(
             "Was called for $facadeFqName; only members of $directoryPackageFqName package are expected."
         }
 
+        val dummyPackageFragment = createDummyPackageFragment(facadeFqName)
         val membersScope = DeserializedPackageMemberScope(
-            createDummyPackageFragment(facadeFqName), proto.`package`, nameResolver, metadataVersion, containerSource = null,
-            components = deserializationComponents
+            dummyPackageFragment, proto.`package`, nameResolver, metadataVersion, containerSource = null,
+            components = deserializationComponents,
+            debugName = "scope of dummyPackageFragment ${dummyPackageFragment.fqName} in module " +
+                    "${deserializationComponents.moduleDescriptor} @KotlinMetadataDeserializerForDecompiler"
         ) { emptyList() }
 
         return membersScope.getContributedDescriptors().toList()

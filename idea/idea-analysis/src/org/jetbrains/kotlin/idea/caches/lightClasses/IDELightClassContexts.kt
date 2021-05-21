@@ -403,7 +403,12 @@ internal object IDELightClassContexts {
 
 
         val resolveSession = container.get<ResolveSession>()
-        moduleDescriptor.initialize(CompositePackageFragmentProvider(listOf(resolveSession.packageFragmentProvider)))
+        moduleDescriptor.initialize(
+            CompositePackageFragmentProvider(
+                listOf(resolveSession.packageFragmentProvider),
+                "CompositeProvider@IDELightClassContexts for $moduleDescriptor"
+            )
+        )
         return resolveSession
     }
 

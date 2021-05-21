@@ -66,7 +66,9 @@ fun createContainerForJS(
         val packagePartProviders = mutableListOf(get<KotlinCodeAnalyzer>().packageFragmentProvider)
         val moduleDescriptor = get<ModuleDescriptorImpl>()
         packagePartProviders += additionalPackages
-        moduleDescriptor.initialize(CompositePackageFragmentProvider(packagePartProviders))
+        moduleDescriptor.initialize(
+            CompositePackageFragmentProvider(packagePartProviders, "CompositeProvider@createContainerForJS for $moduleDescriptor")
+        )
     }
     return storageComponentContainer
 }

@@ -136,7 +136,8 @@ class NativePlatformKindResolution : IdePlatformKindResolution {
                     functionInterfacePackageFragmentProvider(storageManager, builtInsModule),
                     (metadataFactories.DefaultDeserializedDescriptorFactory as KlibMetadataModuleDescriptorFactoryImpl)
                         .createForwardDeclarationHackPackagePartProvider(storageManager, builtInsModule)
-                )
+                ),
+                "CompositeProvider@NativeBuiltins for $builtInsModule"
             )
         )
 

@@ -94,10 +94,9 @@ abstract class KlibMetadataPackageFragment(
             nameResolver,
             KlibMetadataVersion.INSTANCE,
             /* containerSource = */ null,
-            components
-        ) {
-            loadClassNames()
-        }
+            components,
+            "scope for $this"
+        ) { loadClassNames() }
     }
 
     override fun getMemberScope(): DeserializedPackageMemberScope = _memberScope

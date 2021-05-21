@@ -22,7 +22,8 @@ import java.util.*
 import org.jetbrains.kotlin.name.Name
 
 class CompositePackageFragmentProvider(// can be modified from outside
-    private val providers: List<PackageFragmentProvider>
+    private val providers: List<PackageFragmentProvider>,
+    private val debugName: String
 ) : PackageFragmentProviderOptimized {
 
     init {
@@ -55,4 +56,6 @@ class CompositePackageFragmentProvider(// can be modified from outside
         }
         return result
     }
+
+    override fun toString(): String = debugName
 }

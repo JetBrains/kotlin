@@ -133,6 +133,9 @@ class JvmResolverForModuleFactory(
                     )
                 }
 
-        return ResolverForModule(CompositePackageFragmentProvider(providersForModule), container)
+        return ResolverForModule(
+            CompositePackageFragmentProvider(providersForModule, "CompositeProvider@JvmResolver for $moduleDescriptor"),
+            container
+        )
     }
 }

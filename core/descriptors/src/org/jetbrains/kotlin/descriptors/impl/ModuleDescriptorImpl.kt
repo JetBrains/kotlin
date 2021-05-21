@@ -101,9 +101,12 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
                 "Dependency module ${dependency.id} was not initialized by the time contents of dependent module ${this.id} were queried"
             }
         }
-        CompositePackageFragmentProvider(dependenciesDescriptors.map {
-            it.packageFragmentProviderForModuleContent!!
-        })
+        CompositePackageFragmentProvider(
+            dependenciesDescriptors.map {
+                it.packageFragmentProviderForModuleContent!!
+            },
+            "CompositeProvider@ModuleDescriptor for $name"
+        )
     }
 
     private val isInitialized: Boolean

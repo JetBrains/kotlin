@@ -110,10 +110,18 @@ class MetadataPackageFragment(
             val stream = finder.findMetadata(ClassId(fqName, Name.identifier(partName))) ?: continue
             val (proto, nameResolver, version) = readProto(stream)
 
-            scopes.add(DeserializedPackageMemberScope(
-                this, proto.`package`, nameResolver, version, containerSource = null, components = components,
-                classNames = { emptyList() }
-            ))
+            scopes.add(
+                DeserializedPackageMemberScope(
+                    this,
+                    proto.`package`,
+                    nameResolver,
+                    version,
+                    containerSource = null,
+                    components = components,
+                    debugName = "scope with top-level callables and type aliases (no classes) for package part $partName of $this",
+                    classNames = { emptyList() },
+                )
+            )
         }
 
         // Also add the deserialized scope that can load all classes from this package
@@ -121,7 +129,9 @@ class MetadataPackageFragment(
             this, ProtoBuf.Package.getDefaultInstance(),
             NameResolverImpl(ProtoBuf.StringTable.getDefaultInstance(), ProtoBuf.QualifiedNameTable.getDefaultInstance()),
             BuiltInsBinaryVersion.INSTANCE, // Exact version does not matter here
-            containerSource = null, components = components, classNames = { emptyList() }
+            containerSource = null, components = components,
+            debugName = "scope for all classes of $this",
+            classNames = { emptyList() },
         ) {
             override fun hasClass(name: Name): Boolean = hasTopLevelClass(name)
             override fun definitelyDoesNotContainName(name: Name) = false
@@ -129,7 +139,7 @@ class MetadataPackageFragment(
             override fun getNonDeclaredClassifierNames(): Set<Name>? = null
         })
 
-        return ChainedMemberScope.create("Metadata scope", scopes)
+        return ChainedMemberScope.create(".kotlin_metadata parts scope of $this", scopes)
     }
 
     override fun getMemberScope() = memberScope()

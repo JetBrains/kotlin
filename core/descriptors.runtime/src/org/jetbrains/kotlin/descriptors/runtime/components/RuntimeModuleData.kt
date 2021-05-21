@@ -92,7 +92,12 @@ class RuntimeModuleData private constructor(
             )
 
             module.setDependencies(module)
-            module.initialize(CompositePackageFragmentProvider(listOf(javaDescriptorResolver.packageFragmentProvider, builtinsProvider)))
+            module.initialize(
+                CompositePackageFragmentProvider(
+                    listOf(javaDescriptorResolver.packageFragmentProvider, builtinsProvider),
+                    "CompositeProvider@RuntimeModuleData for $module"
+                )
+            )
 
             return RuntimeModuleData(
                 deserializationComponentsForJava.components,

@@ -104,8 +104,9 @@ class IncrementalPackageFragmentProvider(
                             JvmPackagePartSource(
                                 partName, facadeName, packageProto, nameResolver, knownJvmBinaryClass = jvmBinaryClass
                             ),
-                            deserializationComponents, classNames = { emptyList() }
-                        )
+                            deserializationComponents,
+                            "scope for IncrementalMultifileClassPackageFragment for facadeName=$facadeName, packageFqName=$packageFqName, part $partName",
+                        ) { emptyList() }
                     }
                 }
             )

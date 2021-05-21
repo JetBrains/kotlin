@@ -70,7 +70,8 @@ class DeserializedDescriptorResolver {
             kotlinClass.abiStability
         )
         return DeserializedPackageMemberScope(
-            descriptor, packageProto, nameResolver, kotlinClass.classHeader.metadataVersion, source, components
+            descriptor, packageProto, nameResolver, kotlinClass.classHeader.metadataVersion, source, components,
+            "scope for $source in $descriptor"
         ) {
             // All classes are included into Java scope
             emptyList()

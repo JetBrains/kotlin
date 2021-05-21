@@ -225,7 +225,8 @@ class ClassicFrontendFacade(
                 listOf(
                     container.get<KotlinCodeAnalyzer>().packageFragmentProvider,
                     container.get<JavaDescriptorResolver>().packageFragmentProvider
-                )
+                ),
+                "CompositeProvider@ClassicFrontendFacade for $moduleDescriptor"
             )
         )
 
