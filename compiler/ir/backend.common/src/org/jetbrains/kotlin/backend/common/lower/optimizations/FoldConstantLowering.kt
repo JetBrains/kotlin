@@ -130,6 +130,7 @@ class FoldConstantLowering(
             operationName == "toString" -> constToString(operand)
             // Disable toFloat folding on K/JS till `toFloat` is fixed (KT-35422)
             operationName == "toFloat" && floatSpecial -> return call
+            operand.kind == IrConstKind.Null -> return call
             else -> evaluateUnary(
                 operationName,
                 operand.kind.toString(),
@@ -161,6 +162,8 @@ class FoldConstantLowering(
         val lhs = coerceToDouble(call.dispatchReceiver as? IrConst<*> ?: return call)
         val rhs = coerceToDouble(call.getValueArgument(0) as? IrConst<*> ?: return call)
 
+        if (lhs.kind == IrConstKind.Null || rhs.kind == IrConstKind.Null) return call
+
         val evaluated = try {
             evaluateBinary(
                 call.symbol.owner.name.toString(),
@@ -188,6 +191,8 @@ class FoldConstantLowering(
 
         val lhs = call.getValueArgument(0) as? IrConst<*> ?: return call
         val rhs = call.getValueArgument(1) as? IrConst<*> ?: return call
+
+        if (lhs.kind == IrConstKind.Null || rhs.kind == IrConstKind.Null) return call
 
         val evaluated = try {
             val evaluator =
