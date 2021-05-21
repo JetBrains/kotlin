@@ -97,9 +97,12 @@ val KotlinType?.toClassDescriptor: ClassDescriptor?
     }
 
 internal val ClassDescriptor.shouldHaveGeneratedMethodsInCompanion: Boolean
-    get() = this.isSerializableObject || this.isSerializableEnum() || this.kind == ClassKind.CLASS && annotations.hasAnnotation(SerializationAnnotations.serializableAnnotationFqName)
+    get() = this.isSerializableObject || this.isSerializableEnum() || this.kind == ClassKind.CLASS && hasSerializableAnnotation
 
 internal val ClassDescriptor.isSerializableObject: Boolean
+    get() = kind == ClassKind.OBJECT && hasSerializableAnnotation
+
+internal val ClassDescriptor.isInternallySerializableObject: Boolean
     get() = kind == ClassKind.OBJECT && hasSerializableAnnotationWithoutArgs
 
 internal val ClassDescriptor.isInternalSerializable: Boolean //todo normal checking
@@ -108,14 +111,12 @@ internal val ClassDescriptor.isInternalSerializable: Boolean //todo normal check
         return hasSerializableAnnotationWithoutArgs
     }
 
-internal fun ClassDescriptor.isSerializableEnum(): Boolean {
-    if (this.kind != ClassKind.ENUM_CLASS) return false
-    if (hasSerializableAnnotationWithoutArgs) return true
-    return false
-}
+internal fun ClassDescriptor.isSerializableEnum(): Boolean = kind == ClassKind.ENUM_CLASS && hasSerializableAnnotation
+
+internal fun ClassDescriptor.isInternallySerializableEnum(): Boolean = kind == ClassKind.ENUM_CLASS && hasSerializableAnnotationWithoutArgs
 
 internal val ClassDescriptor.shouldHaveGeneratedSerializer: Boolean
-    get() = (isInternalSerializable && (modality == Modality.FINAL || modality == Modality.OPEN)) || isSerializableEnum()
+    get() = (isInternalSerializable && (modality == Modality.FINAL || modality == Modality.OPEN)) || isInternallySerializableEnum()
 
 internal fun ClassDescriptor.enumEntries(): List<ClassDescriptor> {
     check(this.kind == ClassKind.ENUM_CLASS)
@@ -128,9 +129,12 @@ internal fun ClassDescriptor.enumEntries(): List<ClassDescriptor> {
 internal val Annotations.hasAnySerialAnnotation: Boolean
     get() = serialNameValue != null || any { it.annotationClass?.isSerialInfoAnnotation == true }
 
+private val ClassDescriptor.hasSerializableAnnotation
+    get() = annotations.hasAnnotation(SerializationAnnotations.serializableAnnotationFqName)
+
 internal val ClassDescriptor.hasSerializableAnnotationWithoutArgs: Boolean
     get() {
-        if (!annotations.hasAnnotation(SerializationAnnotations.serializableAnnotationFqName)) return false
+        if (!hasSerializableAnnotation) return false
         // If provided descriptor is lazy, carefully look at psi in order not to trigger full resolve which may be recursive.
         // Otherwise, this descriptor is deserialized from another module and it is OK to check value right away.
         val psi = findSerializableAnnotationDeclaration() ?: return (serializableWith == null)
@@ -178,7 +182,7 @@ internal val ClassDescriptor?.classSerializer: ClassDescriptor?
     }
 
 internal val ClassDescriptor.hasCompanionObjectAsSerializer: Boolean
-    get() = isSerializableObject || companionObjectDescriptor?.serializerForClass == this.defaultType
+    get() = isInternallySerializableObject || companionObjectDescriptor?.serializerForClass == this.defaultType
 
 // returns only user-overriden Serializer
 internal val KotlinType.overridenSerializer: KotlinType?

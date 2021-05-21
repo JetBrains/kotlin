@@ -68,7 +68,7 @@ class SerializableProperties(private val serializableClass: ClassDescriptor, val
             .let { unsort(serializableClass, it) }
 
         isExternallySerializable =
-            serializableClass.isSerializableEnum() || primaryConstructorParameters.size == primaryConstructorProperties.size
+            serializableClass.isInternallySerializableEnum() || primaryConstructorParameters.size == primaryConstructorProperties.size
 
     }
 
