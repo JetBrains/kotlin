@@ -391,11 +391,7 @@ internal class DescriptorRendererImpl(
         if (descriptor is PackageFragmentDescriptor || descriptor is PackageViewDescriptor) {
             return
         }
-        if (descriptor is ModuleDescriptor) {
-            append(" is a module")
-            return
-        }
-
+        
         val containingDeclaration = descriptor.containingDeclaration
         if (containingDeclaration != null && containingDeclaration !is ModuleDescriptor) {
             append(" ").append(renderMessage("defined in")).append(" ")
