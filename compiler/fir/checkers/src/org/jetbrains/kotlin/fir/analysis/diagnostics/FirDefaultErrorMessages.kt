@@ -239,6 +239,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_TYPE_OF_A
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVISIBLE_REFERENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IS_ENUM_ENTRY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ITERATOR_AMBIGUITY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.JAVA_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LEAKED_IN_PLACE_LAMBDA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LOCAL_ANNOTATION_CLASS_ERROR
@@ -1578,6 +1579,9 @@ class FirDefaultErrorMessages {
                 "Calls having a form of ''suspend {}'' are deprecated because ''suspend'' in the context will have a meaning of a modifier. Add empty argument list to the call: ''suspend() { ... }''"
             )
             map.put(RETURN_FOR_BUILT_IN_SUSPEND, "Using implicit label for this lambda is prohibited")
+
+            // JVM
+            map.put(JAVA_TYPE_MISMATCH, "Java type mismatch expected {0} but found {1}. Use explicit cast", RENDER_TYPE, RENDER_TYPE)
 
             // Extended checkers group
             map.put(REDUNDANT_VISIBILITY_MODIFIER, "Redundant visibility modifier")

@@ -3737,6 +3737,15 @@ internal class ReturnForBuiltInSuspendImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class JavaTypeMismatchImpl(
+    override val expectedType: KtType,
+    override val actualType: KtType,
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.JavaTypeMismatch(), KtAbstractFirDiagnostic<KtExpression> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class ConflictingJvmDeclarationsImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,

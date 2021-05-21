@@ -21665,9 +21665,27 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("deepTypeHierarchy.kt")
+                public void testDeepTypeHierarchy() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/genericVarianceViolation/deepTypeHierarchy.kt");
+                }
+
+                @Test
                 @TestMetadata("inferenceFrom.kt")
                 public void testInferenceFrom() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/platformTypes/genericVarianceViolation/inferenceFrom.kt");
+                }
+
+                @Test
+                @TestMetadata("javaOutProjection.kt")
+                public void testJavaOutProjection() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/genericVarianceViolation/javaOutProjection.kt");
+                }
+
+                @Test
+                @TestMetadata("kotlinOutProjection.kt")
+                public void testKotlinOutProjection() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/genericVarianceViolation/kotlinOutProjection.kt");
                 }
 
                 @Test

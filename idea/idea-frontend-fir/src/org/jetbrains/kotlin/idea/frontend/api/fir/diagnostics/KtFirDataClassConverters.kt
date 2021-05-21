@@ -3314,6 +3314,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.JAVA_TYPE_MISMATCH) { firDiagnostic ->
+        JavaTypeMismatchImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.CONFLICTING_JVM_DECLARATIONS) { firDiagnostic ->
         ConflictingJvmDeclarationsImpl(
             firDiagnostic as FirPsiDiagnostic,
