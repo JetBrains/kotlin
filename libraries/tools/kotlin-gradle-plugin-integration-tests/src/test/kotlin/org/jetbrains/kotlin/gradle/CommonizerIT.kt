@@ -335,6 +335,15 @@ class CommonizerIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun `test KT-46856 filename too long - all native targets configured`() {
+        with(Project("commonize-kt-46856-all-targets")) {
+            build(":commonize") {
+                assertSuccessful()
+            }
+        }
+    }
+
     private fun preparedProject(name: String): Project {
         return Project(name).apply {
             setupWorkingDir()
