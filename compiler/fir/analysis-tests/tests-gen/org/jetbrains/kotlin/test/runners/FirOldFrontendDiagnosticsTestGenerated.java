@@ -984,9 +984,15 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
-            @TestMetadata("AnnotationForClassTypeParameter.kt")
-            public void testAnnotationForClassTypeParameter() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/annotations/AnnotationForClassTypeParameter.kt");
+            @TestMetadata("AnnotationForClassTypeParameter_15.kt")
+            public void testAnnotationForClassTypeParameter_15() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/AnnotationForClassTypeParameter_15.kt");
+            }
+
+            @Test
+            @TestMetadata("AnnotationForClassTypeParameter_16.kt")
+            public void testAnnotationForClassTypeParameter_16() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/AnnotationForClassTypeParameter_16.kt");
             }
 
             @Test
