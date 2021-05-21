@@ -11,6 +11,7 @@ fun main() {
     var f: Foo? = Foo()
     var a: Value? = Value()
     a!!.cpp.data = 17
+    // TODO: update refcount calculations when ref/unref are fixed
     a!!.cpp.refcount = 100;
 
     var b: Value? = f!!.qux();
@@ -28,9 +29,4 @@ fun main() {
     x = null
     z = null
     b = null
-
-    for (i in 0..1000) {
-        Value()
-        Foo()
-    }
 }
