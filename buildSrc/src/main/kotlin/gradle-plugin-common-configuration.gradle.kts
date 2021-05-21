@@ -42,7 +42,8 @@ tasks.withType<KotlinCompile> {
     kotlinOptions.freeCompilerArgs += listOf(
         "-Xskip-prerelease-check",
         "-Xskip-runtime-version-check",
-        "-Xsuppress-version-warnings"
+        "-Xsuppress-version-warnings",
+        "-Xuse-ir" // Needed as long as languageVersion is less than 1.5.
     )
 }
 

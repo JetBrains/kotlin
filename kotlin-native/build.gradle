@@ -120,15 +120,6 @@ allprojects {
         }
     }
 
-    if (findProperty("kotlin.build.useIR") == "true") {
-        tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-            kotlinOptions {
-                useIR = true
-                freeCompilerArgs += ["-Xir-binary-with-stable-abi"]
-            }
-        }
-    }
-
     setupHostAndTarget()
     loadCommandLineProperties()
     loadLocalProperties()

@@ -153,7 +153,6 @@ if (!project.hasProperty("versions.kotlin-native")) {
 
 val effectSystemEnabled by extra(project.getBooleanProperty("kotlin.compiler.effectSystemEnabled") ?: false)
 val newInferenceEnabled by extra(project.getBooleanProperty("kotlin.compiler.newInferenceEnabled") ?: false)
-val useJvmIrBackend by extra(project.kotlinBuildProperties.useIR)
 val useJvmFir by extra(project.kotlinBuildProperties.useFir)
 
 val intellijSeparateSdks = project.getBooleanProperty("intellijSeparateSdks") ?: false
@@ -474,10 +473,6 @@ allprojects {
     tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile> {
         kotlinOptions {
             freeCompilerArgs = commonCompilerArgs + jvmCompilerArgs
-
-            if (useJvmIrBackend) {
-                useIR = true
-            }
 
             if (useJvmFir && this@allprojects.path !in projectsWithDisabledFirBootstrap) {
                 freeCompilerArgs += "-Xuse-fir"
