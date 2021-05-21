@@ -7,3 +7,5 @@ fun bar() {
     val fff: (() -> Unit)? = ::foo
     <caret>fff()
 }
+
+/* IGNORE_FIR */

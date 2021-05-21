@@ -5,3 +5,5 @@ fun foo(bar: Int?) {
     var i: Int = 1
     i = bar?.plus(1) ?: <caret>
 }
+
+/* IGNORE_FIR */

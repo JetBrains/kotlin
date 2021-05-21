@@ -4,3 +4,5 @@
 fun foo(array: Array<String>?) {
     array?.set(0, "")
 }
+
+/* IGNORE_FIR */

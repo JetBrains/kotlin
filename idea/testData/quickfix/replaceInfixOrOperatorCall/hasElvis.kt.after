@@ -5,3 +5,5 @@ fun foo(list: List<String>?) {
     var s = ""
     s = list?.get(0) ?: ""
 }
+
+/* IGNORE_FIR */
