@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-internal val jvmStringConcatenationLowering = makeIrFilePhase<JvmBackendContext>(
+internal val jvmStringConcatenationLowering = makeIrFilePhase(
     { context: JvmBackendContext ->
         if (!context.state.runtimeStringConcat.isDynamic)
             JvmStringConcatenationLowering(context)
@@ -95,6 +95,8 @@ private fun IrExpression.unwrapImplicitNotNull() =
     else
         this
 
+private const val MAX_STRING_CONCAT_DEPTH = 23
+
 /**
  * This lowering pass replaces [IrStringConcatenation]s with StringBuilder appends.
  *
@@ -108,7 +110,7 @@ private class JvmStringConcatenationLowering(val context: JvmBackendContext) : F
     private val stringBuilder = context.ir.symbols.stringBuilder.owner
 
     private val constructor = stringBuilder.constructors.single {
-        it.valueParameters.size == 0
+        it.valueParameters.isEmpty()
     }
 
     private val toStringFunction = stringBuilder.toStringFunction
@@ -152,22 +154,48 @@ private class JvmStringConcatenationLowering(val context: JvmBackendContext) : F
                         putValueArgument(1, lowerInlineClassArgument(arguments[1]) ?: arguments[1])
                     }
 
-                else -> {
-                    var stringBuilder = irCall(constructor)
-                    for (arg in arguments) {
-                        val argument = normalizeArgument(arg)
-                        val appendFunction = typeToAppendFunction(argument.type)
-                        stringBuilder = irCall(appendFunction).apply {
-                            dispatchReceiver = stringBuilder
-                            // Unwrapping IMPLICIT_NOTNULL is necessary for ALL arguments. There could be a call to `String.plus(Any?)`
-                            // anywhere in the flattened IrStringConcatenation expression, e.g., `"foo" + (Java.platformString() + 123)`.
-                            putValueArgument(0, lowerInlineClassArgument(argument) ?: argument.unwrapImplicitNotNull())
-                        }
-                    }
+                arguments.size < MAX_STRING_CONCAT_DEPTH -> {
                     irCall(toStringFunction).apply {
-                        dispatchReceiver = stringBuilder
+                        dispatchReceiver = appendWindow(arguments, irCall(constructor))
                     }
                 }
+
+                else -> {
+                    // arguments.size >= MAX_STRING_CONCAT_DEPTH. Prevent SOE in ExpressionCodegen.
+                    // Generates:
+                    //  {
+                    //      val tmp = StringBuilder()
+                    //      tmp.append(a0).append(a1) /* ... */ .append(a21).append(a22)
+                    //      /* ... repeat for each possibly partial MAX_STRING_CONCAT_DEPTH-element window ... */
+                    //      tmp.toString()
+                    //  }
+                    irBlock {
+                        val tmpStringBuilder = irTemporary(irCall(constructor))
+                        val argsWindowed =
+                            arguments.windowed(
+                                size = MAX_STRING_CONCAT_DEPTH,
+                                step = MAX_STRING_CONCAT_DEPTH,
+                                partialWindows = true
+                            )
+                        for (argsWindow in argsWindowed) {
+                            +appendWindow(argsWindow, irGet(tmpStringBuilder))
+                        }
+                        +irCall(toStringFunction).apply { dispatchReceiver = irGet(tmpStringBuilder) }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun JvmIrBuilder.appendWindow(arguments: List<IrExpression>, stringBuilder0: IrExpression): IrExpression {
+        return arguments.fold(stringBuilder0) { stringBuilder, arg ->
+            val argument = normalizeArgument(arg)
+            val appendFunction = typeToAppendFunction(argument.type)
+            irCall(appendFunction).apply {
+                dispatchReceiver = stringBuilder
+                // Unwrapping IMPLICIT_NOTNULL is necessary for ALL arguments. There could be a call to `String.plus(Any?)`
+                // anywhere in the flattened IrStringConcatenation expression, e.g., `"foo" + (Java.platformString() + 123)`.
+                putValueArgument(0, lowerInlineClassArgument(argument) ?: argument.unwrapImplicitNotNull())
             }
         }
     }
@@ -177,7 +205,8 @@ private class JvmStringConcatenationLowering(val context: JvmBackendContext) : F
  * This lowering pass lowers inline classes arguments of [IrStringConcatenation].
  * Transformed [IrStringConcatenation] would be used as is in [ExpressionCodegen] for makeConcat/makeConcatWithConstants bytecode generation
  */
-private class JvmDynamicStringConcatenationLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
+private class JvmDynamicStringConcatenationLowering(val context: JvmBackendContext) : FileLoweringPass,
+    IrElementTransformerVoidWithContext() {
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
 
     override fun visitStringConcatenation(expression: IrStringConcatenation): IrExpression {

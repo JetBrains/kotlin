@@ -8021,6 +8021,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/dataClasses/changingVarParam.kt");
         }
 
+        @TestMetadata("dataClassWithManyFields.kt")
+        public void testDataClassWithManyFields() throws Exception {
+            runTest("compiler/testData/codegen/box/dataClasses/dataClassWithManyFields.kt");
+        }
+
         @TestMetadata("doubleParam.kt")
         public void testDoubleParam() throws Exception {
             runTest("compiler/testData/codegen/box/dataClasses/doubleParam.kt");

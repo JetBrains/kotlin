@@ -12017,6 +12017,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("dataClassWithManyFields.kt")
+        public void testDataClassWithManyFields() throws Exception {
+            runTest("compiler/testData/codegen/box/dataClasses/dataClassWithManyFields.kt");
+        }
+
+        @Test
         @TestMetadata("doubleParam.kt")
         public void testDoubleParam() throws Exception {
             runTest("compiler/testData/codegen/box/dataClasses/doubleParam.kt");

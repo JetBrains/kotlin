@@ -3634,6 +3634,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/dataClasses/changingVarParam.kt");
         }
 
+        @TestMetadata("dataClassWithManyFields.kt")
+        public void testDataClassWithManyFields() throws Exception {
+            runTest("compiler/testData/codegen/box/dataClasses/dataClassWithManyFields.kt");
+        }
+
         @TestMetadata("genericParam.kt")
         public void testGenericParam() throws Exception {
             runTest("compiler/testData/codegen/box/dataClasses/genericParam.kt");
