@@ -116,12 +116,19 @@ internal open class KotlinJvmCompilerArgumentsContributor(
                     """
                     'kotlinOptions.jdkHome' is deprecated and will ignored in Kotlin 1.6! 
                     
-                    Consider using KotlinJavaToolchain:
+                    Consider using JavaToolchain on Gradle 6.7+:
+                    kotlin {
+                        toolchain {
+                            languageVersion.set(JavaLanguageVersion.of(<MAJOR_JDK_VERSION>))
+                        }
+                    }
+                    
+                    Or on older versions of Gradle:
                     - Kotlin DSL:
                     project.tasks
                         .withType<UsesKotlinJavaToolchain>()
                         .configureEach {
-                            it.kotlinJavaToolchain.setJdkHome(
+                            it.kotlinJavaToolchain.jdk.use(
                                 "/path/to/your/jdk",
                                 JavaVersion.<JDK_VERSION>
                             )
@@ -130,7 +137,7 @@ internal open class KotlinJvmCompilerArgumentsContributor(
                     project.tasks
                         .withType(UsesKotlinJavaToolchain.class)
                         .configureEach {
-                             it.kotlinJavaToolchain.setJdkHome(
+                             it.kotlinJavaToolchain.jdk.use(
                                  '/path/to/your/jdk',
                                  JavaVersion.<JDK_VERSION>
                              )
