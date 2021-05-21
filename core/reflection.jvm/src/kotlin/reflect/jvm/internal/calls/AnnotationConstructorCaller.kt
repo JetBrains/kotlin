@@ -5,12 +5,11 @@
 
 package kotlin.reflect.jvm.internal.calls
 
+import org.jetbrains.kotlin.descriptors.runtime.structure.wrapperByPrimitive
 import java.lang.reflect.Proxy
 import java.lang.reflect.Type
-import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
-import org.jetbrains.kotlin.descriptors.runtime.structure.wrapperByPrimitive
 import java.lang.reflect.Method as ReflectMethod
 
 internal class AnnotationConstructorCaller(
@@ -90,11 +89,10 @@ private fun throwIllegalArgumentType(index: Int, name: String, expectedJvmType: 
         else -> expectedJvmType.kotlin
     }
     // For arrays, also render the type argument in the message, e.g. "... not of the required type kotlin.Array<kotlin.reflect.KClass>"
-    val typeString = when {
-        kotlinClass.qualifiedName == Array<Any>::class.qualifiedName ->
+    val typeString =
+        if (kotlinClass.qualifiedName == Array<Any>::class.qualifiedName)
             "${kotlinClass.qualifiedName}<${kotlinClass.java.componentType.kotlin.qualifiedName}>"
-        else -> kotlinClass.qualifiedName
-    }
+        else kotlinClass.qualifiedName
     throw IllegalArgumentException("Argument #$index $name is not of the required type $typeString")
 }
 
@@ -109,15 +107,15 @@ internal fun <T : Any> createAnnotationInstance(
                     val ours = values[method.name]
                     val theirs = method(other)
                     when (ours) {
-                        is BooleanArray -> Arrays.equals(ours, theirs as BooleanArray)
-                        is CharArray -> Arrays.equals(ours, theirs as CharArray)
-                        is ByteArray -> Arrays.equals(ours, theirs as ByteArray)
-                        is ShortArray -> Arrays.equals(ours, theirs as ShortArray)
-                        is IntArray -> Arrays.equals(ours, theirs as IntArray)
-                        is FloatArray -> Arrays.equals(ours, theirs as FloatArray)
-                        is LongArray -> Arrays.equals(ours, theirs as LongArray)
-                        is DoubleArray -> Arrays.equals(ours, theirs as DoubleArray)
-                        is Array<*> -> Arrays.equals(ours, theirs as Array<*>)
+                        is BooleanArray -> ours contentEquals theirs as BooleanArray
+                        is CharArray -> ours contentEquals theirs as CharArray
+                        is ByteArray -> ours contentEquals theirs as ByteArray
+                        is ShortArray -> ours contentEquals theirs as ShortArray
+                        is IntArray -> ours contentEquals theirs as IntArray
+                        is FloatArray -> ours contentEquals theirs as FloatArray
+                        is LongArray -> ours contentEquals theirs as LongArray
+                        is DoubleArray -> ours contentEquals theirs as DoubleArray
+                        is Array<*> -> ours contentEquals theirs as Array<*>
                         else -> ours == theirs
                     }
                 }
@@ -126,15 +124,15 @@ internal fun <T : Any> createAnnotationInstance(
         values.entries.sumOf { entry ->
             val (key, value) = entry
             val valueHash = when (value) {
-                is BooleanArray -> Arrays.hashCode(value)
-                is CharArray -> Arrays.hashCode(value)
-                is ByteArray -> Arrays.hashCode(value)
-                is ShortArray -> Arrays.hashCode(value)
-                is IntArray -> Arrays.hashCode(value)
-                is FloatArray -> Arrays.hashCode(value)
-                is LongArray -> Arrays.hashCode(value)
-                is DoubleArray -> Arrays.hashCode(value)
-                is Array<*> -> Arrays.hashCode(value)
+                is BooleanArray -> value.contentHashCode()
+                is CharArray -> value.contentHashCode()
+                is ByteArray -> value.contentHashCode()
+                is ShortArray -> value.contentHashCode()
+                is IntArray -> value.contentHashCode()
+                is FloatArray -> value.contentHashCode()
+                is LongArray -> value.contentHashCode()
+                is DoubleArray -> value.contentHashCode()
+                is Array<*> -> value.contentHashCode()
                 else -> value.hashCode()
             }
             127 * key.hashCode() xor valueHash
@@ -148,15 +146,15 @@ internal fun <T : Any> createAnnotationInstance(
             values.entries.joinTo(this, separator = ", ", prefix = "(", postfix = ")") { entry ->
                 val (key, value) = entry
                 val valueString = when (value) {
-                    is BooleanArray -> Arrays.toString(value)
-                    is CharArray -> Arrays.toString(value)
-                    is ByteArray -> Arrays.toString(value)
-                    is ShortArray -> Arrays.toString(value)
-                    is IntArray -> Arrays.toString(value)
-                    is FloatArray -> Arrays.toString(value)
-                    is LongArray -> Arrays.toString(value)
-                    is DoubleArray -> Arrays.toString(value)
-                    is Array<*> -> Arrays.toString(value)
+                    is BooleanArray -> value.contentToString()
+                    is CharArray -> value.contentToString()
+                    is ByteArray -> value.contentToString()
+                    is ShortArray -> value.contentToString()
+                    is IntArray -> value.contentToString()
+                    is FloatArray -> value.contentToString()
+                    is LongArray -> value.contentToString()
+                    is DoubleArray -> value.contentToString()
+                    is Array<*> -> value.contentToString()
                     else -> value.toString()
                 }
                 "$key=$valueString"
@@ -165,8 +163,7 @@ internal fun <T : Any> createAnnotationInstance(
     }
 
     val result = Proxy.newProxyInstance(annotationClass.classLoader, arrayOf(annotationClass)) { _, method, args ->
-        val name = method.name
-        when (name) {
+        when (val name = method.name) {
             "annotationType" -> annotationClass
             "toString" -> toString
             "hashCode" -> hashCode

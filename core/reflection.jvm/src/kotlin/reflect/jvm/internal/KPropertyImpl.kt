@@ -49,8 +49,7 @@ internal abstract class KPropertyImpl<out V> private constructor(
     override val isBound: Boolean get() = rawBoundReceiver != CallableReference.NO_RECEIVER
 
     private val _javaField: ReflectProperties.LazyVal<Field?> = ReflectProperties.lazy {
-        val jvmSignature = RuntimeTypeMapper.mapPropertySignature(descriptor)
-        when (jvmSignature) {
+        when (val jvmSignature = RuntimeTypeMapper.mapPropertySignature(descriptor)) {
             is KotlinProperty -> {
                 val descriptor = jvmSignature.descriptor
                 JvmProtoBufUtil.getJvmFieldSignature(jvmSignature.proto, jvmSignature.nameResolver, jvmSignature.typeTable)?.let {

@@ -57,8 +57,7 @@ import kotlin.reflect.jvm.internal.calls.createAnnotationInstance
 internal val JVM_STATIC = FqName("kotlin.jvm.JvmStatic")
 
 internal fun ClassDescriptor.toJavaClass(): Class<*>? {
-    val source = source
-    return when (source) {
+    return when (val source = source) {
         is KotlinJvmBinarySourceElement -> {
             (source.binaryClass as ReflectKotlinClass).klass
         }
@@ -118,8 +117,7 @@ internal fun DescriptorVisibility.toKVisibility(): KVisibility? =
 
 internal fun Annotated.computeAnnotations(): List<Annotation> =
     annotations.mapNotNull {
-        val source = it.source
-        when (source) {
+        when (val source = it.source) {
             is ReflectAnnotationSource -> source.annotation
             is RuntimeSourceElementFactory.RuntimeSourceElement -> (source.javaElement as? ReflectJavaAnnotation)?.annotation
             else -> it.toAnnotationInstance()
@@ -223,7 +221,7 @@ internal fun <M : MessageLite, D : CallableDescriptor> deserializeToDescriptor(
     typeTable: TypeTable,
     metadataVersion: BinaryVersion,
     createDescriptor: MemberDeserializer.(M) -> D
-): D? {
+): D {
     val moduleData = moduleAnchor.getOrCreateModule()
 
     val typeParameters = when (proto) {

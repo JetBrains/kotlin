@@ -218,7 +218,7 @@ internal sealed class CallerImpl<out M : Member>(
 
         class BoundInstance(field: ReflectField, notNull: Boolean, private val boundReceiver: Any?) : BoundCaller,
             FieldSetter(field, notNull, requiresInstance = false) {
-            override fun call(args: Array<*>): Any? {
+            override fun call(args: Array<*>): Any {
                 checkArguments(args)
                 return member.set(boundReceiver, args.first())
             }
@@ -226,7 +226,7 @@ internal sealed class CallerImpl<out M : Member>(
 
         class BoundJvmStaticInObject(field: ReflectField, notNull: Boolean) : BoundCaller,
             FieldSetter(field, notNull, requiresInstance = false) {
-            override fun call(args: Array<*>): Any? {
+            override fun call(args: Array<*>): Any {
                 checkArguments(args)
                 return member.set(null, args.last())
             }

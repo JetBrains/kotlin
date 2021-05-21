@@ -24,7 +24,8 @@ import java.lang.ref.SoftReference;
 
 public class ReflectProperties {
     public static abstract class Val<T> {
-        private static final Object NULL_VALUE = new Object() {};
+        private static final Object NULL_VALUE = new Object() {
+        };
 
         @SuppressWarnings({"UnusedParameters", "unused"})
         public final T getValue(Object instance, Object metadata) {

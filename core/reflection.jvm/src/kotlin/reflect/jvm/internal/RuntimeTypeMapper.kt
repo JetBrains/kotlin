@@ -16,8 +16,8 @@
 
 package kotlin.reflect.jvm.internal
 
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.CloneableClassScope
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.*
@@ -108,8 +108,8 @@ internal sealed class JvmPropertySignature {
             nameResolver.getString(signature.getter.name) + nameResolver.getString(signature.getter.desc)
         } else {
             val (name, desc) =
-                    JvmProtoBufUtil.getJvmFieldSignature(proto, nameResolver, typeTable)
-                        ?: throw KotlinReflectionInternalError("No field signature for property: $descriptor")
+                JvmProtoBufUtil.getJvmFieldSignature(proto, nameResolver, typeTable)
+                    ?: throw KotlinReflectionInternalError("No field signature for property: $descriptor")
             JvmAbi.getterName(name) + getManglingSuffix() + "()" + desc
         }
 
@@ -218,8 +218,7 @@ internal object RuntimeTypeMapper {
                 }
             }
             is JavaPropertyDescriptor -> {
-                val element = (property.source as? JavaSourceElement)?.javaElement
-                return when (element) {
+                return when (val element = (property.source as? JavaSourceElement)?.javaElement) {
                     is ReflectJavaField -> JvmPropertySignature.JavaField(element.member)
                     is ReflectJavaMethod -> JvmPropertySignature.JavaMethodProperty(
                         element.member,

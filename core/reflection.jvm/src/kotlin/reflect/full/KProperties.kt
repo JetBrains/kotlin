@@ -15,6 +15,7 @@
  */
 
 @file:JvmName("KProperties")
+
 package kotlin.reflect.full
 
 import kotlin.reflect.KProperty1

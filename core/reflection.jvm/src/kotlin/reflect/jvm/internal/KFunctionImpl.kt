@@ -59,8 +59,7 @@ internal class KFunctionImpl private constructor(
     override val name: String get() = descriptor.name.asString()
 
     override val caller: Caller<*> by ReflectProperties.lazy caller@{
-        val jvmSignature = RuntimeTypeMapper.mapSignature(descriptor)
-        val member: Member? = when (jvmSignature) {
+        val member: Member? = when (val jvmSignature = RuntimeTypeMapper.mapSignature(descriptor)) {
             is KotlinConstructor -> {
                 if (isAnnotationConstructor)
                     return@caller AnnotationConstructorCaller(container.jClass, parameters.map { it.name!! }, POSITIONAL_CALL, KOTLIN)

@@ -20,6 +20,9 @@ import org.jetbrains.kotlin.builtins.CompanionObjectMapping
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isMappedIntrinsicCompanionObject
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
+import org.jetbrains.kotlin.descriptors.runtime.structure.functionClassArity
+import org.jetbrains.kotlin.descriptors.runtime.structure.wrapperByPrimitive
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -37,9 +40,6 @@ import kotlin.jvm.internal.TypeIntrinsics
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.DECLARED
 import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.INHERITED
-import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
-import org.jetbrains.kotlin.descriptors.runtime.structure.functionClassArity
-import org.jetbrains.kotlin.descriptors.runtime.structure.wrapperByPrimitive
 
 internal class KClassImpl<T : Any>(
     override val jClass: Class<T>
@@ -130,7 +130,7 @@ internal class KClassImpl<T : Any>(
                     if (superClass !is ClassDescriptor) throw KotlinReflectionInternalError("Supertype not a class: $superClass")
 
                     val superJavaClass = superClass.toJavaClass()
-                            ?: throw KotlinReflectionInternalError("Unsupported superclass of $this: $superClass")
+                        ?: throw KotlinReflectionInternalError("Unsupported superclass of $this: $superClass")
 
                     if (jClass.superclass == superJavaClass) {
                         jClass.genericSuperclass
@@ -142,9 +142,9 @@ internal class KClassImpl<T : Any>(
                 }
             }
             if (!KotlinBuiltIns.isSpecialClassWithNoSupertypes(descriptor) && result.all {
-                val classKind = DescriptorUtils.getClassDescriptorForType(it.type).kind
-                classKind == ClassKind.INTERFACE || classKind == ClassKind.ANNOTATION_CLASS
-            }) {
+                    val classKind = DescriptorUtils.getClassDescriptorForType(it.type).kind
+                    classKind == ClassKind.INTERFACE || classKind == ClassKind.ANNOTATION_CLASS
+                }) {
                 result += KTypeImpl(descriptor.builtIns.anyType) { Any::class.java }
             }
             result.compact()
@@ -305,8 +305,7 @@ internal class KClassImpl<T : Any>(
     }
 
     private fun reportUnresolvedClass(): Nothing {
-        val kind = ReflectKotlinClass.create(jClass)?.classHeader?.kind
-        when (kind) {
+        when (val kind = ReflectKotlinClass.create(jClass)?.classHeader?.kind) {
             KotlinClassHeader.Kind.FILE_FACADE, KotlinClassHeader.Kind.MULTIFILE_CLASS, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
                 throw UnsupportedOperationException(
                     "Packages and file facades are not yet supported in Kotlin reflection. " +

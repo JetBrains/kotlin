@@ -128,9 +128,11 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
         List<KTypeParameter> typeParameters;
         if (container instanceof KClass) {
             typeParameters = ((KClass<?>) container).getTypeParameters();
-        } else if (container instanceof KCallable) {
+        }
+        else if (container instanceof KCallable) {
             typeParameters = ((KCallable<?>) container).getTypeParameters();
-        } else {
+        }
+        else {
             throw new IllegalArgumentException("Type parameter container must be a class or a callable: " + container);
         }
         for (KTypeParameter typeParameter : typeParameters) {

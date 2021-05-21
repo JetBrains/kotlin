@@ -44,7 +44,7 @@ fun <R> Function<R>.reflect(): KFunction<R>? {
 
     val descriptor = deserializeToDescriptor(
         javaClass, proto, nameResolver, TypeTable(proto.typeTable), metadataVersion, MemberDeserializer::loadFunction
-    ) ?: return null
+    )
 
     @Suppress("UNCHECKED_CAST")
     return KFunctionImpl(EmptyContainerForLocal, descriptor) as KFunction<R>
