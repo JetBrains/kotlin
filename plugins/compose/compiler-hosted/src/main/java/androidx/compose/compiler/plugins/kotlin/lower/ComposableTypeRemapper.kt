@@ -91,8 +91,6 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
 
     override fun visitConstructor(declaration: IrConstructor): IrConstructor {
         return super.visitConstructor(declaration).also {
-            WrappedComposableDescriptorPatcher.visitConstructor(it)
-
             it.copyMetadataFrom(declaration)
         }
     }
@@ -105,8 +103,6 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
             symbolRemapper.visitSimpleFunction(declaration)
         }
         return super.visitSimpleFunction(declaration).also {
-            WrappedComposableDescriptorPatcher.visitSimpleFunction(it)
-
             it.correspondingPropertySymbol = declaration.correspondingPropertySymbol
             it.copyMetadataFrom(declaration)
         }
