@@ -767,15 +767,8 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
     private fun generateCFunctionPointer(function: IrSimpleFunction, expression: IrExpression): IrExpression =
             generateWithStubs { generateCFunctionPointer(function, function, expression) }
 
-    // ?.foo()
+    // ?.foo() part
     fun IrBuilderWithScope.irNullOrCall(extensionReceiverExpression: IrExpression, typeArguments: List<IrTypeArgument>, callee: IrSimpleFunctionSymbol): IrExpression =
-            /*irIfThenElse(callee.owner.returnType.makeNullable(),
-                    irEqeqeq(extensionReceiverExpression, irNull()),
-                    irNull(),
-                    irCall(callee).apply {
-                        extensionReceiver = extensionReceiverExpression
-                    }
-            )*/
             irIfThenElse(callee.owner.returnType.makeNullable(),
                     irEqeqeq(extensionReceiverExpression, irNull()),
                     irNull(),
@@ -785,12 +778,7 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
                             putTypeArgument(index, arg.typeOrNull!!)
                         }
                     }
-            ).also{
-                println("NULL OR CALL: ${ir2stringWhole(it)}")
-            }
-            //irCall(callee).apply {
-            //    extensionReceiver = extensionReceiverExpression
-            //}
+            )
 
     fun IrBuilderWithScope.irTmpCall(extensionReceiverExpression: IrExpression, callee: IrSimpleFunctionSymbol): IrExpression =
             irCall(callee).apply {
@@ -1247,8 +1235,6 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
             }
         } else {
             ccall
-        }.also {
-            println("INTEROP LOWERING:\n${ir2stringWhole(it)}")
         }
     }
 
@@ -1333,8 +1319,6 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
             }
         } else {
             ccall
-        }.also {
-            println("INTEROP LOWERING:\n${ir2stringWhole(it)}")
         }
     }
 
