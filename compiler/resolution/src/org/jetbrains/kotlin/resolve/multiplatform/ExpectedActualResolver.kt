@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotationConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility.Compatible
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility.Incompatible
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Compatible
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Incompatible
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
@@ -49,7 +49,7 @@ object ExpectedActualResolver {
         expected: MemberDescriptor,
         platformModule: ModuleDescriptor,
         moduleVisibilityFilter: ModuleFilter = onlyFromThisModule(platformModule)
-    ): Map<Compatibility, List<MemberDescriptor>>? {
+    ): Map<ExpectActualCompatibility<MemberDescriptor>, List<MemberDescriptor>>? {
         return when (expected) {
             is CallableMemberDescriptor -> {
                 expected.findNamesakesFromModule(platformModule, moduleVisibilityFilter).filter { actual ->
@@ -78,7 +78,7 @@ object ExpectedActualResolver {
         actual: MemberDescriptor,
         commonModule: ModuleDescriptor,
         moduleFilter: (ModuleDescriptor) -> Boolean = onlyFromThisModule(commonModule)
-    ): Map<Compatibility, List<MemberDescriptor>>? {
+    ): Map<ExpectActualCompatibility<MemberDescriptor>, List<MemberDescriptor>>? {
         return when (actual) {
             is CallableMemberDescriptor -> {
                 val container = actual.containingDeclaration
@@ -180,79 +180,13 @@ object ExpectedActualResolver {
         return classifiers
     }
 
-    sealed class Compatibility {
-        // For IncompatibilityKind.STRONG `actual` declaration is considered as overload and error reports on expected declaration
-        enum class IncompatibilityKind {
-            WEAK, STRONG
-        }
-
-        // Note that the reason is used in the diagnostic output, see PlatformIncompatibilityDiagnosticRenderer
-        sealed class Incompatible(val reason: String?, val kind: IncompatibilityKind = IncompatibilityKind.WEAK) : Compatibility() {
-            // Callables
-
-            object CallableKind : Incompatible("callable kinds are different (function vs property)", IncompatibilityKind.STRONG)
-
-            object ParameterShape : Incompatible("parameter shapes are different (extension vs non-extension)", IncompatibilityKind.STRONG)
-
-            object ParameterCount : Incompatible("number of value parameters is different", IncompatibilityKind.STRONG)
-            object TypeParameterCount : Incompatible("number of type parameters is different", IncompatibilityKind.STRONG)
-
-            object ParameterTypes : Incompatible("parameter types are different", IncompatibilityKind.STRONG)
-            object ReturnType : Incompatible("return type is different", IncompatibilityKind.STRONG)
-
-            object ParameterNames : Incompatible("parameter names are different")
-            object TypeParameterNames : Incompatible("names of type parameters are different")
-
-            object ValueParameterVararg : Incompatible("some value parameter is vararg in one declaration and non-vararg in the other")
-            object ValueParameterNoinline : Incompatible("some value parameter is noinline in one declaration and not noinline in the other")
-            object ValueParameterCrossinline : Incompatible("some value parameter is crossinline in one declaration and not crossinline in the other")
-
-            // Functions
-
-            object FunctionModifiersDifferent : Incompatible("modifiers are different (suspend)")
-            object FunctionModifiersNotSubset : Incompatible("some modifiers on expected declaration are missing on the actual one (external, infix, inline, operator, tailrec)")
-
-            // Properties
-
-            object PropertyKind : Incompatible("property kinds are different (val vs var)")
-            object PropertyModifiers : Incompatible("modifiers are different (const, lateinit)")
-
-            // Classifiers
-
-            object ClassKind : Incompatible("class kinds are different (class, interface, object, enum, annotation)")
-
-            object ClassModifiers : Incompatible("modifiers are different (companion, inner, inline)")
-
-            object Supertypes : Incompatible("some supertypes are missing in the actual declaration")
-
-            class ClassScopes(
-                val unfulfilled: List<Pair<MemberDescriptor, Map<Incompatible, Collection<MemberDescriptor>>>>
-            ) : Incompatible("some expected members have no actual ones")
-
-            object EnumEntries : Incompatible("some entries from expected enum are missing in the actual enum")
-
-            // Common
-
-            object Modality : Incompatible("modality is different")
-            object Visibility : Incompatible("visibility is different")
-
-            object TypeParameterUpperBounds : Incompatible("upper bounds of type parameters are different", IncompatibilityKind.STRONG)
-            object TypeParameterVariance : Incompatible("declaration-site variances of type parameters are different")
-            object TypeParameterReified : Incompatible("some type parameter is reified in one declaration and non-reified in the other")
-
-            object Unknown : Incompatible(null)
-        }
-
-        object Compatible : Compatibility()
-    }
-
     // a is the declaration in common code, b is the definition in the platform-specific code
     private fun areCompatibleCallables(
         a: CallableMemberDescriptor,
         b: CallableMemberDescriptor,
         platformModule: ModuleDescriptor = b.module,
         parentSubstitutor: Substitutor? = null
-    ): Compatibility {
+    ): ExpectActualCompatibility<MemberDescriptor> {
         assert(a.name == b.name) {
             "This function should be invoked only for declarations with the same name: $a, $b"
         }
@@ -376,7 +310,7 @@ object ExpectedActualResolver {
         b: List<TypeParameterDescriptor>,
         platformModule: ModuleDescriptor,
         substitutor: Substitutor
-    ): Compatibility {
+    ): ExpectActualCompatibility<MemberDescriptor> {
         for (i in a.indices) {
             val aBounds = a[i].upperBounds
             val bBounds = b[i].upperBounds
@@ -393,7 +327,7 @@ object ExpectedActualResolver {
         return Compatible
     }
 
-    private fun areCompatibleFunctions(a: FunctionDescriptor, b: FunctionDescriptor): Compatibility {
+    private fun areCompatibleFunctions(a: FunctionDescriptor, b: FunctionDescriptor): ExpectActualCompatibility<MemberDescriptor> {
         if (!equalBy(a, b) { f -> f.isSuspend }) return Incompatible.FunctionModifiersDifferent
 
         if (a.isExternal && !b.isExternal ||
@@ -405,14 +339,14 @@ object ExpectedActualResolver {
         return Compatible
     }
 
-    private fun areCompatibleProperties(a: PropertyDescriptor, b: PropertyDescriptor): Compatibility {
+    private fun areCompatibleProperties(a: PropertyDescriptor, b: PropertyDescriptor): ExpectActualCompatibility<MemberDescriptor> {
         if (!equalBy(a, b) { p -> p.isVar }) return Incompatible.PropertyKind
         if (!equalBy(a, b) { p -> listOf(p.isConst, p.isLateInit) }) return Incompatible.PropertyModifiers
 
         return Compatible
     }
 
-    private fun areCompatibleClassifiers(a: ClassDescriptor, other: ClassifierDescriptor): Compatibility {
+    private fun areCompatibleClassifiers(a: ClassDescriptor, other: ClassifierDescriptor): ExpectActualCompatibility<MemberDescriptor> {
         // Can't check FQ names here because nested expected class may be implemented via actual typealias's expansion with the other FQ name
         assert(a.name == other.name) { "This function should be invoked only for declarations with the same name: $a, $other" }
 
@@ -476,8 +410,8 @@ object ExpectedActualResolver {
         b: ClassDescriptor,
         platformModule: ModuleDescriptor,
         substitutor: Substitutor
-    ): Compatibility {
-        val unfulfilled = arrayListOf<Pair<MemberDescriptor, Map<Incompatible, MutableCollection<MemberDescriptor>>>>()
+    ): ExpectActualCompatibility<MemberDescriptor> {
+        val unfulfilled = arrayListOf<Pair<MemberDescriptor, Map<Incompatible<MemberDescriptor>, MutableCollection<MemberDescriptor>>>>()
 
         val bMembersByName = b.getMembers().groupBy { it.name }
 
@@ -500,7 +434,7 @@ object ExpectedActualResolver {
             }
             if (mapping.values.any { it == Compatible }) continue
 
-            val incompatibilityMap = mutableMapOf<Incompatible, MutableCollection<MemberDescriptor>>()
+            val incompatibilityMap = mutableMapOf<Incompatible<MemberDescriptor>, MutableCollection<MemberDescriptor>>()
             for ((descriptor, compatibility) in mapping) {
                 when (compatibility) {
                     Compatible -> continue@outer

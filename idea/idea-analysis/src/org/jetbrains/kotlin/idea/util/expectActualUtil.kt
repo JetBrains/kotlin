@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 
 internal fun MemberDescriptor.expectedDescriptors() =
@@ -74,7 +75,7 @@ fun ModuleDescriptor.hasDeclarationOf(descriptor: MemberDescriptor) = declaratio
 private fun ModuleDescriptor.declarationOf(descriptor: MemberDescriptor): DeclarationDescriptor? =
     with(ExpectedActualResolver) {
         val expectedCompatibilityMap = findExpectedForActual(descriptor, this@declarationOf)
-        expectedCompatibilityMap?.get(ExpectedActualResolver.Compatibility.Compatible)?.firstOrNull()
+        expectedCompatibilityMap?.get(ExpectActualCompatibility.Compatible)?.firstOrNull()
             ?: expectedCompatibilityMap?.values?.flatten()?.firstOrNull()
     }
 
