@@ -315,6 +315,7 @@ data class JavaTypeAttributes(
     val upperBoundOfTypeParameter: TypeParameterDescriptor? = null
 ) {
     fun withFlexibility(flexibility: JavaTypeFlexibility) = copy(flexibility = flexibility)
+    fun withTypeParameter(upperBoundOfTypeParameter: TypeParameterDescriptor) = copy(upperBoundOfTypeParameter = upperBoundOfTypeParameter)
 }
 
 enum class JavaTypeFlexibility {
@@ -346,6 +347,8 @@ internal fun TypeParameterDescriptor.getErasedUpperBound(
 ): KotlinType {
     if (this === typeAttr.upperBoundOfTypeParameter) return defaultValue()
 
+    val newTypeAttr = if (typeAttr.upperBoundOfTypeParameter == null) typeAttr.withTypeParameter(this) else typeAttr
+
     /*
      * We should do erasure of containing type parameters with their erasure to avoid creating inconsistent types.
      * E.g. for `class Foo<T: Foo<B>, B>`, we'd have erasure for lower bound: Foo<Foo<*>, Any>,
@@ -353,12 +356,16 @@ internal fun TypeParameterDescriptor.getErasedUpperBound(
      * So we should substitute erasure of the corresponding type parameter: `Foo<Foo<Any>, Any>` or `Foo<Foo<*>, *>`.
      */
     val erasedUpperBounds = defaultType.extractTypeParametersFromUpperBounds(typeAttr.upperBoundOfTypeParameter).associate {
-        it.typeConstructor to RawSubstitution.computeProjection(
-            this,
-            // if erasure happens due to invalid arguments number, use star projections instead
-            if (isRaw) typeAttr else typeAttr.withFlexibility(INFLEXIBLE),
-            it.getErasedUpperBound(isRaw, typeAttr)
-        )
+        val boundProjection = if (it !== typeAttr.upperBoundOfTypeParameter) {
+            RawSubstitution.computeProjection(
+                it,
+                // if erasure happens due to invalid arguments number, use star projections instead
+                if (isRaw) typeAttr else typeAttr.withFlexibility(INFLEXIBLE),
+                if (it !== typeAttr.upperBoundOfTypeParameter) it.getErasedUpperBound(isRaw, newTypeAttr) else it.starProjectionType()
+            )
+        } else makeStarProjection(it, typeAttr)
+
+        it.typeConstructor to boundProjection
     }
     val erasedUpperBoundsSubstitutor = TypeSubstitutor.create(TypeConstructorSubstitution.createByConstructorsMap(erasedUpperBounds))
 
