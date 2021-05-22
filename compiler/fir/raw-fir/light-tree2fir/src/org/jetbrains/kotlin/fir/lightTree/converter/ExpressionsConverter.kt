@@ -86,7 +86,7 @@ class ExpressionsConverter(
                 ANNOTATED_EXPRESSION -> convertAnnotatedExpression(expression)
                 CLASS_LITERAL_EXPRESSION -> convertClassLiteralExpression(expression)
                 CALLABLE_REFERENCE_EXPRESSION -> convertCallableReferenceExpression(expression)
-                in qualifiedAccessTokens -> convertQualifiedExpression(expression)
+                in QUALIFIED_ACCESS -> convertQualifiedExpression(expression)
                 CALL_EXPRESSION -> convertCallExpression(expression)
                 WHEN -> convertWhenExpression(expression)
                 ARRAY_ACCESS_EXPRESSION -> convertArrayAccessExpression(expression)

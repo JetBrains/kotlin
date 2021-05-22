@@ -614,7 +614,11 @@ object PositioningStrategies {
     @JvmField
     val VALUE_ARGUMENTS: PositioningStrategy<KtElement> = object : PositioningStrategy<KtElement>() {
         override fun mark(element: KtElement): List<TextRange> {
-            return markElement(element.findDescendantOfType<KtValueArgumentList>()?.rightParenthesis ?: element)
+            val qualifiedAccess = when (element) {
+                is KtQualifiedExpression -> element.selectorExpression ?: element
+                else -> element
+            }
+            return markElement(qualifiedAccess.findDescendantOfType<KtValueArgumentList>()?.rightParenthesis ?: qualifiedAccess)
         }
     }
 

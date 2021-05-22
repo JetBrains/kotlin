@@ -40,8 +40,6 @@ private val expressionSet = listOf(
     FUN
 )
 
-val qualifiedAccessTokens = TokenSet.create(DOT_QUALIFIED_EXPRESSION, SAFE_ACCESS_EXPRESSION)
-
 fun String?.nameAsSafeName(defaultName: String = ""): Name {
     return when {
         this != null -> Name.identifier(this.replace("`", ""))
