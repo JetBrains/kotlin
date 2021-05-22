@@ -64,7 +64,6 @@ org.jetbrains.kotlin.idea.quickfix.RemoveUnusedValueFix
 org.jetbrains.kotlin.idea.quickfix.RenameModToRemFix
 org.jetbrains.kotlin.idea.quickfix.RenameParameterToMatchOverriddenMethodFix
 org.jetbrains.kotlin.idea.quickfix.RenameUnresolvedReferenceFix
-org.jetbrains.kotlin.idea.quickfix.ReplaceInfixOrOperatorCallFix
 org.jetbrains.kotlin.idea.quickfix.replaceWith.DeprecatedSymbolUsageFix
 org.jetbrains.kotlin.idea.quickfix.replaceWith.DeprecatedSymbolUsageInWholeProjectFix
 org.jetbrains.kotlin.idea.quickfix.RestrictedRetentionForExpressionAnnotationFactory$AddSourceRetentionFix
