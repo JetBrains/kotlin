@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
-import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverValue
@@ -23,7 +23,8 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 class ReplaceInfixOrOperatorCallFix(
     element: KtExpression,
-    private val notNullNeeded: Boolean
+    private val notNullNeeded: Boolean,
+    private val binaryOperatorName: String = ""
 ) : KotlinQuickFixAction<KtExpression>(element) {
 
     override fun getText() = KotlinBundle.message("replace.with.safe.call")
@@ -58,20 +59,18 @@ class ReplaceInfixOrOperatorCallFix(
                 replacement = element.replace(newExpression)
             }
             is KtBinaryExpression -> {
-                replacement = if (element.operationToken == KtTokens.IDENTIFIER) {
-                    val newExpression = psiFactory.createExpressionByPattern(
-                        "$0?.$1($2)$elvis", element.left ?: return, element.operationReference.text, element.right ?: return
-                    )
-                    element.replace(newExpression)
+                val left = element.left ?: return
+                val right = element.right ?: return
+
+                // `a += b` is replaced with `a = a?.plus(b)` when the += operator is not available
+                val isNormalAssignment = element.operationToken in KtTokens.AUGMENTED_ASSIGNMENTS &&
+                        Name.identifier(binaryOperatorName) !in OperatorConventions.ASSIGNMENT_OPERATIONS.values
+                val newExpression = if (isNormalAssignment) {
+                    psiFactory.createExpressionByPattern("$0 = $0?.$1($2)", left, binaryOperatorName, right)
                 } else {
-                    val nameExpression = OperatorToFunctionIntention.convert(element).second
-                    val callExpression = nameExpression.parent as KtCallExpression
-                    val qualifiedExpression = callExpression.parent as KtDotQualifiedExpression
-                    val safeExpression = psiFactory.createExpressionByPattern(
-                        "$0?.$1$elvis", qualifiedExpression.receiverExpression, callExpression
-                    )
-                    qualifiedExpression.replace(safeExpression)
+                    psiFactory.createExpressionByPattern("$0?.$1($2)$elvis", left, binaryOperatorName, right)
                 }
+                replacement = element.replace(newExpression)
             }
         }
         if (elvis.isNotEmpty()) {
@@ -95,7 +94,17 @@ class ReplaceInfixOrOperatorCallFix(
                         parent.left == null || parent.right == null -> null
                         parent.operationToken == KtTokens.EQ -> null
                         parent.operationToken in OperatorConventions.COMPARISON_OPERATIONS -> null
-                        else -> ReplaceInfixOrOperatorCallFix(parent, parent.shouldHaveNotNullType())
+                        else -> {
+                            val binaryOperatorName = if (parent.operationToken == KtTokens.IDENTIFIER) {
+                                // Get name of infix function call
+                                parent.operationReference.text
+                            } else {
+                                parent.resolveToCall(BodyResolveMode.FULL)?.candidateDescriptor?.name?.asString()
+                            }
+                            binaryOperatorName?.let {
+                                ReplaceInfixOrOperatorCallFix(parent, parent.shouldHaveNotNullType(), binaryOperatorName)
+                            }
+                        }
                     }
                 }
                 is KtCallExpression -> {
