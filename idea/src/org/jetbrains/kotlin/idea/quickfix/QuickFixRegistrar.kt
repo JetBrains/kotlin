@@ -266,10 +266,10 @@ class QuickFixRegistrar : QuickFixContributor {
         UNSAFE_INFIX_CALL.registerFactory(UnsafeCallExclExclFixFactory)
         UNSAFE_OPERATOR_CALL.registerFactory(UnsafeCallExclExclFixFactory)
         UNNECESSARY_NOT_NULL_ASSERTION.registerFactory(RemoveExclExclCallFix)
-        UNSAFE_INFIX_CALL.registerFactory(ReplaceInfixOrOperatorCallFix)
-        UNSAFE_OPERATOR_CALL.registerFactory(ReplaceInfixOrOperatorCallFix)
-        UNSAFE_CALL.registerFactory(ReplaceInfixOrOperatorCallFix) // [] only
-        UNSAFE_IMPLICIT_INVOKE_CALL.registerFactory(ReplaceInfixOrOperatorCallFix)
+        UNSAFE_INFIX_CALL.registerFactory(ReplaceInfixOrOperatorCallFixFactory)
+        UNSAFE_OPERATOR_CALL.registerFactory(ReplaceInfixOrOperatorCallFixFactory)
+        UNSAFE_CALL.registerFactory(ReplaceInfixOrOperatorCallFixFactory) // [] only
+        UNSAFE_IMPLICIT_INVOKE_CALL.registerFactory(ReplaceInfixOrOperatorCallFixFactory)
         UNSAFE_CALL.registerFactory(ReplaceWithSafeCallForScopeFunctionFixFactory)
 
         AMBIGUOUS_ANONYMOUS_TYPE_INFERRED.registerActions(SpecifyTypeExplicitlyFix())
