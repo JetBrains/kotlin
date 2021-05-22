@@ -23,7 +23,7 @@ configurations.implementation {
 
 dependencies {
     implementation(kotlinStdlib())
-    implementation(project(":kotlin-scripting-dependencies"))
+    api(project(":kotlin-scripting-dependencies"))
     implementation("org.eclipse.aether:aether-connector-basic:1.1.0")
     implementation("org.eclipse.aether:aether-transport-wagon:1.1.0")
     implementation("org.eclipse.aether:aether-transport-file:1.1.0")
