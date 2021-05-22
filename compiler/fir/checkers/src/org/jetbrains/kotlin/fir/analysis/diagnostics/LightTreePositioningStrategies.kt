@@ -409,12 +409,15 @@ object LightTreePositioningStrategies {
             endOffset: Int,
             tree: FlyweightCapableTreeStructure<LighterASTNode>
         ): List<TextRange> {
-            //PSI counterpart simply search for first RPAR descendant, but this one is more correct
-            return tree.findDescendantByType(node, KtNodeTypes.VALUE_ARGUMENT_LIST)?.let { valueArgumentList ->
+            val nodeToStart = when (node.tokenType) {
+                in KtTokens.QUALIFIED_ACCESS -> tree.findLastChildByType(node, KtNodeTypes.CALL_EXPRESSION) ?: node
+                else -> node
+            }
+            return tree.findDescendantByType(nodeToStart, KtNodeTypes.VALUE_ARGUMENT_LIST)?.let { valueArgumentList ->
                 tree.findLastChildByType(valueArgumentList, KtTokens.RPAR)?.let { rpar ->
                     markElement(rpar, startOffset, endOffset, tree, node)
                 }
-            } ?: markElement(node, startOffset, endOffset, tree, node)
+            } ?: markElement(nodeToStart, startOffset, endOffset, tree, node)
         }
     }
 
@@ -454,7 +457,7 @@ object LightTreePositioningStrategies {
                     return markElement(it, startOffset, endOffset, tree, node)
                 }
             }
-            if (node.tokenType != KtNodeTypes.DOT_QUALIFIED_EXPRESSION && node.tokenType != KtNodeTypes.SAFE_ACCESS_EXPRESSION) {
+            if (node.tokenType !in KtTokens.QUALIFIED_ACCESS) {
                 return super.mark(node, startOffset, endOffset, tree)
             }
             val selector = tree.selector(node)
