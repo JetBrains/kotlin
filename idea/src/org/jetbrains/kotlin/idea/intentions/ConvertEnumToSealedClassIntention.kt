@@ -13,8 +13,10 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.getOrCreateCompanionObject
+import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.refactoring.withExpectedActuals
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -36,6 +38,8 @@ class ConvertEnumToSealedClassIntention : SelfTargetingRangeIntention<KtClass>(
     override fun applyTo(element: KtClass, editor: Editor?) {
         val name = element.name ?: return
         if (name.isEmpty()) return
+
+        val isJvmPlatform = element.platform.isJvm()
 
         for (klass in element.withExpectedActuals()) {
             klass as? KtClass ?: continue
@@ -78,12 +82,14 @@ class ConvertEnumToSealedClassIntention : SelfTargetingRangeIntention<KtClass>(
                 objects.add(obj)
             }
 
-            val enumEntryNames = objects.map { it.nameAsSafeName.asString() }
-            val targetClassName = klass.name
-            if (enumEntryNames.isNotEmpty() && targetClassName != null) {
-                val companionObject = klass.getOrCreateCompanionObject()
-                companionObject.addValuesFunction(targetClassName, enumEntryNames, psiFactory)
-                companionObject.addValueOfFunction(targetClassName, classDescriptor, enumEntryNames, psiFactory)
+            if (isJvmPlatform) {
+                val enumEntryNames = objects.map { it.nameAsSafeName.asString() }
+                val targetClassName = klass.name
+                if (enumEntryNames.isNotEmpty() && targetClassName != null) {
+                    val companionObject = klass.getOrCreateCompanionObject()
+                    companionObject.addValuesFunction(targetClassName, enumEntryNames, psiFactory)
+                    companionObject.addValueOfFunction(targetClassName, classDescriptor, enumEntryNames, psiFactory)
+                }
             }
 
             klass.body?.let { body ->
