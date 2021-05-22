@@ -86,9 +86,12 @@ fun <S : IrSymbol, T : IrOverridableDeclaration<S>> Collection<T>.collectAndFilt
     return realOverrides.values.toSet()
 }
 
-fun Collection<IrOverridableMember>.collectAndFilterRealOverrides(): Set<IrOverridableMember> =
-    @Suppress("UNCHECKED_CAST")
-    (this as Collection<IrOverridableDeclaration<*>>).collectAndFilterRealOverrides()
+@Suppress("UNCHECKED_CAST")
+fun Collection<IrOverridableMember>.collectAndFilterRealOverrides(): Set<IrOverridableMember> = when {
+    all { it is IrSimpleFunction } -> (this as Collection<IrSimpleFunction>).collectAndFilterRealOverrides()
+    all { it is IrProperty } -> (this as Collection<IrProperty>).collectAndFilterRealOverrides()
+    else -> error("all members should be of the same kind, got ${map { it.render() }}")
+}
 
 // TODO: use this implementation instead of any other
 fun <S : IrSymbol, T : IrOverridableDeclaration<S>> T.resolveFakeOverride(
