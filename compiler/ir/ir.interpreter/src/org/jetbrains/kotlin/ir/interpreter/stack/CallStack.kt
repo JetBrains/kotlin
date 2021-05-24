@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.interpreter.CompoundInstruction
 import org.jetbrains.kotlin.ir.interpreter.Instruction
 import org.jetbrains.kotlin.ir.interpreter.SimpleInstruction
+import org.jetbrains.kotlin.ir.interpreter.handleAndDropResult
 import org.jetbrains.kotlin.ir.interpreter.state.State
 import org.jetbrains.kotlin.ir.interpreter.state.StateWithClosure
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -61,7 +62,7 @@ internal class CallStack {
                     dropSubFrame()
                     pushState(result)
                     addInstruction(SimpleInstruction(irReturn))
-                    addInstruction(CompoundInstruction(frameOwner.finallyExpression))
+                    frameOwner.finallyExpression?.handleAndDropResult(this)
                     return
                 }
                 is IrCatch -> {
@@ -69,7 +70,7 @@ internal class CallStack {
                     dropSubFrame()
                     pushState(result)
                     addInstruction(SimpleInstruction(irReturn))
-                    addInstruction(CompoundInstruction(tryBlock.finallyExpression))
+                    tryBlock.finallyExpression?.handleAndDropResult(this)
                     return
                 }
                 else -> {

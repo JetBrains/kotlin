@@ -90,7 +90,6 @@ class IrInterpreter private constructor(
                 incrementAndCheckCommands()
             }
 
-            if (callStack.peekState() == null) callStack.pushState(getUnitState())
             callStack.popState().apply { callStack.dropFrame() }
         }
     }
@@ -106,7 +105,8 @@ class IrInterpreter private constructor(
             is IrValueParameter -> interpretValueParameter(element)
             is IrInstanceInitializerCall -> interpretInstanceInitializerCall(element)
             is IrField -> interpretField(element)
-            is IrBlock -> callStack.dropSubFrame()
+            is IrBody -> interpretBody(element)
+            is IrBlock -> interpretBlock(element)
             is IrReturn -> interpretReturn(element)
             is IrSetField -> interpretSetField(element)
             is IrGetField -> interpretGetField(element)
@@ -140,7 +140,6 @@ class IrInterpreter private constructor(
 
     private fun interpretFunction(function: IrSimpleFunction) {
         function.tryResetFunctionBody()
-        if (callStack.peekState() == null) callStack.pushState(getUnitState()) // implicit Unit return
         if (function.checkCast(environment)) callStack.dropFrameAndCopyResult()
     }
 
@@ -235,6 +234,17 @@ class IrInterpreter private constructor(
         val receiver = irClass.thisReceiver!!.symbol
         val receiverState = callStack.getState(receiver)
         receiverState.setField(Variable(field.correspondingPropertySymbol!!, callStack.popState()))
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    private fun interpretBody(body: IrBody) {
+        if (callStack.peekState() == null) callStack.pushState(getUnitState()) // implicit Unit result
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    private fun interpretBlock(block: IrBlock) {
+        callStack.dropSubFrame()
+        if (callStack.peekState() == null) callStack.pushState(getUnitState()) // implicit Unit result
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -533,7 +543,7 @@ class IrInterpreter private constructor(
             }
             callStack.addInstruction(CustomInstruction(checkUnhandledException))
         }
-        callStack.addInstruction(CompoundInstruction(element.finallyExpression))
+        element.finallyExpression?.handleAndDropResult(callStack)
     }
 
     private fun interpretThrow(expression: IrThrow) {

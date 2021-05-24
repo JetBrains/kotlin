@@ -332,6 +332,12 @@ public class IrInterpreterAfterFir2IrTestGenerated extends AbstractIrInterpreter
     }
 
     @Test
+    @TestMetadata("unitResult.kt")
+    public void testUnitResult() throws Exception {
+        runTest("compiler/testData/ir/interpreter/unitResult.kt");
+    }
+
+    @Test
     @TestMetadata("vararg.kt")
     public void testVararg() throws Exception {
         runTest("compiler/testData/ir/interpreter/vararg.kt");

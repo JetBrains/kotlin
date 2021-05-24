@@ -30,6 +30,15 @@ fun outerReturnTryFinally(n: Int): Int {
 }
 
 @CompileTimeCalculation
+fun outerReturnUnitTryFinally(n: Int): Int {
+    return try {
+        n
+    } finally {
+        Unit
+    }
+}
+
+@CompileTimeCalculation
 fun exceptionInFinally(divideBy: Int): Int {
     return try {
         0
@@ -191,25 +200,26 @@ fun tryTryFinally(): Int {
 
 const val a1 = <!EVALUATED: `0`!>tryFinally(0)<!>
 const val a2 = <!EVALUATED: `10`!>tryFinally(10)<!>
-//const val a3 = outerReturnTryFinally(10) TODO -> `10`
+const val a3 = <!EVALUATED: `10`!>outerReturnTryFinally(10)<!>
+const val a4 = <!EVALUATED: `10`!>outerReturnUnitTryFinally(10)<!>
 const val b1 = <!EVALUATED: `Inside try block; Inside finally; Outside try; `!>tryFinally2()<!>
 const val c1 = <!WAS_NOT_EVALUATED: `
 Exception java.lang.IllegalArgumentException: In finally
-	at TryFinallyKt.tryCatchFinally(tryFinally.kt:48)
-	at TryFinallyKt.<clinit>(tryFinally.kt:196)`!>tryCatchFinally()<!>
+	at TryFinallyKt.tryCatchFinally(tryFinally.kt:57)
+	at TryFinallyKt.<clinit>(tryFinally.kt:206)`!>tryCatchFinally()<!>
 const val c2 = <!EVALUATED: `0`!>exceptionInFinally(10)<!>
 const val c3 = <!WAS_NOT_EVALUATED: `
 Exception java.lang.ArithmeticException: / by zero
-	at TryFinallyKt.exceptionInFinally(tryFinally.kt:37)
-	at TryFinallyKt.<clinit>(tryFinally.kt:198)`!>exceptionInFinally(0)<!>
-//const val d1 = returnTryFinally() TODO -> `OK`
+	at TryFinallyKt.exceptionInFinally(tryFinally.kt:46)
+	at TryFinallyKt.<clinit>(tryFinally.kt:208)`!>exceptionInFinally(0)<!>
+const val d1 = <!EVALUATED: `OK`!>returnTryFinally()<!>
 const val d2 = <!EVALUATED: `1`!>tryCatchReturnFinally(10)<!>
 const val d3 = <!EVALUATED: `0`!>tryCatchReturnFinally(0)<!>
 const val e1 = <!EVALUATED: `10`!>tryFinallyContinue()<!>
 const val e2 = <!EVALUATED: `1`!>tryFinallyBreak()<!>
 const val e3 = <!EVALUATED: `10`!>tryCatchFinallyContinue(0)<!>
-//const val f1 = innerTryFinally(10) TODO -> `1`
+const val f1 = <!EVALUATED: `1`!>innerTryFinally(10)<!>
 const val f2 = <!EVALUATED: `20`!>innerTryFinallyReturn(10)<!>
-//const val g1 = tryCatch(10) TODO -> `0`
-//const val g2 = tryCatch(0) TODO -> `-1`
-//const val h1 = tryTryFinally() TODO -> `-1`
+const val g1 = <!EVALUATED: `0`!>tryCatch(10)<!>
+const val g2 = <!EVALUATED: `-1`!>tryCatch(0)<!>
+const val h1 = <!EVALUATED: `-1`!>tryTryFinally()<!>
