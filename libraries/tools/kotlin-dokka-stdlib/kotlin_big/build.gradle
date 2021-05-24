@@ -1,0 +1,118 @@
+apply plugin: 'de.undercouch.download'
+apply plugin: 'base'
+
+configurations {
+  kotlin_src
+  kotlin_jvm
+}
+
+//final String kotlin_big_build_configuration = 'Kotlin_1360_Compiler'
+final String kotlin_big_version = findProperty("kotlinLocalVersionOverride") ?: '1.5.0'
+final String kotlin_big_build = "1.5.0-release-749"
+
+repositories {
+  if (findProperty("kotlinLocalVersionOverride") != null) mavenLocal()
+//  maven { url = "https://teamcity.jetbrains.com/guestAuth/repository/download/$kotlin_big_build_configuration/$kotlin_big_build/maven" }
+  mavenCentral()
+}
+
+final List<String> modules = [
+        "kotlin-stdlib",
+        "kotlin-stdlib-common",
+        "kotlin-stdlib-jdk7",
+        "kotlin-stdlib-jdk8",
+        "kotlin-stdlib-js",
+        "kotlin-test",
+        "kotlin-test-js",
+        "kotlin-test-junit5",
+        "kotlin-test-junit",
+        "kotlin-test-testng",
+        "kotlin-test-common",
+]
+
+
+task extractSources() { }
+task extractLibs() { }
+
+
+final File kotlin_lib_sources = new File(buildDir, 'sources')
+final File kotlin_lib_binaries = new File(buildDir, 'libs')
+
+modules.forEach { module ->
+  final String src = "kotlin_src_$module"
+  final String lib = "kotlin_lib_$module"
+
+  final Configuration conf_src = configurations.create(src)
+  final Configuration  lib_src = configurations.create(lib)
+
+  if (module == "kotlin-test-js") {
+    conf_src.attributes {attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, "kotlin-runtime")) }
+    lib_src.attributes {attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, "kotlin-runtime")) }
+  }
+
+  dependencies {
+    "$src"(group: 'org.jetbrains.kotlin', name: module, version: kotlin_big_version, classifier: 'sources') { transitive = false }
+    "$lib"(group: 'org.jetbrains.kotlin', name: module, version: kotlin_big_version)
+  }
+
+  final Task sourcesTask = tasks.create("extract_source_$module", Sync) {
+    dependsOn conf_src
+
+    from { conf_src.collect { zipTree(it) } }
+    into "$kotlin_lib_sources/$module"
+  }
+
+  final Task libsTask = tasks.create("extract_lib_$module", Sync) {
+    dependsOn lib_src
+
+    from { lib_src }
+    into "$kotlin_lib_binaries/$module"
+  }
+
+  extractSources.dependsOn sourcesTask
+  extractLibs.dependsOn libsTask
+}
+
+
+final File kotlinSourcesZip = new File(buildDir, "kotlin-${kotlin_big_build}.zip")
+final File kotlinTargetDir = new File(buildDir, "sources/kotlin")
+final String kotlinUrl = "https://github.com/JetBrains/kotlin/archive/build-${kotlin_big_build}.zip"
+
+task downloadKotlinSources(type: Download) {
+  src kotlinUrl
+  dest kotlinSourcesZip
+  overwrite false
+}
+
+task extractKotlinSources(type: Sync, dependsOn: downloadKotlinSources) {
+  String pathPrefix = ""
+
+  if (project.findProperty("kotlinLocalRoot") != null) {
+    from project.property("kotlinLocalRoot")
+    exclude "**/build"
+    exclude "**/node_modules"
+  } else {
+    from zipTree(kotlinSourcesZip)
+    pathPrefix = "*/"
+
+    eachFile { FileCopyDetails file ->
+      //assume all files in the folder
+      file.path = file.path.split("/", 2)[1]
+    }
+  }
+
+  include "${pathPrefix}libraries/stdlib/**"
+  include "${pathPrefix}libraries/kotlin.test/**"
+  include "${pathPrefix}core/builtins/**"
+  include "${pathPrefix}core/reflection.jvm/**"
+
+  exclude "${pathPrefix}core/builtins/src/kotlin/reflect/"
+
+  includeEmptyDirs = false
+
+  into kotlinTargetDir
+}
+
+project.extensions.kotlin_root = kotlinTargetDir
+project.extensions.kotlin_sources = kotlin_lib_sources
+project.extensions.kotlin_libs = kotlin_lib_binaries
