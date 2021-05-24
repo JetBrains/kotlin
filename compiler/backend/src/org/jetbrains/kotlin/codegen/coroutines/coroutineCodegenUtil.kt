@@ -189,7 +189,7 @@ fun ResolvedCall<*>.replaceSuspensionFunctionWithRealDescriptor(
         Pair(it, typeArguments[candidateDescriptor.typeParameters[it.index]]!!.asTypeProjection())
     }.toMap()
 
-    newCall.setResultingSubstitutor(
+    newCall.setSubstitutor(
         TypeConstructorSubstitution.createByParametersMap(newTypeArguments).buildSubstitutor()
     )
 

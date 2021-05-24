@@ -477,7 +477,7 @@ class ResolvedAtomCompleter(
             null, temporaryTrace, tracing, MutableDataFlowInfoForArguments.WithoutArgumentsCheck(DataFlowInfo.EMPTY)
         )
 
-        resolvedCall.setResultingSubstitutor(resultTypeInfo.substitutor)
+        resolvedCall.setSubstitutor(resultTypeInfo.substitutor)
 
         recordArgumentAdaptationForCallableReference(resolvedCall, callableCandidate.callableReferenceAdaptation)
 

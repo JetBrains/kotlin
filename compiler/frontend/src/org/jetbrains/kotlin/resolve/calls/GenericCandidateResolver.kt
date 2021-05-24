@@ -353,7 +353,7 @@ class GenericCandidateResolver(
             resultingSystem.resultingSubstitutor.replaceWithContravariantApproximatingSubstitution()
         } else resultingSystem.resultingSubstitutor
 
-        resolvedCall.setResultingSubstitutor(resultingSubstitutor)
+        resolvedCall.setSubstitutor(resultingSubstitutor)
     }
 
     // See KT-5385

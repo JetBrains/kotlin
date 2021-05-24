@@ -195,22 +195,15 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
         return resultingDescriptor == null ? candidateDescriptor : resultingDescriptor;
     }
 
-    @Override
     @SuppressWarnings("unchecked")
     public void setResultingSubstitutor(@NotNull TypeSubstitutor substitutor) {
-        D descriptorToSubstitute = resultingDescriptor != null && DescriptorUtilsKt.shouldBeUsedToSubstitute(resultingDescriptor)
+        D descriptorToSubstitute = resultingDescriptor != null && DescriptorUtilsKt.shouldBeSubstituteWithStubTypes(resultingDescriptor)
                                    ? resultingDescriptor
                                    : candidateDescriptor;
         resultingDescriptor = (D) descriptorToSubstitute.substitute(substitutor);
-        //noinspection ConstantConditions
-        if (resultingDescriptor == null) {
-            throw new AssertionError(
-                    "resultingDescriptor shouldn't be null:\n" +
-                    "candidateDescriptor: " + DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.render(candidateDescriptor) + "\n" +
-                    "substitution: " + substitutor.getSubstitution()
-            );
-        }
+    }
 
+    public void setResolvedCallSubstitutor(@NotNull TypeSubstitutor substitutor) {
         for (TypeParameterDescriptor typeParameter : candidateDescriptor.getTypeParameters()) {
             TypeProjection typeArgumentProjection = substitutor.getSubstitution().get(typeParameter.getDefaultType());
             if (typeArgumentProjection != null) {
@@ -255,6 +248,12 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
             assert substitutedVersion != null : valueParameterDescriptor;
             argumentToParameterMap.put(entry.getKey(), argumentMatch.replaceValueParameter(substitutedVersion));
         }
+    }
+
+    @Override
+    public void setSubstitutor(@NotNull TypeSubstitutor substitutor) {
+        setResultingSubstitutor(substitutor);
+        setResolvedCallSubstitutor(substitutor);
     }
 
     @Override

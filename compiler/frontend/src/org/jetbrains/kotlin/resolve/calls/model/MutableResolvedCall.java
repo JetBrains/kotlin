@@ -64,7 +64,7 @@ public interface MutableResolvedCall<D extends CallableDescriptor> extends Resol
 
     void setConstraintSystem(@NotNull ConstraintSystem constraintSystem);
 
-    void setResultingSubstitutor(@NotNull TypeSubstitutor substitutor);
+    void setSubstitutor(@NotNull TypeSubstitutor substitutor);
 
     @Nullable
     TypeSubstitutor getKnownTypeParametersSubstitutor();

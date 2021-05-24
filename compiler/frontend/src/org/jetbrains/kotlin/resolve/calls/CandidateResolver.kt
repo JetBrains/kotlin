@@ -108,7 +108,7 @@ class CandidateResolver(
     private fun CallCandidateResolutionContext<*>.processTypeArguments() = check {
         val ktTypeArguments = call.typeArguments
         if (candidateCall.knownTypeParametersSubstitutor != null) {
-            candidateCall.setResultingSubstitutor(candidateCall.knownTypeParametersSubstitutor!!)
+            candidateCall.setSubstitutor(candidateCall.knownTypeParametersSubstitutor!!)
         } else if (ktTypeArguments.isNotEmpty()) {
             // Explicit type arguments passed
 
@@ -137,7 +137,7 @@ class CandidateResolver(
                 checkGenericBoundsInAFunctionCall(ktTypeArguments, typeArguments, candidateDescriptor, substitutor, trace)
             }
 
-            candidateCall.setResultingSubstitutor(substitutor)
+            candidateCall.setSubstitutor(substitutor)
         }
     }
 

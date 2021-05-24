@@ -37,11 +37,9 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstituto
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeProjection
-import org.jetbrains.kotlin.types.TypeSubstitution
-import org.jetbrains.kotlin.types.isError
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
+import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.sure
 
@@ -335,3 +333,9 @@ fun NewTypeSubstitutor.toOldSubstitution(): TypeSubstitution = object : TypeSubs
         return isEmpty
     }
 }
+
+fun <D : CallableDescriptor> ResolvedCallImpl<D>.shouldBeSubstituteWithStubTypes() =
+    typeArguments.any { argument -> argument.value.contains { it is StubTypeForBuilderInference } }
+            || dispatchReceiver?.type?.contains { it is StubTypeForBuilderInference } == true
+            || extensionReceiver?.type?.contains { it is StubTypeForBuilderInference } == true
+            || valueArguments.any { argument -> argument.key.type.contains { it is StubTypeForBuilderInference } }

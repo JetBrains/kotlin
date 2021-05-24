@@ -254,7 +254,7 @@ class CallCompleter(
             system.resultingSubstitutor.replaceWithContravariantApproximatingSubstitution()
         } else system.resultingSubstitutor
 
-        setResultingSubstitutor(resultingSubstitutor)
+        setSubstitutor(resultingSubstitutor)
     }
 
     private fun <D : CallableDescriptor> MutableResolvedCall<D>.updateResolutionStatusFromConstraintSystem(

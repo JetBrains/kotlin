@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.checker.REFINER_CAPABILITY
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
+import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.DFS
@@ -424,8 +425,15 @@ fun ModuleDescriptor.isTypeRefinementEnabled(): Boolean = getCapability(REFINER_
 val VariableDescriptor.isUnderscoreNamed
     get() = !name.isSpecial && name.identifier == "_"
 
-fun <D : CallableDescriptor> D.shouldBeUsedToSubstitute() =
+private fun <D : CallableDescriptor> D.containsStubTypes() =
+    valueParameters.any { parameter -> parameter.type.contains { it is StubTypeForBuilderInference } }
+            || returnType?.contains { it is StubTypeForBuilderInference } == true
+            || dispatchReceiverParameter?.type?.contains { it is StubTypeForBuilderInference } == true
+            || extensionReceiverParameter?.type?.contains { it is StubTypeForBuilderInference } == true
+
+fun <D : CallableDescriptor> D.shouldBeSubstituteWithStubTypes() =
     valueParameters.none { it.type.isError }
             && returnType?.isError != true
             && dispatchReceiverParameter?.type?.isError != true
             && extensionReceiverParameter?.type?.isError != true
+            && containsStubTypes()

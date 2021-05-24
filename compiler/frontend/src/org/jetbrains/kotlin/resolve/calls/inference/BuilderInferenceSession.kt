@@ -15,19 +15,18 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
+import org.jetbrains.kotlin.resolve.calls.callUtil.shouldBeSubstituteWithStubTypes
 import org.jetbrains.kotlin.resolve.calls.callUtil.toOldSubstitution
 import org.jetbrains.kotlin.resolve.calls.components.*
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
-import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
-import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
-import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
-import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutorByConstructorMap
+import org.jetbrains.kotlin.resolve.calls.inference.components.*
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.*
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasBuilderInferenceAnnotation
+import org.jetbrains.kotlin.resolve.descriptorUtil.shouldBeSubstituteWithStubTypes
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
@@ -475,7 +474,13 @@ class BuilderInferenceSession(
         val resolvedCall = trace.get(BindingContext.RESOLVED_CALL, call)
 
         if (resolvedCall is ResolvedCallImpl<*>) {
-            resolvedCall.setResultingSubstitutor(substitutor.toOldSubstitution().buildSubstitutor())
+            val oldSubstitutor = substitutor.toOldSubstitution().buildSubstitutor()
+            if (resolvedCall.resultingDescriptor.shouldBeSubstituteWithStubTypes()) {
+                resolvedCall.setResultingSubstitutor(oldSubstitutor)
+            }
+            if (resolvedCall.shouldBeSubstituteWithStubTypes()) {
+                resolvedCall.setResolvedCallSubstitutor(oldSubstitutor)
+            }
         }
     }
 
