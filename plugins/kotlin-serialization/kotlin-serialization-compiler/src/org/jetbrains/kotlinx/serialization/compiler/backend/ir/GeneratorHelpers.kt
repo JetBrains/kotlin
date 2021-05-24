@@ -810,6 +810,27 @@ interface IrBuilderExtension {
             .map { it.name.toString() }
     }
 
+    fun IrBuilderWithScope.copyAnnotationsFrom(annotations: List<IrConstructorCall>): List<IrExpression> =
+        annotations.mapNotNull { annotationCall ->
+            val annotationClass = annotationCall.symbol.owner.parentAsClass
+            if (!annotationClass.descriptor.isSerialInfoAnnotation) return@mapNotNull null
+
+            if (compilerContext.platform.isJvm()) {
+                val implClass = compilerContext.serialInfoImplJvmIrGenerator.getImplClass(annotationClass)
+                val ctor = implClass.constructors.singleOrNull { it.valueParameters.size == annotationCall.valueArgumentsCount }
+                    ?: error("No constructor args found for SerialInfo annotation Impl class: ${implClass.render()}")
+                irCall(ctor).apply {
+                    for (i in 0 until annotationCall.valueArgumentsCount) {
+                        val argument = annotationCall.getValueArgument(i)
+                            ?: annotationClass.primaryConstructor!!.valueParameters[i].defaultValue?.expression
+                        putValueArgument(i, argument!!.deepCopyWithVariables())
+                    }
+                }
+            } else {
+                annotationCall.deepCopyWithVariables()
+            }
+        }
+
     // Does not use sti and therefore does not perform encoder calls optimization
     fun IrBuilderWithScope.serializerTower(
         generator: SerializerIrGenerator,
@@ -920,8 +941,14 @@ interface IrBuilderExtension {
         val hasNewCtxSerCtor =
             serializerClassOriginal.classId == contextSerializerId && compilerContext.referenceConstructors(serializerClass.fqNameSafe)
                 .any { it.owner.valueParameters.size == 3 }
+        var needToCopyAnnotations = false
         when (serializerClassOriginal.classId) {
-            contextSerializerId, polymorphicSerializerId -> {
+            polymorphicSerializerId -> {
+                needToCopyAnnotations = true
+                args = listOf(classReference(kType))
+                typeArgs = listOf(thisIrType)
+            }
+            contextSerializerId -> {
                 args = listOf(classReference(kType))
                 typeArgs = listOf(thisIrType)
 
@@ -950,10 +977,12 @@ interface IrBuilderExtension {
                 }
             }
             objectSerializerId -> {
+                needToCopyAnnotations = true
                 args = listOf(irString(kType.serialName()), irGetObject(kType.toClassDescriptor!!))
                 typeArgs = listOf(thisIrType)
             }
             sealedSerializerId -> {
+                needToCopyAnnotations = true
                 args = mutableListOf<IrExpression>().apply {
                     add(irString(kType.serialName()))
                     add(classReference(kType))
@@ -1031,14 +1060,34 @@ interface IrBuilderExtension {
                 findSerializerConstructorForTypeArgumentsSerializers(serializerClass)
             ) { "Generated serializer does not have constructor with required number of arguments" }
         } else {
-            compilerContext.referenceConstructors(serializerClass.fqNameSafe).single { it.owner.isPrimary }
+            val constructors = compilerContext.referenceConstructors(serializerClass.fqNameSafe)
+            // search for new signature of polymorphic/sealed/contextual serializer
+            if (!needToCopyAnnotations) {
+                constructors.single { it.owner.isPrimary }
+            } else {
+                constructors.find { it.owner.lastArgumentIsAnnotationArray() } ?: run {
+                    // not found - we are using old serialization runtime without this feature
+                    needToCopyAnnotations = false
+                    constructors.single { it.owner.isPrimary }
+                }
+            }
         }
         // Return type should be correctly substituted
         assert(ctor.isBound)
         val ctorDecl = ctor.owner
+        if (needToCopyAnnotations) {
+            val classAnnotations = copyAnnotationsFrom(thisIrType.getClass()?.annotations.orEmpty())
+            args = args + createArrayOfExpression(compilerContext.builtIns.annotationType.toIrType(), classAnnotations)
+        }
+
         val typeParameters = ctorDecl.parentAsClass.typeParameters
         val substitutedReturnType = ctorDecl.returnType.substitute(typeParameters, typeArgs)
         return irInvoke(null, ctor, typeArguments = typeArgs, valueArguments = args, returnTypeHint = substitutedReturnType)
+    }
+
+    private fun IrConstructor.lastArgumentIsAnnotationArray(): Boolean {
+        val lastArgType = valueParameters.lastOrNull()?.type
+        return (lastArgType != null && (lastArgType as? IrSimpleType)?.arguments?.firstOrNull()?.typeOrNull?.classFqName?.toString() == "kotlin.Annotation")
     }
 
     private fun IrBuilderWithScope.wrapperClassReference(classType: KotlinType): IrClassReference {

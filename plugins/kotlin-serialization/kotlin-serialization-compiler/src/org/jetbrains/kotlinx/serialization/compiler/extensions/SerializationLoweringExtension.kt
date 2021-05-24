@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -40,17 +40,22 @@ fun ClassLoweringPass.runOnFileInOrder(irFile: IrFile) {
     })
 }
 
-typealias SerializationPluginContext = IrPluginContext
+
+class SerializationPluginContext(baseContext: IrPluginContext, val metadataPlugin: SerializationDescriptorSerializerPlugin?) :
+    IrPluginContext by baseContext {
+    lateinit var serialInfoImplJvmIrGenerator: SerialInfoImplJvmIrGenerator
+}
 
 private class SerializerClassLowering(
-    val context: SerializationPluginContext,
-    val metadataPlugin: SerializationDescriptorSerializerPlugin?
+    baseContext: IrPluginContext,
+    metadataPlugin: SerializationDescriptorSerializerPlugin?
 ) : IrElementTransformerVoid(), ClassLoweringPass {
-    private val serialInfoJvmGenerator = SerialInfoImplJvmIrGenerator(context)
+    val context: SerializationPluginContext = SerializationPluginContext(baseContext, metadataPlugin)
+    private val serialInfoJvmGenerator = SerialInfoImplJvmIrGenerator(context).also { context.serialInfoImplJvmIrGenerator = it }
 
     override fun lower(irClass: IrClass) {
         SerializableIrGenerator.generate(irClass, context, context.bindingContext)
-        SerializerIrGenerator.generate(irClass, context, context.bindingContext, metadataPlugin, serialInfoJvmGenerator)
+        SerializerIrGenerator.generate(irClass, context, context.bindingContext, context.metadataPlugin, serialInfoJvmGenerator)
         SerializableCompanionIrGenerator.generate(irClass, context, context.bindingContext)
 
         if (context.platform.isJvm() && KSerializerDescriptorResolver.isSerialInfoImpl(irClass.descriptor)) {
