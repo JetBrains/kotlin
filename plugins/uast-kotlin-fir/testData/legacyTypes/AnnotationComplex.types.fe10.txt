@@ -1,0 +1,49 @@
+UFile (package = ) [public abstract annotation Annotation {...]
+    UClass (name = Annotation) [public abstract annotation Annotation {...}]
+        UAnnotationMethod (name = strings) [public abstract fun strings() : java.lang.String[] = UastEmptyExpression]
+    UClass (name = A) [public final class A {...}]
+        UAnnotation (fqName = Annotation) [@Annotation]
+        UMethod (name = A) [public fun A() = UastEmptyExpression]
+    UClass (name = AnnotationInner) [public abstract annotation AnnotationInner {...}]
+        UAnnotationMethod (name = value) [public abstract fun value() : Annotation = UastEmptyExpression]
+    UClass (name = B1) [public final class B1 {...}]
+        UAnnotation (fqName = AnnotationArray) [@AnnotationArray(value = <init>())]
+            UNamedExpression (name = value) [value = <init>()]
+                UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) [<init>()] : PsiType:Annotation
+                    UIdentifier (Identifier (Annotation)) [UIdentifier (Identifier (Annotation))]
+                    USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: Annotation) [<init>] : PsiType:Annotation
+        UMethod (name = B1) [public fun B1() = UastEmptyExpression]
+    UClass (name = B2) [public final class B2 {...}]
+        UAnnotation (fqName = AnnotationArray) [@AnnotationArray(value = <init>("sv1", "sv2"))]
+            UNamedExpression (name = value) [value = <init>("sv1", "sv2")]
+                UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 2)) [<init>("sv1", "sv2")] : PsiType:Annotation
+                    UIdentifier (Identifier (Annotation)) [UIdentifier (Identifier (Annotation))]
+                    USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: Annotation) [<init>] : PsiType:Annotation
+                    ULiteralExpression (value = "sv1") ["sv1"] : PsiType:String
+                    ULiteralExpression (value = "sv2") ["sv2"] : PsiType:String
+        UMethod (name = B2) [public fun B2() = UastEmptyExpression]
+    UClass (name = AnnotationArray) [public abstract annotation AnnotationArray {...}]
+        UAnnotationMethod (name = value) [public abstract fun value() : Annotation[] = UastEmptyExpression]
+    UClass (name = C) [public final class C {...}]
+        UAnnotation (fqName = AnnotationArray) [@AnnotationArray(value = <init>(arrayOf("sar1", "sar2")))]
+            UNamedExpression (name = value) [value = <init>(arrayOf("sar1", "sar2"))]
+                UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1)) [<init>(arrayOf("sar1", "sar2"))] : PsiType:Annotation
+                    UIdentifier (Identifier (Annotation)) [UIdentifier (Identifier (Annotation))]
+                    USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: Annotation) [<init>] : PsiType:Annotation
+                    UCallExpression (kind = UastCallKind(name='array_initializer'), argCount = 2)) [arrayOf("sar1", "sar2")] : PsiType:String[]
+                        UIdentifier (Identifier (arrayOf)) [UIdentifier (Identifier (arrayOf))]
+                        USimpleNameReferenceExpression (identifier = arrayOf, resolvesTo = null) [arrayOf] : PsiType:String[]
+                        ULiteralExpression (value = "sar1") ["sar1"] : PsiType:String
+                        ULiteralExpression (value = "sar2") ["sar2"] : PsiType:String
+        UMethod (name = C) [public fun C() = UastEmptyExpression]
+    UClass (name = C2) [public final class C2 {...}]
+        UAnnotation (fqName = AnnotationArray) [@AnnotationArray(value = <init>(collectionLiteral["[sar]1", "[sar]2"]))]
+            UNamedExpression (name = value) [value = <init>(collectionLiteral["[sar]1", "[sar]2"])]
+                UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1)) [<init>(collectionLiteral["[sar]1", "[sar]2"])] : PsiType:Annotation
+                    UIdentifier (Identifier (Annotation)) [UIdentifier (Identifier (Annotation))]
+                    USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: Annotation) [<init>] : PsiType:Annotation
+                    UCallExpression (kind = UastCallKind(name='array_initializer'), argCount = 2)) [collectionLiteral["[sar]1", "[sar]2"]] : PsiType:String[]
+                        UIdentifier (Identifier ([)) [UIdentifier (Identifier ([))]
+                        ULiteralExpression (value = "[sar]1") ["[sar]1"] : PsiType:String
+                        ULiteralExpression (value = "[sar]2") ["[sar]2"] : PsiType:String
+        UMethod (name = C2) [public fun C2() = UastEmptyExpression]

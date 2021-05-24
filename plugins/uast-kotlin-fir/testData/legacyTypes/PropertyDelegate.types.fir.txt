@@ -1,0 +1,6 @@
+UFile (package = ) [public final class PropertyDelegateKt {...]
+    UClass (name = PropertyDelegateKt) [public final class PropertyDelegateKt {...}]
+        UMethod (name = getSdCardPath) [public static final fun getSdCardPath() : java.lang.String = UastEmptyExpression]
+        UMethod (name = localPropertyTest) [public static final fun localPropertyTest() : void = [!] UnknownKotlinExpression (BLOCK)]
+            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)]
+        UMethod (name = getAnnotatedDelegate) [public static final fun getAnnotatedDelegate() : int = UastEmptyExpression]

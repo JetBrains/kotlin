@@ -1,0 +1,17 @@
+UFile (package = A.B.C) [package A.B.C...]
+    UClass (name = Foo) [public final class Foo {...}]
+        UMethod (name = Foo) [public fun Foo() = UastEmptyExpression]
+    UClass (name = Bar) [public final class Bar {...}]
+        UMethod (name = getFoo) [public final fun getFoo() : A.B.C.Foo {...}]
+            UBlockExpression [{...}] : PsiType:Void
+                UReturnExpression [return A.B.C.<init>()] : PsiType:Void
+                    UQualifiedReferenceExpression [A.B.C.<init>()] : PsiType:Foo
+                        UQualifiedReferenceExpression [A.B.C]
+                            UQualifiedReferenceExpression [A.B]
+                                USimpleNameReferenceExpression (identifier = A) [A]
+                                USimpleNameReferenceExpression (identifier = B) [B]
+                            USimpleNameReferenceExpression (identifier = C) [C]
+                        UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) [<init>()] : PsiType:Foo
+                            UIdentifier (Identifier (Foo)) [UIdentifier (Identifier (Foo))]
+                            USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: Foo) [<init>] : PsiType:Foo
+        UMethod (name = Bar) [public fun Bar() = UastEmptyExpression]

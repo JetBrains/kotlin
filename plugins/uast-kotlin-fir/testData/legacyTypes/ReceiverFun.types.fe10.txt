@@ -1,0 +1,25 @@
+UFile (package = ) [public final class ReceiverFunKt {...]
+    UClass (name = ReceiverFunKt) [public final class ReceiverFunKt {...}]
+        UMethod (name = foo) [public static final fun foo(@MyReceiverAnnotation @org.jetbrains.annotations.NotNull $this$foo: java.lang.String) : int {...}]
+            UParameter (name = $this$foo) [@MyReceiverAnnotation @org.jetbrains.annotations.NotNull var $this$foo: java.lang.String]
+                UAnnotation (fqName = MyReceiverAnnotation) [@MyReceiverAnnotation]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}]
+                UReturnExpression [return this.length]
+                    UQualifiedReferenceExpression [this.length] : PsiType:int
+                        UThisExpression (label = null) [this] : PsiType:String
+                        USimpleNameReferenceExpression (identifier = length) [length] : PsiType:int
+        UMethod (name = getRx) [public static final fun getRx(@MyReceiverAnnotation(name = "RegExp") @org.jetbrains.annotations.NotNull $this$getRx: java.lang.String) : kotlin.text.Regex {...}]
+            UParameter (name = $this$getRx) [@MyReceiverAnnotation(name = "RegExp") @org.jetbrains.annotations.NotNull var $this$getRx: java.lang.String]
+                UAnnotation (fqName = MyReceiverAnnotation) [@MyReceiverAnnotation(name = "RegExp")]
+                    UNamedExpression (name = name) [name = "RegExp"]
+                        ULiteralExpression (value = "RegExp") ["RegExp"] : PsiType:String
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}] : PsiType:Void
+                UReturnExpression [return toRegex()] : PsiType:Void
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [toRegex()] : PsiType:Regex
+                        UIdentifier (Identifier (toRegex)) [UIdentifier (Identifier (toRegex))]
+                        USimpleNameReferenceExpression (identifier = toRegex, resolvesTo = null) [toRegex] : PsiType:Regex
+    UClass (name = MyReceiverAnnotation) [public abstract annotation MyReceiverAnnotation {...}]
+        UAnnotationMethod (name = name) [public abstract fun name() : java.lang.String = UastEmptyExpression]
+            ULiteralExpression (value = "") [""] : PsiType:String

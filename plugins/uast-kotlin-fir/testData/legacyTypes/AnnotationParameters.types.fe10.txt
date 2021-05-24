@@ -1,0 +1,72 @@
+UFile (package = ) [public final class AnnotationParametersKt {...]
+    UClass (name = AnnotationParametersKt) [public final class AnnotationParametersKt {...}]
+        UMethod (name = foo) [@RequiresPermission(anyOf = intArrayOf(1, 2, 3))...}]
+            UAnnotation (fqName = RequiresPermission) [@RequiresPermission(anyOf = intArrayOf(1, 2, 3))]
+                UNamedExpression (name = anyOf) [anyOf = intArrayOf(1, 2, 3)]
+                    UCallExpression (kind = UastCallKind(name='array_initializer'), argCount = 3)) [intArrayOf(1, 2, 3)] : PsiType:int[]
+                        UIdentifier (Identifier (intArrayOf)) [UIdentifier (Identifier (intArrayOf))]
+                        USimpleNameReferenceExpression (identifier = intArrayOf, resolvesTo = null) [intArrayOf] : PsiType:int[]
+                        ULiteralExpression (value = 1) [1] : PsiType:int
+                        ULiteralExpression (value = 2) [2] : PsiType:int
+                        ULiteralExpression (value = 3) [3] : PsiType:int
+            UAnnotation (fqName = IntRange) [@IntRange(from = 10, to = 0)]
+                UNamedExpression (name = from) [from = 10]
+                    ULiteralExpression (value = 10) [10] : PsiType:long
+                UNamedExpression (name = to) [to = 0]
+                    ULiteralExpression (value = 0) [0] : PsiType:long
+            UAnnotation (fqName = WithDefaultValue) [@WithDefaultValue]
+            UAnnotation (fqName = SuppressLint) [@SuppressLint(value = "Lorem")]
+                UNamedExpression (name = value) [value = "Lorem"]
+                    ULiteralExpression (value = "Lorem") ["Lorem"] : PsiType:String
+            UBlockExpression [{...}]
+                UReturnExpression [return 5]
+                    ULiteralExpression (value = 5) [5] : PsiType:int
+        UMethod (name = bar) [@IntRange(from = 0, to = 100)...}]
+            UAnnotation (fqName = IntRange) [@IntRange(from = 0, to = 100)]
+                UNamedExpression (name = from) [from = 0]
+                    ULiteralExpression (value = 0) [0] : PsiType:long
+                UNamedExpression (name = to) [to = 100]
+                    ULiteralExpression (value = 100) [100] : PsiType:long
+            UAnnotation (fqName = SuppressLint) [@SuppressLint(value = <noref>("Lorem", "Ipsum", "Dolor"))]
+                UNamedExpression (name = value) [value = <noref>("Lorem", "Ipsum", "Dolor")]
+                    UCallExpression (kind = UastCallKind(name='array_initializer'), argCount = 3)) [<noref>("Lorem", "Ipsum", "Dolor")]
+                        ULiteralExpression (value = "Lorem") ["Lorem"] : PsiType:String
+                        ULiteralExpression (value = "Ipsum") ["Ipsum"] : PsiType:String
+                        ULiteralExpression (value = "Dolor") ["Dolor"] : PsiType:String
+            UBlockExpression [{...}]
+                UReturnExpression [return Unit]
+                    USimpleNameReferenceExpression (identifier = Unit) [Unit] : PsiType:void
+        UMethod (name = fooWithArrLiteral) [@RequiresPermission(anyOf = collectionLiteral[1, 2, 3])...}]
+            UAnnotation (fqName = RequiresPermission) [@RequiresPermission(anyOf = collectionLiteral[1, 2, 3])]
+                UNamedExpression (name = anyOf) [anyOf = collectionLiteral[1, 2, 3]]
+                    UCallExpression (kind = UastCallKind(name='array_initializer'), argCount = 3)) [collectionLiteral[1, 2, 3]] : PsiType:int[]
+                        UIdentifier (Identifier ([)) [UIdentifier (Identifier ([))]
+                        ULiteralExpression (value = 1) [1] : PsiType:int
+                        ULiteralExpression (value = 2) [2] : PsiType:int
+                        ULiteralExpression (value = 3) [3] : PsiType:int
+            UBlockExpression [{...}]
+                UReturnExpression [return 5]
+                    ULiteralExpression (value = 5) [5] : PsiType:int
+        UMethod (name = fooWithStrArrLiteral) [@RequiresStrPermission(strs = collectionLiteral["a", "b", "c"])...}]
+            UAnnotation (fqName = RequiresStrPermission) [@RequiresStrPermission(strs = collectionLiteral["a", "b", "c"])]
+                UNamedExpression (name = strs) [strs = collectionLiteral["a", "b", "c"]]
+                    UCallExpression (kind = UastCallKind(name='array_initializer'), argCount = 3)) [collectionLiteral["a", "b", "c"]] : PsiType:String[]
+                        UIdentifier (Identifier ([)) [UIdentifier (Identifier ([))]
+                        ULiteralExpression (value = "a") ["a"] : PsiType:String
+                        ULiteralExpression (value = "b") ["b"] : PsiType:String
+                        ULiteralExpression (value = "c") ["c"] : PsiType:String
+            UBlockExpression [{...}]
+                UReturnExpression [return 3]
+                    ULiteralExpression (value = 3) [3] : PsiType:int
+    UClass (name = IntRange) [public abstract annotation IntRange {...}]
+        UAnnotationMethod (name = from) [public abstract fun from() : long = UastEmptyExpression]
+        UAnnotationMethod (name = to) [public abstract fun to() : long = UastEmptyExpression]
+    UClass (name = RequiresPermission) [public abstract annotation RequiresPermission {...}]
+        UAnnotationMethod (name = anyOf) [public abstract fun anyOf() : int[] = UastEmptyExpression]
+    UClass (name = RequiresStrPermission) [public abstract annotation RequiresStrPermission {...}]
+        UAnnotationMethod (name = strs) [public abstract fun strs() : java.lang.String[] = UastEmptyExpression]
+    UClass (name = WithDefaultValue) [public abstract annotation WithDefaultValue {...}]
+        UAnnotationMethod (name = value) [public abstract fun value() : int = UastEmptyExpression]
+            ULiteralExpression (value = 42) [42] : PsiType:int
+    UClass (name = SuppressLint) [public abstract annotation SuppressLint {...}]
+        UAnnotationMethod (name = value) [public abstract fun value() : java.lang.String[] = UastEmptyExpression]

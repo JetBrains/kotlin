@@ -1,0 +1,126 @@
+UFile (package = ) [import java.lang.Thread...]
+    UImportStatement (isOnDemand = false) [import java.lang.Thread]
+    UImportStatement (isOnDemand = false) [import java.lang.Runnable]
+    UImportStatement (isOnDemand = false) [import java.util.concurrent.Callable]
+    UImportStatement (isOnDemand = false) [import java.util.function.Supplier]
+    UClass (name = SAMKt) [public final class SAMKt {...}]
+        UField (name = notSam) [@org.jetbrains.annotations.NotNull private static final var notSam: kotlin.jvm.functions.Function0<kotlin.Unit> = { ...}]
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            ULambdaExpression [{ ...}] : PsiType:Function0<? extends Unit>
+                UBlockExpression [{...}]
+        UField (name = foo) [@org.jetbrains.annotations.NotNull private static var foo: java.lang.Runnable = { ...}]
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            ULambdaExpression [{ ...}] : PsiType:Function0<? extends Unit>
+                UBlockExpression [{...}]
+        UField (name = baz) [@org.jetbrains.annotations.NotNull private static final var baz: java.lang.Runnable = java.lang.Runnable({ ...})]
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UQualifiedReferenceExpression [java.lang.Runnable({ ...})] : PsiType:Runnable
+                UQualifiedReferenceExpression [java.lang]
+                    USimpleNameReferenceExpression (identifier = java) [java]
+                    USimpleNameReferenceExpression (identifier = lang) [lang]
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [Runnable({ ...})] : PsiType:Runnable
+                    UIdentifier (Identifier (Runnable)) [UIdentifier (Identifier (Runnable))]
+                    USimpleNameReferenceExpression (identifier = Runnable, resolvesTo = PsiClass: Runnable) [Runnable] : PsiType:Runnable
+                    ULambdaExpression [{ ...}] : PsiType:Function0<? extends Unit>
+                        UBlockExpression [{...}]
+        UMethod (name = getNotSam) [public static final fun getNotSam() : kotlin.jvm.functions.Function0<kotlin.Unit> = UastEmptyExpression]
+        UMethod (name = getFoo) [public static final fun getFoo() : java.lang.Runnable = UastEmptyExpression]
+        UMethod (name = setFoo) [public static final fun setFoo(@org.jetbrains.annotations.NotNull foo: java.lang.Runnable) : void = UastEmptyExpression]
+            UParameter (name = foo) [@org.jetbrains.annotations.NotNull var foo: java.lang.Runnable]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+        UMethod (name = bar) [public static final fun bar() : java.lang.Runnable {...}]
+            UBlockExpression [{...}] : PsiType:Void
+                UBinaryExpression (operator = =) [foo = { ...}] : PsiType:void
+                    USimpleNameReferenceExpression (identifier = foo) [foo] : PsiType:Runnable
+                    ULambdaExpression [{ ...}] : PsiType:Function0<? extends Unit>
+                        UBlockExpression [{...}]
+                UDeclarationsExpression [var a: java.lang.Runnable = { ...} as java.lang.Runnable]
+                    ULocalVariable (name = a) [var a: java.lang.Runnable = { ...} as java.lang.Runnable]
+                        UBinaryExpressionWithType [{ ...} as java.lang.Runnable] : PsiType:Runnable
+                            ULambdaExpression [{ ...}] : PsiType:Function0<? extends Unit>
+                                UBlockExpression [{...}]
+                            UTypeReferenceExpression (name = java.lang.Runnable) [java.lang.Runnable]
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [runRunnable({ ...})] : PsiType:<ErrorType>
+                    UIdentifier (Identifier (runRunnable)) [UIdentifier (Identifier (runRunnable))]
+                    USimpleNameReferenceExpression (identifier = runRunnable, resolvesTo = null) [runRunnable] : PsiType:<ErrorType>
+                    ULambdaExpression [{ ...}] : PsiType:Function0<? extends Unit>
+                        UBlockExpression [{...}]
+                UReturnExpression [return { ...}] : PsiType:Void
+                    ULambdaExpression [{ ...}] : PsiType:Function0<? extends Unit>
+                        UBlockExpression [{...}]
+        UMethod (name = getBaz) [public static final fun getBaz() : java.lang.Runnable = UastEmptyExpression]
+        UMethod (name = runRunnable) [public static final fun runRunnable(@org.jetbrains.annotations.NotNull r: java.lang.Runnable) : error.NonExistentClass {...}]
+            UParameter (name = r) [@org.jetbrains.annotations.NotNull var r: java.lang.Runnable]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}]
+                UReturnExpression [return <anonymous class>()]
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [<anonymous class>()]
+                        UIdentifier (Identifier (r)) [UIdentifier (Identifier (r))]
+                        USimpleNameReferenceExpression (identifier = <anonymous class>, resolvesTo = null) [<anonymous class>]
+        UMethod (name = test1) [public static final fun test1() : void {...}]
+            UBlockExpression [{...}] : PsiType:void
+                UDeclarationsExpression [var thread1: java.lang.Thread = <init>({ ...})]
+                    ULocalVariable (name = thread1) [var thread1: java.lang.Thread = <init>({ ...})]
+                        UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1)) [<init>({ ...})] : PsiType:Thread
+                            UIdentifier (Identifier (Thread)) [UIdentifier (Identifier (Thread))]
+                            USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: Thread) [<init>] : PsiType:Thread
+                            ULambdaExpression [{ ...}] : PsiType:Function0<? extends Unit>
+                                UBlockExpression [{...}]
+                                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [println("hello1")] : PsiType:void
+                                        UIdentifier (Identifier (println)) [UIdentifier (Identifier (println))]
+                                        USimpleNameReferenceExpression (identifier = println, resolvesTo = null) [println] : PsiType:void
+                                        ULiteralExpression (value = "hello1") ["hello1"] : PsiType:String
+        UMethod (name = test2) [public static final fun test2() : void {...}]
+            UBlockExpression [{...}] : PsiType:void
+                UDeclarationsExpression [var thread2: java.lang.Thread = <init>(Runnable({ ...}))]
+                    ULocalVariable (name = thread2) [var thread2: java.lang.Thread = <init>(Runnable({ ...}))]
+                        UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1)) [<init>(Runnable({ ...}))] : PsiType:Thread
+                            UIdentifier (Identifier (Thread)) [UIdentifier (Identifier (Thread))]
+                            USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: Thread) [<init>] : PsiType:Thread
+                            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [Runnable({ ...})] : PsiType:Runnable
+                                UIdentifier (Identifier (Runnable)) [UIdentifier (Identifier (Runnable))]
+                                USimpleNameReferenceExpression (identifier = Runnable, resolvesTo = PsiClass: Runnable) [Runnable] : PsiType:Runnable
+                                ULambdaExpression [{ ...}] : PsiType:Function0<? extends Unit>
+                                    UBlockExpression [{...}]
+                                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [println("hello2")] : PsiType:void
+                                            UIdentifier (Identifier (println)) [UIdentifier (Identifier (println))]
+                                            USimpleNameReferenceExpression (identifier = println, resolvesTo = null) [println] : PsiType:void
+                                            ULiteralExpression (value = "hello2") ["hello2"] : PsiType:String
+        UMethod (name = test3) [public static final fun test3() : void {...}]
+            UBlockExpression [{...}] : PsiType:String
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [ambiguousSamAcceptor(Supplier({ ...}))] : PsiType:String
+                    UIdentifier (Identifier (ambiguousSamAcceptor)) [UIdentifier (Identifier (ambiguousSamAcceptor))]
+                    USimpleNameReferenceExpression (identifier = ambiguousSamAcceptor, resolvesTo = null) [ambiguousSamAcceptor] : PsiType:String
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [Supplier({ ...})] : PsiType:Supplier<String>
+                        UIdentifier (Identifier (Supplier)) [UIdentifier (Identifier (Supplier))]
+                        USimpleNameReferenceExpression (identifier = Supplier, resolvesTo = PsiClass: Supplier) [Supplier] : PsiType:Supplier<String>
+                        ULambdaExpression [{ ...}] : PsiType:Function0<? extends String>
+                            UBlockExpression [{...}]
+                                UReturnExpression [return "Supplier"]
+                                    ULiteralExpression (value = "Supplier") ["Supplier"] : PsiType:String
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [ambiguousSamAcceptor(Callable({ ...}))] : PsiType:String
+                    UIdentifier (Identifier (ambiguousSamAcceptor)) [UIdentifier (Identifier (ambiguousSamAcceptor))]
+                    USimpleNameReferenceExpression (identifier = ambiguousSamAcceptor, resolvesTo = null) [ambiguousSamAcceptor] : PsiType:String
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [Callable({ ...})] : PsiType:Callable<String>
+                        UIdentifier (Identifier (Callable)) [UIdentifier (Identifier (Callable))]
+                        USimpleNameReferenceExpression (identifier = Callable, resolvesTo = PsiClass: Callable) [Callable] : PsiType:Callable<String>
+                        ULambdaExpression [{ ...}] : PsiType:Function0<? extends String>
+                            UBlockExpression [{...}]
+                                UReturnExpression [return "Callable"]
+                                    ULiteralExpression (value = "Callable") ["Callable"] : PsiType:String
+        UMethod (name = ambiguousSamAcceptor) [public static final fun ambiguousSamAcceptor(@org.jetbrains.annotations.NotNull s: java.util.function.Supplier<java.lang.String>) : java.lang.String {...}]
+            UParameter (name = s) [@org.jetbrains.annotations.NotNull var s: java.util.function.Supplier<java.lang.String>]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}]
+                UReturnExpression [return TODO()]
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [TODO()] : PsiType:Void
+                        UIdentifier (Identifier (TODO)) [UIdentifier (Identifier (TODO))]
+                        USimpleNameReferenceExpression (identifier = TODO, resolvesTo = null) [TODO] : PsiType:Void
+        UMethod (name = ambiguousSamAcceptor) [public static final fun ambiguousSamAcceptor(@org.jetbrains.annotations.NotNull s: java.util.concurrent.Callable<java.lang.String>) : java.lang.String {...}]
+            UParameter (name = s) [@org.jetbrains.annotations.NotNull var s: java.util.concurrent.Callable<java.lang.String>]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}]
+                UReturnExpression [return TODO()]
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [TODO()] : PsiType:Void
+                        UIdentifier (Identifier (TODO)) [UIdentifier (Identifier (TODO))]
+                        USimpleNameReferenceExpression (identifier = TODO, resolvesTo = null) [TODO] : PsiType:Void

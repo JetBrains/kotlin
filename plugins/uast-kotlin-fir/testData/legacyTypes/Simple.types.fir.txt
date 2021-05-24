@@ -1,0 +1,8 @@
+UFile (package = ) [public final class Simple {...]
+    UClass (name = Simple) [public final class Simple {...}]
+        UField (name = property) [private final var property: java.lang.String = [!] UnknownKotlinExpression (STRING_TEMPLATE)]
+            [!] UnknownKotlinExpression (STRING_TEMPLATE) [[!] UnknownKotlinExpression (STRING_TEMPLATE)]
+        UMethod (name = Simple) [public fun Simple() = UastEmptyExpression]
+        UMethod (name = method) [public final fun method() : void = [!] UnknownKotlinExpression (BLOCK)]
+            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)]
+        UMethod (name = getProperty) [public final fun getProperty() : java.lang.String = UastEmptyExpression]

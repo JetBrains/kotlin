@@ -1,0 +1,72 @@
+UFile (package = ) [public final class TypeReferencesKt {...]
+    UClass (name = TypeReferencesKt) [public final class TypeReferencesKt {...}]
+        UMethod (name = foo) [public static final fun foo(@org.jetbrains.annotations.NotNull parameter: int) : java.lang.String {...}]
+            UParameter (name = parameter) [@org.jetbrains.annotations.NotNull var parameter: int]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}] : PsiType:Void
+                UDeclarationsExpression [var varWithType: java.lang.String = "Not Null"]
+                    ULocalVariable (name = varWithType) [var varWithType: java.lang.String = "Not Null"]
+                        ULiteralExpression (value = "Not Null") ["Not Null"] : PsiType:String
+                UDeclarationsExpression [var varWithoutType: java.lang.String = "lorem ipsum"]
+                    ULocalVariable (name = varWithoutType) [var varWithoutType: java.lang.String = "lorem ipsum"]
+                        ULiteralExpression (value = "lorem ipsum") ["lorem ipsum"] : PsiType:String
+                UDeclarationsExpression [var result: java.lang.String = varWithType + varWithoutType]
+                    ULocalVariable (name = result) [var result: java.lang.String = varWithType + varWithoutType]
+                        UBinaryExpression (operator = +) [varWithType + varWithoutType] : PsiType:String
+                            USimpleNameReferenceExpression (identifier = varWithType) [varWithType] : PsiType:String
+                            USimpleNameReferenceExpression (identifier = varWithoutType) [varWithoutType] : PsiType:String
+                UReturnExpression [return result] : PsiType:Void
+                    USimpleNameReferenceExpression (identifier = result) [result] : PsiType:String
+        UMethod (name = parameterizedFoo) [public static final fun parameterizedFoo(@org.jetbrains.annotations.Nullable arg: T) : void {...}]
+            UParameter (name = arg) [@org.jetbrains.annotations.Nullable var arg: T]
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable) [@org.jetbrains.annotations.Nullable]
+            UBlockExpression [{...}] : PsiType:void
+                UDeclarationsExpression [var a: T = arg]
+                    ULocalVariable (name = a) [var a: T = arg]
+                        USimpleNameReferenceExpression (identifier = arg) [arg] : PsiType:T
+                UDeclarationsExpression [var at: T = elvis {...}]
+                    ULocalVariable (name = at) [var at: T = elvis {...}]
+                        UExpressionList (elvis) [elvis {...}] : PsiType:T
+                            UDeclarationsExpression [var var708e23eb: T = arg]
+                                ULocalVariable (name = var708e23eb) [var var708e23eb: T = arg]
+                                    USimpleNameReferenceExpression (identifier = arg) [arg] : PsiType:T
+                            UIfExpression [if (var708e23eb != null) var708e23eb else return]
+                                UBinaryExpression (operator = !=) [var708e23eb != null]
+                                    USimpleNameReferenceExpression (identifier = var708e23eb) [var708e23eb]
+                                    ULiteralExpression (value = null) [null]
+                                USimpleNameReferenceExpression (identifier = var708e23eb) [var708e23eb]
+                                UReturnExpression [return] : PsiType:Void
+                UDeclarationsExpression [var tl: java.util.List<? extends T> = listOf(at)]
+                    ULocalVariable (name = tl) [var tl: java.util.List<? extends T> = listOf(at)]
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [listOf(at)] : PsiType:List<? extends T>
+                            UIdentifier (Identifier (listOf)) [UIdentifier (Identifier (listOf))]
+                            USimpleNameReferenceExpression (identifier = listOf, resolvesTo = null) [listOf] : PsiType:List<? extends T>
+                            USimpleNameReferenceExpression (identifier = at) [at] : PsiType:T
+                UDeclarationsExpression [var tsl: java.util.List<? extends java.lang.String> = tl.map({ var it: T ->...})]
+                    ULocalVariable (name = tsl) [var tsl: java.util.List<? extends java.lang.String> = tl.map({ var it: T ->...})]
+                        UQualifiedReferenceExpression [tl.map({ var it: T ->...})] : PsiType:List<? extends String>
+                            USimpleNameReferenceExpression (identifier = tl) [tl] : PsiType:List<? extends T>
+                            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [map({ var it: T ->...})] : PsiType:List<? extends String>
+                                UIdentifier (Identifier (map)) [UIdentifier (Identifier (map))]
+                                USimpleNameReferenceExpression (identifier = map, resolvesTo = null) [map] : PsiType:List<? extends String>
+                                ULambdaExpression [{ var it: T ->...}] : PsiType:Function1<? super T, ? extends String>
+                                    UParameter (name = it) [var it: T]
+                                    UBlockExpression [{...}]
+                                        UReturnExpression [return it.toString()]
+                                            UQualifiedReferenceExpression [it.toString()] : PsiType:String
+                                                USimpleNameReferenceExpression (identifier = it) [it] : PsiType:T
+                                                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [toString()] : PsiType:String
+                                                    UIdentifier (Identifier (toString)) [UIdentifier (Identifier (toString))]
+                                                    USimpleNameReferenceExpression (identifier = toString, resolvesTo = null) [toString] : PsiType:String
+                UDeclarationsExpression [var lls: java.util.List<? extends java.util.List<? extends java.lang.String>>]
+                    ULocalVariable (name = lls) [var lls: java.util.List<? extends java.util.List<? extends java.lang.String>>]
+                UDeclarationsExpression [var llsAliased: java.util.List<? extends java.util.List<? extends java.lang.String>>]
+                    ULocalVariable (name = llsAliased) [var llsAliased: java.util.List<? extends java.util.List<? extends java.lang.String>>]
+                UDeclarationsExpression [var llt: java.util.List<? extends java.util.List<? extends T>>]
+                    ULocalVariable (name = llt) [var llt: java.util.List<? extends java.util.List<? extends T>>]
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [parameterizedFoo(emptyList())] : PsiType:void
+                    UIdentifier (Identifier (parameterizedFoo)) [UIdentifier (Identifier (parameterizedFoo))]
+                    USimpleNameReferenceExpression (identifier = parameterizedFoo, resolvesTo = null) [parameterizedFoo] : PsiType:void
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [emptyList()] : PsiType:List<? extends String>
+                        UIdentifier (Identifier (emptyList)) [UIdentifier (Identifier (emptyList))]
+                        USimpleNameReferenceExpression (identifier = emptyList, resolvesTo = null) [emptyList] : PsiType:List<? extends String>

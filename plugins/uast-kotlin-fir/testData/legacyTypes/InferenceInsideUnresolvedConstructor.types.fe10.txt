@@ -1,0 +1,18 @@
+UFile (package = ) [public final class InferenceInsideUnresolvedConstructorKt {...]
+    UClass (name = InferenceInsideUnresolvedConstructorKt) [public final class InferenceInsideUnresolvedConstructorKt {...}]
+        UMethod (name = getBar) [public static final fun getBar() : java.lang.Object {...}]
+            UBlockExpression [{...}]
+                UReturnExpression [return <anonymous class>(id(42))]
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [<anonymous class>(id(42))]
+                        UIdentifier (Identifier (Unresolved)) [UIdentifier (Identifier (Unresolved))]
+                        USimpleNameReferenceExpression (identifier = <anonymous class>, resolvesTo = null) [<anonymous class>]
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [id(42)] : PsiType:int
+                            UIdentifier (Identifier (id)) [UIdentifier (Identifier (id))]
+                            USimpleNameReferenceExpression (identifier = id, resolvesTo = null) [id] : PsiType:int
+                            ULiteralExpression (value = 42) [42] : PsiType:int
+        UMethod (name = id) [public static final fun id(@org.jetbrains.annotations.Nullable x: T) : T {...}]
+            UParameter (name = x) [@org.jetbrains.annotations.Nullable var x: T]
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable) [@org.jetbrains.annotations.Nullable]
+            UBlockExpression [{...}]
+                UReturnExpression [return x]
+                    USimpleNameReferenceExpression (identifier = x) [x] : PsiType:T

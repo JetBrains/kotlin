@@ -1,0 +1,147 @@
+UFile (package = ) [public final class ResolveKt {...]
+    UClass (name = ResolveKt) [public final class ResolveKt {...}]
+        UMethod (name = bar) [public static final fun bar() : void {...}]
+            UBlockExpression [{...}] : PsiType:IntRange
+                UQualifiedReferenceExpression [<init>().foo()] : PsiType:void
+                    UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) [<init>()] : PsiType:A
+                        UIdentifier (Identifier (A)) [UIdentifier (Identifier (A))]
+                        USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: A) [<init>] : PsiType:A
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [foo()] : PsiType:void
+                        UIdentifier (Identifier (foo)) [UIdentifier (Identifier (foo))]
+                        USimpleNameReferenceExpression (identifier = foo, resolvesTo = null) [foo] : PsiType:void
+                UQualifiedReferenceExpression [<init>().inlineFoo()] : PsiType:void
+                    UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) [<init>()] : PsiType:A
+                        UIdentifier (Identifier (A)) [UIdentifier (Identifier (A))]
+                        USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: A) [<init>] : PsiType:A
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [inlineFoo()] : PsiType:void
+                        UIdentifier (Identifier (inlineFoo)) [UIdentifier (Identifier (inlineFoo))]
+                        USimpleNameReferenceExpression (identifier = inlineFoo, resolvesTo = null) [inlineFoo] : PsiType:void
+                UQualifiedReferenceExpression [listOf(<init>()).forEach({ var it: A ->...})] : PsiType:void
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [listOf(<init>())] : PsiType:List<? extends A>
+                        UIdentifier (Identifier (listOf)) [UIdentifier (Identifier (listOf))]
+                        USimpleNameReferenceExpression (identifier = listOf, resolvesTo = null) [listOf] : PsiType:List<? extends A>
+                        UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) [<init>()] : PsiType:A
+                            UIdentifier (Identifier (A)) [UIdentifier (Identifier (A))]
+                            USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: A) [<init>] : PsiType:A
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [forEach({ var it: A ->...})] : PsiType:void
+                        UIdentifier (Identifier (forEach)) [UIdentifier (Identifier (forEach))]
+                        USimpleNameReferenceExpression (identifier = forEach, resolvesTo = null) [forEach] : PsiType:void
+                        ULambdaExpression [{ var it: A ->...}] : PsiType:Function1<? super A, ? extends Unit>
+                            UParameter (name = it) [var it: A]
+                            UBlockExpression [{...}]
+                                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [println(it)] : PsiType:void
+                                    UIdentifier (Identifier (println)) [UIdentifier (Identifier (println))]
+                                    USimpleNameReferenceExpression (identifier = println, resolvesTo = null) [println] : PsiType:void
+                                    USimpleNameReferenceExpression (identifier = it) [it] : PsiType:A
+                UQualifiedReferenceExpression [listOf("").joinToString()] : PsiType:String
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [listOf("")] : PsiType:List<? extends String>
+                        UIdentifier (Identifier (listOf)) [UIdentifier (Identifier (listOf))]
+                        USimpleNameReferenceExpression (identifier = listOf, resolvesTo = null) [listOf] : PsiType:List<? extends String>
+                        ULiteralExpression (value = "") [""] : PsiType:String
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [joinToString()] : PsiType:String
+                        UIdentifier (Identifier (joinToString)) [UIdentifier (Identifier (joinToString))]
+                        USimpleNameReferenceExpression (identifier = joinToString, resolvesTo = null) [joinToString] : PsiType:String
+                UQualifiedReferenceExpression [listOf("").size] : PsiType:int
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [listOf("")] : PsiType:List<? extends String>
+                        UIdentifier (Identifier (listOf)) [UIdentifier (Identifier (listOf))]
+                        USimpleNameReferenceExpression (identifier = listOf, resolvesTo = null) [listOf] : PsiType:List<? extends String>
+                        ULiteralExpression (value = "") [""] : PsiType:String
+                    USimpleNameReferenceExpression (identifier = size) [size] : PsiType:int
+                UQualifiedReferenceExpression [listOf("").indices] : PsiType:IntRange
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [listOf("")] : PsiType:List<? extends String>
+                        UIdentifier (Identifier (listOf)) [UIdentifier (Identifier (listOf))]
+                        USimpleNameReferenceExpression (identifier = listOf, resolvesTo = null) [listOf] : PsiType:List<? extends String>
+                        ULiteralExpression (value = "") [""] : PsiType:String
+                    USimpleNameReferenceExpression (identifier = indices) [indices] : PsiType:IntRange
+                UDeclarationsExpression [var date: java.util.Date = java.util.<init>()]
+                    ULocalVariable (name = date) [var date: java.util.Date = java.util.<init>()]
+                        UQualifiedReferenceExpression [java.util.<init>()] : PsiType:Date
+                            UQualifiedReferenceExpression [java.util]
+                                USimpleNameReferenceExpression (identifier = java) [java]
+                                USimpleNameReferenceExpression (identifier = util) [util]
+                            UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) [<init>()] : PsiType:Date
+                                UIdentifier (Identifier (Date)) [UIdentifier (Identifier (Date))]
+                                USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: Date) [<init>] : PsiType:Date
+                UBinaryExpression (operator = =) [date.time = 1000] : PsiType:void
+                    UQualifiedReferenceExpression [date.time] : PsiType:long
+                        USimpleNameReferenceExpression (identifier = date) [date] : PsiType:Date
+                        USimpleNameReferenceExpression (identifier = time) [time] : PsiType:long
+                            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [setTime(1000)]
+                                UIdentifier (Identifier (time)) [UIdentifier (Identifier (time))]
+                                ULiteralExpression (value = 1000) [1000] : PsiType:long
+                    ULiteralExpression (value = 1000) [1000] : PsiType:long
+                UQualifiedReferenceExpression [listOf("").last()] : PsiType:String
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [listOf("")] : PsiType:List<? extends String>
+                        UIdentifier (Identifier (listOf)) [UIdentifier (Identifier (listOf))]
+                        USimpleNameReferenceExpression (identifier = listOf, resolvesTo = null) [listOf] : PsiType:List<? extends String>
+                        ULiteralExpression (value = "") [""] : PsiType:String
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [last()] : PsiType:String
+                        UIdentifier (Identifier (last)) [UIdentifier (Identifier (last))]
+                        USimpleNameReferenceExpression (identifier = last, resolvesTo = null) [last] : PsiType:String
+                UQualifiedReferenceExpression [mutableMapOf(1 <other> "1").entries.first().setValue("123")] : PsiType:String
+                    UQualifiedReferenceExpression [mutableMapOf(1 <other> "1").entries.first()] : PsiType:Entry<Integer, String>
+                        UQualifiedReferenceExpression [mutableMapOf(1 <other> "1").entries] : PsiType:Set<Entry<Integer, String>>
+                            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [mutableMapOf(1 <other> "1")] : PsiType:Map<Integer, String>
+                                UIdentifier (Identifier (mutableMapOf)) [UIdentifier (Identifier (mutableMapOf))]
+                                USimpleNameReferenceExpression (identifier = mutableMapOf, resolvesTo = null) [mutableMapOf] : PsiType:Map<Integer, String>
+                                UBinaryExpression (operator = <other>) [1 <other> "1"] : PsiType:Pair<? extends Integer, ? extends String>
+                                    ULiteralExpression (value = 1) [1] : PsiType:int
+                                    ULiteralExpression (value = "1") ["1"] : PsiType:String
+                            USimpleNameReferenceExpression (identifier = entries) [entries] : PsiType:Set<Entry<Integer, String>>
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [first()] : PsiType:Entry<Integer, String>
+                            UIdentifier (Identifier (first)) [UIdentifier (Identifier (first))]
+                            USimpleNameReferenceExpression (identifier = first, resolvesTo = null) [first] : PsiType:Entry<Integer, String>
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [setValue("123")] : PsiType:String
+                        UIdentifier (Identifier (setValue)) [UIdentifier (Identifier (setValue))]
+                        USimpleNameReferenceExpression (identifier = setValue, resolvesTo = null) [setValue] : PsiType:String
+                        ULiteralExpression (value = "123") ["123"] : PsiType:String
+                UDeclarationsExpression [var intRange: kotlin.ranges.LongRange = 0 .. 3]
+                    ULocalVariable (name = intRange) [var intRange: kotlin.ranges.LongRange = 0 .. 3]
+                        UBinaryExpression (operator = ..) [0 .. 3] : PsiType:LongRange
+                            ULiteralExpression (value = 0) [0] : PsiType:long
+                            ULiteralExpression (value = 3) [3] : PsiType:long
+                UQualifiedReferenceExpression [intRange.contains(2 as int)] : PsiType:boolean
+                    USimpleNameReferenceExpression (identifier = intRange) [intRange] : PsiType:LongRange
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [contains(2 as int)] : PsiType:boolean
+                        UIdentifier (Identifier (contains)) [UIdentifier (Identifier (contains))]
+                        USimpleNameReferenceExpression (identifier = contains, resolvesTo = null) [contains] : PsiType:boolean
+                        UBinaryExpressionWithType [2 as int] : PsiType:int
+                            ULiteralExpression (value = 2) [2] : PsiType:int
+                            UTypeReferenceExpression (name = int) [int]
+                UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 2)) [<init>(1, 2)] : PsiType:IntRange
+                    UIdentifier (Identifier (IntRange)) [UIdentifier (Identifier (IntRange))]
+                    USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: IntRange) [<init>] : PsiType:IntRange
+                    ULiteralExpression (value = 1) [1] : PsiType:int
+                    ULiteralExpression (value = 2) [2] : PsiType:int
+        UMethod (name = barT) [public static final fun barT(@org.jetbrains.annotations.NotNull t: T) : void {...}]
+            UParameter (name = t) [@org.jetbrains.annotations.NotNull var t: T]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}] : PsiType:void
+                UQualifiedReferenceExpression [t.foo()] : PsiType:void
+                    USimpleNameReferenceExpression (identifier = t) [t] : PsiType:T
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [foo()] : PsiType:void
+                        UIdentifier (Identifier (foo)) [UIdentifier (Identifier (foo))]
+                        USimpleNameReferenceExpression (identifier = foo, resolvesTo = null) [foo] : PsiType:void
+        UMethod (name = barTL) [public static final fun barTL(@org.jetbrains.annotations.NotNull listT: T) : void {...}]
+            UParameter (name = listT) [@org.jetbrains.annotations.NotNull var listT: T]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}] : PsiType:void
+                UQualifiedReferenceExpression [listT.isEmpty()] : PsiType:boolean
+                    USimpleNameReferenceExpression (identifier = listT) [listT] : PsiType:T
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [isEmpty()] : PsiType:boolean
+                        UIdentifier (Identifier (isEmpty)) [UIdentifier (Identifier (isEmpty))]
+                        USimpleNameReferenceExpression (identifier = isEmpty, resolvesTo = null) [isEmpty] : PsiType:boolean
+                UForEachExpression [for (a : listT) {...}]
+                    USimpleNameReferenceExpression (identifier = listT) [listT] : PsiType:T
+                    UBlockExpression [{...}] : PsiType:void
+                        UQualifiedReferenceExpression [a.foo()] : PsiType:void
+                            USimpleNameReferenceExpression (identifier = a) [a] : PsiType:A
+                            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [foo()] : PsiType:void
+                                UIdentifier (Identifier (foo)) [UIdentifier (Identifier (foo))]
+                                USimpleNameReferenceExpression (identifier = foo, resolvesTo = null) [foo] : PsiType:void
+    UClass (name = A) [public class A {...}]
+        UMethod (name = foo) [public final fun foo() : void {...}]
+            UBlockExpression [{...}] : PsiType:void
+        UMethod (name = inlineFoo) [public final fun inlineFoo() : void {...}]
+            UBlockExpression [{...}] : PsiType:void
+        UMethod (name = A) [public fun A() = UastEmptyExpression]

@@ -1,0 +1,5 @@
+UFile (package = test.pkg) [package test.pkg...]
+    UClass (name = Test) [public final class Test {...}]
+        UMethod (name = Test) [public fun Test() = UastEmptyExpression]
+        UMethod (name = test1) [public final fun test1() : void = [!] UnknownKotlinExpression (BLOCK)]
+            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)]

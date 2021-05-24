@@ -1,0 +1,4 @@
+UFile (package = ) [public final class ReifiedResolveKt {...]
+    UClass (name = ReifiedResolveKt) [public final class ReifiedResolveKt {...}]
+        UMethod (name = resolve) [public static final fun resolve() : void = [!] UnknownKotlinExpression (BLOCK)]
+            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)]

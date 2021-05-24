@@ -1,0 +1,7 @@
+UFile (package = ) [public final class CycleInTypeParametersKt {...]
+    UClass (name = CycleInTypeParametersKt) [public final class CycleInTypeParametersKt {...}]
+        UField (name = a) [private static final var a: Device<?> = [!] UnknownKotlinExpression (BINARY_WITH_TYPE)]
+            [!] UnknownKotlinExpression (BINARY_WITH_TYPE) [[!] UnknownKotlinExpression (BINARY_WITH_TYPE)]
+        UMethod (name = getA) [public static final fun getA() : Device<?> = UastEmptyExpression]
+    UClass (name = Device) [public final class Device {...}]
+        UMethod (name = Device) [public fun Device() = UastEmptyExpression]

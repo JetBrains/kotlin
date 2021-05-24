@@ -1,0 +1,4 @@
+UFile (package = test.pkg) [package test.pkg...]
+    UClass (name = ReifiedKt) [public final class ReifiedKt {...}]
+    UClass (name = Context) [public final class Context {...}]
+        UMethod (name = Context) [public fun Context() = UastEmptyExpression]

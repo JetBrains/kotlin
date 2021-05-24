@@ -1,0 +1,14 @@
+UFile (package = ) [public final class Ea101715Kt {...]
+    UClass (name = Ea101715Kt) [public final class Ea101715Kt {...}]
+        UMethod (name = a) [public static final fun a() : void {...}]
+            UBlockExpression [{...}] : PsiType:void
+                UDeclarationsExpression [var a: <ErrorType> = <anonymous class>(555)]
+                    ULocalVariable (name = a) [var a: <ErrorType> = <anonymous class>(555)]
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [<anonymous class>(555)]
+                            UIdentifier (Identifier (Obj)) [UIdentifier (Identifier (Obj))]
+                            USimpleNameReferenceExpression (identifier = <anonymous class>, resolvesTo = null) [<anonymous class>]
+                            ULiteralExpression (value = 555) [555] : PsiType:int
+    UClass (name = Obj) [public final class Obj {...}]
+        UField (name = INSTANCE) [@null public static final var INSTANCE: Obj]
+            UAnnotation (fqName = null) [@null]
+        UMethod (name = Obj) [private fun Obj() = UastEmptyExpression]

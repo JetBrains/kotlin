@@ -1,0 +1,59 @@
+UFile (package = ) [public final class MyColor {...]
+    UClass (name = MyColor) [public final class MyColor {...}]
+        UField (name = x) [@org.jetbrains.annotations.NotNull private final var x: int]
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+        UField (name = y) [@org.jetbrains.annotations.NotNull private final var y: int]
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+        UField (name = z) [@org.jetbrains.annotations.NotNull private final var z: int]
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+        UMethod (name = getX) [public final fun getX() : int = UastEmptyExpression]
+        UMethod (name = getY) [public final fun getY() : int = UastEmptyExpression]
+        UMethod (name = getZ) [public final fun getZ() : int = UastEmptyExpression]
+        UMethod (name = MyColor) [public fun MyColor(@org.jetbrains.annotations.NotNull x: int, @org.jetbrains.annotations.NotNull y: int, @org.jetbrains.annotations.NotNull z: int) = UastEmptyExpression]
+            UParameter (name = x) [@org.jetbrains.annotations.NotNull var x: int]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UParameter (name = y) [@org.jetbrains.annotations.NotNull var y: int]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UParameter (name = z) [@org.jetbrains.annotations.NotNull var z: int]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+    UClass (name = Some) [public final class Some {...}]
+        UField (name = delegate$delegate) [@org.jetbrains.annotations.NotNull private final var delegate$delegate: kotlin.Lazy]
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [lazy({ ...})] : PsiType:Lazy<? extends MyColor>
+                UIdentifier (Identifier (lazy)) [UIdentifier (Identifier (lazy))]
+                USimpleNameReferenceExpression (identifier = lazy, resolvesTo = null) [lazy] : PsiType:Lazy<? extends MyColor>
+                ULambdaExpression [{ ...}] : PsiType:Function0<? extends MyColor>
+                    UBlockExpression [{...}]
+                        UReturnExpression [return <init>(18, 2, 3)]
+                            UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 3)) [<init>(18, 2, 3)] : PsiType:MyColor
+                                UIdentifier (Identifier (MyColor)) [UIdentifier (Identifier (MyColor))]
+                                USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: MyColor) [<init>] : PsiType:MyColor
+                                ULiteralExpression (value = 18) [18] : PsiType:int
+                                ULiteralExpression (value = 2) [2] : PsiType:int
+                                ULiteralExpression (value = 3) [3] : PsiType:int
+        UField (name = lambda) [@org.jetbrains.annotations.NotNull private final var lambda: kotlin.Lazy<MyColor> = lazy({ ...})]
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [lazy({ ...})] : PsiType:Lazy<? extends MyColor>
+                UIdentifier (Identifier (lazy)) [UIdentifier (Identifier (lazy))]
+                USimpleNameReferenceExpression (identifier = lazy, resolvesTo = null) [lazy] : PsiType:Lazy<? extends MyColor>
+                ULambdaExpression [{ ...}] : PsiType:Function0<? extends MyColor>
+                    UBlockExpression [{...}]
+                        UReturnExpression [return <init>(1, 2, 3)]
+                            UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 3)) [<init>(1, 2, 3)] : PsiType:MyColor
+                                UIdentifier (Identifier (MyColor)) [UIdentifier (Identifier (MyColor))]
+                                USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: MyColor) [<init>] : PsiType:MyColor
+                                ULiteralExpression (value = 1) [1] : PsiType:int
+                                ULiteralExpression (value = 2) [2] : PsiType:int
+                                ULiteralExpression (value = 3) [3] : PsiType:int
+        UField (name = nonLazy) [@org.jetbrains.annotations.NotNull private final var nonLazy: MyColor = <init>(1, 2, 3)]
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 3)) [<init>(1, 2, 3)] : PsiType:MyColor
+                UIdentifier (Identifier (MyColor)) [UIdentifier (Identifier (MyColor))]
+                USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: MyColor) [<init>] : PsiType:MyColor
+                ULiteralExpression (value = 1) [1] : PsiType:int
+                ULiteralExpression (value = 2) [2] : PsiType:int
+                ULiteralExpression (value = 3) [3] : PsiType:int
+        UMethod (name = getDelegate) [public final fun getDelegate() : MyColor = UastEmptyExpression]
+        UMethod (name = getLambda) [public final fun getLambda() : kotlin.Lazy<MyColor> = UastEmptyExpression]
+        UMethod (name = getNonLazy) [public final fun getNonLazy() : MyColor = UastEmptyExpression]
+        UMethod (name = Some) [public fun Some() = UastEmptyExpression]

@@ -1,0 +1,74 @@
+UFile (package = ) [public final class AnnotatedExpressionsKt {...]
+    UClass (name = AnnotatedExpressionsKt) [public final class AnnotatedExpressionsKt {...}]
+        UMethod (name = foo) [public static final fun foo() : void {...}]
+            UBlockExpression [{...}] : PsiType:void
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [foo()] : PsiType:void
+                    UAnnotation (fqName = kotlin.Suppress) [@kotlin.Suppress]
+                    UIdentifier (Identifier (foo)) [UIdentifier (Identifier (foo))]
+                    USimpleNameReferenceExpression (identifier = foo, resolvesTo = null) [foo] : PsiType:void
+                UDeclarationsExpression [@kotlin.Suppress var a: int = 1]
+                    ULocalVariable (name = a) [@kotlin.Suppress var a: int = 1]
+                        UAnnotation (fqName = kotlin.Suppress) [@kotlin.Suppress]
+                        ULiteralExpression (value = 1) [1] : PsiType:int
+                UDeclarationsExpression [@kotlin.Suppress var b: int = 2]
+                    ULocalVariable (name = b) [@kotlin.Suppress var b: int = 2]
+                        UAnnotation (fqName = kotlin.Suppress) [@kotlin.Suppress]
+                        ULiteralExpression (value = 2) [2] : PsiType:int
+                UBinaryExpression (operator = =) [b = a] : PsiType:void
+                    UAnnotation (fqName = kotlin.Suppress) [@kotlin.Suppress]
+                    USimpleNameReferenceExpression (identifier = b) [b] : PsiType:int
+                    USimpleNameReferenceExpression (identifier = a) [a] : PsiType:int
+                UIfExpression [if (a > 2) a else b] : PsiType:int
+                    UAnnotation (fqName = kotlin.Suppress) [@kotlin.Suppress]
+                    UBinaryExpression (operator = >) [a > 2] : PsiType:boolean
+                        USimpleNameReferenceExpression (identifier = a) [a] : PsiType:int
+                        ULiteralExpression (value = 2) [2] : PsiType:int
+                    USimpleNameReferenceExpression (identifier = a) [a] : PsiType:int
+                    USimpleNameReferenceExpression (identifier = b) [b] : PsiType:int
+                UDeclarationsExpression [var c: int = elvis {...}]
+                    ULocalVariable (name = c) [var c: int = elvis {...}]
+                        UExpressionList (elvis) [elvis {...}] : PsiType:int
+                            UDeclarationsExpression [var varae507364: int = a]
+                                ULocalVariable (name = varae507364) [var varae507364: int = a]
+                                    USimpleNameReferenceExpression (identifier = a) [a] : PsiType:int
+                                        UAnnotation (fqName = kotlin.Suppress) [@kotlin.Suppress]
+                            UIfExpression [if (varae507364 != null) varae507364 else b]
+                                UBinaryExpression (operator = !=) [varae507364 != null]
+                                    USimpleNameReferenceExpression (identifier = varae507364) [varae507364]
+                                    ULiteralExpression (value = null) [null]
+                                USimpleNameReferenceExpression (identifier = varae507364) [varae507364]
+                                USimpleNameReferenceExpression (identifier = b) [b] : PsiType:int
+        UMethod (name = annotatedSwitch) [public static final fun annotatedSwitch(@org.jetbrains.annotations.NotNull str: java.lang.String) : java.lang.Integer {...}]
+            UParameter (name = str) [@org.jetbrains.annotations.NotNull var str: java.lang.String]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}]
+                UReturnExpression [return switch  {...]
+                    USwitchExpression [switch  {...] : PsiType:int
+                        UExpressionList (when) [    str.isBlank() -> {...    ] : PsiType:int
+                            USwitchClauseExpressionWithBody [str.isBlank() -> {...]
+                                UQualifiedReferenceExpression [str.isBlank()] : PsiType:boolean
+                                    UAnnotation (fqName = kotlin.Suppress) [@kotlin.Suppress(names = "DEPRECATION")]
+                                        UNamedExpression (name = names) [names = "DEPRECATION"]
+                                            ULiteralExpression (value = "DEPRECATION") ["DEPRECATION"] : PsiType:String
+                                    USimpleNameReferenceExpression (identifier = str) [str] : PsiType:String
+                                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [isBlank()] : PsiType:boolean
+                                        UIdentifier (Identifier (isBlank)) [UIdentifier (Identifier (isBlank))]
+                                        USimpleNameReferenceExpression (identifier = isBlank, resolvesTo = null) [isBlank] : PsiType:boolean
+                                UExpressionList (when_entry) [{...]
+                                    UYieldExpression [yield null]
+                                        ULiteralExpression (value = null) [null] : PsiType:Void
+                            USwitchClauseExpressionWithBody [str.isNotEmpty() != null -> {...]
+                                UBinaryExpression (operator = !=) [str.isNotEmpty() != null] : PsiType:boolean
+                                    UQualifiedReferenceExpression [str.isNotEmpty()] : PsiType:boolean
+                                        USimpleNameReferenceExpression (identifier = str) [str] : PsiType:String
+                                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [isNotEmpty()] : PsiType:boolean
+                                            UIdentifier (Identifier (isNotEmpty)) [UIdentifier (Identifier (isNotEmpty))]
+                                            USimpleNameReferenceExpression (identifier = isNotEmpty, resolvesTo = null) [isNotEmpty] : PsiType:boolean
+                                    ULiteralExpression (value = null) [null] : PsiType:Void
+                                UExpressionList (when_entry) [{...]
+                                    UYieldExpression [yield null]
+                                        ULiteralExpression (value = null) [null] : PsiType:Void
+                            USwitchClauseExpressionWithBody [ -> {...]
+                                UExpressionList (when_entry) [{...]
+                                    UYieldExpression [yield 1]
+                                        ULiteralExpression (value = 1) [1] : PsiType:int

@@ -1,0 +1,5 @@
+UFile (package = ) [public final class C {...]
+    UClass (name = C) [public final class C {...}]
+        UMethod (name = foo) [public final fun foo() : void {...}]
+            UBlockExpression [{...}] : PsiType:void
+        UMethod (name = C) [public fun C() = UastEmptyExpression]
