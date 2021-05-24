@@ -91,8 +91,6 @@ fun IrValueParameter.isInlineParameter(): Boolean =
 val IrDeclaration.parentDeclarationsWithSelf: Sequence<IrDeclaration>
     get() = generateSequence(this, { it.parent as? IrDeclaration })
 
-fun IrClass.companionObject() = this.declarations.filterIsInstance<IrClass>().atMostOne { it.isCompanion }
-
 fun buildSimpleAnnotation(irBuiltIns: IrBuiltIns, startOffset: Int, endOffset: Int,
                           annotationClass: IrClass, vararg args: String): IrConstructorCall {
     val constructor = annotationClass.constructors.let {
