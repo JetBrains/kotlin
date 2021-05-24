@@ -206,8 +206,11 @@ class BuilderInferenceSession(
 
     override fun currentConstraintSystem() = ConstraintStorage.Empty
 
-    fun getNotFixedToInferredTypesSubstitutor(): NewTypeSubstitutor =
-        ComposedSubstitutor(commonSystem.buildCurrentSubstitutor() as NewTypeSubstitutor, createNonFixedTypeToVariableSubstitutor())
+    fun getNotFixedToInferredTypesSubstitutor(): NewTypeSubstitutor {
+        val currentSubstitutor =
+            commonSystem.buildCurrentSubstitutor().cast<NewTypeSubstitutor>().takeIf { !it.isEmpty } ?: return EmptySubstitutor
+        return ComposedSubstitutor(currentSubstitutor, createNonFixedTypeToVariableSubstitutor())
+    }
 
     override fun inferPostponedVariables(
         lambda: ResolvedLambdaAtom,
