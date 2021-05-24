@@ -5,5 +5,3 @@ fun foo(list: List<String>?) {
     var s = ""
     s = list[0]<caret> ?: ""
 }
-
-/* IGNORE_FIR */
