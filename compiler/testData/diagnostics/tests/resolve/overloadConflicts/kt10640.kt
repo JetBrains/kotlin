@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface AutoCloseable
 interface Closeable : AutoCloseable
 

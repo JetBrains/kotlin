@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +BooleanElvisBoundSmartCasts
 // See KT-20752
 

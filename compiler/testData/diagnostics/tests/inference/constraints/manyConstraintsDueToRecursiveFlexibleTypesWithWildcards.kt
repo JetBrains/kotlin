@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // SKIP_JAVAC
 
 // FILE: MySettings.java
