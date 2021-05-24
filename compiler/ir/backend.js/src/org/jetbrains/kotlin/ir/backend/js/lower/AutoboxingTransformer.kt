@@ -7,13 +7,11 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.AbstractValueUsageTransformer
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.isPrimitiveArray
@@ -126,7 +124,7 @@ class AutoboxingTransformer(context: JsCommonBackendContext) : AbstractValueUsag
 
         if (actualType.isUnit() && !expectedType.isUnit()) {
             // Don't materialize Unit if value is known to be proper Unit on runtime
-            if (!this.isGetUnit()) {
+            if (!this.isGetUnit(irBuiltIns)) {
                 val unitValue = JsIrBuilder.buildGetObjectValue(actualType, context.irBuiltIns.unitClass)
                 return JsIrBuilder.buildComposite(actualType, listOf(this, unitValue))
             }
@@ -159,20 +157,6 @@ class AutoboxingTransformer(context: JsCommonBackendContext) : AbstractValueUsag
             }
         }
     }
-
-    private tailrec fun IrExpression.isGetUnit(): Boolean =
-        when (this) {
-            is IrContainerExpression ->
-                when (val lastStmt = this.statements.lastOrNull()) {
-                    is IrExpression -> lastStmt.isGetUnit()
-                    else -> false
-                }
-
-            is IrGetObjectValue ->
-                this.symbol == irBuiltIns.unitClass
-
-            else -> false
-        }
 
     private fun buildSafeCall(
         arg: IrExpression,
@@ -207,3 +191,32 @@ class AutoboxingTransformer(context: JsCommonBackendContext) : AbstractValueUsag
         }
     }
 }
+
+class UnitMaterializationPass(val context: JsCommonBackendContext) : AbstractValueUsageTransformer(context.irBuiltIns), BodyLoweringPass {
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
+        irBody.transformChildrenVoid()
+    }
+
+    override fun IrExpression.useAsValue(value: IrValueDeclaration): IrExpression {
+        if (this.type == irBuiltIns.unitType && !this.isGetUnit(irBuiltIns)) {
+            val unitValue = JsIrBuilder.buildGetObjectValue(type, irBuiltIns.unitClass)
+            return JsIrBuilder.buildComposite(type, listOf(this, unitValue))
+        }
+        return this
+    }
+}
+
+
+private tailrec fun IrExpression.isGetUnit(irBuiltIns: IrBuiltIns): Boolean =
+    when (this) {
+        is IrContainerExpression ->
+            when (val lastStmt = this.statements.lastOrNull()) {
+                is IrExpression -> lastStmt.isGetUnit(irBuiltIns)
+                else -> false
+            }
+
+        is IrGetObjectValue ->
+            this.symbol == irBuiltIns.unitClass
+
+        else -> false
+    }
