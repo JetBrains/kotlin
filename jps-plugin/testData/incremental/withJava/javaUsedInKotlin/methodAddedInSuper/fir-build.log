@@ -3,5 +3,8 @@
 Compiling files:
   src/Sub.kt
 End of files
-Exit code: OK
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+'y' hides member of supertype 'Super' and needs 'override' modifier
 
