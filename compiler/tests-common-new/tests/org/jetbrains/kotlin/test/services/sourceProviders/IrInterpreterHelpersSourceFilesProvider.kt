@@ -43,11 +43,11 @@ class IrInterpreterHelpersSourceFilesProvider(testServices: TestServices) : Addi
 
     private fun getTestFilesForEachDirectory(vararg directories: String): List<TestFile> {
         return directories.flatMap { directory ->
-            File(directory).walkTopDown().mapNotNull {
-                if (it.isDirectory) return@mapNotNull null
-                if (EXCLUDES.any { excludePath -> it.absolutePath.endsWith(excludePath) }) return@mapNotNull null
+            File(directory).walkTopDown().mapNotNull { file ->
+                if (file.isDirectory) return@mapNotNull null
+                if (EXCLUDES.any { file.absolutePath.endsWith(it.replace('/', File.separatorChar)) }) return@mapNotNull null
 
-                it.toTestFile()
+                file.toTestFile()
             }.toList()
         }
     }
