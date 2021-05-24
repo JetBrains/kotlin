@@ -119,9 +119,10 @@ class IrCompileTimeChecker(
     }
 
     override fun visitGetValue(expression: IrGetValue, data: Nothing?): Boolean {
-        val parent = expression.symbol.owner.parent as IrSymbolOwner
-        val isObject = (parent as? IrClass)?.isObject == true //used to evaluate constants inside object
-        return visitedStack.contains(parent) || isObject
+        val owner = expression.symbol.owner
+        val parent = owner.parent as IrSymbolOwner
+        val isObjectReceiver = (parent as? IrClass)?.isObject == true && owner.origin == IrDeclarationOrigin.INSTANCE_RECEIVER
+        return visitedStack.contains(parent) || isObjectReceiver
     }
 
     override fun visitSetValue(expression: IrSetValue, data: Nothing?): Boolean {

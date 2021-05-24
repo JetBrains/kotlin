@@ -370,11 +370,10 @@ class IrInterpreter private constructor(
                 callStack.addInstruction(CompoundInstruction(field.initializer?.expression))
             }
             expression.accessesTopLevelOrObjectField() -> {
-                // receiver is null, for example, for top level fields
                 val propertyOwner = field.correspondingPropertySymbol?.owner
                 val isConst = propertyOwner?.isConst == true || propertyOwner?.backingField?.initializer?.expression is IrConst<*>
                 assert(isConst) { "Cannot interpret get method on top level non const properties" }
-                callStack.addInstruction(CompoundInstruction(expression.symbol.owner.initializer?.expression))
+                callStack.addInstruction(CompoundInstruction(field.initializer?.expression))
             }
             else -> {
                 val result = callStack.getState(receiver!!).getField(field.correspondingPropertySymbol!!)
@@ -389,6 +388,9 @@ class IrInterpreter private constructor(
             val state = Common(objectClass)
             environment.mapOfObjects[objectClass.symbol] = state  // must set object's state here to avoid cyclic evaluation
             callStack.addVariable(Variable(objectClass.thisReceiver!!.symbol, state))
+
+            // non compile time objects can be used in interpreter, for example, to evaluate const properties
+            if (!objectClass.hasAnnotation(compileTimeAnnotation)) return@interceptGetObjectValue callStack.pushState(state)
 
             val constructor = objectClass.constructors.firstOrNull() ?: return@interceptGetObjectValue callStack.pushState(state)
             val constructorCall = IrConstructorCallImpl.fromSymbolOwner(constructor.returnType, constructor.symbol)
