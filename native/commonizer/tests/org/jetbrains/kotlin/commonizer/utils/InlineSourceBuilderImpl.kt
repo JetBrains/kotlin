@@ -101,7 +101,7 @@ class InlineSourceBuilderImpl(private val disposable: Disposable) : InlineSource
         }
 
         private inner class ModuleInfoImpl(module: InlineSourceBuilder.Module) : ModuleInfo {
-            private val dependencyModules = module.dependencies.associateBy(::ModuleInfoImpl)
+            private val dependencyModules = module.dependencies.associateBy { ModuleInfoImpl(it) }
             override val name: Name = Name.special("<${module.name}>")
             override fun dependencies(): List<ModuleInfo> = listOf(this) + dependencyModules.keys
             override val platform: TargetPlatform get() = CommonPlatforms.defaultCommonPlatform
