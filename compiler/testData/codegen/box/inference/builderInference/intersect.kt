@@ -1,5 +1,8 @@
 // !LANGUAGE: +UnrestrictedBuilderInference
 // WITH_RUNTIME
+// TARGET_BACKEND: JVM
+// IGNORE_BACKEND_FIR: JVM_IR
+// DONT_TARGET_EXACT_BACKEND: WASM
 
 // FILE: Test.java
 

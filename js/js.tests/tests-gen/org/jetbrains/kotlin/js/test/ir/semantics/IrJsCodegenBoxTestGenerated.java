@@ -12141,34 +12141,14 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/inference/builderInference/capturedTypes.kt");
             }
 
-            @TestMetadata("commonSuperType.kt")
-            public void testCommonSuperType() throws Exception {
-                runTest("compiler/testData/codegen/box/inference/builderInference/commonSuperType.kt");
-            }
-
             @TestMetadata("commonSuperTypeContravariant.kt")
             public void testCommonSuperTypeContravariant() throws Exception {
                 runTest("compiler/testData/codegen/box/inference/builderInference/commonSuperTypeContravariant.kt");
             }
 
-            @TestMetadata("commonSuperTypeCovariant.kt")
-            public void testCommonSuperTypeCovariant() throws Exception {
-                runTest("compiler/testData/codegen/box/inference/builderInference/commonSuperTypeCovariant.kt");
-            }
-
             @TestMetadata("commonSuperTypeInvariant.kt")
             public void testCommonSuperTypeInvariant() throws Exception {
                 runTest("compiler/testData/codegen/box/inference/builderInference/commonSuperTypeInvariant.kt");
-            }
-
-            @TestMetadata("commonSuperTypeNullable.kt")
-            public void testCommonSuperTypeNullable() throws Exception {
-                runTest("compiler/testData/codegen/box/inference/builderInference/commonSuperTypeNullable.kt");
-            }
-
-            @TestMetadata("intersect.kt")
-            public void testIntersect() throws Exception {
-                runTest("compiler/testData/codegen/box/inference/builderInference/intersect.kt");
             }
 
             @TestMetadata("kt41164.kt")

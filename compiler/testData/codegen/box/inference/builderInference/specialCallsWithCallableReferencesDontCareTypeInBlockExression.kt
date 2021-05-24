@@ -1,6 +1,9 @@
 // !LANGUAGE: +UnrestrictedBuilderInference
 // WITH_RUNTIME
 // SKIP_TXT
+// DONT_TARGET_EXACT_BACKEND: WASM
+// IGNORE_LIGHT_ANALYSIS
+// IGNORE_BACKEND: JVM
 
 import kotlin.experimental.ExperimentalTypeInference
 

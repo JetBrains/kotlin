@@ -24,7 +24,7 @@ fun test() {
         get()?.test2()
         get().test2()
         get()?.hashCode()
-        get()?.equals(1)
+        get()?.<!NONE_APPLICABLE!>equals<!>(1)
         // there is `String?.equals` extension
         get().equals("")
     }
@@ -35,10 +35,10 @@ fun test() {
         get()?.test2()
         get().test2()
         get()?.hashCode()
-        get()?.equals(1)
+        get()?.<!NONE_APPLICABLE!>equals<!>(1)
         val x = get()
-        x?.hashCode()
-        x?.equals(1)
+        x<!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()
+        x<!UNNECESSARY_SAFE_CALL!>?.<!><!NONE_APPLICABLE!>equals<!>(1)
         x.equals("")
     }
     val ret3 = build {
@@ -48,22 +48,22 @@ fun test() {
         get()?.test2()
         get().test2()
         get()?.hashCode()
-        get()?.equals(1)
+        get()?.<!NONE_APPLICABLE!>equals<!>(1)
         val x = get()
-        x?.hashCode()
-        x?.equals(1)
+        x<!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()
+        x<!UNNECESSARY_SAFE_CALL!>?.<!><!NONE_APPLICABLE!>equals<!>(1)
 
         if (get() == null) {}
         if (get() === null) {}
 
         if (x != null) {
-            x?.hashCode()
-            x?.equals(1)
+            x<!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()
+            x<!UNNECESSARY_SAFE_CALL!>?.<!><!NONE_APPLICABLE!>equals<!>(1)
             x.equals("")
             x.hashCode()
             x.toString()
             x.test()
-            x?.test2()
+            x<!UNNECESSARY_SAFE_CALL!>?.<!>test2()
             x.test2()
         }
 
@@ -76,33 +76,33 @@ fun test() {
         get()?.test2()
         get().test2()
         get()?.hashCode()
-        get()?.equals(1)
+        get()?.<!NONE_APPLICABLE!>equals<!>(1)
         val x = get()
-        x?.hashCode()
-        x?.equals(1)
+        x<!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()
+        x<!UNNECESSARY_SAFE_CALL!>?.<!><!NONE_APPLICABLE!>equals<!>(1)
 
         if (get() == null) {}
         if (get() === null) {}
 
         if (x == null) {
-            x?.hashCode()
-            x?.equals(1)
+            x<!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()
+            x<!UNNECESSARY_SAFE_CALL!>?.<!><!NONE_APPLICABLE!>equals<!>(1)
             x.equals("") // TODO: is it correct?
             x.hashCode()
             x.toString()
             x.test()
-            x?.test2()
+            x<!UNNECESSARY_SAFE_CALL!>?.<!>test2()
             x.test2()
         }
 
         if (x === null) {
-            x?.hashCode()
-            x?.equals(1)
+            x<!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()
+            x<!UNNECESSARY_SAFE_CALL!>?.<!><!NONE_APPLICABLE!>equals<!>(1)
             x.equals("")
             x.hashCode()
             x.toString()
             x.test()
-            x?.test2()
+            x<!UNNECESSARY_SAFE_CALL!>?.<!>test2()
             x.test2()
         }
 
@@ -115,22 +115,22 @@ fun test() {
         get()?.test2()
         get().test2()
         get()?.hashCode()
-        get()?.equals(1)
+        get()?.<!NONE_APPLICABLE!>equals<!>(1)
         val x = get()
-        x?.hashCode()
-        x?.equals(1)
+        x<!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()
+        x<!UNNECESSARY_SAFE_CALL!>?.<!><!NONE_APPLICABLE!>equals<!>(1)
 
         if (get() == null) {}
         if (get() === null) {}
 
         if (x == null) {
-            x?.hashCode()
-            x?.equals(1)
+            x<!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()
+            x<!UNNECESSARY_SAFE_CALL!>?.<!><!NONE_APPLICABLE!>equals<!>(1)
             x.equals("")
             x.hashCode()
             x.toString()
             x.test()
-            x?.test2()
+            x<!UNNECESSARY_SAFE_CALL!>?.<!>test2()
             x.test2()
         }
 

@@ -15,7 +15,7 @@ fun main() {
     }
     buildList {
         add(3)
-        val x: String = get(0)
+        val x: String = <!INITIALIZER_TYPE_MISMATCH!>get(0)<!>
     }
     buildList {
         add("3")
@@ -28,6 +28,6 @@ fun main() {
     }
     buildList {
         add("")
-        val x: StringBuilder = get(0)
+        val x: StringBuilder = <!INITIALIZER_TYPE_MISMATCH!>get(0)<!>
     }
 }

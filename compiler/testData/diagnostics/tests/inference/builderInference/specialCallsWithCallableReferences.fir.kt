@@ -388,49 +388,49 @@ fun poll66(): Flow<String> {
 
 fun poll7(): Flow<String> {
     return flow {
-        val inv = ::bar!!
+        val inv = ::bar<!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!>
         inv()
     }
 }
 
 fun poll71(): Flow<String> {
     return flow {
-        val inv = ::bar2!!
+        val inv = ::bar2<!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!>
         inv()
     }
 }
 
 fun poll72(): Flow<String> {
     return flow {
-        val inv = ::bar3!!
+        val inv = ::bar3<!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!>
         inv()
     }
 }
 
 fun poll73(): Flow<String> {
     return flow {
-        val inv = ::bar4!!
+        val inv = ::bar4<!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!>
         inv
     }
 }
 
 fun poll74(): Flow<String> {
     return flow {
-        val inv = ::bar5!!
+        val inv = ::bar5<!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!>
         inv
     }
 }
 
 fun poll75(): Flow<String> {
     return flow {
-        val inv = ::Foo6!!
+        val inv = ::Foo6<!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!>
         inv
     }
 }
 
 fun poll76(): Flow<String> {
     return flow {
-        val inv = ::Foo7!!
+        val inv = ::Foo7<!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!>
         inv
     }
 }
@@ -438,21 +438,21 @@ fun poll76(): Flow<String> {
 fun poll8(): Flow<String> {
     return flow {
         val inv = <!NEW_INFERENCE_ERROR!>::bar in <!NEW_INFERENCE_ERROR!>setOf(::foo)<!><!>
-        inv()
+        <!UNRESOLVED_REFERENCE!>inv<!>()
     }
 }
 
 fun poll81(): Flow<String> {
     return flow {
         val inv = ::bar2 in setOf(::foo2)
-        inv()
+        <!UNRESOLVED_REFERENCE!>inv<!>()
     }
 }
 
 fun poll82(): Flow<String> {
     return flow {
         val inv = ::bar3 in <!NEW_INFERENCE_ERROR!>setOf(::foo3)<!>
-        inv()
+        <!UNRESOLVED_REFERENCE!>inv<!>()
     }
 }
 

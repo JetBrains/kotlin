@@ -1,6 +1,7 @@
 // ISSUE: KT-41164
 // WITH_RUNTIME
 // IGNORE_BACKEND_FIR: JVM_IR
+// DONT_TARGET_EXACT_BACKEND: WASM
 
 import kotlin.experimental.ExperimentalTypeInference
 

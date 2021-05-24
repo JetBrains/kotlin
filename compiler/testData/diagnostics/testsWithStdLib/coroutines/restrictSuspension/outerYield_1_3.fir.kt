@@ -84,10 +84,10 @@ fun test() {
 
             with(this) {
                 yield("")
-                this@with.<!UNRESOLVED_REFERENCE!>yield<!>("")
+                this@with.<!UNRESOLVED_REFERENCE{LT}!>yield<!>("")
 
                 yield2("")
-                this@with.<!INAPPLICABLE_CANDIDATE!>yield2<!>("")
+                this@with.<!INAPPLICABLE_CANDIDATE{LT}!>yield2<!>("")
             }
         }
     }
