@@ -292,7 +292,6 @@ include ":plugins:parcelize:parcelize-compiler",
         ":kotlin-parcelize-compiler"
 
 include ":plugins:lombok:lombok-compiler-plugin",
-        ":plugins:lombok:lombok-ide-plugin",
         ":kotlin-lombok"
 
 include ":prepare:ide-plugin-dependencies:android-extensions-compiler-plugin-for-ide",
@@ -398,6 +397,7 @@ if (buildProperties.getOrNull("attachedIntellijVersion") != null) {
             ":plugins:android-extensions-ide", // TODO will this module be removed with other IDE modules?
             ":prepare:ide-lazy-resolver", // TODO will this module be removed with other IDE modules?
             ":prepare:idea-plugin", // TODO will this module be removed with other IDE modules?
+            ":plugins:lombok:lombok-ide-plugin",
             ":plugins:kapt3-idea"
 
     project(':idea:idea-android-output-parser').projectDir = "$rootDir/idea/idea-android/idea-android-output-parser" as File
