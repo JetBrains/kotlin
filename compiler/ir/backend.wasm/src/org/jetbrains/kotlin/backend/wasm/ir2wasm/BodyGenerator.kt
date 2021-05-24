@@ -20,10 +20,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.getInlineClassBackingField
-import org.jetbrains.kotlin.ir.util.isInterface
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.wasm.ir.*
@@ -38,6 +35,13 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
 
     override fun visitElement(element: IrElement) {
         error("Unexpected element of type ${element::class}")
+    }
+
+    val unitGetInstance by lazy { backendContext.mapping.objectToGetInstanceFunction[irBuiltIns.unitClass.owner]!! }
+
+    override fun visitGetObjectValue(expression: IrGetObjectValue) {
+        require(expression.symbol == irBuiltIns.unitClass)
+        body.buildCall(context.referenceFunction(unitGetInstance.symbol))
     }
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall) {
@@ -329,11 +333,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
             statementToWasmInstruction(it)
         }
 
-        if (expression.type != irBuiltIns.unitType) {
-            generateExpression(statements.last() as IrExpression)
-        } else {
-            statementToWasmInstruction(statements.last())
-        }
+        generateExpression(statements.last() as IrExpression)
     }
 
     override fun visitBreak(jump: IrBreak) {
@@ -345,18 +345,17 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
     }
 
     override fun visitReturn(expression: IrReturn) {
-        generateExpression(expression.value)
-
-        // FIXME: Hack for "returning" Unit from functions with generic return type.
-        //        Common case -- lambdas returning unit.
-        if (expression.value.type == irBuiltIns.unitType &&
-            expression.returnTargetSymbol.owner.returnType(backendContext) != irBuiltIns.unitType
+        if (
+            expression.value.type == irBuiltIns.unitType &&
+            expression.returnTargetSymbol.owner.returnType(backendContext) == irBuiltIns.unitType
         ) {
-            val irReturnType = expression.returnTargetSymbol.owner.returnType(backendContext)
+            statementToWasmInstruction(expression.value)
+        } else {
+            generateExpression(expression.value)
+        }
 
-            if (irReturnType != irBuiltIns.unitType) {
-                generateDefaultInitializerForType(context.transformType(irReturnType), body)
-            }
+        if (context.irFunction is IrConstructor) {
+            body.buildGetLocal(context.referenceLocal(0))
         }
 
         // Handle complex exported parameters.
@@ -371,25 +370,6 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
     }
 
     override fun visitWhen(expression: IrWhen) {
-        if (expression.type == irBuiltIns.unitType) {
-            var ifCount = 0
-            for (branch in expression.branches) {
-                if (!isElseBranch(branch)) {
-                    generateExpression(branch.condition)
-                    body.buildIf(label = null, resultType = null)
-                    statementToWasmInstruction(branch.result)
-                    body.buildElse()
-                    ifCount++
-                } else {
-                    statementToWasmInstruction(branch.result)
-                    break
-                }
-            }
-
-            repeat(ifCount) { body.buildEnd() }
-            return
-        }
-
         val resultType = context.transformBlockResultType(expression.type)
         var ifCount = 0
         for (branch in expression.branches) {
@@ -489,10 +469,47 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
             return
         }
 
-        generateExpression(statement as IrExpression)
+        if (statement is IrContainerExpression) {
+            statement.statements.forEach { it ->
+                statementToWasmInstruction(it)
+            }
+        } else if (statement is IrWhen) {
+            var ifCount = 0
+            for (branch in statement.branches) {
+                if (!isElseBranch(branch)) {
+                    generateExpression(branch.condition)
+                    body.buildIf(label = null, resultType = null)
+                    statementToWasmInstruction(branch.result)
+                    body.buildElse()
+                    ifCount++
+                } else {
+                    statementToWasmInstruction(branch.result)
+                    break
+                }
+            }
 
-        if (statement.type != irBuiltIns.unitType && statement.type != irBuiltIns.nothingType) {
-            body.buildInstr(WasmOp.DROP)
+            repeat(ifCount) { body.buildEnd() }
+        } else {
+            generateExpression(statement as IrExpression)
+
+            var needDrop = true
+            if (statement.type == irBuiltIns.nothingType)
+                needDrop = false
+
+            if (statement is IrSetValue || statement is IrBreakContinue || statement is IrSetField || statement is IrLoop || statement is IrDelegatingConstructorCall) {
+                needDrop = false
+            }
+
+            if (statement is IrCall || statement is IrConstructorCall) {
+                val unitGetInstanceCall = statement is IrCall && statement.symbol.owner == unitGetInstance
+                if (statement.type == irBuiltIns.unitType && !unitGetInstanceCall) {
+                    needDrop = false
+                }
+            }
+
+            if (needDrop) {
+                body.buildInstr(WasmOp.DROP)
+            }
         }
     }
 

@@ -156,6 +156,8 @@ class InlineClassLowering(val context: CommonBackendContext) {
                         +statement.transformStatement(object : IrElementTransformerVoid() {
                             override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
                                 expression.transformChildrenVoid()
+                                // Static function for delegating constructors return unboxed instance of inline class
+                                expression.type = irClass.defaultType
                                 return irBlock(expression) {
                                     thisVar = createTmpVariable(
                                         expression,

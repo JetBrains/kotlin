@@ -14,9 +14,12 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.erasedUpperBound
+import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.backend.js.utils.findUnitGetInstanceFunction
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
@@ -35,6 +38,7 @@ class WasmTypeOperatorLowering(val context: WasmBackendContext) : FileLoweringPa
 class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrElementTransformerVoidWithContext() {
     private val symbols = context.wasmSymbols
     private val builtIns = context.irBuiltIns
+    private val unitGetInstance = context.findUnitGetInstanceFunction()
 
     private lateinit var builder: DeclarationIrBuilder
 
@@ -45,7 +49,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         return when (expression.operator) {
             IrTypeOperator.IMPLICIT_CAST -> lowerImplicitCast(expression)
             IrTypeOperator.IMPLICIT_DYNAMIC_CAST -> error("Dynamic casts are not supported in Wasm backend")
-            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> expression.argument
+            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> builder.irComposite(resultType = builtIns.unitType) { +expression.argument }
             IrTypeOperator.IMPLICIT_INTEGER_COERCION -> lowerIntegerCoercion(expression)
             IrTypeOperator.IMPLICIT_NOTNULL -> lowerImplicitCast(expression)
             IrTypeOperator.INSTANCEOF -> lowerInstanceOf(expression, inverted = false)
@@ -55,6 +59,19 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
             IrTypeOperator.SAM_CONVERSION -> TODO("SAM conversion: ${expression.render()}")
             IrTypeOperator.REINTERPRET_CAST -> expression
         }
+    }
+
+    override fun visitVariable(declaration: IrVariable): IrStatement {
+        // Some IR passes, notable for-loops-lowering assumes implicit cast during variable initialization
+        val initializer = declaration.initializer
+        if (initializer != null &&
+            initializer.type != declaration.type
+        ) {
+            builder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol).at(declaration)
+            declaration.initializer = narrowType(initializer.type, declaration.type, initializer)
+        }
+
+        return super.visitVariable(declaration)
     }
 
     private fun lowerInstanceOf(
@@ -135,10 +152,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
     private fun generateTypeCheckNonNull(argument: IrExpression, toType: IrType): IrExpression {
         assert(!toType.isMarkedNullable())
         return when {
-            toType.isNothing() -> builder.irComposite(resultType = builtIns.booleanType) {
-                +(argument)
-                +builder.irFalse()
-            }
+            toType.isNothing() -> builder.irFalse()
             toType.isTypeParameter() -> generateTypeCheckWithTypeParameter(argument, toType)
             toType.isInterface() -> generateIsInterface(argument, toType)
             else -> generateIsSubClass(argument, toType)
@@ -281,16 +295,10 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         val fromTypeErased = fromType.erasedType
         val toTypeErased = toType.erasedType
         if (fromTypeErased.isSubtypeOfClass(toTypeErased.classOrNull!!)) {
-            return builder.irComposite {
-                +argument
-                +builder.irTrue()
-            }
+            return builder.irTrue()
         }
         if (!toTypeErased.isSubtypeOfClass(fromTypeErased.classOrNull!!)) {
-            return builder.irComposite {
-                +argument
-                +builder.irFalse()
-            }
+            return builder.irFalse()
         }
 
         return builder.irCall(symbols.refTest).apply {
