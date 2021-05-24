@@ -10,11 +10,11 @@ class B: A {
 
 fun test1(a: A) {
     assert((a as B).bool())
-    <!DEBUG_INFO_SMARTCAST{NI}!>a<!>.<!UNRESOLVED_REFERENCE{OI}!>bool<!>()
+    <!DEBUG_INFO_SMARTCAST!>a<!>.bool()
 }
 
 fun test2() {
     val a: A? = null;
     assert((a as B).bool())
-    <!DEBUG_INFO_SMARTCAST{NI}!>a<!><!UNNECESSARY_SAFE_CALL{NI}!>?.<!><!UNRESOLVED_REFERENCE{OI}!>bool<!>()
+    <!DEBUG_INFO_SMARTCAST!>a<!><!UNNECESSARY_SAFE_CALL!>?.<!>bool()
 }

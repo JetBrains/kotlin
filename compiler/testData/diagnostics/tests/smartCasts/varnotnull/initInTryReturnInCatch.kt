@@ -75,5 +75,5 @@ fun test6() {
     finally {
         a = null
     }
-    <!DEBUG_INFO_CONSTANT{OI}!>a<!><!UNSAFE_CALL!>.<!>hashCode() // a is null here
+    a<!UNSAFE_CALL!>.<!>hashCode() // a is null here
 }

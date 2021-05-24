@@ -43,10 +43,10 @@ fun main() {
 
     joinG(1, "2")
     joinG(<!NON_VARARG_SPREAD!>*<!>1, "2")
-    <!TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR{OI}!>joinG<!>(1, *<!TYPE_MISMATCH!>"2"<!>)
+    joinG(1, *<!TYPE_MISMATCH!>"2"<!>)
     joinG(x = 1, a = a)
-    <!TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR{OI}!>joinG<!>(x = 1, a = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR, TYPE_MISMATCH!>"2"<!>)
-    <!TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR{OI}!>joinG<!>(x = <!NON_VARARG_SPREAD!>*<!>1, a = *<!TYPE_MISMATCH!>"2"<!>)
+    joinG(x = 1, a = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR, TYPE_MISMATCH!>"2"<!>)
+    joinG(x = <!NON_VARARG_SPREAD!>*<!>1, a = *<!TYPE_MISMATCH!>"2"<!>)
     joinG(1, *a)
     joinG(1, *a, "3")
     joinG(1, "4", *a, "3")

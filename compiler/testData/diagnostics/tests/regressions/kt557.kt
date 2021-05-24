@@ -7,5 +7,5 @@ fun Array<String>.length() : Int {
 }
 
 fun test(array : Array<String?>?) {
-    <!TYPE_MISMATCH{OI}!>array?.sure<Array<String?>>()<!>.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER{NI}!>length<!>()
+    array?.sure<Array<String?>>().<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>length<!>()
 }

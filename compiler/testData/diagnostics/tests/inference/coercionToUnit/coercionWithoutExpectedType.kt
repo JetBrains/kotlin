@@ -1,4 +1,3 @@
-
 fun <T> materialize(): T = TODO()
 
 fun implicitCoercion() {
@@ -13,6 +12,6 @@ fun implicitCoercion() {
 
     val c = l@{
         // Error: block doesn't have an expected type, so call can't be inferred!
-        return@l <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER{NI}, TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER{OI}!>materialize<!>()
+        return@l <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>()
     }
 }

@@ -11,5 +11,5 @@ class C<T> {
 }
 
 fun test(a: C<out CharSequence>) {
-    <!MEMBER_PROJECTED_OUT{OI}("public final operator fun set(x: Int, y: T): Unit defined in C; C<out CharSequence>")!>a[1]<!> = <!CONSTANT_EXPECTED_TYPE_MISMATCH{NI}("integer; Nothing")!>25<!>
+    a[1] = <!CONSTANT_EXPECTED_TYPE_MISMATCH("integer; Nothing")!>25<!>
 }

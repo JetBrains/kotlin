@@ -31,13 +31,13 @@ fun getArr(): Array<String>? = null
 fun f() {
     A().foo(1, <!SPREAD_OF_NULLABLE!>*<!>args)
     bar(2, <!SPREAD_OF_NULLABLE!>*<!><!TYPE_MISMATCH!>args<!>)
-    baz(<!NON_VARARG_SPREAD, SPREAD_OF_NULLABLE!>*<!><!TYPE_MISMATCH{NI}!>args<!>)
+    baz(<!NON_VARARG_SPREAD, SPREAD_OF_NULLABLE!>*<!><!TYPE_MISMATCH!>args<!>)
 }
 
 fun g(args: Array<String>?) {
 
     if (args != null) {
-        A().foo(1, *<!DEBUG_INFO_SMARTCAST{OI}!>args<!>)
+        A().foo(1, *args)
     }
     A().foo(1, *A.ar)
 }
@@ -48,14 +48,14 @@ class B {
 
 fun h(b: B) {
     if (b.args != null) {
-        A().foo(1, <!SPREAD_OF_NULLABLE!>*<!><!SMARTCAST_IMPOSSIBLE{OI}!>b.args<!>)
+        A().foo(1, <!SPREAD_OF_NULLABLE!>*<!>b.args)
     }
 }
 
 fun k() {
     A().foo(1, <!SPREAD_OF_NULLABLE!>*<!>getArr())
     bar(2, <!SPREAD_OF_NULLABLE!>*<!><!TYPE_MISMATCH!>getArr()<!>)
-    baz(<!NON_VARARG_SPREAD, SPREAD_OF_NULLABLE!>*<!><!TYPE_MISMATCH{NI}!>getArr()<!>)
+    baz(<!NON_VARARG_SPREAD, SPREAD_OF_NULLABLE!>*<!><!TYPE_MISMATCH!>getArr()<!>)
 }
 
 fun invokeTest(goodArgs: Array<String>) {

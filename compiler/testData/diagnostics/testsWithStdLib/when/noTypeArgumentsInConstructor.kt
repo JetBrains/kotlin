@@ -1,4 +1,3 @@
-
 import java.util.*
 
 fun <T> nullable(x: T): T? = x
@@ -27,9 +26,9 @@ val test4: Collection<Int> =
         }
 
 val test5: Collection<Int> =
-        listOf(1, 2, 3).<!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH{OI}!>flatMapTo(<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER{OI}!>LinkedHashSet<!>()) { // TODO
+        listOf(1, 2, 3).flatMapTo(LinkedHashSet()) { // TODO
             if (true) listOf(it) else listOf(it)
-        }<!>
+        }
 
 val test6: Collection<Int> =
         listOf(1, 2, 3).flatMapTo(LinkedHashSet<Int>()) {

@@ -5,7 +5,7 @@ interface A
 fun <T> emptyList(): List<T> = throw Exception()
 
 fun test1() {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER{NI}, TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER{OI}!>emptyList<!>()
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>emptyList<!>()
 }
 
 //--------------
@@ -13,7 +13,7 @@ fun test1() {
 fun <T: A> emptyListOfA(): List<T> = throw Exception()
 
 fun test2() {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER{NI}, TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER{OI}!>emptyListOfA<!>()
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>emptyListOfA<!>()
 }
 
 //--------------
@@ -21,7 +21,7 @@ fun test2() {
 fun <T: A, R: T> emptyStrangeMap(): Map<T, R> = throw Exception()
 
 fun test3() {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER{NI}, TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER{OI}!>emptyStrangeMap<!>()
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>emptyStrangeMap<!>()
 }
 
 //--------------

@@ -8,10 +8,10 @@ fun test(x: A<out CharSequence>, y: Out<CharSequence>) {
     with(x) {
         // TODO: this diagnostic could be replaced with TYPE_MISMATCH_DUE_TO_TYPE_PROJECTION
         "".<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>()
-        <!TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS{OI}!>y<!>.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER{NI}!>bar<!>()
+        y.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>bar<!>()
 
         with(y) {
-            <!TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS{OI}, UNRESOLVED_REFERENCE_WRONG_RECEIVER{NI}!>bar<!>()
+            <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>bar<!>()
         }
     }
 }

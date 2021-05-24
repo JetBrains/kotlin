@@ -1,2 +1,2 @@
-annotation class A(val a: IntArray = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH{OI}, TYPE_MISMATCH{NI}, TYPE_MISMATCH{NI}!>arrayOf(1)<!>)
+annotation class A(val a: IntArray = <!TYPE_MISMATCH, TYPE_MISMATCH!>arrayOf(1)<!>)
 annotation class B(val a: IntArray = intArrayOf(1))

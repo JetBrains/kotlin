@@ -16,11 +16,11 @@ fun <S> intersect(vararg elements: S): S = TODO()
 fun intersectAfterSmartCast(arg: Base, arg2: Base) = intersect(
     run {
         if (arg !is One) throw Exception()
-        <!DEBUG_INFO_SMARTCAST{NI}!>arg<!>
+        <!DEBUG_INFO_SMARTCAST!>arg<!>
     },
     run {
         if (arg2 !is Two) throw Exception()
-        <!DEBUG_INFO_SMARTCAST{NI}!>arg2<!>
+        <!DEBUG_INFO_SMARTCAST!>arg2<!>
     }
 )
 
@@ -32,6 +32,6 @@ fun intersectArgWithSmartCastFromLambda(arg: One, arg2: Base) = argOrFn(arg) {
 }
 
 fun test() {
-    intersectAfterSmartCast(O1, O2).<!UNRESOLVED_REFERENCE{NI}!>base<!>()
-    intersectArgWithSmartCastFromLambda(O1, O2).<!UNRESOLVED_REFERENCE{NI}!>base<!>()
+    intersectAfterSmartCast(O1, O2).<!UNRESOLVED_REFERENCE!>base<!>()
+    intersectArgWithSmartCastFromLambda(O1, O2).<!UNRESOLVED_REFERENCE!>base<!>()
 }

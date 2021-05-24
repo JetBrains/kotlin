@@ -8,7 +8,7 @@ fun test1() {}
 @Foo([], [], [])
 fun test2() {}
 
-@Foo([<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1f<!>], <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH{OI}, TYPE_MISMATCH{NI}, TYPE_MISMATCH{NI}!>[' ']<!>, [<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>])
+@Foo([<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1f<!>], <!TYPE_MISMATCH, TYPE_MISMATCH!>[' ']<!>, [<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>])
 fun test3() {}
 
 @Foo(c = [1f], b = [""], a = [1])

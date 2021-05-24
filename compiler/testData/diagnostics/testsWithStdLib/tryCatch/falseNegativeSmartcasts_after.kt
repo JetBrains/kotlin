@@ -13,7 +13,7 @@ fun test1(s1: String?) {
         return
     }
     finally {
-        <!DEBUG_INFO_SMARTCAST{OI}!>s<!><!UNSAFE_CALL{NI}!>.<!>length
+        s<!UNSAFE_CALL!>.<!>length
     }
     <!DEBUG_INFO_SMARTCAST!>s<!>.length
 }

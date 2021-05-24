@@ -10,7 +10,7 @@ fun test(x: Int?) {
     val a7: Number? = 1 <!USELESS_CAST!>as? Number<!>
 
     run { x <!USELESS_CAST!>as? Int<!> }
-    run { x <!USELESS_CAST{NI}!>as? Number<!> }
+    run { x <!USELESS_CAST!>as? Number<!> }
 
     foo(x as? Number)
 

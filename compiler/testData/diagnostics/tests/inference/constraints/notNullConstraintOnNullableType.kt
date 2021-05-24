@@ -17,8 +17,8 @@ fun test(out: Out<Int>, i: In<Int>, inv: A<Int>) {
     r checkType { _<Int>() }
 
     // T? <: Int => error
-    <!TYPE_INFERENCE_INCORPORATION_ERROR{OI}!>doIn<!>(<!TYPE_MISMATCH!>i<!>)
+    doIn(<!TYPE_MISMATCH!>i<!>)
 
     // T? >: Int => error
-    <!TYPE_INFERENCE_INCORPORATION_ERROR{OI}!>doA<!>(<!TYPE_MISMATCH!>inv<!>)
+    doA(<!TYPE_MISMATCH!>inv<!>)
 }

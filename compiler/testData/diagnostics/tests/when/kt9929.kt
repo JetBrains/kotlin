@@ -1,7 +1,7 @@
-val test: Int = if (true) <!TYPE_MISMATCH{NI}!>{
+val test: Int = if (true) <!TYPE_MISMATCH!>{
     when (2) {
         1 -> 1
-        else -> <!NULL_FOR_NONNULL_TYPE{OI}!>null<!>
+        else -> null
     }
 }<!>
 else {

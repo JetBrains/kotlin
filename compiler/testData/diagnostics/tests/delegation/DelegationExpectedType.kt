@@ -20,6 +20,6 @@ class D : A<Int> by baz({ it + 1 })
 
 fun <T> boo(t: T): A<T> = AImpl()
 
-class E : A<Int> by <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH{OI}, TYPE_MISMATCH{NI}, TYPE_MISMATCH{NI}!>boo("")<!>
+class E : A<Int> by <!TYPE_MISMATCH, TYPE_MISMATCH!>boo("")<!>
 
 class F : A<Int> by <!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>AImpl<String>()<!>

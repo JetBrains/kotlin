@@ -13,12 +13,12 @@
 fun foo(x: Int) = x
 
 fun test0(flag: Boolean) {
-    foo(<!TYPE_MISMATCH{NI}!>if (flag) <!CONSTANT_EXPECTED_TYPE_MISMATCH{OI}!>true<!> else <!TYPE_MISMATCH{OI}!>""<!><!>)
+    foo(<!TYPE_MISMATCH!>if (flag) true else ""<!>)
 }
 
 fun test1(flag: Boolean) {
-    foo(<!TYPE_MISMATCH{NI}!>when (flag) {
-        true -> <!CONSTANT_EXPECTED_TYPE_MISMATCH{OI}!>true<!>
-        else -> <!TYPE_MISMATCH{OI}!>""<!>
+    foo(<!TYPE_MISMATCH!>when (flag) {
+        true -> true
+        else -> ""
     }<!>)
 }

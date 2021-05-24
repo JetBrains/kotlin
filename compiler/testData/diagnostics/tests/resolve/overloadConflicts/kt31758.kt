@@ -21,5 +21,5 @@ import a.*
 import b.*
 
 fun test() {
-    <!OVERLOAD_RESOLUTION_AMBIGUITY{NI}!>foo<!><A> { }
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!><A> { }
 }

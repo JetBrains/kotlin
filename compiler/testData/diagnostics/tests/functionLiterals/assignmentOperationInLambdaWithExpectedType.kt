@@ -11,5 +11,5 @@ fun test(bal: Array<Int>) {
 
     val e: Unit = run { bar += 4 }
 
-    val f: Int = <!TYPE_MISMATCH{NI}!>run { <!ASSIGNMENT_TYPE_MISMATCH{OI}, TYPE_MISMATCH{NI}!>bar += 4<!> }<!>
+    val f: Int = <!TYPE_MISMATCH!>run { <!TYPE_MISMATCH!>bar += 4<!> }<!>
 }

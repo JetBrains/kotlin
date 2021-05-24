@@ -19,7 +19,7 @@ fun test_fun(s: String, arr: Array<String>) {
 }
 
 fun test_ann(s: String, arr: Array<String>) {
-    @Ann(<!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH{OI}, TYPE_MISMATCH, TYPE_MISMATCH!>[""]<!>, x = 1)
+    @Ann(<!TYPE_MISMATCH, TYPE_MISMATCH!>[""]<!>, x = 1)
     foo()
     @Ann(*[""], x = 1)
     foo()

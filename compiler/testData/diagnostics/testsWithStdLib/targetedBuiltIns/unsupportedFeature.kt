@@ -27,7 +27,7 @@ interface A2 : List<String> {
     <!NOTHING_TO_OVERRIDE!>override<!> fun stream(): java.util.stream.Stream<String> = null!!
 }
 
-class B : <!NONE_APPLICABLE{OI}!>Throwable<!>(<!TOO_MANY_ARGUMENTS{NI}!>""<!>, <!TOO_MANY_ARGUMENTS{NI}!>null<!>, <!TOO_MANY_ARGUMENTS{NI}!>false<!>, <!TOO_MANY_ARGUMENTS{NI}!>false<!>)
+class B : Throwable(<!TOO_MANY_ARGUMENTS!>""<!>, <!TOO_MANY_ARGUMENTS!>null<!>, <!TOO_MANY_ARGUMENTS!>false<!>, <!TOO_MANY_ARGUMENTS!>false<!>)
 
 class B1 : RuntimeException() {
     <!NOTHING_TO_OVERRIDE!>override<!> fun fillInStackTrace(): Throwable { // 'override' keyword must be prohibited, as it was in 1.0.x

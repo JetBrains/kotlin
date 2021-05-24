@@ -34,22 +34,22 @@ fun test4() {
 // should be an error on receiver, shouldn't be thrown away
 
 fun test5() {
-    <!TYPE_MISMATCH{OI}!>1<!>.<!FUNCTION_EXPECTED{NI}!>(fun String.()=1)<!>()
+    1.<!FUNCTION_EXPECTED!>(fun String.()=1)<!>()
 }
 
 fun <R: Any> R?.sure() : R = this!!
 
 fun <T> test6(l: List<T>?) {
-    <!TYPE_MISMATCH{OI}!>l<!>.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER{NI}!>sure<!><<!UPPER_BOUND_VIOLATED{OI}!>T<!>>()
+    l.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>sure<!><T>()
 }
 
 
 fun List<String>.b() {}
 
 fun test7(l: List<String?>) {
-    <!TYPE_MISMATCH{OI}!>l<!>.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER{NI}!>b<!>()
+    l.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>b<!>()
 }
 
 fun test8(l: List<Any>?) {
-    <!TYPE_MISMATCH{OI}!>l<!>.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER{NI}!>b<!>()
+    l.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>b<!>()
 }

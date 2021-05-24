@@ -1,4 +1,3 @@
-
 fun <T> materialize(): T = TODO()
 
 fun a(): Unit = run {
@@ -18,13 +17,13 @@ fun c(): Unit = run {
         // Attention!
         // In OI expected type 'Unit' isn't applied here because of implementation quirks (note that OI still applies Unit in case 'e')
         // In NI, it is applied and call is correctly inferred, which is consistent with the previous case
-        <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER{OI}!>materialize<!>()
+        materialize()
     }
 }
 
 fun d(): Unit = run outer@{
     run inner@{
-        return@inner <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER{OI}!>materialize<!>()
+        return@inner materialize()
     }
 }
 

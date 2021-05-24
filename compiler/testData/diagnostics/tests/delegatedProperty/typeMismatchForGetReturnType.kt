@@ -2,7 +2,7 @@
 
 import kotlin.reflect.KProperty
 
-val c: Int by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE{NI}, DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH{OI}!>Delegate()<!>
+val c: Int by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>Delegate()<!>
 
 class Delegate {
   operator fun getValue(t: Any?, p: KProperty<*>): String {

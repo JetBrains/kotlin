@@ -13,15 +13,15 @@ fun test1() {
     try {
         x = null
     } catch (e: Exception) {
-        <!DEBUG_INFO_SMARTCAST{OI}!>x<!><!UNSAFE_CALL{NI}!>.<!>length // smartcast shouldn't be allowed (OOME could happen after `x = null`)
+        x<!UNSAFE_CALL!>.<!>length // smartcast shouldn't be allowed (OOME could happen after `x = null`)
         throw e
     }
     finally {
         // smartcast shouldn't be allowed, `x = null` could've happened
-        <!DEBUG_INFO_SMARTCAST{OI}!>x<!><!UNSAFE_CALL{NI}!>.<!>length
+        x<!UNSAFE_CALL!>.<!>length
     }
     // smartcast shouldn't be allowed, `x = null` could've happened
-    <!DEBUG_INFO_SMARTCAST{OI}!>x<!><!UNSAFE_CALL{NI}!>.<!>length
+    x<!UNSAFE_CALL!>.<!>length
 }
 
 // With old DFA of try/catch info about unsound smartcasts after try
@@ -34,7 +34,7 @@ fun test2() {
         x = null
     } catch (e: Exception) {
         // BAD
-        <!DEBUG_INFO_SMARTCAST{OI}!>x<!><!UNSAFE_CALL{NI}!>.<!>length
+        x<!UNSAFE_CALL!>.<!>length
     }
     finally {
         x<!UNSAFE_CALL!>.<!>length
@@ -50,7 +50,7 @@ fun test3() {
         } catch (e: Exception) {
             t2 = null
         }
-        <!DEBUG_INFO_SMARTCAST{OI}!>t2<!><!UNSAFE_CALL{NI}!>.<!>not() // wrong smartcast, NPE
+        t2<!UNSAFE_CALL!>.<!>not() // wrong smartcast, NPE
     }
 }
 
@@ -60,7 +60,7 @@ fun test4() {
         try {
             t2 = null
         } finally { }
-        <!DEBUG_INFO_SMARTCAST{OI}!>t2<!><!UNSAFE_CALL{NI}!>.<!>not() // wrong smartcast, NPE
+        t2<!UNSAFE_CALL!>.<!>not() // wrong smartcast, NPE
     }
 }
 
@@ -80,10 +80,10 @@ fun test5() {
         return
     }
     finally {
-        <!DEBUG_INFO_SMARTCAST{OI}!>s1<!><!UNSAFE_CALL{NI}!>.<!>length
-        <!DEBUG_INFO_SMARTCAST{OI}!>s2<!><!UNSAFE_CALL{NI}!>.<!>length
+        s1<!UNSAFE_CALL!>.<!>length
+        s2<!UNSAFE_CALL!>.<!>length
     }
-    <!DEBUG_INFO_SMARTCAST{OI}!>s1<!><!UNSAFE_CALL{NI}!>.<!>length
+    s1<!UNSAFE_CALL!>.<!>length
     <!DEBUG_INFO_SMARTCAST!>s2<!>.length
 }
 
@@ -98,10 +98,10 @@ fun test6(s1: String?, s2: String?) {
         return
     }
     finally {
-        <!DEBUG_INFO_SMARTCAST{OI}!>s<!><!UNSAFE_CALL{NI}!>.<!>length
+        s<!UNSAFE_CALL!>.<!>length
         requireNotNull(s2)
     }
-    <!DEBUG_INFO_SMARTCAST{OI}!>s<!><!UNSAFE_CALL{NI}!>.<!>length
-    <!DEBUG_INFO_SMARTCAST{NI}!>s1<!><!UNSAFE_CALL{OI}!>.<!>length
+    s<!UNSAFE_CALL!>.<!>length
+    <!DEBUG_INFO_SMARTCAST!>s1<!>.length
     <!DEBUG_INFO_SMARTCAST!>s2<!>.length
 }

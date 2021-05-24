@@ -18,6 +18,6 @@ fun <K, V> B<K>.star(p: KProperty1<*, V>): B<V> = TODO()
 fun <R : A> B<R>.test(){
     foo(A::bla)
     bar(A::bla)
-    <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS{OI}!>baz<!>(<!TYPE_MISMATCH{NI}!>A::bla<!>)
+    baz(<!TYPE_MISMATCH!>A::bla<!>)
     star(A::bla)
 }

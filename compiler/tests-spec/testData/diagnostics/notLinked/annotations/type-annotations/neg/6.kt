@@ -36,7 +36,7 @@ fun case_2(a: Any) {
 fun case_3_1(a: Any) {}
 
 fun case_3_2(a: Any) {
-    case_3_1(a as @<!OI;DEBUG_INFO_MISSING_UNRESOLVED!>Ann<!>(<!DEBUG_INFO_MISSING_UNRESOLVED!>unresolved_reference<!>) String) // OK, no error in IDE and in the compiler
+    case_3_1(a as @Ann(<!DEBUG_INFO_MISSING_UNRESOLVED!>unresolved_reference<!>) String) // OK, no error in IDE and in the compiler
 }
 
 // TESTCASE NUMBER: 4

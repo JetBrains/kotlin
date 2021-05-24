@@ -15,7 +15,7 @@ fun hashMapTest() {
 
     x[null] = 1
     x[bar()] = 1
-    <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS{OI}!>x[""]<!> = <!TYPE_MISMATCH{NI}!>nullableInt<!>
+    x[""] = <!TYPE_MISMATCH!>nullableInt<!>
     x[""] = 1
 
     val b1: MutableMap<String?, Int?> = <!TYPE_MISMATCH!>x<!>
@@ -40,7 +40,7 @@ fun treeMapTest() {
 
     x[null] = 1
     x[bar()] = 1
-    <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS{OI}!>x[""]<!> = <!TYPE_MISMATCH{NI}!>nullableInt<!>
+    x[""] = <!TYPE_MISMATCH!>nullableInt<!>
     x[""] = 1
 
     val b1: MutableMap<String?, Int?> = <!TYPE_MISMATCH!>x<!>

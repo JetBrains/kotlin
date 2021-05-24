@@ -103,7 +103,7 @@ fun case_4(value_1: Number, value_2: (() -> Unit)?) {
     } else if (contracts.case_4(value_1, value_2) == false) {
         println(value_2)
     } else if (contracts.case_4(value_1, value_2) == null) {
-        <!OI;DEBUG_INFO_CONSTANT, UNSAFE_IMPLICIT_INVOKE_CALL!>value_2<!>()
+        <!UNSAFE_IMPLICIT_INVOKE_CALL!>value_2<!>()
     }
 }
 
@@ -112,10 +112,10 @@ fun case_5(value_1: Number?, value_2: String?) {
     when (value_2.case_5(value_1)) {
         true -> {
             println(value_2<!UNSAFE_CALL!>.<!>length)
-            println(<!OI;DEBUG_INFO_CONSTANT!>value_1<!><!UNSAFE_CALL!>.<!>toByte())
+            println(value_1<!UNSAFE_CALL!>.<!>toByte())
         }
         false -> {
-            println(<!OI;DEBUG_INFO_CONSTANT!>value_2<!><!UNSAFE_CALL!>.<!>length)
+            println(value_2<!UNSAFE_CALL!>.<!>length)
             println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>())
         }
     }
@@ -125,7 +125,7 @@ fun case_5(value_1: Number?, value_2: String?) {
 fun case_6(value_1: Number, value_2: String?, value_3: Any?) {
     when (value_3.case_6(value_1, value_2)) {
         true -> {
-            println(<!OI;DEBUG_INFO_CONSTANT!>value_3<!>.equals(""))
+            println(value_3.equals(""))
             println(value_2<!UNSAFE_CALL!>.<!>length)
         }
         false -> {

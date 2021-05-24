@@ -18,5 +18,5 @@ fun foo(): A.() -> Int {
     val b: Int = foo()(A())
     val c: Int = (foo())(A())
 
-    <!UNREACHABLE_CODE{OI}!>return<!> null!!
+    return null!!
 }

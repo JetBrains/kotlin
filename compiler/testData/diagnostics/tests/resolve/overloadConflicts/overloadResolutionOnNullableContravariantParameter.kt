@@ -19,5 +19,5 @@ import a.*
 import b.*
 
 fun main() {
-    <!OVERLOAD_RESOLUTION_AMBIGUITY{OI}!>foo<!><String> {  }
+    foo<String> {  }
 }

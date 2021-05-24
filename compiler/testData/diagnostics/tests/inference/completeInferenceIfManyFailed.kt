@@ -13,6 +13,6 @@ fun <T: Any> joinT(x: Comparable<*>, y: T): T? {
 }
 
 fun test() {
-    val x2 = <!TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR{OI}!>joinT<!>(<!TYPE_MISMATCH!>Unit<!>, "2")
+    val x2 = joinT(<!TYPE_MISMATCH!>Unit<!>, "2")
     checkSubtype<String?>(x2)
 }

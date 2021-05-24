@@ -1,4 +1,3 @@
-
 // FILE: J.java
 
 import kotlin.jvm.functions.Function1;
@@ -13,5 +12,5 @@ fun useJ(j: J) {
 }
 
 fun jj() {
-    useJ(<!TYPE_MISMATCH!>{<!TYPE_MISMATCH{NI}!><!>}<!>)
+    useJ(<!TYPE_MISMATCH!>{<!TYPE_MISMATCH!><!>}<!>)
 }

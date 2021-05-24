@@ -18,7 +18,7 @@ class C {
     fun p() : Resource? = null
 
     fun bar() {
-        <!TYPE_INFERENCE_UPPER_BOUND_VIOLATED{OI}!>foo<!>(<!TYPE_MISMATCH{NI}!>p()<!>) {
+        foo(<!TYPE_MISMATCH!>p()<!>) {
 
         }
     }
