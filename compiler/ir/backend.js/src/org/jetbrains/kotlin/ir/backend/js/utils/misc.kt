@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.utils
 import org.jetbrains.kotlin.backend.common.ir.isMethodOfAny
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
@@ -112,3 +113,6 @@ fun IrBody.prependFunctionCall(
         }
     }
 }
+
+fun JsCommonBackendContext.findUnitGetInstanceFunction(): IrSimpleFunction =
+    mapping.objectToGetInstanceFunction[irBuiltIns.unitClass.owner]!!

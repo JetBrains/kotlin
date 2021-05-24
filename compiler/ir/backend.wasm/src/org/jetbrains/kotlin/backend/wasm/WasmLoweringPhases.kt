@@ -334,6 +334,14 @@ private val wasmNullSpecializationLowering = makeWasmModulePhase(
     description = "Specialize assigning Nothing? values to other types."
 )
 
+private val unitLoweringPass = makeWasmModulePhase(
+    { context -> UnitLoweringPass(context) },
+    name = "UnitLoweringPass",
+    description = "Materialize unit instances"
+)
+
+
+
 private val wasmFunctionInterfaceReplacer = makeWasmModulePhase(
     ::WasmFunctionInterfaceReplacer,
     name = "WasmFunctionInterfaceReplacer",
@@ -521,5 +529,6 @@ val wasmPhases = NamedCompilerPhase(
             wasmFunctionInterfaceReplacer then
             wasmNullSpecializationLowering then
             wasmTryCatchLowering then
+            unitLoweringPass then
             validateIrAfterLowering
 )

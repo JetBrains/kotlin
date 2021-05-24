@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.wasm.utils.*
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.backend.js.utils.findUnitGetInstanceFunction
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
@@ -28,6 +29,8 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
     // Shortcuts
     private val backendContext: WasmBackendContext = context.backendContext
     private val irBuiltIns: IrBuiltIns = backendContext.irBuiltIns
+
+    private val unitGetInstanceFunction: IrSimpleFunction by lazy { backendContext.findUnitGetInstanceFunction() }
 
     override fun visitElement(element: IrElement) {
         error("Unexpected element of type ${element::class}")
@@ -78,8 +81,18 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
                     }
                 },
                 resultTypes = listOfNotNull(
-                    context.transformResultType(declaration.returnType).let {
-                        if (importedName != null && it is WasmRefNullType) WasmEqRef else it
+                    run {
+                        val type = if (declaration == unitGetInstanceFunction) {
+                            // Unit_getInstance returns true Unit reference instead of "void"
+                            context.transformType(declaration.returnType)
+                        } else {
+                            context.transformResultType(declaration.returnType)
+                        }
+
+                        if (importedName != null && type is WasmRefNullType)
+                            WasmEqRef
+                        else
+                            type
                     }
                 )
             )
@@ -373,3 +386,4 @@ fun IrFunction.getEffectiveValueParameters(): List<IrValueParameter> {
 
 fun IrFunction.isExported(context: WasmBackendContext): Boolean =
     visibility == DescriptorVisibilities.PUBLIC && fqNameWhenAvailable in context.additionalExportedDeclarations
+
