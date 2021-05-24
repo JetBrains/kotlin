@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class ResolutionCandidate<A>
 
 class ResolutionTask<B, C : B>(val candidate: ResolutionCandidate<B>)

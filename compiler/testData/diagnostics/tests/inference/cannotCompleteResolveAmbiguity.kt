@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 package f
 
 fun <T> g(i: Int, a: Any): List<T> {throw Exception()}
