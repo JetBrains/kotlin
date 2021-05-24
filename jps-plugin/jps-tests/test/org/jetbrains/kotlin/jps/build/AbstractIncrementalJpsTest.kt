@@ -30,6 +30,7 @@ import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.api.CanceledStatus
 import org.jetbrains.jps.builders.BuildResult
 import org.jetbrains.jps.builders.CompileScopeTestBuilder
+import org.jetbrains.jps.builders.JpsBuildTestCase
 import org.jetbrains.jps.builders.impl.BuildDataPathsImpl
 import org.jetbrains.jps.builders.impl.logging.ProjectBuilderLoggerBase
 import org.jetbrains.jps.builders.java.dependencyView.Callbacks
@@ -153,7 +154,7 @@ abstract class AbstractIncrementalJpsTest(
     override fun tearDown() {
         restoreSystemProperties()
 
-        (AbstractIncrementalJpsTest::myProject).javaField!![this] = null
+        JpsBuildTestCase::class.java.getDeclaredField("myProject")[this] = null
         (AbstractIncrementalJpsTest::projectDescriptor).javaField!![this] = null
         (AbstractIncrementalJpsTest::systemPropertiesBackup).javaField!![this] = null
 
