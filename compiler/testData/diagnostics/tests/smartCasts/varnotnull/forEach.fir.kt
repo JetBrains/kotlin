@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 data class SomeObject(val n: SomeObject?) {
     fun doSomething() {}
     fun next(): SomeObject? = n    

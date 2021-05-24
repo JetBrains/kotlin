@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 fun test(bal: Array<Int>) {
     var bar = 4
 

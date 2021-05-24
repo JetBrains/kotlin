@@ -1,6 +1,5 @@
 // !CHECK_TYPE
 // !LANGUAGE: -AdditionalBuiltInsMembers
-// !WITH_NEW_INFERENCE
 // SKIP_TXT
 // FULL_JDK
 

@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 
 fun test1() {
     <!TYPE_MISMATCH{OI}!>1<!>. <!FUNCTION_EXPECTED{NI}!>(fun String.(i: Int) = i )<!>(1)

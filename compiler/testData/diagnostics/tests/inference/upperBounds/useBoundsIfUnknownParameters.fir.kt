@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 package Hello
 
 open class Base<T>

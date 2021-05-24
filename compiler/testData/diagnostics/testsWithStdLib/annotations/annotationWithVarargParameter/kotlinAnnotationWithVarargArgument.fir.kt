@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 
 annotation class B(vararg val args: String)
 

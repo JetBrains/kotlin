@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 fun foo1(b: Boolean, c: Int) {
     if (b && <!CONDITION_TYPE_MISMATCH!>c<!>) {}
     if (b || <!CONDITION_TYPE_MISMATCH!>c<!>) {}

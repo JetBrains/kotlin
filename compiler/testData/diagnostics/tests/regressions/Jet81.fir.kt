@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // NI_EXPECTED_FILE
 // JET-81 Assertion fails when processing self-referring anonymous objects
 

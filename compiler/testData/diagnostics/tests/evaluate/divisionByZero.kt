@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
-// !WITH_NEW_INFERENCE
 
 val a1 = 0
 val a2 = <!DIVISION_BY_ZERO!>1 / 0<!>

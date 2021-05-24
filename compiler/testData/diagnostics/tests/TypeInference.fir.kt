@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 class C<T>() {
   fun foo() : T {}
 }

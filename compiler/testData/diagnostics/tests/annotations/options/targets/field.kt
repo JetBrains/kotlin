@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 @Target(AnnotationTarget.FIELD) 
 annotation class Field
 

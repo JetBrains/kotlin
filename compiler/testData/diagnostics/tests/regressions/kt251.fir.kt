@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 class A() {
     var x: Int = 0
         get() = "s"

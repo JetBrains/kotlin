@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // FILE: C.java
 
 // See KT-10410

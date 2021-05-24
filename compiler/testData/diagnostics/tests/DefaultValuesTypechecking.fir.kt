@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 val x = ""
 
 fun bar(x : Int = "", y : Int = x, z : String = y) {

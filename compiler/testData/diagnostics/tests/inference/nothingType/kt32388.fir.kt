@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 
 fun <A, B> Either<A, B>.recover(f: (A) -> B): Either<A, B> = when (this) {
     is Either.Left -> f(this.a).right()

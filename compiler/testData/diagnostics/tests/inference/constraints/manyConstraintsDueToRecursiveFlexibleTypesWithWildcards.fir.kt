@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // SKIP_JAVAC
 
 // FILE: MySettings.java

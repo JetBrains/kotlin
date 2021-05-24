@@ -1,5 +1,4 @@
 // !LANGUAGE: +NewInference
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun call(vararg x: Any?) {}

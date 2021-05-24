@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 
 fun test(mc: MutableCollection<out CharSequence>) {
     mc.addAll(mc)

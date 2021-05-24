@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 class Data<T>(val x: T, val y: T)
 
 operator fun <T> Data<T>.component1() = x

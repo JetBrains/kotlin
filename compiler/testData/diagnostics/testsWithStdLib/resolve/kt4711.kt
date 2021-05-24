@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 //KT-4711 Error type with no error reported from type inference
 
 fun main() {

@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 fun test(): Array<Int> {
     [1, 2]
     [1, 2][0]

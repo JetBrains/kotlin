@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 fun import() {
     <!UNRESOLVED_REFERENCE!>import<!> a<!SYNTAX!>.<!><!UNRESOLVED_REFERENCE!>*<!><!SYNTAX!><!>
 }

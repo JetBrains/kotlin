@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 
 class A {
     operator fun get(x: Int): Int = x

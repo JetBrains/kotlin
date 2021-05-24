@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 val x = ""
 
 fun bar(x : Int = <!TYPE_MISMATCH!>""<!>, y : Int = x, z : String = <!TYPE_MISMATCH!>y<!>) {

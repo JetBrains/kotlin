@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 package f
 
 fun <R> h(i: Int, a: Any, r: R, f: (Boolean) -> Int) = 1

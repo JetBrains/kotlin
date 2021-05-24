@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // Ambiguity between fun and callable property
 
 open class BaseWithCallableProp {

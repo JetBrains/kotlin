@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 fun test(a: Int) {
     run f@{
       if (a > 0) return@f

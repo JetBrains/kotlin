@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// !WITH_NEW_INFERENCE
 
 fun takeFnToAny(fn: () -> Any) {}
 fun takeFnToUnit(fn: () -> Unit) {}

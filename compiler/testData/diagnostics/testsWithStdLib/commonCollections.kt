@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 
 import java.util.*
 fun foo() {

@@ -1,5 +1,4 @@
 // !LANGUAGE: +NewInference
-// !WITH_NEW_INFERENCE
 
 interface B<T : S?, S : Any> {
     val t: T

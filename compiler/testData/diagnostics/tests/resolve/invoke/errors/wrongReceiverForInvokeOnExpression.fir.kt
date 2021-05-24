@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 
 fun test1() {
     1. (<!UNRESOLVED_REFERENCE!>fun String.(i: Int) = i<!> )(1)

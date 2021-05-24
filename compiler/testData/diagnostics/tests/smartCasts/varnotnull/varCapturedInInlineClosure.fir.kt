@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // See also KT-7186
 
 fun IntArray.forEachIndexed( op: (i: Int, value: Int) -> Unit) {

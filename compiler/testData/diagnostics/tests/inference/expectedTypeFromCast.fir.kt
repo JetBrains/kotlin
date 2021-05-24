@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !LANGUAGE: +ExpectedTypeFromCast
 
 fun <T> foo(): T = TODO()

@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // MODULE: m1
 // FILE: a.kt
 package p

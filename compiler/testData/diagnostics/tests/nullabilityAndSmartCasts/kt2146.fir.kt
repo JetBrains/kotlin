@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 //KT-2146 Nullability casts in when.
 package kt2146
 

@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 open class GenericBaseClass<T> {
     open fun foo(x: T): T = x
     open fun ambiguous(x: T): T = x

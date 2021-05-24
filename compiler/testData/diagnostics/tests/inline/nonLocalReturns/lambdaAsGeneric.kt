@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 
 fun box() : String {
     <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER{NI}!>test<!> {

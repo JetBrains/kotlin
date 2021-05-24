@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// !WITH_NEW_INFERENCE
 class A() {
     operator infix fun plus(i : Int) {}
     operator fun unaryMinus() {}

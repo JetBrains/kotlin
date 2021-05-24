@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 
 // TESTCASE NUMBER: 1, 2, 3, 4, 5
 @Retention(AnnotationRetention.RUNTIME)
