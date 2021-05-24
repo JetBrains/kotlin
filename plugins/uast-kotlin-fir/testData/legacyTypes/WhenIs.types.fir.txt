@@ -1,0 +1,5 @@
+UFile (package = ) [public final class WhenIsKt {...]
+    UClass (name = WhenIsKt) [public final class WhenIsKt {...}]
+        UMethod (name = foo) [public static final fun foo(bar: java.lang.Object) : void = [!] UnknownKotlinExpression (WHEN)]
+            UParameter (name = bar) [var bar: java.lang.Object]
+            [!] UnknownKotlinExpression (WHEN) [[!] UnknownKotlinExpression (WHEN)]

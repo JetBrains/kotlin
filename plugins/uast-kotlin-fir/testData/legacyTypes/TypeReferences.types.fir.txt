@@ -1,0 +1,8 @@
+UFile (package = ) [public final class TypeReferencesKt {...]
+    UClass (name = TypeReferencesKt) [public final class TypeReferencesKt {...}]
+        UMethod (name = foo) [public static final fun foo(parameter: int) : java.lang.String = [!] UnknownKotlinExpression (BLOCK)]
+            UParameter (name = parameter) [var parameter: int]
+            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)]
+        UMethod (name = parameterizedFoo) [public static final fun parameterizedFoo(arg: T) : void = [!] UnknownKotlinExpression (BLOCK)]
+            UParameter (name = arg) [var arg: T]
+            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)]

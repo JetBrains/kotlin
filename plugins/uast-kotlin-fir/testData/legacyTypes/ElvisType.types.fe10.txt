@@ -1,0 +1,24 @@
+UFile (package = ) [public final class ElvisTypeKt {...]
+    UClass (name = ElvisTypeKt) [public final class ElvisTypeKt {...}]
+        UMethod (name = foo) [public static final fun foo(@org.jetbrains.annotations.Nullable text: java.lang.String) : void {...}]
+            UParameter (name = text) [@org.jetbrains.annotations.Nullable var text: java.lang.String]
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable) [@org.jetbrains.annotations.Nullable]
+            UBlockExpression [{...}]
+                UReturnExpression [return bar(elvis {...})]
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [bar(elvis {...})] : PsiType:void
+                        UIdentifier (Identifier (bar)) [UIdentifier (Identifier (bar))]
+                        USimpleNameReferenceExpression (identifier = bar, resolvesTo = null) [bar] : PsiType:void
+                        UExpressionList (elvis) [elvis {...}] : PsiType:String
+                            UDeclarationsExpression [var var63c495f9: java.lang.String = text]
+                                ULocalVariable (name = var63c495f9) [var var63c495f9: java.lang.String = text]
+                                    USimpleNameReferenceExpression (identifier = text) [text] : PsiType:String
+                            UIfExpression [if (var63c495f9 != null) var63c495f9 else return]
+                                UBinaryExpression (operator = !=) [var63c495f9 != null]
+                                    USimpleNameReferenceExpression (identifier = var63c495f9) [var63c495f9]
+                                    ULiteralExpression (value = null) [null]
+                                USimpleNameReferenceExpression (identifier = var63c495f9) [var63c495f9]
+                                UReturnExpression [return] : PsiType:Void
+        UMethod (name = bar) [public static final fun bar(@org.jetbrains.annotations.NotNull o: java.lang.Object) : void {...}]
+            UParameter (name = o) [@org.jetbrains.annotations.NotNull var o: java.lang.Object]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}] : PsiType:void

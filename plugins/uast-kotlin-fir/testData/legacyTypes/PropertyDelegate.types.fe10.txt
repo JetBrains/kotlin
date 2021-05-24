@@ -1,0 +1,36 @@
+UFile (package = ) [public final class PropertyDelegateKt {...]
+    UClass (name = PropertyDelegateKt) [public final class PropertyDelegateKt {...}]
+        UField (name = sdCardPath$delegate) [@org.jetbrains.annotations.NotNull private static final var sdCardPath$delegate: kotlin.Lazy]
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [lazy({ ...})] : PsiType:Lazy<? extends String>
+                UIdentifier (Identifier (lazy)) [UIdentifier (Identifier (lazy))]
+                USimpleNameReferenceExpression (identifier = lazy, resolvesTo = null) [lazy] : PsiType:Lazy<? extends String>
+                ULambdaExpression [{ ...}] : PsiType:Function0<? extends String>
+                    UBlockExpression [{...}]
+                        UReturnExpression [return "/sdcard"]
+                            ULiteralExpression (value = "/sdcard") ["/sdcard"] : PsiType:String
+        UField (name = annotatedDelegate$delegate) [@org.jetbrains.annotations.NotNull @kotlin.Suppress private static final var annotatedDelegate$delegate: kotlin.Lazy]
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UAnnotation (fqName = kotlin.Suppress) [@kotlin.Suppress]
+            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [lazy({ ...})] : PsiType:Lazy<? extends Integer>
+                UIdentifier (Identifier (lazy)) [UIdentifier (Identifier (lazy))]
+                USimpleNameReferenceExpression (identifier = lazy, resolvesTo = null) [lazy] : PsiType:Lazy<? extends Integer>
+                ULambdaExpression [{ ...}] : PsiType:Function0<? extends Integer>
+                    UBlockExpression [{...}]
+                        UReturnExpression [return 1 + 1]
+                            UBinaryExpression (operator = +) [1 + 1] : PsiType:int
+                                ULiteralExpression (value = 1) [1] : PsiType:int
+                                ULiteralExpression (value = 1) [1] : PsiType:int
+        UMethod (name = getSdCardPath) [public static final fun getSdCardPath() : java.lang.String = UastEmptyExpression]
+        UMethod (name = localPropertyTest) [public static final fun localPropertyTest() : void {...}]
+            UBlockExpression [{...}] : PsiType:void
+                UDeclarationsExpression [var sdCardPathLocal: java.lang.String]
+                    ULocalVariable (name = sdCardPathLocal) [var sdCardPathLocal: java.lang.String]
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [lazy({ ...})] : PsiType:Lazy<? extends String>
+                            UIdentifier (Identifier (lazy)) [UIdentifier (Identifier (lazy))]
+                            USimpleNameReferenceExpression (identifier = lazy, resolvesTo = null) [lazy] : PsiType:Lazy<? extends String>
+                            ULambdaExpression [{ ...}] : PsiType:Function0<? extends String>
+                                UBlockExpression [{...}]
+                                    UReturnExpression [return "/sdcard"]
+                                        ULiteralExpression (value = "/sdcard") ["/sdcard"] : PsiType:String
+        UMethod (name = getAnnotatedDelegate) [public static final fun getAnnotatedDelegate() : int = UastEmptyExpression]

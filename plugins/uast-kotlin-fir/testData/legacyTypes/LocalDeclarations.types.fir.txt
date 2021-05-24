@@ -1,0 +1,4 @@
+UFile (package = ) [public final class LocalDeclarationsKt {...]
+    UClass (name = LocalDeclarationsKt) [public final class LocalDeclarationsKt {...}]
+        UMethod (name = foo) [public static final fun foo() : boolean = [!] UnknownKotlinExpression (BLOCK)]
+            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)]

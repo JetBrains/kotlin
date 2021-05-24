@@ -1,0 +1,10 @@
+UFile (package = ) [public final class AssertionKt {...]
+    UClass (name = AssertionKt) [public final class AssertionKt {...}]
+        UMethod (name = foo) [public static final fun foo() : java.lang.String {...}]
+            UBlockExpression [{...}] : PsiType:Void
+                UDeclarationsExpression [var s: java.lang.String = "Not Null"]
+                    ULocalVariable (name = s) [var s: java.lang.String = "Not Null"]
+                        ULiteralExpression (value = "Not Null") ["Not Null"] : PsiType:String
+                UReturnExpression [return s!!] : PsiType:Void
+                    UPostfixExpression (operator = !!) [s!!] : PsiType:String
+                        USimpleNameReferenceExpression (identifier = s) [s] : PsiType:String

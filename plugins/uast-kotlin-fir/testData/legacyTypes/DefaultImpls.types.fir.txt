@@ -1,0 +1,6 @@
+UFile (package = ) [public abstract interface Foo {...]
+    UClass (name = Foo) [public abstract interface Foo {...}]
+        UMethod (name = bar) [public fun bar() : java.lang.String = [!] UnknownKotlinExpression (STRING_TEMPLATE)]
+            [!] UnknownKotlinExpression (STRING_TEMPLATE) [[!] UnknownKotlinExpression (STRING_TEMPLATE)]
+    UClass (name = Baz) [public final class Baz : null {...}]
+        UMethod (name = Baz) [public fun Baz() = UastEmptyExpression]

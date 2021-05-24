@@ -1,0 +1,177 @@
+UFile (package = ) [public final class A {...]
+    UClass (name = A) [public final class A {...}]
+        UField (name = str) [@org.jetbrains.annotations.NotNull private final var str: java.lang.String]
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+        UMethod (name = getStr) [public final fun getStr() : java.lang.String = UastEmptyExpression]
+        UMethod (name = A) [public fun A(@org.jetbrains.annotations.NotNull str: java.lang.String) = UastEmptyExpression]
+            UParameter (name = str) [@org.jetbrains.annotations.NotNull var str: java.lang.String]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+        UMethod (name = A) [public fun A(@org.jetbrains.annotations.NotNull i: int) {...}]
+            UParameter (name = i) [@org.jetbrains.annotations.NotNull var i: int]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}]
+                UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1)) [<init>(i.toString())]
+                    UIdentifier (Identifier (this)) [UIdentifier (Identifier (this))]
+                    USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: A) [<init>]
+                    UQualifiedReferenceExpression [i.toString()] : PsiType:String
+                        USimpleNameReferenceExpression (identifier = i) [i] : PsiType:int
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [toString()] : PsiType:String
+                            UIdentifier (Identifier (toString)) [UIdentifier (Identifier (toString))]
+                            USimpleNameReferenceExpression (identifier = toString, resolvesTo = null) [toString] : PsiType:String
+    UClass (name = AWithInit) [public final class AWithInit {...}]
+        UField (name = str) [@org.jetbrains.annotations.NotNull private final var str: java.lang.String]
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+        UMethod (name = getStr) [public final fun getStr() : java.lang.String = UastEmptyExpression]
+        UMethod (name = AWithInit) [public fun AWithInit(@org.jetbrains.annotations.NotNull str: java.lang.String) {...}]
+            UParameter (name = str) [@org.jetbrains.annotations.NotNull var str: java.lang.String]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}]
+                UBlockExpression [{...}] : PsiType:void
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [println()] : PsiType:void
+                        UIdentifier (Identifier (println)) [UIdentifier (Identifier (println))]
+                        USimpleNameReferenceExpression (identifier = println, resolvesTo = null) [println] : PsiType:void
+        UMethod (name = AWithInit) [public fun AWithInit(@org.jetbrains.annotations.NotNull i: int) {...}]
+            UParameter (name = i) [@org.jetbrains.annotations.NotNull var i: int]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}]
+                UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1)) [<init>(i.toString())]
+                    UIdentifier (Identifier (this)) [UIdentifier (Identifier (this))]
+                    USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: AWithInit) [<init>]
+                    UQualifiedReferenceExpression [i.toString()] : PsiType:String
+                        USimpleNameReferenceExpression (identifier = i) [i] : PsiType:int
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [toString()] : PsiType:String
+                            UIdentifier (Identifier (toString)) [UIdentifier (Identifier (toString))]
+                            USimpleNameReferenceExpression (identifier = toString, resolvesTo = null) [toString] : PsiType:String
+    UClass (name = AWith2Init) [public final class AWith2Init {...}]
+        UField (name = str) [@org.jetbrains.annotations.NotNull private final var str: java.lang.String]
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+        UMethod (name = getStr) [public final fun getStr() : java.lang.String = UastEmptyExpression]
+        UMethod (name = AWith2Init) [public fun AWith2Init(@org.jetbrains.annotations.NotNull str: java.lang.String) {...}]
+            UParameter (name = str) [@org.jetbrains.annotations.NotNull var str: java.lang.String]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}]
+                UBlockExpression [{...}] : PsiType:void
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [println(1)] : PsiType:void
+                        UIdentifier (Identifier (println)) [UIdentifier (Identifier (println))]
+                        USimpleNameReferenceExpression (identifier = println, resolvesTo = null) [println] : PsiType:void
+                        ULiteralExpression (value = 1) [1] : PsiType:int
+                UBlockExpression [{...}] : PsiType:void
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [println(2)] : PsiType:void
+                        UIdentifier (Identifier (println)) [UIdentifier (Identifier (println))]
+                        USimpleNameReferenceExpression (identifier = println, resolvesTo = null) [println] : PsiType:void
+                        ULiteralExpression (value = 2) [2] : PsiType:int
+        UMethod (name = AWith2Init) [public fun AWith2Init(@org.jetbrains.annotations.NotNull i: int) {...}]
+            UParameter (name = i) [@org.jetbrains.annotations.NotNull var i: int]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}]
+                UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1)) [<init>(i.toString())]
+                    UIdentifier (Identifier (this)) [UIdentifier (Identifier (this))]
+                    USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: AWith2Init) [<init>]
+                    UQualifiedReferenceExpression [i.toString()] : PsiType:String
+                        USimpleNameReferenceExpression (identifier = i) [i] : PsiType:int
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [toString()] : PsiType:String
+                            UIdentifier (Identifier (toString)) [UIdentifier (Identifier (toString))]
+                            USimpleNameReferenceExpression (identifier = toString, resolvesTo = null) [toString] : PsiType:String
+    UClass (name = AOnlyInit) [public final class AOnlyInit {...}]
+        UMethod (name = AOnlyInit) [public fun AOnlyInit() {...}]
+            UBlockExpression [{...}]
+                UBlockExpression [{...}] : PsiType:void
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [println(1)] : PsiType:void
+                        UIdentifier (Identifier (println)) [UIdentifier (Identifier (println))]
+                        USimpleNameReferenceExpression (identifier = println, resolvesTo = null) [println] : PsiType:void
+                        ULiteralExpression (value = 1) [1] : PsiType:int
+                UBlockExpression [{...}] : PsiType:void
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [println(2)] : PsiType:void
+                        UIdentifier (Identifier (println)) [UIdentifier (Identifier (println))]
+                        USimpleNameReferenceExpression (identifier = println, resolvesTo = null) [println] : PsiType:void
+                        ULiteralExpression (value = 2) [2] : PsiType:int
+    UClass (name = AWithSecondary) [public final class AWithSecondary {...}]
+        UField (name = a) [@org.jetbrains.annotations.NotNull public var a: java.lang.String]
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+        UMethod (name = getA) [public final fun getA() : java.lang.String = UastEmptyExpression]
+        UMethod (name = setA) [public final fun setA(@org.jetbrains.annotations.NotNull a: java.lang.String) : void = UastEmptyExpression]
+            UParameter (name = a) [@org.jetbrains.annotations.NotNull var a: java.lang.String]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+        UMethod (name = AWithSecondary) [public fun AWithSecondary(@org.jetbrains.annotations.NotNull i: int) {...}]
+            UParameter (name = i) [@org.jetbrains.annotations.NotNull var i: int]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}]
+                UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) [<init>()]
+                    UIdentifier (Identifier ()) [UIdentifier (Identifier ())]
+                    USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: Object) [<init>]
+                UBinaryExpression (operator = =) [a = i.toString()] : PsiType:void
+                    USimpleNameReferenceExpression (identifier = a) [a] : PsiType:String
+                    UQualifiedReferenceExpression [i.toString()] : PsiType:String
+                        USimpleNameReferenceExpression (identifier = i) [i] : PsiType:int
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [toString()] : PsiType:String
+                            UIdentifier (Identifier (toString)) [UIdentifier (Identifier (toString))]
+                            USimpleNameReferenceExpression (identifier = toString, resolvesTo = null) [toString] : PsiType:String
+        UMethod (name = AWithSecondary) [public fun AWithSecondary(@org.jetbrains.annotations.NotNull s: java.lang.String) {...}]
+            UParameter (name = s) [@org.jetbrains.annotations.NotNull var s: java.lang.String]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}]
+                UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) [<init>()]
+                    UIdentifier (Identifier ()) [UIdentifier (Identifier ())]
+                    USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: Object) [<init>]
+                UBinaryExpression (operator = =) [a = s] : PsiType:void
+                    USimpleNameReferenceExpression (identifier = a) [a] : PsiType:String
+                    USimpleNameReferenceExpression (identifier = s) [s] : PsiType:String
+    UClass (name = AWithSecondaryInit) [public final class AWithSecondaryInit {...}]
+        UField (name = a) [@org.jetbrains.annotations.NotNull public var a: java.lang.String]
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+        UMethod (name = getA) [public final fun getA() : java.lang.String = UastEmptyExpression]
+        UMethod (name = setA) [public final fun setA(@org.jetbrains.annotations.NotNull a: java.lang.String) : void = UastEmptyExpression]
+            UParameter (name = a) [@org.jetbrains.annotations.NotNull var a: java.lang.String]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+        UMethod (name = AWithSecondaryInit) [public fun AWithSecondaryInit(@org.jetbrains.annotations.NotNull i: int) {...}]
+            UParameter (name = i) [@org.jetbrains.annotations.NotNull var i: int]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}]
+                UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) [<init>()]
+                    UIdentifier (Identifier ()) [UIdentifier (Identifier ())]
+                    USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: Object) [<init>]
+                UBlockExpression [{...}] : PsiType:void
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [println()] : PsiType:void
+                        UIdentifier (Identifier (println)) [UIdentifier (Identifier (println))]
+                        USimpleNameReferenceExpression (identifier = println, resolvesTo = null) [println] : PsiType:void
+                UBinaryExpression (operator = =) [a = i.toString()] : PsiType:void
+                    USimpleNameReferenceExpression (identifier = a) [a] : PsiType:String
+                    UQualifiedReferenceExpression [i.toString()] : PsiType:String
+                        USimpleNameReferenceExpression (identifier = i) [i] : PsiType:int
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [toString()] : PsiType:String
+                            UIdentifier (Identifier (toString)) [UIdentifier (Identifier (toString))]
+                            USimpleNameReferenceExpression (identifier = toString, resolvesTo = null) [toString] : PsiType:String
+        UMethod (name = AWithSecondaryInit) [public fun AWithSecondaryInit(@org.jetbrains.annotations.NotNull s: java.lang.String) {...}]
+            UParameter (name = s) [@org.jetbrains.annotations.NotNull var s: java.lang.String]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}]
+                UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) [<init>()]
+                    UIdentifier (Identifier ()) [UIdentifier (Identifier ())]
+                    USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: Object) [<init>]
+                UBinaryExpression (operator = =) [a = s] : PsiType:void
+                    USimpleNameReferenceExpression (identifier = a) [a] : PsiType:String
+                    USimpleNameReferenceExpression (identifier = s) [s] : PsiType:String
+                UDeclarationsExpression [var local: java.lang.String = s]
+                    ULocalVariable (name = local) [var local: java.lang.String = s]
+                        USimpleNameReferenceExpression (identifier = s) [s] : PsiType:String
+                UQualifiedReferenceExpression [local.toString()] : PsiType:String
+                    USimpleNameReferenceExpression (identifier = local) [local] : PsiType:String
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [toString()] : PsiType:String
+                        UIdentifier (Identifier (toString)) [UIdentifier (Identifier (toString))]
+                        USimpleNameReferenceExpression (identifier = toString, resolvesTo = null) [toString] : PsiType:String
+    UClass (name = AWithFieldInit) [public final class AWithFieldInit {...}]
+        UField (name = a) [@org.jetbrains.annotations.NotNull private final var a: java.lang.String]
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+        UMethod (name = getA) [public final fun getA() : java.lang.String = UastEmptyExpression]
+        UMethod (name = AWithFieldInit) [public fun AWithFieldInit(@org.jetbrains.annotations.NotNull i: int) {...}]
+            UParameter (name = i) [@org.jetbrains.annotations.NotNull var i: int]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}]
+                UBlockExpression [{...}] : PsiType:void
+                    UBinaryExpression (operator = =) [a = i.toString()] : PsiType:void
+                        USimpleNameReferenceExpression (identifier = a) [a] : PsiType:String
+                        UQualifiedReferenceExpression [i.toString()] : PsiType:String
+                            USimpleNameReferenceExpression (identifier = i) [i] : PsiType:int
+                            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [toString()] : PsiType:String
+                                UIdentifier (Identifier (toString)) [UIdentifier (Identifier (toString))]
+                                USimpleNameReferenceExpression (identifier = toString, resolvesTo = null) [toString] : PsiType:String

@@ -1,0 +1,24 @@
+UFile (package = ) [public enum Style {...]
+    UClass (name = Style) [public enum Style {...}]
+        UField (name = value) [@org.jetbrains.annotations.Nullable private final var value: java.lang.String]
+            UAnnotation (fqName = org.jetbrains.annotations.Nullable) [@org.jetbrains.annotations.Nullable]
+        UEnumConstant (name = SYSTEM) [@null SYSTEM("system")]
+            UAnnotation (fqName = null) [@null]
+            USimpleNameReferenceExpression (identifier = Style) [Style]
+            ULiteralExpression (value = "system") ["system"] : PsiType:String
+        UEnumConstant (name = USER) [@null USER("user")]
+            UAnnotation (fqName = null) [@null]
+            USimpleNameReferenceExpression (identifier = Style) [Style]
+            ULiteralExpression (value = "user") ["user"] : PsiType:String
+        UEnumConstant (name = INTERNAL) [@null INTERNAL("internal")]
+            UAnnotation (fqName = null) [@null]
+            USimpleNameReferenceExpression (identifier = Style) [Style]
+            ULiteralExpression (value = "internal") ["internal"] : PsiType:String
+        UEnumConstant (name = UNKNOWN) [@null UNKNOWN(null)]
+            UAnnotation (fqName = null) [@null]
+            USimpleNameReferenceExpression (identifier = Style) [Style]
+            ULiteralExpression (value = null) [null] : PsiType:Void
+        UMethod (name = getValue) [public final fun getValue() : java.lang.String = UastEmptyExpression]
+        UMethod (name = Style) [private fun Style(@org.jetbrains.annotations.Nullable value: java.lang.String) = UastEmptyExpression]
+            UParameter (name = value) [@org.jetbrains.annotations.Nullable var value: java.lang.String]
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable) [@org.jetbrains.annotations.Nullable]

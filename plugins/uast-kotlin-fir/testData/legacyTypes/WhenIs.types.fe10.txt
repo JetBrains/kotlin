@@ -1,0 +1,24 @@
+UFile (package = ) [public final class WhenIsKt {...]
+    UClass (name = WhenIsKt) [public final class WhenIsKt {...}]
+        UMethod (name = foo) [public static final fun foo(@org.jetbrains.annotations.NotNull bar: java.lang.Object) : java.lang.String {...}]
+            UParameter (name = bar) [@org.jetbrains.annotations.NotNull var bar: java.lang.Object]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}]
+                UReturnExpression [return switch (bar)  {...]
+                    USwitchExpression [switch (bar)  {...] : PsiType:String
+                        USimpleNameReferenceExpression (identifier = bar) [bar] : PsiType:Object
+                        UExpressionList (when) [    it is java.lang.String -> {...    ] : PsiType:String
+                            USwitchClauseExpressionWithBody [it is java.lang.String -> {...]
+                                UBinaryExpressionWithType [it is java.lang.String]
+                                    USimpleNameReferenceExpression (identifier = it) [it]
+                                    UTypeReferenceExpression (name = java.lang.String) [java.lang.String]
+                                UExpressionList (when_entry) [{...]
+                                    UYieldExpression [yield bar]
+                                        USimpleNameReferenceExpression (identifier = bar) [bar] : PsiType:Object
+                            USwitchClauseExpressionWithBody [it !is java.lang.String -> {...]
+                                UBinaryExpressionWithType [it !is java.lang.String]
+                                    USimpleNameReferenceExpression (identifier = it) [it]
+                                    UTypeReferenceExpression (name = java.lang.String) [java.lang.String]
+                                UExpressionList (when_entry) [{...]
+                                    UYieldExpression [yield "<error>"]
+                                        ULiteralExpression (value = "<error>") ["<error>"] : PsiType:String

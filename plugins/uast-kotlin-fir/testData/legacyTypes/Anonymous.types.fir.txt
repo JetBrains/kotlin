@@ -1,0 +1,8 @@
+UFile (package = ) [import java.io.Closeable...]
+    UImportStatement (isOnDemand = false) [import java.io.Closeable]
+    UImportStatement (isOnDemand = false) [import java.io.InputStream]
+    UClass (name = AnonymousKt) [public final class AnonymousKt {...}]
+        UMethod (name = foo) [public static final fun foo() : void = [!] UnknownKotlinExpression (BLOCK)]
+            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)]
+        UMethod (name = withErr) [public static final fun withErr() : void = [!] UnknownKotlinExpression (BLOCK)]
+            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)]

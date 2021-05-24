@@ -1,0 +1,7 @@
+UFile (package = ) [public final class InferenceInsideUnresolvedConstructorKt {...]
+    UClass (name = InferenceInsideUnresolvedConstructorKt) [public final class InferenceInsideUnresolvedConstructorKt {...}]
+        UMethod (name = getBar) [public static final fun getBar() : java.lang.Object = [!] UnknownKotlinExpression (CALL_EXPRESSION)]
+            [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
+        UMethod (name = id) [public static final fun id(x: T) : T = [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+            UParameter (name = x) [var x: T]
+            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]

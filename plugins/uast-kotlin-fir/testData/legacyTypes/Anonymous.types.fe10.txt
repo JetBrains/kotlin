@@ -1,0 +1,59 @@
+UFile (package = ) [import java.io.Closeable...]
+    UImportStatement (isOnDemand = false) [import java.io.Closeable]
+    UImportStatement (isOnDemand = false) [import java.io.InputStream]
+    UClass (name = AnonymousKt) [public final class AnonymousKt {...}]
+        UMethod (name = foo) [public static final fun foo() : void {...}]
+            UBlockExpression [{...}] : PsiType:void
+                UDeclarationsExpression [var runnable: <ErrorType> = anonymous object : Runnable { override fun run() {} }]
+                    ULocalVariable (name = runnable) [var runnable: <ErrorType> = anonymous object : Runnable { override fun run() {} }]
+                        UObjectLiteralExpression [anonymous object : Runnable { override fun run() {} }] : PsiType:Runnable
+                            UClass (name = null) [final class null : java.lang.Runnable {...}]
+                                UMethod (name = run) [public fun run() : void {...}]
+                                    UBlockExpression [{...}] : PsiType:void
+                                UMethod (name = ) [private fun () = UastEmptyExpression]
+                UQualifiedReferenceExpression [runnable.run()] : PsiType:void
+                    USimpleNameReferenceExpression (identifier = runnable) [runnable] : PsiType:<ErrorType>
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [run()] : PsiType:void
+                        UIdentifier (Identifier (run)) [UIdentifier (Identifier (run))]
+                        USimpleNameReferenceExpression (identifier = run, resolvesTo = null) [run] : PsiType:void
+                UDeclarationsExpression [var runnable2: java.lang.Runnable = Runnable({ ...})]
+                    ULocalVariable (name = runnable2) [var runnable2: java.lang.Runnable = Runnable({ ...})]
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [Runnable({ ...})] : PsiType:Runnable
+                            UIdentifier (Identifier (Runnable)) [UIdentifier (Identifier (Runnable))]
+                            USimpleNameReferenceExpression (identifier = Runnable, resolvesTo = PsiClass: Runnable) [Runnable] : PsiType:Runnable
+                            ULambdaExpression [{ ...}] : PsiType:Function0<? extends Unit>
+                                UBlockExpression [{...}]
+                                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [println()] : PsiType:void
+                                        UIdentifier (Identifier (println)) [UIdentifier (Identifier (println))]
+                                        USimpleNameReferenceExpression (identifier = println, resolvesTo = null) [println] : PsiType:void
+                UQualifiedReferenceExpression [runnable2.run()] : PsiType:void
+                    USimpleNameReferenceExpression (identifier = runnable2) [runnable2] : PsiType:Runnable
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [run()] : PsiType:void
+                        UIdentifier (Identifier (run)) [UIdentifier (Identifier (run))]
+                        USimpleNameReferenceExpression (identifier = run, resolvesTo = null) [run] : PsiType:void
+                UDeclarationsExpression [var closeableRunnable: <ErrorType> = anonymous object : Runnable, Closeable { override fun close() {} override fun run() {} }]
+                    ULocalVariable (name = closeableRunnable) [var closeableRunnable: <ErrorType> = anonymous object : Runnable, Closeable { override fun close() {} override fun run() {} }]
+                        UObjectLiteralExpression [anonymous object : Runnable, Closeable { override fun close() {} override fun run() {} }] : PsiType:Runnable
+                            UClass (name = null) [final class null : java.lang.Runnable, java.io.Closeable {...}]
+                                UMethod (name = close) [public fun close() : void {...}]
+                                    UBlockExpression [{...}] : PsiType:void
+                                UMethod (name = run) [public fun run() : void {...}]
+                                    UBlockExpression [{...}] : PsiType:void
+                                UMethod (name = ) [private fun () = UastEmptyExpression]
+                UDeclarationsExpression [var runnableIs: <ErrorType> = anonymous object : InputStream(), Runnable { override fun read(): Int = 0; override fun run() {} }]
+                    ULocalVariable (name = runnableIs) [var runnableIs: <ErrorType> = anonymous object : InputStream(), Runnable { override fun read(): Int = 0; override fun run() {} }]
+                        UObjectLiteralExpression [anonymous object : InputStream(), Runnable { override fun read(): Int = 0; override fun run() {} }] : PsiType:InputStream
+                            UClass (name = null) [final class null : java.io.InputStream, java.lang.Runnable {...}]
+                                UMethod (name = read) [public fun read() : int {...}]
+                                    UBlockExpression [{...}]
+                                        UReturnExpression [return 0]
+                                            ULiteralExpression (value = 0) [0] : PsiType:int
+                                UMethod (name = run) [public fun run() : void {...}]
+                                    UBlockExpression [{...}] : PsiType:void
+                                UMethod (name = ) [private fun () = UastEmptyExpression]
+        UMethod (name = withErr) [public static final fun withErr() : void {...}]
+            UBlockExpression [{...}] : PsiType:void
+                UDeclarationsExpression [var runnable: <ErrorType> = anonymous null]
+                    ULocalVariable (name = runnable) [var runnable: <ErrorType> = anonymous null]
+                        UObjectLiteralExpression [anonymous null] : PsiType:<ErrorType>
+                            UClass (name = <invalid object code>) [class <invalid object code> {...}]

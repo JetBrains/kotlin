@@ -1,0 +1,57 @@
+UFile (package = ) [public final class ReifiedParametersKt {...]
+    UClass (name = ReifiedParametersKt) [public final class ReifiedParametersKt {...}]
+        UMethod (name = functionWithLambda) [static fun functionWithLambda(@org.jetbrains.annotations.Nullable t: T, @org.jetbrains.annotations.NotNull process: kotlin.jvm.functions.Function1<? super T,? extends java.lang.Integer>) : int {...}]
+            UParameter (name = t) [@org.jetbrains.annotations.Nullable var t: T]
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable) [@org.jetbrains.annotations.Nullable]
+            UParameter (name = process) [@org.jetbrains.annotations.NotNull var process: kotlin.jvm.functions.Function1<? super T,? extends java.lang.Integer>]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}]
+                UReturnExpression [return invoke(t)]
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [invoke(t)] : PsiType:int
+                        UIdentifier (Identifier (process)) [UIdentifier (Identifier (process))]
+                        USimpleNameReferenceExpression (identifier = invoke, resolvesTo = null) [invoke] : PsiType:int
+                        USimpleNameReferenceExpression (identifier = t) [t] : PsiType:T
+        UMethod (name = functionWithVararg) [static fun functionWithVararg(@org.jetbrains.annotations.Nullable i: int, @org.jetbrains.annotations.Nullable t: T) : T {...}]
+            UParameter (name = i) [@org.jetbrains.annotations.Nullable var i: int]
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable) [@org.jetbrains.annotations.Nullable]
+            UParameter (name = t) [@org.jetbrains.annotations.Nullable var t: T]
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable) [@org.jetbrains.annotations.Nullable]
+            UBlockExpression [{...}]
+                UReturnExpression [return t[0]]
+                    UArrayAccessExpression [t[0]] : PsiType:T
+                        USimpleNameReferenceExpression (identifier = t) [t] : PsiType:T[]
+                        ULiteralExpression (value = 0) [0] : PsiType:int
+        UMethod (name = functionWithReceiver) [static fun functionWithReceiver(@org.jetbrains.annotations.Nullable $this$functionWithReceiver: T, @org.jetbrains.annotations.Nullable i: int) : T {...}]
+            UParameter (name = $this$functionWithReceiver) [@org.jetbrains.annotations.Nullable var $this$functionWithReceiver: T]
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable) [@org.jetbrains.annotations.Nullable]
+            UParameter (name = i) [@org.jetbrains.annotations.Nullable var i: int]
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable) [@org.jetbrains.annotations.Nullable]
+            UBlockExpression [{...}]
+                UReturnExpression [return this]
+                    UThisExpression (label = null) [this] : PsiType:T
+        UMethod (name = name with spaces) [static fun name with spaces(@org.jetbrains.annotations.Nullable $this$name with spaces: T, @org.jetbrains.annotations.Nullable i: int) : T {...}]
+            UParameter (name = $this$name with spaces) [@org.jetbrains.annotations.Nullable var $this$name with spaces: T]
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable) [@org.jetbrains.annotations.Nullable]
+            UParameter (name = i) [@org.jetbrains.annotations.Nullable var i: int]
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable) [@org.jetbrains.annotations.Nullable]
+            UBlockExpression [{...}]
+                UReturnExpression [return this]
+                    UThisExpression (label = null) [this] : PsiType:T
+        UMethod (name = functionWithParamAnnotation) [static fun functionWithParamAnnotation(@org.jetbrains.annotations.Nullable @kotlin.Suppress(names = "s") t: T) : T {...}]
+            UParameter (name = t) [@org.jetbrains.annotations.Nullable @kotlin.Suppress(names = "s") var t: T]
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable) [@org.jetbrains.annotations.Nullable]
+                UAnnotation (fqName = kotlin.Suppress) [@kotlin.Suppress(names = "s")]
+                    UNamedExpression (name = names) [names = "s"]
+                        ULiteralExpression (value = "s") ["s"] : PsiType:String
+            UBlockExpression [{...}]
+                UReturnExpression [return t]
+                    USimpleNameReferenceExpression (identifier = t) [t] : PsiType:T
+        UMethod (name = functionUnresolved) [static fun functionUnresolved(@org.jetbrains.annotations.NotNull @kotlin.Suppress(names = "s") t: <ErrorType>) : T {...}]
+            UParameter (name = t) [@org.jetbrains.annotations.NotNull @kotlin.Suppress(names = "s") var t: <ErrorType>]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+                UAnnotation (fqName = kotlin.Suppress) [@kotlin.Suppress(names = "s")]
+                    UNamedExpression (name = names) [names = "s"]
+                        ULiteralExpression (value = "s") ["s"] : PsiType:String
+            UBlockExpression [{...}]
+                UReturnExpression [return t]
+                    USimpleNameReferenceExpression (identifier = t) [t] : PsiType:<ErrorType>
