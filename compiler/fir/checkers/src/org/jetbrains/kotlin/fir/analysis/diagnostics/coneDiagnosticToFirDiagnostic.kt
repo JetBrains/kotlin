@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
-import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -105,16 +104,15 @@ private fun mapUnsafeCallError(
         (candidateFunction?.isOperator == true || candidateFunction?.isInfix == true)
     ) {
         val operationToken = source.getChild(KtTokens.IDENTIFIER)
-        if (candidateFunction.isInfix && operationToken?.elementType == KtTokens.IDENTIFIER) {
-            return FirErrors.UNSAFE_INFIX_CALL.on(
+        return if (operationToken != null) {
+            FirErrors.UNSAFE_INFIX_CALL.on(
                 source,
                 receiverExpression,
                 candidateFunctionName!!.asString(),
                 singleArgument,
             )
-        }
-        if (candidateFunction.isOperator && operationToken == null) {
-            return FirErrors.UNSAFE_OPERATOR_CALL.on(
+        } else {
+            FirErrors.UNSAFE_OPERATOR_CALL.on(
                 source,
                 receiverExpression,
                 candidateFunctionName!!.asString(),

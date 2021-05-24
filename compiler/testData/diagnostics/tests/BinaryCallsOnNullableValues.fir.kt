@@ -6,7 +6,7 @@ fun f(): Unit {
     var x: Int? = 1
     x = null
     x <!UNSAFE_OPERATOR_CALL!>+<!> 1
-    x <!UNSAFE_CALL!>plus<!> 1
+    x <!UNSAFE_INFIX_CALL!>plus<!> 1
     x <!UNSAFE_OPERATOR_CALL!><<!> 1
     x <!UNRESOLVED_REFERENCE!>+=<!> 1
 
