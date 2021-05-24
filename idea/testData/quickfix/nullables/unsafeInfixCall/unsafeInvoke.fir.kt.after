@@ -1,0 +1,3 @@
+// "Replace with safe (?.) call" "true"
+
+fun foo(exec: (() -> Unit)?) = exec?.invoke() ?: <caret>

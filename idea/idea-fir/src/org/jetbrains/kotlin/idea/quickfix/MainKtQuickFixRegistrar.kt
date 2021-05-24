@@ -111,6 +111,7 @@ class MainKtQuickFixRegistrar : KtQuickFixRegistrar() {
         registerApplicator(ReplaceCallFixFactories.unsafeCallFactory)
         registerApplicator(ReplaceCallFixFactories.unsafeInfixCallFactory)
         registerApplicator(ReplaceCallFixFactories.unsafeOperatorCallFactory)
+        registerApplicator(ReplaceCallFixFactories.unsafeImplicitInvokeCallFactory)
         registerApplicator(AddExclExclCallFixFactories.unsafeCallFactory)
         registerApplicator(AddExclExclCallFixFactories.unsafeInfixCallFactory)
         registerApplicator(AddExclExclCallFixFactories.unsafeOperatorCallFactory)

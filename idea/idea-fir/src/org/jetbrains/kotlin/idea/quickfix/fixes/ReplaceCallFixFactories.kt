@@ -66,6 +66,26 @@ object ReplaceCallFixFactories {
             listOf(ReplaceInfixOrOperatorCallFix(target, shouldHaveNotNullType(target), diagnostic.operator))
         }
 
+    val unsafeImplicitInvokeCallFactory =
+        diagnosticFixFactory<KtFirDiagnostic.UnsafeImplicitInvokeCall> { diagnostic ->
+            val target = diagnostic.psi as? KtNameReferenceExpression ?: return@diagnosticFixFactory emptyList()
+
+            val callExpression = target.parent as? KtCallExpression ?: return@diagnosticFixFactory emptyList()
+            val qualifiedExpression = callExpression.parent as? KtQualifiedExpression
+            if (qualifiedExpression == null) {
+                // TODO: This matches FE 1.0 behavior (see ReplaceInfixOrOperatorCallFixFactory.kt) but we should be able to do the fix
+                // when the call is a qualified expression. We just need to make sure to pass any extension receiver as an argument, e.g.:
+                //
+                //   fun test(exec: (String.() -> Unit)?) = "".exec()  // Can be fixed to exec?.invoke("")
+                //
+                // This should be differentiated from this case without an extension receiver:
+                //
+                //   class A(val exec: (() -> Unit)?)
+                //   fun test(a: A) = a.exec()  // Can be fixed to a.exec?.invoke()
+                listOf(ReplaceInfixOrOperatorCallFix(callExpression, shouldHaveNotNullType(callExpression)))
+            } else emptyList()
+        }
+
     private fun KtAnalysisSession.shouldHaveNotNullType(expression: KtExpression): Boolean {
         // This function is used to determine if we may need to add an elvis operator after the safe call. For example, to replace
         // `s.length` in `val x: Int = s.length` with a safe call, it should be replaced with `s.length ?: <caret>`.
