@@ -4,5 +4,3 @@
 fun foo(array: Array<String>?) {
     array?.get(0)
 }
-
-/* IGNORE_FIR */

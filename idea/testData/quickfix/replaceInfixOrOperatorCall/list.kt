@@ -4,5 +4,3 @@
 fun foo(list: List<String>?) {
     list<caret>[0]
 }
-
-/* IGNORE_FIR */

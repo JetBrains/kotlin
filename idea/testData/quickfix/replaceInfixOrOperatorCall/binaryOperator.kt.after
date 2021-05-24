@@ -4,5 +4,3 @@
 fun foo(bar: Int?) {
     bar?.plus(1)
 }
-
-/* IGNORE_FIR */

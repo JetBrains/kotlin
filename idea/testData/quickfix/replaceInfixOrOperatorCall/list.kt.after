@@ -4,5 +4,3 @@
 fun foo(list: List<String>?) {
     list?.get(0)
 }
-
-/* IGNORE_FIR */
