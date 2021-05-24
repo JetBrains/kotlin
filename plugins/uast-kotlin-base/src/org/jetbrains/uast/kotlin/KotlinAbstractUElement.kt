@@ -20,7 +20,7 @@ abstract class KotlinAbstractUElement(
         psi?.let { UastFacade.findPlugin(it) }
     }
 
-    protected val baseResolveProviderService: BaseKotlinUastResolveProviderService by lz {
+    open val baseResolveProviderService: BaseKotlinUastResolveProviderService by lz {
         baseResolveProviderServiceSupplier?.get()
             ?: psi?.project?.let { ServiceManager.getService(it, BaseKotlinUastResolveProviderService::class.java) }
             ?: error("${BaseKotlinUastResolveProviderService::class.java.name} is not available")
