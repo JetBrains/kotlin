@@ -16,20 +16,11 @@
 
 package org.jetbrains.uast.kotlin
 
-import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.constants.UnsignedErrorValueTypeConstant
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.uast.UExpression
-
-interface KotlinUElementWithType : UExpression {
-    override fun getExpressionType(): PsiType? {
-        val ktElement = sourcePsi as? KtExpression ?: return null
-        val ktType = ktElement.analyze()[BindingContext.EXPRESSION_TYPE_INFO, ktElement]?.type ?: return null
-        return ktType.toPsiType(this, ktElement, boxed = false)
-    }
-}
 
 interface KotlinEvaluatableUElement : UExpression {
     override fun evaluate(): Any? {

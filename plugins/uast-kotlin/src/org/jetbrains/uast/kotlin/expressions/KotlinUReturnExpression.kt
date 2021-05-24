@@ -25,8 +25,8 @@ import org.jetbrains.uast.kotlin.internal.KotlinFakeUElement
 import org.jetbrains.uast.kotlin.internal.toSourcePsiFakeAware
 
 class KotlinUReturnExpression(
-        override val sourcePsi: KtReturnExpression,
-        givenParent: UElement?
+    override val sourcePsi: KtReturnExpression,
+    givenParent: UElement?
 ) : KotlinAbstractUExpression(givenParent), UReturnExpression, KotlinUElementWithType {
     override val returnExpression by lz { KotlinConverter.convertOrNull(sourcePsi.returnedExpression, this) }
 }
@@ -39,6 +39,11 @@ class KotlinUImplicitReturnExpression(
 
     override lateinit var returnExpression: UExpression
         internal set
+
+    // Due to the lack of [psi], (lazily) delegate to the one in [returnExpression]
+    override val baseResolveProviderService: BaseKotlinUastResolveProviderService by lz {
+        (returnExpression as KotlinAbstractUElement).baseResolveProviderService
+    }
 
     override fun unwrapToSourcePsi(): List<PsiElement> {
         return returnExpression.toSourcePsiFakeAware()

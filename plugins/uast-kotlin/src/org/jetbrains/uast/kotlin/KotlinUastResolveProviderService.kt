@@ -6,6 +6,7 @@
 package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.uast.UElement
+import org.jetbrains.uast.UExpression
 
 interface KotlinUastResolveProviderService : BaseKotlinUastResolveProviderService {
     fun getBindingContext(element: KtElement): BindingContext
@@ -26,5 +28,11 @@ interface KotlinUastResolveProviderService : BaseKotlinUastResolveProviderServic
 
     override fun resolveToDeclaration(ktExpression: KtExpression): PsiElement? {
         return resolveToDeclarationImpl(ktExpression)
+    }
+
+    override fun getExpressionType(uExpression: UExpression): PsiType? {
+        val ktElement = uExpression.sourcePsi as? KtExpression ?: return null
+        val ktType = ktElement.analyze()[BindingContext.EXPRESSION_TYPE_INFO, ktElement]?.type ?: return null
+        return ktType.toPsiType(uExpression, ktElement, boxed = false)
     }
 }

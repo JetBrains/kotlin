@@ -6,8 +6,10 @@
 package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.uast.UElement
+import org.jetbrains.uast.UExpression
 
 interface BaseKotlinUastResolveProviderService {
     fun isJvmElement(psiElement: PsiElement): Boolean
@@ -15,4 +17,6 @@ interface BaseKotlinUastResolveProviderService {
     fun convertParent(uElement: UElement): UElement?
 
     fun resolveToDeclaration(ktExpression: KtExpression): PsiElement?
+
+    fun getExpressionType(uExpression: UExpression): PsiType?
 }
