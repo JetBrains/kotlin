@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 open class A() {
   fun foo() {}
 }

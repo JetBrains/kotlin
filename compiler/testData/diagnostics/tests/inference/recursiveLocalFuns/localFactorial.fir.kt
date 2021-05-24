@@ -1,5 +1,4 @@
 // FIR_IDE_IGNORE
-// !WITH_NEW_INFERENCE
 // See KT-6271
 fun foo() {
     fun fact(n: Int) = {

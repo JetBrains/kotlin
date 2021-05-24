@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 
 fun create(): Map<String, String> = null!!
 

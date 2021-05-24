@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 package kt606_dependents
 
 //KT-1489 Code analyzer fails with assertion

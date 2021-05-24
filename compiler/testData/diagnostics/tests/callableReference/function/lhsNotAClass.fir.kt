@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 
 class A<T, U : Any> {
     fun foo() = <!CALLABLE_REFERENCE_LHS_NOT_A_CLASS!>T::toString<!>

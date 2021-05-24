@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 open class Final {
     fun foo() {}
     val bar: Int = 0

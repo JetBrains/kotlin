@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // FILE: main.kt
 package test
 

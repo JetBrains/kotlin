@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -USELESS_ELVIS
 
 fun test() {

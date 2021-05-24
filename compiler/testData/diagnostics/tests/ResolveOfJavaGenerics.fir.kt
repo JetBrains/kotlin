@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // Fixpoint generic in Java: Enum<T extends Enum<T>>
 fun test(a : java.lang.annotation.RetentionPolicy) {
 

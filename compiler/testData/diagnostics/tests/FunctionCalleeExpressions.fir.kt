@@ -1,5 +1,4 @@
 // COMPARE_WITH_LIGHT_TREE
-// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 
 package foo

@@ -1,6 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // !RENDER_DIAGNOSTICS_MESSAGES
-// !WITH_NEW_INFERENCE
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.TYPE, AnnotationTarget.CLASS)
 annotation class A

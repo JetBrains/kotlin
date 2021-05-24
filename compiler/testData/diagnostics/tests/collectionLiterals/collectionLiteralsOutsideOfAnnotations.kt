@@ -1,5 +1,4 @@
 // !LANGUAGE: +NewInference
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 
 fun takeArray(array: Array<String>) {}

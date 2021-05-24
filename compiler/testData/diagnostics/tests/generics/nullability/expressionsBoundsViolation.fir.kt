@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 class A<T : CharSequence>(x: T)

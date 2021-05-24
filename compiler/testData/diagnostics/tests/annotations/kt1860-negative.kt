@@ -1,5 +1,4 @@
 // COMPARE_WITH_LIGHT_TREE
-// !WITH_NEW_INFERENCE
 fun foo(@<!UNRESOLVED_REFERENCE!>varargs<!> f : Int) {}
 
 var bar : Int = 1

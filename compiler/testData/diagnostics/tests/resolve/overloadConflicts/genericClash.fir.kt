@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// !WITH_NEW_INFERENCE
 
 interface A<T> {
     fun foo(x: T)

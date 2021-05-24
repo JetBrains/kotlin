@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// !WITH_NEW_INFERENCE
 // !RENDER_DIAGNOSTICS_MESSAGES
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.TYPE, AnnotationTarget.CLASS)

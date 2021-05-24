@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
-// !WITH_NEW_INFERENCE
 
 open class Base()
 class CX : Base()

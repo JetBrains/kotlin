@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
 
 fun use(a: Any?) = a

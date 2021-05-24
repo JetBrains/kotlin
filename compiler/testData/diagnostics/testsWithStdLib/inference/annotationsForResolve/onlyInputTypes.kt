@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
-// !WITH_NEW_INFERENCE
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 public fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.contains1(element: T): Boolean = null!!

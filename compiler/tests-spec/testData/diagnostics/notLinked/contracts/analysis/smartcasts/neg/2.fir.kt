@@ -1,5 +1,4 @@
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
-// !WITH_NEW_INFERENCE
 // SKIP_TXT
 
 // TESTCASE NUMBER: 1

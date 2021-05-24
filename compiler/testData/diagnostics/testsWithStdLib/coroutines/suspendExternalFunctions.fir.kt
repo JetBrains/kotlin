@@ -1,6 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // !CHECK_TYPE
-// !WITH_NEW_INFERENCE
 suspend fun noParams() {
 }
 

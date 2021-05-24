@@ -1,6 +1,5 @@
 // !LANGUAGE: -AllowAssigningArrayElementsToVarargsInNamedFormForFunctions
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// !WITH_NEW_INFERENCE
 
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.EXPRESSION)

@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 class ExplicitAccessorForAnnotation {
     val tt: String? = "good"
         get

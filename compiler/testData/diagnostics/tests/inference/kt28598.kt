@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !IDIAGNOSTICS: -UNUSED_EXPRESSION
 
 fun case_1(a: MutableList<out MutableList<MutableList<MutableList<MutableList<MutableList<MutableList<Int?>?>?>?>?>?>?>?) {

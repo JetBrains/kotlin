@@ -1,5 +1,4 @@
 // !LANGUAGE: +VariableDeclarationInWhenSubject
-// !WITH_NEW_INFERENCE
 
 fun foo(s1: Int, s2: Int) = s1 + s2
 

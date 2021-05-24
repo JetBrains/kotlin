@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
-// !WITH_NEW_INFERENCE
 
 fun <R> myRun(b: () -> R): R = b()
 

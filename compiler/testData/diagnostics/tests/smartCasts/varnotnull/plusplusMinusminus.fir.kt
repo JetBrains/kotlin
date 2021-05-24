@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 fun foo(arg: Int?): Int {
     var i = arg
     if (i != null && i++ == 5) {

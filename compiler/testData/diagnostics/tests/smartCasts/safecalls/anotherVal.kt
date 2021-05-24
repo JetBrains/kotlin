@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 
 fun calc(x: List<String>?, y: Int?): Int {
     x?.get(y!! - 1) 

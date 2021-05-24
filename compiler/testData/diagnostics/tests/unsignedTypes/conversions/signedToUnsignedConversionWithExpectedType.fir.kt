@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// !WITH_NEW_INFERENCE
 
 fun takeUByte(u: UByte) {}
 fun takeUShort(u: UShort) {}

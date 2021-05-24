@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !LANGUAGE: +ArrayLiteralsInAnnotations, +ProhibitAssigningSingleElementsToVarargsInNamedForm
 
 annotation class Ann1(vararg val a: String = [])

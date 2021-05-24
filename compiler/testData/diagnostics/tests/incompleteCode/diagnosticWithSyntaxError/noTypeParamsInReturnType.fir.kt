@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 package b
 
 fun <T, R> foo(map: Map<T, R>) : R = throw Exception()

@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
 fun bar(x: Int): Int = x + 1
 

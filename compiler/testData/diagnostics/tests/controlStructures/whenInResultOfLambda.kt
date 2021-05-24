@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // NI_EXPECTED_FILE
 
 val test1 = { when (true) { true -> <!IMPLICIT_CAST_TO_ANY{OI}!>1<!>; else -> <!IMPLICIT_CAST_TO_ANY{OI}!>""<!> } }

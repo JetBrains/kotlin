@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 fun <T> test(t: T): T {
     if (t != null) {
         return t<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>

@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 import <!UNRESOLVED_REFERENCE!>com<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>unknown<!>
 
 fun ff() {

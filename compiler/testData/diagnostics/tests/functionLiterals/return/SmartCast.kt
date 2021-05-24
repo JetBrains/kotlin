@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // NI_EXPECTED_FILE
 // KT-6822 Smart cast doesn't work inside local returned expression in lambda
 

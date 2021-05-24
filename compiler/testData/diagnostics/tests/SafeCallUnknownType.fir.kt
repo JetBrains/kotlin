@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 import com.unknown
 
 fun ff() {

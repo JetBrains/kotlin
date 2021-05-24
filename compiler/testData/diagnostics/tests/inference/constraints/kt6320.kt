@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 // AssertionError in ConstraintSystem(The constraint shouldn't contain different type variables on both sides: Y <: X)
 

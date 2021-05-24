@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun <K> id2(x: K, s: String): K = x

@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// !WITH_NEW_INFERENCE
 
 interface G<T> {
     fun build(): G<T>

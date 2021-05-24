@@ -1,6 +1,5 @@
 // !USE_EXPERIMENTAL: kotlin.RequiresOptIn
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// !WITH_NEW_INFERENCE
 
 import kotlin.experimental.ExperimentalTypeInference
 

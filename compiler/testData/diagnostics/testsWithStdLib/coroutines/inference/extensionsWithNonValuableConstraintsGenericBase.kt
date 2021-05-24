@@ -1,6 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // !USE_EXPERIMENTAL: kotlin.RequiresOptIn
-// !WITH_NEW_INFERENCE
 // NI_EXPECTED_FILE
 
 @file:OptIn(ExperimentalTypeInference::class)

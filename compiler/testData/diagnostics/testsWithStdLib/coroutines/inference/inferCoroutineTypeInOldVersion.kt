@@ -1,6 +1,5 @@
 // !LANGUAGE: -ExperimentalBuilderInference
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// !WITH_NEW_INFERENCE
 
 class Builder<T> {
     suspend fun add(t: T) {}

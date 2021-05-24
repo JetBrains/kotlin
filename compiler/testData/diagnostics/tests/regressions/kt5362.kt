@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // KT-5362 Compiler crashes on access to extension method from nested class
 class Outer {
     class Nested{

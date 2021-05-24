@@ -1,5 +1,4 @@
 //KT-2741 Compiler can't infer a type of a function literal parameter when its body contains errors
-// !WITH_NEW_INFERENCE
 
 package a
 

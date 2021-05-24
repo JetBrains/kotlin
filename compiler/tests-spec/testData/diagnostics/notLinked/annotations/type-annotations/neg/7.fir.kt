@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 
 // TESTCASE NUMBER: 1, 2
 @Target(AnnotationTarget.TYPE)

@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !LANGUAGE: +ArrayLiteralsInAnnotations
 
 annotation class Foo(val a: IntArray, val b: Array<String>, val c: FloatArray)

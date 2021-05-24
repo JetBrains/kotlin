@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 // FILE: A.java
 public interface A {

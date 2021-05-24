@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 fun foo(u : Unit) : Int = 1
 
 fun test() : Int {

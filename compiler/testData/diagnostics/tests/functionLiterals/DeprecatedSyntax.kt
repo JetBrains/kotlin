@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 val receiver = { Int.(<!SYNTAX!><!>) <!SYNTAX!>-><!> }
 val receiverWithParameter = { Int.<!ILLEGAL_SELECTOR!>(<!UNRESOLVED_REFERENCE!>a<!>)<!> <!SYNTAX!>-><!> }
 

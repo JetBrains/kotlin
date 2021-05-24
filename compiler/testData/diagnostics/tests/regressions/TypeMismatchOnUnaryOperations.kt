@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 fun main() {
     val a : Int? = null;
     var v = 1
