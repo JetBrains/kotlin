@@ -9,5 +9,5 @@ fun <T> T.testThis(): String? {
     if (this != null) {
         return this<!UNNECESSARY_SAFE_CALL!>?.<!>toString()
     }
-    return <!DEBUG_INFO_CONSTANT{OI}!>this<!>?.toString()
+    return this?.toString()
 }

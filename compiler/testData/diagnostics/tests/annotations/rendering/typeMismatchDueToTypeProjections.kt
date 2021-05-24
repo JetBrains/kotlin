@@ -13,5 +13,5 @@ class C<T> {
 class Out<out F>
 
 fun test(a: C<out CharSequence>, y: Out<CharSequence>) {
-    a + <!TYPE_MISMATCH{NI}("Out<Nothing>; Out<CharSequence>"), TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS{OI}!>y<!>
+    a + <!TYPE_MISMATCH("Out<Nothing>; Out<CharSequence>")!>y<!>
 }

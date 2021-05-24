@@ -15,9 +15,9 @@ fun test1() {
     bar("", 1, ::foo).checkType { _<Pair<String, Int>>() }
     bar("", 1, ::fooReturnInt).checkType { _<Pair<String, Int>>() }
     bar("", 1, ::fooTakeString).checkType { _<Pair<String, Int>>() }
-    bar("", "", ::fooReturnInt).checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER{NI}!>_<!><Pair<String, Any>>() }
+    bar("", "", ::fooReturnInt).checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Pair<String, Any>>() }
 
-    val x: String = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH{OI}, TYPE_MISMATCH{NI}, TYPE_MISMATCH{NI}!>bar("", "", ::fooReturnInt)<!>
+    val x: String = <!TYPE_MISMATCH, TYPE_MISMATCH!>bar("", "", ::fooReturnInt)<!>
 
     baz(Int::toString, ::foo).checkType { _<Pair<Int, String>>() }
 }

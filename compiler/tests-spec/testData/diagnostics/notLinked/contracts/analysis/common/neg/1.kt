@@ -65,8 +65,8 @@ fun case_2(value_1: Int?, value_2: Int?, value_3: Any?) {
         true -> {
             println(value_3?.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>xor<!>(true))
             println(<!UNINITIALIZED_VARIABLE!>value_4<!>)
-            println(<!OI;DEBUG_INFO_CONSTANT!>value_1<!><!UNSAFE_CALL!>.<!>inv())
-            println(<!OI;DEBUG_INFO_CONSTANT!>value_2<!><!UNSAFE_CALL!>.<!>inv())
+            println(value_1<!UNSAFE_CALL!>.<!>inv())
+            println(value_2<!UNSAFE_CALL!>.<!>inv())
         }
         false -> {
             println(value_4)

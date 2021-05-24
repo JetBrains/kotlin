@@ -20,7 +20,7 @@ fun <T : String?> foo(x: T) {
     x?.bar1()
     x?.bar2()
 
-    x<!UNSAFE_CALL{NI}!>.<!><!TYPE_INFERENCE_UPPER_BOUND_VIOLATED{OI}!>bar3<!>()
+    x<!UNSAFE_CALL!>.<!>bar3()
 
-    x?.let { it<!UNSAFE_CALL{OI}!>.<!>length }
+    x?.let { it.length }
 }

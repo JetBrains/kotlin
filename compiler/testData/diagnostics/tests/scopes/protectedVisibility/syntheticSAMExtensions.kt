@@ -20,7 +20,7 @@ class B : A() {
         }
 
         if (d.x is B) {
-            <!SMARTCAST_IMPOSSIBLE{OI}!>d.x<!>.<!INVISIBLE_MEMBER{NI}!>foo<!> {}
+            d.x.<!INVISIBLE_MEMBER!>foo<!> {}
         }
     }
 }

@@ -1,4 +1,4 @@
-@Target(AnnotationTarget.FIELD) 
+@Target(AnnotationTarget.FIELD)
 annotation class Field
 
 <!WRONG_ANNOTATION_TARGET!>@Field<!>

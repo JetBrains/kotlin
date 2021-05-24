@@ -17,8 +17,8 @@ fun test4(x: <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>NL<Any><!>) {}
 val test5 = NA<Int>()
 val test6 = NA<<!UPPER_BOUND_VIOLATED!>Any<!>>()
 val test7 = NL<Int>()
-val test8 = MMMM<<!UPPER_BOUND_VIOLATED{NI}!>Int<!>>()
-val test9dwd = <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION{OI}!>NL<Any>()<!>
+val test8 = MMMM<<!UPPER_BOUND_VIOLATED!>Int<!>>()
+val test9dwd = NL<Any>()
 
 fun test9(x: TC<Number, Collection<Number>>) {}
 fun test10(x: TC<Number, Collection<Int>>) {}

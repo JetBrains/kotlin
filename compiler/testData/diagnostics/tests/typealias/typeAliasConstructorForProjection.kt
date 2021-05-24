@@ -7,8 +7,8 @@ typealias CIn = C<in Int>
 typealias COut = C<out Int>
 typealias CT<T> = C<T>
 
-val test1 = <!EXPANDED_TYPE_CANNOT_BE_CONSTRUCTED{OI}!>CStar()<!>
-val test2 = <!EXPANDED_TYPE_CANNOT_BE_CONSTRUCTED{OI}!>CIn()<!>
-val test3 = <!EXPANDED_TYPE_CANNOT_BE_CONSTRUCTED{OI}!>COut()<!>
-val test4 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER{NI}!>CT<!><<!PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT!>*<!>>()
+val test1 = CStar()
+val test2 = CIn()
+val test3 = COut()
+val test4 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>CT<!><<!PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT!>*<!>>()
 val test5 = CT<CT<*>>()

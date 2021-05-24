@@ -1,16 +1,15 @@
-
 fun test1() {
-    <!TYPE_MISMATCH{OI}!>1<!>. <!FUNCTION_EXPECTED{NI}!>(fun String.(i: Int) = i )<!>(1)
-    <!TYPE_MISMATCH{OI}!>1<!>.<!FUNCTION_EXPECTED{NI}!>(label@ fun String.(i: Int) = i )<!>(1)
+    1. <!FUNCTION_EXPECTED!>(fun String.(i: Int) = i )<!>(1)
+    1.<!FUNCTION_EXPECTED!>(label@ fun String.(i: Int) = i )<!>(1)
 }
 
 fun test2(f: String.(Int) -> Unit) {
-    <!TYPE_MISMATCH{OI}!>11<!>.<!FUNCTION_EXPECTED{NI}!>(f)<!>(1)
-    <!TYPE_MISMATCH{OI}!>11<!>.<!FUNCTION_EXPECTED{NI}!>(f)<!>(<!NO_VALUE_FOR_PARAMETER{OI}!>)<!>
+    11.<!FUNCTION_EXPECTED!>(f)<!>(1)
+    11.<!FUNCTION_EXPECTED!>(f)<!>()
 }
 
 fun test3() {
     fun foo(): String.(Int) -> Unit = {}
 
-    <!TYPE_MISMATCH{OI}!>1<!>.<!FUNCTION_EXPECTED{NI}!>(foo())<!>(1)
+    1.<!FUNCTION_EXPECTED!>(foo())<!>(1)
 }

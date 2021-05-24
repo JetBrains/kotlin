@@ -1,9 +1,9 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 // Related issue: KT-28654
 
-fun <K> select(): K = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH{OI}, TYPE_MISMATCH{NI}!>run <!TYPE_MISMATCH{NI}!>{ <!TYPE_MISMATCH{OI}!><!>}<!><!>
+fun <K> select(): K = <!TYPE_MISMATCH!>run <!TYPE_MISMATCH!>{ }<!><!>
 
 fun test() {
     val x: Int = select()
-    val t = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER{NI}, TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER{OI}!>select<!>()
+    val t = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>select<!>()
 }

@@ -6,7 +6,7 @@ fun foo(x: String?, y: String?, z: String?, w: String?) {
     if (x != null || y != null || (<!DEBUG_INFO_CONSTANT!>x<!> != z && <!DEBUG_INFO_CONSTANT!>y<!> != z))
         z<!UNSAFE_CALL!>.<!>length
     else
-        <!DEBUG_INFO_CONSTANT{OI}!>z<!><!UNSAFE_CALL!>.<!>length
+        z<!UNSAFE_CALL!>.<!>length
     if (x == null || y == null || (x != z && y != z))
         z<!UNSAFE_CALL!>.<!>length
     else

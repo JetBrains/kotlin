@@ -104,8 +104,8 @@ fun testImplicitCoercion() {
     val g = <!INVALID_IF_AS_EXPRESSION!>if<!> (true) 4
     val h = if (false) <!IMPLICIT_CAST_TO_ANY!>4<!> else <!IMPLICIT_CAST_TO_ANY!>{}<!>
 
-    bar(<!TYPE_MISMATCH{NI}!>if (true) {
-        <!CONSTANT_EXPECTED_TYPE_MISMATCH{OI}!>4<!>
+    bar(<!TYPE_MISMATCH!>if (true) {
+        4
     } else {
         z = 342
     }<!>)

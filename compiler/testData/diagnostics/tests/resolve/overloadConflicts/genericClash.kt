@@ -14,6 +14,6 @@ fun <E> baz(x: String, y: E) {}
 fun bar(x: A<String>) {
     x.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>("")
 
-    x.<!CANNOT_COMPLETE_RESOLVE{OI}, OVERLOAD_RESOLUTION_AMBIGUITY{NI}!>baz<!>("", "")
-    <!CANNOT_COMPLETE_RESOLVE{OI}, OVERLOAD_RESOLUTION_AMBIGUITY{NI}!>baz<!>("", "")
+    x.<!OVERLOAD_RESOLUTION_AMBIGUITY!>baz<!>("", "")
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>baz<!>("", "")
 }

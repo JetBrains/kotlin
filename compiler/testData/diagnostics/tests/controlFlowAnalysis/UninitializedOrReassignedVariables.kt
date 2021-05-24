@@ -240,7 +240,7 @@ class Outer() {
 }
 
 class ForwardAccessToBackingField() { //kt-147
-    val a = <!DEBUG_INFO_MISSING_UNRESOLVED{NI}, TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM, UNINITIALIZED_VARIABLE{OI}!>a<!> // error
+    val a = <!DEBUG_INFO_MISSING_UNRESOLVED, TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>a<!> // error
     val b = <!UNINITIALIZED_VARIABLE!>c<!> // error
     val c = 1
 }

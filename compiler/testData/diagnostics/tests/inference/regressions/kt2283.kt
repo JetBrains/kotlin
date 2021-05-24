@@ -9,5 +9,5 @@ fun <A, B> Foo<A>.map(f: (A) -> B): Foo<B> = object : Foo<B> {}
 
 fun foo() {
     val l: Foo<String> = object : Foo<String> {}
-    val m: Foo<String> = l.<!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH{OI}!>map { ppp -> <!CONSTANT_EXPECTED_TYPE_MISMATCH{NI}, CONSTANT_EXPECTED_TYPE_MISMATCH{NI}!>1<!> }<!>
+    val m: Foo<String> = l.map { ppp -> <!CONSTANT_EXPECTED_TYPE_MISMATCH, CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!> }
 }

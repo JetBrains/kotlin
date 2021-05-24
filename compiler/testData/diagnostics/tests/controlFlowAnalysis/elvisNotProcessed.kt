@@ -11,16 +11,16 @@ else {
 }
 
 val ww = if (true) {
-    <!TYPE_MISMATCH{OI}!>{ true }<!> <!USELESS_ELVIS!>?: null!!<!>
+    { true } <!USELESS_ELVIS!>?: null!!<!>
 }
 else if (true) {
-    <!TYPE_MISMATCH{OI}!>{ true }<!> <!USELESS_ELVIS!>?: null!!<!>
+    { true } <!USELESS_ELVIS!>?: null!!<!>
 }
 else {
     null!!
 }
 
-val <!IMPLICIT_NOTHING_PROPERTY_TYPE{OI}!>n<!> = null ?: (null ?: <!TYPE_MISMATCH{OI}!>{ true }<!>)
+val n = null ?: (null ?: { true })
 
 fun l(): (() -> Boolean)? = null
 
@@ -33,6 +33,6 @@ val bbb = null ?: ( l() <!USELESS_ELVIS_RIGHT_IS_NULL!>?: null<!>)
 val bbbb = ( l() <!USELESS_ELVIS_RIGHT_IS_NULL!>?: null<!>) ?: ( l() <!USELESS_ELVIS_RIGHT_IS_NULL!>?: null<!>)
 
 fun f(x : Long?): Long {
-    var a = x ?: (<!TYPE_MISMATCH{OI}!>fun() {}<!> <!USELESS_ELVIS!>?: <!TYPE_MISMATCH{OI}!>fun() {}<!><!>)
-    return <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE{OI}, TYPE_MISMATCH{NI}!>a<!>
+    var a = x ?: (fun() {} <!USELESS_ELVIS!>?: fun() {}<!>)
+    return <!TYPE_MISMATCH!>a<!>
 }

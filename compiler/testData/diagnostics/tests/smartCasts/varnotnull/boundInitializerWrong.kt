@@ -5,7 +5,7 @@ fun foo() {
     val y = x
     x = null
     if (y != null) {
-        <!DEBUG_INFO_CONSTANT{OI}!>x<!><!UNSAFE_CALL!>.<!>hashCode()
+        x<!UNSAFE_CALL!>.<!>hashCode()
     }
 }
 
@@ -22,7 +22,7 @@ fun bar(s: String?) {
     val hashCode = ss?.hashCode()
     ss = null
     if (hashCode != null) {
-        <!DEBUG_INFO_CONSTANT{OI}!>ss<!><!UNSAFE_CALL!>.<!>hashCode()
+        ss<!UNSAFE_CALL!>.<!>hashCode()
     }
 }
 

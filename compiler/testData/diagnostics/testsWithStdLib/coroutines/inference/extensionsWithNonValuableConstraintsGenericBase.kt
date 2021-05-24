@@ -27,11 +27,11 @@ val test1 = generate {
     yield("foo")
 }
 
-val test2 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER{NI}, TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER{OI}!>generate<!> {
+val test2 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
     starBase()
 }
 
-val test3 = <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER{OI}!>generate<!> {
+val test3 = generate {
     yield("bar")
     stringBase()
 }
@@ -46,6 +46,6 @@ val test5 = generateSpecific {
     stringBase()
 }
 
-val test6 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER{NI}, TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER{OI}!>generateSpecific<!> {
+val test6 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generateSpecific<!> {
     stringBase()
 }

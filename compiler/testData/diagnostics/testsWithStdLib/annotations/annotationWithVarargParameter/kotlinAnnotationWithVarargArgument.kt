@@ -1,6 +1,5 @@
-
 annotation class B(vararg val args: String)
 
-@B(*<!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH{OI}, TYPE_MISMATCH{NI}!>arrayOf(<!CONSTANT_EXPECTED_TYPE_MISMATCH{NI}!>1<!>, "b")<!>)
+@B(*<!TYPE_MISMATCH!>arrayOf(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>, "b")<!>)
 fun test() {
 }

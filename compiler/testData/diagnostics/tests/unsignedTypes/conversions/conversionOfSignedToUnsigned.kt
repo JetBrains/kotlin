@@ -54,7 +54,7 @@ fun test() {
 
     takeUBytes(IMPLICIT_INT, EXPLICIT_INT, 42u)
 
-    takeLong(<!TYPE_MISMATCH{NI}!>IMPLICIT_INT<!>)
+    takeLong(<!TYPE_MISMATCH!>IMPLICIT_INT<!>)
 
     takeIntWithoutAnnotation(IMPLICIT_INT)
 

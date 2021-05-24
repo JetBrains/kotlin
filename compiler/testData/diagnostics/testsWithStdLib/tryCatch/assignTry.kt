@@ -11,8 +11,8 @@ fun test2() {
     catch (e: ExcA) {
         null
     }
-    catch (e: ExcB) <!TYPE_MISMATCH{NI}!>{
-        <!CONSTANT_EXPECTED_TYPE_MISMATCH{OI}!>10<!>
+    catch (e: ExcB) <!TYPE_MISMATCH!>{
+        10
     }<!>
     s<!UNSAFE_CALL!>.<!>length
 }

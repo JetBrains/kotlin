@@ -7,9 +7,9 @@ interface B<T : S?, S : Any> {
 class C(override val t: Any?) : B<Any?, Any>
 
 fun f(b: B<*, Any>) {
-    val y = <!TYPE_MISMATCH{OI}!>b<!>.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER{NI}!>t<!>
-    if (<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE{NI}!>y<!> is String<!USELESS_NULLABLE_CHECK{OI}!>?<!>) {
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE{NI}, DEBUG_INFO_SMARTCAST{OI}!>y<!>.<!DEBUG_INFO_MISSING_UNRESOLVED{NI}!>length<!>
+    val y = b.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>t<!>
+    if (<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>y<!> is String?) {
+        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>y<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>length<!>
     }
 }
 

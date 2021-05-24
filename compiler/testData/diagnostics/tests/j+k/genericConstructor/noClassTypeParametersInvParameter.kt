@@ -9,7 +9,7 @@ public class A {
 class Inv<T>
 
 fun test(x: Inv<Int>, y: Inv<String>) {
-    <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS{OI}!>A<!>("", <!TYPE_MISMATCH{NI}!>x<!>)
+    A("", <!TYPE_MISMATCH!>x<!>)
     A("", y)
 
     A<String>("", <!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>x<!>)

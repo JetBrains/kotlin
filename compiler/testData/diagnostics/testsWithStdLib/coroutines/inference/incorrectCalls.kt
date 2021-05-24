@@ -24,12 +24,12 @@ val test2 = generate {
     notYield(3)
 }
 
-val test3 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER{NI}, TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER{OI}!>generate<!> {
+val test3 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
     yield(3)
     yieldBarReturnType(3)
 }
 
-val test4 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER{NI}, TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER{OI}!>generate<!> {
+val test4 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
     yield(3)
     barReturnType()
 }

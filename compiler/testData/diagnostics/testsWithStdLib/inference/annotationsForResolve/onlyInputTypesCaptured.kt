@@ -16,7 +16,7 @@ class Out<out T>
 // -------------------------------------------------------
 
 fun test_0(x: Inv2<in Number, out Number>, list: List<Inv2<Any, Int>>) {
-    list.<!TYPE_INFERENCE_ONLY_INPUT_TYPES{NI}!>foo<!>(x)
+    list.<!TYPE_INFERENCE_ONLY_INPUT_TYPES!>foo<!>(x)
 }
 
 // ------------------------- Inv -------------------------
@@ -34,11 +34,11 @@ fun test_3(x: Inv<Number>, list: List<Inv<Any>>) {
 }
 
 fun test_4(x: Inv<in Number>, list: List<Inv<Any>>) {
-    list.<!TYPE_INFERENCE_ONLY_INPUT_TYPES{NI}!>contains1<!>(x)
+    list.<!TYPE_INFERENCE_ONLY_INPUT_TYPES!>contains1<!>(x)
 }
 
 fun test_5(x: Inv<in Number>, list: List<Inv<Number>>) {
-    list.<!TYPE_INFERENCE_ONLY_INPUT_TYPES{NI}!>contains1<!>(x)
+    list.<!TYPE_INFERENCE_ONLY_INPUT_TYPES!>contains1<!>(x)
 }
 
 fun test_6(x: Inv<in Number>, list: List<Inv<Int>>) {

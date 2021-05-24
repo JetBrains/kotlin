@@ -11,30 +11,30 @@
 
 annotation class Ann(vararg val s: String)
 
-@Ann(s = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH{OI}, TYPE_MISMATCH{NI}!>arrayOf()<!>)
+@Ann(s = <!TYPE_MISMATCH!>arrayOf()<!>)
 fun test1() {}
 
 @Ann(s = <!TYPE_MISMATCH!>intArrayOf()<!>)
 fun test2() {}
 
-@Ann(s = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH{OI}, TYPE_MISMATCH{NI}!>arrayOf(1)<!>)
+@Ann(s = <!TYPE_MISMATCH!>arrayOf(1)<!>)
 fun test3() {}
 
-@Ann(s = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH{OI}, TYPE_MISMATCH, TYPE_MISMATCH!>["value"]<!>)
+@Ann(s = <!TYPE_MISMATCH, TYPE_MISMATCH!>["value"]<!>)
 fun test5() {}
 
-@JavaAnn(value = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH{OI}, TYPE_MISMATCH{NI}!>arrayOf("value")<!>)
+@JavaAnn(value = <!TYPE_MISMATCH!>arrayOf("value")<!>)
 fun jTest1() {}
 
-@JavaAnn(value = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH{OI}, TYPE_MISMATCH, TYPE_MISMATCH!>["value"]<!>)
+@JavaAnn(value = <!TYPE_MISMATCH, TYPE_MISMATCH!>["value"]<!>)
 fun jTest2() {}
 
-@JavaAnn(value = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH{OI}, TYPE_MISMATCH, TYPE_MISMATCH!>["value"]<!>, path = ["path"])
+@JavaAnn(value = <!TYPE_MISMATCH, TYPE_MISMATCH!>["value"]<!>, path = ["path"])
 fun jTest3() {}
 
 annotation class IntAnn(vararg val i: Int)
 
-@IntAnn(i = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH{OI}, TYPE_MISMATCH, TYPE_MISMATCH!>[1, 2]<!>)
+@IntAnn(i = <!TYPE_MISMATCH, TYPE_MISMATCH!>[1, 2]<!>)
 fun foo1() {}
 
 @IntAnn(i = <!TYPE_MISMATCH!>intArrayOf(0)<!>)

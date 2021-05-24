@@ -15,6 +15,6 @@ class C<X, Z, Y : X>
 
 class D<X, Z, Y : X>(foo: C<X, Z, Y>) {
     fun test(a: C<Y, Y, Y>) {
-        val d: D<X, Y, Y> = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH{OI}, TYPE_MISMATCH{NI}, TYPE_MISMATCH{NI}!>D(a)<!>
+        val d: D<X, Y, Y> = <!TYPE_MISMATCH, TYPE_MISMATCH!>D(a)<!>
     }
 }

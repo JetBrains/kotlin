@@ -8,4 +8,4 @@ public class C {
 
 // FILE: main.kt
 
-fun foo() = <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER{OI}!>C<!>(<!NO_VALUE_FOR_PARAMETER!>)<!>
+fun foo() = C(<!NO_VALUE_FOR_PARAMETER!>)<!>

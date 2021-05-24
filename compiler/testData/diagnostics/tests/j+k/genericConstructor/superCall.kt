@@ -9,9 +9,9 @@ public class A<E> {
 // FILE: main.kt
 
 class B1(x: List<String>) : A<CharSequence>("", x)
-class B2(x: List<Int>) : <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH{OI}!>A<CharSequence>("", x)<!>
+class B2(x: List<Int>) : A<CharSequence>("", x)
 
 class C : A<CharSequence> {
     constructor(x: List<String>) : super("", x)
-    constructor(x: List<Int>, y: Int) : <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH{OI}!>super<!>("", x)
+    constructor(x: List<Int>, y: Int) : super("", x)
 }

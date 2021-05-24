@@ -10,6 +10,6 @@ fun <T> listOf(): List<T> = null!!
 // Unresolved reference is ok here:
 // we can't create a substituted signature for type alias constructor
 // since it has 'out' type projection in 'in' position.
-val test1 = <!UNRESOLVED_REFERENCE!>BOutIn<!>(<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER{OI}!>listOf<!>(), null!!)
+val test1 = <!UNRESOLVED_REFERENCE!>BOutIn<!>(listOf(), null!!)
 
-val test2 = <!EXPANDED_TYPE_CANNOT_BE_CONSTRUCTED{OI}!>BInIn(listOf(), null!!)<!>
+val test2 = BInIn(listOf(), null!!)
