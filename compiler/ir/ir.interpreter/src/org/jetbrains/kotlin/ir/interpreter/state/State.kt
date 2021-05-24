@@ -38,7 +38,6 @@ internal interface State {
 
 internal fun State.isNull() = this is Primitive<*> && this.value == null
 
-internal fun State.asNumber() = (this as Primitive<*>).value as Number
 internal fun State.asInt() = (this as Primitive<*>).value as Int
 internal fun State.asBoolean() = (this as Primitive<*>).value as Boolean
 internal fun State.asString() = (this as Primitive<*>).value.toString()

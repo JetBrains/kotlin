@@ -5,20 +5,15 @@
 
 package org.jetbrains.kotlin.ir.interpreter.intrinsics
 
-import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.ir.interpreter.*
 import org.jetbrains.kotlin.ir.interpreter.stack.Stack
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.getUnsignedType
-import org.jetbrains.kotlin.ir.types.isUnsignedType
 import org.jetbrains.kotlin.ir.util.*
 
 internal sealed class IntrinsicBase {
@@ -192,24 +187,6 @@ internal object ArrayConstructor : IntrinsicBase() {
         }
 
         stack.pushReturnValue(arrayValue.toPrimitiveStateArray(irFunction.parentAsClass.defaultType))
-        return Next
-    }
-}
-
-internal object UnsignedConstructor : IntrinsicBase() {
-    override fun equalTo(irFunction: IrFunction): Boolean {
-        val constructorCall = irFunction as? IrConstructor ?: return false
-        val irClass = constructorCall.parent as IrClass
-        return irClass.defaultType.isUnsignedType() && irFunction.valueParameters.size == 1
-    }
-
-    override fun evaluate(irFunction: IrFunction, stack: Stack, interpret: IrElement.() -> ExecutionResult): ExecutionResult {
-        val parameter = irFunction.valueParameters.single()
-        val argument = stack.getVariable(parameter.symbol).state.asNumber()
-        val irClass = irFunction.parent as IrClass
-        val result = Common(irClass)
-        result.fields.add(Variable(parameter.symbol, argument.toState(parameter.type)))
-        stack.pushReturnValue(result)
         return Next
     }
 }
