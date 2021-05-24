@@ -162,7 +162,7 @@ internal fun List<Any?>.toPrimitiveStateArray(type: IrType): Primitive<*> {
         type.isLongArray() -> Primitive(LongArray(size) { i -> (this[i] as Number).toLong() }, type)
         type.isFloatArray() -> Primitive(FloatArray(size) { i -> (this[i] as Number).toFloat() }, type)
         type.isDoubleArray() -> Primitive(DoubleArray(size) { i -> (this[i] as Number).toDouble() }, type)
-        type.isBooleanArray() -> Primitive(BooleanArray(size) { i -> this[i].toString().toBoolean() }, type)
+        type.isBooleanArray() -> Primitive(BooleanArray(size) { i -> (this[i] as Boolean) }, type)
         else -> Primitive<Array<*>>(this.toTypedArray(), type)
     }
 }

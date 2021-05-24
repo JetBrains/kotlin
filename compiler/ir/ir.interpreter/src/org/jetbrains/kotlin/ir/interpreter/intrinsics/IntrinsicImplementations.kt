@@ -13,12 +13,9 @@ import org.jetbrains.kotlin.ir.interpreter.*
 import org.jetbrains.kotlin.ir.interpreter.state.*
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KFunctionState
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KTypeState
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.types.isArray
-import org.jetbrains.kotlin.ir.types.isCharArray
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.types.Variance
@@ -241,7 +238,13 @@ internal object ArrayConstructor : IntrinsicBase() {
     override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {
         val sizeDescriptor = irFunction.valueParameters[0].symbol
         val size = environment.callStack.getState(sizeDescriptor).asInt()
-        val arrayValue = MutableList<Any?>(size) { if (irFunction.returnType.isCharArray()) 0.toChar() else 0 }
+        val arrayValue = MutableList<Any?>(size) {
+            when {
+                irFunction.returnType.isCharArray() -> 0.toChar()
+                irFunction.returnType.isBooleanArray() -> false
+                else -> 0
+            }
+        }
 
         if (irFunction.valueParameters.size == 2) {
             for (i in size - 1 downTo 0) {
