@@ -846,6 +846,15 @@ class ComposableFunctionBodyTransformer(
                 returnVar?.let { irReturn(declaration.symbol, irGet(it)) }
             )
         )
+        if (
+            elideGroups &&
+            collectSourceInformation &&
+            !declaration.descriptor.hasExplicitGroupsAnnotation()
+        ) {
+            scope.realizeEndCalls {
+                irSourceInformationMarkerEnd(body)
+            }
+        }
 
         return declaration
     }
@@ -3572,7 +3581,7 @@ class ComposableFunctionBodyTransformer(
                 }
             }
 
-            protected open fun realizeEndCalls(makeEnd: () -> IrExpression) {
+            open fun realizeEndCalls(makeEnd: () -> IrExpression) {
                 extraEndLocations.forEach {
                     it(makeEnd())
                 }
