@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 private val INLINE_ONLY_ANNOTATION_CLASS_ID = ClassId.topLevel(FqName("kotlin.internal.InlineOnly"))
 
-internal fun FirClass<*>.unsubstitutedScope(context: CheckerContext) =
+fun FirClass<*>.unsubstitutedScope(context: CheckerContext) =
     this.unsubstitutedScope(context.sessionHolder.session, context.sessionHolder.scopeSession, withForcedTypeCalculator = false)
 
 /**

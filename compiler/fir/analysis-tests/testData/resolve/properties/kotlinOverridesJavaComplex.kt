@@ -44,7 +44,7 @@ public <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class LightClassWrapper<!> : Light(), 
 }
 
 public abstract class Light : Field, TypeParametersOwner {
-    fun getTypeParameters() = listOf()
+    fun <!VIRTUAL_MEMBER_HIDDEN!>getTypeParameters<!>() = listOf()
 }
 
 public interface Field : Named

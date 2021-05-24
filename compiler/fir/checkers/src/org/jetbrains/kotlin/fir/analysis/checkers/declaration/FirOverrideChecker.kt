@@ -7,21 +7,22 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.analysis.overridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenProperties
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
@@ -172,11 +173,29 @@ object FirOverrideChecker : FirClassChecker() {
         firTypeScope: FirTypeScope,
         context: CheckerContext,
     ) {
+        val overriddenMemberSymbols = firTypeScope.retrieveDirectOverriddenOf(member)
+
         if (!member.isOverride) {
+            if (overriddenMemberSymbols.isEmpty() ||
+                context.session.overridesBackwardCompatibilityHelper.overrideCanBeOmitted(overriddenMemberSymbols, context)
+            ) {
+                return
+            }
+            val kind = member.source?.kind
+            // Only report if the current member has real source or it's a member property declared inside the primary constructor.
+            if (kind !is FirRealSourceElementKind && kind !is FirFakeSourceElementKind.PropertyFromParameter) return
+
+            val overridden = overriddenMemberSymbols.first().originalOrSelf()
+            val containingClass = overridden.containingClass()?.toFirRegularClass(context.session) ?: return
+            reporter.reportOn(
+                member.source,
+                FirErrors.VIRTUAL_MEMBER_HIDDEN,
+                member,
+                containingClass,
+                context
+            )
             return
         }
-
-        val overriddenMemberSymbols = firTypeScope.retrieveDirectOverriddenOf(member)
 
         if (overriddenMemberSymbols.isEmpty()) {
             reporter.reportNothingToOverride(member, context)

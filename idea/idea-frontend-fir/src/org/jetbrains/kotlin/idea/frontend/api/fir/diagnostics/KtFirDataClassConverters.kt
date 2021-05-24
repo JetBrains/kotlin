@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.psi.KtAnnotation
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
@@ -1585,6 +1586,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.NON_FINAL_MEMBER_IN_OBJECT) { firDiagnostic ->
         NonFinalMemberInObjectImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.VIRTUAL_MEMBER_HIDDEN) { firDiagnostic ->
+        VirtualMemberHiddenImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a as FirDeclaration),
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.b) as KtNamedClassOrObjectSymbol,
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )

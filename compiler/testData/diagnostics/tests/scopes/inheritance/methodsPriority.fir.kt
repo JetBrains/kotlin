@@ -25,7 +25,7 @@ fun test() {
 }
 
 class E: A() {
-    fun foo() = A()
+    fun <!VIRTUAL_MEMBER_HIDDEN!>foo<!>() = A()
 
     init {
         val a: A = foo() // todo: discuss
