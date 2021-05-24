@@ -352,14 +352,35 @@ internal class ObjCExportTranslatorImpl(
                         }
                     }
 
+            if (descriptor.needCompanionObjectProperty(namer)) {
+                add {
+                    ObjCProperty(
+                            ObjCExportNamer.companionObjectPropertyName, null,
+                            mapReferenceType(descriptor.companionObjectDescriptor!!.defaultType, genericExportScope),
+                            listOf("class", "readonly"),
+                            getterName = namer.getCompanionObjectPropertySelector(descriptor),
+                            declarationAttributes = listOf(swiftNameAttribute(ObjCExportNamer.companionObjectPropertyName))
+                    )
+                }
+            }
             // TODO: consider adding exception-throwing impls for these.
             when (descriptor.kind) {
-                ClassKind.OBJECT -> add {
-                    ObjCMethod(
-                            null, false, ObjCInstanceType,
-                            listOf(namer.getObjectInstanceSelector(descriptor)), emptyList(),
-                            listOf(swiftNameAttribute("init()"))
-                    )
+                ClassKind.OBJECT -> {
+                    add {
+                        ObjCMethod(
+                                null, false, ObjCInstanceType,
+                                listOf(namer.getObjectInstanceSelector(descriptor)), emptyList(),
+                                listOf(swiftNameAttribute("init()"))
+                        )
+                    }
+                    add {
+                        ObjCProperty(
+                                ObjCExportNamer.objectPropertyName, null,
+                                mapReferenceType(descriptor.defaultType, genericExportScope), listOf("class", "readonly"),
+                                getterName = namer.getObjectPropertySelector(descriptor),
+                                declarationAttributes = listOf(swiftNameAttribute(ObjCExportNamer.objectPropertyName))
+                        )
+                    }
                 }
                 ClassKind.ENUM_CLASS -> {
                     val type = mapType(descriptor.defaultType, ReferenceBridge, ObjCNoneExportScope)
@@ -1291,6 +1312,10 @@ internal object ObjCNoneExportScope: ObjCExportScope{
 private fun computeSuperClassType(descriptor: ClassDescriptor): KotlinType? = descriptor.typeConstructor.supertypes.filter { !it.isInterface() }.firstOrNull()
 
 internal const val OBJC_SUBCLASSING_RESTRICTED = "objc_subclassing_restricted"
+
+internal fun ClassDescriptor.needCompanionObjectProperty(namer: ObjCExportNamer) = hasCompanionObject &&
+        (kind != ClassKind.ENUM_CLASS || enumEntries.all { namer.getEnumEntrySelector(it) != ObjCExportNamer.companionObjectPropertyName })
+
 
 private fun Deprecation.toDeprecationAttribute(): String {
     val attribute = when (deprecationLevel) {

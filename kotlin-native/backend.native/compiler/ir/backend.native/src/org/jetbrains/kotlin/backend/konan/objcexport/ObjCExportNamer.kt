@@ -67,8 +67,13 @@ interface ObjCExportNamer {
     val mutableMapName: ClassOrProtocolName
     val kotlinNumberName: ClassOrProtocolName
 
+    fun getObjectPropertySelector(descriptor: ClassDescriptor): String
+    fun getCompanionObjectPropertySelector(descriptor: ClassDescriptor): String
+
     companion object {
-        internal val kotlinThrowableAsErrorMethodName: String = "asError"
+        internal const val kotlinThrowableAsErrorMethodName: String = "asError"
+        internal const val objectPropertyName: String = "shared"
+        internal const val companionObjectPropertyName: String = "companion"
     }
 }
 
@@ -598,6 +603,16 @@ internal class ObjCExportNamerImpl(
                 append('_')
             }
         }
+    }
+
+
+    override fun getObjectPropertySelector(descriptor: ClassDescriptor): String {
+        val collides = ObjCExportNamer.objectPropertyName == getObjectInstanceSelector(descriptor)
+        return ObjCExportNamer.objectPropertyName + (if (collides) "_" else "")
+    }
+
+    override fun getCompanionObjectPropertySelector(descriptor: ClassDescriptor): String {
+        return ObjCExportNamer.companionObjectPropertyName
     }
 
     init {

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasCompanionObject
 
 internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): ObjCExportCodeSpec {
 
@@ -73,7 +74,13 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
             }
 
             if (descriptor.kind == ClassKind.OBJECT) {
-                methods += ObjCGetterForObjectInstance(namer.getObjectInstanceSelector(descriptor))
+                methods += ObjCGetterForObjectInstance(namer.getObjectInstanceSelector(descriptor), irClassSymbol)
+                methods += ObjCGetterForObjectInstance(namer.getObjectPropertySelector(descriptor), irClassSymbol)
+            }
+
+            if (descriptor.needCompanionObjectProperty(namer)) {
+                methods += ObjCGetterForObjectInstance(namer.getCompanionObjectPropertySelector(descriptor),
+                        symbolTable.referenceClass(descriptor.companionObjectDescriptor!!))
             }
 
             if (descriptor.kind == ClassKind.ENUM_CLASS) {
@@ -152,7 +159,7 @@ internal class ObjCClassMethodForKotlinEnumValues(
         val selector: String
 ) : ObjCMethodSpec()
 
-internal class ObjCGetterForObjectInstance(val selector: String) : ObjCMethodSpec()
+internal class ObjCGetterForObjectInstance(val selector: String, val classSymbol: IrClassSymbol) : ObjCMethodSpec()
 
 internal object ObjCKotlinThrowableAsErrorMethod : ObjCMethodSpec()
 

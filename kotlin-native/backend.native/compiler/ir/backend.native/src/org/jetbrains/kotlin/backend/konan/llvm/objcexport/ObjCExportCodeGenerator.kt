@@ -1298,10 +1298,10 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
                 classAdapters += createEnumValuesAdapter(it.valuesFunctionSymbol.owner, it.selector)
             }
             is ObjCGetterForObjectInstance -> {
-                classAdapters += if (irClass.isUnit()) {
+                classAdapters += if (it.classSymbol.owner.isUnit()) {
                     createUnitInstanceAdapter(it.selector)
                 } else {
-                    createObjectInstanceAdapter(irClass, it.selector)
+                    createObjectInstanceAdapter(it.classSymbol.owner, it.selector)
                 }
             }
             ObjCKotlinThrowableAsErrorMethod -> {
