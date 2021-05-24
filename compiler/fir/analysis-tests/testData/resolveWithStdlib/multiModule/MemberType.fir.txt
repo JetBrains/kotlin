@@ -1,10 +1,6 @@
 Module: m1-common
 FILE: common.kt
     public final expect class MyList : R|kotlin/Any| {
-        public expect constructor(): R|MyList| {
-            super<R|kotlin/Any|>()
-        }
-
         public final expect fun get(i: R|kotlin/Int|): R|kotlin/Int|
 
     }

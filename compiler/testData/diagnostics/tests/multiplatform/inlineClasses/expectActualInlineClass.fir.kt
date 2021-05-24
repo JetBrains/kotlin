@@ -20,9 +20,9 @@ expect inline class NonInlineActual(val x: Int)
 actual inline class Foo1(val x: Int) {
     actual fun bar(): String = "Hello"
 }
-actual inline class Foo2(val x: String)
+<!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>actual inline class Foo2(val x: String)<!>
 actual <!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_INLINE_CLASS!>inline<!> class Foo3
 
-actual inline class NonInlineExpect(val x: Int)
+<!ACTUAL_WITHOUT_EXPECT!>actual inline class NonInlineExpect(val x: Int)<!>
 
-actual class NonInlineActual actual constructor(actual val x: Int)
+<!ACTUAL_WITHOUT_EXPECT!>actual class NonInlineActual actual constructor(actual val x: Int)<!>

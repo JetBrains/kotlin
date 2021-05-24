@@ -9,4 +9,4 @@ expect fun foo()
 
 <!NON_MEMBER_FUNCTION_NO_BODY!>actual fun foo()<!>
 
-<!NON_MEMBER_FUNCTION_NO_BODY!>actual fun bar()<!>
+<!ACTUAL_WITHOUT_EXPECT, NON_MEMBER_FUNCTION_NO_BODY!>actual fun bar()<!>

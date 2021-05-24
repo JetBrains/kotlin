@@ -568,4 +568,10 @@ abstract class AbstractTypeApproximator(
 
     // Nothing or Nothing!
     private fun KotlinTypeMarker.isTrivialSub() = lowerBoundIfFlexible().isNothing()
+
+    override fun CapturedTypeMarker.typeParameter(): TypeParameterMarker? {
+        with(ctx) {
+            return typeParameter()
+        }
+    }
 }

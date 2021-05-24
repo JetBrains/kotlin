@@ -7,6 +7,7 @@ plugins {
 dependencies {
     implementation(project(":compiler:fir:tree"))
     implementation(project(":compiler:fir:tree:tree-generator"))
+    implementation(project(":compiler:resolution.common"))
     implementation(project(":kotlin-reflect"))
     implementation(project(":kotlin-reflect-api"))
 

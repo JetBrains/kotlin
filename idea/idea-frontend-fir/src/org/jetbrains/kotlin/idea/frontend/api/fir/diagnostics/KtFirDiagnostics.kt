@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
+import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnosticWithPsi
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassLikeSymbol
@@ -33,10 +35,14 @@ import org.jetbrains.kotlin.psi.KtBinaryExpressionWithTypeRHS
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtConstructor
+import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
+import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtIfExpression
@@ -59,6 +65,7 @@ import org.jetbrains.kotlin.psi.KtWhenCondition
 import org.jetbrains.kotlin.psi.KtWhenEntry
 import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Incompatible
 import org.jetbrains.kotlin.types.Variance
 
 /*
@@ -1504,10 +1511,6 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = PrivateSetterForOpenProperty::class
     }
 
-    abstract class ExpectedPrivateDeclaration : KtFirDiagnostic<KtModifierListOwner>() {
-        override val diagnosticClass get() = ExpectedPrivateDeclaration::class
-    }
-
     abstract class ValWithSetter : KtFirDiagnostic<KtPropertyAccessor>() {
         override val diagnosticClass get() = ValWithSetter::class
     }
@@ -1575,6 +1578,22 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ExpectedDeclarationWithBody::class
     }
 
+    abstract class ExpectedClassConstructorDelegationCall : KtFirDiagnostic<KtConstructorDelegationCall>() {
+        override val diagnosticClass get() = ExpectedClassConstructorDelegationCall::class
+    }
+
+    abstract class ExpectedClassConstructorPropertyParameter : KtFirDiagnostic<KtParameter>() {
+        override val diagnosticClass get() = ExpectedClassConstructorPropertyParameter::class
+    }
+
+    abstract class ExpectedEnumConstructor : KtFirDiagnostic<KtConstructor<*>>() {
+        override val diagnosticClass get() = ExpectedEnumConstructor::class
+    }
+
+    abstract class ExpectedEnumEntryWithBody : KtFirDiagnostic<KtEnumEntry>() {
+        override val diagnosticClass get() = ExpectedEnumEntryWithBody::class
+    }
+
     abstract class ExpectedPropertyInitializer : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = ExpectedPropertyInitializer::class
     }
@@ -1585,6 +1604,82 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class ExpectedLateinitProperty : KtFirDiagnostic<KtModifierListOwner>() {
         override val diagnosticClass get() = ExpectedLateinitProperty::class
+    }
+
+    abstract class SupertypeInitializedInExpectedClass : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = SupertypeInitializedInExpectedClass::class
+    }
+
+    abstract class ExpectedPrivateDeclaration : KtFirDiagnostic<KtModifierListOwner>() {
+        override val diagnosticClass get() = ExpectedPrivateDeclaration::class
+    }
+
+    abstract class ImplementationByDelegationInExpectClass : KtFirDiagnostic<KtDelegatedSuperTypeEntry>() {
+        override val diagnosticClass get() = ImplementationByDelegationInExpectClass::class
+    }
+
+    abstract class ActualTypeAliasNotToClass : KtFirDiagnostic<KtTypeAlias>() {
+        override val diagnosticClass get() = ActualTypeAliasNotToClass::class
+    }
+
+    abstract class ActualTypeAliasToClassWithDeclarationSiteVariance : KtFirDiagnostic<KtTypeAlias>() {
+        override val diagnosticClass get() = ActualTypeAliasToClassWithDeclarationSiteVariance::class
+    }
+
+    abstract class ActualTypeAliasWithUseSiteVariance : KtFirDiagnostic<KtTypeAlias>() {
+        override val diagnosticClass get() = ActualTypeAliasWithUseSiteVariance::class
+    }
+
+    abstract class ActualTypeAliasWithComplexSubstitution : KtFirDiagnostic<KtTypeAlias>() {
+        override val diagnosticClass get() = ActualTypeAliasWithComplexSubstitution::class
+    }
+
+    abstract class ActualFunctionWithDefaultArguments : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = ActualFunctionWithDefaultArguments::class
+    }
+
+    abstract class ActualAnnotationConflictingDefaultArgumentValue : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = ActualAnnotationConflictingDefaultArgumentValue::class
+        abstract val parameter: KtVariableLikeSymbol
+    }
+
+    abstract class ExpectedFunctionSourceWithDefaultArgumentsNotFound : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = ExpectedFunctionSourceWithDefaultArgumentsNotFound::class
+    }
+
+    abstract class NoActualForExpect : KtFirDiagnostic<KtNamedDeclaration>() {
+        override val diagnosticClass get() = NoActualForExpect::class
+        abstract val declaration: KtSymbol
+        abstract val module: FirModuleData
+        abstract val compatibility: Map<Incompatible<FirBasedSymbol<*>>, List<KtSymbol>>
+    }
+
+    abstract class ActualWithoutExpect : KtFirDiagnostic<KtNamedDeclaration>() {
+        override val diagnosticClass get() = ActualWithoutExpect::class
+        abstract val declaration: KtSymbol
+        abstract val compatibility: Map<Incompatible<FirBasedSymbol<*>>, List<KtSymbol>>
+    }
+
+    abstract class AmbiguousActuals : KtFirDiagnostic<KtNamedDeclaration>() {
+        override val diagnosticClass get() = AmbiguousActuals::class
+        abstract val declaration: KtSymbol
+        abstract val candidates: List<KtSymbol>
+    }
+
+    abstract class AmbiguousExpects : KtFirDiagnostic<KtNamedDeclaration>() {
+        override val diagnosticClass get() = AmbiguousExpects::class
+        abstract val declaration: KtSymbol
+        abstract val modules: List<FirModuleData>
+    }
+
+    abstract class NoActualClassMemberForExpectedClass : KtFirDiagnostic<KtNamedDeclaration>() {
+        override val diagnosticClass get() = NoActualClassMemberForExpectedClass::class
+        abstract val declaration: KtSymbol
+        abstract val members: List<Pair<KtSymbol, Map<Incompatible<FirBasedSymbol<*>>, List<KtSymbol>>>>
+    }
+
+    abstract class ActualMissing : KtFirDiagnostic<KtNamedDeclaration>() {
+        override val diagnosticClass get() = ActualMissing::class
     }
 
     abstract class InitializerRequiredForDestructuringDeclaration : KtFirDiagnostic<KtDestructuringDeclaration>() {

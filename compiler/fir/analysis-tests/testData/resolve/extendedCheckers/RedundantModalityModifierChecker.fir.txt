@@ -38,10 +38,6 @@ FILE: RedundantModalityModifierChecker.kt
     public abstract interface Foo : R|kotlin/Any| {
     }
     public abstract expect class AbstractClass : R|Foo| {
-        public expect constructor(): R|AbstractClass| {
-            super<R|kotlin/Any|>()
-        }
-
         public abstract expect override fun foo(): R|kotlin/Unit|
 
         public abstract expect fun bar(): R|kotlin/Unit|

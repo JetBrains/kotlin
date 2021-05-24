@@ -272,4 +272,8 @@ object SourceElementPositioningStrategies {
         LightTreePositioningStrategies.DECLARATION_WITH_BODY,
         PositioningStrategies.DECLARATION_WITH_BODY
     )
+
+    // TODO
+    val ACTUAL_DECLARATION_NAME = DEFAULT
+    val INCOMPATIBLE_DECLARATION = DEFAULT
 }

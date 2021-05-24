@@ -9,10 +9,10 @@ expect fun foo()
 // FILE: jvm.kt
 package jvm
 
-actual fun foo() {}
+<!ACTUAL_WITHOUT_EXPECT!>actual fun foo() {}<!>
 
 // MODULE: m3-js()()(m1-common)
 // FILE: js.kt
 package js
 
-actual fun foo() {}
+<!ACTUAL_WITHOUT_EXPECT!>actual fun foo() {}<!>

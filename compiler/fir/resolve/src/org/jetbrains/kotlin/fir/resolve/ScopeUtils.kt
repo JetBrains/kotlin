@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScope
 import org.jetbrains.kotlin.fir.scopes.scopeForClass
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
@@ -95,6 +96,7 @@ private fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: Scope
     }
 }
 
+fun FirClassSymbol<*>.defaultType(): ConeClassLikeType = fir.defaultType()
 
 fun FirClass.defaultType(): ConeClassLikeType =
     when (this) {

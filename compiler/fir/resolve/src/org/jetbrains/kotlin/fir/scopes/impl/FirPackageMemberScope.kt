@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedForCalls
@@ -19,8 +20,11 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.SmartList
 
-class FirPackageMemberScope(val fqName: FqName, val session: FirSession) : FirScope() {
-    private val symbolProvider = session.symbolProvider
+class FirPackageMemberScope(
+    val fqName: FqName,
+    val session: FirSession,
+    private val symbolProvider: FirSymbolProvider = session.symbolProvider
+) : FirScope() {
     private val classifierCache: MutableMap<Name, FirClassifierSymbol<*>?> = mutableMapOf()
     private val functionCache: MutableMap<Name, List<FirNamedFunctionSymbol>> = mutableMapOf()
     private val propertyCache: MutableMap<Name, List<FirPropertySymbol>> = mutableMapOf()

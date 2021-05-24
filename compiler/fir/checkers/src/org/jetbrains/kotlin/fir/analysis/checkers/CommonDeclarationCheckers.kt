@@ -30,6 +30,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirInfixFunctionDeclarationChecker,
             FirExposedVisibilityDeclarationChecker,
             FirCyclicTypeBoundsChecker,
+            FirExpectActualDeclarationChecker
         )
 
     override val functionCheckers: Set<FirFunctionChecker>

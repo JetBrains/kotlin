@@ -10,7 +10,7 @@ expect class FooBar {
 }
 
 fun test() {
-    Foo()
+    <!UNRESOLVED_REFERENCE!>Foo<!>()
     Bar()
     Baz()
     FooBar()

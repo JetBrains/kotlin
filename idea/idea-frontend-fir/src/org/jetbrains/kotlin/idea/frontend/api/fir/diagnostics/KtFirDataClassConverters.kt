@@ -26,10 +26,14 @@ import org.jetbrains.kotlin.psi.KtBinaryExpressionWithTypeRHS
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtConstructor
+import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
+import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtIfExpression
@@ -2129,12 +2133,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.EXPECTED_PRIVATE_DECLARATION) { firDiagnostic ->
-        ExpectedPrivateDeclarationImpl(
-            firDiagnostic as FirPsiDiagnostic,
-            token,
-        )
-    }
     add(FirErrors.VAL_WITH_SETTER) { firDiagnostic ->
         ValWithSetterImpl(
             firDiagnostic as FirPsiDiagnostic,
@@ -2232,6 +2230,30 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.EXPECTED_CLASS_CONSTRUCTOR_DELEGATION_CALL) { firDiagnostic ->
+        ExpectedClassConstructorDelegationCallImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.EXPECTED_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER) { firDiagnostic ->
+        ExpectedClassConstructorPropertyParameterImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.EXPECTED_ENUM_CONSTRUCTOR) { firDiagnostic ->
+        ExpectedEnumConstructorImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.EXPECTED_ENUM_ENTRY_WITH_BODY) { firDiagnostic ->
+        ExpectedEnumEntryWithBodyImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.EXPECTED_PROPERTY_INITIALIZER) { firDiagnostic ->
         ExpectedPropertyInitializerImpl(
             firDiagnostic as FirPsiDiagnostic,
@@ -2246,6 +2268,138 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.EXPECTED_LATEINIT_PROPERTY) { firDiagnostic ->
         ExpectedLateinitPropertyImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS) { firDiagnostic ->
+        SupertypeInitializedInExpectedClassImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.EXPECTED_PRIVATE_DECLARATION) { firDiagnostic ->
+        ExpectedPrivateDeclarationImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.IMPLEMENTATION_BY_DELEGATION_IN_EXPECT_CLASS) { firDiagnostic ->
+        ImplementationByDelegationInExpectClassImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.ACTUAL_TYPE_ALIAS_NOT_TO_CLASS) { firDiagnostic ->
+        ActualTypeAliasNotToClassImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.ACTUAL_TYPE_ALIAS_TO_CLASS_WITH_DECLARATION_SITE_VARIANCE) { firDiagnostic ->
+        ActualTypeAliasToClassWithDeclarationSiteVarianceImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.ACTUAL_TYPE_ALIAS_WITH_USE_SITE_VARIANCE) { firDiagnostic ->
+        ActualTypeAliasWithUseSiteVarianceImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.ACTUAL_TYPE_ALIAS_WITH_COMPLEX_SUBSTITUTION) { firDiagnostic ->
+        ActualTypeAliasWithComplexSubstitutionImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS) { firDiagnostic ->
+        ActualFunctionWithDefaultArgumentsImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE) { firDiagnostic ->
+        ActualAnnotationConflictingDefaultArgumentValueImpl(
+            firSymbolBuilder.variableLikeBuilder.buildVariableLikeSymbol(firDiagnostic.a.fir),
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.EXPECTED_FUNCTION_SOURCE_WITH_DEFAULT_ARGUMENTS_NOT_FOUND) { firDiagnostic ->
+        ExpectedFunctionSourceWithDefaultArgumentsNotFoundImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.NO_ACTUAL_FOR_EXPECT) { firDiagnostic ->
+        NoActualForExpectImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a.fir),
+            firDiagnostic.b,
+            firDiagnostic.c.mapKeys { (incompatible, _) ->
+                incompatible
+            }.mapValues { (_, collection) -> 
+                collection.map { firBasedSymbol ->
+                                    firSymbolBuilder.buildSymbol(firBasedSymbol.fir)
+                                }
+            },
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.ACTUAL_WITHOUT_EXPECT) { firDiagnostic ->
+        ActualWithoutExpectImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a.fir),
+            firDiagnostic.b.mapKeys { (incompatible, _) ->
+                incompatible
+            }.mapValues { (_, collection) -> 
+                collection.map { firBasedSymbol ->
+                                    firSymbolBuilder.buildSymbol(firBasedSymbol.fir)
+                                }
+            },
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.AMBIGUOUS_ACTUALS) { firDiagnostic ->
+        AmbiguousActualsImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a.fir),
+            firDiagnostic.b.map { firBasedSymbol ->
+                firSymbolBuilder.buildSymbol(firBasedSymbol.fir)
+            },
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.AMBIGUOUS_EXPECTS) { firDiagnostic ->
+        AmbiguousExpectsImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a.fir),
+            firDiagnostic.b.map { firModuleData ->
+                firModuleData
+            },
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS) { firDiagnostic ->
+        NoActualClassMemberForExpectedClassImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a.fir),
+            firDiagnostic.b.map { pair ->
+                firSymbolBuilder.buildSymbol(pair.first.fir) to pair.second.mapKeys { (incompatible, _) ->
+                                    incompatible
+                                }.mapValues { (_, collection) -> 
+                                    collection.map { firBasedSymbol ->
+                                                            firSymbolBuilder.buildSymbol(firBasedSymbol.fir)
+                                                        }
+                                }
+            },
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.ACTUAL_MISSING) { firDiagnostic ->
+        ActualMissingImpl(
             firDiagnostic as FirPsiDiagnostic,
             token,
         )

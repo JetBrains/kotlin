@@ -17,12 +17,12 @@ expect open class Foo3
 // FILE: jvm.kt
 
 interface Foo1
-actual interface Foo2
+<!ACTUAL_WITHOUT_EXPECT!>actual interface Foo2<!>
 
-actual var s: String = "value"
+<!ACTUAL_WITHOUT_EXPECT!>actual var s: String = "value"<!>
 
 fun foo2(): Int = 0
 
-<!REDECLARATION!>actual class Foo3<!>
+<!ACTUAL_WITHOUT_EXPECT, REDECLARATION!>actual class Foo3<!>
 
 <!REDECLARATION!>class Foo3<!>

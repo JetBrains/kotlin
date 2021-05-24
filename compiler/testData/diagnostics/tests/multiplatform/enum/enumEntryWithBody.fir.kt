@@ -5,7 +5,7 @@
 expect enum class En {
     E1,
     E2 {
-        fun foo() = ""
+        <!EXPECTED_DECLARATION_WITH_BODY!>fun foo()<!> = ""
     },
     E3 { };
 }

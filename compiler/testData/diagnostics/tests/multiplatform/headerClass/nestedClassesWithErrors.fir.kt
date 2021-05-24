@@ -4,7 +4,7 @@
 
 expect class B {
     class N {
-        fun body() {}
+        <!EXPECTED_DECLARATION_WITH_BODY!>fun body()<!> {}
         expect fun extraHeader()
     }
 }
@@ -39,7 +39,7 @@ actual class C {
     actual inner class I
 }
 
-actual class D
+<!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>actual class D<!>
 
 actual class E {
     class N
