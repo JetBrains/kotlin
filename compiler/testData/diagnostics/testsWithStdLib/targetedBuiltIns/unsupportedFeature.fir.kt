@@ -14,11 +14,11 @@ class A : java.util.ArrayList<String>() {
 }
 
 class A1 : java.util.ArrayList<String>() {
-    // `stream` is defined in ArrayList, so it was possible to declare it in 1.0 without an 'override' keyword
+    // `stream` is defined in Collection, so it was possible to declare it in 1.0 without an 'override' keyword
     fun stream(): java.util.stream.Stream<String> = super.stream()
 
     // `sort` is defined in ArrayList, so it was impossible to declare it in 1.0 without an 'override' keyword
-    fun sort(c: Comparator<in String>?) {
+    fun <!VIRTUAL_MEMBER_HIDDEN!>sort<!>(c: Comparator<in String>?) {
         super.sort(c)
     }
 }

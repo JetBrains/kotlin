@@ -563,6 +563,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val NON_FINAL_MEMBER_IN_FINAL_CLASS by warning<KtNamedDeclaration>(PositioningStrategy.OPEN_MODIFIER)
         val NON_FINAL_MEMBER_IN_OBJECT by warning<KtNamedDeclaration>(PositioningStrategy.OPEN_MODIFIER)
+        val VIRTUAL_MEMBER_HIDDEN by error<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<FirMemberDeclaration>("declared")
+            parameter<FirRegularClass>("overriddenContainer")
+        }
     }
 
     val REDECLARATIONS by object : DiagnosticGroup("Redeclarations") {

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnosticWithPsi
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionLikeSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtVariableLikeSymbol
@@ -1127,6 +1128,12 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class NonFinalMemberInObject : KtFirDiagnostic<KtNamedDeclaration>() {
         override val diagnosticClass get() = NonFinalMemberInObject::class
+    }
+
+    abstract class VirtualMemberHidden : KtFirDiagnostic<KtNamedDeclaration>() {
+        override val diagnosticClass get() = VirtualMemberHidden::class
+        abstract val declared: KtSymbol
+        abstract val overriddenContainer: KtNamedClassOrObjectSymbol
     }
 
     abstract class ManyCompanionObjects : KtFirDiagnostic<KtObjectDeclaration>() {

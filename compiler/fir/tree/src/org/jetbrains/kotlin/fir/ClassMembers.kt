@@ -71,6 +71,16 @@ inline fun <reified D : FirCallableDeclaration<*>> D.originalIfFakeOverride(): D
 inline fun <reified S : FirCallableSymbol<*>> S.originalIfFakeOverride(): S? =
     fir.originalIfFakeOverride()?.symbol as S?
 
+inline fun <reified D : FirCallableDeclaration<*>> D.originalOrSelf(): D {
+    var result = this
+    while (result.isSubstitutionOrIntersectionOverride) {
+        result = result.originalIfFakeOverride() ?: break
+    }
+    return result
+}
+
+inline fun <reified S : FirCallableSymbol<*>> S.originalOrSelf(): S = fir.originalOrSelf().symbol as S
+
 inline fun <reified D : FirCallableDeclaration<*>> D.unwrapFakeOverrides(): D {
     var current = this
 

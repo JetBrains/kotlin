@@ -144,6 +144,14 @@ private object FirToKtConversionCreator {
             "firSymbolBuilder.classifierBuilder.buildClassLikeSymbol({0})",
             KtClassLikeSymbol::class.createType()
         ),
+        FirRegularClass::class to HLFunctionCallConversion(
+            "firSymbolBuilder.classifierBuilder.buildClassLikeSymbol({0}) as KtNamedClassOrObjectSymbol",
+            KtNamedClassOrObjectSymbol::class.createType(),
+            importsToAdd = listOf(
+                "org.jetbrains.kotlin.fir.declarations.FirRegularClass",
+                "org.jetbrains.kotlin.idea.frontend.api.symbols.KtNamedClassOrObjectSymbol"
+            )
+        ),
         FirExpression::class to HLFunctionCallConversion(
             "{0}.source!!.psi as KtExpression",
             KtExpression::class.createType(),

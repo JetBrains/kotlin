@@ -36,8 +36,8 @@ class MyChildClass() : MyClass() {}
 }
 
 <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class MyIllegalClass4<!>() : MyTrait, MyAbstractClass() {
-    fun foo() {}
-    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val pr : Unit<!>
+    fun <!VIRTUAL_MEMBER_HIDDEN!>foo<!>() {}
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val <!VIRTUAL_MEMBER_HIDDEN!>pr<!> : Unit<!>
     override fun other() {}
     override val otherPr : Int = 1
 }
