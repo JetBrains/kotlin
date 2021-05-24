@@ -5241,7 +5241,6 @@ task buildKonanTests { t ->
             srcFiles sources
             baseDir testOutputLocal
             extraOpts '-ea' // Without this option assertions would remain inactive.
-            extraOpts '-g' // To include line numbers in stack trace.
             extraOpts '-tr'
             extraOpts '-Xverify-ir'
             extraOpts project.globalTestArgs
