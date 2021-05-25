@@ -28,10 +28,7 @@ import org.jetbrains.kotlin.resolve.inline.isInlineOnly
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForReturnType
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionLiteral
-import org.jetbrains.kotlin.types.expressions.LabelResolver
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -81,7 +78,6 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
             }
         }
     }
-
 
     protected fun throwCompilationException(
         nodeAndSmap: SMAPAndMethodNode?, e: Exception, generateNodeText: Boolean
@@ -150,8 +146,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
         val insns = methodNode.instructions.toArray()
         for (i in insns.indices) {
-            val insn = insns[i]
-            when (insn) {
+            when (val insn = insns[i]) {
                 is JumpInsnNode ->
                     if (isBackwardJump(i, insn.label)) return false
 
@@ -406,12 +401,10 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         if (kind !== ValueKind.DEFAULT_MASK && kind !== ValueKind.METHOD_HANDLE_IN_DEFAULT) {
             return false
         }
-        assert(value is StackValue.Constant) {
-            "Additional default method argument should be constant, but " + value
-        }
+        assert(value is StackValue.Constant) { "Additional default method argument should be constant, but $value" }
         val constantValue = (value as StackValue.Constant).value
         if (kind === ValueKind.DEFAULT_MASK) {
-            assert(constantValue is Int) { "Mask should be of Integer type, but " + constantValue }
+            assert(constantValue is Int) { "Mask should be of Integer type, but $constantValue" }
             maskValues.add(constantValue as Int)
             if (maskStartIndex == -1) {
                 maskStartIndex = invocationParamBuilder.listAllParams().sumOf {
@@ -510,8 +503,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                         doCreateMethodNodeFromCompiled(directMember, state, jvmSignature.asmMethod)
                     else
                         null
-                result ?:
-                throw IllegalStateException("Couldn't obtain compiled function body for $functionDescriptor")
+                result ?: throw IllegalStateException("Couldn't obtain compiled function body for $functionDescriptor")
             }
 
             return SMAPAndMethodNode(cloneMethodNode(resultInCache.node), resultInCache.classSMAP)
@@ -592,25 +584,5 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                     InlineUtil.isInlineParameter(field.descriptor) &&
                     InlineUtil.isInline(field.descriptor.containingDeclaration)
         }
-
-        fun getDeclarationLabels(lambdaOrFun: PsiElement?, descriptor: DeclarationDescriptor): Set<String> {
-            val result = HashSet<String>()
-
-            if (lambdaOrFun != null) {
-                val label = LabelResolver.getLabelNameIfAny(lambdaOrFun)
-                if (label != null) {
-                    result.add(label.asString())
-                }
-            }
-
-            if (!isFunctionLiteral(descriptor)) {
-                if (!descriptor.name.isSpecial) {
-                    result.add(descriptor.name.asString())
-                }
-                result.add(FIRST_FUN_LABEL)
-            }
-            return result
-        }
     }
-
 }
