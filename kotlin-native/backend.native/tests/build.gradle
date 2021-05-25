@@ -4793,7 +4793,6 @@ Task frameworkTest(String name, Closure<FrameworkTest> configurator) {
 
 if (isAppleTarget(project)) {
     frameworkTest('testObjCExport') {
-        enabled = !isExperimentalMM // Experimental MM does not support thread state switching for ObjC interop yet.
         final String frameworkName = 'Kt'
         final String dir = "$testOutputFramework/testObjCExport"
         final File lazyHeader = file("$dir/$target-lazy.h")
@@ -4842,7 +4841,6 @@ if (isAppleTarget(project)) {
     }
 
     frameworkTest('testObjCExportNoGenerics') {
-        enabled = !isExperimentalMM // Experimental MM does not support thread state switching for ObjC interop yet.
         final String frameworkName = 'KtNoGenerics'
         final String frameworkArtifactName = 'Kt'
         final String dir = "$testOutputFramework/testObjCExportNoGenerics"
@@ -4895,7 +4893,6 @@ if (isAppleTarget(project)) {
     }
 
     frameworkTest('testObjCExportStatic') {
-        enabled = !isExperimentalMM // Experimental MM does not support thread state switching for ObjC interop yet.
         final String frameworkName = 'KtStatic'
         final String frameworkArtifactName = 'Kt'
         final String libraryName = frameworkName + "Library"
@@ -4926,7 +4923,6 @@ if (isAppleTarget(project)) {
     }
 
     frameworkTest('testValuesGenericsFramework') {
-        enabled = !isExperimentalMM // Experimental MM does not support thread state switching for ObjC interop yet.
         framework('ValuesGenerics') {
             sources = ['objcexport/values.kt', 'framework/values_generics']
         }
@@ -4934,7 +4930,6 @@ if (isAppleTarget(project)) {
     }
 
     frameworkTest("testStdlibFramework") {
-        enabled = !isExperimentalMM // Experimental MM does not support thread state switching for ObjC interop yet.
         framework('Stdlib') {
             sources = ['framework/stdlib']
             bitcode = true
@@ -4946,7 +4941,6 @@ if (isAppleTarget(project)) {
     if (cacheTesting != null && cacheTesting.isDynamic) {
         // testMultipleFrameworks disabled until https://youtrack.jetbrains.com/issue/KT-34262 is fixed.
     } else frameworkTest("testMultipleFrameworks") {
-        enabled = !isExperimentalMM // Experimental MM does not support thread state switching for ObjC interop yet.
         framework('First') {
             sources = ['framework/multiple/framework1', 'framework/multiple/shared']
             bitcode = true
@@ -4959,7 +4953,6 @@ if (isAppleTarget(project)) {
     }
 
     frameworkTest("testMultipleFrameworksStatic") {
-        enabled = !isExperimentalMM // Experimental MM does not support thread state switching for ObjC interop yet.
         if (cacheTesting != null) {
             // See https://youtrack.jetbrains.com/issue/KT-34261.
             expectedExitStatus = 134
@@ -4984,7 +4977,6 @@ if (isAppleTarget(project)) {
     }
 
     frameworkTest("testGh3343Framework") {
-        enabled = !isExperimentalMM // Experimental MM doesn't support thread state switching for ObjC interop yet.
         framework('Gh3343') {
             sources = ['framework/gh3343']
             library = 'objcGh3343'
@@ -4993,8 +4985,7 @@ if (isAppleTarget(project)) {
     }
 
     frameworkTest("testKt42397Framework") {
-        enabled = !project.globalTestArgs.contains('-opt') &&
-            !isExperimentalMM // Experimental MM does not support thread state switching for ObjC interop yet.
+        enabled = !project.globalTestArgs.contains('-opt')
         framework("Kt42397") {
             sources = ['framework/kt42397']
         }
@@ -5002,7 +4993,6 @@ if (isAppleTarget(project)) {
     }
 
     frameworkTest("testKt43517Framework") {
-        enabled = !isExperimentalMM // Experimental MM does not support thread state switching for ObjC interop yet.
         framework('Kt43517') {
             sources = ['framework/kt43517']
             library = 'objcKt43517'
