@@ -100,7 +100,7 @@ object FirFakeOverrideGenerator {
     ): FirSimpleFunction {
         return buildSimpleFunction {
             source = baseFunction.source
-            moduleData = session.moduleData
+            moduleData = session.nullableModuleData ?: baseFunction.moduleData
             this.origin = origin
             name = baseFunction.name
             status = baseFunction.status.copy(isExpect, newModality, newVisibility)
