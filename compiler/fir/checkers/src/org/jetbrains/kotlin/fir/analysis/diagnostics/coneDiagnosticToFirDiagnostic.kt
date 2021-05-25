@@ -100,11 +100,18 @@ private fun mapUnsafeCallError(
     val receiverExpression = candidate.callInfo.explicitReceiver
     val singleArgument = candidate.callInfo.argumentList.arguments.singleOrNull()
     if (receiverExpression != null && singleArgument != null &&
-        source.elementType == KtNodeTypes.OPERATION_REFERENCE &&
+        (source.elementType == KtNodeTypes.OPERATION_REFERENCE || source.elementType == KtNodeTypes.BINARY_EXPRESSION) &&
         (candidateFunction?.isOperator == true || candidateFunction?.isInfix == true)
     ) {
-        val operationToken = source.getChild(KtTokens.IDENTIFIER)
-        return if (operationToken != null) {
+        // For augmented assignment operations (e.g., `a += b`), the source is the entire binary expression (BINARY_EXPRESSION).
+        // TODO: No need to check for source.elementType == BINARY_EXPRESSION if we use operator as callee reference source
+        //  (see FirExpressionsResolveTransformer.transformAssignmentOperatorStatement)
+        val operationSource = if (source.elementType == KtNodeTypes.BINARY_EXPRESSION) {
+            source.getChild(KtNodeTypes.OPERATION_REFERENCE)
+        } else {
+            source
+        }
+        return if (operationSource?.getChild(KtTokens.IDENTIFIER) != null) {
             FirErrors.UNSAFE_INFIX_CALL.on(
                 source,
                 receiverExpression,
