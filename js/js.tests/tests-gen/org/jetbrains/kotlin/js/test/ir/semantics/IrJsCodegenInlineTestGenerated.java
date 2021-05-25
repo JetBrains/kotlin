@@ -3990,9 +3990,19 @@ public class IrJsCodegenInlineTestGenerated extends AbstractIrJsCodegenInlineTes
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/inlineClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
             }
 
+            @TestMetadata("returnBoxedFromLambda.kt")
+            public void testReturnBoxedFromLambda() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/suspend/inlineClass/returnBoxedFromLambda.kt");
+            }
+
             @TestMetadata("returnUnboxedDirect.kt")
             public void testReturnUnboxedDirect() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/suspend/inlineClass/returnUnboxedDirect.kt");
+            }
+
+            @TestMetadata("returnUnboxedFromLambda.kt")
+            public void testReturnUnboxedFromLambda() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/suspend/inlineClass/returnUnboxedFromLambda.kt");
             }
 
             @TestMetadata("returnUnboxedResume.kt")
