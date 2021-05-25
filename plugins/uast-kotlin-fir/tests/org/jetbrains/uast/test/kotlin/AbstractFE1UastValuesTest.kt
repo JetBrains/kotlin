@@ -7,24 +7,12 @@ package org.jetbrains.uast.test.kotlin
 
 import org.jetbrains.uast.UFile
 import org.jetbrains.uast.test.common.kotlin.FirUastValuesTestBase
-import java.io.File
+import org.jetbrains.uast.test.env.kotlin.AbstractFE1UastTest
 
-abstract class AbstractFE1UastValuesTest : AbstractKotlinUastTest(), FirUastValuesTestBase {
+abstract class AbstractFE1UastValuesTest : AbstractFE1UastTest(), FirUastValuesTestBase {
     override val isFirUastPlugin: Boolean = false
 
     override fun check(filePath: String, file: UFile) {
         super<FirUastValuesTestBase>.check(filePath, file)
-    }
-
-    override var testDataDir = File("plugins/uast-kotlin-fir/testData")
-
-    fun doTest(filePath: String) {
-        testDataDir = File(filePath).parentFile
-        val testName = filePath.substring(filePath.lastIndexOf('/') + 1).removeSuffix(".kt")
-        val virtualFile = getVirtualFile(testName)
-
-        val psiFile = psiManager.findFile(virtualFile) ?: error("Can't get psi file for $testName")
-        val uFile = uastContext.convertElementWithParent(psiFile, null) ?: error("Can't get UFile for $testName")
-        check(filePath, uFile as UFile)
     }
 }
