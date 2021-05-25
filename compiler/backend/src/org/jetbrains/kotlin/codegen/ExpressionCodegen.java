@@ -2950,12 +2950,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                         bindingContext, state
                 );
 
-        PsiSourceCompilerForInline sourceCompiler = new PsiSourceCompilerForInline(this, callElement);
         FunctionDescriptor functionDescriptor =
                 InlineUtil.isArrayConstructorWithLambda(original)
                 ? FictitiousArrayConstructor.create((ConstructorDescriptor) original) : original.getOriginal();
+        PsiSourceCompilerForInline sourceCompiler = new PsiSourceCompilerForInline(this, callElement, functionDescriptor);
 
-        sourceCompiler.initializeInlineFunctionContext(functionDescriptor);
         JvmMethodSignature signature = typeMapper.mapSignatureWithGeneric(functionDescriptor, sourceCompiler.getContextKind());
         if (signature.getAsmMethod().getName().contains("-") &&
             !state.getConfiguration().getBoolean(JVMConfigurationKeys.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME)

@@ -58,8 +58,6 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
     private val initialFrameSize = codegen.frameMap.currentSize
 
-    private val isSameModule: Boolean = sourceCompiler.isCallInsideSameModuleAsDeclared(functionDescriptor)
-
     protected val invocationParamBuilder = ParametersBuilder.newBuilder()
 
     protected val expressionMap = linkedMapOf<Int, FunctionalArgument>()
@@ -214,7 +212,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         val sourceInfo = sourceMapper.sourceInfo!!
         val callSite = SourcePosition(codegen.lastLineNumber, sourceInfo.sourceFileName!!, sourceInfo.pathOrCleanFQN)
         val inliner = MethodInliner(
-            node, parameters, info, FieldRemapper(null, null, parameters), isSameModule,
+            node, parameters, info, FieldRemapper(null, null, parameters), sourceCompiler.isCallInsideSameModuleAsCallee,
             "Method inlining " + sourceCompiler.callElementText,
             SourceMapCopier(sourceMapper, nodeAndSmap.classSMAP, callSite),
             info.callSiteInfo, if (functionDescriptor.isInlineOnly()) InlineOnlySmapSkipper(codegen) else null,
@@ -234,7 +232,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         generateAndInsertFinallyBlocks(
             adapter, infos, (remapper.remap(parameters.argsSizeOnStack + 1).value as StackValue.Local).index
         )
-        if (!sourceCompiler.isFinallyMarkerRequired()) {
+        if (!sourceCompiler.isFinallyMarkerRequired) {
             removeFinallyMarkers(adapter)
         }
 
@@ -456,7 +454,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
         val directMember = getDirectMemberAndCallableFromObject(functionDescriptor)
         if (!isBuiltInArrayIntrinsic(functionDescriptor) && !descriptorIsDeserialized(directMember)) {
-            val node = sourceCompiler.doCreateMethodNodeFromSource(functionDescriptor, jvmSignature, callDefault, asmMethod)
+            val node = sourceCompiler.compileInlineFunction(jvmSignature, callDefault, asmMethod)
             node.node.preprocessSuspendMarkers(forInline = true, keepFakeContinuation = false)
             return node
         }

@@ -30,27 +30,30 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import kotlin.properties.Delegates
 
-class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, override val callElement: KtElement) :
-    SourceCompilerForInline {
+class PsiSourceCompilerForInline(
+    private val codegen: ExpressionCodegen,
+    override val callElement: KtElement,
+    private val functionDescriptor: FunctionDescriptor
+) : SourceCompilerForInline {
+    override val state
+        get() = codegen.state
 
-    override val state = codegen.state
+    private val additionalInnerClasses = mutableListOf<ClassDescriptor>()
 
-    private var context by Delegates.notNull<CodegenContext<*>>()
-
-    private var additionalInnerClasses = mutableListOf<ClassDescriptor>()
+    private val context = getContext(
+        functionDescriptor,
+        functionDescriptor,
+        codegen.state,
+        DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor)?.containingFile as? KtFile,
+        additionalInnerClasses
+    )
 
     override val lookupLocation = KotlinLookupLocation(callElement)
 
+    override val callElementText: String by lazy { callElement.text }
 
-    override val callElementText: String by lazy {
-        callElement.text
-    }
-
-    override val callsiteFile by lazy {
-        callElement.containingFile
-    }
+    override val callsiteFile by lazy { callElement.containingFile }
 
     override val contextKind
         get () = context.contextKind
@@ -211,22 +214,18 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
         }
     }
 
-    override fun doCreateMethodNodeFromSource(
-        callableDescriptor: FunctionDescriptor,
-        jvmSignature: JvmMethodSignature,
-        callDefault: Boolean,
-        asmMethod: Method
-    ): SMAPAndMethodNode {
-        val element = DescriptorToSourceUtils.descriptorToDeclaration(callableDescriptor)
+    override fun compileInlineFunction(jvmSignature: JvmMethodSignature, callDefault: Boolean, asmMethod: Method): SMAPAndMethodNode {
+        val element = DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor)
 
         if (!(element is KtNamedFunction || element is KtPropertyAccessor)) {
-            throw IllegalStateException("Couldn't find declaration for function $callableDescriptor")
+            throw IllegalStateException("Couldn't find declaration for function $functionDescriptor")
         }
         val inliningFunction = element as KtDeclarationWithBody?
 
         val node = MethodNode(
             Opcodes.API_VERSION,
-            DescriptorAsmUtil.getMethodAsmFlags(callableDescriptor, context.contextKind, state) or if (callDefault) Opcodes.ACC_STATIC else 0,
+            DescriptorAsmUtil.getMethodAsmFlags(functionDescriptor, context.contextKind, state) or
+                    if (callDefault) Opcodes.ACC_STATIC else 0,
             asmMethod.name,
             asmMethod.descriptor, null, null
         )
@@ -234,10 +233,10 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
         //for maxLocals calculation
         val maxCalcAdapter = wrapWithMaxLocalCalc(node)
         val parentContext = context.parentContext ?: error("Context has no parent: $context")
-        val methodContext = parentContext.intoFunction(callableDescriptor)
+        val methodContext = parentContext.intoFunction(functionDescriptor)
 
         val smap = if (callDefault) {
-            val implementationOwner = state.typeMapper.mapImplementationOwner(callableDescriptor)
+            val implementationOwner = state.typeMapper.mapImplementationOwner(functionDescriptor)
             val parentCodegen = FakeMemberCodegen(
                 codegen.parentCodegen, inliningFunction!!, methodContext.parentContext as FieldOwnerContext<*>,
                 implementationOwner.internalName,
@@ -245,15 +244,15 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
                 false
             )
             if (element !is KtNamedFunction) {
-                throw IllegalStateException("Property accessors with default parameters not supported $callableDescriptor")
+                throw IllegalStateException("Property accessors with default parameters not supported $functionDescriptor")
             }
             FunctionCodegen.generateDefaultImplBody(
-                methodContext, callableDescriptor, maxCalcAdapter, DefaultParameterValueLoader.DEFAULT,
+                methodContext, functionDescriptor, maxCalcAdapter, DefaultParameterValueLoader.DEFAULT,
                 inliningFunction as KtNamedFunction?, parentCodegen, asmMethod
             )
             SMAP(parentCodegen.orCreateSourceMapper.resultMappings)
         } else {
-            generateMethodBody(maxCalcAdapter, callableDescriptor, methodContext, inliningFunction!!, jvmSignature, null)
+            generateMethodBody(maxCalcAdapter, functionDescriptor, methodContext, inliningFunction!!, jvmSignature, null)
         }
         maxCalcAdapter.visitMaxs(-1, -1)
         maxCalcAdapter.visitEnd()
@@ -277,12 +276,11 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
             it.addBlockStackElementsForNonLocalReturns(codegen.blockStackElements, curFinallyDepth)
         }
 
-    override fun isCallInsideSameModuleAsDeclared(functionDescriptor: FunctionDescriptor): Boolean {
-        return JvmCodegenUtil.isCallInsideSameModuleAsDeclared(functionDescriptor, codegen.getContext(), codegen.state.outDirectory)
-    }
+    override val isCallInsideSameModuleAsCallee: Boolean
+        get() = JvmCodegenUtil.isCallInsideSameModuleAsDeclared(functionDescriptor, codegen.getContext(), codegen.state.outDirectory)
 
-    override fun isFinallyMarkerRequired(): Boolean = isFinallyMarkerRequired(codegen.getContext())
-
+    override val isFinallyMarkerRequired: Boolean
+        get() = isFinallyMarkerRequired(codegen.getContext())
 
     override val compilationContextDescriptor
         get() = codegen.getContext().contextDescriptor
@@ -299,16 +297,6 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
 
         val labels = getDeclarationLabels(DescriptorToSourceUtils.descriptorToDeclaration(descriptor), descriptor)
         return labels.associateWith { null } // TODO add break/continue labels
-    }
-
-    fun initializeInlineFunctionContext(functionDescriptor: FunctionDescriptor) {
-        context = getContext(
-            functionDescriptor,
-            functionDescriptor,
-            state,
-            DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor)?.containingFile as? KtFile,
-            additionalInnerClasses
-        )
     }
 
     override fun reportSuspensionPointInsideMonitor(stackTraceElement: String) {
