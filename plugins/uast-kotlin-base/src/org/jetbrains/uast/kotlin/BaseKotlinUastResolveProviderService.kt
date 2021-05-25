@@ -14,6 +14,8 @@ import org.jetbrains.uast.UExpression
 interface BaseKotlinUastResolveProviderService {
     fun isJvmElement(psiElement: PsiElement): Boolean
 
+    val baseKotlinConverter: BaseKotlinConverter
+
     fun convertParent(uElement: UElement): UElement?
 
     fun resolveToDeclaration(ktExpression: KtExpression): PsiElement?

@@ -1,12 +1,12 @@
 UFile (package = ) [public final class PropertyWithAnnotationKt {...]
     UClass (name = PropertyWithAnnotationKt) [public final class PropertyWithAnnotationKt {...}]
-        UField (name = prop1) [private static final var prop1: int = [!] UnknownKotlinExpression (INTEGER_CONSTANT)]
-            [!] UnknownKotlinExpression (INTEGER_CONSTANT) [[!] UnknownKotlinExpression (INTEGER_CONSTANT)] = Undetermined
+        UField (name = prop1) [private static final var prop1: int = "not-yet-compile-time-constant"]
+            ULiteralExpression (value = "not-yet-compile-time-constant") ["not-yet-compile-time-constant"] = "not-yet-compile-time-constant"
         UMethod (name = getProp1) [public static final fun getProp1() : int = UastEmptyExpression]
-        UMethod (name = getProp2) [public static final fun getProp2() : int = [!] UnknownKotlinExpression (INTEGER_CONSTANT)]
-            [!] UnknownKotlinExpression (INTEGER_CONSTANT) [[!] UnknownKotlinExpression (INTEGER_CONSTANT)] = Undetermined
-        UMethod (name = getProp3) [public static final fun getProp3() : int = [!] UnknownKotlinExpression (INTEGER_CONSTANT)]
-            [!] UnknownKotlinExpression (INTEGER_CONSTANT) [[!] UnknownKotlinExpression (INTEGER_CONSTANT)] = Undetermined
+        UMethod (name = getProp2) [public static final fun getProp2() : int = "not-yet-compile-time-constant"]
+            ULiteralExpression (value = "not-yet-compile-time-constant") ["not-yet-compile-time-constant"] = "not-yet-compile-time-constant"
+        UMethod (name = getProp3) [public static final fun getProp3() : int = "not-yet-compile-time-constant"]
+            ULiteralExpression (value = "not-yet-compile-time-constant") ["not-yet-compile-time-constant"] = "not-yet-compile-time-constant"
         UMethod (name = setProp3) [public static final fun setProp3(value: int) : void = [!] UnknownKotlinExpression (BLOCK)]
             UParameter (name = value) [var value: int]
             [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined

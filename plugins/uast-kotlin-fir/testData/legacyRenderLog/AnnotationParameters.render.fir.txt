@@ -1,8 +1,8 @@
 public final class AnnotationParametersKt {
-    public static final fun foo() : int = [!] UnknownKotlinExpression (INTEGER_CONSTANT)
+    public static final fun foo() : int = "not-yet-compile-time-constant"
     public static final fun bar() : void = [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
-    public static final fun fooWithArrLiteral() : int = [!] UnknownKotlinExpression (INTEGER_CONSTANT)
-    public static final fun fooWithStrArrLiteral() : int = [!] UnknownKotlinExpression (INTEGER_CONSTANT)
+    public static final fun fooWithArrLiteral() : int = "not-yet-compile-time-constant"
+    public static final fun fooWithStrArrLiteral() : int = "not-yet-compile-time-constant"
 }
 
 public abstract annotation IntRange {

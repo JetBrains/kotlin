@@ -1,7 +1,7 @@
 UFile (package = )
     UClass (name = NameContainingFileKt)
         UField (name = xyzzy)
-            [!] UnknownKotlinExpression (INTEGER_CONSTANT)
+            ULiteralExpression (value = "not-yet-compile-time-constant")
         UMethod (name = bar)
             [!] UnknownKotlinExpression (BLOCK)
         UMethod (name = getXyzzy)

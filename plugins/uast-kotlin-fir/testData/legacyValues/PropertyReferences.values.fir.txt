@@ -6,8 +6,8 @@ UFile (package = ) [public final class PropertyReferencesKt {...]
             UParameter (name = $this$ext) [var $this$ext: A]
             [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
     UClass (name = A) [public final class A {...}]
-        UField (name = privateProp) [private var privateProp: int = [!] UnknownKotlinExpression (INTEGER_CONSTANT)]
-            [!] UnknownKotlinExpression (INTEGER_CONSTANT) [[!] UnknownKotlinExpression (INTEGER_CONSTANT)] = Undetermined
+        UField (name = privateProp) [private var privateProp: int = "not-yet-compile-time-constant"]
+            ULiteralExpression (value = "not-yet-compile-time-constant") ["not-yet-compile-time-constant"] = "not-yet-compile-time-constant"
         UField (name = mutableProp) [private var mutableProp: int]
         UMethod (name = A) [public fun A(init: int) = UastEmptyExpression]
             UParameter (name = init) [var init: int]
