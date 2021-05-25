@@ -16,22 +16,20 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower
 
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import androidx.compose.compiler.plugins.kotlin.hasComposableAnnotation
+import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ParameterDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.ir.descriptors.IrBasedDeclarationDescriptor
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.DescriptorsRemapper
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.types.KotlinType
 
 /**
- * This symbol remapper is aware of possible wrapped descriptor ownership change to align
+ * This symbol remapper is aware of possible descriptor signature change to align
  * function signature and descriptor signature in cases of composable value parameters.
- * As wrapped descriptors are bound to IR functions inside, we need to create a new one to change
- * the function this descriptor represents as well.
+ * It removes descriptors whenever the signature changes, forcing it to be generated from IR.
  *
  * E.g. when function has a signature of:
  * ```
@@ -43,37 +41,51 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
  * ```
  * Same applies for receiver and return types.
  *
- * After remapping them, the newly created descriptors are bound back using
- * [WrappedComposableDescriptorPatcher] right after IR counterparts are created
- * (see usages in [ComposerTypeRemapper])
- *
  * This conversion is only required with decoys, but can be applied to the JVM as well for
  * consistency.
  */
 class ComposableSymbolRemapper : DeepCopySymbolRemapper(
     object : DescriptorsRemapper {
+        override fun remapDeclaredConstructor(
+            descriptor: ClassConstructorDescriptor
+        ): ClassConstructorDescriptor? =
+            descriptor.takeUnless { it.isTransformed() }
+
+        override fun remapDeclaredSimpleFunction(
+            descriptor: FunctionDescriptor
+        ): FunctionDescriptor? =
+            descriptor.takeUnless { it.isTransformed() }
+
+        override fun remapDeclaredValueParameter(
+            descriptor: ParameterDescriptor
+        ): ParameterDescriptor? =
+            descriptor.takeUnless { it.isTransformed() }
+
+        override fun remapDeclaredTypeParameter(
+            descriptor: TypeParameterDescriptor
+        ): TypeParameterDescriptor? =
+            descriptor.takeUnless { it.isTransformed() }
+
+        private fun ClassConstructorDescriptor.isTransformed(): Boolean =
+            this is IrBasedDeclarationDescriptor<*> ||
+                valueParameters.any { it.type.containsComposable() }
+
+        private fun FunctionDescriptor.isTransformed(): Boolean =
+            this is IrBasedDeclarationDescriptor<*> ||
+                valueParameters.any { it.type.containsComposable() } ||
+                returnType?.containsComposable() == true
+
+        private fun ParameterDescriptor.isTransformed(): Boolean =
+            this is IrBasedDeclarationDescriptor<*> ||
+                type.containsComposable() ||
+                containingDeclaration.let { it is FunctionDescriptor && it.isTransformed() }
+
+        private fun TypeParameterDescriptor.isTransformed(): Boolean =
+            this is IrBasedDeclarationDescriptor<*> ||
+                containingDeclaration.let { it is FunctionDescriptor && it.isTransformed() }
+
+        private fun KotlinType.containsComposable() =
+            hasComposableAnnotation() ||
+                arguments.any { it.type.hasComposableAnnotation() }
     }
 )
-
-@OptIn(ObsoleteDescriptorBasedAPI::class)
-object WrappedComposableDescriptorPatcher : IrElementVisitorVoid {
-    override fun visitElement(element: IrElement) {
-        element.acceptChildrenVoid(this)
-    }
-
-    override fun visitConstructor(declaration: IrConstructor) {
-        super.visitConstructor(declaration)
-    }
-
-    override fun visitSimpleFunction(declaration: IrSimpleFunction) {
-        super.visitSimpleFunction(declaration)
-    }
-
-    override fun visitValueParameter(declaration: IrValueParameter) {
-        super.visitValueParameter(declaration)
-    }
-
-    override fun visitTypeParameter(declaration: IrTypeParameter) {
-        super.visitTypeParameter(declaration)
-    }
-}
