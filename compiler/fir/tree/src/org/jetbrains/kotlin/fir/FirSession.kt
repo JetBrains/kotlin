@@ -35,6 +35,11 @@ abstract class FirSession @PrivateSessionConstructor constructor(
     fun register(tClass: KClass<out FirSessionComponent>, value: FirSessionComponent) {
         registerComponent(tClass, value)
     }
+
+    override fun toString(): String {
+        val moduleData = nullableModuleData ?: return "Libraries session"
+        return "Source session for module ${moduleData.name}"
+    }
 }
 
 abstract class FirSessionProvider {

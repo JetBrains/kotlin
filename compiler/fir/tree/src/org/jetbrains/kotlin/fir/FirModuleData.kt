@@ -60,6 +60,10 @@ abstract class FirModuleData : FirSessionComponent {
         }
         _session = session
     }
+
+    override fun toString(): String {
+        return "Module $name"
+    }
 }
 
 class FirModuleDataImpl(
