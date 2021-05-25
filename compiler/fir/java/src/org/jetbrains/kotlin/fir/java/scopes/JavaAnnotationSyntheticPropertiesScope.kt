@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlin.fir.java.scopes
 
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.moduleData
+import org.jetbrains.kotlin.fir.nullableModuleData
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
@@ -44,7 +47,15 @@ class JavaAnnotationSyntheticPropertiesScope(
                 val callableId = CallableId(classId, name)
                 FirAccessorSymbol(callableId, callableId).also {
                     val accessor = FirSyntheticPropertyAccessor(function, isGetter = true)
-                    FirSyntheticProperty(session.moduleData, name, isVar = false, it, function.status, function.resolvePhase, accessor)
+                    FirSyntheticProperty(
+                        session.nullableModuleData ?: function.moduleData,
+                        name,
+                        isVar = false,
+                        it,
+                        function.status.copy(newModality = Modality.FINAL),
+                        function.resolvePhase,
+                        accessor
+                    )
                 }
             }
             processor(symbol)
