@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
+import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
 import org.jetbrains.kotlin.codegen.IrExpressionLambda
 import org.jetbrains.kotlin.codegen.JvmKotlinType
 import org.jetbrains.kotlin.codegen.StackValue
@@ -215,11 +216,18 @@ class IrExpressionLambdaImpl(
             val isSuspend = parameter.isInlineParameter() && parameter.type.isSuspendFunctionTypeOrSubtype()
             capturedParamDesc(parameter.name.asString(), asmMethod.argumentTypes[startCapture + index], isSuspend)
         }
+        // The parameter list should include the continuation if this is a suspend lambda. In the IR backend,
+        // the lambda is suspend iff the inline function's parameter is marked suspend, so FunctionN.invoke call
+        // inside the inline function already has a (real) continuation value as the last argument.
         val freeParameters = function.explicitParameters.let { it.take(startCapture) + it.drop(endCapture) }
         val freeAsmParameters = asmMethod.argumentTypes.let { it.take(startCapture) + it.drop(endCapture) }
-        invokeMethod = Method(asmMethod.name, asmMethod.returnType, freeAsmParameters.toTypedArray())
+        // The return type, on the other hand, should be the original type if this is a suspend lambda that returns
+        // an unboxed inline class value so that the inliner will box it (FunctionN.invoke should return a boxed value).
+        val unboxedReturnType = function.suspendFunctionOriginal().originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass()
+        val unboxedAsmReturnType = unboxedReturnType?.let(codegen.typeMapper::mapType)
+        invokeMethod = Method(asmMethod.name, unboxedAsmReturnType ?: asmMethod.returnType, freeAsmParameters.toTypedArray())
         invokeMethodParameters = freeParameters.map { it.type.toIrBasedKotlinType() }
-        invokeMethodReturnType = function.returnType.toIrBasedKotlinType()
+        invokeMethodReturnType = (unboxedReturnType ?: function.returnType).toIrBasedKotlinType()
     }
 }
 

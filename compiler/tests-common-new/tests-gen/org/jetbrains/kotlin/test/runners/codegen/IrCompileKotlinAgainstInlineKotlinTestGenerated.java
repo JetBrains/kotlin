@@ -4982,9 +4982,21 @@ public class IrCompileKotlinAgainstInlineKotlinTestGenerated extends AbstractIrC
             }
 
             @Test
+            @TestMetadata("returnBoxedFromLambda.kt")
+            public void testReturnBoxedFromLambda() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/suspend/inlineClass/returnBoxedFromLambda.kt");
+            }
+
+            @Test
             @TestMetadata("returnUnboxedDirect.kt")
             public void testReturnUnboxedDirect() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/suspend/inlineClass/returnUnboxedDirect.kt");
+            }
+
+            @Test
+            @TestMetadata("returnUnboxedFromLambda.kt")
+            public void testReturnUnboxedFromLambda() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/suspend/inlineClass/returnUnboxedFromLambda.kt");
             }
 
             @Test
