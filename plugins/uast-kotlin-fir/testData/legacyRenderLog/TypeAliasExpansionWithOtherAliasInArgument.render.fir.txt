@@ -1,4 +1,4 @@
 public final class TypeAliasExpansionWithOtherAliasInArgumentKt {
-    public static final fun foo($this$foo: kotlin.jvm.functions.Function1, x: kotlin.jvm.functions.Function1) : kotlin.jvm.functions.Function1 = [!] UnknownKotlinExpression (NULL)
-    public static final fun bar($this$bar: java.util.Map<java.lang.String,? extends java.lang.Integer>, x: java.util.Map<java.lang.String,? extends java.lang.Integer>) : java.util.Map<java.lang.String,? extends java.lang.Integer> = [!] UnknownKotlinExpression (NULL)
+    public static final fun foo($this$foo: kotlin.jvm.functions.Function1, x: kotlin.jvm.functions.Function1) : kotlin.jvm.functions.Function1 = "not-yet-compile-time-constant"
+    public static final fun bar($this$bar: java.util.Map<java.lang.String,? extends java.lang.Integer>, x: java.util.Map<java.lang.String,? extends java.lang.Integer>) : java.util.Map<java.lang.String,? extends java.lang.Integer> = "not-yet-compile-time-constant"
 }

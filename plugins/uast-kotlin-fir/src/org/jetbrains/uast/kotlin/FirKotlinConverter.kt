@@ -18,8 +18,9 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.uast.*
+import org.jetbrains.uast.expressions.UInjectionHost
 
-internal object FirKotlinConverter {
+internal object FirKotlinConverter : BaseKotlinConverter {
     internal fun convertDeclarationOrElement(
         element: PsiElement,
         givenParent: UElement?,
@@ -172,7 +173,7 @@ internal object FirKotlinConverter {
             },
             alternative catch@{
                 val uCatchClause = element.parent?.parent?.safeAs<KtCatchClause>()?.toUElementOfType<UCatchClause>() ?: return@catch null
-                uCatchClause.parameters.firstOrNull { it.sourcePsi == element}
+                uCatchClause.parameters.firstOrNull { it.sourcePsi == element }
             },
             *convertToPropertyAlternatives(LightClassUtil.getLightClassPropertyMethods(element), givenParent)
         )
@@ -192,6 +193,13 @@ internal object FirKotlinConverter {
                 is KtExpression -> {
                     convertExpression(element, givenParent, requiredTypes)
                 }
+                is KtLiteralStringTemplateEntry, is KtEscapeStringTemplateEntry -> {
+                    el<ULiteralExpression>(build(::KotlinStringULiteralExpression))
+                }
+                is KtStringTemplateEntry -> {
+                    element.expression?.let { convertExpression(it, givenParent, requiredTypes) }
+                        ?: expr<UExpression> { UastEmptyExpression(givenParent) }
+                }
                 is KtImportDirective -> {
                     el<UImportStatement>(build(::KotlinUImportStatement))
                 }
@@ -208,8 +216,12 @@ internal object FirKotlinConverter {
                             el<UIdentifier>(build(::KotlinUIdentifier))
                         }
                         element.elementType == KtTokens.LBRACKET && element.parent is KtCollectionLiteralExpression -> {
-                            // TODO: need counterpart of UCollectionLiteralExpression
-                            null
+                            el<UIdentifier> {
+                                UIdentifier(
+                                    element,
+                                    KotlinUCollectionLiteralExpression(element.parent as KtCollectionLiteralExpression, null)
+                                )
+                            }
                         }
                         else -> null
                     }
@@ -219,7 +231,9 @@ internal object FirKotlinConverter {
         }
     }
 
-    internal fun convertExpression(
+    // TODO: forceUInjectionHost (for test)?
+
+    override fun convertExpression(
         expression: KtExpression,
         givenParent: UElement?,
         requiredTypes: Array<out Class<out UElement>>
@@ -234,6 +248,26 @@ internal object FirKotlinConverter {
 
         return with(requiredTypes) {
             when (expression) {
+                is KtStringTemplateExpression -> {
+                    when {
+                        requiredTypes.contains(UInjectionHost::class.java) -> {
+                            expr<UInjectionHost> { KotlinStringTemplateUPolyadicExpression(expression, givenParent) }
+                        }
+                        expression.entries.isEmpty() -> {
+                            expr<ULiteralExpression> { KotlinStringULiteralExpression(expression, givenParent, "") }
+                        }
+                        expression.entries.size == 1 -> {
+                            convertEntry(expression.entries[0], givenParent, requiredTypes)
+                        }
+                        else -> {
+                            expr<KotlinStringTemplateUPolyadicExpression> {
+                                KotlinStringTemplateUPolyadicExpression(expression, givenParent)
+                            }
+                        }
+                    }
+                }
+                is KtCollectionLiteralExpression -> expr<UCallExpression>(build(::KotlinUCollectionLiteralExpression))
+                is KtConstantExpression -> expr<ULiteralExpression>(build(::KotlinULiteralExpression))
                 else -> expr<UExpression>(build(::UnknownKotlinExpression))
             }
         }

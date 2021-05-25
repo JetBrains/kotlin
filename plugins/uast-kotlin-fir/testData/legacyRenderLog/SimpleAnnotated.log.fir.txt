@@ -1,7 +1,7 @@
 UFile (package = )
     UClass (name = SimpleAnnotated)
         UField (name = property)
-            [!] UnknownKotlinExpression (STRING_TEMPLATE)
+            ULiteralExpression (value = "Mary")
         UMethod (name = SimpleAnnotated)
         UMethod (name = method)
             [!] UnknownKotlinExpression (BLOCK)

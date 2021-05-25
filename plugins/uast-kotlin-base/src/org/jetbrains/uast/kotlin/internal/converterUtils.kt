@@ -5,11 +5,13 @@
 
 package org.jetbrains.uast.kotlin
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.uast.DEFAULT_EXPRESSION_TYPES_LIST
 import org.jetbrains.uast.DEFAULT_TYPES_LIST
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UExpression
+import org.jetbrains.uast.kotlin.internal.KotlinFakeUElement
 
 fun expressionTypes(requiredType: Class<out UElement>?) =
     requiredType?.let { arrayOf(it) } ?: DEFAULT_EXPRESSION_TYPES_LIST
@@ -47,3 +49,8 @@ val identifiersTokens = setOf(
     KtTokens.THIS_KEYWORD, KtTokens.SUPER_KEYWORD,
     KtTokens.GET_KEYWORD, KtTokens.SET_KEYWORD
 )
+
+fun UElement.toSourcePsiFakeAware(): List<PsiElement> {
+    if (this is KotlinFakeUElement) return this.unwrapToSourcePsi()
+    return listOfNotNull(this.sourcePsi)
+}

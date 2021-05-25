@@ -1,5 +1,5 @@
 public final class Simple {
-    private final var property: java.lang.String = [!] UnknownKotlinExpression (STRING_TEMPLATE)
+    private final var property: java.lang.String = "Mary"
     public fun Simple() = UastEmptyExpression
     public final fun method() : void = [!] UnknownKotlinExpression (BLOCK)
     public final fun getProperty() : java.lang.String = UastEmptyExpression

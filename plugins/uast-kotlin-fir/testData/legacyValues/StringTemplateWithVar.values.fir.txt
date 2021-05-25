@@ -1,8 +1,10 @@
 UFile (package = ) [public final class StringTemplateWithVarKt {...]
     UClass (name = StringTemplateWithVarKt) [public final class StringTemplateWithVarKt {...}]
-        UField (name = bar) [private static final var bar: java.lang.String = [!] UnknownKotlinExpression (STRING_TEMPLATE)]
-            [!] UnknownKotlinExpression (STRING_TEMPLATE) [[!] UnknownKotlinExpression (STRING_TEMPLATE)] = Undetermined
-        UField (name = f) [private static final var f: java.lang.String = [!] UnknownKotlinExpression (STRING_TEMPLATE)]
-            [!] UnknownKotlinExpression (STRING_TEMPLATE) [[!] UnknownKotlinExpression (STRING_TEMPLATE)] = Undetermined
+        UField (name = bar) [private static final var bar: java.lang.String = "bar"]
+            ULiteralExpression (value = "bar") ["bar"] = "bar"
+        UField (name = f) [private static final var f: java.lang.String = "foo" + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+            UPolyadicExpression (operator = +) ["foo" + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
+                ULiteralExpression (value = "foo") ["foo"] = "foo"
+                [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
         UMethod (name = getBar) [public static final fun getBar() : java.lang.String = UastEmptyExpression]
         UMethod (name = getF) [public static final fun getF() : java.lang.String = UastEmptyExpression]

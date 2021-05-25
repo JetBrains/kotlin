@@ -1,6 +1,6 @@
 UFile (package = )
     UClass (name = Foo)
         UMethod (name = bar)
-            [!] UnknownKotlinExpression (STRING_TEMPLATE)
+            ULiteralExpression (value = "Hello!")
     UClass (name = Baz)
         UMethod (name = Baz)

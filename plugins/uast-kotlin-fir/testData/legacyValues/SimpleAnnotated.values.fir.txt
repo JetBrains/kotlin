@@ -1,7 +1,7 @@
 UFile (package = ) [public final class SimpleAnnotated {...]
     UClass (name = SimpleAnnotated) [public final class SimpleAnnotated {...}]
-        UField (name = property) [private final var property: java.lang.String = [!] UnknownKotlinExpression (STRING_TEMPLATE)]
-            [!] UnknownKotlinExpression (STRING_TEMPLATE) [[!] UnknownKotlinExpression (STRING_TEMPLATE)] = Undetermined
+        UField (name = property) [private final var property: java.lang.String = "Mary"]
+            ULiteralExpression (value = "Mary") ["Mary"] = "Mary"
         UMethod (name = SimpleAnnotated) [public fun SimpleAnnotated() = UastEmptyExpression]
         UMethod (name = method) [public final fun method() : void = [!] UnknownKotlinExpression (BLOCK)]
             [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined

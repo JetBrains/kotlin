@@ -1,7 +1,7 @@
 UFile (package = )
     UClass (name = PropertyInitializerWithoutSetterKt)
         UField (name = withoutSetter)
-            [!] UnknownKotlinExpression (STRING_TEMPLATE)
+            ULiteralExpression (value = "/sdcard")
         UMethod (name = getWithoutSetter)
             [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
         UMethod (name = setWithoutSetter)

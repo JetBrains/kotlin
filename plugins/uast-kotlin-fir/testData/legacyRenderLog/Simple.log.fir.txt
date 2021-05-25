@@ -1,7 +1,7 @@
 UFile (package = )
     UClass (name = Simple)
         UField (name = property)
-            [!] UnknownKotlinExpression (STRING_TEMPLATE)
+            ULiteralExpression (value = "Mary")
         UMethod (name = Simple)
         UMethod (name = method)
             [!] UnknownKotlinExpression (BLOCK)

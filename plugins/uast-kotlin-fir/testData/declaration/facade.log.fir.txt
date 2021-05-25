@@ -1,7 +1,7 @@
 UFile (package = declaration)
     UClass (name = Utils)
         UMethod (name = foo)
-            [!] UnknownKotlinExpression (INTEGER_CONSTANT)
+            ULiteralExpression (value = "not-yet-compile-time-constant")
         UMethod (name = buzz)
             UParameter (name = $this$buzz)
             [!] UnknownKotlinExpression (BLOCK)

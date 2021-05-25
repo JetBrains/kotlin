@@ -1,5 +1,5 @@
 public abstract interface Foo {
-    public fun bar() : java.lang.String = [!] UnknownKotlinExpression (STRING_TEMPLATE)
+    public fun bar() : java.lang.String = "Hello!"
 }
 
 public final class Baz : null {
