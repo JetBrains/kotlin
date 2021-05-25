@@ -83,11 +83,8 @@ abstract class DefaultLambda(
     val offset: Int,
     val needReification: Boolean
 ) : LambdaInfo(isCrossinline) {
-
     final override var isBoundCallableReference by Delegates.notNull<Boolean>()
         private set
-
-    val parameterOffsetsInDefault: MutableList<Int> = arrayListOf()
 
     final override lateinit var invokeMethod: Method
         private set
@@ -113,8 +110,10 @@ abstract class DefaultLambda(
         }
         capturedVars =
             if (isFunctionReference || isPropertyReference)
-                constructor?.desc?.let { Type.getArgumentTypes(it) }?.singleOrNull()?.let {
-                    originalBoundReceiverType = it
+                capturedArgs.singleOrNull()?.let {
+                    if (AsmUtil.isPrimitive(it)) {
+                        originalBoundReceiverType = it
+                    }
                     listOf(capturedParamDesc(AsmUtil.RECEIVER_PARAMETER_NAME, AsmUtil.boxType(it), isSuspend = false))
                 } ?: emptyList()
             else
