@@ -13,6 +13,7 @@ import org.gradle.api.logging.Logging
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
+import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildEsStatListener
 import org.jetbrains.kotlin.gradle.report.configureReporting
 import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 
@@ -64,6 +65,9 @@ internal class KotlinGradleBuildServices private constructor(
             val kotlinGradleListenerProvider: org.gradle.api.provider.Provider<KotlinGradleBuildListener> = project.provider {
                 KotlinGradleBuildListener(KotlinGradleFinishBuildHandler())
             }
+            val kotlinGradleEsListenerProvider = project.provider {
+                KotlinBuildEsStatListener(project.name)
+            }
 
             if (instance != null) {
                 log.kotlinDebug(ALREADY_INITIALIZED_MESSAGE)
@@ -74,6 +78,7 @@ internal class KotlinGradleBuildServices private constructor(
             val services = KotlinGradleBuildServices(gradle)
             if (isConfigurationCacheAvailable(gradle)) {
                 listenerRegistryHolder.listenerRegistry!!.onTaskCompletion(kotlinGradleListenerProvider)
+                listenerRegistryHolder.listenerRegistry.onTaskCompletion(kotlinGradleEsListenerProvider)
             } else {
                 gradle.addBuildListener(services)
                 log.kotlinDebug(INIT_MESSAGE)
@@ -103,6 +108,7 @@ internal class KotlinGradleBuildServices private constructor(
 
     override fun buildFinished(result: BuildResult) {
         buildHandler!!.buildFinished(result.gradle!!)
+        KotlinBuildEsStatListener(result.gradle!!.rootProject.name).onFinish(result)
         instance = null
         log.kotlinDebug(DISPOSE_MESSAGE)
     }

@@ -36,6 +36,12 @@ enum class CompilerSystemProperties(val property: String, val alwaysDirectAccess
     KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY("kotlin.environment.keepalive"),
     COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS("kotlin.daemon.custom.run.files.path.for.tests"),
     KOTLIN_COLORS_ENABLED_PROPERTY("kotlin.colors.enabled"),
+
+    KOTLIN_STAT_ENABLED_PROPERTY("kotlin.plugin.stat.enabled"),
+    KOTLIN_STAT_ENDPOINT_PROPERTY("kotlin.plugin.stat.endpoint"),
+    KOTLIN_STAT_USER_PROPERTY("kotlin.plugin.stat.user"),
+    KOTLIN_STAT_PASSWORD_PROPERTY("kotlin.plugin.stat.password"),
+
     OS_NAME("os.name", alwaysDirectAccess = true),
     TMP_DIR("java.io.tmpdir"),
     USER_HOME("user.home", alwaysDirectAccess = true),
