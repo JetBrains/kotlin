@@ -5,6 +5,7 @@
 
 package generators.unicode.ranges
 
+import generators.unicode.PropertyLine
 import generators.unicode.UnicodeDataLine
 import generators.unicode.writeHeader
 import java.io.File
@@ -35,6 +36,16 @@ internal class CharCategoryTestGenerator(private val outputFile: File) {
         if (arraySize == 2048) {
             arraySize = 0
             arrayIndex++
+        }
+    }
+
+    private val otherLowercaseRanges = mutableListOf<PropertyLine>()
+    private val otherUppercaseRanges = mutableListOf<PropertyLine>()
+
+    fun appendPropertyLine(line: PropertyLine) {
+        when (line.property) {
+            "Other_Lowercase" -> otherLowercaseRanges.add(line)
+            "Other_Uppercase" -> otherUppercaseRanges.add(line)
         }
     }
 
@@ -111,10 +122,10 @@ class CharCategoryTest {
             val expectedIsLetterOrDigit = expectedIsLetter || expectedIsDigit
             test(expectedIsLetterOrDigit, char.isLetterOrDigit(), "isLetterOrDigit()")
             
-            val expectedIsLowerCase = isLowerCase(expectedCategoryCode)
+            val expectedIsLowerCase = isLowerCase(char, expectedCategoryCode)
             test(expectedIsLowerCase, char.isLowerCase(), "isLowerCase()")
 
-            val expectedIsUpperCase = isUpperCase(expectedCategoryCode)
+            val expectedIsUpperCase = isUpperCase(char, expectedCategoryCode)
             test(expectedIsUpperCase, char.isUpperCase(), "isUpperCase()")
 
             val expectedIsWhitespace = isWhitespace(char, expectedCategoryCode)
@@ -136,12 +147,20 @@ class CharCategoryTest {
         ).map { it.code }
     }
 
-    private fun isLowerCase(categoryCode: String): Boolean {
-        return categoryCode == CharCategory.LOWERCASE_LETTER.code
+    private val otherLowerChars = listOf<IntRange>(
+        ${otherLowercaseRanges.joinToString { it.hexIntRangeLiteral() }}
+    ).flatten().toHashSet()
+
+    private fun isLowerCase(char: Char, categoryCode: String): Boolean {
+        return categoryCode == CharCategory.LOWERCASE_LETTER.code || otherLowerChars.contains(char.code)
     }
 
-    private fun isUpperCase(categoryCode: String): Boolean {
-        return categoryCode == CharCategory.UPPERCASE_LETTER.code
+    private val otherUpperChars = listOf<IntRange>(
+        ${otherUppercaseRanges.joinToString { it.hexIntRangeLiteral() }}
+    ).flatten().toHashSet()
+
+    private fun isUpperCase(char: Char, categoryCode: String): Boolean {
+        return categoryCode == CharCategory.UPPERCASE_LETTER.code || otherUpperChars.contains(char.code)
     }
 
     private fun isWhitespace(char: Char, categoryCode: String): Boolean {

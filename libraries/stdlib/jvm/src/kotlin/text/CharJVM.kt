@@ -100,7 +100,8 @@ public actual fun Char.isWhitespace(): Boolean = Character.isWhitespace(this) ||
 /**
  * Returns `true` if this character is upper case.
  *
- * @see Character.isUpperCase
+ * A character is considered to be an upper case character if its [category] is [CharCategory.UPPERCASE_LETTER],
+ * or it has contributory property Other_Uppercase as defined by the Unicode Standard.
  *
  * @sample samples.text.Chars.isUpperCase
  */
@@ -110,7 +111,8 @@ public actual inline fun Char.isUpperCase(): Boolean = Character.isUpperCase(thi
 /**
  * Returns `true` if this character is lower case.
  *
- * @see Character.isLowerCase
+ * A character is considered to be a lower case character if its [category] is [CharCategory.LOWERCASE_LETTER],
+ * or it has contributory property Other_Lowercase as defined by the Unicode Standard.
  *
  * @sample samples.text.Chars.isLowerCase
  */
