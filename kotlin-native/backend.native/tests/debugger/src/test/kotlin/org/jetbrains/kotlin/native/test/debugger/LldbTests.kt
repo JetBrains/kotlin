@@ -199,4 +199,101 @@ class LldbTests {
               frame #7: [..]
         """.trimIndent().lldb(binary)
     }
+
+    @Test
+    fun `kt42208 with variable`() = lldbComplexTest {
+        val kt42208One = """
+            fun main() {
+                val a = foo()
+                a()
+                a()
+                a()
+            }
+        """.feedOutput("kt42208-1.kt")
+        val kt42208Two = """
+             // aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+             class A
+             val list = mutableListOf<A>()
+             inline fun foo() = { ->
+                 list.add(A())
+             }
+        """.feedOutput("kt42208-2.kt")
+        val binary = arrayOf(kt42208One, kt42208Two).binary("kt42208", "-g")
+        """
+            > b kt42208-2.kt:5
+            > ${lldbCommandRunOrContinue()}
+            > bt
+            * thread #1, queue = 'com.apple.main-thread', stop reason = breakpoint 1.1
+            * frame #0: [..] kt42208.kexe`kfun:main${'$'}<anonymous>_1#internal at kt42208-2.kt:5:5
+              frame #1: [..] kt42208.kexe`kfun:${'$'}main${'$'}<anonymous>_1${'$'}FUNCTION_REFERENCE${'$'}0.invoke#internal(_this=[..]) at kt42208-1.kt:2:5
+              frame #2: [..] kt42208.kexe`kfun:${'$'}main${'$'}<anonymous>_1${'$'}FUNCTION_REFERENCE${'$'}0.${'$'}<bridge-BNN>invoke(_this=[..]){}kotlin.Boolean#internal at kt42208-1.kt:2:5
+              frame #3: [..] kt42208.kexe`kfun:#main(){} at kt42208-1.kt:3:5
+              frame #4: [..] kt42208.kexe`Konan_start(args=[..]) at kt42208-1.kt:1:1
+              frame #5: [..] kt42208.kexe`Init_and_run_start + 107
+              frame #6: [..]
+            > c
+            > bt
+            * thread #1, queue = 'com.apple.main-thread', stop reason = breakpoint 1.1
+            * frame #0: [..] kt42208.kexe`kfun:main${'$'}<anonymous>_1#internal at kt42208-2.kt:5:5
+              frame #1: [..] kt42208.kexe`kfun:${'$'}main${'$'}<anonymous>_1${'$'}FUNCTION_REFERENCE${'$'}0.invoke#internal(_this=[..]) at kt42208-1.kt:2:5
+              frame #2: [..] kt42208.kexe`kfun:${'$'}main${'$'}<anonymous>_1${'$'}FUNCTION_REFERENCE${'$'}0.${'$'}<bridge-BNN>invoke(_this=[..]){}kotlin.Boolean#internal at kt42208-1.kt:2:5
+              frame #3: [..] kt42208.kexe`kfun:#main(){} at kt42208-1.kt:4:5
+              frame #4: [..] kt42208.kexe`Konan_start(args=[..]) at kt42208-1.kt:1:1
+              frame #5: [..] kt42208.kexe`Init_and_run_start + 107
+              frame #6: [..]
+            > c
+            > bt
+            * thread #1, queue = 'com.apple.main-thread', stop reason = breakpoint 1.1
+            * frame #0: [..] kt42208.kexe`kfun:main${'$'}<anonymous>_1#internal at kt42208-2.kt:5:5
+              frame #1: [..] kt42208.kexe`kfun:${'$'}main${'$'}<anonymous>_1${'$'}FUNCTION_REFERENCE${'$'}0.invoke#internal(_this=[..]) at kt42208-1.kt:2:5
+              frame #2: [..] kt42208.kexe`kfun:${'$'}main${'$'}<anonymous>_1${'$'}FUNCTION_REFERENCE${'$'}0.${'$'}<bridge-BNN>invoke(_this=[..]){}kotlin.Boolean#internal at kt42208-1.kt:2:5
+              frame #3: [..] kt42208.kexe`kfun:#main(){} at kt42208-1.kt:5:5
+              frame #4: [..] kt42208.kexe`Konan_start(args=[..]) at kt42208-1.kt:1:1
+              frame #5: [..] kt42208.kexe`Init_and_run_start + 107
+              frame #6: [..]
+        """.trimIndent().lldb(binary)
+    }
+
+
+    @Test
+    fun `kt42208 with passing lambda to another function`() = lldbComplexTest {
+        val kt42208One = """
+            fun main() {
+                val a = foo()
+                bar(a)
+            }
+        """.feedOutput("kt42208-1.kt")
+        val kt42208Two = """
+             // aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+             class A
+             val list = mutableListOf<A>()
+             inline fun foo() = { ->
+                 list.add(A())
+             }
+        """.feedOutput("kt42208-2.kt")
+
+        val kt42208Three = """
+            fun bar(v:(()->Unit)) {
+               v()
+            }
+        """.feedOutput("kt42208-3.kt")
+        val binary = arrayOf(kt42208One, kt42208Two, kt42208Three).binary("kt42208", "-g", "-XXLanguage:+UnitConversion")
+        """
+            > b kt42208-2.kt:5
+            > ${lldbCommandRunOrContinue()}
+            > bt
+            * thread #1, queue = 'com.apple.main-thread', stop reason = breakpoint 1.1
+            * frame #0: [..] kt42208.kexe`kfun:main${'$'}<anonymous>_1#internal at kt42208-2.kt:5:5
+              frame #1: [..] kt42208.kexe`kfun:${'$'}main${'$'}<anonymous>_1${'$'}FUNCTION_REFERENCE${'$'}0.invoke#internal(_this=[..]) at kt42208-1.kt:2:5
+              frame #2: [..] kt42208.kexe`kfun:${'$'}main${'$'}<anonymous>_1${'$'}FUNCTION_REFERENCE${'$'}0.${'$'}<bridge-BNN>invoke(_this=[..]){}kotlin.Boolean#internal at kt42208-1.kt:2:5
+              frame #3: [..] kt42208.kexe`kfun:#bar(v=[]){} at kt42208-3.kt:2:4
+              frame #4: [..] kt42208.kexe`kfun:#main(){} at kt42208-1.kt:3:5
+              frame #5: [..] kt42208.kexe`Konan_start(args=[]) at kt42208-1.kt:1:1
+              frame #6: [..] kt42208.kexe`Init_and_run_start + 107
+              frame #7: [..]
+              frame #8: [..]
+            > c
+        """.trimIndent().lldb(binary)
+    }
+
 }
