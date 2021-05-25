@@ -1017,10 +1017,6 @@ fun main(args: Array<String>) {
         }
 
         testGroup("idea/idea-frontend-fir/idea-fir-low-level-api/tests", "idea/testData") {
-            testClass<AbstractFirMultiModuleResolveTest> {
-                model("fir/multiModule", recursive = false, extension = null)
-            }
-
             testClass<AbstractFirLazyResolveTest> {
                 model("fir/lazyResolve", extension = "test", singleClass = true, filenameStartsLowerCase = true)
             }
