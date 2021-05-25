@@ -61,7 +61,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
     private val initialFrameSize = codegen.frameMap.currentSize
 
-    private val isSameModule: Boolean
+    private val isSameModule: Boolean = sourceCompiler.isCallInsideSameModuleAsDeclared(functionDescriptor)
 
     protected val invocationParamBuilder = ParametersBuilder.newBuilder()
 
@@ -69,15 +69,11 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
     private val sourceMapper = sourceCompiler.lazySourceMapper
 
-    protected var delayedHiddenWriting: Function0<Unit>? = null
-
     protected val maskValues = ArrayList<Int>()
     protected var maskStartIndex = -1
     protected var methodHandleInDefaultMethodIndex = -1
 
     init {
-        isSameModule = sourceCompiler.isCallInsideSameModuleAsDeclared(functionDescriptor)
-
         if (functionDescriptor !is FictitiousArrayConstructor) {
             //track changes for property accessor and @JvmName inline functions/property accessors
             if (jvmSignature.asmMethod.name != functionDescriptor.name.asString()) {
@@ -200,8 +196,6 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     }
 
     private fun inlineCall(nodeAndSmap: SMAPAndMethodNode, inlineDefaultLambda: Boolean): InlineResult {
-        assert(delayedHiddenWriting == null) { "'putHiddenParamsIntoLocals' should be called after 'processAndPutHiddenParameters(true)'" }
-
         val node = nodeAndSmap.node
         if (inlineDefaultLambda) {
             for (lambda in extractDefaultLambdas(node)) {
@@ -352,15 +346,16 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         val isDefaultParameter = kind === ValueKind.DEFAULT_PARAMETER
         val jvmType = jvmKotlinType.type
         val kotlinType = jvmKotlinType.kotlinType
-        if (!isDefaultParameter && shouldPutGeneralValue(jvmType, kotlinType, stackValue)) {
+        val canRemap = isPrimitive(jvmType) == isPrimitive(stackValue.type) &&
+                !StackValue.requiresInlineClassBoxingOrUnboxing(stackValue.type, stackValue.kotlinType, jvmType, kotlinType) &&
+                (stackValue is StackValue.Local || stackValue.isCapturedInlineParameter())
+        if (!canRemap && !isDefaultParameter) {
             stackValue.put(jvmType, kotlinType, codegen.visitor)
         }
 
         if (!asFunctionInline && Type.VOID_TYPE !== jvmType) {
             //TODO remap only inlinable closure => otherwise we could get a lot of problem
-            val couldBeRemapped = !shouldPutGeneralValue(jvmType, kotlinType, stackValue) && !isDefaultParameter
-            val remappedValue = if (couldBeRemapped) stackValue else null
-
+            val remappedValue = if (canRemap && !isDefaultParameter) stackValue else null
             val info: ParameterInfo
             if (capturedParam != null) {
                 info = invocationParamBuilder.addCapturedParam(capturedParam, capturedParam.fieldName, false)
@@ -370,48 +365,24 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                 info.functionalArgument = when (kind) {
                     ValueKind.NON_INLINEABLE_ARGUMENT_FOR_INLINE_PARAMETER_CALLED_IN_SUSPEND ->
                         NonInlineableArgumentForInlineableParameterCalledInSuspend
-                    ValueKind.NON_INLINEABLE_ARGUMENT_FOR_INLINE_SUSPEND_PARAMETER -> NonInlineableArgumentForInlineableSuspendParameter
+                    ValueKind.NON_INLINEABLE_ARGUMENT_FOR_INLINE_SUSPEND_PARAMETER ->
+                        NonInlineableArgumentForInlineableSuspendParameter
                     else -> null
                 }
             }
 
-            recordParameterValueInLocalVal(false, isDefaultParameter, info)
-        }
-    }
-
-    protected fun recordParameterValueInLocalVal(
-        delayedWritingToLocals: Boolean,
-        skipStore: Boolean,
-        vararg infos: ParameterInfo
-    ): Function0<Unit>? {
-        val index = IntArray(infos.size) { i ->
-            if (!infos[i].isSkippedOrRemapped) {
-                codegen.frameMap.enterTemp(infos[i].type)
-            } else -1
-        }
-
-        val possibleLazyTask = {
-            for (i in infos.indices.reversed()) {
-                val info = infos[i]
-                if (!info.isSkippedOrRemapped) {
-                    val type = info.type
-                    val local = StackValue.local(index[i], type)
-                    if (!skipStore) {
-                        local.store(StackValue.onStack(info.typeOnStack), codegen.visitor)
-                    }
-                    if (info is CapturedParamInfo) {
-                        info.remapValue = local
-                        info.isSynthetic = true
-                    }
+            if (!info.isSkippedOrRemapped) {
+                val local = StackValue.local(codegen.frameMap.enterTemp(info.type), info.type)
+                if (!isDefaultParameter) {
+                    local.store(StackValue.onStack(info.typeOnStack), codegen.visitor)
+                }
+                if (info is CapturedParamInfo) {
+                    info.remapValue = local
+                    info.isSynthetic = true
                 }
             }
         }
-
-        if (delayedWritingToLocals) return possibleLazyTask
-        possibleLazyTask()
-        return null
     }
-
 
     private fun leaveTemps() {
         invocationParamBuilder.listAllParams().asReversed().forEach { param ->
@@ -615,42 +586,12 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
             }
         }
 
-        /*descriptor is null for captured vars*/
-        private fun shouldPutGeneralValue(type: Type, kotlinType: KotlinType?, stackValue: StackValue): Boolean {
-            //remap only inline functions (and maybe non primitives)
-            //TODO - clean assertion and remapping logic
-
-            // don't remap boxing/unboxing primitives
-            if (isPrimitive(type) != isPrimitive(stackValue.type)) {
-                return true
-            }
-
-            // don't remap boxing/unboxing inline classes
-            if (StackValue.requiresInlineClassBoxingOrUnboxing(stackValue.type, stackValue.kotlinType, type, kotlinType)) {
-                return true
-            }
-
-            if (stackValue is StackValue.Local) {
-                return false
-            }
-
-            var field = stackValue
-            if (stackValue is StackValue.FieldForSharedVar) {
-                field = stackValue.receiver
-            }
-
-            //check that value corresponds to captured inlining parameter
-            if (field is StackValue.Field) {
-                val varDescriptor = field.descriptor
-                //check that variable is inline function parameter
-                return !(varDescriptor is ParameterDescriptor &&
-                        InlineUtil.isInlineParameter(varDescriptor) &&
-                        InlineUtil.isInline(varDescriptor.containingDeclaration))
-            }
-
-            return true
+        private fun StackValue.isCapturedInlineParameter(): Boolean {
+            val field = if (this is StackValue.FieldForSharedVar) receiver else this
+            return field is StackValue.Field && field.descriptor is ParameterDescriptor &&
+                    InlineUtil.isInlineParameter(field.descriptor) &&
+                    InlineUtil.isInline(field.descriptor.containingDeclaration)
         }
-
 
         fun getDeclarationLabels(lambdaOrFun: PsiElement?, descriptor: DeclarationDescriptor): Set<String> {
             val result = HashSet<String>()

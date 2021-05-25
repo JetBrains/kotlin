@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.SimpleType;
-import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.Opcodes;
@@ -1329,8 +1328,8 @@ public abstract class StackValue {
             StackValue newReceiver = StackValue.receiver(call, receiver, codegen, callable);
             ArgumentGenerator generator = createArgumentGenerator();
             newReceiver.put(newReceiver.type, newReceiver.kotlinType, v);
-            callGenerator.processAndPutHiddenParameters(false);
-
+            callGenerator.processHiddenParameters();
+            callGenerator.putHiddenParamsIntoLocals();
             defaultArgs = generator.generate(valueArguments, valueArguments, call.getResultingDescriptor());
         }
 
@@ -1748,7 +1747,8 @@ public abstract class StackValue {
                 assert getterDescriptor != null : "Getter descriptor should be not null for " + descriptor;
                 if (resolvedCall != null && getterDescriptor.isInline()) {
                     CallGenerator callGenerator = codegen.getOrCreateCallGenerator(resolvedCall, ((PropertyDescriptor)resolvedCall.getResultingDescriptor()).getGetter());
-                    callGenerator.processAndPutHiddenParameters(false);
+                    callGenerator.processHiddenParameters();
+                    callGenerator.putHiddenParamsIntoLocals();
                     callGenerator.genCall(getter, resolvedCall, false, codegen);
                 }
                 else {
@@ -1832,7 +1832,7 @@ public abstract class StackValue {
                 if (!skipReceiver) {
                     putReceiver(v, false);
                 }
-                callGenerator.processAndPutHiddenParameters(true);
+                callGenerator.processHiddenParameters();
                 callGenerator.putValueIfNeeded(new JvmKotlinType(
                                                        CollectionsKt.last(setter.getValueParameters()).getAsmType(),
                                                        CollectionsKt.last(setterDescriptor.getValueParameters()).getType()),

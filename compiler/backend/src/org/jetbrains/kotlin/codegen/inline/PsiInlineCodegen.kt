@@ -65,6 +65,7 @@ class PsiInlineCodegen(
         callDefault: Boolean,
         codegen: ExpressionCodegen
     ) {
+        assert(hiddenParameters.isEmpty()) { "putHiddenParamsIntoLocals() should be called after processHiddenParameters()" }
         if (!state.globalInlineContext.enterIntoInlining(functionDescriptor, resolvedCall?.call?.callElement)) {
             generateStub(resolvedCall?.call?.callElement?.text ?: "<no source>", codegen)
             return
@@ -94,22 +95,29 @@ class PsiInlineCodegen(
         return parentIfCondition.isAncestor(callElement, false)
     }
 
-    override fun processAndPutHiddenParameters(justProcess: Boolean) {
-        if (getMethodAsmFlags(functionDescriptor, sourceCompiler.contextKind, state) and Opcodes.ACC_STATIC == 0) {
-            invocationParamBuilder.addNextParameter(methodOwner, false, actualDispatchReceiver)
-        }
+    private val hiddenParameters = mutableListOf<Pair<ParameterInfo, Int>>()
 
+    override fun processHiddenParameters() {
+        if (getMethodAsmFlags(functionDescriptor, sourceCompiler.contextKind, state) and Opcodes.ACC_STATIC == 0) {
+            hiddenParameters += invocationParamBuilder.addNextParameter(methodOwner, false, actualDispatchReceiver) to
+                    codegen.frameMap.enterTemp(methodOwner)
+        }
         for (param in jvmSignature.valueParameters) {
             if (param.kind == JvmMethodParameterKind.VALUE) {
                 break
             }
-            invocationParamBuilder.addNextParameter(param.asmType, false)
+            hiddenParameters += invocationParamBuilder.addNextParameter(param.asmType, false) to
+                    codegen.frameMap.enterTemp(param.asmType)
         }
-
         invocationParamBuilder.markValueParametersStart()
-        val hiddenParameters = invocationParamBuilder.buildParameters().parameters
+    }
 
-        delayedHiddenWriting = recordParameterValueInLocalVal(justProcess, false, *hiddenParameters.toTypedArray())
+    override fun putHiddenParamsIntoLocals() {
+        for (i in hiddenParameters.indices.reversed()) {
+            val (param, offset) = hiddenParameters[i]
+            StackValue.local(offset, param.type).store(StackValue.onStack(param.typeOnStack), codegen.visitor)
+        }
+        hiddenParameters.clear()
     }
 
     /*lambda or callable reference*/
@@ -203,12 +211,6 @@ class PsiInlineCodegen(
     }
 
     override fun reorderArgumentsIfNeeded(actualArgsWithDeclIndex: List<ArgumentAndDeclIndex>, valueParameterTypes: List<Type>) = Unit
-
-    override fun putHiddenParamsIntoLocals() {
-        assert(delayedHiddenWriting != null) { "processAndPutHiddenParameters(true) should be called before putHiddenParamsIntoLocals" }
-        delayedHiddenWriting!!.invoke()
-        delayedHiddenWriting = null
-    }
 
     override fun extractDefaultLambdas(node: MethodNode): List<DefaultLambda> {
         return expandMaskConditionsAndUpdateVariableNodes(

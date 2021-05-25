@@ -2780,7 +2780,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             putReceiverAndInlineMarkerIfNeeded(callableMethod, resolvedCall, receiver, maybeSuspensionPoint, isConstructor);
         }
 
-        callGenerator.processAndPutHiddenParameters(false);
+        callGenerator.processHiddenParameters();
+        callGenerator.putHiddenParamsIntoLocals();
 
         List<ResolvedValueArgument> valueArguments = resolvedCall.getValueArgumentsByIndex();
         assert valueArguments != null : "Failed to arrange value arguments by index: " + resolvedCall.getResultingDescriptor();
