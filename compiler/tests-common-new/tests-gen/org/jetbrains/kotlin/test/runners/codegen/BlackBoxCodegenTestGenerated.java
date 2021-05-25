@@ -3340,6 +3340,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
+            @TestMetadata("extensionProperty.kt")
+            public void testExtensionProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/function/extensionProperty.kt");
+            }
+
+            @Test
             @TestMetadata("genericCallableReferenceArguments.kt")
             public void testGenericCallableReferenceArguments() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/function/genericCallableReferenceArguments.kt");

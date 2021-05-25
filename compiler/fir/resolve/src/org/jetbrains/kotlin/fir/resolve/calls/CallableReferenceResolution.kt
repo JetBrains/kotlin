@@ -66,7 +66,8 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
                     ?.let(candidate.substitutor::substituteOrSelf)
 
             if (resultingReceiverType != null && declarationReceiverType != null) {
-                addSubtypeConstraint(resultingReceiverType, declarationReceiverType, position)
+                val capturedReceiver = context.inferenceComponents.ctx.captureFromExpression(resultingReceiverType) ?: resultingReceiverType
+                addSubtypeConstraint(capturedReceiver, declarationReceiverType, position)
             }
         }
 

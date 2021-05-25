@@ -2922,6 +2922,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/callableReference/function/extensionFromTopLevelUnitOneStringArg.kt");
             }
 
+            @TestMetadata("extensionProperty.kt")
+            public void testExtensionProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/function/extensionProperty.kt");
+            }
+
             @TestMetadata("genericCallableReferenceArguments.kt")
             public void testGenericCallableReferenceArguments() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/function/genericCallableReferenceArguments.kt");

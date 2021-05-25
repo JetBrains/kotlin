@@ -40,8 +40,8 @@ FILE: referenceToExtension.kt
         }
 
         public final fun test_2(): R|kotlin/Unit| {
-            lval extensionValRef: <ERROR TYPE REF: Unresolved reference: extensionVal> = Q|GenericTest.B|::<Unresolved reference: extensionVal>#
-            lval extensionFunRef: <ERROR TYPE REF: Unresolved reference: extensionFun> = Q|GenericTest.B|::<Unresolved reference: extensionFun>#
+            lval extensionValRef: R|kotlin/reflect/KProperty1<GenericTest.B<*>, GenericTest.A<CapturedType(*)>>| = Q|GenericTest.B|::R|/GenericTest.extensionVal<kotlin/Any?>|
+            lval extensionFunRef: R|@ExtensionFunctionType kotlin/reflect/KFunction1<GenericTest.B<*>, GenericTest.A<CapturedType(*)>>| = Q|GenericTest.B|::R|/GenericTest.extensionFun<kotlin/Any?>|
         }
 
     }
