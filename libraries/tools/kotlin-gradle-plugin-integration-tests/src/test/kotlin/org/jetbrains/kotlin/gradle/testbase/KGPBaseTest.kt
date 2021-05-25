@@ -107,7 +107,8 @@ abstract class KGPBaseTest {
                 }
             }
 
-            return sequenceOf(minGradleVersion, *additionalGradleVersions.toTypedArray(), maxGradleVersion)
+            return setOf(minGradleVersion, *additionalGradleVersions.toTypedArray(), maxGradleVersion)
+                .asSequence()
                 .map { Arguments.of(it) }
                 .asStream()
         }
