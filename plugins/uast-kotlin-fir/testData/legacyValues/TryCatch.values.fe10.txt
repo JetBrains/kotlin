@@ -1,0 +1,59 @@
+UFile (package = ) [public final class TryCatch {...]
+    UClass (name = TryCatch) [public final class TryCatch {...}]
+        UMethod (name = catches) [public final fun catches() : void {...}]
+            UBlockExpression [{...}] = external finalizer()()
+                UTryExpression [try {...}] = external finalizer()()
+                    UBlockExpression [{...}] = external body()()
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [body()] = external body()()
+                            UIdentifier (Identifier (body)) [UIdentifier (Identifier (body))]
+                            USimpleNameReferenceExpression (identifier = body, resolvesTo = null) [body] = external body()()
+                    UCatchClause (e) [catch (@org.jetbrains.annotations.NotNull var e: java.lang.Throwable) {...}]
+                        UParameter (name = e) [@org.jetbrains.annotations.NotNull var e: java.lang.Throwable]
+                            UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+                        UBlockExpression [{...}] = external catcher()()
+                            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [catcher()] = external catcher()()
+                                UIdentifier (Identifier (catcher)) [UIdentifier (Identifier (catcher))]
+                                USimpleNameReferenceExpression (identifier = catcher, resolvesTo = null) [catcher] = external catcher()()
+                    UBlockExpression [{...}] = external finalizer()()
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [finalizer()] = external finalizer()()
+                            UIdentifier (Identifier (finalizer)) [UIdentifier (Identifier (finalizer))]
+                            USimpleNameReferenceExpression (identifier = finalizer, resolvesTo = null) [finalizer] = external finalizer()()
+        UMethod (name = body) [public final fun body() : void {...}]
+            UBlockExpression [{...}] = Undetermined
+        UMethod (name = catcher) [public final fun catcher() : void {...}]
+            UBlockExpression [{...}] = Undetermined
+        UMethod (name = finalizer) [public final fun finalizer() : void {...}]
+            UBlockExpression [{...}] = Undetermined
+        UMethod (name = TryCatch) [public fun TryCatch() = UastEmptyExpression]
+    UClass (name = TryCatchAnnotations) [public final class TryCatchAnnotations {...}]
+        UMethod (name = catches) [@java.lang.SuppressWarnings(value = "Something")...}]
+            UAnnotation (fqName = java.lang.SuppressWarnings) [@java.lang.SuppressWarnings(value = "Something")]
+                UNamedExpression (name = value) [value = "Something"] = Undetermined
+                    ULiteralExpression (value = "Something") ["Something"] = "Something"
+            UBlockExpression [{...}] = external finalizer()()
+                UTryExpression [try {...}] = external finalizer()()
+                    UBlockExpression [{...}] = external body()()
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [body()] = external body()()
+                            UIdentifier (Identifier (body)) [UIdentifier (Identifier (body))]
+                            USimpleNameReferenceExpression (identifier = body, resolvesTo = null) [body] = external body()()
+                    UCatchClause (e) [catch (@org.jetbrains.annotations.NotNull @java.lang.SuppressWarnings(value = "Something") var e: java.lang.Throwable) {...}]
+                        UParameter (name = e) [@org.jetbrains.annotations.NotNull @java.lang.SuppressWarnings(value = "Something") var e: java.lang.Throwable]
+                            UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+                            UAnnotation (fqName = java.lang.SuppressWarnings) [@java.lang.SuppressWarnings(value = "Something")]
+                                UNamedExpression (name = value) [value = "Something"] = Undetermined
+                                    ULiteralExpression (value = "Something") ["Something"] = "Something"
+                        UBlockExpression [{...}] = external catcher()()
+                            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [catcher()] = external catcher()()
+                                UIdentifier (Identifier (catcher)) [UIdentifier (Identifier (catcher))]
+                                USimpleNameReferenceExpression (identifier = catcher, resolvesTo = null) [catcher] = external catcher()()
+                    UBlockExpression [{...}] = external finalizer()()
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [finalizer()] = external finalizer()()
+                            UIdentifier (Identifier (finalizer)) [UIdentifier (Identifier (finalizer))]
+                            USimpleNameReferenceExpression (identifier = finalizer, resolvesTo = null) [finalizer] = external finalizer()()
+        UMethod (name = body) [public final fun body() : void {...}]
+            UBlockExpression [{...}] = Undetermined
+        UMethod (name = catcher) [public final fun catcher() : void {...}]
+            UBlockExpression [{...}] = Undetermined
+        UMethod (name = finalizer) [public final fun finalizer() : void {...}]
+            UBlockExpression [{...}] = Undetermined
+        UMethod (name = TryCatchAnnotations) [public fun TryCatchAnnotations() = UastEmptyExpression]

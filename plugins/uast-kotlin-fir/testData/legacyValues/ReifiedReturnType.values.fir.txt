@@ -1,0 +1,9 @@
+UFile (package = ) [public final class ReifiedReturnTypeKt {...]
+    UClass (name = ReifiedReturnTypeKt) [public final class ReifiedReturnTypeKt {...}]
+        UMethod (name = copyWhenGreater) [public static final fun copyWhenGreater(list: java.util.List<? extends T>, threshold: T, threshold2: B) : B = [!] UnknownKotlinExpression (BLOCK)]
+            UParameter (name = list) [var list: java.util.List<? extends T>]
+            UParameter (name = threshold) [var threshold: T]
+            UParameter (name = threshold2) [var threshold2: B]
+            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
+    UClass (name = Foo) [public final class Foo {...}]
+        UMethod (name = Foo) [public fun Foo() = UastEmptyExpression]

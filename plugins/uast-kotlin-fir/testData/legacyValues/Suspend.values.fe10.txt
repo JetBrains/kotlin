@@ -1,0 +1,32 @@
+UFile (package = test.pkg) [package test.pkg...]
+    UClass (name = SuspendKt) [public final class SuspendKt {...}]
+        UMethod (name = top) [public static final fun top(@org.jetbrains.annotations.NotNull $completion: kotlin.coroutines.Continuation<? super java.lang.Integer>) : java.lang.Object {...}]
+            UParameter (name = $completion) [@org.jetbrains.annotations.NotNull var $completion: kotlin.coroutines.Continuation<? super java.lang.Integer>]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}] = Nothing
+                UReturnExpression [return <init>().inner()] = Nothing
+                    UQualifiedReferenceExpression [<init>().inner()] = external inner()()
+                        UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) [<init>()] = external <init>()()
+                            UIdentifier (Identifier (Context)) [UIdentifier (Identifier (Context))]
+                            USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: Context) [<init>] = external <init>()()
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [inner()] = external inner()()
+                            UIdentifier (Identifier (inner)) [UIdentifier (Identifier (inner))]
+                            USimpleNameReferenceExpression (identifier = inner, resolvesTo = null) [inner] = external inner()()
+    UClass (name = Context) [public final class Context {...}]
+        UMethod (name = inner) [public final fun inner(@org.jetbrains.annotations.NotNull $completion: kotlin.coroutines.Continuation<? super java.lang.Integer>) : java.lang.Object {...}]
+            UParameter (name = $completion) [@org.jetbrains.annotations.NotNull var $completion: kotlin.coroutines.Continuation<? super java.lang.Integer>]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}] = Nothing
+                UReturnExpression [return suspendPrivate()] = Nothing
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [suspendPrivate()] = external suspendPrivate()()
+                        UIdentifier (Identifier (suspendPrivate)) [UIdentifier (Identifier (suspendPrivate))]
+                        USimpleNameReferenceExpression (identifier = suspendPrivate, resolvesTo = null) [suspendPrivate] = external suspendPrivate()()
+        UMethod (name = suspendPrivate) [private final fun suspendPrivate(@null $completion: kotlin.coroutines.Continuation<? super java.lang.Integer>) : java.lang.Object {...}]
+            UParameter (name = $completion) [@null var $completion: kotlin.coroutines.Continuation<? super java.lang.Integer>]
+                UAnnotation (fqName = null) [@null]
+            UBlockExpression [{...}] = Nothing
+                UReturnExpression [return inner()] = Nothing
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [inner()] = external inner()()
+                        UIdentifier (Identifier (inner)) [UIdentifier (Identifier (inner))]
+                        USimpleNameReferenceExpression (identifier = inner, resolvesTo = null) [inner] = external inner()()
+        UMethod (name = Context) [public fun Context() = UastEmptyExpression]

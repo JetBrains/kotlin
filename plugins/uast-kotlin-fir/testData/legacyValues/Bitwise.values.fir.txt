@@ -1,0 +1,6 @@
+UFile (package = ) [public final class BitwiseKt {...]
+    UClass (name = BitwiseKt) [public final class BitwiseKt {...}]
+        UMethod (name = foo) [public static final fun foo() : int = [!] UnknownKotlinExpression (BLOCK)]
+            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
+        UMethod (name = bar) [public static final fun bar() : long = [!] UnknownKotlinExpression (BLOCK)]
+            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined

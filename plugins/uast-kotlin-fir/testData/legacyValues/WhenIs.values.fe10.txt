@@ -1,0 +1,24 @@
+UFile (package = ) [public final class WhenIsKt {...]
+    UClass (name = WhenIsKt) [public final class WhenIsKt {...}]
+        UMethod (name = foo) [public static final fun foo(@org.jetbrains.annotations.NotNull bar: java.lang.Object) : java.lang.String {...}]
+            UParameter (name = bar) [@org.jetbrains.annotations.NotNull var bar: java.lang.Object]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}] = Nothing
+                UReturnExpression [return switch (bar)  {...] = Nothing
+                    USwitchExpression [switch (bar)  {...] = Undetermined
+                        USimpleNameReferenceExpression (identifier = bar) [bar] = Undetermined
+                        UExpressionList (when) [    it is java.lang.String -> {...    ] = Undetermined
+                            USwitchClauseExpressionWithBody [it is java.lang.String -> {...] = Undetermined
+                                UBinaryExpressionWithType [it is java.lang.String] = Undetermined
+                                    USimpleNameReferenceExpression (identifier = it) [it] = Nothing
+                                    UTypeReferenceExpression (name = java.lang.String) [java.lang.String] = Undetermined
+                                UExpressionList (when_entry) [{...] = Undetermined
+                                    UYieldExpression [yield bar] = UYieldResult(Undetermined)
+                                        USimpleNameReferenceExpression (identifier = bar) [bar] = Undetermined
+                            USwitchClauseExpressionWithBody [it !is java.lang.String -> {...] = Undetermined
+                                UBinaryExpressionWithType [it !is java.lang.String] = Undetermined
+                                    USimpleNameReferenceExpression (identifier = it) [it] = Nothing
+                                    UTypeReferenceExpression (name = java.lang.String) [java.lang.String] = Undetermined
+                                UExpressionList (when_entry) [{...] = Undetermined
+                                    UYieldExpression [yield "<error>"] = UYieldResult("<error>")
+                                        ULiteralExpression (value = "<error>") ["<error>"] = "<error>"

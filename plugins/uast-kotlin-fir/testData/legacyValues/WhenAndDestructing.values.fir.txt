@@ -1,0 +1,5 @@
+UFile (package = ) [public final class WhenAndDestructingKt {...]
+    UClass (name = WhenAndDestructingKt) [public final class WhenAndDestructingKt {...}]
+        UMethod (name = getElementsAdditionalResolve) [public static final fun getElementsAdditionalResolve(string: java.lang.String) : java.lang.String = [!] UnknownKotlinExpression (BLOCK)]
+            UParameter (name = string) [var string: java.lang.String]
+            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined

@@ -1,0 +1,59 @@
+UFile (package = ) [import java.util.stream.Stream...]
+    UImportStatement (isOnDemand = false) [import java.util.stream.Stream]
+    UClass (name = LambdasKt) [public final class LambdasKt {...}]
+        UMethod (name = foo) [public static final fun foo() : void {...}]
+            UBlockExpression [{...}] = external filter({ var it: java.lang.String ->
+
+    return it.isEmpty()
+})(Undetermined)
+                UQualifiedReferenceExpression [Stream.empty().filter({ var it: java.lang.String ->...})] = external filter({ var it: java.lang.String ->
+
+    return it.isEmpty()
+})(Undetermined)
+                    UQualifiedReferenceExpression [Stream.empty()] = external empty()()
+                        USimpleNameReferenceExpression (identifier = Stream) [Stream] = external Stream()
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [empty()] = external empty()()
+                            UIdentifier (Identifier (empty)) [UIdentifier (Identifier (empty))]
+                            USimpleNameReferenceExpression (identifier = empty, resolvesTo = null) [empty] = external empty()()
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [filter({ var it: java.lang.String ->...})] = external filter({ var it: java.lang.String ->
+
+    return it.isEmpty()
+})(Undetermined)
+                        UIdentifier (Identifier (filter)) [UIdentifier (Identifier (filter))]
+                        USimpleNameReferenceExpression (identifier = filter, resolvesTo = null) [filter] = external filter({ var it: java.lang.String ->
+
+    return it.isEmpty()
+})(Undetermined)
+                        ULambdaExpression [{ var it: java.lang.String ->...}] = Undetermined
+                            UParameter (name = it) [var it: java.lang.String]
+                            UBlockExpression [{...}] = Nothing
+                                UReturnExpression [return it.isEmpty()] = Nothing
+                                    UQualifiedReferenceExpression [it.isEmpty()] = external isEmpty()()
+                                        USimpleNameReferenceExpression (identifier = it) [it] = external it()
+                                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [isEmpty()] = external isEmpty()()
+                                            UIdentifier (Identifier (isEmpty)) [UIdentifier (Identifier (isEmpty))]
+                                            USimpleNameReferenceExpression (identifier = isEmpty, resolvesTo = null) [isEmpty] = external isEmpty()()
+        UMethod (name = doSelectItem) [public static final fun doSelectItem(@org.jetbrains.annotations.NotNull selectItemFunction: kotlin.jvm.functions.Function0<kotlin.Unit>) : void {...}]
+            UParameter (name = selectItemFunction) [@org.jetbrains.annotations.NotNull var selectItemFunction: kotlin.jvm.functions.Function0<kotlin.Unit>]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}] = external invoke()()
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [invoke()] = external invoke()()
+                    UIdentifier (Identifier (selectItemFunction)) [UIdentifier (Identifier (selectItemFunction))]
+                    USimpleNameReferenceExpression (identifier = invoke, resolvesTo = null) [invoke] = external invoke()()
+                UDeclarationsExpression [var baz: kotlin.jvm.functions.Function0<? extends kotlin.Unit> = fun () {...}] = Undetermined
+                    ULocalVariable (name = baz) [var baz: kotlin.jvm.functions.Function0<? extends kotlin.Unit> = fun () {...}]
+                        ULambdaExpression [fun () {...}] = Undetermined
+                            UBlockExpression [{...}] = external <anonymous class>()()
+                                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [<anonymous class>()] = external <anonymous class>()()
+                                    UIdentifier (Identifier (Local)) [UIdentifier (Identifier (Local))]
+                                    USimpleNameReferenceExpression (identifier = <anonymous class>, resolvesTo = null) [<anonymous class>] = external <anonymous class>()()
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [invoke()] = external invoke()()
+                    UIdentifier (Identifier (baz)) [UIdentifier (Identifier (baz))]
+                    USimpleNameReferenceExpression (identifier = invoke, resolvesTo = null) [invoke] = external invoke()()
+        UMethod (name = lambdaInPlaceCall) [public static final fun lambdaInPlaceCall() : void {...}]
+            UBlockExpression [{...}] = Undetermined
+                UWhileExpression [while (invoke()) {...}] = Undetermined
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [invoke()] = external invoke()()
+                        UIdentifier (Identifier ({)) [UIdentifier (Identifier ({))]
+                        USimpleNameReferenceExpression (identifier = invoke, resolvesTo = null) [invoke] = external invoke()()
+                    UBlockExpression [{...}] = Undetermined

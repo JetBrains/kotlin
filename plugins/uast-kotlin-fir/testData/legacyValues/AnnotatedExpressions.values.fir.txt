@@ -1,0 +1,7 @@
+UFile (package = ) [public final class AnnotatedExpressionsKt {...]
+    UClass (name = AnnotatedExpressionsKt) [public final class AnnotatedExpressionsKt {...}]
+        UMethod (name = foo) [public static final fun foo() : void = [!] UnknownKotlinExpression (BLOCK)]
+            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
+        UMethod (name = annotatedSwitch) [public static final fun annotatedSwitch(str: java.lang.String) : java.lang.Integer = [!] UnknownKotlinExpression (WHEN)]
+            UParameter (name = str) [var str: java.lang.String]
+            [!] UnknownKotlinExpression (WHEN) [[!] UnknownKotlinExpression (WHEN)] = Undetermined

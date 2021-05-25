@@ -1,0 +1,17 @@
+UFile (package = ) [public final class TestPropertyInitializer {...]
+    UClass (name = TestPropertyInitializer) [public final class TestPropertyInitializer {...}]
+        UField (name = withSetter) [@org.jetbrains.annotations.NotNull private var withSetter: java.lang.String = "/sdcard"]
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            ULiteralExpression (value = "/sdcard") ["/sdcard"] = "/sdcard"
+        UMethod (name = getWithSetter) [public final fun getWithSetter() : java.lang.String {...}]
+            UBlockExpression [{...}] = Nothing
+                UReturnExpression [return field] = Nothing
+                    USimpleNameReferenceExpression (identifier = field) [field] = external field()
+        UMethod (name = setWithSetter) [public final fun setWithSetter(@org.jetbrains.annotations.NotNull p: java.lang.String) : void {...}]
+            UParameter (name = p) [@org.jetbrains.annotations.NotNull var p: java.lang.String]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}] = Undetermined
+                UBinaryExpression (operator = =) [field = p] = Undetermined
+                    USimpleNameReferenceExpression (identifier = field) [field] = external field()
+                    USimpleNameReferenceExpression (identifier = p) [p] = Undetermined
+        UMethod (name = TestPropertyInitializer) [public fun TestPropertyInitializer() = UastEmptyExpression]

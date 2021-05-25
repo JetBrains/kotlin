@@ -1,0 +1,9 @@
+UFile (package = ) [public final class ElvisKt {...]
+    UClass (name = ElvisKt) [public final class ElvisKt {...}]
+        UMethod (name = foo) [public static final fun foo(bar: java.lang.String) : java.lang.String = [!] UnknownKotlinExpression (NULL)]
+            UParameter (name = bar) [var bar: java.lang.String]
+            [!] UnknownKotlinExpression (NULL) [[!] UnknownKotlinExpression (NULL)] = Undetermined
+        UMethod (name = bar) [public static final fun bar() : int = [!] UnknownKotlinExpression (INTEGER_CONSTANT)]
+            [!] UnknownKotlinExpression (INTEGER_CONSTANT) [[!] UnknownKotlinExpression (INTEGER_CONSTANT)] = Undetermined
+        UMethod (name = baz) [public static final fun baz() : java.lang.String = [!] UnknownKotlinExpression (BLOCK)]
+            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined

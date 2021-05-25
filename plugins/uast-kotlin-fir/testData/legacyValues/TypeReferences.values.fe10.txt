@@ -1,0 +1,81 @@
+UFile (package = ) [public final class TypeReferencesKt {...]
+    UClass (name = TypeReferencesKt) [public final class TypeReferencesKt {...}]
+        UMethod (name = foo) [public static final fun foo(@org.jetbrains.annotations.NotNull parameter: int) : java.lang.String {...}]
+            UParameter (name = parameter) [@org.jetbrains.annotations.NotNull var parameter: int]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}] = Nothing
+                UDeclarationsExpression [var varWithType: java.lang.String = "Not Null"] = Undetermined
+                    ULocalVariable (name = varWithType) [var varWithType: java.lang.String = "Not Null"]
+                        ULiteralExpression (value = "Not Null") ["Not Null"] = "Not Null"
+                UDeclarationsExpression [var varWithoutType: java.lang.String = "lorem ipsum"] = Undetermined
+                    ULocalVariable (name = varWithoutType) [var varWithoutType: java.lang.String = "lorem ipsum"]
+                        ULiteralExpression (value = "lorem ipsum") ["lorem ipsum"] = "lorem ipsum"
+                UDeclarationsExpression [var result: java.lang.String = varWithType + varWithoutType] = Undetermined
+                    ULocalVariable (name = result) [var result: java.lang.String = varWithType + varWithoutType]
+                        UBinaryExpression (operator = +) [varWithType + varWithoutType] = "Not Nulllorem ipsum" (depending on: (var varWithType = "Not Null"), (var varWithoutType = "lorem ipsum"))
+                            USimpleNameReferenceExpression (identifier = varWithType) [varWithType] = (var varWithType = "Not Null")
+                            USimpleNameReferenceExpression (identifier = varWithoutType) [varWithoutType] = (var varWithoutType = "lorem ipsum")
+                UReturnExpression [return result] = Nothing
+                    USimpleNameReferenceExpression (identifier = result) [result] = (var result = "Not Nulllorem ipsum" (depending on: (var varWithType = "Not Null"), (var varWithoutType = "lorem ipsum")))
+        UMethod (name = parameterizedFoo) [public static final fun parameterizedFoo(@org.jetbrains.annotations.Nullable arg: T) : void {...}]
+            UParameter (name = arg) [@org.jetbrains.annotations.Nullable var arg: T]
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable) [@org.jetbrains.annotations.Nullable]
+            UBlockExpression [{...}] = external parameterizedFoo(emptyList())(external emptyList()())
+                UDeclarationsExpression [var a: T = arg] = Undetermined
+                    ULocalVariable (name = a) [var a: T = arg]
+                        USimpleNameReferenceExpression (identifier = arg) [arg] = Undetermined
+                UDeclarationsExpression [var at: T = elvis {...}] = Undetermined
+                    ULocalVariable (name = at) [var at: T = elvis {...}]
+                        UExpressionList (elvis) [elvis {...}] = Undetermined
+                            UDeclarationsExpression [var var708e23eb: T = arg] = Undetermined
+                                ULocalVariable (name = var708e23eb) [var var708e23eb: T = arg]
+                                    USimpleNameReferenceExpression (identifier = arg) [arg] = Undetermined
+                            UIfExpression [if (var708e23eb != null) var708e23eb else return] = Undetermined
+                                UBinaryExpression (operator = !=) [var708e23eb != null] = Undetermined
+                                    USimpleNameReferenceExpression (identifier = var708e23eb) [var708e23eb] = Undetermined
+                                    ULiteralExpression (value = null) [null] = null
+                                USimpleNameReferenceExpression (identifier = var708e23eb) [var708e23eb] = Undetermined
+                                UReturnExpression [return] = Nothing
+                UDeclarationsExpression [var tl: java.util.List<? extends T> = listOf(at)] = Undetermined
+                    ULocalVariable (name = tl) [var tl: java.util.List<? extends T> = listOf(at)]
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [listOf(at)] = external listOf(at)((var at = Undetermined))
+                            UIdentifier (Identifier (listOf)) [UIdentifier (Identifier (listOf))]
+                            USimpleNameReferenceExpression (identifier = listOf, resolvesTo = null) [listOf] = external listOf(at)((var at = Undetermined))
+                            USimpleNameReferenceExpression (identifier = at) [at] = (var at = Undetermined)
+                UDeclarationsExpression [var tsl: java.util.List<? extends java.lang.String> = tl.map({ var it: T ->...})] = Undetermined
+                    ULocalVariable (name = tsl) [var tsl: java.util.List<? extends java.lang.String> = tl.map({ var it: T ->...})]
+                        UQualifiedReferenceExpression [tl.map({ var it: T ->...})] = external map({ var it: T ->
+
+    return it.toString()
+})(Undetermined)
+                            USimpleNameReferenceExpression (identifier = tl) [tl] = (var tl = external listOf(at)((var at = Undetermined)))
+                            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [map({ var it: T ->...})] = external map({ var it: T ->
+
+    return it.toString()
+})(Undetermined)
+                                UIdentifier (Identifier (map)) [UIdentifier (Identifier (map))]
+                                USimpleNameReferenceExpression (identifier = map, resolvesTo = null) [map] = external map({ var it: T ->
+
+    return it.toString()
+})(Undetermined)
+                                ULambdaExpression [{ var it: T ->...}] = Undetermined
+                                    UParameter (name = it) [var it: T]
+                                    UBlockExpression [{...}] = Nothing
+                                        UReturnExpression [return it.toString()] = Undetermined
+                                            UQualifiedReferenceExpression [it.toString()] = external toString()()
+                                                USimpleNameReferenceExpression (identifier = it) [it] = external it()
+                                                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [toString()] = external toString()()
+                                                    UIdentifier (Identifier (toString)) [UIdentifier (Identifier (toString))]
+                                                    USimpleNameReferenceExpression (identifier = toString, resolvesTo = null) [toString] = external toString()()
+                UDeclarationsExpression [var lls: java.util.List<? extends java.util.List<? extends java.lang.String>>] = Undetermined
+                    ULocalVariable (name = lls) [var lls: java.util.List<? extends java.util.List<? extends java.lang.String>>]
+                UDeclarationsExpression [var llsAliased: java.util.List<? extends java.util.List<? extends java.lang.String>>] = Undetermined
+                    ULocalVariable (name = llsAliased) [var llsAliased: java.util.List<? extends java.util.List<? extends java.lang.String>>]
+                UDeclarationsExpression [var llt: java.util.List<? extends java.util.List<? extends T>>] = Undetermined
+                    ULocalVariable (name = llt) [var llt: java.util.List<? extends java.util.List<? extends T>>]
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [parameterizedFoo(emptyList())] = external parameterizedFoo(emptyList())(external emptyList()())
+                    UIdentifier (Identifier (parameterizedFoo)) [UIdentifier (Identifier (parameterizedFoo))]
+                    USimpleNameReferenceExpression (identifier = parameterizedFoo, resolvesTo = null) [parameterizedFoo] = external parameterizedFoo(emptyList())(external emptyList()())
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [emptyList()] = external emptyList()()
+                        UIdentifier (Identifier (emptyList)) [UIdentifier (Identifier (emptyList))]
+                        USimpleNameReferenceExpression (identifier = emptyList, resolvesTo = null) [emptyList] = external emptyList()()

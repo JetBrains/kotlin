@@ -1,0 +1,12 @@
+UFile (package = ) [public final class Demo {...]
+    UClass (name = Demo) [public final class Demo {...}]
+        UField (name = foo) [@org.jetbrains.annotations.NotNull private final var foo: error.NonExistentClass = X.<anonymous class>("lorem")]
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UQualifiedReferenceExpression [X.<anonymous class>("lorem")] = external <anonymous class>("lorem")("lorem")
+                USimpleNameReferenceExpression (identifier = X) [X] = external X()
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [<anonymous class>("lorem")] = external <anonymous class>("lorem")("lorem")
+                    UIdentifier (Identifier (bar)) [UIdentifier (Identifier (bar))]
+                    USimpleNameReferenceExpression (identifier = <anonymous class>, resolvesTo = null) [<anonymous class>] = external <anonymous class>("lorem")("lorem")
+                    ULiteralExpression (value = "lorem") ["lorem"] = "lorem"
+        UMethod (name = getFoo) [public final fun getFoo() : error.NonExistentClass = UastEmptyExpression]
+        UMethod (name = Demo) [public fun Demo() = UastEmptyExpression]

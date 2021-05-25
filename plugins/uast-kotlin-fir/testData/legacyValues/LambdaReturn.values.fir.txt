@@ -1,0 +1,4 @@
+UFile (package = org.jetbrains.uast.kotlin) [package org.jetbrains.uast.kotlin...]
+    UClass (name = LambdaReturnKt) [public final class LambdaReturnKt {...}]
+        UMethod (name = foo) [public static final fun foo() : void = [!] UnknownKotlinExpression (BLOCK)]
+            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined

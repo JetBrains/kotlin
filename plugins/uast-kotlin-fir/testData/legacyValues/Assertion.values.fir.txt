@@ -1,0 +1,4 @@
+UFile (package = ) [public final class AssertionKt {...]
+    UClass (name = AssertionKt) [public final class AssertionKt {...}]
+        UMethod (name = foo) [public static final fun foo() : java.lang.String = [!] UnknownKotlinExpression (BLOCK)]
+            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
