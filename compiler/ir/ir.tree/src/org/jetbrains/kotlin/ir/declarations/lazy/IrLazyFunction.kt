@@ -109,6 +109,7 @@ class IrLazyFunction(
         get() = (descriptor as? DescriptorWithContainerSource)?.containerSource
 
     private fun tryLoadIr(): Boolean {
+        if (!stubGenerator.extensions.irDeserializationEnabled) return false
         if (!isInline || isFakeOverride) return false
         val toplevel = getToplevel()
         return (toplevel as? DeserializableClass)?.loadIr() ?: false

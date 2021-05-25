@@ -7,11 +7,9 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -56,6 +54,8 @@ open class StubGeneratorExtensions {
 
         companion object Instance : EnhancedNullability()
     }
+
+    open val irDeserializationEnabled: Boolean = false
 
     open val flexibleNullabilityAnnotationConstructor: IrConstructor?
         get() = null

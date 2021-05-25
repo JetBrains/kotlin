@@ -306,7 +306,10 @@ object KotlinToJVMBytecodeCompiler {
         )
             .codegenFactory(
                 if (configuration.getBoolean(JVMConfigurationKeys.IR)) JvmIrCodegenFactory(
-                    configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases)
+                    configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases),
+                    jvmGeneratorExtensions = JvmGeneratorExtensionsImpl(
+                        irDeserializationEnabled = configuration.getBoolean(JVMConfigurationKeys.SERIALIZE_IR)
+                    )
                 ) else DefaultCodegenFactory
             )
             .withModule(module)
