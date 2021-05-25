@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) : FirPartialBodyResolveTransformer(transformer) {
     private inline val builtinTypes: BuiltinTypes get() = session.builtinTypes
@@ -386,7 +386,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             assignOperatorCall.transformSingle(this, ResolutionMode.ContextDependent)
         }
         val assignCallReference = resolvedAssignCall.calleeReference as? FirNamedReferenceWithCandidate
-        val assignIsResolvable = assignCallReference?.isError == false
+        val assignIsSuccessful = assignCallReference?.isError == false
 
         // x = x + y
         val simpleOperatorName = FirOperationNameConventions.ASSIGNMENTS_TO_SIMPLE_OPERATOR.getValue(assignmentOperatorStatement.operation)
@@ -395,7 +395,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             simpleOperatorCall.transformSingle(this, ResolutionMode.ContextDependent)
         }
         val operatorCallReference = resolvedOperatorCall.calleeReference as? FirNamedReferenceWithCandidate
-        val operatorIsResolvable = operatorCallReference?.isError == false
+        val operatorIsSuccessful = operatorCallReference?.isError == false
 
         fun operatorReturnTypeMatches(candidate: Candidate): Boolean {
             // After KT-45503, non-assign flavor of operator is checked more strictly: the return type must be assignable to the variable.
@@ -408,8 +408,8 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                 leftArgument.typeRef.coneType
             )
         }
-        // following `!!` is safe since `operatorIsResolvable = true` implies `operatorCallReference != null`
-        val operatorReturnTypeMatches = operatorIsResolvable && operatorReturnTypeMatches(operatorCallReference!!.candidate)
+        // following `!!` is safe since `operatorIsSuccessful = true` implies `operatorCallReference != null`
+        val operatorReturnTypeMatches = operatorIsSuccessful && operatorReturnTypeMatches(operatorCallReference!!.candidate)
 
         val lhsReference = leftArgument.toResolvedCallableReference()
         val lhsSymbol = lhsReference?.resolvedSymbol as? FirVariableSymbol<*>
@@ -467,11 +467,21 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         }
 
         return when {
-            assignIsResolvable && !lhsIsVar -> chooseAssign()
-            !assignIsResolvable && !operatorIsResolvable -> chooseAssign()
-            !assignIsResolvable && operatorIsResolvable -> chooseOperator()
-            assignIsResolvable && !operatorIsResolvable -> chooseAssign()
-            assignIsResolvable && operatorIsResolvable && !operatorReturnTypeMatches -> chooseAssign()
+            assignIsSuccessful && !lhsIsVar -> chooseAssign()
+            !assignIsSuccessful && !operatorIsSuccessful -> {
+                // If neither candidate is successful, choose whichever is resolved, prioritizing assign
+                val isAssignResolved = assignCallReference.safeAs<FirErrorReferenceWithCandidate>()?.diagnostic !is ConeUnresolvedNameError
+                val isOperatorResolved =
+                    operatorCallReference.safeAs<FirErrorReferenceWithCandidate>()?.diagnostic !is ConeUnresolvedNameError
+                when {
+                    isAssignResolved -> chooseAssign()
+                    isOperatorResolved -> chooseOperator()
+                    else -> chooseAssign()
+                }
+            }
+            !assignIsSuccessful && operatorIsSuccessful -> chooseOperator()
+            assignIsSuccessful && !operatorIsSuccessful -> chooseAssign()
+            assignIsSuccessful && operatorIsSuccessful && !operatorReturnTypeMatches -> chooseAssign()
             else -> reportAmbiguity()
         }
     }

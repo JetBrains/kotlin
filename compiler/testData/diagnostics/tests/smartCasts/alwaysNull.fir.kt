@@ -7,7 +7,7 @@ fun foo(): String {
     var t: String? = "y"
     if (t == null) t = "x"
     var x: Int? = null
-    if (x == null) x <!UNRESOLVED_REFERENCE!>+=<!> null
+    if (x == null) x <!UNSAFE_OPERATOR_CALL!>+=<!> null
     return t + s
 }
 
