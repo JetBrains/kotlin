@@ -11,9 +11,7 @@ import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.DescriptorAsmUtil.getMethodAsmFlags
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
-import org.jetbrains.kotlin.codegen.context.EnclosedValueDescriptor
 import org.jetbrains.kotlin.codegen.coroutines.getOrCreateJvmSuspendFunctionView
-import org.jetbrains.kotlin.codegen.coroutines.isCapturedSuspendLambda
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -299,42 +297,27 @@ class PsiExpressionLambda(
         arrayListOf<CapturedParamDesc>().apply {
             val captureThis = closure.capturedOuterClassDescriptor
             if (captureThis != null) {
-                val kotlinType = captureThis.defaultType
-                val type = typeMapper.mapType(kotlinType)
-                val descriptor = EnclosedValueDescriptor(
-                    AsmUtil.CAPTURED_THIS_FIELD, null,
-                    StackValue.field(type, lambdaClassType, AsmUtil.CAPTURED_THIS_FIELD, false, StackValue.LOCAL_0),
-                    type, kotlinType
-                )
-                add(getCapturedParamInfo(descriptor))
+                add(capturedParamDesc(AsmUtil.CAPTURED_THIS_FIELD, typeMapper.mapType(captureThis.defaultType), isSuspend = false))
             }
 
             val capturedReceiver = closure.capturedReceiverFromOuterContext
             if (capturedReceiver != null) {
+                val fieldName = closure.getCapturedReceiverFieldName(typeMapper.bindingContext, languageVersionSettings)
                 val type = typeMapper.mapType(capturedReceiver).let {
                     if (isBoundCallableReference) AsmUtil.boxType(it) else it
                 }
-
-                val fieldName = closure.getCapturedReceiverFieldName(typeMapper.bindingContext, languageVersionSettings)
-                val descriptor = EnclosedValueDescriptor(
-                    fieldName, null,
-                    StackValue.field(type, capturedReceiver, lambdaClassType, fieldName, false, StackValue.LOCAL_0),
-                    type, capturedReceiver
-                )
-                add(getCapturedParamInfo(descriptor))
+                add(capturedParamDesc(fieldName, type, isSuspend = false))
             }
 
-            closure.captureVariables.values.forEach { descriptor ->
-                add(getCapturedParamInfo(descriptor))
+            closure.captureVariables.forEach { (parameter, value) ->
+                val isSuspend = parameter is ValueParameterDescriptor && parameter.type.isSuspendFunctionTypeOrSubtype
+                add(capturedParamDesc(value.fieldName, value.type, isSuspend))
             }
         }
     }
 
     val isPropertyReference: Boolean
         get() = propertyReferenceInfo != null
-
-    override fun isCapturedSuspend(desc: CapturedParamDesc): Boolean =
-        isCapturedSuspendLambda(closure, desc.fieldName, typeMapper.bindingContext)
 }
 
 class PsiDefaultLambda(

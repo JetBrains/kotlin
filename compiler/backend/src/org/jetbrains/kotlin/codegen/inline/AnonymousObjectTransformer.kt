@@ -547,7 +547,7 @@ class AnonymousObjectTransformer(
                         capturedParamBuilder.addCapturedParam(desc, desc.fieldName, !capturedOuterThisTypes.add(desc.type.className))
                     else
                         capturedParamBuilder.addCapturedParam(desc, addUniqueField(desc.fieldName + INLINE_TRANSFORMATION_SUFFIX), false)
-                    if (info is ExpressionLambda && info.isCapturedSuspend(desc)) {
+                    if (desc.isSuspend) {
                         recapturedParamInfo.functionalArgument = NonInlineableArgumentForInlineableParameterCalledInSuspend
                     }
                     val composed = StackValue.field(
