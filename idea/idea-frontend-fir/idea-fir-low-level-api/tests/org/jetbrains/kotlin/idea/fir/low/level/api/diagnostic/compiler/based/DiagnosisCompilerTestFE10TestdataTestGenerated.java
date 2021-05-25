@@ -16741,6 +16741,11 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 runTest("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/AssertNotNull.kt");
             }
 
+            @TestMetadata("augmentedAssignment.kt")
+            public void testAugmentedAssignment() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/augmentedAssignment.kt");
+            }
+
             @TestMetadata("dataFlowInfoAfterExclExcl.kt")
             public void testDataFlowInfoAfterExclExcl() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/dataFlowInfoAfterExclExcl.kt");

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.idea.quickfix.ReplaceInfixOrOperatorCallFix
 import org.jetbrains.kotlin.idea.quickfix.ReplaceWithSafeCallFix
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.unwrapParenthesesLabelsAndAnnotations
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -62,7 +63,7 @@ object ReplaceCallFixFactories {
                 return@diagnosticFixFactory emptyList()
             }
 
-            val target = psi.parent as? KtBinaryExpression ?: return@diagnosticFixFactory emptyList()
+            val target = psi.getNonStrictParentOfType<KtBinaryExpression>() ?: return@diagnosticFixFactory emptyList()
             listOf(ReplaceInfixOrOperatorCallFix(target, shouldHaveNotNullType(target), diagnostic.operator))
         }
 
