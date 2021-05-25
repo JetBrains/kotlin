@@ -109,7 +109,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
     protected fun generateStub(text: String, codegen: BaseExpressionCodegen) {
         leaveTemps()
-        AsmUtil.genThrow(codegen.v, "java/lang/UnsupportedOperationException", "Call is part of inline cycle: $text")
+        AsmUtil.genThrow(codegen.visitor, "java/lang/UnsupportedOperationException", "Call is part of inline cycle: $text")
     }
 
     protected fun endCall(result: InlineResult, registerLineNumberAfterwards: Boolean) {
@@ -248,17 +248,17 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
             removeFinallyMarkers(adapter)
         }
 
-        // In case `codegen.v` is `<clinit>`, initializer for the `$assertionsDisabled` field
+        // In case `codegen.visitor` is `<clinit>`, initializer for the `$assertionsDisabled` field
         // needs to be inserted before the code that actually uses it.
         generateAssertFieldIfNeeded(info)
 
         val shouldSpillStack = !canSkipStackSpillingOnInline(node)
         if (shouldSpillStack) {
-            addInlineMarker(codegen.v, true)
+            addInlineMarker(codegen.visitor, true)
         }
-        adapter.accept(MethodBodyVisitor(codegen.v))
+        adapter.accept(MethodBodyVisitor(codegen.visitor))
         if (shouldSpillStack) {
-            addInlineMarker(codegen.v, false)
+            addInlineMarker(codegen.visitor, false)
         }
         return result
     }
@@ -364,7 +364,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         val jvmType = jvmKotlinType.type
         val kotlinType = jvmKotlinType.kotlinType
         if (!isDefaultParameter && shouldPutGeneralValue(jvmType, kotlinType, stackValue)) {
-            stackValue.put(jvmType, kotlinType, codegen.v)
+            stackValue.put(jvmType, kotlinType, codegen.visitor)
         }
 
         if (!asFunctionInline && Type.VOID_TYPE !== jvmType) {
@@ -413,7 +413,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                     val type = info.type
                     val local = StackValue.local(index[i], type)
                     if (!skipStore) {
-                        local.store(StackValue.onStack(info.typeOnStack), codegen.v)
+                        local.store(StackValue.onStack(info.typeOnStack), codegen.visitor)
                     }
                     if (info is CapturedParamInfo) {
                         info.remapValue = local
@@ -708,6 +708,3 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     }
 
 }
-
-val BaseExpressionCodegen.v: InstructionAdapter
-    get() = visitor

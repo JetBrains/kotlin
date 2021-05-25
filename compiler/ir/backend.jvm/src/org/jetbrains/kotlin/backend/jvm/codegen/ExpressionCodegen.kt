@@ -588,7 +588,7 @@ class ExpressionCodegen(
 
         closureReifiedMarkers[expression.symbol.owner.parentAsClass]?.let {
             if (it.wereUsedReifiedParameters()) {
-                putNeedClassReificationMarker(v)
+                putNeedClassReificationMarker(mv)
                 propagateChildReifiedTypeParametersUsages(it)
             }
         }
@@ -1018,7 +1018,7 @@ class ExpressionCodegen(
                 if (typeOperand.isReifiedTypeParameter) {
                     val operationKind = if (expression.operator == IrTypeOperator.CAST) AS else SAFE_AS
                     putReifiedOperationMarkerIfTypeIsReifiedParameter(typeOperand, operationKind)
-                    v.checkcast(boxedRightType)
+                    mv.checkcast(boxedRightType)
                 } else {
                     assert(expression.operator == IrTypeOperator.CAST) { "IrTypeOperator.SAFE_CAST should have been lowered." }
                     TypeIntrinsics.checkcast(mv, kotlinType, boxedRightType, false)
@@ -1031,7 +1031,7 @@ class ExpressionCodegen(
                 val type = typeMapper.boxType(typeOperand)
                 if (typeOperand.isReifiedTypeParameter) {
                     putReifiedOperationMarkerIfTypeIsReifiedParameter(typeOperand, ReifiedTypeInliner.OperationKind.IS)
-                    v.instanceOf(type)
+                    mv.instanceOf(type)
                 } else {
                     TypeIntrinsics.instanceOf(mv, kotlinType, type, state.languageVersionSettings.isReleaseCoroutines())
                 }
@@ -1444,8 +1444,8 @@ class ExpressionCodegen(
         if (noLineNumberScope || registerLineNumberAfterwards) {
             if (lastLineNumber > -1) {
                 val label = Label()
-                v.visitLabel(label)
-                v.visitLineNumber(lastLineNumber, label)
+                mv.visitLabel(label)
+                mv.visitLineNumber(lastLineNumber, label)
             }
         } else {
             // Inline function has its own line number which is in a separate instance of codegen,
