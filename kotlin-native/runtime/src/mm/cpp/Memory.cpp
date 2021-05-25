@@ -465,18 +465,21 @@ extern "C" void EnsureNeverFrozen(ObjHeader* obj) {
 }
 
 extern "C" ForeignRefContext InitLocalForeignRef(ObjHeader* object) {
+    AssertThreadState(ThreadState::kRunnable);
     // TODO: Remove when legacy MM is gone.
     // Nothing to do.
     return nullptr;
 }
 
 extern "C" ForeignRefContext InitForeignRef(ObjHeader* object) {
+    AssertThreadState(ThreadState::kRunnable);
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     auto* node = mm::StableRefRegistry::Instance().RegisterStableRef(threadData, object);
     return ToForeignRefManager(node);
 }
 
 extern "C" void DeinitForeignRef(ObjHeader* object, ForeignRefContext context) {
+    AssertThreadState(ThreadState::kRunnable);
     RuntimeAssert(context != nullptr, "DeinitForeignRef must not be called for InitLocalForeignRef");
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     auto* node = FromForeignRefManager(context);
@@ -527,6 +530,12 @@ extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnabl
 
 MemoryState* kotlin::mm::GetMemoryState() {
     return ToMemoryState(ThreadRegistry::Instance().CurrentThreadDataNode());
+}
+
+ALWAYS_INLINE kotlin::CalledFromNativeGuard::CalledFromNativeGuard() noexcept {
+    Kotlin_initRuntimeIfNeeded();
+    thread_ = mm::GetMemoryState();
+    SwitchThreadState(thread_, ThreadState::kRunnable);
 }
 
 const bool kotlin::kSupportsMultipleMutators = kotlin::gc::kSupportsMultipleMutators;

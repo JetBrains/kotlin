@@ -46,8 +46,8 @@ static inline OBJ_GETTER(refFromObjCOrNSNull, id obj) {
 }
 
 static inline OBJ_GETTER(invokeAndAssociate, KRef (*func)(KRef* result), id obj) {
+  // TODO: this probably can't be called in uninitialized state in the new MM.
   Kotlin_initRuntimeIfNeeded();
-  // TODO: Does this need a switch to runnable state?
 
   KRef kotlinObj = func(OBJ_RESULT);
 

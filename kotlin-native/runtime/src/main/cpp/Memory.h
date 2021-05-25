@@ -442,6 +442,20 @@ private:
     bool reentrant_;
 };
 
+// Scopely sets the kRunnable thread state for the current thread,
+// and initializes runtime if needed for new MM.
+// No-op for old GC.
+class CalledFromNativeGuard final : private Pinned {
+public:
+    ALWAYS_INLINE CalledFromNativeGuard() noexcept;
+
+    ~CalledFromNativeGuard() noexcept {
+        SwitchThreadState(thread_, ThreadState::kNative);
+    }
+private:
+    MemoryState* thread_;
+};
+
 template <ThreadState state, typename R, typename... Args>
 ALWAYS_INLINE inline R CallWithThreadState(R(*function)(Args...), Args... args) {
     ThreadStateGuard guard(state);

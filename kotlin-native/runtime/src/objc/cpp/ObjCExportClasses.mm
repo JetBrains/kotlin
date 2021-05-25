@@ -61,7 +61,7 @@ static void injectToRuntime();
 
 +(instancetype)allocWithZone:(NSZone*)zone {
   Kotlin_initRuntimeIfNeeded();
-  // TODO: Does this need a switch to runnable state?
+  kotlin::ThreadStateGuard guard(kotlin::ThreadState::kRunnable);
 
   KotlinBase* result = [super allocWithZone:zone];
 
@@ -86,6 +86,8 @@ static void injectToRuntime();
 }
 
 +(instancetype)createWrapper:(ObjHeader*)obj {
+  kotlin::AssertThreadState(kotlin::ThreadState::kRunnable);
+
   KotlinBase* candidate = [super allocWithZone:nil];
   // TODO: should we call NSObject.init ?
   candidate->refHolder.initAndAddRef(obj);
@@ -97,8 +99,11 @@ static void injectToRuntime();
     } else {
       id old = AtomicCompareAndSwapAssociatedObject(obj, nullptr, candidate);
       if (old != nullptr) {
-        candidate->refHolder.releaseRef();
-        [candidate releaseAsAssociatedObject:ReleaseMode::kDetachAndRelease];
+        {
+          kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
+          candidate->refHolder.releaseRef();
+          [candidate releaseAsAssociatedObject:ReleaseMode::kDetachAndRelease];
+        }
         return objc_retainAutoreleaseReturnValue(old);
       }
     }

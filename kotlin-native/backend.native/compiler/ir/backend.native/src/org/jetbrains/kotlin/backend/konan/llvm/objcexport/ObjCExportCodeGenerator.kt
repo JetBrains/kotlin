@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.konan.ForeignExceptionMode
 import org.jetbrains.kotlin.konan.target.AppleConfigurables
 import org.jetbrains.kotlin.konan.target.LinkerOutputKind
 import org.jetbrains.kotlin.name.Name
@@ -67,13 +68,31 @@ internal open class ObjCExportCodeGeneratorBase(codegen: CodeGenerator) : ObjCCo
     fun FunctionGenerationContext.callFromBridge(
             function: LLVMValueRef,
             args: List<LLVMValueRef>,
-            resultLifetime: Lifetime = Lifetime.IRRELEVANT
+            resultLifetime: Lifetime = Lifetime.IRRELEVANT,
+            toNative: Boolean = false
     ): LLVMValueRef {
 
         // TODO: it is required only for Kotlin-to-Objective-C bridges.
         this.forwardingForeignExceptionsTerminatedWith = objcTerminate
 
-        return call(function, args, resultLifetime, ExceptionHandler.Caller)
+        val switchStateToNative = toNative && context.config.memoryModel == MemoryModel.EXPERIMENTAL
+        val exceptionHandler: ExceptionHandler
+
+        if (switchStateToNative) {
+            switchThreadState(ThreadState.Native)
+            // Note: this is suboptimal. We should forbid Kotlin exceptions thrown from native code, and use simple fatal handler here.
+            exceptionHandler = filteringExceptionHandler(ExceptionHandler.Caller, ForeignExceptionMode.default, switchThreadState = true)
+        } else {
+            exceptionHandler = ExceptionHandler.Caller
+        }
+
+        val result = call(function, args, resultLifetime, exceptionHandler)
+
+        if (switchStateToNative) {
+            switchThreadState(ThreadState.Runnable)
+        }
+
+        return result
     }
 
     fun FunctionGenerationContext.kotlinReferenceToObjC(value: LLVMValueRef) =
@@ -134,7 +153,8 @@ internal class ObjCExportCodeGenerator(
             returnType: LLVMTypeRef,
             receiver: LLVMValueRef,
             selector: String,
-            vararg args: LLVMValueRef
+            switchToNative: Boolean,
+            vararg args: LLVMValueRef,
     ): LLVMValueRef {
 
         val objcMsgSendType = functionType(
@@ -143,7 +163,7 @@ internal class ObjCExportCodeGenerator(
                 listOf(int8TypePtr, int8TypePtr) + args.map { it.type }
         )
 
-        return callFromBridge(msgSender(objcMsgSendType), listOf(receiver, genSelector(selector)) + args)
+        return callFromBridge(msgSender(objcMsgSendType), listOf(receiver, genSelector(selector)) + args, toNative = switchToNative)
     }
 
     fun FunctionGenerationContext.kotlinToObjC(
@@ -621,7 +641,8 @@ private fun ObjCExportCodeGenerator.emitBoxConverter(
         val value = kotlinToObjC(kotlinValue, objCValueType)
 
         val nsNumberSubclass = genGetLinkedClass(namer.numberBoxName(boxClass.classId!!).binaryName)
-        ret(genSendMessage(int8TypePtr, nsNumberSubclass, nsNumberFactorySelector, value))
+        val switchToNative = false // We consider these methods fast enough.
+        ret(genSendMessage(int8TypePtr, nsNumberSubclass, nsNumberFactorySelector, switchToNative, value))
     }
 
     LLVMSetLinkage(converter, LLVMLinkage.LLVMPrivateLinkage)
@@ -748,7 +769,7 @@ private inline fun ObjCExportCodeGenerator.generateObjCImpBy(
         null
     }
 
-    generateFunction(codegen, result, startLocation = location, endLocation = location) {
+    generateFunction(codegen, result, startLocation = location, endLocation = location, switchToRunnable = true) {
         genBody()
     }
 
@@ -861,7 +882,7 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
                 is MethodBridge.ReturnValue.WithError.ZeroForError -> {
                     if (returnType.successBridge == MethodBridge.ReturnValue.Instance.InitResult) {
                         // Release init receiver, as required by convention.
-                        callFromBridge(objcRelease, listOf(param(0)))
+                        callFromBridge(objcRelease, listOf(param(0)), toNative = true)
                     }
                     Zero(returnType.objCType(context)).llvm
                 }
@@ -1040,7 +1061,7 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
             }
         }
 
-        val targetResult = callFromBridge(objcMsgSend, objCArgs)
+        val targetResult = callFromBridge(objcMsgSend, objCArgs, toNative = true)
 
         assert(baseMethod.symbol !is IrConstructorSymbol)
 
@@ -1496,7 +1517,7 @@ private inline fun ObjCExportCodeGenerator.generateObjCToKotlinSyntheticGetter(
             MethodBridgeReceiver.Static, valueParameters = emptyList()
     )
 
-    val imp = generateFunction(codegen, objCFunctionType(context, methodBridge), "objc2kotlin") {
+    val imp = generateFunction(codegen, objCFunctionType(context, methodBridge), "objc2kotlin", switchToRunnable = true) {
         block()
     }
 
@@ -1517,6 +1538,7 @@ private fun ObjCExportCodeGenerator.objCToKotlinMethodAdapter(
 
 private fun ObjCExportCodeGenerator.createUnitInstanceAdapter(selector: String) =
         generateObjCToKotlinSyntheticGetter(selector) {
+            // Note: generateObjCToKotlinSyntheticGetter switches to Runnable, which is probably not required here and thus suboptimal.
             initRuntimeIfNeeded() // For instance methods it gets called when allocating.
 
             ret(callFromBridge(context.llvm.Kotlin_ObjCExport_convertUnit, listOf(codegen.theUnitInstanceRef.llvm)))

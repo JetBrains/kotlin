@@ -30,6 +30,11 @@ class KRefSharedHolder {
 
   void dispose() const;
 
+  void disposeFromNative() const {
+    kotlin::CalledFromNativeGuard guard;
+    dispose();
+  }
+
   OBJ_GETTER0(describe) const;
 
  private:
