@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.allUnbound
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -96,7 +96,7 @@ open class AbstractIrSerializeCompileKotlinAgainstInlineKotlinTest : AbstractIrC
     }
 
     private class CheckInlineBodies(testServices: TestServices) : AbstractIrHandler(testServices) {
-        val declaredInlineFunctions = mutableSetOf<IrSimpleFunction>()
+        val declaredInlineFunctionSignatures = mutableSetOf<IdSignature>()
 
         override fun processModule(module: TestModule, info: IrBackendInput) {
             val irModule = info.backendInput.irModuleFragment
@@ -115,7 +115,7 @@ open class AbstractIrSerializeCompileKotlinAgainstInlineKotlinTest : AbstractIrC
             }
 
             override fun visitSimpleFunction(declaration: IrSimpleFunction) {
-                if (declaration.isInline) declaredInlineFunctions.add(declaration)
+                if (declaration.isInline) declaration.symbol.signature?.let { declaredInlineFunctionSignatures.add(it) }
                 super.visitSimpleFunction(declaration)
             }
         }
@@ -129,7 +129,7 @@ open class AbstractIrSerializeCompileKotlinAgainstInlineKotlinTest : AbstractIrC
                 val symbol = expression.symbol
                 assertions.assertTrue(symbol.isBound)
                 val callee = symbol.owner
-                if (callee in declaredInlineFunctions) {
+                if (callee.symbol.signature in declaredInlineFunctionSignatures) {
                     val trueCallee = (callee as IrSimpleFunction).resolveFakeOverride()!!
                     assertions.assertNotNull(trueCallee.body)
                 }
