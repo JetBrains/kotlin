@@ -44,18 +44,11 @@ internal class StringLowercaseGenerator(
 
     override fun UnicodeDataLine.mapping(): String = lowercaseMapping
 
-    fun appendPropListLine(line: PropertyLine) {
-        when (line.property) {
-            "Other_Lowercase",
-            "Other_Uppercase" -> casedRanges.add(line.rangeStart.hexToInt()..line.rangeEnd.hexToInt())
-        }
-    }
-
     fun appendWordBreakPropertyLine(line: PropertyLine) {
         when (line.property) {
             "MidLetter",
             "MidNumLet",
-            "Single_Quote" -> caseIgnorableRanges.add(line.rangeStart.hexToInt()..line.rangeEnd.hexToInt())
+            "Single_Quote" -> caseIgnorableRanges.add(line.intRange())
         }
     }
 
@@ -100,6 +93,9 @@ internal class StringLowercaseGenerator(
                     CharCategory.LOWERCASE_LETTER.value,
                     CharCategory.TITLECASE_LETTER.value -> return true
                 }
+            }
+            if (isOtherUppercase() || isOtherLowercase()) {
+                return true
             }
             val index = binarySearchRange(casedStart, this)
             return index >= 0 && this <= casedEnd[index]

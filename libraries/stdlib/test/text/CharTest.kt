@@ -5,6 +5,7 @@
 
 package test.text
 
+import test.testOnNonJvm6And7
 import kotlin.test.*
 
 class CharTest {
@@ -520,5 +521,35 @@ class CharTest {
         assertEquals('\u1000', '\u1000'.uppercaseChar())
 
         assertEquals("\uFFFF", '\uFFFF'.titlecase())
+    }
+
+    @Test
+    fun otherLowercaseProperty() {
+        testOnNonJvm6And7 {
+            val feminineOrdinalIndicator = '\u00AA'
+            assertTrue(feminineOrdinalIndicator.isLowerCase())
+            assertTrue(feminineOrdinalIndicator.isLetter())
+            assertFalse(feminineOrdinalIndicator.isUpperCase())
+
+            val circledLatinSmallLetterA = '\u24D0'
+            assertTrue(circledLatinSmallLetterA.isLowerCase())
+            assertFalse(circledLatinSmallLetterA.isLetter())
+            assertFalse(circledLatinSmallLetterA.isUpperCase())
+        }
+    }
+
+    @Test
+    fun otherUppercaseProperty() {
+        testOnNonJvm6And7 {
+            val romanNumberOne = '\u2160'
+            assertTrue(romanNumberOne.isUpperCase())
+            assertFalse(romanNumberOne.isLetter())
+            assertFalse(romanNumberOne.isLowerCase())
+
+            val circledLatinCapitalLetterZ = '\u24CF'
+            assertTrue(circledLatinCapitalLetterZ.isUpperCase())
+            assertFalse(circledLatinCapitalLetterZ.isLetter())
+            assertFalse(circledLatinCapitalLetterZ.isLowerCase())
+        }
     }
 }

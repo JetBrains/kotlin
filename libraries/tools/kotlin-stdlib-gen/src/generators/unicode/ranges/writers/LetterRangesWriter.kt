@@ -60,17 +60,17 @@ internal open class LetterRangesWriter(protected val strategy: RangesWritingStra
         }
 
         /**
-         * Returns `true` if this character is a lower case letter.
+         * Returns `true` if this character is a lower case letter, or it has contributory property Other_Lowercase.
          */
         internal fun Char.isLowerCaseImpl(): Boolean {
-            return getLetterType() == 1
+            return getLetterType() == 1 || code.isOtherLowercase()
         }
 
         /**
-         * Returns `true` if this character is an upper case letter.
+         * Returns `true` if this character is an upper case letter, or it has contributory property Other_Uppercase.
          */
         internal fun Char.isUpperCaseImpl(): Boolean {
-            return getLetterType() == 2
+            return getLetterType() == 2 || code.isOtherUppercase()
         }
 
         /**

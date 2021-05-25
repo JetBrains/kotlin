@@ -12,6 +12,8 @@ import generators.unicode.ranges.RangesGenerator
 import generators.unicode.mappings.string.StringCasingTestGenerator
 import generators.unicode.mappings.string.StringLowercaseGenerator
 import generators.unicode.mappings.string.StringUppercaseGenerator
+import generators.unicode.ranges.OtherLowercaseRangesGenerator
+import generators.unicode.ranges.OtherUppercaseRangesGenerator
 import templates.COPYRIGHT_NOTICE
 import templates.KotlinTarget
 import templates.readCopyrightNoticeFromProfile
@@ -61,6 +63,8 @@ fun main(args: Array<String>) {
     }
 
     val categoryRangesGenerators = mutableListOf<RangesGenerator>()
+    val otherLowercaseGenerators = mutableListOf<OtherLowercaseRangesGenerator>()
+    val otherUppercaseGenerators = mutableListOf<OtherUppercaseRangesGenerator>()
 
     fun addRangesGenerators(generatedDir: File, target: KotlinTarget) {
         val category = RangesGenerator.forCharCategory(generatedDir.resolve("_CharCategories.kt"), target)
@@ -71,6 +75,9 @@ fun main(args: Array<String>) {
         categoryRangesGenerators.add(digit)
         categoryRangesGenerators.add(letter)
         categoryRangesGenerators.add(whitespace)
+
+        otherLowercaseGenerators.add(OtherLowercaseRangesGenerator(generatedDir.resolve("_OtherLowercaseChars.kt"), target))
+        otherUppercaseGenerators.add(OtherUppercaseRangesGenerator(generatedDir.resolve("_OtherUppercaseChars.kt"), target))
     }
 
     val oneToOneMappingsGenerators = mutableListOf<MappingsGenerator>()
@@ -154,9 +161,18 @@ fun main(args: Array<String>) {
         bmpUnicodeDataLines.forEach { line -> it.appendLine(line) }
         it.generate()
     }
+    otherLowercaseGenerators.forEach {
+        propListLines.forEach { line -> it.appendLine(line) }
+        it.generate()
+    }
+    otherUppercaseGenerators.forEach {
+        propListLines.forEach { line -> it.appendLine(line) }
+        it.generate()
+    }
 
     categoryTestGenerator.let {
         bmpUnicodeDataLines.forEach { line -> it.appendLine(line) }
+        propListLines.forEach { line -> it.appendPropertyLine(line) }
         it.generate()
     }
 
@@ -176,7 +192,6 @@ fun main(args: Array<String>) {
     }
     stringLowercaseGenerator.let {
         specialCasingLines.forEach { line -> it.appendSpecialCasingLine(line) }
-        propListLines.forEach { line -> it.appendPropListLine(line) }
         wordBreakPropertyLines.forEach { line -> it.appendWordBreakPropertyLine(line) }
         it.generate()
     }

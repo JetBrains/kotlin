@@ -14,6 +14,14 @@ internal class PropertyLine(properties: List<String>) {
     val rangeEnd: String = properties[0].split("..").last()
     val property: String = properties[1].takeWhile { it != ' ' }
 
+    fun intRange(): IntRange {
+        return rangeStart.hexToInt()..rangeEnd.hexToInt()
+    }
+
+    fun hexIntRangeLiteral(): String {
+        return "${rangeStart.hexToInt().toHexIntLiteral()}..${rangeEnd.hexToInt().toHexIntLiteral()}"
+    }
+
     override fun toString(): String {
         return "PropertyLine{rangeStart=$rangeStart" +
                 ", rangeEnd=$rangeEnd" +
