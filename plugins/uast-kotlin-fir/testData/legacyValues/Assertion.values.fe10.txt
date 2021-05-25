@@ -1,0 +1,10 @@
+UFile (package = ) [public final class AssertionKt {...]
+    UClass (name = AssertionKt) [public final class AssertionKt {...}]
+        UMethod (name = foo) [public static final fun foo() : java.lang.String {...}]
+            UBlockExpression [{...}] = Nothing
+                UDeclarationsExpression [var s: java.lang.String = "Not Null"] = Undetermined
+                    ULocalVariable (name = s) [var s: java.lang.String = "Not Null"]
+                        ULiteralExpression (value = "Not Null") ["Not Null"] = "Not Null"
+                UReturnExpression [return s!!] = Nothing
+                    UPostfixExpression (operator = !!) [s!!] = (var s = "Not Null")
+                        USimpleNameReferenceExpression (identifier = s) [s] = (var s = "Not Null")

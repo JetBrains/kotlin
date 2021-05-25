@@ -1,0 +1,44 @@
+UFile (package = test.pkg) [package test.pkg...]
+    UClass (name = ReifiedKt) [public final class ReifiedKt {...}]
+        UMethod (name = systemService2) [public static final fun systemService2(@org.jetbrains.annotations.NotNull $this$systemService2: test.pkg.Context) : error.NonExistentClass {...}]
+            UParameter (name = $this$systemService2) [@org.jetbrains.annotations.NotNull var $this$systemService2: test.pkg.Context]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}] = Nothing
+                UReturnExpression [return <anonymous class>(java.lang.String.java)] = Nothing
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [<anonymous class>(java.lang.String.java)] = external <anonymous class>(java.lang.String.java)(external java())
+                        UIdentifier (Identifier (getSystemService)) [UIdentifier (Identifier (getSystemService))]
+                        USimpleNameReferenceExpression (identifier = <anonymous class>, resolvesTo = null) [<anonymous class>] = external <anonymous class>(java.lang.String.java)(external java())
+                        UQualifiedReferenceExpression [java.lang.String.java] = external java()
+                            UClassLiteralExpression [java.lang.String] = java.lang.String
+                            USimpleNameReferenceExpression (identifier = java) [java] = external java()
+        UMethod (name = systemService1) [static fun systemService1(@org.jetbrains.annotations.NotNull $this$systemService1: test.pkg.Context) : <ErrorType> {...}]
+            UParameter (name = $this$systemService1) [@org.jetbrains.annotations.NotNull var $this$systemService1: test.pkg.Context]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}] = Nothing
+                UReturnExpression [return <anonymous class>(T.java)] = Nothing
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [<anonymous class>(T.java)] = external <anonymous class>(T.java)(external java())
+                        UIdentifier (Identifier (getSystemService)) [UIdentifier (Identifier (getSystemService))]
+                        USimpleNameReferenceExpression (identifier = <anonymous class>, resolvesTo = null) [<anonymous class>] = external <anonymous class>(T.java)(external java())
+                        UQualifiedReferenceExpression [T.java] = external java()
+                            UClassLiteralExpression [T] = T
+                            USimpleNameReferenceExpression (identifier = java) [java] = external java()
+    UClass (name = Context) [public final class Context {...}]
+        UMethod (name = ownSystemService2) [public final fun ownSystemService2() : error.NonExistentClass {...}]
+            UBlockExpression [{...}] = Nothing
+                UReturnExpression [return <anonymous class>(java.lang.String.java)] = Nothing
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [<anonymous class>(java.lang.String.java)] = external <anonymous class>(java.lang.String.java)(external java())
+                        UIdentifier (Identifier (getSystemService)) [UIdentifier (Identifier (getSystemService))]
+                        USimpleNameReferenceExpression (identifier = <anonymous class>, resolvesTo = null) [<anonymous class>] = external <anonymous class>(java.lang.String.java)(external java())
+                        UQualifiedReferenceExpression [java.lang.String.java] = external java()
+                            UClassLiteralExpression [java.lang.String] = java.lang.String
+                            USimpleNameReferenceExpression (identifier = java) [java] = external java()
+        UMethod (name = Context) [public fun Context() = UastEmptyExpression]
+        UMethod (name = ownSystemService1) [fun ownSystemService1() : <ErrorType> {...}]
+            UBlockExpression [{...}] = Nothing
+                UReturnExpression [return <anonymous class>(T.java)] = Nothing
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [<anonymous class>(T.java)] = external <anonymous class>(T.java)(external java())
+                        UIdentifier (Identifier (getSystemService)) [UIdentifier (Identifier (getSystemService))]
+                        USimpleNameReferenceExpression (identifier = <anonymous class>, resolvesTo = null) [<anonymous class>] = external <anonymous class>(T.java)(external java())
+                        UQualifiedReferenceExpression [T.java] = external java()
+                            UClassLiteralExpression [T] = T
+                            USimpleNameReferenceExpression (identifier = java) [java] = external java()

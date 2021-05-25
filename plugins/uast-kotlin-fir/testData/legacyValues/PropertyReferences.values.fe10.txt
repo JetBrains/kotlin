@@ -1,0 +1,82 @@
+UFile (package = ) [public final class PropertyReferencesKt {...]
+    UClass (name = PropertyReferencesKt) [public final class PropertyReferencesKt {...}]
+        UMethod (name = properties) [public static final fun properties() : void {...}]
+            UBlockExpression [{...}] = external mutableProp()
+                UDeclarationsExpression [var a: A = <init>(17)] = Undetermined
+                    ULocalVariable (name = a) [var a: A = <init>(17)]
+                        UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1)) [<init>(17)] = external <init>(17)(17)
+                            UIdentifier (Identifier (A)) [UIdentifier (Identifier (A))]
+                            USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: A) [<init>] = external <init>(17)(17)
+                            ULiteralExpression (value = 17) [17] = 17
+                UDeclarationsExpression [var x: int = -a.mutableProp] = Undetermined
+                    ULocalVariable (name = x) [var x: int = -a.mutableProp]
+                        UPrefixExpression (operator = -) [-a.mutableProp] = Undetermined
+                            UQualifiedReferenceExpression [a.mutableProp] = external mutableProp()
+                                USimpleNameReferenceExpression (identifier = a) [a] = (var a = external <init>(17)(17))
+                                USimpleNameReferenceExpression (identifier = mutableProp) [mutableProp] = external mutableProp()
+                UBinaryExpression (operator = =) [a.mutableProp = 1] = Undetermined
+                    UQualifiedReferenceExpression [a.mutableProp] = external mutableProp()
+                        USimpleNameReferenceExpression (identifier = a) [a] = (var a = external <init>(17)(17))
+                        USimpleNameReferenceExpression (identifier = mutableProp) [mutableProp] = external mutableProp()
+                    ULiteralExpression (value = 1) [1] = 1
+                UBinaryExpression (operator = +=) [a.mutableProp += x] = Undetermined
+                    UQualifiedReferenceExpression [a.mutableProp] = external mutableProp()
+                        USimpleNameReferenceExpression (identifier = a) [a] = (var a = external <init>(17)(17))
+                        USimpleNameReferenceExpression (identifier = mutableProp) [mutableProp] = external mutableProp()
+                    USimpleNameReferenceExpression (identifier = x) [x] = (var x = Undetermined)
+                UPrefixExpression (operator = ++) [++a.mutableProp] = Undetermined
+                    UQualifiedReferenceExpression [a.mutableProp] = external mutableProp()
+                        USimpleNameReferenceExpression (identifier = a) [a] = (var a = external <init>(17)(17))
+                        USimpleNameReferenceExpression (identifier = mutableProp) [mutableProp] = external mutableProp()
+                UPostfixExpression (operator = --) [a.mutableProp--] = external mutableProp()
+                    UQualifiedReferenceExpression [a.mutableProp] = external mutableProp()
+                        USimpleNameReferenceExpression (identifier = a) [a] = (var a = external <init>(17)(17))
+                        USimpleNameReferenceExpression (identifier = mutableProp) [mutableProp] = external mutableProp()
+        UMethod (name = ext) [public static final fun ext(@org.jetbrains.annotations.NotNull $this$ext: A) : void {...}]
+            UParameter (name = $this$ext) [@org.jetbrains.annotations.NotNull var $this$ext: A]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}] = external mutableProp()
+                UDeclarationsExpression [var x: int = -mutableProp] = Undetermined
+                    ULocalVariable (name = x) [var x: int = -mutableProp]
+                        UPrefixExpression (operator = -) [-mutableProp] = Undetermined
+                            USimpleNameReferenceExpression (identifier = mutableProp) [mutableProp] = external mutableProp()
+                UBinaryExpression (operator = =) [mutableProp = 1] = Undetermined
+                    USimpleNameReferenceExpression (identifier = mutableProp) [mutableProp] = external mutableProp()
+                    ULiteralExpression (value = 1) [1] = 1
+                UBinaryExpression (operator = +=) [mutableProp += x] = Undetermined
+                    USimpleNameReferenceExpression (identifier = mutableProp) [mutableProp] = external mutableProp()
+                    USimpleNameReferenceExpression (identifier = x) [x] = (var x = Undetermined)
+                UPrefixExpression (operator = ++) [++mutableProp] = Undetermined
+                    USimpleNameReferenceExpression (identifier = mutableProp) [mutableProp] = external mutableProp()
+                UPostfixExpression (operator = --) [mutableProp--] = external mutableProp()
+                    USimpleNameReferenceExpression (identifier = mutableProp) [mutableProp] = external mutableProp()
+    UClass (name = A) [public final class A {...}]
+        UField (name = privateProp) [@org.jetbrains.annotations.NotNull private var privateProp: int = 0]
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            ULiteralExpression (value = 0) [0] = 0
+        UField (name = mutableProp) [@org.jetbrains.annotations.NotNull private var mutableProp: int]
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+        UMethod (name = getMutableProp) [public final fun getMutableProp() : int = UastEmptyExpression]
+        UMethod (name = setMutableProp) [public final fun setMutableProp(@null mutableProp: int) : void = UastEmptyExpression]
+            UParameter (name = mutableProp) [@null var mutableProp: int]
+                UAnnotation (fqName = null) [@null]
+        UMethod (name = add) [public final fun add(@org.jetbrains.annotations.NotNull x: int) : int {...}]
+            UParameter (name = x) [@org.jetbrains.annotations.NotNull var x: int]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}] = Nothing
+                UDeclarationsExpression [var result: int = privateProp] = Undetermined
+                    ULocalVariable (name = result) [var result: int = privateProp]
+                        USimpleNameReferenceExpression (identifier = privateProp) [privateProp] = external privateProp()
+                UBinaryExpression (operator = =) [privateProp = x] = Undetermined
+                    USimpleNameReferenceExpression (identifier = privateProp) [privateProp] = external privateProp()
+                    USimpleNameReferenceExpression (identifier = x) [x] = Undetermined
+                UReturnExpression [return privateProp] = Nothing
+                    USimpleNameReferenceExpression (identifier = privateProp) [privateProp] = external privateProp()
+        UMethod (name = A) [public fun A(@org.jetbrains.annotations.NotNull init: int) {...}]
+            UParameter (name = init) [@org.jetbrains.annotations.NotNull var init: int]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}] = Undetermined
+                UBlockExpression [{...}] = Undetermined
+                    UBinaryExpression (operator = =) [mutableProp = init] = Undetermined
+                        USimpleNameReferenceExpression (identifier = mutableProp) [mutableProp] = external mutableProp()
+                        USimpleNameReferenceExpression (identifier = init) [init] = Undetermined

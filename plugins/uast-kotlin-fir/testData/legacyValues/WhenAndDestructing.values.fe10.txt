@@ -1,0 +1,48 @@
+UFile (package = ) [public final class WhenAndDestructingKt {...]
+    UClass (name = WhenAndDestructingKt) [public final class WhenAndDestructingKt {...}]
+        UMethod (name = getElementsAdditionalResolve) [public static final fun getElementsAdditionalResolve(@org.jetbrains.annotations.NotNull string: java.lang.String) : java.lang.String {...}]
+            UParameter (name = string) [@org.jetbrains.annotations.NotNull var string: java.lang.String]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}] = Nothing
+                UDeclarationsExpression [var arr: java.util.List<? extends java.lang.String> = listOf("1", "2")] = Undetermined
+                    ULocalVariable (name = arr) [var arr: java.util.List<? extends java.lang.String> = listOf("1", "2")]
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 2)) [listOf("1", "2")] = external listOf("1", "2")("1", "2")
+                            UIdentifier (Identifier (listOf)) [UIdentifier (Identifier (listOf))]
+                            USimpleNameReferenceExpression (identifier = listOf, resolvesTo = null) [listOf] = external listOf("1", "2")("1", "2")
+                            ULiteralExpression (value = "1") ["1"] = "1"
+                            ULiteralExpression (value = "2") ["2"] = "2"
+                USwitchExpression [switch (string)  {...] = Nothing
+                    USimpleNameReferenceExpression (identifier = string) [string] = Undetermined
+                    UExpressionList (when) [    "aaaa" -> {...    ] = Nothing
+                        USwitchClauseExpressionWithBody ["aaaa" -> {...] = Undetermined
+                            ULiteralExpression (value = "aaaa") ["aaaa"] = "aaaa"
+                            UExpressionList (when_entry) [{...] = Undetermined
+                                UYieldExpression [yield return "bindingContext"] = UYieldResult(Nothing)
+                                    UReturnExpression [return "bindingContext"] = Nothing
+                                        ULiteralExpression (value = "bindingContext") ["bindingContext"] = "bindingContext"
+                        USwitchClauseExpressionWithBody ["empty-switch" -> {...] = Undetermined
+                            ULiteralExpression (value = "empty-switch") ["empty-switch"] = "empty-switch"
+                            UExpressionList (when_entry) [{...] = Undetermined
+                        USwitchClauseExpressionWithBody [ -> {...] = Undetermined
+                            UExpressionList (when_entry) [{...] = Undetermined
+                                UDeclarationsExpression [@null var var837f2350: <ErrorType> = arr...@null var statementFilter: java.lang.String = var837f2350.<anonymous class>()] = Undetermined
+                                    ULocalVariable (name = var837f2350) [@null var var837f2350: <ErrorType> = arr]
+                                        UAnnotation (fqName = null) [@null]
+                                        USimpleNameReferenceExpression (identifier = arr) [arr] = (var arr = external listOf("1", "2")("1", "2"))
+                                    ULocalVariable (name = bindingContext) [@null var bindingContext: java.lang.String = var837f2350.<anonymous class>()]
+                                        UAnnotation (fqName = null) [@null]
+                                        UQualifiedReferenceExpression [var837f2350.<anonymous class>()] = external <anonymous class>()()
+                                            USimpleNameReferenceExpression (identifier = var837f2350) [var837f2350] = external var837f2350()
+                                            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [<anonymous class>()] = external <anonymous class>()()
+                                                UIdentifier (Identifier (component1)) [UIdentifier (Identifier (component1))]
+                                                USimpleNameReferenceExpression (identifier = <anonymous class>, resolvesTo = null) [<anonymous class>] = external <anonymous class>()()
+                                    ULocalVariable (name = statementFilter) [@null var statementFilter: java.lang.String = var837f2350.<anonymous class>()]
+                                        UAnnotation (fqName = null) [@null]
+                                        UQualifiedReferenceExpression [var837f2350.<anonymous class>()] = external <anonymous class>()()
+                                            USimpleNameReferenceExpression (identifier = var837f2350) [var837f2350] = external var837f2350()
+                                            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [<anonymous class>()] = external <anonymous class>()()
+                                                UIdentifier (Identifier (component2)) [UIdentifier (Identifier (component2))]
+                                                USimpleNameReferenceExpression (identifier = <anonymous class>, resolvesTo = null) [<anonymous class>] = external <anonymous class>()()
+                                UYieldExpression [yield return bindingContext] = UYieldResult(Nothing)
+                                    UReturnExpression [return bindingContext] = Nothing
+                                        USimpleNameReferenceExpression (identifier = bindingContext) [bindingContext] = (var bindingContext = external <anonymous class>()())

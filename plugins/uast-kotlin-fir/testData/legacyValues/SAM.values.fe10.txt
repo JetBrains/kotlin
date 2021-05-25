@@ -1,0 +1,180 @@
+UFile (package = ) [import java.lang.Thread...]
+    UImportStatement (isOnDemand = false) [import java.lang.Thread]
+    UImportStatement (isOnDemand = false) [import java.lang.Runnable]
+    UImportStatement (isOnDemand = false) [import java.util.concurrent.Callable]
+    UImportStatement (isOnDemand = false) [import java.util.function.Supplier]
+    UClass (name = SAMKt) [public final class SAMKt {...}]
+        UField (name = notSam) [@org.jetbrains.annotations.NotNull private static final var notSam: kotlin.jvm.functions.Function0<kotlin.Unit> = { ...}]
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            ULambdaExpression [{ ...}] = Undetermined
+                UBlockExpression [{...}] = Undetermined
+        UField (name = foo) [@org.jetbrains.annotations.NotNull private static var foo: java.lang.Runnable = { ...}]
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            ULambdaExpression [{ ...}] = Undetermined
+                UBlockExpression [{...}] = Undetermined
+        UField (name = baz) [@org.jetbrains.annotations.NotNull private static final var baz: java.lang.Runnable = java.lang.Runnable({ ...})]
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UQualifiedReferenceExpression [java.lang.Runnable({ ...})] = external Runnable({
+
+})(Undetermined)
+                UQualifiedReferenceExpression [java.lang] = external lang()
+                    USimpleNameReferenceExpression (identifier = java) [java] = external java()
+                    USimpleNameReferenceExpression (identifier = lang) [lang] = external lang()
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [Runnable({ ...})] = external Runnable({
+
+})(Undetermined)
+                    UIdentifier (Identifier (Runnable)) [UIdentifier (Identifier (Runnable))]
+                    USimpleNameReferenceExpression (identifier = Runnable, resolvesTo = PsiClass: Runnable) [Runnable] = external Runnable({
+
+})(Undetermined)
+                    ULambdaExpression [{ ...}] = Undetermined
+                        UBlockExpression [{...}] = Undetermined
+        UMethod (name = getNotSam) [public static final fun getNotSam() : kotlin.jvm.functions.Function0<kotlin.Unit> = UastEmptyExpression]
+        UMethod (name = getFoo) [public static final fun getFoo() : java.lang.Runnable = UastEmptyExpression]
+        UMethod (name = setFoo) [public static final fun setFoo(@org.jetbrains.annotations.NotNull foo: java.lang.Runnable) : void = UastEmptyExpression]
+            UParameter (name = foo) [@org.jetbrains.annotations.NotNull var foo: java.lang.Runnable]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+        UMethod (name = bar) [public static final fun bar() : java.lang.Runnable {...}]
+            UBlockExpression [{...}] = Nothing
+                UBinaryExpression (operator = =) [foo = { ...}] = Undetermined
+                    USimpleNameReferenceExpression (identifier = foo) [foo] = external foo()
+                    ULambdaExpression [{ ...}] = Undetermined
+                        UBlockExpression [{...}] = Undetermined
+                UDeclarationsExpression [var a: java.lang.Runnable = { ...} as java.lang.Runnable] = Undetermined
+                    ULocalVariable (name = a) [var a: java.lang.Runnable = { ...} as java.lang.Runnable]
+                        UBinaryExpressionWithType [{ ...} as java.lang.Runnable] = Undetermined
+                            ULambdaExpression [{ ...}] = Undetermined
+                                UBlockExpression [{...}] = Undetermined
+                            UTypeReferenceExpression (name = java.lang.Runnable) [java.lang.Runnable] = Undetermined
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [runRunnable({ ...})] = external runRunnable({
+
+})(Undetermined)
+                    UIdentifier (Identifier (runRunnable)) [UIdentifier (Identifier (runRunnable))]
+                    USimpleNameReferenceExpression (identifier = runRunnable, resolvesTo = null) [runRunnable] = external runRunnable({
+
+})(Undetermined)
+                    ULambdaExpression [{ ...}] = Undetermined
+                        UBlockExpression [{...}] = Undetermined
+                UReturnExpression [return { ...}] = Nothing
+                    ULambdaExpression [{ ...}] = Undetermined
+                        UBlockExpression [{...}] = Undetermined
+        UMethod (name = getBaz) [public static final fun getBaz() : java.lang.Runnable = UastEmptyExpression]
+        UMethod (name = runRunnable) [public static final fun runRunnable(@org.jetbrains.annotations.NotNull r: java.lang.Runnable) : error.NonExistentClass {...}]
+            UParameter (name = r) [@org.jetbrains.annotations.NotNull var r: java.lang.Runnable]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}] = Nothing
+                UReturnExpression [return <anonymous class>()] = Nothing
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [<anonymous class>()] = external <anonymous class>()()
+                        UIdentifier (Identifier (r)) [UIdentifier (Identifier (r))]
+                        USimpleNameReferenceExpression (identifier = <anonymous class>, resolvesTo = null) [<anonymous class>] = external <anonymous class>()()
+        UMethod (name = test1) [public static final fun test1() : void {...}]
+            UBlockExpression [{...}] = Undetermined
+                UDeclarationsExpression [var thread1: java.lang.Thread = <init>({ ...})] = Undetermined
+                    ULocalVariable (name = thread1) [var thread1: java.lang.Thread = <init>({ ...})]
+                        UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1)) [<init>({ ...})] = external <init>({
+    println("hello1")
+})(Undetermined)
+                            UIdentifier (Identifier (Thread)) [UIdentifier (Identifier (Thread))]
+                            USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: Thread) [<init>] = external <init>({
+    println("hello1")
+})(Undetermined)
+                            ULambdaExpression [{ ...}] = Undetermined
+                                UBlockExpression [{...}] = external println("hello1")("hello1")
+                                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [println("hello1")] = external println("hello1")("hello1")
+                                        UIdentifier (Identifier (println)) [UIdentifier (Identifier (println))]
+                                        USimpleNameReferenceExpression (identifier = println, resolvesTo = null) [println] = external println("hello1")("hello1")
+                                        ULiteralExpression (value = "hello1") ["hello1"] = "hello1"
+        UMethod (name = test2) [public static final fun test2() : void {...}]
+            UBlockExpression [{...}] = Undetermined
+                UDeclarationsExpression [var thread2: java.lang.Thread = <init>(Runnable({ ...}))] = Undetermined
+                    ULocalVariable (name = thread2) [var thread2: java.lang.Thread = <init>(Runnable({ ...}))]
+                        UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1)) [<init>(Runnable({ ...}))] = external <init>(Runnable({
+    println("hello2")
+}))(external Runnable({
+    println("hello2")
+})(Undetermined))
+                            UIdentifier (Identifier (Thread)) [UIdentifier (Identifier (Thread))]
+                            USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: Thread) [<init>] = external <init>(Runnable({
+    println("hello2")
+}))(external Runnable({
+    println("hello2")
+})(Undetermined))
+                            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [Runnable({ ...})] = external Runnable({
+    println("hello2")
+})(Undetermined)
+                                UIdentifier (Identifier (Runnable)) [UIdentifier (Identifier (Runnable))]
+                                USimpleNameReferenceExpression (identifier = Runnable, resolvesTo = PsiClass: Runnable) [Runnable] = external Runnable({
+    println("hello2")
+})(Undetermined)
+                                ULambdaExpression [{ ...}] = Undetermined
+                                    UBlockExpression [{...}] = external println("hello2")("hello2")
+                                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [println("hello2")] = external println("hello2")("hello2")
+                                            UIdentifier (Identifier (println)) [UIdentifier (Identifier (println))]
+                                            USimpleNameReferenceExpression (identifier = println, resolvesTo = null) [println] = external println("hello2")("hello2")
+                                            ULiteralExpression (value = "hello2") ["hello2"] = "hello2"
+        UMethod (name = test3) [public static final fun test3() : void {...}]
+            UBlockExpression [{...}] = external ambiguousSamAcceptor(Callable({
+    return "Callable"
+}))(external Callable({
+    return "Callable"
+})(Undetermined))
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [ambiguousSamAcceptor(Supplier({ ...}))] = external ambiguousSamAcceptor(Supplier({
+    return "Supplier"
+}))(external Supplier({
+    return "Supplier"
+})(Undetermined))
+                    UIdentifier (Identifier (ambiguousSamAcceptor)) [UIdentifier (Identifier (ambiguousSamAcceptor))]
+                    USimpleNameReferenceExpression (identifier = ambiguousSamAcceptor, resolvesTo = null) [ambiguousSamAcceptor] = external ambiguousSamAcceptor(Supplier({
+    return "Supplier"
+}))(external Supplier({
+    return "Supplier"
+})(Undetermined))
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [Supplier({ ...})] = external Supplier({
+    return "Supplier"
+})(Undetermined)
+                        UIdentifier (Identifier (Supplier)) [UIdentifier (Identifier (Supplier))]
+                        USimpleNameReferenceExpression (identifier = Supplier, resolvesTo = PsiClass: Supplier) [Supplier] = external Supplier({
+    return "Supplier"
+})(Undetermined)
+                        ULambdaExpression [{ ...}] = Undetermined
+                            UBlockExpression [{...}] = Nothing
+                                UReturnExpression [return "Supplier"] = Nothing
+                                    ULiteralExpression (value = "Supplier") ["Supplier"] = "Supplier"
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [ambiguousSamAcceptor(Callable({ ...}))] = external ambiguousSamAcceptor(Callable({
+    return "Callable"
+}))(external Callable({
+    return "Callable"
+})(Undetermined))
+                    UIdentifier (Identifier (ambiguousSamAcceptor)) [UIdentifier (Identifier (ambiguousSamAcceptor))]
+                    USimpleNameReferenceExpression (identifier = ambiguousSamAcceptor, resolvesTo = null) [ambiguousSamAcceptor] = external ambiguousSamAcceptor(Callable({
+    return "Callable"
+}))(external Callable({
+    return "Callable"
+})(Undetermined))
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [Callable({ ...})] = external Callable({
+    return "Callable"
+})(Undetermined)
+                        UIdentifier (Identifier (Callable)) [UIdentifier (Identifier (Callable))]
+                        USimpleNameReferenceExpression (identifier = Callable, resolvesTo = PsiClass: Callable) [Callable] = external Callable({
+    return "Callable"
+})(Undetermined)
+                        ULambdaExpression [{ ...}] = Undetermined
+                            UBlockExpression [{...}] = Nothing
+                                UReturnExpression [return "Callable"] = Nothing
+                                    ULiteralExpression (value = "Callable") ["Callable"] = "Callable"
+        UMethod (name = ambiguousSamAcceptor) [public static final fun ambiguousSamAcceptor(@org.jetbrains.annotations.NotNull s: java.util.function.Supplier<java.lang.String>) : java.lang.String {...}]
+            UParameter (name = s) [@org.jetbrains.annotations.NotNull var s: java.util.function.Supplier<java.lang.String>]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}] = Nothing
+                UReturnExpression [return TODO()] = Nothing
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [TODO()] = external TODO()()
+                        UIdentifier (Identifier (TODO)) [UIdentifier (Identifier (TODO))]
+                        USimpleNameReferenceExpression (identifier = TODO, resolvesTo = null) [TODO] = external TODO()()
+        UMethod (name = ambiguousSamAcceptor) [public static final fun ambiguousSamAcceptor(@org.jetbrains.annotations.NotNull s: java.util.concurrent.Callable<java.lang.String>) : java.lang.String {...}]
+            UParameter (name = s) [@org.jetbrains.annotations.NotNull var s: java.util.concurrent.Callable<java.lang.String>]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}] = Nothing
+                UReturnExpression [return TODO()] = Nothing
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [TODO()] = external TODO()()
+                        UIdentifier (Identifier (TODO)) [UIdentifier (Identifier (TODO))]
+                        USimpleNameReferenceExpression (identifier = TODO, resolvesTo = null) [TODO] = external TODO()()

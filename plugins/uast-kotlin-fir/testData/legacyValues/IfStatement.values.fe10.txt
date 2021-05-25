@@ -1,0 +1,12 @@
+UFile (package = ) [public final class IfStatementKt {...]
+    UClass (name = IfStatementKt) [public final class IfStatementKt {...}]
+        UMethod (name = foo) [public static final fun foo() : void {...}]
+            UBlockExpression [{...}] = Undetermined
+                UDeclarationsExpression [var x: int = if ("abc" != "def") 1 else 0] = Undetermined
+                    ULocalVariable (name = x) [var x: int = if ("abc" != "def") 1 else 0]
+                        UIfExpression [if ("abc" != "def") 1 else 0] = 1
+                            UBinaryExpression (operator = !=) ["abc" != "def"] = true
+                                ULiteralExpression (value = "abc") ["abc"] = "abc"
+                                ULiteralExpression (value = "def") ["def"] = "def"
+                            ULiteralExpression (value = 1) [1] = 1
+                            ULiteralExpression (value = 0) [0] = 0

@@ -1,0 +1,8 @@
+UFile (package = ) [public final enum Style {...]
+    UClass (name = Style) [public final enum Style {...}]
+        UField (name = value) [private final var value: java.lang.String]
+        UField (name = SHEET) [public static final var SHEET: Style]
+        UMethod (name = Style) [private fun Style(value: java.lang.String) = UastEmptyExpression]
+            UParameter (name = value) [var value: java.lang.String]
+        UMethod (name = getValue) [public final fun getValue() : java.lang.String = UastEmptyExpression]
+        UMethod (name = getExitAnimation) [public abstract fun getExitAnimation() : java.lang.String = UastEmptyExpression]

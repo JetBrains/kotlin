@@ -1,0 +1,56 @@
+UFile (package = ) [public final class NonTrivialIdentifiersKt {...]
+    UClass (name = NonTrivialIdentifiersKt) [public final class NonTrivialIdentifiersKt {...}]
+        UMethod (name = main) [public static final fun main(@org.jetbrains.annotations.Nullable a: A) : void {...}]
+            UParameter (name = a) [@org.jetbrains.annotations.Nullable var a: A]
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable) [@org.jetbrains.annotations.Nullable]
+            UBlockExpression [{...}] = external invoke({
+    invoke({
+        invoke()
+    })
+})(Undetermined)
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [invoke()] = external invoke()()
+                    UIdentifier (Identifier (()) [UIdentifier (Identifier (())]
+                    USimpleNameReferenceExpression (identifier = invoke, resolvesTo = null) [invoke] = external invoke()()
+                UDeclarationsExpression [var p: A = <init>()] = Undetermined
+                    ULocalVariable (name = p) [var p: A = <init>()]
+                        UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) [<init>()] = external <init>()()
+                            UIdentifier (Identifier (A)) [UIdentifier (Identifier (A))]
+                            USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: A) [<init>] = external <init>()()
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [invoke({ ...})] = external invoke({
+    invoke({
+        invoke()
+    })
+})(Undetermined)
+                    UIdentifier (Identifier ({)) [UIdentifier (Identifier ({))]
+                    USimpleNameReferenceExpression (identifier = invoke, resolvesTo = null) [invoke] = external invoke({
+    invoke({
+        invoke()
+    })
+})(Undetermined)
+                    ULambdaExpression [{ ...}] = Undetermined
+                        UBlockExpression [{...}] = external invoke({
+    invoke()
+})(Undetermined)
+                            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [invoke({ ...})] = external invoke({
+    invoke()
+})(Undetermined)
+                                UIdentifier (Identifier (p)) [UIdentifier (Identifier (p))]
+                                USimpleNameReferenceExpression (identifier = invoke, resolvesTo = null) [invoke] = external invoke({
+    invoke()
+})(Undetermined)
+                                ULambdaExpression [{ ...}] = Undetermined
+                                    UBlockExpression [{...}] = external invoke()()
+                                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [invoke()] = external invoke()()
+                                            UIdentifier (Identifier (()) [UIdentifier (Identifier (())]
+                                            USimpleNameReferenceExpression (identifier = invoke, resolvesTo = null) [invoke] = external invoke()()
+    UClass (name = A) [public final class A {...}]
+        UMethod (name = invoke) [public final fun invoke() : void {...}]
+            UBlockExpression [{...}] = external invoke()()
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [invoke()] = external invoke()()
+                    UIdentifier (Identifier (()) [UIdentifier (Identifier (())]
+                    USimpleNameReferenceExpression (identifier = invoke, resolvesTo = null) [invoke] = external invoke()()
+        UMethod (name = invoke) [public final fun invoke(@org.jetbrains.annotations.NotNull f: kotlin.jvm.functions.Function0<kotlin.Unit>) : void {...}]
+            UParameter (name = f) [@org.jetbrains.annotations.NotNull var f: kotlin.jvm.functions.Function0<kotlin.Unit>]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}] = Undetermined
+        UMethod (name = A) [public fun A() = UastEmptyExpression]

@@ -1,0 +1,50 @@
+UFile (package = ) [public final class ReifiedResolveKt {...]
+    UClass (name = ReifiedResolveKt) [public final class ReifiedResolveKt {...}]
+        UMethod (name = bar) [public static final fun bar(@org.jetbrains.annotations.NotNull init: kotlin.jvm.functions.Function1<? super T,kotlin.Unit>) : T {...}]
+            UParameter (name = init) [@org.jetbrains.annotations.NotNull var init: kotlin.jvm.functions.Function1<? super T,kotlin.Unit> = { ...}]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+                ULambdaExpression [{ ...}] = Undetermined
+                    UBlockExpression [{...}] = Undetermined
+            UBlockExpression [{...}] = external TODO("message")("message")
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [TODO("message")] = external TODO("message")("message")
+                    UIdentifier (Identifier (TODO)) [UIdentifier (Identifier (TODO))]
+                    USimpleNameReferenceExpression (identifier = TODO, resolvesTo = null) [TODO] = external TODO("message")("message")
+                    ULiteralExpression (value = "message") ["message"] = "message"
+        UMethod (name = resolve) [public static final fun resolve() : void {...}]
+            UBlockExpression [{...}] = Undetermined
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [foo()] = external foo()()
+                    UIdentifier (Identifier (foo)) [UIdentifier (Identifier (foo))]
+                    USimpleNameReferenceExpression (identifier = foo, resolvesTo = null) [foo] = external foo()()
+                UDeclarationsExpression [var x: java.lang.String = foo()] = Undetermined
+                    ULocalVariable (name = x) [var x: java.lang.String = foo()]
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [foo()] = external foo()()
+                            UIdentifier (Identifier (foo)) [UIdentifier (Identifier (foo))]
+                            USimpleNameReferenceExpression (identifier = foo, resolvesTo = null) [foo] = external foo()()
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [bar()] = external bar()()
+                    UIdentifier (Identifier (bar)) [UIdentifier (Identifier (bar))]
+                    USimpleNameReferenceExpression (identifier = bar, resolvesTo = null) [bar] = external bar()()
+                UDeclarationsExpression [var y: java.lang.String = bar()] = Undetermined
+                    ULocalVariable (name = y) [var y: java.lang.String = bar()]
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [bar()] = external bar()()
+                            UIdentifier (Identifier (bar)) [UIdentifier (Identifier (bar))]
+                            USimpleNameReferenceExpression (identifier = bar, resolvesTo = null) [bar] = external bar()()
+                UDeclarationsExpression [var z: java.util.List<? extends java.lang.String> = listOf("foo").filterIsInstance()] = Undetermined
+                    ULocalVariable (name = z) [var z: java.util.List<? extends java.lang.String> = listOf("foo").filterIsInstance()]
+                        UQualifiedReferenceExpression [listOf("foo").filterIsInstance()] = external filterIsInstance()()
+                            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [listOf("foo")] = external listOf("foo")("foo")
+                                UIdentifier (Identifier (listOf)) [UIdentifier (Identifier (listOf))]
+                                USimpleNameReferenceExpression (identifier = listOf, resolvesTo = null) [listOf] = external listOf("foo")("foo")
+                                ULiteralExpression (value = "foo") ["foo"] = "foo"
+                            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [filterIsInstance()] = external filterIsInstance()()
+                                UIdentifier (Identifier (filterIsInstance)) [UIdentifier (Identifier (filterIsInstance))]
+                                USimpleNameReferenceExpression (identifier = filterIsInstance, resolvesTo = null) [filterIsInstance] = external filterIsInstance()()
+        UMethod (name = foo) [static fun foo(@org.jetbrains.annotations.NotNull init: kotlin.jvm.functions.Function1<? super T,? extends kotlin.Unit>) : T {...}]
+            UParameter (name = init) [@org.jetbrains.annotations.NotNull var init: kotlin.jvm.functions.Function1<? super T,? extends kotlin.Unit> = { ...}]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+                ULambdaExpression [{ ...}] = Undetermined
+                    UBlockExpression [{...}] = Undetermined
+            UBlockExpression [{...}] = external TODO("message")("message")
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [TODO("message")] = external TODO("message")("message")
+                    UIdentifier (Identifier (TODO)) [UIdentifier (Identifier (TODO))]
+                    USimpleNameReferenceExpression (identifier = TODO, resolvesTo = null) [TODO] = external TODO("message")("message")
+                    ULiteralExpression (value = "message") ["message"] = "message"

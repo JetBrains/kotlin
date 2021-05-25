@@ -1,0 +1,30 @@
+UFile (package = ) [public final class InnerNonFixedTypeVariableKt {...]
+    UClass (name = InnerNonFixedTypeVariableKt) [public final class InnerNonFixedTypeVariableKt {...}]
+        UMethod (name = test) [public static final fun test(@org.jetbrains.annotations.NotNull list: java.util.List<? extends java.lang.Object>) : void {...}]
+            UParameter (name = list) [@org.jetbrains.annotations.NotNull var list: java.util.List<? extends java.lang.Object>]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}] = external <anonymous class>(mutableSetOf(), {
+
+})(external mutableSetOf()(), Undetermined)
+                UQualifiedReferenceExpression [list.filterIsInstance().<anonymous class>(mutableSetOf(), { ...})] = external <anonymous class>(mutableSetOf(), {
+
+})(external mutableSetOf()(), Undetermined)
+                    UQualifiedReferenceExpression [list.filterIsInstance()] = external filterIsInstance()()
+                        USimpleNameReferenceExpression (identifier = list) [list] = Undetermined
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [filterIsInstance()] = external filterIsInstance()()
+                            UIdentifier (Identifier (filterIsInstance)) [UIdentifier (Identifier (filterIsInstance))]
+                            USimpleNameReferenceExpression (identifier = filterIsInstance, resolvesTo = null) [filterIsInstance] = external filterIsInstance()()
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 2)) [<anonymous class>(mutableSetOf(), { ...})] = external <anonymous class>(mutableSetOf(), {
+
+})(external mutableSetOf()(), Undetermined)
+                        UIdentifier (Identifier (mapTo)) [UIdentifier (Identifier (mapTo))]
+                        USimpleNameReferenceExpression (identifier = <anonymous class>, resolvesTo = null) [<anonymous class>] = external <anonymous class>(mutableSetOf(), {
+
+})(external mutableSetOf()(), Undetermined)
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [mutableSetOf()] = external mutableSetOf()()
+                            UIdentifier (Identifier (mutableSetOf)) [UIdentifier (Identifier (mutableSetOf))]
+                            USimpleNameReferenceExpression (identifier = mutableSetOf, resolvesTo = null) [mutableSetOf] = external mutableSetOf()()
+                        ULambdaExpression [{ ...}] = Undetermined
+                            UBlockExpression [{...}] = Undetermined
+    UClass (name = Some) [public final class Some {...}]
+        UMethod (name = Some) [public fun Some() = UastEmptyExpression]

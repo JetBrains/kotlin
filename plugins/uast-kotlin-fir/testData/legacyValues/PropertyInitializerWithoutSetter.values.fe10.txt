@@ -1,0 +1,12 @@
+UFile (package = ) [public final class PropertyInitializerWithoutSetterKt {...]
+    UClass (name = PropertyInitializerWithoutSetterKt) [public final class PropertyInitializerWithoutSetterKt {...}]
+        UField (name = withoutSetter) [@org.jetbrains.annotations.NotNull private static var withoutSetter: java.lang.String = "/sdcard"]
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            ULiteralExpression (value = "/sdcard") ["/sdcard"] = "/sdcard"
+        UMethod (name = getWithoutSetter) [public static final fun getWithoutSetter() : java.lang.String {...}]
+            UBlockExpression [{...}] = Nothing
+                UReturnExpression [return field] = Nothing
+                    USimpleNameReferenceExpression (identifier = field) [field] = external field()
+        UMethod (name = setWithoutSetter) [public static final fun setWithoutSetter(@org.jetbrains.annotations.NotNull withoutSetter: java.lang.String) : void = UastEmptyExpression]
+            UParameter (name = withoutSetter) [@org.jetbrains.annotations.NotNull var withoutSetter: java.lang.String]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]

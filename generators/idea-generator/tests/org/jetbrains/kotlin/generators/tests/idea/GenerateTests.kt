@@ -1673,6 +1673,10 @@ fun main(args: Array<String>) {
             testClass<AbstractFirLegacyUastTypesTest> {
                 model("")
             }
+
+            testClass<AbstractFirLegacyUastValuesTest> {
+                model("")
+            }
         }
 
         testGroup("plugins/uast-kotlin-fir/tests", "plugins/uast-kotlin-fir/testData") {
@@ -1691,6 +1695,10 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractFE1LegacyUastTypesTest> {
+                model("")
+            }
+
+            testClass<AbstractFE1LegacyUastValuesTest> {
                 model("")
             }
         }

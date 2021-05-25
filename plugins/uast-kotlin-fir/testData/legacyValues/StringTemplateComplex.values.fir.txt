@@ -1,0 +1,26 @@
+UFile (package = ) [public final class StringTemplateComplexKt {...]
+    UClass (name = StringTemplateComplexKt) [public final class StringTemplateComplexKt {...}]
+        UField (name = muchRecur) [private static final var muchRecur: java.lang.String = [!] UnknownKotlinExpression (STRING_TEMPLATE)]
+            [!] UnknownKotlinExpression (STRING_TEMPLATE) [[!] UnknownKotlinExpression (STRING_TEMPLATE)] = Undetermined
+        UField (name = case4) [private static final var case4: java.lang.String = [!] UnknownKotlinExpression (STRING_TEMPLATE)]
+            [!] UnknownKotlinExpression (STRING_TEMPLATE) [[!] UnknownKotlinExpression (STRING_TEMPLATE)] = Undetermined
+        UField (name = case5) [private static final var case5: java.lang.String = [!] UnknownKotlinExpression (STRING_TEMPLATE)]
+            [!] UnknownKotlinExpression (STRING_TEMPLATE) [[!] UnknownKotlinExpression (STRING_TEMPLATE)] = Undetermined
+        UField (name = literalInLiteral) [private static final var literalInLiteral: java.lang.String = [!] UnknownKotlinExpression (STRING_TEMPLATE)]
+            [!] UnknownKotlinExpression (STRING_TEMPLATE) [[!] UnknownKotlinExpression (STRING_TEMPLATE)] = Undetermined
+        UField (name = literalInLiteral2) [private static final var literalInLiteral2: java.lang.String = [!] UnknownKotlinExpression (STRING_TEMPLATE)]
+            [!] UnknownKotlinExpression (STRING_TEMPLATE) [[!] UnknownKotlinExpression (STRING_TEMPLATE)] = Undetermined
+        UField (name = empty) [private static final var empty: java.lang.String = [!] UnknownKotlinExpression (STRING_TEMPLATE)]
+            [!] UnknownKotlinExpression (STRING_TEMPLATE) [[!] UnknownKotlinExpression (STRING_TEMPLATE)] = Undetermined
+        UMethod (name = getMuchRecur) [public static final fun getMuchRecur() : java.lang.String = UastEmptyExpression]
+        UMethod (name = getCase4) [public static final fun getCase4() : java.lang.String = UastEmptyExpression]
+        UMethod (name = getCase5) [public static final fun getCase5() : java.lang.String = UastEmptyExpression]
+        UMethod (name = getLiteralInLiteral) [public static final fun getLiteralInLiteral() : java.lang.String = UastEmptyExpression]
+        UMethod (name = getLiteralInLiteral2) [public static final fun getLiteralInLiteral2() : java.lang.String = UastEmptyExpression]
+        UMethod (name = getEmpty) [public static final fun getEmpty() : java.lang.String = UastEmptyExpression]
+        UMethod (name = simpleForTemplate) [public static final fun simpleForTemplate(i: int) : java.lang.String = [!] UnknownKotlinExpression (STRING_TEMPLATE)]
+            UParameter (name = i) [var i: int = [!] UnknownKotlinExpression (INTEGER_CONSTANT)]
+                [!] UnknownKotlinExpression (INTEGER_CONSTANT) [[!] UnknownKotlinExpression (INTEGER_CONSTANT)] = Undetermined
+            [!] UnknownKotlinExpression (STRING_TEMPLATE) [[!] UnknownKotlinExpression (STRING_TEMPLATE)] = Undetermined
+        UMethod (name = foo) [public static final fun foo() : void = [!] UnknownKotlinExpression (BLOCK)]
+            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined

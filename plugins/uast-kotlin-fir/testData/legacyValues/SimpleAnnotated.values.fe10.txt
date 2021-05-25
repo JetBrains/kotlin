@@ -1,0 +1,19 @@
+UFile (package = ) [public final class SimpleAnnotated {...]
+    UClass (name = SimpleAnnotated) [public final class SimpleAnnotated {...}]
+        UField (name = property) [@org.jetbrains.annotations.NotNull @kotlin.SinceKotlin(version = "1.0") private final var property: java.lang.String = "Mary"]
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UAnnotation (fqName = kotlin.SinceKotlin) [@kotlin.SinceKotlin(version = "1.0")]
+                UNamedExpression (name = version) [version = "1.0"] = Undetermined
+                    ULiteralExpression (value = "1.0") ["1.0"] = "1.0"
+            ULiteralExpression (value = "Mary") ["Mary"] = "Mary"
+        UMethod (name = method) [@kotlin.Suppress(names = "abc")...}]
+            UAnnotation (fqName = kotlin.Suppress) [@kotlin.Suppress(names = "abc")]
+                UNamedExpression (name = names) [names = "abc"] = Undetermined
+                    ULiteralExpression (value = "abc") ["abc"] = "abc"
+            UBlockExpression [{...}] = external println("Hello, world!")("Hello, world!")
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [println("Hello, world!")] = external println("Hello, world!")("Hello, world!")
+                    UIdentifier (Identifier (println)) [UIdentifier (Identifier (println))]
+                    USimpleNameReferenceExpression (identifier = println, resolvesTo = null) [println] = external println("Hello, world!")("Hello, world!")
+                    ULiteralExpression (value = "Hello, world!") ["Hello, world!"] = "Hello, world!"
+        UMethod (name = getProperty) [public final fun getProperty() : java.lang.String = UastEmptyExpression]
+        UMethod (name = SimpleAnnotated) [public fun SimpleAnnotated() = UastEmptyExpression]

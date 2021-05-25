@@ -1,0 +1,5 @@
+UFile (package = ) [public final class DestructuringDeclarationKt {...]
+    UClass (name = DestructuringDeclarationKt) [public final class DestructuringDeclarationKt {...}]
+        UMethod (name = foo) [public static final fun foo(data: java.lang.Object) : void = [!] UnknownKotlinExpression (BLOCK)]
+            UParameter (name = data) [var data: java.lang.Object]
+            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined

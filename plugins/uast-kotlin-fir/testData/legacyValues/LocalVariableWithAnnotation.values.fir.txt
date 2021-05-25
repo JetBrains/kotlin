@@ -1,0 +1,5 @@
+UFile (package = ) [public final class LocalVariableWithAnnotationKt {...]
+    UClass (name = LocalVariableWithAnnotationKt) [public final class LocalVariableWithAnnotationKt {...}]
+        UMethod (name = foo) [public static final fun foo() : void = [!] UnknownKotlinExpression (BLOCK)]
+            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
+    UClass (name = TestAnnotation) [public abstract annotation TestAnnotation {...}]

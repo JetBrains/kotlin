@@ -1,0 +1,23 @@
+UFile (package = ) [public final class PropertyTest {...]
+    UClass (name = PropertyTest) [public final class PropertyTest {...}]
+        UMethod (name = getStringRepresentation) [public final fun getStringRepresentation() : java.lang.String {...}]
+            UBlockExpression [{...}] = Nothing
+                UReturnExpression [return this.toString()] = Nothing
+                    UQualifiedReferenceExpression [this.toString()] = external toString()()
+                        UThisExpression (label = null) [this] = Undetermined
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [toString()] = external toString()()
+                            UIdentifier (Identifier (toString)) [UIdentifier (Identifier (toString))]
+                            USimpleNameReferenceExpression (identifier = toString, resolvesTo = null) [toString] = external toString()()
+        UMethod (name = setStringRepresentation) [public final fun setStringRepresentation(@org.jetbrains.annotations.NotNull value: java.lang.String) : void {...}]
+            UParameter (name = value) [@org.jetbrains.annotations.NotNull var value: java.lang.String]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}] = external setDataFromString(value)(Undetermined)
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [setDataFromString(value)] = external setDataFromString(value)(Undetermined)
+                    UIdentifier (Identifier (setDataFromString)) [UIdentifier (Identifier (setDataFromString))]
+                    USimpleNameReferenceExpression (identifier = setDataFromString, resolvesTo = null) [setDataFromString] = external setDataFromString(value)(Undetermined)
+                    USimpleNameReferenceExpression (identifier = value) [value] = Undetermined
+        UMethod (name = setDataFromString) [public final fun setDataFromString(@org.jetbrains.annotations.NotNull data: java.lang.String) : void {...}]
+            UParameter (name = data) [@org.jetbrains.annotations.NotNull var data: java.lang.String]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}] = Undetermined
+        UMethod (name = PropertyTest) [public fun PropertyTest() = UastEmptyExpression]

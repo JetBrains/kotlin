@@ -1,0 +1,64 @@
+UFile (package = ) [public abstract interface Callback {...]
+    UClass (name = Callback) [public abstract interface Callback {...}]
+        UMethod (name = onError) [public abstract fun onError(@org.jetbrains.annotations.NotNull throwable: java.lang.Throwable) : void = UastEmptyExpression]
+            UParameter (name = throwable) [@org.jetbrains.annotations.NotNull var throwable: java.lang.Throwable]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+    UClass (name = Model) [public final class Model {...}]
+        UMethod (name = crashMe) [public final fun crashMe(@org.jetbrains.annotations.NotNull clazz: java.lang.Class<T>, @org.jetbrains.annotations.NotNull factory: kotlin.jvm.functions.Function0<? extends T>) : void {...}]
+            UParameter (name = clazz) [@org.jetbrains.annotations.NotNull var clazz: java.lang.Class<T>]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UParameter (name = factory) [@org.jetbrains.annotations.NotNull var factory: kotlin.jvm.functions.Function0<? extends T>]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}] = Nothing
+                UThrowExpression [throw <init>()] = Nothing
+                    UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) [<init>()] = external <init>()()
+                        UIdentifier (Identifier (UnsupportedOperationException)) [UIdentifier (Identifier (UnsupportedOperationException))]
+                        USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: UnsupportedOperationException) [<init>] = external <init>()()
+        UMethod (name = Model) [public fun Model() {...}]
+            UBlockExpression [{...}] = external crashMe(Callback.java, {
+    return anonymous object : Callback {
+                    override fun onError(throwable: Throwable) {
+                        throw UnsupportedOperationException("")
+                    }
+                }
+})(external java(), Undetermined)
+                UBlockExpression [{...}] = external crashMe(Callback.java, {
+    return anonymous object : Callback {
+                    override fun onError(throwable: Throwable) {
+                        throw UnsupportedOperationException("")
+                    }
+                }
+})(external java(), Undetermined)
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 2)) [crashMe(Callback.java, { ...})] = external crashMe(Callback.java, {
+    return anonymous object : Callback {
+                    override fun onError(throwable: Throwable) {
+                        throw UnsupportedOperationException("")
+                    }
+                }
+})(external java(), Undetermined)
+                        UIdentifier (Identifier (crashMe)) [UIdentifier (Identifier (crashMe))]
+                        USimpleNameReferenceExpression (identifier = crashMe, resolvesTo = null) [crashMe] = external crashMe(Callback.java, {
+    return anonymous object : Callback {
+                    override fun onError(throwable: Throwable) {
+                        throw UnsupportedOperationException("")
+                    }
+                }
+})(external java(), Undetermined)
+                        UQualifiedReferenceExpression [Callback.java] = external java()
+                            UClassLiteralExpression [Callback] = Callback
+                            USimpleNameReferenceExpression (identifier = java) [java] = external java()
+                        ULambdaExpression [{ ...}] = Undetermined
+                            UBlockExpression [{...}] = Nothing
+                                UReturnExpression [return anonymous object : Callback {...            }] = Nothing
+                                    UObjectLiteralExpression [anonymous object : Callback {...            }] = Undetermined
+                                        UClass (name = null) [final class null : Callback {...}]
+                                            UMethod (name = onError) [public fun onError(@org.jetbrains.annotations.NotNull throwable: java.lang.Throwable) : void {...}]
+                                                UParameter (name = throwable) [@org.jetbrains.annotations.NotNull var throwable: java.lang.Throwable]
+                                                    UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+                                                UBlockExpression [{...}] = Nothing
+                                                    UThrowExpression [throw <init>("")] = Nothing
+                                                        UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1)) [<init>("")] = external <init>("")("")
+                                                            UIdentifier (Identifier (UnsupportedOperationException)) [UIdentifier (Identifier (UnsupportedOperationException))]
+                                                            USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: UnsupportedOperationException) [<init>] = external <init>("")("")
+                                                            ULiteralExpression (value = "") [""] = ""
+                                            UMethod (name = ) [private fun () = UastEmptyExpression]
