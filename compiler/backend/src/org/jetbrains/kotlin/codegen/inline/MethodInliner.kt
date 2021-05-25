@@ -425,10 +425,10 @@ class MethodInliner(
                 if (DEFAULT_LAMBDA_FAKE_CALL == owner) {
                     val index = name.substringAfter(DEFAULT_LAMBDA_FAKE_CALL).toInt()
                     val lambda = getFunctionalArgumentIfExists(index) as DefaultLambda
-                    lambda.parameterOffsetsInDefault.zip(lambda.capturedVars).asReversed().forEach { (_, captured) ->
-                        val originalBoundReceiverType = lambda.originalBoundReceiverType
-                        if (lambda.isBoundCallableReference && AsmUtil.isPrimitive(originalBoundReceiverType)) {
-                            StackValue.onStack(originalBoundReceiverType!!).put(captured.type, InstructionAdapter(this))
+                    for (captured in lambda.capturedVars.asReversed()) {
+                        lambda.originalBoundReceiverType?.let {
+                            // The receiver is the only captured value; it needs to be boxed.
+                            StackValue.onStack(it).put(captured.type, InstructionAdapter(this))
                         }
                         super.visitFieldInsn(
                             Opcodes.PUTSTATIC,

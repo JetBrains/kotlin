@@ -440,8 +440,6 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                 paramIndex,
                 ValueKind.DEFAULT_LAMBDA_CAPTURED_PARAMETER
             )
-
-            defaultLambda.parameterOffsetsInDefault.add(invocationParamBuilder.nextParameterOffset)
         }
     }
 
