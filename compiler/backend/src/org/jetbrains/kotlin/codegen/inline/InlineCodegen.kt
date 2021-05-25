@@ -48,7 +48,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     protected val jvmSignature: JvmMethodSignature,
     private val typeParameterMappings: TypeParameterMappings<*>,
     protected val sourceCompiler: SourceCompilerForInline,
-    private val reifiedTypeInliner: ReifiedTypeInliner<*>
+    protected val reifiedTypeInliner: ReifiedTypeInliner<*>
 ) {
     init {
         assert(InlineUtil.isInline(functionDescriptor)) {
@@ -193,21 +193,27 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                 ?: error("No stack value for continuation parameter of suspend function")
     }
 
+    protected fun rememberClosure(parameterType: Type, index: Int, lambdaInfo: LambdaInfo) {
+        val closureInfo = invocationParamBuilder.addNextValueParameter(parameterType, true, null, index)
+        closureInfo.functionalArgument = lambdaInfo
+        expressionMap[closureInfo.index] = lambdaInfo
+    }
+
     private fun inlineCall(nodeAndSmap: SMAPAndMethodNode, inlineDefaultLambda: Boolean): InlineResult {
         assert(delayedHiddenWriting == null) { "'putHiddenParamsIntoLocals' should be called after 'processAndPutHiddenParameters(true)'" }
+
         val node = nodeAndSmap.node
         if (inlineDefaultLambda) {
             for (lambda in extractDefaultLambdas(node)) {
                 invocationParamBuilder.buildParameters().getParameterByDeclarationSlot(lambda.offset).functionalArgument = lambda
                 val prev = expressionMap.put(lambda.offset, lambda)
                 assert(prev == null) { "Lambda with offset ${lambda.offset} already exists: $prev" }
+                lambda.generateLambdaBody(sourceCompiler, reifiedTypeInliner)
+                rememberCapturedForDefaultLambda(lambda)
             }
         }
-        val reificationResult = reifiedTypeInliner.reifyInstructions(node)
-        generateClosuresBodies()
 
-        //through generation captured parameters will be added to invocationParamBuilder
-        putClosureParametersOnStack()
+        val reificationResult = reifiedTypeInliner.reifyInstructions(node)
 
         val parameters = invocationParamBuilder.buildParameters()
 
@@ -340,14 +346,6 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         }
     }
 
-    private fun generateClosuresBodies() {
-        for (info in expressionMap.values) {
-            if (info is LambdaInfo) {
-                info.generateLambdaBody(sourceCompiler, reifiedTypeInliner)
-            }
-        }
-    }
-
     protected fun putArgumentOrCapturedToLocalVal(
         jvmKotlinType: JvmKotlinType,
         stackValue: StackValue,
@@ -431,19 +429,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         }
     }
 
-    private fun putClosureParametersOnStack() {
-        for (next in expressionMap.values) {
-            if (next is LambdaInfo) {
-                // Closure parameters for bound references have already been generated in between other arguments.
-                if (next is ExpressionLambda && next.isBoundCallableReference) continue
-                putClosureParametersOnStack(next)
-            }
-        }
-    }
-
-    protected abstract fun putClosureParametersOnStack(next: LambdaInfo)
-
-    protected fun rememberCapturedForDefaultLambda(defaultLambda: DefaultLambda) {
+    private fun rememberCapturedForDefaultLambda(defaultLambda: DefaultLambda) {
         for ((paramIndex, captured) in defaultLambda.capturedVars.withIndex()) {
             putArgumentOrCapturedToLocalVal(
                 JvmKotlinType(captured.type),
@@ -458,7 +444,6 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
             defaultLambda.parameterOffsetsInDefault.add(invocationParamBuilder.nextParameterOffset)
         }
     }
-
 
     protected fun processDefaultMaskOrMethodHandler(value: StackValue, kind: ValueKind): Boolean {
         if (kind !== ValueKind.DEFAULT_MASK && kind !== ValueKind.METHOD_HANDLE_IN_DEFAULT) {

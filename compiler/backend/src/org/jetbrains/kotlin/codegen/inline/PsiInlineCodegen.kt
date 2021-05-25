@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.inline.InlineUtil.isInlinableParameterExpression
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -72,6 +71,17 @@ class PsiInlineCodegen(
         }
         try {
             val registerLineNumber = registerLineNumberAfterwards(resolvedCall)
+            for (info in expressionMap.values) {
+                if (info is PsiExpressionLambda) {
+                    // Can't be done immediately in `rememberClosure` for some reason:
+                    info.generateLambdaBody(sourceCompiler, reifiedTypeInliner)
+                    // Requires `generateLambdaBody` first if the closure is non-empty (for bound callable references,
+                    // or indeed any callable references, it *is* empty, so this was done in `rememberClosure`):
+                    if (!info.isBoundCallableReference) {
+                        putClosureParametersOnStack(info, null)
+                    }
+                }
+            }
             performInline(resolvedCall?.typeArguments?.keys?.toList(), callDefault, callDefault, codegen.typeSystem, registerLineNumber)
         } finally {
             state.globalInlineContext.exitFromInlining()
@@ -102,31 +112,6 @@ class PsiInlineCodegen(
         delayedHiddenWriting = recordParameterValueInLocalVal(justProcess, false, *hiddenParameters.toTypedArray())
     }
 
-    var activeLambda: LambdaInfo? = null
-        private set
-
-    override fun putClosureParametersOnStack(next: LambdaInfo) {
-        activeLambda = next
-        when (next) {
-            is PsiExpressionLambda -> {
-                val receiverValue = next.boundReceiver?.let { boundReceiver ->
-                    val receiver = codegen.generateReceiverValue(boundReceiver, false)
-                    val receiverKotlinType = receiver.kotlinType
-                    val boxedReceiver =
-                        if (receiverKotlinType != null)
-                            DescriptorAsmUtil.boxType(receiver.type, receiverKotlinType, state.typeMapper)
-                        else
-                            AsmUtil.boxType(receiver.type)
-                    StackValue.coercion(receiver, boxedReceiver, receiverKotlinType)
-                }
-                codegen.pushClosureOnStack(next.classDescriptor, true, this, receiverValue)
-            }
-            is DefaultLambda -> rememberCapturedForDefaultLambda(next)
-            else -> throw RuntimeException("Unknown lambda: $next")
-        }
-        activeLambda = null
-    }
-
     /*lambda or callable reference*/
     private fun isInliningParameter(expression: KtExpression, valueParameterDescriptor: ValueParameterDescriptor): Boolean {
         //TODO deparenthesize typed
@@ -147,11 +132,7 @@ class PsiInlineCodegen(
         }
 
         if (isInliningParameter(argumentExpression, valueParameterDescriptor)) {
-            val lambdaInfo = rememberClosure(argumentExpression, parameterType.type, valueParameterDescriptor)
-            if (lambdaInfo.boundReceiver != null) {
-                // Has to be done immediately to preserve evaluation order.
-                putClosureParametersOnStack(lambdaInfo)
-            }
+            rememberClosure(argumentExpression, parameterType.type, valueParameterDescriptor)
         } else {
             val value = codegen.gen(argumentExpression)
             val kind = when {
@@ -170,7 +151,7 @@ class PsiInlineCodegen(
     private fun isCallSiteIsSuspend(descriptor: ValueParameterDescriptor): Boolean =
         state.bindingContext[CodegenBinding.CALL_SITE_IS_SUSPEND_FOR_CROSSINLINE_LAMBDA, descriptor] == true
 
-    private fun rememberClosure(expression: KtExpression, type: Type, parameter: ValueParameterDescriptor): PsiExpressionLambda {
+    private fun rememberClosure(expression: KtExpression, type: Type, parameter: ValueParameterDescriptor) {
         val ktLambda = KtPsiUtil.deparenthesize(expression)
         assert(isInlinableParameterExpression(ktLambda)) { "Couldn't find inline expression in ${expression.text}" }
 
@@ -179,13 +160,31 @@ class PsiInlineCodegen(
             JvmCodegenUtil.getBoundCallableReferenceReceiver(resolvedCall)
         } else null
 
-        return PsiExpressionLambda(
-            ktLambda!!, state.typeMapper, state.languageVersionSettings, parameter.isCrossinline, boundReceiver
-        ).also { lambda ->
-            val closureInfo = invocationParamBuilder.addNextValueParameter(type, true, null, parameter.index)
-            closureInfo.functionalArgument = lambda
-            expressionMap[closureInfo.index] = lambda
+        val lambda = PsiExpressionLambda(
+            ktLambda!!, state.typeMapper, state.languageVersionSettings, parameter.isCrossinline, boundReceiver != null
+        )
+        rememberClosure(type, parameter.index, lambda)
+        if (boundReceiver != null) {
+            // Has to be done immediately to preserve evaluation order.
+            val receiver = codegen.generateReceiverValue(boundReceiver, false)
+            val receiverKotlinType = receiver.kotlinType
+            val boxedReceiver =
+                if (receiverKotlinType != null)
+                    DescriptorAsmUtil.boxType(receiver.type, receiverKotlinType, state.typeMapper)
+                else
+                    AsmUtil.boxType(receiver.type)
+            val receiverValue = StackValue.coercion(receiver, boxedReceiver, receiverKotlinType)
+            putClosureParametersOnStack(lambda, receiverValue)
         }
+    }
+
+    var activeLambda: LambdaInfo? = null
+        private set
+
+    private fun putClosureParametersOnStack(next: PsiExpressionLambda, receiverValue: StackValue?) {
+        activeLambda = next
+        codegen.pushClosureOnStack(next.classDescriptor, true, this, receiverValue)
+        activeLambda = null
     }
 
     override fun putValueIfNeeded(parameterType: JvmKotlinType, value: StackValue, kind: ValueKind, parameterIndex: Int) {
@@ -231,11 +230,8 @@ class PsiExpressionLambda(
     private val typeMapper: KotlinTypeMapper,
     private val languageVersionSettings: LanguageVersionSettings,
     isCrossInline: Boolean,
-    val boundReceiver: ReceiverValue?
-) : ExpressionLambda(isCrossInline) {
     override val isBoundCallableReference: Boolean
-        get() = boundReceiver != null
-
+) : ExpressionLambda(isCrossInline) {
     override val lambdaClassType: Type
 
     override val invokeMethod: Method
@@ -297,6 +293,7 @@ class PsiExpressionLambda(
         isSuspend = invokeMethodDescriptor.isSuspend
     }
 
+    // This can only be computed after generating the body, hence `lazy`.
     override val capturedVars: List<CapturedParamDesc> by lazy {
         arrayListOf<CapturedParamDesc>().apply {
             val captureThis = closure.capturedOuterClassDescriptor
