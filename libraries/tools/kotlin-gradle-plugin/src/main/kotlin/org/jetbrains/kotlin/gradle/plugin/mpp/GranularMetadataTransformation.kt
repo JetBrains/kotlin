@@ -320,8 +320,7 @@ internal fun resolvableMetadataConfiguration(
                     attributes.attribute(key, allSourceSetsConfiguration.attributes.getAttribute(key)!!)
                 }
                 allSourceSetsConfiguration.attributes.keySet().forEach { copyAttribute(it) }
-                allSourceSetsConfiguration.extendsFrom.forEach { extendsFrom(it) }
-                dependencies.addAll(originalDependencies) // TODO: check if this line is redundant
+                dependencies.addAll(originalDependencies)
             }
             modifiedConfiguration!!.dependencies.add(dependency)
         }
