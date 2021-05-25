@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.completion.contributors
 
-import com.intellij.psi.JavaPsiFacade
 import org.jetbrains.kotlin.idea.completion.context.FirBasicCompletionContext
 import org.jetbrains.kotlin.idea.completion.context.FirNameReferenceRawPositionContext
 import org.jetbrains.kotlin.idea.completion.context.FirRawPositionCompletionContext
@@ -13,12 +12,6 @@ import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPackageSymbol
 import org.jetbrains.kotlin.idea.isExcludedFromAutoImport
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
-import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.platform.jvm.isJvm
-import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
-import org.jetbrains.kotlin.psi.KtExpression
 
 internal class FirPackageCompletionContributor(
     basicContext: FirBasicCompletionContext,
@@ -36,7 +29,7 @@ internal class FirPackageCompletionContributor(
                 packageName.fqName.isExcludedFromAutoImport(project, originalKtFile, originalKtFile.languageVersionSettings)
             }
             .forEach { packageSymbol ->
-                result.addElement(lookupElementFactory.createPackageLookupElement(packageSymbol.fqName))
+                result.addElement(lookupElementFactory.createPackagePartLookupElement(packageSymbol.fqName))
             }
     }
 }

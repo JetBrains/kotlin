@@ -86,6 +86,15 @@ internal class KtFirScopeProvider(
         }
     }
 
+    override fun getStaticMemberScope(symbol: KtSymbolWithMembers): KtScope {
+        val firScope = symbol.withFirForScope { fir ->
+            fir.scopeProvider.getStaticScope(fir, analysisSession.rootModuleSession, ScopeSession())
+        } ?: return KtFirEmptyMemberScope(symbol)
+        firScopeStorage.register(firScope)
+        check(firScope is FirContainingNamesAwareScope)
+        return KtFirDelegatingScopeImpl(firScope, builder, token)
+    }
+
     override fun getDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtDeclaredMemberScope = withValidityAssertion {
         declaredMemberScopeCache.getOrPut(classSymbol) {
             val firScope = classSymbol.withFirForScope {

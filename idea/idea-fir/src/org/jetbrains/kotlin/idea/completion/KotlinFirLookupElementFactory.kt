@@ -11,10 +11,12 @@ import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.completion.contributors.helpers.addDotAndInvokeCompletion
 import org.jetbrains.kotlin.idea.completion.handlers.isTextAt
 import org.jetbrains.kotlin.idea.core.asFqNameWithRootPrefixIfNeeded
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
@@ -27,6 +29,7 @@ import org.jetbrains.kotlin.idea.frontend.api.tokens.HackToForceAllowRunningAnal
 import org.jetbrains.kotlin.idea.frontend.api.tokens.hackyAllowRunningOnEdt
 import org.jetbrains.kotlin.idea.frontend.api.types.KtFunctionalType
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.miniStdLib.letIf
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTypeArgumentList
@@ -40,38 +43,50 @@ internal class KotlinFirLookupElementFactory {
     private val typeParameterLookupElementFactory = TypeParameterLookupElementFactory()
 
     fun KtAnalysisSession.createLookupElement(symbol: KtNamedSymbol): LookupElement? {
-        val elementBuilder = when (symbol) {
-            is KtFunctionSymbol -> with(functionLookupElementFactory) { createLookup(symbol) }
-            is KtVariableLikeSymbol -> with(variableLookupElementFactory) { createLookup(symbol) }
-            is KtClassLikeSymbol -> classLookupElementFactory.createLookup(symbol)
-            is KtTypeParameterSymbol -> typeParameterLookupElementFactory.createLookup(symbol)
+        return when (symbol) {
+            is KtCallableSymbol -> createCallableLookupElement(symbol, importingStrategy = detectImportStrategy(symbol), CallableInsertionStrategy.AS_CALL)
+            is KtClassLikeSymbol -> with(classLookupElementFactory) { createLookup(symbol) }
+            is KtTypeParameterSymbol -> with(typeParameterLookupElementFactory) { createLookup(symbol) }
             else -> throw IllegalArgumentException("Cannot create a lookup element for $symbol")
-        } ?: return null
-
-        return elementBuilder
-            .withPsiElement(symbol.psi) // TODO check if it is a heavy operation and should be postponed
-            .withIcon(KotlinFirIconProvider.getIconFor(symbol))
+        }
     }
 
-    fun createPackageLookupElement(packageFqName: FqName): LookupElement {
-        return LookupElementBuilder.create(PackageLookupObject(packageFqName), packageFqName.shortName().asString())
-            .withInsertHandler(QuotedNamesAwareInsertionHandler())
-            .let {
-                if (!packageFqName.parent().isRoot) {
-                    it.appendTailText(" (${packageFqName.asString()})", true)
-                } else it
+    fun KtAnalysisSession.createCallableLookupElement(
+        symbol: KtCallableSymbol,
+        importingStrategy: CallableImportStrategy,
+        insertionStrategy: CallableInsertionStrategy,
+    ): LookupElementBuilder? {
+        return when (symbol) {
+            is KtFunctionSymbol -> with(functionLookupElementFactory) { createLookup(symbol, importingStrategy, insertionStrategy) }
+            is KtVariableLikeSymbol -> with(variableLookupElementFactory) { createLookup(symbol, importingStrategy) }
+            else -> throw IllegalArgumentException("Cannot create a lookup element for $symbol")
+        }
+    }
+
+    fun createPackagePartLookupElement(packagePartFqName: FqName): LookupElement {
+        val shortName = packagePartFqName.shortName()
+        return LookupElementBuilder.create(PackagePartLookupObject(shortName), "${shortName.render()}.")
+            .withInsertHandler(PackagePartInsertionHandler)
+            .withIcon(AllIcons.Nodes.Package)
+            .letIf(!packagePartFqName.parent().isRoot) {
+                it.appendTailText("(${packagePartFqName.asString()})", true)
             }
     }
 
     fun KtAnalysisSession.createLookupElementForClassLikeSymbol(symbol: KtClassLikeSymbol, insertFqName: Boolean = true): LookupElement? {
         if (symbol !is KtNamedSymbol) return null
-        return classLookupElementFactory.createLookup(symbol, insertFqName)
-            .withPsiElement(symbol.psi) // TODO check if it is a heavy operation and should be postponed
-            .withIcon(KotlinFirIconProvider.getIconFor(symbol))
+        return with(classLookupElementFactory) { createLookup(symbol, insertFqName) }
     }
 }
 
-private sealed class CallableImportStrategy {
+private fun KtAnalysisSession.withSymbolInfo(
+    symbol: KtSymbol,
+    elementBuilder: LookupElementBuilder
+): LookupElementBuilder = elementBuilder
+    .withPsiElement(symbol.psi) // TODO check if it is a heavy operation and should be postponed
+    .withIcon(KotlinFirIconProvider.getIconFor(symbol))
+
+internal sealed class CallableImportStrategy {
     object DoNothing : CallableImportStrategy()
     data class AddImport(val nameToImport: CallableId) : CallableImportStrategy()
     data class InsertFqNameAndShorten(val callableId: CallableId) : CallableImportStrategy()
@@ -86,14 +101,12 @@ private interface KotlinLookupObject {
     val shortName: Name
 }
 
-private data class PackageLookupObject(
-    val packageFqName: FqName,
-) : KotlinLookupObject {
-    override val shortName: Name = packageFqName.shortName()
-}
+private data class PackagePartLookupObject(
+    override val shortName: Name,
+) : KotlinLookupObject
 
-
-private data class ClassifierLookupObject(override val shortName: Name, val classId: ClassId?, val insertFqName: Boolean) : KotlinLookupObject
+private data class ClassifierLookupObject(override val shortName: Name, val classId: ClassId?, val insertFqName: Boolean) :
+    KotlinLookupObject
 
 /**
  * Simplest lookup object so two lookup elements for the same function will clash.
@@ -116,30 +129,37 @@ private data class VariableLookupObject(
 ) : KotlinLookupObject
 
 class ClassLookupElementFactory {
-    fun createLookup(symbol: KtClassLikeSymbol, insertFqName: Boolean = true): LookupElementBuilder {
+    fun KtAnalysisSession.createLookup(symbol: KtClassLikeSymbol, insertFqName: Boolean = true): LookupElementBuilder {
         val name = symbol.nameOrAnonymous
         return LookupElementBuilder.create(ClassifierLookupObject(name, symbol.classIdIfNonLocal, insertFqName), name.asString())
             .withInsertHandler(ClassifierInsertionHandler)
+            .let { withSymbolInfo(symbol, it) }
     }
 }
 
 private class TypeParameterLookupElementFactory {
-    fun createLookup(symbol: KtTypeParameterSymbol): LookupElementBuilder {
-        return LookupElementBuilder.create(UniqueLookupObject(), symbol.name.asString())
+    fun KtAnalysisSession.createLookup(symbol: KtTypeParameterSymbol): LookupElementBuilder {
+        return LookupElementBuilder
+            .create(UniqueLookupObject(), symbol.name.asString())
+            .let { withSymbolInfo(symbol, it) }
     }
 }
 
 private class VariableLookupElementFactory {
-    fun KtAnalysisSession.createLookup(symbol: KtVariableLikeSymbol): LookupElementBuilder {
+    fun KtAnalysisSession.createLookup(
+        symbol: KtVariableLikeSymbol,
+        importStrategy: CallableImportStrategy = detectImportStrategy(symbol)
+    ): LookupElementBuilder {
         val lookupObject = VariableLookupObject(
             symbol.name,
-            importStrategy = detectImportStrategy(symbol)
+            importStrategy = importStrategy
         )
 
         return LookupElementBuilder.create(lookupObject, symbol.name.asString())
             .withTypeText(symbol.annotatedType.type.render(WITH_TYPE_RENDERING_OPTIONS))
             .markIfSyntheticJavaProperty(symbol)
             .withInsertHandler(VariableInsertionHandler)
+            .let { withSymbolInfo(symbol, it) }
     }
 
     private fun LookupElementBuilder.markIfSyntheticJavaProperty(symbol: KtVariableLikeSymbol): LookupElementBuilder = when (symbol) {
@@ -154,51 +174,54 @@ private class VariableLookupElementFactory {
 
     private fun buildSyntheticPropertyTailText(getterName: String, setterName: String?): String =
         if (setterName != null) "$getterName()/$setterName()" else "$getterName()"
+}
 
-    private fun detectImportStrategy(symbol: KtVariableLikeSymbol): CallableImportStrategy {
-        if (symbol !is KtKotlinPropertySymbol || symbol.dispatchType != null) return CallableImportStrategy.DoNothing
+private fun detectImportStrategy(symbol: KtCallableSymbol): CallableImportStrategy {
+    if (symbol !is KtKotlinPropertySymbol || symbol.dispatchType != null) return CallableImportStrategy.DoNothing
 
-        val propertyId = symbol.callableIdIfNonLocal ?: return CallableImportStrategy.DoNothing
+    val propertyId = symbol.callableIdIfNonLocal ?: return CallableImportStrategy.DoNothing
 
-        return if (symbol.isExtension) {
-            CallableImportStrategy.AddImport(propertyId)
-        } else {
-            CallableImportStrategy.InsertFqNameAndShorten(propertyId)
-        }
+    return if (symbol.isExtension) {
+        CallableImportStrategy.AddImport(propertyId)
+    } else {
+        CallableImportStrategy.InsertFqNameAndShorten(propertyId)
     }
 }
 
+internal enum class CallableInsertionStrategy {
+    AS_CALL,
+    AS_IDENTIFIER
+}
+
 private class FunctionLookupElementFactory {
-    fun KtAnalysisSession.createLookup(symbol: KtFunctionSymbol): LookupElementBuilder? {
+    fun KtAnalysisSession.createLookup(
+        symbol: KtFunctionSymbol,
+        importStrategy: CallableImportStrategy,
+        insertionStrategy: CallableInsertionStrategy
+    ): LookupElementBuilder? {
         val lookupObject = FunctionLookupObject(
             symbol.name,
-            importStrategy = detectImportStrategy(symbol),
+            importStrategy = importStrategy,
             inputValueArguments = symbol.valueParameters.isNotEmpty(),
             insertEmptyLambda = insertLambdaBraces(symbol),
             renderedFunctionParameters = with(ShortNamesRenderer) { renderFunctionParameters(symbol) }
         )
 
+        val insertionHandler = when (insertionStrategy) {
+            CallableInsertionStrategy.AS_CALL -> FunctionInsertionHandler
+            CallableInsertionStrategy.AS_IDENTIFIER -> QuotedNamesAwareInsertionHandler()
+        }
+
         return try {
             LookupElementBuilder.create(lookupObject, symbol.name.asString())
                 .withTailText(getTailText(symbol), true)
                 .withTypeText(symbol.annotatedType.type.render(WITH_TYPE_RENDERING_OPTIONS))
-                .withInsertHandler(FunctionInsertionHandler)
+                .withInsertHandler(insertionHandler)
+                .let { withSymbolInfo(symbol, it) }
         } catch (e: Throwable) {
             if (e is ControlFlowException) throw e
             LOG.error(e)
             null
-        }
-    }
-
-    private fun detectImportStrategy(symbol: KtFunctionSymbol): CallableImportStrategy {
-        if (symbol.dispatchType != null) return CallableImportStrategy.DoNothing
-
-        val functionFqName = symbol.callableIdIfNonLocal ?: return CallableImportStrategy.DoNothing
-
-        return if (symbol.isExtension) {
-            CallableImportStrategy.AddImport(functionFqName)
-        } else {
-            CallableImportStrategy.InsertFqNameAndShorten(functionFqName)
         }
     }
 
@@ -371,8 +394,19 @@ private object VariableInsertionHandler : InsertHandler<LookupElement> {
                 shortenReferencesForFirCompletion(targetFile, TextRange(context.startOffset, context.tailOffset))
             }
 
-            is CallableImportStrategy.DoNothing -> {}
+            is CallableImportStrategy.DoNothing -> {
+            }
         }
+    }
+}
+
+private object PackagePartInsertionHandler : InsertHandler<LookupElement> {
+    override fun handleInsert(context: InsertionContext, item: LookupElement) {
+        val lookupElement = item.`object` as PackagePartLookupObject
+        val name = lookupElement.shortName.render()
+        context.document.replaceString(context.startOffset, context.tailOffset, name)
+        context.commitDocument()
+        context.addDotAndInvokeCompletion()
     }
 }
 

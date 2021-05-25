@@ -8,14 +8,40 @@ package org.jetbrains.kotlin.idea.stubindex
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.newvfs.persistent.PersistentFS
 import com.intellij.openapi.vfs.newvfs.persistent.PersistentFSImpl
+import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
+import org.jetbrains.kotlin.idea.search.getKotlinFqName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtFile
 
 
 object PackageIndexUtil {
+    fun getJavaAndKotlinSubPackageFqNames(
+        packageFqName: FqName,
+        scope: GlobalSearchScope,
+        project: Project,
+        targetPlatform: TargetPlatform,
+        nameFilter: (Name) -> Boolean
+    ) = sequence {
+        yieldAll(getSubPackageFqNames(packageFqName, scope, project, nameFilter))
+
+        if (targetPlatform.isJvm()) {
+            val javaPackage = JavaPsiFacade.getInstance(project).findPackage(packageFqName.asString())
+            if (javaPackage != null) {
+                for (psiPackage in javaPackage.getSubPackages(scope)) {
+                    val fqName = psiPackage.getKotlinFqName() ?: continue
+                    if (nameFilter(fqName.shortName())) {
+                        yield(fqName)
+                    }
+                }
+            }
+        }
+    }
+
     @JvmStatic
     fun getSubPackageFqNames(
         packageFqName: FqName,

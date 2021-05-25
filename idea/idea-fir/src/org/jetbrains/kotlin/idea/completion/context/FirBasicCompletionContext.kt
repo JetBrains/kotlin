@@ -9,6 +9,7 @@ import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.PrefixMatcher
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.completion.KotlinFirLookupElementFactory
 import org.jetbrains.kotlin.idea.fir.low.level.api.IndexHelper
@@ -29,6 +30,7 @@ internal class FirBasicCompletionContext(
     val lookupElementFactory: KotlinFirLookupElementFactory = KotlinFirLookupElementFactory(),
 ) {
     val visibleScope = KotlinSourceFilterScope.projectSourceAndClassFiles(originalKtFile.resolveScope, project)
+    val moduleInfo: IdeaModuleInfo = originalKtFile.getModuleInfo()
 
     companion object {
         fun createFromParameters(parameters: CompletionParameters, result: CompletionResultSet): FirBasicCompletionContext? {

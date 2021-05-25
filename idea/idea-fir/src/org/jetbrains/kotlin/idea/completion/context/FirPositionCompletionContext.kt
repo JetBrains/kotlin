@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.completion.context
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.analyse
 import org.jetbrains.kotlin.idea.frontend.api.analyseInDependedAnalysisSession
@@ -23,6 +24,15 @@ internal sealed class FirNameReferencePositionContext : FirRawPositionCompletion
     abstract val nameExpression: KtSimpleNameExpression
     abstract val explicitReceiver: KtExpression?
 }
+
+internal class FirImportDirectivePositionContext(
+    override val position: PsiElement,
+    override val reference: KtSimpleNameReference,
+    override val nameExpression: KtSimpleNameExpression,
+    override val explicitReceiver: KtExpression?,
+    val importDirective: KtImportDirective,
+) : FirNameReferencePositionContext()
+
 
 internal class FirTypeNameReferencePositionContext(
     override val position: PsiElement,
@@ -68,15 +78,34 @@ internal object FirPositionCompletionContextDetector {
         val nameExpression = reference.expression.takeIf { it !is KtLabelReferenceExpression }
             ?: return FirUnknownPositionContext(position)
         val explicitReceiver = nameExpression.getReceiverExpression()
+        val parent = nameExpression.parent
 
-        return when (val parent = nameExpression.parent) {
-            is KtUserType -> {
+        return when {
+            parent is KtUserType -> {
                 detectForTypeContext(parent, position, reference, nameExpression, explicitReceiver)
+            }
+            nameExpression.isReferenceExpressionInImportDirective() -> {
+                FirImportDirectivePositionContext(
+                    position,
+                    reference,
+                    nameExpression,
+                    explicitReceiver,
+                    parent.parentOfType(withSelf = true)!!
+                )
             }
             else -> {
                 FirExpressionNameReferencePositionContext(position, reference, nameExpression, explicitReceiver)
             }
         }
+    }
+
+    private fun KtExpression.isReferenceExpressionInImportDirective() = when (val parent = parent) {
+        is KtImportDirective -> parent.importedReference == this
+        is KtDotQualifiedExpression -> {
+            val importDirective = parent.parent as? KtImportDirective
+            importDirective?.importedReference == parent
+        }
+        else -> false
     }
 
     private fun detectForTypeContext(
@@ -116,7 +145,7 @@ internal object FirPositionCompletionContextDetector {
                 positionContext.nameExpression,
                 action
             )
-            is FirUnknownPositionContext -> {
+            is FirUnknownPositionContext, is FirImportDirectivePositionContext -> {
                 analyse(basicContext.originalKtFile, action)
             }
         }

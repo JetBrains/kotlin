@@ -62,6 +62,11 @@ internal class KtFirPackageScope(
 
             KotlinTopLevelTypeAliasByPackageIndex.getInstance()[fqName.asString(), project, searchScope]
                 .mapNotNullTo(this) { it.nameAsName }
+
+            JavaPsiFacade.getInstance(project)
+                .findPackage(fqName.asString())
+                ?.getClasses(searchScope)
+                ?.mapNotNullTo(this) { it.name?.let(Name::identifier) }
         }
     }
 
@@ -74,21 +79,7 @@ internal class KtFirPackageScope(
     }
 
     override fun getPackageSymbols(nameFilter: KtScopeNameFilter): Sequence<KtPackageSymbol> = withValidityAssertion {
-        sequence {
-            PackageIndexUtil
-                .getSubPackageFqNames(fqName, searchScope, project, nameFilter)
-                .forEach {
-                    yield(builder.createPackageSymbol(it))
-                }
-
-            if (targetPlatform.isJvm()) {
-                JavaPsiFacade.getInstance(project).findPackage(fqName.asString())?.getSubPackages(searchScope)?.forEach { psiPackage ->
-                    val fqName = psiPackage.getKotlinFqName() ?: return@forEach
-                    if (nameFilter(fqName.shortName())) {
-                        yield(builder.createPackageSymbol(fqName))
-                    }
-                }
-            }
-        }
+        PackageIndexUtil.getJavaAndKotlinSubPackageFqNames(fqName, searchScope, project, targetPlatform, nameFilter)
+            .map { builder.createPackageSymbol(it) }
     }
 }

@@ -8,13 +8,10 @@ package org.jetbrains.kotlin.idea.completion.contributors
 import org.jetbrains.kotlin.idea.completion.checkers.CompletionVisibilityChecker
 import org.jetbrains.kotlin.idea.completion.context.FirBasicCompletionContext
 import org.jetbrains.kotlin.idea.completion.context.FirNameReferenceRawPositionContext
+import org.jetbrains.kotlin.idea.completion.contributors.helpers.getStaticScope
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.idea.frontend.api.types.KtClassType
-import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtExpression
 
@@ -42,11 +39,7 @@ internal open class FirClassifierCompletionContributor(
         visibilityChecker: CompletionVisibilityChecker
     ) {
         val reference = receiver.reference() ?: return
-        val scope = when (val symbol = reference.resolveToSymbol()) {
-            is KtSymbolWithMembers -> symbol.getMemberScope()
-            is KtPackageSymbol -> symbol.getPackageScope()
-            else -> return
-        }
+        val scope = getStaticScope(reference) ?: return
         scope
             .getClassifierSymbols(scopeNameFilter)
             .filter { filterClassifiers(it) }

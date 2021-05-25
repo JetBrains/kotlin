@@ -37,15 +37,14 @@ internal object SuperCallInsertionHandler : InsertHandler<LookupElement> {
         val lookupObject = item.`object` as SuperCallLookupObject
 
         replaceWithClassIdAndShorten(lookupObject, context)
-        addDot(context)
-        invokeCompletion(context)
+        context.addDotAndInvokeCompletion()
     }
 
     private fun replaceWithClassIdAndShorten(
         lookupObject: SuperCallLookupObject,
         context: InsertionContext
     ) {
-        val replaceTo = lookupObject.replaceTo  ?: return
+        val replaceTo = lookupObject.replaceTo ?: return
         context.document.replaceString(context.startOffset, context.tailOffset, replaceTo)
         context.commitDocument()
 
@@ -53,19 +52,6 @@ internal object SuperCallInsertionHandler : InsertHandler<LookupElement> {
             val targetFile = context.file as KtFile
             shortenReferencesForFirCompletion(targetFile, TextRange(context.startOffset, context.tailOffset))
         }
-    }
-
-    private fun invokeCompletion(context: InsertionContext) {
-        ApplicationManager.getApplication().invokeLater {
-            CodeCompletionHandlerBase(CompletionType.BASIC, true, false, true)
-                .invokeCompletion(context.project, context.editor)
-        }
-    }
-
-    private fun addDot(context: InsertionContext) {
-        context.document.insertString(context.tailOffset, ".")
-        context.commitDocument()
-        context.editor.caretModel.moveToOffset(context.tailOffset)
     }
 }
 

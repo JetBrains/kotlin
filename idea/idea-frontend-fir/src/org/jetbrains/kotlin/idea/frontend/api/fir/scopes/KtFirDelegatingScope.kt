@@ -79,6 +79,13 @@ internal fun FirScope.getCallableSymbols(callableNames: Collection<Name>, builde
     }
 }
 
+internal class KtFirDelegatingScopeImpl<S>(
+    override val firScope: S,
+    builder: KtSymbolByFirBuilder,
+    token: ValidityToken
+) : KtFirDelegatingScope<S>(builder, token) where S : FirContainingNamesAwareScope, S : FirScope
+
+
 internal fun FirScope.getClassifierSymbols(classLikeNames: Collection<Name>, builder: KtSymbolByFirBuilder): Sequence<KtClassifierSymbol> =
     sequence {
         classLikeNames.forEach { name ->

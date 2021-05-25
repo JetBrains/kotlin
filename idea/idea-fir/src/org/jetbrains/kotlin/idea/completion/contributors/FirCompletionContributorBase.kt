@@ -10,6 +10,8 @@ import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.PrefixMatcher
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.completion.CallableImportStrategy
+import org.jetbrains.kotlin.idea.completion.CallableInsertionStrategy
 import org.jetbrains.kotlin.idea.completion.KotlinFirLookupElementFactory
 import org.jetbrains.kotlin.idea.completion.context.FirBasicCompletionContext
 import org.jetbrains.kotlin.idea.completion.context.FirRawPositionCompletionContext
@@ -21,7 +23,6 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtExpression
@@ -60,6 +61,18 @@ internal abstract class FirCompletionContributorBase<C : FirRawPositionCompletio
                 is KtClassLikeSymbol -> createLookupElementForClassLikeSymbol(symbol, insertFqName)
                 is KtTypeParameterSymbol -> createLookupElement(symbol)
             }
+        } ?: return
+        result.addElement(lookup)
+    }
+
+    protected fun KtAnalysisSession.addCallableSymbolToCompletion(
+        symbol: KtCallableSymbol,
+        importingStrategy: CallableImportStrategy,
+        insertionStrategy: CallableInsertionStrategy,
+    ) {
+        if (symbol !is KtNamedSymbol) return
+        val lookup = with(lookupElementFactory) {
+            createCallableLookupElement(symbol, importingStrategy, insertionStrategy)
         } ?: return
         result.addElement(lookup)
     }

@@ -10,8 +10,6 @@ import com.intellij.openapi.components.service
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PsiJavaPatterns
 import com.intellij.util.ProcessingContext
-import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
-import org.jetbrains.kotlin.idea.completion.checkers.CompletionVisibilityChecker
 import org.jetbrains.kotlin.idea.completion.context.*
 import org.jetbrains.kotlin.idea.completion.context.FirBasicCompletionContext
 import org.jetbrains.kotlin.idea.completion.context.FirExpressionNameReferencePositionContext
@@ -25,7 +23,6 @@ import org.jetbrains.kotlin.idea.completion.contributors.FirClassifierCompletion
 import org.jetbrains.kotlin.idea.completion.contributors.FirKeywordCompletionContributor
 import org.jetbrains.kotlin.idea.completion.contributors.complete
 import org.jetbrains.kotlin.idea.completion.weighers.Weighers
-import org.jetbrains.kotlin.idea.fir.low.level.api.IndexHelper
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.originalKtFile
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -70,6 +67,7 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
         val classifierContributor = FirClassifierCompletionContributor(basicContext)
         val annotationsContributor = FirAnnotationCompletionContributor(basicContext)
         val packageCompletionContributor = FirPackageCompletionContributor(basicContext)
+        val importDirectivePackageMembersCompletionContributor = FirImportDirectivePackageMembersCompletionContributor(basicContext)
 
         when (positionContext) {
             is FirExpressionNameReferencePositionContext -> {
@@ -93,6 +91,11 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
 
             is FirSuperTypeCallNameReferencePositionContext -> {
                 complete(FirSuperEntryContributor(basicContext), positionContext)
+            }
+
+            is FirImportDirectivePositionContext -> {
+                complete(packageCompletionContributor, positionContext)
+                complete(importDirectivePackageMembersCompletionContributor, positionContext)
             }
 
             is FirUnknownPositionContext -> {

@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.psi.KtFile
 
 abstract class KtScopeProvider : KtAnalysisSessionComponent() {
     abstract fun getMemberScope(classSymbol: KtSymbolWithMembers): KtMemberScope
+    abstract fun getStaticMemberScope(symbol: KtSymbolWithMembers): KtScope
+
     abstract fun getDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtDeclaredMemberScope
     abstract fun getFileScope(fileSymbol: KtFileSymbol): KtDeclarationScope<KtSymbolWithDeclarations>
     abstract fun getPackageScope(packageSymbol: KtPackageSymbol): KtPackageScope
@@ -38,6 +40,9 @@ interface KtScopeProviderMixIn : KtAnalysisSessionMixIn {
 
     fun KtSymbolWithMembers.getDeclaredMemberScope(): KtDeclaredMemberScope =
         analysisSession.scopeProvider.getDeclaredMemberScope(this)
+
+    fun KtSymbolWithMembers.getStaticMemberScope(): KtScope =
+        analysisSession.scopeProvider.getStaticMemberScope(this)
 
     fun KtFileSymbol.getFileScope(): KtDeclarationScope<KtSymbolWithDeclarations> =
         analysisSession.scopeProvider.getFileScope(this)
