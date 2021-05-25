@@ -4,8 +4,6 @@
 [![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](https://www.apache.org/licenses/LICENSE-2.0)
 [![Revved up by Gradle Enterprise](https://img.shields.io/badge/Revved%20up%20by-Gradle%20Enterprise-06A0CE?logo=Gradle&labelColor=02303A)](https://ge.jetbrains.com/scans?search.rootProjectNames=Kotlin)
 
-[Join Kotlin 1.5 Online Event on May 25, 2021!](https://pages.jetbrains.com/kotlin-online-event-2021/github-readme)
-
 # Kotlin Programming Language
 
 Welcome to [Kotlin](https://kotlinlang.org/)!   
