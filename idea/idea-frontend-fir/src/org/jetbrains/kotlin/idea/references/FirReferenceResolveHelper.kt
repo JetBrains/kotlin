@@ -6,18 +6,25 @@
 package org.jetbrains.kotlin.idea.references
 
 import com.intellij.psi.tree.TokenSet
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.builder.buildImport
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeOperatorAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnmatchedTypeArgumentsError
-import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
+import org.jetbrains.kotlin.fir.scopes.impl.FirExplicitSimpleImportingScope
+import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
@@ -39,6 +46,7 @@ import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.psi.psiUtil.unwrapNullability
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal object FirReferenceResolveHelper {
     fun FirResolvedTypeRef.toTargetSymbol(session: FirSession, symbolBuilder: KtSymbolByFirBuilder): KtSymbol? {
@@ -116,11 +124,18 @@ internal object FirReferenceResolveHelper {
         symbolBuilder: KtSymbolByFirBuilder,
         forQualifiedType: Boolean
     ): KtFirPackageSymbol? {
+        return symbolBuilder.createPackageSymbolIfOneExists(getQualifierSelected(expression, forQualifiedType))
+    }
+
+    private fun getQualifierSelected(
+        expression: KtSimpleNameExpression,
+        forQualifiedType: Boolean
+    ): FqName {
         val qualified = when {
             forQualifiedType -> expression.parent?.takeIf { it is KtUserType && it.referenceExpression === expression }
             else -> expression.getQualifiedExpressionForSelector()
         }
-        val fqName = when (qualified) {
+        return when (qualified) {
             null -> FqName(expression.getReferencedName())
             else -> {
                 qualified
@@ -130,7 +145,6 @@ internal object FirReferenceResolveHelper {
                     .let(::FqName)
             }
         }
-        return symbolBuilder.createPackageSymbolIfOneExists(fqName)
     }
 
     private fun KtSimpleNameExpression.isPartOfQualifiedExpression(): Boolean {
@@ -313,32 +327,30 @@ internal object FirReferenceResolveHelper {
         return listOf(symbolBuilder.buildSymbol(fir))
     }
 
+    @OptIn(ExperimentalStdlibApi::class)
     private fun getSymbolsByResolvedImport(
         expression: KtSimpleNameExpression,
-        symbolBuilder: KtSymbolByFirBuilder,
+        builder: KtSymbolByFirBuilder,
         fir: FirResolvedImport,
         session: FirSession
     ): List<KtSymbol> {
-        if (expression.isPartOfQualifiedExpression()) {
-            return listOfNotNull(getPackageSymbolFor(expression, symbolBuilder, forQualifiedType = false))
+        val fullFqName = fir.importedFqName
+        val selectedFqName = getQualifierSelected(expression, forQualifiedType = false)
+        val rawImportForSelectedFqName = buildImport {
+            importedFqName = selectedFqName
+            isAllUnder = false
         }
-
-        val classId = fir.resolvedClassId
-        if (classId != null) {
-            return listOfNotNull(classId.toTargetPsi(session, symbolBuilder))
-        }
-        val name = fir.importedName ?: return emptyList()
-        val symbolProvider = session.symbolProvider
-
-        @OptIn(ExperimentalStdlibApi::class)
+        val resolvedImport = FirImportResolveTransformer(session).transformImport(rawImportForSelectedFqName, null) as FirResolvedImport
+        val scope = FirExplicitSimpleImportingScope(listOf(resolvedImport), session, ScopeSession())
+        val selectedName = resolvedImport.importedName ?: return emptyList()
         return buildList {
-            symbolProvider.getTopLevelCallableSymbols(fir.packageFqName, name)
-                .mapTo(this) { it.fir.buildSymbol(symbolBuilder) }
-            symbolProvider
-                .getClassLikeSymbolByFqName(ClassId(fir.packageFqName, name))
-                ?.fir
-                ?.buildSymbol(symbolBuilder)
-                ?.let(::add)
+            if (selectedFqName == fullFqName) {
+                // callables cannot be used as receiver expressions in imports
+                scope.processFunctionsByName(selectedName) { add(it.fir.buildSymbol(builder)) }
+                scope.processPropertiesByName(selectedName) { add(it.fir.buildSymbol(builder)) }
+            }
+            scope.processClassifiersByName(selectedName) { addIfNotNull(it.fir.buildSymbol(builder)) }
+            builder.createPackageSymbolIfOneExists(selectedFqName)?.let(::add)
         }
     }
 
