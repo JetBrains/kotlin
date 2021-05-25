@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.context.EnclosedValueDescriptor
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -53,7 +52,7 @@ abstract class LambdaInfo(@JvmField val isCrossInline: Boolean) : FunctionalArgu
             val field = remapper.findField(FieldInsnNode(0, info.containingLambdaName, info.fieldName, ""))
                 ?: error("Captured field not found: " + info.containingLambdaName + "." + info.fieldName)
             val recapturedParamInfo = builder.addCapturedParam(field, info.fieldName)
-            if (this is ExpressionLambda && isCapturedSuspend(info)) {
+            if (info.isSuspend) {
                 recapturedParamInfo.functionalArgument = NonInlineableArgumentForInlineableParameterCalledInSuspend
             }
         }
@@ -61,14 +60,9 @@ abstract class LambdaInfo(@JvmField val isCrossInline: Boolean) : FunctionalArgu
         return builder.buildParameters()
     }
 
-
     companion object {
-        fun LambdaInfo.getCapturedParamInfo(descriptor: EnclosedValueDescriptor): CapturedParamDesc {
-            return capturedParamDesc(descriptor.fieldName, descriptor.type)
-        }
-
-        fun LambdaInfo.capturedParamDesc(fieldName: String, fieldType: Type): CapturedParamDesc {
-            return CapturedParamDesc(lambdaClassType, fieldName, fieldType)
+        fun LambdaInfo.capturedParamDesc(fieldName: String, fieldType: Type, isSuspend: Boolean): CapturedParamDesc {
+            return CapturedParamDesc(lambdaClassType, fieldName, fieldType, isSuspend)
         }
     }
 }
@@ -81,8 +75,6 @@ abstract class ExpressionLambda(isCrossInline: Boolean) : LambdaInfo(isCrossInli
         node = sourceCompiler.generateLambdaBody(this, reifiedTypeParametersUsages)
         node.node.preprocessSuspendMarkers(forInline = true, keepFakeContinuation = false)
     }
-
-    abstract fun isCapturedSuspend(desc: CapturedParamDesc): Boolean
 }
 
 abstract class DefaultLambda(
@@ -123,11 +115,11 @@ abstract class DefaultLambda(
             if (isFunctionReference || isPropertyReference)
                 constructor?.desc?.let { Type.getArgumentTypes(it) }?.singleOrNull()?.let {
                     originalBoundReceiverType = it
-                    listOf(capturedParamDesc(AsmUtil.RECEIVER_PARAMETER_NAME, AsmUtil.boxType(it)))
+                    listOf(capturedParamDesc(AsmUtil.RECEIVER_PARAMETER_NAME, AsmUtil.boxType(it), isSuspend = false))
                 } ?: emptyList()
             else
                 constructor?.findCapturedFieldAssignmentInstructions()?.map { fieldNode ->
-                    capturedParamDesc(fieldNode.name, Type.getType(fieldNode.desc))
+                    capturedParamDesc(fieldNode.name, Type.getType(fieldNode.desc), isSuspend = false)
                 }?.toList() ?: emptyList()
         isBoundCallableReference = (isFunctionReference || isPropertyReference) && capturedVars.isNotEmpty()
 

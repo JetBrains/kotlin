@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.codegen.coroutines
 
 import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.backend.common.CodegenUtil
-import org.jetbrains.kotlin.builtins.isSuspendFunctionTypeOrSubtype
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.codegen.binding.CalculatedClosure
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding.CAPTURES_CROSSINLINE_LAMBDA
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding.CLOSURE
@@ -599,21 +597,6 @@ class CoroutineCodegenForLambda private constructor(
             )
         }
     }
-}
-
-fun isCapturedSuspendLambda(closure: CalculatedClosure, name: String, bindingContext: BindingContext): Boolean {
-    for ((param, value) in closure.captureVariables) {
-        if (param !is ValueParameterDescriptor) continue
-        if (value.fieldName != name) continue
-        return param.type.isSuspendFunctionTypeOrSubtype
-    }
-    val classDescriptor = closure.capturedOuterClassDescriptor ?: return false
-    return isCapturedSuspendLambda(classDescriptor, name, bindingContext)
-}
-
-fun isCapturedSuspendLambda(classDescriptor: ClassDescriptor, name: String, bindingContext: BindingContext): Boolean {
-    val closure = bindingContext[CLOSURE, classDescriptor] ?: return false
-    return isCapturedSuspendLambda(closure, name, bindingContext)
 }
 
 private class AddEndLabelMethodVisitor(

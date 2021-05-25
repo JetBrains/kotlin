@@ -61,7 +61,7 @@ class IrInlineCodegen(
 
         when (next) {
             is IrExpressionLambdaImpl -> next.reference.getArgumentsWithIr().forEachIndexed { index, (_, ir) ->
-                putCapturedValueOnStack(ir, next.capturedParamsInDesc[index], index)
+                putCapturedValueOnStack(ir, next.capturedVars[index].type, index)
             }
             is IrDefaultLambda -> rememberCapturedForDefaultLambda(next)
             else -> throw RuntimeException("Unknown lambda: $next")
@@ -87,7 +87,7 @@ class IrInlineCodegen(
             val boundReceiver = irReference.extensionReceiver
             if (boundReceiver != null) {
                 activeLambda = lambdaInfo
-                putCapturedValueOnStack(boundReceiver, lambdaInfo.capturedParamsInDesc.single(), 0)
+                putCapturedValueOnStack(boundReceiver, lambdaInfo.capturedVars.single().type, 0)
                 activeLambda = null
             }
         } else {
@@ -185,7 +185,11 @@ class IrExpressionLambdaImpl(
     override val isBoundCallableReference: Boolean
         get() = reference.extensionReceiver != null
 
-    override val isSuspend: Boolean = function.isSuspend
+    override val isSuspend: Boolean
+        get() = reference.symbol.owner.isSuspend
+
+    override val hasDispatchReceiver: Boolean
+        get() = false
 
     // This name doesn't actually matter: it is used internally to tell this lambda's captured
     // arguments apart from any other scope's. So long as it's unique, any value is fine.
@@ -194,44 +198,29 @@ class IrExpressionLambdaImpl(
     override val lambdaClassType: Type = codegen.context.getLocalClassType(reference)
         ?: throw AssertionError("callable reference ${reference.dump()} has no name in context")
 
-    private val capturedParameters: Map<CapturedParamDesc, IrValueParameter> =
-        reference.getArgumentsWithIr().associate { (param, _) ->
-            capturedParamDesc(param.name.asString(), codegen.typeMapper.mapType(param.type)) to param
-        }
-
-    override val capturedVars: List<CapturedParamDesc> = capturedParameters.keys.toList()
-
-    private val loweredMethod = codegen.methodSignatureMapper.mapAsmMethod(function)
-
-    private val captureParameterIndices: Pair<Int, Int>
-        get() = when {
-            isBoundCallableReference -> 0 to 1 // (bound receiver, real parameters...)
-            isExtensionLambda -> 1 to capturedVars.size + 1 // (unbound receiver, captures..., real parameters...)
-            else -> 0 to capturedVars.size // (captures..., real parameters...)
-        }
-
-    val capturedParamsInDesc: List<Type> =
-        captureParameterIndices.let { (from, to) -> loweredMethod.argumentTypes.take(to).drop(from) }
-
-    override val invokeMethod: Method = loweredMethod.let {
-        val (startCapture, endCapture) = captureParameterIndices
-        Method(it.name, it.returnType, (it.argumentTypes.take(startCapture) + it.argumentTypes.drop(endCapture)).toTypedArray())
-    }
-
+    override val capturedVars: List<CapturedParamDesc>
+    override val invokeMethod: Method
     override val invokeMethodParameters: List<KotlinType?>
-        get() {
-            val allParameters = function.explicitParameters.map { it.type.toIrBasedKotlinType() }
-            val (startCapture, endCapture) = captureParameterIndices
-            return allParameters.take(startCapture) + allParameters.drop(endCapture)
-        }
-
     override val invokeMethodReturnType: KotlinType
-        get() = function.returnType.toIrBasedKotlinType()
 
-    override val hasDispatchReceiver: Boolean = false
-
-    override fun isCapturedSuspend(desc: CapturedParamDesc): Boolean =
-        capturedParameters[desc]?.let { it.isInlineParameter() && it.type.isSuspendFunctionTypeOrSubtype() } == true
+    init {
+        val asmMethod = codegen.methodSignatureMapper.mapAsmMethod(function)
+        val capturedParameters = reference.getArgumentsWithIr()
+        val (startCapture, endCapture) = when {
+            isBoundCallableReference -> 0 to 1 // (bound receiver, real parameters...)
+            isExtensionLambda -> 1 to capturedParameters.size + 1 // (unbound receiver, captures..., real parameters...)
+            else -> 0 to capturedParameters.size // (captures..., real parameters...)
+        }
+        capturedVars = capturedParameters.mapIndexed { index, (parameter, _) ->
+            val isSuspend = parameter.isInlineParameter() && parameter.type.isSuspendFunctionTypeOrSubtype()
+            capturedParamDesc(parameter.name.asString(), asmMethod.argumentTypes[startCapture + index], isSuspend)
+        }
+        val freeParameters = function.explicitParameters.let { it.take(startCapture) + it.drop(endCapture) }
+        val freeAsmParameters = asmMethod.argumentTypes.let { it.take(startCapture) + it.drop(endCapture) }
+        invokeMethod = Method(asmMethod.name, asmMethod.returnType, freeAsmParameters.toTypedArray())
+        invokeMethodParameters = freeParameters.map { it.type.toIrBasedKotlinType() }
+        invokeMethodReturnType = function.returnType.toIrBasedKotlinType()
+    }
 }
 
 class IrDefaultLambda(

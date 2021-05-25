@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.codegen.inline.coroutines
 
 import com.intellij.util.ArrayUtil
+import org.jetbrains.kotlin.builtins.isSuspendFunctionTypeOrSubtype
 import org.jetbrains.kotlin.codegen.ClassBuilder
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.coroutines.*
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
@@ -15,6 +17,7 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.org.objectweb.asm.MethodVisitor
@@ -250,7 +253,18 @@ fun FieldInsnNode.isSuspendLambdaCapturedByOuterObjectOrLambda(inliningContext: 
     while (container !is ClassDescriptor) {
         container = container.containingDeclaration ?: return false
     }
-    return isCapturedSuspendLambda(container, name, inliningContext.state.bindingContext)
+    val bindingContext = inliningContext.state.bindingContext
+    var classDescriptor: ClassDescriptor? = container
+    while (classDescriptor != null) {
+        val closure = bindingContext[CodegenBinding.CLOSURE, classDescriptor] ?: return false
+        for ((param, value) in closure.captureVariables) {
+            if (param is ValueParameterDescriptor && value.fieldName == name) {
+                return param.type.isSuspendFunctionTypeOrSubtype
+            }
+        }
+        classDescriptor = closure.capturedOuterClassDescriptor
+    }
+    return false
 }
 
 // Interpreter, that keeps track of captured functional arguments
