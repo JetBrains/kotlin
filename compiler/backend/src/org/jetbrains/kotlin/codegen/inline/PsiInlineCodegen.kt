@@ -290,7 +290,7 @@ class PsiExpressionLambda(
 
         closure = bindingContext.get(CodegenBinding.CLOSURE, classDescriptor)
             ?: throw AssertionError("null closure for lambda ${expression.text}")
-        returnLabels = InlineCodegen.getDeclarationLabels(expression, invokeMethodDescriptor).associateWith { null }
+        returnLabels = getDeclarationLabels(expression, invokeMethodDescriptor).associateWith { null }
         invokeMethod = typeMapper.mapAsmMethod(invokeMethodDescriptor)
         isSuspend = invokeMethodDescriptor.isSuspend
     }
