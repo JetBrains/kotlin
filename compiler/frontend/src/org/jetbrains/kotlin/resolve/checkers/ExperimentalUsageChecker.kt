@@ -34,6 +34,14 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.checkers.OptInNames.EXPERIMENTAL_FQ_NAMES
+import org.jetbrains.kotlin.resolve.checkers.OptInNames.OLD_EXPERIMENTAL_FQ_NAME
+import org.jetbrains.kotlin.resolve.checkers.OptInNames.OLD_USE_EXPERIMENTAL_FQ_NAME
+import org.jetbrains.kotlin.resolve.checkers.OptInNames.OPT_IN_FQ_NAME
+import org.jetbrains.kotlin.resolve.checkers.OptInNames.REQUIRES_OPT_IN_FQ_NAME
+import org.jetbrains.kotlin.resolve.checkers.OptInNames.USE_EXPERIMENTAL_ANNOTATION_CLASS
+import org.jetbrains.kotlin.resolve.checkers.OptInNames.USE_EXPERIMENTAL_FQ_NAMES
+import org.jetbrains.kotlin.resolve.checkers.OptInNames.WAS_EXPERIMENTAL_FQ_NAME
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
@@ -54,14 +62,6 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 
 class ExperimentalUsageChecker(project: Project) : CallChecker {
     private val moduleAnnotationsResolver = ModuleAnnotationsResolver.getInstance(project)
-
-    data class Experimentality(val annotationFqName: FqName, val severity: Severity, val message: String?) {
-        enum class Severity { WARNING, ERROR }
-
-        companion object {
-            val DEFAULT_SEVERITY = Severity.ERROR
-        }
-    }
 
     interface ExperimentalityDiagnostic {
         fun report(trace: BindingTrace, element: PsiElement, fqName: FqName, message: String?)
@@ -113,18 +113,6 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
     }
 
     companion object {
-        val OLD_EXPERIMENTAL_FQ_NAME = FqName("kotlin.Experimental")
-        val OLD_USE_EXPERIMENTAL_FQ_NAME = FqName("kotlin.UseExperimental")
-        val REQUIRES_OPT_IN_FQ_NAME = FqName("kotlin.RequiresOptIn")
-        val OPT_IN_FQ_NAME = FqName("kotlin.OptIn")
-
-        val EXPERIMENTAL_FQ_NAMES = setOf(OLD_EXPERIMENTAL_FQ_NAME, REQUIRES_OPT_IN_FQ_NAME)
-        val USE_EXPERIMENTAL_FQ_NAMES = setOf(OLD_USE_EXPERIMENTAL_FQ_NAME, OPT_IN_FQ_NAME)
-
-        internal val WAS_EXPERIMENTAL_FQ_NAME = FqName("kotlin.WasExperimental")
-        internal val USE_EXPERIMENTAL_ANNOTATION_CLASS = Name.identifier("markerClass")
-        internal val WAS_EXPERIMENTAL_ANNOTATION_CLASS = Name.identifier("markerClass")
-
         private val LEVEL = Name.identifier("level")
         private val MESSAGE = Name.identifier("message")
         private val WARNING_LEVEL = Name.identifier("WARNING")
@@ -329,8 +317,12 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             // Ideally, we should run full resolution (with all classifier usage checkers) on classifiers used in "-Xexperimental" and
             // "-Xuse-experimental" arguments. However, it's not easy to do this. This should be solved in the future with the support of
             // module annotations. For now, we only check deprecations because this is needed to correctly retire unneeded compiler arguments.
-            val deprecationResolver =
-                DeprecationResolver(LockBasedStorageManager("ExperimentalUsageChecker"), languageVersionSettings, CoroutineCompatibilitySupport.ENABLED, DeprecationSettings.Default)
+            val deprecationResolver = DeprecationResolver(
+                LockBasedStorageManager("ExperimentalUsageChecker"),
+                languageVersionSettings,
+                CoroutineCompatibilitySupport.ENABLED,
+                DeprecationSettings.Default
+            )
 
             // Returns true if fqName resolves to a valid opt-in requirement marker.
             fun checkAnnotation(fqName: String): Boolean {
@@ -372,7 +364,8 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
         override fun check(targetDescriptor: ClassifierDescriptor, element: PsiElement, context: ClassifierUsageCheckerContext) {
             val name = targetDescriptor.name
             if (name == OLD_EXPERIMENTAL_FQ_NAME.shortName() || name == REQUIRES_OPT_IN_FQ_NAME.shortName() ||
-                name == OLD_USE_EXPERIMENTAL_FQ_NAME.shortName() || name == OPT_IN_FQ_NAME.shortName()) {
+                name == OLD_USE_EXPERIMENTAL_FQ_NAME.shortName() || name == OPT_IN_FQ_NAME.shortName()
+            ) {
                 val fqName = targetDescriptor.fqNameSafe
                 if (fqName in EXPERIMENTAL_FQ_NAMES || fqName in USE_EXPERIMENTAL_FQ_NAMES) {
                     checkUsageOfKotlinExperimentalOrUseExperimental(element, context)
@@ -412,7 +405,8 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
         private fun checkUsageOfKotlinExperimentalOrUseExperimental(element: PsiElement, context: CheckerContext) {
             val useExperimentalFqNames = context.languageVersionSettings.getFlag(AnalysisFlags.useExperimental)
             if (REQUIRES_OPT_IN_FQ_NAME.asString() !in useExperimentalFqNames &&
-                OLD_EXPERIMENTAL_FQ_NAME.asString() !in useExperimentalFqNames) {
+                OLD_EXPERIMENTAL_FQ_NAME.asString() !in useExperimentalFqNames
+            ) {
                 context.trace.report(Errors.EXPERIMENTAL_IS_NOT_ENABLED.on(element))
             }
 

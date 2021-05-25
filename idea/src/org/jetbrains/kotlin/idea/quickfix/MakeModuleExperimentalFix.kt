@@ -24,14 +24,14 @@ import org.jetbrains.kotlin.idea.roots.invalidateProjectRoots
 import org.jetbrains.kotlin.idea.util.projectStructure.module
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
+import org.jetbrains.kotlin.resolve.checkers.OptInNames
 
 class MakeModuleExperimentalFix(
     file: KtFile,
     private val module: Module,
     private val annotationFqName: FqName
 ) : KotlinQuickFixAction<KtFile>(file) {
-    private val experimentalPrefix = if (module.toDescriptor()?.fqNameIsExisting(ExperimentalUsageChecker.REQUIRES_OPT_IN_FQ_NAME) == true)
+    private val experimentalPrefix = if (module.toDescriptor()?.fqNameIsExisting(OptInNames.REQUIRES_OPT_IN_FQ_NAME) == true)
         "opt-in"
     else
         "use-experimental"
@@ -64,7 +64,7 @@ class MakeModuleExperimentalFix(
         val facet = KotlinFacet.get(module) ?: return true
         val facetSettings = facet.configuration.settings
         val compilerSettings = facetSettings.compilerSettings ?: return true
-        return if (annotationFqName != ExperimentalUsageChecker.REQUIRES_OPT_IN_FQ_NAME && annotationFqName != ExperimentalUsageChecker.OLD_EXPERIMENTAL_FQ_NAME) {
+        return if (annotationFqName != OptInNames.REQUIRES_OPT_IN_FQ_NAME && annotationFqName != OptInNames.OLD_EXPERIMENTAL_FQ_NAME) {
             compilerArgument !in compilerSettings.additionalArgumentsAsList
         } else {
             compilerSettings.additionalArgumentsAsList.none {
@@ -80,9 +80,9 @@ class MakeModuleExperimentalFix(
             return MakeModuleExperimentalFix(
                 containingKtFile,
                 module,
-                ExperimentalUsageChecker.REQUIRES_OPT_IN_FQ_NAME.takeIf {
+                OptInNames.REQUIRES_OPT_IN_FQ_NAME.takeIf {
                     module.toDescriptor()?.fqNameIsExisting(it) == true
-                } ?: ExperimentalUsageChecker.OLD_EXPERIMENTAL_FQ_NAME
+                } ?: OptInNames.OLD_EXPERIMENTAL_FQ_NAME
             )
         }
     }

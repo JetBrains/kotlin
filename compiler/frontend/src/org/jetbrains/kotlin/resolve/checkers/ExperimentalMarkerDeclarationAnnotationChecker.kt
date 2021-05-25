@@ -52,18 +52,18 @@ class ExperimentalMarkerDeclarationAnnotationChecker(private val module: ModuleD
         for (entry in entries) {
             val annotation = trace.bindingContext.get(BindingContext.ANNOTATION, entry) ?: continue
             when (annotation.fqName) {
-                in ExperimentalUsageChecker.USE_EXPERIMENTAL_FQ_NAMES -> {
+                in OptInNames.USE_EXPERIMENTAL_FQ_NAMES -> {
                     val annotationClasses =
-                        annotation.allValueArguments[ExperimentalUsageChecker.USE_EXPERIMENTAL_ANNOTATION_CLASS]
+                        annotation.allValueArguments[OptInNames.USE_EXPERIMENTAL_ANNOTATION_CLASS]
                             .safeAs<ArrayValue>()?.value.orEmpty()
                     checkUseExperimentalUsage(annotationClasses, trace, entry)
                 }
-                in ExperimentalUsageChecker.EXPERIMENTAL_FQ_NAMES -> {
+                in OptInNames.EXPERIMENTAL_FQ_NAMES -> {
                     isAnnotatedWithExperimental = true
                 }
             }
             val annotationClass = annotation.annotationClass ?: continue
-            if (annotationClass.annotations.any { it.fqName in ExperimentalUsageChecker.EXPERIMENTAL_FQ_NAMES }) {
+            if (annotationClass.annotations.any { it.fqName in OptInNames.EXPERIMENTAL_FQ_NAMES }) {
                 val annotationUseSiteTarget = entry.useSiteTarget?.getAnnotationUseSiteTarget()
                 if (KotlinTarget.PROPERTY_GETTER in actualTargets ||
                     annotationUseSiteTarget == AnnotationUseSiteTarget.PROPERTY_GETTER

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
 import org.jetbrains.kotlin.resolve.AnnotationChecker
-import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
+import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 object ExperimentalFixesFactory : KotlinIntentionActionsFactory() {
@@ -103,8 +103,8 @@ object ExperimentalFixesFactory : KotlinIntentionActionsFactory() {
     }
 
     private val ModuleDescriptor.OPT_IN_FQ_NAME: FqName
-        get() = ExperimentalUsageChecker.OPT_IN_FQ_NAME.takeIf { fqNameIsExisting(it) }
-            ?: ExperimentalUsageChecker.OLD_USE_EXPERIMENTAL_FQ_NAME
+        get() = OptInNames.OPT_IN_FQ_NAME.takeIf { fqNameIsExisting(it) }
+            ?: OptInNames.OLD_USE_EXPERIMENTAL_FQ_NAME
 
 
     fun ModuleDescriptor.fqNameIsExisting(fqName: FqName): Boolean = resolveClassByFqName(fqName, NoLookupLocation.FROM_IDE) != null

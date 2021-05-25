@@ -40,8 +40,8 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer.Companion.withOptions
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier.*
 import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy
 import org.jetbrains.kotlin.renderer.render
-import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 import org.jetbrains.kotlin.resolve.checkers.ExplicitApiDeclarationChecker
+import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.resolve.checkers.explicitApiEnabled
 import org.jetbrains.kotlin.resolve.descriptorUtil.setSingleOverridden
 import org.jetbrains.kotlin.util.findCallableMemberBySignature
@@ -209,8 +209,8 @@ private val OVERRIDE_RENDERER = withOptions {
     renderUnabbreviatedType = false
     annotationFilter = {
         val annotations = it.type.constructor.declarationDescriptor?.annotations
-        annotations != null && (annotations.hasAnnotation(ExperimentalUsageChecker.REQUIRES_OPT_IN_FQ_NAME) ||
-                annotations.hasAnnotation(ExperimentalUsageChecker.OLD_EXPERIMENTAL_FQ_NAME))
+        annotations != null && (annotations.hasAnnotation(OptInNames.REQUIRES_OPT_IN_FQ_NAME) ||
+                annotations.hasAnnotation(OptInNames.OLD_EXPERIMENTAL_FQ_NAME))
     }
     presentableUnresolvedTypes = true
     informativeErrorType = false

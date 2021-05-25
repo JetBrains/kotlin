@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForTypeAliasObject
-import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
+import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -88,8 +88,8 @@ private fun DeclarationDescriptor.getOwnSinceKotlinVersion(): SinceKotlinValue? 
     (this as? PropertyAccessorDescriptor)?.correspondingProperty?.consider()
 
     val typeAlias = this as? TypeAliasDescriptor
-            ?: (this as? TypeAliasConstructorDescriptor)?.typeAliasDescriptor
-            ?: (this as? FakeCallableDescriptorForTypeAliasObject)?.typeAliasDescriptor
+        ?: (this as? TypeAliasConstructorDescriptor)?.typeAliasDescriptor
+        ?: (this as? FakeCallableDescriptorForTypeAliasObject)?.typeAliasDescriptor
 
     typeAlias?.consider()
 
@@ -103,9 +103,9 @@ private fun DeclarationDescriptor.getOwnSinceKotlinVersion(): SinceKotlinValue? 
 }
 
 private fun DeclarationDescriptor.loadWasExperimentalMarkerClasses(): List<ClassDescriptor> {
-    val wasExperimental = annotations.findAnnotation(ExperimentalUsageChecker.WAS_EXPERIMENTAL_FQ_NAME)
+    val wasExperimental = annotations.findAnnotation(OptInNames.WAS_EXPERIMENTAL_FQ_NAME)
     if (wasExperimental != null) {
-        val annotationClasses = wasExperimental.allValueArguments[ExperimentalUsageChecker.WAS_EXPERIMENTAL_ANNOTATION_CLASS]
+        val annotationClasses = wasExperimental.allValueArguments[OptInNames.WAS_EXPERIMENTAL_ANNOTATION_CLASS]
         if (annotationClasses is ArrayValue) {
             return annotationClasses.value.mapNotNull { annotationClass ->
                 (annotationClass as? KClassValue)?.getArgumentType(module)?.constructor?.declarationDescriptor as? ClassDescriptor
