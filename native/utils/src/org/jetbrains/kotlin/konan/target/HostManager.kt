@@ -171,11 +171,8 @@ open class HostManager(
             val hostOs = hostOs()
             val arch = hostArch()
             return when (hostOs) {
-                "osx" -> {
-                    if (arch == "aarch64") "macosArm64"
-                    else "macosX64"
-                }
-                else -> hostOs
+                "osx" -> "macos-$arch"
+                else -> "$hostOs-$arch"
             }
         }
 
