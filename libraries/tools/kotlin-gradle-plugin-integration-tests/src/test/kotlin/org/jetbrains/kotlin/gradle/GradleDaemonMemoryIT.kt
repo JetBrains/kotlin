@@ -15,12 +15,11 @@ class GradleDaemonMemoryIT : BaseGradleIT() {
     @Test
     fun testGradleDaemonMemory() {
         val project = Project("gradleDaemonMemory")
-        val VARIANT_CONSTANT = "ForTest"
-        val userVariantArg = "-Duser.variant=$VARIANT_CONSTANT"
-        val MEMORY_MAX_GROWTH_LIMIT_KB = 5000
-        val BUILD_COUNT = 10
+        val userVariantArg = "-Duser.variant=ForTest"
+        val memoryMaxGrowthLimitKB = 5000
+        val buildCount = 10
         val reportMemoryUsage = "-Dkotlin.gradle.test.report.memory.usage=true"
-        val options = BaseGradleIT.BuildOptions(withDaemon = true)
+        val options = BuildOptions(withDaemon = true)
 
         fun exitTestDaemon() {
             project.build(userVariantArg, reportMemoryUsage, "exit", options = options) {
@@ -34,7 +33,7 @@ class GradleDaemonMemoryIT : BaseGradleIT() {
 
             project.build(userVariantArg, reportMemoryUsage, "clean", "assemble", options = options) {
                 assertSuccessful()
-                val matches = "\\[KOTLIN\\]\\[PERF\\] Used memory after build: (\\d+) kb \\(difference since build start: ([+-]?\\d+) kb\\)"
+                val matches = "\\[KOTLIN]\\[PERF] Used memory after build: (\\d+) kb \\(difference since build start: ([+-]?\\d+) kb\\)"
                     .toRegex().find(output)
                 assertTasksExecuted(":compileKotlin")
                 assert(matches != null && matches.groups.size == 3) { "Used memory after build is not reported by plugin" }
@@ -47,20 +46,22 @@ class GradleDaemonMemoryIT : BaseGradleIT() {
         exitTestDaemon()
 
         try {
-            val usedMemory = (1..BUILD_COUNT).map { buildAndGetMemoryAfterBuild() }
+            val usedMemory: List<Int> = (1..buildCount).map { buildAndGetMemoryAfterBuild() }
 
             // ensure that the maximum of the used memory established after several first builds doesn't raise significantly in the subsequent builds
-            val establishedMaximum = usedMemory.take(5).max()!!
-            val totalMaximum = usedMemory.max()!!
+            val establishedMaximum = usedMemory.take(buildCount / 2).maxOrNull()!!
+            val totalMaximum = usedMemory.maxOrNull()!!
 
             val maxGrowth = totalMaximum - establishedMaximum
             assertTrue(
-                maxGrowth <= MEMORY_MAX_GROWTH_LIMIT_KB,
-                "Maximum used memory over series of builds growth $maxGrowth (from $establishedMaximum to $totalMaximum) kb > $MEMORY_MAX_GROWTH_LIMIT_KB kb"
+                maxGrowth <= memoryMaxGrowthLimitKB,
+                "Maximum used memory over series of builds growth $maxGrowth " +
+                        "(from $establishedMaximum to $totalMaximum) kb > $memoryMaxGrowthLimitKB kb\n" +
+                        "Usages: $usedMemory"
             )
 
             // testing that nothing remains locked by daemon, see KT-9440
-            project.build(userVariantArg, "clean", options = BaseGradleIT.BuildOptions(withDaemon = true)) {
+            project.build(userVariantArg, "clean", options = BuildOptions(withDaemon = true)) {
                 assertSuccessful()
             }
         } finally {
