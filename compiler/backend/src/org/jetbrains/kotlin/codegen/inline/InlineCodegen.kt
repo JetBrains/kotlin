@@ -268,18 +268,14 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
     abstract fun descriptorIsDeserialized(memberDescriptor: CallableMemberDescriptor): Boolean
 
-    fun generateAndInsertFinallyBlocks(
+    private fun generateAndInsertFinallyBlocks(
         intoNode: MethodNode,
         insertPoints: List<MethodInliner.PointForExternalFinallyBlocks>,
         offsetForFinallyLocalVar: Int
     ) {
         if (!sourceCompiler.hasFinallyBlocks()) return
 
-        val extensionPoints = HashMap<AbstractInsnNode, MethodInliner.PointForExternalFinallyBlocks>()
-        for (insertPoint in insertPoints) {
-            extensionPoints.put(insertPoint.beforeIns, insertPoint)
-        }
-
+        val extensionPoints = insertPoints.associateBy { it.beforeIns }
         val processor = DefaultProcessor(intoNode, offsetForFinallyLocalVar)
 
         var curFinallyDepth = 0
@@ -321,7 +317,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
                 val splitBy = SimpleInterval(start.info as LabelNode, extension.finallyIntervalEnd)
                 processor.tryBlocksMetaInfo.splitAndRemoveCurrentIntervals(splitBy, true)
-                processor.localVarsMetaInfo.splitAndRemoveCurrentIntervals(splitBy, true);
+                processor.localVarsMetaInfo.splitAndRemoveCurrentIntervals(splitBy, true)
 
                 mark.dropTo()
             }
@@ -330,7 +326,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         }
 
         processor.substituteTryBlockNodes(intoNode)
-        processor.substituteLocalVarTable(intoNode);
+        processor.substituteLocalVarTable(intoNode)
     }
 
     protected abstract fun generateAssertFieldIfNeeded(info: RootInliningContext)
@@ -362,7 +358,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
         if (!asFunctionInline && Type.VOID_TYPE !== jvmType) {
             //TODO remap only inlinable closure => otherwise we could get a lot of problem
-            val couldBeRemapped = !shouldPutGeneralValue(jvmType, kotlinType, stackValue) && kind !== ValueKind.DEFAULT_PARAMETER
+            val couldBeRemapped = !shouldPutGeneralValue(jvmType, kotlinType, stackValue) && !isDefaultParameter
             val remappedValue = if (couldBeRemapped) stackValue else null
 
             val info: ParameterInfo
@@ -379,11 +375,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                 }
             }
 
-            recordParameterValueInLocalVal(
-                false,
-                isDefaultParameter || kind === ValueKind.DEFAULT_LAMBDA_CAPTURED_PARAMETER,
-                info
-            )
+            recordParameterValueInLocalVal(false, isDefaultParameter, info)
         }
     }
 
@@ -430,16 +422,12 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     }
 
     private fun rememberCapturedForDefaultLambda(defaultLambda: DefaultLambda) {
-        for ((paramIndex, captured) in defaultLambda.capturedVars.withIndex()) {
-            putArgumentOrCapturedToLocalVal(
-                JvmKotlinType(captured.type),
-                //HACK: actually parameter would be placed on stack in default function
-                // also see ValueKind.DEFAULT_LAMBDA_CAPTURED_PARAMETER check
-                StackValue.onStack(captured.type),
-                captured,
-                paramIndex,
-                ValueKind.DEFAULT_LAMBDA_CAPTURED_PARAMETER
-            )
+        if (!asFunctionInline) {
+            for (captured in defaultLambda.capturedVars) {
+                val info = invocationParamBuilder.addCapturedParam(captured, captured.fieldName, false)
+                info.remapValue = StackValue.local(codegen.frameMap.enterTemp(info.type), info.type)
+                info.isSynthetic = true
+            }
         }
     }
 
