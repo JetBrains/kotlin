@@ -26,7 +26,7 @@ package override
     }
 
     <error descr="[ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED] Class MyIllegalClass4 is not abstract and does not implement abstract base class member bar">class MyIllegalClass4</error> : MyTrait, MyAbstractClass() {
-        fun foo() {}
+        fun <error descr="[VIRTUAL_MEMBER_HIDDEN] 'foo' hides member of supertype 'MyTrait' and needs 'override' modifier">foo</error>() {}
         override fun other() {}
     }
 

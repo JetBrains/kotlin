@@ -18,3 +18,4 @@ interface Z {
 class B : A(), X, Y, Z {
     override<caret> fun foo() {}
 }
+/* IGNORE_FIR */

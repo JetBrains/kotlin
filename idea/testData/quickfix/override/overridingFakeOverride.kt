@@ -16,3 +16,4 @@ class B() : Y {
     override<caret> fun foo() {
     }
 }
+/* IGNORE_FIR */

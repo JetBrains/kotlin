@@ -8,3 +8,4 @@ fun test() {
         <caret>override fun foo() {}
     }
 }
+/* IGNORE_FIR */

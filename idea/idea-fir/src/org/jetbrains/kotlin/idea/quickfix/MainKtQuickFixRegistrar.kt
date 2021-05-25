@@ -62,6 +62,10 @@ class MainKtQuickFixRegistrar : KtQuickFixRegistrar() {
             KtFirDiagnostic.AbstractClassMemberNotImplemented::class,
             AddModifierFix.addAbstractModifier
         )
+        registerPsiQuickFixes(
+            KtFirDiagnostic.VirtualMemberHidden::class,
+            AddModifierFix.addOverrideModifier
+        )
         registerPsiQuickFixes(KtFirDiagnostic.ValOrVarOnLoopParameter::class, RemoveValVarFromParameterFix)
         registerPsiQuickFixes(KtFirDiagnostic.ValOrVarOnFunParameter::class, RemoveValVarFromParameterFix)
         registerPsiQuickFixes(KtFirDiagnostic.ValOrVarOnCatchParameter::class, RemoveValVarFromParameterFix)

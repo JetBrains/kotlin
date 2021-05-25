@@ -6,3 +6,4 @@ open class A {
 class B : A() {
     override<caret> var x = 24;
 }
+/* IGNORE_FIR */
