@@ -7,5 +7,3 @@ fun foo(b: A) {
     var a: A? = A()
     a = a?.plus(b)
 }
-
-/* IGNORE_FIR */

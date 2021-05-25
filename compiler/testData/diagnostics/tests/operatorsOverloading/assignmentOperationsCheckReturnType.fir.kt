@@ -1,14 +1,14 @@
 fun intBinEq() {
     var x = 0
-    x <!UNRESOLVED_REFERENCE!>+=<!> 'a'
+    x <!NONE_APPLICABLE!>+=<!> 'a'
     x += 1.toByte()
     x += 1.toShort()
     <!ASSIGNMENT_TYPE_MISMATCH!>x += 1L<!>
     <!ASSIGNMENT_TYPE_MISMATCH!>x += 1f<!>
     <!ASSIGNMENT_TYPE_MISMATCH!>x += 1.0<!>
-    x <!UNRESOLVED_REFERENCE!>*=<!> 'a'
-    <!ASSIGNMENT_TYPE_MISMATCH!>x *= 1.toByte()<!>
-    <!ASSIGNMENT_TYPE_MISMATCH!>x *= 1.toShort()<!>
+    x <!NONE_APPLICABLE!>*=<!> 'a'
+    x *= 1.toByte()
+    x *= 1.toShort()
     <!ASSIGNMENT_TYPE_MISMATCH!>x *= 1L<!>
     <!ASSIGNMENT_TYPE_MISMATCH!>x *= 1f<!>
     <!ASSIGNMENT_TYPE_MISMATCH!>x *= 1.0<!>
@@ -16,16 +16,16 @@ fun intBinEq() {
 
 fun shortBinEq() {
     var x = 0.toShort()
-    x <!UNRESOLVED_REFERENCE!>+=<!> 'a'
+    x <!NONE_APPLICABLE!>+=<!> 'a'
     x += 1.toByte()
     x += 1.toShort()
     <!ASSIGNMENT_TYPE_MISMATCH!>x += 1L<!>
     <!ASSIGNMENT_TYPE_MISMATCH!>x += 1f<!>
     <!ASSIGNMENT_TYPE_MISMATCH!>x += 1.0<!>
 
-    x <!UNRESOLVED_REFERENCE!>*=<!> 'a'
-    <!ASSIGNMENT_TYPE_MISMATCH!>x *= 1.toByte()<!>
-    <!ASSIGNMENT_TYPE_MISMATCH!>x *= 1.toShort()<!>
+    x <!NONE_APPLICABLE!>*=<!> 'a'
+    x *= 1.toByte()
+    x *= 1.toShort()
     <!ASSIGNMENT_TYPE_MISMATCH!>x *= 1L<!>
     <!ASSIGNMENT_TYPE_MISMATCH!>x *= 1f<!>
     <!ASSIGNMENT_TYPE_MISMATCH!>x *= 1.0<!>
