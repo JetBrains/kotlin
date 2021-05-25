@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.render
@@ -204,6 +205,10 @@ class FirStatusResolver(
                 selfPublishedEffectiveVisibility,
                 session.typeContext
             )
+        }
+
+        if (containingClass is FirRegularClass && containingClass.isExpect) {
+            status.isExpect = true
         }
 
         return status.resolved(visibility, modality, effectiveVisibility)
