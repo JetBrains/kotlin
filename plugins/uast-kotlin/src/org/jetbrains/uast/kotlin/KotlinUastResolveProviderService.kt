@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.constants.UnsignedErrorValueTypeConstant
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UExpression
 
@@ -34,5 +36,12 @@ interface KotlinUastResolveProviderService : BaseKotlinUastResolveProviderServic
         val ktElement = uExpression.sourcePsi as? KtExpression ?: return null
         val ktType = ktElement.analyze()[BindingContext.EXPRESSION_TYPE_INFO, ktElement]?.type ?: return null
         return ktType.toPsiType(uExpression, ktElement, boxed = false)
+    }
+
+    override fun evaluate(uExpression: UExpression): Any? {
+        val ktElement = uExpression.sourcePsi as? KtExpression ?: return null
+        val compileTimeConst = ktElement.analyze()[BindingContext.COMPILE_TIME_VALUE, ktElement]
+        if (compileTimeConst is UnsignedErrorValueTypeConstant) return null
+        return compileTimeConst?.getValue(TypeUtils.NO_EXPECTED_TYPE)
     }
 }
