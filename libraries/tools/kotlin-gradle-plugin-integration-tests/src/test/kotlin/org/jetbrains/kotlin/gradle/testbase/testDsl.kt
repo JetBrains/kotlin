@@ -8,18 +8,13 @@ package org.jetbrains.kotlin.gradle.testbase
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.util.GradleVersion
-import kotlin.test.assertTrue
 import java.io.File
 import java.nio.file.*
 import java.nio.file.Files.copy
 import java.nio.file.Files.createDirectories
-
 import java.nio.file.attribute.BasicFileAttributes
-import kotlin.io.path.ExperimentalPathApi
-import kotlin.io.path.createFile
-import kotlin.io.path.exists
-import kotlin.io.path.readText
-import kotlin.io.path.writeText
+import kotlin.io.path.*
+import kotlin.test.assertTrue
 
 /**
  * Create new test project.
@@ -74,11 +69,14 @@ fun TestProject.build(
     vararg buildArguments: String,
     assertions: BuildResult.() -> Unit = {}
 ) {
-    val buildResult = gradleRunner
-        .withArguments(commonBuildSetup(buildArguments.toList()))
-        .build()
+    val allBuildArguments = commonBuildSetup(buildArguments.toList())
+    withBuildSummary(allBuildArguments) {
+        val buildResult = gradleRunner
+            .withArguments(allBuildArguments)
+            .build()
 
-    assertions(buildResult)
+        assertions(buildResult)
+    }
 }
 
 /**
@@ -88,11 +86,14 @@ fun TestProject.buildAndFail(
     vararg buildArguments: String,
     assertions: BuildResult.() -> Unit = {}
 ) {
-    val buildResult = gradleRunner
-        .withArguments(commonBuildSetup(buildArguments.toList()))
-        .buildAndFail()
+    val allBuildArguments = commonBuildSetup(buildArguments.toList())
+    withBuildSummary(allBuildArguments) {
+        val buildResult = gradleRunner
+            .withArguments(allBuildArguments)
+            .buildAndFail()
 
-    assertions(buildResult)
+        assertions(buildResult)
+    }
 }
 
 fun TestProject.enableLocalBuildCache(
@@ -132,14 +133,19 @@ private fun TestProject.commonBuildSetup(
     buildArguments: List<String>
 ): List<String> {
     val buildOptionsArguments = buildOptions.toArguments(gradleVersion)
-    val allBuildArguments = buildOptionsArguments + buildArguments + "--full-stacktrace"
+    return buildOptionsArguments + buildArguments + "--full-stacktrace"
+}
 
-    println("<=== Test build: ${this.projectName} ===>")
-    println("<=== Using Gradle version: ${gradleVersion.version} ===>")
-    println("<=== Run arguments: ${allBuildArguments.joinToString()} ===>")
-    println("<=== Project path:  ${projectPath.toAbsolutePath()} ===>")
-
-    return allBuildArguments
+private fun TestProject.withBuildSummary(buildArguments: List<String>, run: () -> Unit) {
+    try {
+        run()
+    } catch (t: Throwable) {
+        println("<=== Test build: ${projectName} ===>")
+        println("<=== Using Gradle version: ${gradleVersion.version} ===>")
+        println("<=== Run arguments: ${buildArguments.joinToString()} ===>")
+        println("<=== Project path:  ${projectPath.toAbsolutePath()} ===>")
+        throw t
+    }
 }
 
 /**
