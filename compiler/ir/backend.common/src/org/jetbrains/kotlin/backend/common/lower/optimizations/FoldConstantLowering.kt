@@ -40,7 +40,8 @@ val foldConstantLoweringPhase = makeIrFilePhase(
 class FoldConstantLowering(
     private val context: CommonBackendContext,
     // In K/JS Float and Double are the same so Float constant should be fold similar to Double
-    private val floatSpecial: Boolean = false) : IrElementTransformerVoid(), BodyLoweringPass {
+    private val floatSpecial: Boolean = false
+) : IrElementTransformerVoid(), BodyLoweringPass {
     /**
      * ID of an binary operator / method.
      *
@@ -208,7 +209,6 @@ class FoldConstantLowering(
     private fun normalizeUnsignedValue(const: IrConst<*>): Any? {
         // Unsigned constants are represented through signed constants with a different IrType
         if (const.type.isUnsigned()) {
-            @OptIn(ExperimentalUnsignedTypes::class)
             when (val kind = const.kind) {
                 is IrConstKind.Byte ->
                     return kind.valueOf(const).toUByte()
@@ -248,7 +248,6 @@ class FoldConstantLowering(
         return normalizeUnsignedValue(const).toString()
     }
 
-    @ExperimentalUnsignedTypes
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitCall(expression: IrCall): IrExpression {
