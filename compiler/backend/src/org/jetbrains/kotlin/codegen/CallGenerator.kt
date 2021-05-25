@@ -39,13 +39,9 @@ interface CallGenerator {
             }
         }
 
-        override fun processAndPutHiddenParameters(justProcess: Boolean) {
+        override fun processHiddenParameters() {}
 
-        }
-
-        override fun putHiddenParamsIntoLocals() {
-
-        }
+        override fun putHiddenParamsIntoLocals() {}
 
         override fun genValueAndPut(
             valueParameterDescriptor: ValueParameterDescriptor?,
@@ -140,9 +136,8 @@ interface CallGenerator {
         paramIndex: Int
     )
 
-    fun processAndPutHiddenParameters(justProcess: Boolean)
+    fun processHiddenParameters()
 
-    /*should be called if justProcess = true in processAndPutHiddenParameters*/
     fun putHiddenParamsIntoLocals()
 
     fun reorderArgumentsIfNeeded(actualArgsWithDeclIndex: List<ArgumentAndDeclIndex>, valueParameterTypes: List<Type>)

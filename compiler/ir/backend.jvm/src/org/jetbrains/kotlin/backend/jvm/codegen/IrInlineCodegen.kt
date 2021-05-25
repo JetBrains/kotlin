@@ -90,7 +90,7 @@ class IrInlineCodegen(
             val onStack = when {
                 kind == ValueKind.METHOD_HANDLE_IN_DEFAULT -> StackValue.constant(null, AsmTypes.OBJECT_TYPE)
                 kind == ValueKind.DEFAULT_MASK -> StackValue.constant((argumentExpression as IrConst<*>).value, Type.INT_TYPE)
-                kind == ValueKind.DEFAULT_PARAMETER -> StackValue.constant(null, AsmTypes.OBJECT_TYPE)
+                kind == ValueKind.DEFAULT_PARAMETER -> StackValue.createDefaultValue(parameterType)
                 irValueParameter.index >= 0
                     // Reuse an existing local if possible. NOTE: when stopping at a breakpoint placed
                     // in an inline function, arguments which reuse an existing local will not be visible
