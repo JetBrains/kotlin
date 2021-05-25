@@ -261,6 +261,18 @@ public class IrSteppingTestGenerated extends AbstractIrSteppingTest {
     }
 
     @Test
+    @TestMetadata("kt42208b.kt")
+    public void testKt42208b() throws Exception {
+        runTest("compiler/testData/debug/stepping/kt42208b.kt");
+    }
+
+    @Test
+    @TestMetadata("kt42208c.kt")
+    public void testKt42208c() throws Exception {
+        runTest("compiler/testData/debug/stepping/kt42208c.kt");
+    }
+
+    @Test
     @TestMetadata("lambdaStepInline.kt")
     public void testLambdaStepInline() throws Exception {
         runTest("compiler/testData/debug/stepping/lambdaStepInline.kt");
