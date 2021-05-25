@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.Position
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.IrBasedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
@@ -105,12 +104,7 @@ class IrSourceCompilerForInline(
         return FunctionCodegen(lambdaInfo.function, codegen.classCodegen).generate(codegen, reifiedTypeParameters)
     }
 
-    override fun doCreateMethodNodeFromSource(
-        callableDescriptor: FunctionDescriptor,
-        jvmSignature: JvmMethodSignature,
-        callDefault: Boolean,
-        asmMethod: Method
-    ): SMAPAndMethodNode =
+    override fun compileInlineFunction(jvmSignature: JvmMethodSignature, callDefault: Boolean, asmMethod: Method): SMAPAndMethodNode =
         ClassCodegen.getOrCreate(callee.parentAsClass, codegen.context).generateMethodNode(callee)
 
     override fun hasFinallyBlocks() = data.hasFinallyBlocks()
@@ -129,17 +123,11 @@ class IrSourceCompilerForInline(
         }
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
-    override fun isCallInsideSameModuleAsDeclared(functionDescriptor: FunctionDescriptor): Boolean {
-        require(functionDescriptor is IrBasedSimpleFunctionDescriptor) {
-            "expected an IrBasedSimpleFunctionDescriptor, got $functionDescriptor"
-        }
-        val function = functionDescriptor.owner
-        return function.module == codegen.irFunction.module
-    }
+    override val isCallInsideSameModuleAsCallee: Boolean
+        get() = callee.module == codegen.irFunction.module
 
-    override fun isFinallyMarkerRequired(): Boolean {
-        return codegen.isFinallyMarkerRequired()
-    }
+    override val isFinallyMarkerRequired: Boolean
+        get() = codegen.isFinallyMarkerRequired
 
     override val compilationContextDescriptor: DeclarationDescriptor
         get() = compilationContextFunctionDescriptor

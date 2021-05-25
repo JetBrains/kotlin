@@ -37,12 +37,7 @@ interface SourceCompilerForInline {
 
     fun generateLambdaBody(lambdaInfo: ExpressionLambda, reifiedTypeParameters: ReifiedTypeParametersUsages): SMAPAndMethodNode
 
-    fun doCreateMethodNodeFromSource(
-        callableDescriptor: FunctionDescriptor,
-        jvmSignature: JvmMethodSignature,
-        callDefault: Boolean,
-        asmMethod: Method
-    ): SMAPAndMethodNode
+    fun compileInlineFunction(jvmSignature: JvmMethodSignature, callDefault: Boolean, asmMethod: Method): SMAPAndMethodNode
 
     fun hasFinallyBlocks(): Boolean
 
@@ -53,9 +48,9 @@ interface SourceCompilerForInline {
 
     fun generateFinallyBlocksIfNeeded(codegen: BaseExpressionCodegen, returnType: Type, afterReturnLabel: Label, target: Label?)
 
-    fun isCallInsideSameModuleAsDeclared(functionDescriptor: FunctionDescriptor): Boolean
+    val isCallInsideSameModuleAsCallee: Boolean
 
-    fun isFinallyMarkerRequired(): Boolean
+    val isFinallyMarkerRequired: Boolean
 
     val compilationContextDescriptor: DeclarationDescriptor
 

@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.ir.IrElement
@@ -1241,11 +1240,11 @@ class ExpressionCodegen(
         val gapStart = markNewLinkedLabel()
         data.localGapScope(tryWithFinallyInfo) {
             finallyDepth++
-            if (isFinallyMarkerRequired()) {
+            if (isFinallyMarkerRequired) {
                 generateFinallyMarker(mv, finallyDepth, true)
             }
             tryWithFinallyInfo.onExit.accept(this, data).discard()
-            if (isFinallyMarkerRequired()) {
+            if (isFinallyMarkerRequired) {
                 generateFinallyMarker(mv, finallyDepth, false)
             }
             finallyDepth--
@@ -1445,9 +1444,8 @@ class ExpressionCodegen(
         }
     }
 
-    fun isFinallyMarkerRequired(): Boolean {
-        return irFunction.isInline || inlinedInto != null
-    }
+    val isFinallyMarkerRequired: Boolean
+        get() = irFunction.isInline || inlinedInto != null
 
     val IrType.isReifiedTypeParameter: Boolean
         get() = this.classifierOrNull?.safeAs<IrTypeParameterSymbol>()?.owner?.isReified == true
