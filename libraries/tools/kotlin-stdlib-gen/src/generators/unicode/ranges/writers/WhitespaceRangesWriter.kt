@@ -5,6 +5,7 @@
 
 package generators.unicode.ranges.writers
 
+import generators.unicode.rangeCheck
 import generators.unicode.toHexIntLiteral
 import java.io.FileWriter
 
@@ -38,24 +39,12 @@ internal class WhitespaceRangesWriter : RangesWriter {
 
             val start = rangeStart[i]
             val end = rangeEnd[i]
-            when (start) {
-                end -> {
-                    if (start > 0x1000 && tabCount == 5) {
-                        builder.appendLine("$ch > 0x1000 && (")
-                        tabCount = 6
-                        builder.append(tab.repeat(tabCount))
-                    }
-                    builder.appendLine("$ch == ${start.toHexIntLiteral()}")
-                }
-                end - 1 -> {
-                    builder.appendLine("$ch == ${start.toHexIntLiteral()}")
-                    builder.append(tab.repeat(tabCount)).append("|| ")
-                    builder.appendLine("$ch == ${end.toHexIntLiteral()}")
-                }
-                else -> {
-                    builder.appendLine("$ch in ${start.toHexIntLiteral()}..${end.toHexIntLiteral()}")
-                }
+            if (start > 0x1000 && tabCount == 5) {
+                builder.appendLine("$ch > 0x1000 && (")
+                tabCount = 6
+                builder.append(tab.repeat(tabCount))
             }
+            builder.appendLine((start..end).rangeCheck(ch, tab.repeat(tabCount)))
         }
 
         return builder.append(tab.repeat(5)).append(")").toString()
