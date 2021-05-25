@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.ir.createParameterDeclarations
+import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
 import org.jetbrains.kotlin.backend.jvm.lower.SingletonObjectJvmStaticTransformer
 import org.jetbrains.kotlin.backend.jvm.serialization.deserializeClassFromByteArray
 import org.jetbrains.kotlin.backend.jvm.serialization.deserializeIrFileFromByteArray
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.*
@@ -184,6 +186,8 @@ open class JvmGeneratorExtensionsImpl(private val generateFacades: Boolean = tru
     private val kotlinJvmInternalPackage =
         IrExternalPackageFragmentImpl(DescriptorlessExternalPackageFragmentSymbol(), JvmAnnotationNames.KOTLIN_JVM_INTERNAL)
 
+    private val specialAnnotationConstructors = mutableListOf<IrConstructor>()
+
     private fun createSpecialAnnotationClass(fqn: FqName, parent: IrPackageFragment) =
         IrFactoryImpl.buildClass {
             kind = ClassKind.ANNOTATION_CLASS
@@ -193,6 +197,8 @@ open class JvmGeneratorExtensionsImpl(private val generateFacades: Boolean = tru
             this.parent = parent
             addConstructor {
                 isPrimary = true
+            }.also { constructor ->
+                specialAnnotationConstructors.add(constructor)
             }
         }
 
@@ -216,6 +222,14 @@ open class JvmGeneratorExtensionsImpl(private val generateFacades: Boolean = tru
             context.irBuiltIns.unitType,
             context.symbolTable.referenceConstructor(recordConstructor)
         )
+    }
+
+    override fun registerDeclarations(symbolTable: SymbolTable) {
+        val signatureComputer = IdSignatureSerializer(JvmIrMangler)
+        specialAnnotationConstructors.forEach { constructor ->
+            symbolTable.declareConstructorWithSignature(signatureComputer.composePublicIdSignature(constructor), constructor.symbol)
+        }
+        super.registerDeclarations(symbolTable)
     }
 
     override val shouldPreventDeprecatedIntegerValueTypeLiteralConversion: Boolean

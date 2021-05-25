@@ -77,6 +77,7 @@ class SymbolTable(
         abstract fun get(d: D): S?
         abstract fun set(s: S)
         abstract fun get(sig: IdSignature): S?
+        abstract fun set(sig: IdSignature, s: S)
 
         inline fun declare(d: D, createSymbol: () -> S, createOwner: (S) -> B): B {
             synchronized(lock) {
@@ -217,6 +218,10 @@ class SymbolTable(
         }
 
         override fun get(sig: IdSignature): S? = idSigToSymbol[sig]
+
+        override fun set(sig: IdSignature, s: S) {
+            idSigToSymbol[sig] = s
+        }
     }
 
     private inner class EnumEntrySymbolTable : FlatSymbolTable<ClassDescriptor, IrEnumEntry, IrEnumEntrySymbol>() {
@@ -265,6 +270,10 @@ class SymbolTable(
 
             operator fun get(sig: IdSignature): S? = idSigToSymbol[sig] ?: parent?.get(sig)
 
+            operator fun set(sig: IdSignature, s: S) {
+                idSigToSymbol[sig] = s
+            }
+
             fun dumpTo(stringBuilder: StringBuilder): StringBuilder =
                 stringBuilder.also {
                     it.append("owner=")
@@ -294,6 +303,11 @@ class SymbolTable(
         override fun get(sig: IdSignature): S? {
             val scope = currentScope ?: return null
             return scope[sig]
+        }
+
+        override fun set(sig: IdSignature, s: S) {
+            val scope = currentScope ?: throw AssertionError("No active scope")
+            scope[sig] = s
         }
 
         inline fun declareLocal(d: D, createSymbol: () -> S, createOwner: (S) -> B): B {
@@ -513,6 +527,10 @@ class SymbolTable(
             { createConstructorSymbol(descriptor) },
             constructorFactory
         )
+
+    fun declareConstructorWithSignature(sig: IdSignature, symbol: IrConstructorSymbol) {
+        constructorSymbolTable.set(sig, symbol)
+    }
 
     override fun referenceConstructor(descriptor: ClassConstructorDescriptor) =
         constructorSymbolTable.referenced(descriptor) { createConstructorSymbol(descriptor) }
