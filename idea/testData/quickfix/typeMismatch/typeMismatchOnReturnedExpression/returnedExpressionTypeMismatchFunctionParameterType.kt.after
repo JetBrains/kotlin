@@ -4,3 +4,4 @@ fun foo(f: () -> String) {
         ""<caret>
     }
 }
+/* IGNORE_FIR */

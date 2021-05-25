@@ -5,3 +5,4 @@ class A {
         get(): () -> Int = if (true) { {42}<caret> } else { {24} }
         set(i: () -> Int) {}
 }
+/* IGNORE_FIR */
