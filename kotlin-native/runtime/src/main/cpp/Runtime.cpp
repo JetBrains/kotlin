@@ -389,6 +389,10 @@ KBoolean Kotlin_Debugging_isPermanent(KRef obj) {
     return obj->permanent();
 }
 
+RUNTIME_NOTHROW KBoolean Kotlin_Debugging_isLocal(KRef obj) {
+    return obj->local();
+}
+
 RUNTIME_NOTHROW void Kotlin_initRuntimeIfNeededFromKotlin() {
     switch (CurrentMemoryModel) {
         case MemoryModel::kExperimental:

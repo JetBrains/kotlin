@@ -2601,24 +2601,21 @@ standaloneTest("args0") {
 }
 
 standaloneTest("devirtualization_lateinitInterface") {
-    disabled = (cacheTesting != null) || // Cache is not compatible with -opt.
-        isExperimentalMM // Experimental MM does not support -opt yet.
+    disabled = (cacheTesting != null) // Cache is not compatible with -opt.
     goldValue = "42\n"
     flags = ["-opt"]
     source = "codegen/devirtualization/lateinitInterface.kt"
 }
 
 standaloneTest("devirtualization_getter_looking_as_box_function") {
-    disabled = (cacheTesting != null) || // Cache is not compatible with -opt.
-        isExperimentalMM // Experimental MM does not support -opt yet.
+    disabled = (cacheTesting != null) // Cache is not compatible with -opt.
     goldValue = "box\n"
     flags = ["-opt"]
     source = "codegen/devirtualization/getter_looking_as_box_function.kt"
 }
 
 standaloneTest("devirtualization_anonymousObject") {
-    disabled = (cacheTesting != null) || // Cache is not compatible with -opt.
-        isExperimentalMM // Experimental MM does not support -opt yet.
+    disabled = (cacheTesting != null) // Cache is not compatible with -opt.
     goldValue = "zzz\n"
     flags = ["-opt"]
     source = "codegen/devirtualization/anonymousObject.kt"
@@ -2855,6 +2852,14 @@ task codegen_escapeAnalysis_zeroOutObjectOnAlloc(type: KonanLocalTest) {
 
 task codegen_escapeAnalysis_recursion(type: KonanLocalTest) {
     source = "codegen/escapeAnalysis/recursion.kt"
+}
+
+standaloneTest("codegen_escapeAnalysis_stackAllocated") {
+    disabled = (cacheTesting != null) || // Cache is not compatible with -opt.
+        project.globalTestArgs.contains('-g') || // -g and -opt are incompatible
+        isExperimentalMM // TODO: Experimental MM doesn't support stack-allocated objects yet.
+    flags = ['-opt', '-tr', '-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
+    source = "codegen/escapeAnalysis/stackAllocated.kt"
 }
 
 task memory_var1(type: KonanLocalTest) {
@@ -3598,8 +3603,7 @@ tasks.register("driver0", KonanDriverTest) {
 }
 
 tasks.register("driver_opt", KonanDriverTest) {
-    disabled = (cacheTesting != null) || // Cache is not compatible with -opt.
-        isExperimentalMM // Experimental MM does not support -opt yet.
+    disabled = (cacheTesting != null) // Cache is not compatible with -opt.
     goldValue = "Hello, world!\n"
     source = "runtime/basic/driver0.kt"
     flags = ["-opt"]
@@ -4158,7 +4162,8 @@ interopTest("interop_threadStates") {
 
 interopTest("interop_threadStates_callbacksWithExceptions") {
     disabled = (project.testTarget == 'wasm32') || // No interop for wasm yet.
-            !isExperimentalMM // No thread state switching in the legacy MM.
+            !isExperimentalMM || // No thread state switching in the legacy MM.
+            project.globalTestArgs.contains('-opt') // TODO: Fix this test for -opt.
     source = "interop/threadStates/callbacksWithExceptions.kt"
     interop = "threadStates"
 }
@@ -5135,8 +5140,7 @@ tasks.register("metadata_compare_unable_to_import", MetadataComparisonTest) {
 }
 
 standaloneTest("local_ea_arraysfieldwrite") {
-    disabled = (cacheTesting != null) || // Cache is not compatible with -opt.
-        isExperimentalMM // Experimental MM does not support -opt yet.
+    disabled = (cacheTesting != null) // Cache is not compatible with -opt.
     goldValue = "Array (constructor init):\nSize: 2\nContents: [1, 2]\n" +
             "Array (constructor init):\nSize: 2\nContents: [3, 4]\n" +
             "Array (default value init):\nSize: 2\nContents: [1, 2]\n" +
