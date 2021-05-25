@@ -256,6 +256,7 @@ object FirErrors {
     val ASSIGNMENT_TYPE_MISMATCH by error2<KtExpression, ConeKotlinType, ConeKotlinType>()
     val RESULT_TYPE_MISMATCH by error2<KtExpression, ConeKotlinType, ConeKotlinType>()
     val MANY_LAMBDA_EXPRESSION_ARGUMENTS by error0<KtValueArgument>()
+    val NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER by error1<KtElement, String>()
 
     // Ambiguity
     val OVERLOAD_RESOLUTION_AMBIGUITY by error1<PsiElement, Collection<AbstractFirBasedSymbol<*>>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
 class ConeTypeVariableForLambdaReturnType(val argument: FirAnonymousFunction, name: String) : ConeTypeVariable(name)
 class ConeTypeVariableForPostponedAtom(name: String) : ConeTypeVariable(name)
+class ConeTypeVariableForLambdaParameterType(name: String, val index: Int) : ConeTypeVariable(name)
 
 //  -------------------------- Atoms --------------------------
 

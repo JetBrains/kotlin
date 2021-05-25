@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
@@ -15,10 +18,12 @@ import org.jetbrains.kotlin.fir.returnExpressions
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.inference.components.*
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
+import org.jetbrains.kotlin.resolve.calls.inference.model.NotEnoughInformationForTypeParameter
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
 import org.jetbrains.kotlin.resolve.calls.model.PostponedAtomWithRevisableExpectedType
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -219,17 +224,81 @@ class ConstraintSystemCompleter(private val components: BodyResolveComponents) {
                 fixVariable(asConstraintSystemCompletionContext(), topLevelType, variableWithConstraints, postponedArguments)
                 return true
             } else {
-//                TODO("Not enough information for parameter")
-                fixVariable(
-                    asConstraintSystemCompletionContext(),
-                    topLevelType,
-                    variableWithConstraints,
-                    postponedArguments
-                ) // means Nothing/Any instead of Error type
+                processVariableWhenNotEnoughInformation(this, variableWithConstraints, topLevelAtoms)
             }
         }
 
         return false
+    }
+
+    private fun processVariableWhenNotEnoughInformation(
+        c: ConstraintSystemCompletionContext,
+        variableWithConstraints: VariableWithConstraints,
+        topLevelAtoms: List<FirStatement>,
+    ) {
+        val typeVariable = variableWithConstraints.typeVariable
+        val resolvedAtom =
+            findResolvedAtomBy(typeVariable, topLevelAtoms) ?: topLevelAtoms.firstOrNull()
+
+        if (resolvedAtom != null) {
+            c.addError(NotEnoughInformationForTypeParameter(typeVariable, resolvedAtom))
+        }
+
+        val resultErrorType = when (typeVariable) {
+            is ConeTypeParameterBasedTypeVariable ->
+                createCannotInferErrorType(
+                    "Cannot infer argument for type parameter ${typeVariable.typeParameterSymbol.name}",
+                    isUninferredParameter = true,
+                )
+            is ConeTypeVariableForLambdaParameterType -> createCannotInferErrorType("Cannot infer lambda parameter type")
+            else -> createCannotInferErrorType("Cannot infer type variable $typeVariable")
+        }
+
+        c.fixVariable(typeVariable, resultErrorType, ConeFixVariableConstraintPosition(typeVariable))
+    }
+
+    private fun createCannotInferErrorType(message: String, isUninferredParameter: Boolean = false) =
+        ConeClassErrorType(
+            ConeSimpleDiagnostic(
+                message,
+                DiagnosticKind.CannotInferParameterType,
+            ),
+            isUninferredParameter,
+        )
+
+    private fun findResolvedAtomBy(
+        typeVariable: TypeVariableMarker,
+        topLevelAtoms: List<FirStatement>
+    ): FirStatement? {
+
+        fun FirStatement.findFirstAtomContainingVariable(): FirStatement? {
+
+            var result: FirStatement? = null
+
+            fun suggestElement(element: FirElement) {
+                if (result == null && element is FirStatement) {
+                    result = element
+                }
+            }
+
+            this@findFirstAtomContainingVariable.processAllContainingCallCandidates(processBlocks = true) { candidate ->
+                if (typeVariable in candidate.freshVariables) {
+                    suggestElement(candidate.callInfo.callSite)
+                }
+
+                for (postponedAtom in candidate.postponedAtoms) {
+                    if (postponedAtom is ResolvedLambdaAtom) {
+                        if (postponedAtom.typeVariableForLambdaReturnType == typeVariable) {
+                            suggestElement(postponedAtom.atom)
+                        }
+                    }
+                }
+            }
+
+            return result
+        }
+
+        return topLevelAtoms.firstNotNullOfOrNull(FirStatement::findFirstAtomContainingVariable)
     }
 
     private fun analyzeRemainingNotAnalyzedPostponedArgument(

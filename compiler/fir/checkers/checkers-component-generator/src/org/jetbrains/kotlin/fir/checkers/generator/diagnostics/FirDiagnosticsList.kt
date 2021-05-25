@@ -341,6 +341,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
 
         val MANY_LAMBDA_EXPRESSION_ARGUMENTS by error<KtValueArgument>()
+
+        val NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER by error<KtElement> {
+            parameter<String>("name")
+        }
     }
 
     val AMBIGUITY by object : DiagnosticGroup("Ambiguity") {

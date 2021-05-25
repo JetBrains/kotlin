@@ -99,8 +99,9 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
         argument: PostponedAtomWithRevisableExpectedType,
         index: Int
     ): TypeVariableMarker {
-        return ConeTypeVariableForPostponedAtom(
-            PostponedArgumentInputTypesResolver.TYPE_VARIABLE_NAME_PREFIX_FOR_LAMBDA_PARAMETER_TYPE + index
+        return ConeTypeVariableForLambdaParameterType(
+            PostponedArgumentInputTypesResolver.TYPE_VARIABLE_NAME_PREFIX_FOR_LAMBDA_PARAMETER_TYPE + index,
+            index
         )
     }
 

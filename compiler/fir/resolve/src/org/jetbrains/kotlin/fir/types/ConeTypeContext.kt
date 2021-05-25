@@ -91,7 +91,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun KotlinTypeMarker.isUninferredParameter(): Boolean {
         assert(this is ConeKotlinType)
-        return false // TODO
+        return this is ConeClassErrorType && this.isUninferredParameter
     }
 
     override fun FlexibleTypeMarker.asDynamicType(): DynamicTypeMarker? {
