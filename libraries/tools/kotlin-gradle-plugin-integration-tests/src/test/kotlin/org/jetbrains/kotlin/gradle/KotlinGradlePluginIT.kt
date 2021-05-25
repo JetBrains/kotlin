@@ -744,6 +744,17 @@ class KotlinGradleIT : BaseGradleIT() {
     }
 
     @Test
+    fun testKotlinPluginDependenciesInBuildSrc() {
+        val project = transformProjectWithPluginsDsl("kotlinPluginDepsInBuildSrc")
+        project.setupWorkingDir()
+        project.build("build") {
+            assertSuccessful()
+            assertContains("Hi from BuildSrc")
+        }
+
+    }
+
+    @Test
     fun testInternalTest() = with(
         Project("internalTest")
     ) {
