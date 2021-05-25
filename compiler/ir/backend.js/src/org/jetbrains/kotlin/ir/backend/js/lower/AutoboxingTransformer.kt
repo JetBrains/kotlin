@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.coerceToUnitIfNeeded
 import org.jetbrains.kotlin.ir.util.isPrimitiveArray
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.render
@@ -125,7 +124,7 @@ class AutoboxingTransformer(context: JsCommonBackendContext) : AbstractValueUsag
 
         if (actualType.isUnit() && !expectedType.isUnit()) {
             // Don't materialize Unit if value is known to be proper Unit on runtime
-            if (!this.isGetUnit()) {
+            if (!this.isGetUnit(irBuiltIns)) {
                 val unitValue = JsIrBuilder.buildGetObjectValue(actualType, context.irBuiltIns.unitClass)
                 return JsIrBuilder.buildComposite(actualType, listOf(this, unitValue))
             }
@@ -158,20 +157,6 @@ class AutoboxingTransformer(context: JsCommonBackendContext) : AbstractValueUsag
             }
         }
     }
-
-    private tailrec fun IrExpression.isGetUnit(): Boolean =
-        when (this) {
-            is IrContainerExpression ->
-                when (val lastStmt = this.statements.lastOrNull()) {
-                    is IrExpression -> lastStmt.isGetUnit()
-                    else -> false
-                }
-
-            is IrGetObjectValue ->
-                this.symbol == irBuiltIns.unitClass
-
-            else -> false
-        }
 
     private fun buildSafeCall(
         arg: IrExpression,
