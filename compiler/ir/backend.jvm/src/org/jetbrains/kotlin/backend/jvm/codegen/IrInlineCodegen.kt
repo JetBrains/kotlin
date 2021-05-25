@@ -57,16 +57,6 @@ class IrInlineCodegen(
         }
     }
 
-    override fun putClosureParametersOnStack(next: LambdaInfo) {
-        when (next) {
-            is IrExpressionLambdaImpl -> next.reference.getArgumentsWithIr().forEachIndexed { index, (_, ir) ->
-                putCapturedValueOnStack(ir, next.capturedVars[index], index)
-            }
-            is IrDefaultLambda -> rememberCapturedForDefaultLambda(next)
-            else -> throw RuntimeException("Unknown lambda: $next")
-        }
-    }
-
     override fun genValueAndPut(
         irValueParameter: IrValueParameter,
         argumentExpression: IrExpression,
@@ -78,12 +68,10 @@ class IrInlineCodegen(
         if (isInlineParameter && argumentExpression.isInlineIrExpression()) {
             val irReference = (argumentExpression as IrBlock).statements.filterIsInstance<IrFunctionReference>().single()
             val lambdaInfo = IrExpressionLambdaImpl(codegen, irReference, irValueParameter)
-            val closureInfo = invocationParamBuilder.addNextValueParameter(parameterType, true, null, irValueParameter.index)
-            closureInfo.functionalArgument = lambdaInfo
-            expressionMap[closureInfo.index] = lambdaInfo
-            val boundReceiver = irReference.extensionReceiver
-            if (boundReceiver != null) {
-                putCapturedValueOnStack(boundReceiver, lambdaInfo.capturedVars.single(), 0)
+            rememberClosure(parameterType, irValueParameter.index, lambdaInfo)
+            lambdaInfo.generateLambdaBody(sourceCompiler, reifiedTypeInliner)
+            lambdaInfo.reference.getArgumentsWithIr().forEachIndexed { index, (_, ir) ->
+                putCapturedValueOnStack(ir, lambdaInfo.capturedVars[index], index)
             }
         } else {
             val kind = when (irValueParameter.origin) {
