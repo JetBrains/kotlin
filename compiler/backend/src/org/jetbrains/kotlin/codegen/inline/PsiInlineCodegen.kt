@@ -105,20 +105,26 @@ class PsiInlineCodegen(
     var activeLambda: LambdaInfo? = null
         private set
 
-    override fun putClosureParametersOnStack(next: LambdaInfo, functionReferenceReceiver: StackValue?) {
+    override fun putClosureParametersOnStack(next: LambdaInfo) {
         activeLambda = next
         when (next) {
-            is PsiExpressionLambda -> codegen.pushClosureOnStack(next.classDescriptor, true, this, functionReferenceReceiver)
+            is PsiExpressionLambda -> {
+                val receiverValue = next.boundReceiver?.let { boundReceiver ->
+                    val receiver = codegen.generateReceiverValue(boundReceiver, false)
+                    val receiverKotlinType = receiver.kotlinType
+                    val boxedReceiver =
+                        if (receiverKotlinType != null)
+                            DescriptorAsmUtil.boxType(receiver.type, receiverKotlinType, state.typeMapper)
+                        else
+                            AsmUtil.boxType(receiver.type)
+                    StackValue.coercion(receiver, boxedReceiver, receiverKotlinType)
+                }
+                codegen.pushClosureOnStack(next.classDescriptor, true, this, receiverValue)
+            }
             is DefaultLambda -> rememberCapturedForDefaultLambda(next)
             else -> throw RuntimeException("Unknown lambda: $next")
         }
         activeLambda = null
-    }
-
-    private fun getBoundCallableReferenceReceiver(argumentExpression: KtExpression): ReceiverValue? {
-        val deparenthesized = KtPsiUtil.deparenthesize(argumentExpression) as? KtCallableReferenceExpression ?: return null
-        val resolvedCall = deparenthesized.callableReference.getResolvedCallWithAssert(state.bindingContext)
-        return JvmCodegenUtil.getBoundCallableReferenceReceiver(resolvedCall)
     }
 
     /*lambda or callable reference*/
@@ -142,21 +148,9 @@ class PsiInlineCodegen(
 
         if (isInliningParameter(argumentExpression, valueParameterDescriptor)) {
             val lambdaInfo = rememberClosure(argumentExpression, parameterType.type, valueParameterDescriptor)
-
-            val receiverValue = getBoundCallableReferenceReceiver(argumentExpression)
-            if (receiverValue != null) {
-                val receiver = codegen.generateReceiverValue(receiverValue, false)
-                val receiverKotlinType = receiver.kotlinType
-                val boxedReceiver =
-                    if (receiverKotlinType != null)
-                        DescriptorAsmUtil.boxType(receiver.type, receiverKotlinType, state.typeMapper)
-                    else
-                        AsmUtil.boxType(receiver.type)
-
-                putClosureParametersOnStack(
-                    lambdaInfo,
-                    StackValue.coercion(receiver, boxedReceiver, receiverKotlinType)
-                )
+            if (lambdaInfo.boundReceiver != null) {
+                // Has to be done immediately to preserve evaluation order.
+                putClosureParametersOnStack(lambdaInfo)
             }
         } else {
             val value = codegen.gen(argumentExpression)
@@ -176,13 +170,17 @@ class PsiInlineCodegen(
     private fun isCallSiteIsSuspend(descriptor: ValueParameterDescriptor): Boolean =
         state.bindingContext[CodegenBinding.CALL_SITE_IS_SUSPEND_FOR_CROSSINLINE_LAMBDA, descriptor] == true
 
-    private fun rememberClosure(expression: KtExpression, type: Type, parameter: ValueParameterDescriptor): LambdaInfo {
+    private fun rememberClosure(expression: KtExpression, type: Type, parameter: ValueParameterDescriptor): PsiExpressionLambda {
         val ktLambda = KtPsiUtil.deparenthesize(expression)
         assert(isInlinableParameterExpression(ktLambda)) { "Couldn't find inline expression in ${expression.text}" }
 
+        val boundReceiver = if (ktLambda is KtCallableReferenceExpression) {
+            val resolvedCall = ktLambda.callableReference.getResolvedCallWithAssert(state.bindingContext)
+            JvmCodegenUtil.getBoundCallableReferenceReceiver(resolvedCall)
+        } else null
+
         return PsiExpressionLambda(
-            ktLambda!!, state.typeMapper, state.languageVersionSettings,
-            parameter.isCrossinline, getBoundCallableReferenceReceiver(expression) != null
+            ktLambda!!, state.typeMapper, state.languageVersionSettings, parameter.isCrossinline, boundReceiver
         ).also { lambda ->
             val closureInfo = invocationParamBuilder.addNextValueParameter(type, true, null, parameter.index)
             closureInfo.functionalArgument = lambda
@@ -233,8 +231,10 @@ class PsiExpressionLambda(
     private val typeMapper: KotlinTypeMapper,
     private val languageVersionSettings: LanguageVersionSettings,
     isCrossInline: Boolean,
-    override val isBoundCallableReference: Boolean
+    val boundReceiver: ReceiverValue?
 ) : ExpressionLambda(isCrossInline) {
+    override val isBoundCallableReference: Boolean
+        get() = boundReceiver != null
 
     override val lambdaClassType: Type
 

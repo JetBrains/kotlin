@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.inline.isInlineOnly
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
@@ -37,7 +36,6 @@ import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.*
 import kotlin.math.max
@@ -435,15 +433,15 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
     private fun putClosureParametersOnStack() {
         for (next in expressionMap.values) {
-            //closure parameters for bounded callable references are generated inplace
             if (next is LambdaInfo) {
+                // Closure parameters for bound references have already been generated in between other arguments.
                 if (next is ExpressionLambda && next.isBoundCallableReference) continue
-                putClosureParametersOnStack(next, null)
+                putClosureParametersOnStack(next)
             }
         }
     }
 
-    abstract protected fun putClosureParametersOnStack(next: LambdaInfo, functionReferenceReceiver: StackValue?)
+    protected abstract fun putClosureParametersOnStack(next: LambdaInfo)
 
     protected fun rememberCapturedForDefaultLambda(defaultLambda: DefaultLambda) {
         for ((paramIndex, captured) in defaultLambda.capturedVars.withIndex()) {

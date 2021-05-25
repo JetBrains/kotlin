@@ -57,7 +57,7 @@ class IrInlineCodegen(
         }
     }
 
-    override fun putClosureParametersOnStack(next: LambdaInfo, functionReferenceReceiver: StackValue?) {
+    override fun putClosureParametersOnStack(next: LambdaInfo) {
         when (next) {
             is IrExpressionLambdaImpl -> next.reference.getArgumentsWithIr().forEachIndexed { index, (_, ir) ->
                 putCapturedValueOnStack(ir, next.capturedVars[index], index)
