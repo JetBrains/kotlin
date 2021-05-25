@@ -1,4 +1,4 @@
-public abstract annotation class SimpleAnnotation : R|kotlin/Annotation| {
+public final annotation class SimpleAnnotation : R|kotlin/Annotation| {
     public constructor(): R|test/SimpleAnnotation|
 
 }

@@ -245,8 +245,8 @@ class JavaSymbolProvider(
             name = javaClass.name
             val visibility = javaClass.visibility
             this@buildJavaClass.visibility = visibility
-            modality = javaClass.modality
             classKind = javaClass.classKind
+            modality = if (classKind == ClassKind.ANNOTATION_CLASS || classKind == ClassKind.ENUM_CLASS) Modality.FINAL else javaClass.modality
             this.isTopLevel = outerClassId == null
             isStatic = javaClass.isStatic
             this.javaTypeParameterStack = javaTypeParameterStack
@@ -272,7 +272,7 @@ class JavaSymbolProvider(
 
             status = FirResolvedDeclarationStatusImpl(
                 visibility,
-                javaClass.modality,
+                modality!!,
                 effectiveVisibility
             ).apply {
                 this.isInner = !isTopLevel && !this@buildJavaClass.isStatic
