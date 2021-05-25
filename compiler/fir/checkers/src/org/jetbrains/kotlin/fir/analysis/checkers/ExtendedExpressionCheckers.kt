@@ -19,7 +19,7 @@ object ExtendedExpressionCheckers : ExpressionCheckers() {
             CanBeReplacedWithOperatorAssignmentChecker,
         )
 
-    override val qualifiedAccessCheckers: Set<FirQualifiedAccessChecker>
+    override val qualifiedAccessExpressionCheckers: Set<FirQualifiedAccessExpressionChecker>
         get() = setOf(
             RedundantCallOfConversionMethod,
             UselessCallOnNotNullChecker,

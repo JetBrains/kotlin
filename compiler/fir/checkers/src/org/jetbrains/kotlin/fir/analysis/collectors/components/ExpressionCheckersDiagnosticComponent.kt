@@ -39,7 +39,7 @@ class ExpressionCheckersDiagnosticComponent(
     }
 
     override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: CheckerContext) {
-        checkers.allQualifiedAccessCheckers.check(qualifiedAccessExpression, data, reporter)
+        checkers.allQualifiedAccessExpressionCheckers.check(qualifiedAccessExpression, data, reporter)
     }
 
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: CheckerContext) {
@@ -47,7 +47,7 @@ class ExpressionCheckersDiagnosticComponent(
     }
 
     override fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess, data: CheckerContext) {
-        checkers.allQualifiedAccessCheckers.check(callableReferenceAccess, data, reporter)
+        checkers.allQualifiedAccessExpressionCheckers.check(callableReferenceAccess, data, reporter)
     }
 
     override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: CheckerContext) {

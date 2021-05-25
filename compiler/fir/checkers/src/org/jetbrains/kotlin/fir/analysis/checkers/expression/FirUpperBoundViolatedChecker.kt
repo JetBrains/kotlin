@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-object FirUpperBoundViolatedChecker : FirQualifiedAccessChecker() {
+object FirUpperBoundViolatedChecker : FirQualifiedAccessExpressionChecker() {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         // something that contains the type parameters
         // declarations with their declared bounds.

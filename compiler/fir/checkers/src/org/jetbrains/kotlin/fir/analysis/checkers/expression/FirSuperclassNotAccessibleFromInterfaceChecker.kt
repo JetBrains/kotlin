@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-object FirSuperclassNotAccessibleFromInterfaceChecker : FirQualifiedAccessChecker() {
+object FirSuperclassNotAccessibleFromInterfaceChecker : FirQualifiedAccessExpressionChecker() {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         expression.explicitReceiver.safeAs<FirQualifiedAccessExpression>()
             ?.calleeReference.safeAs<FirSuperReference>()

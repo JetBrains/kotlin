@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 
-object FirTypeArgumentsNotAllowedExpressionChecker : FirQualifiedAccessChecker() {
+object FirTypeArgumentsNotAllowedExpressionChecker : FirQualifiedAccessExpressionChecker() {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         // analyze type parameters near
         // package names

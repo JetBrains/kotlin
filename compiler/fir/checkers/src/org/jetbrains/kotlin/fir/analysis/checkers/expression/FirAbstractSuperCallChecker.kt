@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-object FirAbstractSuperCallChecker : FirQualifiedAccessChecker() {
+object FirAbstractSuperCallChecker : FirQualifiedAccessExpressionChecker() {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         // require the receiver to be the super reference
         expression.explicitReceiver.safeAs<FirQualifiedAccessExpression>()

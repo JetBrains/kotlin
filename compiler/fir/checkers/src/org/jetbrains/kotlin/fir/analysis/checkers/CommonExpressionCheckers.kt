@@ -20,7 +20,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
             FirExpressionAnnotationChecker,
         )
 
-    override val qualifiedAccessCheckers: Set<FirQualifiedAccessChecker>
+    override val qualifiedAccessExpressionCheckers: Set<FirQualifiedAccessExpressionChecker>
         get() = setOf(
             FirCallableReferenceChecker,
             FirSuperNotAvailableChecker,

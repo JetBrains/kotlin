@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeTypeParameterInQualified
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
-object FirTypeParameterInQualifiedAccessChecker : FirQualifiedAccessChecker() {
+object FirTypeParameterInQualifiedAccessChecker : FirQualifiedAccessExpressionChecker() {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         checkExplicitReceiver(expression, context, reporter)
         checkExpressionItself(expression, context, reporter)

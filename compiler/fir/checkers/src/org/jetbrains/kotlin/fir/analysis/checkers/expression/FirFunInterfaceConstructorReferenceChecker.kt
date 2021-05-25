@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.isFun
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 
-object FirFunInterfaceConstructorReferenceChecker : FirQualifiedAccessChecker() {
+object FirFunInterfaceConstructorReferenceChecker : FirQualifiedAccessExpressionChecker() {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         if (expression !is FirCallableReferenceAccess || expression is FirGetClassCall) return
 

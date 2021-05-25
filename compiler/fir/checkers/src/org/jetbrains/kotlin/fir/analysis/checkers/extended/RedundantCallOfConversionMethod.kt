@@ -5,9 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirQualifiedAccessChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirQualifiedAccessExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
@@ -24,7 +23,7 @@ import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtSafeQualifiedExpression
 
-object RedundantCallOfConversionMethod : FirQualifiedAccessChecker() {
+object RedundantCallOfConversionMethod : FirQualifiedAccessExpressionChecker() {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         if (expression !is FirFunctionCall) return
         val functionName = expression.calleeReference.name.asString()

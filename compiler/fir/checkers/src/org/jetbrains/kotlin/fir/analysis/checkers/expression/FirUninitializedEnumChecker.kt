@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 
-object FirUninitializedEnumChecker : FirQualifiedAccessChecker() {
+object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker() {
     // Initialization order: member property initializers, enum entries, companion object (including members in it).
     //
     // When JVM loads a class, the corresponding class initializer, a.k.a. <clinit>, is executed first.

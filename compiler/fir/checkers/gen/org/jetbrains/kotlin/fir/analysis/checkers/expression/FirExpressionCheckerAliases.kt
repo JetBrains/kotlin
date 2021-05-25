@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirLoop
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
@@ -32,7 +33,8 @@ import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 
 typealias FirBasicExpressionChecker = FirExpressionChecker<FirStatement>
-typealias FirQualifiedAccessChecker = FirExpressionChecker<FirQualifiedAccessExpression>
+typealias FirQualifiedAccessChecker = FirExpressionChecker<FirQualifiedAccess>
+typealias FirQualifiedAccessExpressionChecker = FirExpressionChecker<FirQualifiedAccessExpression>
 typealias FirFunctionCallChecker = FirExpressionChecker<FirFunctionCall>
 typealias FirVariableAssignmentChecker = FirExpressionChecker<FirVariableAssignment>
 typealias FirTryExpressionChecker = FirExpressionChecker<FirTryExpression>

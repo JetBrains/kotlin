@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-object FirSealedClassConstructorCallChecker : FirQualifiedAccessChecker() {
+object FirSealedClassConstructorCallChecker : FirQualifiedAccessExpressionChecker() {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         val constructorFir = expression.calleeReference.safeAs<FirResolvedNamedReference>()
             ?.resolvedSymbol
