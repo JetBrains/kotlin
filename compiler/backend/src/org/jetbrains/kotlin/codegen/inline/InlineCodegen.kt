@@ -69,9 +69,6 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
     protected val expressionMap = linkedMapOf<Int, FunctionalArgument>()
 
-    var activeLambda: LambdaInfo? = null
-        protected set
-
     private val sourceMapper = sourceCompiler.lazySourceMapper
 
     protected var delayedHiddenWriting: Function0<Unit>? = null
@@ -356,7 +353,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     protected fun putArgumentOrCapturedToLocalVal(
         jvmKotlinType: JvmKotlinType,
         stackValue: StackValue,
-        capturedParamIndex: Int,
+        capturedParam: CapturedParamDesc?,
         parameterIndex: Int,
         kind: ValueKind
     ) {
@@ -373,9 +370,8 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
             val remappedValue = if (couldBeRemapped) stackValue else null
 
             val info: ParameterInfo
-            if (capturedParamIndex >= 0) {
-                val capturedParamInfoInLambda = activeLambda!!.capturedVars[capturedParamIndex]
-                info = invocationParamBuilder.addCapturedParam(capturedParamInfoInLambda, capturedParamInfoInLambda.fieldName, false)
+            if (capturedParam != null) {
+                info = invocationParamBuilder.addCapturedParam(capturedParam, capturedParam.fieldName, false)
                 info.remapValue = remappedValue
             } else {
                 info = invocationParamBuilder.addNextValueParameter(jvmType, false, remappedValue, parameterIndex)
@@ -456,7 +452,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                 //HACK: actually parameter would be placed on stack in default function
                 // also see ValueKind.DEFAULT_LAMBDA_CAPTURED_PARAMETER check
                 StackValue.onStack(captured.type),
-                paramIndex,
+                captured,
                 paramIndex,
                 ValueKind.DEFAULT_LAMBDA_CAPTURED_PARAMETER
             )

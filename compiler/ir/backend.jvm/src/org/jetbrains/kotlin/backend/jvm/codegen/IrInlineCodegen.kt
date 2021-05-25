@@ -58,17 +58,13 @@ class IrInlineCodegen(
     }
 
     override fun putClosureParametersOnStack(next: LambdaInfo, functionReferenceReceiver: StackValue?) {
-        activeLambda = next
-
         when (next) {
             is IrExpressionLambdaImpl -> next.reference.getArgumentsWithIr().forEachIndexed { index, (_, ir) ->
-                putCapturedValueOnStack(ir, next.capturedVars[index].type, index)
+                putCapturedValueOnStack(ir, next.capturedVars[index], index)
             }
             is IrDefaultLambda -> rememberCapturedForDefaultLambda(next)
             else -> throw RuntimeException("Unknown lambda: $next")
         }
-
-        activeLambda = null
     }
 
     override fun genValueAndPut(
@@ -87,9 +83,7 @@ class IrInlineCodegen(
             expressionMap[closureInfo.index] = lambdaInfo
             val boundReceiver = irReference.extensionReceiver
             if (boundReceiver != null) {
-                activeLambda = lambdaInfo
-                putCapturedValueOnStack(boundReceiver, lambdaInfo.capturedVars.single().type, 0)
-                activeLambda = null
+                putCapturedValueOnStack(boundReceiver, lambdaInfo.capturedVars.single(), 0)
             }
         } else {
             val kind = when (irValueParameter.origin) {
@@ -125,15 +119,15 @@ class IrInlineCodegen(
             //TODO support default argument erasure
             if (!processDefaultMaskOrMethodHandler(onStack, kind)) {
                 val expectedType = JvmKotlinType(parameterType, irValueParameter.type.toIrBasedKotlinType())
-                putArgumentOrCapturedToLocalVal(expectedType, onStack, -1, irValueParameter.index, kind)
+                putArgumentOrCapturedToLocalVal(expectedType, onStack, null, irValueParameter.index, kind)
             }
         }
     }
 
-    private fun putCapturedValueOnStack(argumentExpression: IrExpression, valueType: Type, capturedParamIndex: Int) {
-        val onStack = codegen.genOrGetLocal(argumentExpression, valueType, argumentExpression.type, BlockInfo())
-        val expectedType = JvmKotlinType(valueType, argumentExpression.type.toIrBasedKotlinType())
-        putArgumentOrCapturedToLocalVal(expectedType, onStack, capturedParamIndex, capturedParamIndex, ValueKind.CAPTURED)
+    private fun putCapturedValueOnStack(argumentExpression: IrExpression, param: CapturedParamDesc, capturedParamIndex: Int) {
+        val onStack = codegen.genOrGetLocal(argumentExpression, param.type, argumentExpression.type, BlockInfo())
+        val expectedType = JvmKotlinType(param.type, argumentExpression.type.toIrBasedKotlinType())
+        putArgumentOrCapturedToLocalVal(expectedType, onStack, param, capturedParamIndex, ValueKind.CAPTURED)
     }
 
     override fun beforeValueParametersStart() {

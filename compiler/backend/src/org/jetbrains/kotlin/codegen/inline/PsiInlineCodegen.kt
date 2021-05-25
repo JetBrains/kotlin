@@ -102,6 +102,9 @@ class PsiInlineCodegen(
         delayedHiddenWriting = recordParameterValueInLocalVal(justProcess, false, *hiddenParameters.toTypedArray())
     }
 
+    var activeLambda: LambdaInfo? = null
+        private set
+
     override fun putClosureParametersOnStack(next: LambdaInfo, functionReferenceReceiver: StackValue?) {
         activeLambda = next
         when (next) {
@@ -192,12 +195,13 @@ class PsiInlineCodegen(
 
         assert(maskValues.isEmpty()) { "Additional default call arguments should be last ones, but $value" }
 
-        putArgumentOrCapturedToLocalVal(parameterType, value, -1, parameterIndex, kind)
+        putArgumentOrCapturedToLocalVal(parameterType, value, null, parameterIndex, kind)
     }
 
     override fun putCapturedValueOnStack(stackValue: StackValue, valueType: Type, paramIndex: Int) {
+        val param = activeLambda!!.capturedVars[paramIndex]
         putArgumentOrCapturedToLocalVal(
-            JvmKotlinType(stackValue.type, stackValue.kotlinType), stackValue, paramIndex, paramIndex, ValueKind.CAPTURED
+            JvmKotlinType(stackValue.type, stackValue.kotlinType), stackValue, param, paramIndex, ValueKind.CAPTURED
         )
     }
 
