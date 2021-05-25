@@ -117,8 +117,13 @@ fun MutableCollection<JdkId>.discoverJdksOnMacOS(project: Project) {
         for (rex in macOsJavaHomeOutRegexes) {
             val matchResult = rex.matchEntire(line)
             if (matchResult != null) {
-                addIfBetter(project, matchResult.groupValues[1], matchResult.groupValues[0], File(matchResult.groupValues[3]))
-                break
+                val jdkHomeDir = File(matchResult.groupValues[3])
+                // Filter out JRE installed at /Library/Internet Plug-Ins/JavaAppletPlugin.plugin/
+                // and shown by the java_home tool
+                if (!jdkHomeDir.path.contains("JavaAppletPlugin.plugin")) {
+                    addIfBetter(project, matchResult.groupValues[1], matchResult.groupValues[0], jdkHomeDir)
+                    break
+                }
             }
         }
     }
