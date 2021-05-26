@@ -23,7 +23,7 @@ import LibPackCase1.a.boo
 import LibPackCase1.b.*
 
 fun case1 (b: B?){
-    b.boo({ <!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>C()<!> })
+    b.boo({ <!TYPE_MISMATCH, TYPE_MISMATCH!>C()<!> })
     b.boo({1})
 }
 

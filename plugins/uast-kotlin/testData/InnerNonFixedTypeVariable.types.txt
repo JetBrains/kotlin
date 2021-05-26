@@ -7,9 +7,9 @@ UFile (package = ) [public final class InnerNonFixedTypeVariableKt {...]
                 UQualifiedReferenceExpression [list.filterIsInstance().<anonymous class>(mutableSetOf(), { ...})] : PsiType:<ErrorType>
                     UQualifiedReferenceExpression [list.filterIsInstance()]
                         USimpleNameReferenceExpression (identifier = list) [list] : PsiType:List<? extends Object>
-                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [filterIsInstance()] : PsiType:List<? extends NonExistentClass>
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [filterIsInstance()]
                             UIdentifier (Identifier (filterIsInstance)) [UIdentifier (Identifier (filterIsInstance))]
-                            USimpleNameReferenceExpression (identifier = filterIsInstance, resolvesTo = null) [filterIsInstance] : PsiType:List<? extends NonExistentClass>
+                            USimpleNameReferenceExpression (identifier = filterIsInstance, resolvesTo = null) [filterIsInstance]
                     UCallExpression (kind = UastCallKind(name='method_call'), argCount = 2)) [<anonymous class>(mutableSetOf(), { ...})] : PsiType:<ErrorType>
                         UIdentifier (Identifier (mapTo)) [UIdentifier (Identifier (mapTo))]
                         USimpleNameReferenceExpression (identifier = <anonymous class>, resolvesTo = null) [<anonymous class>] : PsiType:<ErrorType>

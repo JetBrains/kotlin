@@ -36,7 +36,7 @@ fun <R> main(a: ReturnType<R>) {
     takeNotNullStringAndKNullable(<!TYPE_MISMATCH!>x1<!>)
     takeNullableStringAndKNullable(x1)
     takeNotNullStringAndNotNullK(<!TYPE_MISMATCH("ReturnType.A<String, TypeVariable(K)>; ReturnType.A<String?, R?>!")!>x1<!>)
-    takeNullableStringAndNotNullK(<!TYPE_MISMATCH, TYPE_MISMATCH!>x1<!>)
+    takeNullableStringAndNotNullK(<!TYPE_MISMATCH!>x1<!>)
     takeNotNullString(<!TYPE_MISMATCH!>a.foo41.foo411<!>)
 
     val x2 = <!DEBUG_INFO_EXPRESSION_TYPE("(ReturnType.A<@org.jetbrains.annotations.Nullable kotlin.String?, @org.jetbrains.annotations.NotNull R!!>..ReturnType.A<@org.jetbrains.annotations.Nullable kotlin.String?, @org.jetbrains.annotations.NotNull R!!>?)")!>a.foo2()<!>
@@ -60,6 +60,6 @@ fun <R> main(a: ReturnType<R>) {
     val x5 = <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.Array<@org.jetbrains.annotations.Nullable kotlin.String?>..kotlin.Array<out @org.jetbrains.annotations.Nullable kotlin.String?>?)")!>a.foo5()<!>
     takeArrayOfNotNullString(<!TYPE_MISMATCH!>x5<!>)
     takeArrayOfNullableString(x5)
-    takeArrayOfNotNullK(<!TYPE_MISMATCH, TYPE_MISMATCH!>x5<!>)
+    takeArrayOfNotNullK(<!TYPE_MISMATCH!>x5<!>)
     takeArrayOfNullableK(x5)
 }

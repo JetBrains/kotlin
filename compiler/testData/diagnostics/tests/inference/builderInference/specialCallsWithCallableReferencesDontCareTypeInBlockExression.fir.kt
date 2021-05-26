@@ -72,7 +72,7 @@ fun poll14(flag: Boolean): Flow<String> {
 fun poll15(flag: Boolean): Flow<String> {
     return flow {
         val inv = if (flag) { ::bar5 } else { ::foo5 }
-        inv(<!NO_VALUE_FOR_PARAMETER{LT}!>)<!>
+        inv()
     }
 }
 
@@ -93,7 +93,7 @@ fun poll17(flag: Boolean): Flow<String> {
 fun poll4(): Flow<String> {
     return flow {
         val inv = try { ::bar } finally { ::foo }
-        inv(<!NO_VALUE_FOR_PARAMETER{LT}!>)<!>
+        inv()
     }
 }
 
@@ -121,7 +121,7 @@ fun poll43(): Flow<String> {
 fun poll44(): Flow<String> {
     return flow {
         val inv = try { ::bar5 } finally { ::foo5 }
-        inv(<!NO_VALUE_FOR_PARAMETER{LT}!>)<!>
+        inv()
     }
 }
 
@@ -142,7 +142,7 @@ fun poll46(): Flow<String> {
 fun poll5(): Flow<String> {
     return flow {
         val inv = try { ::bar } catch (e: Exception) { ::foo } finally { ::foo }
-        inv(<!NO_VALUE_FOR_PARAMETER{LT}!>)<!>
+        inv()
     }
 }
 
@@ -170,7 +170,7 @@ fun poll53(): Flow<String> {
 fun poll54(): Flow<String> {
     return flow {
         val inv = try { ::bar5 } catch (e: Exception) { ::foo5 } finally { ::foo5 }
-        inv(<!NO_VALUE_FOR_PARAMETER{LT}!>)<!>
+        inv()
     }
 }
 

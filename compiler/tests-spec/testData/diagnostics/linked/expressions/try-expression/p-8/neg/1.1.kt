@@ -84,9 +84,9 @@ fun case3() {
     try {
         throwExceptionA(false)
         A(2)
-    } catch (e: ExcA) <!TYPE_MISMATCH, TYPE_MISMATCH!>{
+    } catch (e: ExcA) <!TYPE_MISMATCH!>{
         A(<!NULL_FOR_NONNULL_TYPE!>null<!>) //diag duplication
-    }<!> catch (e: ExcB) <!TYPE_MISMATCH, TYPE_MISMATCH!>{
+    }<!> catch (e: ExcB) <!TYPE_MISMATCH!>{
         B(<!NULL_FOR_NONNULL_TYPE!>null<!>) //diag duplication
     }<!>
 }

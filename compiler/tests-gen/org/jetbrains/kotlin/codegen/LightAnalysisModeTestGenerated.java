@@ -14513,6 +14513,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class BuilderInference extends AbstractLightAnalysisModeTest {
+            @TestMetadata("specialCallsWithCallableReferencesDontCareTypeInBlockExression.kt")
+            public void ignoreSpecialCallsWithCallableReferencesDontCareTypeInBlockExression() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/specialCallsWithCallableReferencesDontCareTypeInBlockExression.kt");
+            }
+
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
@@ -14609,11 +14614,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("specialCallsWithCallableReferencesDontCareTypeInBlockExpression.kt")
             public void testSpecialCallsWithCallableReferencesDontCareTypeInBlockExpression() throws Exception {
                 runTest("compiler/testData/codegen/box/inference/builderInference/specialCallsWithCallableReferencesDontCareTypeInBlockExpression.kt");
-            }
-
-            @TestMetadata("specialCallsWithCallableReferencesDontCareTypeInBlockExression.kt")
-            public void testSpecialCallsWithCallableReferencesDontCareTypeInBlockExression() throws Exception {
-                runTest("compiler/testData/codegen/box/inference/builderInference/specialCallsWithCallableReferencesDontCareTypeInBlockExression.kt");
             }
 
             @TestMetadata("specialCallsWithCallableReferencesDontRewriteAtSlice.kt")

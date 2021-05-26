@@ -38,7 +38,7 @@ class Flow<out R>(private val block: suspend FlowCollector<R>.() -> Unit)
 fun poll7(): Flow<String> {
     return flow {
         val inv = ::bar<!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!>
-        inv(<!NO_VALUE_FOR_PARAMETER{LT}!>)<!>
+        inv()
     }
 }
 
