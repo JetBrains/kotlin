@@ -26,7 +26,7 @@ fun test() {
         get()?.hashCode()
         get()?.equals(1)
         // there is `String?.equals` extension
-        <!TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?")!>get()<!>.equals("")
+        <!TYPE_MISMATCH("Any; Nothing?")!>get()<!>.equals("")
     }
     val ret2 = build {
         emit(1)
@@ -39,7 +39,7 @@ fun test() {
         val x = get()
         x?.hashCode()
         x?.equals(1)
-        <!TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?")!>x<!>.equals("")
+        <!TYPE_MISMATCH("Any; Nothing?")!>x<!>.equals("")
     }
     val ret3 = build {
         emit(1)
@@ -74,7 +74,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x == null) {
-            <!TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?")!>x<!>.hashCode()
+            <!TYPE_MISMATCH("Any; Nothing?")!>x<!>.hashCode()
         }
 
         ""
@@ -84,7 +84,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x == null) {
-            <!TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?")!>x<!>.equals("")
+            <!TYPE_MISMATCH("Any; Nothing?")!>x<!>.equals("")
         }
 
         ""
@@ -104,7 +104,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x == null) {
-            <!TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?")!>x<!>.test()
+            <!TYPE_MISMATCH("Any; Nothing?")!>x<!>.test()
         }
 
         ""
@@ -114,7 +114,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x === null) {
-            <!TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?")!>x<!>.hashCode()
+            <!TYPE_MISMATCH("Any; Nothing?")!>x<!>.hashCode()
         }
 
         ""
@@ -124,7 +124,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x === null) {
-            <!TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?")!>x<!>.equals("")
+            <!TYPE_MISMATCH("Any; Nothing?")!>x<!>.equals("")
         }
 
         ""
@@ -144,7 +144,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x === null) {
-            <!TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?")!>x<!>.test()
+            <!TYPE_MISMATCH("Any; Nothing?")!>x<!>.test()
         }
 
         ""
@@ -153,7 +153,7 @@ fun test() {
         emit(1)
         emit(null)
         val x = get()
-        <!TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?")!>x<!>.test()
+        <!TYPE_MISMATCH("Any; Nothing?")!>x<!>.test()
 
         ""
     }
@@ -211,7 +211,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x == null) {
-            <!TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?")!>x<!>.equals("")
+            <!TYPE_MISMATCH("Any; Nothing?")!>x<!>.equals("")
         }
 
         ""
@@ -221,7 +221,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x == null) {
-            <!TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?")!>x<!>.hashCode()
+            <!TYPE_MISMATCH("Any; Nothing?")!>x<!>.hashCode()
         }
         ""
     }
@@ -230,7 +230,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x == null) {
-            <!TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?")!>x<!>.toString()
+            <!TYPE_MISMATCH("Any; Nothing?")!>x<!>.toString()
         }
         ""
     }
@@ -239,7 +239,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x == null) {
-            <!TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?")!>x<!>.test()
+            <!TYPE_MISMATCH("Any; Nothing?")!>x<!>.test()
         }
         ""
     }
@@ -248,7 +248,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x === null) {
-            <!TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?")!>x<!>.equals("")
+            <!TYPE_MISMATCH("Any; Nothing?")!>x<!>.equals("")
         }
 
         ""
@@ -258,7 +258,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x === null) {
-            <!TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?")!>x<!>.hashCode()
+            <!TYPE_MISMATCH("Any; Nothing?")!>x<!>.hashCode()
         }
         ""
     }
@@ -267,7 +267,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x === null) {
-            <!TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?")!>x<!>.toString()
+            <!TYPE_MISMATCH("Any; Nothing?")!>x<!>.toString()
         }
         ""
     }
@@ -276,7 +276,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x === null) {
-            <!TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?")!>x<!>.test()
+            <!TYPE_MISMATCH("Any; Nothing?")!>x<!>.test()
         }
         ""
     }
@@ -284,7 +284,7 @@ fun test() {
         emit(1)
         emit(null)
         val x = get()
-        <!TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?"), TYPE_MISMATCH("Any; Nothing?")!>x<!>.test()
+        <!TYPE_MISMATCH("Any; Nothing?")!>x<!>.test()
         ""
     }
     val ret51 = build {

@@ -1,5 +1,6 @@
 // !USE_EXPERIMENTAL: kotlin.RequiresOptIn
 // !DIAGNOSTICS: -UNUSED_PARAMETER
+// !WITH_NEW_INFERENCE
 // NI_EXPECTED_FILE
 
 @file:OptIn(ExperimentalTypeInference::class)
@@ -14,10 +15,10 @@ fun <S> generate(@BuilderInference g: suspend Controller<S>.() -> Unit): S = TOD
 
 class A
 
-val test1 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+val test1 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER{NI}, TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER{OI}!>generate<!> {
     yield(<!NO_COMPANION_OBJECT!>A<!>)
 }
 
-val test2: Int = <!TYPE_MISMATCH!>generate {
-    yield(<!TYPE_MISMATCH, TYPE_MISMATCH!>A()<!>)
+val test2: Int = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH{OI}, TYPE_MISMATCH{NI}!>generate {
+    yield(<!TYPE_MISMATCH{NI}!>A()<!>)
 }<!>

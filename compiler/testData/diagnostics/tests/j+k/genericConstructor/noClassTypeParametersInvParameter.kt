@@ -12,7 +12,7 @@ fun test(x: Inv<Int>, y: Inv<String>) {
     A("", <!TYPE_MISMATCH!>x<!>)
     A("", y)
 
-    A<String>("", <!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>x<!>)
+    A<String>("", <!TYPE_MISMATCH, TYPE_MISMATCH!>x<!>)
 
     A<Any>("", <!TYPE_MISMATCH, TYPE_MISMATCH!>x<!>)
     A<String>("", y)

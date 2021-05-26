@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
@@ -10,18 +11,18 @@
  */
 
 fun test1(): Int {
-    val x: String = if (true) <!TYPE_MISMATCH!>{
+    val x: String = if (true) <!TYPE_MISMATCH{NI}!>{
         when {
-            true -> Any()
-            else -> null
+            true -> <!TYPE_MISMATCH{OI}!>Any()<!>
+            else -> <!NULL_FOR_NONNULL_TYPE{OI}!>null<!>
         }
     }<!> else ""
     return x.hashCode()
 }
 
 fun test2(): Int {
-    val x: String = <!TYPE_MISMATCH, TYPE_MISMATCH!>when {
-                        true -> Any()
+    val x: String = <!TYPE_MISMATCH{NI}!>when {
+                        true -> <!TYPE_MISMATCH{OI}!>Any()<!>
                         else -> null
                     } ?: return 0<!>
     return x.hashCode()

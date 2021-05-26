@@ -110,7 +110,7 @@ fun ResolutionContext<*>.reportTypeMismatchDueToTypeProjection(
 }
 
 fun BindingTrace.reportDiagnosticOnce(diagnostic: Diagnostic) {
-    if (bindingContext.diagnostics.forElement(diagnostic.psiElement).any { it.factory == diagnostic.factory }) return
+    if (bindingContext.diagnostics.noSuppression().forElement(diagnostic.psiElement).any { it.factory == diagnostic.factory }) return
 
     report(diagnostic)
 }
@@ -119,8 +119,10 @@ fun BindingTrace.reportDiagnosticOnceWrtDiagnosticFactoryList(
     diagnosticToReport: Diagnostic,
     vararg diagnosticFactories: DiagnosticFactory<*>,
 ) {
-    val hasAlreadyReportedDiagnosticFromListOrSameType = bindingContext.diagnostics.forElement(diagnosticToReport.psiElement)
-        .any { diagnostic -> diagnostic.factory == diagnosticToReport.factory || diagnosticFactories.any { it == diagnostic.factory } }
+    val hasAlreadyReportedDiagnosticFromListOrSameType =
+        bindingContext.diagnostics.noSuppression()
+            .forElement(diagnosticToReport.psiElement)
+            .any { diagnostic -> diagnostic.factory == diagnosticToReport.factory || diagnosticFactories.any { it == diagnostic.factory } }
 
     if (hasAlreadyReportedDiagnosticFromListOrSameType) return
 

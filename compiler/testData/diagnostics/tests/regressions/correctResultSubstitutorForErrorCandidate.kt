@@ -1,7 +1,8 @@
+// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun test(a: Int, b: Boolean) {
-    bar(a.foo(<!TYPE_MISMATCH, TYPE_MISMATCH!>b<!>))
+    <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER{OI}!>bar<!>(a.<!TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR{OI}!>foo<!>(<!TYPE_MISMATCH!>b<!>))
 }
 
 fun <T, R> T.foo(l: (T) -> R): R = TODO()

@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 interface Foo
 interface Bar : Foo
 
@@ -12,14 +13,14 @@ val foo: Foo = run {
     <!DEBUG_INFO_SMARTCAST!>x<!>
 }
 
-val foofoo: Foo = run {
+val foofoo: Foo = <!TYPE_INFERENCE_UPPER_BOUND_VIOLATED{OI}!>run<!> {
     val x = foo()
     if (x == null) throw Exception()
-    <!DEBUG_INFO_SMARTCAST, TYPE_MISMATCH!>x<!>
+    <!DEBUG_INFO_SMARTCAST, TYPE_MISMATCH{NI}!>x<!>
 }
 
-val bar: Bar = <!TYPE_MISMATCH!>run {
+val bar: Bar = <!TYPE_MISMATCH{NI}!><!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS{OI}!>run<!> {
     val x = foo()
     if (x == null) throw Exception()
-    <!DEBUG_INFO_SMARTCAST, TYPE_MISMATCH, TYPE_MISMATCH!>x<!>
+    <!DEBUG_INFO_SMARTCAST{NI}, TYPE_MISMATCH!>x<!>
 }<!>

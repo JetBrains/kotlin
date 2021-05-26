@@ -262,8 +262,8 @@ class Main<L>(x: L?, y: L) {
     val x471 = <!DEBUG_INFO_EXPRESSION_TYPE("OutBar<OutBar<OutBar<L!!>>>")!>foo47(y)<!>
 
     fun <R> takeLambda(block: () -> R): R = materialize()
-    val x480 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L>")!><!DEBUG_INFO_LEAKING_THIS!>takeLambda<!> { foo48 { <!TYPE_MISMATCH("Any; L"), TYPE_MISMATCH("Any; L")!>x<!> } }<!>
-    val x481 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L>")!><!DEBUG_INFO_LEAKING_THIS!>takeLambda<!> { foo48 { <!TYPE_MISMATCH("Any; L"), TYPE_MISMATCH("Any; L")!>y<!> } }<!>
+    val x480 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L>")!><!DEBUG_INFO_LEAKING_THIS!>takeLambda<!> { foo48 { <!TYPE_MISMATCH("Any; L")!>x<!> } }<!>
+    val x481 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L>")!><!DEBUG_INFO_LEAKING_THIS!>takeLambda<!> { foo48 { <!TYPE_MISMATCH("Any; L")!>y<!> } }<!>
     val x482 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<kotlin.Nothing>")!><!DEBUG_INFO_LEAKING_THIS!>takeLambda<!> { foo48 { null } }<!>
 }
 

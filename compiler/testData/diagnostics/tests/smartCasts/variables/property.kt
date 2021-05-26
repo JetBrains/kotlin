@@ -6,5 +6,5 @@ fun bar(s: String): Int {
 
 fun foo(m: MyClass): Int {
     m.p = "xyz"
-    return bar(<!SMARTCAST_IMPOSSIBLE, SMARTCAST_IMPOSSIBLE!>m.p<!>)
+    return bar(<!SMARTCAST_IMPOSSIBLE!>m.p<!>)
 }

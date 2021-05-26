@@ -147,7 +147,7 @@ fun poll73(): Flow<String> {
 
 fun poll8(): Flow<String> {
     return flow {
-        val inv = {<!CONSTANT_EXPECTED_TYPE_MISMATCH, CONSTANT_EXPECTED_TYPE_MISMATCH, CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>} in setOf({1f})
+        val inv = {<!CONSTANT_EXPECTED_TYPE_MISMATCH, CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>} in setOf({1f})
         <!DEBUG_INFO_MISSING_UNRESOLVED!>inv()<!>
     }
 }
@@ -175,7 +175,7 @@ fun poll83(): Flow<String> {
 
 fun poll84(): Flow<String> {
     return flow {
-        val inv = {{<!CONSTANT_EXPECTED_TYPE_MISMATCH, CONSTANT_EXPECTED_TYPE_MISMATCH, CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>}} in setOf({{1f}})
+        val inv = {{<!CONSTANT_EXPECTED_TYPE_MISMATCH, CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>}} in setOf({{1f}})
         <!DEBUG_INFO_MISSING_UNRESOLVED!>inv()<!>
     }
 }

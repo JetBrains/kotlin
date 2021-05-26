@@ -18,10 +18,10 @@ fun main() {
     J <!TYPE_MISMATCH!>{ <!EXPECTED_PARAMETER_TYPE_MISMATCH!>s: String<!> -> s}<!> // should be prohibited, because SAM value parameter has nullable type
     J { "" + it<!UNSAFE_CALL!>.<!>length }
     J { <!NULL_FOR_NONNULL_TYPE, NULL_FOR_NONNULL_TYPE!>null<!> }
-    J { <!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>it?.length?.toString()<!> }
+    J { <!TYPE_MISMATCH, TYPE_MISMATCH!>it?.length?.toString()<!> }
 
     J2 <!TYPE_MISMATCH!>{ <!EXPECTED_PARAMETER_TYPE_MISMATCH!>s: String<!> -> s}<!>
     J2 { "" + it<!UNSAFE_CALL!>.<!>length }
     J2 { <!NULL_FOR_NONNULL_TYPE, NULL_FOR_NONNULL_TYPE!>null<!> }
-    J2 { <!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>it?.length?.toString()<!> }
+    J2 { <!TYPE_MISMATCH, TYPE_MISMATCH!>it?.length?.toString()<!> }
 }
