@@ -34,7 +34,7 @@ internal object SuperCallInsertionHandler : InsertHandler<LookupElement> {
         val lookupObject = item.`object` as SuperCallLookupObject
 
         replaceWithClassIdAndShorten(lookupObject, context)
-        context.addDotAndInvokeCompletion()
+        context.addSymbolAndInvokeCompletion(symbol = ".")
     }
 
     private fun replaceWithClassIdAndShorten(

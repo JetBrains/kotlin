@@ -10,8 +10,8 @@ import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.openapi.application.ApplicationManager
 
-internal fun InsertionContext.addDotAndInvokeCompletion() {
-    addDotToCompletion(this)
+internal fun InsertionContext.addSymbolAndInvokeCompletion(symbol: String) {
+    addSymbolToCompletion(this, symbol)
     invokeCompletion(this)
 }
 
@@ -22,8 +22,8 @@ private fun invokeCompletion(context: InsertionContext) {
     }
 }
 
-private fun addDotToCompletion(context: InsertionContext) {
-    context.document.insertString(context.tailOffset, ".")
+private fun addSymbolToCompletion(context: InsertionContext, symbol: String) {
+    context.document.insertString(context.tailOffset, symbol)
     context.commitDocument()
     context.editor.caretModel.moveToOffset(context.tailOffset)
 }

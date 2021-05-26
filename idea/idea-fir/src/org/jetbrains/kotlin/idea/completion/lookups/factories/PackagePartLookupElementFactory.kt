@@ -10,7 +10,7 @@ import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.icons.AllIcons
-import org.jetbrains.kotlin.idea.completion.contributors.helpers.addDotAndInvokeCompletion
+import org.jetbrains.kotlin.idea.completion.contributors.helpers.addSymbolAndInvokeCompletion
 import org.jetbrains.kotlin.idea.completion.lookups.KotlinLookupObject
 import org.jetbrains.kotlin.miniStdLib.letIf
 import org.jetbrains.kotlin.name.FqName
@@ -41,7 +41,7 @@ private object PackagePartInsertionHandler : InsertHandler<LookupElement> {
         val name = lookupElement.shortName.render()
         context.document.replaceString(context.startOffset, context.tailOffset, name)
         context.commitDocument()
-        context.addDotAndInvokeCompletion()
+        context.addSymbolAndInvokeCompletion(symbol = ".")
     }
 }
 

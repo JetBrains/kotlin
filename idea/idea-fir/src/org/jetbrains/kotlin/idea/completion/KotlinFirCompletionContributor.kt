@@ -69,6 +69,7 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
         val annotationsContributor = FirAnnotationCompletionContributor(basicContext)
         val packageCompletionContributor = FirPackageCompletionContributor(basicContext)
         val importDirectivePackageMembersCompletionContributor = FirImportDirectivePackageMembersCompletionContributor(basicContext)
+        val typeParameterConstraintNameInWhereClauseContributor = FirTypeParameterConstraintNameInWhereClauseCompletionContributor(basicContext)
 
         when (positionContext) {
             is FirExpressionNameReferencePositionContext -> {
@@ -101,6 +102,10 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
 
             is FirPackageDirectivePositionContext -> {
                 complete(packageCompletionContributor, positionContext)
+            }
+
+            is FirTypeConstraintNameInWhereClausePositionContext -> {
+                complete(typeParameterConstraintNameInWhereClauseContributor, positionContext)
             }
 
             is FirUnknownPositionContext -> {

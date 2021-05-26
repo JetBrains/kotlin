@@ -9,9 +9,11 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.openapi.module.Module
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.completion.*
+import org.jetbrains.kotlin.idea.completion.context.*
 import org.jetbrains.kotlin.idea.completion.context.FirBasicCompletionContext
 import org.jetbrains.kotlin.idea.completion.context.FirNameReferencePositionContext
 import org.jetbrains.kotlin.idea.completion.context.FirRawPositionCompletionContext
+import org.jetbrains.kotlin.idea.completion.context.FirTypeConstraintNameInWhereClausePositionContext
 import org.jetbrains.kotlin.idea.completion.context.FirUnknownPositionContext
 import org.jetbrains.kotlin.idea.completion.contributors.keywords.OverrideKeywordHandler
 import org.jetbrains.kotlin.idea.completion.contributors.keywords.ReturnKeywordHandler
@@ -43,6 +45,9 @@ internal class FirKeywordCompletionContributor(basicContext: FirBasicCompletionC
                     is KtLabelReferenceExpression -> reference.expression.parent.parent as? KtExpressionWithLabel
                     else -> reference.expression
                 }
+            }
+            is FirTypeConstraintNameInWhereClausePositionContext -> {
+                error("keyword completion should not be called for FirTypeConstraintNameInWhereClausePositionContext")
             }
             is FirUnknownPositionContext -> null
         }
