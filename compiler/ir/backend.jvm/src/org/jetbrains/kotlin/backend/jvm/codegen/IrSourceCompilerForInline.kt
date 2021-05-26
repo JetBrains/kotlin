@@ -91,7 +91,7 @@ class IrSourceCompilerForInline(
             )
         }
 
-    override val lazySourceMapper: SourceMapper
+    override val sourceMapper: SourceMapper
         get() = codegen.smap
 
     override fun generateLambdaBody(lambdaInfo: ExpressionLambda, reifiedTypeParameters: ReifiedTypeParametersUsages): SMAPAndMethodNode {

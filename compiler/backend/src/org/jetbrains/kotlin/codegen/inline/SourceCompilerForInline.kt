@@ -33,7 +33,7 @@ interface SourceCompilerForInline {
 
     val inlineCallSiteInfo: InlineCallSiteInfo
 
-    val lazySourceMapper: SourceMapper
+    val sourceMapper: SourceMapper
 
     fun generateLambdaBody(lambdaInfo: ExpressionLambda, reifiedTypeParameters: ReifiedTypeParametersUsages): SMAPAndMethodNode
 
