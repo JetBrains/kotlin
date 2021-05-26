@@ -1,0 +1,9 @@
+// "Remove useless cast" "true"
+fun foo() {}
+
+fun test() {
+    foo()
+    // comment
+    ({ "" })
+}
+/* IGNORE_FIR */
