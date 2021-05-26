@@ -13,6 +13,7 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.completion.lookups.*
 import org.jetbrains.kotlin.idea.completion.lookups.CallableImportStrategy
 import org.jetbrains.kotlin.idea.completion.lookups.KotlinLookupObject
+import org.jetbrains.kotlin.idea.completion.lookups.TailTextProvider.getTailText
 import org.jetbrains.kotlin.idea.completion.lookups.addCallableImportIfRequired
 import org.jetbrains.kotlin.idea.completion.lookups.detectImportStrategy
 import org.jetbrains.kotlin.idea.completion.lookups.shortenReferencesForFirCompletion
@@ -32,11 +33,13 @@ internal class VariableLookupElementFactory {
     ): LookupElementBuilder {
         val lookupObject = VariableLookupObject(
             symbol.name,
-            importStrategy = importStrategy
+            importStrategy = importStrategy,
+            renderedReceiverType = symbol.receiverType?.type?.render(CompletionShortNamesRenderer.TYPE_RENDERING_OPTIONS),
         )
 
         return LookupElementBuilder.create(lookupObject, symbol.name.asString())
             .withTypeText(symbol.annotatedType.type.render(KtTypeRendererOptions.SHORT_NAMES))
+            .withTailText(getTailText(symbol), true)
             .markIfSyntheticJavaProperty(symbol)
             .withInsertHandler(VariableInsertionHandler)
             .let { withSymbolInfo(symbol, it) }
@@ -61,8 +64,9 @@ internal class VariableLookupElementFactory {
  */
 private data class VariableLookupObject(
     override val shortName: Name,
-    val importStrategy: CallableImportStrategy
-) : KotlinLookupObject
+    val importStrategy: CallableImportStrategy,
+    override val renderedReceiverType: String?,
+) : KotlinCallableLookupObject()
 
 
 private object VariableInsertionHandler : InsertHandler<LookupElement> {

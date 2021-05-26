@@ -32,6 +32,10 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTypeArgumentList
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.renderer.render
+import org.jetbrains.kotlin.idea.completion.lookups.TailTextProvider.getTailText
+import org.jetbrains.kotlin.idea.completion.lookups.TailTextProvider.insertLambdaBraces
+import org.jetbrains.kotlin.idea.completion.lookups.CompletionShortNamesRenderer.renderFunctionParameters
+import org.jetbrains.kotlin.idea.completion.lookups.CompletionShortNamesRenderer.TYPE_RENDERING_OPTIONS
 
 internal class FunctionLookupElementFactory {
     fun KtAnalysisSession.createLookup(
@@ -44,7 +48,8 @@ internal class FunctionLookupElementFactory {
             importStrategy = importStrategy,
             inputValueArguments = symbol.valueParameters.isNotEmpty(),
             insertEmptyLambda = insertLambdaBraces(symbol),
-            renderedFunctionParameters = with(CompletionShortNamesRenderer) { renderFunctionParameters(symbol) }
+            renderedFunctionParameters = renderFunctionParameters(symbol),
+            renderedReceiverType = symbol.receiverType?.type?.render(TYPE_RENDERING_OPTIONS)
         )
 
         val insertionHandler = when (insertionStrategy) {
@@ -65,14 +70,6 @@ internal class FunctionLookupElementFactory {
         }
     }
 
-    private fun KtAnalysisSession.getTailText(symbol: KtFunctionSymbol): String {
-        return if (insertLambdaBraces(symbol)) " {...}" else with(CompletionShortNamesRenderer) { renderFunctionParameters(symbol) }
-    }
-
-    private fun KtAnalysisSession.insertLambdaBraces(symbol: KtFunctionSymbol): Boolean {
-        val singleParam = symbol.valueParameters.singleOrNull()
-        return singleParam != null && !singleParam.hasDefaultValue && singleParam.annotatedType.type is KtFunctionalType
-    }
 
     companion object {
         private val LOG = logger<FunctionLookupElementFactory>()
@@ -88,8 +85,9 @@ private data class FunctionLookupObject(
     val inputValueArguments: Boolean,
     val insertEmptyLambda: Boolean,
     // for distinction between different overloads
-    private val renderedFunctionParameters: String
-) : KotlinLookupObject
+    private val renderedFunctionParameters: String,
+    override val renderedReceiverType: String?
+) : KotlinCallableLookupObject()
 
 
 private object FunctionInsertionHandler : QuotedNamesAwareInsertionHandler() {
