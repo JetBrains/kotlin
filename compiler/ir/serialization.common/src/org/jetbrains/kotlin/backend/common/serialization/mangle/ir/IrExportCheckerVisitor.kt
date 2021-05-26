@@ -23,15 +23,23 @@ import org.jetbrains.kotlin.name.SpecialNames
 abstract class IrExportCheckerVisitor(private val compatibleMode: Boolean) : KotlinExportChecker<IrDeclaration> {
 
     private val compatibleChecker = CompatibleChecker()
-    private val newChecker = NewChecker()
+    private val checker = Checker()
 
+    /**
+     * @return true if [declaration] is exportable from klib point of view.
+     * Depending on [compatibleMode] option the same declaration could have FileLocal or Common signature.
+     */
     override fun check(declaration: IrDeclaration, type: SpecialDeclarationType): Boolean {
-        return declaration.accept(if (compatibleMode) compatibleChecker else newChecker, null)
+        return declaration.accept(if (compatibleMode) compatibleChecker else checker, null)
     }
 
     abstract override fun IrDeclaration.isPlatformSpecificExported(): Boolean
 
-    private class NewChecker : IrElementVisitor<Boolean, Nothing?> {
+    /**
+     * Corresponding to export policy of klib ABI >= 1.6.0.
+     * In that case any non-local declaration (including type parameter and field) is exportable and could be navigated between modules
+     */
+    private class Checker : IrElementVisitor<Boolean, Nothing?> {
         override fun visitElement(element: IrElement, data: Nothing?): Boolean {
             error("Should bot reach here ${element.render()}")
         }
@@ -68,6 +76,14 @@ abstract class IrExportCheckerVisitor(private val compatibleMode: Boolean) : Kot
         override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: Nothing?): Boolean = false
     }
 
+    /**
+     * Was using for klib ABI version <= 1.5.0. In that case declaration which has itself or in their hierarchy private or local parent
+     * is considered non-exportable.
+     *
+     * Also type parameters and fields are not exportable.
+     *
+     * Is used to link libraries with ABI level <= 1.5.0
+     */
     private inner class CompatibleChecker : IrElementVisitor<Boolean, Nothing?> {
         private fun IrDeclaration.isExported(annotations: List<IrConstructorCall>, visibility: DescriptorVisibility?): Boolean {
             val speciallyExported = annotations.hasAnnotation(publishedApiAnnotation) || isPlatformSpecificExported()

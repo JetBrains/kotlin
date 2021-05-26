@@ -11,6 +11,6 @@ import org.jetbrains.kotlin.ir.util.KotlinMangler
 abstract class AbstractKotlinMangler<D : Any> : KotlinMangler<D> {
     override val String.hashMangle get() = cityHash64()
 
-    abstract fun getExportChecker(): KotlinExportChecker<D>
+    abstract fun getExportChecker(compatibleMode: Boolean): KotlinExportChecker<D>
     abstract fun getMangleComputer(mode: MangleMode): KotlinMangleComputer<D>
 }

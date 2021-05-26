@@ -6,14 +6,19 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.KotlinMangler
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
+import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 
 interface IdSignatureClashTracker {
@@ -43,13 +48,13 @@ abstract class GlobalDeclarationTable(
         }
     }
 
-    open fun computeSignatureByDeclaration(declaration: IrDeclaration): IdSignature {
+    open fun computeSignatureByDeclaration(declaration: IrDeclaration, compatibleMode: Boolean): IdSignature {
         return table.getOrPut(declaration) {
-            publicIdSignatureComputer.composePublicIdSignature(declaration).also { clashTracker.commit(declaration, it) }
+            publicIdSignatureComputer.composePublicIdSignature(declaration, compatibleMode).also { clashTracker.commit(declaration, it) }
         }
     }
 
-    fun isExportedDeclaration(declaration: IrDeclaration): Boolean = with(mangler) { declaration.isExported() }
+    fun isExportedDeclaration(declaration: IrDeclaration, compatibleMode: Boolean): Boolean = with(mangler) { declaration.isExported(compatibleMode) }
 }
 
 open class DeclarationTable(globalTable: GlobalDeclarationTable) {
@@ -62,24 +67,34 @@ open class DeclarationTable(globalTable: GlobalDeclarationTable) {
         signaturer.inFile(file?.symbol, block)
     }
 
-    fun isExportedDeclaration(declaration: IrDeclaration) = globalDeclarationTable.isExportedDeclaration(declaration)
+
+    private fun IrDeclaration.isLocalDeclaration(compatibleMode: Boolean): Boolean {
+        return !isExportedDeclaration(this, compatibleMode)
+    }
+
+    fun isExportedDeclaration(declaration: IrDeclaration, compatibleMode: Boolean) =
+        globalDeclarationTable.isExportedDeclaration(declaration, compatibleMode)
 
     protected open fun tryComputeBackendSpecificSignature(declaration: IrDeclaration): IdSignature? = null
 
-    private fun computeSignatureByDeclaration(declaration: IrDeclaration): IdSignature {
-        tryComputeBackendSpecificSignature(declaration)?.let { return it }
-        return if (declaration.isLocalDeclaration()) {
-            table.getOrPut(declaration) { signaturer.composeFileLocalIdSignature(declaration) }
-        } else globalDeclarationTable.computeSignatureByDeclaration(declaration)
+    private fun allocateIndexedSignature(declaration: IrDeclaration, compatibleMode: Boolean): IdSignature {
+        return table.getOrPut(declaration) { signaturer.composeFileLocalIdSignature(declaration, compatibleMode) }
     }
 
-    fun privateDeclarationSignature(declaration: IrDeclaration, builder: () -> IdSignature): IdSignature {
-        assert(declaration.isLocalDeclaration())
+    private fun computeSignatureByDeclaration(declaration: IrDeclaration, compatibleMode: Boolean): IdSignature {
+        tryComputeBackendSpecificSignature(declaration)?.let { return it }
+        return if (declaration.isLocalDeclaration(compatibleMode)) {
+            allocateIndexedSignature(declaration, compatibleMode)
+        } else globalDeclarationTable.computeSignatureByDeclaration(declaration, compatibleMode)
+    }
+
+    fun privateDeclarationSignature(declaration: IrDeclaration, compatibleMode: Boolean, builder: () -> IdSignature): IdSignature {
+        assert(declaration.isLocalDeclaration(compatibleMode))
         return table.getOrPut(declaration) { builder() }
     }
 
-    fun signatureByDeclaration(declaration: IrDeclaration): IdSignature {
-        return computeSignatureByDeclaration(declaration)
+    fun signatureByDeclaration(declaration: IrDeclaration, compatibleMode: Boolean): IdSignature {
+        return computeSignatureByDeclaration(declaration, compatibleMode)
     }
 
     fun assumeDeclarationSignature(declaration: IrDeclaration, signature: IdSignature) {
