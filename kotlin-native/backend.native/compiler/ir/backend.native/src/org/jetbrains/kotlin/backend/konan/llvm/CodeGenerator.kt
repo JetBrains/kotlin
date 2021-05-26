@@ -379,6 +379,9 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     //private var arenaSlot: LLVMValueRef? = null
     private val slotToVariableLocation = mutableMapOf<Int, VariableDebugLocation>()
 
+    private val loadsMap = mutableMapOf<LLVMValueRef, LLVMValueRef>()
+    private val bitcastsMap = mutableMapOf<Pair<LLVMValueRef, LLVMTypeRef?>, LLVMValueRef>()
+
     private val prologueBb = basicBlockInFunction("prologue", startLocation)
     private val localsInitBb = basicBlockInFunction("locals_init", startLocation)
     private val stackLocalsInitBb = basicBlockInFunction("stack_locals_init", startLocation)
@@ -488,10 +491,15 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     }
 
     fun loadSlot(address: LLVMValueRef, isVar: Boolean, name: String = ""): LLVMValueRef {
+        if (!afterCondition && address in loadsMap) {
+            return loadsMap[address]!!
+        }
         val value = LLVMBuildLoad(builder, address, name)!!
         if (isObjectRef(value) && isVar) {
             val slot = alloca(LLVMTypeOf(value), variableLocation = null)
             storeStackRef(value, slot)
+        } else if (isObjectRef(value)) {
+            loadsMap[address] = value
         }
         return value
     }
@@ -622,6 +630,8 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             // because other invokes processed before can be inside arguments list.
             if (exceptionHandler == ExceptionHandler.Caller)
                 invokeInstructions.add(0, FunctionInvokeInformation(result, llvmFunction, rargs, args.size, success))
+            else
+                afterCondition =  true
             positionAtEnd(success)
 
             return result
@@ -689,10 +699,11 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         currentPositionHolder.setAfterTerminator()
         return res
     }
-
+    private var afterCondition = false
     fun condBr(condition: LLVMValueRef?, bbTrue: LLVMBasicBlockRef?, bbFalse: LLVMBasicBlockRef?): LLVMValueRef? {
         val res = LLVMBuildCondBr(builder, condition, bbTrue, bbFalse)
         currentPositionHolder.setAfterTerminator()
+        afterCondition = true
         return res
     }
 
@@ -764,7 +775,11 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     fun select(ifValue: LLVMValueRef, thenValue: LLVMValueRef, elseValue: LLVMValueRef, name: String = ""): LLVMValueRef =
             LLVMBuildSelect(builder, ifValue, thenValue, elseValue, name)!!
 
-    fun bitcast(type: LLVMTypeRef?, value: LLVMValueRef, name: String = "") = LLVMBuildBitCast(builder, value, type, name)!!
+    fun bitcast(type: LLVMTypeRef?, value: LLVMValueRef, name: String = "") =
+            if (!afterCondition) {
+        bitcastsMap.getOrPut(value to type) {
+            LLVMBuildBitCast(builder, value, type, name)!!
+        }} else LLVMBuildBitCast(builder, value, type, name)!!
 
     fun intToPtr(value: LLVMValueRef?, DestTy: LLVMTypeRef, Name: String = "") = LLVMBuildIntToPtr(builder, value, DestTy, Name)!!
     fun ptrToInt(value: LLVMValueRef?, DestTy: LLVMTypeRef, Name: String = "") = LLVMBuildPtrToInt(builder, value, DestTy, Name)!!
