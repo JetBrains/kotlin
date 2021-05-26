@@ -38,7 +38,7 @@ open class SerializerCodegenImpl(
     companion object {
         fun generateSerializerExtensions(codegen: ImplementationBodyCodegen, metadataPlugin: SerializationDescriptorSerializerPlugin?) {
             val serializableClass = getSerializableClassDescriptorBySerializer(codegen.descriptor) ?: return
-            val serializerCodegen = if (serializableClass.isSerializableEnum()) {
+            val serializerCodegen = if (serializableClass.isInternallySerializableEnum()) {
                 SerializerForEnumsCodegen(codegen, serializableClass)
             } else {
                 SerializerCodegenImpl(codegen, serializableClass, metadataPlugin)
