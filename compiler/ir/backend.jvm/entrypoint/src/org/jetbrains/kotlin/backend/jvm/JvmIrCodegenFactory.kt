@@ -179,8 +179,11 @@ open class JvmIrCodegenFactory(
 
     fun doGenerateFilesInternal(input: JvmIrBackendInput) {
         val (state, irModuleFragment, symbolTable, phaseConfig, irProviders, extensions, backendExtension, notifyCodegenStart) = input
+        val irSerializer = if (state.configuration.getBoolean(JVMConfigurationKeys.SERIALIZE_IR))
+            JvmIrSerializerImpl(state.configuration)
+        else null
         val context = JvmBackendContext(
-            state, irModuleFragment.irBuiltins, irModuleFragment, symbolTable, phaseConfig, extensions, backendExtension,
+            state, irModuleFragment.irBuiltins, irModuleFragment, symbolTable, phaseConfig, extensions, backendExtension, irSerializer,
             notifyCodegenStart
         )
         /* JvmBackendContext creates new unbound symbols, have to resolve them. */
