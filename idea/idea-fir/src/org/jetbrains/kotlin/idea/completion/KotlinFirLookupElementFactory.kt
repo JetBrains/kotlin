@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.frontend.api.components.KtTypeRendererOptions
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.addImportToFile
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtPossibleMemberSymbol
 import org.jetbrains.kotlin.idea.frontend.api.tokens.HackToForceAllowRunningAnalyzeOnEDT
 import org.jetbrains.kotlin.idea.frontend.api.tokens.hackyAllowRunningOnEdt
 import org.jetbrains.kotlin.idea.frontend.api.types.KtFunctionalType
@@ -177,7 +178,7 @@ private class VariableLookupElementFactory {
 }
 
 private fun detectImportStrategy(symbol: KtCallableSymbol): CallableImportStrategy {
-    if (symbol !is KtKotlinPropertySymbol || symbol.dispatchType != null) return CallableImportStrategy.DoNothing
+    if (symbol !is KtPossibleMemberSymbol || symbol.dispatchType != null) return CallableImportStrategy.DoNothing
 
     val propertyId = symbol.callableIdIfNonLocal ?: return CallableImportStrategy.DoNothing
 
