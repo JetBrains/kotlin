@@ -295,13 +295,13 @@ private fun codegenPhase(generateMultifileFacade: Boolean): NamedCompilerPhase<J
                     object : FileLoweringPass {
                         override fun lower(irFile: IrFile) {
                             val isMultifileFacade = irFile.fileEntry is MultifileFacadeFileEntry
-                            if (isMultifileFacade != generateMultifileFacade) return
-
-                            for (loweredClass in irFile.declarations) {
-                                if (loweredClass !is IrClass) {
-                                    throw AssertionError("File-level declaration should be IrClass after JvmLower, got: " + loweredClass.render())
+                            if (isMultifileFacade == generateMultifileFacade) {
+                                for (loweredClass in irFile.declarations) {
+                                    if (loweredClass !is IrClass) {
+                                        throw AssertionError("File-level declaration should be IrClass after JvmLower, got: " + loweredClass.render())
+                                    }
+                                    ClassCodegen.getOrCreate(loweredClass, context).generate()
                                 }
-                                ClassCodegen.getOrCreate(loweredClass, context).generate()
                             }
                         }
                     }

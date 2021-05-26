@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm
 
-import kotlinx.cinterop.*
+import kotlinx.cinterop.toCValues
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.descriptors.*
+import org.jetbrains.kotlin.backend.konan.descriptors.ClassLayoutBuilder
+import org.jetbrains.kotlin.backend.konan.descriptors.isTypedIntrinsic
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import kotlin.collections.set
 
 internal fun createLlvmDeclarations(context: Context): LlvmDeclarations {
     val generator = DeclarationsGeneratorVisitor(context)
@@ -107,7 +109,7 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
         }
     }
 
-    val objectNamer = Namer("object-")
+    private val objectNamer = Namer("object-")
 
     private fun getLocalName(parent: FqName, declaration: IrDeclaration): Name {
         if (declaration.isAnonymousObject) {

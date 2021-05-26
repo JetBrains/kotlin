@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.common.serialization.mangle.ir.IrExportCheck
 import org.jetbrains.kotlin.backend.common.serialization.mangle.ir.IrMangleComputer
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -87,6 +88,8 @@ abstract class AbstractJvmDescriptorMangler(private val mainDetector: MainFuncti
             // For more details see JvmPlatformOverloadsSpecificityComparator.kt
             return if (isJavaField) MangleConstant.JAVA_FIELD_SUFFIX else null
         }
+
+        override fun visitModuleDeclaration(descriptor: ModuleDescriptor, data: Nothing?) {} // SKIP in case of synthetic properties
     }
 
     override fun getExportChecker(): KotlinExportChecker<DeclarationDescriptor> = exportChecker

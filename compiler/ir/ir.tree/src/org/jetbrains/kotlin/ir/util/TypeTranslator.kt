@@ -44,6 +44,8 @@ abstract class TypeTranslator(
 
     private val erasureStack = Stack<PropertyDescriptor>()
 
+    protected abstract fun isTypeAliasAccessibleHere(typeAliasDescriptor: TypeAliasDescriptor): Boolean
+
     fun enterScope(irElement: IrTypeParametersContainer) {
         typeParametersResolver.enterTypeParameterScope(irElement)
         if (enterTableScope) {
@@ -166,7 +168,12 @@ abstract class TypeTranslator(
 
     private fun SimpleType.toIrTypeAbbreviation(): IrTypeAbbreviation? {
         // Abbreviated type's classifier might not be TypeAliasDescriptor in case it's MockClassDescriptor (not found in dependencies).
-        val typeAliasDescriptor = constructor.declarationDescriptor as? TypeAliasDescriptor ?: return null
+        val typeAliasDescriptor = constructor.declarationDescriptor.let {
+            it as? TypeAliasDescriptor
+        } ?: return null
+
+        if (!isTypeAliasAccessibleHere(typeAliasDescriptor)) return null
+
         return IrTypeAbbreviationImpl(
             symbolTable.referenceTypeAlias(typeAliasDescriptor),
             isMarkedNullable,

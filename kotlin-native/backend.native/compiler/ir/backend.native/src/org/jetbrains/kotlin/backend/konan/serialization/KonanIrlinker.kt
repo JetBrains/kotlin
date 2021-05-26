@@ -131,7 +131,7 @@ internal class KonanIrLinker(
         private fun IdSignature.isInteropSignature(): Boolean = IdSignature.Flags.IS_NATIVE_INTEROP_LIBRARY.test()
 
         override fun contains(idSig: IdSignature): Boolean {
-            if (idSig.isPublic) {
+            if (idSig.isPubliclyVisible) {
                 if (idSig.isInteropSignature()) {
                     // TODO: add descriptor cache??
                     return descriptorByIdSignatureFinder.findDescriptorBySignature(idSig) != null
@@ -178,7 +178,7 @@ internal class KonanIrLinker(
         private val declaredDeclaration = mutableMapOf<IdSignature, IrClass>()
 
         private fun IdSignature.isForwardDeclarationSignature(): Boolean {
-            if (isPublic) {
+            if (isPubliclyVisible) {
                 return packageFqName().run {
                     startsWith(C_NAMES_NAME) || startsWith(OBJC_NAMES_NAME)
                 }

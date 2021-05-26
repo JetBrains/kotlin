@@ -668,7 +668,6 @@ class Fir2IrDeclarationStorage(
     internal fun IrProperty.createBackingField(
         property: FirProperty,
         origin: IrDeclarationOrigin,
-        descriptor: PropertyDescriptor,
         visibility: DescriptorVisibility,
         name: Name,
         isFinal: Boolean,
@@ -676,9 +675,7 @@ class Fir2IrDeclarationStorage(
         type: IrType? = null
     ): IrField = convertCatching(property) {
         val inferredType = type ?: firInitializerExpression!!.typeRef.toIrType()
-        return symbolTable.declareField(
-            startOffset, endOffset, origin, descriptor, inferredType
-        ) { symbol ->
+        return declareIrField(null) { symbol ->
             irFactory.createField(
                 startOffset, endOffset, origin, symbol,
                 name, inferredType,
@@ -711,6 +708,12 @@ class Fir2IrDeclarationStorage(
             factory(IrPropertySymbolImpl())
         else
             symbolTable.declareProperty(signature, { Fir2IrPropertySymbol(signature, containerSource) }, factory)
+
+    private fun declareIrField(signature: IdSignature?, factory: (IrFieldSymbol) -> IrField): IrField =
+        if (signature == null)
+            factory(IrFieldSymbolImpl())
+        else
+            symbolTable.declareField(signature, { IrFieldPublicSymbolImpl(signature) }, factory)
 
     fun getOrCreateIrProperty(
         property: FirProperty,
@@ -796,13 +799,13 @@ class Fir2IrDeclarationStorage(
                     if (delegate != null || property.hasBackingField) {
                         backingField = if (delegate != null) {
                             createBackingField(
-                                property, IrDeclarationOrigin.PROPERTY_DELEGATE, descriptor,
+                                property, IrDeclarationOrigin.PROPERTY_DELEGATE,
                                 components.visibilityConverter.convertToDescriptorVisibility(property.fieldVisibility),
                                 Name.identifier("${property.name}\$delegate"), true, delegate
                             )
                         } else {
                             createBackingField(
-                                property, IrDeclarationOrigin.PROPERTY_BACKING_FIELD, descriptor,
+                                property, IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
                                 components.visibilityConverter.convertToDescriptorVisibility(property.fieldVisibility),
                                 property.name, property.isVal, initializer, type
                             ).also { field ->

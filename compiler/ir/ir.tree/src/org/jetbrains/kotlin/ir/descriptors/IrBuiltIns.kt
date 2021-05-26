@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 import org.jetbrains.kotlin.ir.declarations.IrFactory
-import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
@@ -48,8 +47,7 @@ class IrBuiltIns(
     private val builtInsModule = builtIns.builtInsModule
 
     private val packageFragmentDescriptor = IrBuiltinsPackageFragmentDescriptorImpl(builtInsModule, KOTLIN_INTERNAL_IR_FQN)
-    val packageFragment =
-        IrExternalPackageFragmentImpl(symbolTable.referenceExternalPackageFragment(packageFragmentDescriptor), KOTLIN_INTERNAL_IR_FQN)
+    val packageFragment = symbolTable.declareExternalPackageFragmentIfNotExists(packageFragmentDescriptor)
 
     private fun ClassDescriptor.toIrSymbol() = symbolTable.referenceClass(this)
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)

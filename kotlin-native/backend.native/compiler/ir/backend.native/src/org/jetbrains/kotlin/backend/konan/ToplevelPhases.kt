@@ -10,8 +10,9 @@ import org.jetbrains.kotlin.backend.konan.MemoryModel
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
-import org.jetbrains.kotlin.backend.konan.serialization.*
-import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
+import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
+import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.IrElement

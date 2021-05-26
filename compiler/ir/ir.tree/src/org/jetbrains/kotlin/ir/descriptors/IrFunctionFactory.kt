@@ -236,18 +236,18 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
 
     private val kotlinPackageFragment: IrPackageFragment by lazy {
         irBuiltIns.builtIns.getFunction(0).let {
-            symbolTable.declareExternalPackageFragment(it.containingDeclaration as PackageFragmentDescriptor)
+            symbolTable.declareExternalPackageFragmentIfNotExists(it.containingDeclaration as PackageFragmentDescriptor)
         }
     }
     private val kotlinCoroutinesPackageFragment: IrPackageFragment by lazy {
         irBuiltIns.builtIns.getSuspendFunction(0).let {
-            symbolTable.declareExternalPackageFragment(it.containingDeclaration as PackageFragmentDescriptor)
+            symbolTable.declareExternalPackageFragmentIfNotExists(it.containingDeclaration as PackageFragmentDescriptor)
         }
     }
 
     private val kotlinReflectPackageFragment: IrPackageFragment by lazy {
         irBuiltIns.kPropertyClass.descriptor.let {
-            symbolTable.declareExternalPackageFragment(it.containingDeclaration as PackageFragmentDescriptor)
+            symbolTable.declareExternalPackageFragmentIfNotExists(it.containingDeclaration as PackageFragmentDescriptor)
         }
     }
 

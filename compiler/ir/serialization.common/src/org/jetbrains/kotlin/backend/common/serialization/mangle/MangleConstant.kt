@@ -23,6 +23,15 @@ enum class MangleConstant(val prefix: Char, val separator: Char, val suffix: Cha
         const val ERROR_MARK = "<ERROR CLASS>"
         const val ERROR_DECLARATION = "<ERROR DECLARATION>"
         const val STATIC_MEMBER_MARK = "#static"
+        const val TYPE_PARAMETER_MARKER_NAME = "<TP>"
+        const val DISPATCH_RECEIVER_PARAMETER_MARKER_NAME = "<DR>"
+        const val EXTENSION_RECEIVER_PARAMETER_MARKER_NAME = "<ER>"
+        const val THIS_RECEIVER_PARAMETER_MARKER_NAME = "<TR>"
+        const val PRIMARY_CONSTRUCTOR_PARAMETER_NAME = "<PCVP>"
+        const val BACKING_FIELD_NAME = "<BF>"
+        const val ANON_INIT_NAME_PREFIX = "<ANI"
+        const val ANON_INIT_NAME_POSTFIX = ">"
+        const val ENUM_ENTRY_CLASS_NAME = "<EEC>"
 
         const val VARIANCE_SEPARATOR = '|'
         const val UPPER_BOUND_SEPARATOR = '§'
@@ -37,6 +46,8 @@ enum class MangleConstant(val prefix: Char, val separator: Char, val suffix: Cha
         const val FUNCTION_NAME_PREFIX = '#'
         const val TYPE_PARAM_INDEX_PREFIX = '@'
 
+        const val LOCAL_DECLARATION_INDEX_PREFIX = '$'
+
         const val JAVA_FIELD_SUFFIX = "#jf"
 
         const val EMPTY_PREFIX = ""
@@ -48,5 +59,8 @@ enum class MangleConstant(val prefix: Char, val separator: Char, val suffix: Cha
         const val ENUM_ENTRY_PREFIX = "kenumentry"
         const val TYPE_ALIAS_PREFIX = "ktypealias"
         const val TYPE_PARAM_PREFIX = "ktypeparam"
+
+        const val DISPATCH_RECEIVER_SCOPE_INDEX: Int = -1
+        const val EXTENSION_RECEIVER_SCOPE_INDEX: Int = -2
     }
 }
