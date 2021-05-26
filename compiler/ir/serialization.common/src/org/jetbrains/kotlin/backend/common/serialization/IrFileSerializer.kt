@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.backend.common.serialization.proto.AccessorIdSignature as ProtoAccessorIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.Actual as ProtoActual
+import org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature as ProtoCompositeSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.FieldAccessCommon as ProtoFieldAccessCommon
 import org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry as ProtoFileEntry
 import org.jetbrains.kotlin.backend.common.serialization.proto.FileLocalIdSignature as ProtoFileLocalIdSignature
@@ -108,6 +109,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrVarargElement a
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable as ProtoVariable
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrWhen as ProtoWhen
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrWhile as ProtoWhile
+import org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature as ProtoLocalSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.Loop as ProtoLoop
 import org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon as ProtoMemberAccessCommon
 import org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression as ProtoNullableIrExpression
@@ -238,6 +240,30 @@ open class IrFileSerializer(
 
     private fun serializeScopeLocalSignature(signature: IdSignature.ScopeLocalDeclaration): Int = signature.id
 
+    private fun serializeCompositeSignature(signature: IdSignature.CompositeSignature): ProtoCompositeSignature {
+        val proto = ProtoCompositeSignature.newBuilder()
+
+        proto.containerSig = protoIdSignature(signature.container)
+        proto.innerSig = protoIdSignature(signature.inner)
+
+        return proto.build()
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    private fun serializeFileSignature(signature: IdSignature.FileSignature): ProtoFileSignature = ProtoFileSignature.getDefaultInstance()
+
+    private fun serializeLocalSignature(signature: IdSignature.LocalSignature): ProtoLocalSignature {
+        val proto = ProtoLocalSignature.newBuilder()
+
+        proto.addAllLocalFqName(serializeFqName(signature.localFqn))
+        signature.hashSig?.let { proto.localHash = it }
+        if (addDebugInfo) {
+            signature.description?.let { proto.description = serializeDebugInfo(it) }
+        }
+
+        return proto.build()
+    }
+
     private fun serializePrivateSignature(signature: IdSignature.GlobalFileLocalSignature): ProtoFileLocalIdSignature {
         val proto = ProtoFileLocalIdSignature.newBuilder()
 
@@ -257,10 +283,6 @@ open class IrFileSerializer(
         return proto.build()
     }
 
-    private fun serializeFileSignature(): ProtoFileSignature {
-        return ProtoFileSignature.newBuilder().build()
-    }
-
     private fun serializeLoweredDeclarationSignature(signature: IdSignature.LoweredDeclarationSignature): ProtoLoweredIdSignature {
         val proto = ProtoLoweredIdSignature.newBuilder()
 
@@ -271,15 +293,18 @@ open class IrFileSerializer(
         return proto.build()
     }
 
-    fun serializeIdSignature(idSignature: IdSignature): ProtoIdSignature {
+    private fun serializeIdSignature(idSignature: IdSignature): ProtoIdSignature {
         val proto = ProtoIdSignature.newBuilder()
         when (idSignature) {
             is IdSignature.CommonSignature -> proto.publicSig = serializePublicSignature(idSignature)
             is IdSignature.AccessorSignature -> proto.accessorSig = serializeAccessorSignature(idSignature)
             is IdSignature.FileLocalSignature -> proto.privateSig = serializePrivateSignature(idSignature)
             is IdSignature.ScopeLocalDeclaration -> proto.scopedLocalSig = serializeScopeLocalSignature(idSignature)
+            is IdSignature.CompositeSignature -> proto.compositeSig = serializeCompositeSignature(idSignature)
+            is IdSignature.LocalSignature -> proto.localSig = serializeLocalSignature(idSignature)
+            is IdSignature.FileSignature -> proto.fileSig = serializeFileSignature(idSignature)
+            // IR IC part
             is IdSignature.LoweredDeclarationSignature -> proto.icSig = serializeLoweredDeclarationSignature(idSignature)
-            is IdSignature.FileSignature -> proto.fileSig = serializeFileSignature()
             is IdSignature.GlobalFileLocalSignature -> proto.privateSig = serializePrivateSignature(idSignature)
             is IdSignature.GlobalScopeLocalDeclaration -> proto.externalScopedLocalSig = serializeScopeLocalSignature(idSignature)
         }
@@ -1472,6 +1497,16 @@ open class IrFileSerializer(
     }
 
     fun serializeIrFile(file: IrFile): SerializedIrFile {
+        var result: SerializedIrFile? = null
+
+        declarationTable.inFile(file) {
+            result = serializeIrFileImpl(file)
+        }
+
+        return result!!
+    }
+
+    private fun serializeIrFileImpl(file: IrFile): SerializedIrFile {
         val topLevelDeclarations = mutableListOf<SerializedDeclaration>()
 
         val proto = ProtoFile.newBuilder()

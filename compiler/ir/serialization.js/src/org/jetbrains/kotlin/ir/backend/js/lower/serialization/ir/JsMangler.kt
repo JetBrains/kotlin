@@ -50,8 +50,7 @@ abstract class AbstractJsDescriptorMangler : DescriptorBasedKotlinManglerImpl() 
         override fun DeclarationDescriptor.isPlatformSpecificExported() = false
     }
 
-    private class JsDescriptorManglerComputer(builder: StringBuilder, mode: MangleMode) :
-        DescriptorMangleComputer(builder, mode) {
+    private class JsDescriptorManglerComputer(builder: StringBuilder, mode: MangleMode) : DescriptorMangleComputer(builder, mode) {
         override fun copy(newMode: MangleMode): DescriptorMangleComputer = JsDescriptorManglerComputer(builder, newMode)
     }
 

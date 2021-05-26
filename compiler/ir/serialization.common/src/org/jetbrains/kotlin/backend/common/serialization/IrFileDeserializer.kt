@@ -78,7 +78,6 @@ class FileDeserializationState(
             ::addIdSignature,
             linker::handleExpectActualMapping,
         ) { idSig, symbolKind ->
-            assert(idSig.isPublic)
 
             val topLevelSig = idSig.topLevelSignature()
             val actualModuleDeserializer =

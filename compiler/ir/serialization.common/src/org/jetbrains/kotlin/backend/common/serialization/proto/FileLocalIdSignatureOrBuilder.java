@@ -26,11 +26,20 @@ public interface FileLocalIdSignatureOrBuilder extends
   long getLocalId();
 
   /**
-   * <code>optional int32 file = 3;</code>
+   * <code>optional int32 debug_info = 3;</code>
+   */
+  boolean hasDebugInfo();
+  /**
+   * <code>optional int32 debug_info = 3;</code>
+   */
+  int getDebugInfo();
+
+  /**
+   * <code>optional int32 file = 101;</code>
    */
   boolean hasFile();
   /**
-   * <code>optional int32 file = 3;</code>
+   * <code>optional int32 file = 101;</code>
    */
   int getFile();
 }

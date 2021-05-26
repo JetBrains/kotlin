@@ -5,28 +5,35 @@
 
 package org.jetbrains.kotlin.backend.jvm.serialization
 
+import org.jetbrains.kotlin.backend.common.serialization.mangle.SpecialDeclarationType
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.load.java.descriptors.JavaForKotlinOverridePropertyDescriptor
+import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.overriddenTreeAsSequence
+import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class JvmIdSignatureDescriptor(private val mangler: KotlinMangler.DescriptorMangler) : IdSignatureDescriptor(mangler) {
 
-    private class JvmDescriptorBasedSignatureBuilder(mangler: KotlinMangler.DescriptorMangler) : DescriptorBasedSignatureBuilder(mangler) {
+    private inner class JvmDescriptorBasedSignatureBuilder(mangler: KotlinMangler.DescriptorMangler, type: SpecialDeclarationType) : DescriptorBasedSignatureBuilder(mangler, type) {
         override fun platformSpecificFunction(descriptor: FunctionDescriptor) {
             keepTrackOfOverridesForPossiblyClashingFakeOverride(descriptor)
+        }
+
+        override fun isKotlinPackage(descriptor: PackageFragmentDescriptor): Boolean {
+            return descriptor !is LazyJavaPackageFragment
         }
 
         override fun platformSpecificProperty(descriptor: PropertyDescriptor) {
             // See KT-31646
             setSpecialJavaProperty(descriptor is JavaForKotlinOverridePropertyDescriptor)
+            setSyntheticJavaProperty(descriptor is SyntheticJavaPropertyDescriptor)
             keepTrackOfOverridesForPossiblyClashingFakeOverride(descriptor)
         }
 
@@ -36,6 +43,10 @@ class JvmIdSignatureDescriptor(private val mangler: KotlinMangler.DescriptorMang
 
         override fun platformSpecificSetter(descriptor: PropertySetterDescriptor) {
             keepTrackOfOverridesForPossiblyClashingFakeOverride(descriptor)
+        }
+
+        override fun platformSpecificModule(descriptor: ModuleDescriptor) {
+
         }
 
         private fun keepTrackOfOverridesForPossiblyClashingFakeOverride(descriptor: CallableMemberDescriptor) {
@@ -95,19 +106,6 @@ class JvmIdSignatureDescriptor(private val mangler: KotlinMangler.DescriptorMang
             }
     }
 
-    override fun createSignatureBuilder(): DescriptorBasedSignatureBuilder = JvmDescriptorBasedSignatureBuilder(mangler)
-
-    /* In multi-threaded environment, we cannot afford to cache a signature builder, as in IdSignatureBuilder. */
-
-    override fun composeSignature(descriptor: DeclarationDescriptor): IdSignature? {
-        return if (mangler.run { descriptor.isExported() }) {
-            createSignatureBuilder().buildSignature(descriptor)
-        } else null
-    }
-
-    override fun composeEnumEntrySignature(descriptor: ClassDescriptor): IdSignature? {
-        return if (mangler.run { descriptor.isExportEnumEntry() }) {
-            createSignatureBuilder().buildSignature(descriptor)
-        } else null
-    }
+    override fun createSignatureBuilder(type: SpecialDeclarationType): DescriptorBasedSignatureBuilder =
+        JvmDescriptorBasedSignatureBuilder(mangler, type)
 }

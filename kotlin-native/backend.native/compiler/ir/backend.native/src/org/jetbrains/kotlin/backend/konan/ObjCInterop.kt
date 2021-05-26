@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.symbols.isPublicApi
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.getPublicSignature
 import org.jetbrains.kotlin.ir.util.*
@@ -59,7 +58,7 @@ private fun IrClass.selfOrAnySuperClass(pred: (IrClass) -> Boolean): Boolean {
 }
 
 internal fun IrClass.isObjCClass() = this.packageFqName != interopPackageName &&
-        selfOrAnySuperClass { it.symbol.isPublicApi && objCObjectIdSignature == it.symbol.signature }
+        selfOrAnySuperClass { objCObjectIdSignature == it.symbol.signature }
 
 fun ClassDescriptor.isExternalObjCClass(): Boolean = this.isObjCClass() &&
         this.parentsWithSelf.filterIsInstance<ClassDescriptor>().any {
@@ -78,11 +77,10 @@ fun ClassDescriptor.isObjCMetaClass(): Boolean = this.getAllSuperClassifiers().a
 }
 
 fun IrClass.isObjCMetaClass(): Boolean = selfOrAnySuperClass {
-    it.symbol.isPublicApi && objCClassIdSignature == it.symbol.signature
+    objCClassIdSignature == it.symbol.signature
 }
 
-fun IrClass.isObjCProtocolClass(): Boolean =
-        symbol.isPublicApi && objCProtocolIdSignature == symbol.signature
+fun IrClass.isObjCProtocolClass(): Boolean = objCProtocolIdSignature == symbol.signature
 
 fun ClassDescriptor.isObjCProtocolClass(): Boolean =
         this.fqNameSafe == objCProtocolFqName

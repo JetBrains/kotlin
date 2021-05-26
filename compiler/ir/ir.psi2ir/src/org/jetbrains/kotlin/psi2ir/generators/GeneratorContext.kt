@@ -28,7 +28,7 @@ class GeneratorContext(
     val languageVersionSettings: LanguageVersionSettings,
     val symbolTable: SymbolTable,
     val extensions: GeneratorExtensions,
-    val typeTranslator: TypeTranslator,
+    val typeTranslator: TypeTranslatorImpl,
     val constantValueGenerator: ConstantValueGenerator,
     override val irBuiltIns: IrBuiltIns
 ) : IrGeneratorContext {

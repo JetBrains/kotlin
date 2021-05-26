@@ -40,16 +40,27 @@ message AccessorIdSignature {
 message FileLocalIdSignature {
   required int32 container = 1;
   required int64 local_id = 2;
-  optional int32 file = 3;
+  optional int32 debug_info = 3;
+  optional int32 file = 101;
 }
+
+message CompositeSignature {
+  required int32 container_sig = 1;
+  required int32 inner_sig = 2;
+}
+
+message LocalSignature {
+  repeated int32 local_fq_name = 1 [packed=true];
+  optional int64 local_hash = 2;
+  optional int32 description = 3; // debug information
+}
+
+message FileSignature {}
 
 message LoweredIdSignature {
   required int32 parent_signature = 1;
   required int32 stage = 2;
   required int32 index = 3;
-}
-
-message FileSignature {
 }
 
 message ScopeLocalIdSignature {
@@ -63,10 +74,12 @@ message IdSignature {
     FileLocalIdSignature private_sig = 2;
     AccessorIdSignature accessor_sig = 3;
     int32 scoped_local_sig = 4;
+    CompositeSignature composite_sig = 5;
+    LocalSignature local_sig = 6;
+    FileSignature file_sig = 7;
 
     // JS IC related stuff below. Proto indices 100+ were chosen due to compatibility considerations.
     LoweredIdSignature ic_sig = 105;
-    FileSignature file_sig = 106;
     ScopeLocalIdSignature external_scoped_local_sig = 107;
   }
 }
