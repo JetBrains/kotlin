@@ -186,10 +186,13 @@ private fun stableNameForExternalDeclaration(declaration: IrDeclaration): String
         !declaration.hasStaticDispatch() ||
         !declaration.isEffectivelyExternal() ||
         declaration.isPropertyAccessor ||
-        declaration.isPropertyField ||
-        declaration is IrConstructor
+        declaration.isPropertyField
     ) {
         return null
+    }
+
+    if (declaration is IrConstructor) {
+        return stableNameForExternalDeclaration(declaration.parentAsClass)
     }
 
     val importedFromModuleOnly =
