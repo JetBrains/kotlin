@@ -11,6 +11,7 @@ import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
@@ -27,13 +28,16 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
 import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.scopes.impl.wrapNestedClassifierScopeWithSubstitutionForSuperType
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
-import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
+import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.types.model.TypeArgumentMarker
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class FirSupertypeResolverProcessor(session: FirSession, scopeSession: ScopeSession) :
     FirTransformerBasedResolveProcessor(session, scopeSession) {
@@ -273,7 +277,11 @@ class FirSupertypeResolverVisitor(
         when (val status = supertypeComputationSession.getSupertypesComputationStatus(classLikeDeclaration)) {
             is SupertypeComputationStatus.Computed -> return status.supertypeRefs
             is SupertypeComputationStatus.Computing -> return listOf(
-                createErrorTypeRef(classLikeDeclaration, "Loop in supertype definition for ${classLikeDeclaration.symbol.classId}")
+                createErrorTypeRef(
+                    classLikeDeclaration,
+                    "Loop in supertype definition for ${classLikeDeclaration.symbol.classId}",
+                    if (classLikeDeclaration is FirTypeAlias) DiagnosticKind.RecursiveTypealiasExpansion else DiagnosticKind.LoopInSupertype
+                )
             )
         }
 
@@ -326,7 +334,11 @@ class FirSupertypeResolverVisitor(
                             diagnostic = ConeTypeParameterSupertype(typeParameterType.lookupTag.typeParameterSymbol)
                         }
                     superTypeRef !is FirResolvedTypeRef ->
-                        createErrorTypeRef(superTypeRef, "Unresolved super-type: ${superTypeRef.render()}")
+                        createErrorTypeRef(
+                            superTypeRef,
+                            "Unresolved super-type: ${superTypeRef.render()}",
+                            DiagnosticKind.UnresolvedSupertype
+                        )
                     else ->
                         superTypeRef
                 }
@@ -360,17 +372,25 @@ class FirSupertypeResolverVisitor(
                     ?: return@resolveSpecificClassLikeSupertypes listOf(
                         createErrorTypeRef(
                             typeAlias.expandedTypeRef,
-                            "Unresolved expanded typeRef for ${typeAlias.symbol.classId}"
+                            "Unresolved expanded typeRef for ${typeAlias.symbol.classId}",
+                            DiagnosticKind.UnresolvedExpandedType
                         )
                     )
 
-            val type = resolvedTypeRef.type
-            if (type is ConeClassLikeType) {
-                val expansionTypeAlias = type.lookupTag.toSymbol(session)?.safeAs<FirTypeAliasSymbol>()?.fir
-                if (expansionTypeAlias != null) {
-                    visitTypeAlias(expansionTypeAlias, null)
+            fun visitNestedTypeAliases(type: TypeArgumentMarker) {
+                if (type is ConeClassLikeType) {
+                    val symbol = type.lookupTag.toSymbol(session)
+                    if (symbol is FirTypeAliasSymbol) {
+                        visitTypeAlias(symbol.fir, null)
+                    } else if (symbol is FirClassLikeSymbol) {
+                        for (typeArgument in type.typeArguments) {
+                            visitNestedTypeAliases(typeArgument)
+                        }
+                    }
                 }
             }
+
+            visitNestedTypeAliases(resolvedTypeRef.type)
 
             listOf(resolvedTypeRef)
         }
@@ -381,9 +401,9 @@ class FirSupertypeResolverVisitor(
     }
 }
 
-private fun createErrorTypeRef(fir: FirElement, message: String) = buildErrorTypeRef {
+private fun createErrorTypeRef(fir: FirElement, message: String, kind: DiagnosticKind) = buildErrorTypeRef {
     source = fir.source
-    diagnostic = ConeSimpleDiagnostic(message)
+    diagnostic = ConeSimpleDiagnostic(message, kind)
 }
 
 class SupertypeComputationSession {
@@ -434,51 +454,95 @@ class SupertypeComputationSession {
     }
 
     private val newClassifiersForBreakingLoops = mutableListOf<FirClassLikeDeclaration<*>>()
-    private val breakLoopsDfsVisited = hashSetOf<FirClassLikeDeclaration<*>>()
 
     fun breakLoops(session: FirSession) {
-        val inProcess = hashSetOf<FirClassLikeDeclaration<*>>()
+        val visitedClassLikeDecls = mutableSetOf<FirClassLikeDeclaration<*>>()
+        val loopedClassLikeDecls = mutableSetOf<FirClassLikeDeclaration<*>>()
+        val path = mutableListOf<FirClassLikeDeclaration<*>>()
+        val pathSet = mutableSetOf<FirClassLikeDeclaration<*>>()
 
-        fun dfs(classLikeDeclaration: FirClassLikeDeclaration<*>) {
-            if (classLikeDeclaration in breakLoopsDfsVisited) return
-            val supertypeComputationStatus = supertypeStatusMap[classLikeDeclaration] ?: return
-            if (classLikeDeclaration in inProcess) return
+        fun checkIsInLoop(classLikeDecl: FirClassLikeDeclaration<*>?) {
+            if (classLikeDecl == null) return
 
-            inProcess.add(classLikeDeclaration)
-
-            require(supertypeComputationStatus is SupertypeComputationStatus.Computed) {
-                "Expected computed supertypes in breakLoops for ${classLikeDeclaration.symbol.classId}"
+            val supertypeRefs: List<FirResolvedTypeRef>
+            val supertypeComputationStatus = supertypeStatusMap[classLikeDecl]
+            supertypeRefs = if (supertypeComputationStatus != null) {
+                require(supertypeComputationStatus is SupertypeComputationStatus.Computed) {
+                    "Expected computed supertypes in breakLoops for ${classLikeDecl.symbol.classId}"
+                }
+                supertypeComputationStatus.supertypeRefs
+            } else {
+                when (classLikeDecl) {
+                    is FirRegularClass ->
+                        classLikeDecl.superTypeRefs.filterIsInstance<FirResolvedTypeRef>()
+                    is FirTypeAlias ->
+                        (classLikeDecl.expandedTypeRef as? FirResolvedTypeRef)?.let { listOf(it) } ?: listOf()
+                    else -> return
+                }
             }
 
-            val typeRefs = supertypeComputationStatus.supertypeRefs
-            val resultingTypeRefs = mutableListOf<FirResolvedTypeRef>()
-            var wereChanges = false
+            if (classLikeDecl in visitedClassLikeDecls) {
+                if (classLikeDecl in pathSet) {
+                    loopedClassLikeDecls.add(classLikeDecl)
+                    loopedClassLikeDecls.addAll(path.takeLastWhile { element -> element != classLikeDecl })
+                }
+                return
+            }
 
-            for (typeRef in typeRefs) {
-                val fir = typeRef.firClassLike(session)
-                fir?.let(::dfs)
-                resultingTypeRefs.add(
-                    if (fir in inProcess) {
-                        wereChanges = true
+            path.add(classLikeDecl)
+            pathSet.add(classLikeDecl)
+            visitedClassLikeDecls.add(classLikeDecl)
+
+            val parentId = classLikeDecl.symbol.classId.relativeClassName.parent()
+            if (!parentId.isRoot) {
+                val parentSymbol = session.symbolProvider.getClassLikeSymbolByFqName(ClassId.fromString(parentId.asString()))
+                if (parentSymbol is FirRegularClassSymbol) {
+                    checkIsInLoop(parentSymbol.fir)
+                }
+            }
+
+            val isTypeAlias = classLikeDecl is FirTypeAlias
+            var isErrorInSupertypesFound = false
+            val resultSupertypeRefs = mutableListOf<FirResolvedTypeRef>()
+            for (supertypeRef in supertypeRefs) {
+                val supertypeFir = supertypeRef.firClassLike(session)
+                checkIsInLoop(supertypeFir)
+
+                if (isTypeAlias) {
+                    for (typeArgument in supertypeRef.type.typeArguments) {
+                        if (typeArgument is ConeClassLikeType) {
+                            checkIsInLoop(typeArgument.lookupTag.toSymbol(session)?.fir)
+                        }
+                    }
+                }
+
+                resultSupertypeRefs.add(
+                    if (classLikeDecl in loopedClassLikeDecls) {
+                        isErrorInSupertypesFound = true
                         createErrorTypeRef(
-                            typeRef,
-                            "Loop in supertype: ${classLikeDeclaration.symbol.classId} -> ${fir?.symbol?.classId}"
+                            supertypeRef,
+                            "Loop in supertype: ${classLikeDecl.symbol.classId} -> ${supertypeFir?.symbol?.classId}",
+                            if (isTypeAlias) DiagnosticKind.RecursiveTypealiasExpansion else DiagnosticKind.LoopInSupertype
                         )
-                    } else
-                        typeRef
+                    } else {
+                        supertypeRef
+                    }
                 )
             }
 
-            if (wereChanges) {
-                supertypeStatusMap[classLikeDeclaration] = SupertypeComputationStatus.Computed(resultingTypeRefs)
+            if (isErrorInSupertypesFound) {
+                supertypeStatusMap[classLikeDecl] = SupertypeComputationStatus.Computed(resultSupertypeRefs)
             }
 
-            inProcess.remove(classLikeDeclaration)
-            breakLoopsDfsVisited.add(classLikeDeclaration)
+            path.removeAt(path.size - 1)
+            pathSet.remove(classLikeDecl)
         }
 
         for (classifier in newClassifiersForBreakingLoops) {
-            dfs(classifier)
+            checkIsInLoop(classifier)
+            require(path.isEmpty()) {
+                "Path should be empty"
+            }
         }
         newClassifiersForBreakingLoops.clear()
     }

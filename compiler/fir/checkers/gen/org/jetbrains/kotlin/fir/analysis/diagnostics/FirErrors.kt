@@ -143,6 +143,7 @@ object FirErrors {
     val SEALED_SUPERTYPE by error0<KtTypeReference>()
     val SEALED_SUPERTYPE_IN_LOCAL_CLASS by error0<KtTypeReference>()
     val SUPERTYPE_NOT_A_CLASS_OR_INTERFACE by error1<KtElement, String>()
+    val CYCLIC_INHERITANCE_HIERARCHY by error0<PsiElement>()
 
     // Constructor problems
     val CONSTRUCTOR_IN_OBJECT by error0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
@@ -481,6 +482,7 @@ object FirErrors {
 
     // Type alias
     val TOPLEVEL_TYPEALIASES_ONLY by error0<KtTypeAlias>()
+    val RECURSIVE_TYPEALIAS_EXPANSION by error0<KtTypeAlias>()
 
     // Extended checkers
     val REDUNDANT_VISIBILITY_MODIFIER by warning0<KtModifierListOwner>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)

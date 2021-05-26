@@ -1,10 +1,10 @@
 // KT-303 Stack overflow on a cyclic class hierarchy
 
-open class Foo() : Bar() {
+open class Foo() : <error descr="[CYCLIC_INHERITANCE_HIERARCHY] There's a cycle in the inheritance hierarchy for this type">Bar</error>() {
   val a : Int = 1
 }
 
-open class Bar() : <error descr="[OTHER_ERROR] Unknown (other) error">Foo</error>() {
+open class Bar() : <error descr="[CYCLIC_INHERITANCE_HIERARCHY] There's a cycle in the inheritance hierarchy for this type">Foo</error>() {
 
 }
 

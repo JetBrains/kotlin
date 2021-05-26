@@ -7,7 +7,7 @@ val bImpl: B.Companion.Interface
     get() = null!!
 
 interface A {
-    companion object : <!FINAL_SUPERTYPE!>Nested<!>(), Interface by aImpl, I<Nested, Interface> {
+    companion object : <!CYCLIC_INHERITANCE_HIERARCHY!>Nested<!>(), <!CYCLIC_INHERITANCE_HIERARCHY!>Interface<!> by aImpl, <!CYCLIC_INHERITANCE_HIERARCHY!>I<Nested, Interface><!> {
 
         class Nested
 
@@ -16,7 +16,7 @@ interface A {
 }
 
 class B {
-    companion object : <!FINAL_SUPERTYPE!>Nested<!>(), Interface by aImpl, I<Nested, Interface> {
+    companion object : <!CYCLIC_INHERITANCE_HIERARCHY!>Nested<!>(), <!CYCLIC_INHERITANCE_HIERARCHY!>Interface<!> by aImpl, <!CYCLIC_INHERITANCE_HIERARCHY!>I<Nested, Interface><!> {
 
         class Nested
 

@@ -1,11 +1,11 @@
 interface A {
     fun foo() {}
 }
-interface B : A, E {}
-interface C : <error descr="[OTHER_ERROR] Unknown (other) error">B</error> {}
-interface D : <error descr="[OTHER_ERROR] Unknown (other) error">B</error> {}
-interface E : F {}
-interface F : D, C {}
+interface B : A, <error descr="[CYCLIC_INHERITANCE_HIERARCHY] There's a cycle in the inheritance hierarchy for this type">E</error> {}
+interface C : <error descr="[CYCLIC_INHERITANCE_HIERARCHY] There's a cycle in the inheritance hierarchy for this type">B</error> {}
+interface D : <error descr="[CYCLIC_INHERITANCE_HIERARCHY] There's a cycle in the inheritance hierarchy for this type">B</error> {}
+interface E : <error descr="[CYCLIC_INHERITANCE_HIERARCHY] There's a cycle in the inheritance hierarchy for this type">F</error> {}
+interface F : <error descr="[CYCLIC_INHERITANCE_HIERARCHY] There's a cycle in the inheritance hierarchy for this type">D</error>, <error descr="[CYCLIC_INHERITANCE_HIERARCHY] There's a cycle in the inheritance hierarchy for this type">C</error> {}
 interface G : F {}
 interface H : F {}
 

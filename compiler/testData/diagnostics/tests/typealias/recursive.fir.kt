@@ -1,11 +1,12 @@
-typealias R = <!OTHER_ERROR!>R<!>
+typealias R = <!RECURSIVE_TYPEALIAS_EXPANSION!>R<!>
 
-typealias L = List<L>
+typealias L = <!RECURSIVE_TYPEALIAS_EXPANSION!>List<L><!>
 
-typealias A = <!OTHER_ERROR!>B<!>
-typealias B = A
+typealias A = <!RECURSIVE_TYPEALIAS_EXPANSION!>B<!>
+typealias B = <!RECURSIVE_TYPEALIAS_EXPANSION!>A<!>
 
-typealias F1 = (Int) -> F2
-typealias F2 = (F1) -> Int
+typealias F1 = <!RECURSIVE_TYPEALIAS_EXPANSION!>(Int) -> F2<!>
+typealias F2 = <!RECURSIVE_TYPEALIAS_EXPANSION!>(F1) -> Int<!>
+typealias F3 = (F1) -> Int
 
-val x: A = TODO()
+val x: F3 = TODO()

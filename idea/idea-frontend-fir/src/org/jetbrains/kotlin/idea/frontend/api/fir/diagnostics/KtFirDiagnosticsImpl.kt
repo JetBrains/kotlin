@@ -472,6 +472,13 @@ internal class SupertypeNotAClassOrInterfaceImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
+internal class CyclicInheritanceHierarchyImpl(
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.CyclicInheritanceHierarchy(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
 internal class ConstructorInObjectImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
@@ -2700,6 +2707,13 @@ internal class ToplevelTypealiasesOnlyImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.ToplevelTypealiasesOnly(), KtAbstractFirDiagnostic<KtTypeAlias> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
+internal class RecursiveTypealiasExpansionImpl(
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.RecursiveTypealiasExpansion(), KtAbstractFirDiagnostic<KtTypeAlias> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 

@@ -62,7 +62,7 @@ private fun ConeDiagnostic.toFirDiagnostic(
         FirErrors.NO_TYPE_ARGUMENTS_ON_RHS.on(qualifiedAccessSource ?: source, this.desiredCount, this.type)
     is ConeSimpleDiagnostic -> when (source.kind) {
         is FirFakeSourceElementKind -> null
-        else -> this.getFactory(source).on(qualifiedAccessSource ?: source)
+        else -> this.getFactory(source)?.on(qualifiedAccessSource ?: source)
     }
     is ConeInstanceAccessBeforeSuperCall -> FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL.on(source, this.target)
     is ConeStubDiagnostic -> null
@@ -277,7 +277,7 @@ private fun ConstraintSystemError.toDiagnostic(
 private val NewConstraintError.lowerConeType: ConeKotlinType get() = lowerType as ConeKotlinType
 private val NewConstraintError.upperConeType: ConeKotlinType get() = upperType as ConeKotlinType
 
-private fun ConeSimpleDiagnostic.getFactory(source: FirSourceElement): FirDiagnosticFactory0<*> {
+private fun ConeSimpleDiagnostic.getFactory(source: FirSourceElement): FirDiagnosticFactory0<*>? {
     @Suppress("UNCHECKED_CAST")
     return when (kind) {
         DiagnosticKind.Syntax -> FirErrors.SYNTAX
@@ -309,11 +309,15 @@ private fun ConeSimpleDiagnostic.getFactory(source: FirSourceElement): FirDiagno
         DiagnosticKind.IntLiteralOutOfRange -> FirErrors.INT_LITERAL_OUT_OF_RANGE
         DiagnosticKind.FloatLiteralOutOfRange -> FirErrors.FLOAT_LITERAL_OUT_OF_RANGE
         DiagnosticKind.WrongLongSuffix -> FirErrors.WRONG_LONG_SUFFIX
-        DiagnosticKind.Other -> FirErrors.OTHER_ERROR
         DiagnosticKind.IncorrectCharacterLiteral -> FirErrors.INCORRECT_CHARACTER_LITERAL
         DiagnosticKind.EmptyCharacterLiteral -> FirErrors.EMPTY_CHARACTER_LITERAL
         DiagnosticKind.TooManyCharactersInCharacterLiteral -> FirErrors.TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL
         DiagnosticKind.IllegalEscape -> FirErrors.ILLEGAL_ESCAPE
+        DiagnosticKind.RecursiveTypealiasExpansion -> FirErrors.RECURSIVE_TYPEALIAS_EXPANSION
+        DiagnosticKind.LoopInSupertype -> FirErrors.CYCLIC_INHERITANCE_HIERARCHY
+        DiagnosticKind.UnresolvedSupertype,
+        DiagnosticKind.UnresolvedExpandedType,
+        DiagnosticKind.Other -> FirErrors.OTHER_ERROR
         else -> throw IllegalArgumentException("Unsupported diagnostic kind: $kind at $javaClass")
     }
 }

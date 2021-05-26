@@ -407,6 +407,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.CYCLIC_INHERITANCE_HIERARCHY) { firDiagnostic ->
+        CyclicInheritanceHierarchyImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.CONSTRUCTOR_IN_OBJECT) { firDiagnostic ->
         ConstructorInObjectImpl(
             firDiagnostic as FirPsiDiagnostic<*>,
@@ -2374,6 +2380,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.TOPLEVEL_TYPEALIASES_ONLY) { firDiagnostic ->
         ToplevelTypealiasesOnlyImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.RECURSIVE_TYPEALIAS_EXPANSION) { firDiagnostic ->
+        RecursiveTypealiasExpansionImpl(
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )

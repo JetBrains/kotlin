@@ -5,7 +5,7 @@ interface ExceptionTracker : <!EXPOSED_SUPER_INTERFACE!>LockBasedStorageManager.
 
 // FILE: StorageManager.kt
 
-interface StorageManager : ExceptionTracker {
+interface StorageManager : <!CYCLIC_INHERITANCE_HIERARCHY!>ExceptionTracker<!> {
     fun foo()
 }
 

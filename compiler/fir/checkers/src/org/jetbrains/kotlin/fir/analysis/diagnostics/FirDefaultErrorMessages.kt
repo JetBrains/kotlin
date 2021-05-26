@@ -82,6 +82,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONST_VAL_WITH_NO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLIC_CONSTRUCTOR_DELEGATION_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLIC_GENERIC_UPPER_BOUND
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLIC_INHERITANCE_HIERARCHY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_NOT_PROPERTY_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_VARARG_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_WITHOUT_PARAMETERS
@@ -247,6 +248,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.QUALIFIED_SUPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RECURSION_IN_IMPLICIT_TYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RECURSION_IN_INLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RECURSION_IN_SUPERTYPES
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RECURSIVE_TYPEALIAS_EXPANSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_ANNOTATION_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_CALL_OF_CONVERSION_METHOD
@@ -438,7 +440,7 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(SEALED_SUPERTYPE, "This type is sealed, so it can be inherited by only its own nested classes or objects")
             map.put(SEALED_SUPERTYPE_IN_LOCAL_CLASS, "Local class cannot extend a sealed class")
             map.put(SUPERTYPE_NOT_A_CLASS_OR_INTERFACE, "Supertype is not a class or interface", TO_STRING)
-
+            map.put(CYCLIC_INHERITANCE_HIERARCHY, "There's a cycle in the inheritance hierarchy for this type")
 
             // Constructor problems
             map.put(CONSTRUCTOR_IN_OBJECT, "Constructors are not allowed for objects")
@@ -1109,6 +1111,7 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
 
             // Type alias
             map.put(TOPLEVEL_TYPEALIASES_ONLY, "Nested and local type aliases are not supported")
+            map.put(RECURSIVE_TYPEALIAS_EXPANSION, "Recursive type alias in expansion")
 
             // Returns
             map.put(RETURN_NOT_ALLOWED, "'return' is not allowed here")

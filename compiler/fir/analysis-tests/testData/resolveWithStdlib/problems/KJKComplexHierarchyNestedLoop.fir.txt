@@ -1,5 +1,5 @@
 FILE: K1.kt
-    public final class K2 : R|J1| {
+    public final class K2 : <ERROR TYPE REF: Loop in supertype: /K2 -> /J1> {
         public constructor(): R|K2| {
             super<R|J1|>()
         }
