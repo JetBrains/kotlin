@@ -60,7 +60,8 @@ class SerializedIrFile(
     val signatures: ByteArray,
     val strings: ByteArray,
     val bodies: ByteArray,
-    val declarations: ByteArray
+    val declarations: ByteArray,
+    val debugInfo: ByteArray?
 )
 
 class SerializedIrModule(val files: Collection<SerializedIrFile>)

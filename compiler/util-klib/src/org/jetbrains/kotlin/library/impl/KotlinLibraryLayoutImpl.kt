@@ -150,6 +150,8 @@ class ExtractingIrLibraryImpl(val zipped: IrLibraryLayoutImpl) :
     override val irBodies: File by lazy { zipped.extract(zipped.irBodies) }
 
     override val irFiles: File by lazy { zipped.extract(zipped.irFiles) }
+
+    override val irDebugInfo: File by lazy { zipped.extract(zipped.irDebugInfo) }
 }
 
 internal fun zippedKotlinLibraryChecks(klibFile: File) {

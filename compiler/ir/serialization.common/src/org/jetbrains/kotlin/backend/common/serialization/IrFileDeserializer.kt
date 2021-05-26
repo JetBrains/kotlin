@@ -142,17 +142,20 @@ abstract class IrLibraryFile {
     abstract fun signature(index: Int): ByteArray
     abstract fun string(index: Int): ByteArray
     abstract fun body(index: Int): ByteArray
+    abstract fun debugInfo(index: Int): ByteArray?
 }
 
-class IrLibraryFileFromKlib(private val klib: IrLibrary, private val fileIndex: Int): IrLibraryFile() {
+class IrLibraryFileFromKlib(private val klib: IrLibrary, private val fileIndex: Int) : IrLibraryFile() {
     override fun irDeclaration(index: Int): ByteArray = klib.irDeclaration(index, fileIndex)
     override fun type(index: Int): ByteArray = klib.type(index, fileIndex)
     override fun signature(index: Int): ByteArray = klib.signature(index, fileIndex)
     override fun string(index: Int): ByteArray = klib.string(index, fileIndex)
     override fun body(index: Int): ByteArray = klib.body(index, fileIndex)
+    override fun debugInfo(index: Int): ByteArray? = klib.debugInfo(index, fileIndex)
 }
 
 internal fun IrLibraryFile.deserializeString(index: Int): String = WobblyTF8.decode(string(index))
+internal fun IrLibraryFile.deserializeDebugInfo(index: Int): String? = debugInfo(index)?.let { WobblyTF8.decode(it) }
 
 internal fun IrLibraryFile.deserializeFqName(fqn: List<Int>): String =
     fqn.joinToString(".", transform = ::deserializeString)
