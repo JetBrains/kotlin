@@ -594,7 +594,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     ): FirStatement {
         val resolved = components.typeResolverTransformer.withAllowedBareTypes {
             typeOperatorCall.transformConversionTypeRef(transformer, ResolutionMode.ContextIndependent)
-        }.transformOtherChildren(transformer, ResolutionMode.ContextIndependent)
+        }.transformTypeOperatorCallChildren()
 
         val conversionTypeRef = resolved.conversionTypeRef.withTypeArgumentsForBareType(resolved.argument)
         resolved.transformChildren(object : FirDefaultTransformer<Any?>() {
@@ -634,6 +634,37 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         }
         dataFlowAnalyzer.exitTypeOperatorCall(resolved)
         return resolved
+    }
+
+    private fun FirTypeOperatorCall.transformTypeOperatorCallChildren(): FirTypeOperatorCall {
+        if (operation == FirOperation.AS || operation == FirOperation.SAFE_AS) {
+            val argument = argumentList.arguments.singleOrNull() ?: error("Not a single argument: ${this.render()}")
+
+            // For calls in the form of (materialize() as MyClass) we've got a special rule that adds expect type to the `materialize()` call
+            // AS operator doesn't add expected type to any other expressions
+            // See https://kotlinlang.org/docs/whatsnew12.html#support-for-foo-as-a-shorthand-for-this-foo
+            // And limitations at org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleterKt.isFunctionForExpectTypeFromCastFeature(org.jetbrains.kotlin.fir.declarations.FirFunction<?>)
+            if (argument is FirFunctionCall || (argument is FirSafeCallExpression && argument.regularQualifiedAccess is FirFunctionCall)) {
+                val expectedType = conversionTypeRef.coneTypeSafe<ConeKotlinType>()?.takeIf {
+                    // is not bare type
+                    it !is ConeClassLikeType ||
+                            it.typeArguments.isNotEmpty() ||
+                            (it.lookupTag.toSymbol(session)?.fir as? FirTypeParameterRefsOwner)?.typeParameters?.isEmpty() == true
+                }?.let {
+                    if (operation == FirOperation.SAFE_AS)
+                        it.withNullability(ConeNullability.NULLABLE, session.typeContext)
+                    else
+                        it
+                }
+
+                if (expectedType != null) {
+                    val newMode = ResolutionMode.WithExpectedTypeFromCast(conversionTypeRef.withReplacedConeType(expectedType))
+                    return transformOtherChildren(transformer, newMode)
+                }
+            }
+        }
+
+        return transformOtherChildren(transformer, ResolutionMode.ContextIndependent)
     }
 
     override fun transformCheckNotNullCall(

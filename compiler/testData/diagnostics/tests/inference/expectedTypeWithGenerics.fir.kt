@@ -5,13 +5,13 @@ class X<S> {
 }
 
 fun test(x: X<Number>) {
-    val y = x.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>() as Int
+    val y = x.foo() as Int
 }
 
 fun <S, D: S> g() {
     fun <T : S> foo(): T = TODO()
 
-    val y = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>() as Int
+    val y = <!NEW_INFERENCE_ERROR!>foo()<!> as Int
 
-    val y2 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>() as D
+    val y2 = foo() as D
 }

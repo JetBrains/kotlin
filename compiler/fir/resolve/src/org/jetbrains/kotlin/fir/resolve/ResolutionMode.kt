@@ -26,11 +26,16 @@ sealed class ResolutionMode {
     class WithStatus(val status: FirDeclarationStatus) : ResolutionMode()
 
     class LambdaResolution(val expectedReturnTypeRef: FirResolvedTypeRef?) : ResolutionMode()
+
+    class WithExpectedTypeFromCast(
+        val expectedTypeRef: FirTypeRef,
+    ) : ResolutionMode()
 }
 
-fun ResolutionMode.expectedType(components: BodyResolveComponents): FirTypeRef? = when (this) {
+fun ResolutionMode.expectedType(components: BodyResolveComponents, allowFromCast: Boolean = false): FirTypeRef? = when (this) {
     is ResolutionMode.WithExpectedType -> expectedTypeRef
     is ResolutionMode.ContextIndependent -> components.noExpectedType
+    is ResolutionMode.WithExpectedTypeFromCast -> expectedTypeRef.takeIf { allowFromCast }
     else -> null
 }
 

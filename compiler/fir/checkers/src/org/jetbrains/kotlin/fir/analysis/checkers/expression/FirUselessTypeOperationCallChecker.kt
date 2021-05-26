@@ -9,8 +9,10 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.inference.isFunctionForExpectTypeFromCastFeature
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -34,7 +36,7 @@ object FirUselessTypeOperationCallChecker : FirTypeOperatorCallChecker() {
             } else {
                 targetType
             }
-        if (isRefinementUseless(context, candidateType, refinedTargetType, shouldCheckForExactType(expression, context))) {
+        if (isRefinementUseless(context, candidateType, refinedTargetType, shouldCheckForExactType(expression, context), arg)) {
             when (expression.operation) {
                 FirOperation.IS -> reporter.reportOn(expression.source, FirErrors.USELESS_IS_CHECK, true, context)
                 FirOperation.NOT_IS -> reporter.reportOn(expression.source, FirErrors.USELESS_IS_CHECK, false, context)
@@ -62,8 +64,14 @@ object FirUselessTypeOperationCallChecker : FirTypeOperatorCallChecker() {
         candidateType: ConeKotlinType,
         targetType: ConeKotlinType,
         shouldCheckForExactType: Boolean,
+        arg: FirExpression,
     ): Boolean {
         return if (shouldCheckForExactType) {
+            if (arg is FirFunctionCall) {
+                val function = arg.toResolvedCallableSymbol()?.fir as? FirFunction
+                if (function != null && function.isFunctionForExpectTypeFromCastFeature()) return false
+            }
+
             isExactTypeCast(context, candidateType, targetType)
         } else {
             isUpcast(context, candidateType, targetType)
