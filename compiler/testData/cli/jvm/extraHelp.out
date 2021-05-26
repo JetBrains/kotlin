@@ -90,6 +90,12 @@ where advanced options include:
   -Xno-receiver-assertions   Don't generate not-null assertion for extension receiver arguments of platform types
   -Xno-reset-jar-timestamps  Do not reset jar entry timestamps to a fixed date
   -Xno-unified-null-checks   Use pre-1.4 exception types in null checks instead of java.lang.NPE. See KT-22275 for more details
+  -Xnullability-annotations=@<fq.name>:{ignore/strict/warn}
+                             Specify behavior for specific Java nullability annotations (provided with fully qualified package name)
+                             Modes:
+                               * ignore
+                               * strict
+                               * warn (report a warning)
   -Xparallel-backend-threads When using the IR backend, run lowerings by file in N parallel threads.
                              0 means use a thread per processor core.
                              Default value is 1
