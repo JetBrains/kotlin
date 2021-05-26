@@ -127,6 +127,7 @@ open class IrFileSerializer(
     private val skipMutableState: Boolean = false,
     private val allowNullTypes: Boolean = false,
     private val allowErrorStatementOrigins: Boolean = false, // TODO: support InlinerExpressionLocationHint
+    private val addDebugInfo: Boolean = true
 ) {
     private val loopIndex = mutableMapOf<IrLoop, Int>()
     private var currentLoopIndex = 0
@@ -149,6 +150,8 @@ open class IrFileSerializer(
     private val protoIdSignatureArray = arrayListOf<ProtoIdSignature>()
 
     private val protoBodyArray = mutableListOf<XStatementOrExpression>()
+
+    private val protoDebugInfoArray = arrayListOf<String>()
 
     sealed class XStatementOrExpression {
         abstract fun toByteArray(): ByteArray
@@ -198,6 +201,11 @@ open class IrFileSerializer(
         protoStringArray.size - 1
     }
 
+    private fun serializeDebugInfo(value: String): Int {
+        protoDebugInfoArray.add(value)
+        return protoDebugInfoArray.size - 1
+    }
+
     private fun serializeName(name: Name): Int = serializeString(name.toString())
 
     /* ------- IdSignature ------------------------------------------------------ */
@@ -235,6 +243,9 @@ open class IrFileSerializer(
 
         proto.container = protoIdSignature(signature.container)
         proto.localId = signature.id
+        if (addDebugInfo) {
+            signature.description?.let { proto.debugInfo = serializeDebugInfo(it) }
+        }
 
         return proto.build()
     }
@@ -259,7 +270,7 @@ open class IrFileSerializer(
         proto.addAllLocalFqName(serializeFqName(signature.localFqn))
         signature.hashSig?.let { proto.localHash = it }
         if (addDebugInfo) {
-            signature.description?.let { proto.description = serializeDebugInfo(it) }
+            signature.description?.let { proto.debugInfo = serializeDebugInfo(it) }
         }
 
         return proto.build()
@@ -1493,7 +1504,8 @@ open class IrFileSerializer(
             IrMemoryArrayWriter(protoIdSignatureArray.map { it.toByteArray() }).writeIntoMemory(),
             IrMemoryArrayWriter(protoStringArray.map { it.toByteArray() }).writeIntoMemory(),
             IrMemoryArrayWriter(protoBodyArray.map { it.toByteArray() }).writeIntoMemory(),
-            IrMemoryDeclarationWriter(topLevelDeclarations).writeIntoMemory()
+            IrMemoryDeclarationWriter(topLevelDeclarations).writeIntoMemory(),
+            debugInfo = null
         )
     }
 
@@ -1555,11 +1567,12 @@ open class IrFileSerializer(
             IrMemoryArrayWriter(protoIdSignatureArray.map { it.toByteArray() }).writeIntoMemory(),
             IrMemoryStringWriter(protoStringArray).writeIntoMemory(),
             IrMemoryArrayWriter(protoBodyArray.map { it.toByteArray() }).writeIntoMemory(),
-            IrMemoryDeclarationWriter(topLevelDeclarations).writeIntoMemory()
+            IrMemoryDeclarationWriter(topLevelDeclarations).writeIntoMemory(),
+            if (addDebugInfo) IrMemoryStringWriter(protoDebugInfoArray).writeIntoMemory() else null
         )
     }
 
-    fun serializeExpectActualSubstitutionTable(proto: ProtoFile.Builder) {
+    private fun serializeExpectActualSubstitutionTable(proto: ProtoFile.Builder) {
         if (skipExpects) return
 
         expectActualTable.table.forEach next@{ (expect, actualSymbol) ->

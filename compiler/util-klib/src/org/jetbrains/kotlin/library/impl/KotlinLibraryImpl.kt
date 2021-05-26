@@ -108,6 +108,8 @@ class IrMonoliticLibraryImpl(_access: IrLibraryAccess<IrKotlinLibraryLayout>) : 
 
     override fun body(index: Int, fileIndex: Int) = bodies.tableItemBytes(fileIndex, index)
 
+    override fun debugInfo(index: Int, fileIndex: Int) = debugInfos?.tableItemBytes(fileIndex, index)
+
     override fun file(index: Int) = files.tableItemBytes(index)
 
     private fun loadIrDeclaration(index: Int, fileIndex: Int) =
@@ -141,6 +143,12 @@ class IrMonoliticLibraryImpl(_access: IrLibraryAccess<IrKotlinLibraryLayout>) : 
         IrMultiArrayFileReader(access.realFiles {
             it.irBodies
         })
+    }
+
+    private val debugInfos: IrMultiArrayFileReader? by lazy {
+        access.realFiles {
+            it.irDebugInfo.let { diFile -> if (diFile.exists) IrMultiArrayFileReader(diFile) else null }
+        }
     }
 
     private val files: IrArrayFileReader by lazy {
@@ -210,6 +218,23 @@ class IrPerFileLibraryImpl(_access: IrLibraryAccess<IrKotlinLibraryLayout>) : Ir
             })
         }
         return dataReader.tableItemBytes(index)
+    }
+
+
+    private val fileToDebugInfoMap = mutableMapOf<Int, IrArrayFileReader?>()
+    override fun debugInfo(index: Int, fileIndex: Int): ByteArray? {
+        val dataReader = fileToDebugInfoMap.getOrPut(fileIndex) {
+            val fileDirectory = directories[fileIndex]
+            access.realFiles {
+                it.irDebugInfo(fileDirectory).let { diFile ->
+                    if (diFile.exists) {
+                        IrArrayFileReader(diFile)
+                    } else null
+                }
+            }
+
+        }
+        return dataReader?.tableItemBytes(index)
     }
 
     override fun file(index: Int): ByteArray {
