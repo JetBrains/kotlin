@@ -6,7 +6,7 @@ import kotlin.reflect.KProperty
 open class Base
 class Derived: Base()
 
-var a: Derived by <!NEW_INFERENCE_ERROR, NEW_INFERENCE_ERROR!>A()<!>
+var a: Derived by A()
 
 class A {
   operator fun getValue(t: Any?, p: KProperty<*>): Derived {

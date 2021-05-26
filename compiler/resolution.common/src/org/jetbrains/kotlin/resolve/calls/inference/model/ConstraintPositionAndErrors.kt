@@ -68,7 +68,7 @@ abstract class LambdaArgumentConstraintPosition<T>(val lambda: T) : ConstraintPo
     }
 }
 
-abstract class DelegatedPropertyConstraintPosition<T>(val topLevelCall: T) : ConstraintPosition() {
+open class DelegatedPropertyConstraintPosition<T>(val topLevelCall: T) : ConstraintPosition() {
     override fun toString(): String = "Constraint from call $topLevelCall for delegated property"
 }
 

@@ -16,7 +16,7 @@ class B<R>() {
 }
 
 var b1: Int by B()
-var b2: Int by <!NEW_INFERENCE_ERROR, NEW_INFERENCE_ERROR!>B<Number>()<!>
+var b2: Int by B<Number>()
 
 class C<R>() {
     operator fun getValue(t: Any?, p: KProperty<*>): R = null!!

@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
-import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.model.DelegatedPropertyConstraintPosition
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -113,7 +113,7 @@ class FirDelegatedPropertyInferenceSession(
             val unsubstitutedReturnType = accessor.returnTypeRef.coneType
 
             val substitutedReturnType = substitutor.substituteOrSelf(unsubstitutedReturnType)
-            commonSystem.addSubtypeConstraint(substitutedReturnType, expectedType!!, SimpleConstraintSystemConstraintPosition)
+            commonSystem.addSubtypeConstraint(substitutedReturnType, expectedType!!, DelegatedPropertyConstraintPosition(callInfo.callSite))
         }
 
         addConstraintForThis(commonSystem)
@@ -125,7 +125,7 @@ class FirDelegatedPropertyInferenceSession(
             val unsubstitutedParameterType = accessor.valueParameters.getOrNull(2)?.returnTypeRef?.coneType ?: return
 
             val substitutedReturnType = substitutor.substituteOrSelf(unsubstitutedParameterType)
-            commonSystem.addSubtypeConstraint(substitutedReturnType, expectedType!!, SimpleConstraintSystemConstraintPosition)
+            commonSystem.addSubtypeConstraint(expectedType!!, substitutedReturnType, DelegatedPropertyConstraintPosition(callInfo.callSite))
         }
 
         addConstraintForThis(commonSystem)
@@ -141,7 +141,7 @@ class FirDelegatedPropertyInferenceSession(
             } ?: components.session.builtinTypes.nullableNothingType.type
         val valueParameterForThis = (symbol as? FirFunctionSymbol<*>)?.fir?.valueParameters?.firstOrNull() ?: return
         val substitutedType = substitutor.substituteOrSelf(valueParameterForThis.returnTypeRef.coneType)
-        commonSystem.addSubtypeConstraint(typeOfThis, substitutedType, SimpleConstraintSystemConstraintPosition)
+        commonSystem.addSubtypeConstraint(typeOfThis, substitutedType, DelegatedPropertyConstraintPosition(callInfo.callSite))
     }
 
     override fun <T> writeOnlyStubs(call: T): Boolean where T : FirResolvable, T : FirStatement = false

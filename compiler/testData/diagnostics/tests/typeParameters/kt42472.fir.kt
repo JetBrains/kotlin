@@ -7,6 +7,6 @@ fun interface ReadOnlyProperty<in T, out V> {
 }
 
 class Problem {
-    val variable: Int by delegate() // delegate returns `ReadOnlyProperty<Problem, {CharSequence & Int}>`
+    val variable: Int by <!DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH, NEW_INFERENCE_ERROR, NEW_INFERENCE_ERROR!>delegate()<!> // delegate returns `ReadOnlyProperty<Problem, {CharSequence & Int}>`
     fun <T : CharSequence> delegate() = null as ReadOnlyProperty<Problem, T>
 }
