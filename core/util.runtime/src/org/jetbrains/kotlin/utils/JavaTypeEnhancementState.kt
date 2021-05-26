@@ -35,7 +35,8 @@ class JavaTypeEnhancementState(
     val migrationLevelForJsr305: ReportLevel?,
     val userDefinedLevelForSpecificJsr305Annotation: Map<String, ReportLevel>,
     val enableCompatqualCheckerFrameworkAnnotations: Boolean = COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS_SUPPORT_DEFAULT_VALUE,
-    val jspecifyReportLevel: ReportLevel = DEFAULT_REPORT_LEVEL_FOR_JSPECIFY
+    val jspecifyReportLevel: ReportLevel = DEFAULT_REPORT_LEVEL_FOR_JSPECIFY,
+    val nullabilityAnnotationsReportLevel: Map<String, ReportLevel>
 ) {
     val description: Array<String> by lazy {
         val result = mutableListOf<String>()
@@ -64,12 +65,27 @@ class JavaTypeEnhancementState(
         val DEFAULT_REPORT_LEVEL_FOR_JSPECIFY = ReportLevel.WARN
 
         @JvmField
-        val DEFAULT: JavaTypeEnhancementState = JavaTypeEnhancementState(ReportLevel.WARN, null, emptyMap())
+        val DEFAULT: JavaTypeEnhancementState = JavaTypeEnhancementState(
+            ReportLevel.WARN,
+            null,
+            emptyMap(),
+            nullabilityAnnotationsReportLevel = emptyMap()
+        )
 
         @JvmField
-        val DISABLED_JSR_305: JavaTypeEnhancementState = JavaTypeEnhancementState(ReportLevel.IGNORE, ReportLevel.IGNORE, emptyMap())
+        val DISABLED_JSR_305: JavaTypeEnhancementState = JavaTypeEnhancementState(
+            ReportLevel.IGNORE,
+            ReportLevel.IGNORE,
+            emptyMap(),
+            nullabilityAnnotationsReportLevel = emptyMap()
+        )
 
         @JvmField
-        val STRICT: JavaTypeEnhancementState = JavaTypeEnhancementState(ReportLevel.STRICT, ReportLevel.STRICT, emptyMap())
+        val STRICT: JavaTypeEnhancementState = JavaTypeEnhancementState(
+            ReportLevel.STRICT,
+            ReportLevel.STRICT,
+            emptyMap(),
+            nullabilityAnnotationsReportLevel = emptyMap()
+        )
     }
 }

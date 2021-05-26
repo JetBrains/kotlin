@@ -283,6 +283,17 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var jsr305: Array<String>? by FreezableVar(null)
 
     @Argument(
+        value = "-Xnullability-annotations",
+        valueDescription = "@<fq.name>:{ignore/strict/warn}",
+        description = "Specify behavior for specific Java nullability annotations (provided with fully qualified package name)\n" +
+                "Modes:\n" +
+                "  * ignore\n" +
+                "  * strict\n" +
+                "  * warn (report a warning)"
+    )
+    var nullabilityAnnotations: Array<String>? by FreezableVar(null)
+
+    @Argument(
         value = "-Xsupport-compatqual-checker-framework-annotations",
         valueDescription = "enable|disable",
         description = "Specify behavior for Checker Framework compatqual annotations (NullableDecl/NonNullDecl).\n" +
@@ -494,7 +505,8 @@ default: `indy-with-constants` for JVM target 9 or greater, `inline` otherwise""
         result[JvmAnalysisFlags.javaTypeEnhancementState] = JavaTypeEnhancementStateParser(collector).parse(
             jsr305,
             supportCompatqualCheckerFrameworkAnnotations,
-            jspecifyAnnotations
+            jspecifyAnnotations,
+            nullabilityAnnotations
         )
         result[AnalysisFlags.ignoreDataFlowInAssert] = JVMAssertionsMode.fromString(assertionsMode) != JVMAssertionsMode.LEGACY
         JvmDefaultMode.fromStringOrNull(jvmDefault)?.let {

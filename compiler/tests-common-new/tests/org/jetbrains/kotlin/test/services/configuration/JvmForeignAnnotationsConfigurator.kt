@@ -59,7 +59,8 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
                 globalState,
                 migrationState,
                 userAnnotationsState,
-                jspecifyReportLevel = jSpecifyReportLevel
+                jspecifyReportLevel = jSpecifyReportLevel,
+                nullabilityAnnotationsReportLevel = emptyMap()
             )
         )
     }
