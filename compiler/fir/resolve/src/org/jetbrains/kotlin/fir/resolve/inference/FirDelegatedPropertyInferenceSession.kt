@@ -80,6 +80,13 @@ class FirDelegatedPropertyInferenceSession(
                 )
             }
         }
+
+        for ((_, candidate) in partiallyResolvedCalls) {
+            for (error in commonSystem.errors) {
+                candidate.system.addError(error)
+            }
+        }
+
         resultingConstraintSystem = commonSystem
         return resolvedCalls
     }
