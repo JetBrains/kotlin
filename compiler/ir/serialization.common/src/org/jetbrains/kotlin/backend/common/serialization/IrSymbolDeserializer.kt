@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature
 class IrSymbolDeserializer(
     val symbolTable: ReferenceSymbolTable,
     val fileReader: IrLibraryFile,
+    fileSymbol: IrFileSymbol,
     val actuals: List<Actual>,
     val enqueueLocalTopLevelDeclaration: (IdSignature) -> Unit,
     val handleExpectActualMapping: (IdSignature, IrSymbol) -> IrSymbol,

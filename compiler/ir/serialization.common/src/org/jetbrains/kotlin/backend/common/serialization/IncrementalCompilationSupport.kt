@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.IrLibrary
+import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.impl.*
 
@@ -79,7 +80,7 @@ class CurrentModuleWithICDeserializer(
     private val irBuiltIns: IrBuiltIns,
     icData: List<SerializedIrFile>,
     icReaderFactory: (IrLibrary) -> IrModuleDeserializer) :
-    IrModuleDeserializer(delegate.moduleDescriptor) {
+    IrModuleDeserializer(delegate.moduleDescriptor, KotlinAbiVersion.CURRENT) {
 
     private val dirtyDeclarations = mutableMapOf<IdSignature, IrSymbol>()
     private val icKlib = ICKotlinLibrary(icData)

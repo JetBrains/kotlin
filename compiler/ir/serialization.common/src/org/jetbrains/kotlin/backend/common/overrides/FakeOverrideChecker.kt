@@ -5,7 +5,10 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrOverridableMember
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -41,7 +44,7 @@ class FakeOverrideChecker(
             .filterNot { it.visibility == DescriptorVisibilities.PRIVATE || it.visibility == DescriptorVisibilities.INVISIBLE_FAKE }
 
         val descriptorSignatures = descriptorFakeOverrides
-            .map { with(descriptorMangler) { it.signatureString }}
+            .map { with(descriptorMangler) { it.signatureString() } }
             .sorted()
 
         val irFakeOverrides = clazz.declarations
@@ -53,7 +56,7 @@ class FakeOverrideChecker(
         }
 
         val irSignatures = irFakeOverrides
-            .map { with(irMangler) { it.signatureString }}
+            .map { with(irMangler) { it.signatureString() } }
             .sorted()
 
         // We can't have equality here because dependency libraries could have

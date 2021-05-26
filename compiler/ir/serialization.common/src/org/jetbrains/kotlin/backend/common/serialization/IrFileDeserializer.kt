@@ -70,7 +70,7 @@ class FileDeserializationState(
 
     val symbolDeserializer =
         IrSymbolDeserializer(
-            linker.symbolTable, fileReader, fileProto.actualList, ::addIdSignature, linker::handleExpectActualMapping
+            linker.symbolTable, fileReader, file.symbol, fileProto.actualList, ::addIdSignature, linker::handleExpectActualMapping
         ) { idSig, symbolKind ->
 
             val topLevelSig = idSig.topLevelSignature()
@@ -96,6 +96,7 @@ class FileDeserializationState(
         symbolDeserializer,
         linker.fakeOverrideBuilder.platformSpecificClassFilter,
         linker.fakeOverrideBuilder,
+        compatibilityMode = moduleDeserializer.compatibilityMode
     )
 
     val fileDeserializer = IrFileDeserializer(file, fileReader, fileProto, symbolDeserializer, declarationDeserializer)

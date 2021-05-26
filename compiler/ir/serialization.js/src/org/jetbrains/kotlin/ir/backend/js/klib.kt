@@ -105,7 +105,8 @@ fun generateKLib(
     irFactory: IrFactory,
     outputKlibPath: String,
     nopack: Boolean,
-    jsOutputName: String?,
+    abiVersion: KotlinAbiVersion = KotlinAbiVersion.CURRENT,
+    jsOutputName: String?
 ) {
     val incrementalDataProvider = configuration.get(JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER)
     val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
@@ -196,6 +197,7 @@ fun generateKLib(
         nopack,
         perFile = false,
         hasErrors,
+        abiVersion,
         jsOutputName
     )
 }
@@ -495,15 +497,19 @@ fun serializeModuleIntoKlib(
     nopack: Boolean,
     perFile: Boolean,
     containsErrorCode: Boolean = false,
+    abiVersion: KotlinAbiVersion,
     jsOutputName: String?,
 ) {
     assert(files.size == moduleFragment.files.size)
+
+    val compatibilityMode = CompatibilityMode(abiVersion)
 
     val serializedIr =
         JsIrModuleSerializer(
             messageLogger,
             moduleFragment.irBuiltins,
-            expectDescriptorToSymbol = expectDescriptorToSymbol,
+            expectDescriptorToSymbol,
+            compatibilityMode,
             skipExpects = !configuration.expectActualLinker
         ).serializedIrModule(moduleFragment)
 
@@ -559,7 +565,7 @@ fun serializeModuleIntoKlib(
     val fullSerializedIr = SerializedIrModule(compiledKotlinFiles.map { it.irData })
 
     val versions = KotlinLibraryVersioning(
-        abiVersion = KotlinAbiVersion.CURRENT,
+        abiVersion = compatibilityMode.abiVersion,
         libraryVersion = null,
         compilerVersion = KotlinCompilerVersion.VERSION,
         metadataVersion = KlibMetadataVersion.INSTANCE.toString(),
