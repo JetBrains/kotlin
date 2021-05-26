@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.util.originalKtFile
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtFile
+import java.io.File
 
 class KotlinFirCompletionContributor : CompletionContributor() {
     init {
@@ -96,6 +97,10 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
             is FirImportDirectivePositionContext -> {
                 complete(packageCompletionContributor, positionContext)
                 complete(importDirectivePackageMembersCompletionContributor, positionContext)
+            }
+
+            is FirPackageDirectivePositionContext -> {
+                complete(packageCompletionContributor, positionContext)
             }
 
             is FirUnknownPositionContext -> {
