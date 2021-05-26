@@ -1053,6 +1053,13 @@ interface IrBuilderExtension {
             typeArgs = listOf(typeArgs[0].makeNotNull()) + typeArgs
         }
 
+        // If KType is interface, .classSerializer always yields PolymorphicSerializer, which may be unavailable for interfaces from other modules
+        if (!kType.isInterface() && serializerClassOriginal == kType.toClassDescriptor?.classSerializer && enclosingGenerator !is SerializableCompanionIrGenerator) {
+            // This is default type serializer, we can shortcut through Companion.serializer()
+            // BUT not during generation of this method itself
+            callSerializerFromCompanion(thisIrType, typeArgs, args)?.let { return it }
+        }
+
 
         val serializable = getSerializableClassDescriptorBySerializer(serializerClass)
         val ctor = if (serializable?.declaredTypeParameters?.isNotEmpty() == true) {
@@ -1083,6 +1090,27 @@ interface IrBuilderExtension {
         val typeParameters = ctorDecl.parentAsClass.typeParameters
         val substitutedReturnType = ctorDecl.returnType.substitute(typeParameters, typeArgs)
         return irInvoke(null, ctor, typeArguments = typeArgs, valueArguments = args, returnTypeHint = substitutedReturnType)
+    }
+
+    fun IrBuilderWithScope.callSerializerFromCompanion(
+        thisIrType: IrType,
+        typeArgs: List<IrType>,
+        args: List<IrExpression>
+    ): IrExpression? {
+        val baseClass = thisIrType.getClass() ?: return null
+        val companionClass = baseClass.companionObject() ?: return null
+        val serializerProviderFunction = companionClass.declarations.singleOrNull {
+            it is IrFunction && it.name == SerialEntityNames.SERIALIZER_PROVIDER_NAME && it.valueParameters.size == baseClass.typeParameters.size
+        } ?: return null
+        with(serializerProviderFunction as IrFunction) {
+            // Note that [args] and [typeArgs] may be unused if we short-cut to e.g. SealedClassSerializer
+            return irInvoke(
+                irGetObject(companionClass),
+                symbol,
+                typeArgs.takeIf { it.size == typeParameters.size }.orEmpty(),
+                args.takeIf { it.size == valueParameters.size }.orEmpty()
+            )
+        }
     }
 
     private fun IrConstructor.lastArgumentIsAnnotationArray(): Boolean {

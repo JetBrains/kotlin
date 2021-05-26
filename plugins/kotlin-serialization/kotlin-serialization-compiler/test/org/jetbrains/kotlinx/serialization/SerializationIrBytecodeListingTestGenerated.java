@@ -33,4 +33,9 @@ public class SerializationIrBytecodeListingTestGenerated extends AbstractSeriali
     public void testBasic() throws Exception {
         runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/codegen/Basic.kt");
     }
+
+    @TestMetadata("Sealed.kt")
+    public void testSealed() throws Exception {
+        runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/codegen/Sealed.kt");
+    }
 }
