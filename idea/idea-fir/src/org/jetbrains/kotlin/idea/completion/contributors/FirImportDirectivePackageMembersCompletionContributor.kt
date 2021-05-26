@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.idea.completion.contributors
 
-import org.jetbrains.kotlin.idea.completion.CallableImportStrategy
-import org.jetbrains.kotlin.idea.completion.CallableInsertionStrategy
 import org.jetbrains.kotlin.idea.completion.checkers.CompletionVisibilityChecker
 import org.jetbrains.kotlin.idea.completion.context.FirBasicCompletionContext
 import org.jetbrains.kotlin.idea.completion.context.FirImportDirectivePositionContext
 import org.jetbrains.kotlin.idea.completion.contributors.helpers.getStaticScope
+import org.jetbrains.kotlin.idea.completion.lookups.CallableImportStrategy
+import org.jetbrains.kotlin.idea.completion.lookups.CallableInsertionStrategy
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 
 internal class FirImportDirectivePackageMembersCompletionContributor(
