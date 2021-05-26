@@ -128,7 +128,7 @@ class IrModuleDeserializerWithBuiltIns(
         val className = fqnParts.firstOrNull() ?: error("Expected class name for $idSig")
 
         val functionDescriptor = computeFunctionDescriptor(className)
-        val topLevelSignature = IdSignature.PublicSignature(publicSig.packageFqName, className, null, publicSig.mask)
+        val topLevelSignature = IdSignature.CommonSignature(publicSig.packageFqName, className, null, publicSig.mask)
 
         val functionClass = when (functionDescriptor.functionKind) {
             FunctionClassKind.KSuspendFunction -> functionFactory.kSuspendFunctionN(functionDescriptor.arity) { callback ->

@@ -137,7 +137,7 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
 
             val function = reference.symbol.owner
             val isRestricted = reference.symbol.owner.extensionReceiverParameter?.type?.classOrNull?.owner?.annotations?.any {
-                it.type.classOrNull?.signature == IdSignature.PublicSignature("kotlin.coroutines", "RestrictsSuspension", null, 0)
+                it.type.classOrNull?.signature == IdSignature.CommonSignature("kotlin.coroutines", "RestrictsSuspension", null, 0)
             } == true
             val suspendLambda =
                 if (isRestricted) context.ir.symbols.restrictedSuspendLambdaClass.owner

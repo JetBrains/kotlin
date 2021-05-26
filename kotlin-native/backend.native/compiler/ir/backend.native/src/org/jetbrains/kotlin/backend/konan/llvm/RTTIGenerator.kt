@@ -188,8 +188,10 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             vector128Type to 10
     )
 
-    private fun getElementType(irClass: IrClass): LLVMTypeRef? =
-            if (irClass.symbol.isPublicApi) arrayClasses[irClass.symbol.signature as IdSignature.PublicSignature] else null
+    private fun getElementType(irClass: IrClass): LLVMTypeRef? {
+        val signature = irClass.symbol.signature as? IdSignature.CommonSignature?
+        return signature?.let { arrayClasses[it] }
+    }
 
     private fun getInstanceSize(classType: LLVMTypeRef?, irClass: IrClass) : Int {
         val elementType = getElementType(irClass)

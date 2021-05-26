@@ -190,7 +190,7 @@ internal class KonanIrLinker(
         override fun contains(idSig: IdSignature): Boolean = idSig.isForwardDeclarationSignature()
 
         private fun resolveDescriptor(idSig: IdSignature): ClassDescriptor =
-            with(idSig as IdSignature.PublicSignature) {
+            with(idSig as IdSignature.CommonSignature) {
                 val classId = ClassId(packageFqName(), FqName(declarationFqName), false)
                 moduleDescriptor.findClassAcrossModuleDependencies(classId) ?: error("No declaration found with $idSig")
             }

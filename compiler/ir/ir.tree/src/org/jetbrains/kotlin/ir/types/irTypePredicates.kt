@@ -43,16 +43,16 @@ object IdSignatureValues {
     @JvmField val iterable = getPublicSignature(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, "Iterable")
     @JvmField val continuation = getPublicSignature(StandardNames.COROUTINES_PACKAGE_FQ_NAME_RELEASE, "Continuation")
     @JvmField val result = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "Result")
-    @JvmField val sequence = IdSignature.PublicSignature("kotlin.sequences", "Sequence", null, 0)
+    @JvmField val sequence = IdSignature.CommonSignature("kotlin.sequences", "Sequence", null, 0)
 }
 
-private fun IrType.isNotNullClassType(signature: IdSignature.PublicSignature) = isClassType(signature, hasQuestionMark = false)
-private fun IrType.isNullableClassType(signature: IdSignature.PublicSignature) = isClassType(signature, hasQuestionMark = true)
+private fun IrType.isNotNullClassType(signature: IdSignature.CommonSignature) = isClassType(signature, hasQuestionMark = false)
+private fun IrType.isNullableClassType(signature: IdSignature.CommonSignature) = isClassType(signature, hasQuestionMark = true)
 
 fun getPublicSignature(packageFqName: FqName, name: String) =
-    IdSignature.PublicSignature(packageFqName.asString(), name, null, 0)
+    IdSignature.CommonSignature(packageFqName.asString(), name, null, 0)
 
-private fun IrType.isClassType(signature: IdSignature.PublicSignature, hasQuestionMark: Boolean? = null): Boolean {
+private fun IrType.isClassType(signature: IdSignature.CommonSignature, hasQuestionMark: Boolean? = null): Boolean {
     if (this !is IrSimpleType) return false
     if (hasQuestionMark != null && this.hasQuestionMark != hasQuestionMark) return false
     return signature == classifier.signature
@@ -66,12 +66,12 @@ private fun classFqNameEquals(symbol: IrClassSymbol, fqName: FqNameUnsafe): Bool
     return classFqNameEquals(symbol.owner, fqName)
 }
 
-private val idSignatureToPrimitiveType: Map<IdSignature.PublicSignature, PrimitiveType> =
+private val idSignatureToPrimitiveType: Map<IdSignature.CommonSignature, PrimitiveType> =
     PrimitiveType.values().associateBy {
         getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, it.typeName.asString())
     }
 
-val primitiveArrayTypesSignatures: Map<PrimitiveType, IdSignature.PublicSignature> =
+val primitiveArrayTypesSignatures: Map<PrimitiveType, IdSignature.CommonSignature> =
     PrimitiveType.values().associateWith {
         getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "${it.typeName.asString()}Array")
     }

@@ -199,7 +199,7 @@ open class IrFileSerializer(
 
     /* ------- IdSignature ------------------------------------------------------ */
 
-    private fun serializePublicSignature(signature: IdSignature.PublicSignature): ProtoPublicIdSignature {
+    private fun serializePublicSignature(signature: IdSignature.CommonSignature): ProtoPublicIdSignature {
         val proto = ProtoPublicIdSignature.newBuilder()
         proto.addAllPackageFqName(serializeFqName(signature.packageFqName))
         proto.addAllDeclarationFqName(serializeFqName(signature.declarationFqName))
@@ -274,7 +274,7 @@ open class IrFileSerializer(
     fun serializeIdSignature(idSignature: IdSignature): ProtoIdSignature {
         val proto = ProtoIdSignature.newBuilder()
         when (idSignature) {
-            is IdSignature.PublicSignature -> proto.publicSig = serializePublicSignature(idSignature)
+            is IdSignature.CommonSignature -> proto.publicSig = serializePublicSignature(idSignature)
             is IdSignature.AccessorSignature -> proto.accessorSig = serializeAccessorSignature(idSignature)
             is IdSignature.FileLocalSignature -> proto.privateSig = serializePrivateSignature(idSignature)
             is IdSignature.ScopeLocalDeclaration -> proto.scopedLocalSig = serializeScopeLocalSignature(idSignature)
