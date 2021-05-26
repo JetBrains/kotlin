@@ -214,7 +214,7 @@ task registerExternalBenchmarks {
                     "jdkVendor": System.getProperty("java.vendor"),
                     "kotlinVersion": kotlinVersion,
                     "type": "native",
-                    "compilerVersion": konanVersion,
+                    "compilerVersion": kotlinVersion,
                     "flags": optionsList,
                     "benchmarks": "[]"]
             if (compileTime != null) {
