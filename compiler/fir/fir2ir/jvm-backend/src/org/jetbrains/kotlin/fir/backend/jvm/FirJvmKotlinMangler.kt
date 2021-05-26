@@ -14,18 +14,15 @@ import org.jetbrains.kotlin.fir.signaturer.FirMangler
 @NoMutableState
 class FirJvmKotlinMangler(private val session: FirSession) : AbstractKotlinMangler<FirDeclaration>(), FirMangler {
 
-    override val FirDeclaration.mangleString: String
-        get() = getMangleComputer(MangleMode.FULL).computeMangle(this)
+    override fun FirDeclaration.mangleString(): String = getMangleComputer(MangleMode.FULL).computeMangle(this)
 
-    override val FirDeclaration.signatureString: String
-        get() = getMangleComputer(MangleMode.SIGNATURE).computeMangle(this)
+    override fun FirDeclaration.signatureString(): String = getMangleComputer(MangleMode.SIGNATURE).computeMangle(this)
 
-    override val FirDeclaration.fqnString: String
-        get() = getMangleComputer(MangleMode.FQNAME).computeMangle(this)
+    override fun FirDeclaration.fqnString(): String = getMangleComputer(MangleMode.FQNAME).computeMangle(this)
 
-    override fun FirDeclaration.isExported(): Boolean = true
+    override fun FirDeclaration.isExported(compatibleMode: Boolean): Boolean = true
 
-    override fun getExportChecker(): KotlinExportChecker<FirDeclaration> {
+    override fun getExportChecker(compatibleMode: Boolean): KotlinExportChecker<FirDeclaration>  {
         return object : KotlinExportChecker<FirDeclaration> {
             override fun check(declaration: FirDeclaration, type: SpecialDeclarationType): Boolean = true
 

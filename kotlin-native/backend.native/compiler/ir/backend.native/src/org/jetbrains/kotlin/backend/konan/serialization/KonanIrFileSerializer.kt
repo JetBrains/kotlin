@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.backend.konan.serialization
 
+import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
@@ -16,8 +17,9 @@ class KonanIrFileSerializer(
     declarationTable: DeclarationTable,
     expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
     skipExpects: Boolean,
-    bodiesOnlyForInlines: Boolean = false
-): IrFileSerializer(messageLogger, declarationTable, expectDescriptorToSymbol, skipExpects = skipExpects, bodiesOnlyForInlines = bodiesOnlyForInlines) {
+    bodiesOnlyForInlines: Boolean = false,
+    compatibilityMode: CompatibilityMode
+): IrFileSerializer(messageLogger, declarationTable, expectDescriptorToSymbol, compatibilityMode, bodiesOnlyForInlines, skipExpects) {
 
     override fun backendSpecificExplicitRoot(node: IrAnnotationContainer): Boolean {
         val fqn = when (node) {
