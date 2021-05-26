@@ -59,11 +59,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     private val initialFrameSize = codegen.frameMap.currentSize
 
     protected val invocationParamBuilder = ParametersBuilder.newBuilder()
-
     protected val expressionMap = linkedMapOf<Int, FunctionalArgument>()
-
-    private val sourceMapper = sourceCompiler.lazySourceMapper
-
     protected val maskValues = ArrayList<Int>()
     protected var maskStartIndex = -1
     protected var methodHandleInDefaultMethodIndex = -1
@@ -209,6 +205,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
             sourceCompiler, sourceCompiler.inlineCallSiteInfo, reifiedTypeInliner, typeParameterMappings
         )
 
+        val sourceMapper = sourceCompiler.sourceMapper
         val sourceInfo = sourceMapper.sourceInfo!!
         val callSite = SourcePosition(codegen.lastLineNumber, sourceInfo.sourceFileName!!, sourceInfo.pathOrCleanFQN)
         val inliner = MethodInliner(
@@ -431,8 +428,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         )
     }
 
-
-    internal fun createInlineMethodNode(
+    private fun createInlineMethodNode(
         callDefault: Boolean,
         typeArguments: List<TypeParameterMarker>?,
         typeSystem: TypeSystemCommonBackendContext

@@ -82,7 +82,7 @@ class PsiSourceCompilerForInline(
             )
         }
 
-    override val lazySourceMapper
+    override val sourceMapper
         get() = codegen.parentCodegen.orCreateSourceMapper
 
     override fun generateLambdaBody(lambdaInfo: ExpressionLambda, reifiedTypeParameters: ReifiedTypeParametersUsages): SMAPAndMethodNode {
