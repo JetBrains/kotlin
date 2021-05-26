@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.test.TestFiles
 import org.jetbrains.kotlin.test.TestFiles.TestFileFactory
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
-import java.util.*
 
 abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : KotlinBaseTest.TestFile> :
     KotlinBaseTest<F>() {
@@ -140,7 +139,7 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
                 return createTestFile(module, fileName, text, directives)
             }
 
-            override fun createModule(name: String, dependencies: List<String>, friends: List<String>): M? {
+            override fun createModule(name: String, dependencies: List<String>, friends: List<String>, abiVersions: List<Int>): M? {
                 val module = createTestModule(name, dependencies, friends)
                 val oldValue = modules.put(name, ModuleAndDependencies(module, dependencies, friends))
                 assert(oldValue == null) { "Module $name declared more than once" }
