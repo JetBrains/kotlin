@@ -9,7 +9,8 @@ import org.gradle.api.artifacts.transform.*
 import org.gradle.api.file.FileSystemLocation
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Classpath
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile.Companion.CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE
+import org.jetbrains.kotlin.gradle.incremental.ClasspathEntrySnapshotter
+import org.jetbrains.kotlin.gradle.incremental.ClasspathEntrySnapshotSerializer
 
 /** Transform to create a snapshot ([CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE]) of a classpath entry (directory or jar). */
 @CacheableTransform
@@ -23,9 +24,8 @@ abstract class ClasspathEntrySnapshotTransform : TransformAction<TransformParame
         val classpathEntry = inputArtifact.get().asFile
         val snapshotFile = outputs.file(CLASSPATH_ENTRY_SNAPSHOT_FILE_NAME)
 
-        // TODO WORK-IN-PROGRESS
-        val snapshot = "[Place holder - actual snapshot will be inserted in an upcoming change]"
-        snapshotFile.writeText(snapshot)
+        val snapshot = ClasspathEntrySnapshotter.snapshot(classpathEntry)
+        ClasspathEntrySnapshotSerializer.writeToFile(snapshot, snapshotFile)
     }
 }
 

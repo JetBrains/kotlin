@@ -34,9 +34,8 @@ import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner.Companion.normalizeForFlagFile
 import org.jetbrains.kotlin.daemon.common.MultiModuleICSettings
 import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.incremental.*
 import org.jetbrains.kotlin.gradle.incremental.ChangedFiles
-import org.jetbrains.kotlin.gradle.incremental.IncrementalModuleInfoBuildService
-import org.jetbrains.kotlin.gradle.incremental.IncrementalModuleInfoProvider
 import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.tasks.TaskConfigurator
 import org.jetbrains.kotlin.gradle.internal.tasks.TaskWithLocalState
@@ -730,8 +729,10 @@ abstract class KotlinCompile @Inject constructor(
         val currentSnapshotFiles = classpathSnapshotProperties.classpathSnapshot.files.toList()
         val previousSnapshotFiles = getClasspathSnapshotFilesInDir(classpathSnapshotProperties.classpathSnapshotDir.get().asFile)
 
-        // TODO WORK-IN-PROGRESS
-        return ClasspathChanges.NotAvailable.UnableToCompute
+        val currentSnapshot = ClasspathSnapshotSerializer.readFromFiles(currentSnapshotFiles)
+        val previousSnapshot = ClasspathSnapshotSerializer.readFromFiles(previousSnapshotFiles)
+
+        return ClasspathChangesComputer.getChanges(currentSnapshot, previousSnapshot)
     }
 
     /**
