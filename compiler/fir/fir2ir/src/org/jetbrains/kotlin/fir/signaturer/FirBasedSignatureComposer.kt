@@ -73,14 +73,14 @@ class FirBasedSignatureComposer(private val mangler: FirMangler) : Fir2IrSignatu
             is FirRegularClass -> {
                 // TODO: private classes are probably not acceptable here too
                 val classId = declaration.classId
-                IdSignature.PublicSignature(
+                IdSignature.CommonSignature(
                     classId.packageFqName.asString(), classId.relativeClassName.asString(), builder.hashId, builder.mask
                 )
             }
             is FirTypeAlias -> {
                 if (declaration.visibility == Visibilities.Private) return null
                 val classId = declaration.symbol.classId
-                IdSignature.PublicSignature(
+                IdSignature.CommonSignature(
                     classId.packageFqName.asString(), classId.relativeClassName.asString(), builder.hashId, builder.mask
                 )
             }
@@ -92,7 +92,7 @@ class FirBasedSignatureComposer(private val mangler: FirMangler) : Fir2IrSignatu
                 val packageName = classId?.packageFqName ?: declaration.symbol.callableId.packageName
                 val callableName = declaration.symbol.callableId.callableName
 
-                IdSignature.PublicSignature(
+                IdSignature.CommonSignature(
                     packageName.asString(),
                     classId?.relativeClassName?.child(callableName)?.asString() ?: callableName.asString(),
                     builder.hashId, builder.mask
@@ -107,12 +107,12 @@ class FirBasedSignatureComposer(private val mangler: FirMangler) : Fir2IrSignatu
         isSetter: Boolean,
         containingClass: ConeClassLikeLookupTag?
     ): IdSignature? {
-        val propertySignature = composeSignature(property, containingClass) as? IdSignature.PublicSignature ?: return null
+        val propertySignature = composeSignature(property, containingClass) as? IdSignature.CommonSignature ?: return null
         val accessorFqName = if (isSetter) {
             propertySignature.declarationFqName + ".<set-${property.name.asString()}>"
         } else {
             propertySignature.declarationFqName + ".<get-${property.name.asString()}>"
         }
-        return IdSignature.PublicSignature(propertySignature.packageFqName, accessorFqName, propertySignature.id, propertySignature.mask)
+        return IdSignature.CommonSignature(propertySignature.packageFqName, accessorFqName, propertySignature.id, propertySignature.mask)
     }
 }

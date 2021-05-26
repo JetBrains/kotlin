@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.isPublicApi
 import org.jetbrains.kotlin.ir.types.IdSignatureValues
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.isMarkedNullable
@@ -36,8 +35,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-private fun IrClass.isClassTypeWithSignature(signature: IdSignature.PublicSignature): Boolean {
-    if (!symbol.isPublicApi) return false
+private fun IrClass.isClassTypeWithSignature(signature: IdSignature.CommonSignature): Boolean {
     return signature == symbol.signature
 }
 

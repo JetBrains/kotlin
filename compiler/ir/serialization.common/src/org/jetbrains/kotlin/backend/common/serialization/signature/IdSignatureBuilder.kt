@@ -39,10 +39,10 @@ abstract class IdSignatureBuilder<D> {
                 return IdSignature.SpecialFakeOverrideSignature(memberSignature, overriddenSignatures)
             }
             hashIdAcc == null -> {
-                IdSignature.PublicSignature(packageFqName, classFqName, hashId, mask)
+                IdSignature.CommonSignature(packageFqName, classFqName, hashId, mask)
             }
             else -> {
-                val accessorSignature = IdSignature.PublicSignature(packageFqName, classFqName, hashIdAcc, mask)
+                val accessorSignature = IdSignature.CommonSignature(packageFqName, classFqName, hashIdAcc, mask)
                 hashIdAcc = null
                 classFqnSegments.run { removeAt(lastIndex) }
                 val propertySignature = build()

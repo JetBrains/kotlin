@@ -337,7 +337,7 @@ abstract class DeclarationStubGenerator(
 
     private fun findDescriptorBySignature(signature: IdSignature): DeclarationDescriptor? = when (signature) {
             is IdSignature.AccessorSignature -> findDescriptorForAccessorSignature(signature)
-            is IdSignature.PublicSignature -> findDescriptorForPublicSignature(signature)
+            is IdSignature.CommonSignature -> findDescriptorForPublicSignature(signature)
             else -> error("only PublicSignature or AccessorSignature should reach this point, got $signature")
         }
 
@@ -347,7 +347,7 @@ abstract class DeclarationStubGenerator(
         return propertyDescriptor.accessors.singleOrNull { it.name.asString() == shortName }
     }
 
-    private fun findDescriptorForPublicSignature(signature: IdSignature.PublicSignature): DeclarationDescriptor? {
+    private fun findDescriptorForPublicSignature(signature: IdSignature.CommonSignature): DeclarationDescriptor? {
         val packageDescriptor = moduleDescriptor.getPackage(signature.packageFqName())
         val nameSegments = signature.nameSegments
         val toplevelDescriptors = packageDescriptor.memberScope.getDescriptorsFiltered { name -> name.asString() == nameSegments.first() }
