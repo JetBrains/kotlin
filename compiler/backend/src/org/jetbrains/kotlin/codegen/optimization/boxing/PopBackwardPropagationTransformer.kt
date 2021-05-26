@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.codegen.optimization.boxing
 
 import org.jetbrains.kotlin.codegen.optimization.OptimizationMethodVisitor
-import org.jetbrains.kotlin.codegen.optimization.common.debugText
 import org.jetbrains.kotlin.codegen.optimization.common.isLoadOperation
 import org.jetbrains.kotlin.codegen.optimization.fixStack.peekWords
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
@@ -52,60 +51,44 @@ class PopBackwardPropagationTransformer : MethodTransformer() {
 
         private val dontTouchInsnIndices = BitSet(insns.size)
 
-        private val transformations = hashMapOf<AbstractInsnNode, Transformation>()
-        private val frames = analyzeMethodBody()
-
         fun transform() {
+            val frames = Analyzer(HazardsTrackingInterpreter()).analyze("fake", methodNode)
             for ((i, insn) in insns.withIndex()) {
-                if (insn.opcode == Opcodes.POP && frames[i] != null) {
-                    val inputTop = getInputTop(insn)
-                    val sources = inputTop.insns
-                    if (sources.none { isDontTouch(it) } && sources.any { isTransformablePopOperand(it) }) {
+                val frame = frames[i] ?: continue
+                when (insn.opcode) {
+                    Opcodes.POP ->
+                        frame.top()?.let { input ->
+                            // If this POP won't be removed, other POPs that touch the same values have to stay as well.
+                            if (input.insns.any { it.shouldKeep() } || input.longerWhenFusedWithPop()) {
+                                input.insns.markAsDontTouch()
+                            }
+                        }
+                    Opcodes.POP2 -> frame.peekWords(2)?.forEach { it.insns.markAsDontTouch() }
+                    Opcodes.DUP_X1 -> frame.peekWords(1, 1)?.forEach { it.insns.markAsDontTouch() }
+                    Opcodes.DUP2_X1 -> frame.peekWords(2, 1)?.forEach { it.insns.markAsDontTouch() }
+                    Opcodes.DUP_X2 -> frame.peekWords(1, 2)?.forEach { it.insns.markAsDontTouch() }
+                    Opcodes.DUP2_X2 -> frame.peekWords(2, 2)?.forEach { it.insns.markAsDontTouch() }
+                }
+            }
+
+            val transformations = hashMapOf<AbstractInsnNode, Transformation>()
+            for ((i, insn) in insns.withIndex()) {
+                val frame = frames[i] ?: continue
+                if (insn.opcode == Opcodes.POP) {
+                    val input = frame.top() ?: continue
+                    if (input.insns.none { it.shouldKeep() }) {
                         transformations[insn] = REPLACE_WITH_NOP
-                        sources.forEach { propagatePopBackwards(it, inputTop.size) }
+                        input.insns.forEach {
+                            if (it !in transformations) {
+                                transformations[it] = it.combineWithPop(frames, input.size)
+                            }
+                        }
                     }
                 }
             }
             for ((insn, transformation) in transformations.entries) {
                 transformation(insn)
             }
-        }
-
-        private fun analyzeMethodBody(): Array<out Frame<SourceValue>?> {
-            val frames = Analyzer(HazardsTrackingInterpreter()).analyze("fake", methodNode)
-            val insns = methodNode.instructions.toArray()
-            for (i in frames.indices) {
-                val frame = frames[i] ?: continue
-                val insn = insns[i]
-
-                when (insn.opcode) {
-                    Opcodes.POP2 -> {
-                        val top2 = frame.peekWords(2) ?: throwIncorrectBytecode(insn, frame)
-                        top2.forEach { it.insns.markAsDontTouch() }
-                    }
-                    Opcodes.DUP_X1 -> {
-                        val top2 = frame.peekWords(1, 1) ?: throwIncorrectBytecode(insn, frame)
-                        top2.forEach { it.insns.markAsDontTouch() }
-                    }
-                    Opcodes.DUP2_X1 -> {
-                        val top3 = frame.peekWords(2, 1) ?: throwIncorrectBytecode(insn, frame)
-                        top3.forEach { it.insns.markAsDontTouch() }
-                    }
-                    Opcodes.DUP_X2 -> {
-                        val top3 = frame.peekWords(1, 2) ?: throwIncorrectBytecode(insn, frame)
-                        top3.forEach { it.insns.markAsDontTouch() }
-                    }
-                    Opcodes.DUP2_X2 -> {
-                        val top4 = frame.peekWords(2, 2) ?: throwIncorrectBytecode(insn, frame)
-                        top4.forEach { it.insns.markAsDontTouch() }
-                    }
-                }
-            }
-            return frames
-        }
-
-        private fun throwIncorrectBytecode(insn: AbstractInsnNode?, frame: Frame<SourceValue>): Nothing {
-            throw AssertionError("Incorrect bytecode at ${methodNode.instructions.indexOf(insn)}: ${insn.debugText} $frame")
         }
 
         private inner class HazardsTrackingInterpreter : SourceInterpreter(Opcodes.API_VERSION) {
@@ -122,9 +105,7 @@ class PopBackwardPropagationTransformer : MethodTransformer() {
             }
 
             override fun unaryOperation(insn: AbstractInsnNode, value: SourceValue): SourceValue {
-                if (!insn.isPrimitiveTypeConversion()) {
-                    value.insns.markAsDontTouch()
-                }
+                value.insns.markAsDontTouch()
                 return super.unaryOperation(insn, value)
             }
 
@@ -153,59 +134,38 @@ class PopBackwardPropagationTransformer : MethodTransformer() {
             }
         }
 
-        private fun propagatePopBackwards(insn: AbstractInsnNode, poppedValueSize: Int) {
-            if (transformations.containsKey(insn)) return
-
+        private fun SourceValue.longerWhenFusedWithPop() = insns.fold(0) { x, insn ->
             when {
-                insn.isPrimitiveBoxing() ->
-                    transformations[insn] = replaceWithPopTransformation(getInputTop(insn).size)
+                insn.isPurePush() -> x - 1
+                insn.isPrimitiveBoxing() || insn.isPrimitiveTypeConversion() -> x
+                else -> x + 1
+            }
+        } > 0
 
-                insn.isPurePush() ->
-                    transformations[insn] = REPLACE_WITH_NOP
-
-                insn.isPrimitiveTypeConversion() -> {
-                    val inputTop = getInputTop(insn)
-                    val sources = inputTop.insns
-                    if (sources.none { isDontTouch(it) }) {
-                        transformations[insn] = REPLACE_WITH_NOP
-                        sources.forEach { propagatePopBackwards(it, inputTop.size) }
-                    } else {
-                        transformations[insn] = replaceWithPopTransformation(inputTop.size)
+        private fun AbstractInsnNode.combineWithPop(frames: Array<out Frame<SourceValue>?>, resultSize: Int): Transformation =
+            when {
+                isPurePush() -> REPLACE_WITH_NOP
+                isPrimitiveBoxing() || isPrimitiveTypeConversion() -> {
+                    val index = insnList.indexOf(this)
+                    val frame = frames[index] ?: throw AssertionError("dead instruction #$index used by non-dead instruction")
+                    val input = frame.top() ?: throw AssertionError("coercion instruction at #$index has no input")
+                    when (input.size) {
+                        1 -> REPLACE_WITH_POP1
+                        2 -> REPLACE_WITH_POP2
+                        else -> throw AssertionError("Unexpected pop value size: ${input.size}")
                     }
                 }
-
                 else ->
-                    transformations[insn] = insertPopAfterTransformation(poppedValueSize)
-            }
-        }
-
-        private fun replaceWithPopTransformation(size: Int): Transformation =
-            when (size) {
-                1 -> REPLACE_WITH_POP1
-                2 -> REPLACE_WITH_POP2
-                else -> throw AssertionError("Unexpected pop value size: $size")
+                    when (resultSize) {
+                        1 -> INSERT_POP1_AFTER
+                        2 -> INSERT_POP2_AFTER
+                        else -> throw AssertionError("Unexpected pop value size: $resultSize")
+                    }
             }
 
-        private fun insertPopAfterTransformation(size: Int): Transformation =
-            when (size) {
-                1 -> INSERT_POP1_AFTER
-                2 -> INSERT_POP2_AFTER
-                else -> throw AssertionError("Unexpected pop value size: $size")
-            }
-
-        private fun getInputTop(insn: AbstractInsnNode): SourceValue {
-            val i = insnList.indexOf(insn)
-            val frame = frames[i] ?: throw AssertionError("Unexpected dead instruction #$i")
-            return frame.top() ?: throw AssertionError("Instruction #$i has empty stack on input")
-        }
-
-        private fun isTransformablePopOperand(insn: AbstractInsnNode) =
-            insn.isPrimitiveBoxing() || insn.isPurePush()
-
-        private fun isDontTouch(insn: AbstractInsnNode) =
-            dontTouchInsnIndices[insnList.indexOf(insn)]
+        private fun AbstractInsnNode.shouldKeep() =
+            dontTouchInsnIndices[insnList.indexOf(this)]
     }
-
 }
 
 fun AbstractInsnNode.isPurePush() =
