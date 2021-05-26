@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.psi
 
 import org.jetbrains.kotlin.name.ClassId
 
-interface KtClassLikeDeclaration : KtDeclaration {
+interface KtClassLikeDeclaration : KtNamedDeclaration {
     /**
      * Return [ClassId], if the class is not local (E.e, if a class can be accessed by that [ClassId] from another context)
      *

@@ -70,6 +70,7 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
         val packageCompletionContributor = FirPackageCompletionContributor(basicContext)
         val importDirectivePackageMembersCompletionContributor = FirImportDirectivePackageMembersCompletionContributor(basicContext)
         val typeParameterConstraintNameInWhereClauseContributor = FirTypeParameterConstraintNameInWhereClauseCompletionContributor(basicContext)
+        val classifierNameContributor = FirSameAsFileClassifierNameCompletionContributor(basicContext)
 
         when (positionContext) {
             is FirExpressionNameReferencePositionContext -> {
@@ -110,6 +111,10 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
 
             is FirUnknownPositionContext -> {
                 complete(keywordContributor, positionContext)
+            }
+
+            is FirClassifierNamePositionContext -> {
+                complete(classifierNameContributor, positionContext)
             }
 
             is FirIncorrectPositionContext -> {
