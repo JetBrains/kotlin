@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.facade.TranslationUnit
+import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.parsing.parseBoolean
 import org.jetbrains.kotlin.test.TargetBackend
@@ -98,6 +99,8 @@ abstract class BasicIrBoxTest(
         propertyLazyInitialization: Boolean,
         safeExternalBoolean: Boolean,
         safeExternalBooleanDiagnostic: RuntimeDiagnostic?,
+        skipMangleVerification: Boolean,
+        abiVersion: KotlinAbiVersion
     ) {
         val filesToCompile = units.map { (it as TranslationUnit.SourceFile).file }
 
@@ -156,6 +159,7 @@ abstract class BasicIrBoxTest(
                     lowerPerModule = lowerPerModule,
                     safeExternalBoolean = safeExternalBoolean,
                     safeExternalBooleanDiagnostic = safeExternalBooleanDiagnostic,
+                    verifySignatures = !skipMangleVerification
                 )
 
                 compiledModule.jsCode!!.writeTo(outputFile, config)
@@ -187,6 +191,7 @@ abstract class BasicIrBoxTest(
                     propertyLazyInitialization = propertyLazyInitialization,
                     safeExternalBoolean = safeExternalBoolean,
                     safeExternalBooleanDiagnostic = safeExternalBooleanDiagnostic,
+                    verifySignatures = !skipMangleVerification
                 ).jsCode!!.writeTo(pirOutputFile, config)
             }
         } else {
@@ -200,6 +205,8 @@ abstract class BasicIrBoxTest(
                 irFactory = IrFactoryImpl,
                 outputKlibPath = actualOutputFile,
                 nopack = true,
+                verifySignatures = !skipMangleVerification,
+                abiVersion = abiVersion,
                 null
             )
 
