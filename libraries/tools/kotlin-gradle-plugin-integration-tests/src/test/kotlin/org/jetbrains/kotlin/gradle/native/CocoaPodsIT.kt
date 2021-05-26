@@ -776,7 +776,7 @@ class CocoaPodsIT : BaseGradleIT() {
             test(
                 "syncFramework",
                 "-Pkotlin.native.cocoapods.target=ios_x64,ios_arm64",
-                "-Pkotlin.native.cocoapods.configuration=DEBUG"
+                "-Pkotlin.native.cocoapods.configuration=Debug"
             )
         }
     }
