@@ -1,5 +1,86 @@
 # CHANGELOG
 
+## 1.5.10
+
+### Compiler
+
+#### Fixes
+
+- [`KT-41078`](https://youtrack.jetbrains.com/issue/KT-41078) Incorrect type substitution in contracts with type parameters
+- [`KT-44770`](https://youtrack.jetbrains.com/issue/KT-44770) JVM / IR: "IllegalArgumentException: Unrecognized Type: [null]" Jackson doesn't recognize type
+- [`KT-45084`](https://youtrack.jetbrains.com/issue/KT-45084) JVM IR: "NoSuchElementException: Sequence contains no element matching the predicate" when inline class is passed to lambda with >22 parameters
+- [`KT-45779`](https://youtrack.jetbrains.com/issue/KT-45779) JVM / IR: java.lang.NoSuchMethodError: 'int java.lang.Integer.plus(int)' caused by function reference
+- [`KT-45941`](https://youtrack.jetbrains.com/issue/KT-45941) JVM IR: local functions use generic type parameters of the outer class in the bytecode, which breaks Bytebuddy and MockK
+- [`KT-46149`](https://youtrack.jetbrains.com/issue/KT-46149) Generate synthetic classes for SAM adapters with erased instead of generic supertype
+- [`KT-46189`](https://youtrack.jetbrains.com/issue/KT-46189) JVM IR: tailrec function with capturing lambda in default parameter value leads to NoSuchMethodError at runtime
+- [`KT-46214`](https://youtrack.jetbrains.com/issue/KT-46214) JVM / IR: "IllegalStateException: No mapping for symbol: VALUE_PARAMETER INSTANCE_RECEIVER" on a suspend function in an inner class
+- [`KT-46238`](https://youtrack.jetbrains.com/issue/KT-46238) JVM IR: BootstrapMethodError in JDK 11+ on intersection type passed in arguments of SAM adapter where SAM interface's type parameter has a non-trivial upper bound
+- [`KT-46259`](https://youtrack.jetbrains.com/issue/KT-46259) JVM IR: local function for adapted function reference is not declared as ACC_SYNTHETIC
+- [`KT-46284`](https://youtrack.jetbrains.com/issue/KT-46284) JVM IR: "Unbound private symbol IrClassSymbol" on class reference to script class
+- [`KT-46402`](https://youtrack.jetbrains.com/issue/KT-46402) IllegalAccessError: "CapturedLambdaInterpreter (in unnamed module @0x71b06418) cannot access class jdk.internal.org.objectweb.asm.Type" caused by inline function with a suspend parameter in Maven project
+- [`KT-46408`](https://youtrack.jetbrains.com/issue/KT-46408) JVM IR: BootstrapMethodError due to missing bridge for subclass of generic Java interface
+- [`KT-46426`](https://youtrack.jetbrains.com/issue/KT-46426) JVM IR: Corrupted .class file when passing Array constructor reference as (inline) lambda
+- [`KT-46455`](https://youtrack.jetbrains.com/issue/KT-46455) OOM on parsing invalid code with string interpolation
+- [`KT-46503`](https://youtrack.jetbrains.com/issue/KT-46503) JVM IR: "AssertionError: Unexpected variance in super type argument: out @1"
+- [`KT-46505`](https://youtrack.jetbrains.com/issue/KT-46505) JVM IR: NullPointerException caused by a callable reference with nullable inline value class parameter
+- [`KT-46512`](https://youtrack.jetbrains.com/issue/KT-46512) JVM / IR: NoSuchMethodError on SAM conversion of a function reference
+- [`KT-46515`](https://youtrack.jetbrains.com/issue/KT-46515) IndexOutOfBoundsException: "Empty list doesn't contain element at index 0." on bad variable name in 1.5.0
+- [`KT-46516`](https://youtrack.jetbrains.com/issue/KT-46516) JVM IR: "AnalyzerException: Expected I, but found R" on subclassing AbstractMutableList<Int>
+- [`KT-46524`](https://youtrack.jetbrains.com/issue/KT-46524) Cannot use unsigned literals with api-version < 1.5 even with opt-in
+- [`KT-46537`](https://youtrack.jetbrains.com/issue/KT-46537) JVM / IR: "IllegalStateException: No noarg super constructor for CLASS" caused by "No-arg" plugin with annotation on child class
+- [`KT-46540`](https://youtrack.jetbrains.com/issue/KT-46540) JVM / IR: AnalyzerException: Expected an object reference, but found J caused by java.function.Supplier
+- [`KT-46554`](https://youtrack.jetbrains.com/issue/KT-46554) JVM IR: "IllegalStateException: No mapping for symbol: VAR IR_TEMPORARY_VARIABLE" with value class constructor delegation call
+- [`KT-46555`](https://youtrack.jetbrains.com/issue/KT-46555) JVM IR: IllegalAccessError when using Java method reference
+- [`KT-46562`](https://youtrack.jetbrains.com/issue/KT-46562) Kotlin 1.5.0 generates non-serializable lambdas when they should be serializable
+- [`KT-46568`](https://youtrack.jetbrains.com/issue/KT-46568) JVM IR: "AssertionError: IrCall expected inside JvmStatic wrapper" on compiling protected static function with return type Nothing inside companion object of abstract class
+- [`KT-46574`](https://youtrack.jetbrains.com/issue/KT-46574) JVM / IR: ClassCastException caused by runBlocking awaiting call while returning Kotlin.Result type.
+- [`KT-46579`](https://youtrack.jetbrains.com/issue/KT-46579) JVM IR: "IllegalArgumentException: Sequence contains more than one matching element" for Java enum with overloaded values() static method
+- [`KT-46584`](https://youtrack.jetbrains.com/issue/KT-46584) JVM IR: Intrinsics.needClassReification (UnsupportedOperationException thrown). Property delegate provider crossinline lambda inlining/reification issue
+- [`KT-46751`](https://youtrack.jetbrains.com/issue/KT-46751) JVM / IR:"ClassCastException: java.lang.String cannot be cast to java.lang.Void" in extension function in Kotlin 1.5
+
+### IDE
+
+- [`KT-45981`](https://youtrack.jetbrains.com/issue/KT-45981) failed to analyze: java.lang.AssertionError: diagnostic callback has been already registered: Code analysis get stuck in AS 2020.3.1.14 & Kotlin v1.5.0-M2
+- [`KT-46622`](https://youtrack.jetbrains.com/issue/KT-46622) 60+ second freezes with Kotlin plugin 1.5.0: GetModuleInfoKt.findJvmStdlibAcrossDependencies
+
+### IDE. Gradle Integration
+
+- [`KT-46417`](https://youtrack.jetbrains.com/issue/KT-46417) [UNRESOLVED_REFERENCE] For project to project dependencies of native platform test source sets
+
+### Libraries
+
+- [`KT-46280`](https://youtrack.jetbrains.com/issue/KT-46280) JvmRecord annotation missing constructor in common
+
+### Middle-end. IR
+
+- [`KT-44013`](https://youtrack.jetbrains.com/issue/KT-44013) NPE: When calling constructor of a function type while inheriting from it, despite it's an interface
+
+### Tools. Android Extensions
+
+- [`KT-46590`](https://youtrack.jetbrains.com/issue/KT-46590) Kotlin Android Extensions 1.5.0 generates bad writeToParcel() method for nullable Array types
+
+### Tools. Gradle
+
+- [`KT-41142`](https://youtrack.jetbrains.com/issue/KT-41142) Kotlin version conflict when using Kotlin Gradle plugins in pre-compiled script plugin
+- [`KT-46353`](https://youtrack.jetbrains.com/issue/KT-46353) Optimizations disabled in Gradle 7 for KAPT when generating sources
+- [`KT-46368`](https://youtrack.jetbrains.com/issue/KT-46368) Memory leak with 1.5.0-RC when building with Gradle
+- [`KT-46689`](https://youtrack.jetbrains.com/issue/KT-46689) Track -Xuse-old-backend flag usage
+
+### Tools. Gradle. JS
+
+- [`KT-46006`](https://youtrack.jetbrains.com/issue/KT-46006) KJS \ Gradle: Task without declaring an explicit or implicit dependency on `jsGenerateExternalsIntegrated` in Gradle 7
+- [`KT-46162`](https://youtrack.jetbrains.com/issue/KT-46162) KJS: Exported items unavailable on dev server
+- [`KT-46331`](https://youtrack.jetbrains.com/issue/KT-46331) KJS: With `kotlin.js.webpack.major.version=4` browserXRun tasks fail
+
+### Tools. Parcelize
+
+- [`KT-46567`](https://youtrack.jetbrains.com/issue/KT-46567) Kotlin 1.5.0 parcelize compilation fails in new backend when using TypeParceller with nested generics
+
+### Tools. kapt
+
+- [`KT-45532`](https://youtrack.jetbrains.com/issue/KT-45532) Do not create Kapt stubs directory during configuration time
+
+
 ## 1.5.0
 
 ### Backend. Native
