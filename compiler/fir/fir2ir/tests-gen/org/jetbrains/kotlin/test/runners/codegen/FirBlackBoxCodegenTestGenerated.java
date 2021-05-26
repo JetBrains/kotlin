@@ -53,6 +53,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("annotationOnWhen.kt")
+        public void testAnnotationOnWhen() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/annotationOnWhen.kt");
+        }
+
+        @Test
         @TestMetadata("annotationProperty.kt")
         public void testAnnotationProperty() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/annotationProperty.kt");

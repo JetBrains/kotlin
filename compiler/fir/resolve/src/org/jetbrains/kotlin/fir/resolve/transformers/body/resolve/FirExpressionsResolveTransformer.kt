@@ -639,6 +639,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         }
 
         checkNotNullCall.argumentList.transformArguments(transformer, ResolutionMode.ContextDependent)
+        checkNotNullCall.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
 
         var callCompleted = false
         val result = components.syntheticCallGenerator.generateCalleeForCheckNotNullCall(checkNotNullCall, resolutionContext)?.let {
