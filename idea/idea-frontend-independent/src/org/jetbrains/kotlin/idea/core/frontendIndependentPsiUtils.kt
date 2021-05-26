@@ -11,14 +11,21 @@ import org.jetbrains.kotlin.psi.KtParenthesizedExpression
 import org.jetbrains.kotlin.psi.KtPsiUtil
 
 inline fun <reified T : PsiElement> PsiElement.replaced(newElement: T): T {
+    if (this == newElement) return newElement
     val result = replace(newElement)
     return result as? T ?: (result as KtParenthesizedExpression).expression as T
 }
 
 fun KtExpression.dropEnclosingParenthesesIfPossible(): KtExpression {
-    val parent = parent as? KtParenthesizedExpression ?: return this
-    if (!KtPsiUtil.areParenthesesUseless(parent)) return this
-    return parent.replaced(this)
+    val innermostExpression = this
+    var current = innermostExpression
+
+    while (true) {
+        val parent = current.parent as? KtParenthesizedExpression ?: break
+        if (!KtPsiUtil.areParenthesesUseless(parent)) break
+        current = parent
+    }
+    return current.replaced(innermostExpression)
 }
 
 //todo make inline
@@ -26,6 +33,3 @@ fun KtExpression.dropEnclosingParenthesesIfPossible(): KtExpression {
 fun <T : PsiElement> T.copied(): T = copy() as T
 
 fun String.unquote(): String = KtPsiUtil.unquoteIdentifier(this)
-
-
-
