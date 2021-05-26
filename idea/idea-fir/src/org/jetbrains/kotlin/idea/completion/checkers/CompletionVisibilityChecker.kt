@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.completion.checkers
 
 import org.jetbrains.kotlin.idea.completion.context.FirBasicCompletionContext
-import org.jetbrains.kotlin.idea.completion.context.FirNameReferenceRawPositionContext
+import org.jetbrains.kotlin.idea.completion.context.FirNameReferencePositionContext
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassifierSymbol
@@ -26,7 +26,7 @@ internal fun interface CompletionVisibilityChecker {
     companion object {
         fun create(
             basicContext: FirBasicCompletionContext,
-            positionContext: FirNameReferenceRawPositionContext
+            positionContext: FirNameReferencePositionContext
         ): CompletionVisibilityChecker = CompletionVisibilityChecker {
             basicContext.parameters.invocationCount > 1 || isVisible(
                 it,

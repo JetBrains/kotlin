@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.completion.contributors
 
 import org.jetbrains.kotlin.idea.completion.checkers.CompletionVisibilityChecker
 import org.jetbrains.kotlin.idea.completion.context.FirBasicCompletionContext
-import org.jetbrains.kotlin.idea.completion.context.FirNameReferenceRawPositionContext
+import org.jetbrains.kotlin.idea.completion.context.FirNameReferencePositionContext
 import org.jetbrains.kotlin.idea.completion.contributors.helpers.getStaticScope
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
@@ -17,11 +17,11 @@ import org.jetbrains.kotlin.psi.KtExpression
 
 internal open class FirClassifierCompletionContributor(
     basicContext: FirBasicCompletionContext,
-) : FirContextCompletionContributorBase<FirNameReferenceRawPositionContext>(basicContext) {
+) : FirContextCompletionContributorBase<FirNameReferencePositionContext>(basicContext) {
 
     protected open fun KtAnalysisSession.filterClassifiers(classifierSymbol: KtClassifierSymbol): Boolean = true
 
-    override fun KtAnalysisSession.complete(positionContext: FirNameReferenceRawPositionContext) {
+    override fun KtAnalysisSession.complete(positionContext: FirNameReferencePositionContext) {
         val visibilityChecker = CompletionVisibilityChecker.create(basicContext, positionContext)
 
         when (val receiver = positionContext.explicitReceiver) {
@@ -48,7 +48,7 @@ internal open class FirClassifierCompletionContributor(
     }
 
     private fun KtAnalysisSession.completeWithoutReceiver(
-        positionContext: FirNameReferenceRawPositionContext,
+        positionContext: FirNameReferencePositionContext,
         visibilityChecker: CompletionVisibilityChecker
     ) {
         val implicitScopes = originalKtFile.getScopeContextForPosition(positionContext.nameExpression).scopes

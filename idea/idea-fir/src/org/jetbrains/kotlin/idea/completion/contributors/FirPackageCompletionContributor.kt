@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.completion.contributors
 
 import org.jetbrains.kotlin.idea.completion.context.FirBasicCompletionContext
-import org.jetbrains.kotlin.idea.completion.context.FirNameReferenceRawPositionContext
+import org.jetbrains.kotlin.idea.completion.context.FirNameReferencePositionContext
 import org.jetbrains.kotlin.idea.completion.context.FirRawPositionCompletionContext
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPackageSymbol
@@ -18,7 +18,7 @@ internal class FirPackageCompletionContributor(
 ) : FirCompletionContributorBase<FirRawPositionCompletionContext>(basicContext) {
 
     override fun KtAnalysisSession.complete(positionContext: FirRawPositionCompletionContext) {
-        val rootSymbol = if (positionContext !is FirNameReferenceRawPositionContext || positionContext.explicitReceiver == null) {
+        val rootSymbol = if (positionContext !is FirNameReferencePositionContext || positionContext.explicitReceiver == null) {
             ROOT_PACKAGE_SYMBOL
         } else {
             positionContext.explicitReceiver?.reference()?.resolveToSymbol() as? KtPackageSymbol
