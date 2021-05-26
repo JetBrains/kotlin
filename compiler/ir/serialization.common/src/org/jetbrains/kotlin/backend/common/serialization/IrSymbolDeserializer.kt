@@ -22,14 +22,14 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.backend.common.serialization.proto.AccessorIdSignature as ProtoAccessorIdSignature
-import org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature as ProtoLocalSignature
+import org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature as ProtoCommonIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature as ProtoCompositeSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.FileLocalIdSignature as ProtoFileLocalIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.ScopeLocalIdSignature as ProtoScopeLocalIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature as ProtoFileSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
+import org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature as ProtoLocalSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature as ProtoLoweredIdSignature
-import org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature as ProtoCommonIdSignature
 
 class IrSymbolDeserializer(
     val symbolTable: ReferenceSymbolTable,
@@ -192,7 +192,7 @@ class IrSymbolDeserializer(
     private fun deserializeLocalIdSignature(proto: ProtoLocalSignature): IdSignature.LocalSignature {
         val localFqn = fileReader.deserializeFqName(proto.localFqNameList)
         val localHash = if (proto.hasLocalHash()) proto.localHash else null
-        val description = if (proto.hasDescription()) fileReader.deserializeDebugInfo(proto.description) else null
+        val description = if (proto.hasDebugInfo()) fileReader.deserializeDebugInfo(proto.debugInfo) else null
         return IdSignature.LocalSignature(localFqn, localHash, description)
     }
 

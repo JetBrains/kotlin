@@ -64,6 +64,7 @@ interface IrLibrary {
     fun signature(index: Int, fileIndex: Int): ByteArray
     fun string(index: Int, fileIndex: Int): ByteArray
     fun body(index: Int, fileIndex: Int): ByteArray
+    fun debugInfo(index: Int, fileIndex: Int): ByteArray?
     fun file(index: Int): ByteArray
     fun fileCount(): Int
 }

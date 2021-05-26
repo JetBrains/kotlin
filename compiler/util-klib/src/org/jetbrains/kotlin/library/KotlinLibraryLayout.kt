@@ -70,11 +70,14 @@ interface IrKotlinLibraryLayout : KotlinLibraryLayout {
         get() = File(irDir, "files.knf")
     val dataFlowGraphFile
         get() = File(irDir, "module_data_flow_graph")
+    val irDebugInfo
+        get() = File(irDir, "debugInfo.knd")
 
-    fun irDeclarations(file: File): File = File(file, "irCombined.knd")
+    fun irDeclarations(file: File): File = File(file, "irDeclarations.knd")
     fun irTypes(file: File): File = File(file, "types.knt")
     fun irSignatures(file: File): File = File(file, "signatures.knt")
     fun irStrings(file: File): File = File(file, "strings.knt")
     fun irBodies(file: File): File = File(file, "body.knb")
     fun irFile(file: File): File = File(file, "file.knf")
+    fun irDebugInfo(file: File): File = File(file, "debugInfo.knd")
 }

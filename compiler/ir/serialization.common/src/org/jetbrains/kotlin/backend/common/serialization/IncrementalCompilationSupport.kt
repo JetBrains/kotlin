@@ -38,10 +38,17 @@ class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary {
         return reader.tableItemBytes(index)
     }
 
+    private inline fun <R : IrArrayReader?> Array<R?>.itemNullableBytes(fileIndex: Int, index: Int, factory: () -> R): ByteArray? {
+        val reader = this[fileIndex] ?: factory().also { this[fileIndex] = it }
+
+        return reader?.tableItemBytes(index)
+    }
+
     private val indexedDeclarations = arrayOfNulls<DeclarationIrTableMemoryReader>(icData.size)
     private val indexedTypes = arrayOfNulls<IrArrayMemoryReader>(icData.size)
     private val indexedSignatures = arrayOfNulls<IrArrayMemoryReader>(icData.size)
     private val indexedStrings = arrayOfNulls<IrArrayMemoryReader>(icData.size)
+    private val indexedDebugInfos = arrayOfNulls<IrArrayMemoryReader?>(icData.size)
     private val indexedBodies = arrayOfNulls<IrArrayMemoryReader>(icData.size)
 
     override fun irDeclaration(index: Int, fileIndex: Int): ByteArray =
@@ -67,6 +74,11 @@ class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary {
     override fun body(index: Int, fileIndex: Int): ByteArray =
         indexedBodies.itemBytes(fileIndex, index) {
             IrArrayMemoryReader(icData[fileIndex].bodies)
+        }
+
+    override fun debugInfo(index: Int, fileIndex: Int): ByteArray? =
+        indexedDebugInfos.itemNullableBytes(fileIndex, index) {
+            icData[fileIndex].debugInfo?.let { IrArrayMemoryReader(it) }
         }
 
     override fun file(index: Int): ByteArray = icData[index].fileData
