@@ -4,30 +4,30 @@
 package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 /**
- * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature}
+ * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature}
  */
-public final class PublicIdSignature extends
+public final class CommonIdSignature extends
     org.jetbrains.kotlin.protobuf.GeneratedMessageLite implements
-    // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature)
-    PublicIdSignatureOrBuilder {
-  // Use PublicIdSignature.newBuilder() to construct.
-  private PublicIdSignature(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
+    // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature)
+    CommonIdSignatureOrBuilder {
+  // Use CommonIdSignature.newBuilder() to construct.
+  private CommonIdSignature(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
     super(builder);
     this.unknownFields = builder.getUnknownFields();
   }
-  private PublicIdSignature(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
+  private CommonIdSignature(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
 
-  private static final PublicIdSignature defaultInstance;
-  public static PublicIdSignature getDefaultInstance() {
+  private static final CommonIdSignature defaultInstance;
+  public static CommonIdSignature getDefaultInstance() {
     return defaultInstance;
   }
 
-  public PublicIdSignature getDefaultInstanceForType() {
+  public CommonIdSignature getDefaultInstanceForType() {
     return defaultInstance;
   }
 
   private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
-  private PublicIdSignature(
+  private CommonIdSignature(
       org.jetbrains.kotlin.protobuf.CodedInputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
@@ -129,18 +129,18 @@ public final class PublicIdSignature extends
       makeExtensionsImmutable();
     }
   }
-  public static org.jetbrains.kotlin.protobuf.Parser<PublicIdSignature> PARSER =
-      new org.jetbrains.kotlin.protobuf.AbstractParser<PublicIdSignature>() {
-    public PublicIdSignature parsePartialFrom(
+  public static org.jetbrains.kotlin.protobuf.Parser<CommonIdSignature> PARSER =
+      new org.jetbrains.kotlin.protobuf.AbstractParser<CommonIdSignature>() {
+    public CommonIdSignature parsePartialFrom(
         org.jetbrains.kotlin.protobuf.CodedInputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-      return new PublicIdSignature(input, extensionRegistry);
+      return new CommonIdSignature(input, extensionRegistry);
     }
   };
 
   @java.lang.Override
-  public org.jetbrains.kotlin.protobuf.Parser<PublicIdSignature> getParserForType() {
+  public org.jetbrains.kotlin.protobuf.Parser<CommonIdSignature> getParserForType() {
     return PARSER;
   }
 
@@ -317,53 +317,53 @@ public final class PublicIdSignature extends
     return super.writeReplace();
   }
 
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature parseFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature parseFrom(
       org.jetbrains.kotlin.protobuf.ByteString data)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature parseFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature parseFrom(
       org.jetbrains.kotlin.protobuf.ByteString data,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature parseFrom(byte[] data)
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature parseFrom(byte[] data)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature parseFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature parseFrom(
       byte[] data,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature parseFrom(java.io.InputStream input)
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return PARSER.parseFrom(input);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature parseFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature parseFrom(
       java.io.InputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return PARSER.parseFrom(input, extensionRegistry);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature parseDelimitedFrom(java.io.InputStream input)
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return PARSER.parseDelimitedFrom(input);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature parseDelimitedFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature parseDelimitedFrom(
       java.io.InputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return PARSER.parseDelimitedFrom(input, extensionRegistry);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature parseFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature parseFrom(
       org.jetbrains.kotlin.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return PARSER.parseFrom(input);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature parseFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature parseFrom(
       org.jetbrains.kotlin.protobuf.CodedInputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -372,21 +372,21 @@ public final class PublicIdSignature extends
 
   public static Builder newBuilder() { return Builder.create(); }
   public Builder newBuilderForType() { return newBuilder(); }
-  public static Builder newBuilder(org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature prototype) {
+  public static Builder newBuilder(org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature prototype) {
     return newBuilder().mergeFrom(prototype);
   }
   public Builder toBuilder() { return newBuilder(this); }
 
   /**
-   * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature}
+   * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature}
    */
   public static final class Builder extends
       org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
-        org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature, Builder>
+        org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature, Builder>
       implements
-      // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature)
-      org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignatureOrBuilder {
-    // Construct using org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature.newBuilder()
+      // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature)
+      org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignatureOrBuilder {
+    // Construct using org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature.newBuilder()
     private Builder() {
       maybeForceBuilderInitialization();
     }
@@ -414,20 +414,20 @@ public final class PublicIdSignature extends
       return create().mergeFrom(buildPartial());
     }
 
-    public org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature getDefaultInstanceForType() {
-      return org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature.getDefaultInstance();
+    public org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature getDefaultInstanceForType() {
+      return org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature.getDefaultInstance();
     }
 
-    public org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature build() {
-      org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature result = buildPartial();
+    public org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature build() {
+      org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
       return result;
     }
 
-    public org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature buildPartial() {
-      org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature result = new org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature(this);
+    public org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature buildPartial() {
+      org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature result = new org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature(this);
       int from_bitField0_ = bitField0_;
       int to_bitField0_ = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
@@ -452,8 +452,8 @@ public final class PublicIdSignature extends
       return result;
     }
 
-    public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature other) {
-      if (other == org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature.getDefaultInstance()) return this;
+    public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature other) {
+      if (other == org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature.getDefaultInstance()) return this;
       if (!other.packageFqName_.isEmpty()) {
         if (packageFqName_.isEmpty()) {
           packageFqName_ = other.packageFqName_;
@@ -493,11 +493,11 @@ public final class PublicIdSignature extends
         org.jetbrains.kotlin.protobuf.CodedInputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature parsedMessage = null;
+      org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature parsedMessage = null;
       try {
         parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
       } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature) e.getUnfinishedMessage();
+        parsedMessage = (org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature) e.getUnfinishedMessage();
         throw e;
       } finally {
         if (parsedMessage != null) {
@@ -704,13 +704,13 @@ public final class PublicIdSignature extends
       return this;
     }
 
-    // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature)
+    // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature)
   }
 
   static {
-    defaultInstance = new PublicIdSignature(true);
+    defaultInstance = new CommonIdSignature(true);
     defaultInstance.initFields();
   }
 
-  // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature)
+  // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature)
 }
