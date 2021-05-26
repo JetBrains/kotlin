@@ -60,7 +60,7 @@ class PopBackwardPropagationTransformer : MethodTransformer() {
                 if (insn.opcode == Opcodes.POP && frames[i] != null) {
                     val inputTop = getInputTop(insn)
                     val sources = inputTop.insns
-                    if (sources.all { !isDontTouch(it) } && sources.any { isTransformablePopOperand(it) }) {
+                    if (sources.none { isDontTouch(it) } && sources.any { isTransformablePopOperand(it) }) {
                         transformations[insn] = REPLACE_WITH_NOP
                         sources.forEach { propagatePopBackwards(it, inputTop.size) }
                     }
@@ -122,7 +122,7 @@ class PopBackwardPropagationTransformer : MethodTransformer() {
             }
 
             override fun unaryOperation(insn: AbstractInsnNode, value: SourceValue): SourceValue {
-                if (insn.opcode != Opcodes.CHECKCAST && !insn.isPrimitiveTypeConversion()) {
+                if (!insn.isPrimitiveTypeConversion()) {
                     value.insns.markAsDontTouch()
                 }
                 return super.unaryOperation(insn, value)
@@ -157,30 +157,16 @@ class PopBackwardPropagationTransformer : MethodTransformer() {
             if (transformations.containsKey(insn)) return
 
             when {
-                insn.opcode == Opcodes.CHECKCAST -> {
-                    val inputTop = getInputTop(insn)
-                    val sources = inputTop.insns
-                    val resultType = (insn as TypeInsnNode).desc
-                    if (sources.all { !isDontTouch(it) } && sources.any { isTransformableCheckcastOperand(it, resultType) }) {
-                        transformations[insn] = REPLACE_WITH_NOP
-                        sources.forEach { propagatePopBackwards(it, inputTop.size) }
-                    } else {
-                        transformations[insn] = insertPopAfterTransformation(poppedValueSize)
-                    }
-                }
-
-                insn.isPrimitiveBoxing() -> {
+                insn.isPrimitiveBoxing() ->
                     transformations[insn] = replaceWithPopTransformation(getInputTop(insn).size)
-                }
 
-                insn.isPurePush() -> {
+                insn.isPurePush() ->
                     transformations[insn] = REPLACE_WITH_NOP
-                }
 
                 insn.isPrimitiveTypeConversion() -> {
                     val inputTop = getInputTop(insn)
                     val sources = inputTop.insns
-                    if (sources.all { !isDontTouch(it) }) {
+                    if (sources.none { isDontTouch(it) }) {
                         transformations[insn] = REPLACE_WITH_NOP
                         sources.forEach { propagatePopBackwards(it, inputTop.size) }
                     } else {
@@ -188,9 +174,8 @@ class PopBackwardPropagationTransformer : MethodTransformer() {
                     }
                 }
 
-                else -> {
+                else ->
                     transformations[insn] = insertPopAfterTransformation(poppedValueSize)
-                }
             }
         }
 
@@ -214,11 +199,8 @@ class PopBackwardPropagationTransformer : MethodTransformer() {
             return frame.top() ?: throw AssertionError("Instruction #$i has empty stack on input")
         }
 
-        private fun isTransformableCheckcastOperand(it: AbstractInsnNode, resultType: String) =
-            it.isPrimitiveBoxing() && (it as MethodInsnNode).owner == resultType
-
         private fun isTransformablePopOperand(insn: AbstractInsnNode) =
-            insn.opcode == Opcodes.CHECKCAST || insn.isPrimitiveBoxing() || insn.isPurePush()
+            insn.isPrimitiveBoxing() || insn.isPurePush()
 
         private fun isDontTouch(insn: AbstractInsnNode) =
             dontTouchInsnIndices[insnList.indexOf(insn)]
