@@ -155,7 +155,7 @@ class ResolvedAtomCompleter(
         val callElement = psiCallForResolutionContext.callElement
         if (callElement is KtExpression) {
             val recordedType = topLevelCallContext.trace.getType(callElement)
-            if ((recordedType.shouldBeUpdated()) && resolvedCall.resultingDescriptor.returnType != null) {
+            if (recordedType != null && recordedType.shouldBeUpdated() && resolvedCall.resultingDescriptor.returnType != null) {
                 topLevelCallContext.trace.recordType(callElement, resolvedCall.resultingDescriptor.returnType)
             }
         }
