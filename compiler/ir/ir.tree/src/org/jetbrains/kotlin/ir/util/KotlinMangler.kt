@@ -29,10 +29,8 @@ interface KotlinMangler<D : Any> {
         override val manglerName: String
             get() = "Descriptor"
 
-        fun ClassDescriptor.isExportEnumEntry(): Boolean
         fun ClassDescriptor.mangleEnumEntryString(): String
 
-        fun PropertyDescriptor.isExportField(): Boolean
         fun PropertyDescriptor.mangleFieldString(): String
     }
 

@@ -137,8 +137,8 @@ open class IncrementalJsCache(
         }
 
         for ((srcFile, irData) in incrementalResults.irFileData) {
-            val (fileData, types, signatures, strings, declarations, bodies, fqn) = irData
-            irTranslationResults.put(srcFile, fileData, types, signatures, strings, declarations, bodies, fqn)
+            val (fileData, types, signatures, strings, declarations, bodies, fqn, debugInfos) = irData
+            irTranslationResults.put(srcFile, fileData, types, signatures, strings, declarations, bodies, fqn, debugInfos)
         }
     }
 
@@ -269,6 +269,7 @@ private object IrTranslationResultValueExternalizer : DataExternalizer<IrTransla
         output.writeArray(value.declarations)
         output.writeArray(value.bodies)
         output.writeArray(value.fqn)
+        value.debugInfo?.let { output.writeArray(it) }
     }
 
     private fun DataOutput.writeArray(array: ByteArray) {
@@ -283,6 +284,17 @@ private object IrTranslationResultValueExternalizer : DataExternalizer<IrTransla
         return filedata
     }
 
+    private fun DataInput.readArrayOrNull(): ByteArray? {
+        try {
+            val dataSize = readInt()
+            val filedata = ByteArray(dataSize)
+            readFully(filedata)
+            return filedata
+        } catch (e: Throwable) {
+            return null
+        }
+    }
+
     override fun read(input: DataInput): IrTranslationResultValue {
         val fileData = input.readArray()
         val types = input.readArray()
@@ -291,8 +303,9 @@ private object IrTranslationResultValueExternalizer : DataExternalizer<IrTransla
         val declarations = input.readArray()
         val bodies = input.readArray()
         val fqn = input.readArray()
+        val debugInfos = input.readArrayOrNull()
 
-        return IrTranslationResultValue(fileData, types, signatures, strings, declarations, bodies, fqn)
+        return IrTranslationResultValue(fileData, types, signatures, strings, declarations, bodies, fqn, debugInfos)
     }
 }
 
@@ -317,10 +330,11 @@ private class IrTranslationResultMap(
         newStrings: ByteArray,
         newDeclarations: ByteArray,
         newBodies: ByteArray,
-        fqn: ByteArray
+        fqn: ByteArray,
+        debugInfos: ByteArray?
     ) {
         storage[pathConverter.toPath(sourceFile)] =
-            IrTranslationResultValue(newFiledata, newTypes, newSignatures, newStrings, newDeclarations, newBodies, fqn)
+            IrTranslationResultValue(newFiledata, newTypes, newSignatures, newStrings, newDeclarations, newBodies, fqn, debugInfos)
     }
 
     operator fun get(sourceFile: File): IrTranslationResultValue? =

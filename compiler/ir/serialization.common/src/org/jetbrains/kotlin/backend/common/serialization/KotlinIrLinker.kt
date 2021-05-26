@@ -23,6 +23,10 @@ import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.library.IrLibrary
+import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.IrMessageLogger
+import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -104,18 +108,17 @@ abstract class KotlinIrLinker(
     }
 
     private fun findDeserializedDeclarationForSymbol(symbol: IrSymbol): DeclarationDescriptor? {
-        assert(symbol.isPublicApi || symbol.descriptor.module === currentModule || platformSpecificSymbol(symbol))
 
         if (symbol in triedToDeserializeDeclarationForSymbol || symbol in deserializedSymbols) {
             return null
         }
         triedToDeserializeDeclarationForSymbol.add(symbol)
 
+        if (!symbol.hasDescriptor) return null
         val descriptor = symbol.descriptor
 
         val moduleDeserializer = resolveModuleDeserializer(descriptor.module, symbol.signature)
 
-//        moduleDeserializer.deserializeIrSymbol(signature, symbol.kind())
         moduleDeserializer.declareIrSymbol(symbol)
 
         deserializeAllReachableTopLevels()
@@ -149,9 +152,11 @@ abstract class KotlinIrLinker(
     override fun getDeclaration(symbol: IrSymbol): IrDeclaration? {
 
         if (!symbol.isPublicApi) {
-            val descriptor = symbol.descriptor
-            if (!platformSpecificSymbol(symbol)) {
-                if (descriptor.module !== currentModule) return null
+            if (symbol.hasDescriptor) {
+                val descriptor = symbol.descriptor
+                if (!platformSpecificSymbol(symbol)) {
+                    if (descriptor.module !== currentModule) return null
+                }
             }
         }
 
@@ -173,14 +178,14 @@ abstract class KotlinIrLinker(
     }
 
     override fun tryReferencingSimpleFunctionByLocalSignature(parent: IrDeclaration, idSignature: IdSignature): IrSimpleFunctionSymbol? {
-        if (idSignature.isPublic) return null
+        if (idSignature.isPubliclyVisible) return null
         val file = parent.file
         val moduleDescriptor = file.packageFragmentDescriptor.containingDeclaration
         return resolveModuleDeserializer(moduleDescriptor, null).referenceSimpleFunctionByLocalSignature(file, idSignature)
     }
 
     override fun tryReferencingPropertyByLocalSignature(parent: IrDeclaration, idSignature: IdSignature): IrPropertySymbol? {
-        if (idSignature.isPublic) return null
+        if (idSignature.isPubliclyVisible) return null
         val file = parent.file
         val moduleDescriptor = file.packageFragmentDescriptor.containingDeclaration
         return resolveModuleDeserializer(moduleDescriptor, null).referencePropertyByLocalSignature(file, idSignature)

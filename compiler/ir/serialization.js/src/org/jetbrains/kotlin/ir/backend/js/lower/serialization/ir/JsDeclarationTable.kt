@@ -21,17 +21,13 @@ class JsUniqIdClashTracker : IdSignatureClashTracker {
     private val committedIdSignatures = mutableMapOf<IdSignature, IrDeclaration>()
 
     override fun commit(declaration: IrDeclaration, signature: IdSignature) {
-        if (!signature.isPublic) return // don't track local ids
+        if (!signature.isPubliclyVisible) return // don't track local ids
 
         if (signature in committedIdSignatures) {
             val clashedDeclaration = committedIdSignatures[signature]!!
             val parent = declaration.parent
             val clashedParent = clashedDeclaration.parent
-            if (declaration is IrTypeParameter && parent is IrSimpleFunction && parent.parent is IrProperty && parent !== clashedParent) {
-                // Check whether they are type parameters of the same extension property but different accessors
-                require(clashedParent is IrSimpleFunction)
-                require(clashedParent.correspondingPropertySymbol === parent.correspondingPropertySymbol)
-            } else {
+            if (declaration !is IrTypeParameter || parent !is IrSimpleFunction || clashedParent !is IrSimpleFunction || parent.correspondingPropertySymbol !== clashedParent.correspondingPropertySymbol) {
                 // TODO: handle clashes properly
                 error("IdSignature clash: $signature; Existed declaration ${clashedDeclaration.render()} clashed with new ${declaration.render()}")
             }

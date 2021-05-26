@@ -259,10 +259,10 @@ class IrDeclarationDeserializer(
                 sig = p.second
                 declareGlobalTypeParameter(sig, { symbol }, factory)
             } else {
-                val symbolData = BinarySymbolData
-                    .decode(proto.base.symbol)
+                val symbolData = BinarySymbolData.decode(proto.base.symbol)
                 sig = symbolDeserializer.deserializeIdSignature(symbolData.signatureId)
-                declareScopedTypeParameter(sig, { IrTypeParameterSymbolImpl() }, factory)
+                declareScopedTypeParameter(sig, {
+                    if (it.isPubliclyVisible) IrTypeParameterPublicSymbolImpl(it) else IrTypeParameterSymbolImpl() }, factory)
             }
         }
 
@@ -433,7 +433,11 @@ class IrDeclarationDeserializer(
      */
     private fun IrType.checkObjectLeak(): Boolean {
         return if (this is IrSimpleType) {
-            classifier.let { !it.isPublicApi && it !is IrTypeParameterSymbol } || arguments.any { it.typeOrNull?.checkObjectLeak() == true }
+            val signature = classifier.signature
+
+            val possibleLeakedClassifier = (signature == null || signature.isLocal) && classifier !is IrTypeParameterSymbol
+
+            possibleLeakedClassifier || arguments.any { it.typeOrNull?.checkObjectLeak() == true }
         } else false
     }
 
@@ -747,7 +751,7 @@ class IrDeclarationDeserializer(
             else -> return false
         }
         if (symbol !is IrPublicSymbolBase<*>) return false
-        if (!symbol.signature.isPublic) return false
+        if (!symbol.signature.isPubliclyVisible) return false
 
         return when (proto.declaratorCase!!) {
             IR_FUNCTION -> FunctionFlags.decode(proto.irFunction.base.base.flags).isFakeOverride

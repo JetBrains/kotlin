@@ -155,7 +155,6 @@ class JvmIrLinker(
         }
 
         override fun declareIrSymbol(symbol: IrSymbol) {
-            assert(symbol.isPublicApi || symbol.descriptor.isJavaDescriptor())
             if (symbol is IrFieldSymbol) {
                 declareJavaFieldStub(symbol)
             } else {
