@@ -13,7 +13,7 @@ fun foo() {
     takeUByte(<!ARGUMENT_TYPE_MISMATCH!>id(1)<!>)
 
     1 <!NONE_APPLICABLE!>+<!> 1u
-    (1u <!NONE_APPLICABLE!>+<!> 1) <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><UInt>() }
+    (1u <!NONE_APPLICABLE!>+<!> 1) <!INAPPLICABLE_CANDIDATE!>checkType<!> { _<UInt>() }
 
     id<UInt>(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
 }

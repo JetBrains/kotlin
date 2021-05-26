@@ -11,7 +11,7 @@ fun <S> generate(g: suspend Controller<S>.() -> Unit): S = TODO()
 
 suspend fun Base.baseExtension() {}
 
-val test1 = generate {
-    yield(<!ARGUMENT_TYPE_MISMATCH!>"foo"<!>)
+val test1 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+    yield("foo")
     baseExtension()
 }

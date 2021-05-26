@@ -86,12 +86,12 @@ fun <T : Foo, R: Number, D: Int> main() {
     // with LHS and conflicting projection
     bar2<T>(Foo::<!OVERLOAD_RESOLUTION_AMBIGUITY!>resolve<!>)
     bar2<Foo>(Foo::<!OVERLOAD_RESOLUTION_AMBIGUITY!>resolve<!>)
-    bar2(Foo::<!OVERLOAD_RESOLUTION_AMBIGUITY!>resolve<!>)
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar2<!>(Foo::<!OVERLOAD_RESOLUTION_AMBIGUITY!>resolve<!>)
 
     // with LHS and Any? expected type
     bar3<T>(Foo::<!OVERLOAD_RESOLUTION_AMBIGUITY!>resolve<!>)
     bar3<Foo>(Foo::<!OVERLOAD_RESOLUTION_AMBIGUITY!>resolve<!>)
-    bar3(Foo::<!OVERLOAD_RESOLUTION_AMBIGUITY!>resolve<!>)
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar3<!>(Foo::<!OVERLOAD_RESOLUTION_AMBIGUITY!>resolve<!>)
 
     // with LHS and `Function` expected type
     bar4<T>(Foo::resolve) // ERROR before the fix in NI

@@ -9,7 +9,7 @@ inline fun <reified T> f(): T = throw UnsupportedOperationException()
 fun <T> id(p: T): T = p
 
 fun <A> main() {
-    f()
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>f<!>()
 
     val a: A = f()
     f<A>()

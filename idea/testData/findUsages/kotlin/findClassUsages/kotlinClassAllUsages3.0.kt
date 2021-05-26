@@ -5,5 +5,3 @@ package server
 
 data class <caret>Data
 // DISABLE-ERRORS
-
-// FIR_COMPARISON

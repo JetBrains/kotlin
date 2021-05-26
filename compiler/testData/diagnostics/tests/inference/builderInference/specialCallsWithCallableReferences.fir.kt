@@ -80,7 +80,7 @@ fun poll05(): Flow<String> {
 
 fun poll06(): Flow<String> {
     return flow {
-        val inv = select(foo7(), ::Foo7)
+        val inv = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>select<!>(foo7(), ::Foo7)
         inv
     }
 }
@@ -479,21 +479,21 @@ fun poll85(): Flow<String> {
 
 fun poll86(): Flow<String> {
     return flow {
-        val inv = <!NEW_INFERENCE_ERROR!>::Foo7 in <!NEW_INFERENCE_ERROR!>setOf(::Foo7)<!><!>
+        val inv = ::Foo7 <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>in<!> <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>setOf<!>(::Foo7)
         inv
     }
 }
 
 fun poll87(): Flow<String> {
     return flow {
-        val inv = ::Foo7 in setOf(foo7())
+        val inv = ::Foo7 <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>in<!> setOf(foo7())
         inv
     }
 }
 
 fun poll88(): Flow<String> {
     return flow {
-        val inv = foo7() in <!NEW_INFERENCE_ERROR!>setOf(::Foo7)<!>
+        val inv = foo7() in <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>setOf<!>(::Foo7)
         inv
     }
 }

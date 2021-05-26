@@ -14,7 +14,7 @@ interface TestInterface<R> {
 }
 
 fun test() {
-    val ret = combined({ }) {
-        emit(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
+    val ret = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>combined<!>({ }) {
+        emit(1)
     }
 }

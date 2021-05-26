@@ -4,17 +4,17 @@ fun <T> foo(): T = TODO()
 
 fun <V> id(value: V) = value
 
-val asString = foo() as String
+val asString = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>() as String
 
-val viaId = id(foo()) as String
+val viaId = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>id<!>(foo()) as String
 
-val insideId = id(foo() as String)
+val insideId = id(<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>() as String)
 
-val asList = foo() as List<String>
+val asList = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>() as List<String>
 
-val asStarList = foo() as List<*>
+val asStarList = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>() as List<*>
 
-val safeAs = foo() as? String
+val safeAs = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>() as? String
 
-val fromIs = <!USELESS_IS_CHECK!>foo() is String<!>
-val fromNoIs = <!USELESS_IS_CHECK!>foo() !is String<!>
+val fromIs = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>() is String
+val fromNoIs = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>() !is String

@@ -284,7 +284,7 @@ fun poll82() {
 }
 
 fun poll83() {
-    val inv = <!NEW_INFERENCE_ERROR!>::bar4 in <!NEW_INFERENCE_ERROR!>setOf(::foo4)<!><!>
+    val inv = ::bar4 <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>in<!> <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>setOf<!>(::foo4)
     inv
 }
 
@@ -299,16 +299,16 @@ fun poll85() {
 }
 
 fun poll86() {
-    val inv = <!NEW_INFERENCE_ERROR!>::Foo7 in <!NEW_INFERENCE_ERROR!>setOf(::Foo7)<!><!>
+    val inv = ::Foo7 <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>in<!> <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>setOf<!>(::Foo7)
     inv
 }
 
 fun poll87() {
-    val inv = ::Foo7 in setOf(foo7())
+    val inv = ::Foo7 <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>in<!> setOf(foo7())
     inv
 }
 
 fun poll88() {
-    val inv = foo7() in <!NEW_INFERENCE_ERROR!>setOf(::Foo7)<!>
+    val inv = foo7() in <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>setOf<!>(::Foo7)
     inv
 }

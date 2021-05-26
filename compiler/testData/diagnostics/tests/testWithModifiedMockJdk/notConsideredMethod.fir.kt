@@ -7,7 +7,7 @@ interface A : MutableCollection<String> {
 }
 
 fun foo(x: MutableCollection<Int>, y: Collection<String>, z: A) {
-    x.<!UNRESOLVED_REFERENCE!>nonExistingMethod<!>(1).checkType { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
+    x.<!UNRESOLVED_REFERENCE!>nonExistingMethod<!>(1).checkType { _<String>() }
     y.<!UNRESOLVED_REFERENCE!>nonExistingMethod<!>("")
     z.nonExistingMethod("")
 }

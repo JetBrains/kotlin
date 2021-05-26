@@ -5,7 +5,7 @@ class A {
     val p1 by this
         get
 
-    var p2 by this
+    var p2 by <!NEW_INFERENCE_ERROR!>this<!>
         <!ACCESSOR_FOR_DELEGATED_PROPERTY!>get() = ""<!>
 
     operator fun getValue(a: Any?, p: Any?) = ""

@@ -19,7 +19,7 @@ import testPackCase1.I4.Companion.foo
 class Case1() : I2, I1, I3, I4  {
 
     fun test() {
-       foo(1)
+       <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>(1)
     }
 }
 

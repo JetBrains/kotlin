@@ -57,7 +57,7 @@ fun test7(cls: Cls) {
 }
 
 fun test8(cls: Cls) {
-    id(
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>id<!>(
         wrapIn(cls)
     )
 }

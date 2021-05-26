@@ -22,5 +22,5 @@ fun test() {
 
     val a6 = foo(::singleA, ::singleB)
 
-    foo(::<!OVERLOAD_RESOLUTION_AMBIGUITY!>multiple<!>, ::<!OVERLOAD_RESOLUTION_AMBIGUITY!>multiple<!>)
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>(::<!OVERLOAD_RESOLUTION_AMBIGUITY!>multiple<!>, ::<!OVERLOAD_RESOLUTION_AMBIGUITY!>multiple<!>)
 }

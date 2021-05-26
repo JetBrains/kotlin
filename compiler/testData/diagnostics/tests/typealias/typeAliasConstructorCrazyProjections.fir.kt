@@ -12,4 +12,4 @@ fun <T> listOf(): List<T> = null!!
 // since it has 'out' type projection in 'in' position.
 val test1 = BOutIn(<!ARGUMENT_TYPE_MISMATCH!>listOf()<!>, null!!)
 
-val test2 = BInIn(listOf(), null!!)
+val test2 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>BInIn<!>(listOf(), null!!)

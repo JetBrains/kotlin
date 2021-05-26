@@ -48,7 +48,7 @@ fun main(args : Array<String>) {
 
     val b = fooT2<Int>()(1)
     checkSubtype<Int>(b)
-    fooT2()(1) // : Any?
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>fooT2<!>()(1) // : Any?
 
     <!UNRESOLVED_REFERENCE!>1<!>()
     <!UNRESOLVED_REFERENCE!>1<!>{}

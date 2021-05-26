@@ -21,7 +21,7 @@ fun test(l : List<Int>) {
   Collections.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: emptyList">emptyList</error>
   Collections.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: emptyList">emptyList</error><Int>
   Collections.emptyList<Int>()
-  Collections.emptyList()
+  Collections.<error descr="[NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER] T">emptyList</error>()
 
   checkSubtype<Set<Int>?>(Collections.singleton<Int>(1))
   Collections.singleton<Int>(<error descr="[ARGUMENT_TYPE_MISMATCH] Argument type mismatch: actual type is kotlin/Double but ft<TypeVariable(T), TypeVariable(T)?> was expected">1.0</error>)

@@ -12,18 +12,18 @@ fun <S> Builder<S>.extensionAdd(s: S) {}
 
 suspend fun <S> Builder<S>.safeExtensionAdd(s: S) {}
 
-val member = build {
-    add(<!ARGUMENT_TYPE_MISMATCH!>42<!>)
+val member = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
+    add(42)
 }
 
-val memberWithoutAnn = wrongBuild {
-    add(<!ARGUMENT_TYPE_MISMATCH!>42<!>)
+val memberWithoutAnn = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>wrongBuild<!> {
+    add(42)
 }
 
-val extension = build {
-    extensionAdd(<!ARGUMENT_TYPE_MISMATCH!>"foo"<!>)
+val extension = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
+    extensionAdd("foo")
 }
 
-val safeExtension = build {
-    safeExtensionAdd(<!ARGUMENT_TYPE_MISMATCH!>"foo"<!>)
+val safeExtension = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
+    safeExtensionAdd("foo")
 }

@@ -3,8 +3,8 @@ package foo
 import kotlin.reflect.KProperty
 
 class A {
-    var a5: String by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>MyProperty1()<!>
-    var b5: String by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>getMyProperty1()<!>
+    var a5: String by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, NEW_INFERENCE_ERROR, NEW_INFERENCE_ERROR!>MyProperty1()<!>
+    var b5: String by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, NEW_INFERENCE_ERROR, NEW_INFERENCE_ERROR!>getMyProperty1()<!>
 }
 
 fun <A, B> getMyProperty1() = MyProperty1<A, B>()

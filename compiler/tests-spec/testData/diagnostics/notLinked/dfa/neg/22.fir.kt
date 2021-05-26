@@ -167,7 +167,7 @@ fun case_12(x: Int?) {
 
     val y: Int
     while (true) {
-        break[x!!]
+        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>break[x!!]<!>
     }
 
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>

@@ -10,4 +10,4 @@ val ms: MyString = "MyString"
 val msn: MyString? = null
 
 val msc: MyStringContainer = Container(ms)
-val msc1 = MyStringContainer(null)
+val msc1 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>MyStringContainer<!>(null)

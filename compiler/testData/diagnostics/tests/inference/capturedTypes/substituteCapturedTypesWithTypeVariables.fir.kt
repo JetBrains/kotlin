@@ -6,7 +6,7 @@ fun <T> getFoo(value: T) = null as Foo<out Foo<T>>
 fun <R> takeLambda(block: () -> R) {}
 
 fun main(x: Int) {
-    takeLambda {
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>takeLambda<!> {
         getFoo(x)
     }
 }

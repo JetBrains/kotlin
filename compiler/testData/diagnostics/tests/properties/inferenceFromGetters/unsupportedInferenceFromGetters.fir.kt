@@ -7,8 +7,8 @@ val x get() {
 }
 
 // cantBeInferred.kt
-val x1 get() = foo()
-val y1 get() = bar()
+val x1 get() = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>()
+val y1 get() = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar<!>()
 
 fun <E> foo(): E = null!!
 fun <E> bar(): List<E> = null!!

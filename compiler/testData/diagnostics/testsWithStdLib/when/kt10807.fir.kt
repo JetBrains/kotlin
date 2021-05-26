@@ -5,13 +5,13 @@ import kotlin.comparisons.nullsLast
 class Foo(val a: String, val b: Int)
 
 fun getComp(): Comparator<Foo?> =
-        <!RETURN_TYPE_MISMATCH!>when {
-            else -> nullsLast(compareBy({ it.<!UNRESOLVED_REFERENCE!>a<!> }, { it.<!UNRESOLVED_REFERENCE!>b<!> }))
-        }<!>
+        when {
+            else -> <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>nullsLast<!>(compareBy({ it.<!UNRESOLVED_REFERENCE!>a<!> }, { it.<!UNRESOLVED_REFERENCE!>b<!> }))
+        }
 
 fun getCompInverted(): Comparator<Foo?> =
-        <!TYPE_MISMATCH!>nullsLast(
+        nullsLast(
                 when {
-                    else -> compareBy({ it.<!UNRESOLVED_REFERENCE!>a<!> }, { it.<!UNRESOLVED_REFERENCE!>b<!> })
+                    else -> <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>compareBy<!>({ it.<!UNRESOLVED_REFERENCE!>a<!> }, { it.<!UNRESOLVED_REFERENCE!>b<!> })
                 }
-        )<!>
+        )

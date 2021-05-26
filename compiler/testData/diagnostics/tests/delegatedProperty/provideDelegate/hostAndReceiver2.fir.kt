@@ -8,6 +8,6 @@ object T2 {
     operator fun <T> Foo<T>.provideDelegate(host: T2, p: Any?): Foo<T> = TODO()
     operator fun <T> Foo<T>.getValue(receiver: String, p: Any?): T = TODO()
 
-    val String.test1: String by <!TYPE_MISMATCH!>delegate()<!>
-    val test2: String by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>delegate()<!>
+    val String.test1: String by <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>delegate<!>()
+    val test2: String by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, NEW_INFERENCE_ERROR!><!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>delegate<!>()<!>
 }

@@ -78,11 +78,11 @@ fun main() {
 
     // Interdependent lambdas by input-output types aren't supported
     takeInterdependentLambdas({}, {})
-    takeInterdependentLambdas({ it }, { <!ARGUMENT_TYPE_MISMATCH!>10<!> })
-    takeInterdependentLambdas({ <!ARGUMENT_TYPE_MISMATCH!>10<!> }, { it })
-    takeInterdependentLambdas({ <!ARGUMENT_TYPE_MISMATCH!>10<!> }, { x -> x })
-    takeInterdependentLambdas({ x -> <!ARGUMENT_TYPE_MISMATCH!>10<!> }, { it })
-    takeInterdependentLambdas({ it }, { x -> <!ARGUMENT_TYPE_MISMATCH!>10<!> })
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>takeInterdependentLambdas<!>({ it }, { 10 })
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>takeInterdependentLambdas<!>({ 10 }, { it })
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>takeInterdependentLambdas<!>({ 10 }, { <!CANNOT_INFER_PARAMETER_TYPE!>x<!> -> x })
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>takeInterdependentLambdas<!>({ <!CANNOT_INFER_PARAMETER_TYPE!>x<!> -> 10 }, { it })
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>takeInterdependentLambdas<!>({ it }, { <!CANNOT_INFER_PARAMETER_TYPE!>x<!> -> 10 })
 
     // Dependent lambdas by input-output types
     takeDependentLambdas({ <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>it<!> }, { it })

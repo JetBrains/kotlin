@@ -24,7 +24,7 @@ fun test(l : java.util.List<Int>) {
   Collections.<!UNRESOLVED_REFERENCE!>emptyList<!>
   Collections.<!UNRESOLVED_REFERENCE!>emptyList<!><Int>
   Collections.emptyList<Int>()
-  Collections.emptyList()
+  Collections.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>emptyList<!>()
 
   checkSubtype<Set<Int>?>(Collections.singleton<Int>(1))
   Collections.singleton<Int>(<!ARGUMENT_TYPE_MISMATCH!>1.0<!>)

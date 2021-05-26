@@ -32,6 +32,6 @@ fun test() {
         x.baz(1).checkType { _<Unit>() }
         x.baz(1, <!TOO_MANY_ARGUMENTS!>2<!>)
 
-        x.<!UNRESOLVED_REFERENCE!>foobar<!>().checkType { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
+        x.<!UNRESOLVED_REFERENCE!>foobar<!>().checkType { _<String>() }
     }
 }

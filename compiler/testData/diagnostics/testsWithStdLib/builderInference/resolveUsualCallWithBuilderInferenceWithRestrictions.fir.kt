@@ -24,8 +24,8 @@ val member = build {
     add(42)
 }
 
-val memberWithoutAnn = wrongBuild {
-    add(<!ARGUMENT_TYPE_MISMATCH!>42<!>)
+val memberWithoutAnn = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>wrongBuild<!> {
+    add(42)
 }
 
 val extension = build {

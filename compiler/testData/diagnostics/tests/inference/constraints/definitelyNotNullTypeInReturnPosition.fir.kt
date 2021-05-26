@@ -164,11 +164,11 @@ class Main<L>(x: L?, y: L) {
     val x170 = foo17(x)
     val x171 = foo17(y)
 
-    val x180 = Bar().<!UNRESOLVED_REFERENCE!>foo18<!>(x)
-    val x181 = Bar().<!UNRESOLVED_REFERENCE!>foo18<!>(y)
+    val x180 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Bar<!>().<!UNRESOLVED_REFERENCE!>foo18<!>(x)
+    val x181 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Bar<!>().<!UNRESOLVED_REFERENCE!>foo18<!>(y)
 
-    val x200: L = Bar().<!UNRESOLVED_REFERENCE!>foo19<!>()
-    val x201: L = Bar().<!UNRESOLVED_REFERENCE!>foo19<!>()
+    val x200: L = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Bar<!>().<!UNRESOLVED_REFERENCE!>foo19<!>()
+    val x201: L = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Bar<!>().<!UNRESOLVED_REFERENCE!>foo19<!>()
 
     val x210 = foo21(x)
     val x211 = foo21(y)
@@ -262,8 +262,8 @@ class Main<L>(x: L?, y: L) {
     val x471 = foo47(y)
 
     fun <R> takeLambda(block: () -> R): R = materialize()
-    val x480 = <!NEW_INFERENCE_ERROR!>takeLambda { foo48 { <!ARGUMENT_TYPE_MISMATCH!>x<!> } }<!>
-    val x481 = <!NEW_INFERENCE_ERROR!>takeLambda { foo48 { <!ARGUMENT_TYPE_MISMATCH!>y<!> } }<!>
+    val x480 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>takeLambda<!> { foo48 { <!ARGUMENT_TYPE_MISMATCH!>x<!> } }
+    val x481 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>takeLambda<!> { foo48 { <!ARGUMENT_TYPE_MISMATCH!>y<!> } }
     val x482 = takeLambda { foo48 { null } }
 }
 

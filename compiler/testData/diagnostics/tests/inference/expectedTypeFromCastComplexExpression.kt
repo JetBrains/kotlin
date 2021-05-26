@@ -11,7 +11,6 @@ class A {
     }
 }
 
-val x = A().foo() as String
-val y = A.foo2() as String
-val z = pp.A.foo2() as String
-
+val x = A().<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>() as String
+val y = A.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo2<!>() as String
+val z = pp.A.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo2<!>() as String

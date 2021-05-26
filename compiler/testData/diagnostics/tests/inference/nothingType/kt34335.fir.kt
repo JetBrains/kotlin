@@ -14,5 +14,5 @@ fun test1() {
 }
 
 fun test2() {
-    ::foo.call({ x -> println(x::class) })
+    ::foo.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>call<!>({ x -> println(x::class) })
 }

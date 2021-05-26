@@ -5,7 +5,7 @@
 class Inv<I>
 fun <T> materialize(): Inv<T> = TODO()
 fun <K> id(arg: K) = arg
-fun <S> select(vararg args: S): S = TODO()
+fun <S> select(vararg args: <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>S<!>): S = TODO()
 
 fun test1(b: Boolean?) {
     val v = when(b) {
@@ -17,20 +17,20 @@ fun test1(b: Boolean?) {
 }
 
 fun test2() {
-    <!NEW_INFERENCE_ERROR!>select(
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>select<!>(
         materialize()
-    )<!>
+    )
     select(materialize(), materialize<String>())
     select(materialize(), null, Inv<String>())
     <!NEW_INFERENCE_ERROR!>select(
         materialize(),
         null
     )<!>
-    <!NEW_INFERENCE_ERROR!>select(
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>select<!>(
         materialize(),
         materialize()
-    )<!>
-    select(
+    )
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>select<!>(
         materialize(),
         materialize(),
         null

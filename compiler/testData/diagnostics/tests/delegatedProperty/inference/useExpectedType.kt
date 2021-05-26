@@ -52,12 +52,12 @@ class MyProperty2<T> {
 //--------------------------
 
 class A3 {
-    var a3: String by MyProperty3()
-    var b3: String by getMyProperty3()
+    var a3: String by <!NEW_INFERENCE_ERROR, NEW_INFERENCE_ERROR, NEW_INFERENCE_ERROR!>MyProperty3()<!>
+    var b3: String by <!NEW_INFERENCE_ERROR, NEW_INFERENCE_ERROR, NEW_INFERENCE_ERROR!>getMyProperty3()<!>
 }
 
-var c3: String by getMyProperty3()
-var d3: String by MyProperty3()
+var c3: String by <!NEW_INFERENCE_ERROR, NEW_INFERENCE_ERROR, NEW_INFERENCE_ERROR!>getMyProperty3()<!>
+var d3: String by <!NEW_INFERENCE_ERROR, NEW_INFERENCE_ERROR, NEW_INFERENCE_ERROR!>MyProperty3()<!>
 
 fun <A> getMyProperty3() = MyProperty3<A>()
 

@@ -47,7 +47,7 @@ fun <T> bar(a: Any): T = a as T
 
 fun <T> foo() {
     foo<<!UNRESOLVED_REFERENCE!>Color.RED<!>>()
-    foo<RedAlias>()
+    foo<<!CANNOT_INFER_PARAMETER_TYPE!>RedAlias<!>>()
     bar<<!UNRESOLVED_REFERENCE!>Color.RED<!>>(<!ARGUMENT_TYPE_MISMATCH!>Color.RED<!>)
 }
 

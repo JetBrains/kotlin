@@ -7,26 +7,26 @@ class Controller<T> {
 
 fun <S> generate(g: suspend Controller<S>.() -> Unit): S = TODO()
 
-val test1 = generate {
-    apply {
-        yield(<!ARGUMENT_TYPE_MISMATCH!>4<!>)
+val test1 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>apply<!> {
+        yield(4)
     }
 }
 
-val test2 = generate {
-    yield(<!ARGUMENT_TYPE_MISMATCH!>B<!>)
-    apply {
-        yield(<!ARGUMENT_TYPE_MISMATCH!>C<!>)
+val test2 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+    yield(B)
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>apply<!> {
+        yield(C)
     }
 }
 
-val test3 = generate {
-    this.let {
-        yield(<!ARGUMENT_TYPE_MISMATCH!>B<!>)
+val test3 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+    this.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>let<!> {
+        yield(B)
     }
 
-    apply {
-        yield(<!ARGUMENT_TYPE_MISMATCH!>C<!>)
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>apply<!> {
+        yield(C)
     }
 }
 

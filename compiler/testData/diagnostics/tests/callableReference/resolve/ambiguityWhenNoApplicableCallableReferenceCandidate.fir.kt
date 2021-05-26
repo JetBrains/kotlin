@@ -7,5 +7,5 @@ fun foo(y: String) {}
 fun <T> bar(f: (T) -> Unit) {}
 
 fun test() {
-    bar(::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>)
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar<!>(::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>)
 }
