@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -125,43 +124,10 @@ private class InlineCallableReferenceToLambdaTransformer(
         }
     }
 
-    private class BoundReceiver(
-        val receiverParameter: IrValueParameter,
-        val receiverValue: IrExpression,
-        val receiverType: IrType
-    )
-
-    private fun IrCallableReference<*>.getBoundReceiver(): BoundReceiver? {
-        val irFunction = when (this) {
-            is IrFunctionReference ->
-                this.symbol.owner
-            is IrPropertyReference ->
-                this.getter!!.owner
-            else ->
-                throw AssertionError("Unexpected callable reference: ${this.render()}")
-        }
-
-        this.dispatchReceiver?.let { dispatchReceiver ->
-            val dispatchReceiverParameter = irFunction.dispatchReceiverParameter
-                ?: throw AssertionError("Referenced declaration '${this.symbol.owner.render()}' has no dispatch receiver: ${this.dump()}")
-            // NB in case of fake override of Base::foo in Child::foo, dispatch receiver type is Base,
-            // but we in fact need Child (because of accessor generation).
-            return BoundReceiver(dispatchReceiverParameter, dispatchReceiver, irFunction.parentAsClass.defaultType)
-        }
-
-        this.extensionReceiver?.let { extensionReceiver ->
-            val extensionReceiverParameter = irFunction.extensionReceiverParameter
-                ?: throw AssertionError("Referenced declaration '${this.symbol.owner.render()}' has no extension receiver: ${this.dump()}")
-            return BoundReceiver(extensionReceiverParameter, extensionReceiver, extensionReceiverParameter.type)
-        }
-
-        return null
-    }
-
     private fun expandInlineFunctionReferenceToLambda(expression: IrCallableReference<*>, referencedFunction: IrFunction): IrExpression {
         val irBuilder = context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
         return irBuilder.irBlock(expression, IrStatementOrigin.LAMBDA) {
-            val boundReceiver = expression.getBoundReceiver()
+            val (receiverParameter, receiverValue) = expression.getArgumentsWithIr().singleOrNull() ?: (null to null)
             val argumentTypes = (expression.type as IrSimpleType).arguments.dropLast(1).map { (it as IrTypeProjection).type }
 
             val function = context.irFactory.buildFun {
@@ -173,8 +139,8 @@ private class InlineCallableReferenceToLambdaTransformer(
                 isSuspend = referencedFunction.isSuspend
             }.apply {
                 parent = currentDeclarationParent!!
-                if (boundReceiver != null) {
-                    addExtensionReceiver(boundReceiver.receiverType)
+                if (receiverValue != null) {
+                    addExtensionReceiver(receiverValue.type)
                 }
                 for ((index, argumentType) in argumentTypes.withIndex()) {
                     addValueParameter {
@@ -196,7 +162,7 @@ private class InlineCallableReferenceToLambdaTransformer(
                         var unboundIndex = 0
                         for (parameter in referencedFunction.explicitParameters) {
                             when {
-                                boundReceiver?.receiverParameter == parameter ->
+                                receiverParameter == parameter ->
                                     irGet(extensionReceiverParameter!!)
                                 parameter.isVararg && unboundIndex < argumentTypes.size && parameter.type == valueParameters[unboundIndex].type ->
                                     irGet(valueParameters[unboundIndex++])
@@ -225,7 +191,7 @@ private class InlineCallableReferenceToLambdaTransformer(
                 origin = IrStatementOrigin.LAMBDA
             ).apply {
                 copyAttributes(expression)
-                extensionReceiver = boundReceiver?.receiverValue
+                extensionReceiver = receiverValue
             }
         }
     }

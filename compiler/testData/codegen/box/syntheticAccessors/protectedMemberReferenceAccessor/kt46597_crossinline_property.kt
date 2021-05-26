@@ -1,5 +1,4 @@
 // IGNORE_BACKEND: WASM
-// IGNORE_BACKEND_FIR: JVM_IR
 
 // FILE: a.kt
 package a

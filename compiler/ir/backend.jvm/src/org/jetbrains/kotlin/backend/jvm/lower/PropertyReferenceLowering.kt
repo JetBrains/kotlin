@@ -354,15 +354,7 @@ private class PropertyReferenceLowering(val context: JvmBackendContext) : IrElem
                 val receiverFromField = boundReceiver?.let { irImplicitCast(irGetField(irGet(arguments[0]), backingField), it.type) }
                 call.copyTypeArgumentsFrom(expression)
                 call.dispatchReceiver = call.symbol.owner.dispatchReceiverParameter?.let {
-                    receiverFromField ?: irImplicitCast(
-                        irGet(arguments[1]),
-                        // In `C::x`, the receiver must be cast to `C` in order to put accessors for protected
-                        // properties in the correct class (box/syntheticAccessors/accessorForProtectedPropertyReference.kt).
-                        // However, if `x` is a property of C's superclass, the type of `dispatchReceiverParameter` is not `C`.
-                        // Since the receiver is not bound, the type of the property must be `KProperty1<C, ReturnType>` or
-                        // `KProperty2<C, ExtensionReceiver, ReturnType>`.
-                        ((expression.type as IrSimpleType).arguments.first() as IrTypeProjection).type
-                    )
+                    receiverFromField ?: irImplicitCast(irGet(arguments[1]), expression.receiverType)
                 }
                 call.extensionReceiver = call.symbol.owner.extensionReceiverParameter?.let {
                     if (call.symbol.owner.dispatchReceiverParameter == null)
@@ -393,9 +385,9 @@ private class PropertyReferenceLowering(val context: JvmBackendContext) : IrElem
                 field.isStatic ->
                     null
                 expression.dispatchReceiver != null ->
-                    irImplicitCast(irGetField(irGet(arguments[0]), backingField), field.parentAsClass.defaultType)
+                    irImplicitCast(irGetField(irGet(arguments[0]), backingField), expression.receiverType)
                 else ->
-                    irImplicitCast(irGet(arguments[1]), field.parentAsClass.defaultType)
+                    irImplicitCast(irGet(arguments[1]), expression.receiverType)
             }
 
             referenceClass.addOverride(get!!) { arguments ->
@@ -448,6 +440,12 @@ private class PropertyReferenceLowering(val context: JvmBackendContext) : IrElem
             }
         }
     }
+
+    // In `value::x`, using `value`'s type is fine; but in `C::x`, the type of the receiver has to be `C`.
+    // This is *not* the type of `x`'s dispatch receiver if `x` is declared in a superclass of `C`, so we
+    // extract `C` from the reference's type, which is either `KProperty1<C, R>` or `KProperty2<C, Extension, R>`.
+    private val IrCallableReference<*>.receiverType
+        get() = dispatchReceiver?.type ?: ((type as IrSimpleType).arguments.first() as IrTypeProjection).type
 
     private fun IrCallableReference<*>.getBoundReceiver(): IrExpression? {
         val callee = symbol.owner
