@@ -46,8 +46,8 @@ internal class FirKeywordCompletionContributor(basicContext: FirBasicCompletionC
                     else -> reference.expression
                 }
             }
-            is FirTypeConstraintNameInWhereClausePositionContext -> {
-                error("keyword completion should not be called for FirTypeConstraintNameInWhereClausePositionContext")
+            is FirTypeConstraintNameInWhereClausePositionContext, is FirIncorrectPositionContext -> {
+                error("keyword completion should not be called for ${positionContext::class.simpleName}")
             }
             is FirUnknownPositionContext -> null
         }

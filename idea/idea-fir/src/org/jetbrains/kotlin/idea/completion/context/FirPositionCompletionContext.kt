@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.completion.context
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.analyse
@@ -18,6 +19,10 @@ import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 internal sealed class FirRawPositionCompletionContext {
     abstract val position: PsiElement
 }
+
+internal class FirIncorrectPositionContext(
+    override val position: PsiElement
+): FirRawPositionCompletionContext()
 
 internal class FirTypeConstraintNameInWhereClausePositionContext(
     override val position: PsiElement,
@@ -146,21 +151,25 @@ internal object FirPositionCompletionContextDetector {
         reference: KtSimpleNameReference,
         nameExpression: KtSimpleNameExpression,
         explicitReceiver: KtExpression?
-    ): FirNameReferencePositionContext {
+    ): FirRawPositionCompletionContext {
         val typeReference = (userType.parent as? KtTypeReference)?.takeIf { it.typeElement == userType }
-        return when (val typeReferenceOwner = typeReference?.parent) {
-            is KtConstructorCalleeExpression -> {
+        val typeReferenceOwner = typeReference?.parent
+        return when {
+            typeReferenceOwner is KtConstructorCalleeExpression -> {
                 val constructorCall = typeReferenceOwner.takeIf { it.typeReference == typeReference }
                 val annotationEntry = (constructorCall?.parent as? KtAnnotationEntry)?.takeIf { it.calleeExpression == constructorCall }
                 annotationEntry?.let {
                     FirAnnotationTypeNameReferencePositionContext(position, reference, nameExpression, explicitReceiver, it)
                 }
             }
-            is KtSuperExpression -> {
+            typeReferenceOwner is KtSuperExpression -> {
                 val superTypeCallEntry = typeReferenceOwner.takeIf { it.superTypeQualifier == typeReference }
                 superTypeCallEntry?.let {
                     FirSuperTypeCallNameReferencePositionContext(position, reference, nameExpression, explicitReceiver, it)
                 }
+            }
+            typeReferenceOwner is KtTypeConstraint && typeReferenceOwner.children.any { it is PsiErrorElement } -> {
+                FirIncorrectPositionContext(position)
             }
             else -> null
         } ?: FirTypeNameReferencePositionContext(position, reference, nameExpression, explicitReceiver)
@@ -180,7 +189,8 @@ internal object FirPositionCompletionContextDetector {
             is FirUnknownPositionContext,
             is FirImportDirectivePositionContext,
             is FirPackageDirectivePositionContext,
-            is FirTypeConstraintNameInWhereClausePositionContext -> {
+            is FirTypeConstraintNameInWhereClausePositionContext,
+            is FirIncorrectPositionContext -> {
                 analyse(basicContext.originalKtFile, action)
             }
         }

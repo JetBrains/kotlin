@@ -111,6 +111,10 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
             is FirUnknownPositionContext -> {
                 complete(keywordContributor, positionContext)
             }
+
+            is FirIncorrectPositionContext -> {
+                // do nothing, completion is not suposed to be called here
+            }
         }
     }
 
