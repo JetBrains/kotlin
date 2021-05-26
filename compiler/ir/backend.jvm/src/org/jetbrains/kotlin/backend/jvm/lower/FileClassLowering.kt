@@ -144,7 +144,7 @@ private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPa
     }
 
     private companion object {
-        private val JVM_NAME = IdSignature.PublicSignature("kotlin.jvm", "JvmName", null, 0)
+        private val JVM_NAME = IdSignature.CommonSignature("kotlin.jvm", "JvmName", null, 0)
     }
 }
 
