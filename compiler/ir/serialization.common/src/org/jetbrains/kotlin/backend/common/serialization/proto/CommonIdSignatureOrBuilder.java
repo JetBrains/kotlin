@@ -3,8 +3,8 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.proto;
 
-public interface PublicIdSignatureOrBuilder extends
-    // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature)
+public interface CommonIdSignatureOrBuilder extends
+    // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature)
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
