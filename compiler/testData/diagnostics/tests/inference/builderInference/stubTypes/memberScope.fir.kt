@@ -24,7 +24,7 @@ fun test() {
         get()?.test2()
         get().test2()
         get()?.hashCode()
-        get()?.<!NONE_APPLICABLE!>equals<!>(1)
+        get()?.equals(1)
         // there is `String?.equals` extension
         get().equals("")
     }
@@ -35,10 +35,10 @@ fun test() {
         get()?.test2()
         get().test2()
         get()?.hashCode()
-        get()?.<!NONE_APPLICABLE!>equals<!>(1)
+        get()?.equals(1)
         val x = get()
-        x<!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()
-        x<!UNNECESSARY_SAFE_CALL!>?.<!><!NONE_APPLICABLE!>equals<!>(1)
+        x?.hashCode()
+        x?.equals(1)
         x.equals("")
     }
     val ret3 = build {
@@ -48,22 +48,22 @@ fun test() {
         get()?.test2()
         get().test2()
         get()?.hashCode()
-        get()?.<!NONE_APPLICABLE!>equals<!>(1)
+        get()?.equals(1)
         val x = get()
-        x<!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()
-        x<!UNNECESSARY_SAFE_CALL!>?.<!><!NONE_APPLICABLE!>equals<!>(1)
+        x?.hashCode()
+        x?.equals(1)
 
         if (get() == null) {}
         if (get() === null) {}
 
         if (x != null) {
-            x<!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()
-            x<!UNNECESSARY_SAFE_CALL!>?.<!><!NONE_APPLICABLE!>equals<!>(1)
+            x?.hashCode()
+            x?.equals(1)
             x.equals("")
             x.hashCode()
             x.toString()
             x.test()
-            x<!UNNECESSARY_SAFE_CALL!>?.<!>test2()
+            x?.test2()
             x.test2()
         }
 
@@ -72,37 +72,135 @@ fun test() {
     val ret4 = build {
         emit(1)
         emit(null)
+        val x = get()
+        if (x == null) {
+            x.hashCode()
+        }
+
+        ""
+    }
+    val ret401 = build {
+        emit(1)
+        emit(null)
+        val x = get()
+        if (x == null) {
+            x.equals("")
+        }
+
+        ""
+    }
+    val ret402 = build {
+        emit(1)
+        emit(null)
+        val x = get()
+        if (x == null) {
+            x.toString("")
+        }
+
+        ""
+    }
+    val ret403 = build {
+        emit(1)
+        emit(null)
+        val x = get()
+        if (x == null) {
+            x.test()
+        }
+
+        ""
+    }
+    val ret404 = build {
+        emit(1)
+        emit(null)
+        val x = get()
+        if (x === null) {
+            x.hashCode()
+        }
+
+        ""
+    }
+    val ret405 = build {
+        emit(1)
+        emit(null)
+        val x = get()
+        if (x === null) {
+            x.equals("")
+        }
+
+        ""
+    }
+    val ret406 = build {
+        emit(1)
+        emit(null)
+        val x = get()
+        if (x === null) {
+            x.toString("")
+        }
+
+        ""
+    }
+    val ret407 = build {
+        emit(1)
+        emit(null)
+        val x = get()
+        if (x === null) {
+            x.test()
+        }
+
+        ""
+    }
+    val ret408 = build {
+        emit(1)
+        emit(null)
+        val x = get()
+        x.test()
+
+        ""
+    }
+    val ret41 = build {
+        emit(1)
+        emit(null)
         get()?.test()
         get()?.test2()
         get().test2()
         get()?.hashCode()
-        get()?.<!NONE_APPLICABLE!>equals<!>(1)
+        get()?.equals(1)
         val x = get()
-        x<!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()
-        x<!UNNECESSARY_SAFE_CALL!>?.<!><!NONE_APPLICABLE!>equals<!>(1)
+        x?.hashCode()
+        x?.equals(1)
 
         if (get() == null) {}
         if (get() === null) {}
 
         if (x == null) {
-            x<!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()
-            x<!UNNECESSARY_SAFE_CALL!>?.<!><!NONE_APPLICABLE!>equals<!>(1)
-            x.equals("") // TODO: is it correct?
-            x.hashCode()
-            x.toString()
-            x.test()
-            x<!UNNECESSARY_SAFE_CALL!>?.<!>test2()
+            x?.hashCode()
+        }
+
+        if (x == null) {
+            x?.equals(1)
+        }
+
+        if (x == null) {
+            x?.test2()
+        }
+
+        if (x == null) {
             x.test2()
         }
 
         if (x === null) {
-            x<!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()
-            x<!UNNECESSARY_SAFE_CALL!>?.<!><!NONE_APPLICABLE!>equals<!>(1)
-            x.equals("")
-            x.hashCode()
-            x.toString()
-            x.test()
-            x<!UNNECESSARY_SAFE_CALL!>?.<!>test2()
+            x?.hashCode()
+        }
+
+        if (x === null) {
+            x?.equals(1)
+        }
+
+        if (x === null) {
+            x?.test2()
+        }
+
+        if (x === null) {
             x.test2()
         }
 
@@ -111,26 +209,103 @@ fun test() {
     val ret5 = build {
         emit(1)
         emit(null)
+        val x = get()
+        if (x == null) {
+            x.equals("")
+        }
+
+        ""
+    }
+    val ret501 = build {
+        emit(1)
+        emit(null)
+        val x = get()
+        if (x == null) {
+            x.hashCode()
+        }
+        ""
+    }
+    val ret502 = build {
+        emit(1)
+        emit(null)
+        val x = get()
+        if (x == null) {
+            x.toString()
+        }
+        ""
+    }
+    val ret503 = build {
+        emit(1)
+        emit(null)
+        val x = get()
+        if (x == null) {
+            x.test()
+        }
+        ""
+    }
+    val ret504 = build {
+        emit(1)
+        emit(null)
+        val x = get()
+        if (x === null) {
+            x.equals("")
+        }
+
+        ""
+    }
+    val ret505 = build {
+        emit(1)
+        emit(null)
+        val x = get()
+        if (x === null) {
+            x.hashCode()
+        }
+        ""
+    }
+    val ret506 = build {
+        emit(1)
+        emit(null)
+        val x = get()
+        if (x === null) {
+            x.toString()
+        }
+        ""
+    }
+    val ret507 = build {
+        emit(1)
+        emit(null)
+        val x = get()
+        if (x === null) {
+            x.test()
+        }
+        ""
+    }
+    val ret508 = build {
+        emit(1)
+        emit(null)
+        val x = get()
+        x.test()
+        ""
+    }
+    val ret51 = build {
+        emit(1)
+        emit(null)
         get()?.test()
         get()?.test2()
         get().test2()
         get()?.hashCode()
-        get()?.<!NONE_APPLICABLE!>equals<!>(1)
+        get()?.equals(1)
         val x = get()
-        x<!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()
-        x<!UNNECESSARY_SAFE_CALL!>?.<!><!NONE_APPLICABLE!>equals<!>(1)
+        x?.hashCode()
+        x?.equals(1)
 
         if (get() == null) {}
         if (get() === null) {}
 
         if (x == null) {
-            x<!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()
-            x<!UNNECESSARY_SAFE_CALL!>?.<!><!NONE_APPLICABLE!>equals<!>(1)
-            x.equals("")
-            x.hashCode()
-            x.toString()
-            x.test()
-            x<!UNNECESSARY_SAFE_CALL!>?.<!>test2()
+            x?.hashCode()
+            x?.equals(1)
+            x?.test2()
             x.test2()
         }
 

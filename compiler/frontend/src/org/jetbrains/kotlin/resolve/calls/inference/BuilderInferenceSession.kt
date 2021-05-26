@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.types.model.freshTypeConstructor
 import org.jetbrains.kotlin.types.model.safeSubstitute
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.contains
+import org.jetbrains.kotlin.types.typeUtil.shouldBeUpdated
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class BuilderInferenceSession(
@@ -71,6 +72,8 @@ class BuilderInferenceSession(
     }
 
     private val commonCalls = arrayListOf<PSICompletedCallInfo>()
+
+    private val localVariables = arrayListOf<KtVariableDeclaration>()
 
     // These calls come from the old type inference
     private val oldDoubleColonExpressionCalls = arrayListOf<KtExpression>()
@@ -147,6 +150,10 @@ class BuilderInferenceSession(
         if (!isApplicableCall) {
             hasInapplicableCall = true
         }
+    }
+
+    fun addLocalVariable(variable: KtVariableDeclaration) {
+        localVariables.add(variable)
     }
 
     private fun anyReceiverContainStubType(descriptor: CallableDescriptor): Boolean {
@@ -426,6 +433,13 @@ class BuilderInferenceSession(
         )
     }
 
+    private fun updateLocalVariable(localVariable: KtVariableDeclaration, substitutor: NewTypeSubstitutor) {
+        val descriptor = trace[BindingContext.VARIABLE, localVariable] as? LocalVariableDescriptor
+        if (descriptor != null && descriptor.type.shouldBeUpdated()) {
+            descriptor.setOutType(substitutor.safeSubstitute(descriptor.type.unwrap()))
+        }
+    }
+
     private fun updateCall(
         completedCall: PSICompletedCallInfo,
         nonFixedTypesToResultSubstitutor: NewTypeSubstitutor,
@@ -543,6 +557,10 @@ class BuilderInferenceSession(
                 nonFixedTypesToResultSubstitutor,
                 topLevelCallContext.replaceBindingTrace(findTopLevelTrace()).replaceInferenceSession(this)
             )
+
+            for (localVariable in localVariables) {
+                updateLocalVariable(localVariable, nonFixedTypesToResultSubstitutor)
+            }
 
             for (completedCall in commonCalls) {
                 updateCall(completedCall, nonFixedTypesToResultSubstitutor, nonFixedTypesToResult)

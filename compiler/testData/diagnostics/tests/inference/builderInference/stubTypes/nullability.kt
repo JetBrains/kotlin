@@ -28,7 +28,7 @@ fun test(a: String?) {
         get()?.equals("")
         val x = get()
         x?.equals("")
-        x ?: 1
+        x <!USELESS_ELVIS!>?: 1<!>
         x!!
         ""
     }
@@ -55,7 +55,7 @@ fun test(a: String?) {
         get()?.equals("")
         val x = get()
         x?.equals("")
-        x ?: 1
+        x <!USELESS_ELVIS!>?: 1<!>
         x!!
         ""
     }

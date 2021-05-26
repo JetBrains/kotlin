@@ -22,3 +22,5 @@ interface CoroutineScope
 interface Flow<out T>
 
 interface FlowCollector<in T>
+
+fun box() = "OK"
