@@ -10,10 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.TestHelperGeneratorKt;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -33,7 +30,7 @@ public class TestFiles {
      */
     private static final String MODULE_DELIMITER = ",\\s*";
 
-    private static final Pattern MODULE_PATTERN = Pattern.compile("//\\s*MODULE:\\s*([^()\\n]+)(?:\\(([^()]+(?:" + MODULE_DELIMITER + "[^()]+)*)\\))?\\s*(?:\\(([^()]+(?:" + MODULE_DELIMITER + "[^()]+)*)\\))?\n");
+    private static final Pattern MODULE_PATTERN = Pattern.compile("//\\s*MODULE:\\s*([^()\\n]+)(?:\\(([^()]+(?:" + MODULE_DELIMITER + "[^()]+)*)\\))?\\s*(?:\\(([^()]+(?:" + MODULE_DELIMITER + "[^()]+)*)\\))?\\s*(?:\\((\\d+(?:" + MODULE_DELIMITER + "\\d+)*)\\))?\n");
     private static final Pattern FILE_PATTERN = Pattern.compile("//\\s*FILE:\\s*(.*)\n");
 
     private static final Pattern LINE_SEPARATOR_PATTERN = Pattern.compile("\\r\\n|\\r|\\n");
@@ -88,10 +85,11 @@ public class TestFiles {
                     String moduleName = moduleMatcher.group(1);
                     String moduleDependencies = moduleMatcher.group(2);
                     String moduleFriends = moduleMatcher.group(3);
+                    String abiVersions = moduleMatcher.group(4);
                     if (moduleName != null) {
                         moduleName = moduleName.trim();
                         hasModules = true;
-                        module = factory.createModule(moduleName, parseModuleList(moduleDependencies), parseModuleList(moduleFriends));
+                        module = factory.createModule(moduleName, parseModuleList(moduleDependencies), parseModuleList(moduleFriends), parseAbiVersionsList(abiVersions));
                         M oldValue = modules.put(moduleName, module);
                         assert oldValue == null : "Module with name " + moduleName + " already present in file";
                     }
@@ -138,7 +136,7 @@ public class TestFiles {
         }
 
         if (isDirectiveDefined(expectedText, "WITH_COROUTINES")) {
-            M supportModule = hasModules ? factory.createModule("support", Collections.emptyList(), Collections.emptyList()) : null;
+            M supportModule = hasModules ? factory.createModule("support", Collections.emptyList(), Collections.emptyList(), Collections.emptyList()) : null;
             if (supportModule != null) {
                 M oldValue = modules.put(supportModule.name, supportModule);
                 assert oldValue == null : "Module with name " + supportModule.name + " already present in file";
@@ -201,9 +199,19 @@ public class TestFiles {
         return kotlin.text.StringsKt.split(dependencies, Pattern.compile(MODULE_DELIMITER), 0);
     }
 
+    private static List<Integer> parseAbiVersionsList(@Nullable String versions) {
+        if (versions == null) return Collections.emptyList();
+        List<String> splitted = kotlin.text.StringsKt.split(versions, Pattern.compile(MODULE_DELIMITER), 0);
+        List<Integer> result = new ArrayList<>(splitted.size());
+        for (String s : splitted) {
+            result.add(Integer.parseInt(s));
+        }
+        return result;
+    }
+
     public interface TestFileFactory<M, F> {
         F createFile(@Nullable M module, @NotNull String fileName, @NotNull String text, @NotNull Directives directives);
-        M createModule(@NotNull String name, @NotNull List<String> dependencies, @NotNull List<String> friends);
+        M createModule(@NotNull String name, @NotNull List<String> dependencies, @NotNull List<String> friends, @NotNull List<Integer> abiVersions);
     }
 
     public static abstract class TestFileFactoryNoModules<F> implements TestFileFactory<KotlinBaseTest.TestModule, F> {
@@ -221,7 +229,7 @@ public class TestFiles {
         public abstract F create(@NotNull String fileName, @NotNull String text, @NotNull Directives directives);
 
         @Override
-        public KotlinBaseTest.TestModule createModule(@NotNull String name, @NotNull List<String> dependencies, @NotNull List<String> friends) {
+        public KotlinBaseTest.TestModule createModule(@NotNull String name, @NotNull List<String> dependencies, @NotNull List<String> friends, @NotNull List<Integer> abiVersions) {
             return null;
         }
     }

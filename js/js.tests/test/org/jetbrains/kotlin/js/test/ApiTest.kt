@@ -86,6 +86,7 @@ class ApiTest : KotlinTestWithEnvironment() {
                 resolvedLibraries,
                 listOf(),
                 IrFactoryImpl,
+                verifySignatures = true
             ).module.descriptor.packagesSerialized()
         }
 
