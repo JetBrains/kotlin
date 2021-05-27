@@ -10,10 +10,12 @@ fun f(): String = "O"
 
 val g: String? get() = "K"
 
+inline val h: String get() = ""
+
 inline fun <T> i(block: () -> T): T = block()
 
 // FILE: 2.kt
 
 import foo.bar.*
 
-fun box(): String = i { f() + g }
+fun box(): String = i { f() + g + h }
