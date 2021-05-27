@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.inline.InlineUtil.isInlinableParameterExpression
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.org.objectweb.asm.Label
@@ -219,9 +218,6 @@ class PsiInlineCodegen(
             ::PsiDefaultLambda
         )
     }
-
-    override fun descriptorIsDeserialized(memberDescriptor: CallableMemberDescriptor): Boolean =
-        memberDescriptor is DescriptorWithContainerSource
 }
 
 private val FunctionDescriptor.explicitParameters

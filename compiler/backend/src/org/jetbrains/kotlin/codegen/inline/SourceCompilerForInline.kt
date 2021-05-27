@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
@@ -37,7 +38,9 @@ interface SourceCompilerForInline {
 
     fun generateLambdaBody(lambdaInfo: ExpressionLambda, reifiedTypeParameters: ReifiedTypeParametersUsages): SMAPAndMethodNode
 
-    fun compileInlineFunction(jvmSignature: JvmMethodSignature, callDefault: Boolean, asmMethod: Method): SMAPAndMethodNode
+    fun inlineFunctionSignature(jvmSignature: JvmMethodSignature, callDefault: Boolean): Pair<ClassId, Method>?
+
+    fun compileInlineFunction(jvmSignature: JvmMethodSignature, callDefault: Boolean): SMAPAndMethodNode
 
     fun hasFinallyBlocks(): Boolean
 

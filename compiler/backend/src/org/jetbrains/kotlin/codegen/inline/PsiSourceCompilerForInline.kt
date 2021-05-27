@@ -11,16 +11,21 @@ import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.context.*
 import org.jetbrains.kotlin.codegen.coroutines.getOrCreateJvmSuspendFunctionView
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.KotlinLookupLocation
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCallWithAssert
 import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.resolve.jvm.annotations.isCallableMemberCompiledToJvmDefault
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.expressions.LabelResolver
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -214,7 +219,32 @@ class PsiSourceCompilerForInline(
         }
     }
 
-    override fun compileInlineFunction(jvmSignature: JvmMethodSignature, callDefault: Boolean, asmMethod: Method): SMAPAndMethodNode {
+    private fun getDirectMemberAndCallableFromObject(): CallableMemberDescriptor {
+        val directMember = JvmCodegenUtil.getDirectMember(functionDescriptor)
+        return (directMember as? ImportedFromObjectCallableDescriptor<*>)?.callableFromObject ?: directMember
+    }
+
+    override fun inlineFunctionSignature(jvmSignature: JvmMethodSignature, callDefault: Boolean): Pair<ClassId, Method>? {
+        val directMember = getDirectMemberAndCallableFromObject() as? DescriptorWithContainerSource
+            ?: return null
+        val containerId = KotlinTypeMapper.getContainingClassesForDeserializedCallable(directMember).implClassId
+        if (!callDefault) {
+            return containerId to jvmSignature.asmMethod
+        }
+        // This is all available in the `Callable` passed to `PsiInlineCodegen.genCallInner`, but it's not forwarded through the inliner...
+        var result = state.typeMapper.mapDefaultMethod(functionDescriptor, contextKind)
+        if (result.name.contains("-") &&
+            !state.configuration.getBoolean(JVMConfigurationKeys.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME) &&
+            classFileContainsMethod(functionDescriptor, state, result) == false
+        ) {
+            state.typeMapper.useOldManglingRulesForFunctionAcceptingInlineClass = true
+            result = state.typeMapper.mapDefaultMethod(functionDescriptor, contextKind)
+            state.typeMapper.useOldManglingRulesForFunctionAcceptingInlineClass = false
+        }
+        return containerId to result
+    }
+
+    override fun compileInlineFunction(jvmSignature: JvmMethodSignature, callDefault: Boolean): SMAPAndMethodNode {
         val element = DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor)
 
         if (!(element is KtNamedFunction || element is KtPropertyAccessor)) {
@@ -222,6 +252,10 @@ class PsiSourceCompilerForInline(
         }
         val inliningFunction = element as KtDeclarationWithBody?
 
+        val asmMethod = if (callDefault)
+            state.typeMapper.mapDefaultMethod(functionDescriptor, contextKind)
+        else
+            jvmSignature.asmMethod
         val node = MethodNode(
             Opcodes.API_VERSION,
             DescriptorAsmUtil.getMethodAsmFlags(functionDescriptor, context.contextKind, state) or

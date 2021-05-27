@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.ValueKind
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -150,9 +149,6 @@ class IrInlineCodegen(
             ::IrDefaultLambda
         )
     }
-
-    override fun descriptorIsDeserialized(memberDescriptor: CallableMemberDescriptor): Boolean =
-        ((memberDescriptor as IrBasedDeclarationDescriptor<*>).owner as IrMemberWithContainerSource).parentClassId != null
 }
 
 class IrExpressionLambdaImpl(

@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.module
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.doNotAnalyze
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.SUSPENSION_POINT_INSIDE_MONITOR
@@ -104,7 +105,10 @@ class IrSourceCompilerForInline(
         return FunctionCodegen(lambdaInfo.function, codegen.classCodegen).generate(codegen, reifiedTypeParameters)
     }
 
-    override fun compileInlineFunction(jvmSignature: JvmMethodSignature, callDefault: Boolean, asmMethod: Method): SMAPAndMethodNode =
+    override fun inlineFunctionSignature(jvmSignature: JvmMethodSignature, callDefault: Boolean): Pair<ClassId, Method>? =
+        callee.parentClassId?.let { it to jvmSignature.asmMethod }
+
+    override fun compileInlineFunction(jvmSignature: JvmMethodSignature, callDefault: Boolean): SMAPAndMethodNode =
         ClassCodegen.getOrCreate(callee.parentAsClass, codegen.context).generateMethodNode(callee)
 
     override fun hasFinallyBlocks() = data.hasFinallyBlocks()
