@@ -2,10 +2,13 @@ UFile (package = )
     UClass (name = PropertyTest)
         UMethod (name = PropertyTest)
         UMethod (name = getStringRepresentation)
-            [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+            UBlockExpression
+                UReturnExpression
+                    [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
         UMethod (name = setStringRepresentation)
             UParameter (name = value)
-            [!] UnknownKotlinExpression (BLOCK)
+            UBlockExpression
+                [!] UnknownKotlinExpression (CALL_EXPRESSION)
         UMethod (name = setDataFromString)
             UParameter (name = data)
-            [!] UnknownKotlinExpression (BLOCK)
+            UBlockExpression

@@ -4,7 +4,10 @@ import java.lang.Thread
 public final class ObjectsKt {
     private static final var topRunnable: java.lang.Runnable = [!] UnknownKotlinExpression (OBJECT_LITERAL)
     public static final fun getTopRunnable() : java.lang.Runnable = UastEmptyExpression
-    public static final fun main() : void = [!] UnknownKotlinExpression (BLOCK)
+    public static final fun main() : void {
+        [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+        [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+    }
 }
 
 public final class RunnableManager {
@@ -12,6 +15,10 @@ public final class RunnableManager {
     private final var tasks: java.util.List<java.lang.Runnable> = [!] UnknownKotlinExpression (CALL_EXPRESSION)
     private fun RunnableManager() = UastEmptyExpression
     public final fun getTasks() : java.util.List<java.lang.Runnable> = UastEmptyExpression
-    public final fun register(runnable: java.lang.Runnable) : void = [!] UnknownKotlinExpression (BLOCK)
-    public final fun runAll() : void = [!] UnknownKotlinExpression (BLOCK)
+    public final fun register(runnable: java.lang.Runnable) : void {
+        [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+    }
+    public final fun runAll() : void {
+        [!] UnknownKotlinExpression (FOR)
+    }
 }

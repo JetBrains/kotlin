@@ -1,4 +1,8 @@
 UFile (package = ) [public final class InKt {...]
     UClass (name = InKt) [public final class InKt {...}]
-        UMethod (name = foo) [public static final fun foo() : boolean = [!] UnknownKotlinExpression (BLOCK)]
-            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
+        UMethod (name = foo) [public static final fun foo() : boolean {...}]
+            UBlockExpression [{...}] = Nothing
+                [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)] = Undetermined
+                [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)] = Undetermined
+                UReturnExpression [return [!] UnknownKotlinExpression (BINARY_EXPRESSION)] = Nothing
+                    [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)] = Undetermined

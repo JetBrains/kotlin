@@ -14,21 +14,36 @@ UFile (package = ) [import java.lang.Thread...]
         UMethod (name = getFoo) [public static final fun getFoo() : java.lang.Runnable = UastEmptyExpression]
         UMethod (name = setFoo) [public static final fun setFoo(value: java.lang.Runnable) : void = UastEmptyExpression]
             UParameter (name = value) [var value: java.lang.Runnable]
-        UMethod (name = bar) [public static final fun bar() : java.lang.Runnable = [!] UnknownKotlinExpression (BLOCK)]
-            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
+        UMethod (name = bar) [public static final fun bar() : java.lang.Runnable {...}]
+            UBlockExpression [{...}] = Nothing
+                [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)] = Undetermined
+                [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)] = Undetermined
+                [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
+                UReturnExpression [return [!] UnknownKotlinExpression (LAMBDA_EXPRESSION)] = Nothing
+                    [!] UnknownKotlinExpression (LAMBDA_EXPRESSION) [[!] UnknownKotlinExpression (LAMBDA_EXPRESSION)] = Undetermined
         UMethod (name = getBaz) [public static final fun getBaz() : java.lang.Runnable = UastEmptyExpression]
-        UMethod (name = runRunnable) [public static final fun runRunnable(r: java.lang.Runnable) : error.NonExistentClass = [!] UnknownKotlinExpression (CALL_EXPRESSION)]
+        UMethod (name = runRunnable) [public static final fun runRunnable(r: java.lang.Runnable) : error.NonExistentClass {...}]
             UParameter (name = r) [var r: java.lang.Runnable]
-            [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
-        UMethod (name = test1) [public static final fun test1() : void = [!] UnknownKotlinExpression (BLOCK)]
-            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
-        UMethod (name = test2) [public static final fun test2() : void = [!] UnknownKotlinExpression (BLOCK)]
-            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
-        UMethod (name = test3) [public static final fun test3() : void = [!] UnknownKotlinExpression (BLOCK)]
-            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
-        UMethod (name = ambiguousSamAcceptor) [public static final fun ambiguousSamAcceptor(s: java.util.function.Supplier<java.lang.String>) : java.lang.String = [!] UnknownKotlinExpression (CALL_EXPRESSION)]
+            UBlockExpression [{...}] = Nothing
+                UReturnExpression [return [!] UnknownKotlinExpression (CALL_EXPRESSION)] = Nothing
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
+        UMethod (name = test1) [public static final fun test1() : void {...}]
+            UBlockExpression [{...}] = Undetermined
+                [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)] = Undetermined
+        UMethod (name = test2) [public static final fun test2() : void {...}]
+            UBlockExpression [{...}] = Undetermined
+                [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)] = Undetermined
+        UMethod (name = test3) [public static final fun test3() : void {...}]
+            UBlockExpression [{...}] = Undetermined
+                [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
+                [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
+        UMethod (name = ambiguousSamAcceptor) [public static final fun ambiguousSamAcceptor(s: java.util.function.Supplier<java.lang.String>) : java.lang.String {...}]
             UParameter (name = s) [var s: java.util.function.Supplier<java.lang.String>]
-            [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
-        UMethod (name = ambiguousSamAcceptor) [public static final fun ambiguousSamAcceptor(s: java.util.concurrent.Callable<java.lang.String>) : java.lang.String = [!] UnknownKotlinExpression (CALL_EXPRESSION)]
+            UBlockExpression [{...}] = Nothing
+                UReturnExpression [return [!] UnknownKotlinExpression (CALL_EXPRESSION)] = Nothing
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
+        UMethod (name = ambiguousSamAcceptor) [public static final fun ambiguousSamAcceptor(s: java.util.concurrent.Callable<java.lang.String>) : java.lang.String {...}]
             UParameter (name = s) [var s: java.util.concurrent.Callable<java.lang.String>]
-            [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
+            UBlockExpression [{...}] = Nothing
+                UReturnExpression [return [!] UnknownKotlinExpression (CALL_EXPRESSION)] = Nothing
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined

@@ -25,16 +25,26 @@ public final class AOnlyInit {
 
 public final class AWithSecondary {
     private var a: java.lang.String
-    public fun AWithSecondary(i: int) = [!] UnknownKotlinExpression (BLOCK)
-    public fun AWithSecondary(s: java.lang.String) = [!] UnknownKotlinExpression (BLOCK)
+    public fun AWithSecondary(i: int) {
+        [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+    }
+    public fun AWithSecondary(s: java.lang.String) {
+        [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+    }
     public final fun getA() : java.lang.String = UastEmptyExpression
     public final fun setA(value: java.lang.String) : void = UastEmptyExpression
 }
 
 public final class AWithSecondaryInit {
     private var a: java.lang.String
-    public fun AWithSecondaryInit(i: int) = [!] UnknownKotlinExpression (BLOCK)
-    public fun AWithSecondaryInit(s: java.lang.String) = [!] UnknownKotlinExpression (BLOCK)
+    public fun AWithSecondaryInit(i: int) {
+        [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+    }
+    public fun AWithSecondaryInit(s: java.lang.String) {
+        [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+    }
     public final fun getA() : java.lang.String = UastEmptyExpression
     public final fun setA(value: java.lang.String) : void = UastEmptyExpression
 }

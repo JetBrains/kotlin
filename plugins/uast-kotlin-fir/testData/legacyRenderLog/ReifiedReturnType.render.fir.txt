@@ -1,5 +1,7 @@
 public final class ReifiedReturnTypeKt {
-    public static final fun copyWhenGreater(list: java.util.List<? extends T>, threshold: T, threshold2: B) : B = [!] UnknownKotlinExpression (BLOCK)
+    public static final fun copyWhenGreater(list: java.util.List<? extends T>, threshold: T, threshold2: B) : B {
+        return [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+    }
 }
 
 public final class Foo {

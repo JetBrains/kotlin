@@ -1,5 +1,14 @@
 package org.jetbrains.uast.kotlin
 
 public final class LambdaReturnKt {
-    public static final fun foo() : void = [!] UnknownKotlinExpression (BLOCK)
+    public static final fun foo() : void {
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (CALL_EXPRESSION)
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (PROPERTY)
+    }
 }

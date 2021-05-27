@@ -3,5 +3,7 @@ UFile (package = A.B.C) [package A.B.C...]
         UMethod (name = Foo) [public fun Foo() = UastEmptyExpression]
     UClass (name = Bar) [public final class Bar {...}]
         UMethod (name = Bar) [public fun Bar() = UastEmptyExpression]
-        UMethod (name = getFoo) [public final fun getFoo() : A.B.C.Foo = [!] UnknownKotlinExpression (BLOCK)]
-            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
+        UMethod (name = getFoo) [public final fun getFoo() : A.B.C.Foo {...}]
+            UBlockExpression [{...}] = Nothing
+                UReturnExpression [return [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)] = Nothing
+                    [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) [[!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)] = Undetermined

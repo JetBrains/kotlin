@@ -1,31 +1,42 @@
 UFile (package = ) [public final class ParametersDisorderKt {...]
     UClass (name = ParametersDisorderKt) [public final class ParametersDisorderKt {...}]
-        UMethod (name = global) [public static final fun global(a: int, b: float) : void = [!] UnknownKotlinExpression (BLOCK)]
+        UMethod (name = global) [public static final fun global(a: int, b: float) : void {...}]
             UParameter (name = a) [var a: int]
             UParameter (name = b) [var b: float]
-            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
-        UMethod (name = withDefault) [public static final fun withDefault(c: int, d: java.lang.String) : void = [!] UnknownKotlinExpression (BLOCK)]
+            UBlockExpression [{...}] = Undetermined
+        UMethod (name = withDefault) [public static final fun withDefault(c: int, d: java.lang.String) : void {...}]
             UParameter (name = c) [var c: int = "not-yet-compile-time-constant"]
                 ULiteralExpression (value = "not-yet-compile-time-constant") ["not-yet-compile-time-constant"] = "not-yet-compile-time-constant"
             UParameter (name = d) [var d: java.lang.String = "aaa"]
                 ULiteralExpression (value = "aaa") ["aaa"] = "aaa"
-            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
-        UMethod (name = withReceiver) [public static final fun withReceiver($this$withReceiver: java.lang.String, a: int, b: float) : void = [!] UnknownKotlinExpression (BLOCK)]
+            UBlockExpression [{...}] = Undetermined
+        UMethod (name = withReceiver) [public static final fun withReceiver($this$withReceiver: java.lang.String, a: int, b: float) : void {...}]
             UParameter (name = $this$withReceiver) [var $this$withReceiver: java.lang.String]
             UParameter (name = a) [var a: int]
             UParameter (name = b) [var b: float]
-            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
-        UMethod (name = call) [public static final fun call() : void = [!] UnknownKotlinExpression (BLOCK)]
-            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
-        UMethod (name = objectLiteral) [public static final fun objectLiteral() : void = [!] UnknownKotlinExpression (BLOCK)]
-            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
+            UBlockExpression [{...}] = Undetermined
+        UMethod (name = call) [public static final fun call() : void {...}]
+            UBlockExpression [{...}] = Undetermined
+                [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
+                [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
+                [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) [[!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)] = Undetermined
+                [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) [[!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)] = Undetermined
+                [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
+                [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) [[!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)] = Undetermined
+                [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) [[!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)] = Undetermined
+                [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) [[!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)] = Undetermined
+                [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) [[!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)] = Undetermined
+                [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
+        UMethod (name = objectLiteral) [public static final fun objectLiteral() : void {...}]
+            UBlockExpression [{...}] = Undetermined
+                [!] UnknownKotlinExpression (OBJECT_LITERAL) [[!] UnknownKotlinExpression (OBJECT_LITERAL)] = Undetermined
     UClass (name = A) [public final class A {...}]
         UMethod (name = A) [public fun A() = UastEmptyExpression]
-        UMethod (name = with2Receivers) [public final fun with2Receivers($this$with2Receivers: java.lang.String, a: int, b: float) : void = [!] UnknownKotlinExpression (BLOCK)]
+        UMethod (name = with2Receivers) [public final fun with2Receivers($this$with2Receivers: java.lang.String, a: int, b: float) : void {...}]
             UParameter (name = $this$with2Receivers) [var $this$with2Receivers: java.lang.String]
             UParameter (name = a) [var a: int]
             UParameter (name = b) [var b: float]
-            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
+            UBlockExpression [{...}] = Undetermined
     UClass (name = Parent) [public class Parent {...}]
         UMethod (name = Parent) [public fun Parent(a: java.lang.String, b: int) = UastEmptyExpression]
             UParameter (name = a) [var a: java.lang.String]

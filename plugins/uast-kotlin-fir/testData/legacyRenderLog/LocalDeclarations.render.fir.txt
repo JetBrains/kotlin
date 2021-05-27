@@ -1,3 +1,9 @@
 public final class LocalDeclarationsKt {
-    public static final fun foo() : boolean = [!] UnknownKotlinExpression (BLOCK)
+    public static final fun foo() : boolean {
+        [!] UnknownKotlinExpression (CLASS)
+        [!] UnknownKotlinExpression (FUN)
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (FUN)
+        return [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+    }
 }

@@ -1,3 +1,6 @@
 public final class WhenAndDestructingKt {
-    public static final fun getElementsAdditionalResolve(string: java.lang.String) : java.lang.String = [!] UnknownKotlinExpression (BLOCK)
+    public static final fun getElementsAdditionalResolve(string: java.lang.String) : java.lang.String {
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (WHEN)
+    }
 }

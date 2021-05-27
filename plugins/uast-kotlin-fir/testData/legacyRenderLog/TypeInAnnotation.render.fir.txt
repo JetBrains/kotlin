@@ -1,4 +1,5 @@
 public final class C {
     public fun C() = UastEmptyExpression
-    public final fun foo() : void = [!] UnknownKotlinExpression (BLOCK)
+    public final fun foo() : void {
+    }
 }

@@ -5,5 +5,5 @@ UFile (package = ) [public final class MethodReferenceKt {...]
         UMethod (name = getX) [public static final fun getX() : kotlin.reflect.KFunction<? extends kotlin.Unit> = UastEmptyExpression]
     UClass (name = Foo) [public final class Foo {...}]
         UMethod (name = Foo) [public fun Foo() = UastEmptyExpression]
-        UMethod (name = bar) [public final fun bar() : void = [!] UnknownKotlinExpression (BLOCK)]
-            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
+        UMethod (name = bar) [public final fun bar() : void {...}]
+            UBlockExpression [{...}] = Undetermined

@@ -2,6 +2,15 @@ import java.io.Closeable
 import java.io.InputStream
 
 public final class AnonymousKt {
-    public static final fun foo() : void = [!] UnknownKotlinExpression (BLOCK)
-    public static final fun withErr() : void = [!] UnknownKotlinExpression (BLOCK)
+    public static final fun foo() : void {
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (PROPERTY)
+    }
+    public static final fun withErr() : void {
+        [!] UnknownKotlinExpression (PROPERTY)
+    }
 }

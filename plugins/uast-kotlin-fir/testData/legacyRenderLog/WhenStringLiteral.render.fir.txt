@@ -3,5 +3,8 @@ public final class WhenStringLiteralKt {
     private static final var b: int = [!] UnknownKotlinExpression (WHEN)
     public static final fun getA() : java.lang.String = UastEmptyExpression
     public static final fun getB() : int = UastEmptyExpression
-    public static final fun <no name provided>() : void = [!] UnknownKotlinExpression (BLOCK)
+    public static final fun <no name provided>() : void {
+        "abc1"
+        "def1"
+    }
 }

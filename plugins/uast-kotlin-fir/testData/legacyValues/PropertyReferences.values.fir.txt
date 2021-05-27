@@ -1,10 +1,21 @@
 UFile (package = ) [public final class PropertyReferencesKt {...]
     UClass (name = PropertyReferencesKt) [public final class PropertyReferencesKt {...}]
-        UMethod (name = properties) [public static final fun properties() : void = [!] UnknownKotlinExpression (BLOCK)]
-            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
-        UMethod (name = ext) [public static final fun ext($this$ext: A) : void = [!] UnknownKotlinExpression (BLOCK)]
+        UMethod (name = properties) [public static final fun properties() : void {...}]
+            UBlockExpression [{...}] = Undetermined
+                [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)] = Undetermined
+                [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)] = Undetermined
+                [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)] = Undetermined
+                [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)] = Undetermined
+                [!] UnknownKotlinExpression (PREFIX_EXPRESSION) [[!] UnknownKotlinExpression (PREFIX_EXPRESSION)] = Undetermined
+                [!] UnknownKotlinExpression (POSTFIX_EXPRESSION) [[!] UnknownKotlinExpression (POSTFIX_EXPRESSION)] = Undetermined
+        UMethod (name = ext) [public static final fun ext($this$ext: A) : void {...}]
             UParameter (name = $this$ext) [var $this$ext: A]
-            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
+            UBlockExpression [{...}] = Undetermined
+                [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)] = Undetermined
+                [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)] = Undetermined
+                [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)] = Undetermined
+                [!] UnknownKotlinExpression (PREFIX_EXPRESSION) [[!] UnknownKotlinExpression (PREFIX_EXPRESSION)] = Undetermined
+                [!] UnknownKotlinExpression (POSTFIX_EXPRESSION) [[!] UnknownKotlinExpression (POSTFIX_EXPRESSION)] = Undetermined
     UClass (name = A) [public final class A {...}]
         UField (name = privateProp) [private var privateProp: int = "not-yet-compile-time-constant"]
             ULiteralExpression (value = "not-yet-compile-time-constant") ["not-yet-compile-time-constant"] = "not-yet-compile-time-constant"
@@ -14,6 +25,10 @@ UFile (package = ) [public final class PropertyReferencesKt {...]
         UMethod (name = getMutableProp) [public final fun getMutableProp() : int = UastEmptyExpression]
         UMethod (name = setMutableProp) [public final fun setMutableProp(value: int) : void = UastEmptyExpression]
             UParameter (name = value) [var value: int]
-        UMethod (name = add) [public final fun add(x: int) : int = [!] UnknownKotlinExpression (BLOCK)]
+        UMethod (name = add) [public final fun add(x: int) : int {...}]
             UParameter (name = x) [var x: int]
-            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
+            UBlockExpression [{...}] = Nothing
+                [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)] = Undetermined
+                [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)] = Undetermined
+                UReturnExpression [return [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Nothing
+                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined

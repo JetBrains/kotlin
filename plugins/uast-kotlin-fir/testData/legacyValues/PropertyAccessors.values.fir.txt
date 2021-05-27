@@ -1,11 +1,14 @@
 UFile (package = ) [public final class PropertyTest {...]
     UClass (name = PropertyTest) [public final class PropertyTest {...}]
         UMethod (name = PropertyTest) [public fun PropertyTest() = UastEmptyExpression]
-        UMethod (name = getStringRepresentation) [public final fun getStringRepresentation() : java.lang.String = [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)]
-            [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) [[!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)] = Undetermined
-        UMethod (name = setStringRepresentation) [public final fun setStringRepresentation(value: java.lang.String) : void = [!] UnknownKotlinExpression (BLOCK)]
+        UMethod (name = getStringRepresentation) [public final fun getStringRepresentation() : java.lang.String {...}]
+            UBlockExpression [{...}] = Nothing
+                UReturnExpression [return [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)] = Nothing
+                    [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) [[!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)] = Undetermined
+        UMethod (name = setStringRepresentation) [public final fun setStringRepresentation(value: java.lang.String) : void {...}]
             UParameter (name = value) [var value: java.lang.String]
-            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
-        UMethod (name = setDataFromString) [public final fun setDataFromString(data: java.lang.String) : void = [!] UnknownKotlinExpression (BLOCK)]
+            UBlockExpression [{...}] = Undetermined
+                [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
+        UMethod (name = setDataFromString) [public final fun setDataFromString(data: java.lang.String) : void {...}]
             UParameter (name = data) [var data: java.lang.String]
-            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
+            UBlockExpression [{...}] = Undetermined

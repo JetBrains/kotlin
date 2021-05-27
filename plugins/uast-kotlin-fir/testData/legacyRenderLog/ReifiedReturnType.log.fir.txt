@@ -4,6 +4,8 @@ UFile (package = )
             UParameter (name = list)
             UParameter (name = threshold)
             UParameter (name = threshold2)
-            [!] UnknownKotlinExpression (BLOCK)
+            UBlockExpression
+                UReturnExpression
+                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
     UClass (name = Foo)
         UMethod (name = Foo)

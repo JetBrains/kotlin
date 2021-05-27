@@ -2,6 +2,7 @@ UFile (package = )
     UClass (name = InnerNonFixedTypeVariableKt)
         UMethod (name = test)
             UParameter (name = list)
-            [!] UnknownKotlinExpression (BLOCK)
+            UBlockExpression
+                [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
     UClass (name = Some)
         UMethod (name = Some)

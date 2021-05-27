@@ -180,16 +180,3 @@ class KotlinUMethodWithFakeLightDelegate internal constructor(
 
     override fun hashCode(): Int = original.hashCode()
 }
-
-internal fun wrapExpressionBody(function: UElement, bodyExpression: KtExpression): UExpression? = when (bodyExpression) {
-    !is KtBlockExpression -> {
-        KotlinUBlockExpression.KotlinLazyUBlockExpression(function) { block ->
-            val implicitReturn = KotlinUImplicitReturnExpression(block)
-            val uBody = function.getLanguagePlugin().convertElement(bodyExpression, implicitReturn) as? UExpression
-                ?: return@KotlinLazyUBlockExpression emptyList()
-            listOf(implicitReturn.apply { returnExpression = uBody })
-        }
-
-    }
-    else -> function.getLanguagePlugin().convertElement(bodyExpression, function) as? UExpression
-}

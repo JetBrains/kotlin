@@ -1,7 +1,15 @@
 UFile (package = ) [public final class AnnotatedExpressionsKt {...]
     UClass (name = AnnotatedExpressionsKt) [public final class AnnotatedExpressionsKt {...}]
-        UMethod (name = foo) [public static final fun foo() : void = [!] UnknownKotlinExpression (BLOCK)]
-            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
-        UMethod (name = annotatedSwitch) [public static final fun annotatedSwitch(str: java.lang.String) : java.lang.Integer = [!] UnknownKotlinExpression (WHEN)]
+        UMethod (name = foo) [public static final fun foo() : void {...}]
+            UBlockExpression [{...}] = Undetermined
+                [!] UnknownKotlinExpression (ANNOTATED_EXPRESSION) [[!] UnknownKotlinExpression (ANNOTATED_EXPRESSION)] = Undetermined
+                [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)] = Undetermined
+                [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)] = Undetermined
+                [!] UnknownKotlinExpression (ANNOTATED_EXPRESSION) [[!] UnknownKotlinExpression (ANNOTATED_EXPRESSION)] = Undetermined
+                [!] UnknownKotlinExpression (ANNOTATED_EXPRESSION) [[!] UnknownKotlinExpression (ANNOTATED_EXPRESSION)] = Undetermined
+                [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)] = Undetermined
+        UMethod (name = annotatedSwitch) [public static final fun annotatedSwitch(str: java.lang.String) : java.lang.Integer {...}]
             UParameter (name = str) [var str: java.lang.String]
-            [!] UnknownKotlinExpression (WHEN) [[!] UnknownKotlinExpression (WHEN)] = Undetermined
+            UBlockExpression [{...}] = Nothing
+                UReturnExpression [return [!] UnknownKotlinExpression (WHEN)] = Nothing
+                    [!] UnknownKotlinExpression (WHEN) [[!] UnknownKotlinExpression (WHEN)] = Undetermined

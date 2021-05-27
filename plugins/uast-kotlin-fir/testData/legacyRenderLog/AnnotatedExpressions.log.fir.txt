@@ -1,7 +1,15 @@
 UFile (package = )
     UClass (name = AnnotatedExpressionsKt)
         UMethod (name = foo)
-            [!] UnknownKotlinExpression (BLOCK)
+            UBlockExpression
+                [!] UnknownKotlinExpression (ANNOTATED_EXPRESSION)
+                [!] UnknownKotlinExpression (PROPERTY)
+                [!] UnknownKotlinExpression (PROPERTY)
+                [!] UnknownKotlinExpression (ANNOTATED_EXPRESSION)
+                [!] UnknownKotlinExpression (ANNOTATED_EXPRESSION)
+                [!] UnknownKotlinExpression (PROPERTY)
         UMethod (name = annotatedSwitch)
             UParameter (name = str)
-            [!] UnknownKotlinExpression (WHEN)
+            UBlockExpression
+                UReturnExpression
+                    [!] UnknownKotlinExpression (WHEN)

@@ -218,13 +218,6 @@ internal fun KtClassOrObject.toPsiType(): PsiType {
     return PsiTypesUtil.getClassType(lightClass)
 }
 
-internal fun KtElement.canAnalyze(): Boolean {
-    if (!isValid) return false
-    val containingFile = containingFile as? KtFile ?: return false // EA-114080, EA-113475, EA-134193
-    if (containingFile.doNotAnalyze != null) return false // To prevent exceptions during analysis
-    return true
-}
-
 internal fun KtElement.analyze(): BindingContext {
     if (!canAnalyze()) return BindingContext.EMPTY
     return ServiceManager.getService(project, KotlinUastResolveProviderService::class.java)

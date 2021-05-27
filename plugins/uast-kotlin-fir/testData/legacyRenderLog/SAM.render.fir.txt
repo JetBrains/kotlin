@@ -10,12 +10,30 @@ public final class SAMKt {
     public static final fun getNotSam() : kotlin.jvm.functions.Function0<? extends kotlin.Unit> = UastEmptyExpression
     public static final fun getFoo() : java.lang.Runnable = UastEmptyExpression
     public static final fun setFoo(value: java.lang.Runnable) : void = UastEmptyExpression
-    public static final fun bar() : java.lang.Runnable = [!] UnknownKotlinExpression (BLOCK)
+    public static final fun bar() : java.lang.Runnable {
+        [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (CALL_EXPRESSION)
+        return [!] UnknownKotlinExpression (LAMBDA_EXPRESSION)
+    }
     public static final fun getBaz() : java.lang.Runnable = UastEmptyExpression
-    public static final fun runRunnable(r: java.lang.Runnable) : error.NonExistentClass = [!] UnknownKotlinExpression (CALL_EXPRESSION)
-    public static final fun test1() : void = [!] UnknownKotlinExpression (BLOCK)
-    public static final fun test2() : void = [!] UnknownKotlinExpression (BLOCK)
-    public static final fun test3() : void = [!] UnknownKotlinExpression (BLOCK)
-    public static final fun ambiguousSamAcceptor(s: java.util.function.Supplier<java.lang.String>) : java.lang.String = [!] UnknownKotlinExpression (CALL_EXPRESSION)
-    public static final fun ambiguousSamAcceptor(s: java.util.concurrent.Callable<java.lang.String>) : java.lang.String = [!] UnknownKotlinExpression (CALL_EXPRESSION)
+    public static final fun runRunnable(r: java.lang.Runnable) : error.NonExistentClass {
+        return [!] UnknownKotlinExpression (CALL_EXPRESSION)
+    }
+    public static final fun test1() : void {
+        [!] UnknownKotlinExpression (PROPERTY)
+    }
+    public static final fun test2() : void {
+        [!] UnknownKotlinExpression (PROPERTY)
+    }
+    public static final fun test3() : void {
+        [!] UnknownKotlinExpression (CALL_EXPRESSION)
+        [!] UnknownKotlinExpression (CALL_EXPRESSION)
+    }
+    public static final fun ambiguousSamAcceptor(s: java.util.function.Supplier<java.lang.String>) : java.lang.String {
+        return [!] UnknownKotlinExpression (CALL_EXPRESSION)
+    }
+    public static final fun ambiguousSamAcceptor(s: java.util.concurrent.Callable<java.lang.String>) : java.lang.String {
+        return [!] UnknownKotlinExpression (CALL_EXPRESSION)
+    }
 }

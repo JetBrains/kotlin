@@ -24,23 +24,29 @@ UFile (package = ) [public final class A {...]
         UMethod (name = AOnlyInit) [public fun AOnlyInit() = UastEmptyExpression]
     UClass (name = AWithSecondary) [public final class AWithSecondary {...}]
         UField (name = a) [private var a: java.lang.String]
-        UMethod (name = AWithSecondary) [public fun AWithSecondary(i: int) = [!] UnknownKotlinExpression (BLOCK)]
+        UMethod (name = AWithSecondary) [public fun AWithSecondary(i: int) {...}]
             UParameter (name = i) [var i: int]
-            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
-        UMethod (name = AWithSecondary) [public fun AWithSecondary(s: java.lang.String) = [!] UnknownKotlinExpression (BLOCK)]
+            UBlockExpression [{...}] = Undetermined
+                [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)] = Undetermined
+        UMethod (name = AWithSecondary) [public fun AWithSecondary(s: java.lang.String) {...}]
             UParameter (name = s) [var s: java.lang.String]
-            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
+            UBlockExpression [{...}] = Undetermined
+                [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)] = Undetermined
         UMethod (name = getA) [public final fun getA() : java.lang.String = UastEmptyExpression]
         UMethod (name = setA) [public final fun setA(value: java.lang.String) : void = UastEmptyExpression]
             UParameter (name = value) [var value: java.lang.String]
     UClass (name = AWithSecondaryInit) [public final class AWithSecondaryInit {...}]
         UField (name = a) [private var a: java.lang.String]
-        UMethod (name = AWithSecondaryInit) [public fun AWithSecondaryInit(i: int) = [!] UnknownKotlinExpression (BLOCK)]
+        UMethod (name = AWithSecondaryInit) [public fun AWithSecondaryInit(i: int) {...}]
             UParameter (name = i) [var i: int]
-            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
-        UMethod (name = AWithSecondaryInit) [public fun AWithSecondaryInit(s: java.lang.String) = [!] UnknownKotlinExpression (BLOCK)]
+            UBlockExpression [{...}] = Undetermined
+                [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)] = Undetermined
+        UMethod (name = AWithSecondaryInit) [public fun AWithSecondaryInit(s: java.lang.String) {...}]
             UParameter (name = s) [var s: java.lang.String]
-            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
+            UBlockExpression [{...}] = Undetermined
+                [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)] = Undetermined
+                [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)] = Undetermined
+                [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) [[!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)] = Undetermined
         UMethod (name = getA) [public final fun getA() : java.lang.String = UastEmptyExpression]
         UMethod (name = setA) [public final fun setA(value: java.lang.String) : void = UastEmptyExpression]
             UParameter (name = value) [var value: java.lang.String]

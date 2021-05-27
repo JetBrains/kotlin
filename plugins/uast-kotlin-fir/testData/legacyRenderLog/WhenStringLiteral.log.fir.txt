@@ -7,4 +7,6 @@ UFile (package = )
         UMethod (name = getA)
         UMethod (name = getB)
         UMethod (name = <no name provided>)
-            [!] UnknownKotlinExpression (BLOCK)
+            UBlockExpression
+                ULiteralExpression (value = "abc1")
+                ULiteralExpression (value = "def1")

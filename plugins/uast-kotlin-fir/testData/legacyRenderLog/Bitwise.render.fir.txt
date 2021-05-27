@@ -1,4 +1,24 @@
 public final class BitwiseKt {
-    public static final fun foo() : int = [!] UnknownKotlinExpression (BLOCK)
-    public static final fun bar() : long = [!] UnknownKotlinExpression (BLOCK)
+    public static final fun foo() : int {
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (PROPERTY)
+        return [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+    }
+    public static final fun bar() : long {
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (PROPERTY)
+        return [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+    }
 }

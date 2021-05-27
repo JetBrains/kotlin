@@ -4,10 +4,15 @@ UFile (package = )
             ULiteralExpression (value = "not-yet-compile-time-constant")
         UMethod (name = getProp1)
         UMethod (name = getProp2)
-            ULiteralExpression (value = "not-yet-compile-time-constant")
+            UBlockExpression
+                UReturnExpression
+                    ULiteralExpression (value = "not-yet-compile-time-constant")
         UMethod (name = getProp3)
-            ULiteralExpression (value = "not-yet-compile-time-constant")
+            UBlockExpression
+                UReturnExpression
+                    ULiteralExpression (value = "not-yet-compile-time-constant")
         UMethod (name = setProp3)
             UParameter (name = value)
-            [!] UnknownKotlinExpression (BLOCK)
+            UBlockExpression
+                [!] UnknownKotlinExpression (BINARY_EXPRESSION)
     UClass (name = TestAnnotation)

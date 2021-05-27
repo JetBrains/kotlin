@@ -1,5 +1,7 @@
 public abstract interface Foo {
-    public fun bar() : java.lang.String = "Hello!"
+    public fun bar() : java.lang.String {
+        return "Hello!"
+    }
 }
 
 public final class Baz : null {

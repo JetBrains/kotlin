@@ -5,4 +5,4 @@ UFile (package = )
                 ULiteralExpression (value = "not-yet-compile-time-constant")
             UParameter (name = foo)
                 ULiteralExpression (value = "not-yet-compile-time-constant")
-            [!] UnknownKotlinExpression (BLOCK)
+            UBlockExpression

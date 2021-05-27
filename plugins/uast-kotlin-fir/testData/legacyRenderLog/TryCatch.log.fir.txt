@@ -2,20 +2,22 @@ UFile (package = )
     UClass (name = TryCatch)
         UMethod (name = TryCatch)
         UMethod (name = catches)
-            [!] UnknownKotlinExpression (BLOCK)
+            UBlockExpression
+                [!] UnknownKotlinExpression (TRY)
         UMethod (name = body)
-            [!] UnknownKotlinExpression (BLOCK)
+            UBlockExpression
         UMethod (name = catcher)
-            [!] UnknownKotlinExpression (BLOCK)
+            UBlockExpression
         UMethod (name = finalizer)
-            [!] UnknownKotlinExpression (BLOCK)
+            UBlockExpression
     UClass (name = TryCatchAnnotations)
         UMethod (name = TryCatchAnnotations)
         UMethod (name = catches)
-            [!] UnknownKotlinExpression (BLOCK)
+            UBlockExpression
+                [!] UnknownKotlinExpression (TRY)
         UMethod (name = body)
-            [!] UnknownKotlinExpression (BLOCK)
+            UBlockExpression
         UMethod (name = catcher)
-            [!] UnknownKotlinExpression (BLOCK)
+            UBlockExpression
         UMethod (name = finalizer)
-            [!] UnknownKotlinExpression (BLOCK)
+            UBlockExpression

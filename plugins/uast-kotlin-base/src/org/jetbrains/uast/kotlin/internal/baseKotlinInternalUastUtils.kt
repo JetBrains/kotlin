@@ -10,10 +10,7 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightMember
-import org.jetbrains.kotlin.psi.KtBlockExpression
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtPsiUtil
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.uast.UDeclaration
 import org.jetbrains.uast.UElement
 import java.util.function.Supplier
@@ -44,4 +41,11 @@ fun KtExpression.unwrapBlockOrParenthesis(): KtExpression {
         return KtPsiUtil.safeDeparenthesize(statement)
     }
     return innerExpression
+}
+
+fun KtElement.canAnalyze(): Boolean {
+    if (!isValid) return false
+    val containingFile = containingFile as? KtFile ?: return false // EA-114080, EA-113475, EA-134193
+    if (containingFile.doNotAnalyze != null) return false // To prevent exceptions during analysis
+    return true
 }

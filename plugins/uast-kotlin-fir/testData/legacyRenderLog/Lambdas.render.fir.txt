@@ -1,7 +1,15 @@
 import java.util.stream.Stream
 
 public final class LambdasKt {
-    public static final fun foo() : void = [!] UnknownKotlinExpression (BLOCK)
-    public static final fun doSelectItem(selectItemFunction: kotlin.jvm.functions.Function0<? extends kotlin.Unit>) : void = [!] UnknownKotlinExpression (BLOCK)
-    public static final fun lambdaInPlaceCall() : void = [!] UnknownKotlinExpression (BLOCK)
+    public static final fun foo() : void {
+        [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+    }
+    public static final fun doSelectItem(selectItemFunction: kotlin.jvm.functions.Function0<? extends kotlin.Unit>) : void {
+        [!] UnknownKotlinExpression (CALL_EXPRESSION)
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (CALL_EXPRESSION)
+    }
+    public static final fun lambdaInPlaceCall() : void {
+        [!] UnknownKotlinExpression (WHILE)
+    }
 }

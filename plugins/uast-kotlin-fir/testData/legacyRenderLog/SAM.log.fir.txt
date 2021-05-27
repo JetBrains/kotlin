@@ -15,20 +15,35 @@ UFile (package = )
         UMethod (name = setFoo)
             UParameter (name = value)
         UMethod (name = bar)
-            [!] UnknownKotlinExpression (BLOCK)
+            UBlockExpression
+                [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+                [!] UnknownKotlinExpression (PROPERTY)
+                [!] UnknownKotlinExpression (CALL_EXPRESSION)
+                UReturnExpression
+                    [!] UnknownKotlinExpression (LAMBDA_EXPRESSION)
         UMethod (name = getBaz)
         UMethod (name = runRunnable)
             UParameter (name = r)
-            [!] UnknownKotlinExpression (CALL_EXPRESSION)
+            UBlockExpression
+                UReturnExpression
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION)
         UMethod (name = test1)
-            [!] UnknownKotlinExpression (BLOCK)
+            UBlockExpression
+                [!] UnknownKotlinExpression (PROPERTY)
         UMethod (name = test2)
-            [!] UnknownKotlinExpression (BLOCK)
+            UBlockExpression
+                [!] UnknownKotlinExpression (PROPERTY)
         UMethod (name = test3)
-            [!] UnknownKotlinExpression (BLOCK)
+            UBlockExpression
+                [!] UnknownKotlinExpression (CALL_EXPRESSION)
+                [!] UnknownKotlinExpression (CALL_EXPRESSION)
         UMethod (name = ambiguousSamAcceptor)
             UParameter (name = s)
-            [!] UnknownKotlinExpression (CALL_EXPRESSION)
+            UBlockExpression
+                UReturnExpression
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION)
         UMethod (name = ambiguousSamAcceptor)
             UParameter (name = s)
-            [!] UnknownKotlinExpression (CALL_EXPRESSION)
+            UBlockExpression
+                UReturnExpression
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION)

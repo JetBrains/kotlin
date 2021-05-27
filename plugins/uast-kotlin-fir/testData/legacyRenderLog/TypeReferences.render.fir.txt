@@ -1,4 +1,18 @@
 public final class TypeReferencesKt {
-    public static final fun foo(parameter: int) : java.lang.String = [!] UnknownKotlinExpression (BLOCK)
-    public static final fun parameterizedFoo(arg: T) : void = [!] UnknownKotlinExpression (BLOCK)
+    public static final fun foo(parameter: int) : java.lang.String {
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (PROPERTY)
+        return [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+    }
+    public static final fun parameterizedFoo(arg: T) : void {
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (CALL_EXPRESSION)
+    }
 }

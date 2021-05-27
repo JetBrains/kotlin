@@ -6,5 +6,7 @@ UFile (package = ) [public final class WhenStringLiteralKt {...]
             [!] UnknownKotlinExpression (WHEN) [[!] UnknownKotlinExpression (WHEN)] = Undetermined
         UMethod (name = getA) [public static final fun getA() : java.lang.String = UastEmptyExpression]
         UMethod (name = getB) [public static final fun getB() : int = UastEmptyExpression]
-        UMethod (name = <no name provided>) [public static final fun <no name provided>() : void = [!] UnknownKotlinExpression (BLOCK)]
-            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
+        UMethod (name = <no name provided>) [public static final fun <no name provided>() : void {...}]
+            UBlockExpression [{...}] = "def1"
+                ULiteralExpression (value = "abc1") ["abc1"] = "abc1"
+                ULiteralExpression (value = "def1") ["def1"] = "def1"

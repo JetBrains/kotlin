@@ -2,7 +2,10 @@ UFile (package = )
     UClass (name = TestPropertyInitializer)
         UMethod (name = TestPropertyInitializer)
         UMethod (name = getWithSetter)
-            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+            UBlockExpression
+                UReturnExpression
+                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
         UMethod (name = setWithSetter)
             UParameter (name = p)
-            [!] UnknownKotlinExpression (BLOCK)
+            UBlockExpression
+                [!] UnknownKotlinExpression (BINARY_EXPRESSION)
