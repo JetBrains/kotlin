@@ -9,11 +9,13 @@ import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.inline.InlineCodegen
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.isCheckParameterIsNotNull
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.FunctionImportedFromObject
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForReturnType
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
@@ -65,13 +67,14 @@ class DelegatedPropertiesCodegenHelper(private val state: GenerationState) {
             this
 
     private fun isDelegatedPropertyMetadataRequiredForFunctionFromBinaries(calleeDescriptor: FunctionDescriptor): Boolean {
-        assert(calleeDescriptor is DescriptorWithContainerSource) {
+        require(calleeDescriptor is DescriptorWithContainerSource) {
             "Function descriptor from binaries expected: $calleeDescriptor"
         }
-
         val metadataParameterIndex = getMetadataParameterIndex(calleeDescriptor)
-        val methodNode = InlineCodegen.createSpecialInlineMethodNodeFromBinaries(calleeDescriptor, state)
-
+        val containerId = KotlinTypeMapper.getContainingClassesForDeserializedCallable(calleeDescriptor).implClassId
+        val asmMethod = state.typeMapper.mapAsmMethod(calleeDescriptor)
+        val isMangled = requiresFunctionNameManglingForReturnType(calleeDescriptor)
+        val methodNode = InlineCodegen.loadCompiledInlineFunction(containerId, asmMethod, calleeDescriptor.isSuspend, isMangled, state).node
         return isMetadataParameterUsedInCompiledMethodBody(metadataParameterIndex, methodNode)
     }
 

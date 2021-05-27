@@ -6,28 +6,23 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
 import org.jetbrains.kotlin.codegen.context.ClosureContext
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
-import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicArrayConstructors
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.Position
 import org.jetbrains.kotlin.incremental.components.ScopeKind
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.inline.isInlineOnly
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForReturnType
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.org.objectweb.asm.Label
@@ -250,8 +245,6 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
     abstract fun extractDefaultLambdas(node: MethodNode): List<DefaultLambda>
 
-    abstract fun descriptorIsDeserialized(memberDescriptor: CallableMemberDescriptor): Boolean
-
     private fun generateAndInsertFinallyBlocks(
         intoNode: MethodNode,
         insertPoints: List<MethodInliner.PointForExternalFinallyBlocks>,
@@ -433,144 +426,63 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         typeArguments: List<TypeParameterMarker>?,
         typeSystem: TypeSystemCommonBackendContext
     ): SMAPAndMethodNode {
-        val intrinsic = generateInlineIntrinsic(state, functionDescriptor, typeArguments, typeSystem)
+        val intrinsic = generateInlineIntrinsic(state, functionDescriptor, jvmSignature.asmMethod, typeArguments, typeSystem)
         if (intrinsic != null) {
-            return SMAPAndMethodNode(intrinsic, createDefaultFakeSMAP())
+            return SMAPAndMethodNode(intrinsic, SMAP(listOf()))
         }
-
-        var asmMethod = mapMethod(callDefault)
-        if (asmMethod.name.contains("-") &&
-            !state.configuration.getBoolean(JVMConfigurationKeys.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME) &&
-            classFileContainsMethod(functionDescriptor, state, asmMethod) == false
-        ) {
-            state.typeMapper.useOldManglingRulesForFunctionAcceptingInlineClass = true
-            asmMethod = mapMethod(callDefault)
-            state.typeMapper.useOldManglingRulesForFunctionAcceptingInlineClass = false
+        sourceCompiler.inlineFunctionSignature(jvmSignature, callDefault)?.let { (containerId, asmMethod) ->
+            val isMangled = requiresFunctionNameManglingForReturnType(functionDescriptor)
+            return loadCompiledInlineFunction(containerId, asmMethod, functionDescriptor.isSuspend, isMangled, state)
         }
-
-        val directMember = getDirectMemberAndCallableFromObject(functionDescriptor)
-        if (!isBuiltInArrayIntrinsic(functionDescriptor) && !descriptorIsDeserialized(directMember)) {
-            val node = sourceCompiler.compileInlineFunction(jvmSignature, callDefault, asmMethod)
-            node.node.preprocessSuspendMarkers(forInline = true, keepFakeContinuation = false)
-            return node
+        return sourceCompiler.compileInlineFunction(jvmSignature, callDefault).apply {
+            node.preprocessSuspendMarkers(forInline = true, keepFakeContinuation = false)
         }
-
-        return getCompiledMethodNodeInner(functionDescriptor, directMember, asmMethod, methodOwner, state, jvmSignature)
     }
 
-    private fun mapMethod(callDefault: Boolean): Method =
-        if (callDefault) state.typeMapper.mapDefaultMethod(functionDescriptor, sourceCompiler.contextKind)
-        else mangleSuspendInlineFunctionAsmMethodIfNeeded(functionDescriptor, jvmSignature.asmMethod)
-
     companion object {
-
-        internal fun createSpecialInlineMethodNodeFromBinaries(functionDescriptor: FunctionDescriptor, state: GenerationState): MethodNode {
-            val directMember = getDirectMemberAndCallableFromObject(functionDescriptor)
-            assert(directMember is DescriptorWithContainerSource) {
-                "Function is not in binaries: $functionDescriptor"
-            }
-            assert(directMember is FunctionDescriptor && directMember.isOperator) {
-                "Operator function expected: $directMember"
-            }
-
-            val methodOwner = state.typeMapper.mapImplementationOwner(functionDescriptor)
-            val jvmSignature = state.typeMapper.mapSignatureWithGeneric(functionDescriptor, OwnerKind.IMPLEMENTATION)
-
-            val asmMethod = mangleSuspendInlineFunctionAsmMethodIfNeeded(functionDescriptor, jvmSignature.asmMethod)
-
-            return getCompiledMethodNodeInner(functionDescriptor, directMember, asmMethod, methodOwner, state, jvmSignature).node
-        }
-
-        private fun getCompiledMethodNodeInner(
-            functionDescriptor: FunctionDescriptor,
-            directMember: CallableMemberDescriptor,
+        internal fun loadCompiledInlineFunction(
+            containerId: ClassId,
             asmMethod: Method,
-            methodOwner: Type,
-            state: GenerationState,
-            jvmSignature: JvmMethodSignature
+            isSuspend: Boolean,
+            isMangled: Boolean,
+            state: GenerationState
         ): SMAPAndMethodNode {
-            val methodId = MethodId(methodOwner.internalName, asmMethod)
-
-            val resultInCache = state.inlineCache.methodNodeById.getOrPut(methodId) {
-                val result = doCreateMethodNodeFromCompiled(directMember, state, asmMethod)
-                    ?: if (functionDescriptor.isSuspend)
-                        doCreateMethodNodeFromCompiled(directMember, state, jvmSignature.asmMethod)
-                    else
-                        null
-                result ?: throw IllegalStateException("Couldn't obtain compiled function body for $functionDescriptor")
-            }
-
-            return SMAPAndMethodNode(cloneMethodNode(resultInCache.node), resultInCache.classSMAP)
-        }
-
-        private fun createDefaultFakeSMAP() = SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1)
-
-        // For suspend inline functions we generate two methods:
-        // 1) normal one: with state machine to call directly
-        // 2) for inliner: with mangled name and without state machine
-        private fun mangleSuspendInlineFunctionAsmMethodIfNeeded(functionDescriptor: FunctionDescriptor, asmMethod: Method): Method {
-            if (!functionDescriptor.isSuspend) return asmMethod
-            return Method("${asmMethod.name}$FOR_INLINE_SUFFIX", asmMethod.descriptor)
-        }
-
-        private fun getDirectMemberAndCallableFromObject(functionDescriptor: FunctionDescriptor): CallableMemberDescriptor {
-            val directMember = JvmCodegenUtil.getDirectMember(functionDescriptor)
-            return (directMember as? ImportedFromObjectCallableDescriptor<*>)?.callableFromObject ?: directMember
-        }
-
-        private fun doCreateMethodNodeFromCompiled(
-            callableDescriptor: CallableMemberDescriptor,
-            state: GenerationState,
-            asmMethod: Method
-        ): SMAPAndMethodNode? {
-            if (isBuiltInArrayIntrinsic(callableDescriptor)) {
-                val body = when {
-                    callableDescriptor is FictitiousArrayConstructor -> IntrinsicArrayConstructors.generateArrayConstructorBody(asmMethod)
-                    callableDescriptor.name.asString() == "emptyArray" -> IntrinsicArrayConstructors.generateEmptyArrayBody(asmMethod)
-                    callableDescriptor.name.asString() == "arrayOf" -> IntrinsicArrayConstructors.generateArrayOfBody(asmMethod)
-                    else -> throw UnsupportedOperationException("Not an array intrinsic: $callableDescriptor")
-                }
-                return SMAPAndMethodNode(body, SMAP(listOf()))
-            }
-
-            assert(callableDescriptor is DescriptorWithContainerSource) { "Not a deserialized function or proper: $callableDescriptor" }
-
-            val containingClasses =
-                KotlinTypeMapper.getContainingClassesForDeserializedCallable(callableDescriptor as DescriptorWithContainerSource)
-
-            val containerId = containingClasses.implClassId
-
+            val containerType = AsmUtil.asmTypeByClassId(containerId)
             val bytes = state.inlineCache.classBytes.getOrPut(containerId) {
                 findVirtualFile(state, containerId)?.contentsToByteArray()
                     ?: throw IllegalStateException("Couldn't find declaration file for $containerId")
             }
+            val resultInCache = state.inlineCache.methodNodeById.getOrPut(MethodId(containerType.descriptor, asmMethod)) {
+                getMethodNode(containerType, bytes, asmMethod.name, asmMethod.descriptor, isSuspend, isMangled)
+            }
+            return SMAPAndMethodNode(cloneMethodNode(resultInCache.node), resultInCache.classSMAP)
+        }
 
-            val classType = AsmUtil.asmTypeByClassId(containerId)
-            val methodNode = getMethodNode(bytes, asmMethod.name, asmMethod.descriptor, classType)
-            if (methodNode == null && requiresFunctionNameManglingForReturnType(callableDescriptor)) {
-                val nameWithoutManglingSuffix = asmMethod.name.stripManglingSuffixOrNull()
-                if (nameWithoutManglingSuffix != null) {
-                    val methodWithoutMangling = getMethodNode(bytes, nameWithoutManglingSuffix, asmMethod.descriptor, classType)
-                    if (methodWithoutMangling != null) return methodWithoutMangling
+        private fun getMethodNode(
+            owner: Type,
+            bytes: ByteArray,
+            name: String,
+            descriptor: String,
+            isSuspend: Boolean,
+            isMangled: Boolean
+        ): SMAPAndMethodNode {
+            getMethodNode(owner, bytes, name, descriptor, isSuspend)?.let { return it }
+            if (isMangled) {
+                // Compatibility with old inline class ABI versions.
+                val dashIndex = name.indexOf('-')
+                val nameWithoutManglingSuffix = if (dashIndex > 0) name.substring(0, dashIndex) else name
+                if (nameWithoutManglingSuffix != name) {
+                    getMethodNode(owner, bytes, nameWithoutManglingSuffix, descriptor, isSuspend)?.let { return it }
                 }
-                return getMethodNode(bytes, "$nameWithoutManglingSuffix-impl", asmMethod.descriptor, classType)
+                getMethodNode(owner, bytes, "$nameWithoutManglingSuffix-impl", descriptor, isSuspend)?.let { return it }
             }
-
-            return methodNode
+            throw IllegalStateException("couldn't find inline method $owner.$name$descriptor")
         }
 
-        private fun String.stripManglingSuffixOrNull(): String? {
-            val dashIndex = indexOf('-')
-            return if (dashIndex < 0) null else substring(0, dashIndex)
-        }
-
-        private fun isBuiltInArrayIntrinsic(callableDescriptor: CallableMemberDescriptor): Boolean {
-            if (callableDescriptor is FictitiousArrayConstructor) return true
-            val name = callableDescriptor.name.asString()
-            return (name == "arrayOf" || name == "emptyArray") && callableDescriptor.containingDeclaration.let { container ->
-                container is PackageFragmentDescriptor && container.fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME
-            }
-        }
+        // If an `inline suspend fun` has a state machine, it should have a `$$forInline` version without one.
+        private fun getMethodNode(owner: Type, bytes: ByteArray, name: String, descriptor: String, isSuspend: Boolean) =
+            (if (isSuspend) getMethodNode(bytes, name + FOR_INLINE_SUFFIX, descriptor, owner) else null)
+                ?: getMethodNode(bytes, name, descriptor, owner)
 
         private fun StackValue.isCapturedInlineParameter(): Boolean {
             val field = if (this is StackValue.FieldForSharedVar) receiver else this

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.codegen.coroutines.createMethodNodeForCoroutineConte
 import org.jetbrains.kotlin.codegen.coroutines.createMethodNodeForIntercepted
 import org.jetbrains.kotlin.codegen.coroutines.createMethodNodeForSuspendCoroutineUninterceptedOrReturn
 import org.jetbrains.kotlin.codegen.createMethodNodeForAlwaysEnabledAssert
+import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicArrayConstructors
 import org.jetbrains.kotlin.codegen.isBuiltinAlwaysEnabledAssert
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -26,11 +27,13 @@ import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
+import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 internal fun generateInlineIntrinsic(
     state: GenerationState,
     descriptor: FunctionDescriptor,
+    asmMethod: Method,
     typeParameters: List<TypeParameterMarker>?,
     typeSystem: TypeSystemCommonBackendContext
 ): MethodNode? {
@@ -49,6 +52,12 @@ internal fun generateInlineIntrinsic(
             createMethodNodeForSuspendCoroutineUninterceptedOrReturn(languageVersionSettings)
         descriptor.isBuiltinAlwaysEnabledAssert() ->
             createMethodNodeForAlwaysEnabledAssert(descriptor)
+        descriptor is FictitiousArrayConstructor ->
+            IntrinsicArrayConstructors.generateArrayConstructorBody(asmMethod)
+        IntrinsicArrayConstructors.isArrayOf(descriptor) ->
+            IntrinsicArrayConstructors.generateArrayOfBody(asmMethod)
+        IntrinsicArrayConstructors.isEmptyArray(descriptor) ->
+            IntrinsicArrayConstructors.generateEmptyArrayBody(asmMethod)
         else -> null
     }
 }
