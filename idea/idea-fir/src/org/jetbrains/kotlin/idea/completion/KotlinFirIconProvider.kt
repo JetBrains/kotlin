@@ -51,6 +51,8 @@ internal object KotlinFirIconProvider {
 
         if (symbol is KtTypeAliasSymbol) return KotlinIcons.TYPE_ALIAS
 
+        if (symbol is KtEnumEntrySymbol) return KotlinIcons.ENUM
+
         return null
     }
 }
