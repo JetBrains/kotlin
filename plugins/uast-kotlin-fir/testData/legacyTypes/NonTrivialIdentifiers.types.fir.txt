@@ -2,15 +2,15 @@ UFile (package = ) [public final class NonTrivialIdentifiersKt {...]
     UClass (name = NonTrivialIdentifiersKt) [public final class NonTrivialIdentifiersKt {...}]
         UMethod (name = main) [public static final fun main(a: A) : void {...}]
             UParameter (name = a) [var a: A]
-            UBlockExpression [{...}]
+            UBlockExpression [{...}] : PsiType:Unit
                 [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
                 [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
     UClass (name = A) [public final class A {...}]
         UMethod (name = A) [public fun A() = UastEmptyExpression]
         UMethod (name = invoke) [public final fun invoke() : void {...}]
-            UBlockExpression [{...}]
+            UBlockExpression [{...}] : PsiType:Unit
                 [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
         UMethod (name = invoke) [public final fun invoke(f: kotlin.jvm.functions.Function0<? extends kotlin.Unit>) : void {...}]
             UParameter (name = f) [var f: kotlin.jvm.functions.Function0<? extends kotlin.Unit>]
-            UBlockExpression [{...}]
+            UBlockExpression [{...}] : PsiType:Unit

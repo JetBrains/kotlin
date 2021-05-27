@@ -7,8 +7,8 @@ UFile (package = ) [public final class ReceiverFunKt {...]
                     [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) [[!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)]
         UMethod (name = getRx) [public static final fun getRx($this$rx: java.lang.String) : kotlin.text.Regex {...}]
             UParameter (name = $this$rx) [var $this$rx: java.lang.String]
-            UBlockExpression [{...}]
-                UReturnExpression [return [!] UnknownKotlinExpression (CALL_EXPRESSION)]
+            UBlockExpression [{...}] : PsiType:Regex
+                UReturnExpression [return [!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:Void
                     [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
     UClass (name = MyReceiverAnnotation) [public abstract annotation MyReceiverAnnotation {...}]
         UMethod (name = name) [public abstract fun name() : java.lang.String = UastEmptyExpression]

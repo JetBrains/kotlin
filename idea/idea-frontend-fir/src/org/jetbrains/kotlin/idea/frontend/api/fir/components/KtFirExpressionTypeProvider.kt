@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.idea.asJava.asPsiType
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirSafe
@@ -28,6 +30,7 @@ import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.idea.references.FirReferenceResolveHelper
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.psi.*
 
 internal class KtFirExpressionTypeProvider(
@@ -47,6 +50,21 @@ internal class KtFirExpressionTypeProvider(
             else -> error("Unexpected ${fir::class}")
         }
     }
+
+    override fun getPsiTypeForKtExpression(
+        expression: KtExpression,
+        mode: TypeMappingMode,
+    ): PsiType = withValidityAssertion {
+        when (val fir = expression.getOrBuildFir(firResolveState)) {
+            is FirExpression -> fir.typeRef.coneType.asPsiType(mode, expression)
+            is FirNamedReference -> fir.getReferencedElementType().asPsiType(mode, expression)
+            is FirStatement -> PsiType.VOID
+            else -> error("Unexpected ${fir::class}")
+        }
+    }
+
+    private fun ConeKotlinType.asPsiType(mode: TypeMappingMode, psiContext: PsiElement) =
+        asPsiType(rootModuleSession, analysisSession.firResolveState, mode, psiContext)
 
     private fun FirNamedReference.getReferencedElementType(): ConeKotlinType {
         val symbols = when (this) {

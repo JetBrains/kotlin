@@ -1,7 +1,7 @@
 UFile (package = ) [public final class ResolveKt {...]
     UClass (name = ResolveKt) [public final class ResolveKt {...}]
         UMethod (name = bar) [public static final fun bar() : void {...}]
-            UBlockExpression [{...}]
+            UBlockExpression [{...}] : PsiType:IntRange
                 [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) [[!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)]
                 [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) [[!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)]
                 [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) [[!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)]
@@ -17,14 +17,14 @@ UFile (package = ) [public final class ResolveKt {...]
                 [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
         UMethod (name = barT) [public static final fun barT(t: T) : void {...}]
             UParameter (name = t) [var t: T]
-            UBlockExpression [{...}]
+            UBlockExpression [{...}] : PsiType:Unit
                 [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) [[!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)]
         UMethod (name = barTL) [public static final fun barTL(listT: T) : void {...}]
             UParameter (name = listT) [var listT: T]
-            UBlockExpression [{...}]
+            UBlockExpression [{...}] : PsiType:Unit
                 [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) [[!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)]
                 [!] UnknownKotlinExpression (FOR) [[!] UnknownKotlinExpression (FOR)]
     UClass (name = A) [public class A {...}]
         UMethod (name = A) [public fun A() = UastEmptyExpression]
         UMethod (name = foo) [public final fun foo() : void {...}]
-            UBlockExpression [{...}]
+            UBlockExpression [{...}] : PsiType:Unit

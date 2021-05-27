@@ -7,4 +7,4 @@ UFile (package = ) [public final class ElvisTypeKt {...]
                     [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
         UMethod (name = bar) [public static final fun bar(o: java.lang.Object) : void {...}]
             UParameter (name = o) [var o: java.lang.Object]
-            UBlockExpression [{...}]
+            UBlockExpression [{...}] : PsiType:Unit

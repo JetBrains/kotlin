@@ -3,7 +3,7 @@ UFile (package = ) [public final class StringTemplateWithVarKt {...]
         UField (name = bar) [private static final var bar: java.lang.String = "bar"]
             ULiteralExpression (value = "bar") ["bar"] : PsiType:String
         UField (name = f) [private static final var f: java.lang.String = "foo" + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
-            UPolyadicExpression (operator = +) ["foo" + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+            UPolyadicExpression (operator = +) ["foo" + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] : PsiType:String
                 ULiteralExpression (value = "foo") ["foo"] : PsiType:String
                 [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
         UMethod (name = getBar) [public static final fun getBar() : java.lang.String = UastEmptyExpression]

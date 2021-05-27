@@ -7,7 +7,7 @@ UFile (package = ) [public final class StringTemplateKt {...]
         UField (name = baz) [private static final var baz: java.lang.String = "dolor"]
             ULiteralExpression (value = "dolor") ["dolor"] : PsiType:String
         UField (name = foobarbaz) [private static final var foobarbaz: java.lang.String = [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) + " " + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) + " " + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
-            UPolyadicExpression (operator = +) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION) + " " + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) + " " + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+            UPolyadicExpression (operator = +) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION) + " " + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) + " " + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] : PsiType:String
                 [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
                 ULiteralExpression (value = " ") [" "] : PsiType:String
                 [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]

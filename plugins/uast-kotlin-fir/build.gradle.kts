@@ -53,6 +53,7 @@ runtimeJar(tasks.register<ShadowJar>("shadowJar")) {
 testsJar ()
 
 projectTest(parallel = true) {
+    dependsOn(":dist")
     workingDir = rootDir
     val useFirIdeaPlugin = kotlinBuildProperties.useFirIdeaPlugin
     doFirst {

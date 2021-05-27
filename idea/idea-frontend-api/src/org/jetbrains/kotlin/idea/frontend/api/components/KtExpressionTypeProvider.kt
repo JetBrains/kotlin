@@ -6,13 +6,16 @@
 package org.jetbrains.kotlin.idea.frontend.api.components
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
+import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
 
 abstract class KtExpressionTypeProvider : KtAnalysisSessionComponent() {
     abstract fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KtType
     abstract fun getKtExpressionType(expression: KtExpression): KtType
+    abstract fun getPsiTypeForKtExpression(expression: KtExpression, mode: TypeMappingMode): PsiType
     abstract fun getExpectedType(expression: PsiElement): KtType?
     abstract fun isDefinitelyNull(expression: KtExpression): Boolean
     abstract fun isDefinitelyNotNull(expression: KtExpression): Boolean
@@ -21,6 +24,9 @@ abstract class KtExpressionTypeProvider : KtAnalysisSessionComponent() {
 interface KtExpressionTypeProviderMixIn : KtAnalysisSessionMixIn {
     fun KtExpression.getKtType(): KtType =
         analysisSession.expressionTypeProvider.getKtExpressionType(this)
+
+    fun KtExpression.getPsiType(mode: TypeMappingMode = TypeMappingMode.DEFAULT): PsiType =
+        analysisSession.expressionTypeProvider.getPsiTypeForKtExpression(this, mode)
 
     fun KtDeclaration.getReturnKtType(): KtType =
         analysisSession.expressionTypeProvider.getReturnTypeForKtDeclaration(this)

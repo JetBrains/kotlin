@@ -7,8 +7,8 @@ UFile (package = ) [public final class PropertyTest {...]
                     [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) [[!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)]
         UMethod (name = setStringRepresentation) [public final fun setStringRepresentation(value: java.lang.String) : void {...}]
             UParameter (name = value) [var value: java.lang.String]
-            UBlockExpression [{...}]
+            UBlockExpression [{...}] : PsiType:Unit
                 [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
         UMethod (name = setDataFromString) [public final fun setDataFromString(data: java.lang.String) : void {...}]
             UParameter (name = data) [var data: java.lang.String]
-            UBlockExpression [{...}]
+            UBlockExpression [{...}] : PsiType:Unit

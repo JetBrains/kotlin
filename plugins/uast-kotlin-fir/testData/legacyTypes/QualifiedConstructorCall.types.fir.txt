@@ -4,6 +4,6 @@ UFile (package = A.B.C) [package A.B.C...]
     UClass (name = Bar) [public final class Bar {...}]
         UMethod (name = Bar) [public fun Bar() = UastEmptyExpression]
         UMethod (name = getFoo) [public final fun getFoo() : A.B.C.Foo {...}]
-            UBlockExpression [{...}]
-                UReturnExpression [return [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)]
+            UBlockExpression [{...}] : PsiType:Void
+                UReturnExpression [return [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)] : PsiType:Void
                     [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) [[!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)]
