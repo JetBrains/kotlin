@@ -1,3 +1,4 @@
+// FIR_IDE_IGNORE
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 
 import kotlin.contracts.*

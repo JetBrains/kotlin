@@ -1,3 +1,4 @@
+// FIR_IDE_IGNORE
 // FIR_IDENTICAL
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 // SKIP_TXT
