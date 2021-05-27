@@ -125,11 +125,26 @@ class PropertyAccessorInlineLowering(private val context: CommonBackendContext) 
             }
         }
 
-        private fun isSimpleSetter(callee: IrSimpleFunction, backingField: IrField): Boolean {
-            val body = callee.body?.let { it as IrBlockBody } ?: return false
+        private fun getSetFieldStatement(callee: IrSimpleFunction): IrSetField? {
+            val body = callee.body?.let { it as IrBlockBody } ?: return null
+            val stmt = when (body.statements.size) {
+                1 -> body.statements.first()
+                2 -> {
+                    // ReturnsInsertionLowering in K/N adds return statement that can be safely ignored.
+                    val returnValue = (body.statements.last() as? IrReturn)?.value
+                    val returnSymbol = (returnValue as? IrGetObjectValue)?.symbol
+                    if (returnSymbol == context.ir.symbols.unit) {
+                        body.statements.first()
+                    }
+                    else null
+                }
+                else -> null
+            }
+            return stmt as? IrSetField
+        }
 
-            val stmt = body.statements.singleOrNull() ?: return false
-            val setFieldStmt = stmt as? IrSetField ?: return false
+        private fun isSimpleSetter(callee: IrSimpleFunction, backingField: IrField): Boolean {
+            val setFieldStmt = getSetFieldStatement(callee) ?: return false
             if (setFieldStmt.symbol !== backingField.symbol) return false
 
             // TODO: support constant setters
