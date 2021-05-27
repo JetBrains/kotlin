@@ -35,31 +35,24 @@ private fun Project.getDependenciesFor(target: CommonizerTarget): FileCollection
     }
 
     /* Target does not participate in any commonization. Try finding relevant platform libraries */
-    val konanTarget = target.konanTargets.singleOrNull() ?: return project.files()
-    return project.filesProvider { konanDistribution.platformLibsDir.resolve(konanTarget.name).listFiles().orEmpty().toSet() }
+    return if (target is LeafCommonizerTarget) getOriginalPlatformLibrariesFor(target) else project.files()
+}
+
+private fun Project.getOriginalPlatformLibrariesFor(target: LeafCommonizerTarget): FileCollection {
+    return project.filesProvider { konanDistribution.platformLibsDir.resolve(target.konanTarget.name).listFiles().orEmpty().toSet() }
+}
+
+private fun HierarchicalNativeDistributionCommonizerTask.getCommonizedPlatformLibrariesFor(target: SharedCommonizerTarget): FileCollection {
+    val rootTarget = rootCommonizerTargets.firstOrNull { rootTarget -> rootTarget.isEqualOrAncestorOf(target) } ?: return project.files()
+    val targetOutputDirectory = HierarchicalCommonizerOutputLayout.getTargetDirectory(getRootOutputDirectory(rootTarget), target)
+    return project.filesProvider { targetOutputDirectory.listFiles().orEmpty().toList() }.builtBy(this)
 }
 
 private fun HierarchicalNativeDistributionCommonizerTask.getCommonizedDependenciesFor(target: CommonizerTarget): FileCollection {
-    val rootTarget = rootCommonizerTargets.firstOrNull { rootTarget -> rootTarget.isEqualOrAncestorOf(target) } ?: return project.files()
-    val targetOutputDirectory = HierarchicalCommonizerOutputLayout.getTargetDirectory(getRootOutputDirectory(rootTarget), target)
-    val targetDependencies = project.filesProvider { targetOutputDirectory.listFiles().orEmpty().toList() }.builtBy(this)
-
-    /*
-    LeafCommonizerTargets will still analyze against 'new' 'commonized' platform dependencies.
-    This means, that some parts of the API might get lifted to the direct parent dependency.
-     */
-    val necessaryParentTargetDependencies: FileCollection = rootTarget.takeIf { target is LeafCommonizerTarget }
-        ?.findParentOf(target)
-        ?.let { parentTarget -> getCommonizedDependenciesFor(parentTarget) }
-        ?: project.files()
-
-    return targetDependencies + necessaryParentTargetDependencies
-}
-
-private fun CommonizerTarget.findParentOf(target: CommonizerTarget): CommonizerTarget? {
-    return withAllAncestors()
-        .filterIsInstance<SharedCommonizerTarget>()
-        .firstOrNull { target in it.targets }
+    return when (target) {
+        is LeafCommonizerTarget -> project.getOriginalPlatformLibrariesFor(target)
+        is SharedCommonizerTarget -> getCommonizedPlatformLibrariesFor(target)
+    }
 }
 
 private fun Project.addDependencies(sourceSet: KotlinSourceSet, libraries: FileCollection) {
