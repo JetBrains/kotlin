@@ -7,3 +7,23 @@ UFile (package = )
                     [!] UnknownKotlinExpression (BINARY_EXPRESSION)
                     UBlockExpression
                         [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+        UMethod (name = kt44412)
+            UBlockExpression
+                [!] UnknownKotlinExpression (PROPERTY)
+                ULabeledExpression (label = Outer)
+                    UWhileExpression
+                        ULiteralExpression (value = "not-yet-compile-time-constant")
+                        UBlockExpression
+                            [!] UnknownKotlinExpression (PREFIX_EXPRESSION)
+                            [!] UnknownKotlinExpression (PROPERTY)
+                            ULabeledExpression (label = Inner)
+                                UDoWhileExpression
+                                    UIfExpression
+                                        [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+                                        ULiteralExpression (value = "not-yet-compile-time-constant")
+                                        UBreakExpression (label = null)
+                                    UBlockExpression
+                                        [!] UnknownKotlinExpression (PREFIX_EXPRESSION)
+                            UIfExpression
+                                [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+                                UBreakExpression (label = null)

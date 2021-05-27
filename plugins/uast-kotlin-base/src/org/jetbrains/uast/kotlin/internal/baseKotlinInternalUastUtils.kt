@@ -17,6 +17,9 @@ import java.util.function.Supplier
 
 typealias BaseResolveProviderServiceSupplier = Supplier<BaseKotlinUastResolveProviderService>
 
+@Suppress("NOTHING_TO_INLINE")
+inline fun String?.orAnonymous(kind: String = ""): String = this ?: "<anonymous" + (if (kind.isNotBlank()) " $kind" else "") + ">"
+
 fun <T> lz(initializer: () -> T) =
     lazy(LazyThreadSafetyMode.SYNCHRONIZED, initializer)
 
