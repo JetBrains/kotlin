@@ -22,6 +22,14 @@ object TypeMismatchFactories {
         getFixesForTypeMismatch(diagnostic.psi, diagnostic.expectedType, diagnostic.actualType)
     }
 
+    val assignmentTypeMismatch = diagnosticFixFactory<KtFirDiagnostic.AssignmentTypeMismatch> { diagnostic ->
+        getFixesForTypeMismatch(diagnostic.psi, diagnostic.expectedType, diagnostic.actualType)
+    }
+
+    val initializerTypeMismatch = diagnosticFixFactory<KtFirDiagnostic.InitializerTypeMismatch> { diagnostic ->
+        diagnostic.psi.initializer?.let { getFixesForTypeMismatch(it, diagnostic.expectedType, diagnostic.actualType) } ?: emptyList()
+    }
+
     private fun KtAnalysisSession.getFixesForTypeMismatch(
         psi: PsiElement,
         expectedType: KtType,
