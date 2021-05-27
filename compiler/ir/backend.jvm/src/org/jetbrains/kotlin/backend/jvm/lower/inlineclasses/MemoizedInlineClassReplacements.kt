@@ -206,8 +206,11 @@ class MemoizedInlineClassReplacements(
                 )
             }
             function.extensionReceiverParameter?.let {
+                val baseName =
+                    (function as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.name?.asStringStripSpecialMarkers()
+                        ?: function.name
                 newValueParameters += it.copyTo(
-                    this, index = newValueParameters.size, name = Name.identifier("\$this\$${function.name}"),
+                    this, index = newValueParameters.size, name = Name.identifier("\$this\$$baseName"),
                     origin = IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER
                 )
             }

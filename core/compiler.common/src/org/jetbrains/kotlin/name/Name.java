@@ -46,6 +46,12 @@ public final class Name implements Comparable<Name> {
         return special;
     }
 
+    @NotNull
+    public String asStringStripSpecialMarkers() {
+        if (isSpecial()) return asString().substring(1, asString().length() - 1);
+        return asString();
+    }
+
     @Override
     public int compareTo(Name that) {
         return this.name.compareTo(that.name);

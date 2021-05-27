@@ -785,9 +785,6 @@ class LocalDeclarationsLowering(
             }
         }
 
-        private fun Name.stripSpecialMarkers(): String =
-            if (isSpecial) asString().substring(1, asString().length - 1) else asString()
-
         private fun suggestNameForCapturedValue(declaration: IrValueDeclaration, usedNames: MutableSet<String>, isExplicitLocalFunction: Boolean = false): Name {
             if (declaration is IrValueParameter) {
                 if (declaration.name.asString() == "<this>" && declaration.isDispatchReceiver()) {
@@ -808,7 +805,7 @@ class LocalDeclarationsLowering(
             }
 
             val base = if (declaration.name.isSpecial) {
-                declaration.name.stripSpecialMarkers()
+                declaration.name.asStringStripSpecialMarkers()
             } else {
                 declaration.name.asString()
             }
@@ -859,9 +856,9 @@ class LocalDeclarationsLowering(
                 val correspondingProperty = parentFun.safeAs<IrSimpleFunction>()?.correspondingPropertySymbol?.owner
                 return when {
                     correspondingProperty != null ->
-                        correspondingProperty.name.stripSpecialMarkers()
+                        correspondingProperty.name.asStringStripSpecialMarkers()
                     else ->
-                        parentFun.name.stripSpecialMarkers()
+                        parentFun.name.asStringStripSpecialMarkers()
                 }
             }
 
