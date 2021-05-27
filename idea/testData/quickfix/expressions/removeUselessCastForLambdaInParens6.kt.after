@@ -5,5 +5,3 @@ fun main() {
     foo();
     { "" }
 }
-
-/* IGNORE_FIR */

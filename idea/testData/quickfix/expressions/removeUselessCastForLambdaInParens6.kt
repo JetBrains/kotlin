@@ -5,5 +5,3 @@ fun main() {
     foo();
     ({ "" } as<caret> () -> String)
 }
-
-/* IGNORE_FIR */

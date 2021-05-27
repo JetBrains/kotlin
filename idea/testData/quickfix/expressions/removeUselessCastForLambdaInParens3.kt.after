@@ -7,4 +7,3 @@ fun test() {
     A().foo()
     ({ "" })
 }
-/* IGNORE_FIR */

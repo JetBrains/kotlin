@@ -106,6 +106,7 @@ class MainKtQuickFixRegistrar : KtQuickFixRegistrar() {
         registerPsiQuickFixes(KtFirDiagnostic.UnnecessaryNotNullAssertion::class, RemoveExclExclCallFix)
         registerPsiQuickFixes(KtFirDiagnostic.UselessElvis::class, RemoveUselessElvisFix)
         registerPsiQuickFixes(KtFirDiagnostic.UselessElvisRightIsNull::class, RemoveUselessElvisFix)
+        registerPsiQuickFixes(KtFirDiagnostic.UselessCast::class, RemoveUselessCastFix)
         registerApplicator(ReplaceCallFixFactories.unsafeCallFactory)
         registerApplicator(AddExclExclCallFixFactories.unsafeCallFactory)
         registerApplicator(AddExclExclCallFixFactories.unsafeInfixCallFactory)

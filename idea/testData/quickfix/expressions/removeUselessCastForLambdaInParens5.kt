@@ -5,4 +5,3 @@ fun test() {
     class B : A()
     ({ "" } as<caret> () -> String)
 }
-/* IGNORE_FIR */
