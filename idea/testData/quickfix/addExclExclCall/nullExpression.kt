@@ -9,3 +9,6 @@ fun foo(arg: String?) {
         val x: String = arg<caret>
     }
 }
+
+// TODO: Need data flow info from null check
+/* IGNORE_FIR */

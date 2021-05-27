@@ -5,6 +5,5 @@ class C {
 
 // Test for KTIJ-10052
 fun C.test() {
-    var z: String = ""
-    z = <caret>s
+    var z: String = <caret>s
 }
