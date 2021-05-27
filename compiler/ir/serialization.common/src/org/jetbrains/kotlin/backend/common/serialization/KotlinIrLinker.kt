@@ -14,11 +14,15 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.descriptors.*
+import org.jetbrains.kotlin.ir.descriptors.IrAbstractFunctionFactory
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.linkage.KotlinIrLinkerInternalException
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.IrMessageLogger
+import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.Name
@@ -54,8 +58,8 @@ abstract class KotlinIrLinker(
 
     public open fun handleNoModuleDeserializerFound(idSignature: IdSignature, currentModule: ModuleDescriptor, dependencies: Collection<IrModuleDeserializer>): IrModuleDeserializer {
         val message = buildString {
-            append("Module $currentModule has reference $idSignature, unfortunately neither itself nor its dependencies ")
-            dependencies.joinTo(this, "\n\t", "[\n\t", "\n]")
+            append("Module ${currentModule.name} has reference $idSignature, unfortunately neither itself nor its dependencies ")
+            dependencies.joinTo(this, "\n\t", "[\n\t", "\n]") { it.moduleDescriptor.name.asString() }
             append(" contain this declaration")
             append("\n")
             append("Please check that project configuration is correct and has required dependencies.")
