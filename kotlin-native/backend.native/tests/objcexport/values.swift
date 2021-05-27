@@ -596,10 +596,17 @@ func testShared() throws {
         try assertFalse(ValuesKt.isFrozen(obj: obj), "isFrozen(\(obj))")
     }
 
-    try assertFrozen(NSObject())
-    try assertFrozen(TestSharedIImpl())
-    try assertFrozen(ValuesKt.kotlinLambda(block: { return $0 }) as AnyObject)
-    try assertNotFrozen(FinalClassExtOpen())
+    if ValuesKt.isExperimentalMM {
+        try assertNotFrozen(NSObject())
+        try assertNotFrozen(TestSharedIImpl())
+        try assertNotFrozen(ValuesKt.kotlinLambda(block: { return $0 }) as AnyObject)
+        try assertNotFrozen(FinalClassExtOpen())
+    } else {
+        try assertFrozen(NSObject())
+        try assertFrozen(TestSharedIImpl())
+        try assertFrozen(ValuesKt.kotlinLambda(block: { return $0 }) as AnyObject)
+        try assertNotFrozen(FinalClassExtOpen())
+    }
 }
 
 class PureSwiftClass {

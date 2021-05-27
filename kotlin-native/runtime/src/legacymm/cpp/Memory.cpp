@@ -3137,7 +3137,7 @@ void ObjHeader::destroyMetaObject(ObjHeader* object) {
   }
 
 #ifdef KONAN_OBJC_INTEROP
-  Kotlin_ObjCExport_releaseAssociatedObject(meta->associatedObject_);
+  Kotlin_ObjCExport_detachAndReleaseAssociatedObject(meta->associatedObject_);
 #endif
 
   konanFreeMemory(meta);
@@ -3284,6 +3284,10 @@ RUNTIME_NOTHROW void ReleaseHeapRefNoCollectStrict(const ObjHeader* object) {
 }
 RUNTIME_NOTHROW void ReleaseHeapRefNoCollectRelaxed(const ObjHeader* object) {
   releaseHeapRef<false, /* CanCollect = */ false>(const_cast<ObjHeader*>(object));
+}
+
+RUNTIME_NOTHROW OBJ_GETTER(TryRef, ObjHeader* object) {
+    RuntimeFail("Only for experimental MM");
 }
 
 ForeignRefContext InitLocalForeignRef(ObjHeader* object) {

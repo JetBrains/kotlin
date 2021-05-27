@@ -9,6 +9,7 @@
 #import <Foundation/NSObject.h>
 #import "Memory.h"
 #import "MemorySharedRefs.hpp"
+#import "ObjCExportPrivate.h"
 #import "ObjCInteropUtilsPrivate.h"
 
 // TODO: rework the interface to reduce the number of virtual calls
@@ -73,7 +74,9 @@ void objc_release(id obj);
 }
 
 // Called when removing Kotlin object.
--(void)releaseAsAssociatedObject {
+-(void)releaseAsAssociatedObject:(ReleaseMode)mode {
+  if (!ReleaseModeHasRelease(mode))
+    return;
   objc_destroyWeak(&referred);
   objc_release(self);
 }

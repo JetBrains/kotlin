@@ -327,6 +327,7 @@ MODEL_VARIANTS(void, UpdateHeapRefsInsideOneArray, const ArrayHeader* array, int
 MODEL_VARIANTS(void, EnterFrame, ObjHeader** start, int parameters, int count);
 MODEL_VARIANTS(void, LeaveFrame, ObjHeader** start, int parameters, int count);
 
+void ReleaseHeapRef(const ObjHeader* object) RUNTIME_NOTHROW;
 MODEL_VARIANTS(void, ReleaseHeapRef, const ObjHeader* object);
 MODEL_VARIANTS(void, ReleaseHeapRefNoCollect, const ObjHeader* object);
 

@@ -32,6 +32,7 @@
 #import "Runtime.h"
 #import "ObjCExport.h"
 #import "ObjCExportCollections.h"
+#import "ObjCExportPrivate.h"
 
 extern "C" {
 
@@ -92,7 +93,9 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
   RETURN_RESULT_OF(invokeAndAssociate, Kotlin_NSArrayAsKList_create, objc_retain(self));
 }
 
--(void)releaseAsAssociatedObject {
+-(void)releaseAsAssociatedObject:(ReleaseMode)mode {
+  if (!ReleaseModeHasRelease(mode))
+    return;
   objc_release(self);
 }
 @end;
@@ -105,7 +108,9 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
   RETURN_RESULT_OF(invokeAndAssociate, Kotlin_NSMutableArrayAsKMutableList_create, objc_retain(self));
 }
 
--(void)releaseAsAssociatedObject {
+-(void)releaseAsAssociatedObject:(ReleaseMode)mode {
+  if (!ReleaseModeHasRelease(mode))
+    return;
   objc_release(self);
 }
 @end;
@@ -119,7 +124,9 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
   RETURN_RESULT_OF(invokeAndAssociate, Kotlin_NSSetAsKSet_create, objc_retain(self));
 }
 
--(void)releaseAsAssociatedObject {
+-(void)releaseAsAssociatedObject:(ReleaseMode)mode {
+  if (!ReleaseModeHasRelease(mode))
+    return;
   objc_release(self);
 }
 
@@ -133,7 +140,9 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
   RETURN_RESULT_OF(invokeAndAssociate, Kotlin_NSDictionaryAsKMap_create, objc_retain(self));
 }
 
--(void)releaseAsAssociatedObject {
+-(void)releaseAsAssociatedObject:(ReleaseMode)mode {
+  if (!ReleaseModeHasRelease(mode))
+    return;
   objc_release(self);
 }
 
@@ -560,7 +569,9 @@ static inline id KMap_get(KRef map, id aKey) {
 @end;
 
 @implementation NSEnumerator (NSEnumeratorAsAssociatedObject)
--(void)releaseAsAssociatedObject {
+-(void)releaseAsAssociatedObject:(ReleaseMode)mode {
+  if (!ReleaseModeHasRelease(mode))
+    return;
   objc_release(self);
 }
 @end;

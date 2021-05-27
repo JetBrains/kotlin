@@ -370,6 +370,24 @@ extern "C" RUNTIME_NOTHROW void PerformFullGC(MemoryState* memory) {
     memory->GetThreadData()->gc().PerformFullGC();
 }
 
+extern "C" bool TryAddHeapRef(const ObjHeader* object) {
+    RuntimeFail("Only for legacy MM");
+}
+
+extern "C" RUNTIME_NOTHROW void ReleaseHeapRefNoCollect(const ObjHeader* object) {
+    RuntimeFail("Only for legacy MM");
+}
+
+extern "C" RUNTIME_NOTHROW OBJ_GETTER(TryRef, ObjHeader* object) {
+    // TODO: With CMS this needs:
+    //       * during marking phase if `object` is unmarked: barrier (might be automatic because of the stack write)
+    //         and return `object`;
+    //       * during marking phase if `object` is marked: return `object`;
+    //       * during sweeping phase if `object` is unmarked: return nullptr;
+    //       * during sweeping phase if `object` is marked: return `object`;
+    RETURN_OBJ(object);
+}
+
 extern "C" RUNTIME_NOTHROW bool ClearSubgraphReferences(ObjHeader* root, bool checked) {
     // TODO: Remove when legacy MM is gone.
     return true;

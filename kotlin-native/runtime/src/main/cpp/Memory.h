@@ -298,10 +298,12 @@ bool Kotlin_Any_isShareable(ObjHeader* thiz);
 void Kotlin_Any_share(ObjHeader* thiz);
 void PerformFullGC(MemoryState* memory) RUNTIME_NOTHROW;
 
+// Only for legacy
 bool TryAddHeapRef(const ObjHeader* object);
-
-void ReleaseHeapRef(const ObjHeader* object) RUNTIME_NOTHROW;
 void ReleaseHeapRefNoCollect(const ObjHeader* object) RUNTIME_NOTHROW;
+
+// Only for experimental
+OBJ_GETTER(TryRef, ObjHeader* object) RUNTIME_NOTHROW;
 
 ForeignRefContext InitLocalForeignRef(ObjHeader* object);
 

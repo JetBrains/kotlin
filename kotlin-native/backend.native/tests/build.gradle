@@ -4316,7 +4316,7 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 
     interopTestMultifile("interop_objc_tests") {
-        enabled = !isExperimentalMM  // Experimental MM does not support Obj-C weaks and thread state switching for ObjC interop yet.
+        enabled = !isExperimentalMM  // Experimental MM does not support thread state switching for ObjC interop yet.
         source = "interop/objc/tests/"
         interop = 'objcTests'
         flags = ['-tr', '-e', 'main']
@@ -4787,7 +4787,7 @@ Task frameworkTest(String name, Closure<FrameworkTest> configurator) {
 
 if (isAppleTarget(project)) {
     frameworkTest('testObjCExport') {
-        enabled = !isExperimentalMM // Experimental MM does not support Obj-C weaks and thread state switching for ObjC interop yet.
+        enabled = !isExperimentalMM // Experimental MM does not support thread state switching for ObjC interop yet.
         final String frameworkName = 'Kt'
         final String dir = "$testOutputFramework/testObjCExport"
         final File lazyHeader = file("$dir/$target-lazy.h")
@@ -4836,7 +4836,7 @@ if (isAppleTarget(project)) {
     }
 
     frameworkTest('testObjCExportNoGenerics') {
-        enabled = !isExperimentalMM // Experimental MM does not support Obj-C weaks and thread state switching for ObjC interop yet.
+        enabled = !isExperimentalMM // Experimental MM does not support thread state switching for ObjC interop yet.
         final String frameworkName = 'KtNoGenerics'
         final String frameworkArtifactName = 'Kt'
         final String dir = "$testOutputFramework/testObjCExportNoGenerics"
@@ -4889,7 +4889,7 @@ if (isAppleTarget(project)) {
     }
 
     frameworkTest('testObjCExportStatic') {
-        enabled = !isExperimentalMM // Experimental MM does not support Obj-C weaks and thread state switching for ObjC interop yet.
+        enabled = !isExperimentalMM // Experimental MM does not support thread state switching for ObjC interop yet.
         final String frameworkName = 'KtStatic'
         final String frameworkArtifactName = 'Kt'
         final String libraryName = frameworkName + "Library"

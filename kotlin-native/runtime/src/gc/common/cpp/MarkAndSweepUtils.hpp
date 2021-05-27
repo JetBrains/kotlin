@@ -62,6 +62,7 @@ typename Traits::ObjectFactory::FinalizerQueue Sweep(typename Traits::ObjectFact
         auto* objHeader = it->IsArray() ? it->GetArrayHeader()->obj() : it->GetObjHeader();
         if (auto* extraObject = mm::ExtraObjectData::Get(objHeader)) {
             extraObject->ClearWeakReferenceCounter();
+            extraObject->DetachAssociatedObject();
         }
         if (HasFinalizers(objHeader)) {
             iter.MoveAndAdvance(finalizerQueue, it);

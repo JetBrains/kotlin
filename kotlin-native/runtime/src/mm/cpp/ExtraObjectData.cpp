@@ -65,6 +65,12 @@ void mm::ExtraObjectData::Uninstall(ObjHeader* object) noexcept {
     delete &data;
 }
 
+void mm::ExtraObjectData::DetachAssociatedObject() noexcept {
+#ifdef KONAN_OBJC_INTEROP
+    Kotlin_ObjCExport_detachAssociatedObject(associatedObject_);
+#endif
+}
+
 bool mm::ExtraObjectData::HasWeakReferenceCounter() noexcept {
     return weakReferenceCounter_ != nullptr;
 }

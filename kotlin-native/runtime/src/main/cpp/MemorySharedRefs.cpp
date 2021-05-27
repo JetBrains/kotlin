@@ -146,19 +146,30 @@ bool BackRefFromAssociatedObject::tryAddRef() {
 
   if (obj_ == nullptr) return false; // E.g. after [detach].
 
-  // Suboptimal but simple:
-  ensureRefAccessible<errorPolicy>(obj_, context_);
+  if (CurrentMemoryModel == MemoryModel::kExperimental) {
+      ObjHolder holder;
+      ObjHeader* obj = TryRef(obj_, holder.slot());
+      // Failed to lock weak reference.
+      if (obj == nullptr) return false;
+      RuntimeAssert(obj == obj_, "Mismatched locked weak. obj=%p obj_=%p", obj, obj_);
+      // TODO: This is a very weird way to ask for "unsafe" addRef.
+      addRef<ErrorPolicy::kIgnore>();
+      return true;
+  } else {
+      // Suboptimal but simple:
+      ensureRefAccessible<errorPolicy>(obj_, context_);
 
-  ObjHeader* obj = obj_;
+      ObjHeader* obj = obj_;
 
-  if (!TryAddHeapRef(obj)) return false;
-  RuntimeAssert(isForeignRefAccessible(obj_, context_), "Cannot be inaccessible because of the check above");
-  // TODO: This is a very weird way to ask for "unsafe" addRef.
-  addRef<ErrorPolicy::kIgnore>();
-  ReleaseHeapRefNoCollect(obj); // Balance TryAddHeapRef.
-  // TODO: consider optimizing for non-shared objects.
+      if (!TryAddHeapRef(obj)) return false;
+      RuntimeAssert(isForeignRefAccessible(obj_, context_), "Cannot be inaccessible because of the check above");
+      // TODO: This is a very weird way to ask for "unsafe" addRef.
+      addRef<ErrorPolicy::kIgnore>();
+      ReleaseHeapRefNoCollect(obj); // Balance TryAddHeapRef.
+      // TODO: consider optimizing for non-shared objects.
 
-  return true;
+      return true;
+  }
 }
 
 template bool BackRefFromAssociatedObject::tryAddRef<ErrorPolicy::kThrow>();
@@ -181,6 +192,10 @@ void BackRefFromAssociatedObject::releaseRef() {
 void BackRefFromAssociatedObject::detach() {
   RuntimeAssert(atomicGet(&refCount) == 0, "unexpected refCount");
   obj_ = nullptr; // Handled in addRef/tryAddRef/releaseRef/ref.
+}
+
+ALWAYS_INLINE void BackRefFromAssociatedObject::assertDetached() {
+    RuntimeAssert(obj_ == nullptr, "Expecting this=%p to be detached, but found obj_=%p", this, obj_);
 }
 
 template <ErrorPolicy errorPolicy>

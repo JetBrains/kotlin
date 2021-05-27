@@ -1021,3 +1021,6 @@ interface Bar_FakeOverrideInInterface : Foo_FakeOverrideInInterface<String>
 fun callFoo_FakeOverrideInInterface(obj: Bar_FakeOverrideInInterface) {
     obj.foo(null)
 }
+
+val isExperimentalMM: Boolean
+    get() = kotlin.native.Platform.memoryModel == kotlin.native.MemoryModel.EXPERIMENTAL

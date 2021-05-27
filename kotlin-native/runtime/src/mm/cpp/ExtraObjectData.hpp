@@ -42,6 +42,7 @@ public:
 #ifdef KONAN_OBJC_INTEROP
     void** GetAssociatedObjectLocation() noexcept { return &associatedObject_; }
 #endif
+    void DetachAssociatedObject() noexcept;
 
     ObjHeader** GetWeakCounterLocation() noexcept { return &weakReferenceCounter_; }
 

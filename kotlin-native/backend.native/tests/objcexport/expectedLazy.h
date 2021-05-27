@@ -2312,6 +2312,7 @@ __attribute__((swift_name("ValuesKt")))
 @property (class) id _Nullable warningVar __attribute__((swift_name("warningVar"))) __attribute__((deprecated("warning")));
 @property (class) int32_t gh3525BaseInitCount __attribute__((swift_name("gh3525BaseInitCount")));
 @property (class) int32_t gh3525InitCount __attribute__((swift_name("gh3525InitCount")));
+@property (class, readonly) BOOL isExperimentalMM __attribute__((swift_name("isExperimentalMM")));
 @end;
 
 __attribute__((swift_name("InvariantSuper")))

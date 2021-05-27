@@ -123,11 +123,27 @@ static Class getOrCreateClass(const TypeInfo* typeInfo);
 
 extern "C" id objc_retainAutoreleaseReturnValue(id self);
 
-extern "C" ALWAYS_INLINE void Kotlin_ObjCExport_releaseAssociatedObject(void* associatedObject) {
+namespace {
+
+ALWAYS_INLINE void send_releaseAsAssociatedObject(void* associatedObject, ReleaseMode mode) {
   if (associatedObject != nullptr) {
-    auto msgSend = reinterpret_cast<void (*)(void* self, SEL cmd)>(&objc_msgSend);
-    msgSend(associatedObject, Kotlin_ObjCExport_releaseAsAssociatedObjectSelector);
+    auto msgSend = reinterpret_cast<void (*)(void* self, SEL cmd, ReleaseMode mode)>(&objc_msgSend);
+    msgSend(associatedObject, Kotlin_ObjCExport_releaseAsAssociatedObjectSelector, mode);
   }
+}
+
+} // namespace
+
+extern "C" ALWAYS_INLINE void Kotlin_ObjCExport_releaseAssociatedObject(void* associatedObject) {
+  send_releaseAsAssociatedObject(associatedObject, ReleaseMode::kRelease);
+}
+
+extern "C" ALWAYS_INLINE void Kotlin_ObjCExport_detachAndReleaseAssociatedObject(void* associatedObject) {
+  send_releaseAsAssociatedObject(associatedObject, ReleaseMode::kDetachAndRelease);
+}
+
+extern "C" ALWAYS_INLINE void Kotlin_ObjCExport_detachAssociatedObject(void* associatedObject) {
+  send_releaseAsAssociatedObject(associatedObject, ReleaseMode::kDetach);
 }
 
 extern "C" id Kotlin_ObjCExport_convertUnit(ObjHeader* unitInstance) {
@@ -300,7 +316,7 @@ static OBJ_GETTER(blockToKotlinImp, id self, SEL cmd);
 static OBJ_GETTER(boxedBooleanToKotlinImp, NSNumber* self, SEL cmd);
 
 static OBJ_GETTER(SwiftObject_toKotlinImp, id self, SEL cmd);
-static void SwiftObject_releaseAsAssociatedObjectImp(id self, SEL cmd);
+static void SwiftObject_releaseAsAssociatedObjectImp(id self, SEL cmd, ReleaseMode mode);
 
 static void initTypeAdaptersFrom(const ObjCTypeAdapter** adapters, int count) {
   for (int index = 0; index < count; ++index) {
@@ -359,7 +375,7 @@ static void Kotlin_ObjCExport_initializeImpl() {
         swiftRootClass, releaseAsAssociatedObjectSelector,
         (IMP)SwiftObject_releaseAsAssociatedObjectImp, releaseAsAssociatedObjectTypeEncoding
       );
-      RuntimeAssert(added, "Unable to add 'releaseAsAssociatedObject' method to SwiftObject class");
+      RuntimeAssert(added, "Unable to add 'releaseAsAssociatedObject:' method to SwiftObject class");
     }
   }
 }
@@ -379,7 +395,9 @@ static OBJ_GETTER(SwiftObject_toKotlinImp, id self, SEL cmd) {
   RETURN_RESULT_OF(Kotlin_ObjCExport_convertUnmappedObjCObject, self);
 }
 
-static void SwiftObject_releaseAsAssociatedObjectImp(id self, SEL cmd) {
+static void SwiftObject_releaseAsAssociatedObjectImp(id self, SEL cmd, ReleaseMode mode) {
+  if (!ReleaseModeHasRelease(mode))
+    return;
   objc_release(self);
 }
 
