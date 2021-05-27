@@ -3412,5 +3412,33 @@ public class HighLevelJvmBasicCompletionTestGenerated extends AbstractHighLevelJ
                 runTest("idea/idea-completion/testData/../../idea-fir/testData/completion/basic/common/when/sealedInterfaceInWhen.kt");
             }
         }
+
+        @TestMetadata("idea/idea-completion/testData/../../idea-fir/testData/completion/basic/common/where")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Where extends AbstractHighLevelJvmBasicCompletionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInWhere() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-completion/testData/../../idea-fir/testData/completion/basic/common/where"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("noCompletionAfterDotInWhen.kt")
+            public void testNoCompletionAfterDotInWhen() throws Exception {
+                runTest("idea/idea-completion/testData/../../idea-fir/testData/completion/basic/common/where/noCompletionAfterDotInWhen.kt");
+            }
+
+            @TestMetadata("whereInClass.kt")
+            public void testWhereInClass() throws Exception {
+                runTest("idea/idea-completion/testData/../../idea-fir/testData/completion/basic/common/where/whereInClass.kt");
+            }
+
+            @TestMetadata("whereInFunction.kt")
+            public void testWhereInFunction() throws Exception {
+                runTest("idea/idea-completion/testData/../../idea-fir/testData/completion/basic/common/where/whereInFunction.kt");
+            }
+        }
     }
 }
