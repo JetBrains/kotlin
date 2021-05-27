@@ -39,6 +39,11 @@ public class FE1UastDeclarationTestGenerated extends AbstractFE1UastDeclarationT
         runTest("plugins/uast-kotlin-fir/testData/declaration/facade.kt");
     }
 
+    @TestMetadata("if.kt")
+    public void testIf() throws Exception {
+        runTest("plugins/uast-kotlin-fir/testData/declaration/if.kt");
+    }
+
     @TestMetadata("importOnDemand.kt")
     public void testImportOnDemand() throws Exception {
         runTest("plugins/uast-kotlin-fir/testData/declaration/importOnDemand.kt");

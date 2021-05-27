@@ -1,0 +1,10 @@
+UFile (package = )
+    UClass (name = IfKt)
+        UMethod (name = test)
+            UParameter (name = b)
+            UBlockExpression
+                UReturnExpression
+                    UIfExpression
+                        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                        ULiteralExpression (value = "not-yet-compile-time-constant")
+                        ULiteralExpression (value = "42")
