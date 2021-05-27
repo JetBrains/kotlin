@@ -104,10 +104,15 @@ class IrSourceCompilerForInline(
         return FunctionCodegen(lambdaInfo.function, codegen.classCodegen).generate(codegen, reifiedTypeParameters)
     }
 
-    override fun compileInlineFunction(jvmSignature: JvmMethodSignature): SMAPAndMethodNode =
-        callee.parentClassId?.let { containerId ->
-            loadCompiledInlineFunction(containerId, jvmSignature.asmMethod, callee.isSuspend, callee.hasMangledReturnType, state)
-        } ?: ClassCodegen.getOrCreate(callee.parentAsClass, codegen.context).generateMethodNode(callee)
+    override fun compileInlineFunction(jvmSignature: JvmMethodSignature): SMAPAndMethodNode {
+        generateInlineIntrinsicForIr(state.languageVersionSettings, callee.toIrBasedDescriptor())?.let {
+            return it
+        }
+        callee.parentClassId?.let {
+            return loadCompiledInlineFunction(it, jvmSignature.asmMethod, callee.isSuspend, callee.hasMangledReturnType, state)
+        }
+        return ClassCodegen.getOrCreate(callee.parentAsClass, codegen.context).generateMethodNode(callee)
+    }
 
     override fun hasFinallyBlocks() = data.hasFinallyBlocks()
 

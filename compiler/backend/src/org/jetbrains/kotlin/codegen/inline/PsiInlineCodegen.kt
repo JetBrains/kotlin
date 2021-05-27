@@ -83,7 +83,7 @@ class PsiInlineCodegen(
                     }
                 }
             }
-            performInline(resolvedCall?.typeArguments?.keys?.toList(), callDefault, codegen.typeSystem, registerLineNumber)
+            performInline(callDefault, registerLineNumber)
         } finally {
             state.globalInlineContext.exitFromInlining()
         }
