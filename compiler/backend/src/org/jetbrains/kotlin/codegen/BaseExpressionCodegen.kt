@@ -41,14 +41,11 @@ interface BaseExpressionCodegen {
     fun markLineNumberAfterInlineIfNeeded(registerLineNumberAfterwards: Boolean)
 
     fun consumeReifiedOperationMarker(typeParameter: TypeParameterMarker)
+}
 
-    fun putReifiedOperationMarkerIfTypeIsReifiedParameter(type: KotlinTypeMarker, operationKind: OperationKind) {
-        with(typeSystem) {
-            val (typeParameter, second) = extractReificationArgument(type) ?: return
-            if (typeParameter.isReified()) {
-                consumeReifiedOperationMarker(typeParameter)
-                putReifiedOperationMarker(operationKind, second, visitor)
-            }
-        }
-    }
+fun BaseExpressionCodegen.putReifiedOperationMarkerIfTypeIsReifiedParameter(type: KotlinTypeMarker, operationKind: OperationKind): Boolean {
+    val (typeParameter, second) = typeSystem.extractReificationArgument(type) ?: return false
+    consumeReifiedOperationMarker(typeParameter)
+    putReifiedOperationMarker(operationKind, second, visitor)
+    return true
 }

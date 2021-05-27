@@ -42,6 +42,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
     private val kotlinFqn = StandardNames.BUILT_INS_PACKAGE_FQ_NAME
     private val kotlinJvmFqn = FqName("kotlin.jvm")
     private val kotlinJvmInternalUnsafeFqn = FqName("kotlin.jvm.internal.unsafe")
+    private val kotlinReflectFqn = StandardNames.KOTLIN_REFLECT_FQ_NAME
 
     private val anyFqn = StandardNames.FqNames.any.toSafe()
     private val arrayFqn = StandardNames.FqNames.array.toSafe()
@@ -64,6 +65,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 Key(kotlinFqn, null, "enumValues", listOf()) to EnumValues,
                 Key(kotlinFqn, null, "enumValueOf", listOf(stringFqn)) to EnumValueOf,
                 Key(kotlinFqn, stringFqn, "plus", listOf(anyFqn)) to StringPlus,
+                Key(kotlinReflectFqn, null, "typeOf", listOf()) to TypeOf,
                 irBuiltIns.eqeqSymbol.toKey()!! to Equals(KtTokens.EQEQ),
                 irBuiltIns.eqeqeqSymbol.toKey()!! to Equals(KtTokens.EQEQEQ),
                 irBuiltIns.ieee754equalsFunByOperandType[irBuiltIns.floatClass]!!.toKey()!! to Ieee754Equals(Type.FLOAT_TYPE),
