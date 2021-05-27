@@ -7,7 +7,7 @@ class C : A() {
     val constant = 42
     // Some comment
     override val bar: Int
-        get() = <selection><caret>bar</selection>
+        get() = <selection><caret>super.bar</selection>
 
     override fun equals(other: Any?): Boolean {
         return super.equals(other)

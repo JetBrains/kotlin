@@ -82,10 +82,14 @@ abstract class KtNamedClassOrObjectSymbol : KtClassOrObjectSymbol(),
 }
 
 enum class KtClassKind {
-    CLASS, ENUM_CLASS, ENUM_ENTRY, ANNOTATION_CLASS, OBJECT, COMPANION_OBJECT, INTERFACE, ANONYMOUS_OBJECT
-}
+    CLASS,
+    ENUM_CLASS,
+    ENUM_ENTRY,
+    ANNOTATION_CLASS,
+    OBJECT,
+    COMPANION_OBJECT,
+    INTERFACE,
+    ANONYMOUS_OBJECT;
 
-val KtClassKind.isObject
-    get() = this == KtClassKind.OBJECT
-            || this == KtClassKind.COMPANION_OBJECT
-            || this == KtClassKind.ANONYMOUS_OBJECT
+    val isObject: Boolean get() = this == OBJECT || this == COMPANION_OBJECT || this == ANONYMOUS_OBJECT
+}
