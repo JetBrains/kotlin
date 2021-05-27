@@ -201,7 +201,13 @@ class SubpluginsIT : BaseGradleIT() {
     }
 
     @Test
-    fun testKotlinVersionDowngradeInSupbrojectKt39809() = with(Project("android-dagger", directoryPrefix = "kapt2")) {
+    fun testKotlinVersionDowngradeInSupbrojectKt39809() = with(
+        Project(
+            "android-dagger",
+            directoryPrefix = "kapt2",
+            gradleVersionRequirement = GradleVersionRequired.AtLeast("6.7.1")
+        )
+    ) {
         setupWorkingDir()
 
         gradleBuildScript("app").modify {
