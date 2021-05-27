@@ -10,4 +10,3 @@ fun foo(bar: Base):Int {
         else -> 1
     }
 }
-/* IGNORE_FIR */
