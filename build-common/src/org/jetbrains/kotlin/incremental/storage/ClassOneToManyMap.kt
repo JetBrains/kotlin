@@ -28,6 +28,7 @@ internal open class ClassOneToManyMap(storageFile: File) : BasicStringMap<Collec
         storage.append(key.asString(), listOf(value.asString()))
     }
 
+    @Synchronized
     operator fun get(key: FqName): Collection<FqName> =
         storage[key.asString()]?.map(::FqName) ?: setOf()
 
