@@ -1,5 +1,6 @@
 // WITH_RUNTIME
 // DONT_TARGET_EXACT_BACKEND: WASM
+// IGNORE_BACKEND_FIR: JVM_IR
 
 @OptIn(ExperimentalStdlibApi::class)
 fun foo1() {

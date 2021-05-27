@@ -1,3 +1,5 @@
+// IGNORE_BACKEND_FIR: JVM_IR
+// See KT-46996
 typealias BoolArray = Array<Boolean>
 typealias IArray = IntArray
 typealias MyArray<T> = Array<T>

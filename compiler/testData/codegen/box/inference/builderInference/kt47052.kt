@@ -1,5 +1,6 @@
 // DONT_TARGET_EXACT_BACKEND: WASM
 // WITH_RUNTIME
+// IGNORE_BACKEND_FIR: JVM_IR
 
 public inline fun <R, C : MutableCollection<in R>> flatMapTo1(destination: C, transform: (List<String>) -> Iterable<R>) {}
 

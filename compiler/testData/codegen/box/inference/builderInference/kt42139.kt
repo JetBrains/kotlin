@@ -1,6 +1,7 @@
 // DONT_TARGET_EXACT_BACKEND: WASM
 // !LANGUAGE: +UnrestrictedBuilderInference
 // WITH_RUNTIME
+// IGNORE_BACKEND_FIR: JVM_IR
 
 fun <R> select(vararg x: R) = x[0]
 fun <K> myEmptyList(): List<K> = emptyList()
