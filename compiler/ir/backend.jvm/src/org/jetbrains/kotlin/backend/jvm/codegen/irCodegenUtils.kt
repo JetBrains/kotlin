@@ -382,7 +382,7 @@ fun IrSimpleType.isRawType(): Boolean =
     hasAnnotation(JvmSymbols.RAW_TYPE_ANNOTATION_FQ_NAME)
 
 internal fun classFileContainsMethod(classId: ClassId, function: IrFunction, context: JvmBackendContext): Boolean? {
-    val originalSignature = context.methodSignatureMapper.mapSignatureWithGeneric(function).asmMethod
+    val originalSignature = context.methodSignatureMapper.mapAsmMethod(function)
     val originalDescriptor = originalSignature.descriptor
     val descriptor = if (function.isSuspend)
         listOf(*Type.getArgumentTypes(originalDescriptor), Type.getObjectType("kotlin/coroutines/Continuation"))
@@ -392,12 +392,16 @@ internal fun classFileContainsMethod(classId: ClassId, function: IrFunction, con
 }
 
 val IrMemberWithContainerSource.parentClassId: ClassId?
-    get() = (containerSource as? JvmPackagePartSource)?.classId ?: (parent as? IrClass)?.classId
+    get() = ((this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner ?: this).let { directMember ->
+        (directMember.containerSource as? JvmPackagePartSource)?.classId ?: (directMember.parent as? IrClass)?.classId
+    }
 
 // Translated into IR-based terms from classifierDescriptor?.classId
-val IrClass.classId: ClassId?
+private val IrClass.classId: ClassId?
     get() = when (val parent = parent) {
         is IrExternalPackageFragment -> ClassId(parent.fqName, name)
+        // TODO: there's `context.classNameOverride`; theoretically it's only relevant for top-level members,
+        //       where `containerSource` is a `JvmPackagePartSource` anyway, but I'm not 100% sure.
         is IrClass -> parent.classId?.createNestedClassId(name)
         else -> null
     }
