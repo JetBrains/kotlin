@@ -17,19 +17,23 @@ abstract class AbstractFirDiagnosticTestSpec : AbstractFirDiagnosticTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
-            defaultDirectives {
-                +SPEC_HELPERS
-                +WITH_STDLIB
-            }
-
-            useAdditionalSourceProviders(::SpecHelpersSourceFilesProvider)
-
-            useAfterAnalysisCheckers(
-                ::FirIdenticalChecker,
-                ::FirFailingTestSuppressor,
-            )
-
-            useMetaTestConfigurators(::FirOldFrontendMetaConfigurator)
+            baseFirSpecDiagnosticTestConfiguration()
         }
     }
+}
+
+fun TestConfigurationBuilder.baseFirSpecDiagnosticTestConfiguration() {
+    defaultDirectives {
+        +SPEC_HELPERS
+        +WITH_STDLIB
+    }
+
+    useAdditionalSourceProviders(::SpecHelpersSourceFilesProvider)
+
+    useAfterAnalysisCheckers(
+        ::FirIdenticalChecker,
+        ::FirFailingTestSuppressor,
+    )
+
+    useMetaTestConfigurators(::FirOldFrontendMetaConfigurator)
 }

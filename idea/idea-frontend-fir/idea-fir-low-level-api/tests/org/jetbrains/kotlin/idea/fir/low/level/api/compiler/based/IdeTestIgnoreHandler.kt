@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.compiler.based
 
 import org.jetbrains.kotlin.test.WrappedException
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.services.TestServices
@@ -55,6 +56,18 @@ class IdeTestIgnoreHandler(testServices: TestServices) : AfterAnalysisChecker(te
     private fun isFirIdeIgnoreDirectivePresent(): Boolean {
         val moduleStructure = testServices.moduleStructure
         return FirIdeDirectives.FIR_IDE_IGNORE in moduleStructure.allDirectives
+    }
+}
+
+fun TestConfigurationBuilder.addIdeTestIgnoreHandler() {
+    /* IdeTestIgnoreHandler should be executed after FirFailingTestSuppressor,
+    otherwise IdeTestIgnoreHandler will suppress exceptions and FirFailingTestSuppressor will throw error
+    saying that file .fir.fail exists but test passes
+     */
+    forTestsMatching("*") {
+        useAfterAnalysisCheckers(
+            ::IdeTestIgnoreHandler
+        )
     }
 }
 

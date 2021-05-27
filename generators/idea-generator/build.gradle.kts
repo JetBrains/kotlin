@@ -34,6 +34,7 @@ dependencies {
     testCompile(projectTests(":plugins:parcelize:parcelize-ide"))
     testCompile(projectTests(":kotlinx-serialization-ide-plugin"))
     testCompile(projectTests(":compiler:tests-common"))
+    testCompile(projectTests(":compiler:tests-spec"))
 }
 
 val generateIdeaTests by generator("org.jetbrains.kotlin.generators.tests.idea.GenerateTestsKt")
