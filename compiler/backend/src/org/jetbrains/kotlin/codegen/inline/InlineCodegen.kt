@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.inline.isInlineOnly
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
-import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForReturnType
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.org.objectweb.asm.Label
@@ -100,13 +99,17 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     fun performInline(
         typeArguments: List<TypeParameterMarker>?,
         inlineDefaultLambdas: Boolean,
-        mapDefaultSignature: Boolean,
         typeSystem: TypeSystemCommonBackendContext,
         registerLineNumberAfterwards: Boolean,
     ) {
         var nodeAndSmap: SMAPAndMethodNode? = null
         try {
-            nodeAndSmap = createInlineMethodNode(mapDefaultSignature, typeArguments, typeSystem)
+            nodeAndSmap =
+                generateInlineIntrinsic(state, functionDescriptor, jvmSignature.asmMethod, typeArguments, typeSystem)?.let {
+                    SMAPAndMethodNode(it, SMAP(listOf()))
+                } ?: sourceCompiler.compileInlineFunction(jvmSignature).apply {
+                    node.preprocessSuspendMarkers(forInline = true, keepFakeContinuation = false)
+                }
             endCall(inlineCall(nodeAndSmap, inlineDefaultLambdas), registerLineNumberAfterwards)
         } catch (e: CompilationException) {
             throw e
@@ -420,26 +423,8 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         )
     }
 
-    private fun createInlineMethodNode(
-        callDefault: Boolean,
-        typeArguments: List<TypeParameterMarker>?,
-        typeSystem: TypeSystemCommonBackendContext
-    ): SMAPAndMethodNode {
-        val intrinsic = generateInlineIntrinsic(state, functionDescriptor, jvmSignature.asmMethod, typeArguments, typeSystem)
-        if (intrinsic != null) {
-            return SMAPAndMethodNode(intrinsic, SMAP(listOf()))
-        }
-        sourceCompiler.inlineFunctionSignature(jvmSignature, callDefault)?.let { (containerId, asmMethod) ->
-            val isMangled = requiresFunctionNameManglingForReturnType(functionDescriptor)
-            return loadCompiledInlineFunction(containerId, asmMethod, functionDescriptor.isSuspend, isMangled, state)
-        }
-        return sourceCompiler.compileInlineFunction(jvmSignature, callDefault).apply {
-            node.preprocessSuspendMarkers(forInline = true, keepFakeContinuation = false)
-        }
-    }
-
     companion object {
-        internal fun loadCompiledInlineFunction(
+        fun loadCompiledInlineFunction(
             containerId: ClassId,
             asmMethod: Method,
             isSuspend: Boolean,

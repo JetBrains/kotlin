@@ -129,8 +129,7 @@ class IrInlineCodegen(
         performInline(
             expression.symbol.owner.typeParameters.map { it.symbol },
             // Always look for default lambdas to allow custom default argument handling in compiler plugins.
-            true,
-            false,
+            inlineDefaultLambdas = true,
             codegen.typeMapper.typeSystem,
             registerLineNumberAfterwards = isInsideIfCondition,
         )

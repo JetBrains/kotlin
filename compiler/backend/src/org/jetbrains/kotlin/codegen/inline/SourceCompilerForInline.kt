@@ -38,9 +38,7 @@ interface SourceCompilerForInline {
 
     fun generateLambdaBody(lambdaInfo: ExpressionLambda, reifiedTypeParameters: ReifiedTypeParametersUsages): SMAPAndMethodNode
 
-    fun inlineFunctionSignature(jvmSignature: JvmMethodSignature, callDefault: Boolean): Pair<ClassId, Method>?
-
-    fun compileInlineFunction(jvmSignature: JvmMethodSignature, callDefault: Boolean): SMAPAndMethodNode
+    fun compileInlineFunction(jvmSignature: JvmMethodSignature): SMAPAndMethodNode
 
     fun hasFinallyBlocks(): Boolean
 
