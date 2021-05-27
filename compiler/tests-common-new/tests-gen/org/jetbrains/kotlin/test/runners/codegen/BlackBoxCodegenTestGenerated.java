@@ -40342,6 +40342,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             public void testKt46578_propertyRef() throws Exception {
                 runTest("compiler/testData/codegen/box/syntheticAccessors/protectedJavaFieldAccessor/kt46578_propertyRef.kt");
             }
+
+            @Test
+            @TestMetadata("kt46900_jkk_inheritance.kt")
+            public void testKt46900_jkk_inheritance() throws Exception {
+                runTest("compiler/testData/codegen/box/syntheticAccessors/protectedJavaFieldAccessor/kt46900_jkk_inheritance.kt");
+            }
         }
 
         @Nested
