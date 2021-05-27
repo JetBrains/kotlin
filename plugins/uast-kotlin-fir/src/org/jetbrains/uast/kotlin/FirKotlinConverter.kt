@@ -277,6 +277,7 @@ internal object FirKotlinConverter : BaseKotlinConverter {
                     FirKotlinUBlockExpression(expression, givenParent)
                 }
                 is KtReturnExpression -> expr<UReturnExpression>(build(::KotlinUReturnExpression))
+                is KtThrowExpression -> expr<UThrowExpression>(build(::KotlinUThrowExpression))
 
                 is KtBreakExpression -> expr<UBreakExpression>(build(::KotlinUBreakExpression))
                 is KtContinueExpression -> expr<UContinueExpression>(build(::KotlinUContinueExpression))

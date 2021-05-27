@@ -5,6 +5,6 @@ public abstract interface Callback {
 public final class Model {
     public fun Model() = UastEmptyExpression
     public final fun crashMe(clazz: java.lang.Class<T>, factory: kotlin.jvm.functions.Function0<? extends T>) : void {
-        [!] UnknownKotlinExpression (THROW)
+        throw [!] UnknownKotlinExpression (CALL_EXPRESSION)
     }
 }
