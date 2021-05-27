@@ -152,9 +152,8 @@ constructor(
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:Optional
     @get:InputDirectory
-    open val configDirectory: File? by lazy {
-        projectDir.resolve("webpack.config.d").takeIf { it.isDirectory }
-    }
+    open val configDirectory: File?
+        get() = projectDir.resolve("webpack.config.d").takeIf { it.isDirectory }
 
     @Input
     var report: Boolean = false
