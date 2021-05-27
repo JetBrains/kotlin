@@ -36,14 +36,13 @@ class IrInlineCodegen(
     codegen: ExpressionCodegen,
     state: GenerationState,
     private val function: IrFunction,
-    methodOwner: Type,
     signature: JvmMethodSignature,
     typeParameterMappings: TypeParameterMappings<IrType>,
     sourceCompiler: SourceCompilerForInline,
     reifiedTypeInliner: ReifiedTypeInliner<IrType>
 ) :
     InlineCodegen<ExpressionCodegen>(
-        codegen, state, function.toIrBasedDescriptor(), methodOwner, signature, typeParameterMappings, sourceCompiler, reifiedTypeInliner
+        codegen, state, function.toIrBasedDescriptor(), signature, typeParameterMappings, sourceCompiler, reifiedTypeInliner
     ),
     IrInlineCallGenerator {
 

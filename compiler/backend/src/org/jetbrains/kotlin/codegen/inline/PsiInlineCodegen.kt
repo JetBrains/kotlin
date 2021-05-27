@@ -40,13 +40,13 @@ class PsiInlineCodegen(
     codegen: ExpressionCodegen,
     state: GenerationState,
     function: FunctionDescriptor,
-    methodOwner: Type,
     signature: JvmMethodSignature,
     typeParameterMappings: TypeParameterMappings<KotlinType>,
     sourceCompiler: SourceCompilerForInline,
-    private val actualDispatchReceiver: Type = methodOwner
+    private val methodOwner: Type,
+    private val actualDispatchReceiver: Type
 ) : InlineCodegen<ExpressionCodegen>(
-    codegen, state, function, methodOwner, signature, typeParameterMappings, sourceCompiler,
+    codegen, state, function, signature, typeParameterMappings, sourceCompiler,
     ReifiedTypeInliner(
         typeParameterMappings, PsiInlineIntrinsicsSupport(state), codegen.typeSystem,
         state.languageVersionSettings, state.unifiedNullChecks

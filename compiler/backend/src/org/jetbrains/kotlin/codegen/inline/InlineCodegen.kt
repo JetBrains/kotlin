@@ -36,7 +36,6 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     protected val codegen: T,
     protected val state: GenerationState,
     protected val functionDescriptor: FunctionDescriptor,
-    protected val methodOwner: Type,
     protected val jvmSignature: JvmMethodSignature,
     private val typeParameterMappings: TypeParameterMappings<*>,
     protected val sourceCompiler: SourceCompilerForInline,
