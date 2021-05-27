@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.inline.isInlineOnly
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
-import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
-import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -83,31 +81,17 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         AsmUtil.genThrow(codegen.visitor, "java/lang/UnsupportedOperationException", "Call is part of inline cycle: $text")
     }
 
-    protected fun endCall(result: InlineResult, registerLineNumberAfterwards: Boolean) {
-        leaveTemps()
-
-        codegen.propagateChildReifiedTypeParametersUsages(result.reifiedTypeParametersUsages)
-
-        state.factory.removeClasses(result.calcClassesToRemove())
-
-        codegen.markLineNumberAfterInlineIfNeeded(registerLineNumberAfterwards)
-    }
-
-    fun performInline(
-        typeArguments: List<TypeParameterMarker>?,
-        inlineDefaultLambdas: Boolean,
-        typeSystem: TypeSystemCommonBackendContext,
-        registerLineNumberAfterwards: Boolean,
-    ) {
+    fun performInline(inlineDefaultLambdas: Boolean, registerLineNumberAfterwards: Boolean) {
         var nodeAndSmap: SMAPAndMethodNode? = null
         try {
-            nodeAndSmap =
-                generateInlineIntrinsic(state, functionDescriptor, jvmSignature.asmMethod, typeArguments, typeSystem)?.let {
-                    SMAPAndMethodNode(it, SMAP(listOf()))
-                } ?: sourceCompiler.compileInlineFunction(jvmSignature).apply {
-                    node.preprocessSuspendMarkers(forInline = true, keepFakeContinuation = false)
-                }
-            endCall(inlineCall(nodeAndSmap, inlineDefaultLambdas), registerLineNumberAfterwards)
+            nodeAndSmap = sourceCompiler.compileInlineFunction(jvmSignature).apply {
+                node.preprocessSuspendMarkers(forInline = true, keepFakeContinuation = false)
+            }
+            val result = inlineCall(nodeAndSmap, inlineDefaultLambdas)
+            leaveTemps()
+            codegen.propagateChildReifiedTypeParametersUsages(result.reifiedTypeParametersUsages)
+            codegen.markLineNumberAfterInlineIfNeeded(registerLineNumberAfterwards)
+            state.factory.removeClasses(result.calcClassesToRemove())
         } catch (e: CompilationException) {
             throw e
         } catch (e: InlineException) {

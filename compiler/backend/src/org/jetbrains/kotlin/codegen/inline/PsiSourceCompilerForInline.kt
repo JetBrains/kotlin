@@ -241,6 +241,10 @@ class PsiSourceCompilerForInline(
     }
 
     override fun compileInlineFunction(jvmSignature: JvmMethodSignature): SMAPAndMethodNode {
+        generateInlineIntrinsic(state.languageVersionSettings, functionDescriptor, jvmSignature.asmMethod, codegen.typeSystem)?.let {
+            return it
+        }
+
         val asmMethod = if (callDefault) mapDefault() else jvmSignature.asmMethod
 
         val directMember = getDirectMemberAndCallableFromObject()

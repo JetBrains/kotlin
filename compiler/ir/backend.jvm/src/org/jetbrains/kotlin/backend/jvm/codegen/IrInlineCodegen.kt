@@ -126,13 +126,8 @@ class IrInlineCodegen(
         expression: IrFunctionAccessExpression,
         isInsideIfCondition: Boolean,
     ) {
-        performInline(
-            expression.symbol.owner.typeParameters.map { it.symbol },
-            // Always look for default lambdas to allow custom default argument handling in compiler plugins.
-            inlineDefaultLambdas = true,
-            codegen.typeMapper.typeSystem,
-            registerLineNumberAfterwards = isInsideIfCondition,
-        )
+        // Always look for default lambdas to allow custom default argument handling in compiler plugins.
+        performInline(inlineDefaultLambdas = true, registerLineNumberAfterwards = isInsideIfCondition)
     }
 
     override fun genCycleStub(text: String, codegen: ExpressionCodegen) {
