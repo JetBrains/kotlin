@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAnnotationRetention
 import org.jetbrains.kotlin.resolve.descriptorUtil.isRepeatableAnnotation
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
+import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
@@ -53,8 +54,16 @@ class AnnotationChecker(
         }
         if (
             annotated is KtTypeParameterListOwner &&
-            (annotated is KtCallableDeclaration || languageVersionSettings.supportsFeature(ProperCheckAnnotationsTargetInTypeUsePositions))
+            (annotated is KtCallableDeclaration || languageVersionSettings.supportsFeature(ProperCheckAnnotationsTargetInTypeUsePositions) ||
+                    (annotated is KtClass && languageVersionSettings.supportsFeature(ClassTypeParameterAnnotations)))
         ) {
+            if (annotated is KtClass && languageVersionSettings.supportsFeature(ClassTypeParameterAnnotations)) {
+                (descriptor as? ClassDescriptor)?.declaredTypeParameters?.forEach {
+                    //force annotation resolve to obtain targets
+                    ForceResolveUtil.forceResolveAllContents(it.annotations)
+                }
+            }
+
             annotated.typeParameters.forEach { check(it, trace) }
             for (typeParameter in annotated.typeParameters) {
                 typeParameter.extendsBound?.let {
