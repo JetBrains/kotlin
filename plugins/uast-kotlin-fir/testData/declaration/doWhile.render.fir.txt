@@ -6,4 +6,16 @@ public final class DoWhileKt {
         }while ([!] UnknownKotlinExpression (BINARY_EXPRESSION))
 
     }
+    public static final fun kt44412() : void {
+        [!] UnknownKotlinExpression (PROPERTY)
+        Outer@ while ("not-yet-compile-time-constant") {
+            [!] UnknownKotlinExpression (PREFIX_EXPRESSION)
+            [!] UnknownKotlinExpression (PROPERTY)
+            Inner@ do {
+                [!] UnknownKotlinExpression (PREFIX_EXPRESSION)
+            }while (if ([!] UnknownKotlinExpression (BINARY_EXPRESSION)) "not-yet-compile-time-constant" else break)
+
+            if ([!] UnknownKotlinExpression (BINARY_EXPRESSION)) break
+        }
+    }
 }

@@ -269,6 +269,8 @@ internal object FirKotlinConverter : BaseKotlinConverter {
                 is KtCollectionLiteralExpression -> expr<UCallExpression>(build(::KotlinUCollectionLiteralExpression))
                 is KtConstantExpression -> expr<ULiteralExpression>(build(::KotlinULiteralExpression))
 
+                is KtLabeledExpression -> expr<ULabeledExpression>(build(::KotlinULabeledExpression))
+
                 is KtBlockExpression -> expr<UBlockExpression> {
                     // TODO: differentiate lambda
                     FirKotlinUBlockExpression(expression, givenParent)

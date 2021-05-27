@@ -6,4 +6,16 @@ public final class DoWhileKt {
         }while (x != null)
 
     }
+    public static final fun kt44412() : void {
+        var i: int = 0
+        Outer@ while (true) {
+            ++i
+            var j: int = 0
+            Inner@ do {
+                ++j
+            }while (if (j >= 3) false else break)
+
+            if (i == 3) break
+        }
+    }
 }
