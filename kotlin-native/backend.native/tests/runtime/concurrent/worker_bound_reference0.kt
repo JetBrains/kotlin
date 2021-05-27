@@ -37,20 +37,30 @@ fun testGlobal() {
 val global2: WorkerBoundReference<A> = WorkerBoundReference(A(3))
 
 @Test
-fun testGlobalDenyAccessOnWorker() {
+fun testGlobalAccessOnWorker() {
     assertEquals(3, global2.value.a)
 
     val worker = Worker.start()
     val future = worker.execute(TransferMode.SAFE, {}) {
-        val local = global2
-        assertFailsWith<IncorrectDereferenceException> {
-            local.value
+        if (Platform.memoryModel == MemoryModel.EXPERIMENTAL) {
+            assertEquals(global2.value, global2.valueOrNull)
+            global2.value.a
+        } else {
+            val local = global2
+            assertFailsWith<IncorrectDereferenceException> {
+                local.value
+            }
+            assertEquals(null, local.valueOrNull)
+            null
         }
-        assertEquals(null, local.valueOrNull)
-        Unit
     }
 
-    future.result
+    val value = future.result
+    if (Platform.memoryModel == MemoryModel.EXPERIMENTAL) {
+        assertEquals(3, value)
+    } else {
+        assertEquals(null, value)
+    }
     worker.requestTermination().result
 }
 
@@ -189,20 +199,30 @@ fun testLocalFrozen() {
 }
 
 @Test
-fun testLocalDenyAccessOnWorkerFrozen() {
+fun testLocalAccessOnWorkerFrozen() {
     val local = WorkerBoundReference(A(3)).freeze()
     assertEquals(3, local.value.a)
 
     val worker = Worker.start()
     val future = worker.execute(TransferMode.SAFE, { local }) { local ->
-        assertFailsWith<IncorrectDereferenceException> {
-            local.value
+        if (Platform.memoryModel == MemoryModel.EXPERIMENTAL) {
+            assertEquals(local.value, local.valueOrNull)
+            local.value.a
+        } else {
+            assertFailsWith<IncorrectDereferenceException> {
+                local.value
+            }
+            assertEquals(null, local.valueOrNull)
+            null
         }
-        assertEquals(null, local.valueOrNull)
-        Unit
     }
 
-    future.result
+    val value = future.result
+    if (Platform.memoryModel == MemoryModel.EXPERIMENTAL) {
+        assertEquals(3, value)
+    } else {
+        assertEquals(null, value)
+    }
     worker.requestTermination().result
 }
 
@@ -277,17 +297,22 @@ fun testLocalAccessOnMainThread() {
 }
 
 @Test
-fun testLocalDenyAccessOnMainThreadFrozen() {
+fun testLocalAccessOnMainThreadFrozen() {
     val worker = Worker.start()
     val future = worker.execute(TransferMode.SAFE, {}) {
         WorkerBoundReference(A(3)).freeze()
     }
 
     val value = future.result
-    assertFailsWith<IncorrectDereferenceException> {
-        value.value
+    if (Platform.memoryModel == MemoryModel.EXPERIMENTAL) {
+        assertEquals(3, value.value.a)
+        assertEquals(value.value, value.valueOrNull)
+    } else {
+        assertFailsWith<IncorrectDereferenceException> {
+            value.value
+        }
+        assertEquals(null, value.valueOrNull)
     }
-    assertEquals(null, value.valueOrNull)
 
     worker.requestTermination().result
 }
@@ -385,20 +410,30 @@ fun testLocalWithWrapperFrozen() {
 }
 
 @Test
-fun testLocalDenyAccessWithWrapperFrozen() {
+fun testLocalAccessWithWrapperFrozen() {
     val local = Wrapper(WorkerBoundReference(A(3))).freeze()
     assertEquals(3, local.ref.value.a)
 
     val worker = Worker.start()
     val future = worker.execute(TransferMode.SAFE, { local }) { local ->
-        assertFailsWith<IncorrectDereferenceException> {
-            local.ref.value
+        if (Platform.memoryModel == MemoryModel.EXPERIMENTAL) {
+            assertEquals(local.ref.value, local.ref.valueOrNull)
+            local.ref.value.a
+        } else {
+            assertFailsWith<IncorrectDereferenceException> {
+                local.ref.value
+            }
+            assertEquals(null, local.ref.valueOrNull)
+            null
         }
-        assertEquals(null, local.ref.valueOrNull)
-        Unit
     }
 
-    future.result
+    val value = future.result
+    if (Platform.memoryModel == MemoryModel.EXPERIMENTAL) {
+        assertEquals(3, value)
+    } else {
+        assertEquals(null, value)
+    }
     worker.requestTermination().result
 }
 
@@ -437,7 +472,14 @@ fun testCollectFrozen() {
     val (refOwner, refWeak, refValueWeak) = getOwnerAndWeaksFrozen(3)
 
     refOwner.value = null
-    GC.collect()
+    if (Platform.memoryModel == MemoryModel.EXPERIMENTAL) {
+        // This runs the finalizer on the WorkerBoundReference<A>, which schedules removing A from the root set
+        GC.collect()
+        // This actually frees A
+        GC.collect()
+    } else {
+        GC.collect()
+    }
 
     // Last reference to WorkerBoundReference is gone, so it and it's referent are destroyed.
     assertNull(refWeak.value)
@@ -647,7 +689,16 @@ fun collectCyclicGarbageWithAtomicsFrozen() {
     val (ref1Owner, ref1Weak, ref2Weak) = createCyclicGarbageWithAtomicsFrozen()
 
     dispose(ref1Owner)
-    GC.collect()
+    if (Platform.memoryModel == MemoryModel.EXPERIMENTAL) {
+        // Finalizes WorkerBoundReference<C2> and schedules C2 removal from the root set
+        GC.collect()
+        // Frees C2, finalizes WorkerBoundReference<C1> and schedules C1 removal from the root set
+        GC.collect()
+        // Frees C1
+        GC.collect()
+    } else {
+        GC.collect()
+    }
 
     assertNull(ref1Weak.value)
     assertNull(ref2Weak.value)
@@ -723,16 +774,25 @@ fun concurrentAccessFrozen() {
             while (workerUnlocker.value < 1) {
             }
 
-            assertFailsWith<IncorrectDereferenceException> {
-                ref.value
+            if (Platform.memoryModel == MemoryModel.EXPERIMENTAL) {
+                ref.value.a
+            } else {
+                assertFailsWith<IncorrectDereferenceException> {
+                    ref.value
+                }
+                null
             }
-            Unit
         }
     }
     workerUnlocker.increment()
 
     for (future in futures) {
-        future.result
+        val value = future.result
+        if (Platform.memoryModel == MemoryModel.EXPERIMENTAL) {
+            assertEquals(3, value)
+        } else {
+            assertEquals(null, value)
+        }
     }
 
     for (worker in workers) {
@@ -742,6 +802,11 @@ fun concurrentAccessFrozen() {
 
 @Test
 fun testExceptionMessageFrozen() {
+    // Only for legacy MM
+    if (Platform.memoryModel == MemoryModel.EXPERIMENTAL) {
+        return
+    }
+
     val worker = Worker.start()
     val future = worker.execute(TransferMode.SAFE, {}) {
         WorkerBoundReference(A(3)).freeze()

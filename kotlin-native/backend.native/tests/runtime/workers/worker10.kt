@@ -45,7 +45,7 @@ val topSharedData = Data(43)
         false
     }
     }).consume {
-        result -> assertEquals(Platform.memoryModel == MemoryModel.RELAXED, result)
+        result -> assertEquals(Platform.memoryModel != MemoryModel.STRICT, result)
     }
 
     worker.execute(TransferMode.SAFE, { -> }, {
@@ -65,7 +65,7 @@ val topSharedData = Data(43)
             false
         }
     }).consume {
-        result -> assertEquals(Platform.memoryModel == MemoryModel.RELAXED, result)
+        result -> assertEquals(Platform.memoryModel != MemoryModel.STRICT, result)
     }
 
     worker.execute(TransferMode.SAFE, { -> }, {

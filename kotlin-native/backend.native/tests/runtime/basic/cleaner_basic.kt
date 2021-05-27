@@ -55,6 +55,34 @@ fun testCleanerLambda() {
 }
 
 @Test
+fun testCleanerNonSharedLambda() {
+    // Only for experimental MM.
+    if (Platform.memoryModel != MemoryModel.EXPERIMENTAL) {
+        return
+    }
+    val called = AtomicBoolean(false);
+    var funBoxWeak: WeakReference<FunBox>? = null
+    var cleanerWeak: WeakReference<Cleaner>? = null
+    {
+        val cleaner = {
+            val funBox = FunBox { called.value = true }
+            funBoxWeak = WeakReference(funBox)
+            createCleaner(funBox) { it.call() }
+        }()
+        GC.collect()  // Make sure local funBox reference is gone
+        cleanerWeak = WeakReference(cleaner)
+        assertFalse(called.value)
+    }()
+
+    GC.collect()
+    performGCOnCleanerWorker()
+
+    assertNull(cleanerWeak!!.value)
+    assertTrue(called.value)
+    assertNull(funBoxWeak!!.value)
+}
+
+@Test
 fun testCleanerAnonymousFunction() {
     val called = AtomicBoolean(false);
     var funBoxWeak: WeakReference<FunBox>? = null
@@ -62,6 +90,34 @@ fun testCleanerAnonymousFunction() {
     {
         val cleaner = {
             val funBox = FunBox { called.value = true }.freeze()
+            funBoxWeak = WeakReference(funBox)
+            createCleaner(funBox, fun (it: FunBox) { it.call() })
+        }()
+        GC.collect()  // Make sure local funBox reference is gone
+        cleanerWeak = WeakReference(cleaner)
+        assertFalse(called.value)
+    }()
+
+    GC.collect()
+    performGCOnCleanerWorker()
+
+    assertNull(cleanerWeak!!.value)
+    assertTrue(called.value)
+    assertNull(funBoxWeak!!.value)
+}
+
+@Test
+fun testCleanerNonSharedAnonymousFunction() {
+    // Only for experimental MM.
+    if (Platform.memoryModel != MemoryModel.EXPERIMENTAL) {
+        return
+    }
+    val called = AtomicBoolean(false);
+    var funBoxWeak: WeakReference<FunBox>? = null
+    var cleanerWeak: WeakReference<Cleaner>? = null
+    {
+        val cleaner = {
+            val funBox = FunBox { called.value = true }
             funBoxWeak = WeakReference(funBox)
             createCleaner(funBox, fun (it: FunBox) { it.call() })
         }()
@@ -103,7 +159,39 @@ fun testCleanerFunctionReference() {
 }
 
 @Test
+fun testCleanerNonSharedFunctionReference() {
+    // Only for experimental MM.
+    if (Platform.memoryModel != MemoryModel.EXPERIMENTAL) {
+        return
+    }
+    val called = AtomicBoolean(false);
+    var funBoxWeak: WeakReference<FunBox>? = null
+    var cleanerWeak: WeakReference<Cleaner>? = null
+    {
+        val cleaner = {
+            val funBox = FunBox { called.value = true }
+            funBoxWeak = WeakReference(funBox)
+            createCleaner(funBox, FunBox::call)
+        }()
+        GC.collect()  // Make sure local funBox reference is gone
+        cleanerWeak = WeakReference(cleaner)
+        assertFalse(called.value)
+    }()
+
+    GC.collect()
+    performGCOnCleanerWorker()
+
+    assertNull(cleanerWeak!!.value)
+    assertTrue(called.value)
+    assertNull(funBoxWeak!!.value)
+}
+
+@Test
 fun testCleanerFailWithNonShareableArgument() {
+    // Only for legacy MM.
+    if (Platform.memoryModel == MemoryModel.EXPERIMENTAL) {
+        return
+    }
     val funBox = FunBox {}
     assertFailsWith<IllegalArgumentException> {
         createCleaner(funBox) {}
