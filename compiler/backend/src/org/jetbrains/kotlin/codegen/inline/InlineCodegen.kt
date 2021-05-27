@@ -9,13 +9,11 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
 import org.jetbrains.kotlin.codegen.context.ClosureContext
-import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.Position
 import org.jetbrains.kotlin.incremental.components.ScopeKind
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -27,7 +25,6 @@ import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.*
 import kotlin.math.max
 
@@ -424,50 +421,6 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     }
 
     companion object {
-        fun loadCompiledInlineFunction(
-            containerId: ClassId,
-            asmMethod: Method,
-            isSuspend: Boolean,
-            isMangled: Boolean,
-            state: GenerationState
-        ): SMAPAndMethodNode {
-            val containerType = AsmUtil.asmTypeByClassId(containerId)
-            val bytes = state.inlineCache.classBytes.getOrPut(containerId) {
-                findVirtualFile(state, containerId)?.contentsToByteArray()
-                    ?: throw IllegalStateException("Couldn't find declaration file for $containerId")
-            }
-            val resultInCache = state.inlineCache.methodNodeById.getOrPut(MethodId(containerType.descriptor, asmMethod)) {
-                getMethodNode(containerType, bytes, asmMethod.name, asmMethod.descriptor, isSuspend, isMangled)
-            }
-            return SMAPAndMethodNode(cloneMethodNode(resultInCache.node), resultInCache.classSMAP)
-        }
-
-        private fun getMethodNode(
-            owner: Type,
-            bytes: ByteArray,
-            name: String,
-            descriptor: String,
-            isSuspend: Boolean,
-            isMangled: Boolean
-        ): SMAPAndMethodNode {
-            getMethodNode(owner, bytes, name, descriptor, isSuspend)?.let { return it }
-            if (isMangled) {
-                // Compatibility with old inline class ABI versions.
-                val dashIndex = name.indexOf('-')
-                val nameWithoutManglingSuffix = if (dashIndex > 0) name.substring(0, dashIndex) else name
-                if (nameWithoutManglingSuffix != name) {
-                    getMethodNode(owner, bytes, nameWithoutManglingSuffix, descriptor, isSuspend)?.let { return it }
-                }
-                getMethodNode(owner, bytes, "$nameWithoutManglingSuffix-impl", descriptor, isSuspend)?.let { return it }
-            }
-            throw IllegalStateException("couldn't find inline method $owner.$name$descriptor")
-        }
-
-        // If an `inline suspend fun` has a state machine, it should have a `$$forInline` version without one.
-        private fun getMethodNode(owner: Type, bytes: ByteArray, name: String, descriptor: String, isSuspend: Boolean) =
-            (if (isSuspend) getMethodNode(bytes, name + FOR_INLINE_SUFFIX, descriptor, owner) else null)
-                ?: getMethodNode(bytes, name, descriptor, owner)
-
         private fun StackValue.isCapturedInlineParameter(): Boolean {
             val field = if (this is StackValue.FieldForSharedVar) receiver else this
             return field is StackValue.Field && field.descriptor is ParameterDescriptor &&
