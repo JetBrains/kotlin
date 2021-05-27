@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.jvm.ir.getKtFile
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.hasMangledReturnType
 import org.jetbrains.kotlin.codegen.BaseExpressionCodegen
-import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -50,13 +49,6 @@ class IrSourceCompilerForInline(
 
     override val callsiteFile: PsiFile?
         get() = codegen.irFunction.fileParent.getKtFile()
-
-    override val contextKind: OwnerKind
-        get() = when (val parent = callElement.symbol.owner.parent) {
-            is IrPackageFragment -> OwnerKind.PACKAGE
-            is IrClass -> OwnerKind.IMPLEMENTATION
-            else -> throw AssertionError("Unexpected declaration container: $parent")
-        }
 
     override val inlineCallSiteInfo: InlineCallSiteInfo
         get() {

@@ -99,7 +99,8 @@ class PsiInlineCodegen(
     private val hiddenParameters = mutableListOf<Pair<ParameterInfo, Int>>()
 
     override fun processHiddenParameters() {
-        if (getMethodAsmFlags(functionDescriptor, sourceCompiler.contextKind, state) and Opcodes.ACC_STATIC == 0) {
+        val contextKind = (sourceCompiler as PsiSourceCompilerForInline).context.contextKind
+        if (getMethodAsmFlags(functionDescriptor, contextKind, state) and Opcodes.ACC_STATIC == 0) {
             hiddenParameters += invocationParamBuilder.addNextParameter(methodOwner, false, actualDispatchReceiver) to
                     codegen.frameMap.enterTemp(methodOwner)
         }

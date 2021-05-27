@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.codegen.inline
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.BaseExpressionCodegen
-import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -33,8 +32,6 @@ interface SourceCompilerForInline {
     val callElementText: String
 
     val callsiteFile: PsiFile?
-
-    val contextKind: OwnerKind
 
     val inlineCallSiteInfo: InlineCallSiteInfo
 
