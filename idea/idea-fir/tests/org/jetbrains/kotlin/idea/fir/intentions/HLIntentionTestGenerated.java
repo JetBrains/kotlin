@@ -473,4 +473,87 @@ public class HLIntentionTestGenerated extends AbstractHLIntentionTest {
             runTest("idea/testData/intentions/specifyTypeExplicitly/unitType.kt");
         }
     }
+
+    @TestMetadata("idea/testData/intentions/importAllMembers")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ImportAllMembers extends AbstractHLIntentionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInImportAllMembers() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/intentions/importAllMembers"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
+        }
+
+        @TestMetadata("AlreadyImported.kt")
+        public void testAlreadyImported() throws Exception {
+            runTest("idea/testData/intentions/importAllMembers/AlreadyImported.kt");
+        }
+
+        @TestMetadata("AlreadyImportedWithStar.kt")
+        public void testAlreadyImportedWithStar() throws Exception {
+            runTest("idea/testData/intentions/importAllMembers/AlreadyImportedWithStar.kt");
+        }
+
+        @TestMetadata("AmbiguousCalls.kt")
+        public void testAmbiguousCalls() throws Exception {
+            runTest("idea/testData/intentions/importAllMembers/AmbiguousCalls.kt");
+        }
+
+        @TestMetadata("EnumMembers.kt")
+        public void testEnumMembers() throws Exception {
+            runTest("idea/testData/intentions/importAllMembers/EnumMembers.kt");
+        }
+
+        @TestMetadata("ImportAllMembersInImport.kt")
+        public void testImportAllMembersInImport() throws Exception {
+            runTest("idea/testData/intentions/importAllMembers/ImportAllMembersInImport.kt");
+        }
+
+        @TestMetadata("NotFromCompanionObject.kt")
+        public void testNotFromCompanionObject() throws Exception {
+            runTest("idea/testData/intentions/importAllMembers/NotFromCompanionObject.kt");
+        }
+
+        @TestMetadata("NotFromObject.kt")
+        public void testNotFromObject() throws Exception {
+            runTest("idea/testData/intentions/importAllMembers/NotFromObject.kt");
+        }
+
+        @TestMetadata("QualifiedName.kt")
+        public void testQualifiedName() throws Exception {
+            runTest("idea/testData/intentions/importAllMembers/QualifiedName.kt");
+        }
+
+        @TestMetadata("QualifiedName2.kt")
+        public void testQualifiedName2() throws Exception {
+            runTest("idea/testData/intentions/importAllMembers/QualifiedName2.kt");
+        }
+
+        @TestMetadata("RemoveSingleImports.kt")
+        public void testRemoveSingleImports() throws Exception {
+            runTest("idea/testData/intentions/importAllMembers/RemoveSingleImports.kt");
+        }
+
+        @TestMetadata("StaticJavaMembers.kt")
+        public void testStaticJavaMembers() throws Exception {
+            runTest("idea/testData/intentions/importAllMembers/StaticJavaMembers.kt");
+        }
+
+        @TestMetadata("TypeReference.kt")
+        public void testTypeReference() throws Exception {
+            runTest("idea/testData/intentions/importAllMembers/TypeReference.kt");
+        }
+
+        @TestMetadata("TypeReference2.kt")
+        public void testTypeReference2() throws Exception {
+            runTest("idea/testData/intentions/importAllMembers/TypeReference2.kt");
+        }
+
+        @TestMetadata("UnresolvedMember.kt")
+        public void testUnresolvedMember() throws Exception {
+            runTest("idea/testData/intentions/importAllMembers/UnresolvedMember.kt");
+        }
+    }
 }
