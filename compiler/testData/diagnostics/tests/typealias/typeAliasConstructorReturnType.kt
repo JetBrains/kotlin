@@ -8,10 +8,10 @@ typealias PIntIntA = Pair<Int, Int>
 typealias PA<T1A, T2A> = Pair<T1A, T2A>
 typealias P2A<TA> = Pair<TA, TA>
 
-val test1 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>CIntA<!>(10)
+val test1 = CIntA(10)
 val test2 = CA<Int>(10)
 val test3 = CA(10)
-val test4 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>PIntIntA<!>(10, 20)
+val test4 = PIntIntA(10, 20)
 val test5 = PA<Int, Int>(10, 20)
 val test6 = PA(10, 20)
 val test7 = P2A<Int>(10, 20)

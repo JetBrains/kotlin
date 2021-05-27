@@ -36,5 +36,5 @@ FILE fqName:<root> fileName:/specializedTypeAliasConstructorCall.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test (): <root>.Cell<kotlin.Int> declared in <root>'
         CONSTRUCTOR_CALL 'public constructor <init> (value: T of <root>.Cell) [primary] declared in <root>.Cell' type=<root>.Cell<kotlin.Int> origin=null
-          <class: T>: kotlin.Any?
+          <class: T>: <none>
           value: CONST Int type=kotlin.Int value=42

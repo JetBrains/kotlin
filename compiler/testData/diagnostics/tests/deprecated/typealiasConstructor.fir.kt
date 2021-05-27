@@ -14,4 +14,4 @@ class Test1 : DeprecatedClassAlias()
 
 class Test2 : WithDeprecatedCtorAlias()
 
-val test3 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>ArrayListOfDeprecatedClass<!>()
+val test3 = ArrayListOfDeprecatedClass()

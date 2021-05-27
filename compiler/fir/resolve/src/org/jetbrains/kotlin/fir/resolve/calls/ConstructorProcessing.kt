@@ -178,7 +178,9 @@ private fun processConstructors(
 
                     val outerType = bodyResolveComponents.outerClassManager.outerType(type)
 
-                    if (basicScope != null && (matchedSymbol.fir.typeParameters.isNotEmpty() || outerType != null)) {
+                    if (basicScope != null &&
+                        (matchedSymbol.fir.typeParameters.isNotEmpty() || outerType != null || type.typeArguments.isNotEmpty())
+                    ) {
                         TypeAliasConstructorsSubstitutingScope(
                             matchedSymbol,
                             basicScope,
@@ -212,10 +214,6 @@ private class TypeAliasConstructorsSubstitutingScope(
     private val delegatingScope: FirScope,
     private val outerType: ConeClassLikeType?,
 ) : FirScope() {
-
-    init {
-        require(outerType != null || typeAliasSymbol.fir.typeParameters.isNotEmpty())
-    }
 
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
         delegatingScope.processDeclaredConstructors wrapper@{ originalConstructorSymbol ->
