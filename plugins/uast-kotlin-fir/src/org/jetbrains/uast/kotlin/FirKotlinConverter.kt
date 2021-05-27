@@ -270,6 +270,7 @@ internal object FirKotlinConverter : BaseKotlinConverter {
                 is KtConstantExpression -> expr<ULiteralExpression>(build(::KotlinULiteralExpression))
 
                 is KtLabeledExpression -> expr<ULabeledExpression>(build(::KotlinULabeledExpression))
+                is KtParenthesizedExpression -> expr<UParenthesizedExpression>(build(::KotlinUParenthesizedExpression))
 
                 is KtBlockExpression -> expr<UBlockExpression> {
                     // TODO: differentiate lambda

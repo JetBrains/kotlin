@@ -6,5 +6,6 @@ UFile (package = )
                 UReturnExpression
                     UIfExpression
                         [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
-                        ULiteralExpression (value = "not-yet-compile-time-constant")
+                        UParenthesizedExpression
+                            [!] UnknownKotlinExpression (BINARY_EXPRESSION)
                         ULiteralExpression (value = "42")
