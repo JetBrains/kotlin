@@ -1222,8 +1222,8 @@ internal class NamedParameterNotFoundImpl(
 }
 
 internal class AssignmentTypeMismatchImpl(
-    override val expected: KtType,
-    override val actual: KtType,
+    override val expectedType: KtType,
+    override val actualType: KtType,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.AssignmentTypeMismatch(), KtAbstractFirDiagnostic<KtExpression> {
@@ -1231,8 +1231,8 @@ internal class AssignmentTypeMismatchImpl(
 }
 
 internal class ResultTypeMismatchImpl(
-    override val expected: KtType,
-    override val actual: KtType,
+    override val expectedType: KtType,
+    override val actualType: KtType,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.ResultTypeMismatch(), KtAbstractFirDiagnostic<KtExpression> {

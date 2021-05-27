@@ -331,13 +331,13 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
 
         val ASSIGNMENT_TYPE_MISMATCH by error<KtExpression> {
-            parameter<ConeKotlinType>("expected")
-            parameter<ConeKotlinType>("actual")
+            parameter<ConeKotlinType>("expectedType")
+            parameter<ConeKotlinType>("actualType")
         }
 
         val RESULT_TYPE_MISMATCH by error<KtExpression> {
-            parameter<ConeKotlinType>("expected")
-            parameter<ConeKotlinType>("actual")
+            parameter<ConeKotlinType>("expectedType")
+            parameter<ConeKotlinType>("actualType")
         }
 
         val MANY_LAMBDA_EXPRESSION_ARGUMENTS by error<KtValueArgument>()
