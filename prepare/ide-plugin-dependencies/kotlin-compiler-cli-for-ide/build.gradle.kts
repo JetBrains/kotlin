@@ -1,6 +1,8 @@
-idePluginDependency {
-    publishProjectJars(listOf(
-        ":compiler:cli",
-        ":compiler:cli-js"
-    ))
+plugins {
+    kotlin("jvm")
 }
+
+publishJarsForIde(listOf(
+    ":compiler:cli",
+    ":compiler:cli-js"
+))

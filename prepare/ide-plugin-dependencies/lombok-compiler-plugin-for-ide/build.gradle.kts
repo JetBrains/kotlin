@@ -1,3 +1,5 @@
-idePluginDependency {
-    publishProjectJars(listOf(":plugins:lombok:lombok-compiler-plugin"))
+plugins {
+    kotlin("jvm")
 }
+
+publishJarsForIde(listOf(":plugins:lombok:lombok-compiler-plugin"))
