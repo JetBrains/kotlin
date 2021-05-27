@@ -1174,7 +1174,6 @@ fun main(args: Array<String>) {
                 model("checker/diagnosticsMessage", excludedPattern = excludedFirTestdataPattern)
             }
 
-
             testClass<AbstractHighLevelQuickFixTest> {
                 val pattern = "^([\\w\\-_]+)\\.kt$"
                 model("quickfix/abstract", pattern = pattern, filenameStartsLowerCase = true)
@@ -1213,6 +1212,7 @@ fun main(args: Array<String>) {
                 val pattern = "^([\\w\\-_]+)\\.(kt|kts)$"
                 model("intentions/addPropertyAccessors", pattern = pattern)
                 model("intentions/specifyTypeExplicitly", pattern = pattern)
+                model("intentions/importAllMembers", pattern = pattern)
             }
 
             testClass<AbstractFirShortenRefsTest> {
