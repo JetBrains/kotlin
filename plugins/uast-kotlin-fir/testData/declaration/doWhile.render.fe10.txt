@@ -1,0 +1,9 @@
+public final class DoWhileKt {
+    public static final fun test() : void {
+        var x: java.lang.String = null
+        do {
+            x = "non-null"
+        }while (x != null)
+
+    }
+}

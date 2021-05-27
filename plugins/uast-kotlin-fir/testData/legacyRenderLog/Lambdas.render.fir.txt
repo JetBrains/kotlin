@@ -10,6 +10,7 @@ public final class LambdasKt {
         [!] UnknownKotlinExpression (CALL_EXPRESSION)
     }
     public static final fun lambdaInPlaceCall() : void {
-        [!] UnknownKotlinExpression (WHILE)
+        while ([!] UnknownKotlinExpression (CALL_EXPRESSION)) {
+        }
     }
 }

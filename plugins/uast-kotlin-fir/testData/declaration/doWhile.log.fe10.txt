@@ -1,0 +1,15 @@
+UFile (package = )
+    UClass (name = DoWhileKt)
+        UMethod (name = test)
+            UBlockExpression
+                UDeclarationsExpression
+                    ULocalVariable (name = x)
+                        ULiteralExpression (value = null)
+                UDoWhileExpression
+                    UBinaryExpression (operator = !=)
+                        USimpleNameReferenceExpression (identifier = x)
+                        ULiteralExpression (value = null)
+                    UBlockExpression
+                        UBinaryExpression (operator = =)
+                            USimpleNameReferenceExpression (identifier = x)
+                            ULiteralExpression (value = "non-null")

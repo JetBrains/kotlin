@@ -1,0 +1,9 @@
+public final class DoWhileKt {
+    public static final fun test() : void {
+        [!] UnknownKotlinExpression (PROPERTY)
+        do {
+            [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+        }while ([!] UnknownKotlinExpression (BINARY_EXPRESSION))
+
+    }
+}

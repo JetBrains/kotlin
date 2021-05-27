@@ -12,4 +12,6 @@ UFile (package = )
                 [!] UnknownKotlinExpression (CALL_EXPRESSION)
         UMethod (name = lambdaInPlaceCall)
             UBlockExpression
-                [!] UnknownKotlinExpression (WHILE)
+                UWhileExpression
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION)
+                    UBlockExpression

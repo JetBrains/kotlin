@@ -1,0 +1,9 @@
+UFile (package = )
+    UClass (name = DoWhileKt)
+        UMethod (name = test)
+            UBlockExpression
+                [!] UnknownKotlinExpression (PROPERTY)
+                UDoWhileExpression
+                    [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+                    UBlockExpression
+                        [!] UnknownKotlinExpression (BINARY_EXPRESSION)

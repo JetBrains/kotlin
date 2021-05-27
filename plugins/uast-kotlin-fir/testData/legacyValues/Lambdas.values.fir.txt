@@ -12,4 +12,6 @@ UFile (package = ) [import java.util.stream.Stream...]
                 [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
         UMethod (name = lambdaInPlaceCall) [public static final fun lambdaInPlaceCall() : void {...}]
             UBlockExpression [{...}] = Undetermined
-                [!] UnknownKotlinExpression (WHILE) [[!] UnknownKotlinExpression (WHILE)] = Undetermined
+                UWhileExpression [while ([!] UnknownKotlinExpression (CALL_EXPRESSION)) {...}] = Undetermined
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
+                    UBlockExpression [{...}] = Undetermined
