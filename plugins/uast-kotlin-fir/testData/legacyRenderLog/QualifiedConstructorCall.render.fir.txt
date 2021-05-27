@@ -6,5 +6,7 @@ public final class Foo {
 
 public final class Bar {
     public fun Bar() = UastEmptyExpression
-    public final fun getFoo() : A.B.C.Foo = [!] UnknownKotlinExpression (BLOCK)
+    public final fun getFoo() : A.B.C.Foo {
+        return [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+    }
 }

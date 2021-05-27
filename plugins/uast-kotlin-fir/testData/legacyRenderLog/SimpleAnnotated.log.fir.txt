@@ -4,5 +4,6 @@ UFile (package = )
             ULiteralExpression (value = "Mary")
         UMethod (name = SimpleAnnotated)
         UMethod (name = method)
-            [!] UnknownKotlinExpression (BLOCK)
+            UBlockExpression
+                [!] UnknownKotlinExpression (CALL_EXPRESSION)
         UMethod (name = getProperty)

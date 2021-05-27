@@ -7,10 +7,9 @@ package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.uast.DEFAULT_EXPRESSION_TYPES_LIST
-import org.jetbrains.uast.DEFAULT_TYPES_LIST
-import org.jetbrains.uast.UElement
-import org.jetbrains.uast.UExpression
+import org.jetbrains.kotlin.psi.KtBlockExpression
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.internal.KotlinFakeUElement
 
 fun expressionTypes(requiredType: Class<out UElement>?) =
@@ -53,4 +52,17 @@ val identifiersTokens = setOf(
 fun UElement.toSourcePsiFakeAware(): List<PsiElement> {
     if (this is KotlinFakeUElement) return this.unwrapToSourcePsi()
     return listOfNotNull(this.sourcePsi)
+}
+
+fun wrapExpressionBody(function: UElement, bodyExpression: KtExpression): UExpression? = when (bodyExpression) {
+    !is KtBlockExpression -> {
+        KotlinLazyUBlockExpression(function) { block ->
+            val implicitReturn = KotlinUImplicitReturnExpression(block)
+            val uBody = function.getLanguagePlugin().convertElement(bodyExpression, implicitReturn) as? UExpression
+                ?: return@KotlinLazyUBlockExpression emptyList()
+            listOf(implicitReturn.apply { returnExpression = uBody })
+        }
+
+    }
+    else -> function.getLanguagePlugin().convertElement(bodyExpression, function) as? UExpression
 }

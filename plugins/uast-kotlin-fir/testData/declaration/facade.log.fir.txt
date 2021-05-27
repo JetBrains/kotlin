@@ -1,7 +1,13 @@
 UFile (package = declaration)
     UClass (name = Utils)
         UMethod (name = foo)
-            ULiteralExpression (value = "not-yet-compile-time-constant")
+            UBlockExpression
+                UReturnExpression
+                    ULiteralExpression (value = "not-yet-compile-time-constant")
         UMethod (name = buzz)
             UParameter (name = $this$buzz)
-            [!] UnknownKotlinExpression (BLOCK)
+            UBlockExpression
+                UReturnExpression
+                    UPolyadicExpression (operator = +)
+                        [!] UnknownKotlinExpression (THIS_EXPRESSION)
+                        ULiteralExpression (value = "... zzz...")

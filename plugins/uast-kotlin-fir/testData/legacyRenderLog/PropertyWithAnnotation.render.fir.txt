@@ -1,9 +1,15 @@
 public final class PropertyWithAnnotationKt {
     private static final var prop1: int = "not-yet-compile-time-constant"
     public static final fun getProp1() : int = UastEmptyExpression
-    public static final fun getProp2() : int = "not-yet-compile-time-constant"
-    public static final fun getProp3() : int = "not-yet-compile-time-constant"
-    public static final fun setProp3(value: int) : void = [!] UnknownKotlinExpression (BLOCK)
+    public static final fun getProp2() : int {
+        return "not-yet-compile-time-constant"
+    }
+    public static final fun getProp3() : int {
+        return "not-yet-compile-time-constant"
+    }
+    public static final fun setProp3(value: int) : void {
+        [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+    }
 }
 
 public abstract annotation TestAnnotation {

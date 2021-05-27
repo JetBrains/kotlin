@@ -6,4 +6,4 @@ UFile (package = )
     UClass (name = Foo)
         UMethod (name = Foo)
         UMethod (name = bar)
-            [!] UnknownKotlinExpression (BLOCK)
+            UBlockExpression

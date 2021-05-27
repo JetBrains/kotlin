@@ -1,3 +1,5 @@
 public final class WhenIsKt {
-    public static final fun foo(bar: java.lang.Object) : void = [!] UnknownKotlinExpression (WHEN)
+    public static final fun foo(bar: java.lang.Object) : void {
+        return [!] UnknownKotlinExpression (WHEN)
+    }
 }

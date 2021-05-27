@@ -1,10 +1,30 @@
 public final class ResolveKt {
-    public static final fun bar() : void = [!] UnknownKotlinExpression (BLOCK)
-    public static final fun barT(t: T) : void = [!] UnknownKotlinExpression (BLOCK)
-    public static final fun barTL(listT: T) : void = [!] UnknownKotlinExpression (BLOCK)
+    public static final fun bar() : void {
+        [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+        [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+        [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+        [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+        [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+        [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+        [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+        [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+        [!] UnknownKotlinExpression (CALL_EXPRESSION)
+    }
+    public static final fun barT(t: T) : void {
+        [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+    }
+    public static final fun barTL(listT: T) : void {
+        [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+        [!] UnknownKotlinExpression (FOR)
+    }
 }
 
 public class A {
     public fun A() = UastEmptyExpression
-    public final fun foo() : void = [!] UnknownKotlinExpression (BLOCK)
+    public final fun foo() : void {
+    }
 }

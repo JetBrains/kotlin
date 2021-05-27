@@ -1,7 +1,8 @@
 UFile (package = )
     UClass (name = Ea101715Kt)
         UMethod (name = a)
-            [!] UnknownKotlinExpression (BLOCK)
+            UBlockExpression
+                [!] UnknownKotlinExpression (PROPERTY)
     UClass (name = Obj)
         UField (name = INSTANCE)
         UMethod (name = Obj)

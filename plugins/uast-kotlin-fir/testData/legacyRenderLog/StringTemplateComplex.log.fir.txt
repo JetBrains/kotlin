@@ -37,6 +37,11 @@ UFile (package = )
         UMethod (name = simpleForTemplate)
             UParameter (name = i)
                 ULiteralExpression (value = "not-yet-compile-time-constant")
-            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+            UBlockExpression
+                UReturnExpression
+                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
         UMethod (name = foo)
-            [!] UnknownKotlinExpression (BLOCK)
+            UBlockExpression
+                [!] UnknownKotlinExpression (CALL_EXPRESSION)
+                [!] UnknownKotlinExpression (PROPERTY)
+                [!] UnknownKotlinExpression (PROPERTY)

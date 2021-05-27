@@ -1,5 +1,6 @@
 UFile (package = ) [public final class BrokenMethodKt {...]
     UClass (name = BrokenMethodKt) [public final class BrokenMethodKt {...}]
-        UMethod (name = main) [public static final fun main(args: java.lang.String[]) : void = [!] UnknownKotlinExpression (BLOCK)]
+        UMethod (name = main) [public static final fun main(args: java.lang.String[]) : void {...}]
             UParameter (name = args) [var args: java.lang.String[]]
-            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)]
+            UBlockExpression [{...}]
+                [!] UnknownKotlinExpression (CLASS) [[!] UnknownKotlinExpression (CLASS)]

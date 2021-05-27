@@ -221,7 +221,7 @@ open class KotlinConstructorUMethod(
         }
         val bodyExpressions = getBodyExpressions()
         if (delegationCall == null && bodyExpressions.isEmpty()) return@lz null
-        KotlinUBlockExpression.KotlinLazyUBlockExpression(this) { uastParent ->
+        KotlinLazyUBlockExpression(this) { uastParent ->
             SmartList<UExpression>().apply {
                 delegationCall?.let {
                     add(KotlinUFunctionCallExpression(it, uastParent))
@@ -338,7 +338,7 @@ class KotlinScriptUClass(
     ) : KotlinUMethod(psi, psi.kotlinOrigin, givenParent) {
         override val uastBody: UExpression? by lz {
             val initializers = script.declarations.filterIsInstance<KtScriptInitializer>()
-            KotlinUBlockExpression.create(initializers, this)
+            KotlinLazyUBlockExpression.create(initializers, this)
         }
         override val javaPsi = psi
     }

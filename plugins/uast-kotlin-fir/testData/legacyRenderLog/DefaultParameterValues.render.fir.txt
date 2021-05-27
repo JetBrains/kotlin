@@ -1,3 +1,4 @@
 public final class DefaultParameterValuesKt {
-    public static final fun foo(a: int, foo: java.lang.String) : void = [!] UnknownKotlinExpression (BLOCK)
+    public static final fun foo(a: int, foo: java.lang.String) : void {
+    }
 }

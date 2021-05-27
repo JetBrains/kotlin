@@ -11,6 +11,12 @@ public final class StringTemplateComplexKt {
     public static final fun getLiteralInLiteral() : java.lang.String = UastEmptyExpression
     public static final fun getLiteralInLiteral2() : java.lang.String = UastEmptyExpression
     public static final fun getEmpty() : java.lang.String = UastEmptyExpression
-    public static final fun simpleForTemplate(i: int) : java.lang.String = [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
-    public static final fun foo() : void = [!] UnknownKotlinExpression (BLOCK)
+    public static final fun simpleForTemplate(i: int) : java.lang.String {
+        return [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+    }
+    public static final fun foo() : void {
+        [!] UnknownKotlinExpression (CALL_EXPRESSION)
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (PROPERTY)
+    }
 }

@@ -1,4 +1,5 @@
 UFile (package = )
     UClass (name = IfStatementKt)
         UMethod (name = foo)
-            [!] UnknownKotlinExpression (BLOCK)
+            UBlockExpression
+                [!] UnknownKotlinExpression (PROPERTY)

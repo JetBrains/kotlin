@@ -30,6 +30,8 @@ open class FirKotlinUMethod(
 
     override fun getSourceElement() = sourcePsi
 
+    private val kotlinOrigin = getKotlinMemberOrigin(psi.originalElement) ?: sourcePsi
+
     override val uAnnotations: List<UAnnotation>
         get() {
             // TODO: Not yet implemented
@@ -65,6 +67,7 @@ open class FirKotlinUMethod(
     }
 
     override val uastBody: UExpression? by lz {
+        if (kotlinOrigin?.canAnalyze() != true) return@lz null // EA-137193
         val bodyExpression = when (sourcePsi) {
             is KtFunction -> sourcePsi.bodyExpression
             is KtPropertyAccessor -> sourcePsi.bodyExpression
@@ -76,7 +79,7 @@ open class FirKotlinUMethod(
             else -> null
         } ?: return@lz null
 
-        UastFacade.findPlugin(this)?.convertElement(bodyExpression, this) as? UExpression
+        wrapExpressionBody(this, bodyExpression)
     }
 
     override val returnTypeReference: UTypeReferenceExpression? by lz {

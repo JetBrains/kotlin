@@ -1,3 +1,5 @@
 public final class BrokenMethodKt {
-    public static final fun main(args: java.lang.String[]) : void = [!] UnknownKotlinExpression (BLOCK)
+    public static final fun main(args: java.lang.String[]) : void {
+        [!] UnknownKotlinExpression (CLASS)
+    }
 }

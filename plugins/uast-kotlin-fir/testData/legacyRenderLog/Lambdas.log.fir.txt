@@ -2,9 +2,14 @@ UFile (package = )
     UImportStatement (isOnDemand = false)
     UClass (name = LambdasKt)
         UMethod (name = foo)
-            [!] UnknownKotlinExpression (BLOCK)
+            UBlockExpression
+                [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
         UMethod (name = doSelectItem)
             UParameter (name = selectItemFunction)
-            [!] UnknownKotlinExpression (BLOCK)
+            UBlockExpression
+                [!] UnknownKotlinExpression (CALL_EXPRESSION)
+                [!] UnknownKotlinExpression (PROPERTY)
+                [!] UnknownKotlinExpression (CALL_EXPRESSION)
         UMethod (name = lambdaInPlaceCall)
-            [!] UnknownKotlinExpression (BLOCK)
+            UBlockExpression
+                [!] UnknownKotlinExpression (WHILE)

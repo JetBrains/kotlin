@@ -3,6 +3,8 @@ UFile (package = )
         UField (name = withoutSetter)
             ULiteralExpression (value = "/sdcard")
         UMethod (name = getWithoutSetter)
-            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+            UBlockExpression
+                UReturnExpression
+                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
         UMethod (name = setWithoutSetter)
             UParameter (name = value)

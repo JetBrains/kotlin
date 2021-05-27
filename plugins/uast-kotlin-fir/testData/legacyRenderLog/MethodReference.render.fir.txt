@@ -5,5 +5,6 @@ public final class MethodReferenceKt {
 
 public final class Foo {
     public fun Foo() = UastEmptyExpression
-    public final fun bar() : void = [!] UnknownKotlinExpression (BLOCK)
+    public final fun bar() : void {
+    }
 }

@@ -1,3 +1,7 @@
 public final class InKt {
-    public static final fun foo() : boolean = [!] UnknownKotlinExpression (BLOCK)
+    public static final fun foo() : boolean {
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (PROPERTY)
+        return [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+    }
 }

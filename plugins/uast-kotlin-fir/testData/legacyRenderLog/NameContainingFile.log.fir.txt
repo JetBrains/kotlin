@@ -3,7 +3,7 @@ UFile (package = )
         UField (name = xyzzy)
             ULiteralExpression (value = "not-yet-compile-time-constant")
         UMethod (name = bar)
-            [!] UnknownKotlinExpression (BLOCK)
+            UBlockExpression
         UMethod (name = getXyzzy)
     UClass (name = Foo)
         UMethod (name = Foo)

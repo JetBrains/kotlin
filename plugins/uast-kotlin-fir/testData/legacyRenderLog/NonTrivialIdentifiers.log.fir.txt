@@ -2,11 +2,15 @@ UFile (package = )
     UClass (name = NonTrivialIdentifiersKt)
         UMethod (name = main)
             UParameter (name = a)
-            [!] UnknownKotlinExpression (BLOCK)
+            UBlockExpression
+                [!] UnknownKotlinExpression (CALL_EXPRESSION)
+                [!] UnknownKotlinExpression (PROPERTY)
+                [!] UnknownKotlinExpression (CALL_EXPRESSION)
     UClass (name = A)
         UMethod (name = A)
         UMethod (name = invoke)
-            [!] UnknownKotlinExpression (BLOCK)
+            UBlockExpression
+                [!] UnknownKotlinExpression (CALL_EXPRESSION)
         UMethod (name = invoke)
             UParameter (name = f)
-            [!] UnknownKotlinExpression (BLOCK)
+            UBlockExpression

@@ -1,10 +1,14 @@
 UFile (package = ) [public final class ReceiverFunKt {...]
     UClass (name = ReceiverFunKt) [public final class ReceiverFunKt {...}]
-        UMethod (name = foo) [public static final fun foo($this$foo: java.lang.String) : int = [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)]
+        UMethod (name = foo) [public static final fun foo($this$foo: java.lang.String) : int {...}]
             UParameter (name = $this$foo) [var $this$foo: java.lang.String]
-            [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) [[!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)] = Undetermined
-        UMethod (name = getRx) [public static final fun getRx($this$rx: java.lang.String) : kotlin.text.Regex = [!] UnknownKotlinExpression (BLOCK)]
+            UBlockExpression [{...}] = Nothing
+                UReturnExpression [return [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)] = Nothing
+                    [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) [[!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)] = Undetermined
+        UMethod (name = getRx) [public static final fun getRx($this$rx: java.lang.String) : kotlin.text.Regex {...}]
             UParameter (name = $this$rx) [var $this$rx: java.lang.String]
-            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
+            UBlockExpression [{...}] = Nothing
+                UReturnExpression [return [!] UnknownKotlinExpression (CALL_EXPRESSION)] = Nothing
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
     UClass (name = MyReceiverAnnotation) [public abstract annotation MyReceiverAnnotation {...}]
         UMethod (name = name) [public abstract fun name() : java.lang.String = UastEmptyExpression]

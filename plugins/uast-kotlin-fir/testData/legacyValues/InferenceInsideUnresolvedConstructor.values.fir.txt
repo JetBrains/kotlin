@@ -1,7 +1,11 @@
 UFile (package = ) [public final class InferenceInsideUnresolvedConstructorKt {...]
     UClass (name = InferenceInsideUnresolvedConstructorKt) [public final class InferenceInsideUnresolvedConstructorKt {...}]
-        UMethod (name = getBar) [public static final fun getBar() : java.lang.Object = [!] UnknownKotlinExpression (CALL_EXPRESSION)]
-            [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
-        UMethod (name = id) [public static final fun id(x: T) : T = [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+        UMethod (name = getBar) [public static final fun getBar() : java.lang.Object {...}]
+            UBlockExpression [{...}] = Nothing
+                UReturnExpression [return [!] UnknownKotlinExpression (CALL_EXPRESSION)] = Nothing
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
+        UMethod (name = id) [public static final fun id(x: T) : T {...}]
             UParameter (name = x) [var x: T]
-            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
+            UBlockExpression [{...}] = Nothing
+                UReturnExpression [return [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Nothing
+                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined

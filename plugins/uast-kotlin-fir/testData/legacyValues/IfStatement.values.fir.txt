@@ -1,4 +1,5 @@
 UFile (package = ) [public final class IfStatementKt {...]
     UClass (name = IfStatementKt) [public final class IfStatementKt {...}]
-        UMethod (name = foo) [public static final fun foo() : void = [!] UnknownKotlinExpression (BLOCK)]
-            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
+        UMethod (name = foo) [public static final fun foo() : void {...}]
+            UBlockExpression [{...}] = Undetermined
+                [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)] = Undetermined

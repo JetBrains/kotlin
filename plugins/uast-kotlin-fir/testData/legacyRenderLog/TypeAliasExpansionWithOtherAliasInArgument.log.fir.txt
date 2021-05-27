@@ -3,8 +3,12 @@ UFile (package = )
         UMethod (name = foo)
             UParameter (name = $this$foo)
             UParameter (name = x)
-            ULiteralExpression (value = "not-yet-compile-time-constant")
+            UBlockExpression
+                UReturnExpression
+                    ULiteralExpression (value = "not-yet-compile-time-constant")
         UMethod (name = bar)
             UParameter (name = $this$bar)
             UParameter (name = x)
-            ULiteralExpression (value = "not-yet-compile-time-constant")
+            UBlockExpression
+                UReturnExpression
+                    ULiteralExpression (value = "not-yet-compile-time-constant")

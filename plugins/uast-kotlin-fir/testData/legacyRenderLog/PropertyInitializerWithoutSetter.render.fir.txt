@@ -1,5 +1,7 @@
 public final class PropertyInitializerWithoutSetterKt {
     private static var withoutSetter: java.lang.String = "/sdcard"
-    public static final fun getWithoutSetter() : java.lang.String = [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+    public static final fun getWithoutSetter() : java.lang.String {
+        return [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+    }
     public static final fun setWithoutSetter(value: java.lang.String) : void = UastEmptyExpression
 }

@@ -1,4 +1,10 @@
 UFile (package = ) [public final class LocalDeclarationsKt {...]
     UClass (name = LocalDeclarationsKt) [public final class LocalDeclarationsKt {...}]
-        UMethod (name = foo) [public static final fun foo() : boolean = [!] UnknownKotlinExpression (BLOCK)]
-            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
+        UMethod (name = foo) [public static final fun foo() : boolean {...}]
+            UBlockExpression [{...}] = Nothing
+                [!] UnknownKotlinExpression (CLASS) [[!] UnknownKotlinExpression (CLASS)] = Undetermined
+                [!] UnknownKotlinExpression (FUN) [[!] UnknownKotlinExpression (FUN)] = Undetermined
+                [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)] = Undetermined
+                [!] UnknownKotlinExpression (FUN) [[!] UnknownKotlinExpression (FUN)] = Undetermined
+                UReturnExpression [return [!] UnknownKotlinExpression (BINARY_EXPRESSION)] = Nothing
+                    [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)] = Undetermined

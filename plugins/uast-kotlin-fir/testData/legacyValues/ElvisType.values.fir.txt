@@ -1,8 +1,10 @@
 UFile (package = ) [public final class ElvisTypeKt {...]
     UClass (name = ElvisTypeKt) [public final class ElvisTypeKt {...}]
-        UMethod (name = foo) [public static final fun foo(text: java.lang.String) : void = [!] UnknownKotlinExpression (CALL_EXPRESSION)]
+        UMethod (name = foo) [public static final fun foo(text: java.lang.String) : void {...}]
             UParameter (name = text) [var text: java.lang.String]
-            [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
-        UMethod (name = bar) [public static final fun bar(o: java.lang.Object) : void = [!] UnknownKotlinExpression (BLOCK)]
+            UBlockExpression [{...}] = Nothing
+                UReturnExpression [return [!] UnknownKotlinExpression (CALL_EXPRESSION)] = Nothing
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
+        UMethod (name = bar) [public static final fun bar(o: java.lang.Object) : void {...}]
             UParameter (name = o) [var o: java.lang.Object]
-            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
+            UBlockExpression [{...}] = Undetermined

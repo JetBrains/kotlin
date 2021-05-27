@@ -2,4 +2,6 @@ UFile (package = )
     UClass (name = WhenAndDestructingKt)
         UMethod (name = getElementsAdditionalResolve)
             UParameter (name = string)
-            [!] UnknownKotlinExpression (BLOCK)
+            UBlockExpression
+                [!] UnknownKotlinExpression (PROPERTY)
+                [!] UnknownKotlinExpression (WHEN)

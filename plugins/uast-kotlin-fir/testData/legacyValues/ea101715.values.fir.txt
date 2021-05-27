@@ -1,7 +1,8 @@
 UFile (package = ) [public final class Ea101715Kt {...]
     UClass (name = Ea101715Kt) [public final class Ea101715Kt {...}]
-        UMethod (name = a) [public static final fun a() : void = [!] UnknownKotlinExpression (BLOCK)]
-            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
+        UMethod (name = a) [public static final fun a() : void {...}]
+            UBlockExpression [{...}] = Undetermined
+                [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)] = Undetermined
     UClass (name = Obj) [public final class Obj {...}]
         UField (name = INSTANCE) [public static final var INSTANCE: Obj]
         UMethod (name = Obj) [private fun Obj() = UastEmptyExpression]

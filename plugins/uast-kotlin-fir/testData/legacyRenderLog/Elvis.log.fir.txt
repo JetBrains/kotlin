@@ -2,8 +2,14 @@ UFile (package = )
     UClass (name = ElvisKt)
         UMethod (name = foo)
             UParameter (name = bar)
-            ULiteralExpression (value = "not-yet-compile-time-constant")
+            UBlockExpression
+                UReturnExpression
+                    ULiteralExpression (value = "not-yet-compile-time-constant")
         UMethod (name = bar)
-            ULiteralExpression (value = "not-yet-compile-time-constant")
+            UBlockExpression
+                UReturnExpression
+                    ULiteralExpression (value = "not-yet-compile-time-constant")
         UMethod (name = baz)
-            [!] UnknownKotlinExpression (BLOCK)
+            UBlockExpression
+                UReturnExpression
+                    [!] UnknownKotlinExpression (BINARY_EXPRESSION)

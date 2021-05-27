@@ -1,6 +1,19 @@
 public final class PropertyReferencesKt {
-    public static final fun properties() : void = [!] UnknownKotlinExpression (BLOCK)
-    public static final fun ext($this$ext: A) : void = [!] UnknownKotlinExpression (BLOCK)
+    public static final fun properties() : void {
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+        [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+        [!] UnknownKotlinExpression (PREFIX_EXPRESSION)
+        [!] UnknownKotlinExpression (POSTFIX_EXPRESSION)
+    }
+    public static final fun ext($this$ext: A) : void {
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+        [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+        [!] UnknownKotlinExpression (PREFIX_EXPRESSION)
+        [!] UnknownKotlinExpression (POSTFIX_EXPRESSION)
+    }
 }
 
 public final class A {
@@ -9,5 +22,9 @@ public final class A {
     public fun A(init: int) = UastEmptyExpression
     public final fun getMutableProp() : int = UastEmptyExpression
     public final fun setMutableProp(value: int) : void = UastEmptyExpression
-    public final fun add(x: int) : int = [!] UnknownKotlinExpression (BLOCK)
+    public final fun add(x: int) : int {
+        [!] UnknownKotlinExpression (PROPERTY)
+        [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+        return [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+    }
 }

@@ -1,4 +1,7 @@
 UFile (package = ) [public final class AssertionKt {...]
     UClass (name = AssertionKt) [public final class AssertionKt {...}]
-        UMethod (name = foo) [public static final fun foo() : java.lang.String = [!] UnknownKotlinExpression (BLOCK)]
-            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
+        UMethod (name = foo) [public static final fun foo() : java.lang.String {...}]
+            UBlockExpression [{...}] = Nothing
+                [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)] = Undetermined
+                UReturnExpression [return [!] UnknownKotlinExpression (POSTFIX_EXPRESSION)] = Nothing
+                    [!] UnknownKotlinExpression (POSTFIX_EXPRESSION) [[!] UnknownKotlinExpression (POSTFIX_EXPRESSION)] = Undetermined

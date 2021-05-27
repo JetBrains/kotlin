@@ -1,5 +1,7 @@
 public final class LocalVariableWithAnnotationKt {
-    public static final fun foo() : void = [!] UnknownKotlinExpression (BLOCK)
+    public static final fun foo() : void {
+        [!] UnknownKotlinExpression (PROPERTY)
+    }
 }
 
 public abstract annotation TestAnnotation {

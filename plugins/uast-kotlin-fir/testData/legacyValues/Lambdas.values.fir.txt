@@ -1,10 +1,15 @@
 UFile (package = ) [import java.util.stream.Stream...]
     UImportStatement (isOnDemand = false) [import java.util.stream.Stream]
     UClass (name = LambdasKt) [public final class LambdasKt {...}]
-        UMethod (name = foo) [public static final fun foo() : void = [!] UnknownKotlinExpression (BLOCK)]
-            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
-        UMethod (name = doSelectItem) [public static final fun doSelectItem(selectItemFunction: kotlin.jvm.functions.Function0<? extends kotlin.Unit>) : void = [!] UnknownKotlinExpression (BLOCK)]
+        UMethod (name = foo) [public static final fun foo() : void {...}]
+            UBlockExpression [{...}] = Undetermined
+                [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) [[!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)] = Undetermined
+        UMethod (name = doSelectItem) [public static final fun doSelectItem(selectItemFunction: kotlin.jvm.functions.Function0<? extends kotlin.Unit>) : void {...}]
             UParameter (name = selectItemFunction) [var selectItemFunction: kotlin.jvm.functions.Function0<? extends kotlin.Unit>]
-            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
-        UMethod (name = lambdaInPlaceCall) [public static final fun lambdaInPlaceCall() : void = [!] UnknownKotlinExpression (BLOCK)]
-            [!] UnknownKotlinExpression (BLOCK) [[!] UnknownKotlinExpression (BLOCK)] = Undetermined
+            UBlockExpression [{...}] = Undetermined
+                [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
+                [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)] = Undetermined
+                [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
+        UMethod (name = lambdaInPlaceCall) [public static final fun lambdaInPlaceCall() : void {...}]
+            UBlockExpression [{...}] = Undetermined
+                [!] UnknownKotlinExpression (WHILE) [[!] UnknownKotlinExpression (WHILE)] = Undetermined
