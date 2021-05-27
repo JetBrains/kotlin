@@ -7,5 +7,10 @@ UFile (package = )
                 UReturnExpression
                     UIfExpression
                         USimpleNameReferenceExpression (identifier = b)
-                        ULiteralExpression (value = 42)
+                        UParenthesizedExpression
+                            UBinaryExpression (operator = +)
+                                UBinaryExpression (operator = *)
+                                    ULiteralExpression (value = 4)
+                                    ULiteralExpression (value = 10)
+                                ULiteralExpression (value = 2)
                         ULiteralExpression (value = "42")

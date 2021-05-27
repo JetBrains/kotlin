@@ -1,6 +1,6 @@
 fun test(b: Boolean): Any {
     return if (b)
-        42
+        (4 * 10 + 2)
     else
         "42"
 }
