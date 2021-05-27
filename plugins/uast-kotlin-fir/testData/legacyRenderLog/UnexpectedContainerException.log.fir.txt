@@ -8,4 +8,5 @@ UFile (package = )
             UParameter (name = clazz)
             UParameter (name = factory)
             UBlockExpression
-                [!] UnknownKotlinExpression (THROW)
+                UThrowExpression
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION)
