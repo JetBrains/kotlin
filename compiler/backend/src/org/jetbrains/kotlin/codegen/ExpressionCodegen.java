@@ -2956,7 +2956,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 ? FictitiousArrayConstructor.create((ConstructorDescriptor) original) : original.getOriginal();
         PsiSourceCompilerForInline sourceCompiler = new PsiSourceCompilerForInline(this, callElement, functionDescriptor);
 
-        JvmMethodSignature signature = typeMapper.mapSignatureWithGeneric(functionDescriptor, sourceCompiler.getContextKind());
+        JvmMethodSignature signature = typeMapper.mapSignatureWithGeneric(functionDescriptor, sourceCompiler.getContext().getContextKind());
         if (signature.getAsmMethod().getName().contains("-") &&
             !state.getConfiguration().getBoolean(JVMConfigurationKeys.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME)
         ) {
@@ -2964,7 +2964,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                     InlineClassesCodegenUtilKt.classFileContainsMethod(functionDescriptor, state, signature.getAsmMethod());
             if (classFileContainsMethod != null && !classFileContainsMethod) {
                 typeMapper.setUseOldManglingRulesForFunctionAcceptingInlineClass(true);
-                signature = typeMapper.mapSignatureWithGeneric(functionDescriptor, sourceCompiler.getContextKind());
+                signature = typeMapper.mapSignatureWithGeneric(functionDescriptor, sourceCompiler.getContext().getContextKind());
                 typeMapper.setUseOldManglingRulesForFunctionAcceptingInlineClass(false);
             }
         }

@@ -46,7 +46,7 @@ class PsiSourceCompilerForInline(
 
     private val additionalInnerClasses = mutableListOf<ClassDescriptor>()
 
-    private val context = getContext(
+    val context = getContext(
         functionDescriptor,
         functionDescriptor,
         codegen.state,
@@ -57,9 +57,6 @@ class PsiSourceCompilerForInline(
     override val callElementText: String by lazy { callElement.text }
 
     override val callsiteFile by lazy { callElement.containingFile }
-
-    override val contextKind
-        get () = context.contextKind
 
     override val inlineCallSiteInfo: InlineCallSiteInfo
         get() {
@@ -226,13 +223,13 @@ class PsiSourceCompilerForInline(
 
     private fun mapDefault(): Method {
         // This is all available in the `Callable` passed to `PsiInlineCodegen.genCallInner`, but it's not forwarded through the inliner...
-        var result = state.typeMapper.mapDefaultMethod(functionDescriptor, contextKind)
+        var result = state.typeMapper.mapDefaultMethod(functionDescriptor, context.contextKind)
         if (result.name.contains("-") &&
             !state.configuration.getBoolean(JVMConfigurationKeys.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME) &&
             classFileContainsMethod(functionDescriptor, state, result) == false
         ) {
             state.typeMapper.useOldManglingRulesForFunctionAcceptingInlineClass = true
-            result = state.typeMapper.mapDefaultMethod(functionDescriptor, contextKind)
+            result = state.typeMapper.mapDefaultMethod(functionDescriptor, context.contextKind)
             state.typeMapper.useOldManglingRulesForFunctionAcceptingInlineClass = false
         }
         return result
