@@ -830,4 +830,20 @@ abstract class AbstractKotlin2JsGradlePluginIT(val irBackend: Boolean) : BaseGra
             }
         }
     }
+
+    @Test
+    fun testDynamicWebpackConfigD() {
+        with(Project("js-dynamic-webpack-config-d")) {
+            setupWorkingDir()
+            gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+
+            build(
+                "build"
+            ) {
+                assertSuccessful()
+                assertFileExists("build/js/packages/js-dynamic-webpack-config-d")
+                assertFileContains("build/js/packages/js-dynamic-webpack-config-d/webpack.config.js", "// hello from patch.js")
+            }
+        }
+    }
 }
