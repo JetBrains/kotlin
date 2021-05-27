@@ -996,6 +996,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("AnnotationForClassTypeParameter_typeUseFlag.kt")
+            public void testAnnotationForClassTypeParameter_typeUseFlag() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/AnnotationForClassTypeParameter_typeUseFlag.kt");
+            }
+
+            @Test
             @TestMetadata("AnnotationForFunctionTypeParameter.kt")
             public void testAnnotationForFunctionTypeParameter() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/AnnotationForFunctionTypeParameter.kt");
