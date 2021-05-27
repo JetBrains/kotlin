@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.incremental.components.LocationInfo
-import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.Position
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -46,26 +45,6 @@ class IrSourceCompilerForInline(
     internal val codegen: ExpressionCodegen,
     private val data: BlockInfo
 ) : SourceCompilerForInline {
-
-    override val lookupLocation: LookupLocation
-        get() = object : LookupLocation {
-            override val location: LocationInfo?
-                get() {
-                    val ktFile = codegen.irFunction.fileParent.getKtFile()
-                        ?.takeUnless { it.doNotAnalyze != null } ?: return null
-
-                    return object : LocationInfo {
-                        override val filePath = ktFile.virtualFilePath
-
-                        override val position: Position
-                            get() = DiagnosticUtils.getLineAndColumnInPsiFile(
-                                ktFile,
-                                TextRange(callElement.startOffset, callElement.endOffset)
-                            ).let { Position(it.line, it.column) }
-                    }
-                }
-        }
-
     override val callElementText: String
         get() = ir2string(callElement)
 
@@ -110,7 +89,18 @@ class IrSourceCompilerForInline(
             return it
         }
         if (jvmSignature.asmMethod.name != callee.name.asString()) {
-            trackLookup(callee.parentAsClass.kotlinFqName, jvmSignature.asmMethod.name) // ?
+            val ktFile = codegen.irFunction.fileParent.getKtFile()
+            if (ktFile != null && ktFile.doNotAnalyze == null) {
+                state.trackLookup(callee.parentAsClass.kotlinFqName, jvmSignature.asmMethod.name, object : LocationInfo {
+                    override val filePath = ktFile.virtualFilePath
+
+                    override val position: Position
+                        get() = DiagnosticUtils.getLineAndColumnInPsiFile(
+                            ktFile,
+                            TextRange(callElement.startOffset, callElement.endOffset)
+                        ).let { Position(it.line, it.column) }
+                })
+            }
         }
         callee.parentClassId?.let {
             return loadCompiledInlineFunction(it, jvmSignature.asmMethod, callee.isSuspend, callee.hasMangledReturnType, state)
