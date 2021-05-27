@@ -32,6 +32,7 @@ internal object NodeJsPlatform {
     val architecture: String = run {
         val arch = property("os.arch").toLowerCase()
         when {
+            arch == "aarch64" -> ARM64
             arch.contains("64") -> X64
             arch == "arm" -> {
                 // as Java just returns "arm" on all ARM variants, we need a system call to determine the exact arch
