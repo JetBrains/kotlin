@@ -131,7 +131,7 @@ class JvmMappedScope(
 
         // NOTE: No-arg constructors
         @OptIn(ExperimentalStdlibApi::class)
-        private val additionalHiddenConstructors = buildSet {
+        private val additionalHiddenConstructors = buildSet<String> {
             // kotlin.text.String pseudo-constructors should be used instead of java.lang.String constructors
             listOf(
                 "",

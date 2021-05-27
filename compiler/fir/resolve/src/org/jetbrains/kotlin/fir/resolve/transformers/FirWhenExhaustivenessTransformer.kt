@@ -63,7 +63,7 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
 
         val checkers = buildList {
             exhaustivenessCheckers.filterTo(this) { it.isApplicable(cleanSubjectType, session) }
-            if (isNotEmpty() && cleanSubjectType.isMarkedNullable) {
+            if (isNotEmpty<WhenExhaustivenessChecker>() && cleanSubjectType.isMarkedNullable) {
                 add(WhenOnNullableExhaustivenessChecker)
             }
         }
