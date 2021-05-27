@@ -2967,13 +2967,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 typeMapper.setUseOldManglingRulesForFunctionAcceptingInlineClass(false);
             }
         }
-        Type methodOwner = typeMapper.mapImplementationOwner(functionDescriptor);
         if (isDefaultCompilation) {
             return new InlineCodegenForDefaultBody(functionDescriptor, this, state, signature, sourceCompiler);
-        }
-        else {
-            return new PsiInlineCodegen(this, state, functionDescriptor, methodOwner, signature, typeParameterMappings, sourceCompiler,
-                                        typeMapper.mapOwner(descriptor));
+        } else {
+            return new PsiInlineCodegen(this, state, functionDescriptor, signature, typeParameterMappings, sourceCompiler,
+                                        typeMapper.mapImplementationOwner(functionDescriptor), typeMapper.mapOwner(descriptor));
         }
     }
 
