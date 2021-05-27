@@ -54,8 +54,6 @@ class PsiSourceCompilerForInline(
         additionalInnerClasses
     ) as MethodContext
 
-    override val lookupLocation = KotlinLookupLocation(callElement)
-
     override val callElementText: String by lazy { callElement.text }
 
     override val callsiteFile by lazy { callElement.containingFile }
@@ -247,7 +245,9 @@ class PsiSourceCompilerForInline(
 
         val asmMethod = if (callDefault) mapDefault() else jvmSignature.asmMethod
         if (asmMethod.name != functionDescriptor.name.asString()) {
-            trackLookup(DescriptorUtils.getFqNameSafe(functionDescriptor.containingDeclaration), asmMethod.name) // ?
+            KotlinLookupLocation(callElement).location?.let {
+                state.trackLookup(DescriptorUtils.getFqNameSafe(functionDescriptor.containingDeclaration), asmMethod.name, it)
+            }
         }
 
         val directMember = getDirectMemberAndCallableFromObject()

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.components.LocationInfo
 import org.jetbrains.kotlin.incremental.components.Position
 import org.jetbrains.kotlin.incremental.components.ScopeKind
 import org.jetbrains.kotlin.name.ClassId
@@ -29,8 +29,6 @@ interface SourceCompilerForInline {
     val state: GenerationState
 
     val callElement: Any
-
-    val lookupLocation: LookupLocation
 
     val callElementText: String
 
@@ -68,13 +66,11 @@ interface SourceCompilerForInline {
     fun reportSuspensionPointInsideMonitor(stackTraceElement: String)
 }
 
-fun SourceCompilerForInline.trackLookup(container: FqName, functionName: String) {
-    val lookupTracker = state.configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER) ?: return
-    val location = lookupLocation.location ?: return
-    val position = if (lookupTracker.requiresPosition) location.position else Position.NO_POSITION
+fun GenerationState.trackLookup(container: FqName, functionName: String, location: LocationInfo) {
+    val lookupTracker = configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER) ?: return
     lookupTracker.record(
         location.filePath,
-        position,
+        if (lookupTracker.requiresPosition) location.position else Position.NO_POSITION,
         container.asString(),
         ScopeKind.CLASSIFIER,
         functionName
