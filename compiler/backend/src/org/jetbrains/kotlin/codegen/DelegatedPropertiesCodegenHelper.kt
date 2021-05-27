@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
-import org.jetbrains.kotlin.codegen.inline.InlineCodegen
+import org.jetbrains.kotlin.codegen.inline.loadCompiledInlineFunction
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.isCheckParameterIsNotNull
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
@@ -74,7 +74,7 @@ class DelegatedPropertiesCodegenHelper(private val state: GenerationState) {
         val containerId = KotlinTypeMapper.getContainingClassesForDeserializedCallable(calleeDescriptor).implClassId
         val asmMethod = state.typeMapper.mapAsmMethod(calleeDescriptor)
         val isMangled = requiresFunctionNameManglingForReturnType(calleeDescriptor)
-        val methodNode = InlineCodegen.loadCompiledInlineFunction(containerId, asmMethod, calleeDescriptor.isSuspend, isMangled, state).node
+        val methodNode = loadCompiledInlineFunction(containerId, asmMethod, calleeDescriptor.isSuspend, isMangled, state).node
         return isMetadataParameterUsedInCompiledMethodBody(metadataParameterIndex, methodNode)
     }
 

@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.BaseExpressionCodegen
 import org.jetbrains.kotlin.codegen.OwnerKind
+import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -61,3 +63,47 @@ interface SourceCompilerForInline {
 
     fun reportSuspensionPointInsideMonitor(stackTraceElement: String)
 }
+
+fun loadCompiledInlineFunction(
+    containerId: ClassId,
+    asmMethod: Method,
+    isSuspend: Boolean,
+    isMangled: Boolean,
+    state: GenerationState
+): SMAPAndMethodNode {
+    val containerType = AsmUtil.asmTypeByClassId(containerId)
+    val bytes = state.inlineCache.classBytes.getOrPut(containerId) {
+        findVirtualFile(state, containerId)?.contentsToByteArray()
+            ?: throw IllegalStateException("Couldn't find declaration file for $containerId")
+    }
+    val resultInCache = state.inlineCache.methodNodeById.getOrPut(MethodId(containerType.descriptor, asmMethod)) {
+        getMethodNode(containerType, bytes, asmMethod.name, asmMethod.descriptor, isSuspend, isMangled)
+    }
+    return SMAPAndMethodNode(cloneMethodNode(resultInCache.node), resultInCache.classSMAP)
+}
+
+private fun getMethodNode(
+    owner: Type,
+    bytes: ByteArray,
+    name: String,
+    descriptor: String,
+    isSuspend: Boolean,
+    isMangled: Boolean
+): SMAPAndMethodNode {
+    getMethodNode(owner, bytes, name, descriptor, isSuspend)?.let { return it }
+    if (isMangled) {
+        // Compatibility with old inline class ABI versions.
+        val dashIndex = name.indexOf('-')
+        val nameWithoutManglingSuffix = if (dashIndex > 0) name.substring(0, dashIndex) else name
+        if (nameWithoutManglingSuffix != name) {
+            getMethodNode(owner, bytes, nameWithoutManglingSuffix, descriptor, isSuspend)?.let { return it }
+        }
+        getMethodNode(owner, bytes, "$nameWithoutManglingSuffix-impl", descriptor, isSuspend)?.let { return it }
+    }
+    throw IllegalStateException("couldn't find inline method $owner.$name$descriptor")
+}
+
+// If an `inline suspend fun` has a state machine, it should have a `$$forInline` version without one.
+private fun getMethodNode(owner: Type, bytes: ByteArray, name: String, descriptor: String, isSuspend: Boolean) =
+    (if (isSuspend) getMethodNode(bytes, name + FOR_INLINE_SUFFIX, descriptor, owner) else null)
+        ?: getMethodNode(bytes, name, descriptor, owner)

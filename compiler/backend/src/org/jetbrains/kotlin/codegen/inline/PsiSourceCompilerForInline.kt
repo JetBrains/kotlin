@@ -247,7 +247,7 @@ class PsiSourceCompilerForInline(
         if (directMember is DescriptorWithContainerSource) {
             val containerId = KotlinTypeMapper.getContainingClassesForDeserializedCallable(directMember).implClassId
             val isMangled = requiresFunctionNameManglingForReturnType(functionDescriptor)
-            return InlineCodegen.loadCompiledInlineFunction(containerId, asmMethod, functionDescriptor.isSuspend, isMangled, state)
+            return loadCompiledInlineFunction(containerId, asmMethod, functionDescriptor.isSuspend, isMangled, state)
         }
 
         val element = DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor)

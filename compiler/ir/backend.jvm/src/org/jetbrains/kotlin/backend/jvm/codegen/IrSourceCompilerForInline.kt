@@ -106,7 +106,7 @@ class IrSourceCompilerForInline(
 
     override fun compileInlineFunction(jvmSignature: JvmMethodSignature): SMAPAndMethodNode =
         callee.parentClassId?.let { containerId ->
-            InlineCodegen.loadCompiledInlineFunction(containerId, jvmSignature.asmMethod, callee.isSuspend, callee.hasMangledReturnType, state)
+            loadCompiledInlineFunction(containerId, jvmSignature.asmMethod, callee.isSuspend, callee.hasMangledReturnType, state)
         } ?: ClassCodegen.getOrCreate(callee.parentAsClass, codegen.context).generateMethodNode(callee)
 
     override fun hasFinallyBlocks() = data.hasFinallyBlocks()
