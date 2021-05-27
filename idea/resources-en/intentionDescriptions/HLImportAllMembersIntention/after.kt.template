@@ -1,0 +1,7 @@
+import javax.swing.SwingUtilities
+<spot>import javax.swing.SwingUtilities.*</spot>
+
+fun foo() {
+    invokeLater { }
+    invokeAndWait()
+}
