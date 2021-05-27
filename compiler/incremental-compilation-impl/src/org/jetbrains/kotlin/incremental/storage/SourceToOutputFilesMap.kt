@@ -13,7 +13,6 @@ class SourceToOutputFilesMap(
     private val pathConverter: FileToPathConverter
 ) : BasicStringMap<Collection<String>>(storageFile, PathStringDescriptor, StringCollectionExternalizer) {
 
-    @Synchronized
     operator fun set(sourceFile: File, outputFiles: Collection<File>) {
         storage[pathConverter.toPath(sourceFile)] = outputFiles.map(pathConverter::toPath)
     }
@@ -24,7 +23,6 @@ class SourceToOutputFilesMap(
     override fun dumpValue(value: Collection<String>) =
         value.dumpCollection()
 
-    @Synchronized
     fun remove(file: File): Collection<File> =
         get(file).also { storage.remove(pathConverter.toPath(file)) }
 }

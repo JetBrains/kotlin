@@ -221,6 +221,7 @@ private class TranslationResultMap(
             TranslationResultValue(metadata = newMetadata, binaryAst = newBinaryAst, inlineData = newInlineData)
     }
 
+    @Synchronized
     operator fun get(sourceFile: File): TranslationResultValue? =
         storage[pathConverter.toPath(sourceFile)]
 
@@ -361,6 +362,7 @@ private class InlineFunctionsMap(
     storageFile: File,
     private val pathConverter: FileToPathConverter
 ) : BasicStringMap<Map<String, Long>>(storageFile, StringToLongMapExternalizer) {
+    @Synchronized
     fun process(srcFile: File, newMap: Map<String, Long>, changesCollector: ChangesCollector) {
         val key = pathConverter.toPath(srcFile)
         val oldMap = storage[key] ?: emptyMap()
@@ -378,6 +380,7 @@ private class InlineFunctionsMap(
         }
     }
 
+    @Synchronized
     fun remove(sourceFile: File) {
         storage.remove(pathConverter.toPath(sourceFile))
     }
