@@ -11,7 +11,7 @@
  * DESCRIPTION: attempt to implement abstract members with invalid types
  */
 
-// FILE: TestCase.kt
+// FILE: TestCase1.kt
 // TESTCASE NUMBER: 1
 package testPackCase1
 abstract class Base {
@@ -37,7 +37,7 @@ class Case1 : Base() {
 
 
 
-// FILE: TestCase.kt
+// FILE: TestCase2.kt
 // TESTCASE NUMBER: 2
 package testPackCase2
 abstract class Base {
@@ -53,7 +53,7 @@ class Case2(override val a: String, override var b: <!VAR_TYPE_MISMATCH_ON_OVERR
     }
 }
 
-// FILE: TestCase.kt
+// FILE: TestCase3.kt
 // TESTCASE NUMBER: 3
 package testPackCase3
 abstract class Base {

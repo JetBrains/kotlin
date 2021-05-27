@@ -11,7 +11,7 @@
  * HELPERS: checkType
  */
 
-// FILE: functions.kt
+// FILE: fileWithFunctions.kt
 
 package functions
 

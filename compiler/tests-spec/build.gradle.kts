@@ -28,6 +28,8 @@ sourceSets {
     "test" { projectDefault() }
 }
 
+testsJar()
+
 projectTest(parallel = true) {
     workingDir = rootDir
 }
