@@ -6,4 +6,4 @@ UFile (package = ) [public final class MethodReferenceKt {...]
     UClass (name = Foo) [public final class Foo {...}]
         UMethod (name = Foo) [public fun Foo() = UastEmptyExpression]
         UMethod (name = bar) [public final fun bar() : void {...}]
-            UBlockExpression [{...}]
+            UBlockExpression [{...}] : PsiType:Unit

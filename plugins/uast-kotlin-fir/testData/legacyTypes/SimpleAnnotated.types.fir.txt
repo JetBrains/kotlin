@@ -4,6 +4,6 @@ UFile (package = ) [public final class SimpleAnnotated {...]
             ULiteralExpression (value = "Mary") ["Mary"] : PsiType:String
         UMethod (name = SimpleAnnotated) [public fun SimpleAnnotated() = UastEmptyExpression]
         UMethod (name = method) [public final fun method() : void {...}]
-            UBlockExpression [{...}]
+            UBlockExpression [{...}] : PsiType:Unit
                 [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
         UMethod (name = getProperty) [public final fun getProperty() : java.lang.String = UastEmptyExpression]

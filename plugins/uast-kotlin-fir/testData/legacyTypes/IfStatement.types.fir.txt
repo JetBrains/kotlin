@@ -1,5 +1,5 @@
 UFile (package = ) [public final class IfStatementKt {...]
     UClass (name = IfStatementKt) [public final class IfStatementKt {...}]
         UMethod (name = foo) [public static final fun foo() : void {...}]
-            UBlockExpression [{...}]
+            UBlockExpression [{...}] : PsiType:Unit
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]

@@ -2,5 +2,5 @@ UFile (package = ) [public final class BrokenMethodKt {...]
     UClass (name = BrokenMethodKt) [public final class BrokenMethodKt {...}]
         UMethod (name = main) [public static final fun main(args: java.lang.String[]) : void {...}]
             UParameter (name = args) [var args: java.lang.String[]]
-            UBlockExpression [{...}]
+            UBlockExpression [{...}] : PsiType:Unit
                 [!] UnknownKotlinExpression (CLASS) [[!] UnknownKotlinExpression (CLASS)]

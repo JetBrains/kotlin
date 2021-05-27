@@ -2,7 +2,7 @@ UFile (package = ) [public final class ClassA {...]
     UClass (name = ClassA) [public final class ClassA {...}]
         UField (name = paramAndProp) [private final var paramAndProp: java.lang.String]
         UField (name = writebleProp) [private var writebleProp: int = "not-yet-compile-time-constant"]
-            ULiteralExpression (value = "not-yet-compile-time-constant") ["not-yet-compile-time-constant"]
+            ULiteralExpression (value = "not-yet-compile-time-constant") ["not-yet-compile-time-constant"] : PsiType:int
         UMethod (name = ClassA) [public fun ClassA(justParam: int, paramAndProp: java.lang.String) = UastEmptyExpression]
             UParameter (name = justParam) [var justParam: int]
             UParameter (name = paramAndProp) [var paramAndProp: java.lang.String]

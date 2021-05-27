@@ -1,7 +1,7 @@
 UFile (package = ) [public final class AssertionKt {...]
     UClass (name = AssertionKt) [public final class AssertionKt {...}]
         UMethod (name = foo) [public static final fun foo() : java.lang.String {...}]
-            UBlockExpression [{...}]
+            UBlockExpression [{...}] : PsiType:Void
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
-                UReturnExpression [return [!] UnknownKotlinExpression (POSTFIX_EXPRESSION)]
+                UReturnExpression [return [!] UnknownKotlinExpression (POSTFIX_EXPRESSION)] : PsiType:Void
                     [!] UnknownKotlinExpression (POSTFIX_EXPRESSION) [[!] UnknownKotlinExpression (POSTFIX_EXPRESSION)]

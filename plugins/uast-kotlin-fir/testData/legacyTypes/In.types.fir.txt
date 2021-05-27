@@ -1,8 +1,8 @@
 UFile (package = ) [public final class InKt {...]
     UClass (name = InKt) [public final class InKt {...}]
         UMethod (name = foo) [public static final fun foo() : boolean {...}]
-            UBlockExpression [{...}]
+            UBlockExpression [{...}] : PsiType:Void
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
-                UReturnExpression [return [!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                UReturnExpression [return [!] UnknownKotlinExpression (BINARY_EXPRESSION)] : PsiType:Void
                     [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]

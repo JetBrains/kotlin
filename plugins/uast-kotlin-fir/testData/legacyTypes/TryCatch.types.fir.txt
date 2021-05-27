@@ -2,22 +2,22 @@ UFile (package = ) [public final class TryCatch {...]
     UClass (name = TryCatch) [public final class TryCatch {...}]
         UMethod (name = TryCatch) [public fun TryCatch() = UastEmptyExpression]
         UMethod (name = catches) [public final fun catches() : void {...}]
-            UBlockExpression [{...}]
+            UBlockExpression [{...}] : PsiType:Unit
                 [!] UnknownKotlinExpression (TRY) [[!] UnknownKotlinExpression (TRY)]
         UMethod (name = body) [public final fun body() : void {...}]
-            UBlockExpression [{...}]
+            UBlockExpression [{...}] : PsiType:Unit
         UMethod (name = catcher) [public final fun catcher() : void {...}]
-            UBlockExpression [{...}]
+            UBlockExpression [{...}] : PsiType:Unit
         UMethod (name = finalizer) [public final fun finalizer() : void {...}]
-            UBlockExpression [{...}]
+            UBlockExpression [{...}] : PsiType:Unit
     UClass (name = TryCatchAnnotations) [public final class TryCatchAnnotations {...}]
         UMethod (name = TryCatchAnnotations) [public fun TryCatchAnnotations() = UastEmptyExpression]
         UMethod (name = catches) [public final fun catches() : void {...}]
-            UBlockExpression [{...}]
+            UBlockExpression [{...}] : PsiType:Unit
                 [!] UnknownKotlinExpression (TRY) [[!] UnknownKotlinExpression (TRY)]
         UMethod (name = body) [public final fun body() : void {...}]
-            UBlockExpression [{...}]
+            UBlockExpression [{...}] : PsiType:Unit
         UMethod (name = catcher) [public final fun catcher() : void {...}]
-            UBlockExpression [{...}]
+            UBlockExpression [{...}] : PsiType:Unit
         UMethod (name = finalizer) [public final fun finalizer() : void {...}]
-            UBlockExpression [{...}]
+            UBlockExpression [{...}] : PsiType:Unit

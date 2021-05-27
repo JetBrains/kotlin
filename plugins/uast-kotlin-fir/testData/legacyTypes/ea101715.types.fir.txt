@@ -1,7 +1,7 @@
 UFile (package = ) [public final class Ea101715Kt {...]
     UClass (name = Ea101715Kt) [public final class Ea101715Kt {...}]
         UMethod (name = a) [public static final fun a() : void {...}]
-            UBlockExpression [{...}]
+            UBlockExpression [{...}] : PsiType:Unit
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
     UClass (name = Obj) [public final class Obj {...}]
         UField (name = INSTANCE) [public static final var INSTANCE: Obj]

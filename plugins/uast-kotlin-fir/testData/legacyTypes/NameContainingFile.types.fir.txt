@@ -1,9 +1,9 @@
 UFile (package = ) [public final class NameContainingFileKt {...]
     UClass (name = NameContainingFileKt) [public final class NameContainingFileKt {...}]
         UField (name = xyzzy) [private static final var xyzzy: int = "not-yet-compile-time-constant"]
-            ULiteralExpression (value = "not-yet-compile-time-constant") ["not-yet-compile-time-constant"]
+            ULiteralExpression (value = "not-yet-compile-time-constant") ["not-yet-compile-time-constant"] : PsiType:int
         UMethod (name = bar) [public static final fun bar() : void {...}]
-            UBlockExpression [{...}]
+            UBlockExpression [{...}] : PsiType:Unit
         UMethod (name = getXyzzy) [public static final fun getXyzzy() : int = UastEmptyExpression]
     UClass (name = Foo) [public final class Foo {...}]
         UMethod (name = Foo) [public fun Foo() = UastEmptyExpression]

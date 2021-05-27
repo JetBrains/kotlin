@@ -10,6 +10,7 @@ import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.idea.frontend.api.analyseWithCustomToken
 import org.jetbrains.kotlin.idea.frontend.api.tokens.AlwaysAccessibleValidityTokenFactory
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.uast.UElement
@@ -36,8 +37,10 @@ interface FirKotlinUastResolveProviderService : BaseKotlinUastResolveProviderSer
     }
 
     override fun getExpressionType(uExpression: UExpression): PsiType? {
-        // TODO("Not yet implemented")
-        return null
+        val ktExpression = uExpression.sourcePsi as? KtExpression ?: return null
+        analyseWithCustomToken(ktExpression, AlwaysAccessibleValidityTokenFactory) {
+            return ktExpression.getPsiType(TypeMappingMode.DEFAULT_UAST)
+        }
     }
 
     override fun evaluate(uExpression: UExpression): Any? {

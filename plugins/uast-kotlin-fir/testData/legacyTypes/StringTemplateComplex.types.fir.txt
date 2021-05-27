@@ -3,26 +3,26 @@ UFile (package = ) [public final class StringTemplateComplexKt {...]
         UField (name = muchRecur) [private static final var muchRecur: java.lang.String = "abc"]
             ULiteralExpression (value = "abc") ["abc"] : PsiType:String
         UField (name = case4) [private static final var case4: java.lang.String = "a " + "literal" + " z"]
-            UPolyadicExpression (operator = +) ["a " + "literal" + " z"]
+            UPolyadicExpression (operator = +) ["a " + "literal" + " z"] : PsiType:String
                 ULiteralExpression (value = "a ") ["a "] : PsiType:String
                 ULiteralExpression (value = "literal") ["literal"] : PsiType:String
                 ULiteralExpression (value = " z") [" z"] : PsiType:String
         UField (name = case5) [private static final var case5: java.lang.String = "a " + "literal" + " " + "literal" + " z"]
-            UPolyadicExpression (operator = +) ["a " + "literal" + " " + "literal" + " z"]
+            UPolyadicExpression (operator = +) ["a " + "literal" + " " + "literal" + " z"] : PsiType:String
                 ULiteralExpression (value = "a ") ["a "] : PsiType:String
                 ULiteralExpression (value = "literal") ["literal"] : PsiType:String
                 ULiteralExpression (value = " ") [" "] : PsiType:String
                 ULiteralExpression (value = "literal") ["literal"] : PsiType:String
                 ULiteralExpression (value = " z") [" z"] : PsiType:String
         UField (name = literalInLiteral) [private static final var literalInLiteral: java.lang.String = "a " + "literal" + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) + " z"]
-            UPolyadicExpression (operator = +) ["a " + "literal" + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) + " z"]
+            UPolyadicExpression (operator = +) ["a " + "literal" + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) + " z"] : PsiType:String
                 ULiteralExpression (value = "a ") ["a "] : PsiType:String
-                UPolyadicExpression (operator = +) ["literal" + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                UPolyadicExpression (operator = +) ["literal" + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] : PsiType:String
                     ULiteralExpression (value = "literal") ["literal"] : PsiType:String
                     [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
                 ULiteralExpression (value = " z") [" z"] : PsiType:String
         UField (name = literalInLiteral2) [private static final var literalInLiteral2: java.lang.String = "a " + [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) + " z"]
-            UPolyadicExpression (operator = +) ["a " + [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) + " z"]
+            UPolyadicExpression (operator = +) ["a " + [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) + " z"] : PsiType:String
                 ULiteralExpression (value = "a ") ["a "] : PsiType:String
                 [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) [[!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)]
                 ULiteralExpression (value = " z") [" z"] : PsiType:String
@@ -36,12 +36,12 @@ UFile (package = ) [public final class StringTemplateComplexKt {...]
         UMethod (name = getEmpty) [public static final fun getEmpty() : java.lang.String = UastEmptyExpression]
         UMethod (name = simpleForTemplate) [public static final fun simpleForTemplate(i: int) : java.lang.String {...}]
             UParameter (name = i) [var i: int = "not-yet-compile-time-constant"]
-                ULiteralExpression (value = "not-yet-compile-time-constant") ["not-yet-compile-time-constant"]
+                ULiteralExpression (value = "not-yet-compile-time-constant") ["not-yet-compile-time-constant"] : PsiType:int
             UBlockExpression [{...}]
                 UReturnExpression [return [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
                     [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
         UMethod (name = foo) [public static final fun foo() : void {...}]
-            UBlockExpression [{...}]
+            UBlockExpression [{...}] : PsiType:Unit
                 [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
