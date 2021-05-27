@@ -41,6 +41,7 @@ private val intellijModulesForWhichGenerateBuildGradle = listOf(
 val jsonUrlPrefixes = mapOf(
     "202" to "https://buildserver.labs.intellij.net/guestAuth/repository/download/ijplatform_IjPlatform202_IntellijArtifactMappings/113235432:id",
     "203" to "https://buildserver.labs.intellij.net/guestAuth/repository/download/ijplatform_IjPlatform203_IntellijArtifactMappings/117989041:id",
+    "211" to "https://buildserver.labs.intellij.net/guestAuth/repository/download/ijplatform_IjPlatform211_IntellijArtifactMappings/121258191:id",
 )
 
 fun main() {
