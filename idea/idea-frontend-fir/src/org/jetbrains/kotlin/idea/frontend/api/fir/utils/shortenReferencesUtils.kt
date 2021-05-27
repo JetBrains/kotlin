@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.ImportPath
 
@@ -40,11 +39,17 @@ fun addImportToFile(
     alias: Name? = null
 ) {
     val importPath = ImportPath(fqName, allUnder, alias)
+    // Already imported.
+    if (file.importDirectives.any { it.importPath == importPath && it.alias?.name == alias?.identifierOrNullIfSpecial }) return
 
     val psiFactory = KtPsiFactory(project)
     if (file is KtCodeFragment) {
         val newDirective = psiFactory.createImportDirective(importPath)
         file.addImportsFromString(newDirective.text)
+    }
+
+    if (allUnder) {
+        file.importDirectives.filter { it.alias == null && it.importPath?.fqName?.parent() == fqName }.forEach { it.delete() }
     }
 
     val importList = file.importList
