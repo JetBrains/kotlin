@@ -33,7 +33,7 @@ class HierarchicalTypeAliasCommonizationTest : AbstractInlineSourcesCommonizatio
     /**
      * See: https://youtrack.jetbrains.com/issue/KT-45992
      */
-    fun `todo test typealias and class`() {
+    fun `test typealias and class`() {
         val result = commonize {
             outputTarget("(a,b)")
             simpleSingleSourceTarget("a", """class X """)
@@ -45,7 +45,7 @@ class HierarchicalTypeAliasCommonizationTest : AbstractInlineSourcesCommonizatio
             )
         }
 
-        result.assertCommonized("(a,b)", "expect class X")
+        result.assertCommonized("(a,b)", "expect class X expect constructor()")
     }
 
     fun `test typealias to different classes`() {
