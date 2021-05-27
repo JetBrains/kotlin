@@ -31,7 +31,7 @@ val compileJava by tasks.getting(JavaCompile::class) {
 val compileKotlin by tasks.getting(KotlinCompile::class) {
     kotlinOptions {
         jvmTarget = "1.6"
-        jdkHome = rootProject.extra["JDK_16"] as String
+        jdkHome = (rootProject.extra["JDK_16"] as String).takeUnless { kotlinBuildProperties.suppressJdkHomeWarning }
         freeCompilerArgs += "-Xsuppress-deprecated-jvm-target-warning"
     }
 }

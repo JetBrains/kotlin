@@ -35,7 +35,7 @@ configureSourcesJar()
 configureJavadocJar()
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
-    kotlinOptions.jdkHome = JDK_18
+    kotlinOptions.jdkHome = BuildPropertiesExtKt.getSuppressJdkHomeWarning(project.kotlinBuildProperties) ? null : JDK_18
     kotlinOptions.jvmTarget = 1.8
 }
 

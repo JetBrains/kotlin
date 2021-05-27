@@ -67,7 +67,7 @@ artifacts {
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
-    kotlinOptions.jdkHome = JDK_17
+    kotlinOptions.jdkHome = BuildPropertiesExtKt.getSuppressJdkHomeWarning(project.kotlinBuildProperties) ? null : JDK_17
 }
 
 compileKotlin {
