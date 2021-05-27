@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.util.originalKtFile
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtFile
-import java.io.File
 
 class KotlinFirCompletionContributor : CompletionContributor() {
     init {
@@ -71,6 +70,7 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
         val importDirectivePackageMembersCompletionContributor = FirImportDirectivePackageMembersCompletionContributor(basicContext)
         val typeParameterConstraintNameInWhereClauseContributor = FirTypeParameterConstraintNameInWhereClauseCompletionContributor(basicContext)
         val classifierNameContributor = FirSameAsFileClassifierNameCompletionContributor(basicContext)
+        val whenWithSubjecConditionContributor = FirWhenWithSubjectConditionContributor(basicContext)
 
         when (positionContext) {
             is FirExpressionNameReferencePositionContext -> {
@@ -115,6 +115,10 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
 
             is FirClassifierNamePositionContext -> {
                 complete(classifierNameContributor, positionContext)
+            }
+
+            is FirWithSubjectEntryPositionContext -> {
+                complete(whenWithSubjecConditionContributor, positionContext)
             }
 
             is FirIncorrectPositionContext -> {

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.*
 import org.jetbrains.kotlin.idea.frontend.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.components.KtInheritorsProvider
 import org.jetbrains.kotlin.idea.frontend.api.components.KtVisibilityChecker
 import org.jetbrains.kotlin.idea.frontend.api.components.KtSymbolDeclarationRendererProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.components.*
@@ -77,6 +78,8 @@ private constructor(
     override val typeInfoProviderImpl = KtFirTypeInfoProvider(this, token)
 
     override val subtypingComponentImpl = KtFirSubtypingComponent(this, token)
+
+    override val inheritorsProviderImpl: KtInheritorsProvider = KtFirInheritorsProvider(this, token)
 
     override fun createContextDependentCopy(originalKtFile: KtFile, elementToReanalyze: KtElement): KtAnalysisSession {
         check(mode == AnalysisSessionMode.REGULAR) {

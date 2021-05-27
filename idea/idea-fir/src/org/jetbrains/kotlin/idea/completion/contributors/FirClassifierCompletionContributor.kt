@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.idea.completion.contributors.helpers.getStaticScope
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.types.KtClassType
-import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.idea.completion.contributors.helpers.FirClassifierProvider.getAvailableClassifiersCurrentScope
 
 internal open class FirClassifierCompletionContributor(
     basicContext: FirBasicCompletionContext,
@@ -51,19 +51,14 @@ internal open class FirClassifierCompletionContributor(
         positionContext: FirNameReferencePositionContext,
         visibilityChecker: CompletionVisibilityChecker
     ) {
-        val implicitScopes = originalKtFile.getScopeContextForPosition(positionContext.nameExpression).scopes
-        val classesFromScopes = implicitScopes
-            .getClassifierSymbols(scopeNameFilter)
+        getAvailableClassifiersCurrentScope(
+            originalKtFile,
+            positionContext.nameExpression,
+            scopeNameFilter,
+            indexHelper,
+            visibilityChecker
+        )
             .filter { filterClassifiers(it) }
-            .filter { with(visibilityChecker) { isVisible(it) } }
-
-        classesFromScopes.forEach { addClassifierSymbolToCompletion(it, insertFqName = true) }
-
-        val kotlinClassesFromIndices = indexHelper.getKotlinClasses(scopeNameFilter, psiFilter = { it !is KtEnumEntry })
-        kotlinClassesFromIndices.asSequence()
-            .map { it.getSymbol() as KtClassifierSymbol }
-            .filter { filterClassifiers(it) }
-            .filter { with(visibilityChecker) { isVisible(it) } }
             .forEach { addClassifierSymbolToCompletion(it, insertFqName = true) }
     }
 }

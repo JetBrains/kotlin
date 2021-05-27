@@ -34,6 +34,7 @@ class SealedClassInheritorsProviderIdeImpl : SealedClassInheritorsProvider() {
     }
 
     private fun getInheritors(firClass: FirRegularClass): List<ClassId> {
+        // TODO fix for non-source classes
         val sealedKtClass = firClass.psi as? KtClass ?: return emptyList()
         val module = sealedKtClass.module ?: return emptyList()
         val containingPackage = firClass.classId.packageFqName

@@ -42,7 +42,8 @@ abstract class KtAnalysisSession(final override val token: ValidityToken) : Vali
     KtReferenceShortenerMixIn,
     KtSymbolDeclarationRendererMixIn,
     KtVisibilityCheckerMixIn,
-    KtMemberSymbolProviderMixin
+    KtMemberSymbolProviderMixin,
+    KtInheritorsProviderMixIn
 {
 
     override val analysisSession: KtAnalysisSession get() = this
@@ -99,4 +100,7 @@ abstract class KtAnalysisSession(final override val token: ValidityToken) : Vali
 
     internal val overrideInfoProvider: KtOverrideInfoProvider get() = overrideInfoProviderImpl
     protected abstract val overrideInfoProviderImpl: KtOverrideInfoProvider
+
+    internal val inheritorsProvider: KtInheritorsProvider get() = inheritorsProviderImpl
+    protected abstract val inheritorsProviderImpl: KtInheritorsProvider
 }
