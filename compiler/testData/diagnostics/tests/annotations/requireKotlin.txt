@@ -1,0 +1,28 @@
+package
+
+package kotlin {
+
+    package kotlin.io {
+
+        @kotlin.internal.RequireKotlin(version = "1.x") public final class IllegalVersion {
+            public constructor IllegalVersion()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        @kotlin.internal.RequireKotlin(version = "1.2") public final class LegalMinimum {
+            public constructor LegalMinimum()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        @kotlin.internal.RequireKotlin(message = "Requires newer compiler version to be inlined correctly.", version = "1.2", versionKind = RequireKotlinVersionKind.COMPILER_VERSION) public final class LegalStdLib {
+            public constructor LegalStdLib()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+}

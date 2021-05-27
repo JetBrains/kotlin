@@ -1133,6 +1133,11 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 runTest("compiler/testData/diagnostics/tests/annotations/RecursivelyIncorrectlyAnnotatedParameter.kt");
             }
 
+            @TestMetadata("requireKotlin.kt")
+            public void testRequireKotlin() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/requireKotlin.kt");
+            }
+
             @TestMetadata("RetentionsOfAnnotationWithExpressionTarget_after.kt")
             public void testRetentionsOfAnnotationWithExpressionTarget_after() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/RetentionsOfAnnotationWithExpressionTarget_after.kt");

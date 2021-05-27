@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.ConstantArgumentKind
 import org.jetbrains.kotlin.fir.analysis.checkers.checkConstantArguments
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.findSingleArgumentByName
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticFactory0
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -20,17 +21,18 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.RequireKotlinConstants
 
 object FirAnnotationArgumentChecker : FirAnnotationCallChecker() {
+    private val versionArgumentName = Name.identifier("version")
     private val deprecatedSinceKotlinFqName = FqName("kotlin.DeprecatedSinceKotlin")
     private val sinceKotlinFqName = FqName("kotlin.SinceKotlin")
 
     private val annotationFqNamesWithVersion = setOf(
-        FqName("kotlin.internal.RequireKotlin"),
+        RequireKotlinConstants.FQ_NAME,
         sinceKotlinFqName,
-        deprecatedSinceKotlinFqName
     )
 
     override fun check(expression: FirAnnotationCall, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -38,10 +40,11 @@ object FirAnnotationArgumentChecker : FirAnnotationCallChecker() {
         val fqName = expression.fqName(context.session)
         for ((arg, _) in argumentMapping) {
             val argExpression = (arg as? FirNamedArgumentExpression)?.expression ?: arg
-            checkAnnotationArgumentWithSubElements(argExpression, fqName, context.session, reporter, context)
+            checkAnnotationArgumentWithSubElements(argExpression, context.session, reporter, context)
                 ?.let { reporter.reportOn(argExpression.source, it, context) }
         }
 
+        checkAnnotationsWithVersion(fqName, expression, context, reporter)
         checkDeprecatedSinceKotlin(expression.source, fqName, argumentMapping, context, reporter)
 
         val args = expression.argumentList.arguments
@@ -54,7 +57,6 @@ object FirAnnotationArgumentChecker : FirAnnotationCallChecker() {
 
     private fun checkAnnotationArgumentWithSubElements(
         expression: FirExpression,
-        fqName: FqName?,
         session: FirSession,
         reporter: DiagnosticReporter,
         context: CheckerContext
@@ -66,7 +68,7 @@ object FirAnnotationArgumentChecker : FirAnnotationCallChecker() {
             for (arg in args.arguments) {
                 val sourceForReport = arg.source
 
-                when (val err = checkAnnotationArgumentWithSubElements(arg, fqName, session, reporter, context)) {
+                when (val err = checkAnnotationArgumentWithSubElements(arg, session, reporter, context)) {
                     null -> {
                         //DO NOTHING
                     }
@@ -86,12 +88,12 @@ object FirAnnotationArgumentChecker : FirAnnotationCallChecker() {
             is FirVarargArgumentsExpression -> {
                 for (arg in expression.arguments) {
                     val unwrappedArg = if (arg is FirSpreadArgumentExpression) arg.expression else arg
-                    checkAnnotationArgumentWithSubElements(unwrappedArg, fqName, session, reporter, context)
+                    checkAnnotationArgumentWithSubElements(unwrappedArg, session, reporter, context)
                         ?.let { reporter.reportOn(unwrappedArg.source, it, context) }
                 }
             }
             else -> {
-                val error = when (checkConstantArguments(expression, session)) {
+                return when (checkConstantArguments(expression, session)) {
                     ConstantArgumentKind.NOT_CONST -> FirErrors.ANNOTATION_ARGUMENT_MUST_BE_CONST
                     ConstantArgumentKind.ENUM_NOT_CONST -> FirErrors.ANNOTATION_ARGUMENT_MUST_BE_ENUM_CONST
                     ConstantArgumentKind.NOT_KCLASS_LITERAL -> FirErrors.ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL
@@ -103,31 +105,45 @@ object FirAnnotationArgumentChecker : FirAnnotationCallChecker() {
                         if (expression is FirFunctionCall) checkArgumentList(expression.argumentList)
                         else null
                 }
-                if (error != null) {
-                    return error
-                } else if (annotationFqNamesWithVersion.contains(fqName)) {
-                    val argSource = expression.source
-                    if (argSource != null) {
-                        val stringValue = (expression as? FirConstExpression<*>)?.value as? String
-                        if (stringValue != null) {
-                            if (!stringValue.matches(RequireKotlinConstants.VERSION_REGEX)) {
-                                reporter.reportOn(argSource, FirErrors.ILLEGAL_KOTLIN_VERSION_STRING_VALUE, context)
-                            } else if (fqName == sinceKotlinFqName) {
-                                val version = ApiVersion.parse(stringValue)
-                                val specified = context.session.languageVersionSettings.apiVersion
-                                if (version != null && version > specified) {
-                                    reporter.report(
-                                        FirErrors.NEWER_VERSION_IN_SINCE_KOTLIN.on(argSource, specified.versionString),
-                                        context
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
             }
         }
         return null
+    }
+
+    private fun parseVersionExpressionOrReport(
+        expression: FirExpression,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ): ApiVersion? {
+        val constantExpression = (expression as? FirConstExpression<*>)
+            ?: ((expression as? FirNamedArgumentExpression)?.expression as? FirConstExpression<*>) ?: return null
+        val stringValue = constantExpression.value as? String ?: return null
+        if (!stringValue.matches(RequireKotlinConstants.VERSION_REGEX)) {
+            reporter.reportOn(expression.source, FirErrors.ILLEGAL_KOTLIN_VERSION_STRING_VALUE, context)
+            return null
+        }
+        val version = ApiVersion.parse(stringValue)
+        if (version == null) {
+            reporter.reportOn(expression.source, FirErrors.ILLEGAL_KOTLIN_VERSION_STRING_VALUE, context)
+        }
+        return version
+    }
+
+    private fun checkAnnotationsWithVersion(
+        fqName: FqName?,
+        annotationCall: FirAnnotationCall,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ) {
+        if (!annotationFqNamesWithVersion.contains(fqName)) return
+        val versionExpression = annotationCall.findSingleArgumentByName(versionArgumentName) ?: return
+        val version = parseVersionExpressionOrReport(versionExpression, context, reporter) ?: return
+        if (fqName == sinceKotlinFqName) {
+            val specified = context.session.languageVersionSettings.apiVersion
+            if (version > specified) {
+                reporter.reportOn(versionExpression.source, FirErrors.NEWER_VERSION_IN_SINCE_KOTLIN, specified.versionString, context)
+            }
+        }
     }
 
     private fun checkDeprecatedSinceKotlin(
@@ -150,12 +166,8 @@ object FirAnnotationArgumentChecker : FirAnnotationCallChecker() {
         for (argument in argumentMapping) {
             val identifier = argument.value.name.identifier
             if (identifier == "warningSince" || identifier == "errorSince" || identifier == "hiddenSince") {
-                val argKey = argument.key
-                val constExpression = (argKey as? FirConstExpression<*>)
-                    ?: ((argKey as? FirNamedArgumentExpression)?.expression as? FirConstExpression<*>)
-                val stringValue = constExpression?.value as? String
-                if (stringValue != null) {
-                    val version = ApiVersion.parse(stringValue)
+                val version = parseVersionExpressionOrReport(argument.key, context, reporter)
+                if (version != null) {
                     when (identifier) {
                         "warningSince" -> warningSince = version
                         "errorSince" -> errorSince = version

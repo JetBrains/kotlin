@@ -1350,6 +1350,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("requireKotlin.kt")
+            public void testRequireKotlin() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/requireKotlin.kt");
+            }
+
+            @Test
             @TestMetadata("RetentionsOfAnnotationWithExpressionTarget_after.kt")
             public void testRetentionsOfAnnotationWithExpressionTarget_after() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/RetentionsOfAnnotationWithExpressionTarget_after.kt");
