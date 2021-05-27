@@ -179,7 +179,7 @@ private fun IrDeclarationWithVisibility.specialCaseVisibility(kind: OwnerKind?):
         return Opcodes.ACC_PRIVATE
     }
 
-    if (isInlineOnlyPrivateInBytecode() || isInlineOnlyPropertyAccessor()) {
+    if (isInlineOnlyPrivateInBytecode()) {
         return Opcodes.ACC_PRIVATE
     }
 
@@ -223,26 +223,18 @@ private tailrec fun isInlineOrContainedInInline(declaration: IrDeclaration?): Bo
 
 /* Borrowed from inlineOnly.kt */
 
-fun IrDeclarationWithVisibility.isInlineOnlyOrReifiable(): Boolean =
-    this is IrFunction && (isReifiable() || isInlineOnly())
-
 fun IrDeclarationWithVisibility.isEffectivelyInlineOnly(): Boolean =
-    isInlineOnlyOrReifiable() || isInlineOnlyPrivateInBytecode() || isInlineOnlyPropertyAccessor()
+    this is IrFunction && (isReifiable() || isInlineOnly() || isPrivateInlineSuspend())
 
-fun IrDeclarationWithVisibility.isInlineOnlyPrivateInBytecode(): Boolean =
-    (this is IrFunction && isInlineOnly()) || isPrivateInlineSuspend()
+private fun IrDeclarationWithVisibility.isInlineOnlyPrivateInBytecode(): Boolean =
+    this is IrFunction && (isInlineOnly() || isPrivateInlineSuspend())
 
-private fun IrDeclarationWithVisibility.isPrivateInlineSuspend(): Boolean =
-    this is IrFunction && isSuspend && isInline && visibility == DescriptorVisibilities.PRIVATE
-
-private fun IrDeclarationWithVisibility.isInlineOnlyPropertyAccessor(): Boolean {
-    if (this !is IrSimpleFunction) return false
-    val propertySymbol = correspondingPropertySymbol ?: return false
-    return propertySymbol.owner.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME)
-}
+private fun IrFunction.isPrivateInlineSuspend(): Boolean =
+    isSuspend && isInline && visibility == DescriptorVisibilities.PRIVATE
 
 fun IrFunction.isInlineOnly() =
-    isInline && hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME)
+    (isInline && hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME)) ||
+            (this is IrSimpleFunction && correspondingPropertySymbol?.owner?.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME) == true)
 
 fun IrFunction.isReifiable() = typeParameters.any { it.isReified }
 

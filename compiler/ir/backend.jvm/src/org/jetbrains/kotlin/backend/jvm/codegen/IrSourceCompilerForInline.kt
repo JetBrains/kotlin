@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.util.isSuspend
+import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.ir.util.module
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.psi.KtElement
@@ -107,6 +108,9 @@ class IrSourceCompilerForInline(
     override fun compileInlineFunction(jvmSignature: JvmMethodSignature): SMAPAndMethodNode {
         generateInlineIntrinsicForIr(state.languageVersionSettings, callee.toIrBasedDescriptor())?.let {
             return it
+        }
+        if (jvmSignature.asmMethod.name != callee.name.asString()) {
+            trackLookup(callee.parentAsClass.kotlinFqName, jvmSignature.asmMethod.name) // ?
         }
         callee.parentClassId?.let {
             return loadCompiledInlineFunction(it, jvmSignature.asmMethod, callee.isSuspend, callee.hasMangledReturnType, state)

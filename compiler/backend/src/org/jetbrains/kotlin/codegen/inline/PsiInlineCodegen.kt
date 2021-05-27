@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCallWithAssert
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.inline.InlineUtil.isInlinableParameterExpression
+import org.jetbrains.kotlin.resolve.inline.isInlineOnly
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.KotlinType
@@ -39,14 +40,14 @@ import org.jetbrains.org.objectweb.asm.tree.MethodNode
 class PsiInlineCodegen(
     codegen: ExpressionCodegen,
     state: GenerationState,
-    function: FunctionDescriptor,
+    private val functionDescriptor: FunctionDescriptor,
     signature: JvmMethodSignature,
     typeParameterMappings: TypeParameterMappings<KotlinType>,
     sourceCompiler: SourceCompilerForInline,
     private val methodOwner: Type,
     private val actualDispatchReceiver: Type
 ) : InlineCodegen<ExpressionCodegen>(
-    codegen, state, function, signature, typeParameterMappings, sourceCompiler,
+    codegen, state, signature, typeParameterMappings, sourceCompiler,
     ReifiedTypeInliner(
         typeParameterMappings, PsiInlineIntrinsicsSupport(state), codegen.typeSystem,
         state.languageVersionSettings, state.unifiedNullChecks
@@ -83,7 +84,7 @@ class PsiInlineCodegen(
                     }
                 }
             }
-            performInline(callDefault, registerLineNumber)
+            performInline(registerLineNumber, functionDescriptor.isInlineOnly(), functionDescriptor.isSuspend)
         } finally {
             state.globalInlineContext.exitFromInlining()
         }

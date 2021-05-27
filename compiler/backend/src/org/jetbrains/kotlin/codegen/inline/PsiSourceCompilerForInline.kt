@@ -52,7 +52,7 @@ class PsiSourceCompilerForInline(
         codegen.state,
         DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor)?.containingFile as? KtFile,
         additionalInnerClasses
-    )
+    ) as MethodContext
 
     override val lookupLocation = KotlinLookupLocation(callElement)
 
@@ -246,6 +246,9 @@ class PsiSourceCompilerForInline(
         }
 
         val asmMethod = if (callDefault) mapDefault() else jvmSignature.asmMethod
+        if (asmMethod.name != functionDescriptor.name.asString()) {
+            trackLookup(DescriptorUtils.getFqNameSafe(functionDescriptor.containingDeclaration), asmMethod.name) // ?
+        }
 
         val directMember = getDirectMemberAndCallableFromObject()
         if (directMember is DescriptorWithContainerSource) {
@@ -254,12 +257,8 @@ class PsiSourceCompilerForInline(
             return loadCompiledInlineFunction(containerId, asmMethod, functionDescriptor.isSuspend, isMangled, state)
         }
 
-        val element = DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor)
-
-        if (!(element is KtNamedFunction || element is KtPropertyAccessor)) {
-            throw IllegalStateException("Couldn't find declaration for function $functionDescriptor")
-        }
-        val inliningFunction = element as KtDeclarationWithBody?
+        val element = DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor) as? KtDeclarationWithBody
+            ?: throw IllegalStateException("Couldn't find declaration for function $functionDescriptor")
 
         val node = MethodNode(
             Opcodes.API_VERSION,
@@ -271,13 +270,10 @@ class PsiSourceCompilerForInline(
 
         //for maxLocals calculation
         val maxCalcAdapter = wrapWithMaxLocalCalc(node)
-        val parentContext = context.parentContext ?: error("Context has no parent: $context")
-        val methodContext = parentContext.intoFunction(functionDescriptor)
-
         val smap = if (callDefault) {
             val implementationOwner = state.typeMapper.mapImplementationOwner(functionDescriptor)
             val parentCodegen = FakeMemberCodegen(
-                codegen.parentCodegen, inliningFunction!!, methodContext.parentContext as FieldOwnerContext<*>,
+                codegen.parentCodegen, element, context.parentContext as FieldOwnerContext<*>,
                 implementationOwner.internalName,
                 additionalInnerClasses,
                 false
@@ -286,12 +282,12 @@ class PsiSourceCompilerForInline(
                 throw IllegalStateException("Property accessors with default parameters not supported $functionDescriptor")
             }
             FunctionCodegen.generateDefaultImplBody(
-                methodContext, functionDescriptor, maxCalcAdapter, DefaultParameterValueLoader.DEFAULT,
-                inliningFunction as KtNamedFunction?, parentCodegen, asmMethod
+                context, functionDescriptor, maxCalcAdapter, DefaultParameterValueLoader.DEFAULT,
+                element as KtNamedFunction?, parentCodegen, asmMethod
             )
             SMAP(parentCodegen.orCreateSourceMapper.resultMappings)
         } else {
-            generateMethodBody(maxCalcAdapter, functionDescriptor, methodContext, inliningFunction!!, jvmSignature, null)
+            generateMethodBody(maxCalcAdapter, functionDescriptor, context, element, jvmSignature, null)
         }
         maxCalcAdapter.visitMaxs(-1, -1)
         maxCalcAdapter.visitEnd()
