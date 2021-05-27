@@ -64,6 +64,7 @@ class PsiInlineCodegen(
         callDefault: Boolean,
         codegen: ExpressionCodegen
     ) {
+        (sourceCompiler as PsiSourceCompilerForInline).callDefault = callDefault
         assert(hiddenParameters.isEmpty()) { "putHiddenParamsIntoLocals() should be called after processHiddenParameters()" }
         if (!state.globalInlineContext.enterIntoInlining(functionDescriptor, resolvedCall?.call?.callElement)) {
             generateStub(resolvedCall?.call?.callElement?.text ?: "<no source>", codegen)
@@ -82,7 +83,7 @@ class PsiInlineCodegen(
                     }
                 }
             }
-            performInline(resolvedCall?.typeArguments?.keys?.toList(), callDefault, callDefault, codegen.typeSystem, registerLineNumber)
+            performInline(resolvedCall?.typeArguments?.keys?.toList(), callDefault, codegen.typeSystem, registerLineNumber)
         } finally {
             state.globalInlineContext.exitFromInlining()
         }
