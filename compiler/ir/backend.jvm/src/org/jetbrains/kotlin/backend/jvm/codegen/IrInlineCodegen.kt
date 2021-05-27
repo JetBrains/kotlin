@@ -41,9 +41,7 @@ class IrInlineCodegen(
     sourceCompiler: SourceCompilerForInline,
     reifiedTypeInliner: ReifiedTypeInliner<IrType>
 ) :
-    InlineCodegen<ExpressionCodegen>(
-        codegen, state, function.toIrBasedDescriptor(), signature, typeParameterMappings, sourceCompiler, reifiedTypeInliner
-    ),
+    InlineCodegen<ExpressionCodegen>(codegen, state, signature, typeParameterMappings, sourceCompiler, reifiedTypeInliner),
     IrInlineCallGenerator {
 
     override fun generateAssertFieldIfNeeded(info: RootInliningContext) {
@@ -126,8 +124,7 @@ class IrInlineCodegen(
         expression: IrFunctionAccessExpression,
         isInsideIfCondition: Boolean,
     ) {
-        // Always look for default lambdas to allow custom default argument handling in compiler plugins.
-        performInline(inlineDefaultLambdas = true, registerLineNumberAfterwards = isInsideIfCondition)
+        performInline(isInsideIfCondition, function.isInlineOnly(), function.isSuspend)
     }
 
     override fun genCycleStub(text: String, codegen: ExpressionCodegen) {
@@ -135,7 +132,6 @@ class IrInlineCodegen(
     }
 
     override fun extractDefaultLambdas(node: MethodNode): List<DefaultLambda> {
-        if (maskStartIndex == -1) return listOf()
         return expandMaskConditionsAndUpdateVariableNodes(
             node, maskStartIndex, maskValues, methodHandleInDefaultMethodIndex,
             extractDefaultLambdaOffsetAndDescriptor(jvmSignature, function),

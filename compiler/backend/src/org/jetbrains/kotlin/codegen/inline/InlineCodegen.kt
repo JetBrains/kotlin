@@ -10,15 +10,11 @@ import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
 import org.jetbrains.kotlin.codegen.context.ClosureContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.incremental.components.Position
-import org.jetbrains.kotlin.incremental.components.ScopeKind
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
-import org.jetbrains.kotlin.resolve.inline.isInlineOnly
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -29,18 +25,11 @@ import kotlin.math.max
 abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     protected val codegen: T,
     protected val state: GenerationState,
-    protected val functionDescriptor: FunctionDescriptor,
     protected val jvmSignature: JvmMethodSignature,
     private val typeParameterMappings: TypeParameterMappings<*>,
     protected val sourceCompiler: SourceCompilerForInline,
     protected val reifiedTypeInliner: ReifiedTypeInliner<*>
 ) {
-    init {
-        assert(InlineUtil.isInline(functionDescriptor)) {
-            "InlineCodegen can inline only inline functions: $functionDescriptor"
-        }
-    }
-
     // TODO: implement AS_FUNCTION inline strategy
     private val asFunctionInline = false
 
@@ -52,15 +41,6 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     protected var maskStartIndex = -1
     protected var methodHandleInDefaultMethodIndex = -1
 
-    init {
-        if (functionDescriptor !is FictitiousArrayConstructor) {
-            //track changes for property accessor and @JvmName inline functions/property accessors
-            if (jvmSignature.asmMethod.name != functionDescriptor.name.asString()) {
-                trackLookup(functionDescriptor)
-            }
-        }
-    }
-
     protected fun throwCompilationException(
         nodeAndSmap: SMAPAndMethodNode?, e: Exception, generateNodeText: Boolean
     ): CompilationException {
@@ -68,7 +48,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         val element = DescriptorToSourceUtils.descriptorToDeclaration(contextDescriptor)
         val node = nodeAndSmap?.node
         throw CompilationException(
-            "Couldn't inline method call '" + functionDescriptor.name + "' into\n" +
+            "Couldn't inline method call '${jvmSignature.asmMethod}' into\n" +
                     DescriptorRenderer.DEBUG_TEXT.render(contextDescriptor) + "\n" +
                     (element?.text ?: "<no source>") +
                     if (generateNodeText) "\nCause: " + node.nodeText else "",
@@ -81,13 +61,13 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         AsmUtil.genThrow(codegen.visitor, "java/lang/UnsupportedOperationException", "Call is part of inline cycle: $text")
     }
 
-    fun performInline(inlineDefaultLambdas: Boolean, registerLineNumberAfterwards: Boolean) {
+    fun performInline(registerLineNumberAfterwards: Boolean, isInlineOnly: Boolean, isSuspend: Boolean) {
         var nodeAndSmap: SMAPAndMethodNode? = null
         try {
             nodeAndSmap = sourceCompiler.compileInlineFunction(jvmSignature).apply {
                 node.preprocessSuspendMarkers(forInline = true, keepFakeContinuation = false)
             }
-            val result = inlineCall(nodeAndSmap, inlineDefaultLambdas)
+            val result = inlineCall(nodeAndSmap, isInlineOnly, isSuspend)
             leaveTemps()
             codegen.propagateChildReifiedTypeParametersUsages(result.reifiedTypeParametersUsages)
             codegen.markLineNumberAfterInlineIfNeeded(registerLineNumberAfterwards)
@@ -109,8 +89,6 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         //
         // Instead of checking for loops precisely, we just check if there are any backward jumps -
         // that is, a jump from instruction #i to instruction #j where j < i
-
-        if (functionDescriptor.isSuspend) return false
         if (methodNode.tryCatchBlocks.isNotEmpty()) return false
 
         fun isBackwardJump(fromIndex: Int, toLabel: LabelNode) =
@@ -162,9 +140,9 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         expressionMap[closureInfo.index] = lambdaInfo
     }
 
-    private fun inlineCall(nodeAndSmap: SMAPAndMethodNode, inlineDefaultLambda: Boolean): InlineResult {
+    private fun inlineCall(nodeAndSmap: SMAPAndMethodNode, isInlineOnly: Boolean, isSuspend: Boolean): InlineResult {
         val node = nodeAndSmap.node
-        if (inlineDefaultLambda) {
+        if (maskStartIndex != -1) {
             for (lambda in extractDefaultLambdas(node)) {
                 invocationParamBuilder.buildParameters().getParameterByDeclarationSlot(lambda.offset).functionalArgument = lambda
                 val prev = expressionMap.put(lambda.offset, lambda)
@@ -190,7 +168,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
             node, parameters, info, FieldRemapper(null, null, parameters), sourceCompiler.isCallInsideSameModuleAsCallee,
             "Method inlining " + sourceCompiler.callElementText,
             SourceMapCopier(sourceMapper, nodeAndSmap.classSMAP, callSite),
-            info.callSiteInfo, if (functionDescriptor.isInlineOnly()) InlineOnlySmapSkipper(codegen) else null,
+            info.callSiteInfo, if (isInlineOnly) InlineOnlySmapSkipper(codegen) else null,
             !isInlinedToInlineFunInKotlinRuntime()
         ) //with captured
 
@@ -215,7 +193,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         // needs to be inserted before the code that actually uses it.
         generateAssertFieldIfNeeded(info)
 
-        val shouldSpillStack = !canSkipStackSpillingOnInline(node)
+        val shouldSpillStack = isSuspend || !canSkipStackSpillingOnInline(node)
         if (shouldSpillStack) {
             addInlineMarker(codegen.visitor, true)
         }
@@ -387,21 +365,6 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
             methodHandleInDefaultMethodIndex = maskStartIndex + maskValues.size
         }
         return true
-    }
-
-    private fun trackLookup(functionOrAccessor: FunctionDescriptor) {
-        val functionOrAccessorName = jvmSignature.asmMethod.name
-        val lookupTracker = state.configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER) ?: return
-        val location = sourceCompiler.lookupLocation.location ?: return
-        val position = if (lookupTracker.requiresPosition) location.position else Position.NO_POSITION
-        val classOrPackageFragment = functionOrAccessor.containingDeclaration
-        lookupTracker.record(
-            location.filePath,
-            position,
-            DescriptorUtils.getFqName(classOrPackageFragment).asString(),
-            ScopeKind.CLASSIFIER,
-            functionOrAccessorName
-        )
     }
 
     companion object {
