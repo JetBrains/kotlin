@@ -3874,4 +3874,64 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """
     )
+
+    @Test
+    fun testMultipleNestedInlines() = verifyComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.Composable
+
+            @Composable
+            fun AttemptedToRealizeGroupTwice() {
+                Wrapper {
+                    repeat(1) {
+                        repeat(1) {
+                            Leaf(0)
+                        }
+                        Leaf(0)
+                    }
+                }
+            }
+        """,
+        expectedTransformed = """
+            @Composable
+            fun AttemptedToRealizeGroupTwice(%composer: Composer?, %changed: Int) {
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(AttemptedToRealizeGroupTwice)<Wrappe...>:Test.kt")
+              if (%changed !== 0 || !%composer.skipping) {
+                Wrapper({ %composer: Composer?, %changed: Int ->
+                  %composer.startReplaceableGroup(<>)
+                  sourceInformation(%composer, "C*<Leaf(0...>:Test.kt")
+                  if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                    repeat(1) { it: Int ->
+                      %composer.startReplaceableGroup(<>)
+                      sourceInformation(%composer, "*<Leaf(0...>")
+                      repeat(1) { it: Int ->
+                        Leaf(0, %composer, 0b0110, 0)
+                      }
+                      %composer.endReplaceableGroup()
+                      Leaf(0, %composer, 0b0110, 0)
+                    }
+                  } else {
+                    %composer.skipToGroupEnd()
+                  }
+                  %composer.endReplaceableGroup()
+                }, %composer, 0)
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                AttemptedToRealizeGroupTwice(%composer, %changed or 0b0001)
+              }
+            }
+        """,
+        extra = """
+            import androidx.compose.runtime.Composable
+
+            @Composable
+            inline fun Wrapper(content: @Composable () -> Unit) { }
+
+            @Composable
+            fun Leaf(default: Int = 0) {}
+        """
+    )
 }
