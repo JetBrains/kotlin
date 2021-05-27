@@ -153,6 +153,7 @@ class IrOverridingUtil(
             .flatMap {
                 when (it) {
                     is IrSimpleFunction -> it.overriddenSymbols.map { it.owner }
+                    // TODO: use IrProperty.overriddenSymbols instead: KT-47019
                     is IrProperty -> (it.getter ?: it.setter)?.overriddenSymbols
                         ?.map { it.owner.correspondingPropertySymbol!!.owner }
                         ?: emptyList()
