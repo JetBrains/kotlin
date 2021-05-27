@@ -393,13 +393,12 @@ fun TypeSystemCommonBackendContext.extractReificationArgument(initialType: Kotli
     while (type.isArrayOrNullableArray()) {
         arrayDepth++
         val argument = type.getArgument(0)
-        type =
-            if (argument.isStarProjection()) nullableAnyType()
-            else argument.getType()
+        if (argument.isStarProjection()) return null
+        type = argument.getType()
     }
 
     val typeParameter = type.typeConstructor().getTypeParameterClassifier() ?: return null
-
+    if (!typeParameter.isReified()) return null
     return Pair(typeParameter, ReificationArgument(typeParameter.getName().asString(), isNullable, arrayDepth))
 }
 

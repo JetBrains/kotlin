@@ -37,7 +37,7 @@ private fun TypeSystemCommonBackendContext.putTypeOfReifiedTypeParameter(
     v.aconst(null)
 }
 
-internal fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.generateTypeOf(
+fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.generateTypeOf(
     v: InstructionAdapter, type: KT, intrinsicsSupport: ReifiedTypeInliner.IntrinsicsSupport<KT>
 ) {
     val typeParameter = type.typeConstructor().getTypeParameterClassifier()
@@ -103,7 +103,7 @@ private fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.generateNonRe
         TypeVariance.OUT -> KVariance.OUT
     }
     v.getstatic(K_VARIANCE.internalName, variance.name, K_VARIANCE.descriptor)
-    v.aconst(typeParameter.isReified())
+    v.iconst(if (typeParameter.isReified()) 1 else 0)
     v.invokestatic(
         REFLECTION, "typeParameter",
         Type.getMethodDescriptor(K_TYPE_PARAMETER, OBJECT_TYPE, JAVA_STRING_TYPE, K_VARIANCE, Type.BOOLEAN_TYPE),
@@ -119,11 +119,11 @@ private fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.generateNonRe
     if (bounds.size == 1) {
         generateTypeOf(v, bounds.single(), intrinsicsSupport)
     } else {
-        v.aconst(bounds.size)
+        v.iconst(bounds.size)
         v.newarray(K_TYPE)
         for ((i, bound) in bounds.withIndex()) {
             v.dup()
-            v.aconst(i)
+            v.iconst(i)
             generateTypeOf(v, bound, intrinsicsSupport)
             v.astore(K_TYPE)
         }

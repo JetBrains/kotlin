@@ -77,13 +77,13 @@ class IrInlineIntrinsicsSupport(
         v.anew(implClass)
         v.dup()
         if (withArity) {
-            v.aconst(function.allParametersCount)
+            v.iconst(function.allParametersCount)
         }
         putClassInstance(v, FunctionReferenceLowering.getOwnerKClassType(declaration.parent, context))
         v.aconst(declaration.name.asString())
         // TODO: generate correct signature for functions and property accessors which have inline class types in the signature.
         SignatureString.generateSignatureString(v, function, context)
-        v.aconst(FunctionReferenceLowering.getCallableReferenceTopLevelFlag(declaration))
+        v.iconst(FunctionReferenceLowering.getCallableReferenceTopLevelFlag(declaration))
         val parameterTypes =
             (if (withArity) listOf(INT_TYPE) else emptyList()) +
                     listOf(JAVA_CLASS_TYPE, JAVA_STRING_TYPE, JAVA_STRING_TYPE, INT_TYPE)

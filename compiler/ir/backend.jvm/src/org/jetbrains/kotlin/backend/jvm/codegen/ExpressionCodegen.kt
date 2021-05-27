@@ -1342,10 +1342,10 @@ class ExpressionCodegen(
             val classType = classReference.classType
             val classifier = classType.classifierOrNull
             if (classifier is IrTypeParameterSymbol) {
-                assert(classifier.owner.isReified) {
-                    "Non-reified type parameter under ::class should be rejected by type checker: ${classifier.owner.dump()}"
+                val success = putReifiedOperationMarkerIfTypeIsReifiedParameter(classType, ReifiedTypeInliner.OperationKind.JAVA_CLASS)
+                assert(success) {
+                    "Non-reified type parameter under ::class should be rejected by type checker: ${classType.render()}"
                 }
-                putReifiedOperationMarkerIfTypeIsReifiedParameter(classType, ReifiedTypeInliner.OperationKind.JAVA_CLASS)
             }
 
             generateClassInstance(mv, classType, typeMapper)
