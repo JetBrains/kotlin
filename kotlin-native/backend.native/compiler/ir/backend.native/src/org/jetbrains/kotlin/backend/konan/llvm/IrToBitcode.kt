@@ -1646,7 +1646,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             if (needMutationCheck(value.symbol.owner.parentAsClass)) {
                 functionGenerationContext.call(context.llvm.mutationCheck,
                         listOf(functionGenerationContext.bitcast(codegen.kObjHeaderPtr, thisPtr)),
-                        Lifetime.IRRELEVANT, ExceptionHandler.Caller)
+                        Lifetime.IRRELEVANT, currentCodeContext.exceptionHandler)
 
                 if (functionGenerationContext.isObjectType(valueToAssign.type))
                     functionGenerationContext.call(context.llvm.checkLifetimesConstraint, listOf(thisPtr, valueToAssign))
