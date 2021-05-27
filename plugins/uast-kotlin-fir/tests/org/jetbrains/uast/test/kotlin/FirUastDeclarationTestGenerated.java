@@ -29,6 +29,11 @@ public class FirUastDeclarationTestGenerated extends AbstractFirUastDeclarationT
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/uast-kotlin-fir/testData/declaration"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
+    @TestMetadata("doWhile.kt")
+    public void testDoWhile() throws Exception {
+        runTest("plugins/uast-kotlin-fir/testData/declaration/doWhile.kt");
+    }
+
     @TestMetadata("facade.kt")
     public void testFacade() throws Exception {
         runTest("plugins/uast-kotlin-fir/testData/declaration/facade.kt");
