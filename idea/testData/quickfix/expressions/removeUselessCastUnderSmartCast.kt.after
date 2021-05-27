@@ -5,5 +5,3 @@ fun test(x: Any): String? {
     }
     return null
 }
-
-/* IGNORE_FIR */

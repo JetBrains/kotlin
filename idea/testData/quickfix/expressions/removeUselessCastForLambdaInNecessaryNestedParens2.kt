@@ -6,4 +6,3 @@ fun test() {
     // comment
     ((({ "" } as<caret> () -> String)))
 }
-/* IGNORE_FIR */

@@ -2,4 +2,3 @@
 fun test() {
     ({ "" } as<caret> () -> String)
 }
-/* IGNORE_FIR */
