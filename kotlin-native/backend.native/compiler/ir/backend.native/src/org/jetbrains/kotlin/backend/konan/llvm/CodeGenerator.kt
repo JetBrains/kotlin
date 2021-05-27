@@ -498,7 +498,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         if (isObjectRef(value) && isVar) {
             val slot = alloca(LLVMTypeOf(value), variableLocation = null)
             storeStackRef(value, slot)
-        } else if (isObjectRef(value)) {
+        } else if (!afterCondition && isObjectRef(value)) {
             loadsMap[address] = value
         }
         return value
@@ -775,11 +775,13 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     fun select(ifValue: LLVMValueRef, thenValue: LLVMValueRef, elseValue: LLVMValueRef, name: String = ""): LLVMValueRef =
             LLVMBuildSelect(builder, ifValue, thenValue, elseValue, name)!!
 
-    fun bitcast(type: LLVMTypeRef?, value: LLVMValueRef, name: String = "") =
-            if (!afterCondition) {
-        bitcastsMap.getOrPut(value to type) {
-            LLVMBuildBitCast(builder, value, type, name)!!
-        }} else LLVMBuildBitCast(builder, value, type, name)!!
+    fun bitcast(type: LLVMTypeRef?, value: LLVMValueRef, name: String = ""): LLVMValueRef {
+        val key = value to type
+        if (key in bitcastsMap) {
+            return bitcastsMap[key]!!
+        }
+        return LLVMBuildBitCast(builder, value, type, name)!!.also { if (!afterCondition) bitcastsMap[key] = it }
+    }
 
     fun intToPtr(value: LLVMValueRef?, DestTy: LLVMTypeRef, Name: String = "") = LLVMBuildIntToPtr(builder, value, DestTy, Name)!!
     fun ptrToInt(value: LLVMValueRef?, DestTy: LLVMTypeRef, Name: String = "") = LLVMBuildPtrToInt(builder, value, DestTy, Name)!!
