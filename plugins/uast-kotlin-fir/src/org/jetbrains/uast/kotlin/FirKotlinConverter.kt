@@ -280,6 +280,8 @@ internal object FirKotlinConverter : BaseKotlinConverter {
                 is KtDoWhileExpression -> expr<UDoWhileExpression>(build(::KotlinUDoWhileExpression))
                 is KtWhileExpression -> expr<UWhileExpression>(build(::KotlinUWhileExpression))
 
+                is KtIfExpression -> expr<UIfExpression>(build(::KotlinUIfExpression))
+
                 else -> expr<UExpression>(build(::UnknownKotlinExpression))
             }
         }
