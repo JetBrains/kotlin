@@ -1198,6 +1198,7 @@ fun main(args: Array<String>) {
             testClass<AbstractHighLevelJvmBasicCompletionTest> {
                 model("basic/common")
                 model("basic/java")
+                model("../../idea-fir/testData/completion/basic/common", testClassName = "CommonFir")
             }
 
             testClass<AbstractHighLevelBasicCompletionHandlerTest> {
