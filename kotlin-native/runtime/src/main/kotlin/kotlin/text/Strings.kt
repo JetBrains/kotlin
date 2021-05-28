@@ -37,7 +37,8 @@ internal actual external fun String.nativeLastIndexOf(str: String, fromIndex: In
  *
  * @param ignoreCase `true` to ignore character case when comparing strings. By default `false`.
  */
-public actual fun String?.equals(other: String?, ignoreCase: Boolean): Boolean {
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String?.equals(other: String?, ignoreCase: Boolean = false): Boolean {
     if (this === null)
         return other === null
     if (other === null)
@@ -55,7 +56,8 @@ public actual fun String?.equals(other: String?, ignoreCase: Boolean): Boolean {
  *
  * @sample samples.text.Strings.replace
  */
-public actual fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean): String {
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String {
     return if (!ignoreCase)
         replace(oldChar, newChar)
     else
@@ -87,13 +89,15 @@ private fun String.replaceIgnoreCase(oldChar: Char, newChar: Char): String {
  *
  * @sample samples.text.Strings.replace
  */
-public actual fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean): String =
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean = false): String =
         splitToSequence(oldValue, ignoreCase = ignoreCase).joinToString(separator = newValue)
 
 /**
  * Returns a new string with the first occurrence of [oldChar] replaced with [newChar].
  */
-public actual fun String.replaceFirst(oldChar: Char, newChar: Char, ignoreCase: Boolean): String {
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.replaceFirst(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String {
     val index = indexOf(oldChar, ignoreCase = ignoreCase)
     return if (index < 0) this else this.replaceRange(index, index + 1, newChar.toString())
 }
@@ -102,7 +106,8 @@ public actual fun String.replaceFirst(oldChar: Char, newChar: Char, ignoreCase: 
  * Returns a new string obtained by replacing the first occurrence of the [oldValue] substring in this string
  * with the specified [newValue] string.
  */
-public actual fun String.replaceFirst(oldValue: String, newValue: String, ignoreCase: Boolean): String {
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.replaceFirst(oldValue: String, newValue: String, ignoreCase: Boolean = false): String {
     val index = indexOf(oldValue, ignoreCase = ignoreCase)
     return if (index < 0) this else this.replaceRange(index, index + oldValue.length, newValue)
 }
@@ -134,19 +139,22 @@ public actual inline fun String.substring(startIndex: Int): String =
 /**
  * Returns `true` if this string starts with the specified prefix.
  */
-public actual fun String.startsWith(prefix: String, ignoreCase: Boolean): Boolean =
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.startsWith(prefix: String, ignoreCase: Boolean = false): Boolean =
         regionMatches(0, prefix, 0, prefix.length, ignoreCase)
 
 /**
  * Returns `true` if a substring of this string starting at the specified offset [startIndex] starts with the specified prefix.
  */
-public actual fun String.startsWith(prefix: String, startIndex: Int, ignoreCase: Boolean): Boolean =
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.startsWith(prefix: String, startIndex: Int, ignoreCase: Boolean = false): Boolean =
         regionMatches(startIndex, prefix, 0, prefix.length, ignoreCase)
 
 /**
  * Returns `true` if this string ends with the specified suffix.
  */
-public actual fun String.endsWith(suffix: String, ignoreCase: Boolean): Boolean =
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.endsWith(suffix: String, ignoreCase: Boolean = false): Boolean =
         regionMatches(length - suffix.length, suffix, 0, suffix.length, ignoreCase)
 
 /**
@@ -156,9 +164,10 @@ public actual fun String.endsWith(suffix: String, ignoreCase: Boolean): Boolean 
  * @param otherOffset the start offset in the other char sequence of the substring to compare.
  * @param length the length of the substring to compare.
  */
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun CharSequence.regionMatches(
         thisOffset: Int, other: CharSequence, otherOffset: Int, length: Int,
-        ignoreCase: Boolean): Boolean {
+        ignoreCase: Boolean = false): Boolean {
     return if (this is String && other is String) {
         this.regionMatches(thisOffset, other, otherOffset, length, ignoreCase)
     } else {
@@ -343,7 +352,8 @@ public actual fun CharArray.concatToString(): String = unsafeStringFromCharArray
  * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
  */
 @SinceKotlin("1.3")
-public actual fun CharArray.concatToString(startIndex: Int, endIndex: Int): String {
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun CharArray.concatToString(startIndex: Int = 0, endIndex: Int = this.size): String {
     checkBoundsIndexes(startIndex, endIndex, size)
     return unsafeStringFromCharArray(this, startIndex, endIndex - startIndex)
 }
@@ -370,7 +380,8 @@ internal external fun unsafeStringFromCharArray(array: CharArray, start: Int, si
  * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
  */
 @SinceKotlin("1.3")
-public actual fun String.toCharArray(startIndex: Int, endIndex: Int): CharArray {
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.toCharArray(startIndex: Int = 0, endIndex: Int = this.length): CharArray {
     checkBoundsIndexes(startIndex, endIndex, length)
     return toCharArray(this, startIndex, endIndex - startIndex)
 }
@@ -395,7 +406,8 @@ public actual fun ByteArray.decodeToString(): String = unsafeStringFromUtf8(0, s
  * @throws CharacterCodingException if the byte array contains malformed UTF-8 byte sequence and [throwOnInvalidSequence] is true.
  */
 @SinceKotlin("1.3")
-public actual fun ByteArray.decodeToString(startIndex: Int, endIndex: Int, throwOnInvalidSequence: Boolean): String {
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun ByteArray.decodeToString(startIndex: Int = 0, endIndex: Int = this.size, throwOnInvalidSequence: Boolean = false): String {
     checkBoundsIndexes(startIndex, endIndex, size)
     return if (throwOnInvalidSequence)
         unsafeStringFromUtf8OrThrow(startIndex, endIndex - startIndex)
@@ -423,7 +435,8 @@ public actual fun String.encodeToByteArray(): ByteArray = unsafeStringToUtf8(0, 
  * @throws CharacterCodingException if this string contains malformed char sequence and [throwOnInvalidSequence] is true.
  */
 @SinceKotlin("1.3")
-public actual fun String.encodeToByteArray(startIndex: Int, endIndex: Int, throwOnInvalidSequence: Boolean): ByteArray {
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.encodeToByteArray(startIndex: Int = 0, endIndex: Int = this.length, throwOnInvalidSequence: Boolean = false): ByteArray {
     checkBoundsIndexes(startIndex, endIndex, length)
     return if (throwOnInvalidSequence)
         unsafeStringToUtf8OrThrow(startIndex, endIndex - startIndex)
@@ -462,7 +475,8 @@ internal fun compareToIgnoreCase(thiz: String, other: String): Int {
         1
 }
 
-public actual fun String.compareTo(other: String, ignoreCase: Boolean): Int {
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.compareTo(other: String, ignoreCase: Boolean = false): Int {
     return if (!ignoreCase) this.compareTo(other)
     else compareToIgnoreCase(this, other)
 }

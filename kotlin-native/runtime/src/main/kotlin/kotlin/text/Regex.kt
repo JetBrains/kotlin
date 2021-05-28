@@ -157,7 +157,8 @@ public actual class Regex internal constructor(internal val nativePattern: Patte
      * @return An instance of [MatchResult] if match was found or `null` otherwise.
      * @throws IndexOutOfBoundsException if [startIndex] is less than zero or greater than the length of the [input] char sequence.
      */
-    actual fun find(input: CharSequence, startIndex: Int): MatchResult? {
+    @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+    actual fun find(input: CharSequence, startIndex: Int = 0): MatchResult? {
         if (startIndex < 0 || startIndex > input.length) {
             throw IndexOutOfBoundsException("Start index is out of bounds: $startIndex, input length: ${input.length}")
         }
@@ -178,7 +179,8 @@ public actual class Regex internal constructor(internal val nativePattern: Patte
      *
      * @throws IndexOutOfBoundsException if [startIndex] is less than zero or greater than the length of the [input] char sequence.
      */
-    actual fun findAll(input: CharSequence, startIndex: Int): Sequence<MatchResult> {
+    @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+    actual fun findAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult> {
         if (startIndex < 0 || startIndex > input.length) {
             throw IndexOutOfBoundsException("Start index is out of bounds: $startIndex, input length: ${input.length}")
         }
@@ -282,7 +284,8 @@ public actual class Regex internal constructor(internal val nativePattern: Patte
      * @param limit Non-negative value specifying the maximum number of substrings the string can be split to.
      *              Zero by default means no limit is set.
      */
-    actual fun split(input: CharSequence, limit: Int): List<String> {
+    @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+    actual fun split(input: CharSequence, limit: Int = 0): List<String> {
         require(limit >= 0, { "Limit must be non-negative, but was $limit." } )
 
         var match: MatchResult? = find(input)
