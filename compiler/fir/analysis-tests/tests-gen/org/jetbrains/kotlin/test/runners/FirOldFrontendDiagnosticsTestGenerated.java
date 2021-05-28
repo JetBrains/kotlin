@@ -20899,6 +20899,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("inferenceFrom.kt")
+                public void testInferenceFrom() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/genericVarianceViolation/inferenceFrom.kt");
+                }
+
+                @Test
                 @TestMetadata("listSuperType.kt")
                 public void testListSuperType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/platformTypes/genericVarianceViolation/listSuperType.kt");

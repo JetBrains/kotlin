@@ -409,7 +409,7 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
                 JavaToKotlinClassMap.mapJavaToKotlin(classifier.fqName!!)
             } ?: classifier.classId!!
 
-            if (isLowerBound) {
+            if (isLowerBound || argumentsMakeSenseOnlyForMutableContainer(classId, session)) {
                 classId = classId.readOnlyToMutable() ?: classId
             }
 
@@ -459,6 +459,26 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
         else -> ConeKotlinErrorType(ConeSimpleDiagnostic("Unexpected classifier: $classifier", DiagnosticKind.Java))
     }
 }
+
+// Returns true for covariant read-only container that has mutable pair with invariant parameter
+// List<in A> does not make sense, but MutableList<in A> does
+// Same for Map<K, in V>
+// But both Iterable<in A>, MutableIterable<in A> don't make sense as they are covariant, so return false
+private fun JavaClassifierType.argumentsMakeSenseOnlyForMutableContainer(
+    classId: ClassId,
+    session: FirSession,
+): Boolean {
+    if (!JavaToKotlinClassMap.isReadOnly(classId.asSingleFqName().toUnsafe())) return false
+    val mutableClassId = classId.readOnlyToMutable() ?: return false
+
+    if (!typeArguments.lastOrNull().isSuperWildcard()) return false
+    val mutableLastParameterVariance =
+        (mutableClassId.toLookupTag().toSymbol(session)?.fir as? FirRegularClass)?.typeParameters?.lastOrNull()?.symbol?.fir?.variance
+            ?: return false
+
+    return mutableLastParameterVariance != OUT_VARIANCE
+}
+
 
 private fun FirRegularClass.createRawArguments(
     session: FirSession,

@@ -24,7 +24,7 @@ FILE fqName:<root> fileName:/v8arrayToList.kt
         CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.V8Array' type=<root>.V8Array origin=null
       VAR name:list type:kotlin.collections.List<kotlin.String> [val]
         TYPE_OP type=kotlin.collections.List<kotlin.String> origin=CAST typeOperand=kotlin.collections.List<kotlin.String>
-          CALL 'public open fun toList (array: @[FlexibleNullability] <root>.V8Array?): @[FlexibleNullability] kotlin.collections.List<*>? declared in <root>.Utils' type=@[FlexibleNullability] kotlin.collections.List<*>? origin=null
+          CALL 'public open fun toList (array: @[FlexibleNullability] <root>.V8Array?): @[FlexibleNullability] kotlin.collections.MutableList<in @[FlexibleNullability] kotlin.Any?>? declared in <root>.Utils' type=@[FlexibleNullability] kotlin.collections.MutableList<in @[FlexibleNullability] kotlin.Any?>? origin=null
             array: GET_VAR 'val array: <root>.V8Array [val] declared in <root>.box' type=<root>.V8Array origin=null
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         CALL 'public abstract fun get (index: kotlin.Int): E of kotlin.collections.List [operator] declared in kotlin.collections.List' type=kotlin.String origin=null

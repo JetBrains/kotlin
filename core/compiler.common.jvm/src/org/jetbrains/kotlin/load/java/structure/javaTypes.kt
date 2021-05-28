@@ -43,3 +43,5 @@ interface JavaWildcardType : JavaType {
     val bound: JavaType?
     val isExtends: Boolean
 }
+
+fun JavaType?.isSuperWildcard(): Boolean = (this as? JavaWildcardType)?.let { it.bound != null && !it.isExtends } ?: false

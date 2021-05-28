@@ -184,8 +184,6 @@ class JavaTypeResolver(
     private fun JavaClassifierType.argumentsMakeSenseOnlyForMutableContainer(
         readOnlyContainer: ClassDescriptor
     ): Boolean {
-        fun JavaType?.isSuperWildcard(): Boolean = (this as? JavaWildcardType)?.let { it.bound != null && !it.isExtends } ?: false
-
         if (!typeArguments.lastOrNull().isSuperWildcard()) return false
         val mutableLastParameterVariance = JavaToKotlinClassMapper.convertReadOnlyToMutable(readOnlyContainer)
             .typeConstructor.parameters.lastOrNull()?.variance ?: return false
