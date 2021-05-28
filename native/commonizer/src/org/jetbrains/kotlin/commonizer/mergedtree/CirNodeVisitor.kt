@@ -15,3 +15,14 @@ interface CirNodeVisitor<T, R> {
     fun visitClassConstructorNode(node: CirClassConstructorNode, data: T): R
     fun visitTypeAliasNode(node: CirTypeAliasNode, data: T): R
 }
+
+interface CirNodeVisitorAdapter<T> : CirNodeVisitor<T, Unit> {
+    override fun visitRootNode(node: CirRootNode, data: T) = Unit
+    override fun visitModuleNode(node: CirModuleNode, data: T) = Unit
+    override fun visitPackageNode(node: CirPackageNode, data: T) = Unit
+    override fun visitPropertyNode(node: CirPropertyNode, data: T) = Unit
+    override fun visitFunctionNode(node: CirFunctionNode, data: T) = Unit
+    override fun visitClassNode(node: CirClassNode, data: T) = Unit
+    override fun visitClassConstructorNode(node: CirClassConstructorNode, data: T) = Unit
+    override fun visitTypeAliasNode(node: CirTypeAliasNode, data: T) = Unit
+}

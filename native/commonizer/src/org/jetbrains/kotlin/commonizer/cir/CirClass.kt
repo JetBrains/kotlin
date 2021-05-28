@@ -72,11 +72,3 @@ data class CirClassImpl(
             _supertypes = value
         }
 }
-
-
-data class AliasedCirClassImpl(
-    val pointingTypeAlias: CirTypeAlias,
-    val pointedClass: CirClass
-) : CirClass by pointedClass {
-    override val name: CirName = pointingTypeAlias.name
-}
