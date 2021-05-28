@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.hasMangledReturnType
 import org.jetbrains.kotlin.codegen.BaseExpressionCodegen
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.incremental.components.LocationInfo
 import org.jetbrains.kotlin.incremental.components.Position
@@ -32,6 +30,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.doNotAnalyze
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.SUSPENSION_POINT_INSIDE_MONITOR
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -122,11 +121,8 @@ class IrSourceCompilerForInline(
     override val isFinallyMarkerRequired: Boolean
         get() = codegen.isFinallyMarkerRequired
 
-    override val compilationContextDescriptor: DeclarationDescriptor
-        get() = compilationContextFunctionDescriptor
-
-    override val compilationContextFunctionDescriptor: FunctionDescriptor
-        get() = generateSequence(codegen) { it.inlinedInto }.last().irFunction.toIrBasedDescriptor()
+    override fun isSuspendLambdaCapturedByOuterObjectOrLambda(name: String): Boolean =
+        false // IR does not capture variables through outer this
 
     override fun getContextLabels(): Map<String, Label?> {
         val result = mutableMapOf<String, Label?>(codegen.irFunction.name.asString() to null)

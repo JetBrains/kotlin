@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.coroutines.continuationAsmType
 import org.jetbrains.kotlin.codegen.inline.FieldRemapper.Companion.foldName
 import org.jetbrains.kotlin.codegen.inline.coroutines.CoroutineTransformer
-import org.jetbrains.kotlin.codegen.inline.coroutines.isSuspendLambdaCapturedByOuterObjectOrLambda
 import org.jetbrains.kotlin.codegen.inline.coroutines.markNoinlineLambdaIfSuspend
 import org.jetbrains.kotlin.codegen.inline.coroutines.surroundInvokesWithSuspendMarkersIfNeeded
 import org.jetbrains.kotlin.codegen.optimization.ApiVersionCallsPreprocessingMethodTransformer
@@ -24,7 +23,6 @@ import org.jetbrains.kotlin.codegen.optimization.nullCheck.isCheckParameterIsNot
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.utils.SmartList
@@ -230,7 +228,7 @@ class MethodInliner(
                         return
                     }
 
-                    val nullableAnyType = inliningContext.root.sourceCompilerForInline.compilationContextDescriptor.builtIns.nullableAnyType
+                    val nullableAnyType = inliningContext.state.module.builtIns.nullableAnyType
                     val expectedParameters = info.invokeMethod.argumentTypes
                     val expectedKotlinParameters = info.invokeMethodParameters
                     val argumentCount = Type.getArgumentTypes(desc).size.let {
@@ -825,7 +823,7 @@ class MethodInliner(
                 getFunctionalArgumentIfExists((insnNode as VarInsnNode).`var`)
             insnNode is FieldInsnNode && insnNode.name.startsWith(CAPTURED_FIELD_FOLD_PREFIX) ->
                 findCapturedField(insnNode, nodeRemapper).functionalArgument
-            insnNode is FieldInsnNode && insnNode.isSuspendLambdaCapturedByOuterObjectOrLambda(inliningContext) ->
+            insnNode is FieldInsnNode && inliningContext.root.sourceCompilerForInline.isSuspendLambdaCapturedByOuterObjectOrLambda(insnNode.name) ->
                 NonInlineableArgumentForInlineableParameterCalledInSuspend
             else ->
                 null

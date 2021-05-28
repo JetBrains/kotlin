@@ -6,18 +6,13 @@
 package org.jetbrains.kotlin.codegen.inline.coroutines
 
 import com.intellij.util.ArrayUtil
-import org.jetbrains.kotlin.builtins.isSuspendFunctionTypeOrSubtype
 import org.jetbrains.kotlin.codegen.ClassBuilder
-import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.coroutines.*
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.isReleaseCoroutines
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.org.objectweb.asm.MethodVisitor
@@ -236,35 +231,6 @@ fun surroundInvokesWithSuspendMarkersIfNeeded(node: MethodNode) {
             addInlineMarker(this, isStartNotEnd = false)
         })
     }
-}
-
-// We cannot find the lambda in captured parameters: it came from object outside of the our reach:
-// this can happen when the lambda capture by non-transformed closure:
-//   inline fun inlineMe(crossinline c: suspend() -> Unit) = suspend { c() }
-//   inline fun inlineMe2(crossinline c: suspend() -> Unit) = suspend { inlineMe { c() }() }
-// Suppose, we inline inlineMe into inlineMe2: the only knowledge we have about inlineMe$1 is captured receiver (this$0)
-// Thus, transformed lambda from inlineMe, inlineMe3$$inlined$inlineMe2$1 contains the following bytecode
-//   ALOAD 0
-//   GETFIELD inlineMe2$1$invokeSuspend$$inlined$inlineMe$1.this$0 : LScratchKt$inlineMe2$1;
-//   GETFIELD inlineMe2$1.$c : Lkotlin/jvm/functions/Function1;
-// Since inlineMe2's lambda is outside of reach of the inliner, find crossinline parameter from compilation context:
-fun FieldInsnNode.isSuspendLambdaCapturedByOuterObjectOrLambda(inliningContext: InliningContext): Boolean {
-    var container: DeclarationDescriptor = inliningContext.root.sourceCompilerForInline.compilationContextFunctionDescriptor
-    while (container !is ClassDescriptor) {
-        container = container.containingDeclaration ?: return false
-    }
-    val bindingContext = inliningContext.state.bindingContext
-    var classDescriptor: ClassDescriptor? = container
-    while (classDescriptor != null) {
-        val closure = bindingContext[CodegenBinding.CLOSURE, classDescriptor] ?: return false
-        for ((param, value) in closure.captureVariables) {
-            if (param is ValueParameterDescriptor && value.fieldName == name) {
-                return param.type.isSuspendFunctionTypeOrSubtype
-            }
-        }
-        classDescriptor = closure.capturedOuterClassDescriptor
-    }
-    return false
 }
 
 // Interpreter, that keeps track of captured functional arguments
