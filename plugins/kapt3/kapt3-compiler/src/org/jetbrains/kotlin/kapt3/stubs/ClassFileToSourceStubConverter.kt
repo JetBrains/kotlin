@@ -1280,6 +1280,8 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
                         null
                 }
                 is KtCollectionLiteralExpression -> singleArg.getInnerExpressions()
+                is KtDotQualifiedExpression -> listOf(singleArg)
+                null -> args
                 else -> null
             }
 
@@ -1317,7 +1319,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         if (constantValue is List<*>) {
             val callArgs = unwrapArgumentExpression()
             // So we make sure something is absent in the constant value
-            if (callArgs != null && callArgs.size != constantValue.size) {
+            if (callArgs != null && callArgs.size > constantValue.size) {
                 val literalExpressions = mapJList(callArgs, ::tryParseTypeLiteralExpression)
                 if (literalExpressions.size == callArgs.size) {
                     return treeMaker.NewArray(null, null, literalExpressions)

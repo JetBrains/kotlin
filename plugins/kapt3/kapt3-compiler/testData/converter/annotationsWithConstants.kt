@@ -44,11 +44,26 @@ public class B {
     public final static String a9 = "A";
 }
 
+//FILE: lib/OnClick.java
+package lib;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface OnClick {
+    int[] value() default {};
+}
+
 //FILE: test.kt
 package app
 
 import lib.R as LibR
 import lib.R.id.textView
+import lib.OnClick
 
 annotation class Bind(val id: Int)
 
@@ -132,6 +147,12 @@ class MyActivity {
 
     @MultiValueByte(ids = byteArrayOf(B.a2))
     fun multi5() {}
+
+    @OnClick(B.id.textView)
+    fun multiJava1() {}
+
+    @OnClick(B.id.textView, app.R.layout.mainActivity)
+    fun multiJava2() {}
 
     const val propA = B.id.textView
     val propB = B.id.textView

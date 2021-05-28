@@ -285,6 +285,14 @@ public final class MyActivity {
     public final void multi5() {
     }
 
+    @lib.OnClick(value = {app.B.id.textView})
+    public final void multiJava1() {
+    }
+
+    @lib.OnClick(value = {app.B.id.textView, app.R.layout.mainActivity})
+    public final void multiJava2() {
+    }
+
     public final int getPropB() {
         return 0;
     }
@@ -337,6 +345,22 @@ public class R2 {
         }
         public static final int mainActivity = 100;
     }
+}
+
+////////////////////
+
+package lib;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Target(value = ElementType.METHOD)
+@Retention(value = RetentionPolicy.RUNTIME)
+public @interface OnClick {
+
+    int[] value() default {};
 }
 
 ////////////////////
