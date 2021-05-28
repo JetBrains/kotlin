@@ -28,7 +28,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     protected val jvmSignature: JvmMethodSignature,
     private val typeParameterMappings: TypeParameterMappings<*>,
     protected val sourceCompiler: SourceCompilerForInline,
-    protected val reifiedTypeInliner: ReifiedTypeInliner<*>
+    private val reifiedTypeInliner: ReifiedTypeInliner<*>
 ) {
     // TODO: implement AS_FUNCTION inline strategy
     private val asFunctionInline = false
@@ -147,7 +147,9 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                 invocationParamBuilder.buildParameters().getParameterByDeclarationSlot(lambda.offset).functionalArgument = lambda
                 val prev = expressionMap.put(lambda.offset, lambda)
                 assert(prev == null) { "Lambda with offset ${lambda.offset} already exists: $prev" }
-                lambda.generateLambdaBody(sourceCompiler, reifiedTypeInliner)
+                if (lambda.needReification) {
+                    lambda.reifiedTypeParametersUsages.mergeAll(reifiedTypeInliner.reifyInstructions(lambda.node.node))
+                }
                 rememberCapturedForDefaultLambda(lambda)
             }
         }
@@ -205,6 +207,14 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     }
 
     abstract fun extractDefaultLambdas(node: MethodNode): List<DefaultLambda>
+
+    protected inline fun <T> extractDefaultLambdas(
+        node: MethodNode, parameters: Map<Int, T>, block: ExtractedDefaultLambda.(T) -> DefaultLambda
+    ): List<DefaultLambda> = expandMaskConditionsAndUpdateVariableNodes(
+        node, maskStartIndex, maskValues, methodHandleInDefaultMethodIndex, parameters.keys
+    ).map {
+        it.block(parameters[it.offset]!!)
+    }
 
     private fun generateAndInsertFinallyBlocks(
         intoNode: MethodNode,

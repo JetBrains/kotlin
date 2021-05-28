@@ -65,7 +65,7 @@ class IrInlineCodegen(
             val irReference = (argumentExpression as IrBlock).statements.filterIsInstance<IrFunctionReference>().single()
             val lambdaInfo = IrExpressionLambdaImpl(codegen, irReference, irValueParameter)
             rememberClosure(parameterType, irValueParameter.index, lambdaInfo)
-            lambdaInfo.generateLambdaBody(sourceCompiler, reifiedTypeInliner)
+            lambdaInfo.generateLambdaBody(sourceCompiler)
             lambdaInfo.reference.getArgumentsWithIr().forEachIndexed { index, (_, ir) ->
                 putCapturedValueOnStack(ir, lambdaInfo.capturedVars[index], index)
             }
@@ -131,13 +131,10 @@ class IrInlineCodegen(
         generateStub(text, codegen)
     }
 
-    override fun extractDefaultLambdas(node: MethodNode): List<DefaultLambda> {
-        return expandMaskConditionsAndUpdateVariableNodes(
-            node, maskStartIndex, maskValues, methodHandleInDefaultMethodIndex,
-            extractDefaultLambdaOffsetAndDescriptor(jvmSignature, function),
-            ::IrDefaultLambda
-        )
-    }
+    override fun extractDefaultLambdas(node: MethodNode): List<DefaultLambda> =
+        extractDefaultLambdas(node, extractDefaultLambdaOffsetAndDescriptor(jvmSignature, function)) { parameter ->
+            IrDefaultLambda(type, capturedArgs, parameter, offset, needReification, sourceCompiler as IrSourceCompilerForInline)
+        }
 }
 
 class IrExpressionLambdaImpl(
@@ -199,13 +196,30 @@ class IrExpressionLambdaImpl(
 }
 
 class IrDefaultLambda(
-    override val lambdaClassType: Type,
+    lambdaClassType: Type,
     capturedArgs: Array<Type>,
-    private val irValueParameter: IrValueParameter,
+    irValueParameter: IrValueParameter,
     offset: Int,
-    needReification: Boolean
-) : DefaultLambda(capturedArgs, irValueParameter.isCrossinline, offset, needReification) {
-    private lateinit var typeArguments: List<IrType>
+    needReification: Boolean,
+    sourceCompiler: IrSourceCompilerForInline
+) : DefaultLambda(lambdaClassType, capturedArgs, irValueParameter.isCrossinline, offset, needReification, sourceCompiler) {
+    private val typeArguments: List<IrType> = (irValueParameter.type as IrSimpleType).arguments.let {
+        val context = sourceCompiler.codegen.context
+        if (isPropertyReference) {
+            // Property references: `(A) -> B` => `get(Any?): Any?`
+            List(it.size) { context.irBuiltIns.anyNType }
+        } else {
+            // Non-suspend function references and lambdas: `(A) -> B` => `invoke(A): B`
+            // Suspend function references: `suspend (A) -> B` => `invoke(A, Continuation<B>): Any?`
+            // TODO: default suspend lambdas are currently uninlinable
+            it.mapTo(mutableListOf()) { argument -> (argument as IrTypeProjection).type }.apply {
+                if (irValueParameter.type.isSuspendFunction()) {
+                    set(size - 1, context.ir.symbols.continuationClass.typeWith(get(size - 1)))
+                    add(context.irBuiltIns.anyNType)
+                }
+            }
+        }
+    }
 
     override val invokeMethodParameters: List<KotlinType>
         get() = typeArguments.dropLast(1).map { it.toIrBasedKotlinType() }
@@ -213,33 +227,16 @@ class IrDefaultLambda(
     override val invokeMethodReturnType: KotlinType
         get() = typeArguments.last().toIrBasedKotlinType()
 
-    override fun mapAsmMethod(sourceCompiler: SourceCompilerForInline, isPropertyReference: Boolean): Method {
-        val context = (sourceCompiler as IrSourceCompilerForInline).codegen.context
-        typeArguments = (irValueParameter.type as IrSimpleType).arguments.let {
-            if (isPropertyReference) {
-                // Property references: `(A) -> B` => `get(Any?): Any?`
-                List(it.size) { context.irBuiltIns.anyNType }
-            } else {
-                // Non-suspend function references and lambdas: `(A) -> B` => `invoke(A): B`
-                // Suspend function references: `suspend (A) -> B` => `invoke(A, Continuation<B>): Any?`
-                // TODO: default suspend lambdas are currently uninlinable
-                it.mapTo(mutableListOf()) { argument -> (argument as IrTypeProjection).type }.apply {
-                    if (irValueParameter.type.isSuspendFunction()) {
-                        set(size - 1, context.ir.symbols.continuationClass.typeWith(get(size - 1)))
-                        add(context.irBuiltIns.anyNType)
-                    }
-                }
-            }
-        }
+    init {
         val base = if (isPropertyReference) OperatorNameConventions.GET.asString() else OperatorNameConventions.INVOKE.asString()
         val name = InlineClassAbi.hashSuffix(
-            context.state.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures,
+            sourceCompiler.codegen.context.state.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures,
             typeArguments.dropLast(1),
             typeArguments.last().takeIf { it.isInlineClassType() }
         )?.let { "$base-$it" } ?: base
-        // TODO: while technically only the number of arguments here matters right now (see DefaultLambdaInfo.generateLambdaBody),
+        // TODO: while technically only the number of arguments here matters right now (see `loadInvoke`),
         //       it would be better to map to a non-erased signature if not a property reference.
-        return Method(name, AsmTypes.OBJECT_TYPE, Array(typeArguments.size - 1) { AsmTypes.OBJECT_TYPE })
+        loadInvoke(sourceCompiler, Method(name, AsmTypes.OBJECT_TYPE, Array(typeArguments.size - 1) { AsmTypes.OBJECT_TYPE }))
     }
 }
 

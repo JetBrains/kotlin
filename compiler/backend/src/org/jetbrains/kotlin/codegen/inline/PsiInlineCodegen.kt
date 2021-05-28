@@ -76,7 +76,7 @@ class PsiInlineCodegen(
             for (info in expressionMap.values) {
                 if (info is PsiExpressionLambda) {
                     // Can't be done immediately in `rememberClosure` for some reason:
-                    info.generateLambdaBody(sourceCompiler, reifiedTypeInliner)
+                    info.generateLambdaBody(sourceCompiler)
                     // Requires `generateLambdaBody` first if the closure is non-empty (for bound callable references,
                     // or indeed any callable references, it *is* empty, so this was done in `rememberClosure`):
                     if (!info.isBoundCallableReference) {
@@ -214,13 +214,10 @@ class PsiInlineCodegen(
 
     override fun reorderArgumentsIfNeeded(actualArgsWithDeclIndex: List<ArgumentAndDeclIndex>, valueParameterTypes: List<Type>) = Unit
 
-    override fun extractDefaultLambdas(node: MethodNode): List<DefaultLambda> {
-        return expandMaskConditionsAndUpdateVariableNodes(
-            node, maskStartIndex, maskValues, methodHandleInDefaultMethodIndex,
-            extractDefaultLambdaOffsetAndDescriptor(jvmSignature, functionDescriptor),
-            ::PsiDefaultLambda
-        )
-    }
+    override fun extractDefaultLambdas(node: MethodNode): List<DefaultLambda> =
+        extractDefaultLambdas(node, extractDefaultLambdaOffsetAndDescriptor(jvmSignature, functionDescriptor)) { parameter ->
+            PsiDefaultLambda(type, capturedArgs, parameter, offset, needReification, sourceCompiler)
+        }
 }
 
 private val FunctionDescriptor.explicitParameters
@@ -323,13 +320,14 @@ class PsiExpressionLambda(
 }
 
 class PsiDefaultLambda(
-    override val lambdaClassType: Type,
+    lambdaClassType: Type,
     capturedArgs: Array<Type>,
-    private val parameterDescriptor: ValueParameterDescriptor,
+    parameterDescriptor: ValueParameterDescriptor,
     offset: Int,
-    needReification: Boolean
-) : DefaultLambda(capturedArgs, parameterDescriptor.isCrossinline, offset, needReification) {
-    private lateinit var invokeMethodDescriptor: FunctionDescriptor
+    needReification: Boolean,
+    sourceCompiler: SourceCompilerForInline
+) : DefaultLambda(lambdaClassType, capturedArgs, parameterDescriptor.isCrossinline, offset, needReification, sourceCompiler) {
+    private val invokeMethodDescriptor: FunctionDescriptor
 
     override val invokeMethodParameters: List<KotlinType?>
         get() = invokeMethodDescriptor.explicitParameters.map { it.returnType }
@@ -337,7 +335,7 @@ class PsiDefaultLambda(
     override val invokeMethodReturnType: KotlinType?
         get() = invokeMethodDescriptor.returnType
 
-    override fun mapAsmMethod(sourceCompiler: SourceCompilerForInline, isPropertyReference: Boolean): Method {
+    init {
         val substitutedDescriptor = parameterDescriptor.type.memberScope
             .getContributedFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.FROM_BACKEND)
             .single()
@@ -355,6 +353,6 @@ class PsiDefaultLambda(
             // Non-suspend function references and lambdas: `(A) -> B` => `invoke(A): B`
             else -> substitutedDescriptor
         }
-        return sourceCompiler.state.typeMapper.mapSignatureSkipGeneric(invokeMethodDescriptor).asmMethod
+        loadInvoke(sourceCompiler, sourceCompiler.state.typeMapper.mapSignatureSkipGeneric(invokeMethodDescriptor).asmMethod)
     }
 }
