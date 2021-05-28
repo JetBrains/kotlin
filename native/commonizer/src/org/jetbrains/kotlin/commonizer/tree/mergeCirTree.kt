@@ -6,8 +6,14 @@
 package org.jetbrains.kotlin.commonizer.tree
 
 import org.jetbrains.kotlin.commonizer.TargetDependent
+import org.jetbrains.kotlin.commonizer.cir.AliasedCirClassImpl
+import org.jetbrains.kotlin.commonizer.cir.CirClass
+import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.cir.CirRoot
 import org.jetbrains.kotlin.commonizer.mergedtree.*
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.storage.StorageManager
 
 internal data class TargetBuildingContext(
@@ -22,6 +28,7 @@ internal fun mergeCirTree(
         node.targetDeclarations[targetIndex] = CirRoot.create(target)
         node.buildModules(TargetBuildingContext(storageManager, classifiers, roots.size, targetIndex), roots[target].modules)
     }
+    node.buildTypeAliasClassStubs()
     return node
 }
 
@@ -95,3 +102,65 @@ internal fun CirPackageNode.buildTypeAlias(context: TargetBuildingContext, treeT
     typeAliasNode.targetDeclarations[context.targetIndex] = treeTypeAlias.typeAlias
 }
 
+internal fun CirRootNode.buildTypeAliasClassStubs() {
+    this.modules.values.forEach { moduleNode ->
+        val classes: Map<CirEntityId, CirClassNode> = moduleNode.packages.flatMap { it.value.classes.values }.associateBy { it.id }
+
+        moduleNode.packages.flatMap { it.value.typeAliases.values }
+            .forEach { typeAliasNode ->
+                for (index in typeAliasNode.targetDeclarations.indices) {
+                    val typeAlias = typeAliasNode.targetDeclarations[index] ?: continue
+
+                    val associatedClassNode = classes[typeAliasNode.id] ?: continue
+                    val expandedClassNode = classes[typeAlias.expandedType.classifierId]
+                    val expandedClass = expandedClassNode?.targetDeclarations?.get(index)
+                        ?: CirClass.create(
+                            emptyList(),
+                            typeAlias.name,
+                            typeParameters = emptyList(),
+                            visibility = Visibilities.Public,
+                            modality = Modality.FINAL,
+                            ClassKind.CLASS,
+                            null,
+                            false,
+                            false,
+                            false,
+                            false,
+                            false
+                        ).also {
+                            it.supertypes = emptyList()
+                        }
+
+                    if (associatedClassNode.targetDeclarations[index] == null) {
+                        val aliasedClass = AliasedCirClassImpl(
+                            pointingTypeAlias = typeAlias,
+                            pointedClass = expandedClass
+                        )
+
+                        associatedClassNode.targetDeclarations[index] = aliasedClass
+
+                        expandedClassNode?.constructors?.forEach { (key, constructorNode) ->
+                            associatedClassNode.constructors[key]?.targetDeclarations?.set(
+                                index,
+                                constructorNode.targetDeclarations[index]!!.withContainingClass(aliasedClass)
+                            )
+                        }
+
+                        expandedClassNode?.properties?.forEach { (key, propertyNode) ->
+                            associatedClassNode.properties[key]?.targetDeclarations?.set(
+                                index,
+                                propertyNode.targetDeclarations[index]!!.withContainingClass(aliasedClass)
+                            )
+                        }
+
+                        expandedClassNode?.functions?.forEach { (key, functionNode) ->
+                            associatedClassNode.functions[key]?.targetDeclarations?.set(
+                                index,
+                                functionNode.targetDeclarations[index]!!.withContainingClass(aliasedClass)
+                            )
+                        }
+                    }
+                }
+            }
+    }
+}

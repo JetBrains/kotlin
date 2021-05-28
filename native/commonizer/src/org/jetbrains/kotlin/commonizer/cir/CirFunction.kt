@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.descriptors.Visibility
 interface CirFunction : CirFunctionOrProperty, CirCallableMemberWithParameters {
     val modifiers: CirFunctionModifiers
 
+    override fun withContainingClass(containingClass: CirContainingClass): CirFunction
+
     companion object {
         @Suppress("NOTHING_TO_INLINE")
         inline fun create(
@@ -57,4 +59,8 @@ data class CirFunctionImpl(
     override val returnType: CirType,
     override val kind: CallableMemberDescriptor.Kind,
     override val modifiers: CirFunctionModifiers
-) : CirFunction
+) : CirFunction {
+    override fun withContainingClass(containingClass: CirContainingClass): CirFunction {
+        return copy(containingClass = containingClass)
+    }
+}

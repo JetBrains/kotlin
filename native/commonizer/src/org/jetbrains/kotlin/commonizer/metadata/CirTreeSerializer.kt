@@ -143,6 +143,8 @@ private class CirTreeSerializationVisitor(
         classContext: CirTreeSerializationContext
     ): KmClass? {
         val cirClass = classContext.get<CirClass>(node) ?: return null
+        if (cirClass is AliasedCirClassImpl) return null // don't render Ghosts
+
         val classTypeParametersCount = cirClass.typeParameters.size
         val fullClassName = classContext.currentPath.toString()
 
@@ -199,6 +201,7 @@ private class CirTreeSerializationVisitor(
         val cirClassifier = typeAliasContext.get<CirClassifier>(node) ?: return null
 
         return when (cirClassifier) {
+            is AliasedCirClassImpl -> Unit // Don't serialize this Ghost
             is CirTypeAlias -> cirClassifier.serializeTypeAlias(typeAliasContext)
             is CirClass -> {
                 val fullClassName = typeAliasContext.currentPath.toString()
