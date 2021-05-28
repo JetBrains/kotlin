@@ -89,6 +89,8 @@ class KotlinBuildProperties(
 
     val localBootstrapPath: String? = getOrNull("bootstrap.local.path") as String?
 
+    val useIR: Boolean = getBoolean("kotlin.build.useIR")
+
     val useIRForLibraries: Boolean = getBoolean("kotlin.build.useIRForLibraries")
 
     val useFir: Boolean = getBoolean("kotlin.build.useFir")
