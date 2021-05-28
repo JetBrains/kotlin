@@ -8,11 +8,9 @@ package org.jetbrains.kotlin.codegen.inline
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
-import org.jetbrains.kotlin.codegen.context.ClosureContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
@@ -41,21 +39,6 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     protected var maskStartIndex = -1
     protected var methodHandleInDefaultMethodIndex = -1
 
-    protected fun throwCompilationException(
-        nodeAndSmap: SMAPAndMethodNode?, e: Exception, generateNodeText: Boolean
-    ): CompilationException {
-        val contextDescriptor = sourceCompiler.compilationContextDescriptor
-        val element = DescriptorToSourceUtils.descriptorToDeclaration(contextDescriptor)
-        val node = nodeAndSmap?.node
-        throw CompilationException(
-            "Couldn't inline method call '${jvmSignature.asmMethod}' into\n" +
-                    DescriptorRenderer.DEBUG_TEXT.render(contextDescriptor) + "\n" +
-                    (element?.text ?: "<no source>") +
-                    if (generateNodeText) "\nCause: " + node.nodeText else "",
-            e, sourceCompiler.callElement as? PsiElement
-        )
-    }
-
     protected fun generateStub(text: String, codegen: BaseExpressionCodegen) {
         leaveTemps()
         AsmUtil.genThrow(codegen.visitor, "java/lang/UnsupportedOperationException", "Call is part of inline cycle: $text")
@@ -75,9 +58,15 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         } catch (e: CompilationException) {
             throw e
         } catch (e: InlineException) {
-            throw throwCompilationException(nodeAndSmap, e, false)
+            throw CompilationException(
+                "Couldn't inline method call: ${sourceCompiler.callElementText}",
+                e, sourceCompiler.callElement as? PsiElement
+            )
         } catch (e: Exception) {
-            throw throwCompilationException(nodeAndSmap, e, true)
+            throw CompilationException(
+                "Couldn't inline method call: ${sourceCompiler.callElementText}\nMethod: ${nodeAndSmap?.node?.nodeText}",
+                e, sourceCompiler.callElement as? PsiElement
+            )
         }
     }
 
@@ -117,21 +106,6 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         }
 
         return true
-    }
-
-    private fun continuationValue(): StackValue {
-        assert(codegen is ExpressionCodegen) { "Expected ExpressionCodegen in coroutineContext inlining" }
-        codegen as ExpressionCodegen
-
-        val parentContext = codegen.context.parentContext
-        return if (parentContext is ClosureContext) {
-            val originalSuspendLambdaDescriptor =
-                parentContext.originalSuspendLambdaDescriptor ?: error("No original lambda descriptor found")
-            codegen.genCoroutineInstanceForSuspendLambda(originalSuspendLambdaDescriptor)
-                ?: error("No stack value for coroutine instance of lambda found")
-        } else
-            codegen.getContinuationParameterFromEnclosingSuspendFunctionDescriptor(codegen.context.functionDescriptor)
-                ?: error("No stack value for continuation parameter of suspend function")
     }
 
     protected fun rememberClosure(parameterType: Type, index: Int, lambdaInfo: LambdaInfo) {

@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.codegen.inline
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.common.CodegenUtil
+import org.jetbrains.kotlin.builtins.isSuspendFunctionTypeOrSubtype
 import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.context.*
 import org.jetbrains.kotlin.codegen.coroutines.getOrCreateJvmSuspendFunctionView
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -21,11 +23,13 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCallWithAssert
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.resolve.jvm.annotations.isCallableMemberCompiledToJvmDefault
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForReturnType
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.expressions.LabelResolver
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -76,8 +80,8 @@ class PsiSourceCompilerForInline(
                 parentCodegen.className,
                 signature.asmMethod.name,
                 signature.asmMethod.descriptor,
-                compilationContextFunctionDescriptor.isInlineOrInsideInline(),
-                compilationContextFunctionDescriptor.isSuspend,
+                context.functionDescriptor.isInlineOrInsideInline(),
+                context.functionDescriptor.isSuspend,
                 CodegenUtil.getLineNumberForElement(callElement, false) ?: 0
             )
         }
@@ -314,11 +318,33 @@ class PsiSourceCompilerForInline(
     override val isFinallyMarkerRequired: Boolean
         get() = isFinallyMarkerRequired(codegen.getContext())
 
-    override val compilationContextDescriptor
-        get() = codegen.getContext().contextDescriptor
-
-    override val compilationContextFunctionDescriptor
-        get() = codegen.getContext().functionDescriptor
+    override fun isSuspendLambdaCapturedByOuterObjectOrLambda(name: String): Boolean {
+        // We cannot find the lambda in captured parameters: it came from object outside of the our reach:
+        // this can happen when the lambda capture by non-transformed closure:
+        //   inline fun inlineMe(crossinline c: suspend() -> Unit) = suspend { c() }
+        //   inline fun inlineMe2(crossinline c: suspend() -> Unit) = suspend { inlineMe { c() }() }
+        // Suppose, we inline inlineMe into inlineMe2: the only knowledge we have about inlineMe$1 is captured receiver (this$0)
+        // Thus, transformed lambda from inlineMe, inlineMe3$$inlined$inlineMe2$1 contains the following bytecode
+        //   ALOAD 0
+        //   GETFIELD inlineMe2$1$invokeSuspend$$inlined$inlineMe$1.this$0 : LScratchKt$inlineMe2$1;
+        //   GETFIELD inlineMe2$1.$c : Lkotlin/jvm/functions/Function1;
+        // Since inlineMe2's lambda is outside of reach of the inliner, find crossinline parameter from compilation context:
+        var container: DeclarationDescriptor = codegen.getContext().functionDescriptor
+        while (container !is ClassDescriptor) {
+            container = container.containingDeclaration ?: return false
+        }
+        var classDescriptor: ClassDescriptor? = container
+        while (classDescriptor != null) {
+            val closure = state.bindingContext[CodegenBinding.CLOSURE, classDescriptor] ?: return false
+            for ((param, value) in closure.captureVariables) {
+                if (param is ValueParameterDescriptor && value.fieldName == name) {
+                    return param.type.isSuspendFunctionTypeOrSubtype
+                }
+            }
+            classDescriptor = closure.capturedOuterClassDescriptor
+        }
+        return false
+    }
 
     override fun getContextLabels(): Map<String, Label?> {
         val context = codegen.getContext()
