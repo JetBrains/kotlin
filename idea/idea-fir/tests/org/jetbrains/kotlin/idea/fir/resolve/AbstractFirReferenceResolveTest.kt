@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.fir.resolve
 
 import org.jetbrains.kotlin.idea.completion.test.configureWithExtraFile
-import org.jetbrains.kotlin.idea.invalidateCaches
+import org.jetbrains.kotlin.idea.fir.invalidateCaches
 import org.jetbrains.kotlin.idea.resolve.AbstractReferenceResolveTest
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor

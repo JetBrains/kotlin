@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.fir.completion.wheigher;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.idea.fir.completion.wheigher.AbstractHighLevelWeigherTest;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.util.KtTestUtil;

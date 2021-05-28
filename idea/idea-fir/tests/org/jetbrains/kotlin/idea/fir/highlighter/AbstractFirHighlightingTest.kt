@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.idea.fir.highlighter
 
-import org.jetbrains.kotlin.idea.addExternalTestFiles
+import org.jetbrains.kotlin.idea.fir.addExternalTestFiles
 import org.jetbrains.kotlin.idea.highlighter.AbstractHighlightingTest
-import org.jetbrains.kotlin.idea.invalidateCaches
+import org.jetbrains.kotlin.idea.fir.invalidateCaches
 import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources
-import org.jetbrains.kotlin.idea.withPossiblyDisabledDuplicatedFirSourceElementsException
+import org.jetbrains.kotlin.idea.fir.withPossiblyDisabledDuplicatedFirSourceElementsException
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.utils.IgnoreTests

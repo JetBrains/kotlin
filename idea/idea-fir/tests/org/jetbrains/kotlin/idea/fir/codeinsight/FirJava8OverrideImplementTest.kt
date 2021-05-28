@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.fir.codeinsight
 
 import org.jetbrains.kotlin.idea.codeInsight.Java8OverrideImplementTest
 import org.jetbrains.kotlin.idea.core.overrideImplement.KtClassMember
-import org.jetbrains.kotlin.idea.invalidateCaches
+import org.jetbrains.kotlin.idea.fir.invalidateCaches
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.runner.RunWith

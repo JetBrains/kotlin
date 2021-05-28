@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.fir.findUsages
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.findUsages.AbstractFindUsagesTest
-import org.jetbrains.kotlin.idea.invalidateCaches
+import org.jetbrains.kotlin.idea.fir.invalidateCaches
 import org.jetbrains.kotlin.psi.KtFile
 
 abstract class AbstractFindUsagesFirTest : AbstractFindUsagesTest() {
