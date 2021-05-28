@@ -55,6 +55,8 @@ struct NeonTraits {
     #endif
     };
 
+#include "polyhash/attributeSensitiveFunctions.inc"
+
     static int polyHashUnalignedUnrollUpTo16(int n, uint16_t const* str) {
         Vec128Type res = initVec128();
 
