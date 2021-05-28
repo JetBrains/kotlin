@@ -12,13 +12,13 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.IrInterpreterBackendHandler
-import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.BinaryKind
 import org.jetbrains.kotlin.test.model.DependencyKind
+import org.jetbrains.kotlin.test.model.FrontendKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.preprocessors.IrInterpreterImplicitKotlinImports
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
@@ -28,10 +28,12 @@ import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigu
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.IrInterpreterHelpersSourceFilesProvider
 
-open class AbstractIrInterpreterAfterFir2IrTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
+open class AbstractIrInterpreterTest(
+    private val frontendKind: FrontendKind<*>
+) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
     override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
-            frontend = FrontendKinds.FIR
+            frontend = frontendKind
             targetPlatform = JvmPlatforms.defaultJvmPlatform
             artifactKind = BinaryKind.NoArtifact
             targetBackend = TargetBackend.JVM_IR
@@ -51,12 +53,14 @@ open class AbstractIrInterpreterAfterFir2IrTest : AbstractKotlinCompilerWithTarg
         )
 
         firFrontendStep()
+        classicFrontendStep()
         fir2IrStep()
+        psi2IrStep()
+        jvmIrBackendStep()
 
         irHandlersStep {
             useHandlers(::IrInterpreterBackendHandler)
         }
-
 
         useAdditionalSourceProviders(::IrInterpreterHelpersSourceFilesProvider)
         useSourcePreprocessor(::IrInterpreterImplicitKotlinImports)
@@ -66,6 +70,9 @@ open class AbstractIrInterpreterAfterFir2IrTest : AbstractKotlinCompilerWithTarg
         enableMetaInfoHandler()
     }
 }
+
+open class AbstractIrInterpreterAfterFir2IrTest : AbstractIrInterpreterTest(FrontendKinds.FIR)
+open class AbstractIrInterpreterAfterPsi2IrTest : AbstractIrInterpreterTest(FrontendKinds.ClassicFrontend)
 
 class IrInterpreterEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override fun provideAdditionalAnalysisFlags(

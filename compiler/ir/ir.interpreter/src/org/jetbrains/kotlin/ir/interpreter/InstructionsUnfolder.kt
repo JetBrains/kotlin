@@ -369,7 +369,7 @@ private fun unfoldStringConcatenation(expression: IrStringConcatenation, environ
 
 private fun unfoldComposite(element: IrComposite, callStack: CallStack) {
     when (element.origin) {
-        IrStatementOrigin.DESTRUCTURING_DECLARATION, IrStatementOrigin.DO_WHILE_LOOP ->
+        IrStatementOrigin.DESTRUCTURING_DECLARATION, IrStatementOrigin.DO_WHILE_LOOP, null -> // is null for body of do while loop
             element.statements.reversed().forEach { callStack.addInstruction(CompoundInstruction(it)) }
         else -> TODO("${element.origin} not implemented")
     }

@@ -30,6 +30,7 @@ class IrInterpreterHelpersSourceFilesProvider(testServices: TestServices) : Addi
         private val ANNOTATIONS_PATHS = arrayOf(
             "./libraries/stdlib/src/kotlin/annotations",
             "./libraries/stdlib/src/kotlin/internal/Annotations.kt",
+            "./libraries/stdlib/src/kotlin/experimental/inferenceMarker.kt",
             "./libraries/stdlib/jvm/runtime/kotlin/jvm/annotations/JvmPlatformAnnotations.kt",
         )
         private const val REFLECT_PATH = "./libraries/stdlib/jvm/src/kotlin/reflect"

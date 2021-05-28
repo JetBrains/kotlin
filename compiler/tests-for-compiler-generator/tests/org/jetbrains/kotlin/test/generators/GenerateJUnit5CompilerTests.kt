@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.test.runners.codegen.*
 import org.jetbrains.kotlin.test.runners.ir.AbstractFir2IrTextTest
 import org.jetbrains.kotlin.test.runners.ir.AbstractIrTextTest
 import org.jetbrains.kotlin.test.runners.ir.interpreter.AbstractIrInterpreterAfterFir2IrTest
+import org.jetbrains.kotlin.test.runners.ir.interpreter.AbstractIrInterpreterAfterPsi2IrTest
 import org.jetbrains.kotlin.visualizer.fir.AbstractFirVisualizerTest
 import org.jetbrains.kotlin.visualizer.psi.AbstractPsiVisualizerTest
 import org.junit.jupiter.api.parallel.Execution
@@ -165,6 +166,10 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
             }
 
             testClass<AbstractIrInterpreterAfterFir2IrTest> {
+                model("ir/interpreter", excludeDirs = listOf("helpers"))
+            }
+
+            testClass<AbstractIrInterpreterAfterPsi2IrTest> {
                 model("ir/interpreter", excludeDirs = listOf("helpers"))
             }
         }
