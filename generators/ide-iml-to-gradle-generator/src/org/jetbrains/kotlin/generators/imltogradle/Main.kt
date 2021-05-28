@@ -162,9 +162,7 @@ fun convertJpsModuleDependency(dep: JpsModuleDependency): List<JpsLikeDependency
                 .map { it.copy(scope = it.scope intersectCompileClasspath dep.scope) }
                 .filter { it.scope != JpsJavaDependencyScope.RUNTIME } // We are interested only in transitive dependencies which affect compilation
                 .flatMap { convertIntellijDependencyNotFollowingTransitive(it, dep.isExported).asSequence() }
-                .mapIndexed { index, jpsLikeDependency ->
-                    if (index != 0) JpsLikeDependencyWithComment(jpsLikeDependency, "Exported transitive dependency") else jpsLikeDependency
-                }
+                .map { JpsLikeDependencyWithComment(it, "'$moduleName' dependency") }
                 .toList()
         }
         else -> error("Cannot convert module dependency to Gradle $dep")
