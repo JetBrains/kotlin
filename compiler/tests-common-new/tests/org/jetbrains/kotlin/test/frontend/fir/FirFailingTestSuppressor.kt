@@ -14,7 +14,8 @@ class FirFailingTestSuppressor(testServices: TestServices) : AfterAnalysisChecke
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
         val testFile = testServices.moduleStructure.originalTestDataFiles.first()
         val failFile = testFile.parentFile.resolve("${testFile.nameWithoutExtension}.fail")
-        val exceptionFromFir = failedAssertions.firstOrNull { it is WrappedException.FromFacade.Frontend }
+        val exceptionFromFir =
+            failedAssertions.firstOrNull { it is WrappedException.FromFacade.Frontend || it is WrappedException.FromFrontendHandler }
         return when {
             failFile.exists() && exceptionFromFir != null -> emptyList()
             failFile.exists() && exceptionFromFir == null -> {
