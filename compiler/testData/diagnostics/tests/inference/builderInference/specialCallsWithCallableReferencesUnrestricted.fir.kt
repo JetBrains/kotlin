@@ -480,7 +480,7 @@ fun poll85(): Flow<String> {
 
 fun poll86(): Flow<String> {
     return flow {
-        val inv = ::Foo7 in setOf(::Foo7)
+        val inv = <!NEW_INFERENCE_ERROR!>::Foo7 in <!NEW_INFERENCE_ERROR!>setOf(::Foo7)<!><!>
         inv
     }
 }
@@ -494,7 +494,7 @@ fun poll87(): Flow<String> {
 
 fun poll88(): Flow<String> {
     return flow {
-        val inv = foo7() in setOf(::Foo7)
+        val inv = foo7() in <!NEW_INFERENCE_ERROR!>setOf(::Foo7)<!>
         inv
     }
 }

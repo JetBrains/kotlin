@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +UnrestrictedBuilderInference
 // !USE_EXPERIMENTAL: kotlin.RequiresOptIn
 // !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
@@ -25,12 +26,12 @@ val test2 = generate {
     notYield(3)
 }
 
-val test3 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+val test3 = generate {
     yield(3)
     yieldBarReturnType(3)
 }
 
-val test4 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+val test4 = generate {
     yield(3)
     barReturnType()
 }

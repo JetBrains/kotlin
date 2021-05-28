@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // SKIP_TXT
 
 class ExcA : Exception()
@@ -27,9 +26,9 @@ fun test1(): Map<Int, Int> = run {
 }
 
 fun test2(): Map<Int, Int> = run {
-    <!TYPE_MISMATCH{NI}!>try {
+    <!TYPE_MISMATCH!>try {
         emptyMap()
     } catch (e: ExcA) {
-        <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH{OI}, TYPE_MISMATCH{NI}!>mapOf(<!TYPE_MISMATCH{NI}!>"" to ""<!>)<!>
+        <!TYPE_MISMATCH!>mapOf(<!TYPE_MISMATCH!>"" to ""<!>)<!>
     }<!>
 }

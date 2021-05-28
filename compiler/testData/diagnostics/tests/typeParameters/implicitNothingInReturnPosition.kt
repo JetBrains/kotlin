@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNCHECKED_CAST
-// !WITH_NEW_INFERENCE
 // SKIP_TXT
 // Issue: KT-20849
 
@@ -40,7 +39,7 @@ class Context<T>
 fun <T> Any.decodeIn(typeFrom: Context<in T>): T = something()
 
 fun <T> Any?.decodeOut1(typeFrom: Context<out T>): T {
-    return <!TYPE_MISMATCH{NI}!>this?.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>decodeIn<!>(typeFrom) ?: <!TYPE_MISMATCH{OI}!>kotlin.Unit<!><!>
+    return <!TYPE_MISMATCH!>this?.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>decodeIn<!>(typeFrom) ?: kotlin.Unit<!>
 }
 
 fun <T> Any.decodeOut2(typeFrom: Context<out T>): T {

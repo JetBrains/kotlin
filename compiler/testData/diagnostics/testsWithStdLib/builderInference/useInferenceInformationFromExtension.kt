@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +UnrestrictedBuilderInference
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
@@ -24,7 +25,7 @@ val normal = generate {
     yield(42)
 }
 
-val extension = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+val extension = generate {
     extensionYield("foo")
 }
 

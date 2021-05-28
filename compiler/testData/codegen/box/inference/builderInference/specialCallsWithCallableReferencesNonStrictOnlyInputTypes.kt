@@ -9,7 +9,7 @@ import kotlin.experimental.ExperimentalTypeInference
 @OptIn(ExperimentalTypeInference::class)
 fun <R> scopedFlow(@BuilderInference block: suspend CoroutineScope.(FlowCollector<R>) -> Unit): Flow<R> =
     flow {
-        val collector = <!DEBUG_INFO_EXPRESSION_TYPE("")!>this<!>
+        val collector = this
         flowScope { block(collector) }
     }
 

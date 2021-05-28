@@ -38,7 +38,7 @@ fun <R> select(vararg x: R) = x[0]
 
 fun poll0(): Flow<String> {
     return flow {
-        val inv = <!NEW_INFERENCE_ERROR!>select(::bar, ::foo)<!>
+        val inv = select(::bar, ::foo)
         inv()
     }
 }
@@ -52,7 +52,7 @@ fun poll01(): Flow<String> {
 
 fun poll02(): Flow<String> {
     return flow {
-        val inv = <!NEW_INFERENCE_ERROR!>select(::bar3, ::foo3)<!>
+        val inv = select(::bar3, ::foo3)
         inv()
     }
 }
@@ -66,7 +66,7 @@ fun poll03(): Flow<String> {
 
 fun poll04(): Flow<String> {
     return flow {
-        val inv = <!NEW_INFERENCE_ERROR!>select(::bar5, ::foo5)<!>
+        val inv = select(::bar5, ::foo5)
         inv
     }
 }
@@ -437,7 +437,7 @@ fun poll76(): Flow<String> {
 
 fun poll8(): Flow<String> {
     return flow {
-        val inv = <!NEW_INFERENCE_ERROR!>::bar in <!NEW_INFERENCE_ERROR!>setOf(::foo)<!><!>
+        val inv = ::bar in setOf(::foo)
         <!UNRESOLVED_REFERENCE!>inv<!>()
     }
 }
@@ -451,7 +451,7 @@ fun poll81(): Flow<String> {
 
 fun poll82(): Flow<String> {
     return flow {
-        val inv = ::bar3 in <!NEW_INFERENCE_ERROR!>setOf(::foo3)<!>
+        val inv = ::bar3 in setOf(::foo3)
         <!UNRESOLVED_REFERENCE!>inv<!>()
     }
 }
@@ -465,7 +465,7 @@ fun poll83(): Flow<String> {
 
 fun poll84(): Flow<String> {
     return flow {
-        val inv = <!NEW_INFERENCE_ERROR!>::bar5 in <!NEW_INFERENCE_ERROR!>setOf(::foo5)<!><!>
+        val inv = ::bar5 in setOf(::foo5)
         inv
     }
 }

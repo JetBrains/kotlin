@@ -37,26 +37,26 @@ fun <R> main(a: ReturnTypeWithWarnings<R>) {
     val x1 = a.foo1()
     takeNotNullStringAndKNullable(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>x1<!>)
     takeNullableStringAndKNullable(x1)
-    takeNotNullStringAndNotNullK(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS, TYPE_MISMATCH, TYPE_MISMATCH!>x1<!>)
-    takeNullableStringAndNotNullK(<!TYPE_MISMATCH, TYPE_MISMATCH!>x1<!>)
+    takeNotNullStringAndNotNullK(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS, TYPE_MISMATCH!>x1<!>)
+    takeNullableStringAndNotNullK(<!TYPE_MISMATCH!>x1<!>)
     takeNotNullString(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo41.foo411<!>)
 
     val x2 = a.foo2()
     takeNotNullStringAndKNullable(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>x2<!>)
     takeNullableStringAndKNullable(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>x2<!>)
-    takeNotNullStringAndNotNullK(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS, TYPE_MISMATCH, TYPE_MISMATCH!>x2<!>)
-    takeNullableStringAndNotNullK(<!TYPE_MISMATCH, TYPE_MISMATCH!>x2<!>)
+    takeNotNullStringAndNotNullK(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS, TYPE_MISMATCH!>x2<!>)
+    takeNullableStringAndNotNullK(<!TYPE_MISMATCH!>x2<!>)
 
     val x3 = a.foo3
     takeNotNullStringAndKNullable(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>x3<!>)
     takeNullableStringAndKNullable(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>x3<!>)
-    takeNotNullStringAndNotNullK(<!TYPE_MISMATCH, TYPE_MISMATCH!>x3<!>)
-    takeNullableStringAndNotNullK(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS, TYPE_MISMATCH, TYPE_MISMATCH!>x3<!>)
+    takeNotNullStringAndNotNullK(<!TYPE_MISMATCH!>x3<!>)
+    takeNullableStringAndNotNullK(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS, TYPE_MISMATCH!>x3<!>)
 
     val x4 = a.foo4
     takeArrayOfNotNullString(<!TYPE_MISMATCH!>x4<!>)
     takeArrayOfNullableString(<!TYPE_MISMATCH!>x4<!>)
-    takeArrayOfNotNullK(<!TYPE_MISMATCH, TYPE_MISMATCH!>x4<!>)
+    takeArrayOfNotNullK(<!TYPE_MISMATCH!>x4<!>)
     takeArrayOfNullableK(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>x4<!>)
 
     val x5 = a.foo5()
