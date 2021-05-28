@@ -106,6 +106,7 @@ import org.jetbrains.kotlin.idea.fir.frontend.api.symbols.AbstractMemoryLeakInSy
 import org.jetbrains.kotlin.idea.fir.frontend.api.symbols.AbstractSymbolByFqNameTest
 import org.jetbrains.kotlin.idea.fir.frontend.api.symbols.AbstractSymbolByPsiTest
 import org.jetbrains.kotlin.idea.fir.frontend.api.symbols.AbstractSymbolByReferenceTest
+import org.jetbrains.kotlin.idea.fir.inspections.AbstractFe10BindingIntentionTest
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyTest
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyWithLibTest
 import org.jetbrains.kotlin.idea.highlighter.*
