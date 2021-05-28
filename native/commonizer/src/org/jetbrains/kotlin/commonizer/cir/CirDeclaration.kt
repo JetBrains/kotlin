@@ -41,8 +41,13 @@ interface CirHasModality {
     val modality: Modality
 }
 
+
 interface CirMaybeCallableMemberOfClass {
     val containingClass: CirContainingClass? // null assumes no containing class
+
+    fun withContainingClass(containingClass: CirContainingClass): CirMaybeCallableMemberOfClass = object : CirMaybeCallableMemberOfClass {
+        override val containingClass: CirContainingClass = containingClass
+    }
 }
 
 /**

@@ -111,7 +111,7 @@ class HierarchicalTypeAliasCommonizationTest : AbstractInlineSourcesCommonizatio
             "(e,f)", """expect class x expect constructor()"""
         )
 
-        result.assertCommonized("((a,b), (c,d))", """expect class x""")
-        result.assertCommonized("(((a,b), (c,d)), (e,f))", """expect class x""")
+        result.assertCommonized("((a,b), (c,d))", """expect class x expect constructor()""")
+        result.assertCommonized("(((a,b), (c,d)), (e,f))", """expect class x expect constructor()""")
     }
 }

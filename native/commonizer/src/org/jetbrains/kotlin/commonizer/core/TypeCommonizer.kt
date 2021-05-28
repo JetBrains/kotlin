@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.commonizer.core
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.core.CommonizedTypeAliasAnswer.Companion.FAILURE_MISSING_IN_SOME_TARGET
 import org.jetbrains.kotlin.commonizer.core.CommonizedTypeAliasAnswer.Companion.SUCCESS_FROM_DEPENDENCY_LIBRARY
+import org.jetbrains.kotlin.commonizer.core.CommonizedTypeAliasAnswer.Companion.create
 import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.commonizer.utils.isUnderKotlinNativeSyntheticPackages
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -203,16 +204,9 @@ private fun commonizeClass(classId: CirEntityId, classifiers: CirKnownClassifier
         return true
     }
 
-    return when (val node = classifiers.commonizedNodes.classNode(classId)) {
-        null -> {
-            // No node means that the type alias was not subject for commonization. It is missing in some target(s) => not commonized.
-            false
-        }
-        else -> {
-            // Common declaration in node is not null -> successfully commonized.
-            (node.commonDeclaration() != null)
-        }
-    }
+    // Looking for a a node that provides a non-null (successfully commonized) classifier declaration
+    return (classifiers.commonizedNodes.classNode(classId)?.commonDeclaration?.invoke()
+        ?: classifiers.commonizedNodes.typeAliasNode(classId)?.commonDeclaration?.invoke()) != null
 }
 
 private fun commonizeTypeAlias(typeAliasId: CirEntityId, classifiers: CirKnownClassifiers): CommonizedTypeAliasAnswer {
@@ -221,16 +215,14 @@ private fun commonizeTypeAlias(typeAliasId: CirEntityId, classifiers: CirKnownCl
         return SUCCESS_FROM_DEPENDENCY_LIBRARY
     }
 
-    return when (val node = classifiers.commonizedNodes.typeAliasNode(typeAliasId)) {
-        null -> {
-            // No node means that the type alias was not subject for commonization. It is missing in some target(s) => not commonized.
-            FAILURE_MISSING_IN_SOME_TARGET
-        }
-        else -> {
-            // Common declaration in node is not null -> successfully commonized.
-            CommonizedTypeAliasAnswer.create(node.commonDeclaration())
-        }
+    val typeAliasNode = classifiers.commonizedNodes.typeAliasNode(typeAliasId)
+    val classNode = classifiers.commonizedNodes.classNode(typeAliasId)
+
+    if (typeAliasNode == null && classNode == null) {
+        return FAILURE_MISSING_IN_SOME_TARGET
     }
+
+    return create(typeAliasNode?.commonDeclaration?.invoke() ?: classNode?.commonDeclaration?.invoke())
 }
 
 private class CommonizedTypeAliasAnswer(val commonized: Boolean, val commonClassifier: CirClassifier?) {

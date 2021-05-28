@@ -21,6 +21,8 @@ interface CirProperty : CirFunctionOrProperty, CirLiftedUpDeclaration {
     val delegateFieldAnnotations: List<CirAnnotation>
     val compileTimeInitializer: CirConstantValue
 
+    override fun withContainingClass(containingClass: CirContainingClass): CirProperty
+
     companion object {
         @Suppress("NOTHING_TO_INLINE")
         inline fun create(
@@ -90,4 +92,8 @@ data class CirPropertyImpl(
 ) : CirProperty {
     // const property in "common" fragment is already lifted up
     override val isLiftedUp get() = isConst
+
+    override fun withContainingClass(containingClass: CirContainingClass): CirProperty {
+        return copy(containingClass = containingClass)
+    }
 }

@@ -1,5 +1,4 @@
 expect class A()
-
 // Lifted up type aliases:
 typealias B = A // class at the RHS
 typealias C = A // TA at the RHS, expanded to the same class
@@ -40,10 +39,11 @@ typealias U = A // same nullability of the RHS class
 
 expect class V // different nullability of the RHS class
 typealias W = A // same nullability of the RHS TA
+expect class X // different nullability of the RHS TA
 typealias Y = V // TA at the RHS with the different nullability of own RHS
 
 // Supertypes:
-expect class FILE : kotlinx.cinterop.CStructVar
+expect class FILE expect constructor(): kotlinx.cinterop.CStructVar
 
 typealias uuid_t = kotlinx.cinterop.CArrayPointer<kotlinx.cinterop.UByteVar>
 typealias __darwin_uuid_t = kotlinx.cinterop.CArrayPointer<kotlinx.cinterop.UByteVar>

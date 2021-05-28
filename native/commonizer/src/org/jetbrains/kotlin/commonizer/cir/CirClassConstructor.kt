@@ -18,6 +18,8 @@ interface CirClassConstructor :
     val isPrimary: Boolean
     override val containingClass: CirContainingClass // non-nullable
 
+    override fun withContainingClass(containingClass: CirContainingClass): CirClassConstructor
+
     companion object {
         @Suppress("NOTHING_TO_INLINE")
         inline fun create(
@@ -48,4 +50,8 @@ data class CirClassConstructorImpl(
     override var valueParameters: List<CirValueParameter>,
     override var hasStableParameterNames: Boolean,
     override val isPrimary: Boolean
-) : CirClassConstructor
+) : CirClassConstructor {
+    override fun withContainingClass(containingClass: CirContainingClass): CirClassConstructor {
+        return copy(containingClass = containingClass)
+    }
+}

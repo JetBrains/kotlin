@@ -18,8 +18,7 @@ internal tailrec fun computeSuitableUnderlyingType(
     return when (underlyingType) {
         is CirClassType -> underlyingType.withCommonizedArguments(classifiers)
         is CirTypeAliasType -> if (classifiers.commonDependencies.hasClassifier(underlyingType.classifierId))
-            underlyingType.withCommonizedArguments(classifiers)
-        else
+            underlyingType.withCommonizedArguments(classifiers) else
             computeSuitableUnderlyingType(classifiers, underlyingType.underlyingType)
     }
 }

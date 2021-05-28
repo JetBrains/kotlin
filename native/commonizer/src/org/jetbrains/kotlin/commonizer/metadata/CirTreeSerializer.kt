@@ -143,6 +143,7 @@ private class CirTreeSerializationVisitor(
         classContext: CirTreeSerializationContext
     ): KmClass? {
         val cirClass = classContext.get<CirClass>(node) ?: return null
+
         val classTypeParametersCount = cirClass.typeParameters.size
         val fullClassName = classContext.currentPath.toString()
 
@@ -403,7 +404,8 @@ internal data class CirTreeSerializationContext(
     }
 
     inline fun <reified T : CirDeclaration> get(node: CirNode<*, *>): T? {
-        return (if (isCommon) node.commonDeclaration() else node.targetDeclarations[targetIndex]) as T?
+        return ((if (isCommon) node.commonDeclaration() else node.targetDeclarations[targetIndex]) as T?)
+            .takeIf { it !is ArtificialCirDeclaration }
     }
 
     inline fun <reified T : CirDeclaration> get(node: CirNodeWithLiftingUp<*, *>): T? {
@@ -411,7 +413,7 @@ internal data class CirTreeSerializationContext(
             isCommon -> node.commonDeclaration() as T?
             node.isLiftedUp -> null
             else -> node.targetDeclarations[targetIndex] as T?
-        }
+        }.takeIf { it !is ArtificialCirDeclaration }
     }
 
     companion object {

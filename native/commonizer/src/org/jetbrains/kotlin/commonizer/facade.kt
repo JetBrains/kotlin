@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.commonizer.mergedtree.CirNode.Companion.indexOfCommo
 import org.jetbrains.kotlin.commonizer.mergedtree.CirNode.Companion.targetIndices
 import org.jetbrains.kotlin.commonizer.mergedtree.CirRootNode
 import org.jetbrains.kotlin.commonizer.metadata.CirTreeSerializer.serializeSingleTarget
+import org.jetbrains.kotlin.commonizer.transformer.Checked.Companion.invoke
+import org.jetbrains.kotlin.commonizer.transformer.InlineTypeAliasCirNodeTransformer
 import org.jetbrains.kotlin.commonizer.tree.CirTreeRoot
 import org.jetbrains.kotlin.commonizer.tree.assembleCirTree
 import org.jetbrains.kotlin.commonizer.tree.deserializeCirTree
@@ -50,6 +52,7 @@ private fun commonize(
     )
 
     val mergedTree = merge(storageManager, classifiers, cirTrees) ?: return null
+    InlineTypeAliasCirNodeTransformer(storageManager, classifiers).invoke(mergedTree)
     mergedTree.accept(CommonizationVisitor(classifiers, mergedTree), Unit)
     parameters.logProgress("Commonized declarations for $target")
 

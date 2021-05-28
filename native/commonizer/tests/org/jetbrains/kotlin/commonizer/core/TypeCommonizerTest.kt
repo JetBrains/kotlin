@@ -273,14 +273,6 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
     )
 
     @Test
-    // why success: expect class/actual TAs
-    fun taTypesInUserPackageWithDifferentClasses() = doTestSuccess(
-        expected = mockClassType("org/sample/FooAlias"),
-        mockTAType("org/sample/FooAlias") { mockClassType("org/sample/Foo") },
-        mockTAType("org/sample/FooAlias") { mockClassType("org/sample/Bar") }
-    )
-
-    @Test
     // why success: short-circuiting & lifting up
     fun multilevelTATypesInUserPackageWithSameNameAndRightHandSideClass1() = doTestSuccess(
         expected = mockTAType("org/sample/FooAlias") {
@@ -334,28 +326,6 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
         mockTAType("org/sample/FooAlias") {
             mockTAType("org/sample/FooAliasL2") {
                 mockClassType("org/sample/Foo")
-            }
-        }
-    )
-
-    @Test
-    // why success: lifting up outer TA and expect class for inner TA
-    fun multilevelTATypesInUserPackageWithSameNameAndRightHandSideClass4() = doTestSuccess(
-        expected = mockTAType("org/sample/FooAlias") {
-            mockTAType("org/sample/FooAliasL2") {
-                mockClassType("org/sample/Foo")
-            }
-        },
-
-        mockTAType("org/sample/FooAlias") {
-            mockTAType("org/sample/FooAliasL2") {
-                mockClassType("org/sample/Bar")
-            }
-        },
-
-        mockTAType("org/sample/FooAlias") {
-            mockTAType("org/sample/FooAliasL2") {
-                mockClassType("org/sample/Baz")
             }
         }
     )
@@ -432,30 +402,16 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
     fun taTypesInUserPackageWithDifferentNullability1() = doTestFailure(
         mockTAType("org/sample/FooAlias", nullable = false) { mockClassType("org/sample/Foo") },
         mockTAType("org/sample/FooAlias", nullable = false) { mockClassType("org/sample/Foo") },
-        mockTAType("org/sample/FooAlias", nullable = true) { mockClassType("org/sample/Foo") }
+        mockTAType("org/sample/FooAlias", nullable = true) { mockClassType("org/sample/Foo") },
+        shouldFailOnFirstVariant = true
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun taTypesInUserPackageWithDifferentNullability2() = doTestFailure(
         mockTAType("org/sample/FooAlias", nullable = true) { mockClassType("org/sample/Foo") },
         mockTAType("org/sample/FooAlias", nullable = true) { mockClassType("org/sample/Foo") },
-        mockTAType("org/sample/FooAlias", nullable = false) { mockClassType("org/sample/Foo") }
-    )
-
-    @Test
-    // why success: nullability of underlying type does not matter if expect class/actual TAs created
-    fun taTypesInUserPackageWithDifferentNullability3() = doTestSuccess(
-        expected = mockClassType("org/sample/FooAlias"),
-        mockTAType("org/sample/FooAlias") { mockClassType("org/sample/Foo", nullable = false) },
-        mockTAType("org/sample/FooAlias") { mockClassType("org/sample/Foo", nullable = true) }
-    )
-
-    @Test
-    // why success: nullability of underlying type does not matter if expect class/actual TAs created
-    fun taTypesInUserPackageWithDifferentNullability4() = doTestSuccess(
-        expected = mockClassType("org/sample/FooAlias"),
-        mockTAType("org/sample/FooAlias") { mockClassType("org/sample/Foo", nullable = true) },
-        mockTAType("org/sample/FooAlias") { mockClassType("org/sample/Foo", nullable = false) }
+        mockTAType("org/sample/FooAlias", nullable = false) { mockClassType("org/sample/Foo") },
+        shouldFailOnFirstVariant = true
     )
 
     private fun prepareCache(variants: Array<out CirClassOrTypeAliasType>) {
@@ -469,7 +425,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
                             storageManager = LockBasedStorageManager.NO_LOCKS,
                             size = variants.size,
                             classifiers = classifiers,
-                            parentCommonDeclaration = null,
+                            condition = CommonizerCondition.none(),
                             classId = type.classifierId
                         )
                     }

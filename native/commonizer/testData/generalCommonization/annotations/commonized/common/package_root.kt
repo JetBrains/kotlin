@@ -19,4 +19,4 @@ expect class AnnotatedClass(value: String) {
 }
 typealias AnnotatedLiftedUpTypeAlias = AnnotatedClass
 
-expect class AnnotatedNonLiftedUpTypeAlias
+expect class AnnotatedNonLiftedUpTypeAlias expect constructor(expect val value: String)
