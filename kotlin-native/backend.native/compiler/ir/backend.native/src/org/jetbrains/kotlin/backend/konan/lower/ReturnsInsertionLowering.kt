@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
+import org.jetbrains.kotlin.ir.types.isNullableNothing
 import org.jetbrains.kotlin.ir.util.isSimpleTypeWithQuestionMark
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -46,7 +47,8 @@ internal class ReturnsInsertionLowering(val context: Context) : FileLoweringPass
                             } else if (declaration.returnType.isSimpleTypeWithQuestionMark) {
                                 // this is a workaround for KT-42832
                                 val typeOperatorCall = body.statements.lastOrNull() as? IrTypeOperatorCall
-                                if (typeOperatorCall?.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT) {
+                                if (typeOperatorCall?.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT
+                                        && typeOperatorCall.argument.type.isNullableNothing()) {
                                     body.statements[body.statements.lastIndex] = irReturn(typeOperatorCall.argument)
                                 }
                             }

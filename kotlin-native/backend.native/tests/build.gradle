@@ -533,6 +533,12 @@ standaloneTest("function_nothingN_returning_safe_call") {
     source = "codegen/function/nothingNReturningSafeCall.kt"
 }
 
+standaloneTest("unreachable_statement_after_return") {
+    flags = ["-g", "-entry", "codegen.function.unreachable_statement_after_return.main"]
+    source = "codegen/function/unreachableStatementAfterReturn.kt"
+    goldValue = "1\n2\n3\n4\n"
+}
+
 task codegen_controlflow_for_loops(type: KonanLocalTest) {
     source = "codegen/controlflow/for_loops.kt"
     goldValue = "01234\n0123\n43210\n\n024\n02\n420\n\n036\n03\n630\n\n024\n02\n420\n\n"
