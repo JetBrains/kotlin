@@ -23,7 +23,7 @@ import org.jetbrains.org.objectweb.asm.commons.Method
 data class MethodId(val ownerInternalName: String, val method: Method)
 
 class InlineCache {
-    val classBytes: SLRUMap<ClassId, ByteArray> = SLRUMap(30, 20)
+    val classBytes: SLRUMap<String, ByteArray> = SLRUMap(30, 20)
     val methodNodeById: SLRUMap<MethodId, SMAPAndMethodNode> = SLRUMap(60, 50)
 }
 

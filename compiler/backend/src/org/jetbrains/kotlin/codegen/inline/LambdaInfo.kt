@@ -14,7 +14,6 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
-import kotlin.properties.Delegates
 
 interface FunctionalArgument
 
@@ -40,8 +39,6 @@ abstract class LambdaInfo(@JvmField val isCrossInline: Boolean) : FunctionalArgu
     lateinit var node: SMAPAndMethodNode
 
     val reifiedTypeParametersUsages = ReifiedTypeParametersUsages()
-
-    abstract fun generateLambdaBody(sourceCompiler: SourceCompilerForInline, reifiedTypeInliner: ReifiedTypeInliner<*>)
 
     open val hasDispatchReceiver = true
 
@@ -71,49 +68,52 @@ object NonInlineableArgumentForInlineableParameterCalledInSuspend : FunctionalAr
 object NonInlineableArgumentForInlineableSuspendParameter : FunctionalArgument
 
 abstract class ExpressionLambda(isCrossInline: Boolean) : LambdaInfo(isCrossInline) {
-    override fun generateLambdaBody(sourceCompiler: SourceCompilerForInline, reifiedTypeInliner: ReifiedTypeInliner<*>) {
+    fun generateLambdaBody(sourceCompiler: SourceCompilerForInline) {
         node = sourceCompiler.generateLambdaBody(this, reifiedTypeParametersUsages)
         node.node.preprocessSuspendMarkers(forInline = true, keepFakeContinuation = false)
     }
 }
 
 abstract class DefaultLambda(
-    private val capturedArgs: Array<Type>,
+    final override val lambdaClassType: Type,
+    capturedArgs: Array<Type>,
     isCrossinline: Boolean,
     val offset: Int,
-    val needReification: Boolean
+    val needReification: Boolean,
+    sourceCompiler: SourceCompilerForInline
 ) : LambdaInfo(isCrossinline) {
-    final override var isBoundCallableReference by Delegates.notNull<Boolean>()
-        private set
+    final override val isSuspend
+        get() = false // TODO: it should probably be true sometimes, but it never was
+    final override val isBoundCallableReference: Boolean
+    final override val capturedVars: List<CapturedParamDesc>
 
-    final override lateinit var invokeMethod: Method
-        private set
+    final override val invokeMethod: Method
+        get() = Method(node.node.name, node.node.desc)
 
-    final override lateinit var capturedVars: List<CapturedParamDesc>
-        private set
+    val originalBoundReceiverType: Type?
 
-    var originalBoundReceiverType: Type? = null
-        private set
+    protected val isPropertyReference: Boolean
+    protected val isFunctionReference: Boolean
 
-    override val isSuspend = false // TODO: it should probably be true sometimes, but it never was
-
-    override fun generateLambdaBody(sourceCompiler: SourceCompilerForInline, reifiedTypeInliner: ReifiedTypeInliner<*>) {
-        val classBytes = loadClassBytesByInternalName(sourceCompiler.state, lambdaClassType.internalName)
+    init {
+        val classBytes = loadClass(sourceCompiler)
         val superName = ClassReader(classBytes).superName
-        val isPropertyReference = superName in PROPERTY_REFERENCE_SUPER_CLASSES
-        val isFunctionReference = superName == FUNCTION_REFERENCE.internalName || superName == FUNCTION_REFERENCE_IMPL.internalName
+        isPropertyReference = superName in PROPERTY_REFERENCE_SUPER_CLASSES
+        isFunctionReference = superName == FUNCTION_REFERENCE.internalName || superName == FUNCTION_REFERENCE_IMPL.internalName
 
         val constructorDescriptor = Type.getMethodDescriptor(Type.VOID_TYPE, *capturedArgs)
         val constructor = getMethodNode(classBytes, "<init>", constructorDescriptor, lambdaClassType)?.node
         assert(constructor != null || capturedArgs.isEmpty()) {
             "Can't find non-default constructor <init>$constructorDescriptor for default lambda $lambdaClassType"
         }
+        // This only works for primitives but not inline classes, since information about the Kotlin type of the bound
+        // receiver is not present anywhere. This is why with JVM_IR the constructor argument of bound references
+        // is already `Object`, and this field is never used.
+        originalBoundReceiverType =
+            capturedArgs.singleOrNull()?.takeIf { (isFunctionReference || isPropertyReference) && AsmUtil.isPrimitive(it) }
         capturedVars =
             if (isFunctionReference || isPropertyReference)
                 capturedArgs.singleOrNull()?.let {
-                    if (AsmUtil.isPrimitive(it)) {
-                        originalBoundReceiverType = it
-                    }
                     listOf(capturedParamDesc(AsmUtil.RECEIVER_PARAMETER_NAME, AsmUtil.boxType(it), isSuspend = false))
                 } ?: emptyList()
             else
@@ -121,22 +121,21 @@ abstract class DefaultLambda(
                     capturedParamDesc(fieldNode.name, Type.getType(fieldNode.desc), isSuspend = false)
                 }?.toList() ?: emptyList()
         isBoundCallableReference = (isFunctionReference || isPropertyReference) && capturedVars.isNotEmpty()
+    }
 
+    private fun loadClass(sourceCompiler: SourceCompilerForInline): ByteArray =
+        sourceCompiler.state.inlineCache.classBytes.getOrPut(lambdaClassType.internalName) {
+            loadClassBytesByInternalName(sourceCompiler.state, lambdaClassType.internalName)
+        }
+
+    protected fun loadInvoke(sourceCompiler: SourceCompilerForInline, invokeMethod: Method) {
+        val classBytes = loadClass(sourceCompiler)
         val invokeNameFallback = (if (isPropertyReference) OperatorNameConventions.GET else OperatorNameConventions.INVOKE).asString()
-        val invokeMethod = mapAsmMethod(sourceCompiler, isPropertyReference)
-        // TODO: `signatureAmbiguity = true` ignores the argument types from `invokeDescriptor` and only looks at the count.
-        //   This effectively masks incorrect results from `mapAsmDescriptor`, which hopefully won't manifest in another way.
+        // TODO: `signatureAmbiguity = true` ignores the argument types from `invokeMethod` and only looks at the count.
         node = getMethodNode(classBytes, invokeMethod.name, invokeMethod.descriptor, lambdaClassType, signatureAmbiguity = true)
             ?: getMethodNode(classBytes, invokeNameFallback, invokeMethod.descriptor, lambdaClassType, signatureAmbiguity = true)
                     ?: error("Can't find method '$invokeMethod' in '${lambdaClassType.internalName}'")
-        this.invokeMethod = Method(node.node.name, node.node.desc)
-        if (needReification) {
-            //nested classes could also require reification
-            reifiedTypeParametersUsages.mergeAll(reifiedTypeInliner.reifyInstructions(node.node))
-        }
     }
-
-    protected abstract fun mapAsmMethod(sourceCompiler: SourceCompilerForInline, isPropertyReference: Boolean): Method
 
     private companion object {
         val PROPERTY_REFERENCE_SUPER_CLASSES =

@@ -82,7 +82,7 @@ fun loadCompiledInlineFunction(
     state: GenerationState
 ): SMAPAndMethodNode {
     val containerType = AsmUtil.asmTypeByClassId(containerId)
-    val bytes = state.inlineCache.classBytes.getOrPut(containerId) {
+    val bytes = state.inlineCache.classBytes.getOrPut(containerType.internalName) {
         findVirtualFile(state, containerId)?.contentsToByteArray()
             ?: throw IllegalStateException("Couldn't find declaration file for $containerId")
     }

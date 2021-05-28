@@ -60,15 +60,15 @@ fun extractDefaultLambdaOffsetAndDescriptor(
     }
 }
 
+class ExtractedDefaultLambda(val type: Type, val capturedArgs: Array<Type>, val offset: Int, val needReification: Boolean)
 
-fun <T, R : DefaultLambda> expandMaskConditionsAndUpdateVariableNodes(
+fun expandMaskConditionsAndUpdateVariableNodes(
     node: MethodNode,
     maskStartIndex: Int,
     masks: List<Int>,
     methodHandlerIndex: Int,
-    defaultLambdas: Map<Int, T>,
-    lambdaConstructor: (Type, Array<Type>, T, Int, Boolean) -> R
-): List<R> {
+    validOffsets: Collection<Int>
+): List<ExtractedDefaultLambda> {
     fun isMaskIndex(varIndex: Int): Boolean {
         return maskStartIndex <= varIndex && varIndex < maskStartIndex + masks.size
     }
@@ -111,7 +111,8 @@ fun <T, R : DefaultLambda> expandMaskConditionsAndUpdateVariableNodes(
     val toDelete = linkedSetOf<AbstractInsnNode>()
     val toInsert = arrayListOf<Pair<AbstractInsnNode, AbstractInsnNode>>()
 
-    val defaultLambdasInfo = extractDefaultLambdasInfo(conditions, defaultLambdas, toDelete, toInsert, lambdaConstructor)
+    val extractable = conditions.filter { it.expandNotDelete && it.varIndex in validOffsets }
+    val defaultLambdasInfo = extractDefaultLambdasInfo(extractable, toDelete, toInsert)
 
     val indexToVarNode = node.localVariables?.filter { it.index < maskStartIndex }?.associateBy { it.index } ?: emptyMap()
     conditions.forEach {
@@ -131,7 +132,7 @@ fun <T, R : DefaultLambda> expandMaskConditionsAndUpdateVariableNodes(
     }
 
     node.localVariables.removeIf {
-        (it.start in toDelete && it.end in toDelete) || defaultLambdas.contains(it.index)
+        (it.start in toDelete && it.end in toDelete) || validOffsets.contains(it.index)
     }
 
     node.remove(toDelete)
@@ -139,16 +140,12 @@ fun <T, R : DefaultLambda> expandMaskConditionsAndUpdateVariableNodes(
     return defaultLambdasInfo
 }
 
-
-private fun <T, R : DefaultLambda> extractDefaultLambdasInfo(
+private fun extractDefaultLambdasInfo(
     conditions: List<Condition>,
-    defaultLambdas: Map<Int, T>,
     toDelete: MutableCollection<AbstractInsnNode>,
-    toInsert: MutableList<Pair<AbstractInsnNode, AbstractInsnNode>>,
-    lambdaConstructor: (Type, Array<Type>, T, Int, Boolean) -> R
-): List<R> {
-    val defaultLambdaConditions = conditions.filter { it.expandNotDelete && defaultLambdas.contains(it.varIndex) }
-    return defaultLambdaConditions.map {
+    toInsert: MutableList<Pair<AbstractInsnNode, AbstractInsnNode>>
+): List<ExtractedDefaultLambda> {
+    return conditions.map {
         val varAssignmentInstruction = it.varInsNode!!
         var instanceInstuction = varAssignmentInstruction.previous
         if (instanceInstuction is TypeInsnNode && instanceInstuction.opcode == Opcodes.CHECKCAST) {
@@ -190,7 +187,7 @@ private fun <T, R : DefaultLambda> extractDefaultLambdasInfo(
 
         toInsert.add(varAssignmentInstruction to defaultLambdaFakeCallStub(argTypes, it.varIndex))
 
-        lambdaConstructor(owner, argTypes, defaultLambdas[it.varIndex]!!, it.varIndex, needReification)
+        ExtractedDefaultLambda(owner, argTypes, it.varIndex, needReification)
     }
 }
 
