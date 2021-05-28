@@ -9,7 +9,7 @@ Thread stack trace:
 		($result, $this$sequence, step, terms, this)
 CoroutineInfo: -1 coroutine UNKNOWN
 	CoroutineStackFrame resumeWith:!LINE_NUMBER!, BaseContinuationImpl (kotlin.coroutines.jvm.internal)
-		($i$a$-with-BaseContinuationImpl$resumeWith$1, $this$resumeWith_u24lambda_u2d0, completion, current, param, result, this)
+		($i$a$-with-BaseContinuationImpl$resumeWith$1, $this$with, completion, current, param, result, this)
 	CoroutineStackFrame hasNext:!LINE_NUMBER!, SequenceBuilderIterator (kotlin.sequences)
 		(step, this)
 	CoroutineStackFrame hasNext:!LINE_NUMBER!, TakeSequence$iterator$1 (kotlin.sequences)

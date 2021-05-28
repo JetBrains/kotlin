@@ -15,7 +15,7 @@ CoroutineInfo: -1 coroutine UNKNOWN
 	CoroutineStackFrame invokeSuspend:!LINE_NUMBER!, IntrinsicsKt__IntrinsicsJvmKt$createCoroutineUnintercepted$$inlined$createCoroutineFromSuspendFunction$IntrinsicsKt__IntrinsicsJvmKt$1 (kotlin.coroutines.intrinsics)
 		($i$a$-createCoroutineFromSuspendFunction-IntrinsicsKt__IntrinsicsJvmKt$createCoroutineUnintercepted$1, it, result, this)
 	CoroutineStackFrame resumeWith:!LINE_NUMBER!, BaseContinuationImpl (kotlin.coroutines.jvm.internal)
-		($i$a$-with-BaseContinuationImpl$resumeWith$1, $this$resumeWith_u24lambda_u2d0, completion, current, param, result, this)
+		($i$a$-with-BaseContinuationImpl$resumeWith$1, $this$with, completion, current, param, result, this)
 	CoroutineStackFrame startCoroutine:!LINE_NUMBER!, ContinuationKt (kotlin.coroutines)
 		($this$startCoroutine, completion)
 	CoroutineStackFrame runSuspend:!LINE_NUMBER!, RunSuspendKt (kotlin.coroutines.jvm.internal)
