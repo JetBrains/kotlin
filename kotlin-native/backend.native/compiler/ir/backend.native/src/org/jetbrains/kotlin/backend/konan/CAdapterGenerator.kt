@@ -220,7 +220,7 @@ private class ExportedElement(val kind: ElementKind,
                     generateFunction(owner.codegen, LLVMGetElementType(llvmFunction.type)!!, cname) {
                         val receiver = param(0)
                         val numParams = LLVMCountParams(llvmFunction)
-                        val args = (0 .. numParams - 1).map { index -> param(index) }
+                        val args = (0 until numParams).map { index -> param(index) }
                         val callee = lookupVirtualImpl(receiver, irFunction)
                         val result = call(callee, args, exceptionHandler = ExceptionHandler.Caller, verbatim = true)
                         ret(result)
@@ -270,14 +270,7 @@ private class ExportedElement(val kind: ElementKind,
 
     val isFunction = declaration is FunctionDescriptor
     val isTopLevelFunction: Boolean
-        get() {
-            if (declaration !is FunctionDescriptor ||
-                    !declaration.annotations.hasAnnotation(RuntimeNames.cnameAnnotation))
-                return false
-            val annotation = declaration.annotations.findAnnotation(RuntimeNames.cnameAnnotation)!!
-            val externName = annotation.properValue("externName")
-            return externName != null && externName.isNotEmpty()
-        }
+        get() = (declaration as? FunctionDescriptor)?.isTopLevelFunction() ?: false
     val isClass = declaration is ClassDescriptor && declaration.kind != ClassKind.ENUM_ENTRY
     val isEnumEntry = declaration is ClassDescriptor && declaration.kind == ClassKind.ENUM_ENTRY
     val isSingletonObject = declaration is ClassDescriptor && DescriptorUtils.isObject(declaration)
@@ -334,88 +327,67 @@ private class ExportedElement(val kind: ElementKind,
 
     fun makeFunctionPointerString(): String {
         val signature = makeCFunctionSignature(true)
-        return "${owner.translateType(signature[0])} (*${signature[0].name})(${signature.drop(1).map { it -> "${owner.translateType(it)} ${it.name}" }.joinToString(", ")});"
+        return signature.drop(1)
+                .joinToString(
+                        prefix = "${owner.translateType(signature[0])} (*${signature[0].name})(",
+                        postfix = ");",
+                        separator = ", ") { "${owner.translateType(it)} ${it.name}" }
     }
 
     fun makeTopLevelFunctionString(): Pair<String, String> {
         val signature = makeCFunctionSignature(false)
         val name = signature[0].name
-        return (name to
-                "extern ${owner.translateType(signature[0])} $name(${signature.drop(1).map { it -> "${owner.translateType(it)} ${it.name}" }.joinToString(", ")});")
+        return (name to signature.drop(1)
+                .joinToString(
+                        prefix = "extern ${owner.translateType(signature[0])} $name(",
+                        postfix = ");",
+                        separator = ", ") { "${owner.translateType(it)} ${it.name}" })
     }
 
     fun makeFunctionDeclaration(): String {
         assert(isFunction)
         val bridge = makeBridgeSignature()
 
-        val builder = StringBuilder()
-        builder.append("extern \"C\" ${bridge[0]} $cname")
-        builder.append("(${bridge.drop(1).joinToString(", ")});\n")
-
-        // Now the C function body.
-        builder.append(translateBody(makeCFunctionSignature(false)))
-        return builder.toString()
+        return buildString {
+            appendLine(bridge
+                    .drop(1)
+                    .joinToString(prefix = "extern \"C\" ${bridge[0]} $cname (", separator = ", ", postfix = ");"))
+            // Now the C function body.
+            translateBody(makeCFunctionSignature(false).map { it.type })
+        }
     }
 
     fun makeClassDeclaration(): String {
         assert(isClass)
-        val typeGetter = "extern \"C\" ${owner.prefix}_KType* ${cname}_type(void);"
-        val instanceGetter = if (isSingletonObject) {
-            val objectClassC = owner.translateType((declaration as ClassDescriptor).defaultType)
-            """
-            |
-            |extern "C" KObjHeader* ${cname}_instance(KObjHeader**);
-            |static $objectClassC ${cname}_instance_impl(void) {
-            |  Kotlin_initRuntimeIfNeeded();
-            |  ScopedRunnableState stateGuard;
-            |  KObjHolder result_holder;
-            |  KObjHeader* result = ${cname}_instance(result_holder.slot());
-            |  return $objectClassC { .pinned = CreateStablePointer(result)};
-            |}
-            """.trimMargin()
-        } else ""
-        return "$typeGetter$instanceGetter"
+        return buildString {
+            appendLine("extern \"C\" ${owner.prefix}_KType* ${cname}_type(void);")
+            if (isSingletonObject) {
+                appendLine("extern \"C\" KObjHeader* ${cname}_instance(KObjHeader**);")
+                functionGenerator(listOf((declaration as ClassDescriptor).defaultType), owner, declaration, "${cname}_instance_impl") {
+                    kotlinInitRuntimeIfNeeded()
+                    variable(name = "stateGuard", cType = "ScopedRunnableState").defineAndInitVariable()
+                    val result = result(returnType).defineAndInitVariable {
+                        call("${cname}_instance", resultHolder!!)
+                    }
+                    ret(result)
+                }
+            }
+        }
     }
 
     fun makeEnumEntryDeclaration(): String {
         assert(isEnumEntry)
         val enumClass = declaration.containingDeclaration as ClassDescriptor
-        val enumClassC = owner.translateType(enumClass.defaultType)
 
-        return """
-              |extern "C" KObjHeader* $cname(KObjHeader**);
-              |static $enumClassC ${cname}_impl(void) {
-              |  Kotlin_initRuntimeIfNeeded();
-              |  ScopedRunnableState stateGuard;
-              |  KObjHolder result_holder;
-              |  KObjHeader* result = $cname(result_holder.slot());
-              |  return $enumClassC { .pinned = CreateStablePointer(result)};
-              |}
-              """.trimMargin()
-    }
-
-    private fun translateArgument(name: String, signatureElement: SignatureElement,
-                                  direction: Direction, builder: StringBuilder): String {
-        return when {
-            owner.isMappedToString(signatureElement.type) ->
-                if (direction == Direction.C_TO_KOTLIN) {
-                    builder.append("  KObjHolder ${name}_holder;\n")
-                    "CreateStringFromCString($name, ${name}_holder.slot())"
-                } else {
-                    "CreateCStringFromString($name)"
+        return buildString {
+            appendLine("extern \"C\" KObjHeader* $cname(KObjHeader**);")
+            functionGenerator(listOf(enumClass.defaultType), owner, declaration, "${cname}_impl") {
+                kotlinInitRuntimeIfNeeded()
+                variable(name = "stateGuard", cType = "ScopedRunnableState").defineAndInitVariable()
+                val result = result(returnType).defineAndInitVariable {
+                    call("$cname", resultHolder!!)
                 }
-            owner.isMappedToReference(signatureElement.type) ->
-                if (direction == Direction.C_TO_KOTLIN) {
-                    builder.append("  KObjHolder ${name}_holder2;\n")
-                    "DerefStablePointer(${name}.pinned, ${name}_holder2.slot())"
-                } else {
-                    "((${owner.translateType(signatureElement.type)}){ .pinned = CreateStablePointer(${name})})"
-                }
-            else -> {
-                assert(!signatureElement.type.binaryTypeIsReference()) {
-                    println(signatureElement.toString())
-                }
-                name
+                ret(result)
             }
         }
     }
@@ -426,50 +398,44 @@ private class ExportedElement(val kind: ElementKind,
         else
             "${cname}_impl"
 
-    private fun translateBody(cfunction: List<SignatureElement>): String {
-        val visibility = if (isTopLevelFunction) "RUNTIME_USED extern \"C\"" else "static"
-        val builder = StringBuilder()
-        builder.append("$visibility ${owner.translateType(cfunction[0])} ${cnameImpl}(${cfunction.drop(1).
-                mapIndexed { index, it -> "${owner.translateType(it)} arg${index}" }.joinToString(", ")}) {\n")
-        // TODO: do we really need that in every function?
-        builder.append("  Kotlin_initRuntimeIfNeeded();\n")
-        builder.append("  ScopedRunnableState stateGuard;\n");
-        val args = ArrayList(cfunction.drop(1).mapIndexed { index, pair ->
-            translateArgument("arg$index", pair, Direction.C_TO_KOTLIN, builder)
-        })
-        val isVoidReturned = owner.isMappedToVoid(cfunction[0].type)
-        val isConstructor = declaration is ConstructorDescriptor
-        val isObjectReturned = !isConstructor && owner.isMappedToReference(cfunction[0].type)
-        val isStringReturned = owner.isMappedToString(cfunction[0].type)
-        builder.append("   try {\n")
-        if (isObjectReturned || isStringReturned) {
-            builder.append("  KObjHolder result_holder;\n")
-            args += "result_holder.slot()"
-        }
-        if (isConstructor) {
-            builder.append("  KObjHolder result_holder;\n")
-            val clazz = scope.elements[0]
-            assert(clazz.kind == ElementKind.TYPE)
-            builder.append("  KObjHeader* result = AllocInstance((const KTypeInfo*)${clazz.cname}_type(), result_holder.slot());\n")
-            args.add(0, "result")
-        }
-        if (!isVoidReturned && !isConstructor) {
-            builder.append("  auto result = ")
-        }
-        builder.append("  $cname(")
-        builder.append(args.joinToString(", "))
-        builder.append(");\n")
+    private fun StringBuilder.translateBody(signature: List<KotlinType>): String {
+        return functionGenerator(signature, owner, declaration, cnameImpl) {
+            val args = mutableListOf(*parameters.toTypedArray())
+            val result = result(returnType)
+            val isVoidReturned = result.isVoid()
+            val isConstructor = declaration is ConstructorDescriptor
+            val isObjectReturned = !isConstructor && result.isReference()
+            val isStringReturned = result.isStringReference()
+            // TODO: do we really need that in every function?
+            kotlinInitRuntimeIfNeeded()
+            variable(name = "stateGuard", cType = "ScopedRunnableState").defineAndInitVariable()
+            scope("try") {
+                if (isObjectReturned || isStringReturned) {
+                    args += resultHolder!!
+                }
 
-        if (!isVoidReturned) {
-            val result = translateArgument(
-                    "result", cfunction[0], Direction.KOTLIN_TO_C, builder)
-            builder.append("  return $result;\n")
+                if (isConstructor) {
+                    result.defineAndInitVariable {
+                        val clazz = scope.elements[0]
+                        assert(clazz.kind == ElementKind.TYPE)
+                        call("AllocInstance", "(const KTypeInfo*)${clazz.cname}_type()", resultHolder!!.ref)
+                    }
+                    args.add(0, result)
+                }
+
+                if (!isVoidReturned && !isConstructor) {
+                    result.defineAndInitVariable {
+                        call(cname, *args.toTypedArray())
+                    }
+                } else
+                    call(cname, *args.toTypedArray())
+
+                ret(result)
+            }
+            scope("catch(ExceptionObjHolder& e)") {
+                call("TerminateWithUnhandledException", "e.GetExceptionObject()")
+            }
         }
-        builder.append("   } catch (ExceptionObjHolder& e) { TerminateWithUnhandledException(e.GetExceptionObject()); } \n")
-
-        builder.append("}\n")
-
-        return builder.toString()
     }
 
     private fun addUsedType(type: KotlinType, set: MutableSet<ClassDescriptor>) {
@@ -769,15 +735,42 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
 
     private fun ExportedElementScope.hasNonEmptySubScopes(): Boolean = elements.isNotEmpty() || scopes.any { it.hasNonEmptySubScopes() }
 
+    private fun outputScope(indent: Int = 0, prefix: String? = null, suffix: String? = null, body: (Int) -> Unit) {
+        output("//prefix: $prefix, suffix: $suffix indent: $indent")
+
+        prefix?.let { output("$prefix {", indent) }
+        body(indent + 1)
+        suffix?.let { output("}$suffix", indent) }
+    }
+
+    private fun ExportedElementScope.struct(kind: DefinitionKind, indent: Int, body: ExportedElementScope.(Int) -> Unit) {
+        output("//struct: kind:${kind.name} prefix: $prefix, indent: $indent")
+        val prefix = when (kind) {
+            DefinitionKind.C_HEADER_STRUCT -> "struct"
+            DefinitionKind.C_SOURCE_STRUCT -> ".${name} = "
+            else -> null
+        }
+        val suffix = when (kind) {
+            DefinitionKind.C_HEADER_STRUCT -> "${name};"
+            DefinitionKind.C_SOURCE_STRUCT -> ","
+            else -> null
+        }
+        outputScope(indent, prefix, suffix) {
+            this.body(it)
+        }
+    }
+
+    private fun KotlinType.typedef(indent: Int, body: (Int) -> Unit) = translateType(this).typedef(indent, body)
+
+    private fun String.typedef(indent: Int, body: (Int) -> Unit) = outputScope(indent, prefix = "typedef struct", suffix = "$this;", body)
+
     private fun makeScopeDefinitions(scope: ExportedElementScope, kind: DefinitionKind, indent: Int) {
         if (!scope.hasNonEmptySubScopes())
             return
-        if (kind == DefinitionKind.C_HEADER_STRUCT) output("struct {", indent)
-        if (kind == DefinitionKind.C_SOURCE_STRUCT) output(".${scope.name} = {", indent)
-        scope.elements.forEach { makeElementDefinition(it, kind, indent + 1) }
-        scope.scopes.forEach { makeScopeDefinitions(it, kind, indent + 1) }
-        if (kind == DefinitionKind.C_HEADER_STRUCT) output("} ${scope.name};", indent)
-        if (kind == DefinitionKind.C_SOURCE_STRUCT) output("},", indent)
+        scope.struct(kind, indent) { indentLevel ->
+            elements.forEach { makeElementDefinition(it, kind, indentLevel) }
+            scopes.forEach { makeScopeDefinitions(it, kind, indentLevel) }
+        }
     }
 
     private fun defineUsedTypesImpl(scope: ExportedElementScope, set: MutableSet<ClassDescriptor>) {
@@ -793,23 +786,21 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         val set = mutableSetOf<ClassDescriptor>()
         defineUsedTypesImpl(scope, set)
         // Add nullable primitives.
+        val pinned: (Int) -> Unit = {
+            output("${prefix}_KNativePtr pinned;", it)
+        }
         predefinedTypes.forEach {
-            val nullableIt = it.makeNullable()
-            output("typedef struct {", indent)
-            output("${prefix}_KNativePtr pinned;", indent + 1)
-            output("} ${translateType(nullableIt)};", indent)
+            it.makeNullable().typedef(indent, pinned)
         }
         set.forEach {
             val type = it.defaultType
             if (isMappedToReference(type) && !it.isInlined()) {
-                output("typedef struct {", indent)
-                output("${prefix}_KNativePtr pinned;", indent + 1)
-                output("} ${translateType(type)};", indent)
+                type.typedef(indent, pinned)
             }
         }
     }
 
-    val exportedSymbols = mutableListOf<String>()
+    private val exportedSymbols = mutableListOf<String>()
 
     private fun makeGlobalStruct(top: ExportedElementScope) {
         val headerFile = context.config.outputFiles.cAdapterHeader
@@ -868,23 +859,23 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         makeScopeDefinitions(top, DefinitionKind.C_HEADER_DECLARATION, 0)
 
         output("")
-        output("typedef struct {")
-        output("/* Service functions. */", 1)
-        output("void (*DisposeStablePointer)(${prefix}_KNativePtr ptr);", 1)
-        output("void (*DisposeString)(const char* string);", 1)
-        output("${prefix}_KBoolean (*IsInstance)(${prefix}_KNativePtr ref, const ${prefix}_KType* type);", 1)
-        predefinedTypes.forEach {
-            val nullableIt = it.makeNullable()
-            val argument = if (!it.isUnit()) translateType(it) else "void"
-            output("${translateType(nullableIt)} (*${it.createNullableNameForPredefinedType})($argument);", 1)
+        val symbols = "${prefix}_ExportedSymbols"
+        symbols.typedef(0) {
+            output("/* Service functions. */", it)
+            output("void (*DisposeStablePointer)(${prefix}_KNativePtr ptr);", it)
+            output("void (*DisposeString)(const char* string);", it)
+            output("${prefix}_KBoolean (*IsInstance)(${prefix}_KNativePtr ref, const ${prefix}_KType* type);", it)
+            predefinedTypes.forEach { type ->
+                val nullableIt = type.makeNullable()
+                val argument = if (!type.isUnit()) translateType(type) else "void"
+                output("${translateType(nullableIt)} (*${type.createNullableNameForPredefinedType})($argument);", it)
+            }
+
+            output("")
+            output("/* User functions. */", it)
+            makeScopeDefinitions(top, DefinitionKind.C_HEADER_STRUCT, it)
         }
-
-        output("")
-        output("/* User functions. */", 1)
-        makeScopeDefinitions(top, DefinitionKind.C_HEADER_STRUCT, 1)
-        output("} ${prefix}_ExportedSymbols;")
-
-        output("extern ${prefix}_ExportedSymbols* $exportedSymbol(void);")
+        output("extern $symbols* $exportedSymbol(void);")
         output("""
         #ifdef __cplusplus
         }  /* extern "C" */
@@ -988,33 +979,37 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         |  return IsInstance(DerefStablePointer(ref, holder.slot()), (const KTypeInfo*)type);
         |}
         """.trimMargin())
-        predefinedTypes.forEach {
+        predefinedTypes.forEach { it:KotlinType ->
             assert(!it.isNothing())
             val nullableIt = it.makeNullable()
-            val needArgument = !it.isUnit()
-            val (parameter, maybeComma) = if (needArgument)
-                ("${translateType(it)} value" to ",") else ("" to "")
-            val argument = if (needArgument) "value, " else ""
-            output("extern \"C\" KObjHeader* Kotlin_box${it.shortNameForPredefinedType}($parameter$maybeComma KObjHeader**);")
-            output("static ${translateType(nullableIt)} ${it.createNullableNameForPredefinedType}Impl($parameter) {")
-            output("Kotlin_initRuntimeIfNeeded();", 1)
-            output("ScopedRunnableState stateGuard;", 1)
-            output("KObjHolder result_holder;", 1)
-            output("KObjHeader* result = Kotlin_box${it.shortNameForPredefinedType}($argument result_holder.slot());", 1)
-            output("return ${translateType(nullableIt)} { .pinned = CreateStablePointer(result) };", 1)
-            output("}")
+            buildString {
+                appendLine("extern \"C\" KObjHeader* Kotlin_box${it.shortNameForPredefinedType}(${"${translateType(it)} ,".takeIf { _ -> !it.isUnit() } ?: ""} KObjHeader**);")
+                functionGenerator(
+                        it.takeIf { !it.isUnit() }?.run { listOf(nullableIt, this) } ?: listOf(nullableIt),
+                        this@CAdapterGenerator,
+                        null,
+                        "${it.createNullableNameForPredefinedType}Impl") {
+                    kotlinInitRuntimeIfNeeded()
+                    variable(name = "stateGuard", cType = "ScopedRunnableState").defineAndInitVariable()
+                    val result = result(nullableIt).defineAndInitVariable {
+                        call("Kotlin_box${it.shortNameForPredefinedType}", *parameters.toTypedArray(), resultHolder!!)
+                    }
+                    ret(result)
+                }
+            }.also {
+                output(it)
+            }
         }
         makeScopeDefinitions(top, DefinitionKind.C_SOURCE_DECLARATION, 0)
-        output("static ${prefix}_ExportedSymbols __konan_symbols = {")
-        output(".DisposeStablePointer = DisposeStablePointerImpl,", 1)
-        output(".DisposeString = DisposeStringImpl,", 1)
-        output(".IsInstance = IsInstanceImpl,", 1)
-        predefinedTypes.forEach {
-            output(".${it.createNullableNameForPredefinedType} = ${it.createNullableNameForPredefinedType}Impl,", 1)
+        outputScope(prefix = "static ${prefix}_ExportedSymbols __konan_symbols =", suffix = ";") {
+            output(".DisposeStablePointer = DisposeStablePointerImpl,", it)
+            output(".DisposeString = DisposeStringImpl,", it)
+            output(".IsInstance = IsInstanceImpl,", it)
+            predefinedTypes.forEach { type ->
+                output(".${type.createNullableNameForPredefinedType} = ${type.createNullableNameForPredefinedType}Impl,", it)
+            }
+            makeScopeDefinitions(top, DefinitionKind.C_SOURCE_STRUCT, it)
         }
-
-        makeScopeDefinitions(top, DefinitionKind.C_SOURCE_STRUCT, 1)
-        output("};")
         output("RUNTIME_USED ${prefix}_ExportedSymbols* $exportedSymbol(void) { return &__konan_symbols;}")
         outputStreamWriter.close()
 
