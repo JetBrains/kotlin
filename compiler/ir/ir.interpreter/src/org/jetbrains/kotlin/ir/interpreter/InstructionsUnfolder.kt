@@ -68,6 +68,7 @@ internal fun unfoldInstruction(element: IrElement?, environment: IrInterpreterEn
         is IrFunctionReference -> unfoldFunctionReference(element, callStack)
         is IrPropertyReference -> unfoldPropertyReference(element, callStack)
         is IrClassReference -> unfoldClassReference(element, callStack)
+        is IrGetClass -> unfoldGetClass(element, callStack)
         is IrComposite -> unfoldComposite(element, callStack)
 
         else -> TODO("${element.javaClass} not supported")
@@ -401,4 +402,9 @@ private fun unfoldPropertyReference(propertyReference: IrPropertyReference, call
 
 private fun unfoldClassReference(classReference: IrClassReference, callStack: CallStack) {
     callStack.addInstruction(SimpleInstruction(classReference))
+}
+
+private fun unfoldGetClass(element: IrGetClass, callStack: CallStack) {
+    callStack.addInstruction(SimpleInstruction(element))
+    callStack.addInstruction(CompoundInstruction(element.argument))
 }

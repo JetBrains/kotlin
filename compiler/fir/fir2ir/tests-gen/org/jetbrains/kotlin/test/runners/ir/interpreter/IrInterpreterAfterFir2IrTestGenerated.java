@@ -695,6 +695,12 @@ public class IrInterpreterAfterFir2IrTestGenerated extends AbstractIrInterpreter
         }
 
         @Test
+        @TestMetadata("getClass.kt")
+        public void testGetClass() throws Exception {
+            runTest("compiler/testData/ir/interpreter/reference/getClass.kt");
+        }
+
+        @Test
         @TestMetadata("propertyReference.kt")
         public void testPropertyReference() throws Exception {
             runTest("compiler/testData/ir/interpreter/reference/propertyReference.kt");
