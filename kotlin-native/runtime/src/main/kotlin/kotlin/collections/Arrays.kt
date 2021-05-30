@@ -111,6 +111,7 @@ internal actual fun <T> copyToArrayImpl(collection: Collection<*>, array: Array<
  *
  * Allocates an array of runtime type `T` having its size equal to the size of this collection
  * and populates the array with the elements of this collection.
+ * @sample samples.collections.Collections.Collections.collectionToTypedArray
  */
 public actual inline fun <reified T> Collection<T>.toTypedArray(): Array<T> {
     val result = arrayOfNulls<T>(size)
