@@ -8,7 +8,10 @@ package kotlin.collections
 import kotlin.comparisons.naturalOrder
 import kotlin.random.Random
 
-/** Returns the array if it's not `null`, or an empty array otherwise. */
+/**
+ * Returns the array if it's not `null`, or an empty array otherwise.
+ * @sample samples.collections.Arrays.Usage.arrayOrEmpty
+ */
 @kotlin.internal.InlineOnly
 public actual inline fun <T> Array<out T>?.orEmpty(): Array<out T> = this ?: emptyArray<T>()
 

@@ -7,7 +7,10 @@ package kotlin.collections
 
 expect interface RandomAccess
 
-/** Returns the array if it's not `null`, or an empty array otherwise. */
+/**
+ * Returns the array if it's not `null`, or an empty array otherwise.
+ * @sample samples.collections.Arrays.Usage.arrayOrEmpty
+ */
 expect inline fun <reified T> Array<out T>?.orEmpty(): Array<out T>
 
 
