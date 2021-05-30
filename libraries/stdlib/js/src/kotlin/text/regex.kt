@@ -66,11 +66,13 @@ public actual class Regex actual constructor(pattern: String, options: Set<Regex
         return nativePattern.test(input.toString())
     }
 
-    /** Returns the first match of a regular expression in the [input], beginning at the specified [startIndex].
+    /**
+     * Returns the first match of a regular expression in the [input], beginning at the specified [startIndex].
      *
      * @param startIndex An index to start search with, by default 0. Must be not less than zero and not greater than `input.length()`
      * @return An instance of [MatchResult] if match was found or `null` otherwise.
      * @throws IndexOutOfBoundsException if [startIndex] is less than zero or greater than the length of the [input] char sequence.
+     * @sample samples.text.Regexps.find
      */
     @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
     public actual fun find(input: CharSequence, startIndex: Int = 0): MatchResult? {
