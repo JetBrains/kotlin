@@ -12,6 +12,13 @@ import kotlin.random.Random
 @kotlin.internal.InlineOnly
 public actual inline fun <T> Array<out T>?.orEmpty(): Array<out T> = this ?: emptyArray<T>()
 
+/**
+ * Returns a *typed* array containing all of the elements of this collection.
+ *
+ * Allocates an array of runtime type `T` having its size equal to the size of this collection
+ * and populates the array with the elements of this collection.
+ * @sample samples.collections.Collections.Collections.collectionToTypedArray
+ */
 @kotlin.internal.InlineOnly
 public actual inline fun <T> Collection<T>.toTypedArray(): Array<T> = copyToArray(this)
 
