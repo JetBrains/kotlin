@@ -33,6 +33,8 @@ expect class Regex {
     /**
      * Returns a sequence of all occurrences of a regular expression within the [input] string, beginning at the specified [startIndex].
      *
+     * @throws IndexOutOfBoundsException if [startIndex] is less than zero or greater than the length of the [input] char sequence.
+     *
      * @sample samples.text.Regexps.findAll
      */
     fun findAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult>
