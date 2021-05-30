@@ -159,6 +159,8 @@ public actual fun <T : Comparable<T>> MutableList<T>.sort(): Unit {
  * Sorts elements in the list in-place according to the order specified with [comparator].
  *
  * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ *
+ * @sample samples.collections.Collections.Sorting.sortMutableListWith
  */
 public actual fun <T> MutableList<T>.sortWith(comparator: Comparator<in T>): Unit {
     collectionsSort(this, comparator)
