@@ -1,4 +1,4 @@
 val test: Int
-  field = Companion.<get-MIN_VALUE>()
+  field = Companion.#MIN_VALUE
   get
 

@@ -22,12 +22,10 @@ FILE fqName:<root> fileName:/AbstractMutableMap.kt
     PROPERTY name:entries visibility:public modality:FINAL [val]
       overridden:
         public abstract entries: @[FlexibleNullability] kotlin.collections.Set<@[FlexibleNullability] kotlin.collections.Map.Entry<@[FlexibleNullability] K of kotlin.collections.AbstractMutableMap?, @[FlexibleNullability] V of kotlin.collections.AbstractMutableMap?>?>? [fake_override,val]
-        public abstract entries: @[FlexibleNullability] kotlin.collections.Set<@[FlexibleNullability] kotlin.collections.Map.Entry<@[FlexibleNullability] K of java.util.AbstractMap?, @[FlexibleNullability] V of java.util.AbstractMap?>?>? [val]
       FUN name:<get-entries> visibility:public modality:FINAL <> ($this:<root>.MyMap<K of <root>.MyMap, V of <root>.MyMap>) returnType:kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K of <root>.MyMap, V of <root>.MyMap>>
         correspondingProperty: PROPERTY name:entries visibility:public modality:FINAL [val]
         overridden:
           public abstract fun <get-entries> (): @[FlexibleNullability] kotlin.collections.Set<@[FlexibleNullability] kotlin.collections.Map.Entry<@[FlexibleNullability] K of kotlin.collections.AbstractMutableMap?, @[FlexibleNullability] V of kotlin.collections.AbstractMutableMap?>?>? [fake_override] declared in kotlin.collections.AbstractMutableMap
-          public abstract fun <get-entries> (): @[FlexibleNullability] kotlin.collections.Set<@[FlexibleNullability] kotlin.collections.Map.Entry<@[FlexibleNullability] K of java.util.AbstractMap?, @[FlexibleNullability] V of java.util.AbstractMap?>?>? declared in java.util.AbstractMap
         $this: VALUE_PARAMETER name:<this> type:<root>.MyMap<K of <root>.MyMap, V of <root>.MyMap>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-entries> (): kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K of <root>.MyMap, V of <root>.MyMap>> declared in <root>.MyMap'
