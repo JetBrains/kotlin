@@ -7,7 +7,10 @@ package kotlin.collections
 
 import kotlin.internal.PureReifiable
 
-/** Returns the array if it's not `null`, or an empty array otherwise. */
+/**
+ * Returns the array if it's not `null`, or an empty array otherwise.
+ * @sample samples.collections.Arrays.Usage.arrayOrEmpty
+ */
 public actual inline fun <reified T> Array<out T>?.orEmpty(): Array<out T> = this ?: emptyArray<T>()
 
 internal fun checkCopyOfRangeArguments(fromIndex: Int, toIndex: Int, size: Int) {
