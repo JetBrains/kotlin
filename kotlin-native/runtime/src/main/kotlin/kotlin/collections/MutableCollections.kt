@@ -9,6 +9,8 @@ package kotlin.collections
  * Sorts elements in the list in-place according to their natural sort order.
  *
  * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ *
+ * @sample samples.collections.Collections.Sorting.sortMutableList
  */
 public actual fun <T : Comparable<T>> MutableList<T>.sort(): Unit = sortWith(naturalOrder())
 
