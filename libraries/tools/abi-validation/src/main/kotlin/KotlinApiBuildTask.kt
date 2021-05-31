@@ -36,8 +36,8 @@ open class KotlinApiBuildTask @Inject constructor(
     @get:Input
     val ignoredClasses : Set<String> get() = extension.ignoredClasses
 
-    @get:Input
-    val projectName = project.objects.property(String::class.java)
+    @get:Internal
+    internal val projectName = project.name
 
     @TaskAction
     fun generate() {
@@ -53,7 +53,7 @@ open class KotlinApiBuildTask @Inject constructor(
             .filterOutNonPublic(ignoredPackages, ignoredClasses)
             .filterOutAnnotated(nonPublicMarkers.map { it.replace(".", "/") }.toSet())
 
-        outputApiDir.resolve("${projectName.get()}.api").bufferedWriter().use { writer ->
+        outputApiDir.resolve("$projectName.api").bufferedWriter().use { writer ->
             signatures
                 .sortedBy { it.name }
                 .forEach { api ->
