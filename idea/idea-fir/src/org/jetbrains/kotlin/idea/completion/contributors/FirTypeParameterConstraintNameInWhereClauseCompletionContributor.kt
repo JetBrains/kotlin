@@ -33,7 +33,7 @@ internal class FirTypeParameterConstraintNameInWhereClauseCompletionContributor(
                 .withInsertHandler(TypeParameterInWhenClauseInsertionHandler)
                 .withPsiElement(typeParameter.psi)
                 .withIcon(icon)
-                .let(result::addElement)
+                .let(sink::addElement)
         }
     }
 }

@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 fun foo(param: String) {
     val s = "$param.eq<caret>bla-bla-bla"
 }

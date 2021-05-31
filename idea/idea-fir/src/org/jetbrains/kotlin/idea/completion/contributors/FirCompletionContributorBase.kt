@@ -10,6 +10,7 @@ import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.PrefixMatcher
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.completion.LookupElementSink
 import org.jetbrains.kotlin.idea.completion.context.FirBasicCompletionContext
 import org.jetbrains.kotlin.idea.completion.context.FirRawPositionCompletionContext
 import org.jetbrains.kotlin.idea.completion.lookups.CallableImportStrategy
@@ -31,7 +32,7 @@ import org.jetbrains.kotlin.psi.KtFile
 internal abstract class FirCompletionContributorBase<C : FirRawPositionCompletionContext>(protected val basicContext: FirBasicCompletionContext) {
     protected val prefixMatcher: PrefixMatcher get() = basicContext.prefixMatcher
     protected val parameters: CompletionParameters get() = basicContext.parameters
-    protected val result: CompletionResultSet get() = basicContext.result
+    protected val sink: LookupElementSink get() = basicContext.sink
     protected val originalKtFile: KtFile get() = basicContext.originalKtFile
     protected val fakeKtFile: KtFile get() = basicContext.fakeKtFile
     protected val project: Project get() = basicContext.project
@@ -50,7 +51,7 @@ internal abstract class FirCompletionContributorBase<C : FirRawPositionCompletio
         with(lookupElementFactory) {
             createLookupElement(symbol)
                 ?.let { applyWeighers(it, symbol, expectedType) }
-                ?.let(result::addElement)
+                ?.let(sink::addElement)
         }
     }
 
@@ -62,7 +63,7 @@ internal abstract class FirCompletionContributorBase<C : FirRawPositionCompletio
                 is KtTypeParameterSymbol -> createLookupElement(symbol)
             }
         } ?: return
-        result.addElement(lookup)
+        sink.addElement(lookup)
     }
 
     protected fun KtAnalysisSession.addCallableSymbolToCompletion(
@@ -74,7 +75,7 @@ internal abstract class FirCompletionContributorBase<C : FirRawPositionCompletio
         val lookup = with(lookupElementFactory) {
             createCallableLookupElement(symbol, importingStrategy, insertionStrategy)
         } ?: return
-        result.addElement(lookup)
+        sink.addElement(lookup)
     }
 
     protected fun KtExpression.reference() = when (this) {

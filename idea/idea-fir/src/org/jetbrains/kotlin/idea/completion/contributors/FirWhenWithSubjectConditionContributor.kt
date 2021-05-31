@@ -68,7 +68,7 @@ internal class FirWhenWithSubjectConditionContributor(
     private fun KtAnalysisSession.addNullIfWhenExpressionCanReturnNull(type: KtType?) {
         if (type?.canBeNull == true) {
             val lookupElement = createKeywordElement(keyword = KtTokens.NULL_KEYWORD.value)
-            result.addElement(lookupElement)
+            sink.addElement(lookupElement)
         }
     }
 
@@ -155,7 +155,7 @@ internal class FirWhenWithSubjectConditionContributor(
         val whenEntry = whenCondition.parent as? KtWhenEntry ?: return
         if (whenEntry.conditions.size > 1) return
         val lookupElement = createKeywordElement(keyword = KtTokens.ELSE_KEYWORD.value, tail = " -> ")
-        result.addElement(lookupElement)
+        sink.addElement(lookupElement)
     }
 
 
@@ -191,7 +191,7 @@ internal class FirWhenWithSubjectConditionContributor(
             .withIcon(getIconFor(symbol))
             .withPsiElement(symbol.psi)
             .withInsertHandler(WhenConditionInsertionHandler)
-            .let(result::addElement)
+            .let(sink::addElement)
     }
 }
 

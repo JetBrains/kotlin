@@ -18,14 +18,12 @@ import org.jetbrains.kotlin.idea.completion.lookups.*
 import org.jetbrains.kotlin.idea.completion.lookups.CallableImportStrategy
 import org.jetbrains.kotlin.idea.completion.lookups.CallableInsertionStrategy
 import org.jetbrains.kotlin.idea.completion.lookups.CompletionShortNamesRenderer
-import org.jetbrains.kotlin.idea.completion.lookups.KotlinLookupObject
 import org.jetbrains.kotlin.idea.completion.lookups.QuotedNamesAwareInsertionHandler
 import org.jetbrains.kotlin.idea.completion.lookups.addCallableImportIfRequired
 import org.jetbrains.kotlin.idea.completion.lookups.shortenReferencesForFirCompletion
 import org.jetbrains.kotlin.idea.core.asFqNameWithRootPrefixIfNeeded
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
-import org.jetbrains.kotlin.idea.frontend.api.types.KtFunctionalType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile

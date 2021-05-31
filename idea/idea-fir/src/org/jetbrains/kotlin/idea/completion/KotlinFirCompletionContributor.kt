@@ -37,14 +37,29 @@ class KotlinFirCompletionContributor : CompletionContributor() {
         val psiFile = context.file
         if (psiFile !is KtFile) return
 
-        context.dummyIdentifier = service<CompletionDummyIdentifierProviderService>().provideDummyIdentifier(context)
+        val identifierProviderService = service<CompletionDummyIdentifierProviderService>()
+
+        correctPositionAndDummyIdentifier(identifierProviderService, context)
+    }
+
+    private fun correctPositionAndDummyIdentifier(
+        identifierProviderService: CompletionDummyIdentifierProviderService,
+        context: CompletionInitializationContext
+    ) {
+        val dummyIdentifierCorrected = identifierProviderService.correctPositionForStringTemplateEntry(context)
+        if (dummyIdentifierCorrected) {
+            return
+        }
+
+        context.dummyIdentifier = identifierProviderService.provideDummyIdentifier(context)
     }
 }
 
 private object KotlinFirCompletionProvider : CompletionProvider<CompletionParameters>() {
     override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
-        if (shouldSuppressCompletion(parameters, result.prefixMatcher)) return
+        @Suppress("NAME_SHADOWING") val parameters = KotlinFirCompletionParametersProvider.provide(parameters)
 
+        if (shouldSuppressCompletion(parameters.ijParameters, result.prefixMatcher)) return
         val resultSet = createResultSet(parameters, result)
 
         val basicContext = FirBasicCompletionContext.createFromParameters(parameters, resultSet) ?: return
@@ -68,7 +83,8 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
         val annotationsContributor = FirAnnotationCompletionContributor(basicContext)
         val packageCompletionContributor = FirPackageCompletionContributor(basicContext)
         val importDirectivePackageMembersCompletionContributor = FirImportDirectivePackageMembersCompletionContributor(basicContext)
-        val typeParameterConstraintNameInWhereClauseContributor = FirTypeParameterConstraintNameInWhereClauseCompletionContributor(basicContext)
+        val typeParameterConstraintNameInWhereClauseContributor =
+            FirTypeParameterConstraintNameInWhereClauseCompletionContributor(basicContext)
         val classifierNameContributor = FirSameAsFileClassifierNameCompletionContributor(basicContext)
         val whenWithSubjecConditionContributor = FirWhenWithSubjectConditionContributor(basicContext)
 
@@ -134,8 +150,17 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
         fakeFile.originalKtFile = originalFile
     }
 
-    private fun createResultSet(parameters: CompletionParameters, result: CompletionResultSet): CompletionResultSet =
-        result.withRelevanceSorter(createSorter(parameters, result))
+    private fun createResultSet(parameters: KotlinFirCompletionParameters, result: CompletionResultSet): CompletionResultSet {
+        @Suppress("NAME_SHADOWING") var result = result.withRelevanceSorter(createSorter(parameters.ijParameters, result))
+        if (parameters is KotlinFirCompletionParameters.Corrected) {
+            val replaced = parameters.ijParameters
+
+            @Suppress("UnstableApiUsage", "DEPRECATION")
+            val originalPrefix = CompletionData.findPrefixStatic(replaced.position, replaced.offset)
+            result = result.withPrefixMatcher(originalPrefix)
+        }
+        return result
+    }
 
     private fun createSorter(parameters: CompletionParameters, result: CompletionResultSet): CompletionSorter =
         CompletionSorter.defaultSorter(parameters, result.prefixMatcher)

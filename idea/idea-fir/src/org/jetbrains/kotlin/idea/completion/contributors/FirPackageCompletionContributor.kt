@@ -29,7 +29,7 @@ internal class FirPackageCompletionContributor(
                 packageName.fqName.isExcludedFromAutoImport(project, originalKtFile, originalKtFile.languageVersionSettings)
             }
             .forEach { packageSymbol ->
-                result.addElement(lookupElementFactory.createPackagePartLookupElement(packageSymbol.fqName))
+                sink.addElement(lookupElementFactory.createPackagePartLookupElement(packageSymbol.fqName))
             }
     }
 }

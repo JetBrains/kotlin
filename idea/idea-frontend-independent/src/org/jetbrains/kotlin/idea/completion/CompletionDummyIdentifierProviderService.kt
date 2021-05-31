@@ -19,6 +19,27 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import kotlin.math.max
 
 abstract class CompletionDummyIdentifierProviderService {
+
+    fun correctPositionForStringTemplateEntry(context: CompletionInitializationContext): Boolean {
+        val offset = context.startOffset
+        val psiFile = context.file
+        val tokenBefore = psiFile.findElementAt(max(0, offset - 1))
+
+        if (offset > 0 && tokenBefore!!.node.elementType == KtTokens.REGULAR_STRING_PART && tokenBefore.text.startsWith(".")) {
+            val prev = tokenBefore.parent.prevSibling
+            if (prev != null && prev is KtSimpleNameStringTemplateEntry) {
+                val expression = prev.expression
+                if (expression != null) {
+                    val prefix = tokenBefore.text.substring(0, offset - tokenBefore.startOffset)
+                    context.dummyIdentifier = "{" + expression.text + prefix + CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + "}"
+                    context.offsetMap.addOffset(CompletionInitializationContext.START_OFFSET, expression.startOffset)
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
     fun provideDummyIdentifier(context: CompletionInitializationContext): String {
         val psiFile = context.file
         if (psiFile !is KtFile) {

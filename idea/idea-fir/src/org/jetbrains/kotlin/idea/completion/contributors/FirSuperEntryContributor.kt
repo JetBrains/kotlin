@@ -25,7 +25,7 @@ internal class FirSuperEntryContributor(
             LookupElementBuilder.create(SuperLookupObject(superType.name, superType.classIdIfNonLocal), superType.name.asString())
                 .withTailText(tailText)
                 .withInsertHandler(SuperCallInsertionHandler)
-                .let { result.addElement(it) }
+                .let { sink.addElement(it) }
         }
     }
 }

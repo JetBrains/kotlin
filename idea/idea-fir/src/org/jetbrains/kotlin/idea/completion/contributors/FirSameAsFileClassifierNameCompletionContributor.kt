@@ -28,7 +28,7 @@ internal class FirSameAsFileClassifierNameCompletionContributor(
         val name = originalKtFile.virtualFile.nameWithoutExtension
         if (!isValidUpperCapitalizedClassName(name)) return
         if (originalKtFile.declarations.any { it is KtClassOrObject && it.name == name }) return
-        result.addElement(LookupElementBuilder.create(name))
+        sink.addElement(LookupElementBuilder.create(name))
     }
 
     private fun isValidUpperCapitalizedClassName(name: String) =
