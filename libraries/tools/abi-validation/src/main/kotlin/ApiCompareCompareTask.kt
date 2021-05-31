@@ -8,10 +8,12 @@ package kotlinx.validation
 import difflib.*
 import org.gradle.api.*
 import org.gradle.api.file.*
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.*
 import java.io.*
+import javax.inject.Inject
 
-open class ApiCompareCompareTask : DefaultTask() {
+open class ApiCompareCompareTask @Inject constructor(private val objects: ObjectFactory): DefaultTask() {
 
     /*
      * Nullability and optionality is a workaround for
@@ -37,6 +39,11 @@ open class ApiCompareCompareTask : DefaultTask() {
     @Optional
     val dummyOutputFile: File? = null
 
+    @get:Input
+    internal val projectName = objects.property(String::class.java)
+
+    private val rootDir = project.rootProject.rootDir
+
     @TaskAction
     fun verify() {
         val projectApiDir = projectApiDir
@@ -45,13 +52,13 @@ open class ApiCompareCompareTask : DefaultTask() {
                     "Please ensure that ':apiDump' was executed in order to get API dump to compare the build against")
         }
 
-        val subject = project.name
+        val subject = projectName.get()
         val apiBuildDirFiles = mutableSetOf<RelativePath>()
         val expectedApiFiles = mutableSetOf<RelativePath>()
-        project.fileTree(apiBuildDir).visit { file ->
+        objects.fileTree().from(apiBuildDir).visit { file ->
             apiBuildDirFiles.add(file.relativePath)
         }
-        project.fileTree(projectApiDir).visit { file ->
+        objects.fileTree().from(projectApiDir).visit { file ->
             expectedApiFiles.add(file.relativePath)
         }
 
@@ -77,7 +84,7 @@ open class ApiCompareCompareTask : DefaultTask() {
     }
 
     private fun File.relativePath(): String {
-        return relativeTo(project.rootProject.rootDir).toString() + "/"
+        return relativeTo(rootDir).toString() + "/"
     }
 
     private fun compareFiles(checkFile: File, builtFile: File): String? {
