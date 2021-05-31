@@ -58,6 +58,8 @@ open class KotlinIosArm64Variant @Inject constructor(containingModule: KotlinGra
     KotlinNativeVariantInternal(containingModule, fragmentName, KonanTarget.IOS_ARM64)
 
 interface KotlinNativeCompilationData<T : KotlinCommonOptions> : KotlinCompilationData<T> {
+    val artifactsTaskName: String
+
     val konanTarget: KonanTarget
     val enableEndorsedLibs: Boolean
 }
@@ -65,6 +67,9 @@ interface KotlinNativeCompilationData<T : KotlinCommonOptions> : KotlinCompilati
 internal class KotlinNativeVariantCompilationData(
     val variant: KotlinNativeVariantInternal
 ) : KotlinVariantCompilationDataInternal<KotlinCommonOptions>, KotlinNativeCompilationData<KotlinCommonOptions> {
+    override val artifactsTaskName: String
+        get() = owner.disambiguateName("klib")
+
     override val konanTarget: KonanTarget
         get() = variant.konanTarget
 
