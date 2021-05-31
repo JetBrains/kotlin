@@ -55,9 +55,6 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
     abstract val kaptJars: ConfigurableFileCollection
 
     @get:Input
-    var isVerbose: Boolean = false
-
-    @get:Input
     var classLoadersCacheSize: Int = 0
 
     @get:Input
@@ -119,7 +116,7 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
         }
 
         val kaptFlagsForWorker = mutableSetOf<String>().apply {
-            if (isVerbose) add("VERBOSE")
+            if (verbose.get()) add("VERBOSE")
             if (mapDiagnosticLocations) add("MAP_DIAGNOSTIC_LOCATIONS")
             if (includeCompileClasspath) add("INCLUDE_COMPILE_CLASSPATH")
             if (incrementalChanges is KaptIncrementalChanges.Known) add("INCREMENTAL_APT")

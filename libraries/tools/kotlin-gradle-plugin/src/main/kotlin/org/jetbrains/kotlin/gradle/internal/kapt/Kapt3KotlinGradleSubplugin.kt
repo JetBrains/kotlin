@@ -595,7 +595,6 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         if (taskClass == KaptWithoutKotlincTask::class.java) {
             kaptTaskProvider.configure {
                 it as KaptWithoutKotlincTask
-                it.isVerbose = project.isKaptVerbose()
                 it.mapDiagnosticLocations = kaptExtension.mapDiagnosticLocations
                 it.annotationProcessorFqNames = kaptExtension.processors.split(',').filter { it.isNotEmpty() }
                 it.javacOptions = dslJavacOptions.get()

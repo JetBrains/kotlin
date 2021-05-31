@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.gradle.internal
 
+import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
@@ -22,6 +23,8 @@ import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.cacheOnlyIfEnabledForKotlin
 import org.jetbrains.kotlin.gradle.tasks.clearLocalState
 import org.jetbrains.kotlin.gradle.utils.getValue
+import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
+import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.gradle.utils.propertyWithNewInstance
 import java.io.File
 import java.util.concurrent.Callable
@@ -56,6 +59,7 @@ abstract class KaptTask @Inject constructor(
                     .matching { it.include("**/*.java") }
                     .filter { f -> task.isRootAllowed(f) }
             ).disallowChanges()
+            task.verbose.set(queryKaptVerboseProperty(task.project))
         }
     }
 
@@ -165,6 +169,9 @@ abstract class KaptTask @Inject constructor(
     @get:Internal
     override val metrics: BuildMetricsReporter =
         BuildMetricsReporterImpl()
+
+    @get:Input
+    abstract val verbose: Property<Boolean>
 
     private fun isRootAllowed(file: File): Boolean =
         file.exists() &&
@@ -331,5 +338,27 @@ abstract class KaptTask @Inject constructor(
             logger.debug("Could not check annotation processors existence in $file: $e")
         }
         return false
+    }
+
+    companion object {
+        const val KAPT_VERBOSE_OPTION_NAME = "kapt.verbose"
+
+        internal fun queryKaptVerboseProperty(
+            project: Project
+        ): Provider<Boolean> {
+            return if (isConfigurationCacheAvailable(project.gradle)) {
+                project
+                    .providers
+                    .gradleProperty(KAPT_VERBOSE_OPTION_NAME)
+                    .forUseAtConfigurationTime()
+                    .map { it.toString().toBoolean() }
+                    .orElse(false)
+            } else {
+                project.objects.property(
+                    project.hasProperty(KAPT_VERBOSE_OPTION_NAME) &&
+                            project.property(KAPT_VERBOSE_OPTION_NAME).toString().toBoolean()
+                )
+            }
+        }
     }
 }
