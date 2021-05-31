@@ -13,6 +13,7 @@ import com.intellij.debugger.engine.evaluation.TextWithImportsImpl
 import com.intellij.debugger.engine.evaluation.expression.EvaluatorBuilderImpl
 import com.intellij.debugger.impl.DebuggerContextImpl
 import com.intellij.debugger.impl.DebuggerContextImpl.createDebuggerContext
+import com.intellij.debugger.impl.OutputChecker
 import com.intellij.debugger.ui.impl.watch.NodeDescriptorImpl
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.ui.treeStructure.Tree
@@ -229,10 +230,28 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDescriptorTestCaseWi
         }
     }
 
+    private fun targetBackend(): TargetBackend =
+        when (fragmentCompilerBackend()) {
+            CodeFragmentCompiler.Companion.FragmentCompilerBackend.JVM ->
+                if (useIrBackend()) TargetBackend.JVM_IR_WITH_OLD_EVALUATOR else TargetBackend.JVM_WITH_OLD_EVALUATOR
+            CodeFragmentCompiler.Companion.FragmentCompilerBackend.JVM_IR ->
+                if (useIrBackend()) TargetBackend.JVM_IR_WITH_IR_EVALUATOR else TargetBackend.JVM_WITH_IR_EVALUATOR
+        }
+
+    override fun initOutputChecker(): OutputChecker {
+        return KotlinOutputChecker(
+            getTestDirectoryPath(),
+            testAppPath,
+            appOutputPath,
+            targetBackend(),
+            getExpectedOutputFile()
+        )
+    }
+
     override fun throwExceptionsIfAny() {
         if (exceptions.isNotEmpty()) {
             val isIgnored = InTextDirectivesUtils.isIgnoredTarget(
-                if (useIrBackend()) TargetBackend.JVM_IR_WITH_OLD_EVALUATOR else TargetBackend.JVM_WITH_OLD_EVALUATOR,
+                targetBackend(),
                 getExpectedOutputFile()
             )
 

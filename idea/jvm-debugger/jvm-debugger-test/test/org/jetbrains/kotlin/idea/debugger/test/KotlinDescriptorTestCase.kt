@@ -150,7 +150,13 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
     abstract fun doMultiFileTest(files: TestFiles, preferences: DebuggerPreferences)
 
     override fun initOutputChecker(): OutputChecker {
-        return KotlinOutputChecker(getTestDirectoryPath(), testAppPath, appOutputPath, useIrBackend(), getExpectedOutputFile())
+        return KotlinOutputChecker(
+            getTestDirectoryPath(),
+            testAppPath,
+            appOutputPath,
+            if (useIrBackend()) TargetBackend.JVM_IR else TargetBackend.JVM,
+            getExpectedOutputFile()
+        )
     }
 
     override fun setUpModule() {

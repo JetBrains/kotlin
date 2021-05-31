@@ -24,7 +24,7 @@ internal class KotlinOutputChecker(
     private val testDir: String,
     appPath: String,
     outputPath: String,
-    private val useIrBackend: Boolean,
+    private val targetBackend: TargetBackend,
     private val expectedOutputFile: File,
 ) : OutputChecker(appPath, outputPath) {
     companion object {
@@ -63,7 +63,7 @@ internal class KotlinOutputChecker(
 
         val outDir = File(testDir)
         var outFile = expectedOutputFile
-        val isIgnored = InTextDirectivesUtils.isIgnoredTarget(if (useIrBackend) TargetBackend.JVM_IR_WITH_OLD_EVALUATOR else TargetBackend.JVM_WITH_OLD_EVALUATOR, outFile)
+        val isIgnored = InTextDirectivesUtils.isIgnoredTarget(targetBackend, outFile)
 
         if (!outFile.exists()) {
             if (SystemInfo.isWindows) {

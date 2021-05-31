@@ -23,7 +23,9 @@ enum class TargetBackend(
     ANDROID_IR(true, JVM_IR),
     NATIVE(true),
     JVM_WITH_OLD_EVALUATOR(false),
-    JVM_IR_WITH_OLD_EVALUATOR(true);
+    JVM_IR_WITH_OLD_EVALUATOR(true),
+    JVM_WITH_IR_EVALUATOR(false),
+    JVM_IR_WITH_IR_EVALUATOR(true);
 
     val compatibleWith get() = compatibleWithTargetBackend ?: ANY
 }

@@ -248,6 +248,16 @@ fun main(args: Array<String>) {
                 model("evaluation/multipleBreakpoints", testMethod = "doMultipleBreakpointsTest", targetBackend = TargetBackend.JVM_IR_WITH_OLD_EVALUATOR)
             }
 
+            testClass<AbstractKotlinEvaluateExpressionWithIRFragmentCompilerTest> {
+                model("evaluation/singleBreakpoint", testMethod = "doSingleBreakpointTest", targetBackend = TargetBackend.JVM_WITH_IR_EVALUATOR)
+                model("evaluation/multipleBreakpoints", testMethod = "doMultipleBreakpointsTest", targetBackend = TargetBackend.JVM_WITH_IR_EVALUATOR)
+            }
+
+            testClass<AbstractIrKotlinEvaluateExpressionWithIRFragmentCompilerTest> {
+                model("evaluation/singleBreakpoint", testMethod = "doSingleBreakpointTest", targetBackend = TargetBackend.JVM_IR_WITH_IR_EVALUATOR)
+                model("evaluation/multipleBreakpoints", testMethod = "doMultipleBreakpointsTest", targetBackend = TargetBackend.JVM_IR_WITH_IR_EVALUATOR)
+            }
+
             testClass<AbstractSelectExpressionForDebuggerTest> {
                 model("selectExpression", recursive = false)
                 model("selectExpression/disallowMethodCalls", testMethod = "doTestWoMethodCalls")
