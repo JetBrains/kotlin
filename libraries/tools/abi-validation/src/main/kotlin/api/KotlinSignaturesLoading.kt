@@ -135,11 +135,11 @@ public fun List<ClassBinarySignature>.dump() = dump(to = System.out)
 public fun <T : Appendable> List<ClassBinarySignature>.dump(to: T): T {
     forEach { classApi ->
         with(to) {
-            append(classApi.signature).appendln(" {")
+            append(classApi.signature).appendLine(" {")
             classApi.memberSignatures
                     .sortedWith(MEMBER_SORT_ORDER)
-                    .forEach { append("\t").appendln(it.signature) }
-            appendln("}\n")
+                    .forEach { append("\t").appendLine(it.signature) }
+            appendLine("}\n")
         }
     }
     return to
