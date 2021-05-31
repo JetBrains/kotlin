@@ -9,9 +9,10 @@ import com.intellij.codeInsight.completion.CodeCompletionHandlerBase
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.psi.PsiDocumentManager
 
 internal fun InsertionContext.addSymbolAndInvokeCompletion(symbol: String) {
-    addSymbolToCompletion(this, symbol)
+    this.addSymbolToCompletion(symbol)
     invokeCompletion(this)
 }
 
@@ -24,8 +25,24 @@ private fun invokeCompletion(context: InsertionContext) {
     }
 }
 
-private fun addSymbolToCompletion(context: InsertionContext, symbol: String) {
-    context.document.insertString(context.tailOffset, symbol)
-    context.commitDocument()
-    context.editor.caretModel.moveToOffset(context.tailOffset)
+internal fun InsertionContext.addSymbolToCompletion(symbol: String) {
+    PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(document)
+    document.insertString(tailOffset, symbol)
+    commitDocument()
+    editor.caretModel.moveToOffset(tailOffset)
+}
+
+internal fun InsertionContext.addTypeArguments(typeArgumentsCount: Int) {
+    when {
+        typeArgumentsCount == 0 -> {
+            return
+        }
+        typeArgumentsCount < 0 -> {
+            error("Count of type arguments should be non-negative, but was $typeArgumentsCount")
+        }
+        else -> {
+            commitDocument()
+            addSymbolToCompletion(createStarTypeArgumentsList(typeArgumentsCount))
+        }
+    }
 }

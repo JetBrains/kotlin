@@ -24,10 +24,15 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.idea.completion.contributors.helpers.FirClassifierProvider.getAvailableClassifiersCurrentScope
+import org.jetbrains.kotlin.idea.completion.contributors.helpers.addSymbolToCompletion
+import org.jetbrains.kotlin.idea.completion.contributors.helpers.addTypeArguments
+import org.jetbrains.kotlin.idea.completion.contributors.helpers.createStarTypeArgumentsList
 import org.jetbrains.kotlin.idea.completion.lookups.KotlinLookupObject
 import org.jetbrains.kotlin.idea.completion.lookups.shortenReferencesForFirCompletion
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithTypeParameters
 import org.jetbrains.kotlin.idea.frontend.api.types.*
+import org.jetbrains.kotlin.miniStdLib.letIf
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -44,15 +49,22 @@ internal class FirWhenWithSubjectConditionContributor(
         val subjectType = subject.getKtType()
         val classSymbol = getClassSymbol(subjectType)
         val visibilityChecker = CompletionVisibilityChecker.create(basicContext, positionContext)
+        val isSingleCondition = whenCondition.isSingleConditionInEntry()
         when {
             classSymbol?.classKind == KtClassKind.ENUM_CLASS -> {
-                completeEnumEntries(classSymbol, allConditionsExceptCurrent, visibilityChecker)
+                completeEnumEntries(classSymbol, allConditionsExceptCurrent, visibilityChecker, isSingleCondition)
             }
             classSymbol?.modality == Modality.SEALED -> {
-                completeSubClassesOfSealedClass(classSymbol, allConditionsExceptCurrent, whenCondition, visibilityChecker)
+                completeSubClassesOfSealedClass(
+                    classSymbol,
+                    allConditionsExceptCurrent,
+                    whenCondition,
+                    visibilityChecker,
+                    isSingleCondition
+                )
             }
             else -> {
-                completeAllTypes(whenCondition, visibilityChecker)
+                completeAllTypes(whenCondition, visibilityChecker, isSingleCondition)
             }
         }
         addNullIfWhenExpressionCanReturnNull(subjectType)
@@ -75,6 +87,7 @@ internal class FirWhenWithSubjectConditionContributor(
     private fun KtAnalysisSession.completeAllTypes(
         whenCondition: KtWhenCondition,
         visibilityChecker: CompletionVisibilityChecker,
+        isSingleCondition: Boolean,
     ) {
         getAvailableClassifiersCurrentScope(originalKtFile, whenCondition, scopeNameFilter, indexHelper, visibilityChecker)
             .forEach { classifier ->
@@ -84,7 +97,8 @@ internal class FirWhenWithSubjectConditionContributor(
                     classifier.name.asString(),
                     classifier,
                     (classifier as? KtNamedClassOrObjectSymbol)?.classIdIfNonLocal?.asSingleFqName(),
-                    isPrefixNeeded(classifier)
+                    isPrefixNeeded(classifier),
+                    isSingleCondition,
                 )
             }
     }
@@ -104,6 +118,7 @@ internal class FirWhenWithSubjectConditionContributor(
         conditions: List<KtWhenCondition>,
         whenCondition: KtWhenCondition,
         visibilityChecker: CompletionVisibilityChecker,
+        isSingleCondition: Boolean,
     ) {
         require(classSymbol.modality == Modality.SEALED)
         val handledCasesClassIds = getHandledClassIds(conditions)
@@ -115,11 +130,17 @@ internal class FirWhenWithSubjectConditionContributor(
             .filter { with(visibilityChecker) { isVisible(it as KtClassifierSymbol) } }
             .forEach { inheritor ->
                 val classId = inheritor.classIdIfNonLocal ?: return@forEach
-                addLookupElement(classId.relativeClassName.asString(), inheritor, classId.asSingleFqName(), isPrefixNeeded(inheritor))
+                addLookupElement(
+                    classId.relativeClassName.asString(),
+                    inheritor,
+                    classId.asSingleFqName(),
+                    isPrefixNeeded(inheritor),
+                    isSingleCondition
+                )
             }
 
         if (allInheritors.any { it.modality == Modality.ABSTRACT }) {
-            completeAllTypes(whenCondition, visibilityChecker)
+            completeAllTypes(whenCondition, visibilityChecker, isSingleCondition)
         }
     }
 
@@ -162,7 +183,8 @@ internal class FirWhenWithSubjectConditionContributor(
     private fun KtAnalysisSession.completeEnumEntries(
         classSymbol: KtNamedClassOrObjectSymbol,
         conditions: List<KtWhenCondition>,
-        visibilityChecker: CompletionVisibilityChecker
+        visibilityChecker: CompletionVisibilityChecker,
+        isSingleCondition: Boolean,
     ) {
         require(classSymbol.classKind == KtClassKind.ENUM_CLASS)
         val handledCasesNames = conditions.mapNotNullTo(hashSetOf()) { condition ->
@@ -179,18 +201,33 @@ internal class FirWhenWithSubjectConditionContributor(
                     "${classSymbol.name.asString()}.${entry.name.asString()}",
                     entry,
                     entry.callableIdIfNonLocal?.asSingleFqName(),
-                    isPrefixNeeded = false
+                    isPrefixNeeded = false,
+                    isSingleCondition,
                 )
             }
     }
 
-    private fun KtAnalysisSession.addLookupElement(lookupString: String, symbol: KtNamedSymbol, fqName: FqName?, isPrefixNeeded: Boolean) {
-        val lookupObject = WhenConditionLookupObject(symbol.name, fqName, isPrefixNeeded)
+    private fun KtWhenCondition.isSingleConditionInEntry(): Boolean {
+        val entry = parent as KtWhenEntry
+        return entry.conditions.size == 1
+    }
+
+    private fun KtAnalysisSession.addLookupElement(
+        lookupString: String,
+        symbol: KtNamedSymbol,
+        fqName: FqName?,
+        isPrefixNeeded: Boolean,
+        isSingleCondition: Boolean
+    ) {
+        val typeArgumentsCount = (symbol as? KtSymbolWithTypeParameters)?.typeParameters?.size ?: 0
+        val lookupObject = WhenConditionLookupObject(symbol.name, fqName, isPrefixNeeded, isSingleCondition, typeArgumentsCount)
 
         LookupElementBuilder.create(lookupObject, getIsPrefix(isPrefixNeeded) + lookupString)
             .withIcon(getIconFor(symbol))
             .withPsiElement(symbol.psi)
             .withInsertHandler(WhenConditionInsertionHandler)
+            .withTailText(createStarTypeArgumentsList(typeArgumentsCount), /*grayed*/true)
+            .letIf(isSingleCondition) { it.appendTailText(" -> ",  /*grayed*/true) }
             .let(sink::addElement)
     }
 }
@@ -199,20 +236,41 @@ private data class WhenConditionLookupObject(
     override val shortName: Name,
     val fqName: FqName?,
     val needIsPrefix: Boolean,
+    val isSingleCondition: Boolean,
+    val typeArgumentsCount: Int,
 ) : KotlinLookupObject
+
 
 private object WhenConditionInsertionHandler : InsertionHandlerBase<WhenConditionLookupObject>(WhenConditionLookupObject::class) {
     override fun handleInsert(context: InsertionContext, item: LookupElement, ktFile: KtFile, lookupObject: WhenConditionLookupObject) {
+        context.insertName(lookupObject, ktFile)
+        context.addTypeArguments(lookupObject.typeArgumentsCount)
+        context.addArrow(lookupObject)
+    }
+
+    private fun InsertionContext.addArrow(
+        lookupObject: WhenConditionLookupObject
+    ) {
+        if (lookupObject.isSingleCondition && completionChar != ',') {
+            addSymbolToCompletion(" -> ")
+            commitDocument()
+        }
+    }
+
+    private fun InsertionContext.insertName(
+        lookupObject: WhenConditionLookupObject,
+        ktFile: KtFile
+    ) {
         if (lookupObject.fqName != null) {
             val fqName = lookupObject.fqName
-            context.document.replaceString(
-                context.startOffset,
-                context.tailOffset,
+            document.replaceString(
+                startOffset,
+                tailOffset,
                 getIsPrefix(lookupObject.needIsPrefix) + fqName.render()
             )
-            context.commitDocument()
+            commitDocument()
 
-            shortenReferencesForFirCompletion(ktFile, TextRange(context.startOffset, context.tailOffset))
+            shortenReferencesForFirCompletion(ktFile, TextRange(startOffset, tailOffset))
         }
     }
 }

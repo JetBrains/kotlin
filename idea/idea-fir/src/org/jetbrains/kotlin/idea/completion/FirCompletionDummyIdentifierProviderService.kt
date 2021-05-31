@@ -5,14 +5,21 @@
 
 package org.jetbrains.kotlin.idea.completion
 
-import org.jetbrains.kotlin.idea.frontend.api.analyse
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassKind
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.idea.references.mainReference
+import com.intellij.codeInsight.completion.CompletionInitializationContext
+import com.intellij.codeInsight.completion.CompletionUtilCore
+import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
+import org.jetbrains.kotlin.psi.KtWhenEntry
 
 class FirCompletionDummyIdentifierProviderService : CompletionDummyIdentifierProviderService() {
+    override fun handleDefaultCase(context: CompletionInitializationContext): String? {
+        val elementAtOffset = context.file.findElementAt(context.startOffset) ?: return null
+        return when {
+            elementAtOffset.parentOfType<KtWhenEntry>() != null -> CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED
+            else -> null
+        }
+    }
+
     override fun allTargetsAreFunctionsOrClasses(nameReferenceExpression: KtNameReferenceExpression): Boolean {
         return true
         // TODO fir cannot handle invalid code and handles listOf< as binary expression
