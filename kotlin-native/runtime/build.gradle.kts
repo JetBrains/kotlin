@@ -272,6 +272,12 @@ val assemble by tasks.registering {
     })
 }
 
+val hostAssemble by tasks.registering {
+    dependsOn(tasks.withType(CompileToBitcode::class).matching {
+        it.outputGroup == "main" && it.target == hostName
+    })
+}
+
 val clean by tasks.registering {
     doFirst {
         delete(buildDir)

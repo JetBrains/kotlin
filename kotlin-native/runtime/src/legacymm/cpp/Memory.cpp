@@ -3733,6 +3733,10 @@ ALWAYS_INLINE void kotlin::AssertThreadState(MemoryState* thread, ThreadState ex
     // no-op, used by the new MM only.
 }
 
+ALWAYS_INLINE void kotlin::AssertThreadState(MemoryState* thread, std::initializer_list<ThreadState> expected) noexcept {
+    // no-op, used by the new MM only.
+}
+
 MemoryState* kotlin::mm::GetMemoryState() {
     return ::memoryState;
 }

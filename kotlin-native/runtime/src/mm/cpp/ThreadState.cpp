@@ -7,7 +7,7 @@
 #include "ThreadData.hpp"
 #include "ThreadState.hpp"
 
-const char* kotlin::internal::stateToString(ThreadState state) noexcept {
+const char* kotlin::ThreadStateName(ThreadState state) noexcept {
     switch (state) {
         case ThreadState::kRunnable:
             return "RUNNABLE";
@@ -16,11 +16,27 @@ const char* kotlin::internal::stateToString(ThreadState state) noexcept {
     }
 }
 
+std::string kotlin::internal::statesToString(std::initializer_list<ThreadState> states) noexcept {
+    std::string result = "{ ";
+    for (size_t i = 0; i < states.size(); i++) {
+        if (i != 0) {
+            result += ", ";
+        }
+        result += ThreadStateName(data(states)[i]);
+    }
+    result += " }";
+    return result;
+}
+
 ALWAYS_INLINE ThreadState kotlin::SwitchThreadState(MemoryState* thread, ThreadState newState, bool reentrant) noexcept {
     return SwitchThreadState(thread->GetThreadData(), newState, reentrant);
 }
 
 ALWAYS_INLINE void kotlin::AssertThreadState(MemoryState* thread, ThreadState expected) noexcept {
+    AssertThreadState(thread->GetThreadData(), expected);
+}
+
+ALWAYS_INLINE void kotlin::AssertThreadState(MemoryState* thread, std::initializer_list<ThreadState> expected) noexcept {
     AssertThreadState(thread->GetThreadData(), expected);
 }
 

@@ -17,6 +17,7 @@
 #ifndef RUNTIME_MEMORY_H
 #define RUNTIME_MEMORY_H
 
+#include <ostream>
 #include <utility>
 
 #include "KAssert.h"
@@ -410,9 +411,14 @@ ALWAYS_INLINE ThreadState SwitchThreadState(MemoryState* thread, ThreadState new
 
 // Asserts that the given thread is in the given state.
 ALWAYS_INLINE void AssertThreadState(MemoryState* thread, ThreadState expected) noexcept;
+ALWAYS_INLINE void AssertThreadState(MemoryState* thread, std::initializer_list<ThreadState> expected) noexcept;
 
 // Asserts that the current thread is in the the given state.
 ALWAYS_INLINE inline void AssertThreadState(ThreadState expected) noexcept {
+    AssertThreadState(mm::GetMemoryState(), expected);
+}
+
+ALWAYS_INLINE inline void AssertThreadState(std::initializer_list<ThreadState> expected) noexcept {
     AssertThreadState(mm::GetMemoryState(), expected);
 }
 
