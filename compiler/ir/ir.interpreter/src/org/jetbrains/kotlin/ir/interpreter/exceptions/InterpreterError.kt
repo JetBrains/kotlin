@@ -12,3 +12,5 @@ class InterpreterMethodNotFoundError(message: String) : InterpreterError(message
 class InterpreterTimeOutError : InterpreterError("Exceeded execution limit of constexpr expression")
 
 class InterpreterEmptyReturnStackError : InterpreterError("Return values stack is empty")
+
+class InterpreterAssertionError(message: String) : InterpreterError(message)

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.interpreter.proxy.reflection
 
 import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
+import org.jetbrains.kotlin.ir.interpreter.exceptions.verify
 import org.jetbrains.kotlin.ir.interpreter.getDispatchReceiver
 import org.jetbrains.kotlin.ir.interpreter.getExtensionReceiver
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
@@ -64,7 +65,7 @@ internal class KMutableProperty0Proxy(
             override fun call(vararg args: Any?) {
                 checkArguments(1, args.size)
                 // null receiver <=> property is on top level
-                assert(state.receiver != null) { "Cannot interpret set method on top level non const properties" }
+                verify(state.receiver != null) { "Cannot interpret set method on top level properties" }
                 val receiver = state.receiver!!
                 val newValue = args.single().toState(propertyType)
                 setter.getExtensionReceiver()

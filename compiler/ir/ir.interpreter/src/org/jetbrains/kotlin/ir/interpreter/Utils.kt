@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
+import org.jetbrains.kotlin.ir.interpreter.exceptions.handleUserException
 import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.wrap
 import org.jetbrains.kotlin.ir.interpreter.state.*
@@ -220,22 +221,6 @@ internal fun IrClass.internalName(): String {
             }
         }
     return internalName.toString()
-}
-
-internal inline fun withExceptionHandler(environment: IrInterpreterEnvironment, block: () -> Unit) {
-    try {
-        block()
-    } catch (e: Throwable) {
-        e.handleUserException(environment)
-    }
-}
-
-internal fun Throwable.handleUserException(environment: IrInterpreterEnvironment) {
-    val exceptionName = this::class.java.simpleName
-    val irExceptionClass = environment.irExceptions.firstOrNull { it.name.asString() == exceptionName }
-        ?: environment.irBuiltIns.throwableClass.owner
-    environment.callStack.pushState(ExceptionState(this, irExceptionClass, environment.callStack.getStackTrace()))
-    environment.callStack.dropFramesUntilTryCatch()
 }
 
 /**

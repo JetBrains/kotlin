@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterError
 import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterTimeOutError
+import org.jetbrains.kotlin.ir.interpreter.exceptions.handleUserException
+import org.jetbrains.kotlin.ir.interpreter.exceptions.verify
 import org.jetbrains.kotlin.ir.interpreter.proxy.CommonProxy.Companion.asProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
 import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
@@ -90,7 +92,6 @@ class IrInterpreter private constructor(
 
             while (!callStack.hasNoInstructions()) {
                 callStack.popInstruction().handle()
-                incrementAndCheckCommands()
             }
 
             callStack.popState().apply { callStack.dropFrame() }
@@ -386,7 +387,7 @@ class IrInterpreter private constructor(
             expression.accessesTopLevelOrObjectField() -> {
                 val propertyOwner = field.correspondingPropertySymbol?.owner
                 val isConst = propertyOwner?.isConst == true || propertyOwner?.backingField?.initializer?.expression is IrConst<*>
-                assert(isConst) { "Cannot interpret get method on top level non const properties" }
+                verify(isConst) { "Cannot interpret get method on top level non const properties" }
                 callStack.addInstruction(CompoundInstruction(field.initializer?.expression))
             }
             else -> {

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.interpreter.*
+import org.jetbrains.kotlin.ir.interpreter.exceptions.handleUserException
 import org.jetbrains.kotlin.ir.interpreter.state.*
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KFunctionState
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KTypeState

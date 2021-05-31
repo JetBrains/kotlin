@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.ir.interpreter.builtins.interpretBinaryFunction
 import org.jetbrains.kotlin.ir.interpreter.builtins.interpretTernaryFunction
 import org.jetbrains.kotlin.ir.interpreter.builtins.interpretUnaryFunction
 import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterError
+import org.jetbrains.kotlin.ir.interpreter.exceptions.verify
+import org.jetbrains.kotlin.ir.interpreter.exceptions.withExceptionHandler
 import org.jetbrains.kotlin.ir.interpreter.intrinsics.IntrinsicEvaluator
 import org.jetbrains.kotlin.ir.interpreter.proxy.wrap
 import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
@@ -141,7 +143,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
             irClass.defaultType.isArray() || irClass.defaultType.isPrimitiveArray() -> {
                 // array constructor doesn't have body so must be treated separately
                 callStack.addVariable(Variable(irConstructor.symbol, KTypeState(constructorCall.type, irBuiltIns.anyClass.owner)))
-                assert(handleIntrinsicMethods(irConstructor)) { "Unsupported intrinsic constructor: ${irConstructor.render()}" }
+                verify(handleIntrinsicMethods(irConstructor)) { "Unsupported intrinsic constructor: ${irConstructor.render()}" }
             }
             irClass.defaultType.isUnsignedType() -> {
                 val propertySymbol = irClass.declarations.single { it is IrProperty }.symbol
@@ -178,13 +180,13 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
 
     override fun interceptJavaStaticField(expression: IrGetField) {
         val field = expression.symbol.owner
-        assert(field.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && field.isStatic)
-        assert(field.initializer?.expression !is IrConst<*>)
+        verify(field.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && field.isStatic)
+        verify(field.initializer?.expression !is IrConst<*>)
         callStack.pushState(Wrapper.getStaticGetter(field).invokeWithArguments().toState(field.type))
     }
 
     private fun MethodHandle?.invokeMethod(irFunction: IrFunction, args: List<State>) {
-        this ?: return assert(handleIntrinsicMethods(irFunction)) { "Unsupported intrinsic function: ${irFunction.render()}" }
+        this ?: return verify(handleIntrinsicMethods(irFunction)) { "Unsupported intrinsic function: ${irFunction.render()}" }
         val argsForMethodInvocation = irFunction.getArgsForMethodInvocation(this@DefaultCallInterceptor, this.type(), args)
         withExceptionHandler(environment) {
             val result = this.invokeWithArguments(argsForMethodInvocation) // TODO if null return Unit

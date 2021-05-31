@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
 import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterError
+import org.jetbrains.kotlin.ir.interpreter.exceptions.handleUserException
+import org.jetbrains.kotlin.ir.interpreter.exceptions.verify
 import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.*
@@ -214,8 +216,7 @@ private fun unfoldReturn(expression: IrReturn, callStack: CallStack) {
 }
 
 private fun unfoldSetField(expression: IrSetField, callStack: CallStack) {
-    // receiver is null, for example, for top level fields; cannot interpret set on top level var
-    if (expression.accessesTopLevelOrObjectField()) error("Cannot interpret set method on top level properties")
+    verify(!expression.accessesTopLevelOrObjectField()) { "Cannot interpret set method on top level properties" }
 
     callStack.addInstruction(SimpleInstruction(expression))
     callStack.addInstruction(CompoundInstruction(expression.value))
