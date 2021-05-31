@@ -371,7 +371,8 @@ internal class KotlinCompilationNpmResolver(
                 )
             },
             externalNpmDependencies.map { it.toDeclaration() },
-            fileCollectionDependencies
+            fileCollectionDependencies,
+            projectPath
         )
     }
 
@@ -400,7 +401,8 @@ internal class KotlinCompilationNpmResolver(
         var internalCompositeDependencies: Collection<CompositeDependency>,
         var externalGradleDependencies: Collection<FileExternalGradleDependency>,
         var externalNpmDependencies: Collection<NpmDependencyDeclaration>,
-        var fileCollectionDependencies: Collection<FileCollectionExternalGradleDependency>
+        var fileCollectionDependencies: Collection<FileCollectionExternalGradleDependency>,
+        val projectPath: String
     ) : Serializable {
         private val projectPackagesDir by lazy { compilationResolver.nodeJs.projectPackagesDir }
         private val rootDir by lazy { compilationResolver.nodeJs.rootProject.rootDir }
@@ -454,7 +456,7 @@ internal class KotlinCompilationNpmResolver(
                 .filterNotNull()
 
             val toolsNpmDependencies = compilationResolver.rootResolver.nodeJs.taskRequirements
-                .getCompilationNpmRequirements(compilationResolver.compilationDisambiguatedName)
+                .getCompilationNpmRequirements(projectPath, compilationResolver.compilationDisambiguatedName)
 
             val dukatIfNecessary = if (externalNpmDependencies.any { it.generateExternals }) {
                 setOf(
