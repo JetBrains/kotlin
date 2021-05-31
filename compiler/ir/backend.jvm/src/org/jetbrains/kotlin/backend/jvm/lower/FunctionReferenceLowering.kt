@@ -383,6 +383,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         // The type of the reference is KFunction<in A1, ..., in An, out R>
         private val parameterTypes = (irFunctionReference.type as IrSimpleType).arguments.map { (it as IrTypeProjection).type }
         private val argumentTypes = parameterTypes.dropLast(1)
+        private val referenceReturnType = parameterTypes.last()
 
         private val typeArgumentsMap = irFunctionReference.typeSubstitutionMap
 
@@ -671,7 +672,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             functionReferenceClass.addFunction {
                 setSourceRange(if (isLambda) callee else irFunctionReference)
                 name = superMethod.name
-                returnType = callee.returnType
+                returnType = referenceReturnType
                 isSuspend = callee.isSuspend
             }.apply {
                 overriddenSymbols += superMethod.symbol
@@ -703,7 +704,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
 
             body = context.createJvmIrBuilder(symbol, startOffset, endOffset).run {
                 var unboundIndex = 0
-                val call = irCall(callee).apply {
+                val call = irCall(callee.symbol, referenceReturnType).apply {
                     for (typeParameter in irFunctionReference.symbol.owner.allTypeParameters) {
                         putTypeArgument(typeParameter.index, typeArgumentsMap[typeParameter.symbol])
                     }
