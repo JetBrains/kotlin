@@ -20,7 +20,7 @@ class BasicMultiplatformTest : BaseAbstractTest() {
 
         testFromData(configuration) {
             pagesTransformationStage = {
-                assertEquals(6, it.children.firstOrNull()?.children?.count() ?: 0)
+                assertEquals(7, it.children.firstOrNull()?.children?.count() ?: 0)
             }
         }
     }
