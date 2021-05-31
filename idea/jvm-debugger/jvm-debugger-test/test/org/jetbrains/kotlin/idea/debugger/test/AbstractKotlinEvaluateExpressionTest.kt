@@ -64,11 +64,9 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDescriptorTestCaseWi
 
     private val exceptions = ConcurrentHashMap<String, Throwable>()
 
-    open fun fragmentCompilerBackend() = CodeFragmentCompiler.Companion.FragmentCompilerBackend.JVM
-
-    override fun runBare() {
-        // DO NOTHING
-    }
+//    override fun runBare() {
+//        // DO NOTHING
+//    }
 
     fun doSingleBreakpointTest(path: String) {
         isMultipleBreakpointsTest = false
@@ -229,17 +227,7 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDescriptorTestCaseWi
             exceptions[expression] = e
         }
     }
-
-    override fun initOutputChecker(): OutputChecker {
-        return KotlinOutputChecker(
-            getTestDataPath(),
-            testAppPath,
-            appOutputPath,
-            targetBackend(),
-            getExpectedOutputFile()
-        )
-    }
-
+    
     override fun throwExceptionsIfAny() {
         if (exceptions.isNotEmpty()) {
             val outputFile = getExpectedOutputFile()
