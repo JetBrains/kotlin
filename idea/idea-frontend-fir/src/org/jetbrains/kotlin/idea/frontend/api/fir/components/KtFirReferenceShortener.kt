@@ -188,7 +188,10 @@ private class FirShorteningContext(val firResolveState: FirModuleResolveState) {
 
 private sealed class ElementToShorten
 private class ShortenType(val element: KtUserType, val nameToImport: FqName? = null) : ElementToShorten()
-private class ShortenQualifier(val element: KtDotQualifiedExpression, val nameToImport: FqName? = null) : ElementToShorten()
+
+private class ShortenQualifier(val element: KtDotQualifiedExpression, val nameToImport: FqName? = null) : ElementToShorten() {
+    fun withElement(newElement: KtDotQualifiedExpression) = ShortenQualifier(newElement, nameToImport)
+}
 
 private class ElementsToShortenCollector(
     private val shorteningContext: FirShorteningContext,
@@ -325,7 +328,8 @@ private class ElementsToShortenCollector(
         val referenceExpression = resolvedNamedReference.psi as? KtNameReferenceExpression
         val qualifiedProperty = referenceExpression?.getDotQualifiedExpressionForSelector() ?: return
 
-        val propertyId = (resolvedNamedReference.resolvedSymbol as? FirCallableSymbol<*>)?.callableId ?: return
+        val firCallableSymbol = resolvedNamedReference.resolvedSymbol as? FirCallableSymbol<*> ?: return
+        val propertyId = firCallableSymbol.callableId
 
         val scopes = shorteningContext.findScopesAtPosition(qualifiedProperty, namesToImport, towerContextProvider) ?: return
         val singleAvailableProperty = shorteningContext.findPropertiesInScopes(scopes, propertyId.callableName)
@@ -336,7 +340,15 @@ private class ElementsToShortenCollector(
             else -> findFakePackageToShorten(qualifiedProperty)
         }
 
-        propertyToShorten?.let(::addElementToShorten)
+        propertyToShorten?.withQualifierForCallablesToShorten(firCallableSymbol)?.let(::addElementToShorten)
+    }
+
+    private fun ShortenQualifier.withQualifierForCallablesToShorten(callableSymbol: FirCallableSymbol<*>): ShortenQualifier? {
+        if (callableSymbol.fir is FirEnumEntry) {
+            val newQualifier = element.receiverExpression as? KtDotQualifiedExpression ?: return null
+            return withElement(newQualifier)
+        }
+        return this
     }
 
     private fun processFunctionCall(functionCall: FirFunctionCall) {
