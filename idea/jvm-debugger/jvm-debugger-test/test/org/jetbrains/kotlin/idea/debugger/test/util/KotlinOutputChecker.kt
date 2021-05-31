@@ -63,7 +63,7 @@ internal class KotlinOutputChecker(
 
         val outDir = File(testDir)
         var outFile = expectedOutputFile
-        val isIgnored = InTextDirectivesUtils.isIgnoredTarget(if (useIrBackend) TargetBackend.JVM_IR else TargetBackend.JVM, outFile)
+        val isIgnored = InTextDirectivesUtils.isIgnoredTarget(if (useIrBackend) TargetBackend.JVM_IR_WITH_OLD_EVALUATOR else TargetBackend.JVM_WITH_OLD_EVALUATOR, outFile)
 
         if (!outFile.exists()) {
             if (SystemInfo.isWindows) {
