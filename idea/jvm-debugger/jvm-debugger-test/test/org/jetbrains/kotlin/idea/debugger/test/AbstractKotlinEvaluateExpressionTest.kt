@@ -23,6 +23,7 @@ import org.jetbrains.eval4j.Value
 import org.jetbrains.eval4j.jdi.asValue
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinCodeFragmentFactory
+import org.jetbrains.kotlin.idea.debugger.evaluate.compilation.CodeFragmentCompiler
 import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferences
 import org.jetbrains.kotlin.idea.debugger.test.util.FramePrinter
 import org.jetbrains.kotlin.idea.debugger.test.util.FramePrinterDelegate
@@ -61,6 +62,8 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDescriptorTestCaseWi
     private var framePrinter: FramePrinter? = null
 
     private val exceptions = ConcurrentHashMap<String, Throwable>()
+
+    open fun fragmentCompilerBackend() = CodeFragmentCompiler.Companion.FragmentCompilerBackend.JVM
 
     override fun runBare() {
         // DO NOTHING
@@ -158,6 +161,11 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDescriptorTestCaseWi
         debuggerContext.initCaches()
 
         val contextElement = ContextUtil.getContextElement(debuggerContext)!!
+
+        evaluationContext.debugProcess.putUserData(
+            CodeFragmentCompiler.KOTLIN_EVALUATOR_FRAGMENT_COMPILER_BACKEND,
+            fragmentCompilerBackend()
+        )
 
         assert(KotlinCodeFragmentFactory().isContextAccepted(contextElement)) {
             val text = runReadAction { contextElement.text }

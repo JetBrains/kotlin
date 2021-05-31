@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.debugger.evaluate.compilation
 
+import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.CodeFragmentCodegen.Companion.getSharedTypeIfApplicable
@@ -46,6 +47,17 @@ import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.utils.Printer
 
 class CodeFragmentCompiler(private val executionContext: ExecutionContext, private val status: EvaluationStatus) {
+
+    companion object {
+        enum class FragmentCompilerBackend {
+            JVM,
+            JVM_IR
+        }
+
+        val KOTLIN_EVALUATOR_FRAGMENT_COMPILER_BACKEND: Key<FragmentCompilerBackend> =
+            Key.create("KOTLIN_EVALUATOR_FRAGMENT_COMPILER_BACKEND")
+    }
+
     data class CompilationResult(
         val classes: List<ClassToLoad>,
         val parameterInfo: CodeFragmentParameterInfo,
@@ -84,7 +96,13 @@ class CodeFragmentCompiler(private val executionContext: ExecutionContext, priva
         val generationState = GenerationState.Builder(
             project, ClassBuilderFactories.BINARIES, moduleDescriptorWrapper,
             bindingContext, filesToCompile, compilerConfiguration
-        ).generateDeclaredClassFilter(GeneratedClassFilterForCodeFragment(codeFragment)).build()
+        ).apply {
+            val fragmentCompilerBackend = executionContext.debugProcess.getUserData(KOTLIN_EVALUATOR_FRAGMENT_COMPILER_BACKEND)
+            if (fragmentCompilerBackend == FragmentCompilerBackend.JVM_IR) {
+                codegenFactory(TODO("Not implemented yet: EE-IR Fragment Compiler"))
+            }
+            generateDeclaredClassFilter(GeneratedClassFilterForCodeFragment(codeFragment))
+        }.build()
 
         val parameterInfo = CodeFragmentParameterAnalyzer(executionContext, codeFragment, bindingContext, status).analyze()
         val (classDescriptor, methodDescriptor) = createDescriptorsForCodeFragment(
