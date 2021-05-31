@@ -96,6 +96,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/collections.kt");
         }
 
+        @TestMetadata("color.kt")
+        public void testColor() throws Exception {
+            runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/color.kt");
+        }
+
         @TestMetadata("dataClassCopy.kt")
         public void testDataClassCopy() throws Exception {
             runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/dataClassCopy.kt");
