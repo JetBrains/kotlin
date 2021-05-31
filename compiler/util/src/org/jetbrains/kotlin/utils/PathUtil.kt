@@ -77,7 +77,7 @@ object PathUtil {
     const val KOTLIN_DAEMON_JAR = "$KOTLIN_SCRIPTING_JVM_NAME.jar"
     const val KOTLIN_SCRIPTING_COMPILER_PLUGIN_NAME = "kotlin-scripting-compiler"
     const val KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR = "$KOTLIN_SCRIPTING_COMPILER_PLUGIN_NAME.jar"
-    const val KOTLINX_COROUTINES_CORE_NAME = "kotlinx-coroutines-core"
+    const val KOTLINX_COROUTINES_CORE_NAME = "kotlinx-coroutines-core-jvm"
     const val KOTLINX_COROUTINES_CORE_JAR = "$KOTLINX_COROUTINES_CORE_NAME.jar"
     const val KOTLIN_SCRIPTING_COMPILER_IMPL_NAME = "kotlin-scripting-compiler-impl"
     const val KOTLIN_SCRIPTING_COMPILER_IMPL_JAR = "$KOTLIN_SCRIPTING_COMPILER_IMPL_NAME.jar"
