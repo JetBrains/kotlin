@@ -20,7 +20,7 @@ internal class FirIdeSourcesSession @PrivateSessionConstructor constructor(
     override val scope: GlobalSearchScope,
     val firFileBuilder: FirFileBuilder,
     builtinTypes: BuiltinTypes,
-) : FirIdeModuleSession( builtinTypes) {
+) : FirIdeModuleSession(builtinTypes, Kind.Source) {
     val cache get() = firIdeProvider.cache
 }
 

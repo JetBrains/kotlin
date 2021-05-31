@@ -12,11 +12,11 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 
 @OptIn(PrivateSessionConstructor::class)
-abstract class FirIdeSession(override val builtinTypes: BuiltinTypes) : FirSession(sessionProvider = null) {
+abstract class FirIdeSession(override val builtinTypes: BuiltinTypes, kind: Kind) : FirSession(sessionProvider = null, kind) {
     abstract val project: Project
 }
 
 @OptIn(PrivateSessionConstructor::class)
-abstract class FirIdeModuleSession(builtinTypes: BuiltinTypes) : FirIdeSession(builtinTypes) {
+abstract class FirIdeModuleSession(builtinTypes: BuiltinTypes, kind: Kind) : FirIdeSession(builtinTypes, kind) {
     abstract val scope: GlobalSearchScope
 }

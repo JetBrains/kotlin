@@ -10,12 +10,8 @@ import org.jetbrains.kotlin.fir.*
 @OptIn(PrivateSessionConstructor::class)
 class FirCliSession @PrivateSessionConstructor constructor(
     sessionProvider: FirProjectSessionProvider,
-    val kind: Kind // used for debug
-) : FirSession(sessionProvider) {
-    enum class Kind {
-        Source, Library
-    }
-}
+    kind: Kind
+) : FirSession(sessionProvider, kind)
 
 class FirProjectSessionProvider : FirSessionProvider() {
     override fun getSession(moduleData: FirModuleData): FirSession? {

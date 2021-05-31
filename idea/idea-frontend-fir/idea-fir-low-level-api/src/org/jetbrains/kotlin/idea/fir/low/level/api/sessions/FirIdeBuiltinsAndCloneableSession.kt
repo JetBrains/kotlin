@@ -13,4 +13,4 @@ import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 class FirIdeBuiltinsAndCloneableSession @PrivateSessionConstructor constructor(
     override val project: Project,
     builtinTypes: BuiltinTypes,
-) : FirIdeSession(builtinTypes)
+) : FirIdeSession(builtinTypes, Kind.Library)

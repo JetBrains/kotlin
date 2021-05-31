@@ -19,4 +19,4 @@ internal class FirIdeLibrariesSession @PrivateSessionConstructor constructor(
     override val project: Project,
     override val scope: GlobalSearchScope,
     builtinTypes: BuiltinTypes,
-) : FirIdeModuleSession(builtinTypes)
+) : FirIdeModuleSession(builtinTypes, Kind.Library)

@@ -268,7 +268,7 @@ internal object FirIdeSessionFactory {
 )
 @OptIn(PrivateSessionConstructor::class)
 fun createEmptySession(): FirSession {
-    return object : FirSession(null) {}.apply {
+    return object : FirSession(null, Kind.Source) {}.apply {
         val moduleData = FirModuleDataImpl(
             Name.identifier("<stub module>"),
             dependencies = emptyList(),
