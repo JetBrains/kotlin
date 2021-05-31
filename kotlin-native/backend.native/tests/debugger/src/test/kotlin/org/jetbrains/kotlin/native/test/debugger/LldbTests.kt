@@ -146,6 +146,7 @@ class LldbTests {
 
             > b kfun:#a(){}kotlin.String
             Breakpoint 2: where = [..]`kfun:#a(){}kotlin.String [..] at a.kt:1:1, [..]
+            > q
         """.trimIndent().lldb(application)
     }
 
@@ -167,7 +168,38 @@ class LldbTests {
         """
             > b 2
             Breakpoint 1: where = [..]`kfun:#question(kotlin.String;kotlin.Array<kotlin.String>){}kotlin.String [..] at kt33055.kt:2:12, [..]
+            > q
         """.trimIndent().lldb(kt33055)
+    }
+
+    @Test
+    fun `kt33364`() = lldbComplexTest {
+        val kt33364 = """
+            |fun main() {
+            |    val param = 3
+            |
+            |    //breakpoint here (line: 4, breakpoint is set to 5th line)
+            |    when(param) {
+            |        1 -> print("A")
+            |        2 -> print("B")
+            |        else -> print("C")
+            |    }
+            |
+            |    // breakpoint here (line: 11, breakpoint is set to 12th line)
+            |    when {
+            |        param == 1 -> print("A")
+            |        param == 2 -> print("B")
+            |        else -> print("C")
+            |    }
+            |}
+        """.trimMargin().binary("kt33364", "-g", "-Xg-generate-when-marker=enable")
+        """
+            > b 5
+            Breakpoint 1: where = [..]kfun:#main(){} [..] at kt33364.kt:5:[..]
+            > b 11
+            Breakpoint 2: where = [..]kfun:#main(){} [..] at kt33364.kt:12:[..]
+            > q
+        """.trimIndent().lldb(kt33364)
     }
 
     @Test
