@@ -1177,6 +1177,12 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
         val whenEmittingContext = WhenEmittingContext(expression)
 
+        val generationContext = (currentCodeContext.functionScope() as? FunctionScope)?.functionGenerationContext
+                .takeIf { context.config.generateWhenTrampoline }
+        generationContext?.basicBlock("when", expression.startLocation)?.let {
+            generationContext.br(it)
+            generationContext.positionAtEnd(it)
+        }
         expression.branches.forEach {
             val bbNext = if (it == expression.branches.last())
                              null

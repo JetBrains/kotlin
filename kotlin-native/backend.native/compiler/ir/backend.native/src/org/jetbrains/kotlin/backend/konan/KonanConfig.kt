@@ -44,6 +44,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     val lightDebug: Boolean = configuration.get(KonanConfigKeys.LIGHT_DEBUG)
             ?: target.family.isAppleFamily // Default is true for Apple targets.
     val generateInlinedBodyTrampoline = debug && configuration.get(KonanConfigKeys.GENERATE_INLINED_FUNCTION_BODY_MARKER) ?: false
+    val generateWhenTrampoline = debug && configuration.get(KonanConfigKeys.GENERATE_WHEN_MARKER) ?: false
 
     val memoryModel: MemoryModel get() = configuration.get(KonanConfigKeys.MEMORY_MODEL)!!
     val destroyRuntimeMode: DestroyRuntimeMode get() = configuration.get(KonanConfigKeys.DESTROY_RUNTIME_MODE)!!

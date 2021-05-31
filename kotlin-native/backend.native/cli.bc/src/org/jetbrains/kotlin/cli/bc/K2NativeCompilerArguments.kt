@@ -171,6 +171,12 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
             description = """generates marker of inlined function body on call site to make debugger breakpoint resolution more accurate"""
     )
     var generateInlinedFunctionMarkerString: String? = null
+    @Argument(
+            value = "-Xg-generate-when-marker",
+            valueDescription = "{disable|enable}",
+            description = """generates marker of when to make debugger breakpoint resolution more accurate"""
+    )
+    var generateWhenMarkerString: String? = null
 
 
     @Argument(
