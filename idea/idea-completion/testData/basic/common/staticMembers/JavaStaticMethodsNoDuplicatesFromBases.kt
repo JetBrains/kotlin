@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 import javax.swing.SwingUtilities
 
 class A : SwingUtilities {

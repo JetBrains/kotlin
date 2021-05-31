@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 package b
 
 import b.Bar.A.<caret>
