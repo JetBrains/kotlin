@@ -2315,6 +2315,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         }
 
         @Test
+        @TestMetadata("TypeParameterBounds.kt")
+        public void testTypeParameterBounds() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/TypeParameterBounds.kt");
+        }
+
+        @Test
         @TestMetadata("typeParameterFromJavaClass.kt")
         public void testTypeParameterFromJavaClass() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/typeParameterFromJavaClass.kt");
