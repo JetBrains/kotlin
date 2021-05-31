@@ -265,6 +265,7 @@ class Fir2IrVisitor(
                     convertToIrExpression(initializer).cast(initializer, initializer.typeRef, variable.returnTypeRef)
                 }
         }
+        annotationGenerator.generate(irVariable, variable)
         return irVariable
     }
 
