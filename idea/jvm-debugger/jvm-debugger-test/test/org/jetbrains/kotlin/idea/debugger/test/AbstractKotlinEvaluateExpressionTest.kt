@@ -64,6 +64,8 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDescriptorTestCaseWi
 
     private val exceptions = ConcurrentHashMap<String, Throwable>()
 
+    open fun fragmentCompilerBackend() = CodeFragmentCompiler.Companion.FragmentCompilerBackend.JVM
+
     override fun runBare() {
         // DO NOTHING
     }
