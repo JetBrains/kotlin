@@ -170,18 +170,20 @@ class IrInterpreter private constructor(
     }
 
     private fun interpretCall(call: IrCall) {
+        fun IrFunction.mustBeHandledWithSuperOf(state: State?): State? {
+            if (state is Common && this.parent == state.superWrapperClass?.irClass) return state.superWrapperClass
+            return state
+        }
+
         val owner = call.symbol.owner
         // 1. load evaluated arguments from stack
-        var dispatchReceiver = owner.getDispatchReceiver()?.let { callStack.getState(it) }
+        val dispatchReceiver = owner.getDispatchReceiver()?.let { callStack.getState(it) }
         val extensionReceiver = owner.getExtensionReceiver()?.let { callStack.getState(it) }
-        val valueArguments = owner.valueParameters.map { callStack.getState(it.symbol) }
+        val valueArguments = owner.valueParameters.map { callStack.getState(it.symbol) }.toMutableList()
 
         // 2. get correct function for interpretation
         val irFunction = dispatchReceiver?.getIrFunctionByIrCall(call) ?: call.symbol.owner
-        dispatchReceiver = when (irFunction.parent) {
-            (dispatchReceiver as? Complex)?.superWrapperClass?.irClass -> dispatchReceiver.superWrapperClass
-            else -> dispatchReceiver
-        }
+        val args = listOfNotNull(irFunction.mustBeHandledWithSuperOf(dispatchReceiver), extensionReceiver) + valueArguments
 
         callStack.dropSubFrame() // drop intermediate frame that contains variables for default arg evaluation
         callStack.newFrame(irFunction)
@@ -191,13 +193,11 @@ class IrInterpreter private constructor(
         callStack.addVariable(Variable(irFunction.symbol, KTypeState(call.type, irBuiltIns.anyClass.owner)))
 
         // 3. store arguments in memory (remap args on actual names)
-        val args = mutableListOf<Variable>()
-        irFunction.getDispatchReceiver()?.let { dispatchReceiver?.let { receiver -> args.add(Variable(it, receiver)) } }
-        irFunction.getExtensionReceiver()?.let { args.add(Variable(it, extensionReceiver ?: valueArguments.first())) }
-        // `shift` is used when extension receiver is actually a parameter in lambda
-        val shift = if (irFunction.extensionReceiverParameter != null && extensionReceiver == null) 1 else 0
-        irFunction.valueParameters.forEachIndexed { i, param -> args.add(Variable(param.symbol, valueArguments[i + shift])) }
-        args.forEach { callStack.addVariable(it) }
+        val variables = mutableListOf<Variable>()
+        irFunction.getDispatchReceiver()?.let { dispatchReceiver?.let { receiver -> variables.add(Variable(it, receiver)) } }
+        irFunction.getExtensionReceiver()?.let { variables.add(Variable(it, extensionReceiver ?: valueArguments.removeFirst())) }
+        irFunction.valueParameters.forEach { variables.add(Variable(it.symbol, valueArguments.removeFirst())) }
+        variables.forEach { callStack.addVariable(it) }
 
         // 4. store reified type parameters
         irFunction.typeParameters.filter { it.isReified }
@@ -213,7 +213,7 @@ class IrInterpreter private constructor(
             generateSequence(dispatchReceiver.outerClass) { (it.state as? Complex)?.outerClass }.forEach { callStack.addVariable(it) }
         }
 
-        callInterceptor.interceptCall(call, irFunction, dispatchReceiver, listOfNotNull(dispatchReceiver, extensionReceiver) + valueArguments) {
+        callInterceptor.interceptCall(call, irFunction, args) {
             callStack.addInstruction(CompoundInstruction(irFunction))
         }
     }
@@ -289,7 +289,7 @@ class IrInterpreter private constructor(
         }
         superReceiver?.let { callStack.addVariable(Variable(it, objectState)) }
 
-        callInterceptor.interceptConstructor(constructorCall, objectState, valueArguments) {
+        callInterceptor.interceptConstructor(constructorCall, valueArguments) {
             callStack.pushState(objectState)
             callStack.addInstruction(CompoundInstruction(constructor))
         }

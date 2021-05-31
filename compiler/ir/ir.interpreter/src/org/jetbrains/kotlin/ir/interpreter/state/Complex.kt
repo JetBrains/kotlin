@@ -38,14 +38,6 @@ internal interface Complex: State {
         }
     }
 
-    private fun getThisOrSuperReceiver(superIrClass: IrClass?): IrClass? {
-        return when {
-            superIrClass == null -> this.irClass
-            superIrClass.isInterface -> superIrClass
-            else -> irClass.superTypes.map { it.classOrNull?.owner }.singleOrNull { it?.isInterface == false }
-        }
-    }
-
     fun getOverridden(owner: IrSimpleFunction): IrSimpleFunction {
         if (owner.parent == superWrapperClass?.irClass) return owner
         if (!owner.isFakeOverride || owner.body != null || owner.parentAsClass.defaultType.isAny()) return owner
@@ -55,7 +47,7 @@ internal interface Complex: State {
     }
 
     override fun getIrFunctionByIrCall(expression: IrCall): IrFunction? {
-        val receiver = getThisOrSuperReceiver(expression.superQualifierSymbol?.owner) ?: return null
+        val receiver = expression.superQualifierSymbol?.owner ?: irClass
         val irFunction = getIrFunctionFromGivenClass(receiver, expression.symbol) ?: return null
         return getOverridden(irFunction as IrSimpleFunction)
     }

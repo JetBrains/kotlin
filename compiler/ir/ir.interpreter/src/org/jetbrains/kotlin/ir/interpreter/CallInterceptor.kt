@@ -42,8 +42,8 @@ internal interface CallInterceptor {
     val interpreter: IrInterpreter
 
     fun interceptProxy(irFunction: IrFunction, valueArguments: List<Variable>, expectedResultClass: Class<*> = Any::class.java): Any?
-    fun interceptCall(call: IrCall, irFunction: IrFunction, receiver: State?, args: List<State>, defaultAction: () -> Unit)
-    fun interceptConstructor(constructorCall: IrFunctionAccessExpression, receiver: State, args: List<State>, defaultAction: () -> Unit)
+    fun interceptCall(call: IrCall, irFunction: IrFunction, args: List<State>, defaultAction: () -> Unit)
+    fun interceptConstructor(constructorCall: IrFunctionAccessExpression, args: List<State>, defaultAction: () -> Unit)
     fun interceptGetObjectValue(expression: IrGetObjectValue, defaultAction: () -> Unit)
     fun interceptEnumEntry(enumEntry: IrEnumEntry, defaultAction: () -> Unit)
     fun interceptJavaStaticField(expression: IrGetField)
@@ -65,8 +65,9 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
         }.wrap(this@DefaultCallInterceptor, remainArraysAsIs = true, extendFrom = expectedResultClass)
     }
 
-    override fun interceptCall(call: IrCall, irFunction: IrFunction, receiver: State?, args: List<State>, defaultAction: () -> Unit) {
+    override fun interceptCall(call: IrCall, irFunction: IrFunction, args: List<State>, defaultAction: () -> Unit) {
         val isInlineOnly = irFunction.hasAnnotation(FqName("kotlin.internal.InlineOnly"))
+        val receiver = if (irFunction.dispatchReceiverParameter != null) args[0] else null
         when {
             receiver is Wrapper && !isInlineOnly -> receiver.getMethod(irFunction).invokeMethod(irFunction, args)
             Wrapper.mustBeHandledWithWrapper(irFunction) -> Wrapper.getStaticMethod(irFunction).invokeMethod(irFunction, args)
@@ -123,14 +124,13 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
         }
 
         if (invokedFunction.symbol is IrConstructorSymbol) return
-        this.interceptCall(call, function, dispatchReceiver, listOfNotNull(dispatchReceiver, extensionReceiver) + valueArguments) {
+        this.interceptCall(call, function, listOfNotNull(dispatchReceiver, extensionReceiver) + valueArguments) {
             callStack.addInstruction(CompoundInstruction(function))
         }
     }
 
-    override fun interceptConstructor(
-        constructorCall: IrFunctionAccessExpression, receiver: State, args: List<State>, defaultAction: () -> Unit
-    ) {
+    override fun interceptConstructor(constructorCall: IrFunctionAccessExpression, args: List<State>, defaultAction: () -> Unit) {
+        val receiver = callStack.getState(constructorCall.getThisReceiver())
         val irConstructor = constructorCall.symbol.owner
         val irClass = irConstructor.parentAsClass
         when {
