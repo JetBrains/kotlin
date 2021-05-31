@@ -34,7 +34,12 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class ExperimentalMarkerDeclarationAnnotationChecker(private val module: ModuleDescriptor) : AdditionalAnnotationChecker {
     companion object {
-        private val WRONG_TARGETS_FOR_MARKER = setOf(KotlinTarget.EXPRESSION, KotlinTarget.FILE)
+        private val WRONG_TARGETS_FOR_MARKER = setOf(
+            KotlinTarget.EXPRESSION,
+            KotlinTarget.FILE,
+            KotlinTarget.TYPE,
+            KotlinTarget.TYPE_PARAMETER
+        )
     }
 
     override fun checkEntries(
