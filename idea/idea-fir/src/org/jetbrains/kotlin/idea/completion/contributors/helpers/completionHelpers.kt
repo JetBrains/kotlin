@@ -17,8 +17,10 @@ internal fun InsertionContext.addSymbolAndInvokeCompletion(symbol: String) {
 
 private fun invokeCompletion(context: InsertionContext) {
     ApplicationManager.getApplication().invokeLater {
-        CodeCompletionHandlerBase(CompletionType.BASIC, true, false, true)
-            .invokeCompletion(context.project, context.editor)
+        if (!context.editor.isDisposed) {
+            CodeCompletionHandlerBase(CompletionType.BASIC, true, false, true)
+                .invokeCompletion(context.project, context.editor)
+        }
     }
 }
 
