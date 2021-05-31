@@ -5,14 +5,15 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.mangle
 
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrErrorDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.name.SpecialNames
 
 class ManglerChecker(vararg _manglers: KotlinMangler<IrDeclaration>) : IrElementVisitorVoid {
 
@@ -22,10 +23,43 @@ class ManglerChecker(vararg _manglers: KotlinMangler<IrDeclaration>) : IrElement
         element.acceptChildrenVoid(this)
     }
 
-    private fun KotlinMangler<IrDeclaration>.isExportCheck(declaration: IrDeclaration) = declaration.isExported()
-    private fun KotlinMangler<IrDeclaration>.stringMangle(declaration: IrDeclaration) = declaration.mangleString
-    private fun KotlinMangler<IrDeclaration>.signatureMangle(declaration: IrDeclaration) = declaration.signatureString
-    private fun KotlinMangler<IrDeclaration>.fqnMangle(declaration: IrDeclaration) = declaration.fqnString
+    private val skipper = object : IrElementVisitor<Boolean, Nothing?> {
+        override fun visitElement(element: IrElement, data: Nothing?): Boolean {
+            error("unexpected element: ${element.render()}")
+        }
+
+        override fun visitDeclaration(declaration: IrDeclarationBase, data: Nothing?): Boolean {
+            if (!declaration.symbol.hasDescriptor) return true
+
+            if (declaration.parent is IrPackageFragment) {
+                val vis = declaration as IrDeclarationWithVisibility
+                if (vis.visibility == DescriptorVisibilities.PRIVATE) return true
+                else return false
+            }
+
+            return declaration.parent.accept(this, data)
+        }
+        override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: Nothing?): Boolean = true
+        override fun visitValueParameter(declaration: IrValueParameter, data: Nothing?): Boolean = true
+        override fun visitVariable(declaration: IrVariable, data: Nothing?): Boolean = true
+        override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: Nothing?): Boolean = true
+        override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: Nothing?): Boolean = true
+        override fun visitProperty(declaration: IrProperty, data: Nothing?): Boolean = true
+        override fun visitClass(declaration: IrClass, data: Nothing?): Boolean =
+            declaration.name == SpecialNames.NO_NAME_PROVIDED || super.visitClass(declaration, data)
+    }
+
+    private fun IrDeclaration.shouldBeSkipped(): Boolean = accept(skipper, null)
+    private fun KotlinMangler<IrDeclaration>.isExportCheck(declaration: IrDeclaration) =
+        !declaration.shouldBeSkipped() && declaration.isExported(false)
+    private fun KotlinMangler<IrDeclaration>.stringMangle(declaration: IrDeclaration) =
+        declaration.mangleString()
+
+    private fun KotlinMangler<IrDeclaration>.signatureMangle(declaration: IrDeclaration) =
+        declaration.signatureString()
+
+    private fun KotlinMangler<IrDeclaration>.fqnMangle(declaration: IrDeclaration) =
+        declaration.fqnString()
 
     private fun <T : Any, R> Iterable<T>.checkAllEqual(init: R, op: T.() -> R, onError: (T, R, T, R) -> Unit): R {
         var prev: T? = null
