@@ -289,4 +289,33 @@ class LldbTests {
         """.trimIndent().lldb(binary)
     }
 
+    @Test
+    fun `kt33982`() = lldbComplexTest {
+        val kt33982 = """
+            |tailrec fun tailrecFun(number: Int): Int = if (number < 10) {
+            |    number
+            |} else {
+            |    tailrecFun(number - 1) // breakpoint here
+            |}
+            |
+            |fun main() {
+            |    tailrecFun(15)
+            |}
+        """.trimMargin().binary("kt33982", "-g")
+        """
+            > b 4
+            Breakpoint 1: where = [..]kfun:#tailrecFun(kotlin.Int){}kotlin.Int [..] at kt33982.kt:4:[..]
+            > ${lldbCommandRunOrContinue()}
+            > fr v
+            (int) number = 15
+            > c
+            > fr v
+            (int) number = 14
+            > c
+            > fr v
+            (int) number = 13
+            > q
+        """.trimIndent().lldb(kt33982)
+    }
+
 }
