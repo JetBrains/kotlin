@@ -6,8 +6,6 @@
 #ifndef RUNTIME_MM_THREAD_STATE_H
 #define RUNTIME_MM_THREAD_STATE_H
 
-#include <ostream>
-
 #include <Common.h>
 #include <Utils.hpp>
 
@@ -27,10 +25,6 @@ std::string statesToString(std::initializer_list<ThreadState> states) noexcept;
 } // namespace internal
 
 const char* ThreadStateName(ThreadState state) noexcept;
-
-inline std::ostream& operator<<(std::ostream& stream, ThreadState state) {
-    return stream << ThreadStateName(state);
-}
 
 // Switches the state of the given thread to `newState` and returns the previous thread state.
 ALWAYS_INLINE inline ThreadState SwitchThreadState(mm::ThreadData* threadData, ThreadState newState, bool reentrant = false) noexcept {
