@@ -33,12 +33,12 @@ internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<
         return when (constExpression.kind) {
             ConstantValueKind.Boolean -> BooleanValue(value as Boolean)
             ConstantValueKind.Char -> CharValue(value as Char)
-            ConstantValueKind.Byte -> ByteValue(value as Byte)
-            ConstantValueKind.UnsignedByte -> UByteValue(value as Byte)
-            ConstantValueKind.Short -> ShortValue(value as Short)
-            ConstantValueKind.UnsignedShort -> UShortValue(value as Short)
-            ConstantValueKind.Int -> IntValue(value as Int)
-            ConstantValueKind.UnsignedInt -> UIntValue(value as Int)
+            ConstantValueKind.Byte -> ByteValue((value as Number).toByte())
+            ConstantValueKind.UnsignedByte -> UByteValue((value as Number).toByte())
+            ConstantValueKind.Short -> ShortValue((value as Number).toShort())
+            ConstantValueKind.UnsignedShort -> UShortValue((value as Number).toShort())
+            ConstantValueKind.Int -> IntValue((value as Number).toInt())
+            ConstantValueKind.UnsignedInt -> UIntValue((value as Number).toInt())
             ConstantValueKind.Long -> LongValue(value as Long)
             ConstantValueKind.UnsignedLong -> ULongValue(value as Long)
             ConstantValueKind.String -> StringValue(value as String)
@@ -52,14 +52,14 @@ internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<
     override fun visitArrayOfCall(
         arrayOfCall: FirArrayOfCall,
         data: Nothing?
-    ): ConstantValue<*>? {
+    ): ConstantValue<*> {
         return ArrayValue(arrayOfCall.argumentList.arguments.mapNotNull { it.accept(this, null) })
     }
 
     override fun visitAnnotationCall(
         annotationCall: FirAnnotationCall,
         data: Nothing?
-    ): ConstantValue<*>? {
+    ): ConstantValue<*> {
         return AnnotationValue(annotationCall)
     }
 
