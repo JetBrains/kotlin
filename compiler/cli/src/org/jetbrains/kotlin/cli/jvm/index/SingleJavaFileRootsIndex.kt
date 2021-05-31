@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.cli.jvm.index
 import com.intellij.lang.java.lexer.JavaLexer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.pom.java.LanguageLevel
+import com.intellij.psi.PsiKeyword
 import com.intellij.psi.impl.source.tree.ElementType
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.name.ClassId
@@ -53,7 +54,7 @@ class SingleJavaFileRootsIndex(private val roots: List<JavaRoot>) {
      * Given a .java file, [readClassIds] uses lexer to determine which classes are declared in that file
      */
     private class JavaSourceClassIdReader(file: VirtualFile) {
-        private val lexer = JavaLexer(LanguageLevel.JDK_1_9).apply {
+        private val lexer = JavaLexer(LanguageLevel.HIGHEST).apply {
             start(String(file.contentsToByteArray()))
         }
         private var braceBalance = 0
@@ -73,7 +74,13 @@ class SingleJavaFileRootsIndex(private val roots: List<JavaRoot>) {
         private fun tokenText(): String = lexer.tokenText
 
         private fun atClass(): Boolean =
-            braceBalance == 0 && lexer.tokenType in CLASS_KEYWORDS
+            braceBalance == 0 && (lexer.tokenType in CLASS_KEYWORDS || atRecord())
+
+        private fun atRecord(): Boolean {
+            // Note that the soft keyword "record" is lexed as IDENTIFIER instead of RECORD_KEYWORD.
+            // This is kind of a sloppy way to parse a soft keyword, but we only do it at the top level, where it seems to work fine.
+            return at(ElementType.IDENTIFIER) && tokenText() == PsiKeyword.RECORD
+        }
 
         fun readClassIds(): List<ClassId> {
             var packageFqName = FqName.ROOT
@@ -98,6 +105,7 @@ class SingleJavaFileRootsIndex(private val roots: List<JavaRoot>) {
                     advance()
                 }
                 if (end()) break
+                advance()
                 while (!end() && !at(ElementType.IDENTIFIER)) {
                     advance()
                 }
