@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
+
+class VariableReplacementOrigin(val replaces: IrValueParameter) : IrDeclarationOrigin
 /**
  * This pass lowers tail recursion calls in `tailrec` functions.
  *
@@ -79,7 +81,7 @@ private fun lowerTailRecursionCalls(context: BackendContext, irFunction: IrFunct
     oldBody.statements += builder.irBlockBody {
         // Define variables containing current values of parameters:
         val parameterToVariable = parameters.associate {
-            it to createTmpVariable(irGet(it), nameHint = it.symbol.suggestVariableName(), isMutable = true)
+            it to createTmpVariable(irGet(it), nameHint = "${it.symbol.suggestVariableName()}", isMutable = true, VariableReplacementOrigin(it))
         }
         // (these variables are to be updated on any tail call).
 
