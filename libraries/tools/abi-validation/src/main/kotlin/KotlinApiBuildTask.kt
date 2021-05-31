@@ -54,11 +54,11 @@ open class KotlinApiBuildTask @Inject constructor(
             signatures
                 .sortedBy { it.name }
                 .forEach { api ->
-                    writer.append(api.signature).appendln(" {")
+                    writer.append(api.signature).appendLine(" {")
                     api.memberSignatures
                         .sortedWith(MEMBER_SORT_ORDER)
-                        .forEach { writer.append("\t").appendln(it.signature) }
-                    writer.appendln("}\n")
+                        .forEach { writer.append("\t").appendLine(it.signature) }
+                    writer.appendLine("}\n")
                 }
         }
     }

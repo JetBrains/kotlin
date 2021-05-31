@@ -12,7 +12,6 @@ plugins {
 
 repositories {
     mavenCentral()
-    jcenter()
     gradlePluginPortal()
 }
 
@@ -25,9 +24,6 @@ sourceSets {
 sourceSets {
     create("functionalTest") {
         withConvention(org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet::class) {
-        }
-        resources {
-            srcDir(file("src/functionalTest/resources"))
         }
         compileClasspath += sourceSets.main.get().output + configurations.testRuntimeClasspath
         runtimeClasspath += output + compileClasspath
@@ -56,7 +52,7 @@ dependencies {
 
 tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions.apply {
-        languageVersion = "1.3"
+        languageVersion = "1.4"
         jvmTarget = "1.8"
         allWarningsAsErrors = true
         // Suppress the warning about kotlin-reflect 1.3 and kotlin-stdlib 1.4 in the classpath.
