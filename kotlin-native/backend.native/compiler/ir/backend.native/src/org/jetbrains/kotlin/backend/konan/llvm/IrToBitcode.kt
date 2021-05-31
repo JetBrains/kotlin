@@ -10,6 +10,7 @@ import llvm.*
 import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.common.ir.allParameters
 import org.jetbrains.kotlin.backend.common.ir.allParametersCount
+import org.jetbrains.kotlin.backend.common.lower.VariableReplacementOrigin
 import org.jetbrains.kotlin.backend.common.lower.inline.InlinerExpressionLocationHint
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cgen.CBridgeOrigin
@@ -590,15 +591,31 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private inner class VariableScope : InnerScopeImpl() {
 
         override fun genDeclareVariable(variable: IrVariable, value: LLVMValueRef?, variableLocation: VariableDebugLocation?): Int {
-            return functionGenerationContext.vars.createVariable(variable, value, variableLocation)
+            return (variable.origin as? VariableReplacementOrigin)?.let {
+                (outerContext as? ParameterScope)?.parametersToIndex?.get(it.replaces).takeIf { context.shouldContainDebugInfo() }
+            } ?: functionGenerationContext.vars.createVariable(variable, value, variableLocation)
         }
 
         override fun getDeclaredValue(value: IrValueDeclaration): Int {
+            if (context.shouldContainDebugInfo()) {
+                (value as? IrVariable)?.let {
+                    (it.origin as? VariableReplacementOrigin)?.replaces?.let {
+                        return getDeclaredValue(it)
+                    }
+                }
+            }
             val index = functionGenerationContext.vars.indexOf(value)
             return if (index < 0) super.getDeclaredValue(value) else index
         }
 
         override fun genGetValue(value: IrValueDeclaration): LLVMValueRef {
+            if (context.shouldContainDebugInfo()) {
+                (value as? IrVariable)?.let {
+                    (it.origin as? VariableReplacementOrigin)?.replaces?.let {
+                        return genGetValue(it)
+                    }
+                }
+            }
             val index = functionGenerationContext.vars.indexOf(value)
             if (index < 0) {
                 return super.genGetValue(value)
@@ -616,6 +633,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             private val functionGenerationContext: FunctionGenerationContext): InnerScopeImpl() {
 
         val parameters = bindParameters(function)
+        val parametersToIndex = mutableMapOf<IrValueParameter, Int>()
 
         init {
             if (function != null) {
@@ -623,6 +641,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     val parameter = it.key
                     val local = functionGenerationContext.vars.createParameter(
                             parameter, debugInfoIfNeeded(function, parameter))
+                    parametersToIndex[parameter] = local
                     functionGenerationContext.mapParameterForDebug(local, it.value)
                 }
             }
