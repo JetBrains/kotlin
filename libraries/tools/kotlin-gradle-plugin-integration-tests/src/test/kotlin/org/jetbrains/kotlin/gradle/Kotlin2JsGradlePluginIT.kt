@@ -21,6 +21,7 @@ import java.io.File
 import java.io.FileFilter
 import java.util.zip.ZipFile
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
@@ -743,6 +744,27 @@ abstract class AbstractKotlin2JsGradlePluginIT(val irBackend: Boolean) : BaseGra
     }
 
     @Test
+    fun testNoUnintendedDevDependencies() = with(Project("kotlin-js-browser-project")) {
+        setupWorkingDir()
+        gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+        gradleSettingsScript().modify(::transformBuildScriptWithPluginsDsl)
+
+        build("browserProductionWebpack") {
+            assertSuccessful()
+
+            val appPackageJson = getSubprojectPackageJson(projectName = "kotlin-js-browser", subProject = "app")
+            val libPackageJson = getSubprojectPackageJson(projectName = "kotlin-js-browser", subProject = "lib")
+
+            assertTrue("${appPackageJson.name} should contain css-loader") {
+                "css-loader" in appPackageJson.devDependencies
+            }
+            assertFalse("${libPackageJson.name} shouldn't contain css-loader") {
+                "css-loader" in libPackageJson.devDependencies
+            }
+        }
+    }
+
+    @Test
     fun testUpdatingPackageJsonOnDependenciesClash() = with(Project("kotlin-js-dependencies-clash")) {
         setupWorkingDir()
         gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
@@ -760,15 +782,8 @@ abstract class AbstractKotlin2JsGradlePluginIT(val irBackend: Boolean) : BaseGra
         build("packageJson", "rootPackageJson", "kotlinNpmInstall") {
             assertSuccessful()
 
-            fun getPackageJson(subProject: String) =
-                fileInWorkingDir("build/js/packages/kotlin-js-dependencies-clash-$subProject")
-                    .resolve(NpmProject.PACKAGE_JSON)
-                    .let {
-                        Gson().fromJson(it.readText(), PackageJson::class.java)
-                    }
-
-            val basePackageJson = getPackageJson("base")
-            val libPackageJson = getPackageJson("lib")
+            val basePackageJson = getSubprojectPackageJson("base")
+            val libPackageJson = getSubprojectPackageJson("lib")
 
             val dependency = "kotlinx-coroutines-core"
             assertFileVersion(basePackageJson, dependency)
@@ -846,4 +861,11 @@ abstract class AbstractKotlin2JsGradlePluginIT(val irBackend: Boolean) : BaseGra
             }
         }
     }
+
+    private fun CompiledProject.getSubprojectPackageJson(subProject: String, projectName: String? = null) =
+        fileInWorkingDir("build/js/packages/${projectName ?: project.projectName}-$subProject")
+            .resolve(NpmProject.PACKAGE_JSON)
+            .let {
+                Gson().fromJson(it.readText(), PackageJson::class.java)
+            }
 }
