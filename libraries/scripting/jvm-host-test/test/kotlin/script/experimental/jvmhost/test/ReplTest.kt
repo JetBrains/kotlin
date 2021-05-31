@@ -147,6 +147,21 @@ class ReplTest : TestCase() {
     }
 
     @Test
+    // TODO: make it covering more cases
+    fun testIrReceiverOvewrite() {
+        checkEvaluateInRepl(
+            sequenceOf(
+                "fun f(a: String) = a",
+                "f(\"x\")"
+            ),
+            sequenceOf(
+                null,
+                "x"
+            )
+        )
+    }
+
+    @Test
     fun testNoEvaluationError() {
         checkEvaluateInReplDiags(
             sequenceOf(

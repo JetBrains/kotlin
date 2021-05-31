@@ -494,15 +494,10 @@ private class ScriptToClassTransformer(
         if (irScript.earlierScripts != null) {
             val target = expression.symbol.owner
             val receiver: IrValueParameter? = target.dispatchReceiverParameter
-            if (target.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR && receiver?.name == Name.special("<this>")) {
+            if (receiver?.name == Name.special("<this>")) {
                 val newReceiver = getAccessCallForEarlierScript(expression, receiver.type)
                 if (newReceiver != null) {
-                    val builder = context.createIrBuilder(expression.symbol)
-                    val newCall = builder.irCall(expression.symbol, target.returnType, origin = expression.origin).also {
-                        it.copyTypeAndValueArgumentsFrom(expression)
-                        it.dispatchReceiver = newReceiver
-                    }
-                    return super.visitCall(newCall)
+                    expression.dispatchReceiver = newReceiver
                 }
             }
         }
