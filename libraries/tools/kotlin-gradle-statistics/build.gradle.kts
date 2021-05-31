@@ -12,7 +12,13 @@ dependencies {
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { projectDefault() }
+    "test" {
+        if (kotlinBuildProperties.isJpsBuildEnabled) {
+            none()
+        } else {
+            projectDefault()
+        }
+    }
 }
 
 projectTest {
