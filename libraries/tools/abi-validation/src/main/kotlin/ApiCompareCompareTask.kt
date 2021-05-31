@@ -39,8 +39,7 @@ open class ApiCompareCompareTask @Inject constructor(private val objects: Object
     @Optional
     val dummyOutputFile: File? = null
 
-    @get:Input
-    internal val projectName = objects.property(String::class.java)
+    private val projectName = project.name
 
     private val rootDir = project.rootProject.rootDir
 
@@ -52,7 +51,7 @@ open class ApiCompareCompareTask @Inject constructor(private val objects: Object
                     "Please ensure that ':apiDump' was executed in order to get API dump to compare the build against")
         }
 
-        val subject = projectName.get()
+        val subject = projectName
         val apiBuildDirFiles = mutableSetOf<RelativePath>()
         val expectedApiFiles = mutableSetOf<RelativePath>()
         objects.fileTree().from(apiBuildDir).visit { file ->

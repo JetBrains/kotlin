@@ -97,7 +97,6 @@ private fun Project.configureKotlinCompilation(
             inputDependencies = files(provider<Any> { if (isEnabled) compilation.compileDependencyFiles else emptyList<Any>() })
         }
         outputApiDir = apiBuildDir
-        this.projectName.set(project.name)
     }
     configureCheckTasks(apiBuildDir, apiBuild, extension)
 }
@@ -119,7 +118,6 @@ private fun Project.configureApiTasks(sourceSet: SourceSet, extension: ApiValida
         inputClassesDirs = files(provider<Any> { if (isEnabled) sourceSet.output.classesDirs else emptyList<Any>() })
         inputDependencies = files(provider<Any> { if (isEnabled) sourceSet.output.classesDirs else emptyList<Any>() })
         outputApiDir = apiBuildDir
-        this.projectName.set(project.name)
     }
 
     configureCheckTasks(apiBuildDir, apiBuild, extension)
@@ -143,7 +141,6 @@ private fun Project.configureCheckTasks(
             null
         }
         this.apiBuildDir = apiBuildDir
-        this.projectName.set(project.name)
         dependsOn(apiBuild)
     }
 
