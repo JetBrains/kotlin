@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.inline.INLINE_ONLY_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -80,6 +81,10 @@ internal class LambdaMetafactoryArgumentsBuilder(
 
         // Don't generate references to intrinsic functions as invokedynamic (no such method exists at run-time).
         if (context.irIntrinsics.getIntrinsic(implFun.symbol) != null)
+            return null
+
+        // Don't generate reference to inlineOnly methods as those do not exist at runtime.
+        if (implFun.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME))
             return null
 
         if (implFun is IrConstructor && implFun.visibility.isPrivate) {
