@@ -1,6 +1,6 @@
 
 @file:Repository("https://jcenter.bintray.com/")
-@file:DependsOn("org.jetbrains.kotlinx:kotlinx-serialization-runtime:1.0-M1-1.4.0-rc", options = ["transitive=false"])
+@file:DependsOn("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.1")
 
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
