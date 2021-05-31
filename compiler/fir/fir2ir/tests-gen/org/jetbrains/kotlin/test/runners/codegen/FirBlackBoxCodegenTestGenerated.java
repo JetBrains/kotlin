@@ -21212,6 +21212,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Test
+            @TestMetadata("inlineOnly.kt")
+            public void testInlineOnly() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/inlineOnly.kt");
+            }
+
+            @Test
             @TestMetadata("insideInitBlock.kt")
             public void testInsideInitBlock() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/insideInitBlock.kt");

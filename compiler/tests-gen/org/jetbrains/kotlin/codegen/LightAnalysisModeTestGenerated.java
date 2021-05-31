@@ -17701,6 +17701,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/genericFunInterfaceWithPrimitive.kt");
             }
 
+            @TestMetadata("inlineOnly.kt")
+            public void testInlineOnly() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/inlineOnly.kt");
+            }
+
             @TestMetadata("insideInitBlock.kt")
             public void testInsideInitBlock() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/insideInitBlock.kt");
