@@ -325,6 +325,7 @@ class Fir2IrClassifierStorage(
         } else {
             typeParameterCache[typeParameter] = irTypeParameter
         }
+        annotationGenerator.generate(irTypeParameter, typeParameter)
         return irTypeParameter
     }
 
