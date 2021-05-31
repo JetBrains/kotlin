@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.fir.serialization
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.serialization.constant.ConstantValue
 import org.jetbrains.kotlin.fir.serialization.constant.toConstantValue
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.name.Name
 
 class FirAnnotationSerializer(private val session: FirSession, internal val stringTable: FirElementAwareStringTable) {
     fun serializeAnnotation(annotation: FirAnnotationCall): ProtoBuf.Annotation = ProtoBuf.Annotation.newBuilder().apply {
@@ -20,12 +22,23 @@ class FirAnnotationSerializer(private val session: FirSession, internal val stri
 
         id = stringTable.getFqNameIndex(annotationClass)
 
-        for (argumentExpression in annotation.argumentList.arguments) {
-            if (argumentExpression !is FirNamedArgumentExpression) continue
+        fun addArgument(argumentExpression: FirExpression, parameterName: Name) {
             val argument = ProtoBuf.Annotation.Argument.newBuilder()
-            argument.nameId = stringTable.getStringIndex(argumentExpression.name.asString())
-            argument.setValue(valueProto(argumentExpression.toConstantValue() ?: continue))
+            argument.nameId = stringTable.getStringIndex(parameterName.asString())
+            argument.setValue(valueProto(argumentExpression.toConstantValue() ?: return))
             addArgument(argument)
+        }
+
+        val argumentList = annotation.argumentList
+        if (argumentList is FirResolvedArgumentList) {
+            for ((argumentExpression, parameter) in argumentList.mapping) {
+                addArgument(argumentExpression, parameter.name)
+            }
+        } else {
+            for (argumentExpression in argumentList.arguments) {
+                if (argumentExpression !is FirNamedArgumentExpression) continue
+                addArgument(argumentExpression, argumentExpression.name)
+            }
         }
     }.build()
 
