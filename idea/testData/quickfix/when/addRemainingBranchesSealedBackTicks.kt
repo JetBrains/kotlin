@@ -13,4 +13,3 @@ object `null`: FooSealed()
 fun test(foo: FooSealed?) = <caret>when (foo) {
     A -> "A"
 }
-/* IGNORE_FIR */

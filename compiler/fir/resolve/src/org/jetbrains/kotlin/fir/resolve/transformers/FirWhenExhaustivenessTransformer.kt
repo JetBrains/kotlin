@@ -33,6 +33,59 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
             WhenOnEnumExhaustivenessChecker,
             WhenOnSealedClassExhaustivenessChecker
         )
+
+        @OptIn(ExperimentalStdlibApi::class)
+        fun computeAllMissingCases(session: FirSession, whenExpression: FirWhenExpression): List<WhenMissingCase> {
+            val subjectType = getSubjectType(session, whenExpression) ?: return emptyList()
+            return buildList {
+                for (type in subjectType.unwrapIntersectionType()) {
+                    val checkers = getCheckers(type, session)
+                    collectMissingCases(checkers, whenExpression, type, session)
+                }
+            }
+        }
+
+        private fun getSubjectType(session: FirSession, whenExpression: FirWhenExpression): ConeKotlinType? {
+            val subjectType = whenExpression.subjectVariable?.returnTypeRef?.coneType
+                ?: whenExpression.subject?.typeRef?.coneType
+                ?: return null
+
+            return subjectType.fullyExpandedType(session).lowerBoundIfFlexible()
+        }
+
+        private fun ConeKotlinType.unwrapIntersectionType(): Collection<ConeKotlinType> {
+            return (this as? ConeIntersectionType)?.intersectedTypes ?: listOf(this)
+        }
+
+
+        @OptIn(ExperimentalStdlibApi::class)
+        private fun getCheckers(
+            subjectType: ConeKotlinType,
+            session: FirSession
+        ): List<WhenExhaustivenessChecker> {
+            return buildList {
+                exhaustivenessCheckers.filterTo<WhenExhaustivenessChecker, MutableCollection<in WhenExhaustivenessChecker>>(this) {
+                    it.isApplicable(subjectType, session)
+                }
+                if (isNotEmpty() && subjectType.isMarkedNullable) {
+                    this.add(WhenOnNullableExhaustivenessChecker)
+                }
+            }
+        }
+
+        private fun MutableList<WhenMissingCase>.collectMissingCases(
+            checkers: List<WhenExhaustivenessChecker>,
+            whenExpression: FirWhenExpression,
+            subjectType: ConeKotlinType,
+            session: FirSession
+        ) {
+            for (checker in checkers) {
+                checker.computeMissingCases(whenExpression, subjectType, session, this)
+            }
+            if (isEmpty() && whenExpression.branches.isEmpty()) {
+                add(WhenMissingCase.Unknown)
+            }
+        }
     }
 
     override fun <E : FirElement> transformElement(element: E, data: Any?): E {
@@ -52,21 +105,17 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
         }
 
         val session = bodyResolveComponents.session
-        val subjectType = (whenExpression.subjectVariable?.returnTypeRef?.coneType
-            ?: whenExpression.subject?.typeRef?.coneType)
-            ?.fullyExpandedType(session)?.lowerBoundIfFlexible()
-            ?: run {
-                whenExpression.replaceExhaustivenessStatus(ExhaustivenessStatus.NotExhaustive.NO_ELSE_BRANCH)
-                return
-            }
+        val subjectType = getSubjectType(session, whenExpression) ?: run {
+            whenExpression.replaceExhaustivenessStatus(ExhaustivenessStatus.NotExhaustive.NO_ELSE_BRANCH)
+            return
+        }
 
         if (whenExpression.branches.isEmpty() && subjectType.isNothing) {
             whenExpression.replaceExhaustivenessStatus(ExhaustivenessStatus.ExhaustiveAsNothing)
             return
         }
 
-        val unwrappedIntersectionTypes = (subjectType as? ConeIntersectionType)?.intersectedTypes ?: listOf(subjectType)
-
+        val unwrappedIntersectionTypes = subjectType.unwrapIntersectionType()
 
         var status: ExhaustivenessStatus = ExhaustivenessStatus.NotExhaustive.NO_ELSE_BRANCH
 
@@ -86,30 +135,18 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
         whenExpression.replaceExhaustivenessStatus(status)
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun computeStatusForNonIntersectionType(
         unwrappedSubjectType: ConeKotlinType,
         session: FirSession,
         whenExpression: FirWhenExpression,
     ): ExhaustivenessStatus {
-        val checkers = buildList {
-            exhaustivenessCheckers.filterTo(this) { it.isApplicable(unwrappedSubjectType, session) }
-            if (isNotEmpty() && unwrappedSubjectType.isMarkedNullable) {
-                add(WhenOnNullableExhaustivenessChecker)
-            }
-        }
-
+        val checkers = getCheckers(unwrappedSubjectType, session)
         if (checkers.isEmpty()) {
             return ExhaustivenessStatus.NotExhaustive.NO_ELSE_BRANCH
         }
 
         val whenMissingCases = mutableListOf<WhenMissingCase>()
-        for (checker in checkers) {
-            checker.computeMissingCases(whenExpression, unwrappedSubjectType, session, whenMissingCases)
-        }
-        if (whenMissingCases.isEmpty() && whenExpression.branches.isEmpty()) {
-            whenMissingCases.add(WhenMissingCase.Unknown)
-        }
+        whenMissingCases.collectMissingCases(checkers, whenExpression, unwrappedSubjectType, session)
 
         return if (whenMissingCases.isEmpty()) {
             ExhaustivenessStatus.ProperlyExhaustive

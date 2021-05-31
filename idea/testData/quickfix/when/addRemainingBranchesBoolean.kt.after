@@ -4,4 +4,3 @@ fun test(b: Boolean) = when(b) {
     false -> 0
     true -> TODO()
 }
-/* IGNORE_FIR */

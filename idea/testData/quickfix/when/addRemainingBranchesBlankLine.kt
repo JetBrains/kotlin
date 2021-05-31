@@ -9,4 +9,3 @@ fun test(a: A) {
 
     }
 }
-/* IGNORE_FIR */

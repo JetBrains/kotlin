@@ -11,4 +11,3 @@ fun test(a: A) {
         is B -> TODO()
     }
 }
-/* IGNORE_FIR */

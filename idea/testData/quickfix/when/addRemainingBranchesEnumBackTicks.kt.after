@@ -14,4 +14,3 @@ fun test(foo: FooEnum?) = <caret>when (foo) {
     FooEnum.`null` -> TODO()
     null -> TODO()
 }
-/* IGNORE_FIR */

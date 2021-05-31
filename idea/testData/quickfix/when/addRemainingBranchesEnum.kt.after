@@ -7,4 +7,3 @@ fun test(c: Color) = when(c) {
     Color.R -> TODO()
     Color.G -> TODO()
 }
-/* IGNORE_FIR */
