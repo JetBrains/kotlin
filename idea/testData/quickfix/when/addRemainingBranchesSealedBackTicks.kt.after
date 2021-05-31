@@ -20,4 +20,3 @@ fun test(foo: FooSealed?) = <caret>when (foo) {
     is `true` -> TODO()
     null -> TODO()
 }
-/* IGNORE_FIR */

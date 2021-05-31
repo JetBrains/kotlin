@@ -8,4 +8,3 @@ enum class FooEnum {
 fun test(foo: FooEnum?) = <caret>when (foo) {
     FooEnum.A -> "A"
 }
-/* IGNORE_FIR */
