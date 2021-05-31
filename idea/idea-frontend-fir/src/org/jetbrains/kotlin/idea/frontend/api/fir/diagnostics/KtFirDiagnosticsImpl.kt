@@ -1358,7 +1358,7 @@ internal class ConflictingProjectionImpl(
     override val type: KtType,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ConflictingProjection(), KtAbstractFirDiagnostic<PsiElement> {
+) : KtFirDiagnostic.ConflictingProjection(), KtAbstractFirDiagnostic<KtTypeParameter> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 

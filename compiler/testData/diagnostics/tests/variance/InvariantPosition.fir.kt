@@ -23,7 +23,7 @@ interface Test<in I, out O, P> {
     var neOk7: Pair<In<<!TYPE_VARIANCE_CONFLICT("I; in; invariant; Pair<In<I>, O>")!>I<!>>, <!TYPE_VARIANCE_CONFLICT("O; out; invariant; Pair<In<I>, O>")!>O<!>>
     var neOk8: Inv<in <!TYPE_VARIANCE_CONFLICT("O; out; invariant; Inv<in O>")!>O<!>>
     var neOk9: Inv<in <!TYPE_VARIANCE_CONFLICT("I; in; invariant; Inv<in I>")!>I<!>>
-    var neOk10: <!CONFLICTING_PROJECTION!>In<out I><!>
+    var neOk10: In<<!CONFLICTING_PROJECTION!>out<!> I>
 
     var neOk11: <!TYPE_VARIANCE_CONFLICT("I; in; invariant; I")!>I<!>
     var neOk12: In<<!TYPE_VARIANCE_CONFLICT("O; out; invariant; In<O>")!>O<!>>

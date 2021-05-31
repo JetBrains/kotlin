@@ -274,7 +274,7 @@ object FirErrors {
     val TYPE_PARAMETERS_IN_OBJECT by error0<PsiElement>()
     val ILLEGAL_PROJECTION_USAGE by error0<PsiElement>()
     val TYPE_PARAMETERS_IN_ENUM by error0<PsiElement>()
-    val CONFLICTING_PROJECTION by error1<PsiElement, ConeKotlinType>()
+    val CONFLICTING_PROJECTION by error1<KtTypeParameter, ConeKotlinType>(SourceElementPositioningStrategies.VARIANCE_MODIFIER)
     val VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED by error0<KtTypeParameter>(SourceElementPositioningStrategies.VARIANCE_MODIFIER)
     val CATCH_PARAMETER_WITH_DEFAULT_VALUE by error0<PsiElement>()
     val REIFIED_TYPE_IN_CATCH_CLAUSE by error0<PsiElement>()

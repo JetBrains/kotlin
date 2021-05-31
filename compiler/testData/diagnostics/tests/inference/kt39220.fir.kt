@@ -51,7 +51,7 @@ val String.x1 get() = ""
 
 fun <K> bar1(f: KFunction2<K, String, String>) {}
 
-fun <K> bar2(f: <!CONFLICTING_PROJECTION!>KFunction2<out K, String, String><!>) {}
+fun <K> bar2(f: KFunction2<<!CONFLICTING_PROJECTION!>out<!> K, String, String>) {}
 
 fun <K> bar3(f: Any?) {}
 

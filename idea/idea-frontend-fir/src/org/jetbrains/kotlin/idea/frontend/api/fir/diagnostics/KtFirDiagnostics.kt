@@ -840,7 +840,7 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = TypeParametersInEnum::class
     }
 
-    abstract class ConflictingProjection : KtFirDiagnostic<PsiElement>() {
+    abstract class ConflictingProjection : KtFirDiagnostic<KtTypeParameter>() {
         override val diagnosticClass get() = ConflictingProjection::class
         abstract val type: KtType
     }

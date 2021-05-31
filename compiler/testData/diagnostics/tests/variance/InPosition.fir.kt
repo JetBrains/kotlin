@@ -35,7 +35,7 @@ interface Test<in I, out O, P> {
     fun neOk6(i: In<In<<!TYPE_VARIANCE_CONFLICT("O; out; in; In<In<O>>")!>O<!>>>)
     fun neOk7(i: Pair<In<<!TYPE_VARIANCE_CONFLICT("I; in; out; Pair<In<I>, O>")!>I<!>>, <!TYPE_VARIANCE_CONFLICT("O; out; in; Pair<In<I>, O>")!>O<!>>)
     fun neOk8(i: Inv<out <!TYPE_VARIANCE_CONFLICT("O; out; in; Inv<out O>")!>O<!>>)
-    fun neOk9(i: <!CONFLICTING_PROJECTION!>In<out P><!>)
+    fun neOk9(i: In<<!CONFLICTING_PROJECTION!>out<!> P>)
     fun neOk10(i: Out<<!TYPE_VARIANCE_CONFLICT("O; out; in; Out<O>")!>O<!>>)
 
     fun neOk11(i: Inv<in <!TYPE_VARIANCE_CONFLICT("I; in; out; Inv<in I>")!>I<!>>)

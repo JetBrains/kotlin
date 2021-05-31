@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -66,9 +67,37 @@ object FirConflictingProjectionChecker : FirBasicDeclarationChecker() {
                 actual is ConeKotlinTypeProjectionIn && protoVariance == Variance.OUT_VARIANCE ||
                 actual is ConeKotlinTypeProjectionOut && protoVariance == Variance.IN_VARIANCE
             ) {
-                reporter.reportOn(typeRef.source, FirErrors.CONFLICTING_PROJECTION, typeRef.coneType, context)
-                return
+                val typeArgSource = extractTypeArgumentSource(typeRef, it)
+                reporter.reportOn(typeArgSource ?: typeRef.source, FirErrors.CONFLICTING_PROJECTION, typeRef.coneType, context)
             }
         }
+    }
+
+    private fun extractTypeArgumentSource(typeRef: FirTypeRef, index: Int): FirSourceElement? {
+        if (typeRef is FirResolvedTypeRef) {
+            val delegatedTypeRef = typeRef.delegatedTypeRef
+            if (delegatedTypeRef is FirUserTypeRef) {
+                var currentTypeArguments: List<FirTypeProjection>? = null
+                var currentIndex = index
+                val qualifier = delegatedTypeRef.qualifier
+
+                for (i in qualifier.size - 1 downTo 0) {
+                    val typeArguments = qualifier[i].typeArgumentList.typeArguments
+                    if (currentIndex < typeArguments.size) {
+                        currentTypeArguments = typeArguments
+                        break
+                    } else {
+                        currentIndex -= typeArguments.size
+                    }
+                }
+
+                val typeArgument = currentTypeArguments?.elementAtOrNull(currentIndex)
+                if (typeArgument is FirTypeProjectionWithVariance) {
+                    return typeArgument.source
+                }
+            }
+        }
+
+        return null
     }
 }

@@ -154,7 +154,7 @@ object FirClassVarianceChecker : FirClassChecker() {
                     }
 
                     if (newVariance != null) {
-                        val subTypeRef = extractChildFirTypeRef(typeRef, index)
+                        val subTypeRef = extractTypeArgumentTypeRef(typeRef, index)
 
                         checkVarianceConflict(
                             typeArgumentType, newVariance, subTypeRef, containingType,
@@ -167,7 +167,7 @@ object FirClassVarianceChecker : FirClassChecker() {
         }
     }
 
-    private fun extractChildFirTypeRef(typeRef: FirTypeRef?, index: Int): FirTypeRef? {
+    private fun extractTypeArgumentTypeRef(typeRef: FirTypeRef?, index: Int): FirTypeRef? {
         if (typeRef is FirResolvedTypeRef) {
             val delegatedTypeRef = typeRef.delegatedTypeRef
             if (delegatedTypeRef is FirUserTypeRef) {

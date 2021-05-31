@@ -156,3 +156,26 @@ FILE: conflictingProjection.kt
     public final fun test18(): R|InOuter.OutIntermediate.InInner<out kotlin/Char, in kotlin/String, kotlin/Int>| {
         ^test18 R|/InOuter.InOuter|<R|kotlin/Int|>().R|SubstitutionOverride</InOuter.OutIntermediate.OutIntermediate>|<R|kotlin/String|>().R|SubstitutionOverride</InOuter.OutIntermediate.InInner.InInner>|<R|kotlin/Any?|>()
     }
+    public final class TwoParametersOuter<T, in T1> : R|kotlin/Any| {
+        public constructor<T, in T1>(): R|TwoParametersOuter<T, T1>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final inner class TwoParametersIntermediate<out K, K1, T, in T1> : R|kotlin/Any| {
+            public constructor<out K, K1>(): R|TwoParametersOuter.TwoParametersIntermediate<K, K1, T, T1>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final inner class InInner<in G, G1, out K, K1, T, in T1> : R|kotlin/Any| {
+                public constructor<in G, G1>(): R|TwoParametersOuter.TwoParametersIntermediate.InInner<G, G1, K, K1, T, T1>| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+    }
+    public final fun test19(): R|TwoParametersOuter.TwoParametersIntermediate.InInner<kotlin/Char, kotlin/Char, in kotlin/String, kotlin/Int, kotlin/Int, out kotlin/String>?| {
+        ^test19 Null(null)
+    }
