@@ -119,7 +119,7 @@ open class KotlinUMethod(
 
     override val returnTypeReference: UTypeReferenceExpression? by lz {
         (sourcePsi as? KtCallableDeclaration)?.typeReference?.let {
-            LazyKotlinUTypeReferenceExpression(it, this) { javaPsi.returnType ?: UastErrorType }
+            KotlinUTypeReferenceExpression(it, this) { javaPsi.returnType ?: UastErrorType }
         }
     }
 

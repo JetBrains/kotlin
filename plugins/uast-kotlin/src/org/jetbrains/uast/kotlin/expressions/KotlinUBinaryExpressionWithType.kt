@@ -32,7 +32,7 @@ class KotlinUBinaryExpressionWithType(
     override val type by lz { sourcePsi.right.toPsiType(this) }
     
     override val typeReference by lz {
-        sourcePsi.right?.let { LazyKotlinUTypeReferenceExpression(it, this) }
+        sourcePsi.right?.let { KotlinUTypeReferenceExpression(it, this) }
     }
     
     override val operationKind = when (sourcePsi.operationReference.getReferencedNameElementType()) {

@@ -45,7 +45,7 @@ class KotlinUCatchClause(
     override val typeReferences by lz {
         val parameter = sourcePsi.catchParameter ?: return@lz emptyList<UTypeReferenceExpression>()
         val typeReference = parameter.typeReference ?: return@lz emptyList<UTypeReferenceExpression>()
-        listOf(LazyKotlinUTypeReferenceExpression(typeReference, this) { typeReference.toPsiType(this, boxed = true) })
+        listOf(KotlinUTypeReferenceExpression(typeReference, this) { typeReference.toPsiType(this, boxed = true) })
     }
 
     // equal to IDEA 202 implementation

@@ -30,7 +30,7 @@ class KotlinUTypeCheckExpression(
     override val type by lz { sourcePsi.typeReference.toPsiType(this) }
     
     override val typeReference = sourcePsi.typeReference?.let {
-        LazyKotlinUTypeReferenceExpression(it, this) { it.toPsiType(this) }
+        KotlinUTypeReferenceExpression(it, this) { it.toPsiType(this) }
     }
     
     override val operationKind =
