@@ -21212,6 +21212,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
+            @TestMetadata("kt45779.kt")
+            public void testKt45779() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/kt45779.kt");
+            }
+
+            @Test
             @TestMetadata("nullabilityAssertions.kt")
             public void testNullabilityAssertions() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/nullabilityAssertions.kt");
