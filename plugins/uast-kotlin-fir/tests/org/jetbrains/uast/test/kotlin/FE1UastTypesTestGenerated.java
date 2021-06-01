@@ -29,6 +29,11 @@ public class FE1UastTypesTestGenerated extends AbstractFE1UastTypesTest {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/uast-kotlin-fir/testData/type"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
+    @TestMetadata("typeCheck.kt")
+    public void testTypeCheck() throws Exception {
+        runTest("plugins/uast-kotlin-fir/testData/type/typeCheck.kt");
+    }
+
     @TestMetadata("unresolved.kt")
     public void testUnresolved() throws Exception {
         runTest("plugins/uast-kotlin-fir/testData/type/unresolved.kt");
