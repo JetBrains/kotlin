@@ -29,12 +29,12 @@ import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.util.KtTestUtil
-import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
+import org.jetbrains.kotlin.load.java.JavaTypeEnhancementState
 import java.io.File
 
 class LoadJavaPackageAnnotationsTest : KtUsefulTestCase() {
     companion object {
-        private val TEST_DATA_PATH = "compiler/testData/loadJavaPackageAnnotations/"
+        private const val TEST_DATA_PATH = "compiler/testData/loadJavaPackageAnnotations/"
     }
 
     private fun doTest(useJavac: Boolean, configurator: (CompilerConfiguration) -> Unit) {
@@ -45,27 +45,26 @@ class LoadJavaPackageAnnotationsTest : KtUsefulTestCase() {
                 put(JVMConfigurationKeys.USE_JAVAC, true)
             }
             languageVersionSettings = LanguageVersionSettingsImpl(
-                    LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE, mapOf(JvmAnalysisFlags.javaTypeEnhancementState to JavaTypeEnhancementState.STRICT)
+                LanguageVersion.LATEST_STABLE,
+                ApiVersion.LATEST_STABLE,
+                mapOf(JvmAnalysisFlags.javaTypeEnhancementState to JavaTypeEnhancementState.DEFAULT)
             )
             configurator(this)
         }
-        val environment =
-                KotlinCoreEnvironment.createForTests(
-                        testRootDisposable,
-                        configuration,
-                        EnvironmentConfigFiles.JVM_CONFIG_FILES
-                ).apply {
-                    if (useJavac) {
-                        registerJavac()
-                    }
-                }
+        val environment = KotlinCoreEnvironment.createForTests(
+            testRootDisposable,
+            configuration,
+            EnvironmentConfigFiles.JVM_CONFIG_FILES
+        ).apply {
+            if (useJavac) {
+                registerJavac()
+            }
+        }
         val moduleDescriptor = JvmResolveUtil.analyze(environment).moduleDescriptor
 
-        val packageFragmentDescriptor =
-                moduleDescriptor.getPackage(FqName("test")).fragments
-                        .singleOrNull {
-                            it.getMemberScope().getContributedClassifier(Name.identifier("A"), NoLookupLocation.FROM_TEST) != null
-                        }.let { assertInstanceOf(it, LazyJavaPackageFragment::class.java) }
+        val packageFragmentDescriptor = moduleDescriptor.getPackage(FqName("test")).fragments
+            .singleOrNull { it.getMemberScope().getContributedClassifier(Name.identifier("A"), NoLookupLocation.FROM_TEST) != null }
+            .let { assertInstanceOf(it, LazyJavaPackageFragment::class.java) }
 
         val annotation = packageFragmentDescriptor.annotations.findAnnotation(FqName("test.Ann"))
         assertNotNull(annotation)

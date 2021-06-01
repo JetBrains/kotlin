@@ -14,8 +14,9 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
-import org.jetbrains.kotlin.utils.ReportLevel
+import org.jetbrains.kotlin.load.java.JavaTypeEnhancementState
+import org.jetbrains.kotlin.load.java.ReportLevel
+import org.jetbrains.kotlin.name.FqName
 
 class FirAnnotationTypeQualifierResolver(private val session: FirSession, private val javaTypeEnhancementState: JavaTypeEnhancementState) {
 
@@ -52,7 +53,7 @@ class FirAnnotationTypeQualifierResolver(private val session: FirSession, privat
         get() = (coneClassLikeType?.lookupTag?.toSymbol(this@FirAnnotationTypeQualifierResolver.session) as? FirRegularClassSymbol)?.fir
 
     fun resolveTypeQualifierAnnotation(annotationCall: FirAnnotationCall): FirAnnotationCall? {
-        if (javaTypeEnhancementState.disabledJsr305) {
+        if (javaTypeEnhancementState.jsr305.isDisabled) {
             return null
         }
 
@@ -63,7 +64,7 @@ class FirAnnotationTypeQualifierResolver(private val session: FirSession, privat
     }
 
     fun resolveQualifierBuiltInDefaultAnnotation(annotationCall: FirAnnotationCall): JavaDefaultQualifiers? {
-        if (javaTypeEnhancementState.disabledJsr305) {
+        if (javaTypeEnhancementState.jsr305.isDisabled) {
             return null
         }
 
@@ -77,7 +78,7 @@ class FirAnnotationTypeQualifierResolver(private val session: FirSession, privat
     }
 
     fun resolveTypeQualifierDefaultAnnotation(annotationCall: FirAnnotationCall): TypeQualifierWithApplicability? {
-        if (javaTypeEnhancementState.disabledJsr305) {
+        if (javaTypeEnhancementState.jsr305.isDisabled) {
             return null
         }
 
@@ -109,11 +110,11 @@ class FirAnnotationTypeQualifierResolver(private val session: FirSession, privat
 
     fun resolveJsr305ReportLevel(annotationCall: FirAnnotationCall): ReportLevel {
         resolveJsr305CustomLevel(annotationCall)?.let { return it }
-        return javaTypeEnhancementState.globalJsr305Level
+        return javaTypeEnhancementState.jsr305.globalLevel
     }
 
     fun resolveJsr305CustomLevel(annotationCall: FirAnnotationCall): ReportLevel? {
-        javaTypeEnhancementState.userDefinedLevelForSpecificJsr305Annotation[annotationCall.classId?.run { packageFqName.asString() + "." + relativeClassName.asString() }]?.let { return it }
+        javaTypeEnhancementState.jsr305.userDefinedLevelForSpecificAnnotation[annotationCall.classId?.run { FqName(packageFqName.asString() + "." + relativeClassName.asString()) }]?.let { return it }
         return annotationCall.resolvedClass?.migrationAnnotationStatus()
     }
 
@@ -122,7 +123,7 @@ class FirAnnotationTypeQualifierResolver(private val session: FirSession, privat
             it.classId == MIGRATION_ANNOTATION_ID
         }?.arguments?.firstOrNull()?.toResolvedCallableSymbol()?.callableId?.callableName ?: return null
 
-        javaTypeEnhancementState.migrationLevelForJsr305?.let { return it }
+        javaTypeEnhancementState.jsr305.migrationLevel?.let { return it }
 
         return when (enumEntryName.asString()) {
             "STRICT" -> ReportLevel.STRICT
@@ -146,7 +147,7 @@ class FirAnnotationTypeQualifierResolver(private val session: FirSession, privat
             )
         }
 
-    val disabled: Boolean = javaTypeEnhancementState.disabledJsr305
+    val isDisabled: Boolean = javaTypeEnhancementState.jsr305.isDisabled
 
 }
 

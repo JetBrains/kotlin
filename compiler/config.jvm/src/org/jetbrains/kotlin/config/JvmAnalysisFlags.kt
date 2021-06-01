@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.config
 
-import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
+import org.jetbrains.kotlin.load.java.JavaTypeEnhancementState
 import kotlin.reflect.KProperty
 
 object JvmAnalysisFlags {
