@@ -82,7 +82,6 @@ abstract class AbstractLoweringTests : AbstractCodegenTest() {
         val compiledClasses = classLoader(
             """
        import android.widget.*
-       import androidx.compose.androidview.adapters.*
        import androidx.compose.runtime.*
 
        $COMPOSE_VIEW_STUBS_IMPORTS
