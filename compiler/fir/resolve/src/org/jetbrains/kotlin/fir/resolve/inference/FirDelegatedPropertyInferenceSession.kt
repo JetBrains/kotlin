@@ -53,7 +53,8 @@ class FirDelegatedPropertyInferenceSession(
 
     override fun inferPostponedVariables(
         lambda: ResolvedLambdaAtom,
-        initialStorage: ConstraintStorage
+        initialStorage: ConstraintStorage,
+        completionMode: ConstraintSystemCompletionMode
     ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType>? = null
 
     override fun <T> shouldCompleteResolvedSubAtomsOf(call: T): Boolean where T : FirResolvable, T : FirStatement = true
@@ -76,7 +77,8 @@ class FirDelegatedPropertyInferenceSession(
                 postponedArgumentsAnalyzer.analyze(
                     commonSystem.asPostponedArgumentsAnalyzerContext(),
                     it,
-                    resolvedCalls.first().candidate
+                    resolvedCalls.first().candidate,
+                    ConstraintSystemCompletionMode.FULL,
                 )
             }
         }

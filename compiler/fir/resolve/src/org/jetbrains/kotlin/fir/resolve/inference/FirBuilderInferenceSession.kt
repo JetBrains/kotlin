@@ -108,7 +108,8 @@ class FirBuilderInferenceSession(
 
     override fun inferPostponedVariables(
         lambda: ResolvedLambdaAtom,
-        initialStorage: ConstraintStorage
+        initialStorage: ConstraintStorage,
+        completionMode: ConstraintSystemCompletionMode
     ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType>? {
         val (commonSystem, effectivelyEmptyConstraintSystem) = buildCommonSystem(initialStorage)
         if (effectivelyEmptyConstraintSystem) {
@@ -120,7 +121,7 @@ class FirBuilderInferenceSession(
         @Suppress("UNCHECKED_CAST")
         components.callCompleter.completer.complete(
             context,
-            ConstraintSystemCompletionMode.FULL,
+            completionMode,
             partiallyResolvedCalls.map { it.first as FirStatement },
             components.session.builtinTypes.unitType.type, resolutionContext,
             collectVariablesFromContext = true

@@ -16,11 +16,15 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreNameReference
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeTypeVariable
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.model.CoroutinePosition
 import org.jetbrains.kotlin.types.model.StubTypeMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
@@ -52,14 +56,15 @@ class PostponedArgumentsAnalyzer(
     fun analyze(
         c: PostponedArgumentsAnalyzerContext,
         argument: PostponedResolvedAtom,
-        candidate: Candidate
+        candidate: Candidate,
+        completionMode: ConstraintSystemCompletionMode
     ) {
         when (argument) {
             is ResolvedLambdaAtom ->
-                analyzeLambda(c, argument, candidate)
+                analyzeLambda(c, argument, candidate, completionMode)
 
             is LambdaWithTypeVariableAsExpectedTypeAtom ->
-                analyzeLambda(c, argument.transformToResolvedLambda(c.getBuilder(), resolutionContext), candidate)
+                analyzeLambda(c, argument.transformToResolvedLambda(c.getBuilder(), resolutionContext), candidate, completionMode)
 
             is ResolvedCallableReferenceAtom -> processCallableReference(argument, candidate)
 
@@ -106,7 +111,8 @@ class PostponedArgumentsAnalyzer(
     fun analyzeLambda(
         c: PostponedArgumentsAnalyzerContext,
         lambda: ResolvedLambdaAtom,
-        candidate: Candidate
+        candidate: Candidate,
+        completionMode: ConstraintSystemCompletionMode,
         //diagnosticHolder: KotlinDiagnosticsHolder
     ): ReturnArgumentsAnalysisResult {
         val unitType = components.session.builtinTypes.unitType.type
@@ -135,7 +141,15 @@ class PostponedArgumentsAnalyzer(
             expectedTypeForReturnArguments,
             stubsForPostponedVariables
         )
-        applyResultsOfAnalyzedLambdaToCandidateSystem(c, lambda, candidate, results, expectedTypeForReturnArguments, ::substitute)
+        applyResultsOfAnalyzedLambdaToCandidateSystem(
+            c,
+            lambda,
+            candidate,
+            results,
+            completionMode,
+            expectedTypeForReturnArguments,
+            ::substitute
+        )
         return results
     }
 
@@ -144,6 +158,7 @@ class PostponedArgumentsAnalyzer(
         lambda: ResolvedLambdaAtom,
         candidate: Candidate,
         results: ReturnArgumentsAnalysisResult,
+        completionMode: ConstraintSystemCompletionMode,
         expectedReturnType: ConeKotlinType? = null,
         substitute: (ConeKotlinType) -> ConeKotlinType = c.createSubstituteFunctorForLambdaAnalysis()
     ) {
@@ -151,7 +166,7 @@ class PostponedArgumentsAnalyzer(
         if (inferenceSession != null) {
             val storageSnapshot = c.getBuilder().currentStorage()
 
-            val postponedVariables = inferenceSession.inferPostponedVariables(lambda, storageSnapshot)
+            val postponedVariables = inferenceSession.inferPostponedVariables(lambda, storageSnapshot, completionMode)
 
             if (postponedVariables == null) {
                 c.getBuilder().removePostponedVariables()

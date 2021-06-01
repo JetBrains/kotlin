@@ -77,11 +77,11 @@ FILE fqName:<root> fileName:/kt47082.kt
               $receiver: VALUE_PARAMETER name:<this> type:<root>.Derived<R of <root>.foo>
               BLOCK_BODY
                 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                  CALL 'public final fun toChannel <E, C> (destination: C of <root>.toChannel): C of <root>.toChannel declared in <root>' type=<root>.Derived<R of <root>.foo> origin=null
+                  CALL 'public final fun toChannel <E, C> (destination: C of <root>.toChannel): C of <root>.toChannel declared in <root>' type=<root>.Derived<IrErrorType(null)> origin=null
                     <E>: R of <root>.foo
-                    <C>: <root>.Derived<R of <root>.foo>
+                    <C>: <root>.Derived<IrErrorType(null)>
                     $receiver: GET_VAR 'r: <root>.Receiver<R of <root>.foo> declared in <root>.foo' type=<root>.Receiver<R of <root>.foo> origin=null
-                    destination: GET_VAR '<this>: <root>.Derived<R of <root>.foo> declared in <root>.foo.<anonymous>' type=<root>.Derived<R of <root>.foo> origin=null
+                    destination: GET_VAR '<this>: <root>.Derived<R of <root>.foo> declared in <root>.foo.<anonymous>' type=<root>.Derived<IrErrorType(null)> origin=null
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'

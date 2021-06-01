@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariableTypeConstructor
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 
 abstract class FirInferenceSession {
@@ -27,6 +28,7 @@ abstract class FirInferenceSession {
     abstract fun inferPostponedVariables(
         lambda: ResolvedLambdaAtom,
         initialStorage: ConstraintStorage,
+        completionMode: ConstraintSystemCompletionMode,
         // TODO: diagnostic holder
     ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType>?
 
@@ -47,7 +49,8 @@ abstract class FirStubInferenceSession : FirInferenceSession() {
 
     override fun inferPostponedVariables(
         lambda: ResolvedLambdaAtom,
-        initialStorage: ConstraintStorage
+        initialStorage: ConstraintStorage,
+        completionMode: ConstraintSystemCompletionMode
     ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType>? = null
 
     override fun <T> writeOnlyStubs(call: T): Boolean where T : FirResolvable, T : FirStatement = false

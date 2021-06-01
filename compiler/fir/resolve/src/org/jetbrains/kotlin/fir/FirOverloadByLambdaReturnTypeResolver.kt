@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
@@ -138,7 +137,8 @@ class FirOverloadByLambdaReturnTypeResolver(
             val results = postponedArgumentsAnalyzer.analyzeLambda(
                 firstCandidate.system.asPostponedArgumentsAnalyzerContext(),
                 firstAtom,
-                firstCandidate
+                firstCandidate,
+                ConstraintSystemCompletionMode.FULL,
             )
             while (iterator.hasNext()) {
                 val (candidate, atom) = iterator.next()
@@ -147,7 +147,8 @@ class FirOverloadByLambdaReturnTypeResolver(
                     candidate.system.asPostponedArgumentsAnalyzerContext(),
                     atom,
                     candidate,
-                    results
+                    results,
+                    ConstraintSystemCompletionMode.FULL,
                 )
             }
 
