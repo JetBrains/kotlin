@@ -16,7 +16,7 @@ fun box(): String {
         }
     } finally {
         return "OK"
-    }  // TODO: why do we go to this line before going to the line above for the finally block.
+    }
     return "FAIL"
 }
 
@@ -33,5 +33,4 @@ fun box(): String {
 // test.kt:10 box: i:int=0:int, e:java.lang.Exception=java.lang.RuntimeException
 // test.kt:11 box: i:int=0:int, e:java.lang.Exception=java.lang.RuntimeException, y:java.lang.String="y":java.lang.String
 // test.kt:14 box: i:int=0:int, e:java.lang.Exception=java.lang.RuntimeException
-// test.kt:19 box:
 // test.kt:18 box:

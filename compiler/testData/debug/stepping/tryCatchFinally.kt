@@ -52,7 +52,11 @@ fun box() {
 // test.kt:13 foo
 // test.kt:17 foo
 // test.kt:18 foo
+// LINENUMBERS JVM
+// test.kt:17 foo
+// LINENUMBERS JVM_IR
 // test.kt:12 foo
+// LINENUMBERS
 // test.kt:19 foo
 // test.kt:34 box
 // test.kt:35 box
@@ -69,7 +73,11 @@ fun box() {
 // test.kt:15 foo
 // test.kt:17 foo
 // test.kt:18 foo
+// LINENUMBERS JVM
+// test.kt:17 foo
+// LINENUMBERS JVM_IR
 // test.kt:12 foo
+// LINENUMBERS
 // test.kt:19 foo
 // test.kt:36 box
 // test.kt:37 box
@@ -87,6 +95,10 @@ fun box() {
 // test.kt:15 foo
 // test.kt:17 foo
 // test.kt:18 foo
+// LINENUMBERS JVM
+// test.kt:17 foo
+// LINENUMBERS JVM_IR
 // test.kt:12 foo
+// LINENUMBERS
 // test.kt:19 foo
 // test.kt:38 box
