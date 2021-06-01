@@ -1,0 +1,7 @@
+import javax.swing.SwingUtilities
+<spot>import javax.swing.SwingUtilities.invokeLater</spot>
+
+fun foo() {
+    <spot>invokeLater</spot> { }
+    <spot>invokeLater</spot>()
+}

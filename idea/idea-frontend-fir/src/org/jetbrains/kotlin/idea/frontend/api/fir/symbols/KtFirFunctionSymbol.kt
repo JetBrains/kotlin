@@ -69,6 +69,7 @@ internal class KtFirFunctionSymbol(
     override val isSuspend: Boolean get() = firRef.withFir { it.isSuspend }
     override val isOverride: Boolean get() = firRef.withFir { it.isOverride }
     override val isInfix: Boolean get() = firRef.withFir { it.isInfix }
+    override val isStatic: Boolean get() = firRef.withFir { it.isStatic }
 
     override val dispatchType: KtType? by cached {
         firRef.dispatchReceiverTypeAndAnnotations(builder)

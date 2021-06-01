@@ -16,6 +16,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: FINAL
   name: listOf
@@ -38,6 +39,7 @@ KtFirFunctionSymbol:
   isInline: true
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: FINAL
   name: listOf
@@ -60,6 +62,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: FINAL
   name: listOf
