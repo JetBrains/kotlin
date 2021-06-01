@@ -200,6 +200,11 @@ internal object FirKotlinConverter : BaseKotlinConverter {
                     element.expression?.let { convertExpression(it, givenParent, requiredTypes) }
                         ?: expr<UExpression> { UastEmptyExpression(givenParent) }
                 }
+                is KtTypeReference ->
+                    requiredTypes.accommodate(
+                        alternative { KotlinUTypeReferenceExpression(element, givenParent) },
+                        alternative { convertReceiverParameter(element) }
+                    ).firstOrNull()
                 is KtImportDirective -> {
                     el<UImportStatement>(build(::KotlinUImportStatement))
                 }

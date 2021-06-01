@@ -38,7 +38,7 @@ sealed class AbstractFirKotlinUClass(
 
     override val uastSuperTypes: List<UTypeReferenceExpression>
         get() = ktClass?.superTypeListEntries.orEmpty().mapNotNull { it.typeReference }.map {
-            FirKotlinUTypeReferenceExpression(it, this)
+            KotlinUTypeReferenceExpression(it, this)
         }
 
     // TODO: delegateExpressions

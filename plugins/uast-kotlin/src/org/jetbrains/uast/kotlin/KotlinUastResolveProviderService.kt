@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.constants.UnsignedErrorValueTypeConstant
 import org.jetbrains.kotlin.types.TypeUtils
@@ -33,6 +34,10 @@ interface KotlinUastResolveProviderService : BaseKotlinUastResolveProviderServic
 
     override fun resolveToDeclaration(ktExpression: KtExpression): PsiElement? {
         return resolveToDeclarationImpl(ktExpression)
+    }
+
+    override fun resolveToType(ktTypeReference: KtTypeReference, source: UElement): PsiType? {
+        return ktTypeReference.toPsiType(source)
     }
 
     override fun getExpressionType(uExpression: UExpression): PsiType? {

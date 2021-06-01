@@ -133,12 +133,6 @@ internal object KotlinConverter : BaseKotlinConverter {
         }}
     }
 
-    internal fun convertReceiverParameter(receiver: KtTypeReference): UParameter? {
-        val call = (receiver.parent as? KtCallableDeclaration) ?: return null
-        if (call.receiverTypeReference != receiver) return null
-        return call.toUElementOfType<UMethod>()?.uastParameters?.firstOrNull()
-    }
-
     var forceUInjectionHost = Registry.`is`("kotlin.uast.force.uinjectionhost", false)
         @TestOnly
         set(value) {
