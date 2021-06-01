@@ -312,6 +312,7 @@ internal object ConeTypeCompatibilityChecker {
                     // considered compatible.
                     is ConeKotlinTypeProjectionIn -> BoundTypeArgument(coneTypeProjection.type, Variance.IN_VARIANCE)
                     is ConeKotlinTypeProjectionOut -> BoundTypeArgument(coneTypeProjection.type, Variance.OUT_VARIANCE)
+                    is ConeKotlinTypeConflictingProjection -> BoundTypeArgument(coneTypeProjection.type, Variance.INVARIANT)
                     is ConeKotlinType ->
                         when ((typeParameter as? FirTypeParameter)?.variance) {
                             Variance.IN_VARIANCE -> BoundTypeArgument(coneTypeProjection.type, Variance.IN_VARIANCE)

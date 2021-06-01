@@ -15,16 +15,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.foldMap
 
 enum class ProjectionKind {
     STAR, IN, OUT, INVARIANT;
-
-    operator fun plus(other: ProjectionKind): ProjectionKind {
-        return when {
-            this == other -> this
-            this == STAR || other == STAR -> STAR
-            this == INVARIANT -> other
-            other == INVARIANT -> this
-            else -> STAR
-        }
-    }
 }
 
 sealed class ConeTypeProjection : TypeArgumentMarker {
@@ -52,6 +42,11 @@ data class ConeKotlinTypeProjectionIn(override val type: ConeKotlinType) : ConeK
 data class ConeKotlinTypeProjectionOut(override val type: ConeKotlinType) : ConeKotlinTypeProjection() {
     override val kind: ProjectionKind
         get() = ProjectionKind.OUT
+}
+
+data class ConeKotlinTypeConflictingProjection(override val type: ConeKotlinType) : ConeKotlinTypeProjection() {
+    override val kind: ProjectionKind
+        get() = ProjectionKind.INVARIANT
 }
 
 val ConeTypeProjection.type: ConeKotlinType?

@@ -107,12 +107,32 @@ private fun mapTypeAliasArguments(
                 else -> mappedType
             }
 
-            return when (mappedProjection.kind + projection.kind) {
-                ProjectionKind.STAR -> ConeStarProjection
-                ProjectionKind.IN -> ConeKotlinTypeProjectionIn(mappedType)
-                ProjectionKind.OUT -> ConeKotlinTypeProjectionOut(mappedType)
-                ProjectionKind.INVARIANT -> mappedType
+            fun convertProjectionKindToConeTypeProjection(projectionKind: ProjectionKind): ConeTypeProjection {
+                return when (projectionKind) {
+                    ProjectionKind.STAR -> ConeStarProjection
+                    ProjectionKind.IN -> ConeKotlinTypeProjectionIn(mappedType)
+                    ProjectionKind.OUT -> ConeKotlinTypeProjectionOut(mappedType)
+                    ProjectionKind.INVARIANT -> mappedType
+                }
             }
+
+            if (mappedProjection.kind == projection.kind) {
+                return convertProjectionKindToConeTypeProjection(mappedProjection.kind)
+            }
+
+            if (mappedProjection.kind == ProjectionKind.STAR || projection.kind == ProjectionKind.STAR) {
+                return ConeStarProjection
+            }
+
+            if (mappedProjection.kind == ProjectionKind.INVARIANT) {
+                return convertProjectionKindToConeTypeProjection(projection.kind)
+            }
+
+            if (projection.kind == ProjectionKind.INVARIANT) {
+                return convertProjectionKindToConeTypeProjection(mappedProjection.kind)
+            }
+
+            return ConeKotlinTypeConflictingProjection(mappedType)
         }
     }
 

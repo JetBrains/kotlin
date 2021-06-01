@@ -49,6 +49,7 @@ private fun ConeTypeProjection.renderForDebugInfo(): String {
         ConeStarProjection -> "*"
         is ConeKotlinTypeProjectionIn -> "in ${type.renderForDebugInfo()}"
         is ConeKotlinTypeProjectionOut -> "out ${type.renderForDebugInfo()}"
+        is ConeKotlinTypeConflictingProjection -> "CONFLICTING-PROJECTION ${type.renderForDebugInfo()}"
         is ConeKotlinType -> renderForDebugInfo()
     }
 }

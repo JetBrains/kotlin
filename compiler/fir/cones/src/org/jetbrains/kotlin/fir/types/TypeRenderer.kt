@@ -59,6 +59,7 @@ private fun ConeKotlinType.renderAttributes(): String {
 fun ConeTypeProjection.render(): String {
     return when (this) {
         ConeStarProjection -> "*"
+        is ConeKotlinTypeConflictingProjection -> "CONFLICTING-PROJECTION ${type.render()}"
         is ConeKotlinTypeProjectionIn -> "in ${type.render()}"
         is ConeKotlinTypeProjectionOut -> "out ${type.render()}"
         is ConeKotlinType -> render()

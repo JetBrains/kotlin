@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.classId
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.typeContext
@@ -19,6 +18,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeArgument
+import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
@@ -165,16 +165,16 @@ class Fir2IrTypeConverter(
     }
 
     private fun ConeTypeProjection.toIrTypeArgument(typeContext: ConversionTypeContext): IrTypeArgument {
+        fun toIrTypeArgument(type: ConeKotlinType, variance: Variance): IrTypeProjection {
+            val irType = type.toIrType(typeContext)
+            return makeTypeProjection(irType, if (typeContext.invariantProjection) Variance.INVARIANT else variance)
+        }
+
         return when (this) {
             ConeStarProjection -> IrStarProjectionImpl
-            is ConeKotlinTypeProjectionIn -> {
-                val irType = this.type.toIrType(typeContext)
-                makeTypeProjection(irType, if (typeContext.invariantProjection) Variance.INVARIANT else Variance.IN_VARIANCE)
-            }
-            is ConeKotlinTypeProjectionOut -> {
-                val irType = this.type.toIrType(typeContext)
-                makeTypeProjection(irType, if (typeContext.invariantProjection) Variance.INVARIANT else Variance.OUT_VARIANCE)
-            }
+            is ConeKotlinTypeProjectionIn -> toIrTypeArgument(this.type, Variance.IN_VARIANCE)
+            is ConeKotlinTypeProjectionOut -> toIrTypeArgument(this.type, Variance.OUT_VARIANCE)
+            is ConeKotlinTypeConflictingProjection -> toIrTypeArgument(this.type, Variance.INVARIANT)
             is ConeKotlinType -> {
                 if (this is ConeCapturedType && this in capturedTypeCache && this.isRecursive(mutableSetOf())) {
                     // Recursive captured type, e.g., Recursive<R> where R : Recursive<R>, ...

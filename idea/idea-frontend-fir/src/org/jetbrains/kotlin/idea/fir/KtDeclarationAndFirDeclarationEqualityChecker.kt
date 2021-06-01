@@ -162,6 +162,7 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
         ConeStarProjection -> "*"
         is ConeKotlinTypeProjectionIn -> "in ${type.renderTypeAsKotlinType()}"
         is ConeKotlinTypeProjectionOut -> "out ${type.renderTypeAsKotlinType()}"
+        is ConeKotlinTypeConflictingProjection -> "CONFLICTING-PROJECTION ${type.renderTypeAsKotlinType()}"
         is ConeKotlinType -> renderTypeAsKotlinType()
     }
 
