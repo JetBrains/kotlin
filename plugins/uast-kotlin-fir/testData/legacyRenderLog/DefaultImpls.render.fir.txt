@@ -4,6 +4,6 @@ public abstract interface Foo {
     }
 }
 
-public final class Baz : null {
+public final class Baz : Foo {
     public fun Baz() = UastEmptyExpression
 }

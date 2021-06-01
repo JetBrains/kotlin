@@ -4,5 +4,5 @@ UFile (package = ) [public abstract interface Foo {...]
             UBlockExpression [{...}]
                 UReturnExpression [return "Hello!"]
                     ULiteralExpression (value = "Hello!") ["Hello!"] : PsiType:String
-    UClass (name = Baz) [public final class Baz : null {...}]
+    UClass (name = Baz) [public final class Baz : Foo {...}]
         UMethod (name = Baz) [public fun Baz() = UastEmptyExpression]

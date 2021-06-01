@@ -14,11 +14,11 @@ public class A {
     }
 }
 
-public final class B : null {
+public final class B : A {
     public fun B(param: java.lang.String) = UastEmptyExpression
 }
 
-public final class C : null {
+public final class C : A {
     public fun C(p: java.lang.String) = UastEmptyExpression
     public fun C(i: int) {
         [!] UnknownKotlinExpression (CALL_EXPRESSION)
@@ -28,7 +28,7 @@ public final class C : null {
     }
 }
 
-public final class O : null {
+public final class O : A {
     public static final var INSTANCE: O
     private fun O() = UastEmptyExpression
 }

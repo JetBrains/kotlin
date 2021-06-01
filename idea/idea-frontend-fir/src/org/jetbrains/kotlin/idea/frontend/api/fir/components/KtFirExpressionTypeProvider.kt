@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.idea.asJava.asPsiType
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirSafe
@@ -62,9 +61,6 @@ internal class KtFirExpressionTypeProvider(
             else -> error("Unexpected ${fir::class}")
         }
     }
-
-    private fun ConeKotlinType.asPsiType(mode: TypeMappingMode, psiContext: PsiElement) =
-        asPsiType(rootModuleSession, analysisSession.firResolveState, mode, psiContext)
 
     private fun FirNamedReference.getReferencedElementType(): ConeKotlinType {
         val symbols = when (this) {

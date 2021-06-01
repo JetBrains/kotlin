@@ -7,7 +7,7 @@ UFile (package = ) [public final class ConstructorDelegateKt {...]
                     [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
     UClass (name = Base) [public abstract interface Base {...}]
         UMethod (name = print) [public abstract fun print() : void = UastEmptyExpression]
-    UClass (name = BaseImpl) [public final class BaseImpl : null {...}]
+    UClass (name = BaseImpl) [public final class BaseImpl : Base {...}]
         UField (name = x) [private final var x: int]
         UMethod (name = BaseImpl) [public fun BaseImpl(x: int) = UastEmptyExpression]
             UParameter (name = x) [var x: int]
@@ -15,6 +15,6 @@ UFile (package = ) [public final class ConstructorDelegateKt {...]
         UMethod (name = print) [public fun print() : void {...}]
             UBlockExpression [{...}] = Undetermined
                 [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
-    UClass (name = Derived) [public final class Derived : null, null {...}]
+    UClass (name = Derived) [public final class Derived : Base, java.lang.CharSequence {...}]
         UMethod (name = Derived) [public fun Derived(b: Base) = UastEmptyExpression]
             UParameter (name = b) [var b: Base]

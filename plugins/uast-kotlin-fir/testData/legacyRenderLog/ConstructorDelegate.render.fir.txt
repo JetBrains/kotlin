@@ -8,7 +8,7 @@ public abstract interface Base {
     public abstract fun print() : void = UastEmptyExpression
 }
 
-public final class BaseImpl : null {
+public final class BaseImpl : Base {
     private final var x: int
     public fun BaseImpl(x: int) = UastEmptyExpression
     public final fun getX() : int = UastEmptyExpression
@@ -17,6 +17,6 @@ public final class BaseImpl : null {
     }
 }
 
-public final class Derived : null, null {
+public final class Derived : Base, java.lang.CharSequence {
     public fun Derived(b: Base) = UastEmptyExpression
 }
