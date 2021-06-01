@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.withAllDependsOnSourceSets
 import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.targets.jvm.JvmCompilationsTestRunSource
+import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.testing.KotlinTaskTestRun
@@ -46,6 +47,7 @@ internal fun customizeKotlinDependencies(project: Project) {
         configureKotlinTestDependency(project)
     }
     configureDefaultVersionsResolutionStrategy(project)
+    excludeStdlibCommonFromJvmCompilationsAndSourceSets(project)
 }
 
 private fun configureDefaultVersionsResolutionStrategy(project: Project) {
@@ -61,6 +63,26 @@ private fun configureDefaultVersionsResolutionStrategy(project: Project) {
 }
 
 //region stdlib
+private fun excludeStdlibCommonFromJvmCompilationsAndSourceSets(project: Project) {
+    val multiplatformExtension = project.multiplatformExtensionOrNull ?: return
+
+    multiplatformExtension.targets.withType(KotlinJvmTarget::class.java).all { jvmTarget ->
+        val configurationsNamesToExcludeStdlibFrom: MutableList<String> = mutableListOf()
+        jvmTarget.compilations.forEach {
+            configurationsNamesToExcludeStdlibFrom += it.compileDependencyConfigurationName
+            configurationsNamesToExcludeStdlibFrom += it.runtimeDependencyConfigurationName
+            configurationsNamesToExcludeStdlibFrom += it.defaultSourceSet.apiMetadataConfigurationName
+            configurationsNamesToExcludeStdlibFrom += it.defaultSourceSet.implementationMetadataConfigurationName
+        }
+
+        configurationsNamesToExcludeStdlibFrom.forEach {
+            project.configurations.getByName(it).exclude(
+                mapOf("group" to "org.jetbrains.kotlin", "module" to "kotlin-stdlib-common")
+            )
+        }
+    }
+}
+
 internal fun configureStdlibDefaultDependency(project: Project) = with(project) {
     if (!PropertiesProvider(project).stdlibDefaultDependency)
         return
