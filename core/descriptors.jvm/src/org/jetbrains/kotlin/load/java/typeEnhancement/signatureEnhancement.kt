@@ -39,8 +39,6 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
-import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
-import org.jetbrains.kotlin.utils.ReportLevel
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class SignatureEnhancement(
@@ -89,10 +87,7 @@ class SignatureEnhancement(
         val isForWarningOnly = annotationDescriptor is LazyJavaAnnotationDescriptor
                 && (annotationDescriptor.isFreshlySupportedTypeUseAnnotation || typeParameterBounds)
                 && !areImprovementsEnabled
-
-        val migrationStatus = jspecifyMigrationStatus(annotationFqName)
-            ?: commonMigrationStatus(annotationFqName, annotationDescriptor, isForWarningOnly)
-            ?: return null
+        val migrationStatus = commonMigrationStatus(annotationFqName, annotationDescriptor, isForWarningOnly) ?: return null
 
         return if (!migrationStatus.isForWarningOnly
             && annotationDescriptor is PossiblyExternalAnnotationDescriptor
@@ -102,44 +97,35 @@ class SignatureEnhancement(
         } else migrationStatus
     }
 
-    private fun jspecifyMigrationStatus(
-        annotationFqName: FqName
-    ): NullabilityQualifierWithMigrationStatus? {
-        if (javaTypeEnhancementState.jspecifyReportLevel == ReportLevel.IGNORE) return null
-        val isForWarningOnly = javaTypeEnhancementState.jspecifyReportLevel == ReportLevel.WARN
-        return when (annotationFqName) {
-            JSPECIFY_NULLABLE -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE, isForWarningOnly)
-            JSPECIFY_NULLNESS_UNKNOWN ->
-                NullabilityQualifierWithMigrationStatus(NullabilityQualifier.FORCE_FLEXIBILITY, isForWarningOnly)
-            else -> null
-        }
-    }
+    private fun getReportLevel(annotationFqName: FqName) = javaTypeEnhancementState.getReportLevelForAnnotation(annotationFqName)
 
     private fun commonMigrationStatus(
         annotationFqName: FqName,
         annotationDescriptor: AnnotationDescriptor,
         isForWarningOnly: Boolean = false
-    ): NullabilityQualifierWithMigrationStatus? = when {
-        annotationFqName in NULLABLE_ANNOTATIONS -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE, isForWarningOnly)
-        annotationFqName in NOT_NULL_ANNOTATIONS -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL, isForWarningOnly)
-        annotationFqName == JAVAX_NONNULL_ANNOTATION -> annotationDescriptor.extractNullabilityTypeFromArgument(isForWarningOnly)
+    ): NullabilityQualifierWithMigrationStatus? {
+        val reportLevel = getReportLevel(annotationFqName)
 
-        annotationFqName == COMPATQUAL_NULLABLE_ANNOTATION && javaTypeEnhancementState.enableCompatqualCheckerFrameworkAnnotations ->
-            NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE, isForWarningOnly)
+        if (reportLevel.isIgnore) return null
 
-        annotationFqName == COMPATQUAL_NONNULL_ANNOTATION && javaTypeEnhancementState.enableCompatqualCheckerFrameworkAnnotations ->
-            NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL, isForWarningOnly)
+        val isForWarning = reportLevel.isWarning || isForWarningOnly
 
-        annotationFqName == ANDROIDX_RECENTLY_NON_NULL_ANNOTATION -> NullabilityQualifierWithMigrationStatus(
-            NullabilityQualifier.NOT_NULL,
-            isForWarningOnly = true
-        )
-
-        annotationFqName == ANDROIDX_RECENTLY_NULLABLE_ANNOTATION -> NullabilityQualifierWithMigrationStatus(
-            NullabilityQualifier.NULLABLE,
-            isForWarningOnly = true
-        )
-        else -> null
+        return when (annotationFqName) {
+            in NULLABLE_ANNOTATIONS -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE, isForWarning)
+            in NOT_NULL_ANNOTATIONS -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL, isForWarning)
+            JAVAX_NONNULL_ANNOTATION -> annotationDescriptor.extractNullabilityTypeFromArgument(isForWarning)
+            COMPATQUAL_NULLABLE_ANNOTATION ->
+                NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE, isForWarning)
+            COMPATQUAL_NONNULL_ANNOTATION ->
+                NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL, isForWarning)
+            ANDROIDX_RECENTLY_NON_NULL_ANNOTATION -> NullabilityQualifierWithMigrationStatus(
+                NullabilityQualifier.NOT_NULL, isForWarning
+            )
+            ANDROIDX_RECENTLY_NULLABLE_ANNOTATION -> NullabilityQualifierWithMigrationStatus(
+                NullabilityQualifier.NULLABLE, isForWarning
+            )
+            else -> null
+        }
     }
 
     fun <D : CallableMemberDescriptor> enhanceSignatures(c: LazyJavaResolverContext, platformSignatures: Collection<D>): Collection<D> {

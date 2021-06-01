@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.resolve.jvm.annotations
 
 import org.jetbrains.kotlin.config.JvmDefaultMode
-import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -17,7 +16,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.util.findImplementationFromInterface
-import org.jetbrains.kotlin.utils.ReportLevel
 
 val JVM_DEFAULT_FQ_NAME = FqName("kotlin.jvm.JvmDefault")
 val JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME = FqName("kotlin.jvm.JvmDefaultWithoutCompatibility")
@@ -97,34 +95,3 @@ fun DeclarationDescriptor.findSynchronizedAnnotation(): AnnotationDescriptor? =
     annotations.findAnnotation(SYNCHRONIZED_ANNOTATION_FQ_NAME)
 
 fun ClassDescriptor.isJvmRecord(): Boolean = annotations.hasAnnotation(JVM_RECORD_ANNOTATION_FQ_NAME)
-
-data class NullabilityAnnotationsStatus(
-    val reportLevelBefore: ReportLevel,
-    val sinceVersion: LanguageVersion = LanguageVersion.KOTLIN_1_0,
-    val reportLevelAfter: ReportLevel = reportLevelBefore,
-) {
-    companion object {
-        val DEFAULT = NullabilityAnnotationsStatus(ReportLevel.STRICT)
-    }
-}
-
-val nullabilityAnnotationSettings = mapOf(
-    FqName("org.jetbrains.annotations") to NullabilityAnnotationsStatus.DEFAULT,
-    FqName("androidx.annotation") to NullabilityAnnotationsStatus.DEFAULT,
-    FqName("android.support.annotation") to NullabilityAnnotationsStatus.DEFAULT,
-    FqName("android.annotation") to NullabilityAnnotationsStatus.DEFAULT,
-    FqName("com.android.annotations") to NullabilityAnnotationsStatus.DEFAULT,
-    FqName("org.eclipse.jdt.annotation") to NullabilityAnnotationsStatus.DEFAULT,
-    FqName("org.checkerframework.checker.nullness.qual") to NullabilityAnnotationsStatus.DEFAULT,
-    FqName("org.checkerframework.checker.nullness.compatqual") to NullabilityAnnotationsStatus.DEFAULT,
-    FqName("javax.annotation") to NullabilityAnnotationsStatus.DEFAULT,
-    FqName("javax.annotation") to NullabilityAnnotationsStatus.DEFAULT,
-    FqName("edu.umd.cs.findbugs.annotations") to NullabilityAnnotationsStatus.DEFAULT,
-    FqName("io.reactivex.annotations") to NullabilityAnnotationsStatus.DEFAULT,
-    FqName("lombok") to NullabilityAnnotationsStatus.DEFAULT,
-    FqName("org.jspecify.nullness") to NullabilityAnnotationsStatus(
-        reportLevelBefore = ReportLevel.WARN,
-        sinceVersion = LanguageVersion.KOTLIN_1_6,
-        reportLevelAfter = ReportLevel.STRICT
-    ),
-)

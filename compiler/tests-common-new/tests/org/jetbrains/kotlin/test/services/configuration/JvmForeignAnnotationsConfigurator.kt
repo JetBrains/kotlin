@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
+import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.TestJavacVersion
 import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives
@@ -26,8 +27,7 @@ import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.util.KtTestUtil
-import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
-import org.jetbrains.kotlin.utils.ReportLevel
+import org.jetbrains.kotlin.name.FqName
 import java.io.File
 import kotlin.io.path.createTempDirectory
 
@@ -51,16 +51,14 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
         val userAnnotationsState = directives[JSR305_SPECIAL_REPORT].mapNotNull {
             val (name, stateDescription) = it.split(":").takeIf { it.size == 2 } ?: return@mapNotNull null
             val state = ReportLevel.findByDescription(stateDescription) ?: return@mapNotNull null
-            name to state
+            FqName(name) to state
         }.toMap()
-        val jSpecifyReportLevel = directives.singleOrZeroValue(JSPECIFY_STATE) ?: ReportLevel.WARN
+        val configuredReportLevels =
+            directives.singleOrZeroValue(JSPECIFY_STATE)?.let { mapOf(JSPECIFY_ANNOTATIONS_PACKAGE to it) } ?: emptyMap()
         return mapOf(
             JvmAnalysisFlags.javaTypeEnhancementState to JavaTypeEnhancementState(
-                globalState,
-                migrationState,
-                userAnnotationsState,
-                jspecifyReportLevel = jSpecifyReportLevel,
-                nullabilityAnnotationsReportLevel = emptyMap()
+                Jsr305Settings(globalState, migrationState, userAnnotationsState),
+                getReportLevelForAnnotation = { getReportLevelForAnnotation(it, configuredReportLevels) }
             )
         )
     }

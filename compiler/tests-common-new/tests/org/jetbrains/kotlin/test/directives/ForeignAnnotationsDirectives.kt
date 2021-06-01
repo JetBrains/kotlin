@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.test.directives
 
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.configuration.JavaForeignAnnotationType
-import org.jetbrains.kotlin.utils.ReportLevel
+import org.jetbrains.kotlin.load.java.ReportLevel
 
 @Suppress("RemoveExplicitTypeArguments")
 object ForeignAnnotationsDirectives : SimpleDirectivesContainer() {
