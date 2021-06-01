@@ -291,6 +291,8 @@ internal object FirKotlinConverter : BaseKotlinConverter {
 
                 is KtIfExpression -> expr<UIfExpression>(build(::KotlinUIfExpression))
 
+                is KtIsExpression -> expr<UBinaryExpressionWithType>(build(::KotlinUTypeCheckExpression))
+
                 else -> expr<UExpression>(build(::UnknownKotlinExpression))
             }
         }

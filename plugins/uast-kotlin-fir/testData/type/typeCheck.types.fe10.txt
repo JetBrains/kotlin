@@ -1,0 +1,17 @@
+UFile (package = ) [public final class TypeCheckKt {...]
+    UClass (name = TypeCheckKt) [public final class TypeCheckKt {...}]
+        UMethod (name = asString) [public static final fun asString(@org.jetbrains.annotations.Nullable $this$asString: java.lang.Object) : java.lang.String {...}]
+            UParameter (name = $this$asString) [@org.jetbrains.annotations.Nullable var $this$asString: java.lang.Object]
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable) [@org.jetbrains.annotations.Nullable]
+            UBlockExpression [{...}] : PsiType:Void
+                UReturnExpression [return if (x !is java.lang.String) x.<anonymous class>() else x] : PsiType:Void
+                    UIfExpression [if (x !is java.lang.String) x.<anonymous class>() else x] : PsiType:String
+                        UBinaryExpressionWithType [x !is java.lang.String] : PsiType:boolean
+                            USimpleNameReferenceExpression (identifier = x) [x]
+                            UTypeReferenceExpression (name = java.lang.String) [java.lang.String]
+                        UQualifiedReferenceExpression [x.<anonymous class>()] : PsiType:<ErrorType>
+                            USimpleNameReferenceExpression (identifier = x) [x]
+                            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [<anonymous class>()] : PsiType:<ErrorType>
+                                UIdentifier (Identifier (toString)) [UIdentifier (Identifier (toString))]
+                                USimpleNameReferenceExpression (identifier = <anonymous class>, resolvesTo = null) [<anonymous class>] : PsiType:<ErrorType>
+                        USimpleNameReferenceExpression (identifier = x) [x]
