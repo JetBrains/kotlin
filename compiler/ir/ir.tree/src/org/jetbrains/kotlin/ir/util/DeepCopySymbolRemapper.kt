@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 open class DeepCopySymbolRemapper(
-    private val descriptorsRemapper: DescriptorsRemapper = NullDescriptorsRemapper
+    protected val descriptorsRemapper: DescriptorsRemapper = NullDescriptorsRemapper
 ) : IrElementVisitorVoid, SymbolRemapper {
 
     protected val classes = hashMapOf<IrClassSymbol, IrClassSymbol>()
