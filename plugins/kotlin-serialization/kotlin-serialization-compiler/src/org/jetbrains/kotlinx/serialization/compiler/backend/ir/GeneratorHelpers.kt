@@ -938,10 +938,8 @@ interface IrBuilderExtension {
         var args: List<IrExpression>
         var typeArgs: List<IrType?>
         val thisIrType = kType.toIrType()
-        val hasNewCtxSerCtor =
-            serializerClassOriginal.classId == contextSerializerId && compilerContext.referenceConstructors(serializerClass.fqNameSafe)
-                .any { it.owner.valueParameters.size == 3 }
         var needToCopyAnnotations = false
+
         when (serializerClassOriginal.classId) {
             polymorphicSerializerId -> {
                 needToCopyAnnotations = true
@@ -951,6 +949,10 @@ interface IrBuilderExtension {
             contextSerializerId -> {
                 args = listOf(classReference(kType))
                 typeArgs = listOf(thisIrType)
+
+                val hasNewCtxSerCtor =
+                    serializerClassOriginal.classId == contextSerializerId && compilerContext.referenceConstructors(serializerClass.fqNameSafe)
+                        .any { it.owner.valueParameters.size == 3 }
 
                 if (hasNewCtxSerCtor) {
                     // new signature of context serializer
@@ -1115,7 +1117,8 @@ interface IrBuilderExtension {
 
     private fun IrConstructor.lastArgumentIsAnnotationArray(): Boolean {
         val lastArgType = valueParameters.lastOrNull()?.type
-        return (lastArgType != null && (lastArgType as? IrSimpleType)?.arguments?.firstOrNull()?.typeOrNull?.classFqName?.toString() == "kotlin.Annotation")
+        if (lastArgType == null || !lastArgType.isArray()) return false
+        return ((lastArgType as? IrSimpleType)?.arguments?.firstOrNull()?.typeOrNull?.classFqName?.toString() == "kotlin.Annotation")
     }
 
     private fun IrBuilderWithScope.wrapperClassReference(classType: KotlinType): IrClassReference {
