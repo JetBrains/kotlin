@@ -4,7 +4,7 @@
 }
 
 public final class SimpleTypeAnnotation : R|kotlin/Any| {
-    public final fun foo(x: @R|test/A|() R|kotlin/ranges/IntRange|): @R|test/A|() R|kotlin/Int|
+    public final fun foo(x: R|@R|test/A|()  kotlin/ranges/IntRange|): R|@R|test/A|()  kotlin/Int|
 
     public constructor(): R|test/SimpleTypeAnnotation|
 

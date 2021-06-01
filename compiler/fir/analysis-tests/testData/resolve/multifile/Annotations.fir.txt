@@ -63,15 +63,15 @@ FILE: main.kt
             super<R|kotlin/Any|>()
         }
 
-        @R|annotations/Simple|() public abstract fun foo(@R|annotations/WithString|(String(abc)) arg: @R|annotations/Simple|() R|kotlin/Double|): R|kotlin/Unit|
+        @R|annotations/Simple|() public abstract fun foo(@R|annotations/WithString|(String(abc)) arg: R|@R|annotations/Simple|()  kotlin/Double|): R|kotlin/Unit|
 
         @R|annotations/Complex|(R|annotations/WithInt.WithInt|(Int(7)), R|annotations/WithString.WithString|(String())) public abstract val v: R|kotlin/String|
             public get(): R|kotlin/String|
 
     }
-    @R|annotations/WithString|(String(xyz)) public final class Second : @R|annotations/WithInt|(Int(0)) R|test/First| {
+    @R|annotations/WithString|(String(xyz)) public final class Second : R|@R|annotations/WithInt|(Int(0))  test/First| {
         public constructor(y: R|kotlin/Char|): R|test/Second| {
-            super<@R|annotations/WithInt|(Int(0)) R|test/First|>()
+            super<R|@R|annotations/WithInt|(Int(0))  test/First|>()
         }
 
         public final val y: R|kotlin/Char| = R|<local>/y|
@@ -90,4 +90,4 @@ FILE: main.kt
         }
 
     }
-    @R|annotations/WithInt|(Int(24)) @R|annotations/VeryComplex|(Float(3.14), Double(6.67E-11), Boolean(false), Long(123456789012345), Null(null)) @R|annotations/WithInt|(Int(24)) @R|annotations/VeryComplex|(Float(3.14), Double(6.67E-11), Boolean(false), Long(123456789012345), Null(null)) public final typealias Third = @R|annotations/Simple|() R|test/Second|
+    @R|annotations/WithInt|(Int(24)) @R|annotations/VeryComplex|(Float(3.14), Double(6.67E-11), Boolean(false), Long(123456789012345), Null(null)) @R|annotations/WithInt|(Int(24)) @R|annotations/VeryComplex|(Float(3.14), Double(6.67E-11), Boolean(false), Long(123456789012345), Null(null)) public final typealias Third = R|@R|annotations/Simple|()  test/Second|

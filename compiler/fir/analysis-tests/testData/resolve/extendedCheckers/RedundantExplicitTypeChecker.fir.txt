@@ -6,7 +6,7 @@ FILE: RedundantExplicitTypeChecker.kt
 
     }
     public final fun annotated(): R|kotlin/Unit| {
-        lval x: @R|A|() R|kotlin/Int| = Int(1)
+        lval x: R|@R|A|()  kotlin/Int| = Int(1)
     }
     public final object SomeObj : R|kotlin/Any| {
         private constructor(): R|SomeObj| {

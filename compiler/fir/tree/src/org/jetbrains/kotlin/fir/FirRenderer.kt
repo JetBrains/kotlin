@@ -1001,12 +1001,6 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
 
     override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
         val kind = resolvedTypeRef.functionTypeKind
-        val annotations = if (kind.withPrettyRender()) {
-            resolvedTypeRef.annotations.dropExtensionFunctionAnnotation()
-        } else {
-            resolvedTypeRef.annotations
-        }
-        annotations.renderAnnotations()
         print("R|")
         val coneType = resolvedTypeRef.type
         print(coneType.renderFunctionType(kind, resolvedTypeRef.annotations.any {
