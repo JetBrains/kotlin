@@ -8,14 +8,12 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.util
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredConstructors
 import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredFunctionSymbols
 import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredPropertySymbols
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.idea.fir.low.level.api.KtDeclarationAndFirDeclarationEqualityChecker
-import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.InternalForInline
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.InvalidFirElementTypeException
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
@@ -65,91 +63,24 @@ internal inline fun <reified F : FirDeclaration> KtDeclaration.findFirDeclaratio
     return fir
 }
 
-/**
- * Looks for compiled non-local [this] declaration by querying its classId/callableId from the [symbolProvider].
- *
- * Works only if [this] is compiled (i.e. comes from .class file).
- */
-@InternalForInline
-fun KtDeclaration.findNonLocalDeclarationForCompiledElement(symbolProvider: FirSymbolProvider): FirDeclaration {
-    require(containingKtFile.isCompiled) {
-        "This method will only work on compiled declarations, but this declaration is not compiled: ${getElementTextInContext()}"
-    }
-
-    return when (this) {
-        is KtClassOrObject -> {
-            require(!isLocal)
-            val classId = getClassId()
-                ?: error("Non-local class should have classId. The class is ${getElementTextInContext()}")
-
-            val classCandidate = symbolProvider.getClassLikeSymbolByFqName(classId)
-                ?: error("We should be able to find a symbol for $classId")
-
-            classCandidate.fir
-        }
-
-        is KtConstructor<*> -> {
-            val containingClass = containingClassOrObject ?: error("Constructor must have outer class: ${getElementTextInContext()}")
-
-            require(!containingClass.isLocal)
-            val classId = containingClass.getClassId()
-                ?: error("Non-local class should have classId. The class is ${containingClass.getElementTextInContext()}")
-
-            val constructorCandidate =
-                symbolProvider.getClassDeclaredConstructors(classId)
-                    .singleOrNull { representSameConstructor(this, it.fir) }
-                    ?: error("We should be able to find a constructor: ${getElementTextInContext()}")
-
-            constructorCandidate.fir
-        }
-
-        is KtNamedFunction -> {
-            require(!isLocal)
-
-            val functionCandidate =
-                findFunctionCandidates(symbolProvider, isTopLevel)
-                    .singleOrNull { representSameFunction(this, it.fir) }
-                    ?: error("We should be able to find a symbol for function ${name}: ${getElementTextInContext()}")
-
-            functionCandidate.fir
-        }
-
-        is KtProperty -> {
-            require(!isLocal)
-
-            val propertyCandidate =
-                findPropertyCandidates(symbolProvider, isTopLevel)
-                    .singleOrNull()
-                    ?: error("We should be able to find a symbol for property ${name}: ${getElementTextInContext()}")
-
-            propertyCandidate.fir
-        }
-
-        else -> error("Unsupported compiled declaration of type ${this::class}: ${getElementTextInContext()}")
-    }
-}
-
-private fun representSameFunction(psiFunction: KtNamedFunction, it: FirFunction<*>) =
+internal fun representSameFunction(psiFunction: KtNamedFunction, it: FirFunction<*>): Boolean =
     KtDeclarationAndFirDeclarationEqualityChecker.representsTheSameDeclaration(psiFunction, it)
 
-private fun representSameConstructor(
-    psiConstructor: KtConstructor<*>,
-    firConstructor: FirConstructor
-): Boolean {
-    if (firConstructor.isPrimary) {
-        return psiConstructor is KtPrimaryConstructor
+internal fun representSameConstructor(psiConstructor: KtConstructor<*>, firConstructor: FirConstructor): Boolean {
+    if ((firConstructor.isPrimary) != (psiConstructor is KtPrimaryConstructor)) {
+        return false
     }
 
     return KtDeclarationAndFirDeclarationEqualityChecker.representsTheSameDeclaration(psiConstructor, firConstructor)
 }
 
-private fun KtCallableDeclaration.findFunctionCandidates(
+internal fun KtCallableDeclaration.findFunctionCandidates(
     symbolProvider: FirSymbolProvider,
     isTopLevel: Boolean
 ): List<FirFunctionSymbol<*>> =
     findCallableCandidates(symbolProvider, isTopLevel).filterIsInstance<FirFunctionSymbol<*>>()
 
-private fun KtCallableDeclaration.findPropertyCandidates(
+internal fun KtCallableDeclaration.findPropertyCandidates(
     symbolProvider: FirSymbolProvider,
     isTopLevel: Boolean
 ): List<FirPropertySymbol> =

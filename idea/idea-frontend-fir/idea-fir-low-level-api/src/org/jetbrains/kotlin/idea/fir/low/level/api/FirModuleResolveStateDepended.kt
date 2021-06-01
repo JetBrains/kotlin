@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
@@ -80,5 +79,9 @@ internal class FirModuleResolveStateDepended(
 
     @OptIn(InternalForInline::class)
     override fun findSourceFirDeclaration(ktDeclaration: KtDeclaration): FirDeclaration =
+        originalState.findSourceFirDeclaration(ktDeclaration)
+
+    @OptIn(InternalForInline::class)
+    override fun findSourceFirCompiledDeclaration(ktDeclaration: KtDeclaration) =
         originalState.findSourceFirDeclaration(ktDeclaration)
 }

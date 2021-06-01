@@ -6,11 +6,9 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.api
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.InternalForInline
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
@@ -71,6 +69,17 @@ abstract class FirModuleResolveState {
     abstract fun findSourceFirDeclaration(
         ktDeclaration: KtLambdaExpression,
     ): FirDeclaration
+
+    /**
+     * Looks for compiled non-local [ktDeclaration] declaration by querying its classId/callableId from the SymbolProvider.
+     *
+     * Works only if [ktDeclaration] is compiled (i.e. comes from .class file).
+     */
+    @InternalForInline
+    abstract fun findSourceFirCompiledDeclaration(
+        ktDeclaration: KtDeclaration
+    ): FirDeclaration
+
 
     internal abstract fun <D : FirDeclaration> resolveFirToPhase(declaration: D, toPhase: FirResolvePhase): D
 }

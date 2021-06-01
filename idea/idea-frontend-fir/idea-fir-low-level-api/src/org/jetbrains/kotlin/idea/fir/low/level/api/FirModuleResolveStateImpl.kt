@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.realPsi
+import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredConstructors
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
@@ -29,11 +31,11 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarati
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSessionProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSourcesSession
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.FirElementFinder
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.findSourceNonLocalFirDeclaration
 import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
 internal class FirModuleResolveStateImpl(
     override val project: Project,
@@ -118,6 +120,66 @@ internal class FirModuleResolveStateImpl(
         }
         return firDeclaration
             ?: error("FirDeclaration was not found for\n${ktDeclaration.getElementTextInContext()}")
+    }
+
+    @OptIn(InternalForInline::class)
+    override fun findSourceFirCompiledDeclaration(ktDeclaration: KtDeclaration): FirDeclaration {
+        require(ktDeclaration.containingKtFile.isCompiled) {
+            "This method will only work on compiled declarations, but this declaration is not compiled: ${ktDeclaration.getElementTextInContext()}"
+        }
+
+        return when (ktDeclaration) {
+            is KtClassOrObject -> {
+                require(!ktDeclaration.isLocal)
+                val classId = ktDeclaration.getClassId()
+                    ?: error("Non-local class should have classId. The class is ${ktDeclaration.getElementTextInContext()}")
+
+                val classCandidate = rootModuleSession.symbolProvider.getClassLikeSymbolByFqName(classId)
+                    ?: error("We should be able to find a symbol for $classId")
+
+                classCandidate.fir
+            }
+
+            is KtConstructor<*> -> {
+                val containingClass = ktDeclaration.containingClassOrObject
+                    ?: error("Constructor must have outer class: ${ktDeclaration.getElementTextInContext()}")
+
+                require(!containingClass.isLocal)
+                val classId = containingClass.getClassId()
+                    ?: error("Non-local class should have classId. The class is ${containingClass.getElementTextInContext()}")
+
+                val constructorCandidate =
+                    rootModuleSession.symbolProvider.getClassDeclaredConstructors(classId)
+                        .singleOrNull { representSameConstructor(ktDeclaration, it.fir) }
+                        ?: error("We should be able to find a constructor: ${ktDeclaration.getElementTextInContext()}")
+
+                constructorCandidate.fir
+            }
+
+            is KtNamedFunction -> {
+                require(!ktDeclaration.isLocal)
+
+                val functionCandidate =
+                    ktDeclaration.findFunctionCandidates(rootModuleSession.symbolProvider, ktDeclaration.isTopLevel)
+                        .singleOrNull { representSameFunction(ktDeclaration, it.fir) }
+                        ?: error("We should be able to find a symbol for function ${ktDeclaration.name}: ${ktDeclaration.getElementTextInContext()}")
+
+                functionCandidate.fir
+            }
+
+            is KtProperty -> {
+                require(!ktDeclaration.isLocal)
+
+                val propertyCandidate =
+                    ktDeclaration.findPropertyCandidates(rootModuleSession.symbolProvider, ktDeclaration.isTopLevel)
+                        .singleOrNull()
+                        ?: error("We should be able to find a symbol for property ${ktDeclaration.name}: ${ktDeclaration.getElementTextInContext()}")
+
+                propertyCandidate.fir
+            }
+
+            else -> error("Unsupported compiled declaration of type ${ktDeclaration::class}: ${ktDeclaration.getElementTextInContext()}")
+        }
     }
 
     override fun <D : FirDeclaration> resolveFirToPhase(declaration: D, toPhase: FirResolvePhase): D {

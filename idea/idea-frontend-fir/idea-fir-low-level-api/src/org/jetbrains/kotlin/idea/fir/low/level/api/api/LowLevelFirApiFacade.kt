@@ -8,12 +8,10 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.api
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirIdeResolveStateService
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.InternalForInline
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.findNonLocalDeclarationForCompiledElement
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -47,7 +45,7 @@ inline fun <R> KtDeclaration.withFirDeclaration(
     action: (FirDeclaration) -> R
 ): R {
     val firDeclaration = if (containingKtFile.isCompiled) {
-        findNonLocalDeclarationForCompiledElement(resolveState.rootModuleSession.symbolProvider)
+        resolveState.findSourceFirCompiledDeclaration(this)
     } else {
         resolveState.findSourceFirDeclaration(this)
     }
