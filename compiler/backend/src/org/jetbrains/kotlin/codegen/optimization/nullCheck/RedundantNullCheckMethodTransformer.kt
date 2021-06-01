@@ -39,9 +39,9 @@ import org.jetbrains.org.objectweb.asm.tree.*
 
 class RedundantNullCheckMethodTransformer(private val generationState: GenerationState) : MethodTransformer() {
     override fun transform(internalClassName: String, methodNode: MethodNode) {
-        @Suppress("ControlFlowWithEmptyBody")
-        while (TransformerPass(internalClassName, methodNode, generationState).run()) {
-        }
+        do {
+            val changes = TransformerPass(internalClassName, methodNode, generationState).run()
+        } while (changes)
     }
 
     private class TransformerPass(val internalClassName: String, val methodNode: MethodNode, val generationState: GenerationState) {
@@ -170,14 +170,14 @@ class RedundantNullCheckMethodTransformer(private val generationState: Generatio
             }
 
             private fun collectVariableDependentChecks() {
-                insnLoop@ for (insn in methodNode.instructions) {
+                for (insn in methodNode.instructions) {
                     when {
                         insn.isInstanceOfOrNullCheck() -> {
-                            val previous = insn.previous ?: continue@insnLoop
+                            val previous = insn.previous ?: continue
                             if (previous.opcode == Opcodes.ALOAD) {
                                 addDependentCheck(insn, previous as VarInsnNode)
                             } else if (previous.opcode == Opcodes.DUP) {
-                                val previous2 = previous.previous ?: continue@insnLoop
+                                val previous2 = previous.previous ?: continue
                                 if (previous2.opcode == Opcodes.ALOAD) {
                                     addDependentCheck(insn, previous2 as VarInsnNode)
                                 }
@@ -185,36 +185,36 @@ class RedundantNullCheckMethodTransformer(private val generationState: Generatio
                         }
 
                         insn.isCheckNotNull() -> {
-                            val previous = insn.previous ?: continue@insnLoop
+                            val previous = insn.previous ?: continue
                             val aLoadInsn = if (previous.opcode == Opcodes.DUP) {
-                                previous.previous ?: continue@insnLoop
+                                previous.previous ?: continue
                             } else previous
-                            if (aLoadInsn.opcode != Opcodes.ALOAD) continue@insnLoop
+                            if (aLoadInsn.opcode != Opcodes.ALOAD) continue
                             addDependentCheck(insn, aLoadInsn as VarInsnNode)
                         }
 
                         insn.isCheckParameterIsNotNull() -> {
-                            val ldcInsn = insn.previous ?: continue@insnLoop
-                            if (ldcInsn.opcode != Opcodes.LDC) continue@insnLoop
-                            val aLoadInsn = ldcInsn.previous ?: continue@insnLoop
-                            if (aLoadInsn.opcode != Opcodes.ALOAD) continue@insnLoop
+                            val ldcInsn = insn.previous ?: continue
+                            if (ldcInsn.opcode != Opcodes.LDC) continue
+                            val aLoadInsn = ldcInsn.previous ?: continue
+                            if (aLoadInsn.opcode != Opcodes.ALOAD) continue
                             addDependentCheck(insn, aLoadInsn as VarInsnNode)
                         }
 
                         insn.isCheckExpressionValueIsNotNull() -> {
-                            val ldcInsn = insn.previous ?: continue@insnLoop
-                            if (ldcInsn.opcode != Opcodes.LDC) continue@insnLoop
+                            val ldcInsn = insn.previous ?: continue
+                            if (ldcInsn.opcode != Opcodes.LDC) continue
                             var aLoadInsn: VarInsnNode? = null
-                            val insn1 = ldcInsn.previous ?: continue@insnLoop
+                            val insn1 = ldcInsn.previous ?: continue
                             if (insn1.opcode == Opcodes.ALOAD) {
                                 aLoadInsn = insn1 as VarInsnNode
                             } else if (insn1.opcode == Opcodes.DUP) {
-                                val insn2 = insn1.previous ?: continue@insnLoop
+                                val insn2 = insn1.previous ?: continue
                                 if (insn2.opcode == Opcodes.ALOAD) {
                                     aLoadInsn = insn2 as VarInsnNode
                                 }
                             }
-                            if (aLoadInsn == null) continue@insnLoop
+                            if (aLoadInsn == null) continue
                             addDependentCheck(insn, aLoadInsn)
                         }
                     }
