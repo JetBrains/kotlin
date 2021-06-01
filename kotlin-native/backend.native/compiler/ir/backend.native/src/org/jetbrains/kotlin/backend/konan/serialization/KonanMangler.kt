@@ -95,7 +95,9 @@ abstract class AbstractKonanDescriptorMangler : DescriptorBasedKotlinManglerImpl
 
     override fun getMangleComputer(mode: MangleMode): DescriptorMangleComputer = KonanDescriptorMangleComputer(StringBuilder(256), mode)
 
-    private inner class KonanDescriptorExportChecker : DescriptorExportCheckerVisitor()
+    private inner class KonanDescriptorExportChecker : DescriptorExportCheckerVisitor() {
+        override fun DeclarationDescriptor.isPlatformSpecificExported(): Boolean = isPlatformSpecificExport()
+    }
 
     override fun DeclarationDescriptor.isPlatformSpecificExport(): Boolean {
         if (this is SimpleFunctionDescriptor) {
