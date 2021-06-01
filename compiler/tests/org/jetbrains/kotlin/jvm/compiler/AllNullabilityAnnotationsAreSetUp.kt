@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.jvm.compiler
 
 import org.jetbrains.kotlin.load.java.NULLABILITY_ANNOTATIONS
+import org.jetbrains.kotlin.load.java.nullabilityAnnotationSettings
 import org.jetbrains.kotlin.name.isChildOf
-import org.jetbrains.kotlin.resolve.jvm.annotations.nullabilityAnnotationSettings
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 
 class AllNullabilityAnnotationsAreSetUpTest : KtUsefulTestCase() {

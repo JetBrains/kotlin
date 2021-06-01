@@ -27,8 +27,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.firstArgument
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
-import org.jetbrains.kotlin.utils.ReportLevel
 
 class AnnotationTypeQualifierResolver(storageManager: StorageManager, private val javaTypeEnhancementState: JavaTypeEnhancementState) {
     class TypeQualifierWithApplicability(
@@ -68,7 +66,7 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
     }
 
     fun resolveTypeQualifierAnnotation(annotationDescriptor: AnnotationDescriptor): AnnotationDescriptor? {
-        if (javaTypeEnhancementState.disabledJsr305) {
+        if (javaTypeEnhancementState.jsr305.isDisabled) {
             return null
         }
 
@@ -92,15 +90,16 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
     }
 
     private fun resolveDefaultAnnotationState(annotationDescriptor: AnnotationDescriptor): ReportLevel {
-        if (annotationDescriptor.fqName in JSPECIFY_DEFAULT_ANNOTATIONS) {
-            return javaTypeEnhancementState.jspecifyReportLevel
+        val annotationFqname = annotationDescriptor.fqName
+        if (annotationFqname != null && annotationFqname in JSPECIFY_DEFAULT_ANNOTATIONS) {
+            return javaTypeEnhancementState.getReportLevelForAnnotation(annotationFqname)
         }
 
         return resolveJsr305AnnotationState(annotationDescriptor)
     }
 
     fun resolveTypeQualifierDefaultAnnotation(annotationDescriptor: AnnotationDescriptor): TypeQualifierWithApplicability? {
-        if (javaTypeEnhancementState.disabledJsr305) {
+        if (javaTypeEnhancementState.jsr305.isDisabled) {
             return null
         }
 
@@ -138,11 +137,11 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
 
     fun resolveJsr305AnnotationState(annotationDescriptor: AnnotationDescriptor): ReportLevel {
         resolveJsr305CustomState(annotationDescriptor)?.let { return it }
-        return javaTypeEnhancementState.globalJsr305Level
+        return javaTypeEnhancementState.jsr305.globalLevel
     }
 
     fun resolveJsr305CustomState(annotationDescriptor: AnnotationDescriptor): ReportLevel? {
-        javaTypeEnhancementState.userDefinedLevelForSpecificJsr305Annotation[annotationDescriptor.fqName?.asString()]?.let { return it }
+        javaTypeEnhancementState.jsr305.userDefinedLevelForSpecificAnnotation[annotationDescriptor.fqName]?.let { return it }
         return annotationDescriptor.annotationClass?.migrationAnnotationStatus()
     }
 
@@ -150,7 +149,7 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
         val enumValue = annotations.findAnnotation(MIGRATION_ANNOTATION_FQNAME)?.firstArgument() as? EnumValue
             ?: return null
 
-        javaTypeEnhancementState.migrationLevelForJsr305?.let { return it }
+        javaTypeEnhancementState.jsr305.migrationLevel?.let { return it }
 
         return when (enumValue.enumEntryName.asString()) {
             "STRICT" -> ReportLevel.STRICT

@@ -8,20 +8,22 @@ package org.jetbrains.kotlin.test.frontend.classic.handlers
 import org.jetbrains.kotlin.codeMetaInfo.model.DiagnosticCodeMetaInfo
 import org.jetbrains.kotlin.codeMetaInfo.model.JspecifyMarkerCodeMetaInfo
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.load.java.JSPECIFY_ANNOTATIONS_PACKAGE
+import org.jetbrains.kotlin.load.java.ReportLevel
+import org.jetbrains.kotlin.load.java.getDefaultReportLevelForAnnotation
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.globalMetadataInfoHandler
-import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
-import org.jetbrains.kotlin.utils.ReportLevel
+import org.jetbrains.kotlin.load.java.getReportLevelForAnnotation
 
 // Not that this diagnostic handler should be included only with `ClassicDiagnosticsHandler` and go after it
 class JspecifyDiagnosticComplianceHandler(testServices: TestServices) : ClassicFrontendAnalysisHandler(testServices) {
     override fun processModule(module: TestModule, info: ClassicFrontendOutputArtifact) {
         val jspecifyMode = module.directives[ForeignAnnotationsDirectives.JSPECIFY_STATE].singleOrNull()
-            ?: JavaTypeEnhancementState.DEFAULT_REPORT_LEVEL_FOR_JSPECIFY
+            ?: getDefaultReportLevelForAnnotation(JSPECIFY_ANNOTATIONS_PACKAGE)
 
         for ((testFile, ktFile) in info.allKtFiles) {
             val reportedDiagnostics =

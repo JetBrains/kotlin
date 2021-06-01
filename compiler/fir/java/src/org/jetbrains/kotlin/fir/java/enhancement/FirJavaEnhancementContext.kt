@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.java.enhancement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.load.java.*
-import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
 
 class FirJavaEnhancementContext private constructor(
     val session: FirSession,
@@ -51,7 +50,7 @@ fun FirJavaEnhancementContext.computeNewDefaultTypeQualifiers(
     javaTypeEnhancementState: JavaTypeEnhancementState,
     additionalAnnotations: List<FirAnnotationCall>
 ): JavaTypeQualifiersByElementType? {
-    if (typeQualifierResolver.disabled) return defaultTypeQualifiers
+    if (typeQualifierResolver.isDisabled) return defaultTypeQualifiers
 
     val defaultQualifiers =
         additionalAnnotations.mapNotNull { annotationCall ->
