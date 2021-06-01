@@ -5,13 +5,16 @@
 
 package org.jetbrains.uast.kotlin
 
-import org.jetbrains.kotlin.psi.KtEscapeStringTemplateEntry
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtStringTemplateEntry
-import org.jetbrains.kotlin.psi.KtStringTemplateEntryWithExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.uast.*
 
 interface BaseKotlinConverter {
+
+    fun convertReceiverParameter(receiver: KtTypeReference): UParameter? {
+        val call = (receiver.parent as? KtCallableDeclaration) ?: return null
+        if (call.receiverTypeReference != receiver) return null
+        return call.toUElementOfType<UMethod>()?.uastParameters?.firstOrNull()
+    }
 
     fun convertExpression(
         expression: KtExpression,

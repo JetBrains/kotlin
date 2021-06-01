@@ -8,6 +8,7 @@ package org.jetbrains.uast.kotlin
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UExpression
 
@@ -19,6 +20,8 @@ interface BaseKotlinUastResolveProviderService {
     fun convertParent(uElement: UElement): UElement?
 
     fun resolveToDeclaration(ktExpression: KtExpression): PsiElement?
+
+    fun resolveToType(ktTypeReference: KtTypeReference, source: UElement): PsiType?
 
     fun getExpressionType(uExpression: UExpression): PsiType?
 
