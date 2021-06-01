@@ -10,11 +10,17 @@
 
 import java.util.function.Consumer
 
-fun call(c: Consumer<String>) {
-}
+inline fun <reified T> f(x: T) =
+    println("${T::class.simpleName}($x)")
+
+private inline fun g(x: String) = println(x)
+
+fun call(c: Consumer<String>) = c.accept("")
 
 fun box(): String {
-    // println is inline only and therefore we cannot use invoke-dynamic to target it.
-    call(::println)
+    call(::println) // `println` is `@InlineOnly`
+    call(::f) // `f` has a reified type parameter and thus isn't callable directly
+    val obj = { call(::g) } // `g` is inaccessible in this scope
+    obj()
     return "OK"
 }
