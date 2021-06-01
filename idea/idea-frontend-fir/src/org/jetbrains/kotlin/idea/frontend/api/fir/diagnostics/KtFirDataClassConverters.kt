@@ -1200,6 +1200,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.REDUNDANT_PROJECTION) { firDiagnostic ->
+        RedundantProjectionImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED) { firDiagnostic ->
         VarianceOnTypeParameterNotAllowedImpl(
             firDiagnostic as FirPsiDiagnostic<*>,

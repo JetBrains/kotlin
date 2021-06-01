@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.extractTypeRefAndSourceFromTypeArgument
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-object FirConflictingProjectionChecker : FirBasicDeclarationChecker() {
+object FirProjectionRelationChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration is FirPropertyAccessor) {
             return
@@ -62,16 +62,28 @@ object FirConflictingProjectionChecker : FirBasicDeclarationChecker() {
                 ?.symbol?.fir
                 ?.variance
 
-            if (
-                (fullyExpandedProjection is ConeKotlinTypeConflictingProjection ||
-                        actual is ConeKotlinTypeProjectionIn && protoVariance == Variance.OUT_VARIANCE ||
-                        actual is ConeKotlinTypeProjectionOut && protoVariance == Variance.IN_VARIANCE) &&
-                typeRef.source?.kind !is FirFakeSourceElementKind
+            val projectionRelation = if (fullyExpandedProjection is ConeKotlinTypeConflictingProjection ||
+                actual is ConeKotlinTypeProjectionIn && protoVariance == Variance.OUT_VARIANCE ||
+                actual is ConeKotlinTypeProjectionOut && protoVariance == Variance.IN_VARIANCE
             ) {
-                val typeArgSource = extractTypeArgumentSource(typeRef, it)
+                ProjectionRelation.Conflicting
+            } else if (actual is ConeKotlinTypeProjectionIn && protoVariance == Variance.IN_VARIANCE ||
+                actual is ConeKotlinTypeProjectionOut && protoVariance == Variance.OUT_VARIANCE
+            ) {
+                ProjectionRelation.Redundant
+            } else {
+                ProjectionRelation.None
+            }
+
+            val (typeArgTypeRef, typeArgSource) = extractTypeRefAndSourceFromTypeArgument(typeRef, it) ?: continue
+
+            if (projectionRelation != ProjectionRelation.None && typeRef.source?.kind !is FirFakeSourceElementKind) {
                 reporter.reportOn(
-                    typeArgSource ?: typeRef.source,
-                    if (type != fullyExpandedType) FirErrors.CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION else FirErrors.CONFLICTING_PROJECTION,
+                    typeArgSource ?: typeArgTypeRef.source,
+                    if (projectionRelation == ProjectionRelation.Conflicting)
+                        if (type != fullyExpandedType) FirErrors.CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION else FirErrors.CONFLICTING_PROJECTION
+                    else
+                        FirErrors.REDUNDANT_PROJECTION,
                     fullyExpandedType,
                     context
                 )
@@ -79,31 +91,9 @@ object FirConflictingProjectionChecker : FirBasicDeclarationChecker() {
         }
     }
 
-    private fun extractTypeArgumentSource(typeRef: FirTypeRef, index: Int): FirSourceElement? {
-        if (typeRef is FirResolvedTypeRef) {
-            val delegatedTypeRef = typeRef.delegatedTypeRef
-            if (delegatedTypeRef is FirUserTypeRef) {
-                var currentTypeArguments: List<FirTypeProjection>? = null
-                var currentIndex = index
-                val qualifier = delegatedTypeRef.qualifier
-
-                for (i in qualifier.size - 1 downTo 0) {
-                    val typeArguments = qualifier[i].typeArgumentList.typeArguments
-                    if (currentIndex < typeArguments.size) {
-                        currentTypeArguments = typeArguments
-                        break
-                    } else {
-                        currentIndex -= typeArguments.size
-                    }
-                }
-
-                val typeArgument = currentTypeArguments?.elementAtOrNull(currentIndex)
-                if (typeArgument is FirTypeProjectionWithVariance) {
-                    return typeArgument.source
-                }
-            }
-        }
-
-        return null
+    private enum class ProjectionRelation {
+        Conflicting,
+        Redundant,
+        None
     }
 }

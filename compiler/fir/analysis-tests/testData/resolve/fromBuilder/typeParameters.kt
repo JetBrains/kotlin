@@ -4,7 +4,7 @@ interface List<out T : Any> {
     infix fun concat(other: List<<!TYPE_VARIANCE_CONFLICT!>T<!>>): List<T>
 }
 
-typealias StringList = List<out String>
+typealias StringList = List<<!REDUNDANT_PROJECTION!>out<!> String>
 typealias AnyList = List<*>
 
 abstract class AbstractList<out T : Any> : List<T>

@@ -386,6 +386,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION by error<KtTypeParameter>(PositioningStrategy.VARIANCE_MODIFIER) {
             parameter<ConeKotlinType>("type")
         }
+        val REDUNDANT_PROJECTION by warning<KtTypeParameter>(PositioningStrategy.VARIANCE_MODIFIER) {
+            parameter<ConeKotlinType>("type")
+        }
         val VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED by error<KtTypeParameter>(PositioningStrategy.VARIANCE_MODIFIER)
 
         val CATCH_PARAMETER_WITH_DEFAULT_VALUE by error<PsiElement>()

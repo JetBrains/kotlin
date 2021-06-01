@@ -254,6 +254,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_EXPLICI
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_MODALITY_MODIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_MODIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_OPEN_IN_INTERFACE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_PROJECTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_RETURN_UNIT_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_SETTER_PARAMETER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_SINGLE_EXPRESSION_STRING_TEMPLATE
@@ -614,6 +615,11 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(
                 CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION,
                 "Conflicting projection in type alias expansion in intermediate type '{0}'",
+                RENDER_TYPE
+            )
+            map.put(
+                REDUNDANT_PROJECTION,
+                "Projection is redundant: the corresponding type parameter of {0} has the same variance",
                 RENDER_TYPE
             )
             map.put(

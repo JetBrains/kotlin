@@ -2525,7 +2525,7 @@ fun <T> case_37(x: Map<in T, *>?) {
 }
 
 // TESTCASE NUMBER: 38
-fun <T> case_38(x: Map<*, out T>?) {
+fun <T> case_38(x: Map<*, <!REDUNDANT_PROJECTION!>out<!> T>?) {
     if (x != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Map<*, out T>? & kotlin.collections.Map<*, out T>")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Map<*, out T>? & kotlin.collections.Map<*, out T>")!>x<!>.equals(null)
@@ -2731,7 +2731,7 @@ fun <T> case_40(x: InterfaceWithTwoTypeParameters<in T, in T>?) {
 }
 
 // TESTCASE NUMBER: 41
-fun <T> case_41(x: Map<out T, out T>?) {
+fun <T> case_41(x: Map<out T, <!REDUNDANT_PROJECTION!>out<!> T>?) {
     if (x != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Map<out T, out T>? & kotlin.collections.Map<out T, out T>")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Map<out T, out T>? & kotlin.collections.Map<out T, out T>")!>x<!>.equals(null)
@@ -2803,7 +2803,7 @@ fun <T> case_41(x: Map<out T, out T>?) {
 }
 
 // TESTCASE NUMBER: 42
-fun <T> case_42(x: Map<T, out T>?) {
+fun <T> case_42(x: Map<T, <!REDUNDANT_PROJECTION!>out<!> T>?) {
     if (x != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Map<T, out T>? & kotlin.collections.Map<T, out T>")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Map<T, out T>? & kotlin.collections.Map<T, out T>")!>x<!>.equals(null)

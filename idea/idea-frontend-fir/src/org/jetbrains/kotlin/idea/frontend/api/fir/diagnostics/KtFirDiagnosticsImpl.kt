@@ -1370,6 +1370,14 @@ internal class ConflictingProjectionInTypealiasExpansionImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
+internal class RedundantProjectionImpl(
+    override val type: KtType,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.RedundantProjection(), KtAbstractFirDiagnostic<KtTypeParameter> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
 internal class VarianceOnTypeParameterNotAllowedImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,

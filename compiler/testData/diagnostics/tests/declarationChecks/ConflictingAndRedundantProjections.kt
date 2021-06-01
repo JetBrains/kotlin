@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class In<in T>
 class Out<out T>
 class Inv<T>

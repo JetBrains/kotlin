@@ -8,11 +8,11 @@ typealias InvOut = Inv<out Int>
 typealias InvT<T> = Inv<T>
 
 typealias OutStar = Out<*>
-typealias OutOut = Out<out Int>
+typealias OutOut = Out<<!REDUNDANT_PROJECTION!>out<!> Int>
 typealias OutT<T> = Out<T>
 
 typealias InStar = In<*>
-typealias InIn = In<in Int>
+typealias InIn = In<<!REDUNDANT_PROJECTION!>in<!> Int>
 typealias InT<T> = In<T>
 
 class Test1 : InvStar
@@ -24,9 +24,9 @@ class Test5 : InvT<InvT<*>>
 class Test6 : OutStar
 class Test7 : OutOut
 class Test8 : OutT<Int>
-class Test9 : OutT<out Int>
+class Test9 : OutT<<!REDUNDANT_PROJECTION!>out<!> Int>
 
 class Test10 : InStar
 class Test11 : InIn
 class Test12 : InT<Int>
-class Test13 : InT<in Int>
+class Test13 : InT<<!REDUNDANT_PROJECTION!>in<!> Int>
