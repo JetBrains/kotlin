@@ -1,0 +1,93 @@
+UFile (package = ) [import java.lang.Runnable...]
+    UImportStatement (isOnDemand = false) [import java.lang.Runnable]
+    UClass (name = TypeCastKt) [public final class TypeCastKt {...}]
+        UMethod (name = stringConsumer) [public static final fun stringConsumer(@org.jetbrains.annotations.NotNull s: java.lang.String) : void {...}]
+            UParameter (name = s) [@org.jetbrains.annotations.NotNull var s: java.lang.String]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}] : PsiType:void
+        UMethod (name = foo) [public static final fun foo(@org.jetbrains.annotations.NotNull x: java.lang.Object, @org.jetbrains.annotations.NotNull isSafe: boolean) : java.lang.Runnable {...}]
+            UParameter (name = x) [@org.jetbrains.annotations.NotNull var x: java.lang.Object]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UParameter (name = isSafe) [@org.jetbrains.annotations.NotNull var isSafe: boolean]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}]
+                UReturnExpression [return if (isSafe) x as java.lang.Runnable else x as? java.lang.Runnable]
+                    UIfExpression [if (isSafe) x as java.lang.Runnable else x as? java.lang.Runnable] : PsiType:Runnable
+                        USimpleNameReferenceExpression (identifier = isSafe) [isSafe] : PsiType:boolean
+                        UBinaryExpressionWithType [x as java.lang.Runnable] : PsiType:Runnable
+                            USimpleNameReferenceExpression (identifier = x) [x] : PsiType:Object
+                            UTypeReferenceExpression (name = java.lang.Runnable) [java.lang.Runnable]
+                        UBinaryExpressionWithType [x as? java.lang.Runnable] : PsiType:Runnable
+                            USimpleNameReferenceExpression (identifier = x) [x] : PsiType:Object
+                            UTypeReferenceExpression (name = java.lang.Runnable) [java.lang.Runnable]
+        UMethod (name = box) [public static final fun box() : java.lang.String {...}]
+            UBlockExpression [{...}] : PsiType:Void
+                UDeclarationsExpression [var x: java.lang.Object = stringConsumer("Hi") as java.lang.Object]
+                    ULocalVariable (name = x) [var x: java.lang.Object = stringConsumer("Hi") as java.lang.Object]
+                        UBinaryExpressionWithType [stringConsumer("Hi") as java.lang.Object] : PsiType:Object
+                            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [stringConsumer("Hi")] : PsiType:void
+                                UIdentifier (Identifier (stringConsumer)) [UIdentifier (Identifier (stringConsumer))]
+                                USimpleNameReferenceExpression (identifier = stringConsumer, resolvesTo = null) [stringConsumer] : PsiType:void
+                                ULiteralExpression (value = "Hi") ["Hi"] : PsiType:String
+                            UTypeReferenceExpression (name = java.lang.Object) [java.lang.Object]
+                UIfExpression [if (x != Unit) return "Fail: " + x] : PsiType:void
+                    UBinaryExpression (operator = !=) [x != Unit] : PsiType:boolean
+                        USimpleNameReferenceExpression (identifier = x) [x] : PsiType:Object
+                        USimpleNameReferenceExpression (identifier = Unit) [Unit] : PsiType:void
+                    UReturnExpression [return "Fail: " + x] : PsiType:Void
+                        UPolyadicExpression (operator = +) ["Fail: " + x] : PsiType:String
+                            ULiteralExpression (value = "Fail: ") ["Fail: "] : PsiType:String
+                            USimpleNameReferenceExpression (identifier = x) [x] : PsiType:Object
+                UDeclarationsExpression [var y: java.lang.Object = stringConsumer("Hi, again") as java.lang.Object]
+                    ULocalVariable (name = y) [var y: java.lang.Object = stringConsumer("Hi, again") as java.lang.Object]
+                        UBinaryExpressionWithType [stringConsumer("Hi, again") as java.lang.Object] : PsiType:Object
+                            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [stringConsumer("Hi, again")] : PsiType:void
+                                UIdentifier (Identifier (stringConsumer)) [UIdentifier (Identifier (stringConsumer))]
+                                USimpleNameReferenceExpression (identifier = stringConsumer, resolvesTo = null) [stringConsumer] : PsiType:void
+                                ULiteralExpression (value = "Hi, again") ["Hi, again"] : PsiType:String
+                            UTypeReferenceExpression (name = java.lang.Object) [java.lang.Object]
+                UIfExpression [if (y != Unit) return "Fail: " + y] : PsiType:void
+                    UBinaryExpression (operator = !=) [y != Unit] : PsiType:boolean
+                        USimpleNameReferenceExpression (identifier = y) [y] : PsiType:Object
+                        USimpleNameReferenceExpression (identifier = Unit) [Unit] : PsiType:void
+                    UReturnExpression [return "Fail: " + y] : PsiType:Void
+                        UPolyadicExpression (operator = +) ["Fail: " + y] : PsiType:String
+                            ULiteralExpression (value = "Fail: ") ["Fail: "] : PsiType:String
+                            USimpleNameReferenceExpression (identifier = y) [y] : PsiType:Object
+                UDeclarationsExpression [var r: <ErrorType> = anonymous object : Runnable {...    }]
+                    ULocalVariable (name = r) [var r: <ErrorType> = anonymous object : Runnable {...    }]
+                        UObjectLiteralExpression [anonymous object : Runnable {...    }] : PsiType:Runnable
+                            UClass (name = null) [final class null : java.lang.Runnable {...}]
+                                UMethod (name = run) [public fun run() : void {...}]
+                                    UBlockExpression [{...}] : PsiType:void
+                                UMethod (name = ) [private fun () = UastEmptyExpression]
+                UIfExpression [if (foo(r, true) !== UastEmptyExpression <other> UastEmptyExpression) return "Fail: " + r] : PsiType:void
+                    UBinaryExpression (operator = !==) [foo(r, true) !== UastEmptyExpression <other> UastEmptyExpression] : PsiType:boolean
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 2)) [foo(r, true)] : PsiType:Runnable
+                            UIdentifier (Identifier (foo)) [UIdentifier (Identifier (foo))]
+                            USimpleNameReferenceExpression (identifier = foo, resolvesTo = null) [foo] : PsiType:Runnable
+                            USimpleNameReferenceExpression (identifier = r) [r] : PsiType:<ErrorType>
+                            ULiteralExpression (value = true) [true] : PsiType:boolean
+                        UBinaryExpression (operator = <other>) [UastEmptyExpression <other> UastEmptyExpression]
+                            UastEmptyExpression [UastEmptyExpression]
+                            UastEmptyExpression [UastEmptyExpression]
+                    UReturnExpression [return "Fail: " + r] : PsiType:Void
+                        UPolyadicExpression (operator = +) ["Fail: " + r] : PsiType:String
+                            ULiteralExpression (value = "Fail: ") ["Fail: "] : PsiType:String
+                            USimpleNameReferenceExpression (identifier = r) [r] : PsiType:<ErrorType>
+                UIfExpression [if (foo(r, false) !== UastEmptyExpression <other> UastEmptyExpression) return "Fail: " + r] : PsiType:void
+                    UBinaryExpression (operator = !==) [foo(r, false) !== UastEmptyExpression <other> UastEmptyExpression] : PsiType:boolean
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 2)) [foo(r, false)] : PsiType:Runnable
+                            UIdentifier (Identifier (foo)) [UIdentifier (Identifier (foo))]
+                            USimpleNameReferenceExpression (identifier = foo, resolvesTo = null) [foo] : PsiType:Runnable
+                            USimpleNameReferenceExpression (identifier = r) [r] : PsiType:<ErrorType>
+                            ULiteralExpression (value = false) [false] : PsiType:boolean
+                        UBinaryExpression (operator = <other>) [UastEmptyExpression <other> UastEmptyExpression]
+                            UastEmptyExpression [UastEmptyExpression]
+                            UastEmptyExpression [UastEmptyExpression]
+                    UReturnExpression [return "Fail: " + r] : PsiType:Void
+                        UPolyadicExpression (operator = +) ["Fail: " + r] : PsiType:String
+                            ULiteralExpression (value = "Fail: ") ["Fail: "] : PsiType:String
+                            USimpleNameReferenceExpression (identifier = r) [r] : PsiType:<ErrorType>
+                UReturnExpression [return "OK"] : PsiType:Void
+                    ULiteralExpression (value = "OK") ["OK"] : PsiType:String

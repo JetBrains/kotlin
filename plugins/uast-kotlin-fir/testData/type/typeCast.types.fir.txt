@@ -1,0 +1,50 @@
+UFile (package = ) [import java.lang.Runnable...]
+    UImportStatement (isOnDemand = false) [import java.lang.Runnable]
+    UClass (name = TypeCastKt) [public final class TypeCastKt {...}]
+        UMethod (name = stringConsumer) [public static final fun stringConsumer(s: java.lang.String) : void {...}]
+            UParameter (name = s) [var s: java.lang.String]
+            UBlockExpression [{...}] : PsiType:Unit
+        UMethod (name = foo) [public static final fun foo(x: java.lang.Object, isSafe: boolean) : java.lang.Runnable {...}]
+            UParameter (name = x) [var x: java.lang.Object]
+            UParameter (name = isSafe) [var isSafe: boolean]
+            UBlockExpression [{...}]
+                UReturnExpression [return if ([!] UnknownKotlinExpression (REFERENCE_EXPRESSION)) [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) as java.lang.Runnable else [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) as? java.lang.Runnable]
+                    UIfExpression [if ([!] UnknownKotlinExpression (REFERENCE_EXPRESSION)) [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) as java.lang.Runnable else [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) as? java.lang.Runnable] : PsiType:Runnable
+                        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                        UBinaryExpressionWithType [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION) as java.lang.Runnable] : PsiType:Runnable
+                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                            UTypeReferenceExpression (name = java.lang.Runnable) [java.lang.Runnable]
+                        UBinaryExpressionWithType [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION) as? java.lang.Runnable] : PsiType:Runnable
+                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                            UTypeReferenceExpression (name = java.lang.Runnable) [java.lang.Runnable]
+        UMethod (name = box) [public static final fun box() : java.lang.String {...}]
+            UBlockExpression [{...}] : PsiType:Void
+                [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
+                UIfExpression [if ([!] UnknownKotlinExpression (BINARY_EXPRESSION)) return "Fail: " + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] : PsiType:Unit
+                    [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                    UReturnExpression [return "Fail: " + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] : PsiType:Void
+                        UPolyadicExpression (operator = +) ["Fail: " + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] : PsiType:String
+                            ULiteralExpression (value = "Fail: ") ["Fail: "] : PsiType:String
+                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
+                UIfExpression [if ([!] UnknownKotlinExpression (BINARY_EXPRESSION)) return "Fail: " + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] : PsiType:Unit
+                    [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                    UReturnExpression [return "Fail: " + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] : PsiType:Void
+                        UPolyadicExpression (operator = +) ["Fail: " + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] : PsiType:String
+                            ULiteralExpression (value = "Fail: ") ["Fail: "] : PsiType:String
+                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
+                UIfExpression [if ([!] UnknownKotlinExpression (BINARY_EXPRESSION)) return "Fail: " + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] : PsiType:Unit
+                    [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                    UReturnExpression [return "Fail: " + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] : PsiType:Void
+                        UPolyadicExpression (operator = +) ["Fail: " + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] : PsiType:String
+                            ULiteralExpression (value = "Fail: ") ["Fail: "] : PsiType:String
+                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                UIfExpression [if ([!] UnknownKotlinExpression (BINARY_EXPRESSION)) return "Fail: " + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] : PsiType:Unit
+                    [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                    UReturnExpression [return "Fail: " + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] : PsiType:Void
+                        UPolyadicExpression (operator = +) ["Fail: " + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] : PsiType:String
+                            ULiteralExpression (value = "Fail: ") ["Fail: "] : PsiType:String
+                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                UReturnExpression [return "OK"] : PsiType:Void
+                    ULiteralExpression (value = "OK") ["OK"] : PsiType:String
