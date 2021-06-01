@@ -294,6 +294,8 @@ internal object FirKotlinConverter : BaseKotlinConverter {
                 is KtBinaryExpressionWithTypeRHS -> expr<UBinaryExpressionWithType>(build(::KotlinUBinaryExpressionWithType))
                 is KtIsExpression -> expr<UBinaryExpressionWithType>(build(::KotlinUTypeCheckExpression))
 
+                is KtArrayAccessExpression -> expr<UArrayAccessExpression>(build(::FirKotlinUArrayAccessExpression))
+
                 else -> expr<UExpression>(build(::UnknownKotlinExpression))
             }
         }
