@@ -48,8 +48,13 @@ abstract class BasicMap<K : Comparable<K>, V>(
     }
 
     // avoid unsynchronized close
-    internal fun close() {
+    fun close() {
         storage.close()
+    }
+
+    @TestOnly
+    fun closeForTest() {
+        close()
     }
 
     @TestOnly
