@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.idea.completion.contributors.helpers.FirClassifierProvider.getAvailableClassifiersCurrentScope
-import org.jetbrains.kotlin.idea.completion.contributors.helpers.addSymbolToCompletion
+import org.jetbrains.kotlin.idea.completion.contributors.helpers.insertSymbol
 import org.jetbrains.kotlin.idea.completion.contributors.helpers.addTypeArguments
 import org.jetbrains.kotlin.idea.completion.contributors.helpers.createStarTypeArgumentsList
 import org.jetbrains.kotlin.idea.completion.lookups.KotlinLookupObject
@@ -252,7 +252,7 @@ private object WhenConditionInsertionHandler : InsertionHandlerBase<WhenConditio
         lookupObject: WhenConditionLookupObject
     ) {
         if (lookupObject.isSingleCondition && completionChar != ',') {
-            addSymbolToCompletion(" -> ")
+            insertSymbol(" -> ")
             commitDocument()
         }
     }

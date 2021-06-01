@@ -12,7 +12,7 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import org.jetbrains.kotlin.idea.completion.KotlinFirIconProvider.getIconFor
 import org.jetbrains.kotlin.idea.completion.context.FirBasicCompletionContext
 import org.jetbrains.kotlin.idea.completion.context.FirTypeConstraintNameInWhereClausePositionContext
-import org.jetbrains.kotlin.idea.completion.contributors.helpers.addSymbolAndInvokeCompletion
+import org.jetbrains.kotlin.idea.completion.contributors.helpers.insertSymbolAndInvokeCompletion
 import org.jetbrains.kotlin.idea.completion.lookups.KotlinLookupObject
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithTypeParameters
@@ -47,7 +47,7 @@ private object TypeParameterInWhenClauseInsertionHandler : InsertHandler<LookupE
         val name = lookupElement.shortName.render()
         context.document.replaceString(context.startOffset, context.tailOffset, name)
         context.commitDocument()
-        context.addSymbolAndInvokeCompletion(symbol = " : ")
+        context.insertSymbolAndInvokeCompletion(symbol = " : ")
     }
 }
 

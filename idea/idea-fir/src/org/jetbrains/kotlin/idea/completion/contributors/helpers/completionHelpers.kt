@@ -11,12 +11,12 @@ import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.PsiDocumentManager
 
-internal fun InsertionContext.addSymbolAndInvokeCompletion(symbol: String) {
-    this.addSymbolToCompletion(symbol)
-    invokeCompletion(this)
+internal fun InsertionContext.insertSymbolAndInvokeCompletion(symbol: String) {
+    this.insertSymbol(symbol)
+    scheduleCompletion(this)
 }
 
-private fun invokeCompletion(context: InsertionContext) {
+private fun scheduleCompletion(context: InsertionContext) {
     ApplicationManager.getApplication().invokeLater {
         if (!context.editor.isDisposed) {
             CodeCompletionHandlerBase(CompletionType.BASIC, true, false, true)
@@ -25,7 +25,7 @@ private fun invokeCompletion(context: InsertionContext) {
     }
 }
 
-internal fun InsertionContext.addSymbolToCompletion(symbol: String) {
+internal fun InsertionContext.insertSymbol(symbol: String) {
     PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(document)
     document.insertString(tailOffset, symbol)
     commitDocument()
@@ -42,7 +42,7 @@ internal fun InsertionContext.addTypeArguments(typeArgumentsCount: Int) {
         }
         else -> {
             commitDocument()
-            addSymbolToCompletion(createStarTypeArgumentsList(typeArgumentsCount))
+            insertSymbol(createStarTypeArgumentsList(typeArgumentsCount))
         }
     }
 }
