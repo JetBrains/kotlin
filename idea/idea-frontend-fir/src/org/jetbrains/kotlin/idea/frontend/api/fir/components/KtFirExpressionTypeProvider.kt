@@ -7,24 +7,22 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.expressions.argumentMapping
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirSafe
-import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.components.KtExpressionTypeProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.types.KtErrorType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
@@ -142,6 +140,30 @@ internal class KtFirExpressionTypeProvider(
 
     private fun PsiElement.isIfCondition() =
         unwrapQualified<KtIfExpression> { ifExpr, cond -> ifExpr.condition == cond } != null
+
+    override fun isDefinitelyNull(expression: KtExpression): Boolean =
+        getDefiniteNullability(expression) == DefiniteNullability.DEFINITELY_NULL
+
+    override fun isDefinitelyNotNull(expression: KtExpression): Boolean =
+        getDefiniteNullability(expression) == DefiniteNullability.DEFINITELY_NOT_NULL
+
+    private fun getDefiniteNullability(expression: KtExpression): DefiniteNullability = withValidityAssertion {
+        // TODO: Check stability of smartcast (pending PR 4382)
+        return when (val fir = expression.getOrBuildFir(analysisSession.firResolveState)) {
+            is FirExpressionWithSmartcastToNull -> DefiniteNullability.DEFINITELY_NULL
+            is FirExpression -> {
+                // Note: This includes FirExpressionWithSmartcast
+                with(analysisSession.rootModuleSession.typeContext) {
+                    if (!fir.typeRef.coneType.isNullableType()) {
+                        DefiniteNullability.DEFINITELY_NOT_NULL
+                    } else {
+                        DefiniteNullability.UNKNOWN
+                    }
+                }
+            }
+            else -> DefiniteNullability.UNKNOWN
+        }
+    }
 }
 
 private data class KtCallWithArgument(val call: KtCallExpression, val argument: KtExpression)
@@ -166,3 +188,5 @@ private val PsiElement.nonContainerParent: PsiElement?
         is KtContainerNode -> parent.parent
         else -> parent
     }
+
+private enum class DefiniteNullability { DEFINITELY_NULL, DEFINITELY_NOT_NULL, UNKNOWN }
