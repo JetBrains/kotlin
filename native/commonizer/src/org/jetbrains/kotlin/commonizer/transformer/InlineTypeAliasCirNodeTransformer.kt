@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.commonizer.transformer
 
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.mergedtree.*
+import org.jetbrains.kotlin.commonizer.mergedtree.CirNodeRelationship.Composite.Companion.plus
+import org.jetbrains.kotlin.commonizer.mergedtree.CirNodeRelationship.ParentNode
+import org.jetbrains.kotlin.commonizer.mergedtree.CirNodeRelationship.PreferredNode
 import org.jetbrains.kotlin.commonizer.transformer.CirNodeTransformer.Context
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -84,21 +87,21 @@ internal class InlineTypeAliasCirNodeTransformer(
         fromAliasedClassNode.constructors.forEach { (key, aliasedConstructorNode) ->
             val aliasedConstructor = aliasedConstructorNode.targetDeclarations[targetIndex] ?: return@forEach
             intoClassNode.constructors.getOrPut(key) {
-                buildClassConstructorNode(storageManager, targetSize, classifiers, CommonizerCondition.parent(intoClassNode))
+                buildClassConstructorNode(storageManager, targetSize, classifiers, ParentNode(intoClassNode))
             }.targetDeclarations[targetIndex] = aliasedConstructor.withContainingClass(intoClass).markedArtificial()
         }
 
         fromAliasedClassNode.functions.forEach { (key, aliasedFunctionNode) ->
             val aliasedFunction = aliasedFunctionNode.targetDeclarations[targetIndex] ?: return@forEach
             intoClassNode.functions.getOrPut(key) {
-                buildFunctionNode(storageManager, targetSize, classifiers, CommonizerCondition.parent(intoClassNode))
+                buildFunctionNode(storageManager, targetSize, classifiers, ParentNode(intoClassNode))
             }.targetDeclarations[targetIndex] = aliasedFunction.withContainingClass(intoClass).markedArtificial()
         }
 
         fromAliasedClassNode.properties.forEach { (key, aliasedPropertyNode) ->
             val aliasedProperty = aliasedPropertyNode.targetDeclarations[targetIndex] ?: return@forEach
             intoClassNode.properties.getOrPut(key) {
-                buildPropertyNode(storageManager, targetSize, classifiers, CommonizerCondition.parent(intoClassNode))
+                buildPropertyNode(storageManager, targetSize, classifiers, ParentNode(intoClassNode))
             }.targetDeclarations[targetIndex] = aliasedProperty.withContainingClass(intoClass).markedArtificial()
         }
     }
@@ -112,7 +115,7 @@ internal class InlineTypeAliasCirNodeTransformer(
             //  and if the original typeAliasNode cannot be commonized.
             //  Therefore, this artificial class node acts as a fallback with the original type-alias being still the preferred
             //  option for commonization
-            condition = CommonizerCondition.parent(this) and CommonizerCondition.nodeIsNotCommonized(typeAliasNode),
+            nodeRelationship = ParentNode(this) + PreferredNode(typeAliasNode),
             classId = typeAliasNode.id
         )
         this.classes[typeAliasNode.classifierName] = classNode

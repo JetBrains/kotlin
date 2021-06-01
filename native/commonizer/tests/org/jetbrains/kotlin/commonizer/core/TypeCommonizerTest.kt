@@ -425,7 +425,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
                             storageManager = LockBasedStorageManager.NO_LOCKS,
                             size = variants.size,
                             classifiers = classifiers,
-                            condition = CommonizerCondition.none(),
+                            nodeRelationship = null,
                             classId = type.classifierId
                         )
                     }
