@@ -8,12 +8,6 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.util
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredFunctionSymbols
-import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredPropertySymbols
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.idea.fir.low.level.api.KtDeclarationAndFirDeclarationEqualityChecker
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.InvalidFirElementTypeException
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
@@ -61,44 +55,6 @@ internal inline fun <reified F : FirDeclaration> KtDeclaration.findFirDeclaratio
     val fir = findFirDeclarationForAnyFirSourceDeclaration(firFileBuilder, firSymbolProvider, moduleFileCache)
     if (fir !is F) throw InvalidFirElementTypeException(this, F::class, fir::class)
     return fir
-}
-
-internal fun representSameFunction(psiFunction: KtNamedFunction, it: FirFunction<*>): Boolean =
-    KtDeclarationAndFirDeclarationEqualityChecker.representsTheSameDeclaration(psiFunction, it)
-
-internal fun representSameConstructor(psiConstructor: KtConstructor<*>, firConstructor: FirConstructor): Boolean {
-    if ((firConstructor.isPrimary) != (psiConstructor is KtPrimaryConstructor)) {
-        return false
-    }
-
-    return KtDeclarationAndFirDeclarationEqualityChecker.representsTheSameDeclaration(psiConstructor, firConstructor)
-}
-
-internal fun KtCallableDeclaration.findFunctionCandidates(
-    symbolProvider: FirSymbolProvider,
-    isTopLevel: Boolean
-): List<FirFunctionSymbol<*>> =
-    findCallableCandidates(symbolProvider, isTopLevel).filterIsInstance<FirFunctionSymbol<*>>()
-
-internal fun KtCallableDeclaration.findPropertyCandidates(
-    symbolProvider: FirSymbolProvider,
-    isTopLevel: Boolean
-): List<FirPropertySymbol> =
-    findCallableCandidates(symbolProvider, isTopLevel).filterIsInstance<FirPropertySymbol>()
-
-private fun KtCallableDeclaration.findCallableCandidates(
-    symbolProvider: FirSymbolProvider,
-    isTopLevel: Boolean
-): List<FirCallableSymbol<*>> {
-    if (isTopLevel) {
-        return symbolProvider.getTopLevelCallableSymbols(containingKtFile.packageFqName, nameAsSafeName)
-    }
-
-    val containerClassId = containingClassOrObject?.getClassId()
-        ?: error("No containing non-local declaration found for ${getElementTextInContext()}")
-
-    return symbolProvider.getClassDeclaredFunctionSymbols(containerClassId, nameAsSafeName) +
-            symbolProvider.getClassDeclaredPropertySymbols(containerClassId, nameAsSafeName)
 }
 
 private fun KtDeclaration.findSourceOfNonLocalFirDeclarationByTraversingWholeTree(
