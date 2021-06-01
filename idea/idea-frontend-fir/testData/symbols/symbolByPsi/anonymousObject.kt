@@ -20,6 +20,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: true
+  isStatic: false
   isSuspend: false
   modality: FINAL
   name: run
@@ -45,6 +46,7 @@ KtFirKotlinPropertySymbol:
   isExtension: false
   isLateInit: false
   isOverride: false
+  isStatic: false
   isVal: true
   modality: FINAL
   name: data
@@ -79,6 +81,7 @@ KtFirKotlinPropertySymbol:
   isExtension: false
   isLateInit: false
   isOverride: false
+  isStatic: false
   isVal: true
   modality: FINAL
   name: anonymousObject

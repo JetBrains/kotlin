@@ -71,6 +71,7 @@ abstract class KtJavaFieldSymbol :
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.MEMBER
     final override val isExtension: Boolean get() = false
     final override val receiverType: KtTypeAndAnnotations? get() = null
+    abstract val isStatic: Boolean
 
     abstract override fun createPointer(): KtSymbolPointer<KtJavaFieldSymbol>
 }
@@ -91,6 +92,7 @@ sealed class KtPropertySymbol : KtVariableSymbol(),
     abstract val hasBackingField: Boolean
 
     abstract val isOverride: Boolean
+    abstract val isStatic: Boolean
 
     abstract val initializer: KtConstantValue?
 

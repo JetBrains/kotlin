@@ -13,6 +13,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: ABSTRACT
   name: listIterator
@@ -34,6 +35,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: ABSTRACT
   name: listIterator

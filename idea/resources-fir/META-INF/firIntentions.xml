@@ -24,5 +24,11 @@
       <className>org.jetbrains.kotlin.idea.fir.intentions.HLImportAllMembersIntention</className>
       <category>Kotlin</category>
     </intentionAction>
+
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.fir.intentions.HLImportMemberIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
   </extensions>
 </idea-plugin>

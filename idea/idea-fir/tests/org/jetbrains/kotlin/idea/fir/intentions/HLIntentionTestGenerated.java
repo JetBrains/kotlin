@@ -556,4 +556,127 @@ public class HLIntentionTestGenerated extends AbstractHLIntentionTest {
             runTest("idea/testData/intentions/importAllMembers/UnresolvedMember.kt");
         }
     }
+
+    @TestMetadata("idea/testData/intentions/importMember")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ImportMember extends AbstractHLIntentionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInImportMember() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/intentions/importMember"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
+        }
+
+        @TestMetadata("AlreadyImportedSameNameClass.kt")
+        public void testAlreadyImportedSameNameClass() throws Exception {
+            runTest("idea/testData/intentions/importMember/AlreadyImportedSameNameClass.kt");
+        }
+
+        @TestMetadata("AlreadyImportedSameNameClass2.kt")
+        public void testAlreadyImportedSameNameClass2() throws Exception {
+            runTest("idea/testData/intentions/importMember/AlreadyImportedSameNameClass2.kt");
+        }
+
+        @TestMetadata("ClassCallChain.kt")
+        public void testClassCallChain() throws Exception {
+            runTest("idea/testData/intentions/importMember/ClassCallChain.kt");
+        }
+
+        @TestMetadata("ClassCallChain2.kt")
+        public void testClassCallChain2() throws Exception {
+            runTest("idea/testData/intentions/importMember/ClassCallChain2.kt");
+        }
+
+        @TestMetadata("ClassCallChain3.kt")
+        public void testClassCallChain3() throws Exception {
+            runTest("idea/testData/intentions/importMember/ClassCallChain3.kt");
+        }
+
+        @TestMetadata("EnumMember.kt")
+        public void testEnumMember() throws Exception {
+            runTest("idea/testData/intentions/importMember/EnumMember.kt");
+        }
+
+        @TestMetadata("FqReference.kt")
+        public void testFqReference() throws Exception {
+            runTest("idea/testData/intentions/importMember/FqReference.kt");
+        }
+
+        @TestMetadata("FqReferenceCall.kt")
+        public void testFqReferenceCall() throws Exception {
+            runTest("idea/testData/intentions/importMember/FqReferenceCall.kt");
+        }
+
+        @TestMetadata("FqReferenceForNestedMember.kt")
+        public void testFqReferenceForNestedMember() throws Exception {
+            runTest("idea/testData/intentions/importMember/FqReferenceForNestedMember.kt");
+        }
+
+        @TestMetadata("FqReferenceForNestedMember2.kt")
+        public void testFqReferenceForNestedMember2() throws Exception {
+            runTest("idea/testData/intentions/importMember/FqReferenceForNestedMember2.kt");
+        }
+
+        @TestMetadata("FromCompanionObject.kt")
+        public void testFromCompanionObject() throws Exception {
+            runTest("idea/testData/intentions/importMember/FromCompanionObject.kt");
+        }
+
+        @TestMetadata("ImportMemberInImport.kt")
+        public void testImportMemberInImport() throws Exception {
+            runTest("idea/testData/intentions/importMember/ImportMemberInImport.kt");
+        }
+
+        @TestMetadata("ImportMemberInMiddleOfImport.kt")
+        public void testImportMemberInMiddleOfImport() throws Exception {
+            runTest("idea/testData/intentions/importMember/ImportMemberInMiddleOfImport.kt");
+        }
+
+        @TestMetadata("NestedClass1.kt")
+        public void testNestedClass1() throws Exception {
+            runTest("idea/testData/intentions/importMember/NestedClass1.kt");
+        }
+
+        @TestMetadata("NestedClass2.kt")
+        public void testNestedClass2() throws Exception {
+            runTest("idea/testData/intentions/importMember/NestedClass2.kt");
+        }
+
+        @TestMetadata("NoTarget.kt")
+        public void testNoTarget() throws Exception {
+            runTest("idea/testData/intentions/importMember/NoTarget.kt");
+        }
+
+        @TestMetadata("NotApplicablePackage.kt")
+        public void testNotApplicablePackage() throws Exception {
+            runTest("idea/testData/intentions/importMember/NotApplicablePackage.kt");
+        }
+
+        @TestMetadata("NotForQualifier.kt")
+        public void testNotForQualifier() throws Exception {
+            runTest("idea/testData/intentions/importMember/NotForQualifier.kt");
+        }
+
+        @TestMetadata("ObjectMethod.kt")
+        public void testObjectMethod() throws Exception {
+            runTest("idea/testData/intentions/importMember/ObjectMethod.kt");
+        }
+
+        @TestMetadata("StaticJavaField.kt")
+        public void testStaticJavaField() throws Exception {
+            runTest("idea/testData/intentions/importMember/StaticJavaField.kt");
+        }
+
+        @TestMetadata("StaticJavaMethod.kt")
+        public void testStaticJavaMethod() throws Exception {
+            runTest("idea/testData/intentions/importMember/StaticJavaMethod.kt");
+        }
+
+        @TestMetadata("TopLevelFun.kt")
+        public void testTopLevelFun() throws Exception {
+            runTest("idea/testData/intentions/importMember/TopLevelFun.kt");
+        }
+    }
 }

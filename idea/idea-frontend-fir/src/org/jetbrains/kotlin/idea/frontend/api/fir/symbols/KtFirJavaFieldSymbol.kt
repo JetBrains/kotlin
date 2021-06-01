@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.isStatic
 import org.jetbrains.kotlin.idea.fir.findPsi
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
@@ -44,6 +45,7 @@ internal class KtFirJavaFieldSymbol(
     override val modality: Modality get() = getModality()
 
     override val visibility: Visibility get() = getVisibility()
+    override val isStatic: Boolean get() = firRef.withFir { it.isStatic }
 
     override fun createPointer(): KtSymbolPointer<KtJavaFieldSymbol> {
         TODO("Creating pointers for java fields is not supported yet")

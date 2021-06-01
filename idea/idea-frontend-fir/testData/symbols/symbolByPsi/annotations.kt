@@ -82,6 +82,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: FINAL
   name: x
