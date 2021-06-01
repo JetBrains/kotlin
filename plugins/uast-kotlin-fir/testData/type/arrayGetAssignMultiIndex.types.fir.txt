@@ -1,0 +1,23 @@
+UFile (package = ) [public final class ArrayGetAssignMultiIndexKt {...]
+    UClass (name = ArrayGetAssignMultiIndexKt) [public final class ArrayGetAssignMultiIndexKt {...}]
+        UMethod (name = get) [public static final fun get($this$get: java.lang.String[], index1: int, index2: int) : java.lang.String {...}]
+            UParameter (name = $this$get) [var $this$get: java.lang.String[]]
+            UParameter (name = index1) [var index1: int]
+            UParameter (name = index2) [var index2: int]
+            UBlockExpression [{...}]
+                UReturnExpression [return [!] UnknownKotlinExpression (ARRAY_ACCESS_EXPRESSION)]
+                    [!] UnknownKotlinExpression (ARRAY_ACCESS_EXPRESSION) [[!] UnknownKotlinExpression (ARRAY_ACCESS_EXPRESSION)]
+        UMethod (name = set) [public static final fun set($this$set: java.lang.String[], index1: int, index2: int, elem: java.lang.String) : void {...}]
+            UParameter (name = $this$set) [var $this$set: java.lang.String[]]
+            UParameter (name = index1) [var index1: int]
+            UParameter (name = index2) [var index2: int]
+            UParameter (name = elem) [var elem: java.lang.String]
+            UBlockExpression [{...}] : PsiType:Unit
+                [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+        UMethod (name = box) [public static final fun box() : java.lang.String {...}]
+            UBlockExpression [{...}] : PsiType:Void
+                [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
+                [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                UReturnExpression [return [!] UnknownKotlinExpression (ARRAY_ACCESS_EXPRESSION)] : PsiType:Void
+                    [!] UnknownKotlinExpression (ARRAY_ACCESS_EXPRESSION) [[!] UnknownKotlinExpression (ARRAY_ACCESS_EXPRESSION)]

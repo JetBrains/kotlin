@@ -1,0 +1,131 @@
+UFile (package = ) [import kotlin.test.assertEquals...]
+    UImportStatement (isOnDemand = false) [import kotlin.test.assertEquals]
+    UClass (name = ArrayConstructorsSimpleKt) [public final class ArrayConstructorsSimpleKt {...}]
+        UMethod (name = simpleIntArray) [public static final fun simpleIntArray() : java.lang.Integer[] {...}]
+            UBlockExpression [{...}]
+                UReturnExpression [return <init>(3, { var it: int ->...})]
+                    UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 2)) [<init>(3, { var it: int ->...})] : PsiType:Integer[]
+                        UIdentifier (Identifier (Array)) [UIdentifier (Identifier (Array))]
+                        USimpleNameReferenceExpression (identifier = <init>, resolvesTo = null) [<init>] : PsiType:Integer[]
+                        ULiteralExpression (value = 3) [3] : PsiType:int
+                        ULambdaExpression [{ var it: int ->...}] : PsiType:Function1<? super Integer, ? extends Integer>
+                            UParameter (name = it) [var it: int]
+                            UBlockExpression [{...}]
+                                UReturnExpression [return it]
+                                    USimpleNameReferenceExpression (identifier = it) [it] : PsiType:int
+        UMethod (name = simpleDoubleArray) [public static final fun simpleDoubleArray() : java.lang.Double[] {...}]
+            UBlockExpression [{...}]
+                UReturnExpression [return <init>(3, { var it: int ->...})]
+                    UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 2)) [<init>(3, { var it: int ->...})] : PsiType:Double[]
+                        UIdentifier (Identifier (Array)) [UIdentifier (Identifier (Array))]
+                        USimpleNameReferenceExpression (identifier = <init>, resolvesTo = null) [<init>] : PsiType:Double[]
+                        ULiteralExpression (value = 3) [3] : PsiType:int
+                        ULambdaExpression [{ var it: int ->...}] : PsiType:Function1<? super Integer, ? extends Double>
+                            UParameter (name = it) [var it: int]
+                            UBlockExpression [{...}]
+                                UReturnExpression [return it.toDouble() + 0.1]
+                                    UBinaryExpression (operator = +) [it.toDouble() + 0.1] : PsiType:double
+                                        UQualifiedReferenceExpression [it.toDouble()] : PsiType:double
+                                            USimpleNameReferenceExpression (identifier = it) [it] : PsiType:int
+                                            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [toDouble()] : PsiType:double
+                                                UIdentifier (Identifier (toDouble)) [UIdentifier (Identifier (toDouble))]
+                                                USimpleNameReferenceExpression (identifier = toDouble, resolvesTo = null) [toDouble] : PsiType:double
+                                        ULiteralExpression (value = 0.1) [0.1] : PsiType:double
+        UMethod (name = simpleStringArray) [public static final fun simpleStringArray() : java.lang.String[] {...}]
+            UBlockExpression [{...}]
+                UReturnExpression [return <init>(3, { var it: int ->...})]
+                    UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 2)) [<init>(3, { var it: int ->...})] : PsiType:String[]
+                        UIdentifier (Identifier (Array)) [UIdentifier (Identifier (Array))]
+                        USimpleNameReferenceExpression (identifier = <init>, resolvesTo = null) [<init>] : PsiType:String[]
+                        ULiteralExpression (value = 3) [3] : PsiType:int
+                        ULambdaExpression [{ var it: int ->...}] : PsiType:Function1<? super Integer, ? extends String>
+                            UParameter (name = it) [var it: int]
+                            UBlockExpression [{...}]
+                                UReturnExpression [return it.toString()]
+                                    UQualifiedReferenceExpression [it.toString()] : PsiType:String
+                                        USimpleNameReferenceExpression (identifier = it) [it] : PsiType:int
+                                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [toString()] : PsiType:String
+                                            UIdentifier (Identifier (toString)) [UIdentifier (Identifier (toString))]
+                                            USimpleNameReferenceExpression (identifier = toString, resolvesTo = null) [toString] : PsiType:String
+        UMethod (name = box) [public static final fun box() : java.lang.String {...}]
+            UBlockExpression [{...}] : PsiType:Void
+                UDeclarationsExpression [var ia: java.lang.Integer[] = simpleIntArray()]
+                    ULocalVariable (name = ia) [var ia: java.lang.Integer[] = simpleIntArray()]
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [simpleIntArray()] : PsiType:Integer[]
+                            UIdentifier (Identifier (simpleIntArray)) [UIdentifier (Identifier (simpleIntArray))]
+                            USimpleNameReferenceExpression (identifier = simpleIntArray, resolvesTo = null) [simpleIntArray] : PsiType:Integer[]
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 2)) [assertEquals(0, ia[0])] : PsiType:void
+                    UIdentifier (Identifier (assertEquals)) [UIdentifier (Identifier (assertEquals))]
+                    USimpleNameReferenceExpression (identifier = assertEquals, resolvesTo = null) [assertEquals] : PsiType:void
+                    ULiteralExpression (value = 0) [0] : PsiType:int
+                    UArrayAccessExpression [ia[0]] : PsiType:int
+                        USimpleNameReferenceExpression (identifier = ia) [ia] : PsiType:Integer[]
+                        ULiteralExpression (value = 0) [0] : PsiType:int
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 2)) [assertEquals(1, ia[1])] : PsiType:void
+                    UIdentifier (Identifier (assertEquals)) [UIdentifier (Identifier (assertEquals))]
+                    USimpleNameReferenceExpression (identifier = assertEquals, resolvesTo = null) [assertEquals] : PsiType:void
+                    ULiteralExpression (value = 1) [1] : PsiType:int
+                    UArrayAccessExpression [ia[1]] : PsiType:int
+                        USimpleNameReferenceExpression (identifier = ia) [ia] : PsiType:Integer[]
+                        ULiteralExpression (value = 1) [1] : PsiType:int
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 2)) [assertEquals(2, ia[2])] : PsiType:void
+                    UIdentifier (Identifier (assertEquals)) [UIdentifier (Identifier (assertEquals))]
+                    USimpleNameReferenceExpression (identifier = assertEquals, resolvesTo = null) [assertEquals] : PsiType:void
+                    ULiteralExpression (value = 2) [2] : PsiType:int
+                    UArrayAccessExpression [ia[2]] : PsiType:int
+                        USimpleNameReferenceExpression (identifier = ia) [ia] : PsiType:Integer[]
+                        ULiteralExpression (value = 2) [2] : PsiType:int
+                UDeclarationsExpression [var da: java.lang.Double[] = simpleDoubleArray()]
+                    ULocalVariable (name = da) [var da: java.lang.Double[] = simpleDoubleArray()]
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [simpleDoubleArray()] : PsiType:Double[]
+                            UIdentifier (Identifier (simpleDoubleArray)) [UIdentifier (Identifier (simpleDoubleArray))]
+                            USimpleNameReferenceExpression (identifier = simpleDoubleArray, resolvesTo = null) [simpleDoubleArray] : PsiType:Double[]
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 2)) [assertEquals(0.1, da[0])] : PsiType:void
+                    UIdentifier (Identifier (assertEquals)) [UIdentifier (Identifier (assertEquals))]
+                    USimpleNameReferenceExpression (identifier = assertEquals, resolvesTo = null) [assertEquals] : PsiType:void
+                    ULiteralExpression (value = 0.1) [0.1] : PsiType:double
+                    UArrayAccessExpression [da[0]] : PsiType:double
+                        USimpleNameReferenceExpression (identifier = da) [da] : PsiType:Double[]
+                        ULiteralExpression (value = 0) [0] : PsiType:int
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 2)) [assertEquals(1.1, da[1])] : PsiType:void
+                    UIdentifier (Identifier (assertEquals)) [UIdentifier (Identifier (assertEquals))]
+                    USimpleNameReferenceExpression (identifier = assertEquals, resolvesTo = null) [assertEquals] : PsiType:void
+                    ULiteralExpression (value = 1.1) [1.1] : PsiType:double
+                    UArrayAccessExpression [da[1]] : PsiType:double
+                        USimpleNameReferenceExpression (identifier = da) [da] : PsiType:Double[]
+                        ULiteralExpression (value = 1) [1] : PsiType:int
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 2)) [assertEquals(2.1, da[2])] : PsiType:void
+                    UIdentifier (Identifier (assertEquals)) [UIdentifier (Identifier (assertEquals))]
+                    USimpleNameReferenceExpression (identifier = assertEquals, resolvesTo = null) [assertEquals] : PsiType:void
+                    ULiteralExpression (value = 2.1) [2.1] : PsiType:double
+                    UArrayAccessExpression [da[2]] : PsiType:double
+                        USimpleNameReferenceExpression (identifier = da) [da] : PsiType:Double[]
+                        ULiteralExpression (value = 2) [2] : PsiType:int
+                UDeclarationsExpression [var sa: java.lang.String[] = simpleStringArray()]
+                    ULocalVariable (name = sa) [var sa: java.lang.String[] = simpleStringArray()]
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [simpleStringArray()] : PsiType:String[]
+                            UIdentifier (Identifier (simpleStringArray)) [UIdentifier (Identifier (simpleStringArray))]
+                            USimpleNameReferenceExpression (identifier = simpleStringArray, resolvesTo = null) [simpleStringArray] : PsiType:String[]
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 2)) [assertEquals("0", sa[0])] : PsiType:void
+                    UIdentifier (Identifier (assertEquals)) [UIdentifier (Identifier (assertEquals))]
+                    USimpleNameReferenceExpression (identifier = assertEquals, resolvesTo = null) [assertEquals] : PsiType:void
+                    ULiteralExpression (value = "0") ["0"] : PsiType:String
+                    UArrayAccessExpression [sa[0]] : PsiType:String
+                        USimpleNameReferenceExpression (identifier = sa) [sa] : PsiType:String[]
+                        ULiteralExpression (value = 0) [0] : PsiType:int
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 2)) [assertEquals("1", sa[1])] : PsiType:void
+                    UIdentifier (Identifier (assertEquals)) [UIdentifier (Identifier (assertEquals))]
+                    USimpleNameReferenceExpression (identifier = assertEquals, resolvesTo = null) [assertEquals] : PsiType:void
+                    ULiteralExpression (value = "1") ["1"] : PsiType:String
+                    UArrayAccessExpression [sa[1]] : PsiType:String
+                        USimpleNameReferenceExpression (identifier = sa) [sa] : PsiType:String[]
+                        ULiteralExpression (value = 1) [1] : PsiType:int
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 2)) [assertEquals("2", sa[2])] : PsiType:void
+                    UIdentifier (Identifier (assertEquals)) [UIdentifier (Identifier (assertEquals))]
+                    USimpleNameReferenceExpression (identifier = assertEquals, resolvesTo = null) [assertEquals] : PsiType:void
+                    ULiteralExpression (value = "2") ["2"] : PsiType:String
+                    UArrayAccessExpression [sa[2]] : PsiType:String
+                        USimpleNameReferenceExpression (identifier = sa) [sa] : PsiType:String[]
+                        ULiteralExpression (value = 2) [2] : PsiType:int
+                UReturnExpression [return "OK"] : PsiType:Void
+                    ULiteralExpression (value = "OK") ["OK"] : PsiType:String

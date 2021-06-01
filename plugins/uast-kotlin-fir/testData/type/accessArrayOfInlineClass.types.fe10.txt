@@ -1,0 +1,47 @@
+UFile (package = ) [public final class AccessArrayOfInlineClassKt {...]
+    UClass (name = AccessArrayOfInlineClassKt) [public final class AccessArrayOfInlineClassKt {...}]
+        UField (name = xs) [@org.jetbrains.annotations.NotNull private static final var xs: Z[] = <init>(2, { var it: int ->...})]
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 2)) [<init>(2, { var it: int ->...})] : PsiType:Z[]
+                UIdentifier (Identifier (Array)) [UIdentifier (Identifier (Array))]
+                USimpleNameReferenceExpression (identifier = <init>, resolvesTo = null) [<init>] : PsiType:Z[]
+                ULiteralExpression (value = 2) [2] : PsiType:int
+                ULambdaExpression [{ var it: int ->...}] : PsiType:Function1<? super Integer, ? extends Z>
+                    UParameter (name = it) [var it: int]
+                    UBlockExpression [{...}]
+                        UReturnExpression [return <init>(42)]
+                            UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1)) [<init>(42)] : PsiType:int
+                                UIdentifier (Identifier (Z)) [UIdentifier (Identifier (Z))]
+                                USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: Z) [<init>] : PsiType:int
+                                ULiteralExpression (value = 42) [42] : PsiType:int
+        UMethod (name = getXs) [public static final fun getXs() : Z[] = UastEmptyExpression]
+        UMethod (name = box) [public static final fun box() : java.lang.String {...}]
+            UBlockExpression [{...}] : PsiType:Void
+                UBinaryExpression (operator = =) [xs[0] = <init>(12)] : PsiType:void
+                    UArrayAccessExpression [xs[0]] : PsiType:int
+                        USimpleNameReferenceExpression (identifier = xs) [xs] : PsiType:Z[]
+                        ULiteralExpression (value = 0) [0] : PsiType:int
+                    UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1)) [<init>(12)] : PsiType:int
+                        UIdentifier (Identifier (Z)) [UIdentifier (Identifier (Z))]
+                        USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: Z) [<init>] : PsiType:int
+                        ULiteralExpression (value = 12) [12] : PsiType:int
+                UDeclarationsExpression [var t: int = xs[0]]
+                    ULocalVariable (name = t) [var t: int = xs[0]]
+                        UArrayAccessExpression [xs[0]] : PsiType:int
+                            USimpleNameReferenceExpression (identifier = xs) [xs] : PsiType:Z[]
+                            ULiteralExpression (value = 0) [0] : PsiType:int
+                UIfExpression [if (t.data != 12) throw <init>(t)] : PsiType:void
+                    UBinaryExpression (operator = !=) [t.data != 12] : PsiType:boolean
+                        UQualifiedReferenceExpression [t.data] : PsiType:int
+                            USimpleNameReferenceExpression (identifier = t) [t] : PsiType:int
+                            USimpleNameReferenceExpression (identifier = data) [data] : PsiType:int
+                        ULiteralExpression (value = 12) [12] : PsiType:int
+                    UThrowExpression [throw <init>(t)] : PsiType:Void
+                        UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1)) [<init>(t)] : PsiType:AssertionError
+                            UIdentifier (Identifier (AssertionError)) [UIdentifier (Identifier (AssertionError))]
+                            USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: AssertionError) [<init>] : PsiType:AssertionError
+                            USimpleNameReferenceExpression (identifier = t) [t] : PsiType:int
+                UReturnExpression [return "OK"] : PsiType:Void
+                    ULiteralExpression (value = "OK") ["OK"] : PsiType:String
+    UClass (name = Z) [public final class Z {...}]
+        UMethod (name = getData) [public final fun getData() : int = UastEmptyExpression]
