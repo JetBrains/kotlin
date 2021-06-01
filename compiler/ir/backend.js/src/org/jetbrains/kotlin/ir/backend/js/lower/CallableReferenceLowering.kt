@@ -91,19 +91,23 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
         }
 
         private fun buildFunctionReference(expression: IrFunctionReference): Pair<IrClass, IrConstructor> {
-            return CallableReferenceBuilder(expression.symbol.owner, expression, false).build()
+            val target = expression.symbol.owner
+            val reflectionTarget = expression.reflectionTarget?.owner ?: target
+            return CallableReferenceBuilder(target, expression, reflectionTarget).build()
         }
 
         private fun buildLambdaReference(function: IrSimpleFunction, expression: IrFunctionExpression): Pair<IrClass, IrConstructor> {
-            return CallableReferenceBuilder(function, expression, true).build()
+            return CallableReferenceBuilder(function, expression, null).build()
         }
     }
 
     private inner class CallableReferenceBuilder(
         private val function: IrFunction,
         private val reference: IrExpression,
-        private val isLambda: Boolean
+        private val reflectionTarget: IrFunction?
     ) {
+
+        private val isLambda: Boolean get() = reflectionTarget == null
 
         private val isSuspendLambda = isLambda && function.isSuspend
 
@@ -362,11 +366,12 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                 type = clazz.defaultType
             }
 
+            // TODO: What name should be in case of constructor? <init> or class name?
             getter.body = context.irFactory.createBlockBody(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
                     IrReturnImpl(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET, nothingType, getter.symbol, IrConstImpl.string(
-                            UNDEFINED_OFFSET, UNDEFINED_OFFSET, stringType, function.name.asString()
+                            UNDEFINED_OFFSET, UNDEFINED_OFFSET, stringType, reflectionTarget!!.name.asString()
                         )
                     )
                 )
