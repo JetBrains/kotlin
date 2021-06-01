@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -41,34 +42,39 @@ object FirConflictingProjectionChecker : FirBasicDeclarationChecker() {
         }
     }
 
-    private fun checkTypeRef(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
-        val declaration = typeRef.coneTypeSafe<ConeClassLikeType>()
-            ?.lookupTag
-            ?.toSymbol(context.session)
-            ?.fir.safeAs<FirRegularClass>()
-            ?: return
+    private fun checkTypeRef(
+        typeRef: FirTypeRef,
+        context: CheckerContext,
+        reporter: DiagnosticReporter,
+    ) {
+        val type = typeRef.coneTypeSafe<ConeClassLikeType>()
+        val fullyExpandedType = type?.fullyExpandedType(context.session) ?: return
+        val declaration = fullyExpandedType.toSymbol(context.session)?.fir.safeAs<FirRegularClass>() ?: return
 
         val size = minOf(declaration.typeParameters.size, typeRef.coneType.typeArguments.size)
 
         for (it in 0 until size) {
             val proto = declaration.typeParameters[it]
             val actual = typeRef.coneType.typeArguments[it]
+            val fullyExpandedProjection = fullyExpandedType.typeArguments[it]
 
             val protoVariance = proto.safeAs<FirTypeParameterRef>()
                 ?.symbol?.fir
                 ?.variance
-                ?: continue
-
-            if (protoVariance == Variance.INVARIANT) {
-                continue
-            }
 
             if (
-                actual is ConeKotlinTypeProjectionIn && protoVariance == Variance.OUT_VARIANCE ||
-                actual is ConeKotlinTypeProjectionOut && protoVariance == Variance.IN_VARIANCE
+                (fullyExpandedProjection is ConeKotlinTypeConflictingProjection ||
+                        actual is ConeKotlinTypeProjectionIn && protoVariance == Variance.OUT_VARIANCE ||
+                        actual is ConeKotlinTypeProjectionOut && protoVariance == Variance.IN_VARIANCE) &&
+                typeRef.source?.kind !is FirFakeSourceElementKind
             ) {
                 val typeArgSource = extractTypeArgumentSource(typeRef, it)
-                reporter.reportOn(typeArgSource ?: typeRef.source, FirErrors.CONFLICTING_PROJECTION, typeRef.coneType, context)
+                reporter.reportOn(
+                    typeArgSource ?: typeRef.source,
+                    if (type != fullyExpandedType) FirErrors.CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION else FirErrors.CONFLICTING_PROJECTION,
+                    fullyExpandedType,
+                    context
+                )
             }
         }
     }

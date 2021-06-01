@@ -845,6 +845,11 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val type: KtType
     }
 
+    abstract class ConflictingProjectionInTypealiasExpansion : KtFirDiagnostic<KtTypeParameter>() {
+        override val diagnosticClass get() = ConflictingProjectionInTypealiasExpansion::class
+        abstract val type: KtType
+    }
+
     abstract class VarianceOnTypeParameterNotAllowed : KtFirDiagnostic<KtTypeParameter>() {
         override val diagnosticClass get() = VarianceOnTypeParameterNotAllowed::class
     }

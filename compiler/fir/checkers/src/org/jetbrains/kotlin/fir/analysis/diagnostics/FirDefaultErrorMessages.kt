@@ -70,6 +70,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPONENT_FUNCTIO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONDITION_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_OVERLOADS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_PROJECTION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_UPPER_BOUNDS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONSTRUCTOR_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONSTRUCTOR_IN_OBJECT
@@ -608,6 +609,11 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(
                 CONFLICTING_PROJECTION,
                 "Projection is conflicting with variance of the corresponding type parameter of {0}. Remove the projection or replace it with ''*''",
+                RENDER_TYPE
+            )
+            map.put(
+                CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION,
+                "Conflicting projection in type alias expansion in intermediate type '{0}'",
                 RENDER_TYPE
             )
             map.put(
