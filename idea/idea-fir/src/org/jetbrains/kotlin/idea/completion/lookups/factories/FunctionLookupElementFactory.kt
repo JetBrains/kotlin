@@ -40,7 +40,7 @@ internal class FunctionLookupElementFactory {
         symbol: KtFunctionSymbol,
         importStrategy: CallableImportStrategy,
         insertionStrategy: CallableInsertionStrategy
-    ): LookupElementBuilder? {
+    ): LookupElementBuilder {
         val lookupObject = FunctionLookupObject(
             symbol.name,
             importStrategy = importStrategy,
@@ -55,22 +55,11 @@ internal class FunctionLookupElementFactory {
             CallableInsertionStrategy.AS_IDENTIFIER -> QuotedNamesAwareInsertionHandler()
         }
 
-        return try {
-            LookupElementBuilder.create(lookupObject, symbol.name.asString())
-                .withTailText(getTailText(symbol), true)
-                .withTypeText(symbol.annotatedType.type.render(CompletionShortNamesRenderer.TYPE_RENDERING_OPTIONS))
-                .withInsertHandler(insertionHandler)
-                .let { withSymbolInfo(symbol, it) }
-        } catch (e: Throwable) {
-            if (e is ControlFlowException) throw e
-            LOG.error(e)
-            null
-        }
-    }
-
-
-    companion object {
-        private val LOG = logger<FunctionLookupElementFactory>()
+        return LookupElementBuilder.create(lookupObject, symbol.name.asString())
+            .withTailText(getTailText(symbol), true)
+            .withTypeText(symbol.annotatedType.type.render(CompletionShortNamesRenderer.TYPE_RENDERING_OPTIONS))
+            .withInsertHandler(insertionHandler)
+            .let { withSymbolInfo(symbol, it) }
     }
 }
 

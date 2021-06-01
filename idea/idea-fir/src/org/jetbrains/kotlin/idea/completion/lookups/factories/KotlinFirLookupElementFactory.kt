@@ -22,7 +22,7 @@ internal class KotlinFirLookupElementFactory {
     private val typeParameterLookupElementFactory = TypeParameterLookupElementFactory()
     private val packagePartLookupElementFactory = PackagePartLookupElementFactory()
 
-    fun KtAnalysisSession.createLookupElement(symbol: KtNamedSymbol): LookupElement? {
+    fun KtAnalysisSession.createLookupElement(symbol: KtNamedSymbol): LookupElement {
         return when (symbol) {
             is KtCallableSymbol -> createCallableLookupElement(
                 symbol,
@@ -39,7 +39,7 @@ internal class KotlinFirLookupElementFactory {
         symbol: KtCallableSymbol,
         importingStrategy: CallableImportStrategy,
         insertionStrategy: CallableInsertionStrategy,
-    ): LookupElementBuilder? {
+    ): LookupElementBuilder {
         return when (symbol) {
             is KtFunctionSymbol -> with(functionLookupElementFactory) { createLookup(symbol, importingStrategy, insertionStrategy) }
             is KtVariableLikeSymbol -> with(variableLookupElementFactory) { createLookup(symbol, importingStrategy) }
