@@ -13,8 +13,14 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.compiler.based.IdeTestIgnoreH
 abstract class AbstractDiagnosisCompilerTestDataTest : AbstractCompilerBasedTest() {
     override fun TestConfigurationBuilder.configureTest() {
         baseFirDiagnosticTestConfiguration()
-        useAfterAnalysisCheckers(
-            ::IdeTestIgnoreHandler
-        )
+        /* IdeTestIgnoreHandler should be executed after FirFailingTestSuppressor,
+        otherwise IdeTestIgnoreHandler will suppress exceptions and FirFailingTestSuppressor will throw error
+        saying that file .fir.fail exists but test passes
+         */
+        forTestsMatching("*") {
+            useAfterAnalysisCheckers(
+                ::IdeTestIgnoreHandler
+            )
+        }
     }
 }

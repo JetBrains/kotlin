@@ -19,9 +19,7 @@ class FirFailingTestSuppressor(testServices: TestServices) : AfterAnalysisChecke
         return when {
             failFile.exists() && exceptionFromFir != null -> emptyList()
             failFile.exists() && exceptionFromFir == null -> {
-                emptyList()
-                // TODO: revert it when `DiagnosisCompilerTestFE10TestdataTestGenerated` supports `*.fir.fail` files
-//                failedAssertions + AssertionError("Fail file exists but no exception was throw. Please remove ${failFile.name}").wrap()
+                failedAssertions + AssertionError("Fail file exists but no exception was throw. Please remove ${failFile.name}").wrap()
             }
             else -> failedAssertions
         }
