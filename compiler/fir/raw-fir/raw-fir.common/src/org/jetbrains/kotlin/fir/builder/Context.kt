@@ -33,6 +33,7 @@ class Context<T> {
 
     var forcedElementSourceKind: FirSourceElementKind? = null
     val dispatchReceiverTypesStack = mutableListOf<ConeClassLikeType>()
+    var containerIsExpect: Boolean = false
 
     fun pushFirTypeParameters(notNested: Boolean, parameters: List<FirTypeParameterRef>) {
         capturedTypeParameters.add(StatusFirTypeParameterSymbolList(notNested, parameters.map { it.symbol }))

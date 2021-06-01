@@ -66,12 +66,15 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
     /**** Class name utils ****/
     inline fun <T> withChildClassName(
         name: Name,
+        isExpect: Boolean,
         forceLocalContext: Boolean = false,
         l: () -> T
     ): T {
         context.className = context.className.child(name)
         val oldForcedLocalContext = context.forcedLocalContext
         context.forcedLocalContext = forceLocalContext || context.forcedLocalContext
+        val previousIsExpect = context.containerIsExpect
+        context.containerIsExpect = previousIsExpect || isExpect
         val dispatchReceiversNumber = context.dispatchReceiverTypesStack.size
         return try {
             l()
@@ -86,6 +89,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
 
             context.className = context.className.parent()
             context.forcedLocalContext = oldForcedLocalContext
+            context.containerIsExpect = previousIsExpect
         }
     }
 
