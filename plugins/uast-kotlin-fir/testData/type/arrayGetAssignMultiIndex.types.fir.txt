@@ -5,8 +5,10 @@ UFile (package = ) [public final class ArrayGetAssignMultiIndexKt {...]
             UParameter (name = index1) [var index1: int]
             UParameter (name = index2) [var index2: int]
             UBlockExpression [{...}]
-                UReturnExpression [return [!] UnknownKotlinExpression (ARRAY_ACCESS_EXPRESSION)]
-                    [!] UnknownKotlinExpression (ARRAY_ACCESS_EXPRESSION) [[!] UnknownKotlinExpression (ARRAY_ACCESS_EXPRESSION)]
+                UReturnExpression [return [!] UnknownKotlinExpression (THIS_EXPRESSION)[[!] UnknownKotlinExpression (BINARY_EXPRESSION)]]
+                    UArrayAccessExpression [[!] UnknownKotlinExpression (THIS_EXPRESSION)[[!] UnknownKotlinExpression (BINARY_EXPRESSION)]] : PsiType:String
+                        [!] UnknownKotlinExpression (THIS_EXPRESSION) [[!] UnknownKotlinExpression (THIS_EXPRESSION)]
+                        [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
         UMethod (name = set) [public static final fun set($this$set: java.lang.String[], index1: int, index2: int, elem: java.lang.String) : void {...}]
             UParameter (name = $this$set) [var $this$set: java.lang.String[]]
             UParameter (name = index1) [var index1: int]
@@ -19,5 +21,8 @@ UFile (package = ) [public final class ArrayGetAssignMultiIndexKt {...]
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
                 [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
                 [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
-                UReturnExpression [return [!] UnknownKotlinExpression (ARRAY_ACCESS_EXPRESSION)] : PsiType:Void
-                    [!] UnknownKotlinExpression (ARRAY_ACCESS_EXPRESSION) [[!] UnknownKotlinExpression (ARRAY_ACCESS_EXPRESSION)]
+                UReturnExpression [return [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)[[!] UnknownKotlinExpression (PREFIX_EXPRESSION), "not-yet-compile-time-constant"]] : PsiType:Void
+                    UArrayAccessExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)[[!] UnknownKotlinExpression (PREFIX_EXPRESSION), "not-yet-compile-time-constant"]] : PsiType:String
+                        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                        [!] UnknownKotlinExpression (PREFIX_EXPRESSION) [[!] UnknownKotlinExpression (PREFIX_EXPRESSION)]
+                        ULiteralExpression (value = "not-yet-compile-time-constant") ["not-yet-compile-time-constant"] : PsiType:int
