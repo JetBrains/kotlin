@@ -17721,6 +17721,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/intReturnTypeAsNumber.kt");
             }
 
+            @TestMetadata("kt45779.kt")
+            public void testKt45779() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/kt45779.kt");
+            }
+
             @TestMetadata("nullabilityAssertions.kt")
             public void testNullabilityAssertions() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/nullabilityAssertions.kt");
