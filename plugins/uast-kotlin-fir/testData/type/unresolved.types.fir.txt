@@ -1,0 +1,12 @@
+UFile (package = ) [public final class UnresolvedKt {...]
+    UClass (name = UnresolvedKt) [public final class UnresolvedKt {...}]
+        UMethod (name = foo) [public static final fun foo(x: error.NonExistentClass) : void {...}]
+            UParameter (name = x) [var x: error.NonExistentClass]
+            UBlockExpression [{...}] : PsiType:Unit
+    UClass (name = A) [public final class A : error.NonExistentClass {...}]
+        UField (name = prop) [private final var prop: error.NonExistentClass]
+        UMethod (name = A) [public fun A(prop: error.NonExistentClass) = UastEmptyExpression]
+            UParameter (name = prop) [var prop: error.NonExistentClass]
+        UMethod (name = getProp) [public final fun getProp() : error.NonExistentClass = UastEmptyExpression]
+        UMethod (name = bar) [public fun bar() : error.NonExistentClass {...}]
+            UBlockExpression [{...}] : PsiType:Unit

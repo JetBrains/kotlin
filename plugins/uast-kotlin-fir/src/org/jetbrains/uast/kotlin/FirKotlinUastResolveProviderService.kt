@@ -38,8 +38,9 @@ interface FirKotlinUastResolveProviderService : BaseKotlinUastResolveProviderSer
     }
 
     override fun resolveToType(ktTypeReference: KtTypeReference, source: UElement): PsiType? {
-        // TODO: use type conversions in firLightUtils.kt
-        return PsiType.NULL
+        analyseWithCustomToken(ktTypeReference, AlwaysAccessibleValidityTokenFactory) {
+            return ktTypeReference.getPsiType(TypeMappingMode.DEFAULT_UAST)
+        }
     }
 
     override fun getExpressionType(uExpression: UExpression): PsiType? {
