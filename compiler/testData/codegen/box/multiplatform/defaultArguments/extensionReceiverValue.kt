@@ -1,5 +1,5 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // !LANGUAGE: +MultiPlatformProjects
-
 // FILE: common.kt
 
 class Receiver(val value: String)
