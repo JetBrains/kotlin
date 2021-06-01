@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.idea.fir.low.level.api.KtDeclarationAndFirDeclarationEqualityChecker
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSession
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex

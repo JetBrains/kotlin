@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.fir
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.rt.execution.junit.FileComparisonFailure
 import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.idea.fir.low.level.api.KtDeclarationAndFirDeclarationEqualityChecker
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getResolveState
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
