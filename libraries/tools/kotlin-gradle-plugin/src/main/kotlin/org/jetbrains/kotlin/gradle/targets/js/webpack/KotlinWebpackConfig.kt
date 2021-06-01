@@ -489,7 +489,7 @@ data class KotlinWebpackConfig(
                         let msg = `${"$"}{Math.trunc(p / 10)}${"$"}{Math.trunc(p % 10)}% ${"$"}{message} ${"$"}{args.join(' ')}`;
                         ${
                 if (progressReporterPathFilter == null) "" else """
-                            msg = msg.replace(new RegExp(${progressReporterPathFilter!!.jsQuoted()}, 'g'), '');
+                            msg = msg.replace(${progressReporterPathFilter!!.jsQuoted()}, '');
                         """.trimIndent()
             };
                         console.log(msg);
