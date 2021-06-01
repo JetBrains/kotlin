@@ -125,10 +125,7 @@ open class JvmGeneratorExtensionsImpl(
         allowErrorNodes: Boolean
     ): Boolean {
         val serializedIr = (irClass.source as? KotlinJvmBinarySourceElement)?.binaryClass?.classHeader?.serializedIr ?: return false
-        deserializeClassFromByteArray(
-            serializedIr, stubGenerator.moduleDescriptor, stubGenerator.irBuiltIns, stubGenerator.symbolTable, parent, allowErrorNodes
-        )
-        ExternalDependenciesGenerator(stubGenerator.symbolTable, listOf(stubGenerator)).generateUnboundSymbolsAsDependencies()
+        deserializeClassFromByteArray(serializedIr, stubGenerator, irClass, allowErrorNodes)
         val cachedFields = getCachedFields(stubGenerator.irBuiltIns.irFactory, stubGenerator.irBuiltIns.languageVersionSettings)
         irClass.transform(SingletonObjectJvmStaticTransformer(stubGenerator.irBuiltIns, cachedFields), null)
         return true
@@ -141,10 +138,7 @@ open class JvmGeneratorExtensionsImpl(
         allowErrorNodes: Boolean
     ): Boolean {
         val serializedIr = (irClass.source as? JvmPackagePartSource)?.knownJvmBinaryClass?.classHeader?.serializedIr ?: return false
-        deserializeIrFileFromByteArray(
-            serializedIr, stubGenerator.moduleDescriptor, stubGenerator.irBuiltIns, stubGenerator.symbolTable, irClass, allowErrorNodes
-        )
-        ExternalDependenciesGenerator(stubGenerator.symbolTable, listOf(stubGenerator)).generateUnboundSymbolsAsDependencies()
+        deserializeIrFileFromByteArray(serializedIr, stubGenerator, irClass, allowErrorNodes)
         val cachedFields = getCachedFields(stubGenerator.irBuiltIns.irFactory, stubGenerator.irBuiltIns.languageVersionSettings)
         irClass.transform(SingletonObjectJvmStaticTransformer(stubGenerator.irBuiltIns, cachedFields), null)
         return true

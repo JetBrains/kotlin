@@ -26,9 +26,6 @@ class JvmIrSerializerSession(
 
     // Usage protocol: construct an instance, call only one of `serializeIrFile()` and `serializeTopLevelClass()` only once.
 
-    // We do not reconstruct fake overrides upon deserialization (yet).
-    override fun backendSpecificSerializeAllMembers(irClass: IrClass): Boolean = true
-
     fun serializeJvmIrFile(irFile: IrFile): JvmIr.JvmIrFile {
         val proto = JvmIr.JvmIrFile.newBuilder()
 

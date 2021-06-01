@@ -1,12 +1,12 @@
 // FILE: 1.kt
-
 open class C {
-    fun f() = "OK"
+    fun o() = "O"
+    val k = "K"
 }
 
 inline fun inlineFun(): String {
     val cc = object : C() {}
-    return cc.f()
+    return cc.o() + cc.k
 }
 
 // FILE: 2.kt
