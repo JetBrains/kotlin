@@ -13,6 +13,3 @@ fun test(i: Int?) {
 }
 
 fun other(i: Int) {}
-
-// TODO: Need data flow info from null check
-/* IGNORE_FIR */

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.idea.quickfix.AddExclExclCallFix
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.unwrapParenthesesLabelsAndAnnotations
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object AddExclExclCallFixFactories {
     val unsafeCallFactory = diagnosticFixFactory<KtFirDiagnostic.UnsafeCall> { diagnostic ->
@@ -77,6 +78,15 @@ object AddExclExclCallFixFactories {
             is KtOperationReferenceExpression -> return getFixForUnsafeCall(unwrapped.parent)
 
             else -> return emptyList()
+        }
+
+        // We don't want to offer AddExclExclCallFix if we know the expression is definitely null, e.g.:
+        //
+        //   if (nullableInt == null) {
+        //     val x = nullableInt.length  // No AddExclExclCallFix here
+        //   }
+        if (target?.safeAs<KtExpression>()?.isDefinitelyNull() == true) {
+            return emptyList()
         }
 
         return listOfNotNull(target.asAddExclExclCallFix(hasImplicitReceiver = hasImplicitReceiver))
