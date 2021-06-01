@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.isNull
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KPropertyState
 import org.jetbrains.kotlin.ir.interpreter.toState
+import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import kotlin.reflect.*
 
@@ -66,6 +67,7 @@ internal class KMutableProperty0Proxy(
                 checkArguments(1, args.size)
                 // null receiver <=> property is on top level
                 verify(state.receiver != null) { "Cannot interpret set method on top level properties" }
+                verify(state.receiver?.irClass?.isObject != true) { "Cannot interpret set method on property of object" }
                 val receiver = state.receiver!!
                 val newValue = args.single().toState(propertyType)
                 setter.getExtensionReceiver()

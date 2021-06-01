@@ -426,6 +426,7 @@ class IrInterpreter private constructor(
 
             val cleanEnumSuperCall = fun() {
                 enumSuperCall?.apply { (0 until this.valueArgumentsCount).forEach { putValueArgument(it, null) } } // restore to null
+                callStack.popState()    // result of constructor must be dropped, because next instruction will be `IrGetEnumValue`
                 callStack.dropSubFrame()
             }
 
@@ -606,6 +607,16 @@ class IrInterpreter private constructor(
 
         callStack.dropSubFrame()
         val propertyState = KPropertyState(propertyReference, receiver)
+
+        fun List<IrTypeParameter>.addToFields() {
+            (0 until propertyReference.typeArgumentsCount).forEach { index ->
+                val kTypeState = KTypeState(propertyReference.getTypeArgument(index)!!, irBuiltIns.anyClass.owner)
+                propertyState.fields += Variable(this[index].symbol, kTypeState)
+            }
+        }
+        propertyReference.getter?.owner?.typeParameters?.addToFields()
+        propertyReference.setter?.owner?.typeParameters?.addToFields()
+
         callStack.pushState(propertyState)
     }
 

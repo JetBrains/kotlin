@@ -42,16 +42,15 @@ internal abstract class ReflectionState : State {
     private fun renderReceivers(dispatchReceiver: IrType?, extensionReceiver: IrType?): String {
         return buildString {
             if (dispatchReceiver != null) {
-                append(dispatchReceiver.renderType())
-                append(".")
+                append(dispatchReceiver.renderType()).append(".")
             }
-            val addParentheses = dispatchReceiver != null && extensionReceiver != null
-            if (addParentheses) append("(")
+
             if (extensionReceiver != null) {
-                append(extensionReceiver.renderType())
-                append(".")
+                val addParentheses = dispatchReceiver != null
+                if (addParentheses) append("(")
+                append(extensionReceiver.renderType()).append(".")
+                if (addParentheses) append(")")
             }
-            if (addParentheses) append(")")
         }
     }
 
@@ -79,7 +78,12 @@ internal abstract class ReflectionState : State {
     }
 
     protected fun IrType.renderType(): String {
-        var renderedType = this.render()
+        var renderedType = this.render().replace("<root>.", "")
+        if (renderedType.contains("<get-")) {
+            val startIndex = renderedType.indexOf("<get-")
+            val lastTriangle = renderedType.indexOf('>', startIndex) + 1
+            renderedType = renderedType.replaceRange(startIndex, lastTriangle, "get")
+        }
         do {
             val index = renderedType.indexOf(" of ")
             if (index == -1) break

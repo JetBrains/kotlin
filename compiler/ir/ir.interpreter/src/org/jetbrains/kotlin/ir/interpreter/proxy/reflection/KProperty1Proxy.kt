@@ -5,23 +5,35 @@
 
 package org.jetbrains.kotlin.ir.interpreter.proxy.reflection
 
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KPropertyState
+import org.jetbrains.kotlin.ir.interpreter.state.reflection.KTypeState
 import org.jetbrains.kotlin.ir.interpreter.toState
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.classifierOrFail
 import kotlin.reflect.*
 
 internal open class KProperty1Proxy(
     override val state: KPropertyState, override val callInterceptor: CallInterceptor
 ) : AbstractKPropertyProxy(state, callInterceptor), KProperty1<Any?, Any?> {
+    protected fun IrValueParameter.getActualType(): IrType {
+        return when (this.type.classOrNull) {
+            null -> (state.getField(this.type.classifierOrFail) as KTypeState).irType
+            else -> this.type
+        }
+    }
+
     override val getter: KProperty1.Getter<Any?, Any?>
         get() = object : Getter(state.property.getter!!), KProperty1.Getter<Any?, Any?> {
             override fun invoke(p1: Any?): Any? = call(p1)
 
             override fun call(vararg args: Any?): Any? {
                 checkArguments(1, args.size)
-                val receiverParameter = getter.dispatchReceiverParameter ?: getter.extensionReceiverParameter
-                val receiver = Variable(receiverParameter!!.symbol, args[0].toState(receiverParameter.type))
+                val receiverParameter = (getter.dispatchReceiverParameter ?: getter.extensionReceiverParameter)!!
+                val receiver = Variable(receiverParameter.symbol, args[0].toState(receiverParameter.getActualType()))
                 return callInterceptor.interceptProxy(getter, listOf(receiver))
             }
 
@@ -48,10 +60,10 @@ internal class KMutableProperty1Proxy(
 
             override fun call(vararg args: Any?) {
                 checkArguments(2, args.size)
-                val receiverParameter = setter.dispatchReceiverParameter ?: setter.extensionReceiverParameter
-                val receiver = Variable(receiverParameter!!.symbol, args[0].toState(receiverParameter.type))
+                val receiverParameter = (setter.dispatchReceiverParameter ?: setter.extensionReceiverParameter)!!
+                val receiver = Variable(receiverParameter.symbol, args[0].toState(receiverParameter.getActualType()))
                 val valueParameter = setter.valueParameters.single()
-                val value = Variable(valueParameter.symbol, args[1].toState(valueParameter.type))
+                val value = Variable(valueParameter.symbol, args[1].toState(valueParameter.getActualType()))
                 callInterceptor.interceptProxy(setter, listOf(receiver, value))
             }
 
