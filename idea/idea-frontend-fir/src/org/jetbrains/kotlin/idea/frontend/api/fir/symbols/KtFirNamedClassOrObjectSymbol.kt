@@ -55,12 +55,11 @@ internal class KtFirNamedClassOrObjectSymbol(
     override fun containsAnnotation(classId: ClassId): Boolean = firRef.containsAnnotation(classId)
     override val annotationClassIds: Collection<ClassId> by cached { firRef.getAnnotationClassIds() }
 
-    override val isInner: Boolean get() = firRef.withFir(FirResolvePhase.STATUS) { it.isInner }
-    override val isData: Boolean get() = firRef.withFir(FirResolvePhase.STATUS) { it.isData }
-    override val isInline: Boolean get() = firRef.withFir(FirResolvePhase.STATUS) { it.isInline }
-    override val isFun: Boolean get() = firRef.withFir(FirResolvePhase.STATUS) { it.isFun }
-
-    override val isExternal: Boolean get() = firRef.withFir(FirResolvePhase.STATUS) { it.isExternal }
+    override val isInner: Boolean get() = firRef.withFir { it.isInner }
+    override val isData: Boolean get() = firRef.withFir { it.isData }
+    override val isInline: Boolean get() = firRef.withFir { it.isInline }
+    override val isFun: Boolean get() = firRef.withFir { it.isFun }
+    override val isExternal: Boolean get() = firRef.withFir{ it.isExternal }
 
     override val companionObject: KtFirNamedClassOrObjectSymbol? by firRef.withFirAndCache { fir ->
         fir.companionObject?.let { builder.classifierBuilder.buildNamedClassOrObjectSymbol(it) }
