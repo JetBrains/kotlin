@@ -104,6 +104,7 @@ internal class KtFirKotlinPropertySymbol(
     override val isConst: Boolean get() = firRef.withFir { it.isConst }
 
     override val isOverride: Boolean get() = firRef.withFir { it.isOverride }
+    override val isStatic: Boolean get() = firRef.withFir { it.isStatic }
 
     override val hasGetter: Boolean get() = firRef.withFir { it.getter != null }
     override val hasSetter: Boolean get() = firRef.withFir { it.setter != null }

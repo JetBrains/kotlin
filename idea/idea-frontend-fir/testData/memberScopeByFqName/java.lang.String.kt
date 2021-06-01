@@ -8,6 +8,7 @@ KtFirJavaFieldSymbol:
   annotatedType: [] ft<kotlin/CharArray, kotlin/CharArray?>
   callableIdIfNonLocal: java/lang/String.value
   isExtension: false
+  isStatic: false
   isVal: true
   modality: FINAL
   name: value
@@ -20,6 +21,7 @@ KtFirJavaFieldSymbol:
   annotatedType: [] kotlin/Int
   callableIdIfNonLocal: java/lang/String.hash
   isExtension: false
+  isStatic: false
   isVal: false
   modality: OPEN
   name: hash
@@ -40,6 +42,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: hash32
@@ -54,6 +57,7 @@ KtFirJavaFieldSymbol:
   annotatedType: [] kotlin/Int
   callableIdIfNonLocal: java/lang/String.hash32
   isExtension: false
+  isStatic: false
   isVal: false
   modality: OPEN
   name: hash32
@@ -75,6 +79,7 @@ KtFirSyntheticJavaPropertySymbol:
   initializer: null
   isExtension: false
   isOverride: false
+  isStatic: false
   isVal: true
   javaGetterName: length
   javaSetterName: null
@@ -98,6 +103,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: isEmpty
@@ -120,6 +126,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: charAt
@@ -142,6 +149,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: codePointAt
@@ -164,6 +172,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: codePointBefore
@@ -186,6 +195,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: codePointCount
@@ -208,6 +218,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: offsetByCodePoints
@@ -230,6 +241,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: getChars
@@ -252,6 +264,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: getChars
@@ -274,6 +287,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: getBytes
@@ -296,6 +310,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: getBytes
@@ -318,6 +333,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: getBytes
@@ -340,6 +356,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: getBytes
@@ -362,6 +379,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: true
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: equals
@@ -384,6 +402,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: contentEquals
@@ -406,6 +425,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: contentEquals
@@ -428,6 +448,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: equalsIgnoreCase
@@ -450,6 +471,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: true
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: compareTo
@@ -472,6 +494,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: compareToIgnoreCase
@@ -494,6 +517,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: regionMatches
@@ -516,6 +540,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: regionMatches
@@ -538,6 +563,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: startsWith
@@ -560,6 +586,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: startsWith
@@ -582,6 +609,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: endsWith
@@ -604,6 +632,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: hashCode
@@ -626,6 +655,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: indexOf
@@ -648,6 +678,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: indexOf
@@ -670,6 +701,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: indexOf
@@ -692,6 +724,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: indexOf
@@ -714,6 +747,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: indexOfSupplementary
@@ -736,6 +770,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: lastIndexOf
@@ -758,6 +793,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: lastIndexOf
@@ -780,6 +816,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: lastIndexOf
@@ -802,6 +839,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: lastIndexOf
@@ -824,6 +862,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: lastIndexOfSupplementary
@@ -846,6 +885,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: substring
@@ -868,6 +908,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: substring
@@ -890,6 +931,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: subSequence
@@ -912,6 +954,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: concat
@@ -934,6 +977,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: replace
@@ -956,6 +1000,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: replace
@@ -978,6 +1023,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: matches
@@ -1000,6 +1046,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: true
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: contains
@@ -1022,6 +1069,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: replaceFirst
@@ -1044,6 +1092,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: replaceAll
@@ -1066,6 +1115,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: split
@@ -1088,6 +1138,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: split
@@ -1110,6 +1161,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: toLowerCase
@@ -1132,6 +1184,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: toLowerCase
@@ -1154,6 +1207,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: toUpperCase
@@ -1176,6 +1230,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: toUpperCase
@@ -1198,6 +1253,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: trim
@@ -1220,6 +1276,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: toString
@@ -1242,6 +1299,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: toCharArray
@@ -1264,6 +1322,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: OPEN
   name: intern
@@ -1286,6 +1345,7 @@ KtFirFunctionSymbol:
   isInline: false
   isOperator: true
   isOverride: false
+  isStatic: false
   isSuspend: false
   modality: ABSTRACT
   name: get

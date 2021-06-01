@@ -38,6 +38,7 @@ abstract class KtFunctionSymbol : KtFunctionLikeSymbol(),
     abstract val isInline: Boolean
     abstract val isOverride: Boolean
     abstract val isInfix: Boolean
+    abstract val isStatic: Boolean
 
     abstract override fun createPointer(): KtSymbolPointer<KtFunctionSymbol>
 }

@@ -18,6 +18,7 @@ KtFirKotlinPropertySymbol:
   isExtension: false
   isLateInit: false
   isOverride: false
+  isStatic: false
   isVal: true
   modality: FINAL
   name: x
@@ -59,6 +60,7 @@ KtFirKotlinPropertySymbol:
   isExtension: true
   isLateInit: false
   isOverride: false
+  isStatic: false
   isVal: true
   modality: FINAL
   name: y
