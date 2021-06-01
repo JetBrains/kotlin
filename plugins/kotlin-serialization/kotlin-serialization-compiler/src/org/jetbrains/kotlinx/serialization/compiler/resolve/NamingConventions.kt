@@ -29,6 +29,7 @@ object SerializationAnnotations {
     internal val requiredAnnotationFqName = FqName("kotlinx.serialization.Required")
     val serialTransientFqName = FqName("kotlinx.serialization.Transient")
     internal val serialInfoFqName = FqName("kotlinx.serialization.SerialInfo")
+    internal val encodeDefaultFqName = FqName("kotlinx.serialization.EncodeDefault")
 
     internal val contextualFqName = FqName("kotlinx.serialization.ContextualSerialization") // this one is deprecated
     internal val contextualOnFileFqName = FqName("kotlinx.serialization.UseContextualSerialization")

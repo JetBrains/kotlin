@@ -1227,23 +1227,47 @@ interface IrBuilderExtension {
             )
 
             // check for call to .shouldEncodeElementDefault
-            if (!property.optional) {
+            val encodeDefaults = property.getIrPropertyFrom(serializableIrClass).getEncodeDefaultAnnotationValue()
+            if (!property.optional || encodeDefaults == true) {
                 // emit call right away
                 +elementCall
             } else {
-                // emit check:
-                // if (if (output.shouldEncodeElementDefault(this.descriptor, i)) true else {obj.prop != DEFAULT_VALUE} ) {
-                //    output.encodeIntElement(this.descriptor, i, obj.prop)// block {obj.prop != DEFAULT_VALUE} may contain several statements
-                val shouldEncodeFunc = kOutputClass.referenceFunctionSymbol(CallingConventions.shouldEncodeDefault)
-                val partA = irInvoke(irGet(localOutput), shouldEncodeFunc, irGet(localSerialDesc), irInt(index))
                 val partB = irNotEquals(property.irGet(), initializerAdapter(property.irField.initializer!!))
-                // Ir infrastructure does not have dedicated symbol for ||, so
-                //  `a || b == if (a) true else b`, see org.jetbrains.kotlin.ir.builders.PrimitivesKt.oror
-                val condition = irIfThenElse(compilerContext.irBuiltIns.booleanType, partA, irTrue(), partB)
+
+                val condition = if (encodeDefaults == false) {
+                    // drop default without call to .shouldEncodeElementDefault
+                    partB
+                } else {
+                    // emit check:
+                    // if (if (output.shouldEncodeElementDefault(this.descriptor, i)) true else {obj.prop != DEFAULT_VALUE} ) {
+                    //    output.encodeIntElement(this.descriptor, i, obj.prop)// block {obj.prop != DEFAULT_VALUE} may contain several statements
+                    val shouldEncodeFunc = kOutputClass.referenceFunctionSymbol(CallingConventions.shouldEncodeDefault)
+                    val partA = irInvoke(irGet(localOutput), shouldEncodeFunc, irGet(localSerialDesc), irInt(index))
+                    // Ir infrastructure does not have dedicated symbol for ||, so
+                    //  `a || b == if (a) true else b`, see org.jetbrains.kotlin.ir.builders.PrimitivesKt.oror
+                    irIfThenElse(compilerContext.irBuiltIns.booleanType, partA, irTrue(), partB)
+                }
                 +irIfThen(condition, elementCall)
             }
         }
     }
+
+    /**
+     * True — ALWAYS
+     * False — NEVER
+     * null — not specified
+     */
+    fun IrProperty.getEncodeDefaultAnnotationValue(): Boolean? {
+        val call = annotations.findAnnotation(SerializationAnnotations.encodeDefaultFqName) ?: return null
+        val arg = call.getValueArgument(0) ?: return true // ALWAYS by default
+        val argValue = (arg as? IrGetEnumValue ?: error("Argument of enum constructor expected to implement IrGetEnumValue, got $arg")).symbol.owner.name.toString()
+        return when (argValue) {
+            "ALWAYS" -> true
+            "NEVER" -> false
+            else -> error("Unknown EncodeDefaultMode enum value: $argValue")
+        }
+    }
+
 
     fun IrBlockBodyBuilder.formEncodeDecodePropertyCall(
         enclosingGenerator: AbstractSerialGenerator,
