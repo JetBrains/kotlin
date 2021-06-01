@@ -1,0 +1,15 @@
+UFile (package = ) [public final class AccessArrayOfInlineClassKt {...]
+    UClass (name = AccessArrayOfInlineClassKt) [public final class AccessArrayOfInlineClassKt {...}]
+        UField (name = xs) [private static final var xs: Z[] = [!] UnknownKotlinExpression (CALL_EXPRESSION)]
+            [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
+        UMethod (name = getXs) [public static final fun getXs() : Z[] = UastEmptyExpression]
+        UMethod (name = box) [public static final fun box() : java.lang.String {...}]
+            UBlockExpression [{...}] : PsiType:Void
+                [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
+                UIfExpression [if ([!] UnknownKotlinExpression (BINARY_EXPRESSION)) throw [!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:Unit
+                    [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                    UThrowExpression [throw [!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:Void
+                        [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
+                UReturnExpression [return "OK"] : PsiType:Void
+                    ULiteralExpression (value = "OK") ["OK"] : PsiType:String

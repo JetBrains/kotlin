@@ -25,8 +25,23 @@ public class FirUastTypesTestGenerated extends AbstractFirUastTypesTest {
         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
+    @TestMetadata("accessArrayOfInlineClass.kt")
+    public void testAccessArrayOfInlineClass() throws Exception {
+        runTest("plugins/uast-kotlin-fir/testData/type/accessArrayOfInlineClass.kt");
+    }
+
     public void testAllFilesPresentInType() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/uast-kotlin-fir/testData/type"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @TestMetadata("arrayConstructorsSimple.kt")
+    public void testArrayConstructorsSimple() throws Exception {
+        runTest("plugins/uast-kotlin-fir/testData/type/arrayConstructorsSimple.kt");
+    }
+
+    @TestMetadata("arrayGetAssignMultiIndex.kt")
+    public void testArrayGetAssignMultiIndex() throws Exception {
+        runTest("plugins/uast-kotlin-fir/testData/type/arrayGetAssignMultiIndex.kt");
     }
 
     @TestMetadata("typeCast.kt")

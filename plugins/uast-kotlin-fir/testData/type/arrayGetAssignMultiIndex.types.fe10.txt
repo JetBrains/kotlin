@@ -1,0 +1,66 @@
+UFile (package = ) [public final class ArrayGetAssignMultiIndexKt {...]
+    UClass (name = ArrayGetAssignMultiIndexKt) [public final class ArrayGetAssignMultiIndexKt {...}]
+        UMethod (name = get) [public static final fun get(@org.jetbrains.annotations.NotNull $this$get: java.lang.String[], @org.jetbrains.annotations.NotNull index1: int, @org.jetbrains.annotations.NotNull index2: int) : java.lang.String {...}]
+            UParameter (name = $this$get) [@org.jetbrains.annotations.NotNull var $this$get: java.lang.String[]]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UParameter (name = index1) [@org.jetbrains.annotations.NotNull var index1: int]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UParameter (name = index2) [@org.jetbrains.annotations.NotNull var index2: int]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}]
+                UReturnExpression [return this[index1 + index2]]
+                    UArrayAccessExpression [this[index1 + index2]] : PsiType:String
+                        UThisExpression (label = null) [this] : PsiType:String[]
+                        UBinaryExpression (operator = +) [index1 + index2] : PsiType:int
+                            USimpleNameReferenceExpression (identifier = index1) [index1] : PsiType:int
+                            USimpleNameReferenceExpression (identifier = index2) [index2] : PsiType:int
+        UMethod (name = set) [public static final fun set(@org.jetbrains.annotations.NotNull $this$set: java.lang.String[], @org.jetbrains.annotations.NotNull index1: int, @org.jetbrains.annotations.NotNull index2: int, @org.jetbrains.annotations.NotNull elem: java.lang.String) : void {...}]
+            UParameter (name = $this$set) [@org.jetbrains.annotations.NotNull var $this$set: java.lang.String[]]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UParameter (name = index1) [@org.jetbrains.annotations.NotNull var index1: int]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UParameter (name = index2) [@org.jetbrains.annotations.NotNull var index2: int]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UParameter (name = elem) [@org.jetbrains.annotations.NotNull var elem: java.lang.String]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}] : PsiType:void
+                UBinaryExpression (operator = =) [this[index1 + index2] = elem] : PsiType:void
+                    UArrayAccessExpression [this[index1 + index2]] : PsiType:String
+                        UThisExpression (label = null) [this] : PsiType:String[]
+                        UBinaryExpression (operator = +) [index1 + index2] : PsiType:int
+                            USimpleNameReferenceExpression (identifier = index1) [index1] : PsiType:int
+                            USimpleNameReferenceExpression (identifier = index2) [index2] : PsiType:int
+                    USimpleNameReferenceExpression (identifier = elem) [elem] : PsiType:String
+        UMethod (name = box) [public static final fun box() : java.lang.String {...}]
+            UBlockExpression [{...}] : PsiType:Void
+                UDeclarationsExpression [var s: java.lang.String[] = <init>(1, { var it: int ->...})]
+                    ULocalVariable (name = s) [var s: java.lang.String[] = <init>(1, { var it: int ->...})]
+                        UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 2)) [<init>(1, { var it: int ->...})] : PsiType:String[]
+                            UIdentifier (Identifier (Array)) [UIdentifier (Identifier (Array))]
+                            USimpleNameReferenceExpression (identifier = <init>, resolvesTo = null) [<init>] : PsiType:String[]
+                            ULiteralExpression (value = 1) [1] : PsiType:int
+                            ULambdaExpression [{ var it: int ->...}] : PsiType:Function1<? super Integer, ? extends String>
+                                UParameter (name = it) [var it: int]
+                                UBlockExpression [{...}]
+                                    UReturnExpression [return ""]
+                                        ULiteralExpression (value = "") [""] : PsiType:String
+                UBinaryExpression (operator = =) [s[1, -1] = "O"] : PsiType:void
+                    UArrayAccessExpression [s[1, -1]] : PsiType:String
+                        USimpleNameReferenceExpression (identifier = s) [s] : PsiType:String[]
+                        ULiteralExpression (value = 1) [1] : PsiType:int
+                        UPrefixExpression (operator = -) [-1] : PsiType:int
+                            ULiteralExpression (value = 1) [1] : PsiType:int
+                    ULiteralExpression (value = "O") ["O"] : PsiType:String
+                UBinaryExpression (operator = +=) [s[2, -2] += "K"] : PsiType:void
+                    UArrayAccessExpression [s[2, -2]] : PsiType:String
+                        USimpleNameReferenceExpression (identifier = s) [s] : PsiType:String[]
+                        ULiteralExpression (value = 2) [2] : PsiType:int
+                        UPrefixExpression (operator = -) [-2] : PsiType:int
+                            ULiteralExpression (value = 2) [2] : PsiType:int
+                    ULiteralExpression (value = "K") ["K"] : PsiType:String
+                UReturnExpression [return s[-3, 3]] : PsiType:Void
+                    UArrayAccessExpression [s[-3, 3]] : PsiType:String
+                        USimpleNameReferenceExpression (identifier = s) [s] : PsiType:String[]
+                        UPrefixExpression (operator = -) [-3] : PsiType:int
+                            ULiteralExpression (value = 3) [3] : PsiType:int
+                        ULiteralExpression (value = 3) [3] : PsiType:int
