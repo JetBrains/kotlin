@@ -578,3 +578,41 @@ internal fun checkCondition(condition: FirExpression, context: CheckerContext, r
         reporter.reportOn(condition.source, FirErrors.CONDITION_TYPE_MISMATCH, coneType, context)
     }
 }
+
+fun extractTypeRefAndSourceFromTypeArgument(typeRef: FirTypeRef?, index: Int): Pair<FirTypeRef, FirSourceElement?>? {
+    if (typeRef is FirResolvedTypeRef) {
+        val delegatedTypeRef = typeRef.delegatedTypeRef
+        if (delegatedTypeRef is FirUserTypeRef) {
+            var currentTypeArguments: List<FirTypeProjection>? = null
+            var currentIndex = index
+            val qualifier = delegatedTypeRef.qualifier
+
+            for (i in qualifier.size - 1 downTo 0) {
+                val typeArguments = qualifier[i].typeArgumentList.typeArguments
+                if (currentIndex < typeArguments.size) {
+                    currentTypeArguments = typeArguments
+                    break
+                } else {
+                    currentIndex -= typeArguments.size
+                }
+            }
+
+            val typeArgument = currentTypeArguments?.elementAtOrNull(currentIndex)
+            if (typeArgument is FirTypeProjectionWithVariance) {
+                return Pair(typeArgument.typeRef, typeArgument.source)
+            }
+        } else if (delegatedTypeRef is FirFunctionTypeRef) {
+            val valueParameters = delegatedTypeRef.valueParameters
+            if (index < valueParameters.size) {
+                val valueParamTypeRef = valueParameters.elementAt(index).returnTypeRef
+                return Pair(valueParamTypeRef, valueParamTypeRef.source)
+            }
+            if (index == valueParameters.size) {
+                val returnTypeRef = delegatedTypeRef.returnTypeRef
+                return Pair(returnTypeRef, returnTypeRef.source)
+            }
+        }
+    }
+
+    return null
+}

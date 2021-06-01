@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.extractTypeRefAndSourceFromTypeArgument
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
@@ -154,37 +155,16 @@ object FirClassVarianceChecker : FirClassChecker() {
                     }
 
                     if (newVariance != null) {
-                        val subTypeRef = extractTypeArgumentTypeRef(typeRef, index)
+                        val subTypeRefAndSource = extractTypeRefAndSourceFromTypeArgument(typeRef, index)
 
                         checkVarianceConflict(
-                            typeArgumentType, newVariance, subTypeRef, containingType,
-                            context, reporter,subTypeRef?.source ?: source,
+                            typeArgumentType, newVariance, subTypeRefAndSource?.first, containingType,
+                            context, reporter, subTypeRefAndSource?.first?.source ?: source,
                             fullyExpandedType != type
                         )
                     }
                 }
             }
         }
-    }
-
-    private fun extractTypeArgumentTypeRef(typeRef: FirTypeRef?, index: Int): FirTypeRef? {
-        if (typeRef is FirResolvedTypeRef) {
-            val delegatedTypeRef = typeRef.delegatedTypeRef
-            if (delegatedTypeRef is FirUserTypeRef) {
-                val typeArgument = delegatedTypeRef.qualifier[0].typeArgumentList.typeArguments.elementAtOrNull(index)
-                if (typeArgument is FirTypeProjectionWithVariance) {
-                    return typeArgument.typeRef
-                }
-            } else if (delegatedTypeRef is FirFunctionTypeRef) {
-                if (index < delegatedTypeRef.valueParameters.size) {
-                    return delegatedTypeRef.valueParameters.elementAt(index).returnTypeRef
-                }
-                if (index == delegatedTypeRef.valueParameters.size) {
-                    return delegatedTypeRef.returnTypeRef
-                }
-            }
-        }
-
-        return null
     }
 }

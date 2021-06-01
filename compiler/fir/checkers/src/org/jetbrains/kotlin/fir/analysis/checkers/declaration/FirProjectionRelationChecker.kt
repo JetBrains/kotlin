@@ -45,17 +45,19 @@ object FirProjectionRelationChecker : FirBasicDeclarationChecker() {
     private fun checkTypeRef(
         typeRef: FirTypeRef,
         context: CheckerContext,
-        reporter: DiagnosticReporter,
+        reporter: DiagnosticReporter
     ) {
         val type = typeRef.coneTypeSafe<ConeClassLikeType>()
         val fullyExpandedType = type?.fullyExpandedType(context.session) ?: return
         val declaration = fullyExpandedType.toSymbol(context.session)?.fir.safeAs<FirRegularClass>() ?: return
+        val typeParameters = declaration.typeParameters
+        val typeArguments = type.typeArguments
 
-        val size = minOf(declaration.typeParameters.size, typeRef.coneType.typeArguments.size)
+        val size = minOf(typeParameters.size, typeArguments.size)
 
         for (it in 0 until size) {
-            val proto = declaration.typeParameters[it]
-            val actual = typeRef.coneType.typeArguments[it]
+            val proto = typeParameters[it]
+            val actual = typeArguments[it]
             val fullyExpandedProjection = fullyExpandedType.typeArguments[it]
 
             val protoVariance = proto.safeAs<FirTypeParameterRef>()
@@ -88,6 +90,8 @@ object FirProjectionRelationChecker : FirBasicDeclarationChecker() {
                     context
                 )
             }
+
+            checkTypeRef(typeArgTypeRef, context, reporter)
         }
     }
 

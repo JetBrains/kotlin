@@ -23,7 +23,7 @@ fun case_1(x: Out<<!REDUNDANT_PROJECTION!>out<!> Int?>?) {
  * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-28598
  */
-fun case_2(a: Out<<!REDUNDANT_PROJECTION!>out<!> Out<out Out<out Out<out Out<out Out<out Int?>?>?>?>?>?>?) {
+fun case_2(a: Out<<!REDUNDANT_PROJECTION!>out<!> Out<<!REDUNDANT_PROJECTION!>out<!> Out<<!REDUNDANT_PROJECTION!>out<!> Out<<!REDUNDANT_PROJECTION!>out<!> Out<<!REDUNDANT_PROJECTION!>out<!> Out<<!REDUNDANT_PROJECTION!>out<!> Int?>?>?>?>?>?>?) {
     if (a != null) {
         val b = <!DEBUG_INFO_EXPRESSION_TYPE("Out<out Out<out Out<out Out<out Out<out Out<out kotlin.Int?>?>?>?>?>?>? & Out<out Out<out Out<out Out<out Out<out Out<out kotlin.Int?>?>?>?>?>?>")!>a<!>.get()
         if (b != null) {

@@ -65,3 +65,6 @@ fun invOut_Inv(x: Inv3<Int>) = x
 fun invOut_In(x: <!CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION!>Inv3<in Int><!>) = x
 fun invOut_Out(x: Inv3<out Int>) = x
 fun invOut_Star(x: Inv3<*>) = x
+
+fun nested_conflicting_type_argument(x: In<Out<<!CONFLICTING_PROJECTION!>in<!> Int>>) = x
+fun nested_redundant_type_argument(x: In<Out<<!REDUNDANT_PROJECTION!>out<!> Int>>) = x
