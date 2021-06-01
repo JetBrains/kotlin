@@ -9,20 +9,27 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ir.asInlinable
+import org.jetbrains.kotlin.backend.common.ir.copyValueParametersFrom
 import org.jetbrains.kotlin.backend.common.ir.inline
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
-import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.constructedClass
+import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class ArrayConstructorLowering(val context: CommonBackendContext) : BodyLoweringPass {
@@ -37,18 +44,20 @@ private class ArrayConstructorTransformer(
 ) : IrElementTransformerVoidWithContext() {
 
     // Array(size, init) -> Array(size)
-    private fun arrayInlineToSizeConstructor(irConstructor: IrConstructor): IrFunctionSymbol? {
-        val clazz = irConstructor.constructedClass.symbol
-        return when {
-            irConstructor.valueParameters.size != 2 -> null
-            clazz == context.irBuiltIns.arrayClass -> context.ir.symbols.arrayOfNulls // Array<T> has no unary constructor: it can only exist for Array<T?>
-            context.irBuiltIns.primitiveArrays.contains(clazz) -> clazz.constructors.single { it.owner.valueParameters.size == 1 }
-            else -> null
+    companion object {
+        internal fun arrayInlineToSizeConstructor(context: CommonBackendContext, irConstructor: IrConstructor): IrFunctionSymbol? {
+            val clazz = irConstructor.constructedClass.symbol
+            return when {
+                irConstructor.valueParameters.size != 2 -> null
+                clazz == context.irBuiltIns.arrayClass -> context.ir.symbols.arrayOfNulls // Array<T> has no unary constructor: it can only exist for Array<T?>
+                context.irBuiltIns.primitiveArrays.contains(clazz) -> clazz.constructors.single { it.owner.valueParameters.size == 1 }
+                else -> null
+            }
         }
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
-        val sizeConstructor = arrayInlineToSizeConstructor(expression.symbol.owner)
+        val sizeConstructor = arrayInlineToSizeConstructor(context, expression.symbol.owner)
             ?: return super.visitConstructorCall(expression)
         // inline fun <reified T> Array(size: Int, invokable: (Int) -> T): Array<T> {
         //     val result = arrayOfNulls<T>(size)
@@ -87,6 +96,83 @@ private class ArrayConstructorTransformer(
                 }
             }
             +irGet(result)
+        }
+    }
+}
+
+
+object arrayConstuctorWrapper : IrDeclarationOriginImpl("arrayConstuctorWrapper") {}
+
+class ArrayConstructorReferenceLowering(val context: CommonBackendContext) : BodyLoweringPass {
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
+        irBody.transformChildrenVoid(ArrayConstructorReferenceTransformer(context, container as IrSymbolOwner))
+    }
+
+    private class ArrayConstructorReferenceTransformer(val context: CommonBackendContext, val container: IrSymbolOwner) : IrElementTransformerVoid() {
+        override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
+            expression.transformChildrenVoid()
+            val target = expression.symbol.owner
+
+            if (target !is IrConstructor) return expression
+
+            if (ArrayConstructorTransformer.arrayInlineToSizeConstructor(context, target) == null) return expression
+
+            return expression.run {
+                IrCompositeImpl(startOffset, endOffset, type, origin).apply {
+                    val wrapper = createFunctionReferenceWrapper(expression, target)
+                    statements.add(wrapper)
+                    statements.add(
+                        IrFunctionReferenceImpl(
+                            startOffset,
+                            endOffset,
+                            type,
+                            wrapper.symbol,
+                            0,
+                            valueArgumentsCount,
+                            target.symbol,
+                            origin
+                        )
+                    )
+                }
+            }
+        }
+
+        private fun createFunctionReferenceWrapper(expression: IrFunctionReference, target: IrConstructor): IrSimpleFunction {
+            val typeArguments = with(expression.type as IrSimpleType) { arguments }
+            assert(typeArguments.size == 3)
+            val arrayType = (typeArguments[2] as IrTypeProjection).type
+            val arrayElementType = ((arrayType as IrSimpleType).arguments.singleOrNull() as? IrTypeProjection)?.type
+
+            val wrapper = context.irFactory.buildFun {
+                startOffset = expression.startOffset
+                endOffset = expression.endOffset
+                origin = arrayConstuctorWrapper
+                name = Name.special("<array_inline_constructor_wrapper>")
+                visibility = DescriptorVisibilities.LOCAL
+
+            }
+
+            val substitutionMap = target.typeParameters.singleOrNull()?.let { mapOf(it.symbol to arrayElementType!!) } ?: emptyMap()
+            wrapper.copyValueParametersFrom(target, substitutionMap)
+
+            wrapper.returnType = arrayType
+            wrapper.parent = container as IrDeclarationParent
+            wrapper.body = context.irFactory.createBlockBody(expression.startOffset, expression.endOffset).also { body ->
+                with(context.createIrBuilder(wrapper.symbol)) {
+                    body.statements.add(irReturn(
+                        irCall(target.symbol, arrayType).also { call ->
+                            if (call.typeArgumentsCount != 0) {
+                                assert(call.typeArgumentsCount == 1)
+                                call.putTypeArgument(0, arrayElementType)
+                            }
+                            call.putValueArgument(0, irGet(wrapper.valueParameters[0]))
+                            call.putValueArgument(1, irGet(wrapper.valueParameters[1]))
+                        }
+                    ))
+                }
+            }
+
+            return wrapper
         }
     }
 }
