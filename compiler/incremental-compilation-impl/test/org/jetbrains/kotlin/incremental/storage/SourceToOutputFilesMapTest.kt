@@ -29,7 +29,7 @@ class SourceToOutputFilesMapTest : TestWithWorkingDir() {
     @After
     override fun tearDown() {
         stofMap.flush(false)
-        stofMap.close()
+        stofMap.closeForTest()
         super.tearDown()
     }
 

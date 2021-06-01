@@ -31,7 +31,7 @@ class FileSnapshotMapTest : TestWithWorkingDir() {
     @After
     override fun tearDown() {
         snapshotMap.flush(false)
-        snapshotMap.close()
+        snapshotMap.closeForTest()
         super.tearDown()
     }
 
