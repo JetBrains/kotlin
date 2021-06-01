@@ -10,8 +10,6 @@ import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.FirLabel
-import org.jetbrains.kotlin.fir.declarations.FirImport
-import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.FirTargetElement
@@ -49,6 +47,9 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
+import org.jetbrains.kotlin.fir.declarations.FirImport
+import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
+import org.jetbrains.kotlin.fir.declarations.FirErrorImport
 import org.jetbrains.kotlin.fir.expressions.FirLoop
 import org.jetbrains.kotlin.fir.expressions.FirErrorLoop
 import org.jetbrains.kotlin.fir.expressions.FirDoWhileLoop
@@ -155,14 +156,6 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     open fun transformLabel(label: FirLabel, data: D): FirLabel {
         return transformElement(label, data)
-    }
-
-    open fun transformImport(import: FirImport, data: D): FirImport {
-        return transformElement(import, data)
-    }
-
-    open fun transformResolvedImport(resolvedImport: FirResolvedImport, data: D): FirImport {
-        return transformElement(resolvedImport, data)
     }
 
     open fun <E> transformSymbolOwner(symbolOwner: FirSymbolOwner<E>, data: D): FirSymbolOwner<E> where E : FirSymbolOwner<E>, E : FirDeclaration {
@@ -311,6 +304,18 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     open fun transformDiagnosticHolder(diagnosticHolder: FirDiagnosticHolder, data: D): FirDiagnosticHolder {
         return transformElement(diagnosticHolder, data)
+    }
+
+    open fun transformImport(import: FirImport, data: D): FirImport {
+        return transformElement(import, data)
+    }
+
+    open fun transformResolvedImport(resolvedImport: FirResolvedImport, data: D): FirImport {
+        return transformElement(resolvedImport, data)
+    }
+
+    open fun transformErrorImport(errorImport: FirErrorImport, data: D): FirImport {
+        return transformElement(errorImport, data)
     }
 
     open fun transformLoop(loop: FirLoop, data: D): FirStatement {
@@ -661,14 +666,6 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformLabel(label, data)
     }
 
-    final override fun visitImport(import: FirImport, data: D): FirImport {
-        return transformImport(import, data)
-    }
-
-    final override fun visitResolvedImport(resolvedImport: FirResolvedImport, data: D): FirImport {
-        return transformResolvedImport(resolvedImport, data)
-    }
-
     final override fun <E> visitSymbolOwner(symbolOwner: FirSymbolOwner<E>, data: D): FirSymbolOwner<E> where E : FirSymbolOwner<E>, E : FirDeclaration {
         return transformSymbolOwner(symbolOwner, data)
     }
@@ -815,6 +812,18 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     final override fun visitDiagnosticHolder(diagnosticHolder: FirDiagnosticHolder, data: D): FirDiagnosticHolder {
         return transformDiagnosticHolder(diagnosticHolder, data)
+    }
+
+    final override fun visitImport(import: FirImport, data: D): FirImport {
+        return transformImport(import, data)
+    }
+
+    final override fun visitResolvedImport(resolvedImport: FirResolvedImport, data: D): FirImport {
+        return transformResolvedImport(resolvedImport, data)
+    }
+
+    final override fun visitErrorImport(errorImport: FirErrorImport, data: D): FirImport {
+        return transformErrorImport(errorImport, data)
     }
 
     final override fun visitLoop(loop: FirLoop, data: D): FirStatement {

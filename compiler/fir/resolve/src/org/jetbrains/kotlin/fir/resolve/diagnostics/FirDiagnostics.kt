@@ -122,6 +122,10 @@ class ConeCyclicTypeBound(val symbol: FirTypeParameterSymbol, val bounds: Immuta
     override val reason: String get() = "Type parameter ${symbol.fir.name} has cyclic bounds"
 }
 
+class ConeImportFromSingleton(val name: Name) : ConeDiagnostic() {
+    override val reason: String get() = "Import from singleton $name is not allowed"
+}
+
 private fun describeSymbol(symbol: AbstractFirBasedSymbol<*>): String {
     return when (symbol) {
         is FirClassLikeSymbol<*> -> symbol.classId.asString()

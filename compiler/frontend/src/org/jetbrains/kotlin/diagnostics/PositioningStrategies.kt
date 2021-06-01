@@ -890,6 +890,19 @@ object PositioningStrategies {
         }
     }
 
+    val IMPORT_LAST_NAME: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
+        override fun mark(element: PsiElement): List<TextRange> {
+            if (element is KtImportDirective) {
+                val importedReference = element.importedReference
+                if (importedReference is KtDotQualifiedExpression) {
+                    importedReference.selectorExpression?.let { return super.mark(it) }
+                }
+                return super.mark(element.importedReference ?: element)
+            }
+            return super.mark(element)
+        }
+    }
+
     /**
      * @param locateReferencedName whether to remove any nested parentheses while locating the reference element. This is useful for
      * diagnostics on super and unresolved references. For example, with the following, only the part inside the parentheses should be

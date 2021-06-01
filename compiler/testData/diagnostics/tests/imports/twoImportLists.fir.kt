@@ -75,7 +75,7 @@ fun bar() {}
 //FILE:c.kt
 package c
 
-import c.C.*
+import c.<!CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON!>C<!>.*
 
 object C {
     fun f() {
@@ -84,7 +84,7 @@ object C {
 }
 
 fun foo() {
-    if (i == 3) f()
+    if (<!UNRESOLVED_REFERENCE!>i<!> == 3) <!UNRESOLVED_REFERENCE!>f<!>()
 }
 
 //FILE:d.kt

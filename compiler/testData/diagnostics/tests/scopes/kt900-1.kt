@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // import all members from companion object
 package c
 

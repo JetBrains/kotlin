@@ -1805,6 +1805,11 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val symbol: KtSymbol
     }
 
+    abstract class CannotAllUnderImportFromSingleton : KtFirDiagnostic<KtSimpleNameExpression>() {
+        override val diagnosticClass get() = CannotAllUnderImportFromSingleton::class
+        abstract val objectName: Name
+    }
+
     abstract class ConflictingJvmDeclarations : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = ConflictingJvmDeclarations::class
     }

@@ -940,6 +940,12 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Symbol>("symbol")
         }
     }
+
+    val IMPORTS by object : DiagnosticGroup("Imports") {
+        val CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON by error<KtSimpleNameExpression>(PositioningStrategy.IMPORT_LAST_NAME) {
+            parameter<Name>("objectName")
+        }
+    }
 }
 
 private val exposedVisibilityDiagnosticInit: DiagnosticBuilder.() -> Unit = {

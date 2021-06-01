@@ -10,8 +10,6 @@ import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.FirLabel
-import org.jetbrains.kotlin.fir.declarations.FirImport
-import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.FirTargetElement
@@ -49,6 +47,9 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
+import org.jetbrains.kotlin.fir.declarations.FirImport
+import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
+import org.jetbrains.kotlin.fir.declarations.FirErrorImport
 import org.jetbrains.kotlin.fir.expressions.FirLoop
 import org.jetbrains.kotlin.fir.expressions.FirErrorLoop
 import org.jetbrains.kotlin.fir.expressions.FirDoWhileLoop
@@ -154,14 +155,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitLabel(label: FirLabel) {
         visitElement(label)
-    }
-
-    open fun visitImport(import: FirImport) {
-        visitElement(import)
-    }
-
-    open fun visitResolvedImport(resolvedImport: FirResolvedImport) {
-        visitElement(resolvedImport)
     }
 
     open fun <E> visitSymbolOwner(symbolOwner: FirSymbolOwner<E>) where E : FirSymbolOwner<E>, E : FirDeclaration {
@@ -310,6 +303,18 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitDiagnosticHolder(diagnosticHolder: FirDiagnosticHolder) {
         visitElement(diagnosticHolder)
+    }
+
+    open fun visitImport(import: FirImport) {
+        visitElement(import)
+    }
+
+    open fun visitResolvedImport(resolvedImport: FirResolvedImport) {
+        visitElement(resolvedImport)
+    }
+
+    open fun visitErrorImport(errorImport: FirErrorImport) {
+        visitElement(errorImport)
     }
 
     open fun visitLoop(loop: FirLoop) {
@@ -660,14 +665,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitLabel(label)
     }
 
-    final override fun visitImport(import: FirImport, data: Nothing?) {
-        visitImport(import)
-    }
-
-    final override fun visitResolvedImport(resolvedImport: FirResolvedImport, data: Nothing?) {
-        visitResolvedImport(resolvedImport)
-    }
-
     final override fun <E> visitSymbolOwner(symbolOwner: FirSymbolOwner<E>, data: Nothing?) where E : FirSymbolOwner<E>, E : FirDeclaration {
         visitSymbolOwner(symbolOwner)
     }
@@ -814,6 +811,18 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitDiagnosticHolder(diagnosticHolder: FirDiagnosticHolder, data: Nothing?) {
         visitDiagnosticHolder(diagnosticHolder)
+    }
+
+    final override fun visitImport(import: FirImport, data: Nothing?) {
+        visitImport(import)
+    }
+
+    final override fun visitResolvedImport(resolvedImport: FirResolvedImport, data: Nothing?) {
+        visitResolvedImport(resolvedImport)
+    }
+
+    final override fun visitErrorImport(errorImport: FirErrorImport, data: Nothing?) {
+        visitErrorImport(errorImport)
     }
 
     final override fun visitLoop(loop: FirLoop, data: Nothing?) {

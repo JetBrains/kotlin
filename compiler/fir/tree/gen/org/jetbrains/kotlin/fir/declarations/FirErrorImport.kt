@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.fir.declarations
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.fir.visitors.*
@@ -18,20 +19,17 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirResolvedImport : FirPureAbstractElement(), FirImport {
+abstract class FirErrorImport : FirPureAbstractElement(), FirImport, FirDiagnosticHolder {
     abstract override val source: FirSourceElement?
     abstract override val importedFqName: FqName?
     abstract override val isAllUnder: Boolean
     abstract override val aliasName: Name?
+    abstract override val diagnostic: ConeDiagnostic
     abstract val delegate: FirImport
-    abstract val packageFqName: FqName
-    abstract val relativeClassName: FqName?
-    abstract val resolvedClassId: ClassId?
-    abstract val importedName: Name?
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedImport(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitErrorImport(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformResolvedImport(this, data) as E
+        transformer.transformErrorImport(this, data) as E
 }

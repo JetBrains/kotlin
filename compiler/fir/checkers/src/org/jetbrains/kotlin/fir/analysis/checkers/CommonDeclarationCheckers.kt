@@ -100,6 +100,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirKClassWithIncorrectTypeArgumentChecker,
             FirTopLevelFunctionsChecker,
             FirTopLevelPropertiesChecker,
+            FirImportsChecker,
         )
 
     override val controlFlowAnalyserCheckers: Set<FirControlFlowChecker>

@@ -6,11 +6,12 @@
 package org.jetbrains.kotlin.fir.declarations.builder
 
 import kotlin.contracts.*
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.declarations.FirErrorImport
 import org.jetbrains.kotlin.fir.declarations.FirImport
-import org.jetbrains.kotlin.fir.declarations.impl.FirImportImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirErrorImportImpl
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -21,27 +22,22 @@ import org.jetbrains.kotlin.name.Name
  */
 
 @FirBuilderDsl
-class FirImportBuilder {
-    var source: FirSourceElement? = null
-    var importedFqName: FqName? = null
-    var isAllUnder: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
-    var aliasName: Name? = null
+class FirErrorImportBuilder {
+    lateinit var diagnostic: ConeDiagnostic
+    lateinit var delegate: FirImport
 
-    fun build(): FirImport {
-        return FirImportImpl(
-            source,
-            importedFqName,
-            isAllUnder,
-            aliasName,
+    fun build(): FirErrorImport {
+        return FirErrorImportImpl(
+            diagnostic,
+            delegate,
         )
     }
-
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildImport(init: FirImportBuilder.() -> Unit): FirImport {
+inline fun buildErrorImport(init: FirErrorImportBuilder.() -> Unit): FirErrorImport {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }
-    return FirImportBuilder().apply(init).build()
+    return FirErrorImportBuilder().apply(init).build()
 }

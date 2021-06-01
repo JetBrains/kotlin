@@ -10,8 +10,6 @@ import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.FirLabel
-import org.jetbrains.kotlin.fir.declarations.FirImport
-import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.FirTargetElement
@@ -49,6 +47,9 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
+import org.jetbrains.kotlin.fir.declarations.FirImport
+import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
+import org.jetbrains.kotlin.fir.declarations.FirErrorImport
 import org.jetbrains.kotlin.fir.expressions.FirLoop
 import org.jetbrains.kotlin.fir.expressions.FirErrorLoop
 import org.jetbrains.kotlin.fir.expressions.FirDoWhileLoop
@@ -148,10 +149,6 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitLabel(label: FirLabel, data: D): R  = visitElement(label, data)
 
-    open fun visitImport(import: FirImport, data: D): R  = visitElement(import, data)
-
-    open fun visitResolvedImport(resolvedImport: FirResolvedImport, data: D): R  = visitElement(resolvedImport, data)
-
     open fun <E> visitSymbolOwner(symbolOwner: FirSymbolOwner<E>, data: D): R where E : FirSymbolOwner<E>, E : FirDeclaration  = visitElement(symbolOwner, data)
 
     open fun visitResolvable(resolvable: FirResolvable, data: D): R  = visitElement(resolvable, data)
@@ -225,6 +222,12 @@ abstract class FirVisitor<out R, in D> {
     open fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: D): R  = visitElement(anonymousObject, data)
 
     open fun visitDiagnosticHolder(diagnosticHolder: FirDiagnosticHolder, data: D): R  = visitElement(diagnosticHolder, data)
+
+    open fun visitImport(import: FirImport, data: D): R  = visitElement(import, data)
+
+    open fun visitResolvedImport(resolvedImport: FirResolvedImport, data: D): R  = visitElement(resolvedImport, data)
+
+    open fun visitErrorImport(errorImport: FirErrorImport, data: D): R  = visitElement(errorImport, data)
 
     open fun visitLoop(loop: FirLoop, data: D): R  = visitElement(loop, data)
 

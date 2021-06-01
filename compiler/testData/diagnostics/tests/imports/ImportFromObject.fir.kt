@@ -54,12 +54,12 @@ object K: Base(), BaseI<Int> {
 // FILE: b.kt
 package b
 
-import a.O.*
+import a.<!CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON!>O<!>.*
 
 fun testErroneusAllUnderImportFromObject() {
-    A()
-    B
-    bar()
+    <!UNRESOLVED_REFERENCE!>A<!>()
+    <!UNRESOLVED_REFERENCE!>B<!>
+    <!UNRESOLVED_REFERENCE!>bar<!>()
 }
 
 // FILE: c.kt

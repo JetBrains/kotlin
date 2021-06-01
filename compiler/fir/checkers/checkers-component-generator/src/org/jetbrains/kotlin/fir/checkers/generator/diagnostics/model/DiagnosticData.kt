@@ -73,6 +73,7 @@ enum class PositioningStrategy(private val strategy: String? = null) {
     QUESTION_MARK_BY_TYPE,
     ANNOTATION_USE_SITE,
     ASSIGNMENT_LHS,
+    IMPORT_LAST_NAME,
 
     ;
 

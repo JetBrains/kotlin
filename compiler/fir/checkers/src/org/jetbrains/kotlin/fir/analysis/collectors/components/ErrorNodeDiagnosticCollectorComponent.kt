@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
+import org.jetbrains.kotlin.fir.declarations.FirErrorImport
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
@@ -92,6 +93,11 @@ class ErrorNodeDiagnosticCollectorComponent(
     override fun visitErrorResolvedQualifier(errorResolvedQualifier: FirErrorResolvedQualifier, data: CheckerContext) {
         val source = errorResolvedQualifier.source ?: return
         reportFirDiagnostic(errorResolvedQualifier.diagnostic, source, reporter, data)
+    }
+
+    override fun visitErrorImport(errorImport: FirErrorImport, data: CheckerContext) {
+        val source = errorImport.source ?: return
+        reportFirDiagnostic(errorImport.diagnostic, source, reporter, data)
     }
 
     private fun reportFirDiagnostic(

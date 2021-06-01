@@ -65,6 +65,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             }
         }
 
+        impl(errorImport) {
+            delegateFields(listOf("aliasName", "importedFqName", "isAllUnder", "source"), "delegate")
+        }
+
         impl(annotationCall) {
             default("typeRef") {
                 value = "annotationTypeRef"

@@ -252,4 +252,9 @@ object SourceElementPositioningStrategies {
         LightTreePositioningStrategies.ASSIGNMENT_LHS,
         PositioningStrategies.ASSIGNMENT_LHS
     )
+
+    val IMPORT_LAST_NAME = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.IMPORT_LAST_NAME,
+        PositioningStrategies.IMPORT_LAST_NAME
+    )
 }

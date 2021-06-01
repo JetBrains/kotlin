@@ -2,7 +2,7 @@ package d
 
 //import from objects before properties resolve
 
-import d.A.*
+import d.<!CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON!>A<!>.*
 import d.M.R
 import d.M.R.bar
 import d.M.T
@@ -14,7 +14,7 @@ val y: T = Y
 fun f() {
     bar()
     R.bar()
-    B.foo()
+    <!UNRESOLVED_REFERENCE!>B<!>.foo()
 }
 
 object M {

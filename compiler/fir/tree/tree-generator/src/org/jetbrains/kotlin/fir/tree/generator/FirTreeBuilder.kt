@@ -14,8 +14,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val typeRef = sealedElement("TypeRef", TypeRef, annotationContainer)
     val reference = element("Reference", Reference)
     val label = element("Label", Other)
-    val import = element("Import", Declaration)
-    val resolvedImport = element("ResolvedImport", Declaration, import)
+
     val symbolOwner = element("SymbolOwner", Other)
     val resolvable = sealedElement("Resolvable", Expression)
 
@@ -63,6 +62,10 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val anonymousObject = element("AnonymousObject", Declaration, klass, controlFlowGraphOwner, expression)
 
     val diagnosticHolder = element("DiagnosticHolder", Diagnostics)
+
+    val import = element("Import", Declaration)
+    val resolvedImport = element("ResolvedImport", Declaration, import)
+    val errorImport = element("ErrorImport", Declaration, import, diagnosticHolder)
 
     val loop = sealedElement("Loop", Expression, statement, targetElement)
     val errorLoop = element("ErrorLoop", Expression, loop, diagnosticHolder)

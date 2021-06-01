@@ -518,4 +518,7 @@ object FirErrors {
     val PRIVATE_CLASS_MEMBER_FROM_INLINE by error2<KtElement, AbstractFirBasedSymbol<*>, AbstractFirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val SUPER_CALL_FROM_PUBLIC_INLINE by warning1<KtElement, AbstractFirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
 
+    // Imports
+    val CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON by error1<KtSimpleNameExpression, Name>(SourceElementPositioningStrategies.IMPORT_LAST_NAME)
+
 }
