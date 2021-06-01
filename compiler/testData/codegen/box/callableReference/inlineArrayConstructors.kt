@@ -1,5 +1,4 @@
 // WITH_RUNTIME
-// IGNORE_BACKEND: JS_IR
 
 fun createArray(ctor: (Int, (Int) -> Char) -> CharArray) =
     ctor(1) { 'O' }
