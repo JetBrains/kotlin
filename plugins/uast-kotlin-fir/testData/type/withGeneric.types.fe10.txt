@@ -1,0 +1,83 @@
+UFile (package = ) [public final class WithGenericKt {...]
+    UClass (name = WithGenericKt) [public final class WithGenericKt {...}]
+        UMethod (name = test1) [public static final fun test1() : T {...}]
+            UBlockExpression [{...}]
+                UReturnExpression [return null as T]
+                    UBinaryExpressionWithType [null as T] : PsiType:T
+                        ULiteralExpression (value = null) [null] : PsiType:Void
+                        UTypeReferenceExpression (name = T) [T]
+        UMethod (name = test2) [public static final fun test2() : T {...}]
+            UBlockExpression [{...}] : PsiType:Void
+                UDeclarationsExpression [var a: java.lang.Object = null]
+                    ULocalVariable (name = a) [var a: java.lang.Object = null]
+                        ULiteralExpression (value = null) [null] : PsiType:Void
+                UReturnExpression [return a as T] : PsiType:Void
+                    UBinaryExpressionWithType [a as T] : PsiType:T
+                        USimpleNameReferenceExpression (identifier = a) [a] : PsiType:Object
+                        UTypeReferenceExpression (name = T) [T]
+        UMethod (name = test3) [public static final fun test3() : T {...}]
+            UBlockExpression [{...}]
+                UReturnExpression [return null as T]
+                    UBinaryExpressionWithType [null as T] : PsiType:T
+                        ULiteralExpression (value = null) [null] : PsiType:Void
+                        UTypeReferenceExpression (name = T) [T]
+        UMethod (name = castToString) [public static final fun castToString(@org.jetbrains.annotations.Nullable t: T) : void {...}]
+            UParameter (name = t) [@org.jetbrains.annotations.Nullable var t: T]
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable) [@org.jetbrains.annotations.Nullable]
+            UBlockExpression [{...}] : PsiType:String
+                UBinaryExpressionWithType [t as java.lang.String] : PsiType:String
+                    USimpleNameReferenceExpression (identifier = t) [t] : PsiType:T
+                    UTypeReferenceExpression (name = java.lang.String) [java.lang.String]
+        UMethod (name = box) [public static final fun box() : java.lang.String {...}]
+            UBlockExpression [{...}] : PsiType:Void
+                UIfExpression [if (test1() != null) return "fail: test1"] : PsiType:void
+                    UBinaryExpression (operator = !=) [test1() != null] : PsiType:boolean
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [test1()] : PsiType:int
+                            UIdentifier (Identifier (test1)) [UIdentifier (Identifier (test1))]
+                            USimpleNameReferenceExpression (identifier = test1, resolvesTo = null) [test1] : PsiType:int
+                        ULiteralExpression (value = null) [null] : PsiType:Void
+                    UReturnExpression [return "fail: test1"] : PsiType:Void
+                        ULiteralExpression (value = "fail: test1") ["fail: test1"] : PsiType:String
+                UIfExpression [if (test2() != null) return "fail: test2"] : PsiType:void
+                    UBinaryExpression (operator = !=) [test2() != null] : PsiType:boolean
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [test2()] : PsiType:int
+                            UIdentifier (Identifier (test2)) [UIdentifier (Identifier (test2))]
+                            USimpleNameReferenceExpression (identifier = test2, resolvesTo = null) [test2] : PsiType:int
+                        ULiteralExpression (value = null) [null] : PsiType:Void
+                    UReturnExpression [return "fail: test2"] : PsiType:Void
+                        ULiteralExpression (value = "fail: test2") ["fail: test2"] : PsiType:String
+                UDeclarationsExpression [var result3: java.lang.String = "fail"]
+                    ULocalVariable (name = result3) [var result3: java.lang.String = "fail"]
+                        ULiteralExpression (value = "fail") ["fail"] : PsiType:String
+                UTryExpression [try {...] : PsiType:Object
+                    UBlockExpression [{...}] : PsiType:int
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [test3()] : PsiType:int
+                            UIdentifier (Identifier (test3)) [UIdentifier (Identifier (test3))]
+                            USimpleNameReferenceExpression (identifier = test3, resolvesTo = null) [test3] : PsiType:int
+                    UCatchClause (e) [catch (@org.jetbrains.annotations.NotNull var e: java.lang.NullPointerException) {...}]
+                        UParameter (name = e) [@org.jetbrains.annotations.NotNull var e: java.lang.NullPointerException]
+                            UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+                        UBlockExpression [{...}] : PsiType:void
+                            UBinaryExpression (operator = =) [result3 = "OK"] : PsiType:void
+                                USimpleNameReferenceExpression (identifier = result3) [result3] : PsiType:String
+                                ULiteralExpression (value = "OK") ["OK"] : PsiType:String
+                UIfExpression [if (result3 != "OK") return "fail: test3"] : PsiType:void
+                    UBinaryExpression (operator = !=) [result3 != "OK"] : PsiType:boolean
+                        USimpleNameReferenceExpression (identifier = result3) [result3] : PsiType:String
+                        ULiteralExpression (value = "OK") ["OK"] : PsiType:String
+                    UReturnExpression [return "fail: test3"] : PsiType:Void
+                        ULiteralExpression (value = "fail: test3") ["fail: test3"] : PsiType:String
+                UTryExpression [try {...] : PsiType:void
+                    UBlockExpression [{...}] : PsiType:void
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [castToString(null)] : PsiType:void
+                            UIdentifier (Identifier (castToString)) [UIdentifier (Identifier (castToString))]
+                            USimpleNameReferenceExpression (identifier = castToString, resolvesTo = null) [castToString] : PsiType:void
+                            ULiteralExpression (value = null) [null] : PsiType:Void
+                    UCatchClause (e) [catch (@org.jetbrains.annotations.NotNull var e: java.lang.Exception) {...}]
+                        UParameter (name = e) [@org.jetbrains.annotations.NotNull var e: java.lang.Exception]
+                            UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+                        UBlockExpression [{...}] : PsiType:Void
+                            UReturnExpression [return "OK"] : PsiType:Void
+                                ULiteralExpression (value = "OK") ["OK"] : PsiType:String
+                UReturnExpression [return "Fail"] : PsiType:Void
+                    ULiteralExpression (value = "Fail") ["Fail"] : PsiType:String

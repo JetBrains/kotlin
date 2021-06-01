@@ -29,6 +29,11 @@ public class FirUastTypesTestGenerated extends AbstractFirUastTypesTest {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/uast-kotlin-fir/testData/type"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
+    @TestMetadata("typeCast.kt")
+    public void testTypeCast() throws Exception {
+        runTest("plugins/uast-kotlin-fir/testData/type/typeCast.kt");
+    }
+
     @TestMetadata("typeCheck.kt")
     public void testTypeCheck() throws Exception {
         runTest("plugins/uast-kotlin-fir/testData/type/typeCheck.kt");
@@ -37,5 +42,10 @@ public class FirUastTypesTestGenerated extends AbstractFirUastTypesTest {
     @TestMetadata("unresolved.kt")
     public void testUnresolved() throws Exception {
         runTest("plugins/uast-kotlin-fir/testData/type/unresolved.kt");
+    }
+
+    @TestMetadata("withGeneric.kt")
+    public void testWithGeneric() throws Exception {
+        runTest("plugins/uast-kotlin-fir/testData/type/withGeneric.kt");
     }
 }
