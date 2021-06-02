@@ -97,14 +97,12 @@ class SignatureEnhancement(
         } else migrationStatus
     }
 
-    private fun getReportLevel(annotationFqName: FqName) = javaTypeEnhancementState.getReportLevelForAnnotation(annotationFqName)
-
     private fun commonMigrationStatus(
         annotationFqName: FqName,
         annotationDescriptor: AnnotationDescriptor,
         isForWarningOnly: Boolean = false
     ): NullabilityQualifierWithMigrationStatus? {
-        val reportLevel = getReportLevel(annotationFqName)
+        val reportLevel = javaTypeEnhancementState.getReportLevelForAnnotation(annotationFqName)
 
         if (reportLevel.isIgnore) return null
 
@@ -113,6 +111,8 @@ class SignatureEnhancement(
         return when (annotationFqName) {
             in NULLABLE_ANNOTATIONS -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE, isForWarning)
             in NOT_NULL_ANNOTATIONS -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL, isForWarning)
+            JSPECIFY_NULLABLE -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE, isForWarning)
+            JSPECIFY_NULLNESS_UNKNOWN -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.FORCE_FLEXIBILITY, isForWarning)
             JAVAX_NONNULL_ANNOTATION -> annotationDescriptor.extractNullabilityTypeFromArgument(isForWarning)
             COMPATQUAL_NULLABLE_ANNOTATION ->
                 NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE, isForWarning)
