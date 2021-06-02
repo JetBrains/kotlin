@@ -228,17 +228,6 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
         for (member in potentialBridgeTargets) {
             val parent = member.parentAsClass
             createBridges(parent, member)
-
-            // For lambda classes, we move overrides from the `invoke` function to its bridge. This will allow us to avoid boxing
-            // the return type of `invoke` in codegen for lambdas with primitive return type. This does not apply to lambdas returning
-            // inline class types erasing to Any, which we need to box.
-            if (member.name == OperatorNameConventions.INVOKE
-                && (parent.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL ||
-                        parent.origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL)
-                && !member.returnType.isInlineClassErasingToAny
-            ) {
-                member.overriddenSymbols = emptyList()
-            }
         }
     }
 
@@ -436,6 +425,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
             returnType = bridge.overridden.returnType.eraseTypeParameters()
             isSuspend = bridge.overridden.isSuspend
         }.apply {
+            copyAttributes(target)
             copyParametersWithErasure(this@addBridge, bridge.overridden)
             body = context.createIrBuilder(symbol, startOffset, endOffset).run { irExprBody(delegatingCall(this@apply, target)) }
 
