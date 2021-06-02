@@ -20,7 +20,7 @@ abstract class MasterPluginVersionGradleImportingTestCase : MultiplePluginVersio
             return (SUPPORTED_GRADLE_VERSIONS).map { gradleVersion ->
                 arrayOf<Any>(
                     gradleVersion,
-                    MASTER_VERSION_OF_PLUGIN
+                    "master"
                 )
             }.toList()
         }
