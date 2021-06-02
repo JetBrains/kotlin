@@ -236,7 +236,14 @@ class IrBuiltIns(
     val stringType = string.toIrType()
     val stringClass = builtIns.string.toIrSymbol()
 
+    val iterableClass = builtIns.iterable.toIrSymbol()
+    val iteratorClass = builtIns.iterator.toIrSymbol()
+    val listIteratorClass = builtIns.listIterator.toIrSymbol()
+    val listClass = builtIns.list.toIrSymbol()
     val collectionClass = builtIns.collection.toIrSymbol()
+    val setClass = builtIns.set.toIrSymbol()
+    val mapClass = builtIns.map.toIrSymbol()
+    val mapEntryClass = builtIns.mapEntry.toIrSymbol()
 
     val arrayClass = builtIns.array.toIrSymbol()
 

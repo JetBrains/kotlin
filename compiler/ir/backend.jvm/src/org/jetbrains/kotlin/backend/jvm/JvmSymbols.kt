@@ -899,6 +899,9 @@ class JvmSymbols(
         val FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME =
             IrBuiltIns.KOTLIN_INTERNAL_IR_FQN.child(Name.identifier("FlexibleNullability"))
 
+        val FLEXIBLE_MUTABILITY_ANNOTATION_FQ_NAME =
+            IrBuiltIns.KOTLIN_INTERNAL_IR_FQN.child(Name.identifier("FlexibleMutability"))
+
         val RAW_TYPE_ANNOTATION_FQ_NAME =
             IrBuiltIns.KOTLIN_INTERNAL_IR_FQN.child(Name.identifier("RawType"))
     }

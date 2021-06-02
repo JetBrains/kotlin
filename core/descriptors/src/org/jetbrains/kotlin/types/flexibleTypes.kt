@@ -174,12 +174,11 @@ object FlexibleTypeBoundsChecker {
         return possiblePairBound == b.constructor.declarationDescriptor?.fqNameSafe
     }
 
-    // We consider base bounds as not mutable collections
-    fun getBaseBoundFqNameByMutability(a: KotlinType): FqName? {
-        val fqName = a.constructor.declarationDescriptor?.fqNameSafe ?: return null
+    // We consider base bounds as readonly collection interfaces (e.g. kotlin.collections.Iterable).
+    fun getBaseBoundFqNameByMutability(type: KotlinType): FqName? =
+        type.constructor.declarationDescriptor?.fqNameSafe?.let(::getBaseBoundFqNameByMutability)
 
-        if (fqName in baseTypesToMutableEquivalent) return fqName
-
-        return mutableToBaseMap[fqName]
-    }
+    fun getBaseBoundFqNameByMutability(fqName: FqName): FqName? =
+        if (fqName in baseTypesToMutableEquivalent) fqName
+        else mutableToBaseMap[fqName]
 }

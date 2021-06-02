@@ -5,35 +5,80 @@
 
 package org.jetbrains.kotlin.ir.types
 
+import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.FlexibleTypeBoundsChecker
 import org.jetbrains.kotlin.types.model.FlexibleTypeMarker
-import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 
+// TODO: extract properly to JVM-specific modules
 internal interface IrJvmFlexibleType : FlexibleTypeMarker {
-    val lowerBound: SimpleTypeMarker
-    val upperBound: SimpleTypeMarker
+    val lowerBound: IrSimpleType
+    val upperBound: IrSimpleType
 }
 
-internal class IrJvmFlexibleNullabilityType(val irType: IrSimpleType) : IrJvmFlexibleType {
-    override val lowerBound get() = irType.withHasQuestionMark(false)
-    override val upperBound get() = irType.withHasQuestionMark(true)
+private class IrJvmFlexibleTypeImpl(
+    val irType: IrSimpleType,
+    val builtIns: IrBuiltIns,
+    val nullability: Boolean,
+    val mutability: Boolean
+) : IrJvmFlexibleType {
+    override val lowerBound: IrSimpleType
+        get() = irType.buildSimpleType {
+            if (nullability) hasQuestionMark = false
+            // No change in classifier is needed for mutability because type's classifier is set to the lower bound anyway
+            // (see TypeTranslator.translateType).
+            kotlinType = null
+        }
+
+    override val upperBound: IrSimpleType
+        get() = irType.buildSimpleType {
+            if (nullability) hasQuestionMark = true
+            if (mutability) {
+                val klass = classifier?.owner as? IrClass
+                    ?: error("Mutability-flexible type's classifier is not a class: ${irType.render()}")
+                val readonlyClassFqName = FlexibleTypeBoundsChecker.getBaseBoundFqNameByMutability(klass.fqNameWhenAvailable!!)
+                classifier = when (readonlyClassFqName) {
+                    StandardNames.FqNames.iterable -> builtIns.iterableClass
+                    StandardNames.FqNames.iterator -> builtIns.iteratorClass
+                    StandardNames.FqNames.listIterator -> builtIns.listIteratorClass
+                    StandardNames.FqNames.list -> builtIns.listClass
+                    StandardNames.FqNames.collection -> builtIns.collectionClass
+                    StandardNames.FqNames.set -> builtIns.setClass
+                    StandardNames.FqNames.map -> builtIns.mapClass
+                    StandardNames.FqNames.mapEntry -> builtIns.mapEntryClass
+                    else -> error("Mutability-flexible type with unknown classifier: ${irType.render()}, FQ name: $readonlyClassFqName")
+                }
+            }
+            kotlinType = null
+        }
 }
 
-internal val FLEXIBLE_NULLABILITY_FQN = FqName("kotlin.internal.ir").child(Name.identifier("FlexibleNullability"))
+internal val FLEXIBLE_NULLABILITY_FQN = FqName("kotlin.internal.ir.FlexibleNullability")
+internal val FLEXIBLE_MUTABILITY_FQN = FqName("kotlin.internal.ir.FlexibleMutability")
 
-internal fun IrType.isWithFlexibleNullability() =
+internal fun IrType.isWithFlexibleNullability(): Boolean =
     hasAnnotation(FLEXIBLE_NULLABILITY_FQN)
 
-internal fun IrType.asJvmFlexibleType() =
-    when {
-        this is IrSimpleType && isWithFlexibleNullability() ->
-            IrJvmFlexibleNullabilityType(
-                this.removeAnnotations { irCtorCall ->
-                    irCtorCall.type.classFqName == FLEXIBLE_NULLABILITY_FQN
-                } as IrSimpleType
-            )
-        else ->
-            null
-    }
+internal fun IrType.isWithFlexibleMutability(): Boolean =
+    hasAnnotation(FLEXIBLE_MUTABILITY_FQN)
+
+internal fun IrType.asJvmFlexibleType(builtIns: IrBuiltIns): FlexibleTypeMarker? {
+    if (this !is IrSimpleType || annotations.isEmpty()) return null
+
+    val nullability = isWithFlexibleNullability()
+    val mutability = isWithFlexibleMutability()
+    if (!nullability && !mutability) return null
+
+    val baseType = this.removeAnnotations { irCtorCall ->
+        val fqName = irCtorCall.type.classFqName
+        fqName == FLEXIBLE_NULLABILITY_FQN || fqName == FLEXIBLE_MUTABILITY_FQN
+    } as IrSimpleType
+
+    return IrJvmFlexibleTypeImpl(baseType, builtIns, nullability, mutability)
+}

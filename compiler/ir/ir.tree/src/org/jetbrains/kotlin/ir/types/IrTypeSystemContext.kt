@@ -36,15 +36,10 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun KotlinTypeMarker.asSimpleType() = this as? SimpleTypeMarker
 
-    override fun KotlinTypeMarker.asFlexibleType(): FlexibleTypeMarker? {
-        if (this is FlexibleTypeMarker) return this
-
-        if (this is IrType) {
-            val jvmFlexibleType = this.asJvmFlexibleType()
-            if (jvmFlexibleType != null) return jvmFlexibleType
-        }
-
-        return null
+    override fun KotlinTypeMarker.asFlexibleType(): FlexibleTypeMarker? = when (this) {
+        is FlexibleTypeMarker -> this
+        is IrType -> asJvmFlexibleType(irBuiltIns)
+        else -> null
     }
 
     override fun KotlinTypeMarker.isError() = this is IrErrorType

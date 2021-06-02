@@ -231,12 +231,22 @@ abstract class TypeTranslator(
         if (flexibleType.isNullabilityFlexible()) {
             irAnnotations.addSpecialAnnotation(extensions.flexibleNullabilityAnnotationConstructor)
         }
+        if (flexibleType.isMutabilityFlexible()) {
+            irAnnotations.addSpecialAnnotation(extensions.flexibleMutabilityAnnotationConstructor)
+        }
 
         if (flexibleType is RawType) {
             irAnnotations.addSpecialAnnotation(extensions.rawTypeAnnotationConstructor)
         }
 
         return irAnnotations
+    }
+
+    private fun KotlinType.isMutabilityFlexible(): Boolean {
+        val flexibility = unwrap()
+        return flexibility is FlexibleType && flexibility.lowerBound.constructor != flexibility.upperBound.constructor &&
+                FlexibleTypeBoundsChecker.getBaseBoundFqNameByMutability(flexibility.lowerBound) ==
+                FlexibleTypeBoundsChecker.getBaseBoundFqNameByMutability(flexibility.upperBound)
     }
 
     private fun MutableList<IrConstructorCall>.addSpecialAnnotation(irConstructor: IrConstructor?) {

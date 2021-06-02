@@ -362,6 +362,7 @@ abstract class AnnotationCodegen(
 
         internal val internalAnnotations = setOf(
             JvmSymbols.FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME,
+            JvmSymbols.FLEXIBLE_MUTABILITY_ANNOTATION_FQ_NAME,
             JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION,
             JvmSymbols.RAW_TYPE_ANNOTATION_FQ_NAME
         )

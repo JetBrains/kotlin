@@ -57,7 +57,7 @@ class KRaw : JRaw {
     return <this>.#$$delegate_0.returnsRawGenericOut()
   }
 
-  override fun returnsRawList(): @FlexibleNullability @RawType MutableList<Any?>? {
+  override fun returnsRawList(): @FlexibleNullability @FlexibleMutability @RawType MutableList<Any?>? {
     return <this>.#$$delegate_0.returnsRawList()
   }
 
@@ -73,7 +73,7 @@ class KRaw : JRaw {
     <this>.#$$delegate_0.takesRawGenericOut(g = g)
   }
 
-  override fun takesRawList(list: @FlexibleNullability @RawType MutableList<Any?>?) {
+  override fun takesRawList(list: @FlexibleNullability @FlexibleMutability @RawType MutableList<Any?>?) {
     <this>.#$$delegate_0.takesRawList(list = list)
   }
 

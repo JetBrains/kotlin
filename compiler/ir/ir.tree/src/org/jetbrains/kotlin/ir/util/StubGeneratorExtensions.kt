@@ -38,6 +38,9 @@ open class StubGeneratorExtensions {
     open val flexibleNullabilityAnnotationConstructor: IrConstructor?
         get() = null
 
+    open val flexibleMutabilityAnnotationConstructor: IrConstructor?
+        get() = null
+
     open val enhancedNullabilityAnnotationConstructor: IrConstructor?
         get() = null
 

@@ -159,9 +159,6 @@ open class JvmGeneratorExtensionsImpl(private val generateFacades: Boolean = tru
     override val shouldPreventDeprecatedIntegerValueTypeLiteralConversion: Boolean
         get() = true
 
-    private val flexibleNullabilityAnnotationClass =
-        createSpecialAnnotationClass(JvmSymbols.FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME, kotlinIrInternalPackage)
-
     private val rawTypeAnnotationClass =
         createSpecialAnnotationClass(JvmSymbols.RAW_TYPE_ANNOTATION_FQ_NAME, kotlinIrInternalPackage)
 
@@ -170,7 +167,10 @@ open class JvmGeneratorExtensionsImpl(private val generateFacades: Boolean = tru
         createSpecialAnnotationClass(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION, kotlinJvmInternalPackage)
 
     override val flexibleNullabilityAnnotationConstructor: IrConstructor =
-        flexibleNullabilityAnnotationClass.constructors.single()
+        createSpecialAnnotationClass(JvmSymbols.FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME, kotlinIrInternalPackage).constructors.single()
+
+    override val flexibleMutabilityAnnotationConstructor: IrConstructor =
+        createSpecialAnnotationClass(JvmSymbols.FLEXIBLE_MUTABILITY_ANNOTATION_FQ_NAME, kotlinIrInternalPackage).constructors.single()
 
     override val enhancedNullabilityAnnotationConstructor: IrConstructor =
         enhancedNullabilityAnnotationClass.constructors.single()
