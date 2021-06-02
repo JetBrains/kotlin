@@ -187,6 +187,7 @@ class HierarchicalPropertyCommonizationTest : AbstractInlineSourcesCommonization
             "(a, b)", """
                 expect class AB expect constructor()
                 expect typealias TA_AB = AB
+                // https://youtrack.jetbrains.com/issue/KT-47100
                 expect val x: AB
         """.trimIndent()
         )
