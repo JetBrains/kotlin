@@ -84,10 +84,14 @@ abstract class AbstractJvmDescriptorMangler(private val mainDetector: MainFuncti
             return if (isJavaField) MangleConstant.JAVA_FIELD_SUFFIX else null
         }
 
-        override fun visitModuleDeclaration(descriptor: ModuleDescriptor, data: Nothing?) {} // SKIP in case of synthetic properties
+        override fun visitModuleDeclaration(descriptor: ModuleDescriptor, data: Nothing?) {
+            // In general, having module descriptor as `containingDeclaration` for regular declaration is considered an error (in JS/Native)
+            // because there should be `PackageFragmentDescriptor` in between
+            // but on JVM there is `SyntheticJavaPropertyDescriptor` whose parent is a module. So let just skip it.
+        }
     }
 
-    override fun getExportChecker(compatibleMode: Boolean): KotlinExportChecker<DeclarationDescriptor> = exportChecker // error("Should not be reached")
+    override fun getExportChecker(compatibleMode: Boolean): KotlinExportChecker<DeclarationDescriptor> = exportChecker
 
     override fun getMangleComputer(mode: MangleMode): KotlinMangleComputer<DeclarationDescriptor> {
         return JvmDescriptorManglerComputer(StringBuilder(256), mainDetector, mode)
