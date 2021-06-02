@@ -49,8 +49,7 @@ abstract class IrBindablePublicSymbolBase<out D : DeclarationDescriptor, B : IrS
 
     private var _owner: B? = null
     override val owner: B
-        get() = _owner ?:
-        throw IllegalStateException("Symbol for $signature is unbound")
+        get() = _owner ?: throw IllegalStateException("Symbol for $signature is unbound")
 
     override fun bind(owner: B) {
         if (_owner == null) {
