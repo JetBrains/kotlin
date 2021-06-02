@@ -44,7 +44,7 @@ interface IrCallGenerator {
         codegen: ExpressionCodegen,
         blockInfo: BlockInfo
     ) {
-        codegen.gen(argumentExpression, parameterType, irValueParameter.type, blockInfo)
+        with(codegen) { gen(argumentExpression, parameterType, irValueParameter.realType, blockInfo) }
     }
 
     object DefaultCallGenerator : IrCallGenerator
