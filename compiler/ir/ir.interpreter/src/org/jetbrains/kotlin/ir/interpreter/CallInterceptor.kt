@@ -137,7 +137,10 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
         when {
             Wrapper.mustBeHandledWithWrapper(irClass) || irClass.fqNameWhenAvailable!!.startsWith(Name.identifier("java")) -> {
                 Wrapper.getConstructorMethod(irConstructor).invokeMethod(irConstructor, args)
-                if (constructorCall !is IrConstructorCall) (receiver as Common).superWrapperClass = callStack.popState() as Wrapper
+                when (constructorCall) {
+                    is IrConstructorCall -> callStack.setState(constructorCall.getThisReceiver(), callStack.popState())
+                    else -> (receiver as Common).superWrapperClass = callStack.popState() as Wrapper
+                }
             }
             irClass.defaultType.isArray() || irClass.defaultType.isPrimitiveArray() -> {
                 // array constructor doesn't have body so must be treated separately

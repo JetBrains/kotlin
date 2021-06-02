@@ -205,7 +205,7 @@ class IrInterpreter private constructor(
             .forEach { callStack.addVariable(Variable(it.symbol, KTypeState(call.getTypeArgument(it.index)!!, irBuiltIns.anyClass.owner))) }
 
         // 5. load up values onto stack
-        if (dispatchReceiver == null && extensionReceiver == null && irFunction.isLocal) callStack.copyUpValuesFromPreviousFrame()
+        if (irFunction.isLocal) callStack.copyUpValuesFromPreviousFrame()
         if (dispatchReceiver is StateWithClosure) callStack.loadUpValues(dispatchReceiver)
         if (extensionReceiver is StateWithClosure) callStack.loadUpValues(extensionReceiver)
 
@@ -254,6 +254,7 @@ class IrInterpreter private constructor(
 
     @Suppress("UNUSED_PARAMETER")
     private fun interpretConstructor(constructor: IrConstructor) {
+        callStack.pushState(callStack.getState(constructor.parentAsClass.thisReceiver!!.symbol))
         callStack.dropFrameAndCopyResult()
     }
 
@@ -291,7 +292,6 @@ class IrInterpreter private constructor(
         superReceiver?.let { callStack.addVariable(Variable(it, objectState)) }
 
         callInterceptor.interceptConstructor(constructorCall, valueArguments) {
-            callStack.pushState(objectState)
             callStack.addInstruction(CompoundInstruction(constructor))
         }
     }

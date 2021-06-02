@@ -200,11 +200,17 @@ private fun unfoldBlock(block: IrBlock, callStack: CallStack) {
 }
 
 private fun unfoldStatements(statements: List<IrStatement>, callStack: CallStack) {
+    fun Int.isLastIndex(): Boolean = statements.size - 1 == this
+
     for (i in statements.indices.reversed()) {
         when (val statement = statements[i]) {
             is IrClass -> if (!statement.isLocal) TODO("Only local classes are supported")
             is IrFunction -> if (!statement.isLocal) TODO("Only local functions are supported")
-            is IrExpression -> statement.handleAndDropResult(callStack, dropOnlyUnit = true)
+            is IrExpression ->
+                when {
+                    i.isLastIndex() -> callStack.addInstruction(CompoundInstruction(statement))
+                    else -> statement.handleAndDropResult(callStack, dropOnlyUnit = true)
+                }
             else -> callStack.addInstruction(CompoundInstruction(statement))
         }
     }
