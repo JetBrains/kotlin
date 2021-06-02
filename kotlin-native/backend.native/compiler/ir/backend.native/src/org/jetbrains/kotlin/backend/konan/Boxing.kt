@@ -31,10 +31,17 @@ private fun KonanSymbols.getTypeConversionImpl(
 ): IrSimpleFunctionSymbol? {
     if (actualInlinedClass == expectedInlinedClass) return null
 
+    // TODO: this is to workaround an issue which is most probably caused by
+    //  a deep copying in the the Compose plugin.
+    // Don't push the fix. It can't be correct.
+    if (actualInlinedClass?.fqNameForIrSerialization == expectedInlinedClass?.fqNameForIrSerialization) return null
+
     return when {
         actualInlinedClass == null && expectedInlinedClass == null -> null
         actualInlinedClass != null && expectedInlinedClass == null -> context.getBoxFunction(actualInlinedClass)
         actualInlinedClass == null && expectedInlinedClass != null -> context.getUnboxFunction(expectedInlinedClass)
+        actualInlinedClass?.fqNameForIrSerialization == expectedInlinedClass?.fqNameForIrSerialization ->
+            error("TYPE MISMATCH:\n$actualInlinedClass\n$expectedInlinedClass\n${actualInlinedClass?.symbol}\n${expectedInlinedClass?.symbol}\n${actualInlinedClass?.symbol?.signature}\n${expectedInlinedClass?.symbol?.signature}")
         else -> error("actual type is ${actualInlinedClass?.fqNameForIrSerialization}, expected ${expectedInlinedClass?.fqNameForIrSerialization}")
     }?.symbol
 }
