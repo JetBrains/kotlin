@@ -18,9 +18,14 @@ object StubRenderer {
             val kDoc = if (shouldExportKDoc) {
                 descriptor?.extractKDocString()?.let {
                     if (it.isNotEmpty()) {  // sometimes `findDoc` return empty string; is it a bug?
+                        // Nested comment is allowed inside of preformatted ``` block in kdoc but not in ObjC
+                        val kdocClean =
+                                if (it.startsWith("/**") && it.endsWith("*/"))
+                                    "/**${it.substring(3, it.length - 2).replace("*/", "**").replace("/*", "**")}*/"
+                                else it
                         +"" // Probably makes the output more readable.
-                        it.lines().forEach { it.trim().let {
-                                if (it[0] == '*') +" $it"
+                        kdocClean.lines().forEach { it.trim().let {
+                                if (it.isNotEmpty() && it[0] == '*') +" $it"
                                 else +"$it"
                             }
                         }
