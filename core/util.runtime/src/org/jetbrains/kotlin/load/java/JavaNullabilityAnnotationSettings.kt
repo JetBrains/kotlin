@@ -37,6 +37,11 @@ val nullabilityAnnotationSettings = mapOf(
         sinceVersion = KotlinVersion(1, 6),
         reportLevelAfter = ReportLevel.STRICT
     ),
+    FqName("io.reactivex.rxjava3.annotations") to JavaNullabilityAnnotationsStatus(
+        reportLevelBefore = ReportLevel.WARN,
+        sinceVersion = KotlinVersion(1, 7),
+        reportLevelAfter = ReportLevel.STRICT
+    ),
 )
 
 private val jsr305Settings = JavaNullabilityAnnotationsStatus(

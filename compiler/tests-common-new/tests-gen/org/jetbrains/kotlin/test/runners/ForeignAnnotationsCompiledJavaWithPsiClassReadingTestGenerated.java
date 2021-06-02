@@ -98,6 +98,30 @@ public class ForeignAnnotationsCompiledJavaWithPsiClassReadingTestGenerated exte
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/rxjava.kt");
         }
 
+        @Test
+        @TestMetadata("rxjava3Default.kt")
+        public void testRxjava3Default() throws Exception {
+            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/rxjava3Default.kt");
+        }
+
+        @Test
+        @TestMetadata("rxjava3Errors.kt")
+        public void testRxjava3Errors() throws Exception {
+            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/rxjava3Errors.kt");
+        }
+
+        @Test
+        @TestMetadata("rxjava3Ignore.kt")
+        public void testRxjava3Ignore() throws Exception {
+            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/rxjava3Ignore.kt");
+        }
+
+        @Test
+        @TestMetadata("rxjava3Warnings.kt")
+        public void testRxjava3Warnings() throws Exception {
+            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/rxjava3Warnings.kt");
+        }
+
         @Nested
         @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305")
         @TestDataPath("$PROJECT_ROOT")
