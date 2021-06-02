@@ -106,4 +106,89 @@ class HierarchicalPropertyCommonizationTest : AbstractInlineSourcesCommonization
         """.trimIndent()
         )
     }
+
+    fun `test typeAliased property and class typed property`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+            simpleSingleSourceTarget(
+                "a", """
+                    class AB
+                    typealias TA = AB
+                    val x: TA = TA()
+            """.trimIndent()
+            )
+
+            simpleSingleSourceTarget(
+                "b", """
+                    class AB
+                    val x: AB = AB()
+                """.trimIndent()
+            )
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                expect class AB expect constructor()
+                expect val x: AB
+        """.trimIndent()
+        )
+    }
+
+    fun `test class typed property and typeAliased property`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+            simpleSingleSourceTarget(
+                "a", """
+                    class AB
+                    val x: AB = AB()
+            """.trimIndent()
+            )
+
+            simpleSingleSourceTarget(
+                "b", """
+                    class AB
+                    typealias TA = AB
+                    val x: TA = TA
+                """.trimIndent()
+            )
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                expect class AB expect constructor()
+                expect val x: AB
+        """.trimIndent()
+        )
+    }
+
+
+    fun `test single typeAliased property and double typeAliased property`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+            simpleSingleSourceTarget(
+                "a", """
+                    class AB
+                    typealias TA_AB = AB
+                    val x: TA_AB = TA_AB()
+            """.trimIndent()
+            )
+
+            simpleSingleSourceTarget(
+                "b", """
+                    class AB
+                    typealias TA_AB = AB
+                    typealias TA_B = TA_AB
+                    val x: TA_B = TA_B()
+                """.trimIndent()
+            )
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                expect class AB expect constructor()
+                expect typealias TA_AB = AB
+                expect val x: AB
+        """.trimIndent()
+        )
+    }
 }

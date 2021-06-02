@@ -189,8 +189,9 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
         mockTAType("kotlin/sequences/SequenceBuilder") { mockClassType("kotlin/sequences/SequenceScope") }
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun taTypesInKotlinPackageWithDifferentNames() = doTestFailure(
+    @Test
+    fun taTypesInKotlinPackageWithDifferentNames() = doTestSuccess(
+        expected = mockClassType("kotlin/sequences/SequenceScope"),
         mockTAType("kotlin/sequences/SequenceBuilder") { mockClassType("kotlin/sequences/SequenceScope") },
         mockTAType("kotlin/sequences/SequenceBuilder") { mockClassType("kotlin/sequences/SequenceScope") },
         mockTAType("kotlin/sequences/FictitiousTypeAlias") { mockClassType("kotlin/sequences/SequenceScope") }
@@ -214,8 +215,9 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
         mockTAType("kotlinx/cinterop/CArrayPointer") { mockClassType("kotlinx/cinterop/CPointer") }
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun taTypesInKotlinxPackageWithDifferentNames() = doTestFailure(
+    @Test()
+    fun taTypesInKotlinxPackageWithDifferentNames() = doTestSuccess(
+        expected = mockClassType("kotlinx/cinterop/CPointer"),
         mockTAType("kotlinx/cinterop/CArrayPointer") { mockClassType("kotlinx/cinterop/CPointer") },
         mockTAType("kotlinx/cinterop/CArrayPointer") { mockClassType("kotlinx/cinterop/CPointer") },
         mockTAType("kotlinx/cinterop/FictitiousTypeAlias") { mockClassType("kotlinx/cinterop/CPointer") }
@@ -265,11 +267,11 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
         mockTAType("org/sample/FooAlias") { mockClassType("org/sample/Foo") }
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun taTypesInUserPackageWithDifferentNames() = doTestFailure(
+    @Test
+    fun taTypesInUserPackageWithDifferentNames() = doTestSuccess(
+        expected = mockClassType("org/sample/Foo"),
         mockTAType("org/sample/FooAlias") { mockClassType("org/sample/Foo") },
         mockTAType("org/sample/BarAlias") { mockClassType("org/sample/Foo") },
-        shouldFailOnFirstVariant = true
     )
 
     @Test
@@ -402,8 +404,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
     fun taTypesInUserPackageWithDifferentNullability1() = doTestFailure(
         mockTAType("org/sample/FooAlias", nullable = false) { mockClassType("org/sample/Foo") },
         mockTAType("org/sample/FooAlias", nullable = false) { mockClassType("org/sample/Foo") },
-        mockTAType("org/sample/FooAlias", nullable = true) { mockClassType("org/sample/Foo") },
-        shouldFailOnFirstVariant = true
+        mockTAType("org/sample/FooAlias", nullable = true) { mockClassType("org/sample/Foo") }
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
@@ -411,7 +412,6 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
         mockTAType("org/sample/FooAlias", nullable = true) { mockClassType("org/sample/Foo") },
         mockTAType("org/sample/FooAlias", nullable = true) { mockClassType("org/sample/Foo") },
         mockTAType("org/sample/FooAlias", nullable = false) { mockClassType("org/sample/Foo") },
-        shouldFailOnFirstVariant = true
     )
 
     private fun prepareCache(variants: Array<out CirClassOrTypeAliasType>) {

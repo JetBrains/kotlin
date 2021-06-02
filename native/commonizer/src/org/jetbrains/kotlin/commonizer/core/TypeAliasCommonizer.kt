@@ -52,9 +52,6 @@ private class TypeAliasShortCircuitingCommonizer(
         expandedType = expandedType.result as CirClassType
     )
 
-    val resultOrNull: CirTypeAlias?
-        get() = if (hasResult) commonizationResult() else null
-
     override fun initialize(first: CirTypeAlias) {
         name = first.name
     }

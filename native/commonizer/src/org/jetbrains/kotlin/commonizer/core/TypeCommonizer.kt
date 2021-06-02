@@ -14,25 +14,57 @@ import org.jetbrains.kotlin.commonizer.utils.isUnderKotlinNativeSyntheticPackage
 import org.jetbrains.kotlin.descriptors.Visibility
 
 class TypeCommonizer(private val classifiers: CirKnownClassifiers) : AbstractStandardCommonizer<CirType, CirType>() {
-    private lateinit var wrapped: Commonizer<*, CirType>
+    private var typeCommonizer: AbstractStandardCommonizer<*, CirType>? = null
+    private var underlyingTypeCommonizer: TypeCommonizer? = null
 
-    override fun commonizationResult() = wrapped.result
+    override fun commonizationResult() = typeCommonizer?.resultOrNull
+        ?: underlyingTypeCommonizer?.result
+        ?: typeCommonizer?.result
+        ?: failInErrorState()
 
     override fun initialize(first: CirType) {
         @Suppress("UNCHECKED_CAST")
-        wrapped = when (first) {
+        typeCommonizer = when (first) {
             is CirClassType -> ClassTypeCommonizer(classifiers)
             is CirTypeAliasType -> TypeAliasTypeCommonizer(classifiers)
             is CirTypeParameterType -> TypeParameterTypeCommonizer()
             is CirFlexibleType -> FlexibleTypeCommonizer(classifiers)
-        } as Commonizer<*, CirType>
+        } as AbstractStandardCommonizer<*, CirType>
+
+        if (first is CirTypeAliasType) {
+            underlyingTypeCommonizer = TypeCommonizer(classifiers)
+        }
     }
 
-    override fun doCommonizeWith(next: CirType) = when (next) {
-        is CirClassType -> (wrapped as? ClassTypeCommonizer)?.commonizeWith(next) == true
-        is CirTypeAliasType -> (wrapped as? TypeAliasTypeCommonizer)?.commonizeWith(next) == true
-        is CirTypeParameterType -> (wrapped as? TypeParameterTypeCommonizer)?.commonizeWith(next) == true
-        is CirFlexibleType -> (wrapped as? FlexibleTypeCommonizer)?.commonizeWith(next) == true
+    override fun doCommonizeWith(next: CirType): Boolean {
+        return when (next) {
+            is CirClassType -> doCommonizeWithClassType(next)
+            is CirTypeAliasType -> doCommonizeWithTypeAliasType(next)
+            is CirTypeParameterType -> (typeCommonizer as? TypeParameterTypeCommonizer)?.commonizeWith(next) == true
+            is CirFlexibleType -> (typeCommonizer as? FlexibleTypeCommonizer)?.commonizeWith(next) == true
+        }
+    }
+
+    private fun doCommonizeWithClassType(next: CirClassType): Boolean {
+        if ((typeCommonizer as? ClassTypeCommonizer) == null) {
+            typeCommonizer = null
+        }
+
+        val firstAnswer = (typeCommonizer as? ClassTypeCommonizer)?.commonizeWith(next) == true
+        val secondAnswer = underlyingTypeCommonizer?.commonizeWith(next) == true
+        return firstAnswer || secondAnswer
+    }
+
+    private fun doCommonizeWithTypeAliasType(next: CirTypeAliasType): Boolean {
+        if (typeCommonizer != null && underlyingTypeCommonizer == null) {
+            underlyingTypeCommonizer = TypeCommonizer(classifiers)
+            underlyingTypeCommonizer?.commonizeWith(typeCommonizer?.resultOrNull ?: return false)
+            typeCommonizer = null
+        }
+
+        val firstAnswer = (typeCommonizer as? TypeAliasTypeCommonizer)?.commonizeWith(next) == true
+        val secondAnswer = underlyingTypeCommonizer?.commonizeWith(next.underlyingType) == true
+        return firstAnswer || secondAnswer
     }
 }
 

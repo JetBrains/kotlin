@@ -241,4 +241,33 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
             """.trimIndent()
         )
     }
+
+    fun `test typeAlias chain with nullability 2`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+            simpleSingleSourceTarget(
+                "a", """
+                    class AB
+                    typealias V = AB
+                    typealias Y = V?
+                """.trimIndent()
+            )
+
+            simpleSingleSourceTarget(
+                "b", """
+                    class AB
+                    typealias V = AB
+                    typealias Y = V
+                """.trimIndent()
+            )
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                expect class AB expect constructor()
+                expect typealias V = AB
+                expect class Y
+            """.trimIndent()
+        )
+    }
 }
