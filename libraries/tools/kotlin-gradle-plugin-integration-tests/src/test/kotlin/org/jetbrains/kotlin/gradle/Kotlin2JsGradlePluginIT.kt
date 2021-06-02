@@ -832,33 +832,6 @@ abstract class AbstractKotlin2JsGradlePluginIT(val irBackend: Boolean) : BaseGra
     }
 
     @Test
-    fun testUpdatingPackageJsonOnDependenciesClash() = with(Project("kotlin-js-dependencies-clash")) {
-        setupWorkingDir()
-        gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
-
-        fun assertFileVersion(
-            packageJson: PackageJson,
-            dependency: String
-        ) {
-            val version = packageJson.dependencies[dependency]!!
-            assertTrue("${packageJson.name} must have $dependency with file version, but $version found") {
-                version.isFileVersion()
-            }
-        }
-
-        build("packageJson", "rootPackageJson", "kotlinNpmInstall") {
-            assertSuccessful()
-
-            val basePackageJson = getSubprojectPackageJson("base")
-            val libPackageJson = getSubprojectPackageJson("lib")
-
-            val dependency = "kotlinx-coroutines-core"
-            assertFileVersion(basePackageJson, dependency)
-            assertFileVersion(libPackageJson, dependency)
-        }
-    }
-
-    @Test
     fun testYarnResolution() = with(Project("kotlin-js-yarn-resolutions")) {
         setupWorkingDir()
         gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
