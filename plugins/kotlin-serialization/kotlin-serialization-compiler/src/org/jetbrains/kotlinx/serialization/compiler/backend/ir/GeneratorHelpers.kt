@@ -717,6 +717,18 @@ interface IrBuilderExtension {
         )
     }
 
+    fun createClassReference(irClass: IrClass, startOffset: Int, endOffset: Int): IrClassReference {
+        val classType = irClass.descriptor.toSimpleType(false)
+        val classSymbol = irClass.symbol
+        return IrClassReferenceImpl(
+            startOffset,
+            endOffset,
+            compilerContext.irBuiltIns.kClassClass.starProjectedType,
+            classSymbol,
+            classType.approximateJvmErasure.toIrType()
+        )
+    }
+
     // It is impossible to use star projections right away, because Array<Int>::class differ from Array<String>::class :
     // detailed information about type arguments required for class references on jvm
     private val KotlinType.approximateJvmErasure: KotlinType

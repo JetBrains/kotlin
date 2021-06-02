@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.util.collectionUtils.filterIsInstanceAnd
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCompanionCodegen
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializer
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
@@ -58,7 +59,7 @@ class SerializableCompanionIrGenerator(
             )
         ) ?: return
 
-        val irSerializableClass = compilerContext.referenceClass(serializableDescriptor.fqNameSafe)?.owner ?: return
+        val irSerializableClass = if (irClass.isCompanion) irClass.parentAsClass else irClass
         val serializableWithAlreadyPresent = irSerializableClass.annotations.any {
             it.symbol.descriptor.constructedClass.fqNameSafe == annotationMarkerClass.fqNameSafe
         }
@@ -66,12 +67,23 @@ class SerializableCompanionIrGenerator(
 
         val annotationCtor = compilerContext.referenceConstructors(annotationMarkerClass.fqNameSafe).single { it.owner.isPrimary }
         val annotationType = annotationMarkerClass.defaultType.toIrType()
+
+        val serializerIrClass = if (serializableDescriptor.isInternalSerializable) {
+            // internally generated serializer always declared inside serializable class
+            irSerializableClass.declarations
+                .filterIsInstanceAnd<IrClass> { it.name == serializer.name }
+                .singleOrNull() ?: throw Exception("No class with name ${serializer.fqNameSafe}")
+        } else {
+            // FIXME referenceClass not supports local classes so it should be replaced in future
+            compilerContext.referenceClass(serializer.fqNameSafe)!!.owner
+        }
+
+
         val annotationCtorCall = IrConstructorCallImpl.fromSymbolDescriptor(startOffset, endOffset, annotationType, annotationCtor).apply {
-            val serializerType = serializer.toSimpleType(false)
             putValueArgument(
                 0,
                 createClassReference(
-                    serializerType,
+                    serializerIrClass,
                     startOffset,
                     endOffset
                 )

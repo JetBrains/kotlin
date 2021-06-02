@@ -26,8 +26,8 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
                     "Make sure that you've setup your buildscript correctly and re-import project."
         )
         MAP.put(
-            SerializationErrors.LOCAL_CLASSES_NOT_SUPPORTED,
-            "Local classes and anonymous objects can not be serializable."
+            SerializationErrors.ANONYMOUS_OBJECTS_NOT_SUPPORTED,
+            "Anonymous objects or contained in it classes can not be serializable."
         )
         MAP.put(
             SerializationErrors.INNER_CLASSES_NOT_SUPPORTED,
@@ -72,6 +72,11 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
             "Class ''{1}'', which is serializer for type ''{2}'', is applied here to type ''{0}''. This may lead to errors or incorrect behavior.",
             Renderers.RENDER_TYPE,
             Renderers.RENDER_TYPE,
+            Renderers.RENDER_TYPE
+        )
+        MAP.put(
+            SerializationErrors.LOCAL_SERIALIZER_USAGE,
+            "Class ''{0}'' can't be used as a serializer since it is local",
             Renderers.RENDER_TYPE
         )
         MAP.put(

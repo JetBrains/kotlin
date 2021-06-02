@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.util.collectionUtils.filterIsInstanceAnd
 import org.jetbrains.kotlin.utils.getOrPutNullable
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.*
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.serializableAnnotationIsUseless
@@ -172,10 +173,15 @@ class SerializableIrGenerator(
 
     private fun IrBlockBodyBuilder.getStaticSerialDescriptorExpr(): IrExpression {
         val serializer = serializableDescriptor.classSerializer!!
-        val serialDescriptorGetter = compilerContext.referenceClass(serializer.fqNameSafe)?.getPropertyGetter(SERIAL_DESC_FIELD)
-            ?: throw Exception("No class with name ${serializer.fqNameSafe}")
+        // internally generated serializer always declared inside serializable class
+        val serializerIrClass = irClass.declarations
+            .filterIsInstanceAnd<IrClass> { it.name == serializer.name }
+            .singleOrNull() ?: throw Exception("No class with name ${serializer.fqNameSafe}")
+
+        val serialDescriptorGetter =
+            serializerIrClass.getPropertyGetter(SERIAL_DESC_FIELD)!!
         return irGet(
-            serialDescriptorGetter.owner.returnType,
+            serializerIrClass.defaultType,
             irGetObject(serializer),
             serialDescriptorGetter.owner.symbol
         )

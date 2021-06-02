@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.isInlineClass
@@ -458,6 +460,15 @@ open class SerializerIrGenerator(
             val ctor: IrConstructorSymbol = serializableSyntheticConstructor(serializableIrClass)
             +irReturn(irInvoke(null, ctor, typeArgs, args))
         } else {
+            if (DescriptorUtils.isLocal(serializerDescriptor)) {
+                // if the serializer is local, then the serializable class too, since they must be in the same scope
+                throw CompilationException(
+                    "External serializer class `${serializerDescriptor.fqNameSafe}` is local. Local external serializers are not supported yet.",
+                    null,
+                    null
+                )
+            }
+
             generateGoldenMaskCheck(bitMasks, properties, localSerialDesc.get())
 
             val ctor: IrConstructorSymbol =

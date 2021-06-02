@@ -29,6 +29,7 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.common.bodyPropertie
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializerOrContextUnchecked
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.primaryConstructorPropertiesDescriptorsMap
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.serializableAnnotationFqName
 
 internal val SERIALIZABLE_PROPERTIES: WritableSlice<ClassDescriptor, SerializableProperties> = Slices.createSimpleSlice()
 
@@ -110,7 +111,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
             return false
         }
 
-        if (!descriptor.annotations.hasAnnotation(SerializationAnnotations.serializableAnnotationFqName)) return false
+        if (!descriptor.annotations.hasAnnotation(serializableAnnotationFqName)) return false
 
         if (!serializationPluginEnabledOn(descriptor)) {
             trace.reportOnSerializableAnnotation(descriptor, SerializationErrors.PLUGIN_IS_NOT_ENABLED)
@@ -118,8 +119,8 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         }
 
 
-        if (DescriptorUtils.isLocal(descriptor)) {
-            trace.reportOnSerializableAnnotation(descriptor, SerializationErrors.LOCAL_CLASSES_NOT_SUPPORTED)
+        if (descriptor.isAnonymousObjectOrContained) {
+            trace.reportOnSerializableAnnotation(descriptor, SerializationErrors.ANONYMOUS_OBJECTS_NOT_SUPPORTED)
             return false
         }
 
@@ -140,7 +141,11 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
             }
             return false
         }
-        if (!descriptor.hasSerializableAnnotationWithoutArgs) return false
+        if (!descriptor.hasSerializableAnnotationWithoutArgs) {
+            // defined custom serializer
+            checkClassWithCustomSerializer(descriptor, declaration, trace)
+            return false
+        }
 
         if (descriptor.serializableAnnotationIsUseless) {
             trace.reportOnSerializableAnnotation(descriptor, SerializationErrors.SERIALIZABLE_ANNOTATION_IGNORED)
@@ -158,9 +163,27 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         return true
     }
 
+    private fun checkClassWithCustomSerializer(descriptor: ClassDescriptor, declaration: KtDeclaration, trace: BindingTrace) {
+        val annotationPsi = descriptor.findSerializableAnnotationDeclaration()
+        checkCustomSerializerMatch(descriptor.module, descriptor.defaultType, descriptor, annotationPsi, trace, declaration)
+        checkCustomSerializerIsNotLocal(descriptor.module, descriptor, trace, declaration)
+    }
+
+    private val ClassDescriptor.isAnonymousObjectOrContained: Boolean
+        get() {
+            var current: DeclarationDescriptor? = this
+            while (current != null) {
+                if (DescriptorUtils.isAnonymousObject(current)) {
+                    return true
+                }
+                current = current.containingDeclaration
+            }
+            return false
+        }
+
     private fun ClassDescriptor.isSerializableEnumWithMissingSerializer(): Boolean {
         if (kind != ClassKind.ENUM_CLASS) return false
-        if (annotations.hasAnnotation(SerializationAnnotations.serializableAnnotationFqName)) return false
+        if (annotations.hasAnnotation(serializableAnnotationFqName)) return false
         if (annotations.hasAnySerialAnnotation) return true
         return enumEntries().any { (it.annotations.hasAnySerialAnnotation) }
     }
@@ -173,7 +196,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
     }
 
     private fun buildSerializableProperties(descriptor: ClassDescriptor, trace: BindingTrace): SerializableProperties? {
-        if (!descriptor.annotations.hasAnnotation(SerializationAnnotations.serializableAnnotationFqName)) return null
+        if (!descriptor.annotations.hasAnnotation(serializableAnnotationFqName)) return null
         if (!descriptor.isInternalSerializable) return null
         if (descriptor.hasCompanionObjectAsSerializer) return null // customized by user
 
@@ -234,6 +257,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
             if (serializer != null) {
                 val element = ktType?.typeElement
                 checkCustomSerializerMatch(it.module, it.type, it.descriptor, element, trace, propertyPsi)
+                checkCustomSerializerIsNotLocal(it.module, it.descriptor, trace, propertyPsi)
                 checkSerializerNullability(it.type, serializer.defaultType, element, trace, propertyPsi)
                 generatorContextForAnalysis.checkTypeArguments(it.module, it.type, element, trace, propertyPsi)
             } else {
@@ -286,6 +310,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         val serializer = findTypeSerializerOrContextUnchecked(module, type)
         if (serializer != null) {
             checkCustomSerializerMatch(module, type, type, element, trace, fallbackElement)
+            checkCustomSerializerIsNotLocal(module, type, trace, fallbackElement)
             checkSerializerNullability(type, serializer.defaultType, element, trace, fallbackElement)
             checkTypeArguments(module, type, element, trace, fallbackElement)
         } else {
@@ -313,6 +338,27 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
                     serializerForType
                 )
             )
+    }
+
+    private fun checkCustomSerializerIsNotLocal(
+        module: ModuleDescriptor,
+        declaration: Annotated,
+        trace: BindingTrace,
+        declarationElement: PsiElement
+    ) {
+        val serializerType = declaration.annotations.serializableWith(module) ?: return
+        val serializerDescriptor = serializerType.toClassDescriptor ?: return
+
+        if (DescriptorUtils.isLocal(serializerDescriptor)) {
+            val element = declaration.findSerializableAnnotationDeclaration() ?: declarationElement
+
+            trace.report(
+                SerializationErrors.LOCAL_SERIALIZER_USAGE.on(
+                    element,
+                    serializerType
+                )
+            )
+        }
     }
 
     private fun checkSerializerNullability(

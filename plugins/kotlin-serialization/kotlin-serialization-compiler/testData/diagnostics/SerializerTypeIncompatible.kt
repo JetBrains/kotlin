@@ -14,6 +14,9 @@ object BazSerializer: KSerializer<Baz>
 @Serializer(forClass = Baz::class)
 object NullableBazSerializer: KSerializer<Baz?>
 
+<!SERIALIZER_TYPE_INCOMPATIBLE!>@Serializable(with = BazSerializer::class)<!>
+class Biz(val i: Int)
+
 @Serializable
 class Foo(@Serializable(with = BazSerializer::class) val i: <!SERIALIZER_TYPE_INCOMPATIBLE!>Bar<!>)
 
