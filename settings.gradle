@@ -311,6 +311,7 @@ include ":prepare:ide-plugin-dependencies:android-extensions-compiler-plugin-for
         ":prepare:ide-plugin-dependencies:lombok-compiler-plugin-for-ide",
         ":prepare:ide-plugin-dependencies:tests-common-tests-for-ide",
         ":prepare:ide-plugin-dependencies:compiler-components-for-jps",
+        ":prepare:ide-plugin-dependencies:kotlin-compiler-testdata-for-ide",
         ":prepare:ide-plugin-dependencies:kotlin-compiler-tests-for-ide"
 
 if (buildProperties.getOrNull("attachedIntellijVersion") != null) {
