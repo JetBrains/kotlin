@@ -23,6 +23,12 @@ abstract class InjectedAnotherStubTypeConstraintPosition<T>(private val builderI
     override fun toString(): String = "Injected from $builderInferenceLambdaOfInjectedStubType builder inference call"
 }
 
+abstract class BuilderInferenceSubstitutionConstraintPosition<L, I>(private val builderInferenceLambda: L, val initialConstraint: I) :
+    ConstraintPosition(), OnlyInputTypeConstraintPosition {
+    override fun toString(): String = "Incorporated builder inference constraint $initialConstraint " +
+            "into $builderInferenceLambda call"
+}
+
 abstract class ExpectedTypeConstraintPosition<T>(val topLevelCall: T) : ConstraintPosition(), OnlyInputTypeConstraintPosition {
     override fun toString(): String = "ExpectedType for call $topLevelCall"
 }

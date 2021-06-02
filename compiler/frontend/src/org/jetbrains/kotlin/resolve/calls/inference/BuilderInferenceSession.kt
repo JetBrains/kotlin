@@ -329,22 +329,24 @@ class BuilderInferenceSession(
         val callSubstitutor = storage.buildResultingSubstitutor(commonSystem, transformTypeVariablesToErrorTypes = false)
 
         for (initialConstraint in storage.initialConstraints) {
-            val lowerCallSubstituted = callSubstitutor.safeSubstitute(initialConstraint.a as UnwrappedType)
-            val upperCallSubstituted = callSubstitutor.safeSubstitute(initialConstraint.b as UnwrappedType)
-
-            val (lower, upper) = substituteNotFixedVariables(lowerCallSubstituted, upperCallSubstituted, nonFixedToVariablesSubstitutor)
+            val substitutedConstraint = initialConstraint.substitute(callSubstitutor)
+            val (lower, upper) = substituteNotFixedVariables(
+                substitutedConstraint.a as KotlinType,
+                substitutedConstraint.b as KotlinType,
+                nonFixedToVariablesSubstitutor
+            )
 
             if (commonSystem.isProperType(lower) && commonSystem.isProperType(upper)) continue
 
             when (initialConstraint.constraintKind) {
                 ConstraintKind.LOWER -> error("LOWER constraint shouldn't be used, please use UPPER")
 
-                ConstraintKind.UPPER -> commonSystem.addSubtypeConstraint(lower, upper, initialConstraint.position)
+                ConstraintKind.UPPER -> commonSystem.addSubtypeConstraint(lower, upper, substitutedConstraint.position)
 
                 ConstraintKind.EQUALITY ->
                     with(commonSystem) {
-                        addSubtypeConstraint(lower, upper, initialConstraint.position)
-                        addSubtypeConstraint(upper, lower, initialConstraint.position)
+                        addSubtypeConstraint(lower, upper, substitutedConstraint.position)
+                        addSubtypeConstraint(upper, lower, substitutedConstraint.position)
                     }
             }
         }
@@ -540,6 +542,20 @@ class BuilderInferenceSession(
 
             containingElement.anyDescendantOfType<KtElement> { it == atom.psiCall.callElement }
         }
+    }
+
+    private fun InitialConstraint.substitute(substitutor: NewTypeSubstitutor): InitialConstraint {
+        val lowerSubstituted = substitutor.safeSubstitute(a as UnwrappedType)
+        val upperSubstituted = substitutor.safeSubstitute(b as UnwrappedType)
+
+        if (lowerSubstituted == a && upperSubstituted == b) return this
+
+        return InitialConstraint(
+            lowerSubstituted,
+            upperSubstituted,
+            constraintKind,
+            BuilderInferenceSubstitutionConstraintPositionImpl(lambdaArgument, this)
+        )
     }
 
     companion object {

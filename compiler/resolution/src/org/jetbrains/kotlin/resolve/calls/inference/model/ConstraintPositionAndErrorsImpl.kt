@@ -18,6 +18,12 @@ class ExplicitTypeParameterConstraintPositionImpl(
 class InjectedAnotherStubTypeConstraintPositionImpl(builderInferenceLambdaOfInjectedStubType: LambdaKotlinCallArgument) :
     InjectedAnotherStubTypeConstraintPosition<LambdaKotlinCallArgument>(builderInferenceLambdaOfInjectedStubType)
 
+class BuilderInferenceSubstitutionConstraintPositionImpl(
+    builderInferenceLambda: LambdaKotlinCallArgument, initialConstraint: InitialConstraint
+) : BuilderInferenceSubstitutionConstraintPosition<LambdaKotlinCallArgument, InitialConstraint>(
+    builderInferenceLambda, initialConstraint
+)
+
 class ExpectedTypeConstraintPositionImpl(topLevelCall: KotlinCall) : ExpectedTypeConstraintPosition<KotlinCall>(topLevelCall)
 
 class DeclaredUpperBoundConstraintPositionImpl(
