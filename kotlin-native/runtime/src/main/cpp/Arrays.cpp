@@ -34,14 +34,14 @@ ALWAYS_INLINE inline void mutabilityCheck(KConstRef thiz) {
   }
 }
 
-ALWAYS_INLINE inline void boundsCheck(const ArrayHeader* array, KInt index) {
+/*ALWAYS_INLINE inline void boundsCheck(const ArrayHeader* array, KInt index) {
   // We couldn't have created an array bigger than max KInt value.
   // So if index is < 0, conversion to an unsigned value would make it bigger
   // than the array size.
   if (static_cast<uint32_t>(index) >= array->count_) {
     ThrowArrayIndexOutOfBoundsException();
   }
-}
+}*/
 
 template<typename T>
 inline void fillImpl(KRef thiz, KInt fromIndex, KInt toIndex, T value) {
