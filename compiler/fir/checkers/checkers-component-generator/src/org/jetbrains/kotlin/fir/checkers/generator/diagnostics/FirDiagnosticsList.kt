@@ -955,6 +955,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val CONFLICTING_IMPORT by error<KtImportDirective>(PositioningStrategy.IMPORT_LAST_NAME) {
             parameter<Name>("name")
         }
+
+        val OPERATOR_RENAMED_ON_IMPORT by error<KtSimpleNameExpression>(PositioningStrategy.IMPORT_LAST_NAME)
     }
 }
 

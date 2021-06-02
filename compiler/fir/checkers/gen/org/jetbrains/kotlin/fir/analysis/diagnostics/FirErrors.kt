@@ -524,5 +524,6 @@ object FirErrors {
     val PACKAGE_CANNOT_BE_IMPORTED by error0<KtSimpleNameExpression>(SourceElementPositioningStrategies.IMPORT_LAST_NAME)
     val CANNOT_BE_IMPORTED by error1<KtSimpleNameExpression, Name>(SourceElementPositioningStrategies.IMPORT_LAST_NAME)
     val CONFLICTING_IMPORT by error1<KtImportDirective, Name>(SourceElementPositioningStrategies.IMPORT_LAST_NAME)
+    val OPERATOR_RENAMED_ON_IMPORT by error0<KtSimpleNameExpression>(SourceElementPositioningStrategies.IMPORT_LAST_NAME)
 
 }

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 object FirImportsChecker : FirFileChecker() {
     override fun check(declaration: FirFile, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -25,6 +26,9 @@ object FirImportsChecker : FirFileChecker() {
             }
             if (!import.isAllUnder) {
                 checkCanBeImported(import, context, reporter)
+                if (import is FirResolvedImport) {
+                    checkOperatorRename(import, context, reporter)
+                }
             }
         }
         checkConflictingImports(declaration.imports, context, reporter)
@@ -86,6 +90,24 @@ object FirImportsChecker : FirFileChecker() {
                     reporter.reportOn(it.source, FirErrors.CONFLICTING_IMPORT, it.importedName!!, context)
                 }
             }
+    }
+
+    private fun checkOperatorRename(import: FirResolvedImport, context: CheckerContext, reporter: DiagnosticReporter) {
+        val alias = import.aliasName ?: return
+        val importedName = import.importedName ?: return
+        if (!OperatorConventions.isConventionName(alias)) return
+        val classId = import.resolvedClassId
+        val illegalRename = if (classId != null) {
+            val classFir = classId.resolveToClass(context) ?: return
+            classFir.classKind.isSingleton && classFir.declarations.any { it is FirSimpleFunction && it.isOperator}
+        } else {
+            context.session.symbolProvider.getTopLevelFunctionSymbols(import.packageFqName, importedName).any {
+                it.fir.isOperator
+            }
+        }
+        if (illegalRename) {
+            reporter.reportOn(import.source, FirErrors.OPERATOR_RENAMED_ON_IMPORT, context)
+        }
     }
 
     private fun FirResolvedImport.resolvesToClass(context: CheckerContext): Boolean {
