@@ -169,6 +169,12 @@ open class HostManager(
         @JvmStatic
         fun simpleOsName(): String {
             val hostOs = hostOs()
+            return if (hostOs == "osx") "macos" else hostOs
+        }
+
+        @JvmStatic
+        fun platformName(): String {
+            val hostOs = hostOs()
             val arch = hostArch()
             return when (hostOs) {
                 "osx" -> "macos-$arch"

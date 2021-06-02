@@ -43,7 +43,7 @@ internal val Project.host
     get() = HostManager.host.visibleName
 
 internal val Project.simpleOsName
-    get() = HostManager.simpleOsName()
+    get() = HostManager.platformName()
 
 /** A task with a KonanTarget specified. */
 abstract class KonanTargetableTask: DefaultTask() {

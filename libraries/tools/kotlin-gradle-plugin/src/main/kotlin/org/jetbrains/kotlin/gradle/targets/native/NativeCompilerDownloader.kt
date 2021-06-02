@@ -45,7 +45,7 @@ class NativeCompilerDownloader(
         get() = NativeDistributionTypeProvider(project).getDistributionType(compilerVersion)
 
     private val simpleOsName: String
-        get() = HostManager.simpleOsName()
+        get() = HostManager.platformName()
 
     private val dependencyName: String
         get() {

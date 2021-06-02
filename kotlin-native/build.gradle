@@ -480,7 +480,7 @@ task bundle {
 }
 
 task bundleRegular(type: (isWindows()) ? Zip : Tar) {
-    def simpleOsName = HostManager.simpleOsName()
+    def simpleOsName = HostManager.platformName()
     archiveBaseName.set("kotlin-native-$simpleOsName-$konanVersionFull")
     from(UtilsKt.getKotlinNativeDist(project)) {
         include '**'
@@ -501,7 +501,7 @@ task bundleRegular(type: (isWindows()) ? Zip : Tar) {
 
 task bundlePrebuilt(type: (isWindows()) ? Zip : Tar) {
     dependsOn("crossDistPlatformLibs")
-    def simpleOsName = HostManager.simpleOsName()
+    def simpleOsName = HostManager.platformName()
     archiveBaseName.set("kotlin-native-prebuilt-$simpleOsName-$konanVersionFull")
     from(UtilsKt.getKotlinNativeDist(project)) {
         include '**'
@@ -539,7 +539,7 @@ configure([bundleRegular, bundlePrebuilt]) {
 task 'tc-dist'(type: (isWindows()) ? Zip : Tar) {
     dependsOn('dist')
     dependsOn('distSources')
-    def simpleOsName = HostManager.simpleOsName()
+    def simpleOsName = HostManager.platformName()
     archiveBaseName.set("kotlin-native-dist-$simpleOsName-$konanVersionFull")
     from(UtilsKt.getKotlinNativeDist(project)) {
         include '**'
@@ -613,7 +613,7 @@ task uploadBundle {
                 server: project.findProperty("cdnUrl") ?: System.getenv("CDN_URL"),
                 userid: project.findProperty("cdnUser") ?: System.getenv("CDN_USER"),
                 password: project.findProperty("cdnPass") ?: System.getenv("CDN_PASS"),
-                remoteDir: "/builds/$kind/$konanVersion/${HostManager.simpleOsName()}"
+                remoteDir: "/builds/$kind/$konanVersion/${HostManager.platformName()}"
         ]
         ant {
             taskdef(name: 'ftp',

@@ -52,7 +52,7 @@ class NativePlatformLibsIT : BaseGradleIT() {
 
     private fun deleteInstalledCompilers() {
         // Clean existing installation directories.
-        val osName = HostManager.simpleOsName()
+        val osName = HostManager.platformName()
         val oldCompilerDir = DependencyDirectories.localKonanDir.resolve("kotlin-native-$osName-$oldCompilerVersion")
         val currentCompilerDir = DependencyDirectories.localKonanDir.resolve("kotlin-native-$osName-$currentCompilerVersion")
 
