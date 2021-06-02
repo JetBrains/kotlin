@@ -87,6 +87,12 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
         }
 
         @Test
+        @TestMetadata("multiple.kt")
+        public void testMultiple() throws Exception {
+            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/multiple.kt");
+        }
+
+        @Test
         @TestMetadata("rxjava.kt")
         public void testRxjava() throws Exception {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/rxjava.kt");

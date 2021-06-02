@@ -45,6 +45,7 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
     override val directivesContainers: List<DirectivesContainer>
         get() = listOf(ForeignAnnotationsDirectives)
 
+    @OptIn(ExperimentalStdlibApi::class)
     override fun provideAdditionalAnalysisFlags(directives: RegisteredDirectives): Map<AnalysisFlag<*>, Any?> {
         val defaultJsr305Settings = Jsr305Settings.DEFAULT
         val globalState = directives.singleOrZeroValue(JSR305_GLOBAL_REPORT) ?: defaultJsr305Settings.globalLevel
@@ -54,8 +55,13 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
             val state = ReportLevel.findByDescription(stateDescription) ?: return@mapNotNull null
             FqName(name) to state
         }.toMap()
-        val configuredReportLevels =
-            directives.singleOrZeroValue(JSPECIFY_STATE)?.let { mapOf(JSPECIFY_ANNOTATIONS_PACKAGE to it) } ?: emptyMap()
+        val configuredReportLevels = buildMap<FqName, ReportLevel> {
+            directives.singleOrZeroValue(JSPECIFY_STATE)?.let { put(JSPECIFY_ANNOTATIONS_PACKAGE, it) }
+            for ((fqname, reportLevel) in directives[ForeignAnnotationsDirectives.NULLABILITY_ANNOTATIONS]) {
+                put(fqname, reportLevel)
+            }
+        }
+
         return mapOf(
             JvmAnalysisFlags.javaTypeEnhancementState to JavaTypeEnhancementState(
                 Jsr305Settings(globalState, migrationState, userAnnotationsState),

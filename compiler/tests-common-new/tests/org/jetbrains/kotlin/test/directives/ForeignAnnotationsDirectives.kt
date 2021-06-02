@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.test.directives
 
+import org.jetbrains.kotlin.cli.common.arguments.JavaTypeEnhancementStateParser
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.configuration.JavaForeignAnnotationType
 import org.jetbrains.kotlin.load.java.ReportLevel
+import org.jetbrains.kotlin.name.FqName
 
 @Suppress("RemoveExplicitTypeArguments")
 object ForeignAnnotationsDirectives : SimpleDirectivesContainer() {
@@ -28,6 +30,11 @@ object ForeignAnnotationsDirectives : SimpleDirectivesContainer() {
     val JSPECIFY_STATE by enumDirective<ReportLevel>(
         description = "Report level for jSpecify annotations",
         additionalParser = ReportLevel.Companion::findByDescription
+    )
+
+    val NULLABILITY_ANNOTATIONS by valueDirective<Pair<FqName, ReportLevel>>(
+        description = "List of annotations with their report levels",
+        parser = JavaTypeEnhancementStateParser.Companion::parsePlainNullabilityAnnotationReportLevels
     )
 
     val ANNOTATIONS_PATH by enumDirective<JavaForeignAnnotationType>(
