@@ -30,19 +30,11 @@ public interface LocalSignatureOrBuilder extends
   long getLocalHash();
 
   /**
-   * <code>optional int32 description = 3;</code>
-   *
-   * <pre>
-   * debug information
-   * </pre>
+   * <code>optional int32 debug_info = 3;</code>
    */
-  boolean hasDescription();
+  boolean hasDebugInfo();
   /**
-   * <code>optional int32 description = 3;</code>
-   *
-   * <pre>
-   * debug information
-   * </pre>
+   * <code>optional int32 debug_info = 3;</code>
    */
-  int getDescription();
+  int getDebugInfo();
 }

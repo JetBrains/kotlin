@@ -81,7 +81,7 @@ public final class LocalSignature extends
           }
           case 24: {
             bitField0_ |= 0x00000002;
-            description_ = input.readInt32();
+            debugInfo_ = input.readInt32();
             break;
           }
         }
@@ -159,33 +159,25 @@ public final class LocalSignature extends
     return localHash_;
   }
 
-  public static final int DESCRIPTION_FIELD_NUMBER = 3;
-  private int description_;
+  public static final int DEBUG_INFO_FIELD_NUMBER = 3;
+  private int debugInfo_;
   /**
-   * <code>optional int32 description = 3;</code>
-   *
-   * <pre>
-   * debug information
-   * </pre>
+   * <code>optional int32 debug_info = 3;</code>
    */
-  public boolean hasDescription() {
+  public boolean hasDebugInfo() {
     return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
-   * <code>optional int32 description = 3;</code>
-   *
-   * <pre>
-   * debug information
-   * </pre>
+   * <code>optional int32 debug_info = 3;</code>
    */
-  public int getDescription() {
-    return description_;
+  public int getDebugInfo() {
+    return debugInfo_;
   }
 
   private void initFields() {
     localFqName_ = java.util.Collections.emptyList();
     localHash_ = 0L;
-    description_ = 0;
+    debugInfo_ = 0;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -211,7 +203,7 @@ public final class LocalSignature extends
       output.writeInt64(2, localHash_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
-      output.writeInt32(3, description_);
+      output.writeInt32(3, debugInfo_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -242,7 +234,7 @@ public final class LocalSignature extends
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt32Size(3, description_);
+        .computeInt32Size(3, debugInfo_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -342,7 +334,7 @@ public final class LocalSignature extends
       bitField0_ = (bitField0_ & ~0x00000001);
       localHash_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000002);
-      description_ = 0;
+      debugInfo_ = 0;
       bitField0_ = (bitField0_ & ~0x00000004);
       return this;
     }
@@ -379,7 +371,7 @@ public final class LocalSignature extends
       if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
         to_bitField0_ |= 0x00000002;
       }
-      result.description_ = description_;
+      result.debugInfo_ = debugInfo_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -399,8 +391,8 @@ public final class LocalSignature extends
       if (other.hasLocalHash()) {
         setLocalHash(other.getLocalHash());
       }
-      if (other.hasDescription()) {
-        setDescription(other.getDescription());
+      if (other.hasDebugInfo()) {
+        setDebugInfo(other.getDebugInfo());
       }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
@@ -528,50 +520,34 @@ public final class LocalSignature extends
       return this;
     }
 
-    private int description_ ;
+    private int debugInfo_ ;
     /**
-     * <code>optional int32 description = 3;</code>
-     *
-     * <pre>
-     * debug information
-     * </pre>
+     * <code>optional int32 debug_info = 3;</code>
      */
-    public boolean hasDescription() {
+    public boolean hasDebugInfo() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>optional int32 description = 3;</code>
-     *
-     * <pre>
-     * debug information
-     * </pre>
+     * <code>optional int32 debug_info = 3;</code>
      */
-    public int getDescription() {
-      return description_;
+    public int getDebugInfo() {
+      return debugInfo_;
     }
     /**
-     * <code>optional int32 description = 3;</code>
-     *
-     * <pre>
-     * debug information
-     * </pre>
+     * <code>optional int32 debug_info = 3;</code>
      */
-    public Builder setDescription(int value) {
+    public Builder setDebugInfo(int value) {
       bitField0_ |= 0x00000004;
-      description_ = value;
+      debugInfo_ = value;
       
       return this;
     }
     /**
-     * <code>optional int32 description = 3;</code>
-     *
-     * <pre>
-     * debug information
-     * </pre>
+     * <code>optional int32 debug_info = 3;</code>
      */
-    public Builder clearDescription() {
+    public Builder clearDebugInfo() {
       bitField0_ = (bitField0_ & ~0x00000004);
-      description_ = 0;
+      debugInfo_ = 0;
       
       return this;
     }

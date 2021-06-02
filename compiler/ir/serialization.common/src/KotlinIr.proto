@@ -51,7 +51,7 @@ message CompositeSignature {
 message LocalSignature {
   repeated int32 local_fq_name = 1 [packed=true];
   optional int64 local_hash = 2;
-  optional int32 description = 3; // debug information
+  optional int32 debug_info = 3;
 }
 
 message FileSignature {}

@@ -261,7 +261,7 @@ open class IrFileSerializer(
         proto.addAllLocalFqName(serializeFqName(signature.localFqn))
         signature.hashSig?.let { proto.localHash = it }
         if (addDebugInfo) {
-            signature.description?.let { proto.description = serializeDebugInfo(it) }
+            signature.description?.let { proto.debugInfo = serializeDebugInfo(it) }
         }
 
         return proto.build()
