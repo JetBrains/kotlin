@@ -556,13 +556,6 @@ allprojects {
         outputs.doNotCacheIf("https://youtrack.jetbrains.com/issue/KTI-112") { true }
     }
 
-    tasks.withType<JavaCompile>().configureEach {
-        if (targetCompatibility == "1.6" && sourceCompatibility == "1.6") {
-            options.forkOptions.jvmArgs?.add("-J-Xint")
-            options.forkOptions.jvmArgs?.add("-J-showversion")
-        }
-    }
-
     if (isConfigurationCacheDisabled) {
         // Custom input normolization isn't supported by configuration cache at the moment
         // See https://github.com/gradle/gradle/issues/13706
