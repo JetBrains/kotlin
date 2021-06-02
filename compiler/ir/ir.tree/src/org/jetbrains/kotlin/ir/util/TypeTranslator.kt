@@ -168,9 +168,7 @@ abstract class TypeTranslator(
 
     private fun SimpleType.toIrTypeAbbreviation(): IrTypeAbbreviation? {
         // Abbreviated type's classifier might not be TypeAliasDescriptor in case it's MockClassDescriptor (not found in dependencies).
-        val typeAliasDescriptor = constructor.declarationDescriptor.let {
-            it as? TypeAliasDescriptor
-        } ?: return null
+        val typeAliasDescriptor = constructor.declarationDescriptor as? TypeAliasDescriptor ?: return null
 
         if (!isTypeAliasAccessibleHere(typeAliasDescriptor)) return null
 
