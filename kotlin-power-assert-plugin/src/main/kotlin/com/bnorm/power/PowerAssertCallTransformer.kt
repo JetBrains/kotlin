@@ -29,7 +29,7 @@ import com.bnorm.power.diagram.substring
 import com.bnorm.power.internal.ReturnableBlockTransformer
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.backend.common.ir.asSimpleLambda
+import org.jetbrains.kotlin.backend.common.ir.asInlinable
 import org.jetbrains.kotlin.backend.common.ir.inline
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.utils.asString
-import org.jetbrains.kotlin.ir.builders.irCallOp
+import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.builders.parent
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -52,16 +52,14 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeArgument
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
-import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isBoolean
 import org.jetbrains.kotlin.ir.types.isSubtypeOf
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
-import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isFunctionOrKFunction
 import org.jetbrains.kotlin.ir.util.kotlinFqName
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class PowerAssertCallTransformer(
   private val file: IrFile,
@@ -159,17 +157,15 @@ class PowerAssertCallTransformer(
     roots: List<Node?>,
     original: IrCall
   ): IrExpression? {
-    val lambda = messageArgument?.asSimpleLambda()
     return when {
       messageArgument is IrConst<*> -> messageArgument
       messageArgument is IrStringConcatenation -> messageArgument
-      lambda != null -> lambda.deepCopyWithSymbols(parent).inline(parent)
-        .transform(ReturnableBlockTransformer(context, scope.scopeOwnerSymbol), null)
-      messageArgument != null -> {
-        val invoke = messageArgument.type.classOrNull!!.owner.functions
-          .single { it.name == OperatorNameConventions.INVOKE }
-        irCallOp(invoke.symbol, invoke.returnType, messageArgument)
-      }
+      messageArgument != null -> irBlock {
+        +messageArgument.deepCopyWithSymbols(parent)
+          .asInlinable(this)
+          .inline(parent)
+          .patchDeclarationParents(scope.getLocalDeclarationParent())
+      }.transform(ReturnableBlockTransformer(context, scope.scopeOwnerSymbol), null)
       // TODO what should the default message be?
       roots.size == 1 && original.getValueArgument(0)!!.type.isBoolean() -> irString("Assertion failed")
       else -> null
