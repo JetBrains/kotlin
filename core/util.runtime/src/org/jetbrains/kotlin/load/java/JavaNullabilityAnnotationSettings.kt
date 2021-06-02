@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.load.java
 
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.isChildOf
+import org.jetbrains.kotlin.name.findValueForMostSpecificFqname
 
 val JSPECIFY_ANNOTATIONS_PACKAGE = FqName("org.jspecify.nullness")
 val CHECKER_FRAMEWORK_COMPATQUAL_ANNOTATIONS_PACKAGE = FqName("org.checkerframework.checker.nullness.compatqual")
@@ -38,21 +38,10 @@ val jsr305Settings = JavaNullabilityAnnotationsStatus(
 
 fun getDefaultReportLevelForAnnotation(annotationFqName: FqName) = getReportLevelForAnnotation(annotationFqName, emptyMap())
 
-fun getReportLevelForAnnotation(annotationFqName: FqName, configuredReportLevels: Map<FqName, ReportLevel>): ReportLevel {
-    val configuredReportLevel = configuredReportLevels.entries.find { (fqName, _) ->
-        annotationFqName == fqName || annotationFqName.isChildOf(fqName)
-    }?.value
+fun getReportLevelForAnnotation(annotation: FqName, configuredReportLevels: Map<FqName, ReportLevel>): ReportLevel {
+    annotation.findValueForMostSpecificFqname(configuredReportLevels)?.let { return it }
 
-    if (configuredReportLevel != null) return configuredReportLevel
-
-    val defaultReportLevel = nullabilityAnnotationSettings.entries.find { (fqName, _) ->
-        annotationFqName == fqName || annotationFqName.isChildOf(fqName)
-    }?.value
-
-    require(defaultReportLevel != null) {
-        println(nullabilityAnnotationSettings)
-        "Default settings for nullability annotation ${annotationFqName.asString()} must be described"
-    }
+    val defaultReportLevel = annotation.findValueForMostSpecificFqname(nullabilityAnnotationSettings) ?: return ReportLevel.IGNORE
 
     return if (defaultReportLevel.sinceVersion != null && defaultReportLevel.sinceVersion <= KotlinVersion.CURRENT) {
         defaultReportLevel.reportLevelAfter
