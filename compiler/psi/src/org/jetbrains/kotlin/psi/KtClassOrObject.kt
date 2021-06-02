@@ -115,7 +115,7 @@ abstract class KtClassOrObject :
 
     override fun hasPrimaryConstructor(): Boolean = hasExplicitPrimaryConstructor() || !hasSecondaryConstructors()
 
-    private fun hasSecondaryConstructors(): Boolean = !secondaryConstructors.isEmpty()
+    fun hasSecondaryConstructors(): Boolean = !secondaryConstructors.isEmpty()
 
     override fun getSecondaryConstructors(): List<KtSecondaryConstructor> = getBody()?.secondaryConstructors.orEmpty()
 

@@ -1,9 +1,5 @@
 FILE: expectActual.kt
     public? final? expect class MyClass : R|kotlin/Any| {
-        public? expect constructor(): R|MyClass| {
-            super<R|kotlin/Any|>()
-        }
-
     }
     public? final? expect fun foo(): String
     public? final? expect val x: Int

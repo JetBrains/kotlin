@@ -707,7 +707,10 @@ open class RawFirBuilder(
             // TODO: in case we have no primary constructor,
             // it may be not possible to determine delegated super type right here
             delegatedSuperTypeRef = delegatedSuperTypeRef ?: defaultDelegatedSuperTypeRef
-            if ((this !is KtClass || !this.isInterface()) && this.hasPrimaryConstructor()) {
+            val shouldNotGenerateImplicitPrimaryConstructor = hasExplicitPrimaryConstructor() || hasSecondaryConstructors() ||
+                    (hasExpectModifier() && classKind != ClassKind.ENUM_CLASS)
+
+            if ((this !is KtClass || !this.isInterface()) && (primaryConstructor != null || !shouldNotGenerateImplicitPrimaryConstructor)) {
                 val firPrimaryConstructor = primaryConstructor.toFirConstructor(
                     superTypeCallEntry,
                     delegatedSuperTypeRef,
