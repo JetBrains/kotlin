@@ -951,6 +951,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val CANNOT_BE_IMPORTED by error<KtSimpleNameExpression>(PositioningStrategy.IMPORT_LAST_NAME) {
             parameter<Name>("name")
         }
+
+        val CONFLICTING_IMPORT by error<KtImportDirective>(PositioningStrategy.IMPORT_LAST_NAME) {
+            parameter<Name>("name")
+        }
     }
 }
 

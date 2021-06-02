@@ -70,6 +70,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPONENT_FUNCTIO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPONENT_FUNCTION_ON_NULLABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONDITION_TYPE_MISMATCH
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_IMPORT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_OVERLOADS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_PROJECTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION
@@ -1172,6 +1173,11 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(
                 CANNOT_BE_IMPORTED,
                 "Cannot import ''{0}'', functions and properties can be imported only from packages or objects",
+                TO_STRING
+            )
+            map.put(
+                CONFLICTING_IMPORT,
+                "Conflicting import, imported name ''{0}'' is ambiguous",
                 TO_STRING
             )
 

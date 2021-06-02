@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.diagnostics
 
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiComment
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiNameIdentifierOwner
-import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes
@@ -891,6 +888,12 @@ object PositioningStrategies {
     }
 
     val IMPORT_LAST_NAME: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
+
+        override fun isValid(element: PsiElement): Boolean {
+            if (element is PsiErrorElement) return false
+            return !element.children.any { !isValid(it) }
+        }
+
         override fun mark(element: PsiElement): List<TextRange> {
             if (element is KtImportDirective) {
                 val importedReference = element.importedReference

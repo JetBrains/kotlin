@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtIfExpression
+import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
@@ -1816,6 +1817,11 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class CannotBeImported : KtFirDiagnostic<KtSimpleNameExpression>() {
         override val diagnosticClass get() = CannotBeImported::class
+        abstract val name: Name
+    }
+
+    abstract class ConflictingImport : KtFirDiagnostic<KtImportDirective>() {
+        override val diagnosticClass get() = ConflictingImport::class
         abstract val name: Name
     }
 
