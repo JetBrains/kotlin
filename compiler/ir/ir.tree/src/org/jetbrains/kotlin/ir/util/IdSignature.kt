@@ -72,10 +72,10 @@ sealed class IdSignature {
             }
 
             val nameSegments = nameSegments
-            val adoptedMask = adaptMask(mask)
-            if (nameSegments.size == 1 && mask == adoptedMask) return this
+            val adaptedMask = adaptMask(mask)
+            if (nameSegments.size == 1 && mask == adaptedMask) return this
 
-            return CommonSignature(packageFqName, nameSegments.first(), null, adoptedMask)
+            return CommonSignature(packageFqName, nameSegments.first(), null, adaptedMask)
         }
 
         override fun isPackageSignature(): Boolean = id == null && declarationFqName.isEmpty()
@@ -320,7 +320,7 @@ sealed class IdSignature {
 
         override val hasTopLevel: Boolean get() = false
 
-        override fun topLevelSignature(): IdSignature = this
+        override fun topLevelSignature(): IdSignature = error("Is not supported for Local ID")
 
         override fun nearestPublicSig(): IdSignature = error("Is not supported for Local ID")
 
