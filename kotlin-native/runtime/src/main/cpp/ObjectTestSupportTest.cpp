@@ -5,12 +5,11 @@
 
 #include "ObjectTestSupport.hpp"
 
-#include <thread>
-
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 #include "Natives.h"
+#include "TestSupport.hpp"
 
 using namespace kotlin;
 
@@ -67,17 +66,6 @@ template <typename TestCase>
 class ObjectTestSupportObjectTest : public testing::Test {};
 using ObjectTestCases = testing::Types<RegularObjectTestCase, IrregularObjectTestCase>;
 TYPED_TEST_SUITE(ObjectTestSupportObjectTest, ObjectTestCases, ObjectTestCaseNames);
-
-// TODO: Replace with common implementation.
-template <typename F>
-void RunInNewThread(F f) {
-    std::thread([&f]() {
-        auto* memory = InitMemory(false);
-        f();
-        ClearMemoryForTests(memory);
-        DeinitMemory(memory, false);
-    }).join();
-}
 
 template <typename Payload>
 KStdVector<ObjHeader**> Collect(test_support::Object<Payload>& object) {

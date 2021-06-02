@@ -35,7 +35,7 @@ public:
         stableRefThreadQueue_(StableRefRegistry::Instance()),
         gc_(GlobalData::Instance().gc(), *this),
         objectFactoryThreadQueue_(GlobalData::Instance().objectFactory(), gc_),
-        suspensionData_(ThreadState::kRunnable) {}
+        suspensionData_(ThreadState::kNative) {}
 
     ~ThreadData() = default;
 

@@ -422,8 +422,11 @@ ALWAYS_INLINE inline void AssertThreadState(std::initializer_list<ThreadState> e
 }
 
 // Scopely sets the given thread state for the given thread.
-class ThreadStateGuard final : private Pinned {
+class ThreadStateGuard final : private MoveOnly {
 public:
+    // Do not set any state. Useful to create a variable to move another guard into.
+    ThreadStateGuard() : thread_(nullptr), oldState_(ThreadState::kNative), reentrant_(false) {}
+
     // Set the state for the given thread.
     ThreadStateGuard(MemoryState* thread, ThreadState state, bool reentrant = false) noexcept : thread_(thread), reentrant_(reentrant) {
         oldState_ = SwitchThreadState(thread_, state, reentrant_);
@@ -433,9 +436,25 @@ public:
     explicit ThreadStateGuard(ThreadState state, bool reentrant = false) noexcept
         : ThreadStateGuard(mm::GetMemoryState(), state, reentrant) {};
 
-    ~ThreadStateGuard() noexcept {
-        SwitchThreadState(thread_, oldState_, reentrant_);
+    ThreadStateGuard(ThreadStateGuard&& other) noexcept
+        : thread_(other.thread_), oldState_(other.oldState_), reentrant_(other.reentrant_) {
+        other.thread_ = nullptr;
     }
+
+    ~ThreadStateGuard() noexcept {
+        if (thread_ != nullptr) {
+            SwitchThreadState(thread_, oldState_, reentrant_);
+        }
+    }
+
+    ThreadStateGuard& operator=(ThreadStateGuard&& other) noexcept {
+        thread_ = other.thread_;
+        oldState_ = other.oldState_;
+        reentrant_ = other.reentrant_;
+        other.thread_ = nullptr;
+        return *this;
+    }
+
 private:
     MemoryState* thread_;
     ThreadState oldState_;

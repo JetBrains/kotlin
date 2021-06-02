@@ -3,8 +3,8 @@
  * that can be found in the LICENSE file.
  */
 
-#ifndef RUNTIME_MM_THREAD_SUSPENSION_UTILS_H
-#define RUNTIME_MM_THREAD_SUSPENSION_UTILS_H
+#ifndef RUNTIME_MM_THREAD_SUSPENSION_H
+#define RUNTIME_MM_THREAD_SUSPENSION_H
 
 #include <atomic>
 
@@ -57,4 +57,4 @@ void ResumeThreads() noexcept;
 } // namespace mm
 } // namespace kotlin
 
-#endif // RUNTIME_MM_THREAD_SUSPENSION_UTILS_H
+#endif // RUNTIME_MM_THREAD_SUSPENSION_H

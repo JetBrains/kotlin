@@ -60,7 +60,7 @@ protected:
 // the variable it works with to avoid invalid memory access.
 template<typename T1, typename T2>
 class AutoReset final : private Pinned {
-    static_assert(std::is_assignable<T1, T2>::value);
+    static_assert(std::is_assignable<T1&, T2>::value);
 
 public:
     AutoReset(T1* variable, T2 value) : variable_(variable), oldValue_(*variable) {

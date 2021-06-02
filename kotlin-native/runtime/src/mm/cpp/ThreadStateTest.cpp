@@ -139,6 +139,24 @@ TEST_F(ThreadStateTest, CallWithRunnableState) {
     });
 }
 
+TEST_F(ThreadStateTest, MovingGuard) {
+    RunInNewThread([](MemoryState* memoryState) {
+        auto& threadData = *memoryState->GetThreadData();
+        ASSERT_EQ(threadData.state(), ThreadState::kRunnable);
+        {
+            ThreadStateGuard outerGuard;
+            EXPECT_EQ(threadData.state(), ThreadState::kRunnable);
+            {
+                ThreadStateGuard innerGuard(memoryState, ThreadState::kNative);
+                EXPECT_EQ(threadData.state(), ThreadState::kNative);
+                outerGuard = std::move(innerGuard);
+            }
+            EXPECT_EQ(threadData.state(), ThreadState::kNative);
+        }
+        EXPECT_EQ(threadData.state(), ThreadState::kRunnable);
+    });
+}
+
 TEST(ThreadStateDeathTest, StateAsserts) {
     RunInNewThread([](MemoryState* memoryState) {
         mm::ThreadData* threadData = memoryState->GetThreadData();
@@ -189,6 +207,29 @@ TEST(ThreadStateDeathTest, ReentrantStateSwitch) {
         auto* threadData = memoryState->GetThreadData();
         ASSERT_EQ(threadData->state(), ThreadState::kRunnable);
         EXPECT_EXIT({ SwitchThreadState(memoryState, ThreadState::kRunnable, true); exit(0); },
+                    testing::ExitedWithCode(0),
+                    testing::Not(testing::ContainsRegex("runtime assert: Illegal thread state switch.")));
+    });
+}
+
+TEST(ThreadStateDeathTest, MovingReentrantGuard) {
+    RunInNewThread([](MemoryState* memoryState) {
+
+        auto blockUnderTest = [&memoryState]() {
+            auto& threadData = *memoryState->GetThreadData();
+            ASSERT_EQ(threadData.state(), ThreadState::kRunnable);
+            {
+                ThreadStateGuard outerGuard;
+                {
+                    ThreadStateGuard innerGuard(memoryState, ThreadState::kRunnable, /* reentrant = */ true);
+                    outerGuard = std::move(innerGuard);
+                }
+            }
+            EXPECT_EQ(threadData.state(), ThreadState::kRunnable);
+            exit(0);
+        };
+
+        EXPECT_EXIT({ blockUnderTest(); },
                     testing::ExitedWithCode(0),
                     testing::Not(testing::ContainsRegex("runtime assert: Illegal thread state switch.")));
     });

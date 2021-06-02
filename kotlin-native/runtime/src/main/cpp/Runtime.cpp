@@ -106,10 +106,15 @@ RuntimeState* initRuntime() {
   ::runtimeState = result;
 
   bool firstRuntime = false;
+  // We set this guard in the `switch` below, after memory initialization.
+  kotlin::ThreadStateGuard stateGuard;
   switch (Kotlin_getDestroyRuntimeMode()) {
       case DESTROY_RUNTIME_LEGACY:
           compareAndSwap(&globalRuntimeStatus, kGlobalRuntimeUninitialized, kGlobalRuntimeRunning);
           result->memoryState = InitMemory(false); // The argument will be ignored for legacy DestroyRuntimeMode
+          // Switch thread state because worker and globals inits require the runnable state.
+          // This call may block if GC requested suspending threads.
+          stateGuard = kotlin::ThreadStateGuard(result->memoryState, kotlin::ThreadState::kRunnable);
           result->worker = WorkerInit(result->memoryState, true);
           firstRuntime = atomicAdd(&aliveRuntimesCount, 1) == 1;
           if (!kotlin::kSupportsMultipleMutators && !firstRuntime) {
@@ -131,6 +136,9 @@ RuntimeState* initRuntime() {
               konan::abort();
           }
           result->memoryState = InitMemory(firstRuntime);
+          // Switch thread state because worker and globals inits require the runnable state.
+          // This call may block if GC requested suspending threads.
+          stateGuard = kotlin::ThreadStateGuard(result->memoryState, kotlin::ThreadState::kRunnable);
           result->worker = WorkerInit(result->memoryState, true);
   }
 
@@ -147,8 +155,6 @@ RuntimeState* initRuntime() {
   InitOrDeinitGlobalVariables(INIT_THREAD_LOCAL_GLOBALS, result->memoryState);
   RuntimeAssert(result->status == RuntimeStatus::kUninitialized, "Runtime must still be in the uninitialized state");
   result->status = RuntimeStatus::kRunning;
-
-  kotlin::SwitchThreadState(result->memoryState, kotlin::ThreadState::kNative);
 
   return result;
 }
@@ -173,8 +179,14 @@ void deinitRuntime(RuntimeState* state, bool destroyRuntime) {
   ClearTLS(state->memoryState);
   if (destroyRuntime)
     InitOrDeinitGlobalVariables(DEINIT_GLOBALS, state->memoryState);
+
+  // Worker deinit must be performed in the runnable state because
+  // Worker's destructor unregisters stable refs.
   auto workerId = GetWorkerId(state->worker);
   WorkerDeinit(state->worker);
+
+  // Do not use ThreadStateGuard because memoryState will be destroyed during DeinitMemory.
+  kotlin::SwitchThreadState(state->memoryState, kotlin::ThreadState::kNative);
   DeinitMemory(state->memoryState, destroyRuntime);
   konanDestructInstance(state);
   WorkerDestroyThreadDataIfNeeded(workerId);

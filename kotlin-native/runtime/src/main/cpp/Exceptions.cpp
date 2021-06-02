@@ -243,6 +243,10 @@ class {
 
 //! Process exception hook (if any) or just printStackTrace + write crash log
 void processUnhandledKotlinException(KRef throwable) {
+  // Use the reentrant switch because both states are possible here:
+  //  - runnable, if the exception occured in a pure Kotlin thread (except initialization of globals).
+  //  - native, if the throwing code was called from ObjC/Swift or if the exception occured during initialization of globals.
+  kotlin::ThreadStateGuard guard(kotlin::ThreadState::kRunnable, /* reentrant = */ true);
   OnUnhandledException(throwable);
 #if KONAN_REPORT_BACKTRACE_TO_IOS_CRASH_LOG
   ReportBacktraceToIosCrashLog(throwable);
