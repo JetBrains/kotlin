@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_WITH_IR_EVALUATOR, JVM_IR_WITH_IR_EVALUATOR
 LineBreakpoint created at methodWithBreakpoint.kt:5
 LineBreakpoint created at methodWithBreakpoint.kt:10
 Run Java
