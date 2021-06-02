@@ -21,7 +21,7 @@ object HLIdParameterConversion : HLParameterConversion() {
     override fun convertType(type: KType): KType = type
 }
 
-class HLMapParameterConversion(
+class HLCollectionParameterConversion(
     private val parameterName: String,
     private val mappingConversion: HLParameterConversion,
 ) : HLParameterConversion() {
@@ -45,6 +45,45 @@ class HLMapParameterConversion(
         )
 
     override val importsToAdd get() = mappingConversion.importsToAdd
+}
+
+class HLMapParameterConversion(
+    private val keyName: String,
+    private val valueName: String,
+    private val mappingConversionForKeys: HLParameterConversion,
+    private val mappingConversionForValues: HLParameterConversion,
+) : HLParameterConversion() {
+    override fun convertExpression(expression: String, context: ConversionContext): String {
+        val keyTransformation = mappingConversionForKeys.convertExpression(keyName, context.increaseIndent())
+        val valueTransformation = mappingConversionForValues.convertExpression(valueName, context.increaseIndent())
+        return buildString {
+            appendLine("$expression.mapKeys { ($keyName, _) ->")
+            appendLine(keyTransformation.withIndent(context.increaseIndent()))
+            appendLine("}.mapValues { (_, $valueName) -> ".withIndent(context))
+            appendLine(valueTransformation.withIndent(context.increaseIndent()))
+            append("}".withIndent(context))
+        }
+    }
+
+    override fun convertType(type: KType): KType {
+        val keyArgument = type.arguments[0]
+        val valueArgument = type.arguments[1]
+        return Map::class.createType(
+            arguments = listOf(
+                KTypeProjection(
+                    variance = KVariance.INVARIANT,
+                    type = keyArgument.type?.let(mappingConversionForKeys::convertType)
+                ),
+                KTypeProjection(
+                    variance = KVariance.INVARIANT,
+                    type = valueArgument.type?.let(mappingConversionForValues::convertType)
+                )
+            )
+        )
+    }
+
+    override val importsToAdd: List<String>
+        get() = (mappingConversionForKeys.importsToAdd + mappingConversionForValues.importsToAdd).distinct()
 }
 
 class HLPairParameterConversion(
@@ -93,3 +132,6 @@ private fun String.withIndent(context: ConversionContext): String {
     val newIndent = " ".repeat(context.currentIndent * context.indentUnitValue)
     return replaceIndent(newIndent)
 }
+
+val HLParameterConversion.isTrivial: Boolean
+    get() = this is HLIdParameterConversion
