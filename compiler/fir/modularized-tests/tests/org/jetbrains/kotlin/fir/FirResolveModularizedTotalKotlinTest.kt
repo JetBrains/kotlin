@@ -52,11 +52,6 @@ private val RUN_CHECKERS = System.getProperty("fir.bench.run.checkers", "false")
 private val USE_LIGHT_TREE = System.getProperty("fir.bench.use.light.tree", "false").toBooleanLenient()!!
 private val DUMP_MEMORY = System.getProperty("fir.bench.dump.memory", "false").toBooleanLenient()!!
 
-private val ASYNC_PROFILER_LIB = System.getProperty("fir.bench.use.async.profiler.lib")
-private val ASYNC_PROFILER_START_CMD = System.getProperty("fir.bench.use.async.profiler.cmd.start")
-private val ASYNC_PROFILER_STOP_CMD = System.getProperty("fir.bench.use.async.profiler.cmd.stop")
-private val PROFILER_SNAPSHOT_DIR = System.getProperty("fir.bench.snapshot.dir") ?: "tmp/snapshots"
-
 private val REPORT_PASS_EVENTS = System.getProperty("fir.bench.report.pass.events", "false").toBooleanLenient()!!
 
 private interface CLibrary : Library {
@@ -121,34 +116,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 
     private var passEventReporter: PassEventReporter? = null
 
-    private val asyncProfiler = if (ASYNC_PROFILER_LIB != null) {
-        try {
-            AsyncProfilerHelper.getInstance(ASYNC_PROFILER_LIB)
-        } catch (e: ExceptionInInitializerError) {
-            if (e.cause is ClassNotFoundException) {
-                throw IllegalStateException("Async-profiler initialization error, make sure async-profiler.jar is on classpath", e.cause)
-            }
-            throw e
-        }
-    } else {
-        null
-    }
-
-    private fun executeAsyncProfilerCommand(command: String?, pass: Int) {
-        if (asyncProfiler != null) {
-            require(command != null)
-            fun String.replaceParams(): String =
-                this.replace("\$REPORT_DATE", reportDateStr)
-                    .replace("\$PASS", pass.toString())
-
-            val snapshotDir = File(PROFILER_SNAPSHOT_DIR.replaceParams()).also { it.mkdirs() }
-            val expandedCommand = command
-                .replace("\$SNAPSHOT_DIR", snapshotDir.toString())
-                .replaceParams()
-            val result = asyncProfiler.execute(expandedCommand)
-            println("PROFILER: $result")
-        }
-    }
+    private val asyncProfilerControl = AsyncProfilerControl()
 
     @OptIn(ObsoleteTestInfrastructure::class)
     private fun runAnalysis(moduleData: ModuleData, environment: KotlinCoreEnvironment) {
@@ -252,10 +220,13 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         if (DUMP_FIR) dump = MultiModuleHtmlFirDump(File(FIR_HTML_DUMP_PATH))
         System.gc()
         passEventReporter?.reportPassStart(pass)
-        executeAsyncProfilerCommand(ASYNC_PROFILER_START_CMD, pass)
+        asyncProfilerControl.beforePass(pass, reportDateStr)
     }
 
     override fun afterPass(pass: Int) {
+
+        asyncProfilerControl.afterPass(pass, reportDateStr)
+
         val statistics = bench.getTotalStatistics()
         statistics.report(System.out, "Pass $pass")
 
@@ -270,8 +241,6 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         if (FAIL_FAST) {
             bench.throwFailure()
         }
-
-        executeAsyncProfilerCommand(ASYNC_PROFILER_STOP_CMD, pass)
 
         passEventReporter?.reportPassEnd(pass)
     }

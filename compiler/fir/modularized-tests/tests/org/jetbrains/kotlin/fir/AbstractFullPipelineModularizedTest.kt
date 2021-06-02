@@ -23,6 +23,8 @@ import java.nio.file.Path
 
 abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
 
+    private val asyncProfilerControl = AsyncProfilerControl()
+
     data class ModuleStatus(val data: ModuleData, val targetInfo: String) {
         var compilationError: String? = null
         var jvmInternalError: String? = null
@@ -64,9 +66,13 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
         okModules.clear()
         errorModules.clear()
         crashedModules.clear()
+
+        asyncProfilerControl.beforePass(pass, reportDateStr)
     }
 
     override fun afterPass(pass: Int) {
+        asyncProfilerControl.afterPass(pass, reportDateStr)
+
         createReport(finalReport = pass == PASSES - 1)
         require(totalModules.isNotEmpty()) { "No modules were analyzed" }
         require(okModules.isNotEmpty()) { "All of $totalModules is failed" }
