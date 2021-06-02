@@ -55,9 +55,12 @@ fun getDefaultJsr305Settings(): Jsr305Settings {
     } else {
         jsr305Settings.reportLevelBefore
     }
-    val migrationLevel = if (globalReportLevel == ReportLevel.WARN) null else globalReportLevel
+    val migrationLevel = getDefaultMigrationJsr305ReportLevelForGivenGlobal(globalReportLevel)
     return Jsr305Settings(globalReportLevel, migrationLevel)
 }
+
+fun getDefaultMigrationJsr305ReportLevelForGivenGlobal(globalReportLevel: ReportLevel) =
+    if (globalReportLevel == ReportLevel.WARN) null else globalReportLevel
 
 fun getDefaultReportLevelForAnnotation(annotationFqName: FqName) = getReportLevelForAnnotation(annotationFqName, emptyMap())
 
