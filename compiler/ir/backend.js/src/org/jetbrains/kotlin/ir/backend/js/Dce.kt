@@ -411,7 +411,7 @@ fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendConte
                             val ref = expression.getTypeArgument(0)?.classOrNull ?: context.irBuiltIns.anyClass
                             referencedJsClassesFromExpressions += ref.owner
                         }
-                        context.intrinsics.jsObjectCreate.symbol -> {
+                        context.intrinsics.jsObjectCreate -> {
                             val classToCreate = expression.getTypeArgument(0)!!.classifierOrFail.owner as IrClass
                             classToCreate.enqueue("intrinsic: jsObjectCreate")
                             constructedClasses += classToCreate

@@ -55,6 +55,8 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             prefixOp(intrinsics.jsPrefixDec, JsUnaryOperator.DEC)
             postfixOp(intrinsics.jsPostfixDec, JsUnaryOperator.DEC)
 
+            prefixOp(intrinsics.jsDelete, JsUnaryOperator.DELETE)
+
             binOp(intrinsics.jsPlus, JsBinaryOperator.ADD)
             binOp(intrinsics.jsMinus, JsBinaryOperator.SUB)
             binOp(intrinsics.jsMult, JsBinaryOperator.MUL)
@@ -77,6 +79,8 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             binOp(intrinsics.jsBitShiftL, JsBinaryOperator.SHL)
 
             binOp(intrinsics.jsInstanceOf, JsBinaryOperator.INSTANCEOF)
+
+            binOp(intrinsics.jsIn, JsBinaryOperator.INOP)
 
             prefixOp(intrinsics.jsTypeOf, JsUnaryOperator.TYPEOF)
 

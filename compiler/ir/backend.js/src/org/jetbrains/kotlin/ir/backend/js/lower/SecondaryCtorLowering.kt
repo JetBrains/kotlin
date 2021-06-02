@@ -86,7 +86,7 @@ class SecondaryConstructorLowering(val context: JsIrBackendContext) : Declaratio
         stub.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
             val type = irClass.defaultType
             val createFunctionIntrinsic = context.intrinsics.jsObjectCreate
-            val irCreateCall = JsIrBuilder.buildCall(createFunctionIntrinsic.symbol, type, listOf(type))
+            val irCreateCall = JsIrBuilder.buildCall(createFunctionIntrinsic, type, listOf(type))
             val irDelegateCall = JsIrBuilder.buildCall(delegate.symbol, type).also { call ->
                 for (i in 0 until stub.typeParameters.size) {
                     call.putTypeArgument(i, stub.typeParameters[i].toIrType())

@@ -54,7 +54,7 @@ class IrBuiltIns(
     private fun ClassDescriptor.toIrSymbol() = symbolTable.referenceClass(this)
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
-    fun defineOperator(name: String, returnType: IrType, valueParameterTypes: List<IrType>): IrSimpleFunctionSymbol {
+    private fun defineOperator(name: String, returnType: IrType, valueParameterTypes: List<IrType>): IrSimpleFunctionSymbol {
         val operatorDescriptor =
             IrSimpleBuiltinOperatorDescriptorImpl(packageFragmentDescriptor, Name.identifier(name), returnType.originalKotlinType!!)
 

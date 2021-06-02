@@ -34,69 +34,68 @@ import java.util.*
 
 class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendContext) {
 
-    val externalPackageFragment = IrExternalPackageFragmentImpl.createEmptyExternalPackageFragment(
-        context.builtIns.builtInsModule, FqName("kotlin.js.internal")
-    )
-
     // TODO: Should we drop operator intrinsics in favor of IrDynamicOperatorExpression?
 
     // Equality operations:
 
-    val jsEqeq = binOpBool("jsEqeq")
-    val jsNotEq = binOpBool("jsNotEq")
-    val jsEqeqeq = binOpBool("jsEqeqeq")
-    val jsNotEqeq = binOpBool("jsNotEqeq")
+    val jsEqeq = getInternalFunction("jsEqeq")
+    val jsNotEq = getInternalFunction("jsNotEq")
+    val jsEqeqeq = getInternalFunction("jsEqeqeq")
+    val jsNotEqeq = getInternalFunction("jsNotEqeq")
 
-    val jsGt = binOpBool("jsGt")
-    val jsGtEq = binOpBool("jsGtEq")
-    val jsLt = binOpBool("jsLt")
-    val jsLtEq = binOpBool("jsLtEq")
+    val jsGt = getInternalFunction("jsGt")
+    val jsGtEq = getInternalFunction("jsGtEq")
+    val jsLt = getInternalFunction("jsLt")
+    val jsLtEq = getInternalFunction("jsLtEq")
 
 
     // Unary operations:
 
-    val jsNot = unOpBool("jsNot")
+    val jsNot = getInternalFunction("jsNot")
 
-    val jsUnaryPlus = unOp("jsUnaryPlus")
-    val jsUnaryMinus = unOp("jsUnaryMinus")
+    val jsUnaryPlus = getInternalFunction("jsUnaryPlus")
+    val jsUnaryMinus = getInternalFunction("jsUnaryMinus")
 
-    val jsPrefixInc = unOp("jsPrefixInc")
-    val jsPostfixInc = unOp("jsPostfixInc")
-    val jsPrefixDec = unOp("jsPrefixDec")
-    val jsPostfixDec = unOp("jsPostfixDec")
+    val jsPrefixInc = getInternalFunction("jsPrefixInc")
+    val jsPostfixInc = getInternalFunction("jsPostfixInc")
+    val jsPrefixDec = getInternalFunction("jsPrefixDec")
+    val jsPostfixDec = getInternalFunction("jsPostfixDec")
+
+    val jsDelete = getInternalFunction("jsDelete")
 
     // Binary operations:
 
-    val jsPlus = binOp("jsPlus")
-    val jsMinus = binOp("jsMinus")
-    val jsMult = binOp("jsMult")
-    val jsDiv = binOp("jsDiv")
-    val jsMod = binOp("jsMod")
+    val jsPlus = getInternalFunction("jsPlus")
+    val jsMinus = getInternalFunction("jsMinus")
+    val jsMult = getInternalFunction("jsMult")
+    val jsDiv = getInternalFunction("jsDiv")
+    val jsMod = getInternalFunction("jsMod")
 
-    val jsPlusAssign = binOp("jsPlusAssign")
-    val jsMinusAssign = binOp("jsMinusAssign")
-    val jsMultAssign = binOp("jsMultAssign")
-    val jsDivAssign = binOp("jsDivAssign")
-    val jsModAssign = binOp("jsModAssign")
+    val jsPlusAssign = getInternalFunction("jsPlusAssign")
+    val jsMinusAssign = getInternalFunction("jsMinusAssign")
+    val jsMultAssign = getInternalFunction("jsMultAssign")
+    val jsDivAssign = getInternalFunction("jsDivAssign")
+    val jsModAssign = getInternalFunction("jsModAssign")
 
-    val jsAnd = binOp("jsAnd")
-    val jsOr = binOp("jsOr")
+    val jsAnd = getInternalFunction("jsAnd")
+    val jsOr = getInternalFunction("jsOr")
 
+    val jsIn = getInternalFunction("jsInIntrinsic")
 
     // Bit operations:
 
-    val jsBitAnd = binOpInt("jsBitAnd")
-    val jsBitOr = binOpInt("jsBitOr")
-    val jsBitXor = binOpInt("jsBitXor")
-    val jsBitNot = unOpInt("jsBitNot")
+    val jsBitAnd = getInternalFunction("jsBitAnd")
+    val jsBitOr = getInternalFunction("jsBitOr")
+    val jsBitXor = getInternalFunction("jsBitXor")
+    val jsBitNot = getInternalFunction("jsBitNot")
 
-    val jsBitShiftR = binOpInt("jsBitShiftR")
-    val jsBitShiftRU = binOpInt("jsBitShiftRU")
-    val jsBitShiftL = binOpInt("jsBitShiftL")
+    val jsBitShiftR = getInternalFunction("jsBitShiftR")
+    val jsBitShiftRU = getInternalFunction("jsBitShiftRU")
+    val jsBitShiftL = getInternalFunction("jsBitShiftL")
 
     // Type checks:
 
-    val jsInstanceOf = binOpBool("jsInstanceOf")
+    val jsInstanceOf = getInternalFunction("jsInstanceOfIntrinsic")
     val jsTypeOf = getInternalFunction("jsTypeOf")
 
     // Number conversions:
@@ -144,7 +143,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
 
     // Other:
 
-    val jsObjectCreate = defineObjectCreateIntrinsic() // Object.create
+    val jsObjectCreate = getInternalFunction("objectCreate") // Object.create
     val jsCode = getInternalFunction("js") // js("<code>")
     val jsHashCode = getInternalFunction("hashCode")
     val jsGetNumberHashCode = getInternalFunction("getNumberHashCode")
@@ -155,10 +154,10 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsCompareTo = getInternalFunction("compareTo")
     val jsEquals = getInternalFunction("equals")
     val jsConstruct = getInternalFunction("construct")
-    val jsNewTarget = unOp("jsNewTarget")
-    val jsEmptyObject = unOp("emptyObject")
-    val jsOpenInitializerBox = binOp("openInitializerBox")
-    val es6DefaultType = defineEs6DefaultTypeIntrinsic().symbol
+    val jsNewTarget = getInternalFunction("jsNewTarget")
+    val jsEmptyObject = getInternalFunction("emptyObject")
+    val jsOpenInitializerBox = getInternalFunction("openInitializerBox")
+    val es6DefaultType = getInternalFunction("DefaultType")
 
     val jsImul = getInternalFunction("imul")
 
@@ -174,8 +173,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsGetKClass = getInternalWithoutPackage("getKClass")
     val jsGetKClassFromExpression = getInternalWithoutPackage("getKClassFromExpression")
 
-    private val jsClassClassSymbol = getInternalClassWithoutPackage("kotlin.js.JsClass")
-    val jsClass = defineJsClassIntrinsic().symbol
+    val jsClass = getInternalFunction("jsClassIntrinsic")
 
     val jsNumberRangeToNumber = getInternalFunction("numberRangeToNumber")
     val jsNumberRangeToLong = getInternalFunction("numberRangeToLong")
@@ -214,7 +212,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val uIntClassSymbol by context.lazy2 { getInternalClassWithoutPackage("kotlin.UInt") }
     val uLongClassSymbol by context.lazy2 { getInternalClassWithoutPackage("kotlin.ULong") }
 
-    val unreachable = defineUnreachableIntrinsic()
+    val unreachable = getInternalFunction("unreachable")
 
     val returnIfSuspended = getInternalFunction("returnIfSuspended")
     val getContinuation = getInternalFunction("getContinuation")
@@ -230,16 +228,16 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsArray = getInternalFunction("arrayWithFun")
     val jsFillArray = getInternalFunction("fillArrayFun")
 
-    val jsArrayLength = unOp("jsArrayLength")
-    val jsArrayGet = binOp("jsArrayGet")
-    val jsArraySet = tripleOp("jsArraySet")
+    val jsArrayLength = getInternalFunction("jsArrayLength")
+    val jsArrayGet = getInternalFunction("jsArrayGet")
+    val jsArraySet = getInternalFunction("jsArraySet")
 
     val jsArrayIteratorFunction = getInternalFunction("arrayIterator")
 
     val jsPrimitiveArrayIteratorFunctions =
         PrimitiveType.values().associate { it to getInternalFunction("${it.typeName.asString().toLowerCaseAsciiOnly()}ArrayIterator") }
 
-    val arrayLiteral = unOp("arrayLiteral")
+    val arrayLiteral = getInternalFunction("arrayLiteral")
 
     val primitiveToTypedArrayMap = EnumMap(
         mapOf(
@@ -262,14 +260,14 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val primitiveToSizeConstructor =
         PrimitiveType.values().associate { type ->
             type to (primitiveToTypedArrayMap[type]?.let {
-                unOp("${it.toLowerCaseAsciiOnly()}Array")
+                getInternalFunction("${it.toLowerCaseAsciiOnly()}Array")
             } ?: getInternalFunction("${type.typeName.asString().toLowerCaseAsciiOnly()}Array"))
         }
 
     val primitiveToLiteralConstructor =
         PrimitiveType.values().associate { type ->
             type to (primitiveToTypedArrayMap[type]?.let {
-                unOp("${it.toLowerCaseAsciiOnly()}ArrayOf")
+                getInternalFunction("${it.toLowerCaseAsciiOnly()}ArrayOf")
             } ?: getInternalFunction("${type.typeName.asString().toLowerCaseAsciiOnly()}ArrayOf"))
         }
 
@@ -278,9 +276,9 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val primitiveArrayConcat = getInternalWithoutPackage("primitiveArrayConcat")
     val taggedArrayCopy = getInternalWithoutPackage("taggedArrayCopy")
 
-    val jsArraySlice = defineJsSliceIntrinsic().symbol
+    val jsArraySlice = getInternalFunction("slice")
 
-    val jsBind = defineJsBindIntrinsic()
+    val jsBind = getInternalFunction("jsBind")
 
     // TODO move to IntrinsifyCallsLowering
     val doNotIntrinsifyAnnotationSymbol = context.symbolTable.referenceClass(context.getJsInternalClass("DoNotIntrinsify"))
@@ -311,15 +309,15 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
 
     val captureStack = getInternalFunction("captureStack")
 
-    val createSharedBox = defineCreateSharedBox()
-    val readSharedBox = defineReadSharedBox()
-    val writeSharedBox = defineWriteSharedBox()
+    val createSharedBox = getInternalFunction("sharedBoxCreate")
+    val readSharedBox = getInternalFunction("sharedBoxRead")
+    val writeSharedBox = getInternalFunction("sharedBoxWrite")
 
 
     val safePropertyGet = getInternalFunction("safePropertyGet")
     val safePropertySet = getInternalFunction("safePropertySet")
 
-    val jsUndefined = defineJsUndefinedIntrinsic()
+    val jsUndefined = getInternalFunction("jsUndefined")
 
     // Helpers:
 
@@ -339,153 +337,4 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
 
     private fun getInternalClassWithoutPackage(fqName: String) =
         context.symbolTable.referenceClass(context.getClass(FqName(fqName)))
-
-    private val irFactory: IrFactory get() = context.irFactory
-
-    // TODO: unify how we create intrinsic symbols
-    private fun defineObjectCreateIntrinsic(): IrSimpleFunction {
-        return irFactory.addFunction(externalPackageFragment) {
-            name = Name.identifier("Object\$create")
-            origin = JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB
-        }.apply {
-            returnType = addTypeParameter("T", irBuiltIns.anyType).defaultType
-        }
-    }
-
-    private fun defineCreateSharedBox(): IrSimpleFunction {
-        return irFactory.addFunction(externalPackageFragment) {
-            name = Name.identifier("\$sharedBox\$create")
-            origin = JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB
-            returnType = context.dynamicType
-        }.apply {
-            val tp = addTypeParameter("T", irBuiltIns.anyNType)
-            addValueParameter {
-                index = 0
-                name = Name.identifier("v")
-                type = IrSimpleTypeBuilder().run {
-                    classifier = tp.symbol
-                    hasQuestionMark = true
-                    buildSimpleType()
-                }
-            }
-        }
-    }
-
-    private fun defineReadSharedBox(): IrSimpleFunction {
-        return irFactory.addFunction(externalPackageFragment) {
-            name = Name.identifier("\$sharedBox\$read")
-            origin = JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB
-        }.apply {
-            val tp = addTypeParameter("T", irBuiltIns.anyNType)
-            returnType = IrSimpleTypeBuilder().run {
-                classifier = tp.symbol
-                hasQuestionMark = true
-                buildSimpleType()
-            }
-            addValueParameter {
-                index = 0
-                name = Name.identifier("box")
-                type = context.dynamicType
-            }
-        }
-    }
-
-    private fun defineWriteSharedBox(): IrSimpleFunction {
-        return irFactory.addFunction(externalPackageFragment) {
-            name = Name.identifier("\$sharedBox\$write")
-            origin = JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB
-            returnType = irBuiltIns.unitType
-        }.apply {
-            val tp = addTypeParameter("T", irBuiltIns.anyNType)
-            addValueParameter {
-                index = 0
-                name = Name.identifier("box")
-                type = context.dynamicType
-            }
-            addValueParameter {
-                index = 1
-                name = Name.identifier("nv")
-                type = IrSimpleTypeBuilder().run {
-                    classifier = tp.symbol
-                    hasQuestionMark = true
-                    buildSimpleType()
-                }
-            }
-        }
-    }
-
-    private fun defineJsUndefinedIntrinsic(): IrSimpleFunction {
-        return irFactory.addFunction(externalPackageFragment) {
-            name = Name.identifier("\$undefined")
-        }.apply {
-            returnType = context.irBuiltIns.nothingNType
-        }
-    }
-
-    private fun defineEs6DefaultTypeIntrinsic(): IrSimpleFunction {
-        return irFactory.addFunction(externalPackageFragment) {
-            name = Name.identifier("DefaultType")
-        }.apply {
-            returnType = addTypeParameter("T", irBuiltIns.anyType).defaultType
-        }
-    }
-
-    private fun defineJsBindIntrinsic(): IrSimpleFunction {
-        return irFactory.addFunction(externalPackageFragment) {
-            name = Name.identifier("\$jsBind\$")
-            origin = JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB
-            returnType = irBuiltIns.anyNType
-        }.apply {
-            listOf("receiver", "target").forEach { addValueParameter(it, irBuiltIns.anyType) }
-        }
-    }
-
-    private fun defineJsSliceIntrinsic(): IrSimpleFunction {
-        return irFactory.addFunction(externalPackageFragment) {
-            name = Name.identifier("slice")
-            origin = JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB
-        }.apply {
-            val aType = addTypeParameter("A", irBuiltIns.anyType).defaultType
-            returnType = aType
-            addValueParameter("a", aType)
-        }
-    }
-
-    private fun defineUnreachableIntrinsic(): IrSimpleFunction {
-        return irFactory.addFunction(externalPackageFragment) {
-            name = Name.identifier(Namer.UNREACHABLE_NAME)
-            origin = JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB
-            returnType = irBuiltIns.nothingType
-        }
-    }
-
-    private fun defineJsClassIntrinsic(): IrSimpleFunction {
-        return irFactory.addFunction(externalPackageFragment) {
-            name = Name.identifier("jsClass")
-            origin = JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB
-            isInline = true
-        }.apply {
-            val typeParameter = addTypeParameter {
-                name = Name.identifier("T")
-                isReified = true
-                superTypes += irBuiltIns.anyType
-            }
-            returnType = jsClassClassSymbol.typeWithParameters(listOf(typeParameter))
-        }
-    }
-
-    private fun unOp(name: String, returnType: IrType = irBuiltIns.anyNType) =
-        irBuiltIns.run { defineOperator(name, returnType, listOf(anyNType)) }
-
-    private fun unOpBool(name: String) = unOp(name, irBuiltIns.booleanType)
-    private fun unOpInt(name: String) = unOp(name, irBuiltIns.intType)
-
-    private fun binOp(name: String, returnType: IrType = irBuiltIns.anyNType) =
-        irBuiltIns.run { defineOperator(name, returnType, listOf(anyNType, anyNType)) }
-
-    private fun tripleOp(name: String, returnType: IrType = irBuiltIns.anyNType) =
-        irBuiltIns.run { defineOperator(name, returnType, listOf(anyNType, anyNType, anyNType)) }
-
-    private fun binOpBool(name: String) = binOp(name, irBuiltIns.booleanType)
-    private fun binOpInt(name: String) = binOp(name, irBuiltIns.intType)
 }
