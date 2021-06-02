@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.container.get
+import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.fir.analysis.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
@@ -46,10 +47,18 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
+import org.jetbrains.kotlin.resolve.diagnostics.SimpleGenericDiagnostics
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
-import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.utils.newLinkedHashMapWithExpectedSize
 import java.io.File
+import kotlin.collections.List
+import kotlin.collections.any
+import kotlin.collections.emptyList
+import kotlin.collections.flatten
+import kotlin.collections.fold
+import kotlin.collections.isNotEmpty
+import kotlin.collections.map
+import kotlin.collections.set
 
 object FirKotlinToJvmBytecodeCompiler {
     fun compileModulesUsingFrontendIR(
@@ -171,16 +180,9 @@ object FirKotlinToJvmBytecodeCompiler {
                 jvmGeneratorExtensions = extensions
             )
 
-            // Create and initialize the module and its dependencies
-            val container = TopDownAnalyzerFacadeForJVM.createContainer(
-                project, ktFiles, NoScopeRecordCliBindingTrace(), environment.configuration, environment::createPackagePartProvider,
-                ::FileBasedDeclarationProviderFactory, CompilerEnvironment,
-                TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, ktFiles), emptyList()
-            )
-
             val generationState = GenerationState.Builder(
                 environment.project, ClassBuilderFactories.BINARIES,
-                container.get(), dummyBindingContext, ktFiles,
+                moduleFragment.descriptor, dummyBindingContext, ktFiles,
                 moduleConfiguration
             ).codegenFactory(
                 codegenFactory
