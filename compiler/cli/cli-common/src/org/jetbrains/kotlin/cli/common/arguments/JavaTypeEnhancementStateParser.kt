@@ -180,4 +180,11 @@ class JavaTypeEnhancementStateParser(private val collector: MessageCollector) {
 
         return FqName(name) to state
     }
+
+    companion object {
+        private val DEFAULT = JavaTypeEnhancementStateParser(MessageCollector.NONE)
+
+        fun parsePlainNullabilityAnnotationReportLevels(nullabilityAnnotations: String) =
+            DEFAULT.parseNullabilityAnnotationReportLevels(arrayOf(nullabilityAnnotations)).entries.singleOrNull()?.toPair()
+    }
 }
