@@ -23,6 +23,14 @@ val nullabilityAnnotationSettings = mapOf(
     FqName("javax.annotation") to JavaNullabilityAnnotationsStatus.DEFAULT,
     FqName("edu.umd.cs.findbugs.annotations") to JavaNullabilityAnnotationsStatus.DEFAULT,
     FqName("io.reactivex.annotations") to JavaNullabilityAnnotationsStatus.DEFAULT,
+    FqName("androidx.annotation.RecentlyNullable") to JavaNullabilityAnnotationsStatus(
+        reportLevelBefore = ReportLevel.WARN,
+        sinceVersion = null
+    ),
+    FqName("androidx.annotation.RecentlyNonNull") to JavaNullabilityAnnotationsStatus(
+        reportLevelBefore = ReportLevel.WARN,
+        sinceVersion = null
+    ),
     FqName("lombok") to JavaNullabilityAnnotationsStatus.DEFAULT,
     JSPECIFY_ANNOTATIONS_PACKAGE to JavaNullabilityAnnotationsStatus(
         reportLevelBefore = ReportLevel.WARN,
