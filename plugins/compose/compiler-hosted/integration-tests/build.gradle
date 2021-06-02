@@ -17,7 +17,6 @@
 
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-import static androidx.build.dependencies.DependenciesKt.*
 import androidx.build.Publish
 
 plugins {
@@ -27,18 +26,18 @@ plugins {
 }
 
 dependencies {
-    implementation(KOTLIN_STDLIB)
-    testImplementation(JUNIT)
-    testImplementation(ROBOLECTRIC)
+    implementation(libs.kotlinStdlib)
+    testImplementation(libs.junit)
+    testImplementation(libs.robolectric)
 
-    testCompileOnly("org.jetbrains.kotlin:kotlin-compiler:$KOTLIN_VERSION")
+    testCompileOnly(libs.kotlinCompiler)
     testRuntimeOnly(
         project(
            ":compose:compiler:compiler-hosted:integration-tests:kotlin-compiler-repackaged"
         )
     )
 
-    testImplementation(KOTLIN_STDLIB)
+    testImplementation(libs.kotlinStdlib)
     testImplementation(project(":compose:androidview:androidview"))
     testImplementation(project(":compose:compiler:compiler-hosted"))
     testImplementation(projectOrArtifact(":compose:material:material"))
