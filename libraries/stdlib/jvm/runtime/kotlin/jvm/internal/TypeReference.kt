@@ -35,13 +35,14 @@ public class TypeReference /* @SinceKotlin("1.6") constructor */(
         (classifier.hashCode() * 31 + arguments.hashCode()) * 31 + isMarkedNullable.hashCode()
 
     override fun toString(): String =
-        asString() + Reflection.REFLECTION_NOT_AVAILABLE
+        asString(false) + Reflection.REFLECTION_NOT_AVAILABLE
 
-    private fun asString(): String {
+    private fun asString(convertPrimitiveToWrapper: Boolean): String {
         val javaClass = (classifier as? KClass<*>)?.java
         val klass = when {
             javaClass == null -> classifier.toString()
             javaClass.isArray -> javaClass.arrayClassName
+            convertPrimitiveToWrapper && javaClass.isPrimitive -> (classifier as KClass<*>).javaObjectType.name
             else -> javaClass.name
         }
         val args =
@@ -70,7 +71,7 @@ public class TypeReference /* @SinceKotlin("1.6") constructor */(
     private fun KTypeProjection.asString(): String {
         if (variance == null) return "*"
 
-        val typeString = (type as? TypeReference)?.asString() ?: type.toString()
+        val typeString = (type as? TypeReference)?.asString(true) ?: type.toString()
         return when (variance) {
             KVariance.INVARIANT -> typeString
             KVariance.IN -> "in $typeString"
