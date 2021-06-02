@@ -529,6 +529,13 @@ __attribute__((swift_name("KDocExport")))
 @property int32_t yxxyz __attribute__((swift_name("yxxyz")));
 @end;
 
+__attribute__((swift_name("SomeClassWithProperty")))
+@interface KtSomeClassWithProperty : KtBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@property (readonly) KtSomeClassWithProperty *heavyFormattedKDocFoo __attribute__((swift_name("heavyFormattedKDocFoo")));
+@end;
+
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("KdocExportKt")))
 @interface KtKdocExportKt : KtBase
