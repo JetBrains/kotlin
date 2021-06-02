@@ -16,7 +16,6 @@
 
 import androidx.build.LibraryGroups
 import androidx.build.LibraryType
-import androidx.build.LibraryVersions
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
