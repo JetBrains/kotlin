@@ -520,5 +520,7 @@ object FirErrors {
 
     // Imports
     val CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON by error1<KtSimpleNameExpression, Name>(SourceElementPositioningStrategies.IMPORT_LAST_NAME)
+    val PACKAGE_CANNOT_BE_IMPORTED by error0<KtSimpleNameExpression>(SourceElementPositioningStrategies.IMPORT_LAST_NAME)
+    val CANNOT_BE_IMPORTED by error1<KtSimpleNameExpression, Name>(SourceElementPositioningStrategies.IMPORT_LAST_NAME)
 
 }

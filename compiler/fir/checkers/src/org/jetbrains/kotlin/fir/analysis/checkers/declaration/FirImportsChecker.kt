@@ -16,8 +16,12 @@ import org.jetbrains.kotlin.name.ClassId
 object FirImportsChecker : FirFileChecker() {
     override fun check(declaration: FirFile, context: CheckerContext, reporter: DiagnosticReporter) {
         declaration.imports.forEach { import ->
-            if (import.isAllUnder && import !is FirResolvedImport && import !is FirErrorImport) {
+            if (import is FirErrorImport) return@forEach
+            if (import.isAllUnder && import !is FirResolvedImport) {
                 checkAllUnderFromEnumEntry(import, context, reporter)
+            }
+            if (!import.isAllUnder) {
+                checkCanBeImported(import, context, reporter)
             }
         }
     }
@@ -30,6 +34,35 @@ object FirImportsChecker : FirFileChecker() {
         val classFir = classSymbol.fir as? FirRegularClass ?: return
         if (classFir.isEnumClass && classFir.collectEnumEntries().any { it.name == fqName.shortName() }) {
             reporter.reportOn(import.source, FirErrors.CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON, classFir.name, context)
+        }
+    }
+
+    private fun checkCanBeImported(import: FirImport, context: CheckerContext, reporter: DiagnosticReporter) {
+        val importedFqName = import.importedFqName ?: return
+        val importedName = importedFqName.shortName()
+        //empty name come from LT in some erroneous cases
+        if (importedName.isSpecial || importedName.identifier.isEmpty()) return
+        val classId = (import as? FirResolvedImport)?.resolvedClassId
+        if (classId != null) {
+            val classSymbol = context.session.symbolProvider.getClassLikeSymbolByFqName(classId) ?: return
+            val classFir = classSymbol.fir as? FirRegularClass ?: return
+            if (classFir.classKind.isSingleton) return
+            
+            val illegalImport = classFir.declarations.any {
+                it is FirSimpleFunction && !it.isStatic && it.name == importedName ||
+                        it is FirProperty && it.name == importedName
+            }
+            if (illegalImport) {
+                reporter.reportOn(import.source, FirErrors.CANNOT_BE_IMPORTED, importedName, context)
+            }
+        } else {
+            val importedClassId = ClassId.topLevel(importedFqName)
+            if (context.session.symbolProvider.getClassLikeSymbolByFqName(importedClassId) != null) {
+                return
+            }
+            context.session.symbolProvider.getPackage(importedFqName)?.let {
+                reporter.reportOn(import.source, FirErrors.PACKAGE_CANNOT_BE_IMPORTED, context)
+            }
         }
     }
 }

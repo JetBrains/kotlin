@@ -1810,6 +1810,15 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val objectName: Name
     }
 
+    abstract class PackageCannotBeImported : KtFirDiagnostic<KtSimpleNameExpression>() {
+        override val diagnosticClass get() = PackageCannotBeImported::class
+    }
+
+    abstract class CannotBeImported : KtFirDiagnostic<KtSimpleNameExpression>() {
+        override val diagnosticClass get() = CannotBeImported::class
+        abstract val name: Name
+    }
+
     abstract class ConflictingJvmDeclarations : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = ConflictingJvmDeclarations::class
     }

@@ -945,6 +945,12 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON by error<KtSimpleNameExpression>(PositioningStrategy.IMPORT_LAST_NAME) {
             parameter<Name>("objectName")
         }
+
+        val PACKAGE_CANNOT_BE_IMPORTED by error<KtSimpleNameExpression>(PositioningStrategy.IMPORT_LAST_NAME)
+
+        val CANNOT_BE_IMPORTED by error<KtSimpleNameExpression>(PositioningStrategy.IMPORT_LAST_NAME) {
+            parameter<Name>("name")
+        }
     }
 }
 
