@@ -158,7 +158,7 @@ class FirStatusResolver(
         }
 
         val modality = status.modality?.let {
-            if (it == Modality.OPEN && containingClass?.classKind == ClassKind.INTERFACE && !declaration.hasOwnBodyOrAccessorBody()) {
+            if (it == Modality.OPEN && containingClass?.classKind == ClassKind.INTERFACE && !(declaration.hasOwnBodyOrAccessorBody() || status.isExpect)) {
                 Modality.ABSTRACT
             } else {
                 it

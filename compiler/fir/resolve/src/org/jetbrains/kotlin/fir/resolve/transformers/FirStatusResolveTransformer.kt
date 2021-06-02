@@ -484,7 +484,8 @@ abstract class AbstractFirStatusResolveTransformer(
         if (needReplacePhase(simpleFunction)) {
             simpleFunction.replaceResolvePhase(transformerPhase)
         }
-        simpleFunction.transformStatus(this, statusResolver.resolveStatus(simpleFunction, containingClass, isLocal = false))
+        val resolvedStatus = statusResolver.resolveStatus(simpleFunction, containingClass, isLocal = false)
+        simpleFunction.transformStatus(this, resolvedStatus)
         calculateDeprecations(simpleFunction)
         return transformDeclaration(simpleFunction, data) as FirStatement
     }
