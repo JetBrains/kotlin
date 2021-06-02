@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
 
 // FILE: OCNewFileActionBase.java
 public class OCNewFileActionBase<T extends OCNewFileActionBase<T>.CreateFileDialogBase> {
