@@ -29,8 +29,6 @@ class JavaTypeEnhancementStateParser(private val collector: MessageCollector) {
         jspecifyState: String?,
         nullabilityAnnotations: Array<String>?,
     ): JavaTypeEnhancementState {
-        val jsr305State = parseJsr305State(jsr305Args)
-
         val compatqualCheckerFrameworkAnnotationsReportLevel = when (supportCompatqualCheckerFrameworkAnnotations) {
             "enable" -> ReportLevel.STRICT
             "disable" -> ReportLevel.IGNORE
@@ -43,10 +41,9 @@ class JavaTypeEnhancementStateParser(private val collector: MessageCollector) {
                 getDefaultReportLevelForAnnotation(CHECKER_FRAMEWORK_COMPATQUAL_ANNOTATIONS_PACKAGE)
             }
         }
-
+        val jsr305Settings = parseJsr305State(jsr305Args)
         val jspecifyReportLevel = parseJspecifyReportLevel(jspecifyState)
         val nullabilityAnnotationReportLevels = parseNullabilityAnnotationReportLevels(nullabilityAnnotations)
-        val jsr305Settings = Jsr305Settings(jsr305State.global ?: ReportLevel.WARN, jsr305State.migration, jsr305State.usedDefined)
 
         return JavaTypeEnhancementState(jsr305Settings) {
             when {
@@ -99,17 +96,12 @@ class JavaTypeEnhancementStateParser(private val collector: MessageCollector) {
         return reportLevel
     }
 
-    private data class Jsr305State(
-        val global: ReportLevel?,
-        val migration: ReportLevel?,
-        val usedDefined: Map<FqName, ReportLevel>
-    )
-
-    private fun parseJsr305State(args: Array<String>?): Jsr305State {
+    private fun parseJsr305State(args: Array<String>?): Jsr305Settings {
         var global: ReportLevel? = null
         var migration: ReportLevel? = null
         val userDefined = mutableMapOf<FqName, ReportLevel>()
         val compilerOption = "-Xjsr305"
+        val defaultSettings = Jsr305Settings.DEFAULT
 
         fun parseJsr305UnderMigration(item: String): ReportLevel? {
             val rawState = item.split(":").takeIf { it.size == 2 }?.get(1)
@@ -156,7 +148,14 @@ class JavaTypeEnhancementStateParser(private val collector: MessageCollector) {
                 }
             }
         }
-        return Jsr305State(global, migration, userDefined)
+
+        val globalLevel = global ?: defaultSettings.globalLevel
+
+        return Jsr305Settings(
+            globalLevel = globalLevel,
+            migrationLevel = migration ?: getDefaultMigrationJsr305ReportLevelForGivenGlobal(globalLevel),
+            userDefinedLevelForSpecificAnnotation = defaultSettings.userDefinedLevelForSpecificAnnotation
+        )
     }
 
     private fun reportUnrecognizedReportLevel(item: String, sourceCompilerOption: String) {
