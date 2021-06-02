@@ -171,9 +171,11 @@ class IrInterpreter private constructor(
     }
 
     private fun interpretCall(call: IrCall) {
-        fun IrFunction.mustBeHandledWithSuperOf(state: State?): State? {
-            if (state is Common && this.parent == state.superWrapperClass?.irClass) return state.superWrapperClass
-            return state
+        fun State?.getThisOrSuperReceiver(irFunction: IrFunction): State? {
+            // check if this function must be handled by super wrapper object
+            if (this !is Common || this.superWrapperClass == null || irFunction.parent !is IrClass) return this
+            if (superWrapperClass!!.irClass.isSubclassOf(irFunction.parentAsClass)) return superWrapperClass
+            return this
         }
 
         val owner = call.symbol.owner
@@ -184,7 +186,7 @@ class IrInterpreter private constructor(
 
         // 2. get correct function for interpretation
         val irFunction = dispatchReceiver?.getIrFunctionByIrCall(call) ?: call.symbol.owner
-        val args = listOfNotNull(irFunction.mustBeHandledWithSuperOf(dispatchReceiver), extensionReceiver) + valueArguments
+        val args = listOfNotNull(dispatchReceiver.getThisOrSuperReceiver(irFunction), extensionReceiver) + valueArguments
 
         callStack.dropSubFrame() // drop intermediate frame that contains variables for default arg evaluation
         callStack.newFrame(irFunction)
@@ -194,11 +196,9 @@ class IrInterpreter private constructor(
         callStack.addVariable(Variable(irFunction.symbol, KTypeState(call.type, irBuiltIns.anyClass.owner)))
 
         // 3. store arguments in memory (remap args on actual names)
-        val variables = mutableListOf<Variable>()
-        irFunction.getDispatchReceiver()?.let { dispatchReceiver?.let { receiver -> variables.add(Variable(it, receiver)) } }
-        irFunction.getExtensionReceiver()?.let { variables.add(Variable(it, extensionReceiver ?: valueArguments.removeFirst())) }
-        irFunction.valueParameters.forEach { variables.add(Variable(it.symbol, valueArguments.removeFirst())) }
-        variables.forEach { callStack.addVariable(it) }
+        irFunction.getDispatchReceiver()?.let { dispatchReceiver?.let { receiver -> callStack.addVariable(Variable(it, receiver)) } }
+        irFunction.getExtensionReceiver()?.let { callStack.addVariable(Variable(it, extensionReceiver ?: valueArguments.removeFirst())) }
+        irFunction.valueParameters.forEach { callStack.addVariable(Variable(it.symbol, valueArguments.removeFirst())) }
 
         // 4. store reified type parameters
         irFunction.typeParameters.filter { it.isReified }
@@ -592,8 +592,10 @@ class IrInterpreter private constructor(
         val extensionReceiver = reference.extensionReceiver?.let { callStack.getState(irFunction.getExtensionReceiver()!!) }
 
         callStack.dropSubFrame()
-        irFunction.getDispatchReceiver()?.let { dispatchReceiver?.let { receiver -> function.fields += Variable(it, receiver) } }
-        irFunction.getExtensionReceiver()?.let { extensionReceiver?.let { receiver -> function.fields += Variable(it, receiver) } }
+        // receivers in fields are used in comparison of two functions in KFunctionProxy
+        dispatchReceiver?.let { function.fields += Variable(irFunction.getDispatchReceiver()!!, it) }
+        extensionReceiver?.let { function.fields += Variable(irFunction.getExtensionReceiver()!!, it) }
+        function.upValues += function.fields
 
         if (irFunction.isLocal) callStack.storeUpValues(function)
         callStack.pushState(function)

@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.lang.invoke.MethodHandle
 
 internal interface CallInterceptor {
@@ -74,7 +75,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
             receiver is Wrapper && !isInlineOnly -> receiver.getMethod(irFunction).invokeMethod(irFunction, args)
             Wrapper.mustBeHandledWithWrapper(irFunction) -> Wrapper.getStaticMethod(irFunction).invokeMethod(irFunction, args)
             handleIntrinsicMethods(irFunction) -> return
-            receiver is KFunctionState && call.symbol.owner.name.asString() == "invoke" -> handleInvoke(call, receiver, args)
+            receiver is KFunctionState && call.symbol.owner.name == OperatorNameConventions.INVOKE -> handleInvoke(call, receiver, args)
             receiver is ReflectionState -> Wrapper.getReflectionMethod(irFunction).invokeMethod(irFunction, args)
             receiver is Primitive<*> -> calculateBuiltIns(irFunction, args) // check for js char, js long and get field for primitives
             irFunction.body == null ->

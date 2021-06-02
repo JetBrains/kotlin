@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.interpreter.*
 import org.jetbrains.kotlin.ir.interpreter.exceptions.handleUserException
 import org.jetbrains.kotlin.ir.interpreter.state.*
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KFunctionState
+import org.jetbrains.kotlin.ir.interpreter.state.reflection.KPropertyState
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KTypeState
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
@@ -217,19 +218,23 @@ internal object ArrayConstructor : IntrinsicBase() {
 
     override fun unwind(irFunction: IrFunction, environment: IrInterpreterEnvironment): List<Instruction> {
         if (irFunction.valueParameters.size == 1) return listOf(customEvaluateInstruction(irFunction, environment))
+        val callStack = environment.callStack
         val instructions = mutableListOf<Instruction>(customEvaluateInstruction(irFunction, environment))
 
-        val sizeDescriptor = irFunction.valueParameters[0].symbol
-        val size = environment.callStack.getState(sizeDescriptor).asInt()
+        val sizeSymbol = irFunction.valueParameters[0].symbol
+        val size = callStack.getState(sizeSymbol).asInt()
 
-        val initDescriptor = irFunction.valueParameters[1].symbol
-        val initLambda = environment.callStack.getState(initDescriptor) as KFunctionState
-        environment.callStack.loadUpValues(initLambda)
-        val function = initLambda.irFunction as IrSimpleFunction
-        val index = initLambda.irFunction.valueParameters.single()
+        val initSymbol = irFunction.valueParameters[1].symbol
+        val function = when (val state = callStack.getState(initSymbol)) {
+            is KFunctionState -> state.irFunction.apply { callStack.loadUpValues(state) }
+            is KPropertyState -> state.property.getter
+            else -> TODO("Unsupported `init` in array constructor: $state")
+        } as IrSimpleFunction
+
         for (i in size - 1 downTo 0) {
             val call = IrCallImpl.fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, function.returnType, function.symbol)
-            call.putValueArgument(0, IrConstImpl.int(UNDEFINED_OFFSET, UNDEFINED_OFFSET, index.type, i))
+            val arg = IrConstImpl.int(UNDEFINED_OFFSET, UNDEFINED_OFFSET, environment.irBuiltIns.intType, i)
+            if (function.correspondingPropertySymbol == null) call.putValueArgument(0, arg) else call.extensionReceiver = arg
             instructions += CompoundInstruction(call)
         }
 
