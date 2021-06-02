@@ -1,11 +1,6 @@
 apply plugin: 'de.undercouch.download'
 apply plugin: 'base'
 
-configurations {
-  kotlin_src
-  kotlin_jvm
-}
-
 //final String kotlin_big_build_configuration = 'Kotlin_1360_Compiler'
 final String kotlin_big_version = findProperty("kotlinLocalVersionOverride") ?: '1.5.0'
 final String kotlin_big_build = "1.5.0-release-749"
