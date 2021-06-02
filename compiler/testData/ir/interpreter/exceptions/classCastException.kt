@@ -59,6 +59,7 @@ Exception java.lang.ClassCastException: kotlin.Int cannot be cast to kotlin.Stri
 const val stringList = getIntList<List<String>>().<!WAS_NOT_EVALUATED: `
 Exception java.lang.ClassCastException: kotlin.Int cannot be cast to kotlin.String
 	at ClassCastExceptionKt.stringList.<anonymous>(classCastException.kt:54)
+	at ClassCastExceptionKt.stringList.Function$0.invoke(classCastException.kt:0)
 	at StandardKt.kotlin.let(Standard.kt:32)
 	at ClassCastExceptionKt.<clinit>(classCastException.kt:53)`!>let {
     it[0].length
@@ -66,6 +67,7 @@ Exception java.lang.ClassCastException: kotlin.Int cannot be cast to kotlin.Stri
 const val nullableStringList = getStringNullableList<List<String>>().<!WAS_NOT_EVALUATED: `
 Exception java.lang.NullPointerException
 	at ClassCastExceptionKt.nullableStringList.<anonymous>(classCastException.kt)
+	at ClassCastExceptionKt.nullableStringList.Function$0.invoke(classCastException.kt:0)
 	at StandardKt.kotlin.let(Standard.kt:32)
 	at ClassCastExceptionKt.<clinit>(classCastException.kt:56)`!>let { it[0].length }<!>
 const val nullableStringLength = <!WAS_NOT_EVALUATED: `

@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.ir.interpreter.proxy.wrap
 import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.*
-import org.jetbrains.kotlin.ir.interpreter.state.reflection.KFunctionState
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KTypeState
-import org.jetbrains.kotlin.ir.interpreter.state.reflection.ReflectionState
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
@@ -36,7 +33,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.lang.invoke.MethodHandle
 
 internal interface CallInterceptor {
@@ -75,58 +71,11 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
             receiver is Wrapper && !isInlineOnly -> receiver.getMethod(irFunction).invokeMethod(irFunction, args)
             Wrapper.mustBeHandledWithWrapper(irFunction) -> Wrapper.getStaticMethod(irFunction).invokeMethod(irFunction, args)
             handleIntrinsicMethods(irFunction) -> return
-            receiver is KFunctionState && call.symbol.owner.name == OperatorNameConventions.INVOKE -> handleInvoke(call, receiver, args)
-            receiver is ReflectionState -> Wrapper.getReflectionMethod(irFunction).invokeMethod(irFunction, args)
+            receiver.mustBeHandledAsReflection(call) -> Wrapper.getReflectionMethod(irFunction).invokeMethod(irFunction, args)
             receiver is Primitive<*> -> calculateBuiltIns(irFunction, args) // check for js char, js long and get field for primitives
             irFunction.body == null ->
                 irFunction.trySubstituteFunctionBody() ?: irFunction.tryCalculateLazyConst() ?: calculateBuiltIns(irFunction, args)
             else -> defaultAction()
-        }
-    }
-
-    // TODO unite this logic with interpretCall
-    private fun handleInvoke(call: IrCall, functionState: KFunctionState, args: List<State>) {
-        val invokedFunction = functionState.irFunction
-
-        var index = 1 // drop first arg that is reference to function
-        val dispatchReceiver = invokedFunction.dispatchReceiverParameter?.let { functionState.getField(it.symbol) ?: args[index++] }
-        val extensionReceiver = invokedFunction.extensionReceiverParameter?.let { functionState.getField(it.symbol) ?: args[index++] }
-        val valueArguments = invokedFunction.valueParameters.map { args[index++] }
-
-        val function = when (val symbol = invokedFunction.symbol) {
-            is IrSimpleFunctionSymbol -> {
-                val irCall = IrCallImpl.fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, invokedFunction.returnType, symbol)
-                val actualFunction = dispatchReceiver?.getIrFunctionByIrCall(irCall) ?: invokedFunction
-                callStack.newFrame(actualFunction)
-                callStack.addInstruction(SimpleInstruction(actualFunction))
-                callStack.addVariable(Variable(actualFunction.symbol, KTypeState(call.type, irBuiltIns.anyClass.owner)))
-
-                actualFunction
-            }
-            is IrConstructorSymbol -> {
-                val irConstructorCall = IrConstructorCallImpl.fromSymbolOwner(invokedFunction.returnType, symbol)
-                callStack.newSubFrame(irConstructorCall)
-                callStack.addInstruction(SimpleInstruction(irConstructorCall))
-                callStack.addVariable(Variable(invokedFunction.parentAsClass.thisReceiver!!.symbol, Common(invokedFunction.parentAsClass)))
-
-                invokedFunction
-            }
-            else -> TODO("unsupported symbol $symbol for invoke")
-        }
-
-        function.dispatchReceiverParameter?.let { callStack.addVariable(Variable(it.symbol, dispatchReceiver!!)) }
-        function.extensionReceiverParameter?.let { callStack.addVariable(Variable(it.symbol, extensionReceiver!!)) }
-        function.valueParameters.forEachIndexed { i, param -> callStack.addVariable(Variable(param.symbol, valueArguments[i])) }
-        if (invokedFunction.symbol is IrConstructorSymbol) return
-
-        callStack.loadUpValues(functionState)
-        if (extensionReceiver is StateWithClosure) callStack.loadUpValues(extensionReceiver)
-        if (dispatchReceiver is Complex && function.parentClassOrNull?.isInner == true) {
-            generateSequence(dispatchReceiver.outerClass) { (it.state as? Complex)?.outerClass }.forEach { callStack.addVariable(it) }
-        }
-
-        this.interceptCall(call, function, listOfNotNull(dispatchReceiver, extensionReceiver) + valueArguments) {
-            callStack.addInstruction(CompoundInstruction(function))
         }
     }
 

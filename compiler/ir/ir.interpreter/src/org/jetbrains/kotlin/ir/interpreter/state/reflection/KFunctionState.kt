@@ -5,32 +5,125 @@
 
 package org.jetbrains.kotlin.ir.interpreter.state.reflection
 
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.putArgument
 import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KParameterProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KTypeParameterProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KTypeProxy
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.StateWithClosure
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeParameter
 
-internal class KFunctionState(val irFunction: IrFunction, override val irClass: IrClass) : ReflectionState(), StateWithClosure {
+internal class KFunctionState(
+    val irFunction: IrFunction, override val irClass: IrClass, override val fields: MutableList<Variable>,
+) : ReflectionState(), StateWithClosure {
     override val upValues: MutableList<Variable> = mutableListOf()
-    override val fields: MutableList<Variable> = mutableListOf()
     private var _parameters: List<KParameter>? = null
     private var _returnType: KType? = null
     private var _typeParameters: List<KTypeParameter>? = null
 
-    constructor(functionReference: IrFunctionReference) : this(functionReference.symbol.owner, functionReference.type.classOrNull!!.owner)
+    private val functionClass: IrClass
+    val invokeSymbol: IrFunctionSymbol
+
+    init {
+        val invokeFunction = irClass.declarations.filterIsInstance<IrSimpleFunction>().single { it.name == OperatorNameConventions.INVOKE }
+        // TODO do we need new class here? if yes, do we need different names for temp classes?
+        functionClass = IrFactoryImpl.createClass(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+            object : IrDeclarationOriginImpl("TEMP_CLASS_FOR_INTERPRETER") {}, IrClassSymbolImpl(),
+            Name.identifier("Function\$0"), ClassKind.CLASS, DescriptorVisibilities.PRIVATE, Modality.FINAL
+        ).apply {
+            parent = irFunction.parent
+        }
+
+        functionClass.superTypes += irClass.defaultType
+        functionClass.declarations += IrFunctionImpl(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+            object : IrDeclarationOriginImpl("TEMP_FUNCTION_FOR_INTERPRETER") {}, IrSimpleFunctionSymbolImpl(),
+            OperatorNameConventions.INVOKE, DescriptorVisibilities.PUBLIC, Modality.FINAL, irFunction.returnType,
+            isInline = false, isExternal = false, isTailrec = false, isSuspend = false, isOperator = true, isInfix = false, isExpect = false
+        ).apply impl@{
+            parent = functionClass
+            overriddenSymbols = listOf(invokeFunction.symbol)
+
+            dispatchReceiverParameter = invokeFunction.dispatchReceiverParameter?.deepCopyWithSymbols(initialParent = this)
+            valueParameters = mutableListOf()
+
+            val call = when (val symbol = irFunction.symbol) {
+                is IrSimpleFunctionSymbol -> IrCallImpl(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                    irFunction.returnType, symbol, irFunction.typeParameters.size, irFunction.valueParameters.size
+                )
+                is IrConstructorSymbol -> IrConstructorCallImpl.fromSymbolOwner(irFunction.returnType, symbol)
+                else -> TODO("Unsupported symbol $symbol for invoke")
+            }.apply {
+                val dispatchParameter = irFunction.dispatchReceiverParameter
+                val extensionParameter = irFunction.extensionReceiverParameter
+
+                if (dispatchParameter != null && getField(dispatchParameter.symbol) == null) {
+                    dispatchReceiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, dispatchParameter.type, dispatchParameter.symbol)
+                    (this@impl.valueParameters as MutableList).add(dispatchParameter)
+                }
+                if (extensionParameter != null && getField(extensionParameter.symbol) == null) {
+                    extensionReceiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, extensionParameter.type, extensionParameter.symbol)
+                    (this@impl.valueParameters as MutableList).add(extensionParameter)
+                }
+                irFunction.valueParameters.forEach {
+                    putArgument(it, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, it.type, it.symbol))
+                    (this@impl.valueParameters as MutableList).add(it)
+                }
+            }
+
+            body = IrBlockBodyImpl(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                listOf(IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, this.returnType, this.symbol, call))
+            )
+
+            invokeSymbol = this.symbol
+        }
+    }
+
+    constructor(irFunction: IrFunction, irClass: IrClass) : this(irFunction, irClass, mutableListOf())
+
+    constructor(functionReference: IrFunctionReference, dispatchReceiver: Variable?, extensionReceiver: Variable?) : this(
+        functionReference.symbol.owner,
+        functionReference.type.classOrNull!!.owner,
+        listOfNotNull(dispatchReceiver, extensionReceiver).toMutableList()
+    ) {
+        // receivers are used in comparison of two functions in KFunctionProxy
+        upValues += fields
+    }
+
     constructor(irFunction: IrFunction, irBuiltIns: IrBuiltIns) :
-            this(irFunction, irBuiltIns.kFunctionN(irFunction.valueParameters.size))
+            this(irFunction, irBuiltIns.kFunctionN(irFunction.valueParameters.size), mutableListOf())
+
+    override fun getIrFunctionByIrCall(expression: IrCall): IrFunction? {
+        if (expression.symbol.owner.name == OperatorNameConventions.INVOKE) return invokeSymbol.owner
+        return super.getIrFunctionByIrCall(expression)
+    }
 
     fun getParameters(callInterceptor: CallInterceptor): List<KParameter> {
         if (_parameters != null) return _parameters!!

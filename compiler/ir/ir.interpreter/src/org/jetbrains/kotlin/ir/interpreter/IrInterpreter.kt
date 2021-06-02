@@ -585,18 +585,18 @@ class IrInterpreter private constructor(
     }
 
     private fun interpretFunctionReference(reference: IrFunctionReference) {
-        val function = KFunctionState(reference)
-        val irFunction = function.irFunction
+        val irFunction = reference.symbol.owner
 
         val dispatchReceiver = reference.dispatchReceiver?.let { callStack.getState(irFunction.getDispatchReceiver()!!) }
         val extensionReceiver = reference.extensionReceiver?.let { callStack.getState(irFunction.getExtensionReceiver()!!) }
 
         callStack.dropSubFrame()
-        // receivers in fields are used in comparison of two functions in KFunctionProxy
-        dispatchReceiver?.let { function.fields += Variable(irFunction.getDispatchReceiver()!!, it) }
-        extensionReceiver?.let { function.fields += Variable(irFunction.getExtensionReceiver()!!, it) }
-        function.upValues += function.fields
 
+        val function = KFunctionState(
+            reference,
+            dispatchReceiver?.let { Variable(irFunction.getDispatchReceiver()!!, it) },
+            extensionReceiver?.let { Variable(irFunction.getExtensionReceiver()!!, it) }
+        )
         if (irFunction.isLocal) callStack.storeUpValues(function)
         callStack.pushState(function)
     }

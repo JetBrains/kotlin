@@ -5,15 +5,18 @@
 
 package org.jetbrains.kotlin.ir.interpreter.state
 
-import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterEnvironment
 import org.jetbrains.kotlin.ir.interpreter.exceptions.handleUserException
+import org.jetbrains.kotlin.ir.interpreter.stack.Variable
+import org.jetbrains.kotlin.ir.interpreter.state.reflection.KFunctionState
+import org.jetbrains.kotlin.ir.interpreter.state.reflection.ReflectionState
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal interface State {
     val fields: MutableList<Variable>
@@ -74,4 +77,8 @@ internal fun State.checkNullability(
         return null
     }
     return this
+}
+
+internal fun State?.mustBeHandledAsReflection(call: IrCall): Boolean {
+    return this is ReflectionState && !(this is KFunctionState && call.symbol.owner.name == OperatorNameConventions.INVOKE)
 }
