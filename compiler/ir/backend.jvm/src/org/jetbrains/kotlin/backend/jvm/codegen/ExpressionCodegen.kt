@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.lower.constantValue
-import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.requiresMangling
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
 import org.jetbrains.kotlin.backend.jvm.lower.isMultifileBridge
 import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
@@ -221,13 +220,6 @@ class ExpressionCodegen(
             expression.accept(this, data).materializeAt(type, irType)
         }
         return StackValue.onStack(type, irType.toIrBasedKotlinType())
-    }
-
-    internal fun genOrGetLocal(expression: IrExpression, type: Type, parameterType: IrType, data: BlockInfo): StackValue {
-        return if (expression is IrGetValue)
-            StackValue.local(findLocalIndex(expression.symbol), frameMap.typeOf(expression.symbol), expression.type.toIrBasedKotlinType())
-        else
-            gen(expression, type, parameterType, data)
     }
 
     fun generate() {
@@ -543,6 +535,8 @@ class ExpressionCodegen(
                     MaterialValue(this, unboxedInlineClassIrType.asmType, unboxedInlineClassIrType)
                 }
             }
+            expression.symbol.owner.resultIsActuallyAny(null) == true ->
+                MaterialValue(this, callable.asmMethod.returnType, context.irBuiltIns.anyNType)
             else ->
                 MaterialValue(this, callable.asmMethod.returnType, callable.returnType)
         }
@@ -646,55 +640,57 @@ class ExpressionCodegen(
         expression.markLineNumber(startOffset = true)
         val type = frameMap.typeOf(expression.symbol)
         mv.load(findLocalIndex(expression.symbol), type)
-        unboxResultIfNeeded(expression)
-        return MaterialValue(this, type, expression.type)
+        return MaterialValue(this, type, expression.symbol.owner.realType)
     }
 
-    // We do not mangle functions if Result is the only parameter of the function,
-    // thus, if the function overrides generic parameter, its argument is boxed and there is no
-    // bridge to unbox it. Instead, we unbox it in the non-mangled function manually.
-    private fun unboxResultIfNeeded(arg: IrGetValue) {
-        if (arg.type.erasedUpperBound.fqNameWhenAvailable != StandardNames.RESULT_FQ_NAME) return
-        // Unlike inline callable reference arguments, nullable Result arguments are unboxed during coercion to not-null Result
-        if (arg.type.isNullable()) return
-        // Do not unbox arguments of lambda, but unbox arguments of callable references
-        if (irFunction.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) return
-        if (!onlyResultInlineClassParameters()) return
-        if (irFunction !is IrSimpleFunction) return
-        // Skip Result's methods
-        if (irFunction.parentAsClass.fqNameWhenAvailable == StandardNames.RESULT_FQ_NAME) return
-        // Do not unbox, if there is a bridge, which unboxes for us
-        if (hasBridge()) return
+    internal fun genOrGetLocal(expression: IrExpression, type: Type, parameterType: IrType, data: BlockInfo): StackValue =
+        if (expression is IrGetValue)
+            StackValue.local(
+                findLocalIndex(expression.symbol), frameMap.typeOf(expression.symbol),
+                expression.symbol.owner.realType.toIrBasedKotlinType()
+            )
+        else
+            gen(expression, type, parameterType, data)
 
-        val index = (arg.symbol as? IrValueParameterSymbol)?.owner?.index ?: return
-        val genericOrAnyOverride = irFunction.overriddenSymbols.any {
-            val overriddenParam = if (index < 0) it.owner.dispatchReceiverParameter!! else it.owner.valueParameters[index]
-            overriddenParam.type.erasedUpperBound.fqNameWhenAvailable != StandardNames.RESULT_FQ_NAME
-        } || irFunction.parentAsClass.let { it.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL && !it.isSamAdapter() }
-        if (!genericOrAnyOverride) return
+    // We do not mangle functions if Result is the only parameter of the function. This means that if a function
+    // taking `Result` as a parameter overrides a function taking `Any?`, there is no bridge unless needed for
+    // some other reason, and thus `Result` is actually `Any?`. TODO: do this stuff at IR level?
+    val IrValueDeclaration.realType: IrType
+        get() = parent.let { parent ->
+            val isBoxedResult = this is IrValueParameter && parent is IrSimpleFunction &&
+                    parent.dispatchReceiverParameter != this &&
+                    (parent.parent as? IrClass)?.fqNameWhenAvailable != StandardNames.RESULT_FQ_NAME &&
+                    parent.resultIsActuallyAny(index) == true
+            return if (isBoxedResult) context.irBuiltIns.anyNType else type
+        }
 
-        // Result parameter of SAM-wrapper to Java SAM is already unboxed in visitGetValue, do not unbox it anymore
-        if (irFunction.parentAsClass.superTypes.any { it.getClass()?.isFromJava() == true }) return
-
-        // Do not unbox Results in suspend lambda `invoke` methods. These just forward to `invokeSuspend`,
-        // where the arguments are unboxed.
-        if (
-            irFunction.parentAsClass.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA &&
-            irFunction.name == OperatorNameConventions.INVOKE
-        ) return
-
-        StackValue.unboxInlineClass(OBJECT_TYPE, arg.type.erasedUpperBound.defaultType, mv, typeMapper)
-    }
-
-    private fun IrClass.isSamAdapter(): Boolean = this.superTypes.any { it.getClass()?.isFun == true }
-
-    private fun onlyResultInlineClassParameters(): Boolean = irFunction.valueParameters.all { !it.type.requiresMangling }
-
-    private fun hasBridge(): Boolean = irFunction.parentAsClass.declarations.any { function ->
-        function is IrFunction && function != irFunction &&
-                context.methodSignatureMapper.mapSignatureSkipGeneric(function).let {
-                    it.asmMethod.name == signature.asmMethod.name && it.valueParameters == signature.valueParameters
-                }
+    // Argument: null for return value, -1 for extension receiver, >= 0 for value parameter.
+    //           (It does not make sense to check the dispatch receiver.)
+    // Return: null if this is not a `Result<T>` type at all, false if this is an unboxed `Result<T>`,
+    //         true if this is a `Result<T>` overriding `Any?` and so it is boxed.
+    private fun IrSimpleFunction.resultIsActuallyAny(index: Int?): Boolean? {
+        val type = when {
+            index == null -> returnType
+            index < 0 -> extensionReceiverParameter!!.type
+            else -> valueParameters[index].type
+        }
+        return when {
+            // Only care about `Result<T>`; `Result<T>?` is boxed in any case.
+            type.erasedUpperBound.fqNameWhenAvailable != StandardNames.RESULT_FQ_NAME || type.isNullable() -> null
+            // In `SuspendLambda.invoke`, we take a boxed result and store it in a field of type `Any?` (or pass it
+            // to `create(Any?)`). Normally, we'd unbox here and the box at the store/call, but the boxing is elided
+            // by the hack in `PromisedValue.materializedAt`, and so we remove the unboxing as well. TODO: unhack this.
+            parentAsClass.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA && name == OperatorNameConventions.INVOKE -> false
+            // If there's a bridge, it will unbox `Result` along with transforming all other arguments.
+            parentAsClass.declarations.any { function ->
+                function is IrSimpleFunction && function != this &&
+                        function.origin == IrDeclarationOrigin.BRIDGE &&
+                        function.attributeOwnerId == attributeOwnerId
+            } -> false
+            // And if there's no bridge, we only need to unbox if we override another method that either takes
+            // `Any?` or also needs to unbox. (TODO: what if results of `needsResultArgumentUnboxing` are inconsistent?)
+            else -> overriddenSymbols.any { it.owner.resultIsActuallyAny(index) != false }
+        }
     }
 
     override fun visitFieldAccess(expression: IrFieldAccessExpression, data: BlockInfo): PromisedValue {
