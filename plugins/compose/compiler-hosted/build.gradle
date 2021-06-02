@@ -16,10 +16,8 @@
 
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-import static androidx.build.dependencies.DependenciesKt.*
 import androidx.build.LibraryGroups
 import androidx.build.LibraryType
-import androidx.build.LibraryVersions
 
 plugins {
     id("AndroidXPlugin")
@@ -27,8 +25,8 @@ plugins {
 }
 
 dependencies {
-    compileOnly(KOTLIN_STDLIB)
-    compileOnly("org.jetbrains.kotlin:kotlin-compiler:$KOTLIN_VERSION")
+    compileOnly(libs.kotlinStdlib)
+    compileOnly(libs.kotlinCompiler)
 }
 
 tasks.withType(KotlinCompile).configureEach {

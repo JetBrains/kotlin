@@ -17,15 +17,13 @@
 import androidx.build.Publish
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
-import static androidx.build.dependencies.DependenciesKt.getKOTLIN_VERSION
-
 plugins {
     id("java")
     id("AndroidXPlugin")
 }
 
 dependencies {
-    compileOnly("org.jetbrains.kotlin:kotlin-compiler:$KOTLIN_VERSION")
+    compileOnly(libs.kotlinCompiler)
 }
 
 // This task exists to work around https://youtrack.jetbrains.com/issue/KT-44876
