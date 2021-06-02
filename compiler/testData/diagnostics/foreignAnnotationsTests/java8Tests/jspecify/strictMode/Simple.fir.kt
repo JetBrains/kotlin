@@ -1,4 +1,5 @@
 // JSPECIFY_STATE: strict
+// !LANGUAGE: +TypeEnhancementImprovementsInStrictMode
 
 // FILE: Simple.java
 import org.jspecify.nullness.*;
