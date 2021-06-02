@@ -1,5 +1,6 @@
 // JSPECIFY_STATE: strict
 // MUTE_FOR_PSI_CLASS_FILES_READING
+// !LANGUAGE: +TypeEnhancementImprovementsInStrictMode
 
 // FILE: AnnotatedBoundsOfWildcard.java
 import org.jspecify.nullness.*;
