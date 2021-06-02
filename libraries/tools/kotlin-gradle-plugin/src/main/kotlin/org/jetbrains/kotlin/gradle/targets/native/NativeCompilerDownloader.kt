@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionType
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionTypeProvider
 import org.jetbrains.kotlin.konan.CompilerVersion
+import org.jetbrains.kotlin.konan.CompilerVersionImpl
 import org.jetbrains.kotlin.konan.MetaVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
@@ -45,7 +46,20 @@ class NativeCompilerDownloader(
         get() = NativeDistributionTypeProvider(project).getDistributionType(compilerVersion)
 
     private val simpleOsName: String
-        get() = HostManager.platformName()
+        get() {
+            fun CompilerVersion.isAtLeast(compilerVersion: CompilerVersion): Boolean {
+                if (this.major != compilerVersion.major) return this.major > compilerVersion.major
+                if (this.minor != compilerVersion.minor) return this.minor > compilerVersion.minor
+                if (this.maintenance != compilerVersion.maintenance) return this.maintenance > compilerVersion.maintenance
+                if (this.meta.ordinal != compilerVersion.meta.ordinal) return this.meta.ordinal > compilerVersion.meta.ordinal
+                return this.build >= compilerVersion.build
+            }
+            return if (compilerVersion.isAtLeast(CompilerVersionImpl(major = 1, minor = 5, maintenance = 30, build = 1466))) {
+                HostManager.platformName()
+            } else {
+                HostManager.simpleOsName()
+            }
+        }
 
     private val dependencyName: String
         get() {
