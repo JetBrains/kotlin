@@ -44,7 +44,7 @@ class TypeTranslatorImpl(
         CommonSupertypes.commonSupertype(types)
 
     override fun isTypeAliasAccessibleHere(typeAliasDescriptor: TypeAliasDescriptor): Boolean {
-        if (typeAliasDescriptor.visibility != DescriptorVisibilities.PRIVATE) return true
+        if (DescriptorVisibilities.isPrivate(typeAliasDescriptor.visibility)) return true
 
         val psiFile = typeAliasDescriptor.source.getPsi()?.containingFile ?: return false
 
