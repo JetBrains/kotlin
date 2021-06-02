@@ -56,11 +56,11 @@ private fun FirAnnotationCall.extractNullabilityFromKnownAnnotations(javaTypeEnh
         COMPATQUAL_NONNULL_ANNOTATION_ID -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL)
         ANDROIDX_RECENTLY_NON_NULL_ANNOTATION_ID -> NullabilityQualifierWithMigrationStatus(
             NullabilityQualifier.NOT_NULL,
-            isForWarningOnly = true
+            isForWarningOnly = reportLevel.isWarning
         )
         ANDROIDX_RECENTLY_NULLABLE_ANNOTATION_ID -> NullabilityQualifierWithMigrationStatus(
             NullabilityQualifier.NULLABLE,
-            isForWarningOnly = true
+            isForWarningOnly = reportLevel.isWarning
         )
         else -> null
     }
