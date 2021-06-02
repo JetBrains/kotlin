@@ -52,8 +52,8 @@ private fun FirAnnotationCall.extractNullabilityFromKnownAnnotations(javaTypeEnh
         JSPECIFY_NULLNESS_UNKNOWN_ANNOTATION_ID ->
             NullabilityQualifierWithMigrationStatus(NullabilityQualifier.FORCE_FLEXIBILITY, reportLevel.isWarning)
         JAVAX_NONNULL_ANNOTATION_ID -> extractNullabilityTypeFromArgument()
-        COMPATQUAL_NULLABLE_ANNOTATION_ID -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE)
-        COMPATQUAL_NONNULL_ANNOTATION_ID -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL)
+        COMPATQUAL_NULLABLE_ANNOTATION_ID -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE, reportLevel.isWarning)
+        COMPATQUAL_NONNULL_ANNOTATION_ID -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL, reportLevel.isWarning)
         ANDROIDX_RECENTLY_NON_NULL_ANNOTATION_ID -> NullabilityQualifierWithMigrationStatus(
             NullabilityQualifier.NOT_NULL,
             isForWarningOnly = reportLevel.isWarning
