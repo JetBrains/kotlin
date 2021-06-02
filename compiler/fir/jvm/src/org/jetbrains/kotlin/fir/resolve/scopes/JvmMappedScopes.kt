@@ -10,15 +10,14 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.classId
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.constructType
-import org.jetbrains.kotlin.fir.resolve.symbolProvider
-import org.jetbrains.kotlin.fir.resolve.wrapSubstitutionScopeIfNeed
+import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
 import org.jetbrains.kotlin.fir.scopes.jvm.JvmMappedScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 
 
 fun wrapScopeWithJvmMapped(
@@ -50,10 +49,7 @@ fun wrapScopeWithJvmMapped(
             } else {
                 // We should substitute Java type parameters with base Kotlin type parameters to match overrides properly
                 // It's necessary for MutableMap, which has *two* JavaMappedScope inside (one for itself and another for base Map)
-                (klass.symbol.constructType(
-                    klass.typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
-                    false
-                ) as ConeClassLikeType).wrapSubstitutionScopeIfNeed(
+                wrapSubstitutionScopeIfNeed(
                     useSiteSession, jvmMappedScope, klass, scopeSession,
                     derivedClass = klass,
                 )
@@ -63,3 +59,30 @@ fun wrapScopeWithJvmMapped(
         declaredMemberScope
     }
 }
+
+private fun wrapSubstitutionScopeIfNeed(
+    session: FirSession,
+    useSiteMemberScope: FirTypeScope,
+    declaration: FirClass,
+    builder: ScopeSession,
+    derivedClass: FirRegularClass
+): FirTypeScope {
+    if (declaration.typeParameters.isEmpty()) return useSiteMemberScope
+    return builder.getOrBuild(declaration.symbol, PLATFORM_TYPE_PARAMETERS_SUBSTITUTION_SCOPE_KEY) {
+        val platformClass = session.platformClassMapper.getCorrespondingPlatformClass(declaration) ?: return@getOrBuild useSiteMemberScope
+        // This kind of substitution is necessary when method which is mapped from Java (e.g. Java Map.forEach)
+        // is called on an external type, like MyMap<String, String>,
+        // to determine parameter types properly (e.g. String, String instead of K, V)
+        val platformTypeParameters = platformClass.typeParameters
+        val platformSubstitution = createSubstitution(platformTypeParameters, declaration.defaultType(), session)
+        val substitutor = substitutorByMap(platformSubstitution, session)
+        FirClassSubstitutionScope(
+            session, useSiteMemberScope, substitutor,
+            dispatchReceiverTypeForSubstitutedMembers = derivedClass.defaultType(),
+            skipPrivateMembers = true,
+        )
+    }
+}
+
+private val PLATFORM_TYPE_PARAMETERS_SUBSTITUTION_SCOPE_KEY = scopeSessionKey<FirClassSymbol<*>, FirTypeScope>()
+

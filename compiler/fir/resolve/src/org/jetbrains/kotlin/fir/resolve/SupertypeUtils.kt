@@ -11,16 +11,13 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
-import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.transformers.createSubstitutionForSupertype
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.SmartSet
@@ -109,12 +106,6 @@ inline fun <reified ID : Any, reified FS : FirScope> scopeSessionKey(): ScopeSes
 
 val USE_SITE = scopeSessionKey<FirClassSymbol<*>, FirTypeScope>()
 
-data class SubstitutionScopeKey(
-    val type: ConeClassLikeType,
-    // This property is necessary. Otherwise we may have accidental matching when two classes have the same supertype
-    val derivedClassId: ClassId
-) : ScopeSessionKey<FirClassLikeSymbol<*>, FirClassSubstitutionScope>()
-
 /* TODO REMOVE */
 fun createSubstitution(
     typeParameters: List<FirTypeParameterRef>, // TODO: or really declared?
@@ -137,36 +128,6 @@ fun createSubstitution(
             }
         }
     }.toMap()
-}
-
-fun ConeClassLikeType.wrapSubstitutionScopeIfNeed(
-    session: FirSession,
-    useSiteMemberScope: FirTypeScope,
-    declaration: FirClassLikeDeclaration,
-    builder: ScopeSession,
-    derivedClass: FirRegularClass
-): FirTypeScope {
-    if (this.typeArguments.isEmpty()) return useSiteMemberScope
-    return builder.getOrBuild(declaration.symbol, SubstitutionScopeKey(this, derivedClass.symbol.classId)) {
-        val typeParameters = (declaration as? FirTypeParameterRefsOwner)?.typeParameters.orEmpty()
-        val originalSubstitution = createSubstitution(typeParameters, this, session)
-        val platformClass = session.platformClassMapper.getCorrespondingPlatformClass(declaration)
-        val substitutor = if (platformClass != null) {
-            // This kind of substitution is necessary when method which is mapped from Java (e.g. Java Map.forEach)
-            // is called on an external type, like MyMap<String, String>,
-            // to determine parameter types properly (e.g. String, String instead of K, V)
-            val platformTypeParameters = platformClass.typeParameters
-            val platformSubstitution = createSubstitution(platformTypeParameters, this, session)
-            substitutorByMap(originalSubstitution + platformSubstitution, session)
-        } else {
-            substitutorByMap(originalSubstitution, session)
-        }
-        FirClassSubstitutionScope(
-            session, useSiteMemberScope, substitutor,
-            dispatchReceiverTypeForSubstitutedMembers = derivedClass.defaultType(),
-            skipPrivateMembers = true,
-        )
-    }
 }
 
 private fun ConeClassLikeType.computePartialExpansion(
