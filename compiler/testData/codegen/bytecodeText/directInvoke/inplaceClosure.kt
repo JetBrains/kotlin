@@ -3,4 +3,4 @@ fun test() {
     1.fn()
 }
 
-// 1 invoke \(I\)I
+// 1 invoke \(Ljava/lang/Object;\)Ljava/lang/Object;
