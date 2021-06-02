@@ -677,10 +677,6 @@ class ExpressionCodegen(
         return when {
             // Only care about `Result<T>`; `Result<T>?` is boxed in any case.
             type.erasedUpperBound.fqNameWhenAvailable != StandardNames.RESULT_FQ_NAME || type.isNullable() -> null
-            // In `SuspendLambda.invoke`, we take a boxed result and store it in a field of type `Any?` (or pass it
-            // to `create(Any?)`). Normally, we'd unbox here and the box at the store/call, but the boxing is elided
-            // by the hack in `PromisedValue.materializedAt`, and so we remove the unboxing as well. TODO: unhack this.
-            parentAsClass.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA && name == OperatorNameConventions.INVOKE -> false
             // If there's a bridge, it will unbox `Result` along with transforming all other arguments.
             parentAsClass.declarations.any { function ->
                 function is IrSimpleFunction && function != this &&
