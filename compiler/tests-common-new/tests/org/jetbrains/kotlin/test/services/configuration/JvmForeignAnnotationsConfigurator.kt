@@ -46,8 +46,9 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
         get() = listOf(ForeignAnnotationsDirectives)
 
     override fun provideAdditionalAnalysisFlags(directives: RegisteredDirectives): Map<AnalysisFlag<*>, Any?> {
-        val globalState = directives.singleOrZeroValue(JSR305_GLOBAL_REPORT) ?: ReportLevel.WARN
-        val migrationState = directives.singleOrZeroValue(JSR305_MIGRATION_REPORT)
+        val defaultJsr305Settings = Jsr305Settings.DEFAULT
+        val globalState = directives.singleOrZeroValue(JSR305_GLOBAL_REPORT) ?: defaultJsr305Settings.globalLevel
+        val migrationState = directives.singleOrZeroValue(JSR305_MIGRATION_REPORT) ?: defaultJsr305Settings.migrationLevel
         val userAnnotationsState = directives[JSR305_SPECIAL_REPORT].mapNotNull {
             val (name, stateDescription) = it.split(":").takeIf { it.size == 2 } ?: return@mapNotNull null
             val state = ReportLevel.findByDescription(stateDescription) ?: return@mapNotNull null

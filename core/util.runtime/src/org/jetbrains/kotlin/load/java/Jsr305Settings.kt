@@ -13,13 +13,7 @@ data class Jsr305Settings(
     val userDefinedLevelForSpecificAnnotation: Map<FqName, ReportLevel> = emptyMap()
 ) {
     companion object {
-        val DEFAULT by lazy {
-            val reportLevelBefore = if (jsr305Settings.sinceVersion != null && jsr305Settings.sinceVersion <= KotlinVersion.CURRENT) {
-                jsr305Settings.reportLevelBefore
-            } else jsr305Settings.reportLevelAfter
-
-            Jsr305Settings(reportLevelBefore, if (reportLevelBefore == ReportLevel.WARN) null else reportLevelBefore)
-        }
+        val DEFAULT = getDefaultJsr305Settings()
     }
 
     @OptIn(ExperimentalStdlibApi::class)
