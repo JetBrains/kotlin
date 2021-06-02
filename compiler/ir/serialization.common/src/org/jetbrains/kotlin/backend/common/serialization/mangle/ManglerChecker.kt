@@ -33,8 +33,7 @@ class ManglerChecker(vararg _manglers: KotlinMangler<IrDeclaration>) : IrElement
 
             if (declaration.parent is IrPackageFragment) {
                 val vis = declaration as IrDeclarationWithVisibility
-                if (vis.visibility == DescriptorVisibilities.PRIVATE) return true
-                else return false
+                return DescriptorVisibilities.isPrivate(vis.visibility)
             }
 
             return declaration.parent.accept(this, data)
