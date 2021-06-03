@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import kotlinx.collections.immutable.PersistentList
-import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -24,21 +22,27 @@ object FirCyclicTypeBoundsChecker : FirMemberDeclarationChecker() {
 
         val processed = mutableSetOf<Name>()
         val cycles = mutableSetOf<Name>()
-        val graph = declaration.typeParameters.map { param ->
+        val graph = declaration.typeParameters.associate { param ->
             param.symbol.name to param.symbol.fir.bounds.flatMap { extractTypeParamNames(it) }.toSet()
-        }.toMap()
+        }
+        val graphFunc = { name: Name -> graph.getOrDefault(name, emptySet()) }
+        val path = mutableListOf<Name>()
 
-        declaration.typeParameters.forEach { param ->
-            if (!processed.contains(param.symbol.name)) {
-                findCycles(
-                    persistentListOf(),
-                    param.symbol.name,
-                    processed,
-                    mutableSetOf(),
-                    cycles
-                ) { name -> graph.getOrDefault(name, emptySet()) }
+        fun findCycles(
+            node: Name
+        ) {
+            if (processed.add(node)) {
+                path.add(node)
+                graphFunc(node).forEach { nextNode ->
+                    findCycles(nextNode)
+                }
+                path.removeAt(path.size - 1)
+            } else {
+                cycles.addAll(path.dropWhile { it != node })
             }
         }
+
+        declaration.typeParameters.forEach { param -> findCycles(param.symbol.name) }
 
         if (cycles.isNotEmpty()) {
             declaration.typeParameters
@@ -72,24 +76,4 @@ object FirCyclicTypeBoundsChecker : FirMemberDeclarationChecker() {
         ref.unwrapBound().mapNotNull { extractTypeParamName(it.coneType) }.toSet()
 
     private fun extractTypeParamName(type: ConeKotlinType): Name? = type.safeAs<ConeTypeParameterType>()?.lookupTag?.name
-
-    private fun findCycles(
-        path: PersistentList<Name>,
-        node: Name,
-        processed: MutableSet<Name>,
-        visited: MutableSet<Name>,
-        cycles: MutableSet<Name>,
-        graph: (Name) -> Set<Name>
-    ) {
-        processed.add(node)
-        if (visited.add(node)) {
-            val newPath = path.add(node)
-            graph(node).forEach { nextNode ->
-                findCycles(newPath, nextNode, processed, visited, cycles, graph)
-            }
-        } else {
-            cycles.addAll(path.dropWhile { it != node })
-        }
-    }
-
 }
