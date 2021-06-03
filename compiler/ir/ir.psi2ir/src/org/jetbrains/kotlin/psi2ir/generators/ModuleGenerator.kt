@@ -38,15 +38,13 @@ class ModuleGenerator(
     override val context: GeneratorContext,
     private val expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>? = null
 ) : Generator {
-    private val constantValueGenerator = context.constantValueGenerator
 
     fun generateModuleFragment(ktFiles: Collection<KtFile>): IrModuleFragment =
         IrModuleFragmentImpl(context.moduleDescriptor, context.irBuiltIns).also { irModule ->
-            val irDeclarationGenerator = DeclarationGenerator(context)
             ktFiles.toSet().mapTo(irModule.files) { ktFile ->
-                context.typeTranslator.inFile(ktFile) {
-                    generateSingleFile(irDeclarationGenerator, ktFile, irModule)
-                }
+                val fileContext = context.createFileScopeContext(ktFile)
+                val irDeclarationGenerator = DeclarationGenerator(fileContext)
+                generateSingleFile(irDeclarationGenerator, ktFile, irModule)
             }
         }
 
@@ -57,6 +55,7 @@ class ModuleGenerator(
     private fun generateSingleFile(irDeclarationGenerator: DeclarationGenerator, ktFile: KtFile, module: IrModuleFragment): IrFileImpl {
         val irFile = createEmptyIrFile(ktFile, module)
 
+        val constantValueGenerator = irDeclarationGenerator.context.constantValueGenerator
         for (ktAnnotationEntry in ktFile.annotationEntries) {
             val annotationDescriptor = getOrFail(BindingContext.ANNOTATION, ktAnnotationEntry)
             constantValueGenerator.generateAnnotationConstructorCall(annotationDescriptor)?.let {
