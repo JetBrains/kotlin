@@ -20,7 +20,6 @@ apply from: "../../playground-common/playground-include-settings.gradle"
 setupPlayground(this, "../..")
 selectProjectsFromAndroidX({ name ->
     if (name.startsWith(":compose:compiler")) return true
-    if (name == ":compose:androidview:androidview") return true
     if (name == ":compose:lint:common") return true
     if (name == ":compose:lint:internal-lint-checks") return true
     return false
