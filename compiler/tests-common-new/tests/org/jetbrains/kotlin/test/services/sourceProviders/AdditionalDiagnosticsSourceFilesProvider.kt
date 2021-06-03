@@ -17,14 +17,12 @@ import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.TestServices
 import java.io.File
 
-class AdditionalDiagnosticsSourceFilesProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
-    companion object {
-        private const val HELPERS_PATH = "./compiler/testData/diagnostics/helpers"
-        private val DIRECTIVE_TO_FILE_MAP: Map<SimpleDirective, String> = mapOf(
-            CHECK_TYPE to "$HELPERS_PATH/types/checkType.kt",
-            INFERENCE_HELPERS to "$HELPERS_PATH/inference/inferenceUtils.kt"
-        )
-    }
+class AdditionalDiagnosticsSourceFilesProvider(testServices: TestServices, baseDir: String = ".") : AdditionalSourceProvider(testServices) {
+    private val helpersPath = "$baseDir/compiler/testData/diagnostics/helpers"
+    private val directiveToFileMap: Map<SimpleDirective, String> = mapOf(
+        CHECK_TYPE to "$helpersPath/types/checkType.kt",
+        INFERENCE_HELPERS to "$helpersPath/inference/inferenceUtils.kt"
+    )
 
     override val directives: List<DirectivesContainer> =
         listOf(AdditionalFilesDirectives)
@@ -32,7 +30,7 @@ class AdditionalDiagnosticsSourceFilesProvider(testServices: TestServices) : Add
     @OptIn(ExperimentalStdlibApi::class)
     override fun produceAdditionalFiles(globalDirectives: RegisteredDirectives, module: TestModule): List<TestFile> {
         return buildList {
-            for ((directive, path) in DIRECTIVE_TO_FILE_MAP) {
+            for ((directive, path) in directiveToFileMap) {
                 if (directive in module.directives) {
                     add(File(path).toTestFile())
                 }

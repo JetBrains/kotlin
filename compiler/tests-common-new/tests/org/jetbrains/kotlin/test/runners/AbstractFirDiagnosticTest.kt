@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.runners
 
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.bind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.COMPARE_WITH_LIGHT_TREE
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
@@ -44,7 +45,8 @@ abstract class AbstractFirDiagnosticsWithLightTreeTest : AbstractFirDiagnosticTe
 }
 
 
-fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration() {
+// `baseDir` is used in Kotlin plugin from IJ infra
+fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(baseDir: String = ".") {
     globalDefaults {
         frontend = FrontendKinds.FIR
         targetPlatform = JvmPlatforms.defaultJvmPlatform
@@ -59,7 +61,7 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration() {
     )
 
     useAdditionalSourceProviders(
-        ::AdditionalDiagnosticsSourceFilesProvider,
+        ::AdditionalDiagnosticsSourceFilesProvider.bind(baseDir),
         ::CoroutineHelpersSourceFilesProvider,
     )
     useFrontendFacades(::FirFrontendFacade)
