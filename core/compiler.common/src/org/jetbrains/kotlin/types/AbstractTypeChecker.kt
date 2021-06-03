@@ -490,7 +490,7 @@ object AbstractTypeChecker {
         }
 
         if (subType.isStubTypeForBuilderInference() && superType.isStubTypeForBuilderInference())
-            return isStubTypeSubtypeOfAnother(subType, superType)
+            return isStubTypeSubtypeOfAnother(subType, superType) || context.isStubTypeEqualsToAnything
 
         if (subType.isStubType() || superType.isStubType())
             return context.isStubTypeEqualsToAnything

@@ -47,16 +47,16 @@ fun test() {
 
         build2 {
             emit(1)
-            select1(this@build.get(), <!TYPE_MISMATCH!>getInv()<!>)
-            select1(get(), <!TYPE_MISMATCH!>Test.foo(this@build.getInv())<!>)
-            select1(Test.foo(this@build.get()), <!TYPE_MISMATCH!>Test.foo(getInv())<!>)
-            select1(Test.foo(get()), <!TYPE_MISMATCH!>this@build.getInv()<!>)
-            <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.Int..kotlin.Int?)")!>select4(this@build.get(), <!TYPE_MISMATCH!>getInv()<!>)<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select4(get(), <!TYPE_MISMATCH!>Test.foo(this@build.getInv())<!>)<!>
-            select4(Test.foo(this@build.get()), <!TYPE_MISMATCH!>Test.foo(getInv())<!>)
-            select4(Test.foo(get()), <!TYPE_MISMATCH!>this@build.getInv()<!>)
+            select1(<!TYPE_MISMATCH!>this@build.get()<!>, getInv())
+            select1(<!TYPE_MISMATCH!>get()<!>, Test.foo(this@build.getInv()))
+            select1(<!TYPE_MISMATCH!>Test.foo(this@build.get())<!>, Test.foo(getInv()))
+            select1(<!TYPE_MISMATCH!>Test.foo(get())<!>, this@build.getInv())
+            <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.Int..kotlin.Int?)")!>select4(<!TYPE_MISMATCH!>this@build.get()<!>, getInv())<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select4(<!TYPE_MISMATCH!>get()<!>, Test.foo(this@build.getInv()))<!>
+            select4(<!TYPE_MISMATCH!>Test.foo(this@build.get())<!>, Test.foo(getInv()))
+            select4(<!TYPE_MISMATCH!>Test.foo(get())<!>, this@build.getInv())
 
-            <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.Int..kotlin.Int?)")!>select4(id(Test.foo(this@build.get())), <!TYPE_MISMATCH!>getInv()<!>)<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.Int..kotlin.Int?)")!>select4(<!TYPE_MISMATCH!>id(Test.foo(this@build.get()))<!>, getInv())<!>
             ""
         }
         ""
@@ -78,14 +78,14 @@ fun test() {
 
         build2 {
             emit(1)
-            select2(this@build.get(), <!TYPE_MISMATCH("TypeVariable(R2); TypeVariable(R1)")!>getInv()<!>)
-            select2(get(), <!TYPE_MISMATCH("TypeVariable(R1); TypeVariable(R2)")!>Test.foo(this@build.getInv())<!>)
-            select2(Test.foo(this@build.get()), <!TYPE_MISMATCH("TypeVariable(R2); TypeVariable(R1)!")!>Test.foo(getInv())<!>)
-            select2(Test.foo(get()), <!TYPE_MISMATCH("TypeVariable(R1); TypeVariable(R2)!")!>this@build.getInv()<!>)
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>select3(this@build.get(), <!TYPE_MISMATCH!>getInv()<!>)<!>
+            select2(this@build.get(), getInv()) // TODO
+            select2(get(), <!TYPE_MISMATCH("Inv<Any?>; Inv<String?>!")!>Test.foo(this@build.getInv())<!>)
+            select2(Test.foo(this@build.get()), Test.foo(getInv())) // TODO
+            select2(Test.foo(get()), <!TYPE_MISMATCH("Inv<Any?>; Inv<String?>")!>this@build.getInv()<!>)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>select3(this@build.get(), getInv())<!> // TODO
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>select3(get(), <!TYPE_MISMATCH!>Test.foo(this@build.getInv())<!>)<!>
-            select3(Test.foo(this@build.get()), <!TYPE_MISMATCH("TypeVariable(R2); TypeVariable(R1)")!>Test.foo(getInv())<!>)
-            select3(Test.foo(get()), <!TYPE_MISMATCH("TypeVariable(R1); TypeVariable(R2)")!>this@build.getInv()<!>)
+            select3(Test.foo(this@build.get()), Test.foo(getInv())) // TODO
+            select3(Test.foo(get()), <!TYPE_MISMATCH("Inv<Any?>; Inv<String?>")!>this@build.getInv()<!>)
             ""
         }
         ""
