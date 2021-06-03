@@ -279,18 +279,18 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                     }
                 }
                 put(GARBAGE_COLLECTOR, when (arguments.gc) {
-                    null -> GC.SINGLE_THREAD_MARK_SWEEP
+                    null -> GC.SAME_THREAD_MARK_AND_SWEEP
                     "noop" -> {
                         assertGcSupported()
                         GC.NOOP
                     }
                     "stms" -> {
                         assertGcSupported()
-                        GC.SINGLE_THREAD_MARK_SWEEP
+                        GC.SAME_THREAD_MARK_AND_SWEEP
                     }
                     else -> {
                         configuration.report(ERROR, "Unsupported GC ${arguments.gc}")
-                        GC.SINGLE_THREAD_MARK_SWEEP
+                        GC.SAME_THREAD_MARK_AND_SWEEP
                     }
                 })
             }

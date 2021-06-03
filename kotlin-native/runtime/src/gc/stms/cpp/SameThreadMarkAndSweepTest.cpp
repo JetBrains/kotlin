@@ -3,7 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
-#include "SingleThreadMarkAndSweep.hpp"
+#include "SameThreadMarkAndSweep.hpp"
 
 #include <condition_variable>
 #include <future>
@@ -23,7 +23,7 @@
 
 using namespace kotlin;
 
-// These tests can only work if `GC` is `SingleThreadMarkAndSweep`.
+// These tests can only work if `GC` is `SameThreadMarkAndSweep`.
 // TODO: Extracting GC into a separate module will help with this.
 
 namespace {
@@ -197,10 +197,10 @@ KStdVector<ObjHeader*> Alive(mm::ThreadData& threadData) {
     return objects;
 }
 
-using Color = gc::SingleThreadMarkAndSweep::ObjectData::Color;
+using Color = gc::SameThreadMarkAndSweep::ObjectData::Color;
 
 Color GetColor(ObjHeader* objHeader) {
-    auto nodeRef = mm::ObjectFactory<gc::SingleThreadMarkAndSweep>::NodeRef::From(objHeader);
+    auto nodeRef = mm::ObjectFactory<gc::SameThreadMarkAndSweep>::NodeRef::From(objHeader);
     return nodeRef.GCObjectData().color();
 }
 
@@ -213,9 +213,9 @@ WeakCounter& InstallWeakCounter(mm::ThreadData& threadData, ObjHeader* objHeader
     return weakCounter;
 }
 
-class SingleThreadMarkAndSweepTest : public testing::Test {
+class SameThreadMarkAndSweepTest : public testing::Test {
 public:
-    ~SingleThreadMarkAndSweepTest() {
+    ~SameThreadMarkAndSweepTest() {
         mm::GlobalsRegistry::Instance().ClearForTests();
         mm::GlobalData::Instance().objectFactory().ClearForTests();
     }
@@ -228,7 +228,7 @@ private:
 
 } // namespace
 
-TEST_F(SingleThreadMarkAndSweepTest, RootSet) {
+TEST_F(SameThreadMarkAndSweepTest, RootSet) {
     RunInNewThread([](mm::ThreadData& threadData) {
         GlobalObjectHolder global1{threadData};
         GlobalObjectArrayHolder global2{threadData};
@@ -263,7 +263,7 @@ TEST_F(SingleThreadMarkAndSweepTest, RootSet) {
     });
 }
 
-TEST_F(SingleThreadMarkAndSweepTest, InterconnectedRootSet) {
+TEST_F(SameThreadMarkAndSweepTest, InterconnectedRootSet) {
     RunInNewThread([](mm::ThreadData& threadData) {
         GlobalObjectHolder global1{threadData};
         GlobalObjectArrayHolder global2{threadData};
@@ -309,7 +309,7 @@ TEST_F(SingleThreadMarkAndSweepTest, InterconnectedRootSet) {
     });
 }
 
-TEST_F(SingleThreadMarkAndSweepTest, FreeObjects) {
+TEST_F(SameThreadMarkAndSweepTest, FreeObjects) {
     RunInNewThread([](mm::ThreadData& threadData) {
         auto& object1 = AllocateObject(threadData);
         auto& object2 = AllocateObject(threadData);
@@ -324,7 +324,7 @@ TEST_F(SingleThreadMarkAndSweepTest, FreeObjects) {
     });
 }
 
-TEST_F(SingleThreadMarkAndSweepTest, FreeObjectsWithFinalizers) {
+TEST_F(SameThreadMarkAndSweepTest, FreeObjectsWithFinalizers) {
     RunInNewThread([this](mm::ThreadData& threadData) {
         auto& object1 = AllocateObjectWithFinalizer(threadData);
         auto& object2 = AllocateObjectWithFinalizer(threadData);
@@ -341,7 +341,7 @@ TEST_F(SingleThreadMarkAndSweepTest, FreeObjectsWithFinalizers) {
     });
 }
 
-TEST_F(SingleThreadMarkAndSweepTest, FreeObjectWithFreeWeak) {
+TEST_F(SameThreadMarkAndSweepTest, FreeObjectWithFreeWeak) {
     RunInNewThread([](mm::ThreadData& threadData) {
         auto& object1 = AllocateObject(threadData);
         auto& weak1 = ([&threadData, &object1]() -> WeakCounter& {
@@ -360,7 +360,7 @@ TEST_F(SingleThreadMarkAndSweepTest, FreeObjectWithFreeWeak) {
     });
 }
 
-TEST_F(SingleThreadMarkAndSweepTest, FreeObjectWithHoldedWeak) {
+TEST_F(SameThreadMarkAndSweepTest, FreeObjectWithHoldedWeak) {
     RunInNewThread([](mm::ThreadData& threadData) {
         auto& object1 = AllocateObject(threadData);
         StackObjectHolder stack{threadData};
@@ -379,7 +379,7 @@ TEST_F(SingleThreadMarkAndSweepTest, FreeObjectWithHoldedWeak) {
     });
 }
 
-TEST_F(SingleThreadMarkAndSweepTest, ObjectReferencedFromRootSet) {
+TEST_F(SameThreadMarkAndSweepTest, ObjectReferencedFromRootSet) {
     RunInNewThread([](mm::ThreadData& threadData) {
         GlobalObjectHolder global{threadData};
         StackObjectHolder stack{threadData};
@@ -419,7 +419,7 @@ TEST_F(SingleThreadMarkAndSweepTest, ObjectReferencedFromRootSet) {
     });
 }
 
-TEST_F(SingleThreadMarkAndSweepTest, ObjectsWithCycles) {
+TEST_F(SameThreadMarkAndSweepTest, ObjectsWithCycles) {
     RunInNewThread([](mm::ThreadData& threadData) {
         GlobalObjectHolder global{threadData};
         StackObjectHolder stack{threadData};
@@ -468,7 +468,7 @@ TEST_F(SingleThreadMarkAndSweepTest, ObjectsWithCycles) {
     });
 }
 
-TEST_F(SingleThreadMarkAndSweepTest, ObjectsWithCyclesAndFinalizers) {
+TEST_F(SameThreadMarkAndSweepTest, ObjectsWithCyclesAndFinalizers) {
     RunInNewThread([this](mm::ThreadData& threadData) {
         GlobalObjectHolder global{threadData};
         StackObjectHolder stack{threadData};
@@ -519,7 +519,7 @@ TEST_F(SingleThreadMarkAndSweepTest, ObjectsWithCyclesAndFinalizers) {
     });
 }
 
-TEST_F(SingleThreadMarkAndSweepTest, ObjectsWithCyclesIntoRootSet) {
+TEST_F(SameThreadMarkAndSweepTest, ObjectsWithCyclesIntoRootSet) {
     RunInNewThread([](mm::ThreadData& threadData) {
         GlobalObjectHolder global{threadData};
         StackObjectHolder stack{threadData};
@@ -547,7 +547,7 @@ TEST_F(SingleThreadMarkAndSweepTest, ObjectsWithCyclesIntoRootSet) {
     });
 }
 
-TEST_F(SingleThreadMarkAndSweepTest, RunGCTwice) {
+TEST_F(SameThreadMarkAndSweepTest, RunGCTwice) {
     RunInNewThread([](mm::ThreadData& threadData) {
         GlobalObjectHolder global{threadData};
         StackObjectHolder stack{threadData};
@@ -597,7 +597,7 @@ TEST_F(SingleThreadMarkAndSweepTest, RunGCTwice) {
     });
 }
 
-TEST_F(SingleThreadMarkAndSweepTest, PermanentObjects) {
+TEST_F(SameThreadMarkAndSweepTest, PermanentObjects) {
     RunInNewThread([](mm::ThreadData& threadData) {
         GlobalPermanentObjectHolder global1{threadData};
         GlobalObjectHolder global2{threadData};
@@ -619,7 +619,7 @@ TEST_F(SingleThreadMarkAndSweepTest, PermanentObjects) {
     });
 }
 
-TEST_F(SingleThreadMarkAndSweepTest, SameObjectInRootSet) {
+TEST_F(SameThreadMarkAndSweepTest, SameObjectInRootSet) {
     RunInNewThread([](mm::ThreadData& threadData) {
         GlobalObjectHolder global{threadData};
         StackObjectHolder stack(*global);
@@ -743,7 +743,7 @@ private:
 
 } // namespace
 
-TEST_F(SingleThreadMarkAndSweepTest, MultipleMutatorsCollect) {
+TEST_F(SameThreadMarkAndSweepTest, MultipleMutatorsCollect) {
     KStdVector<Mutator> mutators(kDefaultThreadCount);
     KStdVector<ObjHeader*> globals(kDefaultThreadCount);
     KStdVector<ObjHeader*> locals(kDefaultThreadCount);
@@ -799,7 +799,7 @@ TEST_F(SingleThreadMarkAndSweepTest, MultipleMutatorsCollect) {
     }
 }
 
-TEST_F(SingleThreadMarkAndSweepTest, MultipleMutatorsAllCollect) {
+TEST_F(SameThreadMarkAndSweepTest, MultipleMutatorsAllCollect) {
     KStdVector<Mutator> mutators(kDefaultThreadCount);
     KStdVector<ObjHeader*> globals(kDefaultThreadCount);
     KStdVector<ObjHeader*> locals(kDefaultThreadCount);
@@ -849,7 +849,7 @@ TEST_F(SingleThreadMarkAndSweepTest, MultipleMutatorsAllCollect) {
     }
 }
 
-TEST_F(SingleThreadMarkAndSweepTest, MultipleMutatorsAddToRootSetAfterCollectionRequested) {
+TEST_F(SameThreadMarkAndSweepTest, MultipleMutatorsAddToRootSetAfterCollectionRequested) {
     KStdVector<Mutator> mutators(kDefaultThreadCount);
     KStdVector<ObjHeader*> globals(kDefaultThreadCount);
     KStdVector<ObjHeader*> locals(kDefaultThreadCount);
@@ -921,7 +921,7 @@ TEST_F(SingleThreadMarkAndSweepTest, MultipleMutatorsAddToRootSetAfterCollection
     }
 }
 
-TEST_F(SingleThreadMarkAndSweepTest, CrossThreadReference) {
+TEST_F(SameThreadMarkAndSweepTest, CrossThreadReference) {
     KStdVector<Mutator> mutators(kDefaultThreadCount);
     KStdVector<ObjHeader*> globals(kDefaultThreadCount);
     KStdVector<ObjHeader*> locals(kDefaultThreadCount);
@@ -987,7 +987,7 @@ TEST_F(SingleThreadMarkAndSweepTest, CrossThreadReference) {
     }
 }
 
-TEST_F(SingleThreadMarkAndSweepTest, MultipleMutatorsWeaks) {
+TEST_F(SameThreadMarkAndSweepTest, MultipleMutatorsWeaks) {
     KStdVector<Mutator> mutators(kDefaultThreadCount);
     ObjHeader* globalRoot = nullptr;
     WeakCounter* weak = nullptr;

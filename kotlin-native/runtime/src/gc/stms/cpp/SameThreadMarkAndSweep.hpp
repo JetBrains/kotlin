@@ -3,8 +3,8 @@
  * that can be found in the LICENSE file.
  */
 
-#ifndef RUNTIME_GC_STMS_SINGLE_THREAD_MARK_AND_SWEEP_H
-#define RUNTIME_GC_STMS_SINGLE_THREAD_MARK_AND_SWEEP_H
+#ifndef RUNTIME_GC_STMS_SAME_THREAD_MARK_AND_SWEEP_H
+#define RUNTIME_GC_STMS_SAME_THREAD_MARK_AND_SWEEP_H
 
 #include <cstddef>
 
@@ -21,8 +21,7 @@ class ThreadData;
 namespace gc {
 
 // Stop-the-world Mark-and-Sweep that runs on mutator threads. Can support targets that do not have threads.
-// TODO: Rename it away from SingleThreadMarkAndSweep, but keep it STMS.
-class SingleThreadMarkAndSweep : private Pinned {
+class SameThreadMarkAndSweep : private Pinned {
 public:
     class ObjectData {
     public:
@@ -41,9 +40,9 @@ public:
 
     class ThreadData : private Pinned {
     public:
-        using ObjectData = SingleThreadMarkAndSweep::ObjectData;
+        using ObjectData = SameThreadMarkAndSweep::ObjectData;
 
-        explicit ThreadData(SingleThreadMarkAndSweep& gc, mm::ThreadData& threadData) noexcept : gc_(gc), threadData_(threadData) {}
+        explicit ThreadData(SameThreadMarkAndSweep& gc, mm::ThreadData& threadData) noexcept : gc_(gc), threadData_(threadData) {}
         ~ThreadData() = default;
 
         void SafePointFunctionEpilogue() noexcept;
@@ -58,14 +57,14 @@ public:
     private:
         void SafePointRegular(size_t weight) noexcept;
 
-        SingleThreadMarkAndSweep& gc_;
+        SameThreadMarkAndSweep& gc_;
         mm::ThreadData& threadData_;
         size_t allocatedBytes_ = 0;
         size_t safePointsCounter_ = 0;
     };
 
-    SingleThreadMarkAndSweep() noexcept {}
-    ~SingleThreadMarkAndSweep() = default;
+    SameThreadMarkAndSweep() noexcept {}
+    ~SameThreadMarkAndSweep() = default;
 
     void SetThreshold(size_t value) noexcept { threshold_ = value; }
     size_t GetThreshold() noexcept { return threshold_; }
@@ -77,7 +76,7 @@ public:
     bool GetAutoTune() noexcept { return autoTune_; }
 
 private:
-    mm::ObjectFactory<SingleThreadMarkAndSweep>::FinalizerQueue PerformFullGC() noexcept;
+    mm::ObjectFactory<SameThreadMarkAndSweep>::FinalizerQueue PerformFullGC() noexcept;
 
     size_t threshold_ = 1000;
     size_t allocationThresholdBytes_ = 10000;
@@ -87,4 +86,4 @@ private:
 } // namespace gc
 } // namespace kotlin
 
-#endif // RUNTIME_GC_STMS_SINGLE_THREAD_MARK_AND_SWEEP_H
+#endif // RUNTIME_GC_STMS_SAME_THREAD_MARK_AND_SWEEP_H

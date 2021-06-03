@@ -164,9 +164,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             MemoryModel.EXPERIMENTAL -> {
                 add("common_gc.bc")
                 when (gc) {
-                    GC.SINGLE_THREAD_MARK_SWEEP -> {
+                    GC.SAME_THREAD_MARK_AND_SWEEP -> {
                         add("experimental_memory_manager_stms.bc")
-                        add("single_thread_ms_gc.bc")
+                        add("same_thread_ms_gc.bc")
                     }
                     GC.NOOP -> {
                         add("experimental_memory_manager_noop.bc")

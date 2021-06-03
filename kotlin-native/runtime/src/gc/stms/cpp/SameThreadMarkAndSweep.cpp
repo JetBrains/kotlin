@@ -3,7 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
-#include "SingleThreadMarkAndSweep.hpp"
+#include "SameThreadMarkAndSweep.hpp"
 
 #include "GlobalData.hpp"
 #include "MarkAndSweepUtils.hpp"
@@ -20,48 +20,48 @@ namespace {
 
 struct MarkTraits {
     static bool IsMarked(ObjHeader* object) noexcept {
-        auto& objectData = mm::ObjectFactory<gc::SingleThreadMarkAndSweep>::NodeRef::From(object).GCObjectData();
-        return objectData.color() == gc::SingleThreadMarkAndSweep::ObjectData::Color::kBlack;
+        auto& objectData = mm::ObjectFactory<gc::SameThreadMarkAndSweep>::NodeRef::From(object).GCObjectData();
+        return objectData.color() == gc::SameThreadMarkAndSweep::ObjectData::Color::kBlack;
     }
 
     static bool TryMark(ObjHeader* object) noexcept {
-        auto& objectData = mm::ObjectFactory<gc::SingleThreadMarkAndSweep>::NodeRef::From(object).GCObjectData();
-        if (objectData.color() == gc::SingleThreadMarkAndSweep::ObjectData::Color::kBlack) return false;
-        objectData.setColor(gc::SingleThreadMarkAndSweep::ObjectData::Color::kBlack);
+        auto& objectData = mm::ObjectFactory<gc::SameThreadMarkAndSweep>::NodeRef::From(object).GCObjectData();
+        if (objectData.color() == gc::SameThreadMarkAndSweep::ObjectData::Color::kBlack) return false;
+        objectData.setColor(gc::SameThreadMarkAndSweep::ObjectData::Color::kBlack);
         return true;
     };
 };
 
 struct SweepTraits {
-    using ObjectFactory = mm::ObjectFactory<gc::SingleThreadMarkAndSweep>;
+    using ObjectFactory = mm::ObjectFactory<gc::SameThreadMarkAndSweep>;
 
     static bool TryResetMark(ObjectFactory::NodeRef node) noexcept {
         auto& objectData = node.GCObjectData();
-        if (objectData.color() == gc::SingleThreadMarkAndSweep::ObjectData::Color::kWhite) return false;
-        objectData.setColor(gc::SingleThreadMarkAndSweep::ObjectData::Color::kWhite);
+        if (objectData.color() == gc::SameThreadMarkAndSweep::ObjectData::Color::kWhite) return false;
+        objectData.setColor(gc::SameThreadMarkAndSweep::ObjectData::Color::kWhite);
         return true;
     }
 };
 
 struct FinalizeTraits {
-    using ObjectFactory = mm::ObjectFactory<gc::SingleThreadMarkAndSweep>;
+    using ObjectFactory = mm::ObjectFactory<gc::SameThreadMarkAndSweep>;
 };
 
 } // namespace
 
-void gc::SingleThreadMarkAndSweep::ThreadData::SafePointFunctionEpilogue() noexcept {
+void gc::SameThreadMarkAndSweep::ThreadData::SafePointFunctionEpilogue() noexcept {
     SafePointRegular(1);
 }
 
-void gc::SingleThreadMarkAndSweep::ThreadData::SafePointLoopBody() noexcept {
+void gc::SameThreadMarkAndSweep::ThreadData::SafePointLoopBody() noexcept {
     SafePointRegular(1);
 }
 
-void gc::SingleThreadMarkAndSweep::ThreadData::SafePointExceptionUnwind() noexcept {
+void gc::SameThreadMarkAndSweep::ThreadData::SafePointExceptionUnwind() noexcept {
     SafePointRegular(1);
 }
 
-void gc::SingleThreadMarkAndSweep::ThreadData::SafePointAllocation(size_t size) noexcept {
+void gc::SameThreadMarkAndSweep::ThreadData::SafePointAllocation(size_t size) noexcept {
     size_t allocationOverhead =
             gc_.GetAllocationThresholdBytes() == 0 ? allocatedBytes_ : allocatedBytes_ % gc_.GetAllocationThresholdBytes();
     if (threadData_.suspensionData().suspendIfRequested()) {
@@ -73,8 +73,8 @@ void gc::SingleThreadMarkAndSweep::ThreadData::SafePointAllocation(size_t size) 
     allocatedBytes_ += size;
 }
 
-void gc::SingleThreadMarkAndSweep::ThreadData::PerformFullGC() noexcept {
-    mm::ObjectFactory<gc::SingleThreadMarkAndSweep>::FinalizerQueue finalizerQueue;
+void gc::SameThreadMarkAndSweep::ThreadData::PerformFullGC() noexcept {
+    mm::ObjectFactory<gc::SameThreadMarkAndSweep>::FinalizerQueue finalizerQueue;
     {
         // Switch state to native to simulate this thread being a GC thread.
         // As a bonus, if we failed to suspend threads (which means some other thread asked for a GC),
@@ -94,11 +94,11 @@ void gc::SingleThreadMarkAndSweep::ThreadData::PerformFullGC() noexcept {
     finalizerQueue.Finalize();
 }
 
-void gc::SingleThreadMarkAndSweep::ThreadData::OnOOM(size_t size) noexcept {
+void gc::SameThreadMarkAndSweep::ThreadData::OnOOM(size_t size) noexcept {
     PerformFullGC();
 }
 
-void gc::SingleThreadMarkAndSweep::ThreadData::SafePointRegular(size_t weight) noexcept {
+void gc::SameThreadMarkAndSweep::ThreadData::SafePointRegular(size_t weight) noexcept {
     size_t counterOverhead = gc_.GetThreshold() == 0 ? safePointsCounter_ : safePointsCounter_ % gc_.GetThreshold();
     if (threadData_.suspensionData().suspendIfRequested()) {
         safePointsCounter_ = 0;
@@ -109,7 +109,7 @@ void gc::SingleThreadMarkAndSweep::ThreadData::SafePointRegular(size_t weight) n
     safePointsCounter_ += weight;
 }
 
-mm::ObjectFactory<gc::SingleThreadMarkAndSweep>::FinalizerQueue gc::SingleThreadMarkAndSweep::PerformFullGC() noexcept {
+mm::ObjectFactory<gc::SameThreadMarkAndSweep>::FinalizerQueue gc::SameThreadMarkAndSweep::PerformFullGC() noexcept {
     bool didSuspend = mm::SuspendThreads();
     if (!didSuspend) {
         // Somebody else suspended the threads, and so ran a GC.

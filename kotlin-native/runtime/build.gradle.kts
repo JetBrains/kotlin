@@ -44,7 +44,7 @@ bitcode {
             "${target}ExperimentalMemoryManagerNoop",
             "${target}ExperimentalMemoryManagerStms",
             "${target}CommonGc",
-            "${target}SingleThreadMsGc",
+            "${target}SameThreadMsGc",
             "${target}NoopGc"
         )
         includeRuntime()
@@ -126,7 +126,7 @@ bitcode {
         includeRuntime()
     }
 
-    create("single_thread_ms_gc", file("src/gc/stms")) {
+    create("same_thread_ms_gc", file("src/gc/stms")) {
         headersDirs += files("src/gc/stms/cpp", "src/gc/common/cpp", "src/mm/cpp")
         includeRuntime()
     }
@@ -174,7 +174,7 @@ targetList.forEach { targetName ->
                 "${targetName}Runtime",
                 "${targetName}ExperimentalMemoryManagerStms",
                 "${targetName}CommonGc",
-                "${targetName}SingleThreadMsGc",
+                "${targetName}SameThreadMsGc",
                 "${targetName}Release",
                 "${targetName}Mimalloc",
                 "${targetName}OptAlloc"
@@ -192,7 +192,7 @@ targetList.forEach { targetName ->
                 "${targetName}Runtime",
                 "${targetName}ExperimentalMemoryManagerStms",
                 "${targetName}CommonGc",
-                "${targetName}SingleThreadMsGc",
+                "${targetName}SameThreadMsGc",
                 "${targetName}Release",
                 "${targetName}StdAlloc"
             )

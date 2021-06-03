@@ -7,5 +7,5 @@ package org.jetbrains.kotlin.backend.konan
 
 enum class GC {
     NOOP,
-    SINGLE_THREAD_MARK_SWEEP,
+    SAME_THREAD_MARK_AND_SWEEP,
 }
