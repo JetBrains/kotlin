@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.hasAnnotation
@@ -74,6 +75,15 @@ fun KotlinType.makeComposable(module: ModuleDescriptor): KotlinType {
     val annotation = ComposeFqNames.makeComposableAnnotation(module)
     return replaceAnnotations(Annotations.create(annotations + annotation))
 }
+
+fun AnonymousFunctionDescriptor.annotateAsComposable(module: ModuleDescriptor) =
+    AnonymousFunctionDescriptor(
+        containingDeclaration,
+        Annotations.create(annotations + ComposeFqNames.makeComposableAnnotation(module)),
+        kind,
+        source,
+        isSuspend
+    )
 
 fun IrType.hasComposableAnnotation(): Boolean =
     hasAnnotation(ComposeFqNames.Composable)
