@@ -64,7 +64,7 @@ public final data class DataClass {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.RequiresOptIn @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) public final annotation class Marker : kotlin.Annotation {
+@kotlin.RequiresOptIn @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.TYPEALIAS}) public final annotation class Marker : kotlin.Annotation {
     public constructor Marker()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -112,4 +112,6 @@ public abstract class User {
     public final fun Some?.onSome(): kotlin.Unit
 }
 public typealias My = Some
+@kotlin.OptIn(markerClass = {Marker::class}) public typealias MyList = kotlin.collections.ArrayList<I>
+@Marker public typealias YourList = kotlin.collections.ArrayList<kotlin.String>
 

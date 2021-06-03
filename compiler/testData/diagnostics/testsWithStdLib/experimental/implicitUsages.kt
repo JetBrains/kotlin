@@ -2,6 +2,7 @@
 
 @RequiresOptIn
 @Retention(AnnotationRetention.BINARY)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.TYPEALIAS)
 annotation class Marker
 
 @Marker
@@ -59,8 +60,17 @@ class A : I
 @OptIn(Marker::class)
 class B : I
 
+@OptIn(Marker::class)
+typealias MyList = ArrayList<I>
+
+@Marker
+typealias YourList = ArrayList<String>
+
 fun main() {
     val x = <!EXPERIMENTAL_API_USAGE_ERROR!>listOf<!>(A(), B())
+    val y = <!EXPERIMENTAL_API_USAGE_ERROR!>MyList<!>()
+    val z = <!EXPERIMENTAL_API_USAGE_ERROR!>YourList<!>()
+    <!EXPERIMENTAL_API_USAGE_ERROR!>YourList<!>().add("")
 }
 
 @Marker

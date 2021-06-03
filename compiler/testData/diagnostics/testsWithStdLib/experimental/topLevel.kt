@@ -75,5 +75,5 @@ fun use() {
     <!EXPERIMENTAL_API_USAGE!>function<!>()
     <!EXPERIMENTAL_API_USAGE!>property<!>
     val s: <!EXPERIMENTAL_API_USAGE!>Typealias<!> = ""
-    s.hashCode()
+    <!EXPERIMENTAL_API_USAGE!>s<!>.hashCode()
 }
