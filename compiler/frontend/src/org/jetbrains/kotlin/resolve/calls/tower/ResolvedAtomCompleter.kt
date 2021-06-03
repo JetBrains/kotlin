@@ -403,15 +403,20 @@ class ResolvedAtomCompleter(
         callableCandidate: CallableReferenceCandidate,
         recordedDescriptor: CallableDescriptor
     ): CallableReferenceResultTypeInfo {
+        val dispatchReceiver = recordedDescriptor.dispatchReceiverParameter?.value
+            ?: callableCandidate.dispatchReceiver?.receiver?.receiverValue
+        val extensionReceiver = recordedDescriptor.extensionReceiverParameter?.value
+            ?: callableCandidate.extensionReceiver?.receiver?.receiverValue
+
         val explicitCallableReceiver = when (callableCandidate.explicitReceiverKind) {
-            ExplicitReceiverKind.DISPATCH_RECEIVER -> callableCandidate.dispatchReceiver
-            ExplicitReceiverKind.EXTENSION_RECEIVER -> callableCandidate.extensionReceiver
+            ExplicitReceiverKind.DISPATCH_RECEIVER -> dispatchReceiver
+            ExplicitReceiverKind.EXTENSION_RECEIVER -> extensionReceiver
             else -> null
         }
         return CallableReferenceResultTypeInfo(
-            recordedDescriptor.dispatchReceiverParameter?.value,
-            recordedDescriptor.extensionReceiverParameter?.value,
-            explicitCallableReceiver?.receiver?.receiverValue,
+            dispatchReceiver,
+            extensionReceiver,
+            explicitCallableReceiver,
             TypeSubstitutor.EMPTY,
             callableCandidate.reflectionCandidateType.replaceFunctionTypeArgumentsByDescriptor(recordedDescriptor)
         )
