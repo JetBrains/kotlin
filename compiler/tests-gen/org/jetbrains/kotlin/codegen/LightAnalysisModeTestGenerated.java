@@ -16789,27 +16789,27 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Result extends AbstractLightAnalysisModeTest {
+            @TestMetadata("directCall1.kt")
+            public void ignoreDirectCall1() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/result/directCall1.kt");
+            }
+
+            @TestMetadata("directCall2.kt")
+            public void ignoreDirectCall2() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/result/directCall2.kt");
+            }
+
+            @TestMetadata("doubleOverride.kt")
+            public void ignoreDoubleOverride() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/result/doubleOverride.kt");
+            }
+
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
 
             public void testAllFilesPresentInResult() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/result"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
-            }
-
-            @TestMetadata("directCall1.kt")
-            public void testDirectCall1() throws Exception {
-                runTest("compiler/testData/codegen/box/inlineClasses/result/directCall1.kt");
-            }
-
-            @TestMetadata("directCall2.kt")
-            public void testDirectCall2() throws Exception {
-                runTest("compiler/testData/codegen/box/inlineClasses/result/directCall2.kt");
-            }
-
-            @TestMetadata("doubleOverride.kt")
-            public void testDoubleOverride() throws Exception {
-                runTest("compiler/testData/codegen/box/inlineClasses/result/doubleOverride.kt");
             }
 
             @TestMetadata("extensionOverride.kt")
