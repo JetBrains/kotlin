@@ -90,7 +90,14 @@ class HLPairParameterConversion(
     private val mappingConversionFirst: HLParameterConversion,
     private val mappingConversionSecond: HLParameterConversion,
 ) : HLParameterConversion() {
-    override fun convertExpression(expression: String, context: ConversionContext): String = expression
+    override fun convertExpression(expression: String, context: ConversionContext): String {
+        if (mappingConversionFirst.isTrivial && mappingConversionSecond.isTrivial) {
+            return expression
+        }
+        val first = mappingConversionFirst.convertExpression("$expression.first", context)
+        val second = mappingConversionSecond.convertExpression("$expression.second", context)
+        return "$first to $second"
+    }
 
     override fun convertType(type: KType): KType {
         val first = type.arguments.getOrNull(0)?.type ?: return type
