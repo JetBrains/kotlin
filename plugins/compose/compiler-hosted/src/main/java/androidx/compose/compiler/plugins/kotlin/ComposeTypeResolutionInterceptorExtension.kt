@@ -50,6 +50,7 @@ open class ComposeTypeResolutionInterceptorExtension : TypeResolutionInterceptor
             // If the expected type has an @Composable annotation then the literal function
             // expression should infer a an @Composable annotation
             context.trace.record(INFERRED_COMPOSABLE_DESCRIPTOR, descriptor, true)
+            return descriptor.annotateAsComposable(context.scope.ownerDescriptor.module)
         }
         val arg = getArgumentDescriptor(expression.functionLiteral, context.trace.bindingContext)
 

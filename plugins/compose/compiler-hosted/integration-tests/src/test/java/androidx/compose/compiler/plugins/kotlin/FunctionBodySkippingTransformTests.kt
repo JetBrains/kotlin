@@ -139,7 +139,6 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
               used(a)
               Example(class <no name provided> : A {
                 @Composable
-                @Composable
                 override fun compute(it: Int, %composer: Composer?, %changed: Int) {
                   %composer = %composer.startRestartGroup(<>)
                   sourceInformation(%composer, "C(compute)<comput...>:Test.kt")
@@ -213,7 +212,6 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
               sourceInformation(%composer, "C(Test)<Button>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
                 Button(class <no name provided> : ButtonColors {
-                  @Composable
                   @Composable
                   override fun getColor(%composer: Composer?, %changed: Int): Color {
                     %composer.startReplaceableGroup(<>)
