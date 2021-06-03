@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.builders.IrGeneratorContext
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrDeclarationReference
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -27,7 +28,7 @@ class GeneratorContext private constructor(
     val languageVersionSettings: LanguageVersionSettings,
     val symbolTable: SymbolTable,
     val extensions: GeneratorExtensions,
-    val typeTranslator: TypeTranslatorImpl,
+    val typeTranslator: TypeTranslator,
     override val irBuiltIns: IrBuiltIns,
     internal val callToSubstitutedDescriptorMap: MutableMap<IrDeclarationReference, CallableDescriptor>
 ) : IrGeneratorContext {
@@ -39,7 +40,7 @@ class GeneratorContext private constructor(
         languageVersionSettings: LanguageVersionSettings,
         symbolTable: SymbolTable,
         extensions: GeneratorExtensions,
-        typeTranslator: TypeTranslatorImpl,
+        typeTranslator: TypeTranslator,
         irBuiltIns: IrBuiltIns,
     ) : this(
         configuration,
