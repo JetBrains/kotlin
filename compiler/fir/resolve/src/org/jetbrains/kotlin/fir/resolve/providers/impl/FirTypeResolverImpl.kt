@@ -161,8 +161,13 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             StandardNames.getFunctionClassId(typeRef.parametersCount)
         }
         val attributes = typeRef.annotations.computeTypeAttributes()
+        val symbol = resolveBuiltInQualified(classId, session)
         return ConeClassLikeTypeImpl(
-            resolveBuiltInQualified(classId, session).toLookupTag(),
+            symbol.toLookupTag().also {
+                if (it is ConeClassLikeLookupTagImpl) {
+                    it.bindSymbolToLookupTag(session, symbol)
+                }
+            },
             parameters.toTypedArray(),
             typeRef.isMarkedNullable,
             attributes
