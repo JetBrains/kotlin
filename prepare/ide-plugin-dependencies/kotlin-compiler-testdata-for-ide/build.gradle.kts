@@ -16,6 +16,7 @@ idePluginDependency {
             "compiler/fir/analysis-tests/testData/resolve",
             "compiler/fir/analysis-tests/testData/resolveWithStdlib",
             "compiler/testData/diagnostics/tests",
+            "compiler/testData/diagnostics/helpers",
             "compiler/testData/diagnostics/testsWithStdLib"
         ).forEach {
             from(rootDir.resolve(it)) {
