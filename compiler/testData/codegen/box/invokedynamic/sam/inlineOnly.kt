@@ -8,7 +8,7 @@
 // JVM_IR_TEMPLATES
 // 0 java/lang/invoke/LambdaMetafactory
 
-import java.util.function.Consumer
+// FILE: inlineOnly.kt
 
 inline fun <reified T> f(x: T) =
     println("${T::class.simpleName}($x)")
@@ -23,4 +23,10 @@ fun box(): String {
     val obj = { call(::g) } // `g` is inaccessible in this scope
     obj()
     return "OK"
+}
+
+// FILE: Consumer.java
+
+public interface Consumer<T> {
+    void accept(T t);
 }
