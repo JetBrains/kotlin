@@ -191,7 +191,7 @@ KStdVector<ObjHeader*> Alive(mm::ThreadData& threadData) {
     for (auto node : threadData.objectFactoryThreadQueue()) {
         objects.push_back(node.IsArray() ? node.GetArrayHeader()->obj() : node.GetObjHeader());
     }
-    for (auto node : mm::GlobalData::Instance().objectFactory().Iter()) {
+    for (auto node : mm::GlobalData::Instance().objectFactory().LockForIter()) {
         objects.push_back(node.IsArray() ? node.GetArrayHeader()->obj() : node.GetObjHeader());
     }
     return objects;

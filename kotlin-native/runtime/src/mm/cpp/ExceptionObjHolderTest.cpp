@@ -24,7 +24,7 @@ public:
         stableRefs.ProcessThread(&threadData);
         stableRefs.ProcessDeletions();
         KStdVector<ObjHeader*> result;
-        for (const auto& obj : stableRefs.Iter()) {
+        for (const auto& obj : stableRefs.LockForIter()) {
             result.push_back(obj);
         }
         return result;

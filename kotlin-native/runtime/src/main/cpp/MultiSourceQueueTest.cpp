@@ -21,7 +21,7 @@ namespace {
 template <typename T>
 KStdVector<T> Collect(MultiSourceQueue<T>& queue) {
     KStdVector<T> result;
-    for (const auto& element : queue.Iter()) {
+    for (const auto& element : queue.LockForIter()) {
         result.push_back(element);
     }
     return result;
@@ -254,7 +254,7 @@ TEST(MultiSourceQueueTest, IterWhileConcurrentPublish) {
 
     KStdVector<int> actualBefore;
     {
-        auto iter = queue.Iter();
+        auto iter = queue.LockForIter();
         while (readyCount < kThreadCount) {
         }
         canStart = true;

@@ -39,14 +39,14 @@ public:
     // when it's asked by GC to stop.
     void ProcessThread(mm::ThreadData* threadData) noexcept;
 
-    // Lock registry and apply deletions. Should be called on GC thread after all threads have published, and before `Iter`.
+    // Lock registry and apply deletions. Should be called on GC thread after all threads have published, and before `LockForIter`.
     void ProcessDeletions() noexcept;
 
     // Lock registry for safe iteration.
     // TODO: Iteration over `stableRefs_` will be slow, because it's `KStdList` collected at different times from
     // different threads, and so the nodes are all over the memory. Use metrics to understand how
     // much of a problem is it.
-    Iterable Iter() noexcept { return stableRefs_.Iter(); }
+    Iterable LockForIter() noexcept { return stableRefs_.LockForIter(); }
 
     void ClearForTests() noexcept { stableRefs_.ClearForTests(); }
 

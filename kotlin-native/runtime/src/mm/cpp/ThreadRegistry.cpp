@@ -31,8 +31,12 @@ void mm::ThreadRegistry::Unregister(Node* threadDataNode) noexcept {
     // Do not touch `currentThreadData_` as TLS may already have been deallocated.
 }
 
-mm::ThreadRegistry::Iterable mm::ThreadRegistry::Iter() noexcept {
-    return list_.Iter();
+mm::ThreadRegistry::Iterable mm::ThreadRegistry::LockForIter() noexcept {
+    return list_.LockForIter();
+}
+
+std::unique_lock<mm::ThreadRegistry::Mutex> mm::ThreadRegistry::Lock() noexcept {
+    return list_.Lock();
 }
 
 ALWAYS_INLINE mm::ThreadData* mm::ThreadRegistry::CurrentThreadData() const noexcept {

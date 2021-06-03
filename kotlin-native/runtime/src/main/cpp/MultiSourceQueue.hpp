@@ -119,7 +119,7 @@ public:
 
     // Lock `MultiSourceQueue` for safe iteration. If element was scheduled for deletion,
     // it'll still be iterated. Use `ApplyDeletions` to remove those elements.
-    Iterable Iter() noexcept { return Iterable(*this); }
+    Iterable LockForIter() noexcept { return Iterable(*this); }
 
     // Lock `MultiSourceQueue` and apply deletions. Only deletes elements that were published.
     void ApplyDeletions() noexcept {

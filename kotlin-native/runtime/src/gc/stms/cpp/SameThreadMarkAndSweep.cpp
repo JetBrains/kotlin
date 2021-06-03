@@ -126,7 +126,7 @@ mm::ObjectFactory<gc::SameThreadMarkAndSweep>::FinalizerQueue gc::SameThreadMark
     }
 
     KStdVector<ObjHeader*> graySet;
-    for (auto& thread : mm::GlobalData::Instance().threadRegistry().Iter()) {
+    for (auto& thread : mm::GlobalData::Instance().threadRegistry().LockForIter()) {
         // TODO: Maybe it's more efficient to do by the suspending thread?
         thread.Publish();
         for (auto* object : mm::ThreadRootSet(thread)) {

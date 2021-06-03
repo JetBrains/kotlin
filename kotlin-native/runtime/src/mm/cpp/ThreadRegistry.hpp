@@ -19,8 +19,9 @@ class ThreadData;
 
 class ThreadRegistry final : private Pinned {
 public:
-    using Node = SingleLockList<ThreadData>::Node;
-    using Iterable = SingleLockList<ThreadData>::Iterable;
+    using Mutex = std::recursive_mutex;
+    using Node = SingleLockList<ThreadData, Mutex>::Node;
+    using Iterable = SingleLockList<ThreadData, Mutex>::Iterable;
 
     static ThreadRegistry& Instance() noexcept;
 
@@ -30,7 +31,9 @@ public:
     void Unregister(Node* threadDataNode) noexcept;
 
     // Locks `ThreadRegistry` for safe iteration.
-    Iterable Iter() noexcept;
+    Iterable LockForIter() noexcept;
+
+    std::unique_lock<Mutex> Lock() noexcept;
 
     // Try not to use these methods very often, as (1) thread local access can be slow on some platforms,
     // (2) TLS gets deallocated before our thread destruction hooks run.
@@ -51,7 +54,7 @@ private:
 
     static THREAD_LOCAL_VARIABLE Node* currentThreadDataNode_;
 
-    SingleLockList<ThreadData> list_;
+    SingleLockList<ThreadData, Mutex> list_;
 };
 
 } // namespace mm

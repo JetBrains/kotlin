@@ -29,7 +29,7 @@ constexpr size_t kDefaultReportingStep = 1000;
 
 KStdVector<mm::ThreadData*> collectThreadData() {
     KStdVector<mm::ThreadData*> result;
-    auto iter = mm::ThreadRegistry::Instance().Iter();
+    auto iter = mm::ThreadRegistry::Instance().LockForIter();
     for (auto& thread : iter) {
         result.push_back(&thread);
     }

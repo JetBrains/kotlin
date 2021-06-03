@@ -53,7 +53,7 @@ template <typename Traits>
 typename Traits::ObjectFactory::FinalizerQueue Sweep(typename Traits::ObjectFactory& objectFactory) noexcept {
     typename Traits::ObjectFactory::FinalizerQueue finalizerQueue;
 
-    auto iter = objectFactory.Iter();
+    auto iter = objectFactory.LockForIter();
     for (auto it = iter.begin(); it != iter.end();) {
         if (Traits::TryResetMark(*it)) {
             ++it;

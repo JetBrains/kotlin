@@ -39,7 +39,7 @@ using Consumer = typename Storage::Consumer;
 template <size_t DataAlignment>
 KStdVector<void*> Collect(ObjectFactoryStorage<DataAlignment>& storage) {
     KStdVector<void*> result;
-    for (auto& node : storage.Iter()) {
+    for (auto& node : storage.LockForIter()) {
         result.push_back(node.Data());
     }
     return result;
@@ -48,7 +48,7 @@ KStdVector<void*> Collect(ObjectFactoryStorage<DataAlignment>& storage) {
 template <typename T, size_t DataAlignment>
 KStdVector<T> Collect(ObjectFactoryStorage<DataAlignment>& storage) {
     KStdVector<T> result;
-    for (auto& node : storage.Iter()) {
+    for (auto& node : storage.LockForIter()) {
         result.push_back(*static_cast<T*>(node.Data()));
     }
     return result;
@@ -137,7 +137,7 @@ TEST(ObjectFactoryStorageTest, PublishDifferentTypes) {
 
     producer.Publish();
 
-    auto actual = storage.Iter();
+    auto actual = storage.LockForIter();
     auto it = actual.begin();
     EXPECT_THAT(it->Data<int>(), 1);
     ++it;
@@ -222,7 +222,7 @@ TEST(ObjectFactoryStorageTest, EraseFirst) {
     producer.Publish();
 
     {
-        auto iter = storage.Iter();
+        auto iter = storage.LockForIter();
         for (auto it = iter.begin(); it != iter.end();) {
             if (it->Data<int>() == 1) {
                 iter.EraseAndAdvance(it);
@@ -248,7 +248,7 @@ TEST(ObjectFactoryStorageTest, EraseMiddle) {
     producer.Publish();
 
     {
-        auto iter = storage.Iter();
+        auto iter = storage.LockForIter();
         for (auto it = iter.begin(); it != iter.end();) {
             if (it->Data<int>() == 2) {
                 iter.EraseAndAdvance(it);
@@ -274,7 +274,7 @@ TEST(ObjectFactoryStorageTest, EraseLast) {
     producer.Publish();
 
     {
-        auto iter = storage.Iter();
+        auto iter = storage.LockForIter();
         for (auto it = iter.begin(); it != iter.end();) {
             if (it->Data<int>() == 3) {
                 iter.EraseAndAdvance(it);
@@ -300,7 +300,7 @@ TEST(ObjectFactoryStorageTest, EraseAll) {
     producer.Publish();
 
     {
-        auto iter = storage.Iter();
+        auto iter = storage.LockForIter();
         for (auto it = iter.begin(); it != iter.end();) {
             iter.EraseAndAdvance(it);
         }
@@ -320,7 +320,7 @@ TEST(ObjectFactoryStorageTest, EraseTheOnlyElement) {
     producer.Publish();
 
     {
-        auto iter = storage.Iter();
+        auto iter = storage.LockForIter();
         auto it = iter.begin();
         iter.EraseAndAdvance(it);
         EXPECT_THAT(it, iter.end());
@@ -343,7 +343,7 @@ TEST(ObjectFactoryStorageTest, MoveFirst) {
     producer.Publish();
 
     {
-        auto iter = storage.Iter();
+        auto iter = storage.LockForIter();
         for (auto it = iter.begin(); it != iter.end();) {
             if (it->Data<int>() == 1) {
                 iter.MoveAndAdvance(consumer, it);
@@ -372,7 +372,7 @@ TEST(ObjectFactoryStorageTest, MoveMiddle) {
     producer.Publish();
 
     {
-        auto iter = storage.Iter();
+        auto iter = storage.LockForIter();
         for (auto it = iter.begin(); it != iter.end();) {
             if (it->Data<int>() == 2) {
                 iter.MoveAndAdvance(consumer, it);
@@ -401,7 +401,7 @@ TEST(ObjectFactoryStorageTest, MoveLast) {
     producer.Publish();
 
     {
-        auto iter = storage.Iter();
+        auto iter = storage.LockForIter();
         for (auto it = iter.begin(); it != iter.end();) {
             if (it->Data<int>() == 3) {
                 iter.MoveAndAdvance(consumer, it);
@@ -430,7 +430,7 @@ TEST(ObjectFactoryStorageTest, MoveAll) {
     producer.Publish();
 
     {
-        auto iter = storage.Iter();
+        auto iter = storage.LockForIter();
         for (auto it = iter.begin(); it != iter.end();) {
             iter.MoveAndAdvance(consumer, it);
         }
@@ -453,7 +453,7 @@ TEST(ObjectFactoryStorageTest, MoveTheOnlyElement) {
     producer.Publish();
 
     {
-        auto iter = storage.Iter();
+        auto iter = storage.LockForIter();
         auto it = iter.begin();
         iter.MoveAndAdvance(consumer, it);
         EXPECT_THAT(it, iter.end());
@@ -484,7 +484,7 @@ TEST(ObjectFactoryStorageTest, MoveAndErase) {
     producer.Publish();
 
     {
-        auto iter = storage.Iter();
+        auto iter = storage.LockForIter();
         for (auto it = iter.begin(); it != iter.end();) {
             ++it;
             iter.EraseAndAdvance(it);
@@ -566,7 +566,7 @@ TEST(ObjectFactoryStorageTest, IterWhileConcurrentPublish) {
 
     KStdVector<int> actualBefore;
     {
-        auto iter = storage.Iter();
+        auto iter = storage.LockForIter();
         while (readyCount < kThreadCount) {
         }
         canStart = true;
@@ -624,7 +624,7 @@ TEST(ObjectFactoryStorageTest, EraseWhileConcurrentPublish) {
     }
 
     {
-        auto iter = storage.Iter();
+        auto iter = storage.LockForIter();
         while (readyCount < kThreadCount) {
         }
         canStart = true;
@@ -772,7 +772,7 @@ TEST(ObjectFactoryTest, CreateObject) {
     EXPECT_THAT(node.GetObjHeader(), object);
     EXPECT_THAT(node.GCObjectData().flags, 42);
 
-    auto iter = objectFactory.Iter();
+    auto iter = objectFactory.LockForIter();
     auto it = iter.begin();
     EXPECT_THAT(*it, node);
     ++it;
@@ -792,7 +792,7 @@ TEST(ObjectFactoryTest, CreateObjectArray) {
     EXPECT_THAT(node.GetArrayHeader(), array);
     EXPECT_THAT(node.GCObjectData().flags, 42);
 
-    auto iter = objectFactory.Iter();
+    auto iter = objectFactory.LockForIter();
     auto it = iter.begin();
     EXPECT_THAT(*it, node);
     ++it;
@@ -812,7 +812,7 @@ TEST(ObjectFactoryTest, CreateCharArray) {
     EXPECT_THAT(node.GetArrayHeader(), array);
     EXPECT_THAT(node.GCObjectData().flags, 42);
 
-    auto iter = objectFactory.Iter();
+    auto iter = objectFactory.LockForIter();
     auto it = iter.begin();
     EXPECT_THAT(*it, node);
     ++it;
@@ -833,7 +833,7 @@ TEST(ObjectFactoryTest, Erase) {
     threadQueue.Publish();
 
     {
-        auto iter = objectFactory.Iter();
+        auto iter = objectFactory.LockForIter();
         for (auto it = iter.begin(); it != iter.end();) {
             if (it->IsArray()) {
                 iter.EraseAndAdvance(it);
@@ -844,7 +844,7 @@ TEST(ObjectFactoryTest, Erase) {
     }
 
     {
-        auto iter = objectFactory.Iter();
+        auto iter = objectFactory.LockForIter();
         int count = 0;
         for (auto it = iter.begin(); it != iter.end(); ++it, ++count) {
             EXPECT_FALSE(it->IsArray());
@@ -868,7 +868,7 @@ TEST(ObjectFactoryTest, Move) {
     threadQueue.Publish();
 
     {
-        auto iter = objectFactory.Iter();
+        auto iter = objectFactory.LockForIter();
         for (auto it = iter.begin(); it != iter.end();) {
             if (it->IsArray()) {
                 iter.MoveAndAdvance(finalizerQueue, it);
@@ -879,7 +879,7 @@ TEST(ObjectFactoryTest, Move) {
     }
 
     {
-        auto iter = objectFactory.Iter();
+        auto iter = objectFactory.LockForIter();
         int count = 0;
         for (auto it = iter.begin(); it != iter.end(); ++it, ++count) {
             EXPECT_FALSE(it->IsArray());
@@ -914,7 +914,7 @@ TEST(ObjectFactoryTest, RunFinalizers) {
     threadQueue.Publish();
 
     {
-        auto iter = objectFactory.Iter();
+        auto iter = objectFactory.LockForIter();
         for (auto it = iter.begin(); it != iter.end();) {
             iter.MoveAndAdvance(finalizerQueue, it);
         }
@@ -961,7 +961,7 @@ TEST(ObjectFactoryTest, ConcurrentPublish) {
         t.join();
     }
 
-    auto iter = objectFactory.Iter();
+    auto iter = objectFactory.LockForIter();
     KStdVector<ObjHeader*> actual;
     for (auto it = iter.begin(); it != iter.end(); ++it) {
         actual.push_back(it->GetObjHeader());

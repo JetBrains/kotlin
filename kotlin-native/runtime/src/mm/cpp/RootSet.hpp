@@ -104,7 +104,7 @@ public:
     };
 
     GlobalRootSet(GlobalsRegistry& globalsRegistry, StableRefRegistry& stableRefRegistry) noexcept :
-        globalsIterable_(globalsRegistry.Iter()), stableRefsIterable_(stableRefRegistry.Iter()) {}
+        globalsIterable_(globalsRegistry.LockForIter()), stableRefsIterable_(stableRefRegistry.LockForIter()) {}
     GlobalRootSet() noexcept;
 
     Iterator begin() noexcept { return Iterator(Iterator::begin, *this); }
