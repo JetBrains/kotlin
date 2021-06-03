@@ -138,7 +138,15 @@ dependencies {
     }
 }
 
-fun prepareDeps(intellij: Configuration, intellijCore: Configuration, sources: Configuration, intellijUltimate: Configuration, jpsStandalone: Configuration, intellijVersion: String) {
+fun prepareDeps(
+    intellij: Configuration,
+    intellijCore: Configuration,
+    sources: Configuration,
+    intellijUltimate: Configuration,
+    jpsStandalone: Configuration,
+    intellijVersion: String,
+    registerNodeJSPlugin: Boolean = false
+) {
     val makeIntellijCore = buildIvyRepositoryTask(intellijCore, customDepsOrg, customDepsRepoDir)
 
     val makeIntellijAnnotations = tasks.register("makeIntellijAnnotations${intellij.name.capitalize()}", Copy::class) {
@@ -223,14 +231,14 @@ fun prepareDeps(intellij: Configuration, intellijCore: Configuration, sources: C
         )
     }
 
-    if (installIntellijUltimate) {
+    if (registerNodeJSPlugin && installIntellijUltimate) {
         val buildNodeJsPlugin =
             buildIvyRepositoryTask(nodeJSPlugin, customDepsOrg, customDepsRepoDir, ::skipToplevelDirectory, sourcesFile)
         tasks.named("build") { dependsOn(buildNodeJsPlugin) }
     }
 }
 
-prepareDeps(intellij, intellijCore, sources, intellijUltimate, jpsStandalone, intellijVersion)
+prepareDeps(intellij, intellijCore, sources, intellijUltimate, jpsStandalone, intellijVersion, registerNodeJSPlugin = true)
 if (intellijVersionForIde != null) {
     prepareDeps(intellijForIde, intellijCoreForIde, sourcesForIde, intellijUltimateForIde, jpsStandaloneForIde, intellijVersionForIde)
 }
