@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.types.isMarkedNullable
  * Returns inline class for given class or null of type is not inlined
  * TODO: Make this configurable for different backends (currently implements logic of JS BE)
  */
-private fun IrType.getInlinedClass(): IrClass? {
+fun IrType.getInlinedClass(): IrClass? {
     if (this is IrSimpleType) {
         val erased = erase(this) ?: return null
         if (erased.isInline) {
