@@ -14,16 +14,16 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.*
 
-class TypeTranslatorImpl(
+open class TypeTranslatorImpl(
     symbolTable: ReferenceSymbolTable,
     languageVersionSettings: LanguageVersionSettings,
     moduleDescriptor: ModuleDescriptor,
     typeParametersResolverBuilder: () -> TypeParametersResolver = { ScopedTypeParametersResolver() },
     enterTableScope: Boolean = false,
     extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY,
+    private val ktFile: KtFile? = null
 ) : TypeTranslator(symbolTable, languageVersionSettings, typeParametersResolverBuilder, enterTableScope, extensions) {
-    override val constantValueGenerator: ConstantValueGenerator =
-        ConstantValueGeneratorImpl(moduleDescriptor, symbolTable, this)
+    override val constantValueGenerator: ConstantValueGenerator = ConstantValueGeneratorImpl(moduleDescriptor, symbolTable, this)
 
     private val typeApproximatorForNI = TypeApproximator(moduleDescriptor.builtIns, languageVersionSettings)
 
@@ -48,17 +48,6 @@ class TypeTranslatorImpl(
 
         val psiFile = typeAliasDescriptor.source.getPsi()?.containingFile ?: return false
 
-        return psiFile == currentFile
-    }
-
-    private var currentFile: KtFile? = null
-
-    fun <R> inFile(ktFile: KtFile?, block: () -> R): R {
-        try {
-            currentFile = ktFile
-            return block()
-        } finally {
-            currentFile = null
-        }
+        return psiFile == ktFile
     }
 }
