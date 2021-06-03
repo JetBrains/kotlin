@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class Foo<out T>(val baz: Baz<T>)
 
 class Bar {

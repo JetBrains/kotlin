@@ -47,7 +47,7 @@ fun main() {
     a.baz(listOf())
 
     a.manyParams(null)
-    a.<!NONE_APPLICABLE!>manyParams<!>(any<kotlin.jvm.functions.FunctionN<Unit>>())
+    a.manyParams(any<kotlin.jvm.functions.FunctionN<Unit>>())
 
     // Potentially, this would have better to forbid calling manyParams, too.
     // But it might be complicated because we need to match that it is an override
