@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.originalIfFakeOverride
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectData
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.FirRefWithValidityCheck
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
@@ -43,7 +44,12 @@ private tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (orig
             else -> throw InvalidFirDeclarationOriginForSymbol(this)
         }
     }
+    FirDeclarationOrigin.ImportedFromObject -> {
+        val importedFromObjectData = (this as FirCallableDeclaration<*>).importedFromObjectData
+            ?: error("Declaration has ImportedFromObject origin, but no importedFromObjectData present")
 
+        importedFromObjectData.original.ktSymbolOrigin()
+    }
     else -> {
         val overridden = (this as? FirCallableDeclaration<*>)?.originalIfFakeOverride()
             ?: throw InvalidFirDeclarationOriginForSymbol(this)
