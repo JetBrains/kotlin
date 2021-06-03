@@ -265,7 +265,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
                 }
             } ?: newDeclarationWithReplacement
 
-            val onAirDesignation = FirDeclarationUntypedDesignationWithFile(
+            val onAirDesignation = FirDeclarationDesignationWithFile(
                 path = originalDesignation.path,
                 declaration = copiedFirDeclaration,
                 isLocalDesignation = false,

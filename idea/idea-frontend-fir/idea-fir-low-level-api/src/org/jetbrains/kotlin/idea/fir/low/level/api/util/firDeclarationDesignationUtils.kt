@@ -8,21 +8,21 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.util
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolved
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationUntypedDesignation
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignation
 
 internal fun FirDeclaration.ensurePhase(firResolvePhase: FirResolvePhase) =
     check(resolvePhase >= firResolvePhase) {
         "Element phase required to be $firResolvePhase but element resolved to $resolvePhase"
     }
 
-internal fun FirDeclarationUntypedDesignation.ensurePathPhase(firResolvePhase: FirResolvePhase) =
+internal fun FirDeclarationDesignation.ensurePathPhase(firResolvePhase: FirResolvePhase) =
     path.forEach { it.ensurePhase(firResolvePhase) }
 
-internal fun FirDeclarationUntypedDesignation.ensureDesignation(firResolvePhase: FirResolvePhase) {
+internal fun FirDeclarationDesignation.ensureDesignation(firResolvePhase: FirResolvePhase) {
     ensurePathPhase(firResolvePhase)
     declaration.ensurePhase(firResolvePhase)
 }
-internal fun FirDeclarationUntypedDesignation.ensurePhaseForClasses(firResolvePhase: FirResolvePhase) {
+internal fun FirDeclarationDesignation.ensurePhaseForClasses(firResolvePhase: FirResolvePhase) {
     ensurePathPhase(firResolvePhase)
     if (declaration is FirClassLikeDeclaration<*>) {
         check(declaration.resolvePhase >= firResolvePhase) {
@@ -31,7 +31,7 @@ internal fun FirDeclarationUntypedDesignation.ensurePhaseForClasses(firResolvePh
     }
 }
 
-internal fun FirDeclarationUntypedDesignation.isTargetCallableDeclarationAndInPhase(firResolvePhase: FirResolvePhase): Boolean =
+internal fun FirDeclarationDesignation.isTargetCallableDeclarationAndInPhase(firResolvePhase: FirResolvePhase): Boolean =
     (declaration as? FirCallableDeclaration<*>)?.let { it.resolvePhase >= firResolvePhase } ?: false
 
-internal fun FirDeclarationUntypedDesignation.targetContainingDeclaration(): FirDeclaration? = path.lastOrNull()
+internal fun FirDeclarationDesignation.targetContainingDeclaration(): FirDeclaration? = path.lastOrNull()

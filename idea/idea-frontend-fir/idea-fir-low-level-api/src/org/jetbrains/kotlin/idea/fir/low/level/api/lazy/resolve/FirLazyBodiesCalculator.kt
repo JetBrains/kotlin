@@ -14,38 +14,25 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignation
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationUntypedDesignation
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtSecondaryConstructor
 
 internal object FirLazyBodiesCalculator {
-    fun calculateLazyBodiesInside(designation: FirDeclarationUntypedDesignation) {
+    fun calculateLazyBodiesInside(designation: FirDeclarationDesignation) {
         designation.declaration.transform<FirElement, MutableList<FirDeclaration>>(
             FirLazyBodiesCalculatorTransformer,
             designation.toSequence(includeTarget = true).toMutableList()
         )
     }
 
-    fun calculateLazyBodiesInsideIfNeeded(designation: FirDeclarationUntypedDesignation, phase: FirResolvePhase) {
-        if (phase == FIRST_PHASE_WHICH_NEEDS_BODIES) {
-            calculateLazyBodiesInside(designation)
-        }
-    }
-
-    fun calculateLazyBodiesIfPhaseRequires(firFile: FirFile, phase: FirResolvePhase) {
-        if (phase == FIRST_PHASE_WHICH_NEEDS_BODIES) {
-            firFile.transform<FirElement, MutableList<FirDeclaration>>(FirLazyBodiesCalculatorTransformer, mutableListOf())
-        }
-    }
-
     fun calculateLazyBodies(firFile: FirFile) {
         firFile.transform<FirElement, MutableList<FirDeclaration>>(FirLazyBodiesCalculatorTransformer, mutableListOf())
     }
 
-    fun calculateLazyBodiesForFunction(designation: FirDeclarationDesignation<FirSimpleFunction>) {
-        val simpleFunction = designation.declaration
+    fun calculateLazyBodiesForFunction(designation: FirDeclarationDesignation) {
+        val simpleFunction = designation.declaration as FirSimpleFunction
         if (simpleFunction.body !is FirLazyBlock) return
         val newFunction = RawFirNonLocalDeclarationBuilder.buildWithRebind(
             session = simpleFunction.moduleData.session,
@@ -59,9 +46,9 @@ internal object FirLazyBodiesCalculator {
         }
     }
 
-    fun calculateLazyBodyForSecondaryConstructor(designation: FirDeclarationDesignation<FirConstructor>) {
+    fun calculateLazyBodyForSecondaryConstructor(designation: FirDeclarationDesignation) {
         require(!designation.isLocalDesignation) { "Not supported for local designations" }
-        val secondaryConstructor = designation.declaration
+        val secondaryConstructor = designation.declaration as FirConstructor
         require(!secondaryConstructor.isPrimary)
         if (secondaryConstructor.body !is FirLazyBlock) return
 
@@ -77,9 +64,9 @@ internal object FirLazyBodiesCalculator {
         }
     }
 
-    fun calculateLazyBodyForProperty(designation: FirDeclarationDesignation<FirProperty>) {
+    fun calculateLazyBodyForProperty(designation: FirDeclarationDesignation) {
         require(!designation.isLocalDesignation) { "Not supported for local designations" }
-        val firProperty = designation.declaration
+        val firProperty = designation.declaration as FirProperty
         if (!needCalculatingLazyBodyForProperty(firProperty)) return
 
         val newProperty = RawFirNonLocalDeclarationBuilder.buildWithRebind(
@@ -117,8 +104,6 @@ internal object FirLazyBodiesCalculator {
                 || firProperty.setter?.body is FirLazyBlock
                 || firProperty.initializer is FirLazyExpression
                 || (firProperty.delegate as? FirWrappedDelegateExpression)?.expression is FirLazyExpression
-
-    private val FIRST_PHASE_WHICH_NEEDS_BODIES = FirResolvePhase.CONTRACTS
 }
 
 private object FirLazyBodiesCalculatorTransformer : FirTransformer<MutableList<FirDeclaration>>() {

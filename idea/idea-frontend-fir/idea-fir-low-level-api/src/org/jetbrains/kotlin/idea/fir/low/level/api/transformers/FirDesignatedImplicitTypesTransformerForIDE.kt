@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyRe
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.createReturnTypeCalculatorForIDE
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationUntypedDesignationWithFile
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignationWithFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculator
 import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.isResolvedForAllDeclarations
 import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.updateResolvedPhaseForDeclarationAndChildren
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.util.isTargetCallableDeclarat
  * Transform designation into IMPLICIT_TYPES_BODY_RESOLVE declaration. Affects only for target declaration, it's children and dependents
  */
 internal class FirDesignatedImplicitTypesTransformerForIDE(
-    private val designation: FirDeclarationUntypedDesignationWithFile,
+    private val designation: FirDeclarationDesignationWithFile,
     session: FirSession,
     scopeSession: ScopeSession,
     private val declarationPhaseDowngraded: Boolean,

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirProviderInterceptor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationUntypedDesignationWithFile
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignationWithFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculator
 import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.isResolvedForAllDeclarations
 import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.updateResolvedPhaseForDeclarationAndChildren
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.util.isTargetCallableDeclarat
  * Transform designation into BODY_RESOLVE declaration. Affects only for target declaration and it's children
  */
 internal class FirDesignatedBodyResolveTransformerForIDE(
-    private val designation: FirDeclarationUntypedDesignationWithFile,
+    private val designation: FirDeclarationDesignationWithFile,
     session: FirSession,
     scopeSession: ScopeSession,
     private val declarationPhaseDowngraded: Boolean,

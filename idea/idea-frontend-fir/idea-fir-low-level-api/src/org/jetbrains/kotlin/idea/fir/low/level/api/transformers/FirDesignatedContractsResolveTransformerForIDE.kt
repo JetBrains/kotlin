@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractResolveTransformer
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationUntypedDesignationWithFile
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignationWithFile
+import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.isResolvedForAllDeclarations
 import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.updateResolvedPhaseForDeclarationAndChildren
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.*
@@ -22,7 +23,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.util.ensurePhase
  * Transform designation into CONTRACTS declaration. Affects only for target declaration and it's children
  */
 internal class FirDesignatedContractsResolveTransformerForIDE(
-    private val designation: FirDeclarationUntypedDesignationWithFile,
+    private val designation: FirDeclarationDesignationWithFile,
     session: FirSession,
     scopeSession: ScopeSession,
     private val declarationPhaseDowngraded: Boolean,
@@ -54,6 +55,7 @@ internal class FirDesignatedContractsResolveTransformerForIDE(
         if (designation.isTargetCallableDeclarationAndInPhase(FirResolvePhase.CONTRACTS)) return
         designation.ensureDesignation(FirResolvePhase.STATUS)
 
+        FirLazyBodiesCalculator.calculateLazyBodiesInside(designation)
         phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.CONTRACTS) {
             designation.firFile.transform<FirFile, ResolutionMode>(this, ResolutionMode.ContextIndependent)
         }

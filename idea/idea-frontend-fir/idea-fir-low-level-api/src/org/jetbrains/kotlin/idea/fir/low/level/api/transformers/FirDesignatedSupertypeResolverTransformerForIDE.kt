@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationUntypedDesignation
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationUntypedDesignationWithFile
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignation
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignationWithFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.collectDesignation
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.util.ensurePhase
  * Transform designation into SUPER_TYPES phase. Affects only for designation, target declaration, it's children and dependents
  */
 internal class FirDesignatedSupertypeResolverTransformerForIDE(
-    private val designation: FirDeclarationUntypedDesignationWithFile,
+    private val designation: FirDeclarationDesignationWithFile,
     private val session: FirSession,
     private val scopeSession: ScopeSession,
     private val declarationPhaseDowngraded: Boolean,
@@ -41,7 +41,7 @@ internal class FirDesignatedSupertypeResolverTransformerForIDE(
 
     private val supertypeComputationSession = SupertypeComputationSession()
 
-    private inner class DesignatedFirSupertypeResolverVisitor(classDesignation: FirDeclarationUntypedDesignation) :
+    private inner class DesignatedFirSupertypeResolverVisitor(classDesignation: FirDeclarationDesignation) :
         FirSupertypeResolverVisitor(
             session = session,
             supertypeComputationSession = supertypeComputationSession,
@@ -60,7 +60,7 @@ internal class FirDesignatedSupertypeResolverTransformerForIDE(
         }
     }
 
-    private inner class DesignatedFirApplySupertypesTransformer(classDesignation: FirDeclarationUntypedDesignation) :
+    private inner class DesignatedFirApplySupertypesTransformer(classDesignation: FirDeclarationDesignation) :
         FirApplySupertypesTransformer(supertypeComputationSession) {
 
         override fun needReplacePhase(firDeclaration: FirDeclaration): Boolean =
@@ -93,9 +93,9 @@ internal class FirDesignatedSupertypeResolverTransformerForIDE(
         }
     }
 
-    private fun collect(designation: FirDeclarationUntypedDesignationWithFile): Collection<FirDeclarationUntypedDesignationWithFile> {
-        val visited = mutableMapOf<FirDeclaration, FirDeclarationUntypedDesignationWithFile>()
-        val toVisit = mutableListOf<FirDeclarationUntypedDesignationWithFile>()
+    private fun collect(designation: FirDeclarationDesignationWithFile): Collection<FirDeclarationDesignationWithFile> {
+        val visited = mutableMapOf<FirDeclaration, FirDeclarationDesignationWithFile>()
+        val toVisit = mutableListOf<FirDeclarationDesignationWithFile>()
         toVisit.add(designation)
 
         while (toVisit.isNotEmpty()) {
@@ -131,8 +131,8 @@ internal class FirDesignatedSupertypeResolverTransformerForIDE(
         return visited.values
     }
 
-    private fun apply(visited: Collection<FirDeclarationUntypedDesignationWithFile>) {
-        fun applyToFileSymbols(designations: List<FirDeclarationUntypedDesignationWithFile>) {
+    private fun apply(visited: Collection<FirDeclarationDesignationWithFile>) {
+        fun applyToFileSymbols(designations: List<FirDeclarationDesignationWithFile>) {
             for (designation in designations) {
                 if (checkPCE) checkCanceled()
                 val applier = DesignatedFirApplySupertypesTransformer(designation)
@@ -159,7 +159,7 @@ internal class FirDesignatedSupertypeResolverTransformerForIDE(
             val resolvableTarget = designation.path.lastOrNull() ?: return
             check(resolvableTarget is FirClassLikeDeclaration<*>)
             val targetPath = designation.path.dropLast(1)
-            FirDeclarationUntypedDesignationWithFile(targetPath, resolvableTarget, false, designation.firFile)
+            FirDeclarationDesignationWithFile(targetPath, resolvableTarget, false, designation.firFile)
         } else designation
 
         if (targetDesignation.isResolvedForAllDeclarations(FirResolvePhase.SUPER_TYPES, declarationPhaseDowngraded)) return

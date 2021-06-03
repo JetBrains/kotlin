@@ -244,7 +244,7 @@ internal class FirLazyDeclarationResolver(
     }
 
     private fun runLazyDesignatedResolveWithoutLock(
-        designation: FirDeclarationUntypedDesignationWithFile,
+        designation: FirDeclarationDesignationWithFile,
         moduleFileCache: ModuleFileCache,
         scopeSession: ScopeSession,
         toPhase: FirResolvePhase,
@@ -272,7 +272,6 @@ internal class FirLazyDeclarationResolver(
             currentPhase = currentPhase.next
             if (currentPhase.pluginPhase) continue
             if (checkPCE) checkCanceled()
-            FirLazyBodiesCalculator.calculateLazyBodiesInsideIfNeeded(designation, currentPhase)
 
             currentPhase.createLazyTransformer(
                 designation = designation,
@@ -287,7 +286,7 @@ internal class FirLazyDeclarationResolver(
     }
 
     internal fun runLazyDesignatedOnAirResolveToBodyWithoutLock(
-        designation: FirDeclarationUntypedDesignationWithFile,
+        designation: FirDeclarationDesignationWithFile,
         moduleFileCache: ModuleFileCache,
         checkPCE: Boolean,
         resolveWithUnchangedFir: Boolean,
@@ -322,7 +321,7 @@ internal class FirLazyDeclarationResolver(
     }
 
     private fun FirResolvePhase.createLazyTransformer(
-        designation: FirDeclarationUntypedDesignationWithFile,
+        designation: FirDeclarationDesignationWithFile,
         scopeSession: ScopeSession,
         declarationPhaseDowngraded: Boolean,
         moduleFileCache: ModuleFileCache,

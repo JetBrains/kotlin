@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationUntypedDesignation
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignation
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.collectDesignation
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.idea.util.ifTrue
@@ -32,7 +32,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
         fun buildWithReplacement(
             session: FirSession,
             scopeProvider: FirScopeProvider,
-            designation: FirDeclarationUntypedDesignation,
+            designation: FirDeclarationDesignation,
             rootNonLocalDeclaration: KtDeclaration,
             replacement: RawFirReplacement?
         ): FirDeclaration {
@@ -54,7 +54,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
         fun buildWithRebind(
             session: FirSession,
             scopeProvider: FirScopeProvider,
-            designation: FirDeclarationUntypedDesignation,
+            designation: FirDeclarationDesignation,
             rootNonLocalDeclaration: KtDeclaration,
         ): FirDeclaration {
             require(!designation.isLocalDesignation) { "Local declaration is not allowed here" }

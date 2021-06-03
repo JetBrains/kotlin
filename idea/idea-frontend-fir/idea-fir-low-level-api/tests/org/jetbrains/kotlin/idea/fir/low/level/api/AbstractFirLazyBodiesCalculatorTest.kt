@@ -28,7 +28,7 @@ abstract class AbstractFirLazyBodiesCalculatorTest : KotlinLightCodeInsightFixtu
         val provider = session.firIdeProvider.kotlinScopeProvider
 
         val laziedFirFile = RawFirBuilder(session, provider, RawFirBuilderMode.LAZY_BODIES).buildFirFile(file)
-        FirLazyBodiesCalculator.calculateLazyBodiesIfPhaseRequires(laziedFirFile, FirResolvePhase.CONTRACTS)
+        FirLazyBodiesCalculator.calculateLazyBodies(laziedFirFile)
         val fullFirFile = RawFirBuilder(session, provider, RawFirBuilderMode.NORMAL).buildFirFile(file)
 
         val laziedFirFileDump = StringBuilder().also { FirRenderer(it).visitFile(laziedFirFile) }.toString()

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.StatusComputationSession
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationUntypedDesignationWithFile
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignationWithFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.isResolvedForAllDeclarations
 import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.updateResolvedPhaseForDeclarationAndChildren
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.ensureDesignation
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.util.ensurePhase
  * Transform designation into STATUS phase. Affects only for designation, target declaration, it's children and dependents
  */
 internal class FirDesignatedStatusResolveTransformerForIDE(
-    private val designation: FirDeclarationUntypedDesignationWithFile,
+    private val designation: FirDeclarationDesignationWithFile,
     private val session: FirSession,
     private val scopeSession: ScopeSession,
     private val declarationPhaseDowngraded: Boolean,

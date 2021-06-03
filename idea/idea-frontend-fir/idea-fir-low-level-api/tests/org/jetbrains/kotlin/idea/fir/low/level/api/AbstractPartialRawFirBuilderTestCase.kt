@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignation
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationUntypedDesignation
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignation
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.RawFirNonLocalDeclarationBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
@@ -62,7 +62,7 @@ abstract class AbstractPartialRawFirBuilderTestCase : KtParsingTestCase(
 
     private class DesignationBuilder(private val elementToBuild: KtDeclaration) : FirVisitorVoid() {
         private val path = mutableListOf<FirDeclaration>()
-        var resultDesignation: FirDeclarationUntypedDesignation? = null
+        var resultDesignation: FirDeclarationDesignation? = null
             private set
 
         override fun visitElement(element: FirElement) {

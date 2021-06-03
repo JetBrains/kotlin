@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirTypeResolveTransformer
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationUntypedDesignationWithFile
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignationWithFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.isResolvedForAllDeclarations
 import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.updateResolvedPhaseForDeclarationAndChildren
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.*
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.util.ensurePhaseForClasses
  * Transform designation into TYPES phase. Affects only for designation, target declaration and it's children
  */
 internal class FirDesignatedTypeResolverTransformerForIDE(
-    private val designation: FirDeclarationUntypedDesignationWithFile,
+    private val designation: FirDeclarationDesignationWithFile,
     session: FirSession,
     scopeSession: ScopeSession,
     private val declarationPhaseDowngraded: Boolean,

@@ -9,7 +9,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationUntypedDesignation
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignation
 
 internal interface FirLazyTransformerForIDE {
     fun transformDeclaration(phaseRunner: FirPhaseRunner)
@@ -47,7 +47,7 @@ internal interface FirLazyTransformerForIDE {
             }
         }
 
-        fun FirDeclarationUntypedDesignation.resolvePhaseForAllDeclarations(includeDeclarationPhase: Boolean): FirResolvePhase {
+        fun FirDeclarationDesignation.resolvePhaseForAllDeclarations(includeDeclarationPhase: Boolean): FirResolvePhase {
             //resolvePhaseWithForAllDeclarations for these origins are derived from original declaration
             val includeTarget = when (declaration.origin) {
                 is FirDeclarationOrigin.SubstitutionOverride,
@@ -63,7 +63,7 @@ internal interface FirLazyTransformerForIDE {
             return if (includeDeclarationPhase) minOf(declaration.resolvePhase, allContaining) else allContaining
         }
 
-        fun FirDeclarationUntypedDesignation.isResolvedForAllDeclarations(phase: FirResolvePhase, includeDeclarationPhase: Boolean) =
+        fun FirDeclarationDesignation.isResolvedForAllDeclarations(phase: FirResolvePhase, includeDeclarationPhase: Boolean) =
             resolvePhaseForAllDeclarations(includeDeclarationPhase) >= phase
 
         val DUMMY = object : FirLazyTransformerForIDE {
