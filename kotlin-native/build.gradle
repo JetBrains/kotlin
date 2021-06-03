@@ -696,3 +696,14 @@ task "checkStdlibAbiCompatibility"(type: CompareDistributionSignatures) {
     }
     onMismatchMode = CompareDistributionSignatures.OnMismatchMode.FAIL
 }
+
+if (HostManager.host == KonanTarget.MACOS_ARM64) {
+    project.rootProject.afterEvaluate {
+        tasks.withType(JavaCompile) {
+            if (targetCompatibility == "1.6" && sourceCompatibility == "1.6") {
+                options.forkOptions.jvmArgs.add("-J-Xint")
+                options.forkOptions.jvmArgs.add("-J-showversion")
+            }
+        }
+    }
+}

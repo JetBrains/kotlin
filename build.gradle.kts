@@ -604,13 +604,6 @@ allprojects {
             }
         }
 
-        tasks.withType<JavaCompile> {
-            if (targetCompatibility == "1.6" && sourceCompatibility == "1.6") {
-                options.forkOptions.jvmArgs?.add("-J-Xint")
-                options.forkOptions.jvmArgs?.add("-J-showversion")
-            }
-        }
-
         run configureCompilerClasspath@{
             val bootstrapCompilerClasspath by rootProject.buildscript.configurations
             configurations.findByName("kotlinCompilerClasspath")?.let {
