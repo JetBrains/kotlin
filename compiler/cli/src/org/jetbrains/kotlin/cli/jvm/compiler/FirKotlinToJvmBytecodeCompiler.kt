@@ -13,6 +13,7 @@ import com.intellij.openapi.vfs.VirtualFileSystem
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
+import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.asJava.FilteredJvmDiagnostics
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
@@ -30,16 +31,17 @@ import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.FirAnalyzerFacade
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.backend.Fir2IrResult
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
+import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.fir.session.FirSessionFactory.createSessionWithDependencies
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvider
@@ -48,10 +50,16 @@ import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.CommonPlatforms
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
+import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
+import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.newLinkedHashMapWithExpectedSize
 import java.io.File
 import kotlin.collections.set
@@ -148,11 +156,13 @@ object FirKotlinToJvmBytecodeCompiler {
     }
 
     private fun CompilationContext.runFrontend(ktFiles: List<KtFile>): FirAnalyzerFacade? {
+        @Suppress("NAME_SHADOWING")
+        var ktFiles = ktFiles
         val syntaxErrors = ktFiles.fold(false) { errorsFound, ktFile ->
             AnalyzerWithCompilerReport.reportSyntaxErrors(ktFile, environment.messageCollector).isHasErrors or errorsFound
         }
 
-        val sourceScope = GlobalSearchScope.filesWithoutLibrariesScope(project, ktFiles.map { it.virtualFile })
+        var sourceScope = GlobalSearchScope.filesWithoutLibrariesScope(project, ktFiles.map { it.virtualFile })
             .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
 
         var librariesScope = ProjectScope.getLibrariesScope(project)
@@ -164,35 +174,78 @@ object FirKotlinToJvmBytecodeCompiler {
         }
 
         val languageVersionSettings = moduleConfiguration.languageVersionSettings
-        val session = createSessionWithDependencies(
-            Name.identifier(module.getModuleName()),
+
+        val commonKtFiles = ktFiles.filter { it.isCommonSource == true }
+
+        val sessionProvider = FirProjectSessionProvider()
+
+        fun createSession(
+            name: String,
+            platform: TargetPlatform,
+            analyzerServices: PlatformDependentAnalyzerServices,
+            sourceScope: GlobalSearchScope,
+            dependenciesConfigurator: DependencyListForCliModule.Builder.() -> Unit = {}
+        ): FirSession {
+            return createSessionWithDependencies(
+                Name.identifier(name),
+                platform,
+                analyzerServices,
+                externalSessionProvider = sessionProvider,
+                project,
+                languageVersionSettings,
+                sourceScope,
+                librariesScope,
+                lookupTracker = environment.configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER),
+                providerAndScopeForIncrementalCompilation,
+                getPackagePartProvider = { environment.createPackagePartProvider(it) },
+                dependenciesConfigurator = {
+                    dependencies(moduleConfiguration.jvmClasspathRoots.map { it.toPath() })
+                    dependencies(moduleConfiguration.jvmModularRoots.map { it.toPath() })
+                    friendDependencies(moduleConfiguration[JVMConfigurationKeys.FRIEND_PATHS] ?: emptyList())
+                    dependenciesConfigurator()
+                },
+                sessionConfigurator = {
+                    if (extendedAnalysisMode) {
+                        registerExtendedCommonCheckers()
+                    }
+                }
+            )
+        }
+
+        val commonSession = runIf(
+            languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects) && commonKtFiles.isNotEmpty()
+        ) {
+            val commonSourcesScope = GlobalSearchScope.filesWithoutLibrariesScope(project, commonKtFiles.map { it.virtualFile })
+            sourceScope = sourceScope.intersectWith(GlobalSearchScope.notScope(commonSourcesScope))
+            ktFiles = ktFiles.filterNot { it.isCommonSource == true }
+            createSession(
+                "${module.getModuleName()}-common",
+                CommonPlatforms.defaultCommonPlatform,
+                CommonPlatformAnalyzerServices,
+                commonSourcesScope
+            )
+        }
+
+        val session = createSession(
+            module.getModuleName(),
             JvmPlatforms.unspecifiedJvmPlatform,
             JvmPlatformAnalyzerServices,
-            externalSessionProvider = null,
-            project,
-            languageVersionSettings,
-            sourceScope,
-            librariesScope,
-            lookupTracker = environment.configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER),
-            providerAndScopeForIncrementalCompilation,
-            getPackagePartProvider = { environment.createPackagePartProvider(it) },
-            dependenciesConfigurator = {
-                dependencies(moduleConfiguration.jvmClasspathRoots.map { it.toPath() })
-                dependencies(moduleConfiguration.jvmModularRoots.map { it.toPath() })
-                friendDependencies(moduleConfiguration[JVMConfigurationKeys.FRIEND_PATHS] ?: emptyList())
-            },
-            sessionConfigurator = {
-                if (extendedAnalysisMode) {
-                    registerExtendedCommonCheckers()
-                }
+            sourceScope
+        ) {
+            if (commonSession != null) {
+                sourceDependsOnDependencies(listOf(commonSession.moduleData))
             }
-        )
+        }
 
+        val commonAnalyzerFacade = commonSession?.let { FirAnalyzerFacade(it, languageVersionSettings, commonKtFiles) }
         val firAnalyzerFacade = FirAnalyzerFacade(session, languageVersionSettings, ktFiles)
 
+        commonAnalyzerFacade?.runResolution()
+        val allFirDiagnostics = mutableListOf<FirDiagnostic>()
+        commonAnalyzerFacade?.runCheckers()?.values?.flattenTo(allFirDiagnostics)
         firAnalyzerFacade.runResolution()
-        val firDiagnostics = firAnalyzerFacade.runCheckers().values.flatten()
-        val hasErrors = FirDiagnosticsCompilerResultsReporter.reportDiagnostics(firDiagnostics, environment.messageCollector)
+        firAnalyzerFacade.runCheckers().values.flattenTo(allFirDiagnostics)
+        val hasErrors = FirDiagnosticsCompilerResultsReporter.reportDiagnostics(allFirDiagnostics, environment.messageCollector)
 
         return firAnalyzerFacade.takeUnless { syntaxErrors || hasErrors }
     }

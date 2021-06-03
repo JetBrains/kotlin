@@ -1,0 +1,10 @@
+$TESTDATA_DIR$/firMultiplatformCompilationWithoutErrors/common.kt
+$TESTDATA_DIR$/firMultiplatformCompilationWithoutErrors/jvm.kt
+-Xcommon-sources
+$TESTDATA_DIR$/firMultiplatformCompilationWithoutErrors/common.kt
+-Xuse-fir
+-cp
+.
+-d
+$TEMP_DIR$
+-XXLanguage\:+MultiPlatformProjects

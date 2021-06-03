@@ -311,6 +311,16 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/firHello.args");
         }
 
+        @TestMetadata("firMultiplatformCompilationWithError.args")
+        public void testFirMultiplatformCompilationWithError() throws Exception {
+            runTest("compiler/testData/cli/jvm/firMultiplatformCompilationWithError.args");
+        }
+
+        @TestMetadata("firMultiplatformCompilationWithoutErrors.args")
+        public void testFirMultiplatformCompilationWithoutErrors() throws Exception {
+            runTest("compiler/testData/cli/jvm/firMultiplatformCompilationWithoutErrors.args");
+        }
+
         @TestMetadata("firStdlibDependency.args")
         public void testFirStdlibDependency() throws Exception {
             runTest("compiler/testData/cli/jvm/firStdlibDependency.args");

@@ -290,6 +290,10 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
     override fun getClassNamesInPackage(fqName: FqName): Set<Name> {
         return state.classesInPackage[fqName] ?: emptySet()
     }
+
+    fun getAllFirFiles(): List<FirFile> {
+        return state.fileMap.values.flatten()
+    }
 }
 
 private const val rebuildIndex = true

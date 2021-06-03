@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.builder.PsiHandlingMode
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
@@ -101,8 +102,13 @@ class FirAnalyzerFacade(
         if (_scopeSession == null) runResolution()
         val signaturer = JvmIdSignatureDescriptor(JvmDescriptorMangler(null))
 
+        val commonFirFiles = session.moduleData.dependsOnDependencies
+            .map { it.session }
+            .filter { it.kind == FirSession.Kind.Source }
+            .flatMap { (it.firProvider as FirProviderImpl).getAllFirFiles() }
+
         return Fir2IrConverter.createModuleFragment(
-            session, _scopeSession!!, firFiles!!,
+            session, _scopeSession!!, firFiles!! + commonFirFiles,
             languageVersionSettings, signaturer,
             extensions, FirJvmKotlinMangler(session), IrFactoryImpl,
             FirJvmVisibilityConverter,
