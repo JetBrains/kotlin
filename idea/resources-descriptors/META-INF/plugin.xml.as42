@@ -16,6 +16,14 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
   <idea-version since-build="202.6397.94" until-build="202.*"/>
 
   <change-notes><![CDATA[
+    <h3>1.5.20-RC</h3>
+    <ul>
+      <li>Gradle parallel compilation is enabled by default. The `kotlin.parallel.tasks.in.project` property is deprecated.</li>
+      <li>Ability to set the JDK version for the compilation in the Gradle build script.</li>
+      <li>Aligned behavior of stdlib functions `isLowerCase`/`isUpperCase` and `digitToInt` across platforms.</li>
+    </ul>
+    Learn more in the <a href="https://github.com/JetBrains/kotlin/releases/tag/v1.5.20-RC">changelog</a>.
+    <br><br>
     <h3>1.5.20-M1</h3>
     <ul>
       <li>String concatenation uses invokedynamic on JVM by default.</li>
