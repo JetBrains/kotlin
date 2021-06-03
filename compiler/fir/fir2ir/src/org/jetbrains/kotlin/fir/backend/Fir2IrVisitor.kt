@@ -52,7 +52,7 @@ class Fir2IrVisitor(
     private val conversionScope: Fir2IrConversionScope
 ) : Fir2IrComponents by components, FirDefaultVisitor<IrElement, Any?>(), IrGeneratorContextInterface {
 
-    internal val implicitCastInserter = Fir2IrImplicitCastInserter(components, this)
+    internal val implicitCastInserter = Fir2IrImplicitCastInserter(components)
 
     private val memberGenerator = ClassMemberGenerator(components, this, conversionScope)
 
