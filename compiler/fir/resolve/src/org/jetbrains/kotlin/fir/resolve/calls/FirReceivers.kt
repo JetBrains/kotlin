@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
-import org.jetbrains.kotlin.types.SmartcastStability
 
 interface Receiver
 
@@ -90,9 +89,8 @@ sealed class ImplicitReceiverValue<S : AbstractFirBasedSymbol<*>>(
         } else {
             buildExpressionWithSmartcast {
                 originalExpression = originalReceiverExpression
-                smartcastType = originalReceiverExpression.typeRef.resolvedTypeFromPrototype(type)
+                typeRef = originalReceiverExpression.typeRef.resolvedTypeFromPrototype(type)
                 typesFromSmartCast = listOf(type)
-                smartcastStability = SmartcastStability.STABLE_VALUE
             }
         }
         implicitScope = type.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing)

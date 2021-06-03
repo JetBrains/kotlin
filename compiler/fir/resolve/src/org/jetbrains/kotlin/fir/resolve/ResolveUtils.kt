@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
-import org.jetbrains.kotlin.types.SmartcastStability
 
 fun List<FirQualifierPart>.toTypeProjections(): Array<ConeTypeProjection> =
     asReversed().flatMap { it.typeArgumentList.typeArguments.map { typeArgument -> typeArgument.toConeTypeProjection() } }.toTypedArray()
@@ -286,9 +285,8 @@ fun BodyResolveComponents.transformQualifiedAccessUsingSmartcastInfo(
     }
     return buildExpressionWithSmartcast {
         originalExpression = qualifiedAccessExpression
-        smartcastType = intersectedTypeRef
+        typeRef = intersectedTypeRef
         this.typesFromSmartCast = typesFromSmartCast
-        smartcastStability = SmartcastStability.STABLE_VALUE
     }
 }
 

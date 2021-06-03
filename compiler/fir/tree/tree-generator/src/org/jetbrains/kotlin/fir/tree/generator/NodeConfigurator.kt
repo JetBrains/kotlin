@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.tree.generator.FieldSets.name
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.receivers
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.returnTypeRef
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.scopeProvider
-import org.jetbrains.kotlin.fir.tree.generator.FieldSets.smartcastStability
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.status
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.superTypeRefs
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.symbol
@@ -459,8 +458,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("originalExpression", qualifiedAccessExpression)
             +field("typesFromSmartCast", "Collection<ConeKotlinType>", null, customType = coneKotlinTypeType)
             +field("originalType", typeRef)
-            +field("smartcastType", typeRef)
-            +smartcastStability
         }
 
         expressionWithSmartcastToNull.configure {

@@ -10,16 +10,14 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionWithSmartcastToNullImpl
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.types.SmartcastStability
 
 class FirExpressionWithSmartcastToNullBuilder {
     lateinit var originalExpression: FirQualifiedAccessExpression
-    lateinit var smartcastType: FirTypeRef
+    lateinit var typeRef: FirTypeRef
     lateinit var typesFromSmartCast: Collection<ConeKotlinType>
-    lateinit var smartcastStability: SmartcastStability
 
     fun build(): FirExpressionWithSmartcastToNull {
-        return FirExpressionWithSmartcastToNullImpl(originalExpression, smartcastType, typesFromSmartCast, smartcastStability)
+        return FirExpressionWithSmartcastToNullImpl(originalExpression, typeRef, typesFromSmartCast)
     }
 }
 
