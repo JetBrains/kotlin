@@ -62,7 +62,7 @@ import java.util.*
  * @author Dmitry Petrov
  */
 open class MethodAnalyzer<V : Value>(
-    val owner: String,
+    private val owner: String,
     val method: MethodNode,
     protected val interpreter: Interpreter<V>
 ) {
