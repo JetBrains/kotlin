@@ -54,6 +54,7 @@ class CodeConformanceTest : TestCase() {
                 "libraries/tools/kotlin-gradle-plugin-core/gradle_api_jar/build/tmp",
                 "libraries/tools/kotlin-js-tests/src/test/web/qunit.js",
                 "libraries/tools/kotlin-maven-plugin/target",
+                "libraries/tools/kotlin-source-map-loader/.gradle",
                 "libraries/tools/kotlin-test-js-runner/.gradle",
                 "libraries/tools/kotlin-test-js-runner/lib",
                 "libraries/tools/kotlin-test-js-runner/node_modules",
