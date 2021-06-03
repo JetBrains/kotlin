@@ -17,26 +17,17 @@ enum class MangleConstant(val prefix: Char, val separator: Char, val suffix: Cha
         const val STAR_MARK = '*'
         const val Q_MARK = '?'
         const val ENHANCED_NULLABILITY_MARK = "{EnhancedNullability}"
-        const val EXPECT_MARK = "#expect"
-        const val UNKNOWN_MARK = "<unknown>"
         const val DYNAMIC_MARK = "<dynamic>"
         const val ERROR_MARK = "<ERROR CLASS>"
         const val ERROR_DECLARATION = "<ERROR DECLARATION>"
         const val STATIC_MEMBER_MARK = "#static"
         const val TYPE_PARAMETER_MARKER_NAME = "<TP>"
-        const val DISPATCH_RECEIVER_PARAMETER_MARKER_NAME = "<DR>"
-        const val EXTENSION_RECEIVER_PARAMETER_MARKER_NAME = "<ER>"
-        const val THIS_RECEIVER_PARAMETER_MARKER_NAME = "<TR>"
-        const val PRIMARY_CONSTRUCTOR_PARAMETER_NAME = "<PCVP>"
         const val BACKING_FIELD_NAME = "<BF>"
         const val ANON_INIT_NAME_PREFIX = "<ANI"
-        const val ANON_INIT_NAME_POSTFIX = ">"
         const val ENUM_ENTRY_CLASS_NAME = "<EEC>"
 
         const val VARIANCE_SEPARATOR = '|'
         const val UPPER_BOUND_SEPARATOR = '§'
-        const val PREFIX_SEPARATOR = ':'
-        const val MODULE_SEPARATOR = '$'
         const val FQN_SEPARATOR = '.'
         const val INDEX_SEPARATOR = ':'
 
@@ -50,17 +41,8 @@ enum class MangleConstant(val prefix: Char, val separator: Char, val suffix: Cha
 
         const val JAVA_FIELD_SUFFIX = "#jf"
 
-        const val EMPTY_PREFIX = ""
-
         const val FUN_PREFIX = "kfun"
         const val CLASS_PREFIX = "kclass"
-        const val PROPERTY_PREFIX = "kprop"
         const val FIELD_PREFIX = "kfield"
-        const val ENUM_ENTRY_PREFIX = "kenumentry"
-        const val TYPE_ALIAS_PREFIX = "ktypealias"
-        const val TYPE_PARAM_PREFIX = "ktypeparam"
-
-        const val DISPATCH_RECEIVER_SCOPE_INDEX: Int = -1
-        const val EXTENSION_RECEIVER_SCOPE_INDEX: Int = -2
     }
 }
