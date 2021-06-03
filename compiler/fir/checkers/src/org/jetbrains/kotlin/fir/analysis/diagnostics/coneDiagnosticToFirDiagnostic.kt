@@ -46,15 +46,6 @@ private fun ConeDiagnostic.toFirDiagnostic(
         val candidate = candidates.first { it.currentApplicability == CandidateApplicability.UNSAFE_CALL }
         val unsafeCall = candidate.diagnostics.firstIsInstance<UnsafeCall>()
         mapUnsafeCallError(candidate, unsafeCall, source, qualifiedAccessSource)
-    } else if (this.applicability == CandidateApplicability.UNSTABLE_SMARTCAST) {
-        val unstableSmartcast =
-            this.candidates.first { it.currentApplicability == CandidateApplicability.UNSTABLE_SMARTCAST }.diagnostics.firstIsInstance<UnstableSmartCast>()
-        FirErrors.SMARTCAST_IMPOSSIBLE.on(
-            unstableSmartcast.argument.source,
-            unstableSmartcast.targetType,
-            unstableSmartcast.argument,
-            unstableSmartcast.argument.smartcastStability.description
-        )
     } else {
         FirErrors.NONE_APPLICABLE.on(source, this.candidates.map { it.symbol })
     }
@@ -143,8 +134,8 @@ private fun mapInapplicableCandidateError(
     source: FirSourceElement,
     qualifiedAccessSource: FirSourceElement?,
 ): List<FirDiagnostic<FirSourceElement>> {
-    val genericDiagnostic = FirErrors.INAPPLICABLE_CANDIDATE.on(source, diagnostic.candidate.symbol)
-    val diagnostics = diagnostic.candidate.diagnostics.filter { it.applicability == diagnostic.applicability }.mapNotNull { rootCause ->
+    // TODO: Need to distinguish SMARTCAST_IMPOSSIBLE
+    return diagnostic.candidate.diagnostics.filter { it.applicability == diagnostic.applicability }.mapNotNull { rootCause ->
         when (rootCause) {
             is VarargArgumentOutsideParentheses -> FirErrors.VARARG_OUTSIDE_PARENTHESES.on(
                 rootCause.argument.source ?: qualifiedAccessSource
@@ -175,21 +166,9 @@ private fun mapInapplicableCandidateError(
             is InfixCallOfNonInfixFunction -> FirErrors.INFIX_MODIFIER_REQUIRED.on(source, rootCause.function)
             is OperatorCallOfNonOperatorFunction ->
                 FirErrors.OPERATOR_MODIFIER_REQUIRED.on(source, rootCause.function, rootCause.function.fir.name.asString())
-            is UnstableSmartCast -> FirErrors.SMARTCAST_IMPOSSIBLE.on(
-                rootCause.argument.source,
-                rootCause.targetType,
-                rootCause.argument,
-                rootCause.argument.smartcastStability.description
-            )
-            else -> genericDiagnostic
+            else -> null
         }
-    }.distinct()
-    return if (diagnostics.size > 1) {
-        // If there are more specific diagnostics, filter out the generic diagnostic.
-        diagnostics.filter { it != genericDiagnostic }
-    } else {
-        diagnostics
-    }
+    }.ifEmpty { listOf(FirErrors.INAPPLICABLE_CANDIDATE.on(source, diagnostic.candidate.symbol)) }
 }
 
 @OptIn(ExperimentalStdlibApi::class)

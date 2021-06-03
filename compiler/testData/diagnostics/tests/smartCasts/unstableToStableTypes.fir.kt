@@ -7,7 +7,7 @@ class Foo(var x: Any) {
         if (x is Bar) {
             val y = x
             // Error: x is not stable, Type(y) = Any
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.bar()
+            x.<!UNRESOLVED_REFERENCE!>bar<!>()
             y.<!UNRESOLVED_REFERENCE!>bar<!>()
             if (y == x) {
                 // Still error

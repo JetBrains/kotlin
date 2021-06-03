@@ -30,9 +30,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.types.model.TypeSystemCommonSuperTypesContext
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -358,7 +358,17 @@ private fun checkApplicabilityForArgumentType(
 ) {
     if (expectedType == null) return
 
-    fun subtypeError(actualExpectedType: ConeKotlinType): ResolutionDiagnostic {
+    fun unstableSmartCastOrSubtypeError(
+        unstableType: ConeKotlinType?,
+        actualExpectedType: ConeKotlinType,
+        position: ConstraintPosition
+    ): ResolutionDiagnostic {
+        if (unstableType != null) {
+            if (csBuilder.addSubtypeConstraintIfCompatible(unstableType, actualExpectedType, position)) {
+                return UnstableSmartCast.ResolutionError(argument, unstableType)
+            }
+        }
+
         if (argument.isNullLiteral && actualExpectedType.nullability == ConeNullability.NOT_NULL) {
             return NullForNotNullType(argument)
         }
@@ -396,17 +406,14 @@ private fun checkApplicabilityForArgumentType(
     }
 
     if (!csBuilder.addSubtypeConstraintIfCompatible(argumentType, expectedType, position)) {
-        val smartcastExpression = argument as? FirExpressionWithSmartcast
-        if (smartcastExpression != null && smartcastExpression.smartcastStability != SmartcastStability.STABLE_VALUE) {
-            val unstableType = smartcastExpression.smartcastType.coneType
-            if (csBuilder.addSubtypeConstraintIfCompatible(unstableType, expectedType, position)) {
-                sink.reportDiagnostic(UnstableSmartCast(smartcastExpression, expectedType))
-                return
-            }
-        }
-
         if (!isReceiver) {
-            sink.reportDiagnosticIfNotNull(subtypeError(expectedType))
+            sink.reportDiagnosticIfNotNull(
+                unstableSmartCastOrSubtypeError(
+                    unstableType = null, // TODO: handle unstable smartcasts
+                    expectedType,
+                    position
+                )
+            )
             return
         }
 

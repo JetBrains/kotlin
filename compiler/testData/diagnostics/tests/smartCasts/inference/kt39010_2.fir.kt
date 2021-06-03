@@ -11,6 +11,6 @@ interface KI {
 
 fun KI.bar() {
     if (a is B) {
-        <!SMARTCAST_IMPOSSIBLE!>a<!>.foo()
+        a.<!UNRESOLVED_REFERENCE!>foo<!>()
     }
 }

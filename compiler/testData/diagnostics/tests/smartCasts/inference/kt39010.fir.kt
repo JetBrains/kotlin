@@ -5,7 +5,7 @@ class A<E> {
 class B(var a: A<*>?) {
     fun bar() {
         if (a != null) {
-            <!SMARTCAST_IMPOSSIBLE!>a<!>.foo()
+            a<!UNSAFE_CALL!>.<!>foo()
         }
     }
 }
