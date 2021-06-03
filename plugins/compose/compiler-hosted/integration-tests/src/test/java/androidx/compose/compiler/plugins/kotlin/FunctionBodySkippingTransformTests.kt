@@ -198,7 +198,7 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
                 %dirty = %dirty or if (%composer.changed(colors)) 0b0100 else 0b0010
               }
               if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
-                Text("hello world", null, colors.getColor(%composer, 0b1110 and %dirty), TextUnit(0L), null, null, null, TextUnit(0L), null, null, TextUnit(0L), null, false, 0, null, null, %composer, 0b0110, 0, 0b1111111111111010)
+                Text("hello world", null, colors.getColor(%composer, 0b1110 and %dirty), TextUnit(0L), null, null, null, TextUnit(0L), null, null, TextUnit(0L), TextOverflow(0), false, 0, null, null, %composer, 0b0110, 0b01000000, 0b1111111111111010)
               } else {
                 %composer.skipToGroupEnd()
               }
