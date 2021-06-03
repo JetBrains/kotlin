@@ -38,7 +38,6 @@ dependencies {
     )
 
     testImplementation(libs.kotlinStdlib)
-    testImplementation(project(":compose:androidview:androidview"))
     testImplementation(project(":compose:compiler:compiler-hosted"))
     testImplementation(projectOrArtifact(":compose:material:material"))
     testImplementation(projectOrArtifact(":compose:runtime:runtime"))

@@ -1889,8 +1889,6 @@ fun <T> B(foo: T, bar: String) { }
     fun testEffects1(): Unit = ensureSetup {
         compose(
             """
-                import androidx.compose.androidview.adapters.*
-
                 @Composable
                 fun Counter() {
                     var count = remember { mutableStateOf(0) }
@@ -1921,8 +1919,6 @@ fun <T> B(foo: T, bar: String) { }
     fun testEffects2(): Unit = ensureSetup {
         compose(
             """
-                import androidx.compose.androidview.adapters.*
-
                 @Composable
                 fun Counter() {
                     var count = remember { mutableStateOf(0) }
@@ -1955,8 +1951,6 @@ fun <T> B(foo: T, bar: String) { }
         val log = StringBuilder()
         compose(
             """
-                import androidx.compose.androidview.adapters.*
-
                 @Composable
                 fun Counter(log: StringBuilder) {
                     var count = remember { mutableStateOf(0) }
@@ -1999,8 +1993,6 @@ fun <T> B(foo: T, bar: String) { }
         val log = StringBuilder()
         compose(
             """
-                import androidx.compose.androidview.adapters.*
-
                 @Composable
                 fun printer(log: StringBuilder, str: String) {
                     onCommit {
