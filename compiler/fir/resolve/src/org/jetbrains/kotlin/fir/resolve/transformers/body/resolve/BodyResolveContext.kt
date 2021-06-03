@@ -73,7 +73,7 @@ class BodyResolveContext(
         get() = towerDataContextsForClassParts.towerDataContextForCallableReferences
 
     @set:PrivateForInline
-    var containers: PersistentList<FirDeclaration> = persistentListOf()
+    var containers: MutableList<FirDeclaration> = mutableListOf()
 
     @set:PrivateForInline
     var containingClass: FirRegularClass? = null
@@ -108,25 +108,23 @@ class BodyResolveContext(
 
     @PrivateForInline
     inline fun <T> withContainer(declaration: FirDeclaration, f: () -> T): T {
-        val oldContainers = containers
-        containers = containers.add(declaration)
+        containers.add(declaration)
         return try {
             f()
         } finally {
-            containers = oldContainers
+            containers.removeAt(containers.size - 1)
         }
     }
 
     @PrivateForInline
     private inline fun <T> withContainerClass(declaration: FirRegularClass, f: () -> T): T {
-        val oldContainers = containers
         val oldContainingClass = containingClass
-        containers = containers.add(declaration)
+        containers.add(declaration)
         containingClass = declaration
         return try {
             f()
         } finally {
-            containers = oldContainers
+            containers.removeAt(containers.size - 1)
             containingClass = oldContainingClass
         }
     }

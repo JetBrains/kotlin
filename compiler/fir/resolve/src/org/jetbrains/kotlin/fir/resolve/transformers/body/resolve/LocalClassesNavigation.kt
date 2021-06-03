@@ -49,7 +49,7 @@ private class NavigationInfoVisitor : FirDefaultVisitor<Unit, Any?>() {
     val resultingMap: MutableMap<FirCallableMemberDeclaration<*>, FirClassLikeDeclaration<*>> = mutableMapOf()
     val parentForClass: MutableMap<FirClassLikeDeclaration<*>, FirClassLikeDeclaration<*>?> = mutableMapOf()
     val allMembers: MutableList<FirSymbolOwner<*>> = mutableListOf()
-    private var currentPath: PersistentList<FirClassLikeDeclaration<*>> = persistentListOf()
+    private val currentPath: MutableList<FirClassLikeDeclaration<*>> = mutableListOf()
 
     override fun visitElement(element: FirElement, data: Any?) {}
 
@@ -63,12 +63,11 @@ private class NavigationInfoVisitor : FirDefaultVisitor<Unit, Any?>() {
 
     override fun <F : FirClass<F>> visitClass(klass: FirClass<F>, data: Any?) {
         parentForClass[klass] = currentPath.lastOrNull()
-        val prev = currentPath
-        currentPath = currentPath.add(klass)
+        currentPath.add(klass)
 
         klass.acceptChildren(this, null)
 
-        currentPath = prev
+        currentPath.removeAt(currentPath.size - 1)
     }
 
     override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Any?) {
