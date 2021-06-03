@@ -95,8 +95,7 @@ class ExperimentalMarkerDeclarationAnnotationChecker(private val module: ModuleD
         experimentalFqName: FqName,
         visited: MutableSet<CallableMemberDescriptor> = mutableSetOf()
     ): Boolean {
-        if (this in visited) return false
-        visited += this
+        if (!visited.add(this)) return false
         for (overridden in overriddenDescriptors) {
             if (overridden.annotations.any { it.fqName == experimentalFqName }) {
                 return true

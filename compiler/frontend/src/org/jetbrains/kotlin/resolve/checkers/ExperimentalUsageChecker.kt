@@ -175,8 +175,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             languageVersionSettings: LanguageVersionSettings,
             visited: MutableSet<DeclarationDescriptor> = mutableSetOf()
         ): Set<Experimentality> {
-            if (this in visited) return emptySet()
-            visited += this
+            if (!visited.add(this)) return emptySet()
             val result = SmartSet.create<Experimentality>()
             if (this is CallableMemberDescriptor && kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
                 for (overridden in overriddenDescriptors) {
