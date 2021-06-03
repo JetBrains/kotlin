@@ -28,11 +28,11 @@ import java.util.*
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 abstract class TypeTranslator(
-    private val symbolTable: ReferenceSymbolTable,
+    protected val symbolTable: ReferenceSymbolTable,
     val languageVersionSettings: LanguageVersionSettings,
     typeParametersResolverBuilder: () -> TypeParametersResolver = { ScopedTypeParametersResolver() },
     private val enterTableScope: Boolean = false,
-    private val extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY
+    protected val extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY
 ) {
     abstract val constantValueGenerator: ConstantValueGenerator
 
@@ -69,7 +69,7 @@ abstract class TypeTranslator(
         }
     }
 
-    inline fun <T> buildWithScope(container: IrTypeParametersContainer, builder: () -> T): T {
+    fun <T> buildWithScope(container: IrTypeParametersContainer, builder: () -> T): T {
         enterScope(container)
         val result = builder()
         leaveScope(container)
@@ -170,6 +170,8 @@ abstract class TypeTranslator(
         // Abbreviated type's classifier might not be TypeAliasDescriptor in case it's MockClassDescriptor (not found in dependencies).
         val typeAliasDescriptor = constructor.declarationDescriptor as? TypeAliasDescriptor ?: return null
 
+        // There is possible situation when we have private top-level type alias visible outside its file which is illegal from klib POV.
+        // In that specific case don't generate type abbreviation
         if (!isTypeAliasAccessibleHere(typeAliasDescriptor)) return null
 
         return IrTypeAbbreviationImpl(

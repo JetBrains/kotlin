@@ -63,7 +63,6 @@ class Psi2IrTranslator(
             symbolTable,
             extensions,
             typeTranslator,
-            typeTranslator.constantValueGenerator,
             IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, symbolTable),
         )
     }
