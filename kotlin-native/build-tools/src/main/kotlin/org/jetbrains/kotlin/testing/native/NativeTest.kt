@@ -286,6 +286,10 @@ private fun createTestTask(
         workingDir = project.buildDir.resolve("testReports/$testName")
         val xmlReport = workingDir.resolve("report.xml")
         executable(linkTask.outputFile)
+        val filter = project.findProperty("gtest_filter");
+        if (filter != null) {
+            args("--gtest_filter=${filter}")
+        }
         args("--gtest_output=xml:${xmlReport.absoluteFile}")
         when (sanitizer) {
             SanitizerKind.THREAD -> {
