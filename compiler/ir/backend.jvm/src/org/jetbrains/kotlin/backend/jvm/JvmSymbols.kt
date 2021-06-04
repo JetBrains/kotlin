@@ -250,6 +250,8 @@ class JvmSymbols(
             klass.inlineClassRepresentation = InlineClassRepresentation(Name.identifier("value"), irBuiltIns.anyNType as IrSimpleType)
         }
 
+    val resultOfAnyType: IrType = resultClassStub.typeWith(irBuiltIns.anyNType)
+
     val continuationImplClass: IrClassSymbol =
         createClass(FqName("kotlin.coroutines.jvm.internal.ContinuationImpl"), classModality = Modality.ABSTRACT) { klass ->
             val continuationType = continuationClass.typeWith(irBuiltIns.anyNType)
@@ -258,7 +260,7 @@ class JvmSymbols(
                 addValueParameter(SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME, continuationType.makeNullable())
             }
             klass.addFunction(INVOKE_SUSPEND_METHOD_NAME, irBuiltIns.anyNType, Modality.ABSTRACT).apply {
-                addValueParameter(SUSPEND_CALL_RESULT_NAME, resultClassStub.typeWith(irBuiltIns.anyNType))
+                addValueParameter(SUSPEND_CALL_RESULT_NAME, resultOfAnyType)
             }
         }
 
@@ -291,7 +293,7 @@ class JvmSymbols(
             )
         }
         klass.addFunction(INVOKE_SUSPEND_METHOD_NAME, irBuiltIns.anyNType, Modality.ABSTRACT, DescriptorVisibilities.PROTECTED).apply {
-            addValueParameter(SUSPEND_CALL_RESULT_NAME, resultClassStub.typeWith(irBuiltIns.anyNType))
+            addValueParameter(SUSPEND_CALL_RESULT_NAME, resultOfAnyType)
         }
         klass.addFunction(SUSPEND_FUNCTION_CREATE_METHOD_NAME, continuationClass.typeWith(irBuiltIns.unitType), Modality.OPEN).apply {
             addValueParameter(SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME, continuationClass.typeWith(irBuiltIns.nothingType))

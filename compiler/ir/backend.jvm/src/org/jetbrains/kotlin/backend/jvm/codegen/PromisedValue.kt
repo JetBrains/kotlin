@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.eraseTypeParameters
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.*
 import org.jetbrains.kotlin.codegen.AsmUtil
@@ -32,15 +31,8 @@ abstract class PromisedValue(val codegen: ExpressionCodegen, val type: Type, val
         val fromTypeRepresentation = erasedSourceType.getClass()!!.inlineClassRepresentation
         val toTypeRepresentation = erasedTargetType.getClass()!!.inlineClassRepresentation
 
-        // Boxing and unboxing kotlin.Result leads to CCE in generated code
-        val doNotCoerceKotlinResultInContinuation =
-            (codegen.irFunction.parentAsClass.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS ||
-                    (codegen.irFunction.parentAsClass.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA &&
-                            !codegen.irFunction.isInvokeSuspendOfLambda()))
-                    && (irType.isKotlinResult() || irTarget.isKotlinResult())
-
         // Coerce inline classes
-        if ((fromTypeRepresentation != null || toTypeRepresentation != null) && !doNotCoerceKotlinResultInContinuation) {
+        if (fromTypeRepresentation != null || toTypeRepresentation != null) {
             val isFromTypeUnboxed = fromTypeRepresentation?.underlyingType?.let(typeMapper::mapType) == type
             val isToTypeUnboxed = toTypeRepresentation?.underlyingType?.let(typeMapper::mapType) == target
 

@@ -340,7 +340,14 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
     }
 
     private fun IrBlockBodyBuilder.callInvokeSuspend(invokeSuspend: IrSimpleFunction, lambda: IrExpression): IrExpression =
-        irCallOp(invokeSuspend.symbol, invokeSuspend.returnType, lambda, irUnit())
+        irCallOp(invokeSuspend.symbol, invokeSuspend.returnType, lambda, irCall(
+            this@SuspendLambdaLowering.context.ir.symbols.unsafeCoerceIntrinsic,
+            this@SuspendLambdaLowering.context.ir.symbols.resultOfAnyType
+        ).apply {
+            putTypeArgument(0, context.irBuiltIns.anyNType)
+            putTypeArgument(1, type)
+            putValueArgument(0, irUnit())
+        })
 
     private fun IrClass.addPrimaryConstructorForLambda(superClass: IrClass, arity: Int): IrConstructor =
         addConstructor {
