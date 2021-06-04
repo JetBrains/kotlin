@@ -243,7 +243,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 outputWatFile.writeText(res.wat)
 
                 val runner = """
-                    const wasmBinary = read(String.raw`${outputWasmFile.absoluteFile}`, 'binary');
+                    const wasmBinary = read(arguments[0] ?? String.raw`${outputWasmFile.absoluteFile}`, 'binary');
                     const wasmModule = new WebAssembly.Module(wasmBinary);
                     const wasmInstance = new WebAssembly.Instance(wasmModule, { runtime, js_code });
                     wasmInstance.exports.main();
