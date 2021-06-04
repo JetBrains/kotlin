@@ -15,7 +15,7 @@ dependencies {
     testImplementation(commonDep("junit:junit"))
     testCompileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl") }
     testImplementation(projectTests(":compiler:tests-common"))
-    testCompileOnly(intellijDep("ideaIC"))
+    testCompileOnly(intellijDep()) { includeJars("uast-tests") }
 }
 
 sourceSets {
