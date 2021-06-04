@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.intrinsics.JavaClassProperty
-import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
+import org.jetbrains.kotlin.backend.jvm.ir.eraseTypeParameters
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.lower.constantValue
@@ -57,7 +57,6 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
-import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.keysToMap
@@ -674,19 +673,14 @@ class ExpressionCodegen(
             index < 0 -> extensionReceiverParameter!!.type
             else -> valueParameters[index].type
         }
-        return when {
-            // Only care about `Result<T>`; `Result<T>?` is boxed in any case.
-            type.erasedUpperBound.fqNameWhenAvailable != StandardNames.RESULT_FQ_NAME || type.isNullable() -> null
-            // If there's a bridge, it will unbox `Result` along with transforming all other arguments.
-            parentAsClass.declarations.any { function ->
-                function is IrSimpleFunction && function != this &&
-                        function.origin == IrDeclarationOrigin.BRIDGE &&
-                        function.attributeOwnerId == attributeOwnerId
-            } -> false
-            // And if there's no bridge, we only need to unbox if we override another method that either takes
-            // `Any?` or also needs to unbox. (TODO: what if results of `needsResultArgumentUnboxing` are inconsistent?)
-            else -> overriddenSymbols.any { it.owner.resultIsActuallyAny(index) != false }
-        }
+        if (!type.eraseTypeParameters().isKotlinResult()) return null
+        // If there's a bridge, it will unbox `Result` along with transforming all other arguments.
+        // Otherwise, we need to treat `Result` as boxed if it overrides a non-`Result` or boxed `Result` type.
+        // TODO: if results of `needsResultArgumentUnboxing` for `overriddenSymbols` are inconsistent, the boxedness
+        //       of the `Result` depends on which overridden function is called. This is probably unfixable.
+        return parentAsClass.functions.none {
+            it != this && it.origin == IrDeclarationOrigin.BRIDGE && it.attributeOwnerId == attributeOwnerId
+        } && overriddenSymbols.any { it.owner.resultIsActuallyAny(index) != false }
     }
 
     override fun visitFieldAccess(expression: IrFieldAccessExpression, data: BlockInfo): PromisedValue {
@@ -921,7 +915,11 @@ class ExpressionCodegen(
             return unboxedInlineClass.asmType to unboxedInlineClass
         }
         val asmType = if (this == irFunction) signature.returnType else methodSignatureMapper.mapReturnType(this)
-        val irType = if (this is IrConstructor) context.irBuiltIns.unitType else returnType
+        val irType = when {
+            this is IrConstructor -> context.irBuiltIns.unitType
+            this is IrSimpleFunction && resultIsActuallyAny(null) == true -> context.irBuiltIns.anyNType
+            else -> returnType
+        }
         return asmType to irType
     }
 
