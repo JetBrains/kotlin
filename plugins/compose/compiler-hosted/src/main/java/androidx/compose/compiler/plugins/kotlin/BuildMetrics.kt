@@ -52,6 +52,7 @@ interface FunctionMetrics {
     val defaultsGroup: Boolean
     val groups: Int
     val calls: Int
+    val scheme: String?
     fun recordGroup()
     fun recordComposableCall(
         expression: IrCall,
@@ -74,6 +75,9 @@ interface FunctionMetrics {
         hasDefaults: Boolean,
         readonly: Boolean
     )
+    fun recordScheme(
+        scheme: String
+    )
     fun print(out: Appendable, src: IrSourcePrinterVisitor)
 }
 
@@ -95,6 +99,7 @@ interface ModuleMetrics {
         expression: IrCall,
         paramMeta: List<ComposableFunctionBodyTransformer.ParamMeta>
     )
+    fun log(message: String)
     fun Appendable.appendModuleJson()
     fun Appendable.appendComposablesCsv()
     fun Appendable.appendComposablesTxt()
@@ -112,6 +117,9 @@ object EmptyModuleMetrics : ModuleMetrics {
         expression: IrCall,
         paramMeta: List<ComposableFunctionBodyTransformer.ParamMeta>
     ) {}
+    override fun log(message: String) {
+        println(message)
+    }
     override fun Appendable.appendModuleJson() {}
     override fun Appendable.appendComposablesCsv() {}
     override fun Appendable.appendComposablesTxt() {}
@@ -147,6 +155,8 @@ object EmptyFunctionMetrics : FunctionMetrics {
         get() = emptyMetricsAccessed()
     override val calls: Int
         get() = emptyMetricsAccessed()
+    override val scheme: String
+        get() = emptyMetricsAccessed()
     override fun recordGroup() {}
     override fun recordComposableCall(
         expression: IrCall,
@@ -169,6 +179,7 @@ object EmptyFunctionMetrics : FunctionMetrics {
         hasDefaults: Boolean,
         readonly: Boolean
     ) {}
+    override fun recordScheme(scheme: String) {}
     override fun print(out: Appendable, src: IrSourcePrinterVisitor) {}
 }
 
@@ -203,6 +214,7 @@ class ModuleMetricsImpl(
 
     private val composables = mutableListOf<FunctionMetrics>()
     private val classes = mutableListOf<ClassMetrics>()
+    private val logMessages = mutableListOf<String>()
 
     private inner class ClassMetrics(
         val declaration: IrClass,
@@ -320,6 +332,10 @@ class ModuleMetricsImpl(
         }
     }
 
+    override fun log(message: String) {
+        logMessages.add(message)
+    }
+
     override fun Appendable.appendModuleJson() = appendJson {
         entry("skippableComposables", skippableComposables)
         entry("restartableComposables", restartableComposables)
@@ -418,6 +434,12 @@ class ModuleMetricsImpl(
             appendComposablesTxt()
         }
 
+        if (logMessages.isNotEmpty()) {
+            File(dir, "$prefix-composables.log").write {
+                for (line in logMessages) appendLine(line)
+            }
+        }
+
         File(dir, "$prefix-classes.txt").write {
             appendClassesTxt()
         }
@@ -442,7 +464,7 @@ class FunctionMetricsImpl(
     override var defaultsGroup: Boolean = false
     override var groups: Int = 0
     override var calls: Int = 0
-
+    override var scheme: String? = null
     private class Param(
         val declaration: IrValueParameter,
         val type: IrType,
@@ -527,11 +549,16 @@ class FunctionMetricsImpl(
         )
     }
 
+    override fun recordScheme(scheme: String) {
+        this.scheme = scheme
+    }
+
     override fun print(out: Appendable, src: IrSourcePrinterVisitor): Unit = with(out) {
         if (restartable) append("restartable ")
         if (skippable) append("skippable ")
         if (readonly) append("readonly ")
         if (inline) append("inline ")
+        scheme?.let { append("scheme(\"$it\") ") }
         append("fun ")
         append(name)
         if (parameters.isEmpty()) {

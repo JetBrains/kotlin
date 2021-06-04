@@ -307,6 +307,7 @@ class IrSourcePrinterVisitor(
                 "rangeTo" -> ".."
                 "plusAssign" -> "+="
                 "minusAssign" -> "-="
+                "unaryMinus" -> "-"
                 "timesAssign" -> "*="
                 "divAssign" -> "/="
                 "remAssign" -> "%="
@@ -319,11 +320,17 @@ class IrSourcePrinterVisitor(
                 "EQEQ" -> if (isInNotCall) "!=" else "=="
                 "EQEQEQ" -> if (isInNotCall) "!==" else "==="
                 "OROR" -> "||"
+                "ieee754equals" -> "=="
+
                 // no names for
                 "invoke", "get", "set" -> ""
-                "iterator", "hasNext", "next", "getValue", "setValue" -> name
+                "iterator", "hasNext", "next", "getValue", "setValue",
+                "noWhenBranchMatchedException" -> name
                 "CHECK_NOT_NULL" -> "!!"
-                else -> error("Unhandled operator $name")
+                else -> {
+                    if (name.startsWith("component")) name
+                    else error("Unhandled operator $name")
+                }
             }
 
             val printBinary = when (name) {
@@ -379,22 +386,31 @@ class IrSourcePrinterVisitor(
                     expression.getValueArgument(1)?.print()
                 }
                 // builtin static operators
-                "greater", "less", "lessOrEqual", "greaterOrEqual", "EQEQ", "EQEQEQ" -> {
+                "greater", "less", "lessOrEqual", "greaterOrEqual", "EQEQ", "EQEQEQ",
+                "ieee754equals" -> {
                     expression.getValueArgument(0)?.print()
                     print(" $opSymbol ")
                     expression.getValueArgument(1)?.print()
                 }
-                "iterator", "hasNext", "next", "getValue", "setValue" -> {
+                "iterator", "hasNext", "next", "getValue", "setValue",
+                "noWhenBranchMatchedException" -> {
                     (expression.dispatchReceiver ?: expression.extensionReceiver)?.print()
                     print(".")
                     print(opSymbol)
                     print("()")
                 }
-                // else binary
                 else -> {
-                    (expression.dispatchReceiver ?: expression.extensionReceiver)?.print()
-                    print(" $opSymbol ")
-                    expression.getValueArgument(0)?.print()
+                    if (name.startsWith("component")) {
+                        (expression.dispatchReceiver ?: expression.extensionReceiver)?.print()
+                        print(".")
+                        print(opSymbol)
+                        print("()")
+                    } else {
+                        // else binary
+                        (expression.dispatchReceiver ?: expression.extensionReceiver)?.print()
+                        print(" $opSymbol ")
+                        expression.getValueArgument(0)?.print()
+                    }
                 }
             }
             printIntsAsBinary = prevPrintBinary
@@ -559,13 +575,16 @@ class IrSourcePrinterVisitor(
             IrTypeOperator.NOT_INSTANCEOF -> {
                 expression.argument.print()
             }
-            IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_CAST -> {
+            IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_CAST, IrTypeOperator.SAFE_CAST -> {
                 expression.argument.print()
             }
             IrTypeOperator.SAM_CONVERSION -> {
                 expression.argument.print()
             }
             IrTypeOperator.IMPLICIT_NOTNULL -> {
+                expression.argument.print()
+            }
+            IrTypeOperator.INSTANCEOF -> {
                 expression.argument.print()
             }
             else -> error("Unknown type operator: ${expression.operator}")

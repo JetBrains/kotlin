@@ -90,6 +90,12 @@ object ComposeErrors {
         )
 
     @JvmField
+    val CALLED_IN_INCORRECT_CONTEXT =
+        DiagnosticFactory1.create<PsiElement, String>(
+            Severity.ERROR
+        )
+
+    @JvmField
     val MISSING_DISALLOW_COMPOSABLE_CALLS_ANNOTATION =
         DiagnosticFactory3.create<
             PsiElement,
@@ -128,6 +134,18 @@ object ComposeErrors {
     val TYPE_MISMATCH =
         DiagnosticFactory2.create<KtExpression, KotlinType, KotlinType>(
             Severity.ERROR
+        )
+
+    @JvmField
+    val COMPOSE_APPLIER_CALL_MISMATCH =
+        DiagnosticFactory2.create<PsiElement, String, String>(
+            Severity.WARNING
+        )
+
+    @JvmField
+    val COMPOSE_APPLIER_PARAMETER_MISMATCH =
+        DiagnosticFactory2.create<PsiElement, String, String>(
+            Severity.WARNING
         )
 
     init {

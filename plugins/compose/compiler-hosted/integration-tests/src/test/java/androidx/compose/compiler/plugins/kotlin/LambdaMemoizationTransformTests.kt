@@ -79,6 +79,7 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
                   %composer.endReplaceableGroup()
                 }
                 @Composable
+                @ComposableInferredTarget(scheme = "[0[0]]")
                 fun B(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
                   %composer.startReplaceableGroup(<>)
                   sourceInformation(%composer, "C(B)<conten...>:Test.kt")
