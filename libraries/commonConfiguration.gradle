@@ -135,6 +135,10 @@ ext.configurePublishing = { Project project, configure = { } ->
     }
 }
 
+ext.configureGradlePluginPublishing = { Project project ->
+    ArtifactsKt.publishGradlePlugin(project)
+}
+
 ext.configurePluginMarkers = { Project project, withEmptyJars = true ->
     PluginMarkersKt.publishPluginMarkers(project, withEmptyJars)
 }

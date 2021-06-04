@@ -35,10 +35,6 @@ configure(pluginProjects) { project ->
             vcsUrl = 'https://github.com/JetBrains/kotlin/'
             description = 'Kotlin plugins for Gradle'
             tags = ['kotlin']
-
-            mavenCoordinates {
-                groupId = "org.jetbrains.kotlin"
-            }
         }
     }
 }

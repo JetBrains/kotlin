@@ -17,7 +17,7 @@ dependencies {
 
 projectTest(parallel = true)
 
-publish()
+publishGradlePlugin()
 
 sourcesJar()
 javadocJar()

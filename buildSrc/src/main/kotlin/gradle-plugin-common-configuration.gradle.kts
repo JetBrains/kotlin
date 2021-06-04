@@ -8,7 +8,7 @@ plugins {
     kotlin("jvm")
 }
 
-publish()
+publishGradlePlugin()
 standardPublicJars()
 
 extensions.extraProperties["kotlin.stdlib.default.dependency"] = "false"

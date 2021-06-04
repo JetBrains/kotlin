@@ -68,7 +68,7 @@ class KotlinBuildPublishingPlugin @Inject constructor(
 
         configure<PublishingExtension> {
             publications {
-                create<MavenPublication>(PUBLICATION_NAME) {
+                create<MavenPublication>(project.mainPublicationName) {
                     from(kotlinLibraryComponent)
 
                     configureKotlinPomAttributes(project)
@@ -79,15 +79,25 @@ class KotlinBuildPublishingPlugin @Inject constructor(
     }
 
     companion object {
-        const val PUBLICATION_NAME = "Main"
+        const val DEFAULT_MAIN_PUBLICATION_NAME = "Main"
+        const val MAIN_PUBLICATION_NAME_PROPERTY = "MainPublicationName"
         const val REPOSITORY_NAME = "Maven"
         const val ADHOC_COMPONENT_NAME = "kotlinLibrary"
 
         const val COMPILE_CONFIGURATION = "publishedCompile"
         const val RUNTIME_CONFIGURATION = "publishedRuntime"
-
     }
 }
+
+var Project.mainPublicationName: String
+    get() {
+        return if (project.extra.has(KotlinBuildPublishingPlugin.MAIN_PUBLICATION_NAME_PROPERTY))
+            project.extra.get(KotlinBuildPublishingPlugin.MAIN_PUBLICATION_NAME_PROPERTY) as String
+        else KotlinBuildPublishingPlugin.DEFAULT_MAIN_PUBLICATION_NAME
+    }
+    set(value) {
+        project.extra.set(KotlinBuildPublishingPlugin.MAIN_PUBLICATION_NAME_PROPERTY, value)
+    }
 
 @OptIn(ExperimentalStdlibApi::class)
 private fun humanReadableName(name: String) =
