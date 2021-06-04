@@ -107,7 +107,6 @@ class IrInterpreter private constructor(
             is IrEnumConstructorCall -> interpretEnumConstructorCall(element)
             is IrDelegatingConstructorCall -> interpretDelegatingConstructorCall(element)
             is IrValueParameter -> interpretValueParameter(element)
-            is IrInstanceInitializerCall -> interpretInstanceInitializerCall(element)
             is IrField -> interpretField(element)
             is IrBody -> interpretBody(element)
             is IrBlock -> interpretBlock(element)
@@ -219,21 +218,6 @@ class IrInterpreter private constructor(
         }
     }
 
-    private fun interpretInstanceInitializerCall(call: IrInstanceInitializerCall) {
-        val irClass = call.classSymbol.owner
-
-        val classProperties = irClass.declarations.filterIsInstance<IrProperty>()
-        classProperties.forEach { property ->
-            property.backingField?.initializer?.expression ?: return@forEach
-            val receiver = irClass.thisReceiver!!.symbol
-            if (property.backingField?.initializer != null) {
-                val receiverState = callStack.getState(receiver)
-                val propertyVar = Variable(property.symbol, callStack.popState())
-                receiverState.setField(propertyVar)
-            }
-        }
-    }
-
     private fun interpretField(field: IrField) {
         val irClass = field.parentAsClass
         val receiver = irClass.thisReceiver!!.symbol
@@ -262,9 +246,11 @@ class IrInterpreter private constructor(
         val constructor = constructorCall.symbol.owner
         val valueArguments = constructor.valueParameters.map { callStack.getState(it.symbol) }
         val irClass = constructor.parentAsClass
+        val receiverSymbol = constructor.dispatchReceiverParameter?.symbol
+
         val objectState = callStack.getState(constructorCall.getThisReceiver())
         if (irClass.isLocal) callStack.storeUpValues(objectState as StateWithClosure)
-        val outerClass = if (irClass.isInner) callStack.getState(constructor.dispatchReceiverParameter!!.symbol) else null
+        val outerClass = receiverSymbol?.let { callStack.getState(it) }
 
         callStack.dropSubFrame()
         callStack.newFrame(constructor)
@@ -272,15 +258,6 @@ class IrInterpreter private constructor(
         callStack.addVariable(Variable(constructorCall.getThisReceiver(), objectState))
         constructor.valueParameters.forEachIndexed { i, param -> callStack.addVariable(Variable(param.symbol, valueArguments[i])) }
         if (irClass.isLocal) callStack.loadUpValues(objectState as StateWithClosure)
-
-        if (outerClass != null) {
-            val outerClassVar = Variable(irClass.parentAsClass.thisReceiver!!.symbol, outerClass)
-            (objectState as Complex).outerClass = outerClassVar
-            // used in case when inner class has inner super class
-            callStack.addVariable(Variable(constructor.dispatchReceiverParameter!!.symbol, outerClass))
-            // used to get information from outer class
-            callStack.addVariable(outerClassVar)
-        }
 
         val superReceiver = when (val irStatement = constructor.body?.statements?.get(0)) {
             null -> null // for jvm
@@ -290,6 +267,19 @@ class IrInterpreter private constructor(
             else -> TODO("${irStatement::class.java} is not supported as first statement in constructor call")
         }
         superReceiver?.let { callStack.addVariable(Variable(it, objectState)) }
+
+        if (outerClass != null) {
+            val outerClassVar = Variable(irClass.parentAsClass.thisReceiver!!.symbol, outerClass)
+            (objectState as Complex).outerClass = outerClassVar
+            if (superReceiver != receiverSymbol) {
+                // This check is needed to test that this inner class is not subclass of its outer.
+                // If it is true and if we add the next symbol, it will interfere with super symbol in memory.
+                // In other case, we need this variable when inner class has inner super class.
+                callStack.addVariable(Variable(receiverSymbol, outerClass))
+            }
+            // used to get information from outer class
+            generateSequence(outerClassVar) { (it.state as? Complex)?.outerClass }.forEach { callStack.addVariable(it) }
+        }
 
         callInterceptor.interceptConstructor(constructorCall, valueArguments) {
             callStack.addInstruction(CompoundInstruction(constructor))
