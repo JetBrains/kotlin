@@ -80,6 +80,31 @@ internal class FirRefWithValidityCheck<out D : FirDeclaration>(fir: D, resolveSt
         }
     }
 
+    /**
+     * Runs [action] with fir element with write action hold
+     * Consider using this then [action] may call some resolve
+     */
+    inline fun <R> withFirWithPossibleResolveInside(
+        resolveType: ResolveType = ResolveType.NoResolve,
+        crossinline action: (fir: D) -> R
+    ): R {
+        token.assertIsValidAndAccessible()
+        val fir = firWeakRef.get()
+            ?: throw EntityWasGarbageCollectedException("FirElement")
+        val resolveState = resolveStateWeakRef.get()
+            ?: throw EntityWasGarbageCollectedException("FirModuleResolveState")
+        return when (resolveType) {
+            ResolveType.BodyResolveWithChildren -> {
+                /*
+                 The ResolveType type is the maximum possible phase we can resolve our declaration to
+                 So there is not need to run whole `action` under write lock
+                 */
+                action(fir.withFirDeclarationInWriteLock(resolveState, resolveType) { it })
+            }
+            else -> fir.withFirDeclarationInWriteLock(resolveState, resolveType) { action(it) }
+        }
+    }
+
     val resolveState
         get() = resolveStateWeakRef.get() ?: throw EntityWasGarbageCollectedException("FirModuleResolveState")
 
@@ -95,7 +120,7 @@ internal class FirRefWithValidityCheck<out D : FirDeclaration>(fir: D, resolveSt
         val resolveState = resolveStateWeakRef.get()
             ?: throw EntityWasGarbageCollectedException("FirModuleResolveState")
         return when (type) {
-            ResolveType.CallableBodyResolve -> {
+            ResolveType.BodyResolveWithChildren -> {
                 /*
                  The CallableBodyResolve type is the maximum possible phase we can resolve our declaration to
                  So there is not need to run whole `action` under read lock

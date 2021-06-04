@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.coneClassLikeType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolved
 import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.ResolveType
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.FirRefWithValidityCheck
 import org.jetbrains.kotlin.name.ClassId
 
@@ -29,16 +30,11 @@ internal fun FirRefWithValidityCheck<FirAnnotatedDeclaration>.toAnnotationsList(
 }
 
 internal fun FirRefWithValidityCheck<FirAnnotatedDeclaration>.containsAnnotation(classId: ClassId): Boolean =
-    withFir(AnnotationPhases.PHASE_FOR_ANNOTATION_CLASS_ID) { fir ->
+    withFir(ResolveType.AnnotationType) { fir ->
         fir.annotations.any { it.getClassId(fir.moduleData.session) == classId }
     }
 
 internal fun FirRefWithValidityCheck<FirAnnotatedDeclaration>.getAnnotationClassIds(): Collection<ClassId> =
-    withFir(AnnotationPhases.PHASE_FOR_ANNOTATION_CLASS_ID) { fir ->
+    withFir(ResolveType.AnnotationType) { fir ->
         fir.annotations.mapNotNull { it.getClassId(fir.moduleData.session) }
     }
-
-
-internal object AnnotationPhases {
-    val PHASE_FOR_ANNOTATION_CLASS_ID = FirResolvePhase.TYPES
-}

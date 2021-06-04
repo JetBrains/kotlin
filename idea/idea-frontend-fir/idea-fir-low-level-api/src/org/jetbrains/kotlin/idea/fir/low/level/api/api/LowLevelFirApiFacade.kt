@@ -136,6 +136,18 @@ fun <D : FirDeclaration, R> D.withFirDeclarationInWriteLock(
 }
 
 /**
+ * Executes [action] with given [FirDeclaration] under write lock, so resolve **is possible** inside [action]
+ */
+fun <D : FirDeclaration, R> D.withFirDeclarationInWriteLock(
+    resolveState: FirModuleResolveState,
+    resolveType: ResolveType = ResolveType.BodyResolveWithChildren,
+    action: (D) -> R,
+): R {
+    resolvedFirToType(resolveType, resolveState)
+    return resolveState.withLock(this, DeclarationLockType.WRITE_LOCK, action)
+}
+
+/**
  * Returns a list of Diagnostics compiler finds for given [KtElement]
  * This operation could be performance affective because it create FIleStructureElement and resolve non-local declaration into BODY phase
  */

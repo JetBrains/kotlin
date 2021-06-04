@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.withFirDeclaration
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
+import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.declarationCanBeLazilyResolved
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -32,7 +33,7 @@ abstract class AbstractFirLazyDeclarationResolveTest : KotlinLightCodeInsightFix
         val testDataFile = File(path)
         val ktFile = myFixture.configureByText(testDataFile.name, FileUtil.loadFile(testDataFile)) as KtFile
         val lazyDeclarations = ktFile.collectDescendantsOfType<KtDeclaration> { ktDeclaration ->
-            FirLazyDeclarationResolver.declarationCanBeLazilyResolved(ktDeclaration)
+            declarationCanBeLazilyResolved(ktDeclaration)
         }
 
         val declarationToResolve = lazyDeclarations.firstOrNull { it.name?.lowercase() == "resolveme" }

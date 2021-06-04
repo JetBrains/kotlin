@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.file.builder
 
 import com.google.common.collect.MapMaker
+import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.PrivateForInline
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.DeclarationLockType
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.lockWithPCECheck
@@ -66,6 +67,21 @@ internal class DeadLockGuard {
             throw ReadWriteDeadLockException()
         }
         return action()
+    }
+}
+
+/**
+ * Runs [resolve] function (which is considered to do some resolve on [firFile]) under a lock for [firFile]
+ */
+internal inline fun <R> LockProvider<FirFile>.runCustomResolveUnderLock(
+    firFile: FirFile,
+    checkPCE: Boolean,
+    body: () -> R
+): R {
+    return if (checkPCE) {
+        withWriteLockPCECheck(key = firFile, lockingIntervalMs = 50L, action = body)
+    } else {
+        withWriteLock(key = firFile, action = body)
     }
 }
 

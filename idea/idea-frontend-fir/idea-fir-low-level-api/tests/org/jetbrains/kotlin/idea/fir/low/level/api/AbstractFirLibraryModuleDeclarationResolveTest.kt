@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.fir.low.level.api
 
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.fir.FirRenderer
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.withFirDeclaration
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
@@ -48,7 +49,7 @@ abstract class AbstractFirLibraryModuleDeclarationResolveTest : KotlinLightCodeI
         // We intentionally use ktFile here as a context element, because resolving
         // from compiled PSI-elements (e.g. caretResolutionTarget) is not yet supported
         resolveWithClearCaches(ktFile) { resolveState ->
-            val renderedDeclaration = caretResolutionTarget.withFirDeclaration(resolveState) { firDeclaration ->
+            val renderedDeclaration = caretResolutionTarget.withFirDeclaration(resolveState, FirResolvePhase.RAW_FIR) { firDeclaration ->
                 firDeclaration.render(FirRenderer.RenderMode.WithResolvePhases)
             }
 

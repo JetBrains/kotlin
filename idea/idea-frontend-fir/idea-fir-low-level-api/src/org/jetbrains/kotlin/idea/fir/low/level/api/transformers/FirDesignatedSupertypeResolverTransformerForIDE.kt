@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -18,8 +19,8 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignation
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignationWithFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.collectDesignation
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
+import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.runCustomResolveUnderLock
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
-import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver.Companion.runCustomResolveUnderLock
 import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.isResolvedForAllDeclarations
 import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.updateResolvedPhaseForDeclarationAndChildren
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.checkCanceled
@@ -96,19 +97,19 @@ internal class FirDesignatedSupertypeResolverTransformerForIDE(
     private fun collect(designation: FirDeclarationDesignationWithFile): Collection<FirDeclarationDesignationWithFile> {
         val visited = mutableMapOf<FirDeclaration, FirDeclarationDesignationWithFile>()
         val toVisit = mutableListOf<FirDeclarationDesignationWithFile>()
-        toVisit.add(designation)
 
+        toVisit.add(designation)
         while (toVisit.isNotEmpty()) {
             for (nowVisit in toVisit) {
                 if (checkPCE) checkCanceled()
                 val resolver = DesignatedFirSupertypeResolverVisitor(nowVisit)
-                runCustomResolveUnderLock(nowVisit.firFile, moduleFileCache, checkPCE) {
+                moduleFileCache.firFileLockProvider.runCustomResolveUnderLock(nowVisit.firFile, checkPCE) {
                     firLazyDeclarationResolver.lazyResolveFileDeclaration(
                         firFile = nowVisit.firFile,
                         moduleFileCache = moduleFileCache,
                         toPhase = FirResolvePhase.IMPORTS,
                         scopeSession = scopeSession,
-                        checkPCE = false,
+                        checkPCE = true,
                     )
                     nowVisit.firFile.accept(resolver, null)
                 }
@@ -122,6 +123,7 @@ internal class FirDesignatedSupertypeResolverTransformerForIDE(
                 for (reference in value.supertypeRefs) {
                     val classLikeDeclaration = reference.type.toSymbol(session)?.fir
                     if (classLikeDeclaration !is FirClassLikeDeclaration<*>) continue
+                    if (classLikeDeclaration is FirJavaClass) continue
                     if (visited.containsKey(classLikeDeclaration)) continue
                     val containingFile = moduleFileCache.getContainerFirFile(classLikeDeclaration) ?: continue
                     toVisit.add(classLikeDeclaration.collectDesignation(containingFile))
@@ -144,7 +146,7 @@ internal class FirDesignatedSupertypeResolverTransformerForIDE(
         val filesToDesignations = visited.groupBy { it.firFile }
         for (designationsPerFile in filesToDesignations) {
             if (checkPCE) checkCanceled()
-            runCustomResolveUnderLock(designationsPerFile.key, moduleFileCache, checkPCE) {
+            moduleFileCache.firFileLockProvider.runCustomResolveUnderLock(designationsPerFile.key, checkPCE) {
                 applyToFileSymbols(designationsPerFile.value)
             }
         }

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotationCall
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtTypeAndAnnotations
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
+import org.jetbrains.kotlin.idea.util.ifTrue
 
 internal class KtFirTypeAndAnnotations<T : FirDeclaration>(
     private val containingDeclaration: FirRefWithValidityCheck<T>,
@@ -64,10 +65,10 @@ internal fun FirRefWithValidityCheck<FirClass<*>>.superTypesAndAnnotationsList(b
 
 internal fun FirRefWithValidityCheck<FirRegularClass>.superTypesAndAnnotationsListForRegularClass(builder: KtSymbolByFirBuilder): List<KtTypeAndAnnotations> {
     return withFir { fir ->
-        if (fir.resolvePhase >= FirResolvePhase.SUPER_TYPES) {
+        (fir.resolvePhase >= FirResolvePhase.SUPER_TYPES).ifTrue {
             fir.superTypeRefs.mapToTypeAndAnnotations(this, builder)
-        } else null
-    } ?: withFirWithPossibleResolveInside { fir ->
+        }
+    } ?: withFirWithPossibleResolveInside(ResolveType.NoResolve) { fir ->
         fir.resolveSupertypesInTheAir(builder.rootSession).mapToTypeAndAnnotations(this, builder)
     }
 }

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.LockProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.RawFirNonLocalDeclarationBuilder
+import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.declarationCanBeLazilyResolved
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.resolvePhaseForDeclarationAndChildren
@@ -231,14 +232,14 @@ internal class NonReanalyzableDeclarationStructureElement(
         private val recorder = object : FirElementsRecorder() {
             override fun visitProperty(property: FirProperty, data: MutableMap<KtElement, FirElement>) {
                 val psi = property.psi as? KtProperty ?: return super.visitProperty(property, data)
-                if (!FileElementFactory.isReanalyzableContainer(psi) || !FirLazyDeclarationResolver.declarationCanBeLazilyResolved(psi)) {
+                if (!FileElementFactory.isReanalyzableContainer(psi) || !declarationCanBeLazilyResolved(psi)) {
                     super.visitProperty(property, data)
                 }
             }
 
             override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: MutableMap<KtElement, FirElement>) {
                 val psi = simpleFunction.psi as? KtNamedFunction ?: return super.visitSimpleFunction(simpleFunction, data)
-                if (!FileElementFactory.isReanalyzableContainer(psi) || !FirLazyDeclarationResolver.declarationCanBeLazilyResolved(psi)) {
+                if (!FileElementFactory.isReanalyzableContainer(psi) || !declarationCanBeLazilyResolved(psi)) {
                     super.visitSimpleFunction(simpleFunction, data)
                 }
             }

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.api.DeclarationCopyBuilder.wi
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FileTowerProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextAllElementsCollector
+import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.runCustomResolveUnderLock
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FirElementsRecorder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.KtToFirMapping
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
@@ -248,7 +249,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
 
         val isInBodyReplacement = isInBodyReplacement(nonLocalDeclaration, replacement)
 
-        return FirLazyDeclarationResolver.runCustomResolveUnderLock(originalFirFile, state.rootModuleSession.cache, true) {
+        return state.rootModuleSession.cache.firFileLockProvider.runCustomResolveUnderLock(originalFirFile, true) {
             val copiedFirDeclaration = isInBodyReplacement.ifTrue {
                 when (originalDeclaration) {
                     is FirSimpleFunction ->
