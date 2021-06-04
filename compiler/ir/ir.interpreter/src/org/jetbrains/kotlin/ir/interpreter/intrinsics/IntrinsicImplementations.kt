@@ -290,6 +290,7 @@ internal object AssertIntrinsic : IntrinsicBase() {
 
         val messageLambda = environment.callStack.getState(irFunction.valueParameters.last().symbol) as KFunctionState
         val function = messageLambda.irFunction as IrSimpleFunction
+        environment.callStack.loadUpValues(messageLambda)
         val call = IrCallImpl.fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, function.returnType, function.symbol)
 
         return listOf(customEvaluateInstruction(irFunction, environment), CompoundInstruction(call))

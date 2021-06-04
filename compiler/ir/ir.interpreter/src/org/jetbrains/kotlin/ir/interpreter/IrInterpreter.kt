@@ -456,33 +456,41 @@ class IrInterpreter private constructor(
         val isErased = typeClassifier.owner is IrTypeParameter && !isReified
         val typeOperand = if (isReified) (callStack.getState(typeClassifier) as KTypeState).irType else expression.typeOperand
 
+        val state = callStack.popState()
         when (expression.operator) {
             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> {
-                callStack.popState()
+                // do nothing
                 // callStack.pushState(getUnitState()) TODO find real use cases for this
             }
             IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_CAST -> {
-                if (!isErased && !callStack.peekState()!!.isSubtypeOf(typeOperand)) {
-                    val convertibleClassName = callStack.popState().irClass.fqNameWhenAvailable
-                    ClassCastException("$convertibleClassName cannot be cast to ${typeOperand.render()}").handleUserException(environment)
+                when {
+                    state.isNull() && !typeOperand.isNullable() -> NullPointerException().handleUserException(environment)
+                    !isErased && !state.isSubtypeOf(typeOperand) -> {
+                        val castedClassName = state.irClass.fqNameWhenAvailable
+                        ClassCastException("$castedClassName cannot be cast to ${typeOperand.render()}").handleUserException(environment)
+                    }
+                    else -> callStack.pushState(state)
                 }
             }
             IrTypeOperator.SAFE_CAST -> {
-                if (!isErased && !callStack.peekState()!!.isSubtypeOf(typeOperand)) {
-                    callStack.popState()
-                    callStack.pushState(null.toState(irBuiltIns.nothingNType))
+                when {
+                    !isErased && !state.isSubtypeOf(typeOperand) -> callStack.pushState(null.toState(irBuiltIns.nothingNType))
+                    else -> callStack.pushState(state)
                 }
             }
             IrTypeOperator.INSTANCEOF -> {
-                val isInstance = callStack.popState().isSubtypeOf(typeOperand) || isErased
+                val isInstance = state.isSubtypeOf(typeOperand) || isErased
                 callStack.pushState(isInstance.toState(irBuiltIns.booleanType))
             }
             IrTypeOperator.NOT_INSTANCEOF -> {
-                val isInstance = callStack.popState().isSubtypeOf(typeOperand) || isErased
+                val isInstance = state.isSubtypeOf(typeOperand) || isErased
                 callStack.pushState((!isInstance).toState(irBuiltIns.booleanType))
             }
             IrTypeOperator.IMPLICIT_NOTNULL -> {
-
+                when {
+                    state.isNull() && !typeOperand.isNullable() -> NullPointerException().handleUserException(environment)
+                    else -> callStack.pushState(state)
+                }
             }
             else -> TODO("${expression.operator} not implemented")
         }

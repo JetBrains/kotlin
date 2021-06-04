@@ -38,6 +38,15 @@ fun notNullLambda(lambda: (() -> String)?): String {
     }
 }
 
+@CompileTimeCalculation
+fun nullableCast(str: String?): String {
+    return try {
+        str as String
+    } catch (e: NullPointerException) {
+        "Null"
+    }
+}
+
 const val a1 = <!EVALUATED: `Value isn't null`!>notNullAssertion(1)<!>
 const val a2 = <!EVALUATED: `Value is null`!>notNullAssertion(null)<!>
 const val b1 = <!EVALUATED: `Value isn't null`!>notNullAssertionForObject(A())<!>
@@ -46,3 +55,5 @@ const val c1 = <!EVALUATED: `Some text`!>notNullAssertionForSomeWrapper(StringBu
 const val c2 = <!EVALUATED: `Value is null`!>notNullAssertionForSomeWrapper(null)<!>
 const val d1 = <!EVALUATED: `Not null lambda`!>notNullLambda { "Not null lambda" }<!>
 const val d2 = <!EVALUATED: `Lambda is null`!>notNullLambda(null)<!>
+const val e1 = <!EVALUATED: `Not null String`!>nullableCast("Not null String")<!>
+const val e2 = <!EVALUATED: `Null`!>nullableCast(null)<!>
