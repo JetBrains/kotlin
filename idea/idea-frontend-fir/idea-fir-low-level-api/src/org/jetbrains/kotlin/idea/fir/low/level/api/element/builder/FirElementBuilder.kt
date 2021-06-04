@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FileStructureCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FileStructureElement
-import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.KtToFirMapping
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.isNonAnonymousClassOrObject
 import org.jetbrains.kotlin.idea.util.getElementTextInContext
@@ -66,7 +65,7 @@ internal class FirElementBuilder {
         moduleFileCache: ModuleFileCache,
         firLazyDeclarationResolver: FirLazyDeclarationResolver
     ): FirFile {
-        val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile, moduleFileCache, lazyBodiesMode = false)
+        val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile, moduleFileCache, allowLazyBodies = false)
         firLazyDeclarationResolver.lazyResolveFileDeclaration(
             firFile = firFile,
             moduleFileCache = moduleFileCache,

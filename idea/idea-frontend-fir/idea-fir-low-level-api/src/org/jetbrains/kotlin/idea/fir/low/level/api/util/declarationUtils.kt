@@ -42,7 +42,7 @@ internal fun KtDeclaration.findFirDeclarationForAnyFirSourceDeclaration(
 ): FirDeclaration {
     val nonLocalDeclaration = getNonLocalContainingOrThisDeclaration()
         ?.findSourceNonLocalFirDeclaration(firFileBuilder, firSymbolProvider, moduleFileCache)
-        ?: firFileBuilder.buildRawFirFileWithCaching(containingKtFile, moduleFileCache, lazyBodiesMode = true)
+        ?: firFileBuilder.buildRawFirFileWithCaching(containingKtFile, moduleFileCache, allowLazyBodies = true)
     val originalDeclaration = originalDeclaration
     val fir = FirElementFinder.findElementIn<FirDeclaration>(nonLocalDeclaration) { firDeclaration ->
         firDeclaration.psi == this || firDeclaration.psi == originalDeclaration
@@ -66,7 +66,7 @@ private fun KtDeclaration.findSourceOfNonLocalFirDeclarationByTraversingWholeTre
     moduleFileCache: ModuleFileCache,
     containerFirFile: FirFile?,
 ): FirDeclaration? {
-    val firFile = containerFirFile ?: firFileBuilder.buildRawFirFileWithCaching(containingKtFile, moduleFileCache, lazyBodiesMode = true)
+    val firFile = containerFirFile ?: firFileBuilder.buildRawFirFileWithCaching(containingKtFile, moduleFileCache, allowLazyBodies = true)
     val originalDeclaration = originalDeclaration
     return FirElementFinder.findElementIn(firFile, goInside = { it is FirRegularClass }) { firDeclaration ->
         firDeclaration.psi == this || firDeclaration.psi == originalDeclaration
@@ -88,7 +88,7 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
                 containerClassFir?.declarations
             } else {
                 val ktFile = containingKtFile
-                val firFile = containerFirFile ?: firFileBuilder.buildRawFirFileWithCaching(ktFile, moduleFileCache, lazyBodiesMode = true)
+                val firFile = containerFirFile ?: firFileBuilder.buildRawFirFileWithCaching(ktFile, moduleFileCache, allowLazyBodies = true)
                 firFile.declarations
             }
             val original = originalDeclaration

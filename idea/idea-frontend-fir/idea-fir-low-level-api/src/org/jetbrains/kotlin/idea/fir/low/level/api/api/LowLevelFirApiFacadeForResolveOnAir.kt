@@ -27,10 +27,8 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.api.DeclarationCopyBuilder.wi
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FileTowerProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextAllElementsCollector
-import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FirElementsRecorder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.KtToFirMapping
-import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.RawFirNonLocalDeclarationBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.RawFirReplacement
@@ -38,7 +36,6 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.buildFileFirAnno
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.buildFirUserTypeRef
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSourcesSession
-import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirProviderInterceptorForIDE
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.originalDeclaration
 import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.idea.util.ifTrue
@@ -134,7 +131,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         val firFile = session.firFileBuilder.buildRawFirFileWithCaching(
             ktFile = file,
             cache = session.cache,
-            lazyBodiesMode = true
+            allowLazyBodies = true
         )
 
         state.firLazyDeclarationResolver.lazyResolveFileDeclaration(

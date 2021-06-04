@@ -21,13 +21,25 @@ import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.*
 import java.util.concurrent.ConcurrentHashMap
 
-internal class FileStructure(
+internal class FileStructure private constructor(
     private val ktFile: KtFile,
     private val firFile: FirFile,
     private val firLazyDeclarationResolver: FirLazyDeclarationResolver,
     private val firFileBuilder: FirFileBuilder,
     private val moduleFileCache: ModuleFileCache,
 ) {
+    companion object {
+        fun build(
+            ktFile: KtFile,
+            firLazyDeclarationResolver: FirLazyDeclarationResolver,
+            firFileBuilder: FirFileBuilder,
+            moduleFileCache: ModuleFileCache,
+        ): FileStructure {
+            val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile, moduleFileCache, allowLazyBodies = false)
+            return FileStructure(ktFile, firFile, firLazyDeclarationResolver, firFileBuilder, moduleFileCache)
+        }
+    }
+
     private val firIdeProvider = firFile.moduleData.session.firIdeProvider
 
     private val structureElements = ConcurrentHashMap<KtAnnotated, FileStructureElement>()
@@ -117,7 +129,7 @@ internal class FileStructure(
 
     private fun createStructureElement(container: KtAnnotated): FileStructureElement = when (container) {
         is KtFile -> {
-            val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile, moduleFileCache, lazyBodiesMode = true)
+            val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile, moduleFileCache, allowLazyBodies = true)
             firLazyDeclarationResolver.resolveFileAnnotations(
                 firFile = firFile,
                 annotations = firFile.annotations,
