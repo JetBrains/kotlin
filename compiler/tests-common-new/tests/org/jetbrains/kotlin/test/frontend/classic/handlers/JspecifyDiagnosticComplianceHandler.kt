@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.globalMetadataInfoHandler
-import org.jetbrains.kotlin.load.java.getReportLevelForAnnotation
 
 // Not that this diagnostic handler should be included only with `ClassicDiagnosticsHandler` and go after it
 class JspecifyDiagnosticComplianceHandler(testServices: TestServices) : ClassicFrontendAnalysisHandler(testServices) {
