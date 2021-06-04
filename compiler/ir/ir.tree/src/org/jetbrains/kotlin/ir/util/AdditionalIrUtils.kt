@@ -85,6 +85,9 @@ fun IrSimpleFunction.overrides(other: IrSimpleFunction): Boolean {
 private val IrConstructorCall.annotationClass
     get() = this.symbol.owner.constructedClass
 
+fun IrConstructorCall.isAnnotationWithEqualFqName(fqName: FqName): Boolean =
+    annotationClass.hasEqualFqName(fqName)
+
 val IrClass.packageFqName: FqName?
     get() = symbol.signature?.packageFqName() ?: parent.getPackageFragment()?.fqName
 

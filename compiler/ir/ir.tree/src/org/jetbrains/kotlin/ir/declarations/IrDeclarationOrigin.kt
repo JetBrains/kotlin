@@ -59,6 +59,7 @@ interface IrDeclarationOrigin {
     object IR_BUILTINS_STUB : IrDeclarationOriginImpl("IR_BUILTINS_STUB")
     object BRIDGE : IrDeclarationOriginImpl("BRIDGE", isSynthetic = true)
     object BRIDGE_SPECIAL : IrDeclarationOriginImpl("BRIDGE_SPECIAL")
+    object GENERATED_SETTER_GETTER : IrDeclarationOriginImpl("GENERATED_SETTER_GETTER", isSynthetic = true)
 
     object FIELD_FOR_ENUM_ENTRY : IrDeclarationOriginImpl("FIELD_FOR_ENUM_ENTRY")
     object SYNTHETIC_HELPER_FOR_ENUM_VALUES : IrDeclarationOriginImpl("SYNTHETIC_HELPER_FOR_ENUM_VALUES", isSynthetic = true)

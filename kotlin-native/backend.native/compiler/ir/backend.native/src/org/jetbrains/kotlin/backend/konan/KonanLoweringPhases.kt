@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.lower.optimizations.FoldConstantLowering
 import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
+import org.jetbrains.kotlin.backend.konan.ir.FunctionsWithoutBCGenerator
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.lower.FinallyBlocksLowering
 import org.jetbrains.kotlin.backend.konan.lower.InitializersLowering
@@ -331,11 +332,19 @@ internal val interopPhase = makeKonanFileLoweringPhase(
         prerequisite = setOf(inlinePhase, localFunctionsPhase, functionReferencePhase)
 )
 
+internal val functionsWithoutBC = makeKonanModuleOpPhase(
+        name = "FunctionsWithoutBCGenerator",
+        description = "Functions without bounds check generation",
+        op = { context, _ ->
+            FunctionsWithoutBCGenerator(context).generate()
+        }
+)
+
 internal val varargPhase = makeKonanFileLoweringPhase(
         ::VarargInjectionLowering,
         name = "Vararg",
         description = "Vararg lowering",
-        prerequisite = setOf(functionReferencePhase, defaultParameterExtentPhase, interopPhase)
+        prerequisite = setOf(functionReferencePhase, defaultParameterExtentPhase, interopPhase, functionsWithoutBC)
 )
 
 internal val compileTimeEvaluatePhase = makeKonanFileLoweringPhase(

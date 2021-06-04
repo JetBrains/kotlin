@@ -39,6 +39,11 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import kotlin.properties.Delegates
 
+object KonanNameConventions {
+    val setWithoutBC = Name.special("<setWithoutBC>")
+    val getWithoutBC = Name.special("<getWithoutBC>")
+}
+
 // This is what Context collects about IR.
 internal class KonanIr(context: Context, irModule: IrModuleFragment): Ir<Context>(context, irModule) {
     override var symbols: KonanSymbols by Delegates.notNull()
