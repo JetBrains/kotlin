@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.extractNativ
 import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
+import org.jetbrains.kotlin.konan.CompilerVersion
+import org.jetbrains.kotlin.konan.CompilerVersionImpl
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
@@ -50,11 +52,27 @@ class NativePlatformLibsIT : BaseGradleIT() {
             configureMemoryInGradleProperties()
         }
 
+    private fun CompilerVersion.isAtLeast(compilerVersion: CompilerVersion): Boolean {
+        if (this.major != compilerVersion.major) return this.major > compilerVersion.major
+        if (this.minor != compilerVersion.minor) return this.minor > compilerVersion.minor
+        if (this.maintenance != compilerVersion.maintenance) return this.maintenance > compilerVersion.maintenance
+        if (this.meta.ordinal != compilerVersion.meta.ordinal) return this.meta.ordinal > compilerVersion.meta.ordinal
+        return this.build >= compilerVersion.build
+    }
+
+    private fun simpleOsName(compilerVersion: CompilerVersion): String =
+        if (compilerVersion.isAtLeast(CompilerVersionImpl(major = 1, minor = 5, maintenance = 30, build = 1466))) {
+            HostManager.platformName()
+        } else {
+            HostManager.simpleOsName()
+        }
+
     private fun deleteInstalledCompilers() {
         // Clean existing installation directories.
-        val osName = HostManager.simpleOsName()
-        val oldCompilerDir = DependencyDirectories.localKonanDir.resolve("kotlin-native-$osName-$oldCompilerVersion")
-        val currentCompilerDir = DependencyDirectories.localKonanDir.resolve("kotlin-native-$osName-$currentCompilerVersion")
+        val oldOsName = simpleOsName(CompilerVersion.fromString(oldCompilerVersion))
+        val currentOsName = simpleOsName(currentCompilerVersion)
+        val oldCompilerDir = DependencyDirectories.localKonanDir.resolve("kotlin-native-$oldOsName-$oldCompilerVersion")
+        val currentCompilerDir = DependencyDirectories.localKonanDir.resolve("kotlin-native-$currentOsName-$currentCompilerVersion")
 
         for (compilerDirectory in listOf(oldCompilerDir, currentCompilerDir)) {
             compilerDirectory.deleteRecursively()
@@ -73,7 +91,8 @@ class NativePlatformLibsIT : BaseGradleIT() {
         build("tasks", "-Pkotlin.native.version=$oldCompilerVersion") {
             assertSuccessful()
             assertContains("Unpack Kotlin/Native compiler to ")
-            assertContainsRegex("Kotlin/Native distribution: .*kotlin-native-(macos|linux|windows)".toRegex())
+            val osName = simpleOsName(CompilerVersion.fromString(oldCompilerVersion))
+            assertContainsRegex("Kotlin/Native distribution: .*kotlin-native-$osName".toRegex())
             assertNotContains("Generate platform libraries for ")
         }
     }
@@ -85,7 +104,8 @@ class NativePlatformLibsIT : BaseGradleIT() {
         // Check that a prebuilt distribution is used by default.
         build("assemble") {
             assertSuccessful()
-            assertContainsRegex("Kotlin/Native distribution: .*kotlin-native-prebuilt-(macos|linux|windows)".toRegex())
+            val osName = simpleOsName(currentCompilerVersion)
+            assertContainsRegex("Kotlin/Native distribution: .*kotlin-native-prebuilt-$osName".toRegex())
             assertNotContains("Generate platform libraries for ")
         }
     }
@@ -107,7 +127,8 @@ class NativePlatformLibsIT : BaseGradleIT() {
             // Check that platform libraries are correctly generated for both root project and a subproject.
             buildWithLightDist("assemble") {
                 assertSuccessful()
-                assertContainsRegex("Kotlin/Native distribution: .*kotlin-native-(macos|linux|windows)".toRegex())
+                val osName = simpleOsName(currentCompilerVersion)
+                assertContainsRegex("Kotlin/Native distribution: .*kotlin-native-$osName".toRegex())
                 assertContains("Generate platform libraries for linux_x64")
                 assertContains("Generate platform libraries for linux_arm64")
             }
@@ -171,7 +192,8 @@ class NativePlatformLibsIT : BaseGradleIT() {
 
         build("assemble", "-Pkotlin.native.distribution.type=prebuilt") {
             assertSuccessful()
-            assertContainsRegex("Kotlin/Native distribution: .*kotlin-native-prebuilt-(macos|linux|windows)".toRegex())
+            val osName = simpleOsName(currentCompilerVersion)
+            assertContainsRegex("Kotlin/Native distribution: .*kotlin-native-prebuilt-$osName".toRegex())
             assertNotContains("Generate platform libraries for ")
         }
     }
@@ -182,19 +204,22 @@ class NativePlatformLibsIT : BaseGradleIT() {
             assertSuccessful()
             assertContains("Warning: Project property 'kotlin.native.restrictedDistribution' is deprecated. Please use 'kotlin.native.distribution.type=light' instead")
 
+            val osName = simpleOsName(currentCompilerVersion)
+            val regex = "Kotlin/Native distribution: .*kotlin-native-restricted-$osName".toRegex()
             // Restricted distribution is available for Mac hosts only.
             if (HostManager.hostIsMac) {
-                assertContainsRegex("Kotlin/Native distribution: .*kotlin-native-restricted-(macos|linux|windows)".toRegex())
+                assertContainsRegex(regex)
             } else {
-                assertNotContains("Kotlin/Native distribution: .*kotlin-native-restricted-(macos|linux|windows)".toRegex())
+                assertNotContains(regex)
             }
         }
 
         // We allow using this deprecated property for 1.4 too. Just download the distribution without platform libs in this case.
         build("tasks", "-Pkotlin.native.restrictedDistribution=true") {
             assertSuccessful()
+            val osName = simpleOsName(currentCompilerVersion)
             assertContains("Warning: Project property 'kotlin.native.restrictedDistribution' is deprecated. Please use 'kotlin.native.distribution.type=light' instead")
-            assertContainsRegex("Kotlin/Native distribution: .*kotlin-native-(macos|linux|windows)".toRegex())
+            assertContainsRegex("Kotlin/Native distribution: .*kotlin-native-$osName".toRegex())
         }
     }
 
@@ -202,17 +227,21 @@ class NativePlatformLibsIT : BaseGradleIT() {
     fun testSettingDistributionTypeForOldCompiler() = with(platformLibrariesProject("linuxX64")) {
         build("tasks", "-Pkotlin.native.distribution.type=prebuilt", "-Pkotlin.native.version=$oldCompilerVersion") {
             assertSuccessful()
-            assertContainsRegex("Kotlin/Native distribution: .*kotlin-native-(macos|linux|windows)".toRegex())
+            val osName = simpleOsName(CompilerVersion.fromString(oldCompilerVersion))
+            val regex = "Kotlin/Native distribution: .*kotlin-native-$osName".toRegex()
+            assertContainsRegex(regex)
         }
 
         build("tasks", "-Pkotlin.native.distribution.type=light", "-Pkotlin.native.version=$oldCompilerVersion") {
             assertSuccessful()
 
+            val osName = simpleOsName(CompilerVersion.fromString(oldCompilerVersion))
+            val regex = "Kotlin/Native distribution: .*kotlin-native-restricted-$osName".toRegex()
             // Restricted distribution is available for Mac hosts only.
             if (HostManager.hostIsMac) {
-                assertContainsRegex("Kotlin/Native distribution: .*kotlin-native-restricted-(macos|linux|windows)".toRegex())
+                assertContainsRegex(regex)
             } else {
-                assertNotContains("Kotlin/Native distribution: .*kotlin-native-restricted-(macos|linux|windows)".toRegex())
+                assertNotContains(regex)
             }
         }
     }
