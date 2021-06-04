@@ -11,6 +11,8 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.logging.Logger
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
+import org.gradle.api.services.BuildService
+import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
@@ -49,6 +51,7 @@ import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.library.impl.isKotlinLibrary
 import org.jetbrains.kotlin.utils.JsLibraryUtils
 import java.io.File
+import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 
 const val KOTLIN_BUILD_DIR_NAME = "kotlin"
@@ -650,6 +653,16 @@ open class Kotlin2JsCompile @Inject constructor(
     objectFactory: ObjectFactory
 ) : AbstractKotlinCompile<K2JSCompilerArguments>(), KotlinJsCompile {
 
+    internal abstract class LibraryFilterCachingService : BuildService<BuildServiceParameters.None>, AutoCloseable {
+        private val cache = ConcurrentHashMap<File, Boolean>()
+
+        fun getOrCompute(key: File, compute: (File) -> Boolean) = cache.computeIfAbsent(key, compute)
+
+        override fun close() {
+            cache.clear()
+        }
+    }
+
     init {
         incremental = true
     }
@@ -754,7 +767,7 @@ open class Kotlin2JsCompile @Inject constructor(
     //  1) purely pre-IR backend
     //  2) purely IR backend
     //  3) hybrid pre-IR and IR backend. Can only accept libraries with both JS and IR parts.
-    private val libraryFilter: (File) -> Boolean
+    private val libraryFilterBody: (File) -> Boolean
         get() = if (kotlinOptions.isIrBackendEnabled()) {
             if (kotlinOptions.isPreIrBackendDisabled()) {
                 ::isKotlinLibrary
@@ -763,6 +776,17 @@ open class Kotlin2JsCompile @Inject constructor(
             }
         } else {
             JsLibraryUtils::isKotlinJavascriptLibrary
+        }
+
+    private val libraryCache = project.rootProject.gradle.sharedServices.registerIfAbsent(
+        "${LibraryFilterCachingService::class.java.canonicalName}_${LibraryFilterCachingService::class.java.hashCode()}",
+        LibraryFilterCachingService::class.java
+    ) {}
+
+    @get:Internal
+    protected val libraryFilter: (File) -> Boolean
+        get() = { file ->
+            libraryCache.get().getOrCompute(file, libraryFilterBody)
         }
 
     @get:Internal
