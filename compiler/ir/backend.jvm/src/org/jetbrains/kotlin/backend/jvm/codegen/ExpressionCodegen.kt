@@ -934,10 +934,6 @@ class ExpressionCodegen(
         val (returnType, returnIrType) = owner.returnAsmAndIrTypes()
         val afterReturnLabel = Label()
         expression.value.accept(this, data).materializeAt(returnType, returnIrType)
-        // In case of non-local return from suspend lambda 'materializeAt' does not box return value, box it manually.
-        if (isNonLocalReturn && owner.isInvokeSuspendOfLambda() && expression.value.type.isKotlinResult()) {
-            StackValue.boxInlineClass(expression.value.type, mv, typeMapper)
-        }
         generateFinallyBlocksIfNeeded(returnType, afterReturnLabel, data, null)
         expression.markLineNumber(startOffset = true)
         if (isNonLocalReturn) {
