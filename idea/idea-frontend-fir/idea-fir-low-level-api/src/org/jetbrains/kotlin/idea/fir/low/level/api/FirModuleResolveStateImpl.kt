@@ -68,7 +68,7 @@ internal class FirModuleResolveStateImpl(
         )
 
     override fun getOrBuildFirFile(ktFile: KtFile): FirFile =
-        firFileBuilder.buildRawFirFileWithCaching(ktFile, rootModuleSession.cache, allowLazyBodies = false)
+        firFileBuilder.buildRawFirFileWithCaching(ktFile, rootModuleSession.cache, preferLazyBodies = false)
 
     override fun tryGetCachedFirFile(declaration: FirDeclaration, cache: ModuleFileCache): FirFile? =
         cache.getContainerFirFile(declaration)

@@ -35,7 +35,7 @@ internal class FileStructure private constructor(
             firFileBuilder: FirFileBuilder,
             moduleFileCache: ModuleFileCache,
         ): FileStructure {
-            val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile, moduleFileCache, allowLazyBodies = false)
+            val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile, moduleFileCache, preferLazyBodies = false)
             return FileStructure(ktFile, firFile, firLazyDeclarationResolver, firFileBuilder, moduleFileCache)
         }
     }
@@ -129,7 +129,7 @@ internal class FileStructure private constructor(
 
     private fun createStructureElement(container: KtAnnotated): FileStructureElement = when (container) {
         is KtFile -> {
-            val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile, moduleFileCache, allowLazyBodies = true)
+            val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile, moduleFileCache, preferLazyBodies = true)
             firLazyDeclarationResolver.resolveFileAnnotations(
                 firFile = firFile,
                 annotations = firFile.annotations,

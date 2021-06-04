@@ -39,7 +39,7 @@ internal class FirProviderHelper(
                     null -> indexHelper.typeAliasFromIndexByClassId(classId)
                     else -> if (klass.getClassId() == null) null else klass
                 } ?: return@computeIfAbsent Optional.empty()
-                val firFile = firFileBuilder.buildRawFirFileWithCaching(ktClass.containingKtFile, cache, allowLazyBodies = true)
+                val firFile = firFileBuilder.buildRawFirFileWithCaching(ktClass.containingKtFile, cache, preferLazyBodies = true)
                 val classifier = FirElementFinder.findElementIn<FirClassLikeDeclaration<*>>(firFile) { classifier ->
                     classifier.symbol.classId == classId
                 }
@@ -61,7 +61,7 @@ internal class FirProviderHelper(
                 @OptIn(ExperimentalStdlibApi::class)
                 buildList {
                     files.forEach { ktFile ->
-                        val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile, cache, allowLazyBodies = true)
+                        val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile, cache, preferLazyBodies = true)
                         firFile.collectCallableDeclarationsTo(this, name)
                     }
                 }

@@ -29,9 +29,9 @@ internal class FirFileBuilder(
     fun buildRawFirFileWithCaching(
         ktFile: KtFile,
         cache: ModuleFileCache,
-        allowLazyBodies: Boolean
+        preferLazyBodies: Boolean
     ): FirFile = cache.fileCached(ktFile) {
-        RawFirBuilder(cache.session, scopeProvider, RawFirBuilderMode.lazyBodies(allowLazyBodies)).buildFirFile(ktFile)
+        RawFirBuilder(cache.session, scopeProvider, RawFirBuilderMode.lazyBodies(preferLazyBodies)).buildFirFile(ktFile)
     }
 }
 

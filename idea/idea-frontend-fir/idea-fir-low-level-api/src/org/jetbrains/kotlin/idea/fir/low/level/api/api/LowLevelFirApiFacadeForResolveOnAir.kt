@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataC
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.runCustomResolveUnderLock
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FirElementsRecorder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.KtToFirMapping
-import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.RawFirNonLocalDeclarationBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.RawFirReplacement
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.buildFileFirAnnotation
@@ -132,7 +131,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         val firFile = session.firFileBuilder.buildRawFirFileWithCaching(
             ktFile = file,
             cache = session.cache,
-            allowLazyBodies = true
+            preferLazyBodies = true
         )
 
         state.firLazyDeclarationResolver.lazyResolveFileDeclaration(
