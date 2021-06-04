@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineOnly
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
+import org.jetbrains.kotlin.backend.jvm.codegen.representativeUpperBound
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.config.JvmDefaultMode
@@ -123,6 +124,11 @@ val IrType.erasedUpperBound: IrClass
  * the value is not reboxed and reunboxed by the codegen by using the unsafeCoerceIntrinsic.
  */
 fun IrType.defaultValue(startOffset: Int, endOffset: Int, context: JvmBackendContext): IrExpression {
+    val classifier = this.classifierOrNull
+    if (classifier is IrTypeParameterSymbol) {
+        return classifier.owner.representativeUpperBound.defaultValue(startOffset, endOffset, context)
+    }
+
     if (this !is IrSimpleType || hasQuestionMark || classOrNull?.owner?.isInline != true)
         return IrConstImpl.defaultValueForType(startOffset, endOffset, this)
 
