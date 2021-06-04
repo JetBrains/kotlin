@@ -122,12 +122,6 @@ public class IrInterpreterAfterFir2IrTestGenerated extends AbstractIrInterpreter
     }
 
     @Test
-    @TestMetadata("doubleArrayOf.kt")
-    public void testDoubleArrayOf() throws Exception {
-        runTest("compiler/testData/ir/interpreter/doubleArrayOf.kt");
-    }
-
-    @Test
     @TestMetadata("elvis.kt")
     public void testElvis() throws Exception {
         runTest("compiler/testData/ir/interpreter/elvis.kt");
@@ -380,6 +374,12 @@ public class IrInterpreterAfterFir2IrTestGenerated extends AbstractIrInterpreter
         @TestMetadata("arrayOf.kt")
         public void testArrayOf() throws Exception {
             runTest("compiler/testData/ir/interpreter/collections/arrayOf.kt");
+        }
+
+        @Test
+        @TestMetadata("doubleArrayOf.kt")
+        public void testDoubleArrayOf() throws Exception {
+            runTest("compiler/testData/ir/interpreter/collections/doubleArrayOf.kt");
         }
 
         @Test
