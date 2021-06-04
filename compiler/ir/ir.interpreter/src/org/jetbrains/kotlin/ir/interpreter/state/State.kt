@@ -7,15 +7,20 @@ package org.jetbrains.kotlin.ir.interpreter.state
 
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterEnvironment
 import org.jetbrains.kotlin.ir.interpreter.exceptions.handleUserException
+import org.jetbrains.kotlin.ir.interpreter.isFunction
+import org.jetbrains.kotlin.ir.interpreter.isKFunction
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KFunctionState
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.ReflectionState
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.isSubclassOf
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal interface State {
@@ -62,7 +67,15 @@ internal fun State.isSubtypeOf(other: IrType): Boolean {
         return this.type.arraySubtypeCheck(other)
     }
 
-    return this.irClass.defaultType.isSubtypeOfClass(other.classOrNull!!)
+    val thisType = this.irClass.defaultType
+    if (other.isFunction() && thisType.isKFunction()/* TODO || (other.isSuspendFunction && thisType.isKSuspendFunction())*/) {
+        // KFunction{n} has no super type of Function{n},
+        // but the single overridden function of KFunction{n}.invoke is Function{n}.invoke.
+        val invokeFun = this.irClass.declarations.filterIsInstance<IrSimpleFunction>().single { it.name == OperatorNameConventions.INVOKE }
+        return invokeFun.overriddenSymbols.single().owner.parentAsClass.isSubclassOf(other.classOrNull!!.owner)
+    }
+
+    return thisType.isSubtypeOfClass(other.classOrNull!!)
 }
 
 /**
