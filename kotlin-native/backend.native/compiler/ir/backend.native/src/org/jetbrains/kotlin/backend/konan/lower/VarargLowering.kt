@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.konan.KonanBackendContext
+import org.jetbrains.kotlin.backend.konan.ir.KonanNameConventions
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.ir.IrElement
@@ -127,7 +128,7 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
                         log { "element:$i> ${ir2string(element)}" }
                         val dst = vars[element]!!
                         if (element !is IrSpreadElement) {
-                            +irCall(arrayHandle.setMethodSymbol.owner).apply {
+                            +irCall(arrayHandle.setMethodSymbol).apply {
                                 dispatchReceiver = irGet(arrayTmpVariable)
                                 putValueArgument(0, if (hasSpreadElement) irGet(indexTmpVariable) else irConstInt(i))
                                 putValueArgument(1, irGet(dst))
@@ -205,7 +206,10 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
     }
 
     abstract inner class ArrayHandle(val arraySymbol: IrClassSymbol) {
-        val setMethodSymbol = arraySymbol.functions.single { it.descriptor.name == OperatorNameConventions.SET }
+        val setMethodSymbol = with(arraySymbol.owner.functions) {
+            // For unsigned types use set method.
+            singleOrNull { it.name == KonanNameConventions.setWithoutBC } ?: single { it.name == OperatorNameConventions.SET }
+        }
         val sizeGetterSymbol = arraySymbol.getPropertyGetter("size")!!
         val copyIntoSymbol = symbols.copyInto[arraySymbol.descriptor]!!
         protected val singleParameterConstructor =
@@ -259,6 +263,7 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
             UnsignedArrayHandle(it, primitiveArrayHandles[primitiveType]!!)
         }
     }
+
 
     val arrayToHandle =
         (primitiveArrayHandles.values + unsignedArrayHandles + ReferenceArrayHandle()).associateBy { it.arraySymbol }
