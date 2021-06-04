@@ -1,0 +1,30 @@
+fun <E : Any?> produce(@BuilderInference block: @ExtensionFunctionType Function1<Derived<E>, Unit>): E {
+  return null as E
+}
+
+interface Derived<in E : Any?> : Base<E> {
+
+}
+
+interface Base<in E : Any?> {
+
+}
+
+interface Receiver<out E : Any?> {
+
+}
+
+fun <E : Any?, C : Base<E>> Receiver<E>.toChannel(destination: C): C {
+  return null as C
+}
+
+fun <R : Any?> foo(r: Receiver<R>): R {
+  return produce<R>(block = local fun Derived<R>.<anonymous>() {
+    r.toChannel<R, Derived<R>>(destination = <this>) /*~> Unit */
+  }
+)
+}
+
+fun box(): String {
+  return "OK"
+}
