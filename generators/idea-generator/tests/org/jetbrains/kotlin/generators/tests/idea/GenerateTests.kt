@@ -1115,6 +1115,7 @@ fun main(args: Array<String>) {
             }
         }
 
+        /*
         testGroup("idea/idea-frontend-fir/idea-fir-low-level-api/tests", testDataRoot = GeneralConfiguration.SPEC_TESTDATA_PATH
         ) {
             testClass<AbstractDiagnosisCompilerTestDataSpecTest> {
@@ -1125,7 +1126,7 @@ fun main(args: Array<String>) {
                 )
             }
         }
-
+        */
 
         testGroup("idea/idea-fir/tests", "idea") {
             testClass<AbstractFirHighlightingTest> {
