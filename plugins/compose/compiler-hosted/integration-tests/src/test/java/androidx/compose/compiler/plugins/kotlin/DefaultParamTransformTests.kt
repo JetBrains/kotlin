@@ -122,7 +122,7 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)<Exampl...>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
-                Example(Foo(0), %composer, 0, 0b0001)
+                Example(<unsafe-coerce>(0), %composer, 0, 0b0001)
               } else {
                 %composer.skipToGroupEnd()
               }
