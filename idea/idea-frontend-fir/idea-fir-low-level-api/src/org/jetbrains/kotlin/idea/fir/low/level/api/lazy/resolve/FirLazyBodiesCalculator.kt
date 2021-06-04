@@ -47,7 +47,6 @@ internal object FirLazyBodiesCalculator {
     }
 
     fun calculateLazyBodyForSecondaryConstructor(designation: FirDeclarationDesignation) {
-        require(!designation.isLocalDesignation) { "Not supported for local designations" }
         val secondaryConstructor = designation.declaration as FirConstructor
         require(!secondaryConstructor.isPrimary)
         if (secondaryConstructor.body !is FirLazyBlock) return
@@ -65,7 +64,6 @@ internal object FirLazyBodiesCalculator {
     }
 
     fun calculateLazyBodyForProperty(designation: FirDeclarationDesignation) {
-        require(!designation.isLocalDesignation) { "Not supported for local designations" }
         val firProperty = designation.declaration as FirProperty
         if (!needCalculatingLazyBodyForProperty(firProperty)) return
 
@@ -132,7 +130,7 @@ private object FirLazyBodiesCalculatorTransformer : FirTransformer<MutableList<F
         data: MutableList<FirDeclaration>
     ): FirDeclaration {
         if (simpleFunction.body is FirLazyBlock) {
-            val designation = FirDeclarationDesignation(data, simpleFunction, false)
+            val designation = FirDeclarationDesignation(data, simpleFunction)
             FirLazyBodiesCalculator.calculateLazyBodiesForFunction(designation)
         }
         return simpleFunction
@@ -143,7 +141,7 @@ private object FirLazyBodiesCalculatorTransformer : FirTransformer<MutableList<F
         data: MutableList<FirDeclaration>
     ): FirDeclaration {
         if (constructor.body is FirLazyBlock) {
-            val designation = FirDeclarationDesignation(data, constructor, false)
+            val designation = FirDeclarationDesignation(data, constructor)
             FirLazyBodiesCalculator.calculateLazyBodyForSecondaryConstructor(designation)
         }
         return constructor
@@ -151,7 +149,7 @@ private object FirLazyBodiesCalculatorTransformer : FirTransformer<MutableList<F
 
     override fun transformProperty(property: FirProperty, data: MutableList<FirDeclaration>): FirDeclaration {
         if (FirLazyBodiesCalculator.needCalculatingLazyBodyForProperty(property)) {
-            val designation = FirDeclarationDesignation(data, property, false)
+            val designation = FirDeclarationDesignation(data, property)
             FirLazyBodiesCalculator.calculateLazyBodyForProperty(designation)
         }
         return property

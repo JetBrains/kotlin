@@ -63,9 +63,6 @@ internal object PersistenceContextCollector {
             "Cannot collect context for local declaration ${declaration.renderWithType()}"
         }
         val designation = declaration.collectDesignation(firFile)
-        check(!designation.isLocalDesignation) {
-            "Designation should not local for ${declaration.renderWithType()}"
-        }
         return ContextCollectingDiagnosticCollectorVisitor.collect(sessionHolder, designation)
     }
 }

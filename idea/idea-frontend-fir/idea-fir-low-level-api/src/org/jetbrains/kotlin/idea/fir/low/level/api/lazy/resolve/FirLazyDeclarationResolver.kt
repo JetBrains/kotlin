@@ -251,8 +251,6 @@ internal class FirLazyDeclarationResolver(
         checkPCE: Boolean,
         declarationPhaseDowngraded: Boolean,
     ) {
-        check(!designation.isLocalDesignation) { "Could not resolve local designation" }
-
         val filePhase = designation.firFile.resolvePhase
         if (filePhase == FirResolvePhase.RAW_FIR) {
             lazyResolveFileDeclarationWithoutLock(

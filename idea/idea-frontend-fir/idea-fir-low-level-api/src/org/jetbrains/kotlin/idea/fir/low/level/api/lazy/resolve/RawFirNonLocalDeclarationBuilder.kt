@@ -36,8 +36,6 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             rootNonLocalDeclaration: KtDeclaration,
             replacement: RawFirReplacement?
         ): FirDeclaration {
-            require(!designation.isLocalDesignation) { "Local declaration is not allowed here" }
-
             val replacementApplier = replacement?.Applier()
             val builder = RawFirNonLocalDeclarationBuilder(
                 session = session,
@@ -57,8 +55,6 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             designation: FirDeclarationDesignation,
             rootNonLocalDeclaration: KtDeclaration,
         ): FirDeclaration {
-            require(!designation.isLocalDesignation) { "Local declaration is not allowed here" }
-
             val functionsToRebind = when (val originalDeclaration = designation.declaration) {
                 is FirSimpleFunction -> setOf(originalDeclaration)
                 is FirProperty -> setOfNotNull(originalDeclaration.getter, originalDeclaration.setter)

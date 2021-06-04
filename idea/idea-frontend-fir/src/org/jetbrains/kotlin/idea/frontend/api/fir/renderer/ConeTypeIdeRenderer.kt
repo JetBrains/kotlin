@@ -6,20 +6,22 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.renderer
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.isInner
-import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
+import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.containingClassForLocal
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedError
+import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.inference.*
+import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.idea.asJava.applyIf
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.collectDesignation
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.tryCollectDesignation
 import org.jetbrains.kotlin.idea.frontend.api.components.KtTypeRendererOptions
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.idea.util.ifTrue
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.renderer.render
 
@@ -176,6 +178,32 @@ internal class ConeTypeIdeRenderer(
         return null
     }
 
+    private fun FirRegularClass.collectForLocal(): List<FirClassLikeDeclaration<*>> {
+        require(isLocal)
+        var containingClassLookUp = containingClassForLocal()
+        val designation = mutableListOf<FirClassLikeDeclaration<*>>(this)
+        while (containingClassLookUp != null && containingClassLookUp.classId.isLocal) {
+            val currentClass = containingClassLookUp.toFirRegularClass(moduleData.session) ?: break
+            designation.add(currentClass)
+            containingClassLookUp = currentClass.containingClassForLocal()
+        }
+        return designation
+    }
+
+    private fun collectDesignationPathForLocal(declaration: FirDeclaration): List<FirDeclaration>? {
+        val containingClass = when (declaration) {
+            is FirCallableDeclaration<*> -> declaration.containingClass()?.toFirRegularClass(declaration.moduleData.session)
+            is FirAnonymousObject -> return listOf(declaration)
+            is FirClassLikeDeclaration<*> -> declaration.let {
+                if (!declaration.isLocal) return null
+                (it as? FirRegularClass)?.containingClassForLocal()?.toFirRegularClass(declaration.moduleData.session)
+            }
+            else -> error("Invalid declaration ${declaration.renderWithType()}")
+        } ?: return listOf(declaration)
+
+        return containingClass.isLocal.ifTrue { containingClass.collectForLocal().reversed() }
+    }
+
     private fun StringBuilder.renderTypeConstructorAndArguments(type: ConeClassLikeType) {
         fun renderTypeArguments(typeArguments: Array<out ConeTypeProjection>, range: IntRange) {
             if (range.any()) {
@@ -208,10 +236,12 @@ internal class ConeTypeIdeRenderer(
             return
         }
 
-        val classToRender = classSymbolToRender.fir
-        val designation = classToRender.collectDesignation()
-            .toSequence(includeTarget = true)
-            .toList()
+        val designation = classSymbolToRender.fir.let {
+            val nonLocalDesignation = it.tryCollectDesignation()
+            nonLocalDesignation?.toSequence(includeTarget = true)?.toList()
+                ?: collectDesignationPathForLocal(it)
+                ?: emptyList()
+        }
 
         var typeParametersLeft = type.typeArguments.count()
         fun needToRenderTypeParameters(index: Int): Boolean {

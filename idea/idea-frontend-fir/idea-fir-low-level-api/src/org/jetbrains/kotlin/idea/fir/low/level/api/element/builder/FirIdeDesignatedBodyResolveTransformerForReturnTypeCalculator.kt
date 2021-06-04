@@ -62,19 +62,19 @@ class FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculatorImpl(
         simpleFunction: FirSimpleFunction,
         data: ResolutionMode
     ): FirSimpleFunction {
-        val firDesignation = FirDeclarationDesignation(declarationDesignation, simpleFunction, false)
+        val firDesignation = FirDeclarationDesignation(declarationDesignation, simpleFunction)
         FirLazyBodiesCalculator.calculateLazyBodiesForFunction(firDesignation)
         return super.transformSimpleFunction(simpleFunction, data)
     }
 
     override fun transformConstructor(constructor: FirConstructor, data: ResolutionMode): FirDeclaration {
-        val firDesignation = FirDeclarationDesignation(declarationDesignation, constructor, false)
+        val firDesignation = FirDeclarationDesignation(declarationDesignation, constructor)
         FirLazyBodiesCalculator.calculateLazyBodyForSecondaryConstructor(firDesignation)
         return super.transformConstructor(constructor, data)
     }
 
     override fun transformProperty(property: FirProperty, data: ResolutionMode): FirProperty {
-        val firDesignation = FirDeclarationDesignation(declarationDesignation, property, false)
+        val firDesignation = FirDeclarationDesignation(declarationDesignation, property)
         FirLazyBodiesCalculator.calculateLazyBodyForProperty(firDesignation)
         return super.transformProperty(property, data)
     }

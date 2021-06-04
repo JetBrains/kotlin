@@ -268,7 +268,6 @@ object LowLevelFirApiFacadeForResolveOnAir {
             val onAirDesignation = FirDeclarationDesignationWithFile(
                 path = originalDesignation.path,
                 declaration = copiedFirDeclaration,
-                isLocalDesignation = false,
                 firFile = originalFirFile
             )
             state.firLazyDeclarationResolver.runLazyDesignatedOnAirResolveToBodyWithoutLock(

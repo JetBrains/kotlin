@@ -159,7 +159,7 @@ internal class FirDesignatedSupertypeResolverTransformerForIDE(
             val resolvableTarget = designation.path.lastOrNull() ?: return
             check(resolvableTarget is FirClassLikeDeclaration<*>)
             val targetPath = designation.path.dropLast(1)
-            FirDeclarationDesignationWithFile(targetPath, resolvableTarget, false, designation.firFile)
+            FirDeclarationDesignationWithFile(targetPath, resolvableTarget, designation.firFile)
         } else designation
 
         if (targetDesignation.isResolvedForAllDeclarations(FirResolvePhase.SUPER_TYPES, declarationPhaseDowngraded)) return
