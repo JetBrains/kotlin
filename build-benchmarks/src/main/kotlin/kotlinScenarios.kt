@@ -11,6 +11,8 @@ fun kotlinBenchmarks() =
         defaultTasks(Tasks.DIST, Tasks.COMPILER_TEST_CLASSES, Tasks.IDEA_TEST_CLASSES, Tasks.KOTLIN_GRADLE_PLUGIN_COMPILE_JAVA)
         defaultJdk = System.getenv("JDK_8")
 
+        val noArgs = arrayOf<String>()
+
         val defaultArguments = arrayOf(
             "--info",
             "--no-build-cache",
@@ -42,14 +44,14 @@ fun kotlinBenchmarks() =
         scenario("(buildSrc, Kotlin) add public fun") {
             step {
                 changeFile(buildSrc, TypeOfChange.ADD_PUBLIC_FUNCTION)
-                runTasks()
+                runTasks(*noArgs)
             }
         }
 
         scenario("(buildSrc, Kotlin) add private fun") {
             step {
                 changeFile(buildSrc, TypeOfChange.ADD_PRIVATE_FUNCTION)
-                runTasks()
+                runTasks(*noArgs)
             }
         }
 
