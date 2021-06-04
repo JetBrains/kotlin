@@ -16,9 +16,8 @@ import java.io.IOException
 import java.io.RandomAccessFile
 import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
-import java.util.*
 
-internal class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) : ZipHandler(path) {
+class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) : ZipHandler(path) {
     private val myRoot: VirtualFile?
 
     private val ourEntryMap: Map<String, ZipEntryDescription>
@@ -143,6 +142,12 @@ internal class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) :
             synchronized(it) {
                 it.get().second.contentsToByteArray(zipEntryDescription)
             }
+        }
+    }
+
+    companion object {
+        fun cleanFileAccessorsCache() {
+            cachedOpenFileHandles.clear()
         }
     }
 }
