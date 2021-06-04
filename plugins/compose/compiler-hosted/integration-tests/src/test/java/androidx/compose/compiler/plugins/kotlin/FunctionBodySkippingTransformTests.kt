@@ -259,6 +259,7 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
         """,
         """
             @Composable
+            @ComposableInferredTarget(scheme = "[0[0]]")
             fun Example(content: Function2<Composer, Int, Unit>?, %composer: Composer?, %changed: Int, %default: Int) {
               if (isTraceInProgress()) {
                 traceEventStart(<>)
@@ -374,6 +375,7 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
         """,
         """
             @Composable
+            @ComposableInferredTarget(scheme = "[androidx.compose.ui.UiComposable[androidx.compose.ui.UiComposable]]")
             fun Button(colors: ButtonColors, %composer: Composer?, %changed: Int) {
               if (isTraceInProgress()) {
                 traceEventStart(<>)
@@ -397,6 +399,7 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
               }
             }
             @Composable
+            @ComposableTarget(applier = "androidx.compose.ui.UiComposable")
             fun Test(%composer: Composer?, %changed: Int) {
               if (isTraceInProgress()) {
                 traceEventStart(<>)
@@ -511,6 +514,7 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
         """,
         """
             @Composable
+            @ComposableInferredTarget(scheme = "[0[0]]")
             fun RowColumnImpl(orientation: LayoutOrientation, modifier: Modifier?, arrangement: Vertical?, crossAxisAlignment: Horizontal?, crossAxisSize: SizeMode?, content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int, %default: Int) {
               if (isTraceInProgress()) {
                 traceEventStart(<>)
@@ -578,6 +582,7 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
               }
             }
             @Composable
+            @ComposableInferredTarget(scheme = "[0[0]]")
             fun Column(modifier: Modifier?, verticalArrangement: Vertical?, horizontalGravity: Horizontal?, content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int, %default: Int) {
               if (isTraceInProgress()) {
                 traceEventStart(<>)
@@ -912,6 +917,7 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
         """,
         """
             @Composable
+            @ComposableInferredTarget(scheme = "[0[0]]")
             fun SimpleBox(modifier: Modifier?, content: Function2<Composer, Int, Unit>?, %composer: Composer?, %changed: Int, %default: Int) {
               if (isTraceInProgress()) {
                 traceEventStart(<>)
@@ -1040,6 +1046,7 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
         """,
         """
             @Composable
+            @ComposableInferredTarget(scheme = "[0[0]]")
             fun SomeThing(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
               if (isTraceInProgress()) {
                 traceEventStart(<>)
@@ -1365,6 +1372,7 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
         """,
         """
             @Composable
+            @ComposableInferredTarget(scheme = "[0[0]]")
             fun Wrap(y: Int, content: Function3<@[ParameterName(name = 'x')] Int, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
               if (isTraceInProgress()) {
                 traceEventStart(<>)
@@ -3285,6 +3293,7 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
         """,
         """
             @Composable
+            @ComposableInferredTarget(scheme = "[0[0]]")
             fun Example(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
               if (isTraceInProgress()) {
                 traceEventStart(<>)
@@ -3352,6 +3361,7 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
         """,
         """
             @Composable
+            @ComposableInferredTarget(scheme = "[0[0]]")
             fun Box2(modifier: Modifier?, paddingStart: Dp, content: Function2<Composer, Int, Unit>?, %composer: Composer?, %changed: Int, %default: Int) {
               if (isTraceInProgress()) {
                 traceEventStart(<>)

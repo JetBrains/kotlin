@@ -19,6 +19,7 @@ package androidx.compose.compiler.plugins.kotlin
 import androidx.compose.compiler.plugins.kotlin.lower.ClassStabilityTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.ComposableFunInterfaceLowering
 import androidx.compose.compiler.plugins.kotlin.lower.ComposableFunctionBodyTransformer
+import androidx.compose.compiler.plugins.kotlin.lower.ComposableTargetAnnotationsTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.ComposableSymbolRemapper
 import androidx.compose.compiler.plugins.kotlin.lower.ComposerIntrinsicTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.ComposerLambdaMemoization
@@ -161,6 +162,13 @@ class ComposeIrGenerationExtension(
             bindingTrace,
             decoysEnabled,
             metrics,
+        ).lower(moduleFragment)
+
+        ComposableTargetAnnotationsTransformer(
+            pluginContext,
+            symbolRemapper,
+            bindingTrace,
+            metrics
         ).lower(moduleFragment)
 
         // transform calls to the currentComposer to just use the local parameter from the

@@ -50,9 +50,9 @@ dependencies {
 
     testImplementation(libs.kotlinStdlib)
     testImplementation(project(":compose:compiler:compiler-hosted"))
-    testImplementation(projectOrArtifact(":compose:material:material"))
-    testImplementation(projectOrArtifact(":compose:runtime:runtime"))
-    testImplementation(projectOrArtifact(":compose:ui:ui"))
+    testImplementation(project(":compose:material:material"))
+    testImplementation(project(":compose:runtime:runtime"))
+    testImplementation(project(":compose:ui:ui"))
     testImplementation("androidx.core:core-ktx:1.1.0")
     testImplementation("androidx.activity:activity-ktx:1.2.0")
 }
@@ -60,6 +60,8 @@ dependencies {
 afterEvaluate {
     tasks.withType(Test) { t ->
         t.dependsOn(":compose:compiler:compiler:embeddedPlugin")
+
+        maxHeapSize("1024m")
     }
 }
 
