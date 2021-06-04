@@ -18,11 +18,8 @@ abstract class IdSignatureBuilder<D> {
     protected var mask = 0L
     protected var container: IdSignature? = null
     protected var description: String? = null
-    protected var errorIndex: Int? = null
 
     protected var isTopLevelPrivate: Boolean = false
-
-    private var fileStorage: IdSignature.FileSignature? = null
 
     protected abstract val currentFileSignature: IdSignature.FileSignature?
 
