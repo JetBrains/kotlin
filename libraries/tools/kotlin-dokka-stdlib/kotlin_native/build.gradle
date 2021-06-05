@@ -35,8 +35,6 @@ if (useBuildServer) {
 
 configurations {
   kotlin_native_linux
-  kotlin_native_mac
-  kotlin_native_windows
 }
 
 def kotlinNativeDep(String target, String ext) {
@@ -47,8 +45,6 @@ def kotlinNativeDep(String target, String ext) {
 
 dependencies {
   kotlin_native_linux   kotlinNativeDep("linux", "tar.gz")
-  kotlin_native_mac     kotlinNativeDep("macos", "tar.gz")
-  kotlin_native_windows kotlinNativeDep("windows", "zip")
 }
 
 final File kotlin_native_dir = new File(buildDir, "kotlin_native")
@@ -56,16 +52,6 @@ final File kotlin_native_dir = new File(buildDir, "kotlin_native")
 task extractKotlinNativeBinariesLinux(type: Sync) {
   from { tarTree(resources.gzip(configurations.kotlin_native_linux.singleFile)) }
   into new File(kotlin_native_dir, 'linux')
-}
-
-task extractKotlinNativeBinariesMac(type: Sync) {
-  from { tarTree(resources.gzip(configurations.kotlin_native_mac.singleFile)) }
-  into new File(kotlin_native_dir, 'mac')
-}
-
-task extractKotlinNativeBinariesWindows(type: Sync) {
-  from { zipTree(configurations.kotlin_native_windows.singleFile) }
-  into new File(kotlin_native_dir, 'windows')
 }
 
 
@@ -132,9 +118,7 @@ task extractKotlinNativeSources(type: Sync, dependsOn: downloadKotlinNativeSourc
   }
 }
 
-task extractKotlinNative(dependsOn: [extractKotlinNativeSources, extractKotlinNativeBinariesLinux, extractKotlinNativeBinariesMac, extractKotlinNativeBinariesWindows]) {}
+task extractKotlinNative(dependsOn: [extractKotlinNativeSources, extractKotlinNativeBinariesLinux]) {}
 
 project.extensions.kotlin_native_root = findProperty("kotlinLocalRoot") == null ? kotlinTargetDir : findProperty("kotlinLocalRoot") + "/kotlin-native"
 project.extensions.kotlin_native_bin_linux = new File(kotlin_native_dir, "linux/kotlin-native-linux-${kotlin_native_version}")
-project.extensions.kotlin_native_bin_mac = new File(kotlin_native_dir, "mac/kotlin-native-mac-${kotlin_native_version}")
-project.extensions.kotlin_native_bin_windows = new File(kotlin_native_dir, "windows/kotlin-native-windows-${kotlin_native_version}")
