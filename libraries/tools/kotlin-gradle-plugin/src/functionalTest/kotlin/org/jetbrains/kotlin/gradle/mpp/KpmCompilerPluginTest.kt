@@ -118,6 +118,26 @@ class KpmCompilerPluginTest {
         assertEquals(1, pluginDataObtainCount)
     }
 
+    @Test
+    fun `it should not be possible to read plugin data during configuration phase`() {
+        val project = buildProjectWithKPM {
+            plugins.apply(TestPluginWithListeners::class.java)
+
+            projectModel {
+                main {
+                    jvm
+                }
+            }
+
+            // Getting task shouldn't fail due to laziness
+            val task = tasks.getByName("compileKotlinJvm") as AbstractKotlinCompile<*>
+            // But trying to get pluginData during "configuration" should fail
+            assertFailsWith<IllegalStateException> { task.kotlinPluginData!!.get() }
+        }
+
+        project.evaluate()
+    }
+
     private fun Project.pluginDataOfTask(taskName: String) = this
         .tasks
         .getByName(taskName)

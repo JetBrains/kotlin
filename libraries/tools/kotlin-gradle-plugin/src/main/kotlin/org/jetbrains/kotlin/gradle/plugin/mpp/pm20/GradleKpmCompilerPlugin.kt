@@ -42,7 +42,7 @@ private fun Project.compilerPluginDataProvider(
         val builder = CompilerPluginOptionsBuilder(project, configurationName)
         builder += pluginDataList()
         builder.build()
-    }.apply { finalizeValueOnRead() }
+    }.apply { disallowUnsafeRead() }
 }
 
 internal class CompilerPluginOptionsBuilder(
