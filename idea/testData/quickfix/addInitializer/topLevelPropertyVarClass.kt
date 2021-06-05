@@ -2,4 +2,3 @@
 // WITH_RUNTIME
 class A
 <caret>var label: A
-/* IGNORE_FIR */

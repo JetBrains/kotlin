@@ -3,4 +3,3 @@ class A {
     var n: Int = <selection>0</selection><caret>
         get() = 1
 }
-/* IGNORE_FIR */
