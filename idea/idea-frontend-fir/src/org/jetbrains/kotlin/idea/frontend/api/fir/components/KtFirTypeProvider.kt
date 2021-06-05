@@ -5,15 +5,11 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
-import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.typeContext
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.withNullability
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
 import org.jetbrains.kotlin.idea.frontend.api.components.KtBuiltinTypes
 import org.jetbrains.kotlin.idea.frontend.api.components.KtTypeProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
@@ -25,9 +21,6 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtTypeNullability
-import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
-import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
-import org.jetbrains.kotlin.psi.KtTypeReference
 
 internal class KtFirTypeProvider(
     override val analysisSession: KtFirAnalysisSession,
@@ -56,14 +49,6 @@ internal class KtFirTypeProvider(
             )
         }
         return type.asKtType()
-    }
-
-    override fun getPsiType(ktTypeReference: KtTypeReference, mode: TypeMappingMode): PsiType = withValidityAssertion {
-        when (val fir = ktTypeReference.getOrBuildFir(firResolveState)) {
-            // NB: [FirErrorTypeRef] is a subtype of [FirResolvedTypeRef], and the error type in it will be properly handled by [asPsiType].
-            is FirResolvedTypeRef -> fir.coneType.asPsiType(mode, ktTypeReference)
-            else -> error("Unexpected ${fir::class}")
-        }
     }
 
     override fun withNullability(type: KtType, newNullability: KtTypeNullability): KtType {

@@ -110,7 +110,7 @@ private class AnonymousTypesSubstitutor(
     }
 }
 
-fun ConeKotlinType.asPsiType(
+internal fun ConeKotlinType.asPsiType(
     session: FirSession,
     state: FirModuleResolveState,
     mode: TypeMappingMode,

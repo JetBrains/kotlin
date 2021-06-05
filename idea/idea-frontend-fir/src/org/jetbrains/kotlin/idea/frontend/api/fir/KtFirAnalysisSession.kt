@@ -73,6 +73,8 @@ private constructor(
 
     override val visibilityCheckerImpl: KtVisibilityChecker = KtFirVisibilityChecker(this, token)
 
+    override val psiTypeProviderImpl = KtFirPsiTypeProvider(this, token)
+
     override val typeProviderImpl = KtFirTypeProvider(this, token)
 
     override val typeInfoProviderImpl = KtFirTypeInfoProvider(this, token)

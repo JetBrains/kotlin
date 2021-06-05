@@ -31,6 +31,7 @@ abstract class KtAnalysisSession(final override val token: ValidityToken) : Vali
     KtCompletionCandidateCheckerMixIn,
     KtSymbolDeclarationOverridesProviderMixIn,
     KtExpressionTypeProviderMixIn,
+    KtPsiTypeProviderMixIn,
     KtTypeProviderMixIn,
     KtTypeInfoProviderMixIn,
     KtSymbolProviderMixIn,
@@ -82,6 +83,9 @@ abstract class KtAnalysisSession(final override val token: ValidityToken) : Vali
 
     internal val expressionTypeProvider: KtExpressionTypeProvider get() = expressionTypeProviderImpl
     protected abstract val expressionTypeProviderImpl: KtExpressionTypeProvider
+
+    internal val psiTypeProvider: KtPsiTypeProvider get() = psiTypeProviderImpl
+    protected abstract val psiTypeProviderImpl: KtPsiTypeProvider
 
     internal val typeProvider: KtTypeProvider get() = typeProviderImpl
     protected abstract val typeProviderImpl: KtTypeProvider
