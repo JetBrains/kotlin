@@ -10,6 +10,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
+import org.jetbrains.kotlin.idea.frontend.api.tokens.AlwaysAccessibleValidityTokenFactory
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ReadActionConfinementValidityTokenFactory
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityTokenFactory
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -91,6 +92,16 @@ inline fun <R> analyseWithCustomToken(
     action: KtAnalysisSession.() -> R
 ): R =
     contextElement.project.service<KtAnalysisSessionProvider>().analyse(contextElement, tokenFactory, action)
+
+/**
+ * UAST-specific version of [analyse] that executes the given [action] in [KtAnalysisSession] context
+ */
+@OptIn(InvalidWayOfUsingAnalysisSession::class)
+inline fun <R> analyseForUast(
+    contextElement: KtElement,
+    action: KtAnalysisSession.() -> R
+): R =
+    analyseWithCustomToken(contextElement, AlwaysAccessibleValidityTokenFactory, action)
 
 @OptIn(InvalidWayOfUsingAnalysisSession::class)
 inline fun <R> analyseInDependedAnalysisSession(

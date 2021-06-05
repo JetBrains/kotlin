@@ -7,8 +7,7 @@ package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiType
-import org.jetbrains.kotlin.idea.frontend.api.analyseWithCustomToken
-import org.jetbrains.kotlin.idea.frontend.api.tokens.AlwaysAccessibleValidityTokenFactory
+import org.jetbrains.kotlin.idea.frontend.api.analyseForUast
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.psi.KtExpression
@@ -28,7 +27,7 @@ interface FirKotlinUastResolveProviderService : BaseKotlinUastResolveProviderSer
     override fun resolveToDeclaration(ktExpression: KtExpression): PsiElement? {
         when (ktExpression) {
             is KtReferenceExpression -> {
-                analyseWithCustomToken(ktExpression, AlwaysAccessibleValidityTokenFactory) {
+                analyseForUast(ktExpression) {
                     return ktExpression.mainReference.resolve()
                 }
             }
@@ -38,14 +37,14 @@ interface FirKotlinUastResolveProviderService : BaseKotlinUastResolveProviderSer
     }
 
     override fun resolveToType(ktTypeReference: KtTypeReference, source: UElement): PsiType? {
-        analyseWithCustomToken(ktTypeReference, AlwaysAccessibleValidityTokenFactory) {
+        analyseForUast(ktTypeReference) {
             return ktTypeReference.getPsiType(TypeMappingMode.DEFAULT_UAST)
         }
     }
 
     override fun getExpressionType(uExpression: UExpression): PsiType? {
         val ktExpression = uExpression.sourcePsi as? KtExpression ?: return null
-        analyseWithCustomToken(ktExpression, AlwaysAccessibleValidityTokenFactory) {
+        analyseForUast(ktExpression) {
             return ktExpression.getPsiType(TypeMappingMode.DEFAULT_UAST)
         }
     }
