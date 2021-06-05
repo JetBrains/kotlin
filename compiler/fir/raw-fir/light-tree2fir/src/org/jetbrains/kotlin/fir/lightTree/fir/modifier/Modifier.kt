@@ -42,23 +42,25 @@ class Modifier(
             return
         }
         val upperCasedModifier = modifier.toString().uppercase()
-        when {
-            INLINE_MODIFIER.contains(tokenType) -> {
+        when (ModifierSets.ModifierKinds[tokenType]) {
+            ModifierKind.INLINE -> {
                 if (isInClass)
                     this.classModifiers += ClassModifier.valueOf(upperCasedModifier)
                 else
                     this.functionModifiers += FunctionModifier.valueOf(upperCasedModifier)
             }
-            CLASS_MODIFIER.contains(tokenType) -> this.classModifiers += ClassModifier.valueOf(upperCasedModifier)
-            MEMBER_MODIFIER.contains(tokenType) -> this.memberModifiers += MemberModifier.valueOf(upperCasedModifier)
-            VISIBILITY_MODIFIER.contains(tokenType) -> this.visibilityModifiers +=
+            ModifierKind.CLASS -> this.classModifiers += ClassModifier.valueOf(upperCasedModifier)
+            ModifierKind.MEMBER -> this.memberModifiers += MemberModifier.valueOf(upperCasedModifier)
+            ModifierKind.VISIBILITY -> this.visibilityModifiers +=
                 VisibilityModifier.valueOf(upperCasedModifier)
-            FUNCTION_MODIFIER.contains(tokenType) -> this.functionModifiers += FunctionModifier.valueOf(upperCasedModifier)
-            PROPERTY_MODIFIER.contains(tokenType) -> this.propertyModifier = PropertyModifier.valueOf(upperCasedModifier)
-            INHERITANCE_MODIFIER.contains(tokenType) -> this.inheritanceModifiers +=
+            ModifierKind.FUNCTION -> this.functionModifiers += FunctionModifier.valueOf(upperCasedModifier)
+            ModifierKind.PROPERTY -> this.propertyModifier = PropertyModifier.valueOf(upperCasedModifier)
+            ModifierKind.INHERITANCE -> this.inheritanceModifiers +=
                 InheritanceModifier.valueOf(upperCasedModifier)
-            PARAMETER_MODIFIER.contains(tokenType) -> this.parameterModifiers += ParameterModifier.valueOf(upperCasedModifier)
-            PLATFORM_MODIFIER.contains(tokenType) -> this.platformModifiers += PlatformModifier.valueOf(upperCasedModifier)
+            ModifierKind.PARAMETER -> this.parameterModifiers += ParameterModifier.valueOf(upperCasedModifier)
+            ModifierKind.PLATFORM -> this.platformModifiers += PlatformModifier.valueOf(upperCasedModifier)
+            else -> {
+            }
         }
     }
 

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.lightTree.fir.modifier
 
+import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.lexer.KtTokens.*
 
@@ -43,4 +44,28 @@ object ModifierSets {
     val VARIANCE_MODIFIER = TokenSet.create(IN_KEYWORD, OUT_KEYWORD)
     val REIFICATION_MODIFIER = TokenSet.create(REIFIED_KEYWORD)
     val INLINE_MODIFIER = TokenSet.create(INLINE_KEYWORD)
+
+    val ModifierKinds: Map<IElementType, ModifierKind> = let {
+        val result = mutableMapOf<IElementType, ModifierKind>()
+
+        fun initTokenSet(tokenSet: TokenSet, modifierKind: ModifierKind) {
+            for (modifier in tokenSet.types) {
+                result[modifier] = modifierKind
+            }
+        }
+
+        initTokenSet(CLASS_MODIFIER, ModifierKind.CLASS)
+        initTokenSet(MEMBER_MODIFIER, ModifierKind.MEMBER)
+        initTokenSet(VISIBILITY_MODIFIER, ModifierKind.VISIBILITY)
+        initTokenSet(FUNCTION_MODIFIER, ModifierKind.FUNCTION)
+        initTokenSet(PROPERTY_MODIFIER, ModifierKind.PROPERTY)
+        initTokenSet(INHERITANCE_MODIFIER, ModifierKind.INHERITANCE)
+        initTokenSet(PARAMETER_MODIFIER, ModifierKind.PARAMETER)
+        initTokenSet(PLATFORM_MODIFIER, ModifierKind.PLATFORM)
+        initTokenSet(VARIANCE_MODIFIER, ModifierKind.VARIANCE)
+        initTokenSet(REIFICATION_MODIFIER, ModifierKind.REIFICATION)
+        initTokenSet(INLINE_MODIFIER, ModifierKind.INLINE)
+
+        result
+    }
 }
