@@ -11,13 +11,13 @@ import kotlin.test.assertTrue
 class KpmCompilerPluginIT : BaseGradleIT() {
 
     @Test
-    fun testSensitivePluginOptions() {
-        val project = transformProjectWithPluginsDsl("kpmSensitivePluginOptions")
-        fun updatePluginOptions(sensitiveValue: String, insensitiveValue: String) {
+    fun testTransientPluginOptions() {
+        val project = transformProjectWithPluginsDsl("kpmTransientPluginOptions")
+        fun updatePluginOptions(regularOptionValue: String, transientOptionValue: String) {
             project.gradleProperties().writeText(
                 """
-                    test-plugin.sensitive=$sensitiveValue
-                    test-plugin.insensitive=$insensitiveValue
+                    test-plugin.regular=$regularOptionValue
+                    test-plugin.transient=$transientOptionValue
                     """.trimIndent()
             )
         }
@@ -28,36 +28,36 @@ class KpmCompilerPluginIT : BaseGradleIT() {
             assertTasksExecuted(":compileKotlinJvm")
             compilerArgs(":compileKotlinJvm").also { args ->
                 assertTrue(
-                    args.contains("plugin:test-plugin:sensitive=XXX"),
-                    "Expected sensitive plugin option in compilation args"
+                    args.contains("plugin:test-plugin:regular=XXX"),
+                    "Expected regular plugin option in compilation args"
                 )
                 assertTrue(
-                    args.contains("plugin:test-plugin:insensitive=YYY"),
-                    "Expected insensitive plugin option in compilation args"
+                    args.contains("plugin:test-plugin:transient=YYY"),
+                    "Expected transient plugin option in compilation args"
                 )
             }
         }
 
-        // When insensitive plugin option change
+        // When transient plugin option change
         updatePluginOptions("XXX", "ZZZ")
         project.build("compileKotlin") {
             assertSuccessful()
             assertTasksUpToDate(":compileKotlinJvm")
         }
 
-        // When sensitive plugin option change
+        // When regular plugin option change
         updatePluginOptions("ZZZ", "ZZZ")
         project.build("compileKotlin") {
             assertSuccessful()
             assertTasksExecuted(":compileKotlinJvm")
             compilerArgs(":compileKotlinJvm").also { args ->
                 assertTrue(
-                    args.contains("plugin:test-plugin:sensitive=ZZZ"),
-                    "Expected sensitive plugin option in compilation args"
+                    args.contains("plugin:test-plugin:regular=ZZZ"),
+                    "Expected regular plugin option in compilation args"
                 )
                 assertTrue(
-                    args.contains("plugin:test-plugin:insensitive=ZZZ"),
-                    "Expected insensitive plugin option in compilation args"
+                    args.contains("plugin:test-plugin:transient=ZZZ"),
+                    "Expected transient plugin option in compilation args"
                 )
             }
         }

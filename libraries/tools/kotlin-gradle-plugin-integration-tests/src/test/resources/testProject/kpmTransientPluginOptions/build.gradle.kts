@@ -1,5 +1,4 @@
 import org.gradle.api.Project
-import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.project.model.*
 
@@ -12,7 +11,7 @@ repositories {
     mavenLocal()
 }
 
-plugins.apply(GradleKpmPluginWithSensitivePluginOptions::class.java)
+plugins.apply(GradleKpmPluginWithTransientPluginOptions::class.java)
 
 configure<KotlinPm20ProjectExtension> {
     main {
@@ -20,17 +19,17 @@ configure<KotlinPm20ProjectExtension> {
     }
 }
 
-class KpmPluginWithSensitivePluginOptions(
-    private val sensitiveOptionValue: String,
-    private val insensitiveOptionValue: String
+class KpmPluginWithTransientPluginOptions(
+    private val regularOptionValue: String,
+    private val transientOptionValue: String
 ) : KpmCompilerPlugin {
     private fun pluginData() = PluginData(
         pluginId = "test-plugin",
         // allopen artifact is used to avoid boilerplate with cooking custom compiler plugin
         artifact = PluginData.ArtifactCoordinates("org.jetbrains.kotlin", "kotlin-allopen"),
         options = listOf(
-            StringOption("sensitive", sensitiveOptionValue, true),
-            StringOption("insensitive", insensitiveOptionValue, false)
+            StringOption("regular", regularOptionValue, isTransient = false),
+            StringOption("transient", transientOptionValue, isTransient = true)
         )
     )
 
@@ -39,7 +38,7 @@ class KpmPluginWithSensitivePluginOptions(
     override fun forPlatformCompilation(variant: KotlinModuleVariant) = pluginData()
 }
 
-class GradleKpmPluginWithSensitivePluginOptions : GradleKpmCompilerPlugin {
+class GradleKpmPluginWithTransientPluginOptions : GradleKpmCompilerPlugin {
     private lateinit var project: Project
 
     override fun apply(target: Project) {
@@ -47,9 +46,9 @@ class GradleKpmPluginWithSensitivePluginOptions : GradleKpmCompilerPlugin {
     }
 
     override val kpmCompilerPlugin by lazy {
-        KpmPluginWithSensitivePluginOptions(
-            sensitiveOptionValue = project.property("test-plugin.sensitive") as String,
-            insensitiveOptionValue = project.property("test-plugin.insensitive") as String
+        KpmPluginWithTransientPluginOptions(
+            regularOptionValue = project.property("test-plugin.regular") as String,
+            transientOptionValue = project.property("test-plugin.transient") as String
         )
     }
 }

@@ -53,22 +53,28 @@ sealed class PluginOption {
     abstract val key: String
 
     /**
-     * when true a value of given plugin option is sensitive for incremental compilation
-     * when false compilation task can be skipped even if value differs from previous one
+     * Indicates whether value of [PluginOption] should be stored for incremental build checks.
+     * Value changes of non-transient [PluginOption] will invalidate incremental caches.
      */
-    abstract val sensitive: Boolean
+    abstract val isTransient: Boolean
 }
 
 data class StringOption(
     override val key: String,
     val value: String,
-    override val sensitive: Boolean = true
+    override val isTransient: Boolean = false
 ) : PluginOption()
 
 data class FilesOption(
     override val key: String,
     val files: List<File>,
-    override val sensitive: Boolean = true
+    /**
+     * Indicates whether FilesOption is used as input or output during compilation
+     * false means input
+     * true means output
+     */
+    val isOutput: Boolean = false,
+    override val isTransient: Boolean = false
 ) : PluginOption()
 
 // TODO: It should be part of "Compilation Process": KotlinModule.compilationRequestFor(METADATA | PLATFORM) -> CompilationRequest

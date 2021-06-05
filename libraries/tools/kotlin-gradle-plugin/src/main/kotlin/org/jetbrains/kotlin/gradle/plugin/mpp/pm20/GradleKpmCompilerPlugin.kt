@@ -53,6 +53,7 @@ internal class CompilerPluginOptionsBuilder(
     private val artifacts = mutableListOf<String>()
     private val gradleInputs = mutableMapOf<String, MutableList<String>>()
     private val gradleInputFiles = mutableSetOf<File>()
+    private val gradleOutputFiles = mutableSetOf<File>()
 
     operator fun plusAssign(pluginData: PluginData) {
         artifacts += pluginData.artifact.toGradleCoordinates()
@@ -60,8 +61,8 @@ internal class CompilerPluginOptionsBuilder(
         for (option in pluginData.options) {
             pluginOptions.addPluginArgument(pluginData.pluginId, option.toSubpluginOption())
 
-            if (option.sensitive) {
-                addToInputs(pluginData.pluginId, option)
+            if (!option.isTransient) {
+                addToInputsOutputs(pluginData.pluginId, option)
             }
         }
     }
@@ -72,9 +73,14 @@ internal class CompilerPluginOptionsBuilder(
         }
     }
 
-    private fun addToInputs(pluginId: String, option: PluginOption) {
-        when(option) {
-            is FilesOption -> gradleInputFiles += option.files
+    private fun addToInputsOutputs(pluginId: String, option: PluginOption) {
+        when (option) {
+            is FilesOption ->
+                if (option.isOutput) {
+                    gradleOutputFiles += option.files
+                } else {
+                    gradleInputFiles += option.files
+                }
             is StringOption -> gradleInputs
                 .getOrPut("${pluginId}.${option.key}") { mutableListOf() }
                 .add(option.value)
@@ -93,12 +99,15 @@ internal class CompilerPluginOptionsBuilder(
         return KotlinCompilerPluginData(
             classpath = pluginClasspathConfiguration,
             options = pluginOptions,
-            inputs = gradleInputs.flattenWithIndex(),
-            inputFiles = gradleInputFiles
+            inputsOutputsState = KotlinCompilerPluginData.InputsOutputsState(
+                inputs = gradleInputs.flattenWithIndex(),
+                inputFiles = gradleInputFiles,
+                outputFiles = gradleOutputFiles
+            )
         )
     }
 
-    private fun Map<String,List<String>>.flattenWithIndex(): Map<String, String> {
+    private fun Map<String, List<String>>.flattenWithIndex(): Map<String, String> {
         val result = mutableMapOf<String, String>()
 
         for ((key, values) in this) {
@@ -116,5 +125,5 @@ internal class CompilerPluginOptionsBuilder(
     }
 
     private fun PluginData.ArtifactCoordinates.toGradleCoordinates(): String =
-        "$group:$artifact:${version ?: project.getKotlinPluginVersion()}"
+        listOfNotNull(group, artifact, version).joinToString(":")
 }

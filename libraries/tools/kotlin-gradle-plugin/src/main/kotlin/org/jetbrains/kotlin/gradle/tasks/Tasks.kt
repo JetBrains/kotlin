@@ -788,14 +788,19 @@ data class KotlinCompilerPluginData(
     /**
      * Used only for Up-to-date checks
      */
-    @get:Input
-    val inputs: Map<String, String>,
+    @get:Nested
+    val inputsOutputsState: InputsOutputsState
+) {
+    data class InputsOutputsState(
+        @get:Input
+        val inputs: Map<String, String>,
 
-    /**
-     * Used only for Up-to-date checks
-     */
-    @get:InputFiles
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    val inputFiles: Set<File>
-)
+        @get:InputFiles
+        @get:PathSensitive(PathSensitivity.RELATIVE)
+        val inputFiles: Set<File>,
+
+        @get:OutputFiles
+        val outputFiles: Set<File>
+    )
+}
 
