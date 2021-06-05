@@ -15,8 +15,6 @@
 
   <property name="kotlin_native_root" location="IT_IS_SET_FROM_GRADLE6"/>
   <property name="kotlin_native_linux" location="IT_IS_SET_FROM_GRADLE7"/>
-  <property name="kotlin_native_windows" location="IT_IS_SET_FROM_GRADLE8"/>
-  <property name="kotlin_native_mac" location="IT_IS_SET_FROM_GRADLE9"/>
 
   <property name="language.version" value="1.5"/>
 

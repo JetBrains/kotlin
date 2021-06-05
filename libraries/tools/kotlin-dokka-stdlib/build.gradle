@@ -74,7 +74,5 @@ setupCallDokka.doLast {
             "-Dkotlin_libs=${pKotlinBig().kotlin_libs}",
             "-Dkotlin_native_root=${pKotlinNative().kotlin_native_root}",
             "-Dkotlin_native_linux=${pKotlinNative().kotlin_native_bin_linux}",
-            "-Dkotlin_native_windows=${pKotlinNative().kotlin_native_bin_windows}",
-            "-Dkotlin_native_mac=${pKotlinNative().kotlin_native_bin_mac}",
     ]
 }
