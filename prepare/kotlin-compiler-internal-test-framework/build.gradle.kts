@@ -1,49 +1,23 @@
-import org.gradle.jvm.tasks.Jar
-
 plugins {
     java
-    `maven-publish`
 }
 
-val embedded by configurations
+val compilerModules: Array<String> by rootProject.extra
 
 dependencies {
-    embedded(project(":compiler:serialization")){ isTransitive = false }
-    embedded(projectTests(":compiler:tests-common-jvm6")){ isTransitive = false }
-    embedded(projectTests(":compiler:test-infrastructure")){ isTransitive = false }
-    embedded(projectTests(":compiler:test-infrastructure-utils")){ isTransitive = false }
-    embedded(projectTests(":compiler:tests-compiler-utils")){ isTransitive = false }
+    compilerModules.forEach {
+        embedded(project(it)) { isTransitive = false }
+    }
+    embedded(projectTests(":compiler:tests-common-jvm6")) { isTransitive = false }
+    embedded(projectTests(":compiler:test-infrastructure")) { isTransitive = false }
+    embedded(projectTests(":compiler:test-infrastructure-utils")) { isTransitive = false }
+    embedded(projectTests(":compiler:tests-compiler-utils")) { isTransitive = false }
     embedded(projectTests(":compiler:tests-common-new")) { isTransitive = false }
+    embedded(protobufFull())
+    embedded(kotlinBuiltins())
 }
 
 publish()
-noDefaultJar()
-
-val runtimeJar: TaskProvider<out Jar> = runtimeJar(unshadedCompiler())
-publishing {
-    publications {
-        create<MavenPublication>("maven"){
-            artifact(runtimeJar)
-        }
-    }
-}
+runtimeJar()
 sourcesJar()
 javadocJar()
-
-val testCompilationClasspath by configurations.creating
-val testCompilerClasspath by configurations.creating {
-    isCanBeConsumed = false
-    extendsFrom(configurations["runtimeElements"])
-    attributes {
-        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
-        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
-    }
-}
-
-projectTest {
-    dependsOn(runtimeJar)
-    doFirst {
-        systemProperty("compilerClasspath", "${runtimeJar.get().outputs.files.asPath}${File.pathSeparator}${testCompilerClasspath.asPath}")
-        systemProperty("compilationClasspath", testCompilationClasspath.asPath)
-    }
-}
