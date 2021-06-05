@@ -120,19 +120,19 @@ internal class KtImplementAsConstructorParameterQuickfix(private val members: Co
 
 object MemberNotImplementedQuickfixFactories {
 
-    val abstractMemberNotImplemented = diagnosticFixFactory<KtFirDiagnostic.AbstractMemberNotImplemented> { diagnostic ->
+    val abstractMemberNotImplemented = diagnosticFixFactory(KtFirDiagnostic.AbstractMemberNotImplemented::class) { diagnostic ->
         getUnimplementedMemberFixes(diagnostic.psi)
     }
 
-    val abstractClassMemberNotImplemented = diagnosticFixFactory<KtFirDiagnostic.AbstractClassMemberNotImplemented> { diagnostic ->
+    val abstractClassMemberNotImplemented = diagnosticFixFactory(KtFirDiagnostic.AbstractClassMemberNotImplemented::class) { diagnostic ->
         getUnimplementedMemberFixes(diagnostic.psi)
     }
 
-    val manyInterfacesMemberNotImplemented = diagnosticFixFactory<KtFirDiagnostic.ManyInterfacesMemberNotImplemented> { diagnostic ->
+    val manyInterfacesMemberNotImplemented = diagnosticFixFactory(KtFirDiagnostic.ManyInterfacesMemberNotImplemented::class) { diagnostic ->
         getUnimplementedMemberFixes(diagnostic.psi)
     }
 
-    val manyImplMemberNotImplemented = diagnosticFixFactory<KtFirDiagnostic.ManyImplMemberNotImplemented> { diagnostic ->
+    val manyImplMemberNotImplemented = diagnosticFixFactory(KtFirDiagnostic.ManyImplMemberNotImplemented::class) { diagnostic ->
         getUnimplementedMemberFixes(diagnostic.psi, false)
     }
 
