@@ -14,11 +14,11 @@ import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtTypeNullability
 
 object TypeMismatchFactories {
-    val argumentTypeMismatchFactory = diagnosticFixFactory<KtFirDiagnostic.ArgumentTypeMismatch> { diagnostic ->
+    val argumentTypeMismatchFactory = diagnosticFixFactory(KtFirDiagnostic.ArgumentTypeMismatch::class) { diagnostic ->
         getFixesForTypeMismatch(diagnostic.psi, diagnostic.expectedType, diagnostic.actualType)
     }
 
-    val returnTypeMismatchFactory = diagnosticFixFactory<KtFirDiagnostic.ReturnTypeMismatch> { diagnostic ->
+    val returnTypeMismatchFactory = diagnosticFixFactory(KtFirDiagnostic.ReturnTypeMismatch::class) { diagnostic ->
         getFixesForTypeMismatch(diagnostic.psi, diagnostic.expectedType, diagnostic.actualType)
     }
 

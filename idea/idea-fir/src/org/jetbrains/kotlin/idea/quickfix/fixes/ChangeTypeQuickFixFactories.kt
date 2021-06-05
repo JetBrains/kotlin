@@ -118,14 +118,14 @@ object ChangeTypeQuickFixFactories {
         }
 
     val returnTypeMismatch =
-        diagnosticFixFactory<KtFirDiagnostic.ReturnTypeMismatch, KtCallableDeclaration, Input>(applicator) { diagnostic ->
+        diagnosticFixFactory(KtFirDiagnostic.ReturnTypeMismatch::class, applicator) { diagnostic ->
             val function = diagnostic.targetFunction.psi as? KtCallableDeclaration ?: return@diagnosticFixFactory emptyList()
             listOf(function withInput Input(TargetType.ENCLOSING_DECLARATION, createTypeInfo(diagnostic.actualType)))
         }
 
     @OptIn(ExperimentalStdlibApi::class)
     val componentFunctionReturnTypeMismatch =
-        diagnosticFixFactory<KtFirDiagnostic.ComponentFunctionReturnTypeMismatch, KtCallableDeclaration, Input>(applicator) { diagnostic ->
+        diagnosticFixFactory(KtFirDiagnostic.ComponentFunctionReturnTypeMismatch::class, applicator) { diagnostic ->
             val entryWithWrongType =
                 getDestructuringDeclarationEntryThatTypeMismatchComponentFunction(
                     diagnostic.componentFunctionName,
@@ -143,9 +143,9 @@ object ChangeTypeQuickFixFactories {
             }
         }
 
-    private inline fun <DIAGNOSTIC : KtDiagnosticWithPsi<KtNamedDeclaration>> changeReturnTypeOnOverride(
+    private inline fun <reified DIAGNOSTIC : KtDiagnosticWithPsi<KtNamedDeclaration>> changeReturnTypeOnOverride(
         crossinline getCallableSymbol: (DIAGNOSTIC) -> KtCallableSymbol?
-    ) = diagnosticFixFactory<DIAGNOSTIC, KtCallableDeclaration, Input>(applicator) { diagnostic ->
+    ) = diagnosticFixFactory(DIAGNOSTIC::class, applicator) { diagnostic ->
         val declaration = diagnostic.psi as? KtCallableDeclaration ?: return@diagnosticFixFactory emptyList()
         val callable = getCallableSymbol(diagnostic) ?: return@diagnosticFixFactory emptyList()
         listOfNotNull(

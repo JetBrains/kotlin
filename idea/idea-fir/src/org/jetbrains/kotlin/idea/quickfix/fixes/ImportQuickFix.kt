@@ -134,7 +134,7 @@ internal class ImportQuickFix(
     }
 
     internal companion object {
-        val FACTORY = diagnosticFixFactory<KtFirDiagnostic.UnresolvedReference> { diagnostic ->
+        val FACTORY = diagnosticFixFactory(KtFirDiagnostic.UnresolvedReference::class) { diagnostic ->
             val element = diagnostic.psi
 
             val indexHelper = IndexHelper(element.project, createSearchScope(element))

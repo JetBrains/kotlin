@@ -38,7 +38,7 @@ object InitializePropertyQuickFixFactory {
 
     @OptIn(ExperimentalStdlibApi::class)
     val initializePropertyFactory =
-        diagnosticFixFactory<KtFirDiagnostic.MustBeInitializedOrBeAbstract> { diagnostic ->
+        diagnosticFixFactory(KtFirDiagnostic.MustBeInitializedOrBeAbstract::class) { diagnostic ->
             val property: KtProperty = diagnostic.psi
             buildList {
                 add(

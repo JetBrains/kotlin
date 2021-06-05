@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.idea.intentions.fir.AddAccessorsIntention
 import org.jetbrains.kotlin.psi.KtProperty
 
 object AddAccessorsFactories {
-    val addAccessorsToUninitializedProperty = diagnosticFixFactory<KtFirDiagnostic.MustBeInitializedOrBeAbstract> { diagnostic ->
+    val addAccessorsToUninitializedProperty = diagnosticFixFactory(KtFirDiagnostic.MustBeInitializedOrBeAbstract::class) { diagnostic ->
         val property: KtProperty = diagnostic.psi
         val addGetter = property.getter == null
         val addSetter = property.isVar && property.setter == null
