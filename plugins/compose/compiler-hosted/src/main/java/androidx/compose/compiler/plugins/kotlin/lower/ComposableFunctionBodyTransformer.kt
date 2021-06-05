@@ -3337,7 +3337,6 @@ class ComposableFunctionBodyTransformer(
                                 builder.append(
                                     it.asString()
                                         .replacePrefix("androidx.compose.", "c#")
-                                        .replacePrefix("androidx.ui.", "u#")
                                 )
                             }
                         }
