@@ -41,6 +41,7 @@ jar {
     manifestAttributes(manifest, project)
 }
 
+ArtifactsKt.noDefaultJar(project)
 ArtifactsKt.runtimeJar(project, EmbeddableKt.rewriteDefaultJarDepsToShadedCompiler(project, {}), {})
 configureSourcesJar()
 configureJavadocJar()

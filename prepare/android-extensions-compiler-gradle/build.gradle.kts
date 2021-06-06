@@ -29,6 +29,7 @@ sourceSets {
 
 publish()
 
+noDefaultJar()
 runtimeJar(rewriteDefaultJarDepsToShadedCompiler())
 
 sourcesJar()

@@ -62,8 +62,6 @@ fun Project.removeArtifacts(configuration: Configuration, task: Task) {
 
 fun Project.noDefaultJar() {
     tasks.named("jar").configure {
-        enabled = false
-        actions = emptyList()
         configurations.forEach { cfg ->
             removeArtifacts(cfg, this)
         }
