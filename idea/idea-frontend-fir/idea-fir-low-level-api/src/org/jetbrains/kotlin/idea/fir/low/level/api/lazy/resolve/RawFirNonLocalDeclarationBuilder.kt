@@ -89,9 +89,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
         check(classOrObject is KtClassOrObject)
 
         withChildClassName(classOrObject.nameAsSafeName, false) {
-            withCapturedTypeParameters {
-                if (!parent.isInner) context.capturedTypeParameters = context.capturedTypeParameters.clear()
-                addCapturedTypeParameters(parent.typeParameters.take(classOrObject.typeParameters.size))
+            withCapturedTypeParameters(parent.isInner, parent.typeParameters.subList(0, classOrObject.typeParameters.size)) {
                 registerSelfType(classOrObject.toDelegatedSelfType(parent))
                 return moveNext(iterator, parent)
             }

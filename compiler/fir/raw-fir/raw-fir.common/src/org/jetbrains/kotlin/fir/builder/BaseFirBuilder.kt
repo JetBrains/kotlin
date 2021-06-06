@@ -90,22 +90,13 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         context.dispatchReceiverTypesStack.add(selfType.type as ConeClassLikeType)
     }
 
-    inline fun <T> withCapturedTypeParameters(block: () -> T): T {
-        val previous = context.capturedTypeParameters
+    inline fun <T> withCapturedTypeParameters(status: Boolean, currentFirTypeParameters: List<FirTypeParameterRef>, block: () -> T): T {
+        context.pushFirTypeParameters(status, currentFirTypeParameters)
         return try {
             block()
         } finally {
-            context.capturedTypeParameters = previous
+            context.popFirTypeParameters()
         }
-    }
-
-    fun addCapturedTypeParameters(typeParameters: List<FirTypeParameterRef>) {
-        context.capturedTypeParameters =
-            context.capturedTypeParameters.addAll(0, typeParameters.map { typeParameter -> typeParameter.symbol })
-    }
-
-    fun clearCapturedTypeParameters() {
-        context.capturedTypeParameters = context.capturedTypeParameters.clear()
     }
 
     fun callableIdForName(name: Name, local: Boolean = false) =

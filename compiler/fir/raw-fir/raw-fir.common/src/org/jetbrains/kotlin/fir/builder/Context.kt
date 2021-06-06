@@ -5,15 +5,14 @@
 
 package org.jetbrains.kotlin.fir.builder
 
-import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.fir.FirFunctionTarget
 import org.jetbrains.kotlin.fir.FirLabel
 import org.jetbrains.kotlin.fir.FirLoopTarget
 import org.jetbrains.kotlin.fir.FirSourceElementKind
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -28,9 +27,36 @@ class Context<T> {
     val calleeNamesForLambda = mutableListOf<Name>()
     val firLabels = mutableListOf<FirLabel>()
     val firLoopTargets = mutableListOf<FirLoopTarget>()
-    var capturedTypeParameters = persistentListOf<FirTypeParameterSymbol>()
+    val capturedTypeParameters = mutableListOf<StatusFirTypeParameterSymbolList>()
     val arraySetArgument = mutableMapOf<T, FirExpression>()
 
     var forcedElementSourceKind: FirSourceElementKind? = null
     val dispatchReceiverTypesStack = mutableListOf<ConeClassLikeType>()
+
+    fun pushFirTypeParameters(notNested: Boolean, parameters: List<FirTypeParameterRef>) {
+        capturedTypeParameters.add(StatusFirTypeParameterSymbolList(notNested, parameters.map { it.symbol }))
+    }
+
+    fun popFirTypeParameters() {
+        val list = capturedTypeParameters
+        list.removeAt(list.lastIndex)
+    }
+
+    inline fun applyToActualCapturedTypeParameters(ignoreLastLevel: Boolean, action: (FirTypeParameterSymbol) -> Unit) {
+        for (index in capturedTypeParameters.lastIndex downTo 0) {
+            val element = capturedTypeParameters[index]
+
+            if (index < capturedTypeParameters.lastIndex || !ignoreLastLevel) {
+                for (capturedTypeParameter in element.list) {
+                    action(capturedTypeParameter)
+                }
+            }
+
+            if (!element.notNested) {
+                break
+            }
+        }
+    }
+
+    data class StatusFirTypeParameterSymbolList(val notNested: Boolean, val list: List<FirTypeParameterSymbol> = listOf())
 }

@@ -397,21 +397,21 @@ class DeclarationsConverter(
         val isLocal = isClassLocal(classNode) { getParent() }
 
         return withChildClassName(className, isLocal) {
-            withCapturedTypeParameters {
-                val status = FirDeclarationStatusImpl(
-                    if (isLocal) Visibilities.Local else modifiers.getVisibility(),
-                    modifiers.getModality(isClassOrObject = true)
-                ).apply {
-                    isExpect = modifiers.hasExpect()
-                    isActual = modifiers.hasActual()
-                    isInner = modifiers.isInner()
-                    isCompanion = modifiers.isCompanion() && classKind == ClassKind.OBJECT
-                    isData = modifiers.isDataClass()
-                    isInline = modifiers.isInlineClass()
-                    isFun = modifiers.isFunctionalInterface()
-                    isExternal = modifiers.hasExternal()
-                }
+            val status = FirDeclarationStatusImpl(
+                if (isLocal) Visibilities.Local else modifiers.getVisibility(),
+                modifiers.getModality(isClassOrObject = true)
+            ).apply {
+                isExpect = modifiers.hasExpect()
+                isActual = modifiers.hasActual()
+                isInner = modifiers.isInner()
+                isCompanion = modifiers.isCompanion() && classKind == ClassKind.OBJECT
+                isData = modifiers.isDataClass()
+                isInline = modifiers.isInlineClass()
+                isFun = modifiers.isFunctionalInterface()
+                isExternal = modifiers.hasExternal()
+            }
 
+            withCapturedTypeParameters(status.isInner, firTypeParameters) {
                 buildRegularClass {
                     source = classNode.toFirSourceElement()
                     moduleData = baseModuleData
@@ -424,9 +424,9 @@ class DeclarationsConverter(
                     annotations += modifiers.annotations
                     typeParameters += firTypeParameters
 
-                    if (!status.isInner) clearCapturedTypeParameters()
-                    typeParameters += context.capturedTypeParameters.map { buildOuterClassTypeParameterRef { symbol = it } }
-                    addCapturedTypeParameters(firTypeParameters)
+                    context.applyToActualCapturedTypeParameters(true) {
+                        typeParameters += buildOuterClassTypeParameterRef { symbol = it }
+                    }
 
                     val selfType = classNode.toDelegatedSelfType(this)
                     registerSelfType(selfType)
@@ -554,7 +554,9 @@ class DeclarationsConverter(
                 classKind = ClassKind.OBJECT
                 scopeProvider = baseScopeProvider
                 symbol = FirAnonymousObjectSymbol()
-                typeParameters += context.capturedTypeParameters.map { buildOuterClassTypeParameterRef { this.symbol = it } }
+                context.applyToActualCapturedTypeParameters(false) {
+                    typeParameters += buildOuterClassTypeParameterRef { this.symbol = it }
+                }
                 val delegatedSelfType = objectLiteral.toDelegatedSelfType(this)
                 registerSelfType(delegatedSelfType)
 
@@ -1059,9 +1061,8 @@ class DeclarationsConverter(
                 receiverTypeRef = receiverType
                 symbol = FirPropertySymbol(callableIdForName(propertyName))
                 dispatchReceiverType = currentDispatchReceiverType()
-                withCapturedTypeParameters {
+                withCapturedTypeParameters(true, firTypeParameters) {
                     typeParameters += firTypeParameters
-                    addCapturedTypeParameters(firTypeParameters)
 
                     val delegateBuilder = delegateExpression?.let {
                         FirWrappedDelegateExpressionBuilder().apply {
@@ -1419,11 +1420,14 @@ class DeclarationsConverter(
             context.firFunctionTargets += target
             annotations += modifiers.annotations
 
-            withCapturedTypeParameters {
-                if (this is FirSimpleFunctionBuilder) {
-                    typeParameters += firTypeParameters
-                    addCapturedTypeParameters(typeParameters)
-                }
+            val actualTypeParameters = if (this is FirSimpleFunctionBuilder) {
+                typeParameters += firTypeParameters
+                typeParameters
+            } else {
+                listOf()
+            }
+
+            withCapturedTypeParameters(true, actualTypeParameters) {
                 valueParametersList?.let { list -> valueParameters += convertValueParameters(list).map { it.firValueParameter } }
 
                 val hasContractEffectList = outerContractDescription != null
