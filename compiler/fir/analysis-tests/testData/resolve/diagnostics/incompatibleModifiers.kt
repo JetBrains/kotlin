@@ -1,5 +1,3 @@
-class A<<!INCOMPATIBLE_MODIFIERS!>in<!> <!INCOMPATIBLE_MODIFIERS!>out<!> T> {  }
-
 <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>public<!> class B
 <!INCOMPATIBLE_MODIFIERS!>protected<!> <!INCOMPATIBLE_MODIFIERS!>internal<!> class C
 

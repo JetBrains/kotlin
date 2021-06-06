@@ -1736,7 +1736,7 @@ class DeclarationsConverter(
         return firType
     }
 
-    private fun Collection<TypeModifier>.hasSuspend() = any { it.hasSuspend }
+    private fun Collection<TypeModifier>.hasSuspend() = any { it.hasSuspend() }
 
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeRefContents

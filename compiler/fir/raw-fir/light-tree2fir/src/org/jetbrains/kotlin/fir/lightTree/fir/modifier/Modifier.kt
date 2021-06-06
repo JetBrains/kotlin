@@ -10,175 +10,131 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.CLASS_MODIFIER
-import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.FUNCTION_MODIFIER
-import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.INHERITANCE_MODIFIER
-import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.INLINE_MODIFIER
-import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.MEMBER_MODIFIER
-import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.PARAMETER_MODIFIER
-import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.PLATFORM_MODIFIER
-import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.PROPERTY_MODIFIER
-import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.VISIBILITY_MODIFIER
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.types.Variance
 
-class Modifier(
-    private val classModifiers: MutableList<ClassModifier> = mutableListOf(),
-    private val memberModifiers: MutableList<MemberModifier> = mutableListOf(),
-    private val visibilityModifiers: MutableList<VisibilityModifier> = mutableListOf(),
-    private val functionModifiers: MutableList<FunctionModifier> = mutableListOf(),
-    private var propertyModifier: PropertyModifier? = null,
-    private val inheritanceModifiers: MutableList<InheritanceModifier> = mutableListOf(),
-    private val parameterModifiers: MutableList<ParameterModifier> = mutableListOf(),
-    private val platformModifiers: MutableList<PlatformModifier> = mutableListOf()
-) {
+open class Modifier(var modifiers: Long = ModifierFlag.NONE.value) {
     val annotations: MutableList<FirAnnotationCall> = mutableListOf()
 
     fun addModifier(modifier: LighterASTNode, isInClass: Boolean = false) {
-        val tokenType = modifier.tokenType
-        if (tokenType == KtTokens.CONST_KEYWORD) {
-            // Specific case because CONST may exist both on parameter and property
-            propertyModifier = PropertyModifier.CONST
-            parameterModifiers += ParameterModifier.CONST
-            return
-        }
-        val upperCasedModifier = modifier.toString().uppercase()
-        when (ModifierSets.ModifierKinds[tokenType]) {
-            ModifierKind.INLINE -> {
-                if (isInClass)
-                    this.classModifiers += ClassModifier.valueOf(upperCasedModifier)
-                else
-                    this.functionModifiers += FunctionModifier.valueOf(upperCasedModifier)
+        when (val tokenType = modifier.tokenType) {
+            KtTokens.CONST_KEYWORD -> {
+                // Specific case because CONST may exist both on parameter and property
+                setFlag(ModifierFlag.PROPERTY_CONST)
+                setFlag(ModifierFlag.PARAMETER_CONST)
             }
-            ModifierKind.CLASS -> this.classModifiers += ClassModifier.valueOf(upperCasedModifier)
-            ModifierKind.MEMBER -> this.memberModifiers += MemberModifier.valueOf(upperCasedModifier)
-            ModifierKind.VISIBILITY -> this.visibilityModifiers +=
-                VisibilityModifier.valueOf(upperCasedModifier)
-            ModifierKind.FUNCTION -> this.functionModifiers += FunctionModifier.valueOf(upperCasedModifier)
-            ModifierKind.PROPERTY -> this.propertyModifier = PropertyModifier.valueOf(upperCasedModifier)
-            ModifierKind.INHERITANCE -> this.inheritanceModifiers +=
-                InheritanceModifier.valueOf(upperCasedModifier)
-            ModifierKind.PARAMETER -> this.parameterModifiers += ParameterModifier.valueOf(upperCasedModifier)
-            ModifierKind.PLATFORM -> this.platformModifiers += PlatformModifier.valueOf(upperCasedModifier)
+            KtTokens.INLINE_KEYWORD -> {
+                setFlag(if (isInClass) ModifierFlag.CLASS_INLINE else ModifierFlag.FUNCTION_INLINE)
+            }
             else -> {
+                setFlag(ModifierFlag.ElementTypeToModifierFlagMap[tokenType])
             }
         }
     }
 
-    fun isEnum(): Boolean {
-        return classModifiers.contains(ClassModifier.ENUM)
-    }
+    fun isEnum(): Boolean = hasFlag(ModifierFlag.CLASS_ENUM)
 
-    fun isAnnotation(): Boolean {
-        return classModifiers.contains(ClassModifier.ANNOTATION)
-    }
+    fun isAnnotation(): Boolean = hasFlag(ModifierFlag.CLASS_ANNOTATION)
 
-    fun isDataClass(): Boolean {
-        return classModifiers.contains(ClassModifier.DATA)
-    }
+    fun isDataClass(): Boolean = hasFlag(ModifierFlag.CLASS_DATA)
 
-    fun isInlineClass(): Boolean {
-        return classModifiers.contains(ClassModifier.INLINE)
-    }
+    fun isInlineClass(): Boolean = hasFlag(ModifierFlag.CLASS_INLINE)
 
-    fun isInner(): Boolean {
-        return classModifiers.contains(ClassModifier.INNER)
-    }
+    fun isInner(): Boolean = hasFlag(ModifierFlag.CLASS_INNER)
 
-    fun isCompanion(): Boolean {
-        return classModifiers.contains(ClassModifier.COMPANION)
-    }
+    fun isCompanion(): Boolean = hasFlag(ModifierFlag.CLASS_COMPANION)
 
-    fun isFunctionalInterface(): Boolean {
-        return classModifiers.contains(ClassModifier.FUN)
-    }
+    fun isFunctionalInterface(): Boolean = hasFlag(ModifierFlag.CLASS_FUN)
 
-    fun hasOverride(): Boolean {
-        return memberModifiers.contains(MemberModifier.OVERRIDE)
-    }
+    fun hasOverride(): Boolean = hasFlag(ModifierFlag.MEMBER_OVERRIDE)
 
-    fun hasLateinit(): Boolean {
-        return memberModifiers.contains(MemberModifier.LATEINIT)
-    }
+    fun hasLateinit(): Boolean = hasFlag(ModifierFlag.MEMBER_LATEINIT)
 
     fun getVisibility(): Visibility {
         return when {
-            visibilityModifiers.contains(VisibilityModifier.PRIVATE) -> Visibilities.Private
-            visibilityModifiers.contains(VisibilityModifier.PUBLIC) -> Visibilities.Public
-            visibilityModifiers.contains(VisibilityModifier.PROTECTED) -> Visibilities.Protected
-            visibilityModifiers.contains(VisibilityModifier.INTERNAL) -> Visibilities.Internal
+            hasFlag(ModifierFlag.VISIBILITY_PRIVATE) -> Visibilities.Private
+            hasFlag(ModifierFlag.VISIBILITY_PUBLIC) -> Visibilities.Public
+            hasFlag(ModifierFlag.VISIBILITY_PROTECTED) -> Visibilities.Protected
+            hasFlag(ModifierFlag.VISIBILITY_INTERNAL) -> Visibilities.Internal
             else -> Visibilities.Unknown
         }
     }
 
-    fun hasTailrec(): Boolean {
-        return functionModifiers.contains(FunctionModifier.TAILREC)
-    }
+    fun hasTailrec(): Boolean = hasFlag(ModifierFlag.FUNCTION_TAILREC)
 
-    fun hasOperator(): Boolean {
-        return functionModifiers.contains(FunctionModifier.OPERATOR)
-    }
+    fun hasOperator(): Boolean = hasFlag(ModifierFlag.FUNCTION_OPERATOR)
 
-    fun hasInfix(): Boolean {
-        return functionModifiers.contains(FunctionModifier.INFIX)
-    }
+    fun hasInfix(): Boolean = hasFlag(ModifierFlag.FUNCTION_INFIX)
 
-    fun hasInline(): Boolean {
-        return functionModifiers.contains(FunctionModifier.INLINE)
-    }
+    fun hasInline(): Boolean = hasFlag(ModifierFlag.FUNCTION_INLINE)
 
-    fun hasExternal(): Boolean {
-        return functionModifiers.contains(FunctionModifier.EXTERNAL)
-    }
+    fun hasExternal(): Boolean = hasFlag(ModifierFlag.FUNCTION_EXTERNAL)
 
-    fun hasSuspend(): Boolean {
-        return functionModifiers.contains(FunctionModifier.SUSPEND)
-    }
+    fun hasSuspend(): Boolean = hasFlag(ModifierFlag.FUNCTION_SUSPEND)
 
-    fun isConst(): Boolean {
-        return propertyModifier == PropertyModifier.CONST
-    }
+    fun isConst(): Boolean = hasFlag(ModifierFlag.PROPERTY_CONST)
 
     fun hasModality(modality: Modality): Boolean {
         return when {
-            modality == Modality.FINAL && inheritanceModifiers.contains(InheritanceModifier.FINAL) -> true
-            modality == Modality.SEALED && inheritanceModifiers.contains(InheritanceModifier.SEALED) -> true
-            modality == Modality.ABSTRACT && inheritanceModifiers.contains(InheritanceModifier.ABSTRACT) -> true
-            modality == Modality.OPEN && inheritanceModifiers.contains(InheritanceModifier.OPEN) -> true
+            modality == Modality.FINAL && hasFlag(ModifierFlag.INHERITANCE_FINAL) -> true
+            modality == Modality.SEALED && hasFlag(ModifierFlag.INHERITANCE_SEALED) -> true
+            modality == Modality.ABSTRACT && hasFlag(ModifierFlag.INHERITANCE_ABSTRACT) -> true
+            modality == Modality.OPEN && hasFlag(ModifierFlag.INHERITANCE_OPEN) -> true
             else -> false
         }
     }
 
     fun getModality(isClassOrObject: Boolean): Modality? {
         return when {
-            inheritanceModifiers.contains(InheritanceModifier.FINAL) -> Modality.FINAL
-            inheritanceModifiers.contains(InheritanceModifier.SEALED) -> if (isClassOrObject) Modality.SEALED else null
-            inheritanceModifiers.contains(InheritanceModifier.ABSTRACT) -> Modality.ABSTRACT
-            inheritanceModifiers.contains(InheritanceModifier.OPEN) -> Modality.OPEN
+            hasFlag(ModifierFlag.INHERITANCE_FINAL) -> Modality.FINAL
+            hasFlag(ModifierFlag.INHERITANCE_SEALED) -> if (isClassOrObject) Modality.SEALED else null
+            hasFlag(ModifierFlag.INHERITANCE_ABSTRACT) -> Modality.ABSTRACT
+            hasFlag(ModifierFlag.INHERITANCE_OPEN) -> Modality.OPEN
             else -> null
         }
     }
 
-    fun hasVararg(): Boolean {
-        return parameterModifiers.contains(ParameterModifier.VARARG)
+    fun getVariance(): Variance {
+        return when {
+            hasFlag(ModifierFlag.VARIANCE_IN) -> Variance.IN_VARIANCE
+            hasFlag(ModifierFlag.VARIANCE_OUT) -> Variance.OUT_VARIANCE
+            else -> Variance.INVARIANT
+        }
     }
 
-    fun hasNoinline(): Boolean {
-        return parameterModifiers.contains(ParameterModifier.NOINLINE)
+    fun hasVararg(): Boolean = hasFlag(ModifierFlag.PARAMETER_VARARG)
+
+    fun hasNoinline(): Boolean = hasFlag(ModifierFlag.PARAMETER_NOINLINE)
+
+    fun hasCrossinline(): Boolean = hasFlag(ModifierFlag.PARAMETER_CROSSINLINE)
+
+    fun hasExpect(): Boolean = hasFlag(ModifierFlag.PLATFORM_EXPECT) || hasFlag(ModifierFlag.PLATFORM_HEADER)
+
+    fun hasActual(): Boolean = hasFlag(ModifierFlag.PLATFORM_ACTUAL) || hasFlag(ModifierFlag.PLATFORM_IMPL)
+
+    fun hasConst(): Boolean = hasFlag(ModifierFlag.PARAMETER_CONST)
+
+    protected fun hasFlag(flag: ModifierFlag) = (modifiers and flag.value) == flag.value
+
+    protected fun setFlag(flag: ModifierFlag?) {
+        if (flag != null) {
+            modifiers = modifiers or flag.value
+        }
     }
 
-    fun hasCrossinline(): Boolean {
-        return parameterModifiers.contains(ParameterModifier.CROSSINLINE)
-    }
-
-    fun hasExpect(): Boolean {
-        return platformModifiers.contains(PlatformModifier.EXPECT) || platformModifiers.contains(PlatformModifier.HEADER)
-    }
-
-    fun hasActual(): Boolean {
-        return platformModifiers.contains(PlatformModifier.ACTUAL) || platformModifiers.contains(PlatformModifier.IMPL)
-    }
-
-    fun hasConst(): Boolean {
-        return parameterModifiers.contains(ParameterModifier.CONST)
+    override fun toString(): String {
+        val result = StringBuilder()
+        var firstAppend = true
+        for (value in ModifierFlag.Values) {
+            if (hasFlag(value) && value != ModifierFlag.NONE) {
+                if (firstAppend) {
+                    firstAppend = false
+                } else {
+                    result.append(" ")
+                }
+                result.append(value.name)
+            }
+        }
+        return result.toString()
     }
 }
