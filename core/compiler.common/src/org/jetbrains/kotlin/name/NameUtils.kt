@@ -42,7 +42,7 @@ object NameUtils {
             // NB `uppercase` uses Locale.ROOT and is locale-independent.
             // See Javadoc on java.lang.String.toUpperCase() for more details.
             if (Character.isJavaIdentifierStart(str[0]))
-                str.substring(0, 1).uppercase() + str.substring(1)
+                str[0].uppercase() + str.substring(1)
             else
                 "_$str"
 

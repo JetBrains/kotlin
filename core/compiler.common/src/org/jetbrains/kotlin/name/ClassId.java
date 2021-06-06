@@ -105,8 +105,16 @@ public final class ClassId {
 
     @NotNull
     public static ClassId fromString(@NotNull String string, boolean isLocal) {
-        String packageName = StringsKt.substringBeforeLast(string, '/', "").replace('/', '.');
-        String className = StringsKt.substringAfterLast(string, '/', string);
+        int lastSlashIndex = string.lastIndexOf("/");
+        String packageName;
+        String className;
+        if (lastSlashIndex == -1) {
+            packageName = "";
+            className = string;
+        } else {
+            packageName = string.substring(0, lastSlashIndex).replace('/', '.');
+            className = string.substring(lastSlashIndex + 1);
+        }
         return new ClassId(new FqName(packageName), new FqName(className), isLocal);
     }
 

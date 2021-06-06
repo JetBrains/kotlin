@@ -72,13 +72,13 @@ val FirFunctionTypeRef.parametersCount: Int
     else
         valueParameters.size
 
-const val EXTENSION_FUNCTION_ANNOTATION = "kotlin/ExtensionFunctionType"
+val EXTENSION_FUNCTION_ANNOTATION = ClassId.fromString("kotlin/ExtensionFunctionType")
 
 val FirAnnotationCall.isExtensionFunctionAnnotationCall: Boolean
     get() = (this as? FirAnnotationCall)?.let { annotationCall ->
         (annotationCall.annotationTypeRef as? FirResolvedTypeRef)?.let { typeRef ->
             (typeRef.type as? ConeClassLikeType)?.let {
-                it.lookupTag.classId.asString() == EXTENSION_FUNCTION_ANNOTATION
+                it.lookupTag.classId == EXTENSION_FUNCTION_ANNOTATION
             }
         }
     } == true

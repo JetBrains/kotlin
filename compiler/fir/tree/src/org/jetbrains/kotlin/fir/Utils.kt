@@ -70,12 +70,12 @@ fun FirSourceElement.getWholeQualifierSourceIfPossible(stepsToWholeQualifier: In
     return when (this) {
         is FirRealPsiSourceElement<*> -> {
             val qualifiersChain = generateSequence(psi) { it.parent }
-            val wholeQualifier = qualifiersChain.drop(stepsToWholeQualifier).first()
+            val wholeQualifier = qualifiersChain.elementAt(stepsToWholeQualifier)
             wholeQualifier.toFirPsiSourceElement() as FirRealPsiSourceElement
         }
         is FirLightSourceElement -> {
             val qualifiersChain = generateSequence(lighterASTNode) { treeStructure.getParent(it) }
-            val wholeQualifier = qualifiersChain.drop(stepsToWholeQualifier).first()
+            val wholeQualifier = qualifiersChain.elementAt(stepsToWholeQualifier)
             wholeQualifier.toFirLightSourceElement(
                 treeStructure,
                 startOffset = this.startOffset,
