@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope.Companion.ALL_NAME_FILTER
 import org.jetbrains.kotlin.scripting.ide_services.compiler.completion
 import org.jetbrains.kotlin.scripting.ide_services.compiler.filterOutShadowedDescriptors
@@ -41,8 +40,6 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.asFlexibleType
 import org.jetbrains.kotlin.types.isFlexible
 import java.io.File
-import java.lang.IllegalArgumentException
-import java.util.*
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.SourceCodeCompletionVariant
 
@@ -72,6 +69,12 @@ fun getKJvmCompletion(
 fun prepareCodeForCompletion(code: String, cursor: Int) =
     code.substring(0, cursor) + KJvmReplCompleter.INSERTED_STRING + code.substring(cursor)
 
+private inline fun <reified T> PsiElement.thisOrParent() = when {
+    this is T -> this
+    this.parent is T -> (this.parent as T)
+    else -> null
+}
+
 private class KJvmReplCompleter(
     private val ktScript: KtFile,
     private val bindingContext: BindingContext,
@@ -89,148 +92,162 @@ private class KJvmReplCompleter(
         return element
     }
 
-    fun getCompletion() = sequence<SourceCodeCompletionVariant> gen@{
-        val filterOutShadowedDescriptors = configuration[ScriptCompilationConfiguration.completion.filterOutShadowedDescriptors]!!
-        val nameFilter = configuration[ScriptCompilationConfiguration.completion.nameFilter]!!
+    private val getDescriptorsQualified = ResultGetter { element, options ->
+        val expression = element.thisOrParent<KtQualifiedExpression>() ?: return@ResultGetter null
 
-        val element = getElementAt(cursor)
+        val receiverExpression = expression.receiverExpression
+        val expressionType = bindingContext.get(
+            BindingContext.EXPRESSION_TYPE_INFO,
+            receiverExpression
+        )?.type
 
-        var descriptors: Collection<DeclarationDescriptor>? = null
-        var isTipsManagerCompletion = true
-        var isSortNeeded = true
+        DescriptorsResult(targetElement = expression).apply {
+            if (expressionType != null) {
+                sortNeeded = false
+                descriptors.addAll(
+                    getVariantsHelper { true }
+                        .getReferenceVariants(
+                            receiverExpression,
+                            CallTypeAndReceiver.DOT(receiverExpression),
+                            DescriptorKindFilter.ALL,
+                            ALL_NAME_FILTER,
+                            filterOutShadowed = options.filterOutShadowedDescriptors,
+                        )
+                )
+            }
+        }
+    }
 
-        if (element == null)
-            return@gen
+    private val getDescriptorsSimple = ResultGetter { element, options ->
+        val expression = element.thisOrParent<KtSimpleNameExpression>() ?: return@ResultGetter null
 
-        val simpleExpression = when {
-            element is KtSimpleNameExpression -> element
-            element.parent is KtSimpleNameExpression -> element.parent as KtSimpleNameExpression
-            else -> null
+        val result = DescriptorsResult(targetElement = expression)
+        val inDescriptor: DeclarationDescriptor = expression.getResolutionScope(bindingContext, resolutionFacade).ownerDescriptor
+        val prefix = element.text.substring(0, cursor - element.startOffset)
+
+        val elementParent = element.parent
+        if (prefix.isEmpty() && elementParent is KtBinaryExpression) {
+            val parentChildren = elementParent.children
+            if (parentChildren.size == 3 &&
+                parentChildren[1] is KtOperationReferenceExpression &&
+                parentChildren[1].text == INSERTED_STRING
+            ) return@ResultGetter result
         }
 
-        if (simpleExpression != null) {
-            val inDescriptor: DeclarationDescriptor = simpleExpression.getResolutionScope(bindingContext, resolutionFacade).ownerDescriptor
-            val prefix = element.text.substring(0, cursor - element.startOffset)
+        val containingArgument = expression.thisOrParent<KtValueArgument>()
+        val containingCall = containingArgument?.getParentOfType<KtCallExpression>(true)
+        val containingQualifiedExpression = containingCall?.parent as? KtDotQualifiedExpression
+        val containingCallId = containingCall?.calleeExpression?.text
+        fun Name.test(checkAgainstContainingCall: Boolean): Boolean {
+            if (isSpecial) return false
+            if (options.nameFilter(identifier, prefix)) return true
+            return checkAgainstContainingCall && containingCallId?.let { options.nameFilter(identifier, it) } == true
+        }
 
-            val elementParent = element.parent
-            if (prefix.isEmpty() && elementParent is KtBinaryExpression) {
-                val parentChildren = elementParent.children
-                if (parentChildren.size == 3 &&
-                    parentChildren[1] is KtOperationReferenceExpression &&
-                    parentChildren[1].text == INSERTED_STRING
-                ) return@gen
-            }
+        DescriptorsResult(targetElement = element).apply {
+            sortNeeded = false
 
-            val containingCallId = simpleExpression.getParentOfType<KtCallExpression>(true)?.calleeExpression?.text
-            fun Name.test(checkAgainstContainingCall: Boolean): Boolean {
-                if (isSpecial) return false
-                if (nameFilter(identifier, prefix)) return true
-                return checkAgainstContainingCall && containingCallId?.let { nameFilter(identifier, it) } == true
-            }
+            descriptors.apply {
+                fun addParameters(descriptor: DeclarationDescriptor) {
+                    if (containingCallId == descriptor.name.identifier) {
+                        val params = when (descriptor) {
+                            is CallableDescriptor -> descriptor.valueParameters
+                            is ClassDescriptor -> descriptor.constructors.flatMap { it.valueParameters }
+                            else -> emptyList()
+                        }
+                        val valueParams = params.filter { it.name.test(false) }
+                        addAll(valueParams)
+                        containingCallParameters.addAll(valueParams)
+                    }
+                }
 
-            isSortNeeded = false
-            descriptors = ArrayList<DeclarationDescriptor>().also { result ->
-                ReferenceVariantsHelper(
-                    bindingContext,
-                    resolutionFacade,
-                    moduleDescriptor,
+                getVariantsHelper(
                     VisibilityFilter(inDescriptor)
                 ).getReferenceVariants(
-                    simpleExpression,
+                    expression,
                     DescriptorKindFilter.ALL,
                     { it.test(true) },
                     filterOutJavaGettersAndSetters = true,
-                    filterOutShadowed = filterOutShadowedDescriptors, // setting to true makes it slower up to 4 times
+                    filterOutShadowed = options.filterOutShadowedDescriptors, // setting to true makes it slower up to 4 times
                     excludeNonInitializedVariable = true,
                     useReceiverType = null
                 ).forEach { descriptor ->
-                    if (descriptor.name.test(false)) result.add(descriptor)
-                    if (descriptor is CallableDescriptor && containingCallId == descriptor.name.identifier) {
-                        descriptor.valueParameters.filterTo(result) { it.name.test(false) }
-                    }
+                    if (descriptor.name.test(false)) add(descriptor)
+                    addParameters(descriptor)
                 }
-            }
 
-        } else if (element is KtStringTemplateExpression) {
-            if (element.hasInterpolation()) {
-                return@gen
-            }
-
-            val stringVal = element.entries.joinToString("") {
-                val t = it.text
-                if (it.startOffset <= cursor && cursor <= it.endOffset) {
-                    val s = cursor - it.startOffset
-                    val e = s + INSERTED_STRING.length
-                    t.substring(0, s) + t.substring(e)
-                } else t
-            }
-
-            val separatorIndex = stringVal.lastIndexOfAny(charArrayOf('/', '\\'))
-            val dir = if (separatorIndex != -1) {
-                stringVal.substring(0, separatorIndex + 1)
-            } else {
-                "."
-            }
-            val namePrefix = stringVal.substring(separatorIndex + 1)
-
-            val file = File(dir)
-
-            file.listFiles { p, f -> p == file && f.startsWith(namePrefix, true) }?.forEach {
-                yield(SourceCodeCompletionVariant(it.name, it.name, "file", "file"))
-            }
-
-            return@gen
-
-        } else {
-            isTipsManagerCompletion = false
-            val resolutionScope: LexicalScope?
-            val parent = element.parent
-
-            val qualifiedExpression = when {
-                element is KtQualifiedExpression -> {
-                    isTipsManagerCompletion = true
-                    element
+                if (containingQualifiedExpression != null) {
+                    val receiverExpression = containingQualifiedExpression.receiverExpression
+                    getVariantsHelper { true }
+                        .getReferenceVariants(
+                            receiverExpression,
+                            CallTypeAndReceiver.DOT(receiverExpression),
+                            DescriptorKindFilter.CALLABLES,
+                            ALL_NAME_FILTER,
+                            filterOutShadowed = options.filterOutShadowedDescriptors,
+                        )
+                        .forEach { descriptor ->
+                            addParameters(descriptor)
+                        }
                 }
-                parent is KtQualifiedExpression -> parent
-                else -> null
-            }
-
-            if (qualifiedExpression != null) {
-                val receiverExpression = qualifiedExpression.receiverExpression
-                val expressionType = bindingContext.get(
-                    BindingContext.EXPRESSION_TYPE_INFO,
-                    receiverExpression
-                )?.type
-                if (expressionType != null) {
-                    isSortNeeded = false
-                    descriptors = ReferenceVariantsHelper(
-                        bindingContext,
-                        resolutionFacade,
-                        moduleDescriptor,
-                        { true }
-                    ).getReferenceVariants(
-                        receiverExpression,
-                        CallTypeAndReceiver.DOT(receiverExpression),
-                        DescriptorKindFilter.ALL,
-                        ALL_NAME_FILTER,
-                        filterOutShadowed = filterOutShadowedDescriptors,
-                    )
-                }
-            } else {
-                resolutionScope = bindingContext.get(
-                    BindingContext.LEXICAL_SCOPE,
-                    element as KtExpression?
-                )
-                descriptors = (resolutionScope?.getContributedDescriptors(
-                    DescriptorKindFilter.ALL,
-                    ALL_NAME_FILTER
-                )
-                    ?: return@gen)
             }
         }
+    }
 
-        if (descriptors != null) {
-            val targetElement = if (isTipsManagerCompletion) element else element.parent
+    private val getDescriptorsString = ResultGetter { element, _ ->
+        if (element !is KtStringTemplateExpression) return@ResultGetter null
+
+        val stringVal = element.entries.joinToString("") {
+            val t = it.text
+            if (it.startOffset <= cursor && cursor <= it.endOffset) {
+                val s = cursor - it.startOffset
+                val e = s + INSERTED_STRING.length
+                t.substring(0, s) + t.substring(e)
+            } else t
+        }
+
+        val separatorIndex = stringVal.lastIndexOfAny(charArrayOf('/', '\\'))
+        val dir = if (separatorIndex != -1) {
+            stringVal.substring(0, separatorIndex + 1)
+        } else {
+            "."
+        }
+        val namePrefix = stringVal.substring(separatorIndex + 1)
+
+        val file = File(dir)
+        DescriptorsResult(targetElement = element).also { result ->
+            result.variants = sequence {
+                file.listFiles { p, f -> p == file && f.startsWith(namePrefix, true) }?.forEach {
+                    yield(SourceCodeCompletionVariant(it.name, it.name, "file", "file"))
+                }
+            }
+        }
+    }
+
+    private val getDescriptorsDefault = ResultGetter { element, _ ->
+        val resolutionScope = bindingContext.get(
+            BindingContext.LEXICAL_SCOPE,
+            element as KtExpression?
+        )
+        DescriptorsResult(targetElement = element).also { result ->
+            resolutionScope?.getContributedDescriptors(
+                DescriptorKindFilter.ALL,
+                ALL_NAME_FILTER
+            )?.let { descriptors ->
+                result.descriptors.addAll(descriptors)
+            }
+        }
+    }
+
+    private fun renderResult(
+        element: PsiElement,
+        options: DescriptorsOptions,
+        result: DescriptorsResult?
+    ): Sequence<SourceCodeCompletionVariant> {
+        if (result == null) return emptySequence()
+        result.variants?.let { return it }
+
+        with(result) {
             val prefixEnd = cursor - targetElement.startOffset
             var prefix = targetElement.text.substring(0, prefixEnd)
 
@@ -243,66 +260,108 @@ private class KJvmReplCompleter(
                 prefix.substring(0, cursorWithinElement)
             }
 
-            if (descriptors !is ArrayList<*>) {
-                descriptors = ArrayList(descriptors)
-            }
-
-            (descriptors as ArrayList<DeclarationDescriptor>)
-                .map {
-                    val presentation =
-                        getPresentation(
-                            it
-                        )
-                    Triple(it, presentation, (presentation.presentableText + presentation.tailText).lowercase())
-                }
-                .let {
-                    if (isSortNeeded) it.sortedBy { descTriple -> descTriple.third } else it
-                }
-                .forEach { resultTriple ->
-                    val descriptor = resultTriple.first
-                    val (rawName, presentableText, tailText, completionText) = resultTriple.second
-                    if (nameFilter(rawName, prefix)) {
-                        val fullName: String =
-                            formatName(
-                                presentableText
+            return sequence {
+                descriptors
+                    .map {
+                        val presentation =
+                            getPresentation(
+                                it, result.containingCallParameters
                             )
-                        val deprecationLevel = descriptor.annotations
-                            .findAnnotation(FqName("kotlin.Deprecated"))
-                            ?.let { annotationDescriptor ->
-                                val valuePair = annotationDescriptor.argumentValue("level")?.value as? Pair<*, *>
-                                val valueClass = (valuePair?.first as? ClassId)?.takeIf { DeprecationLevel::class.classId == it }
-                                val valueName = (valuePair?.second as? Name)?.identifier
-                                if (valueClass == null || valueName == null) return@let DeprecationLevel.WARNING
-                                DeprecationLevel.valueOf(valueName)
-                            }
-                        yield(
-                            SourceCodeCompletionVariant(
-                                completionText,
-                                fullName,
-                                tailText,
-                                getIconFromDescriptor(
-                                    descriptor
-                                ),
-                                deprecationLevel,
-                            )
-                        )
+                        Triple(it, presentation, (presentation.presentableText + presentation.tailText).lowercase())
                     }
-                }
+                    .let {
+                        if (sortNeeded) it.sortedBy { descTriple -> descTriple.third } else it
+                    }
+                    .forEach { resultTriple ->
+                        val descriptor = resultTriple.first
+                        val (rawName, presentableText, tailText, completionText) = resultTriple.second
+                        if (options.nameFilter(rawName, prefix)) {
+                            val fullName: String =
+                                formatName(
+                                    presentableText
+                                )
+                            val deprecationLevel = descriptor.annotations
+                                .findAnnotation(FqName("kotlin.Deprecated"))
+                                ?.let { annotationDescriptor ->
+                                    val valuePair = annotationDescriptor.argumentValue("level")?.value as? Pair<*, *>
+                                    val valueClass = (valuePair?.first as? ClassId)?.takeIf { DeprecationLevel::class.classId == it }
+                                    val valueName = (valuePair?.second as? Name)?.identifier
+                                    if (valueClass == null || valueName == null) return@let DeprecationLevel.WARNING
+                                    DeprecationLevel.valueOf(valueName)
+                                }
+                            yield(
+                                SourceCodeCompletionVariant(
+                                    completionText,
+                                    fullName,
+                                    tailText,
+                                    getIconFromDescriptor(
+                                        descriptor
+                                    ),
+                                    deprecationLevel,
+                                )
+                            )
+                        }
+                    }
 
-            yieldAll(
-                keywordsCompletionVariants(
-                    KtTokens.KEYWORDS,
-                    prefix
+                yieldAll(
+                    keywordsCompletionVariants(
+                        KtTokens.KEYWORDS,
+                        prefix
+                    )
                 )
-            )
-            yieldAll(
-                keywordsCompletionVariants(
-                    KtTokens.SOFT_KEYWORDS,
-                    prefix
+                yieldAll(
+                    keywordsCompletionVariants(
+                        KtTokens.SOFT_KEYWORDS,
+                        prefix
+                    )
                 )
-            )
+            }
         }
     }
+
+    fun getCompletion(): Sequence<SourceCodeCompletionVariant> {
+        val filterOutShadowedDescriptors = configuration[ScriptCompilationConfiguration.completion.filterOutShadowedDescriptors]!!
+        val nameFilter = configuration[ScriptCompilationConfiguration.completion.nameFilter]!!
+        val options = DescriptorsOptions(
+            nameFilter, filterOutShadowedDescriptors
+        )
+
+        val element = getElementAt(cursor) ?: return emptySequence()
+
+        val descriptorsGetters = listOf(
+            getDescriptorsSimple,
+            getDescriptorsString,
+            getDescriptorsQualified,
+            getDescriptorsDefault,
+        )
+
+        val result = descriptorsGetters.firstNotNullOfOrNull { it.get(element, options) }
+        return renderResult(element, options, result)
+    }
+
+    private fun getVariantsHelper(visibilityFilter: (DeclarationDescriptor) -> Boolean) = ReferenceVariantsHelper(
+        bindingContext,
+        resolutionFacade,
+        moduleDescriptor,
+        visibilityFilter,
+    )
+
+    private fun interface ResultGetter {
+        fun get(element: PsiElement, options: DescriptorsOptions): DescriptorsResult?
+    }
+
+    private class DescriptorsResult(
+        val descriptors: MutableList<DeclarationDescriptor> = mutableListOf(),
+        var variants: Sequence<SourceCodeCompletionVariant>? = null,
+        var sortNeeded: Boolean = true,
+        var targetElement: PsiElement,
+        val containingCallParameters: MutableList<ValueParameterDescriptor> = mutableListOf(),
+    )
+
+    private class DescriptorsOptions(
+        val nameFilter: (String, String) -> Boolean,
+        val filterOutShadowedDescriptors: Boolean,
+    )
 
     private class VisibilityFilter(
         private val inDescriptor: DeclarationDescriptor
@@ -396,7 +455,10 @@ private class KJvmReplCompleter(
             val completionText: String
         )
 
-        fun getPresentation(descriptor: DeclarationDescriptor): DescriptorPresentation {
+        fun getPresentation(
+            descriptor: DeclarationDescriptor,
+            callParameters: Collection<ValueParameterDescriptor>
+        ): DescriptorPresentation {
             val rawDescriptorName = descriptor.name.asString()
             val descriptorName = rawDescriptorName.quoteIfNeeded()
             var presentableText = descriptorName
@@ -426,7 +488,10 @@ private class KJvmReplCompleter(
                 val outType =
                     descriptor.type
                 typeText = RENDERER.renderType(outType)
-                if (descriptor is ValueParameterDescriptor) {
+                if (
+                    descriptor is ValueParameterDescriptor &&
+                    callParameters.contains(descriptor)
+                ) {
                     completionText = "$rawDescriptorName = "
                 }
             } else if (descriptor is ClassDescriptor) {

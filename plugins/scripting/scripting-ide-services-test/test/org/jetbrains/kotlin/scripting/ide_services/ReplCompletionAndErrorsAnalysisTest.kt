@@ -113,16 +113,51 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
     fun testFunctionArgumentNames() = test {
         run {
             doCompile
-            code = """fun _sf(_someInt: Int = 42, _someString: String = "s") = 1"""
+            code = """
+                fun _sf(_someInt: Int = 42, _someString: String = "s") = 1
+                fun String.f(_bar: Int) = _bar
+                class C(val _xyz: Int)
+            """.trimIndent()
         }
         run {
-            doComplete
             code = """_sf(_s"""
             cursor = code.length
             expect {
                 addCompletion("_sf(", "_sf(Int = ..., String = ...)", "Int", "method")
                 addCompletion("_someInt = ", "_someInt", "Int", "parameter")
                 addCompletion("_someString = ", "_someString", "String", "parameter")
+            }
+        }
+        run {
+            code = """ "my string".f(_b"""
+            cursor = code.length
+            expect {
+                addCompletion("_bar = ", "_bar", "Int", "parameter")
+            }
+        }
+        run {
+            code = "C(_x"
+            cursor = code.length
+            expect {
+                addCompletion("_xyz = ", "_xyz", "Int", "parameter")
+            }
+        }
+    }
+
+    @Test
+    fun testCompletionInsideFunctions() = test {
+        run {
+            val statement = "val a = _f"
+            code = """
+                fun dontCompleteMe(_foo: Int, bar: String) {
+                    val _foo2 = ""
+                    $statement
+                }
+            """.trimIndent()
+            cursor = code.indexOf(statement) + statement.length
+            expect {
+                addCompletion("_foo2", "_foo2", "String", "property")
+                addCompletion("_foo", "_foo", "Int", "parameter")
             }
         }
     }
