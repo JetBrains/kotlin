@@ -292,9 +292,18 @@ class ClassGenerator(
             irProperty.setter = generateDelegatedFunction(irDelegate, delegatedDescriptor.setter!!, delegateToDescriptor.setter!!)
         }
 
+        irProperty.generateOverrides(delegatedDescriptor)
+
         irProperty.linkCorrespondingPropertySymbol()
 
         return irProperty
+    }
+
+    private fun IrProperty.generateOverrides(propertyDescriptor: PropertyDescriptor) {
+        overriddenSymbols =
+            propertyDescriptor.overriddenDescriptors.map { overriddenPropertyDescriptor ->
+                context.symbolTable.referenceProperty(overriddenPropertyDescriptor.original)
+            }
     }
 
     private fun generateDelegatedFunction(
