@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.api
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirIdeResolveStateService
@@ -58,6 +59,24 @@ inline fun <R> KtDeclaration.withFirDeclaration(
     }
 
     return action(resolvedDeclaration)
+}
+
+/**
+ * Creates [FirDeclaration] by [KtDeclaration] and executes an [action] on it
+ * [FirDeclaration] passed to [action] will be resolved at least to [resolveType] when executing [action] on it
+ *
+ * [FirDeclaration] passed to [action] should not be leaked outside [action] lambda
+ * Otherwise, some threading problems may arise,
+ */
+@OptIn(InternalForInline::class)
+inline fun <R> KtDeclaration.withFirDeclaration(
+    resolveState: FirModuleResolveState,
+    resolveType: ResolveType = ResolveType.NoResolve,
+    action: (FirDeclaration) -> R
+): R {
+    val firDeclaration = resolveState.findSourceFirDeclaration(this)
+    firDeclaration.resolvedFirToType(resolveType, resolveState)
+    return action(firDeclaration)
 }
 
 /**

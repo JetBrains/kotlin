@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignation
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.RawFirNonLocalDeclarationBuilder
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.*
@@ -68,7 +69,7 @@ abstract class AbstractPartialRawFirBuilderTestCase : KtParsingTestCase(
                 is FirSimpleFunction, is FirProperty -> {
                     if (element.psi == elementToBuild) {
                         val originalDeclaration = element as FirDeclaration
-                        resultDesignation = FirDeclarationDesignation(path, originalDeclaration, false)
+                        resultDesignation = FirDeclarationDesignation(path, originalDeclaration)
                     } else {
                         element.acceptChildren(this)
                     }

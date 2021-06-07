@@ -1,0 +1,458 @@
+RAW_FIR:
+FILE: superTypesLoop.kt
+    public? open class resolveMe : C {
+        public? [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+            super<C>()
+        }
+
+    }
+    public? open class A : B {
+        public? [ContainingClassKey=A] constructor(): R|A| {
+            super<B>()
+        }
+
+    }
+    public? open class B : C {
+        public? [ContainingClassKey=B] constructor(): R|B| {
+            super<C>()
+        }
+
+    }
+    public? open class C : A {
+        public? [ContainingClassKey=C] constructor(): R|C| {
+            super<A>()
+        }
+
+    }
+
+IMPORTS:
+FILE: superTypesLoop.kt
+    public? open class resolveMe : C {
+        public? [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+            super<C>()
+        }
+
+    }
+    public? open class A : B {
+        public? [ContainingClassKey=A] constructor(): R|A| {
+            super<B>()
+        }
+
+    }
+    public? open class B : C {
+        public? [ContainingClassKey=B] constructor(): R|B| {
+            super<C>()
+        }
+
+    }
+    public? open class C : A {
+        public? [ContainingClassKey=C] constructor(): R|C| {
+            super<A>()
+        }
+
+    }
+
+SUPER_TYPES:
+FILE: superTypesLoop.kt
+    public? open [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class resolveMe : R|C| {
+        public? [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+            super<C>()
+        }
+
+    }
+    public? open class A : B {
+        public? [ContainingClassKey=A] constructor(): R|A| {
+            super<B>()
+        }
+
+    }
+    public? open class B : C {
+        public? [ContainingClassKey=B] constructor(): R|B| {
+            super<C>()
+        }
+
+    }
+    public? open class C : A {
+        public? [ContainingClassKey=C] constructor(): R|C| {
+            super<A>()
+        }
+
+    }
+
+TYPES:
+FILE: superTypesLoop.kt
+    public? open [ResolvePhaseWithForAllDeclarationsKey=TYPES] class resolveMe : R|C| {
+        public? [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+            super<R|C|>()
+        }
+
+    }
+    public? open class A : B {
+        public? [ContainingClassKey=A] constructor(): R|A| {
+            super<B>()
+        }
+
+    }
+    public? open class B : C {
+        public? [ContainingClassKey=B] constructor(): R|B| {
+            super<C>()
+        }
+
+    }
+    public? open [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+        public? [ContainingClassKey=C] constructor(): R|C| {
+            super<A>()
+        }
+
+    }
+
+STATUS:
+FILE: superTypesLoop.kt
+    public open [ResolvePhaseWithForAllDeclarationsKey=STATUS] class resolveMe : R|C| {
+        public [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+            super<R|C|>()
+        }
+
+    }
+    public? open class A : B {
+        public? [ContainingClassKey=A] constructor(): R|A| {
+            super<B>()
+        }
+
+    }
+    public? open class B : C {
+        public? [ContainingClassKey=B] constructor(): R|B| {
+            super<C>()
+        }
+
+    }
+    public open [ResolvePhaseWithForAllDeclarationsKey=TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+        public [ContainingClassKey=C] constructor(): R|C| {
+            super<R|A|>()
+        }
+
+    }
+
+CONTRACTS:
+FILE: superTypesLoop.kt
+    public open [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] class resolveMe : R|C| {
+        public [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+            super<R|C|>()
+        }
+
+    }
+    public? open class A : B {
+        public? [ContainingClassKey=A] constructor(): R|A| {
+            super<B>()
+        }
+
+    }
+    public? open class B : C {
+        public? [ContainingClassKey=B] constructor(): R|B| {
+            super<C>()
+        }
+
+    }
+    public open [ResolvePhaseWithForAllDeclarationsKey=TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+        public [ContainingClassKey=C] constructor(): R|C| {
+            super<R|A|>()
+        }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: superTypesLoop.kt
+    public open [ResolvePhaseWithForAllDeclarationsKey=IMPLICIT_TYPES_BODY_RESOLVE] class resolveMe : R|C| {
+        public [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+            super<R|C|>()
+        }
+
+    }
+    public? open class A : B {
+        public? [ContainingClassKey=A] constructor(): R|A| {
+            super<B>()
+        }
+
+    }
+    public? open class B : C {
+        public? [ContainingClassKey=B] constructor(): R|B| {
+            super<C>()
+        }
+
+    }
+    public open [ResolvePhaseWithForAllDeclarationsKey=TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+        public [ContainingClassKey=C] constructor(): R|C| {
+            super<R|A|>()
+        }
+
+    }
+
+BODY_RESOLVE:
+FILE: superTypesLoop.kt
+    public open [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] class resolveMe : R|C| {
+        public [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+            super<R|C|>()
+        }
+
+    }
+    public? open class A : B {
+        public? [ContainingClassKey=A] constructor(): R|A| {
+            super<B>()
+        }
+
+    }
+    public? open class B : C {
+        public? [ContainingClassKey=B] constructor(): R|B| {
+            super<C>()
+        }
+
+    }
+    public open [ResolvePhaseWithForAllDeclarationsKey=TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+        public [ContainingClassKey=C] constructor(): R|C| {
+            super<R|A|>()
+        }
+
+    }
+
+NoResolve:
+FILE: superTypesLoop.kt
+    public? open class resolveMe : C {
+        public? [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+            super<C>()
+        }
+
+    }
+    public? open class A : B {
+        public? [ContainingClassKey=A] constructor(): R|A| {
+            super<B>()
+        }
+
+    }
+    public? open class B : C {
+        public? [ContainingClassKey=B] constructor(): R|B| {
+            super<C>()
+        }
+
+    }
+    public? open class C : A {
+        public? [ContainingClassKey=C] constructor(): R|C| {
+            super<A>()
+        }
+
+    }
+
+BodyResolveWithChildren:
+FILE: superTypesLoop.kt
+    public open [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] class resolveMe : R|C| {
+        public [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+            super<R|C|>()
+        }
+
+    }
+    public? open class A : B {
+        public? [ContainingClassKey=A] constructor(): R|A| {
+            super<B>()
+        }
+
+    }
+    public? open class B : C {
+        public? [ContainingClassKey=B] constructor(): R|B| {
+            super<C>()
+        }
+
+    }
+    public open [ResolvePhaseWithForAllDeclarationsKey=TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+        public [ContainingClassKey=C] constructor(): R|C| {
+            super<R|A|>()
+        }
+
+    }
+
+AnnotationType:
+FILE: superTypesLoop.kt
+    public? open [ResolvePhaseWithForAllDeclarationsKey=TYPES] class resolveMe : R|C| {
+        public? [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+            super<R|C|>()
+        }
+
+    }
+    public? open class A : B {
+        public? [ContainingClassKey=A] constructor(): R|A| {
+            super<B>()
+        }
+
+    }
+    public? open class B : C {
+        public? [ContainingClassKey=B] constructor(): R|B| {
+            super<C>()
+        }
+
+    }
+    public? open [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+        public? [ContainingClassKey=C] constructor(): R|C| {
+            super<A>()
+        }
+
+    }
+
+AnnotationsArguments:
+FILE: superTypesLoop.kt
+    public open [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] class resolveMe : R|C| {
+        public [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+            super<R|C|>()
+        }
+
+    }
+    public? open class A : B {
+        public? [ContainingClassKey=A] constructor(): R|A| {
+            super<B>()
+        }
+
+    }
+    public? open class B : C {
+        public? [ContainingClassKey=B] constructor(): R|B| {
+            super<C>()
+        }
+
+    }
+    public open [ResolvePhaseWithForAllDeclarationsKey=TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+        public [ContainingClassKey=C] constructor(): R|C| {
+            super<R|A|>()
+        }
+
+    }
+
+ClassSuperTypes:
+FILE: superTypesLoop.kt
+    public? open [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class resolveMe : R|C| {
+        public? [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+            super<C>()
+        }
+
+    }
+    public? open class A : B {
+        public? [ContainingClassKey=A] constructor(): R|A| {
+            super<B>()
+        }
+
+    }
+    public? open class B : C {
+        public? [ContainingClassKey=B] constructor(): R|B| {
+            super<C>()
+        }
+
+    }
+    public? open class C : A {
+        public? [ContainingClassKey=C] constructor(): R|C| {
+            super<A>()
+        }
+
+    }
+
+DeclarationStatus:
+FILE: superTypesLoop.kt
+    public open [ResolvePhaseWithForAllDeclarationsKey=STATUS] class resolveMe : R|C| {
+        public [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+            super<R|C|>()
+        }
+
+    }
+    public? open class A : B {
+        public? [ContainingClassKey=A] constructor(): R|A| {
+            super<B>()
+        }
+
+    }
+    public? open class B : C {
+        public? [ContainingClassKey=B] constructor(): R|B| {
+            super<C>()
+        }
+
+    }
+    public open [ResolvePhaseWithForAllDeclarationsKey=TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+        public [ContainingClassKey=C] constructor(): R|C| {
+            super<R|A|>()
+        }
+
+    }
+
+ValueParametersTypes:
+FILE: superTypesLoop.kt
+    public? open [ResolvePhaseWithForAllDeclarationsKey=TYPES] class resolveMe : R|C| {
+        public? [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+            super<R|C|>()
+        }
+
+    }
+    public? open class A : B {
+        public? [ContainingClassKey=A] constructor(): R|A| {
+            super<B>()
+        }
+
+    }
+    public? open class B : C {
+        public? [ContainingClassKey=B] constructor(): R|B| {
+            super<C>()
+        }
+
+    }
+    public? open [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+        public? [ContainingClassKey=C] constructor(): R|C| {
+            super<A>()
+        }
+
+    }
+
+TypeParametersTypes:
+FILE: superTypesLoop.kt
+    public? open [ResolvePhaseWithForAllDeclarationsKey=TYPES] class resolveMe : R|C| {
+        public? [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+            super<R|C|>()
+        }
+
+    }
+    public? open class A : B {
+        public? [ContainingClassKey=A] constructor(): R|A| {
+            super<B>()
+        }
+
+    }
+    public? open class B : C {
+        public? [ContainingClassKey=B] constructor(): R|B| {
+            super<C>()
+        }
+
+    }
+    public? open [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+        public? [ContainingClassKey=C] constructor(): R|C| {
+            super<A>()
+        }
+
+    }
+
+FILE RAW TO BODY:
+FILE: superTypesLoop.kt
+    public open [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] class resolveMe : R|C| {
+        public [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+            super<R|C|>()
+        }
+
+    }
+    public open [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+        public [ContainingClassKey=A] constructor(): R|A| {
+            super<R|B|>()
+        }
+
+    }
+    public open [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] class B : R|C| {
+        public [ContainingClassKey=B] constructor(): R|B| {
+            super<R|C|>()
+        }
+
+    }
+    public open [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] class C : R|A| {
+        public [ContainingClassKey=C] constructor(): R|C| {
+            super<R|A|>()
+        }
+
+    }

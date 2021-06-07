@@ -1,0 +1,113 @@
+RAW_FIR:
+FILE: annotations.kt
+    @FILE:Suppress(String(1))
+    @Suppress(String(2)) public? final? fun resolveMe(): R|kotlin/Unit| {
+    }
+
+IMPORTS:
+FILE: annotations.kt
+    @FILE:Suppress(String(1))
+    @Suppress(String(2)) public? final? fun resolveMe(): R|kotlin/Unit| {
+    }
+
+SUPER_TYPES:
+FILE: annotations.kt
+    @FILE:Suppress(String(1))
+    @Suppress(String(2)) public? final? fun resolveMe(): R|kotlin/Unit| {
+    }
+
+TYPES:
+FILE: annotations.kt
+    @FILE:Suppress(String(1))
+    @R|kotlin/Suppress|(String(2)) public? final? [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun resolveMe(): R|kotlin/Unit| {
+    }
+
+STATUS:
+FILE: annotations.kt
+    @FILE:Suppress(String(1))
+    @R|kotlin/Suppress|(String(2)) public final [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun resolveMe(): R|kotlin/Unit| {
+    }
+
+CONTRACTS:
+FILE: annotations.kt
+    @FILE:Suppress(String(1))
+    @R|kotlin/Suppress|(String(2)) public final [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun resolveMe(): R|kotlin/Unit| {
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: annotations.kt
+    @FILE:Suppress(String(1))
+    @R|kotlin/Suppress|(String(2)) public final [ResolvePhaseWithForAllDeclarationsKey=IMPLICIT_TYPES_BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+    }
+
+BODY_RESOLVE:
+FILE: annotations.kt
+    @FILE:Suppress(String(1))
+    @R|kotlin/Suppress|(vararg(String(2))) public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+    }
+
+NoResolve:
+FILE: annotations.kt
+    @FILE:Suppress(String(1))
+    @Suppress(String(2)) public? final? fun resolveMe(): R|kotlin/Unit| {
+    }
+
+BodyResolveWithChildren:
+FILE: annotations.kt
+    @FILE:Suppress(String(1))
+    @R|kotlin/Suppress|(vararg(String(2))) public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+    }
+
+CallableBodyResolve:
+FILE: annotations.kt
+    @FILE:Suppress(String(1))
+    @R|kotlin/Suppress|(vararg(String(2))) public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+    }
+
+CallableReturnType:
+FILE: annotations.kt
+    @FILE:Suppress(String(1))
+    @Suppress(String(2)) public? final? fun resolveMe(): R|kotlin/Unit| {
+    }
+
+AnnotationType:
+FILE: annotations.kt
+    @FILE:Suppress(String(1))
+    @R|kotlin/Suppress|(String(2)) public? final? [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun resolveMe(): R|kotlin/Unit| {
+    }
+
+AnnotationsArguments:
+FILE: annotations.kt
+    @FILE:Suppress(String(1))
+    @R|kotlin/Suppress|(vararg(String(2))) public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+    }
+
+CallableContracts:
+FILE: annotations.kt
+    @FILE:Suppress(String(1))
+    @R|kotlin/Suppress|(String(2)) public final [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun resolveMe(): R|kotlin/Unit| {
+    }
+
+DeclarationStatus:
+FILE: annotations.kt
+    @FILE:Suppress(String(1))
+    @R|kotlin/Suppress|(String(2)) public final [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun resolveMe(): R|kotlin/Unit| {
+    }
+
+ValueParametersTypes:
+FILE: annotations.kt
+    @FILE:Suppress(String(1))
+    @R|kotlin/Suppress|(String(2)) public? final? [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun resolveMe(): R|kotlin/Unit| {
+    }
+
+TypeParametersTypes:
+FILE: annotations.kt
+    @FILE:Suppress(String(1))
+    @R|kotlin/Suppress|(String(2)) public? final? [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun resolveMe(): R|kotlin/Unit| {
+    }
+
+FILE RAW TO BODY:
+FILE: annotations.kt
+    @FILE:R|kotlin/Suppress|(vararg(String(1)))
+    @R|kotlin/Suppress|(vararg(String(2))) public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+    }
