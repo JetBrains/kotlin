@@ -441,7 +441,7 @@ public fun <T> List<T>.binarySearch(fromIndex: Int = 0, toIndex: Int = size, com
  * Structural changes in the base list make the behavior of the view undefined.
  */
 public fun <T> List<T>.removePrefix(prefix: List<T>): List<T> {
-    return if (this.startWith(prefix)) {
+    return if (this.startsWith(prefix)) {
         this.subList(prefix.size, this.size)
     } else {
         this
@@ -453,7 +453,7 @@ public fun <T> List<T>.removePrefix(prefix: List<T>): List<T> {
  *
  * For empty [prefix] returns true
  */
-public fun <T> List<T>.startWith(prefix: List<T>): Boolean {
+public fun <T> List<T>.startsWith(prefix: List<T>): Boolean {
     if (prefix.isEmpty()) {
         return true
     }

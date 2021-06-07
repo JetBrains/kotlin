@@ -8,27 +8,27 @@ package test.collections
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class StartWithListTest {
+class StartsWithListTest {
 
     private val data = listOf(1, 2, 8, 9)
 
     @Test
-    fun startWithSingle() {
-        assertEquals(true, data.startWith(listOf(1)))
+    fun startsWithSingle() {
+        assertEquals(true, data.startsWith(listOf(1)))
     }
 
     @Test
-    fun startWithPositive() {
-        assertEquals(true, data.startWith(listOf(1)))
+    fun startsWithPositive() {
+        assertEquals(true, data.startsWith(listOf(1)))
     }
 
     @Test
-    fun startWithEmpty() {
-        assertEquals(true, data.startWith(emptyList()))
+    fun startsWithEmpty() {
+        assertEquals(true, data.startsWith(emptyList()))
     }
 
     @Test
-    fun startWithNegative() {
-        assertEquals(false, data.startWith(listOf(2, 8)))
+    fun startsWithNegative() {
+        assertEquals(false, data.startsWith(listOf(2, 8)))
     }
 }
