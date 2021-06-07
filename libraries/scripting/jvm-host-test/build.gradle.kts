@@ -13,9 +13,6 @@ val embeddableTestRuntime by configurations.creating {
 dependencies {
     allTestsRuntime(commonDep("junit"))
     allTestsRuntime(intellijCoreDep()) { includeJars("intellij-core") }
-    Platform[193].orLower {
-        allTestsRuntime(intellijDep()) { includeJars("openapi") }
-    }
     allTestsRuntime(intellijDep()) { includeJars("idea", "idea_rt", "log4j", "jna") }
     testCompile(project(":kotlin-scripting-jvm-host-unshaded"))
     testCompile(projectTests(":compiler:tests-common"))

@@ -15,10 +15,6 @@ repositories {
 }
 
 dependencies {
-    Platform[193].orLower {
-        testCompileOnly(intellijDep()) { includeJars("openapi", rootProject = rootProject) }
-    }
-
     testCompileOnly(intellijDep()) {
         includeJars("extensions", "idea_rt", "util", "asm-all", "platform-util-ex", "jna", rootProject = rootProject)
     }

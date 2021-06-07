@@ -174,10 +174,7 @@ dependencies {
     if (Ide.IJ()) {
         testCompileOnly(intellijPluginDep("maven"))
         testRuntime(intellijPluginDep("maven"))
-
-        if (Ide.IJ201.orHigher()) {
-            testRuntime(intellijPluginDep("repository-search"))
-        }
+        testRuntime(intellijPluginDep("repository-search"))
     }
 
     testRuntime(intellijPluginDep("junit"))
@@ -192,14 +189,11 @@ dependencies {
         testRuntime(project(":idea:idea-fir"))
     }
 
-    if (Ide.AS36.orHigher()) {
+    if (Ide.AS()) {
         testRuntime(intellijPluginDep("android-layoutlib"))
         testRuntime(intellijPluginDep("git4idea"))
         testRuntime(intellijPluginDep("google-cloud-tools-core-as"))
         testRuntime(intellijPluginDep("google-login-as"))
-    }
-
-    if (Ide.AS41.orHigher()) {
         testRuntime(intellijPluginDep("platform-images"))
     }
 }

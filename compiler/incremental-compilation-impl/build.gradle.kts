@@ -26,12 +26,7 @@ dependencies {
     testCompile(intellijDep()) { includeJars("log4j", "jdom") }
     testRuntime(project(":kotlin-reflect"))
     testRuntime(project(":core:descriptors.runtime"))
-
-    if (Platform.P192.orHigher()) {
-        testRuntime(intellijDep()) { includeJars("lz4-java", rootProject = rootProject) }
-    } else {
-        testRuntime(intellijDep()) { includeJars("lz4-1.3.0") }
-    }
+    testRuntime(intellijDep()) { includeJars("lz4-java", rootProject = rootProject) }
 }
 
 sourceSets {

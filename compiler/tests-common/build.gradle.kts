@@ -57,17 +57,12 @@ dependencies {
     testCompileOnly(project(":kotlin-reflect-api"))
     testCompileOnly(toolsJar())
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    Platform[193].orLower {
-        testCompile(intellijDep()) { includeJars("openapi", "picocontainer", rootProject = rootProject) }
-    }
-    Platform[201].orHigher {
-        testCompile(intellijDep()) {
-            includeJars(
-                "testFramework",
-                "testFramework.core",
-                rootProject = rootProject
-            )
-        }
+    testCompile(intellijDep()) {
+        includeJars(
+            "testFramework",
+            "testFramework.core",
+            rootProject = rootProject
+        )
     }
     Platform[202] {
         testCompile(intellijDep()) { includeJars("intellij-deps-fastutil-8.3.1-1") }

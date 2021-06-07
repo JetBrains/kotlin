@@ -65,19 +65,13 @@ dependencies {
 
     Ide.IJ {
         testRuntime(intellijPluginDep("maven"))
-
-        if (Ide.IJ201.orHigher()) {
-            testRuntime(intellijPluginDep("repository-search"))
-        }
+        testRuntime(intellijPluginDep("repository-search"))
     }
 
     testRuntime(intellijPluginDep("testng"))
 
-    if (Ide.AS36.orHigher()) {
+    Ide.AS {
         testRuntime(intellijPluginDep("android-layoutlib"))
-    }
-
-    if (Ide.AS41.orHigher()) {
         testRuntime(intellijPluginDep("platform-images"))
     }
 }

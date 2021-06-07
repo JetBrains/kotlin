@@ -16,9 +16,6 @@ dependencies {
     testCompile(project(":js:js.engines"))
     testCompile(intellijCoreDep()) { includeJars("intellij-core") }
     testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    Platform[193].orLower {
-        testRuntimeOnly(intellijDep()) { includeJars("openapi", "picocontainer", rootProject = rootProject) }
-    }
     testRuntimeOnly(intellijDep()) {
         includeJars("idea", "idea_rt", "log4j", "guava", "jdom", rootProject = rootProject)
     }

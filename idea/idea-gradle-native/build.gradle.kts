@@ -28,9 +28,7 @@ dependencies {
     compileOnly(intellijDep())
 
     testCompile(intellijPluginDep("gradle"))
-    Platform[193].orHigher {
-        testCompile(intellijPluginDep("gradle-java"))
-    }
+    testCompile(intellijPluginDep("gradle-java"))
     testCompileOnly(intellijPluginDep("Groovy"))
     testCompileOnly(intellijDep())
 
@@ -52,9 +50,7 @@ dependencies {
     testRuntime(project(":kotlinx-serialization-ide-plugin"))
     testRuntime(project(":plugins:lombok:lombok-ide-plugin"))
     // TODO: the order of the plugins matters here, consider avoiding order-dependency
-    Platform[192].orHigher {
-        testRuntime(intellijPluginDep("java"))
-    }
+    testRuntime(intellijPluginDep("java"))
     testRuntime(intellijPluginDep("junit"))
     testRuntime(intellijPluginDep("testng"))
     testRuntime(intellijPluginDep("properties"))
@@ -64,19 +60,13 @@ dependencies {
     testRuntime(intellijPluginDep("coverage"))
     if (Ide.IJ()) {
         testRuntime(intellijPluginDep("maven"))
-
-        if (Ide.IJ201.orHigher()) {
-            testRuntime(intellijPluginDep("repository-search"))
-        }
+        testRuntime(intellijPluginDep("repository-search"))
     }
     testRuntime(intellijPluginDep("android"))
     testRuntime(intellijPluginDep("smali"))
 
-    if (Ide.AS36.orHigher()) {
+    if (Ide.AS()) {
         testRuntime(intellijPluginDep("android-layoutlib"))
-    }
-
-    if (Ide.AS41.orHigher()) {
         testRuntime(intellijPluginDep("platform-images"))
     }
 }
@@ -95,7 +85,7 @@ projectTest(parallel = true) {
 
 configureFormInstrumentation()
 
-if (Ide.AS41.orHigher()) {
+if (Ide.AS()) {
     getOrCreateTask<Test>("test") {
         setExcludes(listOf("**"))
     }

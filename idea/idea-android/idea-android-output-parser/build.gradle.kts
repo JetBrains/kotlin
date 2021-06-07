@@ -13,13 +13,7 @@ dependencies {
 }
 
 sourceSets {
-    if (Ide.IJ() && Platform[183].orLower()) {
-        "main" {
-            projectDefault()
-        }
-    } else {
-        "main" {}
-    }
+    "main" {}
     "test" {}
 }
 

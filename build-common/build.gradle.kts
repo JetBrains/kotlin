@@ -23,9 +23,6 @@ dependencies {
     testCompile(commonDep("junit:junit"))
     testCompile(protobufFull())
     testCompile(kotlinStdlib())
-    Platform[193].orLower {
-        testCompileOnly(intellijDep()) { includeJars("openapi", rootProject = rootProject) }
-    }
     testRuntime(project(":kotlin-reflect"))
 }
 

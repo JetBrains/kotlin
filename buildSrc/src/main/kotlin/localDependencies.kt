@@ -181,9 +181,7 @@ fun Project.runIdeTask(name: String, ideaPluginDir: File, ideaSandboxDir: File, 
             "-Dplugin.path=${ideaPluginDir.absolutePath}"
         )
 
-        if (Platform[201].orHigher()) {
-            jvmArgs("-Didea.platform.prefix=Idea")
-        }
+        jvmArgs("-Didea.platform.prefix=Idea")
 
         if (rootProject.findProperty("versions.androidStudioRelease") != null) {
             jvmArgs("-Didea.platform.prefix=AndroidStudio")

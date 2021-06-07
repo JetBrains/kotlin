@@ -29,10 +29,6 @@ dependencies {
 
     testCompileOnly(intellijDep())
 
-    if (Platform.P191.orLower()) {
-        compileOnly(intellijDep()) { includeJars("java-api", "java-impl") }
-    }
-
     compileOnly(intellijDep()) { includeJars("platform-impl") }
     compileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl") }
     testCompileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl") }
