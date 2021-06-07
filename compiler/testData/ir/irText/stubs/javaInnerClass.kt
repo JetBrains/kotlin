@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // !DUMP_DEPENDENCIES
 // FILE: J.java
 

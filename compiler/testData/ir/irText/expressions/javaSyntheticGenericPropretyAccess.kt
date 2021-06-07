@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // FILE: javaSyntheticGenericPropertyAccess.kt
 fun <F> test(j: J<F>) {
     j.foo

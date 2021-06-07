@@ -1,4 +1,5 @@
 // FIR_IDENTICAL
+// TARGET_BACKEND: JVM
 // FILE: enhancedNullability.kt
 // WITH_JDK
 fun use(s: String) {}

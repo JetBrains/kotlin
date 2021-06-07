@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // FILE: stringVsTConstrained.kt
 fun <T> useTConstrained(xs: Array<T>, fn: () -> T) = fn()
 

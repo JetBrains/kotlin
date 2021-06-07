@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // FIR_IDENTICAL
 // FILE: JavaAnn.java
 import java.lang.annotation.Retention;

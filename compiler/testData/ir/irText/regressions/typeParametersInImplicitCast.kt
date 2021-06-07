@@ -1,4 +1,5 @@
 // WITH_RUNTIME
+// TARGET_BACKEND: JVM
 // FILE: ListId.java
 import java.util.List;
 import org.jetbrains.annotations.NotNull;

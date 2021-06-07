@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // FILE: SomeJavaClass.java
 
 public class SomeJavaClass {

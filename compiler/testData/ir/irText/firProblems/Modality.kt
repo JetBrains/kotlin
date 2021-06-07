@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // FILE: Modality.java
 public interface Modality
 

@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // FULL_JDK
 
 import java.util.ArrayList

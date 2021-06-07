@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // FILE: propertyReferences.kt
 object Delegate {
     operator fun getValue(thisRef: Any?, kProp: Any) = 1

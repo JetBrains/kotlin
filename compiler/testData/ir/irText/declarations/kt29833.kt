@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // FILE: Definitions.kt
 // IR_FILE: kt29833.txt
 package interop

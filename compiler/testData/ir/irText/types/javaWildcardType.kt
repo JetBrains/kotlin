@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // FILE: javaWildcardType.kt
 interface K {
     fun kf1(): Collection<out CharSequence>

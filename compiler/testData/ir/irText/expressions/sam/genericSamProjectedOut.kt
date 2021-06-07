@@ -1,4 +1,5 @@
 // !LANGUAGE: -NewInference
+// TARGET_BACKEND: JVM
 // WITH_RUNTIME
 // FILE: genericSamProjectedOut.kt
 import example.SomeJavaClass

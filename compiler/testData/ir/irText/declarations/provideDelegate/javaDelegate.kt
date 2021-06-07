@@ -1,4 +1,5 @@
 // WITH_RUNTIME
+// TARGET_BACKEND: JVM
 // SKIP_KT_DUMP
 
 // FILE: box.kt

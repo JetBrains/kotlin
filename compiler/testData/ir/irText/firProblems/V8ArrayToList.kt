@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // FILE: Utils.java
 
 import java.util.*;

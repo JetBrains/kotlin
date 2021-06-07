@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // WITH_RUNTIME
 // FULL_JDK
 import java.io.Reader

@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // SKIP_KT_DUMP
 
 // FILE: kt45934.kt

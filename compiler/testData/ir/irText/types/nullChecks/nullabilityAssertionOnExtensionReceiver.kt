@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // FILE: nullabilityAssertionOnExtensionReceiver.kt
 
 fun String.extension() {}

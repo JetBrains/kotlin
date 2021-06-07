@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // FILE: typeParameterWithMultipleNotNullableBounds.kt
 fun <T> f(x: T): Int where T : CharSequence, T : Comparable<T> {
     return x.compareTo(x)

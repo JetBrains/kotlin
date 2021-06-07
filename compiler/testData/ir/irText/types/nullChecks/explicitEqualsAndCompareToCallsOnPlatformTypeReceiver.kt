@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // FILE: explicitEqualsAndCompareToCallsOnPlatformTypeReceiver.kt
 
 fun JavaClass.testPlatformEqualsPlatform() =

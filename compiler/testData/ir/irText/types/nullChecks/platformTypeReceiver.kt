@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // FILE: J.java
 public class J {
     public static Boolean BOOL_NULL = null;
