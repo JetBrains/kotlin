@@ -179,6 +179,21 @@ open class LinkNativeTest @Inject constructor(
     }
 }
 
+open class ReportWithPrefixes @Inject constructor(
+        @Input val testName: String,
+        @InputFile val inputReport: File,
+        @OutputFile val outputReport: File
+) : DefaultTask() {
+    @TaskAction
+    fun process() {
+        // TODO: Better to use proper XML parsing.
+        var contents = inputReport.readText()
+        contents = contents.replace("<testsuite name=\"", "<testsuite name=\"${testName}.")
+        contents = contents.replace("classname=\"", "classname=\"${testName}.")
+        outputReport.writeText(contents)
+    }
+}
+
 private fun createTestTask(
         project: Project,
         testName: String,
@@ -285,14 +300,9 @@ private fun createTestTask(
             workingDir.mkdirs()
         }
 
-        doLast {
-            // TODO: Better to use proper XML parsing.
-            var contents = xmlReport.readText()
-            contents = contents.replace("<testsuite name=\"", "<testsuite name=\"${testName}.")
-            contents = contents.replace("classname=\"", "classname=\"${testName}.")
-            val rewrittenReport = workingDir.resolve("report-with-prefixes.xml")
-            rewrittenReport.writeText(contents)
-        }
+        val reportWithPrefixes = workingDir.resolve("report-with-prefixes.xml")
+        val reportTask = project.tasks.register("${testName}Report", ReportWithPrefixes::class.java, testName, xmlReport, reportWithPrefixes)
+        finalizedBy(reportTask)
     }
 }
 
