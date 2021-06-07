@@ -12,9 +12,11 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
+import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 object FirImportsChecker : FirFileChecker() {
@@ -55,16 +57,15 @@ object FirImportsChecker : FirFileChecker() {
             val classFir = classId.resolveToClass(context) ?: return
             if (classFir.classKind.isSingleton) return
 
-            val illegalImport = classFir.declarations.any {
-                it is FirSimpleFunction && !it.isStatic && it.name == importedName ||
-                        it is FirProperty && it.name == importedName
+            val illegalImport = classFir.hasFunctionOrProperty(context, importedName) {
+                it is FirSimpleFunction && !it.isStatic || it is FirProperty
             }
             if (illegalImport) {
                 reporter.reportOn(import.source, FirErrors.CANNOT_BE_IMPORTED, importedName, context)
             }
         } else {
             val importedClassId = ClassId.topLevel(importedFqName)
-            if (context.session.symbolProvider.getClassLikeSymbolByFqName(importedClassId) != null) {
+            if (importedClassId.resolveToClass(context) != null) {
                 return
             }
             context.session.symbolProvider.getPackage(importedFqName)?.let {
@@ -99,7 +100,7 @@ object FirImportsChecker : FirFileChecker() {
         val classId = import.resolvedClassId
         val illegalRename = if (classId != null) {
             val classFir = classId.resolveToClass(context) ?: return
-            classFir.classKind.isSingleton && classFir.declarations.any { it is FirSimpleFunction && it.isOperator}
+            classFir.classKind.isSingleton && classFir.hasFunction(context, importedName) { it.isOperator }
         } else {
             context.session.symbolProvider.getTopLevelFunctionSymbols(import.packageFqName, importedName).any {
                 it.fir.isOperator
@@ -133,5 +134,38 @@ object FirImportsChecker : FirFileChecker() {
             is FirTypeAliasSymbol -> classSymbol.fir.followAllAlias(context.session) as? FirRegularClass
             else -> null
         }
+    }
+
+    private fun FirRegularClass.hasFunction(context: CheckerContext, name: Name, predicate: (FirSimpleFunction) -> Boolean): Boolean {
+        var result = false
+        context.session.declaredMemberScope(this).processFunctionsByName(name) { sym ->
+            if (!result) {
+                result = predicate(sym.fir)
+            }
+        }
+        return result
+    }
+
+    private fun FirRegularClass.hasFunctionOrProperty(
+        context: CheckerContext,
+        name: Name,
+        predicate: (FirDeclaration) -> Boolean
+    ): Boolean {
+        var result = false
+        val scope = context.session.declaredMemberScope(this)
+        scope.processFunctionsByName(name) { sym ->
+            if (!result) {
+                result = predicate(sym.fir)
+            }
+        }
+        if (result) return true
+
+        scope.processPropertiesByName(name) { sym ->
+            if (!result) {
+                result = predicate(sym.fir)
+            }
+        }
+
+        return result
     }
 }
