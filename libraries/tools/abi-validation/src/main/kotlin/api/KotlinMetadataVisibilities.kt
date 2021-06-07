@@ -121,16 +121,33 @@ fun KotlinClassMetadata.toClassVisibility(classNode: ClassNode): ClassVisibility
 
 fun ClassNode.toClassVisibility() = kotlinMetadata?.toClassVisibility(this)
 
-fun Sequence<ClassNode>.readKotlinVisibilities(): Map<String, ClassVisibility> =
-    mapNotNull { it.toClassVisibility() }
-        .associateBy { it.name }
-        .apply {
-            values.asSequence().filter { it.isCompanion }.forEach {
-                val containingClassName = it.name.substringBeforeLast('$')
-                getValue(containingClassName).companionVisibilities = it
-            }
-
-            values.asSequence().filter { it.facadeClassName != null }.forEach {
-                getValue(it.facadeClassName!!).partVisibilities.add(it)
+fun Map<String, ClassNode>.readKotlinVisibilities(visibilityFilter: (String) -> Boolean = { true }): Map<String, ClassVisibility> =
+    /*
+     * Optimized sequence of:
+     * 1) Map values to visibility
+     * 2) Filter keys by visibilityFilter
+     * 3) Post-process each value and set facade/companion
+     */
+    entries
+        .mapNotNull { (name, classNode) ->
+            if (!visibilityFilter(name)) return@mapNotNull null
+            val visibility = classNode.toClassVisibility() ?: return@mapNotNull null
+            name to visibility
+        }.toMap().apply {
+            values.forEach {
+                updateCompanionInfo(it)
+                updateFacadeInfo(it)
             }
         }
+
+private fun Map<String, ClassVisibility>.updateFacadeInfo(it: ClassVisibility) {
+    if (it.facadeClassName == null) return
+    getValue(it.facadeClassName).partVisibilities.add(it)
+}
+
+private fun Map<String, ClassVisibility>.updateCompanionInfo(it: ClassVisibility) {
+    if (!it.isCompanion) return
+    val containingClassName = it.name.substringBeforeLast('$')
+    getValue(containingClassName).companionVisibilities = it
+}
+
