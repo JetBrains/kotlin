@@ -381,7 +381,8 @@ open class IrFileSerializer(
         val classifier: IrClassifierSymbol?,
         val hasQuestionMark: Boolean?,
         val arguments: List<IrTypeArgumentKey>?,
-        val annotations: List<IrConstructorCall>
+        val annotations: List<IrConstructorCall>,
+        val abbreviation: IrTypeAbbreviation?
     )
 
     data class IrTypeArgumentKey(
@@ -401,7 +402,8 @@ open class IrFileSerializer(
             classifier = this.classifierOrNull,
             hasQuestionMark = (this as? IrSimpleType)?.hasQuestionMark,
             arguments = (this as? IrSimpleType)?.arguments?.map { it.toIrTypeArgumentKey },
-            annotations = this.annotations
+            annotations = this.annotations,
+            abbreviation = (this as? IrSimpleType)?.abbreviation
         )
 
     private val IrTypeArgument.toIrTypeArgumentKey: IrTypeArgumentKey
