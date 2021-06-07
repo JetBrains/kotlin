@@ -967,11 +967,20 @@ abstract class AbstractComposeLowering(
         type: IrType = context.irBuiltIns.unitType,
         condition: IrExpression,
         thenPart: IrExpression,
-        elsePart: IrExpression
+        elsePart: IrExpression,
+        startOffset: Int = UNDEFINED_OFFSET,
+        endOffset: Int = UNDEFINED_OFFSET
     ) =
-        IrIfThenElseImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, IrStatementOrigin.IF).apply {
-            branches.add(IrBranchImpl(startOffset, endOffset, condition, thenPart))
-            branches.add(irElseBranch(elsePart))
+        IrIfThenElseImpl(startOffset, endOffset, type, IrStatementOrigin.IF).apply {
+            branches.add(
+                IrBranchImpl(
+                    startOffset,
+                    endOffset,
+                    condition,
+                    thenPart
+                )
+            )
+            branches.add(irElseBranch(elsePart, startOffset, endOffset))
         }
 
     protected fun irWhen(
@@ -992,8 +1001,11 @@ abstract class AbstractComposeLowering(
         return IrBranchImpl(condition, result)
     }
 
-    protected fun irElseBranch(expression: IrExpression) =
-        IrElseBranchImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irConst(true), expression)
+    protected fun irElseBranch(
+        expression: IrExpression,
+        startOffset: Int = UNDEFINED_OFFSET,
+        endOffset: Int = UNDEFINED_OFFSET
+    ) = IrElseBranchImpl(startOffset, endOffset, irConst(true), expression)
 
     protected fun irBlock(
         type: IrType = context.irBuiltIns.unitType,
