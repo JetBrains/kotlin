@@ -70,7 +70,7 @@ val DEFAULT_GRADLE_PLUGIN_REPOSITORY = RepositoryDescription(
 fun devRepository(version: String) = RepositoryDescription(
     "teamcity.kotlin.dev",
     "Teamcity Repository of Kotlin Development Builds",
-    "https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_KotlinPublic_Compiler),number:$version,branch:(default:any)/artifacts/content/maven",
+    "https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_KotlinPublic_Aggregate),number:$version,branch:(default:any)/artifacts/content/maven",
     null,
     isSnapshot = false
 )

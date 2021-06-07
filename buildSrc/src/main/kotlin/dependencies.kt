@@ -36,7 +36,7 @@ val Project.internalBootstrapRepo: String? get() =
     when {
         bootstrapKotlinRepo?.startsWith("https://buildserver.labs.intellij.net") == true ->
             bootstrapKotlinRepo!!.replace("artifacts/content/maven", "artifacts/content/internal/repo")
-        else -> "https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_KotlinPublic_Compiler),number:$bootstrapKotlinVersion," +
+        else -> "https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_KotlinPublic_Aggregate),number:$bootstrapKotlinVersion," +
                 "branch:default:any/artifacts/content/internal/repo/"
     }
 

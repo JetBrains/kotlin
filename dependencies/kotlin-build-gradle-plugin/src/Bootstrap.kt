@@ -19,7 +19,7 @@ var Project.bootstrapKotlinRepo: String?
 
 @Deprecated("Obsolete, use internalBootstrapRepo instead.")
 val Project.internalKotlinRepo: String?
-    get() = "https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_KotlinPublic_Compiler),number:$bootstrapKotlinVersion," +
+    get() = "https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_KotlinPublic_Aggregate),number:$bootstrapKotlinVersion," +
             "branch:default:any/artifacts/content/internal/repo"
 
 fun Project.kotlinBootstrapFrom(defaultSource: BootstrapOption) {
