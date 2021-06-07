@@ -125,6 +125,7 @@ message IrConstructorCall {
   required int64 symbol = 1;
   required int32 constructor_type_arguments_count = 2;
   required MemberAccessCommon member_access = 3;
+  optional int32 origin_name = 4;
 }
 
 message IrFunctionReference {

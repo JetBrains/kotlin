@@ -245,7 +245,8 @@ class IrBodyDeserializer(
             start, end, type,
             symbol, typeArgumentsCount = proto.memberAccess.typeArgumentCount,
             constructorTypeArgumentsCount = proto.constructorTypeArgumentsCount,
-            valueArgumentsCount = proto.memberAccess.valueArgumentCount
+            valueArgumentsCount = proto.memberAccess.valueArgumentCount,
+            origin = if (proto.hasOriginName()) deserializeIrStatementOrigin(proto.originName) else null
         ).also {
             deserializeMemberAccessCommon(it, proto.memberAccess)
         }

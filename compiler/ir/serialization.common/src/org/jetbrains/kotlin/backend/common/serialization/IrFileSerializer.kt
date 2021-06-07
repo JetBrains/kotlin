@@ -526,6 +526,9 @@ open class IrFileSerializer(
             symbol = serializeIrSymbol(call.symbol)
             constructorTypeArgumentsCount = call.constructorTypeArgumentsCount
             memberAccess = serializeMemberAccessCommon(call)
+            call.origin?.let {
+                originName = serializeIrStatementOrigin(it)
+            }
         }.build()
 
     private fun serializeFunctionExpression(functionExpression: IrFunctionExpression): ProtoFunctionExpression =
