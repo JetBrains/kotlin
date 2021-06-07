@@ -942,7 +942,9 @@ class ComposableFunctionBodyTransformer(
                     type = context.irBuiltIns.unitType,
                     statements = transformed.statements
                 ),
-                elsePart = irSkipToGroupEnd()
+                elsePart = irSkipToGroupEnd(body.startOffset, body.endOffset),
+                startOffset = body.startOffset,
+                endOffset = body.endOffset
             )
             scope.realizeCoalescableGroup()
             declaration.body = IrBlockBodyImpl(
@@ -1090,7 +1092,9 @@ class ComposableFunctionBodyTransformer(
                 thenPart = irBlock(
                     statements = bodyPreamble.statements + transformed.statements
                 ),
-                elsePart = irSkipToGroupEnd()
+                elsePart = irSkipToGroupEnd(body.startOffset, body.endOffset),
+                startOffset = body.startOffset,
+                endOffset = body.endOffset
             )
         } else irComposite(
             statements = bodyPreamble.statements + transformed.statements
@@ -1727,10 +1731,13 @@ class ComposableFunctionBodyTransformer(
         currentScope.nearestComposer
             ?: error("Not in a composable function \n${printScopeStack()}")
 
-    private fun irCurrentComposer(): IrExpression {
+    private fun irCurrentComposer(
+        startOffset: Int = UNDEFINED_OFFSET,
+        endOffset: Int = UNDEFINED_OFFSET
+    ): IrExpression {
         return IrGetValueImpl(
-            UNDEFINED_OFFSET,
-            UNDEFINED_OFFSET,
+            startOffset,
+            endOffset,
             nearestComposer().symbol
         )
     }
@@ -1903,8 +1910,13 @@ class ComposableFunctionBodyTransformer(
         }
     }
 
-    private fun irSkipToGroupEnd(): IrExpression {
-        return irMethodCall(irCurrentComposer(), skipToGroupEndFunction)
+    private fun irSkipToGroupEnd(startOffset: Int, endOffset: Int): IrExpression {
+        return irMethodCall(
+            irCurrentComposer(startOffset, endOffset),
+            skipToGroupEndFunction,
+            startOffset,
+            endOffset
+        )
     }
 
     private fun irSkipCurrentGroup(): IrExpression {
