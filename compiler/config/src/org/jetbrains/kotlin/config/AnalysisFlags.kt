@@ -53,4 +53,7 @@ object AnalysisFlags {
 
     @JvmStatic
     val extendedCompilerChecks by AnalysisFlag.Delegates.Boolean
+
+    @JvmStatic
+    val allowKotlinPackage by AnalysisFlag.Delegates.Boolean
 }

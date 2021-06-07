@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.SAM_CONVERSIONS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.STRING_CONCAT
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.DISABLE_CALL_ASSERTIONS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.DISABLE_PARAM_ASSERTIONS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.EMIT_JVM_TYPE_ANNOTATIONS
@@ -243,7 +244,7 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
             configuration.put(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING, true)
         }
 
-        if (JvmEnvironmentConfigurationDirectives.ALLOW_KOTLIN_PACKAGE in module.directives) {
+        if (LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE in module.directives) {
             configuration.put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, true)
         }
     }

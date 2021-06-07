@@ -1,4 +1,5 @@
 // !LANGUAGE: +InlineClasses
+// ALLOW_KOTLIN_PACKAGE
 
 // FILE: uint.kt
 
@@ -7,9 +8,6 @@ package kotlin
 inline class UInt(val value: Int)
 
 // FILE: test.kt
-
-//this import in required in FIR because default imports don't search in local sources atm
-import kotlin.UInt
 
 const val u = UInt(14)
 

@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.builder.buildImport
 import org.jetbrains.kotlin.fir.declarations.builder.buildResolvedImport
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -20,7 +22,10 @@ class FirDefaultStarImportingScope(
     scopeSession: ScopeSession,
     filter: FirImportingScopeFilter,
     priority: DefaultImportPriority
-) : FirAbstractStarImportingScope(session, scopeSession, filter, lookupInFir = false) {
+) : FirAbstractStarImportingScope(
+    session, scopeSession, filter,
+    lookupInFir = session.languageVersionSettings.getFlag(AnalysisFlags.allowKotlinPackage)
+) {
     // TODO: put languageVersionSettings into FirSession?
     override val starImports = run {
         val analyzerServices = session.moduleData.analyzerServices

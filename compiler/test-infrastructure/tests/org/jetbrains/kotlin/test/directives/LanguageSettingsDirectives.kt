@@ -52,6 +52,10 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
         additionalParser = ExplicitApiMode.Companion::fromString
     )
 
+    val ALLOW_KOTLIN_PACKAGE by directive(
+        description = "Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info (AnalysisFlags.allowKotlinPackage)"
+    )
+
     // --------------------- Jvm Analysis Flags ---------------------
 
     val JVM_DEFAULT_MODE by enumDirective<JvmDefaultMode>(

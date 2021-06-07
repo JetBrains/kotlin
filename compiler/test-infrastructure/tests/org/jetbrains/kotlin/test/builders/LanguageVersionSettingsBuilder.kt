@@ -69,6 +69,7 @@ class LanguageVersionSettingsBuilder {
             analysisFlag(AnalysisFlags.constraintSystemForOverloadResolution, directives.singleOrZeroValue(LanguageSettingsDirectives.CONSTRAINT_SYSTEM_FOR_OVERLOAD_RESOLUTION)),
             analysisFlag(AnalysisFlags.allowResultReturnType, trueOrNull(LanguageSettingsDirectives.ALLOW_RESULT_RETURN_TYPE in directives)),
             analysisFlag(AnalysisFlags.explicitApiMode, directives.singleOrZeroValue(LanguageSettingsDirectives.EXPLICIT_API_MODE)),
+            analysisFlag(AnalysisFlags.allowKotlinPackage, trueOrNull(LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE in directives)),
 
             analysisFlag(JvmAnalysisFlags.jvmDefaultMode, directives.singleOrZeroValue(LanguageSettingsDirectives.JVM_DEFAULT_MODE)),
             analysisFlag(JvmAnalysisFlags.inheritMultifileParts, trueOrNull(LanguageSettingsDirectives.INHERIT_MULTIFILE_PARTS in directives)),

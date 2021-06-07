@@ -384,6 +384,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
                 "Unknown value for parameter -Xexplicit-api: '$explicitApi'. Value should be one of ${ExplicitApiMode.availableValues()}"
             )
             put(AnalysisFlags.extendedCompilerChecks, extendedCompilerChecks)
+            put(AnalysisFlags.allowKotlinPackage, allowKotlinPackage)
         }
     }
 

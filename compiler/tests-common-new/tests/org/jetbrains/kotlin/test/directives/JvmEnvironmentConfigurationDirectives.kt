@@ -34,8 +34,6 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
 
     val WITH_FOREIGN_ANNOTATIONS by directive("Add foreign nullability annotations to classpath")
 
-    val ALLOW_KOTLIN_PACKAGE by directive("Don't require stdlib as a java 9 module")
-
     val WITH_JSR305_TEST_ANNOTATIONS by directive(
         description = """
             Add test nullability annotations based on JSR-305 annotations
