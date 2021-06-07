@@ -7,6 +7,7 @@ publishTestJarsForIde(
         ":compiler:test-infrastructure",
         ":compiler:tests-common-new",
         ":compiler:test-infrastructure-utils",
-        ":compiler:tests-compiler-utils"
+        ":compiler:tests-compiler-utils",
+        ":compiler:tests-spec"
     )
 )
