@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.DefaultMapping
 import org.jetbrains.kotlin.backend.common.Mapping
 import org.jetbrains.kotlin.backend.common.ir.Ir
-import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.psi.PsiErrorBuilder
 import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
@@ -29,7 +28,6 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irBlock
-import org.jetbrains.kotlin.ir.builders.irNull
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
@@ -161,7 +159,6 @@ class JvmBackendContext(
     override fun throwUninitializedPropertyAccessException(builder: IrBuilderWithScope, name: String): IrExpression =
         builder.irBlock {
             +super.throwUninitializedPropertyAccessException(builder, name)
-            +irThrow(irNull())
         }
 
     override fun handleDeepCopy(
