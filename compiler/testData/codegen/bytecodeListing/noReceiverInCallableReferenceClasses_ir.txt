@@ -44,7 +44,7 @@ synthetic final class NoReceiverInCallableReferenceClassesKt$aFoo$1 {
     // source: 'noReceiverInCallableReferenceClasses.kt'
     enclosing method NoReceiverInCallableReferenceClassesKt.<clinit>()V
     inner (anonymous) class NoReceiverInCallableReferenceClassesKt$aFoo$1
-    method <init>(p0: A): void
+    method <init>(p0: java.lang.Object): void
     public synthetic bridge method invoke(): java.lang.Object
     public final method invoke(): void
 }

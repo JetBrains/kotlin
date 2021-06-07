@@ -1877,6 +1877,24 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
                 }
 
                 @Test
+                @TestMetadata("boundInlineClassMethod.kt")
+                public void testBoundInlineClassMethod() throws Exception {
+                    runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/boundInlineClassMethod.kt");
+                }
+
+                @Test
+                @TestMetadata("boundInlineClassMethodWithAny.kt")
+                public void testBoundInlineClassMethodWithAny() throws Exception {
+                    runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/boundInlineClassMethodWithAny.kt");
+                }
+
+                @Test
+                @TestMetadata("boundInlineClassMethodWithInt.kt")
+                public void testBoundInlineClassMethodWithInt() throws Exception {
+                    runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/boundInlineClassMethodWithInt.kt");
+                }
+
+                @Test
                 @TestMetadata("boundPropertyReference.kt")
                 public void testBoundPropertyReference() throws Exception {
                     runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/boundPropertyReference.kt");
