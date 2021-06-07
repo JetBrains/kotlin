@@ -113,11 +113,15 @@ object GenerationUtils {
 
         // TODO: add running checkers and check that it's safe to compile
         val firAnalyzerFacade = FirAnalyzerFacade(session, configuration.languageVersionSettings, files)
-        val extensions = JvmGeneratorExtensionsImpl()
+        val extensions = JvmGeneratorExtensionsImpl(configuration)
         val (moduleFragment, symbolTable, components) = firAnalyzerFacade.convertToIr(extensions)
         val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 
-        val codegenFactory = JvmIrCodegenFactory(configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases))
+        val codegenFactory = JvmIrCodegenFactory(
+            configuration,
+            configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases),
+            jvmGeneratorExtensions = extensions
+        )
 
         // Create and initialize the test module and its dependencies
         val container = TopDownAnalyzerFacadeForJVM.createContainer(
@@ -194,7 +198,10 @@ object GenerationUtils {
             files, configuration
         ).codegenFactory(
             if (isIrBackend)
-                JvmIrCodegenFactory(configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases))
+                JvmIrCodegenFactory(
+                    configuration,
+                    configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases),
+                )
             else DefaultCodegenFactory
         ).isIrBackend(isIrBackend).apply(configureGenerationState).build()
         if (analysisResult.shouldGenerateCode) {

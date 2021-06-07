@@ -141,7 +141,7 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
         ): IrModuleFragment {
             return generateIrModule(
                 JvmResolveUtil.analyze(ktFilesToAnalyze, environment), psi2ir, ktFilesToAnalyze,
-                JvmGeneratorExtensionsImpl(generateFacades = false),
+                JvmGeneratorExtensionsImpl(environment.configuration, generateFacades = false),
                 createIdSignatureComposer = { bindingContext ->
                     JvmIdSignatureDescriptor(JvmDescriptorMangler(MainFunctionDetector(bindingContext, languageVersionSettings)))
                 }

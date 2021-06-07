@@ -16,5 +16,5 @@ interface JvmGeneratorExtensions {
 
     val rawTypeAnnotationConstructor: IrConstructor?
 
-    fun getCachedFields(irFactory: IrFactory, languageVersionSettings: LanguageVersionSettings): CachedFieldsForObjectInstances
+    val cachedFields: CachedFieldsForObjectInstances
 }

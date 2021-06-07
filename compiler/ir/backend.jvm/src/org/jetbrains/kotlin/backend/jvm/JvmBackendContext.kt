@@ -67,7 +67,7 @@ class JvmBackendContext(
 
     internal val innerClassesSupport = JvmInnerClassesSupport(irFactory)
     internal val cachedDeclarations = JvmCachedDeclarations(
-        this, generatorExtensions.getCachedFields(irFactory, state.languageVersionSettings)
+        this, generatorExtensions.cachedFields
     )
 
     override val mapping: Mapping = DefaultMapping()

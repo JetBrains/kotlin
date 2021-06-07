@@ -41,15 +41,15 @@ class Fir2IrResultsConverter(
         module: TestModule,
         inputArtifact: FirOutputArtifact
     ): IrBackendInput {
-        val extensions = JvmGeneratorExtensionsImpl()
+        val compilerConfigurationProvider = testServices.compilerConfigurationProvider
+        val configuration = compilerConfigurationProvider.getCompilerConfiguration(module)
+        val extensions = JvmGeneratorExtensionsImpl(configuration)
+
         val (irModuleFragment, symbolTable, components) = inputArtifact.firAnalyzerFacade.convertToIr(extensions)
         val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 
-        val compilerConfigurationProvider = testServices.compilerConfigurationProvider
-        val configuration = compilerConfigurationProvider.getCompilerConfiguration(module)
-
         val phaseConfig = configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases)
-        val codegenFactory = JvmIrCodegenFactory(phaseConfig)
+        val codegenFactory = JvmIrCodegenFactory(configuration, phaseConfig, jvmGeneratorExtensions = extensions)
 
         // TODO: handle fir from light tree
         val ktFiles = inputArtifact.firFiles.values.mapNotNull { it.psi as KtFile? }

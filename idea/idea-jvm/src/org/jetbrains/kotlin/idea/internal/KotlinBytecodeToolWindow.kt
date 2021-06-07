@@ -330,7 +330,7 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
                 .generateDeclaredClassFilter(generateClassFilter)
                 .codegenFactory(
                     if (configuration.getBoolean(JVMConfigurationKeys.IR))
-                        JvmIrCodegenFactory(PhaseConfig(jvmPhases))
+                        JvmIrCodegenFactory(configuration, PhaseConfig(jvmPhases))
                     else
                         DefaultCodegenFactory
                 )

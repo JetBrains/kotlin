@@ -238,7 +238,8 @@ private fun generate(
 ).codegenFactory(
     if (kotlinCompilerConfiguration.getBoolean(JVMConfigurationKeys.IR))
         JvmIrCodegenFactory(
-            kotlinCompilerConfiguration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases)
+            kotlinCompilerConfiguration,
+            kotlinCompilerConfiguration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases),
         ) else DefaultCodegenFactory
 ).build().also {
     KotlinCodegenFacade.compileCorrectFiles(it)

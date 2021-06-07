@@ -198,10 +198,11 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase> protected cons
         snippetKtFile: KtFile,
         sourceFiles: List<KtFile>
     ): GenerationState {
-        val generatorExtensions = object : JvmGeneratorExtensionsImpl() {
+        val generatorExtensions = object : JvmGeneratorExtensionsImpl(compilationState.environment.configuration) {
             override fun getPreviousScripts() = history.map { compilationState.symbolTable.referenceScript(it.item) }
         }
         val codegenFactory = JvmIrCodegenFactory(
+            compilationState.environment.configuration,
             compilationState.environment.configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases),
             compilationState.mangler, compilationState.symbolTable, generatorExtensions
         )
