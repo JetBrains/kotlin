@@ -100,7 +100,7 @@ struct StructAnonRecordMember_Complicate {
 	struct {
 	    char x;
 		struct { int64_t b11, b12; } Y2;
-		float f  __attribute__((aligned(16)));
+		int32_t f  __attribute__((aligned(16)));
 	}; // __attribute__((aligned(16)));
 	char last;
 };
@@ -112,7 +112,7 @@ struct StructAnonRecordMember_Complicate {
     .b2 = 42, \
     .second = 's', \
     .last = 'z', \
-    .f = 3.14, \
+    .f = 314, \
     .Y2 = {11, 12} \
 }
 
@@ -132,7 +132,7 @@ struct StructAnonRecordMember_Packed {
 	struct {
 	    char x;
 		struct { int64_t b11, b12; } Y2;
-		float f;
+		int32_t f;
 	} __attribute__((aligned(16)));
 	char last;
 } __attribute__ ((packed));
@@ -155,8 +155,8 @@ struct StructAnonRecordMember_PragmaPacked {
 	struct {
 	    char x;
 		struct { int64_t b11, b12; } Y2;
-		float f  __attribute__((aligned(16)));
-	}; // __attribute__((aligned(16)));
+		int32_t f  __attribute__((aligned(16))); // another kind of alignment
+	};
 	char last;
 } __attribute__ ((packed));
 #pragma pack()
@@ -178,8 +178,8 @@ struct StructAnonRecordMember_Packed2 {
 	struct {
 	    char x;
 		struct { int64_t b11, b12; } Y2;
-		float f  __attribute__((aligned(16)));
-	}; // __attribute__((aligned(16)));
+		int32_t f;
+	} __attribute__((aligned(16)));
 	char last;
 } __attribute__ ((packed));
 #pragma pack()
