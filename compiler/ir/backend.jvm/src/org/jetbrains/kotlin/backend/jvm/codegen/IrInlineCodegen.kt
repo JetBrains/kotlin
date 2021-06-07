@@ -203,23 +203,16 @@ class IrDefaultLambda(
     needReification: Boolean,
     sourceCompiler: IrSourceCompilerForInline
 ) : DefaultLambda(lambdaClassType, capturedArgs, irValueParameter.isCrossinline, offset, needReification, sourceCompiler) {
-    private val typeArguments: List<IrType> = (irValueParameter.type as IrSimpleType).arguments.let {
-        val context = sourceCompiler.codegen.context
-        if (isPropertyReference) {
-            // Property references: `(A) -> B` => `get(Any?): Any?`
-            List(it.size) { context.irBuiltIns.anyNType }
-        } else {
-            // Non-suspend function references and lambdas: `(A) -> B` => `invoke(A): B`
+    private val typeArguments: MutableList<IrType> =
+        (irValueParameter.type as IrSimpleType).arguments.mapTo(mutableListOf()) { (it as IrTypeProjection).type }.apply {
             // Suspend function references: `suspend (A) -> B` => `invoke(A, Continuation<B>): Any?`
-            // TODO: default suspend lambdas are currently uninlinable
-            it.mapTo(mutableListOf()) { argument -> (argument as IrTypeProjection).type }.apply {
-                if (irValueParameter.type.isSuspendFunction()) {
-                    set(size - 1, context.ir.symbols.continuationClass.typeWith(get(size - 1)))
-                    add(context.irBuiltIns.anyNType)
-                }
+            // TODO: default suspend lambdas are currently uninlinable due to having a state machine
+            if (irValueParameter.type.isSuspendFunction()) {
+                val context = sourceCompiler.codegen.context
+                set(size - 1, context.ir.symbols.continuationClass.typeWith(get(size - 1)))
+                add(context.irBuiltIns.anyNType)
             }
         }
-    }
 
     override val invokeMethodParameters: List<KotlinType>
         get() = typeArguments.dropLast(1).map { it.toIrBasedKotlinType() }
@@ -236,7 +229,10 @@ class IrDefaultLambda(
         )?.let { "$base-$it" } ?: base
         // TODO: while technically only the number of arguments here matters right now (see `loadInvoke`),
         //       it would be better to map to a non-erased signature if not a property reference.
-        loadInvoke(sourceCompiler, Method(name, AsmTypes.OBJECT_TYPE, Array(typeArguments.size - 1) { AsmTypes.OBJECT_TYPE }))
+        if (loadInvoke(sourceCompiler, base, Method(name, AsmTypes.OBJECT_TYPE, Array(typeArguments.size - 1) { AsmTypes.OBJECT_TYPE }))) {
+            // If the loaded method is `invoke(Object, ...) -> Object`, then it expects boxed parameters and returns a boxed value.
+            typeArguments.replaceAll { sourceCompiler.codegen.context.irBuiltIns.anyNType }
+        }
     }
 }
 

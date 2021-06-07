@@ -1393,6 +1393,11 @@ public class IrJsCodegenInlineTestGenerated extends AbstractIrJsCodegenInlineTes
                 runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/kt25106.kt");
             }
 
+            @TestMetadata("lambdaTakesResult.kt")
+            public void testLambdaTakesResult() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/lambdaTakesResult.kt");
+            }
+
             @TestMetadata("noInline.kt")
             public void testNoInline() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/noInline.kt");

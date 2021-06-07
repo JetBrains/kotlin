@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.codegen.inline
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.Label
@@ -128,13 +127,14 @@ abstract class DefaultLambda(
             loadClassBytesByInternalName(sourceCompiler.state, lambdaClassType.internalName)
         }
 
-    protected fun loadInvoke(sourceCompiler: SourceCompilerForInline, invokeMethod: Method) {
+    // Returns whether the loaded invoke is erased, i.e. the name equals the fallback and all types are `Object`.
+    protected fun loadInvoke(sourceCompiler: SourceCompilerForInline, erasedName: String, actualMethod: Method): Boolean {
         val classBytes = loadClass(sourceCompiler)
-        val invokeNameFallback = (if (isPropertyReference) OperatorNameConventions.GET else OperatorNameConventions.INVOKE).asString()
         // TODO: `signatureAmbiguity = true` ignores the argument types from `invokeMethod` and only looks at the count.
-        node = getMethodNode(classBytes, invokeMethod.name, invokeMethod.descriptor, lambdaClassType, signatureAmbiguity = true)
-            ?: getMethodNode(classBytes, invokeNameFallback, invokeMethod.descriptor, lambdaClassType, signatureAmbiguity = true)
-                    ?: error("Can't find method '$invokeMethod' in '${lambdaClassType.internalName}'")
+        node = getMethodNode(classBytes, actualMethod.name, actualMethod.descriptor, lambdaClassType, signatureAmbiguity = true)
+            ?: getMethodNode(classBytes, erasedName, actualMethod.descriptor, lambdaClassType, signatureAmbiguity = true)
+                    ?: error("Can't find method '$actualMethod' in '${lambdaClassType.internalName}'")
+        return invokeMethod.run { name == erasedName && returnType == OBJECT_TYPE && argumentTypes.all { it == OBJECT_TYPE } }
     }
 
     private companion object {

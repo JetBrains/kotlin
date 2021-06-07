@@ -90,7 +90,7 @@ class PsiSourceCompilerForInline(
         get() = codegen.parentCodegen.orCreateSourceMapper
 
     override fun generateLambdaBody(lambdaInfo: ExpressionLambda, reifiedTypeParameters: ReifiedTypeParametersUsages): SMAPAndMethodNode {
-        lambdaInfo as? PsiExpressionLambda ?: error("TODO")
+        require(lambdaInfo is PsiExpressionLambda)
         val invokeMethodDescriptor = lambdaInfo.invokeMethodDescriptor
         val jvmMethodSignature = state.typeMapper.mapSignatureSkipGeneric(invokeMethodDescriptor)
         val asmMethod = jvmMethodSignature.asmMethod
