@@ -249,10 +249,12 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             emptyList()
         }
 
+        val propertyModality = ProtoEnumFlags.modality(Flags.MODALITY.get(flags))
+
         val getter = if (hasGetter) {
             val getterFlags = if (proto.hasGetterFlags()) proto.getterFlags else defaultAccessorFlags
             val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(getterFlags))
-            val modality = ProtoEnumFlags.modality(Flags.MODALITY.get(getterFlags))
+            val accessorModality = ProtoEnumFlags.modality(Flags.MODALITY.get(getterFlags))
             val effectiveVisibility = visibility.toEffectiveVisibility(classSymbol)
             if (Flags.IS_NOT_DEFAULT.get(getterFlags)) {
                 buildPropertyAccessor {
@@ -261,11 +263,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                     this.returnTypeRef = returnTypeRef
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                     isGetter = true
-                    status = FirResolvedDeclarationStatusImpl(
-                        visibility,
-                        modality,
-                        effectiveVisibility
-                    ).apply {
+                    status = FirResolvedDeclarationStatusImpl(visibility, accessorModality, effectiveVisibility).apply {
                         isInline = Flags.IS_INLINE_ACCESSOR.get(getterFlags)
                         isExternal = Flags.IS_EXTERNAL_ACCESSOR.get(getterFlags)
                     }
@@ -275,7 +273,9 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                     versionRequirementsTable = c.versionRequirementTable
                 }
             } else {
-                FirDefaultPropertyGetter(null, c.moduleData, FirDeclarationOrigin.Library, returnTypeRef, visibility, effectiveVisibility)
+                FirDefaultPropertyGetter(
+                    null, c.moduleData, FirDeclarationOrigin.Library, returnTypeRef, visibility, propertyModality, effectiveVisibility
+                )
             }.apply {
                 (annotations as MutableList<FirAnnotationCall>) +=
                     c.annotationDeserializer.loadPropertyGetterAnnotations(
@@ -289,7 +289,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         val setter = if (Flags.HAS_SETTER.get(flags)) {
             val setterFlags = if (proto.hasSetterFlags()) proto.setterFlags else defaultAccessorFlags
             val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(setterFlags))
-            val modality = ProtoEnumFlags.modality(Flags.MODALITY.get(setterFlags))
+            val accessorModality = ProtoEnumFlags.modality(Flags.MODALITY.get(setterFlags))
             val effectiveVisibility = visibility.toEffectiveVisibility(classSymbol)
             if (Flags.IS_NOT_DEFAULT.get(setterFlags)) {
                 buildPropertyAccessor {
@@ -298,11 +298,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                     this.returnTypeRef = FirImplicitUnitTypeRef(source)
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                     isGetter = false
-                    status = FirResolvedDeclarationStatusImpl(
-                        visibility,
-                        modality,
-                        effectiveVisibility
-                    ).apply {
+                    status = FirResolvedDeclarationStatusImpl(visibility, accessorModality, effectiveVisibility).apply {
                         isInline = Flags.IS_INLINE_ACCESSOR.get(setterFlags)
                         isExternal = Flags.IS_EXTERNAL_ACCESSOR.get(setterFlags)
                     }
@@ -318,7 +314,9 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                     versionRequirementsTable = c.versionRequirementTable
                 }
             } else {
-                FirDefaultPropertySetter(null, c.moduleData, FirDeclarationOrigin.Library, returnTypeRef, visibility, effectiveVisibility)
+                FirDefaultPropertySetter(
+                    null, c.moduleData, FirDeclarationOrigin.Library, returnTypeRef, visibility, propertyModality, effectiveVisibility
+                )
             }.apply {
                 (annotations as MutableList<FirAnnotationCall>) +=
                     c.annotationDeserializer.loadPropertySetterAnnotations(
@@ -343,11 +341,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             dispatchReceiverType = c.dispatchReceiver
             isLocal = false
             val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags))
-            status = FirResolvedDeclarationStatusImpl(
-                visibility,
-                ProtoEnumFlags.modality(Flags.MODALITY.get(flags)),
-                visibility.toEffectiveVisibility(classSymbol)
-            ).apply {
+            status = FirResolvedDeclarationStatusImpl(visibility, propertyModality, visibility.toEffectiveVisibility(classSymbol)).apply {
                 isExpect = Flags.IS_EXPECT_PROPERTY.get(flags)
                 isActual = false
                 isOverride = false
