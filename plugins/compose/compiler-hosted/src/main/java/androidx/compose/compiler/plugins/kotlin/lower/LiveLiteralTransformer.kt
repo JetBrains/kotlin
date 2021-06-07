@@ -243,7 +243,8 @@ open class LiveLiteralTransformer(
     private fun irLiveLiteralGetter(
         key: String,
         literalValue: IrExpression,
-        literalType: IrType
+        literalType: IrType,
+        startOffset: Int
     ): IrSimpleFunction {
         val clazz = liveLiteralsClass!!
         val stateType = stateInterface.owner.typeWith(literalType).makeNullable()
@@ -261,8 +262,8 @@ open class LiveLiteralTransformer(
                 f.correspondingPropertySymbol = p.symbol
                 f.parent = clazz
                 f.initializer = IrExpressionBodyImpl(
-                    literalValue.startOffset,
-                    literalValue.endOffset,
+                    SYNTHETIC_OFFSET,
+                    SYNTHETIC_OFFSET,
                     literalValue
                 )
             }
@@ -321,7 +322,7 @@ open class LiveLiteralTransformer(
             returnType = literalType
         ).also { fn ->
             val thisParam = fn.dispatchReceiverParameter!!
-            fn.annotations += irLiveLiteralInfoAnnotation(key, literalValue.startOffset)
+            fn.annotations += irLiveLiteralInfoAnnotation(key, startOffset)
             fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
                 // if (!isLiveLiteralsEnabled) return defaultValueField
                 // val a = stateField
@@ -432,8 +433,11 @@ open class LiveLiteralTransformer(
         // create the getter function on the live literals class
         val getter = irLiveLiteralGetter(
             key = key,
-            literalValue = expression.copy(),
-            literalType = expression.type
+            // Move the start/endOffsets to the call of the getter since we don't
+            // want to step into <clinit> in the debugger.
+            literalValue = expression.copyWithOffsets(UNDEFINED_OFFSET, UNDEFINED_OFFSET),
+            literalType = expression.type,
+            startOffset = expression.startOffset
         )
 
         // return a call to the getter in place of the constant
