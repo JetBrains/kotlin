@@ -1115,18 +1115,18 @@ fun main(args: Array<String>) {
             }
         }
 
-        /*
+
         testGroup("idea/idea-frontend-fir/idea-fir-low-level-api/tests", testDataRoot = GeneralConfiguration.SPEC_TESTDATA_PATH
         ) {
-            testClass<AbstractDiagnosisCompilerTestDataSpecTest> {
+            testClass<AbstractDiagnosisCompilerTestDataSpecTest>(suiteTestClassName = "FirIdeSpecTest") {
                 model(
                     "diagnostics",
                     excludeDirs = listOf("helpers") + detectDirsWithTestsMapFileOnly("diagnostics"),
-                    excludedPattern = excludedFirTestdataPattern
+                    excludedPattern = excludedFirTestdataPattern,
                 )
             }
         }
-        */
+
 
         testGroup("idea/idea-fir/tests", "idea") {
             testClass<AbstractFirHighlightingTest> {
