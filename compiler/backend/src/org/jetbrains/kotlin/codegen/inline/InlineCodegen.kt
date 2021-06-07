@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -28,9 +29,6 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     protected val sourceCompiler: SourceCompilerForInline,
     private val reifiedTypeInliner: ReifiedTypeInliner<*>
 ) {
-    // TODO: implement AS_FUNCTION inline strategy
-    private val asFunctionInline = false
-
     private val initialFrameSize = codegen.frameMap.currentSize
 
     protected val invocationParamBuilder = ParametersBuilder.newBuilder()
@@ -106,12 +104,6 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         }
 
         return true
-    }
-
-    protected fun rememberClosure(parameterType: Type, index: Int, lambdaInfo: LambdaInfo) {
-        val closureInfo = invocationParamBuilder.addNextValueParameter(parameterType, true, null, index)
-        closureInfo.functionalArgument = lambdaInfo
-        expressionMap[closureInfo.index] = lambdaInfo
     }
 
     private fun inlineCall(nodeAndSmap: SMAPAndMethodNode, isInlineOnly: Boolean, isSuspend: Boolean): InlineResult {
@@ -264,50 +256,46 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         }
     }
 
-    protected fun putArgumentOrCapturedToLocalVal(
-        jvmKotlinType: JvmKotlinType,
-        stackValue: StackValue,
-        capturedParam: CapturedParamDesc?,
-        parameterIndex: Int,
-        kind: ValueKind
-    ) {
-        val isDefaultParameter = kind === ValueKind.DEFAULT_PARAMETER
-        val jvmType = jvmKotlinType.type
-        val kotlinType = jvmKotlinType.kotlinType
-        val canRemap = isPrimitive(jvmType) == isPrimitive(stackValue.type) &&
-                !StackValue.requiresInlineClassBoxingOrUnboxing(stackValue.type, stackValue.kotlinType, jvmType, kotlinType) &&
-                (stackValue is StackValue.Local || stackValue.isCapturedInlineParameter())
-        if (!canRemap && !isDefaultParameter) {
-            stackValue.put(jvmType, kotlinType, codegen.visitor)
+    protected fun rememberClosure(parameterType: Type, index: Int, lambdaInfo: LambdaInfo) {
+        val closureInfo = invocationParamBuilder.addNextValueParameter(parameterType, true, null, index)
+        closureInfo.functionalArgument = lambdaInfo
+        expressionMap[closureInfo.index] = lambdaInfo
+    }
+
+    protected fun putCapturedToLocalVal(stackValue: StackValue, capturedParam: CapturedParamDesc, kotlinType: KotlinType?) {
+        val info = invocationParamBuilder.addCapturedParam(capturedParam, capturedParam.fieldName, false)
+        if (stackValue.isLocalWithNoBoxing(JvmKotlinType(info.type, kotlinType))) {
+            info.remapValue = stackValue
+        } else {
+            stackValue.put(info.type, kotlinType, codegen.visitor)
+            val local = StackValue.local(codegen.frameMap.enterTemp(info.type), info.type)
+            local.store(StackValue.onStack(info.type), codegen.visitor)
+            info.remapValue = local
+            info.isSynthetic = true
+        }
+    }
+
+    protected fun putArgumentToLocalVal(jvmKotlinType: JvmKotlinType, stackValue: StackValue, parameterIndex: Int, kind: ValueKind) {
+        if (kind === ValueKind.DEFAULT_MASK || kind === ValueKind.METHOD_HANDLE_IN_DEFAULT) {
+            return processDefaultMaskOrMethodHandler(stackValue, kind)
         }
 
-        if (!asFunctionInline && Type.VOID_TYPE !== jvmType) {
-            //TODO remap only inlinable closure => otherwise we could get a lot of problem
-            val remappedValue = if (canRemap && !isDefaultParameter) stackValue else null
-            val info: ParameterInfo
-            if (capturedParam != null) {
-                info = invocationParamBuilder.addCapturedParam(capturedParam, capturedParam.fieldName, false)
-                info.remapValue = remappedValue
-            } else {
-                info = invocationParamBuilder.addNextValueParameter(jvmType, false, remappedValue, parameterIndex)
-                info.functionalArgument = when (kind) {
-                    ValueKind.NON_INLINEABLE_ARGUMENT_FOR_INLINE_PARAMETER_CALLED_IN_SUSPEND ->
-                        NonInlineableArgumentForInlineableParameterCalledInSuspend
-                    ValueKind.NON_INLINEABLE_ARGUMENT_FOR_INLINE_SUSPEND_PARAMETER ->
-                        NonInlineableArgumentForInlineableSuspendParameter
-                    else -> null
-                }
-            }
-
-            if (!info.isSkippedOrRemapped) {
-                val local = StackValue.local(codegen.frameMap.enterTemp(info.type), info.type)
-                if (!isDefaultParameter) {
-                    local.store(StackValue.onStack(info.typeOnStack), codegen.visitor)
-                }
-                if (info is CapturedParamInfo) {
-                    info.remapValue = local
-                    info.isSynthetic = true
-                }
+        val info = invocationParamBuilder.addNextValueParameter(jvmKotlinType.type, false, null, parameterIndex)
+        info.functionalArgument = when (kind) {
+            ValueKind.NON_INLINEABLE_ARGUMENT_FOR_INLINE_PARAMETER_CALLED_IN_SUSPEND ->
+                NonInlineableArgumentForInlineableParameterCalledInSuspend
+            ValueKind.NON_INLINEABLE_ARGUMENT_FOR_INLINE_SUSPEND_PARAMETER ->
+                NonInlineableArgumentForInlineableSuspendParameter
+            else -> null
+        }
+        when {
+            kind === ValueKind.DEFAULT_PARAMETER ->
+                codegen.frameMap.enterTemp(info.type) // the inline function will put the value into this slot
+            stackValue.isLocalWithNoBoxing(jvmKotlinType) ->
+                info.remapValue = stackValue
+            else -> {
+                stackValue.put(info.type, jvmKotlinType.kotlinType, codegen.visitor)
+                codegen.visitor.store(codegen.frameMap.enterTemp(info.type), info.type)
             }
         }
     }
@@ -321,19 +309,14 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     }
 
     private fun rememberCapturedForDefaultLambda(defaultLambda: DefaultLambda) {
-        if (!asFunctionInline) {
-            for (captured in defaultLambda.capturedVars) {
-                val info = invocationParamBuilder.addCapturedParam(captured, captured.fieldName, false)
-                info.remapValue = StackValue.local(codegen.frameMap.enterTemp(info.type), info.type)
-                info.isSynthetic = true
-            }
+        for (captured in defaultLambda.capturedVars) {
+            val info = invocationParamBuilder.addCapturedParam(captured, captured.fieldName, false)
+            info.remapValue = StackValue.local(codegen.frameMap.enterTemp(info.type), info.type)
+            info.isSynthetic = true
         }
     }
 
-    protected fun processDefaultMaskOrMethodHandler(value: StackValue, kind: ValueKind): Boolean {
-        if (kind !== ValueKind.DEFAULT_MASK && kind !== ValueKind.METHOD_HANDLE_IN_DEFAULT) {
-            return false
-        }
+    private fun processDefaultMaskOrMethodHandler(value: StackValue, kind: ValueKind) {
         assert(value is StackValue.Constant) { "Additional default method argument should be constant, but $value" }
         val constantValue = (value as StackValue.Constant).value
         if (kind === ValueKind.DEFAULT_MASK) {
@@ -348,10 +331,14 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
             assert(constantValue == null) { "Additional method handle for default argument should be null, but " + constantValue!! }
             methodHandleInDefaultMethodIndex = maskStartIndex + maskValues.size
         }
-        return true
     }
 
     companion object {
+        private fun StackValue.isLocalWithNoBoxing(expected: JvmKotlinType): Boolean =
+            isPrimitive(expected.type) == isPrimitive(type) &&
+                    !StackValue.requiresInlineClassBoxingOrUnboxing(type, kotlinType, expected.type, expected.kotlinType) &&
+                    (this is StackValue.Local || isCapturedInlineParameter())
+
         private fun StackValue.isCapturedInlineParameter(): Boolean {
             val field = if (this is StackValue.FieldForSharedVar) receiver else this
             return field is StackValue.Field && field.descriptor is ParameterDescriptor &&
