@@ -86,26 +86,28 @@ class IrOverridingUtil(
         originalSuperTypes.clear()
     }
 
-    private val IrOverridableMember.overriddenSymbols: List<IrSymbol>
-        get() = (this as? IrOverridableDeclaration<*>)?.overriddenSymbols
-            ?: error("Unexpected IrOverridableMember: $this")
-
-    private fun IrOverridableMember.setOverriddenSymbols(value: List<IrSymbol>) {
-        when (this) {
-            is IrSimpleFunction -> this.overriddenSymbols =
-                value.map { it as? IrSimpleFunctionSymbol ?: error("Unexpected function overridden symbol: $it") }
-            is IrProperty -> {
-                this.overriddenSymbols =
-                    value.map { it as? IrPropertySymbol ?: error("Unexpected property overridden symbol: $it") }
-                val getter = this.getter ?: error("Property has no getter: ${render()}")
-                getter.overriddenSymbols = value.map { (it.owner as IrProperty).getter!!.symbol }
-                this.setter?.let { setter ->
-                    setter.overriddenSymbols = value.mapNotNull { (it.owner as IrProperty).setter?.symbol }
-                }
-            }
+    private var IrOverridableMember.overriddenSymbols: List<IrSymbol>
+        get() = when (this) {
+            is IrSimpleFunction -> this.overriddenSymbols
+            is IrProperty -> this.overriddenSymbols
             else -> error("Unexpected declaration for overriddenSymbols: $this")
         }
-    }
+        set(value) {
+            when (this) {
+                is IrSimpleFunction -> this.overriddenSymbols =
+                    value.map { it as? IrSimpleFunctionSymbol ?: error("Unexpected function overridden symbol: $it") }
+                is IrProperty -> {
+                    val overriddenProperties = value.map { it as? IrPropertySymbol ?: error("Unexpected property overridden symbol: $it") }
+                    val getter = this.getter ?: error("Property has no getter: ${render()}")
+                    getter.overriddenSymbols = overriddenProperties.map { it.owner.getter!!.symbol }
+                    this.setter?.let { setter ->
+                        setter.overriddenSymbols = overriddenProperties.mapNotNull { it.owner.setter?.symbol }
+                    }
+                    this.overriddenSymbols = overriddenProperties
+                }
+                else -> error("Unexpected declaration for overriddenSymbols: $this")
+            }
+        }
 
     fun buildFakeOverridesForClass(clazz: IrClass) {
         val superTypes = clazz.superTypes
@@ -225,7 +227,7 @@ class IrOverridingUtil(
             }
         }
         //strategy.setOverriddenDescriptors(fromCurrent, overridden)
-        fromCurrent.setOverriddenSymbols(overridden.map { it.original.symbol })
+        fromCurrent.overriddenSymbols = overridden.map { it.original.symbol }
 
         return bound
     }
@@ -383,7 +385,7 @@ class IrOverridingUtil(
             }
         }
 
-        fakeOverride.setOverriddenSymbols(effectiveOverridden.map { it.original.symbol })
+        fakeOverride.overriddenSymbols = effectiveOverridden.map { it.original.symbol }
 
         assert(
             fakeOverride.overriddenSymbols.isNotEmpty()
