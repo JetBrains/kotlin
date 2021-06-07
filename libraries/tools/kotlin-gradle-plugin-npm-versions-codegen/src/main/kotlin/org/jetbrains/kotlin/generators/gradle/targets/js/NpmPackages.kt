@@ -15,7 +15,7 @@ val npmPackages = listOf(
     NpmPackage("webpack-dev-server", "4.0.0-beta.2"),
     NpmPackage("webpack-dev-server", "3.11.2", "webpackDevServer3"),
     NpmPackage("source-map-loader"),
-    NpmPackage("source-map-loader", "1.1.3", "sourceMapLoader1"),
+    NpmPackage("source-map-loader", "1.1.0", "sourceMapLoader1"),
     NpmPackage("source-map-support"),
     NpmPackage("css-loader"),
     NpmPackage("style-loader"),
