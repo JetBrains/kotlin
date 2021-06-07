@@ -490,7 +490,7 @@ abstract class KotlinCompile @Inject constructor(
             kotlinScriptExtensions = sourceFilesExtensions.get().toTypedArray()
         )
         compilerRunner.runJvmCompilerAsync(
-            sourceRoots.kotlinSourceFiles,
+            sourceRoots.kotlinSourceFiles.files.toList(),
             commonSourceSet.toList(),
             sourceRoots.javaSourceRoots,
             javaPackagePrefix,
@@ -799,7 +799,12 @@ abstract class Kotlin2JsCompile @Inject constructor(
             reportingSettings = reportingSettings,
             incrementalCompilationEnvironment = icEnv
         )
-        compilerRunner.runJsCompilerAsync(sourceRoots.kotlinSourceFiles, commonSourceSet.toList(), args, environment)
+        compilerRunner.runJsCompilerAsync(
+            sourceRoots.kotlinSourceFiles.files.toList(),
+            commonSourceSet.toList(),
+            args,
+            environment
+        )
     }
 }
 

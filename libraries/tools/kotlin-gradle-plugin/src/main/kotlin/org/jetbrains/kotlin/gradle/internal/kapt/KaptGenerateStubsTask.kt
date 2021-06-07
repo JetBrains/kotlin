@@ -57,8 +57,8 @@ abstract class KaptGenerateStubsTask : KotlinCompile(KotlinJvmOptionsImpl()) {
                 providerFactory.provider {
                     kotlinCompileTask.getSourceRoots().let { compileTaskSourceRoots ->
                         SourceRoots.ForJvm(
-                            compileTaskSourceRoots.kotlinSourceFiles.filterTo(mutableListOf()) { task.isSourceRootAllowed(it) },
-                            javaSourceRootsProvider = { compileTaskSourceRoots.javaSourceRoots.filterTo(mutableSetOf()) { task.isSourceRootAllowed(it) } }
+                            compileTaskSourceRoots.kotlinSourceFiles.filter { task.isSourceRootAllowed(it) },
+                            compileTaskSourceRoots.javaSourceRoots.filter { task.isSourceRootAllowed(it) }
                         )
                     }
                 }

@@ -11,62 +11,58 @@ import org.jetbrains.kotlin.gradle.utils.isJavaFile
 import org.jetbrains.kotlin.gradle.utils.isKotlinFile
 import org.jetbrains.kotlin.gradle.utils.isParentOf
 import java.io.File
-import java.util.*
 import java.util.concurrent.Callable
 
-internal sealed class SourceRoots(val kotlinSourceFiles: List<File>) {
+internal sealed class SourceRoots(val kotlinSourceFiles: FileCollection) {
     private companion object {
         fun dumpPaths(files: Iterable<File>): String =
             "[${files.map { it.canonicalPath }.sorted().joinToString(prefix = "\n\t", separator = ",\n\t")}]"
     }
 
     open fun log(taskName: String, logger: Logger) {
-        logger.kotlinDebug { "$taskName source roots: ${dumpPaths(kotlinSourceFiles)}" }
+        logger.kotlinDebug { "$taskName source roots: ${dumpPaths(kotlinSourceFiles.files)}" }
     }
 
     class ForJvm constructor(
-        kotlinSourceFiles: List<File>,
-        private val javaSourceRootsProvider: () -> Set<File>
+        kotlinSourceFiles: FileCollection,
+        val javaSourceRoots: FileCollection
     ) : SourceRoots(kotlinSourceFiles) {
-        val javaSourceRoots: Set<File>
-            get() = javaSourceRootsProvider()
-
-        constructor(kotlinSourceFiles: List<File>, allSourceRoots: FileCollection, taskSource: FileCollection) : this(kotlinSourceFiles, {
-            findRootsForSources(allSourceRoots, taskSource.filter(File::isJavaFile)).toSet()
-        })
 
         companion object {
-            fun create(taskSource: FileTree, sourceRoots: FilteringSourceRootsContainer, sourceFilesExtensions: List<String>): ForJvm {
-                val kotlinSourceFiles = (taskSource as Iterable<File>).filter { it.isKotlinFile(sourceFilesExtensions) }
-                return ForJvm(kotlinSourceFiles, sourceRoots.sourceRoots, taskSource)
+            fun create(
+                taskSource: FileTree,
+                sourceRoots: FilteringSourceRootsContainer,
+                sourceFilesExtensions: List<String>
+            ): ForJvm {
+                return ForJvm(
+                    taskSource.filter { it.isKotlinFile(sourceFilesExtensions) },
+                    sourceRoots.sourceRoots.filterJavaRoots(
+                        taskSource.filter { it.isJavaFile() }
+                    )
+                )
             }
 
-            private fun findRootsForSources(allSourceRoots: Iterable<File>, sources: Iterable<File>): Set<File> {
-                val resultRoots = HashSet<File>()
-                val sourceDirs = sources.mapTo(HashSet()) { it.parentFile }
-
-                for (sourceDir in sourceDirs) {
-                    for (sourceRoot in allSourceRoots) {
-                        if (sourceRoot.isParentOf(sourceDir)) {
-                            resultRoots.add(sourceRoot)
-                        }
-                    }
-                }
-
-                return resultRoots
+            private fun FileCollection.filterJavaRoots(
+                sourceDirs: FileCollection
+            ): FileCollection = filter { sourceRoot ->
+                sourceDirs.asSequence().map { it.parentFile }.any { sourceRoot.isParentOf(it) }
             }
         }
 
         override fun log(taskName: String, logger: Logger) {
             super.log(taskName, logger)
-            logger.kotlinDebug { "$taskName java source roots: ${dumpPaths(javaSourceRoots)}" }
+            logger.kotlinDebug { "$taskName java source roots: ${dumpPaths(javaSourceRoots.files)}" }
         }
     }
 
-    class KotlinOnly(kotlinSourceFiles: List<File>) : SourceRoots(kotlinSourceFiles) {
+    class KotlinOnly(kotlinSourceFiles: FileCollection) : SourceRoots(kotlinSourceFiles) {
         companion object {
-            fun create(taskSource: FileTree, sourceFilesExtensions: List<String>) =
-                KotlinOnly((taskSource as Iterable<File>).filter { it.isKotlinFile(sourceFilesExtensions) })
+            fun create(
+                taskSource: FileTree,
+                sourceFilesExtensions: List<String>
+            ) = KotlinOnly(
+                taskSource.filter { it.isKotlinFile(sourceFilesExtensions) }
+            )
         }
     }
 }
