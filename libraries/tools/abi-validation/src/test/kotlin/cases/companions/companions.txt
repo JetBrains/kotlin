@@ -27,7 +27,6 @@ protected final class cases/companions/PublicClasses$AbstractProtectedCompanion$
 }
 
 public final class cases/companions/PublicClasses$InternalCompanion {
-	public static final field Companion Lcases/companions/PublicClasses$InternalCompanion$Companion;
 	public fun <init> ()V
 }
 
@@ -47,12 +46,19 @@ public final class cases/companions/PublicClasses$PublicCompanion {
 public final class cases/companions/PublicClasses$PublicCompanion$Companion {
 }
 
+public final class cases/companions/PublicClasses$PublishedApiCompanion {
+	public static final field Companion Lcases/companions/PublicClasses$PublishedApiCompanion$Companion;
+	public fun <init> ()V
+}
+
+public final class cases/companions/PublicClasses$PublishedApiCompanion$Companion {
+}
+
 public final class cases/companions/PublicInterfaces {
 	public static final field INSTANCE Lcases/companions/PublicInterfaces;
 }
 
 public abstract interface class cases/companions/PublicInterfaces$PrivateCompanion {
-	public static final synthetic field Companion Lcases/companions/PublicInterfaces$PrivateCompanion$Companion;
 }
 
 public abstract interface class cases/companions/PublicInterfaces$PublicCompanion {
@@ -60,5 +66,45 @@ public abstract interface class cases/companions/PublicInterfaces$PublicCompanio
 }
 
 public final class cases/companions/PublicInterfaces$PublicCompanion$Companion {
+}
+
+public final class cases/companions/PublishedApiClasses {
+	public static final field INSTANCE Lcases/companions/PublishedApiClasses;
+}
+
+public abstract class cases/companions/PublishedApiClasses$AbstractProtectedCompanion {
+	protected static final field Companion Lcases/companions/PublishedApiClasses$AbstractProtectedCompanion$Companion;
+	public fun <init> ()V
+}
+
+protected final class cases/companions/PublishedApiClasses$AbstractProtectedCompanion$Companion {
+}
+
+public final class cases/companions/PublishedApiClasses$InternalCompanion {
+	public fun <init> ()V
+}
+
+public final class cases/companions/PublishedApiClasses$PrivateCompanion {
+	public fun <init> ()V
+}
+
+public final class cases/companions/PublishedApiClasses$ProtectedCompanion {
+	public fun <init> ()V
+}
+
+public final class cases/companions/PublishedApiClasses$PublicCompanion {
+	public static final field Companion Lcases/companions/PublishedApiClasses$PublicCompanion$Companion;
+	public fun <init> ()V
+}
+
+public final class cases/companions/PublishedApiClasses$PublicCompanion$Companion {
+}
+
+public final class cases/companions/PublishedApiClasses$PublishedApiCompanion {
+	public static final field Companion Lcases/companions/PublishedApiClasses$PublishedApiCompanion$Companion;
+	public fun <init> ()V
+}
+
+public final class cases/companions/PublishedApiClasses$PublishedApiCompanion$Companion {
 }
 

@@ -18,6 +18,11 @@ object PublicClasses {
         internal companion object
     }
 
+    class PublishedApiCompanion {
+        @PublishedApi
+        internal companion object
+    }
+
     class PrivateCompanion {
         private companion object
     }
@@ -32,8 +37,6 @@ object PublicInterfaces {
         private companion object
     }
 }
-
-
 
 object InternalClasses {
     internal class PublicCompanion {
@@ -57,6 +60,39 @@ object InternalClasses {
     }
 }
 
+object PublishedApiClasses {
+    @PublishedApi
+    internal class PublicCompanion {
+        companion object
+    }
+
+    @PublishedApi
+    internal class ProtectedCompanion {
+        protected companion object
+    }
+
+    @PublishedApi
+    internal abstract class AbstractProtectedCompanion {
+        protected companion object
+    }
+
+    @PublishedApi
+    internal class InternalCompanion {
+        internal companion object
+    }
+
+    @PublishedApi
+    internal class PublishedApiCompanion {
+        @PublishedApi
+        internal companion object
+    }
+
+    @PublishedApi
+    internal class PrivateCompanion {
+        private companion object
+    }
+}
+
 object InternalInterfaces {
     internal interface PublicCompanion {
         companion object
@@ -66,7 +102,6 @@ object InternalInterfaces {
         private companion object
     }
 }
-
 
 object PrivateClasses {
     private class PublicCompanion {
@@ -82,6 +117,11 @@ object PrivateClasses {
     }
 
     private class InternalCompanion {
+        internal companion object
+    }
+
+    private class PublishedApiCompanion {
+        @PublishedApi
         internal companion object
     }
 
