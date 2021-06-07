@@ -38,7 +38,7 @@ class KtQuickFixesList @ForKtQuickFixesListBuilder @OptIn(PrivateForInline::clas
 
 
     companion object {
-        @OptIn(ForKtQuickFixesListBuilder::class)
+        @OptIn(ForKtQuickFixesListBuilder::class, PrivateForInline::class)
         fun createCombined(registrars: List<KtQuickFixesList>): KtQuickFixesList {
             val allQuickFixes = registrars.map { it.quickFixes }.merge()
             return KtQuickFixesList(allQuickFixes)
@@ -90,7 +90,7 @@ class KtQuickFixesListBuilder private constructor() {
             .add(HLQuickFixFactory.HLApplicatorBasedFactory(quickFixFactory))
     }
 
-    @OptIn(ForKtQuickFixesListBuilder::class)
+    @OptIn(ForKtQuickFixesListBuilder::class, PrivateForInline::class)
     private fun build() = KtQuickFixesList(quickFixes)
 
     companion object {

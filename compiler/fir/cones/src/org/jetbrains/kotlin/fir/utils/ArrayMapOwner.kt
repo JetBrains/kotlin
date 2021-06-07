@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.utils
 
-import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.properties.ReadOnlyProperty
@@ -17,8 +16,7 @@ annotation class Protected
 
 @OptIn(Protected::class)
 abstract class AbstractArrayMapOwner<K : Any, V : Any> {
-    // TODO: make [arrayMap] protected and remove annotation after KT-19306 fix
-    @get:Protected
+    @Protected
     abstract val arrayMap: ArrayMap<V>
     protected abstract val typeRegistry: TypeRegistry<K, V>
 

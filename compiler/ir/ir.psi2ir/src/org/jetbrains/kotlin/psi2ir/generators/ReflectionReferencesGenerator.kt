@@ -433,7 +433,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
     )
 
     private class IrSyntheticJavaProperty(
-        @ObsoleteDescriptorBasedAPI
+        @property:ObsoleteDescriptorBasedAPI
         override val descriptor: SyntheticJavaPropertyDescriptor,
         override val symbol: IrPropertySymbol,
         private val getterSymbol: IrSimpleFunctionSymbol,

@@ -114,7 +114,7 @@ internal class HLApplicatorImpl<PSI : PsiElement, INPUT : HLApplicatorInput>(
 
 
 class HLApplicatorBuilder<PSI : PsiElement, INPUT : HLApplicatorInput> internal constructor(
-    @PrivateForInline
+    @property:PrivateForInline
     var applyTo: ((PSI, INPUT, Project, Editor?) -> Unit)? = null,
     private var isApplicableByPsi: ((PSI) -> Boolean)? = null,
     private var getActionName: ((PSI, INPUT) -> String)? = null,
