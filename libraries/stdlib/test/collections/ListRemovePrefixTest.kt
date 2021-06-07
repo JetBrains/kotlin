@@ -33,4 +33,9 @@ class ListRemovePrefixTest {
         assertEquals(emptyList(), data.removePrefix(data))
     }
 
+    @Test
+    fun removePrefixWithNull() {
+        assertEquals(listOf(null, 2), listOf(null, 1, null, 2).removePrefix(listOf(null, 1)))
+    }
+
 }
