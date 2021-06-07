@@ -41,17 +41,17 @@ annotation class E4
 annotation class E5
 
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
-@Target(PROPERTY, FUNCTION, PROPERTY_SETTER, VALUE_PARAMETER, FIELD)
+@Target(PROPERTY, FUNCTION, PROPERTY_SETTER, VALUE_PARAMETER, FIELD, LOCAL_VARIABLE)
 @Retention(AnnotationRetention.BINARY)
 annotation class E6
 
 var some: Int
-    <!EXPERIMENTAL_ANNOTATION_ON_GETTER!>@E4<!>
+    <!EXPERIMENTAL_ANNOTATION_ON_WRONG_TARGET!>@E4<!>
     get() = 42
     @E5
     set(value) {}
 
-<!EXPERIMENTAL_ANNOTATION_ON_GETTER!>@get:E4<!>
+<!EXPERIMENTAL_ANNOTATION_ON_WRONG_TARGET!>@get:E4<!>
 val another: Int = 42
 
 class My {
@@ -74,18 +74,22 @@ class Derived : Base {
     <!EXPERIMENTAL_ANNOTATION_ON_OVERRIDE!>@E6<!>
     override val bar: Int = 42
 
-    @set:E6 @setparam:E6
+    @set:E6 <!EXPERIMENTAL_ANNOTATION_ON_WRONG_TARGET!>@setparam:E6<!>
     override var baz: Int = 13
 
     @E6
     override fun foo() {}
 
-    override fun @receiver:E6 String.withReceiver() {}
+    override fun <!EXPERIMENTAL_ANNOTATION_ON_WRONG_TARGET!>@receiver:E6<!> String.withReceiver() {}
 }
 
-abstract class Another : Base {
-    @delegate:E6
+abstract class Another(<!EXPERIMENTAL_ANNOTATION_ON_WRONG_TARGET!>@param:E6<!> val x: String) : Base {
+    <!EXPERIMENTAL_ANNOTATION_ON_WRONG_TARGET!>@delegate:E6<!>
     override val bar: Int by lazy { 42 }
+
+    fun baz(<!EXPERIMENTAL_ANNOTATION_ON_WRONG_TARGET!>@E6<!> param: Int) {
+        <!EXPERIMENTAL_ANNOTATION_ON_WRONG_TARGET!>@E6<!> val x = param
+    }
 }
 
 interface A {

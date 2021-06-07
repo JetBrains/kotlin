@@ -170,7 +170,7 @@ public class DefaultErrorMessages {
         MAP.put(EXPERIMENTAL_ANNOTATION_WITH_WRONG_TARGET, "Opt-in requirement marker annotation cannot be used on the following code elements: {0}. Please remove these targets", STRING);
         MAP.put(EXPERIMENTAL_ANNOTATION_WITH_WRONG_RETENTION, "Opt-in requirement marker annotation cannot be used with SOURCE retention. Please replace retention with BINARY");
 
-        MAP.put(EXPERIMENTAL_ANNOTATION_ON_GETTER, "Opt-in requirement marker annotation cannot be used on getter. Please annotate property instead");
+        MAP.put(EXPERIMENTAL_ANNOTATION_ON_WRONG_TARGET, "Opt-in requirement marker annotation cannot be used on {0}", STRING);
         MAP.put(EXPERIMENTAL_ANNOTATION_ON_OVERRIDE, "Opt-in requirement marker annotation on override requires the same marker on base declaration");
 
         MAP.put(EXPERIMENTAL_UNSIGNED_LITERALS, "{0}", STRING);

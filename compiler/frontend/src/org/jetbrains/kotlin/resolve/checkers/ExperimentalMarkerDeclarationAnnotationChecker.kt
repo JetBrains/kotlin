@@ -64,16 +64,31 @@ class ExperimentalMarkerDeclarationAnnotationChecker(private val module: ModuleD
             }
             val annotationClass = annotation.annotationClass ?: continue
             if (annotationClass.annotations.any { it.fqName in ExperimentalUsageChecker.EXPERIMENTAL_FQ_NAMES }) {
+                val annotationUseSiteTarget = entry.useSiteTarget?.getAnnotationUseSiteTarget()
                 if (KotlinTarget.PROPERTY_GETTER in actualTargets ||
-                    entry.useSiteTarget?.getAnnotationUseSiteTarget() == AnnotationUseSiteTarget.PROPERTY_GETTER
+                    annotationUseSiteTarget == AnnotationUseSiteTarget.PROPERTY_GETTER
                 ) {
-                    trace.report(Errors.EXPERIMENTAL_ANNOTATION_ON_GETTER.on(entry))
+                    trace.report(Errors.EXPERIMENTAL_ANNOTATION_ON_WRONG_TARGET.on(entry, "getter"))
+                }
+                if (KotlinTarget.VALUE_PARAMETER in actualTargets && annotationUseSiteTarget == null ||
+                    annotationUseSiteTarget == AnnotationUseSiteTarget.RECEIVER ||
+                    annotationUseSiteTarget == AnnotationUseSiteTarget.SETTER_PARAMETER ||
+                    annotationUseSiteTarget == AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER
+                ) {
+                    trace.report(Errors.EXPERIMENTAL_ANNOTATION_ON_WRONG_TARGET.on(entry, "parameter"))
+                }
+                if (KotlinTarget.LOCAL_VARIABLE in actualTargets) {
+                    trace.report(Errors.EXPERIMENTAL_ANNOTATION_ON_WRONG_TARGET.on(entry, "variable"))
+                }
+                if (annotationUseSiteTarget == AnnotationUseSiteTarget.FIELD ||
+                    annotationUseSiteTarget == AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD
+                ) {
+                    trace.report(Errors.EXPERIMENTAL_ANNOTATION_ON_WRONG_TARGET.on(entry, "field"))
                 }
                 val annotated = entry.getStrictParentOfType<KtAnnotated>() ?: continue
-                val useSiteTarget = entry.useSiteTarget?.getAnnotationUseSiteTarget()
                 if (annotated is KtCallableDeclaration &&
                     annotated !is KtPropertyAccessor &&
-                    useSiteTarget == null &&
+                    annotationUseSiteTarget == null &&
                     annotated.hasModifier(KtTokens.OVERRIDE_KEYWORD)
                 ) {
                     val descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, annotated)

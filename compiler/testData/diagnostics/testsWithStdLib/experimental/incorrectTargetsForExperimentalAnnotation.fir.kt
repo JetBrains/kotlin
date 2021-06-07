@@ -41,7 +41,7 @@ annotation class E4
 annotation class E5
 
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
-@Target(PROPERTY, FUNCTION, PROPERTY_SETTER, VALUE_PARAMETER, FIELD)
+@Target(PROPERTY, FUNCTION, PROPERTY_SETTER, VALUE_PARAMETER, FIELD, LOCAL_VARIABLE)
 @Retention(AnnotationRetention.BINARY)
 annotation class E6
 
@@ -83,9 +83,13 @@ class Derived : Base {
     override fun @receiver:E6 String.withReceiver() {}
 }
 
-abstract class Another : Base {
+abstract class Another(@param:E6 val x: String) : Base {
     @delegate:E6
     override val bar: Int by lazy { 42 }
+
+    fun baz(@E6 param: Int) {
+        @E6 val x = param
+    }
 }
 
 interface A {
