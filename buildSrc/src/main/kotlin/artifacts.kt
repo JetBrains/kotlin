@@ -112,6 +112,8 @@ fun <T : Jar> Project.runtimeJar(task: TaskProvider<T>, body: T.() -> Unit = {})
         addVariantsFromConfiguration(runtimeJar) { }
     }
 
+    (components.findByName("java") as AdhocComponentWithVariants?)?.addVariantsFromConfiguration(runtimeJar) { }
+
     return task
 }
 
