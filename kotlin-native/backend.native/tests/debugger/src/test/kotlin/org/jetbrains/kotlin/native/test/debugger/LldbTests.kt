@@ -164,7 +164,7 @@ class LldbTests {
             |fun main(args: Array<String>) {
             |    println(question("Subject", args))
             |}
-        """.trimMargin().binary("kt33055", "-g", "-Xg-generate-inline-function-body-marker=enable")
+        """.trimMargin().binary("kt33055", "-g", "-Xg-generate-debug-trampoline=enable")
         """
             > b 2
             Breakpoint 1: where = [..]`kfun:#question(kotlin.String;kotlin.Array<kotlin.String>){}kotlin.String [..] at kt33055.kt:2:12, [..]
@@ -192,7 +192,7 @@ class LldbTests {
             |        else -> print("C")
             |    }
             |}
-        """.trimMargin().binary("kt33364", "-g", "-Xg-generate-when-marker=enable")
+        """.trimMargin().binary("kt33364", "-g", "-Xg-generate-debug-trampoline=enable")
         """
             > b 5
             Breakpoint 1: where = [..]kfun:#main(){} [..] at kt33364.kt:5:[..]
