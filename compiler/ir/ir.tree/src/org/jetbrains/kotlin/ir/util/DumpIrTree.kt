@@ -49,7 +49,7 @@ class DumpIrTreeVisitor(
 ) : IrElementVisitor<Unit, String> {
 
     private val printer = Printer(out, "  ")
-    private val elementRenderer = RenderIrElementVisitor(normalizeNames)
+    private val elementRenderer = RenderIrElementVisitor(normalizeNames, !stableOrder)
     private fun IrType.render() = elementRenderer.renderType(this)
 
     private fun List<IrDeclaration>.ordered(): List<IrDeclaration> {
@@ -92,6 +92,12 @@ class DumpIrTreeVisitor(
     override fun visitModuleFragment(declaration: IrModuleFragment, data: String) {
         declaration.dumpLabeledElementWith(data) {
             declaration.files.dumpElements()
+        }
+    }
+
+    override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment, data: String) {
+        declaration.dumpLabeledElementWith(data) {
+            declaration.declarations.ordered().dumpElements()
         }
     }
 
