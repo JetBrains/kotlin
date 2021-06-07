@@ -622,7 +622,12 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 parameters.forEach{
                     val parameter = it.key
                     val local = functionGenerationContext.vars.createParameter(
-                            parameter, debugInfoIfNeeded(function, parameter))
+                            parameter,
+                            if (!function.descriptor.isTailrec)
+                                debugInfoIfNeeded(function, parameter)
+                            else
+                                null
+                    )
                     functionGenerationContext.mapParameterForDebug(local, it.value)
                 }
             }
