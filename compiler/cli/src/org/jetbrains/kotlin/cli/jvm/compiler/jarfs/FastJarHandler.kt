@@ -14,6 +14,7 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.io.RandomAccessFile
+import java.nio.ByteBuffer
 import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
 
@@ -26,8 +27,12 @@ class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) : ZipHandl
     init {
         RandomAccessFile(file, "r").use { randomAccessFile ->
             val mappedByteBuffer = randomAccessFile.channel.map(FileChannel.MapMode.READ_ONLY, 0, randomAccessFile.length())
-            ourEntryMap = mappedByteBuffer.parseCentralDirectory().associateBy { it.relativePath }
-            cachedManifest = ourEntryMap[MANIFEST_PATH]?.let(mappedByteBuffer::contentsToByteArray)
+            try {
+                ourEntryMap = mappedByteBuffer.parseCentralDirectory().associateBy { it.relativePath }
+                cachedManifest = ourEntryMap[MANIFEST_PATH]?.let(mappedByteBuffer::contentsToByteArray)
+            } finally {
+                mappedByteBuffer.unmapBuffer()
+            }
         }
 
         val entries: MutableMap<EntryInfo, FastJarVirtualFile> = HashMap()
@@ -167,9 +172,48 @@ private val cachedOpenFileHandles: FileAccessorCache<File, RandomAccessFileAndBu
         @Throws(IOException::class)
         override fun disposeAccessor(fileAccessor: RandomAccessFileAndBuffer) {
             fileAccessor.first.close()
+            fileAccessor.second.unmapBuffer()
         }
 
         override fun isEqual(val1: File, val2: File): Boolean {
             return val1 == val2 // reference equality to handle different jars for different ZipHandlers on the same path
         }
     }
+
+private val IS_PRIOR_9_JRE = System.getProperty("java.specification.version", "").startsWith("1.")
+
+private fun ByteBuffer.unmapBuffer() {
+    if (!isDirect) return
+
+    try {
+        if (IS_PRIOR_9_JRE) {
+            val cleaner = this::class.java.getMethod("cleaner")
+
+            cleaner.isAccessible = true
+
+            val clean = Class.forName("sun.misc.Cleaner").getMethod("clean")
+            clean.isAccessible = true
+
+            clean.invoke(cleaner.invoke(this))
+        } else {
+            val unsafeClass = try {
+                Class.forName("sun.misc.Unsafe")
+            } catch (ex: Exception) {
+                // jdk.internal.misc.Unsafe doesn't yet have an invokeCleaner() method,
+                // but that method should be added if sun.misc.Unsafe is removed.
+                Class.forName("jdk.internal.misc.Unsafe")
+            }
+
+            val clean = unsafeClass.getMethod("invokeCleaner", ByteBuffer::class.java)
+            clean.isAccessible = true
+
+            val theUnsafeField = unsafeClass.getDeclaredField("theUnsafe")
+            theUnsafeField.isAccessible = true
+
+            val theUnsafe = theUnsafeField.get(null)
+
+            clean.invoke(theUnsafe, this)
+        }
+    } catch (ex: Exception) {
+    }
+}
