@@ -203,15 +203,15 @@ class IrInterpreter private constructor(
         irFunction.typeParameters.filter { it.isReified }
             .forEach { callStack.addVariable(Variable(it.symbol, KTypeState(call.getTypeArgument(it.index)!!, irBuiltIns.anyClass.owner))) }
 
-        // 5. load up values onto stack
-        if (irFunction.isLocal) callStack.copyUpValuesFromPreviousFrame()
-        if (dispatchReceiver is StateWithClosure) callStack.loadUpValues(dispatchReceiver)
-        if (extensionReceiver is StateWithClosure) callStack.loadUpValues(extensionReceiver)
-
-        // 6. load outer class object
+        // 5. load outer class object
         if (dispatchReceiver is Complex && irFunction.parentClassOrNull?.isInner == true) {
             generateSequence(dispatchReceiver.outerClass) { (it.state as? Complex)?.outerClass }.forEach { callStack.addVariable(it) }
         }
+
+        // 6. load up values onto stack
+        if (irFunction.isLocal) callStack.copyUpValuesFromPreviousFrame()
+        if (dispatchReceiver is StateWithClosure) callStack.loadUpValues(dispatchReceiver)
+        if (extensionReceiver is StateWithClosure) callStack.loadUpValues(extensionReceiver)
 
         callInterceptor.interceptCall(call, irFunction, args) {
             callStack.addInstruction(CompoundInstruction(irFunction))
@@ -257,7 +257,6 @@ class IrInterpreter private constructor(
         callStack.addInstruction(SimpleInstruction(constructor))
         callStack.addVariable(Variable(constructorCall.getThisReceiver(), objectState))
         constructor.valueParameters.forEachIndexed { i, param -> callStack.addVariable(Variable(param.symbol, valueArguments[i])) }
-        if (irClass.isLocal) callStack.loadUpValues(objectState as StateWithClosure)
 
         val superReceiver = when (val irStatement = constructor.body?.statements?.get(0)) {
             null -> null // for jvm
@@ -280,6 +279,7 @@ class IrInterpreter private constructor(
             // used to get information from outer class
             generateSequence(outerClassVar) { (it.state as? Complex)?.outerClass }.forEach { callStack.addVariable(it) }
         }
+        if (irClass.isLocal) callStack.loadUpValues(objectState as StateWithClosure)
 
         callInterceptor.interceptConstructor(constructorCall, valueArguments) {
             callStack.addInstruction(CompoundInstruction(constructor))
