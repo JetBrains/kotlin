@@ -1134,6 +1134,25 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    fun testInlineClassesAsDefaultParameters(): Unit = ensureSetup {
+        compose(
+            """
+                inline class Positive(val int: Int) {
+                  init { require(int > 0) }
+                }
+
+                @Composable fun Check(positive: Positive = Positive(1)) {
+                  positive.int
+                }
+            """,
+            "Check()",
+            noParameters
+        ).then {
+            // Everything is fine if we get here without an exception.
+        }
+    }
+
+    @Test
     fun testRangeForLoop(): Unit = ensureSetup {
         codegen(
             """
