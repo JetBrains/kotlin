@@ -37,6 +37,7 @@ KtFirFunctionSymbol:
   dispatchType: A
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false

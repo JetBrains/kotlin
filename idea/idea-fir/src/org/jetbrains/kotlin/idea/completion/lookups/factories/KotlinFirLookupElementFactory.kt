@@ -27,7 +27,7 @@ internal class KotlinFirLookupElementFactory {
             is KtCallableSymbol -> createCallableLookupElement(
                 symbol,
                 importingStrategy = detectImportStrategy(symbol),
-                CallableInsertionStrategy.AS_CALL
+                CallableInsertionStrategy.AsCall
             )
             is KtClassLikeSymbol -> with(classLookupElementFactory) { createLookup(symbol) }
             is KtTypeParameterSymbol -> with(typeParameterLookupElementFactory) { createLookup(symbol) }

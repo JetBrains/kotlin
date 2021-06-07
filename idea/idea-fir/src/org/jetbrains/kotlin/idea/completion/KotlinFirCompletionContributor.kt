@@ -79,6 +79,7 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
     ) {
         val keywordContributor = FirKeywordCompletionContributor(basicContext)
         val callableContributor = FirCallableCompletionContributor(basicContext)
+        val infixCallableContributor = FirInfixCallableCompletionContributor(basicContext)
         val callableReferenceContributor = FirCallableReferenceCompletionContributor(basicContext)
         val classifierContributor = FirClassifierCompletionContributor(basicContext)
         val classifierReferenceContributor = FirClassifierReferenceCompletionContributor(basicContext)
@@ -142,6 +143,11 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
             is FirCallableReferencePositionContext -> {
                 complete(callableReferenceContributor, positionContext)
                 complete(classifierReferenceContributor, positionContext)
+            }
+
+            is FirInfixCallPositionContext -> {
+                complete(keywordContributor, positionContext)
+                complete(infixCallableContributor, positionContext)
             }
 
             is FirIncorrectPositionContext -> {

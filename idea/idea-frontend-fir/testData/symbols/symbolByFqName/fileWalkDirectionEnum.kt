@@ -12,6 +12,7 @@ KtFirFunctionSymbol:
   dispatchType: null
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -33,6 +34,7 @@ KtFirFunctionSymbol:
   dispatchType: null
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: true
   isOperator: false
   isOverride: false
@@ -54,6 +56,7 @@ KtFirFunctionSymbol:
   dispatchType: null
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false

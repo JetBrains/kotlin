@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.idea.completion.lookups
 
-internal enum class CallableInsertionStrategy {
-    AS_CALL,
-    AS_IDENTIFIER
+import com.intellij.codeInsight.completion.InsertionContext
+
+internal sealed class CallableInsertionStrategy {
+    object AsCall : CallableInsertionStrategy()
+    object AsIdentifier : CallableInsertionStrategy()
+    class AsIdentifierCustom(val insertionHandlerAction: InsertionContext.() -> Unit) : CallableInsertionStrategy()
 }

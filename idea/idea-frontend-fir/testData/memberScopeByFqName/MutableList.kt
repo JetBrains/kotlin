@@ -10,6 +10,7 @@ KtFirFunctionSymbol:
   dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -31,6 +32,7 @@ KtFirFunctionSymbol:
   dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -52,6 +54,7 @@ KtFirFunctionSymbol:
   dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -73,6 +76,7 @@ KtFirFunctionSymbol:
   dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -94,6 +98,7 @@ KtFirFunctionSymbol:
   dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -115,6 +120,7 @@ KtFirFunctionSymbol:
   dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -136,6 +142,7 @@ KtFirFunctionSymbol:
   dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -157,6 +164,7 @@ KtFirFunctionSymbol:
   dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -178,6 +186,7 @@ KtFirFunctionSymbol:
   dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -199,6 +208,7 @@ KtFirFunctionSymbol:
   dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -220,6 +230,7 @@ KtFirFunctionSymbol:
   dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -241,6 +252,7 @@ KtFirFunctionSymbol:
   dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: true
   isOverride: false
@@ -262,6 +274,7 @@ KtFirFunctionSymbol:
   dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -283,6 +296,7 @@ KtFirFunctionSymbol:
   dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: true
   isOverride: false
@@ -304,6 +318,7 @@ KtFirFunctionSymbol:
   dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -325,6 +340,7 @@ KtFirFunctionSymbol:
   dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: true
   isOverride: false
@@ -346,6 +362,7 @@ KtFirFunctionSymbol:
   dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -367,6 +384,7 @@ KtFirFunctionSymbol:
   dispatchType: kotlin/collections/List<E>
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -388,6 +406,7 @@ KtFirFunctionSymbol:
   dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: true
   isOverride: false
@@ -409,6 +428,7 @@ KtFirFunctionSymbol:
   dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -454,6 +474,7 @@ KtFirFunctionSymbol:
   dispatchType: kotlin/Any
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: true
   isOverride: false
@@ -475,6 +496,7 @@ KtFirFunctionSymbol:
   dispatchType: kotlin/Any
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -496,6 +518,7 @@ KtFirFunctionSymbol:
   dispatchType: kotlin/Any
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false

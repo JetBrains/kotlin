@@ -87,6 +87,13 @@ internal class FirExpressionNameReferencePositionContext(
     override val explicitReceiver: KtExpression?
 ) : FirNameReferencePositionContext()
 
+internal class FirInfixCallPositionContext(
+    override val position: PsiElement,
+    override val reference: KtSimpleNameReference,
+    override val nameExpression: KtSimpleNameExpression,
+    override val explicitReceiver: KtExpression?
+) : FirNameReferencePositionContext()
+
 
 internal class FirWithSubjectEntryPositionContext(
     override val position: PsiElement,
@@ -171,6 +178,11 @@ internal object FirPositionCompletionContextDetector {
                 position,
                 position.parentOfType()!!,
             )
+            parent is KtBinaryExpression && parent.operationReference == nameExpression -> {
+                FirInfixCallPositionContext(
+                    position, reference, nameExpression, explicitReceiver
+                )
+            }
             else -> {
                 FirExpressionNameReferencePositionContext(position, reference, nameExpression, explicitReceiver)
             }

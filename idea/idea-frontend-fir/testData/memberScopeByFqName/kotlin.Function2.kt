@@ -12,6 +12,7 @@ KtFirFunctionSymbol:
   dispatchType: kotlin/Function2<P1, P2, R>
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: true
   isOverride: false
@@ -33,6 +34,7 @@ KtFirFunctionSymbol:
   dispatchType: kotlin/Any
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: true
   isOverride: false
@@ -54,6 +56,7 @@ KtFirFunctionSymbol:
   dispatchType: kotlin/Any
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -75,6 +78,7 @@ KtFirFunctionSymbol:
   dispatchType: kotlin/Any
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false

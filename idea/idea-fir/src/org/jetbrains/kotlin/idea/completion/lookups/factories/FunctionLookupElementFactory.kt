@@ -49,8 +49,14 @@ internal class FunctionLookupElementFactory {
         )
 
         val insertionHandler = when (insertionStrategy) {
-            CallableInsertionStrategy.AS_CALL -> FunctionInsertionHandler
-            CallableInsertionStrategy.AS_IDENTIFIER -> QuotedNamesAwareInsertionHandler()
+            CallableInsertionStrategy.AsCall -> FunctionInsertionHandler
+            CallableInsertionStrategy.AsIdentifier -> QuotedNamesAwareInsertionHandler()
+            is CallableInsertionStrategy.AsIdentifierCustom -> object : QuotedNamesAwareInsertionHandler() {
+                override fun handleInsert(context: InsertionContext, item: LookupElement) {
+                    super.handleInsert(context, item)
+                    insertionStrategy.insertionHandlerAction(context)
+                }
+            }
         }
 
         return LookupElementBuilder.create(lookupObject, symbol.name.asString())

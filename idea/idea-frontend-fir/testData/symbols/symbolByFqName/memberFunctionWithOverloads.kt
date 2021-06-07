@@ -10,6 +10,7 @@ KtFirFunctionSymbol:
   dispatchType: kotlin/collections/List<E>
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -31,6 +32,7 @@ KtFirFunctionSymbol:
   dispatchType: kotlin/collections/List<E>
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false

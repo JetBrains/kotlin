@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 class C {
     fun foo(p: Int){}
     infix fun bar(p: Int) {}
