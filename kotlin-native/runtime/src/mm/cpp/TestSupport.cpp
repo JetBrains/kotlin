@@ -11,6 +11,7 @@
 #include "GlobalsRegistry.hpp"
 #include "TestSupport.hpp"
 #include "ThreadData.hpp"
+#include "ThreadState.hpp"
 
 using namespace kotlin;
 
@@ -57,4 +58,8 @@ extern "C" void Kotlin_TestSupport_AssertClearGlobalState() {
 void kotlin::DeinitMemoryForTests(MemoryState* memoryState) {
     DeinitMemory(memoryState, false);
     mm::ThreadRegistry::TestSupport::ClearCurrentThreadData();
+}
+
+std::ostream& kotlin::operator<<(std::ostream& stream, ThreadState state) {
+    return stream << ThreadStateName(state);
 }

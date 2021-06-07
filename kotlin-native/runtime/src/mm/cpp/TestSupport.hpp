@@ -5,6 +5,8 @@
 
 #include "../../main/cpp/TestSupport.hpp"
 
+#include <ostream>
+
 #include "MemoryPrivate.hpp"
 #include "ThreadData.hpp"
 
@@ -15,5 +17,9 @@ inline void RunInNewThread(std::function<void(mm::ThreadData&)> f) {
         f(*state->GetThreadData());
     });
 }
+
+// Overload the << operator for ThreadState to allow the GTest runner
+// to pretty print ThreadState constants.
+std::ostream& operator<<(std::ostream& stream, ThreadState state);
 
 } // namespace kotlin
