@@ -3945,7 +3945,7 @@ Task interopTestMultifile(String name, Closure<KonanInteropTest> configureClosur
 }
 
 standaloneTest("interop_objc_allocException") {
-    disabled = !isAppleTarget(project) || isExperimentalMM // Experimental MM doesn't support thread state switching for ObjC interop yet.
+    disabled = !isAppleTarget(project) || isExperimentalMM // Experimental MM doesn't support thread state switching for terminate handlers yet.
     expectedExitStatus = 0
     source = "interop/objc/allocException.kt"
     UtilsKt.dependsOnPlatformLibs(it)
@@ -4264,7 +4264,6 @@ standaloneTest("interop_opengl_teapot") {
 
 if (PlatformInfo.isAppleTarget(project)) {
     interopTest("interop_objc_smoke") {
-        enabled = !isExperimentalMM // Experimental MM doesn't support thread state switching for ObjC interop yet.
         goldValue = "84\nFoo\nDeallocated\n" +
                 "Hello, World!\nKotlin says: Hello, everybody!\nHello from Kotlin\n2, 1\n" +
                 "true\ntrue\n" +
@@ -4299,7 +4298,6 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 
     interopTestMultifile("interop_objc_tests") {
-        enabled = !isExperimentalMM  // Experimental MM does not support thread state switching for ObjC interop yet.
         source = "interop/objc/tests/"
         interop = 'objcTests'
         flags = ['-tr', '-e', 'main']
@@ -4320,7 +4318,6 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 
     interopTest("interop_objc_global_initializer") {
-        enabled = !isExperimentalMM // Experimental MM doesn't support thread state switching for ObjC interop yet.
         goldValue = "OK\n"
         source = "interop/objc_with_initializer/objc_test.kt"
         interop = 'objcMisc'
@@ -4339,7 +4336,6 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 
     interopTest("interop_objc_msg_send") {
-        enabled = !isExperimentalMM // Experimental MM doesn't support thread state switching for ObjC interop yet.
         source = "interop/objc/msg_send/main.kt"
         interop = 'objcMessaging'
 
@@ -4357,7 +4353,6 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 
     interopTest("interop_objc_foreignException") {
-        enabled = !isExperimentalMM // Experimental MM doesn't support thread state switching for ObjC interop yet.
         source = "interop/objc/foreignException/objc_wrap.kt"
         interop = 'foreignException'
         UtilsKt.dependsOnPlatformLibs(it)
@@ -4376,7 +4371,6 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 
     interopTest("interop_objc_foreignExceptionMode_wrap") {
-        enabled = !isExperimentalMM // Experimental MM doesn't support thread state switching for ObjC interop yet.
         source = "interop/objc/foreignException/objcExceptionMode.kt"
         interop = 'foreignExceptionMode_wrap'
         goldValue = "OK: ForeignException\n"
@@ -4396,7 +4390,7 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 
     interopTest("interop_objc_foreignExceptionMode_default") {
-        enabled = !isExperimentalMM // Experimental MM doesn't support thread state switching for ObjC interop yet.
+        enabled = !isExperimentalMM // Experimental MM doesn't support thread state switching for terminate handlers yet.
         source = "interop/objc/foreignException/objcExceptionMode.kt"
         interop = 'foreignExceptionMode_default'
         goldValue = "OK: Ends with uncaught exception handler\n"
@@ -4422,20 +4416,23 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 
     interopTest("interop_objc_illegal_sharing_with_weak") {
-        enabled = !isExperimentalMM  // Experimental MM doesn't support thread state switching for ObjC interop yet.
         source = "interop/objc/illegal_sharing_with_weak/main.kt"
         interop = 'objc_illegal_sharing_with_weak'
 
-        expectedExitStatusChecker = { it != 0 }
-        outputChecker = {
-            it.startsWith("Before") &&                   // Should crash after "Before"
-                !it.contains("After") &&                 // But before "After"
-                it.contains("isObjectAliveShouldCrash")  // And should contain stack trace.
+        if (isExperimentalMM) {
+            // Experimental MM supports arbitrary object sharing.
+            goldValue = "Before\nAfter true\n"
+        } else {
+            expectedExitStatusChecker = { it != 0 }
+            outputChecker = {
+                it.startsWith("Before") &&                   // Should crash after "Before"
+                    !it.contains("After") &&                 // But before "After"
+                    it.contains("isObjectAliveShouldCrash")  // And should contain stack trace.
+            }
         }
     }
 
     interopTest("interop_objc_kt42172") {
-        enabled = !isExperimentalMM  // Experimental MM doesn't support thread state switching for ObjC interop yet.
         source = "interop/objc/kt42172/main.kt"
         interop = "objc_kt42172"
         flags = ['-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
@@ -4485,8 +4482,7 @@ standaloneTest("interop_zlib") {
 }
 
 standaloneTest("interop_objc_illegal_sharing") {
-    disabled = !isAppleTarget(project) ||
-        isExperimentalMM  // Experimental MM doesn't support thread state switching for ObjC interop yet.
+    disabled = !isAppleTarget(project)
     source = "interop/objc/illegal_sharing.kt"
     UtilsKt.dependsOnPlatformLibs(it)
     if (isExperimentalMM) {

@@ -15,4 +15,10 @@ fun main() {
     }.result
     worker.requestTermination().result
     waitWorkerTermination(worker)
+
+    if (Platform.memoryModel == MemoryModel.EXPERIMENTAL) {
+        // Experimental MM by default doesn't run GC neither on worker termination nor on program exit.
+        // Enforce GC on program exit:
+        kotlin.native.internal.Debugging.forceCheckedShutdown = true
+    }
 }
