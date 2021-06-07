@@ -96,6 +96,13 @@ internal class FirWithSubjectEntryPositionContext(
     val whenCondition: KtWhenCondition,
 ) : FirNameReferencePositionContext()
 
+internal class FirCallableReferencePositionContext(
+    override val position: PsiElement,
+    override val reference: KtSimpleNameReference,
+    override val nameExpression: KtSimpleNameExpression,
+    override val explicitReceiver: KtExpression?
+) : FirNameReferencePositionContext()
+
 internal class FirUnknownPositionContext(
     override val position: PsiElement
 ) : FirRawPositionCompletionContext()
@@ -129,6 +136,11 @@ internal object FirPositionCompletionContextDetector {
         return when {
             parent is KtUserType -> {
                 detectForTypeContext(parent, position, reference, nameExpression, explicitReceiver)
+            }
+            parent is KtCallableReferenceExpression -> {
+                FirCallableReferencePositionContext(
+                    position, reference, nameExpression, parent.receiverExpression
+                )
             }
             parent is KtWhenCondition && parent.isConditionOnWhenWithSubject() -> {
                 FirWithSubjectEntryPositionContext(

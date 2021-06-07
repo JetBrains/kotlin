@@ -10,18 +10,15 @@ import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
-import com.intellij.openapi.diagnostic.ControlFlowException
-import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.completion.lookups.*
-import org.jetbrains.kotlin.idea.completion.lookups.CallableImportStrategy
+import org.jetbrains.kotlin.idea.completion.lookups.ImportStrategy
 import org.jetbrains.kotlin.idea.completion.lookups.CallableInsertionStrategy
 import org.jetbrains.kotlin.idea.completion.lookups.CompletionShortNamesRenderer
 import org.jetbrains.kotlin.idea.completion.lookups.QuotedNamesAwareInsertionHandler
 import org.jetbrains.kotlin.idea.completion.lookups.addCallableImportIfRequired
 import org.jetbrains.kotlin.idea.completion.lookups.shortenReferencesForFirCompletion
-import org.jetbrains.kotlin.idea.core.asFqNameWithRootPrefixIfNeeded
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -34,11 +31,12 @@ import org.jetbrains.kotlin.idea.completion.lookups.TailTextProvider.getTailText
 import org.jetbrains.kotlin.idea.completion.lookups.TailTextProvider.insertLambdaBraces
 import org.jetbrains.kotlin.idea.completion.lookups.CompletionShortNamesRenderer.renderFunctionParameters
 import org.jetbrains.kotlin.idea.completion.lookups.CompletionShortNamesRenderer.TYPE_RENDERING_OPTIONS
+import org.jetbrains.kotlin.idea.core.withRootPrefixIfNeeded
 
 internal class FunctionLookupElementFactory {
     fun KtAnalysisSession.createLookup(
         symbol: KtFunctionSymbol,
-        importStrategy: CallableImportStrategy,
+        importStrategy: ImportStrategy,
         insertionStrategy: CallableInsertionStrategy
     ): LookupElementBuilder {
         val lookupObject = FunctionLookupObject(
@@ -68,7 +66,7 @@ internal class FunctionLookupElementFactory {
  */
 private data class FunctionLookupObject(
     override val shortName: Name,
-    val importStrategy: CallableImportStrategy,
+    val importStrategy: ImportStrategy,
     val inputValueArguments: Boolean,
     val insertEmptyLambda: Boolean,
     // for distinction between different overloads
@@ -167,11 +165,11 @@ private object FunctionInsertionHandler : QuotedNamesAwareInsertionHandler() {
         val element = context.file.findElementAt(startOffset) ?: return
 
         val importStrategy = lookupObject.importStrategy
-        if (importStrategy is CallableImportStrategy.InsertFqNameAndShorten) {
+        if (importStrategy is ImportStrategy.InsertFqNameAndShorten) {
             context.document.replaceString(
                 context.startOffset,
                 context.tailOffset,
-                importStrategy.callableId.asFqNameWithRootPrefixIfNeeded().render()
+                importStrategy.fqName.withRootPrefixIfNeeded().render()
             )
             context.commitDocument()
 
@@ -183,7 +181,7 @@ private object FunctionInsertionHandler : QuotedNamesAwareInsertionHandler() {
             addArguments(context, element, lookupObject)
             context.commitDocument()
 
-            if (importStrategy is CallableImportStrategy.AddImport) {
+            if (importStrategy is ImportStrategy.AddImport) {
                 addCallableImportIfRequired(targetFile, importStrategy.nameToImport)
             }
         }

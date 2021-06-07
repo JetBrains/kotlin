@@ -48,6 +48,17 @@ interface KtScope : ValidityTokenOwner {
     }
 
     /**
+     * Return a sequence of all [KtSymbol] which current scope contain if declaration name matches [nameFilter]
+     * Constructors are not included here as they have no name
+     */
+    fun getAllNamedSymbols(nameFilter: KtScopeNameFilter = { true }): Sequence<KtSymbol> = withValidityAssertion {
+        sequence {
+            yieldAll(getCallableSymbols(nameFilter))
+            yieldAll(getClassifierSymbols(nameFilter))
+        }
+    }
+
+    /**
      * Return a sequence of [KtCallableSymbol] which current scope contain if declaration name matches [nameFilter]
      */
     fun getCallableSymbols(nameFilter: KtScopeNameFilter = { true }): Sequence<KtCallableSymbol>

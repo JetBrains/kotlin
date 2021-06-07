@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.completion.lookups.factories
 
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
-import org.jetbrains.kotlin.idea.completion.lookups.CallableImportStrategy
+import org.jetbrains.kotlin.idea.completion.lookups.ImportStrategy
 import org.jetbrains.kotlin.idea.completion.lookups.CallableInsertionStrategy
 import org.jetbrains.kotlin.idea.completion.lookups.detectImportStrategy
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
@@ -37,7 +37,7 @@ internal class KotlinFirLookupElementFactory {
 
     fun KtAnalysisSession.createCallableLookupElement(
         symbol: KtCallableSymbol,
-        importingStrategy: CallableImportStrategy,
+        importingStrategy: ImportStrategy,
         insertionStrategy: CallableInsertionStrategy,
     ): LookupElementBuilder {
         return when (symbol) {
@@ -50,9 +50,12 @@ internal class KotlinFirLookupElementFactory {
     fun createPackagePartLookupElement(packagePartFqName: FqName): LookupElement =
         packagePartLookupElementFactory.createPackagePartLookupElement(packagePartFqName)
 
-    fun KtAnalysisSession.createLookupElementForClassLikeSymbol(symbol: KtClassLikeSymbol, insertFqName: Boolean = true): LookupElement? {
+    fun KtAnalysisSession.createLookupElementForClassLikeSymbol(
+        symbol: KtClassLikeSymbol,
+        importingStrategy: ImportStrategy = detectImportStrategy(symbol)
+    ): LookupElement? {
         if (symbol !is KtNamedSymbol) return null
-        return with(classLookupElementFactory) { createLookup(symbol, insertFqName) }
+        return with(classLookupElementFactory) { createLookup(symbol, importingStrategy) }
     }
 }
 

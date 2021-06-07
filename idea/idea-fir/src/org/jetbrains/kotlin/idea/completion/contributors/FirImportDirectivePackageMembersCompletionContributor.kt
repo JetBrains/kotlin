@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.idea.completion.checkers.CompletionVisibilityChecker
 import org.jetbrains.kotlin.idea.completion.context.FirBasicCompletionContext
 import org.jetbrains.kotlin.idea.completion.context.FirImportDirectivePositionContext
 import org.jetbrains.kotlin.idea.completion.contributors.helpers.getStaticScope
-import org.jetbrains.kotlin.idea.completion.lookups.CallableImportStrategy
+import org.jetbrains.kotlin.idea.completion.lookups.ImportStrategy
 import org.jetbrains.kotlin.idea.completion.lookups.CallableInsertionStrategy
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 
@@ -23,14 +23,15 @@ internal class FirImportDirectivePackageMembersCompletionContributor(
 
         scope.getClassifierSymbols(scopeNameFilter)
             .filter { with(visibilityChecker) { isVisible(it) } }
-            .forEach { addClassifierSymbolToCompletion(it, insertFqName = false) }
+            .forEach { addClassifierSymbolToCompletion(it,  ImportStrategy.DoNothing) }
 
         scope.getCallableSymbols(scopeNameFilter)
             .filter { with(visibilityChecker) { isVisible(it) } }
             .forEach {
                 addCallableSymbolToCompletion(
+                    expectedType = null,
                     it,
-                    importingStrategy = CallableImportStrategy.DoNothing,
+                    importingStrategy = ImportStrategy.DoNothing,
                     insertionStrategy = CallableInsertionStrategy.AS_IDENTIFIER
                 )
             }

@@ -10,6 +10,8 @@ import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.completion.lookups.*
+import org.jetbrains.kotlin.idea.completion.lookups.ImportStrategy
 import org.jetbrains.kotlin.idea.completion.lookups.KotlinLookupObject
 import org.jetbrains.kotlin.idea.completion.lookups.shortenReferencesForFirCompletion
 import org.jetbrains.kotlin.idea.completion.lookups.withSymbolInfo
@@ -21,10 +23,13 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.renderer.render
 
-class ClassLookupElementFactory {
-    fun KtAnalysisSession.createLookup(symbol: KtClassLikeSymbol, insertFqName: Boolean = true): LookupElementBuilder {
+internal class ClassLookupElementFactory {
+    fun KtAnalysisSession.createLookup(
+        symbol: KtClassLikeSymbol,
+        importingStrategy: ImportStrategy = detectImportStrategy(symbol)
+    ): LookupElementBuilder {
         val name = symbol.nameOrAnonymous
-        return LookupElementBuilder.create(ClassifierLookupObject(name, symbol.classIdIfNonLocal, insertFqName), name.asString())
+        return LookupElementBuilder.create(ClassifierLookupObject(name, importingStrategy), name.asString())
             .withInsertHandler(ClassifierInsertionHandler)
             .let { withSymbolInfo(symbol, it) }
     }
@@ -33,9 +38,8 @@ class ClassLookupElementFactory {
 
 private data class ClassifierLookupObject(
     override val shortName: Name,
-    val classId: ClassId?,
-    val insertFqName: Boolean
-) : KotlinLookupObject {}
+    val importingStrategy: ImportStrategy
+) : KotlinLookupObject
 
 /**
  * The simplest implementation of the insertion handler for a classifiers.
@@ -45,8 +49,8 @@ private object ClassifierInsertionHandler : InsertHandler<LookupElement> {
         val targetFile = context.file as? KtFile ?: return
         val lookupObject = item.`object` as ClassifierLookupObject
 
-        if (lookupObject.classId != null && lookupObject.insertFqName) {
-            val fqName = lookupObject.classId.asSingleFqName()
+        if (lookupObject.importingStrategy is ImportStrategy.InsertFqNameAndShorten) {
+            val fqName = lookupObject.importingStrategy.fqName
 
             context.document.replaceString(context.startOffset, context.tailOffset, fqName.render())
             context.commitDocument()

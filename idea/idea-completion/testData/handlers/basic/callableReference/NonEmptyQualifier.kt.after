@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 class C {
     fun foo() {
         val v = D::memberFun<caret>

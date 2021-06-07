@@ -11,12 +11,12 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.completion.lookups.*
-import org.jetbrains.kotlin.idea.completion.lookups.CallableImportStrategy
+import org.jetbrains.kotlin.idea.completion.lookups.ImportStrategy
 import org.jetbrains.kotlin.idea.completion.lookups.TailTextProvider.getTailText
 import org.jetbrains.kotlin.idea.completion.lookups.addCallableImportIfRequired
 import org.jetbrains.kotlin.idea.completion.lookups.detectImportStrategy
 import org.jetbrains.kotlin.idea.completion.lookups.shortenReferencesForFirCompletion
-import org.jetbrains.kotlin.idea.core.asFqNameWithRootPrefixIfNeeded
+import org.jetbrains.kotlin.idea.core.withRootPrefixIfNeeded
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.components.KtTypeRendererOptions
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSyntheticJavaPropertySymbol
@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.renderer.render
 internal class VariableLookupElementFactory {
     fun KtAnalysisSession.createLookup(
         symbol: KtVariableLikeSymbol,
-        importStrategy: CallableImportStrategy = detectImportStrategy(symbol)
+        importStrategy: ImportStrategy = detectImportStrategy(symbol)
     ): LookupElementBuilder {
         val lookupObject = VariableLookupObject(
             symbol.name,
@@ -63,7 +63,7 @@ internal class VariableLookupElementFactory {
  */
 private data class VariableLookupObject(
     override val shortName: Name,
-    val importStrategy: CallableImportStrategy,
+    val importStrategy: ImportStrategy,
     override val renderedReceiverType: String?,
 ) : KotlinCallableLookupObject()
 
@@ -74,22 +74,22 @@ private object VariableInsertionHandler : InsertHandler<LookupElement> {
         val lookupObject = item.`object` as VariableLookupObject
 
         when (val importStrategy = lookupObject.importStrategy) {
-            is CallableImportStrategy.AddImport -> {
+            is ImportStrategy.AddImport -> {
                 addCallableImportIfRequired(targetFile, importStrategy.nameToImport)
             }
 
-            is CallableImportStrategy.InsertFqNameAndShorten -> {
+            is ImportStrategy.InsertFqNameAndShorten -> {
                 context.document.replaceString(
                     context.startOffset,
                     context.tailOffset,
-                    importStrategy.callableId.asFqNameWithRootPrefixIfNeeded().render()
+                    importStrategy.fqName.withRootPrefixIfNeeded().render()
                 )
 
                 context.commitDocument()
                 shortenReferencesForFirCompletion(targetFile, TextRange(context.startOffset, context.tailOffset))
             }
 
-            is CallableImportStrategy.DoNothing -> {
+            is ImportStrategy.DoNothing -> {
             }
         }
     }

@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 val v = "a"::<caret>
 
 // EXIST: extFun
