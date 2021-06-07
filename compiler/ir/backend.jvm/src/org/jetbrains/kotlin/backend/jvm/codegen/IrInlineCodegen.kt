@@ -67,7 +67,9 @@ class IrInlineCodegen(
             rememberClosure(parameterType, irValueParameter.index, lambdaInfo)
             lambdaInfo.generateLambdaBody(sourceCompiler)
             lambdaInfo.reference.getArgumentsWithIr().forEachIndexed { index, (_, ir) ->
-                putCapturedValueOnStack(ir, lambdaInfo.capturedVars[index], index)
+                val param = lambdaInfo.capturedVars[index]
+                val onStack = codegen.genOrGetLocal(ir, param.type, ir.type, BlockInfo())
+                putCapturedToLocalVal(onStack, param, ir.type.toIrBasedKotlinType())
             }
         } else {
             val kind = when (irValueParameter.origin) {
@@ -99,19 +101,9 @@ class IrInlineCodegen(
                 -> codegen.gen(argumentExpression, parameterType, irValueParameter.type, blockInfo)
             }
 
-
-            //TODO support default argument erasure
-            if (!processDefaultMaskOrMethodHandler(onStack, kind)) {
-                val expectedType = JvmKotlinType(parameterType, irValueParameter.type.toIrBasedKotlinType())
-                putArgumentOrCapturedToLocalVal(expectedType, onStack, null, irValueParameter.index, kind)
-            }
+            val expectedType = JvmKotlinType(parameterType, irValueParameter.type.toIrBasedKotlinType())
+            putArgumentToLocalVal(expectedType, onStack, irValueParameter.index, kind)
         }
-    }
-
-    private fun putCapturedValueOnStack(argumentExpression: IrExpression, param: CapturedParamDesc, capturedParamIndex: Int) {
-        val onStack = codegen.genOrGetLocal(argumentExpression, param.type, argumentExpression.type, BlockInfo())
-        val expectedType = JvmKotlinType(param.type, argumentExpression.type.toIrBasedKotlinType())
-        putArgumentOrCapturedToLocalVal(expectedType, onStack, param, capturedParamIndex, ValueKind.CAPTURED)
     }
 
     override fun beforeValueParametersStart() {

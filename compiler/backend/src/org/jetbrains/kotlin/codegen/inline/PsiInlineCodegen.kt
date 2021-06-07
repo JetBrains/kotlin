@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.codegen.coroutines.getOrCreateJvmSuspendFunctionView
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
@@ -192,20 +193,11 @@ class PsiInlineCodegen(
         activeLambda = null
     }
 
-    override fun putValueIfNeeded(parameterType: JvmKotlinType, value: StackValue, kind: ValueKind, parameterIndex: Int) {
-        if (processDefaultMaskOrMethodHandler(value, kind)) return
+    override fun putValueIfNeeded(parameterType: JvmKotlinType, value: StackValue, kind: ValueKind, parameterIndex: Int) =
+        putArgumentToLocalVal(parameterType, value, parameterIndex, kind)
 
-        assert(maskValues.isEmpty()) { "Additional default call arguments should be last ones, but $value" }
-
-        putArgumentOrCapturedToLocalVal(parameterType, value, null, parameterIndex, kind)
-    }
-
-    override fun putCapturedValueOnStack(stackValue: StackValue, valueType: Type, paramIndex: Int) {
-        val param = activeLambda!!.capturedVars[paramIndex]
-        putArgumentOrCapturedToLocalVal(
-            JvmKotlinType(stackValue.type, stackValue.kotlinType), stackValue, param, paramIndex, ValueKind.CAPTURED
-        )
-    }
+    override fun putCapturedValueOnStack(stackValue: StackValue, valueType: Type, paramIndex: Int) =
+        putCapturedToLocalVal(stackValue, activeLambda!!.capturedVars[paramIndex], stackValue.kotlinType)
 
     override fun reorderArgumentsIfNeeded(actualArgsWithDeclIndex: List<ArgumentAndDeclIndex>, valueParameterTypes: List<Type>) = Unit
 
@@ -294,9 +286,10 @@ class PsiExpressionLambda(
             val capturedReceiver = closure.capturedReceiverFromOuterContext
             if (capturedReceiver != null) {
                 val fieldName = closure.getCapturedReceiverFieldName(state.typeMapper.bindingContext, state.languageVersionSettings)
-                val type = state.typeMapper.mapType(capturedReceiver).let {
-                    if (isBoundCallableReference) AsmUtil.boxType(it) else it
-                }
+                val type = if (isBoundCallableReference)
+                    state.typeMapper.mapType(capturedReceiver, null, TypeMappingMode.GENERIC_ARGUMENT)
+                else
+                    state.typeMapper.mapType(capturedReceiver)
                 add(capturedParamDesc(fieldName, type, isSuspend = false))
             }
 
