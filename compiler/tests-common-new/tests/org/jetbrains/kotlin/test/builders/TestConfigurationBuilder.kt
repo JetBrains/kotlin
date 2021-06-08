@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.impl.TestConfigurationImpl
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
+import kotlin.io.path.Path
 
 @DefaultsDsl
 @OptIn(TestInfrastructureInternals::class)
@@ -69,7 +70,10 @@ class TestConfigurationBuilder {
         return """$this|$other"""
     }
 
-    private fun String.toMatchingRegexString(): String = """^${replace("*", ".*")}$"""
+    private fun String.toMatchingRegexString(): String = when (this) {
+        "*" -> ".*"
+        else -> """^.*/${replace("*", ".*")}$"""
+    }
 
     fun forTestsMatching(pattern: Regex, configuration: TestConfigurationBuilder.() -> Unit) {
         configurationsByPositiveTestDataCondition += pattern to configuration
@@ -162,13 +166,16 @@ class TestConfigurationBuilder {
     }
 
     fun build(testDataPath: String): TestConfiguration {
+        // We use URI here because we use '/' in our codebase, and URI also uses it (unlike OS-dependent `toString()`)
+        val absoluteTestDataPath = Path(testDataPath).normalize().toUri().toString()
+
         for ((regex, configuration) in configurationsByPositiveTestDataCondition) {
-            if (regex.matches(testDataPath)) {
+            if (regex.matches(absoluteTestDataPath)) {
                 this.configuration()
             }
         }
         for ((regex, configuration) in configurationsByNegativeTestDataCondition) {
-            if (!regex.matches(testDataPath)) {
+            if (!regex.matches(absoluteTestDataPath)) {
                 this.configuration()
             }
         }
