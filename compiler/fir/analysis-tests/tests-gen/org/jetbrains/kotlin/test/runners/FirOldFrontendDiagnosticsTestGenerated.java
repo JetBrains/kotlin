@@ -31032,6 +31032,18 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("intersectionExhaustivenessComplex.kt")
+            public void testIntersectionExhaustivenessComplex() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/when/intersectionExhaustivenessComplex.kt");
+            }
+
+            @Test
+            @TestMetadata("intersectionExhaustivenessSimple.kt")
+            public void testIntersectionExhaustivenessSimple() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/when/intersectionExhaustivenessSimple.kt");
+            }
+
+            @Test
             @TestMetadata("kt10439.kt")
             public void testKt10439() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/when/kt10439.kt");
