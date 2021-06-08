@@ -1,6 +1,6 @@
 public final class ReceiverFunKt {
     public static final fun foo($this$foo: java.lang.String) : int {
-        return [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+        return [!] UnknownKotlinExpression (THIS_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
     }
     public static final fun getRx($this$rx: java.lang.String) : kotlin.text.Regex {
         return [!] UnknownKotlinExpression (CALL_EXPRESSION)

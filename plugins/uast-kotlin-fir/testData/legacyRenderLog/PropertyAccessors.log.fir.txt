@@ -4,7 +4,9 @@ UFile (package = )
         UMethod (name = getStringRepresentation)
             UBlockExpression
                 UReturnExpression
-                    [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+                    UQualifiedReferenceExpression
+                        [!] UnknownKotlinExpression (THIS_EXPRESSION)
+                        [!] UnknownKotlinExpression (CALL_EXPRESSION)
         UMethod (name = setStringRepresentation)
             UParameter (name = value)
             UBlockExpression

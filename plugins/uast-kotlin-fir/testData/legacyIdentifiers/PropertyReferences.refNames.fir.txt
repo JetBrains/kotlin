@@ -1,0 +1,5 @@
+mutableProp -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+mutableProp -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+mutableProp -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+mutableProp -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+mutableProp -> UQualifiedReferenceExpression from KtDotQualifiedExpression

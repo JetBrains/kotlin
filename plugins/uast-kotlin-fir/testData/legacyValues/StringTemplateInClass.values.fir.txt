@@ -1,6 +1,8 @@
 UFile (package = ) [public final class Demo {...]
     UClass (name = Demo) [public final class Demo {...}]
-        UField (name = foo) [private final var foo: error.NonExistentClass = [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)]
-            [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) [[!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)] = Undetermined
+        UField (name = foo) [private final var foo: error.NonExistentClass = [!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)]
+            UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
+                [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
+                [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
         UMethod (name = Demo) [public fun Demo() = UastEmptyExpression]
         UMethod (name = getFoo) [public final fun getFoo() : error.NonExistentClass = UastEmptyExpression]

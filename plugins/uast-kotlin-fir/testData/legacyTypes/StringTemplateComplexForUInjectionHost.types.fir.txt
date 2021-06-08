@@ -21,10 +21,14 @@ UFile (package = ) [public final class StringTemplateComplexForUInjectionHostKt 
                     ULiteralExpression (value = "literal") ["literal"] : PsiType:String
                     [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
                 ULiteralExpression (value = " z") [" z"] : PsiType:String
-        UField (name = literalInLiteral2) [private static final var literalInLiteral2: java.lang.String = "a " + [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) + " z"]
-            UPolyadicExpression (operator = +) ["a " + [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) + " z"] : PsiType:String
+        UField (name = literalInLiteral2) [private static final var literalInLiteral2: java.lang.String = "a " + "literal" + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION) + " z"]
+            UPolyadicExpression (operator = +) ["a " + "literal" + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION) + " z"] : PsiType:String
                 ULiteralExpression (value = "a ") ["a "] : PsiType:String
-                [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) [[!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)]
+                UQualifiedReferenceExpression ["literal" + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:String
+                    UPolyadicExpression (operator = +) ["literal" + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] : PsiType:String
+                        ULiteralExpression (value = "literal") ["literal"] : PsiType:String
+                        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
                 ULiteralExpression (value = " z") [" z"] : PsiType:String
         UField (name = empty) [private static final var empty: java.lang.String = ""]
             ULiteralExpression (value = "") [""] : PsiType:String

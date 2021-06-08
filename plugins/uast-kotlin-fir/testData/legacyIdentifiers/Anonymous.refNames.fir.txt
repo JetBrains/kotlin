@@ -1,0 +1,6 @@
+Closeable -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+io -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+InputStream -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+io -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+run() -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+run() -> UQualifiedReferenceExpression from KtDotQualifiedExpression

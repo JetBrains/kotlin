@@ -2,27 +2,53 @@ UFile (package = )
     UClass (name = ResolveKt)
         UMethod (name = bar)
             UBlockExpression
-                [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
-                [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
-                [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
-                [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
-                [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
-                [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+                UQualifiedReferenceExpression
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION)
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION)
+                UQualifiedReferenceExpression
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION)
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION)
+                UQualifiedReferenceExpression
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION)
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION)
+                UQualifiedReferenceExpression
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION)
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION)
+                UQualifiedReferenceExpression
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION)
+                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                UQualifiedReferenceExpression
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION)
+                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
                 [!] UnknownKotlinExpression (PROPERTY)
                 [!] UnknownKotlinExpression (BINARY_EXPRESSION)
-                [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
-                [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+                UQualifiedReferenceExpression
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION)
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION)
+                UQualifiedReferenceExpression
+                    UQualifiedReferenceExpression
+                        UQualifiedReferenceExpression
+                            [!] UnknownKotlinExpression (CALL_EXPRESSION)
+                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                        [!] UnknownKotlinExpression (CALL_EXPRESSION)
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION)
                 [!] UnknownKotlinExpression (PROPERTY)
-                [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+                UQualifiedReferenceExpression
+                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION)
                 [!] UnknownKotlinExpression (CALL_EXPRESSION)
         UMethod (name = barT)
             UParameter (name = t)
             UBlockExpression
-                [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+                UQualifiedReferenceExpression
+                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION)
         UMethod (name = barTL)
             UParameter (name = listT)
             UBlockExpression
-                [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+                UQualifiedReferenceExpression
+                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION)
                 [!] UnknownKotlinExpression (FOR)
     UClass (name = A)
         UMethod (name = A)

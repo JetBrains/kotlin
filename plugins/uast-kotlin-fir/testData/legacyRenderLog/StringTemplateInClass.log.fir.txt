@@ -1,6 +1,8 @@
 UFile (package = )
     UClass (name = Demo)
         UField (name = foo)
-            [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+            UQualifiedReferenceExpression
+                [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                [!] UnknownKotlinExpression (CALL_EXPRESSION)
         UMethod (name = Demo)
         UMethod (name = getFoo)

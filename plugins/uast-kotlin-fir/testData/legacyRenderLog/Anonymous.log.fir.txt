@@ -5,9 +5,13 @@ UFile (package = )
         UMethod (name = foo)
             UBlockExpression
                 [!] UnknownKotlinExpression (PROPERTY)
-                [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+                UQualifiedReferenceExpression
+                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION)
                 [!] UnknownKotlinExpression (PROPERTY)
-                [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+                UQualifiedReferenceExpression
+                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION)
                 [!] UnknownKotlinExpression (PROPERTY)
                 [!] UnknownKotlinExpression (PROPERTY)
         UMethod (name = withErr)

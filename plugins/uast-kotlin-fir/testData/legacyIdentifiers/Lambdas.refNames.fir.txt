@@ -1,0 +1,6 @@
+Stream -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+stream -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+util -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+filter { it.isEmpty() } -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+empty<String>() -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+isEmpty() -> UQualifiedReferenceExpression from KtDotQualifiedExpression

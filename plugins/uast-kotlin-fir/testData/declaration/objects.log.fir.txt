@@ -7,8 +7,12 @@ UFile (package = )
         UMethod (name = getTopRunnable)
         UMethod (name = main)
             UBlockExpression
-                [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
-                [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+                UQualifiedReferenceExpression
+                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION)
+                UQualifiedReferenceExpression
+                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION)
     UClass (name = RunnableManager)
         UField (name = INSTANCE)
         UField (name = tasks)
@@ -18,7 +22,9 @@ UFile (package = )
         UMethod (name = register)
             UParameter (name = runnable)
             UBlockExpression
-                [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+                UQualifiedReferenceExpression
+                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION)
         UMethod (name = runAll)
             UBlockExpression
                 [!] UnknownKotlinExpression (FOR)

@@ -1,0 +1,5 @@
+pkg -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+java -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+java -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+java -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+java -> UQualifiedReferenceExpression from KtDotQualifiedExpression

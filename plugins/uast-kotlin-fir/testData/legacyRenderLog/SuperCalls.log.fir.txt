@@ -36,7 +36,9 @@ UFile (package = )
         UMethod (name = foo)
             UParameter (name = a)
             UBlockExpression
-                [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+                UQualifiedReferenceExpression
+                    [!] UnknownKotlinExpression (SUPER_EXPRESSION)
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION)
     UClass (name = O)
         UField (name = INSTANCE)
         UMethod (name = O)

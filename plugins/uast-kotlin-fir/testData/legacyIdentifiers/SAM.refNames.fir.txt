@@ -1,0 +1,12 @@
+Thread -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+lang -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+Runnable -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+lang -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+Callable -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+concurrent -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+util -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+Supplier -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+function -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+util -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+Runnable { /* SAM */ } -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+lang -> UQualifiedReferenceExpression from KtDotQualifiedExpression

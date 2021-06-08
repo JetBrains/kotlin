@@ -9,7 +9,11 @@ UFile (package = )
         UField (name = foo)
             [!] UnknownKotlinExpression (LAMBDA_EXPRESSION)
         UField (name = baz)
-            [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+            UQualifiedReferenceExpression
+                UQualifiedReferenceExpression
+                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                [!] UnknownKotlinExpression (CALL_EXPRESSION)
         UMethod (name = getNotSam)
         UMethod (name = getFoo)
         UMethod (name = setFoo)

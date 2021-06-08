@@ -1,0 +1,2 @@
+toString() -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+foo(a) -> UQualifiedReferenceExpression from KtDotQualifiedExpression

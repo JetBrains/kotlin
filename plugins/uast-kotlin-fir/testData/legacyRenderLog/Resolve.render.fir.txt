@@ -1,24 +1,24 @@
 public final class ResolveKt {
     public static final fun bar() : void {
-        [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
-        [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
-        [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
-        [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
-        [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
-        [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+        [!] UnknownKotlinExpression (CALL_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)
+        [!] UnknownKotlinExpression (CALL_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)
+        [!] UnknownKotlinExpression (CALL_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)
+        [!] UnknownKotlinExpression (CALL_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)
+        [!] UnknownKotlinExpression (CALL_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+        [!] UnknownKotlinExpression (CALL_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
         [!] UnknownKotlinExpression (PROPERTY)
         [!] UnknownKotlinExpression (BINARY_EXPRESSION)
-        [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
-        [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+        [!] UnknownKotlinExpression (CALL_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)
+        [!] UnknownKotlinExpression (CALL_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)
         [!] UnknownKotlinExpression (PROPERTY)
-        [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)
         [!] UnknownKotlinExpression (CALL_EXPRESSION)
     }
     public static final fun barT(t: T) : void {
-        [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)
     }
     public static final fun barTL(listT: T) : void {
-        [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)
         [!] UnknownKotlinExpression (FOR)
     }
 }

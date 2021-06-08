@@ -3,6 +3,10 @@ UFile (package = )
         UMethod (name = test)
             UParameter (name = list)
             UBlockExpression
-                [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+                UQualifiedReferenceExpression
+                    UQualifiedReferenceExpression
+                        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                        [!] UnknownKotlinExpression (CALL_EXPRESSION)
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION)
     UClass (name = Some)
         UMethod (name = Some)

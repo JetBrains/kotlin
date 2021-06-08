@@ -1,0 +1,1 @@
+bar("lorem") -> UQualifiedReferenceExpression from KtDotQualifiedExpression

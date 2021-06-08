@@ -3,7 +3,9 @@ UFile (package = test.pkg)
         UMethod (name = top)
             UBlockExpression
                 UReturnExpression
-                    [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+                    UQualifiedReferenceExpression
+                        [!] UnknownKotlinExpression (CALL_EXPRESSION)
+                        [!] UnknownKotlinExpression (CALL_EXPRESSION)
     UClass (name = Context)
         UMethod (name = Context)
         UMethod (name = inner)

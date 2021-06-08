@@ -1,0 +1,2 @@
+isBlank() -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+isNotEmpty() -> UQualifiedReferenceExpression from KtDotQualifiedExpression

@@ -3,7 +3,11 @@ UFile (package = )
     UClass (name = LambdasKt)
         UMethod (name = foo)
             UBlockExpression
-                [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+                UQualifiedReferenceExpression
+                    UQualifiedReferenceExpression
+                        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                        [!] UnknownKotlinExpression (CALL_EXPRESSION)
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION)
         UMethod (name = doSelectItem)
             UParameter (name = selectItemFunction)
             UBlockExpression

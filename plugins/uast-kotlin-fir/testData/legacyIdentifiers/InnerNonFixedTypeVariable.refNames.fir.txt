@@ -1,0 +1,4 @@
+mapTo(mutableSetOf()) {
+
+    } -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+filterIsInstance<Some>() -> UQualifiedReferenceExpression from KtDotQualifiedExpression
