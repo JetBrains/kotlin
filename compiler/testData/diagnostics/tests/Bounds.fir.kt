@@ -12,7 +12,7 @@ package boundsWithSubstitutors
 
     val b = X<Any, X<A<C>, C>>()
     val b0 = X<Any, <!UPPER_BOUND_VIOLATED!>Any?<!>>()
-    val b1 = X<Any, <!UPPER_BOUND_VIOLATED!>X<A<C>, String><!>>()
+    val b1 = X<Any, X<A<C>, <!UPPER_BOUND_VIOLATED!>String<!>>>()
 
 // FILE: b.kt
   open class A {}

@@ -7,17 +7,17 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.extractTypeRefAndSourceFromTypeArgument
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
@@ -35,213 +35,99 @@ object FirUpperBoundViolatedChecker : FirQualifiedAccessExpressionChecker() {
             ?.fir.safeAs<FirTypeParameterRefsOwner>()
             ?: return
 
-        val count = minOf(calleeFir.typeParameters.size, expression.typeArguments.size)
-
-        if (count == 0) {
-            return
-        }
-
-        val parameterPairs = mutableMapOf<FirTypeParameterSymbol, FirTypeRef>()
-
-        for (it in 0 until count) {
-            expression.typeArguments[it].safeAs<FirTypeProjectionWithVariance>()
-                ?.typeRef
-                ?.let { that ->
-                    if (that !is FirErrorTypeRef) {
-                        parameterPairs[calleeFir.typeParameters[it].symbol] = that
-                    } else {
-                        return
-                    }
-                }
-        }
-
-        // we substitute actual values to the
-        // type parameters from the declaration
-        val substitutor = substitutorByMap(
-            parameterPairs.mapValues { it.value.coneType },
-            context.session
-        )
-
-        parameterPairs.forEach { (proto, actual) ->
-            if (actual.source == null) {
-                // inferred types don't report INAPPLICABLE_CANDIDATE for type aliases!
-                return@forEach
-            }
-
-            val upperBound = getSubstitutedUpperBound(proto, substitutor, context.session.typeContext)
-            if (upperBound != null && !satisfiesBounds(upperBound, actual.coneType, context.session.typeContext)) {
-                reporter.reportOn(actual.source, upperBound, context)
-                return
-            }
-
-            // we must analyze nested things like
-            // S<S<K, L>, T<K, L>>()
-            actual.coneType.safeAs<ConeClassLikeType>()?.let {
-                val errorOccurred = analyzeTypeParameters(it, context, reporter, context.session.typeContext, actual.source)
-
-                if (errorOccurred) {
-                    return
-                }
-            }
-        }
-
-        // if we're dealing with a constructor
-        // resolved from a typealias we need to
-        // check if our actual parameters satisfy
-        // this constructor parameters.
-        // e.g.
-        // class B<T : Collection<Number>>
-        // typealias A<G> = B<List<G>>
-        // val a = A<Int>()
-        when (calleeFir) {
-            is FirConstructor -> analyzeConstructorCall(expression, substitutor, context.session.typeContext, reporter, context)
-        }
-    }
-
-    private fun analyzeConstructorCall(
-        functionCall: FirQualifiedAccessExpression,
-        callSiteSubstitutor: ConeSubstitutor,
-        typeSystemContext: ConeTypeContext,
-        reporter: DiagnosticReporter,
-        context: CheckerContext
-    ) {
-        // holds Collection<Number> bound.
-        // note that if B used another type parameter here,
-        // we'd get Collection<K>. So we need to do one more
-        // substitution here
-        val protoConstructor = functionCall.calleeReference.safeAs<FirResolvedNamedReference>()
-            ?.resolvedSymbol.safeAs<FirConstructorSymbol>()
-            ?.fir?.originalForSubstitutionOverride
-            ?: return
-
-        // holds Collection<G> bound.
-        // we need to do substitution here to get
-        // Collection<Int>
-        val actualConstructor = functionCall.calleeReference.safeAs<FirResolvedNamedReference>()
-            ?.resolvedSymbol.safeAs<FirConstructorSymbol>()
-            ?.fir.safeAs<FirConstructor>()
-            ?.returnTypeRef?.coneType
-            ?.safeAs<ConeClassLikeType>()
-            ?: return
-
-        val count = minOf(protoConstructor.typeParameters.size, actualConstructor.typeArguments.size)
-
-        if (count == 0) {
-            return
-        }
-
-        val constructorsParameterPairs = mutableMapOf<FirTypeParameterSymbol, ConeSimpleKotlinType>()
-
-        for (it in 0 until count) {
-            actualConstructor.typeArguments[it].safeAs<ConeSimpleKotlinType>()
-                ?.let { that ->
-                    if (that !is ConeClassErrorType) {
-                        constructorsParameterPairs[protoConstructor.typeParameters[it].symbol] = that
-                    } else {
-                        return
-                    }
-                }
-        }
-
-        // we substitute typealias declaration
-        // parameters to the ones used in the
-        // typealias target
-        val declarationSiteSubstitutor = substitutorByMap(
-            constructorsParameterPairs.toMap().mapValues { it.value.type },
-            context.session
-        )
-
-        constructorsParameterPairs.forEach { (proto, actual) ->
-            // just in case
-            var intersection = typeSystemContext.intersectTypes(
-                proto.fir.bounds.map { it.coneType }
-            ).safeAs<ConeKotlinType>() ?: return@forEach
-
-            intersection = declarationSiteSubstitutor.substituteOrSelf(intersection)
-            intersection = callSiteSubstitutor.substituteOrSelf(intersection)
-
-            // substitute Int for G from
-            // the example above
-            val target = callSiteSubstitutor.substituteOrSelf(actual)
-            val satisfiesBounds = AbstractTypeChecker.isSubtypeOf(typeSystemContext, target, intersection)
-
-            if (!satisfiesBounds) {
-                reporter.reportOn(functionCall.source, intersection, context)
-                return
-            }
+        val coneType = expression.typeRef.coneType
+        if (coneType is ConeClassLikeType) {
+            analyzeTypeParameters(
+                coneType,
+                expression.typeRef,
+                calleeFir.typeParameters.map { it.symbol },
+                expression.typeArguments,
+                context,
+                reporter
+            )
         }
     }
 
     /**
-     * Recursively analyzes type parameters
-     * and reports the diagnostic on the given
-     * reportTarget (because we can't report them
-     * on type parameters themselves now).
-     * Returns true if an error occured
+     * Recursively analyzes type parameters and reports the diagnostic on the given source calculated using typeRef
+     * Returns true if an error occurred
      */
     private fun analyzeTypeParameters(
         type: ConeClassLikeType,
+        typeRef: FirTypeRef?,
+        typeParameters: List<FirTypeParameterSymbol>?,
+        typeArguments: List<FirTypeProjection>?,
         context: CheckerContext,
-        reporter: DiagnosticReporter,
-        typeSystemContext: ConeTypeContext,
-        reportTarget: FirSourceElement?
-    ): Boolean {
-        val prototypeClass = type.lookupTag.toSymbol(context.session)
-            ?.fir.safeAs<FirRegularClass>()
-            ?: return false
-
-        val count = minOf(prototypeClass.typeParameters.size, type.typeArguments.size)
-
-        if (count == 0) {
-            return false
+        reporter: DiagnosticReporter
+    ) {
+        fun getTypeArgument(index: Int): Any {
+            return typeArguments?.elementAt(index) ?: type.typeArguments[index]
         }
 
-        val parameterPairs = mutableMapOf<FirTypeParameterSymbol, ConeClassLikeType>()
+        val typeArgumentsCount = typeArguments?.size ?: type.typeArguments.size
+        if (typeArgumentsCount == 0) {
+            return
+        }
 
-        for (it in 0 until count) {
-            type.typeArguments[it].safeAs<ConeClassLikeType>()
-                ?.let { that ->
-                    if (that !is ConeClassErrorType) {
-                        parameterPairs[prototypeClass.typeParameters[it].symbol] = that
-                    } else {
-                        return true
-                    }
+        val typeParameterSymbols = if (typeParameters != null) {
+            typeParameters
+        } else {
+            val prototypeClass = type.lookupTag.toSymbol(context.session)
+                ?.fir.safeAs<FirRegularClass>()
+                ?: return
+
+            prototypeClass.typeParameters.map { it.symbol }
+        }
+
+        if (typeParameterSymbols.isEmpty()) {
+            return
+        }
+
+        val count = minOf(typeParameterSymbols.size, typeArgumentsCount)
+        val substitution = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
+
+        for (index in 0 until count) {
+            val typeArgument = getTypeArgument(index)
+            val typeParameterSymbol = typeParameterSymbols[index]
+
+            if (typeArgument is FirTypeProjectionWithVariance) {
+                substitution[typeParameterSymbol] = typeArgument.typeRef.coneType
+            } else if (typeArgument is ConeClassLikeType) {
+                substitution[typeParameterSymbol] = typeArgument.type
+            }
+        }
+
+        val substitutor = substitutorByMap(substitution, context.session)
+        val typeSystemContext = context.session.typeContext
+
+        for (index in 0 until count) {
+            var typeArgument: ConeClassLikeType? = null
+            var typeArgumentTypeRef: FirTypeRef? = null
+            var typeArgumentSource: FirSourceElement? = null
+
+            if (typeArguments != null) {
+                val localTypeArgument = typeArguments[index]
+                if (localTypeArgument is FirTypeProjectionWithVariance) {
+                    typeArgumentTypeRef = localTypeArgument.typeRef
+                    typeArgument = typeArgumentTypeRef.coneType as? ConeClassLikeType
+                    typeArgumentSource = localTypeArgument.source
                 }
-        }
-
-        val substitutor = substitutorByMap(
-            parameterPairs.toMap().mapValues { it.value.type },
-            context.session
-        )
-
-        parameterPairs.forEach { (proto, actual) ->
-            val upperBound = getSubstitutedUpperBound(proto, substitutor, typeSystemContext)
-            if (upperBound != null && !satisfiesBounds(upperBound, actual.type, typeSystemContext)) {
-                // should report on the parameter instead!
-                reporter.reportOn(reportTarget, upperBound, context)
-                return true
+            } else {
+                typeArgument = type.typeArguments[index] as? ConeClassLikeType
+                val argTypeRefSource = extractTypeRefAndSourceFromTypeArgument(typeRef, index)
+                typeArgumentTypeRef = argTypeRefSource?.first
+                typeArgumentSource = argTypeRefSource?.second
             }
 
-            val errorOccurred = analyzeTypeParameters(actual, context, reporter, typeSystemContext, reportTarget)
-
-            if (errorOccurred) {
-                return true
+            if (typeArgument != null && typeArgumentSource != null) {
+                val upperBound = getSubstitutedUpperBound(typeParameterSymbols[index], substitutor, typeSystemContext)
+                if (upperBound != null && !satisfiesBounds(upperBound, typeArgument.type, typeSystemContext)) {
+                    reporter.reportOn(typeArgumentSource, FirErrors.UPPER_BOUND_VIOLATED, upperBound, context)
+                } else {
+                    analyzeTypeParameters(typeArgument, typeArgumentTypeRef, null, null, context, reporter)
+                }
             }
         }
-
-        return false
-    }
-
-    /**
-     * Returns true if target satisfies the
-     * bounds of the prototypeSymbol.
-     */
-    private fun satisfiesBounds(
-        upperBound: ConeKotlinType,
-        target: ConeKotlinType,
-        typeSystemContext: ConeTypeContext
-    ): Boolean {
-        return AbstractTypeChecker.isSubtypeOf(typeSystemContext, target, upperBound, stubTypesEqualToAnything = false)
     }
 
     private fun getSubstitutedUpperBound(
@@ -256,11 +142,7 @@ object FirUpperBoundViolatedChecker : FirQualifiedAccessExpressionChecker() {
         return substitutor.substituteOrSelf(intersection)
     }
 
-    private fun DiagnosticReporter.reportOn(
-        source: FirSourceElement?,
-        actual: ConeKotlinType,
-        context: CheckerContext
-    ) {
-        reportOn(source, FirErrors.UPPER_BOUND_VIOLATED, actual, context)
+    private fun satisfiesBounds(upperBound: ConeKotlinType, target: ConeKotlinType, typeSystemContext: ConeTypeContext): Boolean {
+        return AbstractTypeChecker.isSubtypeOf(typeSystemContext, target, upperBound, stubTypesEqualToAnything = false)
     }
 }
