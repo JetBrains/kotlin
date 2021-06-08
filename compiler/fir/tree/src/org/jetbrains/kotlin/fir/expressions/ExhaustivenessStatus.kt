@@ -8,7 +8,19 @@ package org.jetbrains.kotlin.fir.expressions
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 
 sealed class ExhaustivenessStatus {
-    object Exhaustive : ExhaustivenessStatus()
+
+    /**
+     * This value is used if the subject has type other than `Nothing`, in which case it's literally exhaustive only if type's possible
+     * cases are properly covered.
+     */
+    object ProperlyExhaustive : ExhaustivenessStatus()
+
+    /**
+     *  This value is used if the subject has type `Nothing`, in which case even an empty `when` is considered exhaustive. Also, in this
+     *  case, a synthetic else branch is created.
+     */
+    object ExhaustiveAsNothing : ExhaustivenessStatus()
+
     class NotExhaustive(val reasons: List<WhenMissingCase>) : ExhaustivenessStatus() {
         companion object {
             val NO_ELSE_BRANCH = NotExhaustive(listOf(WhenMissingCase.Unknown))
@@ -18,4 +30,7 @@ sealed class ExhaustivenessStatus {
 
 
 val FirWhenExpression.isExhaustive: Boolean
-    get() = exhaustivenessStatus == ExhaustivenessStatus.Exhaustive
+    get() = exhaustivenessStatus == ExhaustivenessStatus.ProperlyExhaustive || exhaustivenessStatus == ExhaustivenessStatus.ExhaustiveAsNothing
+
+val FirWhenExpression.isProperlyExhaustive: Boolean
+    get() = exhaustivenessStatus == ExhaustivenessStatus.ProperlyExhaustive

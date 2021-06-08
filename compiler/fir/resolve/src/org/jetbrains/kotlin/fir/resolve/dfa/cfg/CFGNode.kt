@@ -369,7 +369,7 @@ class WhenBranchResultExitNode(owner: ControlFlowGraph, override val fir: FirWhe
 }
 class WhenSyntheticElseBranchNode(owner: ControlFlowGraph, override val fir: FirWhenExpression, level: Int, id: Int) : CFGNode<FirWhenExpression>(owner, level, id) {
     init {
-        assert(!fir.isExhaustive)
+        assert(!fir.isProperlyExhaustive)
     }
 
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
