@@ -42,7 +42,7 @@ public abstract class KtSymbolProvider : KtAnalysisSessionComponent() {
     public abstract fun getVariableSymbol(psi: KtProperty): KtVariableSymbol
     public abstract fun getAnonymousObjectSymbol(psi: KtObjectLiteralExpression): KtAnonymousObjectSymbol
     public abstract fun getClassOrObjectSymbol(psi: KtClassOrObject): KtClassOrObjectSymbol
-    public abstract fun getNamedClassOrObjectSymbol(psi: KtClassOrObject): KtNamedClassOrObjectSymbol
+    public abstract fun getNamedClassOrObjectSymbol(psi: KtClassOrObject): KtNamedClassOrObjectSymbol?
     public abstract fun getPropertyAccessorSymbol(psi: KtPropertyAccessor): KtPropertyAccessorSymbol
 
     public abstract fun getClassOrObjectSymbolByClassId(classId: ClassId): KtClassOrObjectSymbol?
@@ -102,7 +102,8 @@ public interface KtSymbolProviderMixIn : KtAnalysisSessionMixIn {
     public fun KtClassOrObject.getClassOrObjectSymbol(): KtClassOrObjectSymbol =
         analysisSession.symbolProvider.getClassOrObjectSymbol(this)
 
-    public fun KtClassOrObject.getNamedClassOrObjectSymbol(): KtNamedClassOrObjectSymbol =
+    /** Gets the corresponding class or object symbol or null if the given [KtClassOrObject] is an enum entry. */
+    public fun KtClassOrObject.getNamedClassOrObjectSymbol(): KtNamedClassOrObjectSymbol? =
         analysisSession.symbolProvider.getNamedClassOrObjectSymbol(this)
 
     public fun KtPropertyAccessor.getPropertyAccessorSymbol(): KtPropertyAccessorSymbol =
