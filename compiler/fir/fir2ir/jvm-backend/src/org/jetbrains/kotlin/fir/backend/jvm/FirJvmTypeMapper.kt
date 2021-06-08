@@ -53,8 +53,8 @@ class FirJvmTypeMapper(val session: FirSession) : TypeMappingContext<JvmSignatur
     override fun getScriptInternalName(typeConstructor: TypeConstructorMarker): String =
         TODO("Not yet implemented")
 
-    override fun JvmSignatureWriter.writeGenericType(type: SimpleTypeMarker, asmType: Type, mode: TypeMappingMode) {
-        if (type !is ConeClassLikeType) return
+    override fun JvmSignatureWriter.writeGenericType(type: KotlinTypeMarker, asmType: Type, mode: TypeMappingMode) {
+        if (type !is ConeKotlinType) return
         if (skipGenericSignature() || hasNothingInNonContravariantPosition(type) || type.typeArguments.isEmpty()) {
             writeAsmType(asmType)
             return
@@ -98,8 +98,10 @@ class FirJvmTypeMapper(val session: FirSession) : TypeMappingContext<JvmSignatur
         else -> null
     }
 
-    private fun ConeClassLikeType.buildPossiblyInnerType(): PossiblyInnerConeType? =
-        buildPossiblyInnerType(lookupTag.toSymbol(session)?.toRegularClassSymbol(), 0)
+    private fun ConeKotlinType.buildPossiblyInnerType(): PossiblyInnerConeType? {
+        if (this !is ConeClassLikeType) return null
+        return buildPossiblyInnerType(lookupTag.toSymbol(session)?.toRegularClassSymbol(), 0)
+    }
 
     private fun ConeClassLikeType.parentClassOrNull(): FirRegularClassSymbol? {
         val parentClassId = classId?.outerClassId ?: return null

@@ -7,12 +7,4 @@ package org.jetbrains.uast.test.kotlin
 
 import org.jetbrains.uast.test.common.kotlin.FirLegacyUastTypesTestBase
 
-abstract class AbstractFirLegacyUastTypesTest : AbstractFirUastTypesTest(), FirLegacyUastTypesTestBase {
-    private val whitelist : Set<String> = setOf(
-        // TODO: not able to map Stream<String?..String>
-        "plugins/uast-kotlin/testData/Lambdas.kt",
-    )
-    override fun isExpectedToFail(filePath: String): Boolean {
-        return filePath in whitelist
-    }
-}
+abstract class AbstractFirLegacyUastTypesTest : AbstractFirUastTypesTest(), FirLegacyUastTypesTestBase
