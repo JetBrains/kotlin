@@ -2,7 +2,7 @@ package test.pkg
 
 public final class SuspendKt {
     public static final fun top() : int {
-        return [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+        return [!] UnknownKotlinExpression (CALL_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)
     }
 }
 

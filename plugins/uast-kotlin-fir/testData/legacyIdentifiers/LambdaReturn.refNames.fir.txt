@@ -1,0 +1,3 @@
+kotlin -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+uast -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+jetbrains -> UQualifiedReferenceExpression from KtDotQualifiedExpression

@@ -1,0 +1,17 @@
+foo() -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+inlineFoo() -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+forEach { println(it) } -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+joinToString() -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+size -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+indices -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+Date() -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+util -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+time -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+last() -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+setValue("123") -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+first() -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+entries -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+contains(2 as Int) -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+foo() -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+isEmpty() -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+foo() -> UQualifiedReferenceExpression from KtDotQualifiedExpression

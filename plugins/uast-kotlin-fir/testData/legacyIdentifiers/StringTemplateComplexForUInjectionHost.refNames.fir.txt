@@ -1,0 +1,2 @@
+repeat(4) -> UQualifiedReferenceExpression from KtBlockStringTemplateEntry
+repeat(4) -> UQualifiedReferenceExpression from KtDotQualifiedExpression

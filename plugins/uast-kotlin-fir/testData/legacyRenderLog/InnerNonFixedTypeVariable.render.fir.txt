@@ -1,6 +1,6 @@
 public final class InnerNonFixedTypeVariableKt {
     public static final fun test(list: java.util.List<? extends java.lang.Object>) : void {
-        [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)
     }
 }
 

@@ -19,13 +19,41 @@ UFile (package = ) [public final class ParametersDisorderKt {...]
             UBlockExpression [{...}] : PsiType:Unit
                 [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
                 [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
-                [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) [[!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)]
-                [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) [[!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)]
+                UQualifiedReferenceExpression ["abc".[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:Unit
+                    ULiteralExpression (value = "abc") ["abc"] : PsiType:String
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
+                UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:double
+                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
                 [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
-                [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) [[!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)]
-                [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) [[!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)]
-                [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) [[!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)]
-                [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) [[!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)]
+                UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:NonExistentClass
+                    UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] : PsiType:Unit
+                        UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] : PsiType:Unit
+                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
+                UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:NonExistentClass
+                    UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] : PsiType:Unit
+                        UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] : PsiType:Unit
+                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
+                UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:NonExistentClass
+                    UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] : PsiType:Unit
+                        UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] : PsiType:Unit
+                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
+                UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:NonExistentClass
+                    UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] : PsiType:Unit
+                        UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] : PsiType:Unit
+                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
                 [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
         UMethod (name = objectLiteral) [public static final fun objectLiteral() : void {...}]
             UBlockExpression [{...}] : PsiType:Parent

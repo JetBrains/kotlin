@@ -5,5 +5,11 @@ UFile (package = A.B.C) [package A.B.C...]
         UMethod (name = Bar) [public fun Bar() = UastEmptyExpression]
         UMethod (name = getFoo) [public final fun getFoo() : A.B.C.Foo {...}]
             UBlockExpression [{...}] : PsiType:Void
-                UReturnExpression [return [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)] : PsiType:Void
-                    [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) [[!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)]
+                UReturnExpression [return [!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:Void
+                    UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:Foo
+                        UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] : PsiType:Unit
+                            UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] : PsiType:Unit
+                                [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                                [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                        [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]

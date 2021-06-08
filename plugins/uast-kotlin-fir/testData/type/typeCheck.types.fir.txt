@@ -3,10 +3,12 @@ UFile (package = ) [public final class TypeCheckKt {...]
         UMethod (name = asString) [public static final fun asString($this$asString: java.lang.Object) : java.lang.String {...}]
             UParameter (name = $this$asString) [var $this$asString: java.lang.Object]
             UBlockExpression [{...}] : PsiType:Void
-                UReturnExpression [return if ([!] UnknownKotlinExpression (REFERENCE_EXPRESSION) !is java.lang.String) [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) else [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] : PsiType:Void
-                    UIfExpression [if ([!] UnknownKotlinExpression (REFERENCE_EXPRESSION) !is java.lang.String) [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) else [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] : PsiType:String
+                UReturnExpression [return if ([!] UnknownKotlinExpression (REFERENCE_EXPRESSION) !is java.lang.String) [!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION) else [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] : PsiType:Void
+                    UIfExpression [if ([!] UnknownKotlinExpression (REFERENCE_EXPRESSION) !is java.lang.String) [!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION) else [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] : PsiType:String
                         UBinaryExpressionWithType [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION) !is java.lang.String] : PsiType:boolean
                             [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
                             UTypeReferenceExpression (name = java.lang.String) [java.lang.String]
-                        [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) [[!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)]
+                        UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:String
+                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                            [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
                         [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]

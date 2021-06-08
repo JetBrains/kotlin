@@ -1,0 +1,2 @@
+map { it.toString() } -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+toString() -> UQualifiedReferenceExpression from KtDotQualifiedExpression

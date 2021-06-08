@@ -1,0 +1,1 @@
+filterIsInstance<String>() -> UQualifiedReferenceExpression from KtDotQualifiedExpression

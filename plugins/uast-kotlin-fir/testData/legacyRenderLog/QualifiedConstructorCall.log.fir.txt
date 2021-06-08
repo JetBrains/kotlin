@@ -6,4 +6,10 @@ UFile (package = A.B.C)
         UMethod (name = getFoo)
             UBlockExpression
                 UReturnExpression
-                    [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+                    UQualifiedReferenceExpression
+                        UQualifiedReferenceExpression
+                            UQualifiedReferenceExpression
+                                [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                                [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                        [!] UnknownKotlinExpression (CALL_EXPRESSION)

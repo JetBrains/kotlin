@@ -3,7 +3,7 @@ public final class StringTemplateComplexForUInjectionHostKt {
     private static final var case4: java.lang.String = "a " + "literal" + " z"
     private static final var case5: java.lang.String = "a " + "literal" + " " + "literal" + " z"
     private static final var literalInLiteral: java.lang.String = "a " + "literal" + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) + " z"
-    private static final var literalInLiteral2: java.lang.String = "a " + [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) + " z"
+    private static final var literalInLiteral2: java.lang.String = "a " + "literal" + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION) + " z"
     private static final var empty: java.lang.String = ""
     public static final fun getMuchRecur() : java.lang.String = UastEmptyExpression
     public static final fun getCase4() : java.lang.String = UastEmptyExpression

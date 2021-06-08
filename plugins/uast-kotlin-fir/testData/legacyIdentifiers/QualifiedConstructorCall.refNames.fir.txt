@@ -1,0 +1,5 @@
+C -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+B -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+Foo() -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+C -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+B -> UQualifiedReferenceExpression from KtDotQualifiedExpression

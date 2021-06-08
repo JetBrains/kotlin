@@ -3,6 +3,10 @@ UFile (package = ) [public final class InnerNonFixedTypeVariableKt {...]
         UMethod (name = test) [public static final fun test(list: java.util.List<? extends java.lang.Object>) : void {...}]
             UParameter (name = list) [var list: java.util.List<? extends java.lang.Object>]
             UBlockExpression [{...}] = Undetermined
-                [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION) [[!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)] = Undetermined
+                UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
+                    UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
+                        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
+                        [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
     UClass (name = Some) [public final class Some {...}]
         UMethod (name = Some) [public fun Some() = UastEmptyExpression]

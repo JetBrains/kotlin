@@ -4,7 +4,9 @@ UFile (package = )
             UParameter (name = $this$foo)
             UBlockExpression
                 UReturnExpression
-                    [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+                    UQualifiedReferenceExpression
+                        [!] UnknownKotlinExpression (THIS_EXPRESSION)
+                        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
         UMethod (name = getRx)
             UParameter (name = $this$rx)
             UBlockExpression
