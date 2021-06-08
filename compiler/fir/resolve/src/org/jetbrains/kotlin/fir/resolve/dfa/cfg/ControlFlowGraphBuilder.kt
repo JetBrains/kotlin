@@ -631,7 +631,7 @@ class ControlFlowGraphBuilder {
         // exit from last condition node still on stack
         // we should remove it
         val lastWhenConditionExit = lastNodes.pop()
-        val syntheticElseBranchNode = if (!whenExpression.isExhaustive) {
+        val syntheticElseBranchNode = if (!whenExpression.isProperlyExhaustive) {
             createWhenSyntheticElseBranchNode(whenExpression).apply {
                 addEdge(lastWhenConditionExit, this)
                 addEdge(this, whenExitNode)

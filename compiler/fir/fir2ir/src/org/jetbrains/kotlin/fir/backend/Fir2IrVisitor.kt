@@ -646,7 +646,7 @@ class Fir2IrVisitor(
                         it.condition !is FirElseIfTrueCondition || it.result.statements.isNotEmpty()
                     }?.toIrWhenBranch(whenExpression.typeRef)
                 }
-                if (whenExpression.isExhaustive && whenExpression.branches.none { it.condition is FirElseIfTrueCondition }) {
+                if (whenExpression.isProperlyExhaustive && whenExpression.branches.none { it.condition is FirElseIfTrueCondition }) {
                     val irResult = IrCallImpl(
                         startOffset, endOffset, irBuiltIns.nothingType,
                         irBuiltIns.noWhenBranchMatchedExceptionSymbol,
@@ -660,7 +660,7 @@ class Fir2IrVisitor(
                 generateWhen(
                     startOffset, endOffset, origin,
                     subjectVariable, irBranches,
-                    if (whenExpression.isExhaustive && whenExpression.branches.none {
+                    if (whenExpression.isProperlyExhaustive && whenExpression.branches.none {
                             it.condition is FirElseIfTrueCondition && it.result.statements.isEmpty()
                         }
                     ) whenExpression.typeRef.toIrType() else irBuiltIns.unitType

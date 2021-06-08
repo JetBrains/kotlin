@@ -96,7 +96,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
     }
 
     private fun FirWhenExpression.replaceReturnTypeIfNotExhaustive(): FirWhenExpression {
-        if (!isExhaustive) {
+        if (!isProperlyExhaustive) {
             resultType = resultType.resolvedTypeFromPrototype(session.builtinTypes.unitType.type)
         }
         return this
