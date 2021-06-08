@@ -36,10 +36,7 @@ internal class KtFirSymbolDeclarationRendererProvider(
         }
         check(containingSymbol is KtFirSymbol<*>?)
 
-        val phaseNeeded =
-            if (options.renderContainingDeclarations) FirResolvePhase.BODY_RESOLVE else FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE
-
-        return symbol.firRef.withFir(phaseNeeded) { fir ->
+        return symbol.firRef.withFir(FirResolvePhase.BODY_RESOLVE) { fir ->
             val containingFir = containingSymbol?.firRef?.withFirUnsafe { it }
             FirIdeRenderer.render(fir, containingFir, options, fir.moduleData.session)
         }
