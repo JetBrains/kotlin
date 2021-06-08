@@ -61,7 +61,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
         return interpreter.withNewCallStack(irCall) {
             this@withNewCallStack.environment.callStack.addInstruction(SimpleInstruction(irCall))
             valueArguments.forEach { this@withNewCallStack.environment.callStack.addVariable(it) }
-        }.wrap(this@DefaultCallInterceptor, remainArraysAsIs = true, extendFrom = expectedResultClass)
+        }.wrap(this@DefaultCallInterceptor, remainArraysAsIs = false, extendFrom = expectedResultClass)
     }
 
     override fun interceptCall(call: IrCall, irFunction: IrFunction, args: List<State>, defaultAction: () -> Unit) {

@@ -8,6 +8,10 @@ package org.jetbrains.kotlin.ir.interpreter.exceptions
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterEnvironment
 import org.jetbrains.kotlin.ir.interpreter.state.ExceptionState
 
+internal fun stop(lazyMessage: () -> Any): Nothing {
+    throw InterpreterAssertionError(lazyMessage().toString())
+}
+
 internal fun verify(value: Boolean) {
     verify(value) { "Assertion failed" }
 }

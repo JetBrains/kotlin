@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.interpreter.*
 import org.jetbrains.kotlin.ir.interpreter.exceptions.handleUserException
+import org.jetbrains.kotlin.ir.interpreter.exceptions.stop
 import org.jetbrains.kotlin.ir.interpreter.state.*
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KFunctionState
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KPropertyState
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.types.Variance
+import java.util.*
 
 internal sealed class IntrinsicBase {
     abstract fun canHandleFunctionWithName(fqName: String, origin: IrDeclarationOrigin): Boolean
@@ -303,5 +305,32 @@ internal object AssertIntrinsic : IntrinsicBase() {
             1 -> AssertionError("Assertion failed").handleUserException(environment)
             2 -> AssertionError(environment.callStack.popState().asString()).handleUserException(environment)
         }
+    }
+}
+
+internal object DataClassArrayToString : IntrinsicBase() {
+    override fun canHandleFunctionWithName(fqName: String, origin: IrDeclarationOrigin): Boolean {
+        return fqName == "kotlin.internal.ir.dataClassArrayMemberToString"
+    }
+
+    private fun arrayToString(array: Any?): String {
+        return when (array) {
+            null -> "null"
+            is Array<*> -> Arrays.toString(array)
+            is ByteArray -> Arrays.toString(array)
+            is ShortArray -> Arrays.toString(array)
+            is IntArray -> Arrays.toString(array)
+            is LongArray -> Arrays.toString(array)
+            is CharArray -> Arrays.toString(array)
+            is BooleanArray -> Arrays.toString(array)
+            is FloatArray -> Arrays.toString(array)
+            is DoubleArray -> Arrays.toString(array)
+            else -> stop { "Only arrays are supported in `dataClassArrayMemberToString` call" }
+        }
+    }
+
+    override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {
+        val array = environment.callStack.getState(irFunction.valueParameters.single().symbol) as Primitive<*>
+        environment.callStack.pushState(arrayToString(array.value).toState(irFunction.returnType))
     }
 }

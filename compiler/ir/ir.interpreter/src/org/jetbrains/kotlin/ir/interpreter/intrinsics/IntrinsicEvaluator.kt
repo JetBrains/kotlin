@@ -24,6 +24,7 @@ internal object IntrinsicEvaluator {
             ArrayConstructor.canHandleFunctionWithName(fqName, irFunction.origin) -> ArrayConstructor.unwind(irFunction, environment)
             SourceLocation.canHandleFunctionWithName(fqName, irFunction.origin) -> SourceLocation.unwind(irFunction, environment)
             AssertIntrinsic.canHandleFunctionWithName(fqName, irFunction.origin) -> AssertIntrinsic.unwind(irFunction, environment)
+            DataClassArrayToString.canHandleFunctionWithName(fqName, irFunction.origin) -> DataClassArrayToString.unwind(irFunction, environment)
             else -> null
         }
     }
