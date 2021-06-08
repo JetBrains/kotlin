@@ -67,11 +67,13 @@ fun KGPBaseTest.project(
  */
 fun TestProject.build(
     vararg buildArguments: String,
+    forceOutput: Boolean = false,
     assertions: BuildResult.() -> Unit = {}
 ) {
     val allBuildArguments = commonBuildSetup(buildArguments.toList())
     withBuildSummary(allBuildArguments) {
         val buildResult = gradleRunner
+            .also { if (forceOutput) it.forwardOutput() }
             .withArguments(allBuildArguments)
             .build()
 
@@ -84,11 +86,13 @@ fun TestProject.build(
  */
 fun TestProject.buildAndFail(
     vararg buildArguments: String,
+    forceOutput: Boolean = false,
     assertions: BuildResult.() -> Unit = {}
 ) {
     val allBuildArguments = commonBuildSetup(buildArguments.toList())
     withBuildSummary(allBuildArguments) {
         val buildResult = gradleRunner
+            .also { if (forceOutput) it.forwardOutput() }
             .withArguments(allBuildArguments)
             .buildAndFail()
 
