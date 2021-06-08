@@ -19,7 +19,9 @@ interface TypeMappingContext<Writer : JvmDescriptorTypeWriter<Type>> {
 
     fun getClassInternalName(typeConstructor: TypeConstructorMarker): String
     fun getScriptInternalName(typeConstructor: TypeConstructorMarker): String
-    fun Writer.writeGenericType(type: SimpleTypeMarker, asmType: Type, mode: TypeMappingMode)
+
+    // NB: The counterpart, [KotlinTypeMapper#writeGenericType], doesn't have restriction on [type]
+    fun Writer.writeGenericType(type: KotlinTypeMarker, asmType: Type, mode: TypeMappingMode)
 }
 
 object AbstractTypeMapper {
@@ -44,6 +46,7 @@ object AbstractTypeMapper {
         sw: Writer? = null
     ): Type = context.typeContext.mapType(context, type, mode, sw)
 
+    // NB: The counterpart, [descriptorBasedTypeSignatureMapping#mapType] doesn't have restriction on [type].
     @OptIn(ExperimentalStdlibApi::class)
     private fun <Writer : JvmDescriptorTypeWriter<Type>> TypeSystemCommonBackendContextForTypeMapping.mapType(
         context: TypeMappingContext<Writer>,
@@ -51,10 +54,7 @@ object AbstractTypeMapper {
         mode: TypeMappingMode = TypeMappingMode.DEFAULT,
         sw: Writer? = null
     ): Type {
-        if (type !is SimpleTypeMarker) {
-            error("Unexpected type: $type (original Kotlin type=$type of ${type.let { it::class }})")
-        }
-        if (type.isSuspendFunction()) {
+        if (type is SimpleTypeMarker && type.isSuspendFunction()) {
             val argumentsCount = type.argumentsCount()
             val argumentsList = type.asArgumentList()
 
@@ -79,7 +79,7 @@ object AbstractTypeMapper {
         val typeConstructor = type.typeConstructor()
 
         when {
-            type.isArrayOrNullableArray() -> {
+            type is SimpleTypeMarker && type.isArrayOrNullableArray() -> {
                 val typeArgument = type.asArgumentList()[0]
                 val (variance, memberType) = when {
                     typeArgument.isStarProjection() -> Variance.OUT_VARIANCE to nullableAnyType()
@@ -99,7 +99,7 @@ object AbstractTypeMapper {
                 return AsmUtil.getArrayType(arrayElementType)
             }
 
-            typeConstructor.isClassTypeConstructor() -> {
+            type is SimpleTypeMarker && typeConstructor.isClassTypeConstructor() -> {
                 if (typeConstructor.isInlineClass() && !mode.needInlineClassWrapping) {
                     val expandedType = computeExpandedTypeForInlineClass(type)
                     require(expandedType is SimpleTypeMarker?)
