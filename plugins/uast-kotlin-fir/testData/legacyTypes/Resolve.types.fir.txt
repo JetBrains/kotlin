@@ -14,40 +14,40 @@ UFile (package = ) [public final class ResolveKt {...]
                 UQualifiedReferenceExpression [[!] UnknownKotlinExpression (CALL_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:String
                     [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
                     [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
-                UQualifiedReferenceExpression [[!] UnknownKotlinExpression (CALL_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] : PsiType:int
+                UQualifiedReferenceExpression [[!] UnknownKotlinExpression (CALL_EXPRESSION).size] : PsiType:int
                     [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
-                UQualifiedReferenceExpression [[!] UnknownKotlinExpression (CALL_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] : PsiType:IntRange
+                    USimpleNameReferenceExpression (identifier = size) [size] : PsiType:int
+                UQualifiedReferenceExpression [[!] UnknownKotlinExpression (CALL_EXPRESSION).indices] : PsiType:IntRange
                     [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                    USimpleNameReferenceExpression (identifier = indices) [indices] : PsiType:IntRange
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
                 [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
                 UQualifiedReferenceExpression [[!] UnknownKotlinExpression (CALL_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:String
                     [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
                     [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
-                UQualifiedReferenceExpression [[!] UnknownKotlinExpression (CALL_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:String
-                    UQualifiedReferenceExpression [[!] UnknownKotlinExpression (CALL_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:Entry<Integer, String>
-                        UQualifiedReferenceExpression [[!] UnknownKotlinExpression (CALL_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] : PsiType:Set<Entry<Integer, String>>
+                UQualifiedReferenceExpression [[!] UnknownKotlinExpression (CALL_EXPRESSION).entries.[!] UnknownKotlinExpression (CALL_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:String
+                    UQualifiedReferenceExpression [[!] UnknownKotlinExpression (CALL_EXPRESSION).entries.[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:Entry<Integer, String>
+                        UQualifiedReferenceExpression [[!] UnknownKotlinExpression (CALL_EXPRESSION).entries] : PsiType:Set<Entry<Integer, String>>
                             [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
-                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                            USimpleNameReferenceExpression (identifier = entries) [entries] : PsiType:Set<Entry<Integer, String>>
                         [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
                     [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
-                UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:boolean
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                UQualifiedReferenceExpression [intRange.[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:boolean
+                    USimpleNameReferenceExpression (identifier = intRange) [intRange] : PsiType:LongRange
                     [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
                 [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
         UMethod (name = barT) [public static final fun barT(t: T) : void {...}]
             UParameter (name = t) [var t: T]
             UBlockExpression [{...}] : PsiType:Unit
-                UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:Unit
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                UQualifiedReferenceExpression [t.[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:Unit
+                    USimpleNameReferenceExpression (identifier = t) [t] : PsiType:T
                     [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
         UMethod (name = barTL) [public static final fun barTL(listT: T) : void {...}]
             UParameter (name = listT) [var listT: T]
             UBlockExpression [{...}] : PsiType:Unit
-                UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:boolean
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                UQualifiedReferenceExpression [listT.[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:boolean
+                    USimpleNameReferenceExpression (identifier = listT) [listT] : PsiType:T
                     [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
                 [!] UnknownKotlinExpression (FOR) [[!] UnknownKotlinExpression (FOR)]
     UClass (name = A) [public class A {...}]

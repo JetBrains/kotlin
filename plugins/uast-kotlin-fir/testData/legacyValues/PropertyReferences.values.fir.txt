@@ -33,5 +33,5 @@ UFile (package = ) [public final class PropertyReferencesKt {...]
             UBlockExpression [{...}] = Nothing
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)] = Undetermined
                 [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)] = Undetermined
-                UReturnExpression [return [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Nothing
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
+                UReturnExpression [return privateProp] = Nothing
+                    USimpleNameReferenceExpression (identifier = privateProp) [privateProp] = external privateProp()

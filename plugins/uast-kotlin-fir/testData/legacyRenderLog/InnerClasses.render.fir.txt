@@ -12,7 +12,7 @@ public final class Foo {
         public static final class Baz {
             public fun Baz() = UastEmptyExpression
             public final fun doNothing() : void {
-                return [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                return Unit
             }
         }
     }

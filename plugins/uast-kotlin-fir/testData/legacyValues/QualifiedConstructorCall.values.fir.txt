@@ -5,11 +5,11 @@ UFile (package = A.B.C) [package A.B.C...]
         UMethod (name = Bar) [public fun Bar() = UastEmptyExpression]
         UMethod (name = getFoo) [public final fun getFoo() : A.B.C.Foo {...}]
             UBlockExpression [{...}] = Nothing
-                UReturnExpression [return [!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Nothing
-                    UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
-                        UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
-                            UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
-                                [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
-                                [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
-                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
+                UReturnExpression [return A.B.C.[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Nothing
+                    UQualifiedReferenceExpression [A.B.C.[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
+                        UQualifiedReferenceExpression [A.B.C] = external C()
+                            UQualifiedReferenceExpression [A.B] = external B()
+                                USimpleNameReferenceExpression (identifier = A) [A] = external A()
+                                USimpleNameReferenceExpression (identifier = B) [B] = external B()
+                            USimpleNameReferenceExpression (identifier = C) [C] = external C()
                         [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined

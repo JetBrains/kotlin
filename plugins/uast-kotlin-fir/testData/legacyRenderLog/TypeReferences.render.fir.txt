@@ -3,7 +3,7 @@ public final class TypeReferencesKt {
         [!] UnknownKotlinExpression (PROPERTY)
         [!] UnknownKotlinExpression (PROPERTY)
         [!] UnknownKotlinExpression (PROPERTY)
-        return [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+        return result
     }
     public static final fun parameterizedFoo(arg: T) : void {
         [!] UnknownKotlinExpression (PROPERTY)

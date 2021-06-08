@@ -1,8 +1,0 @@
-A -> UClass (name = A)
-F -> [!] UnknownKotlinExpression (TYPEALIAS)
-A -> [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
-A -> [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
-A -> [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
-G -> [!] UnknownKotlinExpression (TYPEALIAS)
-F -> [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
-F -> [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)

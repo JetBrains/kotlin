@@ -34,4 +34,4 @@ UFile (package = )
                 [!] UnknownKotlinExpression (PROPERTY)
                 [!] UnknownKotlinExpression (BINARY_EXPRESSION)
                 UReturnExpression
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                    USimpleNameReferenceExpression (identifier = privateProp)

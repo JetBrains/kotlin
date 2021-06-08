@@ -17,5 +17,5 @@ UFile (package = ) [public final class Foo {...]
                 UMethod (name = Baz) [public fun Baz() = UastEmptyExpression]
                 UMethod (name = doNothing) [public final fun doNothing() : void {...}]
                     UBlockExpression [{...}]
-                        UReturnExpression [return [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
-                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                        UReturnExpression [return Unit]
+                            USimpleNameReferenceExpression (identifier = Unit) [Unit] : PsiType:Unit

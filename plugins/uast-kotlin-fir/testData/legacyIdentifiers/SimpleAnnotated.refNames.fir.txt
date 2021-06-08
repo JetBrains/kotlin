@@ -1,0 +1,5 @@
+Suppress -> USimpleNameReferenceExpression (identifier = Suppress) from KtNameReferenceExpression
+println -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+kotlin -> USimpleNameReferenceExpression (identifier = kotlin) from KtNameReferenceExpression
+SinceKotlin -> USimpleNameReferenceExpression (identifier = SinceKotlin) from KtNameReferenceExpression
+String -> USimpleNameReferenceExpression (identifier = String) from KtNameReferenceExpression

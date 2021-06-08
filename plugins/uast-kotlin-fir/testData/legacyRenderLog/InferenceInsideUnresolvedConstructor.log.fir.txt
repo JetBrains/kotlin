@@ -8,4 +8,4 @@ UFile (package = )
             UParameter (name = x)
             UBlockExpression
                 UReturnExpression
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                    USimpleNameReferenceExpression (identifier = x)

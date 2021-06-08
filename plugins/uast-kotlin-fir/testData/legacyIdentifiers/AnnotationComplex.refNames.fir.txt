@@ -1,0 +1,16 @@
+String -> USimpleNameReferenceExpression (identifier = String) from KtNameReferenceExpression
+Annotation -> USimpleNameReferenceExpression (identifier = Annotation) from KtNameReferenceExpression
+Annotation -> USimpleNameReferenceExpression (identifier = Annotation) from KtNameReferenceExpression
+AnnotationArray -> USimpleNameReferenceExpression (identifier = AnnotationArray) from KtNameReferenceExpression
+Annotation -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+AnnotationArray -> USimpleNameReferenceExpression (identifier = AnnotationArray) from KtNameReferenceExpression
+value -> USimpleNameReferenceExpression (identifier = value) from KtNameReferenceExpression
+Annotation -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+Annotation -> USimpleNameReferenceExpression (identifier = Annotation) from KtNameReferenceExpression
+AnnotationArray -> USimpleNameReferenceExpression (identifier = AnnotationArray) from KtNameReferenceExpression
+Annotation -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+strings -> USimpleNameReferenceExpression (identifier = strings) from KtNameReferenceExpression
+arrayOf -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+AnnotationArray -> USimpleNameReferenceExpression (identifier = AnnotationArray) from KtNameReferenceExpression
+Annotation -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+strings -> USimpleNameReferenceExpression (identifier = strings) from KtNameReferenceExpression

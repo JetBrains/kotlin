@@ -5,7 +5,7 @@ UFile (package = )
             UBlockExpression
                 UReturnExpression
                     UIfExpression
-                        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                        USimpleNameReferenceExpression (identifier = b)
                         UParenthesizedExpression
                             [!] UnknownKotlinExpression (BINARY_EXPRESSION)
                         ULiteralExpression (value = "42")

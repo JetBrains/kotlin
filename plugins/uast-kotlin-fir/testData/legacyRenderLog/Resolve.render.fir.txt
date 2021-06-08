@@ -4,21 +4,21 @@ public final class ResolveKt {
         [!] UnknownKotlinExpression (CALL_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)
         [!] UnknownKotlinExpression (CALL_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)
         [!] UnknownKotlinExpression (CALL_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)
-        [!] UnknownKotlinExpression (CALL_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
-        [!] UnknownKotlinExpression (CALL_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+        [!] UnknownKotlinExpression (CALL_EXPRESSION).size
+        [!] UnknownKotlinExpression (CALL_EXPRESSION).indices
         [!] UnknownKotlinExpression (PROPERTY)
         [!] UnknownKotlinExpression (BINARY_EXPRESSION)
         [!] UnknownKotlinExpression (CALL_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)
-        [!] UnknownKotlinExpression (CALL_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)
+        [!] UnknownKotlinExpression (CALL_EXPRESSION).entries.[!] UnknownKotlinExpression (CALL_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)
         [!] UnknownKotlinExpression (PROPERTY)
-        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)
+        intRange.[!] UnknownKotlinExpression (CALL_EXPRESSION)
         [!] UnknownKotlinExpression (CALL_EXPRESSION)
     }
     public static final fun barT(t: T) : void {
-        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)
+        t.[!] UnknownKotlinExpression (CALL_EXPRESSION)
     }
     public static final fun barTL(listT: T) : void {
-        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)
+        listT.[!] UnknownKotlinExpression (CALL_EXPRESSION)
         [!] UnknownKotlinExpression (FOR)
     }
 }

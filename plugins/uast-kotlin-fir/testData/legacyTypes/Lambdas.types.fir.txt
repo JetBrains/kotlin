@@ -3,9 +3,9 @@ UFile (package = ) [import java.util.stream.Stream...]
     UClass (name = LambdasKt) [public final class LambdasKt {...}]
         UMethod (name = foo) [public static final fun foo() : void {...}]
             UBlockExpression [{...}] : PsiType:NonExistentClass
-                UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:NonExistentClass
-                    UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:Stream<String>
-                        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                UQualifiedReferenceExpression [Stream.[!] UnknownKotlinExpression (CALL_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:NonExistentClass
+                    UQualifiedReferenceExpression [Stream.[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:Stream<String>
+                        USimpleNameReferenceExpression (identifier = Stream) [Stream] : PsiType:Unit
                         [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
                     [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
         UMethod (name = doSelectItem) [public static final fun doSelectItem(selectItemFunction: kotlin.jvm.functions.Function0<? extends kotlin.Unit>) : void {...}]

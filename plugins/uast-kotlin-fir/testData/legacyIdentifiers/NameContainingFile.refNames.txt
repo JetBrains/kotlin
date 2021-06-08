@@ -1,0 +1,1 @@
+Int -> USimpleNameReferenceExpression (identifier = Int) from KtNameReferenceExpression

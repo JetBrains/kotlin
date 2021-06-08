@@ -18,4 +18,4 @@ UFile (package = )
                 UMethod (name = doNothing)
                     UBlockExpression
                         UReturnExpression
-                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                            USimpleNameReferenceExpression (identifier = Unit)

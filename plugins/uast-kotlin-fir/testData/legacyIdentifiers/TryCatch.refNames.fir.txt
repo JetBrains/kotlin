@@ -1,0 +1,14 @@
+body -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+Throwable -> USimpleNameReferenceExpression (identifier = Throwable) from KtNameReferenceExpression
+catcher -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+finalizer -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+java -> USimpleNameReferenceExpression (identifier = java) from KtNameReferenceExpression
+lang -> USimpleNameReferenceExpression (identifier = lang) from KtNameReferenceExpression
+SuppressWarnings -> USimpleNameReferenceExpression (identifier = SuppressWarnings) from KtNameReferenceExpression
+body -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+java -> USimpleNameReferenceExpression (identifier = java) from KtNameReferenceExpression
+lang -> USimpleNameReferenceExpression (identifier = lang) from KtNameReferenceExpression
+SuppressWarnings -> USimpleNameReferenceExpression (identifier = SuppressWarnings) from KtNameReferenceExpression
+Throwable -> USimpleNameReferenceExpression (identifier = Throwable) from KtNameReferenceExpression
+catcher -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+finalizer -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression

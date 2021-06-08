@@ -3,6 +3,6 @@ public final class InferenceInsideUnresolvedConstructorKt {
         return [!] UnknownKotlinExpression (CALL_EXPRESSION)
     }
     public static final fun id(x: T) : T {
-        return [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+        return x
     }
 }

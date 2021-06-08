@@ -14,20 +14,20 @@ UFile (package = ) [public final class StringTemplateComplexKt {...]
                 ULiteralExpression (value = " ") [" "] = " "
                 ULiteralExpression (value = "literal") ["literal"] = "literal"
                 ULiteralExpression (value = " z") [" z"] = " z"
-        UField (name = literalInLiteral) [private static final var literalInLiteral: java.lang.String = "a " + "literal" + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) + " z"]
-            UPolyadicExpression (operator = +) ["a " + "literal" + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) + " z"] = Undetermined
+        UField (name = literalInLiteral) [private static final var literalInLiteral: java.lang.String = "a " + "literal" + case4 + " z"]
+            UPolyadicExpression (operator = +) ["a " + "literal" + case4 + " z"] = Undetermined
                 ULiteralExpression (value = "a ") ["a "] = "a "
-                UPolyadicExpression (operator = +) ["literal" + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
+                UPolyadicExpression (operator = +) ["literal" + case4] = Undetermined
                     ULiteralExpression (value = "literal") ["literal"] = "literal"
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
+                    USimpleNameReferenceExpression (identifier = case4) [case4] = Undetermined
                 ULiteralExpression (value = " z") [" z"] = " z"
-        UField (name = literalInLiteral2) [private static final var literalInLiteral2: java.lang.String = "a " + "literal" + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION) + " z"]
-            UPolyadicExpression (operator = +) ["a " + "literal" + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION) + " z"] = Undetermined
+        UField (name = literalInLiteral2) [private static final var literalInLiteral2: java.lang.String = "a " + "literal" + case4.[!] UnknownKotlinExpression (CALL_EXPRESSION) + " z"]
+            UPolyadicExpression (operator = +) ["a " + "literal" + case4.[!] UnknownKotlinExpression (CALL_EXPRESSION) + " z"] = Undetermined
                 ULiteralExpression (value = "a ") ["a "] = "a "
-                UQualifiedReferenceExpression ["literal" + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
-                    UPolyadicExpression (operator = +) ["literal" + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
+                UQualifiedReferenceExpression ["literal" + case4.[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
+                    UPolyadicExpression (operator = +) ["literal" + case4] = Undetermined
                         ULiteralExpression (value = "literal") ["literal"] = "literal"
-                        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
+                        USimpleNameReferenceExpression (identifier = case4) [case4] = Undetermined
                     [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
                 ULiteralExpression (value = " z") [" z"] = " z"
         UField (name = empty) [private static final var empty: java.lang.String = ""]
@@ -42,8 +42,8 @@ UFile (package = ) [public final class StringTemplateComplexKt {...]
             UParameter (name = i) [var i: int = 0]
                 ULiteralExpression (value = 0) [0] = (long)0
             UBlockExpression [{...}] = Nothing
-                UReturnExpression [return [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Nothing
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
+                UReturnExpression [return i] = Nothing
+                    USimpleNameReferenceExpression (identifier = i) [i] = Undetermined
         UMethod (name = foo) [public static final fun foo() : void {...}]
             UBlockExpression [{...}] = Undetermined
                 [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined

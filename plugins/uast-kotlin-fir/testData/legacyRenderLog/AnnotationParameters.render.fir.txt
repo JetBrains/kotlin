@@ -3,7 +3,7 @@ public final class AnnotationParametersKt {
         return 5
     }
     public static final fun bar() : void {
-        return [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+        return Unit
     }
     public static final fun fooWithArrLiteral() : int {
         return 5

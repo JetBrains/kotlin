@@ -4,7 +4,7 @@ UFile (package = ) [public final class PropertyInitializerWithoutSetterKt {...]
             ULiteralExpression (value = "/sdcard") ["/sdcard"] = "/sdcard"
         UMethod (name = getWithoutSetter) [public static final fun getWithoutSetter() : java.lang.String {...}]
             UBlockExpression [{...}] = Nothing
-                UReturnExpression [return [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Nothing
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
+                UReturnExpression [return field] = Nothing
+                    USimpleNameReferenceExpression (identifier = field) [field] = external field()
         UMethod (name = setWithoutSetter) [public static final fun setWithoutSetter(value: java.lang.String) : void = UastEmptyExpression]
             UParameter (name = value) [var value: java.lang.String]

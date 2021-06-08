@@ -1,0 +1,2 @@
+readLine -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+a -> USimpleNameReferenceExpression (identifier = a) from KtNameReferenceExpression

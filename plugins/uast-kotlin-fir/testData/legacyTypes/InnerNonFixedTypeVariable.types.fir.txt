@@ -3,9 +3,9 @@ UFile (package = ) [public final class InnerNonFixedTypeVariableKt {...]
         UMethod (name = test) [public static final fun test(list: java.util.List<? extends java.lang.Object>) : void {...}]
             UParameter (name = list) [var list: java.util.List<? extends java.lang.Object>]
             UBlockExpression [{...}] : PsiType:Set<Unit>
-                UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:Set<Unit>
-                    UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:NonExistentClass
-                        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                UQualifiedReferenceExpression [list.[!] UnknownKotlinExpression (CALL_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:Set<Unit>
+                    UQualifiedReferenceExpression [list.[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:NonExistentClass
+                        USimpleNameReferenceExpression (identifier = list) [list] : PsiType:List<? extends Object>
                         [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
                     [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
     UClass (name = Some) [public final class Some {...}]

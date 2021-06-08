@@ -9,9 +9,9 @@ UFile (package = ) [public final class WithGenericKt {...]
         UMethod (name = test2) [public static final fun test2() : T {...}]
             UBlockExpression [{...}] : PsiType:Void
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
-                UReturnExpression [return [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) as T] : PsiType:Void
-                    UBinaryExpressionWithType [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION) as T] : PsiType:T
-                        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                UReturnExpression [return a as T] : PsiType:Void
+                    UBinaryExpressionWithType [a as T] : PsiType:T
+                        USimpleNameReferenceExpression (identifier = a) [a] : PsiType:Object
                         UTypeReferenceExpression (name = T) [T]
         UMethod (name = test3) [public static final fun test3() : T {...}]
             UBlockExpression [{...}]
@@ -22,8 +22,8 @@ UFile (package = ) [public final class WithGenericKt {...]
         UMethod (name = castToString) [public static final fun castToString(t: T) : void {...}]
             UParameter (name = t) [var t: T]
             UBlockExpression [{...}] : PsiType:String
-                UBinaryExpressionWithType [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION) as java.lang.String] : PsiType:String
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                UBinaryExpressionWithType [t as java.lang.String] : PsiType:String
+                    USimpleNameReferenceExpression (identifier = t) [t] : PsiType:T
                     UTypeReferenceExpression (name = java.lang.String) [java.lang.String]
         UMethod (name = box) [public static final fun box() : java.lang.String {...}]
             UBlockExpression [{...}] : PsiType:Void

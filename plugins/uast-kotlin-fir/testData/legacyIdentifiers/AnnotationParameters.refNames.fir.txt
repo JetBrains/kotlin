@@ -1,0 +1,25 @@
+Long -> USimpleNameReferenceExpression (identifier = Long) from KtNameReferenceExpression
+Long -> USimpleNameReferenceExpression (identifier = Long) from KtNameReferenceExpression
+IntArray -> USimpleNameReferenceExpression (identifier = IntArray) from KtNameReferenceExpression
+Array -> USimpleNameReferenceExpression (identifier = Array) from KtNameReferenceExpression
+String -> USimpleNameReferenceExpression (identifier = String) from KtNameReferenceExpression
+Int -> USimpleNameReferenceExpression (identifier = Int) from KtNameReferenceExpression
+String -> USimpleNameReferenceExpression (identifier = String) from KtNameReferenceExpression
+RequiresPermission -> USimpleNameReferenceExpression (identifier = RequiresPermission) from KtNameReferenceExpression
+anyOf -> USimpleNameReferenceExpression (identifier = anyOf) from KtNameReferenceExpression
+intArrayOf -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+IntRange -> USimpleNameReferenceExpression (identifier = IntRange) from KtNameReferenceExpression
+from -> USimpleNameReferenceExpression (identifier = from) from KtNameReferenceExpression
+to -> USimpleNameReferenceExpression (identifier = to) from KtNameReferenceExpression
+WithDefaultValue -> USimpleNameReferenceExpression (identifier = WithDefaultValue) from KtNameReferenceExpression
+SuppressLint -> USimpleNameReferenceExpression (identifier = SuppressLint) from KtNameReferenceExpression
+Int -> USimpleNameReferenceExpression (identifier = Int) from KtNameReferenceExpression
+IntRange -> USimpleNameReferenceExpression (identifier = IntRange) from KtNameReferenceExpression
+SuppressLint -> USimpleNameReferenceExpression (identifier = SuppressLint) from KtNameReferenceExpression
+Unit -> USimpleNameReferenceExpression (identifier = Unit) from KtNameReferenceExpression
+RequiresPermission -> USimpleNameReferenceExpression (identifier = RequiresPermission) from KtNameReferenceExpression
+anyOf -> USimpleNameReferenceExpression (identifier = anyOf) from KtNameReferenceExpression
+Int -> USimpleNameReferenceExpression (identifier = Int) from KtNameReferenceExpression
+RequiresStrPermission -> USimpleNameReferenceExpression (identifier = RequiresStrPermission) from KtNameReferenceExpression
+strs -> USimpleNameReferenceExpression (identifier = strs) from KtNameReferenceExpression
+Int -> USimpleNameReferenceExpression (identifier = Int) from KtNameReferenceExpression

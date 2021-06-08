@@ -1,0 +1,2 @@
+Foo -> USimpleNameReferenceExpression (identifier = Foo) from KtNameReferenceExpression
+bar -> USimpleNameReferenceExpression (identifier = bar) from KtNameReferenceExpression

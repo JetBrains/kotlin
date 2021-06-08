@@ -6,8 +6,8 @@ UFile (package = ) [public final class TypeReferencesKt {...]
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)] = Undetermined
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)] = Undetermined
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)] = Undetermined
-                UReturnExpression [return [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Nothing
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
+                UReturnExpression [return result] = Nothing
+                    USimpleNameReferenceExpression (identifier = result) [result] = external result()
         UMethod (name = parameterizedFoo) [public static final fun parameterizedFoo(arg: T) : void {...}]
             UParameter (name = arg) [var arg: T]
             UBlockExpression [{...}] = Undetermined

@@ -5,8 +5,8 @@ public final class ObjectsKt {
     private static final var topRunnable: java.lang.Runnable = [!] UnknownKotlinExpression (OBJECT_LITERAL)
     public static final fun getTopRunnable() : java.lang.Runnable = UastEmptyExpression
     public static final fun main() : void {
-        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)
-        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)
+        RunnableManager.[!] UnknownKotlinExpression (CALL_EXPRESSION)
+        RunnableManager.[!] UnknownKotlinExpression (CALL_EXPRESSION)
     }
 }
 
@@ -16,7 +16,7 @@ public final class RunnableManager {
     private fun RunnableManager() = UastEmptyExpression
     public final fun getTasks() : java.util.List<java.lang.Runnable> = UastEmptyExpression
     public final fun register(runnable: java.lang.Runnable) : void {
-        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)
+        tasks.[!] UnknownKotlinExpression (CALL_EXPRESSION)
     }
     public final fun runAll() : void {
         [!] UnknownKotlinExpression (FOR)

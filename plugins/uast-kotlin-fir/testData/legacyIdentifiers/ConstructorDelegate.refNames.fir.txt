@@ -1,0 +1,12 @@
+Int -> USimpleNameReferenceExpression (identifier = Int) from KtNameReferenceExpression
+Base -> USimpleNameReferenceExpression (identifier = Base) from KtNameReferenceExpression
+print -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+x -> USimpleNameReferenceExpression (identifier = x) from KtNameReferenceExpression
+Base -> USimpleNameReferenceExpression (identifier = Base) from KtNameReferenceExpression
+Base -> USimpleNameReferenceExpression (identifier = Base) from KtNameReferenceExpression
+createBase -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+CharSequence -> USimpleNameReferenceExpression (identifier = CharSequence) from KtNameReferenceExpression
+Int -> USimpleNameReferenceExpression (identifier = Int) from KtNameReferenceExpression
+Base -> USimpleNameReferenceExpression (identifier = Base) from KtNameReferenceExpression
+BaseImpl -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+i -> USimpleNameReferenceExpression (identifier = i) from KtNameReferenceExpression

@@ -6,11 +6,11 @@ UFile (package = )
             UBlockExpression
                 [!] UnknownKotlinExpression (PROPERTY)
                 UQualifiedReferenceExpression
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                    USimpleNameReferenceExpression (identifier = runnable)
                     [!] UnknownKotlinExpression (CALL_EXPRESSION)
                 [!] UnknownKotlinExpression (PROPERTY)
                 UQualifiedReferenceExpression
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                    USimpleNameReferenceExpression (identifier = runnable2)
                     [!] UnknownKotlinExpression (CALL_EXPRESSION)
                 [!] UnknownKotlinExpression (PROPERTY)
                 [!] UnknownKotlinExpression (PROPERTY)

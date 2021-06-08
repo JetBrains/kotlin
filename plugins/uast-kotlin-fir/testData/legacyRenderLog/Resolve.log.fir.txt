@@ -16,10 +16,10 @@ UFile (package = )
                     [!] UnknownKotlinExpression (CALL_EXPRESSION)
                 UQualifiedReferenceExpression
                     [!] UnknownKotlinExpression (CALL_EXPRESSION)
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                    USimpleNameReferenceExpression (identifier = size)
                 UQualifiedReferenceExpression
                     [!] UnknownKotlinExpression (CALL_EXPRESSION)
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                    USimpleNameReferenceExpression (identifier = indices)
                 [!] UnknownKotlinExpression (PROPERTY)
                 [!] UnknownKotlinExpression (BINARY_EXPRESSION)
                 UQualifiedReferenceExpression
@@ -29,25 +29,25 @@ UFile (package = )
                     UQualifiedReferenceExpression
                         UQualifiedReferenceExpression
                             [!] UnknownKotlinExpression (CALL_EXPRESSION)
-                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                            USimpleNameReferenceExpression (identifier = entries)
                         [!] UnknownKotlinExpression (CALL_EXPRESSION)
                     [!] UnknownKotlinExpression (CALL_EXPRESSION)
                 [!] UnknownKotlinExpression (PROPERTY)
                 UQualifiedReferenceExpression
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                    USimpleNameReferenceExpression (identifier = intRange)
                     [!] UnknownKotlinExpression (CALL_EXPRESSION)
                 [!] UnknownKotlinExpression (CALL_EXPRESSION)
         UMethod (name = barT)
             UParameter (name = t)
             UBlockExpression
                 UQualifiedReferenceExpression
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                    USimpleNameReferenceExpression (identifier = t)
                     [!] UnknownKotlinExpression (CALL_EXPRESSION)
         UMethod (name = barTL)
             UParameter (name = listT)
             UBlockExpression
                 UQualifiedReferenceExpression
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                    USimpleNameReferenceExpression (identifier = listT)
                     [!] UnknownKotlinExpression (CALL_EXPRESSION)
                 [!] UnknownKotlinExpression (FOR)
     UClass (name = A)

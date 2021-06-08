@@ -29,6 +29,6 @@ public final class A {
     public final fun add(x: int) : int {
         [!] UnknownKotlinExpression (PROPERTY)
         [!] UnknownKotlinExpression (BINARY_EXPRESSION)
-        return [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+        return privateProp
     }
 }

@@ -21,8 +21,8 @@ UFile (package = ) [public final class ArrayGetAssignMultiIndexKt {...]
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
                 [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
                 [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
-                UReturnExpression [return [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)[[!] UnknownKotlinExpression (PREFIX_EXPRESSION), 3]] : PsiType:Void
-                    UArrayAccessExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)[[!] UnknownKotlinExpression (PREFIX_EXPRESSION), 3]] : PsiType:String
-                        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                UReturnExpression [return s[[!] UnknownKotlinExpression (PREFIX_EXPRESSION), 3]] : PsiType:Void
+                    UArrayAccessExpression [s[[!] UnknownKotlinExpression (PREFIX_EXPRESSION), 3]] : PsiType:String
+                        USimpleNameReferenceExpression (identifier = s) [s] : PsiType:String[]
                         [!] UnknownKotlinExpression (PREFIX_EXPRESSION) [[!] UnknownKotlinExpression (PREFIX_EXPRESSION)]
                         ULiteralExpression (value = 3) [3] : PsiType:int

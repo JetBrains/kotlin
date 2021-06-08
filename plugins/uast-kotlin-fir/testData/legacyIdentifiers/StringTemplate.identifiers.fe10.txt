@@ -1,7 +1,0 @@
-foo -> UField (name = foo)
-bar -> UField (name = bar)
-baz -> UField (name = baz)
-foobarbaz -> UField (name = foobarbaz)
-foo -> USimpleNameReferenceExpression (identifier = foo)
-bar -> USimpleNameReferenceExpression (identifier = bar)
-baz -> USimpleNameReferenceExpression (identifier = baz)

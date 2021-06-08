@@ -1,12 +1,61 @@
-Thread -> UQualifiedReferenceExpression from KtDotQualifiedExpression
-lang -> UQualifiedReferenceExpression from KtDotQualifiedExpression
-Runnable -> UQualifiedReferenceExpression from KtDotQualifiedExpression
-lang -> UQualifiedReferenceExpression from KtDotQualifiedExpression
-Callable -> UQualifiedReferenceExpression from KtDotQualifiedExpression
-concurrent -> UQualifiedReferenceExpression from KtDotQualifiedExpression
-util -> UQualifiedReferenceExpression from KtDotQualifiedExpression
-Supplier -> UQualifiedReferenceExpression from KtDotQualifiedExpression
-function -> UQualifiedReferenceExpression from KtDotQualifiedExpression
-util -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+Thread -> USimpleNameReferenceExpression (identifier = Thread) from KtDotQualifiedExpression
+lang -> USimpleNameReferenceExpression (identifier = lang) from KtDotQualifiedExpression
+java -> USimpleNameReferenceExpression (identifier = java) from KtNameReferenceExpression
+lang -> USimpleNameReferenceExpression (identifier = lang) from KtNameReferenceExpression
+Thread -> USimpleNameReferenceExpression (identifier = Thread) from KtNameReferenceExpression
+Runnable -> USimpleNameReferenceExpression (identifier = Runnable) from KtDotQualifiedExpression
+lang -> USimpleNameReferenceExpression (identifier = lang) from KtDotQualifiedExpression
+java -> USimpleNameReferenceExpression (identifier = java) from KtNameReferenceExpression
+lang -> USimpleNameReferenceExpression (identifier = lang) from KtNameReferenceExpression
+Runnable -> USimpleNameReferenceExpression (identifier = Runnable) from KtNameReferenceExpression
+Callable -> USimpleNameReferenceExpression (identifier = Callable) from KtDotQualifiedExpression
+concurrent -> USimpleNameReferenceExpression (identifier = concurrent) from KtDotQualifiedExpression
+util -> USimpleNameReferenceExpression (identifier = util) from KtDotQualifiedExpression
+java -> USimpleNameReferenceExpression (identifier = java) from KtNameReferenceExpression
+util -> USimpleNameReferenceExpression (identifier = util) from KtNameReferenceExpression
+concurrent -> USimpleNameReferenceExpression (identifier = concurrent) from KtNameReferenceExpression
+Callable -> USimpleNameReferenceExpression (identifier = Callable) from KtNameReferenceExpression
+Supplier -> USimpleNameReferenceExpression (identifier = Supplier) from KtDotQualifiedExpression
+function -> USimpleNameReferenceExpression (identifier = function) from KtDotQualifiedExpression
+util -> USimpleNameReferenceExpression (identifier = util) from KtDotQualifiedExpression
+java -> USimpleNameReferenceExpression (identifier = java) from KtNameReferenceExpression
+util -> USimpleNameReferenceExpression (identifier = util) from KtNameReferenceExpression
+function -> USimpleNameReferenceExpression (identifier = function) from KtNameReferenceExpression
+Supplier -> USimpleNameReferenceExpression (identifier = Supplier) from KtNameReferenceExpression
+java -> USimpleNameReferenceExpression (identifier = java) from KtNameReferenceExpression
+lang -> USimpleNameReferenceExpression (identifier = lang) from KtNameReferenceExpression
+Runnable -> USimpleNameReferenceExpression (identifier = Runnable) from KtNameReferenceExpression
+java -> USimpleNameReferenceExpression (identifier = java) from KtNameReferenceExpression
+lang -> USimpleNameReferenceExpression (identifier = lang) from KtNameReferenceExpression
+Runnable -> USimpleNameReferenceExpression (identifier = Runnable) from KtNameReferenceExpression
+foo -> USimpleNameReferenceExpression (identifier = foo) from KtNameReferenceExpression
+java -> USimpleNameReferenceExpression (identifier = java) from KtNameReferenceExpression
+lang -> USimpleNameReferenceExpression (identifier = lang) from KtNameReferenceExpression
+Runnable -> USimpleNameReferenceExpression (identifier = Runnable) from KtNameReferenceExpression
+runRunnable -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
 Runnable { /* SAM */ } -> UQualifiedReferenceExpression from KtDotQualifiedExpression
-lang -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+lang -> USimpleNameReferenceExpression (identifier = lang) from KtDotQualifiedExpression
+java -> USimpleNameReferenceExpression (identifier = java) from KtNameReferenceExpression
+lang -> USimpleNameReferenceExpression (identifier = lang) from KtNameReferenceExpression
+Runnable -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+java -> USimpleNameReferenceExpression (identifier = java) from KtNameReferenceExpression
+lang -> USimpleNameReferenceExpression (identifier = lang) from KtNameReferenceExpression
+Runnable -> USimpleNameReferenceExpression (identifier = Runnable) from KtNameReferenceExpression
+r -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+Thread -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+println -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+Thread -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+Runnable -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+println -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+ambiguousSamAcceptor -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+Supplier -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+ambiguousSamAcceptor -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+Callable -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+Supplier -> USimpleNameReferenceExpression (identifier = Supplier) from KtNameReferenceExpression
+String -> USimpleNameReferenceExpression (identifier = String) from KtNameReferenceExpression
+String -> USimpleNameReferenceExpression (identifier = String) from KtNameReferenceExpression
+TODO -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+Callable -> USimpleNameReferenceExpression (identifier = Callable) from KtNameReferenceExpression
+String -> USimpleNameReferenceExpression (identifier = String) from KtNameReferenceExpression
+String -> USimpleNameReferenceExpression (identifier = String) from KtNameReferenceExpression
+TODO -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression

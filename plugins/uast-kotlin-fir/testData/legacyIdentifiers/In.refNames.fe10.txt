@@ -1,3 +1,0 @@
-Boolean -> USimpleNameReferenceExpression (identifier = Boolean) from KtNameReferenceExpression
-x -> USimpleNameReferenceExpression (identifier = x) from KtNameReferenceExpression
-y -> USimpleNameReferenceExpression (identifier = y) from KtNameReferenceExpression
