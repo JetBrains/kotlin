@@ -816,6 +816,10 @@ task tostring3(type: KonanLocalTest) {
     source = "runtime/basic/tostring3.kt"
 }
 
+task tostring4(type: KonanLocalTest) {
+    source = "runtime/basic/tostring4.kt"
+}
+
 task empty_substring(type: KonanLocalTest) {
     goldValue = "\n"
     source = "runtime/basic/empty_substring.kt"

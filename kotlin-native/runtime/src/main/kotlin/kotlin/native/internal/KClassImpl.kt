@@ -27,19 +27,21 @@ internal class KClassImpl<T : Any>(private val typeInfo: NativePtr) : KClass<T> 
 
     override fun hashCode(): Int = typeInfo.hashCode()
 
-    override fun toString(): String {
-        val relativeName = getRelativeName(typeInfo, false)
-        val visibleName = if (relativeName != null) {
-            val packageName = getPackageName(typeInfo, false)!!
-            if (packageName.isEmpty()) relativeName else "$packageName.$relativeName"
-        } else "<anonymous>"
+    override fun toString(): String = "class ${fullName ?: "<anonymous>"}"
 
-        return "class $visibleName"
-    }
+    internal val fullName: String?
+        get() {
+            val relativeName = getRelativeName(typeInfo, false) ?: return null
+            val packageName = getPackageName(typeInfo, false)!!
+            return if (packageName.isEmpty()) relativeName else "$packageName.$relativeName"
+        }
 
     internal fun findAssociatedObjectImpl(key: KClassImpl<*>): Any? =
             findAssociatedObjectImpl(this.typeInfo, key.typeInfo)
 }
+
+internal val KClass<*>.fullName: String?
+    get() = (this as? KClassImpl<*>)?.fullName
 
 @PublishedApi
 internal fun KClass<*>.findAssociatedObject(key: KClass<*>): Any? =

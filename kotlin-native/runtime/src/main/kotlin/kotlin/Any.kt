@@ -6,6 +6,7 @@
 package kotlin
 
 import kotlin.native.identityHashCode
+import kotlin.native.internal.fullName
 import kotlin.native.internal.ExportTypeInfo
 import kotlin.native.internal.GCUnsafeCall
 
@@ -41,8 +42,7 @@ public open class Any {
      * Returns a string representation of the object.
      */
     public open fun toString(): String {
-        val kClass = this::class
-        val className = kClass.qualifiedName ?: kClass.simpleName ?: "<object>"
+        val className = this::class.fullName ?: "<object>"
         // TODO: consider using [identityHashCode].
         val unsignedHashCode = this.hashCode().toLong() and 0xffffffffL
         val hashCodeStr = unsignedHashCode.toString(16)
