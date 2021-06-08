@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.util.getPropertyGetter
 import org.jetbrains.kotlin.ir.util.getSimpleFunction
 import org.jetbrains.kotlin.ir.util.isPrimitiveArray
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /** Builds a [HeaderInfo] for iteration over iterables using the `get / []` operator and an index. */
@@ -79,9 +80,12 @@ internal class ArrayIterationHandler(context: CommonBackendContext) : IndexedGet
     override val IrType.sizePropertyGetter
         get() = getClass()!!.getPropertyGetter("size")!!.owner
 
+    private val getFunctionName: Name
+        get() = context.ir.symbols.getWithoutBCName ?: OperatorNameConventions.GET
+
     override val IrType.getFunction
         get() = getClass()!!.functions.single {
-            it.name == OperatorNameConventions.GET &&
+            it.name == getFunctionName &&
                     it.valueParameters.size == 1 &&
                     it.valueParameters[0].type.isInt()
         }

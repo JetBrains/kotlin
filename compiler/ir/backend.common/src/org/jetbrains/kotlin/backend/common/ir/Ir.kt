@@ -332,6 +332,10 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, irBuiltIns:
 
     open val unsafeCoerceIntrinsic: IrSimpleFunctionSymbol? = null
 
+    open val getWithoutBCName: Name? = null
+
+    open val setWithoutBCName: Name? = null
+
     companion object {
         fun isLateinitIsInitializedPropertyGetter(symbol: IrFunctionSymbol): Boolean =
             symbol is IrSimpleFunctionSymbol && symbol.owner.let { function ->
