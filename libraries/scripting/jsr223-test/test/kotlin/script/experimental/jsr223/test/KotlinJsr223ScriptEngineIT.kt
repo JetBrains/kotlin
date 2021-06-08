@@ -177,6 +177,18 @@ obj
     }
 
     @Test
+    fun testSimpleCompilableWithBindings() {
+        val engine = ScriptEngineManager().getEngineByExtension("kts")
+        engine.put("z", 33)
+        val comp = (engine as Compilable).compile("val x = 10 + bindings[\"z\"] as Int\nx + 20")
+        val res1 = comp.eval()
+        Assert.assertEquals(63, res1)
+        engine.put("z", 44)
+        val res2 = comp.eval()
+        Assert.assertEquals(74, res2)
+    }
+
+    @Test
     fun testMultipleCompilable() {
         val engine = ScriptEngineManager().getEngineByExtension("kts") as KotlinJsr223ScriptEngineImpl
         val compiled1 = engine.compile("""listOf(1,2,3).joinToString(",")""")
