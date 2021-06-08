@@ -573,6 +573,10 @@ internal class KonanSymbols(
     val topLevelSuite    = getKonanTestClass("TopLevelSuite")
     val testFunctionKind = getKonanTestClass("TestFunctionKind")
 
+    override val getWithoutBCName: Name? = KonanNameConventions.getWithoutBC
+
+    override val setWithoutBCName: Name? = KonanNameConventions.setWithoutBC
+
     private val testFunctionKindCache = TestProcessor.FunctionKind.values().associate {
         val symbol = if (it.runtimeKindString.isEmpty())
             null
