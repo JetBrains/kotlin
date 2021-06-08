@@ -71,14 +71,13 @@ fun TestProject.build(
     assertions: BuildResult.() -> Unit = {}
 ) {
     val allBuildArguments = commonBuildSetup(buildArguments.toList())
-    withBuildSummary(allBuildArguments) {
-        val buildResult = gradleRunner
-            .also { if (forceOutput) it.forwardOutput() }
-            .withArguments(allBuildArguments)
-            .build()
-
-        assertions(buildResult)
+    val gradleRunnerForBuild = gradleRunner
+        .also { if (forceOutput) it.forwardOutput() }
+        .withArguments(allBuildArguments)
+    val buildResult = withBuildSummary(allBuildArguments) {
+        gradleRunnerForBuild.build()
     }
+    assertions(buildResult)
 }
 
 /**
@@ -90,14 +89,14 @@ fun TestProject.buildAndFail(
     assertions: BuildResult.() -> Unit = {}
 ) {
     val allBuildArguments = commonBuildSetup(buildArguments.toList())
-    withBuildSummary(allBuildArguments) {
-        val buildResult = gradleRunner
-            .also { if (forceOutput) it.forwardOutput() }
-            .withArguments(allBuildArguments)
-            .buildAndFail()
-
-        assertions(buildResult)
+    val gradleRunnerForBuild = gradleRunner
+        .also { if (forceOutput) it.forwardOutput() }
+        .withArguments(allBuildArguments)
+    val buildResult = withBuildSummary(allBuildArguments) {
+        gradleRunnerForBuild.buildAndFail()
     }
+
+    assertions(buildResult)
 }
 
 fun TestProject.enableLocalBuildCache(
@@ -140,16 +139,17 @@ private fun TestProject.commonBuildSetup(
     return buildOptionsArguments + buildArguments + "--full-stacktrace"
 }
 
-private fun TestProject.withBuildSummary(buildArguments: List<String>, run: () -> Unit) {
-    try {
-        run()
-    } catch (t: Throwable) {
-        println("<=== Test build: ${projectName} ===>")
-        println("<=== Using Gradle version: ${gradleVersion.version} ===>")
-        println("<=== Run arguments: ${buildArguments.joinToString()} ===>")
-        println("<=== Project path:  ${projectPath.toAbsolutePath()} ===>")
-        throw t
-    }
+private fun TestProject.withBuildSummary(
+    buildArguments: List<String>,
+    run: () -> BuildResult
+): BuildResult = try {
+    run()
+} catch (t: Throwable) {
+    println("<=== Test build: $projectName ===>")
+    println("<=== Using Gradle version: ${gradleVersion.version} ===>")
+    println("<=== Run arguments: ${buildArguments.joinToString()} ===>")
+    println("<=== Project path:  ${projectPath.toAbsolutePath()} ===>")
+    throw t
 }
 
 /**
