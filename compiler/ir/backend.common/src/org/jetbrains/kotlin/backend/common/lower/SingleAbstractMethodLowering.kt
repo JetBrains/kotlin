@@ -73,7 +73,7 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
         setSourceRange(createFor)
     }
 
-    abstract val IrType.needEqualsHashCodeMethods: Boolean
+    abstract val IrType.needEqualsHashCodeToStringMethods: Boolean
 
     open val inInlineFunctionScope get() = allScopes.any { scope -> (scope.irElement as? IrFunction)?.isInline ?: false }
 
@@ -231,27 +231,27 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
             }
         }
 
-        if (superType.needEqualsHashCodeMethods)
-            generateEqualsHashCode(subclass, superType, field)
+        if (superType.needEqualsHashCodeToStringMethods)
+            generateEqualsHashCodeToString(subclass, superType, field)
 
         subclass.addFakeOverrides(context.irBuiltIns)
 
         return subclass
     }
 
-    private fun generateEqualsHashCode(klass: IrClass, superType: IrType, functionDelegateField: IrField) =
-        SamEqualsHashCodeMethodsGenerator(context, klass, superType) { receiver ->
+    private fun generateEqualsHashCodeToString(klass: IrClass, superType: IrType, functionDelegateField: IrField) =
+        SamEqualsHashCodeToStringMethodsGenerator(context, klass, superType) { receiver ->
             irGetField(receiver, functionDelegateField)
         }.generate()
 
     private fun getAdditionalSupertypes(supertype: IrType) =
-        if (supertype.needEqualsHashCodeMethods)
+        if (supertype.needEqualsHashCodeToStringMethods)
             listOf(context.ir.symbols.functionAdapter.typeWith())
         else emptyList()
 }
 
 /**
- * Generates equals and hashCode for SAM and fun interface wrappers, as well as an implementation of getFunctionDelegate
+ * Generates equals, hashCode and toString for SAM and fun interface wrappers, as well as an implementation of getFunctionDelegate
  * (inherited from kotlin.jvm.internal.FunctionAdapter), needed to properly implement them.
  * This class is used in two places:
  * - FunctionReferenceLowering, which is the case of SAM conversion of a (maybe adapted) function reference, e.g. `FunInterface(foo::bar)`.
@@ -261,7 +261,7 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
  * - SingleAbstractMethodLowering, which is the case of SAM conversion of any value of a functional type,
  *   e.g. `val f = {}; FunInterface(f)`.
  */
-class SamEqualsHashCodeMethodsGenerator(
+class SamEqualsHashCodeToStringMethodsGenerator(
     private val context: CommonBackendContext,
     private val klass: IrClass,
     private val samSuperType: IrType,
@@ -276,6 +276,7 @@ class SamEqualsHashCodeMethodsGenerator(
         generateGetFunctionDelegate()
         generateEquals()
         generateHashCode()
+        generateToString()
     }
 
     private fun generateGetFunctionDelegate() {
@@ -336,6 +337,29 @@ class SamEqualsHashCodeMethodsGenerator(
             body = context.createIrBuilder(symbol).run {
                 irExprBody(
                     irCall(hashCode).also {
+                        it.dispatchReceiver = irCall(getFunctionDelegate).also {
+                            it.dispatchReceiver = irGet(dispatchReceiverParameter!!)
+                        }
+                    }
+                )
+            }
+        }
+    }
+
+    private fun generateToString() {
+        klass.addFunction("toString", builtIns.stringType).apply {
+
+            fun isToString(function: IrSimpleFunction) =
+                function.name.asString() == "toString" && function.extensionReceiverParameter == null && function.valueParameters.isEmpty()
+
+            overriddenSymbols = klass.superTypes.mapNotNull {
+                it.getClass()?.functions?.singleOrNull(::isToString)?.symbol
+            }
+
+            val str = context.irBuiltIns.functionClass.owner.functions.single(::isToString).symbol
+            body = context.createIrBuilder(symbol).run {
+                irExprBody(
+                    irCall(str).also { it ->
                         it.dispatchReceiver = irCall(getFunctionDelegate).also {
                             it.dispatchReceiver = irGet(dispatchReceiverParameter!!)
                         }

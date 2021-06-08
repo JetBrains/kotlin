@@ -162,7 +162,7 @@ public class SamWrapperCodegen {
             generateGetFunctionDelegate(cv, asmType, functionAsmType);
             generateEquals(cv, asmType, functionAsmType, samAsmType);
             generateHashCode(cv, asmType, functionAsmType);
-
+            generateToString(cv, asmType, functionAsmType);
             generateDelegatesToDefaultImpl(asmType, classDescriptor, samType.getClassDescriptor(), functionCodegen, state);
         }
 
@@ -271,6 +271,16 @@ public class SamWrapperCodegen {
         iv.invokevirtual(OBJECT_TYPE.getInternalName(), "hashCode", "()I", false);
         iv.areturn(Type.INT_TYPE);
         FunctionCodegen.endVisit(iv, "hashCode of SAM wrapper");
+    }
+
+    private static void generateToString(@NotNull ClassBuilder cv, @NotNull Type asmType, @NotNull Type functionAsmType) {
+        MethodVisitor mv = cv.newMethod(JvmDeclarationOrigin.NO_ORIGIN, ACC_PUBLIC, "toString", "()Ljava/lang/String;", null, null);
+        InstructionAdapter iv = new InstructionAdapter(mv);
+        iv.load(0, OBJECT_TYPE);
+        iv.getfield(asmType.getInternalName(), FUNCTION_FIELD_NAME, functionAsmType.getDescriptor());
+        iv.invokevirtual(OBJECT_TYPE.getInternalName(), "toString", "()Ljava/lang/String;", false);
+        iv.areturn(JAVA_STRING_TYPE);
+        FunctionCodegen.endVisit(iv, "toString of SAM wrapper");
     }
 
     private static void generateGetFunctionDelegate(@NotNull ClassBuilder cv, @NotNull Type asmType, @NotNull Type functionAsmType) {
