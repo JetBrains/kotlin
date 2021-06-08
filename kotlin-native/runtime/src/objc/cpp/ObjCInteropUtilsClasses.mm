@@ -35,7 +35,7 @@
 }
 
 -(void)dealloc {
-  refHolder.dispose();
+  refHolder.disposeFromNative();
   [super dealloc];
 }
 
@@ -88,9 +88,23 @@ extern "C" OBJ_GETTER(Kotlin_Interop_refFromObjC, id obj);
 static OBJ_GETTER(Konan_ObjCInterop_getWeakReference, KRef ref) {
   KotlinObjCWeakReference* objcRef = (KotlinObjCWeakReference*)ref->GetAssociatedObject();
 
-  id objcReferred = objc_loadWeakRetained(&objcRef->referred);
+  // objc_loadWeakRetained can call arbitrary user code, so it needs Native state:
+  id objcReferred = kotlin::CallWithThreadState<kotlin::ThreadState::kNative>(objc_loadWeakRetained, &objcRef->referred);
+
+  // Kotlin_Interop_refFromObjC creates Kotlin objects, so it needs Runnable state:
   KRef result = Kotlin_Interop_refFromObjC(objcReferred, OBJ_RESULT);
-  objc_release(objcReferred);
+
+  // objc_release can call arbitrary user code, so it needs Native state:
+  kotlin::CallWithThreadState<kotlin::ThreadState::kNative>(objc_release, objcReferred);
+
+  // Possible optimizations for thread state switching above:
+  //  1. `Kotlin_Interop_refFromObjC` typically does `objc_retain` under the hood. We could coalesce it with `objc_release` above.
+  //  2. `objc_loadWeakRetained` and `objc_release` typically shouldn't call arbitrary user code here:
+  //     the latter can't deallocate the object because it is still alive by this point, so the only possibility for user code here is
+  //     when a user overrides `_tryRetain` or `release`.
+  //     We do this for Kotlin subclasses of Obj-C classes, which also use this implementation.
+  //     But we could use the other weak implementation for such classes, and assume no one else overrides these methods
+  //     (in a dangerous way).
 
   return result;
 }

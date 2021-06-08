@@ -89,6 +89,8 @@ id allocWithZoneImp(Class self, SEL _cmd, void* zone) {
   id result = messenger(&s, _cmd, zone);
 
   auto* typeInfo = classData->typeInfo;
+
+  kotlin::CalledFromNativeGuard guard;
   ObjHolder holder;
   auto kotlinObj = AllocInstanceWithAssociatedObject(typeInfo, result, holder.slot());
 
@@ -372,6 +374,7 @@ void Kotlin_objc_autoreleasePoolPop(void* ptr) {
 }
 
 id Kotlin_objc_allocWithZone(Class clazz) {
+  kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
   return objc_allocWithZone(clazz);
 }
 
@@ -380,6 +383,7 @@ id Kotlin_objc_retain(id ptr) {
 }
 
 void Kotlin_objc_release(id ptr) {
+  kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
   objc_release(ptr);
 }
 

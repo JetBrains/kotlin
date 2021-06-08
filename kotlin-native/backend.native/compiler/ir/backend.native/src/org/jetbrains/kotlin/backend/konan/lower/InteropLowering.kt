@@ -785,6 +785,9 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
         // Calls to other ObjC class constructors must be lowered.
         require(constructedClass.isKotlinObjCClass()) { renderCompilerError(expression) }
         return builder.at(expression).irBlock {
+            // Note: using [interopAllocObjCObject] and [interopObjCRelease] here is suboptimal: they switch the thread to Native state
+            // and then back to Runnable.
+            // TODO: consider calling specialized versions of allocWithZoneImp and releaseImp directly.
             val rawPtr = irTemporary(irCall(symbols.interopAllocObjCObject.owner).apply {
                 putValueArgument(0, getObjCClass(symbols, constructedClass.symbol))
             })

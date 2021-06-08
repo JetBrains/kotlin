@@ -125,20 +125,21 @@ template <ErrorPolicy errorPolicy>
 void BackRefFromAssociatedObject::addRef() {
   static_assert(errorPolicy != ErrorPolicy::kDefaultValue, "Cannot use default return value here");
 
+  // Can be called both from Native state (if ObjC or Swift code adds RC)
+  // and from Runnable state (Kotlin_ObjCExport_refToObjC).
+
   if (atomicAdd(&refCount, 1) == 1) {
     if (obj_ == nullptr) return; // E.g. after [detach].
 
+    kotlin::CalledFromNativeGuard guard(/* reentrant */ true);
+
     // There are no references to the associated object itself, so Kotlin object is being passed from Kotlin,
     // and it is owned therefore.
-    kotlin::AssertThreadState(kotlin::ThreadState::kRunnable);
     ensureRefAccessible<errorPolicy>(obj_, context_); // TODO: consider removing explicit verification.
 
     // Foreign reference has already been deinitialized (see [releaseRef]).
     // Create a new one:
     context_ = InitForeignRef(obj_);
-  } else {
-    // Can be called both from Native state (if ObjC or Swift code adds RC)
-    // and from Runnable state (Kotlin_ObjCExport_refToObjC).
   }
 }
 
