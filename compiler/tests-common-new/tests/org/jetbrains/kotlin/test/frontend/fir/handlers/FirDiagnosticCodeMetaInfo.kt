@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.codeMetaInfo.renderConfigurations.AbstractCodeMetaIn
 import org.jetbrains.kotlin.fir.analysis.diagnostics.AbstractFirDiagnosticWithParametersRenderer
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDefaultErrorMessages
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderer
 
 object FirMetaInfoUtils {
     val renderDiagnosticNoArgs = FirDiagnosticCodeMetaRenderConfiguration().apply { renderParams = false }
@@ -67,7 +66,7 @@ class FirDiagnosticCodeMetaRenderConfiguration(
         val diagnostic = codeMetaInfo.diagnostic
 
         @Suppress("UNCHECKED_CAST")
-        val renderer = FirDefaultErrorMessages.getRendererForDiagnostic(diagnostic) as FirDiagnosticRenderer<FirDiagnostic<*>>
+        val renderer = FirDefaultErrorMessages.getRendererForDiagnostic(diagnostic)
         if (renderer is AbstractFirDiagnosticWithParametersRenderer<*>) {
             renderer.renderParameters(diagnostic).mapTo(params, Any?::toString)
         }

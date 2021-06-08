@@ -379,9 +379,10 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_SETTER_RETU
 @Suppress("unused")
 class FirDefaultErrorMessages {
     companion object {
-        fun getRendererForDiagnostic(diagnostic: FirDiagnostic<*>): FirDiagnosticRenderer<*> {
+        fun getRendererForDiagnostic(diagnostic: FirDiagnostic<*>): FirDiagnosticRenderer<FirDiagnostic<*>> {
             val factory = diagnostic.factory
-            return MAP[factory] ?: factory.firRenderer
+            @Suppress("UNCHECKED_CAST")
+            return (MAP[factory] ?: factory.firRenderer) as FirDiagnosticRenderer<FirDiagnostic<*>>
         }
 
         // * - The old FE reports these diagnostics with additional parameters
