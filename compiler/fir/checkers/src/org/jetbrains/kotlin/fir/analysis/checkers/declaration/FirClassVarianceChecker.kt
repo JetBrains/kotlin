@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.extractTypeRefAndSourceFromTypeArgument
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -116,14 +117,13 @@ object FirClassVarianceChecker : FirClassChecker() {
             ) {
                 val factory =
                     if (isInAbbreviation) FirErrors.TYPE_VARIANCE_CONFLICT_IN_EXPANDED_TYPE else FirErrors.TYPE_VARIANCE_CONFLICT
-                reporter.report(
-                    factory.on(
-                        resultSource,
-                        typeParameter.symbol,
-                        typeParameter.variance,
-                        variance,
-                        containingType
-                    ),
+                reporter.reportOn(
+                    resultSource,
+                    factory,
+                    typeParameter.symbol,
+                    typeParameter.variance,
+                    variance,
+                    containingType,
                     context
                 )
             }

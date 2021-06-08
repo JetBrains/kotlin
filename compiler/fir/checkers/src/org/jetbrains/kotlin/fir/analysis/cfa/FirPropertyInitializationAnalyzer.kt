@@ -80,10 +80,8 @@ object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChec
             }
             val kind = info[symbol] ?: EventOccurrencesRange.ZERO
             if (symbol.fir.isVal && kind.canBeRevisited()) {
-                node.fir.lValue.source?.let {
-                    reporter.report(FirErrors.VAL_REASSIGNMENT.on(it, symbol), context)
-                    return true
-                }
+                reporter.reportOn(node.fir.lValue.source, FirErrors.VAL_REASSIGNMENT, symbol, context)
+                return true
             }
             return false
         }
@@ -109,10 +107,8 @@ object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChec
         ): Boolean {
             val kind = info[symbol] ?: EventOccurrencesRange.ZERO
             if (!kind.isDefinitelyVisited()) {
-                node.fir.source?.let {
-                    reporter.report(FirErrors.UNINITIALIZED_VARIABLE.on(it, symbol), context)
-                    return true
-                }
+                reporter.reportOn(node.fir.source, FirErrors.UNINITIALIZED_VARIABLE, symbol, context)
+                return true
             }
             return false
         }

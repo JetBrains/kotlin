@@ -242,10 +242,8 @@ object FirOverrideChecker : FirClassChecker() {
         overridden: FirCallableDeclaration<*>,
         context: CheckerContext
     ) {
-        overriding.source?.let { source ->
-            overridden.containingClass()?.let { containingClass ->
-                report(FirErrors.OVERRIDING_FINAL_MEMBER.on(source, overridden, containingClass.name), context)
-            }
+        overridden.containingClass()?.let { containingClass ->
+            reportOn(overriding.source, FirErrors.OVERRIDING_FINAL_MEMBER, overridden, containingClass.name, context)
         }
     }
 
@@ -254,7 +252,7 @@ object FirOverrideChecker : FirClassChecker() {
         overridden: FirMemberDeclaration,
         context: CheckerContext
     ) {
-        overriding.source?.let { report(FirErrors.VAR_OVERRIDDEN_BY_VAL.on(it, overriding, overridden), context) }
+        reportOn(overriding.source, FirErrors.VAR_OVERRIDDEN_BY_VAL, overriding, overridden, context)
     }
 
     private fun DiagnosticReporter.reportCannotWeakenAccessPrivilege(

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirFunction
@@ -30,7 +31,7 @@ object FirContractChecker : FirFunctionChecker() {
 
             // TODO: report on fine-grained locations, e.g., ... implies unresolved => report on unresolved, not the entire statement.
             //  but, sometimes, it's just reported on `contract`...
-            reporter.report(FirErrors.ERROR_IN_CONTRACT_DESCRIPTION.on(statement.source!!, UNEXPECTED_CONSTRUCTION), context)
+            reporter.reportOn(statement.source, FirErrors.ERROR_IN_CONTRACT_DESCRIPTION, UNEXPECTED_CONSTRUCTION, context)
         }
     }
 }

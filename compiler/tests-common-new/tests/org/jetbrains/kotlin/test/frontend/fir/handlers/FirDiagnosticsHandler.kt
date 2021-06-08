@@ -111,6 +111,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         return metaInfo
     }
 
+    @OptIn(InternalDiagnosticFactoryMethod::class)
     private fun collectSyntaxDiagnostics(
         testFile: TestFile,
         firFile: FirFile,

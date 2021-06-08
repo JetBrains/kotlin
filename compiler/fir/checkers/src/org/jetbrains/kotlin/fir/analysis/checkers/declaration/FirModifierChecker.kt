@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
@@ -179,24 +180,24 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
     private fun DiagnosticReporter.reportRepeatedModifier(
         modifier: FirModifier<*>, keyword: KtModifierKeywordToken, context: CheckerContext
     ) {
-        report(FirErrors.REPEATED_MODIFIER.on(modifier.source, keyword), context)
+        reportOn(modifier.source, FirErrors.REPEATED_MODIFIER, keyword, context)
     }
 
     private fun DiagnosticReporter.reportRedundantModifier(
         modifier: FirModifier<*>, firstKeyword: KtModifierKeywordToken, secondKeyword: KtModifierKeywordToken, context: CheckerContext
     ) {
-        report(FirErrors.REDUNDANT_MODIFIER.on(modifier.source, firstKeyword, secondKeyword), context)
+        reportOn(modifier.source, FirErrors.REDUNDANT_MODIFIER, firstKeyword, secondKeyword, context)
     }
 
     private fun DiagnosticReporter.reportDeprecatedModifierPair(
         modifier: FirModifier<*>, firstKeyword: KtModifierKeywordToken, secondKeyword: KtModifierKeywordToken, context: CheckerContext
     ) {
-        report(FirErrors.DEPRECATED_MODIFIER_PAIR.on(modifier.source, firstKeyword, secondKeyword), context)
+        reportOn(modifier.source, FirErrors.DEPRECATED_MODIFIER_PAIR, firstKeyword, secondKeyword, context)
     }
 
     private fun DiagnosticReporter.reportIncompatibleModifiers(
         modifier: FirModifier<*>, firstKeyword: KtModifierKeywordToken, secondKeyword: KtModifierKeywordToken, context: CheckerContext
     ) {
-        report(FirErrors.INCOMPATIBLE_MODIFIERS.on(modifier.source, firstKeyword, secondKeyword), context)
+        reportOn(modifier.source, FirErrors.INCOMPATIBLE_MODIFIERS, firstKeyword, secondKeyword, context)
     }
 }

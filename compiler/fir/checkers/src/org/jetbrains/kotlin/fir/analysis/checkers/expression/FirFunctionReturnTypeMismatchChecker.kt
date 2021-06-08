@@ -35,7 +35,6 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker() {
         val returnExpressionType = resultExpression.typeRef.coneTypeSafe<ConeKotlinType>() ?: return
 
         if (!isSubtypeForTypeMismatch(typeContext, subtype = returnExpressionType, supertype = functionReturnType)) {
-            val returnExpressionSource = resultExpression.source ?: return
             if (resultExpression.isNullLiteral && functionReturnType.nullability == ConeNullability.NOT_NULL) {
                 reporter.reportOn(resultExpression.source, NULL_FOR_NONNULL_TYPE, context)
             } else {
@@ -51,8 +50,12 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker() {
                         context
                     )
                 } else {
-                    reporter.report(
-                        RETURN_TYPE_MISMATCH.on(returnExpressionSource, functionReturnType, returnExpressionType, targetElement),
+                    reporter.reportOn(
+                    resultExpression.source,
+                        RETURN_TYPE_MISMATCH,
+                    functionReturnType,
+                    returnExpressionType,
+                    targetElement,
                         context
                     )
                 }

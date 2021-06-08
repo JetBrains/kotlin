@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.coneEffects
 import org.jetbrains.kotlin.fir.contracts.description.ConeCallsEffectDeclaration
@@ -73,11 +74,9 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
         )
 
         for ((symbol, leakedPlaces) in leakedSymbols) {
-            function.contractDescription.source?.let {
-                reporter.report(FirErrors.LEAKED_IN_PLACE_LAMBDA.on(it, symbol), context)
-            }
+            reporter.reportOn(function.contractDescription.source, FirErrors.LEAKED_IN_PLACE_LAMBDA, symbol, context)
             leakedPlaces.forEach {
-                reporter.report(FirErrors.LEAKED_IN_PLACE_LAMBDA.on(it, symbol), context)
+                reporter.reportOn(it, FirErrors.LEAKED_IN_PLACE_LAMBDA, symbol, context)
             }
         }
 
@@ -111,10 +110,15 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
     ): Boolean {
         val foundRange = info[symbol] ?: EventOccurrencesRange.ZERO
         if (foundRange !in requiredRange) {
-            function.contractDescription.source?.let {
-                reporter.report(FirErrors.WRONG_INVOCATION_KIND.on(it, symbol, requiredRange, foundRange), context)
-                return true
-            }
+            reporter.reportOn(
+                function.contractDescription.source,
+                FirErrors.WRONG_INVOCATION_KIND,
+                symbol,
+                requiredRange,
+                foundRange,
+                context
+            )
+            return true
         }
         return false
     }

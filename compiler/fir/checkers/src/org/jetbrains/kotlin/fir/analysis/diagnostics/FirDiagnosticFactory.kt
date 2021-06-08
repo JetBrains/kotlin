@@ -16,6 +16,9 @@ import org.jetbrains.kotlin.fir.FirLightSourceElement
 import org.jetbrains.kotlin.fir.FirPsiSourceElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 
+@RequiresOptIn("Please use DiagnosticReporter.reportOn method if possible")
+annotation class InternalDiagnosticFactoryMethod
+
 sealed class AbstractFirDiagnosticFactory<D : FirDiagnostic<*>, P : PsiElement>(
     override val name: String,
     override val severity: Severity,
@@ -44,6 +47,7 @@ class FirDiagnosticFactory0<P : PsiElement>(
 ) : AbstractFirDiagnosticFactory<FirSimpleDiagnostic<*>, P>(name, severity, positioningStrategy) {
     override val firRenderer: FirDiagnosticRenderer<FirSimpleDiagnostic<*>> = SimpleFirDiagnosticRenderer("")
 
+    @InternalDiagnosticFactoryMethod
     fun on(element: FirSourceElement): FirSimpleDiagnostic<*> {
         return when (element) {
             is FirPsiSourceElement<*> -> FirPsiSimpleDiagnostic(
@@ -65,6 +69,7 @@ class FirDiagnosticFactory1<P : PsiElement, A>(
         FirDiagnosticRenderers.TO_STRING
     )
 
+    @InternalDiagnosticFactoryMethod
     fun on(element: FirSourceElement, a: A): FirDiagnosticWithParameters1<*, A> {
         return when (element) {
             is FirPsiSourceElement<*> -> FirPsiDiagnosticWithParameters1(
@@ -87,6 +92,7 @@ class FirDiagnosticFactory2<P : PsiElement, A, B>(
         FirDiagnosticRenderers.TO_STRING
     )
 
+    @InternalDiagnosticFactoryMethod
     fun on(element: FirSourceElement, a: A, b: B): FirDiagnosticWithParameters2<*, A, B> {
         return when (element) {
             is FirPsiSourceElement<*> -> FirPsiDiagnosticWithParameters2(
@@ -110,6 +116,7 @@ class FirDiagnosticFactory3<P : PsiElement, A, B, C>(
         FirDiagnosticRenderers.TO_STRING
     )
 
+    @InternalDiagnosticFactoryMethod
     fun on(element: FirSourceElement, a: A, b: B, c: C): FirDiagnosticWithParameters3<*, A, B, C> {
         return when (element) {
             is FirPsiSourceElement<*> -> FirPsiDiagnosticWithParameters3(
@@ -134,6 +141,7 @@ class FirDiagnosticFactory4<P : PsiElement, A, B, C, D>(
         FirDiagnosticRenderers.TO_STRING
     )
 
+    @InternalDiagnosticFactoryMethod
     fun on(element: FirSourceElement, a: A, b: B, c: C, d: D): FirDiagnosticWithParameters4<*, A, B, C, D> {
         return when (element) {
             is FirPsiSourceElement<*> -> FirPsiDiagnosticWithParameters4(
@@ -149,16 +157,19 @@ private fun incorrectElement(element: FirSourceElement): Nothing {
     throw IllegalArgumentException("Unknown element type: ${element::class}")
 }
 
+@InternalDiagnosticFactoryMethod
 fun <P : PsiElement> FirDiagnosticFactory0<P>.on(element: FirSourceElement?): FirSimpleDiagnostic<*>? {
     return element?.let { on(it) }
 }
 
+@InternalDiagnosticFactoryMethod
 fun <P : PsiElement, A> FirDiagnosticFactory1<P, A>.on(
     element: FirSourceElement?, a: A
 ): FirDiagnosticWithParameters1<*, A>? {
     return element?.let { on(it, a) }
 }
 
+@InternalDiagnosticFactoryMethod
 fun <P : PsiElement, A, B> FirDiagnosticFactory2<P, A, B>.on(
     element: FirSourceElement?,
     a: A,
@@ -167,6 +178,7 @@ fun <P : PsiElement, A, B> FirDiagnosticFactory2<P, A, B>.on(
     return element?.let { on(it, a, b) }
 }
 
+@InternalDiagnosticFactoryMethod
 fun <P : PsiElement, A, B, C> FirDiagnosticFactory3<P, A, B, C>.on(
     element: FirSourceElement?,
     a: A,
@@ -176,6 +188,7 @@ fun <P : PsiElement, A, B, C> FirDiagnosticFactory3<P, A, B, C>.on(
     return element?.let { on(it, a, b, c) }
 }
 
+@InternalDiagnosticFactoryMethod
 fun <P : PsiElement, A, B, C, D> FirDiagnosticFactory4<P, A, B, C, D>.on(
     element: FirSourceElement?,
     a: A,

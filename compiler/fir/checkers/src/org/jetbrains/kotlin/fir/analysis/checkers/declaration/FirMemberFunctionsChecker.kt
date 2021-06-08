@@ -41,13 +41,16 @@ object FirMemberFunctionsChecker : FirRegularClassChecker() {
         val isAbstract = function.isAbstract || hasAbstractModifier
         if (isAbstract) {
             if (!containingDeclaration.canHaveAbstractDeclaration) {
-                reporter.report(
-                    FirErrors.ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.on(source, function, containingDeclaration),
+                reporter.reportOn(
+                    source,
+                    FirErrors.ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS,
+                    function,
+                    containingDeclaration,
                     context
                 )
             }
             if (function.hasBody) {
-                reporter.report(FirErrors.ABSTRACT_FUNCTION_WITH_BODY.on(source, function), context)
+                reporter.reportOn(source, FirErrors.ABSTRACT_FUNCTION_WITH_BODY, function, context)
             }
         }
         val isInsideExpectClass = isInsideExpectClass(containingDeclaration, context)

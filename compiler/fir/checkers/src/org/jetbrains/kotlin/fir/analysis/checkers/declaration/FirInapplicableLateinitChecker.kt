@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
@@ -23,28 +24,28 @@ object FirInapplicableLateinitChecker : FirPropertyChecker() {
 
         when {
             declaration.isVal ->
-                reporter.reportOn(declaration.source, "is allowed only on mutable properties", context)
+                reporter.reportError(declaration.source, "is allowed only on mutable properties", context)
 
             declaration.initializer != null -> if (declaration.isLocal) {
-                reporter.reportOn(declaration.source, "is not allowed on local variables with initializer", context)
+                reporter.reportError(declaration.source, "is not allowed on local variables with initializer", context)
             } else {
-                reporter.reportOn(declaration.source, "is not allowed on properties with initializer", context)
+                reporter.reportError(declaration.source, "is not allowed on properties with initializer", context)
             }
 
             declaration.delegate != null ->
-                reporter.reportOn(declaration.source, "is not allowed on delegated properties", context)
+                reporter.reportError(declaration.source, "is not allowed on delegated properties", context)
 
             declaration.isNullable() ->
-                reporter.reportOn(declaration.source, "is not allowed on properties of a type with nullable upper bound", context)
+                reporter.reportError(declaration.source, "is not allowed on properties of a type with nullable upper bound", context)
 
             declaration.returnTypeRef.coneType.isPrimitiveOrNullablePrimitive -> if (declaration.isLocal) {
-                reporter.reportOn(declaration.source, "is not allowed on local variables of primitive types", context)
+                reporter.reportError(declaration.source, "is not allowed on local variables of primitive types", context)
             } else {
-                reporter.reportOn(declaration.source, "is not allowed on properties of primitive types", context)
+                reporter.reportError(declaration.source, "is not allowed on properties of primitive types", context)
             }
 
             declaration.hasGetter() || declaration.hasSetter() ->
-                reporter.reportOn(declaration.source, "is not allowed on properties with a custom getter or setter", context)
+                reporter.reportError(declaration.source, "is not allowed on properties with a custom getter or setter", context)
         }
     }
 
@@ -56,7 +57,7 @@ object FirInapplicableLateinitChecker : FirPropertyChecker() {
     private fun FirProperty.hasGetter() = getter != null && getter !is FirDefaultPropertyGetter
     private fun FirProperty.hasSetter() = setter != null && setter !is FirDefaultPropertySetter
 
-    private fun DiagnosticReporter.reportOn(source: FirSourceElement?, target: String, context: CheckerContext) {
-        source?.let { report(FirErrors.INAPPLICABLE_LATEINIT_MODIFIER.on(it, target), context) }
+    private fun DiagnosticReporter.reportError(source: FirSourceElement?, target: String, context: CheckerContext) {
+        reportOn(source, FirErrors.INAPPLICABLE_LATEINIT_MODIFIER, target, context)
     }
 }

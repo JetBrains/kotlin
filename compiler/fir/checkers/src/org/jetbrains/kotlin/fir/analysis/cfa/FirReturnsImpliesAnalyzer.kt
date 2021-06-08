@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isSupertypeOf
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.coneEffects
 import org.jetbrains.kotlin.fir.contracts.description.*
@@ -63,9 +64,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
             }
 
             if (wrongCondition) {
-                function.contractDescription.source?.let {
-                    reporter.report(FirErrors.WRONG_IMPLIES_CONDITION.on(it), context)
-                }
+                reporter.reportOn(function.contractDescription.source, FirErrors.WRONG_IMPLIES_CONDITION, context)
             }
         }
     }

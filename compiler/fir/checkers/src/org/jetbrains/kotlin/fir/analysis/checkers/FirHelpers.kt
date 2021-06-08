@@ -567,7 +567,7 @@ fun checkTypeMismatch(
         if (rValue.isNullLiteral && lValueType.nullability == ConeNullability.NOT_NULL) {
             reporter.reportOn(rValue.source, FirErrors.NULL_FOR_NONNULL_TYPE, context)
         } else {
-            reporter.report(diagnosticFactory.on(source, lValueType, rValueType), context)
+            reporter.reportOn(source, diagnosticFactory, lValueType, rValueType, context)
         }
     }
 }

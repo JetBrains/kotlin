@@ -16,6 +16,7 @@ abstract class DiagnosticReporter {
     abstract fun report(diagnostic: FirDiagnostic<*>?, context: CheckerContext)
 }
 
+@OptIn(InternalDiagnosticFactoryMethod::class)
 fun <P : PsiElement> DiagnosticReporter.reportOn(
     source: FirSourceElement?,
     factory: FirDiagnosticFactory0<P>,
@@ -24,6 +25,7 @@ fun <P : PsiElement> DiagnosticReporter.reportOn(
     source?.let { report(factory.on(it), context) }
 }
 
+@OptIn(InternalDiagnosticFactoryMethod::class)
 fun <P : PsiElement, A : Any> DiagnosticReporter.reportOn(
     source: FirSourceElement?,
     factory: FirDiagnosticFactory1<P, A>,
@@ -33,6 +35,7 @@ fun <P : PsiElement, A : Any> DiagnosticReporter.reportOn(
     source?.let { report(factory.on(it, a), context) }
 }
 
+@OptIn(InternalDiagnosticFactoryMethod::class)
 fun <P : PsiElement, A : Any, B : Any> DiagnosticReporter.reportOn(
     source: FirSourceElement?,
     factory: FirDiagnosticFactory2<P, A, B>,
@@ -43,6 +46,7 @@ fun <P : PsiElement, A : Any, B : Any> DiagnosticReporter.reportOn(
     source?.let { report(factory.on(it, a, b), context) }
 }
 
+@OptIn(InternalDiagnosticFactoryMethod::class)
 fun <P : PsiElement, A : Any, B : Any, C : Any> DiagnosticReporter.reportOn(
     source: FirSourceElement?,
     factory: FirDiagnosticFactory3<P, A, B, C>,
@@ -54,6 +58,7 @@ fun <P : PsiElement, A : Any, B : Any, C : Any> DiagnosticReporter.reportOn(
     source?.let { report(factory.on(it, a, b, c), context) }
 }
 
+@OptIn(InternalDiagnosticFactoryMethod::class)
 fun <P : PsiElement, A : Any, B : Any, C : Any, D : Any> DiagnosticReporter.reportOn(
     source: FirSourceElement?,
     factory: FirDiagnosticFactory4<P, A, B, C, D>,
