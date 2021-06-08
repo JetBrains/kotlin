@@ -44,7 +44,7 @@ internal class KtFirCompletionCandidateChecker(
         possibleExplicitReceiver: KtExpression?,
     ): Boolean = withValidityAssertion {
         require(firSymbolForCandidate is KtFirSymbol<*>)
-        return firSymbolForCandidate.firRef.withFir(phase = FirResolvePhase.BODY_RESOLVE) { declaration ->
+        return firSymbolForCandidate.firRef.withFir(phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) { declaration ->
             check(declaration is FirCallableDeclaration<*>)
             checkExtension(declaration, originalFile, nameExpression, possibleExplicitReceiver)
         }
