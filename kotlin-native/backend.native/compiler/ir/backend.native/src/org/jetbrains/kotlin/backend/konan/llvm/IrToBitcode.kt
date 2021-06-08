@@ -10,6 +10,7 @@ import llvm.*
 import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.common.ir.allParameters
 import org.jetbrains.kotlin.backend.common.ir.allParametersCount
+import org.jetbrains.kotlin.backend.common.lower.VariableReplacementOrigin
 import org.jetbrains.kotlin.backend.common.lower.inline.InlinerExpressionLocationHint
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cgen.CBridgeOrigin
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -619,14 +621,31 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
         init {
             if (function != null) {
-                parameters.forEach{
+                val excludedParameters = mutableSetOf<IrValueParameter>()
+                if (function.descriptor.isTailrec && context.config.debug) {
+                    function.body?.accept(object : IrElementVisitor<Unit, MutableSet<IrValueParameter>> {
+                        override fun visitElement(element: IrElement, data: MutableSet<IrValueParameter>) {
+                            element.acceptChildren(this, data)
+                        }
+
+                        override fun visitVariable(declaration: IrVariable, data: MutableSet<IrValueParameter>) {
+                            (declaration.origin as? VariableReplacementOrigin)?.let {
+                                data.add(it.replaces)
+                            }
+                            super.visitVariable(declaration, data)
+                        }
+
+
+                    }, excludedParameters)
+                }
+                parameters.forEach {
                     val parameter = it.key
                     val local = functionGenerationContext.vars.createParameter(
                             parameter,
-                            if (!function.descriptor.isTailrec)
-                                debugInfoIfNeeded(function, parameter)
-                            else
+                            if (function.descriptor.isTailrec && (parameter in excludedParameters))
                                 null
+                            else
+                                debugInfoIfNeeded(function, parameter)
                     )
                     functionGenerationContext.mapParameterForDebug(local, it.value)
                 }
