@@ -447,13 +447,15 @@ private:
 // No-op for old GC.
 class CalledFromNativeGuard final : private Pinned {
 public:
-    ALWAYS_INLINE CalledFromNativeGuard() noexcept;
+    ALWAYS_INLINE CalledFromNativeGuard(bool reentrant = false) noexcept;
 
     ~CalledFromNativeGuard() noexcept {
-        SwitchThreadState(thread_, ThreadState::kNative);
+        SwitchThreadState(thread_, oldState_, reentrant_);
     }
 private:
     MemoryState* thread_;
+    ThreadState oldState_;
+    bool reentrant_;
 };
 
 template <ThreadState state, typename R, typename... Args>
