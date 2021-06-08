@@ -39,6 +39,7 @@ fun KGPBaseTest.project(
         projectPathAdditionalSuffix
     )
     projectPath.addDefaultBuildFiles()
+    projectPath.enableCacheRedirector()
     if (addHeapDumpOptions) projectPath.addHeapDumpOptions()
 
     val gradleRunner = GradleRunner
@@ -200,6 +201,54 @@ private fun Path.addDefaultBuildFiles() {
                     """.trimIndent()
                 )
             }
+        }
+    }
+}
+
+@OptIn(ExperimentalPathApi::class)
+private fun Path.enableCacheRedirector() {
+    // Path relative to the current gradle module project dir
+    val redirectorScript = Paths.get("../../../gradle/cacheRedirector.gradle.kts")
+    assert(redirectorScript.exists()) {
+        "$redirectorScript does not exist! Please provide correct path to 'cacheRedirector.gradle.kts' file."
+    }
+    val gradleDir = resolve("gradle").also { it.createDirectories() }
+    redirectorScript.copyTo(gradleDir.resolve("cacheRedirector.gradle.kts"))
+
+    resolve("gradle.properties")
+        .also { if (!it.exists()) it.createFile() }
+        .appendText(
+            """
+
+            cacheRedirectorEnabled=true
+
+            """.trimIndent()
+        )
+
+    when {
+        resolve("build.gradle").exists() -> {
+            //language=Groovy
+            resolve("build.gradle").appendText(
+                """
+                
+                allprojects {
+                    apply from: "${'$'}rootDir/gradle/cacheRedirector.gradle.kts"
+                }
+                
+                """.trimIndent()
+            )
+        }
+        resolve("build.gradle.kts").exists() -> {
+            //language=Groovy
+            resolve("build.gradle.kts").appendText(
+                """
+                
+                allprojects {
+                    apply(from = "${'$'}rootDir/gradle/cacheRedirector.gradle.kts")
+                }
+                
+                """.trimIndent()
+            )
         }
     }
 }
