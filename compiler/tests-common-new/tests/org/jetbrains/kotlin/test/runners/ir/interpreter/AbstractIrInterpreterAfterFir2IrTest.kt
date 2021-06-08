@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.test.backend.handlers.IrInterpreterBackendHandler
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.model.*
@@ -33,7 +34,7 @@ open class AbstractIrInterpreterAfterFir2IrTest : AbstractKotlinCompilerWithTarg
         defaultDirectives {
             +JvmEnvironmentConfigurationDirectives.FULL_JDK
             +JvmEnvironmentConfigurationDirectives.NO_RUNTIME
-            +JvmEnvironmentConfigurationDirectives.ALLOW_KOTLIN_PACKAGE
+            +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
         }
 
         useConfigurators(
