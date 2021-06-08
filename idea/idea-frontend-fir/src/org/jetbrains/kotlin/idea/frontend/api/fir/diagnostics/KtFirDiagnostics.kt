@@ -1648,6 +1648,14 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val compileTimeCheckResult: Boolean
     }
 
+    abstract class IsEnumEntry : KtFirDiagnostic<KtTypeReference>() {
+        override val diagnosticClass get() = IsEnumEntry::class
+    }
+
+    abstract class EnumEntryAsType : KtFirDiagnostic<KtTypeReference>() {
+        override val diagnosticClass get() = EnumEntryAsType::class
+    }
+
     abstract class NoElseInWhen : KtFirDiagnostic<KtWhenExpression>() {
         override val diagnosticClass get() = NoElseInWhen::class
         abstract val missingWhenCases: List<WhenMissingCase>

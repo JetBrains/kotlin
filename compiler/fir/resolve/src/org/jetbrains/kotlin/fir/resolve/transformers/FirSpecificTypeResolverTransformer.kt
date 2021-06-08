@@ -37,6 +37,20 @@ class FirSpecificTypeResolverTransformer(
         }
     }
 
+    @set:PrivateForInline
+    var isOperandOfIsOperator: Boolean = false
+
+    @OptIn(PrivateForInline::class)
+    inline fun <R> withIsOperandOfIsOperator(block: () -> R): R {
+        val oldValue = isOperandOfIsOperator
+        isOperandOfIsOperator = true
+        return try {
+            block()
+        } finally {
+            isOperandOfIsOperator = oldValue
+        }
+    }
+
     @PrivateForInline
     @JvmField
     var currentFile: FirFile? = null
@@ -56,7 +70,7 @@ class FirSpecificTypeResolverTransformer(
     override fun transformTypeRef(typeRef: FirTypeRef, data: FirScope): FirResolvedTypeRef {
         session.lookupTracker?.recordTypeLookup(typeRef, data.scopeOwnerLookupNames, currentFile?.source)
         typeRef.transformChildren(this, data)
-        return transformType(typeRef, typeResolver.resolveType(typeRef, data, areBareTypesAllowed))
+        return transformType(typeRef, typeResolver.resolveType(typeRef, data, areBareTypesAllowed, isOperandOfIsOperator))
     }
 
     @OptIn(PrivateForInline::class)
@@ -66,7 +80,8 @@ class FirSpecificTypeResolverTransformer(
     ): FirResolvedTypeRef {
         functionTypeRef.transformChildren(this, data)
         session.lookupTracker?.recordTypeLookup(functionTypeRef, data.scopeOwnerLookupNames, currentFile?.source)
-        val resolvedType = typeResolver.resolveType(functionTypeRef, data, areBareTypesAllowed).takeIfAcceptable()
+        val resolvedType =
+            typeResolver.resolveType(functionTypeRef, data, areBareTypesAllowed, isOperandOfIsOperator = false).takeIfAcceptable()
         return if (resolvedType != null && resolvedType !is ConeClassErrorType) {
             buildResolvedTypeRef {
                 source = functionTypeRef.source
