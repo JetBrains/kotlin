@@ -86,7 +86,7 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
     fun testNonKotlinJvmAppResolvesMppLib() {
         val outerProject = Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")
         val innerProject = Project("simpleProject").apply {
-            setupWorkingDir()
+            setupWorkingDir(false)
             gradleBuildScript().modify {
                 it.replace("apply plugin: \"kotlin\"", "")
                     .replace("\"org.jetbrains.kotlin:kotlin-stdlib\"", "\"org.jetbrains.kotlin:kotlin-stdlib:\$kotlin_version\"")
@@ -350,7 +350,7 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
 
 internal fun BaseGradleIT.Project.embedProject(other: BaseGradleIT.Project, renameTo: String? = null) {
     setupWorkingDir()
-    other.setupWorkingDir()
+    other.setupWorkingDir(false)
     val tempDir = createTempDir(if (isWindows) "" else "BaseGradleIT")
     val embeddedModuleName = renameTo ?: other.projectName
     try {
@@ -358,6 +358,14 @@ internal fun BaseGradleIT.Project.embedProject(other: BaseGradleIT.Project, rena
         tempDir.copyRecursively(projectDir.resolve(embeddedModuleName))
     } finally {
         check(tempDir.deleteRecursively())
+    }
+    if (projectName == other.projectName) {
+        val embeddedModuleDir = projectDir.resolve(embeddedModuleName)
+        val buildFile = embeddedModuleDir.resolve("build.gradle").takeIf { it.exists() }
+            ?: embeddedModuleDir.resolve("build.gradle.kts")
+        buildFile.modify {
+            it.lines().dropLast(4).joinToString(separator = "\n")
+        }
     }
     testCase.apply {
         gradleSettingsScript().appendText("\ninclude(\"$embeddedModuleName\")")

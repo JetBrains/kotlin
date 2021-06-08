@@ -206,7 +206,7 @@ private fun Path.addDefaultBuildFiles() {
 }
 
 @OptIn(ExperimentalPathApi::class)
-private fun Path.enableCacheRedirector() {
+internal fun Path.enableCacheRedirector() {
     // Path relative to the current gradle module project dir
     val redirectorScript = Paths.get("../../../gradle/cacheRedirector.gradle.kts")
     assert(redirectorScript.exists()) {
