@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.idea.util.ifTrue
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 
 object LowLevelFirApiFacadeForResolveOnAir {
 
@@ -78,7 +79,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         val declaration = runBodyResolveOnAir(
             state = state,
             replacement = RawFirReplacement(place, elementToResolve),
-            resolveWithUnchangedFir = false
+            onAirCreatedDeclaration = true
         )
 
         val expressionLocator = object : FirVisitorVoid() {
@@ -114,7 +115,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
                 runBodyResolveOnAir(
                     state = state,
                     collector = it,
-                    resolveWithUnchangedFir = true,
+                    onAirCreatedDeclaration = false,
                     replacement = RawFirReplacement(validPlace, validPlace),
                 )
             }
@@ -174,7 +175,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         val copiedFirDeclaration = runBodyResolveOnAir(
             originalState,
             replacement = RawFirReplacement(sameDeclarationInOriginalFile, dependencyNonLocalDeclaration),
-            resolveWithUnchangedFir = false,
+            onAirCreatedDeclaration = true,
             collector = collector,
         )
 
@@ -210,7 +211,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
     private fun runBodyResolveOnAir(
         state: FirModuleResolveStateImpl,
         replacement: RawFirReplacement,
-        resolveWithUnchangedFir: Boolean,
+        onAirCreatedDeclaration: Boolean,
         collector: FirTowerDataContextCollector? = null,
     ): FirElement {
 
@@ -271,7 +272,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
                 designation = onAirDesignation,
                 moduleFileCache = state.rootModuleSession.cache,
                 checkPCE = true,
-                resolveWithUnchangedFir = resolveWithUnchangedFir,
+                onAirCreatedDeclaration = onAirCreatedDeclaration,
                 towerDataContextCollector = collector,
             )
             copiedFirDeclaration
@@ -281,18 +282,22 @@ object LowLevelFirApiFacadeForResolveOnAir {
 
     private fun isInBodyReplacement(ktDeclaration: KtDeclaration, replacement: RawFirReplacement): Boolean = when (ktDeclaration) {
         is KtNamedFunction ->
-            ktDeclaration.bodyBlockExpression?.let { PsiTreeUtil.isAncestor(it, replacement.from, true) } ?: false
+            ktDeclaration.bodyBlockExpression?.let { it.isAncestor(replacement.from, true) } ?: false
         is KtProperty -> {
             val insideGetterBody = ktDeclaration.getter?.bodyBlockExpression?.let {
-                PsiTreeUtil.isAncestor(it, replacement.from, true)
+                it.isAncestor(replacement.from, true)
             } ?: false
 
-            insideGetterBody || ktDeclaration.setter?.bodyBlockExpression?.let {
-                PsiTreeUtil.isAncestor(it, replacement.from, true)
+            val insideGetterOrSetterBody = insideGetterBody || ktDeclaration.setter?.bodyBlockExpression?.let {
+                it.isAncestor(replacement.from, true)
+            } ?: false
+
+            insideGetterOrSetterBody || ktDeclaration.initializer?.let {
+                it.isAncestor(replacement.from, true)
             } ?: false
         }
         is KtClassOrObject ->
-            ktDeclaration.body?.let { PsiTreeUtil.isAncestor(it, replacement.from, true) } ?: false
+            ktDeclaration.body?.let { it.isAncestor(replacement.from, true) } ?: false
         is KtTypeAlias -> false
         else -> error("Not supported type ${ktDeclaration::class.simpleName}")
     }

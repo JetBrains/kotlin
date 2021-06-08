@@ -5,10 +5,17 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve
 
+import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
+import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
+import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.runCustomResolveUnderLock
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.containingKtFileIfAny
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.getContainingFile
 
 enum class ResolveType {
     NoResolve,
@@ -39,17 +46,40 @@ internal fun FirLazyDeclarationResolver.lazyResolveDeclaration(
             require(firDeclaration is FirCallableDeclaration<*>) {
                 "CallableReturnType type cannot be applied to ${firDeclaration::class.qualifiedName}"
             }
-            val stopAheadOfPhase = { declaration: FirDeclaration ->
-                declaration is FirCallableDeclaration<*> && declaration.returnTypeRef is FirResolvedTypeRef
+            //Need to be sync
+            if (firDeclaration.returnTypeRef is FirResolvedTypeRef) return
+            val containingFile = firDeclaration.getContainingFile()
+            if (containingFile != null) {
+                moduleFileCache.firFileLockProvider.runCustomResolveUnderLock(containingFile, checkPCE) {
+                    if (firDeclaration.returnTypeRef !is FirResolvedTypeRef) {
+                        lazyResolveDeclaration(
+                            firDeclarationToResolve = firDeclaration,
+                            moduleFileCache = moduleFileCache,
+                            toPhase = FirResolvePhase.TYPES,
+                            scopeSession = scopeSession,
+                            checkPCE = checkPCE,
+                        )
+                    }
+                    if (firDeclaration.returnTypeRef !is FirResolvedTypeRef) {
+                        lazyResolveDeclaration(
+                            firDeclarationToResolve = firDeclaration,
+                            moduleFileCache = moduleFileCache,
+                            toPhase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
+                            scopeSession = scopeSession,
+                            checkPCE = checkPCE,
+                        )
+                    }
+                    check(firDeclaration.returnTypeRef is FirResolvedTypeRef)
+                }
+            } else {
+                lazyResolveDeclaration(
+                    firDeclarationToResolve = firDeclaration,
+                    moduleFileCache = moduleFileCache,
+                    toPhase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
+                    scopeSession = scopeSession,
+                    checkPCE = checkPCE,
+                )
             }
-            lazyResolveDeclaration(
-                firDeclarationToResolve = firDeclaration,
-                moduleFileCache = moduleFileCache,
-                toPhase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
-                scopeSession = scopeSession,
-                checkPCE = checkPCE,
-                stopAheadOfPhase = stopAheadOfPhase,
-            )
         }
         ResolveType.BodyResolveWithChildren, ResolveType.CallableBodyResolve -> {
             require(firDeclaration is FirCallableDeclaration<*> || toResolveType != ResolveType.CallableBodyResolve) {

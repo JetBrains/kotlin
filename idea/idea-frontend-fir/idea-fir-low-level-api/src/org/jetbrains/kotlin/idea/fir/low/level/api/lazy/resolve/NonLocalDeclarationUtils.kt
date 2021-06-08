@@ -12,45 +12,25 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.findSourceNonLocalFirDeclaration
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
-internal fun FirDeclaration.getNonLocalDeclarationToResolve(
+internal fun FirDeclaration.getNonLocalDeclarationToResolveAndInLocal(
     provider: FirProvider,
     moduleFileCache: ModuleFileCache,
     firFileBuilder: FirFileBuilder
-): FirDeclaration {
-    if (this is FirFile) return this
+): Pair<FirDeclarationDesignationWithFile, Boolean> {
+    require(this !is FirFile)
 
-    if (this is FirPropertyAccessor || this is FirTypeParameter || this is FirValueParameter) {
-        val ktContainingResolvableDeclaration = when (val psi = this.psi) {
-            is KtPropertyAccessor -> psi.property
-            is KtProperty -> psi
-            is KtParameter, is KtTypeParameter -> psi.getNonLocalContainingOrThisDeclaration()
-                ?: error("Cannot find containing declaration for KtParameter")
-            is KtCallExpression -> {
-                check(this.source?.kind == FirFakeSourceElementKind.DefaultAccessor)
-                val delegationCall = psi.parent as KtPropertyDelegate
-                delegationCall.parent as KtProperty
-            }
-            null -> error("Cannot find containing declaration for KtParameter")
-            else -> error("Invalid source of property accessor ${psi::class}")
-        }
-
-        val targetElement =
-            if (declarationCanBeLazilyResolved(ktContainingResolvableDeclaration)) ktContainingResolvableDeclaration
-            else ktContainingResolvableDeclaration.getNonLocalContainingOrThisDeclaration()
-        check(targetElement != null) { "Container for local declaration cannot be null" }
-
-        return targetElement.findSourceNonLocalFirDeclaration(
-            firFileBuilder = firFileBuilder,
-            firSymbolProvider = moduleData.session.symbolProvider,
-            moduleFileCache = moduleFileCache
-        )
+    val nonLocalDesignation = tryCollectDesignationWithFile()
+    if (nonLocalDesignation != null) {
+        return nonLocalDesignation to false
     }
 
     val ktDeclaration = (psi as? KtDeclaration) ?: run {
@@ -60,10 +40,34 @@ internal fun FirDeclaration.getNonLocalDeclarationToResolve(
         "FirDeclaration should have a PSI of type KtDeclaration"
     }
 
-    if (source !is FirFakeSourceElement<*> && declarationCanBeLazilyResolved(ktDeclaration)) return this
-    val nonLocalPsi = ktDeclaration.getNonLocalContainingOrThisDeclaration()
+    val declaration = when (this) {
+        is FirPropertyAccessor, is FirTypeParameter, is FirValueParameter -> {
+            when (ktDeclaration) {
+                is KtPropertyAccessor -> ktDeclaration.property
+                is KtProperty -> ktDeclaration
+                is KtParameter, is KtTypeParameter -> {
+                    val containingDeclaration = ktDeclaration.getParentOfType<KtDeclaration>(true)
+                    if (containingDeclaration !is KtPropertyAccessor) containingDeclaration else containingDeclaration.property
+                }
+                is KtCallExpression -> {
+                    check(this.source?.kind == FirFakeSourceElementKind.DefaultAccessor)
+                    ((ktDeclaration as? KtCallExpression)?.parent as? KtPropertyDelegate)?.parent as? KtProperty
+                }
+                else -> ktDeclaration
+            }
+        }
+        else -> ktDeclaration
+    }
+    check(declaration is KtDeclaration) {
+        "FirDeclaration should have a PSI of type KtDeclaration"
+    }
+
+    val nonLocalDeclaration = declaration.getNonLocalContainingOrThisDeclaration()
         ?: error("Container for local declaration cannot be null")
-    return nonLocalPsi.findSourceNonLocalFirDeclaration(firFileBuilder, provider.symbolProvider, moduleFileCache)
+
+    val firDeclaration = nonLocalDeclaration.findSourceNonLocalFirDeclaration(firFileBuilder, provider.symbolProvider, moduleFileCache)
+    val needUpgrade = nonLocalDeclaration !== declaration
+    return firDeclaration.collectDesignationWithFile() to needUpgrade
 }
 
 internal fun declarationCanBeLazilyResolved(declaration: KtDeclaration): Boolean {
