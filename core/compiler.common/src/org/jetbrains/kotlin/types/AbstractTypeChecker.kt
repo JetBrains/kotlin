@@ -376,8 +376,9 @@ object AbstractTypeChecker {
     ): Boolean {
         val simpleSubArgumentType = subArgumentType.asSimpleType()
 
-        if (simpleSubArgumentType !is CapturedTypeMarker || !simpleSubArgumentType.typeConstructor().projection().isStarProjection())
-            return false
+        if (simpleSubArgumentType !is CapturedTypeMarker || simpleSubArgumentType.isOldCapturedType()
+            || !simpleSubArgumentType.typeConstructor().projection().isStarProjection()
+        ) return false
         // Only 'for subtyping' captured types are approximated before adding constraints (see ConstraintInjector.addNewIncorporatedConstraint)
         // that can lead to adding problematic constraints like UPPER(Nothing) given by CapturedType(*) <: TypeVariable(A)
         if (simpleSubArgumentType.captureStatus() != CaptureStatus.FOR_SUBTYPING) return false

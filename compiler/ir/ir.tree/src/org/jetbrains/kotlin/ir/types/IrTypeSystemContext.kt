@@ -106,6 +106,8 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun CapturedTypeMarker.captureStatus(): CaptureStatus =
         (this as IrCapturedType).captureStatus
 
+    override fun CapturedTypeMarker.isOldCapturedType(): Boolean = false
+
     override fun CapturedTypeConstructorMarker.projection(): TypeArgumentMarker =
         (this as IrCapturedType.Constructor).argument
 

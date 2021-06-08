@@ -12945,6 +12945,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 }
 
                 @Test
+                @TestMetadata("dontCheckNewCapturedTypeSpecificChecksForOldOnes.kt")
+                public void testDontCheckNewCapturedTypeSpecificChecksForOldOnes() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/dontCheckNewCapturedTypeSpecificChecksForOldOnes.kt");
+                }
+
+                @Test
                 @TestMetadata("expectedTypeMismatchWithInVariance.kt")
                 public void testExpectedTypeMismatchWithInVariance() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/expectedTypeMismatchWithInVariance.kt");
