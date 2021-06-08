@@ -97,7 +97,6 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val UNRESOLVED_LABEL by error<PsiElement>()
         val DESERIALIZATION_ERROR by error<PsiElement>()
         val ERROR_FROM_JAVA_RESOLUTION by error<PsiElement>()
-        val UNKNOWN_CALLABLE_KIND by error<PsiElement>()
         val MISSING_STDLIB_CLASS by error<PsiElement>()
         val NO_THIS by error<PsiElement>()
 
@@ -131,8 +130,6 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
     }
 
     val SUPERTYPES by object : DiagnosticGroup("Supertypes") {
-        val ENUM_AS_SUPERTYPE by error<PsiElement>()
-        val RECURSION_IN_SUPERTYPES by error<PsiElement>()
         val NOT_A_SUPERTYPE by error<PsiElement>()
         val SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE by error<PsiElement>()
         val QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE by error<KtTypeReference> {
