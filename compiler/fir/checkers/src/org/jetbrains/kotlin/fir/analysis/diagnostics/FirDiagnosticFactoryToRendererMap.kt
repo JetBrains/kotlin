@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
-import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticParameterRenderer
 
 class FirDiagnosticFactoryToRendererMap(val name: String) {
     private val renderersMap: MutableMap<AbstractFirDiagnosticFactory<*, *>, FirDiagnosticRenderer<*>> = mutableMapOf()
-    val psiDiagnosticMap: DiagnosticFactoryToRendererMap = DiagnosticFactoryToRendererMap()
 
     operator fun get(factory: AbstractFirDiagnosticFactory<*, *>): FirDiagnosticRenderer<*>? = renderersMap[factory]
 
@@ -58,6 +56,5 @@ class FirDiagnosticFactoryToRendererMap(val name: String) {
 
     private fun put(factory: AbstractFirDiagnosticFactory<*, *>, renderer: FirDiagnosticRenderer<*>) {
         renderersMap[factory] = renderer
-        psiDiagnosticMap.put(factory, renderer)
     }
 }

@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
 import org.jetbrains.kotlin.diagnostics.rendering.*
+import java.text.MessageFormat
 
-interface FirDiagnosticRenderer<D : FirDiagnostic<*>> : DiagnosticRenderer<D> {
-    override fun render(diagnostic: D): String
-
-    override fun renderParameters(diagnostic: D): Array<out Any?>
+sealed interface FirDiagnosticRenderer<D : FirDiagnostic<*>> {
+    fun render(diagnostic: D): String
+    fun renderParameters(diagnostic: D): Array<out Any?>
 }
 
 class SimpleFirDiagnosticRenderer(private val message: String) : FirDiagnosticRenderer<FirSimpleDiagnostic<*>> {
@@ -19,13 +19,19 @@ class SimpleFirDiagnosticRenderer(private val message: String) : FirDiagnosticRe
     }
 
     override fun renderParameters(diagnostic: FirSimpleDiagnostic<*>): Array<out Any?> {
-        return arrayOf()
+        return emptyArray()
     }
 }
 
 sealed class AbstractFirDiagnosticWithParametersRenderer<D : FirDiagnostic<*>>(
     protected val message: String
-) : FirDiagnosticRenderer<D>, AbstractDiagnosticWithParametersRenderer<D>(message)
+) : FirDiagnosticRenderer<D> {
+    private val messageFormat = MessageFormat(message)
+
+    final override fun render(diagnostic: D): String {
+        return messageFormat.format(renderParameters(diagnostic))
+    }
+}
 
 class FirDiagnosticWithParameters1Renderer<A>(
     message: String,

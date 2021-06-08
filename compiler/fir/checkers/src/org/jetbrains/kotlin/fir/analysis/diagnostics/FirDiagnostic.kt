@@ -8,25 +8,23 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.diagnostics.UnboundDiagnostic
 import org.jetbrains.kotlin.fir.FirLightSourceElement
 import org.jetbrains.kotlin.fir.FirPsiSourceElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 
 // ------------------------------ diagnostics ------------------------------
 
-sealed class FirDiagnostic<out E : FirSourceElement> : UnboundDiagnostic {
+sealed class FirDiagnostic<out E : FirSourceElement> {
     abstract val element: E
-    abstract override val severity: Severity
-    abstract override val factory: AbstractFirDiagnosticFactory<*, *>
+    abstract val severity: Severity
+    abstract val factory: AbstractFirDiagnosticFactory<*, *>
     abstract val positioningStrategy: SourceElementPositioningStrategy<*>
 
-    override val textRanges: List<TextRange>
+    val textRanges: List<TextRange>
         get() = positioningStrategy.markDiagnostic(this)
 
-    override val isValid: Boolean
+    val isValid: Boolean
         get() = positioningStrategy.isValid(element)
 }
 
@@ -62,13 +60,16 @@ sealed class FirDiagnosticWithParameters4<out E : FirSourceElement, A, B, C, D> 
 
 // ------------------------------ psi diagnostics ------------------------------
 
-interface FirPsiDiagnostic<P : PsiElement> : Diagnostic {
+interface FirPsiDiagnostic<P : PsiElement> {
+    val factory: AbstractFirDiagnosticFactory<*, P>
     val element: FirPsiSourceElement<P>
+    val textRanges: List<TextRange>
+    val severity: Severity
 
-    override val psiElement: PsiElement
+    val psiElement: PsiElement
         get() = element.psi
 
-    override val psiFile: PsiFile
+    val psiFile: PsiFile
         get() = psiElement.containingFile
 }
 
@@ -119,7 +120,7 @@ data class FirPsiDiagnosticWithParameters4<P : PsiElement, A, B, C, D>(
 
 // ------------------------------ light tree diagnostics ------------------------------
 
-interface FirLightDiagnostic : UnboundDiagnostic {
+interface FirLightDiagnostic {
     val element: FirLightSourceElement
 }
 

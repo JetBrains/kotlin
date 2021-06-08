@@ -147,10 +147,11 @@ object FirKotlinToJvmBytecodeCompiler {
 
             firAnalyzerFacade.runResolution()
             val firDiagnostics = firAnalyzerFacade.runCheckers().values.flatten()
-            AnalyzerWithCompilerReport.reportDiagnostics(
-                SimpleGenericDiagnostics(firDiagnostics),
-                environment.messageCollector
-            )
+            // TODO
+//            AnalyzerWithCompilerReport.reportDiagnostics(
+//                SimpleGenericDiagnostics(firDiagnostics),
+//                environment.messageCollector
+//            )
             performanceManager?.notifyAnalysisFinished()
 
             if (syntaxErrors || firDiagnostics.any { it.severity == Severity.ERROR }) {

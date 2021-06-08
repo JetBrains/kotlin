@@ -1,16 +1,9 @@
-/*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
- */
-
 @file:Suppress("UNCHECKED_CAST")
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticRenderer
 import org.jetbrains.kotlin.fir.FirLightSourceElement
 import org.jetbrains.kotlin.fir.FirPsiSourceElement
 import org.jetbrains.kotlin.fir.FirSourceElement
@@ -19,16 +12,11 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 annotation class InternalDiagnosticFactoryMethod
 
 sealed class AbstractFirDiagnosticFactory<D : FirDiagnostic<*>, P : PsiElement>(
-    override val name: String,
-    override val severity: Severity,
+    val name: String,
+    val severity: Severity,
     val defaultPositioningStrategy: SourceElementPositioningStrategy<P>,
-) : DiagnosticFactory<D>(name, severity) {
+) {
     abstract val firRenderer: FirDiagnosticRenderer<D>
-
-    override var defaultRenderer: DiagnosticRenderer<D>?
-        get() = firRenderer
-        set(_) {
-        }
 }
 
 class FirDiagnosticFactory0<P : PsiElement>(
