@@ -14,6 +14,7 @@ import org.gradle.testkit.runner.TaskOutcome
 fun BuildResult.assertTasksExecuted(vararg tasks: String) {
     tasks.forEach { task ->
         assert(task(task)?.outcome == TaskOutcome.SUCCESS) {
+            printBuildOutput()
             "Task $task didn't have 'SUCCESS' state: ${task(task)?.outcome}"
         }
     }
@@ -25,6 +26,7 @@ fun BuildResult.assertTasksExecuted(vararg tasks: String) {
 fun BuildResult.assertTasksFailed(vararg tasks: String) {
     tasks.forEach { task ->
         assert(task(task)?.outcome == TaskOutcome.FAILED) {
+            printBuildOutput()
             "Task $task didn't have 'FAILED' state: ${task(task)?.outcome}"
         }
     }
@@ -36,6 +38,7 @@ fun BuildResult.assertTasksFailed(vararg tasks: String) {
 fun BuildResult.assertTasksUpToDate(vararg tasks: String) {
     tasks.forEach { task ->
         assert(task(task)?.outcome == TaskOutcome.UP_TO_DATE) {
+            printBuildOutput()
             "Task $task didn't have 'UP-TO-DATE' state: ${task(task)?.outcome}"
         }
     }
@@ -47,6 +50,7 @@ fun BuildResult.assertTasksUpToDate(vararg tasks: String) {
 fun BuildResult.assertTasksSkipped(vararg tasks: String) {
     tasks.forEach { task ->
         assert(task(task)?.outcome == TaskOutcome.SKIPPED) {
+            printBuildOutput()
             "Task $task didn't have 'SKIPPED' state: ${task(task)?.outcome}"
         }
     }
@@ -58,6 +62,7 @@ fun BuildResult.assertTasksSkipped(vararg tasks: String) {
 fun BuildResult.assertTasksFromCache(vararg tasks: String) {
     tasks.forEach { task ->
         assert(task(task)?.outcome == TaskOutcome.FROM_CACHE) {
+            printBuildOutput()
             "Task $task didn't have 'FROM_CACHE' state: ${task(task)?.outcome}"
         }
     }
@@ -69,6 +74,7 @@ fun BuildResult.assertTasksFromCache(vararg tasks: String) {
 fun BuildResult.assertTasksNoSource(vararg tasks: String) {
     tasks.forEach { task ->
         assert(task(task)?.outcome == TaskOutcome.NO_SOURCE) {
+            printBuildOutput()
             "Task $task didn't have 'NO_SOURCE' state: ${task(task)?.outcome}"
         }
     }

@@ -14,6 +14,7 @@ fun BuildResult.assertOutputContains(
     expectedSubString: String
 ) {
     assert(output.contains(expectedSubString)) {
+        printBuildOutput()
         "Build output does not contain \"$expectedSubString\""
     }
 }
@@ -28,6 +29,8 @@ fun BuildResult.assertOutputDoesNotContain(
     wrappingCharsCount: Int = 100,
 ) {
     assert(!output.contains(notExpectedSubString)) {
+        printBuildOutput()
+
         // In case if notExpectedSubString is multiline string
         val occurrences = mutableListOf<Pair<Int, Int>>()
         var startIndex = output.indexOf(notExpectedSubString)
@@ -64,6 +67,8 @@ fun BuildResult.assertOutputContains(
     expected: Regex
 ) {
     assert(output.contains(expected)) {
+        printBuildOutput()
+
         "Build output does not contain any line matching '$expected' regex."
     }
 }
@@ -75,6 +80,8 @@ fun BuildResult.assertOutputDoesNotContain(
     regexToCheck: Regex
 ) {
     assert(!output.contains(regexToCheck)) {
+        printBuildOutput()
+        
         val matchedStrings = regexToCheck
             .findAll(output)
             .map { it.value }
