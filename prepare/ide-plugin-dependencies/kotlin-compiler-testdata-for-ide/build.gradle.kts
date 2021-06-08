@@ -18,7 +18,8 @@ idePluginDependency {
             "compiler/testData/diagnostics/tests",
             "compiler/testData/diagnostics/helpers",
             "compiler/tests-spec/testData",
-            "compiler/testData/diagnostics/testsWithStdLib"
+            "compiler/testData/diagnostics/testsWithStdLib",
+            "compiler/fir/raw-fir/psi2fir/testData"
         ).forEach {
             from(rootDir.resolve(it)) {
                 into(it)
