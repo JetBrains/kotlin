@@ -332,8 +332,8 @@ internal fun KtSymbolWithMembers.createInnerClasses(manager: PsiManager): List<F
 
 internal fun KtClassOrObject.checkIsInheritor(baseClassOrigin: KtClassOrObject, checkDeep: Boolean): Boolean {
     return analyseForLightClasses(this) {
-        val thisSymbol = this@checkIsInheritor.getNamedClassOrObjectSymbol()
-        val baseSymbol = baseClassOrigin.getNamedClassOrObjectSymbol()
+        val thisSymbol = this@checkIsInheritor.getNamedClassOrObjectSymbol() ?: return false
+        val baseSymbol = baseClassOrigin.getNamedClassOrObjectSymbol() ?: return false
 
         if (thisSymbol == baseSymbol) return@analyseForLightClasses false
 
