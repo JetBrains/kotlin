@@ -22,7 +22,10 @@ import org.jetbrains.kotlin.fir.utils.component2
 
 fun ConeClassLikeType.fullyExpandedType(
     useSiteSession: FirSession,
-    expandedConeType: (FirTypeAlias) -> ConeClassLikeType? = FirTypeAlias::expandedConeType,
+    expandedConeType: (FirTypeAlias) -> ConeClassLikeType? = { alias ->
+        alias.ensureResolved(FirResolvePhase.SUPER_TYPES, useSiteSession)
+        alias.expandedConeType
+    },
 ): ConeClassLikeType {
     if (this is ConeClassLikeTypeImpl) {
         val (cachedSession, cachedExpandedType) = cachedExpandedType
@@ -57,7 +60,10 @@ private fun ConeClassLikeType.fullyExpandedTypeNoCache(
 
 fun ConeClassLikeType.directExpansionType(
     useSiteSession: FirSession,
-    expandedConeType: (FirTypeAlias) -> ConeClassLikeType? = FirTypeAlias::expandedConeType,
+    expandedConeType: (FirTypeAlias) -> ConeClassLikeType? = { alias ->
+        alias.ensureResolved(FirResolvePhase.SUPER_TYPES, useSiteSession)
+        alias.expandedConeType
+    },
 ): ConeClassLikeType? {
     val typeAliasSymbol = lookupTag.toSymbol(useSiteSession) as? FirTypeAliasSymbol ?: return null
     val typeAlias = typeAliasSymbol.fir

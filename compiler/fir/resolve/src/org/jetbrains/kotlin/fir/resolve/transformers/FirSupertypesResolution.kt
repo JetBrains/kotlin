@@ -439,7 +439,7 @@ class SupertypeComputationSession {
             }.orEmpty()
         }
 
-        override fun expansionForTypeAlias(typeAlias: FirTypeAlias): ConeClassLikeType? {
+        override fun expansionForTypeAlias(typeAlias: FirTypeAlias, useSiteSession: FirSession): ConeClassLikeType? {
             if (typeAlias.resolvePhase > FirResolvePhase.SUPER_TYPES) return typeAlias.expandedConeType
             return (getSupertypesComputationStatus(typeAlias) as? SupertypeComputationStatus.Computed)
                 ?.supertypeRefs

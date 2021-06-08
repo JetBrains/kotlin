@@ -20,10 +20,7 @@ import org.jetbrains.kotlin.name.ClassId
 
 
 internal fun FirAnnotationCall.getClassId(session: FirSession): ClassId? =
-    coneClassLikeType?.fullyExpandedType(session) { alias ->
-        alias.ensureResolved(FirResolvePhase.SUPER_TYPES, session)
-        alias.expandedConeType
-    }?.classId
+    coneClassLikeType?.fullyExpandedType(session)?.classId
 
 internal fun FirRefWithValidityCheck<FirAnnotatedDeclaration>.toAnnotationsList() = withFir { fir ->
     fir.annotations.map { KtFirAnnotationCall(this, it) }
