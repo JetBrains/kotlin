@@ -46,19 +46,15 @@ class IrSourceCompilerForInline(
     override val callElementText: String
         get() = ir2string(callElement)
 
-    override val callsiteFile: PsiFile?
-        get() = codegen.irFunction.fileParent.getKtFile()
-
     override val inlineCallSiteInfo: InlineCallSiteInfo
         get() {
             val root = generateSequence(codegen) { it.inlinedInto }.last()
             return InlineCallSiteInfo(
                 root.classCodegen.type.internalName,
-                root.signature.asmMethod.name,
-                root.signature.asmMethod.descriptor,
+                root.signature.asmMethod,
                 root.irFunction.isInlineOrInsideInline(),
-                root.irFunction.isSuspend,
-                findElement()?.let { CodegenUtil.getLineNumberForElement(it, false) } ?: 0
+                root.irFunction.fileParent.getKtFile(),
+                callElement.psiElement?.let { CodegenUtil.getLineNumberForElement(it, false) } ?: 0
             )
         }
 
@@ -141,8 +137,6 @@ class IrSourceCompilerForInline(
             .at(callElement.symbol.owner as IrDeclaration)
             .report(SUSPENSION_POINT_INSIDE_MONITOR, stackTraceElement)
     }
-
-    private fun findElement() = callElement.psiElement as? KtElement
 }
 
 private tailrec fun IrDeclaration.isInlineOrInsideInline(): Boolean {

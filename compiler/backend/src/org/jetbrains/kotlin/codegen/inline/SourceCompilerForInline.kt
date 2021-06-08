@@ -23,14 +23,20 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
+class InlineCallSiteInfo(
+    val ownerClassName: String,
+    val method: Method,
+    val isInlineOrInsideInline: Boolean,
+    val file: PsiFile?,
+    val lineNumber: Int
+)
+
 interface SourceCompilerForInline {
     val state: GenerationState
 
     val callElement: Any
 
     val callElementText: String
-
-    val callsiteFile: PsiFile?
 
     val inlineCallSiteInfo: InlineCallSiteInfo
 

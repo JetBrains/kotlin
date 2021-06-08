@@ -60,8 +60,6 @@ class PsiSourceCompilerForInline(
 
     override val callElementText: String by lazy { callElement.text }
 
-    override val callsiteFile by lazy { callElement.containingFile }
-
     override val inlineCallSiteInfo: InlineCallSiteInfo
         get() {
             var context = codegen.getContext()
@@ -78,10 +76,9 @@ class PsiSourceCompilerForInline(
             val signature = codegen.state.typeMapper.mapSignatureSkipGeneric(context.functionDescriptor, context.contextKind)
             return InlineCallSiteInfo(
                 parentCodegen.className,
-                signature.asmMethod.name,
-                signature.asmMethod.descriptor,
+                signature.asmMethod,
                 context.functionDescriptor.isInlineOrInsideInline(),
-                context.functionDescriptor.isSuspend,
+                callElement.containingFile,
                 CodegenUtil.getLineNumberForElement(callElement, false) ?: 0
             )
         }
