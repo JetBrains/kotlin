@@ -65,7 +65,9 @@ object FirImportsChecker : FirFileChecker() {
             }
         } else {
             val importedClassId = ClassId.topLevel(importedFqName)
-            if (importedClassId.resolveToClass(context) != null) {
+            if (importedClassId.resolveToClass(context) != null
+                || context.session.symbolProvider.getTopLevelCallableSymbols(importedFqName.parent(), importedName).isNotEmpty()
+            ) {
                 return
             }
             context.session.symbolProvider.getPackage(importedFqName)?.let {

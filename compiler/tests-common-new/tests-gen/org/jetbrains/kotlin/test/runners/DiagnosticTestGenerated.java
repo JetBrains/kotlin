@@ -11586,6 +11586,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("ImportFunctionWithPackageName.kt")
+            public void testImportFunctionWithPackageName() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/imports/ImportFunctionWithPackageName.kt");
+            }
+
+            @Test
             @TestMetadata("ImportHidingDefinitionInTheSameFile.kt")
             public void testImportHidingDefinitionInTheSameFile() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/imports/ImportHidingDefinitionInTheSameFile.kt");
