@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSourceElement
@@ -32,58 +33,58 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-@OptIn(InternalDiagnosticFactoryMethod::class)
 private fun ConeDiagnostic.toFirDiagnostic(
     source: FirSourceElement,
     qualifiedAccessSource: FirSourceElement?
 ): FirDiagnostic<FirSourceElement>? = when (this) {
-    is ConeUnresolvedReferenceError -> FirErrors.UNRESOLVED_REFERENCE.on(source, this.name?.asString() ?: "<No name>")
-    is ConeUnresolvedSymbolError -> FirErrors.UNRESOLVED_REFERENCE.on(source, this.classId.asString())
-    is ConeUnresolvedNameError -> FirErrors.UNRESOLVED_REFERENCE.on(source, this.name.asString())
-    is ConeUnresolvedQualifierError -> FirErrors.UNRESOLVED_REFERENCE.on(source, this.qualifier)
-    is ConeHiddenCandidateError -> FirErrors.INVISIBLE_REFERENCE.on(source, this.candidateSymbol)
-    is ConeAmbiguityError -> if (this.applicability.isSuccess) {
-        FirErrors.OVERLOAD_RESOLUTION_AMBIGUITY.on(source, this.candidates.map { it.symbol })
-    } else if (this.applicability == CandidateApplicability.UNSAFE_CALL) {
-        val candidate = candidates.first { it.currentApplicability == CandidateApplicability.UNSAFE_CALL }
-        val unsafeCall = candidate.diagnostics.firstIsInstance<UnsafeCall>()
-        mapUnsafeCallError(candidate, unsafeCall, source, qualifiedAccessSource)
-    } else if (this.applicability == CandidateApplicability.UNSTABLE_SMARTCAST) {
-        val unstableSmartcast =
-            this.candidates.first { it.currentApplicability == CandidateApplicability.UNSTABLE_SMARTCAST }.diagnostics.firstIsInstance<UnstableSmartCast>()
-        FirErrors.SMARTCAST_IMPOSSIBLE.on(
-            unstableSmartcast.argument.source,
-            unstableSmartcast.targetType,
-            unstableSmartcast.argument,
-            unstableSmartcast.argument.smartcastStability.description
-        )
-    } else {
-        FirErrors.NONE_APPLICABLE.on(source, this.candidates.map { it.symbol })
+    is ConeUnresolvedReferenceError -> FirErrors.UNRESOLVED_REFERENCE.createOn(source, this.name?.asString() ?: "<No name>")
+    is ConeUnresolvedSymbolError -> FirErrors.UNRESOLVED_REFERENCE.createOn(source, this.classId.asString())
+    is ConeUnresolvedNameError -> FirErrors.UNRESOLVED_REFERENCE.createOn(source, this.name.asString())
+    is ConeUnresolvedQualifierError -> FirErrors.UNRESOLVED_REFERENCE.createOn(source, this.qualifier)
+    is ConeHiddenCandidateError -> FirErrors.INVISIBLE_REFERENCE.createOn(source, this.candidateSymbol)
+    is ConeAmbiguityError -> when {
+        applicability.isSuccess -> FirErrors.OVERLOAD_RESOLUTION_AMBIGUITY.createOn(source, this.candidates.map { it.symbol })
+        applicability == CandidateApplicability.UNSAFE_CALL -> {
+            val candidate = candidates.first { it.currentApplicability == CandidateApplicability.UNSAFE_CALL }
+            val unsafeCall = candidate.diagnostics.firstIsInstance<UnsafeCall>()
+            mapUnsafeCallError(candidate, unsafeCall, source, qualifiedAccessSource)
+        }
+        applicability == CandidateApplicability.UNSTABLE_SMARTCAST -> {
+            val unstableSmartcast =
+                this.candidates.first { it.currentApplicability == CandidateApplicability.UNSTABLE_SMARTCAST }.diagnostics.firstIsInstance<UnstableSmartCast>()
+            FirErrors.SMARTCAST_IMPOSSIBLE.createOn(
+                unstableSmartcast.argument.source,
+                unstableSmartcast.targetType,
+                unstableSmartcast.argument,
+                unstableSmartcast.argument.smartcastStability.description
+            )
+        }
+        else -> FirErrors.NONE_APPLICABLE.createOn(source, this.candidates.map { it.symbol })
     }
-    is ConeOperatorAmbiguityError -> FirErrors.ASSIGN_OPERATOR_AMBIGUITY.on(source, this.candidates)
-    is ConeVariableExpectedError -> FirErrors.VARIABLE_EXPECTED.on(source)
+    is ConeOperatorAmbiguityError -> FirErrors.ASSIGN_OPERATOR_AMBIGUITY.createOn(source, this.candidates)
+    is ConeVariableExpectedError -> FirErrors.VARIABLE_EXPECTED.createOn(source)
     is ConeValReassignmentError -> when (val symbol = this.variable) {
-        is FirBackingFieldSymbol -> FirErrors.VAL_REASSIGNMENT_VIA_BACKING_FIELD_ERROR.on(source, symbol.fir.symbol)
-        else -> FirErrors.VAL_REASSIGNMENT.on(source, symbol)
+        is FirBackingFieldSymbol -> FirErrors.VAL_REASSIGNMENT_VIA_BACKING_FIELD_ERROR.createOn(source, symbol.fir.symbol)
+        else -> FirErrors.VAL_REASSIGNMENT.createOn(source, symbol)
     }
-    is ConeUnexpectedTypeArgumentsError -> FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED.on(this.source.safeAs() ?: source)
-    is ConeIllegalAnnotationError -> FirErrors.NOT_AN_ANNOTATION_CLASS.on(source, this.name.asString())
+    is ConeUnexpectedTypeArgumentsError -> FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED.createOn(this.source.safeAs() ?: source)
+    is ConeIllegalAnnotationError -> FirErrors.NOT_AN_ANNOTATION_CLASS.createOn(source, this.name.asString())
     is ConeWrongNumberOfTypeArgumentsError ->
-        FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(qualifiedAccessSource ?: source, this.desiredCount, this.type)
+        FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS.createOn(qualifiedAccessSource ?: source, this.desiredCount, this.type)
     is ConeNoTypeArgumentsOnRhsError ->
-        FirErrors.NO_TYPE_ARGUMENTS_ON_RHS.on(qualifiedAccessSource ?: source, this.desiredCount, this.type)
+        FirErrors.NO_TYPE_ARGUMENTS_ON_RHS.createOn(qualifiedAccessSource ?: source, this.desiredCount, this.type)
     is ConeSimpleDiagnostic -> when (source.kind) {
         is FirFakeSourceElementKind -> null
-        else -> this.getFactory(source).on(qualifiedAccessSource ?: source)
+        else -> this.getFactory(source).createOn(qualifiedAccessSource ?: source)
     }
-    is ConeInstanceAccessBeforeSuperCall -> FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL.on(source, this.target)
+    is ConeInstanceAccessBeforeSuperCall -> FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL.createOn(source, this.target)
     is ConeStubDiagnostic -> null
     is ConeIntermediateDiagnostic -> null
-    is ConeContractDescriptionError -> FirErrors.ERROR_IN_CONTRACT_DESCRIPTION.on(source, this.reason)
-    is ConeTypeParameterSupertype -> FirErrors.SUPERTYPE_NOT_A_CLASS_OR_INTERFACE.on(source, this.reason)
+    is ConeContractDescriptionError -> FirErrors.ERROR_IN_CONTRACT_DESCRIPTION.createOn(source, this.reason)
+    is ConeTypeParameterSupertype -> FirErrors.SUPERTYPE_NOT_A_CLASS_OR_INTERFACE.createOn(source, this.reason)
     is ConeTypeParameterInQualifiedAccess -> null // reported in various checkers instead
     is ConeNotAnnotationContainer -> null
-    is ConeImportFromSingleton -> FirErrors.CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON.on(source, this.name)
+    is ConeImportFromSingleton -> FirErrors.CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON.createOn(source, this.name)
     else -> throw IllegalArgumentException("Unsupported diagnostic type: ${this.javaClass}")
 }
 
@@ -98,15 +99,14 @@ fun ConeDiagnostic.toFirDiagnostics(
     }
 }
 
-@OptIn(InternalDiagnosticFactoryMethod::class)
 private fun mapUnsafeCallError(
     candidate: Candidate,
     rootCause: UnsafeCall,
     source: FirSourceElement,
     qualifiedAccessSource: FirSourceElement?,
-): FirDiagnostic<*> {
+): FirDiagnostic<*>? {
     if (candidate.callInfo.isImplicitInvoke) {
-        return FirErrors.UNSAFE_IMPLICIT_INVOKE_CALL.on(source, rootCause.actualType)
+        return FirErrors.UNSAFE_IMPLICIT_INVOKE_CALL.createOn(source, rootCause.actualType)
     }
 
     val candidateFunction = candidate.symbol.fir as? FirSimpleFunction
@@ -126,14 +126,14 @@ private fun mapUnsafeCallError(
             source
         }
         return if (operationSource?.getChild(KtTokens.IDENTIFIER) != null) {
-            FirErrors.UNSAFE_INFIX_CALL.on(
+            FirErrors.UNSAFE_INFIX_CALL.createOn(
                 source,
                 receiverExpression,
                 candidateFunctionName!!.asString(),
                 singleArgument,
             )
         } else {
-            FirErrors.UNSAFE_OPERATOR_CALL.on(
+            FirErrors.UNSAFE_OPERATOR_CALL.createOn(
                 source,
                 receiverExpression,
                 candidateFunctionName!!.asString(),
@@ -142,51 +142,50 @@ private fun mapUnsafeCallError(
         }
     }
     return if (source.kind == FirFakeSourceElementKind.ArrayAccessNameReference) {
-        FirErrors.UNSAFE_CALL.on(source, rootCause.actualType, receiverExpression)
+        FirErrors.UNSAFE_CALL.createOn(source, rootCause.actualType, receiverExpression)
     } else {
-        FirErrors.UNSAFE_CALL.on(qualifiedAccessSource ?: source, rootCause.actualType, receiverExpression)
+        FirErrors.UNSAFE_CALL.createOn(qualifiedAccessSource ?: source, rootCause.actualType, receiverExpression)
     }
 }
 
-@OptIn(InternalDiagnosticFactoryMethod::class)
 private fun mapInapplicableCandidateError(
     diagnostic: ConeInapplicableCandidateError,
     source: FirSourceElement,
     qualifiedAccessSource: FirSourceElement?,
 ): List<FirDiagnostic<FirSourceElement>> {
-    val genericDiagnostic = FirErrors.INAPPLICABLE_CANDIDATE.on(source, diagnostic.candidate.symbol)
+    val genericDiagnostic = FirErrors.INAPPLICABLE_CANDIDATE.createOn(source, diagnostic.candidate.symbol)
     val diagnostics = diagnostic.candidate.diagnostics.filter { it.applicability == diagnostic.applicability }.mapNotNull { rootCause ->
         when (rootCause) {
-            is VarargArgumentOutsideParentheses -> FirErrors.VARARG_OUTSIDE_PARENTHESES.on(
+            is VarargArgumentOutsideParentheses -> FirErrors.VARARG_OUTSIDE_PARENTHESES.createOn(
                 rootCause.argument.source ?: qualifiedAccessSource
             )
-            is NamedArgumentNotAllowed -> FirErrors.NAMED_ARGUMENTS_NOT_ALLOWED.on(
+            is NamedArgumentNotAllowed -> FirErrors.NAMED_ARGUMENTS_NOT_ALLOWED.createOn(
                 rootCause.argument.source,
                 rootCause.forbiddenNamedArgumentsTarget
             )
-            is ArgumentTypeMismatch -> FirErrors.ARGUMENT_TYPE_MISMATCH.on(
+            is ArgumentTypeMismatch -> FirErrors.ARGUMENT_TYPE_MISMATCH.createOn(
                 rootCause.argument.source ?: source,
                 rootCause.expectedType,
                 rootCause.actualType,
                 rootCause.isMismatchDueToNullability
             )
-            is NullForNotNullType -> FirErrors.NULL_FOR_NONNULL_TYPE.on(
+            is NullForNotNullType -> FirErrors.NULL_FOR_NONNULL_TYPE.createOn(
                 rootCause.argument.source ?: source
             )
-            is NonVarargSpread -> FirErrors.NON_VARARG_SPREAD.on(rootCause.argument.source?.getChild(KtTokens.MUL, depth = 1)!!)
-            is ArgumentPassedTwice -> FirErrors.ARGUMENT_PASSED_TWICE.on(rootCause.argument.source)
-            is TooManyArguments -> FirErrors.TOO_MANY_ARGUMENTS.on(rootCause.argument.source ?: source, rootCause.function)
-            is NoValueForParameter -> FirErrors.NO_VALUE_FOR_PARAMETER.on(qualifiedAccessSource ?: source, rootCause.valueParameter)
-            is NameNotFound -> FirErrors.NAMED_PARAMETER_NOT_FOUND.on(
+            is NonVarargSpread -> FirErrors.NON_VARARG_SPREAD.createOn(rootCause.argument.source?.getChild(KtTokens.MUL, depth = 1)!!)
+            is ArgumentPassedTwice -> FirErrors.ARGUMENT_PASSED_TWICE.createOn(rootCause.argument.source)
+            is TooManyArguments -> FirErrors.TOO_MANY_ARGUMENTS.createOn(rootCause.argument.source ?: source, rootCause.function)
+            is NoValueForParameter -> FirErrors.NO_VALUE_FOR_PARAMETER.createOn(qualifiedAccessSource ?: source, rootCause.valueParameter)
+            is NameNotFound -> FirErrors.NAMED_PARAMETER_NOT_FOUND.createOn(
                 rootCause.argument.source ?: source,
                 rootCause.argument.name.asString()
             )
             is UnsafeCall -> mapUnsafeCallError(diagnostic.candidate, rootCause, source, qualifiedAccessSource)
-            is ManyLambdaExpressionArguments -> FirErrors.MANY_LAMBDA_EXPRESSION_ARGUMENTS.on(rootCause.argument.source ?: source)
-            is InfixCallOfNonInfixFunction -> FirErrors.INFIX_MODIFIER_REQUIRED.on(source, rootCause.function)
+            is ManyLambdaExpressionArguments -> FirErrors.MANY_LAMBDA_EXPRESSION_ARGUMENTS.createOn(rootCause.argument.source ?: source)
+            is InfixCallOfNonInfixFunction -> FirErrors.INFIX_MODIFIER_REQUIRED.createOn(source, rootCause.function)
             is OperatorCallOfNonOperatorFunction ->
-                FirErrors.OPERATOR_MODIFIER_REQUIRED.on(source, rootCause.function, rootCause.function.fir.name.asString())
-            is UnstableSmartCast -> FirErrors.SMARTCAST_IMPOSSIBLE.on(
+                FirErrors.OPERATOR_MODIFIER_REQUIRED.createOn(source, rootCause.function, rootCause.function.fir.name.asString())
+            is UnstableSmartCast -> FirErrors.SMARTCAST_IMPOSSIBLE.createOn(
                 rootCause.argument.source,
                 rootCause.targetType,
                 rootCause.argument,
@@ -203,7 +202,7 @@ private fun mapInapplicableCandidateError(
     }
 }
 
-@OptIn(ExperimentalStdlibApi::class, InternalDiagnosticFactoryMethod::class)
+@OptIn(ExperimentalStdlibApi::class)
 private fun mapSystemHasContradictionError(
     diagnostic: ConeConstraintSystemHasContradiction,
     source: FirSourceElement,
@@ -241,13 +240,12 @@ private fun mapSystemHasContradictionError(
                     if (morePreciseDiagnosticExists) return@firstNotNullOfOrNull null
                 }
 
-                FirErrors.NEW_INFERENCE_ERROR.on(qualifiedAccessSource ?: source, message)
+                FirErrors.NEW_INFERENCE_ERROR.createOn(qualifiedAccessSource ?: source, message)
             }
         )
     }
 }
 
-@OptIn(InternalDiagnosticFactoryMethod::class)
 private fun ConstraintSystemError.toDiagnostic(
     source: FirSourceElement,
     qualifiedAccessSource: FirSourceElement?,
@@ -267,7 +265,7 @@ private fun ConstraintSystemError.toDiagnostic(
                 }
 
             argument?.let {
-                return FirErrors.ARGUMENT_TYPE_MISMATCH.on(
+                return FirErrors.ARGUMENT_TYPE_MISMATCH.createOn(
                     it.source ?: source,
                     lowerConeType,
                     upperConeType,
@@ -287,13 +285,13 @@ private fun ConstraintSystemError.toDiagnostic(
                         else
                             upperConeType.withNullability(ConeNullability.NULLABLE, typeContext)
 
-                    FirErrors.TYPE_MISMATCH.on(qualifiedAccessSource ?: source, upperConeType, inferredType)
+                    FirErrors.TYPE_MISMATCH.createOn(qualifiedAccessSource ?: source, upperConeType, inferredType)
                 }
                 is ExplicitTypeParameterConstraintPosition<*> -> {
                     val conePosition = position as ConeExplicitTypeParameterConstraintPosition
                     val typeArgument = conePosition.typeArgument
 
-                    FirErrors.UPPER_BOUND_VIOLATED.on(
+                    FirErrors.UPPER_BOUND_VIOLATED.createOn(
                         typeArgument.source ?: qualifiedAccessSource ?: source,
                         upperConeType,
                     )
@@ -319,7 +317,7 @@ private fun ConstraintSystemError.toDiagnostic(
                 else -> error("Unsupported type variable: $typeVariable")
             }
 
-            FirErrors.NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER.on(
+            FirErrors.NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER.createOn(
                 source,
                 typeVariableName,
             )
@@ -374,4 +372,38 @@ private fun ConeSimpleDiagnostic.getFactory(source: FirSourceElement): FirDiagno
         DiagnosticKind.Other -> FirErrors.OTHER_ERROR
         else -> throw IllegalArgumentException("Unsupported diagnostic kind: $kind at $javaClass")
     }
+}
+
+@OptIn(InternalDiagnosticFactoryMethod::class)
+private fun <P : PsiElement> FirDiagnosticFactory0<P>.createOn(
+    element: FirSourceElement?
+): FirSimpleDiagnostic<*>? {
+    return element?.let { on(it, positioningStrategy = null) }
+}
+
+@OptIn(InternalDiagnosticFactoryMethod::class)
+private fun <P : PsiElement, A> FirDiagnosticFactory1<P, A>.createOn(
+    element: FirSourceElement?,
+    a: A
+): FirDiagnosticWithParameters1<*, A>? {
+    return element?.let { on(it, a, positioningStrategy = null) }
+}
+
+@OptIn(InternalDiagnosticFactoryMethod::class)
+private fun <P : PsiElement, A, B> FirDiagnosticFactory2<P, A, B>.createOn(
+    element: FirSourceElement?,
+    a: A,
+    b: B
+): FirDiagnosticWithParameters2<*, A, B>? {
+    return element?.let { on(it, a, b, positioningStrategy = null) }
+}
+
+@OptIn(InternalDiagnosticFactoryMethod::class)
+private fun <P : PsiElement, A, B, C> FirDiagnosticFactory3<P, A, B, C>.createOn(
+    element: FirSourceElement?,
+    a: A,
+    b: B,
+    c: C
+): FirDiagnosticWithParameters3<*, A, B, C>? {
+    return element?.let { on(it, a, b, c, positioningStrategy = null) }
 }

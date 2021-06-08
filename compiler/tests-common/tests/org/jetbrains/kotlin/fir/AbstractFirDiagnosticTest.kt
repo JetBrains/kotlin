@@ -215,13 +215,15 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
                 sourceElement,
                 argumentText,
                 severity,
-                FirDiagnosticFactory1(name, severity)
+                FirDiagnosticFactory1(name, severity),
+                SourceElementPositioningStrategy.DEFAULT
             )
             is FirLightSourceElement -> FirLightDiagnosticWithParameters1(
                 sourceElement,
                 argumentText,
                 severity,
-                FirDiagnosticFactory1<PsiElement, String>(name, severity)
+                FirDiagnosticFactory1<PsiElement, String>(name, severity),
+                SourceElementPositioningStrategy.DEFAULT
             )
         }
     }
@@ -276,7 +278,10 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
     }
 
     private fun createCollector(session: FirSession): AbstractDiagnosticCollector {
-        return FirDiagnosticsCollector.create(session, ScopeSession()) // seems this class is obsolete, so do not care about correctness of the scope session here
+        return FirDiagnosticsCollector.create(
+            session,
+            ScopeSession()
+        ) // seems this class is obsolete, so do not care about correctness of the scope session here
     }
 
     private fun checkCfgDump(testDataFile: File, firFiles: List<FirFile>) {

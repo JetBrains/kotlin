@@ -20,9 +20,10 @@ abstract class DiagnosticReporter {
 fun <P : PsiElement> DiagnosticReporter.reportOn(
     source: FirSourceElement?,
     factory: FirDiagnosticFactory0<P>,
-    context: CheckerContext
+    context: CheckerContext,
+    positioningStrategy: SourceElementPositioningStrategy<P>? = null
 ) {
-    source?.let { report(factory.on(it), context) }
+    source?.let { report(factory.on(it, positioningStrategy), context) }
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
@@ -30,9 +31,10 @@ fun <P : PsiElement, A : Any> DiagnosticReporter.reportOn(
     source: FirSourceElement?,
     factory: FirDiagnosticFactory1<P, A>,
     a: A,
-    context: CheckerContext
+    context: CheckerContext,
+    positioningStrategy: SourceElementPositioningStrategy<P>? = null
 ) {
-    source?.let { report(factory.on(it, a), context) }
+    source?.let { report(factory.on(it, a, positioningStrategy), context) }
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
@@ -41,9 +43,10 @@ fun <P : PsiElement, A : Any, B : Any> DiagnosticReporter.reportOn(
     factory: FirDiagnosticFactory2<P, A, B>,
     a: A,
     b: B,
-    context: CheckerContext
+    context: CheckerContext,
+    positioningStrategy: SourceElementPositioningStrategy<P>? = null
 ) {
-    source?.let { report(factory.on(it, a, b), context) }
+    source?.let { report(factory.on(it, a, b, positioningStrategy), context) }
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
@@ -53,9 +56,10 @@ fun <P : PsiElement, A : Any, B : Any, C : Any> DiagnosticReporter.reportOn(
     a: A,
     b: B,
     c: C,
-    context: CheckerContext
+    context: CheckerContext,
+    positioningStrategy: SourceElementPositioningStrategy<P>? = null
 ) {
-    source?.let { report(factory.on(it, a, b, c), context) }
+    source?.let { report(factory.on(it, a, b, c, positioningStrategy), context) }
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
@@ -66,9 +70,10 @@ fun <P : PsiElement, A : Any, B : Any, C : Any, D : Any> DiagnosticReporter.repo
     b: B,
     c: C,
     d: D,
-    context: CheckerContext
+    context: CheckerContext,
+    positioningStrategy: SourceElementPositioningStrategy<P>? = null
 ) {
-    source?.let { report(factory.on(it, a, b, c, d), context) }
+    source?.let { report(factory.on(it, a, b, c, d, positioningStrategy), context) }
 }
 
 inline fun withSuppressedDiagnostics(
@@ -94,10 +99,11 @@ inline fun withSuppressedDiagnostics(
 fun <P : PsiElement> DiagnosticReporter.reportOnWithSuppression(
     element: FirElement,
     factory: FirDiagnosticFactory0<P>,
-    context: CheckerContext
+    context: CheckerContext,
+    positioningStrategy: SourceElementPositioningStrategy<P>? = null
 ) {
     withSuppressedDiagnostics(element, context) {
-        reportOn(element.source, factory, it)
+        reportOn(element.source, factory, it, positioningStrategy)
     }
 }
 
@@ -105,10 +111,11 @@ fun <P : PsiElement, A : Any> DiagnosticReporter.reportOnWithSuppression(
     element: FirElement,
     factory: FirDiagnosticFactory1<P, A>,
     a: A,
-    context: CheckerContext
+    context: CheckerContext,
+    positioningStrategy: SourceElementPositioningStrategy<P>? = null
 ) {
     withSuppressedDiagnostics(element, context) {
-        reportOn(element.source, factory, a, it)
+        reportOn(element.source, factory, a, it, positioningStrategy)
     }
 }
 
@@ -117,10 +124,11 @@ fun <P : PsiElement, A : Any, B : Any> DiagnosticReporter.reportOnWithSuppressio
     factory: FirDiagnosticFactory2<P, A, B>,
     a: A,
     b: B,
-    context: CheckerContext
+    context: CheckerContext,
+    positioningStrategy: SourceElementPositioningStrategy<P>? = null
 ) {
     withSuppressedDiagnostics(element, context) {
-        reportOn(element.source, factory, a, b, it)
+        reportOn(element.source, factory, a, b, it, positioningStrategy)
     }
 }
 
@@ -130,10 +138,11 @@ fun <P : PsiElement, A : Any, B : Any, C : Any> DiagnosticReporter.reportOnWithS
     a: A,
     b: B,
     c: C,
-    context: CheckerContext
+    context: CheckerContext,
+    positioningStrategy: SourceElementPositioningStrategy<P>? = null
 ) {
     withSuppressedDiagnostics(element, context) {
-        reportOn(element.source, factory, a, b, c, it)
+        reportOn(element.source, factory, a, b, c, it, positioningStrategy)
     }
 }
 
@@ -144,10 +153,11 @@ fun <P : PsiElement, A : Any, B : Any, C : Any, D : Any> DiagnosticReporter.repo
     b: B,
     c: C,
     d: D,
-    context: CheckerContext
+    context: CheckerContext,
+    positioningStrategy: SourceElementPositioningStrategy<P>? = null
 ) {
     withSuppressedDiagnostics(element, context) {
-        reportOn(element.source, factory, a, b, c, d, it)
+        reportOn(element.source, factory, a, b, c, d, it, positioningStrategy)
     }
 }
 

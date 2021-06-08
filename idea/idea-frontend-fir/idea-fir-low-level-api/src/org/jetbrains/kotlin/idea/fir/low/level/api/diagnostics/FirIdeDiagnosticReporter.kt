@@ -34,35 +34,40 @@ private fun FirLightDiagnostic.toPsiDiagnostic(): FirPsiDiagnostic<*> {
         is FirLightSimpleDiagnostic -> FirPsiSimpleDiagnostic(
             psiSourceElement,
             severity,
-            factory as FirDiagnosticFactory0<PsiElement>
+            factory as FirDiagnosticFactory0<PsiElement>,
+            positioningStrategy
         )
 
         is FirLightDiagnosticWithParameters1<*> -> FirPsiDiagnosticWithParameters1(
             psiSourceElement,
             a,
             severity,
-            factory as FirDiagnosticFactory1<PsiElement, Any?>
+            factory as FirDiagnosticFactory1<PsiElement, Any?>,
+            positioningStrategy
         )
 
         is FirLightDiagnosticWithParameters2<*, *> -> FirPsiDiagnosticWithParameters2(
             psiSourceElement,
             a, b,
             severity,
-            factory as FirDiagnosticFactory2<PsiElement, Any?, Any?>
+            factory as FirDiagnosticFactory2<PsiElement, Any?, Any?>,
+            positioningStrategy
         )
 
         is FirLightDiagnosticWithParameters3<*, *, *> -> FirPsiDiagnosticWithParameters3(
             psiSourceElement,
             a, b, c,
             severity,
-            factory as FirDiagnosticFactory3<PsiElement, Any?, Any?, Any?>
+            factory as FirDiagnosticFactory3<PsiElement, Any?, Any?, Any?>,
+            positioningStrategy
         )
 
         is FirLightDiagnosticWithParameters4<*, *, *, *> -> FirPsiDiagnosticWithParameters4(
             psiSourceElement,
             a, b, c, d,
             severity,
-            factory as FirDiagnosticFactory4<PsiElement, Any?, Any?, Any?, Any?>
+            factory as FirDiagnosticFactory4<PsiElement, Any?, Any?, Any?, Any?>,
+            positioningStrategy
         )
         else -> error("Unknown diagnostic type ${this::class.simpleName}")
     }

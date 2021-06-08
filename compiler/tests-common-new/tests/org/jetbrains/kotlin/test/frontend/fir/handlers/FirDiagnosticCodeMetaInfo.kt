@@ -23,7 +23,7 @@ class FirDiagnosticCodeMetaInfo(
     renderConfiguration: FirDiagnosticCodeMetaRenderConfiguration
 ) : CodeMetaInfo {
     private val textRangeFromClassicDiagnostic: TextRange = run {
-        diagnostic.factory.positioningStrategy.markDiagnostic(diagnostic).first()
+        diagnostic.factory.defaultPositioningStrategy.markDiagnostic(diagnostic).first()
     }
 
     override var renderConfiguration: FirDiagnosticCodeMetaRenderConfiguration = renderConfiguration
