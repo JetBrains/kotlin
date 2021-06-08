@@ -966,6 +966,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val USELESS_IS_CHECK by warning<KtElement> {
             parameter<Boolean>("compileTimeCheckResult")
         }
+        val IS_ENUM_ENTRY by error<KtTypeReference>()
+        val ENUM_ENTRY_AS_TYPE by error<KtTypeReference>()
     }
 
     val WHEN_EXPRESSIONS by object : DiagnosticGroup("When expressions") {

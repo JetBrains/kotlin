@@ -2616,6 +2616,18 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.IS_ENUM_ENTRY) { firDiagnostic ->
+        IsEnumEntryImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.ENUM_ENTRY_AS_TYPE) { firDiagnostic ->
+        EnumEntryAsTypeImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.EXPECTED_CONDITION) { firDiagnostic ->
         ExpectedConditionImpl(
             firDiagnostic as FirPsiDiagnostic,
