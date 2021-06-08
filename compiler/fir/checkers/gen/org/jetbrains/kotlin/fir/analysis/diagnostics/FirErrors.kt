@@ -113,7 +113,6 @@ object FirErrors {
     val UNRESOLVED_LABEL by error0<PsiElement>()
     val DESERIALIZATION_ERROR by error0<PsiElement>()
     val ERROR_FROM_JAVA_RESOLUTION by error0<PsiElement>()
-    val UNKNOWN_CALLABLE_KIND by error0<PsiElement>()
     val MISSING_STDLIB_CLASS by error0<PsiElement>()
     val NO_THIS by error0<PsiElement>()
 
@@ -127,8 +126,6 @@ object FirErrors {
     val INSTANCE_ACCESS_BEFORE_SUPER_CALL by error1<PsiElement, String>()
 
     // Supertypes
-    val ENUM_AS_SUPERTYPE by error0<PsiElement>()
-    val RECURSION_IN_SUPERTYPES by error0<PsiElement>()
     val NOT_A_SUPERTYPE by error0<PsiElement>()
     val SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE by error0<PsiElement>()
     val QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE by error1<KtTypeReference, FirClass>()
