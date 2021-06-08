@@ -59,7 +59,7 @@ fun test_StructAnonym_Complicate() {
                 assertEquals('z', last.toInt().toChar())
                 assertEquals('b', b1.toInt().toChar())
                 assertEquals(42L, b2)
-                assertEquals(3.14F, f)
+                assertEquals(314, f)
                 assertEquals(11L, Y2.b11)
             }
 }
@@ -72,7 +72,7 @@ fun test_StructAnonym_Packed() {
                 assertEquals('z', last.toInt().toChar())
                 assertEquals('b', b1.toInt().toChar())
                 assertEquals(42L, b2)
-                assertEquals(3.14F, f)
+                assertEquals(314, f)
                 assertEquals(11L, Y2.b11)
             }
 }
@@ -85,7 +85,7 @@ fun test_StructAnonym_PragmaPacked() {
                 assertEquals('z', last.toInt().toChar())
                 assertEquals('b', b1.toInt().toChar())
                 assertEquals(42L, b2)
-                assertEquals(3.14F, f)
+                assertEquals(314, f)
                 assertEquals(11L, Y2.b11)
             }
 }
@@ -98,7 +98,7 @@ fun test_StructAnonym_Packed2() {
                 assertEquals('z', last.toInt().toChar())
                 assertEquals('b', b1.toInt().toChar())
                 assertEquals(42L, b2)
-                assertEquals(3.14F, f)
+                assertEquals(314, f)
                 assertEquals(11L, Y2.b11)
             }
 }
@@ -108,7 +108,6 @@ fun main() {
     test_StructAnonRecordMember_ImplicitAlignment()
     test_StructAnonRecordMember_ExplicitAlignment()
     test_StructAnonRecordMember_Nested()
-
     test_StructAnonym_Complicate()
     test_StructAnonym_Packed()
     test_StructAnonym_PragmaPacked()
