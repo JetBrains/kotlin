@@ -22,10 +22,7 @@ import org.junit.Assert
 import org.junit.Test
 import java.lang.management.ManagementFactory
 import java.util.concurrent.TimeUnit
-import javax.script.Invocable
-import javax.script.ScriptEngine
-import javax.script.ScriptEngineManager
-import javax.script.SimpleBindings
+import javax.script.*
 
 class KotlinJsr223DaemonCompileScriptEngineIT {
 
@@ -126,6 +123,17 @@ obj
         Assert.assertEquals(7, res3)
     }
 
+    @Test
+    fun testSimpleCompilableWithBindings() {
+        val engine = ScriptEngineManager().getEngineByExtension("kts")
+        engine.put("z", 33)
+        val comp = (engine as Compilable).compile("val x = 10 + bindings[\"z\"] as Int\nx + 20")
+        val res1 = comp.eval()
+        Assert.assertEquals(63, res1)
+        engine.put("z", 44)
+        val res2 = comp.eval()
+        Assert.assertEquals(74, res2)
+    }
 
     // Note: the test is flaky, because it is statistical and the thresholds are not big enough.
     // Therefore it was decided to disable it, but leave in the code in order to be able to quickly check overheads when needed.
