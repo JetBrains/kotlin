@@ -240,6 +240,11 @@ fun Project.publishJarsForIde(projects: List<String>, libraryDependencies: List<
     idePluginDependency {
         publishProjectJars(projects, libraryDependencies)
     }
+    configurations.all {
+        // Don't allow `ideaIC` from compiler to leak into Kotlin plugin modules. Compiler and
+        // plugin may depend on different versions of IDEA and it will lead to version conflict
+        exclude(module = ideModuleName())
+    }
     dependencies {
         projects.forEach {
             jpsLikeJarDependency(project(it), JpsDepScope.COMPILE, { isTransitive = false }, exported = true)
@@ -253,6 +258,11 @@ fun Project.publishJarsForIde(projects: List<String>, libraryDependencies: List<
 fun Project.publishTestJarsForIde(projectNames: List<String>) {
     idePluginDependency {
         publishTestJar(projectNames)
+    }
+    configurations.all {
+        // Don't allow `ideaIC` from compiler to leak into Kotlin plugin modules. Compiler and
+        // plugin may depend on different versions of IDEA and it will lead to version conflict
+        exclude(module = ideModuleName())
     }
     dependencies {
         for (projectName in projectNames) {

@@ -35,7 +35,7 @@ private fun Project.kotlinBuildLocalDependenciesDir(): File =
 
 private fun Project.kotlinBuildLocalRepoDir(): File = kotlinBuildLocalDependenciesDir().resolve("repo")
 
-private fun Project.ideModuleName() = when (IdeVersionConfigurator.currentIde.kind) {
+fun Project.ideModuleName() = when (IdeVersionConfigurator.currentIde.kind) {
     Ide.Kind.AndroidStudio -> "android-studio-ide"
     Ide.Kind.IntelliJ -> {
         if (kotlinBuildProperties.intellijUltimateEnabled) "ideaIU" else "ideaIC"
