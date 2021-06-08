@@ -6,7 +6,7 @@ import java.util.function.Supplier
 public final class SAMKt {
     private static final var notSam: kotlin.jvm.functions.Function0<? extends kotlin.Unit> = [!] UnknownKotlinExpression (LAMBDA_EXPRESSION)
     private static var foo: java.lang.Runnable = [!] UnknownKotlinExpression (LAMBDA_EXPRESSION)
-    private static final var baz: java.lang.Runnable = [!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)
+    private static final var baz: java.lang.Runnable = java.lang.[!] UnknownKotlinExpression (CALL_EXPRESSION)
     public static final fun getNotSam() : kotlin.jvm.functions.Function0<? extends kotlin.Unit> = UastEmptyExpression
     public static final fun getFoo() : java.lang.Runnable = UastEmptyExpression
     public static final fun setFoo(value: java.lang.Runnable) : void = UastEmptyExpression

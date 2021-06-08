@@ -6,8 +6,8 @@ UFile (package = ) [public final class AnnotationParametersKt {...]
                     ULiteralExpression (value = 5) [5] = (long)5
         UMethod (name = bar) [public static final fun bar() : void {...}]
             UBlockExpression [{...}] = Nothing
-                UReturnExpression [return [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Nothing
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
+                UReturnExpression [return Unit] = Nothing
+                    USimpleNameReferenceExpression (identifier = Unit) [Unit] = external Unit()
         UMethod (name = fooWithArrLiteral) [public static final fun fooWithArrLiteral() : int {...}]
             UBlockExpression [{...}] = Nothing
                 UReturnExpression [return 5] = Nothing

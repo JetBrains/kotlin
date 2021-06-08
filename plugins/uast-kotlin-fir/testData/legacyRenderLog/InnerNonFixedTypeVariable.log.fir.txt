@@ -5,7 +5,7 @@ UFile (package = )
             UBlockExpression
                 UQualifiedReferenceExpression
                     UQualifiedReferenceExpression
-                        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                        USimpleNameReferenceExpression (identifier = list)
                         [!] UnknownKotlinExpression (CALL_EXPRESSION)
                     [!] UnknownKotlinExpression (CALL_EXPRESSION)
     UClass (name = Some)

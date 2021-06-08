@@ -5,6 +5,6 @@ UFile (package = )
         UMethod (name = getWithoutSetter)
             UBlockExpression
                 UReturnExpression
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                    USimpleNameReferenceExpression (identifier = field)
         UMethod (name = setWithoutSetter)
             UParameter (name = value)

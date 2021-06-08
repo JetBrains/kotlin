@@ -6,6 +6,6 @@ UFile (package = )
             UParameter (name = threshold2)
             UBlockExpression
                 UReturnExpression
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                    USimpleNameReferenceExpression (identifier = threshold2)
     UClass (name = Foo)
         UMethod (name = Foo)

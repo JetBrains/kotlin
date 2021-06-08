@@ -1,3 +1,0 @@
-Device -> USimpleNameReferenceExpression (identifier = Device) from KtNameReferenceExpression
-D -> USimpleNameReferenceExpression (identifier = D) from KtNameReferenceExpression
-Device -> USimpleNameReferenceExpression (identifier = Device) from KtNameReferenceExpression

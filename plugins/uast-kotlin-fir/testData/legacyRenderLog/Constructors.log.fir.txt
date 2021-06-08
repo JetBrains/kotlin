@@ -67,7 +67,7 @@ UFile (package = )
                 [!] UnknownKotlinExpression (BINARY_EXPRESSION)
                 [!] UnknownKotlinExpression (PROPERTY)
                 UQualifiedReferenceExpression
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                    USimpleNameReferenceExpression (identifier = local)
                     [!] UnknownKotlinExpression (CALL_EXPRESSION)
         UMethod (name = getA)
         UMethod (name = setA)

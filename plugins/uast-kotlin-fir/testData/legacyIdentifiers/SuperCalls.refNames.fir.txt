@@ -1,2 +1,25 @@
+String -> USimpleNameReferenceExpression (identifier = String) from KtNameReferenceExpression
+Int -> USimpleNameReferenceExpression (identifier = Int) from KtNameReferenceExpression
 toString() -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+i -> USimpleNameReferenceExpression (identifier = i) from KtNameReferenceExpression
+toString -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+Long -> USimpleNameReferenceExpression (identifier = Long) from KtNameReferenceExpression
+String -> USimpleNameReferenceExpression (identifier = String) from KtNameReferenceExpression
+A -> USimpleNameReferenceExpression (identifier = A) from KtNameReferenceExpression
+param -> USimpleNameReferenceExpression (identifier = param) from KtNameReferenceExpression
+A -> USimpleNameReferenceExpression (identifier = A) from KtNameReferenceExpression
+String -> USimpleNameReferenceExpression (identifier = String) from KtNameReferenceExpression
+p -> USimpleNameReferenceExpression (identifier = p) from KtNameReferenceExpression
+Int -> USimpleNameReferenceExpression (identifier = Int) from KtNameReferenceExpression
+i -> USimpleNameReferenceExpression (identifier = i) from KtNameReferenceExpression
+println -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+Long -> USimpleNameReferenceExpression (identifier = Long) from KtNameReferenceExpression
 foo(a) -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+foo -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+a -> USimpleNameReferenceExpression (identifier = a) from KtNameReferenceExpression
+A -> USimpleNameReferenceExpression (identifier = A) from KtNameReferenceExpression
+A -> USimpleNameReferenceExpression (identifier = A) from KtNameReferenceExpression
+cons -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+A -> USimpleNameReferenceExpression (identifier = A) from KtNameReferenceExpression
+A -> USimpleNameReferenceExpression (identifier = A) from KtNameReferenceExpression
+A -> USimpleNameReferenceExpression (identifier = A) from KtNameReferenceExpression

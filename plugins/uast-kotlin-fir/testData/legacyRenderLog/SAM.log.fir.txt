@@ -11,8 +11,8 @@ UFile (package = )
         UField (name = baz)
             UQualifiedReferenceExpression
                 UQualifiedReferenceExpression
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                    USimpleNameReferenceExpression (identifier = java)
+                    USimpleNameReferenceExpression (identifier = lang)
                 [!] UnknownKotlinExpression (CALL_EXPRESSION)
         UMethod (name = getNotSam)
         UMethod (name = getFoo)

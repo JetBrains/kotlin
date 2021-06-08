@@ -4,7 +4,7 @@ UFile (package = )
         UMethod (name = getWithSetter)
             UBlockExpression
                 UReturnExpression
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                    USimpleNameReferenceExpression (identifier = field)
         UMethod (name = setWithSetter)
             UParameter (name = p)
             UBlockExpression

@@ -7,5 +7,5 @@ UFile (package = ) [public final class InferenceInsideUnresolvedConstructorKt {.
         UMethod (name = id) [public static final fun id(x: T) : T {...}]
             UParameter (name = x) [var x: T]
             UBlockExpression [{...}]
-                UReturnExpression [return [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                UReturnExpression [return x]
+                    USimpleNameReferenceExpression (identifier = x) [x] : PsiType:T

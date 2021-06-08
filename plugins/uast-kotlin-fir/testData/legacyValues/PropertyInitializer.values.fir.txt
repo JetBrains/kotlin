@@ -3,8 +3,8 @@ UFile (package = ) [public final class TestPropertyInitializer {...]
         UMethod (name = TestPropertyInitializer) [public fun TestPropertyInitializer() = UastEmptyExpression]
         UMethod (name = getWithSetter) [public final fun getWithSetter() : java.lang.String {...}]
             UBlockExpression [{...}] = Nothing
-                UReturnExpression [return [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Nothing
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
+                UReturnExpression [return field] = Nothing
+                    USimpleNameReferenceExpression (identifier = field) [field] = external field()
         UMethod (name = setWithSetter) [public final fun setWithSetter(p: java.lang.String) : void {...}]
             UParameter (name = p) [var p: java.lang.String]
             UBlockExpression [{...}] = Undetermined

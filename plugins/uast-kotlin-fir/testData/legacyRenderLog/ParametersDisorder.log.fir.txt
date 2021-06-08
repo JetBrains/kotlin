@@ -23,36 +23,36 @@ UFile (package = )
                     ULiteralExpression (value = "abc")
                     [!] UnknownKotlinExpression (CALL_EXPRESSION)
                 UQualifiedReferenceExpression
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                    USimpleNameReferenceExpression (identifier = Math)
                     [!] UnknownKotlinExpression (CALL_EXPRESSION)
                 [!] UnknownKotlinExpression (CALL_EXPRESSION)
                 UQualifiedReferenceExpression
                     UQualifiedReferenceExpression
                         UQualifiedReferenceExpression
-                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
-                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
-                        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                            USimpleNameReferenceExpression (identifier = java)
+                            USimpleNameReferenceExpression (identifier = lang)
+                        USimpleNameReferenceExpression (identifier = String)
                     [!] UnknownKotlinExpression (CALL_EXPRESSION)
                 UQualifiedReferenceExpression
                     UQualifiedReferenceExpression
                         UQualifiedReferenceExpression
-                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
-                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
-                        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                            USimpleNameReferenceExpression (identifier = java)
+                            USimpleNameReferenceExpression (identifier = lang)
+                        USimpleNameReferenceExpression (identifier = String)
                     [!] UnknownKotlinExpression (CALL_EXPRESSION)
                 UQualifiedReferenceExpression
                     UQualifiedReferenceExpression
                         UQualifiedReferenceExpression
-                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
-                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
-                        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                            USimpleNameReferenceExpression (identifier = java)
+                            USimpleNameReferenceExpression (identifier = lang)
+                        USimpleNameReferenceExpression (identifier = String)
                     [!] UnknownKotlinExpression (CALL_EXPRESSION)
                 UQualifiedReferenceExpression
                     UQualifiedReferenceExpression
                         UQualifiedReferenceExpression
-                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
-                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
-                        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                            USimpleNameReferenceExpression (identifier = java)
+                            USimpleNameReferenceExpression (identifier = lang)
+                        USimpleNameReferenceExpression (identifier = String)
                     [!] UnknownKotlinExpression (CALL_EXPRESSION)
                 [!] UnknownKotlinExpression (CALL_EXPRESSION)
         UMethod (name = objectLiteral)

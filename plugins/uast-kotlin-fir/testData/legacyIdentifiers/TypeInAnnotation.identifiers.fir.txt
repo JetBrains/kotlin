@@ -1,3 +1,3 @@
 C -> UClass (name = C)
-Test -> [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+Test -> USimpleNameReferenceExpression (identifier = Test)
 foo -> UMethod (name = foo)

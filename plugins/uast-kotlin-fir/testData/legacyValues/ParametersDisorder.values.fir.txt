@@ -22,37 +22,37 @@ UFile (package = ) [public final class ParametersDisorderKt {...]
                 UQualifiedReferenceExpression ["abc".[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
                     ULiteralExpression (value = "abc") ["abc"] = "abc"
                     [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
-                UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
+                UQualifiedReferenceExpression [Math.[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
+                    USimpleNameReferenceExpression (identifier = Math) [Math] = external Math()
                     [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
                 [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
-                UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
-                    UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
-                        UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
-                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
-                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
-                        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
+                UQualifiedReferenceExpression [java.lang.String.[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
+                    UQualifiedReferenceExpression [java.lang.String] = external String()
+                        UQualifiedReferenceExpression [java.lang] = external lang()
+                            USimpleNameReferenceExpression (identifier = java) [java] = external java()
+                            USimpleNameReferenceExpression (identifier = lang) [lang] = external lang()
+                        USimpleNameReferenceExpression (identifier = String) [String] = external String()
                     [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
-                UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
-                    UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
-                        UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
-                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
-                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
-                        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
+                UQualifiedReferenceExpression [java.lang.String.[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
+                    UQualifiedReferenceExpression [java.lang.String] = external String()
+                        UQualifiedReferenceExpression [java.lang] = external lang()
+                            USimpleNameReferenceExpression (identifier = java) [java] = external java()
+                            USimpleNameReferenceExpression (identifier = lang) [lang] = external lang()
+                        USimpleNameReferenceExpression (identifier = String) [String] = external String()
                     [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
-                UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
-                    UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
-                        UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
-                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
-                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
-                        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
+                UQualifiedReferenceExpression [java.lang.String.[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
+                    UQualifiedReferenceExpression [java.lang.String] = external String()
+                        UQualifiedReferenceExpression [java.lang] = external lang()
+                            USimpleNameReferenceExpression (identifier = java) [java] = external java()
+                            USimpleNameReferenceExpression (identifier = lang) [lang] = external lang()
+                        USimpleNameReferenceExpression (identifier = String) [String] = external String()
                     [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
-                UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
-                    UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
-                        UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
-                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
-                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
-                        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
+                UQualifiedReferenceExpression [java.lang.String.[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
+                    UQualifiedReferenceExpression [java.lang.String] = external String()
+                        UQualifiedReferenceExpression [java.lang] = external lang()
+                            USimpleNameReferenceExpression (identifier = java) [java] = external java()
+                            USimpleNameReferenceExpression (identifier = lang) [lang] = external lang()
+                        USimpleNameReferenceExpression (identifier = String) [String] = external String()
                     [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
                 [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
         UMethod (name = objectLiteral) [public static final fun objectLiteral() : void {...}]

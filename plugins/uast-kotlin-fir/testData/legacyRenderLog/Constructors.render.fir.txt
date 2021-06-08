@@ -67,7 +67,7 @@ public final class AWithSecondaryInit {
         UastEmptyExpression
         [!] UnknownKotlinExpression (BINARY_EXPRESSION)
         [!] UnknownKotlinExpression (PROPERTY)
-        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)
+        local.[!] UnknownKotlinExpression (CALL_EXPRESSION)
     }
     public final fun getA() : java.lang.String = UastEmptyExpression
     public final fun setA(value: java.lang.String) : void = UastEmptyExpression

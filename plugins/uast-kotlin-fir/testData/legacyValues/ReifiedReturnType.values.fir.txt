@@ -5,7 +5,7 @@ UFile (package = ) [public final class ReifiedReturnTypeKt {...]
             UParameter (name = threshold) [var threshold: T]
             UParameter (name = threshold2) [var threshold2: B]
             UBlockExpression [{...}] = Nothing
-                UReturnExpression [return [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Nothing
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
+                UReturnExpression [return threshold2] = Nothing
+                    USimpleNameReferenceExpression (identifier = threshold2) [threshold2] = Undetermined
     UClass (name = Foo) [public final class Foo {...}]
         UMethod (name = Foo) [public fun Foo() = UastEmptyExpression]

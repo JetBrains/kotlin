@@ -5,7 +5,7 @@ UFile (package = ) [public final class ReifiedReturnTypeKt {...]
             UParameter (name = threshold) [var threshold: T]
             UParameter (name = threshold2) [var threshold2: B]
             UBlockExpression [{...}] : PsiType:Void
-                UReturnExpression [return [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] : PsiType:Void
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                UReturnExpression [return threshold2] : PsiType:Void
+                    USimpleNameReferenceExpression (identifier = threshold2) [threshold2] : PsiType:B
     UClass (name = Foo) [public final class Foo {...}]
         UMethod (name = Foo) [public fun Foo() = UastEmptyExpression]

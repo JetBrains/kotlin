@@ -1,0 +1,3 @@
+bar -> UField (name = bar)
+f -> UField (name = f)
+bar -> USimpleNameReferenceExpression (identifier = bar)

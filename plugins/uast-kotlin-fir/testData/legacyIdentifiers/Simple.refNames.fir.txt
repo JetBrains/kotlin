@@ -1,0 +1,2 @@
+println -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+String -> USimpleNameReferenceExpression (identifier = String) from KtNameReferenceExpression

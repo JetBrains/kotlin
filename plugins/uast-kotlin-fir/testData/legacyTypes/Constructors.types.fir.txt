@@ -66,8 +66,8 @@ UFile (package = ) [public final class A {...]
                 UastEmptyExpression [UastEmptyExpression]
                 [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
-                UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:String
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                UQualifiedReferenceExpression [local.[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:String
+                    USimpleNameReferenceExpression (identifier = local) [local] : PsiType:String
                     [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
         UMethod (name = getA) [public final fun getA() : java.lang.String = UastEmptyExpression]
         UMethod (name = setA) [public final fun setA(value: java.lang.String) : void = UastEmptyExpression]

@@ -1,3 +1,38 @@
-kotlin -> UQualifiedReferenceExpression from KtDotQualifiedExpression
-uast -> UQualifiedReferenceExpression from KtDotQualifiedExpression
-jetbrains -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+kotlin -> USimpleNameReferenceExpression (identifier = kotlin) from KtDotQualifiedExpression
+uast -> USimpleNameReferenceExpression (identifier = uast) from KtDotQualifiedExpression
+jetbrains -> USimpleNameReferenceExpression (identifier = jetbrains) from KtDotQualifiedExpression
+org -> USimpleNameReferenceExpression (identifier = org) from KtNameReferenceExpression
+jetbrains -> USimpleNameReferenceExpression (identifier = jetbrains) from KtNameReferenceExpression
+uast -> USimpleNameReferenceExpression (identifier = uast) from KtNameReferenceExpression
+kotlin -> USimpleNameReferenceExpression (identifier = kotlin) from KtNameReferenceExpression
+Int -> USimpleNameReferenceExpression (identifier = Int) from KtNameReferenceExpression
+a -> USimpleNameReferenceExpression (identifier = a) from KtNameReferenceExpression
+b -> USimpleNameReferenceExpression (identifier = b) from KtNameReferenceExpression
+Int -> USimpleNameReferenceExpression (identifier = Int) from KtNameReferenceExpression
+a -> USimpleNameReferenceExpression (identifier = a) from KtNameReferenceExpression
+a -> USimpleNameReferenceExpression (identifier = a) from KtNameReferenceExpression
+c -> USimpleNameReferenceExpression (identifier = c) from KtNameReferenceExpression
+a -> USimpleNameReferenceExpression (identifier = a) from KtNameReferenceExpression
+c -> USimpleNameReferenceExpression (identifier = c) from KtNameReferenceExpression
+lbd -> USimpleNameReferenceExpression (identifier = lbd) from KtLabelReferenceExpression
+Int -> USimpleNameReferenceExpression (identifier = Int) from KtNameReferenceExpression
+lbd -> USimpleNameReferenceExpression (identifier = lbd) from KtLabelReferenceExpression
+a -> USimpleNameReferenceExpression (identifier = a) from KtNameReferenceExpression
+d -> USimpleNameReferenceExpression (identifier = d) from KtNameReferenceExpression
+Int -> USimpleNameReferenceExpression (identifier = Int) from KtNameReferenceExpression
+String -> USimpleNameReferenceExpression (identifier = String) from KtNameReferenceExpression
+a -> USimpleNameReferenceExpression (identifier = a) from KtNameReferenceExpression
+a -> USimpleNameReferenceExpression (identifier = a) from KtNameReferenceExpression
+Int -> USimpleNameReferenceExpression (identifier = Int) from KtNameReferenceExpression
+a -> USimpleNameReferenceExpression (identifier = a) from KtNameReferenceExpression
+bar -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+it -> USimpleNameReferenceExpression (identifier = it) from KtNameReferenceExpression
+it -> USimpleNameReferenceExpression (identifier = it) from KtNameReferenceExpression
+b -> USimpleNameReferenceExpression (identifier = b) from KtNameReferenceExpression
+Unit -> USimpleNameReferenceExpression (identifier = Unit) from KtNameReferenceExpression
+listOf -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+Unit -> USimpleNameReferenceExpression (identifier = Unit) from KtNameReferenceExpression
+listOf -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+Int -> USimpleNameReferenceExpression (identifier = Int) from KtNameReferenceExpression
+Int -> USimpleNameReferenceExpression (identifier = Int) from KtNameReferenceExpression
+lmbd -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression

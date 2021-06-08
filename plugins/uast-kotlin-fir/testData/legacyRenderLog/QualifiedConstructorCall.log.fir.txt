@@ -9,7 +9,7 @@ UFile (package = A.B.C)
                     UQualifiedReferenceExpression
                         UQualifiedReferenceExpression
                             UQualifiedReferenceExpression
-                                [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
-                                [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
-                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                                USimpleNameReferenceExpression (identifier = A)
+                                USimpleNameReferenceExpression (identifier = B)
+                            USimpleNameReferenceExpression (identifier = C)
                         [!] UnknownKotlinExpression (CALL_EXPRESSION)

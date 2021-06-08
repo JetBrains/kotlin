@@ -1,6 +1,24 @@
-Closeable -> UQualifiedReferenceExpression from KtDotQualifiedExpression
-io -> UQualifiedReferenceExpression from KtDotQualifiedExpression
-InputStream -> UQualifiedReferenceExpression from KtDotQualifiedExpression
-io -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+Closeable -> USimpleNameReferenceExpression (identifier = Closeable) from KtDotQualifiedExpression
+io -> USimpleNameReferenceExpression (identifier = io) from KtDotQualifiedExpression
+java -> USimpleNameReferenceExpression (identifier = java) from KtNameReferenceExpression
+io -> USimpleNameReferenceExpression (identifier = io) from KtNameReferenceExpression
+Closeable -> USimpleNameReferenceExpression (identifier = Closeable) from KtNameReferenceExpression
+InputStream -> USimpleNameReferenceExpression (identifier = InputStream) from KtDotQualifiedExpression
+io -> USimpleNameReferenceExpression (identifier = io) from KtDotQualifiedExpression
+java -> USimpleNameReferenceExpression (identifier = java) from KtNameReferenceExpression
+io -> USimpleNameReferenceExpression (identifier = io) from KtNameReferenceExpression
+InputStream -> USimpleNameReferenceExpression (identifier = InputStream) from KtNameReferenceExpression
+Runnable -> USimpleNameReferenceExpression (identifier = Runnable) from KtNameReferenceExpression
 run() -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+runnable -> USimpleNameReferenceExpression (identifier = runnable) from KtNameReferenceExpression
+run -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+Runnable -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+println -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
 run() -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+runnable2 -> USimpleNameReferenceExpression (identifier = runnable2) from KtNameReferenceExpression
+run -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+Runnable -> USimpleNameReferenceExpression (identifier = Runnable) from KtNameReferenceExpression
+Closeable -> USimpleNameReferenceExpression (identifier = Closeable) from KtNameReferenceExpression
+InputStream -> USimpleNameReferenceExpression (identifier = InputStream) from KtNameReferenceExpression
+Runnable -> USimpleNameReferenceExpression (identifier = Runnable) from KtNameReferenceExpression
+Int -> USimpleNameReferenceExpression (identifier = Int) from KtNameReferenceExpression

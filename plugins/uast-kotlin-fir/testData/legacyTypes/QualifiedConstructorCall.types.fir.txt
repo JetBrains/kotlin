@@ -5,11 +5,11 @@ UFile (package = A.B.C) [package A.B.C...]
         UMethod (name = Bar) [public fun Bar() = UastEmptyExpression]
         UMethod (name = getFoo) [public final fun getFoo() : A.B.C.Foo {...}]
             UBlockExpression [{...}] : PsiType:Void
-                UReturnExpression [return [!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:Void
-                    UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:Foo
-                        UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] : PsiType:Unit
-                            UQualifiedReferenceExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] : PsiType:Unit
-                                [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
-                                [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
-                            [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                UReturnExpression [return A.B.C.[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:Void
+                    UQualifiedReferenceExpression [A.B.C.[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:Foo
+                        UQualifiedReferenceExpression [A.B.C] : PsiType:Unit
+                            UQualifiedReferenceExpression [A.B] : PsiType:Unit
+                                USimpleNameReferenceExpression (identifier = A) [A] : PsiType:Unit
+                                USimpleNameReferenceExpression (identifier = B) [B] : PsiType:Unit
+                            USimpleNameReferenceExpression (identifier = C) [C] : PsiType:Unit
                         [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]

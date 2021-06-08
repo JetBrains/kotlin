@@ -8,10 +8,10 @@ UFile (package = )
         UMethod (name = main)
             UBlockExpression
                 UQualifiedReferenceExpression
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                    USimpleNameReferenceExpression (identifier = RunnableManager)
                     [!] UnknownKotlinExpression (CALL_EXPRESSION)
                 UQualifiedReferenceExpression
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                    USimpleNameReferenceExpression (identifier = RunnableManager)
                     [!] UnknownKotlinExpression (CALL_EXPRESSION)
     UClass (name = RunnableManager)
         UField (name = INSTANCE)
@@ -23,7 +23,7 @@ UFile (package = )
             UParameter (name = runnable)
             UBlockExpression
                 UQualifiedReferenceExpression
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                    USimpleNameReferenceExpression (identifier = tasks)
                     [!] UnknownKotlinExpression (CALL_EXPRESSION)
         UMethod (name = runAll)
             UBlockExpression

@@ -1,0 +1,7 @@
+Boolean -> USimpleNameReferenceExpression (identifier = Boolean) from KtNameReferenceExpression
+Local -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+Local -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+Int -> USimpleNameReferenceExpression (identifier = Int) from KtNameReferenceExpression
+String -> USimpleNameReferenceExpression (identifier = String) from KtNameReferenceExpression
+bar -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+Local -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression

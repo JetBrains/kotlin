@@ -6,13 +6,13 @@ UFile (package = ) [public final class StringTemplateKt {...]
             ULiteralExpression (value = "ipsum") ["ipsum"] = "ipsum"
         UField (name = baz) [private static final var baz: java.lang.String = "dolor"]
             ULiteralExpression (value = "dolor") ["dolor"] = "dolor"
-        UField (name = foobarbaz) [private static final var foobarbaz: java.lang.String = [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) + " " + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) + " " + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
-            UPolyadicExpression (operator = +) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION) + " " + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) + " " + [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
-                [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
+        UField (name = foobarbaz) [private static final var foobarbaz: java.lang.String = foo + " " + bar + " " + baz]
+            UPolyadicExpression (operator = +) [foo + " " + bar + " " + baz] = Undetermined
+                USimpleNameReferenceExpression (identifier = foo) [foo] = Undetermined
                 ULiteralExpression (value = " ") [" "] = " "
-                [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
+                USimpleNameReferenceExpression (identifier = bar) [bar] = Undetermined
                 ULiteralExpression (value = " ") [" "] = " "
-                [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] = Undetermined
+                USimpleNameReferenceExpression (identifier = baz) [baz] = Undetermined
         UMethod (name = getFoo) [public static final fun getFoo() : java.lang.String = UastEmptyExpression]
         UMethod (name = getBar) [public static final fun getBar() : java.lang.String = UastEmptyExpression]
         UMethod (name = getBaz) [public static final fun getBaz() : java.lang.String = UastEmptyExpression]

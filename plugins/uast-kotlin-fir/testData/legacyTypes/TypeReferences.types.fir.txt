@@ -6,8 +6,8 @@ UFile (package = ) [public final class TypeReferencesKt {...]
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
-                UReturnExpression [return [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)] : PsiType:Void
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
+                UReturnExpression [return result] : PsiType:Void
+                    USimpleNameReferenceExpression (identifier = result) [result] : PsiType:String
         UMethod (name = parameterizedFoo) [public static final fun parameterizedFoo(arg: T) : void {...}]
             UParameter (name = arg) [var arg: T]
             UBlockExpression [{...}] : PsiType:Unit

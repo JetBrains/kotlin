@@ -1,4 +1,4 @@
 Demo -> UClass (name = Demo)
 foo -> UField (name = foo)
-X -> [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+X -> USimpleNameReferenceExpression (identifier = X)
 bar -> [!] UnknownKotlinExpression (CALL_EXPRESSION)

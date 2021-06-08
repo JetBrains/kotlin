@@ -1,5 +1,5 @@
 public final class IfKt {
     public static final fun test(b: boolean) : java.lang.Object {
-        return if ([!] UnknownKotlinExpression (REFERENCE_EXPRESSION)) ([!] UnknownKotlinExpression (BINARY_EXPRESSION)) else "42"
+        return if (b) ([!] UnknownKotlinExpression (BINARY_EXPRESSION)) else "42"
     }
 }

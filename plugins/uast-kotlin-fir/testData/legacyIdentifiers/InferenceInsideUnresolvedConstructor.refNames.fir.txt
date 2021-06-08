@@ -1,0 +1,6 @@
+Any -> USimpleNameReferenceExpression (identifier = Any) from KtNameReferenceExpression
+Unresolved -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+id -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+T -> USimpleNameReferenceExpression (identifier = T) from KtNameReferenceExpression
+T -> USimpleNameReferenceExpression (identifier = T) from KtNameReferenceExpression
+x -> USimpleNameReferenceExpression (identifier = x) from KtNameReferenceExpression

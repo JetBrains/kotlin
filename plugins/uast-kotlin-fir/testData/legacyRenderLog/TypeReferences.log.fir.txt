@@ -7,7 +7,7 @@ UFile (package = )
                 [!] UnknownKotlinExpression (PROPERTY)
                 [!] UnknownKotlinExpression (PROPERTY)
                 UReturnExpression
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                    USimpleNameReferenceExpression (identifier = result)
         UMethod (name = parameterizedFoo)
             UParameter (name = arg)
             UBlockExpression

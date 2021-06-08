@@ -36,18 +36,10 @@ import org.jetbrains.uast.visitor.UastVisitor
 
 var PsiElement.destructuringDeclarationInitializer: Boolean? by UserDataProperty(Key.create("kotlin.uast.destructuringDeclarationInitializer"))
 
-open class KotlinUSimpleReferenceExpression(
+class KotlinUSimpleReferenceExpression(
     override val sourcePsi: KtSimpleNameExpression,
     givenParent: UElement?
-) : KotlinAbstractUExpression(givenParent), USimpleNameReferenceExpression, KotlinUElementWithType, KotlinEvaluatableUElement {
-    private val resolvedDeclaration: PsiElement? by lz { baseResolveProviderService.resolveToDeclaration(sourcePsi) }
-
-    override val identifier get() = sourcePsi.getReferencedName()
-
-    override fun resolve() = resolvedDeclaration
-
-    override val resolvedName: String?
-        get() = (resolvedDeclaration as? PsiNamedElement)?.name
+) : KotlinAbstractUSimpleReferenceExpression(sourcePsi, givenParent) {
 
     override fun accept(visitor: UastVisitor) {
         visitor.visitSimpleNameReferenceExpression(this)
@@ -59,8 +51,6 @@ open class KotlinUSimpleReferenceExpression(
 
         visitor.afterVisitSimpleNameReferenceExpression(this)
     }
-
-    override val referenceNameElement: UElement? by lz { sourcePsi.getIdentifier()?.toUElement() }
 
     private fun visitAccessorCalls(visitor: UastVisitor) {
         // Visit Kotlin get-set synthetic Java property calls as function calls

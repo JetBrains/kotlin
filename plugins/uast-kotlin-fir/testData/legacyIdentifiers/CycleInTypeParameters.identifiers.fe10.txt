@@ -1,7 +1,0 @@
-Device -> UClass (name = Device)
-D -> [!] UnknownKotlinExpression (TYPE_PARAMETER)
-Device -> USimpleNameReferenceExpression (identifier = Device)
-D -> USimpleNameReferenceExpression (identifier = D)
-a -> UField (name = a)
-as? -> USimpleNameReferenceExpression (identifier = as?)
-Device -> USimpleNameReferenceExpression (identifier = Device)

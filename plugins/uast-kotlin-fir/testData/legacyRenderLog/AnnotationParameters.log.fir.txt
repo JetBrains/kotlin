@@ -7,7 +7,7 @@ UFile (package = )
         UMethod (name = bar)
             UBlockExpression
                 UReturnExpression
-                    [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
+                    USimpleNameReferenceExpression (identifier = Unit)
         UMethod (name = fooWithArrLiteral)
             UBlockExpression
                 UReturnExpression

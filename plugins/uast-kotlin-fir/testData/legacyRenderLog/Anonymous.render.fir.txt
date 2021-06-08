@@ -4,9 +4,9 @@ import java.io.InputStream
 public final class AnonymousKt {
     public static final fun foo() : void {
         [!] UnknownKotlinExpression (PROPERTY)
-        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)
+        runnable.[!] UnknownKotlinExpression (CALL_EXPRESSION)
         [!] UnknownKotlinExpression (PROPERTY)
-        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)
+        runnable2.[!] UnknownKotlinExpression (CALL_EXPRESSION)
         [!] UnknownKotlinExpression (PROPERTY)
         [!] UnknownKotlinExpression (PROPERTY)
     }

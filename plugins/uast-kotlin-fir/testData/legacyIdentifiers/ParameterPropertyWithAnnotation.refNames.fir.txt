@@ -1,0 +1,8 @@
+MyAnnotation -> USimpleNameReferenceExpression (identifier = MyAnnotation) from KtNameReferenceExpression
+Int -> USimpleNameReferenceExpression (identifier = Int) from KtNameReferenceExpression
+MyAnnotation -> USimpleNameReferenceExpression (identifier = MyAnnotation) from KtNameReferenceExpression
+MyAnnotation2 -> USimpleNameReferenceExpression (identifier = MyAnnotation2) from KtNameReferenceExpression
+MyAnnotation3 -> USimpleNameReferenceExpression (identifier = MyAnnotation3) from KtNameReferenceExpression
+MyAnnotation4 -> USimpleNameReferenceExpression (identifier = MyAnnotation4) from KtNameReferenceExpression
+MyAnnotation5 -> USimpleNameReferenceExpression (identifier = MyAnnotation5) from KtNameReferenceExpression
+Int -> USimpleNameReferenceExpression (identifier = Int) from KtNameReferenceExpression

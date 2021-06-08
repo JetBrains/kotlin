@@ -1,8 +1,0 @@
-A -> UClass (name = A)
-F -> [!] UnknownKotlinExpression (TYPEALIAS)
-A -> USimpleNameReferenceExpression (identifier = A)
-A -> USimpleNameReferenceExpression (identifier = A)
-A -> USimpleNameReferenceExpression (identifier = A)
-G -> [!] UnknownKotlinExpression (TYPEALIAS)
-F -> USimpleNameReferenceExpression (identifier = F)
-F -> USimpleNameReferenceExpression (identifier = F)

@@ -7,6 +7,6 @@ public final class Foo {
 public final class Bar {
     public fun Bar() = UastEmptyExpression
     public final fun getFoo() : A.B.C.Foo {
-        return [!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)
+        return A.B.C.[!] UnknownKotlinExpression (CALL_EXPRESSION)
     }
 }

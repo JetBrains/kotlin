@@ -9,12 +9,12 @@ public final class ParametersDisorderKt {
         [!] UnknownKotlinExpression (CALL_EXPRESSION)
         [!] UnknownKotlinExpression (CALL_EXPRESSION)
         "abc".[!] UnknownKotlinExpression (CALL_EXPRESSION)
-        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)
+        Math.[!] UnknownKotlinExpression (CALL_EXPRESSION)
         [!] UnknownKotlinExpression (CALL_EXPRESSION)
-        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)
-        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)
-        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)
-        [!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (REFERENCE_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)
+        java.lang.String.[!] UnknownKotlinExpression (CALL_EXPRESSION)
+        java.lang.String.[!] UnknownKotlinExpression (CALL_EXPRESSION)
+        java.lang.String.[!] UnknownKotlinExpression (CALL_EXPRESSION)
+        java.lang.String.[!] UnknownKotlinExpression (CALL_EXPRESSION)
         [!] UnknownKotlinExpression (CALL_EXPRESSION)
     }
     public static final fun objectLiteral() : void {

@@ -1,1 +1,13 @@
-java -> UQualifiedReferenceExpression from KtDotQualifiedExpression
+Throwable -> USimpleNameReferenceExpression (identifier = Throwable) from KtNameReferenceExpression
+crashMe -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+java -> USimpleNameReferenceExpression (identifier = java) from KtDotQualifiedExpression
+Callback -> USimpleNameReferenceExpression (identifier = Callback) from KtNameReferenceExpression
+java -> USimpleNameReferenceExpression (identifier = java) from KtNameReferenceExpression
+Callback -> USimpleNameReferenceExpression (identifier = Callback) from KtNameReferenceExpression
+Throwable -> USimpleNameReferenceExpression (identifier = Throwable) from KtNameReferenceExpression
+UnsupportedOperationException -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
+Any -> USimpleNameReferenceExpression (identifier = Any) from KtNameReferenceExpression
+Class -> USimpleNameReferenceExpression (identifier = Class) from KtNameReferenceExpression
+T -> USimpleNameReferenceExpression (identifier = T) from KtNameReferenceExpression
+T -> USimpleNameReferenceExpression (identifier = T) from KtNameReferenceExpression
+UnsupportedOperationException -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
