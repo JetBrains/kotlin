@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirFunctionSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirKotlinPropertySymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirValueParameterSymbol
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
@@ -41,19 +43,12 @@ internal class KtFirCompletionCandidateChecker(
         nameExpression: KtSimpleNameExpression,
         possibleExplicitReceiver: KtExpression?,
     ): Boolean = withValidityAssertion {
-        val functionFits = firSymbolForCandidate.withResolvedFirOfType<KtFirFunctionSymbol, FirSimpleFunction, Boolean> { firFunction ->
-            checkExtension(firFunction, originalFile, nameExpression, possibleExplicitReceiver)
+        require(firSymbolForCandidate is KtFirSymbol<*>)
+        return firSymbolForCandidate.firRef.withFir(phase = FirResolvePhase.BODY_RESOLVE) { declaration ->
+            check(declaration is FirCallableDeclaration<*>)
+            checkExtension(declaration, originalFile, nameExpression, possibleExplicitReceiver)
         }
-        val propertyFits = firSymbolForCandidate.withResolvedFirOfType<KtFirKotlinPropertySymbol, FirProperty, Boolean> { firProperty ->
-            checkExtension(firProperty, originalFile, nameExpression, possibleExplicitReceiver)
-        }
-
-        functionFits ?: propertyFits ?: false
     }
-
-    private inline fun <reified T : KtFirSymbol<F>, F : FirDeclaration, R> KtCallableSymbol.withResolvedFirOfType(
-        noinline action: (F) -> R,
-    ): R? = this.safeAs<T>()?.firRef?.withFir(phase = FirResolvePhase.BODY_RESOLVE, action)
 
     private fun checkExtension(
         candidateSymbol: FirCallableDeclaration<*>,
