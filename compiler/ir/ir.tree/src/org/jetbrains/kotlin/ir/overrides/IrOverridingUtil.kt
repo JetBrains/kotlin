@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.collectAndFilterRealOverrides
+import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.isReal
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo
@@ -36,6 +37,27 @@ abstract class FakeOverrideBuilderStrategy {
 
     protected abstract fun linkFunctionFakeOverride(declaration: IrFakeOverrideFunction)
     protected abstract fun linkPropertyFakeOverride(declaration: IrFakeOverrideProperty)
+}
+
+private fun IrOverridableMember.isPrivateToThisModule(thisClass: IrClass, memberClass: IrClass): Boolean {
+    if (visibility != DescriptorVisibilities.INTERNAL) return false
+    val thisModule = thisClass.fileOrNull?.module
+    val memberModule = memberClass.fileOrNull?.module
+    if (thisModule == memberModule) return false
+
+    //   Note: On WASM backend there is possible if `thisClass` is from `IrExternalPackageFragment` which module is null
+
+    if (thisModule == null || memberModule == null) return false
+
+    return !isInFriendModules(thisModule, memberModule)
+}
+
+@Suppress("UNUSED_PARAMETER")
+private fun isInFriendModules(thisModule: IrModuleFragment, friendModule: IrModuleFragment): Boolean {
+    // TODO: check if [friendModule] is a friend of [thisModule]
+    // See: KT-47192
+
+    return false
 }
 
 fun buildFakeOverrideMember(superType: IrType, member: IrOverridableMember, clazz: IrClass): IrOverridableMember {
@@ -62,6 +84,8 @@ fun buildFakeOverrideMember(superType: IrType, member: IrOverridableMember, claz
     val copier = DeepCopyIrTreeWithSymbolsForFakeOverrides(substitutionMap)
     val deepCopyFakeOverride = copier.copy(member, clazz) as IrOverridableMember
     deepCopyFakeOverride.parent = clazz
+    if (deepCopyFakeOverride.isPrivateToThisModule(clazz, classifier.owner))
+        deepCopyFakeOverride.visibility = DescriptorVisibilities.INVISIBLE_FAKE
 
     return deepCopyFakeOverride
 }
@@ -120,9 +144,9 @@ class IrOverridingUtil(
             superClass.declarations
                 .filter { it.isOverridableMemberOrAccessor() }
                 .map {
-                    val overridenMember = it as IrOverridableMember
-                    val fakeOverride = fakeOverrideBuilder.fakeOverrideMember(superType, overridenMember, clazz)
-                    originals[fakeOverride] = overridenMember
+                    val overriddenMember = it as IrOverridableMember
+                    val fakeOverride = fakeOverrideBuilder.fakeOverrideMember(superType, overriddenMember, clazz)
+                    originals[fakeOverride] = overriddenMember
                     originalSuperTypes[fakeOverride] = superType
                     fakeOverride
                 }
@@ -250,7 +274,7 @@ class IrOverridingUtil(
 
     private fun filterVisibleFakeOverrides(toFilter: Collection<IrOverridableMember>): Collection<IrOverridableMember> {
         return toFilter.filter { member: IrOverridableMember ->
-            !DescriptorVisibilities.isPrivate(member.visibility)
+            !DescriptorVisibilities.isPrivate(member.visibility) && member.visibility != DescriptorVisibilities.INVISIBLE_FAKE
         }
     }
 
