@@ -13,4 +13,4 @@ import org.junit.jupiter.api.Tag
 @Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 @Tag("SimpleKGP")
-annotation class SimpleGradlePluginPTests
+annotation class SimpleGradlePluginTests
