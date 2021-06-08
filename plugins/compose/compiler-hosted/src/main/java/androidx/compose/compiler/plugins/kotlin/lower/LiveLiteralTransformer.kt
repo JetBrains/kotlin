@@ -195,10 +195,10 @@ open class LiveLiteralTransformer(
     private var liveLiteralsEnabledSymbol: IrSimpleFunctionSymbol? = null
     private var currentFile: IrFile? = null
 
-    private fun irGetLiveLiteralsClass(): IrExpression {
+    private fun irGetLiveLiteralsClass(startOffset: Int, endOffset: Int): IrExpression {
         return IrGetObjectValueImpl(
-            startOffset = UNDEFINED_OFFSET,
-            endOffset = UNDEFINED_OFFSET,
+            startOffset = startOffset,
+            endOffset = endOffset,
             type = liveLiteralsClass!!.defaultType,
             symbol = liveLiteralsClass!!.symbol
         )
@@ -449,7 +449,7 @@ open class LiveLiteralTransformer(
             getter.symbol.owner.typeParameters.size,
             getter.symbol.owner.valueParameters.size
         ).apply {
-            dispatchReceiver = irGetLiveLiteralsClass()
+            dispatchReceiver = irGetLiveLiteralsClass(expression.startOffset, expression.endOffset)
         }
     }
 
