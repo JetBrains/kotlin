@@ -23,4 +23,6 @@ import com.intellij.psi.PsiElement
  */
 interface HLApplicatorInput {
     fun isValidFor(psi: PsiElement): Boolean = true
+
+    companion object Empty : HLApplicatorInput
 }
