@@ -1621,6 +1621,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/intentions/addPropertyAccessors/both"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
             }
 
+            @TestMetadata("caretNotOnName.kt")
+            public void testCaretNotOnName() throws Exception {
+                runTest("idea/testData/intentions/addPropertyAccessors/both/caretNotOnName.kt");
+            }
+
             @TestMetadata("delegate.kt")
             public void testDelegate() throws Exception {
                 runTest("idea/testData/intentions/addPropertyAccessors/both/delegate.kt");
@@ -1697,6 +1702,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
             public void testAllFilesPresentInGetter() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/intentions/addPropertyAccessors/getter"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
+            }
+
+            @TestMetadata("caretNotOnName.kt")
+            public void testCaretNotOnName() throws Exception {
+                runTest("idea/testData/intentions/addPropertyAccessors/getter/caretNotOnName.kt");
             }
 
             @TestMetadata("const.kt")
@@ -1780,6 +1790,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
             public void testAllFilesPresentInSetter() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/intentions/addPropertyAccessors/setter"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
+            }
+
+            @TestMetadata("caretNotOnName.kt")
+            public void testCaretNotOnName() throws Exception {
+                runTest("idea/testData/intentions/addPropertyAccessors/setter/caretNotOnName.kt");
             }
 
             @TestMetadata("delegate.kt")
