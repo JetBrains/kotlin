@@ -26,10 +26,10 @@ import org.jetbrains.uast.UQualifiedReferenceExpression
 import org.jetbrains.uast.kotlin.internal.getResolveResultVariants
 
 class KotlinUSafeQualifiedExpression(
-        override val sourcePsi: KtSafeQualifiedExpression,
-        givenParent: UElement?
+    override val sourcePsi: KtSafeQualifiedExpression,
+    givenParent: UElement?
 ) : KotlinAbstractUExpression(givenParent), UQualifiedReferenceExpression, UMultiResolvable,
-        KotlinUElementWithType, KotlinEvaluatableUElement {
+    KotlinUElementWithType, KotlinEvaluatableUElement {
     override val receiver by lz { KotlinConverter.convertOrEmpty(sourcePsi.receiverExpression, this) }
     override val selector by lz { KotlinConverter.convertOrEmpty(sourcePsi.selectorExpression, this) }
     override val accessType = KotlinQualifiedExpressionAccessTypes.SAFE
@@ -38,5 +38,7 @@ class KotlinUSafeQualifiedExpression(
         get() = (resolve() as? PsiNamedElement)?.name
 
     override fun resolve(): PsiElement? = sourcePsi.selectorExpression?.let { baseResolveProviderService.resolveToDeclaration(it) }
-    override fun multiResolve(): Iterable<ResolveResult> = getResolveResultVariants(sourcePsi.selectorExpression)
+
+    override fun multiResolve(): Iterable<ResolveResult> =
+        getResolveResultVariants(baseResolveProviderService, sourcePsi.selectorExpression)
 }
