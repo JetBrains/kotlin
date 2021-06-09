@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.idea.completion.contributors.*
 import org.jetbrains.kotlin.idea.completion.contributors.FirAnnotationCompletionContributor
 import org.jetbrains.kotlin.idea.completion.contributors.FirCallableCompletionContributor
 import org.jetbrains.kotlin.idea.completion.contributors.FirClassifierCompletionContributor
-import org.jetbrains.kotlin.idea.completion.contributors.FirKeywordCompletionContributor
 import org.jetbrains.kotlin.idea.completion.contributors.complete
 import org.jetbrains.kotlin.idea.completion.weighers.Weighers
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.originalKtFile
@@ -78,6 +77,7 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
         positionContext: FirRawPositionCompletionContext,
     ) {
         val keywordContributor = FirKeywordCompletionContributor(basicContext)
+        val classReferenceContributor = FirClassReferenceCompletionContributor(basicContext)
         val callableContributor = FirCallableCompletionContributor(basicContext)
         val infixCallableContributor = FirInfixCallableCompletionContributor(basicContext)
         val callableReferenceContributor = FirCallableReferenceCompletionContributor(basicContext)
@@ -141,6 +141,7 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
             }
 
             is FirCallableReferencePositionContext -> {
+                complete(classReferenceContributor, positionContext)
                 complete(callableReferenceContributor, positionContext)
                 complete(classifierReferenceContributor, positionContext)
             }
