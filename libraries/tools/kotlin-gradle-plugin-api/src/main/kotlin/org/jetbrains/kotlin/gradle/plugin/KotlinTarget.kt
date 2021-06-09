@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 interface KotlinTargetComponent : SoftwareComponent {
     val target: KotlinTarget
     val publishable: Boolean
+    val publishableOnCurrentHost: Boolean
     val defaultArtifactId: String
     val sourcesArtifacts: Set<PublishArtifact>
 }

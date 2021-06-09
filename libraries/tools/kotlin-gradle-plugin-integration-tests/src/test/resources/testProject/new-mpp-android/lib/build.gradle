@@ -75,8 +75,8 @@ kotlin {
                     attribute(Attribute.of("com.example.compilation", String), compilationName)
                 }
             }
+            publishAllLibraryVariants()
         }
-
         fromPreset(presets.jvm, 'jvmLib')
         fromPreset(presets.js, 'jsLib')
     }

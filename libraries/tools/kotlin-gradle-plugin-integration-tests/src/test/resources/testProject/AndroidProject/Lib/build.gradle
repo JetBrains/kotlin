@@ -20,12 +20,8 @@ android {
 
     flavorDimensions "myFlavor"
     productFlavors {
-        flavor1 {
-            dimension "myFlavor"
-        }
-        flavor2 {
-            dimension "myFlavor"
-        }
+        flavor1 { dimension "myFlavor" }
+        flavor2 { dimension "myFlavor" }
     }
 
     publishNonDefault true

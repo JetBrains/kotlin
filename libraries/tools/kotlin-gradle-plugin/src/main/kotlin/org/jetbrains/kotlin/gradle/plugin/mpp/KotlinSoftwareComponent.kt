@@ -38,7 +38,13 @@ abstract class KotlinSoftwareComponent(
 
     override fun getVariants(): Set<SoftwareComponent> = kotlinTargets
         .filter { target -> target !is KotlinMetadataTarget }
-        .flatMap { it.components }.toSet()
+        .flatMap { target ->
+            val targetPublishableComponentNames =
+                (target as? AbstractKotlinTarget)?.kotlinComponents?.mapNotNullTo(mutableSetOf()) { component ->
+                    component.name.takeIf { component.publishable }
+                }
+            target.components.filter { targetPublishableComponentNames?.contains(it.name) ?: true }
+        }.toSet()
 
     private val _usages: Set<UsageContext> by lazy {
         val metadataTarget = project.multiplatformExtension.metadata()

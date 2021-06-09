@@ -132,14 +132,13 @@ open class KotlinAndroid36GradleIT : KotlinAndroid34GradleIT() {
             }
         }
 
-        // By default, no Android variant should be published in 1.3.20:
         val groupDir = "lib/build/repo/com/example/"
         build("publish") {
             assertSuccessful()
             assertFileExists(groupDir + "lib-jvmlib")
             assertFileExists(groupDir + "lib-jslib")
-            assertNoSuchFile(groupDir + "lib-androidlib")
-            assertNoSuchFile(groupDir + "lib-androidlib-debug")
+            assertFileExists(groupDir + "lib-androidlib")
+            assertFileExists(groupDir + "lib-androidlib-debug")
             projectDir.resolve(groupDir).deleteRecursively()
         }
 

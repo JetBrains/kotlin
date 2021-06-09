@@ -69,7 +69,9 @@ open class KotlinVariant(
 
     override fun getName(): String = componentName ?: producingCompilation.target.targetName
 
-    override var publishable: Boolean = target.publishable
+    override var publishable: Boolean = true
+    override val publishableOnCurrentHost: Boolean
+        get() = publishable && target.publishable
 
     override var sourcesArtifacts: Set<PublishArtifact> = emptySet()
         internal set
@@ -103,12 +105,15 @@ class JointAndroidKotlinTargetComponent(
     override val sourcesArtifacts: Set<PublishArtifact>
 ) : KotlinTargetComponentWithCoordinatesAndPublication, SoftwareComponentInternal {
 
-    override fun getUsages(): Set<KotlinUsageContext> = nestedVariants.flatMap { it.usages }.toSet()
+    override fun getUsages(): Set<KotlinUsageContext> = nestedVariants.filter { it.publishable }.flatMap { it.usages }.toSet()
 
     override fun getName(): String = lowerCamelCaseName(target.targetName, *flavorNames.toTypedArray())
 
     override val publishable: Boolean
-        get() = target.publishable
+        get() = nestedVariants.any { it.publishable }
+
+    override val publishableOnCurrentHost: Boolean
+        get() = publishable
 
     override val defaultArtifactId: String =
         dashSeparatedName(

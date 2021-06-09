@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import com.android.build.gradle.api.BaseVariant
 import org.gradle.api.InvalidUserDataException
+import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
+import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.Usage.JAVA_RUNTIME_JARS
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
@@ -126,7 +128,12 @@ open class KotlinAndroidTarget(
                 createKotlinVariant(
                     lowerCamelCaseName(compilation.target.name, *flavorGroupNameParts.toTypedArray()),
                     compilation,
-                    createAndroidUsageContexts(androidVariant, compilation, artifactClassifier)
+                    createAndroidUsageContexts(
+                        androidVariant,
+                        compilation,
+                        artifactClassifier,
+                        publishableVariants.filter(::isVariantPublished).map(::getBuildTypeName).distinct().size == 1
+                    )
                 ).apply {
                     publishable = isVariantPublished(androidVariant)
                     sourcesArtifacts = setOf(
@@ -154,20 +161,21 @@ open class KotlinAndroidTarget(
             if (publishLibraryVariantsGroupedByFlavor) {
                 JointAndroidKotlinTargetComponent(
                     target = this@KotlinAndroidTarget,
-                    nestedVariants = nestedVariants.filter { it.publishable }.toSet(),
+                    nestedVariants = nestedVariants,
                     flavorNames = flavorGroupNameParts,
                     sourcesArtifacts = nestedVariants.filter { it.publishable }.flatMap { it.sourcesArtifacts }.toSet()
                 )
             } else {
                 nestedVariants.single()
-            } as KotlinTargetComponent
+            } as KotlinTargetComponent // Type inference corner case or bug? this cast in each branch is redundant but required here
         }.toSet()
     }
 
     private fun AbstractAndroidProjectHandler.createAndroidUsageContexts(
         variant: BaseVariant,
         compilation: KotlinCompilation<*>,
-        artifactClassifier: String?
+        artifactClassifier: String?,
+        isSingleBuildType: Boolean
     ): Set<DefaultKotlinUsageContext> {
         val variantName = getVariantName(variant)
         val outputTaskOrProvider = getLibraryOutputTask(variant) ?: return emptySet()
@@ -192,12 +200,42 @@ open class KotlinAndroidTarget(
             apiElementsConfigurationName to javaApiUsageForMavenScoping(),
             runtimeElementsConfigurationName to JAVA_RUNTIME_JARS
         ).mapTo(mutableSetOf()) { (dependencyConfigurationName, usageName) ->
+            val configuration = project.configurations.getByName(dependencyConfigurationName)
             DefaultKotlinUsageContext(
                 compilation,
                 project.usageByName(usageName),
                 dependencyConfigurationName,
-                overrideConfigurationArtifacts = setOf(artifact)
+                overrideConfigurationArtifacts = setOf(artifact),
+                overrideConfigurationAttributes = HierarchyAttributeContainer(configuration.attributes) {
+                    val valueString = run {
+                        val value = configuration.attributes.getAttribute(it)
+                        (value as? Named)?.name ?: value.toString()
+                    }
+                    filterOutAndroidVariantAttribute(it) && filterOutAndroidBuildTypeAttribute(it, valueString, isSingleBuildType)
+                }
             )
         }
+    }
+
+    /** We filter this variant out as it is never requested on the consumer side, while keeping it leads to ambiguity between Android and
+     * JVM variants due to non-nesting sets of unmatched attributes. */
+    private fun filterOutAndroidVariantAttribute(
+        attribute: Attribute<*>
+    ): Boolean =
+        attribute.name != "com.android.build.gradle.internal.attributes.VariantAttr" &&
+                attribute.name != "com.android.build.api.attributes.VariantAttr"
+
+    private fun filterOutAndroidBuildTypeAttribute(
+        it: Attribute<*>,
+        valueString: String,
+        isSinglePublishedVariant: Boolean
+    ) = when {
+        PropertiesProvider(project).keepAndroidBuildTypeAttribute -> true
+        it.name != "com.android.build.api.attributes.BuildTypeAttr" -> true
+
+        // then the name is "com.android.build.api.attributes.BuildTypeAttr", so we omit it if there's just the single variant and always for the release one:
+        valueString == "release" -> false
+        isSinglePublishedVariant -> false
+        else -> true
     }
 }

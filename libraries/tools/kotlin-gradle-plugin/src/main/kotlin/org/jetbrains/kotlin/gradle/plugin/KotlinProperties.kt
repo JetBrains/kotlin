@@ -134,6 +134,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val setJvmTargetFromAndroidCompileOptions: Boolean?
         get() = booleanProperty("kotlin.setJvmTargetFromAndroidCompileOptions")
 
+    val keepAndroidBuildTypeAttribute: Boolean
+        get() = booleanProperty("kotlin.android.buildTypeAttribute.keep") ?: false
+
     val enableGranularSourceSetsMetadata: Boolean?
         get() = booleanProperty("kotlin.mpp.enableGranularSourceSetsMetadata")
 
