@@ -20,7 +20,7 @@ mm::ThreadRegistry::Node* mm::ThreadRegistry::RegisterCurrentThread() noexcept {
     auto* threadDataNode = list_.Emplace(pthread_self());
     AssertThreadState(threadDataNode->Get(), ThreadState::kNative);
     Node*& currentDataNode = currentThreadDataNode_;
-    RuntimeAssert(currentDataNode == nullptr, "This thread already had some data assigned to it.");
+    RuntimeAssert(!IsCurrentThreadRegistered(), "This thread already had some data assigned to it.");
     currentDataNode = threadDataNode;
     return threadDataNode;
 }

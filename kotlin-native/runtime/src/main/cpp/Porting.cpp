@@ -192,13 +192,17 @@ struct DestructorRecord {
 
 static void onThreadExitCallback(void* value) {
   DestructorRecord* record = reinterpret_cast<DestructorRecord*>(value);
+  pthread_setspecific(terminationKey, nullptr);
   while (record != nullptr) {
     record->destructor(record->destructorParameter);
     auto next = record->next;
     free(record);
     record = next;
   }
-  pthread_setspecific(terminationKey, nullptr);
+}
+
+bool isOnThreadExitNotSetOrAlreadyStarted() {
+    return terminationKey != 0 && pthread_getspecific(terminationKey) == nullptr;
 }
 
 #if KONAN_LINUX

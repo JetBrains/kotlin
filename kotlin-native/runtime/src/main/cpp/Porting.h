@@ -41,6 +41,7 @@ RUNTIME_NORETURN void exit(int32_t status);
 
 // Thread control.
 void onThreadExit(void (*destructor)(void*), void* destructorParameter);
+bool isOnThreadExitNotSetOrAlreadyStarted();
 
 // String/byte operations.
 // memcpy/memmove/memcmp are not here intentionally, as frequently implemented/optimized
