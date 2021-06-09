@@ -57,7 +57,15 @@ import java.io.File
 import java.util.*
 
 abstract class AbstractKlibTextTestCase : CodegenTestCase() {
+
+    companion object {
+        val SKIP_KLIB_TEST = Regex("""// SKIP_KLIB_TEST""")
+    }
+
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
+
+        if (SKIP_KLIB_TEST.containsMatchIn(wholeFile.readText())) return
+
         setupEnvironment(files)
 
         loadMultiFiles(files)

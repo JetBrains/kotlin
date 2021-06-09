@@ -57,6 +57,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             runTest("compiler/testData/ir/irText/classes/argumentReorderingInDelegatingConstructorCall.kt");
         }
 
+        @TestMetadata("clashingFakeOverrideSignatures.kt")
+        public void testClashingFakeOverrideSignatures() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/clashingFakeOverrideSignatures.kt");
+        }
+
         @TestMetadata("classMembers.kt")
         public void testClassMembers() throws Exception {
             runTest("compiler/testData/ir/irText/classes/classMembers.kt");
@@ -65,6 +70,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
         @TestMetadata("classes.kt")
         public void testClasses() throws Exception {
             runTest("compiler/testData/ir/irText/classes/classes.kt");
+        }
+
+        @TestMetadata("cloneable.kt")
+        public void testCloneable() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/cloneable.kt");
         }
 
         @TestMetadata("companionObject.kt")
