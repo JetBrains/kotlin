@@ -4,5 +4,20 @@
       <className>org.jetbrains.kotlin.idea.fir.intentions.declarations.HLSpecifyExplicitTypeForCallableDeclarationIntention</className>
       <category>Kotlin</category>
     </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.fir.intentions.HLAddGetterAndSetterIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.fir.intentions.HLAddGetterIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.fir.intentions.HLAddSetterIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
   </extensions>
 </idea-plugin>

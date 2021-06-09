@@ -1197,6 +1197,7 @@ fun main(args: Array<String>) {
 
             testClass<AbstractHLIntentionTest> {
                 val pattern = "^([\\w\\-_]+)\\.(kt|kts)$"
+                model("intentions/addPropertyAccessors", pattern = pattern)
                 model("intentions/specifyTypeExplicitly", pattern = pattern)
             }
 

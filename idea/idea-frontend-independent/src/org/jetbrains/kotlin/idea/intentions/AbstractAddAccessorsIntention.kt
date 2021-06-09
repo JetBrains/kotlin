@@ -18,39 +18,44 @@ abstract class AbstractAddAccessorsIntention(
 ) : SelfTargetingRangeIntention<KtProperty>(KtProperty::class.java, createFamilyName(addGetter, addSetter)) {
 
     override fun applyTo(element: KtProperty, editor: Editor?) {
-        val hasInitializer = element.hasInitializer()
-        val psiFactory = KtPsiFactory(element)
-        if (addGetter) {
-            val expression = if (hasInitializer) psiFactory.createExpression("field") else psiFactory.createBlock("TODO()")
-            val getter = psiFactory.createPropertyGetter(expression)
-            val added = if (element.setter != null) {
-                element.addBefore(getter, element.setter)
-            } else {
-                element.add(getter)
+        applyTo(element, editor, addGetter, addSetter)
+    }
+
+    companion object {
+        fun applyTo(element: KtProperty, editor: Editor?, addGetter: Boolean, addSetter: Boolean) {
+            val hasInitializer = element.hasInitializer()
+            val psiFactory = KtPsiFactory(element)
+            if (addGetter) {
+                val expression = if (hasInitializer) psiFactory.createExpression("field") else psiFactory.createBlock("TODO()")
+                val getter = psiFactory.createPropertyGetter(expression)
+                val added = if (element.setter != null) {
+                    element.addBefore(getter, element.setter)
+                } else {
+                    element.add(getter)
+                }
+                if (!hasInitializer) {
+                    (added as? KtPropertyAccessor)?.bodyBlockExpression?.statements?.firstOrNull()?.let {
+                        editor?.caretModel?.moveToOffset(it.startOffset)
+                    }
+                }
             }
-            if (!hasInitializer) {
-                (added as? KtPropertyAccessor)?.bodyBlockExpression?.statements?.firstOrNull()?.let {
-                    editor?.caretModel?.moveToOffset(it.startOffset)
+            if (addSetter) {
+                val expression = if (hasInitializer) psiFactory.createBlock("field = value") else psiFactory.createEmptyBody()
+                val setter = psiFactory.createPropertySetter(expression)
+                val added = element.add(setter)
+                if (!hasInitializer && !addGetter) {
+                    (added as? KtPropertyAccessor)?.bodyBlockExpression?.lBrace?.let {
+                        editor?.caretModel?.moveToOffset(it.startOffset + 1)
+                    }
                 }
             }
         }
-        if (addSetter) {
-            val expression = if (hasInitializer) psiFactory.createBlock("field = value") else psiFactory.createEmptyBody()
-            val setter = psiFactory.createPropertySetter(expression)
-            val added = element.add(setter)
-            if (!hasInitializer && !addGetter) {
-                (added as? KtPropertyAccessor)?.bodyBlockExpression?.lBrace?.let {
-                    editor?.caretModel?.moveToOffset(it.startOffset + 1)
-                }
-            }
+
+        fun createFamilyName(addGetter: Boolean, addSetter: Boolean): () -> String = when {
+            addGetter && addSetter -> KotlinBundle.lazyMessage("text.add.getter.and.setter")
+            addGetter -> KotlinBundle.lazyMessage("text.add.getter")
+            addSetter -> KotlinBundle.lazyMessage("text.add.setter")
+            else -> throw AssertionError("At least one from (addGetter, addSetter) should be true")
         }
     }
 }
-
-private fun createFamilyName(addGetter: Boolean, addSetter: Boolean): () -> String = when {
-    addGetter && addSetter -> KotlinBundle.lazyMessage("text.add.getter.and.setter")
-    addGetter -> KotlinBundle.lazyMessage("text.add.getter")
-    addSetter -> KotlinBundle.lazyMessage("text.add.setter")
-    else -> throw AssertionError("At least one from (addGetter, addSetter) should be true")
-}
-
