@@ -6,8 +6,13 @@
 package org.jetbrains.uast.kotlin.internal
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.uast.kotlin.FirKotlinUastResolveProviderService
 
 class FirIdeaKotlinUastResolveProviderService : FirKotlinUastResolveProviderService {
     override fun isJvmElement(psiElement: PsiElement): Boolean = psiElement.isJvmElement
+
+    override fun getReferenceVariants(ktExpression: KtExpression, nameHint: String): Sequence<PsiElement> {
+        TODO("Not yet implemented")
+    }
 }

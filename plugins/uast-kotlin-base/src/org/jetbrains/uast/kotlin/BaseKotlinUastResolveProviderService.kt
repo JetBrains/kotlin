@@ -19,6 +19,8 @@ interface BaseKotlinUastResolveProviderService {
 
     fun convertParent(uElement: UElement): UElement?
 
+    fun getReferenceVariants(ktExpression: KtExpression, nameHint: String): Sequence<PsiElement>
+
     fun resolveToDeclaration(ktExpression: KtExpression): PsiElement?
 
     fun resolveToType(ktTypeReference: KtTypeReference, source: UElement): PsiType?

@@ -25,8 +25,8 @@ import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.internal.getResolveResultVariants
 
 class KotlinUCallableReferenceExpression(
-        override val sourcePsi: KtCallableReferenceExpression,
-        givenParent: UElement?
+    override val sourcePsi: KtCallableReferenceExpression,
+    givenParent: UElement?
 ) : KotlinAbstractUExpression(givenParent), UCallableReferenceExpression, UMultiResolvable, KotlinUElementWithType {
     override val qualifierExpression: UExpression?
         get() {
@@ -48,6 +48,7 @@ class KotlinUCallableReferenceExpression(
 
     override fun resolve(): PsiElement? = baseResolveProviderService.resolveToDeclaration(sourcePsi.callableReference)
 
-    override fun multiResolve(): Iterable<ResolveResult> = getResolveResultVariants(sourcePsi.callableReference)
+    override fun multiResolve(): Iterable<ResolveResult> =
+        getResolveResultVariants(baseResolveProviderService, sourcePsi.callableReference)
 
 }

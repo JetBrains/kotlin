@@ -6,9 +6,14 @@
 package org.jetbrains.uast.kotlin.internal
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.uast.kotlin.FirKotlinUastResolveProviderService
 
 class FirCliKotlinUastResolveProviderService : FirKotlinUastResolveProviderService {
     // Currently, UAST CLI is used by Android Lint, i.e., everything is a JVM element.
     override fun isJvmElement(psiElement: PsiElement): Boolean = true
+
+    override fun getReferenceVariants(ktExpression: KtExpression, nameHint: String): Sequence<PsiElement> {
+        return emptySequence() // Not supported (as per the counterpart [CliKotlinUastResolveProviderService])
+    }
 }
