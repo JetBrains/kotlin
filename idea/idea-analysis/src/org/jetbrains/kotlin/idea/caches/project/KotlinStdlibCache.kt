@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.caches.project
 
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.vfs.VirtualFile
@@ -112,16 +113,16 @@ class KotlinStdlibCacheImpl(val project: Project) : KotlinStdlibCache {
 
                 // bfs
                 while (stack.isNotEmpty()) {
+                    ProgressManager.checkCanceled()
+
                     val poll = stack.poll()
                     if (!checkedLibraryInfo.add(poll)) continue
 
-                    val dependencies = poll.dependencies().filter { !checkedLibraryInfo.contains(it) }
-                    dependencies
-                        .filterIsInstance<LibraryInfo>()
-                        .firstOrNull { isStdlib(it) }
-                        ?.let { return@run it }
-
-                    stack += dependencies
+                    stack += poll.dependencies().also { dependencies ->
+                        dependencies
+                            .firstOrNull { it is LibraryInfo && isStdlib(it) }
+                            ?.let { return@run it as LibraryInfo }
+                    }
                 }
                 null
             }
