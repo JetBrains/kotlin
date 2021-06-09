@@ -7,5 +7,5 @@ context(T)
 fun <T> T.f(t: B<T>) {}
 
 fun Int.main(a: A, b: B<String>) {
-    a.f(<!TYPE_MISMATCH, TYPE_MISMATCH!>b<!>)
+    a.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>f<!>(b)
 }
