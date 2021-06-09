@@ -63,6 +63,8 @@ FILE fqName:<root> fileName:/delegatedMembers.kt
             receiver: GET_VAR '<this>: <root>.Test<TT of <root>.Test> declared in <root>.Test.foo' type=<root>.Test<TT of <root>.Test> origin=null
           x: GET_VAR 'x: kotlin.Int declared in <root>.Test.foo' type=kotlin.Int origin=null
     PROPERTY DELEGATED_MEMBER name:bar visibility:public modality:OPEN [val]
+      overridden:
+        public abstract bar: kotlin.Int [val]
       FUN DELEGATED_MEMBER name:<get-bar> visibility:public modality:OPEN <> ($this:<root>.Test<TT of <root>.Test>) returnType:kotlin.Int
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:bar visibility:public modality:OPEN [val]
         overridden:

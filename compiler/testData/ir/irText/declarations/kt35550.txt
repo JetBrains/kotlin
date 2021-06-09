@@ -34,6 +34,8 @@ FILE fqName:<root> fileName:/kt35550.kt
       EXPRESSION_BODY
         GET_VAR 'i: <root>.I declared in <root>.A.<init>' type=<root>.I origin=null
     PROPERTY DELEGATED_MEMBER name:id visibility:public modality:OPEN [val]
+      overridden:
+        public open id: T of <root>.I.<get-id> [val]
       FUN DELEGATED_MEMBER name:<get-id> visibility:public modality:OPEN <T> ($this:<root>.A, $receiver:T of <root>.A.<get-id>) returnType:T of <root>.A.<get-id>
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:id visibility:public modality:OPEN [val]
         overridden:

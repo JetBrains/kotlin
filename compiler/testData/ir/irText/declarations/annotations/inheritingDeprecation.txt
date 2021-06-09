@@ -44,6 +44,8 @@ FILE fqName:<root> fileName:/inheritingDeprecation.kt
       EXPRESSION_BODY
         GET_VAR 'foo: <root>.IFoo declared in <root>.Delegated.<init>' type=<root>.IFoo origin=null
     PROPERTY DELEGATED_MEMBER name:extProp visibility:public modality:OPEN [val]
+      overridden:
+        public open extProp: kotlin.String [val]
       FUN DELEGATED_MEMBER name:<get-extProp> visibility:public modality:OPEN <> ($this:<root>.Delegated, $receiver:kotlin.String) returnType:kotlin.String
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:extProp visibility:public modality:OPEN [val]
         overridden:
@@ -57,6 +59,8 @@ FILE fqName:<root> fileName:/inheritingDeprecation.kt
                 receiver: GET_VAR '<this>: <root>.Delegated declared in <root>.Delegated.<get-extProp>' type=<root>.Delegated origin=null
               $receiver: GET_VAR '<this>: kotlin.String declared in <root>.Delegated.<get-extProp>' type=kotlin.String origin=null
     PROPERTY DELEGATED_MEMBER name:prop visibility:public modality:OPEN [val]
+      overridden:
+        public open prop: kotlin.String [val]
       FUN DELEGATED_MEMBER name:<get-prop> visibility:public modality:OPEN <> ($this:<root>.Delegated) returnType:kotlin.String
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:prop visibility:public modality:OPEN [val]
         overridden:

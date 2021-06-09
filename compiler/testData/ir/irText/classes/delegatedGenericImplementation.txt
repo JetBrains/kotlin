@@ -64,6 +64,8 @@ FILE fqName:<root> fileName:/delegatedGenericImplementation.kt
           a: GET_VAR 'a: E of <root>.Test1 declared in <root>.Test1.foo' type=E of <root>.Test1 origin=null
           b: GET_VAR 'b: B of <root>.Test1.foo declared in <root>.Test1.foo' type=B of <root>.Test1.foo origin=null
     PROPERTY DELEGATED_MEMBER name:id visibility:public modality:OPEN [val]
+      overridden:
+        public abstract id: kotlin.collections.Map<A of <root>.IBase, C of <root>.IBase.<get-id>>? [val]
       FUN DELEGATED_MEMBER name:<get-id> visibility:public modality:OPEN <C> ($this:<root>.Test1<E of <root>.Test1>, $receiver:C of <root>.Test1.<get-id>) returnType:kotlin.collections.Map<E of <root>.Test1, C of <root>.Test1.<get-id>>?
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:id visibility:public modality:OPEN [val]
         overridden:
@@ -79,6 +81,8 @@ FILE fqName:<root> fileName:/delegatedGenericImplementation.kt
                 receiver: GET_VAR '<this>: <root>.Test1<E of <root>.Test1> declared in <root>.Test1.<get-id>' type=<root>.Test1<E of <root>.Test1> origin=null
               $receiver: GET_VAR '<this>: C of <root>.Test1.<get-id> declared in <root>.Test1.<get-id>' type=C of <root>.Test1.<get-id> origin=null
     PROPERTY DELEGATED_MEMBER name:x visibility:public modality:OPEN [var]
+      overridden:
+        public abstract x: D of <root>.IBase.<get-x>? [var]
       FUN DELEGATED_MEMBER name:<get-x> visibility:public modality:OPEN <D> ($this:<root>.Test1<E of <root>.Test1>, $receiver:kotlin.collections.List<D of <root>.Test1.<get-x>>) returnType:D of <root>.Test1.<get-x>?
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:x visibility:public modality:OPEN [var]
         overridden:
@@ -165,6 +169,8 @@ FILE fqName:<root> fileName:/delegatedGenericImplementation.kt
           a: GET_VAR 'a: kotlin.String declared in <root>.Test2.foo' type=kotlin.String origin=null
           b: GET_VAR 'b: B of <root>.Test2.foo declared in <root>.Test2.foo' type=B of <root>.Test2.foo origin=null
     PROPERTY DELEGATED_MEMBER name:id visibility:public modality:OPEN [val]
+      overridden:
+        public abstract id: kotlin.collections.Map<A of <root>.IBase, C of <root>.IBase.<get-id>>? [val]
       FUN DELEGATED_MEMBER name:<get-id> visibility:public modality:OPEN <C> ($this:<root>.Test2, $receiver:C of <root>.Test2.<get-id>) returnType:kotlin.collections.Map<kotlin.String, C of <root>.Test2.<get-id>>?
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:id visibility:public modality:OPEN [val]
         overridden:
@@ -180,6 +186,8 @@ FILE fqName:<root> fileName:/delegatedGenericImplementation.kt
                 receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<get-id>' type=<root>.Test2 origin=null
               $receiver: GET_VAR '<this>: C of <root>.Test2.<get-id> declared in <root>.Test2.<get-id>' type=C of <root>.Test2.<get-id> origin=null
     PROPERTY DELEGATED_MEMBER name:x visibility:public modality:OPEN [var]
+      overridden:
+        public abstract x: D of <root>.IBase.<get-x>? [var]
       FUN DELEGATED_MEMBER name:<get-x> visibility:public modality:OPEN <D> ($this:<root>.Test2, $receiver:kotlin.collections.List<D of <root>.Test2.<get-x>>) returnType:D of <root>.Test2.<get-x>?
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:x visibility:public modality:OPEN [var]
         overridden:

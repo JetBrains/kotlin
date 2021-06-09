@@ -128,6 +128,8 @@ FILE fqName:<root> fileName:/Fir2IrClassifierStorage.kt
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:components type:<root>.Fir2IrComponents visibility:private [final]' type=<root>.Fir2IrComponents origin=null
               receiver: GET_VAR '<this>: <root>.Fir2IrClassifierStorage declared in <root>.Fir2IrClassifierStorage.<get-components>' type=<root>.Fir2IrClassifierStorage origin=null
     PROPERTY DELEGATED_MEMBER name:classifierStorage visibility:public modality:OPEN [val]
+      overridden:
+        public abstract classifierStorage: <root>.Fir2IrClassifierStorage [val]
       FUN DELEGATED_MEMBER name:<get-classifierStorage> visibility:public modality:OPEN <> ($this:<root>.Fir2IrClassifierStorage) returnType:<root>.Fir2IrClassifierStorage
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:classifierStorage visibility:public modality:OPEN [val]
         overridden:
@@ -139,6 +141,8 @@ FILE fqName:<root> fileName:/Fir2IrClassifierStorage.kt
               $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:components type:<root>.Fir2IrComponents visibility:private [final]' type=<root>.Fir2IrComponents origin=null
                 receiver: GET_VAR '<this>: <root>.Fir2IrClassifierStorage declared in <root>.Fir2IrClassifierStorage.<get-classifierStorage>' type=<root>.Fir2IrClassifierStorage origin=null
     PROPERTY DELEGATED_MEMBER name:session visibility:public modality:OPEN [val]
+      overridden:
+        public abstract session: <root>.FirSession [val]
       FUN DELEGATED_MEMBER name:<get-session> visibility:public modality:OPEN <> ($this:<root>.Fir2IrClassifierStorage) returnType:<root>.FirSession
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:session visibility:public modality:OPEN [val]
         overridden:
