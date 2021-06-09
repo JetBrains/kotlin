@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.idea.api.applicator.applicator
 import org.jetbrains.kotlin.idea.fir.api.AbstractHLIntention
 import org.jetbrains.kotlin.idea.fir.api.applicator.HLApplicabilityRange
 import org.jetbrains.kotlin.idea.fir.api.applicator.HLApplicatorInputProvider
+import org.jetbrains.kotlin.idea.fir.api.applicator.applicabilityTarget
 import org.jetbrains.kotlin.idea.fir.api.applicator.inputProvider
-import org.jetbrains.kotlin.idea.fir.applicators.ApplicabilityRanges
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.idea.intentions.AbstractAddAccessorsIntention
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -26,8 +26,9 @@ import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 
 abstract class HLAddAccessorIntention(private val addGetter: Boolean, private val addSetter: Boolean) :
     AbstractHLIntention<KtProperty, HLApplicatorInput.Empty>(KtProperty::class) {
-    // TODO: Copy and test range from AddAccessorIntentions.applicabilityRange
-    override val applicabilityRange: HLApplicabilityRange<KtProperty> = ApplicabilityRanges.SELF
+    override val applicabilityRange: HLApplicabilityRange<KtProperty> = applicabilityTarget { ktProperty ->
+        if (ktProperty.hasInitializer()) ktProperty.nameIdentifier else ktProperty
+    }
 
     override val applicator: HLApplicator<KtProperty, HLApplicatorInput.Empty> = applicator {
         applyTo { ktProperty, _, _, editor ->

@@ -26,6 +26,11 @@ abstract class AbstractHLIntention<PSI : KtElement, INPUT : HLApplicatorInput>(
         if (!applicator.isApplicableByPsi(element, project)) return false
         val ranges = applicabilityRange.getApplicabilityRanges(element)
         if (ranges.isEmpty()) return false
+
+        // An HLApplicabilityRange should be relative to the element, while `caretOffset` is absolute
+        val relativeCaretOffset = caretOffset - element.textRange.startOffset
+        if (ranges.none { it.containsOffset(relativeCaretOffset) }) return false
+
         val input = getInput(element)
         if (input != null && input.isValidFor(element)) {
             setFamilyNameGetter(applicator::getFamilyName)
