@@ -46,6 +46,8 @@ kotlin {
         }
     }
 
+    js('nodeJs')
+
     targets {
         fromPreset(presets.jvm, 'jvm6') {
         	attributes.attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 6)
@@ -61,7 +63,7 @@ kotlin {
                 }
              }
         }
-        fromPreset(presets.js, 'nodeJs')
+
         fromPreset(presets.linuxX64, 'linux64')
 
         configure([linux64]) {

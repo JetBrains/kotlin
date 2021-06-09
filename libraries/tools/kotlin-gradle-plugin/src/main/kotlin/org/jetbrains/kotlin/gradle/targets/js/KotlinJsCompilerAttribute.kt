@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.gradle.targets.js
 
 import org.gradle.api.Named
-import org.gradle.api.attributes.Attribute
-import org.gradle.api.attributes.AttributesSchema
+import org.gradle.api.attributes.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import java.io.Serializable
 
 // For Gradle attributes
@@ -15,6 +16,8 @@ import java.io.Serializable
 enum class KotlinJsCompilerAttribute : Named, Serializable {
     legacy,
     ir,
+
+    @Deprecated("This value is not used in Gradle plugin. You don't need to use it. It will be removed in next major.")
     both;
 
     override fun getName(): String =

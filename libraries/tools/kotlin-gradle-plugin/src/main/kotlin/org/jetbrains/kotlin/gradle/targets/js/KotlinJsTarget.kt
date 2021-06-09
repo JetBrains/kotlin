@@ -52,7 +52,12 @@ constructor(
         }
 
     internal val commonFakeApiElementsConfigurationName: String
-        get() = disambiguateName("commonFakeApiElements")
+        get() = lowerCamelCaseName(
+            irTarget?.let {
+                this.disambiguationClassifierInPlatform
+            } ?: disambiguationClassifier,
+            "commonFakeApiElements"
+        )
 
     val disambiguationClassifierInPlatform: String?
         get() = if (irTarget != null) {

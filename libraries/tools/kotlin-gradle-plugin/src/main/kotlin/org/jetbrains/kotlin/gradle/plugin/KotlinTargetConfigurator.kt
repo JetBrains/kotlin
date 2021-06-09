@@ -59,7 +59,7 @@ interface KotlinTargetConfigurator<KotlinTargetType : KotlinTarget> {
     fun defineConfigurationsForTarget(target: KotlinTargetType)
     fun configureArchivesAndComponent(target: KotlinTargetType)
     fun configureBuild(target: KotlinTargetType)
-    fun configureSourceSet(target: KotlinTarget)
+    fun configureSourceSet(target: KotlinTargetType)
 
     fun configurePlatformSpecificModel(target: KotlinTargetType) = Unit
 }
@@ -105,7 +105,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
         }
     }
 
-    override fun configureSourceSet(target: KotlinTarget) {
+    override fun configureSourceSet(target: KotlinTargetType) {
         val project = target.project
 
         target.compilations.all { compilation ->
@@ -254,7 +254,12 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
         }
     }
 
-    private fun addDependsOnTaskInOtherProjects(project: Project, taskProvider: TaskProvider<*>, useDependedOn: Boolean, configurationName: String) {
+    private fun addDependsOnTaskInOtherProjects(
+        project: Project,
+        taskProvider: TaskProvider<*>,
+        useDependedOn: Boolean,
+        configurationName: String
+    ) {
         val configuration = project.configurations.getByName(configurationName)
         taskProvider.configure { task ->
             task.dependsOn(configuration.getTaskDependencyFromProjectDependency(useDependedOn, taskProvider.name))

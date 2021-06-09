@@ -10,11 +10,13 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
+import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SUFFIX
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.tasks.USING_JS_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.tasks.USING_JS_IR_BACKEND_MESSAGE
 import org.jetbrains.kotlin.gradle.util.*
+import org.junit.Assert
 import org.junit.Assume.assumeFalse
 import org.junit.Test
 import java.io.File
@@ -740,6 +742,73 @@ abstract class AbstractKotlin2JsGradlePluginIT(val irBackend: Boolean) : BaseGra
             )
 
             assertFileExists("app/build/distributions/index.html")
+        }
+    }
+
+    @Test
+    fun testResolveJsProjectDependencyToMetadata() = with(Project("kotlin-js-browser-project")) {
+        setupWorkingDir()
+        gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+        gradleSettingsScript().modify(::transformBuildScriptWithPluginsDsl)
+        gradleProperties().appendText("kotlin.js.compiler=both")
+
+        val compiler = if (irBackend) "IR" else "LEGACY"
+
+        val pathPrefix = "metadataDependency: "
+
+        val appBuild = projectDir.resolve("app/build.gradle.kts")
+        appBuild.modify {
+            it.replace("target {", "js($compiler) {")
+        }
+        appBuild.appendText(
+            "\n" + """
+                kotlin.sourceSets {
+                    val main by getting {
+                        dependencies {
+                            // add these dependencies to check that they are resolved to metadata
+                                api(project(":base"))
+                                implementation(project(":base"))
+                                compileOnly(project(":base"))
+                                runtimeOnly(project(":base"))
+                            }
+                        }
+                    }
+                    
+                task("printMetadataFiles") {
+                    doFirst {
+                        listOf("api", "implementation", "compileOnly", "runtimeOnly").forEach { kind ->
+                            val configuration = configurations.getByName(kind + "DependenciesMetadata")
+                            configuration.files.forEach { println("$pathPrefix" + configuration.name + "->" + it.name) }
+                        }
+                    }
+                }
+            """.trimIndent()
+        )
+
+        val metadataDependencyRegex = "$pathPrefix(.*?)->(.*)".toRegex()
+
+        build(
+            "printMetadataFiles",
+            options = defaultBuildOptions().copy(jsCompilerType = if (irBackend) KotlinJsCompilerType.IR else KotlinJsCompilerType.LEGACY)
+        ) {
+            assertSuccessful()
+
+            val suffix = if (irBackend) "ir" else "legacy"
+            val ext = if (irBackend) "klib" else "jar"
+
+            val expectedFileName = "base-$suffix.$ext"
+
+            val paths = metadataDependencyRegex
+                .findAll(output).map { it.groupValues[1] to it.groupValues[2] }
+                .filter { (_, f) -> "base" in f }
+                .toSet()
+
+            Assert.assertEquals(
+                listOf("api", "implementation", "compileOnly", "runtimeOnly").map {
+                    "$it$METADATA_CONFIGURATION_NAME_SUFFIX" to expectedFileName
+                }.toSet(),
+                paths
+            )
         }
     }
 

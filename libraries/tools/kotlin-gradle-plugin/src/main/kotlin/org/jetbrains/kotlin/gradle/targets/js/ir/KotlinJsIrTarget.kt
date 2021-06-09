@@ -72,7 +72,13 @@ constructor(
     }
 
     internal val commonFakeApiElementsConfigurationName: String
-        get() = disambiguateName("commonFakeApiElements")
+        get() = lowerCamelCaseName(
+            if (mixedMode)
+                disambiguationClassifierInPlatform
+            else
+                disambiguationClassifier,
+            "commonFakeApiElements"
+        )
 
     val disambiguationClassifierInPlatform: String?
         get() = if (mixedMode) {
