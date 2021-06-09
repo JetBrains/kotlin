@@ -8,11 +8,21 @@ package codegen.enum.isFrozen
 import kotlin.test.*
 import kotlin.native.concurrent.*
 
-enum class Zzz(val zzz: String) {
+enum class Zzz(val zzz: String, var value: Int = 0) {
     Z1("z1"),
     Z2("z2")
 }
 
 @Test fun runTest() {
-    println(Zzz.Z1.isFrozen)
+    if (Platform.memoryModel == MemoryModel.STRICT) {
+        assertTrue(Zzz.Z1.isFrozen)
+        assertFailsWith<InvalidMutabilityException> {
+            Zzz.Z1.value = 42
+        }
+        assertEquals(0, Zzz.Z1.value)
+    } else {
+        assertFalse(Zzz.Z1.isFrozen)
+        Zzz.Z1.value = 42
+        assertEquals(42, Zzz.Z1.value)
+    }
 }

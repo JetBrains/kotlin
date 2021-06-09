@@ -1182,7 +1182,6 @@ task enum_nested(type: KonanLocalTest) {
 }
 
 task enum_isFrozen(type: KonanLocalTest) {
-    goldValue = isExperimentalMM ? "false\n" : "true\n"
     source = "codegen/enum/isFrozen.kt"
 }
 
@@ -1275,6 +1274,10 @@ standaloneTest("objectDeclaration_globalConstants") {
     disabled = (cacheTesting != null) // Cache is not compatible with -opt.
     flags = ["-opt", "-Xopt-in=kotlin.native.internal.InternalForKotlinNative", "-tr"]
     source = "codegen/objectDeclaration/globalConstants.kt"
+}
+
+task object_isFrozen(type: KonanLocalTest) {
+    source = "codegen/objectDeclaration/isFrozen.kt"
 }
 
 task localClass_objectExpressionInProperty(type: KonanLocalTest) {
