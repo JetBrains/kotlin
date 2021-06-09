@@ -215,14 +215,14 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
                 sourceElement,
                 argumentText,
                 severity,
-                FirDiagnosticFactory1(name, severity),
+                FirDiagnosticFactory1(name, severity, SourceElementPositioningStrategy.DEFAULT, PsiElement::class),
                 SourceElementPositioningStrategy.DEFAULT
             )
             is FirLightSourceElement -> FirLightDiagnosticWithParameters1(
                 sourceElement,
                 argumentText,
                 severity,
-                FirDiagnosticFactory1<PsiElement, String>(name, severity),
+                FirDiagnosticFactory1(name, severity, SourceElementPositioningStrategy.DEFAULT, PsiElement::class),
                 SourceElementPositioningStrategy.DEFAULT
             )
         }

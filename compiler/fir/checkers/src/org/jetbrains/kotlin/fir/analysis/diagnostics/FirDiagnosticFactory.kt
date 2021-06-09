@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.fir.FirLightSourceElement
 import org.jetbrains.kotlin.fir.FirPsiSourceElement
 import org.jetbrains.kotlin.fir.FirSourceElement
+import kotlin.reflect.KClass
 
 @RequiresOptIn("Please use DiagnosticReporter.reportOn method if possible")
 annotation class InternalDiagnosticFactoryMethod
@@ -15,6 +16,7 @@ sealed class AbstractFirDiagnosticFactory<D : FirDiagnostic<*>, P : PsiElement>(
     val name: String,
     val severity: Severity,
     val defaultPositioningStrategy: SourceElementPositioningStrategy<P>,
+    val psiType: KClass<*>
 ) {
     abstract val firRenderer: FirDiagnosticRenderer<D>
 }
@@ -22,8 +24,9 @@ sealed class AbstractFirDiagnosticFactory<D : FirDiagnostic<*>, P : PsiElement>(
 class FirDiagnosticFactory0<P : PsiElement>(
     name: String,
     severity: Severity,
-    defaultPositioningStrategy: SourceElementPositioningStrategy<P> = SourceElementPositioningStrategy.DEFAULT,
-) : AbstractFirDiagnosticFactory<FirSimpleDiagnostic<*>, P>(name, severity, defaultPositioningStrategy) {
+    defaultPositioningStrategy: SourceElementPositioningStrategy<P>,
+    psiType: KClass<*>
+) : AbstractFirDiagnosticFactory<FirSimpleDiagnostic<*>, P>(name, severity, defaultPositioningStrategy, psiType) {
     override val firRenderer: FirDiagnosticRenderer<FirSimpleDiagnostic<*>> = SimpleFirDiagnosticRenderer("")
 
     @InternalDiagnosticFactoryMethod
@@ -44,8 +47,9 @@ class FirDiagnosticFactory0<P : PsiElement>(
 class FirDiagnosticFactory1<P : PsiElement, A>(
     name: String,
     severity: Severity,
-    defaultPositioningStrategy: SourceElementPositioningStrategy<P> = SourceElementPositioningStrategy.DEFAULT,
-) : AbstractFirDiagnosticFactory<FirDiagnosticWithParameters1<*, A>, P>(name, severity, defaultPositioningStrategy) {
+    defaultPositioningStrategy: SourceElementPositioningStrategy<P>,
+    psiType: KClass<*>
+) : AbstractFirDiagnosticFactory<FirDiagnosticWithParameters1<*, A>, P>(name, severity, defaultPositioningStrategy, psiType) {
     override val firRenderer: FirDiagnosticRenderer<FirDiagnosticWithParameters1<*, A>> = FirDiagnosticWithParameters1Renderer(
         "{0}",
         FirDiagnosticRenderers.TO_STRING
@@ -76,8 +80,9 @@ class FirDiagnosticFactory1<P : PsiElement, A>(
 class FirDiagnosticFactory2<P : PsiElement, A, B>(
     name: String,
     severity: Severity,
-    defaultPositioningStrategy: SourceElementPositioningStrategy<P> = SourceElementPositioningStrategy.DEFAULT,
-) : AbstractFirDiagnosticFactory<FirDiagnosticWithParameters2<*, A, B>, P>(name, severity, defaultPositioningStrategy) {
+    defaultPositioningStrategy: SourceElementPositioningStrategy<P>,
+    psiType: KClass<*>
+) : AbstractFirDiagnosticFactory<FirDiagnosticWithParameters2<*, A, B>, P>(name, severity, defaultPositioningStrategy, psiType) {
     override val firRenderer: FirDiagnosticRenderer<FirDiagnosticWithParameters2<*, A, B>> = FirDiagnosticWithParameters2Renderer(
         "{0}, {1}",
         FirDiagnosticRenderers.TO_STRING,
@@ -111,8 +116,9 @@ class FirDiagnosticFactory2<P : PsiElement, A, B>(
 class FirDiagnosticFactory3<P : PsiElement, A, B, C>(
     name: String,
     severity: Severity,
-    defaultPositioningStrategy: SourceElementPositioningStrategy<P> = SourceElementPositioningStrategy.DEFAULT,
-) : AbstractFirDiagnosticFactory<FirDiagnosticWithParameters3<*, A, B, C>, P>(name, severity, defaultPositioningStrategy) {
+    defaultPositioningStrategy: SourceElementPositioningStrategy<P>,
+    psiType: KClass<*>
+) : AbstractFirDiagnosticFactory<FirDiagnosticWithParameters3<*, A, B, C>, P>(name, severity, defaultPositioningStrategy, psiType) {
     override val firRenderer: FirDiagnosticRenderer<FirDiagnosticWithParameters3<*, A, B, C>> = FirDiagnosticWithParameters3Renderer(
         "{0}, {1}, {2}",
         FirDiagnosticRenderers.TO_STRING,
@@ -149,8 +155,9 @@ class FirDiagnosticFactory3<P : PsiElement, A, B, C>(
 class FirDiagnosticFactory4<P : PsiElement, A, B, C, D>(
     name: String,
     severity: Severity,
-    defaultPositioningStrategy: SourceElementPositioningStrategy<P> = SourceElementPositioningStrategy.DEFAULT,
-) : AbstractFirDiagnosticFactory<FirDiagnosticWithParameters4<*, A, B, C, D>, P>(name, severity, defaultPositioningStrategy) {
+    defaultPositioningStrategy: SourceElementPositioningStrategy<P>,
+    psiType: KClass<*>
+) : AbstractFirDiagnosticFactory<FirDiagnosticWithParameters4<*, A, B, C, D>, P>(name, severity, defaultPositioningStrategy, psiType) {
     override val firRenderer: FirDiagnosticRenderer<FirDiagnosticWithParameters4<*, A, B, C, D>> = FirDiagnosticWithParameters4Renderer(
         "{0}, {1}, {2}, {3}",
         FirDiagnosticRenderers.TO_STRING,

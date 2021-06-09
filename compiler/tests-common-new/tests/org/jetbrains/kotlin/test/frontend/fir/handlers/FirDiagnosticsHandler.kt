@@ -245,7 +245,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         }
 
         val argumentText = argument()
-        val factory = FirDiagnosticFactory1<PsiElement, String>(name, severity)
+        val factory = FirDiagnosticFactory1<PsiElement, String>(name, severity, SourceElementPositioningStrategy.DEFAULT, PsiElement::class)
         return when (positionedElement) {
             is FirPsiSourceElement<*> -> FirPsiDiagnosticWithParameters1(
                 positionedElement,
