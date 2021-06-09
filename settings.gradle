@@ -332,7 +332,7 @@ if (buildProperties.getOrNull("attachedIntellijVersion") != null) {
 }
 
 if (!buildProperties.getBoolean("disableKotlinPluginModules", false) && buildProperties.getOrNull("attachedIntellijVersion") == null) {
-    logger.info("Old Kotlin plugin modules are disabled")
+    logger.info("Old Kotlin plugin modules are enabled")
     include ":idea:idea-jvm",
             ":idea:idea-maven",
             ":idea:idea-gradle",
@@ -416,6 +416,8 @@ if (!buildProperties.getBoolean("disableKotlinPluginModules", false) && buildPro
     project(':sam-with-receiver-ide-plugin').projectDir = "$rootDir/plugins/sam-with-receiver/sam-with-receiver-ide" as File
     project(':kotlin-scripting-idea').projectDir = "$rootDir/plugins/scripting/scripting-idea" as File
     project(':plugins:android-extensions-ide').projectDir = "$rootDir/plugins/android-extensions/android-extensions-idea" as File
+} else {
+    logger.info("Old Kotlin plugin modules are disabled")
 }
 
 if (buildProperties.includeCidrPlugins) {
