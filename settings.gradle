@@ -329,7 +329,10 @@ if (buildProperties.getOrNull("attachedIntellijVersion") != null) {
             project(projectName).projectDir = it.parentFile
         }
     }
-} else {
+}
+
+if (!buildProperties.getBoolean("disableKotlinPluginModules", false) && buildProperties.getOrNull("attachedIntellijVersion") == null) {
+    logger.info("Old Kotlin plugin modules are disabled")
     include ":idea:idea-jvm",
             ":idea:idea-maven",
             ":idea:idea-gradle",
