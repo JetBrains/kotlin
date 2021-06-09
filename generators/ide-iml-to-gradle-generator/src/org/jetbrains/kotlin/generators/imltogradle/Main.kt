@@ -128,7 +128,9 @@ fun convertJpsLibrary(lib: JpsLibrary, scope: JpsJavaDependencyScope, exported: 
         }
         else -> {
             val dependencyNotation = "\"${mavenRepositoryLibraryDescriptor.mavenId}\""
-            listOf(JpsLikeJarDependency(dependencyNotation, scope, dependencyConfiguration = null, exported = exported))
+            val dependencyConfiguration =
+                "{ isTransitive = false }".takeIf { !mavenRepositoryLibraryDescriptor.isIncludeTransitiveDependencies }
+            listOf(JpsLikeJarDependency(dependencyNotation, scope, dependencyConfiguration, exported = exported))
         }
     }
 }
