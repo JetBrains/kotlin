@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
@@ -26,8 +27,8 @@ object FirSealedSupertypeChecker : FirMemberDeclarationChecker() {
                 checkGlobalDeclaration(declaration, context, reporter)
             }
         } else if (declaration is FirProperty) {
-            val initializer = declaration.initializer.safeAs<FirClass<*>>() ?: return
-            checkLocalDeclaration(initializer, context, reporter)
+            val initializer = declaration.initializer as? FirAnonymousObjectExpression ?: return
+            checkLocalDeclaration(initializer.anonymousObject, context, reporter)
         }
     }
 

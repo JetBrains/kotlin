@@ -309,6 +309,10 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         return controlFlowGraph
     }
 
+    fun exitAnonymousObjectExpression(anonymousObjectExpression: FirAnonymousObjectExpression) {
+        graphBuilder.exitAnonymousObjectExpression(anonymousObjectExpression).mergeIncomingFlow()
+    }
+
     // ----------------------------------- Value parameters (and it's defaults) -----------------------------------
 
     fun enterValueParameter(valueParameter: FirValueParameter) {

@@ -337,7 +337,6 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
         val elementsWithDefaultTypeRef = listOf(
             thisReceiverExpression,
             callableReferenceAccess,
-            anonymousObject,
             qualifiedAccessExpression,
             functionCall,
             anonymousFunction,

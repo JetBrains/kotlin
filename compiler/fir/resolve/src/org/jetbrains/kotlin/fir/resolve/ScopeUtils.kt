@@ -118,9 +118,14 @@ fun FirRegularClass.defaultType(): ConeClassLikeTypeImpl {
 }
 
 fun FirAnonymousObject.defaultType(): ConeClassLikeType {
-    return this.typeRef.coneTypeSafe() ?: ConeClassLikeTypeImpl(
+    return ConeClassLikeTypeImpl(
         symbol.toLookupTag(),
-        emptyArray(),
+        typeParameters.map {
+            ConeTypeParameterTypeImpl(
+                it.symbol.toLookupTag(),
+                isNullable = false
+            )
+        }.toTypedArray(),
         isNullable = false
     )
 }

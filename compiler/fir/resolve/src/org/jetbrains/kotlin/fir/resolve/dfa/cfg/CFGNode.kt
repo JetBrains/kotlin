@@ -251,6 +251,12 @@ class AnonymousObjectExitNode(owner: ControlFlowGraph, override val fir: FirAnon
     }
 }
 
+class AnonymousObjectExpressionExitNode(owner: ControlFlowGraph, override val fir: FirAnonymousObjectExpression, level: Int, id: Int) : CFGNode<FirAnonymousObjectExpression>(owner, level, id) {
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitAnonymousObjectExpressionExitNode(this, data)
+    }
+}
+
 // ----------------------------------- Initialization -----------------------------------
 
 class PartOfClassInitializationNode(owner: ControlFlowGraph, override val fir: FirControlFlowGraphOwner, level: Int, id: Int) : CFGNodeWithCfgOwner<FirControlFlowGraphOwner>(owner, level, id) {

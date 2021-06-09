@@ -38,7 +38,6 @@ internal class FirAnonymousObjectImpl(
     override val declarations: MutableList<FirDeclaration>,
     override val annotations: MutableList<FirAnnotationCall>,
     override val scopeProvider: FirScopeProvider,
-    override var typeRef: FirTypeRef,
     override val symbol: FirAnonymousObjectSymbol,
 ) : FirAnonymousObject() {
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
@@ -53,7 +52,6 @@ internal class FirAnonymousObjectImpl(
         declarations.forEach { it.accept(visitor, data) }
         annotations.forEach { it.accept(visitor, data) }
         controlFlowGraphReference?.accept(visitor, data)
-        typeRef.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAnonymousObjectImpl {
@@ -62,7 +60,6 @@ internal class FirAnonymousObjectImpl(
         transformDeclarations(transformer, data)
         transformAnnotations(transformer, data)
         controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
-        typeRef = typeRef.transform(transformer, data)
         return this
     }
 
@@ -97,9 +94,5 @@ internal class FirAnonymousObjectImpl(
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
         controlFlowGraphReference = newControlFlowGraphReference
-    }
-
-    override fun replaceTypeRef(newTypeRef: FirTypeRef) {
-        typeRef = newTypeRef
     }
 }

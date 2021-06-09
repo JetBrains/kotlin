@@ -546,72 +546,75 @@ class DeclarationsConverter(
      */
     fun convertObjectLiteral(objectLiteral: LighterASTNode): FirElement {
         return withChildClassName(ANONYMOUS_OBJECT_NAME) {
-            buildAnonymousObject {
+            buildAnonymousObjectExpression {
                 val objectDeclaration = objectLiteral.getChildNodesByType(OBJECT_DECLARATION).first()
-                source = objectDeclaration.toFirSourceElement()
-                origin = FirDeclarationOrigin.Source
-                moduleData = baseModuleData
-                classKind = ClassKind.OBJECT
-                scopeProvider = baseScopeProvider
-                symbol = FirAnonymousObjectSymbol()
-                context.applyToActualCapturedTypeParameters(false) {
-                    typeParameters += buildOuterClassTypeParameterRef { this.symbol = it }
-                }
-                val delegatedSelfType = objectLiteral.toDelegatedSelfType(this)
-                registerSelfType(delegatedSelfType)
+                val sourceElement = objectDeclaration.toFirSourceElement()
+                source = sourceElement
+                anonymousObject = buildAnonymousObject {
+                    source = objectDeclaration.toFirSourceElement()
+                    origin = FirDeclarationOrigin.Source
+                    moduleData = baseModuleData
+                    classKind = ClassKind.OBJECT
+                    scopeProvider = baseScopeProvider
+                    symbol = FirAnonymousObjectSymbol()
+                    context.applyToActualCapturedTypeParameters(false) {
+                    typeParameters += buildOuterClassTypeParameterRef { this.symbol = it } }
+                    val delegatedSelfType = objectLiteral.toDelegatedSelfType(this)
+                    registerSelfType(delegatedSelfType)
 
-                var modifiers = Modifier()
-                var primaryConstructor: LighterASTNode? = null
-                val superTypeRefs = mutableListOf<FirTypeRef>()
-                val superTypeCallEntry = mutableListOf<FirExpression>()
-                var delegatedSuperTypeRef: FirTypeRef? = null
-                var classBody: LighterASTNode? = null
-                var delegatedConstructorSource: FirLightSourceElement? = null
-                var delegateFields: List<FirField>? = null
+                    var modifiers = Modifier()
+                    var primaryConstructor: LighterASTNode? = null
+                    val superTypeRefs = mutableListOf<FirTypeRef>()
+                    val superTypeCallEntry = mutableListOf<FirExpression>()
+                    var delegatedSuperTypeRef: FirTypeRef? = null
+                    var classBody: LighterASTNode? = null
+                    var delegatedConstructorSource: FirLightSourceElement? = null
+                    var delegateFields: List<FirField>? = null
 
-                objectDeclaration.forEachChildren {
-                    when (it.tokenType) {
-                        MODIFIER_LIST -> modifiers = convertModifierList(it)
-                        PRIMARY_CONSTRUCTOR -> primaryConstructor = it
-                        SUPER_TYPE_LIST -> convertDelegationSpecifiers(it).let { specifiers ->
-                            delegatedSuperTypeRef = specifiers.delegatedSuperTypeRef
-                            superTypeRefs += specifiers.superTypesRef
-                            superTypeCallEntry += specifiers.delegatedConstructorArguments
-                            delegatedConstructorSource = specifiers.delegatedConstructorSource
-                            delegateFields = specifiers.delegateFields
+                    objectDeclaration.forEachChildren {
+                        when (it.tokenType) {
+                            MODIFIER_LIST -> modifiers = convertModifierList(it)
+                            PRIMARY_CONSTRUCTOR -> primaryConstructor = it
+                            SUPER_TYPE_LIST -> convertDelegationSpecifiers(it).let { specifiers ->
+                                delegatedSuperTypeRef = specifiers.delegatedSuperTypeRef
+                                superTypeRefs += specifiers.superTypesRef
+                                superTypeCallEntry += specifiers.delegatedConstructorArguments
+                                delegatedConstructorSource = specifiers.delegatedConstructorSource
+                                delegateFields = specifiers.delegateFields
+                            }
+                            CLASS_BODY -> classBody = it
                         }
-                        CLASS_BODY -> classBody = it
                     }
-                }
 
-                superTypeRefs.ifEmpty {
-                    superTypeRefs += implicitAnyType
-                    delegatedSuperTypeRef = implicitAnyType
-                }
-                val delegatedSuperType = delegatedSuperTypeRef ?: buildImplicitTypeRef()
+                    superTypeRefs.ifEmpty {
+                        superTypeRefs += implicitAnyType
+                        delegatedSuperTypeRef = implicitAnyType
+                    }
+                    val delegatedSuperType = delegatedSuperTypeRef ?: buildImplicitTypeRef()
 
-                annotations += modifiers.annotations
-                this.superTypeRefs += superTypeRefs
-                typeRef = delegatedSelfType
+                    annotations += modifiers.annotations
+                    this.superTypeRefs += superTypeRefs
+                    this@buildAnonymousObjectExpression.typeRef = delegatedSelfType
 
-                val classWrapper = ClassWrapper(
-                    SpecialNames.NO_NAME_PROVIDED, modifiers, ClassKind.OBJECT, this,
-                    hasPrimaryConstructor = false,
-                    hasSecondaryConstructor = classBody.getChildNodesByType(SECONDARY_CONSTRUCTOR).isNotEmpty(),
-                    hasDefaultConstructor = false,
-                    delegatedSelfTypeRef = delegatedSelfType,
-                    delegatedSuperTypeRef = delegatedSuperType,
-                    superTypeCallEntry = superTypeCallEntry
-                )
-                //parse primary constructor
-                convertPrimaryConstructor(
-                    primaryConstructor, typeRef.source, classWrapper, delegatedConstructorSource
-                )?.let { this.declarations += it.firConstructor }
-                delegateFields?.let { this.declarations += it }
+                    val classWrapper = ClassWrapper(
+                        SpecialNames.NO_NAME_PROVIDED, modifiers, ClassKind.OBJECT, this,
+                        hasPrimaryConstructor = false,
+                        hasSecondaryConstructor = classBody.getChildNodesByType(SECONDARY_CONSTRUCTOR).isNotEmpty(),
+                        hasDefaultConstructor = false,
+                        delegatedSelfTypeRef = delegatedSelfType,
+                        delegatedSuperTypeRef = delegatedSuperType,
+                        superTypeCallEntry = superTypeCallEntry
+                    )
+                    //parse primary constructor
+                    convertPrimaryConstructor(
+                        primaryConstructor, delegatedSelfType.source, classWrapper, delegatedConstructorSource
+                    )?.let { this.declarations += it.firConstructor }
+                    delegateFields?.let { this.declarations += it }
 
-                //parse declarations
-                classBody?.let {
-                    this.declarations += convertClassBody(it, classWrapper)
+                    //parse declarations
+                    classBody?.let {
+                        this.declarations += convertClassBody(it, classWrapper)
+                    }
                 }
             }
         }
@@ -659,41 +662,45 @@ class DeclarationsConverter(
             }
             annotations += modifiers.annotations
             initializer = withChildClassName(enumEntryName) {
-                buildAnonymousObject {
-                    source = enumEntry.toFirSourceElement(FirFakeSourceElementKind.EnumInitializer)
-                    moduleData = baseModuleData
-                    origin = FirDeclarationOrigin.Source
-                    classKind = ClassKind.ENUM_ENTRY
-                    scopeProvider = baseScopeProvider
-                    symbol = FirAnonymousObjectSymbol()
-                    annotations += modifiers.annotations
-                    val enumClassWrapper = ClassWrapper(
-                        enumEntryName, modifiers, ClassKind.ENUM_ENTRY, this,
-                        hasPrimaryConstructor = true,
-                        hasSecondaryConstructor = classBodyNode.getChildNodesByType(SECONDARY_CONSTRUCTOR).isNotEmpty(),
-                        hasDefaultConstructor = false,
-                        delegatedSelfTypeRef = buildResolvedTypeRef {
-                            type = ConeClassLikeTypeImpl(
-                                this@buildAnonymousObject.symbol.toLookupTag(),
-                                emptyArray(),
-                                isNullable = false
-                            )
-                        }.also { registerSelfType(it) },
-                        delegatedSuperTypeRef = classWrapper.delegatedSelfTypeRef,
-                        superTypeCallEntry = enumSuperTypeCallEntry
-                    )
-                    superTypeRefs += enumClassWrapper.delegatedSuperTypeRef
-                    convertPrimaryConstructor(
-                        null,
-                        enumEntry.toFirSourceElement(),
-                        enumClassWrapper,
-                        superTypeCallEntry?.toFirSourceElement(),
-                        isEnumEntry = true
-                    )?.let { declarations += it.firConstructor }
-                    classBodyNode?.also {
-                        // Use ANONYMOUS_OBJECT_NAME for the owner class id of enum entry declarations
-                        withChildClassName(ANONYMOUS_OBJECT_NAME, forceLocalContext = true) {
-                            declarations += convertClassBody(it, enumClassWrapper)
+                buildAnonymousObjectExpression {
+                    val entrySource = enumEntry.toFirSourceElement(FirFakeSourceElementKind.EnumInitializer)
+                    source = entrySource
+                    anonymousObject = buildAnonymousObject {
+                        source = entrySource
+                        moduleData = baseModuleData
+                        origin = FirDeclarationOrigin.Source
+                        classKind = ClassKind.ENUM_ENTRY
+                        scopeProvider = baseScopeProvider
+                        symbol = FirAnonymousObjectSymbol()
+                        annotations += modifiers.annotations
+                        val enumClassWrapper = ClassWrapper(
+                            enumEntryName, modifiers, ClassKind.ENUM_ENTRY, this,
+                            hasPrimaryConstructor = true,
+                            hasSecondaryConstructor = classBodyNode.getChildNodesByType(SECONDARY_CONSTRUCTOR).isNotEmpty(),
+                            hasDefaultConstructor = false,
+                            delegatedSelfTypeRef = buildResolvedTypeRef {
+                                type = ConeClassLikeTypeImpl(
+                                    this@buildAnonymousObject.symbol.toLookupTag(),
+                                    emptyArray(),
+                                    isNullable = false
+                                )
+                            }.also { registerSelfType(it) },
+                            delegatedSuperTypeRef = classWrapper.delegatedSelfTypeRef,
+                            superTypeCallEntry = enumSuperTypeCallEntry
+                        )
+                        superTypeRefs += enumClassWrapper.delegatedSuperTypeRef
+                        convertPrimaryConstructor(
+                            null,
+                            enumEntry.toFirSourceElement(),
+                            enumClassWrapper,
+                            superTypeCallEntry?.toFirSourceElement(),
+                            isEnumEntry = true
+                        )?.let { declarations += it.firConstructor }
+                        classBodyNode?.also {
+                            // Use ANONYMOUS_OBJECT_NAME for the owner class id of enum entry declarations
+                            withChildClassName(ANONYMOUS_OBJECT_NAME, forceLocalContext = true) {
+                                declarations += convertClassBody(it, enumClassWrapper)
+                            }
                         }
                     }
                 }

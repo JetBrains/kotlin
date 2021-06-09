@@ -269,6 +269,10 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +symbol("FirAnonymousObjectSymbol")
         }
 
+        anonymousObjectExpression.configure {
+            +field(anonymousObject).withTransform()
+        }
+
         typeAlias.configure {
             +typeParameters
             parentArg(classLikeDeclaration, "F", typeAlias)

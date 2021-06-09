@@ -271,6 +271,13 @@ open class FirBodyResolveTransformer(
         return declarationsTransformer.transformAnonymousObject(anonymousObject, data)
     }
 
+    override fun transformAnonymousObjectExpression(
+        anonymousObjectExpression: FirAnonymousObjectExpression,
+        data: ResolutionMode
+    ): FirStatement {
+        return expressionsTransformer.transformAnonymousObjectExpression(anonymousObjectExpression, data)
+    }
+
     override fun transformSimpleFunction(
         simpleFunction: FirSimpleFunction,
         data: ResolutionMode

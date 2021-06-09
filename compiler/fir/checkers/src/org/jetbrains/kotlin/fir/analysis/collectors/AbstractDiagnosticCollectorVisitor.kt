@@ -77,6 +77,10 @@ abstract class AbstractDiagnosticCollectorVisitor(
         }
     }
 
+    override fun visitAnonymousObjectExpression(anonymousObjectExpression: FirAnonymousObjectExpression, data: Nothing?) {
+        anonymousObjectExpression.anonymousObject.accept(this, data)
+    }
+
     override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: Nothing?) {
         withSuppressedDiagnostics(anonymousObject) {
             visitClassAndChildren(anonymousObject, anonymousObject.defaultType())

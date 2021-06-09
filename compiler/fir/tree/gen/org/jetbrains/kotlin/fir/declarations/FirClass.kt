@@ -21,19 +21,19 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-sealed interface FirClass<F : FirClass<F>> : FirClassLikeDeclaration<F>, FirStatement, FirTypeParameterRefsOwner {
-    override val source: FirSourceElement?
-    override val moduleData: FirModuleData
-    override val resolvePhase: FirResolvePhase
-    override val origin: FirDeclarationOrigin
-    override val attributes: FirDeclarationAttributes
-    override val typeParameters: List<FirTypeParameterRef>
-    override val symbol: FirClassSymbol<F>
-    val classKind: ClassKind
-    val superTypeRefs: List<FirTypeRef>
-    val declarations: List<FirDeclaration>
-    override val annotations: List<FirAnnotationCall>
-    val scopeProvider: FirScopeProvider
+sealed class FirClass<F : FirClass<F>> : FirClassLikeDeclaration<F>(), FirStatement, FirTypeParameterRefsOwner {
+    abstract override val source: FirSourceElement?
+    abstract override val moduleData: FirModuleData
+    abstract override val resolvePhase: FirResolvePhase
+    abstract override val origin: FirDeclarationOrigin
+    abstract override val attributes: FirDeclarationAttributes
+    abstract override val typeParameters: List<FirTypeParameterRef>
+    abstract override val symbol: FirClassSymbol<F>
+    abstract val classKind: ClassKind
+    abstract val superTypeRefs: List<FirTypeRef>
+    abstract val declarations: List<FirDeclaration>
+    abstract override val annotations: List<FirAnnotationCall>
+    abstract val scopeProvider: FirScopeProvider
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitClass(this, data)
 
@@ -41,15 +41,15 @@ sealed interface FirClass<F : FirClass<F>> : FirClassLikeDeclaration<F>, FirStat
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
         transformer.transformClass(this, data) as E
 
-    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
+    abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
-    fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>)
+    abstract fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>)
 
-    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirClass<F>
+    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirClass<F>
 
-    fun <D> transformSuperTypeRefs(transformer: FirTransformer<D>, data: D): FirClass<F>
+    abstract fun <D> transformSuperTypeRefs(transformer: FirTransformer<D>, data: D): FirClass<F>
 
-    fun <D> transformDeclarations(transformer: FirTransformer<D>, data: D): FirClass<F>
+    abstract fun <D> transformDeclarations(transformer: FirTransformer<D>, data: D): FirClass<F>
 
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirClass<F>
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirClass<F>
 }

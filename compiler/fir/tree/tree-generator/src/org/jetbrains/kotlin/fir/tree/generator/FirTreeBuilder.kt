@@ -59,7 +59,9 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val file = element("File", Declaration, annotatedDeclaration)
 
     val anonymousFunction = element("AnonymousFunction", Declaration, function, expression, typeParametersOwner)
-    val anonymousObject = element("AnonymousObject", Declaration, klass, controlFlowGraphOwner, expression)
+
+    val anonymousObject = element("AnonymousObject", Declaration, klass, controlFlowGraphOwner)
+    val anonymousObjectExpression = element("AnonymousObjectExpression", Expression, expression)
 
     val diagnosticHolder = element("DiagnosticHolder", Diagnostics)
 

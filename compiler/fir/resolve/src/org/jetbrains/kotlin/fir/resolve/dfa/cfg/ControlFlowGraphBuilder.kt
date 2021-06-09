@@ -440,6 +440,12 @@ class ControlFlowGraphBuilder {
         return node to graph
     }
 
+    fun exitAnonymousObjectExpression(anonymousObjectExpression: FirAnonymousObjectExpression): AnonymousObjectExpressionExitNode {
+        return createAnonymousObjectExpressionExitNode(anonymousObjectExpression).also {
+            addNewSimpleNodeIfPossible(it)
+        }
+    }
+
     fun visitLocalClassFunctions(klass: FirClass<*>, node: CFGNodeWithCfgOwner<*>) {
         klass.declarations.filterIsInstance<FirFunction<*>>().forEach { function ->
             val functionGraph = function.controlFlowGraphReference?.controlFlowGraph
