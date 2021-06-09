@@ -24,8 +24,8 @@ fun test() {
 
 open class S<F, G : F>
 class T<U, Y : U> : S<U, Y>()
-class P<T>
-class P1<T1: Number, T2: Number>
+class P<T0: Number, T1>
+class P1<T2 : Number, T3 : Number>
 
 
 fun <K, L : K> rest() {
@@ -39,7 +39,7 @@ fun <K, L : K> rest() {
 
     val o6 = S<Any, T<S<K, L>, <!UPPER_BOUND_VIOLATED!>String<!>>>()
     val o7 = S<Any, T<S<K, L>, Nothing>>()
-    val o8 = P<P1<<!UPPER_BOUND_VIOLATED!>String<!>, <!UPPER_BOUND_VIOLATED!>String<!>>>()
+    val o8 = P<<!UPPER_BOUND_VIOLATED!>String<!>, P1<<!UPPER_BOUND_VIOLATED!>String<!>, <!UPPER_BOUND_VIOLATED!>String<!>>>()
 }
 
 class NumColl<T : Collection<Number>>

@@ -45,7 +45,7 @@ class Foo() {}
 
 class Bar<T : <!FINAL_UPPER_BOUND!>Foo<!>>
 
-class Buzz<T> where T : <!FINAL_UPPER_BOUND!>Bar<Int><!>, T : <!UNRESOLVED_REFERENCE!>nioho<!>
+class Buzz<T> where T : <!FINAL_UPPER_BOUND!>Bar<<!UPPER_BOUND_VIOLATED!>Int<!>><!>, T : <!UNRESOLVED_REFERENCE!>nioho<!>
 
 class X<T : <!FINAL_UPPER_BOUND!>Foo<!>>
 class Y<<!CONFLICTING_UPPER_BOUNDS!>T<!>> where T : <!FINAL_UPPER_BOUND!>Foo<!>, T : <!FINAL_UPPER_BOUND, ONLY_ONE_CLASS_BOUND_ALLOWED!>Bar<Foo><!>
@@ -62,8 +62,8 @@ fun <T> test2(t : T)
   t.bar()
 }
 
-val t1 = test2<A>(<!ARGUMENT_TYPE_MISMATCH!>A()<!>)
-val t2 = test2<B>(<!ARGUMENT_TYPE_MISMATCH!>C()<!>)
+val t1 = test2<<!UPPER_BOUND_VIOLATED!>A<!>>(<!ARGUMENT_TYPE_MISMATCH!>A()<!>)
+val t2 = test2<<!UPPER_BOUND_VIOLATED!>B<!>>(<!ARGUMENT_TYPE_MISMATCH!>C()<!>)
 val t3 = test2<C>(C())
 
 val <<!TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER!>T<!>, <!TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER!>B : T<!>> x : Int = 0

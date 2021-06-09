@@ -8,7 +8,7 @@ val <T> <!KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE!>test4<!> get() = T::
 
 fun <T> test5() = listOf(T::class)
 
-fun <T> test6(): kotlin.reflect.KClass<T> = <!TYPE_MISMATCH!>T<!>::class
+fun <T> test6(): kotlin.reflect.KClass<<!UPPER_BOUND_VIOLATED!>T<!>> = <!TYPE_MISMATCH!>T<!>::class
 fun <T> test7(): kotlin.reflect.KClass<*> = <!TYPE_MISMATCH!>T<!>::class
 fun test8() = <!NULLABLE_TYPE_IN_CLASS_LITERAL_LHS!>String?::class<!>
 

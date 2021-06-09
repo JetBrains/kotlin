@@ -17,7 +17,7 @@ class A<F> {
     fun <Z : F, W : Z?> bar() {
         // F
         fooInv1<Inv<F>>(Inv<F>())
-        fooInv2<Inv<F>>(<!ARGUMENT_TYPE_MISMATCH!>Inv<F>()<!>)
+        fooInv2<<!UPPER_BOUND_VIOLATED!>Inv<F><!>>(<!ARGUMENT_TYPE_MISMATCH!>Inv<F>()<!>)
         fooInv1(Inv<F>())
         fooInv2(<!ARGUMENT_TYPE_MISMATCH!>Inv<F>()<!>)
 
@@ -32,13 +32,13 @@ class A<F> {
         fooOut2(Out<F>())
 
         // Z
-        fooInv1<Inv<Z>>(<!ARGUMENT_TYPE_MISMATCH!>Inv<Z>()<!>)
-        fooInv2<Inv<Z>>(<!ARGUMENT_TYPE_MISMATCH!>Inv<Z>()<!>)
+        fooInv1<<!UPPER_BOUND_VIOLATED!>Inv<Z><!>>(<!ARGUMENT_TYPE_MISMATCH!>Inv<Z>()<!>)
+        fooInv2<<!UPPER_BOUND_VIOLATED!>Inv<Z><!>>(<!ARGUMENT_TYPE_MISMATCH!>Inv<Z>()<!>)
         fooInv1(<!ARGUMENT_TYPE_MISMATCH!>Inv<Z>()<!>)
         fooInv2(<!ARGUMENT_TYPE_MISMATCH!>Inv<Z>()<!>)
 
-        fooIn1<In<Z?>>(<!ARGUMENT_TYPE_MISMATCH!>In<Z?>()<!>)
-        fooIn2<In<Z?>>(<!ARGUMENT_TYPE_MISMATCH!>In<Z?>()<!>)
+        fooIn1<<!UPPER_BOUND_VIOLATED!>In<Z?><!>>(<!ARGUMENT_TYPE_MISMATCH!>In<Z?>()<!>)
+        fooIn2<<!UPPER_BOUND_VIOLATED!>In<Z?><!>>(<!ARGUMENT_TYPE_MISMATCH!>In<Z?>()<!>)
         fooIn1(<!ARGUMENT_TYPE_MISMATCH!>In<Z?>()<!>)
         fooIn2(<!ARGUMENT_TYPE_MISMATCH!>In<Z?>()<!>)
 
@@ -48,17 +48,17 @@ class A<F> {
         fooOut2(Out<Z>())
 
         // W
-        fooInv1<Inv<W>>(<!ARGUMENT_TYPE_MISMATCH!>Inv<W>()<!>)
-        fooInv2<Inv<W>>(<!ARGUMENT_TYPE_MISMATCH!>Inv<W>()<!>)
+        fooInv1<<!UPPER_BOUND_VIOLATED!>Inv<W><!>>(<!ARGUMENT_TYPE_MISMATCH!>Inv<W>()<!>)
+        fooInv2<<!UPPER_BOUND_VIOLATED!>Inv<W><!>>(<!ARGUMENT_TYPE_MISMATCH!>Inv<W>()<!>)
         fooInv1(<!ARGUMENT_TYPE_MISMATCH!>Inv<W>()<!>)
         fooInv2(<!ARGUMENT_TYPE_MISMATCH!>Inv<W>()<!>)
 
-        fooIn1<In<W?>>(<!ARGUMENT_TYPE_MISMATCH!>In<W?>()<!>)
-        fooIn2<In<W?>>(<!ARGUMENT_TYPE_MISMATCH!>In<W?>()<!>)
+        fooIn1<<!UPPER_BOUND_VIOLATED!>In<W?><!>>(<!ARGUMENT_TYPE_MISMATCH!>In<W?>()<!>)
+        fooIn2<<!UPPER_BOUND_VIOLATED!>In<W?><!>>(<!ARGUMENT_TYPE_MISMATCH!>In<W?>()<!>)
         fooIn1(<!ARGUMENT_TYPE_MISMATCH!>In<W?>()<!>)
         fooIn2(<!ARGUMENT_TYPE_MISMATCH!>In<W?>()<!>)
 
-        fooOut1<Out<W>>(<!ARGUMENT_TYPE_MISMATCH!>Out<W>()<!>)
+        fooOut1<<!UPPER_BOUND_VIOLATED!>Out<W><!>>(<!ARGUMENT_TYPE_MISMATCH!>Out<W>()<!>)
         fooOut2<Out<W>>(Out<W>())
         fooOut1(<!ARGUMENT_TYPE_MISMATCH!>Out<W>()<!>)
         fooOut2(Out<W>())

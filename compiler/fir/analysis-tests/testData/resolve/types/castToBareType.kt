@@ -1,7 +1,7 @@
 interface FirDeclaration
 
 interface FirSymbolOwner<E : FirSymbolOwner<E>> {
-    val symbol: AbstractFirBasedSymbol<E>
+    val symbol: AbstractFirBasedSymbol<<!UPPER_BOUND_VIOLATED!>E<!>>
 }
 interface FirFunction<F : FirFunction<F>> : FirSymbolOwner<F>, FirDeclaration
 

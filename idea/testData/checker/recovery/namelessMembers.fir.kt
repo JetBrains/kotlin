@@ -7,7 +7,7 @@ class C {
 
     class<error descr="Name expected"> </error>{}
 
-    <error descr="[UPPER_BOUND_VIOLATED] Type argument is not within its bounds: should be subtype of 'kotlin/Enum<C.<no name provided>>'">enum class<error descr="Name expected"> </error>{}</error>
+    enum class<error descr="Name expected"> </error>{}
 }
 
 class C1<<error descr="Type parameter name expected">in</error>> {}

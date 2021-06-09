@@ -7,7 +7,7 @@ abstract class Wrapper<T: A>(protected val t: T)
 class MyWrapper(a: A): Wrapper<A>(a)
 
 // This wrapper is not legal
-class TheirWrapper(e: E): Wrapper<E>(<!ARGUMENT_TYPE_MISMATCH!>e<!>)
+class TheirWrapper(e: E): Wrapper<<!UPPER_BOUND_VIOLATED!>E<!>>(<!ARGUMENT_TYPE_MISMATCH!>e<!>)
 
 data class Pair<out T>(val a: T, val b: T)
 

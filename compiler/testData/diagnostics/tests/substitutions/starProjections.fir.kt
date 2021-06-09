@@ -10,7 +10,7 @@ fun testA(a: A<*, *>) {
     a.t().checkType { _<A<*, *>>() }
 }
 
-interface B<R, T: B<List<R>, T>> {
+interface B<R, T: B<List<R>, <!UPPER_BOUND_VIOLATED!>T<!>>> {
     fun r(): R
     fun t(): T
 }

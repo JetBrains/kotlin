@@ -286,15 +286,7 @@ private fun ConstraintSystemError.toDiagnostic(
 
                     FirErrors.TYPE_MISMATCH.createOn(qualifiedAccessSource ?: source, upperConeType, inferredType)
                 }
-                is ExplicitTypeParameterConstraintPosition<*> -> {
-                    val conePosition = position as ConeExplicitTypeParameterConstraintPosition
-                    val typeArgument = conePosition.typeArgument
-
-                    FirErrors.UPPER_BOUND_VIOLATED.createOn(
-                        typeArgument.source ?: qualifiedAccessSource ?: source,
-                        upperConeType,
-                    )
-                }
+                is ExplicitTypeParameterConstraintPosition<*>,
                 is DelegatedPropertyConstraintPosition<*> -> {
                     errorsToIgnore.add(this)
                     return null

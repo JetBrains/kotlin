@@ -41,14 +41,14 @@ FILE: upperBoundViolated.kt
         }
 
     }
-    public final class P<T> : R|kotlin/Any| {
-        public constructor<T>(): R|P<T>| {
+    public final class P<T0 : R|kotlin/Number|, T1> : R|kotlin/Any| {
+        public constructor<T0 : R|kotlin/Number|, T1>(): R|P<T0, T1>| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public final class P1<T1 : R|kotlin/Number|, T2 : R|kotlin/Number|> : R|kotlin/Any| {
-        public constructor<T1 : R|kotlin/Number|, T2 : R|kotlin/Number|>(): R|P1<T1, T2>| {
+    public final class P1<T2 : R|kotlin/Number|, T3 : R|kotlin/Number|> : R|kotlin/Any| {
+        public constructor<T2 : R|kotlin/Number|, T3 : R|kotlin/Number|>(): R|P1<T2, T3>| {
             super<R|kotlin/Any|>()
         }
 
@@ -62,7 +62,7 @@ FILE: upperBoundViolated.kt
         lval o5: R|S<S<L, L>, T<K, L>>| = <CS errors: /S.S>#<R|S<L, L>|, R|T<K, L>|>()
         lval o6: R|S<kotlin/Any, T<S<K, L>, kotlin/String>>| = R|/S.S|<R|kotlin/Any|, R|T<S<K, L>, kotlin/String>|>()
         lval o7: R|S<kotlin/Any, T<S<K, L>, kotlin/Nothing>>| = R|/S.S|<R|kotlin/Any|, R|T<S<K, L>, kotlin/Nothing>|>()
-        lval o8: R|P<P1<kotlin/String, kotlin/String>>| = R|/P.P|<R|P1<kotlin/String, kotlin/String>|>()
+        lval o8: R|P<kotlin/String, P1<kotlin/String, kotlin/String>>| = <CS errors: /P.P>#<R|kotlin/String|, R|P1<kotlin/String, kotlin/String>|>()
     }
     public final class NumColl<T : R|kotlin/collections/Collection<kotlin/Number>|> : R|kotlin/Any| {
         public constructor<T : R|kotlin/collections/Collection<kotlin/Number>|>(): R|NumColl<T>| {

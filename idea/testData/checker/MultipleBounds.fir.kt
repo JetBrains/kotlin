@@ -30,8 +30,8 @@ class Test1<T>()
 }
 
 fun test() {
-  Test1<<error descr="[UPPER_BOUND_VIOLATED] Type argument is not within its bounds: should be subtype of 'Jet87/A'">B</error>>()
-  Test1<<error descr="[UPPER_BOUND_VIOLATED] Type argument is not within its bounds: should be subtype of 'Jet87/B'">A</error>>()
+  Test1<<error descr="[UPPER_BOUND_VIOLATED] Type argument is not within its bounds: should be subtype of 'it(Jet87/A & Jet87/B)'">B</error>>()
+  Test1<<error descr="[UPPER_BOUND_VIOLATED] Type argument is not within its bounds: should be subtype of 'it(Jet87/A & Jet87/B)'">A</error>>()
   Test1<C>()
 }
 
@@ -39,7 +39,7 @@ class Foo() {}
 
 class Bar<T : Foo>
 
-class Buzz<T> where T : Bar<Int>, T : <error descr="[UNRESOLVED_REFERENCE] Unresolved reference: nioho">nioho</error>
+class Buzz<T> where T : Bar<<error descr="[UPPER_BOUND_VIOLATED] Type argument is not within its bounds: should be subtype of 'Jet87/Foo'">Int</error>>, T : <error descr="[UNRESOLVED_REFERENCE] Unresolved reference: nioho">nioho</error>
 
 class X<T : Foo>
 class Y<<error descr="[CONFLICTING_UPPER_BOUNDS] Upper bounds of T have empty intersection">T</error>> where T :  Foo, T : <error descr="[ONLY_ONE_CLASS_BOUND_ALLOWED] Only one of the upper bounds can be a class">Bar<Foo></error>
@@ -56,8 +56,8 @@ fun <T> test2(t : T)
   t.bar()
 }
 
-val t1 = test2<A>(<error descr="[ARGUMENT_TYPE_MISMATCH] Argument type mismatch: actual type is Jet87/A but T was expected">A()</error>)
-val t2 = test2<B>(<error descr="[ARGUMENT_TYPE_MISMATCH] Argument type mismatch: actual type is Jet87/C but T was expected">C()</error>)
+val t1 = test2<<error descr="[UPPER_BOUND_VIOLATED] Type argument is not within its bounds: should be subtype of 'it(Jet87/A & Jet87/B)'">A</error>>(<error descr="[ARGUMENT_TYPE_MISMATCH] Argument type mismatch: actual type is Jet87/A but T was expected">A()</error>)
+val t2 = test2<<error descr="[UPPER_BOUND_VIOLATED] Type argument is not within its bounds: should be subtype of 'it(Jet87/A & Jet87/B)'">B</error>>(<error descr="[ARGUMENT_TYPE_MISMATCH] Argument type mismatch: actual type is Jet87/C but T was expected">C()</error>)
 val t3 = test2<C>(C())
 
 val <T, B: T> Pair<T, B>.x : Int get() = 0

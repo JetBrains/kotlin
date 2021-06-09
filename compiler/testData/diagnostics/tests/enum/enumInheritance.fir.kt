@@ -2,7 +2,7 @@
 // FILE: test.kt
 enum class MyEnum(): <!CLASS_IN_SUPERTYPE_FOR_ENUM!>MyClass<!>() {}
 enum class MyEnum2(): MyTrait {}
-enum class MyEnum3(): <!UPPER_BOUND_VIOLATED{LT}!><!CLASS_IN_SUPERTYPE_FOR_ENUM, FINAL_SUPERTYPE, UPPER_BOUND_VIOLATED{PSI}!>MyEnumBase<!>()<!> {}
+enum class MyEnum3(): <!CLASS_IN_SUPERTYPE_FOR_ENUM, FINAL_SUPERTYPE!>MyEnumBase<!>() {}
 
 open class MyClass() {}
 

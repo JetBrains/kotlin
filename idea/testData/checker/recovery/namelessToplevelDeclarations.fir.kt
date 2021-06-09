@@ -19,6 +19,6 @@ object<error descr="Name expected"> </error>{
 
 }
 
-<error descr="[UPPER_BOUND_VIOLATED] Type argument is not within its bounds: should be subtype of 'kotlin/Enum<<no name provided>>'">enum class<error descr="Name expected"> </error>{}</error>
+enum class<error descr="Name expected"> </error>{}
 
 annotation class<error descr="Name expected"> </error>{}

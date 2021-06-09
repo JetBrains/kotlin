@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface Trait<N : Number>
 
 object O1 : Trait<Int>

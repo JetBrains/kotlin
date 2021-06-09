@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.syntax.FirDelegationInInterfac
 import org.jetbrains.kotlin.fir.analysis.checkers.syntax.FirFunctionTypeParametersSyntaxChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.syntax.FirTypeParameterSyntaxChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirReservedUnderscoreDeclarationChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirUpperBoundViolatedClassChecker
 
 object CommonDeclarationCheckers : DeclarationCheckers() {
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
@@ -23,7 +24,8 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirConflictsChecker,
             FirProjectionRelationChecker,
             FirTypeConstraintsChecker,
-            FirReservedUnderscoreDeclarationChecker
+            FirReservedUnderscoreDeclarationChecker,
+            FirUpperBoundViolatedClassChecker
         )
 
     override val memberDeclarationCheckers: Set<FirMemberDeclarationChecker>

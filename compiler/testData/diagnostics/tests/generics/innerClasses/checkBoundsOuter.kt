@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class Outer<E : Any> {
     inner class Inner<F, G>
 }
