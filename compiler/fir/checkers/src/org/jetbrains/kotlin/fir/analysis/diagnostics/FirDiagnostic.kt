@@ -73,12 +73,26 @@ interface FirPsiDiagnostic {
         get() = psiElement.containingFile
 }
 
+private const val CHECK_PSI_CONSISTENCY_IN_DIAGNOSTICS = true
+
+private fun FirPsiDiagnostic.checkPsiTypeConsistency() {
+    if (CHECK_PSI_CONSISTENCY_IN_DIAGNOSTICS) {
+        require(factory.psiType.isInstance(element.psi)) {
+            "${element.psi::class} is not a subtype of ${factory.psiType} for factory $factory"
+        }
+    }
+}
+
 data class FirPsiSimpleDiagnostic(
     override val element: FirPsiSourceElement,
     override val severity: Severity,
     override val factory: FirDiagnosticFactory0,
     override val positioningStrategy: SourceElementPositioningStrategy
-) : FirSimpleDiagnostic(), FirPsiDiagnostic
+) : FirSimpleDiagnostic(), FirPsiDiagnostic {
+    init {
+        checkPsiTypeConsistency()
+    }
+}
 
 data class FirPsiDiagnosticWithParameters1<A>(
     override val element: FirPsiSourceElement,
@@ -86,7 +100,12 @@ data class FirPsiDiagnosticWithParameters1<A>(
     override val severity: Severity,
     override val factory: FirDiagnosticFactory1<A>,
     override val positioningStrategy: SourceElementPositioningStrategy
-) : FirDiagnosticWithParameters1<A>(), FirPsiDiagnostic
+) : FirDiagnosticWithParameters1<A>(), FirPsiDiagnostic {
+    init {
+        checkPsiTypeConsistency()
+    }
+}
+
 
 data class FirPsiDiagnosticWithParameters2<A, B>(
     override val element: FirPsiSourceElement,
@@ -95,7 +114,11 @@ data class FirPsiDiagnosticWithParameters2<A, B>(
     override val severity: Severity,
     override val factory: FirDiagnosticFactory2<A, B>,
     override val positioningStrategy: SourceElementPositioningStrategy
-) : FirDiagnosticWithParameters2<A, B>(), FirPsiDiagnostic
+) : FirDiagnosticWithParameters2<A, B>(), FirPsiDiagnostic {
+    init {
+        checkPsiTypeConsistency()
+    }
+}
 
 data class FirPsiDiagnosticWithParameters3<A, B, C>(
     override val element: FirPsiSourceElement,
@@ -105,7 +128,11 @@ data class FirPsiDiagnosticWithParameters3<A, B, C>(
     override val severity: Severity,
     override val factory: FirDiagnosticFactory3<A, B, C>,
     override val positioningStrategy: SourceElementPositioningStrategy
-) : FirDiagnosticWithParameters3<A, B, C>(), FirPsiDiagnostic
+) : FirDiagnosticWithParameters3<A, B, C>(), FirPsiDiagnostic {
+    init {
+        checkPsiTypeConsistency()
+    }
+}
 
 data class FirPsiDiagnosticWithParameters4<A, B, C, D>(
     override val element: FirPsiSourceElement,
@@ -116,7 +143,11 @@ data class FirPsiDiagnosticWithParameters4<A, B, C, D>(
     override val severity: Severity,
     override val factory: FirDiagnosticFactory4<A, B, C, D>,
     override val positioningStrategy: SourceElementPositioningStrategy
-) : FirDiagnosticWithParameters4<A, B, C, D>(), FirPsiDiagnostic
+) : FirDiagnosticWithParameters4<A, B, C, D>(), FirPsiDiagnostic {
+    init {
+        checkPsiTypeConsistency()
+    }
+}
 
 // ------------------------------ light tree diagnostics ------------------------------
 
