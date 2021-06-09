@@ -7,13 +7,17 @@ package org.jetbrains.kotlin.idea.frontend.api.components
 
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
+import org.jetbrains.kotlin.psi.KtDoubleColonExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtTypeReference
 
 abstract class KtPsiTypeProvider : KtAnalysisSessionComponent() {
     abstract fun getPsiTypeForKtExpression(expression: KtExpression, mode: TypeMappingMode): PsiType
-
     abstract fun getPsiTypeForKtTypeReference(ktTypeReference: KtTypeReference, mode: TypeMappingMode): PsiType
+    abstract fun getPsiTypeForReceiverOfDoubleColonExpression(
+        ktDoubleColonExpression: KtDoubleColonExpression,
+        mode: TypeMappingMode
+    ): PsiType?
 }
 
 interface KtPsiTypeProviderMixIn : KtAnalysisSessionMixIn {
@@ -23,4 +27,6 @@ interface KtPsiTypeProviderMixIn : KtAnalysisSessionMixIn {
     fun KtTypeReference.getPsiType(mode: TypeMappingMode = TypeMappingMode.DEFAULT): PsiType =
         analysisSession.psiTypeProvider.getPsiTypeForKtTypeReference(this, mode)
 
+    fun KtDoubleColonExpression.getReceiverPsiType(mode: TypeMappingMode = TypeMappingMode.DEFAULT): PsiType? =
+        analysisSession.psiTypeProvider.getPsiTypeForReceiverOfDoubleColonExpression(this, mode)
 }

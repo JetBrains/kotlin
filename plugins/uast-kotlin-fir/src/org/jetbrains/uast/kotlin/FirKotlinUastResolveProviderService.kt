@@ -10,6 +10,7 @@ import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.idea.frontend.api.analyseForUast
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
+import org.jetbrains.kotlin.psi.KtDoubleColonExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.psi.KtTypeReference
@@ -39,6 +40,12 @@ interface FirKotlinUastResolveProviderService : BaseKotlinUastResolveProviderSer
     override fun resolveToType(ktTypeReference: KtTypeReference, source: UElement): PsiType? {
         analyseForUast(ktTypeReference) {
             return ktTypeReference.getPsiType(TypeMappingMode.DEFAULT_UAST)
+        }
+    }
+
+    override fun getDoubleColonReceiverType(ktDoubleColonExpression: KtDoubleColonExpression, source: UElement): PsiType? {
+        analyseForUast(ktDoubleColonExpression) {
+            return ktDoubleColonExpression.getReceiverPsiType(TypeMappingMode.DEFAULT_UAST)
         }
     }
 

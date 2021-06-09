@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.psi.KtDoubleColonExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtTypeReference
@@ -36,6 +37,13 @@ interface KotlinUastResolveProviderService : BaseKotlinUastResolveProviderServic
 
     override fun resolveToType(ktTypeReference: KtTypeReference, source: UElement): PsiType? {
         return ktTypeReference.toPsiType(source)
+    }
+
+    override fun getDoubleColonReceiverType(ktDoubleColonExpression: KtDoubleColonExpression, source: UElement): PsiType? {
+        val ktType =
+            ktDoubleColonExpression.analyze()[BindingContext.DOUBLE_COLON_LHS, ktDoubleColonExpression.receiverExpression]?.type
+                ?: return null
+        return ktType.toPsiType(source, ktDoubleColonExpression, boxed = true)
     }
 
     override fun getExpressionType(uExpression: UExpression): PsiType? {
