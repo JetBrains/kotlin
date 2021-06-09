@@ -2,4 +2,4 @@ FILE: callMe.kt
     public final [BODY_RESOLVE] fun callMe(): R|kotlin/Int| {
         ^callMe Int(42)
     }
-    public final [STATUS] fun other(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [RAW_FIR] fun other(): R|kotlin/Unit| { LAZY_BLOCK }

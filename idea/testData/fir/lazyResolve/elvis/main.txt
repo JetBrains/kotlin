@@ -1,6 +1,6 @@
 FILE: main.kt
     public final [STATUS] class WithElvis : R|kotlin/Any| {
-        public [STATUS] constructor([STATUS] value: R|kotlin/String?|): R|elvis/WithElvis| {
+        public? [RAW_FIR] constructor([RAW_FIR] value: String?): R|elvis/WithElvis| {
             super<R|kotlin/Any|>()
         }
 

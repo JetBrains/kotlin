@@ -9,12 +9,10 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.compiler.based.AbstractCompil
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.runners.baseFirDiagnosticTestConfiguration
 import org.jetbrains.kotlin.idea.fir.low.level.api.compiler.based.addIdeTestIgnoreHandler
-import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE
 
 abstract class AbstractDiagnosisCompilerTestDataTest : AbstractCompilerBasedTest() {
     override fun TestConfigurationBuilder.configureTest() {
         baseFirDiagnosticTestConfiguration()
-        FirLazyTransformerForIDE.enableDeepEnsure = true
         addIdeTestIgnoreHandler()
     }
 }

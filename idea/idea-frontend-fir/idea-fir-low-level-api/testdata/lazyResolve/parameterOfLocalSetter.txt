@@ -18,16 +18,16 @@ FILE: parameterOfLocalSetter.kt
 
 IMPORTS:
 FILE: parameterOfLocalSetter.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
-        local final class XX : R|kotlin/Any| {
-            public [ContainingClassKey=XX] constructor(): R|XX| {
+    public final [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun ddd(): R|kotlin/Unit| {
+        local final? class XX : R|kotlin/Any| {
+            public? [ContainingClassKey=XX] constructor(): R|XX| {
                 super<R|kotlin/Any|>()
             }
 
-            public final var x: R|kotlin/Int| = Int(2)
-                [ContainingClassKey=XX] public get(): R|kotlin/Int|
-                [ContainingClassKey=XX] public set(resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-                    ^ Q|kotlin/Unit|
+            public? final? var x: Int = IntegerLiteral(2)
+                [ContainingClassKey=XX] public? get(): Int
+                [ContainingClassKey=XX] public? set(resolveMe: Int): R|kotlin/Unit| {
+                    ^ Unit#
                 }
 
         }
@@ -36,16 +36,16 @@ FILE: parameterOfLocalSetter.kt
 
 SUPER_TYPES:
 FILE: parameterOfLocalSetter.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
-        local final class XX : R|kotlin/Any| {
-            public [ContainingClassKey=XX] constructor(): R|XX| {
+    public final [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun ddd(): R|kotlin/Unit| {
+        local final? class XX : R|kotlin/Any| {
+            public? [ContainingClassKey=XX] constructor(): R|XX| {
                 super<R|kotlin/Any|>()
             }
 
-            public final var x: R|kotlin/Int| = Int(2)
-                [ContainingClassKey=XX] public get(): R|kotlin/Int|
-                [ContainingClassKey=XX] public set(resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-                    ^ Q|kotlin/Unit|
+            public? final? var x: Int = IntegerLiteral(2)
+                [ContainingClassKey=XX] public? get(): Int
+                [ContainingClassKey=XX] public? set(resolveMe: Int): R|kotlin/Unit| {
+                    ^ Unit#
                 }
 
         }
@@ -54,16 +54,16 @@ FILE: parameterOfLocalSetter.kt
 
 TYPES:
 FILE: parameterOfLocalSetter.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
-        local final class XX : R|kotlin/Any| {
-            public [ContainingClassKey=XX] constructor(): R|XX| {
+    public final [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun ddd(): R|kotlin/Unit| {
+        local final? class XX : R|kotlin/Any| {
+            public? [ContainingClassKey=XX] constructor(): R|XX| {
                 super<R|kotlin/Any|>()
             }
 
-            public final var x: R|kotlin/Int| = Int(2)
-                [ContainingClassKey=XX] public get(): R|kotlin/Int|
-                [ContainingClassKey=XX] public set(resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-                    ^ Q|kotlin/Unit|
+            public? final? var x: Int = IntegerLiteral(2)
+                [ContainingClassKey=XX] public? get(): Int
+                [ContainingClassKey=XX] public? set(resolveMe: Int): R|kotlin/Unit| {
+                    ^ Unit#
                 }
 
         }
@@ -72,16 +72,16 @@ FILE: parameterOfLocalSetter.kt
 
 STATUS:
 FILE: parameterOfLocalSetter.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
-        local final class XX : R|kotlin/Any| {
-            public [ContainingClassKey=XX] constructor(): R|XX| {
+    public final [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun ddd(): R|kotlin/Unit| {
+        local final? class XX : R|kotlin/Any| {
+            public? [ContainingClassKey=XX] constructor(): R|XX| {
                 super<R|kotlin/Any|>()
             }
 
-            public final var x: R|kotlin/Int| = Int(2)
-                [ContainingClassKey=XX] public get(): R|kotlin/Int|
-                [ContainingClassKey=XX] public set(resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-                    ^ Q|kotlin/Unit|
+            public? final? var x: Int = IntegerLiteral(2)
+                [ContainingClassKey=XX] public? get(): Int
+                [ContainingClassKey=XX] public? set(resolveMe: Int): R|kotlin/Unit| {
+                    ^ Unit#
                 }
 
         }
@@ -216,16 +216,16 @@ FILE: parameterOfLocalSetter.kt
 
 AnnotationType:
 FILE: parameterOfLocalSetter.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
-        local final class XX : R|kotlin/Any| {
-            public [ContainingClassKey=XX] constructor(): R|XX| {
+    public final [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun ddd(): R|kotlin/Unit| {
+        local final? class XX : R|kotlin/Any| {
+            public? [ContainingClassKey=XX] constructor(): R|XX| {
                 super<R|kotlin/Any|>()
             }
 
-            public final var x: R|kotlin/Int| = Int(2)
-                [ContainingClassKey=XX] public get(): R|kotlin/Int|
-                [ContainingClassKey=XX] public set(resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-                    ^ Q|kotlin/Unit|
+            public? final? var x: Int = IntegerLiteral(2)
+                [ContainingClassKey=XX] public? get(): Int
+                [ContainingClassKey=XX] public? set(resolveMe: Int): R|kotlin/Unit| {
+                    ^ Unit#
                 }
 
         }
@@ -270,16 +270,16 @@ FILE: parameterOfLocalSetter.kt
 
 DeclarationStatus:
 FILE: parameterOfLocalSetter.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
-        local final class XX : R|kotlin/Any| {
-            public [ContainingClassKey=XX] constructor(): R|XX| {
+    public final [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun ddd(): R|kotlin/Unit| {
+        local final? class XX : R|kotlin/Any| {
+            public? [ContainingClassKey=XX] constructor(): R|XX| {
                 super<R|kotlin/Any|>()
             }
 
-            public final var x: R|kotlin/Int| = Int(2)
-                [ContainingClassKey=XX] public get(): R|kotlin/Int|
-                [ContainingClassKey=XX] public set(resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-                    ^ Q|kotlin/Unit|
+            public? final? var x: Int = IntegerLiteral(2)
+                [ContainingClassKey=XX] public? get(): Int
+                [ContainingClassKey=XX] public? set(resolveMe: Int): R|kotlin/Unit| {
+                    ^ Unit#
                 }
 
         }
@@ -288,16 +288,16 @@ FILE: parameterOfLocalSetter.kt
 
 ValueParametersTypes:
 FILE: parameterOfLocalSetter.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
-        local final class XX : R|kotlin/Any| {
-            public [ContainingClassKey=XX] constructor(): R|XX| {
+    public final [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun ddd(): R|kotlin/Unit| {
+        local final? class XX : R|kotlin/Any| {
+            public? [ContainingClassKey=XX] constructor(): R|XX| {
                 super<R|kotlin/Any|>()
             }
 
-            public final var x: R|kotlin/Int| = Int(2)
-                [ContainingClassKey=XX] public get(): R|kotlin/Int|
-                [ContainingClassKey=XX] public set(resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-                    ^ Q|kotlin/Unit|
+            public? final? var x: Int = IntegerLiteral(2)
+                [ContainingClassKey=XX] public? get(): Int
+                [ContainingClassKey=XX] public? set(resolveMe: Int): R|kotlin/Unit| {
+                    ^ Unit#
                 }
 
         }
@@ -306,16 +306,16 @@ FILE: parameterOfLocalSetter.kt
 
 TypeParametersTypes:
 FILE: parameterOfLocalSetter.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
-        local final class XX : R|kotlin/Any| {
-            public [ContainingClassKey=XX] constructor(): R|XX| {
+    public final [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun ddd(): R|kotlin/Unit| {
+        local final? class XX : R|kotlin/Any| {
+            public? [ContainingClassKey=XX] constructor(): R|XX| {
                 super<R|kotlin/Any|>()
             }
 
-            public final var x: R|kotlin/Int| = Int(2)
-                [ContainingClassKey=XX] public get(): R|kotlin/Int|
-                [ContainingClassKey=XX] public set(resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-                    ^ Q|kotlin/Unit|
+            public? final? var x: Int = IntegerLiteral(2)
+                [ContainingClassKey=XX] public? get(): Int
+                [ContainingClassKey=XX] public? set(resolveMe: Int): R|kotlin/Unit| {
+                    ^ Unit#
                 }
 
         }

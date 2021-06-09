@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.createResolveStateForNoCaching
+import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE
 import org.jetbrains.kotlin.idea.project.withLanguageVersionSettings
 import org.jetbrains.kotlin.idea.test.*
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.getLanguageLevel
@@ -157,7 +158,13 @@ abstract class AbstractCompilerBasedTest : KotlinLightCodeInsightFixtureTestCase
     fun doTest(path: String) {
         if (ignoreTest()) return
         withLanguageLevel(modules.allDirectives) {
-            TestRunner(configuration).runTest(path)
+            val oldEnableDeepEnsure = FirLazyTransformerForIDE.enableDeepEnsure
+            try {
+                FirLazyTransformerForIDE.enableDeepEnsure = true
+                TestRunner(configuration).runTest(path)
+            } catch (_: Exception) {
+                FirLazyTransformerForIDE.enableDeepEnsure = oldEnableDeepEnsure
+            }
         }
     }
 

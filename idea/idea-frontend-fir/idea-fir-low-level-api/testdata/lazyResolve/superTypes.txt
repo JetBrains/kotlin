@@ -63,7 +63,7 @@ FILE: superTypes.kt
 
 TYPES:
 FILE: superTypes.kt
-    public? open [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class A : R|kotlin/Any| {
+    public? open class A : R|kotlin/Any| {
         public? [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
@@ -210,7 +210,7 @@ FILE: superTypes.kt
 
 AnnotationType:
 FILE: superTypes.kt
-    public? open [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class A : R|kotlin/Any| {
+    public? open class A : R|kotlin/Any| {
         public? [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
@@ -294,7 +294,7 @@ FILE: superTypes.kt
 
 ValueParametersTypes:
 FILE: superTypes.kt
-    public? open [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class A : R|kotlin/Any| {
+    public? open class A : R|kotlin/Any| {
         public? [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
@@ -315,7 +315,7 @@ FILE: superTypes.kt
 
 TypeParametersTypes:
 FILE: superTypes.kt
-    public? open [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class A : R|kotlin/Any| {
+    public? open class A : R|kotlin/Any| {
         public? [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }

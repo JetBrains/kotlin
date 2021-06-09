@@ -8,48 +8,48 @@ FILE: typeParameterOfLocalFunction.kt
 
 IMPORTS:
 FILE: typeParameterOfLocalFunction.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
-        local final fun <resolveMe> kkk(): R|kotlin/Unit| {
+    public final [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun ddd(): R|kotlin/Unit| {
+        local final? fun <resolveMe> kkk(): R|kotlin/Unit| {
         }
 
     }
 
 SUPER_TYPES:
 FILE: typeParameterOfLocalFunction.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
-        local final fun <resolveMe> kkk(): R|kotlin/Unit| {
+    public final [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun ddd(): R|kotlin/Unit| {
+        local final? fun <resolveMe> kkk(): R|kotlin/Unit| {
         }
 
     }
 
 TYPES:
 FILE: typeParameterOfLocalFunction.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
-        local final fun <resolveMe> kkk(): R|kotlin/Unit| {
+    public final [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun ddd(): R|kotlin/Unit| {
+        local final? fun <resolveMe> kkk(): R|kotlin/Unit| {
         }
 
     }
 
 STATUS:
 FILE: typeParameterOfLocalFunction.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
-        local final fun <resolveMe> kkk(): R|kotlin/Unit| {
+    public final [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun ddd(): R|kotlin/Unit| {
+        local final? fun <resolveMe> kkk(): R|kotlin/Unit| {
         }
 
     }
 
 CONTRACTS:
 FILE: typeParameterOfLocalFunction.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
-        local final fun <resolveMe> kkk(): R|kotlin/Unit| {
+    public final [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun ddd(): R|kotlin/Unit| {
+        local final? fun <resolveMe> kkk(): R|kotlin/Unit| {
         }
 
     }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: typeParameterOfLocalFunction.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
-        local final fun <resolveMe> kkk(): R|kotlin/Unit| {
+    public final [ResolvePhaseWithForAllDeclarationsKey=IMPLICIT_TYPES_BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
+        local final? fun <resolveMe> kkk(): R|kotlin/Unit| {
         }
 
     }
@@ -80,8 +80,8 @@ FILE: typeParameterOfLocalFunction.kt
 
 AnnotationType:
 FILE: typeParameterOfLocalFunction.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
-        local final fun <resolveMe> kkk(): R|kotlin/Unit| {
+    public final [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun ddd(): R|kotlin/Unit| {
+        local final? fun <resolveMe> kkk(): R|kotlin/Unit| {
         }
 
     }
@@ -96,24 +96,24 @@ FILE: typeParameterOfLocalFunction.kt
 
 DeclarationStatus:
 FILE: typeParameterOfLocalFunction.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
-        local final fun <resolveMe> kkk(): R|kotlin/Unit| {
+    public final [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun ddd(): R|kotlin/Unit| {
+        local final? fun <resolveMe> kkk(): R|kotlin/Unit| {
         }
 
     }
 
 ValueParametersTypes:
 FILE: typeParameterOfLocalFunction.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
-        local final fun <resolveMe> kkk(): R|kotlin/Unit| {
+    public final [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun ddd(): R|kotlin/Unit| {
+        local final? fun <resolveMe> kkk(): R|kotlin/Unit| {
         }
 
     }
 
 TypeParametersTypes:
 FILE: typeParameterOfLocalFunction.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
-        local final fun <resolveMe> kkk(): R|kotlin/Unit| {
+    public final [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun ddd(): R|kotlin/Unit| {
+        local final? fun <resolveMe> kkk(): R|kotlin/Unit| {
         }
 
     }

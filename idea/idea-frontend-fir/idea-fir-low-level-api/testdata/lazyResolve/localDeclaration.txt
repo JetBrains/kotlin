@@ -1,3 +1,4 @@
+
 RAW_FIR:
 FILE: localDeclaration.kt
     public? final? class A : R|kotlin/Any| {
@@ -27,14 +28,14 @@ FILE: localDeclaration.kt
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun x(): R|kotlin/Unit| {
-            local final [ContainingClassKey=A] class resolveMe : R|kotlin/Any| {
-                public [ContainingClassKey=resolveMe] constructor(): R|A.resolveMe| {
+        public final [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun x(): R|kotlin/Unit| {
+            local final? [ContainingClassKey=A] class resolveMe : R|kotlin/Any| {
+                public? [ContainingClassKey=resolveMe] constructor(): R|A.resolveMe| {
                     super<R|kotlin/Any|>()
                 }
 
-                public final val e: R|kotlin/Int| = Int(2)
-                    [ContainingClassKey=resolveMe] public get(): R|kotlin/Int|
+                public? final? val e: <implicit> = IntegerLiteral(2)
+                    [ContainingClassKey=resolveMe] public? get(): <implicit>
 
             }
 
@@ -49,14 +50,14 @@ FILE: localDeclaration.kt
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun x(): R|kotlin/Unit| {
-            local final [ContainingClassKey=A] class resolveMe : R|kotlin/Any| {
-                public [ContainingClassKey=resolveMe] constructor(): R|A.resolveMe| {
+        public final [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun x(): R|kotlin/Unit| {
+            local final? [ContainingClassKey=A] class resolveMe : R|kotlin/Any| {
+                public? [ContainingClassKey=resolveMe] constructor(): R|A.resolveMe| {
                     super<R|kotlin/Any|>()
                 }
 
-                public final val e: R|kotlin/Int| = Int(2)
-                    [ContainingClassKey=resolveMe] public get(): R|kotlin/Int|
+                public? final? val e: <implicit> = IntegerLiteral(2)
+                    [ContainingClassKey=resolveMe] public? get(): <implicit>
 
             }
 
@@ -71,14 +72,14 @@ FILE: localDeclaration.kt
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun x(): R|kotlin/Unit| {
-            local final [ContainingClassKey=A] class resolveMe : R|kotlin/Any| {
-                public [ContainingClassKey=resolveMe] constructor(): R|A.resolveMe| {
+        public final [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun x(): R|kotlin/Unit| {
+            local final? [ContainingClassKey=A] class resolveMe : R|kotlin/Any| {
+                public? [ContainingClassKey=resolveMe] constructor(): R|A.resolveMe| {
                     super<R|kotlin/Any|>()
                 }
 
-                public final val e: R|kotlin/Int| = Int(2)
-                    [ContainingClassKey=resolveMe] public get(): R|kotlin/Int|
+                public? final? val e: <implicit> = IntegerLiteral(2)
+                    [ContainingClassKey=resolveMe] public? get(): <implicit>
 
             }
 
@@ -93,14 +94,14 @@ FILE: localDeclaration.kt
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun x(): R|kotlin/Unit| {
-            local final [ContainingClassKey=A] class resolveMe : R|kotlin/Any| {
-                public [ContainingClassKey=resolveMe] constructor(): R|A.resolveMe| {
+        public final [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun x(): R|kotlin/Unit| {
+            local final? [ContainingClassKey=A] class resolveMe : R|kotlin/Any| {
+                public? [ContainingClassKey=resolveMe] constructor(): R|A.resolveMe| {
                     super<R|kotlin/Any|>()
                 }
 
-                public final val e: R|kotlin/Int| = Int(2)
-                    [ContainingClassKey=resolveMe] public get(): R|kotlin/Int|
+                public? final? val e: <implicit> = IntegerLiteral(2)
+                    [ContainingClassKey=resolveMe] public? get(): <implicit>
 
             }
 
@@ -115,14 +116,14 @@ FILE: localDeclaration.kt
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun x(): R|kotlin/Unit| {
-            local final [ContainingClassKey=A] class resolveMe : R|kotlin/Any| {
-                public [ContainingClassKey=resolveMe] constructor(): R|A.resolveMe| {
+        public final [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun x(): R|kotlin/Unit| {
+            local final? [ContainingClassKey=A] class resolveMe : R|kotlin/Any| {
+                public? [ContainingClassKey=resolveMe] constructor(): R|A.resolveMe| {
                     super<R|kotlin/Any|>()
                 }
 
-                public final val e: R|kotlin/Int| = Int(2)
-                    [ContainingClassKey=resolveMe] public get(): R|kotlin/Int|
+                public? final? val e: <implicit> = IntegerLiteral(2)
+                    [ContainingClassKey=resolveMe] public? get(): <implicit>
 
             }
 
@@ -137,14 +138,14 @@ FILE: localDeclaration.kt
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun x(): R|kotlin/Unit| {
-            local final [ContainingClassKey=A] class resolveMe : R|kotlin/Any| {
-                public [ContainingClassKey=resolveMe] constructor(): R|A.resolveMe| {
+        public final [ResolvePhaseWithForAllDeclarationsKey=IMPLICIT_TYPES_BODY_RESOLVE] fun x(): R|kotlin/Unit| {
+            local final? [ContainingClassKey=A] class resolveMe : R|kotlin/Any| {
+                public? [ContainingClassKey=resolveMe] constructor(): R|A.resolveMe| {
                     super<R|kotlin/Any|>()
                 }
 
-                public final val e: R|kotlin/Int| = Int(2)
-                    [ContainingClassKey=resolveMe] public get(): R|kotlin/Int|
+                public? final? val e: <implicit> = IntegerLiteral(2)
+                    [ContainingClassKey=resolveMe] public? get(): <implicit>
 
             }
 
@@ -225,14 +226,14 @@ FILE: localDeclaration.kt
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun x(): R|kotlin/Unit| {
-            local final [ContainingClassKey=A] class resolveMe : R|kotlin/Any| {
-                public [ContainingClassKey=resolveMe] constructor(): R|A.resolveMe| {
+        public final [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun x(): R|kotlin/Unit| {
+            local final? [ContainingClassKey=A] class resolveMe : R|kotlin/Any| {
+                public? [ContainingClassKey=resolveMe] constructor(): R|A.resolveMe| {
                     super<R|kotlin/Any|>()
                 }
 
-                public final val e: R|kotlin/Int| = Int(2)
-                    [ContainingClassKey=resolveMe] public get(): R|kotlin/Int|
+                public? final? val e: <implicit> = IntegerLiteral(2)
+                    [ContainingClassKey=resolveMe] public? get(): <implicit>
 
             }
 
@@ -269,14 +270,14 @@ FILE: localDeclaration.kt
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun x(): R|kotlin/Unit| {
-            local final [ContainingClassKey=A] class resolveMe : R|kotlin/Any| {
-                public [ContainingClassKey=resolveMe] constructor(): R|A.resolveMe| {
+        public final [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun x(): R|kotlin/Unit| {
+            local final? [ContainingClassKey=A] class resolveMe : R|kotlin/Any| {
+                public? [ContainingClassKey=resolveMe] constructor(): R|A.resolveMe| {
                     super<R|kotlin/Any|>()
                 }
 
-                public final val e: R|kotlin/Int| = Int(2)
-                    [ContainingClassKey=resolveMe] public get(): R|kotlin/Int|
+                public? final? val e: <implicit> = IntegerLiteral(2)
+                    [ContainingClassKey=resolveMe] public? get(): <implicit>
 
             }
 
@@ -291,14 +292,14 @@ FILE: localDeclaration.kt
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun x(): R|kotlin/Unit| {
-            local final [ContainingClassKey=A] class resolveMe : R|kotlin/Any| {
-                public [ContainingClassKey=resolveMe] constructor(): R|A.resolveMe| {
+        public final [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun x(): R|kotlin/Unit| {
+            local final? [ContainingClassKey=A] class resolveMe : R|kotlin/Any| {
+                public? [ContainingClassKey=resolveMe] constructor(): R|A.resolveMe| {
                     super<R|kotlin/Any|>()
                 }
 
-                public final val e: R|kotlin/Int| = Int(2)
-                    [ContainingClassKey=resolveMe] public get(): R|kotlin/Int|
+                public? final? val e: <implicit> = IntegerLiteral(2)
+                    [ContainingClassKey=resolveMe] public? get(): <implicit>
 
             }
 
@@ -313,14 +314,14 @@ FILE: localDeclaration.kt
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun x(): R|kotlin/Unit| {
-            local final [ContainingClassKey=A] class resolveMe : R|kotlin/Any| {
-                public [ContainingClassKey=resolveMe] constructor(): R|A.resolveMe| {
+        public final [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun x(): R|kotlin/Unit| {
+            local final? [ContainingClassKey=A] class resolveMe : R|kotlin/Any| {
+                public? [ContainingClassKey=resolveMe] constructor(): R|A.resolveMe| {
                     super<R|kotlin/Any|>()
                 }
 
-                public final val e: R|kotlin/Int| = Int(2)
-                    [ContainingClassKey=resolveMe] public get(): R|kotlin/Int|
+                public? final? val e: <implicit> = IntegerLiteral(2)
+                    [ContainingClassKey=resolveMe] public? get(): <implicit>
 
             }
 
@@ -335,14 +336,14 @@ FILE: localDeclaration.kt
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun x(): R|kotlin/Unit| {
-            local final [ContainingClassKey=A] class resolveMe : R|kotlin/Any| {
-                public [ContainingClassKey=resolveMe] constructor(): R|A.resolveMe| {
+        public final [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun x(): R|kotlin/Unit| {
+            local final? [ContainingClassKey=A] class resolveMe : R|kotlin/Any| {
+                public? [ContainingClassKey=resolveMe] constructor(): R|A.resolveMe| {
                     super<R|kotlin/Any|>()
                 }
 
-                public final val e: R|kotlin/Int| = Int(2)
-                    [ContainingClassKey=resolveMe] public get(): R|kotlin/Int|
+                public? final? val e: <implicit> = IntegerLiteral(2)
+                    [ContainingClassKey=resolveMe] public? get(): <implicit>
 
             }
 
