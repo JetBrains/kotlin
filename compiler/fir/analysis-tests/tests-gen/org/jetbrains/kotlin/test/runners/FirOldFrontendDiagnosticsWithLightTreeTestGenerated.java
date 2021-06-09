@@ -10601,9 +10601,27 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 }
 
                 @Test
+                @TestMetadata("localDeclaration.kt")
+                public void testLocalDeclaration() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/localDeclaration.kt");
+                }
+
+                @Test
                 @TestMetadata("manyReceivers.kt")
                 public void testManyReceivers() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/manyReceivers.kt");
+                }
+
+                @Test
+                @TestMetadata("noBackingField.kt")
+                public void testNoBackingField() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/noBackingField.kt");
+                }
+
+                @Test
+                @TestMetadata("noContextReceiversOnInlineClasses.kt")
+                public void testNoContextReceiversOnInlineClasses() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/noContextReceiversOnInlineClasses.kt");
                 }
 
                 @Test
@@ -10628,6 +10646,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 @TestMetadata("superWithContext.kt")
                 public void testSuperWithContext() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/superWithContext.kt");
+                }
+
+                @Test
+                @TestMetadata("syntaxError.kt")
+                public void testSyntaxError() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/syntaxError.kt");
                 }
 
                 @Test
