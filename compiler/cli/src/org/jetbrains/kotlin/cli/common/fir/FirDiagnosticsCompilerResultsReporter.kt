@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDefaultErrorMessages
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 
 object FirDiagnosticsCompilerResultsReporter {
-    fun reportDiagnostics(diagnostics: Collection<FirDiagnostic<*>>, reporter: MessageCollector): Boolean {
+    fun reportDiagnostics(diagnostics: Collection<FirDiagnostic>, reporter: MessageCollector): Boolean {
         var hasErrors = false
         for (diagnostic in diagnostics.sortedWith(DiagnosticComparator)) {
             hasErrors = reportDiagnostic(diagnostic, reporter) || hasErrors
@@ -27,7 +27,7 @@ object FirDiagnosticsCompilerResultsReporter {
     }
 
     @Suppress("UNUSED_PARAMETER")
-    private fun reportSpecialErrors(diagnostics: Collection<FirDiagnostic<*>>) {
+    private fun reportSpecialErrors(diagnostics: Collection<FirDiagnostic>) {
         /*
          * TODO: handle next diagnostics when they will be supported in FIR:
          *  - INCOMPATIBLE_CLASS
@@ -37,7 +37,7 @@ object FirDiagnosticsCompilerResultsReporter {
          */
     }
 
-    private fun reportDiagnostic(diagnostic: FirDiagnostic<*>, reporter: MessageCollector): Boolean {
+    private fun reportDiagnostic(diagnostic: FirDiagnostic, reporter: MessageCollector): Boolean {
         if (!diagnostic.isValid) return false
         diagnostic.location()?.let { location ->
             val severity = AnalyzerWithCompilerReport.convertSeverity(diagnostic.severity)
@@ -48,28 +48,28 @@ object FirDiagnosticsCompilerResultsReporter {
         return diagnostic.severity == Severity.ERROR
     }
 
-    private fun FirDiagnostic<*>.location(): CompilerMessageSourceLocation? = when (val element = element) {
-        is FirPsiSourceElement<*> -> element.location(this)
+    private fun FirDiagnostic.location(): CompilerMessageSourceLocation? = when (val element = element) {
+        is FirPsiSourceElement -> element.location(this)
         is FirLightSourceElement -> element.location(this)
     }
 
-    private fun FirPsiSourceElement<*>.location(diagnostic: FirDiagnostic<*>): CompilerMessageSourceLocation? {
+    private fun FirPsiSourceElement.location(diagnostic: FirDiagnostic): CompilerMessageSourceLocation? {
         val file = psi.containingFile
         return MessageUtil.psiFileToMessageLocation(file, file.name, DiagnosticUtils.getLineAndColumnRange(file, diagnostic.textRanges))
     }
 
     @Suppress("UNUSED_PARAMETER")
-    private fun FirLightSourceElement.location(diagnostic: FirDiagnostic<*>): CompilerMessageSourceLocation? {
+    private fun FirLightSourceElement.location(diagnostic: FirDiagnostic): CompilerMessageSourceLocation? {
         // TODO: support light tree
         return null
     }
 
-    private object DiagnosticComparator : Comparator<FirDiagnostic<*>> {
-        override fun compare(o1: FirDiagnostic<*>, o2: FirDiagnostic<*>): Int {
+    private object DiagnosticComparator : Comparator<FirDiagnostic> {
+        override fun compare(o1: FirDiagnostic, o2: FirDiagnostic): Int {
             val element1 = o1.element
             val element2 = o1.element
             // TODO: support light tree
-            if (element1 !is FirPsiSourceElement<*> || element2 !is FirPsiSourceElement<*>) return 0
+            if (element1 !is FirPsiSourceElement || element2 !is FirPsiSourceElement) return 0
 
             val file1 = element1.psi.containingFile
             val file2 = element2.psi.containingFile

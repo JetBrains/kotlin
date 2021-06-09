@@ -24,7 +24,8 @@ object FirTypeParameterSyntaxChecker : FirDeclarationSyntaxChecker<FirTypeParame
 
     override fun checkPsi(
         element: FirTypeParameter,
-        source: FirPsiSourceElement<KtTypeParameter>,
+        source: FirPsiSourceElement,
+        psi: KtTypeParameter,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {

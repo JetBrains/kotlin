@@ -8,16 +8,16 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticParameterRenderer
 
 class FirDiagnosticFactoryToRendererMap(val name: String) {
-    private val renderersMap: MutableMap<AbstractFirDiagnosticFactory<*, *>, FirDiagnosticRenderer<*>> = mutableMapOf()
+    private val renderersMap: MutableMap<AbstractFirDiagnosticFactory, FirDiagnosticRenderer> = mutableMapOf()
 
-    operator fun get(factory: AbstractFirDiagnosticFactory<*, *>): FirDiagnosticRenderer<*>? = renderersMap[factory]
+    operator fun get(factory: AbstractFirDiagnosticFactory): FirDiagnosticRenderer? = renderersMap[factory]
 
-    fun put(factory: FirDiagnosticFactory0<*>, message: String) {
+    fun put(factory: FirDiagnosticFactory0, message: String) {
         put(factory, SimpleFirDiagnosticRenderer(message))
     }
 
     fun <A> put(
-        factory: FirDiagnosticFactory1<*, A>,
+        factory: FirDiagnosticFactory1<A>,
         message: String,
         rendererA: DiagnosticParameterRenderer<A>?
     ) {
@@ -25,7 +25,7 @@ class FirDiagnosticFactoryToRendererMap(val name: String) {
     }
 
     fun <A, B> put(
-        factory: FirDiagnosticFactory2<*, A, B>,
+        factory: FirDiagnosticFactory2<A, B>,
         message: String,
         rendererA: DiagnosticParameterRenderer<A>?,
         rendererB: DiagnosticParameterRenderer<B>?
@@ -34,7 +34,7 @@ class FirDiagnosticFactoryToRendererMap(val name: String) {
     }
 
     fun <A, B, C> put(
-        factory: FirDiagnosticFactory3<*, A, B, C>,
+        factory: FirDiagnosticFactory3<A, B, C>,
         message: String,
         rendererA: DiagnosticParameterRenderer<A>?,
         rendererB: DiagnosticParameterRenderer<B>?,
@@ -44,7 +44,7 @@ class FirDiagnosticFactoryToRendererMap(val name: String) {
     }
 
     fun <A, B, C, D> put(
-        factory: FirDiagnosticFactory4<*, A, B, C, D>,
+        factory: FirDiagnosticFactory4<A, B, C, D>,
         message: String,
         rendererA: DiagnosticParameterRenderer<A>?,
         rendererB: DiagnosticParameterRenderer<B>?,
@@ -54,7 +54,7 @@ class FirDiagnosticFactoryToRendererMap(val name: String) {
         put(factory, FirDiagnosticWithParameters4Renderer(message, rendererA, rendererB, rendererC, rendererD))
     }
 
-    private fun put(factory: AbstractFirDiagnosticFactory<*, *>, renderer: FirDiagnosticRenderer<*>) {
+    private fun put(factory: AbstractFirDiagnosticFactory, renderer: FirDiagnosticRenderer) {
         renderersMap[factory] = renderer
     }
 }

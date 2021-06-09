@@ -41,7 +41,7 @@ object CanBeReplacedWithOperatorAssignmentChecker : FirVariableAssignmentChecker
         var needToReport = false
         val assignmentSource = expression.source
 
-        if (assignmentSource is FirPsiSourceElement<*>) {
+        if (assignmentSource is FirPsiSourceElement) {
             val lValuePsi = lValue.psi as? KtNameReferenceExpression ?: return
             val rValuePsi = rValue.psi as? KtBinaryExpression ?: return
 

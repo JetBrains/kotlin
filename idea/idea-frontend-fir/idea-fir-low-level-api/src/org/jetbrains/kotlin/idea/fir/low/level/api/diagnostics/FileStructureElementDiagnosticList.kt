@@ -9,9 +9,9 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 
 internal class FileStructureElementDiagnosticList(
-    private val map: Map<PsiElement, List<FirPsiDiagnostic<*>>>
+    private val map: Map<PsiElement, List<FirPsiDiagnostic>>
 ) {
-    fun diagnosticsFor(element: PsiElement): List<FirPsiDiagnostic<*>> = map[element] ?: emptyList()
+    fun diagnosticsFor(element: PsiElement): List<FirPsiDiagnostic> = map[element] ?: emptyList()
 
-    inline fun forEach(action: (List<FirPsiDiagnostic<*>>) -> Unit) = map.values.forEach(action)
+    inline fun forEach(action: (List<FirPsiDiagnostic>) -> Unit) = map.values.forEach(action)
 }

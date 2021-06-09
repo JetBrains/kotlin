@@ -6,13 +6,15 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.syntax
 
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirPsiSourceElement
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.isInterface
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
 
@@ -22,7 +24,8 @@ object FirDelegationInInterfaceSyntaxChecker : FirDeclarationSyntaxChecker<FirRe
 
     override fun checkPsi(
         element: FirRegularClass,
-        source: FirPsiSourceElement<KtClass>,
+        source: FirPsiSourceElement,
+        psi: KtClass,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {

@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypePlaceholderProjection
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -79,7 +78,7 @@ open class RawFirBuilder(
         return reference.accept(Visitor(), Unit) as FirTypeRef
     }
 
-    override fun PsiElement.toFirSourceElement(kind: FirFakeSourceElementKind?): FirPsiSourceElement<*> {
+    override fun PsiElement.toFirSourceElement(kind: FirFakeSourceElementKind?): FirPsiSourceElement {
         val actualKind = kind ?: this@RawFirBuilder.context.forcedElementSourceKind ?: FirRealSourceElementKind
         return this.toFirPsiSourceElement(actualKind)
     }
@@ -1988,7 +1987,7 @@ open class RawFirBuilder(
 
         private fun splitToCalleeAndReceiver(
             calleeExpression: KtExpression?,
-            defaultSource: FirPsiSourceElement<*>,
+            defaultSource: FirPsiSourceElement,
         ): CalleeAndReceiver {
             return when (calleeExpression) {
                 is KtSimpleNameExpression ->

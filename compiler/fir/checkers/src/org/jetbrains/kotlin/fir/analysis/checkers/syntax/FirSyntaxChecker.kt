@@ -27,7 +27,7 @@ interface FirSyntaxChecker<in D : FirElement, P : PsiElement> {
         if (!isApplicable(element, source)) return
         @Suppress("UNCHECKED_CAST")
         when (source) {
-            is FirPsiSourceElement<*> -> checkPsi(element, source as FirPsiSourceElement<P>, context, reporter)
+            is FirPsiSourceElement -> checkPsi(element, source, source.psi as P, context, reporter)
             is FirLightSourceElement -> checkLightTree(element, source, context, reporter)
         }
     }
@@ -37,7 +37,7 @@ interface FirSyntaxChecker<in D : FirElement, P : PsiElement> {
     /**
      *  By default psi tree should be equivalent to light tree and can be processed the same way
      */
-    fun checkPsi(element: D, source: FirPsiSourceElement<P>, context: CheckerContext, reporter: DiagnosticReporter) {
+    fun checkPsi(element: D, source: FirPsiSourceElement, psi: P, context: CheckerContext, reporter: DiagnosticReporter) {
         checkLightTree(element, source, context, reporter)
     }
 

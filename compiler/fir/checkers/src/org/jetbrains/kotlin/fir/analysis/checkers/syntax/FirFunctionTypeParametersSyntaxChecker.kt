@@ -20,12 +20,13 @@ object FirFunctionTypeParametersSyntaxChecker : FirDeclarationSyntaxChecker<FirS
 
     override fun checkPsi(
         element: FirSimpleFunction,
-        source: FirPsiSourceElement<KtFunction>,
+        source: FirPsiSourceElement,
+        psi: KtFunction,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        val typeParamsNode = source.psi.typeParameterList
-        val nameNode = source.psi.nameIdentifier
+        val typeParamsNode = psi.typeParameterList
+        val nameNode = psi.nameIdentifier
 
         if (typeParamsNode != null && nameNode != null && typeParamsNode.startOffset > nameNode.startOffset) {
             reporter.reportOn(

@@ -73,10 +73,10 @@ internal class FirModuleResolveStateImpl(
     override fun tryGetCachedFirFile(declaration: FirDeclaration, cache: ModuleFileCache): FirFile? =
         cache.getContainerFirFile(declaration)
 
-    override fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<FirPsiDiagnostic<*>> =
+    override fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<FirPsiDiagnostic> =
         diagnosticsCollector.getDiagnosticsFor(element, filter)
 
-    override fun collectDiagnosticsForFile(ktFile: KtFile, filter: DiagnosticCheckerFilter): Collection<FirPsiDiagnostic<*>> =
+    override fun collectDiagnosticsForFile(ktFile: KtFile, filter: DiagnosticCheckerFilter): Collection<FirPsiDiagnostic> =
         diagnosticsCollector.collectDiagnosticsForFile(ktFile, filter)
 
     @OptIn(InternalForInline::class)

@@ -26,7 +26,7 @@ class IncrementalPassThroughLookupTrackerComponent(
         val path = sourceToFilePathsCache.getOrPut(definedSource) {
             sourceToFilePath(definedSource)
         }
-        val position = if (requiresPosition && source != null && source is FirPsiSourceElement<*>) {
+        val position = if (requiresPosition && source != null && source is FirPsiSourceElement) {
             getLineAndColumnInPsiFile(source.psi.containingFile, source.psi.textRange).let { Position(it.line, it.column) }
         } else Position.NO_POSITION
 

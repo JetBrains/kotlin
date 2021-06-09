@@ -11,14 +11,14 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.addValueFor
 
 internal class FirIdeDiagnosticReporter : DiagnosticReporter() {
-    val diagnostics = mutableMapOf<PsiElement, MutableList<FirPsiDiagnostic<*>>>()
+    val diagnostics = mutableMapOf<PsiElement, MutableList<FirPsiDiagnostic>>()
 
-    override fun report(diagnostic: FirDiagnostic<*>?, context: CheckerContext) {
+    override fun report(diagnostic: FirDiagnostic?, context: CheckerContext) {
         if (diagnostic == null) return
         if (context.isDiagnosticSuppressed(diagnostic)) return
 
         val psiDiagnostic = when (diagnostic) {
-            is FirPsiDiagnostic<*> -> diagnostic
+            is FirPsiDiagnostic -> diagnostic
             is FirLightDiagnostic -> diagnostic.toPsiDiagnostic()
             else -> error("Unknown diagnostic type ${diagnostic::class.simpleName}")
         }
@@ -26,7 +26,7 @@ internal class FirIdeDiagnosticReporter : DiagnosticReporter() {
     }
 }
 
-private fun FirLightDiagnostic.toPsiDiagnostic(): FirPsiDiagnostic<*> {
+private fun FirLightDiagnostic.toPsiDiagnostic(): FirPsiDiagnostic {
     val psiSourceElement = element.unwrapToFirPsiSourceElement()
         ?: error("Diagnostic should be created from PSI in IDE")
     @Suppress("UNCHECKED_CAST")
@@ -34,7 +34,7 @@ private fun FirLightDiagnostic.toPsiDiagnostic(): FirPsiDiagnostic<*> {
         is FirLightSimpleDiagnostic -> FirPsiSimpleDiagnostic(
             psiSourceElement,
             severity,
-            factory as FirDiagnosticFactory0<PsiElement>,
+            factory,
             positioningStrategy
         )
 
@@ -42,7 +42,7 @@ private fun FirLightDiagnostic.toPsiDiagnostic(): FirPsiDiagnostic<*> {
             psiSourceElement,
             a,
             severity,
-            factory as FirDiagnosticFactory1<PsiElement, Any?>,
+            factory as FirDiagnosticFactory1<Any?>,
             positioningStrategy
         )
 
@@ -50,7 +50,7 @@ private fun FirLightDiagnostic.toPsiDiagnostic(): FirPsiDiagnostic<*> {
             psiSourceElement,
             a, b,
             severity,
-            factory as FirDiagnosticFactory2<PsiElement, Any?, Any?>,
+            factory as FirDiagnosticFactory2<Any?, Any?>,
             positioningStrategy
         )
 
@@ -58,7 +58,7 @@ private fun FirLightDiagnostic.toPsiDiagnostic(): FirPsiDiagnostic<*> {
             psiSourceElement,
             a, b, c,
             severity,
-            factory as FirDiagnosticFactory3<PsiElement, Any?, Any?, Any?>,
+            factory as FirDiagnosticFactory3<Any?, Any?, Any?>,
             positioningStrategy
         )
 
@@ -66,7 +66,7 @@ private fun FirLightDiagnostic.toPsiDiagnostic(): FirPsiDiagnostic<*> {
             psiSourceElement,
             a, b, c, d,
             severity,
-            factory as FirDiagnosticFactory4<PsiElement, Any?, Any?, Any?, Any?>,
+            factory as FirDiagnosticFactory4<Any?, Any?, Any?, Any?>,
             positioningStrategy
         )
         else -> error("Unknown diagnostic type ${this::class.simpleName}")

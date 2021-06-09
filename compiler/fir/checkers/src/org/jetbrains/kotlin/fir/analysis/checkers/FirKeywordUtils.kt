@@ -84,7 +84,7 @@ sealed class FirModifier<Node : Any>(val node: Node, val token: KtModifierKeywor
 fun FirSourceElement?.getModifierList(): FirModifierList? {
     return when (this) {
         null -> null
-        is FirPsiSourceElement<*> -> (psi as? KtModifierListOwner)?.modifierList?.let { FirModifierList.FirPsiModifierList(it) }
+        is FirPsiSourceElement -> (psi as? KtModifierListOwner)?.modifierList?.let { FirModifierList.FirPsiModifierList(it) }
         is FirLightSourceElement -> {
             val modifierListNode = lighterASTNode.getChildren(treeStructure).find { it?.tokenType == KtNodeTypes.MODIFIER_LIST }
                 ?: return null
@@ -103,6 +103,6 @@ fun FirElement.hasModifier(token: KtModifierKeywordToken): Boolean = token in so
 internal val FirSourceElement?.valOrVarKeyword: KtKeywordToken?
     get() = when (this) {
         null -> null
-        is FirPsiSourceElement<*> -> (psi as? KtValVarKeywordOwner)?.valOrVarKeyword?.let { it.node?.elementType as? KtKeywordToken }
+        is FirPsiSourceElement -> (psi as? KtValVarKeywordOwner)?.valOrVarKeyword?.let { it.node?.elementType as? KtKeywordToken }
         is FirLightSourceElement -> treeStructure.valOrVarKeyword(lighterASTNode)?.tokenType as? KtKeywordToken
     }

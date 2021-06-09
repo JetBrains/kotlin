@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSourceElement
@@ -36,7 +35,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 private fun ConeDiagnostic.toFirDiagnostic(
     source: FirSourceElement,
     qualifiedAccessSource: FirSourceElement?
-): FirDiagnostic<FirSourceElement>? = when (this) {
+): FirDiagnostic? = when (this) {
     is ConeUnresolvedReferenceError -> FirErrors.UNRESOLVED_REFERENCE.createOn(source, this.name?.asString() ?: "<No name>")
     is ConeUnresolvedSymbolError -> FirErrors.UNRESOLVED_REFERENCE.createOn(source, this.classId.asString())
     is ConeUnresolvedNameError -> FirErrors.UNRESOLVED_REFERENCE.createOn(source, this.name.asString())
@@ -91,7 +90,7 @@ private fun ConeDiagnostic.toFirDiagnostic(
 fun ConeDiagnostic.toFirDiagnostics(
     source: FirSourceElement,
     qualifiedAccessSource: FirSourceElement?
-): List<FirDiagnostic<FirSourceElement>> {
+): List<FirDiagnostic> {
     return when (this) {
         is ConeInapplicableCandidateError -> mapInapplicableCandidateError(this, source, qualifiedAccessSource)
         is ConeConstraintSystemHasContradiction -> mapSystemHasContradictionError(this, source, qualifiedAccessSource)
@@ -104,7 +103,7 @@ private fun mapUnsafeCallError(
     rootCause: UnsafeCall,
     source: FirSourceElement,
     qualifiedAccessSource: FirSourceElement?,
-): FirDiagnostic<*>? {
+): FirDiagnostic? {
     if (candidate.callInfo.isImplicitInvoke) {
         return FirErrors.UNSAFE_IMPLICIT_INVOKE_CALL.createOn(source, rootCause.actualType)
     }
@@ -152,7 +151,7 @@ private fun mapInapplicableCandidateError(
     diagnostic: ConeInapplicableCandidateError,
     source: FirSourceElement,
     qualifiedAccessSource: FirSourceElement?,
-): List<FirDiagnostic<FirSourceElement>> {
+): List<FirDiagnostic> {
     val genericDiagnostic = FirErrors.INAPPLICABLE_CANDIDATE.createOn(source, diagnostic.candidate.symbol)
     val diagnostics = diagnostic.candidate.diagnostics.filter { it.applicability == diagnostic.applicability }.mapNotNull { rootCause ->
         when (rootCause) {
@@ -207,9 +206,9 @@ private fun mapSystemHasContradictionError(
     diagnostic: ConeConstraintSystemHasContradiction,
     source: FirSourceElement,
     qualifiedAccessSource: FirSourceElement?,
-): List<FirDiagnostic<FirSourceElement>> {
+): List<FirDiagnostic> {
     val errorsToIgnore = mutableSetOf<ConstraintSystemError>()
-    return buildList<FirDiagnostic<FirSourceElement>> {
+    return buildList<FirDiagnostic> {
         for (error in diagnostic.candidate.system.errors) {
             addIfNotNull(
                 error.toDiagnostic(
@@ -252,7 +251,7 @@ private fun ConstraintSystemError.toDiagnostic(
     typeContext: ConeTypeContext,
     errorsToIgnore: MutableSet<ConstraintSystemError>,
     candidate: Candidate,
-): FirDiagnostic<FirSourceElement>? {
+): FirDiagnostic? {
     return when (this) {
         is NewConstraintError -> {
             val position = position.from
@@ -329,7 +328,7 @@ private fun ConstraintSystemError.toDiagnostic(
 private val NewConstraintError.lowerConeType: ConeKotlinType get() = lowerType as ConeKotlinType
 private val NewConstraintError.upperConeType: ConeKotlinType get() = upperType as ConeKotlinType
 
-private fun ConeSimpleDiagnostic.getFactory(source: FirSourceElement): FirDiagnosticFactory0<*> {
+private fun ConeSimpleDiagnostic.getFactory(source: FirSourceElement): FirDiagnosticFactory0 {
     @Suppress("UNCHECKED_CAST")
     return when (kind) {
         DiagnosticKind.Syntax -> FirErrors.SYNTAX
@@ -375,35 +374,35 @@ private fun ConeSimpleDiagnostic.getFactory(source: FirSourceElement): FirDiagno
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
-private fun <P : PsiElement> FirDiagnosticFactory0<P>.createOn(
+private fun FirDiagnosticFactory0.createOn(
     element: FirSourceElement?
-): FirSimpleDiagnostic<*>? {
+): FirSimpleDiagnostic? {
     return element?.let { on(it, positioningStrategy = null) }
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
-private fun <P : PsiElement, A> FirDiagnosticFactory1<P, A>.createOn(
+private fun <A> FirDiagnosticFactory1<A>.createOn(
     element: FirSourceElement?,
     a: A
-): FirDiagnosticWithParameters1<*, A>? {
+): FirDiagnosticWithParameters1<A>? {
     return element?.let { on(it, a, positioningStrategy = null) }
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
-private fun <P : PsiElement, A, B> FirDiagnosticFactory2<P, A, B>.createOn(
+private fun <A, B> FirDiagnosticFactory2<A, B>.createOn(
     element: FirSourceElement?,
     a: A,
     b: B
-): FirDiagnosticWithParameters2<*, A, B>? {
+): FirDiagnosticWithParameters2<A, B>? {
     return element?.let { on(it, a, b, positioningStrategy = null) }
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
-private fun <P : PsiElement, A, B, C> FirDiagnosticFactory3<P, A, B, C>.createOn(
+private fun <A, B, C> FirDiagnosticFactory3<A, B, C>.createOn(
     element: FirSourceElement?,
     a: A,
     b: B,
     c: C
-): FirDiagnosticWithParameters3<*, A, B, C>? {
+): FirDiagnosticWithParameters3<A, B, C>? {
     return element?.let { on(it, a, b, c, positioningStrategy = null) }
 }

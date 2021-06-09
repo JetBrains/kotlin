@@ -70,7 +70,7 @@ internal class FileStructure private constructor(
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    fun getAllDiagnosticsForFile(diagnosticCheckerFilter: DiagnosticCheckerFilter): Collection<FirPsiDiagnostic<*>> {
+    fun getAllDiagnosticsForFile(diagnosticCheckerFilter: DiagnosticCheckerFilter): Collection<FirPsiDiagnostic> {
         val structureElements = getAllStructureElements()
 
         return buildList {
@@ -78,7 +78,7 @@ internal class FileStructure private constructor(
         }
     }
 
-    private fun MutableCollection<FirPsiDiagnostic<*>>.collectDiagnosticsFromStructureElements(
+    private fun MutableCollection<FirPsiDiagnostic>.collectDiagnosticsFromStructureElements(
         structureElements: Collection<FileStructureElement>,
         diagnosticCheckerFilter: DiagnosticCheckerFilter
     ) {

@@ -42,7 +42,7 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker() {
                     isSubtypeForTypeMismatch(typeContext, subtype = resultExpression.smartcastType.coneType, supertype = functionReturnType)
                 ) {
                     reporter.reportOn(
-                        returnExpressionSource,
+                        resultExpression.source,
                         SMARTCAST_IMPOSSIBLE,
                         functionReturnType,
                         resultExpression,
@@ -51,11 +51,11 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker() {
                     )
                 } else {
                     reporter.reportOn(
-                    resultExpression.source,
+                        resultExpression.source,
                         RETURN_TYPE_MISMATCH,
-                    functionReturnType,
-                    returnExpressionType,
-                    targetElement,
+                        functionReturnType,
+                        returnExpressionType,
+                        targetElement,
                         context
                     )
                 }

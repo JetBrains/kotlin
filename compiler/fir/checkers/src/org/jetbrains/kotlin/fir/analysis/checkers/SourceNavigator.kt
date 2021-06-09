@@ -32,7 +32,7 @@ interface SourceNavigator {
 
         fun forElement(e: FirElement): SourceNavigator = when (e.source) {
             is FirLightSourceElement -> lightTreeInstance
-            is FirPsiSourceElement<*> -> PsiSourceNavigator
+            is FirPsiSourceElement -> PsiSourceNavigator
             null -> lightTreeInstance //shouldn't matter
         }
 
@@ -62,7 +62,7 @@ object PsiSourceNavigator : LightTreeSourceNavigator() {
 
     //Swallows incorrect casts!!!
     private inline fun <reified P : PsiElement> FirElement.psi(): P? {
-        val psi = (source as? FirPsiSourceElement<*>)?.psi
+        val psi = (source as? FirPsiSourceElement)?.psi
         return psi as? P
     }
 

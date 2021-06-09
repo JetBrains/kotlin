@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirStringConcatenationCall
 import org.jetbrains.kotlin.fir.expressions.arguments
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 
 object RedundantSingleExpressionStringTemplateChecker : FirStringConcatenationCallChecker() {
@@ -38,7 +38,7 @@ object RedundantSingleExpressionStringTemplateChecker : FirStringConcatenationCa
 
     private fun FirStatement.stringParentChildrenCount(): Int? {
         return when (val source = source) {
-            is FirPsiSourceElement<*> -> source.psi.stringParentChildrenCount()
+            is FirPsiSourceElement -> source.psi.stringParentChildrenCount()
             is FirLightSourceElement -> source.lighterASTNode.stringParentChildrenCount(source)
             null -> null
         }

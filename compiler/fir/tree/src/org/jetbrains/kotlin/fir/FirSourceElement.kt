@@ -187,7 +187,7 @@ sealed class FirSourceElement {
 
 // NB: in certain situations, psi.node could be null
 // Potentially exceptions can be provoked by elementType / lighterASTNode
-sealed class FirPsiSourceElement<out P : PsiElement>(val psi: P) : FirSourceElement() {
+sealed class FirPsiSourceElement(val psi: PsiElement) : FirSourceElement() {
     override val elementType: IElementType
         get() = psi.node.elementType
 
@@ -268,23 +268,23 @@ sealed class FirPsiSourceElement<out P : PsiElement>(val psi: P) : FirSourceElem
     }
 }
 
-class FirRealPsiSourceElement<out P : PsiElement>(psi: P) : FirPsiSourceElement<P>(psi) {
+class FirRealPsiSourceElement(psi: PsiElement) : FirPsiSourceElement(psi) {
     override val kind: FirSourceElementKind get() = FirRealSourceElementKind
 }
 
-class FirFakeSourceElement<out P : PsiElement>(psi: P, override val kind: FirFakeSourceElementKind) : FirPsiSourceElement<P>(psi)
+class FirFakeSourceElement(psi: PsiElement, override val kind: FirFakeSourceElementKind) : FirPsiSourceElement(psi)
 
 fun FirSourceElement.fakeElement(newKind: FirFakeSourceElementKind): FirSourceElement {
     return when (this) {
         is FirLightSourceElement -> FirLightSourceElement(lighterASTNode, startOffset, endOffset, treeStructure, newKind)
-        is FirPsiSourceElement<*> -> FirFakeSourceElement(psi, newKind)
+        is FirPsiSourceElement -> FirFakeSourceElement(psi, newKind)
     }
 }
 
 fun FirSourceElement.realElement(): FirSourceElement = when (this) {
-    is FirRealPsiSourceElement<*> -> this
+    is FirRealPsiSourceElement -> this
     is FirLightSourceElement -> FirLightSourceElement(lighterASTNode, startOffset, endOffset, treeStructure, FirRealSourceElementKind)
-    is FirPsiSourceElement<*> -> FirRealPsiSourceElement(psi)
+    is FirPsiSourceElement -> FirRealPsiSourceElement(psi)
 }
 
 
@@ -305,27 +305,27 @@ class FirLightSourceElement(
      * If it is `pure` [FirLightSourceElement], i.e, compiler created it in light tree mode, then return [unwrapToFirPsiSourceElement] `null`.
      * Otherwise, return some not-null result.
      */
-    fun unwrapToFirPsiSourceElement(): FirPsiSourceElement<*>? {
+    fun unwrapToFirPsiSourceElement(): FirPsiSourceElement? {
         if (treeStructure !is FirPsiSourceElement.WrappedTreeStructure) return null
         val node = treeStructure.unwrap(lighterASTNode)
         return node.psi?.toFirPsiSourceElement(kind)
     }
 }
 
-val FirSourceElement?.psi: PsiElement? get() = (this as? FirPsiSourceElement<*>)?.psi
+val FirSourceElement?.psi: PsiElement? get() = (this as? FirPsiSourceElement)?.psi
 
 val FirSourceElement?.text: CharSequence?
     get() = when (this) {
-        is FirPsiSourceElement<*> -> psi.text
+        is FirPsiSourceElement -> psi.text
         is FirLightSourceElement -> treeStructure.toString(lighterASTNode)
         else -> null
     }
 
-val FirElement.psi: PsiElement? get() = (source as? FirPsiSourceElement<*>)?.psi
-val FirElement.realPsi: PsiElement? get() = (source as? FirRealPsiSourceElement<*>)?.psi
+val FirElement.psi: PsiElement? get() = (source as? FirPsiSourceElement)?.psi
+val FirElement.realPsi: PsiElement? get() = (source as? FirRealPsiSourceElement)?.psi
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun PsiElement.toFirPsiSourceElement(kind: FirSourceElementKind = FirRealSourceElementKind): FirPsiSourceElement<*> = when (kind) {
+inline fun PsiElement.toFirPsiSourceElement(kind: FirSourceElementKind = FirRealSourceElementKind): FirPsiSourceElement = when (kind) {
     is FirRealSourceElementKind -> FirRealPsiSourceElement(this)
     is FirFakeSourceElementKind -> FirFakeSourceElement(this, kind)
 }

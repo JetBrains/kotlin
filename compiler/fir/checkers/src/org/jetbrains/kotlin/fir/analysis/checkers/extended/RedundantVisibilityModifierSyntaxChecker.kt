@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirFakeSourceElement
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirPsiSourceElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -32,7 +31,7 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
         reporter: DiagnosticReporter
     ) {
         if (element is FirConstructor && source.kind is FirFakeSourceElementKind) return
-        if (source is FirFakeSourceElement<*>) return
+        if (source is FirFakeSourceElement) return
         if (
             element !is FirMemberDeclaration
             && !(element is FirPropertyAccessor && element.visibility == context.containingPropertyVisibility)

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
-import org.jetbrains.kotlin.diagnostics.rendering.*
+import org.jetbrains.kotlin.diagnostics.rendering.LanguageFeatureMessageRenderer
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers.RENDER_POSITION_VARIANCE
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers.STRING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.AMBIGUOUS_CALLS
@@ -379,10 +379,10 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_SETTER_RETU
 @Suppress("unused")
 class FirDefaultErrorMessages {
     companion object {
-        fun getRendererForDiagnostic(diagnostic: FirDiagnostic<*>): FirDiagnosticRenderer<FirDiagnostic<*>> {
+        fun getRendererForDiagnostic(diagnostic: FirDiagnostic): FirDiagnosticRenderer {
             val factory = diagnostic.factory
             @Suppress("UNCHECKED_CAST")
-            return (MAP[factory] ?: factory.firRenderer) as FirDiagnosticRenderer<FirDiagnostic<*>>
+            return (MAP[factory] ?: factory.firRenderer)
         }
 
         // * - The old FE reports these diagnostics with additional parameters

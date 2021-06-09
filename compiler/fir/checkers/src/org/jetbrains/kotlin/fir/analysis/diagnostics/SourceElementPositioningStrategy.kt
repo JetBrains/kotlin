@@ -11,28 +11,38 @@ import org.jetbrains.kotlin.diagnostics.PositioningStrategy
 import org.jetbrains.kotlin.fir.FirPsiSourceElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 
-open class SourceElementPositioningStrategy<in E : PsiElement>(
-    val lightTreeStrategy: LightTreePositioningStrategy,
-    val psiStrategy: PositioningStrategy<E>
+class SourceElementPositioningStrategy(
+    private val lightTreeStrategy: LightTreePositioningStrategy,
+    private val psiStrategy: PositioningStrategy<*>
 ) {
-    fun markDiagnostic(diagnostic: FirDiagnostic<*>): List<TextRange> {
+    fun markDiagnostic(diagnostic: FirDiagnostic): List<TextRange> {
         val element = diagnostic.element
-        if (element is FirPsiSourceElement<*>) {
+        if (element is FirPsiSourceElement) {
             @Suppress("UNCHECKED_CAST")
-            return psiStrategy.mark(element.psi as E)
+            return psiStrategy.hackyMark(element.psi)
         }
         return lightTreeStrategy.mark(element.lighterASTNode, element.startOffset, element.endOffset, element.treeStructure)
     }
 
     fun isValid(element: FirSourceElement): Boolean {
-        if (element is FirPsiSourceElement<*>) {
+        if (element is FirPsiSourceElement) {
             @Suppress("UNCHECKED_CAST")
-            return psiStrategy.isValid(element.psi as E)
+            return psiStrategy.hackyIsValid(element.psi)
         }
         return lightTreeStrategy.isValid(element.lighterASTNode, element.treeStructure)
     }
 
+    private fun PositioningStrategy<*>.hackyMark(psi: PsiElement): List<TextRange> {
+        @Suppress("UNCHECKED_CAST")
+        return (this as PositioningStrategy<PsiElement>).mark(psi)
+    }
+
+    private fun PositioningStrategy<*>.hackyIsValid(psi: PsiElement): Boolean {
+        @Suppress("UNCHECKED_CAST")
+        return (this as PositioningStrategy<PsiElement>).isValid(psi)
+    }
+
     companion object {
-        val DEFAULT: SourceElementPositioningStrategy<PsiElement> = SourceElementPositioningStrategies.DEFAULT
+        val DEFAULT: SourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
     }
 }

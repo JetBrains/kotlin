@@ -25,7 +25,7 @@ internal fun FirDeclaration.getKtDeclarationForFirElement(): KtDeclaration {
     require(this !is FirFile)
 
     val ktDeclaration = (psi as? KtDeclaration) ?: run {
-        (source as? FirFakeSourceElement<*>).psi?.parentOfType()
+        (source as? FirFakeSourceElement).psi?.parentOfType()
     }
     check(ktDeclaration is KtDeclaration) {
         "FirDeclaration should have a PSI of type KtDeclaration"

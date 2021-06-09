@@ -134,8 +134,8 @@ private val allowedFakeElementKinds = setOf(
 
 private fun FirElement.getAllowedPsi() = when (val source = source) {
     null -> null
-    is FirRealPsiSourceElement<*> -> source.psi
-    is FirFakeSourceElement<*> -> if (source.kind in allowedFakeElementKinds) psi else null
+    is FirRealPsiSourceElement -> source.psi
+    is FirFakeSourceElement -> if (source.kind in allowedFakeElementKinds) psi else null
     else -> null
 }
 

@@ -25,8 +25,8 @@ internal class FileStructureElementDiagnostics(
         retriever.retrieve(firFile, FileStructureElementDiagnosticsCollector.EXTENDED_COLLECTOR, lockProvider)
     }
 
-    fun diagnosticsFor(filter: DiagnosticCheckerFilter, element: PsiElement): List<FirPsiDiagnostic<*>> =
-        SmartList<FirPsiDiagnostic<*>>().apply {
+    fun diagnosticsFor(filter: DiagnosticCheckerFilter, element: PsiElement): List<FirPsiDiagnostic> =
+        SmartList<FirPsiDiagnostic>().apply {
             if (filter.runCommonCheckers) {
                 addAll(diagnosticByCommonCheckers.diagnosticsFor(element))
             }
@@ -36,7 +36,7 @@ internal class FileStructureElementDiagnostics(
         }
 
 
-    inline fun forEach(filter: DiagnosticCheckerFilter, action: (List<FirPsiDiagnostic<*>>) -> Unit) {
+    inline fun forEach(filter: DiagnosticCheckerFilter, action: (List<FirPsiDiagnostic>) -> Unit) {
         if (filter.runCommonCheckers) {
             diagnosticByCommonCheckers.forEach(action)
         }

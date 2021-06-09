@@ -40,7 +40,7 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker() {
 
         for (property in unprocessedProperties) {
             val source = property.fir.source
-            if (source is FirFakeSourceElement<*>) continue
+            if (source is FirFakeSourceElement) continue
             if (source?.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION) continue
             propertiesCharacteristics[property] = EventOccurrencesRange.ZERO
         }

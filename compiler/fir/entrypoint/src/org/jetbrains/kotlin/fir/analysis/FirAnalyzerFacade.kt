@@ -31,7 +31,7 @@ import java.io.File
 
 abstract class AbstractFirAnalyzerFacade {
     abstract val scopeSession: ScopeSession
-    abstract fun runCheckers(): Map<FirFile, List<FirDiagnostic<*>>>
+    abstract fun runCheckers(): Map<FirFile, List<FirDiagnostic>>
 
     abstract fun runResolution(): List<FirFile>
 
@@ -50,7 +50,7 @@ class FirAnalyzerFacade(
     override val scopeSession: ScopeSession
         get() = _scopeSession!!
 
-    private var collectedDiagnostics: Map<FirFile, List<FirDiagnostic<*>>>? = null
+    private var collectedDiagnostics: Map<FirFile, List<FirDiagnostic>>? = null
 
     private fun buildRawFir() {
         if (firFiles != null) return
@@ -82,7 +82,7 @@ class FirAnalyzerFacade(
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    override fun runCheckers(): Map<FirFile, List<FirDiagnostic<*>>> {
+    override fun runCheckers(): Map<FirFile, List<FirDiagnostic>> {
         if (_scopeSession == null) runResolution()
         if (collectedDiagnostics != null) return collectedDiagnostics!!
         val collector = FirDiagnosticsCollector.create(session, scopeSession)

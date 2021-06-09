@@ -12,107 +12,107 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
 inline fun <reified P : PsiElement> warning0(
-    positioningStrategy: SourceElementPositioningStrategy<P> = SourceElementPositioningStrategy.DEFAULT
-): DiagnosticFactory0DelegateProvider<P> {
+    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategy.DEFAULT
+): DiagnosticFactory0DelegateProvider {
     return DiagnosticFactory0DelegateProvider(Severity.WARNING, positioningStrategy, P::class)
 }
 
 inline fun <reified P : PsiElement, A> warning1(
-    positioningStrategy: SourceElementPositioningStrategy<P> = SourceElementPositioningStrategy.DEFAULT
-): DiagnosticFactory1DelegateProvider<P, A> {
+    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategy.DEFAULT
+): DiagnosticFactory1DelegateProvider<A> {
     return DiagnosticFactory1DelegateProvider(Severity.WARNING, positioningStrategy, P::class)
 }
 
 inline fun <reified P : PsiElement, A, B> warning2(
-    positioningStrategy: SourceElementPositioningStrategy<P> = SourceElementPositioningStrategy.DEFAULT
-): DiagnosticFactory2DelegateProvider<P, A, B> {
+    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategy.DEFAULT
+): DiagnosticFactory2DelegateProvider<A, B> {
     return DiagnosticFactory2DelegateProvider(Severity.WARNING, positioningStrategy, P::class)
 }
 
 inline fun <reified P : PsiElement, A, B, C> warning3(
-    positioningStrategy: SourceElementPositioningStrategy<P> = SourceElementPositioningStrategy.DEFAULT
-): DiagnosticFactory3DelegateProvider<P, A, B, C> {
+    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategy.DEFAULT
+): DiagnosticFactory3DelegateProvider<A, B, C> {
     return DiagnosticFactory3DelegateProvider(Severity.WARNING, positioningStrategy, P::class)
 }
 
 inline fun <reified P : PsiElement> error0(
-    positioningStrategy: SourceElementPositioningStrategy<P> = SourceElementPositioningStrategy.DEFAULT
-): DiagnosticFactory0DelegateProvider<P> {
+    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategy.DEFAULT
+): DiagnosticFactory0DelegateProvider {
     return DiagnosticFactory0DelegateProvider(Severity.ERROR, positioningStrategy, P::class)
 }
 
 inline fun <reified P : PsiElement, A> error1(
-    positioningStrategy: SourceElementPositioningStrategy<P> = SourceElementPositioningStrategy.DEFAULT
-): DiagnosticFactory1DelegateProvider<P, A> {
+    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategy.DEFAULT
+): DiagnosticFactory1DelegateProvider<A> {
     return DiagnosticFactory1DelegateProvider(Severity.ERROR, positioningStrategy, P::class)
 }
 
 inline fun <reified P : PsiElement, A, B> error2(
-    positioningStrategy: SourceElementPositioningStrategy<P> = SourceElementPositioningStrategy.DEFAULT
-): DiagnosticFactory2DelegateProvider<P, A, B> {
+    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategy.DEFAULT
+): DiagnosticFactory2DelegateProvider<A, B> {
     return DiagnosticFactory2DelegateProvider(Severity.ERROR, positioningStrategy, P::class)
 }
 
 inline fun <reified P : PsiElement, A, B, C> error3(
-    positioningStrategy: SourceElementPositioningStrategy<P> = SourceElementPositioningStrategy.DEFAULT
-): DiagnosticFactory3DelegateProvider<P, A, B, C> {
+    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategy.DEFAULT
+): DiagnosticFactory3DelegateProvider<A, B, C> {
     return DiagnosticFactory3DelegateProvider(Severity.ERROR, positioningStrategy, P::class)
 }
 
 inline fun <reified P : PsiElement, A, B, C, D> error4(
-    positioningStrategy: SourceElementPositioningStrategy<P> = SourceElementPositioningStrategy.DEFAULT
-): DiagnosticFactory4DelegateProvider<P, A, B, C, D> {
+    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategy.DEFAULT
+): DiagnosticFactory4DelegateProvider<A, B, C, D> {
     return DiagnosticFactory4DelegateProvider(Severity.ERROR, positioningStrategy, P::class)
 }
 
 // ------------------------------ Providers ------------------------------
 
-class DiagnosticFactory0DelegateProvider<P : PsiElement>(
+class DiagnosticFactory0DelegateProvider(
     private val severity: Severity,
-    private val positioningStrategy: SourceElementPositioningStrategy<P>,
+    private val positioningStrategy: SourceElementPositioningStrategy,
     private val psiType: KClass<*>
 ) {
-    operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, FirDiagnosticFactory0<P>> {
+    operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, FirDiagnosticFactory0> {
         return DummyDelegate(FirDiagnosticFactory0(prop.name, severity, positioningStrategy, psiType))
     }
 }
 
-class DiagnosticFactory1DelegateProvider<P : PsiElement, A>(
+class DiagnosticFactory1DelegateProvider<A>(
     private val severity: Severity,
-    private val positioningStrategy: SourceElementPositioningStrategy<P>,
+    private val positioningStrategy: SourceElementPositioningStrategy,
     private val psiType: KClass<*>
 ) {
-    operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, FirDiagnosticFactory1<P, A>> {
+    operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, FirDiagnosticFactory1<A>> {
         return DummyDelegate(FirDiagnosticFactory1(prop.name, severity, positioningStrategy, psiType))
     }
 }
 
-class DiagnosticFactory2DelegateProvider<P : PsiElement, A, B>(
+class DiagnosticFactory2DelegateProvider<A, B>(
     private val severity: Severity,
-    private val positioningStrategy: SourceElementPositioningStrategy<P>,
+    private val positioningStrategy: SourceElementPositioningStrategy,
     private val psiType: KClass<*>
 ) {
-    operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, FirDiagnosticFactory2<P, A, B>> {
+    operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, FirDiagnosticFactory2<A, B>> {
         return DummyDelegate(FirDiagnosticFactory2(prop.name, severity, positioningStrategy, psiType))
     }
 }
 
-class DiagnosticFactory3DelegateProvider<P : PsiElement, A, B, C>(
+class DiagnosticFactory3DelegateProvider<A, B, C>(
     private val severity: Severity,
-    private val positioningStrategy: SourceElementPositioningStrategy<P>,
+    private val positioningStrategy: SourceElementPositioningStrategy,
     private val psiType: KClass<*>
 ) {
-    operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, FirDiagnosticFactory3<P, A, B, C>> {
+    operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, FirDiagnosticFactory3<A, B, C>> {
         return DummyDelegate(FirDiagnosticFactory3(prop.name, severity, positioningStrategy, psiType))
     }
 }
 
-class DiagnosticFactory4DelegateProvider<P : PsiElement, A, B, C, D>(
+class DiagnosticFactory4DelegateProvider<A, B, C, D>(
     private val severity: Severity,
-    private val positioningStrategy: SourceElementPositioningStrategy<P>,
+    private val positioningStrategy: SourceElementPositioningStrategy,
     private val psiType: KClass<*>
 ) {
-    operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, FirDiagnosticFactory4<P, A, B, C, D>> {
+    operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, FirDiagnosticFactory4<A, B, C, D>> {
         return DummyDelegate(FirDiagnosticFactory4(prop.name, severity, positioningStrategy, psiType))
     }
 }

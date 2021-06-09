@@ -10,24 +10,20 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDefaultErrorMessages
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderer
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
-import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnosticWithPsi
 
 internal interface KtAbstractFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
-    val firDiagnostic: FirPsiDiagnostic<*>
+    val firDiagnostic: FirPsiDiagnostic
 
     override val factoryName: String
         get() = firDiagnostic.factory.name
 
     override val defaultMessage: String
         get() {
-            val diagnostic = firDiagnostic as FirDiagnostic<*>
+            val diagnostic = firDiagnostic as FirDiagnostic
 
-            @Suppress("UNCHECKED_CAST")
-            val firDiagnosticRenderer =
-                FirDefaultErrorMessages.getRendererForDiagnostic(diagnostic) as FirDiagnosticRenderer<FirDiagnostic<*>>
+            val firDiagnosticRenderer = FirDefaultErrorMessages.getRendererForDiagnostic(diagnostic)
             return firDiagnosticRenderer.render(diagnostic)
         }
 

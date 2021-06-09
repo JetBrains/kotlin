@@ -18,11 +18,12 @@ import org.jetbrains.kotlin.psi.KtFunction
 object FirAnonymousFunctionSyntaxChecker : FirExpressionSyntaxChecker<FirAnonymousFunction, KtFunction>() {
     override fun checkPsi(
         element: FirAnonymousFunction,
-        source: FirPsiSourceElement<KtFunction>,
+        source: FirPsiSourceElement,
+        psi: KtFunction,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        if (source.psi.typeParameterList != null) {
+        if (psi.typeParameterList != null) {
             reporter.reportOn(
                 source,
                 FirErrors.TYPE_PARAMETERS_NOT_ALLOWED,

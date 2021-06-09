@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperatorCall
 
 object EmptyRangeChecker : FirFunctionCallChecker() {
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (expression.source is FirFakeSourceElement<*>) return
+        if (expression.source is FirFakeSourceElement) return
         val left = expression.rangeLeft ?: return
         val right = expression.rangeRight ?: return
 

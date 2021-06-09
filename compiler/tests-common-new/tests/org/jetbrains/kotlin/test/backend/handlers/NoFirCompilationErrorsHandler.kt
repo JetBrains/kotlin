@@ -7,11 +7,7 @@ package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDefaultErrorMessages
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderer
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_FIR_DIAGNOSTICS
@@ -33,7 +29,7 @@ class NoFirCompilationErrorsHandler(testServices: TestServices) : FirAnalysisHan
                 if (diagnostic.severity == Severity.ERROR) {
                     hasError = true
                     if (!ignoreErrors) {
-                        val diagnosticText = FirDefaultErrorMessages.getRendererForDiagnostic(diagnostic).hackyRender(diagnostic)
+                        val diagnosticText = FirDefaultErrorMessages.getRendererForDiagnostic(diagnostic).render(diagnostic)
                         val range = diagnostic.textRanges.first()
                         val locationText = firFile.source?.psi?.containingFile?.let { psiFile ->
                             PsiDiagnosticUtils.atLocation(psiFile, range)
@@ -46,13 +42,6 @@ class NoFirCompilationErrorsHandler(testServices: TestServices) : FirAnalysisHan
         if (!hasError && ignoreErrors) {
             assertions.fail { "Test contains $IGNORE_FIR_DIAGNOSTICS directive but no errors was reported. Please remove directive" }
         }
-    }
-
-    private fun FirDiagnosticRenderer<*>.hackyRender(diagnostic: FirDiagnostic<*>): String {
-        @Suppress("UNCHECKED_CAST")
-        val renderer = this as FirDiagnosticRenderer<FirDiagnostic<FirSourceElement>>
-        val castedDiagnostic = diagnostic as FirDiagnostic<FirSourceElement>
-        return renderer.render(castedDiagnostic)
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}

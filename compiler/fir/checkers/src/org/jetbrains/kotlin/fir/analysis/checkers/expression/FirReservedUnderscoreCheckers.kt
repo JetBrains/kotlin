@@ -10,13 +10,16 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirLightSourceElement
+import org.jetbrains.kotlin.fir.FirPsiSourceElement
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.getChildren
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.text
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.stubs.elements.KtDotQualifiedExpressionElementType
@@ -37,7 +40,7 @@ object FirReservedUnderscoreExpressionChecker : FirBasicExpressionChecker() {
                 isExpression = true
             )
         } else if (expression is FirQualifiedAccess) {
-            if (source is FirPsiSourceElement<*>) {
+            if (source is FirPsiSourceElement) {
                 reportIfUnderscoreInQualifiedAccess(source, expression, context, reporter)
             } else if (source is FirLightSourceElement) {
                 reportIfUnderscoreInQualifiedAccess(source, expression, context, reporter)
@@ -48,7 +51,7 @@ object FirReservedUnderscoreExpressionChecker : FirBasicExpressionChecker() {
             }
         } else if (expression is FirReturnExpression) {
             var labelName: String? = null
-            if (source is FirPsiSourceElement<*>) {
+            if (source is FirPsiSourceElement) {
                 labelName = (source.psi.parent as? KtLabeledExpression)?.getLabelName()
             } else if (source is FirLightSourceElement) {
                 val parent = source.treeStructure.getParent(source.lighterASTNode)
@@ -63,7 +66,7 @@ object FirReservedUnderscoreExpressionChecker : FirBasicExpressionChecker() {
     }
 
     private fun reportIfUnderscoreInQualifiedAccess(
-        source: FirPsiSourceElement<*>,
+        source: FirPsiSourceElement,
         expression: FirStatement,
         context: CheckerContext,
         reporter: DiagnosticReporter
@@ -145,7 +148,7 @@ private fun reportIfUnderscore(
 ) {
     val source = declaration.source
     val rawIdentifier = when (source) {
-        is FirPsiSourceElement<*> ->
+        is FirPsiSourceElement ->
             (source.psi as? PsiNameIdentifierOwner)?.nameIdentifier?.text
         is FirLightSourceElement ->
             source.treeStructure.nameIdentifier(source.lighterASTNode)?.toString()
@@ -162,7 +165,7 @@ private fun reportIfUnderscore(
     }
 
     val isReportUnderscoreInReturnOrReceiverTypeRef = when (returnOrReceiverTypeRef) {
-        is FirPsiSourceElement<*> -> {
+        is FirPsiSourceElement -> {
             val psi = returnOrReceiverTypeRef.psi
             psi is KtTypeReference && psi.anyDescendantOfType<LeafPsiElement> { isUnderscore(it.text) }
         }

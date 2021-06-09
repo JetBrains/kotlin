@@ -9,5 +9,5 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 
 abstract class BaseDiagnosticReporter : DiagnosticReporter() {
-    abstract val diagnostics: List<FirDiagnostic<*>>
+    abstract val diagnostics: List<FirDiagnostic>
 }

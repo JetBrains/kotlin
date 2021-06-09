@@ -18,7 +18,7 @@ object FirMetaInfoUtils {
 }
 
 class FirDiagnosticCodeMetaInfo(
-    val diagnostic: FirDiagnostic<*>,
+    val diagnostic: FirDiagnostic,
     renderConfiguration: FirDiagnosticCodeMetaRenderConfiguration
 ) : CodeMetaInfo {
     private val textRangeFromClassicDiagnostic: TextRange = run {
@@ -67,7 +67,7 @@ class FirDiagnosticCodeMetaRenderConfiguration(
 
         @Suppress("UNCHECKED_CAST")
         val renderer = FirDefaultErrorMessages.getRendererForDiagnostic(diagnostic)
-        if (renderer is AbstractFirDiagnosticWithParametersRenderer<*>) {
+        if (renderer is AbstractFirDiagnosticWithParametersRenderer) {
             renderer.renderParameters(diagnostic).mapTo(params, Any?::toString)
         }
 

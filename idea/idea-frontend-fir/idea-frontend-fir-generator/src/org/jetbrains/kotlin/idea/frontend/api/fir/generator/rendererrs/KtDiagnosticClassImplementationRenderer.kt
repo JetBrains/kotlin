@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.generator.rendererrs
 
-import org.jetbrains.kotlin.fir.checkers.generator.inBracketsWithIndent
-import org.jetbrains.kotlin.idea.frontend.api.fir.generator.*
-import org.jetbrains.kotlin.idea.frontend.api.fir.generator.printTypeWithShortNames
 import org.jetbrains.kotlin.fir.checkers.generator.collectClassNamesTo
+import org.jetbrains.kotlin.fir.checkers.generator.inBracketsWithIndent
+import org.jetbrains.kotlin.idea.frontend.api.fir.generator.HLDiagnostic
+import org.jetbrains.kotlin.idea.frontend.api.fir.generator.HLDiagnosticList
+import org.jetbrains.kotlin.idea.frontend.api.fir.generator.HLDiagnosticParameter
+import org.jetbrains.kotlin.idea.frontend.api.fir.generator.printTypeWithShortNames
 import org.jetbrains.kotlin.util.SmartPrinter
 import org.jetbrains.kotlin.util.withIndent
 
@@ -34,7 +36,7 @@ object KtDiagnosticClassImplementationRenderer : AbstractDiagnosticsDataClassRen
         printTypeWithShortNames(diagnostic.original.psiType)
         print(">")
         inBracketsWithIndent {
-            println("override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)")
+            println("override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)")
         }
     }
 
@@ -42,7 +44,7 @@ object KtDiagnosticClassImplementationRenderer : AbstractDiagnosticsDataClassRen
         for (parameter in diagnostic.parameters) {
             printParameter(parameter)
         }
-        println("firDiagnostic: FirPsiDiagnostic<*>,")
+        println("firDiagnostic: FirPsiDiagnostic,")
         println("override val token: ValidityToken,")
     }
 

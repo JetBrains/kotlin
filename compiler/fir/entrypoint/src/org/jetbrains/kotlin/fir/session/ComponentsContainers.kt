@@ -72,7 +72,7 @@ fun FirSession.registerResolveComponents(lookupTracker: LookupTracker? = null) {
     register(FirNameConflictsTrackerComponent::class, FirNameConflictsTracker())
     if (lookupTracker != null) {
         val firFileToPath: (FirSourceElement) -> String = {
-            val psiSource = (it as? FirPsiSourceElement<*>) ?: TODO("Not implemented for non-FirPsiSourceElement")
+            val psiSource = (it as? FirPsiSourceElement) ?: TODO("Not implemented for non-FirPsiSourceElement")
             ((psiSource.psi as? PsiFile) ?: psiSource.psi.containingFile).virtualFile.path
         }
         register(

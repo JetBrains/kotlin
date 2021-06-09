@@ -9,11 +9,11 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 
 class SimpleDiagnosticReporter : BaseDiagnosticReporter() {
-    private val _diagnostics: MutableList<FirDiagnostic<*>> = mutableListOf()
-    override val diagnostics: List<FirDiagnostic<*>>
+    private val _diagnostics: MutableList<FirDiagnostic> = mutableListOf()
+    override val diagnostics: List<FirDiagnostic>
         get() = _diagnostics
 
-    override fun report(diagnostic: FirDiagnostic<*>?, context: CheckerContext) {
+    override fun report(diagnostic: FirDiagnostic?, context: CheckerContext) {
         if (diagnostic == null) return
         _diagnostics += diagnostic
     }

@@ -20,7 +20,7 @@ fun FirSourceElement.getChild(types: TokenSet, index: Int = 0, depth: Int = -1):
 
 fun FirSourceElement.getChild(types: Set<IElementType>, index: Int = 0, depth: Int = -1): FirSourceElement? {
     return when (this) {
-        is FirPsiSourceElement<*> -> {
+        is FirPsiSourceElement -> {
             getChild(types, index, depth)
         }
         is FirLightSourceElement -> {
@@ -30,7 +30,7 @@ fun FirSourceElement.getChild(types: Set<IElementType>, index: Int = 0, depth: I
     }
 }
 
-private fun FirPsiSourceElement<*>.getChild(types: Set<IElementType>, index: Int, depth: Int): FirSourceElement? {
+private fun FirPsiSourceElement.getChild(types: Set<IElementType>, index: Int, depth: Int): FirSourceElement? {
     val visitor = PsiElementFinderByType(types, index, depth)
     return visitor.find(psi)?.toFirPsiSourceElement()
 }

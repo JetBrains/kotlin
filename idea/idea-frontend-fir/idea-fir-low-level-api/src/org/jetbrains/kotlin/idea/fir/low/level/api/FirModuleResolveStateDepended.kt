@@ -72,10 +72,10 @@ internal class FirModuleResolveStateDepended(
         return null
     }
 
-    override fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<FirPsiDiagnostic<*>> =
+    override fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<FirPsiDiagnostic> =
         TODO("Diagnostics are not implemented for depended state")
 
-    override fun collectDiagnosticsForFile(ktFile: KtFile, filter: DiagnosticCheckerFilter): Collection<FirPsiDiagnostic<*>> =
+    override fun collectDiagnosticsForFile(ktFile: KtFile, filter: DiagnosticCheckerFilter): Collection<FirPsiDiagnostic> =
         TODO("Diagnostics are not implemented for depended state")
 
     @OptIn(InternalForInline::class)
