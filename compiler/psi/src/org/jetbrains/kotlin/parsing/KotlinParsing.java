@@ -424,7 +424,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         PsiBuilder.Marker decl = mark();
 
         if (at(CONTEXT_KEYWORD)) {
-            parseContextReceiver();
+            parseContextReceiverList();
         }
 
         ModifierDetector detector = new ModifierDetector();
@@ -617,12 +617,12 @@ public class KotlinParsing extends AbstractKotlinParsing {
     }
 
     /*
-     * contextReceiver
-     *   : "context" "(" typeReference{","}+ ")"
+     * contextReceiverList
+     *   : "context" "(" (label? typeReference{","})+ ")"
      */
-    private void parseContextReceiver() {
+    private void parseContextReceiverList() {
         assert _at(CONTEXT_KEYWORD);
-        PsiBuilder.Marker contextReceiver = mark();
+        PsiBuilder.Marker contextReceiverList = mark();
         advance(); // CONTEXT_KEYWORD
         if (at(LPAR)) {
             advance(); // LPAR
@@ -630,7 +630,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
                 if (at(COMMA)) {
                     errorAndAdvance("Expecting a type reference");
                 }
-                parseTypeRef();
+                parseContextReceiver();
                 if (at(RPAR)) {
                     advance();
                     break;
@@ -644,11 +644,24 @@ public class KotlinParsing extends AbstractKotlinParsing {
                     }
                 }
             }
-            contextReceiver.done(CONTEXT_RECEIVER);
+            contextReceiverList.done(CONTEXT_RECEIVER_LIST);
         } else {
             errorWithRecovery("Expecting context receivers", TokenSet.EMPTY);
-            contextReceiver.drop();
+            contextReceiverList.drop();
         }
+    }
+
+    /*
+     * contextReceiver
+     *   : label? typeReference
+     */
+    private void parseContextReceiver() {
+        PsiBuilder.Marker contextReceiver = mark();
+        if (myExpressionParsing.isAtLabelDefinitionOrMissingIdentifier()) {
+            myExpressionParsing.parseLabelDefinition();
+        }
+        parseTypeRef();
+        contextReceiver.done(CONTEXT_RECEIVER);
     }
 
     /*
@@ -1218,7 +1231,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         PsiBuilder.Marker decl = mark();
 
         if (at(CONTEXT_KEYWORD)) {
-            parseContextReceiver();
+            parseContextReceiverList();
         }
 
         ModifierDetector detector = new ModifierDetector();
