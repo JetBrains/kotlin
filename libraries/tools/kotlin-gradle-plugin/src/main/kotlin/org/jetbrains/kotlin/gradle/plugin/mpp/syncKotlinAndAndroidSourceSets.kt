@@ -105,7 +105,7 @@ private fun syncKotlinAndAndroidResources(
 
     val project = target.project
 
-    androidSourceSet.resources.srcDirs(*kotlinSourceSet.resources.toList().toTypedArray())
+    androidSourceSet.resources.srcDirs(*kotlinSourceSet.resources.srcDirs.toList().toTypedArray())
     if (androidSourceSet.resources.srcDirs.isNotEmpty()) {
         androidSourceSet.resources.srcDir(defaultSourceFolder(project, kotlinSourceSet.name, "resources"))
         kotlinSourceSet.resources.srcDirs(androidSourceSet.resources.srcDirs)
