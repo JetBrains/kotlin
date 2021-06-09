@@ -639,8 +639,6 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
         checkProjectStructure(exhaustiveModuleList = false, exhaustiveDependencyList = false, exhaustiveSourceSourceRootList = false) {
             module("multiplatformb") {
                 sourceFolder("multiplatformb/src/androidMain/kotlin", JavaSourceRootType.SOURCE)
-
-
             }
         }
     }
