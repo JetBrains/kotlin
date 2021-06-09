@@ -10599,9 +10599,24 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                     runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/lazy.kt");
                 }
 
+                @TestMetadata("localDeclaration.kt")
+                public void testLocalDeclaration() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/localDeclaration.kt");
+                }
+
                 @TestMetadata("manyReceivers.kt")
                 public void testManyReceivers() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/manyReceivers.kt");
+                }
+
+                @TestMetadata("noBackingField.kt")
+                public void testNoBackingField() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/noBackingField.kt");
+                }
+
+                @TestMetadata("noContextReceiversOnInlineClasses.kt")
+                public void testNoContextReceiversOnInlineClasses() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/noContextReceiversOnInlineClasses.kt");
                 }
 
                 @TestMetadata("noExplicitReceiver.kt")
@@ -10622,6 +10637,11 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 @TestMetadata("superWithContext.kt")
                 public void testSuperWithContext() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/superWithContext.kt");
+                }
+
+                @TestMetadata("syntaxError.kt")
+                public void testSyntaxError() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/syntaxError.kt");
                 }
 
                 @TestMetadata("thisIdentifierInfo.kt")
