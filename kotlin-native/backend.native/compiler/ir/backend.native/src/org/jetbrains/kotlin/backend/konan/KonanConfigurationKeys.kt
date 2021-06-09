@@ -100,6 +100,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("export KDoc into klib and framework")
         val PRINT_BITCODE: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("print bitcode")
+        val CHECK_EXTERNAL_CALLS: CompilerConfigurationKey<Boolean>
+                = CompilerConfigurationKey.create("check external calls")
         val PRINT_DESCRIPTORS: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("print descriptors")
         val PRINT_IR: CompilerConfigurationKey<Boolean> 

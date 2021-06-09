@@ -195,6 +195,9 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xprint-bitcode", deprecatedName = "--print_bitcode", description = "Print llvm bitcode")
     var printBitCode: Boolean = false
 
+    @Argument(value = "-Xcheck-state-at-external-calls", description = "Check all calls of possibly long external functions are done in Native state")
+    var checkExternalCalls: Boolean = false
+
     @Argument(value = "-Xprint-descriptors", deprecatedName = "--print_descriptors", description = "Print descriptor tree")
     var printDescriptors: Boolean = false
 
