@@ -1,7 +1,7 @@
 public final class PropertyTest {
     public fun PropertyTest() = UastEmptyExpression
     public final fun getStringRepresentation() : java.lang.String {
-        return [!] UnknownKotlinExpression (THIS_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)
+        return this.[!] UnknownKotlinExpression (CALL_EXPRESSION)
     }
     public final fun setStringRepresentation(value: java.lang.String) : void {
         [!] UnknownKotlinExpression (CALL_EXPRESSION)

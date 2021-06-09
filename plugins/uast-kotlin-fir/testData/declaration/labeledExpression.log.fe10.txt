@@ -1,0 +1,49 @@
+UFile (package = )
+    UClass (name = I)
+        UMethod (name = foo)
+    UClass (name = Base)
+        UMethod (name = foo)
+            UBlockExpression
+                UReturnExpression
+                    ULiteralExpression (value = 42)
+        UMethod (name = Base)
+    UClass (name = Foo)
+        UField (name = p)
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            ULiteralExpression (value = "42")
+        UMethod (name = getP)
+        UMethod (name = bar)
+            UParameter (name = other)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 2))
+                    UIdentifier (Identifier (with))
+                    USimpleNameReferenceExpression (identifier = with, resolvesTo = null)
+                    USimpleNameReferenceExpression (identifier = other)
+                    ULambdaExpression
+                        UBlockExpression
+                            UReturnExpression
+                                UQualifiedReferenceExpression
+                                    USuperExpression (label = Foo)
+                                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                                        UIdentifier (Identifier (foo))
+                                        USimpleNameReferenceExpression (identifier = foo, resolvesTo = null)
+        UMethod (name = baz)
+            UParameter (name = other)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 2))
+                    UIdentifier (Identifier (with))
+                    USimpleNameReferenceExpression (identifier = with, resolvesTo = null)
+                    USimpleNameReferenceExpression (identifier = other)
+                    ULambdaExpression
+                        UBlockExpression
+                            UReturnExpression
+                                UQualifiedReferenceExpression
+                                    UThisExpression (label = Foo)
+                                    USimpleNameReferenceExpression (identifier = p)
+        UMethod (name = Foo)
+            UBlockExpression
+                UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0))
+                    UIdentifier (Identifier (Base))
+                    USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: Base)

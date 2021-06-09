@@ -1,0 +1,28 @@
+public abstract interface I {
+    public abstract fun foo() : int = UastEmptyExpression
+}
+
+public abstract class Base {
+    public final fun foo() : int {
+        return 42
+    }
+    public fun Base() = UastEmptyExpression
+}
+
+public final class Foo : I, Base {
+    @org.jetbrains.annotations.NotNull private final var p: java.lang.String = "42"
+    public final fun getP() : java.lang.String = UastEmptyExpression
+    public final fun bar(@org.jetbrains.annotations.NotNull other: I) : int {
+        with(other, {
+            return super.foo()
+        })
+    }
+    public final fun baz(@org.jetbrains.annotations.NotNull other: I) : java.lang.String {
+        with(other, {
+            return this.p
+        })
+    }
+    public fun Foo() {
+        <init>()
+    }
+}

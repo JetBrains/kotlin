@@ -36,8 +36,8 @@ UFile (package = ) [public final class SuperCallsKt {...]
         UMethod (name = foo) [public fun foo(a: long) : void {...}]
             UParameter (name = a) [var a: long]
             UBlockExpression [{...}] : PsiType:Unit
-                UQualifiedReferenceExpression [[!] UnknownKotlinExpression (SUPER_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:Unit
-                    [!] UnknownKotlinExpression (SUPER_EXPRESSION) [[!] UnknownKotlinExpression (SUPER_EXPRESSION)]
+                UQualifiedReferenceExpression [super.[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:Unit
+                    USuperExpression (label = null) [super] : PsiType:A
                     [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
     UClass (name = O) [public final class O : A {...}]
         UField (name = INSTANCE) [public static final var INSTANCE: O]

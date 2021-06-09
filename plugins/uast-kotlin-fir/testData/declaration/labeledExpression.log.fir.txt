@@ -1,0 +1,22 @@
+UFile (package = )
+    UClass (name = I)
+        UMethod (name = foo)
+    UClass (name = Base)
+        UMethod (name = Base)
+        UMethod (name = foo)
+            UBlockExpression
+                UReturnExpression
+                    ULiteralExpression (value = 42)
+    UClass (name = Foo)
+        UField (name = p)
+            ULiteralExpression (value = "42")
+        UMethod (name = Foo)
+        UMethod (name = getP)
+        UMethod (name = bar)
+            UParameter (name = other)
+            UBlockExpression
+                [!] UnknownKotlinExpression (CALL_EXPRESSION)
+        UMethod (name = baz)
+            UParameter (name = other)
+            UBlockExpression
+                [!] UnknownKotlinExpression (CALL_EXPRESSION)

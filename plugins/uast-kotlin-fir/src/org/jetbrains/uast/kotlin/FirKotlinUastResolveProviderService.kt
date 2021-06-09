@@ -10,10 +10,7 @@ import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.idea.frontend.api.analyseForUast
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
-import org.jetbrains.kotlin.psi.KtDoubleColonExpression
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtReferenceExpression
-import org.jetbrains.kotlin.psi.KtTypeReference
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UExpression
 
@@ -27,6 +24,11 @@ interface FirKotlinUastResolveProviderService : BaseKotlinUastResolveProviderSer
 
     override fun resolveToDeclaration(ktExpression: KtExpression): PsiElement? {
         when (ktExpression) {
+            is KtExpressionWithLabel -> {
+                analyseForUast(ktExpression) {
+                    return ktExpression.getTargetLabel()?.mainReference?.resolve()
+                }
+            }
             is KtReferenceExpression -> {
                 analyseForUast(ktExpression) {
                     return ktExpression.mainReference.resolve()

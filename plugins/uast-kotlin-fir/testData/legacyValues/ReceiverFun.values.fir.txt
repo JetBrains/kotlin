@@ -3,9 +3,9 @@ UFile (package = ) [public final class ReceiverFunKt {...]
         UMethod (name = foo) [public static final fun foo($this$foo: java.lang.String) : int {...}]
             UParameter (name = $this$foo) [var $this$foo: java.lang.String]
             UBlockExpression [{...}] = Nothing
-                UReturnExpression [return [!] UnknownKotlinExpression (THIS_EXPRESSION).length] = Nothing
-                    UQualifiedReferenceExpression [[!] UnknownKotlinExpression (THIS_EXPRESSION).length] = external length()
-                        [!] UnknownKotlinExpression (THIS_EXPRESSION) [[!] UnknownKotlinExpression (THIS_EXPRESSION)] = Undetermined
+                UReturnExpression [return this.length] = Nothing
+                    UQualifiedReferenceExpression [this.length] = external length()
+                        UThisExpression (label = null) [this] = Undetermined
                         USimpleNameReferenceExpression (identifier = length) [length] = external length()
         UMethod (name = getRx) [public static final fun getRx($this$rx: java.lang.String) : kotlin.text.Regex {...}]
             UParameter (name = $this$rx) [var $this$rx: java.lang.String]
