@@ -31,6 +31,7 @@ interface FirAbstractResolvedQualifierBuilder {
     abstract var classId: ClassId?
     abstract var symbol: FirClassLikeSymbol<*>?
     abstract var isNullableLHSForCallableReference: Boolean
+    abstract var resolvedToCompanionObject: Boolean
     abstract val typeArguments: MutableList<FirTypeProjection>
 
     fun build(): FirResolvedQualifier

@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildErrorFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildErrorProperty
+import org.jetbrains.kotlin.fir.declarations.classId
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.moduleData
@@ -17,6 +19,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorPropertySymbol
+import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -55,7 +58,20 @@ class CandidateFactory private constructor(
                 callInfo.withReceiverAsArgument(it)
             } ?: callInfo,
             scope,
+            isFromCompanionObjectTypeScope = when (explicitReceiverKind) {
+                ExplicitReceiverKind.EXTENSION_RECEIVER -> extensionReceiverValue.isCandidateFromCompanionObjectTypeScope()
+                ExplicitReceiverKind.DISPATCH_RECEIVER -> dispatchReceiverValue.isCandidateFromCompanionObjectTypeScope()
+                // The following cases are not applicable for companion objects.
+                ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, ExplicitReceiverKind.BOTH_RECEIVERS -> false
+            }
         )
+    }
+
+    private fun ReceiverValue?.isCandidateFromCompanionObjectTypeScope(): Boolean {
+        val expressionReceiverValue = this as? ExpressionReceiverValue ?: return false
+        val resolvedQualifier = (expressionReceiverValue.explicitReceiver as? FirResolvedQualifier) ?: return false
+        val originClassOfCandidate = expressionReceiverValue.type.classId ?: return false
+        return (resolvedQualifier.symbol?.fir as? FirRegularClass)?.companionObject?.classId == originClassOfCandidate
     }
 
     fun createErrorCandidate(callInfo: CallInfo, diagnostic: ConeDiagnostic): Candidate {
