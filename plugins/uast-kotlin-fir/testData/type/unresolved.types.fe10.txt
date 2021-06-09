@@ -1,9 +1,12 @@
 UFile (package = ) [public final class UnresolvedKt {...]
     UClass (name = UnresolvedKt) [public final class UnresolvedKt {...}]
-        UMethod (name = foo) [public static final fun foo(@org.jetbrains.annotations.NotNull x: error.NonExistentClass) : void {...}]
-            UParameter (name = x) [@org.jetbrains.annotations.NotNull var x: error.NonExistentClass]
-                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
-            UBlockExpression [{...}] : PsiType:void
+        UMethod (name = foo) [public static final fun foo(@org.jetbrains.annotations.Nullable x: error.NonExistentClass) : void {...}]
+            UParameter (name = x) [@org.jetbrains.annotations.Nullable var x: error.NonExistentClass]
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable) [@org.jetbrains.annotations.Nullable]
+            UBlockExpression [{...}] : PsiType:<ErrorType>
+                UQualifiedReferenceExpression [x?.prop] : PsiType:<ErrorType>
+                    USimpleNameReferenceExpression (identifier = x) [x] : PsiType:<ErrorType>
+                    USimpleNameReferenceExpression (identifier = prop) [prop] : PsiType:<ErrorType>
     UClass (name = A) [public final class A : <ErrorType> {...}]
         UField (name = prop) [@org.jetbrains.annotations.NotNull private final var prop: error.NonExistentClass]
             UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]

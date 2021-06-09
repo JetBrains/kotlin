@@ -1,4 +1,5 @@
-fun foo(x: Unresolved) {
+fun foo(x: Unresolved?) {
+    x?.prop
 }
 
 class A(
