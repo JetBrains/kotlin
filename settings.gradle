@@ -33,7 +33,7 @@ buildscript {
 }
 
 plugins {
-    id "com.gradle.enterprise" version "3.5"
+    id "com.gradle.enterprise" version "3.6.2"
     id "com.gradle.common-custom-user-data-gradle-plugin" version "1.4" apply false
 }
 
