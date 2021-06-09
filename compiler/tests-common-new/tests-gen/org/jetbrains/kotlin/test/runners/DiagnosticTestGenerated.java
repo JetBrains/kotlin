@@ -26755,6 +26755,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("syntheticPropertyOnUnstableSmartcast.kt")
+                public void testSyntheticPropertyOnUnstableSmartcast() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/inference/syntheticPropertyOnUnstableSmartcast.kt");
+                }
+
+                @Test
                 @TestMetadata("unneededUnstableSmartcast.kt")
                 public void testUnneededUnstableSmartcast() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/smartCasts/inference/unneededUnstableSmartcast.kt");

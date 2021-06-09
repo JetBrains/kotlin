@@ -26665,6 +26665,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 }
 
                 @Test
+                @TestMetadata("syntheticPropertyOnUnstableSmartcast.kt")
+                public void testSyntheticPropertyOnUnstableSmartcast() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/inference/syntheticPropertyOnUnstableSmartcast.kt");
+                }
+
+                @Test
                 @TestMetadata("unneededUnstableSmartcast.kt")
                 public void testUnneededUnstableSmartcast() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/smartCasts/inference/unneededUnstableSmartcast.kt");

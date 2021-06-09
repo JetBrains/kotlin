@@ -1,0 +1,25 @@
+package
+
+package p {
+    public var s: p.Super
+    public fun test(): kotlin.Unit
+
+    public final class Sub : p.Super {
+        public constructor Sub()
+        public final val onlyInSub: kotlin.Int = 1
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ fun getName(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ fun setName(/*0*/ name: kotlin.String): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public interface Super {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public abstract fun getName(): kotlin.String!
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public abstract fun setName(/*0*/ name: kotlin.String!): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
