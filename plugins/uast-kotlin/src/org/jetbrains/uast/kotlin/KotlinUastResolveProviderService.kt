@@ -9,10 +9,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.psi.KtDoubleColonExpression
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtTypeReference
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.constants.UnsignedErrorValueTypeConstant
 import org.jetbrains.kotlin.types.TypeUtils
@@ -32,6 +29,9 @@ interface KotlinUastResolveProviderService : BaseKotlinUastResolveProviderServic
     }
 
     override fun resolveToDeclaration(ktExpression: KtExpression): PsiElement? {
+        if (ktExpression is KtExpressionWithLabel) {
+            return ktExpression.analyze()[BindingContext.LABEL_TARGET, ktExpression.getTargetLabel()]
+        }
         return resolveToDeclarationImpl(ktExpression)
     }
 

@@ -5,9 +5,9 @@ UFile (package = ) [public final class ArrayGetAssignMultiIndexKt {...]
             UParameter (name = index1) [var index1: int]
             UParameter (name = index2) [var index2: int]
             UBlockExpression [{...}]
-                UReturnExpression [return [!] UnknownKotlinExpression (THIS_EXPRESSION)[[!] UnknownKotlinExpression (BINARY_EXPRESSION)]]
-                    UArrayAccessExpression [[!] UnknownKotlinExpression (THIS_EXPRESSION)[[!] UnknownKotlinExpression (BINARY_EXPRESSION)]] : PsiType:String
-                        [!] UnknownKotlinExpression (THIS_EXPRESSION) [[!] UnknownKotlinExpression (THIS_EXPRESSION)]
+                UReturnExpression [return this[[!] UnknownKotlinExpression (BINARY_EXPRESSION)]]
+                    UArrayAccessExpression [this[[!] UnknownKotlinExpression (BINARY_EXPRESSION)]] : PsiType:String
+                        UThisExpression (label = null) [this] : PsiType:String[]
                         [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
         UMethod (name = set) [public static final fun set($this$set: java.lang.String[], index1: int, index2: int, elem: java.lang.String) : void {...}]
             UParameter (name = $this$set) [var $this$set: java.lang.String[]]

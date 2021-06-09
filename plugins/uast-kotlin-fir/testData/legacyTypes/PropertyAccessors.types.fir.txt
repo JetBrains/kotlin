@@ -3,9 +3,9 @@ UFile (package = ) [public final class PropertyTest {...]
         UMethod (name = PropertyTest) [public fun PropertyTest() = UastEmptyExpression]
         UMethod (name = getStringRepresentation) [public final fun getStringRepresentation() : java.lang.String {...}]
             UBlockExpression [{...}]
-                UReturnExpression [return [!] UnknownKotlinExpression (THIS_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)]
-                    UQualifiedReferenceExpression [[!] UnknownKotlinExpression (THIS_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:String
-                        [!] UnknownKotlinExpression (THIS_EXPRESSION) [[!] UnknownKotlinExpression (THIS_EXPRESSION)]
+                UReturnExpression [return this.[!] UnknownKotlinExpression (CALL_EXPRESSION)]
+                    UQualifiedReferenceExpression [this.[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:String
+                        UThisExpression (label = null) [this] : PsiType:PropertyTest
                         [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
         UMethod (name = setStringRepresentation) [public final fun setStringRepresentation(value: java.lang.String) : void {...}]
             UParameter (name = value) [var value: java.lang.String]

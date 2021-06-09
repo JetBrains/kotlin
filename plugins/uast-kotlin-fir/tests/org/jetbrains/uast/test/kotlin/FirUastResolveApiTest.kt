@@ -13,9 +13,7 @@ import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
 import org.jetbrains.kotlin.test.TestMetadata
-import org.jetbrains.uast.UCallableReferenceExpression
-import org.jetbrains.uast.UElement
-import org.jetbrains.uast.UFile
+import org.jetbrains.uast.*
 import org.jetbrains.uast.test.common.kotlin.asRefNames
 import org.jetbrains.uast.test.env.kotlin.AbstractFirUastTest
 import org.jetbrains.uast.visitor.UastVisitor
@@ -30,6 +28,8 @@ class FirUastResolveApiTest : AbstractFirUastTest() {
     override fun check(filePath: String, file: UFile) {
         // Bogus
     }
+
+    // TODO: once call is supported, test labeledExpression.kt for labeled this and super
 
     @TestMetadata("plugins/uast-kotlin/testData")
     @TestDataPath("\$PROJECT_ROOT")
@@ -64,7 +64,6 @@ class FirUastResolveApiTest : AbstractFirUastTest() {
                 Assert.assertEquals("Foo.bar", (barReference as KtNamedFunction).fqName?.asString())
             }
         }
-
 
         @TestMetadata("Imports.kt")
         fun testImports() {
@@ -103,6 +102,29 @@ class FirUastResolveApiTest : AbstractFirUastTest() {
                     }
                     Assert.assertTrue("Unexpected import: $resolvedImport", expected)
                 }
+            }
+        }
+
+        @TestMetadata("ReceiverFun.kt")
+        fun testReceiverFun() {
+            doCheck("plugins/uast-kotlin/testData/ReceiverFun.kt") { _, uFile ->
+                val facade = uFile.findFacade()
+                    ?: throw IllegalStateException("No facade found at ${uFile.asRefNames()}")
+                // ... String.foo() = this.length
+                val foo = facade.methods.find { it.name == "foo" }
+                    ?: throw IllegalStateException("Target function not found at ${uFile.asRefNames()}")
+                var thisReference: PsiElement? = foo
+                foo.accept(object : UastVisitor {
+                    override fun visitElement(node: UElement): Boolean {
+                        return false
+                    }
+
+                    override fun visitThisExpression(node: UThisExpression): Boolean {
+                        thisReference = node.resolve()
+                        return false
+                    }
+                })
+                Assert.assertNull("plain `this` has `null` label", thisReference)
             }
         }
     }

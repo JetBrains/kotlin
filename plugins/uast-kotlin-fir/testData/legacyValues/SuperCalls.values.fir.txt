@@ -36,8 +36,8 @@ UFile (package = ) [public final class SuperCallsKt {...]
         UMethod (name = foo) [public fun foo(a: long) : void {...}]
             UParameter (name = a) [var a: long]
             UBlockExpression [{...}] = Undetermined
-                UQualifiedReferenceExpression [[!] UnknownKotlinExpression (SUPER_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
-                    [!] UnknownKotlinExpression (SUPER_EXPRESSION) [[!] UnknownKotlinExpression (SUPER_EXPRESSION)] = Undetermined
+                UQualifiedReferenceExpression [super.[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
+                    USuperExpression (label = null) [super] = Undetermined
                     [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
     UClass (name = O) [public final class O : A {...}]
         UField (name = INSTANCE) [public static final var INSTANCE: O]

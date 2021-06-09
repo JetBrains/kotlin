@@ -5,6 +5,6 @@ public final class Utils {
         return 42
     }
     public static final fun buzz($this$buzz: java.lang.String) : java.lang.String {
-        return [!] UnknownKotlinExpression (THIS_EXPRESSION) + "... zzz..."
+        return this + "... zzz..."
     }
 }

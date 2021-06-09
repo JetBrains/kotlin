@@ -5,7 +5,7 @@ UFile (package = )
             UBlockExpression
                 UReturnExpression
                     UQualifiedReferenceExpression
-                        [!] UnknownKotlinExpression (THIS_EXPRESSION)
+                        UThisExpression (label = null)
                         USimpleNameReferenceExpression (identifier = length)
         UMethod (name = getRx)
             UParameter (name = $this$rx)

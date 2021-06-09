@@ -9,5 +9,5 @@ UFile (package = declaration)
             UBlockExpression
                 UReturnExpression
                     UPolyadicExpression (operator = +)
-                        [!] UnknownKotlinExpression (THIS_EXPRESSION)
+                        UThisExpression (label = null)
                         ULiteralExpression (value = "... zzz...")

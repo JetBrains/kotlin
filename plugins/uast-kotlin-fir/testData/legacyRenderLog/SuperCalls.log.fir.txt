@@ -37,7 +37,7 @@ UFile (package = )
             UParameter (name = a)
             UBlockExpression
                 UQualifiedReferenceExpression
-                    [!] UnknownKotlinExpression (SUPER_EXPRESSION)
+                    USuperExpression (label = null)
                     [!] UnknownKotlinExpression (CALL_EXPRESSION)
     UClass (name = O)
         UField (name = INSTANCE)
