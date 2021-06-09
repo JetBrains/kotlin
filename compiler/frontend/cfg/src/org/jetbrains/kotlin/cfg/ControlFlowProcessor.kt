@@ -1574,19 +1574,18 @@ class ControlFlowProcessor(
                 }
             }
 
-            if (resolvedCall.resultingDescriptor is VariableDescriptor) {
+            val callInstruction = if (resolvedCall.resultingDescriptor is VariableDescriptor) {
                 // If a callee of the call is just a variable (without 'invoke'), 'read variable' is generated.
                 // todo : process arguments for such a case (KT-5387)
                 val callExpression =
                     callElement as? KtExpression ?: error("Variable-based call without callee expression: " + callElement.text)
                 assert(parameterValues.isEmpty()) { "Variable-based call with non-empty argument list: " + callElement.text }
-                return builder.readVariable(callExpression, resolvedCall, receivers)
+                builder.readVariable(callExpression, resolvedCall, receivers)
+            } else {
+                mark(resolvedCall.call.callElement)
+                builder.call(callElement, resolvedCall, receivers, parameterValues)
             }
-
-            mark(resolvedCall.call.callElement)
-            val callInstruction = builder.call(callElement, resolvedCall, receivers, parameterValues)
-            val deferredGeneratorsForCall = deferredGeneratorsStack.pop()
-            deferredGeneratorsForCall.forEach { it.invoke(builder) }
+            deferredGeneratorsStack.pop().forEach { it.invoke(builder) }
             return callInstruction
         }
 
