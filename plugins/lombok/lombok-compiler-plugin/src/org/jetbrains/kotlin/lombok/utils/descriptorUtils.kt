@@ -43,6 +43,7 @@ fun ClassDescriptor.createFunction(
     methodDescriptor.initialize(
         null,
         receiver,
+        emptyList(),
         typeParameters,
         paramDescriptors,
         returnType,
@@ -66,6 +67,7 @@ fun ClassDescriptor.createJavaConstructor(
     constructor.initialize(
         null,
         constructor.calculateDispatchReceiverParameter(),
+        emptyList(),
         this.declaredTypeParameters,
         paramDescriptors,
         this.defaultType,
