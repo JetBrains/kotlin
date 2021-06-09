@@ -12,8 +12,9 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.completion.LookupElementSink
 import org.jetbrains.kotlin.idea.completion.context.FirBasicCompletionContext
 import org.jetbrains.kotlin.idea.completion.context.FirRawPositionCompletionContext
+import org.jetbrains.kotlin.idea.completion.lookups.*
+import org.jetbrains.kotlin.idea.completion.lookups.CallableInsertionOptions
 import org.jetbrains.kotlin.idea.completion.lookups.ImportStrategy
-import org.jetbrains.kotlin.idea.completion.lookups.CallableInsertionStrategy
 import org.jetbrains.kotlin.idea.completion.lookups.detectImportStrategy
 import org.jetbrains.kotlin.idea.completion.lookups.factories.KotlinFirLookupElementFactory
 import org.jetbrains.kotlin.idea.completion.weighers.Weighers
@@ -71,12 +72,11 @@ internal abstract class FirCompletionContributorBase<C : FirRawPositionCompletio
     protected fun KtAnalysisSession.addCallableSymbolToCompletion(
         expectedType: KtType?,
         symbol: KtCallableSymbol,
-        importingStrategy: ImportStrategy = detectImportStrategy(symbol),
-        insertionStrategy: CallableInsertionStrategy,
+        options: CallableInsertionOptions,
     ) {
         if (symbol !is KtNamedSymbol) return
         val lookup = with(lookupElementFactory) {
-            createCallableLookupElement(symbol, importingStrategy, insertionStrategy)
+            createCallableLookupElement(symbol, options)
         }
         applyWeighers(lookup, symbol, expectedType)
         sink.addElement(lookup)

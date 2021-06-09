@@ -31,4 +31,9 @@ internal object TailTextProvider {
         val singleParam = symbol.valueParameters.singleOrNull()
         return singleParam != null && !singleParam.hasDefaultValue && singleParam.annotatedType.type is KtFunctionalType
     }
+
+    fun KtAnalysisSession.insertLambdaBraces(symbol: KtFunctionalType): Boolean {
+        val singleParam = symbol.parameterTypes.singleOrNull()
+        return singleParam != null && singleParam is KtFunctionalType
+    }
 }

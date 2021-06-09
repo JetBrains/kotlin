@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.components
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
+import org.jetbrains.kotlin.fir.resolve.inference.receiverType
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacadeForResolveOnAir.getTowerContextProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirOfType
@@ -17,19 +19,15 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.resolver.SingleCandidateResol
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.getElementTextInContext
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.components.KtCompletionCandidateChecker
+import org.jetbrains.kotlin.idea.frontend.api.components.KtExtensionApplicabilityResult
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirFunctionSymbol
-import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirKotlinPropertySymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
-import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirValueParameterSymbol
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal class KtFirCompletionCandidateChecker(
     analysisSession: KtFirAnalysisSession,
@@ -42,7 +40,7 @@ internal class KtFirCompletionCandidateChecker(
         originalFile: KtFile,
         nameExpression: KtSimpleNameExpression,
         possibleExplicitReceiver: KtExpression?,
-    ): Boolean = withValidityAssertion {
+    ): KtExtensionApplicabilityResult = withValidityAssertion {
         require(firSymbolForCandidate is KtFirSymbol<*>)
         return firSymbolForCandidate.firRef.withFir(phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) { declaration ->
             check(declaration is FirCallableDeclaration<*>)
@@ -55,7 +53,7 @@ internal class KtFirCompletionCandidateChecker(
         originalFile: KtFile,
         nameExpression: KtSimpleNameExpression,
         possibleExplicitReceiver: KtExpression?,
-    ): Boolean {
+    ): KtExtensionApplicabilityResult {
         val file = originalFile.getOrBuildFirFile(firResolveState)
         val explicitReceiverExpression = possibleExplicitReceiver?.getOrBuildFirOfType<FirExpression>(firResolveState)
         val resolver = SingleCandidateResolver(firResolveState.rootModuleSession, file)
@@ -68,11 +66,17 @@ internal class KtFirCompletionCandidateChecker(
                 explicitReceiver = explicitReceiverExpression
             )
             resolver.resolveSingleCandidate(resolutionParameters)?.let {
-                // not null if resolved and completed successfully
-                return true
+                return when {
+                    candidateSymbol is FirVariable<*> && candidateSymbol.returnTypeRef.coneType.receiverType(rootModuleSession) != null -> {
+                        KtExtensionApplicabilityResult.ApplicableAsFunctionalVariableCall
+                    }
+                    else -> {
+                        KtExtensionApplicabilityResult.ApplicableAsExtensionCallable
+                    }
+                }
             }
         }
-        return false
+        return KtExtensionApplicabilityResult.NonApplicable
     }
 
     private fun getImplicitReceivers(

@@ -11,16 +11,18 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.completion.lookups.*
+import org.jetbrains.kotlin.idea.completion.lookups.CompletionShortNamesRenderer.renderVariable
 import org.jetbrains.kotlin.idea.completion.lookups.ImportStrategy
 import org.jetbrains.kotlin.idea.completion.lookups.TailTextProvider.getTailText
+import org.jetbrains.kotlin.idea.completion.lookups.TailTextProvider.insertLambdaBraces
 import org.jetbrains.kotlin.idea.completion.lookups.addCallableImportIfRequired
-import org.jetbrains.kotlin.idea.completion.lookups.detectImportStrategy
 import org.jetbrains.kotlin.idea.completion.lookups.shortenReferencesForFirCompletion
 import org.jetbrains.kotlin.idea.core.withRootPrefixIfNeeded
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.components.KtTypeRendererOptions
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSyntheticJavaPropertySymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtVariableLikeSymbol
+import org.jetbrains.kotlin.idea.frontend.api.types.KtFunctionalType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.renderer.render
@@ -28,20 +30,42 @@ import org.jetbrains.kotlin.renderer.render
 internal class VariableLookupElementFactory {
     fun KtAnalysisSession.createLookup(
         symbol: KtVariableLikeSymbol,
-        importStrategy: ImportStrategy = detectImportStrategy(symbol)
+        options: CallableInsertionOptions,
     ): LookupElementBuilder {
-        val lookupObject = VariableLookupObject(
-            symbol.name,
-            importStrategy = importStrategy,
-            renderedReceiverType = symbol.receiverType?.type?.render(CompletionShortNamesRenderer.TYPE_RENDERING_OPTIONS),
-        )
+        val rendered = renderVariable(symbol)
+        val builder = when (options.insertionStrategy) {
+            CallableInsertionStrategy.AsCall -> {
+                val functionalType = symbol.annotatedType.type as KtFunctionalType
+                val lookupObject = FunctionCallLookupObject(
+                    symbol.name,
+                    options,
+                    rendered,
+                    inputValueArguments = functionalType.parameterTypes.isNotEmpty(),
+                    insertEmptyLambda = insertLambdaBraces(functionalType),
+                )
 
-        return LookupElementBuilder.create(lookupObject, symbol.name.asString())
-            .withTypeText(symbol.annotatedType.type.render(KtTypeRendererOptions.SHORT_NAMES))
-            .withTailText(getTailText(symbol), true)
-            .markIfSyntheticJavaProperty(symbol)
-            .withInsertHandler(VariableInsertionHandler)
-            .let { withSymbolInfo(symbol, it) }
+                val tailText = functionalType.parameterTypes.joinToString(prefix = "(", postfix = ")") {
+                    it.render(CompletionShortNamesRenderer.TYPE_RENDERING_OPTIONS)
+                }
+
+                val typeText = functionalType.returnType.render(CompletionShortNamesRenderer.TYPE_RENDERING_OPTIONS)
+
+                LookupElementBuilder.create(lookupObject, symbol.name.asString())
+                    .withTailText(tailText, true)
+                    .withTypeText(typeText)
+                    .withInsertHandler(FunctionInsertionHandler)
+            }
+            else -> {
+                val lookupObject = VariableLookupObject(symbol.name, options, rendered)
+                LookupElementBuilder.create(lookupObject, symbol.name.asString())
+                    .withTypeText(symbol.annotatedType.type.render(KtTypeRendererOptions.SHORT_NAMES))
+                    .withTailText(getTailText(symbol), true)
+                    .markIfSyntheticJavaProperty(symbol)
+                    .withInsertHandler(VariableInsertionHandler)
+            }
+        }
+
+        return withSymbolInfo(symbol, builder)
     }
 
     private fun LookupElementBuilder.markIfSyntheticJavaProperty(symbol: KtVariableLikeSymbol): LookupElementBuilder = when (symbol) {
@@ -63,8 +87,8 @@ internal class VariableLookupElementFactory {
  */
 private data class VariableLookupObject(
     override val shortName: Name,
-    val importStrategy: ImportStrategy,
-    override val renderedReceiverType: String?,
+    override val options: CallableInsertionOptions,
+    override val renderedDeclaration: String,
 ) : KotlinCallableLookupObject()
 
 
@@ -73,7 +97,7 @@ private object VariableInsertionHandler : InsertHandler<LookupElement> {
         val targetFile = context.file as? KtFile ?: return
         val lookupObject = item.`object` as VariableLookupObject
 
-        when (val importStrategy = lookupObject.importStrategy) {
+        when (val importStrategy = lookupObject.options.importingStrategy) {
             is ImportStrategy.AddImport -> {
                 addCallableImportIfRequired(targetFile, importStrategy.nameToImport)
             }

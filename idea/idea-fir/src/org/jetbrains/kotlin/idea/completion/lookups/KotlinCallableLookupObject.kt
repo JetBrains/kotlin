@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.completion.lookups
 
-abstract class KotlinCallableLookupObject: KotlinLookupObject {
-    abstract val renderedReceiverType: String?
+internal abstract class KotlinCallableLookupObject : KotlinLookupObject {
+    abstract val renderedDeclaration: String
+    abstract val options: CallableInsertionOptions
 }

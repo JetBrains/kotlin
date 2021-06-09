@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.idea.completion.checkers
 
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.components.KtExtensionApplicabilityResult
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 
 internal fun interface ExtensionApplicabilityChecker {
-    fun KtAnalysisSession.isApplicable(symbol: KtCallableSymbol): Boolean
+    fun KtAnalysisSession.isApplicable(symbol: KtCallableSymbol): KtExtensionApplicabilityResult
 }

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.idea.completion.checkers.CompletionVisibilityChecker
 import org.jetbrains.kotlin.idea.completion.context.FirBasicCompletionContext
 import org.jetbrains.kotlin.idea.completion.context.FirImportDirectivePositionContext
 import org.jetbrains.kotlin.idea.completion.contributors.helpers.getStaticScope
+import org.jetbrains.kotlin.idea.completion.lookups.CallableInsertionOptions
 import org.jetbrains.kotlin.idea.completion.lookups.ImportStrategy
 import org.jetbrains.kotlin.idea.completion.lookups.CallableInsertionStrategy
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
@@ -31,8 +32,7 @@ internal class FirImportDirectivePackageMembersCompletionContributor(
                 addCallableSymbolToCompletion(
                     expectedType = null,
                     it,
-                    importingStrategy = ImportStrategy.DoNothing,
-                    insertionStrategy = CallableInsertionStrategy.AsIdentifier
+                    CallableInsertionOptions(ImportStrategy.DoNothing, CallableInsertionStrategy.AsIdentifier)
                 )
             }
     }

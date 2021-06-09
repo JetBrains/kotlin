@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.types
 
 import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
+import org.jetbrains.kotlin.fir.resolve.inference.receiverType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.idea.frontend.api.*
@@ -78,6 +79,11 @@ internal class KtFirFunctionalType(
         get() = withValidityAssertion {
             if (coneType.isExtensionFunctionType) (typeArguments.first() as KtTypeArgumentWithVariance).type
             else null
+        }
+
+    override val hasReceiver: Boolean
+        get() = withValidityAssertion {
+            coneType.receiverType(firBuilder.rootSession) != null
         }
 
     override val parameterTypes: List<KtType> by cached {

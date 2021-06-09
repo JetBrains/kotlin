@@ -32,23 +32,22 @@ import org.jetbrains.kotlin.idea.completion.lookups.TailTextProvider.insertLambd
 import org.jetbrains.kotlin.idea.completion.lookups.CompletionShortNamesRenderer.renderFunctionParameters
 import org.jetbrains.kotlin.idea.completion.lookups.CompletionShortNamesRenderer.TYPE_RENDERING_OPTIONS
 import org.jetbrains.kotlin.idea.core.withRootPrefixIfNeeded
+import org.jetbrains.kotlin.idea.frontend.api.components.KtDeclarationRendererOptions
 
 internal class FunctionLookupElementFactory {
     fun KtAnalysisSession.createLookup(
         symbol: KtFunctionSymbol,
-        importStrategy: ImportStrategy,
-        insertionStrategy: CallableInsertionStrategy
+        options: CallableInsertionOptions,
     ): LookupElementBuilder {
-        val lookupObject = FunctionLookupObject(
+        val lookupObject = FunctionCallLookupObject(
             symbol.name,
-            importStrategy = importStrategy,
+            options,
+            renderFunctionParameters(symbol),
             inputValueArguments = symbol.valueParameters.isNotEmpty(),
             insertEmptyLambda = insertLambdaBraces(symbol),
-            renderedFunctionParameters = renderFunctionParameters(symbol),
-            renderedReceiverType = symbol.receiverType?.type?.render(TYPE_RENDERING_OPTIONS)
         )
 
-        val insertionHandler = when (insertionStrategy) {
+        val insertionHandler = when (val insertionStrategy = options.insertionStrategy) {
             CallableInsertionStrategy.AsCall -> FunctionInsertionHandler
             CallableInsertionStrategy.AsIdentifier -> QuotedNamesAwareInsertionHandler()
             is CallableInsertionStrategy.AsIdentifierCustom -> object : QuotedNamesAwareInsertionHandler() {
@@ -61,28 +60,24 @@ internal class FunctionLookupElementFactory {
 
         return LookupElementBuilder.create(lookupObject, symbol.name.asString())
             .withTailText(getTailText(symbol), true)
-            .withTypeText(symbol.annotatedType.type.render(CompletionShortNamesRenderer.TYPE_RENDERING_OPTIONS))
+            .withTypeText(symbol.annotatedType.type.render(TYPE_RENDERING_OPTIONS))
             .withInsertHandler(insertionHandler)
             .let { withSymbolInfo(symbol, it) }
     }
 }
 
-/**
- * Simplest lookup object so two lookup elements for the same function will clash.
- */
-private data class FunctionLookupObject(
+
+internal data class FunctionCallLookupObject(
     override val shortName: Name,
-    val importStrategy: ImportStrategy,
+    override val options: CallableInsertionOptions,
+    override val renderedDeclaration: String,
     val inputValueArguments: Boolean,
     val insertEmptyLambda: Boolean,
-    // for distinction between different overloads
-    private val renderedFunctionParameters: String,
-    override val renderedReceiverType: String?
 ) : KotlinCallableLookupObject()
 
 
-private object FunctionInsertionHandler : QuotedNamesAwareInsertionHandler() {
-    private fun addArguments(context: InsertionContext, offsetElement: PsiElement, lookupObject: FunctionLookupObject) {
+internal object FunctionInsertionHandler : QuotedNamesAwareInsertionHandler() {
+    private fun addArguments(context: InsertionContext, offsetElement: PsiElement, lookupObject: FunctionCallLookupObject) {
         val completionChar = context.completionChar
         if (completionChar == '(') { //TODO: more correct behavior related to braces type
             context.setAddCompletionChar(false)
@@ -152,7 +147,7 @@ private object FunctionInsertionHandler : QuotedNamesAwareInsertionHandler() {
         }
     }
 
-    private fun shouldPlaceCaretInBrackets(completionChar: Char, lookupObject: FunctionLookupObject): Boolean {
+    private fun shouldPlaceCaretInBrackets(completionChar: Char, lookupObject: FunctionCallLookupObject): Boolean {
         if (completionChar == ',' || completionChar == '.' || completionChar == '=') return false
         if (completionChar == '(') return true
         return lookupObject.inputValueArguments || lookupObject.insertEmptyLambda
@@ -163,14 +158,14 @@ private object FunctionInsertionHandler : QuotedNamesAwareInsertionHandler() {
 
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
         val targetFile = context.file as? KtFile ?: return
-        val lookupObject = item.`object` as FunctionLookupObject
+        val lookupObject = item.`object` as FunctionCallLookupObject
 
         super.handleInsert(context, item)
 
         val startOffset = context.startOffset
         val element = context.file.findElementAt(startOffset) ?: return
 
-        val importStrategy = lookupObject.importStrategy
+        val importStrategy = lookupObject.options.importingStrategy
         if (importStrategy is ImportStrategy.InsertFqNameAndShorten) {
             context.document.replaceString(
                 context.startOffset,

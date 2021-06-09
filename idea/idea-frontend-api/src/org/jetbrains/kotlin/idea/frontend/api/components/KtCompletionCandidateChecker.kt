@@ -16,7 +16,13 @@ abstract class KtCompletionCandidateChecker : KtAnalysisSessionComponent() {
         originalFile: KtFile,
         nameExpression: KtSimpleNameExpression,
         possibleExplicitReceiver: KtExpression?,
-    ): Boolean
+    ): KtExtensionApplicabilityResult
+}
+
+enum class KtExtensionApplicabilityResult(val isApplicable: Boolean) {
+    ApplicableAsExtensionCallable(isApplicable = true),
+    ApplicableAsFunctionalVariableCall(isApplicable = true),
+    NonApplicable(isApplicable = false),
 }
 
 interface KtCompletionCandidateCheckerMixIn : KtAnalysisSessionMixIn {
@@ -24,7 +30,7 @@ interface KtCompletionCandidateCheckerMixIn : KtAnalysisSessionMixIn {
         originalPsiFile: KtFile,
         psiFakeCompletionExpression: KtSimpleNameExpression,
         psiReceiverExpression: KtExpression?,
-    ): Boolean =
+    ): KtExtensionApplicabilityResult =
         analysisSession.completionCandidateChecker.checkExtensionFitsCandidate(
             this,
             originalPsiFile,

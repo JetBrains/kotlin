@@ -7,8 +7,9 @@ package org.jetbrains.kotlin.idea.completion.lookups.factories
 
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
+import org.jetbrains.kotlin.idea.completion.lookups.*
+import org.jetbrains.kotlin.idea.completion.lookups.CallableInsertionOptions
 import org.jetbrains.kotlin.idea.completion.lookups.ImportStrategy
-import org.jetbrains.kotlin.idea.completion.lookups.CallableInsertionStrategy
 import org.jetbrains.kotlin.idea.completion.lookups.detectImportStrategy
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
@@ -26,8 +27,7 @@ internal class KotlinFirLookupElementFactory {
         return when (symbol) {
             is KtCallableSymbol -> createCallableLookupElement(
                 symbol,
-                importingStrategy = detectImportStrategy(symbol),
-                CallableInsertionStrategy.AsCall
+                detectCallableOptions(symbol),
             )
             is KtClassLikeSymbol -> with(classLookupElementFactory) { createLookup(symbol) }
             is KtTypeParameterSymbol -> with(typeParameterLookupElementFactory) { createLookup(symbol) }
@@ -37,12 +37,11 @@ internal class KotlinFirLookupElementFactory {
 
     fun KtAnalysisSession.createCallableLookupElement(
         symbol: KtCallableSymbol,
-        importingStrategy: ImportStrategy,
-        insertionStrategy: CallableInsertionStrategy,
+        options: CallableInsertionOptions,
     ): LookupElementBuilder {
         return when (symbol) {
-            is KtFunctionSymbol -> with(functionLookupElementFactory) { createLookup(symbol, importingStrategy, insertionStrategy) }
-            is KtVariableLikeSymbol -> with(variableLookupElementFactory) { createLookup(symbol, importingStrategy) }
+            is KtFunctionSymbol -> with(functionLookupElementFactory) { createLookup(symbol, options) }
+            is KtVariableLikeSymbol -> with(variableLookupElementFactory) { createLookup(symbol, options) }
             else -> throw IllegalArgumentException("Cannot create a lookup element for $symbol")
         }
     }
