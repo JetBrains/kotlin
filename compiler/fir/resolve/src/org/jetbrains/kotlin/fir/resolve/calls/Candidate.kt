@@ -85,6 +85,7 @@ class Candidate(
     private val baseSystem: ConstraintStorage,
     val callInfo: CallInfo,
     val originScope: FirScope?,
+    val isFromCompanionObjectTypeScope: Boolean = false
 ) {
 
     var systemInitialized: Boolean = false

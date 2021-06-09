@@ -30,6 +30,7 @@ abstract class FirErrorResolvedQualifier : FirResolvedQualifier(), FirDiagnostic
     abstract override val classId: ClassId?
     abstract override val symbol: FirClassLikeSymbol<*>?
     abstract override val isNullableLHSForCallableReference: Boolean
+    abstract override val resolvedToCompanionObject: Boolean
     abstract override val typeArguments: List<FirTypeProjection>
     abstract override val diagnostic: ConeDiagnostic
 
@@ -42,6 +43,8 @@ abstract class FirErrorResolvedQualifier : FirResolvedQualifier(), FirDiagnostic
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
     abstract override fun replaceIsNullableLHSForCallableReference(newIsNullableLHSForCallableReference: Boolean)
+
+    abstract override fun replaceResolvedToCompanionObject(newResolvedToCompanionObject: Boolean)
 
     abstract override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
 

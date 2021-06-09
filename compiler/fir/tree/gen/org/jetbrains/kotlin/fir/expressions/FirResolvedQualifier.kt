@@ -28,6 +28,7 @@ abstract class FirResolvedQualifier : FirExpression() {
     abstract val classId: ClassId?
     abstract val symbol: FirClassLikeSymbol<*>?
     abstract val isNullableLHSForCallableReference: Boolean
+    abstract val resolvedToCompanionObject: Boolean
     abstract val typeArguments: List<FirTypeProjection>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedQualifier(this, data)
@@ -39,6 +40,8 @@ abstract class FirResolvedQualifier : FirExpression() {
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
     abstract fun replaceIsNullableLHSForCallableReference(newIsNullableLHSForCallableReference: Boolean)
+
+    abstract fun replaceResolvedToCompanionObject(newResolvedToCompanionObject: Boolean)
 
     abstract fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
 

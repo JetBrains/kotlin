@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -33,6 +34,7 @@ internal class FirResolvedQualifierImpl(
     override val classId: ClassId? get() = relativeClassFqName?.let {
     ClassId(packageFqName, it, false)
 }
+    override var resolvedToCompanionObject: Boolean = (symbol?.fir as? FirRegularClass)?.companionObject != null
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)
@@ -63,6 +65,10 @@ internal class FirResolvedQualifierImpl(
 
     override fun replaceIsNullableLHSForCallableReference(newIsNullableLHSForCallableReference: Boolean) {
         isNullableLHSForCallableReference = newIsNullableLHSForCallableReference
+    }
+
+    override fun replaceResolvedToCompanionObject(newResolvedToCompanionObject: Boolean) {
+        resolvedToCompanionObject = newResolvedToCompanionObject
     }
 
     override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
