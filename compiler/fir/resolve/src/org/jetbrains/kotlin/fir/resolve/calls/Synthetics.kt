@@ -118,7 +118,13 @@ class FirSyntheticPropertiesScope(
             delegateGetter = getter
             delegateSetter = matchingSetter
         }
-        processor(property.symbol)
+        val syntheticSymbol = property.symbol
+        (baseScope as? FirUnstableSmartcastTypeScope)?.apply {
+            if (isSymbolFromUnstableSmartcast(getterSymbol)) {
+                markSymbolFromUnstableSmartcast(syntheticSymbol)
+            }
+        }
+        processor(syntheticSymbol)
     }
 
     private fun FirNamedFunctionSymbol.hasJavaOverridden(): Boolean {

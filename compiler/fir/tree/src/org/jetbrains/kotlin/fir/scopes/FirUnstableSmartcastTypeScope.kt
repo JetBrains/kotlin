@@ -45,7 +45,7 @@ class FirUnstableSmartcastTypeScope(
         }
         smartcastScope.process(name) {
             if (it !in unique) {
-                symbolsFromUnstableSmartcast += it
+                markSymbolFromUnstableSmartcast(it)
                 processor(it)
             }
         }
@@ -72,7 +72,7 @@ class FirUnstableSmartcastTypeScope(
 
         smartcastScope.process(name) { symbol, firTypeScope ->
             if (symbol !in unique) {
-                symbolsFromUnstableSmartcast += symbol
+                markSymbolFromUnstableSmartcast(symbol)
                 processor(symbol, firTypeScope)
             } else {
                 ProcessorAction.NEXT
@@ -82,6 +82,10 @@ class FirUnstableSmartcastTypeScope(
     }
 
     fun isSymbolFromUnstableSmartcast(symbol: AbstractFirBasedSymbol<*>) = symbol in symbolsFromUnstableSmartcast
+
+    fun markSymbolFromUnstableSmartcast(symbol: FirCallableSymbol<*>) {
+        symbolsFromUnstableSmartcast += symbol
+    }
 
     override fun processDirectOverriddenFunctionsWithBaseScope(
         functionSymbol: FirNamedFunctionSymbol,
