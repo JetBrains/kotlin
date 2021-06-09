@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: NATIVE
 // MODULE: lib
 // FILE: 2.kt
 abstract class A {
