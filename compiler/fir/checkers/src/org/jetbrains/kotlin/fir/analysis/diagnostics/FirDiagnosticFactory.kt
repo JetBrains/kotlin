@@ -18,6 +18,10 @@ sealed class AbstractFirDiagnosticFactory(
     val psiType: KClass<*>
 ) {
     abstract val firRenderer: FirDiagnosticRenderer
+
+    override fun toString(): String {
+        return name
+    }
 }
 
 class FirDiagnosticFactory0(
