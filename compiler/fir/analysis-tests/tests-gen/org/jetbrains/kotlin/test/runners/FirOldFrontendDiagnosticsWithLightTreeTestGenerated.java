@@ -10566,6 +10566,124 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             public void testVariableInvoke() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/extensions/variableInvoke.kt");
             }
+
+            @Nested
+            @TestMetadata("compiler/testData/diagnostics/tests/extensions/contextReceivers")
+            @TestDataPath("$PROJECT_ROOT")
+            public class ContextReceivers {
+                @Test
+                public void testAllFilesPresentInContextReceivers() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/extensions/contextReceivers"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @Test
+                @TestMetadata("dp.kt")
+                public void testDp() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/dp.kt");
+                }
+
+                @Test
+                @TestMetadata("genericOuterClass.kt")
+                public void testGenericOuterClass() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/genericOuterClass.kt");
+                }
+
+                @Test
+                @TestMetadata("insideDeclaration.kt")
+                public void testInsideDeclaration() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/insideDeclaration.kt");
+                }
+
+                @Test
+                @TestMetadata("lazy.kt")
+                public void testLazy() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/lazy.kt");
+                }
+
+                @Test
+                @TestMetadata("manyReceivers.kt")
+                public void testManyReceivers() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/manyReceivers.kt");
+                }
+
+                @Test
+                @TestMetadata("noExplicitReceiver.kt")
+                public void testNoExplicitReceiver() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/noExplicitReceiver.kt");
+                }
+
+                @Test
+                @TestMetadata("outerClass.kt")
+                public void testOuterClass() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/outerClass.kt");
+                }
+
+                @Test
+                @TestMetadata("plusMatrix.kt")
+                public void testPlusMatrix() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/plusMatrix.kt");
+                }
+
+                @Test
+                @TestMetadata("superWithContext.kt")
+                public void testSuperWithContext() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/superWithContext.kt");
+                }
+
+                @Test
+                @TestMetadata("thisIdentifierInfo.kt")
+                public void testThisIdentifierInfo() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/thisIdentifierInfo.kt");
+                }
+
+                @Test
+                @TestMetadata("thisWithCustomLabel.kt")
+                public void testThisWithCustomLabel() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/thisWithCustomLabel.kt");
+                }
+
+                @Test
+                @TestMetadata("thisWithReceiverLabelsClasses.kt")
+                public void testThisWithReceiverLabelsClasses() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/thisWithReceiverLabelsClasses.kt");
+                }
+
+                @Test
+                @TestMetadata("thisWithReceiverLabelsFunctions.kt")
+                public void testThisWithReceiverLabelsFunctions() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/thisWithReceiverLabelsFunctions.kt");
+                }
+
+                @Test
+                @TestMetadata("thisWithReceiverLabelsProperties.kt")
+                public void testThisWithReceiverLabelsProperties() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/thisWithReceiverLabelsProperties.kt");
+                }
+
+                @Test
+                @TestMetadata("typeParameterized.kt")
+                public void testTypeParameterized() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/typeParameterized.kt");
+                }
+
+                @Test
+                @TestMetadata("typeParameterizedList.kt")
+                public void testTypeParameterizedList() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/typeParameterizedList.kt");
+                }
+
+                @Test
+                @TestMetadata("withExplicitReceiver.kt")
+                public void testWithExplicitReceiver() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/withExplicitReceiver.kt");
+                }
+
+                @Test
+                @TestMetadata("withExplicitReceiverError.kt")
+                public void testWithExplicitReceiverError() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/withExplicitReceiverError.kt");
+                }
+            }
         }
 
         @Nested
