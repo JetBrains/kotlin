@@ -328,4 +328,47 @@ class LldbTests {
         """.trimIndent().lldb(binary)
     }
 
+    @Test
+    fun `kt47198`() = lldbComplexTest {
+        val kt47198 = """
+            fun foo(a:Int) = print("a: ${'$'}a")
+
+            fun main() {
+                foo(33)
+            }
+        """.feedOutput("kt47198.kt")
+
+        val binary = arrayOf(kt47198).binary("kt47198", "-g")
+        """
+            > b 1
+            Breakpoint 1: where = kt47198.kexe`kfun:#foo(kotlin.Int){} [..] at kt47198.kt:1:29, [..]
+            > ${lldbCommandRunOrContinue()}
+            > fr v
+            (int) a = 33
+            > q
+        """.trimIndent().lldb(binary)
+    }
+
+    @Test
+    fun `kt47198 with body`() = lldbComplexTest {
+        val kt47198 = """
+            fun foo(a:Int){
+              print("a: ${'$'}a")
+            }
+
+            fun main() {
+                foo(33)
+            }
+        """.feedOutput("kt47198.kt")
+
+        val binary = arrayOf(kt47198).binary("kt47198", "-g")
+        """
+            > b 1
+            Breakpoint 1: where = kt47198.kexe`kfun:#foo(kotlin.Int){} [..] at kt47198.kt:2:[..]
+            > ${lldbCommandRunOrContinue()}
+            > fr v
+            (int) a = 33
+            > q
+        """.trimIndent().lldb(binary)
+    }
 }
