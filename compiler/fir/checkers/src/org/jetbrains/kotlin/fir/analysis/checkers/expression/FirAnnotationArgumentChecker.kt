@@ -86,7 +86,7 @@ object FirAnnotationArgumentChecker : FirAnnotationCallChecker() {
             is FirArrayOfCall -> return checkArgumentList(expression.argumentList)
             is FirVarargArgumentsExpression -> {
                 for (arg in expression.arguments) {
-                    val unwrappedArg = if (arg is FirSpreadArgumentExpression) arg.expression else arg
+                    val unwrappedArg = arg.unwrapArgument()
                     checkAnnotationArgumentWithSubElements(unwrappedArg, session, reporter, context)
                         ?.let { reporter.reportOn(unwrappedArg.source, it, context) }
                 }
