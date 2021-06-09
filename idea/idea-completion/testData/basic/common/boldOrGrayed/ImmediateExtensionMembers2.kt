@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 fun String.extFunForString(){}
 fun Any.extFunForAny(){}
 fun String?.extFunForStringNullable(){}

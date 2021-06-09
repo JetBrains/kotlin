@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 interface R<T>
 
 val <T> R<T>.prop: Int get() = TODO()

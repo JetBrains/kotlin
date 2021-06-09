@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 interface T1 {
     fun inT1(){}
 }
