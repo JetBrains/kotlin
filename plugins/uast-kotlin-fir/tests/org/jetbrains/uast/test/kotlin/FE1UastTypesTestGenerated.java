@@ -44,6 +44,11 @@ public class FE1UastTypesTestGenerated extends AbstractFE1UastTypesTest {
         runTest("plugins/uast-kotlin-fir/testData/type/arrayGetAssignMultiIndex.kt");
     }
 
+    @TestMetadata("classLiteral.kt")
+    public void testClassLiteral() throws Exception {
+        runTest("plugins/uast-kotlin-fir/testData/type/classLiteral.kt");
+    }
+
     @TestMetadata("typeCast.kt")
     public void testTypeCast() throws Exception {
         runTest("plugins/uast-kotlin-fir/testData/type/typeCast.kt");

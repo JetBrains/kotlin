@@ -1,0 +1,32 @@
+UFile (package = ) [public final class ClassLiteralKt {...]
+    UClass (name = ClassLiteralKt) [public final class ClassLiteralKt {...}]
+        UField (name = stringClass) [private static final var stringClass: kotlin.reflect.KClass<java.lang.String> = java.lang.String]
+            UClassLiteralExpression [java.lang.String] : PsiType:KClass<String>
+        UMethod (name = getStringClass) [public static final fun getStringClass() : kotlin.reflect.KClass<java.lang.String> = UastEmptyExpression]
+        UMethod (name = box) [public static final fun box() : java.lang.String {...}]
+            UBlockExpression [{...}] : PsiType:Void
+                [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
+                [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
+                UReturnExpression [return if ([!] UnknownKotlinExpression (BINARY_EXPRESSION)) "OK" else xClass] : PsiType:Void
+                    UIfExpression [if ([!] UnknownKotlinExpression (BINARY_EXPRESSION)) "OK" else xClass] : PsiType:String
+                        [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                        ULiteralExpression (value = "OK") ["OK"] : PsiType:String
+                        USimpleNameReferenceExpression (identifier = xClass) [xClass] : PsiType:KClass<? extends CharSequence>
+    UClass (name = Foo) [public final class Foo {...}]
+        UField (name = s) [private final var s: java.lang.String]
+        UMethod (name = Foo) [public fun Foo(s: java.lang.String) = UastEmptyExpression]
+            UParameter (name = s) [var s: java.lang.String]
+        UMethod (name = getS) [public final fun getS() : java.lang.String = UastEmptyExpression]
+        UMethod (name = equals) [public fun equals(other: java.lang.Object) : boolean {...}]
+            UParameter (name = other) [var other: java.lang.Object]
+            UBlockExpression [{...}] : PsiType:Void
+                UIfExpression [if ([!] UnknownKotlinExpression (BINARY_EXPRESSION)) return false] : PsiType:Unit
+                    [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                    UReturnExpression [return false] : PsiType:Void
+                        ULiteralExpression (value = false) [false] : PsiType:boolean
+                UIfExpression [if ([!] UnknownKotlinExpression (BINARY_EXPRESSION)) return false] : PsiType:Unit
+                    [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                    UReturnExpression [return false] : PsiType:Void
+                        ULiteralExpression (value = false) [false] : PsiType:boolean
+                UReturnExpression [return [!] UnknownKotlinExpression (BINARY_EXPRESSION)] : PsiType:Void
+                    [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]

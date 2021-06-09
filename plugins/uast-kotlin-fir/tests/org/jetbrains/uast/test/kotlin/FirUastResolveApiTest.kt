@@ -6,14 +6,19 @@
 package org.jetbrains.uast.test.kotlin
 
 import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiMethod
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.uast.UCallableReferenceExpression
+import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UFile
+import org.jetbrains.uast.test.common.kotlin.asRefNames
 import org.jetbrains.uast.test.env.kotlin.AbstractFirUastTest
+import org.jetbrains.uast.visitor.UastVisitor
 import org.junit.Assert
 import org.junit.runner.RunWith
 import java.lang.IllegalStateException
@@ -35,6 +40,31 @@ class FirUastResolveApiTest : AbstractFirUastTest() {
         override fun check(filePath: String, file: UFile) {
             // Bogus
         }
+
+        @TestMetadata("MethodReference.kt")
+        fun testMethodReference() {
+            doCheck("plugins/uast-kotlin/testData/MethodReference.kt") { _, uFile ->
+                val facade = uFile.findFacade()
+                    ?: throw IllegalStateException("No facade found at ${uFile.asRefNames()}")
+                // val x = Foo::bar
+                val x = facade.fields.single()
+                var barReference: PsiElement? = null
+                x.accept(object : UastVisitor {
+                    override fun visitElement(node: UElement): Boolean {
+                        return false
+                    }
+
+                    override fun visitCallableReferenceExpression(node: UCallableReferenceExpression): Boolean {
+                        barReference = node.resolve()
+                        return false
+                    }
+                })
+                Assert.assertNotNull("Foo::bar is not resolved", barReference)
+                Assert.assertTrue("Foo::bar is not a function", barReference is KtNamedFunction)
+                Assert.assertEquals("Foo.bar", (barReference as KtNamedFunction).fqName?.asString())
+            }
+        }
+
 
         @TestMetadata("Imports.kt")
         fun testImports() {
