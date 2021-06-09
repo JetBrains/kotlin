@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterError
 import org.jetbrains.kotlin.ir.interpreter.exceptions.handleUserException
 import org.jetbrains.kotlin.ir.interpreter.exceptions.verify
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.ir.interpreter.state.*
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
 internal fun IrExpression.handleAndDropResult(callStack: CallStack, dropOnlyUnit: Boolean = false) {
     val dropResult = fun() {
@@ -131,11 +133,31 @@ private fun unfoldValueParameters(expression: IrFunctionAccessExpression, callSt
     callStack.addInstruction(SimpleInstruction(expression))
 
     fun getDefaultForParameterAt(index: Int): IrExpression? {
+        fun IrExpressionBody.replaceGetValueFromOtherClass(): IrExpressionBody {
+            return this.deepCopyWithSymbols(irFunction).transform(
+                object : IrElementTransformerVoid() {
+                    override fun visitGetValue(expression: IrGetValue): IrExpression {
+                        val parameter = expression.symbol.owner as? IrValueParameter ?: return super.visitGetValue(expression)
+                        if (parameter.parent == irFunction) return super.visitGetValue(expression)
+                        val newParameter = when (val indexInParameters = parameter.index) {
+                            -1 -> (irFunction.dispatchReceiverParameter ?: irFunction.extensionReceiverParameter)!!
+                            else -> irFunction.valueParameters[indexInParameters]
+                        }
+                        return IrGetValueImpl(expression.startOffset, expression.endOffset, expression.type, newParameter.symbol)
+                    }
+                }, null
+            )
+        }
+
         fun IrValueParameter.getDefault(): IrExpressionBody? {
-            return defaultValue
-                ?: (this.parent as? IrSimpleFunction)?.overriddenSymbols
-                    ?.map { it.owner.valueParameters[this.index].getDefault() }
-                    ?.firstNotNullOfOrNull { it }
+            if (defaultValue != null) return defaultValue
+            val overriddenDefault = (this.parent as? IrSimpleFunction)?.overriddenSymbols
+                ?.map { it.owner.valueParameters[this.index] }
+                ?.firstNotNullOfOrNull { it.getDefault() }
+
+            if (overriddenDefault == null || overriddenDefault.expression is IrConst<*>) return overriddenDefault
+
+            return overriddenDefault.replaceGetValueFromOtherClass()
         }
 
         return irFunction.valueParameters[index].getDefault()?.expression

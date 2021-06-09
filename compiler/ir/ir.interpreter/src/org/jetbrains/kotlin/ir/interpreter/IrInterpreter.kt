@@ -167,6 +167,9 @@ class IrInterpreter private constructor(
 
         //must add value argument in current stack because it can be used later as default argument
         callStack.addVariable(Variable(valueParameter.symbol, state))
+
+        // outer classes can be used in default args evaluation
+        if (isReceiver() && state is Complex) state.loadOuterClassesInto(callStack)
     }
 
     private fun interpretCall(call: IrCall) {
@@ -204,9 +207,7 @@ class IrInterpreter private constructor(
             .forEach { callStack.addVariable(Variable(it.symbol, KTypeState(call.getTypeArgument(it.index)!!, irBuiltIns.anyClass.owner))) }
 
         // 5. load outer class object
-        if (dispatchReceiver is Complex && irFunction.parentClassOrNull?.isInner == true) {
-            generateSequence(dispatchReceiver.outerClass) { (it.state as? Complex)?.outerClass }.forEach { callStack.addVariable(it) }
-        }
+        if (dispatchReceiver is Complex && irFunction.parentClassOrNull?.isInner == true) dispatchReceiver.loadOuterClassesInto(callStack)
 
         // 6. load up values onto stack
         if (irFunction.isLocal) callStack.copyUpValuesFromPreviousFrame()
@@ -277,7 +278,7 @@ class IrInterpreter private constructor(
                 callStack.addVariable(Variable(receiverSymbol, outerClass))
             }
             // used to get information from outer class
-            generateSequence(outerClassVar) { (it.state as? Complex)?.outerClass }.forEach { callStack.addVariable(it) }
+            objectState.loadOuterClassesInto(callStack)
         }
         if (irClass.isLocal) callStack.loadUpValues(objectState as StateWithClosure)
 

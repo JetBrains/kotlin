@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.util.*
 
@@ -50,5 +50,9 @@ internal interface Complex: State {
         val receiver = expression.superQualifierSymbol?.owner ?: irClass
         val irFunction = getIrFunctionFromGivenClass(receiver, expression.symbol) ?: return null
         return getOverridden(irFunction as IrSimpleFunction)
+    }
+
+    fun loadOuterClassesInto(callStack: CallStack) {
+        generateSequence(outerClass) { (it.state as? Complex)?.outerClass }.forEach { callStack.addVariable(it) }
     }
 }
