@@ -101,6 +101,15 @@ internal class KtFirClassErrorType(
     override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
 }
 
+internal class KtFirCapturedType(
+    coneType: ConeCapturedType,
+    override val token: ValidityToken,
+) : KtCapturedType(), KtFirType {
+    override val coneType by weakRef(coneType)
+    override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
+}
+
+
 internal class KtFirTypeParameterType(
     coneType: ConeTypeParameterType,
     override val token: ValidityToken,

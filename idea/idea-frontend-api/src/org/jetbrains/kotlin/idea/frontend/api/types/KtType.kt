@@ -55,6 +55,8 @@ abstract class KtTypeParameterType : KtTypeWithNullability {
     abstract val symbol: KtTypeParameterSymbol
 }
 
+abstract class KtCapturedType : KtType
+
 abstract class KtFlexibleType : KtType {
     abstract val lowerBound: KtType
     abstract val upperBound: KtType
