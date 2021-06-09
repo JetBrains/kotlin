@@ -166,11 +166,11 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     var lightDebugDeprecated: Boolean = false
 
     @Argument(
-            value = "-Xg-generate-inline-function-body-marker",
+            value = "-Xg-generate-debug-trampoline",
             valueDescription = "{disable|enable}",
-            description = """generates marker of inlined function body on call site to make debugger breakpoint resolution more accurate"""
+            description = """generates trampolines to make debugger breakpoint resolution more accurate (inlines, when, etc.)"""
     )
-    var generateInlinedFunctionMarkerString: String? = null
+    var generateDebugTrampolineString: String? = null
 
 
     @Argument(

@@ -169,12 +169,12 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                         null
                     }
                 })
-                putIfNotNull(GENERATE_INLINED_FUNCTION_BODY_MARKER, when (val it = arguments.generateInlinedFunctionMarkerString) {
+                putIfNotNull(GENERATE_DEBUG_TRAMPOLINE, when (val it = arguments.generateDebugTrampolineString) {
                     "enable" -> true
                     "disable" -> false
                     null -> null
                     else -> {
-                        configuration.report(ERROR, "Unsupported -Xg-generate-inline-function-body-marker= value: $it. Possible values are 'enable'/'disable'")
+                        configuration.report(ERROR, "Unsupported -Xg-generate-debug-tramboline= value: $it. Possible values are 'enable'/'disable'")
                         null
                     }
                 })
