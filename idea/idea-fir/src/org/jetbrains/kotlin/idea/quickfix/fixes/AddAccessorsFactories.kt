@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.idea.quickfix.fixes
 
-import com.intellij.codeInsight.intention.PriorityAction
 import org.jetbrains.kotlin.idea.fir.api.fixes.diagnosticFixFactory
+import org.jetbrains.kotlin.idea.fir.intentions.HLAddGetterAndSetterIntention
+import org.jetbrains.kotlin.idea.fir.intentions.HLAddGetterIntention
+import org.jetbrains.kotlin.idea.fir.intentions.HLAddSetterIntention
 import org.jetbrains.kotlin.idea.frontend.api.fir.diagnostics.KtFirDiagnostic
-import org.jetbrains.kotlin.idea.intentions.fir.AddAccessorsIntention
 import org.jetbrains.kotlin.psi.KtProperty
 
 object AddAccessorsFactories {
@@ -16,14 +17,11 @@ object AddAccessorsFactories {
         val property: KtProperty = diagnostic.psi
         val addGetter = property.getter == null
         val addSetter = property.isVar && property.setter == null
-        if (!addGetter && !addSetter) return@diagnosticFixFactory emptyList()
-
-        listOf(
-            AddAccessorsIntention(
-                addGetter,
-                addSetter,
-                if (addGetter && addSetter) PriorityAction.Priority.LOW else PriorityAction.Priority.NORMAL
-            )
-        )
+        when {
+            addGetter && addSetter -> listOf(HLAddGetterAndSetterIntention())
+            addGetter -> listOf(HLAddGetterIntention())
+            addSetter -> listOf(HLAddSetterIntention())
+            else -> emptyList()
+        }
     }
 }
