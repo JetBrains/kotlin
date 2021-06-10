@@ -1206,6 +1206,114 @@ public class HighLevelQuickFixTestGenerated extends AbstractHighLevelQuickFixTes
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/override")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Override extends AbstractHighLevelQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInOverride() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/override"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, false);
+        }
+
+        @TestMetadata("changeToInvocation.kt")
+        public void testChangeToInvocation() throws Exception {
+            runTest("idea/testData/quickfix/override/changeToInvocation.kt");
+        }
+
+        @TestMetadata("dontOfferToImplementMembersForExpectedClass.kt")
+        public void testDontOfferToImplementMembersForExpectedClass() throws Exception {
+            runTest("idea/testData/quickfix/override/dontOfferToImplementMembersForExpectedClass.kt");
+        }
+
+        @TestMetadata("implemenAsConstructorParameter.kt")
+        public void testImplemenAsConstructorParameter() throws Exception {
+            runTest("idea/testData/quickfix/override/implemenAsConstructorParameter.kt");
+        }
+
+        @TestMetadata("implemenAsConstructorParameterFunction.kt")
+        public void testImplemenAsConstructorParameterFunction() throws Exception {
+            runTest("idea/testData/quickfix/override/implemenAsConstructorParameterFunction.kt");
+        }
+
+        @TestMetadata("implemenAsConstructorParameterInObject.kt")
+        public void testImplemenAsConstructorParameterInObject() throws Exception {
+            runTest("idea/testData/quickfix/override/implemenAsConstructorParameterInObject.kt");
+        }
+
+        @TestMetadata("implementMember.kt")
+        public void testImplementMember() throws Exception {
+            runTest("idea/testData/quickfix/override/implementMember.kt");
+        }
+
+        @TestMetadata("implementMemberFromAbstractClass.kt")
+        public void testImplementMemberFromAbstractClass() throws Exception {
+            runTest("idea/testData/quickfix/override/implementMemberFromAbstractClass.kt");
+        }
+
+        @TestMetadata("overriddingMultipleFinalMethods.kt")
+        public void testOverriddingMultipleFinalMethods() throws Exception {
+            runTest("idea/testData/quickfix/override/overriddingMultipleFinalMethods.kt");
+        }
+
+        @TestMetadata("overridingDelegatedMethod.kt")
+        public void testOverridingDelegatedMethod() throws Exception {
+            runTest("idea/testData/quickfix/override/overridingDelegatedMethod.kt");
+        }
+
+        @TestMetadata("overridingFakeOverride.kt")
+        public void testOverridingFakeOverride() throws Exception {
+            runTest("idea/testData/quickfix/override/overridingFakeOverride.kt");
+        }
+
+        @TestMetadata("overridingFinalJavaMethod.kt")
+        public void testOverridingFinalJavaMethod() throws Exception {
+            runTest("idea/testData/quickfix/override/overridingFinalJavaMethod.kt");
+        }
+
+        @TestMetadata("overridingFinalMethod.kt")
+        public void testOverridingFinalMethod() throws Exception {
+            runTest("idea/testData/quickfix/override/overridingFinalMethod.kt");
+        }
+
+        @TestMetadata("overridingFinalMethodInLocal.kt")
+        public void testOverridingFinalMethodInLocal() throws Exception {
+            runTest("idea/testData/quickfix/override/overridingFinalMethodInLocal.kt");
+        }
+
+        @TestMetadata("overridingFinalProperty.kt")
+        public void testOverridingFinalProperty() throws Exception {
+            runTest("idea/testData/quickfix/override/overridingFinalProperty.kt");
+        }
+
+        @TestMetadata("overridingOpenMethodInFinalClass.kt")
+        public void testOverridingOpenMethodInFinalClass() throws Exception {
+            runTest("idea/testData/quickfix/override/overridingOpenMethodInFinalClass.kt");
+        }
+
+        @TestMetadata("parameterNameChangedAmbiguousRename.kt")
+        public void testParameterNameChangedAmbiguousRename() throws Exception {
+            runTest("idea/testData/quickfix/override/parameterNameChangedAmbiguousRename.kt");
+        }
+
+        @TestMetadata("parameterNameChangedMultipleOverrideRenamePossible.kt")
+        public void testParameterNameChangedMultipleOverrideRenamePossible() throws Exception {
+            runTest("idea/testData/quickfix/override/parameterNameChangedMultipleOverrideRenamePossible.kt");
+        }
+
+        @TestMetadata("parameterNameChangedRenamePossible.kt")
+        public void testParameterNameChangedRenamePossible() throws Exception {
+            runTest("idea/testData/quickfix/override/parameterNameChangedRenamePossible.kt");
+        }
+
+        @TestMetadata("virtualMethodHidden.kt")
+        public void testVirtualMethodHidden() throws Exception {
+            runTest("idea/testData/quickfix/override/virtualMethodHidden.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/override/typeMismatchOnOverride")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
