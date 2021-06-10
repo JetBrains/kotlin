@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object JvmFileClassUtil {
     val JVM_NAME: FqName = FqName("kotlin.jvm.JvmName")
@@ -99,9 +100,13 @@ object JvmFileClassUtil {
         }
 
     fun getLiteralStringFromAnnotation(annotation: KtAnnotationEntry): String? {
-        val argumentExpression = annotation.valueArguments.firstOrNull()?.getArgumentExpression() ?: return null
-        val stringTemplate = argumentExpression as? KtStringTemplateExpression ?: return null
-        val singleEntry = stringTemplate.entries.singleOrNull() as? KtLiteralStringTemplateEntry ?: return null
+        val stringTemplateExpression = annotation.valueArguments.firstOrNull()?.run {
+            when (this) {
+                is KtValueArgument -> stringTemplateExpression
+                else -> getArgumentExpression().safeAs<KtStringTemplateExpression>()
+            }
+        } ?: return null
+        val singleEntry = stringTemplateExpression.entries.singleOrNull() as? KtLiteralStringTemplateEntry ?: return null
         return singleEntry.text
     }
 }

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.stubs;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
@@ -21,6 +20,8 @@ import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner;
 import org.junit.runner.RunWith;
 
 import java.util.List;
+
+import static org.jetbrains.kotlin.idea.test.AstAccessControl.dropPsiAndTestWithControlledAccessToAst;
 
 @RunWith(JUnit3WithIdeaConfigurationRunner.class)
 public class KotlinStubsTest extends LightCodeInsightFixtureTestCase {
@@ -56,12 +57,12 @@ public class KotlinStubsTest extends LightCodeInsightFixtureTestCase {
         assertEquals(1, astDeclarations.size());
         assertTrue(astDeclarations.get(0) instanceof KtScript);
 
-        // clean up AST
-        ApplicationManager.getApplication().runWriteAction(() -> ktFile.onContentReload());
+        dropPsiAndTestWithControlledAccessToAst(true, ktFile, getTestRootDisposable(), () -> {
+            List<KtDeclaration> stubDeclarations = ktFile.getDeclarations();
+            assertEquals(1, stubDeclarations.size());
+            assertTrue(stubDeclarations.get(0) instanceof KtScript);
 
-        assertNotNull("file is parsed from AST", ktFile.getStub());
-        List<KtDeclaration> stubDeclarations = ktFile.getDeclarations();
-        assertEquals(1, stubDeclarations.size());
-        assertTrue(stubDeclarations.get(0) instanceof KtScript);
+            return null;
+        });
     }
 }
