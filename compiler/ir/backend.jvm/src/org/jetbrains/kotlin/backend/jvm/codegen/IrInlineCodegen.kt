@@ -179,7 +179,7 @@ class IrExpressionLambdaImpl(
         val freeAsmParameters = asmMethod.argumentTypes.let { it.take(startCapture) + it.drop(endCapture) }
         // The return type, on the other hand, should be the original type if this is a suspend lambda that returns
         // an unboxed inline class value so that the inliner will box it (FunctionN.invoke should return a boxed value).
-        val unboxedReturnType = function.suspendFunctionOriginal().originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass()
+        val unboxedReturnType = function.originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass()
         val unboxedAsmReturnType = unboxedReturnType?.let(codegen.typeMapper::mapType)
         invokeMethod = Method(asmMethod.name, unboxedAsmReturnType ?: asmMethod.returnType, freeAsmParameters.toTypedArray())
         invokeMethodParameters = freeParameters.map { it.type.toIrBasedKotlinType() }

@@ -6801,6 +6801,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     runTest("compiler/testData/codegen/box/coroutines/inlineClasses/direct/createOverride.kt");
                 }
 
+                @TestMetadata("defaultStub.kt")
+                public void testDefaultStub() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/direct/defaultStub.kt");
+                }
+
                 @TestMetadata("genericOverrideSuspendFun.kt")
                 public void testGenericOverrideSuspendFun() throws Exception {
                     runTest("compiler/testData/codegen/box/coroutines/inlineClasses/direct/genericOverrideSuspendFun.kt");
@@ -7042,6 +7047,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 @TestMetadata("createOverride.kt")
                 public void testCreateOverride() throws Exception {
                     runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resume/createOverride.kt");
+                }
+
+                @TestMetadata("defaultStub.kt")
+                public void testDefaultStub() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resume/defaultStub.kt");
                 }
 
                 @TestMetadata("genericOverrideSuspendFun.kt")

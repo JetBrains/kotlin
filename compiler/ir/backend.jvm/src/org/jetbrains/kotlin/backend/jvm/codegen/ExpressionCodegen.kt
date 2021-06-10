@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.lower.constantValue
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
 import org.jetbrains.kotlin.backend.jvm.lower.isMultifileBridge
-import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.*
@@ -488,8 +487,7 @@ class ExpressionCodegen(
 
         callGenerator.genCall(callable, this, expression, isInsideCondition)
 
-        val unboxedInlineClassIrType =
-            callee.suspendFunctionOriginal().originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass()
+        val unboxedInlineClassIrType = callee.originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass()
 
         if (isSuspensionPoint != SuspensionPointKind.NEVER) {
             addSuspendMarker(mv, isStartNotEnd = false, isSuspensionPoint == SuspensionPointKind.NOT_INLINE)
@@ -519,21 +517,15 @@ class ExpressionCodegen(
                 wrapJavaClassesIntoKClasses(mv)
                 MaterialValue(this, AsmTypes.K_CLASS_ARRAY_TYPE, expression.type)
             }
-            unboxedInlineClassIrType != null && !irFunction.isNonBoxingSuspendDelegation() -> {
-                if (!irFunction.shouldContainSuspendMarkers()) {
-                    // Since the coroutine transformer won't run, we need to do this manually.
-                    mv.generateCoroutineSuspendedCheck(state.languageVersionSettings)
+            unboxedInlineClassIrType != null && !irFunction.isNonBoxingSuspendDelegation() ->
+                MaterialValue(this, unboxedInlineClassIrType.asmType, unboxedInlineClassIrType).apply {
+                    if (!irFunction.shouldContainSuspendMarkers()) {
+                        // Since the coroutine transformer won't run, we need to do this manually.
+                        mv.generateCoroutineSuspendedCheck(state.languageVersionSettings)
+                    }
+                    mv.checkcast(type)
                 }
-                mv.checkcast(unboxedInlineClassIrType.asmType)
-                if (irFunction.isInvokeSuspendOfContinuation()) {
-                    // TODO: why is simply materializing the value with type `Object` not enough? This branch shouldn't be needed.
-                    StackValue.boxInlineClass(unboxedInlineClassIrType, mv, typeMapper)
-                    MaterialValue(this, callable.asmMethod.returnType, callable.returnType)
-                } else {
-                    MaterialValue(this, unboxedInlineClassIrType.asmType, unboxedInlineClassIrType)
-                }
-            }
-            expression.symbol.owner.resultIsActuallyAny(null) == true ->
+            callee.resultIsActuallyAny(null) == true ->
                 MaterialValue(this, callable.asmMethod.returnType, context.irBuiltIns.anyNType)
             else ->
                 MaterialValue(this, callable.asmMethod.returnType, callable.returnType)
@@ -907,7 +899,7 @@ class ExpressionCodegen(
     }
 
     private fun IrFunction.returnAsmAndIrTypes(): Pair<Type, IrType> {
-        val unboxedInlineClass = suspendFunctionOriginal().originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass()
+        val unboxedInlineClass = originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass()
         // In case of non-boxing delegation, the return type of the tail call was considered to be `Object`,
         // so that's also what we'll return here to avoid casts/unboxings/etc.
         if (unboxedInlineClass != null && !isNonBoxingSuspendDelegation()) {
