@@ -98,6 +98,16 @@ interface CombinedModuleInfo : ModuleInfo {
     val platformModule: ModuleInfo
 }
 
+/**
+ * Special-purpose module info that allows implementors to provide different behavior compared to the [originalModule]'s.
+ * E.g. may be used to resolve common code as if it were target-specific, or to change the dependencies visible to the code.
+ *
+ * Resolvers should accept a derived module info, iff the [originalModule] is accepted.
+ */
+interface DerivedModuleInfo : ModuleInfo {
+    val originalModule: ModuleInfo
+}
+
 fun ModuleInfo.flatten(): List<ModuleInfo> = when (this) {
     is CombinedModuleInfo -> listOf(this) + containedModules
     else -> listOf(this)
