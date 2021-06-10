@@ -13,3 +13,4 @@ class B : A(), X {
         return arg
     }
 }
+/* IGNORE_FIR */

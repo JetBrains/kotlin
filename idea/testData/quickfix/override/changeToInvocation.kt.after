@@ -5,3 +5,4 @@ open class A {
 }
 
 class B : A<caret>() {}
+/* IGNORE_FIR */

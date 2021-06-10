@@ -16,3 +16,4 @@ class B() : Y {
     override fun foo() {
     }
 }
+/* IGNORE_FIR */

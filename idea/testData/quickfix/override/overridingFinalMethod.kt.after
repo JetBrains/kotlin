@@ -6,3 +6,4 @@ open class A {
 class B : A() {
     override<caret> fun foo() {}
 }
+/* IGNORE_FIR */
