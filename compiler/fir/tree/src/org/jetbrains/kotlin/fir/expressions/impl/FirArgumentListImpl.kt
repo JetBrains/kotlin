@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.expressions.impl
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -28,12 +29,12 @@ internal class FirArgumentListImpl(
 
     override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirArgumentListImpl {
         // Transform all normal arguments first and then lambda to make CFG correct. See KT-46825
-        val postponedFunctionArgs = mutableListOf<Pair<Int, FirAnonymousFunction>>()
+        val postponedFunctionArgs = mutableListOf<Pair<Int, FirAnonymousFunctionExpression>>()
         val iterator = arguments.listIterator()
         while (iterator.hasNext()) {
             val index = iterator.nextIndex()
             val next = iterator.next() as FirPureAbstractElement
-            if (next is FirAnonymousFunction) {
+            if (next is FirAnonymousFunctionExpression) {
                 postponedFunctionArgs += (index to next)
                 continue
             }

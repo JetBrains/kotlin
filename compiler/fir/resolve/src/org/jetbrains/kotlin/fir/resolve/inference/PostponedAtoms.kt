@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.inference
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.references.FirNamedReference
@@ -78,7 +79,7 @@ class ResolvedLambdaAtom(
 }
 
 class LambdaWithTypeVariableAsExpectedTypeAtom(
-    override val atom: FirAnonymousFunction,
+    override val atom: FirAnonymousFunctionExpression,
     private val initialExpectedTypeType: ConeKotlinType,
     val expectedTypeRef: FirTypeRef,
     val candidateOfOuterCall: Candidate,

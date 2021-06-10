@@ -215,11 +215,14 @@ fun ControlFlowGraphBuilder.createExitSafeCallNode(fir: FirSafeCallExpression): 
 fun ControlFlowGraphBuilder.createEnterSafeCallNode(fir: FirSafeCallExpression): EnterSafeCallNode =
     EnterSafeCallNode(currentGraph, fir, levelCounter, createId())
 
-fun ControlFlowGraphBuilder.createPostponedLambdaExitNode(fir: FirAnonymousFunction): PostponedLambdaExitNode =
+fun ControlFlowGraphBuilder.createPostponedLambdaExitNode(fir: FirAnonymousFunctionExpression): PostponedLambdaExitNode =
     PostponedLambdaExitNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createPostponedLambdaEnterNode(fir: FirAnonymousFunction): PostponedLambdaEnterNode =
     PostponedLambdaEnterNode(currentGraph, fir, levelCounter, createId())
+
+fun ControlFlowGraphBuilder.createAnonymousFunctionExpressionExitNode(fir: FirAnonymousFunctionExpression): AnonymousFunctionExpressionExitNode =
+    AnonymousFunctionExpressionExitNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createAnonymousObjectExitNode(fir: FirAnonymousObject): AnonymousObjectExitNode =
     AnonymousObjectExitNode(currentGraph, fir, levelCounter, createId())

@@ -22,11 +22,19 @@ object InvocationKindTransformer : FirTransformer<Any?>() {
             return element
         }
 
+        override fun transformAnonymousFunctionExpression(
+            anonymousFunctionExpression: FirAnonymousFunctionExpression,
+            data: Pair<Map<FirExpression, EventOccurrencesRange>, EventOccurrencesRange?>
+        ): FirStatement {
+            val kind = data.second ?: data.first[anonymousFunctionExpression]
+            return anonymousFunctionExpression.transformAnonymousFunction(this, emptyMap<FirExpression, EventOccurrencesRange>() to kind)
+        }
+
         override fun transformAnonymousFunction(
             anonymousFunction: FirAnonymousFunction,
             data: Pair<Map<FirExpression, EventOccurrencesRange>, EventOccurrencesRange?>
         ): FirStatement {
-            val kind = data.second ?: data.first[anonymousFunction]
+            val kind = data.second
             if (kind != null) {
                 anonymousFunction.replaceInvocationKind(kind)
             }

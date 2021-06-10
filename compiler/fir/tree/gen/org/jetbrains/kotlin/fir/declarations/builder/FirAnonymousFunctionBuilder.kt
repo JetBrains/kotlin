@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.declarations.builder.FirFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.impl.FirAnonymousFunctionImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
-import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -36,7 +35,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 @FirBuilderDsl
-class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
+class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirAnnotationContainerBuilder {
     override var source: FirSourceElement? = null
     override lateinit var moduleData: FirModuleData
     override lateinit var origin: FirDeclarationOrigin
@@ -47,13 +46,13 @@ class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirAnnotationContainerBu
     var controlFlowGraphReference: FirControlFlowGraphReference? = null
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
     override var body: FirBlock? = null
-    override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
     lateinit var symbol: FirAnonymousFunctionSymbol
     var label: FirLabel? = null
     var invocationKind: EventOccurrencesRange? = null
     var inlineStatus: InlineStatus = InlineStatus.Unknown
     var isLambda: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
+    var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
 
     override fun build(): FirAnonymousFunction {
         return FirAnonymousFunctionImpl(
@@ -67,13 +66,13 @@ class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirAnnotationContainerBu
             controlFlowGraphReference,
             valueParameters,
             body,
-            typeRef,
             symbol,
             label,
             invocationKind,
             inlineStatus,
             isLambda,
             typeParameters,
+            typeRef,
         )
     }
 

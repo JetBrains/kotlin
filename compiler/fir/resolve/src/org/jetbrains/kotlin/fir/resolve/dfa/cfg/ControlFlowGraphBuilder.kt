@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.buildAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.dfa.*
@@ -228,9 +229,10 @@ class ControlFlowGraphBuilder {
 
     // ----------------------------------- Anonymous function -----------------------------------
 
-    fun visitPostponedAnonymousFunction(anonymousFunction: FirAnonymousFunction): Pair<PostponedLambdaEnterNode, PostponedLambdaExitNode> {
+    fun visitPostponedAnonymousFunction(anonymousFunctionExpression: FirAnonymousFunctionExpression): Pair<PostponedLambdaEnterNode, PostponedLambdaExitNode> {
+        val anonymousFunction = anonymousFunctionExpression.anonymousFunction
         val enterNode = createPostponedLambdaEnterNode(anonymousFunction)
-        val exitNode = createPostponedLambdaExitNode(anonymousFunction)
+        val exitNode = createPostponedLambdaExitNode(anonymousFunctionExpression)
         val symbol = anonymousFunction.symbol
         postponedLambdas += symbol
         entersToPostponedAnonymousFunctions[symbol] = enterNode
@@ -256,7 +258,11 @@ class ControlFlowGraphBuilder {
 
         if (previousNodeIsNew) {
             assert(symbol !in exitsFromPostponedAnonymousFunctions)
-            val exitFromLambda = createPostponedLambdaExitNode(anonymousFunction).also {
+            val lambdaExpression = buildAnonymousFunctionExpression {
+                source = anonymousFunction.source
+                this.anonymousFunction = anonymousFunction
+            }
+            val exitFromLambda = createPostponedLambdaExitNode(lambdaExpression).also {
                 exitsFromPostponedAnonymousFunctions[symbol] = it
             }
             addEdge(previousNode, exitFromLambda)
@@ -349,6 +355,12 @@ class ControlFlowGraphBuilder {
             Triple(exitNode, null, graph)
         } else {
             Triple(exitNode, postponedExitNode, graph)
+        }
+    }
+
+    fun exitAnonymousFunctionExpression(anonymousFunctionExpression: FirAnonymousFunctionExpression): AnonymousFunctionExpressionExitNode {
+        return createAnonymousFunctionExpressionExitNode(anonymousFunctionExpression).also {
+            addNewSimpleNode(it)
         }
     }
 

@@ -320,6 +320,8 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             default("resolvePhase", "FirResolvePhase.DECLARATIONS")
         }
 
+        noImpl(anonymousFunctionExpression)
+
         impl(propertyAccessor) {
             default("receiverTypeRef") {
                 value = "null"

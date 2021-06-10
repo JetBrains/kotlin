@@ -225,6 +225,10 @@ class Fir2IrVisitor(
         }
     }
 
+    override fun visitAnonymousFunctionExpression(anonymousFunctionExpression: FirAnonymousFunctionExpression, data: Any?): IrElement {
+        return visitAnonymousFunction(anonymousFunctionExpression.anonymousFunction, data)
+    }
+
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: Any?): IrElement {
         return anonymousFunction.convertWithOffsets { startOffset, endOffset ->
             val irFunction = declarationStorage.createIrFunction(

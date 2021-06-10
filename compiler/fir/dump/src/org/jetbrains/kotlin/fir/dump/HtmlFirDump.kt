@@ -1513,6 +1513,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 is FirContinueExpression -> generate(expression)
                 is FirBreakExpression -> generate(expression)
                 is FirAnonymousObjectExpression -> generate(expression.anonymousObject)
+                is FirAnonymousFunctionExpression -> generate(expression.anonymousFunction, isStatement = false)
                 is FirUnitExpression -> generate(expression)
                 is FirStringConcatenationCall -> generate(expression)
                 is FirAnonymousFunction -> generate(expression, isStatement = false)

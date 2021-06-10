@@ -310,6 +310,13 @@ open class FirBodyResolveTransformer(
         return declarationsTransformer.transformAnonymousFunction(anonymousFunction, data)
     }
 
+    override fun transformAnonymousFunctionExpression(
+        anonymousFunctionExpression: FirAnonymousFunctionExpression,
+        data: ResolutionMode
+    ): FirStatement {
+        return expressionsTransformer.transformAnonymousFunctionExpression(anonymousFunctionExpression, data)
+    }
+
     override fun transformValueParameter(valueParameter: FirValueParameter, data: ResolutionMode): FirStatement {
         return declarationsTransformer.transformValueParameter(valueParameter, data)
     }

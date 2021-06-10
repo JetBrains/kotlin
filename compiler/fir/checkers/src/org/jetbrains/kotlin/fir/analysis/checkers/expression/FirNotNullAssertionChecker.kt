@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirCheckNotNullCall
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.fir.types.*
 object FirNotNullAssertionChecker : FirCheckNotNullCallChecker() {
     override fun check(expression: FirCheckNotNullCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val argument = expression.argumentList.arguments.singleOrNull() ?: return
-        if (argument is FirAnonymousFunction && argument.isLambda) {
+        if (argument is FirAnonymousFunctionExpression && argument.anonymousFunction.isLambda) {
             reporter.reportOn(expression.source, FirErrors.NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION, context)
             return
         }

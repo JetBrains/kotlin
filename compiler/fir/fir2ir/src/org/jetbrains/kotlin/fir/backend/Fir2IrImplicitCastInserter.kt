@@ -46,7 +46,9 @@ class Fir2IrImplicitCastInserter(
 
     override fun visitAnonymousObjectExpression(anonymousObjectExpression: FirAnonymousObjectExpression, data: IrElement): IrElement = data
 
-    override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: IrElement): IrElement = data
+    override fun visitAnonymousFunctionExpression(anonymousFunctionExpression: FirAnonymousFunctionExpression, data: IrElement): IrElement {
+        return data
+    }
 
     override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: IrElement): IrElement = data
 

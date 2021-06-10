@@ -39,13 +39,13 @@ internal class FirAnonymousFunctionImpl(
     override var controlFlowGraphReference: FirControlFlowGraphReference?,
     override val valueParameters: MutableList<FirValueParameter>,
     override var body: FirBlock?,
-    override var typeRef: FirTypeRef,
     override val symbol: FirAnonymousFunctionSymbol,
     override var label: FirLabel?,
     override var invocationKind: EventOccurrencesRange?,
     override var inlineStatus: InlineStatus,
     override val isLambda: Boolean,
     override val typeParameters: MutableList<FirTypeParameter>,
+    override var typeRef: FirTypeRef,
 ) : FirAnonymousFunction() {
     override var resolvePhase: FirResolvePhase = FirResolvePhase.DECLARATIONS
 
@@ -60,9 +60,9 @@ internal class FirAnonymousFunctionImpl(
         controlFlowGraphReference?.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
         body?.accept(visitor, data)
-        typeRef.accept(visitor, data)
         label?.accept(visitor, data)
         typeParameters.forEach { it.accept(visitor, data) }
+        typeRef.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionImpl {
@@ -72,9 +72,9 @@ internal class FirAnonymousFunctionImpl(
         controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         transformValueParameters(transformer, data)
         transformBody(transformer, data)
-        typeRef = typeRef.transform(transformer, data)
         label = label?.transform(transformer, data)
         transformTypeParameters(transformer, data)
+        typeRef = typeRef.transform(transformer, data)
         return this
     }
 
@@ -133,15 +133,15 @@ internal class FirAnonymousFunctionImpl(
         body = newBody
     }
 
-    override fun replaceTypeRef(newTypeRef: FirTypeRef) {
-        typeRef = newTypeRef
-    }
-
     override fun replaceInvocationKind(newInvocationKind: EventOccurrencesRange?) {
         invocationKind = newInvocationKind
     }
 
     override fun replaceInlineStatus(newInlineStatus: InlineStatus) {
         inlineStatus = newInlineStatus
+    }
+
+    override fun replaceTypeRef(newTypeRef: FirTypeRef) {
+        typeRef = newTypeRef
     }
 }

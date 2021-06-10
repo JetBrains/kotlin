@@ -190,7 +190,7 @@ class FirCallCompletionResultsWriterTransformer(
                         val functionIsInline =
                             (symbol as? FirNamedFunctionSymbol)?.fir?.isInline == true || symbol.isArrayConstructorWithLambda
                         for ((argument, parameter) in newArgumentList.mapping) {
-                            val lambda = argument.unwrapArgument() as? FirAnonymousFunction ?: continue
+                            val lambda = (argument.unwrapArgument() as? FirAnonymousFunctionExpression)?.anonymousFunction ?: continue
                             val inlineStatus = when {
                                 parameter.isCrossinline && functionIsInline -> InlineStatus.CrossInline
                                 parameter.isNoinline -> InlineStatus.NoInline
@@ -412,7 +412,11 @@ class FirCallCompletionResultsWriterTransformer(
             } else {
                 valueParameter.returnTypeRef.substitute(this)
             }
-            argument.unwrapArgument() to expectedType
+            val unwrappedArgument: FirElement = when (val unwrappedArgument = argument.unwrapArgument()) {
+                is FirAnonymousFunctionExpression -> unwrappedArgument.anonymousFunction
+                else -> unwrappedArgument
+            }
+            unwrappedArgument to expectedType
         }?.toMap()
 
 
@@ -493,6 +497,13 @@ class FirCallCompletionResultsWriterTransformer(
                     ) ?: substitutedType
                 }
             }
+    }
+
+    override fun transformAnonymousFunctionExpression(
+        anonymousFunctionExpression: FirAnonymousFunctionExpression,
+        data: ExpectedArgumentType?
+    ): FirStatement {
+        return anonymousFunctionExpression.transformAnonymousFunction(this, data)
     }
 
     override fun transformAnonymousFunction(
@@ -770,7 +781,7 @@ class FirCallCompletionResultsWriterTransformer(
 
 sealed class ExpectedArgumentType {
     class ArgumentsMap(
-        val map: Map<FirExpression, ConeKotlinType>,
+        val map: Map<FirElement, ConeKotlinType>,
         val lambdasReturnTypes: Map<FirAnonymousFunction, ConeKotlinType>
     ) : ExpectedArgumentType()
 
@@ -778,7 +789,7 @@ sealed class ExpectedArgumentType {
     object NoApproximation : ExpectedArgumentType()
 }
 
-private fun ExpectedArgumentType.getExpectedType(argument: FirExpression): ConeKotlinType? = when (this) {
+private fun ExpectedArgumentType.getExpectedType(argument: FirElement): ConeKotlinType? = when (this) {
     is ExpectedArgumentType.ArgumentsMap -> map[argument]
     is ExpectedArgumentType.ExpectedType -> type
     ExpectedArgumentType.NoApproximation -> null

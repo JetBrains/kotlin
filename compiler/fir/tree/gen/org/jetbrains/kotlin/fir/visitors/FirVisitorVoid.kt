@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
@@ -296,6 +297,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
         visitElement(anonymousFunction)
+    }
+
+    open fun visitAnonymousFunctionExpression(anonymousFunctionExpression: FirAnonymousFunctionExpression) {
+        visitElement(anonymousFunctionExpression)
     }
 
     open fun visitAnonymousObject(anonymousObject: FirAnonymousObject) {
@@ -808,6 +813,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: Nothing?) {
         visitAnonymousFunction(anonymousFunction)
+    }
+
+    final override fun visitAnonymousFunctionExpression(anonymousFunctionExpression: FirAnonymousFunctionExpression, data: Nothing?) {
+        visitAnonymousFunctionExpression(anonymousFunctionExpression)
     }
 
     final override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: Nothing?) {

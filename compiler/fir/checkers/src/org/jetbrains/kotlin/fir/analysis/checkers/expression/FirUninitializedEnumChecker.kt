@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirLambdaArgumentExpression
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 
 object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker() {
@@ -222,6 +219,6 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker() {
                 (delegateCall.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol?.fir as? FirSimpleFunction ?: return null
             if (callee.symbol.callableId.asSingleFqName().asString() != "kotlin.lazy") return null
             val lazyCallArgument = delegateCall.argumentList.arguments.singleOrNull() as? FirLambdaArgumentExpression ?: return null
-            return lazyCallArgument.expression as? FirAnonymousFunction
+            return (lazyCallArgument.expression as? FirAnonymousFunctionExpression)?.anonymousFunction
         }
 }

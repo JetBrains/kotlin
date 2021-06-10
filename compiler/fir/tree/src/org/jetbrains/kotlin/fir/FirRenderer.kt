@@ -580,6 +580,10 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         propertyAccessor.body?.renderBody()
     }
 
+    override fun visitAnonymousFunctionExpression(anonymousFunctionExpression: FirAnonymousFunctionExpression) {
+        visitAnonymousFunction(anonymousFunctionExpression.anonymousFunction)
+    }
+
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
         anonymousFunction.renderDeclarationData()
         anonymousFunction.annotations.renderAnnotations()

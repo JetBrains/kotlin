@@ -18,10 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.errorTypeFromPrototype
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
-import org.jetbrains.kotlin.fir.expressions.builder.buildBlock
-import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
-import org.jetbrains.kotlin.fir.expressions.builder.buildLambdaArgumentExpression
+import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
@@ -146,7 +143,8 @@ open class FirContractResolveTransformer(
             if (resolvedId != FirContractsDslNames.CONTRACT) return transformOwnerWithUnresolvedContract(owner)
             if (contractCall.arguments.size != 1) return transformOwnerOfErrorContract(owner)
             val argument = contractCall.argument as? FirLambdaArgumentExpression ?: return transformOwnerOfErrorContract(owner)
-            val lambdaBody = (argument.expression as FirAnonymousFunction).body ?: return transformOwnerOfErrorContract(owner)
+            val lambdaBody = (argument.expression as FirAnonymousFunctionExpression).anonymousFunction.body
+                ?: return transformOwnerOfErrorContract(owner)
 
             val resolvedContractDescription = buildResolvedContractDescription {
                 val effectExtractor = ConeEffectExtractor(session, owner, valueParameters)
@@ -185,7 +183,9 @@ open class FirContractResolveTransformer(
             }
 
             val lambdaArgument = buildLambdaArgumentExpression {
-                expression = effectsBlock
+                expression = buildAnonymousFunctionExpression {
+                    anonymousFunction = effectsBlock
+                }
             }
 
             val contractCall = buildFunctionCall {

@@ -639,7 +639,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         return when (data) {
             is ResolutionMode.ContextDependent, is ResolutionMode.ContextDependentDelegate -> {
                 context.withAnonymousFunction(anonymousFunction, components, data) {
-                    dataFlowAnalyzer.visitPostponedAnonymousFunction(anonymousFunction)
                     anonymousFunction.addReturn()
                 }
             }

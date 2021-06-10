@@ -1078,6 +1078,22 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         return anonymousObjectExpression
     }
 
+    override fun transformAnonymousFunctionExpression(
+        anonymousFunctionExpression: FirAnonymousFunctionExpression,
+        data: ResolutionMode
+    ): FirStatement {
+        anonymousFunctionExpression.transformAnonymousFunction(transformer, data)
+        when (data) {
+            is ResolutionMode.ContextDependent, is ResolutionMode.ContextDependentDelegate -> {
+                dataFlowAnalyzer.visitPostponedAnonymousFunction(anonymousFunctionExpression)
+            }
+            else -> {
+                dataFlowAnalyzer.exitAnonymousFunctionExpression(anonymousFunctionExpression)
+            }
+        }
+        return anonymousFunctionExpression
+    }
+
     // ------------------------------------------------------------------------------------------------
 
     internal fun <T> storeTypeFromCallee(access: T) where T : FirQualifiedAccess, T : FirExpression {

@@ -87,7 +87,7 @@ class LocalPropertyAndCapturedWriteCollector private constructor() : ControlFlow
     }
 
     override fun visitPostponedLambdaExitNode(node: PostponedLambdaExitNode) {
-        lambdaOrLocalFunctionStack.remove(node.fir)
+        lambdaOrLocalFunctionStack.remove(node.fir.anonymousFunction)
     }
 
     override fun visitLocalFunctionDeclarationNode(node: LocalFunctionDeclarationNode, data: Nothing?) {

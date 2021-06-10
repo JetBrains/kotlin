@@ -272,12 +272,17 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         return FirControlFlowGraphReferenceImpl(graph)
     }
 
-    fun visitPostponedAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
+    fun visitPostponedAnonymousFunction(anonymousFunctionExpression: FirAnonymousFunctionExpression) {
+        val anonymousFunction = anonymousFunctionExpression.anonymousFunction
         getOrCreateLocalVariableAssignmentAnalyzer(anonymousFunction)?.visitPostponedAnonymousFunction(anonymousFunction)
-        val (enterNode, exitNode) = graphBuilder.visitPostponedAnonymousFunction(anonymousFunction)
+        val (enterNode, exitNode) = graphBuilder.visitPostponedAnonymousFunction(anonymousFunctionExpression)
         enterNode.mergeIncomingFlow()
         exitNode.mergeIncomingFlow()
         enterNode.flow = enterNode.flow.fork()
+    }
+
+    fun exitAnonymousFunctionExpression(anonymousFunctionExpression: FirAnonymousFunctionExpression) {
+        graphBuilder.exitAnonymousFunctionExpression(anonymousFunctionExpression).mergeIncomingFlow()
     }
 
     // ----------------------------------- Classes -----------------------------------
@@ -890,7 +895,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     }
 
     fun enterFunctionCall(functionCall: FirFunctionCall) {
-        val lambdaArgs = functionCall.arguments.filterIsInstance<FirAnonymousFunction>()
+        val lambdaArgs = functionCall.arguments.mapNotNull { (it as? FirAnonymousFunctionExpression)?.anonymousFunction }
         if (lambdaArgs.size > 1) {
             getOrCreateLocalVariableAssignmentAnalyzer(lambdaArgs.first())?.enterFunctionCallWithMultipleLambdaArgs(lambdaArgs)
         }
@@ -898,7 +903,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
     @OptIn(PrivateForInline::class)
     fun exitFunctionCall(functionCall: FirFunctionCall, callCompleted: Boolean) {
-        val lambdaArgs = functionCall.arguments.filterIsInstance<FirAnonymousFunction>()
+        val lambdaArgs = functionCall.arguments.mapNotNull { (it as? FirAnonymousFunctionExpression)?.anonymousFunction }
         if (lambdaArgs.size > 1) {
             getOrCreateLocalVariableAssignmentAnalyzer(lambdaArgs.first())?.enterFunctionCallWithMultipleLambdaArgs(lambdaArgs)
         }

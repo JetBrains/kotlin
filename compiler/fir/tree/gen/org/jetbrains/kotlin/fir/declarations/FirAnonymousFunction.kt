@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
-import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -23,7 +22,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirAnonymousFunction : FirFunction<FirAnonymousFunction>, FirExpression(), FirTypeParametersOwner {
+abstract class FirAnonymousFunction : FirFunction<FirAnonymousFunction>(), FirTypeParametersOwner {
     abstract override val source: FirSourceElement?
     abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase
@@ -35,13 +34,13 @@ abstract class FirAnonymousFunction : FirFunction<FirAnonymousFunction>, FirExpr
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract override val valueParameters: List<FirValueParameter>
     abstract override val body: FirBlock?
-    abstract override val typeRef: FirTypeRef
     abstract override val symbol: FirAnonymousFunctionSymbol
     abstract val label: FirLabel?
     abstract val invocationKind: EventOccurrencesRange?
     abstract val inlineStatus: InlineStatus
     abstract val isLambda: Boolean
     abstract override val typeParameters: List<FirTypeParameter>
+    abstract val typeRef: FirTypeRef
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnonymousFunction(this, data)
 
@@ -61,11 +60,11 @@ abstract class FirAnonymousFunction : FirFunction<FirAnonymousFunction>, FirExpr
 
     abstract override fun replaceBody(newBody: FirBlock?)
 
-    abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
-
     abstract fun replaceInvocationKind(newInvocationKind: EventOccurrencesRange?)
 
     abstract fun replaceInlineStatus(newInlineStatus: InlineStatus)
+
+    abstract fun replaceTypeRef(newTypeRef: FirTypeRef)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
 

@@ -133,7 +133,7 @@ class ExpressionsConverter(
 
         val expressionSource = lambdaExpression.toFirSourceElement()
         val target: FirFunctionTarget
-        return buildAnonymousFunction {
+        val anonymousFunction = buildAnonymousFunction {
             source = expressionSource
             moduleData = baseModuleData
             origin = FirDeclarationOrigin.Source
@@ -198,6 +198,10 @@ class ExpressionsConverter(
             context.firFunctionTargets.removeLast()
         }.also { 
             target.bind(it)
+        }
+        return buildAnonymousFunctionExpression {
+            source = expressionSource
+            this.anonymousFunction = anonymousFunction
         }
     }
 

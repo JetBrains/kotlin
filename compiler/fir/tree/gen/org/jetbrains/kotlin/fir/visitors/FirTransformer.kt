@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
@@ -297,6 +298,10 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     open fun transformAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: D): FirStatement {
         return transformElement(anonymousFunction, data)
+    }
+
+    open fun transformAnonymousFunctionExpression(anonymousFunctionExpression: FirAnonymousFunctionExpression, data: D): FirStatement {
+        return transformElement(anonymousFunctionExpression, data)
     }
 
     open fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: D): FirStatement {
@@ -809,6 +814,10 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     final override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: D): FirStatement {
         return transformAnonymousFunction(anonymousFunction, data)
+    }
+
+    final override fun visitAnonymousFunctionExpression(anonymousFunctionExpression: FirAnonymousFunctionExpression, data: D): FirStatement {
+        return transformAnonymousFunctionExpression(anonymousFunctionExpression, data)
     }
 
     final override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: D): FirStatement {

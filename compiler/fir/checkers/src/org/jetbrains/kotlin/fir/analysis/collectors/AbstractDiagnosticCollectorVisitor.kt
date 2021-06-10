@@ -99,6 +99,10 @@ abstract class AbstractDiagnosticCollectorVisitor(
         }
     }
 
+    override fun visitAnonymousFunctionExpression(anonymousFunctionExpression: FirAnonymousFunctionExpression, data: Nothing?) {
+        visitAnonymousFunction(anonymousFunctionExpression.anonymousFunction, data)
+    }
+
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: Nothing?) {
         withSuppressedDiagnostics(anonymousFunction) {
             val labelName = anonymousFunction.label?.name?.let { Name.identifier(it) }

@@ -102,6 +102,8 @@ fun CFGNode<*>.render(): String =
                 is PostponedLambdaEnterNode -> "Postponed enter to lambda"
                 is PostponedLambdaExitNode -> "Postponed exit from lambda"
 
+                is AnonymousFunctionExpressionExitNode -> "Exit anonymous function expression"
+
                 is UnionFunctionCallArgumentsNode -> "Call arguments union"
 
                 is ClassEnterNode -> "Enter class ${owner.name}"
