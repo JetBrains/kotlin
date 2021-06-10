@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.backend.js.ic
 import org.jetbrains.kotlin.backend.common.overrides.DefaultFakeOverrideClassFilter
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.backend.js.JsMappingState
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
@@ -36,7 +35,6 @@ class IcFileDeserializer(
     allowErrorNodes: Boolean,
     deserializeInlineFunctions: Boolean,
     val moduleDeserializer: IrModuleDeserializer,
-    val handleNoModuleDeserializerFound: (IdSignature, ModuleDescriptor, Collection<IrModuleDeserializer>) -> IrModuleDeserializer,
     val originalEnqueue: IdSignature.(IcFileDeserializer) -> Unit,
     val icFileData: SerializedIcDataForFile,
     val mappingState: JsMappingState,
@@ -82,9 +80,8 @@ class IcFileDeserializer(
         // TODO: reference lowered declarations cross-module
         if (kind == BinarySymbolData.SymbolKind.FILE_SYMBOL) return file.symbol
 
-        val actualModuleDeserializer =
-            moduleDeserializer.findModuleDeserializerForTopLevelId(idSig)
-                ?: handleNoModuleDeserializerFound(idSig, moduleDeserializer.moduleDescriptor, moduleDeserializer.moduleDependencies)
+        val actualModuleDeserializer = moduleDeserializer.findModuleDeserializerForTopLevelId(idSig)
+            ?: linker.handleSignatureIdNotFoundInModuleWithDependencies(idSig, moduleDeserializer)
 
         return actualModuleDeserializer.deserializeIrSymbol(idSig, kind)
     }

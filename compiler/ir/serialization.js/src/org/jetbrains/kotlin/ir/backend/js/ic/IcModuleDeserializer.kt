@@ -141,7 +141,6 @@ class IcModuleDeserializer(
             allowErrorNodes,
             strategy.inlineBodies,
             moduleDeserializer,
-            linker::handleNoModuleDeserializerFound,
             { fileDeserializer -> originalEnqueue(fileDeserializer) },
             icFileData,
             mapping.state,

@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.backend.konan
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.backend.common.serialization.linkerissues.UserVisibleIrModulesSupport
+import org.jetbrains.kotlin.backend.konan.serialization.KonanUserVisibleIrModulesSupport
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -90,6 +92,15 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     )
 
     val resolvedLibraries get() = resolve.resolvedLibraries
+
+    internal val userVisibleIrModulesSupport = KonanUserVisibleIrModulesSupport(
+            externalDependenciesLoader = UserVisibleIrModulesSupport.ExternalDependenciesLoader.from(
+                    externalDependenciesFile = configuration.get(KonanConfigKeys.EXTERNAL_DEPENDENCIES)?.let(::File),
+                    onMalformedExternalDependencies = { warningMessage ->
+                        configuration.report(CompilerMessageSeverity.STRONG_WARNING, warningMessage)
+                    }),
+            konanKlibDir = File(distribution.klib)
+    )
 
     internal val cacheSupport = CacheSupport(configuration, resolvedLibraries, target, produce)
 
@@ -206,10 +217,10 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             File(distribution.defaultNatives(target)).child("exceptionsSupport.bc").absolutePath
 
     internal val nativeLibraries: List<String> =
-        configuration.getList(KonanConfigKeys.NATIVE_LIBRARY_FILES)
+            configuration.getList(KonanConfigKeys.NATIVE_LIBRARY_FILES)
 
     internal val includeBinaries: List<String> =
-        configuration.getList(KonanConfigKeys.INCLUDED_BINARY_FILES)
+            configuration.getList(KonanConfigKeys.INCLUDED_BINARY_FILES)
 
     internal val languageVersionSettings =
             configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)!!
