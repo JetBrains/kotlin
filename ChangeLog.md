@@ -1,5 +1,118 @@
 # CHANGELOG
 
+## 1.5.20-RC
+
+### Backend. IR
+
+- [`KT-42239`](https://youtrack.jetbrains.com/issue/KT-42239) IR: Report compilation error instead of throwing an exception (effectively crash compiler) when some declaration wasn't found while deserialization
+
+### Compiler
+
+#### New Features
+
+- [`KT-44373`](https://youtrack.jetbrains.com/issue/KT-44373) FIR: support error / warning suppression
+
+#### Fixes
+
+- [`KT-38342`](https://youtrack.jetbrains.com/issue/KT-38342) FIR: Consider renaming diagnostic from AMBIGUITY to OVERLOAD_RESOLUTION_AMBIGUITY
+- [`KT-38476`](https://youtrack.jetbrains.com/issue/KT-38476) [FIR] Forgotten type approximation
+- [`KT-44682`](https://youtrack.jetbrains.com/issue/KT-44682) raw FIR: incorrect source for qualified access
+- [`KT-44813`](https://youtrack.jetbrains.com/issue/KT-44813) FIR bootstrap: various errors in collection-like classes
+- [`KT-45508`](https://youtrack.jetbrains.com/issue/KT-45508) False negative ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED on a fake override with an abstract super class member
+- [`KT-45578`](https://youtrack.jetbrains.com/issue/KT-45578) REPL: Unresolved imports are cached for the subsequent compilations
+- [`KT-45685`](https://youtrack.jetbrains.com/issue/KT-45685) JVM IR: capturing a variable into crossinline suspend lambda makes the function inside inline function no longer unbox Result
+- [`KT-46235`](https://youtrack.jetbrains.com/issue/KT-46235) JVM IR: Stack overflow error on large expressions
+- [`KT-46578`](https://youtrack.jetbrains.com/issue/KT-46578) JVM IR: IllegalAccessError accessing property delegated to java super class protected field reference
+- [`KT-46597`](https://youtrack.jetbrains.com/issue/KT-46597) JVM IR: AssertionError: SyntheticAccessorLowering should not attempt to modify other files - crossinline accessor
+- [`KT-46601`](https://youtrack.jetbrains.com/issue/KT-46601) JVM / IR: IllegalStateException: "Can't find method 'invokeinvoke`" when default lambda takes inline class parameters
+- [`KT-46759`](https://youtrack.jetbrains.com/issue/KT-46759) JVM IR: CCE in LateinitUsageLowering on @JvmStatic lateinit property in object
+- [`KT-46777`](https://youtrack.jetbrains.com/issue/KT-46777) [Native] [IR] Support suspend function as super type
+- [`KT-46802`](https://youtrack.jetbrains.com/issue/KT-46802) JVM / IR: "UnsupportedOperationException: Unknown structure of ADAPTER_FOR_CALLABLE_REFERENCE" caused by function reference on @JvmStatic function with unused default parameters
+- [`KT-46813`](https://youtrack.jetbrains.com/issue/KT-46813) JVM / IR: "ClassCastException: Integer cannot be cast to class Result" with Flow and `fold` method
+- [`KT-46822`](https://youtrack.jetbrains.com/issue/KT-46822) JVM IR: StackOverflowError on compiling a large data class
+- [`KT-46837`](https://youtrack.jetbrains.com/issue/KT-46837) Backend Internal error: Exception during IR lowering: assert at IrOverridingUtilKt.buildFakeOverrideMember
+- [`KT-46921`](https://youtrack.jetbrains.com/issue/KT-46921) JVM / IR: "IndexOutOfBoundsException: Cannot pop operand off an empty stack" caused by crossinline parameter and label return
+
+### Docs & Examples
+
+- [`KT-33783`](https://youtrack.jetbrains.com/issue/KT-33783) Document when a range created with rangeTo is empty
+
+### IDE
+
+- [`KT-44825`](https://youtrack.jetbrains.com/issue/KT-44825) Can't open Kotlin compiler settings in newly created project
+
+### IDE. Gradle Integration
+
+- [`KT-45277`](https://youtrack.jetbrains.com/issue/KT-45277) Wrong jvm target in gradle module in IDEA
+
+### IDE. Native
+
+- [`KT-39320`](https://youtrack.jetbrains.com/issue/KT-39320) [Commonizer] Reduce memory consumption
+
+### JavaScript
+
+- [`KT-44394`](https://youtrack.jetbrains.com/issue/KT-44394) KJS / IR: `null` companion object for existed stdlib interfaces `NodeFilter` and `SVGUnitTypes`
+- [`KT-45361`](https://youtrack.jetbrains.com/issue/KT-45361) KJS / IR: `IrConstructorCall` representing annotation always returns `Unit`
+- [`KT-46859`](https://youtrack.jetbrains.com/issue/KT-46859) Exception during IR lowering: NullPointerException was thrown at: optimizations.FoldConstantLowering.tryFoldingUnaryOps
+
+### Libraries
+
+- [`KT-46002`](https://youtrack.jetbrains.com/issue/KT-46002) Support all Unicode digit chars in digitToInt (JS and Native)
+- [`KT-46184`](https://youtrack.jetbrains.com/issue/KT-46184) Equivalize isLowerCase and isUpperCase behavior in all platforms
+
+### Middle-end. IR
+
+- [`KT-40425`](https://youtrack.jetbrains.com/issue/KT-40425) IrGenerationExtension. Support simple reporting to compiler output (for development/debug)
+- [`KT-45308`](https://youtrack.jetbrains.com/issue/KT-45308) Psi2ir: "AssertionError: TypeAliasDescriptor expected" caused by using typealias from one module as a type in another module without a transitive dependency
+
+### Native. ObjC Export
+
+- [`KT-38600`](https://youtrack.jetbrains.com/issue/KT-38600) Kotlin MP iOS Target doesn't contain kdoc comments
+
+### Reflection
+
+- [`KT-10838`](https://youtrack.jetbrains.com/issue/KT-10838) Provide sensible toString() for property accessors in reflection
+
+### Tools. CLI
+
+- [`KT-14772`](https://youtrack.jetbrains.com/issue/KT-14772) ISE (FNFE "Not a directory") on compilation with destination argument clashing with an existing file which is not a directory
+- [`KT-18184`](https://youtrack.jetbrains.com/issue/KT-18184) CompileEnvironmentException: Invalid jar path on "-d" with .jar in non-existing directory
+- [`KT-40977`](https://youtrack.jetbrains.com/issue/KT-40977) Report a readable diagnostic on empty -J argument in CLI
+
+### Tools. Compiler Plugins
+
+- [`KT-45538`](https://youtrack.jetbrains.com/issue/KT-45538) Serialization, JVM IR: "AssertionError: No such type argument slot in IrConstructorCallImpl" with inner classes
+- [`KT-46469`](https://youtrack.jetbrains.com/issue/KT-46469) Kotlin Lombok: accessors with `AccessLevel.MODULE` fail to resolve
+- [`KT-46529`](https://youtrack.jetbrains.com/issue/KT-46529) Kotlin Lombok: with `@Accessors` without explicit `prefix` the prefix from lombok.config is not taken into account
+- [`KT-46531`](https://youtrack.jetbrains.com/issue/KT-46531) Kotlin Lombok: `lombok.getter.noIsPrefix` is processed depending on character case
+
+### Tools. Gradle
+
+- [`KT-24533`](https://youtrack.jetbrains.com/issue/KT-24533) Kapt should not run when annotation processors are not configured
+- [`KT-46401`](https://youtrack.jetbrains.com/issue/KT-46401) Deprecate 'kotlin.parallel.tasks.in.project' build property
+- [`KT-46820`](https://youtrack.jetbrains.com/issue/KT-46820) Gradle: kotlinc (1.5.0) race condition causes a NullPointerException
+
+### Tools. Gradle. JS
+
+- [`KT-46976`](https://youtrack.jetbrains.com/issue/KT-46976) KJS: Broken support for dynamically created `webpack.config.d`
+
+### Tools. Gradle. Multiplatform
+
+- [`KT-46394`](https://youtrack.jetbrains.com/issue/KT-46394) Multiplatform: Gradle 7 support
+- [`KT-46517`](https://youtrack.jetbrains.com/issue/KT-46517) Add kotlin-project-model as api dependency to kotlin-gradle-plugin-api
+
+### Tools. Gradle. Native
+
+- [`KT-46680`](https://youtrack.jetbrains.com/issue/KT-46680) Register concrete "embedAndSign" tasks instead umbrella
+- [`KT-46892`](https://youtrack.jetbrains.com/issue/KT-46892) Kotlin Multiplatform Gradle Plugin: EmbedAndSign task always contains a default framework name
+
+### Tools. kapt
+
+- [`KT-31146`](https://youtrack.jetbrains.com/issue/KT-31146) kapt: executableElement.getAnnotation(JvmOverloads::class.java) returns null
+- [`KT-35167`](https://youtrack.jetbrains.com/issue/KT-35167) Kapt Gradle plugin doesn't handle --module-path javac argument
+- [`KT-41581`](https://youtrack.jetbrains.com/issue/KT-41581) Kapt doesn't have line breaks between warnings
+
+
 ## 1.5.20-M1
 
 ### Compiler
