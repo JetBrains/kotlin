@@ -12,7 +12,7 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.idea.core.overrideImplement.KtImplementMembersHandler.Companion.getUnimplementedMembers
 import org.jetbrains.kotlin.idea.core.util.KotlinIdeaCoreBundle
-import org.jetbrains.kotlin.idea.fir.api.fixes.diagnosticFixFactory
+import org.jetbrains.kotlin.idea.fir.api.fixes.diagnosticFixFactoryFromIntentionActions
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.analyse
 import org.jetbrains.kotlin.idea.frontend.api.fir.diagnostics.KtFirDiagnostic
@@ -120,21 +120,25 @@ internal class KtImplementAsConstructorParameterQuickfix(private val members: Co
 
 object MemberNotImplementedQuickfixFactories {
 
-    val abstractMemberNotImplemented = diagnosticFixFactory(KtFirDiagnostic.AbstractMemberNotImplemented::class) { diagnostic ->
-        getUnimplementedMemberFixes(diagnostic.psi)
-    }
+    val abstractMemberNotImplemented =
+        diagnosticFixFactoryFromIntentionActions(KtFirDiagnostic.AbstractMemberNotImplemented::class) { diagnostic ->
+            getUnimplementedMemberFixes(diagnostic.psi)
+        }
 
-    val abstractClassMemberNotImplemented = diagnosticFixFactory(KtFirDiagnostic.AbstractClassMemberNotImplemented::class) { diagnostic ->
-        getUnimplementedMemberFixes(diagnostic.psi)
-    }
+    val abstractClassMemberNotImplemented =
+        diagnosticFixFactoryFromIntentionActions(KtFirDiagnostic.AbstractClassMemberNotImplemented::class) { diagnostic ->
+            getUnimplementedMemberFixes(diagnostic.psi)
+        }
 
-    val manyInterfacesMemberNotImplemented = diagnosticFixFactory(KtFirDiagnostic.ManyInterfacesMemberNotImplemented::class) { diagnostic ->
-        getUnimplementedMemberFixes(diagnostic.psi)
-    }
+    val manyInterfacesMemberNotImplemented =
+        diagnosticFixFactoryFromIntentionActions(KtFirDiagnostic.ManyInterfacesMemberNotImplemented::class) { diagnostic ->
+            getUnimplementedMemberFixes(diagnostic.psi)
+        }
 
-    val manyImplMemberNotImplemented = diagnosticFixFactory(KtFirDiagnostic.ManyImplMemberNotImplemented::class) { diagnostic ->
-        getUnimplementedMemberFixes(diagnostic.psi, false)
-    }
+    val manyImplMemberNotImplemented =
+        diagnosticFixFactoryFromIntentionActions(KtFirDiagnostic.ManyImplMemberNotImplemented::class) { diagnostic ->
+            getUnimplementedMemberFixes(diagnostic.psi, false)
+        }
 
     @OptIn(ExperimentalStdlibApi::class)
     private fun KtAnalysisSession.getUnimplementedMemberFixes(

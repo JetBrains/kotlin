@@ -25,16 +25,9 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 
 abstract class HLAddAccessorIntention(private val addGetter: Boolean, private val addSetter: Boolean) :
-    AbstractHLIntention<KtProperty, HLApplicatorInput.Empty>(KtProperty::class) {
+    AbstractHLIntention<KtProperty, HLApplicatorInput.Empty>(KtProperty::class, applicator(addGetter, addSetter)) {
     override val applicabilityRange: HLApplicabilityRange<KtProperty> = applicabilityTarget { ktProperty ->
         if (ktProperty.hasInitializer()) ktProperty.nameIdentifier else ktProperty
-    }
-
-    override val applicator: HLApplicator<KtProperty, HLApplicatorInput.Empty> = applicator {
-        applyTo { ktProperty, _, _, editor ->
-            AbstractAddAccessorsIntention.applyTo(ktProperty, editor, addGetter, addSetter)
-        }
-        familyAndActionName(AbstractAddAccessorsIntention.createFamilyName(addGetter, addSetter))
     }
 
     override val inputProvider: HLApplicatorInputProvider<KtProperty, HLApplicatorInput.Empty> = inputProvider { ktProperty ->
