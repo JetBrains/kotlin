@@ -55,7 +55,7 @@ abstract class IrBindablePublicSymbolBase<out D : DeclarationDescriptor, B : IrS
         if (_owner == null) {
             _owner = owner
         } else {
-            throw IllegalStateException("${javaClass.simpleName} for $signature is already bound: ${owner.render()}")
+            throw IllegalStateException("${javaClass.simpleName} for $signature is already bound: ${_owner?.render()}")
         }
     }
 
