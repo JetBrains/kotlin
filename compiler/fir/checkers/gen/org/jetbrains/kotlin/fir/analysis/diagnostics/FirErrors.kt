@@ -347,6 +347,7 @@ object FirErrors {
     val CANNOT_WEAKEN_ACCESS_PRIVILEGE by error3<KtModifierListOwner, Visibility, FirCallableDeclaration, Name>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
     val CANNOT_CHANGE_ACCESS_PRIVILEGE by error3<KtModifierListOwner, Visibility, FirCallableDeclaration, Name>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
     val OVERRIDING_FINAL_MEMBER by error2<KtNamedDeclaration, FirCallableDeclaration, Name>(SourceElementPositioningStrategies.OVERRIDE_MODIFIER)
+    val RETURN_TYPE_MISMATCH_ON_INHERITANCE by error3<KtClassOrObject, FirClass<*>, FirCallableDeclaration<*>, FirCallableDeclaration<*>>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val ABSTRACT_MEMBER_NOT_IMPLEMENTED by error2<KtClassOrObject, FirClass, FirCallableDeclaration>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED by error2<KtClassOrObject, FirClass, FirCallableDeclaration>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER by error2<KtClassOrObject, FirClass, FirCallableDeclaration>(SourceElementPositioningStrategies.DECLARATION_NAME)

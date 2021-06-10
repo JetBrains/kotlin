@@ -1171,6 +1171,13 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val containingClassName: Name
     }
 
+    abstract class ReturnTypeMismatchOnInheritance : KtFirDiagnostic<KtClassOrObject>() {
+        override val diagnosticClass get() = ReturnTypeMismatchOnInheritance::class
+        abstract val classOrObject: KtClassLikeSymbol
+        abstract val conflictingDeclaration1: KtCallableSymbol
+        abstract val conflictingDeclaration2: KtCallableSymbol
+    }
+
     abstract class AbstractMemberNotImplemented : KtFirDiagnostic<KtClassOrObject>() {
         override val diagnosticClass get() = AbstractMemberNotImplemented::class
         abstract val classOrObject: KtClassLikeSymbol
