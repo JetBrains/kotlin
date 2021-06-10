@@ -18,6 +18,7 @@ class LldbTests {
             println(z)
         }
     """, """
+        > log enable lldb all
         > b main.kt:2
         Breakpoint 1: [..]
 
