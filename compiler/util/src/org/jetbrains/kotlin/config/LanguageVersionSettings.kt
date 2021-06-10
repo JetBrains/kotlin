@@ -177,6 +177,8 @@ enum class LanguageFeature(
     SamWrapperClassesAreSynthetic(KOTLIN_1_5, defaultState = State.ENABLED, kind = BUG_FIX),
     StrictOnlyInputTypesChecks(KOTLIN_1_5),
 
+    JsEnableExtensionFunctionInExternals(KOTLIN_1_5, defaultState = State.DISABLED, kind = OTHER),
+
     // Disabled until the breaking change is approved by the committee, see KT-10884.
     PackagePrivateFileClassesWithAllPrivateMembers(KOTLIN_1_5, defaultState = State.DISABLED),
 
