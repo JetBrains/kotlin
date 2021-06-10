@@ -114,7 +114,7 @@ extern "C" id Kotlin_ObjCExport_GetAssociatedObject(ObjHeader* obj) {
 extern "C" OBJ_GETTER(Kotlin_ObjCExport_AllocInstanceWithAssociatedObject,
                       const TypeInfo* typeInfo, id associatedObject) RUNTIME_NOTHROW;
 
-extern "C" OBJ_GETTER(Kotlin_ObjCExport_AllocInstanceWithAssociatedObject,
+RUNTIME_NOTHROW extern "C" OBJ_GETTER(Kotlin_ObjCExport_AllocInstanceWithAssociatedObject,
                             const TypeInfo* typeInfo, id associatedObject) {
   RETURN_RESULT_OF(AllocInstanceWithAssociatedObject, typeInfo, associatedObject);
 }

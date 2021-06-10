@@ -11,7 +11,7 @@ extern "C" {
 
 const MemoryModel CurrentMemoryModel = MemoryModel::kRelaxed;
 
-OBJ_GETTER(AllocInstance, const TypeInfo* typeInfo) {
+RUNTIME_NOTHROW OBJ_GETTER(AllocInstance, const TypeInfo* typeInfo) {
   RETURN_RESULT_OF(AllocInstanceRelaxed, typeInfo);
 }
 

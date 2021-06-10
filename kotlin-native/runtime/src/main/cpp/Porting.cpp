@@ -59,7 +59,7 @@ void consoleInit() {
 #endif
 }
 
-void consoleWriteUtf8(const void* utf8, uint32_t sizeBytes) {
+void consoleWriteUtf8(const char* utf8, uint32_t sizeBytes) {
 #ifdef KONAN_ANDROID
   // TODO: use sizeBytes!
   __android_log_print(ANDROID_LOG_INFO, "Konan_main", "%s", utf8);
@@ -68,7 +68,7 @@ void consoleWriteUtf8(const void* utf8, uint32_t sizeBytes) {
 #endif
 }
 
-void consoleErrorUtf8(const void* utf8, uint32_t sizeBytes) {
+void consoleErrorUtf8(const char* utf8, uint32_t sizeBytes) {
 #ifdef KONAN_ANDROID
   // TODO: use sizeBytes!
   __android_log_print(ANDROID_LOG_ERROR, "Konan_main", "%s", utf8);
