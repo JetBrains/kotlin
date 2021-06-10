@@ -377,7 +377,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun KotlinTypeMarker.getAnnotations(): List<AnnotationMarker> {
         require(this is ConeKotlinType)
-        return attributes.arrayMap.toList()
+        return attributes.toList()
     }
 
     override fun SimpleTypeMarker.isStubType(): Boolean {

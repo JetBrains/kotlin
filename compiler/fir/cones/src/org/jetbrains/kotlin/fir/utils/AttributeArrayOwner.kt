@@ -16,7 +16,6 @@ import kotlin.reflect.KClass
  * Note that you can remove attributes from [AttributeArrayOwner] despite
  *   from components in [ComponentArrayOwner]
  */
-@OptIn(Protected::class)
 abstract class AttributeArrayOwner<K : Any, T : Any> protected constructor(
     arrayMap: ArrayMap<T>
 ) : AbstractArrayMapOwner<K, T>() {

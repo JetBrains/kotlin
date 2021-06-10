@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.utils.ArrayMapAccessor
 import org.jetbrains.kotlin.fir.utils.ComponentArrayOwner
-import org.jetbrains.kotlin.fir.utils.Protected
 import org.jetbrains.kotlin.fir.utils.TypeRegistry
 import kotlin.reflect.KClass
 
@@ -50,7 +49,6 @@ class FirExtensionService(val session: FirSession) : ComponentArrayOwner<FirExte
     }
 
     @PluginServicesInitialization
-    @OptIn(Protected::class)
     fun getAllExtensions(): List<FirExtension> {
         return arrayMap.flatten()
     }

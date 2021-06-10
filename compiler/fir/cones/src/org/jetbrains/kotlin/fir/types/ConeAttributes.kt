@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.utils.AttributeArrayOwner
-import org.jetbrains.kotlin.fir.utils.Protected
 import org.jetbrains.kotlin.fir.utils.TypeRegistry
-import org.jetbrains.kotlin.fir.utils.isEmpty
 import org.jetbrains.kotlin.types.model.AnnotationMarker
 import org.jetbrains.kotlin.utils.addIfNotNull
 import kotlin.properties.ReadOnlyProperty
@@ -24,7 +22,6 @@ abstract class ConeAttribute<T : ConeAttribute<T>> : AnnotationMarker {
     abstract val key: KClass<out T>
 }
 
-@OptIn(Protected::class)
 class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : AttributeArrayOwner<ConeAttribute<*>, ConeAttribute<*>>(),
     Iterable<ConeAttribute<*>> {
 
@@ -85,14 +82,10 @@ class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : A
     }
 
     fun remove(attribute: ConeAttribute<*>): ConeAttributes {
-        if (arrayMap.isEmpty()) return this
+        if (isEmpty()) return this
         val attributes = arrayMap.filter { it != attribute }
         if (attributes.size == arrayMap.size) return this
         return create(attributes)
-    }
-
-    override fun iterator(): Iterator<ConeAttribute<*>> {
-        return arrayMap.iterator()
     }
 
     private inline fun perform(other: ConeAttributes, op: ConeAttribute<*>.(ConeAttribute<*>?) -> ConeAttribute<*>?): ConeAttributes {
@@ -109,8 +102,4 @@ class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : A
 
     override val typeRegistry: TypeRegistry<ConeAttribute<*>, ConeAttribute<*>>
         get() = Companion
-
-    private fun isEmpty(): Boolean {
-        return arrayMap.isEmpty()
-    }
 }

@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.utils.isNotEmpty
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
@@ -413,7 +412,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     }
 
     private fun FirDeclaration.renderDeclarationAttributesIfNeeded() {
-        if (mode.renderDeclarationAttributes && attributes.arrayMap.isNotEmpty()) {
+        if (mode.renderDeclarationAttributes && attributes.isNotEmpty()) {
             val attributes = getAttributesWithValues().mapNotNull { (klass, value) ->
                 value?.let { klass.simpleName to value.renderAsDeclarationAttributeValue() }
             }.joinToString { (name, value) -> "$name=$value" }
@@ -427,10 +426,9 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         }
     }
 
-
     private fun FirDeclaration.getAttributesWithValues(): List<Pair<KClass<out FirDeclarationDataKey>, Any?>> {
         val attributesMap = FirDeclarationDataRegistry.allValuesThreadUnsafeForRendering()
-        return attributesMap.entries.sortedBy { it.key.simpleName }.map { (klass, index) -> klass to attributes.arrayMap[index] }
+        return attributesMap.entries.sortedBy { it.key.simpleName }.map { (klass, index) -> klass to attributes[index] }
     }
 
     private fun Any.renderAsDeclarationAttributeValue() = when (this) {

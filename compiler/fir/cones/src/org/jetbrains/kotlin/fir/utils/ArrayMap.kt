@@ -14,9 +14,6 @@ sealed class ArrayMap<T : Any> : Iterable<T> {
     abstract fun copy(): ArrayMap<T>
 }
 
-fun ArrayMap<*>.isEmpty(): Boolean = size == 0
-fun ArrayMap<*>.isNotEmpty(): Boolean = size != 0
-
 internal object EmptyArrayMap : ArrayMap<Nothing>() {
     override val size: Int
         get() = 0
