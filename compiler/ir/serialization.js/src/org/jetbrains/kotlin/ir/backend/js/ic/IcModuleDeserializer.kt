@@ -148,7 +148,7 @@ class IcModuleDeserializer(
             strategy.inlineBodies,
             moduleDeserializer,
             useGlobalSignatures,
-            linker::handleNoModuleDeserializerFound,
+            linker::handleSignatureIdNotFoundInModuleWithDependencies,
             { fileDeserializer -> originalEnqueue(fileDeserializer) },
             icFileData,
             mapping.state,

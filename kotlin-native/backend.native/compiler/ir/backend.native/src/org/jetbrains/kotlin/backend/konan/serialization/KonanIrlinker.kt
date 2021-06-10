@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideClassFilter
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
+import org.jetbrains.kotlin.backend.common.serialization.linkerissues.UserVisibleIrModulesSupport
 import org.jetbrains.kotlin.backend.konan.CachedLibraries
 import org.jetbrains.kotlin.backend.konan.descriptors.isInteropLibrary
 import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForCEnumAndCStructStubs
@@ -72,7 +73,8 @@ internal class KonanIrLinker(
         private val stubGenerator: DeclarationStubGenerator,
         private val cenumsProvider: IrProviderForCEnumAndCStructStubs,
         exportedDependencies: List<ModuleDescriptor>,
-        private val cachedLibraries: CachedLibraries
+        private val cachedLibraries: CachedLibraries,
+        override val userVisibleIrModulesSupport: UserVisibleIrModulesSupport
 ) : KotlinIrLinker(currentModule, messageLogger, builtIns, symbolTable, exportedDependencies) {
 
     companion object {
@@ -204,7 +206,7 @@ internal class KonanIrLinker(
             val descriptor = resolveDescriptor(idSig)
             val actualModule = descriptor.module
             if (actualModule !== moduleDescriptor) {
-                val moduleDeserializer = deserializersForModules[actualModule.name.asString()] ?: error("No module deserializer for $actualModule")
+                val moduleDeserializer = resolveModuleDeserializer(actualModule, idSig)
                 moduleDeserializer.addModuleReachableTopLevel(idSig)
                 return symbolTable.referenceClassFromLinker(idSig)
             }

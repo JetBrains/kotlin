@@ -36,7 +36,7 @@ class IcFileDeserializer(
     deserializeInlineFunctions: Boolean,
     val moduleDeserializer: IrModuleDeserializer,
     useGlobalSignatures: Boolean,
-    val handleNoModuleDeserializerFound: (IdSignature, ModuleDescriptor, Collection<IrModuleDeserializer>) -> IrModuleDeserializer,
+    val handleNoModuleDeserializerFound: (IdSignature, IrModuleDeserializer) -> IrModuleDeserializer,
     val originalEnqueue: IdSignature.(IcFileDeserializer) -> Unit,
     val icFileData: SerializedIcDataForFile,
     val mappingState: JsMappingState,
@@ -96,13 +96,8 @@ class IcFileDeserializer(
 
             return symbol
         } else {
-
-            val actualModuleDeserializer =
-                moduleDeserializer.findModuleDeserializerForTopLevelId(topLevelSig) ?: handleNoModuleDeserializerFound(
-                    idSig,
-                    moduleDeserializer.moduleDescriptor,
-                    moduleDeserializer.moduleDependencies
-                )
+            val actualModuleDeserializer = moduleDeserializer.findModuleDeserializerForTopLevelId(topLevelSig)
+                ?: handleNoModuleDeserializerFound(idSig, moduleDeserializer)
 
             return actualModuleDeserializer.deserializeIrSymbol(idSig, symbolKind)
         }
@@ -225,13 +220,8 @@ class IcFileDeserializer(
         // TODO: reference lowered declarations cross-module
         if (kind == BinarySymbolData.SymbolKind.FILE_SYMBOL) return (idSig as IdSignature.FileSignature).fileSymbol
         val topLevelSig = idSig.topLevelSignature()
-        val actualModuleDeserializer =
-            moduleDeserializer.findModuleDeserializerForTopLevelId(topLevelSig) ?:
-                handleNoModuleDeserializerFound(
-                idSig,
-                moduleDeserializer.moduleDescriptor,
-                moduleDeserializer.moduleDependencies
-            )
+        val actualModuleDeserializer = moduleDeserializer.findModuleDeserializerForTopLevelId(topLevelSig)
+            ?: handleNoModuleDeserializerFound(idSig, moduleDeserializer)
 
         return actualModuleDeserializer.deserializeIrSymbol(idSig, kind)
     }
