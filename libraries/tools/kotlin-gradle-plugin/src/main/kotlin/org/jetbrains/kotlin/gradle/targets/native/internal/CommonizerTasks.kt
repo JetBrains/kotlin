@@ -47,13 +47,12 @@ internal val Project.runCommonizerTask: TaskProvider<Task>
 
 internal val Project.commonizeCInteropTask: TaskProvider<CInteropCommonizerTask>?
     get() {
-        if (isCInteropCommonizationEnabled) {
+        if (isHierarchicalCommonizationEnabled && isCInteropCommonizationEnabled) {
             return locateOrRegisterTask(
                 "commonizeCInterop",
                 invokeWhenRegistered = {
                     commonizeTask.dependsOn(this)
                     commonizeNativeDistributionHierarchicallyTask?.let(this::dependsOn)
-                    commonizeNativeDistributionTask?.let(this::dependsOn)
                 },
                 configureTask = {
                     group = "interop"
@@ -66,13 +65,14 @@ internal val Project.commonizeCInteropTask: TaskProvider<CInteropCommonizerTask>
 
 internal val Project.copyCommonizeCInteropForIdeTask: TaskProvider<CopyCommonizeCInteropForIdeTask>?
     get() {
-        if (isCInteropCommonizationEnabled) {
+        val commonizeCInteropTask = commonizeCInteropTask
+        if (commonizeCInteropTask != null) {
             return locateOrRegisterTask(
                 "copyCommonizeCInteropForIde",
                 invokeWhenRegistered = { if (isInIdeaSync) commonizeTask.dependsOn(this) },
                 configureTask = {
                     group = "interop"
-                    description = "Copies the output of ${commonizeCInteropTask?.get()?.name} into " +
+                    description = "Copies the output of ${commonizeCInteropTask.get().name} into " +
                             "the root projects .gradle folder for the IDE"
                 }
             )

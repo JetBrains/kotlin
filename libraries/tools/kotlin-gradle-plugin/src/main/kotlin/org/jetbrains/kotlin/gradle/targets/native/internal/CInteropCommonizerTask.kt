@@ -143,7 +143,6 @@ internal open class CInteropCommonizerTask : AbstractCInteropCommonizerTask() {
         return sharedNativeCompilations.mapNotNull(::getCommonizationParameters).toSet()
             .run(::removeNotRegisteredInterops)
             .run(::removeEmptyInterops)
-            .run(if (project.isHierarchicalCommonizationEnabled) ::identity else ::removeHierarchicalParameters)
             .run(::removeRedundantParameters)
     }
 
@@ -205,12 +204,6 @@ private fun CInteropCommonizerTask.removeNotRegisteredInterops(
 
 private fun removeEmptyInterops(parameters: Set<CInteropCommonizationParameters>): Set<CInteropCommonizationParameters> {
     return parameters.filterTo(mutableSetOf()) { it.interops.isNotEmpty() }
-}
-
-private fun identity(parameters: Set<CInteropCommonizationParameters>) = parameters
-
-private fun removeHierarchicalParameters(parameters: Set<CInteropCommonizationParameters>): Set<CInteropCommonizationParameters> {
-    return parameters.filterTo(mutableSetOf()) { it.commonizerTarget.level <= 1 }
 }
 
 private fun removeRedundantParameters(parameters: Set<CInteropCommonizationParameters>): Set<CInteropCommonizationParameters> {
