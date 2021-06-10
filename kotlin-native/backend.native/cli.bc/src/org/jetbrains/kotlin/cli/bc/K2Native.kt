@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.cli.bc
 import com.intellij.openapi.Disposable
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
+import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.cli.common.*
@@ -78,9 +79,10 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             val konanConfig = KonanConfig(project, configuration)
             ensureModuleName(konanConfig, environment)
             runTopLevelPhases(konanConfig, environment)
-        } catch (e: KonanCompilationException) {
-            return ExitCode.COMPILATION_ERROR
         } catch (e: Throwable) {
+            if (e is KonanCompilationException || e is CompilationErrorException)
+                return ExitCode.COMPILATION_ERROR
+
             configuration.report(ERROR, """
                 |Compilation failed: ${e.message}
 
