@@ -7,4 +7,3 @@ class Test {
         }
         set(value) {}
 }
-/* IGNORE_FIR */

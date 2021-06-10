@@ -89,6 +89,16 @@ fun <DIAGNOSTIC : KtDiagnosticWithPsi<*>> diagnosticFixFactoryFromIntentionActio
     return HLDiagnosticFixFactoryUsingQuickFixActionBase(diagnosticClass, createQuickFixes)
 }
 
+/**
+ * Returns a [Collection] of [HLDiagnosticFixFactory] that creates [IntentionAction]s from diagnostics that have the same type of
+ * [PsiElement].
+ */
+fun <DIAGNOSTIC_PSI : PsiElement, DIAGNOSTIC : KtDiagnosticWithPsi<DIAGNOSTIC_PSI>> diagnosticFixFactoriesFromIntentionActions(
+    vararg diagnosticClasses: KClass<out DIAGNOSTIC>,
+    createIntentionActions: KtAnalysisSession.(DIAGNOSTIC) -> List<IntentionAction>
+): Collection<HLDiagnosticFixFactory<out DIAGNOSTIC>> =
+    diagnosticClasses.map { diagnosticFixFactoryFromIntentionActions(it, createIntentionActions) }
+
 private class IntentionActionAsQuickFixWrapper<T : PsiElement>(val intentionAction: IntentionAction, element: T) :
     QuickFixActionBase<T>(element) {
     override fun getText(): String = intentionAction.text
