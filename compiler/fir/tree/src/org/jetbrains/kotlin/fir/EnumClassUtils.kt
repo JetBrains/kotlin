@@ -97,6 +97,7 @@ fun FirRegularClassBuilder.generateValueOfFunction(
             isCrossinline = false
             isNoinline = false
             isVararg = false
+            resolvePhase = FirResolvePhase.BODY_RESOLVE
         }
         resolvePhase = FirResolvePhase.BODY_RESOLVE
         body = buildEmptyExpressionBlock().also {
