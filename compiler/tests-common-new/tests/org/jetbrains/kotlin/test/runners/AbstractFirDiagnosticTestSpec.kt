@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.runners
 
+import org.jetbrains.kotlin.test.bind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives.SPEC_HELPERS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_STDLIB
@@ -22,13 +23,13 @@ abstract class AbstractFirDiagnosticTestSpec : AbstractFirDiagnosticTest() {
     }
 }
 
-fun TestConfigurationBuilder.baseFirSpecDiagnosticTestConfiguration() {
+fun TestConfigurationBuilder.baseFirSpecDiagnosticTestConfiguration(baseDir: String = ".") {
     defaultDirectives {
         +SPEC_HELPERS
         +WITH_STDLIB
     }
 
-    useAdditionalSourceProviders(::SpecHelpersSourceFilesProvider)
+    useAdditionalSourceProviders(::SpecHelpersSourceFilesProvider.bind(baseDir))
 
     useAfterAnalysisCheckers(
         ::FirIdenticalChecker,

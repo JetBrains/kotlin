@@ -15,17 +15,15 @@ import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.TestServices
 import java.io.File
 
-class SpecHelpersSourceFilesProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
-    companion object {
-        const val HELPERS_DIR_PATH = "compiler/tests-spec/testData/diagnostics/helpers"
-    }
+class SpecHelpersSourceFilesProvider(testServices: TestServices, baseDir: String) : AdditionalSourceProvider(testServices) {
+    private val helpersDirPath = "$baseDir/compiler/tests-spec/testData/diagnostics/helpers"
 
     override val directives: List<DirectivesContainer> =
         listOf(AdditionalFilesDirectives)
 
     override fun produceAdditionalFiles(globalDirectives: RegisteredDirectives, module: TestModule): List<TestFile> {
         if (SPEC_HELPERS !in module.directives) return emptyList()
-        return File(HELPERS_DIR_PATH).walkTopDown().mapNotNull {
+        return File(helpersDirPath).walkTopDown().mapNotNull {
             if (it.isDirectory) return@mapNotNull null
             it.toTestFile()
         }.toList()
