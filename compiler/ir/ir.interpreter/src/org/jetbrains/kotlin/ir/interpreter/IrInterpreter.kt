@@ -20,12 +20,11 @@ import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
 import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.*
-import org.jetbrains.kotlin.ir.interpreter.state.reflection.KClassState
-import org.jetbrains.kotlin.ir.interpreter.state.reflection.KFunctionState
-import org.jetbrains.kotlin.ir.interpreter.state.reflection.KPropertyState
-import org.jetbrains.kotlin.ir.interpreter.state.reflection.KTypeState
+import org.jetbrains.kotlin.ir.interpreter.state.reflection.*
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.util.*
 
 internal interface Instruction {
@@ -438,10 +437,25 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
     }
 
     private fun interpretTypeOperatorCall(expression: IrTypeOperatorCall) {
+        fun IrClassifierSymbol.getTypeFromStack(): IrType {
+            return (callStack.getState(this) as KTypeState).irType
+        }
+
+        fun IrType.replaceArgumentIfReified(): IrType {
+            if (this !is IrSimpleType) return this
+            val argument = this.arguments.singleOrNull()?.typeOrNull?.classifierOrNull
+            return when {
+                argument is IrTypeParameterSymbol && argument.owner.isReified -> {
+                    this.buildSimpleType { arguments = listOf(argument.getTypeFromStack() as IrTypeArgument) }
+                }
+                else -> this
+            }
+        }
+
         val typeClassifier = expression.typeOperand.classifierOrFail
         val isReified = (typeClassifier.owner as? IrTypeParameter)?.isReified == true
         val isErased = typeClassifier.owner is IrTypeParameter && !isReified
-        val typeOperand = if (isReified) (callStack.getState(typeClassifier) as KTypeState).irType else expression.typeOperand
+        val typeOperand = (if (isReified) typeClassifier.getTypeFromStack() else expression.typeOperand).replaceArgumentIfReified()
 
         val state = callStack.popState()
         when (expression.operator) {
