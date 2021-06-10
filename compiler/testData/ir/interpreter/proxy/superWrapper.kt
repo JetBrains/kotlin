@@ -24,6 +24,7 @@ fun test(list: MyArrayList<Int>): String {
 
     val otherList = arrayListOf(4, 5, 6)
     list.addAll(otherList)
+    list.addAll(emptyList<Int>())
     return "Counter " + list.addCounter + "; size " + list.size
 }
 

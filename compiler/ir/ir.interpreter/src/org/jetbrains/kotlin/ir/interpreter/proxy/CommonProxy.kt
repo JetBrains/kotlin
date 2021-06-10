@@ -80,7 +80,7 @@ internal class CommonProxy private constructor(override val state: Common, overr
                     method.name == "toString" && method.parameterTypes.isEmpty() -> commonProxy.toString()
                     else -> {
                         val irFunction = commonProxy.state.getIrFunction(method)
-                            ?: throw AssertionError("Cannot find method $method in ${commonProxy.state}")
+                            ?: return@newProxyInstance commonProxy.fallbackIfMethodNotFound(method)
                         val valueArguments = mutableListOf<Variable>()
                         valueArguments += Variable(irFunction.getDispatchReceiver()!!, commonProxy.state)
                         valueArguments += irFunction.valueParameters
@@ -88,6 +88,16 @@ internal class CommonProxy private constructor(override val state: Common, overr
                         callInterceptor.interceptProxy(irFunction, valueArguments, method.returnType)
                     }
                 }
+            }
+        }
+
+        private fun CommonProxy.fallbackIfMethodNotFound(method: java.lang.reflect.Method): Any {
+            return when {
+                method.name == "toArray" && method.parameterTypes.isEmpty() -> {
+                    val wrapper = this.state.superWrapperClass
+                    if (wrapper == null) arrayOf() else (wrapper as Collection<*>).toTypedArray()
+                }
+                else -> throw AssertionError("Cannot find method $method in ${this.state}")
             }
         }
     }
