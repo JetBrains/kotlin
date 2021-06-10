@@ -12,8 +12,9 @@ import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.platform.jvm.isJvm
 
 internal class FirClassReferenceCompletionContributor(
-    basicContext: FirBasicCompletionContext
-) : FirCompletionContributorBase<FirCallableReferencePositionContext>(basicContext) {
+    basicContext: FirBasicCompletionContext,
+    priority: Int
+) : FirCompletionContributorBase<FirCallableReferencePositionContext>(basicContext, priority) {
     override fun KtAnalysisSession.complete(positionContext: FirCallableReferencePositionContext) {
         if (positionContext.explicitReceiver == null) return
         sink.addElement(createKeywordElement("class"))

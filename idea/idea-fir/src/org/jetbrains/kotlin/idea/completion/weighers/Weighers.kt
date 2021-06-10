@@ -19,6 +19,7 @@ internal object Weighers {
     fun addWeighersToCompletionSorter(sorter: CompletionSorter): CompletionSorter =
         sorter
             .weighBefore(PlatformWeighersIds.STATS, ExpectedTypeWeigher.Weigher)
+            .weighBefore(ExpectedTypeWeigher.WEIGHER_ID, CompletionContributorGroupWeigher.Weigher)
 
     private object PlatformWeighersIds {
         const val PREFIX = "prefix"

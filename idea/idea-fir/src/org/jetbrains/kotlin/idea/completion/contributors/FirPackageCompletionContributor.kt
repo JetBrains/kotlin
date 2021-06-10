@@ -15,7 +15,8 @@ import org.jetbrains.kotlin.idea.project.languageVersionSettings
 
 internal class FirPackageCompletionContributor(
     basicContext: FirBasicCompletionContext,
-) : FirCompletionContributorBase<FirRawPositionCompletionContext>(basicContext) {
+    priority: Int,
+) : FirCompletionContributorBase<FirRawPositionCompletionContext>(basicContext, priority) {
 
     override fun KtAnalysisSession.complete(positionContext: FirRawPositionCompletionContext) {
         val rootSymbol = if (positionContext !is FirNameReferencePositionContext || positionContext.explicitReceiver == null) {

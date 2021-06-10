@@ -15,8 +15,9 @@ import org.jetbrains.kotlin.idea.completion.lookups.CallableInsertionStrategy
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 
 internal class FirImportDirectivePackageMembersCompletionContributor(
-    basicContext: FirBasicCompletionContext
-) : FirCompletionContributorBase<FirImportDirectivePositionContext>(basicContext) {
+    basicContext: FirBasicCompletionContext,
+    priority: Int
+) : FirCompletionContributorBase<FirImportDirectivePositionContext>(basicContext, priority) {
     override fun KtAnalysisSession.complete(positionContext: FirImportDirectivePositionContext) {
         val reference = positionContext.explicitReceiver?.reference() ?: return
         val scope = getStaticScope(reference) ?: return

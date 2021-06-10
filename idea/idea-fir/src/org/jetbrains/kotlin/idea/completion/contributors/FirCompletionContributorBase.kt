@@ -30,10 +30,25 @@ import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 
-internal abstract class FirCompletionContributorBase<C : FirRawPositionCompletionContext>(protected val basicContext: FirBasicCompletionContext) {
+internal class FirCompletionContributorOptions(
+    val priority: Int = 0
+) {
+    companion object {
+        val DEFAULT = FirCompletionContributorOptions()
+    }
+}
+
+internal abstract class FirCompletionContributorBase<C : FirRawPositionCompletionContext>(
+    protected val basicContext: FirBasicCompletionContext,
+    options: FirCompletionContributorOptions,
+) {
+
+    constructor(basicContext: FirBasicCompletionContext, priority: Int) :
+            this(basicContext, FirCompletionContributorOptions(priority))
+
     protected val prefixMatcher: PrefixMatcher get() = basicContext.prefixMatcher
     protected val parameters: CompletionParameters get() = basicContext.parameters
-    protected val sink: LookupElementSink get() = basicContext.sink
+    protected val sink: LookupElementSink = basicContext.sink.withPriority(options.priority)
     protected val originalKtFile: KtFile get() = basicContext.originalKtFile
     protected val fakeKtFile: KtFile get() = basicContext.fakeKtFile
     protected val project: Project get() = basicContext.project
@@ -41,6 +56,7 @@ internal abstract class FirCompletionContributorBase<C : FirRawPositionCompletio
     protected val indexHelper: HLIndexHelper get() = basicContext.indexHelper
     protected val lookupElementFactory: KotlinFirLookupElementFactory get() = basicContext.lookupElementFactory
     protected val visibleScope = basicContext.visibleScope
+
 
     protected val scopeNameFilter: KtScopeNameFilter =
         { name -> !name.isSpecial && prefixMatcher.prefixMatches(name.identifier) }

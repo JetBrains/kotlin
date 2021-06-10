@@ -14,8 +14,9 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.renderer.render
 
 internal class FirSameAsFileClassifierNameCompletionContributor(
-    basicContext: FirBasicCompletionContext
-) : FirCompletionContributorBase<FirClassifierNamePositionContext>(basicContext) {
+    basicContext: FirBasicCompletionContext,
+    priority: Int
+) : FirCompletionContributorBase<FirClassifierNamePositionContext>(basicContext, priority) {
 
     override fun KtAnalysisSession.complete(positionContext: FirClassifierNamePositionContext) {
         if (positionContext.classLikeDeclaration is KtClassOrObject) {

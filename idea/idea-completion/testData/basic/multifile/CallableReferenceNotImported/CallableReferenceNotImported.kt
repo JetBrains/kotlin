@@ -5,4 +5,3 @@ fun String.foo() {
 
 // EXIST: xxx_topLevelFun
 // EXIST: xxx_topLevelVal
-// ABSENT: xxx_extFun

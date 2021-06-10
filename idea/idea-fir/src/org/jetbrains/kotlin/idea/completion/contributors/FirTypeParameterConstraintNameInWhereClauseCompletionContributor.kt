@@ -20,8 +20,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.renderer.render
 
 internal class FirTypeParameterConstraintNameInWhereClauseCompletionContributor(
-    basicContext: FirBasicCompletionContext
-) : FirCompletionContributorBase<FirTypeConstraintNameInWhereClausePositionContext>(basicContext) {
+    basicContext: FirBasicCompletionContext,
+    priority: Int
+) : FirCompletionContributorBase<FirTypeConstraintNameInWhereClausePositionContext>(basicContext, priority) {
 
     override fun KtAnalysisSession.complete(positionContext: FirTypeConstraintNameInWhereClausePositionContext) {
         val ownerSymbol = positionContext.typeParametersOwner.getSymbol() as? KtSymbolWithTypeParameters ?: return

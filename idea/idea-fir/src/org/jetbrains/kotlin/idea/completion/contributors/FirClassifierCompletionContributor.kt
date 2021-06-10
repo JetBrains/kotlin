@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.idea.frontend.api.types.KtNonErrorClassType
 
 internal open class FirClassifierCompletionContributor(
     basicContext: FirBasicCompletionContext,
-) : FirContextCompletionContributorBase<FirNameReferencePositionContext>(basicContext) {
+    priority: Int,
+) : FirCompletionContributorBase<FirNameReferencePositionContext>(basicContext, priority) {
 
     protected open fun KtAnalysisSession.filterClassifiers(classifierSymbol: KtClassifierSymbol): Boolean = true
 
@@ -72,8 +73,9 @@ internal open class FirClassifierCompletionContributor(
 }
 
 internal class FirAnnotationCompletionContributor(
-    basicContext: FirBasicCompletionContext
-) : FirClassifierCompletionContributor(basicContext) {
+    basicContext: FirBasicCompletionContext,
+    priority: Int
+) : FirClassifierCompletionContributor(basicContext, priority) {
 
     override fun KtAnalysisSession.filterClassifiers(classifierSymbol: KtClassifierSymbol): Boolean = when (classifierSymbol) {
         is KtAnonymousObjectSymbol -> false
@@ -97,8 +99,9 @@ internal class FirAnnotationCompletionContributor(
 }
 
 internal class FirClassifierReferenceCompletionContributor(
-    basicContext: FirBasicCompletionContext
-) : FirClassifierCompletionContributor(basicContext) {
+    basicContext: FirBasicCompletionContext,
+    priority: Int
+) : FirClassifierCompletionContributor(basicContext, priority) {
 
     override fun KtAnalysisSession.getImportingStrategy(classifierSymbol: KtClassifierSymbol): ImportStrategy =
         ImportStrategy.DoNothing

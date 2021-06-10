@@ -13,6 +13,7 @@ import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.openapi.editor.Document
 import com.intellij.psi.util.elementType
 import org.jetbrains.kotlin.idea.completion.stringTemplates.InsertStringTemplateBracesLookupElementDecorator
+import org.jetbrains.kotlin.idea.completion.weighers.CompletionContributorGroupWeigher.groupPriority
 import org.jetbrains.kotlin.idea.core.canDropBraces
 import org.jetbrains.kotlin.idea.core.dropBraces
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -24,13 +25,21 @@ import org.jetbrains.kotlin.psi.KtStringTemplateEntryWithExpression
 internal class LookupElementSink(
     private val resultSet: CompletionResultSet,
     private val parameters: KotlinFirCompletionParameters,
+    private val groupPriority: Int = 0,
 ) {
 
+    fun withPriority(priority: Int): LookupElementSink =
+        LookupElementSink(resultSet, parameters, priority)
+
     fun addElement(element: LookupElement) {
+        element.groupPriority = groupPriority
         resultSet.addElement(applyWrappersToLookupElement(element))
     }
 
     fun addAllElements(elements: Iterable<LookupElement>) {
+        elements.forEach {
+            it.groupPriority = groupPriority
+        }
         resultSet.addAllElements(elements.map(::applyWrappersToLookupElement))
     }
 
@@ -39,6 +48,7 @@ internal class LookupElementSink(
         return wrappers.wrap(lookupElement)
     }
 }
+
 
 private object WrappersProvider {
     fun getWrapperForLookupElement(parameters: KotlinFirCompletionParameters): List<LookupElementWrapper> {

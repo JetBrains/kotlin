@@ -76,83 +76,70 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
         basicContext: FirBasicCompletionContext,
         positionContext: FirRawPositionCompletionContext,
     ) {
-        val keywordContributor = FirKeywordCompletionContributor(basicContext)
-        val classReferenceContributor = FirClassReferenceCompletionContributor(basicContext)
-        val callableContributor = FirCallableCompletionContributor(basicContext)
-        val infixCallableContributor = FirInfixCallableCompletionContributor(basicContext)
-        val callableReferenceContributor = FirCallableReferenceCompletionContributor(basicContext)
-        val classifierContributor = FirClassifierCompletionContributor(basicContext)
-        val classifierReferenceContributor = FirClassifierReferenceCompletionContributor(basicContext)
-        val annotationsContributor = FirAnnotationCompletionContributor(basicContext)
-        val packageCompletionContributor = FirPackageCompletionContributor(basicContext)
-        val importDirectivePackageMembersCompletionContributor = FirImportDirectivePackageMembersCompletionContributor(basicContext)
-        val typeParameterConstraintNameInWhereClauseContributor =
-            FirTypeParameterConstraintNameInWhereClauseCompletionContributor(basicContext)
-        val classifierNameContributor = FirSameAsFileClassifierNameCompletionContributor(basicContext)
-        val whenWithSubjecConditionContributor = FirWhenWithSubjectConditionContributor(basicContext)
+        val factory = FirCompletionContributorFactory(basicContext)
 
         when (positionContext) {
             is FirExpressionNameReferencePositionContext -> {
-                complete(keywordContributor, positionContext)
-                complete(packageCompletionContributor, positionContext)
-                complete(callableContributor, positionContext)
-                complete(classifierContributor, positionContext)
+                complete(factory.keywordContributor(1), positionContext)
+                complete(factory.callableContributor(1), positionContext)
+                complete(factory.classifierContributor(1), positionContext)
+                complete(factory.packageCompletionContributor(2), positionContext)
             }
 
             is FirTypeNameReferencePositionContext -> {
-                complete(keywordContributor, positionContext)
-                complete(packageCompletionContributor, positionContext)
-                complete(classifierContributor, positionContext)
+                complete(factory.classifierContributor(0), positionContext)
+                complete(factory.keywordContributor(1), positionContext)
+                complete(factory.packageCompletionContributor(2), positionContext)
             }
 
             is FirAnnotationTypeNameReferencePositionContext -> {
-                complete(keywordContributor, positionContext)
-                complete(packageCompletionContributor, positionContext)
-                complete(annotationsContributor, positionContext)
+                complete(factory.annotationsContributor(0), positionContext)
+                complete(factory.keywordContributor(1), positionContext)
+                complete(factory.packageCompletionContributor(2), positionContext)
             }
 
             is FirSuperTypeCallNameReferencePositionContext -> {
-                complete(FirSuperEntryContributor(basicContext), positionContext)
+                complete(factory.superEntryContributor(0), positionContext)
             }
 
             is FirImportDirectivePositionContext -> {
-                complete(packageCompletionContributor, positionContext)
-                complete(importDirectivePackageMembersCompletionContributor, positionContext)
+                complete(factory.packageCompletionContributor(0), positionContext)
+                complete(factory.importDirectivePackageMembersContributor(0), positionContext)
             }
 
             is FirPackageDirectivePositionContext -> {
-                complete(packageCompletionContributor, positionContext)
+                complete(factory.packageCompletionContributor(0), positionContext)
             }
 
             is FirTypeConstraintNameInWhereClausePositionContext -> {
-                complete(typeParameterConstraintNameInWhereClauseContributor, positionContext)
+                complete(factory.typeParameterConstraintNameInWhereClauseContributor(0), positionContext)
             }
 
             is FirUnknownPositionContext -> {
-                complete(keywordContributor, positionContext)
+                complete(factory.keywordContributor(0), positionContext)
             }
 
             is FirClassifierNamePositionContext -> {
-                complete(classifierNameContributor, positionContext)
+                complete(factory.classifierNameContributor(0), positionContext)
             }
 
             is FirWithSubjectEntryPositionContext -> {
-                complete(whenWithSubjecConditionContributor, positionContext)
+                complete(factory.whenWithSubjectConditionContributor(0), positionContext)
             }
 
             is FirCallableReferencePositionContext -> {
-                complete(classReferenceContributor, positionContext)
-                complete(callableReferenceContributor, positionContext)
-                complete(classifierReferenceContributor, positionContext)
+                complete(factory.classReferenceContributor(0), positionContext)
+                complete(factory.callableReferenceContributor(1), positionContext)
+                complete(factory.classifierReferenceContributor(1), positionContext)
             }
 
             is FirInfixCallPositionContext -> {
-                complete(keywordContributor, positionContext)
-                complete(infixCallableContributor, positionContext)
+                complete(factory.keywordContributor(0), positionContext)
+                complete(factory.infixCallableContributor(0), positionContext)
             }
 
             is FirIncorrectPositionContext -> {
-                // do nothing, completion is not suposed to be called here
+                // do nothing, completion is not supposed to be called here
             }
         }
     }

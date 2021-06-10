@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.*
 
-internal class FirKeywordCompletionContributor(basicContext: FirBasicCompletionContext) :
-    FirCompletionContributorBase<FirRawPositionCompletionContext>(basicContext) {
+internal class FirKeywordCompletionContributor(basicContext: FirBasicCompletionContext, priority: Int) :
+    FirCompletionContributorBase<FirRawPositionCompletionContext>(basicContext, priority) {
     private val keywordCompletion = KeywordCompletion(object : KeywordCompletion.LanguageVersionSettingProvider {
         override fun getLanguageVersionSetting(element: PsiElement) = element.languageVersionSettings
         override fun getLanguageVersionSetting(module: Module) = module.languageVersionSettings

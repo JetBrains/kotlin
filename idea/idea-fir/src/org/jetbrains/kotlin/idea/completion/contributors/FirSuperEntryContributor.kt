@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.name.Name
 
 internal class FirSuperEntryContributor(
     basicContext: FirBasicCompletionContext,
-) : FirContextCompletionContributorBase<FirSuperTypeCallNameReferencePositionContext>(basicContext) {
+    priority: Int,
+) : FirCompletionContributorBase<FirSuperTypeCallNameReferencePositionContext>(basicContext, priority) {
     override fun KtAnalysisSession.complete(positionContext: FirSuperTypeCallNameReferencePositionContext) {
         getSuperClassesAvailableForSuperCall(positionContext.nameExpression).forEach { superType ->
             val tailText = superType.classIdIfNonLocal?.asString()?.let { "($it)" }

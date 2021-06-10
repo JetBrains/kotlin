@@ -40,7 +40,8 @@ import org.jetbrains.kotlin.renderer.render
 
 internal class FirWhenWithSubjectConditionContributor(
     basicContext: FirBasicCompletionContext,
-) : FirContextCompletionContributorBase<FirWithSubjectEntryPositionContext>(basicContext) {
+    priority: Int,
+) : FirCompletionContributorBase<FirWithSubjectEntryPositionContext>(basicContext, priority) {
     override fun KtAnalysisSession.complete(positionContext: FirWithSubjectEntryPositionContext) {
         val whenCondition = positionContext.whenCondition
         val whenExpression = whenCondition.parentOfType<KtWhenExpression>() ?: return
