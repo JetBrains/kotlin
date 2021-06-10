@@ -77,70 +77,8 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
         positionContext: FirRawPositionCompletionContext,
     ) {
         val factory = FirCompletionContributorFactory(basicContext)
-
-        when (positionContext) {
-            is FirExpressionNameReferencePositionContext -> {
-                complete(factory.keywordContributor(1), positionContext)
-                complete(factory.callableContributor(1), positionContext)
-                complete(factory.classifierContributor(1), positionContext)
-                complete(factory.packageCompletionContributor(2), positionContext)
-            }
-
-            is FirTypeNameReferencePositionContext -> {
-                complete(factory.classifierContributor(0), positionContext)
-                complete(factory.keywordContributor(1), positionContext)
-                complete(factory.packageCompletionContributor(2), positionContext)
-            }
-
-            is FirAnnotationTypeNameReferencePositionContext -> {
-                complete(factory.annotationsContributor(0), positionContext)
-                complete(factory.keywordContributor(1), positionContext)
-                complete(factory.packageCompletionContributor(2), positionContext)
-            }
-
-            is FirSuperTypeCallNameReferencePositionContext -> {
-                complete(factory.superEntryContributor(0), positionContext)
-            }
-
-            is FirImportDirectivePositionContext -> {
-                complete(factory.packageCompletionContributor(0), positionContext)
-                complete(factory.importDirectivePackageMembersContributor(0), positionContext)
-            }
-
-            is FirPackageDirectivePositionContext -> {
-                complete(factory.packageCompletionContributor(0), positionContext)
-            }
-
-            is FirTypeConstraintNameInWhereClausePositionContext -> {
-                complete(factory.typeParameterConstraintNameInWhereClauseContributor(0), positionContext)
-            }
-
-            is FirUnknownPositionContext -> {
-                complete(factory.keywordContributor(0), positionContext)
-            }
-
-            is FirClassifierNamePositionContext -> {
-                complete(factory.classifierNameContributor(0), positionContext)
-            }
-
-            is FirWithSubjectEntryPositionContext -> {
-                complete(factory.whenWithSubjectConditionContributor(0), positionContext)
-            }
-
-            is FirCallableReferencePositionContext -> {
-                complete(factory.classReferenceContributor(0), positionContext)
-                complete(factory.callableReferenceContributor(1), positionContext)
-                complete(factory.classifierReferenceContributor(1), positionContext)
-            }
-
-            is FirInfixCallPositionContext -> {
-                complete(factory.keywordContributor(0), positionContext)
-                complete(factory.infixCallableContributor(0), positionContext)
-            }
-
-            is FirIncorrectPositionContext -> {
-                // do nothing, completion is not supposed to be called here
-            }
+        with(Completions) {
+            complete(factory, positionContext)
         }
     }
 
