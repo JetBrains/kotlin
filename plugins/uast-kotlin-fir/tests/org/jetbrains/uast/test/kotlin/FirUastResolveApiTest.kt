@@ -40,8 +40,10 @@ class FirUastResolveApiTest : AbstractFirUastTest() {
         fun testImports() {
             doCheck("plugins/uast-kotlin/testData/Imports.kt") { _, uFile ->
                 uFile.imports.forEach { uImport ->
-                    if ((uImport.sourcePsi as? KtImportDirective)?.text?.contains("sleep") == true) {
-                        //todo investigate
+                    if ((uImport.sourcePsi as? KtImportDirective)?.text?.endsWith("sleep") == true) {
+                        // There are two static [sleep] in [java.lang.Thread], so the import (w/o knowing its usage) can't be resolved to
+                        // a single function, hence `null` (as [resolve] result).
+                        // TODO: make [UImportStatement] a subtype of [UMultiResolvable], instead of [UResolvable]?
                         return@forEach
                     }
                     val resolvedImport = uImport.resolve()
@@ -52,8 +54,8 @@ class FirUastResolveApiTest : AbstractFirUastTest() {
                             resolvedImport.name == "Thread" || resolvedImport.name == "UncaughtExceptionHandler"
                         }
                         is PsiMethod -> {
-                            // import java.lang.Thread.(currentThread/sleep)
-                            resolvedImport.name == "currentThread" || resolvedImport.name == "sleep"
+                            // import java.lang.Thread.currentThread
+                            resolvedImport.name == "currentThread"
                         }
                         is PsiField -> {
                             // import java.lang.Thread.NORM_PRIORITY
