@@ -80,7 +80,7 @@ internal fun unfoldInstruction(element: IrElement?, environment: IrInterpreterEn
 }
 
 private fun unfoldFunction(function: IrSimpleFunction, environment: IrInterpreterEnvironment) {
-    if (environment.callStack.getStackCount() >= IrInterpreterEnvironment.MAX_STACK)
+    if (environment.callStack.getStackCount() >= environment.configuration.maxStack)
         return StackOverflowError().handleUserException(environment)
     // SimpleInstruction with function is added in IrCall
     // It will serve as endpoint for all possible calls, there we drop frame and copy result to new one

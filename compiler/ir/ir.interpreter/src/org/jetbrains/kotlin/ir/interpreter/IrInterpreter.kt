@@ -39,9 +39,7 @@ internal class CustomInstruction(val evaluate: () -> Unit) : Instruction {
         get() = null
 }
 
-class IrInterpreter private constructor(
-    internal val bodyMap: Map<IdSignature, IrBody>, internal val environment: IrInterpreterEnvironment
-) {
+class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal val bodyMap: Map<IdSignature, IrBody>) {
     val irBuiltIns: IrBuiltIns
         get() = environment.irBuiltIns
     private val callStack: CallStack
@@ -50,16 +48,13 @@ class IrInterpreter private constructor(
     private var commandCount = 0
 
     constructor(irBuiltIns: IrBuiltIns, bodyMap: Map<IdSignature, IrBody> = emptyMap()) :
-            this(bodyMap, IrInterpreterEnvironment(irBuiltIns, CallStack()))
+            this(IrInterpreterEnvironment(irBuiltIns), bodyMap)
 
-    private constructor(environment: IrInterpreterEnvironment, bodyMap: Map<IdSignature, IrBody> = emptyMap()) :
-            this(bodyMap, environment)
-
-    constructor(irModule: IrModuleFragment) : this(emptyMap(), IrInterpreterEnvironment(irModule))
+    constructor(irModule: IrModuleFragment) : this(IrInterpreterEnvironment(irModule), emptyMap())
 
     private fun incrementAndCheckCommands() {
         commandCount++
-        if (commandCount >= IrInterpreterEnvironment.MAX_COMMANDS) InterpreterTimeOutError().handleUserException(environment)
+        if (commandCount >= environment.configuration.maxCommands) InterpreterTimeOutError().handleUserException(environment)
     }
 
     private fun getUnitState(): State = environment.mapOfObjects[irBuiltIns.unitClass]!!
@@ -395,8 +390,9 @@ class IrInterpreter private constructor(
             environment.mapOfObjects[objectClass.symbol] = state  // must set object's state here to avoid cyclic evaluation
             callStack.addVariable(Variable(objectClass.thisReceiver!!.symbol, state))
 
-            // non compile time objects can be used in interpreter, for example, to evaluate const properties
-            if (!objectClass.hasAnnotation(compileTimeAnnotation)) return@interceptGetObjectValue callStack.pushState(state)
+            // non compile time objects can be used in interpreter, for example, to evaluate const properties or in tests
+            if (!objectClass.hasAnnotation(compileTimeAnnotation) && !environment.configuration.createNonCompileTimeObjects)
+                return@interceptGetObjectValue callStack.pushState(state)
 
             val constructor = objectClass.constructors.firstOrNull() ?: return@interceptGetObjectValue callStack.pushState(state)
             val constructorCall = IrConstructorCallImpl.fromSymbolOwner(constructor.returnType, constructor.symbol)
