@@ -67,6 +67,8 @@ fun getDefaultLanguageLevel(
 
 fun String?.toLanguageVersion(): LanguageVersion = when {
     this == null -> VersionView.RELEASED_VERSION
+    startsWith("1.6") -> LanguageVersion.KOTLIN_1_6
+    startsWith("1.5") -> LanguageVersion.KOTLIN_1_5
     startsWith("1.4") -> LanguageVersion.KOTLIN_1_4
     startsWith("1.3") -> LanguageVersion.KOTLIN_1_3
     startsWith("1.2") -> LanguageVersion.KOTLIN_1_2
