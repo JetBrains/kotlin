@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
+import com.google.gson.Gson
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import org.gradle.internal.service.ServiceRegistry
