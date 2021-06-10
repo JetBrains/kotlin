@@ -45,9 +45,6 @@ native {
             cxxflags += "-DKONAN_MACOS=1"
         }
     }
-    if (!HostManager.hostIsMingw) {
-        cxxflags += "-fPIC"
-    }
     suffixes {
         (".cpp" to ".$obj") {
             tool(*platformManager.hostPlatform.clang.clangCXX("").toTypedArray())

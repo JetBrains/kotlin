@@ -4,12 +4,10 @@ headerFilter = clang-c/**
 
 compiler = clang
 
-compilerOpts = -std=c99 -fPIC
+compilerOpts = -std=c99
 linkerOpts.linux = -Wl,-z,noexecstack
 
 linker = clang++
-
-linkerOpts = -fPIC
 
 strictEnums = CXErrorCode CXCursorKind CXTypeKind CXDiagnosticSeverity CXLoadDiag_Error CXSaveError \
     CXTUResourceUsageKind CXLinkageKind CXVisibilityKind CXLanguageKind CXCallingConv CXChildVisitResult \

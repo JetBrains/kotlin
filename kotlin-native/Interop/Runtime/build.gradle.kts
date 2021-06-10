@@ -36,9 +36,6 @@ native {
     val hostLibffiDir = rootProject.project(":kotlin-native").extra["${host}LibffiDir"]
     val cflags = mutableListOf("-I$hostLibffiDir/include",
                                *platformManager.hostPlatform.clang.hostCompilerArgsForJni)
-    if (!HostManager.hostIsMingw) {
-        cflags += "-fPIC"
-    }
     suffixes {
         (".c" to ".$obj") {
             tool(*platformManager.hostPlatform.clang.clangC("").toTypedArray())

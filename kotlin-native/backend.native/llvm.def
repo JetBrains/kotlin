@@ -21,7 +21,7 @@ linkerOpts = -fvisibility-inlines-hidden \
     -ldebugInfo -lcoverageMapping
 
 # ./llvm-config --libs analysis bitreader bitwriter core linker target coverage analysis ipo instrumentation lto objcarcopts arm aarch64 webassembly x86 mips
-linkerOpts.osx = -fPIC \
+linkerOpts.osx = \
     -Wl,-search_paths_first -Wl,-headerpad_max_install_names \
     -lpthread -lz -lm  -lcurses -Wl,-U,_futimens -Wl,-U,_LLVMDumpType \
     -Wl,-exported_symbols_list,llvm.list \
@@ -41,7 +41,7 @@ linkerOpts.osx = -fPIC \
 
 
 # ./llvm-config --libs analysis bitreader bitwriter core linker target coverage analysis ipo instrumentation lto arm aarch64 webassembly x86 mips
-linkerOpts.linux =  -fPIC \
+linkerOpts.linux = \
      -Wl,-z,noexecstack \
      -lrt -ldl -lpthread -lz -lm \
 -lLLVMMipsDisassembler -lLLVMMipsCodeGen -lLLVMMipsAsmParser -lLLVMMipsDesc -lLLVMMipsInfo -lLLVMMipsAsmPrinter \

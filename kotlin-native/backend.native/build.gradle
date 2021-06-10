@@ -49,17 +49,11 @@ kotlinNativeInterop {
         dependsOn ":kotlin-native:llvmDebugInfoC:${NativePluginKt.lib("debugInfo")}"
         dependsOn ":kotlin-native:llvmCoverageMappingC:${NativePluginKt.lib("coverageMapping")}"
         defFile 'llvm.def'
-        if (!project.parent.convention.plugins.platformInfo.isWindows())
-            compilerOpts "-fPIC"
         compilerOpts "-I$llvmDir/include", "-I${rootProject.project(':kotlin-native:llvmDebugInfoC').projectDir}/src/main/include", "-I${rootProject.project(':kotlin-native:llvmCoverageMappingC').projectDir}/src/main/include"
         linkerOpts "-L$llvmDir/lib", "-L${rootProject.project(':kotlin-native:llvmDebugInfoC').buildDir}", "-L${rootProject.project(':kotlin-native:llvmCoverageMappingC').buildDir}"
     }
 
     files {
-        if (!project.project(":kotlin-native").convention.plugins.platformInfo.isWindows()) {
-            compilerOpts '-fPIC'
-            linkerOpts '-fPIC'
-        }
         linker 'clang++'
         linkOutputs ":kotlin-native:common:${hostName}Files"
 

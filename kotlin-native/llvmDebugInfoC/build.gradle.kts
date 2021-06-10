@@ -35,9 +35,6 @@ native {
         "-I${llvmDir}/include",
         "-I${projectDir}/src/main/include"
     )
-    if (!HostManager.hostIsMingw) {
-        cxxflags += "-fPIC"
-    }
     suffixes {
         (".cpp" to ".$obj") {
             tool(*platformManager.hostPlatform.clang.clangCXX("").toTypedArray())

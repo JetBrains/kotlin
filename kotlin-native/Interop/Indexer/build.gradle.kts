@@ -46,9 +46,6 @@ val libclang =
 val cflags = mutableListOf( "-I$llvmDir/include",
         "-I${project(":kotlin-native:libclangext").projectDir.absolutePath}/src/main/include",
                             *platformManager.hostPlatform.clang.hostCompilerArgsForJni)
-if (!HostManager.hostIsMingw) {
-    cflags += "-fPIC"
-}
 
 val ldflags = mutableListOf("$llvmDir/$libclang", "-L${libclangextDir.absolutePath}", "-lclangext")
 

@@ -92,7 +92,7 @@ open class CompileToBitcode @Inject constructor(
                     listOfNotNull("-std=c++17", "-Werror", "-O2",
                             "-Wall", "-Wextra",
                             "-Wno-unused-parameter",  // False positives with polymorphic functions.
-                            "-fPIC".takeIf { !HostManager().targetByName(target).isMINGW })
+                    )
             }
             return commonFlags + sanitizerFlags + languageFlags + compilerArgs
         }

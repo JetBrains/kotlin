@@ -31,9 +31,6 @@ native {
                           "-Isrc/main/include",
                           "-I${project.findProperty("llvmDir")}/include",
                           "-DLLVM_DISABLE_ABI_BREAKING_CHECKS_ENFORCING=1")
-    if (!org.jetbrains.kotlin.konan.target.HostManager.hostIsMingw) {
-        cxxflags += "-fPIC"
-    }
     if (libclangextEnabled) {
         cxxflags += "-DLIBCLANGEXT_ENABLE=1"
     }
