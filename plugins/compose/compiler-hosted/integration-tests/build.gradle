@@ -37,6 +37,18 @@ dependencies {
         )
     )
 
+    // tools.jar required for com.sun.jdi
+    def toolsJar
+    if (JavaVersion.current().getMajorVersion() == "8") {
+        toolsJar = ((URLClassLoader) ToolProvider.getSystemToolClassLoader()).getURLs()
+    } else if (System.env.JAVA_TOOLS_JAR != null) {
+        toolsJar = System.env.JAVA_TOOLS_JAR
+    } else {
+        throw new Exception("If you are not using Java 8, JAVA_TOOLS_JAR env variable " +
+                "needs to be set to tools.jar from a Java 8 installation to build Doclava")
+    }
+    testImplementation(files(toolsJar))
+
     testImplementation(libs.kotlinStdlib)
     testImplementation(project(":compose:compiler:compiler-hosted"))
     testImplementation(projectOrArtifact(":compose:material:material"))
