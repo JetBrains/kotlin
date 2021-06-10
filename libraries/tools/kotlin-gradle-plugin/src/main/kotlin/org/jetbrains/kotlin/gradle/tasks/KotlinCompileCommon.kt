@@ -118,6 +118,10 @@ abstract class KotlinCompileCommon @Inject constructor(
     @get:Internal
     internal val expectActualLinker = objects.property(Boolean::class.java)
 
+    @get:Internal
+    override val kotlinJavaToolchainProvider: Provider<KotlinJavaToolchainProvider>
+        get() = super.kotlinJavaToolchainProvider
+
     override fun callCompilerAsync(args: K2MetadataCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
         val messageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors)
         val outputItemCollector = OutputItemsCollectorImpl()
