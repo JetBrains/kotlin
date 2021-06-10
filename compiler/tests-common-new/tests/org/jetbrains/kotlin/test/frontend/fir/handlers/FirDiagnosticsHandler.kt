@@ -176,7 +176,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         diagnosedRangesToDiagnosticNames: Map<IntRange, Set<String>>
     ): FirDiagnosticWithParameters1<FirSourceElement, String>? =
         DebugInfoDiagnosticFactory1.EXPRESSION_TYPE.createDebugInfoDiagnostic(element, diagnosedRangesToDiagnosticNames) {
-            element.typeRef.renderAsString((element as? FirExpressionWithSmartcast)?.takeIf { it.smartcastStability == SmartcastStability.STABLE_VALUE }?.originalType)
+            element.typeRef.renderAsString((element as? FirExpressionWithSmartcast)?.takeIf { it.isStable }?.originalType)
         }
 
     private fun FirTypeRef.renderAsString(originalTypeRef: FirTypeRef?): String {

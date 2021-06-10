@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.fir.expressions.impl
 
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcastToNull
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -34,12 +37,14 @@ class FirExpressionWithSmartcastToNullImpl(
     override val explicitReceiver: FirExpression? get() = originalExpression.explicitReceiver
     override val dispatchReceiver: FirExpression get() = originalExpression.dispatchReceiver
     override val extensionReceiver: FirExpression get() = originalExpression.extensionReceiver
+    override val isStable: Boolean get() = smartcastStability == SmartcastStability.STABLE_VALUE
     override val calleeReference: FirReference get() = originalExpression.calleeReference
     override val originalType: FirTypeRef get() = originalExpression.typeRef
+
     // A FirExpressionWithSmartcast is only an effective smartcast if `smartcastStability == SmartcastStability.STABLE_VALUE`. Otherwise,
     // it's the same as the `originalExpression` under the hood. The reason we still create such a smartcast expression is for diagnostics
     // purpose only.
-    override val typeRef: FirTypeRef get() = if (smartcastStability == SmartcastStability.STABLE_VALUE) smartcastType else originalType
+    override val typeRef: FirTypeRef get() = if (isStable) smartcastType else originalType
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcastToNull {
         originalExpression = originalExpression.transformSingle(transformer, data)

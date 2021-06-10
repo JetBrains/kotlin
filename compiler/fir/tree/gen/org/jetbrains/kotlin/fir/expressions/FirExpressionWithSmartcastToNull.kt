@@ -29,6 +29,7 @@ abstract class FirExpressionWithSmartcastToNull : FirExpressionWithSmartcast() {
     abstract override val explicitReceiver: FirExpression?
     abstract override val dispatchReceiver: FirExpression
     abstract override val extensionReceiver: FirExpression
+    abstract override val isStable: Boolean
     abstract override val originalExpression: FirQualifiedAccessExpression
     abstract override val typesFromSmartCast: Collection<ConeKotlinType>
     abstract override val originalType: FirTypeRef

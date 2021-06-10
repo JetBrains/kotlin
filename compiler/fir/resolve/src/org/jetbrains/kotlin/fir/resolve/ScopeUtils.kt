@@ -35,7 +35,7 @@ fun FirExpressionWithSmartcast.smartcastScope(
 ): FirTypeScope? {
     val smartcastType = smartcastType.coneType
     val smartcastScope = smartcastType.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing)
-    if (smartcastStability == SmartcastStability.STABLE_VALUE) {
+    if (isStable) {
         return smartcastScope
     }
     val originalScope = originalType.coneType.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing)

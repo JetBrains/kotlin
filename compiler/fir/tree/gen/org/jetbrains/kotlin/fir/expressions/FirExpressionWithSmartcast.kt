@@ -33,6 +33,7 @@ abstract class FirExpressionWithSmartcast : FirQualifiedAccessExpression() {
     abstract val typesFromSmartCast: Collection<ConeKotlinType>
     abstract val originalType: FirTypeRef
     abstract val smartcastType: FirTypeRef
+    abstract val isStable: Boolean
     abstract val smartcastStability: SmartcastStability
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitExpressionWithSmartcast(this, data)
