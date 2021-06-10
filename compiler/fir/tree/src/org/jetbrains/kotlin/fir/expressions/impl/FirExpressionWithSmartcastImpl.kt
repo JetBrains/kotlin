@@ -39,10 +39,12 @@ internal class FirExpressionWithSmartcastImpl(
     override val extensionReceiver: FirExpression get() = originalExpression.extensionReceiver
     override val calleeReference: FirReference get() = originalExpression.calleeReference
     override val originalType: FirTypeRef get() = originalExpression.typeRef
+    override val isStable: Boolean get() = smartcastStability == SmartcastStability.STABLE_VALUE
+
     // A FirExpressionWithSmartcast is only an effective smartcast if `smartcastStability == SmartcastStability.STABLE_VALUE`. Otherwise,
     // it's the same as the `originalExpression` under the hood. The reason we still create such a smartcast expression is for diagnostics
     // purpose only.
-    override val typeRef: FirTypeRef get() = if (smartcastStability == SmartcastStability.STABLE_VALUE) smartcastType else originalType
+    override val typeRef: FirTypeRef get() = if (isStable) smartcastType else originalType
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcast {
         originalExpression = originalExpression.transformSingle(transformer, data)
