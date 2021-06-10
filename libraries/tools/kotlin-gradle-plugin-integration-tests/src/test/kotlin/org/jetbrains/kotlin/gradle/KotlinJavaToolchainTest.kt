@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.logging.LogLevel
 import org.gradle.internal.jvm.JavaInfo
 import org.gradle.internal.jvm.Jvm
 import org.gradle.testkit.runner.BuildResult
@@ -213,42 +212,12 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
-    @DisplayName("jdkHome Kotlin option should produce deprecation warning on Gradle builds")
-    @GradleTest
-    internal fun jdkHomeIsDeprecated(gradleVersion: GradleVersion) {
-        project(
-            projectName = "simple".fullProjectName,
-            gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
-        ) {
-            //language=Groovy
-            rootBuildGradle.append(
-                """
-                import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
-                
-                tasks.withType(KotlinCompile).configureEach {
-                    kotlinOptions {
-                        jdkHome = "${getJdk9Path()}"
-                    }
-                }
-                """.trimIndent()
-            )
-            build("assemble") {
-                assertDaemonIsUsingJdk(getUserJdk().javaExecutableRealPath)
-                assertOutputContains("'kotlinOptions.jdkHome' is deprecated and will ignored in Kotlin 1.6!")
-                assertOutputContains("-jdk-home ${getJdk9().javaHome.absolutePath}")
-            }
-        }
-    }
-
     private fun BuildResult.assertDaemonIsUsingJdk(
         javaexecPath: String
     ) = assertOutputContains("i: connected to the daemon. Daemon is using following 'java' executable to run itself: $javaexecPath")
 
     private fun getUserJdk(): JavaInfo = Jvm.forHome(File(System.getenv("JAVA_HOME")))
     private fun getJdk9(): JavaInfo = Jvm.forHome(File(System.getenv("JDK_9")))
-    // replace required for windows paths so Groovy will not complain about unexpected char '\'
-    private fun getJdk9Path(): String = getJdk9().javaHome.absolutePath.replace("\\", "\\\\")
     private val JavaInfo.javaExecutableRealPath
         get() = javaExecutable
             .toPath()
@@ -259,6 +228,8 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
     private val String.fullProjectName get() = "kotlin-java-toolchain/$this"
 
     private fun TestProject.useJdk9ToCompile() {
+        // replace required for windows paths so Groovy will not complain about unexpected char '\'
+        val jdk9Path = getJdk9().javaHome.absolutePath.replace("\\", "\\\\")
         //language=Groovy
         rootBuildGradle.append(
             """
@@ -269,7 +240,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
                  .withType(UsesKotlinJavaToolchain.class)
                  .configureEach {
                       it.kotlinJavaToolchain.setJdkHome(
-                           "${getJdk9Path()}",
+                           "$jdk9Path",
                            JavaVersion.VERSION_1_9
                       )
                  }
