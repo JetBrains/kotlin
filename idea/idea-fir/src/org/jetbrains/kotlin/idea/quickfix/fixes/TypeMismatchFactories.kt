@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.idea.quickfix.fixes
 
-import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.fir.api.fixes.diagnosticFixFactory
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.diagnostics.KtFirDiagnostic
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtTypeNullability
+import org.jetbrains.kotlin.idea.quickfix.AddExclExclCallFix
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -36,7 +36,7 @@ object TypeMismatchFactories {
         psi: PsiElement,
         expectedType: KtType,
         actualType: KtType
-    ): List<IntentionAction> {
+    ): List<AddExclExclCallFix> {
         // TODO: Add more fixes than just AddExclExclCallFix when available.
         if (!expectedType.canBeNull && actualType.canBeNull) {
             // We don't want to offer AddExclExclCallFix if we know the expression is definitely null, e.g.:
