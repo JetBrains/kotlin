@@ -191,17 +191,14 @@ internal fun createFakeContinuation(context: JvmBackendContext): IrExpression = 
 )
 
 internal fun IrFunction.originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass(): IrType? {
-    if (!isSuspend) return null
-    // Check whether we in fact return inline class
-    val unboxedReturnType = InlineClassAbi.unboxType(returnType.makeNotNull()) ?: return null
-    // Force boxing for primitives. NOTE: this also forbids unboxing a nullable inline class into a nullable primitive.
-    if (unboxedReturnType.isPrimitiveType()) return null
-    // Force boxing for nullable inline class types with nullable underlying type
-    if (returnType.isNullable() && unboxedReturnType.isNullable()) return null
-    // Force boxing if the function overrides function with different type modulo nullability ignoring type parameters
-    if ((this as? IrSimpleFunction)?.overridesReturningDifferentType(returnType) != false) return null
-    // Don't box other inline classes
-    return returnType
+    if (this !is IrSimpleFunction || !isSuspend) return null
+    // Unlike `suspendFunctionOriginal()`, this also maps `$default` stubs to the original function.
+    val original = attributeOwnerId as IrSimpleFunction
+    val unboxedReturnType = InlineClassAbi.unboxType(original.returnType) ?: return null
+    // 1. Can't unbox into a primitive, since suspend functions have to return a reference type.
+    // 2. Force boxing if the function overrides function with different type modulo nullability ignoring type parameters
+    if (unboxedReturnType.isPrimitiveType() || original.overridesReturningDifferentType(original.returnType)) return null
+    return original.returnType
 }
 
 private fun IrSimpleFunction.overridesReturningDifferentType(returnType: IrType): Boolean {
