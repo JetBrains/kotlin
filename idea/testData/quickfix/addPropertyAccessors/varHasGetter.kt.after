@@ -6,4 +6,3 @@ class Test {
         }
         set(value) {<caret>}
 }
-/* IGNORE_FIR */
