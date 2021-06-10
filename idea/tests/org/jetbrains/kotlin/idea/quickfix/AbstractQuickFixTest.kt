@@ -20,7 +20,6 @@ import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.ui.UIUtil
 import junit.framework.TestCase
-import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.idea.caches.resolve.ResolveInDispatchThreadException
 import org.jetbrains.kotlin.idea.caches.resolve.forceCheckForResolveInDispatchThreadInTests
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
@@ -163,9 +162,12 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), Q
                 return
             }
 
-            val writeActionResolveHandler: () -> Unit = {
-                val unwrappedIntention = unwrapIntention(intention)
+            val unwrappedIntention = unwrapIntention(intention)
+            if (shouldCheckIntentionActionType) {
+                assertInstanceOf(unwrappedIntention, QuickFixActionBase::class.java)
+            }
 
+            val writeActionResolveHandler: () -> Unit = {
                 val intentionClassName = unwrappedIntention.javaClass.name
                 if (!quickFixesAllowedToResolveInWriteAction.isWriteActionAllowed(intentionClassName)) {
                     throw ResolveInDispatchThreadException("Resolve is not allowed under the write action for `$intentionClassName`!")
@@ -204,6 +206,14 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), Q
     protected open fun getAfterFileName(beforeFileName: String): String {
         return File(beforeFileName).name + ".after"
     }
+
+    /**
+     * If true, the type of the [IntentionAction] to invoke is [QuickFixActionBase]. This ensures that the action is coming from a
+     * quickfix (i.e., diagnostic-based), and not a regular IDE intention.
+     */
+    protected open val shouldCheckIntentionActionType: Boolean
+        // For FE 1.0, many quickfixes are implemented as IntentionActions, which may or may not be used as regular IDE intentions as well
+        get() = false
 
     @Throws(ClassNotFoundException::class)
     private fun checkForUnexpectedActions() {
