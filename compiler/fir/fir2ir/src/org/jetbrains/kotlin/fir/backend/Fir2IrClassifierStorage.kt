@@ -133,7 +133,9 @@ class Fir2IrClassifierStorage(
     }
 
     private fun IrClass.declareInlineClassRepresentation(klass: FirRegularClass) {
-        inlineClassRepresentation = computeInlineClassRepresentation(klass)
+        if (this !is Fir2IrLazyClass) {
+            inlineClassRepresentation = computeInlineClassRepresentation(klass)
+        }
     }
 
     private fun IrClass.declareSupertypesAndTypeParameters(klass: FirClass): IrClass {
