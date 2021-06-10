@@ -249,7 +249,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FqName>("optInMarkerFqName")
             parameter<String>("message")
         }
-        val EXPERIMENTAL_API_USAGE_ERROR by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
+        val EXPERIMENTAL_API_USAGE_ERROR by warning<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<FqName>("optInMarkerFqName")
             parameter<String>("message")
         }

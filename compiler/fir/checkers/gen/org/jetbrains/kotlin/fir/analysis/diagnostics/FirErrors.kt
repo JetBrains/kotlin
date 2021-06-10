@@ -214,7 +214,7 @@ object FirErrors {
 
     // OptIn-related
     val EXPERIMENTAL_API_USAGE by warning2<PsiElement, FqName, String>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
-    val EXPERIMENTAL_API_USAGE_ERROR by error2<PsiElement, FqName, String>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val EXPERIMENTAL_API_USAGE_ERROR by warning2<PsiElement, FqName, String>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val EXPERIMENTAL_OVERRIDE by warning2<PsiElement, FqName, String>()
     val EXPERIMENTAL_OVERRIDE_ERROR by error2<PsiElement, FqName, String>()
     val EXPERIMENTAL_IS_NOT_ENABLED by warning0<KtAnnotationEntry>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
