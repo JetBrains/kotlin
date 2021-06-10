@@ -153,7 +153,7 @@ private fun checkExpressionArgument(
  * }
  *
  */
-private fun captureFromTypeParameterUpperBoundIfNeeded(argumentType: UnwrappedType, expectedType: UnwrappedType): UnwrappedType {
+fun captureFromTypeParameterUpperBoundIfNeeded(argumentType: UnwrappedType, expectedType: UnwrappedType): UnwrappedType {
     val expectedTypeConstructor = expectedType.upperIfFlexible().constructor
 
     if (argumentType.lowerIfFlexible().constructor.declarationDescriptor is TypeParameterDescriptor) {

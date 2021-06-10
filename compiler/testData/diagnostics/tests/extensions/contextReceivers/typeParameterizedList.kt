@@ -12,6 +12,6 @@ fun main() {
         A<Int>().f()
     }
     with(listOf("1", "2", "3")) {
-        A<Int>().<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>f<!>()
+        A<Int>().<!NO_CONTEXT_RECEIVER!>f()<!>
     }
 }
