@@ -302,10 +302,6 @@ class NativeInteropPlugin implements Plugin<Project> {
     void apply(Project prj) {
         prj.extensions.add("kotlinNativeInterop", new NativeInteropExtension(prj))
 
-        def runtimeNativeLibsDir = new File(prj.findProject(':kotlin-native:Interop:Runtime').buildDir, 'nativelibs')
-
-        def nativeLibsDir = new File(prj.buildDir, "nativelibs")
-
         prj.configurations {
             interopStubGenerator
         }

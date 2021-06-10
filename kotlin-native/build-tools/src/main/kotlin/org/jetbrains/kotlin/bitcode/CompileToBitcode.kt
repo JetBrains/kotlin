@@ -91,7 +91,7 @@ open class CompileToBitcode @Inject constructor(
                 Language.CPP ->
                     listOfNotNull("-std=c++17", "-Werror", "-O2",
                             "-Wall", "-Wextra",
-                            "-Wno-unused-parameter",  // False positives with polymorphic functions.
+                            "-Wno-unused-parameter"  // False positives with polymorphic functions.
                     )
             }
             return commonFlags + sanitizerFlags + languageFlags + compilerArgs
