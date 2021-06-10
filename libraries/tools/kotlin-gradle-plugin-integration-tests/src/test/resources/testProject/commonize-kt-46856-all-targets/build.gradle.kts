@@ -9,10 +9,6 @@ plugins {
 kotlin {
     presets.forEach { preset ->
         if (preset is AbstractKotlinNativeTargetPreset) {
-            // https://youtrack.jetbrains.com/issue/KT-46957
-            if (hostIsLinux && preset.konanTarget == LINUX_MIPS32) {
-                return@forEach
-            }
             targetFromPreset(preset)
         }
     }
