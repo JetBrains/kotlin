@@ -194,15 +194,14 @@ private fun unfoldValueParameters(expression: IrFunctionAccessExpression, callSt
 
 private fun unfoldInstanceInitializerCall(instanceInitializerCall: IrInstanceInitializerCall, callStack: CallStack) {
     val irClass = instanceInitializerCall.classSymbol.owner
+    val toInitialize = irClass.declarations.filter { it is IrProperty || (it is IrAnonymousInitializer && !it.isStatic) }
 
-    // init blocks processing
-    val anonymousInitializer = irClass.declarations.filterIsInstance<IrAnonymousInitializer>().filter { !it.isStatic }
-    anonymousInitializer.reversed().forEach { callStack.addInstruction(CompoundInstruction(it.body)) }
-
-    // properties processing
-    val classProperties = irClass.declarations.filterIsInstance<IrProperty>()
-    classProperties.filter { it.backingField?.initializer?.expression != null }.reversed()
-        .forEach { callStack.addInstruction(CompoundInstruction(it.backingField)) }
+    toInitialize.reversed().forEach {
+        when {
+            it is IrAnonymousInitializer -> callStack.addInstruction(CompoundInstruction(it.body))
+            it is IrProperty && it.backingField?.initializer?.expression != null -> callStack.addInstruction(CompoundInstruction(it.backingField))
+        }
+    }
 }
 
 private fun unfoldField(field: IrField, callStack: CallStack) {

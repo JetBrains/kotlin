@@ -424,14 +424,17 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
                 valueArguments.forEachIndexed { index, irConst -> enumSuperCall.putValueArgument(index, irConst) }
             }
 
-            val enumConstructorCall = enumEntry.initializerExpression?.expression as? IrEnumConstructorCall
+            val enumInitializer = enumEntry.initializerExpression?.expression
                 ?: throw InterpreterError("Initializer at enum entry ${enumEntry.fqNameWhenAvailable} is null")
+            val enumConstructorCall = enumInitializer as? IrEnumConstructorCall
+                ?: (enumInitializer as IrBlock).statements.filterIsInstance<IrEnumConstructorCall>().single()
+
             val enumClassObject = Variable(enumConstructorCall.getThisReceiver(), Common(enumEntry.correspondingClass ?: enumClass))
             environment.mapOfEnums[enumEntry.symbol] = enumClassObject.state as Complex
 
             callStack.newSubFrame(enumEntry)
             callStack.addInstruction(CustomInstruction(cleanEnumSuperCall))
-            callStack.addInstruction(CompoundInstruction(enumConstructorCall))
+            callStack.addInstruction(CompoundInstruction(enumInitializer))
             callStack.addVariable(enumClassObject)
         }
     }
