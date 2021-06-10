@@ -195,7 +195,7 @@ internal object FirOptInUsageBaseChecker {
         reporter: DiagnosticReporter
     ) {
         for ((annotationFqName, severity, message) in experimentalities) {
-            if (!isExperimentalityAcceptableInContext(annotationFqName, element, context)) {
+            if (!isExperimentalityAcceptableInContext(annotationFqName, context)) {
                 val diagnostic = when (severity) {
                     Experimentality.Severity.WARNING -> FirErrors.EXPERIMENTAL_API_USAGE
                     Experimentality.Severity.ERROR -> FirErrors.EXPERIMENTAL_API_USAGE_ERROR
@@ -211,7 +211,6 @@ internal object FirOptInUsageBaseChecker {
 
     private fun isExperimentalityAcceptableInContext(
         annotationFqName: FqName,
-        element: FirElement,
         context: CheckerContext
     ): Boolean {
         val languageVersionSettings = context.session.languageVersionSettings
@@ -219,19 +218,12 @@ internal object FirOptInUsageBaseChecker {
         if (fqNameAsString in languageVersionSettings.getFlag(AnalysisFlags.useExperimental)) {
             return true
         }
-        for (declaration in context.containingDeclarations) {
-            if (declaration !is FirAnnotatedDeclaration) continue
-            if (declaration.isExperimentalityAcceptable(annotationFqName)) {
+        for (annotationContainer in context.annotationContainers) {
+            if (annotationContainer.isExperimentalityAcceptable(annotationFqName)) {
                 return true
             }
         }
-        for (accessOrAnnotation in context.qualifiedAccessOrAnnotationCalls) {
-            if (accessOrAnnotation.isExperimentalityAcceptable(annotationFqName)) {
-                return true
-            }
-        }
-        if (element !is FirAnnotationContainer) return false
-        return element.isExperimentalityAcceptable(annotationFqName)
+        return false
     }
 
     private fun FirAnnotationContainer.isExperimentalityAcceptable(annotationFqName: FqName): Boolean {

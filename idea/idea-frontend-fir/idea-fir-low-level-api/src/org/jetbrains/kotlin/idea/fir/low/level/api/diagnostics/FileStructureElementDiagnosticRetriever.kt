@@ -109,7 +109,7 @@ internal object FileDiagnosticRetriever : FileStructureElementDiagnosticRetrieve
         components,
     ) {
         override fun visitFile(file: FirFile, data: Nothing?) {
-            withSuppressedDiagnostics(file) {
+            withAnnotationContainer(file) {
                 visitWithDeclaration(file) {
                     file.annotations.forEach { it.accept(this, data) }
                     file.packageDirective.accept(this, data)

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.context
 
 import kotlinx.collections.immutable.PersistentSet
 import kotlinx.collections.immutable.persistentSetOf
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
@@ -21,6 +22,7 @@ class MutableCheckerContext private constructor(
     override val containingDeclarations: MutableList<FirDeclaration>,
     override val qualifiedAccessOrAnnotationCalls: MutableList<FirStatement>,
     override val getClassCalls: MutableList<FirGetClassCall>,
+    override val annotationContainers: MutableList<FirAnnotationContainer>,
     sessionHolder: SessionHolder,
     returnTypeCalculator: ReturnTypeCalculator,
     override val suppressedDiagnostics: PersistentSet<String>,
@@ -30,6 +32,7 @@ class MutableCheckerContext private constructor(
 ) : AbstractCheckerContext(sessionHolder, returnTypeCalculator, allInfosSuppressed, allWarningsSuppressed, allErrorsSuppressed) {
     constructor(sessionHolder: SessionHolder, returnTypeCalculator: ReturnTypeCalculator) : this(
         PersistentImplicitReceiverStack(),
+        mutableListOf(),
         mutableListOf(),
         mutableListOf(),
         mutableListOf(),
@@ -47,6 +50,7 @@ class MutableCheckerContext private constructor(
             containingDeclarations,
             qualifiedAccessOrAnnotationCalls,
             getClassCalls,
+            annotationContainers,
             sessionHolder,
             returnTypeCalculator,
             suppressedDiagnostics,
@@ -83,6 +87,15 @@ class MutableCheckerContext private constructor(
         getClassCalls.removeAt(getClassCalls.size - 1)
     }
 
+    override fun addAnnotationContainer(annotationContainer: FirAnnotationContainer): CheckerContext {
+        annotationContainers.add(annotationContainer)
+        return this
+    }
+
+    override fun dropAnnotationContainer() {
+        annotationContainers.removeAt(annotationContainers.size - 1)
+    }
+
     override fun addSuppressedDiagnostics(
         diagnosticNames: Collection<String>,
         allInfosSuppressed: Boolean,
@@ -95,6 +108,7 @@ class MutableCheckerContext private constructor(
             containingDeclarations,
             qualifiedAccessOrAnnotationCalls,
             getClassCalls,
+            annotationContainers,
             sessionHolder,
             returnTypeCalculator,
             suppressedDiagnostics.addAll(diagnosticNames),

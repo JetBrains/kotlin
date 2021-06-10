@@ -9,6 +9,7 @@ import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.PersistentSet
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
@@ -23,6 +24,7 @@ class PersistentCheckerContext private constructor(
     override val containingDeclarations: PersistentList<FirDeclaration>,
     override val qualifiedAccessOrAnnotationCalls: PersistentList<FirStatement>,
     override val getClassCalls: PersistentList<FirGetClassCall>,
+    override val annotationContainers: PersistentList<FirAnnotationContainer>,
     sessionHolder: SessionHolder,
     returnTypeCalculator: ReturnTypeCalculator,
     override val suppressedDiagnostics: PersistentSet<String>,
@@ -32,6 +34,7 @@ class PersistentCheckerContext private constructor(
 ) : AbstractCheckerContext(sessionHolder, returnTypeCalculator, allInfosSuppressed, allWarningsSuppressed, allErrorsSuppressed) {
     constructor(sessionHolder: SessionHolder, returnTypeCalculator: ReturnTypeCalculator) : this(
         PersistentImplicitReceiverStack(),
+        persistentListOf(),
         persistentListOf(),
         persistentListOf(),
         persistentListOf(),
@@ -49,6 +52,7 @@ class PersistentCheckerContext private constructor(
             containingDeclarations,
             qualifiedAccessOrAnnotationCalls,
             getClassCalls,
+            annotationContainers,
             sessionHolder,
             returnTypeCalculator,
             suppressedDiagnostics,
@@ -64,6 +68,7 @@ class PersistentCheckerContext private constructor(
             containingDeclarations.add(declaration),
             qualifiedAccessOrAnnotationCalls,
             getClassCalls,
+            annotationContainers,
             sessionHolder,
             returnTypeCalculator,
             suppressedDiagnostics,
@@ -82,6 +87,7 @@ class PersistentCheckerContext private constructor(
             containingDeclarations,
             this.qualifiedAccessOrAnnotationCalls.add(qualifiedAccessOrAnnotationCall),
             getClassCalls,
+            annotationContainers,
             sessionHolder,
             returnTypeCalculator,
             suppressedDiagnostics,
@@ -100,6 +106,7 @@ class PersistentCheckerContext private constructor(
             containingDeclarations,
             qualifiedAccessOrAnnotationCalls,
             getClassCalls.add(getClassCall),
+            annotationContainers,
             sessionHolder,
             returnTypeCalculator,
             suppressedDiagnostics,
@@ -110,6 +117,25 @@ class PersistentCheckerContext private constructor(
     }
 
     override fun dropGetClassCall() {
+    }
+
+    override fun addAnnotationContainer(annotationContainer: FirAnnotationContainer): PersistentCheckerContext {
+        return PersistentCheckerContext(
+            implicitReceiverStack,
+            containingDeclarations,
+            qualifiedAccessOrAnnotationCalls,
+            getClassCalls,
+            annotationContainers.add(annotationContainer),
+            sessionHolder,
+            returnTypeCalculator,
+            suppressedDiagnostics,
+            allInfosSuppressed,
+            allWarningsSuppressed,
+            allErrorsSuppressed
+        )
+    }
+
+    override fun dropAnnotationContainer() {
     }
 
     override fun addSuppressedDiagnostics(
@@ -124,6 +150,7 @@ class PersistentCheckerContext private constructor(
             containingDeclarations,
             qualifiedAccessOrAnnotationCalls,
             getClassCalls,
+            annotationContainers,
             sessionHolder,
             returnTypeCalculator,
             suppressedDiagnostics.addAll(diagnosticNames),
