@@ -60,7 +60,6 @@ object FirImplementationMismatchChecker : FirClassChecker() {
                 if (!(fir as FirCallableMemberDeclaration<*>).isAbstract) {
                     implementations.add(fir)
                 }
-//                val type = context.returnTypeCalculator.tryCalculateReturnType(intSymbol.fir).coneType
             }
 
             if (delegation != null || implementations.isNotEmpty()) {
@@ -70,7 +69,10 @@ object FirImplementationMismatchChecker : FirClassChecker() {
                 val (conflict, _) = withTypes.find { (_, type) ->
                     !AbstractTypeChecker.isSubtypeOf(typeCheckerContext, methodType, type)
                 } ?: return
-                dedupReporter.reportOn(source, FirErrors.RETURN_TYPE_MISMATCH_ON_INHERITANCE, declaration, method, conflict, context)
+                val error =
+                    if (delegation != null) FirErrors.RETURN_TYPE_MISMATCH_BY_DELEGATION
+                    else FirErrors.RETURN_TYPE_MISMATCH_ON_INHERITANCE
+                dedupReporter.reportOn(source, error, method, conflict, context)
             } else {
                 //if there is no implementation, check that there can be any type compatible (subtype of) with all
                 var clash: Pair<FirCallableDeclaration<*>, FirCallableDeclaration<*>>? = null
@@ -84,7 +86,7 @@ object FirImplementationMismatchChecker : FirClassChecker() {
                     }
                 }
                 clash?.takeIf { !compatible }?.let { (m1, m2) ->
-                    dedupReporter.reportOn(source, FirErrors.RETURN_TYPE_MISMATCH_ON_INHERITANCE, declaration, m1, m2, context)
+                    dedupReporter.reportOn(source, FirErrors.RETURN_TYPE_MISMATCH_ON_INHERITANCE, m1, m2, context)
                 }
             }
         }

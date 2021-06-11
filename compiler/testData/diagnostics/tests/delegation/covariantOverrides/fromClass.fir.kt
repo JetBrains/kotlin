@@ -6,7 +6,7 @@ open class IDerived1 : IBase1 {
     override fun foo(): String = "1"
 }
 
-<!DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE!>class Broken1<!>(val b: IBase1) : IBase1 by b, IDerived1()
+<!DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE, RETURN_TYPE_MISMATCH_BY_DELEGATION!>class Broken1<!>(val b: IBase1) : IBase1 by b, IDerived1()
 
 interface IBase2 {
     val foo: Any

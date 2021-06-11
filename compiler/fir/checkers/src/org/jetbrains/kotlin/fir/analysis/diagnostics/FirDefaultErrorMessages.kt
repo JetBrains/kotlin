@@ -299,6 +299,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RESULT_TYPE_MISMA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_TYPE_MISMATCH
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_TYPE_MISMATCH_BY_DELEGATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_TYPE_MISMATCH_ON_INHERITANCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_TYPE_MISMATCH_ON_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SEALED_CLASS_CONSTRUCTOR_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SEALED_SUPERTYPE
@@ -933,6 +935,20 @@ class FirDefaultErrorMessages {
             map.put(
                 INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS,
                 "Inner class of generic class extending 'Throwable' is prohibited"
+            )
+
+            map.put(
+                RETURN_TYPE_MISMATCH_ON_INHERITANCE,
+                "''{0}'' clashes with ''{1}'': return types are incompatible",
+                NAME,
+                NAME
+            )
+
+            map.put(
+                RETURN_TYPE_MISMATCH_BY_DELEGATION,
+                "Type of ''{0}'' is not a subtype of overridden by delegation ''{1}''",
+                NAME,
+                NAME
             )
 
             // Redeclarations

@@ -588,9 +588,13 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
 
         val RETURN_TYPE_MISMATCH_ON_INHERITANCE by error<KtClassOrObject>(PositioningStrategy.DECLARATION_NAME) {
-            parameter<FirClass<*>>("classOrObject")
             parameter<FirCallableDeclaration<*>>("conflictingDeclaration1")
             parameter<FirCallableDeclaration<*>>("conflictingDeclaration2")
+        }
+
+        val RETURN_TYPE_MISMATCH_BY_DELEGATION by error<KtClassOrObject>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<FirCallableDeclaration<*>>("delegateDeclaration")
+            parameter<FirCallableDeclaration<*>>("baseDeclaration")
         }
 
         val ABSTRACT_MEMBER_NOT_IMPLEMENTED by error<KtClassOrObject>(PositioningStrategy.DECLARATION_NAME) {
