@@ -11,37 +11,39 @@ import org.jetbrains.kotlin.name.findValueForMostSpecificFqname
 val JSPECIFY_ANNOTATIONS_PACKAGE = FqName("org.jspecify.nullness")
 val CHECKER_FRAMEWORK_COMPATQUAL_ANNOTATIONS_PACKAGE = FqName("org.checkerframework.checker.nullness.compatqual")
 
-val nullabilityAnnotationSettings = mapOf(
-    FqName("org.jetbrains.annotations") to JavaNullabilityAnnotationsStatus.DEFAULT,
-    FqName("androidx.annotation") to JavaNullabilityAnnotationsStatus.DEFAULT,
-    FqName("android.support.annotation") to JavaNullabilityAnnotationsStatus.DEFAULT,
-    FqName("android.annotation") to JavaNullabilityAnnotationsStatus.DEFAULT,
-    FqName("com.android.annotations") to JavaNullabilityAnnotationsStatus.DEFAULT,
-    FqName("org.eclipse.jdt.annotation") to JavaNullabilityAnnotationsStatus.DEFAULT,
-    FqName("org.checkerframework.checker.nullness.qual") to JavaNullabilityAnnotationsStatus.DEFAULT,
-    CHECKER_FRAMEWORK_COMPATQUAL_ANNOTATIONS_PACKAGE to JavaNullabilityAnnotationsStatus.DEFAULT,
-    FqName("javax.annotation") to JavaNullabilityAnnotationsStatus.DEFAULT,
-    FqName("edu.umd.cs.findbugs.annotations") to JavaNullabilityAnnotationsStatus.DEFAULT,
-    FqName("io.reactivex.annotations") to JavaNullabilityAnnotationsStatus.DEFAULT,
-    FqName("androidx.annotation.RecentlyNullable") to JavaNullabilityAnnotationsStatus(
-        reportLevelBefore = ReportLevel.WARN,
-        sinceVersion = null
-    ),
-    FqName("androidx.annotation.RecentlyNonNull") to JavaNullabilityAnnotationsStatus(
-        reportLevelBefore = ReportLevel.WARN,
-        sinceVersion = null
-    ),
-    FqName("lombok") to JavaNullabilityAnnotationsStatus.DEFAULT,
-    JSPECIFY_ANNOTATIONS_PACKAGE to JavaNullabilityAnnotationsStatus(
-        reportLevelBefore = ReportLevel.WARN,
-        sinceVersion = KotlinVersion(1, 6),
-        reportLevelAfter = ReportLevel.STRICT
-    ),
-    FqName("io.reactivex.rxjava3.annotations") to JavaNullabilityAnnotationsStatus(
-        reportLevelBefore = ReportLevel.WARN,
-        sinceVersion = KotlinVersion(1, 7),
-        reportLevelAfter = ReportLevel.STRICT
-    ),
+val NULLABILITY_ANNOTATION_SETTINGS: NullabilityAnnotationStates<JavaNullabilityAnnotationsStatus> = NullabilityAnnotationStatesImpl(
+    mapOf(
+        FqName("org.jetbrains.annotations") to JavaNullabilityAnnotationsStatus.DEFAULT,
+        FqName("androidx.annotation") to JavaNullabilityAnnotationsStatus.DEFAULT,
+        FqName("android.support.annotation") to JavaNullabilityAnnotationsStatus.DEFAULT,
+        FqName("android.annotation") to JavaNullabilityAnnotationsStatus.DEFAULT,
+        FqName("com.android.annotations") to JavaNullabilityAnnotationsStatus.DEFAULT,
+        FqName("org.eclipse.jdt.annotation") to JavaNullabilityAnnotationsStatus.DEFAULT,
+        FqName("org.checkerframework.checker.nullness.qual") to JavaNullabilityAnnotationsStatus.DEFAULT,
+        CHECKER_FRAMEWORK_COMPATQUAL_ANNOTATIONS_PACKAGE to JavaNullabilityAnnotationsStatus.DEFAULT,
+        FqName("javax.annotation") to JavaNullabilityAnnotationsStatus.DEFAULT,
+        FqName("edu.umd.cs.findbugs.annotations") to JavaNullabilityAnnotationsStatus.DEFAULT,
+        FqName("io.reactivex.annotations") to JavaNullabilityAnnotationsStatus.DEFAULT,
+        FqName("androidx.annotation.RecentlyNullable") to JavaNullabilityAnnotationsStatus(
+            reportLevelBefore = ReportLevel.WARN,
+            sinceVersion = null
+        ),
+        FqName("androidx.annotation.RecentlyNonNull") to JavaNullabilityAnnotationsStatus(
+            reportLevelBefore = ReportLevel.WARN,
+            sinceVersion = null
+        ),
+        FqName("lombok") to JavaNullabilityAnnotationsStatus.DEFAULT,
+        JSPECIFY_ANNOTATIONS_PACKAGE to JavaNullabilityAnnotationsStatus(
+            reportLevelBefore = ReportLevel.WARN,
+            sinceVersion = KotlinVersion(1, 6),
+            reportLevelAfter = ReportLevel.STRICT
+        ),
+        FqName("io.reactivex.rxjava3.annotations") to JavaNullabilityAnnotationsStatus(
+            reportLevelBefore = ReportLevel.WARN,
+            sinceVersion = KotlinVersion(1, 7),
+            reportLevelAfter = ReportLevel.STRICT
+        ),
+    )
 )
 
 private val JSR_305_DEFAULT_SETTINGS = JavaNullabilityAnnotationsStatus(
@@ -63,21 +65,42 @@ fun getDefaultJsr305Settings(configuredKotlinVersion: KotlinVersion = KotlinVers
 fun getDefaultMigrationJsr305ReportLevelForGivenGlobal(globalReportLevel: ReportLevel) =
     if (globalReportLevel == ReportLevel.WARN) null else globalReportLevel
 
-fun getDefaultReportLevelForAnnotation(annotationFqName: FqName) = getReportLevelForAnnotation(annotationFqName, emptyMap())
+fun getDefaultReportLevelForAnnotation(annotationFqName: FqName) =
+    getReportLevelForAnnotation(annotationFqName, NullabilityAnnotationStates.EMPTY)
 
 fun getReportLevelForAnnotation(
-    annotation: FqName, configuredReportLevels: Map<FqName, ReportLevel>,
+    annotation: FqName,
+    configuredReportLevels: NullabilityAnnotationStates<out ReportLevel>,
     configuredKotlinVersion: KotlinVersion = KotlinVersion.CURRENT
 ): ReportLevel {
-    annotation.findValueForMostSpecificFqname(configuredReportLevels)?.let { return it }
+    configuredReportLevels[annotation]?.let { return it }
 
-    val defaultReportLevel = annotation.findValueForMostSpecificFqname(nullabilityAnnotationSettings) ?: return ReportLevel.IGNORE
+    val defaultStatus = NULLABILITY_ANNOTATION_SETTINGS[annotation] ?: return ReportLevel.IGNORE
 
-    return if (defaultReportLevel.sinceVersion != null && defaultReportLevel.sinceVersion <= configuredKotlinVersion) {
-        defaultReportLevel.reportLevelAfter
+    return if (defaultStatus.sinceVersion != null && defaultStatus.sinceVersion <= configuredKotlinVersion) {
+        defaultStatus.reportLevelAfter
     } else {
-        defaultReportLevel.reportLevelBefore
+        defaultStatus.reportLevelBefore
     }
 }
 
+interface NullabilityAnnotationStates<T : Any> {
+    operator fun get(fqName: FqName): T?
 
+    fun singleOrNull(): Pair<FqName, T>?
+
+    companion object {
+        val EMPTY: NullabilityAnnotationStates<Nothing> = NullabilityAnnotationStatesImpl(emptyMap())
+    }
+}
+
+class NullabilityAnnotationStatesImpl<T : Any>(val states: Map<FqName, T>) : NullabilityAnnotationStates<T> {
+    private val cache = mutableMapOf<FqName, T?>()
+
+    override operator fun get(fqName: FqName): T? {
+        if (fqName in cache) return cache[fqName]
+        return fqName.findValueForMostSpecificFqname(states).also { cache[fqName] = it }
+    }
+
+    override fun singleOrNull() = states.entries.singleOrNull()?.toPair()
+}

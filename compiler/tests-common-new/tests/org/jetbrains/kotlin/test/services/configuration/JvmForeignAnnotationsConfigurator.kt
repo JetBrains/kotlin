@@ -56,12 +56,14 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
             val state = ReportLevel.findByDescription(stateDescription) ?: return@mapNotNull null
             FqName(name) to state
         }.toMap()
-        val configuredReportLevels = buildMap<FqName, ReportLevel> {
-            directives.singleOrZeroValue(JSPECIFY_STATE)?.let { put(JSPECIFY_ANNOTATIONS_PACKAGE, it) }
-            for ((fqname, reportLevel) in directives[ForeignAnnotationsDirectives.NULLABILITY_ANNOTATIONS]) {
-                put(fqname, reportLevel)
+        val configuredReportLevels = NullabilityAnnotationStatesImpl(
+            buildMap<FqName, ReportLevel> {
+                directives.singleOrZeroValue(JSPECIFY_STATE)?.let { put(JSPECIFY_ANNOTATIONS_PACKAGE, it) }
+                for ((fqname, reportLevel) in directives[ForeignAnnotationsDirectives.NULLABILITY_ANNOTATIONS]) {
+                    put(fqname, reportLevel)
+                }
             }
-        }
+        )
 
         return mapOf(
             JvmAnalysisFlags.javaTypeEnhancementState to JavaTypeEnhancementState(
