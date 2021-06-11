@@ -22,13 +22,14 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.assertCast
 import org.jetbrains.kotlin.ir.builders.Scope
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.referenceFunction
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
@@ -84,7 +85,20 @@ class StatementGenerator(
         }
 
     private fun KtElement.genExpr(): IrExpression =
-        genStmt().assertCast()
+        when (val irStatement = genStmt()) {
+            is IrExpression ->
+                irStatement
+            is IrDeclaration ->
+                IrBlockImpl(
+                    irStatement.startOffset,
+                    irStatement.endOffset,
+                    this@StatementGenerator.context.irBuiltIns.unitType,
+                    null,
+                    listOf(irStatement)
+                )
+            else ->
+                throw AssertionError("Unexpected statement: ${irStatement.render()}")
+        }
 
     override fun visitExpression(expression: KtExpression, data: Nothing?): IrStatement =
         IrErrorExpressionImpl(
