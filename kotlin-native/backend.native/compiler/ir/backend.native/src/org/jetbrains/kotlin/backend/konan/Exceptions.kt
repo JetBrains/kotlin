@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.konan.KonanException
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
 /**
@@ -15,9 +14,3 @@ class KonanCompilationException(
         message: String = "",
         cause: Throwable? = null
 ) : KotlinExceptionWithAttachments(message, cause)
-
-/**
- * Internal compiler error: could not deserialize IR for inline function body.
- */
-class KonanIrDeserializationException(message: String = "", cause: Throwable? = null) : KonanException(message, cause)
-
