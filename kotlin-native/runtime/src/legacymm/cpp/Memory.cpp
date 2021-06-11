@@ -255,9 +255,24 @@ THREAD_LOCAL_VARIABLE MemoryState* memoryState = nullptr;
 
 #ifdef KONAN_WINDOWS
     #include <processthreadsapi.h>
-    static DWORD currentFrameTlsIndex = TlsAlloc();
+
+    static void freeCurrentFrameTlsIndex();
+    static DWORD allocCurrentFrameTlsIndex();
+
+    static DWORD currentFrameTlsIndex = allocCurrentFrameTlsIndex();
     inline FrameOverlay* getCurrentFrame() { return (FrameOverlay*)TlsGetValue(currentFrameTlsIndex); }
     inline void setCurrentFrame(FrameOverlay* value) { TlsSetValue(currentFrameTlsIndex, value); }
+
+    static void freeCurrentFrameTlsIndex() {
+      TlsFree(currentFrameTlsIndex);
+    }
+
+    static DWORD allocCurrentFrameTlsIndex() {
+      DWORD tlsIndex = TlsAlloc();
+      if (tlsIndex == TLS_OUT_OF_INDEXES) abort();
+      atexit(freeCurrentFrameTlsIndex);
+      return tlsIndex;
+    }
 #else
     THREAD_LOCAL_VARIABLE FrameOverlay* currentFrame = nullptr;
     inline FrameOverlay* getCurrentFrame() { return currentFrame; }
