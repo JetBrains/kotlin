@@ -1027,10 +1027,12 @@ static Class createClass(const TypeInfo* typeInfo, Class superClass) {
 
   for (int i = 0; i < typeInfo->implementedInterfacesCount_; ++i) {
     const TypeInfo* interface = typeInfo->implementedInterfaces_[i];
-    if (superImplementedInterfaces.find(interface) == superImplementedInterfaces.end()) {
-      const ObjCTypeAdapter* typeAdapter = getTypeAdapter(interface);
-      if (typeAdapter != nullptr) {
-        addVirtualAdapters(result, typeAdapter);
+    const ObjCTypeAdapter* typeAdapter = getTypeAdapter(interface);
+    if (typeAdapter != nullptr) {
+      // Note: we could avoid adding virtual adapters if inherited from super type,
+      // but what's the point?
+      addVirtualAdapters(result, typeAdapter);
+      if (superImplementedInterfaces.find(interface) == superImplementedInterfaces.end()) {
         addProtocolForAdapter(result, typeAdapter);
       }
     }
