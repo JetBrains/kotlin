@@ -25,11 +25,11 @@ internal interface KtFirType : ValidityTokenOwner {
 }
 
 internal class KtFirUsualClassType(
-    coneType: ConeClassLikeTypeImpl,
+    _coneType: ConeClassLikeTypeImpl,
     override val token: ValidityToken,
     _builder: KtSymbolByFirBuilder,
 ) : KtUsualClassType(), KtFirType {
-    override val coneType by weakRef(coneType)
+    override val coneType by weakRef(_coneType)
     private val builder by weakRef(_builder)
 
     override val classId: ClassId get() = withValidityAssertion { coneType.lookupTag.classId }
@@ -48,11 +48,11 @@ internal class KtFirUsualClassType(
 }
 
 internal class KtFirFunctionalType(
-    coneType: ConeClassLikeTypeImpl,
+    _coneType: ConeClassLikeTypeImpl,
     override val token: ValidityToken,
     _builder: KtSymbolByFirBuilder,
 ) : KtFunctionalType(), KtFirType {
-    override val coneType by weakRef(coneType)
+    override val coneType by weakRef(_coneType)
     private val builder by weakRef(_builder)
 
     override val classId: ClassId get() = withValidityAssertion { coneType.lookupTag.classId }
@@ -94,29 +94,29 @@ internal class KtFirFunctionalType(
 }
 
 internal class KtFirClassErrorType(
-    coneType: ConeClassErrorType,
+    _coneType: ConeClassErrorType,
     override val token: ValidityToken,
 ) : KtClassErrorType(), KtFirType {
-    override val coneType by weakRef(coneType)
+    override val coneType by weakRef(_coneType)
 
     override val error: String get() = withValidityAssertion { coneType.diagnostic.reason }
     override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
 }
 
 internal class KtFirCapturedType(
-    coneType: ConeCapturedType,
+    _coneType: ConeCapturedType,
     override val token: ValidityToken,
 ) : KtCapturedType(), KtFirType {
-    override val coneType by weakRef(coneType)
+    override val coneType by weakRef(_coneType)
     override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
 }
 
 internal class KtFirDefinitelyNotNullType(
-    coneType: ConeDefinitelyNotNullType,
+    _coneType: ConeDefinitelyNotNullType,
     override val token: ValidityToken,
     _builder: KtSymbolByFirBuilder,
 ) : KtDefinitelyNotNullType(), KtFirType {
-    override val coneType by weakRef(coneType)
+    override val coneType by weakRef(_coneType)
     private val builder by weakRef(_builder)
 
     override val original: KtType by cached { builder.typeBuilder.buildKtType(this.coneType.original) }
@@ -127,11 +127,11 @@ internal class KtFirDefinitelyNotNullType(
 
 
 internal class KtFirTypeParameterType(
-    coneType: ConeTypeParameterType,
+    _coneType: ConeTypeParameterType,
     override val token: ValidityToken,
     _builder: KtSymbolByFirBuilder,
 ) : KtTypeParameterType(), KtFirType {
-    override val coneType by weakRef(coneType)
+    override val coneType by weakRef(_coneType)
     private val builder by weakRef(_builder)
 
     override val name: Name get() = withValidityAssertion { coneType.lookupTag.name }
@@ -145,11 +145,11 @@ internal class KtFirTypeParameterType(
 }
 
 internal class KtFirFlexibleType(
-    coneType: ConeFlexibleType,
+    _coneType: ConeFlexibleType,
     override val token: ValidityToken,
     _builder: KtSymbolByFirBuilder,
 ) : KtFlexibleType(), KtFirType {
-    override val coneType by weakRef(coneType)
+    override val coneType by weakRef(_coneType)
     private val builder by weakRef(_builder)
 
     override val lowerBound: KtType by cached { builder.typeBuilder.buildKtType(coneType.lowerBound) }
@@ -158,11 +158,11 @@ internal class KtFirFlexibleType(
 }
 
 internal class KtFirIntersectionType(
-    coneType: ConeIntersectionType,
+    _coneType: ConeIntersectionType,
     override val token: ValidityToken,
     _builder: KtSymbolByFirBuilder,
 ) : KtIntersectionType(), KtFirType {
-    override val coneType by weakRef(coneType)
+    override val coneType by weakRef(_coneType)
     private val builder by weakRef(_builder)
 
     override val conjuncts: List<KtType> by cached {
