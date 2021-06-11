@@ -9,7 +9,6 @@ evaluationDependsOnChildren()
 
 configurations {
     dokka
-    kotlin_sources
 }
 
 final String dokka_build = "611"
