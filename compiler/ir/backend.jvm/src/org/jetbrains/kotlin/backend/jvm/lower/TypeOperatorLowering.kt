@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
+import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.IrBuildingTransformer
 import org.jetbrains.kotlin.backend.common.lower.at
@@ -422,7 +423,7 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
                     irComposite(resultType = expression.type) {
                         +irCall(checkExpressionValueIsNotNull).apply {
                             putValueArgument(0, irGet(valueSymbol.owner))
-                            putValueArgument(1, irString(source))
+                            putValueArgument(1, irString(source.trimForRuntimeAssertion()))
                         }
                         +irGet(valueSymbol.owner)
                     }
@@ -435,6 +436,8 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
             }
         }
     }
+
+    private fun String.trimForRuntimeAssertion() = StringUtil.trimMiddle(this, 50)
 
     private fun IrFunction.isDelegated() =
         origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR ||
