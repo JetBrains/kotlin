@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 
-val DEST_FILE: File = File("compiler/frontend/src/org/jetbrains/kotlin/resolve/constants/evaluate/OperationsMapGenerated.kt")
+val DEST_FILE: File = File("compiler/frontend.common/src/org/jetbrains/kotlin/resolve/constants/evaluate/OperationsMapGenerated.kt")
 private val EXCLUDED_FUNCTIONS: List<String> = listOf("rangeTo", "hashCode", "inc", "dec", "subSequence")
 
 fun main() {
@@ -65,7 +65,7 @@ fun generate(): String {
         }
     }
 
-    p.println("internal fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? {")
+    p.println("fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? {")
     p.pushIndent()
     p.println("when (type) {")
     p.pushIndent()
@@ -85,9 +85,8 @@ fun generate(): String {
     p.popIndent()
     p.println("}")
     p.println()
-    p.println()
 
-    p.println("internal fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: CompileTimeType, right: Any): Any? {")
+    p.println("fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: CompileTimeType, right: Any): Any? {")
     p.pushIndent()
     p.println("when (leftType) {")
     p.pushIndent()
@@ -114,7 +113,7 @@ fun generate(): String {
     p.println("}")
     p.println()
 
-    p.println("internal fun checkBinaryOp(")
+    p.println("fun checkBinaryOp(")
     p.println("    name: String, leftType: CompileTimeType, left: BigInteger, rightType: CompileTimeType, right: BigInteger")
     p.println("): BigInteger? {")
     p.pushIndent()

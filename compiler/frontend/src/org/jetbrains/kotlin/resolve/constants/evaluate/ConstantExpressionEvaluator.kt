@@ -12,7 +12,6 @@ import com.intellij.psi.util.TypeConversionUtil
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -1138,11 +1137,6 @@ private fun getReceiverExpressionType(resolvedCall: ResolvedCall<*>): KotlinType
         ExplicitReceiverKind.BOTH_RECEIVERS -> null
         else -> null
     }
-}
-
-internal enum class CompileTimeType {
-    BYTE, SHORT, INT, LONG, DOUBLE, FLOAT, CHAR, BOOLEAN,
-    STRING, ANY
 }
 
 fun ConstantValue<*>.isStandaloneOnlyConstant(): Boolean {
