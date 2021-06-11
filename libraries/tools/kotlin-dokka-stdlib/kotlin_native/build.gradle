@@ -5,8 +5,10 @@ apply plugin: 'base'
 final String kotlinNativeRootDir = rootProject.file( "../../../kotlin-native")
 final File kotlinNativeLibsDir = new File(buildDir, "libs")
 
+final boolean isTeamcityBuild = System.getenv("TEAMCITY_VERSION") != null
 
 task extractLibs(type: Sync) {
+  enabled = !isTeamcityBuild
   from file(new File(kotlinNativeRootDir, "dist/klib"))
   into file(new File(kotlinNativeLibsDir, "klib"))
 
