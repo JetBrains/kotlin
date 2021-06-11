@@ -30,7 +30,7 @@ internal class ConeTypeIdeRenderer(
 
     private fun StringBuilder.appendError(message: String? = null) {
         append(ERROR_TYPE_TEXT)
-        if (message != null) append(" $message")
+        if (message != null) append(" <$message>")
     }
 
     private var filterExtensionFunctionType: Boolean = false
@@ -48,7 +48,7 @@ internal class ConeTypeIdeRenderer(
 
         when (type) {
             is ConeKotlinErrorType -> {
-                appendError()
+                appendError(type.diagnostic.reason)
             }
             //is Dynamic??? -> append("dynamic")
             is ConeClassLikeType -> {
