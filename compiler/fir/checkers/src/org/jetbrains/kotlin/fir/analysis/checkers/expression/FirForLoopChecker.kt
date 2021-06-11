@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.UnsafeCall
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 
@@ -93,9 +93,9 @@ object FirForLoopChecker : FirBlockChecker() {
         reporter: DiagnosticReporter,
         reportSource: FirSourceElement?,
         context: CheckerContext,
-        ambiguityFactory: FirDiagnosticFactory1<Collection<AbstractFirBasedSymbol<*>>>,
+        ambiguityFactory: FirDiagnosticFactory1<Collection<FirBasedSymbol<*>>>,
         missingFactory: FirDiagnosticFactory0,
-        noneApplicableFactory: FirDiagnosticFactory1<Collection<AbstractFirBasedSymbol<*>>>? = null,
+        noneApplicableFactory: FirDiagnosticFactory1<Collection<FirBasedSymbol<*>>>? = null,
         unsafeCallFactory: FirDiagnosticFactory0? = null,
     ): Boolean {
         when (val calleeReference = call.calleeReference) {

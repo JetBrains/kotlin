@@ -8,8 +8,14 @@ package org.jetbrains.kotlin.fir.symbols
 import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 
-interface FirBasedSymbol<E> where E : FirSymbolOwner<E>, E : FirDeclaration {
-    val fir: E
+abstract class FirBasedSymbol<E> where E : FirSymbolOwner<E>, E : FirDeclaration {
+    private var _fir: E? = null
 
-    fun bind(e: E)
+    val fir: E
+        get() = _fir
+            ?: error("Fir is not initialized for $this")
+
+    fun bind(e: E) {
+        _fir = e
+    }
 }

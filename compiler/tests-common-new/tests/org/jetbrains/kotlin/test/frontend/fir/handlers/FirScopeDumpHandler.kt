@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.*
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.render
@@ -66,10 +66,10 @@ class FirScopeDumpHandler(testServices: TestServices) : FirAnalysisHandler(testS
     }
 
     private class SymbolCounter {
-        private val map = mutableMapOf<AbstractFirBasedSymbol<*>, Int>()
+        private val map = mutableMapOf<FirBasedSymbol<*>, Int>()
         private var counter = 0
 
-        fun getIndex(symbol: AbstractFirBasedSymbol<*>): Int {
+        fun getIndex(symbol: FirBasedSymbol<*>): Int {
             return map.computeIfAbsent(symbol) { counter++ }
         }
     }

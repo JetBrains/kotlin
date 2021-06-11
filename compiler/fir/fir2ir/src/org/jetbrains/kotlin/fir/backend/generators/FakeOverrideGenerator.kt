@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirFakeOverrideGenerator
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -98,7 +98,7 @@ class FakeOverrideGenerator(
         name: Name,
         firClass: FirClass<*>,
         result: MutableList<IrDeclaration>,
-        realDeclarationSymbols: Set<AbstractFirBasedSymbol<*>>
+        realDeclarationSymbols: Set<FirBasedSymbol<*>>
     ) {
         val isLocal = firClass !is FirRegularClass || firClass.isLocal
         useSiteMemberScope.processFunctionsByName(name) { functionSymbol ->
@@ -181,7 +181,7 @@ class FakeOverrideGenerator(
         baseSymbols: MutableMap<I, List<S>>,
         result: MutableList<in I>,
         containsErrorTypes: (I) -> Boolean,
-        realDeclarationSymbols: Set<AbstractFirBasedSymbol<*>>,
+        realDeclarationSymbols: Set<FirBasedSymbol<*>>,
         computeDirectOverridden: FirTypeScope.(S) -> List<S>,
         scope: FirTypeScope,
     ) {

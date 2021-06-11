@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -92,7 +92,7 @@ internal val FirExpression.coneType: ConeKotlinType
     get() = typeRef.coneType
 
 @DfaInternals
-internal val FirElement.symbol: AbstractFirBasedSymbol<*>?
+internal val FirElement.symbol: FirBasedSymbol<*>?
     get() = when (this) {
         is FirResolvable -> symbol
         is FirSymbolOwner<*> -> symbol
@@ -105,7 +105,7 @@ internal val FirElement.symbol: AbstractFirBasedSymbol<*>?
     }
 
 @DfaInternals
-internal val FirResolvable.symbol: AbstractFirBasedSymbol<*>?
+internal val FirResolvable.symbol: FirBasedSymbol<*>?
     get() = when (val reference = calleeReference) {
         is FirThisReference -> reference.boundSymbol
         is FirResolvedNamedReference -> reference.resolvedSymbol

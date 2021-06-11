@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.references
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.fir.visitors.*
 abstract class FirResolvedNamedReference : FirNamedReference() {
     abstract override val source: FirSourceElement?
     abstract override val name: Name
-    abstract override val candidateSymbol: AbstractFirBasedSymbol<*>?
-    abstract val resolvedSymbol: AbstractFirBasedSymbol<*>
+    abstract override val candidateSymbol: FirBasedSymbol<*>?
+    abstract val resolvedSymbol: FirBasedSymbol<*>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedNamedReference(this, data)
 

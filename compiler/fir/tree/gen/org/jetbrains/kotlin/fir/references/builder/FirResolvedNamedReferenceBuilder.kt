@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirResolvedNamedReferenceImpl
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
 
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.name.Name
 class FirResolvedNamedReferenceBuilder {
     var source: FirSourceElement? = null
     lateinit var name: Name
-    lateinit var resolvedSymbol: AbstractFirBasedSymbol<*>
+    lateinit var resolvedSymbol: FirBasedSymbol<*>
 
     fun build(): FirResolvedNamedReference {
         return FirResolvedNamedReferenceImpl(

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.*
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionOverrideFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionOverridePropertySymbol
@@ -139,7 +139,7 @@ internal class KtFirSymbolDeclarationOverridesProvider(
         }
     }
 
-    private fun AbstractFirBasedSymbol<*>.getIntersectionOverriddenSymbols(): Collection<FirCallableSymbol<*>> {
+    private fun FirBasedSymbol<*>.getIntersectionOverriddenSymbols(): Collection<FirCallableSymbol<*>> {
         require(this is FirCallableSymbol<*>) {
             "Required FirCallableSymbol but ${this::class} found"
         }

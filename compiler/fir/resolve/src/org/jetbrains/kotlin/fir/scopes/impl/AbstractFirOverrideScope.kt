@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 
 abstract class AbstractFirOverrideScope(
@@ -49,9 +49,9 @@ abstract class AbstractFirOverrideScope(
     protected open fun FirCallableSymbol<*>.getOverridden(overrideCandidates: Set<FirCallableSymbol<*>>): FirCallableSymbol<*>? {
         if (overrideByBase.containsKey(this)) return overrideByBase[this]
 
-        val baseDeclaration = (this as AbstractFirBasedSymbol<*>).fir as FirCallableMemberDeclaration<*>
+        val baseDeclaration = (this as FirBasedSymbol<*>).fir as FirCallableMemberDeclaration<*>
         val override = overrideCandidates.firstOrNull {
-            val overrideCandidate = (it as AbstractFirBasedSymbol<*>).fir as FirCallableMemberDeclaration<*>
+            val overrideCandidate = (it as FirBasedSymbol<*>).fir as FirCallableMemberDeclaration<*>
             baseDeclaration.modality != Modality.FINAL && similarFunctionsOrBothProperties(overrideCandidate, baseDeclaration)
         } // TODO: two or more overrides for one fun?
         overrideByBase[this] = override

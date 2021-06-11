@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -465,7 +465,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             return current
         }
 
-        private fun renderImplicitReceiver(symbol: AbstractFirBasedSymbol<*>, psi: PsiElement?) {
+        private fun renderImplicitReceiver(symbol: FirBasedSymbol<*>, psi: PsiElement?) {
             val receiverType = (symbol.fir as? FirCallableMemberDeclaration<*>)?.dispatchReceiverType ?: return
             val implicitReceiverIndex = implicitReceivers.indexOf(receiverType)
             if (implicitReceiverIndex != -1) addAnnotation("this@$implicitReceiverIndex", psi)
@@ -837,7 +837,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             data.append("(vararg $valueParameter): $name${typeParameters.trim()}") // TODO change "T" to concrete type is array is primitive
         }
 
-        private fun AbstractFirBasedSymbol<*>.isLocalDeclaration(): Boolean {
+        private fun FirBasedSymbol<*>.isLocalDeclaration(): Boolean {
             return when (val fir = this.fir) {
                 is FirConstructor -> fir.returnTypeRef.coneType.isLocal()
                 is FirCallableDeclaration<*> -> {
@@ -853,7 +853,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         // id == packageName + className
-        private fun getSymbolId(symbol: AbstractFirBasedSymbol<*>?): String {
+        private fun getSymbolId(symbol: FirBasedSymbol<*>?): String {
             return when (symbol) {
                 is FirCallableSymbol<*> -> {
                     if (symbol.isLocalDeclaration()) {

@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.lexer.KtKeywordToken
@@ -405,13 +405,13 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Collection<Symbol>>("candidates")
         }
         val ITERATOR_AMBIGUITY by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
-            parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
+            parameter<Collection<FirBasedSymbol<*>>>("candidates")
         }
         val HAS_NEXT_FUNCTION_AMBIGUITY by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
-            parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
+            parameter<Collection<FirBasedSymbol<*>>>("candidates")
         }
         val NEXT_AMBIGUITY by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
-            parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
+            parameter<Collection<FirBasedSymbol<*>>>("candidates")
         }
     }
 
@@ -893,10 +893,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val HAS_NEXT_MISSING by error<KtExpression>()
         val NEXT_MISSING by error<KtExpression>()
         val HAS_NEXT_FUNCTION_NONE_APPLICABLE by error<KtExpression> {
-            parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
+            parameter<Collection<FirBasedSymbol<*>>>("candidates")
         }
         val NEXT_NONE_APPLICABLE by error<KtExpression> {
-            parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
+            parameter<Collection<FirBasedSymbol<*>>>("candidates")
         }
         val DELEGATE_SPECIAL_FUNCTION_MISSING by error<KtExpression> {
             parameter<String>("expectedFunctionSignature")
@@ -905,11 +905,11 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val DELEGATE_SPECIAL_FUNCTION_AMBIGUITY by error<KtExpression> {
             parameter<String>("expectedFunctionSignature")
-            parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
+            parameter<Collection<FirBasedSymbol<*>>>("candidates")
         }
         val DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE by error<KtExpression> {
             parameter<String>("expectedFunctionSignature")
-            parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
+            parameter<Collection<FirBasedSymbol<*>>>("candidates")
         }
         val DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH by error<KtExpression> {
             parameter<String>("delegateFunction")
@@ -1048,4 +1048,4 @@ private inline fun <reified P : PsiElement> AbstractDiagnosticGroup.exposedVisib
     return warning<P>(positioningStrategy, exposedVisibilityDiagnosticInit)
 }
 
-typealias Symbol = AbstractFirBasedSymbol<*>
+typealias Symbol = FirBasedSymbol<*>

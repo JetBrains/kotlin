@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.name.Name
 
 @OptIn(FirImplementationDetail::class)
@@ -18,7 +18,7 @@ open class FirNamedReferenceWithCandidate(
     name: Name,
     val candidate: Candidate
 ) : FirSimpleNamedReference(source, name, candidate.symbol) {
-    override val candidateSymbol: AbstractFirBasedSymbol<*>
+    override val candidateSymbol: FirBasedSymbol<*>
         get() = candidate.symbol
 
     open val isError: Boolean get() = false

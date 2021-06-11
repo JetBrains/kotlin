@@ -63,7 +63,7 @@ val implicitUnitTypeRefType = generatedType("types.impl", "FirImplicitUnitTypeRe
 val resolvePhaseType = type("fir.declarations", "FirResolvePhase")
 val stubReferenceType = generatedType("references.impl", "FirStubReference")
 
-val abstractFirBasedSymbolType = type("fir.symbols", "AbstractFirBasedSymbol")
+val firBasedSymbolType = type("fir.symbols", "FirBasedSymbol")
 val backingFieldSymbolType = type("fir.symbols.impl", "FirBackingFieldSymbol")
 val delegateFieldSymbolType = type("fir.symbols.impl", "FirDelegateFieldSymbol")
 val classSymbolType = type("fir.symbols.impl", "FirClassSymbol")

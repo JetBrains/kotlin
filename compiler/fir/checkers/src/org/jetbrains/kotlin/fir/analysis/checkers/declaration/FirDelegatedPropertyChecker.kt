@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
 import org.jetbrains.kotlin.fir.types.coneType
@@ -65,7 +65,7 @@ object FirDelegatedPropertyChecker : FirPropertyChecker() {
 
                 fun reportInapplicableDiagnostics(
                     candidateApplicability: CandidateApplicability,
-                    candidates: Collection<AbstractFirBasedSymbol<*>>
+                    candidates: Collection<FirBasedSymbol<*>>
                 ) {
                     if (candidateApplicability == CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER) {
                         reporter.reportOn(

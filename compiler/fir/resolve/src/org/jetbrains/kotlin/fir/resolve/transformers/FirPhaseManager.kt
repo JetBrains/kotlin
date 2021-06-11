@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 
 abstract class FirPhaseManager : FirSessionComponent {
     abstract fun ensureResolved(
-        symbol: AbstractFirBasedSymbol<*>,
+        symbol: FirBasedSymbol<*>,
         requiredPhase: FirResolvePhase = FirResolvePhase.DECLARATIONS
     )
 }

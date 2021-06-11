@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticP
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -136,7 +136,7 @@ private object FirToKtConversionCreator {
     )
 
     private val typeMapping: Map<KClass<*>, HLFunctionCallConversion> = mapOf(
-        AbstractFirBasedSymbol::class to HLFunctionCallConversion(
+        FirBasedSymbol::class to HLFunctionCallConversion(
             "firSymbolBuilder.buildSymbol({0}.fir as FirDeclaration)",
             KtSymbol::class.createType(),
             importsToAdd = listOf("org.jetbrains.kotlin.fir.declarations.FirDeclaration")

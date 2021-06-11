@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
@@ -38,7 +38,7 @@ class VariableStorage(private val session: FirSession) {
 
     fun getOrCreateRealVariableWithoutUnwrappingAlias(
         flow: Flow,
-        symbol: AbstractFirBasedSymbol<*>,
+        symbol: FirBasedSymbol<*>,
         fir: FirElement,
         stability: PropertyStability
     ): RealVariable {
@@ -49,7 +49,7 @@ class VariableStorage(private val session: FirSession) {
 
     private fun getOrCreateRealVariable(
         flow: Flow,
-        symbol: AbstractFirBasedSymbol<*>,
+        symbol: FirBasedSymbol<*>,
         fir: FirElement,
         stability: PropertyStability
     ): RealVariable {
@@ -67,7 +67,7 @@ class VariableStorage(private val session: FirSession) {
 
     private fun getIdentifierBySymbol(
         flow: Flow,
-        symbol: AbstractFirBasedSymbol<*>,
+        symbol: FirBasedSymbol<*>,
         fir: FirElement,
     ): Identifier {
         val expression = fir as? FirQualifiedAccess
@@ -109,7 +109,7 @@ class VariableStorage(private val session: FirSession) {
     }
 
     @JvmName("getOrCreateRealVariableOrNull")
-    fun getOrCreateRealVariable(flow: Flow, symbol: AbstractFirBasedSymbol<*>?, fir: FirElement): RealVariable? =
+    fun getOrCreateRealVariable(flow: Flow, symbol: FirBasedSymbol<*>?, fir: FirElement): RealVariable? =
         symbol.getStability(fir)?.let { getOrCreateRealVariable(flow, symbol!!, fir, it) }
 
     fun createSyntheticVariable(fir: FirElement): SyntheticVariable =
@@ -126,14 +126,14 @@ class VariableStorage(private val session: FirSession) {
         }
     }
 
-    fun getRealVariableWithoutUnwrappingAlias(symbol: AbstractFirBasedSymbol<*>?, fir: FirElement, flow: Flow): RealVariable? {
+    fun getRealVariableWithoutUnwrappingAlias(symbol: FirBasedSymbol<*>?, fir: FirElement, flow: Flow): RealVariable? {
         val realFir = fir.unwrapElement()
         return symbol.takeIf { it.getStability(realFir) != null }?.let {
             _realVariables[getIdentifierBySymbol(flow, it, realFir.unwrapElement())]
         }
     }
 
-    fun getRealVariable(symbol: AbstractFirBasedSymbol<*>?, fir: FirElement, flow: Flow): RealVariable? {
+    fun getRealVariable(symbol: FirBasedSymbol<*>?, fir: FirElement, flow: Flow): RealVariable? {
         return getRealVariableWithoutUnwrappingAlias(symbol, fir, flow)?.let { flow.unwrapVariable(it) }
     }
 
@@ -152,7 +152,7 @@ class VariableStorage(private val session: FirSession) {
         }
     }
 
-    fun removeRealVariable(symbol: AbstractFirBasedSymbol<*>) {
+    fun removeRealVariable(symbol: FirBasedSymbol<*>) {
         _realVariables.remove(Identifier(symbol, null, null))
     }
 
@@ -162,7 +162,7 @@ class VariableStorage(private val session: FirSession) {
     }
 
     @OptIn(ExperimentalContracts::class)
-    fun AbstractFirBasedSymbol<*>?.getStability(originalFir: FirElement): PropertyStability? {
+    fun FirBasedSymbol<*>?.getStability(originalFir: FirElement): PropertyStability? {
         contract {
             returnsNotNull() implies (this@getStability != null)
         }

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -110,7 +110,7 @@ object FirSupertypesChecker : FirClassChecker() {
     }
 
     private fun checkClassCannotBeExtendedDirectly(
-        symbol: AbstractFirBasedSymbol<*>?,
+        symbol: FirBasedSymbol<*>?,
         reporter: DiagnosticReporter,
         superTypeRef: FirTypeRef,
         context: CheckerContext
@@ -139,7 +139,7 @@ object FirSupertypesChecker : FirClassChecker() {
     }
 
     private fun checkExpandedTypeCannotBeInherited(
-        symbol: AbstractFirBasedSymbol<*>?,
+        symbol: FirBasedSymbol<*>?,
         fullyExpandedType: ConeKotlinType,
         reporter: DiagnosticReporter,
         superTypeRef: FirTypeRef,

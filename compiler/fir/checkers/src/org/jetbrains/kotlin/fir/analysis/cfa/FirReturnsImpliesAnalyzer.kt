@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.BlockExitNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.JumpNode
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
@@ -216,7 +216,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
     private val CheckerContext.containingProperty: FirProperty?
         get() = (containingDeclarations.asReversed().firstOrNull { it is FirProperty } as? FirProperty)
 
-    private fun FirFunction<*>.getParameterType(symbol: AbstractFirBasedSymbol<*>, context: CheckerContext): ConeKotlinType? {
+    private fun FirFunction<*>.getParameterType(symbol: FirBasedSymbol<*>, context: CheckerContext): ConeKotlinType? {
         val typeRef = if (this.symbol == symbol) {
             if (symbol is FirPropertyAccessorSymbol) {
                 context.containingProperty?.receiverTypeRef
@@ -229,7 +229,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
         return typeRef?.coneType
     }
 
-    private fun FirFunction<*>.getParameterSymbol(index: Int, context: CheckerContext): AbstractFirBasedSymbol<*> {
+    private fun FirFunction<*>.getParameterSymbol(index: Int, context: CheckerContext): FirBasedSymbol<*> {
         return if (index == -1) {
             if (symbol !is FirPropertyAccessorSymbol) {
                 symbol

@@ -14,13 +14,13 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.getOwnerId
 import org.jetbrains.kotlin.fir.resolve.calls.ReceiverValue
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 
 @NoMutableState
 object FirJavaVisibilityChecker : FirVisibilityChecker() {
     override fun platformVisibilityCheck(
         declarationVisibility: Visibility,
-        symbol: AbstractFirBasedSymbol<*>,
+        symbol: FirBasedSymbol<*>,
         useSiteFile: FirFile,
         containingDeclarations: List<FirDeclaration>,
         dispatchReceiver: ReceiverValue?,

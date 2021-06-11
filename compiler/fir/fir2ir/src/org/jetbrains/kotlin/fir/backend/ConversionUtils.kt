@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.originalConstructorIfTypeAlias
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.AccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -140,7 +140,7 @@ fun FirClassifierSymbol<*>.toSymbol(
     }
 }
 
-private fun AbstractFirBasedSymbol<*>.toSymbolForCall(
+private fun FirBasedSymbol<*>.toSymbolForCall(
     session: FirSession,
     classifierStorage: Fir2IrClassifierStorage,
     declarationStorage: Fir2IrDeclarationStorage,

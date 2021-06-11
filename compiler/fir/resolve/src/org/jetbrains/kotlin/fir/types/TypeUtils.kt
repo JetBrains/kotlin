@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLookupTagWithFixedSymbol
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -188,7 +188,7 @@ fun ConeKotlinType.isUnsafeVarianceType(session: FirSession): Boolean {
     return type.attributes.unsafeVarianceType != null
 }
 
-fun ConeKotlinType.toSymbol(session: FirSession): AbstractFirBasedSymbol<*>? {
+fun ConeKotlinType.toSymbol(session: FirSession): FirBasedSymbol<*>? {
     return (this as? ConeLookupTagBasedType)?.lookupTag?.toSymbol(session)
 }
 

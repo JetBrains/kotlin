@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.impl.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.calls.CallableReferenceMappedArguments
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.name.Name
 class FirResolvedCallableReferenceBuilder {
     var source: FirSourceElement? = null
     lateinit var name: Name
-    lateinit var resolvedSymbol: AbstractFirBasedSymbol<*>
+    lateinit var resolvedSymbol: FirBasedSymbol<*>
     val inferredTypeArguments: MutableList<ConeKotlinType> = mutableListOf()
     lateinit var mappedArguments: CallableReferenceMappedArguments
 

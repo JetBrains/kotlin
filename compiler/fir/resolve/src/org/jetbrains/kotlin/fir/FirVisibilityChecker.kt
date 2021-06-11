@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -32,7 +32,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
     object Default : FirVisibilityChecker() {
         override fun platformVisibilityCheck(
             declarationVisibility: Visibility,
-            symbol: AbstractFirBasedSymbol<*>,
+            symbol: FirBasedSymbol<*>,
             useSiteFile: FirFile,
             containingDeclarations: List<FirDeclaration>,
             dispatchReceiver: ReceiverValue?,
@@ -122,7 +122,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
 
     protected abstract fun platformVisibilityCheck(
         declarationVisibility: Visibility,
-        symbol: AbstractFirBasedSymbol<*>,
+        symbol: FirBasedSymbol<*>,
         useSiteFile: FirFile,
         containingDeclarations: List<FirDeclaration>,
         dispatchReceiver: ReceiverValue?,
@@ -210,7 +210,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         return false
     }
 
-    protected fun AbstractFirBasedSymbol<*>.packageFqName(): FqName {
+    protected fun FirBasedSymbol<*>.packageFqName(): FqName {
         return when (this) {
             is FirClassLikeSymbol<*> -> classId.packageFqName
             is FirCallableSymbol<*> -> callableId.packageName
@@ -222,7 +222,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
 val FirSession.moduleVisibilityChecker: FirModuleVisibilityChecker? by FirSession.nullableSessionComponentAccessor()
 val FirSession.visibilityChecker: FirVisibilityChecker by FirSession.sessionComponentAccessor()
 
-fun AbstractFirBasedSymbol<*>.getOwnerId(): ClassId? {
+fun FirBasedSymbol<*>.getOwnerId(): ClassId? {
     return when (this) {
         is FirClassLikeSymbol<*> -> {
             val ownerId = classId.outerClassId

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.types.render
 object FirDiagnosticRenderers {
     val NULLABLE_STRING = Renderer<String?> { it ?: "null" }
 
-    val SYMBOL = Renderer { symbol: AbstractFirBasedSymbol<*> ->
+    val SYMBOL = Renderer { symbol: FirBasedSymbol<*> ->
         when (symbol) {
             is FirClassLikeSymbol<*> -> symbol.classId.asString()
             is FirCallableSymbol<*> -> symbol.callableId.toString()
@@ -32,7 +32,7 @@ object FirDiagnosticRenderers {
         }
     }
 
-    val SYMBOLS = Renderer { symbols: Collection<AbstractFirBasedSymbol<*>> ->
+    val SYMBOLS = Renderer { symbols: Collection<FirBasedSymbol<*>> ->
         symbols.joinToString(prefix = "[", postfix = "]", separator = ", ", limit = 3, truncated = "...") { symbol ->
             SYMBOL.render(symbol)
         }
@@ -97,7 +97,7 @@ object FirDiagnosticRenderers {
         element.render(mode = FirRenderer.RenderMode.WithFqNamesExceptAnnotationAndBody)
     }
 
-    val AMBIGUOUS_CALLS = Renderer { candidates: Collection<AbstractFirBasedSymbol<*>> ->
+    val AMBIGUOUS_CALLS = Renderer { candidates: Collection<FirBasedSymbol<*>> ->
         candidates.joinToString(separator = "\n", prefix = "\n") { symbol ->
             SYMBOL.render(symbol)
         }

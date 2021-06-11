@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.dfa.*
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.isNothing
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
@@ -67,7 +67,7 @@ class ControlFlowGraphBuilder {
     private val exitTargetsForReturn: SymbolBasedNodeStorage<FirFunction<*>, FunctionExitNode> = SymbolBasedNodeStorage()
     private val exitTargetsForTry: Stack<CFGNode<*>> = stackOf()
     private val exitsOfAnonymousFunctions: MutableMap<FirFunctionSymbol<*>, FunctionExitNode> = mutableMapOf()
-    private val enterToLocalClassesMembers: MutableMap<AbstractFirBasedSymbol<*>, CFGNode<*>?> = mutableMapOf()
+    private val enterToLocalClassesMembers: MutableMap<FirBasedSymbol<*>, CFGNode<*>?> = mutableMapOf()
 
     private val postponedLambdas: MutableSet<FirFunctionSymbol<*>> = mutableSetOf()
     private val entersToPostponedAnonymousFunctions: MutableMap<FirFunctionSymbol<*>, PostponedLambdaEnterNode> = mutableMapOf()

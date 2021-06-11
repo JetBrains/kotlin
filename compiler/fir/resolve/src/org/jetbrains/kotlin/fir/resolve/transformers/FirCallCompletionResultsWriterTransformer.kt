@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.remapArguments
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.writeResultType
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperatorCall
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -225,7 +225,7 @@ class FirCallCompletionResultsWriterTransformer(
         return result
     }
 
-    private val AbstractFirBasedSymbol<*>.isArrayConstructorWithLambda: Boolean
+    private val FirBasedSymbol<*>.isArrayConstructorWithLambda: Boolean
         get() {
             val constructor = (this as? FirConstructorSymbol)?.fir ?: return false
             if (constructor.valueParameters.size != 2) return false

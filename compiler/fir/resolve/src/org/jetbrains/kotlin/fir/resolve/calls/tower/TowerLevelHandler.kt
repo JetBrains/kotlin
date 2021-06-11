@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls.tower
 
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 
@@ -71,9 +70,9 @@ private class TowerScopeLevelProcessor(
     val resultCollector: CandidateCollector,
     val candidateFactory: CandidateFactory,
     val group: TowerGroup
-) : TowerScopeLevel.TowerScopeLevelProcessor<AbstractFirBasedSymbol<*>> {
+) : TowerScopeLevel.TowerScopeLevelProcessor<FirBasedSymbol<*>> {
     override fun consumeCandidate(
-        symbol: AbstractFirBasedSymbol<*>,
+        symbol: FirBasedSymbol<*>,
         dispatchReceiverValue: ReceiverValue?,
         extensionReceiverValue: ReceiverValue?,
         scope: FirScope,

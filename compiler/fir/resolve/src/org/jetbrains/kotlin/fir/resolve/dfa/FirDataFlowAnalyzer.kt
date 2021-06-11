@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -175,7 +175,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
          * DataFlowAnalyzer holds variables only for declarations that have some smartcast (or can have)
          * If there is no useful information there is no data flow variable also
          */
-        val symbol: AbstractFirBasedSymbol<*> = qualifiedAccessExpression.symbol ?: return null
+        val symbol: FirBasedSymbol<*> = qualifiedAccessExpression.symbol ?: return null
         val flow = graphBuilder.lastNode.flow
         var variable = variableStorage.getRealVariableWithoutUnwrappingAlias(symbol, qualifiedAccessExpression, flow) ?: return null
         val stability = variable.stability

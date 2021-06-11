@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.scopes.PACKAGE_MEMBER
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
@@ -28,7 +28,7 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
 
     private class DeclarationInspector : FirDeclarationInspector() {
 
-        val declarationConflictingSymbols: HashMap<FirDeclaration, SmartSet<AbstractFirBasedSymbol<*>>> = hashMapOf()
+        val declarationConflictingSymbols: HashMap<FirDeclaration, SmartSet<FirBasedSymbol<*>>> = hashMapOf()
 
         override fun collectNonFunctionDeclaration(key: String, declaration: FirDeclaration): MutableList<FirDeclaration> =
             super.collectNonFunctionDeclaration(key, declaration).also {
@@ -41,7 +41,7 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
             }
 
         private fun collectLocalConflicts(declaration: FirDeclaration, conflicting: List<FirDeclaration>) {
-            val localConflicts = SmartSet.create<AbstractFirBasedSymbol<*>>()
+            val localConflicts = SmartSet.create<FirBasedSymbol<*>>()
             for (otherDeclaration in conflicting) {
                 if (otherDeclaration is FirSymbolOwner<*>) {
                     if (otherDeclaration != declaration && declaration is FirSymbolOwner<*> &&
@@ -75,7 +75,7 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
             declaration: FirDeclaration,
             declarationPresentation: String,
             containingFile: FirFile,
-            conflictingSymbol: AbstractFirBasedSymbol<*>,
+            conflictingSymbol: FirBasedSymbol<*>,
             conflictingPresentation: String?,
             conflictingFile: FirFile?,
             session: FirSession

@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.inference.PostponedResolvedAtom
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariable
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
@@ -77,7 +77,7 @@ data class CallInfo(
 }
 
 class Candidate(
-    val symbol: AbstractFirBasedSymbol<*>,
+    val symbol: FirBasedSymbol<*>,
     val dispatchReceiverValue: ReceiverValue?,
     val extensionReceiverValue: ReceiverValue?,
     val explicitReceiverKind: ExplicitReceiverKind,

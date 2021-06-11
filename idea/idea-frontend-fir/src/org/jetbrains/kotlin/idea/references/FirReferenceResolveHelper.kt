@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
 import org.jetbrains.kotlin.fir.scopes.impl.FirExplicitSimpleImportingScope
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.*
@@ -52,7 +51,7 @@ internal object FirReferenceResolveHelper {
     fun FirResolvedTypeRef.toTargetSymbol(session: FirSession, symbolBuilder: KtSymbolByFirBuilder): KtSymbol? {
 
         val type = getDeclaredType() as? ConeLookupTagBasedType
-        val resolvedSymbol = type?.lookupTag?.toSymbol(session) as? AbstractFirBasedSymbol<*>
+        val resolvedSymbol = type?.lookupTag?.toSymbol(session) as? FirBasedSymbol<*>
 
         val symbol = resolvedSymbol ?: run {
             val diagnostic = (this as? FirErrorTypeRef)?.diagnostic

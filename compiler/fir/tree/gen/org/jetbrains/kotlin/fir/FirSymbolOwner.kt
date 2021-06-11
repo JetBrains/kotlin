@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 interface FirSymbolOwner<E> : FirElement where E : FirSymbolOwner<E>, E : FirDeclaration {
     override val source: FirSourceElement?
-    val symbol: AbstractFirBasedSymbol<E>
+    val symbol: FirBasedSymbol<E>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitSymbolOwner(this, data)
 

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.impl.FirImplicitThisReference
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirImplicitThisReferenceBuilder {
-    var boundSymbol: AbstractFirBasedSymbol<*>? = null
+    var boundSymbol: FirBasedSymbol<*>? = null
 
     fun build(): FirThisReference {
         return FirImplicitThisReference(

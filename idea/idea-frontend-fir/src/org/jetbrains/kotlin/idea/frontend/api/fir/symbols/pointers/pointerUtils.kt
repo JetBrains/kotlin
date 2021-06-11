@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.idea.fir.low.level.api.ideSessionComponents
 import org.jetbrains.kotlin.ir.util.IdSignature
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 internal inline fun <reified D : FirDeclaration> FirScope.findDeclarationWithSignature(
     signature: IdSignature,
     firSession: FirSession,
-    processor: FirScope.((AbstractFirBasedSymbol<*>) -> Unit) -> Unit
+    processor: FirScope.((FirBasedSymbol<*>) -> Unit) -> Unit
 ): D? {
     val signatureComposer = firSession.ideSessionComponents.signatureComposer
     var foundSymbol: D? = null

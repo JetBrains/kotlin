@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.fir.symbols.impl
 
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 
-class FirAnonymousInitializerSymbol : AbstractFirBasedSymbol<FirAnonymousInitializer>() {
+class FirAnonymousInitializerSymbol : FirBasedSymbol<FirAnonymousInitializer>() {
     override fun toString(): String = "${this::class.simpleName} <init>"
 }

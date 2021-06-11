@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -18,7 +18,7 @@ import kotlin.contracts.contract
 // --------------------------------------- Variables ---------------------------------------
 
 data class Identifier(
-    val symbol: AbstractFirBasedSymbol<*>,
+    val symbol: FirBasedSymbol<*>,
     val dispatchReceiver: DataFlowVariable?,
     val extensionReceiver: DataFlowVariable?
 ) {

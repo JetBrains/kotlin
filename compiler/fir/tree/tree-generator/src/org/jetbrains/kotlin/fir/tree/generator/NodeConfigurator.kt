@@ -48,7 +48,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         symbolOwner.configure {
             withArg("E", symbolOwner, declaration)
-            +symbolWithPackage("fir.symbols", "AbstractFirBasedSymbol", "E")
+            +symbolWithPackage("fir.symbols", "FirBasedSymbol", "E")
         }
 
         typeParameterRef.configure {
@@ -560,11 +560,11 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         namedReference.configure {
             +name
-            +field("candidateSymbol", abstractFirBasedSymbolType, "*", nullable = true)
+            +field("candidateSymbol", firBasedSymbolType, "*", nullable = true)
         }
 
         resolvedNamedReference.configure {
-            +field("resolvedSymbol", abstractFirBasedSymbolType, "*")
+            +field("resolvedSymbol", firBasedSymbolType, "*")
         }
 
         resolvedCallableReference.configure {
@@ -587,7 +587,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         thisReference.configure {
             +stringField("labelName", nullable = true)
-            +field("boundSymbol", abstractFirBasedSymbolType, "*", nullable = true, withReplace = true)
+            +field("boundSymbol", firBasedSymbolType, "*", nullable = true, withReplace = true)
         }
 
         typeRef.configure {

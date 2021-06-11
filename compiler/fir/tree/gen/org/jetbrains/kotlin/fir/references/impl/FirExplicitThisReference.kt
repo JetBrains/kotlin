@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.references.impl
 
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.references.FirThisReference
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -19,7 +19,7 @@ internal class FirExplicitThisReference(
     override val source: FirSourceElement?,
     override val labelName: String?,
 ) : FirThisReference() {
-    override var boundSymbol: AbstractFirBasedSymbol<*>? = null
+    override var boundSymbol: FirBasedSymbol<*>? = null
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 
@@ -27,7 +27,7 @@ internal class FirExplicitThisReference(
         return this
     }
 
-    override fun replaceBoundSymbol(newBoundSymbol: AbstractFirBasedSymbol<*>?) {
+    override fun replaceBoundSymbol(newBoundSymbol: FirBasedSymbol<*>?) {
         boundSymbol = newBoundSymbol
     }
 }

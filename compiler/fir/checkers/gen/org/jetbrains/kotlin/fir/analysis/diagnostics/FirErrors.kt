@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -108,7 +108,7 @@ object FirErrors {
     val VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER by warning1<KtParameter, KtKeywordToken>(SourceElementPositioningStrategies.VAL_OR_VAR_NODE)
 
     // Unresolved
-    val INVISIBLE_REFERENCE by error1<PsiElement, AbstractFirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val INVISIBLE_REFERENCE by error1<PsiElement, FirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val UNRESOLVED_REFERENCE by error1<PsiElement, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val UNRESOLVED_LABEL by error0<PsiElement>()
     val DESERIALIZATION_ERROR by error0<PsiElement>()
@@ -257,8 +257,8 @@ object FirErrors {
     val VALUE_CLASS_CANNOT_BE_CLONEABLE by error0<KtDeclaration>(SourceElementPositioningStrategies.INLINE_OR_VALUE_MODIFIER)
 
     // Applicability
-    val NONE_APPLICABLE by error1<PsiElement, Collection<AbstractFirBasedSymbol<*>>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
-    val INAPPLICABLE_CANDIDATE by error1<PsiElement, AbstractFirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val NONE_APPLICABLE by error1<PsiElement, Collection<FirBasedSymbol<*>>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val INAPPLICABLE_CANDIDATE by error1<PsiElement, FirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val TYPE_MISMATCH by error2<PsiElement, ConeKotlinType, ConeKotlinType>()
     val THROWABLE_TYPE_MISMATCH by error1<PsiElement, ConeKotlinType>()
     val CONDITION_TYPE_MISMATCH by error1<PsiElement, ConeKotlinType>()
@@ -278,11 +278,11 @@ object FirErrors {
     val NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER by error1<KtElement, String>()
 
     // Ambiguity
-    val OVERLOAD_RESOLUTION_AMBIGUITY by error1<PsiElement, Collection<AbstractFirBasedSymbol<*>>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
-    val ASSIGN_OPERATOR_AMBIGUITY by error1<PsiElement, Collection<AbstractFirBasedSymbol<*>>>()
-    val ITERATOR_AMBIGUITY by error1<PsiElement, Collection<AbstractFirBasedSymbol<*>>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
-    val HAS_NEXT_FUNCTION_AMBIGUITY by error1<PsiElement, Collection<AbstractFirBasedSymbol<*>>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
-    val NEXT_AMBIGUITY by error1<PsiElement, Collection<AbstractFirBasedSymbol<*>>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val OVERLOAD_RESOLUTION_AMBIGUITY by error1<PsiElement, Collection<FirBasedSymbol<*>>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val ASSIGN_OPERATOR_AMBIGUITY by error1<PsiElement, Collection<FirBasedSymbol<*>>>()
+    val ITERATOR_AMBIGUITY by error1<PsiElement, Collection<FirBasedSymbol<*>>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val HAS_NEXT_FUNCTION_AMBIGUITY by error1<PsiElement, Collection<FirBasedSymbol<*>>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val NEXT_AMBIGUITY by error1<PsiElement, Collection<FirBasedSymbol<*>>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
 
     // Types & type parameters
     val RECURSION_IN_IMPLICIT_TYPES by error0<PsiElement>()
@@ -360,8 +360,8 @@ object FirErrors {
 
     // Redeclarations
     val MANY_COMPANION_OBJECTS by error0<KtObjectDeclaration>(SourceElementPositioningStrategies.COMPANION_OBJECT)
-    val CONFLICTING_OVERLOADS by error1<PsiElement, Collection<AbstractFirBasedSymbol<*>>>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
-    val REDECLARATION by error1<PsiElement, Collection<AbstractFirBasedSymbol<*>>>()
+    val CONFLICTING_OVERLOADS by error1<PsiElement, Collection<FirBasedSymbol<*>>>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
+    val REDECLARATION by error1<PsiElement, Collection<FirBasedSymbol<*>>>()
     val METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE by error0<PsiElement>()
 
     // Invalid local declarations
@@ -435,7 +435,7 @@ object FirErrors {
     // Destructuring declaration
     val INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION by error0<KtDestructuringDeclaration>()
     val COMPONENT_FUNCTION_MISSING by error2<PsiElement, Name, ConeKotlinType>()
-    val COMPONENT_FUNCTION_AMBIGUITY by error2<PsiElement, Name, Collection<AbstractFirBasedSymbol<*>>>()
+    val COMPONENT_FUNCTION_AMBIGUITY by error2<PsiElement, Name, Collection<FirBasedSymbol<*>>>()
     val COMPONENT_FUNCTION_ON_NULLABLE by error1<KtExpression, Name>()
     val COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH by error3<KtExpression, Name, ConeKotlinType, ConeKotlinType>()
 
@@ -449,8 +449,8 @@ object FirErrors {
     val VAL_REASSIGNMENT_VIA_BACKING_FIELD_ERROR by error1<KtExpression, FirPropertySymbol>()
     val CAPTURED_VAL_INITIALIZATION by error1<KtExpression, FirPropertySymbol>()
     val CAPTURED_MEMBER_VAL_INITIALIZATION by error1<KtExpression, FirPropertySymbol>()
-    val WRONG_INVOCATION_KIND by warning3<PsiElement, AbstractFirBasedSymbol<*>, EventOccurrencesRange, EventOccurrencesRange>()
-    val LEAKED_IN_PLACE_LAMBDA by error1<PsiElement, AbstractFirBasedSymbol<*>>()
+    val WRONG_INVOCATION_KIND by warning3<PsiElement, FirBasedSymbol<*>, EventOccurrencesRange, EventOccurrencesRange>()
+    val LEAKED_IN_PLACE_LAMBDA by error1<PsiElement, FirBasedSymbol<*>>()
     val WRONG_IMPLIES_CONDITION by warning0<PsiElement>()
 
     // Nullability
@@ -491,11 +491,11 @@ object FirErrors {
     val ITERATOR_MISSING by error0<KtExpression>()
     val HAS_NEXT_MISSING by error0<KtExpression>()
     val NEXT_MISSING by error0<KtExpression>()
-    val HAS_NEXT_FUNCTION_NONE_APPLICABLE by error1<KtExpression, Collection<AbstractFirBasedSymbol<*>>>()
-    val NEXT_NONE_APPLICABLE by error1<KtExpression, Collection<AbstractFirBasedSymbol<*>>>()
+    val HAS_NEXT_FUNCTION_NONE_APPLICABLE by error1<KtExpression, Collection<FirBasedSymbol<*>>>()
+    val NEXT_NONE_APPLICABLE by error1<KtExpression, Collection<FirBasedSymbol<*>>>()
     val DELEGATE_SPECIAL_FUNCTION_MISSING by error3<KtExpression, String, ConeKotlinType, String>()
-    val DELEGATE_SPECIAL_FUNCTION_AMBIGUITY by error2<KtExpression, String, Collection<AbstractFirBasedSymbol<*>>>()
-    val DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE by error2<KtExpression, String, Collection<AbstractFirBasedSymbol<*>>>()
+    val DELEGATE_SPECIAL_FUNCTION_AMBIGUITY by error2<KtExpression, String, Collection<FirBasedSymbol<*>>>()
+    val DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE by error2<KtExpression, String, Collection<FirBasedSymbol<*>>>()
     val DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH by error3<KtExpression, String, ConeKotlinType, ConeKotlinType>()
     val UNDERSCORE_IS_RESERVED by error0<KtElement>(SourceElementPositioningStrategies.RESERVED_UNDERSCORE)
     val UNDERSCORE_USAGE_WITHOUT_BACKTICKS by error0<KtElement>(SourceElementPositioningStrategies.RESERVED_UNDERSCORE)
@@ -531,15 +531,15 @@ object FirErrors {
     val RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY by error0<KtReturnExpression>(SourceElementPositioningStrategies.RETURN_WITH_LABEL)
 
     // Inline
-    val USAGE_IS_NOT_INLINABLE by error1<KtElement, AbstractFirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
-    val NON_LOCAL_RETURN_NOT_ALLOWED by error1<KtElement, AbstractFirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
-    val RECURSION_IN_INLINE by error1<KtElement, AbstractFirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
-    val NON_PUBLIC_CALL_FROM_PUBLIC_INLINE by error2<KtElement, AbstractFirBasedSymbol<*>, AbstractFirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
-    val PROTECTED_CONSTRUCTOR_CALL_FROM_PUBLIC_INLINE by error2<KtElement, AbstractFirBasedSymbol<*>, AbstractFirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
-    val PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR by error2<KtElement, AbstractFirBasedSymbol<*>, AbstractFirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
-    val PROTECTED_CALL_FROM_PUBLIC_INLINE by warning2<KtElement, AbstractFirBasedSymbol<*>, AbstractFirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
-    val PRIVATE_CLASS_MEMBER_FROM_INLINE by error2<KtElement, AbstractFirBasedSymbol<*>, AbstractFirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
-    val SUPER_CALL_FROM_PUBLIC_INLINE by warning1<KtElement, AbstractFirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val USAGE_IS_NOT_INLINABLE by error1<KtElement, FirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val NON_LOCAL_RETURN_NOT_ALLOWED by error1<KtElement, FirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val RECURSION_IN_INLINE by error1<KtElement, FirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val NON_PUBLIC_CALL_FROM_PUBLIC_INLINE by error2<KtElement, FirBasedSymbol<*>, FirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val PROTECTED_CONSTRUCTOR_CALL_FROM_PUBLIC_INLINE by error2<KtElement, FirBasedSymbol<*>, FirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR by error2<KtElement, FirBasedSymbol<*>, FirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val PROTECTED_CALL_FROM_PUBLIC_INLINE by warning2<KtElement, FirBasedSymbol<*>, FirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val PRIVATE_CLASS_MEMBER_FROM_INLINE by error2<KtElement, FirBasedSymbol<*>, FirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val SUPER_CALL_FROM_PUBLIC_INLINE by warning1<KtElement, FirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
 
     // Imports
     val CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON by error1<KtImportDirective, Name>(SourceElementPositioningStrategies.IMPORT_LAST_NAME)

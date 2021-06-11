@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectData
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -34,19 +34,19 @@ enum class ProcessResult {
 
 abstract class TowerScopeLevel {
 
-    sealed class Token<out T : AbstractFirBasedSymbol<*>> {
+    sealed class Token<out T : FirBasedSymbol<*>> {
         object Properties : Token<FirVariableSymbol<*>>()
         object Functions : Token<FirFunctionSymbol<*>>()
-        object Objects : Token<AbstractFirBasedSymbol<*>>()
+        object Objects : Token<FirBasedSymbol<*>>()
     }
 
     abstract fun processFunctionsByName(info: CallInfo, processor: TowerScopeLevelProcessor<FirFunctionSymbol<*>>): ProcessResult
 
     abstract fun processPropertiesByName(info: CallInfo, processor: TowerScopeLevelProcessor<FirVariableSymbol<*>>): ProcessResult
 
-    abstract fun processObjectsByName(info: CallInfo, processor: TowerScopeLevelProcessor<AbstractFirBasedSymbol<*>>): ProcessResult
+    abstract fun processObjectsByName(info: CallInfo, processor: TowerScopeLevelProcessor<FirBasedSymbol<*>>): ProcessResult
 
-    interface TowerScopeLevelProcessor<in T : AbstractFirBasedSymbol<*>> {
+    interface TowerScopeLevelProcessor<in T : FirBasedSymbol<*>> {
         fun consumeCandidate(
             symbol: T,
             dispatchReceiverValue: ReceiverValue?,
@@ -79,7 +79,7 @@ class MemberScopeTowerLevel(
     private val implicitExtensionInvokeMode: Boolean = false,
     private val scopeSession: ScopeSession
 ) : SessionBasedTowerLevel(session) {
-    private fun <T : AbstractFirBasedSymbol<*>> processMembers(
+    private fun <T : FirBasedSymbol<*>> processMembers(
         output: TowerScopeLevelProcessor<T>,
         processScopeMembers: FirScope.(processor: (T) -> Unit) -> Unit
     ): ProcessResult {
@@ -169,7 +169,7 @@ class MemberScopeTowerLevel(
 
     override fun processObjectsByName(
         info: CallInfo,
-        processor: TowerScopeLevelProcessor<AbstractFirBasedSymbol<*>>
+        processor: TowerScopeLevelProcessor<FirBasedSymbol<*>>
     ): ProcessResult {
         return ProcessResult.FOUND
     }
@@ -273,7 +273,7 @@ class ScopeTowerLevel(
         return false
     }
 
-    private fun <T : AbstractFirBasedSymbol<*>> consumeCallableCandidate(
+    private fun <T : FirBasedSymbol<*>> consumeCallableCandidate(
         candidate: FirCallableSymbol<*>,
         processor: TowerScopeLevelProcessor<T>
     ) {
@@ -326,7 +326,7 @@ class ScopeTowerLevel(
 
     override fun processObjectsByName(
         info: CallInfo,
-        processor: TowerScopeLevelProcessor<AbstractFirBasedSymbol<*>>
+        processor: TowerScopeLevelProcessor<FirBasedSymbol<*>>
     ): ProcessResult {
         var empty = true
         session.lookupTracker?.recordCallLookup(info, scope.scopeOwnerLookupNames)

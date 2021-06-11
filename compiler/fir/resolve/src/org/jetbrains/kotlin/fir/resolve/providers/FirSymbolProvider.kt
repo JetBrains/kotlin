@@ -75,7 +75,7 @@ fun FirSymbolProvider.getClassDeclaredPropertySymbols(classId: ClassId, name: Na
     return classMemberScope?.getProperties(name).orEmpty()
 }
 
-inline fun <reified T : AbstractFirBasedSymbol<*>> FirSymbolProvider.getSymbolByTypeRef(typeRef: FirTypeRef): T? {
+inline fun <reified T : FirBasedSymbol<*>> FirSymbolProvider.getSymbolByTypeRef(typeRef: FirTypeRef): T? {
     val lookupTag = typeRef.coneTypeSafe<ConeLookupTagBasedType>()?.lookupTag ?: return null
     return getSymbolByLookupTag(lookupTag) as? T
 }

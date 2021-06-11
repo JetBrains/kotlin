@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateErr
 import org.jetbrains.kotlin.fir.resolve.directExpansionType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -1631,7 +1630,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         }
     }
 
-    private fun FlowContent.symbolAnchor(symbol: AbstractFirBasedSymbol<*>, body: FlowContent.() -> Unit) {
+    private fun FlowContent.symbolAnchor(symbol: FirBasedSymbol<*>, body: FlowContent.() -> Unit) {
         span(classes = "declaration") {
             id = linkResolver.symbolSignature(symbol)
             body()

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataRegistry
 import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
@@ -49,5 +49,5 @@ var FirDeclarationAttributes.fakeOverrideSubstitution: FakeOverrideSubstitution?
 
 data class FakeOverrideSubstitution(
     val substitutor: ConeSubstitutor,
-    val baseSymbol: AbstractFirBasedSymbol<*>
+    val baseSymbol: FirBasedSymbol<*>
 )
