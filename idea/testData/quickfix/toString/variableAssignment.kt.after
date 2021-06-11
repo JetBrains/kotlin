@@ -1,0 +1,6 @@
+// "Add 'toString()' call" "true"
+
+fun test() {
+    var s: String = ""
+    s = (1 + 2 * 3).toString()<caret>
+}

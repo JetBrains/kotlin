@@ -1183,6 +1183,7 @@ fun main(args: Array<String>) {
                 model("quickfix/wrapWithSafeLetCall", pattern = pattern, filenameStartsLowerCase = true)
                 model("quickfix/typeMismatch/componentFunctionReturnTypeMismatch", pattern = pattern, filenameStartsLowerCase = true)
                 model("quickfix/typeMismatch/typeMismatchOnReturnedExpression", pattern = pattern, filenameStartsLowerCase = true)
+                model("quickfix/toString", pattern = pattern, filenameStartsLowerCase = true)
             }
 
             testClass<AbstractHighLevelQuickFixMultiFileTest> {
