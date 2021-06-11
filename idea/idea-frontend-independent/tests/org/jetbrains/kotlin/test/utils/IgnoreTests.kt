@@ -9,6 +9,7 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KtAssert
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.slf4j.LoggerFactory
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
@@ -98,7 +99,11 @@ object IgnoreTests {
         } catch (e: Throwable) {
             if (testIsEnabled) {
                 if (directive is EnableOrDisableTestDirective.Disable) {
-                    handleTestWithWrongDirective(testPasses = false, testFile, directive, directivePosition, additionalFiles)
+                    try {
+                        handleTestWithWrongDirective(testPasses = false, testFile, directive, directivePosition, additionalFiles)
+                    } catch (e: AssertionError) {
+                        LoggerFactory.getLogger("test").info(e.message)
+                    }
                 }
                 throw e
             }
