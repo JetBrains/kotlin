@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnosticWithPsi
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.diagnostics.KT_DIAGNOSTIC_CONVERTER
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
+import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirType
+import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 
 internal interface KtFirAnalysisSessionComponent {
     val analysisSession: KtFirAnalysisSession
@@ -41,6 +43,12 @@ internal interface KtFirAnalysisSessionComponent {
         check(firDiagnostic is FirPsiDiagnostic<*>)
         return firDiagnostic.asKtDiagnostic()
     }
+
+    val KtType.coneType: ConeKotlinType
+        get() {
+            require(this is KtFirType)
+            return coneType
+        }
 
     fun createTypeCheckerContext() = ConeTypeCheckerContext(
         isErrorTypeEqualsToAnything = true,

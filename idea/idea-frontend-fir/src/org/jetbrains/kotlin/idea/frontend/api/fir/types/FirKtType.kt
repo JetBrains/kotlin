@@ -20,10 +20,8 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
-internal interface KtFirType : KtType, ValidityTokenOwner {
+internal interface KtFirType : ValidityTokenOwner {
     val coneType: ConeKotlinType
-
-    override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
 }
 
 internal class KtFirUsualClassType(
@@ -45,10 +43,7 @@ internal class KtFirUsualClassType(
     }
 
     override val nullability: KtTypeNullability get() = withValidityAssertion { KtTypeNullability.create(coneType.isNullable) }
-
-    override fun asString(): String = withValidityAssertion {
-        coneType.render() //todo
-    }
+    override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
 }
 
 internal class KtFirFunctionalType(
@@ -93,18 +88,17 @@ internal class KtFirFunctionalType(
     override val returnType: KtType
         get() = withValidityAssertion { (typeArguments.last() as KtTypeArgumentWithVariance).type }
 
-    override fun asString(): String = withValidityAssertion {
-        coneType.render() //todo
-    }
+    override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
 }
 
-internal class KtFirErrorType(
+internal class KtFirClassErrorType(
     coneType: ConeClassErrorType,
     override val token: ValidityToken,
-) : KtErrorType(), KtFirType {
+) : KtClassErrorType(), KtFirType {
     override val coneType by weakRef(coneType)
 
     override val error: String get() = withValidityAssertion { coneType.diagnostic.reason }
+    override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
 }
 
 internal class KtFirTypeParameterType(
@@ -121,10 +115,7 @@ internal class KtFirTypeParameterType(
     }
 
     override val nullability: KtTypeNullability get() = withValidityAssertion { KtTypeNullability.create(coneType.isNullable) }
-
-    override fun asString(): String = withValidityAssertion {
-        coneType.render() //todo
-    }
+    override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
 }
 
 internal class KtFirFlexibleType(
@@ -136,6 +127,7 @@ internal class KtFirFlexibleType(
 
     override val lowerBound: KtType by cached { firBuilder.typeBuilder.buildKtType(coneType.lowerBound) }
     override val upperBound: KtType by cached { firBuilder.typeBuilder.buildKtType(coneType.upperBound) }
+    override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
 }
 
 internal class KtFirIntersectionType(
@@ -148,6 +140,8 @@ internal class KtFirIntersectionType(
     override val conjuncts: List<KtType> by cached {
         coneType.intersectedTypes.map { conjunct -> firBuilder.typeBuilder.buildKtType(conjunct) }
     }
+
+    override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
 }
 
 internal class KtFirTypeArgumentWithVariance(
