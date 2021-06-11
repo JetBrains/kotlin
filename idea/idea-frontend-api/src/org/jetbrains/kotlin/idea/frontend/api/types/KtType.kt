@@ -28,9 +28,11 @@ enum class KtTypeNullability(val isNullable: Boolean) {
     }
 }
 
-sealed class KtClassType : KtType
+sealed class KtClassType : KtType {
+    override fun toString(): String = asStringForDebugging()
+}
 
-sealed class KtNonErrorClassType: KtClassType(), KtTypeWithNullability {
+sealed class KtNonErrorClassType : KtClassType(), KtTypeWithNullability {
     abstract val classId: ClassId
     abstract val classSymbol: KtClassLikeSymbol
     abstract val typeArguments: List<KtTypeArgument>
@@ -55,19 +57,27 @@ abstract class KtTypeParameterType : KtTypeWithNullability {
     abstract val symbol: KtTypeParameterSymbol
 }
 
-abstract class KtCapturedType : KtType
+abstract class KtCapturedType : KtType {
+    override fun toString(): String = asStringForDebugging()
+}
 
 abstract class KtDefinitelyNotNullType : KtType, KtTypeWithNullability {
     abstract val original: KtType
 
     final override val nullability: KtTypeNullability get() = KtTypeNullability.NON_NULLABLE
+
+    override fun toString(): String = asStringForDebugging()
 }
 
 abstract class KtFlexibleType : KtType {
     abstract val lowerBound: KtType
     abstract val upperBound: KtType
+
+    override fun toString(): String = asStringForDebugging()
 }
 
-abstract class KtIntersectionType : KtType{
+abstract class KtIntersectionType : KtType {
     abstract val conjuncts: List<KtType>
+
+    override fun toString(): String = asStringForDebugging()
 }
