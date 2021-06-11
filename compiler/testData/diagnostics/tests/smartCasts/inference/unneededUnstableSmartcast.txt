@@ -1,0 +1,10 @@
+package
+
+public final class Test</*0*/ E> {
+    public constructor Test</*0*/ E>(/*0*/ c: kotlin.collections.Collection<E>)
+    public final var c: kotlin.collections.Collection<E>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun test(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
