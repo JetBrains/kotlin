@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.components
 
+import org.jetbrains.kotlin.idea.frontend.api.KtTypeArgument
+import org.jetbrains.kotlin.idea.frontend.api.KtTypeArgumentWithVariance
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtClassType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtTypeNullability
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.types.Variance
 
 abstract class KtTypeCreator : KtAnalysisSessionComponent() {
     abstract fun buildClassType(builder: KtClassTypeBuilder): KtClassType
@@ -35,14 +37,18 @@ inline fun KtTypeCreatorMixIn.buildClassType(
 sealed class KtTypeBuilder
 
 sealed class KtClassTypeBuilder : KtTypeBuilder() {
-    private val _arguments = mutableListOf<KtType>()
+    private val _arguments = mutableListOf<KtTypeArgument>()
 
     var nullability: KtTypeNullability = KtTypeNullability.NON_NULLABLE
 
-    val arguments: List<KtType> get() = _arguments
+    val arguments: List<KtTypeArgument> get() = _arguments
 
-    fun argument(argument: KtType) {
+    fun argument(argument: KtTypeArgument) {
         _arguments += argument
+    }
+
+    fun argument(type: KtType, variance: Variance = Variance.INVARIANT) {
+        _arguments += KtTypeArgumentWithVariance(type, variance, type.token)
     }
 
     class ByClassId(val classId: ClassId) : KtClassTypeBuilder()

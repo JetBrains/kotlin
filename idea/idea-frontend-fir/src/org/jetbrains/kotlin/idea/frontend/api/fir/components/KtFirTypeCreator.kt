@@ -40,9 +40,10 @@ internal class KtFirTypeCreator(
             }
         }
 
-        val coneType = rootModuleSession.typeContext.createSimpleType(
+        val typeContext = rootModuleSession.typeContext
+        val coneType = typeContext.createSimpleType(
             lookupTag,
-            builder.arguments.map { it.coneType },
+            builder.arguments.map { it.coneTypeProjection },
             builder.nullability.isNullable
         ) as ConeClassLikeType
 

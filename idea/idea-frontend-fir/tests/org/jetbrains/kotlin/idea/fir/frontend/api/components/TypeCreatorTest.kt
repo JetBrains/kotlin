@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescrip
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.types.Variance
 import org.junit.Test
 
 internal class TypeCreatorTest : KotlinLightCodeInsightFixtureTestCase() {
@@ -69,6 +70,15 @@ internal class TypeCreatorTest : KotlinLightCodeInsightFixtureTestCase() {
         doTest("ERROR_TYPE <Symbol not found for /NonExistingListClass>") {
             buildClassType(ClassId.fromString("NonExistingListClass")) {
                 argument(buildClassType(StandardClassIds.Int) { nullability = KtTypeNullability.NULLABLE })
+            }
+        }
+    }
+
+    @Test
+    fun testTypeArgumentVariance() {
+        doTest("KClass<out Number>") {
+            buildClassType(StandardClassIds.KClass) {
+                argument(buildClassType(StandardClassIds.Number), variance = Variance.OUT_VARIANCE)
             }
         }
     }
