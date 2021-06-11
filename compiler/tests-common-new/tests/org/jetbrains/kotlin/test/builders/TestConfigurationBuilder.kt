@@ -72,7 +72,7 @@ class TestConfigurationBuilder {
 
     private fun String.toMatchingRegexString(): String = when (this) {
         "*" -> ".*"
-        else -> """^.*/${replace("*", ".*")}$"""
+        else -> """^.*/(${replace("*", ".*")})$"""
     }
 
     fun forTestsMatching(pattern: Regex, configuration: TestConfigurationBuilder.() -> Unit) {
