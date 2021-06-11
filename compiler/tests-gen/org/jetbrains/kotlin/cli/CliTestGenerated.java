@@ -706,6 +706,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/nonexistingArgfile.args");
         }
 
+        @TestMetadata("nullabilityAnnotations.args")
+        public void testNullabilityAnnotations() throws Exception {
+            runTest("compiler/testData/cli/jvm/nullabilityAnnotations.args");
+        }
+
         @TestMetadata("pluginSimple.args")
         public void testPluginSimple() throws Exception {
             runTest("compiler/testData/cli/jvm/pluginSimple.args");
