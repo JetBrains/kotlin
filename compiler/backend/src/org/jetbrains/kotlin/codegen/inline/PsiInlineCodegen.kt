@@ -82,7 +82,7 @@ class PsiInlineCodegen(
                     }
                 }
             }
-            performInline(registerLineNumber, functionDescriptor.isInlineOnly(), functionDescriptor.isSuspend)
+            performInline(registerLineNumber, functionDescriptor.isInlineOnly())
         } finally {
             state.globalInlineContext.exitFromInlining()
         }
