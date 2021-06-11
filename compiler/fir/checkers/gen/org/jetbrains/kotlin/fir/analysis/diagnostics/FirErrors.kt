@@ -353,6 +353,7 @@ object FirErrors {
     val RETURN_TYPE_MISMATCH_BY_DELEGATION by error2<KtClassOrObject, FirCallableDeclaration<*>, FirCallableDeclaration<*>>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val PROPERTY_TYPE_MISMATCH_BY_DELEGATION by error2<KtClassOrObject, FirCallableDeclaration<*>, FirCallableDeclaration<*>>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val VAR_OVERRIDDEN_BY_VAL_BY_DELEGATION by error2<KtClassOrObject, FirCallableDeclaration<*>, FirCallableDeclaration<*>>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val CONFLICTING_INHERITED_MEMBERS by error1<KtClassOrObject, List<FirCallableDeclaration<*>>>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val ABSTRACT_MEMBER_NOT_IMPLEMENTED by error2<KtClassOrObject, FirClass, FirCallableDeclaration>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED by error2<KtClassOrObject, FirClass, FirCallableDeclaration>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER by error2<KtClassOrObject, FirClass, FirCallableDeclaration>(SourceElementPositioningStrategies.DECLARATION_NAME)

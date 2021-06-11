@@ -1207,6 +1207,11 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val baseDeclaration: KtCallableSymbol
     }
 
+    abstract class ConflictingInheritedMembers : KtFirDiagnostic<KtClassOrObject>() {
+        override val diagnosticClass get() = ConflictingInheritedMembers::class
+        abstract val conflictingDeclarations: List<KtCallableSymbol>
+    }
+
     abstract class AbstractMemberNotImplemented : KtFirDiagnostic<KtClassOrObject>() {
         override val diagnosticClass get() = AbstractMemberNotImplemented::class
         abstract val classOrObject: KtClassLikeSymbol

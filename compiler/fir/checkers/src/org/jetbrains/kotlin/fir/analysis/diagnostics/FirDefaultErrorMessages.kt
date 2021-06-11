@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.diagnostics.rendering.LanguageFeatureMessageRenderer
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers.RENDER_POSITION_VARIANCE
+import org.jetbrains.kotlin.diagnostics.rendering.Renderers.commaSeparated
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers.STRING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.AMBIGUOUS_CALLS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.DECLARATION_NAME
@@ -76,6 +77,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPONENT_FUNCTIO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONDITION_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_IMPORT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_INHERITED_MEMBERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_OVERLOADS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_PROJECTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION
@@ -981,6 +983,12 @@ class FirDefaultErrorMessages {
                 "Val-property ''{0}'' implicitly overrides a var-property ''{1}'' by delegation",
                 NAME,
                 NAME
+            )
+
+            map.put(
+                CONFLICTING_INHERITED_MEMBERS,
+                "{0} inherits conflicting members: {1}",
+                commaSeparated(NAME)
             )
 
             // Redeclarations

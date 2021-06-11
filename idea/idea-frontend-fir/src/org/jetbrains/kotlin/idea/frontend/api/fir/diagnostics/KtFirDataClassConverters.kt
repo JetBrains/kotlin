@@ -1700,6 +1700,15 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.CONFLICTING_INHERITED_MEMBERS) { firDiagnostic ->
+        ConflictingInheritedMembersImpl(
+            firDiagnostic.a.map { firCallableDeclaration ->
+                firSymbolBuilder.callableBuilder.buildCallableSymbol(firCallableDeclaration as FirCallableDeclaration)
+            },
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.ABSTRACT_MEMBER_NOT_IMPLEMENTED) { firDiagnostic ->
         AbstractMemberNotImplementedImpl(
             firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a),

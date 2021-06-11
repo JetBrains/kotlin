@@ -617,6 +617,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirCallableDeclaration<*>>("baseDeclaration")
         }
 
+        val CONFLICTING_INHERITED_MEMBERS by error<KtClassOrObject>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<List<FirCallableDeclaration<*>>>("conflictingDeclarations")
+        }
+
         val ABSTRACT_MEMBER_NOT_IMPLEMENTED by error<KtClassOrObject>(PositioningStrategy.DECLARATION_NAME) {
             parameter<FirClass>("classOrObject")
             parameter<FirCallableDeclaration>("missingDeclaration")

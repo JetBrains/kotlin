@@ -1937,6 +1937,14 @@ internal class VarOverriddenByValByDelegationImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
+internal class ConflictingInheritedMembersImpl(
+    override val conflictingDeclarations: List<KtCallableSymbol>,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.ConflictingInheritedMembers(), KtAbstractFirDiagnostic<KtClassOrObject> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
 internal class AbstractMemberNotImplementedImpl(
     override val classOrObject: KtClassLikeSymbol,
     override val missingDeclaration: KtCallableSymbol,

@@ -15,7 +15,7 @@ interface B {
     fun <T> a(@An arg: @An Int)
 }
 
-interface C : A, B
+<!CONFLICTING_INHERITED_MEMBERS!>interface C<!> : A, B
 
 @An
 abstract class D {

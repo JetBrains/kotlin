@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.typeContext
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeCheckerContext
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 object FirImplementationMismatchChecker : FirClassChecker() {
@@ -46,6 +48,7 @@ object FirImplementationMismatchChecker : FirClassChecker() {
                 checkInheritanceClash(declaration, context, dedupReporter, typeCheckerContext, it)
                 checkValOverrideVar(declaration, context, dedupReporter, it)
             }
+            checkConflictingMembers(declaration, context, dedupReporter, classScope, name)
         }
     }
 
@@ -153,5 +156,35 @@ object FirImplementationMismatchChecker : FirClassChecker() {
         if (baseVar != null) {
             reporter.reportOn(containingClass.source, FirErrors.VAR_OVERRIDDEN_BY_VAL_BY_DELEGATION, delegatedVal.fir, baseVar.fir, context)
         }
+    }
+
+    private fun checkConflictingMembers(
+        containingClass: FirClass<*>,
+        context: CheckerContext,
+        reporter: DiagnosticReporter,
+        scope: FirTypeScope,
+        name: Name
+    ) {
+        val allFunctions = mutableListOf<FirSimpleFunction>()
+        scope.processFunctionsByName(name) { sym ->
+            val declaredInThisClass = sym.callableId.classId == containingClass.classId
+            when {
+                sym is FirIntersectionOverrideFunctionSymbol && declaredInThisClass ->
+                    sym.intersections.mapNotNullTo(allFunctions) { (it as? FirNamedFunctionSymbol)?.fir }
+                !declaredInThisClass -> allFunctions.add(sym.fir)
+            }
+        }
+
+        val sameArgumentGroups = allFunctions.groupBy { function ->
+            function.valueParameters.map { it.returnTypeRef.coneType }
+        }.values
+
+        val clash = sameArgumentGroups.mapNotNull { fs ->
+            fs.zipWithNext().find { (m1, m2) ->
+                m1.isSuspend != m2.isSuspend || m1.typeParameters.size != m2.typeParameters.size
+            }
+        }.firstOrNull() ?: return
+
+        reporter.reportOn(containingClass.source, FirErrors.CONFLICTING_INHERITED_MEMBERS, clash.toList(), context)
     }
 }
