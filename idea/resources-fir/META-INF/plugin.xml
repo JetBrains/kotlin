@@ -115,6 +115,7 @@ The Kotlin FIR plugin provides language support in IntelliJ IDEA and Android Stu
 
   <extensions defaultExtensionNs="com.intellij">
     <!-- fir-specific -->
+    <statusBarWidgetFactory implementation="org.jetbrains.kotlin.idea.fir.FirStatusBarWidgetFactory"/>
     <projectService serviceInterface="org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSessionProvider"
                         serviceImplementation="org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSessionProvider"/>
     <applicationService serviceInterface="org.jetbrains.kotlin.idea.references.KotlinReferenceProviderContributor"

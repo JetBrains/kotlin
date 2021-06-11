@@ -35,6 +35,7 @@ public interface KotlinIconsIndependent {
 
     Icon ACTUAL = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/actual.svg");
     Icon EXPECT = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/expect.svg");
+    Icon FIR = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/fir.svg");
 
     Icon LAUNCH = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/kotlin_launch_configuration.svg");
     Icon LOAD_SCRIPT_CONFIGURATION = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/loadScriptConfiguration.svg");
