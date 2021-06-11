@@ -116,7 +116,7 @@ class IrInlineCodegen(
         expression: IrFunctionAccessExpression,
         isInsideIfCondition: Boolean,
     ) {
-        performInline(isInsideIfCondition, function.isInlineOnly(), function.isSuspend)
+        performInline(isInsideIfCondition, function.isInlineOnly())
     }
 
     override fun genCycleStub(text: String, codegen: ExpressionCodegen) {

@@ -42,13 +42,13 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         AsmUtil.genThrow(codegen.visitor, "java/lang/UnsupportedOperationException", "Call is part of inline cycle: $text")
     }
 
-    fun performInline(registerLineNumberAfterwards: Boolean, isInlineOnly: Boolean, isSuspend: Boolean) {
+    fun performInline(registerLineNumberAfterwards: Boolean, isInlineOnly: Boolean) {
         var nodeAndSmap: SMAPAndMethodNode? = null
         try {
             nodeAndSmap = sourceCompiler.compileInlineFunction(jvmSignature).apply {
                 node.preprocessSuspendMarkers(forInline = true, keepFakeContinuation = false)
             }
-            val result = inlineCall(nodeAndSmap, isInlineOnly, isSuspend)
+            val result = inlineCall(nodeAndSmap, isInlineOnly)
             leaveTemps()
             codegen.propagateChildReifiedTypeParametersUsages(result.reifiedTypeParametersUsages)
             codegen.markLineNumberAfterInlineIfNeeded(registerLineNumberAfterwards)
@@ -68,45 +68,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         }
     }
 
-    private fun canSkipStackSpillingOnInline(methodNode: MethodNode): Boolean {
-        // Stack spilling before inline function 'f' call is required if:
-        //  - 'f' is a suspend function
-        //  - 'f' has try-catch blocks
-        //  - 'f' has loops
-        //
-        // Instead of checking for loops precisely, we just check if there are any backward jumps -
-        // that is, a jump from instruction #i to instruction #j where j < i
-        if (methodNode.tryCatchBlocks.isNotEmpty()) return false
-
-        fun isBackwardJump(fromIndex: Int, toLabel: LabelNode) =
-            methodNode.instructions.indexOf(toLabel) < fromIndex
-
-        val insns = methodNode.instructions.toArray()
-        for (i in insns.indices) {
-            when (val insn = insns[i]) {
-                is JumpInsnNode ->
-                    if (isBackwardJump(i, insn.label)) return false
-
-                is LookupSwitchInsnNode -> {
-                    insn.dflt?.let {
-                        if (isBackwardJump(i, it)) return false
-                    }
-                    if (insn.labels.any { isBackwardJump(i, it) }) return false
-                }
-
-                is TableSwitchInsnNode -> {
-                    insn.dflt?.let {
-                        if (isBackwardJump(i, it)) return false
-                    }
-                    if (insn.labels.any { isBackwardJump(i, it) }) return false
-                }
-            }
-        }
-
-        return true
-    }
-
-    private fun inlineCall(nodeAndSmap: SMAPAndMethodNode, isInlineOnly: Boolean, isSuspend: Boolean): InlineResult {
+    private fun inlineCall(nodeAndSmap: SMAPAndMethodNode, isInlineOnly: Boolean): InlineResult {
         val node = nodeAndSmap.node
         if (maskStartIndex != -1) {
             for (lambda in extractDefaultLambdas(node)) {
@@ -161,7 +123,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         // needs to be inserted before the code that actually uses it.
         generateAssertFieldIfNeeded(info)
 
-        val shouldSpillStack = isSuspend || !canSkipStackSpillingOnInline(node)
+        val shouldSpillStack = node.requiresEmptyStackOnEntry()
         if (shouldSpillStack) {
             addInlineMarker(codegen.visitor, true)
         }
@@ -345,5 +307,26 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                     InlineUtil.isInlineParameter(field.descriptor) &&
                     InlineUtil.isInline(field.descriptor.containingDeclaration)
         }
+
+        // Stack spilling before inline function call is required if the inlined bytecode has:
+        //   1. try-catch blocks - otherwise the stack spilling before and after them will not be correct;
+        //   2. suspension points - again, the stack spilling around them is otherwise wrong;
+        //   3. loops - OpenJDK cannot JIT-optimize between loop iterations if the stack is not empty.
+        // Instead of checking for loops precisely, we just check if there are any backward jumps -
+        // that is, a jump from instruction #i to instruction #j where j < i.
+        private fun MethodNode.requiresEmptyStackOnEntry(): Boolean = tryCatchBlocks.isNotEmpty() ||
+                instructions.toArray().any { isBeforeSuspendMarker(it) || isBeforeInlineSuspendMarker(it) || isBackwardsJump(it) }
+
+        private fun MethodNode.isBackwardsJump(insn: AbstractInsnNode): Boolean = when (insn) {
+            is JumpInsnNode -> isBackwardsJump(insn, insn.label)
+            is LookupSwitchInsnNode ->
+                insn.dflt?.let { to -> isBackwardsJump(insn, to) } == true || insn.labels.any { to -> isBackwardsJump(insn, to) }
+            is TableSwitchInsnNode ->
+                insn.dflt?.let { to -> isBackwardsJump(insn, to) } == true || insn.labels.any { to -> isBackwardsJump(insn, to) }
+            else -> false
+        }
+
+        private fun MethodNode.isBackwardsJump(from: AbstractInsnNode, to: LabelNode): Boolean =
+            instructions.indexOf(to) < instructions.indexOf(from)
     }
 }
