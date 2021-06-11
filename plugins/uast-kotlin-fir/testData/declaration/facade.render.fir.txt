@@ -2,7 +2,7 @@ package declaration
 
 public final class Utils {
     public static final fun foo() : int {
-        return "not-yet-compile-time-constant"
+        return 42
     }
     public static final fun buzz($this$buzz: java.lang.String) : java.lang.String {
         return [!] UnknownKotlinExpression (THIS_EXPRESSION) + "... zzz..."

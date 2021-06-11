@@ -1,16 +1,16 @@
 UFile (package = )
     UClass (name = PropertyWithAnnotationKt)
         UField (name = prop1)
-            ULiteralExpression (value = "not-yet-compile-time-constant")
+            ULiteralExpression (value = 0)
         UMethod (name = getProp1)
         UMethod (name = getProp2)
             UBlockExpression
                 UReturnExpression
-                    ULiteralExpression (value = "not-yet-compile-time-constant")
+                    ULiteralExpression (value = 0)
         UMethod (name = getProp3)
             UBlockExpression
                 UReturnExpression
-                    ULiteralExpression (value = "not-yet-compile-time-constant")
+                    ULiteralExpression (value = 0)
         UMethod (name = setProp3)
             UParameter (name = value)
             UBlockExpression

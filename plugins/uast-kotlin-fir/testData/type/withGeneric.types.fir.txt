@@ -2,9 +2,9 @@ UFile (package = ) [public final class WithGenericKt {...]
     UClass (name = WithGenericKt) [public final class WithGenericKt {...}]
         UMethod (name = test1) [public static final fun test1() : T {...}]
             UBlockExpression [{...}]
-                UReturnExpression [return "not-yet-compile-time-constant" as T]
-                    UBinaryExpressionWithType ["not-yet-compile-time-constant" as T] : PsiType:T
-                        ULiteralExpression (value = "not-yet-compile-time-constant") ["not-yet-compile-time-constant"] : PsiType:Void
+                UReturnExpression [return null as T]
+                    UBinaryExpressionWithType [null as T] : PsiType:T
+                        ULiteralExpression (value = null) [null] : PsiType:Void
                         UTypeReferenceExpression (name = T) [T]
         UMethod (name = test2) [public static final fun test2() : T {...}]
             UBlockExpression [{...}] : PsiType:Void
@@ -15,9 +15,9 @@ UFile (package = ) [public final class WithGenericKt {...]
                         UTypeReferenceExpression (name = T) [T]
         UMethod (name = test3) [public static final fun test3() : T {...}]
             UBlockExpression [{...}]
-                UReturnExpression [return "not-yet-compile-time-constant" as T]
-                    UBinaryExpressionWithType ["not-yet-compile-time-constant" as T] : PsiType:T
-                        ULiteralExpression (value = "not-yet-compile-time-constant") ["not-yet-compile-time-constant"] : PsiType:Void
+                UReturnExpression [return null as T]
+                    UBinaryExpressionWithType [null as T] : PsiType:T
+                        ULiteralExpression (value = null) [null] : PsiType:Void
                         UTypeReferenceExpression (name = T) [T]
         UMethod (name = castToString) [public static final fun castToString(t: T) : void {...}]
             UParameter (name = t) [var t: T]

@@ -1,7 +1,7 @@
 UFile (package = )
     UClass (name = NameContainingFileKt)
         UField (name = xyzzy)
-            ULiteralExpression (value = "not-yet-compile-time-constant")
+            ULiteralExpression (value = 0)
         UMethod (name = bar)
             UBlockExpression
         UMethod (name = getXyzzy)

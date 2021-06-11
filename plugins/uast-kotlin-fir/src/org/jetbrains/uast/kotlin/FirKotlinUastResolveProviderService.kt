@@ -50,7 +50,9 @@ interface FirKotlinUastResolveProviderService : BaseKotlinUastResolveProviderSer
     }
 
     override fun evaluate(uExpression: UExpression): Any? {
-        // TODO("Not yet implemented")
-        return "not-yet-compile-time-constant"
+        val ktExpression = uExpression.sourcePsi as? KtExpression ?: return null
+        analyseForUast(ktExpression) {
+            return ktExpression.evaluate()?.value
+        }
     }
 }

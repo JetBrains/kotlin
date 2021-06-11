@@ -1,5 +1,5 @@
 public final class NameContainingFileKt {
-    private static final var xyzzy: int = "not-yet-compile-time-constant"
+    private static final var xyzzy: int = 0
     public static final fun bar() : void {
     }
     public static final fun getXyzzy() : int = UastEmptyExpression

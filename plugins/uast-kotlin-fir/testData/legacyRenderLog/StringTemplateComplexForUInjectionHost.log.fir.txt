@@ -36,7 +36,7 @@ UFile (package = )
         UMethod (name = getEmpty)
         UMethod (name = simpleForTemplate)
             UParameter (name = i)
-                ULiteralExpression (value = "not-yet-compile-time-constant")
+                ULiteralExpression (value = 0)
             UBlockExpression
                 UReturnExpression
                     [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)

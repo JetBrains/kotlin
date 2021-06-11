@@ -1,15 +1,15 @@
 public final class AnnotationParametersKt {
     public static final fun foo() : int {
-        return "not-yet-compile-time-constant"
+        return 5
     }
     public static final fun bar() : void {
         return [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
     }
     public static final fun fooWithArrLiteral() : int {
-        return "not-yet-compile-time-constant"
+        return 5
     }
     public static final fun fooWithStrArrLiteral() : int {
-        return "not-yet-compile-time-constant"
+        return 3
     }
 }
 

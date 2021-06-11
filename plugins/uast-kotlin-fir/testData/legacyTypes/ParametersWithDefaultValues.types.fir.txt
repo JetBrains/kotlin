@@ -3,8 +3,8 @@ UFile (package = ) [public final class ParametersWithDefaultValuesKt {...]
         UMethod (name = foo) [public static final fun foo(a: int, b: java.lang.String, c: int, flag: boolean) : void {...}]
             UParameter (name = a) [var a: int]
             UParameter (name = b) [var b: java.lang.String]
-            UParameter (name = c) [var c: int = "not-yet-compile-time-constant"]
-                ULiteralExpression (value = "not-yet-compile-time-constant") ["not-yet-compile-time-constant"] : PsiType:int
-            UParameter (name = flag) [var flag: boolean = "not-yet-compile-time-constant"]
-                ULiteralExpression (value = "not-yet-compile-time-constant") ["not-yet-compile-time-constant"] : PsiType:boolean
+            UParameter (name = c) [var c: int = 0]
+                ULiteralExpression (value = 0) [0] : PsiType:int
+            UParameter (name = flag) [var flag: boolean = false]
+                ULiteralExpression (value = false) [false] : PsiType:boolean
             UBlockExpression [{...}] : PsiType:Unit

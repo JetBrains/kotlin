@@ -3,7 +3,7 @@ UFile (package = declaration)
         UMethod (name = foo)
             UBlockExpression
                 UReturnExpression
-                    ULiteralExpression (value = "not-yet-compile-time-constant")
+                    ULiteralExpression (value = 42)
         UMethod (name = buzz)
             UParameter (name = $this$buzz)
             UBlockExpression

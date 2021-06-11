@@ -21,8 +21,8 @@ UFile (package = ) [public final class ArrayGetAssignMultiIndexKt {...]
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
                 [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
                 [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
-                UReturnExpression [return [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)[[!] UnknownKotlinExpression (PREFIX_EXPRESSION), "not-yet-compile-time-constant"]] : PsiType:Void
-                    UArrayAccessExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)[[!] UnknownKotlinExpression (PREFIX_EXPRESSION), "not-yet-compile-time-constant"]] : PsiType:String
+                UReturnExpression [return [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)[[!] UnknownKotlinExpression (PREFIX_EXPRESSION), 3]] : PsiType:Void
+                    UArrayAccessExpression [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)[[!] UnknownKotlinExpression (PREFIX_EXPRESSION), 3]] : PsiType:String
                         [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
                         [!] UnknownKotlinExpression (PREFIX_EXPRESSION) [[!] UnknownKotlinExpression (PREFIX_EXPRESSION)]
-                        ULiteralExpression (value = "not-yet-compile-time-constant") ["not-yet-compile-time-constant"] : PsiType:int
+                        ULiteralExpression (value = 3) [3] : PsiType:int

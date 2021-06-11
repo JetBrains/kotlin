@@ -13,6 +13,7 @@ dependencies {
     compile(project(":compiler:fir:fir2ir"))
     compile(project(":compiler:ir.tree"))
     compile(project(":compiler:fir:resolve"))
+    compile(project(":compiler:fir:evaluate"))
     compile(project(":compiler:fir:checkers"))
     compile(project(":compiler:fir:checkers:checkers.jvm"))
     compile(project(":compiler:fir:java"))

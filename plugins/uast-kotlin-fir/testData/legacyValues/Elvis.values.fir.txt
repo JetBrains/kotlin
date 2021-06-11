@@ -3,12 +3,12 @@ UFile (package = ) [public final class ElvisKt {...]
         UMethod (name = foo) [public static final fun foo(bar: java.lang.String) : java.lang.String {...}]
             UParameter (name = bar) [var bar: java.lang.String]
             UBlockExpression [{...}] = Nothing
-                UReturnExpression [return "not-yet-compile-time-constant"] = Nothing
-                    ULiteralExpression (value = "not-yet-compile-time-constant") ["not-yet-compile-time-constant"] = "not-yet-compile-time-constant"
+                UReturnExpression [return null] = Nothing
+                    ULiteralExpression (value = null) [null] = null
         UMethod (name = bar) [public static final fun bar() : int {...}]
             UBlockExpression [{...}] = Nothing
-                UReturnExpression [return "not-yet-compile-time-constant"] = Nothing
-                    ULiteralExpression (value = "not-yet-compile-time-constant") ["not-yet-compile-time-constant"] = "not-yet-compile-time-constant"
+                UReturnExpression [return 42] = Nothing
+                    ULiteralExpression (value = 42) [42] = (long)42
         UMethod (name = baz) [public static final fun baz() : java.lang.String {...}]
             UBlockExpression [{...}] = Nothing
                 UReturnExpression [return [!] UnknownKotlinExpression (BINARY_EXPRESSION)] = Nothing

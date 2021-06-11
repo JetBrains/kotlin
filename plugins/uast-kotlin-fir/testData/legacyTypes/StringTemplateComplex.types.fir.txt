@@ -35,8 +35,8 @@ UFile (package = ) [public final class StringTemplateComplexKt {...]
         UMethod (name = getLiteralInLiteral2) [public static final fun getLiteralInLiteral2() : java.lang.String = UastEmptyExpression]
         UMethod (name = getEmpty) [public static final fun getEmpty() : java.lang.String = UastEmptyExpression]
         UMethod (name = simpleForTemplate) [public static final fun simpleForTemplate(i: int) : java.lang.String {...}]
-            UParameter (name = i) [var i: int = "not-yet-compile-time-constant"]
-                ULiteralExpression (value = "not-yet-compile-time-constant") ["not-yet-compile-time-constant"] : PsiType:int
+            UParameter (name = i) [var i: int = 0]
+                ULiteralExpression (value = 0) [0] : PsiType:int
             UBlockExpression [{...}]
                 UReturnExpression [return [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]
                     [!] UnknownKotlinExpression (REFERENCE_EXPRESSION) [[!] UnknownKotlinExpression (REFERENCE_EXPRESSION)]

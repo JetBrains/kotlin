@@ -17,7 +17,7 @@ public final class PropertyReferencesKt {
 }
 
 public final class A {
-    private var privateProp: int = "not-yet-compile-time-constant"
+    private var privateProp: int = 0
     private var mutableProp: int
     public fun A(init: int) {
         {

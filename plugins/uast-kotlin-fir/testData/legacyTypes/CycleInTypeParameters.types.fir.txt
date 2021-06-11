@@ -1,8 +1,8 @@
 UFile (package = ) [public final class CycleInTypeParametersKt {...]
     UClass (name = CycleInTypeParametersKt) [public final class CycleInTypeParametersKt {...}]
-        UField (name = a) [private static final var a: Device<?> = "not-yet-compile-time-constant" as? Device<?>]
-            UBinaryExpressionWithType ["not-yet-compile-time-constant" as? Device<?>] : PsiType:Device<?>
-                ULiteralExpression (value = "not-yet-compile-time-constant") ["not-yet-compile-time-constant"] : PsiType:Void
+        UField (name = a) [private static final var a: Device<?> = null as? Device<?>]
+            UBinaryExpressionWithType [null as? Device<?>] : PsiType:Device<?>
+                ULiteralExpression (value = null) [null] : PsiType:Void
                 UTypeReferenceExpression (name = Device<?>) [Device<?>]
         UMethod (name = getA) [public static final fun getA() : Device<?> = UastEmptyExpression]
     UClass (name = Device) [public final class Device {...}]

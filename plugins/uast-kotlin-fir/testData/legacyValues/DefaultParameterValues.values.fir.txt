@@ -1,8 +1,8 @@
 UFile (package = ) [public final class DefaultParameterValuesKt {...]
     UClass (name = DefaultParameterValuesKt) [public final class DefaultParameterValuesKt {...}]
         UMethod (name = foo) [public static final fun foo(a: int, foo: java.lang.String) : void {...}]
-            UParameter (name = a) [var a: int = "not-yet-compile-time-constant"]
-                ULiteralExpression (value = "not-yet-compile-time-constant") ["not-yet-compile-time-constant"] = "not-yet-compile-time-constant"
-            UParameter (name = foo) [var foo: java.lang.String = "not-yet-compile-time-constant"]
-                ULiteralExpression (value = "not-yet-compile-time-constant") ["not-yet-compile-time-constant"] = "not-yet-compile-time-constant"
+            UParameter (name = a) [var a: int = 1]
+                ULiteralExpression (value = 1) [1] = (long)1
+            UParameter (name = foo) [var foo: java.lang.String = null]
+                ULiteralExpression (value = null) [null] = null
             UBlockExpression [{...}] = Undetermined

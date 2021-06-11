@@ -5,8 +5,8 @@ UFile (package = ) [public final class ParametersDisorderKt {...]
             UParameter (name = b) [var b: float]
             UBlockExpression [{...}] : PsiType:Unit
         UMethod (name = withDefault) [public static final fun withDefault(c: int, d: java.lang.String) : void {...}]
-            UParameter (name = c) [var c: int = "not-yet-compile-time-constant"]
-                ULiteralExpression (value = "not-yet-compile-time-constant") ["not-yet-compile-time-constant"] : PsiType:int
+            UParameter (name = c) [var c: int = 1]
+                ULiteralExpression (value = 1) [1] : PsiType:int
             UParameter (name = d) [var d: java.lang.String = "aaa"]
                 ULiteralExpression (value = "aaa") ["aaa"] : PsiType:String
             UBlockExpression [{...}] : PsiType:Unit

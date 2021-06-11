@@ -1,16 +1,16 @@
 UFile (package = ) [public final class PropertyWithAnnotationKt {...]
     UClass (name = PropertyWithAnnotationKt) [public final class PropertyWithAnnotationKt {...}]
-        UField (name = prop1) [private static final var prop1: int = "not-yet-compile-time-constant"]
-            ULiteralExpression (value = "not-yet-compile-time-constant") ["not-yet-compile-time-constant"] = "not-yet-compile-time-constant"
+        UField (name = prop1) [private static final var prop1: int = 0]
+            ULiteralExpression (value = 0) [0] = (long)0
         UMethod (name = getProp1) [public static final fun getProp1() : int = UastEmptyExpression]
         UMethod (name = getProp2) [public static final fun getProp2() : int {...}]
             UBlockExpression [{...}] = Nothing
-                UReturnExpression [return "not-yet-compile-time-constant"] = Nothing
-                    ULiteralExpression (value = "not-yet-compile-time-constant") ["not-yet-compile-time-constant"] = "not-yet-compile-time-constant"
+                UReturnExpression [return 0] = Nothing
+                    ULiteralExpression (value = 0) [0] = (long)0
         UMethod (name = getProp3) [public static final fun getProp3() : int {...}]
             UBlockExpression [{...}] = Nothing
-                UReturnExpression [return "not-yet-compile-time-constant"] = Nothing
-                    ULiteralExpression (value = "not-yet-compile-time-constant") ["not-yet-compile-time-constant"] = "not-yet-compile-time-constant"
+                UReturnExpression [return 0] = Nothing
+                    ULiteralExpression (value = 0) [0] = (long)0
         UMethod (name = setProp3) [public static final fun setProp3(value: int) : void {...}]
             UParameter (name = value) [var value: int]
             UBlockExpression [{...}] = Undetermined

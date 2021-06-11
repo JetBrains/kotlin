@@ -6,7 +6,7 @@ UFile (package = )
             UBlockExpression
         UMethod (name = withDefault)
             UParameter (name = c)
-                ULiteralExpression (value = "not-yet-compile-time-constant")
+                ULiteralExpression (value = 1)
             UParameter (name = d)
                 ULiteralExpression (value = "aaa")
             UBlockExpression

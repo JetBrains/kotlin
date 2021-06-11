@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.*
 import org.jetbrains.kotlin.idea.frontend.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
-import org.jetbrains.kotlin.idea.frontend.api.components.KtInheritorsProvider
-import org.jetbrains.kotlin.idea.frontend.api.components.KtVisibilityChecker
-import org.jetbrains.kotlin.idea.frontend.api.components.KtSymbolDeclarationRendererProvider
-import org.jetbrains.kotlin.idea.frontend.api.components.KtTypeCreator
+import org.jetbrains.kotlin.idea.frontend.api.components.*
 import org.jetbrains.kotlin.idea.frontend.api.fir.components.*
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirOverrideInfoProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbolProvider
@@ -69,6 +66,8 @@ private constructor(
         KtFirSymbolDeclarationRendererProvider(this, token)
 
     override val expressionInfoProviderImpl = KtFirExpressionInfoProvider(this, token)
+
+    override val compileTimeConstantProviderImpl: KtCompileTimeConstantProvider = KtFirCompileTimeConstantProvider(this, token)
 
     override val overrideInfoProviderImpl = KtFirOverrideInfoProvider(this, token)
 

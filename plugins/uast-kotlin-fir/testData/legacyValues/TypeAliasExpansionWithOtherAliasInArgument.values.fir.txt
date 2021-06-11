@@ -4,11 +4,11 @@ UFile (package = ) [public final class TypeAliasExpansionWithOtherAliasInArgumen
             UParameter (name = $this$foo) [var $this$foo: kotlin.jvm.functions.Function1]
             UParameter (name = x) [var x: kotlin.jvm.functions.Function1]
             UBlockExpression [{...}] = Nothing
-                UReturnExpression [return "not-yet-compile-time-constant"] = Nothing
-                    ULiteralExpression (value = "not-yet-compile-time-constant") ["not-yet-compile-time-constant"] = "not-yet-compile-time-constant"
+                UReturnExpression [return null] = Nothing
+                    ULiteralExpression (value = null) [null] = null
         UMethod (name = bar) [public static final fun bar($this$bar: java.util.Map<java.lang.String,? extends java.lang.Integer>, x: java.util.Map<java.lang.String,? extends java.lang.Integer>) : java.util.Map<java.lang.String,? extends java.lang.Integer> {...}]
             UParameter (name = $this$bar) [var $this$bar: java.util.Map<java.lang.String,? extends java.lang.Integer>]
             UParameter (name = x) [var x: java.util.Map<java.lang.String,? extends java.lang.Integer>]
             UBlockExpression [{...}] = Nothing
-                UReturnExpression [return "not-yet-compile-time-constant"] = Nothing
-                    ULiteralExpression (value = "not-yet-compile-time-constant") ["not-yet-compile-time-constant"] = "not-yet-compile-time-constant"
+                UReturnExpression [return null] = Nothing
+                    ULiteralExpression (value = null) [null] = null

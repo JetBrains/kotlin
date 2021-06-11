@@ -12,7 +12,7 @@ UFile (package = )
                 [!] UnknownKotlinExpression (PROPERTY)
                 ULabeledExpression (label = Outer)
                     UWhileExpression
-                        ULiteralExpression (value = "not-yet-compile-time-constant")
+                        ULiteralExpression (value = true)
                         UBlockExpression
                             [!] UnknownKotlinExpression (PREFIX_EXPRESSION)
                             [!] UnknownKotlinExpression (PROPERTY)
@@ -20,7 +20,7 @@ UFile (package = )
                                 UDoWhileExpression
                                     UIfExpression
                                         [!] UnknownKotlinExpression (BINARY_EXPRESSION)
-                                        ULiteralExpression (value = "not-yet-compile-time-constant")
+                                        ULiteralExpression (value = false)
                                         UBreakExpression (label = null)
                                     UBlockExpression
                                         [!] UnknownKotlinExpression (PREFIX_EXPRESSION)
