@@ -208,9 +208,9 @@ class QuickFixRegistrar : QuickFixContributor {
             exposed.registerFactory(ChangeVisibilityOnExposureFactory)
         }
 
-        REDUNDANT_NULLABLE.registerFactory(RemoveNullableFix.Factory(RemoveNullableFix.NullableKind.REDUNDANT))
-        NULLABLE_SUPERTYPE.registerFactory(RemoveNullableFix.Factory(RemoveNullableFix.NullableKind.SUPERTYPE))
-        USELESS_NULLABLE_CHECK.registerFactory(RemoveNullableFix.Factory(RemoveNullableFix.NullableKind.USELESS))
+        REDUNDANT_NULLABLE.registerFactory(RemoveNullableFix.removeForRedundant)
+        NULLABLE_SUPERTYPE.registerFactory(RemoveNullableFix.removeForSuperType)
+        USELESS_NULLABLE_CHECK.registerFactory(RemoveNullableFix.removeForUseless)
 
 
         val implementMembersHandler = ImplementMembersHandler()
@@ -527,7 +527,7 @@ class QuickFixRegistrar : QuickFixContributor {
         ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE.registerFactory(AddNewLineAfterAnnotationsFix)
 
         INAPPLICABLE_LATEINIT_MODIFIER.registerFactory(ChangeVariableMutabilityFix.LATEINIT_VAL_FACTORY)
-        INAPPLICABLE_LATEINIT_MODIFIER.registerFactory(RemoveNullableFix.LATEINIT_FACTORY)
+        INAPPLICABLE_LATEINIT_MODIFIER.registerFactory(RemoveNullableFix.removeForLateInitProperty)
         INAPPLICABLE_LATEINIT_MODIFIER.registerFactory(RemovePartsFromPropertyFix.LateInitFactory)
         INAPPLICABLE_LATEINIT_MODIFIER.registerFactory(RemoveModifierFix.createRemoveLateinitFactory())
         INAPPLICABLE_LATEINIT_MODIFIER.registerFactory(ConvertLateinitPropertyToNotNullDelegateFix)
