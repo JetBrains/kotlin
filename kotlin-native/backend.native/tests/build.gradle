@@ -1159,6 +1159,7 @@ task enum_nested(type: KonanLocalTest) {
 }
 
 task enum_isFrozen(type: KonanLocalTest) {
+    disabled = (project.testTarget == 'wasm32') // Uses exceptions.
     source = "codegen/enum/isFrozen.kt"
 }
 
@@ -1254,6 +1255,7 @@ standaloneTest("objectDeclaration_globalConstants") {
 }
 
 task object_isFrozen(type: KonanLocalTest) {
+    disabled = (project.testTarget == 'wasm32') // Uses exceptions.
     source = "codegen/objectDeclaration/isFrozen.kt"
 }
 
