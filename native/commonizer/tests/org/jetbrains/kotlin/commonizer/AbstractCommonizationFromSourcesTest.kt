@@ -84,17 +84,6 @@ abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
             (results.modulesByTargets.getValue(sharedTarget).single() as ModuleResult.Commonized).metadata
 
         assertModulesAreEqual(sharedModuleAsExpected, sharedModuleByCommonizer, sharedTarget)
-
-        val leafTargets: Set<LeafCommonizerTarget> = analyzedModules.leafTargets
-        assertEquals(leafTargets, results.leafTargets)
-
-        for (leafTarget in leafTargets) {
-            val leafTargetModuleAsExpected: SerializedMetadata = analyzedModules.commonizedModules.getValue(leafTarget)
-            val leafTargetModuleByCommonizer: SerializedMetadata =
-                (results.modulesByTargets.getValue(leafTarget).single() as ModuleResult.Commonized).metadata
-
-            assertModulesAreEqual(leafTargetModuleAsExpected, leafTargetModuleByCommonizer, leafTarget)
-        }
     }
 }
 
@@ -208,9 +197,14 @@ private class AnalyzedModules(
         resultsConsumer: ResultsConsumer,
         manifestDataProvider: (CommonizerTarget) -> NativeManifestDataProvider = { MockNativeManifestDataProvider(it) }
     ) = CommonizerParameters(
-        outputTarget = SharedCommonizerTarget(leafTargets.toSet()),
-        manifestProvider = TargetDependent(sharedTarget.withAllAncestors(), manifestDataProvider),
-        dependenciesProvider = TargetDependent(sharedTarget.withAllAncestors()) { dependencyModules[it]?.let(MockModulesProvider::create) },
+        outputTargets = setOf(SharedCommonizerTarget(leafTargets.toSet())),
+        manifestProvider = TargetDependent(sharedTarget.withAllLeaves(), manifestDataProvider),
+        dependenciesProvider = TargetDependent(sharedTarget.withAllLeaves()) { target ->
+            dependencyModules
+                .filter { (registeredTarget, _) -> target in registeredTarget.withAllLeaves() }
+                .values.flatten()
+                .let(MockModulesProvider::create)
+        },
         targetProviders = TargetDependent(leafTargets) { leafTarget ->
             TargetProvider(
                 target = leafTarget,

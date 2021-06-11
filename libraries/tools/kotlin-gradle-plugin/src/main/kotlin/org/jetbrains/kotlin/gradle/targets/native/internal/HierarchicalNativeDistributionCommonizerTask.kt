@@ -8,13 +8,14 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.tasks.*
-import org.jetbrains.kotlin.commonizer.HierarchicalCommonizerOutputLayout.fileName
+import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout.resolveCommonizedDirectory
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
-import org.jetbrains.kotlin.commonizer.identityString
-import org.jetbrains.kotlin.commonizer.isAncestorOf
+import org.jetbrains.kotlin.compilerRunner.GradleCliCommonizer
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeCommonizerToolRunner
 import org.jetbrains.kotlin.compilerRunner.konanHome
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.compilerRunner.registerCommonizerClasspathConfigurationIfNecessary
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR
 import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_COMMON_LIBS_DIR
@@ -28,8 +29,8 @@ internal open class HierarchicalNativeDistributionCommonizerTask : DefaultTask()
     private val konanHome = project.file(project.konanHome)
 
     @get:Input
-    internal val rootCommonizerTargets: Set<SharedCommonizerTarget>
-        get() = project.getRootCommonizerTargets()
+    internal val commonizerTargets: Set<SharedCommonizerTarget>
+        get() = project.getAllCommonizerTargets()
 
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputDirectory
@@ -48,7 +49,10 @@ internal open class HierarchicalNativeDistributionCommonizerTask : DefaultTask()
     @get:OutputDirectories
     @Suppress("unused") // Only for up-to-date checker. The directory with the original platform libs.
     val outputDirectories: Set<File>
-        get() = rootCommonizerTargets.map(::getRootOutputDirectory).toSet()
+        get() {
+            val rootOutputDirectory = getRootOutputDirectory()
+            return commonizerTargets.map { target -> resolveCommonizedDirectory(rootOutputDirectory, target) }.toSet()
+        }
 
     /*
     Ensures that only one CommonizerTask can run at a time.
@@ -74,45 +78,44 @@ internal open class HierarchicalNativeDistributionCommonizerTask : DefaultTask()
     internal val commonizerJvmArgs: List<String>
         get() = commonizerRunner.getCustomJvmArgs()
 
-    internal fun getRootOutputDirectory(target: SharedCommonizerTarget): File {
+    @Internal
+    internal fun getRootOutputDirectory(): File {
         val kotlinVersion = project.getKotlinPluginVersion()
 
         return project.file(konanHome)
             .resolve(KONAN_DISTRIBUTION_KLIB_DIR)
             .resolve(KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR)
             .resolve(urlEncode(kotlinVersion))
-            .resolve(target.fileName)
     }
 
     @TaskAction
     protected fun run() {
-        for (target in rootCommonizerTargets) {
-            NativeDistributionCommonizationCache(commonizerRunner, getRootOutputDirectory(target))
-                .runIfNecessary(getCommandLineArguments(target))
-        }
+        getRootOutputDirectory().deleteRecursively() // TODO NOW CACHING!
+        GradleCliCommonizer(project).commonizeNativeDistribution(
+            konanHome = konanHome,
+            outputDirectory = getRootOutputDirectory(),
+            outputTargets = project.getAllCommonizerTargets(),
+            logLevel = project.commonizerLogLevel
+        )
     }
 
-    private fun getCommandLineArguments(target: SharedCommonizerTarget): List<String> {
-        return mutableListOf<String>().apply {
-            this += "native-dist-commonize"
-            this += "-distribution-path"
-            this += konanHome.absolutePath
-            this += "-output-path"
-            this += getRootOutputDirectory(target).absolutePath
-            this += "-output-commonizer-target"
-            this += target.identityString
-            this += "-log-level"
-            this += project.commonizerLogLevel.name
-        }
+    init {
+        project.registerCommonizerClasspathConfigurationIfNecessary()
     }
 }
 
-private fun Project.getRootCommonizerTargets(): Set<SharedCommonizerTarget> {
-    val kotlin = multiplatformExtensionOrNull ?: return emptySet()
-    val allTargets = kotlin.sourceSets
-        .mapNotNull { sourceSet -> getCommonizerTarget(sourceSet) }
-        .filterIsInstance<SharedCommonizerTarget>()
-    return allTargets.filter { target -> allTargets.none { otherTarget -> otherTarget isAncestorOf target } }.toSet()
+private fun Project.getAllCommonizerTargets(): Set<SharedCommonizerTarget> {
+    return allprojects.flatMapTo(mutableSetOf<SharedCommonizerTarget>()) { project ->
+        val kotlin = project.extensions.findByName("kotlin") // TODO COMMONIZER FAILS HARD WHEN NOTHING IS DEFINED
+            ?.let { it as KotlinProjectExtension }
+            ?.let { it as? KotlinMultiplatformExtension }
+            ?: return@flatMapTo emptySet()
+
+        kotlin.sourceSets
+            .mapNotNull { sourceSet -> project.getCommonizerTarget(sourceSet) }
+            .filterIsInstance<SharedCommonizerTarget>()
+    }
 }
+
 
 private fun urlEncode(value: String): String = URLEncoder.encode(value, Charsets.UTF_8.name())

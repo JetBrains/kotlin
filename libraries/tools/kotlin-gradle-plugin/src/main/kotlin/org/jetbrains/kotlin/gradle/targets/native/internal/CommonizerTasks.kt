@@ -96,7 +96,7 @@ internal val Project.commonizeNativeDistributionTask: TaskProvider<NativeDistrib
 internal val Project.commonizeNativeDistributionHierarchicallyTask: TaskProvider<HierarchicalNativeDistributionCommonizerTask>?
     get() {
         if (!isHierarchicalCommonizationEnabled) return null
-        return locateOrRegisterTask(
+        return rootProject.locateOrRegisterTask(
             "commonizeNativeDistribution",
             invokeWhenRegistered = { commonizeTask.dependsOn(this) },
             configureTask = {

@@ -19,23 +19,19 @@ internal fun Project.setUpHierarchicalKotlinNativePlatformDependencies() {
     val kotlin = multiplatformExtensionOrNull ?: return
     kotlin.sourceSets.forEach { sourceSet ->
         val target = getCommonizerTarget(sourceSet) ?: return@forEach
-        val targetDependencies = getDependenciesFor(target)
         val stdlib = project.filesProvider { listOf(konanDistribution.stdlib) }
-        addDependencies(sourceSet, targetDependencies)
+        addDependencies(sourceSet, getNativeDistributionDependencies(target))
         addDependencies(sourceSet, stdlib)
     }
 }
 
-private fun Project.getDependenciesFor(target: CommonizerTarget): FileCollection {
+internal fun Project.getNativeDistributionDependencies(target: CommonizerTarget): FileCollection {
     val commonizerTask = commonizeNativeDistributionHierarchicallyTask?.get() ?: return project.files()
 
-    /* Target is participating in any commonization and will therefore receive dependencies provided by the commonizer */
-    if (commonizerTask.rootCommonizerTargets.any { rootTarget -> rootTarget.isEqualOrAncestorOf(target) }) {
-        return commonizerTask.getCommonizedDependenciesFor(target)
+    return when (target) {
+        is SharedCommonizerTarget -> commonizerTask.getCommonizedDependenciesFor(target)
+        is LeafCommonizerTarget -> getOriginalPlatformLibrariesFor(target)
     }
-
-    /* Target does not participate in any commonization. Try finding relevant platform libraries */
-    return if (target is LeafCommonizerTarget) getOriginalPlatformLibrariesFor(target) else project.files()
 }
 
 private fun Project.getOriginalPlatformLibrariesFor(target: LeafCommonizerTarget): FileCollection {
@@ -43,8 +39,7 @@ private fun Project.getOriginalPlatformLibrariesFor(target: LeafCommonizerTarget
 }
 
 private fun HierarchicalNativeDistributionCommonizerTask.getCommonizedPlatformLibrariesFor(target: SharedCommonizerTarget): FileCollection {
-    val rootTarget = rootCommonizerTargets.firstOrNull { rootTarget -> rootTarget.isEqualOrAncestorOf(target) } ?: return project.files()
-    val targetOutputDirectory = HierarchicalCommonizerOutputLayout.getTargetDirectory(getRootOutputDirectory(rootTarget), target)
+    val targetOutputDirectory = CommonizerOutputFileLayout.getCommonizedDirectory(getRootOutputDirectory(), target)
     return project.filesProvider { targetOutputDirectory.listFiles().orEmpty().toList() }.builtBy(this)
 }
 

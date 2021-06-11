@@ -21,11 +21,10 @@ class SingleTargetPropagationTest : AbstractInlineSourcesCommonizationTest() {
     @Test
     fun `test single native target in hierarchy`() {
         val result = commonize {
-            outputTarget("((a, b), (c, d))")
+            outputTarget("(a, b)", "(c, d)", "(a, b, c, d)")
             simpleSingleSourceTarget("a", """class A""")
         }
 
-        result.assertCommonized("a", "class A")
         result.assertCommonized("(a,b)", "expect class A expect constructor()")
         result.assertCommonized("((a, b), (c, d))", "expect class A expect constructor()")
     }

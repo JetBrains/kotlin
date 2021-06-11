@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.LeafCommonizerTarget
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
+import org.jetbrains.kotlin.commonizer.allLeaves
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -32,7 +33,7 @@ internal fun Project.getCommonizerTarget(sourceSet: KotlinSourceSet): Commonizer
     return when {
         dependeeCommonizerTargets.isEmpty() -> throw IllegalStateException()
         dependeeCommonizerTargets.size == 1 -> dependeeCommonizerTargets.single()
-        else -> SharedCommonizerTarget(dependeeCommonizerTargets)
+        else -> SharedCommonizerTarget(dependeeCommonizerTargets.allLeaves())
     }
 }
 

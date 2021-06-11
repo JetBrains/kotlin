@@ -5,36 +5,25 @@
 
 package org.jetbrains.kotlin.commonizer.utils
 
-import org.jetbrains.kotlin.commonizer.cli.CliLoggerAdapter
-import org.jetbrains.kotlin.commonizer.CommonizerLogLevel
+import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.util.Logger
 
-class ProgressLogger(
-    private val wrapped: Logger = CliLoggerAdapter(CommonizerLogLevel.Info, 0),
-    private val indent: Int = 0,
-) : Logger by wrapped {
-    private val clockMark = ResettableClockMark()
-    private var finished = false
+private const val ansiReset = "\u001B[0m"
+private const val ansiTimeColor = "\u001B[36m"
+private const val ansiTargetColor = "\u001B[32m"
 
-    private val prefix = "  ".repeat(indent) + " * "
-
-    init {
-        clockMark.reset()
-        require(indent >= 0) { "Required indent >= 1" }
+internal inline fun <T> Logger?.progress(message: String, action: () -> T): T {
+    val clock = ResettableClockMark()
+    clock.reset()
+    try {
+        return action()
+    } finally {
+        this?.log("$message ${ansiTimeColor}in ${clock.elapsedSinceLast()}$ansiReset")
     }
+}
 
-    fun progress(message: String) {
-        check(!finished)
-        wrapped.log("$prefix$message in ${clockMark.elapsedSinceLast()}")
-    }
-
-    fun logTotal() {
-        check(!finished)
-        wrapped.log("TOTAL: ${clockMark.elapsedSinceStart()}")
-        finished = true
-    }
-
-    fun fork(): ProgressLogger {
-        return ProgressLogger(this, indent + 1)
-    }
+internal inline fun <T> Logger?.progress(
+    target: CommonizerTarget, message: String, action: () -> T
+): T {
+    return progress("[$ansiTargetColor$target$ansiReset]: $message", action)
 }

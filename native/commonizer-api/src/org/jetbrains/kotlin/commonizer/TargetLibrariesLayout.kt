@@ -5,30 +5,14 @@
 
 package org.jetbrains.kotlin.commonizer
 
-import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_COMMON_LIBS_DIR
-import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR
 import java.io.File
 import java.security.MessageDigest
 import java.util.*
 
-
-public fun interface CommonizerOutputLayout {
-    public fun getTargetDirectory(root: File, target: CommonizerTarget): File
-}
-
-public object NativeDistributionCommonizerOutputLayout : CommonizerOutputLayout {
-    override fun getTargetDirectory(root: File, target: CommonizerTarget): File {
-        return when (target) {
-            is LeafCommonizerTarget -> root.resolve(KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR).resolve(target.name)
-            is SharedCommonizerTarget -> root.resolve(KONAN_DISTRIBUTION_COMMON_LIBS_DIR)
-        }
-    }
-}
-
-public object HierarchicalCommonizerOutputLayout : CommonizerOutputLayout {
+public object CommonizerOutputFileLayout {
     internal const val maxFileNameLength = 150
 
-    override fun getTargetDirectory(root: File, target: CommonizerTarget): File {
+    public fun getCommonizedDirectory(root: File, target: CommonizerTarget): File {
         return root.resolve(target.fileName)
     }
 
@@ -42,11 +26,18 @@ public object HierarchicalCommonizerOutputLayout : CommonizerOutputLayout {
             }
         }
 
+    public val Set<CommonizerTarget>.fileName: String
+        get() = this.joinToString(";") { it.identityString }.base64Hash
+
+
     private val CommonizerTarget.identityStringHash: String
+        get() = identityString.base64Hash
+
+    private val String.base64Hash: String
         get() {
             val sha = MessageDigest.getInstance("SHA-1")
             val base64 = Base64.getUrlEncoder()
-            return base64.encode(sha.digest(identityString.encodeToByteArray())).decodeToString()
+            return base64.encode(sha.digest(this.encodeToByteArray())).decodeToString()
         }
 }
 

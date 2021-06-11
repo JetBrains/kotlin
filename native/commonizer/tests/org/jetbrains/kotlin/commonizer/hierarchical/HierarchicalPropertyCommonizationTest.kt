@@ -12,7 +12,7 @@ class HierarchicalPropertyCommonizationTest : AbstractInlineSourcesCommonization
 
     fun `test simple property`() {
         val result = commonize {
-            outputTarget("((a, b), (c, d))")
+            outputTarget("(a, b)", "(c, d)", "(a, b, c, d)")
             simpleSingleSourceTarget("a", "val x: Int = 42")
             simpleSingleSourceTarget("b", "val x: Int = 42")
             simpleSingleSourceTarget("c", "val x: Int = 42")
@@ -22,10 +22,6 @@ class HierarchicalPropertyCommonizationTest : AbstractInlineSourcesCommonization
         result.assertCommonized("((a,b), (c,d))", "expect val x: Int")
         result.assertCommonized("(a, b)", "expect val x: Int")
         result.assertCommonized("(c, d)", "expect val x: Int")
-        result.assertCommonized("a", "val x: Int = 42")
-        result.assertCommonized("b", "val x: Int = 42")
-        result.assertCommonized("c", "val x: Int = 42")
-        result.assertCommonized("d", "val x: Int = 42")
     }
 
     fun `test same typeAliased property`() {

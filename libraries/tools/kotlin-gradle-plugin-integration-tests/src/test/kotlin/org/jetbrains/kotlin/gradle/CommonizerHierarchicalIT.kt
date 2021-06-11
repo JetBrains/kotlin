@@ -92,11 +92,7 @@ class CommonizerHierarchicalIT : BaseGradleIT() {
     @Test
     fun `test commonizeHierarchicallyMultiModule`() {
         with(Project("commonizeHierarchicallyMultiModule")) {
-            build(
-                "assemble",
-                // https://youtrack.jetbrains.com/issue/KT-46279
-                options = BuildOptions(warningMode = WarningMode.All)
-            ) {
+            build("assemble") {
                 assertSuccessful()
                 assertTasksExecuted(":p1:commonizeCInterop")
                 assertTasksExecuted(":p2:commonizeCInterop")

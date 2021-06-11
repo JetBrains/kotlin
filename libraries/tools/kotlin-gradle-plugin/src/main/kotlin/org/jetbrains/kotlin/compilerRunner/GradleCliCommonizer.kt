@@ -9,6 +9,10 @@ package org.jetbrains.kotlin.compilerRunner
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.commonizer.CliCommonizer
+import org.jetbrains.kotlin.gradle.plugin.KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME
+import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
+import org.jetbrains.kotlin.gradle.tasks.KOTLIN_KLIB_COMMONIZER_EMBEDDABLE
+import org.jetbrains.kotlin.gradle.tasks.KOTLIN_MODULE_GROUP
 
 /**
  * Creates an instance of [CliCommonizer] that is backed by [KotlinNativeCommonizerToolRunner] to adhere to user defined settings
@@ -18,4 +22,12 @@ internal fun GradleCliCommonizer(project: Project): CliCommonizer {
     return CliCommonizer(CliCommonizer.Executor { arguments ->
         KotlinNativeCommonizerToolRunner(project).run(arguments)
     })
+}
+
+internal fun Project.registerCommonizerClasspathConfigurationIfNecessary() {
+    if (configurations.findByName(KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME) == null) {
+        project.configurations.create(KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME).defaultDependencies {
+            it.add(project.dependencies.create("$KOTLIN_MODULE_GROUP:$KOTLIN_KLIB_COMMONIZER_EMBEDDABLE:${getKotlinPluginVersion()}"))
+        }
+    }
 }

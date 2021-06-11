@@ -18,13 +18,11 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
         }
 
         result.assertCommonized("(a, b)", "expect class X")
-        result.assertCommonized("a", "typealias X = Int")
-        result.assertCommonized("b", "class X")
     }
 
     fun `test commonization of typeAlias and class hierarchically`() {
         val result = commonize {
-            outputTarget("((a, b), (c, d))")
+            outputTarget("(a, b)", "(c, d)", "(a, b, c, d)")
             simpleSingleSourceTarget("a", "typealias X = Int")
             simpleSingleSourceTarget("b", "typealias X = Long")
             simpleSingleSourceTarget("c", "class X")

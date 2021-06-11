@@ -17,7 +17,7 @@ class HierarchicalModuleCommonizationTest : AbstractInlineSourcesCommonizationTe
 
     fun `test common modules hierarchically`() {
         val result = commonize {
-            outputTarget("((a, b), c)")
+            outputTarget("(a, b)", "(a, b, c)")
 
             target("a") {
                 module {
@@ -67,20 +67,20 @@ class HierarchicalModuleCommonizationTest : AbstractInlineSourcesCommonizationTe
         }
 
 
-        result.assertCommonized("((a, b), c)") {
+        result.assertCommonized("(a, b, c)") {
             name = "foo"
             source("expect val foo: Int")
         }
 
         assertEquals(
-            1, result.results[parseCommonizerTarget("((a, b), c)")].orEmpty().size,
+            1, result.results[parseCommonizerTarget("(a, b, c)")].orEmpty().size,
             "Expected only a single module"
         )
     }
 
     fun `test module commonization with empty root not sharing any module`() {
         val result = commonize {
-            outputTarget("((a, b), c)")
+            outputTarget("(a, b)", "(a, b, c)")
 
             target("a") {
                 module {
@@ -110,14 +110,14 @@ class HierarchicalModuleCommonizationTest : AbstractInlineSourcesCommonizationTe
         }
 
         assertTrue(
-            result.results[parseCommonizerTarget("((a, b), c)")].orEmpty().isEmpty(),
-            "Expected empty result for ((a, b), c)"
+            result.results[parseCommonizerTarget("(a, b, c)")].orEmpty().isEmpty(),
+            "Expected empty result for (a, b, c)"
         )
     }
 
     fun `test no common modules`() {
         val result = commonize(Status.NOTHING_TO_DO) {
-            outputTarget("((a, b), c)")
+            outputTarget("(a, b)", "(a, b, c)")
 
             target("a") {
                 module {
@@ -146,7 +146,7 @@ class HierarchicalModuleCommonizationTest : AbstractInlineSourcesCommonizationTe
 
     fun `test propagation`() {
         val result = commonize {
-            outputTarget("(((a, b), c), d)")
+            outputTarget("(a, b)", "(a, b, c)", "(a, b, c, d)")
 
             target("a") {
                 module {
@@ -170,12 +170,12 @@ class HierarchicalModuleCommonizationTest : AbstractInlineSourcesCommonizationTe
             }
         }
 
-        result.assertCommonized("((a, b), c)") {
+        result.assertCommonized("(a, b, c)") {
             name = "foo"
             source("expect val foo: Int")
         }
 
-        result.assertCommonized("(((a, b), c), d)") {
+        result.assertCommonized("(a, b, c, d)") {
             name = "foo"
             source("expect val foo: Int")
         }
@@ -212,36 +212,9 @@ class HierarchicalModuleCommonizationTest : AbstractInlineSourcesCommonizationTe
 
         assertEquals(1, result.results[parseCommonizerTarget("(a, b)")]?.size, "Expected only one commonized module")
 
-
         result.assertCommonized("(a, b)") {
             name = "shared"
             source("expect class Shared expect constructor()")
         }
-
-        result.assertCommonized("a") {
-            name = "shared"
-            source("class Shared constructor()")
-        }
-
-        result.assertCommonized("b") {
-            name = "shared"
-            source("class Shared constructor()")
-        }
-
-        val targetAResults = result.results[parseCommonizerTarget("a")].orEmpty()
-        assertEquals(2, targetAResults.size, "Expected 'Missing' and 'Commonized' results for target a")
-        val targetAMissingModule = kotlin.test.assertNotNull(
-            targetAResults.filterIsInstance<Missing>().singleOrNull(),
-            "Expected 'Missing' result for target a"
-        )
-        assertEquals("onlyInA", targetAMissingModule.libraryName)
-
-        val targetBResults = result.results[parseCommonizerTarget("b")].orEmpty()
-        assertEquals(2, targetBResults.size, "Expected 'Missing' and 'Commonized' results for target b")
-        val targetBMissingModule = kotlin.test.assertNotNull(
-            targetBResults.filterIsInstance<Missing>().singleOrNull(),
-            "Expected 'Missing' result for target b"
-        )
-        assertEquals("onlyInB", targetBMissingModule.libraryName)
     }
 }

@@ -9,13 +9,22 @@ import java.io.File
 import java.io.Serializable
 
 public interface Commonizer : Serializable {
+
     @Throws(Throwable::class)
     public fun commonizeLibraries(
         konanHome: File,
         inputLibraries: Set<File>,
         dependencyLibraries: Set<CommonizerDependency>,
-        outputCommonizerTarget: SharedCommonizerTarget,
+        outputTargets: Set<SharedCommonizerTarget>,
         outputDirectory: File,
+        logLevel: CommonizerLogLevel = CommonizerLogLevel.Quiet
+    )
+
+    @Throws(Throwable::class)
+    public fun commonizeNativeDistribution(
+        konanHome: File,
+        outputDirectory: File,
+        outputTargets: Set<SharedCommonizerTarget>,
         logLevel: CommonizerLogLevel = CommonizerLogLevel.Quiet
     )
 }

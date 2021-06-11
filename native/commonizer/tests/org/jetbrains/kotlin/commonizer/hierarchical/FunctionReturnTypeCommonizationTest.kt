@@ -41,24 +41,6 @@ class FunctionReturnTypeCommonizationTest : AbstractInlineSourcesCommonizationTe
         result.assertCommonized(
             "(a,b)", ""
         )
-
-        result.assertCommonized(
-            "a", """
-            class A {
-                class B
-            }
-            fun x(): A.B = TODO()
-            """
-        )
-
-        result.assertCommonized(
-            "b", """
-            interface A {
-                class B
-            }
-            fun x(): A.B = TODO()
-            """
-        )
     }
 
 
@@ -96,24 +78,6 @@ class FunctionReturnTypeCommonizationTest : AbstractInlineSourcesCommonizationTe
                     expect class B expect constructor()
                 }
                 expect fun x(): A.B
-            """
-        )
-
-        result.assertCommonized(
-            "a", """
-                interface A {
-                    class B
-                }
-                fun x(): A.B = TODO()
-            """
-        )
-
-        result.assertCommonized(
-            "b", """
-                interface A {
-                    class B
-                }
-                fun x(): A.B = TODO()
             """
         )
     }

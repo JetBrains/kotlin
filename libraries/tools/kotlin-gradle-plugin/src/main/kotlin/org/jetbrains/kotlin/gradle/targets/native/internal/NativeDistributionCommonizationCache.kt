@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.compilerRunner.KotlinToolRunner
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import java.io.File
 
+// TODO NOW: Support!
 internal val Project.isNativeDistributionCommonizationCacheEnabled: Boolean
     get() = PropertiesProvider(this).enableNativeDistributionCommonizationCache
 

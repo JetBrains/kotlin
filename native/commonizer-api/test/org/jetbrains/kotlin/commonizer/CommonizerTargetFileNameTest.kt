@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.commonizer
 
-import org.jetbrains.kotlin.commonizer.HierarchicalCommonizerOutputLayout.fileName
-import org.jetbrains.kotlin.commonizer.HierarchicalCommonizerOutputLayout.maxFileNameLength
+import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout.fileName
+import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout.maxFileNameLength
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import kotlin.test.Test

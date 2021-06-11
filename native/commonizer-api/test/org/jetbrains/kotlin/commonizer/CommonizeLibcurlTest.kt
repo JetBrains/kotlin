@@ -34,23 +34,12 @@ class CommonizeLibcurlTest {
                     KonanDistribution(konanHome).platformLibsDir.resolve(LINUX_ARM64.name).listFiles().orEmpty()
                         .map { TargetedCommonizerDependency(LeafCommonizerTarget(LINUX_ARM64), it) }
                         .toSet(),
-            outputCommonizerTarget = CommonizerTarget(LINUX_ARM64, LINUX_X64),
-            outputDirectory = temporaryOutputDirectory.root
+            outputTargets = setOf(CommonizerTarget(LINUX_ARM64, LINUX_X64)),
+            outputDirectory = temporaryOutputDirectory.root,
+            logLevel = CommonizerLogLevel.Info
         )
 
-        val x64OutputDirectory = temporaryOutputDirectory.root.resolve(CommonizerTarget(LINUX_X64).identityString)
-        val arm64OutputDirectory = temporaryOutputDirectory.root.resolve(CommonizerTarget(LINUX_ARM64).identityString)
         val commonOutputDirectory = temporaryOutputDirectory.root.resolve(CommonizerTarget(LINUX_X64, LINUX_ARM64).identityString)
-
-        assertTrue(
-            x64OutputDirectory.exists(),
-            "Missing output directory for x64 target"
-        )
-
-        assertTrue(
-            arm64OutputDirectory.exists(),
-            "Missing output directory for arm64 target"
-        )
 
         assertTrue(
             commonOutputDirectory.exists(),
@@ -64,18 +53,8 @@ class CommonizeLibcurlTest {
             )
         }
 
-        assertContainsKnmFiles(x64OutputDirectory)
-        assertContainsKnmFiles(arm64OutputDirectory)
         assertContainsKnmFiles(commonOutputDirectory)
-
-
-        assertContainsManifestWithContent(x64OutputDirectory, "native_targets=linux_x64")
-        assertContainsManifestWithContent(arm64OutputDirectory, "native_targets=linux_arm64")
         assertContainsManifestWithContent(commonOutputDirectory, "native_targets=linux_arm64 linux_x64")
-
-        assertContainsManifestWithContent(x64OutputDirectory, "commonizer_target=linux_x64")
-        assertContainsManifestWithContent(arm64OutputDirectory, "commonizer_target=linux_arm64")
-
         assertContainsManifestWithContent(commonOutputDirectory, "commonizer_native_targets=linux_arm64 linux_x64")
         assertContainsManifestWithContent(
             commonOutputDirectory, "commonizer_target=${CommonizerTarget(LINUX_X64, LINUX_ARM64).identityString}"
@@ -98,22 +77,14 @@ class CommonizeLibcurlTest {
                     KonanDistribution(konanHome).platformLibsDir.resolve(LINUX_ARM64.name).listFiles().orEmpty()
                         .map { TargetedCommonizerDependency(LeafCommonizerTarget(LINUX_ARM64), it) }
                         .toSet(),
-            outputCommonizerTarget = CommonizerTarget(LINUX_ARM64, LINUX_X64, MACOS_X64),
+            outputTargets = setOf(CommonizerTarget(LINUX_ARM64, LINUX_X64, MACOS_X64)),
             outputDirectory = temporaryOutputDirectory.root
         )
 
-        val x64OutputDirectory = temporaryOutputDirectory.root.resolve(CommonizerTarget(LINUX_X64).identityString)
-        val arm64OutputDirectory = temporaryOutputDirectory.root.resolve(CommonizerTarget(LINUX_ARM64).identityString)
         val commonOutputDirectory = temporaryOutputDirectory.root
             .resolve(CommonizerTarget(LINUX_X64, LINUX_ARM64, MACOS_X64).identityString)
 
-        assertContainsManifestWithContent(x64OutputDirectory, "native_targets=linux_x64")
-        assertContainsManifestWithContent(arm64OutputDirectory, "native_targets=linux_arm64")
         assertContainsManifestWithContent(commonOutputDirectory, "native_targets=linux_arm64 linux_x64")
-
-        assertContainsManifestWithContent(x64OutputDirectory, "commonizer_target=linux_x64")
-        assertContainsManifestWithContent(arm64OutputDirectory, "commonizer_target=linux_arm64")
-
         assertContainsManifestWithContent(commonOutputDirectory, "commonizer_native_targets=linux_arm64 linux_x64 macos_x64")
         assertContainsManifestWithContent(
             commonOutputDirectory, "commonizer_target=${CommonizerTarget(LINUX_X64, LINUX_ARM64, MACOS_X64).identityString}"

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.commonizer.konan
 
-import org.jetbrains.kotlin.commonizer.CommonizerOutputLayout
+import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout
 import org.jetbrains.kotlin.commonizer.CommonizerParameters
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.ResultsConsumer
@@ -18,10 +18,9 @@ import java.io.File
 
 internal class ModuleSerializer(
     private val destination: File,
-    private val outputLayout: CommonizerOutputLayout,
 ) : ResultsConsumer {
     override fun consume(parameters: CommonizerParameters, target: CommonizerTarget, moduleResult: ResultsConsumer.ModuleResult) {
-        val librariesDestination = outputLayout.getTargetDirectory(destination, target)
+        val librariesDestination = CommonizerOutputFileLayout.getCommonizedDirectory(destination, target)
         when (moduleResult) {
             is ResultsConsumer.ModuleResult.Commonized -> {
                 val libraryDestination = librariesDestination.resolve(moduleResult.fileSystemCompatibleLibraryName)

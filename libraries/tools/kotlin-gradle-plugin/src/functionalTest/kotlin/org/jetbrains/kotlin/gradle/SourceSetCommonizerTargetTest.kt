@@ -11,7 +11,6 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
-import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.targets.native.internal.getCommonizerTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
@@ -116,15 +115,16 @@ class SourceSetCommonizerTargetTest {
         assertEquals(CommonizerTarget(IOS_ARM64), project.getCommonizerTarget(iosArm64Main))
         assertEquals(CommonizerTarget(IOS_ARM64), project.getCommonizerTarget(iosArm64Test))
         assertEquals(CommonizerTarget(IOS_X64, IOS_ARM64), project.getCommonizerTarget(iosMain))
+
         assertEquals(
-            SharedCommonizerTarget(CommonizerTarget(IOS_X64, IOS_ARM64), CommonizerTarget(MACOS_X64), CommonizerTarget(LINUX_X64)),
+            CommonizerTarget(IOS_X64, IOS_ARM64, MACOS_X64, LINUX_X64),
             project.getCommonizerTarget(nativeMain)
         )
         assertEquals(
-            SharedCommonizerTarget(CommonizerTarget(IOS_X64, IOS_ARM64), CommonizerTarget(MACOS_X64), CommonizerTarget(LINUX_X64)),
+            CommonizerTarget(IOS_X64, IOS_ARM64, MACOS_X64, LINUX_X64),
             project.getCommonizerTarget(commonMain)
         )
-        /* No test hierarchy declared */
+
         assertEquals(
             CommonizerTarget(IOS_ARM64, IOS_X64, LINUX_X64, MACOS_X64),
             project.getCommonizerTarget(commonTest)

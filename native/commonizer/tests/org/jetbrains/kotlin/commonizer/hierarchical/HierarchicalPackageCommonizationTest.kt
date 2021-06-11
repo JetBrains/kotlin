@@ -12,7 +12,7 @@ class HierarchicalPackageCommonizationTest : AbstractInlineSourcesCommonizationT
 
     fun `test package with dummy`() {
         val result = commonize {
-            outputTarget("((a,b), (c,d))")
+            outputTarget("(a, b)", "(c, d)", "(a, b, c, d)")
 
             target("a") {
                 module {
@@ -105,90 +105,6 @@ class HierarchicalPackageCommonizationTest : AbstractInlineSourcesCommonizationT
                     )
                 }
             }
-        }
-
-        result.assertCommonized("a") {
-            source(
-                """
-                package pkg.abcd
-                val dummy = "me"
-                """, "abcd.kt"
-            )
-            source(
-                """
-                package pkg.ab
-                val dummy = "me"
-                """, "ab.kt"
-            )
-            source(
-                """
-                package pkg.a
-                val dummy = "me"
-                """, "a.kt"
-            )
-        }
-
-        result.assertCommonized("b") {
-            source(
-                """
-                package pkg.abcd
-                val dummy = "me"
-                """, "abcd.kt"
-            )
-            source(
-                """
-                package pkg.ab
-                val dummy = "me"
-                """, "ab.kt"
-            )
-            source(
-                """
-                package pkg.b
-                val dummy = "me"
-                """, "b.kt"
-            )
-        }
-
-        result.assertCommonized("c") {
-            source(
-                """
-                package pkg.abcd
-                val dummy = "me"
-                """, "abcd.kt"
-            )
-            source(
-                """
-                package pkg.cd
-                val dummy = "me"
-                """, "cd.kt"
-            )
-            source(
-                """
-                package pkg.c
-                val dummy = "me"
-                """, "c.kt"
-            )
-        }
-
-        result.assertCommonized("d") {
-            source(
-                """
-                package pkg.abcd
-                val dummy = "me"
-                """, "abcd.kt"
-            )
-            source(
-                """
-                package pkg.cd
-                val dummy = "me"
-                """, "cd.kt"
-            )
-            source(
-                """
-                package pkg.d
-                val dummy = "me"
-                """, "d.kt"
-            )
         }
 
         result.assertCommonized("(a,b)") {

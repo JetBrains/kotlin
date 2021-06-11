@@ -33,60 +33,14 @@ class CommonizerTargetIdentityStringTest {
     }
 
     @Test
-    fun `hierarchical commonizer targets`() {
-        val hierarchy = SharedCommonizerTarget(
-            CommonizerTarget(LINUX_X64, MACOS_X64),
-            CommonizerTarget(IOS_ARM64, IOS_X64)
-        )
-        assertEquals(setOf(LINUX_X64, MACOS_X64, IOS_ARM64, IOS_X64), hierarchy.konanTargets)
-        assertEquals(hierarchy, parseCommonizerTarget(hierarchy.identityString))
-    }
-
-    @Test
-    fun `multilevel hierarchical commonizer targets`() {
-        val hierarchy = SharedCommonizerTarget(
-            SharedCommonizerTarget(
-                SharedCommonizerTarget(
-                    SharedCommonizerTarget(
-                        CommonizerTarget(LINUX_X64, MACOS_X64),
-                        CommonizerTarget(IOS_X64, IOS_ARM64)
-                    ),
-                    CommonizerTarget(LINUX_ARM32_HFP)
-                ),
-                CommonizerTarget(LINUX_MIPSEL32)
-            ),
-            CommonizerTarget(WATCHOS_X86, WATCHOS_ARM64)
-        )
-
-        assertEquals(hierarchy, parseCommonizerTarget(hierarchy.identityString))
-    }
-
-    @Test
-    fun `parsing CommonizerTarget`() {
+    fun `parsing CommonizerTarget with 1 5 20 notation`() {
         val target = parseCommonizerTarget("(x, (x, y, (a, b), (b, c)))")
-        assertEquals(
-            SharedCommonizerTarget(
-                LeafCommonizerTarget("x"),
-                SharedCommonizerTarget(
-                    LeafCommonizerTarget("x"),
-                    LeafCommonizerTarget("y"),
-                    SharedCommonizerTarget(
-                        LeafCommonizerTarget("a"),
-                        LeafCommonizerTarget("b"),
-                    ),
-                    SharedCommonizerTarget(
-                        LeafCommonizerTarget("b"),
-                        LeafCommonizerTarget("c")
-                    )
-                )
-            ),
-            target
-        )
+        assertEquals(SharedCommonizerTarget(setOf("x", "y", "a", "b", "c").map(::LeafCommonizerTarget).toSet()), target)
     }
 
     @Test
     fun `empty shared target`() {
-        assertEquals(SharedCommonizerTarget(emptySet<CommonizerTarget>()), parseCommonizerTarget("()"))
+        assertEquals(SharedCommonizerTarget(emptySet<LeafCommonizerTarget>()), parseCommonizerTarget("()"))
     }
 
     @Test(expected = IllegalArgumentException::class)

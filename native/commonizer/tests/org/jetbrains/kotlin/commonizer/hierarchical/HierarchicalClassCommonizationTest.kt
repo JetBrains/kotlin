@@ -12,19 +12,13 @@ class HierarchicalClassCommonizationTest : AbstractInlineSourcesCommonizationTes
 
     fun `test simple class`() {
         val result = commonize {
-            outputTarget("((a,b), (c,d), e)")
+            outputTarget("(a, b)", "(c, d)", "(a, b, c, d)", "(a, b, c, d, e)")
             simpleSingleSourceTarget("a", "class X")
             simpleSingleSourceTarget("b", "class X")
             simpleSingleSourceTarget("c", "class X")
             simpleSingleSourceTarget("d", "class X")
             simpleSingleSourceTarget("e", "class X")
         }
-
-        result.assertCommonized("a", "class X")
-        result.assertCommonized("b", "class X")
-        result.assertCommonized("c", "class X")
-        result.assertCommonized("d", "class X")
-        result.assertCommonized("e", "class X")
 
         result.assertCommonized("(a,b)", "expect class X expect constructor()")
         result.assertCommonized("(c,d)", "expect class X expect constructor()")
@@ -34,7 +28,7 @@ class HierarchicalClassCommonizationTest : AbstractInlineSourcesCommonizationTes
 
     fun `test sample class`() {
         val result = commonize {
-            outputTarget("((a,b), (c,d))")
+            outputTarget("(a, b)", "(c, d)", "(a, b, c, d)")
             simpleSingleSourceTarget(
                 "a", """
                    class X {
@@ -75,46 +69,6 @@ class HierarchicalClassCommonizationTest : AbstractInlineSourcesCommonizationTes
                 """
             )
         }
-
-        result.assertCommonized(
-            "a", """
-               class X {
-                    val a: Int = 42
-                    val ab: Int = 42
-                    val abcd: Int = 42
-               } 
-                """
-        )
-
-        result.assertCommonized(
-            "b", """
-               class X {
-                    val b: Int = 42
-                    val ab: Int = 42
-                    val abcd: Int = 42
-               } 
-                """
-        )
-
-        result.assertCommonized(
-            "c", """
-               class X {
-                    val c: Int = 42
-                    val cd: Int = 42
-                    val abcd: Int = 42
-               } 
-                """
-        )
-
-        result.assertCommonized(
-            "d", """
-               class X {
-                   val d: Int = 42
-                   val cd: Int = 42
-                   val abcd: Int = 42
-               } 
-                """
-        )
 
         result.assertCommonized(
             "(a,b)", """

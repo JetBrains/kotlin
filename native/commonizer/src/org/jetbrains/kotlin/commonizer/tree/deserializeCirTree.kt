@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.commonizer.tree
 
 import org.jetbrains.kotlin.commonizer.CommonizerParameters
+import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.TargetProvider
 import org.jetbrains.kotlin.commonizer.tree.deserializer.*
+import org.jetbrains.kotlin.commonizer.utils.progress
 
 internal val defaultCirTreeModuleDeserializer = CirTreeModuleDeserializer(
     packageDeserializer = CirTreePackageDeserializer(
@@ -25,8 +27,3 @@ internal val defaultCirTreeModuleDeserializer = CirTreeModuleDeserializer(
 internal val defaultCirTreeRootDeserializer = RootCirTreeDeserializer(
     defaultCirTreeModuleDeserializer
 )
-
-
-internal fun deserializeCirTree(parameters: CommonizerParameters, target: TargetProvider): CirTreeRoot {
-    return defaultCirTreeRootDeserializer(parameters, target)
-}

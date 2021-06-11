@@ -192,8 +192,9 @@ private sealed class IdentityStringSyntaxNode {
 private fun buildCommonizerTarget(node: IdentityStringSyntaxNode): CommonizerTarget {
     return when (node) {
         is LeafTargetSyntaxNode -> LeafCommonizerTarget(node.token.value)
+        // Previous nested ((a, b), c) notation is still valid and will be flattened to (a, b, c)
         is SharedTargetSyntaxNode -> SharedCommonizerTarget(
-            node.children.map { child -> buildCommonizerTarget(child) }.toSet()
+            node.children.flatMap { child -> buildCommonizerTarget(child).allLeaves() }.toSet()
         )
     }
 }

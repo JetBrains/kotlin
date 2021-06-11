@@ -12,7 +12,7 @@ class HierarchicalTypeAliasCommonizationTest : AbstractInlineSourcesCommonizatio
 
     fun `test simple type alias`() {
         val result = commonize {
-            outputTarget("((a,b), (c,d))")
+            outputTarget("(a, b)", "(c, d)", "(a, b, c, d)")
             simpleSingleSourceTarget("a", "typealias X = Int")
             simpleSingleSourceTarget("b", "typealias X = Int")
             simpleSingleSourceTarget("c", "typealias X = Int")
@@ -22,12 +22,6 @@ class HierarchicalTypeAliasCommonizationTest : AbstractInlineSourcesCommonizatio
         result.assertCommonized("((a,b), (c,d))", "typealias X = Int")
         result.assertCommonized("(a,b)", "typealias X = Int")
         result.assertCommonized("(c, d)", "typealias X = Int")
-
-        /* Special case: For now, leaves should depend on commonized platform libraries */
-        result.assertCommonized("a", "")
-        result.assertCommonized("b", "")
-        result.assertCommonized("c", "")
-        result.assertCommonized("d", "")
     }
 
     /**
@@ -50,7 +44,7 @@ class HierarchicalTypeAliasCommonizationTest : AbstractInlineSourcesCommonizatio
 
     fun `test typealias to different classes`() {
         val result = commonize {
-            outputTarget("(((a,b), (c,d)), (e,f))")
+            outputTarget("(a, b)", "(c, d)", "(e, f)", "(a, b, c, d)", "(a, b, c, d, e, f)")
             simpleSingleSourceTarget(
                 "a", """
                 class AB
@@ -79,13 +73,6 @@ class HierarchicalTypeAliasCommonizationTest : AbstractInlineSourcesCommonizatio
             simpleSingleSourceTarget("f", """class x""")
         }
 
-        result.assertCommonized("a", """class AB""")
-        result.assertCommonized("b", """class AB""")
-        result.assertCommonized("c", """class CD""")
-        result.assertCommonized("d", """class CD""")
-        result.assertCommonized("e", """class x""")
-        result.assertCommonized("f", """class x""")
-
         result.assertCommonized(
             "(a,b)", """
                 expect class AB expect constructor()
@@ -111,7 +98,7 @@ class HierarchicalTypeAliasCommonizationTest : AbstractInlineSourcesCommonizatio
             "(e,f)", """expect class x expect constructor()"""
         )
 
-        result.assertCommonized("((a,b), (c,d))", """expect class x expect constructor()""")
-        result.assertCommonized("(((a,b), (c,d)), (e,f))", """expect class x expect constructor()""")
+        result.assertCommonized("(a, b, c, d)", """expect class x expect constructor()""")
+        result.assertCommonized("(a, b, c, d, e, f)", """expect class x expect constructor()""")
     }
 }

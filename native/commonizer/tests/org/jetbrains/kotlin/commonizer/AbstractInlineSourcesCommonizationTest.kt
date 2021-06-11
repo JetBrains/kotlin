@@ -25,7 +25,7 @@ data class HierarchicalCommonizationResult(
 abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizerTestCase() {
 
     data class Parameters(
-        val outputTarget: SharedCommonizerTarget,
+        val outputTargets: Set<SharedCommonizerTarget>,
         val dependencies: TargetDependent<List<InlineSourceBuilder.Module>>,
         val targets: List<Target>
     )
@@ -41,7 +41,7 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
 
     @InlineSourcesCommonizationTestDsl
     class ParametersBuilder(private val parentInlineSourceBuilder: InlineSourceBuilder) {
-        private var outputTarget: SharedCommonizerTarget? = null
+        private var outputTargets: MutableSet<SharedCommonizerTarget>? = null
 
         private val dependencies: MutableMap<CommonizerTarget, MutableList<InlineSourceBuilder.Module>> = LinkedHashMap()
 
@@ -52,8 +52,12 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
 
 
         @InlineSourcesCommonizationTestDsl
-        fun outputTarget(target: String) {
-            outputTarget = parseCommonizerTarget(target) as SharedCommonizerTarget
+        fun outputTarget(vararg targets: String) {
+            val outputTargets = outputTargets ?: mutableSetOf()
+            targets.forEach { target ->
+                outputTargets += parseCommonizerTarget(target) as SharedCommonizerTarget
+            }
+            this.outputTargets = outputTargets
         }
 
         @InlineSourcesCommonizationTestDsl
@@ -67,18 +71,20 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
         }
 
         @InlineSourcesCommonizationTestDsl
-        fun registerDependency(target: CommonizerTarget, builder: InlineSourceBuilder.ModuleBuilder.() -> Unit) {
-            val dependenciesList = dependencies.getOrPut(target) { mutableListOf() }
-            val dependency = inlineSourceBuilderFactory[target].createModule {
-                builder()
-                name = "${target.prettyName}-dependency-${dependenciesList.size}-$name"
+        fun registerDependency(vararg targets: CommonizerTarget, builder: InlineSourceBuilder.ModuleBuilder.() -> Unit) {
+            targets.forEach { target ->
+                val dependenciesList = dependencies.getOrPut(target) { mutableListOf() }
+                val dependency = inlineSourceBuilderFactory[target].createModule {
+                    builder()
+                    name = "$target-dependency-${dependenciesList.size}-$name"
+                }
+                dependenciesList.add(dependency)
             }
-            dependenciesList.add(dependency)
         }
 
         @InlineSourcesCommonizationTestDsl
-        fun registerDependency(target: String, builder: InlineSourceBuilder.ModuleBuilder.() -> Unit) {
-            registerDependency(parseCommonizerTarget(target), builder)
+        fun registerDependency(vararg targets: String, builder: InlineSourceBuilder.ModuleBuilder.() -> Unit) {
+            registerDependency(targets = targets.map(::parseCommonizerTarget).toTypedArray(), builder)
         }
 
         @InlineSourcesCommonizationTestDsl
@@ -96,7 +102,7 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
         }
 
         fun build(): Parameters = Parameters(
-            outputTarget = outputTarget ?: SharedCommonizerTarget(targets.map { it.target }.toSet()),
+            outputTargets = outputTargets ?: setOf(SharedCommonizerTarget(targets.map { it.target }.allLeaves())),
             dependencies = dependencies.toTargetDependent(),
             targets = targets.toList()
         )
@@ -111,7 +117,7 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
                 override fun createModule(builder: InlineSourceBuilder.ModuleBuilder.() -> Unit): InlineSourceBuilder.Module {
                     return inlineSourceBuilder.createModule {
                         dependencies.toMap()
-                            .filterKeys { dependencyTarget -> dependencyTarget.isEqualOrAncestorOf(target) }.values.flatten()
+                            .filterKeys { dependencyTarget -> target in dependencyTarget.withAllLeaves() }.values.flatten()
                             .forEach { dependencyModule -> dependency(dependencyModule) }
                         builder()
                     }
@@ -155,16 +161,16 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
         manifestDataProvider: (CommonizerTarget) -> NativeManifestDataProvider = { MockNativeManifestDataProvider(it) }
     ): CommonizerParameters {
         return CommonizerParameters(
-            outputTarget = outputTarget,
-            manifestProvider = TargetDependent(outputTarget.withAllAncestors(), manifestDataProvider),
-            dependenciesProvider = TargetDependent(outputTarget.withAllAncestors()) { target ->
+            outputTargets = outputTargets,
+            manifestProvider = TargetDependent(outputTargets, manifestDataProvider),
+            dependenciesProvider = TargetDependent(outputTargets.withAllLeaves()) { target ->
                 val explicitDependencies = dependencies.getOrNull(target).orEmpty().map { module -> createModuleDescriptor(module) }
-                val implicitDependencies = listOfNotNull(if (target == outputTarget) DefaultBuiltIns.Instance.builtInsModule else null)
+                val implicitDependencies = listOfNotNull(DefaultBuiltIns.Instance.builtInsModule)
                 val dependencies = explicitDependencies + implicitDependencies
                 if (dependencies.isEmpty()) null
                 else MockModulesProvider.create(dependencies)
             },
-            targetProviders = TargetDependent(outputTarget.allLeaves()) { commonizerTarget ->
+            targetProviders = TargetDependent(outputTargets.allLeaves()) { commonizerTarget ->
                 val target = targets.singleOrNull { it.target == commonizerTarget } ?: return@TargetDependent null
                 TargetProvider(
                     target = commonizerTarget,

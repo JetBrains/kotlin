@@ -9,7 +9,6 @@ import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
-import org.gradle.workers.WorkParameters
 import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.compilerRunner.GradleCliCommonizer
 import org.jetbrains.kotlin.compilerRunner.konanHome
@@ -56,7 +55,9 @@ internal open class CInteropCommonizerTask : AbstractCInteropCommonizerTask() {
     @get:InputFiles
     @get:Classpath
     val commonizedNativeDistributionDependencies: Set<File>
-        get() = getCommonizationParameters().flatMap { nativeDistributionDependencies(it) }.map { it.file }.toSet()
+        get() = getCommonizationParameters().flatMap { parameters -> parameters.targets }
+            .flatMap { target -> project.getNativeDistributionDependencies(target) }
+            .toSet()
 
     fun from(vararg tasks: CInteropProcess) = from(
         tasks.toList()
@@ -96,54 +97,57 @@ internal open class CInteropCommonizerTask : AbstractCInteropCommonizerTask() {
 
         GradleCliCommonizer(project).commonizeLibraries(
             konanHome = project.file(project.konanHome),
-            outputCommonizerTarget = parameters.commonizerTarget,
+            outputTargets = parameters.targets,
             inputLibraries = cinteropsForTarget.map { it.libraryFile.get() }.filter { it.exists() }.toSet(),
             dependencyLibraries = cinteropsForTarget.flatMap { it.dependencies.files }.map(::NonTargetedCommonizerDependency).toSet()
-                    + nativeDistributionDependencies(parameters),
+                    + getNativeDistributionDependencies(parameters),
             outputDirectory = outputDirectory(parameters),
             logLevel = project.commonizerLogLevel
         )
     }
 
-    private fun nativeDistributionDependencies(parameters: CInteropCommonizationParameters): Set<CommonizerDependency> {
-        val task = project.commonizeNativeDistributionHierarchicallyTask?.get() ?: return emptySet()
-
-        val rootTarget = task.rootCommonizerTargets
-            .firstOrNull { rootTarget -> parameters.commonizerTarget in rootTarget } ?: return emptySet()
-
-        val rootTargetOutput = task.getRootOutputDirectory(rootTarget)
-
-        return parameters.commonizerTarget.withAllAncestors()
-            .flatMap { target -> createCommonizerDependencies(rootTargetOutput, target) }
-            .toSet()
+    private fun getNativeDistributionDependencies(parameters: CInteropCommonizationParameters): Set<CommonizerDependency> {
+        return (parameters.targets + parameters.targets.allLeaves()).flatMapTo(mutableSetOf()) { target ->
+            project.getNativeDistributionDependencies(target).map { dependency -> TargetedCommonizerDependency(target, dependency) }
+        }
     }
 
-    private fun createCommonizerDependencies(rootOutput: File, target: CommonizerTarget): List<TargetedCommonizerDependency> {
-        return HierarchicalCommonizerOutputLayout.getTargetDirectory(rootOutput, target).listFiles().orEmpty()
-            .map { file -> TargetedCommonizerDependency(target, file) }
-    }
-
-    @Nested
-    internal fun getCommonizationParameters(): Set<CInteropCommonizationParameters> {
+    private fun getSharedNativeCInterops(): Set<SharedNativeCInterops> {
         val sharedNativeCompilations = (project.multiplatformExtensionOrNull ?: return emptySet())
             .targets.flatMap { it.compilations }
             .filterIsInstance<KotlinSharedNativeCompilation>()
 
-        fun getCommonizationParameters(compilation: KotlinSharedNativeCompilation): CInteropCommonizationParameters? {
-            return CInteropCommonizationParameters(
-                commonizerTarget = project.getCommonizerTarget(compilation) as? SharedCommonizerTarget ?: return null,
+        fun buildSharedNativeCInterops(compilation: KotlinSharedNativeCompilation): SharedNativeCInterops? {
+            return SharedNativeCInterops(
+                target = project.getCommonizerTarget(compilation) as? SharedCommonizerTarget ?: return null,
                 interops = project.getDependingNativeCompilations(compilation)
-                    /* If a depending native compilation has no interop, then commonization is useless */
+                    /* If any dependee native compilation has no interop, then commonization is useless */
                     .flatMap { nativeCompilation -> nativeCompilation.cinterops.ifEmpty { return null } }
                     .map { interop -> interop.identifier }
                     .toSet()
             )
         }
 
-        return sharedNativeCompilations.mapNotNull(::getCommonizationParameters).toSet()
+        return sharedNativeCompilations.mapNotNull(::buildSharedNativeCInterops).toSet()
             .run(::removeNotRegisteredInterops)
             .run(::removeEmptyInterops)
-            .run(::removeRedundantParameters)
+    }
+
+
+    @Nested
+    internal fun getCommonizationParameters(): Set<CInteropCommonizationParameters> {
+        val sharedNativeCInterops = getSharedNativeCInterops()
+        if (sharedNativeCInterops.isEmpty()) return emptySet()
+
+        return sharedNativeCInterops.distinct()
+            .filter { potentialRoot -> sharedNativeCInterops.none { other -> potentialRoot isProperSubsetOf other } }
+            .map { root -> root to sharedNativeCInterops.filter { other -> other isProperSubsetOf root } }
+            .mapTo(mutableSetOf()) { (root, subsets) ->
+                CInteropCommonizationParameters(
+                    targets = subsets.mapTo(mutableSetOf()) { it.target } + root.target,
+                    interops = root.interops
+                )
+            }
     }
 
     override fun getCommonizationParameters(compilation: KotlinSharedNativeCompilation): CInteropCommonizationParameters? {
@@ -155,17 +159,17 @@ internal open class CInteropCommonizerTask : AbstractCInteropCommonizerTask() {
         return supportedParameters.first()
     }
 
-    private fun CInteropCommonizationParameters.supports(
-        compilation: KotlinSharedNativeCompilation
-    ): Boolean {
-        val registeredInterops = cinterops.map { it.identifier }
-        val commonizerTargetOfCompilation = project.getCommonizerTarget(compilation) ?: return false
-        val interopsOfCompilation = project.getDependingNativeCompilations(compilation)
-            .flatMap { it.cinterops }.map { it.identifier }
-            .filter { interop -> interop in registeredInterops }
+}
 
-        return commonizerTarget.contains(commonizerTargetOfCompilation) && interops.containsAll(interopsOfCompilation)
-    }
+internal fun CInteropCommonizationParameters.supports(
+    compilation: KotlinSharedNativeCompilation
+): Boolean {
+    val project = compilation.project
+    val commonizerTargetOfCompilation = project.getCommonizerTarget(compilation) ?: return false
+    val interopsOfCompilation = project.getDependingNativeCompilations(compilation)
+        .flatMap { it.cinterops }.map { it.identifier }
+
+    return targets.contains(commonizerTargetOfCompilation) && interops.containsAll(interopsOfCompilation)
 }
 
 private fun CInteropProcess.toGist(): CInteropGist {
@@ -185,38 +189,39 @@ private fun CInteropProcess.toGist(): CInteropGist {
     )
 }
 
-internal data class CInteropCommonizationParameters(
-    @get:Input val commonizerTarget: SharedCommonizerTarget,
-    @get:Input val interops: Set<CInteropIdentifier>
-) : WorkParameters {
-    operator fun contains(other: CInteropCommonizationParameters) =
-        this.interops.containsAll(other.interops) && this.commonizerTarget.contains(other.commonizerTarget)
+/**
+ * Represents a single shared native compilation / shared native source set
+ * that would rely on given [interops]
+ */
+internal data class SharedNativeCInterops(
+    val target: SharedCommonizerTarget,
+    val interops: Set<CInteropIdentifier>
+)
+
+internal infix fun SharedNativeCInterops.isProperSubsetOf(other: SharedNativeCInterops): Boolean {
+    return target.allLeaves() != other.target.allLeaves() && other.target.allLeaves().containsAll(target.allLeaves())
+            && interops != other.interops && other.interops.containsAll(interops)
 }
 
+/**
+ * Represents a single invocation to the commonizer
+ */
+internal data class CInteropCommonizationParameters(
+    @get:Input val targets: Set<SharedCommonizerTarget>,
+    @get:Input val interops: Set<CInteropIdentifier>
+)
+
 private fun CInteropCommonizerTask.removeNotRegisteredInterops(
-    parameters: Set<CInteropCommonizationParameters>
-): Set<CInteropCommonizationParameters> {
+    parameters: Set<SharedNativeCInterops>
+): Set<SharedNativeCInterops> {
     val registeredInterops = this.cinterops.map { it.identifier }
     return parameters.mapTo(mutableSetOf()) { params ->
         params.copy(interops = params.interops.filterTo(mutableSetOf()) { interop -> interop in registeredInterops })
     }
 }
 
-private fun removeEmptyInterops(parameters: Set<CInteropCommonizationParameters>): Set<CInteropCommonizationParameters> {
+private fun removeEmptyInterops(parameters: Set<SharedNativeCInterops>): Set<SharedNativeCInterops> {
     return parameters.filterTo(mutableSetOf()) { it.interops.isNotEmpty() }
-}
-
-private fun removeRedundantParameters(parameters: Set<CInteropCommonizationParameters>): Set<CInteropCommonizationParameters> {
-    return parameters.filterNotTo(mutableSetOf()) { current ->
-        parameters.any { other ->
-            other !== current && current in other
-        }
-    }
-}
-
-private operator fun CommonizerTarget.contains(other: CommonizerTarget): Boolean {
-    if (this == other) return true
-    return this.isAncestorOf(other)
 }
 
 private fun Project.getDependingNativeCompilations(compilation: KotlinSharedNativeCompilation): Set<KotlinNativeCompilation> {

@@ -7,52 +7,8 @@ package org.jetbrains.kotlin.commonizer
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 class CommonizerTargetUtilsTest {
-
-    @Test
-    fun `isAncestorOf isDescendentOf`() {
-        val child = LeafCommonizerTarget("a")
-        val parent = SharedCommonizerTarget(LeafCommonizerTarget("a"))
-
-        assertTrue(child isDescendentOf parent, "Expected child isDescendent of parent")
-        assertTrue(parent isAncestorOf child, "Expected parent isAncestor of child")
-        assertFalse(child isDescendentOf child, "Expected same target not being descendent of itself")
-        assertFalse(parent isDescendentOf parent, "Expected same target not being descendent of itself")
-        assertFalse(LeafCommonizerTarget("b") isDescendentOf parent, "Expected orphan target not being descendent of parent")
-
-        val hierarchicalParent = SharedCommonizerTarget(parent, parseCommonizerTarget("((c, d), e)"))
-        assertTrue(child isDescendentOf hierarchicalParent, "Expected child being descendent of hierarchical parent")
-        assertTrue(hierarchicalParent isAncestorOf child, "Expected hierarchicalParent being ancestor of child")
-        assertTrue(parseCommonizerTarget("(c, d)") isDescendentOf hierarchicalParent)
-        assertTrue(LeafCommonizerTarget("e") isDescendentOf hierarchicalParent)
-    }
-
-    @Test
-    fun withAllAncestors() {
-        val target = parseCommonizerTarget("((a, b), (c, d), (e, (f, g)))")
-
-        assertEquals(
-            setOf(
-                target,
-                parseCommonizerTarget("(a, b)"),
-                parseCommonizerTarget("(c, d)"),
-                parseCommonizerTarget("(e, (f, g))"),
-                parseCommonizerTarget("(f, g)"),
-                LeafCommonizerTarget("a"),
-                LeafCommonizerTarget("b"),
-                LeafCommonizerTarget("c"),
-                LeafCommonizerTarget("d"),
-                LeafCommonizerTarget("e"),
-                LeafCommonizerTarget("f"),
-                LeafCommonizerTarget("g")
-            ),
-            target.withAllAncestors(),
-            "Expected all targets present"
-        )
-    }
 
     @Test
     fun allLeaves() {
@@ -74,6 +30,19 @@ class CommonizerTargetUtilsTest {
         assertEquals(
             setOf(LeafCommonizerTarget("a")), LeafCommonizerTarget("a").allLeaves(),
             "Expected LeafCommonizerTarget returns itself in 'allLeaves'"
+        )
+    }
+
+    @Test
+    fun `withAllLeaves LeafCommonizerTarget`() {
+        assertEquals(setOf(LeafCommonizerTarget("a")), LeafCommonizerTarget("a").withAllLeaves())
+    }
+
+    @Test
+    fun `withAllLeaves SharedCommonizerTarget`() {
+        assertEquals(
+            setOf(parseCommonizerTarget("(a, b)"), LeafCommonizerTarget("a"), LeafCommonizerTarget("b")),
+            parseCommonizerTarget("(a, b)").withAllLeaves()
         )
     }
 }
