@@ -6,25 +6,28 @@
 package org.jetbrains.kotlin.jvm.compiler
 
 import org.jetbrains.kotlin.load.java.NULLABILITY_ANNOTATIONS
-import org.jetbrains.kotlin.load.java.nullabilityAnnotationSettings
+import org.jetbrains.kotlin.load.java.NULLABILITY_ANNOTATION_SETTINGS
+import org.jetbrains.kotlin.load.java.NullabilityAnnotationStatesImpl
 import org.jetbrains.kotlin.name.isChildOf
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 
 class AllNullabilityAnnotationsAreSetUpTest : KtUsefulTestCase() {
     fun testAllAnnotationsAreSetUp() {
-        assert(NULLABILITY_ANNOTATIONS.all { annotation -> nullabilityAnnotationSettings.keys.any { annotation.isChildOf(it) } }) {
+        val annotationsRawMap = (NULLABILITY_ANNOTATION_SETTINGS as NullabilityAnnotationStatesImpl).states
+        assert(NULLABILITY_ANNOTATIONS.all { annotation -> annotationsRawMap.keys.any { annotation.isChildOf(it) } }) {
             val missedAnnotations = NULLABILITY_ANNOTATIONS.filter { annotation ->
-                nullabilityAnnotationSettings.keys.none { annotation.isChildOf(it) }
+                annotationsRawMap.keys.none { annotation.isChildOf(it) }
             }
             "Not all nullability annotations are presented in `nullabilityAnnotationSettings`. Missed annotations: $missedAnnotations"
         }
     }
 
     fun testAllSetUpAnnotationsArePresent() {
-        assert(nullabilityAnnotationSettings.keys.all { annotationsPackage ->
+        val annotationsRawMap = (NULLABILITY_ANNOTATION_SETTINGS as NullabilityAnnotationStatesImpl).states
+        assert(annotationsRawMap.keys.all { annotationsPackage ->
             NULLABILITY_ANNOTATIONS.any { it.isChildOf(annotationsPackage) }
         }) {
-            val missedAnnotations = nullabilityAnnotationSettings.keys.filter { annotationsPackage ->
+            val missedAnnotations = annotationsRawMap.keys.filter { annotationsPackage ->
                 NULLABILITY_ANNOTATIONS.none { it.isChildOf(annotationsPackage) }
             }
             "Not all set up nullability annotations are presented in `NULLABILITY_ANNOTATIONS`. Missed annotations: $missedAnnotations"

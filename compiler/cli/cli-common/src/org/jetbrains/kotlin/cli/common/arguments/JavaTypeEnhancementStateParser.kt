@@ -65,8 +65,9 @@ class JavaTypeEnhancementStateParser(
         }
     }
 
-    private fun parseNullabilityAnnotationReportLevels(nullabilityAnnotations: Array<String>?): Map<FqName, ReportLevel> {
-        if (nullabilityAnnotations.isNullOrEmpty()) return emptyMap()
+    private fun parseNullabilityAnnotationReportLevels(nullabilityAnnotations: Array<String>?): NullabilityAnnotationStates<out ReportLevel> {
+        if (nullabilityAnnotations.isNullOrEmpty())
+            return NullabilityAnnotationStates.EMPTY
 
         val annotationsWithReportLevels = mutableMapOf<FqName, ReportLevel>()
         val compilerOption = "-Xnullability-annotations"
@@ -87,7 +88,7 @@ class JavaTypeEnhancementStateParser(
             }
         }
 
-        return annotationsWithReportLevels
+        return NullabilityAnnotationStatesImpl(annotationsWithReportLevels)
     }
 
     private fun parseJspecifyReportLevel(
@@ -198,6 +199,6 @@ class JavaTypeEnhancementStateParser(
         private val DEFAULT = JavaTypeEnhancementStateParser(MessageCollector.NONE, KotlinVersion.CURRENT)
 
         fun parsePlainNullabilityAnnotationReportLevels(nullabilityAnnotations: String) =
-            DEFAULT.parseNullabilityAnnotationReportLevels(arrayOf(nullabilityAnnotations)).entries.singleOrNull()?.toPair()
+            DEFAULT.parseNullabilityAnnotationReportLevels(arrayOf(nullabilityAnnotations)).singleOrNull()
     }
 }
