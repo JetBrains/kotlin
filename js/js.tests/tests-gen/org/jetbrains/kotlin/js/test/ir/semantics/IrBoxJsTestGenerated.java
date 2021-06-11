@@ -3307,6 +3307,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             runTest("js/js.translator/testData/box/extensionFunction/implicitReceiverInExtension.kt");
         }
 
+        @TestMetadata("inExternalInterface.kt")
+        public void testInExternalInterface() throws Exception {
+            runTest("js/js.translator/testData/box/extensionFunction/inExternalInterface.kt");
+        }
+
         @TestMetadata("intExtension.kt")
         public void testIntExtension() throws Exception {
             runTest("js/js.translator/testData/box/extensionFunction/intExtension.kt");
