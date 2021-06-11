@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.stat
 data class CompileStatData(
     val version: Int = 1,
     val projectName: String?,
+    val label: String?,
     val taskName: String?,
     val taskResult: String,
     val duration: Long,

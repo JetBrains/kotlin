@@ -15,18 +15,20 @@ import java.net.URL
 import java.util.*
 
 object ReportStatisticsToElasticSearch : ReportStatistics {
-    val url = CompilerSystemProperties.KOTLIN_STAT_ENDPOINT_PROPERTY.value
-    val user = CompilerSystemProperties.KOTLIN_STAT_USER_PROPERTY.value
-    val enable: Boolean = CompilerSystemProperties.KOTLIN_STAT_ENABLED_PROPERTY.value?.toBooleanLenient() ?: false
+    val url by lazy { CompilerSystemProperties.KOTLIN_STAT_ENDPOINT_PROPERTY.value }
+    val user by lazy { CompilerSystemProperties.KOTLIN_STAT_USER_PROPERTY.value }
+    val enable: Boolean by lazy { CompilerSystemProperties.KOTLIN_STAT_ENABLED_PROPERTY.value?.toBooleanLenient() ?: false }
 
     //TODO Do not store password as string
-    val password = CompilerSystemProperties.KOTLIN_STAT_PASSWORD_PROPERTY.value
+    val password by lazy { CompilerSystemProperties.KOTLIN_STAT_PASSWORD_PROPERTY.value }
 
     override fun report(data: CompileStatData) {
         if (!enable) {
             return;
         }
+
         val connection = URL(url).openConnection() as HttpURLConnection
+
         try {
             if (user != null && password != null) {
                 val auth = Base64.getEncoder()
@@ -39,9 +41,11 @@ object ReportStatisticsToElasticSearch : ReportStatistics {
             connection.outputStream.use {
                 it.write(Gson().toJson(data).toByteArray())
             }
-            connection.connect();
+            connection.connect()
             checkResponseAndLog(connection)
             connection.inputStream.use { it.reader().use { reader -> reader.readText() } }
+        } catch (e: Exception) {
+            checkResponseAndLog(connection)
         } finally {
             connection.disconnect()
         }

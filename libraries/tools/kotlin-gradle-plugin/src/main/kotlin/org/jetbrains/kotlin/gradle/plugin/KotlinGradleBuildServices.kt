@@ -66,7 +66,7 @@ internal class KotlinGradleBuildServices private constructor(
                 KotlinGradleBuildListener(KotlinGradleFinishBuildHandler())
             }
             val kotlinGradleEsListenerProvider = project.provider {
-                KotlinBuildEsStatListener(project.name)
+                KotlinBuildEsStatListener(project.rootProject.name)
             }
 
             if (instance != null) {
@@ -81,6 +81,7 @@ internal class KotlinGradleBuildServices private constructor(
                 listenerRegistryHolder.listenerRegistry.onTaskCompletion(kotlinGradleEsListenerProvider)
             } else {
                 gradle.addBuildListener(services)
+                gradle.taskGraph.addTaskExecutionListener(kotlinGradleEsListenerProvider.get())
                 log.kotlinDebug(INIT_MESSAGE)
             }
             instance = services
@@ -108,7 +109,6 @@ internal class KotlinGradleBuildServices private constructor(
 
     override fun buildFinished(result: BuildResult) {
         buildHandler!!.buildFinished(result.gradle!!)
-        KotlinBuildEsStatListener(result.gradle!!.rootProject.name).onFinish(result)
         instance = null
         log.kotlinDebug(DISPOSE_MESSAGE)
     }
