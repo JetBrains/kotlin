@@ -1928,6 +1928,15 @@ internal class PropertyTypeMismatchByDelegationImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
+internal class VarOverriddenByValByDelegationImpl(
+    override val delegateDeclaration: KtCallableSymbol,
+    override val baseDeclaration: KtCallableSymbol,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.VarOverriddenByValByDelegation(), KtAbstractFirDiagnostic<KtClassOrObject> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
 internal class AbstractMemberNotImplementedImpl(
     override val classOrObject: KtClassLikeSymbol,
     override val missingDeclaration: KtCallableSymbol,

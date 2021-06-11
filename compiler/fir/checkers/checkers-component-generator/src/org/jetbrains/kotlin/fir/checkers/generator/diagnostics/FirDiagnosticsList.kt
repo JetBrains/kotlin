@@ -612,6 +612,11 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirCallableDeclaration<*>>("baseDeclaration")
         }
 
+        val VAR_OVERRIDDEN_BY_VAL_BY_DELEGATION by error<KtClassOrObject>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<FirCallableDeclaration<*>>("delegateDeclaration")
+            parameter<FirCallableDeclaration<*>>("baseDeclaration")
+        }
+
         val ABSTRACT_MEMBER_NOT_IMPLEMENTED by error<KtClassOrObject>(PositioningStrategy.DECLARATION_NAME) {
             parameter<FirClass>("classOrObject")
             parameter<FirCallableDeclaration>("missingDeclaration")

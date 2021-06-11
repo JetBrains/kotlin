@@ -386,6 +386,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VARIABLE_NEVER_RE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_ANNOTATION_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_OVERRIDDEN_BY_VAL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_OVERRIDDEN_BY_VAL_BY_DELEGATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_TYPE_MISMATCH_ON_INHERITANCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_TYPE_MISMATCH_ON_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VIRTUAL_MEMBER_HIDDEN
@@ -971,6 +972,13 @@ class FirDefaultErrorMessages {
             map.put(
                 PROPERTY_TYPE_MISMATCH_BY_DELEGATION,
                 "Type of property ''{0}'' is not a subtype of overridden by delegation ''{1}''",
+                NAME,
+                NAME
+            )
+
+            map.put(
+                VAR_OVERRIDDEN_BY_VAL_BY_DELEGATION,
+                "Val-property ''{0}'' implicitly overrides a var-property ''{1}'' by delegation",
                 NAME,
                 NAME
             )

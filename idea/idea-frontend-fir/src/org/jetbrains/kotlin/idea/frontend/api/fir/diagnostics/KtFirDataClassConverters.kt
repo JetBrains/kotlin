@@ -1692,6 +1692,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.VAR_OVERRIDDEN_BY_VAL_BY_DELEGATION) { firDiagnostic ->
+        VarOverriddenByValByDelegationImpl(
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a as FirCallableDeclaration),
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.b as FirCallableDeclaration),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.ABSTRACT_MEMBER_NOT_IMPLEMENTED) { firDiagnostic ->
         AbstractMemberNotImplementedImpl(
             firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a),

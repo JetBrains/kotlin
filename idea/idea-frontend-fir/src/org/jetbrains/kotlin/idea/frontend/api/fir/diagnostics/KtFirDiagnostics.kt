@@ -1201,6 +1201,12 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val baseDeclaration: KtCallableSymbol
     }
 
+    abstract class VarOverriddenByValByDelegation : KtFirDiagnostic<KtClassOrObject>() {
+        override val diagnosticClass get() = VarOverriddenByValByDelegation::class
+        abstract val delegateDeclaration: KtCallableSymbol
+        abstract val baseDeclaration: KtCallableSymbol
+    }
+
     abstract class AbstractMemberNotImplemented : KtFirDiagnostic<KtClassOrObject>() {
         override val diagnosticClass get() = AbstractMemberNotImplemented::class
         abstract val classOrObject: KtClassLikeSymbol
