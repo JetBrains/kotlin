@@ -643,6 +643,22 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
         }
     }
 
+    @Test
+    @PluginTargetVersions(gradleVersion = "6.0+", pluginVersion = "1.5.20+")
+    fun testDetectAndroidNonEmptyResources() {
+        configureByFiles()
+        createProjectSubFile(
+            "local.properties",
+            "sdk.dir=/${KtTestUtil.getAndroidSdkSystemIndependentPath()}"
+        )
+        importProject(true)
+        checkProjectStructure(exhaustiveModuleList = false, exhaustiveDependencyList = false, exhaustiveSourceSourceRootList = false) {
+            module("project.multiplatformb") {
+                sourceFolder("multiplatformb/src/androidTest/resources", JavaResourceRootType.TEST_RESOURCE)
+            }
+        }
+    }
+
     /**
      * This test is inherited form testPlatformToCommonExpectedByInComposite and actually tests
      * dependencies in multiplatform project included in composite build
