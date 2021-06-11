@@ -365,7 +365,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var extendedCompilerChecks: Boolean by FreezableVar(false)
 
-    open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
+    open fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
             put(AnalysisFlags.skipMetadataVersionCheck, skipMetadataVersionCheck)
             put(AnalysisFlags.skipPrereleaseCheck, skipPrereleaseCheck || skipMetadataVersionCheck)
@@ -516,7 +516,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         val languageVersionSettings = LanguageVersionSettingsImpl(
             languageVersion,
             ApiVersion.createByLanguageVersion(apiVersion),
-            configureAnalysisFlags(collector),
+            configureAnalysisFlags(collector, languageVersion),
             configureLanguageFeatures(collector)
         )
 

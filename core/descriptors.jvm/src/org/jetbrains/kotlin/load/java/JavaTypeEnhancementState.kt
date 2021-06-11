@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.load.java
 import org.jetbrains.kotlin.name.FqName
 
 class JavaTypeEnhancementState(
-    val jsr305: Jsr305Settings = Jsr305Settings.DEFAULT,
-    val getReportLevelForAnnotation: (FqName) -> ReportLevel = ::getDefaultReportLevelForAnnotation
+    val jsr305: Jsr305Settings,
+    val getReportLevelForAnnotation: (FqName) -> ReportLevel
 ) {
     val disabledDefaultAnnotations = jsr305.isDisabled || getReportLevelForAnnotation(JSPECIFY_ANNOTATIONS_PACKAGE) == ReportLevel.IGNORE
 
     companion object {
-        val DEFAULT = JavaTypeEnhancementState()
+        val DEFAULT = JavaTypeEnhancementState(getDefaultJsr305Settings(), ::getDefaultReportLevelForAnnotation)
     }
 }
