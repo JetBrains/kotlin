@@ -1171,7 +1171,7 @@ fun main(args: Array<String>) {
                 model("quickfix/expressions", pattern = pattern, filenameStartsLowerCase = true)
                 model("quickfix/lateinit", pattern = pattern, filenameStartsLowerCase = true)
                 model("quickfix/modifiers", pattern = pattern, filenameStartsLowerCase = true, recursive = false)
-                model("quickfix/nullables/unsafeInfixCall", pattern = pattern, filenameStartsLowerCase = true)
+                model("quickfix/nullables", pattern = pattern, filenameStartsLowerCase = true)
                 model("quickfix/override", pattern = pattern, filenameStartsLowerCase = true, recursive = false)
                 model("quickfix/override/typeMismatchOnOverride", pattern = pattern, filenameStartsLowerCase = true, recursive = false)
                 model("quickfix/replaceInfixOrOperatorCall", pattern = pattern, filenameStartsLowerCase = true)

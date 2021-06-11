@@ -2,3 +2,4 @@
 fun f(a: Int) : Boolean {
     return a is Int?<caret>
 }
+/* IGNORE_FIR */
