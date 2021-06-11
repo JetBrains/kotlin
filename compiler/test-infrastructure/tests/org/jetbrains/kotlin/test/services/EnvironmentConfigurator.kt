@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.test.directives.model.*
 import org.jetbrains.kotlin.test.model.TestModule
 
@@ -36,7 +37,10 @@ abstract class EnvironmentConfigurator(protected val testServices: TestServices)
 
     open fun DirectiveToConfigurationKeyExtractor.provideConfigurationKeys() {}
 
-    open fun provideAdditionalAnalysisFlags(directives: RegisteredDirectives): Map<AnalysisFlag<*>, Any?> {
+    open fun provideAdditionalAnalysisFlags(
+        directives: RegisteredDirectives,
+        languageVersion: LanguageVersion
+    ): Map<AnalysisFlag<*>, Any?> {
         return emptyMap()
     }
 

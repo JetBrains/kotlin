@@ -499,15 +499,11 @@ default: `indy-with-constants` for JVM target 9 or greater, `inline` otherwise""
     )
     var typeEnhancementImprovementsInStrictMode: Boolean by FreezableVar(false)
 
-    override fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
-        val result = super.configureAnalysisFlags(collector)
+    override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
+        val result = super.configureAnalysisFlags(collector, languageVersion)
         result[JvmAnalysisFlags.strictMetadataVersionSemantics] = strictMetadataVersionSemantics
-        result[JvmAnalysisFlags.javaTypeEnhancementState] = JavaTypeEnhancementStateParser(collector).parse(
-            jsr305,
-            supportCompatqualCheckerFrameworkAnnotations,
-            jspecifyAnnotations,
-            nullabilityAnnotations
-        )
+        result[JvmAnalysisFlags.javaTypeEnhancementState] = JavaTypeEnhancementStateParser(collector, languageVersion.toKotlinVersion())
+            .parse(jsr305, supportCompatqualCheckerFrameworkAnnotations, jspecifyAnnotations, nullabilityAnnotations)
         result[AnalysisFlags.ignoreDataFlowInAssert] = JVMAssertionsMode.fromString(assertionsMode) != JVMAssertionsMode.LEGACY
         JvmDefaultMode.fromStringOrNull(jvmDefault)?.let {
             result[JvmAnalysisFlags.jvmDefaultMode] = it
