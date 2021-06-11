@@ -26,7 +26,8 @@ fun main() {
 fun generateFirMap(): String {
     val sb = StringBuilder()
     val p = Printer(sb)
-    p.println(File("license/COPYRIGHT.txt").readText())
+    p.println(File("license/COPYRIGHT_HEADER.txt").readText())
+    p.println("@file:Suppress(\"DEPRECATION\", \"DEPRECATION_ERROR\")")
 
     p.println(
         """
