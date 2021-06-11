@@ -175,7 +175,7 @@ object NewCommonSuperTypeCalculator {
             "There should be at least one non-stub type to compute common supertype but there are: $types"
         }
 
-        val nonStubTypeVariables = types.filter { !it.isStubType() }
+        val nonStubTypeVariables = types.filter { !it.isStubTypeForBuilderInference() }
         val areAllNonStubTypesNothing = nonStubTypeVariables.isNotEmpty() && nonStubTypeVariables.all { it.isNothing() }
         if (nonStubTypeVariables.size == 1 && !areAllNonStubTypesNothing) return nonStubTypeVariables.single()
 
