@@ -253,7 +253,7 @@ class CycleDetector : private kotlin::Pinned, public KonanAllocatorAware {
 // TODO: can we pass this variable as an explicit argument?
 THREAD_LOCAL_VARIABLE MemoryState* memoryState = nullptr;
 
-#ifdef KONAN_WINDOWS
+#if defined(KONAN_WINDOWS) && !defined(KONAN_DISABLE_CUSTOM_WIN32_TLS)
     #include <processthreadsapi.h>
 
     static void freeCurrentFrameTlsIndex();
