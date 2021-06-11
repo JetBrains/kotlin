@@ -12,10 +12,6 @@ data class Jsr305Settings(
     val migrationLevel: ReportLevel? = null,
     val userDefinedLevelForSpecificAnnotation: Map<FqName, ReportLevel> = emptyMap()
 ) {
-    companion object {
-        val DEFAULT = getDefaultJsr305Settings()
-    }
-
     @OptIn(ExperimentalStdlibApi::class)
     val description by lazy {
         buildList {

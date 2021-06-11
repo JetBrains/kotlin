@@ -9,9 +9,7 @@ import org.jetbrains.kotlin.cli.jvm.addModularRootIfNotNull
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.config.AnalysisFlag
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JvmAnalysisFlags
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.TestJavacVersion
@@ -46,8 +44,11 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
         get() = listOf(ForeignAnnotationsDirectives)
 
     @OptIn(ExperimentalStdlibApi::class)
-    override fun provideAdditionalAnalysisFlags(directives: RegisteredDirectives): Map<AnalysisFlag<*>, Any?> {
-        val defaultJsr305Settings = Jsr305Settings.DEFAULT
+    override fun provideAdditionalAnalysisFlags(
+        directives: RegisteredDirectives,
+        languageVersion: LanguageVersion
+    ): Map<AnalysisFlag<*>, Any?> {
+        val defaultJsr305Settings = getDefaultJsr305Settings(languageVersion.toKotlinVersion())
         val globalState = directives.singleOrZeroValue(JSR305_GLOBAL_REPORT) ?: defaultJsr305Settings.globalLevel
         val migrationState = directives.singleOrZeroValue(JSR305_MIGRATION_REPORT) ?: defaultJsr305Settings.migrationLevel
         val userAnnotationsState = directives[JSR305_SPECIAL_REPORT].mapNotNull {

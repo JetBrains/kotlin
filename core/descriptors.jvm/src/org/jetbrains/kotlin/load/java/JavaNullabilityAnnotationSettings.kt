@@ -44,17 +44,18 @@ val nullabilityAnnotationSettings = mapOf(
     ),
 )
 
-private val jsr305Settings = JavaNullabilityAnnotationsStatus(
+private val JSR_305_DEFAULT_SETTINGS = JavaNullabilityAnnotationsStatus(
     reportLevelBefore = ReportLevel.WARN,
     sinceVersion = null
 )
 
-fun getDefaultJsr305Settings(): Jsr305Settings {
-    val globalReportLevel = if (jsr305Settings.sinceVersion != null && jsr305Settings.sinceVersion <= KotlinVersion.CURRENT) {
-        jsr305Settings.reportLevelAfter
-    } else {
-        jsr305Settings.reportLevelBefore
-    }
+fun getDefaultJsr305Settings(configuredKotlinVersion: KotlinVersion = KotlinVersion.CURRENT): Jsr305Settings {
+    val globalReportLevel =
+        if (JSR_305_DEFAULT_SETTINGS.sinceVersion != null && JSR_305_DEFAULT_SETTINGS.sinceVersion <= configuredKotlinVersion) {
+            JSR_305_DEFAULT_SETTINGS.reportLevelAfter
+        } else {
+            JSR_305_DEFAULT_SETTINGS.reportLevelBefore
+        }
     val migrationLevel = getDefaultMigrationJsr305ReportLevelForGivenGlobal(globalReportLevel)
     return Jsr305Settings(globalReportLevel, migrationLevel)
 }
@@ -64,12 +65,15 @@ fun getDefaultMigrationJsr305ReportLevelForGivenGlobal(globalReportLevel: Report
 
 fun getDefaultReportLevelForAnnotation(annotationFqName: FqName) = getReportLevelForAnnotation(annotationFqName, emptyMap())
 
-fun getReportLevelForAnnotation(annotation: FqName, configuredReportLevels: Map<FqName, ReportLevel>): ReportLevel {
+fun getReportLevelForAnnotation(
+    annotation: FqName, configuredReportLevels: Map<FqName, ReportLevel>,
+    configuredKotlinVersion: KotlinVersion = KotlinVersion.CURRENT
+): ReportLevel {
     annotation.findValueForMostSpecificFqname(configuredReportLevels)?.let { return it }
 
     val defaultReportLevel = annotation.findValueForMostSpecificFqname(nullabilityAnnotationSettings) ?: return ReportLevel.IGNORE
 
-    return if (defaultReportLevel.sinceVersion != null && defaultReportLevel.sinceVersion <= KotlinVersion.CURRENT) {
+    return if (defaultReportLevel.sinceVersion != null && defaultReportLevel.sinceVersion <= configuredKotlinVersion) {
         defaultReportLevel.reportLevelAfter
     } else {
         defaultReportLevel.reportLevelBefore

@@ -75,11 +75,13 @@ object IDELanguageSettingsProvider : LanguageSettingsProvider {
         for (module in ModuleManager.getInstance(project).modules) {
             val settings = KotlinFacetSettingsProvider.getInstance(project)?.getSettings(module) ?: continue
             val compilerArguments = settings.mergedCompilerArguments as? K2JVMCompilerArguments ?: continue
+            val kotlinVersion = settings.languageLevel?.toKotlinVersion() ?: KotlinVersion.CURRENT
 
-            result = JavaTypeEnhancementStateParser(MessageCollector.NONE).parse(
+            result = JavaTypeEnhancementStateParser(MessageCollector.NONE, kotlinVersion).parse(
                 compilerArguments.jsr305,
                 compilerArguments.supportCompatqualCheckerFrameworkAnnotations,
-                compilerArguments.jspecifyAnnotations
+                compilerArguments.jspecifyAnnotations,
+                compilerArguments.nullabilityAnnotations
             )
 
         }
