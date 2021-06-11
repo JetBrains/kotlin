@@ -109,6 +109,19 @@ internal class KtFirCapturedType(
     override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
 }
 
+internal class KtFirDefinitelyNotNullType(
+    coneType: ConeDefinitelyNotNullType,
+    override val token: ValidityToken,
+    private val firBuilder: KtSymbolByFirBuilder,
+) : KtDefinitelyNotNullType(), KtFirType {
+    override val coneType by weakRef(coneType)
+
+    override val original: KtType by cached { firBuilder.typeBuilder.buildKtType(this.coneType.original) }
+
+    override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
+}
+
+
 
 internal class KtFirTypeParameterType(
     coneType: ConeTypeParameterType,

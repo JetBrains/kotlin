@@ -57,6 +57,12 @@ abstract class KtTypeParameterType : KtTypeWithNullability {
 
 abstract class KtCapturedType : KtType
 
+abstract class KtDefinitelyNotNullType : KtType, KtTypeWithNullability {
+    abstract val original: KtType
+
+    final override val nullability: KtTypeNullability get() = KtTypeNullability.NON_NULLABLE
+}
+
 abstract class KtFlexibleType : KtType {
     abstract val lowerBound: KtType
     abstract val upperBound: KtType
