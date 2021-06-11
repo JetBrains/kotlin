@@ -1177,8 +1177,26 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val conflictingDeclaration2: KtCallableSymbol
     }
 
+    abstract class PropertyTypeMismatchOnInheritance : KtFirDiagnostic<KtClassOrObject>() {
+        override val diagnosticClass get() = PropertyTypeMismatchOnInheritance::class
+        abstract val conflictingDeclaration1: KtCallableSymbol
+        abstract val conflictingDeclaration2: KtCallableSymbol
+    }
+
+    abstract class VarTypeMismatchOnInheritance : KtFirDiagnostic<KtClassOrObject>() {
+        override val diagnosticClass get() = VarTypeMismatchOnInheritance::class
+        abstract val conflictingDeclaration1: KtCallableSymbol
+        abstract val conflictingDeclaration2: KtCallableSymbol
+    }
+
     abstract class ReturnTypeMismatchByDelegation : KtFirDiagnostic<KtClassOrObject>() {
         override val diagnosticClass get() = ReturnTypeMismatchByDelegation::class
+        abstract val delegateDeclaration: KtCallableSymbol
+        abstract val baseDeclaration: KtCallableSymbol
+    }
+
+    abstract class PropertyTypeMismatchByDelegation : KtFirDiagnostic<KtClassOrObject>() {
+        override val diagnosticClass get() = PropertyTypeMismatchByDelegation::class
         abstract val delegateDeclaration: KtCallableSymbol
         abstract val baseDeclaration: KtCallableSymbol
     }

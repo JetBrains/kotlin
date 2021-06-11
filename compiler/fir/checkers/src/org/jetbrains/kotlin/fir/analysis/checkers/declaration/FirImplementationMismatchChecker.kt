@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionCallableSymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
@@ -38,6 +39,30 @@ object FirImplementationMismatchChecker : FirClassChecker() {
         )
         val classScope = declaration.unsubstitutedScope(context)
         val dedupReporter = reporter.deduplicating()
+
+        fun reportTypeMismatch(member1: FirCallableDeclaration<*>, member2: FirCallableDeclaration<*>, isDelegation: Boolean) {
+            val error = if (member1 is FirProperty && member2 is FirProperty) {
+                if (member1.isVar || member2.isVar) {
+                    FirErrors.VAR_TYPE_MISMATCH_ON_INHERITANCE
+                } else {
+                    if (isDelegation) FirErrors.PROPERTY_TYPE_MISMATCH_BY_DELEGATION
+                    else FirErrors.PROPERTY_TYPE_MISMATCH_ON_INHERITANCE
+                }
+            } else {
+                if (isDelegation) FirErrors.RETURN_TYPE_MISMATCH_BY_DELEGATION
+                else FirErrors.RETURN_TYPE_MISMATCH_ON_INHERITANCE
+            }
+            dedupReporter.reportOn(source, error, member1, member2, context)
+        }
+
+        fun canOverride(
+            baseMember: FirCallableDeclaration<*>,
+            inheritedType: ConeKotlinType,
+            baseType: ConeKotlinType
+        ): Boolean =
+            if (baseMember is FirProperty && baseMember.isVar) AbstractTypeChecker.equalTypes(typeCheckerContext, inheritedType, baseType)
+            else AbstractTypeChecker.isSubtypeOf(typeCheckerContext, inheritedType, baseType)
+
 
         fun checkSymbol(symbol: FirCallableSymbol<*>) {
             if (symbol.callableId.classId != declaration.classId) return
@@ -62,37 +87,38 @@ object FirImplementationMismatchChecker : FirClassChecker() {
                 }
             }
 
-            if (delegation != null || implementations.isNotEmpty()) {
-                //if there are more than one implementation we report nothing because it will be reported differently
-                val method = delegation ?: implementations.singleOrNull() ?: return
-                val methodType = context.returnTypeCalculator.tryCalculateReturnType(method).coneType
-                val (conflict, _) = withTypes.find { (_, type) ->
-                    !AbstractTypeChecker.isSubtypeOf(typeCheckerContext, methodType, type)
-                } ?: return
-                val error =
-                    if (delegation != null) FirErrors.RETURN_TYPE_MISMATCH_BY_DELEGATION
-                    else FirErrors.RETURN_TYPE_MISMATCH_ON_INHERITANCE
-                dedupReporter.reportOn(source, error, method, conflict, context)
-            } else {
-                //if there is no implementation, check that there can be any type compatible (subtype of) with all
+            run {
                 var clash: Pair<FirCallableDeclaration<*>, FirCallableDeclaration<*>>? = null
                 val compatible = withTypes.any { (m1, type1) ->
                     withTypes.all { (m2, type2) ->
-                        val result = AbstractTypeChecker.isSubtypeOf(typeCheckerContext, type1, type2)
-                        if (!result && clash == null && !AbstractTypeChecker.isSubtypeOf(typeCheckerContext, type2, type1)) {
+                        val result = canOverride(m2, type1, type2)
+                        if (!result && clash == null && !canOverride(m1, type2, type1)) {
                             clash = m1 to m2
                         }
                         result
                     }
                 }
                 clash?.takeIf { !compatible }?.let { (m1, m2) ->
-                    dedupReporter.reportOn(source, FirErrors.RETURN_TYPE_MISMATCH_ON_INHERITANCE, m1, m2, context)
+                    reportTypeMismatch(m1, m2, false)
+                    return@checkSymbol
                 }
+            }
+
+            if (delegation != null || implementations.isNotEmpty()) {
+                //if there are more than one implementation we report nothing because it will be reported differently
+                val implementationMember = delegation ?: implementations.singleOrNull() ?: return
+                val methodType = context.returnTypeCalculator.tryCalculateReturnType(implementationMember).coneType
+                val (conflict, _) = withTypes.find { (baseMember, baseType) ->
+                    !canOverride(baseMember, methodType, baseType)
+                } ?: return
+
+                reportTypeMismatch(implementationMember, conflict, delegation != null)
             }
         }
 
         for (name in classScope.getCallableNames()) {
             classScope.processFunctionsByName(name, ::checkSymbol)
+            classScope.processPropertiesByName(name, ::checkSymbol)
         }
     }
 }

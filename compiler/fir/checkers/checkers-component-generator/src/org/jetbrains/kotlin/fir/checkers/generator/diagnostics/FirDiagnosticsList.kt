@@ -592,7 +592,22 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirCallableDeclaration<*>>("conflictingDeclaration2")
         }
 
+        val PROPERTY_TYPE_MISMATCH_ON_INHERITANCE by error<KtClassOrObject>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<FirCallableDeclaration<*>>("conflictingDeclaration1")
+            parameter<FirCallableDeclaration<*>>("conflictingDeclaration2")
+        }
+
+        val VAR_TYPE_MISMATCH_ON_INHERITANCE by error<KtClassOrObject>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<FirCallableDeclaration<*>>("conflictingDeclaration1")
+            parameter<FirCallableDeclaration<*>>("conflictingDeclaration2")
+        }
+
         val RETURN_TYPE_MISMATCH_BY_DELEGATION by error<KtClassOrObject>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<FirCallableDeclaration<*>>("delegateDeclaration")
+            parameter<FirCallableDeclaration<*>>("baseDeclaration")
+        }
+
+        val PROPERTY_TYPE_MISMATCH_BY_DELEGATION by error<KtClassOrObject>(PositioningStrategy.DECLARATION_NAME) {
             parameter<FirCallableDeclaration<*>>("delegateDeclaration")
             parameter<FirCallableDeclaration<*>>("baseDeclaration")
         }

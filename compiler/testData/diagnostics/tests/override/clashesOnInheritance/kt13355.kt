@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface IFooAny {
     val foo: Any
 }
