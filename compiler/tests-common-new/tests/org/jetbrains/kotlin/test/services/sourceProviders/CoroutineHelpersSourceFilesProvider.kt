@@ -17,13 +17,12 @@ import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.TestServices
 import java.io.File
 
-class CoroutineHelpersSourceFilesProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
-    companion object {
-        private const val HELPERS_PATH = "./compiler/testData/diagnostics/helpers/coroutines"
-        private const val COROUTINE_HELPERS_PATH = "$HELPERS_PATH/CoroutineHelpers.kt"
-        private const val STATE_MACHINE_CHECKER_PATH = "$HELPERS_PATH/StateMachineChecker.kt"
-        private const val TAIL_CALL_OPTIMIZATION_CHECKER_PATH = "$HELPERS_PATH/TailCallOptimizationChecker.kt"
-    }
+class CoroutineHelpersSourceFilesProvider(testServices: TestServices, testDataPath: String = ".") : AdditionalSourceProvider(testServices) {
+    private val helpersPath = "$testDataPath/compiler/testData/diagnostics/helpers/coroutines"
+
+    private val coroutineHelpersPath = "$helpersPath/CoroutineHelpers.kt"
+    private val stateMachineCheckerPath = "$helpersPath/StateMachineChecker.kt"
+    private val tailCallOptimizationCheckerPath = "$helpersPath/TailCallOptimizationChecker.kt"
 
     override val directives: List<DirectivesContainer> =
         listOf(AdditionalFilesDirectives)
@@ -32,12 +31,12 @@ class CoroutineHelpersSourceFilesProvider(testServices: TestServices) : Addition
     override fun produceAdditionalFiles(globalDirectives: RegisteredDirectives, module: TestModule): List<TestFile> {
         if (WITH_COROUTINES !in module.directives) return emptyList()
         return buildList {
-            add(File(COROUTINE_HELPERS_PATH).toTestFile())
+            add(File(coroutineHelpersPath).toTestFile())
             if (CHECK_STATE_MACHINE in module.directives) {
-                add(File(STATE_MACHINE_CHECKER_PATH).toTestFile())
+                add(File(stateMachineCheckerPath).toTestFile())
             }
             if (CHECK_TAIL_CALL_OPTIMIZATION in module.directives) {
-                add(File(TAIL_CALL_OPTIMIZATION_CHECKER_PATH).toTestFile())
+                add(File(tailCallOptimizationCheckerPath).toTestFile())
             }
         }
     }

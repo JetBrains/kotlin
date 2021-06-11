@@ -62,7 +62,7 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(baseDir: String 
 
     useAdditionalSourceProviders(
         ::AdditionalDiagnosticsSourceFilesProvider.bind(baseDir),
-        ::CoroutineHelpersSourceFilesProvider,
+        ::CoroutineHelpersSourceFilesProvider.bind(baseDir),
     )
     useFrontendFacades(::FirFrontendFacade)
     useFrontendHandlers(
