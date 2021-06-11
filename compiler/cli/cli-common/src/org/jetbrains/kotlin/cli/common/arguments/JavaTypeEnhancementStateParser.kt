@@ -169,7 +169,8 @@ class JavaTypeEnhancementStateParser(
         return Jsr305Settings(
             globalLevel = globalLevel,
             migrationLevel = migration ?: getDefaultMigrationJsr305ReportLevelForGivenGlobal(globalLevel),
-            userDefinedLevelForSpecificAnnotation = defaultSettings.userDefinedLevelForSpecificAnnotation
+            userDefinedLevelForSpecificAnnotation = userDefined.takeIf { it.isNotEmpty() }
+                ?: defaultSettings.userDefinedLevelForSpecificAnnotation
         )
     }
 
