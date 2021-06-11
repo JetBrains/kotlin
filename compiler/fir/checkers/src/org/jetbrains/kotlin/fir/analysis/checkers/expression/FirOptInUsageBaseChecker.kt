@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.fir.analysis.checkers.findSingleArgumentByName
+import org.jetbrains.kotlin.fir.analysis.checkers.findArgumentByName
 import org.jetbrains.kotlin.fir.analysis.checkers.getAnnotationByFqName
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
@@ -19,10 +19,10 @@ object FirOptInUsageBaseChecker {
     internal fun FirRegularClass.loadExperimentalityForMarkerAnnotation(): Experimentality? {
         val experimental = getAnnotationByFqName(OptInNames.REQUIRES_OPT_IN_FQ_NAME) ?: return null
 
-        val levelArgument = experimental.findSingleArgumentByName(LEVEL) as? FirQualifiedAccessExpression
+        val levelArgument = experimental.findArgumentByName(LEVEL) as? FirQualifiedAccessExpression
         val levelName = (levelArgument?.calleeReference as? FirResolvedNamedReference)?.name?.asString()
         val level = OptInLevel.values().firstOrNull { it.name == levelName } ?: OptInLevel.DEFAULT
-        val message = (experimental.findSingleArgumentByName(MESSAGE) as? FirConstExpression<*>)?.value as? String
+        val message = (experimental.findArgumentByName(MESSAGE) as? FirConstExpression<*>)?.value as? String
         return Experimentality(symbol.classId.asSingleFqName(), level.severity, message)
     }
 

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.extractClassesFromArgument
-import org.jetbrains.kotlin.fir.analysis.checkers.findSingleArgumentByName
+import org.jetbrains.kotlin.fir.analysis.checkers.findArgumentByName
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
@@ -32,7 +32,7 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker() {
                 if (arguments.isEmpty()) {
                     reporter.reportOn(expression.source, FirErrors.USE_EXPERIMENTAL_WITHOUT_ARGUMENTS, context)
                 } else {
-                    val annotationClasses = expression.findSingleArgumentByName(OptInNames.USE_EXPERIMENTAL_ANNOTATION_CLASS)
+                    val annotationClasses = expression.findArgumentByName(OptInNames.USE_EXPERIMENTAL_ANNOTATION_CLASS)
                     for (classSymbol in annotationClasses?.extractClassesFromArgument().orEmpty()) {
                         with(FirOptInUsageBaseChecker) {
                             if (classSymbol.fir.loadExperimentalityForMarkerAnnotation() == null) {

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.ConstantArgumentKind
 import org.jetbrains.kotlin.fir.analysis.checkers.checkConstantArguments
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.findSingleArgumentByName
+import org.jetbrains.kotlin.fir.analysis.checkers.findArgumentByName
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticFactory0
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -136,7 +136,7 @@ object FirAnnotationArgumentChecker : FirAnnotationCallChecker() {
         reporter: DiagnosticReporter
     ) {
         if (!annotationFqNamesWithVersion.contains(fqName)) return
-        val versionExpression = annotationCall.findSingleArgumentByName(versionArgumentName) ?: return
+        val versionExpression = annotationCall.findArgumentByName(versionArgumentName) ?: return
         val version = parseVersionExpressionOrReport(versionExpression, context, reporter) ?: return
         if (fqName == sinceKotlinFqName) {
             val specified = context.session.languageVersionSettings.apiVersion

@@ -32,7 +32,7 @@ fun FirAnnotationCall.getRetention(session: FirSession): AnnotationRetention {
 
 fun FirRegularClass.getRetention(): AnnotationRetention {
     val retentionAnnotation = getRetentionAnnotation() ?: return AnnotationRetention.RUNTIME
-    val retentionArgument = retentionAnnotation.findSingleArgumentByName(RETENTION_PARAMETER_NAME) as? FirQualifiedAccessExpression
+    val retentionArgument = retentionAnnotation.findArgumentByName(RETENTION_PARAMETER_NAME) as? FirQualifiedAccessExpression
         ?: return AnnotationRetention.RUNTIME
     val retentionName = (retentionArgument.calleeReference as? FirResolvedNamedReference)?.name?.asString()
         ?: return AnnotationRetention.RUNTIME
@@ -51,7 +51,7 @@ fun FirAnnotationCall.getAllowedAnnotationTargets(session: FirSession): Set<Kotl
 fun FirRegularClass.getAllowedAnnotationTargets(): Set<KotlinTarget> {
     val targetAnnotation = getTargetAnnotation() ?: return defaultAnnotationTargets
     if (targetAnnotation.argumentList.arguments.isEmpty()) return emptySet()
-    val arguments = targetAnnotation.findSingleArgumentByName(TARGET_PARAMETER_NAME)?.unfoldArrayOrVararg().orEmpty()
+    val arguments = targetAnnotation.findArgumentByName(TARGET_PARAMETER_NAME)?.unfoldArrayOrVararg().orEmpty()
 
     return arguments.mapNotNullTo(mutableSetOf()) { argument ->
         val targetExpression = argument as? FirQualifiedAccessExpression
@@ -74,15 +74,20 @@ fun FirAnnotationContainer.getAnnotationByFqName(fqName: FqName): FirAnnotationC
     }
 }
 
-fun FirAnnotationCall.findSingleArgumentByName(name: Name): FirExpression? {
+fun FirAnnotationCall.findArgumentByName(name: Name): FirExpression? {
     val argumentMapping = argumentMapping
     if (argumentMapping != null) {
-        return argumentMapping.keys.firstOrNull()?.takeIf { argumentMapping[it]?.name == name }?.unwrapArgument()
+        return argumentMapping.keys.find { argumentMapping[it]?.name == name }?.unwrapArgument()
     }
     // NB: we have to consider both cases, because deserializer does not create argument mapping
-    val arguments = argumentList.arguments
-    val firstArgument = arguments.firstOrNull() as? FirNamedArgumentExpression ?: return arguments.singleOrNull()
-    return firstArgument.takeIf { it.name == name }?.expression
+    for (argument in arguments) {
+        if (argument is FirNamedArgumentExpression && argument.name == name) {
+            return argument.expression
+        }
+    }
+    // I'm lucky today!
+    // TODO: this line is still needed. However it should be replaced with 'return null'
+    return arguments.singleOrNull()
 }
 
 fun FirExpression.extractClassesFromArgument(): List<FirRegularClassSymbol> {
