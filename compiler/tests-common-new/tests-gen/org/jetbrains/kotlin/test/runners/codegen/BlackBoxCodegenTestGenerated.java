@@ -26373,6 +26373,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("messageLength.kt")
+        public void testMessageLength() throws Exception {
+            runTest("compiler/testData/codegen/box/notNullAssertions/messageLength.kt");
+        }
+
+        @Test
         @TestMetadata("noCallAssertions.kt")
         public void testNoCallAssertions() throws Exception {
             runTest("compiler/testData/codegen/box/notNullAssertions/noCallAssertions.kt");
