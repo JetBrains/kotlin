@@ -215,12 +215,18 @@ internal fun Path.enableCacheRedirector() {
     val gradleDir = resolve("gradle").also { it.createDirectories() }
     redirectorScript.copyTo(gradleDir.resolve("cacheRedirector.gradle.kts"))
 
+    val projectCacheRedirectorStatus = Paths
+        .get("../../../gradle.properties")
+        .readText()
+        .lineSequence()
+        .first { it.startsWith("cacheRedirectorEnabled") }
+
     resolve("gradle.properties")
         .also { if (!it.exists()) it.createFile() }
         .appendText(
             """
 
-            cacheRedirectorEnabled=true
+            $projectCacheRedirectorStatus
 
             """.trimIndent()
         )
