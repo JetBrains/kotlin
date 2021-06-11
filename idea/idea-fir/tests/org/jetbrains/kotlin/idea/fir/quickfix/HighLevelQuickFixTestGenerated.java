@@ -1133,76 +1133,109 @@ public class HighLevelQuickFixTestGenerated extends AbstractHighLevelQuickFixTes
         }
     }
 
-    @TestMetadata("idea/testData/quickfix/nullables/unsafeInfixCall")
+    @TestMetadata("idea/testData/quickfix/nullables")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class UnsafeInfixCall extends AbstractHighLevelQuickFixTest {
+    public static class Nullables extends AbstractHighLevelQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
-        public void testAllFilesPresentInUnsafeInfixCall() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/nullables/unsafeInfixCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+        public void testAllFilesPresentInNullables() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/nullables"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
         }
 
-        @TestMetadata("noComparison.kt")
-        public void testNoComparison() throws Exception {
-            runTest("idea/testData/quickfix/nullables/unsafeInfixCall/noComparison.kt");
+        @TestMetadata("removeRedundantNullable.kt")
+        public void testRemoveRedundantNullable() throws Exception {
+            runTest("idea/testData/quickfix/nullables/removeRedundantNullable.kt");
         }
 
-        @TestMetadata("unsafeComparisonInCondition.kt")
-        public void testUnsafeComparisonInCondition() throws Exception {
-            runTest("idea/testData/quickfix/nullables/unsafeInfixCall/unsafeComparisonInCondition.kt");
+        @TestMetadata("removeSupertypeNullable1.kt")
+        public void testRemoveSupertypeNullable1() throws Exception {
+            runTest("idea/testData/quickfix/nullables/removeSupertypeNullable1.kt");
         }
 
-        @TestMetadata("unsafeComparisonInLogic.kt")
-        public void testUnsafeComparisonInLogic() throws Exception {
-            runTest("idea/testData/quickfix/nullables/unsafeInfixCall/unsafeComparisonInLogic.kt");
+        @TestMetadata("removeSupertypeNullable2.kt")
+        public void testRemoveSupertypeNullable2() throws Exception {
+            runTest("idea/testData/quickfix/nullables/removeSupertypeNullable2.kt");
         }
 
-        @TestMetadata("unsafeComparisonInWhen.kt")
-        public void testUnsafeComparisonInWhen() throws Exception {
-            runTest("idea/testData/quickfix/nullables/unsafeInfixCall/unsafeComparisonInWhen.kt");
+        @TestMetadata("removeUselessNullable.kt")
+        public void testRemoveUselessNullable() throws Exception {
+            runTest("idea/testData/quickfix/nullables/removeUselessNullable.kt");
         }
 
-        @TestMetadata("unsafeComparisonInWhile.kt")
-        public void testUnsafeComparisonInWhile() throws Exception {
-            runTest("idea/testData/quickfix/nullables/unsafeInfixCall/unsafeComparisonInWhile.kt");
-        }
+        @TestMetadata("idea/testData/quickfix/nullables/unsafeInfixCall")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class UnsafeInfixCall extends AbstractHighLevelQuickFixTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
 
-        @TestMetadata("unsafeGet.kt")
-        public void testUnsafeGet() throws Exception {
-            runTest("idea/testData/quickfix/nullables/unsafeInfixCall/unsafeGet.kt");
-        }
+            public void testAllFilesPresentInUnsafeInfixCall() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/nullables/unsafeInfixCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+            }
 
-        @TestMetadata("unsafeInfixCall.kt")
-        public void testUnsafeInfixCall() throws Exception {
-            runTest("idea/testData/quickfix/nullables/unsafeInfixCall/unsafeInfixCall.kt");
-        }
+            @TestMetadata("noComparison.kt")
+            public void testNoComparison() throws Exception {
+                runTest("idea/testData/quickfix/nullables/unsafeInfixCall/noComparison.kt");
+            }
 
-        @TestMetadata("unsafeInvoke.kt")
-        public void testUnsafeInvoke() throws Exception {
-            runTest("idea/testData/quickfix/nullables/unsafeInfixCall/unsafeInvoke.kt");
-        }
+            @TestMetadata("unsafeComparisonInCondition.kt")
+            public void testUnsafeComparisonInCondition() throws Exception {
+                runTest("idea/testData/quickfix/nullables/unsafeInfixCall/unsafeComparisonInCondition.kt");
+            }
 
-        @TestMetadata("unsafeInvokeWithImplicitReceiver.kt")
-        public void testUnsafeInvokeWithImplicitReceiver() throws Exception {
-            runTest("idea/testData/quickfix/nullables/unsafeInfixCall/unsafeInvokeWithImplicitReceiver.kt");
-        }
+            @TestMetadata("unsafeComparisonInLogic.kt")
+            public void testUnsafeComparisonInLogic() throws Exception {
+                runTest("idea/testData/quickfix/nullables/unsafeInfixCall/unsafeComparisonInLogic.kt");
+            }
 
-        @TestMetadata("unsafeInvokeWithReceiver.kt")
-        public void testUnsafeInvokeWithReceiver() throws Exception {
-            runTest("idea/testData/quickfix/nullables/unsafeInfixCall/unsafeInvokeWithReceiver.kt");
-        }
+            @TestMetadata("unsafeComparisonInWhen.kt")
+            public void testUnsafeComparisonInWhen() throws Exception {
+                runTest("idea/testData/quickfix/nullables/unsafeInfixCall/unsafeComparisonInWhen.kt");
+            }
 
-        @TestMetadata("unsafePlus.kt")
-        public void testUnsafePlus() throws Exception {
-            runTest("idea/testData/quickfix/nullables/unsafeInfixCall/unsafePlus.kt");
-        }
+            @TestMetadata("unsafeComparisonInWhile.kt")
+            public void testUnsafeComparisonInWhile() throws Exception {
+                runTest("idea/testData/quickfix/nullables/unsafeInfixCall/unsafeComparisonInWhile.kt");
+            }
 
-        @TestMetadata("unsafeSet.kt")
-        public void testUnsafeSet() throws Exception {
-            runTest("idea/testData/quickfix/nullables/unsafeInfixCall/unsafeSet.kt");
+            @TestMetadata("unsafeGet.kt")
+            public void testUnsafeGet() throws Exception {
+                runTest("idea/testData/quickfix/nullables/unsafeInfixCall/unsafeGet.kt");
+            }
+
+            @TestMetadata("unsafeInfixCall.kt")
+            public void testUnsafeInfixCall() throws Exception {
+                runTest("idea/testData/quickfix/nullables/unsafeInfixCall/unsafeInfixCall.kt");
+            }
+
+            @TestMetadata("unsafeInvoke.kt")
+            public void testUnsafeInvoke() throws Exception {
+                runTest("idea/testData/quickfix/nullables/unsafeInfixCall/unsafeInvoke.kt");
+            }
+
+            @TestMetadata("unsafeInvokeWithImplicitReceiver.kt")
+            public void testUnsafeInvokeWithImplicitReceiver() throws Exception {
+                runTest("idea/testData/quickfix/nullables/unsafeInfixCall/unsafeInvokeWithImplicitReceiver.kt");
+            }
+
+            @TestMetadata("unsafeInvokeWithReceiver.kt")
+            public void testUnsafeInvokeWithReceiver() throws Exception {
+                runTest("idea/testData/quickfix/nullables/unsafeInfixCall/unsafeInvokeWithReceiver.kt");
+            }
+
+            @TestMetadata("unsafePlus.kt")
+            public void testUnsafePlus() throws Exception {
+                runTest("idea/testData/quickfix/nullables/unsafeInfixCall/unsafePlus.kt");
+            }
+
+            @TestMetadata("unsafeSet.kt")
+            public void testUnsafeSet() throws Exception {
+                runTest("idea/testData/quickfix/nullables/unsafeInfixCall/unsafeSet.kt");
+            }
         }
     }
 

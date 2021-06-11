@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtNullableType
-import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 class RemoveNullableFix(element: KtNullableType, private val typeOfError: NullableKind) :
@@ -43,7 +40,10 @@ class RemoveNullableFix(element: KtNullableType, private val typeOfError: Nullab
             return quickFixesPsiBasedFactory { e ->
                 when (typeOfError) {
                     NullableKind.REDUNDANT, NullableKind.SUPERTYPE, NullableKind.USELESS -> {
-                        val nullType = e.getNonStrictParentOfType<KtNullableType>()
+                        val nullType: KtNullableType? = when (e) {
+                            is KtTypeReference -> e.typeElement as? KtNullableType
+                            else -> e.getNonStrictParentOfType()
+                        }
                         if (nullType?.innerType == null) return@quickFixesPsiBasedFactory emptyList()
                         listOf(RemoveNullableFix(nullType, typeOfError))
                     }

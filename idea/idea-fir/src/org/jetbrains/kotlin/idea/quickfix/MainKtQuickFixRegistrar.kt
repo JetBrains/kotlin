@@ -132,6 +132,9 @@ class MainKtQuickFixRegistrar : KtQuickFixRegistrar() {
         registerApplicator(WrapWithSafeLetCallFixFactories.forUnsafeInfixCall)
         registerApplicator(WrapWithSafeLetCallFixFactories.forUnsafeOperatorCall)
         registerApplicator(WrapWithSafeLetCallFixFactories.forArgumentTypeMismatch)
+
+        registerPsiQuickFixes(KtFirDiagnostic.NullableSupertype::class, RemoveNullableFix.removeForSuperType)
+        registerPsiQuickFixes(KtFirDiagnostic.InapplicableLateinitModifier::class, RemoveNullableFix.removeForLateInitProperty)
     }
 
     private val returnTypes = KtQuickFixesListBuilder.registerPsiQuickFix {

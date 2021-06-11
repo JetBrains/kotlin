@@ -2,3 +2,5 @@
 fun main(args : Array<String>) {
     val x : Int? = 15
 }
+
+/* IGNORE_FIR */
