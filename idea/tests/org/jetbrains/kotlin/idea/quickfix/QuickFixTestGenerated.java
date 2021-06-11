@@ -13668,6 +13668,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/toString"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
         }
 
+        @TestMetadata("callArgument.kt")
+        public void testCallArgument() throws Exception {
+            runTest("idea/testData/quickfix/toString/callArgument.kt");
+        }
+
         @TestMetadata("notNullableExpectedNullable.kt")
         public void testNotNullableExpectedNullable() throws Exception {
             runTest("idea/testData/quickfix/toString/notNullableExpectedNullable.kt");
@@ -13683,9 +13688,19 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/toString/nullableExpectedNullable.kt");
         }
 
-        @TestMetadata("simple.kt")
-        public void testSimple() throws Exception {
-            runTest("idea/testData/quickfix/toString/simple.kt");
+        @TestMetadata("propertyInitializer.kt")
+        public void testPropertyInitializer() throws Exception {
+            runTest("idea/testData/quickfix/toString/propertyInitializer.kt");
+        }
+
+        @TestMetadata("returnStatement.kt")
+        public void testReturnStatement() throws Exception {
+            runTest("idea/testData/quickfix/toString/returnStatement.kt");
+        }
+
+        @TestMetadata("variableAssignment.kt")
+        public void testVariableAssignment() throws Exception {
+            runTest("idea/testData/quickfix/toString/variableAssignment.kt");
         }
     }
 

@@ -137,10 +137,17 @@ class MainKtQuickFixRegistrar : KtQuickFixRegistrar() {
         registerPsiQuickFixes(KtFirDiagnostic.InapplicableLateinitModifier::class, RemoveNullableFix.removeForLateInitProperty)
     }
 
-    private val returnTypes = KtQuickFixesListBuilder.registerPsiQuickFix {
+    private val typeMismatch = KtQuickFixesListBuilder.registerPsiQuickFix {
         registerApplicator(ChangeTypeQuickFixFactories.componentFunctionReturnTypeMismatch)
         registerApplicator(ChangeTypeQuickFixFactories.returnTypeMismatch)
+
+        registerApplicator(AddToStringFixFactories.typeMismatch)
+        registerApplicator(AddToStringFixFactories.argumentTypeMismatch)
+        registerApplicator(AddToStringFixFactories.assignmentTypeMismatch)
+        registerApplicator(AddToStringFixFactories.returnTypeMismatch)
+        registerApplicator(AddToStringFixFactories.initializerTypeMismatch)
     }
+
 
     override val list: KtQuickFixesList = KtQuickFixesList.createCombined(
         keywords,
@@ -149,6 +156,6 @@ class MainKtQuickFixRegistrar : KtQuickFixRegistrar() {
         imports,
         mutability,
         expressions,
-        returnTypes
+        typeMismatch
     )
 }

@@ -2334,4 +2334,52 @@ public class HighLevelQuickFixTestGenerated extends AbstractHighLevelQuickFixTes
             runTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/typeMismatchInReturnStatement.kt");
         }
     }
+
+    @TestMetadata("idea/testData/quickfix/toString")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ToString extends AbstractHighLevelQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInToString() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/toString"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("callArgument.kt")
+        public void testCallArgument() throws Exception {
+            runTest("idea/testData/quickfix/toString/callArgument.kt");
+        }
+
+        @TestMetadata("notNullableExpectedNullable.kt")
+        public void testNotNullableExpectedNullable() throws Exception {
+            runTest("idea/testData/quickfix/toString/notNullableExpectedNullable.kt");
+        }
+
+        @TestMetadata("nullableExpectedNotNullable.kt")
+        public void testNullableExpectedNotNullable() throws Exception {
+            runTest("idea/testData/quickfix/toString/nullableExpectedNotNullable.kt");
+        }
+
+        @TestMetadata("nullableExpectedNullable.kt")
+        public void testNullableExpectedNullable() throws Exception {
+            runTest("idea/testData/quickfix/toString/nullableExpectedNullable.kt");
+        }
+
+        @TestMetadata("propertyInitializer.kt")
+        public void testPropertyInitializer() throws Exception {
+            runTest("idea/testData/quickfix/toString/propertyInitializer.kt");
+        }
+
+        @TestMetadata("returnStatement.kt")
+        public void testReturnStatement() throws Exception {
+            runTest("idea/testData/quickfix/toString/returnStatement.kt");
+        }
+
+        @TestMetadata("variableAssignment.kt")
+        public void testVariableAssignment() throws Exception {
+            runTest("idea/testData/quickfix/toString/variableAssignment.kt");
+        }
+    }
 }
