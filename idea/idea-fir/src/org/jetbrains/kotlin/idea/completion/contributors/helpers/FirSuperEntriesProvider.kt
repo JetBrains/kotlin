@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.idea.completion.lookups.shortenReferencesForFirCompl
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtClassType
+import org.jetbrains.kotlin.idea.frontend.api.types.KtNonErrorClassType
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -23,7 +24,7 @@ internal object FirSuperEntriesProvider {
         val containingClass = context.getStrictParentOfType<KtClassOrObject>() ?: return emptyList()
         val containingClassSymbol = containingClass.getClassOrObjectSymbol()
         return containingClassSymbol.superTypes.mapNotNull { superType ->
-            val classType = superType.type as? KtClassType ?: return@mapNotNull null
+            val classType = superType.type as? KtNonErrorClassType ?: return@mapNotNull null
             classType.classSymbol as? KtNamedClassOrObjectSymbol
         }
     }

@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.idea.frontend.api.components.KtExpressionTypeProvide
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.getReferencedElementType
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
-import org.jetbrains.kotlin.idea.frontend.api.types.KtErrorType
+import org.jetbrains.kotlin.idea.frontend.api.types.KtClassErrorType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -51,7 +51,7 @@ internal class KtFirExpressionTypeProvider(
             ?: getExpectedTypeByVariableAssignment(expression)
             ?: getExpectedTypeByPropertyDeclaration(expression)
             ?: getExpectedTypeByFunctionExpressionBody(expression)
-        return expectedType.takeIf { it !is KtErrorType }
+        return expectedType.takeIf { it !is KtClassErrorType }
     }
 
     private fun getExpectedTypeOfFunctionParameter(expression: PsiElement): KtType? {

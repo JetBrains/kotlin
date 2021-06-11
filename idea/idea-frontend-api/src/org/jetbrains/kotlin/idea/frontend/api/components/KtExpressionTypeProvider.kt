@@ -27,7 +27,7 @@ interface KtExpressionTypeProviderMixIn : KtAnalysisSessionMixIn {
 
     /**
      * Returns the expected [KtType] of this [PsiElement] if it is an expression. The returned value should not be a
-     * [org.jetbrains.kotlin.idea.frontend.api.types.KtErrorType].
+     * [org.jetbrains.kotlin.idea.frontend.api.types.KtClassErrorType].
      */
     fun PsiElement.getExpectedType(): KtType? =
         analysisSession.expressionTypeProvider.getExpectedType(this)

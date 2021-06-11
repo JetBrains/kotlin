@@ -165,7 +165,7 @@ internal fun KtType.mapSupertype(
     kotlinCollectionAsIs: Boolean = false,
     annotations: List<KtAnnotationCall>
 ): PsiClassType? {
-    if (this !is KtClassType) return null
+    if (this !is KtNonErrorClassType) return null
     require(this is KtFirType)
     val contextSymbol = classSymbol
     require(contextSymbol is KtFirSymbol<*>)
@@ -313,7 +313,7 @@ internal fun KtType.getTypeNullability(context: KtSymbol, phase: FirResolvePhase
 internal val KtType.isUnit get() = isClassTypeWithClassId(DefaultTypeClassIds.UNIT)
 
 internal fun KtType.isClassTypeWithClassId(classId: ClassId): Boolean {
-    if (this !is KtClassType) return false
+    if (this !is KtNonErrorClassType) return false
     return this.classId == classId
 }
 

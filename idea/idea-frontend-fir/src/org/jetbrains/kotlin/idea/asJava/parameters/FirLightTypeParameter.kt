@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.asJava.mapSupertype
 import org.jetbrains.kotlin.idea.frontend.api.isValid
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtClassType
+import org.jetbrains.kotlin.idea.frontend.api.types.KtNonErrorClassType
 import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
@@ -63,7 +64,7 @@ internal class FirLightTypeParameter(
         )
 
         typeParameterSymbol.upperBounds
-            .filterIsInstance<KtClassType>()
+            .filterIsInstance<KtNonErrorClassType>()
             .filter { it.classId != StandardClassIds.Any }
             .mapNotNull {
                 it.mapSupertype(

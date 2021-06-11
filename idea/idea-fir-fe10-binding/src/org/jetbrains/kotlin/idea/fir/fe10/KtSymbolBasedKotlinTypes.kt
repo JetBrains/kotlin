@@ -110,20 +110,30 @@ fun KtTypeArgument.toTypeProjection(context: FE10BindingContext): TypeProjection
     }
 
 fun KtType.toKotlinType(context: FE10BindingContext, annotations: Annotations = Annotations.EMPTY): UnwrappedType {
-    if (this is KtNonDenotableType) return toKotlinType(context, annotations)
-
-    val typeConstructor = when (this) {
+    val typeConstructor: TypeConstructor = when (this) {
         is KtTypeParameterType -> KtSymbolBasedTypeParameterDescriptor(this.symbol, context).typeConstructor
-        is KtClassType -> when (val classLikeSymbol = classSymbol) {
+        is KtNonErrorClassType -> when (val classLikeSymbol = classSymbol) {
             is KtTypeAliasSymbol -> context.typeAliasImplementationPlanned()
             is KtNamedClassOrObjectSymbol -> KtSymbolBasedClassDescriptor(classLikeSymbol, context).typeConstructor
             is KtAnonymousObjectSymbol -> context.implementationPostponed()
         }
-        is KtErrorType -> ErrorUtils.createErrorTypeConstructorWithCustomDebugName(error)
+        is KtClassErrorType -> ErrorUtils.createErrorTypeConstructorWithCustomDebugName(error)
+        is KtFlexibleType -> {
+            return KotlinTypeFactory.flexibleType(
+                lowerBound.toKotlinType(context, annotations) as SimpleType,
+                upperBound.toKotlinType(context, annotations) as SimpleType
+            )
+        }
+
+        is KtIntersectionType -> {
+            // most likely it isn't correct and intersectTypes(List<UnwrappedType>) should be used,
+            // but I don't think that we will have the real problem with that implementation
+            return IntersectionTypeConstructor(conjuncts.map { it.toKotlinType(context) }).createType()
+        }
         else -> error("Unexpected subclass: ${this.javaClass}")
     }
 
-    val ktTypeArguments = this.safeAs<KtClassType>()?.typeArguments ?: emptyList()
+    val ktTypeArguments = this.safeAs<KtNonErrorClassType>()?.typeArguments ?: emptyList()
 
     val markedAsNullable = this.safeAs<KtTypeWithNullability>()?.nullability == KtTypeNullability.NULLABLE
 
@@ -132,14 +142,3 @@ fun KtType.toKotlinType(context: FE10BindingContext, annotations: Annotations = 
         MemberScopeForKtSymbolBasedDescriptors { this.asStringForDebugging() }
     )
 }
-
-fun KtNonDenotableType.toKotlinType(context: FE10BindingContext, annotations: Annotations = Annotations.EMPTY): UnwrappedType =
-    when (this) {
-        is KtFlexibleType -> KotlinTypeFactory.flexibleType(
-            lowerBound.toKotlinType(context, annotations) as SimpleType,
-            upperBound.toKotlinType(context, annotations) as SimpleType
-        )
-        // most likely it isn't correct and intersectTypes(List<UnwrappedType>) should be used,
-        // but I don't think that we will have the real problem with that implementation
-        is KtIntersectionType -> IntersectionTypeConstructor(conjuncts.map { it.toKotlinType(context) }).createType()
-    }

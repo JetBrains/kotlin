@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.idea.frontend.api.symbols.psiSafe
 import org.jetbrains.kotlin.idea.frontend.api.types.KtClassType
+import org.jetbrains.kotlin.idea.frontend.api.types.KtNonErrorClassType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.quickfix.ChangeTypeFixUtils
 import org.jetbrains.kotlin.name.Name
@@ -134,7 +135,7 @@ object ChangeTypeQuickFixFactories {
                     ?: return@diagnosticFixFactory emptyList()
             buildList<HLApplicatorTargetWithInput<KtCallableDeclaration, Input>> {
                 add(entryWithWrongType withInput Input(TargetType.VARIABLE, createTypeInfo(diagnostic.destructingType)))
-                val classSymbol = (diagnostic.psi.getKtType() as? KtClassType)?.classSymbol as? KtSymbolWithMembers ?: return@buildList
+                val classSymbol = (diagnostic.psi.getKtType() as? KtNonErrorClassType)?.classSymbol as? KtSymbolWithMembers ?: return@buildList
                 val componentFunction = classSymbol.getMemberScope()
                     .getCallableSymbols { it == diagnostic.componentFunctionName }
                     .firstOrNull()?.psi as? KtCallableDeclaration

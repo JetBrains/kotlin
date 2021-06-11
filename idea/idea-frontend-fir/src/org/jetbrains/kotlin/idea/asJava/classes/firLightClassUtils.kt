@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.idea.frontend.api.tokens.hackyAllowRunningOnEdt
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import org.jetbrains.kotlin.idea.frontend.api.types.KtClassType
+import org.jetbrains.kotlin.idea.frontend.api.types.KtNonErrorClassType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
@@ -289,7 +290,7 @@ internal fun FirLightClassBase.createInheritanceList(forExtendsList: Boolean, su
     )
 
     fun KtType.needToAddTypeIntoList(): Boolean {
-        if (this !is KtClassType) return false
+        if (this !is KtNonErrorClassType) return false
 
         // Do not add redundant "extends java.lang.Object" anywhere
         if (this.classId == StandardClassIds.Any) return false

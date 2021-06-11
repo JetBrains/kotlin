@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.idea.frontend.api.components
 
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.idea.frontend.api.types.KtClassType
-import org.jetbrains.kotlin.idea.frontend.api.types.KtType
-import org.jetbrains.kotlin.idea.frontend.api.types.KtTypeNullability
-import org.jetbrains.kotlin.idea.frontend.api.types.KtTypeWithNullability
+import org.jetbrains.kotlin.idea.frontend.api.types.*
 import org.jetbrains.kotlin.name.ClassId
 
 abstract class KtTypeInfoProvider : KtAnalysisSessionComponent() {
@@ -47,13 +44,13 @@ interface KtTypeInfoProviderMixIn : KtAnalysisSessionMixIn {
     val KtType.isUByte: Boolean get() = isClassTypeWithClassId(StandardNames.FqNames.uByte)
 
     fun KtType.isClassTypeWithClassId(classId: ClassId): Boolean {
-        if (this !is KtClassType) return false
+        if (this !is KtNonErrorClassType) return false
         return this.classId == classId
     }
 
     val KtType.isPrimitive: Boolean
         get() {
-            if (this !is KtClassType) return false
+            if (this !is KtNonErrorClassType) return false
             return this.classId in DefaultTypeClassIds.PRIMITIVES
         }
 
