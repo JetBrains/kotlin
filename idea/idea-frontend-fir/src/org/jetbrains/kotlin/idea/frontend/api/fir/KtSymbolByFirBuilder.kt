@@ -336,10 +336,11 @@ internal class KtSymbolByFirBuilder private constructor(
         }
 
         fun buildTypeArgument(coneType: ConeTypeProjection): KtTypeArgument = when (coneType) {
-            is ConeStarProjection -> KtStarProjectionTypeArgument
-            is ConeKotlinTypeProjection -> KtFirTypeArgumentWithVariance(
+            is ConeStarProjection -> KtStarProjectionTypeArgument(token)
+            is ConeKotlinTypeProjection -> KtTypeArgumentWithVariance(
                 buildKtType(coneType.type),
-                coneType.kind.toVariance()
+                coneType.kind.toVariance(),
+                token,
             )
         }
 

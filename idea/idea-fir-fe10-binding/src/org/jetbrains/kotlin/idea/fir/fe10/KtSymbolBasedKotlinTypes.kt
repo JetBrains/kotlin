@@ -105,7 +105,7 @@ fun KtTypeAndAnnotations.toKotlinType(context: FE10BindingContext): UnwrappedTyp
 
 fun KtTypeArgument.toTypeProjection(context: FE10BindingContext): TypeProjection =
     when (this) {
-        KtStarProjectionTypeArgument -> StarProjectionForAbsentTypeParameter(context.builtIns)
+        is KtStarProjectionTypeArgument -> StarProjectionForAbsentTypeParameter(context.builtIns)
         is KtTypeArgumentWithVariance -> TypeProjectionImpl(variance, type.toKotlinType(context))
     }
 

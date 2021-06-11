@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.Variance
 
 internal interface KtFirType : ValidityTokenOwner {
     val coneType: ConeKotlinType
@@ -171,8 +170,3 @@ internal class KtFirIntersectionType(
 
     override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
 }
-
-internal class KtFirTypeArgumentWithVariance(
-    override val type: KtType,
-    override val variance: Variance
-) : KtTypeArgumentWithVariance()
