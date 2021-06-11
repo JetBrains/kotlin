@@ -333,6 +333,7 @@ extra["compilerArtifactsForIde"] = listOf(
     ":prepare:ide-plugin-dependencies:lombok-compiler-plugin-for-ide",
     ":prepare:ide-plugin-dependencies:kotlin-compiler-tests-for-ide",
     ":prepare:ide-plugin-dependencies:kotlin-compiler-testdata-for-ide",
+    ":prepare:ide-plugin-dependencies:kotlin-stdlib-minimal-for-test-for-ide",
     ":kotlin-script-runtime",
     ":kotlin-script-util",
     ":kotlin-scripting-common",
