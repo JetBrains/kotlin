@@ -20,11 +20,19 @@ import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens.QUEST
+import org.jetbrains.kotlin.resolve.checkers.OptInNames
 
 object FirClassLiteralChecker : FirGetClassCallChecker() {
     override fun check(expression: FirGetClassCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val source = expression.source ?: return
         if (source.kind is FirFakeSourceElementKind) return
+        val argument = expression.argument
+        if (argument is FirResolvedQualifier) {
+            val fqName = argument.classId?.asSingleFqName()
+            if (fqName in OptInNames.EXPERIMENTAL_FQ_NAMES || fqName in OptInNames.USE_EXPERIMENTAL_FQ_NAMES) {
+                reporter.reportOn(argument.source, FirErrors.EXPERIMENTAL_CAN_ONLY_BE_USED_AS_ANNOTATION, context)
+            }
+        }
 
         // Note that raw FIR drops marked nullability "?" in, e.g., `A?::class`, `A<T?>::class`, or `A<T?>?::class`.
         // That is, AST structures for those expressions have token type QUEST, whereas FIR element doesn't have any information about it.
@@ -36,7 +44,6 @@ object FirClassLiteralChecker : FirGetClassCallChecker() {
         //
         // Only the 2nd example is valid, and we want to check if token type QUEST doesn't exist at the same level as COLONCOLON.
         val markedNullable = source.getChild(QUEST, depth = 1) != null
-        val argument = expression.argument
         val isNullable = markedNullable ||
                 (argument as? FirResolvedQualifier)?.isNullableLHSForCallableReference == true ||
                 argument.typeRef.coneType.isMarkedNullable ||

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.name.FqName
 
 data class Experimentality(val annotationFqName: FqName, val severity: Severity, val message: String?) {
@@ -12,5 +13,12 @@ data class Experimentality(val annotationFqName: FqName, val severity: Severity,
 
     companion object {
         val DEFAULT_SEVERITY = Severity.ERROR
+
+        val WRONG_TARGETS_FOR_MARKER = setOf(
+            KotlinTarget.EXPRESSION,
+            KotlinTarget.FILE,
+            KotlinTarget.TYPE,
+            KotlinTarget.TYPE_PARAMETER
+        )
     }
 }

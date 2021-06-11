@@ -33,15 +33,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getAnnotationRetention
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class ExperimentalMarkerDeclarationAnnotationChecker(private val module: ModuleDescriptor) : AdditionalAnnotationChecker {
-    companion object {
-        private val WRONG_TARGETS_FOR_MARKER = setOf(
-            KotlinTarget.EXPRESSION,
-            KotlinTarget.FILE,
-            KotlinTarget.TYPE,
-            KotlinTarget.TYPE_PARAMETER
-        )
-    }
-
     override fun checkEntries(
         entries: List<KtAnnotationEntry>,
         actualTargets: List<KotlinTarget>,
@@ -154,7 +145,7 @@ class ExperimentalMarkerDeclarationAnnotationChecker(private val module: ModuleD
         if (targetEntry != null) {
             val (entry, descriptor) = targetEntry
             val allowedTargets = AnnotationChecker.loadAnnotationTargets(descriptor!!) ?: return
-            val wrongTargets = allowedTargets.intersect(WRONG_TARGETS_FOR_MARKER)
+            val wrongTargets = allowedTargets.intersect(Experimentality.WRONG_TARGETS_FOR_MARKER)
             if (wrongTargets.isNotEmpty()) {
                 trace.report(
                     Errors.EXPERIMENTAL_ANNOTATION_WITH_WRONG_TARGET.on(

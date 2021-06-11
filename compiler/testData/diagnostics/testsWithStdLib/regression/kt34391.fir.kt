@@ -15,5 +15,5 @@ class A {
     }
 }
 
-@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
+@<!EXPERIMENTAL_IS_NOT_ENABLED!>RequiresOptIn<!>(level = RequiresOptIn.Level.ERROR)
 annotation class ExperimentalTime

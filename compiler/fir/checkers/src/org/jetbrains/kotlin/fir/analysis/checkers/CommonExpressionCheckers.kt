@@ -12,6 +12,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
     override val annotationCallCheckers: Set<FirAnnotationCallChecker>
         get() = setOf(
             FirAnnotationArgumentChecker,
+            FirOptInAnnotationCallChecker,
         )
 
     override val basicExpressionCheckers: Set<FirBasicExpressionChecker>

@@ -1,3 +1,4 @@
+// !USE_EXPERIMENTAL: kotlin.RequiresOptIn
 import kotlin.contracts.*
 
 @OptIn(ExperimentalContracts::class)

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtVariableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotation
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
@@ -511,6 +512,60 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class InapplicableFileTarget : KtFirDiagnostic<KtAnnotationEntry>() {
         override val diagnosticClass get() = InapplicableFileTarget::class
+    }
+
+    abstract class ExperimentalApiUsage : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = ExperimentalApiUsage::class
+        abstract val optInMarkerFqName: FqName
+        abstract val message: String
+    }
+
+    abstract class ExperimentalApiUsageError : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = ExperimentalApiUsageError::class
+        abstract val optInMarkerFqName: FqName
+        abstract val message: String
+    }
+
+    abstract class ExperimentalOverride : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = ExperimentalOverride::class
+        abstract val optInMarkerFqName: FqName
+        abstract val message: String
+    }
+
+    abstract class ExperimentalOverrideError : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = ExperimentalOverrideError::class
+        abstract val optInMarkerFqName: FqName
+        abstract val message: String
+    }
+
+    abstract class ExperimentalIsNotEnabled : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = ExperimentalIsNotEnabled::class
+    }
+
+    abstract class ExperimentalCanOnlyBeUsedAsAnnotation : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = ExperimentalCanOnlyBeUsedAsAnnotation::class
+    }
+
+    abstract class ExperimentalMarkerCanOnlyBeUsedAsAnnotationOrArgumentInUseExperimental : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = ExperimentalMarkerCanOnlyBeUsedAsAnnotationOrArgumentInUseExperimental::class
+    }
+
+    abstract class UseExperimentalWithoutArguments : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = UseExperimentalWithoutArguments::class
+    }
+
+    abstract class UseExperimentalArgumentIsNotMarker : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = UseExperimentalArgumentIsNotMarker::class
+        abstract val notMarkerFqName: FqName
+    }
+
+    abstract class ExperimentalAnnotationWithWrongTarget : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = ExperimentalAnnotationWithWrongTarget::class
+        abstract val target: String
+    }
+
+    abstract class ExperimentalAnnotationWithWrongRetention : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = ExperimentalAnnotationWithWrongRetention::class
     }
 
     abstract class ExposedTypealiasExpandedType : KtFirDiagnostic<KtNamedDeclaration>() {

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics
 
 import org.jetbrains.kotlin.diagnostics.rendering.*
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers.RENDER_POSITION_VARIANCE
+import org.jetbrains.kotlin.diagnostics.rendering.Renderers.STRING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.AMBIGUOUS_CALLS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.DECLARATION_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FIR
@@ -117,6 +118,15 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_DELEGATE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_LATEINIT_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_PRIVATE_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_PROPERTY_INITIALIZER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPERIMENTAL_ANNOTATION_WITH_WRONG_RETENTION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPERIMENTAL_ANNOTATION_WITH_WRONG_TARGET
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPERIMENTAL_API_USAGE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPERIMENTAL_API_USAGE_ERROR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPERIMENTAL_CAN_ONLY_BE_USED_AS_ANNOTATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPERIMENTAL_IS_NOT_ENABLED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPERIMENTAL_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_USE_EXPERIMENTAL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPERIMENTAL_OVERRIDE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPERIMENTAL_OVERRIDE_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPLICIT_DELEGATION_CALL_REQUIRED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_FUNCTION_RETURN_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_PARAMETER_TYPE
@@ -336,6 +346,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.USELESS_ELVIS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.USELESS_ELVIS_RIGHT_IS_NULL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.USELESS_IS_CHECK
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.USELESS_VARARG_ON_PARAMETER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.USE_EXPERIMENTAL_ARGUMENT_IS_NOT_MARKER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.USE_EXPERIMENTAL_WITHOUT_ARGUMENTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VALUE_CLASS_CANNOT_BE_CLONEABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAL_OR_VAR_ON_CATCH_PARAMETER
@@ -363,7 +375,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_MODIFIER_TA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_SETTER_PARAMETER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_SETTER_RETURN_TYPE
-import org.jetbrains.kotlin.resolve.VarianceConflictDiagnosticData
 
 @Suppress("unused")
 class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
@@ -399,10 +410,10 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(VARIABLE_EXPECTED, "Variable expected")
             map.put(DELEGATION_IN_INTERFACE, "Interfaces cannot use delegation")
             map.put(NESTED_CLASS_NOT_ALLOWED, "{0} is not allowed here", TO_STRING)
-            map.put(VAL_OR_VAR_ON_LOOP_PARAMETER, "''{0}'' on loop parameter is not allowed", TO_STRING);
-            map.put(VAL_OR_VAR_ON_FUN_PARAMETER, "''{0}'' on function parameter is not allowed", TO_STRING);
-            map.put(VAL_OR_VAR_ON_CATCH_PARAMETER, "''{0}'' on catch parameter is not allowed", TO_STRING);
-            map.put(VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER, "''{0}'' on secondary constructor parameter is not allowed", TO_STRING);
+            map.put(VAL_OR_VAR_ON_LOOP_PARAMETER, "''{0}'' on loop parameter is not allowed", TO_STRING)
+            map.put(VAL_OR_VAR_ON_FUN_PARAMETER, "''{0}'' on function parameter is not allowed", TO_STRING)
+            map.put(VAL_OR_VAR_ON_CATCH_PARAMETER, "''{0}'' on catch parameter is not allowed", TO_STRING)
+            map.put(VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER, "''{0}'' on secondary constructor parameter is not allowed", TO_STRING)
 
             // Unresolved
             map.put(INVISIBLE_REFERENCE, "Symbol {0} is invisible", SYMBOL)
@@ -528,6 +539,36 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
                 TO_STRING
             )
 
+            // OptIn
+            map.put(EXPERIMENTAL_API_USAGE, "{1}", TO_STRING, STRING)
+            map.put(EXPERIMENTAL_API_USAGE_ERROR, "{1}", TO_STRING, STRING)
+
+            map.put(EXPERIMENTAL_OVERRIDE, "{1}", TO_STRING, STRING)
+            map.put(EXPERIMENTAL_OVERRIDE_ERROR, "{1}", TO_STRING, STRING)
+
+            map.put(EXPERIMENTAL_IS_NOT_ENABLED, "This class can only be used with the compiler argument '-Xopt-in=kotlin.RequiresOptIn'")
+            map.put(EXPERIMENTAL_CAN_ONLY_BE_USED_AS_ANNOTATION, "This class can only be used as an annotation")
+            map.put(
+                EXPERIMENTAL_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_USE_EXPERIMENTAL,
+                "This class can only be used as an annotation or as an argument to @OptIn"
+            )
+            map.put(USE_EXPERIMENTAL_WITHOUT_ARGUMENTS, "@OptIn without any arguments has no effect")
+            map.put(
+                USE_EXPERIMENTAL_ARGUMENT_IS_NOT_MARKER,
+                "Annotation ''{0}'' is not an opt-in requirement marker, therefore its usage in @OptIn is ignored",
+                TO_STRING
+            )
+            map.put(
+                EXPERIMENTAL_ANNOTATION_WITH_WRONG_TARGET,
+                "Opt-in requirement marker annotation cannot be used on the following code elements: {0}. Please remove these targets",
+                STRING
+            )
+            map.put(
+                EXPERIMENTAL_ANNOTATION_WITH_WRONG_RETENTION,
+                "Opt-in requirement marker annotation cannot be used with SOURCE retention. Please replace retention with BINARY"
+            )
+
+
             // Exposed visibility group // #
             map.put(
                 EXPOSED_TYPEALIAS_EXPANDED_TYPE,
@@ -585,7 +626,13 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(TYPE_MISMATCH, "Type mismatch: inferred type is {1} but {0} was expected", TO_STRING, TO_STRING)
             map.put(THROWABLE_TYPE_MISMATCH, "Throwable type mismatch: actual type is {0}", TO_STRING)
             map.put(CONDITION_TYPE_MISMATCH, "Condition type mismatch: inferred type is {0} but Boolean was expected", TO_STRING)
-            map.put(ARGUMENT_TYPE_MISMATCH, "Argument type mismatch: actual type is {1} but {0} was expected", RENDER_TYPE, RENDER_TYPE, NOT_RENDERED)
+            map.put(
+                ARGUMENT_TYPE_MISMATCH,
+                "Argument type mismatch: actual type is {1} but {0} was expected",
+                RENDER_TYPE,
+                RENDER_TYPE,
+                NOT_RENDERED
+            )
             map.put(ASSIGNMENT_TYPE_MISMATCH, "Assignment type mismatch: actual type is {1} but {0} was expected", RENDER_TYPE, RENDER_TYPE)
             map.put(
                 RESULT_TYPE_MISMATCH,

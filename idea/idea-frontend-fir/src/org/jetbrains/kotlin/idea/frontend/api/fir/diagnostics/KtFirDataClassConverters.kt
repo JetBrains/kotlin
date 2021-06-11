@@ -717,6 +717,82 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.EXPERIMENTAL_API_USAGE) { firDiagnostic ->
+        ExperimentalApiUsageImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.EXPERIMENTAL_API_USAGE_ERROR) { firDiagnostic ->
+        ExperimentalApiUsageErrorImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.EXPERIMENTAL_OVERRIDE) { firDiagnostic ->
+        ExperimentalOverrideImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.EXPERIMENTAL_OVERRIDE_ERROR) { firDiagnostic ->
+        ExperimentalOverrideErrorImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.EXPERIMENTAL_IS_NOT_ENABLED) { firDiagnostic ->
+        ExperimentalIsNotEnabledImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.EXPERIMENTAL_CAN_ONLY_BE_USED_AS_ANNOTATION) { firDiagnostic ->
+        ExperimentalCanOnlyBeUsedAsAnnotationImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.EXPERIMENTAL_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_USE_EXPERIMENTAL) { firDiagnostic ->
+        ExperimentalMarkerCanOnlyBeUsedAsAnnotationOrArgumentInUseExperimentalImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.USE_EXPERIMENTAL_WITHOUT_ARGUMENTS) { firDiagnostic ->
+        UseExperimentalWithoutArgumentsImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.USE_EXPERIMENTAL_ARGUMENT_IS_NOT_MARKER) { firDiagnostic ->
+        UseExperimentalArgumentIsNotMarkerImpl(
+            firDiagnostic.a,
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.EXPERIMENTAL_ANNOTATION_WITH_WRONG_TARGET) { firDiagnostic ->
+        ExperimentalAnnotationWithWrongTargetImpl(
+            firDiagnostic.a,
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.EXPERIMENTAL_ANNOTATION_WITH_WRONG_RETENTION) { firDiagnostic ->
+        ExperimentalAnnotationWithWrongRetentionImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.EXPOSED_TYPEALIAS_EXPANDED_TYPE) { firDiagnostic ->
         ExposedTypealiasExpandedTypeImpl(
             firDiagnostic.a,
