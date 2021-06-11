@@ -1136,3 +1136,13 @@ plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin:
         nodeVersion = "16.2.0"
     }
 }
+
+afterEvaluate {
+    val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
+    if (cacheRedirectorEnabled) {
+        rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin::class.java) {
+            rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().downloadBaseUrl =
+                "https://cache-redirector.jetbrains.com/github.com/yarnpkg/yarn/releases/download"
+        }
+    }
+}
