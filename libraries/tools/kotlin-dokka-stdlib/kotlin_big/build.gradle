@@ -1,13 +1,16 @@
 apply plugin: 'base'
 
+final boolean isTeamcityBuild = System.getenv("TEAMCITY_VERSION") != null
+
 // kotlin/libraries/tools/kotlin-dokka-stdlib  ->  kotlin
 final File kotlinRootDir = rootProject.file( "../../../")
+final File kotlinLibsDir = new File(buildDir, 'libs')
 
-final boolean isTeamcityBuild = System.getenv("TEAMCITY_VERSION") != null
 final String kotlinVersion = isTeamcityBuild ? project.property("deployVersion") : "1.5.255-SNAPSHOT"
+final String repo = isTeamcityBuild ? new File(buildDir, 'repo') : new File(kotlinRootDir, 'build/repo')
 
 repositories {
-  mavenLocal()
+  maven { url = repo }
   mavenCentral()
 }
 
@@ -26,12 +29,8 @@ final List<String> modules = [
 ]
 
 
-task extractLibs() {
-  enabled = !isTeamcityBuild
-}
+task extractLibs() { }
 
-
-final File kotlinLibsDir = new File(buildDir, 'libs')
 
 modules.forEach { module ->
   final String lib = "kotlin_lib_$module"
