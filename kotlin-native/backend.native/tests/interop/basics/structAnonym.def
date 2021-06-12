@@ -94,12 +94,12 @@ struct StructAnonRecordMember_Complicate {
 	union {
 		int a[2];
 		union { char c1; int c2; };
-		struct { char b1; int64_t b2; };  // implicit 64-bits alignment
+		struct { char b1; int32_t b2; };  // implicit 64-bits alignment
 	};
 	char second __attribute__((aligned(16)));
 	struct {
 	    char x;
-		struct { int64_t b11, b12; } Y2;
+		struct { int32_t b11, b12; } Y2;
 		int32_t f  __attribute__((aligned(16)));
 	}; // __attribute__((aligned(16)));
 	char last;

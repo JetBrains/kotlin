@@ -58,9 +58,9 @@ fun test_StructAnonym_Complicate() {
                 assertEquals('s', second.toInt().toChar())
                 assertEquals('z', last.toInt().toChar())
                 assertEquals('b', b1.toInt().toChar())
-                assertEquals(42L, b2)
+                assertEquals(42, b2)
                 assertEquals(314, f)
-                assertEquals(11L, Y2.b11)
+                assertEquals(11, Y2.b11)
             }
 }
 
