@@ -24,6 +24,13 @@ data class KtTypeRendererOptions(
      * @sample Function0<Int> returns () -> Int
      */
     val renderFunctionType: Boolean = true,
+
+    /**
+     * When met type with unresolved qualifier, render it as it is resolved
+     * When `true` will render as `UnresolvedQualifier`
+     * When `false` will render as "ERROR_TYPE <symbol not found for UnresolvedQualifier>"
+     */
+    val renderUnresolvedTypeAsResolved: Boolean = true
 ) {
     companion object {
         val DEFAULT = KtTypeRendererOptions()

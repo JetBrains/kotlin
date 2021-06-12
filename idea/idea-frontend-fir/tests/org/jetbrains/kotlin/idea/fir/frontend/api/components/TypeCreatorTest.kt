@@ -85,6 +85,6 @@ internal class TypeCreatorTest : KotlinLightCodeInsightFixtureTestCase() {
 
 
     companion object {
-        private val RENDERING_OPTIONS = KtTypeRendererOptions.SHORT_NAMES
+        private val RENDERING_OPTIONS = KtTypeRendererOptions.SHORT_NAMES.copy(renderUnresolvedTypeAsResolved = false)
     }
 }

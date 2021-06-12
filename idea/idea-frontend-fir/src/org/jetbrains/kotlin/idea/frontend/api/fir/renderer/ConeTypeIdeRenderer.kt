@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.isInner
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedError
 import org.jetbrains.kotlin.fir.resolve.inference.*
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -18,7 +19,9 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.idea.asJava.applyIf
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.collectDesignation
 import org.jetbrains.kotlin.idea.frontend.api.components.KtTypeRendererOptions
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.renderer.render
 
 internal class ConeTypeIdeRenderer(
     private val session: FirSession,
@@ -48,7 +51,7 @@ internal class ConeTypeIdeRenderer(
 
         when (type) {
             is ConeKotlinErrorType -> {
-                appendError(type.diagnostic.reason)
+                renderErrorType(type)
             }
             //is Dynamic??? -> append("dynamic")
             is ConeClassLikeType -> {
@@ -80,6 +83,16 @@ internal class ConeTypeIdeRenderer(
                 append(renderFlexibleType(renderType(type.lowerBound), renderType(type.upperBound)))
             }
             else -> appendError("Unexpected cone type ${type::class.qualifiedName}")
+        }
+    }
+
+    private fun StringBuilder.renderErrorType(type: ConeKotlinErrorType) {
+        val diagnostic = type.diagnostic
+        if (options.renderUnresolvedTypeAsResolved && diagnostic is ConeUnresolvedError) {
+            val qualifierRendered = diagnostic.qualifier?.let { FqName(it).render() }.orEmpty()
+            append(qualifierRendered)
+        } else {
+            appendError(diagnostic.reason)
         }
     }
 

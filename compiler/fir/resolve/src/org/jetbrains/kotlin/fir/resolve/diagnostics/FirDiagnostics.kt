@@ -21,19 +21,26 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 
-class ConeUnresolvedReferenceError(val name: Name? = null) : ConeDiagnostic() {
+sealed class ConeUnresolvedError : ConeDiagnostic() {
+    abstract val qualifier: String?
+}
+
+class ConeUnresolvedReferenceError(val name: Name? = null) : ConeUnresolvedError() {
+    override val qualifier: String? get() = name?.asString()
     override val reason: String get() = "Unresolved reference" + if (name != null) ": ${name.asString()}" else ""
 }
 
-class ConeUnresolvedSymbolError(val classId: ClassId) : ConeDiagnostic() {
+class ConeUnresolvedSymbolError(val classId: ClassId) : ConeUnresolvedError() {
+    override val qualifier: String get() = classId.asSingleFqName().asString()
     override val reason: String get() = "Symbol not found for $classId"
 }
 
-class ConeUnresolvedQualifierError(val qualifier: String) : ConeDiagnostic() {
+class ConeUnresolvedQualifierError(override val qualifier: String) : ConeUnresolvedError() {
     override val reason: String get() = "Symbol not found for $qualifier"
 }
 
-class ConeUnresolvedNameError(val name: Name) : ConeDiagnostic() {
+class ConeUnresolvedNameError(val name: Name) : ConeUnresolvedError() {
+    override val qualifier: String get() = name.asString()
     override val reason: String get() = "Unresolved name: $name"
 }
 
