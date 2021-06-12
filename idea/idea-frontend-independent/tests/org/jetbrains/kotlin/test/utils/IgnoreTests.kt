@@ -14,7 +14,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 object IgnoreTests {
-    private const val INSERT_DIRECTIVE_AUTOMATICALLY = true // TODO use environment variable instead
+    private const val INSERT_DIRECTIVE_AUTOMATICALLY = false // TODO use environment variable instead
     private const val ALWAYS_CONSIDER_TEST_AS_PASSING = false // TODO use environment variable instead
 
     fun runTestIfEnabledByFileDirective(
