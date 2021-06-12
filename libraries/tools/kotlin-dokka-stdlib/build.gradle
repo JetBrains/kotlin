@@ -11,12 +11,10 @@ configurations {
     dokka
 }
 
-final String dokka_build = "611"
 final String dokka_version = "0.10.2-SNAPSHOT"
 
 repositories {
     mavenLocal()
-    maven { url = "https://teamcity.jetbrains.com/guestAuth/repository/download/Kotlin_Dokka_DokkaAntMavenGradle/$dokka_build/maven"  }
 }
 
 dependencies {
