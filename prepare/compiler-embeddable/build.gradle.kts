@@ -53,8 +53,17 @@ val runtimeJar = runtimeJar(embeddableCompiler()) {
     mergeServiceFiles()
 }
 
-sourcesJar()
-javadocJar()
+sourcesJar {
+    val compilerTask = project(":kotlin-compiler").tasks.named<Jar>("sourcesJar")
+    dependsOn(compilerTask)
+    from(compilerTask.map { zipTree(it.archiveFile) })
+}
+
+javadocJar {
+    val compilerTask = project(":kotlin-compiler").tasks.named<Jar>("javadocJar")
+    dependsOn(compilerTask)
+    from(compilerTask.map { zipTree(it.archiveFile) })
+}
 
 projectTest {
     dependsOn(runtimeJar)
@@ -66,5 +75,4 @@ projectTest {
         systemProperty("compilationClasspath", testCompilationClasspathProvider.get())
     }
 }
-
 
