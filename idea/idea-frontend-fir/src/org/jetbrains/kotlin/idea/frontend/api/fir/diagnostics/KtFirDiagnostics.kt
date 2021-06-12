@@ -1647,12 +1647,12 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val typeParameter: KtTypeParameterSymbol
     }
 
-    abstract class NoCompanionObject : KtFirDiagnostic<KtSimpleNameExpression>() {
+    abstract class NoCompanionObject : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = NoCompanionObject::class
         abstract val klass: KtClassLikeSymbol
     }
 
-    abstract class ExpressionExpectedPackageFound : KtFirDiagnostic<KtSimpleNameExpression>() {
+    abstract class ExpressionExpectedPackageFound : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = ExpressionExpectedPackageFound::class
     }
 

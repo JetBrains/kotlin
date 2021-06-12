@@ -2669,14 +2669,14 @@ internal class NoCompanionObjectImpl(
     override val klass: KtClassLikeSymbol,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.NoCompanionObject(), KtAbstractFirDiagnostic<KtSimpleNameExpression> {
+) : KtFirDiagnostic.NoCompanionObject(), KtAbstractFirDiagnostic<KtExpression> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
 internal class ExpressionExpectedPackageFoundImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ExpressionExpectedPackageFound(), KtAbstractFirDiagnostic<KtSimpleNameExpression> {
+) : KtFirDiagnostic.ExpressionExpectedPackageFound(), KtAbstractFirDiagnostic<KtExpression> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 

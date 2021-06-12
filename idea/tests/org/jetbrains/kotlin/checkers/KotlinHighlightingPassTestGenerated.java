@@ -231,6 +231,11 @@ public class KotlinHighlightingPassTestGenerated extends AbstractKotlinHighlight
             runTest("idea/testData/checker/OverridesAndGenerics.kt");
         }
 
+        @TestMetadata("PackageInExpressionPosition.kt")
+        public void testPackageInExpressionPosition() throws Exception {
+            runTest("idea/testData/checker/PackageInExpressionPosition.kt");
+        }
+
         @TestMetadata("PackageQualified.kt")
         public void testPackageQualified() throws Exception {
             runTest("idea/testData/checker/PackageQualified.kt");
