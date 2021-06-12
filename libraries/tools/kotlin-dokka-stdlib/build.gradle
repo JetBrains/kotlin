@@ -30,14 +30,13 @@ def pAnt() { return project('ant').extensions }
 def pKotlinBig() { return project('kotlin_big').extensions }
 def pKotlinNative() { return project('kotlin_native').extensions }
 
-task extractAll(dependsOn: [setupDokka])
+task setupCallDokka() {
+    dependsOn setupDokka
+    dependsOn project('ant').tasks.getByName('extractAnt')
+    dependsOn project('kotlin_big').tasks.getByName('extractLibs')
+}
 
-extractAll.dependsOn project('kotlin_big').tasks.getByName('extractLibs')
-extractAll.dependsOn project('kotlin_native').tasks.getByName('extractLibs')
-extractAll.dependsOn project('ant').tasks.getByName('extractAnt')
-
-task setupCallDokka() { }
-task callDokka(type: Exec, dependsOn: [extractAll, setupCallDokka]) {
+task callDokka(type: Exec, dependsOn: setupCallDokka) {
     workingDir = projectDir
     // -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005
     environment("ANT_OPTS", "-Xmx3G")
