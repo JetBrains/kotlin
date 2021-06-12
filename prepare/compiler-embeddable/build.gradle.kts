@@ -92,8 +92,17 @@ val runtimeJar = runtimeJar(embeddableCompiler()) {
     transform(CoreXmlShadingTransformer::class.java)
 }
 
-sourcesJar()
-javadocJar()
+sourcesJar{
+    val compilerTask = project(":kotlin-compiler").tasks.named("sourcesJar") as TaskProvider<out Jar>
+    dependsOn(compilerTask)
+    from(compilerTask.map{ zipTree(it.archiveFile) })
+}
+
+javadocJar{
+    val compilerTask = project(":kotlin-compiler").tasks.named("javadocJar") as TaskProvider<out Jar>
+    dependsOn(compilerTask)
+    from(compilerTask.map{ zipTree(it.archiveFile) })
+}
 
 projectTest {
     dependsOn(runtimeJar)
