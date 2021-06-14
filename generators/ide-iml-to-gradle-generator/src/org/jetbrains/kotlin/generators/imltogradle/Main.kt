@@ -36,7 +36,8 @@ private val intellijModulesForWhichGenerateBuildGradle = listOf(
     "intellij.platform.lang.tests",
     "intellij.platform.testExtensions",
     "intellij.java.compiler.tests",
-    "intellij.gradle.toolingExtension.tests"
+    "intellij.gradle.toolingExtension.tests",
+    "intellij.maven",
 )
 
 val jsonUrlPrefixes = mapOf(

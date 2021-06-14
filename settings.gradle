@@ -322,7 +322,7 @@ if (buildProperties.getOrNull("attachedIntellijVersion") != null) {
                 fileName == "intellij.platform.debugger.testFramework.iml" || fileName == "intellij.gradle.tests.iml" ||
                 fileName == "intellij.platform.externalSystem.tests.iml" || fileName == "intellij.platform.lang.tests.iml" ||
                 fileName == "intellij.platform.testExtensions.iml" || fileName == "intellij.java.compiler.tests.iml" ||
-                fileName == "intellij.gradle.toolingExtension.tests.iml"
+                fileName == "intellij.gradle.toolingExtension.tests.iml" || fileName == "intellij.maven.iml"
         ) {
             String projectName = ":kotlin-ide.${fileName.substring(0, fileName.length() - ".iml".length())}"
             include(projectName)
