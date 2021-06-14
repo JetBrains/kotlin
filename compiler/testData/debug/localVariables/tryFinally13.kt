@@ -10,11 +10,11 @@ fun box(): String {
                 val y = "y"
                 return "FAIL1"
             } finally {
-                return "FAIL2"  // TODO: `e` should not be visible here.
+                return "FAIL2"
             }
         }
     } finally {
-        return "OK"  // TODO: `e` should not be visible here.
+        return "OK"
     }
     return "FAIL3"
 }
@@ -31,6 +31,5 @@ fun box(): String {
 // test.kt:9 box: i:int=0:int
 // test.kt:10 box: i:int=0:int, e:java.lang.Exception=java.lang.RuntimeException
 // test.kt:11 box: i:int=0:int, e:java.lang.Exception=java.lang.RuntimeException, y:java.lang.String="y":java.lang.String
-// test.kt:13 box: i:int=0:int, e:java.lang.Exception=java.lang.RuntimeException
-// test.kt:17 box: e:java.lang.Exception=java.lang.RuntimeException
-
+// test.kt:13 box: i:int=0:int
+// test.kt:17 box:
