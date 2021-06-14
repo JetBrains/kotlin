@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir
 
-import com.intellij.openapi.components.service
+import com.intellij.openapi.components.ServiceManager
 import org.jetbrains.kotlin.idea.frontend.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSessionProvider
@@ -21,7 +21,7 @@ internal inline fun <R> analyzeWithSymbolAsContext(
     require(contextSymbol is KtFirSymbol<*>)
     val resolveState = contextSymbol.firRef.resolveState
     val token = contextSymbol.token
-    val analysisSessionProvider = resolveState.project.service<KtAnalysisSessionProvider>()
+    val analysisSessionProvider = ServiceManager.getService(resolveState.project, KtAnalysisSessionProvider::class.java)
     check(analysisSessionProvider is KtFirAnalysisSessionProvider)
     val analysisSession = analysisSessionProvider.getCachedAnalysisSession(resolveState, token)
         ?: throw EntityWasGarbageCollectedException("KtAnalysisSession")

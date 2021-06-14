@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.providers
 
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.fir.FirSession
@@ -21,7 +22,7 @@ import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.IndexHelper
-import org.jetbrains.kotlin.idea.fir.low.level.api.PackageExistenceCheckerForSingleModule
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveStateConfigurator
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.name.ClassId
@@ -41,7 +42,8 @@ internal class FirIdeProvider(
     override val symbolProvider: FirSymbolProvider = SymbolProvider()
 
     private val indexHelper = IndexHelper(project, searchScope)
-    private val packageExistenceChecker = PackageExistenceCheckerForSingleModule(project, moduleInfo)
+    private val packageExistenceChecker = ServiceManager.getService(project, FirModuleResolveStateConfigurator::class.java)
+        .createPackageExistingCheckerForModule(moduleInfo)
 
     private val providerHelper = FirProviderHelper(
         cache,

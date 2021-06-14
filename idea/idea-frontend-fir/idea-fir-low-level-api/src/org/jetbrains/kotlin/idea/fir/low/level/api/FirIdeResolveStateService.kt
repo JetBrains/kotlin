@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api
 
-import com.intellij.openapi.components.service
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import org.jetbrains.annotations.TestOnly
@@ -35,7 +35,8 @@ internal class FirIdeResolveStateService(project: Project) {
         stateCache.computeIfAbsent(moduleInfo) { createResolveStateFor(moduleInfo, sessionProviderStorage) }
 
     companion object {
-        fun getInstance(project: Project): FirIdeResolveStateService = project.service()
+        fun getInstance(project: Project): FirIdeResolveStateService =
+            ServiceManager.getService(project, FirIdeResolveStateService::class.java)
 
         internal fun createResolveStateFor(
             moduleInfo: IdeaModuleInfo,

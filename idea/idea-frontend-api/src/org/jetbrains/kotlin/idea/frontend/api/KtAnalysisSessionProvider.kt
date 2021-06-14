@@ -7,13 +7,14 @@ package org.jetbrains.kotlin.idea.frontend.api
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.components.service
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Computable
 import org.jetbrains.kotlin.idea.frontend.api.tokens.AlwaysAccessibleValidityTokenFactory
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ReadActionConfinementValidityTokenFactory
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityTokenFactory
-import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -65,6 +66,11 @@ abstract class KtAnalysisSessionProvider : Disposable {
     }
 
     override fun dispose() {}
+
+    companion object {
+        fun getInstance(project: Project): KtAnalysisSessionProvider =
+            ServiceManager.getService(project, KtAnalysisSessionProvider::class.java)
+    }
 }
 
 /**
@@ -81,8 +87,7 @@ abstract class KtAnalysisSessionProvider : Disposable {
  */
 @OptIn(InvalidWayOfUsingAnalysisSession::class)
 inline fun <R> analyse(contextElement: KtElement, action: KtAnalysisSession.() -> R): R =
-    contextElement.project
-        .service<KtAnalysisSessionProvider>()
+    KtAnalysisSessionProvider.getInstance(contextElement.project)
         .analyse(contextElement, ReadActionConfinementValidityTokenFactory, action)
 
 @OptIn(InvalidWayOfUsingAnalysisSession::class)
@@ -91,7 +96,8 @@ inline fun <R> analyseWithCustomToken(
     tokenFactory: ValidityTokenFactory,
     action: KtAnalysisSession.() -> R
 ): R =
-    contextElement.project.service<KtAnalysisSessionProvider>().analyse(contextElement, tokenFactory, action)
+    KtAnalysisSessionProvider.getInstance(contextElement.project)
+        .analyse(contextElement, tokenFactory, action)
 
 /**
  * UAST-specific version of [analyse] that executes the given [action] in [KtAnalysisSession] context
@@ -109,7 +115,8 @@ inline fun <R> analyseInDependedAnalysisSession(
     elementToReanalyze: KtElement,
     action: KtAnalysisSession.() -> R
 ): R =
-    originalFile.project.service<KtAnalysisSessionProvider>().analyseInDependedAnalysisSession(originalFile, elementToReanalyze, action)
+    KtAnalysisSessionProvider.getInstance(originalFile.project)
+        .analyseInDependedAnalysisSession(originalFile, elementToReanalyze, action)
 
 /**
  * Execute given [action] in [KtAnalysisSession] context like [analyse] does but execute it in read action
@@ -126,9 +133,9 @@ inline fun <R> analyseInDependedAnalysisSession(
 inline fun <R> analyseWithReadAction(
     contextElement: KtElement,
     crossinline action: KtAnalysisSession.() -> R
-): R = runReadAction {
+): R = ApplicationManager.getApplication().runReadAction(Computable {
     analyse(contextElement, action)
-}
+})
 
 /**
  * Show a modal window with a progress bar and specified [windowTitle]
