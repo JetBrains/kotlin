@@ -97,10 +97,18 @@ class NativeCompilerDownloader(
     }
 
     private fun downloadAndExtract() {
+        // For release branch we have numeration like 1.5.20-256 and compilerVersion.toString() returns 1.5.20 and meta is RELEASE
+        // TODO: fix that in 1.5.30 release, but for now this workaround could be ok
+        val compilerVersionWorkaround =
+            if (compilerVersion.build != -1 && compilerVersion.meta == MetaVersion.RELEASE)
+                "$compilerVersion-${compilerVersion.build}"
+            else
+                "$compilerVersion"
+
         val repoUrl = buildString {
             append("$BASE_DOWNLOAD_URL/")
             append(if (compilerVersion.meta == MetaVersion.DEV) "dev/" else "releases/")
-            append("$compilerVersion/")
+            append("$compilerVersionWorkaround/")
             append(simpleOsName)
         }
         val dependencyUrl = "$repoUrl/$dependencyFileName"

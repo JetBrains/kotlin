@@ -45,6 +45,14 @@ open class KonanCompilerDownloadTask : DefaultTask() {
             logger.info("Use a user-defined compiler path: $konanHome")
         } else {
             try {
+                // WOrkaround. see org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader.downloadAndExtract
+                val compilerVersion = project.konanVersion
+                val compilerVersionWorkaround =
+                        if (compilerVersion.build != -1 && compilerVersion.meta == MetaVersion.RELEASE)
+                            "$compilerVersion-${compilerVersion.build}"
+                        else
+                            "$compilerVersion"
+
                 val downloadUrlDirectory = buildString {
                     append("$BASE_DOWNLOAD_URL/")
                     val version = project.konanVersion
@@ -52,7 +60,7 @@ open class KonanCompilerDownloadTask : DefaultTask() {
                         MetaVersion.DEV -> append("dev/")
                         else -> append("releases/")
                     }
-                    append("$version/")
+                    append("$compilerVersionWorkaround/")
                     append(project.simpleOsName)
                 }
                 val konanCompiler = project.konanCompilerName()
