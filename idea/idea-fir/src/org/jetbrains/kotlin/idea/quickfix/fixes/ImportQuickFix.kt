@@ -19,8 +19,8 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
+import org.jetbrains.kotlin.idea.fir.HLIndexHelper
 import org.jetbrains.kotlin.idea.fir.api.fixes.diagnosticFixFactory
-import org.jetbrains.kotlin.idea.fir.low.level.api.IndexHelper
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.createScopeForModuleLibraries
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.diagnostics.KtFirDiagnostic
@@ -137,7 +137,7 @@ internal class ImportQuickFix(
         val FACTORY = diagnosticFixFactory(KtFirDiagnostic.UnresolvedReference::class) { diagnostic ->
             val element = diagnostic.psi
 
-            val indexHelper = IndexHelper(element.project, createSearchScope(element))
+            val indexHelper = HLIndexHelper(element.project, createSearchScope(element))
 
             val quickFix = when (element) {
                 is KtTypeReference -> createImportTypeFix(indexHelper, element)
@@ -157,7 +157,7 @@ internal class ImportQuickFix(
         }
 
         private fun KtAnalysisSession.createImportNameFix(
-            indexHelper: IndexHelper,
+            indexHelper: HLIndexHelper,
             element: KtNameReferenceExpression
         ): ImportQuickFix? {
             if (isSelectorInQualified(element)) return null
@@ -177,7 +177,7 @@ internal class ImportQuickFix(
             return ImportQuickFix(element, importCandidates)
         }
 
-        private fun KtAnalysisSession.createImportTypeFix(indexHelper: IndexHelper, element: KtTypeReference): ImportQuickFix? {
+        private fun KtAnalysisSession.createImportTypeFix(indexHelper: HLIndexHelper, element: KtTypeReference): ImportQuickFix? {
             val firFile = element.containingKtFile.getFileSymbol()
             val unresolvedName = element.typeName ?: return null
 
@@ -191,7 +191,7 @@ internal class ImportQuickFix(
         }
 
         private fun KtAnalysisSession.collectCallableCandidates(
-            indexHelper: IndexHelper,
+            indexHelper: HLIndexHelper,
             unresolvedName: Name,
             isVisible: (KtCallableSymbol) -> Boolean
         ): List<FqName> {
@@ -206,7 +206,7 @@ internal class ImportQuickFix(
         }
 
         private fun KtAnalysisSession.collectTypesCandidates(
-            indexHelper: IndexHelper,
+            indexHelper: HLIndexHelper,
             unresolvedName: Name,
             isVisible: (KtNamedClassOrObjectSymbol) -> Boolean
         ): List<FqName> {

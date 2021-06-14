@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.idea.completion.lookups.CallableImportStrategy
 import org.jetbrains.kotlin.idea.completion.lookups.CallableInsertionStrategy
 import org.jetbrains.kotlin.idea.completion.lookups.factories.KotlinFirLookupElementFactory
 import org.jetbrains.kotlin.idea.completion.weighers.Weighers
-import org.jetbrains.kotlin.idea.fir.low.level.api.IndexHelper
+import org.jetbrains.kotlin.idea.fir.HLIndexHelper
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
@@ -37,7 +37,7 @@ internal abstract class FirCompletionContributorBase<C : FirRawPositionCompletio
     protected val fakeKtFile: KtFile get() = basicContext.fakeKtFile
     protected val project: Project get() = basicContext.project
     protected val targetPlatform: TargetPlatform get() = basicContext.targetPlatform
-    protected val indexHelper: IndexHelper get() = basicContext.indexHelper
+    protected val indexHelper: HLIndexHelper get() = basicContext.indexHelper
     protected val lookupElementFactory: KotlinFirLookupElementFactory get() = basicContext.lookupElementFactory
     protected val visibleScope = basicContext.visibleScope
 

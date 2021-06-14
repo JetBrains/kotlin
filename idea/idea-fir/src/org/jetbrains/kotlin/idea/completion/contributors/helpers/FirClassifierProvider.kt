@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.completion.contributors.helpers
 
 import org.jetbrains.kotlin.idea.completion.checkers.CompletionVisibilityChecker
-import org.jetbrains.kotlin.idea.fir.low.level.api.IndexHelper
+import org.jetbrains.kotlin.idea.fir.HLIndexHelper
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassifierSymbol
@@ -19,7 +19,7 @@ internal object FirClassifierProvider {
         originalKtFile: KtFile,
         position: KtElement,
         scopeNameFilter: KtScopeNameFilter,
-        indexHelper: IndexHelper,
+        indexHelper: HLIndexHelper,
         visibilityChecker: CompletionVisibilityChecker
     ): Sequence<KtClassifierSymbol> = sequence {
         yieldAll(

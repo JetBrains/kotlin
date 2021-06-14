@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.completion.contributors
 import org.jetbrains.kotlin.idea.completion.context.FirBasicCompletionContext
 import org.jetbrains.kotlin.idea.completion.context.FirNameReferencePositionContext
 import org.jetbrains.kotlin.idea.completion.context.FirRawPositionCompletionContext
-import org.jetbrains.kotlin.idea.fir.low.level.api.IndexHelper
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScopeNameFilter
 

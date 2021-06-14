@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi.*
 /*
 * Move to another module
 */
-public class IndexHelper(val project: Project, private val scope: GlobalSearchScope) {
+internal class IndexHelper(val project: Project, private val scope: GlobalSearchScope) {
     private val stubIndex: StubIndex = StubIndex.getInstance()
 
     private inline fun <INDEX_KEY : Any, reified PSI : PsiElement> firstMatchingOrNull(
@@ -64,86 +64,12 @@ public class IndexHelper(val project: Project, private val scope: GlobalSearchSc
     fun getTopLevelFunctions(callableId: CallableId): Collection<KtNamedFunction> =
         KotlinTopLevelFunctionFqnNameIndex.getInstance()[callableId.asStringForIndexes(), project, scope]
 
-    fun getTopLevelPropertiesInPackage(packageFqName: FqName): Collection<KtProperty> =
-        KotlinTopLevelPropertyByPackageIndex.getInstance().get(packageFqName.asStringForIndexes(), project, scope)
-
-    fun getTopLevelFunctionsInPackage(packageFqName: FqName): Collection<KtFunction> =
-        KotlinTopLevelFunctionByPackageIndex.getInstance().get(packageFqName.asStringForIndexes(), project, scope)
 
     fun getClassNamesInPackage(packageFqName: FqName): Set<Name> =
         KotlinTopLevelClassByPackageIndex.getInstance()
             .get(packageFqName.asStringForIndexes(), project, scope)
             .mapNotNullTo(hashSetOf()) { it.nameAsName }
 
-    fun getKotlinClasses(
-        nameFilter: (Name) -> Boolean,
-        psiFilter: (element: KtClassOrObject) -> Boolean = { true }
-    ): Collection<KtClassOrObject> {
-        val index = KotlinFullClassNameIndex.getInstance()
-        return index.getAllKeys(project).asSequence()
-            .onEach { ProgressManager.checkCanceled() }
-            .filter { fqName -> nameFilter(getShortName(fqName)) }
-            .flatMap { fqName -> index[fqName, project, scope] }
-            .filter(psiFilter)
-            .toList()
-    }
-
-    fun getTopLevelCallables(nameFilter: (Name) -> Boolean): Collection<KtCallableDeclaration> {
-        fun sequenceOfElements(index: StringStubIndexExtension<out KtCallableDeclaration>): Sequence<KtCallableDeclaration> =
-            index.getAllKeys(project).asSequence()
-                .onEach { ProgressManager.checkCanceled() }
-                .filter { fqName -> nameFilter(getShortName(fqName)) }
-                .flatMap { fqName -> index[fqName, project, scope] }
-                .filter { it.receiverTypeReference == null }
-
-        val functions = sequenceOfElements(KotlinTopLevelFunctionFqnNameIndex.getInstance())
-        val properties = sequenceOfElements(KotlinTopLevelPropertyFqnNameIndex.getInstance())
-
-        return (functions + properties).toList()
-    }
-
-    fun getKotlinCallablesByName(name: Name): Collection<KtCallableDeclaration> {
-        val functions: Sequence<KtCallableDeclaration> =
-            KotlinFunctionShortNameIndex.getInstance().get(name.asString(), project, scope).asSequence()
-
-        val properties: Sequence<KtNamedDeclaration> =
-            KotlinPropertyShortNameIndex.getInstance().get(name.asString(), project, scope).asSequence()
-
-        return (functions + properties)
-            .filterIsInstance<KtCallableDeclaration>()
-            .toList()
-    }
-
-    fun getKotlinClassesByName(name: Name): Collection<KtClassOrObject> {
-        return KotlinClassShortNameIndex.getInstance().get(name.asString(), project, scope)
-    }
-
-    fun getTopLevelExtensions(nameFilter: (Name) -> Boolean, receiverTypeNames: Set<String>): Collection<KtCallableDeclaration> {
-        val index = KotlinTopLevelExtensionsByReceiverTypeIndex.INSTANCE
-
-        return index.getAllKeys(project).asSequence()
-            .onEach { ProgressManager.checkCanceled() }
-            .filter { KotlinTopLevelExtensionsByReceiverTypeIndex.receiverTypeNameFromKey(it) in receiverTypeNames }
-            .filter { nameFilter(Name.identifier(KotlinTopLevelExtensionsByReceiverTypeIndex.callableNameFromKey(it))) }
-            .flatMap { key -> index[key, project, scope] }
-            .toList()
-    }
-
-    fun getPossibleTypeAliasExpansionNames(originalTypeName: String): Set<String> {
-        val index = KotlinTypeAliasByExpansionShortNameIndex.INSTANCE
-        val out = mutableSetOf<String>()
-
-        fun searchRecursively(typeName: String) {
-            ProgressManager.checkCanceled()
-            index[typeName, project, scope].asSequence()
-                .mapNotNull { it.name }
-                .filter { out.add(it) }
-                .forEach(::searchRecursively)
-        }
-
-        searchRecursively(originalTypeName)
-        return out
-    }
 
     companion object {
         private fun CallableId.asStringForIndexes(): String =

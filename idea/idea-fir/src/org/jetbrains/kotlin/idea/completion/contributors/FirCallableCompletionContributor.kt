@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.idea.completion.checkers.CompletionVisibilityChecker
 import org.jetbrains.kotlin.idea.completion.checkers.ExtensionApplicabilityChecker
 import org.jetbrains.kotlin.idea.completion.context.FirBasicCompletionContext
 import org.jetbrains.kotlin.idea.completion.context.FirNameReferencePositionContext
-import org.jetbrains.kotlin.idea.fir.low.level.api.IndexHelper
+import org.jetbrains.kotlin.idea.fir.HLIndexHelper
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.components.KtScopeContext
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtCompositeScope
@@ -168,7 +168,7 @@ internal class FirCallableCompletionContributor(
         implicitReceiversTypes.flatMapTo(hashSetOf()) { with(typeNamesProvider) { findAllNames(it) } }
 }
 
-private class TypeNamesProvider(private val indexHelper: IndexHelper) {
+private class TypeNamesProvider(private val indexHelper: HLIndexHelper) {
     fun KtAnalysisSession.findAllNames(type: KtType): Set<String> {
         if (type !is KtNonErrorClassType) return emptySet()
 
