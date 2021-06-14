@@ -1403,10 +1403,20 @@ internal class ProjectionOnNonClassTypeArgumentImpl(
 }
 
 internal class UpperBoundViolatedImpl(
-    override val upperBound: KtType,
+    override val expectedUpperBound: KtType,
+    override val actualUpperBound: KtType,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.UpperBoundViolated(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
+internal class UpperBoundViolatedInTypealiasExpansionImpl(
+    override val expectedUpperBound: KtType,
+    override val actualUpperBound: KtType,
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.UpperBoundViolatedInTypealiasExpansion(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 

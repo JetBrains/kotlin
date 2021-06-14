@@ -872,7 +872,14 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class UpperBoundViolated : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = UpperBoundViolated::class
-        abstract val upperBound: KtType
+        abstract val expectedUpperBound: KtType
+        abstract val actualUpperBound: KtType
+    }
+
+    abstract class UpperBoundViolatedInTypealiasExpansion : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = UpperBoundViolatedInTypealiasExpansion::class
+        abstract val expectedUpperBound: KtType
+        abstract val actualUpperBound: KtType
     }
 
     abstract class TypeArgumentsNotAllowed : KtFirDiagnostic<PsiElement>() {

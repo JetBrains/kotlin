@@ -30,7 +30,7 @@ typealias N<T> = Num<T>
 
 val testN0 = N("")
 val testN1 = N<Int>(1)
-val testN1a = N<String>("")
+val testN1a = N<<!UPPER_BOUND_VIOLATED!>String<!>>("")
 val testN2 = <!INAPPLICABLE_CANDIDATE!>N<!><Int, Int>(1)
 
 class MyPair<T1 : CharSequence, T2 : Number>(val string: T1, val number: T2)

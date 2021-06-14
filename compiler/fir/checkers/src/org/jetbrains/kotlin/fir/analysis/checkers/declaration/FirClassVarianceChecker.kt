@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.extractTypeRefAndSourceFromTypeArgument
+import org.jetbrains.kotlin.fir.analysis.checkers.extractArgumentTypeRefAndSource
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
@@ -155,11 +155,11 @@ object FirClassVarianceChecker : FirClassChecker() {
                     }
 
                     if (newVariance != null) {
-                        val subTypeRefAndSource = extractTypeRefAndSourceFromTypeArgument(typeRef, index)
+                        val subTypeRefAndSource = extractArgumentTypeRefAndSource(typeRef, index)
 
                         checkVarianceConflict(
-                            typeArgumentType, newVariance, subTypeRefAndSource?.first, containingType,
-                            context, reporter, subTypeRefAndSource?.first?.source ?: source,
+                            typeArgumentType, newVariance, subTypeRefAndSource?.typeRef, containingType,
+                            context, reporter, subTypeRefAndSource?.typeRef?.source ?: source,
                             fullyExpandedType != type
                         )
                     }

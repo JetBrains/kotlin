@@ -402,7 +402,12 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val INFERENCE_ERROR by error<PsiElement>()
         val PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT by error<PsiElement>()
         val UPPER_BOUND_VIOLATED by error<PsiElement> {
-            parameter<ConeKotlinType>("upperBound")
+            parameter<ConeKotlinType>("expectedUpperBound")
+            parameter<ConeKotlinType>("actualUpperBound")
+        }
+        val UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION by error<PsiElement> {
+            parameter<ConeKotlinType>("expectedUpperBound")
+            parameter<ConeKotlinType>("actualUpperBound")
         }
         val TYPE_ARGUMENTS_NOT_ALLOWED by error<PsiElement>()
         val WRONG_NUMBER_OF_TYPE_ARGUMENTS by error<PsiElement> {

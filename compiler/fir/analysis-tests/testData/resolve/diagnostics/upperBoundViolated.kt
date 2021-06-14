@@ -45,7 +45,7 @@ fun <K, L : K> rest() {
 class NumColl<T : Collection<Number>>
 typealias NL<K> = NumColl<List<K>>
 val test7 = NL<Int>()<!UNRESOLVED_REFERENCE!>NumberPhile<!><!SYNTAX!><!>
-val test8 = NL<String>()
+val test8 = NL<<!UPPER_BOUND_VIOLATED!>String<!>>()
 
 class NumberPhile<T: Number>(x: T)
 val np1 = NumberPhile(10)

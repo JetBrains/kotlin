@@ -581,7 +581,7 @@ internal fun checkCondition(condition: FirExpression, context: CheckerContext, r
     }
 }
 
-fun extractTypeRefAndSourceFromTypeArgument(typeRef: FirTypeRef?, index: Int): Pair<FirTypeRef, FirSourceElement?>? {
+fun extractArgumentTypeRefAndSource(typeRef: FirTypeRef?, index: Int): FirTypeRefSource? {
     if (typeRef is FirResolvedTypeRef) {
         val delegatedTypeRef = typeRef.delegatedTypeRef
         if (delegatedTypeRef is FirUserTypeRef) {
@@ -601,20 +601,22 @@ fun extractTypeRefAndSourceFromTypeArgument(typeRef: FirTypeRef?, index: Int): P
 
             val typeArgument = currentTypeArguments?.elementAtOrNull(currentIndex)
             if (typeArgument is FirTypeProjectionWithVariance) {
-                return Pair(typeArgument.typeRef, typeArgument.source)
+                return FirTypeRefSource(typeArgument.typeRef, typeArgument.source)
             }
         } else if (delegatedTypeRef is FirFunctionTypeRef) {
             val valueParameters = delegatedTypeRef.valueParameters
             if (index < valueParameters.size) {
                 val valueParamTypeRef = valueParameters.elementAt(index).returnTypeRef
-                return Pair(valueParamTypeRef, valueParamTypeRef.source)
+                return FirTypeRefSource(valueParamTypeRef, valueParamTypeRef.source)
             }
             if (index == valueParameters.size) {
                 val returnTypeRef = delegatedTypeRef.returnTypeRef
-                return Pair(returnTypeRef, returnTypeRef.source)
+                return FirTypeRefSource(returnTypeRef, returnTypeRef.source)
             }
         }
     }
 
     return null
 }
+
+data class FirTypeRefSource(val typeRef: FirTypeRef?, val source: FirSourceElement?)

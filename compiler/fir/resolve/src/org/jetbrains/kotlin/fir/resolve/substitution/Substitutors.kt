@@ -22,6 +22,7 @@ abstract class AbstractConeSubstitutor(private val typeContext: ConeTypeContext)
             is ConeStarProjection -> old
             is ConeKotlinTypeProjectionIn -> ConeKotlinTypeProjectionIn(newType)
             is ConeKotlinTypeProjectionOut -> ConeKotlinTypeProjectionOut(newType)
+            is ConeKotlinTypeConflictingProjection -> ConeKotlinTypeConflictingProjection(newType)
             is ConeKotlinType -> newType
             else -> old
         }

@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.analysis.checkers.FirTypeRefSource
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.extractTypeRefAndSourceFromTypeArgument
+import org.jetbrains.kotlin.fir.analysis.checkers.extractArgumentTypeRefAndSource
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
@@ -17,7 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -33,16 +35,20 @@ object FirUpperBoundViolatedClassChecker : FirBasicDeclarationChecker() {
             for (typeParameter in declaration.typeParameters) {
                 if (typeParameter is FirTypeParameter) {
                     for (bound in typeParameter.bounds) {
-                        analyzeTypeParameters(bound, context, reporter)
+                        checkUpperBoundViolated(bound, context, reporter)
                     }
                 }
             }
 
             for (superTypeRef in declaration.superTypeRefs) {
-                analyzeTypeParameters(superTypeRef, context, reporter)
+                checkUpperBoundViolated(superTypeRef, context, reporter)
             }
+        } else if (declaration is FirTypeAlias) {
+            checkUpperBoundViolated(declaration.expandedTypeRef, context, reporter, isIgnoreTypeParameters = true)
         } else if (declaration is FirCallableDeclaration<*>) {
-            analyzeTypeParameters(declaration.returnTypeRef, context, reporter)
+            if (declaration.returnTypeRef.source?.kind !is FirFakeSourceElementKind) {
+                checkUpperBoundViolated(declaration.returnTypeRef, context, reporter)
+            }
         }
     }
 }
@@ -67,12 +73,25 @@ object FirUpperBoundViolatedExpressionChecker : FirQualifiedAccessExpressionChec
             calleeFir = calleReference.candidateSymbol?.fir.safeAs()
         }
 
-        analyzeTypeParameters(
+        var typeArguments: List<Any>? = null
+        var typeArgumentRefsAndSources: List<FirTypeRefSource?>? = null
+        val typeParameters = if (calleeFir is FirConstructor) {
+            typeArgumentRefsAndSources =
+                expression.typeArguments.map { FirTypeRefSource((it as? FirTypeProjectionWithVariance)?.typeRef, it.source) }
+            val prototypeClass = calleeFir.dispatchReceiverType?.toSymbol(context.session)?.fir.safeAs<FirRegularClass>()
+            prototypeClass?.typeParameters?.map { it.symbol }
+        } else {
+            typeArguments = expression.typeArguments
+            calleeFir?.typeParameters?.map { it.symbol }
+        }
+
+        checkUpperBoundViolated(
             expression.typeRef,
             context,
             reporter,
-            calleeFir?.typeParameters?.map { it.symbol },
-            expression.typeArguments
+            typeParameters,
+            typeArguments,
+            typeArgumentRefsAndSources
         )
     }
 }
@@ -81,12 +100,15 @@ object FirUpperBoundViolatedExpressionChecker : FirQualifiedAccessExpressionChec
  * Recursively analyzes type parameters and reports the diagnostic on the given source calculated using typeRef
  * Returns true if an error occurred
  */
-private fun analyzeTypeParameters(
+private fun checkUpperBoundViolated(
     typeRef: FirTypeRef?,
     context: CheckerContext,
     reporter: DiagnosticReporter,
     typeParameters: List<FirTypeParameterSymbol>? = null,
-    typeArguments: List<FirTypeProjection>? = null
+    typeArguments: List<Any>? = null,
+    typeArgumentRefsAndSources: List<FirTypeRefSource?>? = null,
+    isTypeAlias: Boolean = false,
+    isIgnoreTypeParameters: Boolean = false
 ) {
     val type = when (typeRef) {
         is ConeKotlinType -> typeRef
@@ -101,9 +123,25 @@ private fun analyzeTypeParameters(
 
     val typeParameterSymbols = typeParameters
         ?: if (type is ConeClassLikeType) {
-            val prototypeClass = type.lookupTag.toSymbol(context.session)
+            val fullyExpandedType = type.fullyExpandedType(context.session)
+            val prototypeClass = fullyExpandedType.lookupTag.toSymbol(context.session)
                 ?.fir.safeAs<FirRegularClass>()
                 ?: return
+
+            if (type != fullyExpandedType) {
+                // special check for type aliases
+                checkUpperBoundViolated(
+                    typeRef,
+                    context,
+                    reporter,
+                    prototypeClass.typeParameters.map { it.symbol },
+                    fullyExpandedType.typeArguments.toList(),
+                    null,
+                    isTypeAlias = true,
+                    isIgnoreTypeParameters = isIgnoreTypeParameters
+                )
+                return
+            }
 
             prototypeClass.typeParameters.map { it.symbol }
         } else {
@@ -142,36 +180,43 @@ private fun analyzeTypeParameters(
                 typeArgumentTypeRef = localTypeArgument.typeRef
                 typeArgument = typeArgumentTypeRef.coneType
                 typeArgumentSource = localTypeArgument.source
+            } else if (localTypeArgument is ConeKotlinType) {
+                // Typealias case
+                typeArgument = localTypeArgument
+                typeArgumentSource = typeRef.source
             }
         } else {
             typeArgument = type.typeArguments[index] as? ConeKotlinType
-            val argTypeRefSource = extractTypeRefAndSourceFromTypeArgument(typeRef, index)
-            if (argTypeRefSource != null) {
-                typeArgumentTypeRef = argTypeRefSource.first
-                typeArgumentSource = argTypeRefSource.second
+            val typeArgumentRefAndSource = typeArgumentRefsAndSources?.elementAtOrNull(index)
+            if (typeArgumentRefAndSource != null) {
+                typeArgumentTypeRef = typeArgumentRefAndSource.typeRef
+                typeArgumentSource = typeArgumentRefAndSource.source
+            } else {
+                val extractedTypeArgumentRefAndSource = extractArgumentTypeRefAndSource(typeRef, index)
+                if (extractedTypeArgumentRefAndSource != null) {
+                    typeArgumentTypeRef = extractedTypeArgumentRefAndSource.typeRef
+                    typeArgumentSource = extractedTypeArgumentRefAndSource.source
+                }
             }
         }
 
         if (typeArgument != null && typeArgumentSource != null) {
-            val upperBound = getSubstitutedUpperBound(typeParameterSymbols[index], substitutor, typeSystemContext)
-            if (upperBound != null && !satisfiesBounds(upperBound, typeArgument.type, typeSystemContext)) {
-                reporter.reportOn(typeArgumentSource, FirErrors.UPPER_BOUND_VIOLATED, upperBound, context)
+            if (!isIgnoreTypeParameters || (typeArgument.typeArguments.isEmpty() && typeArgument !is ConeTypeParameterType)) {
+                val intersection = typeSystemContext.intersectTypes(typeParameterSymbols[index].fir.bounds.map { it.coneType }) as? ConeKotlinType
+                if (intersection != null) {
+                    val upperBound = substitutor.substituteOrSelf(intersection)
+                    if (!AbstractTypeChecker.isSubtypeOf(typeSystemContext, typeArgument.type, upperBound, stubTypesEqualToAnything = false)) {
+                        val factory =
+                            if (isTypeAlias) FirErrors.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION else FirErrors.UPPER_BOUND_VIOLATED
+                        reporter.reportOn(typeArgumentSource, factory, upperBound, typeArgument.type, context)
+                        if (isTypeAlias) {
+                            return
+                        }
+                    }
+                }
             }
 
-            analyzeTypeParameters(typeArgumentTypeRef, context, reporter)
+            checkUpperBoundViolated(typeArgumentTypeRef, context, reporter, isIgnoreTypeParameters = isIgnoreTypeParameters)
         }
     }
-}
-
-private fun getSubstitutedUpperBound(
-    prototypeSymbol: FirTypeParameterSymbol,
-    substitutor: ConeSubstitutor,
-    typeSystemContext: ConeTypeContext
-): ConeKotlinType? {
-    val intersection = typeSystemContext.intersectTypes(prototypeSymbol.fir.bounds.map { it.coneType }) as? ConeKotlinType ?: return null
-    return substitutor.substituteOrSelf(intersection)
-}
-
-private fun satisfiesBounds(upperBound: ConeKotlinType, target: ConeKotlinType, typeSystemContext: ConeTypeContext): Boolean {
-    return AbstractTypeChecker.isSubtypeOf(typeSystemContext, target, upperBound, stubTypesEqualToAnything = false)
 }

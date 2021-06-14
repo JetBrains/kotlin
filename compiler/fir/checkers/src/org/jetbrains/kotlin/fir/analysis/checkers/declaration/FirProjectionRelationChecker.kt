@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.extractTypeRefAndSourceFromTypeArgument
+import org.jetbrains.kotlin.fir.analysis.checkers.extractArgumentTypeRefAndSource
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
@@ -77,11 +77,11 @@ object FirProjectionRelationChecker : FirBasicDeclarationChecker() {
                 ProjectionRelation.None
             }
 
-            val (typeArgTypeRef, typeArgSource) = extractTypeRefAndSourceFromTypeArgument(typeRef, it) ?: continue
+            val argTypeRefSource = extractArgumentTypeRefAndSource(typeRef, it) ?: continue
 
             if (projectionRelation != ProjectionRelation.None && typeRef.source?.kind !is FirFakeSourceElementKind) {
                 reporter.reportOn(
-                    typeArgSource ?: typeArgTypeRef.source,
+                    argTypeRefSource.source ?: argTypeRefSource.typeRef?.source,
                     if (projectionRelation == ProjectionRelation.Conflicting)
                         if (type != fullyExpandedType) FirErrors.CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION else FirErrors.CONFLICTING_PROJECTION
                     else
@@ -91,7 +91,7 @@ object FirProjectionRelationChecker : FirBasicDeclarationChecker() {
                 )
             }
 
-            checkTypeRef(typeArgTypeRef, context, reporter)
+            argTypeRefSource.typeRef?.let { checkTypeRef(it, context, reporter) }
         }
     }
 
