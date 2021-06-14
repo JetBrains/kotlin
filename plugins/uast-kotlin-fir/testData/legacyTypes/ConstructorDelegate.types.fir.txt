@@ -16,5 +16,11 @@ UFile (package = ) [public final class ConstructorDelegateKt {...]
             UBlockExpression [{...}] : PsiType:Unit
                 [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
     UClass (name = Derived) [public final class Derived : Base, java.lang.CharSequence {...}]
+        UExpressionList (super_delegation) [super_delegation Base : [!] UnknownKotlinExpression (CALL_EXPRESSION)]
+            UTypeReferenceExpression (name = Base) [Base]
+            [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
+        UExpressionList (super_delegation) [super_delegation java.lang.CharSequence : "abc"]
+            UTypeReferenceExpression (name = java.lang.CharSequence) [java.lang.CharSequence]
+            ULiteralExpression (value = "abc") ["abc"] : PsiType:String
         UMethod (name = Derived) [public fun Derived(b: Base) = UastEmptyExpression]
             UParameter (name = b) [var b: Base]

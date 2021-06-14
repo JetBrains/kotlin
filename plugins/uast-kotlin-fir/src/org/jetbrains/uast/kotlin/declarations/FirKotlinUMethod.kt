@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.utils.SmartList
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.uast.*
 
 open class FirKotlinUMethod(
@@ -124,7 +125,8 @@ open class FirKotlinUMethod(
     }
 }
 
-class FirKotlinConstructorUMethod(
+// TODO: can be commonized if *KotlinUMethod is commonized
+open class FirKotlinConstructorUMethod(
     private val ktClass: KtClassOrObject?,
     override val psi: PsiMethod,
     kotlinOrigin: KtDeclaration?,
@@ -141,11 +143,57 @@ class FirKotlinConstructorUMethod(
     val isPrimary: Boolean
         get() = sourcePsi is KtPrimaryConstructor || sourcePsi is KtClassOrObject
 
+    override val uastBody: UExpression? by lz {
+        val delegationCall: KtCallElement? = sourcePsi.let {
+            when {
+                isPrimary -> ktClass?.superTypeListEntries?.firstIsInstanceOrNull<KtSuperTypeCallEntry>()
+                it is KtSecondaryConstructor -> it.getDelegationCall()
+                else -> null
+            }
+        }
+        val bodyExpressions = getBodyExpressions()
+        if (delegationCall == null && bodyExpressions.isEmpty()) return@lz null
+        KotlinLazyUBlockExpression(this) { uastParent ->
+            SmartList<UExpression>().apply {
+                delegationCall?.let {
+                    // TODO: function call for delegationCall
+                    add(UastEmptyExpression(uastParent))
+                }
+                bodyExpressions.forEach {
+                    add(baseResolveProviderService.baseKotlinConverter.convertOrEmpty(it, uastParent))
+                }
+            }
+        }
+    }
+
     override val uastAnchor: UIdentifier? by lz {
         KotlinUIdentifier(
             javaPsi.nameIdentifier,
             if (isPrimary) ktClass?.nameIdentifier else (sourcePsi as? KtSecondaryConstructor)?.getConstructorKeyword(),
             this
         )
+    }
+
+    protected open fun getBodyExpressions(): List<KtExpression> {
+        if (isPrimary) return getInitializers()
+        val bodyExpression = (sourcePsi as? KtFunction)?.bodyExpression ?: return emptyList()
+        if (bodyExpression is KtBlockExpression) return bodyExpression.statements
+        return listOf(bodyExpression)
+    }
+
+    protected fun getInitializers(): List<KtExpression> {
+        return ktClass?.getAnonymousInitializers()?.mapNotNull { it.body } ?: emptyList()
+    }
+}
+
+// TODO: can be commonized if *KotlinUMethod is commonized
+//   also reuse the comments there (about KT-21617)
+class FirKotlinSecondaryConstructorWithInitializersUMethod(
+    ktClass: KtClassOrObject?,
+    psi: KtLightMethod,
+    givenParent: UElement?
+) : FirKotlinConstructorUMethod(ktClass, psi, givenParent) {
+    override fun getBodyExpressions(): List<KtExpression> {
+        return getInitializers() + super.getBodyExpressions()
     }
 }

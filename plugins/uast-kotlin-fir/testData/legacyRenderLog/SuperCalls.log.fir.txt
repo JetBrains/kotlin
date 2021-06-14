@@ -12,6 +12,8 @@ UFile (package = )
             UParameter (name = str)
         UMethod (name = A)
             UParameter (name = i)
+            UBlockExpression
+                UastEmptyExpression
         UMethod (name = getStr)
         UMethod (name = foo)
             UParameter (name = a)
@@ -19,12 +21,17 @@ UFile (package = )
     UClass (name = B)
         UMethod (name = B)
             UParameter (name = param)
+            UBlockExpression
+                UastEmptyExpression
     UClass (name = C)
         UMethod (name = C)
             UParameter (name = p)
+            UBlockExpression
+                UastEmptyExpression
         UMethod (name = C)
             UParameter (name = i)
             UBlockExpression
+                UastEmptyExpression
                 [!] UnknownKotlinExpression (CALL_EXPRESSION)
         UMethod (name = foo)
             UParameter (name = a)

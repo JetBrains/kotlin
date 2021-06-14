@@ -5,8 +5,10 @@ UFile (package = ) [public final class UnresolvedKt {...]
             UBlockExpression [{...}] : PsiType:Unit
     UClass (name = A) [public final class A : error.NonExistentClass {...}]
         UField (name = prop) [private final var prop: error.NonExistentClass]
-        UMethod (name = A) [public fun A(prop: error.NonExistentClass) = UastEmptyExpression]
+        UMethod (name = A) [public fun A(prop: error.NonExistentClass) {...}]
             UParameter (name = prop) [var prop: error.NonExistentClass]
+            UBlockExpression [{...}]
+                UastEmptyExpression [UastEmptyExpression]
         UMethod (name = getProp) [public final fun getProp() : error.NonExistentClass = UastEmptyExpression]
         UMethod (name = bar) [public fun bar() : error.NonExistentClass {...}]
             UBlockExpression [{...}] : PsiType:Unit

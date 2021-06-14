@@ -6,9 +6,11 @@
 package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.internal.KotlinFakeUElement
 
@@ -65,4 +67,20 @@ fun wrapExpressionBody(function: UElement, bodyExpression: KtExpression): UExpre
 
     }
     else -> function.getLanguagePlugin().convertElement(bodyExpression, function) as? UExpression
+}
+
+fun reportConvertFailure(psiMethod: PsiMethod): Nothing {
+    val isValid = psiMethod.isValid
+    val report = KotlinExceptionWithAttachments(
+        "cant convert $psiMethod of ${psiMethod.javaClass} to UMethod" + if (!isValid) " (method is not valid)" else ""
+    )
+
+    if (isValid) {
+        report.withAttachment("method", psiMethod.text)
+        psiMethod.containingFile?.let {
+            report.withAttachment("file", it.text)
+        }
+    }
+
+    throw report
 }

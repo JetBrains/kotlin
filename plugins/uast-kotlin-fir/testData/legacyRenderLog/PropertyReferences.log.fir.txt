@@ -22,6 +22,9 @@ UFile (package = )
         UField (name = mutableProp)
         UMethod (name = A)
             UParameter (name = init)
+            UBlockExpression
+                UBlockExpression
+                    [!] UnknownKotlinExpression (BINARY_EXPRESSION)
         UMethod (name = getMutableProp)
         UMethod (name = setMutableProp)
             UParameter (name = value)
