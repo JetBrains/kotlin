@@ -36,6 +36,7 @@ where advanced options include:
   -Xwasm                     Use experimental WebAssembly compiler backend
   -Xallow-kotlin-package     Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info
   -Xallow-result-return-type Allow compiling code when `kotlin.Result` is used as a return type
+  -Xbuiltins-from-sources    Compile builtIns from sources
   -Xcheck-phase-conditions   Check pre- and postconditions on phases
   -Xcheck-sticky-phase-conditions
                              Run sticky condition checks on subsequent phases as well. Implies -Xcheck-phase-conditions

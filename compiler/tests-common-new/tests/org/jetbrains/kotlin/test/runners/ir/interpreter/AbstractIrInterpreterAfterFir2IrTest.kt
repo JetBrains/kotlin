@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.test.runners.ir.interpreter
 
+import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
@@ -12,12 +15,15 @@ import org.jetbrains.kotlin.test.backend.handlers.IrInterpreterBackendHandler
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.preprocessors.IrInterpreterImplicitKotlinImports
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
+import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.IrInterpreterHelpersSourceFilesProvider
@@ -40,6 +46,7 @@ open class AbstractIrInterpreterAfterFir2IrTest : AbstractKotlinCompilerWithTarg
 
         useConfigurators(
             ::CommonEnvironmentConfigurator,
+            ::IrInterpreterEnvironmentConfigurator,
             ::JvmEnvironmentConfigurator,
         )
 
@@ -56,3 +63,11 @@ open class AbstractIrInterpreterAfterFir2IrTest : AbstractKotlinCompilerWithTarg
     }
 }
 
+class IrInterpreterEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
+    override fun provideAdditionalAnalysisFlags(
+        directives: RegisteredDirectives,
+        languageVersion: LanguageVersion
+    ): Map<AnalysisFlag<*>, Any?> {
+        return super.provideAdditionalAnalysisFlags(directives, languageVersion) + (AnalysisFlags.builtInsFromSources to true)
+    }
+}

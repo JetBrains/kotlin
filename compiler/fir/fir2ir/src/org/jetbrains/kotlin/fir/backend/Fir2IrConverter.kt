@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.evaluate.evaluateConstants
@@ -266,7 +267,6 @@ class Fir2IrConverter(
             val moduleDescriptor = FirModuleDescriptor(session)
             val symbolTable = SymbolTable(signaturer, irFactory)
             val signatureComposer = FirBasedSignatureComposer(mangler)
-//            FirBuiltinSymbols(irBuiltIns, symbolTable)
             val components = Fir2IrComponentsStorage(session, scopeSession, symbolTable, irFactory, signatureComposer)
             val classifierStorage = Fir2IrClassifierStorage(components)
             components.classifierStorage = classifierStorage
@@ -275,8 +275,11 @@ class Fir2IrConverter(
             components.visibilityConverter = visibilityConverter
             val typeConverter = Fir2IrTypeConverter(components)
             components.typeConverter = typeConverter
-            val irBuiltIns = //IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
-                IrBuiltInsOverFir(components, languageVersionSettings, moduleDescriptor)
+            val irBuiltIns =
+                IrBuiltInsOverFir(
+                    components, languageVersionSettings, moduleDescriptor,
+                    languageVersionSettings.getFlag(AnalysisFlags.builtInsFromSources)
+                )
             components.irBuiltIns = irBuiltIns
             val converter = Fir2IrConverter(moduleDescriptor, components)
             val conversionScope = Fir2IrConversionScope()
