@@ -14,8 +14,10 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
+import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
@@ -75,12 +77,18 @@ object FirImplementationMismatchChecker : FirClassChecker() {
         }
 
         fun canOverride(
-            baseMember: FirCallableDeclaration<*>,
+            inheritedMember: FirCallableDeclaration<*>,
             inheritedType: ConeKotlinType,
+            baseMember: FirCallableDeclaration<*>,
             baseType: ConeKotlinType
-        ): Boolean =
-            if (baseMember is FirProperty && baseMember.isVar) AbstractTypeChecker.equalTypes(typeCheckerContext, inheritedType, baseType)
-            else AbstractTypeChecker.isSubtypeOf(typeCheckerContext, inheritedType, baseType)
+        ): Boolean {
+            val inheritedTypeSubstituted = inheritedType.substituteTypeParameters(inheritedMember, baseMember, context)
+            return if (baseMember is FirProperty && baseMember.isVar)
+                AbstractTypeChecker.equalTypes(typeCheckerContext, inheritedTypeSubstituted, baseType)
+            else
+                AbstractTypeChecker.isSubtypeOf(typeCheckerContext, inheritedTypeSubstituted, baseType)
+        }
+
 
 
         if (symbol.callableId.classId != containingClass.classId) return
@@ -109,8 +117,8 @@ object FirImplementationMismatchChecker : FirClassChecker() {
             var clash: Pair<FirCallableDeclaration<*>, FirCallableDeclaration<*>>? = null
             val compatible = withTypes.any { (m1, type1) ->
                 withTypes.all { (m2, type2) ->
-                    val result = canOverride(m2, type1, type2)
-                    if (!result && clash == null && !canOverride(m1, type2, type1)) {
+                    val result = canOverride(m1, type1, m2, type2)
+                    if (!result && clash == null && !canOverride(m2, type2, m1, type1)) {
                         clash = m1 to m2
                     }
                     result
@@ -125,9 +133,9 @@ object FirImplementationMismatchChecker : FirClassChecker() {
         if (delegation != null || implementations.isNotEmpty()) {
             //if there are more than one implementation we report nothing because it will be reported differently
             val implementationMember = delegation ?: implementations.singleOrNull() ?: return
-            val methodType = context.returnTypeCalculator.tryCalculateReturnType(implementationMember).coneType
+            val implementationType = context.returnTypeCalculator.tryCalculateReturnType(implementationMember).coneType
             val (conflict, _) = withTypes.find { (baseMember, baseType) ->
-                !canOverride(baseMember, methodType, baseType)
+                !canOverride(implementationMember, implementationType, baseMember, baseType)
             } ?: return
 
             reportTypeMismatch(implementationMember, conflict, delegation != null)
@@ -186,5 +194,20 @@ object FirImplementationMismatchChecker : FirClassChecker() {
         }.firstOrNull() ?: return
 
         reporter.reportOn(containingClass.source, FirErrors.CONFLICTING_INHERITED_MEMBERS, clash.toList(), context)
+    }
+
+    private fun ConeKotlinType.substituteTypeParameters(
+        fromDeclaration: FirCallableDeclaration<*>,
+        toDeclaration: FirCallableDeclaration<*>,
+        context: CheckerContext
+    ): ConeKotlinType {
+        val fromParams = (fromDeclaration as? FirTypeParametersOwner)?.typeParameters ?: return this
+        val toParams = (toDeclaration as? FirTypeParametersOwner)?.typeParameters ?: return this
+
+        val substitutionMap = fromParams.zip(toParams) { from, to ->
+            from.symbol to to.toConeType()
+        }.toMap()
+
+        return substitutorByMap(substitutionMap, context.session).substituteOrSelf(this)
     }
 }
