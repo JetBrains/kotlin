@@ -20,7 +20,7 @@ fun compute(): String {
             }
         }
     } finally {
-        x = "OK"  // TODO: `e` should not be visible here.
+        x = "OK"
     }
     return "FAIL"
 }
@@ -45,7 +45,7 @@ fun box() {
 // test.kt:18 compute: e:java.lang.Exception=java.lang.RuntimeException, y:int=32:int, j:int=0:int
 // test.kt:4 compute: e:java.lang.Exception=java.lang.RuntimeException, y:int=32:int, j:int=0:int, $i$f$f:int=0:int
 // test.kt:19 compute: e:java.lang.Exception=java.lang.RuntimeException, y:int=32:int, j:int=0:int, $i$f$f:int=0:int, $i$a$-f-TestKt$compute$1:int=0:int
-// test.kt:23 compute: e:java.lang.Exception=java.lang.RuntimeException
+// test.kt:23 compute:
 // test.kt:29 box:
 // test.kt:30 box: result:java.lang.String="NON_LOCAL_RETURN":java.lang.String
 // test.kt:31 box: result:java.lang.String="NON_LOCAL_RETURN":java.lang.String, localX:java.lang.String="OK":java.lang.String

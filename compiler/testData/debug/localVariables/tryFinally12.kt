@@ -11,7 +11,7 @@ fun box(): String {
                 val z = "z"
                 continue  // TODO: why does the continue not have a line number so we stop here?
             } finally {
-                throw RuntimeException("$i")  // TODO: `e` should not be visible here
+                throw RuntimeException("$i")
             }
         }
     } finally {
@@ -32,6 +32,5 @@ fun box(): String {
 // test.kt:9 box: i:int=0:int
 // test.kt:10 box: i:int=0:int, e:java.lang.Exception=java.lang.RuntimeException
 // test.kt:11 box: i:int=0:int, e:java.lang.Exception=java.lang.RuntimeException, y:java.lang.String="y":java.lang.String
-// test.kt:14 box: i:int=0:int, e:java.lang.Exception=java.lang.RuntimeException
+// test.kt:14 box: i:int=0:int
 // test.kt:18 box:
-
