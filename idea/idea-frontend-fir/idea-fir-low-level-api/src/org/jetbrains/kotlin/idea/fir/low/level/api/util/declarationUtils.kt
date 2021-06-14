@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.util
 
-import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -128,3 +126,12 @@ private fun KtClassLikeDeclaration.findFir(firSymbolProvider: FirSymbolProvider)
 
 val FirDeclaration.isGeneratedDeclaration
     get() = realPsi == null
+
+
+internal val FirDeclaration.isLocalDeclaration: Boolean
+    get() = when (this) {
+        is FirCallableDeclaration<*> ->
+            ((this as? FirCallableMemberDeclaration<*>)?.status?.visibility == Visibilities.Local)
+        is FirClassLikeDeclaration<*> -> isLocal
+        else -> true
+    }

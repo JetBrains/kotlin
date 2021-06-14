@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirProviderInter
 import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.LazyTransformerFactory
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.checkCanceled
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.ensurePhase
-import org.jetbrains.kotlin.idea.util.ifFalse
 import org.jetbrains.kotlin.idea.util.ifTrue
 
 internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBuilder) {
@@ -207,19 +206,15 @@ internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBui
         }
 
         val provider = firDeclarationToResolve.moduleData.session.firIdeProvider
-        val (designation, wasInLocalDeclaration) =
-            firDeclarationToResolve.getNonLocalDeclarationToResolveAndInLocal(provider, moduleFileCache, firFileBuilder)
+        val (designation, forceToBody) =
+            firDeclarationToResolve.getNonLocalDeclarationToResolveAndForceUpgradeToBodyPhase(provider, moduleFileCache, firFileBuilder)
+        val neededPhase = if (forceToBody) FirResolvePhase.BODY_RESOLVE else toPhase
 
         //TODO Should be synchronised
         if (!designation.declaration.isValidForResolve()) return
 
         //TODO Should be synchronised
         val resolvePhase = designation.resolvePhaseForAllDeclarations(includeDeclarationPhase = declarationPhaseDowngraded)
-
-        val neededPhase = if (wasInLocalDeclaration) {
-            if (toPhase >= FirResolvePhase.CONTRACTS) FirResolvePhase.BODY_RESOLVE else maxOf(FirResolvePhase.CONTRACTS, toPhase)
-        } else toPhase
-
         if (resolvePhase >= neededPhase) return
 
         moduleFileCache.firFileLockProvider.runCustomResolveUnderLock(designation.firFile, checkPCE) {

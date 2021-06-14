@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.api
 
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.containingClass
-import org.jetbrains.kotlin.fir.containingClassForLocal
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.getContainingFile
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.isLocalDeclaration
 import org.jetbrains.kotlin.idea.util.ifFalse
-import org.jetbrains.kotlin.idea.util.ifTrue
 
 class FirDeclarationDesignationWithFile(
     path: List<FirDeclaration>,
@@ -55,13 +55,17 @@ private fun FirRegularClass.collectForNonLocal(): List<FirDeclaration> {
 }
 
 private fun collectDesignationPath(declaration: FirDeclaration): List<FirDeclaration>? {
+    if (declaration.isLocalDeclaration) return null
     val containingClass = when (declaration) {
-        is FirCallableDeclaration<*> ->
+        is FirCallableDeclaration<*> -> {
+            val isLocalMember = (declaration as? FirCallableMemberDeclaration<*>)?.status?.visibility == Visibilities.Local
+            if (isLocalMember) return null
             when (declaration) {
                 is FirSimpleFunction, is FirProperty, is FirField, is FirConstructor ->
                     declaration.containingClass()?.toFirRegularClass(declaration.moduleData.session)
                 else -> return null
             }
+        }
         is FirClassLikeDeclaration<*> -> {
             if (declaration.isLocal) return null
             declaration.symbol.classId.outerClassId?.let(declaration.moduleData.session.firProvider::getFirClassifierByFqName)

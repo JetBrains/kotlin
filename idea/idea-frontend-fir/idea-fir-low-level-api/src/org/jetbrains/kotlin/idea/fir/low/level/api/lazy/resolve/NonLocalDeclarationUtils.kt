@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
-internal fun FirDeclaration.getNonLocalDeclarationToResolveAndInLocal(
+internal fun FirDeclaration.getNonLocalDeclarationToResolveAndForceUpgradeToBodyPhase(
     provider: FirProvider,
     moduleFileCache: ModuleFileCache,
     firFileBuilder: FirFileBuilder
