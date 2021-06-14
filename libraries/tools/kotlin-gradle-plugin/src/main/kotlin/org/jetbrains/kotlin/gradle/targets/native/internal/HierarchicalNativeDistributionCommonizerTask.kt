@@ -90,8 +90,7 @@ internal open class HierarchicalNativeDistributionCommonizerTask : DefaultTask()
 
     @TaskAction
     protected fun run() {
-        getRootOutputDirectory().deleteRecursively() // TODO NOW CACHING!
-        GradleCliCommonizer(project).commonizeNativeDistribution(
+        NativeDistributionCommonizationCache(project, GradleCliCommonizer(project)).commonizeNativeDistribution(
             konanHome = konanHome,
             outputDirectory = getRootOutputDirectory(),
             outputTargets = project.getAllCommonizerTargets(),
@@ -106,7 +105,7 @@ internal open class HierarchicalNativeDistributionCommonizerTask : DefaultTask()
 
 private fun Project.getAllCommonizerTargets(): Set<SharedCommonizerTarget> {
     return allprojects.flatMapTo(mutableSetOf<SharedCommonizerTarget>()) { project ->
-        val kotlin = project.extensions.findByName("kotlin") // TODO COMMONIZER FAILS HARD WHEN NOTHING IS DEFINED
+        val kotlin = project.extensions.findByName("kotlin")
             ?.let { it as KotlinProjectExtension }
             ?.let { it as? KotlinMultiplatformExtension }
             ?: return@flatMapTo emptySet()

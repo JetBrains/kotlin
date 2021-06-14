@@ -32,7 +32,7 @@ internal abstract class AbstractCInteropCommonizerTask : DefaultTask() {
         val fileProvider = project.filesProvider {
             val parameters = getCommonizationParameters(compilation) ?: return@filesProvider emptySet<File>()
             CommonizerOutputFileLayout
-                .getCommonizedDirectory(outputDirectory(parameters), compilationCommonizerTarget)
+                .resolveCommonizedDirectory(outputDirectory(parameters), compilationCommonizerTarget)
                 .listFiles().orEmpty().toSet()
         }
 

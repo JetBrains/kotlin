@@ -124,7 +124,7 @@ private class SourceModuleRoots(
         check(sharedTarget.targets == leafTargets)
 
         val allTargets = leafTargets + sharedTarget
-        check(commonizedRoots.keys == allTargets)
+        check(commonizedRoots.keys.single() == sharedTarget)
         check(allTargets.containsAll(dependencyRoots.keys))
     }
 
@@ -189,7 +189,7 @@ private class AnalyzedModules(
         sharedTarget = SharedCommonizerTarget(leafTargets)
         val allTargets = leafTargets + sharedTarget
 
-        check(commonizedModules.keys == allTargets)
+        check(commonizedModules.keys.single() == sharedTarget)
         check(allTargets.containsAll(dependencyModules.keys))
     }
 

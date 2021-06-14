@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.commonizer
 
-import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout.getCommonizedDirectory
+import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout.resolveCommonizedDirectory
 import org.jetbrains.kotlin.commonizer.utils.konanHome
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.junit.Rule
@@ -20,7 +20,7 @@ class CommonizeNativeDistributionTest {
     val temporaryOutputDirectory = TemporaryFolder()
 
     @Test
-    fun commonizeLinuxPlatforms() {
+    fun `commonize - linux platforms`() {
         val linuxTarget1 = CommonizerTarget(LINUX_X64, LINUX_ARM64)
         val linuxTarget2 = CommonizerTarget(LINUX_X64, LINUX_ARM64, LINUX_ARM32_HFP)
 
@@ -32,13 +32,23 @@ class CommonizeNativeDistributionTest {
         )
 
         assertTrue(
-            getCommonizedDirectory(temporaryOutputDirectory.root, linuxTarget1).isDirectory,
+            resolveCommonizedDirectory(temporaryOutputDirectory.root, linuxTarget1).isDirectory,
             "Expected directory for $linuxTarget1"
         )
 
         assertTrue(
-            getCommonizedDirectory(temporaryOutputDirectory.root, linuxTarget2).isDirectory,
+            resolveCommonizedDirectory(temporaryOutputDirectory.root, linuxTarget2).isDirectory,
             "Expected directory for $linuxTarget2"
+        )
+    }
+
+    @Test
+    fun `commonize - no outputTargets specified`() {
+        CliCommonizer(this::class.java.classLoader).commonizeNativeDistribution(
+            konanHome = konanHome,
+            outputTargets = emptySet(),
+            outputDirectory = temporaryOutputDirectory.root,
+            logLevel = CommonizerLogLevel.Info
         )
     }
 }

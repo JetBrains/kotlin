@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.commonizer
 import java.io.File
 import java.io.Serializable
 
-public interface Commonizer : Serializable {
-
+public interface CInteropCommonizer : Serializable {
     @Throws(Throwable::class)
     public fun commonizeLibraries(
         konanHome: File,
@@ -19,7 +18,9 @@ public interface Commonizer : Serializable {
         outputDirectory: File,
         logLevel: CommonizerLogLevel = CommonizerLogLevel.Quiet
     )
+}
 
+public interface NativeDistributionCommonizer : Serializable {
     @Throws(Throwable::class)
     public fun commonizeNativeDistribution(
         konanHome: File,

@@ -3,61 +3,80 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("SameParameterValue")
+
 package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.compilerRunner.KotlinToolRunner
+import org.jetbrains.kotlin.commonizer.*
+import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout.resolveCommonizedDirectory
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import java.io.File
 
-// TODO NOW: Support!
 internal val Project.isNativeDistributionCommonizationCacheEnabled: Boolean
     get() = PropertiesProvider(this).enableNativeDistributionCommonizationCache
 
 internal class NativeDistributionCommonizationCache(
-    private val runner: KotlinToolRunner,
-    private val outputDirectory: File
-) {
-    private val successMarker = outputDirectory.resolve(".commonized")
+    private val project: Project,
+    private val commonizer: NativeDistributionCommonizer
+) : NativeDistributionCommonizer {
 
-    fun runIfNecessary(args: List<String>) {
-        if (!isCached(args)) {
-            run(args)
-        }
-    }
-
-    private fun isCached(args: List<String>): Boolean {
-        if (!runner.project.isNativeDistributionCommonizationCacheEnabled) {
+    override fun commonizeNativeDistribution(
+        konanHome: File,
+        outputDirectory: File,
+        outputTargets: Set<SharedCommonizerTarget>,
+        logLevel: CommonizerLogLevel
+    ) {
+        if (!project.isNativeDistributionCommonizationCacheEnabled) {
             logInfo("Cache disabled")
-            return false
+            return commonizer.commonizeNativeDistribution(konanHome, outputDirectory, outputTargets, logLevel)
         }
 
-        if (successMarker.exists() && successMarker.isFile) {
-            if (successMarker.readText() == successMarkerText(args)) {
-                logInfo("Cache hit for ${outputDirectory.path}")
-                return true
-            } else {
-                logQuiet("Cache miss. Different arguments for ${outputDirectory.path}")
-                successMarker.delete()
-            }
+        val cachedOutputTargets = outputTargets
+            .filter { outputTarget -> isCached(resolveCommonizedDirectory(outputDirectory, outputTarget)) }
+            .onEach { outputTarget -> logInfo("Cache hit: $outputTarget already commonized") }
+            .toSet()
+
+        val missingOutputTargets = outputTargets - cachedOutputTargets
+
+        if (canReturnFast(konanHome, missingOutputTargets)) {
+            logInfo("All available targets are commonized already - Nothing to do")
+            return
         }
 
-        return false
+        missingOutputTargets
+            .map { outputTarget -> resolveCommonizedDirectory(outputDirectory, outputTarget) }
+            .forEach { commonizedDirectory -> if (commonizedDirectory.exists()) commonizedDirectory.deleteRecursively() }
+
+        commonizer.commonizeNativeDistribution(
+            konanHome, outputDirectory, missingOutputTargets, logLevel
+        )
+
+        missingOutputTargets
+            .map { outputTarget -> resolveCommonizedDirectory(outputDirectory, outputTarget) }
+            .filter { commonizedDirectory -> commonizedDirectory.isDirectory }
+            .forEach { commonizedDirectory -> commonizedDirectory.resolve(".success").isFile }
     }
 
-    private fun run(args: List<String>) {
-        outputDirectory.deleteRecursively()
-        runner.run(args)
-        successMarker.writeText(successMarkerText(args))
+    private fun isCached(directory: File): Boolean {
+        val successMarkerFile = directory.resolve(".success")
+        return successMarkerFile.isFile
     }
 
-    private fun successMarkerText(args: List<String>): String {
-        return args.joinToString("\n")
+    private fun canReturnFast(
+        konanHome: File, missingOutputTargets: Set<CommonizerTarget>
+    ): Boolean {
+        if (missingOutputTargets.isEmpty()) return true
+
+        // If all platform lib dirs are missing, we can also return fast from the cache without invoking
+        //  the commonizer
+        return missingOutputTargets.allLeaves()
+            .map { target -> target.konanTarget }
+            .map { konanTarget -> KonanDistribution(konanHome).platformLibsDir.resolve(konanTarget.name) }
+            .none { platformLibsDir -> platformLibsDir.exists() }
     }
 
-    private fun logInfo(message: String) = runner.project.logger.info("${Logging.prefix}: $message")
-
-    private fun logQuiet(message: String) = runner.project.logger.quiet("${Logging.prefix}: $message")
+    private fun logInfo(message: String) = project.logger.info("${Logging.prefix}: $message")
 
     private object Logging {
         const val prefix = "Native Distribution Commonization"

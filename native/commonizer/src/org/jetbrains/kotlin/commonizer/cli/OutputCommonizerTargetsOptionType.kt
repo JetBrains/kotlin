@@ -10,14 +10,19 @@ import org.jetbrains.kotlin.commonizer.parseCommonizerTarget
 
 internal object OutputCommonizerTargetsOptionType : OptionType<Set<SharedCommonizerTarget>>(
     alias = "output-targets",
-    description = "Shared commonizer target representing the commonized output hierarchy", // TODO NOW
+    description = "All output targets separated with ';'",
     mandatory = true
 ) {
     override fun parse(rawValue: String, onError: (reason: String) -> Nothing): Option<Set<SharedCommonizerTarget>> {
         return try {
-            Option(this, rawValue.split(";").map(::parseCommonizerTarget).map { it as SharedCommonizerTarget }.toSet())
+            Option(
+                this, rawValue.split(";")
+                    .map { it.trim() }.filter { it.isNotEmpty() }
+                    .map(::parseCommonizerTarget)
+                    .map { it as SharedCommonizerTarget }.toSet()
+            )
         } catch (t: Throwable) {
-            onError("Failed parsing output-target ($rawValue): ${t.message}")
+            onError("Failed parsing output-targets ($rawValue): ${t.message}")
         }
     }
 }

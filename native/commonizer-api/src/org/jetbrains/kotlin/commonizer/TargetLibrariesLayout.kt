@@ -12,7 +12,7 @@ import java.util.*
 public object CommonizerOutputFileLayout {
     internal const val maxFileNameLength = 150
 
-    public fun getCommonizedDirectory(root: File, target: CommonizerTarget): File {
+    public fun resolveCommonizedDirectory(root: File, target: CommonizerTarget): File {
         return root.resolve(target.fileName)
     }
 

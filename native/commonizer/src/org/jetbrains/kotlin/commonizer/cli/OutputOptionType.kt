@@ -13,7 +13,7 @@ internal object OutputOptionType : OptionType<File>("output-path", "Destination 
 
         try {
             val valid = when {
-                file.isDirectory -> file.listFiles()?.isEmpty() != false
+                file.isDirectory -> true
                 file.exists() -> false
                 else -> {
                     if (!file.mkdirs()) onError("Destination can't be created: $rawValue")

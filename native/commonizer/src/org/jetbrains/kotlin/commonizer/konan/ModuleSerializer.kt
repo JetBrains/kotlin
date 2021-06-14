@@ -20,7 +20,7 @@ internal class ModuleSerializer(
     private val destination: File,
 ) : ResultsConsumer {
     override fun consume(parameters: CommonizerParameters, target: CommonizerTarget, moduleResult: ResultsConsumer.ModuleResult) {
-        val librariesDestination = CommonizerOutputFileLayout.getCommonizedDirectory(destination, target)
+        val librariesDestination = CommonizerOutputFileLayout.resolveCommonizedDirectory(destination, target)
         when (moduleResult) {
             is ResultsConsumer.ModuleResult.Commonized -> {
                 val libraryDestination = librariesDestination.resolve(moduleResult.fileSystemCompatibleLibraryName)

@@ -16,8 +16,7 @@ public fun CliCommonizer(classLoader: ClassLoader): CliCommonizer {
     return CliCommonizer(CommonizerClassLoaderExecutor(classLoader))
 }
 
-public class CliCommonizer(private val executor: Executor) : Commonizer {
-
+public class CliCommonizer(private val executor: Executor) : NativeDistributionCommonizer, CInteropCommonizer {
     public fun interface Executor {
         public operator fun invoke(arguments: List<String>)
     }

@@ -90,11 +90,11 @@ internal class LibraryCommonizer internal constructor(
     }
 
     private fun checkPreconditions() {
-        /* TODO
-        when (outputTarget.allLeaves().size) {
-            0 -> progressLogger.fatal("No targets specified")
-            1 -> progressLogger.fatal("Too few targets specified: $outputTarget")
+        outputTargets.forEach { outputTarget ->
+            when (outputTarget.allLeaves().size) {
+                0 -> logger.fatal("No targets specified")
+                1 -> logger.fatal("Too few targets specified: $outputTarget")
+            }
         }
-         */
     }
 }
