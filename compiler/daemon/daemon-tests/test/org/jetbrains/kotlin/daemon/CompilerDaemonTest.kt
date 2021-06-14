@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.daemon
 
-import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import junit.framework.TestCase
@@ -273,129 +272,6 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
                     logFile1.assertLogContainsSequence("Shutdown started")
                     logFile2.assertLogContainsSequence("Shutdown started")
-                }
-            }
-        }
-    }
-
-    private fun getJdk8Location() = System.getenv("JDK_18") ?: System.getenv("JAVA_HOME")
-
-    fun testNewDaemonIsNotStartedForSameJavaExecutable() {
-        withFlagFile(getTestName(true), "-client1.alive") { flagFile1 ->
-            withFlagFile(getTestName(true), "-client2.alive") { flagFile2 ->
-                val daemonOptions = makeTestDaemonOptions(getTestName(true))
-                val compilerIdJdk8 = CompilerId.makeCompilerId(
-                    compilerClassPath +
-                            File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-compiler-sources.jar"),
-                    File(getJdk8Location()).resolve("bin/java")
-                )
-
-                withLogFile("kotlin-daemon-test-1") { logFile ->
-                    val daemonJVMOptions = makeTestDaemonJvmOptions(logFile)
-                    assertTrue(logFile.length() == 0L)
-
-                    val daemon1 = KotlinCompilerClient.connectToCompileService(
-                        compilerIdJdk8,
-                        flagFile1,
-                        daemonJVMOptions,
-                        daemonOptions,
-                        DaemonReportingTargets(out = System.err),
-                        autostart = true
-                    )
-                    assertNotNull("failed to connect daemon", daemon1)
-                    logFile.assertLogContainsSequence("INFO: starting daemon")
-
-
-                    val daemon2 = KotlinCompilerClient.connectToCompileService(
-                        compilerIdJdk8,
-                        flagFile2,
-                        daemonJVMOptions,
-                        daemonOptions,
-                        DaemonReportingTargets(out = System.err),
-                        autostart = true
-                    )
-                    assertNotNull("failed to connect daemon", daemon2)
-
-                    val logContent = logFile.readText().lines()
-                    assert(
-                        logContent.filter { it.contains("INFO: starting daemon") }.size == 1
-                    ) {
-                        "Second daemon instance was started!"
-                    }
-                    assert(
-                        logContent.filter {
-                            it.contains("INFO: Registered a client alive file: ${flagFile2.absolutePath}")
-                        }.size == 1
-                    ) {
-                        "Second client was not connected to the same instance!"
-                    }
-
-                    KotlinCompilerClient.shutdownCompileService(compilerIdJdk8, daemonOptions)
-
-                    Thread.sleep(100)
-
-                    logFile.assertLogContainsSequence("Shutdown started")
-                }
-            }
-        }
-    }
-
-    // Ignored on Windows OS due to https://bugs.openjdk.java.net/browse/JDK-8189953 bug in JDK 9
-    // Should be unignored once JDK10+ will be available by default on CI agents
-    fun testNewDaemonIsStartedOnJavaExecutableChange() {
-        if (SystemInfo.isWindows) return
-
-        withFlagFile(getTestName(true), "-client1.alive") { flagFile1 ->
-            withFlagFile(getTestName(true), "-client2.alive") { flagFile2 ->
-                val daemonOptions = makeTestDaemonOptions(getTestName(true))
-                val compilerIdJdk8 = CompilerId.makeCompilerId(
-                    compilerClassPath +
-                            File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-compiler-sources.jar"),
-                    File(getJdk8Location()).resolve("bin/java")
-                )
-                val compilerIdJdk9 = CompilerId.makeCompilerId(
-                    compilerClassPath +
-                            File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-compiler-sources.jar"),
-                    File(System.getenv("JDK_9")).resolve("bin/java")
-                )
-
-                withLogFile("kotlin-daemon-test-1") { logFile1 ->
-                    withLogFile("kotlin-daemon-test-2") { logFile2 ->
-                        val daemonJdk8JVMOptions = makeTestDaemonJvmOptions(logFile1)
-                        assertTrue(logFile1.length() == 0L)
-                        val daemonJdk9JVMOptions = makeTestDaemonJvmOptions(logFile2)
-                        assertTrue(logFile2.length() == 0L)
-
-                        val daemonJdk7 = KotlinCompilerClient.connectToCompileService(
-                            compilerIdJdk8,
-                            flagFile1,
-                            daemonJdk8JVMOptions,
-                            daemonOptions,
-                            DaemonReportingTargets(out = System.err),
-                            autostart = true
-                        )
-                        assertNotNull("failed to connect daemon", daemonJdk7)
-                        logFile1.assertLogContainsSequence("INFO: starting daemon")
-
-                        val daemonJdk9 = KotlinCompilerClient.connectToCompileService(
-                            compilerIdJdk9,
-                            flagFile2,
-                            daemonJdk9JVMOptions,
-                            daemonOptions,
-                            DaemonReportingTargets(out = System.err),
-                            autostart = true
-                        )
-                        assertNotNull("failed to connect daemon", daemonJdk9)
-                        logFile2.assertLogContainsSequence("INFO: starting daemon")
-
-                        KotlinCompilerClient.shutdownCompileService(compilerIdJdk8, daemonOptions)
-                        KotlinCompilerClient.shutdownCompileService(compilerIdJdk9, daemonOptions)
-
-                        Thread.sleep(100)
-
-                        logFile1.assertLogContainsSequence("Shutdown started")
-                        logFile2.assertLogContainsSequence("Shutdown started")
-                    }
                 }
             }
         }
