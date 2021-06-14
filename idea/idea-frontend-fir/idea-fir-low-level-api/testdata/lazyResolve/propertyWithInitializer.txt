@@ -1,151 +1,151 @@
 RAW_FIR:
 FILE: propertyWithInitializer.kt
-    public? final? fun resolveMe(): R|kotlin/Unit| {
+    public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| {
         receive#(property#)
     }
-    public? final? val property: Int = IntegerLiteral(10)
-        public? get(): Int
+    public? final? [RAW_FIR] val property: Int = IntegerLiteral(10)
+        [TYPES] public? get(): Int
 
 IMPORTS:
 FILE: propertyWithInitializer.kt
-    public? final? fun resolveMe(): R|kotlin/Unit| {
+    public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| {
         receive#(property#)
     }
-    public? final? val property: Int = IntegerLiteral(10)
-        public? get(): Int
+    public? final? [RAW_FIR] val property: Int = IntegerLiteral(10)
+        [TYPES] public? get(): Int
 
 SUPER_TYPES:
 FILE: propertyWithInitializer.kt
-    public? final? fun resolveMe(): R|kotlin/Unit| {
+    public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| {
         receive#(property#)
     }
-    public? final? val property: Int = IntegerLiteral(10)
-        public? get(): Int
+    public? final? [RAW_FIR] val property: Int = IntegerLiteral(10)
+        [TYPES] public? get(): Int
 
 TYPES:
 FILE: propertyWithInitializer.kt
-    public? final? [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun resolveMe(): R|kotlin/Unit| {
+    public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun resolveMe(): R|kotlin/Unit| {
         receive#(property#)
     }
-    public? final? val property: Int = IntegerLiteral(10)
-        public? get(): Int
+    public? final? [RAW_FIR] val property: Int = IntegerLiteral(10)
+        [TYPES] public? get(): Int
 
 STATUS:
 FILE: propertyWithInitializer.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun resolveMe(): R|kotlin/Unit| {
+    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun resolveMe(): R|kotlin/Unit| {
         receive#(property#)
     }
-    public? final? val property: Int = IntegerLiteral(10)
-        public? get(): Int
+    public? final? [RAW_FIR] val property: Int = IntegerLiteral(10)
+        [TYPES] public? get(): Int
 
 CONTRACTS:
 FILE: propertyWithInitializer.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun resolveMe(): R|kotlin/Unit| {
+    public final [CONTRACTS] [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun resolveMe(): R|kotlin/Unit| {
         receive#(property#)
     }
-    public? final? val property: Int = IntegerLiteral(10)
-        public? get(): Int
+    public? final? [RAW_FIR] val property: Int = IntegerLiteral(10)
+        [TYPES] public? get(): Int
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: propertyWithInitializer.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=IMPLICIT_TYPES_BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+    public final [CONTRACTS] [ResolvePhaseWithForAllDeclarationsKey=IMPLICIT_TYPES_BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         receive#(property#)
     }
-    public? final? val property: Int = IntegerLiteral(10)
-        public? get(): Int
+    public? final? [RAW_FIR] val property: Int = IntegerLiteral(10)
+        [TYPES] public? get(): Int
 
 BODY_RESOLVE:
 FILE: propertyWithInitializer.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         <Unresolved name: receive>#(R|/property|)
     }
-    public final [ResolvePhaseWithForAllDeclarationsKey=STATUS] val property: R|kotlin/Int| = IntegerLiteral(10)
-        public get(): R|kotlin/Int|
+    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] val property: R|kotlin/Int| = IntegerLiteral(10)
+        [BODY_RESOLVE] public get(): R|kotlin/Int|
 
 NoResolve:
 FILE: propertyWithInitializer.kt
-    public? final? fun resolveMe(): R|kotlin/Unit| {
+    public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| {
         receive#(property#)
     }
-    public? final? val property: Int = IntegerLiteral(10)
-        public? get(): Int
+    public? final? [RAW_FIR] val property: Int = IntegerLiteral(10)
+        [TYPES] public? get(): Int
 
 BodyResolveWithChildren:
 FILE: propertyWithInitializer.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         <Unresolved name: receive>#(R|/property|)
     }
-    public final [ResolvePhaseWithForAllDeclarationsKey=STATUS] val property: R|kotlin/Int| = IntegerLiteral(10)
-        public get(): R|kotlin/Int|
+    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] val property: R|kotlin/Int| = IntegerLiteral(10)
+        [BODY_RESOLVE] public get(): R|kotlin/Int|
 
 CallableBodyResolve:
 FILE: propertyWithInitializer.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         <Unresolved name: receive>#(R|/property|)
     }
-    public final [ResolvePhaseWithForAllDeclarationsKey=STATUS] val property: R|kotlin/Int| = IntegerLiteral(10)
-        public get(): R|kotlin/Int|
+    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] val property: R|kotlin/Int| = IntegerLiteral(10)
+        [BODY_RESOLVE] public get(): R|kotlin/Int|
 
 CallableReturnType:
 FILE: propertyWithInitializer.kt
-    public? final? fun resolveMe(): R|kotlin/Unit| {
+    public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| {
         receive#(property#)
     }
-    public? final? val property: Int = IntegerLiteral(10)
-        public? get(): Int
+    public? final? [RAW_FIR] val property: Int = IntegerLiteral(10)
+        [TYPES] public? get(): Int
 
 AnnotationType:
 FILE: propertyWithInitializer.kt
-    public? final? [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun resolveMe(): R|kotlin/Unit| {
+    public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun resolveMe(): R|kotlin/Unit| {
         receive#(property#)
     }
-    public? final? val property: Int = IntegerLiteral(10)
-        public? get(): Int
+    public? final? [RAW_FIR] val property: Int = IntegerLiteral(10)
+        [TYPES] public? get(): Int
 
 AnnotationsArguments:
 FILE: propertyWithInitializer.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         <Unresolved name: receive>#(R|/property|)
     }
-    public final [ResolvePhaseWithForAllDeclarationsKey=STATUS] val property: R|kotlin/Int| = IntegerLiteral(10)
-        public get(): R|kotlin/Int|
+    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] val property: R|kotlin/Int| = IntegerLiteral(10)
+        [BODY_RESOLVE] public get(): R|kotlin/Int|
 
 CallableContracts:
 FILE: propertyWithInitializer.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun resolveMe(): R|kotlin/Unit| {
+    public final [CONTRACTS] [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun resolveMe(): R|kotlin/Unit| {
         receive#(property#)
     }
-    public? final? val property: Int = IntegerLiteral(10)
-        public? get(): Int
+    public? final? [RAW_FIR] val property: Int = IntegerLiteral(10)
+        [TYPES] public? get(): Int
 
 DeclarationStatus:
 FILE: propertyWithInitializer.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun resolveMe(): R|kotlin/Unit| {
+    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun resolveMe(): R|kotlin/Unit| {
         receive#(property#)
     }
-    public? final? val property: Int = IntegerLiteral(10)
-        public? get(): Int
+    public? final? [RAW_FIR] val property: Int = IntegerLiteral(10)
+        [TYPES] public? get(): Int
 
 ValueParametersTypes:
 FILE: propertyWithInitializer.kt
-    public? final? [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun resolveMe(): R|kotlin/Unit| {
+    public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun resolveMe(): R|kotlin/Unit| {
         receive#(property#)
     }
-    public? final? val property: Int = IntegerLiteral(10)
-        public? get(): Int
+    public? final? [RAW_FIR] val property: Int = IntegerLiteral(10)
+        [TYPES] public? get(): Int
 
 TypeParametersTypes:
 FILE: propertyWithInitializer.kt
-    public? final? [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun resolveMe(): R|kotlin/Unit| {
+    public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun resolveMe(): R|kotlin/Unit| {
         receive#(property#)
     }
-    public? final? val property: Int = IntegerLiteral(10)
-        public? get(): Int
+    public? final? [RAW_FIR] val property: Int = IntegerLiteral(10)
+        [TYPES] public? get(): Int
 
 FILE RAW TO BODY:
 FILE: propertyWithInitializer.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         <Unresolved name: receive>#(R|/property|)
     }
-    public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] val property: R|kotlin/Int| = Int(10)
-        public get(): R|kotlin/Int|
+    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] val property: R|kotlin/Int| = Int(10)
+        [BODY_RESOLVE] public get(): R|kotlin/Int|

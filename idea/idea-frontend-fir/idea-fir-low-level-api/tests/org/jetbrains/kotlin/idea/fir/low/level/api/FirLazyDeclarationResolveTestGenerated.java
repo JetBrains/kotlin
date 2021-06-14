@@ -49,6 +49,11 @@ public class FirLazyDeclarationResolveTestGenerated extends AbstractFirLazyDecla
         runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/lazyResolve/localDeclaration.kt");
     }
 
+    @TestMetadata("localFunction.kt")
+    public void testLocalFunction() throws Exception {
+        runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/lazyResolve/localFunction.kt");
+    }
+
     @TestMetadata("parameterOfLocalSetter.kt")
     public void testParameterOfLocalSetter() throws Exception {
         runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/lazyResolve/parameterOfLocalSetter.kt");

@@ -1,13 +1,13 @@
 RAW_FIR:
 FILE: parameterOfNonLocalSetter.kt
-    public? final? class X : R|kotlin/Any| {
-        public? [ContainingClassKey=X] constructor(): R|X| {
+    public? final? [RAW_FIR] class X : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? var x: Int = IntegerLiteral(2)
-            [ContainingClassKey=X] public? get(): Int
-            [ContainingClassKey=X] public? set(resolveMe: Int): R|kotlin/Unit| {
+        public? final? [RAW_FIR] var x: Int = IntegerLiteral(2)
+            [TYPES] [ContainingClassKey=X] public? get(): Int
+            [RAW_FIR] [ContainingClassKey=X] public? set([RAW_FIR] resolveMe: Int): R|kotlin/Unit| {
                 ^ Unit#
             }
 
@@ -15,14 +15,14 @@ FILE: parameterOfNonLocalSetter.kt
 
 IMPORTS:
 FILE: parameterOfNonLocalSetter.kt
-    public? final? class X : R|kotlin/Any| {
-        public? [ContainingClassKey=X] constructor(): R|X| {
+    public? final? [RAW_FIR] class X : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? var x: Int = IntegerLiteral(2)
-            [ContainingClassKey=X] public? get(): Int
-            [ContainingClassKey=X] public? set(resolveMe: Int): R|kotlin/Unit| {
+        public? final? [RAW_FIR] var x: Int = IntegerLiteral(2)
+            [TYPES] [ContainingClassKey=X] public? get(): Int
+            [RAW_FIR] [ContainingClassKey=X] public? set([RAW_FIR] resolveMe: Int): R|kotlin/Unit| {
                 ^ Unit#
             }
 
@@ -30,14 +30,14 @@ FILE: parameterOfNonLocalSetter.kt
 
 SUPER_TYPES:
 FILE: parameterOfNonLocalSetter.kt
-    public? final? [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
-        public? [ContainingClassKey=X] constructor(): R|X| {
+    public? final? [SUPER_TYPES] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? var x: Int = IntegerLiteral(2)
-            [ContainingClassKey=X] public? get(): Int
-            [ContainingClassKey=X] public? set(resolveMe: Int): R|kotlin/Unit| {
+        public? final? [RAW_FIR] var x: Int = IntegerLiteral(2)
+            [TYPES] [ContainingClassKey=X] public? get(): Int
+            [RAW_FIR] [ContainingClassKey=X] public? set([RAW_FIR] resolveMe: Int): R|kotlin/Unit| {
                 ^ Unit#
             }
 
@@ -45,14 +45,14 @@ FILE: parameterOfNonLocalSetter.kt
 
 TYPES:
 FILE: parameterOfNonLocalSetter.kt
-    public? final? [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
-        public? [ContainingClassKey=X] constructor(): R|X| {
+    public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? [ResolvePhaseWithForAllDeclarationsKey=TYPES] var x: R|kotlin/Int| = IntegerLiteral(2)
-            [ContainingClassKey=X] public? get(): R|kotlin/Int|
-            [ContainingClassKey=X] public? set(resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+        public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] var x: R|kotlin/Int| = IntegerLiteral(2)
+            [TYPES] [ContainingClassKey=X] public? get(): R|kotlin/Int|
+            [TYPES] [ContainingClassKey=X] public? set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ Unit#
             }
 
@@ -60,14 +60,14 @@ FILE: parameterOfNonLocalSetter.kt
 
 STATUS:
 FILE: parameterOfNonLocalSetter.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
-        public? [ContainingClassKey=X] constructor(): R|X| {
+    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvePhaseWithForAllDeclarationsKey=STATUS] var x: R|kotlin/Int| = IntegerLiteral(2)
-            [ContainingClassKey=X] public get(): R|kotlin/Int|
-            [ContainingClassKey=X] public set(resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+        public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] var x: R|kotlin/Int| = IntegerLiteral(2)
+            [BODY_RESOLVE] [ContainingClassKey=X] public get(): R|kotlin/Int|
+            [STATUS] [ContainingClassKey=X] public set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ Unit#
             }
 
@@ -75,14 +75,14 @@ FILE: parameterOfNonLocalSetter.kt
 
 CONTRACTS:
 FILE: parameterOfNonLocalSetter.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
-        public? [ContainingClassKey=X] constructor(): R|X| {
+    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] var x: R|kotlin/Int| = IntegerLiteral(2)
-            [ContainingClassKey=X] public get(): R|kotlin/Int|
-            [ContainingClassKey=X] public set(resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+        public final [CONTRACTS] [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] var x: R|kotlin/Int| = IntegerLiteral(2)
+            [BODY_RESOLVE] [ContainingClassKey=X] public get(): R|kotlin/Int|
+            [CONTRACTS] [ContainingClassKey=X] public set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ Unit#
             }
 
@@ -90,14 +90,14 @@ FILE: parameterOfNonLocalSetter.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: parameterOfNonLocalSetter.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
-        public? [ContainingClassKey=X] constructor(): R|X| {
+    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvePhaseWithForAllDeclarationsKey=IMPLICIT_TYPES_BODY_RESOLVE] var x: R|kotlin/Int| = IntegerLiteral(2)
-            [ContainingClassKey=X] public get(): R|kotlin/Int|
-            [ContainingClassKey=X] public set(resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+        public final [CONTRACTS] [ResolvePhaseWithForAllDeclarationsKey=IMPLICIT_TYPES_BODY_RESOLVE] var x: R|kotlin/Int| = IntegerLiteral(2)
+            [BODY_RESOLVE] [ContainingClassKey=X] public get(): R|kotlin/Int|
+            [CONTRACTS] [ContainingClassKey=X] public set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ Unit#
             }
 
@@ -105,14 +105,14 @@ FILE: parameterOfNonLocalSetter.kt
 
 BODY_RESOLVE:
 FILE: parameterOfNonLocalSetter.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
-        public? [ContainingClassKey=X] constructor(): R|X| {
+    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] var x: R|kotlin/Int| = Int(2)
-            [ContainingClassKey=X] public get(): R|kotlin/Int|
-            [ContainingClassKey=X] public set(resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+        public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] var x: R|kotlin/Int| = Int(2)
+            [BODY_RESOLVE] [ContainingClassKey=X] public get(): R|kotlin/Int|
+            [BODY_RESOLVE] [ContainingClassKey=X] public set([BODY_RESOLVE] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ Q|kotlin/Unit|
             }
 
@@ -120,14 +120,14 @@ FILE: parameterOfNonLocalSetter.kt
 
 NoResolve:
 FILE: parameterOfNonLocalSetter.kt
-    public? final? class X : R|kotlin/Any| {
-        public? [ContainingClassKey=X] constructor(): R|X| {
+    public? final? [RAW_FIR] class X : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? var x: Int = IntegerLiteral(2)
-            [ContainingClassKey=X] public? get(): Int
-            [ContainingClassKey=X] public? set(resolveMe: Int): R|kotlin/Unit| {
+        public? final? [RAW_FIR] var x: Int = IntegerLiteral(2)
+            [TYPES] [ContainingClassKey=X] public? get(): Int
+            [RAW_FIR] [ContainingClassKey=X] public? set([RAW_FIR] resolveMe: Int): R|kotlin/Unit| {
                 ^ Unit#
             }
 
@@ -135,14 +135,14 @@ FILE: parameterOfNonLocalSetter.kt
 
 BodyResolveWithChildren:
 FILE: parameterOfNonLocalSetter.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
-        public? [ContainingClassKey=X] constructor(): R|X| {
+    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] var x: R|kotlin/Int| = Int(2)
-            [ContainingClassKey=X] public get(): R|kotlin/Int|
-            [ContainingClassKey=X] public set(resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+        public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] var x: R|kotlin/Int| = Int(2)
+            [BODY_RESOLVE] [ContainingClassKey=X] public get(): R|kotlin/Int|
+            [BODY_RESOLVE] [ContainingClassKey=X] public set([BODY_RESOLVE] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ Q|kotlin/Unit|
             }
 
@@ -150,14 +150,14 @@ FILE: parameterOfNonLocalSetter.kt
 
 CallableBodyResolve:
 FILE: parameterOfNonLocalSetter.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
-        public? [ContainingClassKey=X] constructor(): R|X| {
+    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] var x: R|kotlin/Int| = Int(2)
-            [ContainingClassKey=X] public get(): R|kotlin/Int|
-            [ContainingClassKey=X] public set(resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+        public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] var x: R|kotlin/Int| = Int(2)
+            [BODY_RESOLVE] [ContainingClassKey=X] public get(): R|kotlin/Int|
+            [BODY_RESOLVE] [ContainingClassKey=X] public set([BODY_RESOLVE] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ Q|kotlin/Unit|
             }
 
@@ -165,14 +165,14 @@ FILE: parameterOfNonLocalSetter.kt
 
 CallableReturnType:
 FILE: parameterOfNonLocalSetter.kt
-    public? final? [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
-        public? [ContainingClassKey=X] constructor(): R|X| {
+    public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? [ResolvePhaseWithForAllDeclarationsKey=TYPES] var x: R|kotlin/Int| = IntegerLiteral(2)
-            [ContainingClassKey=X] public? get(): R|kotlin/Int|
-            [ContainingClassKey=X] public? set(resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+        public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] var x: R|kotlin/Int| = IntegerLiteral(2)
+            [TYPES] [ContainingClassKey=X] public? get(): R|kotlin/Int|
+            [TYPES] [ContainingClassKey=X] public? set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ Unit#
             }
 
@@ -180,14 +180,14 @@ FILE: parameterOfNonLocalSetter.kt
 
 AnnotationType:
 FILE: parameterOfNonLocalSetter.kt
-    public? final? [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
-        public? [ContainingClassKey=X] constructor(): R|X| {
+    public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? [ResolvePhaseWithForAllDeclarationsKey=TYPES] var x: R|kotlin/Int| = IntegerLiteral(2)
-            [ContainingClassKey=X] public? get(): R|kotlin/Int|
-            [ContainingClassKey=X] public? set(resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+        public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] var x: R|kotlin/Int| = IntegerLiteral(2)
+            [TYPES] [ContainingClassKey=X] public? get(): R|kotlin/Int|
+            [TYPES] [ContainingClassKey=X] public? set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ Unit#
             }
 
@@ -195,14 +195,14 @@ FILE: parameterOfNonLocalSetter.kt
 
 AnnotationsArguments:
 FILE: parameterOfNonLocalSetter.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
-        public? [ContainingClassKey=X] constructor(): R|X| {
+    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] var x: R|kotlin/Int| = Int(2)
-            [ContainingClassKey=X] public get(): R|kotlin/Int|
-            [ContainingClassKey=X] public set(resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+        public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] var x: R|kotlin/Int| = Int(2)
+            [BODY_RESOLVE] [ContainingClassKey=X] public get(): R|kotlin/Int|
+            [BODY_RESOLVE] [ContainingClassKey=X] public set([BODY_RESOLVE] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ Q|kotlin/Unit|
             }
 
@@ -210,14 +210,14 @@ FILE: parameterOfNonLocalSetter.kt
 
 CallableContracts:
 FILE: parameterOfNonLocalSetter.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
-        public? [ContainingClassKey=X] constructor(): R|X| {
+    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] var x: R|kotlin/Int| = IntegerLiteral(2)
-            [ContainingClassKey=X] public get(): R|kotlin/Int|
-            [ContainingClassKey=X] public set(resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+        public final [CONTRACTS] [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] var x: R|kotlin/Int| = IntegerLiteral(2)
+            [BODY_RESOLVE] [ContainingClassKey=X] public get(): R|kotlin/Int|
+            [CONTRACTS] [ContainingClassKey=X] public set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ Unit#
             }
 
@@ -225,14 +225,14 @@ FILE: parameterOfNonLocalSetter.kt
 
 DeclarationStatus:
 FILE: parameterOfNonLocalSetter.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
-        public? [ContainingClassKey=X] constructor(): R|X| {
+    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvePhaseWithForAllDeclarationsKey=STATUS] var x: R|kotlin/Int| = IntegerLiteral(2)
-            [ContainingClassKey=X] public get(): R|kotlin/Int|
-            [ContainingClassKey=X] public set(resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+        public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] var x: R|kotlin/Int| = IntegerLiteral(2)
+            [BODY_RESOLVE] [ContainingClassKey=X] public get(): R|kotlin/Int|
+            [STATUS] [ContainingClassKey=X] public set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ Unit#
             }
 
@@ -240,14 +240,14 @@ FILE: parameterOfNonLocalSetter.kt
 
 ValueParametersTypes:
 FILE: parameterOfNonLocalSetter.kt
-    public? final? [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
-        public? [ContainingClassKey=X] constructor(): R|X| {
+    public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? [ResolvePhaseWithForAllDeclarationsKey=TYPES] var x: R|kotlin/Int| = IntegerLiteral(2)
-            [ContainingClassKey=X] public? get(): R|kotlin/Int|
-            [ContainingClassKey=X] public? set(resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+        public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] var x: R|kotlin/Int| = IntegerLiteral(2)
+            [TYPES] [ContainingClassKey=X] public? get(): R|kotlin/Int|
+            [TYPES] [ContainingClassKey=X] public? set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ Unit#
             }
 
@@ -255,14 +255,14 @@ FILE: parameterOfNonLocalSetter.kt
 
 TypeParametersTypes:
 FILE: parameterOfNonLocalSetter.kt
-    public? final? [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
-        public? [ContainingClassKey=X] constructor(): R|X| {
+    public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? [ResolvePhaseWithForAllDeclarationsKey=TYPES] var x: R|kotlin/Int| = IntegerLiteral(2)
-            [ContainingClassKey=X] public? get(): R|kotlin/Int|
-            [ContainingClassKey=X] public? set(resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+        public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] var x: R|kotlin/Int| = IntegerLiteral(2)
+            [TYPES] [ContainingClassKey=X] public? get(): R|kotlin/Int|
+            [TYPES] [ContainingClassKey=X] public? set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ Unit#
             }
 
@@ -270,14 +270,14 @@ FILE: parameterOfNonLocalSetter.kt
 
 FILE RAW TO BODY:
 FILE: parameterOfNonLocalSetter.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] class X : R|kotlin/Any| {
-        public [ContainingClassKey=X] constructor(): R|X| {
+    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] class X : R|kotlin/Any| {
+        public [BODY_RESOLVE] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
-        public final var x: R|kotlin/Int| = Int(2)
-            [ContainingClassKey=X] public get(): R|kotlin/Int|
-            [ContainingClassKey=X] public set(resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+        public final [BODY_RESOLVE] var x: R|kotlin/Int| = Int(2)
+            [BODY_RESOLVE] [ContainingClassKey=X] public get(): R|kotlin/Int|
+            [BODY_RESOLVE] [ContainingClassKey=X] public set([BODY_RESOLVE] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ Q|kotlin/Unit|
             }
 

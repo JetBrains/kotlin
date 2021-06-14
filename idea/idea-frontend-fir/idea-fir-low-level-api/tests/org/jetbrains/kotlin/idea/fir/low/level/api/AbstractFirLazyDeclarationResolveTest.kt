@@ -54,7 +54,7 @@ abstract class AbstractFirLazyDeclarationResolveTest : KotlinLightCodeInsightFix
     fun doTest(path: String) {
         val testDataFile = File(path)
         val ktFile = myFixture.configureByText(testDataFile.name, FileUtil.loadFile(testDataFile)) as KtFile
-
+        val rendererOption = FirRenderer.RenderMode.WithDeclarationAttributes.copy(renderDeclarationResolvePhase = true)
         val resultBuilder = StringBuilder()
         resolveWithClearCaches(ktFile) { firModuleResolveState ->
             check(firModuleResolveState is FirModuleResolveStateImpl)
@@ -66,7 +66,7 @@ abstract class AbstractFirLazyDeclarationResolveTest : KotlinLightCodeInsightFix
                 declarationToResolve.withFirDeclaration(firModuleResolveState, currentPhase) {
                     val firFile = firModuleResolveState.getOrBuildFirFile(ktFile)
                     resultBuilder.append("\n${currentPhase.name}:\n")
-                    resultBuilder.append(firFile.render(FirRenderer.RenderMode.WithDeclarationAttributes))
+                    resultBuilder.append(firFile.render(rendererOption))
                 }
             }
         }
@@ -90,7 +90,7 @@ abstract class AbstractFirLazyDeclarationResolveTest : KotlinLightCodeInsightFix
                 declarationToResolve.withFirDeclaration(resolveType, firModuleResolveState) {
                     val firFile = firModuleResolveState.getOrBuildFirFile(ktFile)
                     resultBuilder.append("\n${resolveType.name}:\n")
-                    resultBuilder.append(firFile.render(FirRenderer.RenderMode.WithDeclarationAttributes))
+                    resultBuilder.append(firFile.render(rendererOption))
                 }
             }
         }
@@ -100,7 +100,7 @@ abstract class AbstractFirLazyDeclarationResolveTest : KotlinLightCodeInsightFix
             val firFile = firModuleResolveState.getOrBuildFirFile(ktFile)
             firFile.withFirDeclaration(firModuleResolveState, FirResolvePhase.BODY_RESOLVE) {
                 resultBuilder.append("\nFILE RAW TO BODY:\n")
-                resultBuilder.append(firFile.render(FirRenderer.RenderMode.WithDeclarationAttributes))
+                resultBuilder.append(firFile.render(rendererOption))
             }
         }
 

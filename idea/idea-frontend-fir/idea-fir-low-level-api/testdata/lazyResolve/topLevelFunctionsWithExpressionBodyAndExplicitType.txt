@@ -1,208 +1,208 @@
 RAW_FIR:
 FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
-    public? final? fun resolveMe(): R|kotlin/Unit| {
+    public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| {
         receive#(functionWithLazyBody#())
     }
-    public? final? fun receive(value: String): R|kotlin/Unit| {
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| {
     }
-    public? final? fun functionWithLazyBody(): String {
+    public? final? [RAW_FIR] fun functionWithLazyBody(): String {
         ^functionWithLazyBody String(42)
     }
 
 IMPORTS:
 FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
-    public? final? fun resolveMe(): R|kotlin/Unit| {
+    public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| {
         receive#(functionWithLazyBody#())
     }
-    public? final? fun receive(value: String): R|kotlin/Unit| {
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| {
     }
-    public? final? fun functionWithLazyBody(): String {
+    public? final? [RAW_FIR] fun functionWithLazyBody(): String {
         ^functionWithLazyBody String(42)
     }
 
 SUPER_TYPES:
 FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
-    public? final? fun resolveMe(): R|kotlin/Unit| {
+    public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| {
         receive#(functionWithLazyBody#())
     }
-    public? final? fun receive(value: String): R|kotlin/Unit| {
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| {
     }
-    public? final? fun functionWithLazyBody(): String {
+    public? final? [RAW_FIR] fun functionWithLazyBody(): String {
         ^functionWithLazyBody String(42)
     }
 
 TYPES:
 FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
-    public? final? [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun resolveMe(): R|kotlin/Unit| {
+    public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun resolveMe(): R|kotlin/Unit| {
         receive#(functionWithLazyBody#())
     }
-    public? final? fun receive(value: String): R|kotlin/Unit| {
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| {
     }
-    public? final? fun functionWithLazyBody(): String {
+    public? final? [RAW_FIR] fun functionWithLazyBody(): String {
         ^functionWithLazyBody String(42)
     }
 
 STATUS:
 FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun resolveMe(): R|kotlin/Unit| {
+    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun resolveMe(): R|kotlin/Unit| {
         receive#(functionWithLazyBody#())
     }
-    public? final? fun receive(value: String): R|kotlin/Unit| {
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| {
     }
-    public? final? fun functionWithLazyBody(): String {
+    public? final? [RAW_FIR] fun functionWithLazyBody(): String {
         ^functionWithLazyBody String(42)
     }
 
 CONTRACTS:
 FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun resolveMe(): R|kotlin/Unit| {
+    public final [CONTRACTS] [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun resolveMe(): R|kotlin/Unit| {
         receive#(functionWithLazyBody#())
     }
-    public? final? fun receive(value: String): R|kotlin/Unit| {
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| {
     }
-    public? final? fun functionWithLazyBody(): String {
+    public? final? [RAW_FIR] fun functionWithLazyBody(): String {
         ^functionWithLazyBody String(42)
     }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=IMPLICIT_TYPES_BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+    public final [CONTRACTS] [ResolvePhaseWithForAllDeclarationsKey=IMPLICIT_TYPES_BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         receive#(functionWithLazyBody#())
     }
-    public? final? fun receive(value: String): R|kotlin/Unit| {
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| {
     }
-    public? final? fun functionWithLazyBody(): String {
+    public? final? [RAW_FIR] fun functionWithLazyBody(): String {
         ^functionWithLazyBody String(42)
     }
 
 BODY_RESOLVE:
 FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/functionWithLazyBody|())
     }
-    public final [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun receive(value: R|kotlin/String|): R|kotlin/Unit| {
+    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun receive([STATUS] value: R|kotlin/String|): R|kotlin/Unit| {
     }
-    public final [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun functionWithLazyBody(): R|kotlin/String| {
+    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun functionWithLazyBody(): R|kotlin/String| {
         ^functionWithLazyBody String(42)
     }
 
 NoResolve:
 FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
-    public? final? fun resolveMe(): R|kotlin/Unit| {
+    public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| {
         receive#(functionWithLazyBody#())
     }
-    public? final? fun receive(value: String): R|kotlin/Unit| {
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| {
     }
-    public? final? fun functionWithLazyBody(): String {
+    public? final? [RAW_FIR] fun functionWithLazyBody(): String {
         ^functionWithLazyBody String(42)
     }
 
 BodyResolveWithChildren:
 FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/functionWithLazyBody|())
     }
-    public final [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun receive(value: R|kotlin/String|): R|kotlin/Unit| {
+    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun receive([STATUS] value: R|kotlin/String|): R|kotlin/Unit| {
     }
-    public final [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun functionWithLazyBody(): R|kotlin/String| {
+    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun functionWithLazyBody(): R|kotlin/String| {
         ^functionWithLazyBody String(42)
     }
 
 CallableBodyResolve:
 FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/functionWithLazyBody|())
     }
-    public final [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun receive(value: R|kotlin/String|): R|kotlin/Unit| {
+    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun receive([STATUS] value: R|kotlin/String|): R|kotlin/Unit| {
     }
-    public final [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun functionWithLazyBody(): R|kotlin/String| {
+    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun functionWithLazyBody(): R|kotlin/String| {
         ^functionWithLazyBody String(42)
     }
 
 CallableReturnType:
 FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
-    public? final? fun resolveMe(): R|kotlin/Unit| {
+    public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| {
         receive#(functionWithLazyBody#())
     }
-    public? final? fun receive(value: String): R|kotlin/Unit| {
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| {
     }
-    public? final? fun functionWithLazyBody(): String {
+    public? final? [RAW_FIR] fun functionWithLazyBody(): String {
         ^functionWithLazyBody String(42)
     }
 
 AnnotationType:
 FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
-    public? final? [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun resolveMe(): R|kotlin/Unit| {
+    public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun resolveMe(): R|kotlin/Unit| {
         receive#(functionWithLazyBody#())
     }
-    public? final? fun receive(value: String): R|kotlin/Unit| {
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| {
     }
-    public? final? fun functionWithLazyBody(): String {
+    public? final? [RAW_FIR] fun functionWithLazyBody(): String {
         ^functionWithLazyBody String(42)
     }
 
 AnnotationsArguments:
 FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/functionWithLazyBody|())
     }
-    public final [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun receive(value: R|kotlin/String|): R|kotlin/Unit| {
+    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun receive([STATUS] value: R|kotlin/String|): R|kotlin/Unit| {
     }
-    public final [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun functionWithLazyBody(): R|kotlin/String| {
+    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun functionWithLazyBody(): R|kotlin/String| {
         ^functionWithLazyBody String(42)
     }
 
 CallableContracts:
 FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun resolveMe(): R|kotlin/Unit| {
+    public final [CONTRACTS] [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun resolveMe(): R|kotlin/Unit| {
         receive#(functionWithLazyBody#())
     }
-    public? final? fun receive(value: String): R|kotlin/Unit| {
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| {
     }
-    public? final? fun functionWithLazyBody(): String {
+    public? final? [RAW_FIR] fun functionWithLazyBody(): String {
         ^functionWithLazyBody String(42)
     }
 
 DeclarationStatus:
 FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun resolveMe(): R|kotlin/Unit| {
+    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun resolveMe(): R|kotlin/Unit| {
         receive#(functionWithLazyBody#())
     }
-    public? final? fun receive(value: String): R|kotlin/Unit| {
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| {
     }
-    public? final? fun functionWithLazyBody(): String {
+    public? final? [RAW_FIR] fun functionWithLazyBody(): String {
         ^functionWithLazyBody String(42)
     }
 
 ValueParametersTypes:
 FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
-    public? final? [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun resolveMe(): R|kotlin/Unit| {
+    public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun resolveMe(): R|kotlin/Unit| {
         receive#(functionWithLazyBody#())
     }
-    public? final? fun receive(value: String): R|kotlin/Unit| {
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| {
     }
-    public? final? fun functionWithLazyBody(): String {
+    public? final? [RAW_FIR] fun functionWithLazyBody(): String {
         ^functionWithLazyBody String(42)
     }
 
 TypeParametersTypes:
 FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
-    public? final? [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun resolveMe(): R|kotlin/Unit| {
+    public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun resolveMe(): R|kotlin/Unit| {
         receive#(functionWithLazyBody#())
     }
-    public? final? fun receive(value: String): R|kotlin/Unit| {
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| {
     }
-    public? final? fun functionWithLazyBody(): String {
+    public? final? [RAW_FIR] fun functionWithLazyBody(): String {
         ^functionWithLazyBody String(42)
     }
 
 FILE RAW TO BODY:
 FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/functionWithLazyBody|())
     }
-    public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun receive(value: R|kotlin/String|): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun receive([BODY_RESOLVE] value: R|kotlin/String|): R|kotlin/Unit| {
     }
-    public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun functionWithLazyBody(): R|kotlin/String| {
+    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun functionWithLazyBody(): R|kotlin/String| {
         ^functionWithLazyBody String(42)
     }

@@ -1,79 +1,79 @@
 RAW_FIR:
 FILE: typeParameterOfTopFunction.kt
-    public? final? fun <resolveMe> ddd(): R|kotlin/Unit| {
+    public? final? [RAW_FIR] fun <resolveMe> ddd(): R|kotlin/Unit| {
     }
 
 IMPORTS:
 FILE: typeParameterOfTopFunction.kt
-    public? final? fun <resolveMe> ddd(): R|kotlin/Unit| {
+    public? final? [RAW_FIR] fun <resolveMe> ddd(): R|kotlin/Unit| {
     }
 
 SUPER_TYPES:
 FILE: typeParameterOfTopFunction.kt
-    public? final? fun <resolveMe> ddd(): R|kotlin/Unit| {
+    public? final? [RAW_FIR] fun <resolveMe> ddd(): R|kotlin/Unit| {
     }
 
 TYPES:
 FILE: typeParameterOfTopFunction.kt
-    public? final? [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun <resolveMe> ddd(): R|kotlin/Unit| {
+    public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun <resolveMe> ddd(): R|kotlin/Unit| {
     }
 
 STATUS:
 FILE: typeParameterOfTopFunction.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun <resolveMe> ddd(): R|kotlin/Unit| {
+    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun <resolveMe> ddd(): R|kotlin/Unit| {
     }
 
 CONTRACTS:
 FILE: typeParameterOfTopFunction.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun <resolveMe> ddd(): R|kotlin/Unit| {
+    public final [CONTRACTS] [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun <resolveMe> ddd(): R|kotlin/Unit| {
     }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: typeParameterOfTopFunction.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=IMPLICIT_TYPES_BODY_RESOLVE] fun <resolveMe> ddd(): R|kotlin/Unit| {
+    public final [CONTRACTS] [ResolvePhaseWithForAllDeclarationsKey=IMPLICIT_TYPES_BODY_RESOLVE] fun <resolveMe> ddd(): R|kotlin/Unit| {
     }
 
 BODY_RESOLVE:
 FILE: typeParameterOfTopFunction.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun <resolveMe> ddd(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun <resolveMe> ddd(): R|kotlin/Unit| {
     }
 
 NoResolve:
 FILE: typeParameterOfTopFunction.kt
-    public? final? fun <resolveMe> ddd(): R|kotlin/Unit| {
+    public? final? [RAW_FIR] fun <resolveMe> ddd(): R|kotlin/Unit| {
     }
 
 BodyResolveWithChildren:
 FILE: typeParameterOfTopFunction.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun <resolveMe> ddd(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun <resolveMe> ddd(): R|kotlin/Unit| {
     }
 
 AnnotationType:
 FILE: typeParameterOfTopFunction.kt
-    public? final? [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun <resolveMe> ddd(): R|kotlin/Unit| {
+    public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun <resolveMe> ddd(): R|kotlin/Unit| {
     }
 
 AnnotationsArguments:
 FILE: typeParameterOfTopFunction.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun <resolveMe> ddd(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun <resolveMe> ddd(): R|kotlin/Unit| {
     }
 
 DeclarationStatus:
 FILE: typeParameterOfTopFunction.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun <resolveMe> ddd(): R|kotlin/Unit| {
+    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun <resolveMe> ddd(): R|kotlin/Unit| {
     }
 
 ValueParametersTypes:
 FILE: typeParameterOfTopFunction.kt
-    public? final? [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun <resolveMe> ddd(): R|kotlin/Unit| {
+    public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun <resolveMe> ddd(): R|kotlin/Unit| {
     }
 
 TypeParametersTypes:
 FILE: typeParameterOfTopFunction.kt
-    public? final? [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun <resolveMe> ddd(): R|kotlin/Unit| {
+    public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun <resolveMe> ddd(): R|kotlin/Unit| {
     }
 
 FILE RAW TO BODY:
 FILE: typeParameterOfTopFunction.kt
-    public final [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun <resolveMe> ddd(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun <resolveMe> ddd(): R|kotlin/Unit| {
     }

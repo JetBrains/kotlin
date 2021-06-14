@@ -1,19 +1,19 @@
 RAW_FIR:
 FILE: superTypes.kt
-    public? open class A : R|kotlin/Any| {
-        public? [ContainingClassKey=A] constructor(): R|A| {
+    public? open [RAW_FIR] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public? open class B : A {
-        public? [ContainingClassKey=B] constructor(): R|B| {
+    public? open [RAW_FIR] class B : A {
+        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
             super<A>()
         }
 
     }
-    public? open class resolveMe : A {
-        public? [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public? open [RAW_FIR] class resolveMe : A {
+        public? [RAW_FIR] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<A>()
         }
 
@@ -21,20 +21,20 @@ FILE: superTypes.kt
 
 IMPORTS:
 FILE: superTypes.kt
-    public? open class A : R|kotlin/Any| {
-        public? [ContainingClassKey=A] constructor(): R|A| {
+    public? open [RAW_FIR] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public? open class B : A {
-        public? [ContainingClassKey=B] constructor(): R|B| {
+    public? open [RAW_FIR] class B : A {
+        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
             super<A>()
         }
 
     }
-    public? open class resolveMe : A {
-        public? [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public? open [RAW_FIR] class resolveMe : A {
+        public? [RAW_FIR] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<A>()
         }
 
@@ -42,20 +42,20 @@ FILE: superTypes.kt
 
 SUPER_TYPES:
 FILE: superTypes.kt
-    public? open class A : R|kotlin/Any| {
-        public? [ContainingClassKey=A] constructor(): R|A| {
+    public? open [SUPER_TYPES] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public? open class B : A {
-        public? [ContainingClassKey=B] constructor(): R|B| {
+    public? open [RAW_FIR] class B : A {
+        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
             super<A>()
         }
 
     }
-    public? open [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class resolveMe : R|A| {
-        public? [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public? open [SUPER_TYPES] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class resolveMe : R|A| {
+        public? [RAW_FIR] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<A>()
         }
 
@@ -63,20 +63,20 @@ FILE: superTypes.kt
 
 TYPES:
 FILE: superTypes.kt
-    public? open class A : R|kotlin/Any| {
-        public? [ContainingClassKey=A] constructor(): R|A| {
+    public? open [SUPER_TYPES] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public? open class B : A {
-        public? [ContainingClassKey=B] constructor(): R|B| {
+    public? open [RAW_FIR] class B : A {
+        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
             super<A>()
         }
 
     }
-    public? open [ResolvePhaseWithForAllDeclarationsKey=TYPES] class resolveMe : R|A| {
-        public? [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public? open [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] class resolveMe : R|A| {
+        public? [TYPES] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|A|>()
         }
 
@@ -84,20 +84,20 @@ FILE: superTypes.kt
 
 STATUS:
 FILE: superTypes.kt
-    public open [ResolvePhaseWithForAllDeclarationsKey=TYPES] class A : R|kotlin/Any| {
-        public [ContainingClassKey=A] constructor(): R|A| {
+    public open [STATUS] [ResolvePhaseWithForAllDeclarationsKey=TYPES] class A : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public? open class B : A {
-        public? [ContainingClassKey=B] constructor(): R|B| {
+    public? open [RAW_FIR] class B : A {
+        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
             super<A>()
         }
 
     }
-    public open [ResolvePhaseWithForAllDeclarationsKey=STATUS] class resolveMe : R|A| {
-        public [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public open [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] class resolveMe : R|A| {
+        public [STATUS] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|A|>()
         }
 
@@ -105,20 +105,20 @@ FILE: superTypes.kt
 
 CONTRACTS:
 FILE: superTypes.kt
-    public open [ResolvePhaseWithForAllDeclarationsKey=TYPES] class A : R|kotlin/Any| {
-        public [ContainingClassKey=A] constructor(): R|A| {
+    public open [STATUS] [ResolvePhaseWithForAllDeclarationsKey=TYPES] class A : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public? open class B : A {
-        public? [ContainingClassKey=B] constructor(): R|B| {
+    public? open [RAW_FIR] class B : A {
+        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
             super<A>()
         }
 
     }
-    public open [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] class resolveMe : R|A| {
-        public [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public open [CONTRACTS] [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] class resolveMe : R|A| {
+        public [CONTRACTS] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|A|>()
         }
 
@@ -126,20 +126,20 @@ FILE: superTypes.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: superTypes.kt
-    public open [ResolvePhaseWithForAllDeclarationsKey=TYPES] class A : R|kotlin/Any| {
-        public [ContainingClassKey=A] constructor(): R|A| {
+    public open [STATUS] [ResolvePhaseWithForAllDeclarationsKey=TYPES] class A : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public? open class B : A {
-        public? [ContainingClassKey=B] constructor(): R|B| {
+    public? open [RAW_FIR] class B : A {
+        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
             super<A>()
         }
 
     }
-    public open [ResolvePhaseWithForAllDeclarationsKey=IMPLICIT_TYPES_BODY_RESOLVE] class resolveMe : R|A| {
-        public [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public open [IMPLICIT_TYPES_BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=IMPLICIT_TYPES_BODY_RESOLVE] class resolveMe : R|A| {
+        public [CONTRACTS] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|A|>()
         }
 
@@ -147,20 +147,20 @@ FILE: superTypes.kt
 
 BODY_RESOLVE:
 FILE: superTypes.kt
-    public open [ResolvePhaseWithForAllDeclarationsKey=TYPES] class A : R|kotlin/Any| {
-        public [ContainingClassKey=A] constructor(): R|A| {
+    public open [STATUS] [ResolvePhaseWithForAllDeclarationsKey=TYPES] class A : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public? open class B : A {
-        public? [ContainingClassKey=B] constructor(): R|B| {
+    public? open [RAW_FIR] class B : A {
+        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
             super<A>()
         }
 
     }
-    public open [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] class resolveMe : R|A| {
-        public [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public open [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] class resolveMe : R|A| {
+        public [BODY_RESOLVE] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|A|>()
         }
 
@@ -168,20 +168,20 @@ FILE: superTypes.kt
 
 NoResolve:
 FILE: superTypes.kt
-    public? open class A : R|kotlin/Any| {
-        public? [ContainingClassKey=A] constructor(): R|A| {
+    public? open [RAW_FIR] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public? open class B : A {
-        public? [ContainingClassKey=B] constructor(): R|B| {
+    public? open [RAW_FIR] class B : A {
+        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
             super<A>()
         }
 
     }
-    public? open class resolveMe : A {
-        public? [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public? open [RAW_FIR] class resolveMe : A {
+        public? [RAW_FIR] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<A>()
         }
 
@@ -189,20 +189,20 @@ FILE: superTypes.kt
 
 BodyResolveWithChildren:
 FILE: superTypes.kt
-    public open [ResolvePhaseWithForAllDeclarationsKey=TYPES] class A : R|kotlin/Any| {
-        public [ContainingClassKey=A] constructor(): R|A| {
+    public open [STATUS] [ResolvePhaseWithForAllDeclarationsKey=TYPES] class A : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public? open class B : A {
-        public? [ContainingClassKey=B] constructor(): R|B| {
+    public? open [RAW_FIR] class B : A {
+        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
             super<A>()
         }
 
     }
-    public open [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] class resolveMe : R|A| {
-        public [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public open [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] class resolveMe : R|A| {
+        public [BODY_RESOLVE] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|A|>()
         }
 
@@ -210,20 +210,20 @@ FILE: superTypes.kt
 
 AnnotationType:
 FILE: superTypes.kt
-    public? open class A : R|kotlin/Any| {
-        public? [ContainingClassKey=A] constructor(): R|A| {
+    public? open [SUPER_TYPES] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public? open class B : A {
-        public? [ContainingClassKey=B] constructor(): R|B| {
+    public? open [RAW_FIR] class B : A {
+        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
             super<A>()
         }
 
     }
-    public? open [ResolvePhaseWithForAllDeclarationsKey=TYPES] class resolveMe : R|A| {
-        public? [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public? open [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] class resolveMe : R|A| {
+        public? [TYPES] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|A|>()
         }
 
@@ -231,20 +231,20 @@ FILE: superTypes.kt
 
 AnnotationsArguments:
 FILE: superTypes.kt
-    public open [ResolvePhaseWithForAllDeclarationsKey=TYPES] class A : R|kotlin/Any| {
-        public [ContainingClassKey=A] constructor(): R|A| {
+    public open [STATUS] [ResolvePhaseWithForAllDeclarationsKey=TYPES] class A : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public? open class B : A {
-        public? [ContainingClassKey=B] constructor(): R|B| {
+    public? open [RAW_FIR] class B : A {
+        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
             super<A>()
         }
 
     }
-    public open [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] class resolveMe : R|A| {
-        public [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public open [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] class resolveMe : R|A| {
+        public [BODY_RESOLVE] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|A|>()
         }
 
@@ -252,20 +252,20 @@ FILE: superTypes.kt
 
 ClassSuperTypes:
 FILE: superTypes.kt
-    public? open class A : R|kotlin/Any| {
-        public? [ContainingClassKey=A] constructor(): R|A| {
+    public? open [SUPER_TYPES] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public? open class B : A {
-        public? [ContainingClassKey=B] constructor(): R|B| {
+    public? open [RAW_FIR] class B : A {
+        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
             super<A>()
         }
 
     }
-    public? open [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class resolveMe : R|A| {
-        public? [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public? open [SUPER_TYPES] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class resolveMe : R|A| {
+        public? [RAW_FIR] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<A>()
         }
 
@@ -273,20 +273,20 @@ FILE: superTypes.kt
 
 DeclarationStatus:
 FILE: superTypes.kt
-    public open [ResolvePhaseWithForAllDeclarationsKey=TYPES] class A : R|kotlin/Any| {
-        public [ContainingClassKey=A] constructor(): R|A| {
+    public open [STATUS] [ResolvePhaseWithForAllDeclarationsKey=TYPES] class A : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public? open class B : A {
-        public? [ContainingClassKey=B] constructor(): R|B| {
+    public? open [RAW_FIR] class B : A {
+        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
             super<A>()
         }
 
     }
-    public open [ResolvePhaseWithForAllDeclarationsKey=STATUS] class resolveMe : R|A| {
-        public [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public open [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] class resolveMe : R|A| {
+        public [STATUS] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|A|>()
         }
 
@@ -294,20 +294,20 @@ FILE: superTypes.kt
 
 ValueParametersTypes:
 FILE: superTypes.kt
-    public? open class A : R|kotlin/Any| {
-        public? [ContainingClassKey=A] constructor(): R|A| {
+    public? open [SUPER_TYPES] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public? open class B : A {
-        public? [ContainingClassKey=B] constructor(): R|B| {
+    public? open [RAW_FIR] class B : A {
+        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
             super<A>()
         }
 
     }
-    public? open [ResolvePhaseWithForAllDeclarationsKey=TYPES] class resolveMe : R|A| {
-        public? [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public? open [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] class resolveMe : R|A| {
+        public? [TYPES] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|A|>()
         }
 
@@ -315,20 +315,20 @@ FILE: superTypes.kt
 
 TypeParametersTypes:
 FILE: superTypes.kt
-    public? open class A : R|kotlin/Any| {
-        public? [ContainingClassKey=A] constructor(): R|A| {
+    public? open [SUPER_TYPES] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public? open class B : A {
-        public? [ContainingClassKey=B] constructor(): R|B| {
+    public? open [RAW_FIR] class B : A {
+        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
             super<A>()
         }
 
     }
-    public? open [ResolvePhaseWithForAllDeclarationsKey=TYPES] class resolveMe : R|A| {
-        public? [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public? open [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] class resolveMe : R|A| {
+        public? [TYPES] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|A|>()
         }
 
@@ -336,20 +336,20 @@ FILE: superTypes.kt
 
 FILE RAW TO BODY:
 FILE: superTypes.kt
-    public open [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] class A : R|kotlin/Any| {
-        public [ContainingClassKey=A] constructor(): R|A| {
+    public open [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] class A : R|kotlin/Any| {
+        public [BODY_RESOLVE] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public open [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] class B : R|A| {
-        public [ContainingClassKey=B] constructor(): R|B| {
+    public open [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] class B : R|A| {
+        public [BODY_RESOLVE] [ContainingClassKey=B] constructor(): R|B| {
             super<R|A|>()
         }
 
     }
-    public open [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] class resolveMe : R|A| {
-        public [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public open [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] class resolveMe : R|A| {
+        public [BODY_RESOLVE] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|A|>()
         }
 
