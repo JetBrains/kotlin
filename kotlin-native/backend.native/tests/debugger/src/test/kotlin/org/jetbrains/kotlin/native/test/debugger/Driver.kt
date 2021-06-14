@@ -57,7 +57,7 @@ class ToolDriver(
     }
 
     fun runLldb(program: Path, commands: List<String>): String {
-        val args = listOf("-b", *program.programOrAttach(), "-o", "command script import \"${DistProperties.lldbPrettyPrinters}\"",
+        val args = listOf("-b", *program.programOrAttach(), "-b", "-o", "command script import \"${DistProperties.lldbPrettyPrinters}\"",
                 *commands.flatMap { listOf("-o", it) }.toTypedArray())
         if (!targetIsHost()) {
             return subprocess(DistProperties.xcrun, "simctl", "spawn", "-w", "-s", "iPhone 11", program.toString()) {
