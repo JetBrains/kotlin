@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api
 
-import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.stubs.StringStubIndexExtension
 import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.stubs.StubIndexKey
 import org.jetbrains.kotlin.idea.stubindex.*
@@ -19,10 +17,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
-/*
-* Move to another module
-*/
-internal class IndexHelper(val project: Project, private val scope: GlobalSearchScope) {
+
+internal class DeclarationProviderByIndexesImpl(val project: Project, private val scope: GlobalSearchScope) : DeclarationProvider() {
     private val stubIndex: StubIndex = StubIndex.getInstance()
 
     private inline fun <INDEX_KEY : Any, reified PSI : PsiElement> firstMatchingOrNull(
@@ -43,12 +39,12 @@ internal class IndexHelper(val project: Project, private val scope: GlobalSearch
         return result
     }
 
-    fun classFromIndexByClassId(classId: ClassId) = firstMatchingOrNull(
+    override fun getClassByClassId(classId: ClassId) = firstMatchingOrNull(
         KotlinFullClassNameIndex.KEY,
         classId.asStringForIndexes(),
     ) { candidate -> candidate.containingKtFile.packageFqName == classId.packageFqName }
 
-    fun typeAliasFromIndexByClassId(classId: ClassId): KtTypeAlias? = firstMatchingOrNull<String, KtTypeAlias>(
+    override fun getTypeAliasByClassId(classId: ClassId): KtTypeAlias? = firstMatchingOrNull<String, KtTypeAlias>(
         KotlinTopLevelTypeAliasFqNameIndex.KEY,
         key = classId.asStringForIndexes(),
     ) { candidate -> candidate.containingKtFile.packageFqName == classId.packageFqName }
@@ -57,15 +53,14 @@ internal class IndexHelper(val project: Project, private val scope: GlobalSearch
             key = classId.asString(),
         )
 
-
-    fun getTopLevelProperties(callableId: CallableId): Collection<KtProperty> =
+    override fun getTopLevelProperties(callableId: CallableId): Collection<KtProperty> =
         KotlinTopLevelPropertyFqnNameIndex.getInstance()[callableId.asStringForIndexes(), project, scope]
 
-    fun getTopLevelFunctions(callableId: CallableId): Collection<KtNamedFunction> =
+    override fun getTopLevelFunctions(callableId: CallableId): Collection<KtNamedFunction> =
         KotlinTopLevelFunctionFqnNameIndex.getInstance()[callableId.asStringForIndexes(), project, scope]
 
 
-    fun getClassNamesInPackage(packageFqName: FqName): Set<Name> =
+    override fun getClassNamesInPackage(packageFqName: FqName): Set<Name> =
         KotlinTopLevelClassByPackageIndex.getInstance()
             .get(packageFqName.asStringForIndexes(), project, scope)
             .mapNotNullTo(hashSetOf()) { it.nameAsName }
@@ -80,7 +75,5 @@ internal class IndexHelper(val project: Project, private val scope: GlobalSearch
 
         private fun ClassId.asStringForIndexes(): String =
             asSingleFqName().asStringForIndexes()
-
-        private fun getShortName(fqName: String) = Name.identifier(fqName.substringAfterLast('.'))
     }
 }

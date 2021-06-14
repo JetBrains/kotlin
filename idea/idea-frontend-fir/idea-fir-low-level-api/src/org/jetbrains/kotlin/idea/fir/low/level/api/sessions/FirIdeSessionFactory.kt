@@ -29,10 +29,10 @@ import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.idea.caches.project.*
 import org.jetbrains.kotlin.idea.caches.resolve.IDEPackagePartProvider
+import org.jetbrains.kotlin.idea.fir.low.level.api.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
 import org.jetbrains.kotlin.idea.fir.low.level.api.IdeFirPhaseManager
-import org.jetbrains.kotlin.idea.fir.low.level.api.IdeSessionComponents
-import org.jetbrains.kotlin.idea.fir.low.level.api.SealedClassInheritorsProviderIdeImpl
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveStateConfigurator
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCacheImpl
 import org.jetbrains.kotlin.idea.fir.low.level.api.fir.caches.FirThreadSafeCachesFactory
@@ -58,6 +58,7 @@ import java.nio.file.Paths
 internal object FirIdeSessionFactory {
     fun createSourcesSession(
         project: Project,
+        configurator: FirModuleResolveStateConfigurator,
         moduleInfo: ModuleSourceInfo,
         builtinsAndCloneableSession: FirIdeBuiltinsAndCloneableSession,
         firPhaseRunner: FirPhaseRunner,
@@ -97,7 +98,7 @@ internal object FirIdeSessionFactory {
                 scopeProvider,
                 firFileBuilder,
                 cache,
-                searchScope
+                configurator.createDeclarationProvider(searchScope),
             )
 
             register(FirProvider::class, provider)
@@ -130,6 +131,7 @@ internal object FirIdeSessionFactory {
                             .mapTo(this) {
                                 createSourcesSession(
                                     project,
+                                    configurator,
                                     it,
                                     builtinsAndCloneableSession,
                                     firPhaseRunner,

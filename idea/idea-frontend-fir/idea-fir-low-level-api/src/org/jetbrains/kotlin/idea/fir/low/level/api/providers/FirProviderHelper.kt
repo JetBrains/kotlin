@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.idea.fir.low.level.api.IndexHelper
+import org.jetbrains.kotlin.idea.fir.low.level.api.DeclarationProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.PackageExistenceChecker
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
@@ -28,15 +28,15 @@ import java.util.*
 internal class FirProviderHelper(
     private val cache: ModuleFileCache,
     private val firFileBuilder: FirFileBuilder,
-    private val indexHelper: IndexHelper,
+    private val declarationProvider: DeclarationProvider,
     private val packageExistenceChecker: PackageExistenceChecker,
 ) {
     fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration<*>? {
         if (classId.isLocal) return null
         return executeOrReturnDefaultValueOnPCE(null) {
             cache.classifierByClassId.computeIfAbsent(classId) {
-                val ktClass = when (val klass = indexHelper.classFromIndexByClassId(classId)) {
-                    null -> indexHelper.typeAliasFromIndexByClassId(classId)
+                val ktClass = when (val klass = declarationProvider.getClassByClassId(classId)) {
+                    null -> declarationProvider.getTypeAliasByClassId(classId)
                     else -> if (klass.getClassId() == null) null else klass
                 } ?: return@computeIfAbsent Optional.empty()
                 val firFile = firFileBuilder.buildRawFirFileWithCaching(ktClass.containingKtFile, cache, preferLazyBodies = true)
@@ -55,8 +55,8 @@ internal class FirProviderHelper(
         return executeOrReturnDefaultValueOnPCE(emptyList()) {
             cache.callableByCallableId.computeIfAbsent(callableId) {
                 val files = Sets.newIdentityHashSet<KtFile>().apply {
-                    indexHelper.getTopLevelFunctions(callableId).mapTo(this) { it.containingKtFile }
-                    indexHelper.getTopLevelProperties(callableId).mapTo(this) { it.containingKtFile }
+                    declarationProvider.getTopLevelFunctions(callableId).mapTo(this) { it.containingKtFile }
+                    declarationProvider.getTopLevelProperties(callableId).mapTo(this) { it.containingKtFile }
                 }
                 @OptIn(ExperimentalStdlibApi::class)
                 buildList {

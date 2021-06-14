@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.sessions
 
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.session.FirModuleInfoBasedModuleData
 import org.jetbrains.kotlin.idea.caches.project.LibraryModificationTracker
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveStateConfigurator
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.addValueFor
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.executeWithoutPCE
@@ -25,6 +27,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 internal class FirIdeSessionProviderStorage(private val project: Project) {
     private val sessionsCache = ConcurrentHashMap<ModuleSourceInfo, FromModuleViewSessionCache>()
+    private val configurator = ServiceManager.getService(project, FirModuleResolveStateConfigurator::class.java)
 
     private val librariesCache by cachedValue(project, LibraryModificationTracker.getInstance(project)) { LibrariesCache() }
 
@@ -42,6 +45,7 @@ internal class FirIdeSessionProviderStorage(private val project: Project) {
             val session = executeWithoutPCE {
                 FirIdeSessionFactory.createSourcesSession(
                     project,
+                    configurator,
                     rootModule,
                     builtinsAndCloneableSession,
                     firPhaseRunner,

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.providers
 
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
@@ -21,7 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
-import org.jetbrains.kotlin.idea.fir.low.level.api.IndexHelper
+import org.jetbrains.kotlin.idea.fir.low.level.api.DeclarationProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveStateConfigurator
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
@@ -37,18 +36,17 @@ internal class FirIdeProvider(
     val kotlinScopeProvider: FirKotlinScopeProvider,
     firFileBuilder: FirFileBuilder,
     val cache: ModuleFileCache,
-    searchScope: GlobalSearchScope,
+    private val declarationProvider: DeclarationProvider,
 ) : FirProvider() {
     override val symbolProvider: FirSymbolProvider = SymbolProvider()
 
-    private val indexHelper = IndexHelper(project, searchScope)
     private val packageExistenceChecker = ServiceManager.getService(project, FirModuleResolveStateConfigurator::class.java)
         .createPackageExistingCheckerForModule(moduleInfo)
 
     private val providerHelper = FirProviderHelper(
         cache,
         firFileBuilder,
-        indexHelper,
+        declarationProvider,
         packageExistenceChecker,
     )
 
@@ -103,7 +101,7 @@ internal class FirIdeProvider(
     }
 
     override fun getClassNamesInPackage(fqName: FqName): Set<Name> =
-        indexHelper.getClassNamesInPackage(fqName)
+        declarationProvider.getClassNamesInPackage(fqName)
 
     @NoMutableState
     private inner class SymbolProvider : FirSymbolProvider(session) {
