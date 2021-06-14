@@ -5,10 +5,17 @@
 
 package org.jetbrains.uast.kotlin
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.uast.*
 
 interface BaseKotlinConverter {
+
+    fun convertDeclaration(
+        element: PsiElement,
+        givenParent: UElement?,
+        requiredTypes: Array<out Class<out UElement>>
+    ): UElement?
 
     fun convertReceiverParameter(receiver: KtTypeReference): UParameter? {
         val call = (receiver.parent as? KtCallableDeclaration) ?: return null

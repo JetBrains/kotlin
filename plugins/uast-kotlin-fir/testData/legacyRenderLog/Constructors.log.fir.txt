@@ -5,20 +5,34 @@ UFile (package = )
             UParameter (name = str)
         UMethod (name = A)
             UParameter (name = i)
+            UBlockExpression
+                UastEmptyExpression
         UMethod (name = getStr)
     UClass (name = AWithInit)
         UField (name = str)
         UMethod (name = AWithInit)
             UParameter (name = str)
+            UBlockExpression
+                UBlockExpression
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION)
         UMethod (name = AWithInit)
             UParameter (name = i)
+            UBlockExpression
+                UastEmptyExpression
         UMethod (name = getStr)
     UClass (name = AWith2Init)
         UField (name = str)
         UMethod (name = AWith2Init)
             UParameter (name = str)
+            UBlockExpression
+                UBlockExpression
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION)
+                UBlockExpression
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION)
         UMethod (name = AWith2Init)
             UParameter (name = i)
+            UBlockExpression
+                UastEmptyExpression
         UMethod (name = getStr)
     UClass (name = AOnlyInit)
         UMethod (name = AOnlyInit)
@@ -27,10 +41,12 @@ UFile (package = )
         UMethod (name = AWithSecondary)
             UParameter (name = i)
             UBlockExpression
+                UastEmptyExpression
                 [!] UnknownKotlinExpression (BINARY_EXPRESSION)
         UMethod (name = AWithSecondary)
             UParameter (name = s)
             UBlockExpression
+                UastEmptyExpression
                 [!] UnknownKotlinExpression (BINARY_EXPRESSION)
         UMethod (name = getA)
         UMethod (name = setA)
@@ -40,10 +56,14 @@ UFile (package = )
         UMethod (name = AWithSecondaryInit)
             UParameter (name = i)
             UBlockExpression
+                UastEmptyExpression
+                UBlockExpression
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION)
                 [!] UnknownKotlinExpression (BINARY_EXPRESSION)
         UMethod (name = AWithSecondaryInit)
             UParameter (name = s)
             UBlockExpression
+                UastEmptyExpression
                 [!] UnknownKotlinExpression (BINARY_EXPRESSION)
                 [!] UnknownKotlinExpression (PROPERTY)
                 [!] UnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
@@ -54,4 +74,7 @@ UFile (package = )
         UField (name = a)
         UMethod (name = AWithFieldInit)
             UParameter (name = i)
+            UBlockExpression
+                UBlockExpression
+                    [!] UnknownKotlinExpression (BINARY_EXPRESSION)
         UMethod (name = getA)

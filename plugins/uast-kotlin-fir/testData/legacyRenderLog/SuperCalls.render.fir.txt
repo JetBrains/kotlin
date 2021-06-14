@@ -8,19 +8,26 @@ public final class SuperCallsKt {
 public class A {
     private final var str: java.lang.String
     public fun A(str: java.lang.String) = UastEmptyExpression
-    public fun A(i: int) = UastEmptyExpression
+    public fun A(i: int) {
+        UastEmptyExpression
+    }
     public final fun getStr() : java.lang.String = UastEmptyExpression
     public fun foo(a: long) : void {
     }
 }
 
 public final class B : A {
-    public fun B(param: java.lang.String) = UastEmptyExpression
+    public fun B(param: java.lang.String) {
+        UastEmptyExpression
+    }
 }
 
 public final class C : A {
-    public fun C(p: java.lang.String) = UastEmptyExpression
+    public fun C(p: java.lang.String) {
+        UastEmptyExpression
+    }
     public fun C(i: int) {
+        UastEmptyExpression
         [!] UnknownKotlinExpression (CALL_EXPRESSION)
     }
     public fun foo(a: long) : void {

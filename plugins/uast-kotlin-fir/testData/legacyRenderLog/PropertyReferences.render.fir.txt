@@ -19,7 +19,11 @@ public final class PropertyReferencesKt {
 public final class A {
     private var privateProp: int = "not-yet-compile-time-constant"
     private var mutableProp: int
-    public fun A(init: int) = UastEmptyExpression
+    public fun A(init: int) {
+        {
+            [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+        }
+    }
     public final fun getMutableProp() : int = UastEmptyExpression
     public final fun setMutableProp(value: int) : void = UastEmptyExpression
     public final fun add(x: int) : int {
