@@ -21,6 +21,7 @@ class LldbTests {
         > log enable lldb all
         > b main.kt:2
         Breakpoint 1: [..]
+        > b list
 
         > ${lldbCommandRunOrContinue()}
         Process [..] stopped
