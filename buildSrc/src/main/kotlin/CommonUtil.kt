@@ -87,3 +87,6 @@ val Project.isConfigurationCacheDisabled
 
 val Project.isIdeaActive
     get() = providers.systemProperty("idea.active").forUseAtConfigurationTime().isPresent
+
+val Project.intellijCommunityDir: File
+    get() = rootDir.resolve("kotlin-ide/intellij/community").takeIf { it.isDirectory } ?: rootDir.resolve("kotlin-ide/intellij")
