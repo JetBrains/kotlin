@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -120,7 +121,7 @@ internal class ReanalyzableFunctionStructureElement(
         val originalFunction = firSymbol.fir as FirSimpleFunction
         val designation = originalFunction.collectDesignation()
 
-        val temporaryFunction = RawFirNonLocalDeclarationBuilder.buildWithRebind(
+        val temporaryFunction = RawFirNonLocalDeclarationBuilder.buildWithFunctionSymbolRebind(
             session = originalFunction.moduleData.session,
             scopeProvider = originalFunction.moduleData.session.firIdeProvider.kotlinScopeProvider,
             designation = designation,
@@ -142,6 +143,7 @@ internal class ReanalyzableFunctionStructureElement(
             firLazyDeclarationResolver.lazyResolveDeclaration(
                 firDeclarationToResolve = originalFunction,
                 moduleFileCache = cache,
+                scopeSession = ScopeSession(),
                 toPhase = FirResolvePhase.BODY_RESOLVE,
                 checkPCE = true,
                 declarationPhaseDowngraded = true,
@@ -176,7 +178,7 @@ internal class ReanalyzablePropertyStructureElement(
         val originalProperty = firSymbol.fir
         val designation = originalProperty.collectDesignation()
 
-        val temporaryProperty = RawFirNonLocalDeclarationBuilder.buildWithRebind(
+        val temporaryProperty = RawFirNonLocalDeclarationBuilder.buildWithFunctionSymbolRebind(
             session = originalProperty.moduleData.session,
             scopeProvider = originalProperty.moduleData.session.firIdeProvider.kotlinScopeProvider,
             designation = designation,
@@ -201,6 +203,7 @@ internal class ReanalyzablePropertyStructureElement(
             firLazyDeclarationResolver.lazyResolveDeclaration(
                 firDeclarationToResolve = originalProperty,
                 moduleFileCache = cache,
+                scopeSession = ScopeSession(),
                 toPhase = FirResolvePhase.BODY_RESOLVE,
                 checkPCE = true,
                 declarationPhaseDowngraded = true,

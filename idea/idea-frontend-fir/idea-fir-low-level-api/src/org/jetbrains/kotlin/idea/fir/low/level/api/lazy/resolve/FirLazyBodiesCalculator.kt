@@ -34,7 +34,7 @@ internal object FirLazyBodiesCalculator {
     fun calculateLazyBodiesForFunction(designation: FirDeclarationDesignation) {
         val simpleFunction = designation.declaration as FirSimpleFunction
         if (simpleFunction.body !is FirLazyBlock) return
-        val newFunction = RawFirNonLocalDeclarationBuilder.buildWithRebind(
+        val newFunction = RawFirNonLocalDeclarationBuilder.buildWithFunctionSymbolRebind(
             session = simpleFunction.moduleData.session,
             scopeProvider = simpleFunction.moduleData.session.firIdeProvider.kotlinScopeProvider,
             designation = designation,
@@ -51,7 +51,7 @@ internal object FirLazyBodiesCalculator {
         require(!secondaryConstructor.isPrimary)
         if (secondaryConstructor.body !is FirLazyBlock) return
 
-        val newFunction = RawFirNonLocalDeclarationBuilder.buildWithRebind(
+        val newFunction = RawFirNonLocalDeclarationBuilder.buildWithFunctionSymbolRebind(
             session = secondaryConstructor.moduleData.session,
             scopeProvider = secondaryConstructor.moduleData.session.firIdeProvider.kotlinScopeProvider,
             designation = designation,
@@ -67,7 +67,7 @@ internal object FirLazyBodiesCalculator {
         val firProperty = designation.declaration as FirProperty
         if (!needCalculatingLazyBodyForProperty(firProperty)) return
 
-        val newProperty = RawFirNonLocalDeclarationBuilder.buildWithRebind(
+        val newProperty = RawFirNonLocalDeclarationBuilder.buildWithFunctionSymbolRebind(
             session = firProperty.moduleData.session,
             scopeProvider = firProperty.moduleData.session.firIdeProvider.kotlinScopeProvider,
             designation = designation,

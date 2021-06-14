@@ -69,6 +69,6 @@ internal object LazyTransformerFactory {
             towerDataContextCollector,
             firProviderInterceptor,
         )
-        else -> error("Non-lazy phase $this")
+        else -> error("Non-lazy phase $phase")
     }
 }

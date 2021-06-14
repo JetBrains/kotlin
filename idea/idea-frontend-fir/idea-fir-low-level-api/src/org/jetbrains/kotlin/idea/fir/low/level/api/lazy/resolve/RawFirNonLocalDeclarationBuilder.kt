@@ -46,7 +46,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             }
         }
 
-        fun buildWithRebind(
+        fun buildWithFunctionSymbolRebind(
             session: FirSession,
             scopeProvider: FirScopeProvider,
             designation: FirDeclarationDesignation,

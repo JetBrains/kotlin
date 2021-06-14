@@ -138,6 +138,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         state.firLazyDeclarationResolver.lazyResolveFileDeclaration(
             firFile = firFile,
             moduleFileCache = session.cache,
+            scopeSession = ScopeSession(),
             toPhase = FirResolvePhase.IMPORTS
         )
 

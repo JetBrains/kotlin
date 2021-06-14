@@ -108,7 +108,7 @@ internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBui
         firFile: FirFile,
         moduleFileCache: ModuleFileCache,
         toPhase: FirResolvePhase,
-        scopeSession: ScopeSession = ScopeSession(),
+        scopeSession: ScopeSession,
         checkPCE: Boolean = false,
     ) {
         moduleFileCache.firFileLockProvider.runCustomResolveUnderLock(firFile, checkPCE) {
@@ -186,7 +186,7 @@ internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBui
     fun lazyResolveDeclaration(
         firDeclarationToResolve: FirDeclaration,
         moduleFileCache: ModuleFileCache,
-        scopeSession: ScopeSession = ScopeSession(),
+        scopeSession: ScopeSession,
         toPhase: FirResolvePhase,
         checkPCE: Boolean,
         declarationPhaseDowngraded: Boolean = false,

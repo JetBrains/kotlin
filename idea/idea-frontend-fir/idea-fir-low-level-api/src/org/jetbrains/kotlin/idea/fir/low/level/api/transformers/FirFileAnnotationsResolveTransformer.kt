@@ -54,5 +54,7 @@ internal class FirFileAnnotationsResolveTransformer(
         check(annotations.all { it.resolveStatus == FirAnnotationResolveStatus.Resolved }) { "Annotation was not resolved" }
     }
 
+    override fun ensureResolved(declaration: FirDeclaration) = error("Not implemented")
+
     override fun needReplacePhase(firDeclaration: FirDeclaration): Boolean = false
 }

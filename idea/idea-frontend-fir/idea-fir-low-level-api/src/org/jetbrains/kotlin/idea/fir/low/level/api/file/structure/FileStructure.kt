@@ -119,6 +119,7 @@ internal class FileStructure private constructor(
         firLazyDeclarationResolver.lazyResolveDeclaration(
             firDeclarationToResolve = firDeclaration,
             moduleFileCache = moduleFileCache,
+            scopeSession = ScopeSession(),
             toPhase = FirResolvePhase.BODY_RESOLVE,
             checkPCE = true,
         )

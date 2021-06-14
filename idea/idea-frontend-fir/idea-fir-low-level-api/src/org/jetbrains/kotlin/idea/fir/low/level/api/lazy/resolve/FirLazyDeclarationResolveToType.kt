@@ -37,7 +37,7 @@ internal fun FirLazyDeclarationResolver.lazyResolveDeclaration(
     firDeclaration: FirDeclaration,
     moduleFileCache: ModuleFileCache,
     toResolveType: ResolveType,
-    scopeSession: ScopeSession = ScopeSession(),
+    scopeSession: ScopeSession,
     checkPCE: Boolean = false,
 ) {
     when (toResolveType) {

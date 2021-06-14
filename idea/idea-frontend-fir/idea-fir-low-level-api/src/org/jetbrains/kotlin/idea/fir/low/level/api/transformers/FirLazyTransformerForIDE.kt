@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignation
 
 internal interface FirLazyTransformerForIDE {
     fun transformDeclaration(phaseRunner: FirPhaseRunner)
-    fun ensureResolved(declaration: FirDeclaration): Unit = error("Not implemented")
+    fun ensureResolved(declaration: FirDeclaration)
     fun ensureResolvedDeep(declaration: FirDeclaration) {
         if (!enableDeepEnsure) return
         ensureResolved(declaration)
@@ -68,6 +68,7 @@ internal interface FirLazyTransformerForIDE {
 
         val DUMMY = object : FirLazyTransformerForIDE {
             override fun transformDeclaration(phaseRunner: FirPhaseRunner) = Unit
+            override fun ensureResolved(declaration: FirDeclaration) = error("Not implemented")
         }
     }
 }
