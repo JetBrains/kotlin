@@ -4052,7 +4052,8 @@ interopTest("interop_types") {
 }
 
 interopTest("interop_structAnonym") {
-    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    disabled = (project.testTarget == 'wasm32') || // No interop for wasm yet.
+            (project.testTarget == 'mingw_x86')
     source = "interop/basics/structAnonym.kt"
     interop = 'structAnonym'
 }
