@@ -11,11 +11,9 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirPhaseManager
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.tryCollectDesignation
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirSessionInvalidator
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.isLocalDeclaration
 
 @ThreadSafeMutableState
 internal class IdeFirPhaseManager(
@@ -28,7 +26,6 @@ internal class IdeFirPhaseManager(
         requiredPhase: FirResolvePhase
     ) {
         val fir = symbol.fir as FirDeclaration
-        if (fir.isLocalDeclaration) return
         try {
             if (fir.resolvePhase < requiredPhase) { //TODO Make thread safe
                 lazyDeclarationResolver.lazyResolveDeclaration(
@@ -36,7 +33,8 @@ internal class IdeFirPhaseManager(
                     moduleFileCache = cache,
                     scopeSession = ScopeSession(),
                     toPhase = requiredPhase,
-                    checkPCE = true
+                    checkPCE = true,
+                    skipLocalDeclaration = true,
                 )
             }
         } catch (e: Throwable) {

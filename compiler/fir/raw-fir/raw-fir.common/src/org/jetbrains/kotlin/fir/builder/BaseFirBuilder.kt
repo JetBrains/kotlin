@@ -64,11 +64,12 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
     /**** Class name utils ****/
     inline fun <T> withChildClassName(
         name: Name,
-        isLocal: Boolean = context.firFunctionTargets.isNotEmpty(),
+        forceLocalContext: Boolean = false,
         l: () -> T
     ): T {
         context.className = context.className.child(name)
-        context.localBits.add(isLocal)
+        val oldForcedLocalContext = context.forcedLocalContext
+        context.forcedLocalContext = forceLocalContext || context.forcedLocalContext
         val dispatchReceiversNumber = context.dispatchReceiverTypesStack.size
         return try {
             l()
@@ -82,7 +83,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             }
 
             context.className = context.className.parent()
-            context.localBits.removeLast()
+            context.forcedLocalContext = oldForcedLocalContext
         }
     }
 
@@ -99,9 +100,9 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         }
     }
 
-    fun callableIdForName(name: Name, local: Boolean = false) =
+    fun callableIdForName(name: Name) =
         when {
-            local -> {
+            context.inLocalContext -> {
                 val pathFqName =
                     context.firFunctionTargets.fold(
                         if (context.className == FqName.ROOT) context.packageFqName else context.currentClassId.asSingleFqName()

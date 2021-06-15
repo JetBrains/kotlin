@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.getContainingFile
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.isLocalDeclaration
 import org.jetbrains.kotlin.idea.util.ifFalse
 
 class FirDeclarationDesignationWithFile(
@@ -55,14 +54,16 @@ private fun FirRegularClass.collectForNonLocal(): List<FirDeclaration> {
 }
 
 private fun collectDesignationPath(declaration: FirDeclaration): List<FirDeclaration>? {
-    if (declaration.isLocalDeclaration) return null
     val containingClass = when (declaration) {
         is FirCallableDeclaration<*> -> {
-            val isLocalMember = (declaration as? FirCallableMemberDeclaration<*>)?.status?.visibility == Visibilities.Local
-            if (isLocalMember) return null
+            if (declaration.symbol.callableId.isLocal) return null
+            if ((declaration as? FirCallableMemberDeclaration<*>)?.status?.visibility == Visibilities.Local) return null
             when (declaration) {
-                is FirSimpleFunction, is FirProperty, is FirField, is FirConstructor ->
-                    declaration.containingClass()?.toFirRegularClass(declaration.moduleData.session)
+                is FirSimpleFunction, is FirProperty, is FirField, is FirConstructor -> {
+                    val klass = declaration.containingClass() ?: return emptyList()
+                    if (klass.classId.isLocal) return null
+                    klass.toFirRegularClass(declaration.moduleData.session)
+                }
                 else -> return null
             }
         }

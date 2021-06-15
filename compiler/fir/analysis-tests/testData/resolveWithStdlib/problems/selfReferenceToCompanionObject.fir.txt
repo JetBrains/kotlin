@@ -57,12 +57,12 @@ FILE: selfReferenceToCompanionObject.kt
                 public get(): R|kotlin/String|
 
             public final val closure2: R|() -> kotlin/String| = fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
-                ^ this@R|/<anonymous>|.R|/<anonymous>.y|
+                ^ this@R|/<anonymous>|.R|<local>/y|
             }
 
                 public get(): R|() -> kotlin/String|
 
-            public final override val z: R|kotlin/String| = this@R|/<anonymous>|.R|/<anonymous>.closure2|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()
+            public final override val z: R|kotlin/String| = this@R|/<anonymous>|.R|<local>/closure2|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()
                 public get(): R|kotlin/String|
 
         }

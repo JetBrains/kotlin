@@ -8,7 +8,7 @@ FILE: implicitInLocalClasses.kt
             }
 
             public final fun foo(x: R|kotlin/Int|): R|kotlin/Boolean| {
-                ^foo this@R|/A|.R|/A.bar|(R|<local>/x|)
+                ^foo this@R|/A|.R|<local>/bar|(R|<local>/x|)
             }
 
             public final fun bar(y: R|kotlin/Int|): R|kotlin/Boolean| {
@@ -17,7 +17,7 @@ FILE: implicitInLocalClasses.kt
 
             public final val w: R|kotlin/Boolean|
                 public get(): R|kotlin/Boolean| {
-                    ^ this@R|/A|.R|/A.z|
+                    ^ this@R|/A|.R|<local>/z|
                 }
 
             public final val z: R|kotlin/Boolean|
@@ -28,17 +28,17 @@ FILE: implicitInLocalClasses.kt
         }
 
         lval a: R|A| = R|/A.A|()
-        R|/useBoolean|(R|<local>/a|.R|/A.foo|(Int(1)))
-        R|/useBoolean|(R|<local>/a|.R|/A.bar|(Int(1)))
-        R|/useBoolean|(R|<local>/a|.R|/A.w|)
-        R|/useBoolean|(R|<local>/a|.R|/A.z|)
+        R|/useBoolean|(R|<local>/a|.R|<local>/foo|(Int(1)))
+        R|/useBoolean|(R|<local>/a|.R|<local>/bar|(Int(1)))
+        R|/useBoolean|(R|<local>/a|.R|<local>/w|)
+        R|/useBoolean|(R|<local>/a|.R|<local>/z|)
         local final class B : R|kotlin/Any| {
             public constructor(): R|B| {
                 super<R|kotlin/Any|>()
             }
 
             public final fun foo(x: R|kotlin/Int|): R|kotlin/Boolean| {
-                ^foo this@R|/B|.R|/B.inner|.R|/B.Inner.w|
+                ^foo this@R|/B|.R|<local>/inner|.R|<local>/w|
             }
 
             public final fun bar(y: R|kotlin/Int|): R|kotlin/Boolean| {
@@ -55,12 +55,12 @@ FILE: implicitInLocalClasses.kt
 
                 public final val w: R|kotlin/Boolean|
                     public get(): R|kotlin/Boolean| {
-                        ^ this@R|/B.Inner|.R|/B.Inner.z|
+                        ^ this@R|/B.Inner|.R|<local>/z|
                     }
 
                 public final val z: R|kotlin/Boolean|
                     public get(): R|kotlin/Boolean| {
-                        ^ this@R|/B|.R|/B.bar|(Int(1))
+                        ^ this@R|/B|.R|<local>/bar|(Int(1))
                     }
 
             }
@@ -68,8 +68,8 @@ FILE: implicitInLocalClasses.kt
         }
 
         lval b: R|B| = R|/B.B|()
-        R|/useBoolean|(R|<local>/b|.R|/B.foo|(Int(1)))
-        R|/useBoolean|(R|<local>/b|.R|/B.bar|(Int(1)))
-        R|/useBoolean|(R|<local>/b|.R|/B.inner|.R|/B.Inner.w|)
-        R|/useBoolean|(R|<local>/b|.R|/B.inner|.R|/B.Inner.z|)
+        R|/useBoolean|(R|<local>/b|.R|<local>/foo|(Int(1)))
+        R|/useBoolean|(R|<local>/b|.R|<local>/bar|(Int(1)))
+        R|/useBoolean|(R|<local>/b|.R|<local>/inner|.R|<local>/w|)
+        R|/useBoolean|(R|<local>/b|.R|<local>/inner|.R|<local>/z|)
     }

@@ -11,7 +11,7 @@ digraph inLocalClass_kt {
             1 [label="Enter block"];
             2 [label="Exit local class foo"];
             3 [label="Function call: R|/LocalClass.LocalClass|()"];
-            4 [label="Function call: R|/LocalClass.LocalClass|().R|/LocalClass.run|()"];
+            4 [label="Function call: R|/LocalClass.LocalClass|().R|<local>/run|()"];
             5 [label="Function call: R|<local>/e|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
             6 [label="Exit block"];
         }
@@ -77,7 +77,7 @@ digraph inLocalClass_kt {
             color=blue
             22 [label="Enter block"];
             23 [label="Access variable R|<local>/c|"];
-            24 [label="Assignment: R|/LocalClass.leaked|"];
+            24 [label="Assignment: R|<local>/leaked|"];
             25 [label="Exit block"];
         }
         26 [label="Exit init block" style="filled" fillcolor=red];

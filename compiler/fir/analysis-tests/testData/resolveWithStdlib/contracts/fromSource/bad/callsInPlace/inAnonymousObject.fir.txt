@@ -21,7 +21,7 @@ FILE: inAnonymousObject.kt
                 public get(): R|kotlin/Any|
 
             init {
-                this@R|/<anonymous>|.R|/<anonymous>.leaked| = R|<local>/b|
+                this@R|/<anonymous>|.R|<local>/leaked| = R|<local>/b|
             }
 
             public final override fun run(): R|kotlin/Unit| {
@@ -30,6 +30,6 @@ FILE: inAnonymousObject.kt
 
         }
 
-        R|<local>/obj|.R|/<anonymous>.run|()
+        R|<local>/obj|.R|<local>/run|()
         R|<local>/d|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }

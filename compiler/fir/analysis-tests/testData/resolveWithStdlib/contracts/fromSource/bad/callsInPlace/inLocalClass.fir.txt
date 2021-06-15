@@ -23,7 +23,7 @@ FILE: inLocalClass.kt
             }
 
             init {
-                this@R|/LocalClass|.R|/LocalClass.leaked| = R|<local>/c|
+                this@R|/LocalClass|.R|<local>/leaked| = R|<local>/c|
             }
 
             public final fun run(): R|kotlin/Unit| {
@@ -32,6 +32,6 @@ FILE: inLocalClass.kt
 
         }
 
-        R|/LocalClass.LocalClass|().R|/LocalClass.run|()
+        R|/LocalClass.LocalClass|().R|<local>/run|()
         R|<local>/e|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }

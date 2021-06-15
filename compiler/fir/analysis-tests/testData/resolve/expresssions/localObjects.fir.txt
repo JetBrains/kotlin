@@ -38,7 +38,7 @@ FILE: localObjects.kt
 
         }
 
-        Q|B|.R|/B.foo|()
+        Q|B|.R|<local>/foo|()
     }
     public final val bb: <ERROR TYPE REF: Unresolved name: foo> = <Unresolved name: B>#.<Unresolved name: foo>#()
         public get(): <ERROR TYPE REF: Unresolved name: foo>

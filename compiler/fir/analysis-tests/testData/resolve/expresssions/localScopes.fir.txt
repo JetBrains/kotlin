@@ -20,7 +20,7 @@ FILE: localScopes.kt
         }
 
         lval base: R|BaseLocal| = R|/BaseLocal.BaseLocal|()
-        R|<local>/base|.R|/BaseLocal.baz|()
+        R|<local>/base|.R|<local>/baz|()
         R|<local>/base|.R|/Bar.foo|()
         lval anonymous: R|<anonymous>| = object : R|Bar| {
             private constructor(): R|<anonymous>| {
@@ -32,7 +32,7 @@ FILE: localScopes.kt
 
         }
 
-        R|<local>/anonymous|.R|/<anonymous>.baz|()
+        R|<local>/anonymous|.R|<local>/baz|()
         R|<local>/anonymous|.R|/Bar.foo|()
         local final class DerivedLocal : R|BaseLocal| {
             public constructor(): R|DerivedLocal| {
@@ -45,7 +45,7 @@ FILE: localScopes.kt
         }
 
         lval derived: R|DerivedLocal| = R|/DerivedLocal.DerivedLocal|()
-        R|<local>/derived|.R|/DerivedLocal.gau|()
-        R|<local>/derived|.R|/BaseLocal.baz|()
+        R|<local>/derived|.R|<local>/gau|()
+        R|<local>/derived|.R|<local>/baz|()
         R|<local>/derived|.R|/Bar.foo|()
     }

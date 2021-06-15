@@ -14,5 +14,5 @@ FILE: callableReferenceToLocalClass.kt
         }
 
         lval datas: R|kotlin/collections/List<Data>| = Null(null)!!
-        lval xs: R|kotlin/collections/List<kotlin/Int>| = R|<local>/datas|.R|/myMap|<R|Data|, R|kotlin/Int|>(Q|Data|::R|/Data.x|)
+        lval xs: R|kotlin/collections/List<kotlin/Int>| = R|<local>/datas|.R|/myMap|<R|Data|, R|kotlin/Int|>(Q|Data|::R|<local>/x|)
     }

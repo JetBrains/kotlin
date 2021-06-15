@@ -151,7 +151,7 @@ digraph localClassesWithImplicit_kt {
                             60 [label="Enter block"];
                             61 [label="Access variable R|<local>/b|"];
                             62 [label="Access variable R|kotlin/String.length|"];
-                            63 [label="Function call: this@R|/A|.R|/A.bar|()"];
+                            63 [label="Function call: this@R|/A|.R|<local>/bar|()"];
                             64 [label="Exit block"];
                         }
                         65 [label="Exit when branch result"];
@@ -168,7 +168,7 @@ digraph localClassesWithImplicit_kt {
     ^ when () {
         (R|<local>/b| is R|kotlin/String|) ->  {
             R|<local>/b|.R|kotlin/String.length|
-            this@R|/A|.R|/A.bar|()
+            this@R|/A|.R|<local>/bar|()
         }
         else ->  {
             Int(1)
@@ -238,7 +238,7 @@ digraph localClassesWithImplicit_kt {
                     81 [label="Access variable <Unresolved name: length>#"];
                     82 [label="Access variable R|<local>/a|"];
                     83 [label="Access variable R|kotlin/String.length|"];
-                    84 [label="Function call: this@R|/A|.R|/A.baz|()"];
+                    84 [label="Function call: this@R|/A|.R|<local>/baz|()"];
                     85 [label="Exit block"];
                 }
                 86 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
@@ -248,7 +248,7 @@ digraph localClassesWithImplicit_kt {
             74 [label="Jump: ^bar R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=UNKNOWN>  {
     R|<local>/b|.<Unresolved name: length>#
     R|<local>/a|.R|kotlin/String.length|
-    ^ this@R|/A|.R|/A.baz|()
+    ^ this@R|/A|.R|<local>/baz|()
 }
 )"];
             75 [label="Stub" style="filled" fillcolor=gray];
@@ -352,7 +352,7 @@ digraph localClassesWithImplicit_kt {
                             123 [label="Enter block"];
                             124 [label="Access variable R|<local>/b|"];
                             125 [label="Access variable R|kotlin/String.length|"];
-                            126 [label="Function call: this@R|/<anonymous>|.R|/<anonymous>.bar|()"];
+                            126 [label="Function call: this@R|/<anonymous>|.R|<local>/bar|()"];
                             127 [label="Exit block"];
                         }
                         128 [label="Exit when branch result"];
@@ -369,7 +369,7 @@ digraph localClassesWithImplicit_kt {
     ^ when () {
         (R|<local>/b| is R|kotlin/String|) ->  {
             R|<local>/b|.R|kotlin/String.length|
-            this@R|/<anonymous>|.R|/<anonymous>.bar|()
+            this@R|/<anonymous>|.R|<local>/bar|()
         }
         else ->  {
             Int(1)
@@ -439,7 +439,7 @@ digraph localClassesWithImplicit_kt {
                     144 [label="Access variable R|kotlin/String.length|"];
                     145 [label="Access variable R|<local>/b|"];
                     146 [label="Access variable <Unresolved name: length>#"];
-                    147 [label="Function call: this@R|/<anonymous>|.R|/<anonymous>.baz|()"];
+                    147 [label="Function call: this@R|/<anonymous>|.R|<local>/baz|()"];
                     148 [label="Exit block"];
                 }
                 149 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
@@ -449,7 +449,7 @@ digraph localClassesWithImplicit_kt {
             137 [label="Jump: ^bar R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=UNKNOWN>  {
     R|<local>/a|.R|kotlin/String.length|
     R|<local>/b|.<Unresolved name: length>#
-    ^ this@R|/<anonymous>|.R|/<anonymous>.baz|()
+    ^ this@R|/<anonymous>|.R|<local>/baz|()
 }
 )"];
             138 [label="Stub" style="filled" fillcolor=gray];

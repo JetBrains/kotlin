@@ -21,17 +21,8 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
-internal fun FirDeclaration.getNonLocalDeclarationToResolveAndForceUpgradeToBodyPhase(
-    provider: FirProvider,
-    moduleFileCache: ModuleFileCache,
-    firFileBuilder: FirFileBuilder
-): Pair<FirDeclarationDesignationWithFile, Boolean> {
+internal fun FirDeclaration.getKtDeclarationForFirElement(): KtDeclaration {
     require(this !is FirFile)
-
-    val nonLocalDesignation = tryCollectDesignationWithFile()
-    if (nonLocalDesignation != null) {
-        return nonLocalDesignation to false
-    }
 
     val ktDeclaration = (psi as? KtDeclaration) ?: run {
         (source as? FirFakeSourceElement<*>).psi?.parentOfType()
@@ -61,13 +52,7 @@ internal fun FirDeclaration.getNonLocalDeclarationToResolveAndForceUpgradeToBody
     check(declaration is KtDeclaration) {
         "FirDeclaration should have a PSI of type KtDeclaration"
     }
-
-    val nonLocalDeclaration = declaration.getNonLocalContainingOrThisDeclaration()
-        ?: error("Container for local declaration cannot be null")
-
-    val firDeclaration = nonLocalDeclaration.findSourceNonLocalFirDeclaration(firFileBuilder, provider.symbolProvider, moduleFileCache)
-    val needUpgrade = nonLocalDeclaration !== declaration
-    return firDeclaration.collectDesignationWithFile() to needUpgrade
+    return declaration
 }
 
 internal fun declarationCanBeLazilyResolved(declaration: KtDeclaration): Boolean {

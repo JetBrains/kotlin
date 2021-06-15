@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignationWithFile
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.collectDesignationWithFile
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.tryCollectDesignationWithFile
+import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.runCustomResolveUnderLock
@@ -22,6 +25,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirProviderInter
 import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.LazyTransformerFactory
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.checkCanceled
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.ensurePhase
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.findSourceNonLocalFirDeclaration
 import org.jetbrains.kotlin.idea.util.ifTrue
 
 internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBuilder) {
@@ -189,6 +193,7 @@ internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBui
         toPhase: FirResolvePhase,
         checkPCE: Boolean,
         declarationPhaseDowngraded: Boolean = false,
+        skipLocalDeclaration: Boolean = false,
     ) {
         if (toPhase == FirResolvePhase.RAW_FIR) return
         //TODO Should be synchronised
@@ -205,10 +210,29 @@ internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBui
             return
         }
 
-        val provider = firDeclarationToResolve.moduleData.session.firIdeProvider
-        val (designation, forceToBody) =
-            firDeclarationToResolve.getNonLocalDeclarationToResolveAndForceUpgradeToBodyPhase(provider, moduleFileCache, firFileBuilder)
-        val neededPhase = if (forceToBody) FirResolvePhase.BODY_RESOLVE else toPhase
+        val requestedDeclarationDesignation = firDeclarationToResolve.tryCollectDesignationWithFile()
+
+        val designation: FirDeclarationDesignationWithFile
+        val neededPhase: FirResolvePhase
+        if (requestedDeclarationDesignation != null) {
+            designation = requestedDeclarationDesignation
+            neededPhase = toPhase
+        } else {
+            val possiblyLocalDeclaration = firDeclarationToResolve.getKtDeclarationForFirElement()
+            val nonLocalDeclaration = possiblyLocalDeclaration.getNonLocalContainingOrThisDeclaration()
+                ?: error("Container for local declaration cannot be null")
+
+            val isLocalDeclarationResolveRequested = possiblyLocalDeclaration != nonLocalDeclaration
+            if (isLocalDeclarationResolveRequested && skipLocalDeclaration) return
+
+            val nonLocalFirDeclaration = nonLocalDeclaration.findSourceNonLocalFirDeclaration(
+                firFileBuilder,
+                firDeclarationToResolve.moduleData.session.firIdeProvider.symbolProvider,
+                moduleFileCache
+            )
+            designation = nonLocalFirDeclaration.collectDesignationWithFile()
+            neededPhase = if (isLocalDeclarationResolveRequested) FirResolvePhase.BODY_RESOLVE else toPhase
+        }
 
         //TODO Should be synchronised
         if (!designation.declaration.isValidForResolve()) return

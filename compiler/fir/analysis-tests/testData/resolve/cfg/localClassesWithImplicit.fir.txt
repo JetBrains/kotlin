@@ -20,7 +20,7 @@ FILE: localClassesWithImplicit.kt
                     ^ when () {
                         (R|<local>/b| is R|kotlin/String|) ->  {
                             R|<local>/b|.R|kotlin/String.length|
-                            this@R|/A|.R|/A.bar|()
+                            this@R|/A|.R|<local>/bar|()
                         }
                         else ->  {
                             Int(1)
@@ -35,7 +35,7 @@ FILE: localClassesWithImplicit.kt
                 ^bar R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=UNKNOWN>  {
                     R|<local>/b|.<Unresolved name: length>#
                     R|<local>/a|.R|kotlin/String.length|
-                    ^ this@R|/A|.R|/A.baz|()
+                    ^ this@R|/A|.R|<local>/baz|()
                 }
                 )
             }
@@ -57,7 +57,7 @@ FILE: localClassesWithImplicit.kt
                     ^ when () {
                         (R|<local>/b| is R|kotlin/String|) ->  {
                             R|<local>/b|.R|kotlin/String.length|
-                            this@R|/<anonymous>|.R|/<anonymous>.bar|()
+                            this@R|/<anonymous>|.R|<local>/bar|()
                         }
                         else ->  {
                             Int(1)
@@ -72,7 +72,7 @@ FILE: localClassesWithImplicit.kt
                 ^bar R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=UNKNOWN>  {
                     R|<local>/a|.R|kotlin/String.length|
                     R|<local>/b|.<Unresolved name: length>#
-                    ^ this@R|/<anonymous>|.R|/<anonymous>.baz|()
+                    ^ this@R|/<anonymous>|.R|<local>/baz|()
                 }
                 )
             }

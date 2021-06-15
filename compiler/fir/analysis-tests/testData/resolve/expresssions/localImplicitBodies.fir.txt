@@ -6,7 +6,7 @@ FILE: localImplicitBodies.kt
             }
 
             public final fun sss(): R|kotlin/Int| {
-                ^sss this@R|/<anonymous>|.R|/<anonymous>.abc|()
+                ^sss this@R|/<anonymous>|.R|<local>/abc|()
             }
 
             public final fun abc(): R|kotlin/Int| {
@@ -15,5 +15,5 @@ FILE: localImplicitBodies.kt
 
         }
 
-        lval g: R|kotlin/Int| = R|<local>/x|.R|/<anonymous>.sss|()
+        lval g: R|kotlin/Int| = R|<local>/x|.R|<local>/sss|()
     }

@@ -692,7 +692,7 @@ class DeclarationsConverter(
                     )?.let { declarations += it.firConstructor }
                     classBodyNode?.also {
                         // Use ANONYMOUS_OBJECT_NAME for the owner class id of enum entry declarations
-                        withChildClassName(ANONYMOUS_OBJECT_NAME, isLocal = true) {
+                        withChildClassName(ANONYMOUS_OBJECT_NAME, forceLocalContext = true) {
                             declarations += convertClassBody(it, enumClassWrapper)
                         }
                     }
@@ -1407,7 +1407,7 @@ class DeclarationsConverter(
                     isSuspend = modifiers.hasSuspend()
                 }
 
-                symbol = FirNamedFunctionSymbol(callableIdForName(functionName, isLocal))
+                symbol = FirNamedFunctionSymbol(callableIdForName(functionName))
                 dispatchReceiverType = currentDispatchReceiverType()
             }
         }
