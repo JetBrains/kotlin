@@ -101,7 +101,7 @@ private class ArrayConstructorTransformer(
 }
 
 
-object arrayConstuctorWrapper : IrDeclarationOriginImpl("arrayConstuctorWrapper") {}
+private object ArrayConstructorWrapper : IrDeclarationOriginImpl("arrayConstructorWrapper")
 
 class ArrayConstructorReferenceLowering(val context: CommonBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
@@ -146,7 +146,7 @@ class ArrayConstructorReferenceLowering(val context: CommonBackendContext) : Bod
             val wrapper = context.irFactory.buildFun {
                 startOffset = expression.startOffset
                 endOffset = expression.endOffset
-                origin = arrayConstuctorWrapper
+                origin = ArrayConstructorWrapper
                 name = Name.special("<array_inline_constructor_wrapper>")
                 visibility = DescriptorVisibilities.LOCAL
 
