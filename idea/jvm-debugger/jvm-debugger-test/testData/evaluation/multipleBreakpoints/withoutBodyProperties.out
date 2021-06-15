@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_WITH_IR_EVALUATOR, JVM_IR_WITH_IR_EVALUATOR
 KotlinFieldBreakpoint created at withoutBodyProperties.kt:8
 KotlinFieldBreakpoint created at withoutBodyProperties.kt:13
 LineBreakpoint created at withoutBodyProperties.kt:21

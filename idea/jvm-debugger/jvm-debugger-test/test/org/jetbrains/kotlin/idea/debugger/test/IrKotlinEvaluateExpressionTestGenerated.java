@@ -25,7 +25,7 @@ public class IrKotlinEvaluateExpressionTestGenerated extends AbstractIrKotlinEva
     @RunWith(JUnit3RunnerWithInners.class)
     public static class SingleBreakpoint extends AbstractIrKotlinEvaluateExpressionTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doSingleBreakpointTest, TargetBackend.JVM_IR, testDataFilePath);
+            KotlinTestUtils.runTest(this::doSingleBreakpointTest, TargetBackend.JVM_IR_WITH_OLD_EVALUATOR, testDataFilePath);
         }
 
         @TestMetadata("abstractFunCall.kt")
@@ -39,7 +39,7 @@ public class IrKotlinEvaluateExpressionTestGenerated extends AbstractIrKotlinEva
         }
 
         public void testAllFilesPresentInSingleBreakpoint() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR_WITH_OLD_EVALUATOR, true);
         }
 
         @TestMetadata("annotationValue.kt")
@@ -95,6 +95,11 @@ public class IrKotlinEvaluateExpressionTestGenerated extends AbstractIrKotlinEva
         @TestMetadata("collections.kt")
         public void testCollections() throws Exception {
             runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/collections.kt");
+        }
+
+        @TestMetadata("color.kt")
+        public void testColor() throws Exception {
+            runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/color.kt");
         }
 
         @TestMetadata("dataClassCopy.kt")
@@ -527,11 +532,11 @@ public class IrKotlinEvaluateExpressionTestGenerated extends AbstractIrKotlinEva
         @RunWith(JUnit3RunnerWithInners.class)
         public static class CompilingEvaluator extends AbstractIrKotlinEvaluateExpressionTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doSingleBreakpointTest, TargetBackend.JVM_IR, testDataFilePath);
+                KotlinTestUtils.runTest(this::doSingleBreakpointTest, TargetBackend.JVM_IR_WITH_OLD_EVALUATOR, testDataFilePath);
             }
 
             public void testAllFilesPresentInCompilingEvaluator() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/compilingEvaluator"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/compilingEvaluator"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR_WITH_OLD_EVALUATOR, true);
             }
 
             @TestMetadata("ceAnonymousObject.kt")
@@ -595,11 +600,11 @@ public class IrKotlinEvaluateExpressionTestGenerated extends AbstractIrKotlinEva
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Coroutines extends AbstractIrKotlinEvaluateExpressionTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doSingleBreakpointTest, TargetBackend.JVM_IR, testDataFilePath);
+                KotlinTestUtils.runTest(this::doSingleBreakpointTest, TargetBackend.JVM_IR_WITH_OLD_EVALUATOR, testDataFilePath);
             }
 
             public void testAllFilesPresentInCoroutines() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/coroutines"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/coroutines"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR_WITH_OLD_EVALUATOR, true);
             }
 
             @TestMetadata("anyUpdateInvokeStatic.kt")
@@ -648,11 +653,11 @@ public class IrKotlinEvaluateExpressionTestGenerated extends AbstractIrKotlinEva
         @RunWith(JUnit3RunnerWithInners.class)
         public static class CreateExpression extends AbstractIrKotlinEvaluateExpressionTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doSingleBreakpointTest, TargetBackend.JVM_IR, testDataFilePath);
+                KotlinTestUtils.runTest(this::doSingleBreakpointTest, TargetBackend.JVM_IR_WITH_OLD_EVALUATOR, testDataFilePath);
             }
 
             public void testAllFilesPresentInCreateExpression() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/createExpression"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/createExpression"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR_WITH_OLD_EVALUATOR, true);
             }
 
             @TestMetadata("createExpressionCastToBuiltIn.kt")
@@ -676,11 +681,11 @@ public class IrKotlinEvaluateExpressionTestGenerated extends AbstractIrKotlinEva
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ExtraVariables extends AbstractIrKotlinEvaluateExpressionTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doSingleBreakpointTest, TargetBackend.JVM_IR, testDataFilePath);
+                KotlinTestUtils.runTest(this::doSingleBreakpointTest, TargetBackend.JVM_IR_WITH_OLD_EVALUATOR, testDataFilePath);
             }
 
             public void testAllFilesPresentInExtraVariables() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/extraVariables"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/extraVariables"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR_WITH_OLD_EVALUATOR, true);
             }
 
             @TestMetadata("evBreakpointOnPropertyDeclaration.kt")
@@ -744,11 +749,11 @@ public class IrKotlinEvaluateExpressionTestGenerated extends AbstractIrKotlinEva
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Frame extends AbstractIrKotlinEvaluateExpressionTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doSingleBreakpointTest, TargetBackend.JVM_IR, testDataFilePath);
+                KotlinTestUtils.runTest(this::doSingleBreakpointTest, TargetBackend.JVM_IR_WITH_OLD_EVALUATOR, testDataFilePath);
             }
 
             public void testAllFilesPresentInFrame() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/frame"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/frame"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR_WITH_OLD_EVALUATOR, true);
             }
 
             @TestMetadata("capturedValues1.kt")
@@ -997,11 +1002,11 @@ public class IrKotlinEvaluateExpressionTestGenerated extends AbstractIrKotlinEva
         @RunWith(JUnit3RunnerWithInners.class)
         public static class JavaContext extends AbstractIrKotlinEvaluateExpressionTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doSingleBreakpointTest, TargetBackend.JVM_IR, testDataFilePath);
+                KotlinTestUtils.runTest(this::doSingleBreakpointTest, TargetBackend.JVM_IR_WITH_OLD_EVALUATOR, testDataFilePath);
             }
 
             public void testAllFilesPresentInJavaContext() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/javaContext"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/javaContext"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR_WITH_OLD_EVALUATOR, true);
             }
 
             @TestMetadata("jcBlock.kt")
@@ -1040,11 +1045,11 @@ public class IrKotlinEvaluateExpressionTestGenerated extends AbstractIrKotlinEva
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Labels extends AbstractIrKotlinEvaluateExpressionTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doSingleBreakpointTest, TargetBackend.JVM_IR, testDataFilePath);
+                KotlinTestUtils.runTest(this::doSingleBreakpointTest, TargetBackend.JVM_IR_WITH_OLD_EVALUATOR, testDataFilePath);
             }
 
             public void testAllFilesPresentInLabels() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/labels"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/labels"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR_WITH_OLD_EVALUATOR, true);
             }
 
             @TestMetadata("lCallOnLabeledObj.kt")
@@ -1078,11 +1083,11 @@ public class IrKotlinEvaluateExpressionTestGenerated extends AbstractIrKotlinEva
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Lambdas extends AbstractIrKotlinEvaluateExpressionTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doSingleBreakpointTest, TargetBackend.JVM_IR, testDataFilePath);
+                KotlinTestUtils.runTest(this::doSingleBreakpointTest, TargetBackend.JVM_IR_WITH_OLD_EVALUATOR, testDataFilePath);
             }
 
             public void testAllFilesPresentInLambdas() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/lambdas"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/lambdas"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR_WITH_OLD_EVALUATOR, true);
             }
 
             @TestMetadata("destructuringParam.kt")
@@ -1141,11 +1146,11 @@ public class IrKotlinEvaluateExpressionTestGenerated extends AbstractIrKotlinEva
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Renderer extends AbstractIrKotlinEvaluateExpressionTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doSingleBreakpointTest, TargetBackend.JVM_IR, testDataFilePath);
+                KotlinTestUtils.runTest(this::doSingleBreakpointTest, TargetBackend.JVM_IR_WITH_OLD_EVALUATOR, testDataFilePath);
             }
 
             public void testAllFilesPresentInRenderer() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/renderer"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/renderer"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR_WITH_OLD_EVALUATOR, true);
             }
 
             @TestMetadata("toStringRenderer.kt")
@@ -1160,11 +1165,11 @@ public class IrKotlinEvaluateExpressionTestGenerated extends AbstractIrKotlinEva
     @RunWith(JUnit3RunnerWithInners.class)
     public static class MultipleBreakpoints extends AbstractIrKotlinEvaluateExpressionTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doMultipleBreakpointsTest, TargetBackend.JVM_IR, testDataFilePath);
+            KotlinTestUtils.runTest(this::doMultipleBreakpointsTest, TargetBackend.JVM_IR_WITH_OLD_EVALUATOR, testDataFilePath);
         }
 
         public void testAllFilesPresentInMultipleBreakpoints() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/multipleBreakpoints"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/multipleBreakpoints"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR_WITH_OLD_EVALUATOR, true);
         }
 
         @TestMetadata("clearCache.kt")
@@ -1297,11 +1302,11 @@ public class IrKotlinEvaluateExpressionTestGenerated extends AbstractIrKotlinEva
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Library extends AbstractIrKotlinEvaluateExpressionTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doMultipleBreakpointsTest, TargetBackend.JVM_IR, testDataFilePath);
+                KotlinTestUtils.runTest(this::doMultipleBreakpointsTest, TargetBackend.JVM_IR_WITH_OLD_EVALUATOR, testDataFilePath);
             }
 
             public void testAllFilesPresentInLibrary() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/multipleBreakpoints/library"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/multipleBreakpoints/library"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR_WITH_OLD_EVALUATOR, true);
             }
 
             @TestMetadata("customLibClassName.kt")

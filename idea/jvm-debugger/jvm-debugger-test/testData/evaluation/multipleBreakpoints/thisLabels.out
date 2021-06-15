@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_WITH_IR_EVALUATOR, JVM_IR_WITH_IR_EVALUATOR
 LineBreakpoint created at thisLabels.kt:6
 LineBreakpoint created at thisLabels.kt:8
 LineBreakpoint created at thisLabels.kt:10

@@ -24,6 +24,7 @@ import com.intellij.xdebugger.XDebugSession
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
+import org.jetbrains.kotlin.idea.debugger.evaluate.compilation.CodeFragmentCompiler
 import org.jetbrains.kotlin.idea.debugger.test.preference.*
 import org.jetbrains.kotlin.idea.debugger.test.util.BreakpointCreator
 import org.jetbrains.kotlin.idea.debugger.test.util.KotlinOutputChecker
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.KotlinBaseTest.TestFile
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.jetbrains.kotlin.test.TargetBackend
 import org.junit.ComparisonFailure
 import java.io.File
 
@@ -150,7 +152,13 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
     abstract fun doMultiFileTest(files: TestFiles, preferences: DebuggerPreferences)
 
     override fun initOutputChecker(): OutputChecker {
-        return KotlinOutputChecker(getTestDirectoryPath(), testAppPath, appOutputPath, useIrBackend(), getExpectedOutputFile())
+        return KotlinOutputChecker(
+            getTestDirectoryPath(),
+            testAppPath,
+            appOutputPath,
+            targetBackend(),
+            getExpectedOutputFile()
+        )
     }
 
     override fun setUpModule() {
@@ -220,6 +228,16 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
             KotlinTestUtils.assertEqualsToFile(getExpectedOutputFile(), e.actual)
         }
     }
+
+    open fun fragmentCompilerBackend() = CodeFragmentCompiler.Companion.FragmentCompilerBackend.JVM
+
+    protected fun targetBackend(): TargetBackend =
+        when (fragmentCompilerBackend()) {
+            CodeFragmentCompiler.Companion.FragmentCompilerBackend.JVM ->
+                if (useIrBackend()) TargetBackend.JVM_IR_WITH_OLD_EVALUATOR else TargetBackend.JVM_WITH_OLD_EVALUATOR
+            CodeFragmentCompiler.Companion.FragmentCompilerBackend.JVM_IR ->
+                if (useIrBackend()) TargetBackend.JVM_IR_WITH_IR_EVALUATOR else TargetBackend.JVM_WITH_IR_EVALUATOR
+        }
 
     protected fun getExpectedOutputFile(): File {
         if (useIrBackend()) {

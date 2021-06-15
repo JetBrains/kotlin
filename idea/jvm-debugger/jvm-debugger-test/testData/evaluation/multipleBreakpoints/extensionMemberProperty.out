@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_WITH_IR_EVALUATOR, JVM_IR_WITH_IR_EVALUATOR
 LineBreakpoint created at extensionMemberProperty.kt:13
 LineBreakpoint created at extensionMemberProperty.kt:19
 LineBreakpoint created at extensionMemberProperty.kt:25

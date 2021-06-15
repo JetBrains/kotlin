@@ -1,4 +1,5 @@
-// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JVM_WITH_IR_EVALUATOR, JVM_IR_WITH_IR_EVALUATOR
+// IGNORE_BACKEND: JVM_IR_WITH_OLD_EVALUATOR
 LineBreakpoint created at localFun.kt:9
 LineBreakpoint created at localFun.kt:15
 LineBreakpoint created at localFun.kt:21

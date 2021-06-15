@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_WITH_IR_EVALUATOR, JVM_IR_WITH_IR_EVALUATOR
 LineBreakpoint created at multilineExpressionAtBreakpoint.kt:5
 Run Java
 Connected to the target VM
