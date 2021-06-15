@@ -56,6 +56,9 @@ import org.jetbrains.kotlin.utils.rethrow
 import java.io.File
 import java.util.*
 
+/**
+ * Compares compiled and deserialized IR
+ */
 abstract class AbstractKlibTextTestCase : CodegenTestCase() {
 
     companion object {
@@ -83,9 +86,6 @@ abstract class AbstractKlibTextTestCase : CodegenTestCase() {
         myEnvironment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JS_CONFIG_FILES)
     }
 
-    private val CompilerConfiguration.expectActualLinker: Boolean
-        get() = get(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER) ?: false
-
     fun doTest(wholeFile: File) {
         val expectActualSymbols = mutableMapOf<DeclarationDescriptor, IrSymbol>()
         val ignoreErrors = AbstractIrGeneratorTestCase.shouldIgnoreErrors(wholeFile)
@@ -96,8 +96,7 @@ abstract class AbstractKlibTextTestCase : CodegenTestCase() {
             myEnvironment.configuration.languageVersionSettings.getFeatureSupport(LanguageFeature.MultiPlatformProjects) == LanguageFeature.State.ENABLED
         val klibPath = serializeModule(irModule, bindingContext, stdlib, ignoreErrors, expectActualSymbols, !mppProject)
         val libs = loadKlibFromPath(listOf(runtimeKlibPath, klibPath))
-        val stdlib2 = libs[0]
-        val klib = libs[1]
+        val (stdlib2, klib) = libs
         val deserializedIrModule = deserializeModule(stdlib2, klib)
         val actual = deserializedIrModule.dump(stableOrder = true)
 
@@ -108,7 +107,7 @@ abstract class AbstractKlibTextTestCase : CodegenTestCase() {
         }
     }
 
-    private fun KlibMetadataIncrementalSerializer(configuration: CompilerConfiguration, project: Project, allowErrors: Boolean) =
+    private fun klibMetadataIncrementalSerializer(configuration: CompilerConfiguration, project: Project, allowErrors: Boolean) =
         KlibMetadataIncrementalSerializer(
             languageVersionSettings = configuration.languageVersionSettings,
             metadataVersion = KlibMetadataVersion.INSTANCE,
@@ -140,7 +139,7 @@ abstract class AbstractKlibTextTestCase : CodegenTestCase() {
             )
 
         val moduleDescriptor = irModuleFragment.descriptor
-        val metadataSerializer = KlibMetadataIncrementalSerializer(myEnvironment.configuration, myEnvironment.project, containsErrorCode)
+        val metadataSerializer = klibMetadataIncrementalSerializer(myEnvironment.configuration, myEnvironment.project, containsErrorCode)
 
 
         val compiledKotlinFiles = mutableListOf<KotlinFileSerializedData>()
