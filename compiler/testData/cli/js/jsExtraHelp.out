@@ -27,6 +27,9 @@ where advanced options include:
   -Xir-produce-klib-file     Generate packed klib into file specified by -output. Disables pre-IR backend
   -Xir-property-lazy-initialization
                              Perform lazy initialization for properties
+  -Xir-safe-external-boolean Safe access via Boolean() to Boolean properties in externals to safely cast falsy values.
+  -Xir-safe-external-boolean-diagnostic={log|exception}
+                             Enable runtime diagnostics when access safely to boolean in external declarations
   -Xmetadata-only            Generate *.meta.js and *.kjsm files only
   -Xrepositories=<path>      Paths to additional places where libraries could be found
   -Xtyped-arrays             Translate primitive arrays to JS typed arrays

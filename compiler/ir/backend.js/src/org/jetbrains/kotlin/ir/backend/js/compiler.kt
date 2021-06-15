@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.declarations.StageController
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.noUnboundLeft
-import org.jetbrains.kotlin.js.config.DceRuntimeDiagnostic
+import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.name.FqName
@@ -48,7 +48,7 @@ fun compile(
     generateFullJs: Boolean = true,
     generateDceJs: Boolean = false,
     dceDriven: Boolean = false,
-    dceRuntimeDiagnostic: DceRuntimeDiagnostic? = null,
+    dceRuntimeDiagnostic: RuntimeDiagnostic? = null,
     es6mode: Boolean = false,
     multiModule: Boolean = false,
     relativeRequirePath: Boolean = false,
@@ -56,6 +56,8 @@ fun compile(
     legacyPropertyAccess: Boolean = false,
     baseClassIntoMetadata: Boolean = false,
     lowerPerModule: Boolean = false,
+    safeExternalBoolean: Boolean = false,
+    safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null,
 ): CompilerResult {
     val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer, moduleToName) =
         loadIr(project, mainModule, analyzer, configuration, allDependencies, friendDependencies, irFactory)
@@ -78,7 +80,9 @@ fun compile(
         dceRuntimeDiagnostic = dceRuntimeDiagnostic,
         propertyLazyInitialization = propertyLazyInitialization,
         legacyPropertyAccess = legacyPropertyAccess,
-        baseClassIntoMetadata = baseClassIntoMetadata
+        baseClassIntoMetadata = baseClassIntoMetadata,
+        safeExternalBoolean = safeExternalBoolean,
+        safeExternalBooleanDiagnostic = safeExternalBooleanDiagnostic
     )
 
     // Load declarations referenced during `context` initialization

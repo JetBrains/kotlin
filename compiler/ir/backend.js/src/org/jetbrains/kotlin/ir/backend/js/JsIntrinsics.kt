@@ -164,6 +164,10 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsUnreachableDeclarationLog = getInternalFunction("unreachableDeclarationLog")
     val jsUnreachableDeclarationException = getInternalFunction("unreachableDeclarationException")
 
+    val jsNativeBoolean = getInternalFunction("nativeBoolean")
+    val jsBooleanInExternalLog = getInternalFunction("booleanInExternalLog")
+    val jsBooleanInExternalException = getInternalFunction("booleanInExternalException")
+
     // Coroutines
 
     val jsCoroutineContext
