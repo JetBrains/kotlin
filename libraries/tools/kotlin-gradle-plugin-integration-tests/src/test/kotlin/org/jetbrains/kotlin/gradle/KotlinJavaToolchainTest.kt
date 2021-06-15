@@ -404,7 +404,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             import org.gradle.jvm.toolchain.JavaToolchainService
             
             kotlin {
-                toolchain {
+                jvmToolchain {
                     languageVersion.set(JavaLanguageVersion.of($jdkVersion))
                 }
             }

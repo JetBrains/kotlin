@@ -64,11 +64,11 @@ open class KotlinTopLevelExtension (internal val project: Project) {
     private val toolchainSupport = ToolchainSupport.createToolchain(project)
 
     /**
-     * Configures [Java toolchain](https://docs.gradle.org/current/userguide/toolchains.html) both for Kotlin and Java tasks.
+     * Configures [Java toolchain](https://docs.gradle.org/current/userguide/toolchains.html) both for Kotlin JVM and Java tasks.
      *
      * @param action - action to configure [JavaToolchainSpec]. You could safely cast `Any` into `JavaToolchainSpec`.
      */
-    fun toolchain(action: Action<Any>) {
+    fun jvmToolchain(action: Action<Any>) {
         toolchainSupport.applyToolchain(action)
     }
 
