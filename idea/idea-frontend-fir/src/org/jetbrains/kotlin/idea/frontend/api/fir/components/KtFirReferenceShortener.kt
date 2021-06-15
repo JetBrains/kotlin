@@ -84,6 +84,7 @@ internal class KtFirReferenceShortener(
         val collector = ElementsToShortenCollector(
             context,
             towerContext,
+            selection,
             classShortenOption = { classShortenOption(analysisSession.firSymbolBuilder.buildSymbol(it.fir) as KtClassLikeSymbol) },
             callableShortenOption = { callableShortenOption(analysisSession.firSymbolBuilder.buildSymbol(it.fir) as KtCallableSymbol) })
         firDeclaration.accept(collector)
@@ -287,6 +288,7 @@ private class ShortenQualifier(
 private class ElementsToShortenCollector(
     private val shorteningContext: FirShorteningContext,
     private val towerContextProvider: FirTowerContextProvider,
+    private val selection: TextRange,
     private val classShortenOption: (FirClassLikeSymbol<*>) -> ShortenOption,
     private val callableShortenOption: (FirCallableSymbol<*>) -> ShortenOption,
 ) :
@@ -327,6 +329,7 @@ private class ElementsToShortenCollector(
 
     private fun processTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
         val wholeTypeReference = resolvedTypeRef.psi as? KtTypeReference ?: return
+        if (!wholeTypeReference.textRange.intersects(selection)) return
 
         val wholeClassifierId = resolvedTypeRef.type.lowerBoundIfFlexible().classId ?: return
         val wholeTypeElement = wholeTypeReference.typeElement?.unwrapNullability() as? KtUserType ?: return
@@ -360,7 +363,9 @@ private class ElementsToShortenCollector(
 
     private fun processTypeQualifier(resolvedQualifier: FirResolvedQualifier) {
         val wholeClassQualifier = resolvedQualifier.classId ?: return
-        val wholeQualifierElement = when (val qualifierPsi = resolvedQualifier.psi) {
+        val qualifierPsi = resolvedQualifier.psi ?: return
+        if (!qualifierPsi.textRange.intersects(selection)) return
+        val wholeQualifierElement = when (qualifierPsi) {
             is KtDotQualifiedExpression -> qualifierPsi
             is KtNameReferenceExpression -> qualifierPsi.getDotQualifiedExpressionForSelector() ?: return
             else -> return
@@ -440,8 +445,9 @@ private class ElementsToShortenCollector(
     }
 
     private fun processPropertyReference(resolvedNamedReference: FirResolvedNamedReference) {
-        val referenceExpression = resolvedNamedReference.psi as? KtNameReferenceExpression
-        val qualifiedProperty = referenceExpression?.getDotQualifiedExpressionForSelector() ?: return
+        val referenceExpression = resolvedNamedReference.psi as? KtNameReferenceExpression ?: return
+        if (!referenceExpression.textRange.intersects(selection)) return
+        val qualifiedProperty = referenceExpression.getDotQualifiedExpressionForSelector() ?: return
 
         val callableSymbol = resolvedNamedReference.resolvedSymbol as? FirCallableSymbol<*> ?: return
         processCallableQualifiedAccess(callableSymbol, qualifiedProperty, qualifiedProperty, shorteningContext::findPropertiesInScopes)
@@ -451,6 +457,7 @@ private class ElementsToShortenCollector(
         if (!canBePossibleToDropReceiver(functionCall)) return
 
         val qualifiedCallExpression = functionCall.psi as? KtDotQualifiedExpression ?: return
+        if (!qualifiedCallExpression.textRange.intersects(selection)) return
         val callExpression = qualifiedCallExpression.selectorExpression as? KtCallExpression ?: return
 
         val calleeReference = functionCall.calleeReference
