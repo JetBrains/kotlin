@@ -1,0 +1,8 @@
+// FIR_COMPARISON
+package foo.bar
+
+class A
+
+fun foo(): A {
+    val a: foo.bar.A = foo.bar.A()
+}
