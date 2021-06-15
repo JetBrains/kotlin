@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.codegen.inline
 
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.BaseExpressionCodegen
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -17,7 +16,6 @@ import org.jetbrains.kotlin.incremental.components.ScopeKind
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
@@ -48,12 +46,7 @@ interface SourceCompilerForInline {
 
     fun hasFinallyBlocks(): Boolean
 
-    fun createCodegenForExternalFinallyBlockGenerationOnNonLocalReturn(
-        finallyNode: MethodNode,
-        curFinallyDepth: Int
-    ): BaseExpressionCodegen
-
-    fun generateFinallyBlocksIfNeeded(codegen: BaseExpressionCodegen, returnType: Type, afterReturnLabel: Label, target: Label?)
+    fun generateFinallyBlocks(finallyNode: MethodNode, curFinallyDepth: Int, returnType: Type, afterReturnLabel: Label, target: Label?)
 
     val isCallInsideSameModuleAsCallee: Boolean
 

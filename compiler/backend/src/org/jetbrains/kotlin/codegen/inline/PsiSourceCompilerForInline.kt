@@ -295,19 +295,15 @@ class PsiSourceCompilerForInline(
 
     override fun hasFinallyBlocks() = codegen.hasFinallyBlocks()
 
-    override fun generateFinallyBlocksIfNeeded(codegen: BaseExpressionCodegen, returnType: Type, afterReturnLabel: Label, target: Label?) {
+    override fun generateFinallyBlocks(finallyNode: MethodNode, curFinallyDepth: Int, returnType: Type, afterReturnLabel: Label, target: Label?) {
         // TODO use the target label for non-local break/continue
-        require(codegen is ExpressionCodegen)
-        codegen.generateFinallyBlocksIfNeeded(returnType, null, afterReturnLabel)
-    }
-
-    override fun createCodegenForExternalFinallyBlockGenerationOnNonLocalReturn(finallyNode: MethodNode, curFinallyDepth: Int) =
         ExpressionCodegen(
             finallyNode, codegen.frameMap, codegen.returnType,
             codegen.getContext(), codegen.state, codegen.parentCodegen
         ).also {
             it.addBlockStackElementsForNonLocalReturns(codegen.blockStackElements, curFinallyDepth)
-        }
+        }.generateFinallyBlocksIfNeeded(returnType, null, afterReturnLabel)
+    }
 
     override val isCallInsideSameModuleAsCallee: Boolean
         get() = JvmCodegenUtil.isCallInsideSameModuleAsDeclared(functionDescriptor, codegen.getContext(), codegen.state.outDirectory)
