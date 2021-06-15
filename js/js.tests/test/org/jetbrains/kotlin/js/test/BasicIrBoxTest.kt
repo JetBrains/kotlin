@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
+import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.facade.TranslationUnit
 import org.jetbrains.kotlin.name.FqName
@@ -96,6 +97,7 @@ abstract class BasicIrBoxTest(
         splitPerModule: Boolean,
         propertyLazyInitialization: Boolean,
         safeExternalBoolean: Boolean,
+        safeExternalBooleanDiagnostic: RuntimeDiagnostic?,
     ) {
         val filesToCompile = units.map { (it as TranslationUnit.SourceFile).file }
 
@@ -153,6 +155,7 @@ abstract class BasicIrBoxTest(
                     propertyLazyInitialization = propertyLazyInitialization,
                     lowerPerModule = lowerPerModule,
                     safeExternalBoolean = safeExternalBoolean,
+                    safeExternalBooleanDiagnostic = safeExternalBooleanDiagnostic,
                 )
 
                 compiledModule.jsCode!!.writeTo(outputFile, config)
@@ -183,6 +186,7 @@ abstract class BasicIrBoxTest(
                     multiModule = splitPerModule || perModule,
                     propertyLazyInitialization = propertyLazyInitialization,
                     safeExternalBoolean = safeExternalBoolean,
+                    safeExternalBooleanDiagnostic = safeExternalBooleanDiagnostic,
                 ).jsCode!!.writeTo(pirOutputFile, config)
             }
         } else {
