@@ -144,7 +144,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty("kotlin.mpp.enableCompatibilityMetadataVariant") ?: true
 
     val enableKotlinToolingMetadataArtifact: Boolean
-        get() = booleanProperty("kotlin.mpp.enableKotlinToolingMetadataArtifact") ?: false
+        get() = booleanProperty("kotlin.mpp.enableKotlinToolingMetadataArtifact") ?: true
 
     val mppStabilityNoWarn: Boolean?
         get() = booleanProperty(KotlinMultiplatformPlugin.STABILITY_NOWARN_FLAG)
