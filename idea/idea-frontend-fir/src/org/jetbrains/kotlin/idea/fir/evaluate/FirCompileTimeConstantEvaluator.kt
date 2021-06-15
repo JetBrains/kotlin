@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.evaluate
+package org.jetbrains.kotlin.idea.fir.evaluate
 
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.types.ConstantValueKind
  * An evaluator that transform numeric operation, such as div, into compile-time constant iff involved operands, such as explicit receiver
  * and the argument, are compile-time constant as well.
  */
-class FirCompileTimeConstantEvaluator {
+internal class FirCompileTimeConstantEvaluator {
 
     // TODO: Handle boolean operators, const property loading, class reference, array, annotation values, etc.
     fun evaluate(expression: FirExpression): FirConstExpression<*>? =

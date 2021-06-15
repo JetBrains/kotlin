@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.evaluate.FirCompileTimeConstantEvaluator
+import org.jetbrains.kotlin.idea.fir.evaluate.FirCompileTimeConstantEvaluator
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
 import org.jetbrains.kotlin.idea.frontend.api.components.KtCompileTimeConstantProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
