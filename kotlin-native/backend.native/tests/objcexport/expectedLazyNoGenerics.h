@@ -547,6 +547,51 @@ __attribute__((swift_name("KdocExportKt")))
 + (NSString * _Nullable)whateverA:(NSString *)a error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("whatever(a:)")));
 @end;
 
+__attribute__((swift_name("KotlinPrivateOverrideI1")))
+@protocol KtKotlinPrivateOverrideI1
+@required
+- (int32_t)i123AbstractMethod __attribute__((swift_name("i123AbstractMethod()")));
+- (int32_t)i1OpenMethod __attribute__((swift_name("i1OpenMethod()")));
+@end;
+
+__attribute__((swift_name("KotlinPrivateOverrideI2")))
+@protocol KtKotlinPrivateOverrideI2
+@required
+- (int32_t)i123AbstractMethod __attribute__((swift_name("i123AbstractMethod()")));
+- (int32_t)i234AbstractMethod __attribute__((swift_name("i234AbstractMethod()")));
+- (int32_t)i2AbstractMethod __attribute__((swift_name("i2AbstractMethod()")));
+@end;
+
+__attribute__((swift_name("KotlinPrivateOverrideA1")))
+@interface KtKotlinPrivateOverrideA1 : KtBase <KtKotlinPrivateOverrideI1, KtKotlinPrivateOverrideI2>
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+- (int32_t)a1AbstractMethod __attribute__((swift_name("a1AbstractMethod()")));
+- (int32_t)a1OpenMethod __attribute__((swift_name("a1OpenMethod()")));
+@end;
+
+__attribute__((swift_name("KotlinPrivateOverrideI3")))
+@protocol KtKotlinPrivateOverrideI3
+@required
+- (int32_t)i123AbstractMethod __attribute__((swift_name("i123AbstractMethod()")));
+- (int32_t)i234AbstractMethod __attribute__((swift_name("i234AbstractMethod()")));
+- (int32_t)i3AbstractMethod __attribute__((swift_name("i3AbstractMethod()")));
+@end;
+
+__attribute__((swift_name("KotlinPrivateOverrideI4")))
+@protocol KtKotlinPrivateOverrideI4
+@required
+- (int32_t)i234AbstractMethod __attribute__((swift_name("i234AbstractMethod()")));
+- (int32_t)i4AbstractMethod __attribute__((swift_name("i4AbstractMethod()")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("KotlinPrivateOverrideKt")))
+@interface KtKotlinPrivateOverrideKt : KtBase
++ (id)createP1 __attribute__((swift_name("createP1()")));
++ (id)createP12 __attribute__((swift_name("createP12()")));
+@end;
+
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("Kt35940Kt")))
 @interface KtKt35940Kt : KtBase
