@@ -241,13 +241,23 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractKotlinEvaluateExpressionTest> {
-                model("evaluation/singleBreakpoint", testMethod = "doSingleBreakpointTest")
-                model("evaluation/multipleBreakpoints", testMethod = "doMultipleBreakpointsTest")
+                model("evaluation/singleBreakpoint", testMethod = "doSingleBreakpointTest", targetBackend = TargetBackend.JVM_WITH_OLD_EVALUATOR)
+                model("evaluation/multipleBreakpoints", testMethod = "doMultipleBreakpointsTest", targetBackend = TargetBackend.JVM_WITH_OLD_EVALUATOR)
             }
 
             testClass<AbstractIrKotlinEvaluateExpressionTest> {
-                model("evaluation/singleBreakpoint", testMethod = "doSingleBreakpointTest", targetBackend = TargetBackend.JVM_IR)
-                model("evaluation/multipleBreakpoints", testMethod = "doMultipleBreakpointsTest", targetBackend = TargetBackend.JVM_IR)
+                model("evaluation/singleBreakpoint", testMethod = "doSingleBreakpointTest", targetBackend = TargetBackend.JVM_IR_WITH_OLD_EVALUATOR)
+                model("evaluation/multipleBreakpoints", testMethod = "doMultipleBreakpointsTest", targetBackend = TargetBackend.JVM_IR_WITH_OLD_EVALUATOR)
+            }
+
+            testClass<AbstractKotlinEvaluateExpressionWithIRFragmentCompilerTest> {
+                model("evaluation/singleBreakpoint", testMethod = "doSingleBreakpointTest", targetBackend = TargetBackend.JVM_WITH_IR_EVALUATOR)
+                model("evaluation/multipleBreakpoints", testMethod = "doMultipleBreakpointsTest", targetBackend = TargetBackend.JVM_WITH_IR_EVALUATOR)
+            }
+
+            testClass<AbstractIrKotlinEvaluateExpressionWithIRFragmentCompilerTest> {
+                model("evaluation/singleBreakpoint", testMethod = "doSingleBreakpointTest", targetBackend = TargetBackend.JVM_IR_WITH_IR_EVALUATOR)
+                model("evaluation/multipleBreakpoints", testMethod = "doMultipleBreakpointsTest", targetBackend = TargetBackend.JVM_IR_WITH_IR_EVALUATOR)
             }
 
             testClass<AbstractSelectExpressionForDebuggerTest> {

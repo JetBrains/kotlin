@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_WITH_IR_EVALUATOR, JVM_IR_WITH_IR_EVALUATOR
 LineBreakpoint created at mutations.kt:8
 LineBreakpoint created at mutations.kt:11
 LineBreakpoint created at mutations.kt:14

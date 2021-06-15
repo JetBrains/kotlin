@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_WITH_IR_EVALUATOR, JVM_IR_WITH_IR_EVALUATOR
 LineBreakpoint created at ceAnonymousObjectCapturedInClosure.kt:7 lambdaOrdinal = -1
 Run Java
 Connected to the target VM
