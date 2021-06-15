@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +ProhibitInvisibleAbstractMethodsInSuperclasses
 // MODULE: base
 // FILE: Base.kt

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -44,7 +45,7 @@ object FirOverrideChecker : FirClassChecker() {
 
         for (it in declaration.declarations) {
             if (it is FirSimpleFunction || it is FirProperty) {
-                checkMember(it as FirCallableMemberDeclaration, reporter, typeCheckerContext, firTypeScope, context)
+                checkMember(it as FirCallableMemberDeclaration, declaration, reporter, typeCheckerContext, firTypeScope, context)
             }
         }
     }
@@ -110,6 +111,7 @@ object FirOverrideChecker : FirClassChecker() {
     }
 
     private fun FirCallableMemberDeclaration.checkVisibility(
+        containingClass: FirClass<*>,
         reporter: DiagnosticReporter,
         overriddenSymbols: List<FirCallableSymbol<*>>,
         context: CheckerContext
@@ -131,6 +133,20 @@ object FirOverrideChecker : FirClassChecker() {
                 reporter.reportCannotWeakenAccessPrivilege(this, overridden.fir, context)
                 return
             }
+        }
+
+        val file = context.findClosest<FirFile>() ?: return
+        val containingDeclarations = context.containingDeclarations + containingClass
+        val visibilityChecker = context.session.visibilityChecker
+        val hasVisibleBase = overriddenSymbols.any {
+            val fir = it.fir as? FirCallableMemberDeclaration<*> ?: return@any true
+            visibilityChecker.isVisible(fir, context.session, file, containingDeclarations, null)
+        }
+        if (!hasVisibleBase) {
+            //NB: Old FE reports this in an attempt to override private member,
+            //while the new FE doesn't treat super's private members as overridable, so you won't get them here
+            //instead you will get NOTHING_TO_OVERRIDE, which seems acceptable
+            reporter.reportOn(source, FirErrors.CANNOT_OVERRIDE_INVISIBLE_MEMBER, this, overriddenSymbols.first().fir, context)
         }
     }
 
@@ -170,10 +186,11 @@ object FirOverrideChecker : FirClassChecker() {
 
     private fun checkMember(
         member: FirCallableMemberDeclaration,
+        containingClass: FirClass,
         reporter: DiagnosticReporter,
         typeCheckerContext: AbstractTypeCheckerContext,
         firTypeScope: FirTypeScope,
-        context: CheckerContext,
+        context: CheckerContext
     ) {
         val overriddenMemberSymbols = firTypeScope.retrieveDirectOverriddenOf(member)
 
@@ -188,12 +205,12 @@ object FirOverrideChecker : FirClassChecker() {
             if (kind !is FirRealSourceElementKind && kind !is FirFakeSourceElementKind.PropertyFromParameter) return
 
             val overridden = overriddenMemberSymbols.first().originalOrSelf()
-            val containingClass = overridden.containingClass()?.toFirRegularClass(context.session) ?: return
+            val overriddenClass = overridden.containingClass()?.toFirRegularClass(context.session) ?: return
             reporter.reportOn(
                 member.source,
                 FirErrors.VIRTUAL_MEMBER_HIDDEN,
                 member,
-                containingClass,
+                overriddenClass,
                 context
             )
             return
@@ -214,7 +231,7 @@ object FirOverrideChecker : FirClassChecker() {
             }
         }
 
-        member.checkVisibility(reporter, overriddenMemberSymbols, context)
+        member.checkVisibility(containingClass, reporter, overriddenMemberSymbols, context)
 
         val restriction = member.checkReturnType(
             overriddenSymbols = overriddenMemberSymbols,

@@ -1151,6 +1151,12 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val declaration: KtSymbol
     }
 
+    abstract class CannotOverrideInvisibleMember : KtFirDiagnostic<KtNamedDeclaration>() {
+        override val diagnosticClass get() = CannotOverrideInvisibleMember::class
+        abstract val overridingMember: KtCallableSymbol
+        abstract val baseMember: KtCallableSymbol
+    }
+
     abstract class CannotWeakenAccessPrivilege : KtFirDiagnostic<KtModifierListOwner>() {
         override val diagnosticClass get() = CannotWeakenAccessPrivilege::class
         abstract val overridingVisibility: Visibility

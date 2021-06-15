@@ -27,7 +27,7 @@ import base.*
 // TESTCASE NUMBER: 1
 
 class Case1 : BaseJava() {
-    override fun foo(b: Boolean?) {}
+    <!CANNOT_OVERRIDE_INVISIBLE_MEMBER!>override<!> fun foo(b: Boolean?) {}
 }
 
 fun case1() {
@@ -41,7 +41,7 @@ fun case1() {
 abstract class AbstractClassCase2 : BaseJava() {}
 
 class Case2: AbstractClassCase2() {
-    override fun foo(b: Boolean?) {}
+    <!CANNOT_OVERRIDE_INVISIBLE_MEMBER!>override<!> fun foo(b: Boolean?) {}
 }
 
 fun case2() {

@@ -570,6 +570,11 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val NOTHING_TO_OVERRIDE by error<KtModifierListOwner>(PositioningStrategy.OVERRIDE_MODIFIER) {
             parameter<FirMemberDeclaration>("declaration")
         }
+        
+        val CANNOT_OVERRIDE_INVISIBLE_MEMBER by error<KtNamedDeclaration>(PositioningStrategy.OVERRIDE_MODIFIER) {
+            parameter<FirCallableDeclaration<*>>("overridingMember")
+            parameter<FirCallableDeclaration<*>>("baseMember")
+        }
 
         val CANNOT_WEAKEN_ACCESS_PRIVILEGE by error<KtModifierListOwner>(PositioningStrategy.VISIBILITY_MODIFIER) {
             parameter<Visibility>("overridingVisibility")
