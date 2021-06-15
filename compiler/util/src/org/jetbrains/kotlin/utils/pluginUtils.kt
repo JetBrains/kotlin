@@ -39,7 +39,8 @@ fun decodePluginOptions(options: String): Map<String, List<String>> {
         repeat(valueCount) {
             val size = ois.readInt()
             val byteArray = ByteArray(size)
-            values += String(byteArray, StandardCharsets.UTF_8)
+            val valueBytes = ois.readFully(byteArray)
+            values += String(valueBytes, StandardCharsets.UTF_8)
         }
 
         map[key] = values
