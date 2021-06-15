@@ -40,8 +40,10 @@ interface KotlinJavaToolchain {
          *
          * Major JDK version is considered as compile task input.
          *
-         * @param jdkHomeLocation path to JDK.
+         * @param jdkHomeLocation path to the JDK
+         *
          * *Note*: project build will fail on providing here JRE instead of JDK!
+         *
          * @param jdkVersion provided JDK version
          */
         fun use(
@@ -52,12 +54,16 @@ interface KotlinJavaToolchain {
         /**
          * Set JDK to use for Kotlin compilation.
          *
-         * @see [use]
+         * @param jdkHomeLocation path to the JDK
+         *
+         * **Note**: project build will fail on providing here JRE instead of JDK!
+         *
+         * @param jdkVersion any type that is accepted by [JavaVersion.toVersion]
          */
         fun use(
             jdkHomeLocation: String,
-            jdkVersion: JavaVersion
-        ) = use(File(jdkHomeLocation), jdkVersion)
+            jdkVersion: Any
+        ) = use(File(jdkHomeLocation), JavaVersion.toVersion(jdkVersion))
     }
 
     interface JavaToolchainSetter {
