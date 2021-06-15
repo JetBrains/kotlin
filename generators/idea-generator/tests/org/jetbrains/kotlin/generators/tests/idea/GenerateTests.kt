@@ -1092,6 +1092,7 @@ fun main(args: Array<String>) {
                 model("intentions/importAllMembers", pattern = pattern)
                 model("intentions/importMember", pattern = pattern)
                 model("intentions/convertToBlockBody", pattern = pattern)
+                model("intentions/addWhenRemainingBranches", pattern = pattern)
             }
 
             testClass<AbstractFirShortenRefsTest> {
