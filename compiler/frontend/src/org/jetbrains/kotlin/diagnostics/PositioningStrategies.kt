@@ -821,7 +821,19 @@ object PositioningStrategies {
                     is KtElement -> return mark(selectorExpression)
                 }
             }
+            if (element is KtTypeReference) {
+                element.typeElement?.getReferencedTypeExpression()?.let { return mark(it) }
+            }
             return super.mark(element)
+        }
+    }
+
+    private fun KtTypeElement.getReferencedTypeExpression(): KtElement? {
+        return when (this) {
+            is KtUserType -> referenceExpression
+            is KtNullableType -> innerType?.getReferencedTypeExpression()
+            is KtDefinitelyNotNullType -> innerType?.getReferencedTypeExpression()
+            else -> null
         }
     }
 

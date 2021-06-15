@@ -6,22 +6,22 @@ enum class Color {
     }
 }
 
-class MyColor(val x: <!ENUM_ENTRY_AS_TYPE!>Color.RED<!>, y: <!ENUM_ENTRY_AS_TYPE!>Color.RED<!>) : <!ENUM_ENTRY_AS_TYPE!>Color.RED<!> {
+class MyColor(val x: Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>, y: Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>) : Color.<!ENUM_ENTRY_AS_TYPE!>RED<!> {
 
-    var z: <!ENUM_ENTRY_AS_TYPE!>Color.RED<!> = Color.RED
-    set(arg: <!ENUM_ENTRY_AS_TYPE!>Color.RED<!>) { z = arg }
+    var z: Color.<!ENUM_ENTRY_AS_TYPE!>RED<!> = Color.RED
+    set(arg: Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>) { z = arg }
 
-    fun foo(arg: <!ENUM_ENTRY_AS_TYPE!>Color.RED<!>): <!ENUM_ENTRY_AS_TYPE!>Color.RED<!> = arg
+    fun foo(arg: Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>): Color.<!ENUM_ENTRY_AS_TYPE!>RED<!> = arg
 
-    fun bar(): <!ENUM_ENTRY_AS_TYPE!>Color.RED<!> {
-        class Local : <!ENUM_ENTRY_AS_TYPE!>Color.RED<!>
-        fun local(arg: <!ENUM_ENTRY_AS_TYPE!>Color.RED<!>): <!ENUM_ENTRY_AS_TYPE!>Color.RED<!> = arg
-        val temp: <!ENUM_ENTRY_AS_TYPE!>Color.RED<!> = Color.RED
-        temp as? <!ENUM_ENTRY_AS_TYPE, ENUM_ENTRY_AS_TYPE!>Color.RED<!>
+    fun bar(): Color.<!ENUM_ENTRY_AS_TYPE!>RED<!> {
+        class Local : Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>
+        fun local(arg: Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>): Color.<!ENUM_ENTRY_AS_TYPE!>RED<!> = arg
+        val temp: Color.<!ENUM_ENTRY_AS_TYPE!>RED<!> = Color.RED
+        temp as? Color.<!ENUM_ENTRY_AS_TYPE, ENUM_ENTRY_AS_TYPE!>RED<!>
         if (temp is <!IS_ENUM_ENTRY!>Color.RED<!>) {
-        return temp as <!ENUM_ENTRY_AS_TYPE!>Color.RED<!>
+        return temp as Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>
     }
-        val obj = object : <!ENUM_ENTRY_AS_TYPE!>Color.RED<!> {}
+        val obj = object : Color.<!ENUM_ENTRY_AS_TYPE!>RED<!> {}
         if (obj is <!IS_ENUM_ENTRY!>Color.RED<!>) {
         return obj
     }
@@ -29,26 +29,26 @@ class MyColor(val x: <!ENUM_ENTRY_AS_TYPE!>Color.RED<!>, y: <!ENUM_ENTRY_AS_TYPE
     }
 }
 
-fun create(): Array<<!ENUM_ENTRY_AS_TYPE!>Color.RED<!>>? = null
+fun create(): Array<Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>>? = null
 
-interface Your<T : <!ENUM_ENTRY_AS_TYPE!>Color.RED<!>>
+interface Your<T : Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>>
 
-class His : Your<<!ENUM_ENTRY_AS_TYPE!>Color.RED<!>>
+class His : Your<Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>>
 
-fun <T : <!ENUM_ENTRY_AS_TYPE!>Color.RED<!>> otherCreate(): Array<T>? = null
+fun <T : Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>> otherCreate(): Array<T>? = null
 
-typealias RedAlias = <!ENUM_ENTRY_AS_TYPE!>Color.RED<!>
+typealias RedAlias = Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>
 
-typealias ArrayOfEnumEntry = Array<<!ENUM_ENTRY_AS_TYPE!>Color.RED<!>>
+typealias ArrayOfEnumEntry = Array<Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>>
 
 typealias ArrayOfEnumEntryAlias = Array<RedAlias>
 
 fun <T> bar(a: Any): T = a as T
 
 fun <T> foo() {
-    foo<<!ENUM_ENTRY_AS_TYPE!>Color.RED<!>>()
+    foo<Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>>()
     foo<<!CANNOT_INFER_PARAMETER_TYPE!>RedAlias<!>>()
-    bar<<!ENUM_ENTRY_AS_TYPE!>Color.RED<!>>(<!ARGUMENT_TYPE_MISMATCH!>Color.RED<!>)
+    bar<Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>>(<!ARGUMENT_TYPE_MISMATCH!>Color.RED<!>)
 }
 
-fun Array<<!ENUM_ENTRY_AS_TYPE!>Color.RED<!>>.foo(entries: Array<<!ENUM_ENTRY_AS_TYPE!>Color.RED<!>>): Array<<!ENUM_ENTRY_AS_TYPE!>Color.RED<!>> = null!!
+fun Array<Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>>.foo(entries: Array<Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>>): Array<Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>> = null!!

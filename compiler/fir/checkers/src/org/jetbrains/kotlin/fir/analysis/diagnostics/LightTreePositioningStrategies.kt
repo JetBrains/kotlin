@@ -20,8 +20,7 @@ import org.jetbrains.kotlin.lexer.KtTokens.VISIBILITY_MODIFIERS
 import org.jetbrains.kotlin.psi.KtParameter.VAL_VAR_TOKEN_SET
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStringTemplateExpressionElementType
-import org.jetbrains.kotlin.psi.stubs.elements.KtValueArgumentElementType
-import org.jetbrains.kotlin.psi.stubs.elements.KtValueArgumentListElementType
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 object LightTreePositioningStrategies {
     val DEFAULT = object : LightTreePositioningStrategy() {
@@ -462,14 +461,33 @@ object LightTreePositioningStrategies {
                     return markElement(it, startOffset, endOffset, tree, node)
                 }
             }
-            if (node.tokenType !in KtTokens.QUALIFIED_ACCESS) {
+            if (node.tokenType in KtTokens.QUALIFIED_ACCESS) {
+                val selector = tree.selector(node)
+                if (selector != null) {
+                    return markElement(selector, startOffset, endOffset, tree, node)
+                }
                 return super.mark(node, startOffset, endOffset, tree)
             }
-            val selector = tree.selector(node)
-            if (selector != null) {
-                return markElement(selector, startOffset, endOffset, tree, node)
+            if (node.tokenType == KtNodeTypes.TYPE_REFERENCE) {
+                val typeElement = tree.findChildByType(node, KtStubElementTypes.TYPE_ELEMENT_TYPES)
+                if (typeElement != null) {
+                    val referencedTypeExpression = tree.referencedTypeExpression(typeElement)
+                    if (referencedTypeExpression != null) {
+                        return markElement(referencedTypeExpression, startOffset, endOffset, tree, node)
+                    }
+                }
             }
             return super.mark(node, startOffset, endOffset, tree)
+        }
+    }
+
+    private fun FlyweightCapableTreeStructure<LighterASTNode>.referencedTypeExpression(node: LighterASTNode): LighterASTNode? {
+        return when (node.tokenType) {
+            KtNodeTypes.USER_TYPE -> findChildByType(node, KtNodeTypes.REFERENCE_EXPRESSION)
+                ?: findChildByType(node, KtNodeTypes.ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION)
+            KtNodeTypes.NULLABLE_TYPE, KtNodeTypes.DEFINITELY_NOT_NULL_TYPE -> findChildByType(node, KtStubElementTypes.TYPE_ELEMENT_TYPES)
+                ?.let { referencedTypeExpression(it) }
+            else -> null
         }
     }
 
