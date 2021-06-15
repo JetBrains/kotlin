@@ -127,6 +127,8 @@ class AbstractCollectionsTest {
 
         assertEquals(listOf("ok", "element"), list)
 
+        assertFailsWith<IndexOutOfBoundsException> { list.addAll(-1, listOf()) }
+
         compare(list.storage, list) {
             listBehavior()
         }
