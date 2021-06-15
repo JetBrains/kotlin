@@ -11267,6 +11267,11 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                     runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturingFromArgumentOfFlexibleType.kt");
                 }
 
+                @TestMetadata("dontCheckNewCapturedTypeSpecificChecksForOldOnes.kt")
+                public void testDontCheckNewCapturedTypeSpecificChecksForOldOnes() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/dontCheckNewCapturedTypeSpecificChecksForOldOnes.kt");
+                }
+
                 @TestMetadata("expectedTypeMismatchWithInVariance.kt")
                 public void testExpectedTypeMismatchWithInVariance() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/expectedTypeMismatchWithInVariance.kt");
