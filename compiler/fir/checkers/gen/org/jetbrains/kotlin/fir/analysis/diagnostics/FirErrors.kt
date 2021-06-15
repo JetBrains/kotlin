@@ -468,7 +468,7 @@ object FirErrors {
     val USELESS_CAST by warning0<KtBinaryExpressionWithTypeRHS>(SourceElementPositioningStrategies.AS_TYPE)
     val USELESS_IS_CHECK by warning1<KtElement, Boolean>()
     val IS_ENUM_ENTRY by error0<KtTypeReference>()
-    val ENUM_ENTRY_AS_TYPE by error0<KtTypeReference>()
+    val ENUM_ENTRY_AS_TYPE by error0<KtTypeReference>(SourceElementPositioningStrategies.SELECTOR_BY_QUALIFIED)
 
     // When expressions
     val NO_ELSE_IN_WHEN by error1<KtWhenExpression, List<WhenMissingCase>>(SourceElementPositioningStrategies.WHEN_EXPRESSION)
