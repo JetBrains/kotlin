@@ -2618,6 +2618,10 @@ task interfaceCallsNCasts_functionNameClash(type: KonanLocalTest) {
     source = "codegen/interfaceCallsNCasts/functionNameClash.kt"
 }
 
+task interfaceCallsNCasts_diamond(type: KonanLocalTest) {
+    source = "codegen/interfaceCallsNCasts/diamond.kt"
+}
+
 standaloneTest("multiargs") {
     arguments = ["AAA", "BB", "C"]
     multiRuns = true
