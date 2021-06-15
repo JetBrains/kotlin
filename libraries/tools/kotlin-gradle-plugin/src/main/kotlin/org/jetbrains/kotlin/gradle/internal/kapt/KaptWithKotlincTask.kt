@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.internal
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -113,8 +112,7 @@ abstract class KaptWithKotlincTask @Inject constructor(
 
         val compilerRunner = GradleCompilerRunner(
             taskProvider,
-            kotlinJavaToolchainProvider.get().jdkProvider.javaExecutable.get().asFile,
-            kotlinJavaToolchainProvider.get().jdkProvider.jdkToolsJar.orNull
+            kotlinJavaToolchainProvider.get().currentJvmJdkToolsJar.orNull
         )
         compilerRunner.runJvmCompilerAsync(
             sourcesToCompile = emptyList(),
@@ -122,7 +120,8 @@ abstract class KaptWithKotlincTask @Inject constructor(
             javaSourceRoots = source.files,
             javaPackagePrefix = javaPackagePrefix.orNull,
             args = args,
-            environment = environment
+            environment = environment,
+            jdkHome = kotlinJavaToolchainProvider.get().providedJvm.get().javaHome
         )
     }
 }

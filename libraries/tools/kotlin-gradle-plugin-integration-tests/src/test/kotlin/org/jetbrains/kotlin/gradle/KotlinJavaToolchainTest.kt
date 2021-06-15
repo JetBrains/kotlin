@@ -21,14 +21,15 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
 
     @GradleTestVersions(additionalVersions = ["6.7.1"])
     @GradleTest
-    @DisplayName("Should use by default same jvm as Gradle daemon")
+    @DisplayName("Should use by default same jvm as Gradle daemon for jdkHome")
     internal fun byDefaultShouldUseGradleJDK(gradleVersion: GradleVersion) {
         project(
             projectName = "simple".fullProjectName,
-            gradleVersion = gradleVersion,
+            gradleVersion = gradleVersion
         ) {
-            build("assemble") {
-                assertDaemonIsUsingJdk(getUserJdk().javaExecutableRealPath)
+            build("assemble", enableGradleDebug = true) {
+                assertOutputDoesNotContain("'kotlinOptions.jdkHome' is deprecated and will be ignored in Kotlin 1.7!")
+                assertJdkHomeIsUsingJdk(getUserJdk().javaHomeRealPath)
             }
         }
     }
@@ -41,7 +42,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             projectName = "simple".fullProjectName,
             gradleVersion = gradleVersion
         ) {
-            //lang=Groovy
+            //language=Groovy
             rootBuildGradle.append(
                 """
                 
@@ -65,20 +66,8 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             useJdk9ToCompile()
 
             build("assemble") {
-                assertDaemonIsUsingJdk(getJdk9().javaExecutableRealPath)
+                assertJdkHomeIsUsingJdk(getJdk9().javaHomeRealPath)
             }
-        }
-    }
-
-    @Test
-    @DisplayName("Should fail the build on setting custom JDK when toolchain is available")
-    internal fun errorOnSettingJdkWhenToolchainIsAvailable() {
-        project(
-            projectName = "simple".fullProjectName,
-            gradleVersion = GradleVersion.version("6.7.1"),
-        ) {
-            useJdk9ToCompile()
-            buildAndFail("assemble")
         }
     }
 
@@ -174,11 +163,11 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             )
 
             build("assemble") {
-                assertDaemonIsUsingJdk(
+                assertJdkHomeIsUsingJdk(
                     if (shouldUseToolchain(gradleVersion)) {
                         getToolchainExecPathFromLogs()
                     } else {
-                        getJdk9().javaExecutableRealPath
+                        getJdk9().javaHomeRealPath
                     }
                 )
 
@@ -281,7 +270,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
-    @DisplayName("jdkHome Kotlin option should produce deprecation warning on Gradle builds")
+    @DisplayName("User provided jdkHome Kotlin option should produce deprecation warning on Gradle builds")
     @GradleTest
     internal fun jdkHomeIsDeprecated(gradleVersion: GradleVersion) {
         project(
@@ -302,9 +291,8 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
                 """.trimIndent()
             )
             build("assemble") {
-                assertDaemonIsUsingJdk(getUserJdk().javaExecutableRealPath)
-                assertOutputContains("'kotlinOptions.jdkHome' is deprecated and will ignored in Kotlin 1.6!")
-                assertOutputContains("-jdk-home ${getJdk9().javaHome.absolutePath}")
+                assertJdkHomeIsUsingJdk(getJdk9().javaHomeRealPath)
+                assertOutputContains("'kotlinOptions.jdkHome' is deprecated and will be ignored in Kotlin 1.7!")
             }
         }
     }
@@ -320,7 +308,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         ) {
             useToolchainToCompile(11)
             build("assemble") {
-                assertDaemonIsUsingJdk(getToolchainExecPathFromLogs())
+                assertJdkHomeIsUsingJdk(getToolchainExecPathFromLogs())
             }
         }
     }
@@ -336,21 +324,21 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         ) {
             useToolchainExtension(11)
             build("assemble") {
-                assertDaemonIsUsingJdk(getToolchainExecPathFromLogs())
+                assertJdkHomeIsUsingJdk(getToolchainExecPathFromLogs())
             }
         }
     }
 
-    private fun BuildResult.assertDaemonIsUsingJdk(
+    private fun BuildResult.assertJdkHomeIsUsingJdk(
         javaexecPath: String
-    ) = assertOutputContains("i: connected to the daemon. Daemon is using following 'java' executable to run itself: $javaexecPath")
+    ) = assertOutputContains("[KOTLIN] Kotlin compilation 'jdkHome' argument: $javaexecPath")
 
     private fun getUserJdk(): JavaInfo = Jvm.forHome(File(System.getenv("JAVA_HOME")))
     private fun getJdk9(): JavaInfo = Jvm.forHome(File(System.getenv("JDK_9")))
     // replace required for windows paths so Groovy will not complain about unexpected char '\'
     private fun getJdk9Path(): String = getJdk9().javaHome.absolutePath.replace("\\", "\\\\")
-    private val JavaInfo.javaExecutableRealPath
-        get() = javaExecutable
+    private val JavaInfo.javaHomeRealPath
+        get() = javaHome
             .toPath()
             .toRealPath()
             .toAbsolutePath()
@@ -399,7 +387,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
                  }
             
             afterEvaluate {
-                logger.info("Toolchain exec path: ${'$'}{defaultLauncher.get().executablePath.asFile.absolutePath}")
+                logger.info("Toolchain jdk path: ${'$'}{defaultLauncher.get().metadata.installationPath.asFile.absolutePath}")
             }
             """.trimIndent()
         )
@@ -425,7 +413,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
                 def toolchain = project.extensions.getByType(JavaPluginExtension.class).toolchain
                 def service = project.extensions.getByType(JavaToolchainService.class)
                 def defaultLauncher = service.launcherFor(toolchain)
-                logger.info("Toolchain exec path: ${'$'}{defaultLauncher.get().executablePath.asFile.absolutePath}")
+                logger.info("Toolchain jdk path: ${'$'}{defaultLauncher.get().metadata.installationPath.asFile.absolutePath}")
             }
             """.trimIndent()
         )
@@ -435,6 +423,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
 
     private fun BuildResult.getToolchainExecPathFromLogs() = output
         .lineSequence()
-        .first { it.startsWith("Toolchain exec path:") }
-        .substringAfter("Toolchain exec path: ")
+        .first { it.startsWith("Toolchain jdk path:") }
+        .substringAfter("Toolchain jdk path: ")
 }

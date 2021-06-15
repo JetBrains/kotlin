@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.daemon.common.CompilerId
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
+import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
@@ -55,7 +56,6 @@ is not assignable to 'org.gradle.api.tasks.TaskProvider'" exception
  */
 internal open class GradleCompilerRunner(
     protected val taskProvider: GradleCompileTaskProvider,
-    protected val javaExecutable: File,
     protected val jdkToolsJar: File?
 ) {
 
@@ -78,12 +78,15 @@ internal open class GradleCompilerRunner(
         javaSourceRoots: Iterable<File>,
         javaPackagePrefix: String?,
         args: K2JVMCompilerArguments,
-        environment: GradleCompilerEnvironment
+        environment: GradleCompilerEnvironment,
+        jdkHome: File
     ) {
         args.freeArgs += sourcesToCompile.map { it.absolutePath }
         args.commonSources = commonSources.map { it.absolutePath }.toTypedArray()
         args.javaSourceRoots = javaSourceRoots.map { it.absolutePath }.toTypedArray()
         args.javaPackagePrefix = javaPackagePrefix
+        if (args.jdkHome == null) args.jdkHome = jdkHome.absolutePath
+        loggerProvider.kotlinInfo("Kotlin compilation 'jdkHome' argument: ${args.jdkHome}")
         runCompilerAsync(KotlinCompilerClass.JVM, args, environment)
     }
 
@@ -165,8 +168,7 @@ internal open class GradleCompilerRunner(
             taskPath = pathProvider,
             reportingSettings = environment.reportingSettings,
             kotlinScriptExtensions = environment.kotlinScriptExtensions,
-            allWarningsAsErrors = compilerArgs.allWarningsAsErrors,
-            javaExecutable = javaExecutable
+            allWarningsAsErrors = compilerArgs.allWarningsAsErrors
         )
         TaskLoggers.put(pathProvider, loggerProvider)
         runCompilerAsync(workArgs)
@@ -183,11 +185,10 @@ internal open class GradleCompilerRunner(
             clientIsAliveFlagFile: File,
             sessionIsAliveFlagFile: File,
             compilerFullClasspath: List<File>,
-            javaExecutable: File,
             messageCollector: MessageCollector,
             isDebugEnabled: Boolean
         ): CompileServiceSession? {
-            val compilerId = CompilerId.makeCompilerId(compilerFullClasspath, javaExecutable)
+            val compilerId = CompilerId.makeCompilerId(compilerFullClasspath)
             val additionalJvmParams = arrayListOf<String>()
             return KotlinCompilerRunnerUtils.newDaemonConnection(
                 compilerId, clientIsAliveFlagFile, sessionIsAliveFlagFile,

@@ -114,7 +114,7 @@ internal open class KotlinJvmCompilerArgumentsContributor(
             ?.run {
                 logger.warn(
                     """
-                    'kotlinOptions.jdkHome' is deprecated and will ignored in Kotlin 1.6! 
+                    'kotlinOptions.jdkHome' is deprecated and will be ignored in Kotlin 1.7! 
                     
                     Consider using JavaToolchain on Gradle 6.7+:
                     kotlin {

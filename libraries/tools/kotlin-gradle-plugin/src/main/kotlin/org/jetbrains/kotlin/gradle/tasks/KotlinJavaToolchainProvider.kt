@@ -23,190 +23,141 @@ import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.gradle.utils.propertyWithConvention
 import java.io.File
 import javax.inject.Inject
+import kotlin.reflect.full.functions
 
 abstract class KotlinJavaToolchainProvider @Inject constructor(
-    objects: ObjectFactory,
+    private val objects: ObjectFactory,
     projectLayout: ProjectLayout,
     gradle: Gradle
 ) : KotlinJavaToolchain {
 
-    private val defaultJdkSetter by lazy(LazyThreadSafetyMode.NONE) {
-        DefaultJdkSetter(
-            objects,
-            projectLayout,
-            GradleVersion.version(gradle.gradleVersion)
+    private val currentGradleVersion = GradleVersion.version(gradle.gradleVersion)
+
+    @get:Internal
+    internal val currentJvm: Provider<Jvm> = objects
+        .property(Jvm.current())
+        .chainedFinalizeValueOnRead()
+
+    @get:Internal
+    internal val providedJvm: Property<Jvm> = objects
+        .propertyWithConvention(currentJvm)
+        .chainedFinalizeValueOnRead()
+
+    final override val javaVersion: Provider<JavaVersion> = objects
+        .property(
+            providedJvm.map { jvm ->
+                jvm.javaVersion
+                    ?: throw GradleException(
+                        "Kotlin could not get java version for the JDK installation: " +
+                                jvm.javaHome?.let { "'$it' " }.orEmpty()
+                    )
+            }
         )
+        .chainedFinalizeValueOnRead()
+
+    @get:Internal
+    internal val javaExecutable: RegularFileProperty = objects
+        .fileProperty()
+        .value(
+            providedJvm.flatMap { jvm ->
+                projectLayout.file(
+                    objects.property<File>(
+                        jvm.javaExecutable
+                            ?: throw GradleException(
+                                "Kotlin could not find 'java' executable in the JDK installation: " +
+                                        jvm.javaHome?.let { "'$it' " }.orEmpty()
+                            )
+                    )
+                )
+            }
+        )
+        .chainedFinalizeValueOnRead()
+
+    private fun getToolsJarFromJvm(jvmProvider: Provider<Jvm>): Provider<File?> {
+        return objects
+            .propertyWithConvention(
+                jvmProvider.flatMap { jvm ->
+                    objects.propertyWithConvention(jvm.toolsJar)
+                }
+            )
+            .orElse(javaVersion.flatMap {
+                if (it < JavaVersion.VERSION_1_9) {
+                    throw GradleException(
+                        "Kotlin could not find the required JDK tools in the Java installation. " +
+                                "Make sure Kotlin compilation is running on a JDK, not JRE."
+                    )
+                } else {
+                    objects.propertyWithConvention<File?>(null)
+                }
+            })
     }
 
+    @get:Internal
+    internal val jdkToolsJar: Provider<File?> = getToolsJarFromJvm(providedJvm)
+
+    @get:Internal
+    internal val currentJvmJdkToolsJar: Provider<File?> = getToolsJarFromJvm(currentJvm)
+
+    final override val jdk: KotlinJavaToolchain.JdkSetter = DefaultJdkSetter(providedJvm, currentGradleVersion)
+
     private val defaultJavaToolchainSetter by lazy(LazyThreadSafetyMode.NONE) {
-        if (GradleVersion.version(gradle.gradleVersion) >= TOOLCHAIN_SUPPORTED_VERSION) {
-            DefaultJavaToolchainSetter(objects)
+        if (currentGradleVersion >= TOOLCHAIN_SUPPORTED_VERSION) {
+            DefaultJavaToolchainSetter(providedJvm)
         } else {
             null
         }
     }
 
-    @get:Internal
-    internal val jdkProvider: JdkProvider =
-        if (GradleVersion.version(gradle.gradleVersion) < TOOLCHAIN_SUPPORTED_VERSION) {
-            defaultJdkSetter
-        } else {
-            defaultJavaToolchainSetter!!
-        }
-
-    final override val javaVersion: Provider<JavaVersion>
-        get() = jdkProvider.javaVersion
-
-    final override val jdk: KotlinJavaToolchain.JdkSetter get() = defaultJdkSetter
-
     final override val toolchain: KotlinJavaToolchain.JavaToolchainSetter
         get() = defaultJavaToolchainSetter
             ?: throw GradleException("Toolchain support is available from $TOOLCHAIN_SUPPORTED_VERSION")
 
-    internal interface JdkProvider {
-        val currentJvm: Property<Jvm>
-        val javaExecutable: RegularFileProperty
-        val javaVersion: Property<JavaVersion>
-        val jdkToolsJar: Provider<File?>
-
-        companion object {
-            fun jdkToolsProperty(
-                objectsFactory: ObjectFactory,
-                currentJvm: Provider<Jvm>
-            ): Property<File?> = objectsFactory
-                .propertyWithConvention(
-                    currentJvm.flatMap { jvm ->
-                        objectsFactory.propertyWithConvention(jvm.toolsJar)
-                    }
-                )
-
-            fun defaultJdkToolsJarProvider(
-                objectsFactory: ObjectFactory,
-                javaVersion: Property<JavaVersion>,
-                jdkTools: Property<File?>
-            ): Provider<File?> = jdkTools
-                .orElse(javaVersion.flatMap {
-                    if (it < JavaVersion.VERSION_1_9) {
-                        throw GradleException(
-                            "Kotlin could not find the required JDK tools in the Java installation. " +
-                                    "Make sure Kotlin compilation is running on a JDK, not JRE."
-                        )
-                    } else {
-                        objectsFactory.propertyWithConvention<File?>(null)
-                    }
-                })
-        }
-    }
-
     private class DefaultJdkSetter(
-        private val objectsFactory: ObjectFactory,
-        projectLayout: ProjectLayout,
+        private val providedJvm: Property<Jvm>,
         private val currentGradleVersion: GradleVersion
-    ) : KotlinJavaToolchain.JdkSetter,
-        JdkProvider {
-
-        override val currentJvm: Property<Jvm> = objectsFactory
-            .property(Jvm.current())
-            .chainedFinalizeValueOnRead()
-
-        override val javaExecutable: RegularFileProperty = objectsFactory
-            .fileProperty()
-            .convention(
-                currentJvm.flatMap { jvm ->
-                    projectLayout.file(
-                        objectsFactory.property<File>(
-                            jvm.javaExecutable
-                                ?: throw GradleException(
-                                    "Kotlin could not find 'java' executable in the JDK installation: " +
-                                            jvm.javaHome?.let { "'$it' " }.orEmpty()
-                                )
-                        )
-                    )
-                }
-            )
-            .chainedFinalizeValueOnRead()
-
-        override val javaVersion: Property<JavaVersion> = objectsFactory
-            .propertyWithConvention(
-                currentJvm.map { jvm ->
-                    jvm.javaVersion
-                        ?: throw GradleException(
-                            "Kotlin could not get java version for the JDK installation: " +
-                                    jvm.javaHome?.let { "'$it' " }.orEmpty()
-                        )
-                }
-            )
-
-        private val _jdkToolsJar: Property<File?> = JdkProvider.jdkToolsProperty(
-            objectsFactory,
-            currentJvm
-        )
-        override val jdkToolsJar: Provider<File?> = JdkProvider.defaultJdkToolsJarProvider(
-            objectsFactory,
-            javaVersion,
-            _jdkToolsJar
-        )
+    ) : KotlinJavaToolchain.JdkSetter {
 
         override fun use(
             jdkHomeLocation: File,
             jdkVersion: JavaVersion
         ) {
-            if (currentGradleVersion >= TOOLCHAIN_SUPPORTED_VERSION) {
-                throw GradleException(
-                    "Please use Java toolchains instead"
-                )
+            require(jdkHomeLocation.isDirectory) {
+                "Supplied jdkHomeLocation must be a valid directory. You supplied: $jdkHomeLocation"
+            }
+            require(jdkHomeLocation.exists()) {
+                "Supplied jdkHomeLocation does not exists. You supplied: $jdkHomeLocation"
             }
 
-            val jvm = Jvm.forHome(jdkHomeLocation) as Jvm
-
-            javaExecutable.set(jvm.javaExecutable)
-            _jdkToolsJar.set(jvm.toolsJar)
-            javaVersion.set(jdkVersion)
+            if (currentGradleVersion < GradleVersion.version("6.2.0")) {
+                // Before Gradle 6.2.0 'Jvm.discovered' does not have 'implementationJavaVersion' parameter
+                val jvm = Jvm::class.functions
+                    .first { it.name == "discovered" }
+                    .call(jdkHomeLocation, jdkVersion) as Jvm
+                providedJvm.set(jvm)
+            } else {
+                providedJvm.set(
+                    Jvm.discovered(jdkHomeLocation, null, jdkVersion)
+                )
+            }
         }
     }
 
-    private class DefaultJavaToolchainSetter(
-        objectsFactory: ObjectFactory
-    ) : KotlinJavaToolchain.JavaToolchainSetter,
-        JdkProvider {
-
-        private val javaLauncher: Property<JavaLauncher> = objectsFactory.property()
-
-        override val currentJvm: Property<Jvm> = objectsFactory
-            .propertyWithConvention(
-                javaLauncher.map {
-                    Jvm.forHome(it.metadata.installationPath.asFile) as Jvm
-                }
-            )
-
-        override val javaExecutable: RegularFileProperty = objectsFactory
-            .fileProperty()
-            .apply {
-                set(javaLauncher.map { it.executablePath })
-            }
-
-        override val javaVersion: Property<JavaVersion> = objectsFactory
-            .property(
-                javaLauncher.map {
-                    JavaVersion.toVersion(it.metadata.languageVersion.asInt())
-                }
-            )
-
-        private val _jdkToolsJar = JdkProvider.jdkToolsProperty(
-            objectsFactory,
-            currentJvm
-        )
-
-        override val jdkToolsJar: Provider<File?> = JdkProvider.defaultJdkToolsJarProvider(
-            objectsFactory,
-            javaVersion,
-            _jdkToolsJar
-        )
-
+    private inner class DefaultJavaToolchainSetter(
+        private val providedJvm: Property<Jvm>
+    ) : KotlinJavaToolchain.JavaToolchainSetter {
         override fun use(
             javaLauncher: Provider<JavaLauncher>
         ) {
-            this.javaLauncher.set(javaLauncher)
+            providedJvm.set(
+                javaLauncher.map {
+                    val metadata = javaLauncher.get().metadata
+                    Jvm.discovered(
+                        metadata.installationPath.asFile,
+                        null,
+                        JavaVersion.toVersion(metadata.languageVersion.asInt())
+                    )
+                }
+            )
         }
     }
 }

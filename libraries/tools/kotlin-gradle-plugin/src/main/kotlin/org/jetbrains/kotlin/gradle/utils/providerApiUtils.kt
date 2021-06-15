@@ -52,6 +52,10 @@ internal inline fun <reified T : Any?> ObjectFactory.propertyWithConvention(
     conventionValue: T
 ) = property<T>().convention(conventionValue)
 
+internal inline fun <reified T : Any?> ObjectFactory.providerWithLazyConvention(
+    noinline lazyConventionValue: () -> T
+) = property(lazyConventionValue).map { it.invoke() }
+
 internal inline fun <reified T : Any> ObjectFactory.newInstance() = newInstance(T::class.java)
 
 internal inline fun <reified T : Any> ObjectFactory.newInstance(vararg parameters: Any) =

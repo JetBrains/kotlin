@@ -18,10 +18,9 @@ import java.io.File
  */
 internal class GradleCompilerRunnerWithWorkers(
     taskProvider: GradleCompileTaskProvider,
-    javaExecutable: File,
     jdkToolsJar: File?,
     private val workerExecutor: WorkerExecutor
-) : GradleCompilerRunner(taskProvider, javaExecutable, jdkToolsJar) {
+) : GradleCompilerRunner(taskProvider, jdkToolsJar) {
     override fun runCompilerAsync(workArgs: GradleKotlinCompilerWorkArguments) {
         loggerProvider.kotlinDebug { "Starting Kotlin compiler work from task '${pathProvider}'" }
 

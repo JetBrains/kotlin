@@ -158,7 +158,6 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
         val isolationMode = getWorkerIsolationMode()
         logger.info("Using workers $isolationMode isolation mode to run kapt")
         val toolsJarURLSpec = kotlinJavaToolchainProvider.get()
-            .jdkProvider
             .jdkToolsJar.orNull?.toURI()?.toURL()?.toString().orEmpty()
 
         submitWork(
@@ -170,12 +169,12 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
     }
 
     private fun getWorkerIsolationMode(): IsolationMode {
-        val jdkProvider = kotlinJavaToolchainProvider.get().jdkProvider
-        val gradleJvm = jdkProvider.currentJvm.get()
+        val toolchainProvider = kotlinJavaToolchainProvider.get()
+        val gradleJvm = toolchainProvider.currentJvm.get()
         // Ensuring Gradle build JDK is set to kotlin toolchain by also comparing javaExecutable paths,
         // as user may set JDK with same major Java version, but from different vendor
-        val isRunningOnGradleJvm = gradleJvm.javaVersion == jdkProvider.javaVersion.get() &&
-                gradleJvm.javaExecutable.absolutePath == jdkProvider.javaExecutable.get().asFile.absolutePath
+        val isRunningOnGradleJvm = gradleJvm.javaVersion == toolchainProvider.javaVersion.get() &&
+                gradleJvm.javaExecutable.absolutePath == toolchainProvider.javaExecutable.get().asFile.absolutePath
         val isolationModeStr = getValue("kapt.workers.isolation")?.toLowerCase()
         return when {
             (isolationModeStr == null || isolationModeStr == "none") && isRunningOnGradleJvm -> IsolationMode.NONE
@@ -201,7 +200,6 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
                     it.forkOptions.jvmArgs("-verbose:class")
                 }
                 it.forkOptions.executable = kotlinJavaToolchainProvider.get()
-                    .jdkProvider
                     .javaExecutable
                     .asFile.get()
                     .absolutePath

@@ -138,7 +138,7 @@ class GradleCompileTaskProvider(task: Task) {
     }
 }
 
-abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotlinCompileTool<T>(), UsesKotlinJavaToolchain {
+abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotlinCompileTool<T>() {
 
     open class Configurator<T : AbstractKotlinCompile<*>>(protected val compilation: KotlinCompilationData<*>) : TaskConfigurator<T> {
         override fun configure(task: T) {
@@ -256,39 +256,17 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
 
     private val kotlinLogger by lazy { GradleKotlinLogger(logger) }
 
-    final override val kotlinJavaToolchainProvider: Provider<KotlinJavaToolchainProvider> = objects
-        .propertyWithNewInstance(
-            project.gradle
-        )
+    @get:Internal
+    protected val gradleCompileTaskProvider: Provider<GradleCompileTaskProvider> = objects
+        .providerWithLazyConvention { GradleCompileTaskProvider(this) }
 
     @get:Internal
-    internal val compilerRunner: Provider<GradleCompilerRunner> =
+    internal open val compilerRunner: Provider<GradleCompilerRunner> =
         objects.propertyWithConvention(
-            kotlinJavaToolchainProvider.map {
-                compilerRunner(
-                    it.jdkProvider.javaExecutable.get().asFile,
-                    it.jdkProvider.jdkToolsJar.orNull
-                )
+            gradleCompileTaskProvider.map {
+                GradleCompilerRunner(it, null)
             }
         )
-
-    // Moved creation here to not violate Gradle configuration cache as [compilerRunner] method is called
-    // at execution time
-    // by lazy is added so properties of task extending this one are captured - required for incremental
-    // compilation
-    @get:Internal
-    protected val gradleCompileTaskProvider by lazy {
-        GradleCompileTaskProvider(this)
-    }
-
-    internal open fun compilerRunner(
-        javaExecutable: File,
-        jdkToolsJar: File?
-    ): GradleCompilerRunner = GradleCompilerRunner(
-        gradleCompileTaskProvider,
-        javaExecutable,
-        jdkToolsJar
-    )
 
     private val systemPropertiesService = CompilerSystemPropertiesService.registerIfAbsent(project.gradle)
 
@@ -403,7 +381,9 @@ internal inline val <reified T : Task> T.thisTaskProvider: TaskProvider<out T>
 @CacheableTask
 abstract class KotlinCompile @Inject constructor(
     override val kotlinOptions: KotlinJvmOptions
-) : AbstractKotlinCompile<K2JVMCompilerArguments>(), KotlinJvmCompile {
+) : AbstractKotlinCompile<K2JVMCompilerArguments>(),
+    KotlinJvmCompile,
+    UsesKotlinJavaToolchain {
 
     class Configurator(kotlinCompilation: KotlinCompilationData<*>) : AbstractKotlinCompile.Configurator<KotlinCompile>(kotlinCompilation) {
     }
@@ -437,6 +417,24 @@ abstract class KotlinCompile @Inject constructor(
 
     @get:Input
     abstract val useClasspathSnapshot: Property<Boolean>
+
+    final override val kotlinJavaToolchainProvider: Provider<KotlinJavaToolchainProvider> = objects
+        .propertyWithNewInstance(
+            project.gradle
+        )
+
+    @get:Internal
+    override val compilerRunner: Provider<GradleCompilerRunner> = objects.propertyWithConvention(
+        // From Gradle 6.6 better to replace flatMap with provider.zip()
+        kotlinJavaToolchainProvider.flatMap { toolchain ->
+            objects.property(gradleCompileTaskProvider.map {
+                GradleCompilerRunner(
+                    it,
+                    toolchain.currentJvmJdkToolsJar.orNull
+                )
+            })
+        }
+    )
 
     init {
         incremental = true
@@ -495,7 +493,8 @@ abstract class KotlinCompile @Inject constructor(
             sourceRoots.javaSourceRoots,
             javaPackagePrefix,
             args,
-            environment
+            environment,
+            kotlinJavaToolchainProvider.get().providedJvm.get().javaHome
         )
     }
 
@@ -543,52 +542,53 @@ abstract class KotlinCompile @Inject constructor(
 @CacheableTask
 internal abstract class KotlinCompileWithWorkers @Inject constructor(
     kotlinOptions: KotlinJvmOptions,
-    private val workerExecutor: WorkerExecutor
+    workerExecutor: WorkerExecutor
 ) : KotlinCompile(kotlinOptions) {
-
-    override fun compilerRunner(
-        javaExecutable: File,
-        jdkToolsJar: File?
-    ) = GradleCompilerRunnerWithWorkers(
-        gradleCompileTaskProvider,
-        javaExecutable,
-        jdkToolsJar,
-        workerExecutor
-    )
+    override val compilerRunner: Provider<GradleCompilerRunner> =
+        objects.propertyWithConvention(
+            gradleCompileTaskProvider.map {
+                GradleCompilerRunnerWithWorkers(
+                    it,
+                    null,
+                    workerExecutor
+                ) as GradleCompilerRunner
+            }
+        )
 }
 
 @CacheableTask
 internal abstract class Kotlin2JsCompileWithWorkers @Inject constructor(
     kotlinOptions: KotlinJsOptions,
     objectFactory: ObjectFactory,
-    private val workerExecutor: WorkerExecutor
+    workerExecutor: WorkerExecutor
 ) : Kotlin2JsCompile(kotlinOptions, objectFactory) {
-
-    override fun compilerRunner(
-        javaExecutable: File,
-        jdkToolsJar: File?
-    ) = GradleCompilerRunnerWithWorkers(
-        gradleCompileTaskProvider,
-        javaExecutable,
-        jdkToolsJar,
-        workerExecutor
-    )
+    override val compilerRunner: Provider<GradleCompilerRunner> =
+        objects.propertyWithConvention(
+            gradleCompileTaskProvider.map {
+                GradleCompilerRunnerWithWorkers(
+                    it,
+                    null,
+                    workerExecutor
+                ) as GradleCompilerRunner
+            }
+        )
 }
 
 @CacheableTask
 internal abstract class KotlinCompileCommonWithWorkers @Inject constructor(
     kotlinOptions: KotlinMultiplatformCommonOptions,
-    private val workerExecutor: WorkerExecutor
+    workerExecutor: WorkerExecutor
 ) : KotlinCompileCommon(kotlinOptions) {
-    override fun compilerRunner(
-        javaExecutable: File,
-        jdkToolsJar: File?
-    ) = GradleCompilerRunnerWithWorkers(
-        gradleCompileTaskProvider,
-        javaExecutable,
-        jdkToolsJar,
-        workerExecutor
-    )
+    override val compilerRunner: Provider<GradleCompilerRunner> =
+        objects.propertyWithConvention(
+            gradleCompileTaskProvider.map {
+                GradleCompilerRunnerWithWorkers(
+                    it,
+                    null,
+                    workerExecutor
+                ) as GradleCompilerRunner
+            }
+        )
 }
 
 @CacheableTask
@@ -601,7 +601,8 @@ abstract class Kotlin2JsCompile @Inject constructor(
         incremental = true
     }
 
-    open class Configurator<T : Kotlin2JsCompile>(compilation: KotlinCompilationData<*>) : AbstractKotlinCompile.Configurator<T>(compilation) {
+    open class Configurator<T : Kotlin2JsCompile>(compilation: KotlinCompilationData<*>) :
+        AbstractKotlinCompile.Configurator<T>(compilation) {
 
         override fun configure(task: T) {
             super.configure(task)
