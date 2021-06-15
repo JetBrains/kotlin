@@ -52,3 +52,11 @@ fun PsiClass.classIdIfNonLocal(): ClassId? {
     return ClassId(packageFqName, FqName(classesNames.joinToString(separator = ".")), false)
 }
 
+fun KtExpression.resultingWhens(): List<KtWhenExpression> = when (this) {
+    is KtWhenExpression -> listOf(this) + entries.map { it.expression?.resultingWhens() ?: listOf() }.flatten()
+    is KtIfExpression -> (then?.resultingWhens() ?: listOf()) + (`else`?.resultingWhens() ?: listOf())
+    is KtBinaryExpression -> (left?.resultingWhens() ?: listOf()) + (right?.resultingWhens() ?: listOf())
+    is KtUnaryExpression -> this.baseExpression?.resultingWhens() ?: listOf()
+    is KtBlockExpression -> statements.lastOrNull()?.resultingWhens() ?: listOf()
+    else -> listOf()
+}

@@ -1228,6 +1228,7 @@ fun main(args: Array<String>) {
                 model("intentions/specifyTypeExplicitly", pattern = pattern)
                 model("intentions/importAllMembers", pattern = pattern)
                 model("intentions/importMember", pattern = pattern)
+                model("intentions/convertToBlockBody", pattern = pattern)
             }
 
             testClass<AbstractFirShortenRefsTest> {
