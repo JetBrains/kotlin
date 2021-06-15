@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.runners.ir.interpreter
 
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.IrInterpreterBackendHandler
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -48,6 +49,7 @@ open class AbstractIrInterpreterAfterFir2IrTest : AbstractKotlinCompilerWithTarg
         useFrontendFacades(::FirFrontendFacade)
         useFrontend2BackendConverters(::Fir2IrResultsConverter)
         useBackendFacades(::JvmIrBackendFacade)
+        useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
 
         useBackendHandlers(::IrInterpreterBackendHandler)
         enableMetaInfoHandler()
