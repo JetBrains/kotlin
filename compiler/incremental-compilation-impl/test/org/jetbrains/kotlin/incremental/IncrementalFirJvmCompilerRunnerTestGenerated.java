@@ -377,6 +377,11 @@ public class IncrementalFirJvmCompilerRunnerTestGenerated extends AbstractIncrem
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/objectConstantChanged/");
         }
 
+        @TestMetadata("objectInstanceEquals")
+        public void testObjectInstanceEquals() throws Exception {
+            runTest("jps/jps-plugin/testData/incremental/pureKotlin/objectInstanceEquals/");
+        }
+
         @TestMetadata("ourClassReferenced")
         public void testOurClassReferenced() throws Exception {
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/ourClassReferenced/");

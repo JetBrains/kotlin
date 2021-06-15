@@ -140,6 +140,18 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
     }
 
     @Test
+    @TestMetadata("equalsWithLeftObject.kt")
+    public void testEqualsWithLeftObject() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeText/equalsWithLeftObject.kt");
+    }
+
+    @Test
+    @TestMetadata("equalsWithLeftSealedRightObject.kt")
+    public void testEqualsWithLeftSealedRightObject() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeText/equalsWithLeftSealedRightObject.kt");
+    }
+
+    @Test
     @TestMetadata("falseSmartCast.kt")
     public void testFalseSmartCast() throws Exception {
         runTest("compiler/testData/codegen/bytecodeText/falseSmartCast.kt");

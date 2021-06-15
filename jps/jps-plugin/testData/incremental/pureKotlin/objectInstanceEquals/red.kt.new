@@ -1,0 +1,6 @@
+package test
+
+object Red : Sea() {
+    // non-trivial equals
+    override fun equals(other: Any?) = false
+}

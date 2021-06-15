@@ -1046,6 +1046,11 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/objectConstantChanged/");
         }
 
+        @TestMetadata("objectInstanceEquals")
+        public void testObjectInstanceEquals() throws Exception {
+            runTest("jps/jps-plugin/testData/incremental/pureKotlin/objectInstanceEquals/");
+        }
+
         @TestMetadata("ourClassReferenced")
         public void testOurClassReferenced() throws Exception {
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/ourClassReferenced/");
