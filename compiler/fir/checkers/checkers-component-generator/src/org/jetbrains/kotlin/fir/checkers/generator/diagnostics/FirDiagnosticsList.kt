@@ -967,7 +967,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Boolean>("compileTimeCheckResult")
         }
         val IS_ENUM_ENTRY by error<KtTypeReference>()
-        val ENUM_ENTRY_AS_TYPE by error<KtTypeReference>()
+        val ENUM_ENTRY_AS_TYPE by error<KtTypeReference>(PositioningStrategy.SELECTOR_BY_QUALIFIED)
     }
 
     val WHEN_EXPRESSIONS by object : DiagnosticGroup("When expressions") {
