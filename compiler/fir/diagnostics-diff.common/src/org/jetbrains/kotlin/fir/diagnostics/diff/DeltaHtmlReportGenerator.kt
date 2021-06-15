@@ -112,6 +112,8 @@ class DeltaHtmlReportGenerator(
                             .sortedByDescending { (_, results) -> results.size }
                             .forEach { (_, results) ->
                                 li {
+                                    // It is possible the FIR file could be missing in either "before" or "after", if the test is or became
+                                    // "FIR_IDENTICAL".
                                     fun File.preferFirFile(): File {
                                         return if (name.endsWith(".fir.kt")) {
                                             if (exists()) this else File(parentFile, name.replace(".fir.kt", ".kt"))
@@ -120,53 +122,98 @@ class DeltaHtmlReportGenerator(
                                         }
                                     }
 
-                                    // The diff HTML should compare the "before" and "after" for the FIR file.
-                                    // It is possible the FIR file could be missing in either "before" or "after", if the test became
-                                    // "FIR_IDENTICAL". We should prefer to use the FIR file for diff, if present.
+                                    // Show diffs between:
+                                    // 1. "FIR before" and "FIR after"
+                                    // 2. "FE 1.0 after" and "FIR after"
+                                    // 3. "FE 1.0 before" and "FIR before"
+
                                     val testRelativePath = results[0].expectedFile.toRelativeString(testDataDir)
-                                    val beforeFile = beforeCopiedTestDataDir.resolve(testRelativePath).preferFirFile()
-                                    val beforeRelativePath = beforeFile.toRelativeString(outputDir)
-                                    val afterFile = afterCopiedTestDataDir.resolve(testRelativePath).preferFirFile()
-                                    val afterRelativePath = afterFile.toRelativeString(outputDir)
-                                    val testFileNormalized = testRelativePath.replace("/", "__")
-                                    val diffFile = outputDir.resolve("$DIFF_HTML_FILE_PREFIX$testFileNormalized.html")
+                                    val beforeFE10File = beforeCopiedTestDataDir.resolve(testRelativePath)
+                                    val beforeFE10RelativePath = beforeFE10File.toRelativeString(outputDir)
+                                    val beforeFirFile = beforeFE10File.preferFirFile()
+                                    val beforeFirRelativePath = beforeFirFile.toRelativeString(outputDir)
+                                    val afterFE10File = afterCopiedTestDataDir.resolve(testRelativePath)
+                                    val afterFE10RelativePath = afterFE10File.toRelativeString(outputDir)
+                                    val afterFirFile = afterFE10File.preferFirFile()
+                                    val afterFirRelativePath = afterFirFile.toRelativeString(outputDir)
+
                                     val repoDir = testDataDir.absolutePath.let {
                                         it.substring(it.indexOf("compiler/"))
                                     }
-                                    val beforeLink = if (repo != null) {
+                                    val beforeFE10Link = if (repo != null) {
                                         "https://github.com/$repo/blob/$beforeCommit/$repoDir/${
-                                            beforeFile.toRelativeString(
+                                            beforeFE10File.toRelativeString(
                                                 beforeCopiedTestDataDir
                                             )
                                         }"
-                                    } else beforeRelativePath
-                                    val afterLink = if (repo != null) {
+                                    } else beforeFE10RelativePath
+                                    val beforeFirLink = if (repo != null) {
+                                        "https://github.com/$repo/blob/$beforeCommit/$repoDir/${
+                                            beforeFirFile.toRelativeString(
+                                                beforeCopiedTestDataDir
+                                            )
+                                        }"
+                                    } else beforeFirRelativePath
+                                    val afterFE10Link = if (repo != null) {
                                         "https://github.com/$repo/blob/$afterCommit/$repoDir/${
-                                            afterFile.toRelativeString(
+                                            afterFE10File.toRelativeString(
                                                 afterCopiedTestDataDir
                                             )
                                         }"
-                                    } else afterRelativePath
+                                    } else afterFE10RelativePath
+                                    val afterFirLink = if (repo != null) {
+                                        "https://github.com/$repo/blob/$afterCommit/$repoDir/${
+                                            afterFirFile.toRelativeString(
+                                                afterCopiedTestDataDir
+                                            )
+                                        }"
+                                    } else afterFirRelativePath
 
-                                    outputViewDiffHtml(
+                                    val firBeforeVsFirAfterInput = DiffHtmlInput(
+                                        "Diff between FIR before vs FIR after",
+                                        beforeFirFile,
+                                        beforeFirRelativePath,
+                                        beforeFirLink,
+                                        "FIR before",
+                                        afterFirFile,
+                                        afterFirRelativePath,
+                                        afterFirLink,
+                                        "FIR after"
+                                    )
+                                    val fe10AfterVsFirAfterInput = DiffHtmlInput(
+                                        "Diff between FE 1.0 after vs FIR after",
+                                        afterFE10File,
+                                        afterFE10RelativePath,
+                                        afterFE10Link,
+                                        "FE 1.0 after",
+                                        afterFirFile,
+                                        afterFirRelativePath,
+                                        afterFirLink,
+                                        "FIR after"
+                                    )
+                                    val fe10BeforeVsFirBeforeInput = DiffHtmlInput(
+                                        "Diff between FE 1.0 before vs FIR before",
+                                        beforeFE10File,
+                                        beforeFE10RelativePath,
+                                        beforeFE10Link,
+                                        "FE 1.0 before",
+                                        beforeFirFile,
+                                        beforeFirRelativePath,
+                                        beforeFirLink,
+                                        "FIR before"
+                                    )
+
+                                    val testFileNormalized = testRelativePath.replace("/", "__")
+                                    val diffFile = outputDir.resolve("$DIFF_HTML_FILE_PREFIX$testFileNormalized.html")
+                                    diffFile.outputViewDiffHtml(
                                         testRelativePath,
-                                        beforeFile,
-                                        beforeRelativePath,
-                                        beforeLink,
-                                        afterFile,
-                                        afterRelativePath,
-                                        afterLink,
-                                        diffFile
+                                        listOf(firBeforeVsFirAfterInput, fe10AfterVsFirAfterInput, fe10BeforeVsFirBeforeInput)
                                     )
                                     a(href = diffFile.name) {
                                         target = "_blank"
                                         val fileCount = (if (isRemovedList) -results.size else results.size).formatted(isDelta = true)
                                         +"$testRelativePath ($fileCount)"
                                     }
-
-                                    // TODO: Currently we only have diffs between "FIR before" and "FIR after". Also show diffs between
-                                    // "FE 1.0 before" and "FIR before", and "FE 1.0 after" and "FIR after" (basically the diffs from the
-                                    // original "before" and "after" reports).
                                 }
                             }
                     }

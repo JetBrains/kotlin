@@ -187,30 +187,129 @@ internal fun DIV.outputDiagnosticDetailSummary(
     }
 }
 
-internal fun outputViewDiffHtml(
-    testRelativePath: String,
-    expectedFile: File,
-    expectedDisplayName: String,
-    expectedLink: String,
-    actualFile: File,
-    actualDisplayName: String,
-    actualLink: String,
-    diffFile: File
+internal data class DiffHtmlInput(
+    val diffTitle: String,
+    val leftFile: File,
+    val leftFilename: String,
+    val leftLink: String,
+    val leftLabel: String,
+    val rightFile: File,
+    val rightFilename: String,
+    val rightLink: String,
+    val rightLabel: String
+)
+
+internal fun File.outputViewDiffHtml(
+    pathForPageTitle: String,
+    leftFile: File,
+    leftFilename: String,
+    leftLink: String,
+    rightFile: File,
+    rightFilename: String,
+    rightLink: String,
+    diffTitle: String = "Diff between FE 1.0 vs FIR",
+    leftLabel: String = "FE 1.0",
+    rightLabel: String = "FIR"
 ) {
-    val expectedLines = if (expectedFile.exists()) expectedFile.readLines() else listOf()
-    val actualLines = if (actualFile.exists()) actualFile.readLines() else listOf()
+    outputViewDiffHtml(
+        pathForPageTitle,
+        listOf(DiffHtmlInput(diffTitle, leftFile, leftFilename, leftLink, leftLabel, rightFile, rightFilename, rightLink, rightLabel))
+    )
+}
 
-    // Setting a large context (10000) so the entire file is shown in diff
-    val patch = DiffUtils.diff(expectedLines, actualLines)
-    val diff = UnifiedDiffUtils.generateUnifiedDiff(expectedDisplayName, actualDisplayName, expectedLines, patch, 10000)
+@OptIn(ExperimentalStdlibApi::class)
+internal fun File.outputViewDiffHtml(
+    pathForTitle: String,
+    inputs: List<DiffHtmlInput>
+) {
+    fun DIV.renderDiff(index: Int, input: DiffHtmlInput) {
+        val (diffTitle, leftFile, leftFilename, leftLink, leftLabel, rightFile, rightFilename, rightLink, rightLabel) = input
+        val leftLines = if (leftFile.exists()) leftFile.readLines() else listOf()
+        val rightLines = if (rightFile.exists()) rightFile.readLines() else listOf()
 
-    // ` and $ must be escaped in JavaScript template literals
-    val diffEscaped = diff.joinToString("\n").replace("`", "\\`").replace("$", "\\$")
+        // Setting a large context (10000) so the entire file is shown in diff
+        val patch = DiffUtils.diff(leftLines, rightLines)
+        val diff = if (patch.deltas.isEmpty()) {
+            // Files are identical. Nothing will render if we pass in an empty patch to Diff2Html, so create a "diff" with the whole file.
+            assert(leftLines == rightLines)
+            buildList {
+                add("--- $leftFilename")
+                add("+++ $rightFilename")
+                val lineCount = leftLines.size
+                add("@@ -1,$lineCount +1,$lineCount @@")
+                // Unified diff requires single space before identical lines
+                addAll(leftLines.map { " $it" })
+            }
+        } else {
+            UnifiedDiffUtils.generateUnifiedDiff(leftFilename, rightFilename, leftLines, patch, 10000)
+        }
 
-    diffFile.printWriter().use {
+        // ` and $ must be escaped in JavaScript template literals
+        val diffEscaped = diff.joinToString("\n").replace("`", "\\`").replace("$", "\\$")
+
+        div("card-header p-0") {
+            id = "heading${index}"
+            button(classes = "btn btn-link btn-block text-left") {
+                attributes["data-toggle"] = "collapse"
+                attributes["data-target"] = "#collapse${index}"
+                h5 {
+                    +diffTitle
+                }
+            }
+        }
+        div(if (index == 0) "collapse show" else "collapse") {
+            id = "collapse${index}"
+            div("card-body p-1") {
+                div {
+                    id = "diff${index}"
+                    style = "width: 100%"
+                }
+            }
+        }
+        script(type = "text/javascript") {
+            unsafe {
+                +"""
+                (function() {
+                    const diffString = `${diffEscaped}`;
+                    const targetElement = ${'$'}('#diff${index}')[0];
+                    const configuration = {
+                        drawFileList: false,
+                        fileListToggle: false,
+                        fileListStartVisible: false,
+                        fileContentToggle: false,
+                        matching: 'lines',
+                        outputFormat: 'side-by-side',
+                        synchronisedScroll: true,
+                        highlight: true,
+                        renderNothingWhenEmpty: false,
+                        rawTemplates: {
+                            'generic-file-path': `
+                                <div class="col">
+                                    <a href="${leftLink}" target="_blank">
+                                        <strong>${leftLabel}:</strong> ${leftFilename}
+                                    </a>
+                                </div>
+                                <div class="col">
+                                    <a href="${rightLink}" target="_blank">
+                                        <strong>${rightLabel}:</strong> ${rightFilename}
+                                    </a>
+                                </div>
+                            `
+                        }
+                    };
+                    const diff2htmlUi = new Diff2HtmlUI(targetElement, diffString, configuration);
+                    diff2htmlUi.draw();
+                    diff2htmlUi.highlightCode();
+                })();
+                """.trimIndent()
+            }
+        }
+    }
+
+    printWriter().use {
         it.appendHTML().html {
             head {
-                title { +"Diagnostics diff: $testRelativePath" }
+                title { +"Diagnostics diff: $pathForTitle" }
                 commonHead()
                 link {
                     rel = "stylesheet"
@@ -231,60 +330,7 @@ internal fun outputViewDiffHtml(
 
             body {
                 div("container-fluid") {
-                    div("row") {
-                        ul {
-                            li {
-                                a {
-                                    id = "expected"
-                                    target = "_blank"
-                                    strong { +"Expected file: " }
-                                    span { id = "expected-path" }
-                                }
-                            }
-                            li {
-                                a {
-                                    id = "actual"
-                                    target = "_blank"
-                                    strong { +"Actual file: " }
-                                    span { id = "actual-path" }
-                                }
-                            }
-                        }
-                    }
-                    div("row") {
-                        div {
-                            id = "diff"
-                            style = "width: 100%"
-                        }
-                    }
-                }
-
-                script(type = "text/javascript") {
-                    unsafe {
-                        +"""
-                        ${'$'}('#expected').attr('href', '${expectedLink}');
-                        ${'$'}('#actual').attr('href', '${actualLink}');
-                        ${'$'}('#expected-path').text('${expectedDisplayName}');
-                        ${'$'}('#actual-path').text('${actualDisplayName}');
-
-                        const diffString = `${diffEscaped}`;
-                        const targetElement = ${'$'}('#diff')[0];
-                        const configuration = {
-                            drawFileList: false,
-                            fileListToggle: false,
-                            fileListStartVisible: false,
-                            fileContentToggle: false,
-                            matching: 'lines',
-                            outputFormat: 'side-by-side',
-                            synchronisedScroll: true,
-                            highlight: true,
-                            renderNothingWhenEmpty: false,
-                        };
-                        const diff2htmlUi = new Diff2HtmlUI(targetElement, diffString, configuration);
-                        diff2htmlUi.draw();
-                        diff2htmlUi.highlightCode();
-                        """.trimIndent()
-                    }
+                    inputs.forEachIndexed { index, diff -> renderDiff(index, diff) }
                 }
             }
         }
@@ -296,6 +342,11 @@ internal fun HEAD.commonHead() {
     script(src = "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js") {
         integrity =
             "sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+        attributes["crossorigin"] = "anonymous"
+    }
+    script(src = "https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js") {
+        integrity =
+            "sha512-XKa9Hemdy1Ui3KSGgJdgMyYlUg1gM+QhL6cnlyTe2qzMCYm4nAZ1PsVerQzTTXzonUR+dmswHqgJPuwCq1MaAg=="
         attributes["crossorigin"] = "anonymous"
     }
     link {

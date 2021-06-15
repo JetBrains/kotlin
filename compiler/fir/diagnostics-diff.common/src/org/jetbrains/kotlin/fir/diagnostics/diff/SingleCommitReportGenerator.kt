@@ -91,15 +91,14 @@ class SingleCommitReportGenerator(
                                     val expectedLink = "$linkPrefix/$expectedRelativePath"
                                     val actualLink = "$linkPrefix/$actualRelativePath"
 
-                                    outputViewDiffHtml(
+                                    diffFile.outputViewDiffHtml(
                                         expectedRelativePath,
                                         results[0].expectedFile,
                                         expectedRelativePath,
                                         expectedLink,
                                         results[0].actualFile,
                                         actualRelativePath,
-                                        actualLink,
-                                        diffFile
+                                        actualLink
                                     )
                                     a(href = diffFile.name) {
                                         target = "_blank"

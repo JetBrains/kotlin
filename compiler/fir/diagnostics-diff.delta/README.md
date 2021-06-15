@@ -44,4 +44,7 @@ what has changed between the two commits. For example, under "Missing (-5)" you 
 with the changes, 8 of the diagnostics are no longer missing, but 3 are now missing. Those 8 could be matched now, or possibly mismatched;
 the only way to be sure is to compare the files. Those 3 could be regressions; again, you will have to examine the test.
 
-Clicking on one of the file links will take you to a page that compares the FIR 1.0 "before" and FIR "after" test data files.
+Clicking on one of the file links will take you to a page that shows the diffs between the test data files for:
+1. FIR 1.0 "before" and FIR "after" — Helps answer the question _"How did the changes improve FIR?"_
+2. FE 1.0 "after" and FIR "after" — Helps answer the question _"After the changes, how far is FIR from FE 1.0?"_
+3. FE 1.0 "before" and FIR "before" — Helps answer the question _"Before the changes, how far was FIR from FE 1.0?"_
