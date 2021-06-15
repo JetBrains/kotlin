@@ -6827,6 +6827,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             runTest("js/js.translator/testData/box/propertyAccess/booleanInExternals.kt");
         }
 
+        @TestMetadata("booleanInExternalsWithDiagnostic.kt")
+        public void testBooleanInExternalsWithDiagnostic() throws Exception {
+            runTest("js/js.translator/testData/box/propertyAccess/booleanInExternalsWithDiagnostic.kt");
+        }
+
         @TestMetadata("classUsesPackageProperties.kt")
         public void testClassUsesPackageProperties() throws Exception {
             runTest("js/js.translator/testData/box/propertyAccess/classUsesPackageProperties.kt");
