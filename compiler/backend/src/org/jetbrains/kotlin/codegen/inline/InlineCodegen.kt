@@ -113,7 +113,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
         val infos = MethodInliner.processReturns(adapter, sourceCompiler.getContextLabels(), null)
         generateAndInsertFinallyBlocks(
-            adapter, infos, (remapper.remap(parameters.argsSizeOnStack + 1).value as StackValue.Local).index
+            adapter, infos, (remapper.remap(parameters.argsSizeOnStack).value as StackValue.Local).index
         )
         if (!sourceCompiler.isFinallyMarkerRequired) {
             removeFinallyMarkers(adapter)
@@ -165,37 +165,25 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
             val extension = extensionPoints[curInstr]
             if (extension != null) {
-                val start = Label()
+                var nextFreeLocalIndex = processor.nextFreeLocalIndex
+                for (local in processor.localVarsMetaInfo.currentIntervals) {
+                    val size = Type.getType(local.node.desc).size
+                    nextFreeLocalIndex = max(offsetForFinallyLocalVar + local.node.index + size, nextFreeLocalIndex)
+                }
 
+                val start = Label()
                 val finallyNode = createEmptyMethodNode()
                 finallyNode.visitLabel(start)
-
-                val finallyCodegen =
-                    sourceCompiler.createCodegenForExternalFinallyBlockGenerationOnNonLocalReturn(finallyNode, curFinallyDepth)
-
-                val frameMap = finallyCodegen.frameMap
-                val mark = frameMap.mark()
-                var marker = -1
-                val intervals = processor.localVarsMetaInfo.currentIntervals
-                for (interval in intervals) {
-                    marker = max(interval.node.index + 1, marker)
-                }
-                while (frameMap.currentSize < max(processor.nextFreeLocalIndex, offsetForFinallyLocalVar + marker)) {
-                    frameMap.enterTemp(Type.INT_TYPE)
-                }
-
-                sourceCompiler.generateFinallyBlocksIfNeeded(
-                    finallyCodegen, extension.returnType, extension.finallyIntervalEnd.label, extension.jumpTarget
+                val mark = codegen.frameMap.skipTo(nextFreeLocalIndex)
+                sourceCompiler.generateFinallyBlocks(
+                    finallyNode, curFinallyDepth, extension.returnType, extension.finallyIntervalEnd.label, extension.jumpTarget
                 )
-
-                //Exception table for external try/catch/finally blocks will be generated in original codegen after exiting this method
+                mark.dropTo()
                 insertNodeBefore(finallyNode, intoNode, curInstr)
 
                 val splitBy = SimpleInterval(start.info as LabelNode, extension.finallyIntervalEnd)
                 processor.tryBlocksMetaInfo.splitAndRemoveCurrentIntervals(splitBy, true)
                 processor.localVarsMetaInfo.splitAndRemoveCurrentIntervals(splitBy, true)
-
-                mark.dropTo()
             }
 
             curInstr = curInstr.next
