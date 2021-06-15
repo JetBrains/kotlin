@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.types.Variance
 import java.util.*
 
@@ -168,11 +167,9 @@ internal object EnumIntrinsics : IntrinsicBase() {
                 callStack.pushState(enumEntry.getField(symbol)!!)
             }
             "compareTo" -> {
-                val ordinal = enumEntry.irClass.declarations.filterIsInstance<IrProperty>()
-                    .first { it.name.asString() == "ordinal" }
-                    .resolveFakeOverride()!!
+                val ordinalSymbol = enumEntry.irClass.getOriginalPropertyByName("ordinal").symbol
                 val other = callStack.getState(irFunction.valueParameters.single().symbol)
-                val compareTo = enumEntry.getField(ordinal.symbol)!!.asInt().compareTo(other.getField(ordinal.symbol)!!.asInt())
+                val compareTo = enumEntry.getField(ordinalSymbol)!!.asInt().compareTo(other.getField(ordinalSymbol)!!.asInt())
                 callStack.pushState(compareTo.toState(irFunction.returnType))
             }
             // TODO "clone" -> throw exception
@@ -182,10 +179,8 @@ internal object EnumIntrinsics : IntrinsicBase() {
             }
             "hashCode" -> callStack.pushState(enumEntry.hashCode().toState(irFunction.returnType))
             "toString" -> {
-                val name = enumEntry.irClass.declarations.filterIsInstance<IrProperty>()
-                    .first { it.name.asString() == "name" }
-                    .resolveFakeOverride()!!
-                callStack.pushState(enumEntry.getField(name.symbol)!!)
+                val nameSymbol = enumEntry.irClass.getOriginalPropertyByName("name").symbol
+                callStack.pushState(enumEntry.getField(nameSymbol)!!)
             }
             "values" -> EnumValues.evaluate(irFunction, environment)
             "valueOf" -> EnumValueOf.evaluate(irFunction, environment)

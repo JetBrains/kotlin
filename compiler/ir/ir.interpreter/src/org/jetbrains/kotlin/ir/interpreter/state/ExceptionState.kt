@@ -6,13 +6,10 @@
 package org.jetbrains.kotlin.ir.interpreter.state
 
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.interpreter.getLastOverridden
+import org.jetbrains.kotlin.ir.interpreter.getOriginalPropertyByName
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.toState
 import org.jetbrains.kotlin.ir.util.isSubclassOf
-import org.jetbrains.kotlin.ir.util.nameForIrSerialization
 import kotlin.math.min
 
 internal class ExceptionState private constructor(
@@ -29,8 +26,8 @@ internal class ExceptionState private constructor(
 
     private lateinit var exceptionFqName: String
     private val exceptionHierarchy = mutableListOf<String>()
-    private val messageProperty = irClass.getPropertyByName("message")
-    private val causeProperty = irClass.getPropertyByName("cause")
+    private val messageProperty = irClass.getOriginalPropertyByName("message")
+    private val causeProperty = irClass.getOriginalPropertyByName("cause")
 
     private val stackTrace: List<String> = stackTrace.reversed()
 
@@ -103,14 +100,9 @@ internal class ExceptionState private constructor(
     override fun toString(): String = message?.let { "$exceptionFqName: $it" } ?: exceptionFqName
 
     companion object {
-        private fun IrClass.getPropertyByName(name: String): IrProperty {
-            val property = this.declarations.single { it.nameForIrSerialization.asString() == name } as IrProperty
-            return (property.getter!!.getLastOverridden() as IrSimpleFunction).correspondingPropertySymbol!!.owner
-        }
-
         private fun evaluateFields(exception: Throwable, irClass: IrClass, stackTrace: List<String>): MutableList<Variable> {
-            val messageProperty = irClass.getPropertyByName("message")
-            val causeProperty = irClass.getPropertyByName("cause")
+            val messageProperty = irClass.getOriginalPropertyByName("message")
+            val causeProperty = irClass.getOriginalPropertyByName("cause")
 
             val messageVar = Variable(messageProperty.symbol, exception.message.toState(messageProperty.getter!!.returnType))
             val causeVar = exception.cause?.let {

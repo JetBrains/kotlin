@@ -211,6 +211,11 @@ internal fun IrFieldAccessExpression.accessesTopLevelOrObjectField(): Boolean {
     return this.receiver == null || (this.receiver?.type?.classifierOrNull?.owner as? IrClass)?.isObject == true
 }
 
+internal fun IrClass.getOriginalPropertyByName(name: String): IrProperty {
+    val property = this.declarations.single { it.nameForIrSerialization.asString() == name } as IrProperty
+    return (property.getter!!.getLastOverridden() as IrSimpleFunction).correspondingPropertySymbol!!.owner
+}
+
 internal fun IrFunctionAccessExpression.getFunctionThatContainsDefaults(): IrFunction {
     val irFunction = this.symbol.owner
     fun IrValueParameter.lookup(): IrFunction? {
