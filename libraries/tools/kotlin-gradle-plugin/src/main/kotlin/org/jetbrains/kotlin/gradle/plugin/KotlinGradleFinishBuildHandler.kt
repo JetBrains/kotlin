@@ -35,7 +35,7 @@ class KotlinGradleFinishBuildHandler {
         GradleCompilerRunner.clearBuildModulesInfo()
 
         val rootProject = gradle.rootProject
-        val sessionsDir = GradleCompilerRunner.sessionsDir(rootProject)
+        val sessionsDir = GradleCompilerRunner.sessionsDir(rootProject.buildDir)
         if (sessionsDir.exists()) {
             val sessionFiles = sessionsDir.listFiles()
 

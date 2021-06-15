@@ -7,10 +7,8 @@ package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.FileCollection
-import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.file.*
+import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logger
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
@@ -112,30 +110,58 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments>
     }
 }
 
-class GradleCompileTaskProvider(task: Task) {
+abstract class GradleCompileTaskProvider @Inject constructor(
+    objectFactory: ObjectFactory,
+    projectLayout: ProjectLayout,
+    gradle: Gradle,
+    task: Task,
+    project: Project
+) {
 
-    val path: String = task.path
-    val logger: Logger = task.logger
-    val buildDir: File = task.project.buildDir
-    val projectDir: File = task.project.rootProject.projectDir
-    val rootDir: File = task.project.rootProject.rootDir
-    val sessionsDir: File = GradleCompilerRunner.sessionsDir(task.project)
-    val projectName: String = task.project.rootProject.name.normalizeForFlagFile()
-    val buildModulesInfo: Provider<out IncrementalModuleInfoProvider> = run {
-        val modulesInfo = GradleCompilerRunner.buildModulesInfo(task.project.gradle)
+    @get:Internal
+    val path: Provider<String> = objectFactory.property(task.path)
+
+    @get:Internal
+    val logger: Provider<Logger> = objectFactory.property(task.logger)
+
+    @get:Internal
+    val buildDir: DirectoryProperty = projectLayout.buildDirectory
+
+    @get:Internal
+    val projectDir: Provider<File> = objectFactory
+        .property(project.rootProject.projectDir)
+
+    @get:Internal
+    val rootDir: Provider<File> = objectFactory
+        .property(project.rootProject.rootDir)
+
+    @get:Internal
+    val sessionsDir: Provider<File> = objectFactory
+        .property(GradleCompilerRunner.sessionsDir(project.rootProject.buildDir))
+
+    @get:Internal
+    val projectName: Provider<String> = objectFactory
+        .property(project.rootProject.name.normalizeForFlagFile())
+
+    @get:Internal
+    val buildModulesInfo: Provider<out IncrementalModuleInfoProvider> = objectFactory.property(
         /**
          * See https://youtrack.jetbrains.com/issue/KT-46820. Build service that holds the incremental info may
          * be instantiated during execution phase and there could be multiple threads trying to do that. Because the
          * underlying mechanism does not support multi-threaded access, we need to add external synchronization.
          */
-        synchronized(task.project.gradle.sharedServices) {
-            task.project.gradle.sharedServices.registerIfAbsent(
+        synchronized(gradle.sharedServices) {
+            gradle.sharedServices.registerIfAbsent(
                 IncrementalModuleInfoBuildService.getServiceName(), IncrementalModuleInfoBuildService::class.java
             ) {
-                it.parameters.info.set(modulesInfo)
+                it.parameters.info.set(
+                    objectFactory.providerWithLazyConvention {
+                        GradleCompilerRunner.buildModulesInfo(gradle)
+                    }
+                )
             }
         }
-    }
+    )
 }
 
 abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotlinCompileTool<T>() {
@@ -258,7 +284,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
 
     @get:Internal
     protected val gradleCompileTaskProvider: Provider<GradleCompileTaskProvider> = objects
-        .providerWithLazyConvention { GradleCompileTaskProvider(this) }
+        .property(
+            objects.newInstance<GradleCompileTaskProvider>(project.gradle, this, project)
+        )
 
     @get:Internal
     internal open val compilerRunner: Provider<GradleCompilerRunner> =

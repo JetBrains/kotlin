@@ -59,13 +59,13 @@ internal open class GradleCompilerRunner(
     protected val jdkToolsJar: File?
 ) {
 
-    internal val pathProvider = taskProvider.path
-    internal val loggerProvider = taskProvider.logger
-    internal val buildDirProvider = taskProvider.buildDir
-    internal val projectDirProvider = taskProvider.projectDir
-    internal val projectRootDirProvider = taskProvider.rootDir
-    internal val sessionDirProvider = taskProvider.sessionsDir
-    internal val projectNameProvider = taskProvider.projectName
+    internal val pathProvider = taskProvider.path.get()
+    internal val loggerProvider = taskProvider.logger.get()
+    internal val buildDirProvider = taskProvider.buildDir.get().asFile
+    internal val projectDirProvider = taskProvider.projectDir.get()
+    internal val projectRootDirProvider = taskProvider.rootDir.get()
+    internal val sessionDirProvider = taskProvider.sessionsDir.get()
+    internal val projectNameProvider = taskProvider.projectName.get()
     internal val incrementalModuleInfoProvider = taskProvider.buildModulesInfo
 
     /**
@@ -336,8 +336,8 @@ internal open class GradleCompilerRunner(
             return sessionFlagFile!!
         }
 
-        internal fun sessionsDir(project: Project): File =
-            File(File(project.rootProject.buildDir, "kotlin"), "sessions")
+        internal fun sessionsDir(rootProjectBuildDir: File): File =
+            File(File(rootProjectBuildDir, "kotlin"), "sessions")
     }
 }
 
