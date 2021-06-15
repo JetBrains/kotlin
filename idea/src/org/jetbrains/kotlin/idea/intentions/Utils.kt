@@ -124,15 +124,6 @@ fun KtExpression.negate(reformat: Boolean = true): KtExpression {
     return KtPsiFactory(this).createExpressionByPattern("!$0", this, reformat = reformat)
 }
 
-fun KtExpression.resultingWhens(): List<KtWhenExpression> = when (this) {
-    is KtWhenExpression -> listOf(this) + entries.map { it.expression?.resultingWhens() ?: listOf() }.flatten()
-    is KtIfExpression -> (then?.resultingWhens() ?: listOf()) + (`else`?.resultingWhens() ?: listOf())
-    is KtBinaryExpression -> (left?.resultingWhens() ?: listOf()) + (right?.resultingWhens() ?: listOf())
-    is KtUnaryExpression -> this.baseExpression?.resultingWhens() ?: listOf()
-    is KtBlockExpression -> statements.lastOrNull()?.resultingWhens() ?: listOf()
-    else -> listOf()
-}
-
 fun KtExpression?.hasResultingIfWithoutElse(): Boolean = when (this) {
     is KtIfExpression -> `else` == null || then.hasResultingIfWithoutElse() || `else`.hasResultingIfWithoutElse()
     is KtWhenExpression -> entries.any { it.expression.hasResultingIfWithoutElse() }

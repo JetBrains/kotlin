@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.idea.fir.intentions
 
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.idea.fir.invalidateCaches
 import org.jetbrains.kotlin.idea.intentions.AbstractIntentionTest
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.utils.IgnoreTests
 import java.io.File
 
@@ -29,6 +31,11 @@ abstract class AbstractHLIntentionTest : AbstractIntentionTest() {
 
     override fun checkForErrorsAfter(fileText: String) {}
     override fun checkForErrorsBefore(fileText: String) {}
+
+    override fun tearDown() {
+        project.invalidateCaches(file as? KtFile)
+        super.tearDown()
+    }
 
     companion object {
         private const val AFTER_FIR_EXTENSION = ".after.fir"

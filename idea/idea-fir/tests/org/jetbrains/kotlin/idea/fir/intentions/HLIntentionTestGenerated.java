@@ -679,4 +679,172 @@ public class HLIntentionTestGenerated extends AbstractHLIntentionTest {
             runTest("idea/testData/intentions/importMember/TopLevelFun.kt");
         }
     }
+
+    @TestMetadata("idea/testData/intentions/convertToBlockBody")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConvertToBlockBody extends AbstractHLIntentionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        @TestMetadata("addSpace.kt")
+        public void testAddSpace() throws Exception {
+            runTest("idea/testData/intentions/convertToBlockBody/addSpace.kt");
+        }
+
+        @TestMetadata("adjustLineIndent.kt")
+        public void testAdjustLineIndent() throws Exception {
+            runTest("idea/testData/intentions/convertToBlockBody/adjustLineIndent.kt");
+        }
+
+        public void testAllFilesPresentInConvertToBlockBody() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/intentions/convertToBlockBody"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
+        }
+
+        @TestMetadata("annotatedExpr.kt")
+        public void testAnnotatedExpr() throws Exception {
+            runTest("idea/testData/intentions/convertToBlockBody/annotatedExpr.kt");
+        }
+
+        @TestMetadata("annotatedExpr2.kt")
+        public void testAnnotatedExpr2() throws Exception {
+            runTest("idea/testData/intentions/convertToBlockBody/annotatedExpr2.kt");
+        }
+
+        @TestMetadata("annotatedExprInParentheses.kt")
+        public void testAnnotatedExprInParentheses() throws Exception {
+            runTest("idea/testData/intentions/convertToBlockBody/annotatedExprInParentheses.kt");
+        }
+
+        @TestMetadata("explicitlyNonUnitFun.kt")
+        public void testExplicitlyNonUnitFun() throws Exception {
+            runTest("idea/testData/intentions/convertToBlockBody/explicitlyNonUnitFun.kt");
+        }
+
+        @TestMetadata("explicitlyTypedFunWithUnresolvedExpression.kt")
+        public void testExplicitlyTypedFunWithUnresolvedExpression() throws Exception {
+            runTest("idea/testData/intentions/convertToBlockBody/explicitlyTypedFunWithUnresolvedExpression.kt");
+        }
+
+        @TestMetadata("explicitlyTypedFunWithUnresolvedType.kt")
+        public void testExplicitlyTypedFunWithUnresolvedType() throws Exception {
+            runTest("idea/testData/intentions/convertToBlockBody/explicitlyTypedFunWithUnresolvedType.kt");
+        }
+
+        @TestMetadata("explicitlyUnitFun.kt")
+        public void testExplicitlyUnitFun() throws Exception {
+            runTest("idea/testData/intentions/convertToBlockBody/explicitlyUnitFun.kt");
+        }
+
+        @TestMetadata("explicitlyUnitFunWithUnresolvedExpression.kt")
+        public void testExplicitlyUnitFunWithUnresolvedExpression() throws Exception {
+            runTest("idea/testData/intentions/convertToBlockBody/explicitlyUnitFunWithUnresolvedExpression.kt");
+        }
+
+        @TestMetadata("funWithCustomUnitClass.kt")
+        public void testFunWithCustomUnitClass() throws Exception {
+            runTest("idea/testData/intentions/convertToBlockBody/funWithCustomUnitClass.kt");
+        }
+
+        @TestMetadata("funWithThrow.kt")
+        public void testFunWithThrow() throws Exception {
+            runTest("idea/testData/intentions/convertToBlockBody/funWithThrow.kt");
+        }
+
+        @TestMetadata("funWithUnit.kt")
+        public void testFunWithUnit() throws Exception {
+            runTest("idea/testData/intentions/convertToBlockBody/funWithUnit.kt");
+        }
+
+        @TestMetadata("getter.kt")
+        public void testGetter() throws Exception {
+            runTest("idea/testData/intentions/convertToBlockBody/getter.kt");
+        }
+
+        @TestMetadata("getterTypeInferred.kt")
+        public void testGetterTypeInferred() throws Exception {
+            runTest("idea/testData/intentions/convertToBlockBody/getterTypeInferred.kt");
+        }
+
+        @TestMetadata("getterWithThrow.kt")
+        public void testGetterWithThrow() throws Exception {
+            runTest("idea/testData/intentions/convertToBlockBody/getterWithThrow.kt");
+        }
+
+        @TestMetadata("ifWhenUnit.kt")
+        public void testIfWhenUnit() throws Exception {
+            runTest("idea/testData/intentions/convertToBlockBody/ifWhenUnit.kt");
+        }
+
+        @TestMetadata("implicitlyNonUnitFun.kt")
+        public void testImplicitlyNonUnitFun() throws Exception {
+            runTest("idea/testData/intentions/convertToBlockBody/implicitlyNonUnitFun.kt");
+        }
+
+        @TestMetadata("implicitlyNonUnitFun2.kt")
+        public void testImplicitlyNonUnitFun2() throws Exception {
+            runTest("idea/testData/intentions/convertToBlockBody/implicitlyNonUnitFun2.kt");
+        }
+
+        @TestMetadata("implicitlyTypedFunWithUnresolvedType.kt")
+        public void testImplicitlyTypedFunWithUnresolvedType() throws Exception {
+            runTest("idea/testData/intentions/convertToBlockBody/implicitlyTypedFunWithUnresolvedType.kt");
+        }
+
+        @TestMetadata("implicitlyUnitFun.kt")
+        public void testImplicitlyUnitFun() throws Exception {
+            runTest("idea/testData/intentions/convertToBlockBody/implicitlyUnitFun.kt");
+        }
+
+        @TestMetadata("labeledExpr.kt")
+        public void testLabeledExpr() throws Exception {
+            runTest("idea/testData/intentions/convertToBlockBody/labeledExpr.kt");
+        }
+
+        @TestMetadata("labeledExprInParentheses.kt")
+        public void testLabeledExprInParentheses() throws Exception {
+            runTest("idea/testData/intentions/convertToBlockBody/labeledExprInParentheses.kt");
+        }
+
+        @TestMetadata("nothingFun.kt")
+        public void testNothingFun() throws Exception {
+            runTest("idea/testData/intentions/convertToBlockBody/nothingFun.kt");
+        }
+
+        @TestMetadata("overrideWithPlatformType.kt")
+        public void testOverrideWithPlatformType() throws Exception {
+            runTest("idea/testData/intentions/convertToBlockBody/overrideWithPlatformType.kt");
+        }
+
+        @TestMetadata("setter.kt")
+        public void testSetter() throws Exception {
+            runTest("idea/testData/intentions/convertToBlockBody/setter.kt");
+        }
+
+        @TestMetadata("valueIsAnonymousObject.kt")
+        public void testValueIsAnonymousObject() throws Exception {
+            runTest("idea/testData/intentions/convertToBlockBody/valueIsAnonymousObject.kt");
+        }
+
+        @TestMetadata("valueIsAnonymousObject2.kt")
+        public void testValueIsAnonymousObject2() throws Exception {
+            runTest("idea/testData/intentions/convertToBlockBody/valueIsAnonymousObject2.kt");
+        }
+
+        @TestMetadata("valueIsAnonymousObject3.kt")
+        public void testValueIsAnonymousObject3() throws Exception {
+            runTest("idea/testData/intentions/convertToBlockBody/valueIsAnonymousObject3.kt");
+        }
+
+        @TestMetadata("valueIsAnonymousObject4.kt")
+        public void testValueIsAnonymousObject4() throws Exception {
+            runTest("idea/testData/intentions/convertToBlockBody/valueIsAnonymousObject4.kt");
+        }
+
+        @TestMetadata("whenUnit.kt")
+        public void testWhenUnit() throws Exception {
+            runTest("idea/testData/intentions/convertToBlockBody/whenUnit.kt");
+        }
+    }
 }

@@ -33,6 +33,8 @@ interface KtTypeProviderMixIn : KtAnalysisSessionMixIn {
     fun KtType.approximateToSuperPublicDenotable(): KtType? =
         analysisSession.typeProvider.approximateToSuperPublicDenotableType(this)
 
+    fun KtType.approximateToSuperPublicDenotableOrSelf(): KtType = approximateToSuperPublicDenotable() ?: this
+
     fun KtNamedClassOrObjectSymbol.buildSelfClassType(): KtType =
         analysisSession.typeProvider.buildSelfClassType(this)
 
