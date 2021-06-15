@@ -12,7 +12,9 @@ UFile (package = )
             UMethod (name = getAPlusB)
                 UBlockExpression
                     UReturnExpression
-                        [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+                        UBinaryExpression (operator = +)
+                            USimpleNameReferenceExpression (identifier = a)
+                            USimpleNameReferenceExpression (identifier = b)
             UClass (name = Baz)
                 UMethod (name = Baz)
                 UMethod (name = doNothing)

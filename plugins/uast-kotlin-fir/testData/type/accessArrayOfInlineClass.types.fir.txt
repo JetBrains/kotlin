@@ -5,10 +5,18 @@ UFile (package = ) [public final class AccessArrayOfInlineClassKt {...]
         UMethod (name = getXs) [public static final fun getXs() : Z[] = UastEmptyExpression]
         UMethod (name = box) [public static final fun box() : java.lang.String {...}]
             UBlockExpression [{...}] : PsiType:Void
-                [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                UBinaryExpression (operator = =) [xs[0] = [!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:Unit
+                    UArrayAccessExpression [xs[0]] : PsiType:Unit
+                        USimpleNameReferenceExpression (identifier = xs) [xs] : PsiType:Z[]
+                        ULiteralExpression (value = 0) [0] : PsiType:int
+                    [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
-                UIfExpression [if ([!] UnknownKotlinExpression (BINARY_EXPRESSION)) throw [!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:Unit
-                    [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                UIfExpression [if (t.data != 12) throw [!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:Unit
+                    UBinaryExpression (operator = !=) [t.data != 12] : PsiType:boolean
+                        UQualifiedReferenceExpression [t.data] : PsiType:int
+                            USimpleNameReferenceExpression (identifier = t) [t] : PsiType:Z
+                            USimpleNameReferenceExpression (identifier = data) [data] : PsiType:int
+                        ULiteralExpression (value = 12) [12] : PsiType:int
                     UThrowExpression [throw [!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:Void
                         [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
                 UReturnExpression [return "OK"] : PsiType:Void

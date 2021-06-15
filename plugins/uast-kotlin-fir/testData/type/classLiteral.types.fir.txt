@@ -7,9 +7,11 @@ UFile (package = ) [public final class ClassLiteralKt {...]
             UBlockExpression [{...}] : PsiType:Void
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
-                UReturnExpression [return if ([!] UnknownKotlinExpression (BINARY_EXPRESSION)) "OK" else xClass] : PsiType:Void
-                    UIfExpression [if ([!] UnknownKotlinExpression (BINARY_EXPRESSION)) "OK" else xClass] : PsiType:String
-                        [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                UReturnExpression [return if (xClass == stringClass) "OK" else xClass] : PsiType:Void
+                    UIfExpression [if (xClass == stringClass) "OK" else xClass] : PsiType:String
+                        UBinaryExpression (operator = ==) [xClass == stringClass] : PsiType:boolean
+                            USimpleNameReferenceExpression (identifier = xClass) [xClass] : PsiType:KClass<? extends CharSequence>
+                            USimpleNameReferenceExpression (identifier = stringClass) [stringClass] : PsiType:KClass<String>
                         ULiteralExpression (value = "OK") ["OK"] : PsiType:String
                         USimpleNameReferenceExpression (identifier = xClass) [xClass] : PsiType:KClass<? extends CharSequence>
     UClass (name = Foo) [public final class Foo {...}]
@@ -20,13 +22,24 @@ UFile (package = ) [public final class ClassLiteralKt {...]
         UMethod (name = equals) [public fun equals(other: java.lang.Object) : boolean {...}]
             UParameter (name = other) [var other: java.lang.Object]
             UBlockExpression [{...}] : PsiType:Void
-                UIfExpression [if ([!] UnknownKotlinExpression (BINARY_EXPRESSION)) return false] : PsiType:Unit
-                    [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                UIfExpression [if (other == null) return false] : PsiType:Unit
+                    UBinaryExpression (operator = ==) [other == null] : PsiType:boolean
+                        USimpleNameReferenceExpression (identifier = other) [other] : PsiType:Object
+                        ULiteralExpression (value = null) [null] : PsiType:Void
                     UReturnExpression [return false] : PsiType:Void
                         ULiteralExpression (value = false) [false] : PsiType:boolean
-                UIfExpression [if ([!] UnknownKotlinExpression (BINARY_EXPRESSION)) return false] : PsiType:Unit
-                    [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                UIfExpression [if (java.lang.Object != Foo) return false] : PsiType:Unit
+                    UBinaryExpression (operator = !=) [java.lang.Object != Foo] : PsiType:boolean
+                        UClassLiteralExpression [java.lang.Object] : PsiType:KClass<? extends Object>
+                        UClassLiteralExpression [Foo] : PsiType:KClass<? extends Foo>
                     UReturnExpression [return false] : PsiType:Void
                         ULiteralExpression (value = false) [false] : PsiType:boolean
-                UReturnExpression [return [!] UnknownKotlinExpression (BINARY_EXPRESSION)] : PsiType:Void
-                    [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                UReturnExpression [return s == (other as Foo).s] : PsiType:Void
+                    UBinaryExpression (operator = ==) [s == (other as Foo).s] : PsiType:boolean
+                        USimpleNameReferenceExpression (identifier = s) [s] : PsiType:String
+                        UQualifiedReferenceExpression [(other as Foo).s] : PsiType:String
+                            UParenthesizedExpression [(other as Foo)] : PsiType:Foo
+                                UBinaryExpressionWithType [other as Foo] : PsiType:Foo
+                                    USimpleNameReferenceExpression (identifier = other) [other] : PsiType:Object
+                                    UTypeReferenceExpression (name = Foo) [Foo]
+                            USimpleNameReferenceExpression (identifier = s) [s] : PsiType:String

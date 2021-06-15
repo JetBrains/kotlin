@@ -4,5 +4,15 @@ UFile (package = ) [public final class InKt {...]
             UBlockExpression [{...}] = Nothing
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)] = Undetermined
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)] = Undetermined
-                UReturnExpression [return [!] UnknownKotlinExpression (BINARY_EXPRESSION)] = Nothing
-                    [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)] = Undetermined
+                UReturnExpression [return x in 0 .. 5 && y !in 4 .. 9] = Nothing
+                    UBinaryExpression (operator = &&) [x in 0 .. 5 && y !in 4 .. 9] = Undetermined
+                        UBinaryExpression (operator = in) [x in 0 .. 5] = Undetermined
+                            USimpleNameReferenceExpression (identifier = x) [x] = external x()
+                            UBinaryExpression (operator = ..) [0 .. 5] = Undetermined
+                                ULiteralExpression (value = 0) [0] = (long)0
+                                ULiteralExpression (value = 5) [5] = (long)5
+                        UBinaryExpression (operator = !in) [y !in 4 .. 9] = Undetermined
+                            USimpleNameReferenceExpression (identifier = y) [y] = external y()
+                            UBinaryExpression (operator = ..) [4 .. 9] = Undetermined
+                                ULiteralExpression (value = 4) [4] = (long)4
+                                ULiteralExpression (value = 9) [9] = (long)9

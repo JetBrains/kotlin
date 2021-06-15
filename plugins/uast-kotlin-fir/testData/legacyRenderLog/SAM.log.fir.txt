@@ -20,7 +20,9 @@ UFile (package = )
             UParameter (name = value)
         UMethod (name = bar)
             UBlockExpression
-                [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+                UBinaryExpression (operator = =)
+                    USimpleNameReferenceExpression (identifier = foo)
+                    [!] UnknownKotlinExpression (LAMBDA_EXPRESSION)
                 [!] UnknownKotlinExpression (PROPERTY)
                 [!] UnknownKotlinExpression (CALL_EXPRESSION)
                 UReturnExpression

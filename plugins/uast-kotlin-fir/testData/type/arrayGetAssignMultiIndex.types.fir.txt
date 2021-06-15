@@ -5,22 +5,40 @@ UFile (package = ) [public final class ArrayGetAssignMultiIndexKt {...]
             UParameter (name = index1) [var index1: int]
             UParameter (name = index2) [var index2: int]
             UBlockExpression [{...}]
-                UReturnExpression [return this[[!] UnknownKotlinExpression (BINARY_EXPRESSION)]]
-                    UArrayAccessExpression [this[[!] UnknownKotlinExpression (BINARY_EXPRESSION)]] : PsiType:String
+                UReturnExpression [return this[index1 + index2]]
+                    UArrayAccessExpression [this[index1 + index2]] : PsiType:String
                         UThisExpression (label = null) [this] : PsiType:String[]
-                        [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                        UBinaryExpression (operator = +) [index1 + index2] : PsiType:int
+                            USimpleNameReferenceExpression (identifier = index1) [index1] : PsiType:int
+                            USimpleNameReferenceExpression (identifier = index2) [index2] : PsiType:int
         UMethod (name = set) [public static final fun set($this$set: java.lang.String[], index1: int, index2: int, elem: java.lang.String) : void {...}]
             UParameter (name = $this$set) [var $this$set: java.lang.String[]]
             UParameter (name = index1) [var index1: int]
             UParameter (name = index2) [var index2: int]
             UParameter (name = elem) [var elem: java.lang.String]
             UBlockExpression [{...}] : PsiType:Unit
-                [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                UBinaryExpression (operator = =) [this[index1 + index2] = elem] : PsiType:Unit
+                    UArrayAccessExpression [this[index1 + index2]] : PsiType:Unit
+                        UThisExpression (label = null) [this] : PsiType:String[]
+                        UBinaryExpression (operator = +) [index1 + index2] : PsiType:int
+                            USimpleNameReferenceExpression (identifier = index1) [index1] : PsiType:int
+                            USimpleNameReferenceExpression (identifier = index2) [index2] : PsiType:int
+                    USimpleNameReferenceExpression (identifier = elem) [elem] : PsiType:String
         UMethod (name = box) [public static final fun box() : java.lang.String {...}]
             UBlockExpression [{...}] : PsiType:Void
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
-                [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
-                [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                UBinaryExpression (operator = =) [s[1, [!] UnknownKotlinExpression (PREFIX_EXPRESSION)] = "O"] : PsiType:Unit
+                    UArrayAccessExpression [s[1, [!] UnknownKotlinExpression (PREFIX_EXPRESSION)]] : PsiType:Unit
+                        USimpleNameReferenceExpression (identifier = s) [s] : PsiType:String[]
+                        ULiteralExpression (value = 1) [1] : PsiType:int
+                        [!] UnknownKotlinExpression (PREFIX_EXPRESSION) [[!] UnknownKotlinExpression (PREFIX_EXPRESSION)]
+                    ULiteralExpression (value = "O") ["O"] : PsiType:String
+                UBinaryExpression (operator = +=) [s[2, [!] UnknownKotlinExpression (PREFIX_EXPRESSION)] += "K"] : PsiType:Unit
+                    UArrayAccessExpression [s[2, [!] UnknownKotlinExpression (PREFIX_EXPRESSION)]] : PsiType:Unit
+                        USimpleNameReferenceExpression (identifier = s) [s] : PsiType:String[]
+                        ULiteralExpression (value = 2) [2] : PsiType:int
+                        [!] UnknownKotlinExpression (PREFIX_EXPRESSION) [[!] UnknownKotlinExpression (PREFIX_EXPRESSION)]
+                    ULiteralExpression (value = "K") ["K"] : PsiType:String
                 UReturnExpression [return s[[!] UnknownKotlinExpression (PREFIX_EXPRESSION), 3]] : PsiType:Void
                     UArrayAccessExpression [s[[!] UnknownKotlinExpression (PREFIX_EXPRESSION), 3]] : PsiType:String
                         USimpleNameReferenceExpression (identifier = s) [s] : PsiType:String[]

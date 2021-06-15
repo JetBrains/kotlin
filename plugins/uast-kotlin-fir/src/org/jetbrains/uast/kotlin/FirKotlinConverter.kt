@@ -317,6 +317,15 @@ internal object FirKotlinConverter : BaseKotlinConverter {
                 is KtSafeQualifiedExpression -> expr<UQualifiedReferenceExpression>(build(::KotlinUSafeQualifiedExpression))
                 is KtSimpleNameExpression -> expr<USimpleNameReferenceExpression>(build(::FirKotlinUSimpleReferenceExpression))
 
+                is KtBinaryExpression -> {
+                    // TODO: elvis
+                    if (expression.operationToken == KtTokens.ELVIS) {
+                        expr<UExpression>(build(::UnknownKotlinExpression))
+                    } else {
+                        expr<UBinaryExpression>(build(::FirKotlinUBinaryExpression))
+                    }
+                }
+
                 else -> expr<UExpression>(build(::UnknownKotlinExpression))
             }
         }

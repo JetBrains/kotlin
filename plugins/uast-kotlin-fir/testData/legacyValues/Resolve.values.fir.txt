@@ -21,7 +21,11 @@ UFile (package = ) [public final class ResolveKt {...]
                     [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
                     USimpleNameReferenceExpression (identifier = indices) [indices] = external indices()
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)] = Undetermined
-                [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)] = Undetermined
+                UBinaryExpression (operator = =) [date.time = 1000] = Undetermined
+                    UQualifiedReferenceExpression [date.time] = external time()
+                        USimpleNameReferenceExpression (identifier = date) [date] = external date()
+                        USimpleNameReferenceExpression (identifier = time) [time] = external time()
+                    ULiteralExpression (value = 1000) [1000] = (long)1000
                 UQualifiedReferenceExpression [[!] UnknownKotlinExpression (CALL_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
                     [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
                     [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined

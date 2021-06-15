@@ -4,6 +4,6 @@ public final class TestPropertyInitializer {
         return field
     }
     public final fun setWithSetter(p: java.lang.String) : void {
-        [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+        field = p
     }
 }

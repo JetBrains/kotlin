@@ -2,6 +2,6 @@ public final class InKt {
     public static final fun foo() : boolean {
         [!] UnknownKotlinExpression (PROPERTY)
         [!] UnknownKotlinExpression (PROPERTY)
-        return [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+        return x in 0 .. 5 && y !in 4 .. 9
     }
 }

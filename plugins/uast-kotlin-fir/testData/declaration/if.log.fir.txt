@@ -7,5 +7,9 @@ UFile (package = )
                     UIfExpression
                         USimpleNameReferenceExpression (identifier = b)
                         UParenthesizedExpression
-                            [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+                            UBinaryExpression (operator = +)
+                                UBinaryExpression (operator = *)
+                                    ULiteralExpression (value = 4)
+                                    ULiteralExpression (value = 10)
+                                ULiteralExpression (value = 2)
                         ULiteralExpression (value = "42")

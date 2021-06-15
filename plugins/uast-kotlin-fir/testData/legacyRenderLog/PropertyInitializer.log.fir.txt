@@ -8,4 +8,6 @@ UFile (package = )
         UMethod (name = setWithSetter)
             UParameter (name = p)
             UBlockExpression
-                [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+                UBinaryExpression (operator = =)
+                    USimpleNameReferenceExpression (identifier = field)
+                    USimpleNameReferenceExpression (identifier = p)

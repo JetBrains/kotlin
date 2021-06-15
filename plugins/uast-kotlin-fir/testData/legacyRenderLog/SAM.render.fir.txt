@@ -11,7 +11,7 @@ public final class SAMKt {
     public static final fun getFoo() : java.lang.Runnable = UastEmptyExpression
     public static final fun setFoo(value: java.lang.Runnable) : void = UastEmptyExpression
     public static final fun bar() : java.lang.Runnable {
-        [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+        foo = [!] UnknownKotlinExpression (LAMBDA_EXPRESSION)
         [!] UnknownKotlinExpression (PROPERTY)
         [!] UnknownKotlinExpression (CALL_EXPRESSION)
         return [!] UnknownKotlinExpression (LAMBDA_EXPRESSION)

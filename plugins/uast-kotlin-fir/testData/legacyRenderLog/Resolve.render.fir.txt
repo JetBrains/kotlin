@@ -7,7 +7,7 @@ public final class ResolveKt {
         [!] UnknownKotlinExpression (CALL_EXPRESSION).size
         [!] UnknownKotlinExpression (CALL_EXPRESSION).indices
         [!] UnknownKotlinExpression (PROPERTY)
-        [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+        date.time = 1000
         [!] UnknownKotlinExpression (CALL_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)
         [!] UnknownKotlinExpression (CALL_EXPRESSION).entries.[!] UnknownKotlinExpression (CALL_EXPRESSION).[!] UnknownKotlinExpression (CALL_EXPRESSION)
         [!] UnknownKotlinExpression (PROPERTY)

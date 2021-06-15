@@ -42,12 +42,18 @@ UFile (package = ) [public final class A {...]
             UParameter (name = i) [var i: int]
             UBlockExpression [{...}]
                 UastEmptyExpression [UastEmptyExpression]
-                [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                UBinaryExpression (operator = =) [a = i.[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:void
+                    USimpleNameReferenceExpression (identifier = a) [a] : PsiType:String
+                    UQualifiedReferenceExpression [i.[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:String
+                        USimpleNameReferenceExpression (identifier = i) [i] : PsiType:int
+                        [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
         UMethod (name = AWithSecondary) [public fun AWithSecondary(s: java.lang.String) {...}]
             UParameter (name = s) [var s: java.lang.String]
             UBlockExpression [{...}]
                 UastEmptyExpression [UastEmptyExpression]
-                [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                UBinaryExpression (operator = =) [a = s] : PsiType:void
+                    USimpleNameReferenceExpression (identifier = a) [a] : PsiType:String
+                    USimpleNameReferenceExpression (identifier = s) [s] : PsiType:String
         UMethod (name = getA) [public final fun getA() : java.lang.String = UastEmptyExpression]
         UMethod (name = setA) [public final fun setA(value: java.lang.String) : void = UastEmptyExpression]
             UParameter (name = value) [var value: java.lang.String]
@@ -59,12 +65,18 @@ UFile (package = ) [public final class A {...]
                 UastEmptyExpression [UastEmptyExpression]
                 UBlockExpression [{...}] : PsiType:Unit
                     [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
-                [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                UBinaryExpression (operator = =) [a = i.[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:void
+                    USimpleNameReferenceExpression (identifier = a) [a] : PsiType:String
+                    UQualifiedReferenceExpression [i.[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:String
+                        USimpleNameReferenceExpression (identifier = i) [i] : PsiType:int
+                        [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
         UMethod (name = AWithSecondaryInit) [public fun AWithSecondaryInit(s: java.lang.String) {...}]
             UParameter (name = s) [var s: java.lang.String]
             UBlockExpression [{...}]
                 UastEmptyExpression [UastEmptyExpression]
-                [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                UBinaryExpression (operator = =) [a = s] : PsiType:void
+                    USimpleNameReferenceExpression (identifier = a) [a] : PsiType:String
+                    USimpleNameReferenceExpression (identifier = s) [s] : PsiType:String
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
                 UQualifiedReferenceExpression [local.[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:String
                     USimpleNameReferenceExpression (identifier = local) [local] : PsiType:String
@@ -78,5 +90,9 @@ UFile (package = ) [public final class A {...]
             UParameter (name = i) [var i: int]
             UBlockExpression [{...}]
                 UBlockExpression [{...}] : PsiType:Unit
-                    [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                    UBinaryExpression (operator = =) [a = i.[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:void
+                        USimpleNameReferenceExpression (identifier = a) [a] : PsiType:String
+                        UQualifiedReferenceExpression [i.[!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:String
+                            USimpleNameReferenceExpression (identifier = i) [i] : PsiType:int
+                            [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
         UMethod (name = getA) [public final fun getA() : java.lang.String = UastEmptyExpression]

@@ -27,18 +27,24 @@ UFile (package = ) [public final class WithGenericKt {...]
                     UTypeReferenceExpression (name = java.lang.String) [java.lang.String]
         UMethod (name = box) [public static final fun box() : java.lang.String {...}]
             UBlockExpression [{...}] : PsiType:Void
-                UIfExpression [if ([!] UnknownKotlinExpression (BINARY_EXPRESSION)) return "fail: test1"] : PsiType:Unit
-                    [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                UIfExpression [if ([!] UnknownKotlinExpression (CALL_EXPRESSION) != null) return "fail: test1"] : PsiType:Unit
+                    UBinaryExpression (operator = !=) [[!] UnknownKotlinExpression (CALL_EXPRESSION) != null] : PsiType:boolean
+                        [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
+                        ULiteralExpression (value = null) [null] : PsiType:Void
                     UReturnExpression [return "fail: test1"] : PsiType:Void
                         ULiteralExpression (value = "fail: test1") ["fail: test1"] : PsiType:String
-                UIfExpression [if ([!] UnknownKotlinExpression (BINARY_EXPRESSION)) return "fail: test2"] : PsiType:Unit
-                    [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                UIfExpression [if ([!] UnknownKotlinExpression (CALL_EXPRESSION) != null) return "fail: test2"] : PsiType:Unit
+                    UBinaryExpression (operator = !=) [[!] UnknownKotlinExpression (CALL_EXPRESSION) != null] : PsiType:boolean
+                        [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
+                        ULiteralExpression (value = null) [null] : PsiType:Void
                     UReturnExpression [return "fail: test2"] : PsiType:Void
                         ULiteralExpression (value = "fail: test2") ["fail: test2"] : PsiType:String
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
                 [!] UnknownKotlinExpression (TRY) [[!] UnknownKotlinExpression (TRY)]
-                UIfExpression [if ([!] UnknownKotlinExpression (BINARY_EXPRESSION)) return "fail: test3"] : PsiType:Unit
-                    [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                UIfExpression [if (result3 != "OK") return "fail: test3"] : PsiType:Unit
+                    UBinaryExpression (operator = !=) [result3 != "OK"] : PsiType:boolean
+                        USimpleNameReferenceExpression (identifier = result3) [result3] : PsiType:String
+                        ULiteralExpression (value = "OK") ["OK"] : PsiType:String
                     UReturnExpression [return "fail: test3"] : PsiType:Void
                         ULiteralExpression (value = "fail: test3") ["fail: test3"] : PsiType:String
                 [!] UnknownKotlinExpression (TRY) [[!] UnknownKotlinExpression (TRY)]

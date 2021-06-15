@@ -11,8 +11,10 @@ UFile (package = ) [public final class Foo {...]
             UMethod (name = getB) [public final fun getB() : int = UastEmptyExpression]
             UMethod (name = getAPlusB) [public final fun getAPlusB() : int {...}]
                 UBlockExpression [{...}]
-                    UReturnExpression [return [!] UnknownKotlinExpression (BINARY_EXPRESSION)]
-                        [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                    UReturnExpression [return a + b]
+                        UBinaryExpression (operator = +) [a + b] : PsiType:int
+                            USimpleNameReferenceExpression (identifier = a) [a] : PsiType:int
+                            USimpleNameReferenceExpression (identifier = b) [b] : PsiType:int
             UClass (name = Baz) [public static final class Baz {...}]
                 UMethod (name = Baz) [public fun Baz() = UastEmptyExpression]
                 UMethod (name = doNothing) [public final fun doNothing() : void {...}]

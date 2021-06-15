@@ -4,6 +4,6 @@ public final class LocalDeclarationsKt {
         [!] UnknownKotlinExpression (FUN)
         [!] UnknownKotlinExpression (PROPERTY)
         [!] UnknownKotlinExpression (FUN)
-        return [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+        return [!] UnknownKotlinExpression (CALL_EXPRESSION) == [!] UnknownKotlinExpression (CALL_EXPRESSION)
     }
 }

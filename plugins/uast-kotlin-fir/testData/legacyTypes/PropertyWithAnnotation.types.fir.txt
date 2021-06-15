@@ -14,5 +14,7 @@ UFile (package = ) [public final class PropertyWithAnnotationKt {...]
         UMethod (name = setProp3) [public static final fun setProp3(value: int) : void {...}]
             UParameter (name = value) [var value: int]
             UBlockExpression [{...}] : PsiType:Unit
-                [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                UBinaryExpression (operator = =) [field = value] : PsiType:void
+                    USimpleNameReferenceExpression (identifier = field) [field] : PsiType:int
+                    USimpleNameReferenceExpression (identifier = value) [value] : PsiType:int
     UClass (name = TestAnnotation) [public abstract annotation TestAnnotation {...}]

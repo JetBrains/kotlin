@@ -10,8 +10,16 @@ UFile (package = ) [public final class BitwiseKt {...]
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)] = Undetermined
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)] = Undetermined
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)] = Undetermined
-                UReturnExpression [return [!] UnknownKotlinExpression (BINARY_EXPRESSION)] = Nothing
-                    [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)] = Undetermined
+                UReturnExpression [return pos + zero - zebra * signed / one] = Nothing
+                    UBinaryExpression (operator = -) [pos + zero - zebra * signed / one] = Undetermined
+                        UBinaryExpression (operator = +) [pos + zero] = Undetermined
+                            USimpleNameReferenceExpression (identifier = pos) [pos] = external pos()
+                            USimpleNameReferenceExpression (identifier = zero) [zero] = external zero()
+                        UBinaryExpression (operator = /) [zebra * signed / one] = Undetermined
+                            UBinaryExpression (operator = *) [zebra * signed] = Undetermined
+                                USimpleNameReferenceExpression (identifier = zebra) [zebra] = external zebra()
+                                USimpleNameReferenceExpression (identifier = signed) [signed] = external signed()
+                            USimpleNameReferenceExpression (identifier = one) [one] = external one()
         UMethod (name = bar) [public static final fun bar() : long {...}]
             UBlockExpression [{...}] = Nothing
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)] = Undetermined
@@ -22,5 +30,13 @@ UFile (package = ) [public final class BitwiseKt {...]
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)] = Undetermined
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)] = Undetermined
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)] = Undetermined
-                UReturnExpression [return [!] UnknownKotlinExpression (BINARY_EXPRESSION)] = Nothing
-                    [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)] = Undetermined
+                UReturnExpression [return pos + zero - zebra * signed / one] = Nothing
+                    UBinaryExpression (operator = -) [pos + zero - zebra * signed / one] = Undetermined
+                        UBinaryExpression (operator = +) [pos + zero] = Undetermined
+                            USimpleNameReferenceExpression (identifier = pos) [pos] = external pos()
+                            USimpleNameReferenceExpression (identifier = zero) [zero] = external zero()
+                        UBinaryExpression (operator = /) [zebra * signed / one] = Undetermined
+                            UBinaryExpression (operator = *) [zebra * signed] = Undetermined
+                                USimpleNameReferenceExpression (identifier = zebra) [zebra] = external zebra()
+                                USimpleNameReferenceExpression (identifier = signed) [signed] = external signed()
+                            USimpleNameReferenceExpression (identifier = one) [one] = external one()

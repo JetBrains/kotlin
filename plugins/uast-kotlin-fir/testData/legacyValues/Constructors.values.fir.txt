@@ -42,12 +42,18 @@ UFile (package = ) [public final class A {...]
             UParameter (name = i) [var i: int]
             UBlockExpression [{...}] = Undetermined
                 UastEmptyExpression [UastEmptyExpression] = Undetermined
-                [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)] = Undetermined
+                UBinaryExpression (operator = =) [a = i.[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
+                    USimpleNameReferenceExpression (identifier = a) [a] = external a()
+                    UQualifiedReferenceExpression [i.[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
+                        USimpleNameReferenceExpression (identifier = i) [i] = Undetermined
+                        [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
         UMethod (name = AWithSecondary) [public fun AWithSecondary(s: java.lang.String) {...}]
             UParameter (name = s) [var s: java.lang.String]
             UBlockExpression [{...}] = Undetermined
                 UastEmptyExpression [UastEmptyExpression] = Undetermined
-                [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)] = Undetermined
+                UBinaryExpression (operator = =) [a = s] = Undetermined
+                    USimpleNameReferenceExpression (identifier = a) [a] = external a()
+                    USimpleNameReferenceExpression (identifier = s) [s] = Undetermined
         UMethod (name = getA) [public final fun getA() : java.lang.String = UastEmptyExpression]
         UMethod (name = setA) [public final fun setA(value: java.lang.String) : void = UastEmptyExpression]
             UParameter (name = value) [var value: java.lang.String]
@@ -59,12 +65,18 @@ UFile (package = ) [public final class A {...]
                 UastEmptyExpression [UastEmptyExpression] = Undetermined
                 UBlockExpression [{...}] = Undetermined
                     [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
-                [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)] = Undetermined
+                UBinaryExpression (operator = =) [a = i.[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
+                    USimpleNameReferenceExpression (identifier = a) [a] = external a()
+                    UQualifiedReferenceExpression [i.[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
+                        USimpleNameReferenceExpression (identifier = i) [i] = Undetermined
+                        [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
         UMethod (name = AWithSecondaryInit) [public fun AWithSecondaryInit(s: java.lang.String) {...}]
             UParameter (name = s) [var s: java.lang.String]
             UBlockExpression [{...}] = Undetermined
                 UastEmptyExpression [UastEmptyExpression] = Undetermined
-                [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)] = Undetermined
+                UBinaryExpression (operator = =) [a = s] = Undetermined
+                    USimpleNameReferenceExpression (identifier = a) [a] = external a()
+                    USimpleNameReferenceExpression (identifier = s) [s] = Undetermined
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)] = Undetermined
                 UQualifiedReferenceExpression [local.[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
                     USimpleNameReferenceExpression (identifier = local) [local] = external local()
@@ -78,5 +90,9 @@ UFile (package = ) [public final class A {...]
             UParameter (name = i) [var i: int]
             UBlockExpression [{...}] = Undetermined
                 UBlockExpression [{...}] = Undetermined
-                    [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)] = Undetermined
+                    UBinaryExpression (operator = =) [a = i.[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
+                        USimpleNameReferenceExpression (identifier = a) [a] = Undetermined
+                        UQualifiedReferenceExpression [i.[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
+                            USimpleNameReferenceExpression (identifier = i) [i] = Undetermined
+                            [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
         UMethod (name = getA) [public final fun getA() : java.lang.String = UastEmptyExpression]

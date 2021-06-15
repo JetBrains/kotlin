@@ -42,12 +42,18 @@ UFile (package = )
             UParameter (name = i)
             UBlockExpression
                 UastEmptyExpression
-                [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+                UBinaryExpression (operator = =)
+                    USimpleNameReferenceExpression (identifier = a)
+                    UQualifiedReferenceExpression
+                        USimpleNameReferenceExpression (identifier = i)
+                        [!] UnknownKotlinExpression (CALL_EXPRESSION)
         UMethod (name = AWithSecondary)
             UParameter (name = s)
             UBlockExpression
                 UastEmptyExpression
-                [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+                UBinaryExpression (operator = =)
+                    USimpleNameReferenceExpression (identifier = a)
+                    USimpleNameReferenceExpression (identifier = s)
         UMethod (name = getA)
         UMethod (name = setA)
             UParameter (name = value)
@@ -59,12 +65,18 @@ UFile (package = )
                 UastEmptyExpression
                 UBlockExpression
                     [!] UnknownKotlinExpression (CALL_EXPRESSION)
-                [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+                UBinaryExpression (operator = =)
+                    USimpleNameReferenceExpression (identifier = a)
+                    UQualifiedReferenceExpression
+                        USimpleNameReferenceExpression (identifier = i)
+                        [!] UnknownKotlinExpression (CALL_EXPRESSION)
         UMethod (name = AWithSecondaryInit)
             UParameter (name = s)
             UBlockExpression
                 UastEmptyExpression
-                [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+                UBinaryExpression (operator = =)
+                    USimpleNameReferenceExpression (identifier = a)
+                    USimpleNameReferenceExpression (identifier = s)
                 [!] UnknownKotlinExpression (PROPERTY)
                 UQualifiedReferenceExpression
                     USimpleNameReferenceExpression (identifier = local)
@@ -78,5 +90,9 @@ UFile (package = )
             UParameter (name = i)
             UBlockExpression
                 UBlockExpression
-                    [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+                    UBinaryExpression (operator = =)
+                        USimpleNameReferenceExpression (identifier = a)
+                        UQualifiedReferenceExpression
+                            USimpleNameReferenceExpression (identifier = i)
+                            [!] UnknownKotlinExpression (CALL_EXPRESSION)
         UMethod (name = getA)

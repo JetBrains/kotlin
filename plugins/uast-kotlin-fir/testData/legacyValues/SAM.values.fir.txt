@@ -20,7 +20,9 @@ UFile (package = ) [import java.lang.Thread...]
             UParameter (name = value) [var value: java.lang.Runnable]
         UMethod (name = bar) [public static final fun bar() : java.lang.Runnable {...}]
             UBlockExpression [{...}] = Nothing
-                [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)] = Undetermined
+                UBinaryExpression (operator = =) [foo = [!] UnknownKotlinExpression (LAMBDA_EXPRESSION)] = Undetermined
+                    USimpleNameReferenceExpression (identifier = foo) [foo] = external foo()
+                    [!] UnknownKotlinExpression (LAMBDA_EXPRESSION) [[!] UnknownKotlinExpression (LAMBDA_EXPRESSION)] = Undetermined
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)] = Undetermined
                 [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)] = Undetermined
                 UReturnExpression [return [!] UnknownKotlinExpression (LAMBDA_EXPRESSION)] = Nothing

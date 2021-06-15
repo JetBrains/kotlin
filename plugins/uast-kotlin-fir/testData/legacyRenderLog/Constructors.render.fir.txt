@@ -44,11 +44,11 @@ public final class AWithSecondary {
     private var a: java.lang.String
     public fun AWithSecondary(i: int) {
         UastEmptyExpression
-        [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+        a = i.[!] UnknownKotlinExpression (CALL_EXPRESSION)
     }
     public fun AWithSecondary(s: java.lang.String) {
         UastEmptyExpression
-        [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+        a = s
     }
     public final fun getA() : java.lang.String = UastEmptyExpression
     public final fun setA(value: java.lang.String) : void = UastEmptyExpression
@@ -61,11 +61,11 @@ public final class AWithSecondaryInit {
         {
             [!] UnknownKotlinExpression (CALL_EXPRESSION)
         }
-        [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+        a = i.[!] UnknownKotlinExpression (CALL_EXPRESSION)
     }
     public fun AWithSecondaryInit(s: java.lang.String) {
         UastEmptyExpression
-        [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+        a = s
         [!] UnknownKotlinExpression (PROPERTY)
         local.[!] UnknownKotlinExpression (CALL_EXPRESSION)
     }
@@ -77,7 +77,7 @@ public final class AWithFieldInit {
     private final var a: java.lang.String
     public fun AWithFieldInit(i: int) {
         {
-            [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+            a = i.[!] UnknownKotlinExpression (CALL_EXPRESSION)
         }
     }
     public final fun getA() : java.lang.String = UastEmptyExpression

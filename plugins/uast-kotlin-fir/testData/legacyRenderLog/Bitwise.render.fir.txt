@@ -8,7 +8,7 @@ public final class BitwiseKt {
         [!] UnknownKotlinExpression (PROPERTY)
         [!] UnknownKotlinExpression (PROPERTY)
         [!] UnknownKotlinExpression (PROPERTY)
-        return [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+        return pos + zero - zebra * signed / one
     }
     public static final fun bar() : long {
         [!] UnknownKotlinExpression (PROPERTY)
@@ -19,6 +19,6 @@ public final class BitwiseKt {
         [!] UnknownKotlinExpression (PROPERTY)
         [!] UnknownKotlinExpression (PROPERTY)
         [!] UnknownKotlinExpression (PROPERTY)
-        return [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+        return pos + zero - zebra * signed / one
     }
 }

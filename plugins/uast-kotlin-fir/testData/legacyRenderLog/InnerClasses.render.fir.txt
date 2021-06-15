@@ -7,7 +7,7 @@ public final class Foo {
         public final fun getA() : int = UastEmptyExpression
         public final fun getB() : int = UastEmptyExpression
         public final fun getAPlusB() : int {
-            return [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+            return a + b
         }
         public static final class Baz {
             public fun Baz() = UastEmptyExpression

@@ -2,8 +2,8 @@ public final class DoWhileKt {
     public static final fun test() : void {
         [!] UnknownKotlinExpression (PROPERTY)
         do {
-            [!] UnknownKotlinExpression (BINARY_EXPRESSION)
-        }while ([!] UnknownKotlinExpression (BINARY_EXPRESSION))
+            x = "non-null"
+        }while (x != null)
 
     }
     public static final fun kt44412() : void {
@@ -13,9 +13,9 @@ public final class DoWhileKt {
             [!] UnknownKotlinExpression (PROPERTY)
             Inner@ do {
                 [!] UnknownKotlinExpression (PREFIX_EXPRESSION)
-            }while (if ([!] UnknownKotlinExpression (BINARY_EXPRESSION)) false else break)
+            }while (if (j >= 3) false else break)
 
-            if ([!] UnknownKotlinExpression (BINARY_EXPRESSION)) break
+            if (i == 3) break
         }
     }
 }

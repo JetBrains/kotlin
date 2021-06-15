@@ -20,28 +20,40 @@ UFile (package = ) [import java.lang.Runnable...]
         UMethod (name = box) [public static final fun box() : java.lang.String {...}]
             UBlockExpression [{...}] : PsiType:Void
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
-                UIfExpression [if ([!] UnknownKotlinExpression (BINARY_EXPRESSION)) return "Fail: " + x] : PsiType:Unit
-                    [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                UIfExpression [if (x != Unit) return "Fail: " + x] : PsiType:Unit
+                    UBinaryExpression (operator = !=) [x != Unit] : PsiType:boolean
+                        USimpleNameReferenceExpression (identifier = x) [x] : PsiType:Object
+                        USimpleNameReferenceExpression (identifier = Unit) [Unit] : PsiType:Unit
                     UReturnExpression [return "Fail: " + x] : PsiType:Void
                         UPolyadicExpression (operator = +) ["Fail: " + x] : PsiType:String
                             ULiteralExpression (value = "Fail: ") ["Fail: "] : PsiType:String
                             USimpleNameReferenceExpression (identifier = x) [x] : PsiType:Object
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
-                UIfExpression [if ([!] UnknownKotlinExpression (BINARY_EXPRESSION)) return "Fail: " + y] : PsiType:Unit
-                    [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                UIfExpression [if (y != Unit) return "Fail: " + y] : PsiType:Unit
+                    UBinaryExpression (operator = !=) [y != Unit] : PsiType:boolean
+                        USimpleNameReferenceExpression (identifier = y) [y] : PsiType:Object
+                        USimpleNameReferenceExpression (identifier = Unit) [Unit] : PsiType:Unit
                     UReturnExpression [return "Fail: " + y] : PsiType:Void
                         UPolyadicExpression (operator = +) ["Fail: " + y] : PsiType:String
                             ULiteralExpression (value = "Fail: ") ["Fail: "] : PsiType:String
                             USimpleNameReferenceExpression (identifier = y) [y] : PsiType:Object
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
-                UIfExpression [if ([!] UnknownKotlinExpression (BINARY_EXPRESSION)) return "Fail: " + r] : PsiType:Unit
-                    [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                UIfExpression [if ([!] UnknownKotlinExpression (CALL_EXPRESSION) !== UastEmptyExpression <other> UastEmptyExpression) return "Fail: " + r] : PsiType:Unit
+                    UBinaryExpression (operator = !==) [[!] UnknownKotlinExpression (CALL_EXPRESSION) !== UastEmptyExpression <other> UastEmptyExpression] : PsiType:boolean
+                        [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
+                        UBinaryExpression (operator = <other>) [UastEmptyExpression <other> UastEmptyExpression] : PsiType:NonExistentClass
+                            UastEmptyExpression [UastEmptyExpression]
+                            UastEmptyExpression [UastEmptyExpression]
                     UReturnExpression [return "Fail: " + r] : PsiType:Void
                         UPolyadicExpression (operator = +) ["Fail: " + r] : PsiType:String
                             ULiteralExpression (value = "Fail: ") ["Fail: "] : PsiType:String
                             USimpleNameReferenceExpression (identifier = r) [r] : PsiType:Object
-                UIfExpression [if ([!] UnknownKotlinExpression (BINARY_EXPRESSION)) return "Fail: " + r] : PsiType:Unit
-                    [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                UIfExpression [if ([!] UnknownKotlinExpression (CALL_EXPRESSION) !== UastEmptyExpression <other> UastEmptyExpression) return "Fail: " + r] : PsiType:Unit
+                    UBinaryExpression (operator = !==) [[!] UnknownKotlinExpression (CALL_EXPRESSION) !== UastEmptyExpression <other> UastEmptyExpression] : PsiType:boolean
+                        [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
+                        UBinaryExpression (operator = <other>) [UastEmptyExpression <other> UastEmptyExpression] : PsiType:NonExistentClass
+                            UastEmptyExpression [UastEmptyExpression]
+                            UastEmptyExpression [UastEmptyExpression]
                     UReturnExpression [return "Fail: " + r] : PsiType:Void
                         UPolyadicExpression (operator = +) ["Fail: " + r] : PsiType:String
                             ULiteralExpression (value = "Fail: ") ["Fail: "] : PsiType:String

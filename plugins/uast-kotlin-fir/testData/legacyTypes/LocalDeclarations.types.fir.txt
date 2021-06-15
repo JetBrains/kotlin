@@ -6,5 +6,7 @@ UFile (package = ) [public final class LocalDeclarationsKt {...]
                 [!] UnknownKotlinExpression (FUN) [[!] UnknownKotlinExpression (FUN)]
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
                 [!] UnknownKotlinExpression (FUN) [[!] UnknownKotlinExpression (FUN)]
-                UReturnExpression [return [!] UnknownKotlinExpression (BINARY_EXPRESSION)] : PsiType:Void
-                    [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                UReturnExpression [return [!] UnknownKotlinExpression (CALL_EXPRESSION) == [!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:Void
+                    UBinaryExpression (operator = ==) [[!] UnknownKotlinExpression (CALL_EXPRESSION) == [!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:boolean
+                        [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
+                        [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]

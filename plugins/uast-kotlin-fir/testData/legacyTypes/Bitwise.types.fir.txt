@@ -10,8 +10,16 @@ UFile (package = ) [public final class BitwiseKt {...]
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
-                UReturnExpression [return [!] UnknownKotlinExpression (BINARY_EXPRESSION)] : PsiType:Void
-                    [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                UReturnExpression [return pos + zero - zebra * signed / one] : PsiType:Void
+                    UBinaryExpression (operator = -) [pos + zero - zebra * signed / one] : PsiType:int
+                        UBinaryExpression (operator = +) [pos + zero] : PsiType:int
+                            USimpleNameReferenceExpression (identifier = pos) [pos] : PsiType:int
+                            USimpleNameReferenceExpression (identifier = zero) [zero] : PsiType:int
+                        UBinaryExpression (operator = /) [zebra * signed / one] : PsiType:int
+                            UBinaryExpression (operator = *) [zebra * signed] : PsiType:int
+                                USimpleNameReferenceExpression (identifier = zebra) [zebra] : PsiType:int
+                                USimpleNameReferenceExpression (identifier = signed) [signed] : PsiType:int
+                            USimpleNameReferenceExpression (identifier = one) [one] : PsiType:int
         UMethod (name = bar) [public static final fun bar() : long {...}]
             UBlockExpression [{...}] : PsiType:Void
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
@@ -22,5 +30,13 @@ UFile (package = ) [public final class BitwiseKt {...]
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
-                UReturnExpression [return [!] UnknownKotlinExpression (BINARY_EXPRESSION)] : PsiType:Void
-                    [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                UReturnExpression [return pos + zero - zebra * signed / one] : PsiType:Void
+                    UBinaryExpression (operator = -) [pos + zero - zebra * signed / one] : PsiType:long
+                        UBinaryExpression (operator = +) [pos + zero] : PsiType:long
+                            USimpleNameReferenceExpression (identifier = pos) [pos] : PsiType:long
+                            USimpleNameReferenceExpression (identifier = zero) [zero] : PsiType:long
+                        UBinaryExpression (operator = /) [zebra * signed / one] : PsiType:long
+                            UBinaryExpression (operator = *) [zebra * signed] : PsiType:long
+                                USimpleNameReferenceExpression (identifier = zebra) [zebra] : PsiType:long
+                                USimpleNameReferenceExpression (identifier = signed) [signed] : PsiType:long
+                            USimpleNameReferenceExpression (identifier = one) [one] : PsiType:long

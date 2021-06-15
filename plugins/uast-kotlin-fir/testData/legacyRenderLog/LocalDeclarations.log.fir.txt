@@ -7,4 +7,6 @@ UFile (package = )
                 [!] UnknownKotlinExpression (PROPERTY)
                 [!] UnknownKotlinExpression (FUN)
                 UReturnExpression
-                    [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+                    UBinaryExpression (operator = ==)
+                        [!] UnknownKotlinExpression (CALL_EXPRESSION)
+                        [!] UnknownKotlinExpression (CALL_EXPRESSION)

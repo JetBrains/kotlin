@@ -21,7 +21,11 @@ UFile (package = )
                     [!] UnknownKotlinExpression (CALL_EXPRESSION)
                     USimpleNameReferenceExpression (identifier = indices)
                 [!] UnknownKotlinExpression (PROPERTY)
-                [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+                UBinaryExpression (operator = =)
+                    UQualifiedReferenceExpression
+                        USimpleNameReferenceExpression (identifier = date)
+                        USimpleNameReferenceExpression (identifier = time)
+                    ULiteralExpression (value = 1000)
                 UQualifiedReferenceExpression
                     [!] UnknownKotlinExpression (CALL_EXPRESSION)
                     [!] UnknownKotlinExpression (CALL_EXPRESSION)

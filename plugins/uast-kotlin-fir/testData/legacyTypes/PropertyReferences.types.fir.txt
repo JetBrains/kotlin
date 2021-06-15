@@ -4,16 +4,28 @@ UFile (package = ) [public final class PropertyReferencesKt {...]
             UBlockExpression [{...}] : PsiType:int
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
-                [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
-                [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                UBinaryExpression (operator = =) [a.mutableProp = 1] : PsiType:void
+                    UQualifiedReferenceExpression [a.mutableProp] : PsiType:void
+                        USimpleNameReferenceExpression (identifier = a) [a] : PsiType:A
+                        USimpleNameReferenceExpression (identifier = mutableProp) [mutableProp] : PsiType:int
+                    ULiteralExpression (value = 1) [1] : PsiType:int
+                UBinaryExpression (operator = +=) [a.mutableProp += x] : PsiType:void
+                    UQualifiedReferenceExpression [a.mutableProp] : PsiType:void
+                        USimpleNameReferenceExpression (identifier = a) [a] : PsiType:void
+                        USimpleNameReferenceExpression (identifier = mutableProp) [mutableProp] : PsiType:void
+                    USimpleNameReferenceExpression (identifier = x) [x] : PsiType:int
                 [!] UnknownKotlinExpression (PREFIX_EXPRESSION) [[!] UnknownKotlinExpression (PREFIX_EXPRESSION)]
                 [!] UnknownKotlinExpression (POSTFIX_EXPRESSION) [[!] UnknownKotlinExpression (POSTFIX_EXPRESSION)]
         UMethod (name = ext) [public static final fun ext($this$ext: A) : void {...}]
             UParameter (name = $this$ext) [var $this$ext: A]
             UBlockExpression [{...}] : PsiType:int
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
-                [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
-                [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                UBinaryExpression (operator = =) [mutableProp = 1] : PsiType:void
+                    USimpleNameReferenceExpression (identifier = mutableProp) [mutableProp] : PsiType:int
+                    ULiteralExpression (value = 1) [1] : PsiType:int
+                UBinaryExpression (operator = +=) [mutableProp += x] : PsiType:void
+                    USimpleNameReferenceExpression (identifier = mutableProp) [mutableProp] : PsiType:void
+                    USimpleNameReferenceExpression (identifier = x) [x] : PsiType:int
                 [!] UnknownKotlinExpression (PREFIX_EXPRESSION) [[!] UnknownKotlinExpression (PREFIX_EXPRESSION)]
                 [!] UnknownKotlinExpression (POSTFIX_EXPRESSION) [[!] UnknownKotlinExpression (POSTFIX_EXPRESSION)]
     UClass (name = A) [public final class A {...}]
@@ -24,7 +36,9 @@ UFile (package = ) [public final class PropertyReferencesKt {...]
             UParameter (name = init) [var init: int]
             UBlockExpression [{...}]
                 UBlockExpression [{...}] : PsiType:Unit
-                    [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                    UBinaryExpression (operator = =) [mutableProp = init] : PsiType:void
+                        USimpleNameReferenceExpression (identifier = mutableProp) [mutableProp] : PsiType:int
+                        USimpleNameReferenceExpression (identifier = init) [init] : PsiType:int
         UMethod (name = getMutableProp) [public final fun getMutableProp() : int = UastEmptyExpression]
         UMethod (name = setMutableProp) [public final fun setMutableProp(value: int) : void = UastEmptyExpression]
             UParameter (name = value) [var value: int]
@@ -32,6 +46,8 @@ UFile (package = ) [public final class PropertyReferencesKt {...]
             UParameter (name = x) [var x: int]
             UBlockExpression [{...}] : PsiType:Void
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
-                [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                UBinaryExpression (operator = =) [privateProp = x] : PsiType:void
+                    USimpleNameReferenceExpression (identifier = privateProp) [privateProp] : PsiType:int
+                    USimpleNameReferenceExpression (identifier = x) [x] : PsiType:int
                 UReturnExpression [return privateProp] : PsiType:Void
                     USimpleNameReferenceExpression (identifier = privateProp) [privateProp] : PsiType:int

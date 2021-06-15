@@ -8,4 +8,6 @@ UFile (package = ) [public final class TestPropertyInitializer {...]
         UMethod (name = setWithSetter) [public final fun setWithSetter(p: java.lang.String) : void {...}]
             UParameter (name = p) [var p: java.lang.String]
             UBlockExpression [{...}] = Undetermined
-                [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)] = Undetermined
+                UBinaryExpression (operator = =) [field = p] = Undetermined
+                    USimpleNameReferenceExpression (identifier = field) [field] = external field()
+                    USimpleNameReferenceExpression (identifier = p) [p] = external p()

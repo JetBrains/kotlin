@@ -14,5 +14,7 @@ UFile (package = )
         UMethod (name = setProp3)
             UParameter (name = value)
             UBlockExpression
-                [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+                UBinaryExpression (operator = =)
+                    USimpleNameReferenceExpression (identifier = field)
+                    USimpleNameReferenceExpression (identifier = value)
     UClass (name = TestAnnotation)

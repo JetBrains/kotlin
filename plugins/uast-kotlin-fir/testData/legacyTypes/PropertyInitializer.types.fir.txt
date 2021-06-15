@@ -8,4 +8,6 @@ UFile (package = ) [public final class TestPropertyInitializer {...]
         UMethod (name = setWithSetter) [public final fun setWithSetter(p: java.lang.String) : void {...}]
             UParameter (name = p) [var p: java.lang.String]
             UBlockExpression [{...}] : PsiType:Unit
-                [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                UBinaryExpression (operator = =) [field = p] : PsiType:void
+                    USimpleNameReferenceExpression (identifier = field) [field] : PsiType:String
+                    USimpleNameReferenceExpression (identifier = p) [p] : PsiType:String

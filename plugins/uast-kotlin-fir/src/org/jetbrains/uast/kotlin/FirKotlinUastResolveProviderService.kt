@@ -6,6 +6,7 @@
 package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.idea.frontend.api.analyseForUast
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -20,6 +21,18 @@ interface FirKotlinUastResolveProviderService : BaseKotlinUastResolveProviderSer
 
     override fun convertParent(uElement: UElement): UElement? {
         TODO("Not yet implemented")
+    }
+
+    override fun resolveCall(ktElement: KtElement): PsiMethod? {
+        when (ktElement) {
+            is KtBinaryExpression -> {
+                analyseForUast(ktElement) {
+                    return ktElement.resolveCall()?.toPsiMethod()
+                }
+            }
+            else ->
+                return null
+        }
     }
 
     override fun resolveToDeclaration(ktExpression: KtExpression): PsiElement? {

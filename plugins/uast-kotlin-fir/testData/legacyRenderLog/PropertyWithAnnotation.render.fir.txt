@@ -8,7 +8,7 @@ public final class PropertyWithAnnotationKt {
         return 0
     }
     public static final fun setProp3(value: int) : void {
-        [!] UnknownKotlinExpression (BINARY_EXPRESSION)
+        field = value
     }
 }
 

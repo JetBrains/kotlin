@@ -6,6 +6,7 @@
 package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -26,6 +27,10 @@ interface KotlinUastResolveProviderService : BaseKotlinUastResolveProviderServic
 
     override fun convertParent(uElement: UElement): UElement? {
         return convertParentImpl(uElement)
+    }
+
+    override fun resolveCall(ktElement: KtElement): PsiMethod? {
+        return resolveToPsiMethod(ktElement)
     }
 
     override fun resolveToDeclaration(ktExpression: KtExpression): PsiElement? {

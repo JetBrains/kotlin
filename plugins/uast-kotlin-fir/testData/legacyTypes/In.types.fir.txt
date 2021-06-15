@@ -4,5 +4,15 @@ UFile (package = ) [public final class InKt {...]
             UBlockExpression [{...}] : PsiType:Void
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
-                UReturnExpression [return [!] UnknownKotlinExpression (BINARY_EXPRESSION)] : PsiType:Void
-                    [!] UnknownKotlinExpression (BINARY_EXPRESSION) [[!] UnknownKotlinExpression (BINARY_EXPRESSION)]
+                UReturnExpression [return x in 0 .. 5 && y !in 4 .. 9] : PsiType:Void
+                    UBinaryExpression (operator = &&) [x in 0 .. 5 && y !in 4 .. 9] : PsiType:boolean
+                        UBinaryExpression (operator = in) [x in 0 .. 5] : PsiType:boolean
+                            USimpleNameReferenceExpression (identifier = x) [x] : PsiType:int
+                            UBinaryExpression (operator = ..) [0 .. 5] : PsiType:IntRange
+                                ULiteralExpression (value = 0) [0] : PsiType:int
+                                ULiteralExpression (value = 5) [5] : PsiType:int
+                        UBinaryExpression (operator = !in) [y !in 4 .. 9] : PsiType:boolean
+                            USimpleNameReferenceExpression (identifier = y) [y] : PsiType:int
+                            UBinaryExpression (operator = ..) [4 .. 9] : PsiType:IntRange
+                                ULiteralExpression (value = 4) [4] : PsiType:int
+                                ULiteralExpression (value = 9) [9] : PsiType:int
