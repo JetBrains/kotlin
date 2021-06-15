@@ -2339,13 +2339,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.IS_ENUM_ENTRY) { firDiagnostic ->
         IsEnumEntryImpl(
-            firDiagnostic as FirPsiDiagnostic<*>,
+            firDiagnostic as FirPsiDiagnostic,
             token,
         )
     }
     add(FirErrors.ENUM_ENTRY_AS_TYPE) { firDiagnostic ->
         EnumEntryAsTypeImpl(
-            firDiagnostic as FirPsiDiagnostic<*>,
+            firDiagnostic as FirPsiDiagnostic,
             token,
         )
     }
