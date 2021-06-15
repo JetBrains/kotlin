@@ -52,23 +52,12 @@ internal interface ToolchainSupport {
                             .getByType(JavaPluginExtension::class.java)
                             .toolchain
 
-                        val toolchainSpec = if (!javaToolchainSpec.languageVersion.isPresent) {
-                            // We can't reuse java toolchain and just set 'languageVersion' to it
-                            // as build will fail when java source and/or target compatibility is set
-                            project.objects.newInstance<DefaultToolchainSpec>().apply {
-                                languageVersion.set(
-                                    JavaLanguageVersion.of(
-                                        Jvm.current().javaVersion!!.majorVersion
-                                    )
-                                )
-                            }
-                        } else {
-                            javaToolchainSpec
+                        // Only set when toolchain is configured
+                        if (javaToolchainSpec.languageVersion.isPresent) {
+                            it.kotlinJavaToolchain.toolchain.use(
+                                javaToolchainService.launcherFor(javaToolchainSpec)
+                            )
                         }
-
-                        it.kotlinJavaToolchain.toolchain.use(
-                            javaToolchainService.launcherFor(toolchainSpec)
-                        )
                     }
             }
         }
