@@ -102,7 +102,7 @@ fun FunctionDescriptor.canObjCClassMethodBeCalledVirtually(overriddenDescriptor:
         overriddenDescriptor.isOverridable && this.kind.isReal && !this.isExternalObjCClassMethod()
 
 internal fun IrFunction.canObjCClassMethodBeCalledVirtually(overridden: IrFunction) =
-    overridden.isOverridable && this.origin != IrDeclarationOrigin.FAKE_OVERRIDE && !this.isExternalObjCClassMethod()
+    overridden.isOverridable && !this.isFakeOverride && !this.isExternalObjCClassMethod()
 
 fun ClassDescriptor.isKotlinObjCClass(): Boolean = this.isObjCClass() && !this.isExternalObjCClass()
 

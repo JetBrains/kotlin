@@ -745,7 +745,8 @@ class SymbolTable(
                 isLateinit = descriptor.isLateInit,
                 isDelegated = isDelegated,
                 isExternal = descriptor.isEffectivelyExternal(),
-                isExpect = descriptor.isExpect
+                isExpect = descriptor.isExpect,
+                isFakeOverride = descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE
             ).apply {
                 metadata = DescriptorMetadataSource.Property(symbol.descriptor)
             }
