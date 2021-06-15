@@ -5,19 +5,19 @@
 
 package org.jetbrains.kotlin.ir.interpreter.state
 
-import org.jetbrains.kotlin.ir.interpreter.getLastOverridden
-import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
+import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.types.isAny
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
+import org.jetbrains.kotlin.ir.util.overrides
+import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 
-internal interface Complex: State {
+internal interface Complex : State {
     var superWrapperClass: Wrapper?
     var outerClass: Variable?
 
@@ -38,18 +38,14 @@ internal interface Complex: State {
         }
     }
 
-    fun getOverridden(owner: IrSimpleFunction): IrSimpleFunction {
-        if (owner.parent == superWrapperClass?.irClass) return owner
-        if (!owner.isFakeOverride || owner.body != null || owner.parentAsClass.defaultType.isAny()) return owner
-
-        val overriddenOwner = owner.overriddenSymbols.let { it.singleOrNull { it.owner.body != null } ?: it.singleOrNull() }?.owner
-        return overriddenOwner?.let { getOverridden(it) } ?: owner.getLastOverridden() as IrSimpleFunction
+    fun getRealFunction(owner: IrSimpleFunction): IrSimpleFunction {
+        return owner.resolveFakeOverride() as IrSimpleFunction
     }
 
     override fun getIrFunctionByIrCall(expression: IrCall): IrFunction? {
         val receiver = expression.superQualifierSymbol?.owner ?: irClass
         val irFunction = getIrFunctionFromGivenClass(receiver, expression.symbol) ?: return null
-        return getOverridden(irFunction as IrSimpleFunction)
+        return (irFunction as IrSimpleFunction).resolveFakeOverride()
     }
 
     fun loadOuterClassesInto(callStack: CallStack) {

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.types.isNullableAny
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.nameForIrSerialization
+import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.name.Name
 
 internal class Common private constructor(override val irClass: IrClass, override val fields: MutableList<Variable>) : Complex, StateWithClosure {
@@ -46,25 +47,25 @@ internal class Common private constructor(override val irClass: IrClass, overrid
     }
 
     fun getEqualsFunction(): IrSimpleFunction {
-        val equalsFun = irClass.declarations
+        return irClass.declarations
             .filterIsInstance<IrSimpleFunction>()
             .single {
                 it.name == Name.identifier("equals") && it.dispatchReceiverParameter != null
                         && it.valueParameters.size == 1 && it.valueParameters[0].type.isNullableAny()
             }
-        return getOverridden(equalsFun)
+            .let { it.resolveFakeOverride() as IrSimpleFunction }
     }
 
     fun getHashCodeFunction(): IrSimpleFunction {
         return irClass.declarations.filterIsInstance<IrSimpleFunction>()
             .single { it.name.asString() == "hashCode" && it.valueParameters.isEmpty() }
-            .let { getOverridden(it) }
+            .let { it.resolveFakeOverride() as IrSimpleFunction }
     }
 
     fun getToStringFunction(): IrSimpleFunction {
         return irClass.declarations.filterIsInstance<IrSimpleFunction>()
             .single { it.name.asString() == "toString" && it.valueParameters.isEmpty() }
-            .let { getOverridden(it) }
+            .let { it.resolveFakeOverride() as IrSimpleFunction }
     }
 
     fun createToStringIrCall(): IrCall {
