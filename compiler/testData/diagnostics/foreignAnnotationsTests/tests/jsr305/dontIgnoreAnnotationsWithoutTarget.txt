@@ -1,0 +1,29 @@
+package
+
+public fun foo(/*0*/ x: Inv<kotlin.String?>): kotlin.Unit
+public fun main(/*0*/ a: test.A): kotlin.Unit
+
+public final class Inv</*0*/ T> {
+    public constructor Inv</*0*/ T>(/*0*/ x: T)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+package test {
+
+    public open class A {
+        public constructor A()
+        @javax.annotation.Nullable public open fun bar1(): kotlin.String?
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @kotlin.annotation.Target(allowedTargets = {}) @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) @kotlin.annotation.MustBeDocumented @javax.annotation.Nonnull @javax.annotation.meta.TypeQualifierDefault(value = {ElementType.METHOD, ElementType.PARAMETER, ElementType.PACKAGE}) public final annotation class NonNullApi : kotlin.Annotation {
+        public constructor NonNullApi()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

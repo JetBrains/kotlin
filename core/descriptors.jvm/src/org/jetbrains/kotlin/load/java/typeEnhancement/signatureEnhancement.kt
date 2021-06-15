@@ -332,7 +332,8 @@ class SignatureEnhancement(
             val composedAnnotation =
                 if (isHeadTypeConstructor && typeContainer != null && typeContainer !is TypeParameterDescriptor && areImprovementsInStrictMode) {
                     val filteredContainerAnnotations = typeContainer.annotations.filter {
-                        val (_, targets) = annotationTypeQualifierResolver.resolveAnnotation(it) ?: return@filter false
+                        val (_, targets) = annotationTypeQualifierResolver.resolveAnnotation(it)
+                            ?: return@filter true // don't exclude annotations without specified target or unresolved
                         /*
                          * We don't apply container type use annotations to avoid double applying them like with arrays:
                          *      @NotNull Integer [] f15();

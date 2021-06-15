@@ -102,6 +102,12 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
             }
 
             @Test
+            @TestMetadata("dontIgnoreAnnotationsWithoutTarget.kt")
+            public void testDontIgnoreAnnotationsWithoutTarget() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/dontIgnoreAnnotationsWithoutTarget.kt");
+            }
+
+            @Test
             @TestMetadata("nonNullNever.kt")
             public void testNonNullNever() throws Exception {
                 runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nonNullNever.kt");
