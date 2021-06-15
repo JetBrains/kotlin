@@ -281,7 +281,10 @@ include ":compiler:fir:cones",
         ":compiler:fir:checkers:checkers-component-generator",
         ":compiler:fir:entrypoint",
         ":compiler:fir:analysis-tests",
-        ":compiler:fir:analysis-tests:legacy-fir-tests"
+        ":compiler:fir:analysis-tests:legacy-fir-tests",
+        ":compiler:fir:diagnostics-diff.common",
+        ":compiler:fir:diagnostics-diff.delta",
+        ":compiler:fir:diagnostics-diff.report"
 
 include ":compiler:test-infrastructure",
         ":compiler:test-infrastructure-utils",
