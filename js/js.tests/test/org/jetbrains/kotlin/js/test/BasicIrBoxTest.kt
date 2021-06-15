@@ -95,6 +95,7 @@ abstract class BasicIrBoxTest(
         skipDceDriven: Boolean,
         splitPerModule: Boolean,
         propertyLazyInitialization: Boolean,
+        safeExternalBoolean: Boolean,
     ) {
         val filesToCompile = units.map { (it as TranslationUnit.SourceFile).file }
 
@@ -150,7 +151,8 @@ abstract class BasicIrBoxTest(
                     es6mode = runEs6Mode,
                     multiModule = splitPerModule || perModule,
                     propertyLazyInitialization = propertyLazyInitialization,
-                    lowerPerModule = lowerPerModule
+                    lowerPerModule = lowerPerModule,
+                    safeExternalBoolean = safeExternalBoolean,
                 )
 
                 compiledModule.jsCode!!.writeTo(outputFile, config)
@@ -179,7 +181,8 @@ abstract class BasicIrBoxTest(
                     dceDriven = true,
                     es6mode = runEs6Mode,
                     multiModule = splitPerModule || perModule,
-                    propertyLazyInitialization = propertyLazyInitialization
+                    propertyLazyInitialization = propertyLazyInitialization,
+                    safeExternalBoolean = safeExternalBoolean,
                 ).jsCode!!.writeTo(pirOutputFile, config)
             }
         } else {

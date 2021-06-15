@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.lower.ClassReferenceLowering
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -23,9 +22,8 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.js.config.DceRuntimeDiagnostic
+import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.js.config.removingBody
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
@@ -109,11 +107,6 @@ private fun buildRoots(modules: Iterable<IrModuleFragment>, context: JsIrBackend
     return rootDeclarations
 }
 
-private fun DceRuntimeDiagnostic.unreachableDeclarationMethod(context: JsIrBackendContext) =
-    when (this) {
-        DceRuntimeDiagnostic.LOG -> context.intrinsics.jsUnreachableDeclarationLog
-        DceRuntimeDiagnostic.EXCEPTION -> context.intrinsics.jsUnreachableDeclarationException
-    }
 
 private fun processUselessDeclarations(
     modules: Iterable<IrModuleFragment>,
@@ -171,6 +164,16 @@ private fun IrDeclaration.processUselessDeclaration(context: JsIrBackendContext)
         }
         else -> emptyList()
     }
+}
+
+private fun RuntimeDiagnostic.unreachableDeclarationMethod(context: JsIrBackendContext) =
+    when (this) {
+        RuntimeDiagnostic.LOG -> context.intrinsics.jsUnreachableDeclarationLog
+        RuntimeDiagnostic.EXCEPTION -> context.intrinsics.jsUnreachableDeclarationException
+    }
+
+private fun RuntimeDiagnostic.removingBody(): Boolean {
+    return this != RuntimeDiagnostic.LOG
 }
 
 private fun IrDeclaration.processWithDiagnostic(context: JsIrBackendContext) {
