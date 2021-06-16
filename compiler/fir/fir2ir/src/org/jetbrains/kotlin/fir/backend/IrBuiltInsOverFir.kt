@@ -68,7 +68,7 @@ class IrBuiltInsOverFir(
         booleanClass.owner.functions.first { it.name == OperatorNameConventions.NOT && it.returnType == booleanType }.symbol
     }
 
-    private val any by createClass(kotlinIrPackage, IdSignatureValues.any) {
+    private val any by createClass(kotlinIrPackage, IdSignatureValues.any, build = { modality = Modality.OPEN }) {
         createConstructor()
         createMemberFunction(OperatorNameConventions.EQUALS, booleanType, "other" to anyNType, modality = Modality.OPEN, isOperator = true)
         createMemberFunction("hashCode", intType, modality = Modality.OPEN)
@@ -148,7 +148,10 @@ class IrBuiltInsOverFir(
     override val doubleType: IrType get() = double.type
     override val doubleClass: IrClassSymbol get() = double.klass
 
-    private val charSequence by createClass(kotlinIrPackage, IdSignatureValues.charSequence, build = { kind = ClassKind.INTERFACE }) {
+    private val charSequence by createClass(
+        kotlinIrPackage, IdSignatureValues.charSequence,
+        build = { kind = ClassKind.INTERFACE; modality = Modality.OPEN }
+    ) {
         configureSuperTypes()
         createProperty("length", intType, modality = Modality.ABSTRACT)
         createMemberFunction(OperatorNameConventions.GET, charType, "index" to intType, modality = Modality.ABSTRACT, isOperator = true)
@@ -624,7 +627,6 @@ class IrBuiltInsOverFir(
                     IrClassBuilder().run {
                         name = Name.identifier(signature.shortName)
                         origin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
-                        modality = Modality.OPEN
                         build()
                         irFactory.createClass(
                             startOffset, endOffset, origin, symbol, name, kind, visibility, modality,
