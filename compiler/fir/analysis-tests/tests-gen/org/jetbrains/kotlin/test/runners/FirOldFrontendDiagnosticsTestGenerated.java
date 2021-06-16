@@ -23274,6 +23274,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("propertyInCompanionOfEnum.kt")
+            public void testPropertyInCompanionOfEnum() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/resolve/propertyInCompanionOfEnum.kt");
+            }
+
+            @Test
             @TestMetadata("resolveAnnotatedLambdaArgument.kt")
             public void testResolveAnnotatedLambdaArgument() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/resolve/resolveAnnotatedLambdaArgument.kt");
