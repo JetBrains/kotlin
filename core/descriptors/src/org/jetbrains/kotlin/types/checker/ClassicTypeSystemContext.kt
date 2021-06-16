@@ -230,6 +230,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return this.upperBounds[index]
     }
 
+    override fun TypeParameterMarker.getUpperBounds(): List<KotlinTypeMarker> {
+        require(this is TypeParameterDescriptor, this::errorMessage)
+        return this.upperBounds
+    }
+
     override fun TypeParameterMarker.getTypeConstructor(): TypeConstructorMarker {
         require(this is TypeParameterDescriptor, this::errorMessage)
         return this.typeConstructor

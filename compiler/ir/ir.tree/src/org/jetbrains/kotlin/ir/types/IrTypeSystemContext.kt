@@ -176,6 +176,8 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun TypeParameterMarker.getUpperBound(index: Int) = getSuperTypes(this)[index] as KotlinTypeMarker
 
+    override fun TypeParameterMarker.getUpperBounds() = getSuperTypes(this) as List<KotlinTypeMarker>
+
     override fun TypeParameterMarker.getTypeConstructor() = this as IrTypeParameterSymbol
 
     private fun KotlinTypeMarker.containsTypeConstructor(constructor: TypeConstructorMarker): Boolean {

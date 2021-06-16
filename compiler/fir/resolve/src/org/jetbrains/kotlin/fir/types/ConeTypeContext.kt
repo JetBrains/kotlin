@@ -284,6 +284,11 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return this.symbol.fir.bounds[index].coneType
     }
 
+    override fun TypeParameterMarker.getUpperBounds(): List<KotlinTypeMarker> {
+        require(this is ConeTypeParameterLookupTag)
+        return this.symbol.fir.bounds.map { it.coneType }
+    }
+
     override fun TypeParameterMarker.getTypeConstructor(): TypeConstructorMarker {
         require(this is ConeTypeParameterLookupTag)
         return this

@@ -585,7 +585,7 @@ fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: Ca
             if (!originalValueParameters[i].type.isFunctionTypeOrSubtype) continue
         }
 
-        val samKotlinType = samConversion.getSamTypeForValueParameter(underlyingValueParameter)
+        val samKotlinType = samConversion.getSamTypeForValueParameter(underlyingValueParameter, context.languageVersionSettings)
             ?: underlyingValueParameter.varargElementType // If we have a vararg, vararg element type will be taken
             ?: underlyingValueParameter.type
 

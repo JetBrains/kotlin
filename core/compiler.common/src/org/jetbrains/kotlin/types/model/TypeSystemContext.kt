@@ -325,6 +325,7 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun TypeParameterMarker.getVariance(): TypeVariance
     fun TypeParameterMarker.upperBoundCount(): Int
     fun TypeParameterMarker.getUpperBound(index: Int): KotlinTypeMarker
+    fun TypeParameterMarker.getUpperBounds(): List<KotlinTypeMarker>
     fun TypeParameterMarker.getTypeConstructor(): TypeConstructorMarker
     fun TypeParameterMarker.hasRecursiveBounds(selfConstructor: TypeConstructorMarker): Boolean
 
