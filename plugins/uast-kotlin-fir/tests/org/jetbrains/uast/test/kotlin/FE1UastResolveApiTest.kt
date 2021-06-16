@@ -8,44 +8,42 @@ package org.jetbrains.uast.test.kotlin
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
 import org.jetbrains.kotlin.test.TestMetadata
-import org.jetbrains.uast.*
+import org.jetbrains.uast.UFile
 import org.jetbrains.uast.test.common.kotlin.UastResolveApiTestBase
-import org.jetbrains.uast.test.env.kotlin.AbstractFirUastTest
+import org.jetbrains.uast.test.env.kotlin.AbstractFE1UastTest
 import org.junit.runner.RunWith
+import java.io.File
 
 @RunWith(JUnit3RunnerWithInners::class)
-class FirUastResolveApiTest : AbstractFirUastTest() {
-    override val isFirUastPlugin: Boolean = true
-
-    override fun check(filePath: String, file: UFile) {
+class FE1UastResolveApiTest : AbstractFE1UastTest() {
+    override fun check(testName: String, file: UFile) {
         // Bogus
     }
 
-    // TODO: once call is supported, test labeledExpression.kt for labeled this and super
-
     @TestMetadata("plugins/uast-kotlin/testData")
     @TestDataPath("\$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners::class)
-    class Legacy : AbstractFirUastTest(), UastResolveApiTestBase {
-        override val isFirUastPlugin: Boolean = true
+    class Legacy : AbstractFE1UastTest(), UastResolveApiTestBase {
+        override var testDataDir = File("plugins/uast-kotlin/testData")
 
-        override fun check(filePath: String, file: UFile) {
+        override val isFirUastPlugin: Boolean = false
+
+        override fun check(testName: String, file: UFile) {
             // Bogus
         }
 
         @TestMetadata("MethodReference.kt")
         fun testMethodReference() {
-            doCheck("plugins/uast-kotlin/testData/MethodReference.kt", ::checkCallbackForMethodReference)
+            doTest("MethodReference", ::checkCallbackForMethodReference)
         }
 
         @TestMetadata("Imports.kt")
         fun testImports() {
-            doCheck("plugins/uast-kotlin/testData/Imports.kt", ::checkCallbackForImports)
+            doTest("Imports", ::checkCallbackForImports)
         }
 
         @TestMetadata("ReceiverFun.kt")
         fun testReceiverFun() {
-            doCheck("plugins/uast-kotlin/testData/ReceiverFun.kt", ::checkCallbackForReceiverFun)
+            doTest("ReceiverFun", ::checkCallbackForReceiverFun)
         }
     }
 }
