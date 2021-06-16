@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.generators.imltogradle
 
 import com.google.gson.JsonParser
+import com.intellij.openapi.util.io.systemIndependentPath
 import org.jetbrains.jps.model.JpsSimpleElement
 import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
@@ -103,7 +104,10 @@ fun convertJpsLibrary(lib: JpsLibrary, scope: JpsJavaDependencyScope, exported: 
     return when {
         mavenRepositoryLibraryDescriptor == null -> {
             lib.getRootUrls(JpsOrderRootType.COMPILED)
-                .map { it.removePrefix("jar://").removeSuffix("!/").removePrefix(KOTLIN_REPO_ROOT.canonicalPath) }
+                .map {
+                    it.removePrefix("jar://").removeSuffix("!/")
+                        .removePrefix(KOTLIN_REPO_ROOT.canonicalPath.replace("\\", "/"))
+                }
                 .map {
                     check(it.startsWith("/kotlin-ide/intellij/")) { "Only jars from Community repo are accepted $it" }
                     val relativeToCommunity = it.removePrefix("/kotlin-ide/intellij/").removePrefix("community/")
@@ -188,8 +192,8 @@ fun convertJpsDependencyElement(dep: JpsDependencyElement): List<JpsLikeDependen
 
 fun convertJpsModuleSourceRoot(imlFile: File, sourceRoot: JpsModuleSourceRoot): String {
     return when (sourceRoot.rootType) {
-        is JavaSourceRootType -> "java.srcDir(\"${sourceRoot.file.relativeTo(imlFile.parentFile)}\")"
-        is JavaResourceRootType -> "resources.srcDir(\"${sourceRoot.file.relativeTo(imlFile.parentFile)}\")"
+        is JavaSourceRootType -> "java.srcDir(\"${sourceRoot.file.relativeTo(imlFile.parentFile).systemIndependentPath}\")"
+        is JavaResourceRootType -> "resources.srcDir(\"${sourceRoot.file.relativeTo(imlFile.parentFile).systemIndependentPath}\")"
         else -> error("Unknown sourceRoot = $sourceRoot")
     }
 }
