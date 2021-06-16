@@ -308,6 +308,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SYNTAX
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.THROWABLE_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TOO_MANY_ARGUMENTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TOPLEVEL_TYPEALIASES_ONLY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPEALIAS_SHOULD_EXPAND_TO_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_CANT_BE_USED_FOR_CONST_VAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_MISMATCH
@@ -1183,6 +1184,11 @@ class FirDefaultErrorMessages {
             // Type alias
             map.put(TOPLEVEL_TYPEALIASES_ONLY, "Nested and local type aliases are not supported")
             map.put(RECURSIVE_TYPEALIAS_EXPANSION, "Recursive type alias in expansion")
+            map.put(
+                TYPEALIAS_SHOULD_EXPAND_TO_CLASS,
+                "Type alias expands to {0}, which is not a class, an interface, or an object",
+                RENDER_TYPE
+            )
 
             // Returns
             map.put(RETURN_NOT_ALLOWED, "'return' is not allowed here")

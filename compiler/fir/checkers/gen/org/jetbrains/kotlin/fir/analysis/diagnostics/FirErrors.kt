@@ -500,6 +500,7 @@ object FirErrors {
     // Type alias
     val TOPLEVEL_TYPEALIASES_ONLY by error0<KtTypeAlias>()
     val RECURSIVE_TYPEALIAS_EXPANSION by error0<KtElement>()
+    val TYPEALIAS_SHOULD_EXPAND_TO_CLASS by error1<KtElement, ConeKotlinType>()
 
     // Extended checkers
     val REDUNDANT_VISIBILITY_MODIFIER by warning0<KtModifierListOwner>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
