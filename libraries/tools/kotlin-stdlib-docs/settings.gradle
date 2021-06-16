@@ -1,4 +1,4 @@
-rootProject.name = 'kotlin-dokka-stdlib'
+rootProject.name = 'kotlin-stdlib-docs'
 
 include 'kotlin_native'
 include 'kotlin_big'
