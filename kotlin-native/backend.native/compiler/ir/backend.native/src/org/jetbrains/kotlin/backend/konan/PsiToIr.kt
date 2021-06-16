@@ -67,7 +67,9 @@ internal fun Context.psiToIr(
         stubGenerator.unboundSymbolGeneration = true
 
         object : IrDeserializer {
-            override fun getDeclaration(symbol: IrSymbol) = stubGenerator.getDeclaration(symbol)
+            override fun getDeclaration(symbol: IrSymbol) = functionIrClassFactory.getDeclaration(symbol)
+                    ?: stubGenerator.getDeclaration(symbol)
+
             override fun resolveBySignatureInModule(signature: IdSignature, kind: IrDeserializer.TopLevelSymbolKind, moduleName: Name): IrSymbol {
                 error("Should not be called")
             }
