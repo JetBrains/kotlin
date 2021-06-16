@@ -62,6 +62,13 @@ terms of the MIT license. A copy of the license can be found in the file
     MI_INTERPOSE_MI(posix_memalign),
     MI_INTERPOSE_MI(reallocf),
     MI_INTERPOSE_MI(valloc),
+    #ifndef MI_OSX_ZONE
+    // some code allocates from default zone but deallocates using plain free :-( (like NxHashResizeToCapacity <https://github.com/nneonneo/osx-10.9-opensource/blob/master/objc4-551.1/runtime/hashtable2.mm>)
+    MI_INTERPOSE_FUN(free,mi_cfree), // use safe free that checks if pointers are from us
+    #else
+    // We interpose malloc_default_zone in alloc-override-osx.c
+    MI_INTERPOSE_MI(free),
+    #endif
     // some code allocates from a zone but deallocates using plain free :-( (like NxHashResizeToCapacity <https://github.com/nneonneo/osx-10.9-opensource/blob/master/objc4-551.1/runtime/hashtable2.mm>)
     MI_INTERPOSE_FUN(free,mi_cfree), // use safe free that checks if pointers are from us
   };
@@ -183,7 +190,7 @@ int   posix_memalign(void** p, size_t alignment, size_t size) { return mi_posix_
 void* _aligned_malloc(size_t alignment, size_t size)          { return mi_aligned_alloc(alignment, size); }
 
 // on some glibc `aligned_alloc` is declared `static inline` so we cannot override it (e.g. Conda). This happens
-// when _GLIBCXX_HAVE_ALIGNED_ALLOC is not defined. However, in those cases it will use `memalign`, `posix_memalign`,
+// when _GLIBCXX_HAVE_ALIGNED_ALLOC is not defined. However, in those cases it will use `memalign`, `posix_memalign`, 
 // or `_aligned_malloc` and we can avoid overriding it ourselves.
 // We should always override if using C compilation. (issue #276)
 #if _GLIBCXX_HAVE_ALIGNED_ALLOC || !defined(__cplusplus)

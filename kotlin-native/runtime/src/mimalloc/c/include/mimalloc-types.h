@@ -16,7 +16,7 @@ terms of the MIT license. A copy of the license can be found in the file
 
 #ifdef _MSC_VER
 #pragma warning(disable:4214) // bitfield is not int
-#endif
+#endif 
 
 // Minimal alignment necessary. On most platforms 16 bytes are needed
 // due to SSE registers for example. This must be at least `MI_INTPTR_SIZE`
@@ -205,19 +205,19 @@ typedef uintptr_t mi_thread_free_t;
 // We don't count `freed` (as |free|) but use `used` to reduce
 // the number of memory accesses in the `mi_page_all_free` function(s).
 //
-// Notes:
+// Notes: 
 // - Access is optimized for `mi_free` and `mi_page_alloc` (in `alloc.c`)
 // - Using `uint16_t` does not seem to slow things down
 // - The size is 8 words on 64-bit which helps the page index calculations
-//   (and 10 words on 32-bit, and encoded free lists add 2 words. Sizes 10
+//   (and 10 words on 32-bit, and encoded free lists add 2 words. Sizes 10 
 //    and 12 are still good for address calculation)
-// - To limit the structure size, the `xblock_size` is 32-bits only; for
+// - To limit the structure size, the `xblock_size` is 32-bits only; for 
 //   blocks > MI_HUGE_BLOCK_SIZE the size is determined from the segment page size
 // - `thread_free` uses the bottom bits as a delayed-free flags to optimize
 //   concurrent frees where only the first concurrent free adds to the owning
 //   heap `thread_delayed_free` list (see `alloc.c:mi_free_block_mt`).
 //   The invariant is that no-delayed-free is only set if there is
-//   at least one block that will be added, or as already been added, to
+//   at least one block that will be added, or as already been added, to 
 //   the owning heap `thread_delayed_free` list. This guarantees that pages
 //   will be freed correctly even if only other threads free blocks.
 typedef struct mi_page_s {
@@ -240,12 +240,12 @@ typedef struct mi_page_s {
   uintptr_t             keys[2];           // two random keys to encode the free lists (see `_mi_block_next`)
   #endif
   uint32_t              used;              // number of blocks in use (including blocks in `local_free` and `thread_free`)
-  uint32_t              xblock_size;       // size available in each block (always `>0`)
+  uint32_t              xblock_size;       // size available in each block (always `>0`) 
 
   mi_block_t*           local_free;        // list of deferred free blocks by this thread (migrates to `free`)
   _Atomic(mi_thread_free_t) xthread_free;  // list of deferred free blocks freed by other threads
   _Atomic(uintptr_t)        xheap;
-
+  
   struct mi_page_s*     next;              // next page owned by this thread with the same `block_size`
   struct mi_page_s*     prev;              // previous page owned by this thread with the same `block_size`
 } mi_page_t;
@@ -265,8 +265,8 @@ typedef enum mi_page_kind_e {
 typedef struct mi_segment_s {
   // memory fields
   size_t               memid;            // id for the os-level memory manager
-  bool                 mem_is_fixed;     // `true` if we cannot decommit/reset/protect in this memory (i.e. when allocated using large OS pages)
-  bool                 mem_is_committed; // `true` if the whole segment is eagerly committed
+  bool                 mem_is_pinned;    // `true` if we cannot decommit/reset/protect in this memory (i.e. when allocated using large OS pages)
+  bool                 mem_is_committed; // `true` if the whole segment is eagerly committed  
 
   // segment fields
   _Atomic(struct mi_segment_s*) abandoned_next;
@@ -420,6 +420,7 @@ typedef struct mi_stats_s {
   mi_stat_count_t segments_abandoned;
   mi_stat_count_t pages_abandoned;
   mi_stat_count_t threads;
+  mi_stat_count_t normal;
   mi_stat_count_t huge;
   mi_stat_count_t giant;
   mi_stat_count_t malloc;
@@ -429,10 +430,11 @@ typedef struct mi_stats_s {
   mi_stat_counter_t commit_calls;
   mi_stat_counter_t page_no_retire;
   mi_stat_counter_t searches;
+  mi_stat_counter_t normal_count;
   mi_stat_counter_t huge_count;
   mi_stat_counter_t giant_count;
 #if MI_STAT>1
-  mi_stat_count_t normal[MI_BIN_HUGE+1];
+  mi_stat_count_t normal_bins[MI_BIN_HUGE+1];
 #endif
 } mi_stats_t;
 
@@ -451,6 +453,7 @@ void _mi_stat_counter_increase(mi_stat_counter_t* stat, size_t amount);
 #define mi_stat_counter_increase(stat,amount) (void)0
 #endif
 
+#define mi_heap_stat_counter_increase(heap,stat,amount)  mi_stat_counter_increase( (heap)->tld->stats.stat, amount)
 #define mi_heap_stat_increase(heap,stat,amount)  mi_stat_increase( (heap)->tld->stats.stat, amount)
 #define mi_heap_stat_decrease(heap,stat,amount)  mi_stat_decrease( (heap)->tld->stats.stat, amount)
 

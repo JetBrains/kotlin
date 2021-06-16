@@ -8,7 +8,7 @@ terms of the MIT license. A copy of the license can be found in the file
 #include "mimalloc.h"
 #include "mimalloc-internal.h"
 
-#include <string.h>  // memset, memcpy
+#include <string.h>  // memset
 
 // ------------------------------------------------------
 // Aligned Allocation
@@ -137,7 +137,7 @@ static void* mi_heap_realloc_zero_aligned_at(mi_heap_t* heap, void* p, size_t ne
           memset((uint8_t*)newp + start, 0, newsize - start);
         }
       }
-      memcpy(newp, p, (newsize > size ? size : newsize));
+      _mi_memcpy_aligned(newp, p, (newsize > size ? size : newsize));
       mi_free(p); // only free if successful
     }
     return newp;

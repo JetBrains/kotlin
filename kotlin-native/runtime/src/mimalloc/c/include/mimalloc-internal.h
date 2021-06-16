@@ -34,7 +34,6 @@ terms of the MIT license. A copy of the license can be found in the file
 #define mi_decl_cache_align
 #endif
 
-
 // "options.c"
 void       _mi_fputs(mi_output_fun* out, void* arg, const char* prefix, const char* message);
 void       _mi_fprintf(mi_output_fun* out, void* arg, const char* fmt, ...);
@@ -53,8 +52,8 @@ uintptr_t  _os_random_weak(uintptr_t extra_seed);
 static inline uintptr_t _mi_random_shuffle(uintptr_t x);
 
 // init.c
-extern mi_stats_t       _mi_stats_main;
-extern const mi_page_t  _mi_page_empty;
+extern mi_decl_cache_align mi_stats_t       _mi_stats_main;
+extern mi_decl_cache_align const mi_page_t  _mi_page_empty;
 bool       _mi_is_main_thread(void);
 bool       _mi_preloading();  // true while the C runtime is not ready
 
@@ -66,7 +65,7 @@ void       _mi_os_free(void* p, size_t size, mi_stats_t* stats);   // to free th
 size_t     _mi_os_good_alloc_size(size_t size);
 
 // memory.c
-void*      _mi_mem_alloc_aligned(size_t size, size_t alignment, bool* commit, bool* large, bool* is_zero, size_t* id, mi_os_tld_t* tld);
+void*      _mi_mem_alloc_aligned(size_t size, size_t alignment, bool* commit, bool* large, bool* is_pinned, bool* is_zero, size_t* id, mi_os_tld_t* tld);
 void       _mi_mem_free(void* p, size_t size, size_t id, bool fully_committed, bool any_reset, mi_os_tld_t* tld);
 
 bool       _mi_mem_reset(void* p, size_t size, mi_os_tld_t* tld);
@@ -109,7 +108,6 @@ void       _mi_page_reclaim(mi_heap_t* heap, mi_page_t* page);   // callback fro
 
 size_t     _mi_bin_size(uint8_t bin);           // for stats
 uint8_t    _mi_bin(size_t size);                // for stats
-uint8_t    _mi_bsr(uintptr_t x);                // bit-scan-right, used on BSD in "os.c"
 
 // "heap.c"
 void       _mi_heap_destroy_pages(mi_heap_t* heap);
@@ -245,18 +243,7 @@ static inline bool mi_malloc_satisfies_alignment(size_t alignment, size_t size) 
 #if defined(_CLOCK_T)    // for Illumos
 #undef _CLOCK_T
 #endif
-
 static inline bool mi_mul_overflow(size_t count, size_t size, size_t* total) {
-// Changed order for armv7 (ULONG_MAX == UINT_MAX, but size_t = unsigned long)
-#if defined(__MACH__) && KONAN_MI_MALLOC
-  #if (SIZE_MAX == ULONG_MAX)
-    return __builtin_umull_overflow(count, size, total);
-  #elif (SIZE_MAX == UINT_MAX)
-    return __builtin_umul_overflow(count, size, total);
-  #else
-    return __builtin_umulll_overflow(count, size, total);
-  #endif
-#else // KONAN_MI_MALLOC
   #if (SIZE_MAX == UINT_MAX)
     return __builtin_umul_overflow(count, size, total);
   #elif (SIZE_MAX == ULONG_MAX)
@@ -264,7 +251,6 @@ static inline bool mi_mul_overflow(size_t count, size_t size, size_t* total) {
   #else
     return __builtin_umulll_overflow(count, size, total);
   #endif
-#endif // KONAN_MI_MALLOC
 }
 #else /* __builtin_umul_overflow is unavailable */
 static inline bool mi_mul_overflow(size_t count, size_t size, size_t* total) {
@@ -301,7 +287,7 @@ We try to circumvent this in an efficient way:
 - macOSX : we use an unused TLS slot from the OS allocated slots (MI_TLS_SLOT). On OSX, the
            loader itself calls `malloc` even before the modules are initialized.
 - OpenBSD: we use an unused slot from the pthread block (MI_TLS_PTHREAD_SLOT_OFS).
-- DragonFly: not yet working.
+- DragonFly: the uniqueid use is buggy but kept for reference.
 ------------------------------------------------------------------------------------------- */
 
 extern const mi_heap_t _mi_heap_empty;  // read-only empty heap, initial value of the thread local default heap
@@ -310,16 +296,16 @@ mi_heap_t*  _mi_heap_main_get(void);    // statically allocated main backing hea
 
 #if defined(MI_MALLOC_OVERRIDE)
 #if defined(__MACH__) // OSX
-#define MI_TLS_SLOT               89  // seems unused?
+#define MI_TLS_SLOT               89  // seems unused? 
 // other possible unused ones are 9, 29, __PTK_FRAMEWORK_JAVASCRIPTCORE_KEY4 (94), __PTK_FRAMEWORK_GC_KEY9 (112) and __PTK_FRAMEWORK_OLDGC_KEY9 (89)
 // see <https://github.com/rweichler/substrate/blob/master/include/pthread_machdep.h>
 #elif defined(__OpenBSD__)
-// use end bytes of a name; goes wrong if anyone uses names > 23 characters (ptrhread specifies 16)
+// use end bytes of a name; goes wrong if anyone uses names > 23 characters (ptrhread specifies 16) 
 // see <https://github.com/openbsd/src/blob/master/lib/libc/include/thread_private.h#L371>
-#define MI_TLS_PTHREAD_SLOT_OFS   (6*sizeof(int) + 4*sizeof(void*) + 24)
+#define MI_TLS_PTHREAD_SLOT_OFS   (6*sizeof(int) + 4*sizeof(void*) + 24)  
 #elif defined(__DragonFly__)
 #warning "mimalloc is not working correctly on DragonFly yet."
-#define MI_TLS_PTHREAD_SLOT_OFS   (4 + 1*sizeof(void*))  // offset `uniqueid` (also used by gdb?) <https://github.com/DragonFlyBSD/DragonFlyBSD/blob/master/lib/libthread_xu/thread/thr_private.h#L458>
+//#define MI_TLS_PTHREAD_SLOT_OFS   (4 + 1*sizeof(void*))  // offset `uniqueid` (also used by gdb?) <https://github.com/DragonFlyBSD/DragonFlyBSD/blob/master/lib/libthread_xu/thread/thr_private.h#L458>
 #endif
 #endif
 
@@ -331,7 +317,7 @@ static inline mi_heap_t** mi_tls_pthread_heap_slot(void) {
   pthread_t self = pthread_self();
   #if defined(__DragonFly__)
   if (self==NULL) {
-    static mi_heap_t* pheap_main = _mi_heap_main_get();
+    mi_heap_t* pheap_main = _mi_heap_main_get();
     return &pheap_main;
   }
   #endif
@@ -340,9 +326,13 @@ static inline mi_heap_t** mi_tls_pthread_heap_slot(void) {
 #elif defined(MI_TLS_PTHREAD)
 #include <pthread.h>
 extern pthread_key_t _mi_heap_default_key;
-#else
-extern mi_decl_thread mi_heap_t* _mi_heap_default;  // default heap to allocate from
 #endif
+
+// Default heap to allocate from (if not using TLS- or pthread slots).
+// Do not use this directly but use through `mi_heap_get_default()` (or the unchecked `mi_get_default_heap`).
+// This thread local variable is only used when neither MI_TLS_SLOT, MI_TLS_PTHREAD, or MI_TLS_PTHREAD_SLOT_OFS are defined.
+// However, on the Apple M1 we do use the address of this variable as the unique thread-id (issue #356).
+extern mi_decl_thread mi_heap_t* _mi_heap_default;  // default heap to allocate from
 
 static inline mi_heap_t* mi_get_default_heap(void) {
 #if defined(MI_TLS_SLOT)
@@ -705,11 +695,6 @@ static inline uintptr_t _mi_thread_id(void) mi_attr_noexcept {
 #elif defined(__GNUC__) && \
       (defined(__x86_64__) || defined(__i386__) || defined(__arm__) || defined(__aarch64__))
 
-#if KONAN_MI_MALLOC
-  #include <pthread.h>
-  pthread_t pthread_self(void);
-#endif // KONAN_MI_MALLOC
-
 // TLS register on x86 is in the FS or GS register, see: https://akkadia.org/drepper/tls.pdf
 static inline void* mi_tls_slot(size_t slot) mi_attr_noexcept {
   void* res;
@@ -718,6 +703,8 @@ static inline void* mi_tls_slot(size_t slot) mi_attr_noexcept {
   __asm__("movl %%gs:%1, %0" : "=r" (res) : "m" (*((void**)ofs)) : );  // 32-bit always uses GS
 #elif defined(__MACH__) && defined(__x86_64__)
   __asm__("movq %%gs:%1, %0" : "=r" (res) : "m" (*((void**)ofs)) : );  // x86_64 macOSX uses GS
+#elif defined(__x86_64__) && (MI_INTPTR_SIZE==4)
+  __asm__("movl %%fs:%1, %0" : "=r" (res) : "m" (*((void**)ofs)) : );  // x32 ABI
 #elif defined(__x86_64__)
   __asm__("movq %%fs:%1, %0" : "=r" (res) : "m" (*((void**)ofs)) : );  // x86_64 Linux, BSD uses FS
 #elif defined(__arm__)
@@ -726,7 +713,11 @@ static inline void* mi_tls_slot(size_t slot) mi_attr_noexcept {
   res = tcb[slot];
 #elif defined(__aarch64__)
   void** tcb; UNUSED(ofs);
+#if defined(__APPLE__) // M1, issue #343
+  __asm__ volatile ("mrs %0, tpidrro_el0" : "=r" (tcb));
+#else
   __asm__ volatile ("mrs %0, tpidr_el0" : "=r" (tcb));
+#endif
   res = tcb[slot];
 #endif
   return res;
@@ -739,6 +730,8 @@ static inline void mi_tls_slot_set(size_t slot, void* value) mi_attr_noexcept {
   __asm__("movl %1,%%gs:%0" : "=m" (*((void**)ofs)) : "rn" (value) : );  // 32-bit always uses GS
 #elif defined(__MACH__) && defined(__x86_64__)
   __asm__("movq %1,%%gs:%0" : "=m" (*((void**)ofs)) : "rn" (value) : );  // x86_64 macOSX uses GS
+#elif defined(__x86_64__) && (MI_INTPTR_SIZE==4)
+  __asm__("movl %1,%%fs:%1" : "=m" (*((void**)ofs)) : "rn" (value) : );  // x32 ABI
 #elif defined(__x86_64__)
   __asm__("movq %1,%%fs:%1" : "=m" (*((void**)ofs)) : "rn" (value) : );  // x86_64 Linux, BSD uses FS
 #elif defined(__arm__)
@@ -747,29 +740,189 @@ static inline void mi_tls_slot_set(size_t slot, void* value) mi_attr_noexcept {
   tcb[slot] = value;
 #elif defined(__aarch64__)
   void** tcb; UNUSED(ofs);
+#if defined(__APPLE__) // M1, issue #343
+  __asm__ volatile ("mrs %0, tpidrro_el0" : "=r" (tcb));
+#else
   __asm__ volatile ("mrs %0, tpidr_el0" : "=r" (tcb));
+#endif
   tcb[slot] = value;
 #endif
 }
 
 static inline uintptr_t _mi_thread_id(void) mi_attr_noexcept {
-  #if defined(__MACH__) && KONAN_MI_MALLOC
+#if defined(__aarch64__) && defined(__APPLE__)  // M1
+  // on macOS on the M1, slot 0 does not seem to work, so we fall back to portable C for now. See issue #354
+  return (uintptr_t)&_mi_heap_default;
+#else
+#if defined(__MACH__) && KONAN_MI_MALLOC
     #include <TargetConditionals.h>
     #if TARGET_OS_EMBEDDED // iOS/tvOS/watchOS devices.
       return pthread_mach_thread_np(pthread_self());
     #else
-      // in all our targets, slot 0 is the pointer to the thread control block
+      // in all our other targets, slot 0 is the pointer to the thread control block
       return (uintptr_t)mi_tls_slot(0);
     #endif
-  #else // KONAN_MI_MALLOC
-    // in all our targets, slot 0 is the pointer to the thread control block
-    return (uintptr_t)mi_tls_slot(0);
-  #endif // KONAN_MI_MALLOC
+#endif
+#endif
 }
 #else
 // otherwise use standard C
 static inline uintptr_t _mi_thread_id(void) mi_attr_noexcept {
   return (uintptr_t)&_mi_heap_default;
+}
+#endif
+
+// -----------------------------------------------------------------------
+// Count bits: trailing or leading zeros (with MI_INTPTR_BITS on all zero)
+// -----------------------------------------------------------------------
+
+#if defined(__GNUC__)
+
+#include <limits.h>       // LONG_MAX
+#define MI_HAVE_FAST_BITSCAN
+static inline size_t mi_clz(uintptr_t x) {
+  if (x==0) return MI_INTPTR_BITS;
+#if (INTPTR_MAX == LONG_MAX)
+  return __builtin_clzl(x);
+#else
+  return __builtin_clzll(x);
+#endif
+}
+static inline size_t mi_ctz(uintptr_t x) {
+  if (x==0) return MI_INTPTR_BITS;
+#if (INTPTR_MAX == LONG_MAX)
+  return __builtin_ctzl(x);
+#else
+  return __builtin_ctzll(x);
+#endif
+}
+
+#elif defined(_MSC_VER) 
+
+#include <limits.h>       // LONG_MAX
+#define MI_HAVE_FAST_BITSCAN
+static inline size_t mi_clz(uintptr_t x) {
+  if (x==0) return MI_INTPTR_BITS;
+  unsigned long idx;
+#if (INTPTR_MAX == LONG_MAX)
+  _BitScanReverse(&idx, x);
+#else
+  _BitScanReverse64(&idx, x);
+#endif  
+  return ((MI_INTPTR_BITS - 1) - idx);
+}
+static inline size_t mi_ctz(uintptr_t x) {
+  if (x==0) return MI_INTPTR_BITS;
+  unsigned long idx;
+#if (INTPTR_MAX == LONG_MAX)
+  _BitScanForward(&idx, x);
+#else
+  _BitScanForward64(&idx, x);
+#endif  
+  return idx;
+}
+
+#else
+static inline size_t mi_ctz32(uint32_t x) {
+  // de Bruijn multiplication, see <http://supertech.csail.mit.edu/papers/debruijn.pdf>
+  static const unsigned char debruijn[32] = {
+    0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8,
+    31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9
+  };
+  if (x==0) return 32;
+  return debruijn[((x & -(int32_t)x) * 0x077CB531UL) >> 27];
+}
+static inline size_t mi_clz32(uint32_t x) {
+  // de Bruijn multiplication, see <http://supertech.csail.mit.edu/papers/debruijn.pdf>
+  static const uint8_t debruijn[32] = {
+    31, 22, 30, 21, 18, 10, 29, 2, 20, 17, 15, 13, 9, 6, 28, 1,
+    23, 19, 11, 3, 16, 14, 7, 24, 12, 4, 8, 25, 5, 26, 27, 0
+  };
+  if (x==0) return 32;
+  x |= x >> 1;
+  x |= x >> 2;
+  x |= x >> 4;
+  x |= x >> 8;
+  x |= x >> 16;
+  return debruijn[(uint32_t)(x * 0x07C4ACDDUL) >> 27];
+}
+
+static inline size_t mi_clz(uintptr_t x) {
+  if (x==0) return MI_INTPTR_BITS;  
+#if (MI_INTPTR_BITS <= 32)
+  return mi_clz32((uint32_t)x);
+#else
+  size_t count = mi_clz32((uint32_t)(x >> 32));
+  if (count < 32) return count;
+  return (32 + mi_clz32((uint32_t)x));
+#endif
+}
+static inline size_t mi_ctz(uintptr_t x) {
+  if (x==0) return MI_INTPTR_BITS;
+#if (MI_INTPTR_BITS <= 32)
+  return mi_ctz32((uint32_t)x);
+#else
+  size_t count = mi_ctz32((uint32_t)x);
+  if (count < 32) return count;
+  return (32 + mi_ctz32((uint32_t)(x>>32)));
+#endif
+}
+
+#endif
+
+// "bit scan reverse": Return index of the highest bit (or MI_INTPTR_BITS if `x` is zero)
+static inline size_t mi_bsr(uintptr_t x) {
+  return (x==0 ? MI_INTPTR_BITS : MI_INTPTR_BITS - 1 - mi_clz(x));
+}
+
+
+// ---------------------------------------------------------------------------------
+// Provide our own `_mi_memcpy` for potential performance optimizations.
+//
+// For now, only on Windows with msvc/clang-cl we optimize to `rep movsb` if 
+// we happen to run on x86/x64 cpu's that have "fast short rep movsb" (FSRM) support 
+// (AMD Zen3+ (~2020) or Intel Ice Lake+ (~2017). See also issue #201 and pr #253. 
+// ---------------------------------------------------------------------------------
+
+#if defined(_WIN32) && (defined(_M_IX86) || defined(_M_X64))
+#include <intrin.h>
+#include <string.h>
+extern bool _mi_cpu_has_fsrm;
+static inline void _mi_memcpy(void* dst, const void* src, size_t n) {
+  if (_mi_cpu_has_fsrm) {
+    __movsb((unsigned char*)dst, (const unsigned char*)src, n);
+  }
+  else {
+    memcpy(dst, src, n); // todo: use noinline?
+  }
+}
+#else
+#include <string.h>
+static inline void _mi_memcpy(void* dst, const void* src, size_t n) {
+  memcpy(dst, src, n);
+}
+#endif
+
+
+// -------------------------------------------------------------------------------
+// The `_mi_memcpy_aligned` can be used if the pointers are machine-word aligned 
+// This is used for example in `mi_realloc`.
+// -------------------------------------------------------------------------------
+
+#if (__GNUC__ >= 4) || defined(__clang__)
+// On GCC/CLang we provide a hint that the pointers are word aligned.
+#include <string.h>
+static inline void _mi_memcpy_aligned(void* dst, const void* src, size_t n) {
+  mi_assert_internal(((uintptr_t)dst % MI_INTPTR_SIZE == 0) && ((uintptr_t)src % MI_INTPTR_SIZE == 0));
+  void* adst = __builtin_assume_aligned(dst, MI_INTPTR_SIZE);
+  const void* asrc = __builtin_assume_aligned(src, MI_INTPTR_SIZE);
+  memcpy(adst, asrc, n);
+}
+#else
+// Default fallback on `_mi_memcpy`
+static inline void _mi_memcpy_aligned(void* dst, const void* src, size_t n) {
+  mi_assert_internal(((uintptr_t)dst % MI_INTPTR_SIZE == 0) && ((uintptr_t)src % MI_INTPTR_SIZE == 0));
+  _mi_memcpy(dst, src, n);
 }
 #endif
 
