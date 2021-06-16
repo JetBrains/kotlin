@@ -16,10 +16,8 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.addMember
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isAnnotationWithEqualFqName

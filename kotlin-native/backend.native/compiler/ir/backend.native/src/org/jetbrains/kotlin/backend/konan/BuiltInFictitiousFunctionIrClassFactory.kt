@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
-import org.jetbrains.kotlin.ir.descriptors.IrAbstractFunctionFactory
-import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.descriptors.IrAbstractDescriptorBasedFunctionFactory
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
@@ -38,9 +38,9 @@ internal object DECLARATION_ORIGIN_FUNCTION_CLASS : IrDeclarationOriginImpl("DEC
 
 internal class BuiltInFictitiousFunctionIrClassFactory(
         var symbolTable: SymbolTable?,
-        private val irBuiltIns: IrBuiltIns,
+        private val irBuiltIns: IrBuiltInsOverDescriptors,
         private val reflectionTypes: KonanReflectionTypes
-) : IrAbstractFunctionFactory(), IrProvider {
+) : IrProvider, IrAbstractDescriptorBasedFunctionFactory() {
 
     override fun getDeclaration(symbol: IrSymbol) =
             (symbol.descriptor as? FunctionClassDescriptor)?.let { descriptor ->

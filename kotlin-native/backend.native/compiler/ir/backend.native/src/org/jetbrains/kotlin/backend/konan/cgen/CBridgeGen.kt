@@ -10,12 +10,12 @@ import org.jetbrains.kotlin.backend.konan.PrimitiveBinaryType
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.getObjCMethodInfo
 import org.jetbrains.kotlin.backend.konan.ir.*
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.isObjCMetaClass
 import org.jetbrains.kotlin.backend.konan.lower.FunctionReferenceLowering
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
-import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl

@@ -9,13 +9,15 @@ import org.jetbrains.kotlin.backend.jvm.ir.propertyIfAccessor
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.ir.*
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
-import org.jetbrains.kotlin.backend.konan.ir.isObjCObjectType
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
+import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.ir.util.isEnumClass
+import org.jetbrains.kotlin.ir.util.isUnsigned
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -69,7 +71,7 @@ internal fun IrType.isObjCReferenceType(target: KonanTarget, irBuiltIns: IrBuilt
     if (isObjCObjectType()) return true
 
     val descriptor = classifierOrNull?.descriptor ?: return false
-    val builtIns = irBuiltIns.builtIns
+    val builtIns = (irBuiltIns as IrBuiltInsOverDescriptors).builtIns
 
     return when (descriptor) {
         builtIns.any,

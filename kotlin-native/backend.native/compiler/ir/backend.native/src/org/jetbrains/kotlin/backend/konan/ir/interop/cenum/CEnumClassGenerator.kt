@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrEnumConstructorCallImpl
@@ -154,7 +154,8 @@ internal class CEnumClassGenerator(
 
     private fun createEnumPrimaryConstructor(descriptor: ClassDescriptor): IrConstructor {
         val irConstructor = createConstructor(descriptor.unsubstitutedPrimaryConstructor!!)
-        val enumConstructor = context.builtIns.enum.constructors.single()
+        val builtIns = (irBuiltIns as IrBuiltInsOverDescriptors).builtIns
+        val enumConstructor = builtIns.enum.constructors.single()
         val constructorSymbol = symbolTable.referenceConstructor(enumConstructor)
         val classSymbol = symbolTable.referenceClass(descriptor)
         val type = descriptor.defaultType.toIrType()

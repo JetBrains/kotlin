@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.lower.DefaultParameterInjector
-import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.KonanBackendContext
+import org.jetbrains.kotlin.backend.konan.PrimitiveBinaryType
+import org.jetbrains.kotlin.backend.konan.computePrimitiveBinaryTypeOrNull
+import org.jetbrains.kotlin.backend.konan.getInlinedClassNative
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.types.IrType
@@ -23,7 +26,7 @@ internal class KonanDefaultParameterInjector(private val konanContext: KonanBack
             PrimitiveBinaryType.BOOLEAN -> IrConstImpl.boolean(startOffset, endOffset, type, false)
             PrimitiveBinaryType.BYTE -> IrConstImpl.byte(startOffset, endOffset, type, 0)
             PrimitiveBinaryType.SHORT -> when (type.getInlinedClassNative()) {
-                context.irBuiltIns.char -> IrConstImpl.char(startOffset, endOffset, type, 0.toChar())
+                context.irBuiltIns.charClass -> IrConstImpl.char(startOffset, endOffset, type, 0.toChar())
                 else -> IrConstImpl.short(startOffset, endOffset, type, 0)
             }
             PrimitiveBinaryType.INT -> IrConstImpl.int(startOffset, endOffset, type, 0)
