@@ -6491,6 +6491,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("jvmFieldInConstructor2.kt")
+        public void testJvmFieldInConstructor2() throws Exception {
+            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvmFieldInConstructor2.kt");
+        }
+
+        @Test
         @TestMetadata("jvmFieldInInterfaceCompanion.kt")
         public void testJvmFieldInInterfaceCompanion() throws Exception {
             runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvmFieldInInterfaceCompanion.kt");

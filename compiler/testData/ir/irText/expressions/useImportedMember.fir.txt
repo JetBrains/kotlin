@@ -124,6 +124,8 @@ FILE fqName:<root> fileName:/useImportedMember.kt
           RETURN type=kotlin.Nothing from='public final fun <get-g2> <T> (): T of <root>.C.<get-g2> declared in <root>.C'
             GET_VAR '<this>: T of <root>.C.<get-g2> declared in <root>.C.<get-g2>' type=T of <root>.C.<get-g2> origin=null
     PROPERTY FAKE_OVERRIDE name:fromClass visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final fromClass: T of <root>.BaseClass.<get-fromClass> [val]
       FUN FAKE_OVERRIDE name:<get-fromClass> visibility:public modality:FINAL <T> ($this:<root>.BaseClass, $receiver:T of <root>.C.<get-fromClass>) returnType:T of <root>.C.<get-fromClass> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:fromClass visibility:public modality:FINAL [fake_override,val]
         overridden:

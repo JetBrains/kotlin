@@ -151,6 +151,8 @@ FILE fqName:<root> fileName:/MultiList.kt
       VALUE_PARAMETER name:fromIndex index:0 type:kotlin.Int
       VALUE_PARAMETER name:toIndex index:1 type:kotlin.Int
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:ABSTRACT [fake_override,val]
+      overridden:
+        public abstract size: kotlin.Int [val]
       FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.List<E of kotlin.collections.List>) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
@@ -244,6 +246,8 @@ FILE fqName:<root> fileName:/MultiList.kt
       VALUE_PARAMETER name:p0 index:0 type:kotlin.Int
       VALUE_PARAMETER name:p1 index:1 type:kotlin.Int
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
+      overridden:
+        public open size: kotlin.Int [val]
       FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:OPEN <> ($this:java.util.ArrayList<E of java.util.ArrayList>) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -436,6 +440,8 @@ FILE fqName:<root> fileName:/MultiList.kt
       VALUE_PARAMETER name:p0 index:0 type:kotlin.Int
       VALUE_PARAMETER name:p1 index:1 type:kotlin.Int
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
+      overridden:
+        public open size: kotlin.Int [fake_override,val]
       FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:OPEN <> ($this:java.util.ArrayList<E of java.util.ArrayList>) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
         overridden:

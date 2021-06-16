@@ -55,6 +55,8 @@ FILE fqName:test2 fileName:/kt19306_test2.kt
                   CALL 'protected final fun <get-p> (): kotlin.String declared in test1.A' type=kotlin.String origin=GET_PROPERTY
                     $this: GET_VAR '<this>: test2.B declared in test2.B.test' type=test2.B origin=null
     PROPERTY FAKE_OVERRIDE name:p visibility:protected modality:FINAL [fake_override,var]
+      overridden:
+        protected final p: kotlin.String [var]
       FUN FAKE_OVERRIDE name:<get-p> visibility:protected modality:FINAL <> ($this:test1.A) returnType:kotlin.String [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:p visibility:protected modality:FINAL [fake_override,var]
         overridden:

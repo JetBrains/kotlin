@@ -61,6 +61,8 @@ FILE fqName:<root> fileName:/clashingFakeOverrideSignatures.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.Base<T of <root>.Base>
       VALUE_PARAMETER name:x index:0 type:kotlin.String
     PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final bar: kotlin.Int [val]
       FUN FAKE_OVERRIDE name:<get-bar> visibility:public modality:FINAL <> ($this:<root>.Base<T of <root>.Base>, $receiver:kotlin.String) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -68,6 +70,8 @@ FILE fqName:<root> fileName:/clashingFakeOverrideSignatures.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Base<T of <root>.Base>
         $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
     PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final bar: kotlin.Int [val]
       FUN FAKE_OVERRIDE name:<get-bar> visibility:public modality:FINAL <> ($this:<root>.Base<T of <root>.Base>, $receiver:kotlin.String) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -76,16 +80,16 @@ FILE fqName:<root> fileName:/clashingFakeOverrideSignatures.kt
         $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.Base
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.Base
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
+        public open fun toString (): kotlin.String [fake_override] declared in <root>.Base
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:Derived2 modality:FINAL visibility:public superTypes:[<root>.Derived]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Derived2
@@ -95,40 +99,44 @@ FILE fqName:<root> fileName:/clashingFakeOverrideSignatures.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived2 modality:FINAL visibility:public superTypes:[<root>.Derived]'
     FUN FAKE_OVERRIDE name:foo visibility:public modality:FINAL <> ($this:<root>.Base<T of <root>.Base>, x:kotlin.String) returnType:kotlin.Unit [fake_override]
       overridden:
-        public final fun foo (y: kotlin.String): kotlin.Unit declared in <root>.Base
+        public final fun foo (x: kotlin.String): kotlin.Unit [fake_override] declared in <root>.Derived
       $this: VALUE_PARAMETER name:<this> type:<root>.Base<T of <root>.Base>
       VALUE_PARAMETER name:x index:0 type:kotlin.String
     FUN FAKE_OVERRIDE name:foo visibility:public modality:FINAL <> ($this:<root>.Base<T of <root>.Base>, x:kotlin.String) returnType:kotlin.Unit [fake_override]
       overridden:
-        public final fun foo (y: kotlin.String): kotlin.Unit declared in <root>.Base
+        public final fun foo (x: kotlin.String): kotlin.Unit [fake_override] declared in <root>.Derived
       $this: VALUE_PARAMETER name:<this> type:<root>.Base<T of <root>.Base>
       VALUE_PARAMETER name:x index:0 type:kotlin.String
     PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final bar: kotlin.Int [fake_override,val]
       FUN FAKE_OVERRIDE name:<get-bar> visibility:public modality:FINAL <> ($this:<root>.Base<T of <root>.Base>, $receiver:kotlin.String) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:FINAL [fake_override,val]
         overridden:
-          public final fun <get-bar> (): kotlin.Int declared in <root>.Base
+          public final fun <get-bar> (): kotlin.Int [fake_override] declared in <root>.Derived
         $this: VALUE_PARAMETER name:<this> type:<root>.Base<T of <root>.Base>
         $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
     PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final bar: kotlin.Int [fake_override,val]
       FUN FAKE_OVERRIDE name:<get-bar> visibility:public modality:FINAL <> ($this:<root>.Base<T of <root>.Base>, $receiver:kotlin.String) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:FINAL [fake_override,val]
         overridden:
-          public final fun <get-bar> (): kotlin.Int declared in <root>.Base
+          public final fun <get-bar> (): kotlin.Int [fake_override] declared in <root>.Derived
         $this: VALUE_PARAMETER name:<this> type:<root>.Base<T of <root>.Base>
         $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.Derived
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.Derived
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
+        public open fun toString (): kotlin.String [fake_override] declared in <root>.Derived
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:test visibility:public modality:FINAL <> (b:<root>.Base<kotlin.String>, d:<root>.Derived, d2:<root>.Derived2) returnType:kotlin.Unit
     VALUE_PARAMETER name:b index:0 type:<root>.Base<kotlin.String>
@@ -206,16 +214,16 @@ FILE fqName:<root> fileName:/clashingFakeOverrideSignatures.kt
       VALUE_PARAMETER name:y index:1 type:kotlin.String
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.BaseXY
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.BaseXY
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
+        public open fun toString (): kotlin.String [fake_override] declared in <root>.BaseXY
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:outerFun visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
@@ -281,6 +289,8 @@ FILE fqName:<root> fileName:/clashingFakeOverrideSignatures.kt
           $this: VALUE_PARAMETER name:<this> type:<root>.outerFun.LocalBase<T of <root>.outerFun.LocalBase>
           VALUE_PARAMETER name:y index:0 type:kotlin.String
         PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:FINAL [fake_override,val]
+          overridden:
+            public final bar: kotlin.Int [val]
           FUN FAKE_OVERRIDE name:<get-bar> visibility:public modality:FINAL <> ($this:<root>.outerFun.LocalBase<T of <root>.outerFun.LocalBase>, $receiver:kotlin.String) returnType:kotlin.Int [fake_override]
             correspondingProperty: PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:FINAL [fake_override,val]
             overridden:
@@ -288,6 +298,8 @@ FILE fqName:<root> fileName:/clashingFakeOverrideSignatures.kt
             $this: VALUE_PARAMETER name:<this> type:<root>.outerFun.LocalBase<T of <root>.outerFun.LocalBase>
             $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
         PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:FINAL [fake_override,val]
+          overridden:
+            public final bar: kotlin.Int [val]
           FUN FAKE_OVERRIDE name:<get-bar> visibility:public modality:FINAL <> ($this:<root>.outerFun.LocalBase<T of <root>.outerFun.LocalBase>, $receiver:kotlin.String) returnType:kotlin.Int [fake_override]
             correspondingProperty: PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:FINAL [fake_override,val]
             overridden:
@@ -296,16 +308,16 @@ FILE fqName:<root> fileName:/clashingFakeOverrideSignatures.kt
             $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
         FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
           overridden:
-            public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+            public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.outerFun.LocalBase
           $this: VALUE_PARAMETER name:<this> type:kotlin.Any
           VALUE_PARAMETER name:other index:0 type:kotlin.Any?
         FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
           overridden:
-            public open fun hashCode (): kotlin.Int declared in kotlin.Any
+            public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.outerFun.LocalBase
           $this: VALUE_PARAMETER name:<this> type:kotlin.Any
         FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
           overridden:
-            public open fun toString (): kotlin.String declared in kotlin.Any
+            public open fun toString (): kotlin.String [fake_override] declared in <root>.outerFun.LocalBase
           $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       CLASS CLASS name:LocalDerived2 modality:FINAL visibility:local superTypes:[<root>.outerFun.LocalDerived]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.outerFun.LocalDerived2
@@ -315,40 +327,44 @@ FILE fqName:<root> fileName:/clashingFakeOverrideSignatures.kt
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:LocalDerived2 modality:FINAL visibility:local superTypes:[<root>.outerFun.LocalDerived]'
         FUN FAKE_OVERRIDE name:foo visibility:public modality:FINAL <> ($this:<root>.outerFun.LocalBase<T of <root>.outerFun.LocalBase>, x:kotlin.String) returnType:kotlin.Unit [fake_override]
           overridden:
-            public final fun foo (x: T of <root>.outerFun.LocalBase): kotlin.Unit declared in <root>.outerFun.LocalBase
+            public final fun foo (x: kotlin.String): kotlin.Unit [fake_override] declared in <root>.outerFun.LocalDerived
           $this: VALUE_PARAMETER name:<this> type:<root>.outerFun.LocalBase<T of <root>.outerFun.LocalBase>
           VALUE_PARAMETER name:x index:0 type:kotlin.String
         FUN FAKE_OVERRIDE name:foo visibility:public modality:FINAL <> ($this:<root>.outerFun.LocalBase<T of <root>.outerFun.LocalBase>, y:kotlin.String) returnType:kotlin.Unit [fake_override]
           overridden:
-            public final fun foo (y: kotlin.String): kotlin.Unit declared in <root>.outerFun.LocalBase
+            public final fun foo (y: kotlin.String): kotlin.Unit [fake_override] declared in <root>.outerFun.LocalDerived
           $this: VALUE_PARAMETER name:<this> type:<root>.outerFun.LocalBase<T of <root>.outerFun.LocalBase>
           VALUE_PARAMETER name:y index:0 type:kotlin.String
         PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:FINAL [fake_override,val]
+          overridden:
+            public final bar: kotlin.Int [fake_override,val]
           FUN FAKE_OVERRIDE name:<get-bar> visibility:public modality:FINAL <> ($this:<root>.outerFun.LocalBase<T of <root>.outerFun.LocalBase>, $receiver:kotlin.String) returnType:kotlin.Int [fake_override]
             correspondingProperty: PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:FINAL [fake_override,val]
             overridden:
-              public final fun <get-bar> (): kotlin.Int declared in <root>.outerFun.LocalBase
+              public final fun <get-bar> (): kotlin.Int [fake_override] declared in <root>.outerFun.LocalDerived
             $this: VALUE_PARAMETER name:<this> type:<root>.outerFun.LocalBase<T of <root>.outerFun.LocalBase>
             $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
         PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:FINAL [fake_override,val]
+          overridden:
+            public final bar: kotlin.Int [fake_override,val]
           FUN FAKE_OVERRIDE name:<get-bar> visibility:public modality:FINAL <> ($this:<root>.outerFun.LocalBase<T of <root>.outerFun.LocalBase>, $receiver:kotlin.String) returnType:kotlin.Int [fake_override]
             correspondingProperty: PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:FINAL [fake_override,val]
             overridden:
-              public final fun <get-bar> (): kotlin.Int declared in <root>.outerFun.LocalBase
+              public final fun <get-bar> (): kotlin.Int [fake_override] declared in <root>.outerFun.LocalDerived
             $this: VALUE_PARAMETER name:<this> type:<root>.outerFun.LocalBase<T of <root>.outerFun.LocalBase>
             $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
         FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
           overridden:
-            public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+            public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.outerFun.LocalDerived
           $this: VALUE_PARAMETER name:<this> type:kotlin.Any
           VALUE_PARAMETER name:other index:0 type:kotlin.Any?
         FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
           overridden:
-            public open fun hashCode (): kotlin.Int declared in kotlin.Any
+            public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.outerFun.LocalDerived
           $this: VALUE_PARAMETER name:<this> type:kotlin.Any
         FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
           overridden:
-            public open fun toString (): kotlin.String declared in kotlin.Any
+            public open fun toString (): kotlin.String [fake_override] declared in <root>.outerFun.LocalDerived
           $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       FUN name:test visibility:local modality:FINAL <> (b:<root>.outerFun.LocalBase<kotlin.String>, d:<root>.outerFun.LocalDerived, d2:<root>.outerFun.LocalDerived2) returnType:kotlin.Unit
         VALUE_PARAMETER name:b index:0 type:<root>.outerFun.LocalBase<kotlin.String>
@@ -448,27 +464,27 @@ FILE fqName:<root> fileName:/clashingFakeOverrideSignatures.kt
         VALUE_PARAMETER name:x index:0 type:kotlin.String
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
-          public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.Outer.Inner
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
         VALUE_PARAMETER name:other index:0 type:kotlin.Any?
       FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
         overridden:
-          public open fun hashCode (): kotlin.Int declared in kotlin.Any
+          public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.Outer.Inner
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
         overridden:
-          public open fun toString (): kotlin.String declared in kotlin.Any
+          public open fun toString (): kotlin.String [fake_override] declared in <root>.Outer.Inner
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.Outer
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.Outer
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
+        public open fun toString (): kotlin.String [fake_override] declared in <root>.Outer
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any

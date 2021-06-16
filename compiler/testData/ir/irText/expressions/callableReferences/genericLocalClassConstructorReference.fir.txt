@@ -92,6 +92,8 @@ FILE fqName:<root> fileName:/genericLocalClassConstructorReference.kt
                   GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:pt type:PT of <root>.<get-p> visibility:private [final]' type=PT of <root>.<get-p> origin=null
                     receiver: GET_VAR '<this>: <root>.<get-p>.PLocal<LT of <root>.<get-p>.PLocal> declared in <root>.<get-p>.PLocal.<get-pt>' type=<root>.<get-p>.PLocal<LT of <root>.<get-p>.PLocal> origin=null
           PROPERTY FAKE_OVERRIDE name:ll visibility:public modality:FINAL [fake_override,val]
+            overridden:
+              public final ll: LL of <root>.L [val]
             FUN FAKE_OVERRIDE name:<get-ll> visibility:public modality:FINAL <> ($this:<root>.L<LL of <root>.L>) returnType:LT of <root>.<get-p>.PLocal [fake_override]
               correspondingProperty: PROPERTY FAKE_OVERRIDE name:ll visibility:public modality:FINAL [fake_override,val]
               overridden:
@@ -148,6 +150,8 @@ FILE fqName:<root> fileName:/genericLocalClassConstructorReference.kt
                 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:pt type:FT of <root>.fn visibility:private [final]' type=FT of <root>.fn origin=null
                   receiver: GET_VAR '<this>: <root>.fn.FLocal<LT of <root>.fn.FLocal> declared in <root>.fn.FLocal.<get-pt>' type=<root>.fn.FLocal<LT of <root>.fn.FLocal> origin=null
         PROPERTY FAKE_OVERRIDE name:ll visibility:public modality:FINAL [fake_override,val]
+          overridden:
+            public final ll: LL of <root>.L [val]
           FUN FAKE_OVERRIDE name:<get-ll> visibility:public modality:FINAL <> ($this:<root>.L<LL of <root>.L>) returnType:LT of <root>.fn.FLocal [fake_override]
             correspondingProperty: PROPERTY FAKE_OVERRIDE name:ll visibility:public modality:FINAL [fake_override,val]
             overridden:

@@ -92,6 +92,8 @@ FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
                     GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xx type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
                       receiver: GET_VAR '<this>: <root>.test.<no name provided> declared in <root>.test.<no name provided>.<get-xx>' type=<root>.test.<no name provided> origin=null
             PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,val]
+              overridden:
+                public final y: kotlin.Int [val]
               FUN FAKE_OVERRIDE name:<get-y> visibility:public modality:FINAL <> ($this:<root>.Outer.Inner<T of <root>.Outer>) returnType:kotlin.Int [fake_override]
                 correspondingProperty: PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,val]
                 overridden:

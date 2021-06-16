@@ -97,6 +97,8 @@ FILE fqName:<root> fileName:/inheritingDeprecation.kt
     PROPERTY FAKE_OVERRIDE name:prop visibility:public modality:OPEN [fake_override,val]
       annotations:
         Deprecated(message = '', replaceWith = <null>, level = <null>)
+      overridden:
+        public open prop: kotlin.String [val]
       FUN FAKE_OVERRIDE name:<get-prop> visibility:public modality:OPEN <> ($this:<root>.IFoo) returnType:kotlin.String [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:prop visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -105,6 +107,8 @@ FILE fqName:<root> fileName:/inheritingDeprecation.kt
     PROPERTY FAKE_OVERRIDE name:extProp visibility:public modality:OPEN [fake_override,val]
       annotations:
         Deprecated(message = '', replaceWith = <null>, level = <null>)
+      overridden:
+        public open extProp: kotlin.String [val]
       FUN FAKE_OVERRIDE name:<get-extProp> visibility:public modality:OPEN <> ($this:<root>.IFoo, $receiver:kotlin.String) returnType:kotlin.String [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:extProp visibility:public modality:OPEN [fake_override,val]
         overridden:

@@ -350,7 +350,7 @@ class FakeOverrideGenerator(
                     val baseSymbols = basePropertySymbols[declaration]!!
                     declaration.withProperty {
                         discardAccessorsAccordingToBaseVisibility(baseSymbols)
-                        setOverriddenSymbolsForAccessors(declarationStorage, declaration.isVar, baseSymbols)
+                        setOverriddenSymbolsForProperty(declarationStorage, declaration.isVar, baseSymbols)
                     }
                 }
             }
@@ -372,14 +372,15 @@ class FakeOverrideGenerator(
         }
     }
 
-    private fun IrProperty.setOverriddenSymbolsForAccessors(
+    private fun IrProperty.setOverriddenSymbolsForProperty(
         declarationStorage: Fir2IrDeclarationStorage,
         isVar: Boolean,
         firOverriddenSymbols: List<FirPropertySymbol>
     ): IrProperty {
-        val overriddenIrProperties = getOverriddenSymbolsInSupertypes(this, firOverriddenSymbols) {
+        val overriddenIrSymbols = getOverriddenSymbolsInSupertypes(this, firOverriddenSymbols) {
             declarationStorage.getIrPropertySymbol(it) as IrPropertySymbol
-        }.map { it.owner }
+        }
+        val overriddenIrProperties = overriddenIrSymbols.map { it.owner }
 
         getter?.apply {
             overriddenSymbols = overriddenIrProperties.mapNotNull { it.getter?.symbol }
@@ -389,6 +390,7 @@ class FakeOverrideGenerator(
                 overriddenSymbols = overriddenIrProperties.mapNotNull { it.setter?.symbol }
             }
         }
+        overriddenSymbols = overriddenIrSymbols
         return this
     }
 }

@@ -35,6 +35,8 @@ FILE fqName:<root> fileName:/kt45853.kt
           CALL 'public open fun <get-a> (): @[FlexibleNullability] <root>.AX? declared in <root>.AX' superQualifier='CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:AX modality:ABSTRACT visibility:public superTypes:[<root>.A; <root>.X]' type=@[FlexibleNullability] <root>.AX? origin=GET_PROPERTY
             $this: GET_VAR '<this>: <root>.B declared in <root>.B.getA' type=<root>.B origin=null
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
+      overridden:
+        public open a: @[FlexibleNullability] <root>.AX? [val]
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.AX) returnType:@[FlexibleNullability] <root>.AX? [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:

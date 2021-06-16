@@ -88,12 +88,16 @@ FILE fqName:<root> fileName:/kt16904.kt
               $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1' type=<root>.Test1 origin=null
             other: CONST Int type=kotlin.Int value=42
     PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final x: <root>.B [val]
       FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.A) returnType:<root>.B [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
         overridden:
           public final fun <get-x> (): <root>.B declared in <root>.A
         $this: VALUE_PARAMETER name:<this> type:<root>.A
     PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final y: kotlin.Int [var]
       FUN FAKE_OVERRIDE name:<get-y> visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,var]
         overridden:

@@ -166,6 +166,8 @@ FILE fqName:<root> fileName:/kt43342.kt
           CALL 'public open fun <get-keys> (): kotlin.collections.Set<kotlin.String> [fake_override] declared in <root>.StringFlowInfo' type=kotlin.collections.Set<kotlin.String> origin=GET_PROPERTY
             $this: GET_VAR 'info: <root>.StringFlowInfo declared in <root>.StringFlowInfo.foo' type=<root>.StringFlowInfo origin=null
     PROPERTY FAKE_OVERRIDE name:map visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final map: kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> [val]
       FUN FAKE_OVERRIDE name:<get-map> visibility:public modality:FINAL <> ($this:<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>) returnType:kotlin.collections.Map<kotlin.String, kotlin.String> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:map visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -200,24 +202,32 @@ FILE fqName:<root> fileName:/kt43342.kt
         public open fun isEmpty (): kotlin.Boolean declared in <root>.ControlFlowInfo
       $this: VALUE_PARAMETER name:<this> type:<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>
     PROPERTY FAKE_OVERRIDE name:entries visibility:public modality:OPEN [fake_override,val]
+      overridden:
+        public open entries: kotlin.collections.Set<kotlin.collections.Map.Entry<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>> [val]
       FUN FAKE_OVERRIDE name:<get-entries> visibility:public modality:OPEN <> ($this:<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>) returnType:kotlin.collections.Set<kotlin.collections.Map.Entry<kotlin.String, kotlin.String>> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:entries visibility:public modality:OPEN [fake_override,val]
         overridden:
           public open fun <get-entries> (): kotlin.collections.Set<kotlin.collections.Map.Entry<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>> declared in <root>.ControlFlowInfo
         $this: VALUE_PARAMETER name:<this> type:<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>
     PROPERTY FAKE_OVERRIDE name:keys visibility:public modality:OPEN [fake_override,val]
+      overridden:
+        public open keys: kotlin.collections.Set<K of <root>.ControlFlowInfo> [val]
       FUN FAKE_OVERRIDE name:<get-keys> visibility:public modality:OPEN <> ($this:<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>) returnType:kotlin.collections.Set<kotlin.String> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:keys visibility:public modality:OPEN [fake_override,val]
         overridden:
           public open fun <get-keys> (): kotlin.collections.Set<K of <root>.ControlFlowInfo> declared in <root>.ControlFlowInfo
         $this: VALUE_PARAMETER name:<this> type:<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
+      overridden:
+        public open size: kotlin.Int [val]
       FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:OPEN <> ($this:<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
         overridden:
           public open fun <get-size> (): kotlin.Int declared in <root>.ControlFlowInfo
         $this: VALUE_PARAMETER name:<this> type:<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>
     PROPERTY FAKE_OVERRIDE name:values visibility:public modality:OPEN [fake_override,val]
+      overridden:
+        public open values: kotlin.collections.Collection<V of <root>.ControlFlowInfo> [val]
       FUN FAKE_OVERRIDE name:<get-values> visibility:public modality:OPEN <> ($this:<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>) returnType:kotlin.collections.Collection<kotlin.String> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:values visibility:public modality:OPEN [fake_override,val]
         overridden:

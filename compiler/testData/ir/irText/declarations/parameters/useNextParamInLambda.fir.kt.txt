@@ -1,5 +1,5 @@
-fun f(f1: Function0<String> = local fun <anonymous>(): ErrorType {
-  return error("") /* ErrorCallExpression */
+fun f(f1: Function0<String> = local fun <anonymous>(): String {
+  return f2.invoke()
 }
 , f2: Function0<String> = local fun <anonymous>(): String {
   return "FAIL"
@@ -23,4 +23,3 @@ fun box(): String {
   }
 ))
 }
-

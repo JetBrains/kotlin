@@ -43,6 +43,8 @@ FILE fqName:<root> fileName:/delegatingConstructorCallToTypeAliasConstructor.kt
           value: CONST String type=kotlin.String value="O"
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C1 modality:FINAL visibility:public superTypes:[<root>.Cell<kotlin.String>]'
     PROPERTY FAKE_OVERRIDE name:value visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final value: T of <root>.Cell [val]
       FUN FAKE_OVERRIDE name:<get-value> visibility:public modality:FINAL <> ($this:<root>.Cell<T of <root>.Cell>) returnType:kotlin.String [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:value visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -70,6 +72,8 @@ FILE fqName:<root> fileName:/delegatingConstructorCallToTypeAliasConstructor.kt
           value: CONST String type=kotlin.String value="K"
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C2 modality:FINAL visibility:public superTypes:[<root>.Cell<kotlin.String>]'
     PROPERTY FAKE_OVERRIDE name:value visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final value: T of <root>.Cell [val]
       FUN FAKE_OVERRIDE name:<get-value> visibility:public modality:FINAL <> ($this:<root>.Cell<T of <root>.Cell>) returnType:kotlin.String [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:value visibility:public modality:FINAL [fake_override,val]
         overridden:

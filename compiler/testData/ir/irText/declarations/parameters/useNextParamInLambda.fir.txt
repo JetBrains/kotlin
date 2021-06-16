@@ -2,11 +2,12 @@ FILE fqName:<root> fileName:/useNextParamInLambda.kt
   FUN name:f visibility:public modality:FINAL <> (f1:kotlin.Function0<kotlin.String>, f2:kotlin.Function0<kotlin.String>) returnType:kotlin.String
     VALUE_PARAMETER name:f1 index:0 type:kotlin.Function0<kotlin.String>
       EXPRESSION_BODY
-        FUN_EXPR type=kotlin.Function0<IrErrorType(null)> origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType(null)
+        FUN_EXPR type=kotlin.Function0<kotlin.String> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.String
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType(null) declared in <root>.f'
-                ERROR_CALL 'Unresolved reference: <Unresolved name: f2>#' type=IrErrorType(null)
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.f'
+                CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.String origin=INVOKE
+                  $this: GET_VAR 'f2: kotlin.Function0<kotlin.String> declared in <root>.f' type=kotlin.Function0<kotlin.String> origin=VARIABLE_AS_FUNCTION
     VALUE_PARAMETER name:f2 index:1 type:kotlin.Function0<kotlin.String>
       EXPRESSION_BODY
         FUN_EXPR type=kotlin.Function0<kotlin.String> origin=LAMBDA

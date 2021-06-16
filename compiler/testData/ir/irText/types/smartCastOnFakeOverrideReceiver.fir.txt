@@ -105,6 +105,8 @@ FILE fqName:<root> fileName:/smartCastOnFakeOverrideReceiver.kt
         public final fun f (): kotlin.Int declared in <root>.A
       $this: VALUE_PARAMETER name:<this> type:<root>.A
     PROPERTY FAKE_OVERRIDE name:aVal visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final aVal: kotlin.Int [val]
       FUN FAKE_OVERRIDE name:<get-aVal> visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:aVal visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -198,6 +200,8 @@ FILE fqName:<root> fileName:/smartCastOnFakeOverrideReceiver.kt
         public final fun f (): kotlin.Int declared in <root>.GA
       $this: VALUE_PARAMETER name:<this> type:<root>.GA<T of <root>.GA>
     PROPERTY FAKE_OVERRIDE name:aVal visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final aVal: kotlin.Int [val]
       FUN FAKE_OVERRIDE name:<get-aVal> visibility:public modality:FINAL <> ($this:<root>.GA<T of <root>.GA>) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:aVal visibility:public modality:FINAL [fake_override,val]
         overridden:

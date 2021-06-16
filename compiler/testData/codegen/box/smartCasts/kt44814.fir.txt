@@ -410,12 +410,16 @@ FILE fqName:<root> fileName:/kt44814.kt
             token: GET_VAR 'token: <root>.KtModifierKeywordToken declared in <root>.FirModifier.FirPsiModifier.<init>' type=<root>.KtModifierKeywordToken origin=null
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirPsiModifier modality:FINAL visibility:public superTypes:[<root>.FirModifier<<root>.ASTNode>]'
       PROPERTY FAKE_OVERRIDE name:node visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final node: Node of <root>.FirModifier [val]
         FUN FAKE_OVERRIDE name:<get-node> visibility:public modality:FINAL <> ($this:<root>.FirModifier<Node of <root>.FirModifier>) returnType:<root>.ASTNode [fake_override]
           correspondingProperty: PROPERTY FAKE_OVERRIDE name:node visibility:public modality:FINAL [fake_override,val]
           overridden:
             public final fun <get-node> (): Node of <root>.FirModifier declared in <root>.FirModifier
           $this: VALUE_PARAMETER name:<this> type:<root>.FirModifier<Node of <root>.FirModifier>
       PROPERTY FAKE_OVERRIDE name:token visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final token: <root>.KtModifierKeywordToken [val]
         FUN FAKE_OVERRIDE name:<get-token> visibility:public modality:FINAL <> ($this:<root>.FirModifier<Node of <root>.FirModifier>) returnType:<root>.KtModifierKeywordToken [fake_override]
           correspondingProperty: PROPERTY FAKE_OVERRIDE name:token visibility:public modality:FINAL [fake_override,val]
           overridden:
@@ -458,12 +462,16 @@ FILE fqName:<root> fileName:/kt44814.kt
               GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:tree type:<root>.FlyweightCapableTreeStructure visibility:private [final]' type=<root>.FlyweightCapableTreeStructure origin=null
                 receiver: GET_VAR '<this>: <root>.FirModifier.FirLightModifier declared in <root>.FirModifier.FirLightModifier.<get-tree>' type=<root>.FirModifier.FirLightModifier origin=null
       PROPERTY FAKE_OVERRIDE name:node visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final node: Node of <root>.FirModifier [val]
         FUN FAKE_OVERRIDE name:<get-node> visibility:public modality:FINAL <> ($this:<root>.FirModifier<Node of <root>.FirModifier>) returnType:<root>.LighterASTNode [fake_override]
           correspondingProperty: PROPERTY FAKE_OVERRIDE name:node visibility:public modality:FINAL [fake_override,val]
           overridden:
             public final fun <get-node> (): Node of <root>.FirModifier declared in <root>.FirModifier
           $this: VALUE_PARAMETER name:<this> type:<root>.FirModifier<Node of <root>.FirModifier>
       PROPERTY FAKE_OVERRIDE name:token visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final token: <root>.KtModifierKeywordToken [val]
         FUN FAKE_OVERRIDE name:<get-token> visibility:public modality:FINAL <> ($this:<root>.FirModifier<Node of <root>.FirModifier>) returnType:<root>.KtModifierKeywordToken [fake_override]
           correspondingProperty: PROPERTY FAKE_OVERRIDE name:token visibility:public modality:FINAL [fake_override,val]
           overridden:
@@ -532,6 +540,8 @@ FILE fqName:<root> fileName:/kt44814.kt
               GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:modifierList type:<root>.KtModifierList visibility:private [final]' type=<root>.KtModifierList origin=null
                 receiver: GET_VAR '<this>: <root>.FirModifierList.FirPsiModifierList declared in <root>.FirModifierList.FirPsiModifierList.<get-modifierList>' type=<root>.FirModifierList.FirPsiModifierList origin=null
       PROPERTY FAKE_OVERRIDE name:modifiers visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final modifiers: kotlin.collections.List<<root>.FirModifier<*>> [val]
         FUN FAKE_OVERRIDE name:<get-modifiers> visibility:public modality:FINAL <> ($this:<root>.FirModifierList) returnType:kotlin.collections.List<<root>.FirModifier<*>> [fake_override]
           correspondingProperty: PROPERTY FAKE_OVERRIDE name:modifiers visibility:public modality:FINAL [fake_override,val]
           overridden:
@@ -581,6 +591,8 @@ FILE fqName:<root> fileName:/kt44814.kt
               GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:tree type:<root>.FlyweightCapableTreeStructure visibility:private [final]' type=<root>.FlyweightCapableTreeStructure origin=null
                 receiver: GET_VAR '<this>: <root>.FirModifierList.FirLightModifierList declared in <root>.FirModifierList.FirLightModifierList.<get-tree>' type=<root>.FirModifierList.FirLightModifierList origin=null
       PROPERTY FAKE_OVERRIDE name:modifiers visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final modifiers: kotlin.collections.List<<root>.FirModifier<*>> [val]
         FUN FAKE_OVERRIDE name:<get-modifiers> visibility:public modality:FINAL <> ($this:<root>.FirModifierList) returnType:kotlin.collections.List<<root>.FirModifier<*>> [fake_override]
           correspondingProperty: PROPERTY FAKE_OVERRIDE name:modifiers visibility:public modality:FINAL [fake_override,val]
           overridden:

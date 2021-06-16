@@ -57,12 +57,16 @@ FILE fqName:<root> fileName:/AbstractMutableMap.kt
       VALUE_PARAMETER name:key index:0 type:K of <root>.MyMap
       VALUE_PARAMETER name:value index:1 type:V of <root>.MyMap
     PROPERTY FAKE_OVERRIDE name:keys visibility:public modality:OPEN [fake_override,val]
+      overridden:
+        public open keys: @[FlexibleNullability] kotlin.collections.Set<@[FlexibleNullability] K of kotlin.collections.AbstractMutableMap?>? [fake_override,val]
       FUN FAKE_OVERRIDE name:<get-keys> visibility:public modality:OPEN <> ($this:java.util.AbstractMap<K of java.util.AbstractMap, V of java.util.AbstractMap>) returnType:@[FlexibleNullability] kotlin.collections.Set<@[FlexibleNullability] K of <root>.MyMap?>? [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:keys visibility:public modality:OPEN [fake_override,val]
         overridden:
           public open fun <get-keys> (): @[FlexibleNullability] kotlin.collections.Set<@[FlexibleNullability] K of kotlin.collections.AbstractMutableMap?>? [fake_override] declared in kotlin.collections.AbstractMutableMap
         $this: VALUE_PARAMETER name:<this> type:java.util.AbstractMap<K of java.util.AbstractMap, V of java.util.AbstractMap>
     PROPERTY FAKE_OVERRIDE name:values visibility:public modality:OPEN [fake_override,val]
+      overridden:
+        public open values: @[FlexibleNullability] kotlin.collections.Collection<@[FlexibleNullability] V of kotlin.collections.AbstractMutableMap?>? [fake_override,val]
       FUN FAKE_OVERRIDE name:<get-values> visibility:public modality:OPEN <> ($this:java.util.AbstractMap<K of java.util.AbstractMap, V of java.util.AbstractMap>) returnType:@[FlexibleNullability] kotlin.collections.Collection<@[FlexibleNullability] V of <root>.MyMap?>? [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:values visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -146,6 +150,8 @@ FILE fqName:<root> fileName:/AbstractMutableMap.kt
         public open fun isEmpty (): kotlin.Boolean [fake_override] declared in kotlin.collections.AbstractMutableMap
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractMap<K of java.util.AbstractMap, V of java.util.AbstractMap>
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
+      overridden:
+        public open size: kotlin.Int [fake_override,val]
       FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:OPEN <> ($this:java.util.AbstractMap<K of java.util.AbstractMap, V of java.util.AbstractMap>) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
         overridden:
