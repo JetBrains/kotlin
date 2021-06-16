@@ -334,6 +334,7 @@ private val jvmFilePhases = listOf(
     inlineCallableReferenceToLambdaPhase,
     functionReferencePhase,
     suspendLambdaPhase,
+    propertyReferenceDelegationPhase,
     propertyReferencePhase,
     arrayConstructorPhase,
     constPhase1,

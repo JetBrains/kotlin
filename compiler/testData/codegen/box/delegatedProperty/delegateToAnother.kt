@@ -1,4 +1,3 @@
-// WITH_REFLECT
 // WITH_RUNTIME
 class C(val x: String)
 
