@@ -158,14 +158,18 @@ object FirKotlinToJvmBytecodeCompiler {
             performanceManager?.notifyGenerationStarted()
 
             performanceManager?.notifyIRTranslationStarted()
-            val extensions = JvmGeneratorExtensionsImpl()
+            val extensions = JvmGeneratorExtensionsImpl(projectConfiguration)
             val (moduleFragment, symbolTable, components) = firAnalyzerFacade.convertToIr(extensions)
 
             performanceManager?.notifyIRTranslationFinished()
 
             val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 
-            val codegenFactory = JvmIrCodegenFactory(moduleConfiguration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases))
+            val codegenFactory = JvmIrCodegenFactory(
+                projectConfiguration,
+                moduleConfiguration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases),
+                jvmGeneratorExtensions = extensions
+            )
 
             // Create and initialize the module and its dependencies
             val container = TopDownAnalyzerFacadeForJVM.createContainer(
