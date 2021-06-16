@@ -91,6 +91,7 @@ fun main() {
 
     imlFiles.mapNotNull { imlFile -> ijCommunityModuleNameToJpsModuleMapping[imlFile.nameWithoutExtension]?.let { imlFile to it } }
         .forEach { (imlFile, jpsModule) ->
+            println("Processing iml ${imlFile}")
             imlFile.parentFile.resolve("build.gradle.kts").writeText(convertJpsModule(imlFile, jpsModule))
         }
 }
