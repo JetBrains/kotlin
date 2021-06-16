@@ -51,6 +51,11 @@ internal class StaticData(override val context: Context): ContextUtils {
                 val llvmGlobal = createLlvmGlobal(module!!, type, name, isExported)
                 return Global(staticData, llvmGlobal)
             }
+
+            fun get(staticData: StaticData, name: String): Global? {
+                val llvmGlobal = LLVMGetNamedGlobal(staticData.context.llvmModule, name) ?: return null
+                return Global(staticData, llvmGlobal)
+            }
         }
 
         val type get() = getGlobalType(this.llvmGlobal)
@@ -145,6 +150,10 @@ internal class StaticData(override val context: Context): ContextUtils {
         val global = createGlobal(initializer.llvmType, name, isExported)
         global.setInitializer(initializer)
         return global
+    }
+
+    fun getGlobal(name: String): Global? {
+        return Global.get(this, name)
     }
 
     /**
