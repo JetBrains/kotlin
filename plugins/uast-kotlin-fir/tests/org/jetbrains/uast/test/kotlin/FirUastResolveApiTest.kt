@@ -21,7 +21,28 @@ class FirUastResolveApiTest : AbstractFirUastTest() {
         // Bogus
     }
 
-    // TODO: once call is supported, test labeledExpression.kt for labeled this and super
+    @TestMetadata("plugins/uast-kotlin-fir/testData/declaration")
+    @TestDataPath("\$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners::class)
+    class Declaration : AbstractFirUastTest(), UastResolveApiTestBase {
+        override val isFirUastPlugin: Boolean = true
+
+        override fun check(filePath: String, file: UFile) {
+            // Bogus
+        }
+
+        @TestMetadata("doWhile.kt")
+        fun testDoWhile() {
+            doCheck("plugins/uast-kotlin-fir/testData/declaration/doWhile.kt", ::checkCallbackForDoWhile)
+        }
+
+        @TestMetadata("if.kt")
+        fun testIf() {
+            doCheck("plugins/uast-kotlin-fir/testData/declaration/if.kt", ::checkCallbackForIf)
+        }
+
+        // TODO: once call is supported, test labeledExpression.kt for labeled this and super
+    }
 
     @TestMetadata("plugins/uast-kotlin/testData")
     @TestDataPath("\$PROJECT_ROOT")

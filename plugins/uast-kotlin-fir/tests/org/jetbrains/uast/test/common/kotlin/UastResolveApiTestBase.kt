@@ -13,16 +13,72 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.uast.UCallableReferenceExpression
-import org.jetbrains.uast.UElement
-import org.jetbrains.uast.UFile
-import org.jetbrains.uast.UThisExpression
+import org.jetbrains.uast.*
 import org.jetbrains.uast.test.kotlin.findFacade
 import org.jetbrains.uast.visitor.UastVisitor
 import org.junit.Assert
 import java.lang.IllegalStateException
 
 interface UastResolveApiTestBase : FirUastPluginSelection {
+
+    fun checkCallbackForDoWhile(filePath: String, uFile: UFile) {
+        val facade = uFile.findFacade()
+            ?: throw IllegalStateException("No facade found at ${uFile.asRefNames()}")
+        val test = facade.methods.find { it.name == "test" }
+            ?: throw IllegalStateException("Target function not found at ${uFile.asRefNames()}")
+        val resolvedOperators: MutableList<PsiMethod> = mutableListOf()
+        test.accept(object : UastVisitor {
+            override fun visitElement(node: UElement): Boolean {
+                return false
+            }
+
+            override fun visitBinaryExpression(node: UBinaryExpression): Boolean {
+                node.resolveOperator()?.let { resolvedOperators.add(it) }
+                return false
+            }
+        })
+        // TODO: Handle FirEqualityOperatorCall in KtFirCallResolver#resolveCall(KtBinaryExpression)
+        if (!isFirUastPlugin) {
+            Assert.assertEquals("Expect != (String.equals)", 1, resolvedOperators.size)
+            val op = resolvedOperators.single()
+            Assert.assertEquals("equals", op.name)
+        }
+
+        val kt44412 = facade.methods.find { it.name == "kt44412" }
+            ?: throw IllegalStateException("Target function not found at ${uFile.asRefNames()}")
+        resolvedOperators.clear()
+        kt44412.accept(object : UastVisitor {
+            override fun visitElement(node: UElement): Boolean {
+                return false
+            }
+
+            override fun visitBinaryExpression(node: UBinaryExpression): Boolean {
+                node.resolveOperator()?.let { resolvedOperators.add(it) }
+                return false
+            }
+        })
+        Assert.assertEquals("Kotlin built-in >= (int.compareTo) and == (int.equals) are invisible", 0, resolvedOperators.size)
+    }
+
+    fun checkCallbackForIf(filePath: String, uFile: UFile) {
+        val facade = uFile.findFacade()
+            ?: throw IllegalStateException("No facade found at ${uFile.asRefNames()}")
+        val test = facade.methods.find { it.name == "test" }
+            ?: throw IllegalStateException("Target function not found at ${uFile.asRefNames()}")
+        val resolvedOperators: MutableList<PsiMethod> = mutableListOf()
+        test.accept(object : UastVisitor {
+            override fun visitElement(node: UElement): Boolean {
+                return false
+            }
+
+            override fun visitBinaryExpression(node: UBinaryExpression): Boolean {
+                node.resolveOperator()?.let { resolvedOperators.add(it) }
+                return false
+            }
+        })
+        Assert.assertEquals("Kotlin built-in * (int.times) and + (int.plus) are invisible", 0, resolvedOperators.size)
+    }
+
     fun checkCallbackForMethodReference(filePath: String, uFile: UFile) {
         val facade = uFile.findFacade()
             ?: throw IllegalStateException("No facade found at ${uFile.asRefNames()}")
