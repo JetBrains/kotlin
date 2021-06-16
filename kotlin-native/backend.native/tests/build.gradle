@@ -3806,6 +3806,10 @@ createInterop("kt43265") {
     it.defFile 'interop/kt43265/kt43265.def'
 }
 
+createInterop("kt44283") {
+    it.defFile 'interop/kt44283/kt44283.def'
+}
+
 createInterop("kt43502") {
     it.defFile 'interop/kt43502/kt43502.def'
     it.headers "$projectDir/interop/kt43502/kt43502.h"
@@ -4188,6 +4192,14 @@ interopTest("interop_kt43265") {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
     interop = 'kt43265'
     source = "interop/kt43265/usage.kt"
+}
+
+interopTest("interop_kt44283") {
+    disabled = (project.testTarget == 'wasm32') || // No interop for wasm yet.
+            project.globalTestArgs.contains('-opt') // Incompatible with -g.
+    flags = ['-g']
+    interop = 'kt44283'
+    source = "interop/kt44283/main.kt"
 }
 
 dynamicTest("interop_kt43502") {

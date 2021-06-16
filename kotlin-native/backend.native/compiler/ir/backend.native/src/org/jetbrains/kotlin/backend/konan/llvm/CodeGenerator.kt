@@ -128,13 +128,22 @@ internal inline fun<R> generateFunction(codegen: CodeGenerator,
                                         code: FunctionGenerationContext.(FunctionGenerationContext) -> R) {
     val llvmFunction = codegen.llvmFunction(function)
 
+    val isCToKotlinBridge = function.origin == CBridgeOrigin.C_TO_KOTLIN_BRIDGE
+
     val functionGenerationContext = FunctionGenerationContext(
             llvmFunction,
             codegen,
             startLocation,
             endLocation,
-            switchToRunnable = function.origin == CBridgeOrigin.C_TO_KOTLIN_BRIDGE,
+            switchToRunnable = isCToKotlinBridge,
             function)
+
+    if (isCToKotlinBridge) {
+        // Enable initRuntimeIfNeeded for legacy MM too:
+        functionGenerationContext.needsRuntimeInit = true
+        // This fixes https://youtrack.jetbrains.com/issue/KT-44283.
+    }
+
     try {
         generateFunctionBody(functionGenerationContext, code)
     } finally {
