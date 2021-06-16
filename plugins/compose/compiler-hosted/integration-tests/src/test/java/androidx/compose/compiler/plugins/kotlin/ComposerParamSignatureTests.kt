@@ -125,6 +125,31 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     )
 
     @Test
+    fun test32Params(): Unit = codegen(
+        """
+        @Composable
+        fun <T> TooVerbose(
+            v00: T, v01: T, v02: T, v03: T, v04: T, v05: T, v06: T, v07: T, v08: T, v09: T,
+            v10: T, v11: T, v12: T, v13: T, v14: T, v15: T, v16: T, v17: T, v18: T, v19: T,
+            v20: T, v21: T, v22: T, v23: T, v24: T, v25: T, v26: T, v27: T, v28: T, v29: T,
+            v30: T, v31: T,
+        ) {
+        }
+
+        @Composable
+        fun Test() {
+            TooVerbose(
+                1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                1, 1,
+            )
+        }
+
+        """
+    )
+
+    @Test
     fun testInterfaceMethodWithComposableParameter(): Unit = validateBytecode(
         """
             @Composable
