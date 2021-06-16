@@ -182,6 +182,48 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
     )
 
     @Test
+    fun testVarargWithNoArgs(): Unit = composerParam(
+        """
+            @Composable
+            fun VarArgsFirst(vararg foo: Any?) {
+                println(foo)
+            }
+
+            @Composable
+            fun VarArgsCaller() {
+                VarArgsFirst()
+            }
+        """,
+        """
+            @Composable
+            fun VarArgsFirst(foo: Array<out Any?>, %composer: Composer?, %changed: Int) {
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(VarArgsFirst):Test.kt#2487m")
+              println(foo)
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                VarArgsFirst(*foo, %composer, %changed or 0b0001)
+              }
+            }
+            @Composable
+            fun VarArgsCaller(%composer: Composer?, %changed: Int) {
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(VarArgsCaller)<VarArg...>:Test.kt#2487m")
+              if (%changed !== 0 || !%composer.skipping) {
+                VarArgsFirst(
+                  %composer = %composer,
+                  %changed = 8
+                )
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                VarArgsCaller(%composer, %changed or 0b0001)
+              }
+            }
+        """
+    )
+
+    @Test
     fun testNonComposableCode(): Unit = composerParam(
         """
             fun A() {}
