@@ -23,6 +23,9 @@ sealed class IdSignature {
         fun decode(flags: Long): Boolean = (flags and (1L shl ordinal) != 0L)
     }
 
+    /**
+     * Means that signature has cross-module visibility. In other words referencing declaration could found in klib if property is `true`
+     */
     abstract val isPubliclyVisible: Boolean
 
     open fun isPackageSignature(): Boolean = false
