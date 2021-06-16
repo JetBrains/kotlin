@@ -12,7 +12,6 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
 import java.io.File
 
 @SimpleGradlePluginTests
@@ -118,7 +117,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             projectName = "simple".fullProjectName,
             gradleVersion = gradleVersion,
             projectPathAdditionalSuffix = "1/cache-test",
-            forceOutput = true,
             buildOptions = defaultBuildOptions.copy(buildCacheEnabled = true)
         ) {
             enableLocalBuildCache(buildCache)
@@ -135,7 +133,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             projectName = "simple".fullProjectName,
             gradleVersion = gradleVersion,
             projectPathAdditionalSuffix = "2/cache-test",
-            forceOutput = true,
             buildOptions = defaultBuildOptions.copy(buildCacheEnabled = true)
         ) {
             enableLocalBuildCache(buildCache)
@@ -303,8 +300,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
     internal fun setJdkUsingJavaToolchain(gradleVersion: GradleVersion) {
         project(
             projectName = "simple".fullProjectName,
-            gradleVersion = gradleVersion,
-            forceOutput = true
+            gradleVersion = gradleVersion
         ) {
             useToolchainToCompile(11)
             build("assemble") {
@@ -319,10 +315,25 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
     internal fun setJdkUsingJavaToolchainViaExtension(gradleVersion: GradleVersion) {
         project(
             projectName = "simple".fullProjectName,
-            gradleVersion = gradleVersion,
-            forceOutput = true
+            gradleVersion = gradleVersion
         ) {
             useToolchainExtension(11)
+            build("assemble") {
+                assertJdkHomeIsUsingJdk(getToolchainExecPathFromLogs())
+            }
+        }
+    }
+
+    @DisplayName("Toolchain should be correctly supported in multiplatform plugin jvm targets")
+    @GradleTestVersions(minVersion = "6.7.1")
+    @GradleTest
+    internal fun toolchainCorrectlySupportedInMPPlugin(gradleVersion: GradleVersion) {
+        project(
+            projectName = "mppJvmWithJava".fullProjectName,
+            gradleVersion = gradleVersion
+        ) {
+            useToolchainToCompile(11)
+
             build("assemble") {
                 assertJdkHomeIsUsingJdk(getToolchainExecPathFromLogs())
             }

@@ -1,0 +1,10 @@
+pluginManagement {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    plugins {
+        id "org.jetbrains.kotlin.multiplatform" version "$kotlin_version"
+    }
+}
