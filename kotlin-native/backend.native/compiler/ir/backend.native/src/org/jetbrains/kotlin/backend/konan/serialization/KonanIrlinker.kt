@@ -98,11 +98,11 @@ internal class KonanIrLinker(
             return forwardDeclarationDeserializer ?: error("forward declaration deserializer expected")
         }
 
-        if (klib is KotlinLibrary && klib.isInteropLibrary()) {
+        if (klib != null && klib.isInteropLibrary()) {
             // See https://youtrack.jetbrains.com/issue/KT-43517.
             // Disabling this flag forces linker to generate IR.
             val isCached = false //cachedLibraries.isLibraryCached(klib)
-            return KonanInteropModuleDeserializer(moduleDescriptor, isCached)
+            return KonanInteropModuleDeserializer(moduleDescriptor, klib, isCached)
         }
 
         return KonanModuleDeserializer(moduleDescriptor, klib ?: error("Expecting kotlin library"), strategy)
@@ -118,8 +118,9 @@ internal class KonanIrLinker(
 
     private inner class KonanInteropModuleDeserializer(
             moduleDescriptor: ModuleDescriptor,
+            klib: KotlinLibrary,
             private val isLibraryCached: Boolean
-    ) : IrModuleDeserializer(moduleDescriptor, KotlinAbiVersion.CURRENT) {
+    ) : IrModuleDeserializer(moduleDescriptor, klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT) {
         init {
             assert(moduleDescriptor.kotlinLibrary.isInteropLibrary())
         }
