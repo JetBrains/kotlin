@@ -20,7 +20,7 @@ public class J {
 import p.*
 
 class K: J.C() {
-    fun dynamic.test() {
+    fun <!UNSUPPORTED!>dynamic<!>.test() {
         <!INVISIBLE_REFERENCE!>sam<!>(null)
         <!INVISIBLE_REFERENCE!>sam<!>(
             name = null,

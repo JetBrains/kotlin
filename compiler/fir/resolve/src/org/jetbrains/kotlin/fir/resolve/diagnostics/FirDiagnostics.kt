@@ -133,6 +133,10 @@ class ConeImportFromSingleton(val name: Name) : ConeDiagnostic() {
     override val reason: String get() = "Import from singleton $name is not allowed"
 }
 
+class ConeUnsupportedDynamicType() : ConeDiagnostic() {
+    override val reason: String get() = "Dynamic types are not supported in this context"
+}
+
 private fun describeSymbol(symbol: AbstractFirBasedSymbol<*>): String {
     return when (symbol) {
         is FirClassLikeSymbol<*> -> symbol.classId.asString()
