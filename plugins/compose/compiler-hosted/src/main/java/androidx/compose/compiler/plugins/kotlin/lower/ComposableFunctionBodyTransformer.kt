@@ -151,7 +151,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.typeUtil.isUnit
-import org.jetbrains.kotlin.utils.ifEmpty
 import kotlin.math.abs
 import kotlin.math.absoluteValue
 import kotlin.math.ceil
@@ -2554,13 +2553,14 @@ class ComposableFunctionBodyTransformer(
         val defaultArgs = (defaultArgIndex until numValueParams).map {
             expression.getValueArgument(it)
         }
+        val hasDefaultArgs = defaultArgs.isNotEmpty()
 
         val defaultMasks = defaultArgs.map {
             when (it) {
                 !is IrConst<*> -> error("Expected default mask to be a const")
                 else -> it.value as? Int ?: error("Expected default mask to be an Int")
             }
-        }.ifEmpty { listOf(0b0) }
+        }
 
         val paramMeta = mutableListOf<ParamMeta>()
 
@@ -2579,7 +2579,7 @@ class ComposableFunctionBodyTransformer(
                 }
             }
             val bitIndex = defaultsBitIndex(index)
-            val maskValue = defaultMasks[defaultsParamIndex(index)]
+            val maskValue = if (hasDefaultArgs) defaultMasks[defaultsParamIndex(index)] else 0
             val meta = paramMetaOf(arg, isProvided = maskValue and (0b1 shl bitIndex) == 0)
 
             paramMeta.add(meta)
