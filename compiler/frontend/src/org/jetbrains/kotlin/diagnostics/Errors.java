@@ -1198,6 +1198,7 @@ public interface Errors {
 
     // Context receivers
     DiagnosticFactory1<KtElement, String> NO_CONTEXT_RECEIVER = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<KtElement, String> MULTIPLE_ARGUMENTS_APPLICABLE_FOR_CONTEXT_RECEIVER = DiagnosticFactory1.create(ERROR);
 
     // Error sets
     ImmutableSet<? extends DiagnosticFactory<?>> UNRESOLVED_REFERENCE_DIAGNOSTICS = ImmutableSet.of(

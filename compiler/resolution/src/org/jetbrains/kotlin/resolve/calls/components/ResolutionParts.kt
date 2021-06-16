@@ -16,12 +16,9 @@ import org.jetbrains.kotlin.resolve.calls.components.CheckReceivers.checkReceive
 import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper.TypeArgumentsMapping.NoExplicitArguments
 import org.jetbrains.kotlin.resolve.calls.components.candidate.CallableReferenceResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
-import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
-import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
+import org.jetbrains.kotlin.resolve.calls.inference.*
 import org.jetbrains.kotlin.resolve.calls.inference.components.*
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
-import org.jetbrains.kotlin.resolve.calls.inference.substitute
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCast
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
@@ -807,30 +804,60 @@ internal object ErrorDescriptorResolutionPart : ResolutionPart() {
 }
 
 internal object CheckContextReceiversResolutionPart : ResolutionPart() {
-    private fun ResolutionCandidate.checkReceiver(
-        implicitReceivers: Collection<ReceiverValueWithSmartCastInfo>,
+    private data class ApplicableArgumentWithConstraint(
+        val argument: SimpleKotlinCallArgument,
+        val argumentType: UnwrappedType,
+        val expectedType: UnwrappedType,
+        val position: ConstraintPosition
+    )
+
+    private fun ResolutionCandidate.findContextReceiver(
+        implicitReceiversGroups: List<List<ReceiverValueWithSmartCastInfo>>,
         candidateContextReceiverParameter: ReceiverParameterDescriptor
     ): SimpleKotlinCallArgument? {
-        val csBuilder = getSystem().getBuilder()
-        for (implicitReceiver in implicitReceivers) {
-            val argument = ReceiverExpressionKotlinCallArgument(implicitReceiver)
+
+        fun ReceiverValueWithSmartCastInfo.createArgumentIfCompatible(): ApplicableArgumentWithConstraint? {
+            val csBuilder = getSystem().getBuilder()
+            val argument = ReceiverExpressionKotlinCallArgument(this)
             val expectedTypeUnprepared = argument.getExpectedType(candidateContextReceiverParameter, callComponents.languageVersionSettings)
 
             val expectedType = prepareExpectedType(expectedTypeUnprepared)
             val argumentType = captureFromTypeParameterUpperBoundIfNeeded(argument.receiver.stableType, expectedType)
             val position = ReceiverConstraintPositionImpl(argument)
-            if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, expectedType, position)) return argument
+            return if (csBuilder.isSubtypeConstraintCompatible(argumentType, expectedType, position))
+                ApplicableArgumentWithConstraint(argument, argumentType, expectedType, position)
+            else null
+        }
+
+        for (implicitReceiverGroup in implicitReceiversGroups) {
+            val applicableArguments = implicitReceiverGroup.mapNotNull { it.createArgumentIfCompatible() }.toList()
+            if (applicableArguments.size == 1) {
+                val (argument, argumentType, expectedType, position) = applicableArguments.single()
+                csBuilder.addSubtypeConstraint(argumentType, expectedType, position)
+                return argument
+            }
+            if (applicableArguments.size > 1) {
+                diagnosticsFromResolutionParts.add(MultipleArgumentsApplicableForContextReceiver(candidateContextReceiverParameter))
+                return null
+            }
         }
         diagnosticsFromResolutionParts.add(NoContextReceiver(candidateContextReceiverParameter))
         return null
     }
 
     override fun ResolutionCandidate.process(workIndex: Int) {
-        val implicitReceivers = scopeTower.lexicalScope.parentsWithSelf
-            .flatMap { if (it is LexicalScope) scopeTower.getImplicitReceivers(it) else emptyList() }.toList()
+        val parentLexicalScopes = scopeTower.lexicalScope.parentsWithSelf.filterIsInstance<LexicalScope>()
+        val implicitReceiversGroups = mutableListOf<List<ReceiverValueWithSmartCastInfo>>()
+        for (scope in parentLexicalScopes) {
+            scopeTower.getImplicitReceiver(scope)?.let { implicitReceiversGroups.add(listOf(it)) }
+            val contextReceiversGroup = scopeTower.getContextReceivers(scope)
+            if (contextReceiversGroup.isNotEmpty()) {
+                implicitReceiversGroups.add(contextReceiversGroup)
+            }
+        }
         val contextReceiversArguments = mutableListOf<SimpleKotlinCallArgument>()
         for (candidateContextReceiverParameter in candidateDescriptor.contextReceiverParameters) {
-            contextReceiversArguments.add(findContextReceiver(implicitReceivers, candidateContextReceiverParameter) ?: return)
+            contextReceiversArguments.add(findContextReceiver(implicitReceiversGroups, candidateContextReceiverParameter) ?: return)
         }
         resolvedCall.contextReceiversArguments = contextReceiversArguments
     }

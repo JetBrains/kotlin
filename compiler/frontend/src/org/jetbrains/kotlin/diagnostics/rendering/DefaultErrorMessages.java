@@ -1089,6 +1089,7 @@ public class DefaultErrorMessages {
         MAP.put(CONTRACT_NOT_ALLOWED, "{0}", TO_STRING);
 
         MAP.put(NO_CONTEXT_RECEIVER, "No required context receiver found: {0}", TO_STRING);
+        MAP.put(MULTIPLE_ARGUMENTS_APPLICABLE_FOR_CONTEXT_RECEIVER, "Multiple arguments applicable for context receiver: {0}", TO_STRING);
 
         MAP.setImmutable();
 

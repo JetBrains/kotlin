@@ -400,8 +400,16 @@ class PSICallResolver(
         override val implicitsResolutionFilter: ImplicitsExtensionsResolutionFilter get() = this@PSICallResolver.implicitsResolutionFilter
         private val cache = HashMap<ReceiverParameterDescriptor, ReceiverValueWithSmartCastInfo>()
 
-        override fun getImplicitReceivers(scope: LexicalScope): List<ReceiverValueWithSmartCastInfo> =
-            scope.implicitReceivers.map { cache.getOrPut(it) { context.transformToReceiverWithSmartCastInfo(it.value) } }
+        override fun getImplicitReceiver(scope: LexicalScope): ReceiverValueWithSmartCastInfo? {
+            val implicitReceiver = scope.implicitReceiver ?: return null
+
+            return cache.getOrPut(implicitReceiver) {
+                context.transformToReceiverWithSmartCastInfo(implicitReceiver.value)
+            }
+        }
+
+        override fun getContextReceivers(scope: LexicalScope): List<ReceiverValueWithSmartCastInfo> =
+            scope.contextReceiversGroup.map { cache.getOrPut(it) { context.transformToReceiverWithSmartCastInfo(it.value) } }
 
         override fun getNameForGivenImportAlias(name: Name): Name? =
             (context.call.callElement.containingFile as? KtFile)?.getNameForGivenImportAlias(name)

@@ -148,7 +148,7 @@ public class ExpectedResolveDataUtil {
         emptyModule.initialize(PackageFragmentProvider.Empty.INSTANCE);
 
         LexicalScopeImpl lexicalScope = new LexicalScopeImpl(ImportingScope.Empty.INSTANCE, classDescriptor, false,
-                                                             Collections.singletonList(classDescriptor.getThisAsReceiverParameter()),
+                                                             classDescriptor.getThisAsReceiverParameter(), Collections.emptyList(),
                                                              LexicalScopeKind.SYNTHETIC);
 
         LanguageVersionSettings languageVersionSettings = CommonConfigurationKeysKt.getLanguageVersionSettings(environment.getConfiguration());

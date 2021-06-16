@@ -198,7 +198,7 @@ public class TypeUnifierTest extends KotlinTestWithEnvironment {
     private TypeProjection makeType(String typeStr) {
         LexicalScope withX = new LexicalScopeImpl(
                 builtinsImportingScope, module,
-                false, Collections.emptyList(), LexicalScopeKind.SYNTHETIC, LocalRedeclarationChecker.DO_NOTHING.INSTANCE,
+                false, null, Collections.emptyList(), LexicalScopeKind.SYNTHETIC, LocalRedeclarationChecker.DO_NOTHING.INSTANCE,
                 handler -> {
                     handler.addClassifierDescriptor(x);
                     handler.addClassifierDescriptor(y);
