@@ -307,6 +307,15 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = CyclicInheritanceHierarchy::class
     }
 
+    abstract class ExpandedTypeCannotBeInherited : KtFirDiagnostic<KtTypeReference>() {
+        override val diagnosticClass get() = ExpandedTypeCannotBeInherited::class
+        abstract val type: KtType
+    }
+
+    abstract class ProjectionInImmediateArgumentToSupertype : KtFirDiagnostic<KtModifierListOwner>() {
+        override val diagnosticClass get() = ProjectionInImmediateArgumentToSupertype::class
+    }
+
     abstract class ConstructorInObject : KtFirDiagnostic<KtDeclaration>() {
         override val diagnosticClass get() = ConstructorInObject::class
     }

@@ -144,6 +144,8 @@ object FirErrors {
     val SEALED_SUPERTYPE_IN_LOCAL_CLASS by error0<KtTypeReference>()
     val SUPERTYPE_NOT_A_CLASS_OR_INTERFACE by error1<KtElement, String>()
     val CYCLIC_INHERITANCE_HIERARCHY by error0<PsiElement>()
+    val EXPANDED_TYPE_CANNOT_BE_INHERITED by error1<KtTypeReference, ConeKotlinType>()
+    val PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE by error0<KtModifierListOwner>(SourceElementPositioningStrategies.VARIANCE_MODIFIER)
 
     // Constructor problems
     val CONSTRUCTOR_IN_OBJECT by error0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)

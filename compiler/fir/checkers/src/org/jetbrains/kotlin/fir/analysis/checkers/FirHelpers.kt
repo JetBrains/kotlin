@@ -521,6 +521,8 @@ private val FirSimpleFunction.matchesHashCodeSignature: Boolean
 private val FirSimpleFunction.matchesToStringSignature: Boolean
     get() = valueParameters.isEmpty()
 
+val ConeTypeProjection.isConflictingOrNotInvariant: Boolean get() = kind != ProjectionKind.INVARIANT || this is ConeKotlinTypeConflictingProjection
+
 fun checkTypeMismatch(
     lValueOriginalType: ConeKotlinType,
     rValue: FirExpression,
@@ -600,8 +602,8 @@ fun extractArgumentTypeRefAndSource(typeRef: FirTypeRef?, index: Int): FirTypeRe
             }
 
             val typeArgument = currentTypeArguments?.elementAtOrNull(currentIndex)
-            if (typeArgument is FirTypeProjectionWithVariance) {
-                return FirTypeRefSource(typeArgument.typeRef, typeArgument.source)
+            if (typeArgument is FirTypeProjection) {
+                return FirTypeRefSource((typeArgument as? FirTypeProjectionWithVariance)?.typeRef, typeArgument.source)
             }
         } else if (delegatedTypeRef is FirFunctionTypeRef) {
             val valueParameters = delegatedTypeRef.valueParameters

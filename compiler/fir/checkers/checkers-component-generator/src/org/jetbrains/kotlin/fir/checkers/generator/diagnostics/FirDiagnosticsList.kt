@@ -136,6 +136,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<String>("reason")
         }
         val CYCLIC_INHERITANCE_HIERARCHY by error<PsiElement>()
+        val EXPANDED_TYPE_CANNOT_BE_INHERITED by error<KtTypeReference> {
+            parameter<ConeKotlinType>("type")
+        }
+        val PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE by error<KtModifierListOwner>(PositioningStrategy.VARIANCE_MODIFIER)
     }
 
     val CONSTRUCTOR_PROBLEMS by object : DiagnosticGroup("Constructor problems") {
