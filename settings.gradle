@@ -314,24 +314,101 @@ include ":prepare:ide-plugin-dependencies:android-extensions-compiler-plugin-for
         ":prepare:ide-plugin-dependencies:kotlin-compiler-testdata-for-ide",
         ":prepare:ide-plugin-dependencies:kotlin-compiler-tests-for-ide"
 
-if (buildProperties.getOrNull("attachedIntellijVersion") != null) {
-    logger.info("Including kotlin-ide modules in settings.gradle")
-    new File(rootDir, "kotlin-ide").eachFileRecurse {
-        String fileName = it.name
-        if (fileName.endsWith(".iml") && fileName.startsWith("kotlin.") && new File(it.parentFile, "build.gradle.kts").exists() ||
-                fileName == "intellij.platform.debugger.testFramework.iml" || fileName == "intellij.gradle.tests.iml" ||
-                fileName == "intellij.platform.externalSystem.tests.iml" || fileName == "intellij.platform.lang.tests.iml" ||
-                fileName == "intellij.platform.testExtensions.iml" || fileName == "intellij.java.compiler.tests.iml" ||
-                fileName == "intellij.gradle.toolingExtension.tests.iml" || fileName == "intellij.maven.iml"
-        ) {
-            String projectName = ":kotlin-ide.${fileName.substring(0, fileName.length() - ".iml".length())}"
-            include(projectName)
-            project(projectName).projectDir = it.parentFile
-        }
-    }
+void kotlinIde(String imlPath) {
+    File imlFile = new File("kotlin-ide/kotlin/${imlPath}")
+    imlFile = imlFile.exists() ? imlFile : new File("kotlin-ide/${imlPath}")
+    imlFile = imlFile.exists() ? imlFile : new File("kotlin-ide/intellij/community/${imlPath}")
+    imlFile = imlFile.exists() ? imlFile : new File("kotlin-ide/intellij/${imlPath}")
+    assert imlFile.exists()
+    String fileName = imlFile.name
+    String projectName = ":kotlin-ide.${fileName.substring(0, fileName.length() - ".iml".length())}"
+    include(projectName)
+    project(projectName).projectDir = imlFile.parentFile
 }
 
-if (!buildProperties.getBoolean("disableKotlinPluginModules", false) && buildProperties.getOrNull("attachedIntellijVersion") == null) {
+String attachedIntellijVersion = buildProperties.getOrNull("attachedIntellijVersion")
+if (attachedIntellijVersion != null) {
+    logger.info("Including kotlin-ide modules in settings.gradle")
+    kotlinIde "common/kotlin.common.iml"
+    kotlinIde "compiler-plugins/allopen/kotlin.compiler-plugins.allopen.iml"
+    kotlinIde "compiler-plugins/annotation-based-compiler-support/kotlin.compiler-plugins.annotation-based-compiler-support.iml"
+    kotlinIde "compiler-plugins/base-compiler-plugins-ide-support/kotlin.compiler-plugins.base-compiler-plugins-ide-support.iml"
+    kotlinIde "compiler-plugins/kapt/kotlin.compiler-plugins.kapt.iml"
+    kotlinIde "compiler-plugins/kotlinx-serialization/kotlin.compiler-plugins.kotlinx-serialization.iml"
+    kotlinIde "compiler-plugins/lombok/kotlin.compiler-plugins.lombok.iml"
+    kotlinIde "compiler-plugins/noarg/kotlin.compiler-plugins.noarg.iml"
+    kotlinIde "compiler-plugins/parcelize/kotlin.compiler-plugins.parcelize.iml"
+    kotlinIde "compiler-plugins/sam-with-receiver/kotlin.compiler-plugins.sam-with-receiver.iml"
+    kotlinIde "compiler-plugins/scripting-ide-services/kotlin.compiler-plugins.scripting-ide-services.iml"
+    kotlinIde "compiler-plugins/scripting/kotlin.compiler-plugins.scripting.iml"
+    kotlinIde "core/kotlin.core.iml"
+    kotlinIde "fir-fe10-binding/kotlin.fir.fir-fe10-binding.iml"
+    kotlinIde "fir/kotlin.fir.iml"
+    kotlinIde "fir-low-level-api/kotlin.fir.fir-low-level-api.iml"
+    kotlinIde "formatter/kotlin.formatter.iml"
+    kotlinIde "frontend-api/kotlin.fir.frontend-api.iml"
+    kotlinIde "frontend-fir/kotlin.fir.frontend-fir.iml"
+    kotlinIde "frontend-independent/kotlin.fir.frontend-independent.iml"
+    kotlinIde "frontend-independent/tests/kotlin.fir.frontend-independent.tests.iml"
+    kotlinIde "generators/kotlin.generators.iml"
+    kotlinIde "git/kotlin.git.iml"
+    kotlinIde "gradle/gradle-idea/kotlin.gradle.gradle-idea.iml"
+    kotlinIde "gradle/gradle-native/kotlin.gradle.gradle-native.iml"
+    kotlinIde "gradle/gradle-tooling/kotlin.gradle.gradle-tooling.iml"
+    kotlinIde "idea/kotlin.idea.iml"
+    kotlinIde "idea/tests/kotlin.idea.tests.iml"
+    kotlinIde "j2k/idea/kotlin.j2k.idea.iml"
+    kotlinIde "j2k/new/kotlin.j2k.new.iml"
+    kotlinIde "j2k/new/tests/kotlin.j2k.new.tests.iml"
+    kotlinIde "j2k/old/kotlin.j2k.old.iml"
+    kotlinIde "j2k/old/tests/kotlin.j2k.old.tests.iml"
+    kotlinIde "j2k/services/kotlin.j2k.services.iml"
+    kotlinIde "java/compiler/intellij.java.compiler.tests.iml"
+    kotlinIde "jps/jps-common/kotlin.jps-common.iml"
+    kotlinIde "jps/jps-plugin/kotlin.jps-plugin.iml"
+    kotlinIde "jvm-debugger/core/kotlin.jvm-debugger.core.iml"
+    kotlinIde "jvm-debugger/coroutines/kotlin.jvm-debugger.coroutines.iml"
+    kotlinIde "jvm-debugger/eval4j/kotlin.eval4j.iml"
+    kotlinIde "jvm-debugger/evaluation/kotlin.jvm-debugger.evaluation.iml"
+    kotlinIde "jvm-debugger/sequence/kotlin.jvm-debugger.sequence.iml"
+    kotlinIde "jvm-debugger/test/kotlin.jvm-debugger.test.iml"
+    kotlinIde "jvm-debugger/util/kotlin.jvm-debugger.util.iml"
+    kotlinIde "jvm/kotlin.jvm.iml"
+    kotlinIde "kotlin.all-tests/kotlin.all-tests.iml"
+    kotlinIde "kotlin-compiler-classpath/kotlin.util.compiler-classpath.iml"
+    kotlinIde "line-indent-provider/kotlin.line-indent-provider.iml"
+    kotlinIde "maven/kotlin.maven.iml"
+    kotlinIde "native/kotlin.native.iml"
+    kotlinIde "performance-tests/kotlin.performance-tests.iml"
+    kotlinIde "platform/external-system-impl/intellij.platform.externalSystem.tests.iml"
+    kotlinIde "platform/lang-impl/intellij.platform.lang.tests.iml"
+    kotlinIde "platform/testFramework/extensions/intellij.platform.testExtensions.iml"
+    kotlinIde "platform/xdebugger-testFramework/intellij.platform.debugger.testFramework.iml"
+    kotlinIde "plugins/gradle/intellij.gradle.tests.iml"
+    kotlinIde "plugins/gradle/tooling-extension-impl/intellij.gradle.toolingExtension.tests.iml"
+    kotlinIde "plugins/maven/intellij.maven.iml"
+    kotlinIde "project-wizard/cli/kotlin.project-wizard.cli.iml"
+    kotlinIde "project-wizard/core/kotlin.project-wizard.core.iml"
+    kotlinIde "project-wizard/idea/kotlin.project-wizard.idea.iml"
+    kotlinIde "repl/kotlin.repl.iml"
+    kotlinIde "scripting/kotlin.scripting.iml"
+    kotlinIde "scripting-support/kotlin.scripting-support.iml"
+    kotlinIde "test-framework/kotlin.test-framework.iml"
+    kotlinIde "tests-common/kotlin.tests-common.iml"
+    kotlinIde "uast/uast-kotlin-base/kotlin.uast.uast-kotlin-base.iml"
+    kotlinIde "uast/uast-kotlin-fir/kotlin.uast.uast-kotlin-fir.iml"
+    kotlinIde "uast/uast-kotlin-idea-base/kotlin.uast.uast-kotlin-idea-base.iml"
+    kotlinIde "uast/uast-kotlin-idea/kotlin.uast.uast-kotlin-idea.iml"
+    kotlinIde "uast/uast-kotlin/kotlin.uast.uast-kotlin.iml"
+}
+
+if (attachedIntellijVersion > "202") {
+    kotlinIde "kotlin.fir-all-tests/kotlin.fir-all-tests.iml"
+    kotlinIde "kotlin.resources-descriptors.iml"
+    kotlinIde "kotlin.resources-fir.iml"
+}
+
+if (!buildProperties.getBoolean("disableKotlinPluginModules", false) && attachedIntellijVersion == null) {
     logger.info("Old Kotlin plugin modules are enabled")
     include ":idea:idea-jvm",
             ":idea:idea-maven",
