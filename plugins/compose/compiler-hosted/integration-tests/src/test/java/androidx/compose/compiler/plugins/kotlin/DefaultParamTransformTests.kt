@@ -164,6 +164,33 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
     )
 
     @Test
+    fun testUnusedDefaultComposableLambda(): Unit = defaultParams(
+        """
+        """,
+        """
+            inline fun Bar(unused: @Composable () -> Unit = { }) {}
+            fun Foo() { Bar() }
+        """,
+        """
+            fun Bar(unused: Function2<Composer, Int, Unit> = { %composer: Composer?, %changed: Int ->
+              %composer.startReplaceableGroup(<>)
+              sourceInformation(%composer, "C:Test.kt")
+              if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                Unit
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endReplaceableGroup()
+            }
+            ) { }
+            fun Foo() {
+              Bar(
+              )
+            }
+        """
+    )
+
+    @Test
     fun testNonStaticDefaultExpressions(): Unit = defaultParams(
         """
             fun makeInt(): Int = 123
