@@ -10583,6 +10583,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("ambiguityInGroupSimple.kt")
+                public void testAmbiguityInGroupSimple() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/ambiguityInGroupSimple.kt");
+                }
+
+                @Test
+                @TestMetadata("ambiguityInGroupWithInheritance.kt")
+                public void testAmbiguityInGroupWithInheritance() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/ambiguityInGroupWithInheritance.kt");
+                }
+
+                @Test
                 @TestMetadata("dp.kt")
                 public void testDp() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/dp.kt");

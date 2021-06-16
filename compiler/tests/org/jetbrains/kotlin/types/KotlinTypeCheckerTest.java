@@ -551,7 +551,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
         );
 
         LexicalScope scope = new LexicalScopeImpl(scopeWithImports, scopeWithImports.getOwnerDescriptor(), false,
-                                                  Collections.singletonList(receiverParameterDescriptor), LexicalScopeKind.SYNTHETIC);
+                                                  receiverParameterDescriptor, Collections.emptyList(), LexicalScopeKind.SYNTHETIC);
         assertType(scope, expression, expectedType);
     }
 

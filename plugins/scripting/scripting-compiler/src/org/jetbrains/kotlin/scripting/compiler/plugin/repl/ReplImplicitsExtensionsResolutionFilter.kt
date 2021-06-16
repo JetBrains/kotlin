@@ -41,7 +41,8 @@ class ReplImplicitsExtensionsResolutionFilter(
     ): Sequence<ScopeWithImplicitsExtensionsResolutionInfo> {
         val processedReceivers = mutableSetOf<String>()
         return scopes.map { scope ->
-            val receivers = (scope as? LexicalScope)?.implicitReceivers?.map { it.value }
+            val receivers = (if (scope is LexicalScope) listOfNotNull(scope.implicitReceiver) + scope.contextReceiversGroup else null)
+                ?.map { it.value }
             val keep = receivers?.all {
                 lock.read {
                     when (val descriptorFqName = (it as? ImplicitClassReceiver)?.declarationDescriptor?.fqNameSafe?.asString()) {

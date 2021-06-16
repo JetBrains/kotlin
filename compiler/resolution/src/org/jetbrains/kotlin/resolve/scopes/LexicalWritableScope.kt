@@ -30,7 +30,9 @@ class LexicalWritableScope(
     override val kind: LexicalScopeKind
 ) : LexicalScopeStorage(parent, redeclarationChecker) {
 
-    override val implicitReceivers: List<ReceiverParameterDescriptor>
+    override val implicitReceiver: ReceiverParameterDescriptor?
+        get() = null
+    override val contextReceiversGroup: List<ReceiverParameterDescriptor>
         get() = emptyList()
 
     private var canWrite: Boolean = true
@@ -111,7 +113,9 @@ class LexicalWritableScope(
             "; for descriptor: ",
             ownerDescriptor.name,
             " with implicitReceivers: ",
-            if (implicitReceivers.isEmpty()) "NONE" else implicitReceivers.joinToString { it.value.toString() },
+            implicitReceiver?.value ?: "NONE",
+            " with contextReceiversGroup: ",
+            if (contextReceiversGroup.isEmpty()) "NONE" else contextReceiversGroup.joinToString { it.value.toString() },
             " {"
         )
         p.pushIndent()

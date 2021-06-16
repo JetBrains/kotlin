@@ -91,7 +91,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
         LocalRedeclarationChecker redeclarationChecker =
                 new ThrowingLocalRedeclarationChecker(new OverloadChecker(TypeSpecificityComparator.NONE.INSTANCE));
         LexicalScope typeParameters = new LexicalScopeImpl(
-                topLevelScope, module, false, Collections.emptyList(), LexicalScopeKind.SYNTHETIC,
+                topLevelScope, module, false, null, Collections.emptyList(), LexicalScopeKind.SYNTHETIC,
                 redeclarationChecker,
                 handler -> {
                     for (TypeParameterDescriptor parameterDescriptor : contextClass.getTypeConstructor().getParameters()) {
@@ -101,7 +101,8 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
                 }
         );
         return LexicalChainedScope.Companion.create(
-                typeParameters, module, false, Collections.emptyList(), LexicalScopeKind.SYNTHETIC,
+                typeParameters, module, false, null, Collections.emptyList(),
+                LexicalScopeKind.SYNTHETIC,
                 contextClass.getDefaultType().getMemberScope(),
                 module.getBuiltIns().getBuiltInsPackageScope()
         );

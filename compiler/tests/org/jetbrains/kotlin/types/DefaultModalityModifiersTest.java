@@ -100,7 +100,7 @@ public class DefaultModalityModifiersTest extends KotlinTestWithEnvironment {
             DeclarationDescriptor classDescriptor =
                     bindingContext.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, aClass);
             return new LexicalScopeImpl(
-                    ScopeUtilsKt.memberScopeAsImportingScope(libraryScope), root, false, Collections.emptyList(),
+                    ScopeUtilsKt.memberScopeAsImportingScope(libraryScope), root, false, null, Collections.emptyList(),
                     LexicalScopeKind.SYNTHETIC, LocalRedeclarationChecker.DO_NOTHING.INSTANCE,
                     handler -> {
                         handler.addClassifierDescriptor((ClassifierDescriptor) classDescriptor);

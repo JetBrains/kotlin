@@ -36,7 +36,8 @@ public final class ScopeUtils {
             @NotNull LexicalScope parent,
             @NotNull PropertyDescriptor propertyDescriptor
     ) {
-        return new LexicalScopeImpl(parent, propertyDescriptor, false, Collections.emptyList(), LexicalScopeKind.PROPERTY_HEADER,
+        return new LexicalScopeImpl(parent, propertyDescriptor, false, null, Collections.emptyList(),
+                                    LexicalScopeKind.PROPERTY_HEADER,
                                     // redeclaration on type parameters should be reported early, see: DescriptorResolver.resolvePropertyDescriptor()
                                     LocalRedeclarationChecker.DO_NOTHING.INSTANCE,
                                     handler -> {
@@ -52,7 +53,8 @@ public final class ScopeUtils {
             @NotNull LexicalScope propertyHeader,
             @NotNull PropertyDescriptor propertyDescriptor
     ) {
-        return new LexicalScopeImpl(propertyHeader, propertyDescriptor, false, Collections.emptyList(), LexicalScopeKind.PROPERTY_INITIALIZER_OR_DELEGATE);
+        return new LexicalScopeImpl(propertyHeader, propertyDescriptor, false, null, Collections.emptyList(),
+                                    LexicalScopeKind.PROPERTY_INITIALIZER_OR_DELEGATE);
     }
 
     @NotNull
@@ -60,14 +62,9 @@ public final class ScopeUtils {
             @NotNull LexicalScope parent,
             @NotNull VariableDescriptorWithAccessors variableDescriptor
     ) {
-        List<ReceiverParameterDescriptor> implicitReceivers = new ArrayList<>();
-        ReceiverParameterDescriptor extensionReceiverParameter = variableDescriptor.getExtensionReceiverParameter();
-        if (extensionReceiverParameter != null) {
-            implicitReceivers.add(extensionReceiverParameter);
-        }
         // todo: very strange scope!
-        return new LexicalScopeImpl(parent, variableDescriptor, true, implicitReceivers,
-                                    LexicalScopeKind.PROPERTY_DELEGATE_METHOD
+        return new LexicalScopeImpl(parent, variableDescriptor, true, variableDescriptor.getExtensionReceiverParameter(),
+                /* TODO: Context receivers? */ Collections.emptyList(), LexicalScopeKind.PROPERTY_DELEGATE_METHOD
         );
     }
 

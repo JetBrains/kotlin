@@ -10579,6 +10579,16 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/extensions/contextReceivers"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                 }
 
+                @TestMetadata("ambiguityInGroupSimple.kt")
+                public void testAmbiguityInGroupSimple() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/ambiguityInGroupSimple.kt");
+                }
+
+                @TestMetadata("ambiguityInGroupWithInheritance.kt")
+                public void testAmbiguityInGroupWithInheritance() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/ambiguityInGroupWithInheritance.kt");
+                }
+
                 @TestMetadata("dp.kt")
                 public void testDp() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/dp.kt");

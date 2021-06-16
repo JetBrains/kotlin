@@ -87,3 +87,30 @@ private fun ConstraintSystemBuilder.addConstraintIfCompatible(
     }
     !hasContradiction
 }
+
+fun ConstraintSystemBuilder.isSubtypeConstraintCompatible(
+    lowerType: KotlinTypeMarker,
+    upperType: KotlinTypeMarker,
+    position: ConstraintPosition
+): Boolean = isConstraintCompatible(lowerType, upperType, position, ConstraintKind.LOWER)
+
+private fun ConstraintSystemBuilder.isConstraintCompatible(
+    lowerType: KotlinTypeMarker,
+    upperType: KotlinTypeMarker,
+    position: ConstraintPosition,
+    kind: ConstraintKind
+): Boolean {
+    var isCompatible = false
+    runTransaction {
+        if (!hasContradiction) {
+            when (kind) {
+                ConstraintKind.LOWER -> addSubtypeConstraint(lowerType, upperType, position)
+                ConstraintKind.UPPER -> addSubtypeConstraint(upperType, lowerType, position)
+                ConstraintKind.EQUALITY -> addEqualityConstraint(lowerType, upperType, position)
+            }
+        }
+        isCompatible = !hasContradiction
+        false
+    }
+    return isCompatible
+}
