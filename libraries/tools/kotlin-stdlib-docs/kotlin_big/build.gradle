@@ -3,12 +3,12 @@ apply plugin: 'base'
 final boolean isTeamcityBuild = System.getenv("TEAMCITY_VERSION") != null
 
 // kotlin/libraries/tools/kotlin-stdlib-docs  ->  kotlin
-final File kotlinRootDir = rootProject.file( "../../../")
-final File kotlinLibsDir = new File(buildDir, 'libs')
+final String kotlinRootDir = rootProject.file("../../../").absolutePath
+final String kotlinLibsDir = "$buildDir/libs"
 
 final String githubRevision = isTeamcityBuild ? project.property("githubRevision") : "master"
 final String kotlinVersion = isTeamcityBuild ? project.property("deployVersion") : "1.5.255-SNAPSHOT"
-final String repo = isTeamcityBuild ? new File(buildDir, 'repo') : new File(kotlinRootDir, 'build/repo')
+final String repo = isTeamcityBuild ? project.property("kotlinLibsRepo") : "$kotlinRootDir/build/repo"
 
 println("# Extracting info:")
 println("    isTeamcityBuild: $isTeamcityBuild")
