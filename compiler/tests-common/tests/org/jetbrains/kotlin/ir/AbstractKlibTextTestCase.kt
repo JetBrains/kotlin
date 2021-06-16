@@ -185,8 +185,7 @@ abstract class AbstractKlibTextTestCase : CodegenTestCase() {
             irVersion = KlibIrVersion.INSTANCE.toString()
         )
 
-        val moduleName = irModuleFragment.name.asString()
-        val klibDir = org.jetbrains.kotlin.konan.file.createTempDir(moduleName)
+        val klibDir = org.jetbrains.kotlin.konan.file.createTempDir("testKlib")
 
         buildKotlinLibrary(
             linkDependencies = listOf(stdlib),
@@ -194,7 +193,7 @@ abstract class AbstractKlibTextTestCase : CodegenTestCase() {
             metadata = serializedMetadata,
             dataFlowGraph = null,
             manifestProperties = properties,
-            moduleName = moduleName,
+            moduleName = irModuleFragment.name.asString(),
             nopack = true,
             perFile = false,
             output = klibDir.canonicalPath,
