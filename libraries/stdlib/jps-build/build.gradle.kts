@@ -11,7 +11,7 @@ val commonStdlibSources by configurations.creating
 val builtins by configurations.creating
 
 dependencies {
-    stdlibMinimal("org.jetbrains.kotlin:kotlin-stdlib-jvm-minimal-for-test:$bootstrapKotlinVersion")
+    stdlibMinimal("org.jetbrains.kotlin:kotlin-stdlib-minimal-for-test:$bootstrapKotlinVersion")
     stdlibJS("org.jetbrains.kotlin:kotlin-stdlib-js:$bootstrapKotlinVersion") { isTransitive = false }
     stdlibSources("org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion:sources") { isTransitive = false }
 

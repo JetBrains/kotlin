@@ -321,7 +321,7 @@ fun NamedDomainObjectContainer<TopLevelArtifact>.dist() {
         file("$rootDir/build/build.txt")
 
         // Use output-file-name when fixed https://github.com/JetBrains/gradle-idea-ext-plugin/issues/63
-        archive("kotlin-stdlib-jvm-minimal-for-test.jar") {
+        archive("kotlin-stdlib-minimal-for-test.jar") {
             extractedDirectory(stdlibMinimal.singleFile)
         }
 

@@ -41,7 +41,7 @@
          <trust group="org.jetbrains.kotlin" name="builtins"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-jdk7"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-jdk8"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-jvm-minimal-for-test"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-minimal-for-test"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-project-model"/>
          <trust file="kotlin-native-prebuilt-.*" regex="true"/>
          <trust file=".*-javadoc[.]jar" regex="true"/>
