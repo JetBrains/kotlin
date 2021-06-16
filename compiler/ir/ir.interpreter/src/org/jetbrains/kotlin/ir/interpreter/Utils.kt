@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.lang.invoke.MethodType
 
@@ -77,7 +76,7 @@ internal fun Any?.toState(irType: IrType): State {
         is State -> this
         is Boolean, is Char, is Byte, is Short, is Int, is Long, is String, is Float, is Double, is Array<*>, is ByteArray,
         is CharArray, is ShortArray, is IntArray, is LongArray, is FloatArray, is DoubleArray, is BooleanArray -> Primitive(this, irType)
-        null -> Primitive(this, irType)
+        null -> Primitive.nullStateOfType(irType)
         else -> irType.classOrNull?.owner?.let { Wrapper(this, it) } ?: Wrapper(this)
     }
 }
@@ -200,6 +199,12 @@ internal fun IrType.isFunction() = this.getClass()?.fqNameWhenAvailable?.asStrin
 internal fun IrType.isKFunction() = this.getClass()?.fqNameWhenAvailable?.asString()?.startsWith("kotlin.reflect.KFunction") ?: false
 internal fun IrType.isTypeParameter() = classifierOrNull is IrTypeParameterSymbol
 internal fun IrType.isThrowable() = this.getClass()?.fqNameWhenAvailable?.asString() == "kotlin.Throwable"
+internal fun IrClass.isSubclassOfThrowable(): Boolean {
+    return generateSequence(this) { irClass ->
+        if (irClass.defaultType.isAny()) return@generateSequence null
+        irClass.superTypes.mapNotNull { it.classOrNull?.owner }.singleOrNull { it.isClass }
+    }.any { it.defaultType.isThrowable() }
+}
 
 internal fun IrType.isUnsignedArray(): Boolean {
     if (this !is IrSimpleType || classifier !is IrClassSymbol) return false

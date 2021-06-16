@@ -37,9 +37,9 @@ internal fun unfoldInstruction(element: IrElement?, environment: IrInterpreterEn
     when (element) {
         null -> return
         is IrSimpleFunction -> unfoldFunction(element, environment)
-        is IrConstructor -> unfoldConstructor(element, environment)
+        is IrConstructor -> unfoldConstructor(element, callStack)
         is IrCall -> unfoldCall(element, callStack)
-        is IrConstructorCall -> unfoldConstructorCall(element, callStack)
+        is IrConstructorCall -> unfoldConstructorCall(element, environment)
         is IrEnumConstructorCall -> unfoldEnumConstructorCall(element, callStack)
         is IrDelegatingConstructorCall -> unfoldDelegatingConstructorCall(element, callStack)
         is IrInstanceInitializerCall -> unfoldInstanceInitializerCall(element, callStack)
@@ -88,15 +88,17 @@ private fun unfoldFunction(function: IrSimpleFunction, environment: IrInterprete
         ?: throw InterpreterError("Ir function must be with body")
 }
 
-private fun unfoldConstructor(constructor: IrConstructor, environment: IrInterpreterEnvironment) {
-    val callStack = environment.callStack
+private fun unfoldConstructor(constructor: IrConstructor, callStack: CallStack) {
     when (constructor.fqNameWhenAvailable?.asString()) {
-        "kotlin.Enum.<init>" -> {
+        "kotlin.Enum.<init>", "kotlin.Throwable.<init>" -> {
             val irClass = constructor.parentAsClass
-            val receiver = irClass.thisReceiver!!.symbol
-            val receiverState = callStack.getState(receiver)
-            irClass.declarations.filterIsInstance<IrProperty>().forEachIndexed { index, property ->
-                receiverState.setField(Variable(property.symbol, callStack.getState(constructor.valueParameters[index].symbol)))
+            val receiverSymbol = irClass.thisReceiver!!.symbol
+            val receiverState = callStack.getState(receiverSymbol)
+
+            irClass.declarations.filterIsInstance<IrProperty>().forEach { property ->
+                val parameter = constructor.valueParameters.singleOrNull { it.name == property.name }
+                val state = parameter?.let { callStack.getState(it.symbol) } ?: Primitive.nullStateOfType(property.getter!!.returnType)
+                receiverState.setField(Variable(property.symbol, state))
             }
         }
         else -> {
@@ -111,11 +113,15 @@ private fun unfoldCall(call: IrCall, callStack: CallStack) {
     unfoldValueParameters(call, callStack)
 }
 
-private fun unfoldConstructorCall(constructorCall: IrFunctionAccessExpression, callStack: CallStack) {
+private fun unfoldConstructorCall(constructorCall: IrFunctionAccessExpression, environment: IrInterpreterEnvironment) {
+    val callStack = environment.callStack
     val constructor = constructorCall.symbol.owner
+    val irClass = constructor.parentAsClass
     unfoldValueParameters(constructorCall, callStack)
-    // this variable is used to create object once
-    callStack.addVariable(Variable(constructorCall.getThisReceiver(), Common(constructor.parentAsClass)))
+    // this state is used to create object once
+    val state = if (irClass.isSubclassOfThrowable()) ExceptionState(irClass, callStack.getStackTrace()) else Common(irClass)
+    if (irClass.isObject) environment.mapOfObjects[irClass.symbol] = state  // must set object's state here to avoid cyclic evaluation
+    callStack.addVariable(Variable(constructorCall.getThisReceiver(), state))
 }
 
 private fun unfoldEnumConstructorCall(enumConstructorCall: IrEnumConstructorCall, callStack: CallStack) {

@@ -385,18 +385,18 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
     private fun interpretGetObjectValue(expression: IrGetObjectValue) {
         callInterceptor.interceptGetObjectValue(expression) {
             val objectClass = expression.symbol.owner
-            val state = Common(objectClass)
-            environment.mapOfObjects[objectClass.symbol] = state  // must set object's state here to avoid cyclic evaluation
-            callStack.addVariable(Variable(objectClass.thisReceiver!!.symbol, state))
 
             // non compile time objects can be used in interpreter, for example, to evaluate const properties or in tests
-            if (!objectClass.hasAnnotation(compileTimeAnnotation) && !environment.configuration.createNonCompileTimeObjects)
+            val buildObject = objectClass.hasAnnotation(compileTimeAnnotation) || environment.configuration.createNonCompileTimeObjects
+            if (objectClass.constructors.none() || !buildObject) {
+                val state = Common(objectClass)
+                environment.mapOfObjects[objectClass.symbol] = state
                 return@interceptGetObjectValue callStack.pushState(state)
+            }
 
-            val constructor = objectClass.constructors.firstOrNull() ?: return@interceptGetObjectValue callStack.pushState(state)
+            val constructor = objectClass.constructors.first()
             val constructorCall = IrConstructorCallImpl.fromSymbolOwner(constructor.returnType, constructor.symbol)
-            callStack.newSubFrame(constructorCall)
-            callStack.addInstruction(SimpleInstruction(constructorCall))
+            callStack.addInstruction(CompoundInstruction(constructorCall))
         }
     }
 
@@ -564,15 +564,8 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         element.finallyExpression?.handleAndDropResult(callStack)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     private fun interpretThrow(expression: IrThrow) {
-        val exception = callStack.popState()
-        callStack.newSubFrame(expression) // temporary frame to get correct stack trace
-        when (exception) {
-            is Common -> callStack.pushState(ExceptionState(exception, callStack.getStackTrace()))
-            is Wrapper -> callStack.pushState(ExceptionState(exception, callStack.getStackTrace()))
-            is ExceptionState -> callStack.pushState(exception)
-            else -> throw InterpreterError("${exception::class} cannot be used as exception state")
-        }
         callStack.dropFramesUntilTryCatch()
     }
 

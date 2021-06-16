@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.ir.interpreter.state
 
-import org.jetbrains.kotlin.ir.interpreter.getLastOverridden
-import org.jetbrains.kotlin.ir.interpreter.stack.Variable
-import org.jetbrains.kotlin.ir.interpreter.toState
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.interpreter.getLastOverridden
+import org.jetbrains.kotlin.ir.interpreter.stack.Variable
+import org.jetbrains.kotlin.ir.interpreter.toState
 import org.jetbrains.kotlin.ir.util.isSubclassOf
 import org.jetbrains.kotlin.ir.util.nameForIrSerialization
 import kotlin.math.min
@@ -24,8 +24,8 @@ internal class ExceptionState private constructor(
 
     override val message: String?
         get() = getField(messageProperty.symbol)?.asStringOrNull()
-    override val cause: Throwable?
-        get() = getField(causeProperty.symbol)?.let { if (it is ExceptionState) it else null }
+    override val cause: ExceptionState?
+        get() = getField(causeProperty.symbol) as? ExceptionState
 
     private lateinit var exceptionFqName: String
     private val exceptionHierarchy = mutableListOf<String>()
@@ -36,20 +36,11 @@ internal class ExceptionState private constructor(
 
     init {
         if (!this::exceptionFqName.isInitialized) this.exceptionFqName = irClassFqName()
-
-        if (fields.none { it.symbol == messageProperty.symbol }) {
-            setMessage()
-        }
+        if (fields.none { it.symbol == messageProperty.symbol }) setMessage(null)
+        if (fields.none { it.symbol == causeProperty.symbol }) setCause(null)
     }
 
-    constructor(common: Common, stackTrace: List<String>) : this(common.irClass, common.fields, stackTrace) {
-        (common.superWrapperClass?.value as? Throwable)?.let { setMessage(it.message) }
-        setUpCauseIfNeeded(common.superWrapperClass)
-    }
-
-    constructor(wrapper: Wrapper, stackTrace: List<String>) : this(wrapper.value as Throwable, wrapper.irClass, stackTrace) {
-        setUpCauseIfNeeded(wrapper)
-    }
+    constructor(irClass: IrClass, stackTrace: List<String>) : this(irClass, mutableListOf(), stackTrace)
 
     constructor(
         exception: Throwable, irClass: IrClass, stackTrace: List<String>
@@ -64,11 +55,21 @@ internal class ExceptionState private constructor(
         }
     }
 
-    private fun setUpCauseIfNeeded(wrapper: Wrapper?) {
-        val cause = (wrapper?.value as? Throwable)?.cause as? ExceptionState
-        setCause(cause)
+    fun copyFieldsFrom(wrapper: Wrapper) {
+        (wrapper.value as? Throwable)?.let {
+            setMessage(it.message)
+            setCause(it.cause as? ExceptionState)
+        }
+    }
+
+    override fun setField(newVar: Variable) {
+        super.setField(newVar)
+        recalculateCauseAndMessage()
+    }
+
+    private fun recalculateCauseAndMessage() {
         if (message == null && cause != null) {
-            val causeMessage = cause.exceptionFqName + (cause.message?.let { ": $it" } ?: "")
+            val causeMessage = cause!!.exceptionFqName + (cause!!.message?.let { ": $it" } ?: "")
             setMessage(causeMessage)
         }
     }
@@ -80,12 +81,12 @@ internal class ExceptionState private constructor(
         return irClass.isSubclassOf(ancestor)
     }
 
-    private fun setMessage(messageValue: String? = null) {
+    private fun setMessage(messageValue: String?) {
         setField(Variable(messageProperty.symbol, Primitive(messageValue, messageProperty.getter!!.returnType)))
     }
 
     private fun setCause(causeValue: State?) {
-        setField(Variable(causeProperty.symbol, causeValue ?: Primitive<Throwable?>(null, causeProperty.getter!!.returnType)))
+        setField(Variable(causeProperty.symbol, causeValue ?: Primitive.nullStateOfType(causeProperty.getter!!.returnType)))
     }
 
     fun getFullDescription(): String {
@@ -93,7 +94,7 @@ internal class ExceptionState private constructor(
         val message = message.let { if (it?.isNotEmpty() == true) ": $it" else "" }
         val prefix = if (stackTrace.isNotEmpty()) "\n\t" else ""
         val postfix = if (stackTrace.size > 10) "\n\t..." else ""
-        val causeMessage = (cause as? ExceptionState)?.getFullDescription()?.replaceFirst("Exception ", "\nCaused by: ") ?: ""
+        val causeMessage = cause?.getFullDescription()?.replaceFirst("Exception ", "\nCaused by: ") ?: ""
         return "Exception $exceptionFqName$message" +
                 stackTrace.subList(0, min(stackTrace.size, 10)).joinToString(separator = "\n\t", prefix = prefix, postfix = postfix) +
                 causeMessage

@@ -29,4 +29,10 @@ internal class Primitive<T>(val value: T, val type: IrType) : State {
     override fun toString(): String {
         return "Primitive(value=$value, type=${irClass.defaultType})"
     }
+
+    companion object {
+        fun nullStateOfType(irType: IrType): Primitive<*> {
+            return Primitive(null, irType)
+        }
+    }
 }
