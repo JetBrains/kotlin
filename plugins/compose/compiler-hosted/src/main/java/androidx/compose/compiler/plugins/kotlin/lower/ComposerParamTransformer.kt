@@ -79,6 +79,7 @@ import org.jetbrains.kotlin.ir.util.findAnnotation
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.ir.util.isInlined
+import org.jetbrains.kotlin.ir.util.isVararg
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -198,11 +199,15 @@ class ComposerParamTransformer(
             val argumentsMissing = mutableListOf<Boolean>()
             for (i in 0 until valueArgumentsCount) {
                 val arg = getValueArgument(i)
-                argumentsMissing.add(arg == null)
+                val param = ownerFn.valueParameters[i]
+                val hasDefault = ownerFn.hasDefaultExpressionDefinedForValueParameter(i)
+                argumentsMissing.add(arg == null && hasDefault)
                 if (arg != null) {
                     it.putValueArgument(i, arg)
+                } else if (param.isVararg) {
+                    // do nothing
                 } else {
-                    it.putValueArgument(i, defaultArgumentFor(ownerFn.valueParameters[i]))
+                    it.putValueArgument(i, defaultArgumentFor(param))
                 }
             }
             val realValueParams = valueArgumentsCount
@@ -488,6 +493,16 @@ class ComposerParamTransformer(
                 it.defaultValue != null
             } || overriddenSymbols.any { it.owner.requiresDefaultParameter() }
             )
+    }
+
+    private fun IrFunction.hasDefaultExpressionDefinedForValueParameter(index: Int): Boolean {
+        // checking for default value isn't enough, you need to ensure that none of the overrides
+        // have it as well...
+        if (this !is IrSimpleFunction) return false
+        if (valueParameters[index].defaultValue != null) return true
+        return overriddenSymbols.any {
+            it.owner.hasDefaultExpressionDefinedForValueParameter(index)
+        }
     }
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
