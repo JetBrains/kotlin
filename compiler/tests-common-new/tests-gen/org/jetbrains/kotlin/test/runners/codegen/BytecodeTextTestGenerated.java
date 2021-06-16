@@ -4571,6 +4571,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("delegateToAnother.kt")
+        public void testDelegateToAnother() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/optimizedDelegatedProperties/delegateToAnother.kt");
+        }
+
+        @Test
         @TestMetadata("inSeparateModule.kt")
         public void testInSeparateModule() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/optimizedDelegatedProperties/inSeparateModule.kt");

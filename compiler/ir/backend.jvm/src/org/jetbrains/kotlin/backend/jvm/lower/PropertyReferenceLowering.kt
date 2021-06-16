@@ -60,7 +60,7 @@ internal val propertyReferencePhase = makeIrFilePhase(
     description = "Construct KProperty instances returned by expressions such as A::x and A()::x",
     // This must be done after contents of functions are extracted into separate classes, or else the `$$delegatedProperties`
     // field will end up in the wrong class (not the one that declares the delegated property).
-    prerequisite = setOf(functionReferencePhase, suspendLambdaPhase)
+    prerequisite = setOf(functionReferencePhase, suspendLambdaPhase, propertyReferenceDelegationPhase)
 )
 
 private class PropertyReferenceLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
