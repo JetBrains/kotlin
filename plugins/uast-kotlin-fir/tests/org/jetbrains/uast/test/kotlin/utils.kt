@@ -10,5 +10,5 @@ import org.jetbrains.uast.UClass
 import org.jetbrains.uast.UFile
 
 internal fun UFile.findFacade(): UClass? {
-    return classes.find { it.sourcePsi is KtLightClassForFacade }
+    return classes.find { it.psi is KtLightClassForFacade }
 }
