@@ -301,6 +301,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SEALED_CLASS_CONS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SEALED_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SEALED_SUPERTYPE_IN_LOCAL_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_INLINE_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SETTER_PROJECTED_OUT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SINGLETON_IN_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SMARTCAST_IMPOSSIBLE
@@ -1094,6 +1095,11 @@ class FirDefaultErrorMessages {
             map.put(
                 CAPTURED_MEMBER_VAL_INITIALIZATION,
                 "Captured member values initialization is forbidden due to possible reassignment",
+                VARIABLE_NAME
+            )
+            map.put(
+                SETTER_PROJECTED_OUT,
+                "Setter for ''{0}'' is removed by type projection",
                 VARIABLE_NAME
             )
             map.put(

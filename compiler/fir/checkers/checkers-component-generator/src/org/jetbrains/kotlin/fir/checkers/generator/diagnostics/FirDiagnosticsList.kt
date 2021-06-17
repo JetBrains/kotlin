@@ -811,6 +811,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val CAPTURED_MEMBER_VAL_INITIALIZATION by error<KtExpression> {
             parameter<FirPropertySymbol>("property")
         }
+        val SETTER_PROJECTED_OUT by error<KtBinaryExpression>(PositioningStrategy.ASSIGNMENT_LHS) {
+            parameter<FirPropertySymbol>("property")
+        }
         val WRONG_INVOCATION_KIND by warning<PsiElement> {
             parameter<Symbol>("declaration")
             parameter<EventOccurrencesRange>("requiredRange")

@@ -23,6 +23,6 @@ object FirInitializerTypeMismatchChecker : FirPropertyChecker() {
         if (declaration.returnTypeRef.source?.kind != FirRealSourceElementKind) return
         val propertyType = declaration.returnTypeRef.coneType
 
-        checkTypeMismatch(propertyType, initializer, context, source, reporter, true)
+        checkTypeMismatch(propertyType, null, initializer, context, source, reporter, true)
     }
 }
