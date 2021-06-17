@@ -79,7 +79,7 @@ abstract class SelfTargetingIntention<TElement : PsiElement>(
             if (elementType.isInstance(element) && isApplicableTo(element as TElement, offset)) {
                 return element
             }
-            if (element.textRange.containsInside(offset) && !allowCaretInsideElement(element)) break
+            if (element.textRange.containsInside(offset) && skipProcessingFurtherElementsAfter(element)) break
         }
         return null
     }
@@ -89,8 +89,16 @@ abstract class SelfTargetingIntention<TElement : PsiElement>(
         return getTarget(offset, file)
     }
 
-    /** Whether to keep looking for targets after having processed the given element, which contains the cursor. */
-    protected open fun allowCaretInsideElement(element: PsiElement): Boolean = element !is KtBlockExpression
+    /** Whether to keep looking for targets after having processed the given element, which contains the cursor.
+     * */
+    @Deprecated(
+        "The name of this method is a bit confusing and hence deprecated.",
+        replaceWith = ReplaceWith("!skipProcessingFurtherElementsAfter(element)")
+    )
+    protected open fun allowCaretInsideElement(element: PsiElement): Boolean = !skipProcessingFurtherElementsAfter(element)
+
+    /** Whether to skip looking for targets after having processed the given element, which contains the cursor. */
+    protected open fun skipProcessingFurtherElementsAfter(element: PsiElement): Boolean = element is KtBlockExpression
 
     final override fun isAvailable(project: Project, editor: Editor, file: PsiFile): Boolean {
         if (ApplicationManager.getApplication().isUnitTestMode) {

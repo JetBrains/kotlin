@@ -36,7 +36,8 @@ class HLConvertToBlockBodyIntention :
         val reformat: Boolean,
     ) : HLApplicatorInput
 
-    override fun allowCaretInsideElement(element: PsiElement) = element !is KtDeclaration && super.allowCaretInsideElement(element)
+    override fun skipProcessingFurtherElementsAfter(element: PsiElement) =
+        element is KtDeclaration || super.skipProcessingFurtherElementsAfter(element)
 
     override val applicabilityRange: HLApplicabilityRange<KtDeclarationWithBody> get() = ApplicabilityRanges.SELF
 

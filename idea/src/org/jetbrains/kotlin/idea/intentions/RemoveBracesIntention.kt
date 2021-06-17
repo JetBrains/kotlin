@@ -93,5 +93,5 @@ class RemoveBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class
         }
     }
 
-    override fun allowCaretInsideElement(element: PsiElement) = element !is KtBlockExpression || element.parent is KtWhenEntry
+    override fun skipProcessingFurtherElementsAfter(element: PsiElement) = element is KtBlockExpression && element.parent !is KtWhenEntry
 }
