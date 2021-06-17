@@ -47,6 +47,24 @@ internal open class IrInlineReferenceLocator(private val context: IrPluginContex
         declaration.acceptChildren(this, scope)
     }
 
+    override fun visitValueParameter(declaration: IrValueParameter, data: IrDeclaration?) {
+        val parent = declaration.parent as? IrFunction
+        if (parent?.isInline == true && declaration.isInlineParameter()) {
+            val defaultValue = declaration.defaultValue
+            if (defaultValue != null) {
+                if (defaultValue.expression.isInlineIrExpression()) {
+                    visitInlineable(
+                        defaultValue.expression,
+                        declaration.parent as IrFunction,
+                        declaration,
+                        data!!
+                    )
+                }
+            }
+        }
+        super.visitValueParameter(declaration, data)
+    }
+
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: IrDeclaration?) {
         val function = expression.symbol.owner
         if (function.isInlineFunctionCall(context)) {
@@ -58,21 +76,30 @@ internal open class IrInlineReferenceLocator(private val context: IrPluginContex
                 if (!valueArgument.isInlineIrExpression())
                     continue
 
-                if (valueArgument is IrBlock) {
-                    visitInlineLambda(
-                        valueArgument.statements.last() as IrFunctionReference,
-                        function,
-                        parameter,
-                        data!!
-                    )
-                } else if (valueArgument is IrFunctionExpression) {
-                    visitInlineLambda(valueArgument, function, parameter, data!!)
-                } else if (valueArgument is IrCallableReference<*>) {
-                    visitInlineReference(valueArgument)
-                }
+                visitInlineable(valueArgument, function, parameter, data!!)
             }
         }
         return super.visitFunctionAccess(expression, data)
+    }
+
+    private fun visitInlineable(
+        value: IrExpression,
+        callee: IrFunction,
+        parameter: IrValueParameter,
+        scope: IrDeclaration
+    ) {
+        if (value is IrBlock) {
+            visitInlineLambda(
+                value.statements.last() as IrFunctionReference,
+                callee,
+                parameter,
+                scope
+            )
+        } else if (value is IrFunctionExpression) {
+            visitInlineLambda(value, callee, parameter, scope)
+        } else if (value is IrCallableReference<*>) {
+            visitInlineReference(value)
+        }
     }
 
     open fun visitInlineReference(argument: IrCallableReference<*>) {}
