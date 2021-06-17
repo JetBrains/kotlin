@@ -324,6 +324,26 @@ extern "C" bool AddressToSymbol(const void* address, char* resultBuffer, size_t 
   return theExeSymbolTable->functionAddressToSymbol(address, resultBuffer, resultBufferSize);
 }
 
+#elif __has_include("dlfcn.h")
+
+#include <dlfcn.h>
+
+extern "C" bool AddressToSymbol(const void* address, char* resultBuffer, size_t resultBufferSize) {
+    if (address == nullptr) return false;
+    const char *result = nullptr;
+    Dl_info info;
+    if (dladdr(address, &info) != 0 && info.dli_sname != nullptr) {
+        result = info.dli_sname;
+    }
+    if (result == nullptr) {
+        return false;
+    } else {
+        strncpy(resultBuffer, result, resultBufferSize);
+        resultBuffer[resultBufferSize - 1] = '\0';
+        return true;
+    }
+}
+
 #else
 
 extern "C" bool AddressToSymbol(const void* address, char* resultBuffer, size_t resultBufferSize) {
