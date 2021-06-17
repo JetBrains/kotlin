@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
@@ -18,7 +16,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.idea.fir.getCandidateSymbols
 import org.jetbrains.kotlin.idea.fir.isImplicitFunctionCall
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.idea.frontend.api.calls.*
 import org.jetbrains.kotlin.idea.frontend.api.components.KtCallResolver
 import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtNonBoundToPsiErrorDiagnostic
@@ -31,9 +28,9 @@ import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.idea.references.FirReferenceResolveHelper
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal class KtFirCallResolver(
     override val analysisSession: KtFirAnalysisSession,
@@ -41,8 +38,12 @@ internal class KtFirCallResolver(
 ) : KtCallResolver(), KtFirAnalysisSessionComponent {
 
     override fun resolveCall(call: KtBinaryExpression): KtCall? = withValidityAssertion {
-        val firCall = call.getOrBuildFirSafe<FirFunctionCall>(firResolveState) ?: return null
-        resolveCall(firCall)
+        when (val fir = call.getOrBuildFir(firResolveState)) {
+            is FirFunctionCall -> resolveCall(fir)
+            is FirComparisonExpression -> resolveCall(fir.compareToCall)
+            is FirEqualityOperatorCall -> null // TODO
+            else -> null
+        }
     }
 
     override fun resolveCall(call: KtCallExpression): KtCall? = withValidityAssertion {
@@ -129,12 +130,11 @@ internal class KtFirCallResolver(
     private fun FirResolvedNamedReference.getKtFunctionOrConstructorSymbol(): KtFunctionLikeSymbol? =
         resolvedSymbol.fir.buildSymbol(firSymbolBuilder) as? KtFunctionLikeSymbol
 
-
     companion object {
         private val kotlinFunctionInvokeCallableIds = (0..23).flatMapTo(hashSetOf()) { arity ->
             listOf(
-                CallableId(StandardNames.getFunctionClassId(arity), Name.identifier("invoke")),
-                CallableId(StandardNames.getSuspendFunctionClassId(arity), Name.identifier("invoke"))
+                CallableId(StandardNames.getFunctionClassId(arity), OperatorNameConventions.INVOKE),
+                CallableId(StandardNames.getSuspendFunctionClassId(arity), OperatorNameConventions.INVOKE)
             )
         }
     }
