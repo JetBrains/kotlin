@@ -94,6 +94,12 @@ fun main() {
             valueTransform = { (_, dependencyNotation) -> dependencyNotation }
         )
 
+    val imlsInSameDirectory: List<List<File>> = imlFiles.groupBy { it.parentFile }.filter { it.value.size > 1 }.map { it.value }
+    if (imlsInSameDirectory.isNotEmpty()) {
+        val report = imlsInSameDirectory.joinToString("\n") { "In same directory: " + it.joinToString() }
+        error("It's not allowed to have imls in same directory:\n$report")
+    }
+
     imlFiles.mapNotNull { imlFile -> ijCommunityModuleNameToJpsModuleMapping[imlFile.nameWithoutExtension]?.let { imlFile to it } }
         .forEach { (imlFile, jpsModule) ->
             println("Processing iml ${imlFile}")
