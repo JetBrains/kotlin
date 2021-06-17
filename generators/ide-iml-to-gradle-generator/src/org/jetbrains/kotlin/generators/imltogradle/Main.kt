@@ -18,6 +18,7 @@ import org.jetbrains.jps.model.module.*
 import org.jetbrains.kotlin.generators.imltogradle.GradleDependencyNotation.IntellijDepGradleDependencyNotation
 import java.io.File
 import java.util.*
+import kotlin.system.measureNanoTime
 
 private lateinit var intellijModuleNameToGradleDependencyNotationsMapping: Map<String, List<GradleDependencyNotation>>
 private val KOTLIN_REPO_ROOT = File(".").canonicalFile
@@ -50,11 +51,14 @@ val jsonUrlPrefixes = mapOf(
 fun main() {
     val ijCommunityModuleNameToJpsModuleMapping = INTELLIJ_REPO_ROOT.loadJpsProject().modules.associateBy { it.name }
 
-    val imlFiles = INTELLIJ_REPO_ROOT.walk()
-        .onEnter { it != INTELLIJ_REPO_ROOT.resolve("out") }
+    val skipDirNames = setOf("src", "out", "org", "com", "testData")
+    val imlFiles = INTELLIJ_REPO_ROOT
+        .walk()
+        .onEnter { dir -> dir.name !in skipDirNames }
         .filter {
             it.isFile && it.extension == "iml" &&
-                    (it.name.startsWith("kotlin.") || it.nameWithoutExtension in intellijModulesForWhichGenerateBuildGradle)
+                    (it.name.startsWith("kotlin.") ||
+                            it.nameWithoutExtension in intellijModulesForWhichGenerateBuildGradle)
         }
         .toList()
 
