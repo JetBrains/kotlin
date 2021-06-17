@@ -47,7 +47,7 @@ private fun Project.getOriginalPlatformLibrariesFor(target: LeafCommonizerTarget
     konanDistribution.platformLibsDir.resolve(target.konanTarget.name).listLibraryFiles().toSet()
 }
 
-private fun HierarchicalNativeDistributionCommonizerTask.getCommonizedPlatformLibrariesFor(target: SharedCommonizerTarget): FileCollection {
+private fun NativeDistributionCommonizerTask.getCommonizedPlatformLibrariesFor(target: SharedCommonizerTarget): FileCollection {
     val targetOutputDirectory = CommonizerOutputFileLayout.resolveCommonizedDirectory(getRootOutputDirectory(), target)
     return project.filesProvider { targetOutputDirectory.listLibraryFiles() }.builtBy(this)
 }

@@ -79,7 +79,7 @@ internal val Project.copyCommonizeCInteropForIdeTask: TaskProvider<CopyCommonize
         return null
     }
 
-internal val Project.commonizeNativeDistributionTask: TaskProvider<HierarchicalNativeDistributionCommonizerTask>?
+internal val Project.commonizeNativeDistributionTask: TaskProvider<NativeDistributionCommonizerTask>?
     get() {
         if (!isAllowCommonizer()) return null
         return rootProject.locateOrRegisterTask(

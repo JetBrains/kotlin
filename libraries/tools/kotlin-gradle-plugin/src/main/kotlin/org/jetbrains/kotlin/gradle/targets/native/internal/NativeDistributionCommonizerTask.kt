@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR
 import java.io.File
 import java.net.URLEncoder
 
-internal open class HierarchicalNativeDistributionCommonizerTask : DefaultTask() {
+internal open class NativeDistributionCommonizerTask : DefaultTask() {
 
     private val konanHome = project.file(project.konanHome)
 
