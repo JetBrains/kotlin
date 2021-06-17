@@ -247,6 +247,8 @@ fun convertJpsModule(imlFile: File, jpsModule: JpsModule): String {
         |    $mavenRepos
         |}
         |
+        |disableDependencyVerification()
+        |
         |dependencies {
         |    implementation(toolsJarApi())
         |    $deps
