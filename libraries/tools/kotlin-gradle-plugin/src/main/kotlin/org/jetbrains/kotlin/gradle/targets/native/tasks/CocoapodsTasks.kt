@@ -102,7 +102,6 @@ open class PodspecTask : DefaultTask() {
         }
 
         val gradleCommand = "\$REPO_ROOT/${gradleWrapper.toRelativeString(project.projectDir)}"
-        val syncTask = "${project.path}:$SYNC_TASK_NAME"
 
         val deploymentTargets = run {
             listOf(ios, osx, tvos, watchos).map { it.get() }.filter { it.deploymentTarget != null }.joinToString("\n") {
@@ -130,15 +129,24 @@ open class PodspecTask : DefaultTask() {
                 |
                 $dependencies
                 |
+                |    spec.pod_target_xcconfig = {
+                |        'KOTLIN_PROJECT_PATH' => '${project.path}',
+                |        'PRODUCT_MODULE_NAME' => '$specName',
+                |    }
+                |
                 |    spec.script_phases = [
                 |        {
                 |            :name => 'Build $specName',
                 |            :execution_position => :before_compile,
                 |            :shell_path => '/bin/sh',
                 |            :script => <<-SCRIPT
+                |                if [ "YES" = "${'$'}COCOAPODS_SKIP_KOTLIN_BUILD" ]; then
+                |                  echo "Skipping Gradle build task invocation due to COCOAPODS_SKIP_KOTLIN_BUILD environment variable set to \"YES\""
+                |                  exit 0
+                |                fi
                 |                set -ev
                 |                REPO_ROOT="${'$'}PODS_TARGET_SRCROOT"
-                |                "$gradleCommand" -p "${'$'}REPO_ROOT" $syncTask \
+                |                "$gradleCommand" -p "${'$'}REPO_ROOT" ${'$'}KOTLIN_PROJECT_PATH:$SYNC_TASK_NAME \
                 |                    -P${KotlinCocoapodsPlugin.PLATFORM_PROPERTY}=${'$'}PLATFORM_NAME \
                 |                    -P${KotlinCocoapodsPlugin.ARCHS_PROPERTY}="${'$'}ARCHS" \
                 |                    -P${KotlinCocoapodsPlugin.CONFIGURATION_PROPERTY}=${'$'}CONFIGURATION \
