@@ -27,20 +27,23 @@ UFile (package = ) [public final class ArrayGetAssignMultiIndexKt {...]
         UMethod (name = box) [public static final fun box() : java.lang.String {...}]
             UBlockExpression [{...}] : PsiType:Void
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)]
-                UBinaryExpression (operator = =) [s[1, [!] UnknownKotlinExpression (PREFIX_EXPRESSION)] = "O"] : PsiType:Unit
-                    UArrayAccessExpression [s[1, [!] UnknownKotlinExpression (PREFIX_EXPRESSION)]] : PsiType:Unit
+                UBinaryExpression (operator = =) [s[1, --1] = "O"] : PsiType:Unit
+                    UArrayAccessExpression [s[1, --1]] : PsiType:Unit
                         USimpleNameReferenceExpression (identifier = s) [s] : PsiType:String[]
                         ULiteralExpression (value = 1) [1] : PsiType:int
-                        [!] UnknownKotlinExpression (PREFIX_EXPRESSION) [[!] UnknownKotlinExpression (PREFIX_EXPRESSION)]
+                        UPrefixExpression (operator = -) [--1] : PsiType:int
+                            ULiteralExpression (value = -1) [-1] : PsiType:int
                     ULiteralExpression (value = "O") ["O"] : PsiType:String
-                UBinaryExpression (operator = +=) [s[2, [!] UnknownKotlinExpression (PREFIX_EXPRESSION)] += "K"] : PsiType:Unit
-                    UArrayAccessExpression [s[2, [!] UnknownKotlinExpression (PREFIX_EXPRESSION)]] : PsiType:Unit
+                UBinaryExpression (operator = +=) [s[2, --2] += "K"] : PsiType:Unit
+                    UArrayAccessExpression [s[2, --2]] : PsiType:Unit
                         USimpleNameReferenceExpression (identifier = s) [s] : PsiType:String[]
                         ULiteralExpression (value = 2) [2] : PsiType:int
-                        [!] UnknownKotlinExpression (PREFIX_EXPRESSION) [[!] UnknownKotlinExpression (PREFIX_EXPRESSION)]
+                        UPrefixExpression (operator = -) [--2] : PsiType:int
+                            ULiteralExpression (value = -2) [-2] : PsiType:int
                     ULiteralExpression (value = "K") ["K"] : PsiType:String
-                UReturnExpression [return s[[!] UnknownKotlinExpression (PREFIX_EXPRESSION), 3]] : PsiType:Void
-                    UArrayAccessExpression [s[[!] UnknownKotlinExpression (PREFIX_EXPRESSION), 3]] : PsiType:String
+                UReturnExpression [return s[--3, 3]] : PsiType:Void
+                    UArrayAccessExpression [s[--3, 3]] : PsiType:String
                         USimpleNameReferenceExpression (identifier = s) [s] : PsiType:String[]
-                        [!] UnknownKotlinExpression (PREFIX_EXPRESSION) [[!] UnknownKotlinExpression (PREFIX_EXPRESSION)]
+                        UPrefixExpression (operator = -) [--3] : PsiType:int
+                            ULiteralExpression (value = -3) [-3] : PsiType:int
                         ULiteralExpression (value = 3) [3] : PsiType:int

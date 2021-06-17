@@ -14,7 +14,10 @@ UFile (package = ) [public final class PropertyReferencesKt {...]
                         USimpleNameReferenceExpression (identifier = a) [a] = external a()
                         USimpleNameReferenceExpression (identifier = mutableProp) [mutableProp] = external mutableProp()
                     USimpleNameReferenceExpression (identifier = x) [x] = external x()
-                [!] UnknownKotlinExpression (PREFIX_EXPRESSION) [[!] UnknownKotlinExpression (PREFIX_EXPRESSION)] = Undetermined
+                UPrefixExpression (operator = ++) [++a.mutableProp] = Undetermined
+                    UQualifiedReferenceExpression [a.mutableProp] = external mutableProp()
+                        USimpleNameReferenceExpression (identifier = a) [a] = external a()
+                        USimpleNameReferenceExpression (identifier = mutableProp) [mutableProp] = external mutableProp()
                 [!] UnknownKotlinExpression (POSTFIX_EXPRESSION) [[!] UnknownKotlinExpression (POSTFIX_EXPRESSION)] = Undetermined
         UMethod (name = ext) [public static final fun ext($this$ext: A) : void {...}]
             UParameter (name = $this$ext) [var $this$ext: A]
@@ -26,7 +29,8 @@ UFile (package = ) [public final class PropertyReferencesKt {...]
                 UBinaryExpression (operator = +=) [mutableProp += x] = Undetermined
                     USimpleNameReferenceExpression (identifier = mutableProp) [mutableProp] = external mutableProp()
                     USimpleNameReferenceExpression (identifier = x) [x] = external x()
-                [!] UnknownKotlinExpression (PREFIX_EXPRESSION) [[!] UnknownKotlinExpression (PREFIX_EXPRESSION)] = Undetermined
+                UPrefixExpression (operator = ++) [++mutableProp] = Undetermined
+                    USimpleNameReferenceExpression (identifier = mutableProp) [mutableProp] = external mutableProp()
                 [!] UnknownKotlinExpression (POSTFIX_EXPRESSION) [[!] UnknownKotlinExpression (POSTFIX_EXPRESSION)] = Undetermined
     UClass (name = A) [public final class A {...}]
         UField (name = privateProp) [private var privateProp: int = 0]

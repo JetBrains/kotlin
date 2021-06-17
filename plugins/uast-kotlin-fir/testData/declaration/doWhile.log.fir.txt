@@ -18,7 +18,8 @@ UFile (package = )
                     UWhileExpression
                         ULiteralExpression (value = true)
                         UBlockExpression
-                            [!] UnknownKotlinExpression (PREFIX_EXPRESSION)
+                            UPrefixExpression (operator = ++)
+                                USimpleNameReferenceExpression (identifier = i)
                             [!] UnknownKotlinExpression (PROPERTY)
                             ULabeledExpression (label = Inner)
                                 UDoWhileExpression
@@ -29,7 +30,8 @@ UFile (package = )
                                         ULiteralExpression (value = false)
                                         UBreakExpression (label = null)
                                     UBlockExpression
-                                        [!] UnknownKotlinExpression (PREFIX_EXPRESSION)
+                                        UPrefixExpression (operator = ++)
+                                            USimpleNameReferenceExpression (identifier = j)
                             UIfExpression
                                 UBinaryExpression (operator = ==)
                                     USimpleNameReferenceExpression (identifier = i)

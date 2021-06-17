@@ -9,10 +9,10 @@ public final class DoWhileKt {
     public static final fun kt44412() : void {
         [!] UnknownKotlinExpression (PROPERTY)
         Outer@ while (true) {
-            [!] UnknownKotlinExpression (PREFIX_EXPRESSION)
+            ++i
             [!] UnknownKotlinExpression (PROPERTY)
             Inner@ do {
-                [!] UnknownKotlinExpression (PREFIX_EXPRESSION)
+                ++j
             }while (if (j >= 3) false else break)
 
             if (i == 3) break

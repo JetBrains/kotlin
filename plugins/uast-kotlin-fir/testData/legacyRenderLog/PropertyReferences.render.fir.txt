@@ -4,14 +4,14 @@ public final class PropertyReferencesKt {
         [!] UnknownKotlinExpression (PROPERTY)
         a.mutableProp = 1
         a.mutableProp += x
-        [!] UnknownKotlinExpression (PREFIX_EXPRESSION)
+        ++a.mutableProp
         [!] UnknownKotlinExpression (POSTFIX_EXPRESSION)
     }
     public static final fun ext($this$ext: A) : void {
         [!] UnknownKotlinExpression (PROPERTY)
         mutableProp = 1
         mutableProp += x
-        [!] UnknownKotlinExpression (PREFIX_EXPRESSION)
+        ++mutableProp
         [!] UnknownKotlinExpression (POSTFIX_EXPRESSION)
     }
 }
