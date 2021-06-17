@@ -73,12 +73,19 @@ tasks.withType<KotlinCompile> {
     }
 }
 
-publish()
-
 val jar = runtimeJar {
     dependsOn(builtins)
     from(provider { zipTree(builtins.singleFile) }) { include("kotlin/**") }
 }
 
-sourcesJar()
-javadocJar()
+publishing {
+    publications {
+        create<MavenPublication>("internal") {
+            artifact(jar.get())
+        }
+    }
+
+    repositories {
+        maven("${rootProject.buildDir}/internal/repo")
+    }
+}
