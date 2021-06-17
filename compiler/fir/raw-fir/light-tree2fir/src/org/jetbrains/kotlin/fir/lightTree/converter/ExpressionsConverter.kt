@@ -672,7 +672,13 @@ class ExpressionsConverter(
 
         @OptIn(FirContractViolation::class)
         val subject = FirExpressionRef<FirWhenExpression>()
-        whenEntryNodes.mapTo(whenEntries) { convertWhenEntry(it, subject.takeIf { hasSubject }) }
+        whenEntryNodes.mapTo(whenEntries) {
+            convertWhenEntry(
+                it,
+                subject.takeIf { hasSubject },
+                hasSubjectVariable = subjectVariable != null
+            )
+        }
         return buildWhenExpression {
             source = whenExpression.toFirSourceElement()
             this.subject = subjectExpression
@@ -716,15 +722,19 @@ class ExpressionsConverter(
      * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseWhenEntry
      * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseWhenEntryNotElse
      */
-    private fun convertWhenEntry(whenEntry: LighterASTNode, whenRefWithSubject: FirExpressionRef<FirWhenExpression>?): WhenEntry {
+    private fun convertWhenEntry(
+        whenEntry: LighterASTNode,
+        whenRefWithSubject: FirExpressionRef<FirWhenExpression>?,
+        hasSubjectVariable: Boolean
+    ): WhenEntry {
         var isElse = false
         var firBlock: FirBlock = buildEmptyExpressionBlock()
         val conditions = mutableListOf<FirExpression>()
         whenEntry.forEachChildren {
             when (it.tokenType) {
                 WHEN_CONDITION_EXPRESSION -> conditions += convertWhenConditionExpression(it, whenRefWithSubject)
-                WHEN_CONDITION_IN_RANGE -> conditions += convertWhenConditionInRange(it, whenRefWithSubject)
-                WHEN_CONDITION_IS_PATTERN -> conditions += convertWhenConditionIsPattern(it, whenRefWithSubject)
+                WHEN_CONDITION_IN_RANGE -> conditions += convertWhenConditionInRange(it, whenRefWithSubject, hasSubjectVariable)
+                WHEN_CONDITION_IS_PATTERN -> conditions += convertWhenConditionIsPattern(it, whenRefWithSubject, hasSubjectVariable)
                 ELSE_KEYWORD -> isElse = true
                 BLOCK -> firBlock = declarationsConverter.convertBlock(it)
                 else -> if (it.isExpression()) firBlock = declarationsConverter.convertBlock(it)
@@ -757,9 +767,14 @@ class ExpressionsConverter(
         }
     }
 
-    private fun convertWhenConditionInRange(whenCondition: LighterASTNode, whenRefWithSubject: FirExpressionRef<FirWhenExpression>?): FirExpression {
+    private fun convertWhenConditionInRange(
+        whenCondition: LighterASTNode,
+        whenRefWithSubject: FirExpressionRef<FirWhenExpression>?,
+        hasSubjectVariable: Boolean
+    ): FirExpression {
         var isNegate = false
-        var firExpression: FirExpression = buildErrorExpression(null, ConeSimpleDiagnostic("No range in condition with range", DiagnosticKind.Syntax))
+        var firExpression: FirExpression =
+            buildErrorExpression(null, ConeSimpleDiagnostic("No range in condition with range", DiagnosticKind.Syntax))
         var conditionSource: FirLightSourceElement? = null
         whenCondition.forEachChildren {
             when {
@@ -782,7 +797,11 @@ class ExpressionsConverter(
         } else {
             return buildErrorExpression {
                 source = whenCondition.toFirSourceElement()
-                diagnostic = ConeSimpleDiagnostic("No expression in condition with expression", DiagnosticKind.Syntax)
+                diagnostic = ConeSimpleDiagnostic(
+                    "No expression in condition with expression",
+                    // A subject variable without initializer should be highlighted only at the subject expression.
+                    if (hasSubjectVariable) DiagnosticKind.NotRootCause else DiagnosticKind.ExpressionExpected
+                )
             }
         }
 
@@ -794,7 +813,11 @@ class ExpressionsConverter(
         )
     }
 
-    private fun convertWhenConditionIsPattern(whenCondition: LighterASTNode, whenRefWithSubject: FirExpressionRef<FirWhenExpression>?): FirExpression {
+    private fun convertWhenConditionIsPattern(
+        whenCondition: LighterASTNode,
+        whenRefWithSubject: FirExpressionRef<FirWhenExpression>?,
+        hasSubjectVariable: Boolean
+    ): FirExpression {
         lateinit var firOperation: FirOperation
         lateinit var firType: FirTypeRef
         whenCondition.forEachChildren {
@@ -812,7 +835,11 @@ class ExpressionsConverter(
         } else {
             return buildErrorExpression {
                 source = whenCondition.toFirSourceElement()
-                diagnostic = ConeSimpleDiagnostic("No expression in condition with expression", DiagnosticKind.Syntax)
+                diagnostic = ConeSimpleDiagnostic(
+                    "No expression in condition with expression",
+                    // A subject variable without initializer should be highlighted only at the subject expression.
+                    if (hasSubjectVariable) DiagnosticKind.NotRootCause else DiagnosticKind.ExpressionExpected
+                )
             }
         }
 
