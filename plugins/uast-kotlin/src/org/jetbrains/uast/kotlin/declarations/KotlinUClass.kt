@@ -58,13 +58,15 @@ abstract class AbstractKotlinUClass(givenParent: UElement?) : KotlinAbstractUEle
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitClass(this)) return
         delegateExpressions.acceptList(visitor)
-        annotations.acceptList(visitor)
+        uAnnotations.acceptList(visitor)
         uastDeclarations.acceptList(visitor)
         visitor.afterVisitClass(this)
     }
 
-    override val annotations: List<UAnnotation> by lz {
-        (sourcePsi as? KtModifierListOwner)?.annotationEntries.orEmpty().map { KotlinUAnnotation(it, this) }
+    override val uAnnotations: List<UAnnotation> by lz {
+        (sourcePsi as? KtModifierListOwner)?.annotationEntries.orEmpty().map {
+            baseResolveProviderService.baseKotlinConverter.convertAnnotation(it, this)
+        }
     }
 
     override fun equals(other: Any?) = other is AbstractKotlinUClass && psi == other.psi
