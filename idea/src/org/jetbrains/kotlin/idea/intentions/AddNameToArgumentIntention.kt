@@ -46,9 +46,9 @@ class AddNameToArgumentIntention : SelfTargetingIntention<KtValueArgument>(
         return true
     }
 
-    override fun allowCaretInsideElement(element: PsiElement) = element !is KtValueArgumentList &&
-            element !is KtContainerNode &&
-            super.allowCaretInsideElement(element)
+    override fun skipProcessingFurtherElementsAfter(element: PsiElement) = element is KtValueArgumentList ||
+            element is KtContainerNode ||
+            super.skipProcessingFurtherElementsAfter(element)
 
     override fun applyTo(element: KtValueArgument, editor: Editor?) {
         apply(element)

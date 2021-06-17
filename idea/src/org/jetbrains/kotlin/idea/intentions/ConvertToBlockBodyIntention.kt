@@ -44,7 +44,8 @@ class ConvertToBlockBodyIntention : SelfTargetingIntention<KtDeclarationWithBody
         }
     }
 
-    override fun allowCaretInsideElement(element: PsiElement) = element !is KtDeclaration && super.allowCaretInsideElement(element)
+    override fun skipProcessingFurtherElementsAfter(element: PsiElement) =
+        element is KtDeclaration || super.skipProcessingFurtherElementsAfter(element)
 
     override fun applyTo(element: KtDeclarationWithBody, editor: Editor?) {
         convert(element, true)
