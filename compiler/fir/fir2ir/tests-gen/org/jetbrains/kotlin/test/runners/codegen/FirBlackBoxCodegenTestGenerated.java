@@ -7551,6 +7551,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("kt47300.kt")
+        public void testKt47300() throws Exception {
+            runTest("compiler/testData/codegen/box/contracts/kt47300.kt");
+        }
+
+        @Test
         @TestMetadata("lambdaParameter.kt")
         public void testLambdaParameter() throws Exception {
             runTest("compiler/testData/codegen/box/contracts/lambdaParameter.kt");
