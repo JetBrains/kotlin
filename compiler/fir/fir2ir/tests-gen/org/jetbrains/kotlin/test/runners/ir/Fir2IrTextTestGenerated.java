@@ -2687,6 +2687,12 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         }
 
         @Test
+        @TestMetadata("intersectionTypeInSamType.kt")
+        public void testIntersectionTypeInSamType() throws Exception {
+            runTest("compiler/testData/ir/irText/types/intersectionTypeInSamType.kt");
+        }
+
+        @Test
         @TestMetadata("javaWildcardType.kt")
         public void testJavaWildcardType() throws Exception {
             runTest("compiler/testData/ir/irText/types/javaWildcardType.kt");

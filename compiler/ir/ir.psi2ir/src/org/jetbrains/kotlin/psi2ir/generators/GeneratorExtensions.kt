@@ -8,15 +8,12 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
 import org.jetbrains.kotlin.ir.util.StubGeneratorExtensions
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.backend.common.SamTypeFactory
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 
 open class GeneratorExtensions : StubGeneratorExtensions() {
     open val samConversion: SamConversion
@@ -24,11 +21,6 @@ open class GeneratorExtensions : StubGeneratorExtensions() {
 
     open class SamConversion {
         open fun isPlatformSamType(type: KotlinType): Boolean = false
-
-        open fun getSamTypeForValueParameter(
-            valueParameter: ValueParameterDescriptor,
-            languageVersionSettings: LanguageVersionSettings
-        ): KotlinType? = SamTypeFactory.INSTANCE.createByValueParameter(valueParameter, languageVersionSettings)?.type
 
         companion object Instance : SamConversion()
     }

@@ -127,8 +127,10 @@ internal class LambdaMetafactoryArgumentsBuilder(
         // Don't try to use indy on SAM types with non-invariant projections because buildFakeOverrideMember doesn't support such supertypes
         // (and rightly so: supertypes in Kotlin can't have projections in immediate type arguments). This can happen for example in case
         // the SAM type is instantiated with an intersection type in arguments, which is approximated to an out-projection in psi2ir.
-        if (samType is IrSimpleType && samType.arguments.any { it is IrTypeProjection && it.variance != Variance.INVARIANT })
-            return null
+        if (samType is IrSimpleType) {
+            if (samType.arguments.any { it is IrStarProjection || it is IrTypeProjection && it.variance != Variance.INVARIANT })
+                return null
+        }
 
         // Do the hard work of matching Kotlin functional interface hierarchy against LambdaMetafactory constraints.
         // Briefly: sometimes we have to force boxing on the primitive and inline class values, sometimes we have to keep them unboxed.

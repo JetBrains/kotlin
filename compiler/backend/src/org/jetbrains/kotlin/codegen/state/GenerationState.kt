@@ -147,16 +147,18 @@ class GenerationState private constructor(
         }
     }
 
+    val languageVersionSettings = configuration.languageVersionSettings
+
     val inlineCache: InlineCache = InlineCache()
 
     val incrementalCacheForThisTarget: IncrementalCache?
     val packagesWithObsoleteParts: Set<FqName>
     val obsoleteMultifileClasses: List<FqName>
     val deserializationConfiguration: DeserializationConfiguration =
-        CompilerDeserializationConfiguration(configuration.languageVersionSettings)
+        CompilerDeserializationConfiguration(languageVersionSettings)
 
     val deprecationProvider = DeprecationResolver(
-        LockBasedStorageManager.NO_LOCKS, configuration.languageVersionSettings, CoroutineCompatibilitySupport.ENABLED,
+        LockBasedStorageManager.NO_LOCKS, languageVersionSettings, CoroutineCompatibilitySupport.ENABLED,
         JavaDeprecationSettings
     )
 
@@ -196,8 +198,6 @@ class GenerationState private constructor(
         duplicateSignatureFactory?.reportDiagnostics()
         extraJvmDiagnosticsTrace.bindingContext.diagnostics
     }
-
-    val languageVersionSettings = configuration.languageVersionSettings
 
     val useOldManglingSchemeForFunctionsWithInlineClassesInSignatures =
         configuration.getBoolean(JVMConfigurationKeys.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME) ||
@@ -264,7 +264,7 @@ class GenerationState private constructor(
     val globalInlineContext: GlobalInlineContext = GlobalInlineContext(diagnostics)
     val mappingsClassesForWhenByEnum: MappingsClassesForWhenByEnum = MappingsClassesForWhenByEnum(this)
     val jvmRuntimeTypes: JvmRuntimeTypes = JvmRuntimeTypes(
-        module, configuration.languageVersionSettings, generateOptimizedCallableReferenceSuperClasses
+        module, languageVersionSettings, generateOptimizedCallableReferenceSuperClasses
     )
     val factory: ClassFileFactory
     private var duplicateSignatureFactory: BuilderFactoryForDuplicateSignatureDiagnostics? = null

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
+import org.jetbrains.kotlin.backend.common.SamTypeApproximator
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -33,10 +34,12 @@ class GeneratorContext(
 ) : IrGeneratorContext {
     internal val callToSubstitutedDescriptorMap = mutableMapOf<IrDeclarationReference, CallableDescriptor>()
 
-    // TODO: inject a correct StorageManager instance, or store NotFoundClasses inside ModuleDescriptor
-    val reflectionTypes = ReflectionTypes(moduleDescriptor, NotFoundClasses(LockBasedStorageManager.NO_LOCKS, moduleDescriptor))
-
     fun IrDeclarationReference.commitSubstituted(descriptor: CallableDescriptor) {
         callToSubstitutedDescriptorMap[this] = descriptor
     }
+
+    // TODO: inject a correct StorageManager instance, or store NotFoundClasses inside ModuleDescriptor
+    val reflectionTypes = ReflectionTypes(moduleDescriptor, NotFoundClasses(LockBasedStorageManager.NO_LOCKS, moduleDescriptor))
+
+    val samTypeApproximator = SamTypeApproximator(moduleDescriptor.builtIns, languageVersionSettings)
 }
