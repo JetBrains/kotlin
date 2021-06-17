@@ -2,4 +2,4 @@ plugins {
     kotlin("jvm")
 }
 
-publishJarsForIde(listOf(":kotlin-stdlib:jvm-minimal-for-test"))
+publishJarsForIde(listOf(":kotlin-stdlib-jvm-minimal-for-test"))
