@@ -71,9 +71,14 @@ fun TestProject.build(
     vararg buildArguments: String,
     forceOutput: Boolean = this.forceOutput,
     enableGradleDebug: Boolean = this.enableGradleDebug,
+    buildOptions: KGPBaseTest.BuildOptions = this.buildOptions,
     assertions: BuildResult.() -> Unit = {}
 ) {
-    val allBuildArguments = commonBuildSetup(buildArguments.toList())
+    val allBuildArguments = commonBuildSetup(
+        buildArguments.toList(),
+        buildOptions,
+        gradleVersion
+    )
     val gradleRunnerForBuild = gradleRunner
         .also { if (forceOutput) it.forwardOutput() }
         .withDebug(enableGradleDebug)
@@ -91,9 +96,14 @@ fun TestProject.buildAndFail(
     vararg buildArguments: String,
     forceOutput: Boolean = this.forceOutput,
     enableGradleDebug: Boolean = this.enableGradleDebug,
+    buildOptions: KGPBaseTest.BuildOptions = this.buildOptions,
     assertions: BuildResult.() -> Unit = {}
 ) {
-    val allBuildArguments = commonBuildSetup(buildArguments.toList())
+    val allBuildArguments = commonBuildSetup(
+        buildArguments.toList(),
+        buildOptions,
+        gradleVersion
+    )
     val gradleRunnerForBuild = gradleRunner
         .also { if (forceOutput) it.forwardOutput() }
         .withDebug(enableGradleDebug)
@@ -150,8 +160,10 @@ class TestProject(
     ): Path = classesDir(sourceSet, language = "kotlin")
 }
 
-private fun TestProject.commonBuildSetup(
-    buildArguments: List<String>
+private fun commonBuildSetup(
+    buildArguments: List<String>,
+    buildOptions: KGPBaseTest.BuildOptions,
+    gradleVersion: GradleVersion
 ): List<String> {
     val buildOptionsArguments = buildOptions.toArguments(gradleVersion)
     return buildOptionsArguments + buildArguments + "--full-stacktrace"
