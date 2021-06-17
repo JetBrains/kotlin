@@ -51,5 +51,11 @@ enum class DiagnosticKind {
     FloatLiteralOutOfRange,
     WrongLongSuffix,
 
-    Other
+    Other,
+
+    /**
+     * Special diagnostic kind that is caused by issues at other places in the code. Such diagnostics should not be reported so that user
+     * sees less noise.
+     */
+    NotRootCause
 }

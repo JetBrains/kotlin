@@ -195,7 +195,7 @@ open class RawFirBuilder(
                 )
             }
 
-        private fun KtExpression?.toFirExpression(
+        private fun KtElement?.toFirExpression(
             errorReason: String,
             kind: DiagnosticKind = DiagnosticKind.ExpressionExpected,
         ): FirExpression {
@@ -1747,10 +1747,17 @@ open class RawFirBuilder(
                                 result = branchBody
                             }
                         } else {
-                            val ktCondition = entry.conditions.first() as? KtWhenConditionWithExpression
+                            val ktCondition = entry.conditions.first()
                             buildWhenBranch {
                                 source = entrySource
-                                condition = ktCondition?.expression.toFirExpression("No expression in condition with expression")
+                                condition = ((ktCondition as? KtWhenConditionWithExpression)?.expression
+                                    ?: ktCondition)
+                                    .toFirExpression(
+                                        "No expression in condition with expression",
+                                        // A subject variable without initializer should be highlighted only at the subject expression.
+                                        if (ktSubjectExpression is KtVariableDeclaration) DiagnosticKind.NotRootCause
+                                        else DiagnosticKind.ExpressionExpected
+                                    )
                                 result = branchBody
                             }
                         }

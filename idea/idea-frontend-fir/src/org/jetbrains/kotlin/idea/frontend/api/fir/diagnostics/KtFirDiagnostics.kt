@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.KtTypeProjection
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.KtValueArgument
+import org.jetbrains.kotlin.psi.KtWhenCondition
 import org.jetbrains.kotlin.psi.KtWhenEntry
 import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
@@ -1673,6 +1674,10 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
     abstract class UselessIsCheck : KtFirDiagnostic<KtElement>() {
         override val diagnosticClass get() = UselessIsCheck::class
         abstract val compileTimeCheckResult: Boolean
+    }
+
+    abstract class ExpectedCondition : KtFirDiagnostic<KtWhenCondition>() {
+        override val diagnosticClass get() = ExpectedCondition::class
     }
 
     abstract class NoElseInWhen : KtFirDiagnostic<KtWhenExpression>() {

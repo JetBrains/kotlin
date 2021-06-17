@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.KtTypeProjection
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.KtValueArgument
+import org.jetbrains.kotlin.psi.KtWhenCondition
 import org.jetbrains.kotlin.psi.KtWhenEntry
 import org.jetbrains.kotlin.psi.KtWhenExpression
 
@@ -2373,6 +2374,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
         UselessIsCheckImpl(
             firDiagnostic.a,
             firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.EXPECTED_CONDITION) { firDiagnostic ->
+        ExpectedConditionImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )
     }
