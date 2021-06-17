@@ -1200,11 +1200,13 @@ class Fir2IrDeclarationStorage(
     private fun computeDeclarationOrigin(
         symbol: FirCallableSymbol<*>,
         parentOrigin: IrDeclarationOrigin
-    ): IrDeclarationOrigin {
-        return if (symbol.fir.isIntersectionOverride || symbol.fir.isSubstitutionOverride)
-            IrDeclarationOrigin.FAKE_OVERRIDE
-        else
-            parentOrigin
+    ): IrDeclarationOrigin = when {
+        symbol.fir.isIntersectionOverride || symbol.fir.isSubstitutionOverride -> IrDeclarationOrigin.FAKE_OVERRIDE
+        parentOrigin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB &&
+                (symbol.fir.origin is FirDeclarationOrigin.Enhancement || symbol.fir.origin is FirDeclarationOrigin.Java) -> {
+            IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
+        }
+        else -> parentOrigin
     }
 
     fun getIrFieldSymbol(firFieldSymbol: FirFieldSymbol): IrSymbol {
