@@ -27,10 +27,10 @@ fun test() {
     val r4 = test.C.Companion::foo
     checkSubtype<() -> String>(r4)
 
-    val r5 = (C)::foo
+    val r5 = <!PARENTHESIZED_COMPANION_LHS_DEPRECATION!>(C)<!>::foo
     checkSubtype<() -> String>(r5)
 
-    val r6 = (test.C)::foo
+    val r6 = <!PARENTHESIZED_COMPANION_LHS_DEPRECATION!>(test.C)<!>::foo
     checkSubtype<() -> String>(r6)
 
     val c = C.Companion

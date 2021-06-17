@@ -102,7 +102,7 @@ internal val propertiesPhase = makeIrFilePhase(
     description = "Move fields and accessors for properties to their classes, " +
             "replace calls to default property accessors with field accesses, " +
             "remove unused accessors and create synthetic methods for property annotations",
-    stickyPostconditions = setOf((PropertiesLowering)::checkNoProperties)
+    stickyPostconditions = setOf(PropertiesLowering.Companion::checkNoProperties)
 )
 
 internal val IrClass.isGeneratedLambdaClass: Boolean

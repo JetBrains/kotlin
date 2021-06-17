@@ -358,5 +358,5 @@ object JvmRuntimeVersionsConsistencyChecker {
     }
 
     private fun Manifest.getKotlinLanguageVersion(): MavenComparableVersion =
-        (mainAttributes.getValue(KOTLIN_VERSION_ATTRIBUTE)?.let((ApiVersion)::parse) ?: ApiVersion.KOTLIN_1_0).version
+        (mainAttributes.getValue(KOTLIN_VERSION_ATTRIBUTE)?.let(ApiVersion.Companion::parse) ?: ApiVersion.KOTLIN_1_0).version
 }

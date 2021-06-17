@@ -23,7 +23,7 @@ import libCase1.*
 import kotlin.text.format
 
 fun case1() {
-    val y2 : () ->String =(String)::<!DEBUG_INFO_CALL("fqName: libCase1.format; typeCall: variable")!>format<!>
+    val y2 : () ->String =<!PARENTHESIZED_COMPANION_LHS_DEPRECATION!>(String)<!>::<!DEBUG_INFO_CALL("fqName: libCase1.format; typeCall: variable")!>format<!>
 }
 
 // FILE: LibCase1.kt
@@ -78,7 +78,7 @@ import libCase3.format
 import kotlin.text.*
 
 fun case3() {
-    val y1 =(String)::<!DEBUG_INFO_CALL("fqName: libCase3.format; typeCall: variable")!>format<!>
+    val y1 =<!PARENTHESIZED_COMPANION_LHS_DEPRECATION!>(String)<!>::<!DEBUG_INFO_CALL("fqName: libCase3.format; typeCall: variable")!>format<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KProperty0<kotlin.Unit>")!>y1<!>
 
     val y2 =""::<!DEBUG_INFO_CALL("fqName: libCase3.format; typeCall: variable")!>format<!>

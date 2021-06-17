@@ -61,7 +61,7 @@ class KotlinVersionsTest : KtUsefulTestCase() {
 
         versions.add(
                 ForTestCompileRuntime.runtimeJarClassLoader().loadClass(KotlinVersion::class.qualifiedName!!)
-                        .getDeclaredField((KotlinVersion)::CURRENT.name)
+                        .getDeclaredField(KotlinVersion.Companion::CURRENT.name)
                         .get(null)
                         .toString()
                         .toVersion("KotlinVersion.CURRENT")

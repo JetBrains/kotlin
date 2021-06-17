@@ -57,6 +57,6 @@ class IncrementalPackagePartProvider(
     }
 
     override fun getAllOptionalAnnotationClasses(): List<ClassData> =
-        moduleMappings.flatMap((JvmPackagePartProviderBase)::getAllOptionalAnnotationClasses) +
+        moduleMappings.flatMap(JvmPackagePartProviderBase.Companion::getAllOptionalAnnotationClasses) +
                 parent.getAllOptionalAnnotationClasses()
 }

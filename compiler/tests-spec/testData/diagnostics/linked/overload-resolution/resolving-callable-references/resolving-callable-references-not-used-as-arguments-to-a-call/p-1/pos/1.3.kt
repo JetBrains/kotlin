@@ -22,12 +22,12 @@ package testsCase1
 
 class Case() {
     fun case(v: V) {
-        val va: () -> String = (V)::<!DEBUG_INFO_CALL("fqName: testsCase1.a; typeCall: variable")!>a<!>
+        val va: () -> String = <!PARENTHESIZED_COMPANION_LHS_DEPRECATION!>(V)<!>::<!DEBUG_INFO_CALL("fqName: testsCase1.a; typeCall: variable")!>a<!>
 
-        val vb: () -> String = (V)::<!DEBUG_INFO_CALL("fqName: testsCase1.V.Companion.b; typeCall: variable")!>b<!>
+        val vb: () -> String = <!PARENTHESIZED_COMPANION_LHS_DEPRECATION!>(V)<!>::<!DEBUG_INFO_CALL("fqName: testsCase1.V.Companion.b; typeCall: variable")!>b<!>
 
         val va1: () -> String = v::<!DEBUG_INFO_CALL("fqName: testsCase1.a; typeCall: variable")!>a<!>
-        val vb1: () -> String = (V)::<!DEBUG_INFO_CALL("fqName: testsCase1.V.Companion.b; typeCall: variable")!>b<!>
+        val vb1: () -> String = <!PARENTHESIZED_COMPANION_LHS_DEPRECATION!>(V)<!>::<!DEBUG_INFO_CALL("fqName: testsCase1.V.Companion.b; typeCall: variable")!>b<!>
 
     }
 
