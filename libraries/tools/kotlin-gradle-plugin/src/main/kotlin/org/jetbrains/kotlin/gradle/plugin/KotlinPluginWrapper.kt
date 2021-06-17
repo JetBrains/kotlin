@@ -54,6 +54,15 @@ abstract class KotlinBasePluginWrapper : Plugin<Project> {
 
     private val log = Logging.getLogger(this.javaClass)
 
+    @Deprecated(
+        message = "Scheduled to be removed in 1.7 release",
+        replaceWith = ReplaceWith(
+            "project.getKotlinPluginVersion()",
+            "org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion"
+        )
+    )
+    val kotlinPluginVersion by lazy { loadKotlinVersionFromResource(log) }
+
     open val projectExtensionClass: KClass<out KotlinTopLevelExtension> get() = KotlinProjectExtension::class
 
     internal open fun kotlinSourceSetFactory(project: Project): NamedDomainObjectFactory<KotlinSourceSet> =
@@ -250,6 +259,20 @@ open class KotlinPm20PluginWrapper @Inject constructor(private val objectFactory
 
     override val projectExtensionClass: KClass<out KotlinPm20ProjectExtension>
         get() = KotlinPm20ProjectExtension::class
+}
+
+@Deprecated(
+    message = "Scheduled to be removed in 1.7 release",
+    replaceWith = ReplaceWith(
+        "project.getKotlinPluginVersion()",
+        "org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion"
+    )
+)
+fun Plugin<*>.loadKotlinVersionFromResource(log: Logger): String {
+    log.kotlinDebug("Loading version information")
+    val projectVersion = loadPropertyFromResources("project.properties", "project.version")
+    log.kotlinDebug("Found project version [$projectVersion]")
+    return projectVersion
 }
 
 fun Project.getKotlinPluginVersion(): String {
