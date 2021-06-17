@@ -14163,6 +14163,34 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 public void testTwoTypeConstructors() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/recursiveTypes/twoTypeConstructors.kt");
                 }
+
+                @Nested
+                @TestMetadata("compiler/testData/diagnostics/tests/inference/recursiveTypes/selfTypes")
+                @TestDataPath("$PROJECT_ROOT")
+                public class SelfTypes {
+                    @Test
+                    public void testAllFilesPresentInSelfTypes() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/recursiveTypes/selfTypes"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                    }
+
+                    @Test
+                    @TestMetadata("basicInferenceForImplicitSelfType.kt")
+                    public void testBasicInferenceForImplicitSelfType() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inference/recursiveTypes/selfTypes/basicInferenceForImplicitSelfType.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("recursiveTypeWithTwoTypeParams.kt")
+                    public void testRecursiveTypeWithTwoTypeParams() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inference/recursiveTypes/selfTypes/recursiveTypeWithTwoTypeParams.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("writerAppenderExampleRecursive.kt")
+                    public void testWriterAppenderExampleRecursive() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inference/recursiveTypes/selfTypes/writerAppenderExampleRecursive.kt");
+                    }
+                }
             }
 
             @Nested

@@ -12,15 +12,15 @@ class A<T> {
 }
 
 fun foo2(a: A<out CharSequence>, b: A<in CharSequence>) {
-    a.foo1(<!TYPE_MISMATCH!>Out<CharSequence>()<!>)
-    a.foo1<<!UPPER_BOUND_VIOLATED!>Out<CharSequence><!>>(<!TYPE_MISMATCH!>Out()<!>)
+    a.foo1(Out<CharSequence>())
+    a.foo1<Out<CharSequence>>(Out())
 
     a.foo1(Out())
     a.foo1(Out<Nothing>())
 
-    a.foo2(<!TYPE_MISMATCH!>Inv()<!>)
-    a.foo2(<!TYPE_MISMATCH!>Inv<CharSequence>()<!>)
-    a.foo2<<!UPPER_BOUND_VIOLATED!>Inv<CharSequence><!>>(<!TYPE_MISMATCH!>Inv()<!>)
+    a.foo2(Inv())
+    a.foo2(Inv<CharSequence>())
+    a.foo2<Inv<CharSequence>>(Inv())
 
     a.foo3(In())
     a.foo3(In<CharSequence>())
@@ -30,13 +30,13 @@ fun foo2(a: A<out CharSequence>, b: A<in CharSequence>) {
     b.foo1(Out<CharSequence>())
     b.foo1<Out<CharSequence>>(Out())
 
-    b.foo2(<!TYPE_MISMATCH!>Inv()<!>)
-    b.foo2(<!TYPE_MISMATCH!>Inv<CharSequence>()<!>)
-    b.foo2<<!UPPER_BOUND_VIOLATED!>Inv<CharSequence><!>>(<!TYPE_MISMATCH!>Inv()<!>)
+    b.foo2(Inv())
+    b.foo2(Inv<CharSequence>())
+    b.foo2<Inv<CharSequence>>(Inv())
 
 
-    b.foo3(<!TYPE_MISMATCH!>In<CharSequence>()<!>)
-    b.foo3<<!UPPER_BOUND_VIOLATED!>In<CharSequence><!>>(<!TYPE_MISMATCH!>In()<!>)
+    b.foo3(In<CharSequence>())
+    b.foo3<In<CharSequence>>(In())
 
     b.foo3(In<Any?>())
     b.foo3(In())
