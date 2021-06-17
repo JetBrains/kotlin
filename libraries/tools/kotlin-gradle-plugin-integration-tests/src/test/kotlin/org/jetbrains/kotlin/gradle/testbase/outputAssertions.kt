@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.testkit.runner.BuildResult
+import java.nio.file.Path
 
 /**
  * Asserts Gradle output contains [expectedSubString] string.
@@ -87,5 +88,105 @@ fun BuildResult.assertOutputDoesNotContain(
             .map { it.value }
             .joinToString(prefix = "  ", separator = "\n  ")
         "Build output contains following regex '$regexToCheck' matches:\n$matchedStrings"
+    }
+}
+
+/**
+ * Asserts build output contains exactly [expectedCount] of occurrences of [expected] string.
+ */
+fun BuildResult.assertOutputContainsExactlyTimes(
+    expected: String,
+    expectedCount: Int = 1
+) {
+    val occurrenceCount = expected.toRegex(RegexOption.LITERAL).findAll(output).count()
+    assert(occurrenceCount == expectedCount) {
+        printBuildOutput()
+
+        "Build output contains different number of '$expected' string occurrences - $occurrenceCount then $expectedCount"
+    }
+}
+
+/**
+ * Assert build contains no warnings.
+ */
+fun BuildResult.assertNoBuildWarnings(
+    expectedWarnings: Set<String> = emptySet()
+) {
+    val cleanedOutput = expectedWarnings.fold(output) { acc, s ->
+        acc.replace(s, "")
+    }
+    val warnings = cleanedOutput
+        .lineSequence()
+        .filter { it.trim().startsWith("w:") }
+        .toList()
+
+    assert(warnings.isEmpty()) {
+        printBuildOutput()
+
+        "Build contains following warnings:\n ${warnings.joinToString(separator = "\n")}"
+    }
+}
+
+fun BuildResult.assertIncrementalCompilation(
+    modifiedFiles: Set<Path> = emptySet(),
+    deletedFiles: Set<Path> = emptySet()
+) {
+    val incrementalCompilationOptions = output
+        .lineSequence()
+        .filter { it.trim().startsWith("Options for KOTLIN DAEMON: IncrementalCompilationOptions(") }
+        .map {
+            it
+                .removePrefix("Options for KOTLIN DAEMON: IncrementalCompilationOptions(")
+                .removeSuffix(")")
+        }
+        .toList()
+
+    assert(incrementalCompilationOptions.isNotEmpty()) {
+        printBuildOutput()
+        "No incremental compilation options were found in the build"
+    }
+
+    val modifiedFilesPath = modifiedFiles.map { it.toAbsolutePath().toString() }
+    val deletedFilesPath = deletedFiles.map { it.toAbsolutePath().toString() }
+    val hasMatch = incrementalCompilationOptions
+        .firstOrNull {
+            val optionModifiedFiles = it
+                .substringAfter("modifiedFiles=[")
+                .substringBefore("]")
+                .split(",")
+                .filter(String::isNotEmpty)
+
+            val modifiedFilesFound = if (modifiedFilesPath.isEmpty()) {
+                optionModifiedFiles.isEmpty()
+            } else {
+                modifiedFilesPath.subtract(optionModifiedFiles).isEmpty()
+            }
+
+            val optionDeletedFiles = it
+                .substringAfter("deletedFiles=[")
+                .substringBefore("]")
+                .split(",")
+                .filter(String::isNotEmpty)
+
+            val deletedFilesFound = if (deletedFilesPath.isEmpty()) {
+                optionDeletedFiles.isEmpty()
+            } else {
+                deletedFilesPath.subtract(optionDeletedFiles).isEmpty()
+            }
+
+            modifiedFilesFound && deletedFilesFound
+        } != null
+
+    assert(hasMatch) {
+        printBuildOutput()
+
+        """
+        |Expected incremental compilation options with:
+        |- modified files: ${modifiedFilesPath.joinToString()}
+        |- deleted files: ${deletedFilesPath.joinToString()}
+        |        
+        |but none of following compilation options match:
+        |${incrementalCompilationOptions.joinToString(separator = "\n")}
+        """.trimMargin()
     }
 }
