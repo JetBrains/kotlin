@@ -1,4 +1,5 @@
 // DONT_TARGET_EXACT_BACKEND: JS
+// SKIP_OLD_MODULE_SYSTEMS
 package foo
 
 @JsModule("./externalProperty.mjs")

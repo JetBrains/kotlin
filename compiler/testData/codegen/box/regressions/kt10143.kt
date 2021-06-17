@@ -1,3 +1,5 @@
+// TODO: Investigate ES modules issue
+// SKIP_ES_MODULES
 // FILE: Outer.kt
 
 package another

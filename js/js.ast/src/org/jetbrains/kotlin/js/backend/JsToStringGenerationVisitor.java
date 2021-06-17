@@ -1232,7 +1232,6 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         p.indentOut();
         p.print("} from ");
         p.print(javaScriptString(jsImport.getModule()));
-        p.print(';');
     }
 
 

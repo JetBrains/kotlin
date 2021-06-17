@@ -798,6 +798,94 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
         }
     }
 
+    @TestMetadata("js/js.translator/testData/box/crossModuleRefIR")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CrossModuleRefIR extends AbstractIrBoxJsES6Test {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR_ES6, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInCrossModuleRefIR() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/crossModuleRefIR"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        }
+
+        @TestMetadata("callableObjectRef.kt")
+        public void testCallableObjectRef() throws Exception {
+            runTest("js/js.translator/testData/box/crossModuleRefIR/callableObjectRef.kt");
+        }
+
+        @TestMetadata("constructor.kt")
+        public void testConstructor() throws Exception {
+            runTest("js/js.translator/testData/box/crossModuleRefIR/constructor.kt");
+        }
+
+        @TestMetadata("crossModuleJsExport.kt")
+        public void testCrossModuleJsExport() throws Exception {
+            runTest("js/js.translator/testData/box/crossModuleRefIR/crossModuleJsExport.kt");
+        }
+
+        @TestMetadata("export.kt")
+        public void testExport() throws Exception {
+            runTest("js/js.translator/testData/box/crossModuleRefIR/export.kt");
+        }
+
+        @TestMetadata("inheritance.kt")
+        public void testInheritance() throws Exception {
+            runTest("js/js.translator/testData/box/crossModuleRefIR/inheritance.kt");
+        }
+
+        @TestMetadata("inlineModule.kt")
+        public void testInlineModule() throws Exception {
+            runTest("js/js.translator/testData/box/crossModuleRefIR/inlineModule.kt");
+        }
+
+        @TestMetadata("inlineModuleNonIndentifier.kt")
+        public void testInlineModuleNonIndentifier() throws Exception {
+            runTest("js/js.translator/testData/box/crossModuleRefIR/inlineModuleNonIndentifier.kt");
+        }
+
+        @TestMetadata("lambda.kt")
+        public void testLambda() throws Exception {
+            runTest("js/js.translator/testData/box/crossModuleRefIR/lambda.kt");
+        }
+
+        @TestMetadata("object.kt")
+        public void testObject() throws Exception {
+            runTest("js/js.translator/testData/box/crossModuleRefIR/object.kt");
+        }
+
+        @TestMetadata("objectInInlineClosure.kt")
+        public void testObjectInInlineClosure() throws Exception {
+            runTest("js/js.translator/testData/box/crossModuleRefIR/objectInInlineClosure.kt");
+        }
+
+        @TestMetadata("objectIsObject.kt")
+        public void testObjectIsObject() throws Exception {
+            runTest("js/js.translator/testData/box/crossModuleRefIR/objectIsObject.kt");
+        }
+
+        @TestMetadata("topLevelExtension.kt")
+        public void testTopLevelExtension() throws Exception {
+            runTest("js/js.translator/testData/box/crossModuleRefIR/topLevelExtension.kt");
+        }
+
+        @TestMetadata("topLevelFunction.kt")
+        public void testTopLevelFunction() throws Exception {
+            runTest("js/js.translator/testData/box/crossModuleRefIR/topLevelFunction.kt");
+        }
+
+        @TestMetadata("topLevelMutableProperty.kt")
+        public void testTopLevelMutableProperty() throws Exception {
+            runTest("js/js.translator/testData/box/crossModuleRefIR/topLevelMutableProperty.kt");
+        }
+
+        @TestMetadata("topLevelProperty.kt")
+        public void testTopLevelProperty() throws Exception {
+            runTest("js/js.translator/testData/box/crossModuleRefIR/topLevelProperty.kt");
+        }
+    }
+
     @TestMetadata("js/js.translator/testData/box/dataClass")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -5448,6 +5536,452 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
         @TestMetadata("simpleLabelInlined.kt")
         public void testSimpleLabelInlined() throws Exception {
             runTest("js/js.translator/testData/box/labels/simpleLabelInlined.kt");
+        }
+    }
+
+    @TestMetadata("js/js.translator/testData/box/legacy")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Legacy extends AbstractIrBoxJsES6Test {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR_ES6, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInLegacy() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/legacy"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        }
+
+        @TestMetadata("js/js.translator/testData/box/legacy/crossModuleRef")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class CrossModuleRef extends AbstractIrBoxJsES6Test {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR_ES6, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInCrossModuleRef() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/legacy/crossModuleRef"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+            }
+
+            @TestMetadata("inlineJsModule.kt")
+            public void testInlineJsModule() throws Exception {
+                runTest("js/js.translator/testData/box/legacy/crossModuleRef/inlineJsModule.kt");
+            }
+
+            @TestMetadata("inlineJsModuleNonIdentifier.kt")
+            public void testInlineJsModuleNonIdentifier() throws Exception {
+                runTest("js/js.translator/testData/box/legacy/crossModuleRef/inlineJsModuleNonIdentifier.kt");
+            }
+
+            @TestMetadata("inlineJsModulePackage.kt")
+            public void testInlineJsModulePackage() throws Exception {
+                runTest("js/js.translator/testData/box/legacy/crossModuleRef/inlineJsModulePackage.kt");
+            }
+        }
+
+        @TestMetadata("js/js.translator/testData/box/legacy/export")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Export extends AbstractIrBoxJsES6Test {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR_ES6, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInExport() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/legacy/export"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+            }
+
+            @TestMetadata("nonIndetifierModuleName.kt")
+            public void testNonIndetifierModuleName() throws Exception {
+                runTest("js/js.translator/testData/box/legacy/export/nonIndetifierModuleName.kt");
+            }
+        }
+
+        @TestMetadata("js/js.translator/testData/box/legacy/expression")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Expression extends AbstractIrBoxJsES6Test {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR_ES6, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInExpression() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/legacy/expression"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+            }
+
+            @TestMetadata("js/js.translator/testData/box/legacy/expression/function")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Function extends AbstractIrBoxJsES6Test {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR_ES6, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInFunction() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/legacy/expression/function"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+                }
+            }
+        }
+
+        @TestMetadata("js/js.translator/testData/box/legacy/incremental")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Incremental extends AbstractIrBoxJsES6Test {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR_ES6, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInIncremental() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/legacy/incremental"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+            }
+
+            @TestMetadata("jsModule.kt")
+            public void testJsModule() throws Exception {
+                runTest("js/js.translator/testData/box/legacy/incremental/jsModule.kt");
+            }
+        }
+
+        @TestMetadata("js/js.translator/testData/box/legacy/inline")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Inline extends AbstractIrBoxJsES6Test {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR_ES6, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInInline() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/legacy/inline"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+            }
+
+            @TestMetadata("inlinedObjectLiteralIsCheck.kt")
+            public void testInlinedObjectLiteralIsCheck() throws Exception {
+                runTest("js/js.translator/testData/box/legacy/inline/inlinedObjectLiteralIsCheck.kt");
+            }
+        }
+
+        @TestMetadata("js/js.translator/testData/box/legacy/jsExport")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class JsExport extends AbstractIrBoxJsES6Test {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR_ES6, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInJsExport() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/legacy/jsExport"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+            }
+
+            @TestMetadata("dataClass.kt")
+            public void testDataClass() throws Exception {
+                runTest("js/js.translator/testData/box/legacy/jsExport/dataClass.kt");
+            }
+
+            @TestMetadata("exportedDefaultStub.kt")
+            public void testExportedDefaultStub() throws Exception {
+                runTest("js/js.translator/testData/box/legacy/jsExport/exportedDefaultStub.kt");
+            }
+
+            @TestMetadata("jsExportInClass.kt")
+            public void testJsExportInClass() throws Exception {
+                runTest("js/js.translator/testData/box/legacy/jsExport/jsExportInClass.kt");
+            }
+
+            @TestMetadata("recursiveExport.kt")
+            public void testRecursiveExport() throws Exception {
+                runTest("js/js.translator/testData/box/legacy/jsExport/recursiveExport.kt");
+            }
+        }
+
+        @TestMetadata("js/js.translator/testData/box/legacy/jsModule")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class JsModule extends AbstractIrBoxJsES6Test {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR_ES6, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInJsModule() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/legacy/jsModule"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+            }
+
+            @TestMetadata("externalClass.kt")
+            public void testExternalClass() throws Exception {
+                runTest("js/js.translator/testData/box/legacy/jsModule/externalClass.kt");
+            }
+
+            @TestMetadata("externalClassWithDefaults.kt")
+            public void testExternalClassWithDefaults() throws Exception {
+                runTest("js/js.translator/testData/box/legacy/jsModule/externalClassWithDefaults.kt");
+            }
+
+            @TestMetadata("externalConstructor.kt")
+            public void testExternalConstructor() throws Exception {
+                runTest("js/js.translator/testData/box/legacy/jsModule/externalConstructor.kt");
+            }
+
+            @TestMetadata("externalFunction.kt")
+            public void testExternalFunction() throws Exception {
+                runTest("js/js.translator/testData/box/legacy/jsModule/externalFunction.kt");
+            }
+
+            @TestMetadata("externalFunctionNameClash.kt")
+            public void testExternalFunctionNameClash() throws Exception {
+                runTest("js/js.translator/testData/box/legacy/jsModule/externalFunctionNameClash.kt");
+            }
+
+            @TestMetadata("externalFunctionPlain.kt")
+            public void testExternalFunctionPlain() throws Exception {
+                runTest("js/js.translator/testData/box/legacy/jsModule/externalFunctionPlain.kt");
+            }
+
+            @TestMetadata("externalFunctionUmd.kt")
+            public void testExternalFunctionUmd() throws Exception {
+                runTest("js/js.translator/testData/box/legacy/jsModule/externalFunctionUmd.kt");
+            }
+
+            @TestMetadata("externalFunctionUmdFallback.kt")
+            public void testExternalFunctionUmdFallback() throws Exception {
+                runTest("js/js.translator/testData/box/legacy/jsModule/externalFunctionUmdFallback.kt");
+            }
+
+            @TestMetadata("externalObject.kt")
+            public void testExternalObject() throws Exception {
+                runTest("js/js.translator/testData/box/legacy/jsModule/externalObject.kt");
+            }
+
+            @TestMetadata("externalPackage.kt")
+            public void testExternalPackage() throws Exception {
+                runTest("js/js.translator/testData/box/legacy/jsModule/externalPackage.kt");
+            }
+
+            @TestMetadata("externalPackageInDifferentFile.kt")
+            public void testExternalPackageInDifferentFile() throws Exception {
+                runTest("js/js.translator/testData/box/legacy/jsModule/externalPackageInDifferentFile.kt");
+            }
+
+            @TestMetadata("externalPackagePlain.kt")
+            public void testExternalPackagePlain() throws Exception {
+                runTest("js/js.translator/testData/box/legacy/jsModule/externalPackagePlain.kt");
+            }
+
+            @TestMetadata("externalPackageUmdFallback.kt")
+            public void testExternalPackageUmdFallback() throws Exception {
+                runTest("js/js.translator/testData/box/legacy/jsModule/externalPackageUmdFallback.kt");
+            }
+
+            @TestMetadata("externalProperty.kt")
+            public void testExternalProperty() throws Exception {
+                runTest("js/js.translator/testData/box/legacy/jsModule/externalProperty.kt");
+            }
+
+            @TestMetadata("importCountCommonJS.kt")
+            public void testImportCountCommonJS() throws Exception {
+                runTest("js/js.translator/testData/box/legacy/jsModule/importCountCommonJS.kt");
+            }
+
+            @TestMetadata("importCountUmd.kt")
+            public void testImportCountUmd() throws Exception {
+                runTest("js/js.translator/testData/box/legacy/jsModule/importCountUmd.kt");
+            }
+
+            @TestMetadata("interfaces.kt")
+            public void testInterfaces() throws Exception {
+                runTest("js/js.translator/testData/box/legacy/jsModule/interfaces.kt");
+            }
+
+            @TestMetadata("topLevelVarargFun.kt")
+            public void testTopLevelVarargFun() throws Exception {
+                runTest("js/js.translator/testData/box/legacy/jsModule/topLevelVarargFun.kt");
+            }
+        }
+
+        @TestMetadata("js/js.translator/testData/box/legacy/jsName")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class JsName extends AbstractIrBoxJsES6Test {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR_ES6, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInJsName() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/legacy/jsName"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+            }
+
+            @TestMetadata("defaultJsName.kt")
+            public void testDefaultJsName() throws Exception {
+                runTest("js/js.translator/testData/box/legacy/jsName/defaultJsName.kt");
+            }
+
+            @TestMetadata("jsTopLevelClashes.kt")
+            public void testJsTopLevelClashes() throws Exception {
+                runTest("js/js.translator/testData/box/legacy/jsName/jsTopLevelClashes.kt");
+            }
+
+            @TestMetadata("jsTopLevelRenameReserved.kt")
+            public void testJsTopLevelRenameReserved() throws Exception {
+                runTest("js/js.translator/testData/box/legacy/jsName/jsTopLevelRenameReserved.kt");
+            }
+        }
+
+        @TestMetadata("js/js.translator/testData/box/legacy/jsQualifier")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class JsQualifier extends AbstractIrBoxJsES6Test {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR_ES6, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInJsQualifier() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/legacy/jsQualifier"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+            }
+
+            @TestMetadata("umdFallback.kt")
+            public void testUmdFallback() throws Exception {
+                runTest("js/js.translator/testData/box/legacy/jsQualifier/umdFallback.kt");
+            }
+
+            @TestMetadata("withModule.kt")
+            public void testWithModule() throws Exception {
+                runTest("js/js.translator/testData/box/legacy/jsQualifier/withModule.kt");
+            }
+        }
+
+        @TestMetadata("js/js.translator/testData/box/legacy/multiModuleWrappers")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class MultiModuleWrappers extends AbstractIrBoxJsES6Test {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR_ES6, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInMultiModuleWrappers() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/legacy/multiModuleWrappers"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+            }
+
+            @TestMetadata("js/js.translator/testData/box/legacy/multiModuleWrappers/amd")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Amd extends AbstractIrBoxJsES6Test {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR_ES6, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInAmd() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/legacy/multiModuleWrappers/amd"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+                }
+
+                @TestMetadata("jsModuleOnPackage.kt")
+                public void testJsModuleOnPackage() throws Exception {
+                    runTest("js/js.translator/testData/box/legacy/multiModuleWrappers/amd/jsModuleOnPackage.kt");
+                }
+
+                @TestMetadata("moduleWithNonIdentifierName.kt")
+                public void testModuleWithNonIdentifierName() throws Exception {
+                    runTest("js/js.translator/testData/box/legacy/multiModuleWrappers/amd/moduleWithNonIdentifierName.kt");
+                }
+
+                @TestMetadata("simple.kt")
+                public void testSimple() throws Exception {
+                    runTest("js/js.translator/testData/box/legacy/multiModuleWrappers/amd/simple.kt");
+                }
+            }
+
+            @TestMetadata("js/js.translator/testData/box/legacy/multiModuleWrappers/common_js")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Common_js extends AbstractIrBoxJsES6Test {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR_ES6, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInCommon_js() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/legacy/multiModuleWrappers/common_js"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+                }
+
+                @TestMetadata("inlineFromModuleWithNonIdentifierName.kt")
+                public void testInlineFromModuleWithNonIdentifierName() throws Exception {
+                    runTest("js/js.translator/testData/box/legacy/multiModuleWrappers/common_js/inlineFromModuleWithNonIdentifierName.kt");
+                }
+
+                @TestMetadata("moduleWithNonIdentifierName.kt")
+                public void testModuleWithNonIdentifierName() throws Exception {
+                    runTest("js/js.translator/testData/box/legacy/multiModuleWrappers/common_js/moduleWithNonIdentifierName.kt");
+                }
+
+                @TestMetadata("simple.kt")
+                public void testSimple() throws Exception {
+                    runTest("js/js.translator/testData/box/legacy/multiModuleWrappers/common_js/simple.kt");
+                }
+            }
+
+            @TestMetadata("js/js.translator/testData/box/legacy/multiModuleWrappers/plain")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Plain extends AbstractIrBoxJsES6Test {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR_ES6, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInPlain() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/legacy/multiModuleWrappers/plain"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+                }
+
+                @TestMetadata("inlineFromModuleWithNonIdentifierName.kt")
+                public void testInlineFromModuleWithNonIdentifierName() throws Exception {
+                    runTest("js/js.translator/testData/box/legacy/multiModuleWrappers/plain/inlineFromModuleWithNonIdentifierName.kt");
+                }
+
+                @TestMetadata("moduleWithNonIdentifierName.kt")
+                public void testModuleWithNonIdentifierName() throws Exception {
+                    runTest("js/js.translator/testData/box/legacy/multiModuleWrappers/plain/moduleWithNonIdentifierName.kt");
+                }
+
+                @TestMetadata("simple.kt")
+                public void testSimple() throws Exception {
+                    runTest("js/js.translator/testData/box/legacy/multiModuleWrappers/plain/simple.kt");
+                }
+            }
+
+            @TestMetadata("js/js.translator/testData/box/legacy/multiModuleWrappers/umd")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Umd extends AbstractIrBoxJsES6Test {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR_ES6, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInUmd() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/legacy/multiModuleWrappers/umd"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+                }
+
+                @TestMetadata("moduleWithNonIdentifierName.kt")
+                public void testModuleWithNonIdentifierName() throws Exception {
+                    runTest("js/js.translator/testData/box/legacy/multiModuleWrappers/umd/moduleWithNonIdentifierName.kt");
+                }
+
+                @TestMetadata("simple.kt")
+                public void testSimple() throws Exception {
+                    runTest("js/js.translator/testData/box/legacy/multiModuleWrappers/umd/simple.kt");
+                }
+            }
+        }
+
+        @TestMetadata("js/js.translator/testData/box/legacy/native")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Native extends AbstractIrBoxJsES6Test {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR_ES6, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInNative() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/legacy/native"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+            }
+
+            @TestMetadata("inheritanceInNativeClass.kt")
+            public void testInheritanceInNativeClass() throws Exception {
+                runTest("js/js.translator/testData/box/legacy/native/inheritanceInNativeClass.kt");
+            }
         }
     }
 

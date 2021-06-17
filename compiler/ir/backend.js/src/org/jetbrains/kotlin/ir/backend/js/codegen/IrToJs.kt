@@ -11,12 +11,16 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.LoweredIr
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity.*
 import org.jetbrains.kotlin.ir.backend.js.export.*
+import org.jetbrains.kotlin.ir.backend.js.lower.StaticMembersLowering
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrFileToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.processClassModels
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.hasInterfaceParent
+import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -147,6 +151,13 @@ class IrToJs(
     )
 
     fun generateUnit(unit: CodegenUnit): GeneratedUnit {
+        val exportedDeclarations: List<ExportedDeclaration> =
+            with(ExportModelGenerator(backendContext, generateNamespacesForPackages = false)) {
+                (unit.externalPackageFragments + unit.packageFragments).flatMap { packageFragment ->
+                    generateExport(packageFragment)
+                }
+            }
+
         val stableNames: Set<String> = collectStableNames(unit)
         val nameGenerator = NewNamerImpl(backendContext, unit, guid, stableNames)
 
@@ -158,12 +169,14 @@ class IrToJs(
 
         val rootContext = JsGenerationContext(
             currentFunction = null,
+            currentFile = null,
             staticContext = staticContext,
             localNames = LocalNameGenerator(NameTable())
         )
 
 
         val declarationStatements: List<JsStatement> = unit.packageFragments.flatMap {
+            StaticMembersLowering(backendContext).lower(it as IrFile)
             it.accept(IrFileToJsTransformer(), rootContext).statements
         }
 
@@ -229,13 +242,6 @@ class IrToJs(
         statements += JsExport(JsExport.Subject.Elements(internalExports), null)
 
         // Generate external export
-
-        val exportedDeclarations: List<ExportedDeclaration> =
-            with(ExportModelGenerator(backendContext)) {
-                (unit.externalPackageFragments + unit.packageFragments).flatMap { packageFragment ->
-                    generateExport(packageFragment)
-                }
-            }
 
         val globalNames = NameTable<String>(nameGenerator.staticNames)
         val exporter = ExportModelToJsStatements(
@@ -389,6 +395,7 @@ class IrToJs(
     private fun fileInitOrder(file: IrFile): Int =
         when (val singleDeclaration = file.declarations.singleOrNull()) {
             // Initialize parent classes before child classes
+            //  TODO: Comment about open classes in separate files
             is IrClass -> singleDeclaration.getInheritanceChainLength()
             // Initialize regular files after all open classes
             else -> Int.MAX_VALUE
@@ -398,13 +405,15 @@ class IrToJs(
         if (symbol == backendContext.irBuiltIns.anyClass)
             return 0
 
+        // FIXME: Filter out interfaces
         superTypes.forEach { superType ->
             val superClass: IrClass? = superType.classOrNull?.owner
-            if (superClass != null)
+            if (superClass != null && /* !!! */ !superClass.isInterface)
                 return superClass.getInheritanceChainLength() + 1
         }
 
-        error("Class missing super class $fqNameWhenAvailable")
+
+        return 1
     }
 }
 
@@ -433,9 +442,10 @@ fun generateEsModules(
     ir.allModules.forEach { numerator.add(it) }
 
     fun guid(declaration: IrDeclaration): String {
-        val name = sanitizeName((declaration as IrDeclarationWithName).fqNameWhenAvailable.toString())
+        val name = sanitizeName((declaration as IrDeclarationWithName).name.toString())
         val number = numerator.numeration[declaration]
             ?: error("Can't find number for declaration ${declaration.fqNameWhenAvailable}")
+        // TODO: Use shorter names in release mode
         return "${name}_GUID_${number}"
     }
 

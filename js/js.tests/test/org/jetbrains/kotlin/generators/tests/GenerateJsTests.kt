@@ -30,10 +30,6 @@ fun main(args: Array<String>) {
                 model("box/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS)
             }
 
-            testClass<AbstractLegacyBoxJsTest> {
-                model("legacyBox/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS)
-            }
-
             testClass<AbstractIrBoxJsTest> {
                 model("box/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS_IR)
             }

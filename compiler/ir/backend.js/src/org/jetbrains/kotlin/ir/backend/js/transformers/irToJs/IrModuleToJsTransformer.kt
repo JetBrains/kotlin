@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
 import org.jetbrains.kotlin.js.backend.NoOpSourceLocationConsumer
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
 import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
 import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
@@ -52,7 +53,8 @@ class IrModuleToJsTransformer(
             ) + packageLevelJsModules
         }
 
-        val exportedModule = ExportModelGenerator(backendContext).generateExport(modules)
+        val moduleKind: ModuleKind = backendContext.configuration[JSConfigurationKeys.MODULE_KIND]!!
+        val exportedModule = ExportModelGenerator(backendContext, generateNamespacesForPackages = true).generateExport(modules, moduleKind = moduleKind)
         val dts = exportedModule.toTypeScript()
 
         modules.forEach { module ->
@@ -102,7 +104,7 @@ class IrModuleToJsTransformer(
             val dependencies = others.mapIndexed { index, module ->
                 val moduleName = module.externalModuleName()
 
-                val exportedDeclarations = ExportModelGenerator(backendContext).let { module.files.flatMap { file -> it.generateExport(file) } }
+                val exportedDeclarations = ExportModelGenerator(backendContext, generateNamespacesForPackages = true).let { module.files.flatMap { file -> it.generateExport(file) } }
 
                 moduleName to generateWrappedModuleBody2(
                     listOf(module),

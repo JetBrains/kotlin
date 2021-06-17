@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.js.backend.ast.JsImport
 import org.jetbrains.kotlin.js.backend.ast.JsName
-import java.lang.IllegalStateException
 
 class StaticDeclarationNumerator {
     var currentNumber = 0
@@ -35,32 +34,18 @@ class StaticDeclarationNumerator {
     }
 
     fun add(packageFragment: IrPackageFragment) {
-        packageFragment.declarations.forEach {
-            add(it)
-            it.acceptChildrenVoid(object : IrElementVisitorVoid {
-                override fun visitElement(element: IrElement) {
-                    element.acceptChildrenVoid(this)
-                }
+        packageFragment.acceptChildrenVoid(object : IrElementVisitorVoid {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
 
-                override fun visitField(declaration: IrField) {
-                    if (declaration.parent is IrClass) {
-                        add(declaration)
-                    }
-                    super.visitField(declaration)
+            override fun visitDeclaration(declaration: IrDeclarationBase) {
+                if (declaration !is IrVariable) {
+                    add(declaration)
                 }
-
-                override fun visitSimpleFunction(declaration: IrSimpleFunction) {
-
-                    // Add interfaces default impls
-                    val parentClass = declaration.parent as? IrClass
-                    val isInterfaceImpl = parentClass?.isInterface ?: false
-                    if (isInterfaceImpl && declaration.body != null) {
-                        add(declaration)
-                    }
-                    super.visitSimpleFunction(declaration)
-                }
-            })
-        }
+                super.visitDeclaration(declaration)
+            }
+        })
     }
 }
 
@@ -112,7 +97,6 @@ class NewNamerImpl(
     }
 
     override fun getNameForMemberField(field: IrField): JsName {
-        val className = getNameForStaticDeclaration(field.parentAsClass)
         val fieldName = sanitizeName(
             try {
                 exportId(field)
@@ -121,7 +105,9 @@ class NewNamerImpl(
                 field.name.asString() + "_LIKELY_ELIMINATED_BY_DCE"
             }
         )
-        return JsName(className.toString() + "_f_" + fieldName)
+        // TODO: Webpack not minimize member names, it is long name, which is not minimized, so it affects final JS bundle size
+        // Use shorter names
+        return JsName("f_$fieldName")
     }
 
     override fun getNameForStaticDeclaration(declaration: IrDeclarationWithName): JsName {
@@ -131,6 +117,7 @@ class NewNamerImpl(
             val fullModuleId = if (moduleId.startsWith(".")) {
                 unit.pathToKotlinModulesRoot + moduleId
             } else {
+                // TODO: Do we cover this path in tests?
                 moduleId
             }
 
@@ -181,6 +168,7 @@ class NewNamerImpl(
     }
 }
 
+// TODO: Cache?
 private fun stableNameForExternalDeclaration(declaration: IrDeclaration): String? {
     if (declaration !is IrDeclarationWithName ||
         !declaration.hasStaticDispatch() ||

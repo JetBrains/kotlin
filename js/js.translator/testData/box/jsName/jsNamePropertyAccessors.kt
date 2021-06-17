@@ -1,6 +1,6 @@
 // EXPECTED_REACHABLE_NODES: 1285
 // IGNORE_BACKEND: JS_IR_ES6
-
+// IGNORE_BACKEND: JS_IR
 package foo
 
 external class A {

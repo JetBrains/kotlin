@@ -28,16 +28,25 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-class ExportModelGenerator(val context: JsIrBackendContext) {
+class ExportModelGenerator(
+    val context: JsIrBackendContext,
+    val generateNamespacesForPackages: Boolean
+) {
 
     fun generateExport(file: IrPackageFragment): List<ExportedDeclaration> {
-        return file.declarations.flatMap { declaration -> listOfNotNull(exportDeclaration(declaration)) }
+        val namespaceFqName = file.fqName
+        val exports = file.declarations.flatMap { declaration -> listOfNotNull(exportDeclaration(declaration)) }
+        return when {
+            exports.isEmpty() -> emptyList()
+            !generateNamespacesForPackages || namespaceFqName.isRoot -> exports
+            else -> listOf(ExportedNamespace(namespaceFqName.toString(), exports))
+        }
     }
 
-    fun generateExport(modules: Iterable<IrModuleFragment>): ExportedModule =
+    fun generateExport(modules: Iterable<IrModuleFragment>, moduleKind: ModuleKind = ModuleKind.PLAIN): ExportedModule =
         ExportedModule(
             context.configuration[CommonConfigurationKeys.MODULE_NAME]!!,
-            ModuleKind.COMMON_JS, // TODO: Clean up. These should be ES modules but COMMON_JS d.ts looks the same.
+            moduleKind,
             (context.externalPackageFragment.values + modules.flatMap { it.files }).flatMap {
                 generateExport(it)
             }

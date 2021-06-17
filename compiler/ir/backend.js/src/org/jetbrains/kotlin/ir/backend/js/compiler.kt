@@ -54,7 +54,6 @@ fun compile(
     irFactory: IrFactory,
     dependencies: Collection<String>,
     friendDependencies: Collection<String>,
-    mainArguments: List<String>?,
     exportedDeclarations: Set<FqName> = emptySet(),
     dceDriven: Boolean = false,
     dceRuntimeDiagnostic: RuntimeDiagnostic? = null,
@@ -68,7 +67,8 @@ fun compile(
     safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null,
     useStdlibCache: Boolean = false,
     icCache: Map<String, SerializedIcData> = emptyMap(),
-): CompilerResult {
+    granularity: JsGenerationGranularity = JsGenerationGranularity.WHOLE_PROGRAM,
+): LoweredIr {
 
     if (lowerPerModule) {
         return icCompile(
@@ -78,14 +78,9 @@ fun compile(
             configuration,
             dependencies,
             friendDependencies,
-            mainArguments,
             exportedDeclarations,
-            generateFullJs,
-            generateDceJs,
             dceRuntimeDiagnostic,
             es6mode,
-            multiModule,
-            relativeRequirePath,
             propertyLazyInitialization,
             baseClassIntoMetadata,
             legacyPropertyAccess,
@@ -96,13 +91,8 @@ fun compile(
         )
     }
 
-    val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer, moduleToName) =
-        loadIr(project, mainModule, analyzer, configuration, dependencies, friendDependencies, irFactory, verifySignatures)
-    granularity: JsGenerationGranularity = JsGenerationGranularity.WHOLE_PROGRAM
-): LoweredIr {
-
     val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) =
-        loadIr(project, mainModule, analyzer, configuration, allDependencies, friendDependencies, irFactory)
+        loadIr(project, mainModule, analyzer, configuration, dependencies, friendDependencies, irFactory, verifySignatures)
 
     val moduleDescriptor = moduleFragment.descriptor
 
@@ -124,7 +114,7 @@ fun compile(
         legacyPropertyAccess = legacyPropertyAccess,
         baseClassIntoMetadata = baseClassIntoMetadata,
         safeExternalBoolean = safeExternalBoolean,
-        safeExternalBooleanDiagnostic = safeExternalBooleanDiagnostic
+        safeExternalBooleanDiagnostic = safeExternalBooleanDiagnostic,
         granularity = granularity
     )
 

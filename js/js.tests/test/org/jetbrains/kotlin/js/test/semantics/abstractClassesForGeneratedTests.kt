@@ -14,13 +14,6 @@ abstract class AbstractBoxJsTest : BasicBoxTest(
     override val runMinifierByDefault: Boolean = true
 }
 
-abstract class AbstractLegacyBoxJsTest : BasicBoxTest(
-    TEST_DATA_DIR_PATH + "legacyBox/",
-    "legacyBox/"
-) {
-    override val runMinifierByDefault: Boolean = true
-}
-
 abstract class AbstractJsCodegenBoxTest : BasicBoxTest(
     "compiler/testData/codegen/box/",
     "codegen/box/"

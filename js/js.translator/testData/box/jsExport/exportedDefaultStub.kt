@@ -1,6 +1,7 @@
 // DONT_TARGET_EXACT_BACKEND: JS
 // SKIP_DCE_DRIVEN
 // SKIP_MINIFICATION
+// SKIP_OLD_MODULE_SYSTEMS
 
 @JsExport
 fun ping(a: String = "A", b: Int = 1): String {

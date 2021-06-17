@@ -1,4 +1,5 @@
 // DONT_TARGET_EXACT_BACKEND: JS
+// SKIP_OLD_MODULE_SYSTEMS
 // FILE: lib-1.mjs
 export default function foo() {
     return "OK";

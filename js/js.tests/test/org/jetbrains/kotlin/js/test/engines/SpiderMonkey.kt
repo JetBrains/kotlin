@@ -7,7 +7,11 @@ package org.jetbrains.kotlin.js.test.engines
 
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import java.lang.Boolean.getBoolean
 import kotlin.test.fail
+
+
+val toolLogsEnabled: Boolean = getBoolean("kotlin.js.test.verbose")
 
 class ExternalTool(val path: String) {
     fun run(vararg arguments: String) {
@@ -17,7 +21,9 @@ class ExternalTool(val path: String) {
             .start()
 
         val commandString = command.joinToString(" ") { escapeShellArgument(it) }
-        println(commandString)
+        if (toolLogsEnabled) {
+            println(commandString)
+        }
 
         // Print process output
         val input = BufferedReader(InputStreamReader(process.inputStream))

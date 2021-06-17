@@ -1,4 +1,5 @@
 // DONT_TARGET_EXACT_BACKEND: JS
+// SKIP_OLD_MODULE_SYSTEMS
 // MODULE: main
 // FILE: lib.kt
 @file:JsModule("./foo.mjs")

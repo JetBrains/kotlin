@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.js.test.V8JsTestChecker
-import org.jetbrains.kotlin.js.test.v8tool
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import java.io.File
 
@@ -35,7 +34,7 @@ abstract class AbstractJsKlibBinaryCompatibilityTest : AbstractKlibBinaryCompati
     private fun TestModule.dependenciesToLibrariesArg(version: Int): String =
         this.dependencies.map { it as? TestModule ?: error("Unexpected dependency kind: $it") }.toLibrariesArg(version)
 
-    private val jsPath get() = File(workingDir, "index.js").absolutePath
+    private val TestModule.jsPath get() = File(workingDir, "${this.name}.js").absolutePath
 
     private fun createFiles(files: List<TestFile>): List<String> =
         files.map {
@@ -78,7 +77,7 @@ abstract class AbstractJsKlibBinaryCompatibilityTest : AbstractKlibBinaryCompati
     }
 
     override fun runProgram(module: TestModule, expectedResult: String) {
-        v8tool.run("--module", jsPath)
+        testChecker.check(listOf(module.jsPath), module.name, null, RUNNER_FUNCTION, expectedResult, false)
     }
 
     // TODO: ask js folks what to use here.
@@ -90,12 +89,13 @@ abstract class AbstractJsKlibBinaryCompatibilityTest : AbstractKlibBinaryCompati
 
         private val STDLIB_DEPENDENCY = System.getProperty("kotlin.js.full.stdlib.path")
 
+        // A @JsExport wrapper for box().
+        // Otherwise box() is not available in js.
+        private const val RUNNER_FUNCTION = "__js_exported_wrapper_function"
         private const val RUNNER_FUNCTION_FILE = "js_exported_wrapper_function.kt"
-        private const val runnerFileText = """
-            fun main() {
-                val res = box();
-                if (res != "OK") error("Wrong result ${'$'}res")
-            }
+        private val runnerFileText = """
+            @JsExport
+            fun $RUNNER_FUNCTION() = $TEST_FUNCTION()
         """
     }
 }

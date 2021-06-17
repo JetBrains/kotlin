@@ -1,4 +1,5 @@
 // DONT_TARGET_EXACT_BACKEND: JS
+// SKIP_OLD_MODULE_SYSTEMS
 // FILE: a.kt
 @file:JsModule("./a.mjs")
 package a
