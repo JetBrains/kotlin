@@ -165,6 +165,11 @@ private fun TestProject.withBuildSummary(
  */
 private val testKitDir get() = Paths.get(".").resolve(".testKitDir")
 
+private val hashAlphabet: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
+private fun randomHash(length: Int = 15): String {
+    return List(length) { hashAlphabet.random() }.joinToString("")
+}
+
 private fun setupProjectFromTestResources(
     projectName: String,
     gradleVersion: GradleVersion,
@@ -176,8 +181,9 @@ private fun setupProjectFromTestResources(
     assertTrue("Test project path is a directory") { Files.isDirectory(testProjectPath) }
 
     return tempDir
-        .resolve(projectName)
         .resolve(gradleVersion.version)
+        .resolve(randomHash())
+        .resolve(projectName)
         .resolve(optionalSubDir)
         .also {
             testProjectPath.copyRecursively(it)
