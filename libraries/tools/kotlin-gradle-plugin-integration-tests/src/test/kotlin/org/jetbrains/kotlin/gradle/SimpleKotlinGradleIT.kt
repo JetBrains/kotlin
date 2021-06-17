@@ -20,7 +20,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
         ) {
             build("compileDeployKotlin", "build") {
                 assertOutputContains("Finished executing kotlin compiler using daemon strategy")
-                assertFileExists("build/reports/tests/test/classes/demo.TestSource.html")
+                assertFileInProjectExists("build/reports/tests/test/classes/demo.TestSource.html")
                 assertTasksExecuted(":compileKotlin", ":compileTestKotlin", ":compileDeployKotlin")
             }
 
@@ -87,7 +87,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
     fun testModuleName(gradleVersion: GradleVersion) {
         project("moduleName", gradleVersion) {
             build("build") {
-                assertFileExists("build/classes/kotlin/main/META-INF/FLAG.kotlin_module")
+                assertFileInProjectExists("build/classes/kotlin/main/META-INF/FLAG.kotlin_module")
                 assertFileNotExists("build/classes/kotlin/main/META-INF/moduleName.kotlin_module")
                 assertOutputDoesNotContain("Argument -module-name is passed multiple times")
             }

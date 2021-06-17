@@ -6,21 +6,30 @@
 package org.jetbrains.kotlin.gradle.testbase
 
 import java.nio.file.Files
+import java.nio.file.Path
+
+/**
+ * Asserts file under [file] path exists and is a regular file.
+ */
+fun TestProject.assertFileExists(
+    file: Path
+) {
+    assert(Files.exists(file)) {
+        "File '${file}' does not exist!"
+    }
+
+    assert(Files.isRegularFile(file)) {
+        "'${file}' is not a regular file!"
+    }
+}
 
 /**
  * Asserts file under [pathToFile] relative to the test project exists and is a regular file.
  */
-fun TestProject.assertFileExists(
+fun TestProject.assertFileInProjectExists(
     pathToFile: String
 ) {
-    val filePath = projectPath.resolve(pathToFile)
-    assert(Files.exists(filePath)) {
-        "File '${filePath}' does not exist!"
-    }
-
-    assert(Files.isRegularFile(filePath)) {
-        "'${filePath}' is not a regular file!"
-    }
+    assertFileExists(projectPath.resolve(pathToFile))
 }
 
 /**
