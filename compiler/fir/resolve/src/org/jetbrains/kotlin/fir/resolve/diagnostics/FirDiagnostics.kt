@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.diagnostics
 
 import kotlinx.collections.immutable.ImmutableList
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
@@ -111,6 +112,12 @@ class ConeNoTypeArgumentsOnRhsError(
     type: FirClassLikeSymbol<*>
 ) : ConeUnmatchedTypeArgumentsError(desiredCount, type) {
     override val reason: String get() = "No type arguments on RHS"
+}
+
+class ConeOuterClassArgumentsRequired(
+    val type: FirRegularClass,
+) : ConeDiagnostic() {
+    override val reason: String = "Type arguments should be specified for an outer class"
 }
 
 class ConeInstanceAccessBeforeSuperCall(val target: String) : ConeDiagnostic() {

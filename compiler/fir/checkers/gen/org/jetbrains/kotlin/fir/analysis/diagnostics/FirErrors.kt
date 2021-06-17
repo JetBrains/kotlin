@@ -297,6 +297,7 @@ object FirErrors {
     val TYPE_ARGUMENTS_NOT_ALLOWED by error0<PsiElement>()
     val WRONG_NUMBER_OF_TYPE_ARGUMENTS by error2<PsiElement, Int, FirClassLikeSymbol<*>>()
     val NO_TYPE_ARGUMENTS_ON_RHS by error2<PsiElement, Int, FirClassLikeSymbol<*>>()
+    val OUTER_CLASS_ARGUMENTS_REQUIRED by error1<PsiElement, FirRegularClass>()
     val TYPE_PARAMETERS_IN_OBJECT by error0<PsiElement>()
     val ILLEGAL_PROJECTION_USAGE by error0<PsiElement>()
     val TYPE_PARAMETERS_IN_ENUM by error0<PsiElement>()

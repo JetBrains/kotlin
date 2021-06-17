@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations.builder
 
 import kotlin.contracts.*
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
@@ -24,6 +25,7 @@ class FirOuterClassTypeParameterRefBuilder {
     var source: FirSourceElement? = null
     lateinit var symbol: FirTypeParameterSymbol
 
+    @OptIn(FirImplementationDetail::class)
     fun build(): FirTypeParameterRef {
         return FirOuterClassTypeParameterRef(
             source,

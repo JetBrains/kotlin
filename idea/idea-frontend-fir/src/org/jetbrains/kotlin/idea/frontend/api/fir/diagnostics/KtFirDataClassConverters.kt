@@ -1349,6 +1349,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.OUTER_CLASS_ARGUMENTS_REQUIRED) { firDiagnostic ->
+        OuterClassArgumentsRequiredImpl(
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a) as KtNamedClassOrObjectSymbol,
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.TYPE_PARAMETERS_IN_OBJECT) { firDiagnostic ->
         TypeParametersInObjectImpl(
             firDiagnostic as FirPsiDiagnostic,

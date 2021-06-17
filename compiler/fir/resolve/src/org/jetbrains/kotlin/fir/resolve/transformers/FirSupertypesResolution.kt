@@ -215,6 +215,7 @@ open class FirSupertypeResolverVisitor(
     private val firProviderInterceptor: FirProviderInterceptor? = null,
 ) : FirDefaultVisitor<Unit, Any?>() {
     private val supertypeGenerationExtensions = session.extensionService.supertypeGenerators
+    private val classDeclarations = mutableListOf<FirRegularClass>()
 
     private fun getFirClassifierContainerFileIfAny(symbol: FirClassLikeSymbol<*>): FirFile? =
         if (firProviderInterceptor != null) firProviderInterceptor.getFirClassifierContainerFileIfAny(symbol)
@@ -291,7 +292,7 @@ open class FirSupertypeResolverVisitor(
 
     private fun resolveSpecificClassLikeSupertypes(
         classLikeDeclaration: FirClassLikeDeclaration,
-        resolveSuperTypeRefs: (FirTransformer<FirScope>, FirScope) -> List<FirResolvedTypeRef>
+        resolveSuperTypeRefs: (FirTransformer<ScopeClassDeclaration>, ScopeClassDeclaration) -> List<FirResolvedTypeRef>
     ): List<FirTypeRef> {
         when (val status = supertypeComputationSession.getSupertypesComputationStatus(classLikeDeclaration)) {
             is SupertypeComputationStatus.Computed -> return status.supertypeRefs
@@ -308,7 +309,7 @@ open class FirSupertypeResolverVisitor(
         val scopes = prepareScopes(classLikeDeclaration)
 
         val transformer = FirSpecificTypeResolverTransformer(session)
-        val resolvedTypesRefs = resolveSuperTypeRefs(transformer, FirCompositeScope(scopes))
+        val resolvedTypesRefs = resolveSuperTypeRefs(transformer, ScopeClassDeclaration(FirCompositeScope(scopes), classDeclarations))
 
         supertypeComputationSession.storeSupertypes(classLikeDeclaration, resolvedTypesRefs)
         return resolvedTypesRefs
@@ -319,8 +320,10 @@ open class FirSupertypeResolverVisitor(
     }
 
     override fun visitRegularClass(regularClass: FirRegularClass, data: Any?) {
+        classDeclarations.add(regularClass)
         resolveSpecificClassLikeSupertypes(regularClass, regularClass.superTypeRefs)
         visitDeclarationContent(regularClass, null)
+        classDeclarations.removeAt(classDeclarations.lastIndex)
     }
 
     override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: Any?) {
@@ -332,12 +335,12 @@ open class FirSupertypeResolverVisitor(
         classLikeDeclaration: FirClassLikeDeclaration,
         supertypeRefs: List<FirTypeRef>
     ): List<FirTypeRef> {
-        return resolveSpecificClassLikeSupertypes(classLikeDeclaration) { transformer, scope ->
+        return resolveSpecificClassLikeSupertypes(classLikeDeclaration) { transformer, scopeDeclaration ->
             if (!classLikeDeclaration.isLocalClassOrAnonymousObject()) {
                 session.lookupTracker?.let {
                     val fileSource = getFirClassifierContainerFileIfAny(classLikeDeclaration.symbol)?.source
                     for (supertypeRef in supertypeRefs) {
-                        it.recordTypeLookup(supertypeRef, scope.scopeOwnerLookupNames, fileSource)
+                        it.recordTypeLookup(supertypeRef, scopeDeclaration.scope.scopeOwnerLookupNames, fileSource)
                     }
                 }
             }
@@ -348,7 +351,7 @@ open class FirSupertypeResolverVisitor(
               So we create a copy of supertypeRefs to avoid it
              */
             supertypeRefs.createCopy().mapTo(mutableListOf()) {
-                val superTypeRef = transformer.transformTypeRef(it, scope)
+                val superTypeRef = transformer.transformTypeRef(it, scopeDeclaration)
                 val typeParameterType = superTypeRef.coneTypeSafe<ConeTypeParameterType>()
                 when {
                     typeParameterType != null ->

@@ -8,15 +8,17 @@ package org.jetbrains.kotlin.fir.resolve.providers.impl
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.diagnostics.ConeUnexpectedTypeArgumentsError
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeOuterClassArgumentsRequired
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedQualifierError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupportedDynamicType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeWrongNumberOfTypeArgumentsError
-import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.resolve.transformers.ScopeClassDeclaration
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -46,7 +48,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
 
     private fun resolveToSymbol(
         typeRef: FirTypeRef,
-        scope: FirScope
+        scopeClassDeclaration: ScopeClassDeclaration
     ): Pair<FirClassifierSymbol<*>?, ConeSubstitutor?> {
         return when (typeRef) {
             is FirResolvedTypeRef -> {
@@ -58,7 +60,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 val qualifierResolver = session.qualifierResolver
                 var resolvedSymbol: FirClassifierSymbol<*>? = null
                 var substitutor: ConeSubstitutor? = null
-                scope.processClassifiersByNameWithSubstitution(typeRef.qualifier.first().name) { symbol, substitutorFromScope ->
+                scopeClassDeclaration.scope.processClassifiersByNameWithSubstitution(typeRef.qualifier.first().name) { symbol, substitutorFromScope ->
                     if (resolvedSymbol != null) return@processClassifiersByNameWithSubstitution
                     resolvedSymbol = when (symbol) {
                         is FirClassLikeSymbol<*> -> {
@@ -94,7 +96,8 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         typeRef: FirUserTypeRef,
         symbol: FirClassifierSymbol<*>?,
         substitutor: ConeSubstitutor?,
-        areBareTypesAllowed: Boolean
+        areBareTypesAllowed: Boolean,
+        scopeClassDeclaration: ScopeClassDeclaration
     ): ConeKotlinType {
         if (symbol == null) {
             return ConeKotlinErrorType(ConeUnresolvedQualifierError(typeRef.render()))
@@ -117,24 +120,43 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     return ConeClassErrorType(ConeWrongNumberOfTypeArgumentsError(symbol.fir.typeParameters.size, symbol))
                 } else {
                     val substitutor = substitutor ?: ConeSubstitutor.Empty
+                    var problemTypeParameter: FirTypeParameterRef? = null
+                    val classDeclarations = scopeClassDeclaration.classDeclarations
                     val argumentsFromOuterClassesAndParents = symbol.fir.typeParameters.drop(typeArguments.size).mapNotNull {
-                        val type = ConeTypeParameterTypeImpl(ConeTypeParameterLookupTag(it.symbol), isNullable = false)
-                        // we should report ConeSimpleDiagnostic(..., WrongNumberOfTypeArguments)
-                        // but genericArgumentNumberMismatch.kt test fails with
-                        // index out of bounds exception for start offset of
-                        // the source
-                        substitutor.substituteOrNull(type)
-
+                        if (isValidTypeParameter(it, classDeclarations.lastOrNull(), session)) {
+                            val type = ConeTypeParameterTypeImpl(ConeTypeParameterLookupTag(it.symbol), isNullable = false)
+                            // we should report ConeSimpleDiagnostic(..., WrongNumberOfTypeArguments)
+                            // but genericArgumentNumberMismatch.kt test fails with
+                            // index out of bounds exception for start offset of
+                            // the source
+                            substitutor.substituteOrNull(type)
+                        } else {
+                            if (problemTypeParameter == null) {
+                                problemTypeParameter = it
+                            }
+                            null
+                        }
                     }.toTypedArray<ConeTypeProjection>()
                     typeArguments += argumentsFromOuterClassesAndParents
 
                     if (typeArguments.size != symbol.fir.typeParameters.size) {
-                        return ConeClassErrorType(
-                            ConeWrongNumberOfTypeArgumentsError(
-                                desiredCount = symbol.fir.typeParameters.size - argumentsFromOuterClassesAndParents.size,
-                                type = symbol
+                        if (problemTypeParameter != null) {
+                            var outerClass: FirRegularClass? = null
+                            classDeclarations.forEach {
+                                getClassThatContainsTypeParameter(it, problemTypeParameter!!)?.let { result ->
+                                    outerClass = result
+                                    return@forEach
+                                }
+                            }
+                            return ConeClassErrorType(ConeOuterClassArgumentsRequired(outerClass!!))
+                        } else {
+                            return ConeClassErrorType(
+                                ConeWrongNumberOfTypeArgumentsError(
+                                    desiredCount = symbol.fir.typeParameters.size - argumentsFromOuterClassesAndParents.size,
+                                    type = symbol
+                                )
                             )
-                        )
+                        }
                     }
                 }
             }
@@ -174,14 +196,14 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
 
     override fun resolveType(
         typeRef: FirTypeRef,
-        scope: FirScope,
+        scopeClassDeclaration: ScopeClassDeclaration,
         areBareTypesAllowed: Boolean
     ): ConeKotlinType {
         return when (typeRef) {
             is FirResolvedTypeRef -> typeRef.type
             is FirUserTypeRef -> {
-                val (symbol, substitutor) = resolveToSymbol(typeRef, scope)
-                resolveUserType(typeRef, symbol, substitutor, areBareTypesAllowed)
+                val (symbol, substitutor) = resolveToSymbol(typeRef, scopeClassDeclaration)
+                resolveUserType(typeRef, symbol, substitutor, areBareTypesAllowed, scopeClassDeclaration)
             }
             is FirFunctionTypeRef -> createFunctionalType(typeRef)
             is FirDynamicTypeRef -> ConeKotlinErrorType(ConeUnsupportedDynamicType())

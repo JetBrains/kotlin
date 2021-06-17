@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
@@ -16,7 +17,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-internal class FirOuterClassTypeParameterRef(
+class FirOuterClassTypeParameterRef @FirImplementationDetail constructor(
     override val source: FirSourceElement?,
     override val symbol: FirTypeParameterSymbol,
 ) : FirPureAbstractElement(), FirTypeParameterRef {

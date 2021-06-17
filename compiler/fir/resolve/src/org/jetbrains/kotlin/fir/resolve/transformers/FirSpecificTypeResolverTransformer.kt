@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 class FirSpecificTypeResolverTransformer(
     override val session: FirSession,
     private val errorTypeAsResolved: Boolean = true
-) : FirAbstractTreeTransformer<FirScope>(phase = FirResolvePhase.SUPER_TYPES) {
+) : FirAbstractTreeTransformer<ScopeClassDeclaration>(phase = FirResolvePhase.SUPER_TYPES) {
     private val typeResolver = session.typeResolver
 
     @set:PrivateForInline
@@ -53,8 +53,8 @@ class FirSpecificTypeResolverTransformer(
     }
 
     @OptIn(PrivateForInline::class)
-    override fun transformTypeRef(typeRef: FirTypeRef, data: FirScope): FirResolvedTypeRef {
-        session.lookupTracker?.recordTypeLookup(typeRef, data.scopeOwnerLookupNames, currentFile?.source)
+    override fun transformTypeRef(typeRef: FirTypeRef, data: ScopeClassDeclaration): FirResolvedTypeRef {
+        session.lookupTracker?.recordTypeLookup(typeRef, data.scope.scopeOwnerLookupNames, currentFile?.source)
         typeRef.transformChildren(this, data)
         return transformType(typeRef, typeResolver.resolveType(typeRef, data, areBareTypesAllowed))
     }
@@ -62,10 +62,10 @@ class FirSpecificTypeResolverTransformer(
     @OptIn(PrivateForInline::class)
     override fun transformFunctionTypeRef(
         functionTypeRef: FirFunctionTypeRef,
-        data: FirScope
+        data: ScopeClassDeclaration
     ): FirResolvedTypeRef {
         functionTypeRef.transformChildren(this, data)
-        session.lookupTracker?.recordTypeLookup(functionTypeRef, data.scopeOwnerLookupNames, currentFile?.source)
+        session.lookupTracker?.recordTypeLookup(functionTypeRef, data.scope.scopeOwnerLookupNames, currentFile?.source)
         val resolvedType = typeResolver.resolveType(functionTypeRef, data, areBareTypesAllowed).takeIfAcceptable()
         return if (resolvedType != null && resolvedType !is ConeClassErrorType) {
             buildResolvedTypeRef {
@@ -118,11 +118,11 @@ class FirSpecificTypeResolverTransformer(
         !errorTypeAsResolved && it is ConeClassErrorType
     }
 
-    override fun transformResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: FirScope): FirTypeRef {
+    override fun transformResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: ScopeClassDeclaration): FirTypeRef {
         return resolvedTypeRef
     }
 
-    override fun transformImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: FirScope): FirTypeRef {
+    override fun transformImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: ScopeClassDeclaration): FirTypeRef {
         return implicitTypeRef
     }
 }

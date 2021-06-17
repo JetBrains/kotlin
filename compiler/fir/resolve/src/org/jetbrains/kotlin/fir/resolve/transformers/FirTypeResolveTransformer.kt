@@ -64,15 +64,17 @@ open class FirTypeResolveTransformer(
     }
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: Any?): FirStatement {
-        withScopeCleanup {
-            regularClass.addTypeParametersScope()
-            regularClass.typeParameters.forEach {
-                it.accept(this, data)
+        return withClassDeclarationCleanup(regularClass) {
+            withScopeCleanup {
+                regularClass.addTypeParametersScope()
+                regularClass.typeParameters.forEach {
+                    it.accept(this, data)
+                }
+                unboundCyclesInTypeParametersSupertypes(regularClass)
             }
-            unboundCyclesInTypeParametersSupertypes(regularClass)
-        }
 
-        return resolveNestedClassesSupertypes(regularClass, data)
+            resolveNestedClassesSupertypes(regularClass, data)
+        }
     }
 
     override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: Any?): FirStatement {
@@ -185,7 +187,12 @@ open class FirTypeResolveTransformer(
     }
 
     override fun transformTypeRef(typeRef: FirTypeRef, data: Any?): FirResolvedTypeRef {
-        return typeResolverTransformer.withFile(currentFile) { typeRef.transform(typeResolverTransformer, towerScope) }
+        return typeResolverTransformer.withFile(currentFile) {
+            typeRef.transform(
+                typeResolverTransformer,
+                ScopeClassDeclaration(towerScope, classDeclarations)
+            )
+        }
     }
 
     override fun transformValueParameter(valueParameter: FirValueParameter, data: Any?): FirStatement {

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -447,3 +448,44 @@ fun FirFunction.getAsForbiddenNamedArgumentsTarget(session: FirSession): Forbidd
 //  org.jetbrains.kotlin.fir.serialization.FirElementSerializer.functionProto
 //  org.jetbrains.kotlin.fir.serialization.FirElementSerializer.constructorProto
 fun FirFunction.getHasStableParameterNames(session: FirSession): Boolean = getAsForbiddenNamedArgumentsTarget(session) == null
+
+fun isValidTypeParameter(typeParameter: FirTypeParameterRef, classDeclaration: FirRegularClass?, session: FirSession): Boolean {
+    if (typeParameter !is FirOuterClassTypeParameterRef || classDeclaration == null) {
+        return true
+    }
+
+    fun containsTypeParameter(currentClassDeclaration: FirRegularClass): Boolean {
+        val result = currentClassDeclaration.typeParameters.any { it.symbol == typeParameter.symbol }
+        if (result) {
+            return true
+        }
+
+        for (superTypeRef in currentClassDeclaration.superTypeRefs) {
+            val superClassFir = superTypeRef.firClassLike(session)
+            if (superClassFir == null || superClassFir is FirRegularClass && containsTypeParameter(superClassFir)) {
+                return true
+            }
+        }
+
+        return false
+    }
+
+    return containsTypeParameter(classDeclaration)
+}
+
+fun getClassThatContainsTypeParameter(klass: FirRegularClass, typeParameter: FirTypeParameterRef): FirRegularClass? {
+    if (klass.typeParameters.any { param -> param.symbol == typeParameter.symbol }) {
+        return klass
+    }
+
+    for (declaration in klass.declarations) {
+        if (declaration is FirRegularClass) {
+            val result = getClassThatContainsTypeParameter(declaration, typeParameter)
+            if (result != null) {
+                return result
+            }
+        }
+    }
+
+    return null
+}

@@ -452,6 +452,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Int>("expectedCount")
             parameter<FirClassLikeSymbol<*>>("classifier")
         }
+        val OUTER_CLASS_ARGUMENTS_REQUIRED by error<PsiElement>() {
+            parameter<FirRegularClass>("outer")
+        }
         val TYPE_PARAMETERS_IN_OBJECT by error<PsiElement>()
         val ILLEGAL_PROJECTION_USAGE by error<PsiElement>()
         val TYPE_PARAMETERS_IN_ENUM by error<PsiElement>()
