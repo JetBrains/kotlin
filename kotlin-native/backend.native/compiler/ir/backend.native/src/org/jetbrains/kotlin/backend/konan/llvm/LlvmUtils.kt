@@ -230,6 +230,16 @@ internal fun RuntimeAware.isObjectType(type: LLVMTypeRef): Boolean {
 internal fun CArrayPointer<ByteVar>.getBytes(size: Long) =
         (0 .. size-1).map { this[it] }.toByteArray()
 
+internal fun LLVMValueRef.getAsCString() : String {
+    memScoped {
+        val lengthPtr = alloc<size_tVar>()
+        val data = LLVMGetAsString(this@getAsCString, lengthPtr.ptr)!!
+        require(lengthPtr.value >= 1 && data[lengthPtr.value - 1] == 0.toByte()) { "Expected null-terminated string from llvm"}
+        return data.toKString()
+    }
+}
+
+
 internal fun getFunctionType(ptrToFunction: LLVMValueRef): LLVMTypeRef {
     return getGlobalType(ptrToFunction)
 }

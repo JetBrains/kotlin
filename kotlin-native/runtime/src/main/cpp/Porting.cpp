@@ -68,7 +68,7 @@ void consoleWriteUtf8(const char* utf8, uint32_t sizeBytes) {
 #endif
 }
 
-void consoleErrorUtf8(const char* utf8, uint32_t sizeBytes) {
+NO_EXTERNAL_CALLS_CHECK void consoleErrorUtf8(const char* utf8, uint32_t sizeBytes) {
 #ifdef KONAN_ANDROID
   // TODO: use sizeBytes!
   __android_log_print(ANDROID_LOG_ERROR, "Konan_main", "%s", utf8);
@@ -148,7 +148,7 @@ extern "C" int rpl_vsnprintf(char *, size_t, const char *, va_list);
 #define vsnprintf_impl ::vsnprintf
 #endif
 
-void consolePrintf(const char* format, ...) {
+NO_EXTERNAL_CALLS_CHECK void consolePrintf(const char* format, ...) {
   char buffer[1024];
   va_list args;
   va_start(args, format);
@@ -160,7 +160,7 @@ void consolePrintf(const char* format, ...) {
 }
 
 // TODO: Avoid code duplication.
-void consoleErrorf(const char* format, ...) {
+NO_EXTERNAL_CALLS_CHECK void consoleErrorf(const char* format, ...) {
   char buffer[1024];
   va_list args;
   va_start(args, format);
@@ -201,7 +201,7 @@ static void onThreadExitCallback(void* value) {
   }
 }
 
-bool isOnThreadExitNotSetOrAlreadyStarted() {
+NO_EXTERNAL_CALLS_CHECK bool isOnThreadExitNotSetOrAlreadyStarted() {
     return terminationKey != 0 && pthread_getspecific(terminationKey) == nullptr;
 }
 

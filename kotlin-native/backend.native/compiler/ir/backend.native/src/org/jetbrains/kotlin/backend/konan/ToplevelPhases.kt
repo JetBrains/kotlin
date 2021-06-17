@@ -404,7 +404,9 @@ private val backendCodegen = namedUnitPhase(
                 verifyBitcodePhase then
                 printBitcodePhase then
                 linkBitcodeDependenciesPhase then
+                checkExternalCallsPhase then
                 bitcodeOptimizationPhase then
+                rewriteExternalCallsCheckerGlobals then
                 unitSink()
 )
 
@@ -453,6 +455,8 @@ internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
         disableIf(backendCodegen, config.produce == CompilerOutputKind.LIBRARY)
         disableUnless(bitcodeOptimizationPhase, config.produce.involvesLinkStage)
         disableUnless(linkBitcodeDependenciesPhase, config.produce.involvesLinkStage)
+        disableUnless(checkExternalCallsPhase, config.produce.involvesLinkStage && getBoolean(KonanConfigKeys.CHECK_EXTERNAL_CALLS))
+        disableUnless(rewriteExternalCallsCheckerGlobals, config.produce.involvesLinkStage && getBoolean(KonanConfigKeys.CHECK_EXTERNAL_CALLS))
         disableUnless(objectFilesPhase, config.produce.involvesLinkStage)
         disableUnless(linkerPhase, config.produce.involvesLinkStage)
         disableIf(testProcessorPhase, getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER) == TestRunnerKind.NONE)

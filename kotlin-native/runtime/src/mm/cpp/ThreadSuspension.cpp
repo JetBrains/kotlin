@@ -44,7 +44,7 @@ std::condition_variable gSuspendsionCondVar;
 
 } // namespace
 
-bool kotlin::mm::ThreadSuspensionData::suspendIfRequested() noexcept {
+NO_EXTERNAL_CALLS_CHECK bool kotlin::mm::ThreadSuspensionData::suspendIfRequested() noexcept {
     if (IsThreadSuspensionRequested()) {
         std::unique_lock lock(gSuspensionMutex);
         if (IsThreadSuspensionRequested()) {

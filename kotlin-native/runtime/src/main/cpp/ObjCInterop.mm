@@ -256,7 +256,7 @@ static void AddMethods(Class clazz, const struct ObjCMethodDescription* methods,
 static kotlin::SpinLock classCreationMutex;
 static int anonymousClassNextId = 0;
 
-static Class allocateClass(const KotlinObjCClassInfo* info) {
+NO_EXTERNAL_CALLS_CHECK static Class allocateClass(const KotlinObjCClassInfo* info) {
   Class superclass = Kotlin_Interop_getObjCClass(info->superclassName);
 
   if (info->exported) {

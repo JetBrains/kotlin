@@ -27,6 +27,8 @@
 #define ALWAYS_INLINE __attribute__((always_inline))
 #define NO_INLINE __attribute__((noinline))
 
+#define NO_EXTERNAL_CALLS_CHECK __attribute__((annotate("no_external_calls_check")))
+
 #if KONAN_NO_THREADS
 #define THREAD_LOCAL_VARIABLE
 #else
