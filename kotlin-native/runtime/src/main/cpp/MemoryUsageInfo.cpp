@@ -58,6 +58,10 @@ size_t kotlin::GetPeakResidentSetSizeBytes() noexcept {
 
 extern "C" RUNTIME_NOTHROW KLong Kotlin_MemoryUsageInfo_getPeakResidentSetSizeBytes() {
     auto result = kotlin::GetPeakResidentSetSizeBytes();
-    auto boundedResult = std::min<decltype(result)>(result, std::numeric_limits<KLong>::max());
-    return static_cast<KLong>(boundedResult);
+    // TODO: Need a common implementation for such conversions.
+    if constexpr (sizeof(decltype(result)) >= sizeof(KLong)) {
+        return static_cast<KLong>(std::min<decltype(result)>(result, std::numeric_limits<KLong>::max()));
+    } else {
+        return std::min<KLong>(result, std::numeric_limits<KLong>::max());
+    }
 }
