@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 
 internal val Project.isCInteropCommonizationEnabled: Boolean get() = PropertiesProvider(this).enableCInteropCommonization
 
-internal val Project.isHierarchicalCommonizationEnabled: Boolean get() = PropertiesProvider(this).enableHierarchicalCommonization
-
 internal val Project.isIntransitiveMetadataConfigurationEnabled: Boolean
     get() = PropertiesProvider(this).enableIntransitiveMetadataConfiguration
 
@@ -48,12 +46,12 @@ internal val Project.runCommonizerTask: TaskProvider<Task>
 
 internal val Project.commonizeCInteropTask: TaskProvider<CInteropCommonizerTask>?
     get() {
-        if (isHierarchicalCommonizationEnabled && isCInteropCommonizationEnabled) {
+        if (isCInteropCommonizationEnabled) {
             return locateOrRegisterTask(
                 "commonizeCInterop",
                 invokeWhenRegistered = {
                     commonizeTask.dependsOn(this)
-                    commonizeNativeDistributionHierarchicallyTask?.let(this::dependsOn)
+                    commonizeNativeDistributionTask?.let(this::dependsOn)
                 },
                 configureTask = {
                     group = "interop"
@@ -81,25 +79,12 @@ internal val Project.copyCommonizeCInteropForIdeTask: TaskProvider<CopyCommonize
         return null
     }
 
-internal val Project.commonizeNativeDistributionTask: TaskProvider<NativeDistributionCommonizerTask>?
+internal val Project.commonizeNativeDistributionTask: TaskProvider<HierarchicalNativeDistributionCommonizerTask>?
     get() {
-        if (isHierarchicalCommonizationEnabled) return null
-        return locateOrRegisterTask(
-            "commonizeNativeDistribution",
-            invokeWhenRegistered = { commonizeTask.dependsOn(this) },
-            configureTask = {
-                group = "interop"
-                description = "Invokes the commonizer on the platform libraries provided by the Kotlin/Native distribution"
-            }
-        )
-    }
-
-internal val Project.commonizeNativeDistributionHierarchicallyTask: TaskProvider<HierarchicalNativeDistributionCommonizerTask>?
-    get() {
-        if (!isHierarchicalCommonizationEnabled) return null
+        if (!isAllowCommonizer()) return null
         return rootProject.locateOrRegisterTask(
             "commonizeNativeDistribution",
-            invokeWhenRegistered = { rootProject.commonizeTask.dependsOn(this); cleanNativeDistributionCommonizationTask },
+            invokeWhenRegistered = { rootProject.commonizeTask.dependsOn(this); cleanNativeDistributionCommonizerTask },
             configureTask = {
                 group = "interop"
                 description = "Invokes the commonizer on platform libraries provided by the Kotlin/Native distribution"
@@ -107,9 +92,9 @@ internal val Project.commonizeNativeDistributionHierarchicallyTask: TaskProvider
         )
     }
 
-internal val Project.cleanNativeDistributionCommonizationTask: TaskProvider<Delete>?
+internal val Project.cleanNativeDistributionCommonizerTask: TaskProvider<Delete>?
     get() {
-        val commonizeNativeDistributionTask = commonizeNativeDistributionHierarchicallyTask ?: return null
+        val commonizeNativeDistributionTask = commonizeNativeDistributionTask ?: return null
         return rootProject.locateOrRegisterTask(
             "cleanNativeDistributionCommonization",
             configureTask = {

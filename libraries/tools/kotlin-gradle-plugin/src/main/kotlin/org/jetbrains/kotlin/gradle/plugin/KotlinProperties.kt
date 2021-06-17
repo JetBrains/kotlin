@@ -260,12 +260,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val commonizerLogLevel: String?
         get() = property("kotlin.mpp.commonizerLogLevel")
 
-    /**
-     * Enables experimental commonization of 'higher level' shared native source sets
-     */
-    val enableHierarchicalCommonization: Boolean
-        get() = booleanProperty("kotlin.mpp.enableHierarchicalCommonization") ?: true
-
     val enableNativeDistributionCommonizationCache: Boolean
         get() = booleanProperty("kotlin.mpp.enableNativeDistributionCommonizationCache") ?: true
 

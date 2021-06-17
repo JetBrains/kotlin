@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.native.DisabledNativeTargetsReporter
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionTypeProvider
 import org.jetbrains.kotlin.gradle.targets.native.internal.PlatformLibrariesGenerator
-import org.jetbrains.kotlin.gradle.targets.native.internal.setUpKotlinNativePlatformDependencies
+import org.jetbrains.kotlin.gradle.targets.native.internal.setupKotlinNativePlatformDependencies
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import org.jetbrains.kotlin.konan.CompilerVersion
@@ -87,7 +87,7 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
 
         SingleActionPerProject.run(project, "setUpKotlinNativePlatformDependencies") {
             project.gradle.projectsEvaluated {
-                project.setUpKotlinNativePlatformDependencies()
+                project.setupKotlinNativePlatformDependencies()
             }
         }
 

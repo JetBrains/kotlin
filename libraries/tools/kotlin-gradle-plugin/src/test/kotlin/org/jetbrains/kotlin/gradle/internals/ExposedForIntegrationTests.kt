@@ -6,12 +6,13 @@
 package org.jetbrains.kotlin.gradle.internals
 
 import org.jetbrains.kotlin.gradle.plugin.KOTLIN_12X_MPP_DEPRECATION_WARNING
-import org.jetbrains.kotlin.gradle.targets.native.internal.NO_NATIVE_STDLIB_PROPERTY_WARNING
-import org.jetbrains.kotlin.gradle.targets.native.internal.NO_NATIVE_STDLIB_WARNING
+
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.parseKotlinSourceSetMetadataFromJson
 import org.jetbrains.kotlin.gradle.targets.native.DisabledNativeTargetsReporter
+import org.jetbrains.kotlin.gradle.targets.native.internal.MissingNativeStdlibWarning.NO_NATIVE_STDLIB_PROPERTY_WARNING
+import org.jetbrains.kotlin.gradle.targets.native.internal.MissingNativeStdlibWarning.NO_NATIVE_STDLIB_WARNING
 
 fun parseKotlinSourceSetMetadataFromJson(json: String): KotlinProjectStructureMetadata? = parseKotlinSourceSetMetadataFromJson(json)
 
