@@ -49,6 +49,10 @@ internal interface Complex : State {
     }
 
     fun loadOuterClassesInto(callStack: CallStack) {
-        generateSequence(outerClass) { (it.state as? Complex)?.outerClass }.forEach { callStack.addVariable(it) }
+        generateSequence(outerClass) { (it.state as? Complex)?.outerClass }
+            .forEach { variable ->
+                callStack.addVariable(variable)
+                (variable.state as? StateWithClosure)?.let { callStack.loadUpValues(it) }
+            }
     }
 }

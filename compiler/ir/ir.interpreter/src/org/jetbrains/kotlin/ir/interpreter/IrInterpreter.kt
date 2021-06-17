@@ -204,9 +204,9 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         if (dispatchReceiver is Complex && irFunction.parentClassOrNull?.isInner == true) dispatchReceiver.loadOuterClassesInto(callStack)
 
         // 6. load up values onto stack
-        if (irFunction.isLocal) callStack.copyUpValuesFromPreviousFrame()
         if (dispatchReceiver is StateWithClosure) callStack.loadUpValues(dispatchReceiver)
         if (extensionReceiver is StateWithClosure) callStack.loadUpValues(extensionReceiver)
+        if (irFunction.isLocal) callStack.copyUpValuesFromPreviousFrame()
 
         callInterceptor.interceptCall(call, irFunction, args) {
             callStack.addInstruction(CompoundInstruction(irFunction))
@@ -243,7 +243,16 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         val irClass = constructor.parentAsClass
         val receiverSymbol = constructor.dispatchReceiverParameter?.symbol
 
-        val objectState = callStack.getState(constructorCall.getThisReceiver())
+        // this check is used to be sure that object will be created once
+        val objectState = when (constructorCall) {
+            !is IrConstructorCall -> callStack.getState(constructorCall.getThisReceiver())
+            else -> (if (irClass.isSubclassOfThrowable()) ExceptionState(irClass, callStack.getStackTrace()) else Common(irClass))
+                .apply {
+                    // must set object's state here, before actual initialization, to avoid cyclic evaluation
+                    if (irClass.isObject) environment.mapOfObjects[irClass.symbol] = this
+                }
+        }
+
         if (irClass.isLocal) callStack.storeUpValues(objectState as StateWithClosure)
         val outerClass = receiverSymbol?.let { callStack.getState(it) }
 

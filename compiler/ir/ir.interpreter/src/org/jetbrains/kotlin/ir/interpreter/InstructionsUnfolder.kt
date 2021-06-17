@@ -39,9 +39,9 @@ internal fun unfoldInstruction(element: IrElement?, environment: IrInterpreterEn
         is IrSimpleFunction -> unfoldFunction(element, environment)
         is IrConstructor -> unfoldConstructor(element, callStack)
         is IrCall -> unfoldCall(element, callStack)
-        is IrConstructorCall -> unfoldConstructorCall(element, environment)
-        is IrEnumConstructorCall -> unfoldEnumConstructorCall(element, callStack)
-        is IrDelegatingConstructorCall -> unfoldDelegatingConstructorCall(element, callStack)
+        is IrConstructorCall -> unfoldConstructorCall(element, callStack)
+        is IrEnumConstructorCall -> unfoldConstructorCall(element, callStack)
+        is IrDelegatingConstructorCall -> unfoldConstructorCall(element, callStack)
         is IrInstanceInitializerCall -> unfoldInstanceInitializerCall(element, callStack)
         is IrField -> unfoldField(element, callStack)
         is IrBody -> unfoldBody(element, callStack)
@@ -113,23 +113,9 @@ private fun unfoldCall(call: IrCall, callStack: CallStack) {
     unfoldValueParameters(call, callStack)
 }
 
-private fun unfoldConstructorCall(constructorCall: IrFunctionAccessExpression, environment: IrInterpreterEnvironment) {
-    val callStack = environment.callStack
-    val constructor = constructorCall.symbol.owner
-    val irClass = constructor.parentAsClass
+// This function is responsible for IrConstructorCall, IrDelegatingConstructorCall and IrEnumConstructorCall
+private fun unfoldConstructorCall(constructorCall: IrFunctionAccessExpression, callStack: CallStack) {
     unfoldValueParameters(constructorCall, callStack)
-    // this state is used to create object once
-    val state = if (irClass.isSubclassOfThrowable()) ExceptionState(irClass, callStack.getStackTrace()) else Common(irClass)
-    if (irClass.isObject) environment.mapOfObjects[irClass.symbol] = state  // must set object's state here to avoid cyclic evaluation
-    callStack.addVariable(Variable(constructorCall.getThisReceiver(), state))
-}
-
-private fun unfoldEnumConstructorCall(enumConstructorCall: IrEnumConstructorCall, callStack: CallStack) {
-    unfoldValueParameters(enumConstructorCall, callStack)
-}
-
-private fun unfoldDelegatingConstructorCall(delegatingConstructorCall: IrFunctionAccessExpression, callStack: CallStack) {
-    unfoldValueParameters(delegatingConstructorCall, callStack)
 }
 
 private fun unfoldValueParameters(expression: IrFunctionAccessExpression, callStack: CallStack) {
