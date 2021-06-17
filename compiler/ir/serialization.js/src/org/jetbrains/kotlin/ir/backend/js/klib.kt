@@ -55,7 +55,7 @@ import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.buildKotlinLibrary
-import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
+import org.jetbrains.kotlin.library.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.progress.IncrementalNextRoundException
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
@@ -68,6 +68,8 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.util.DummyLogger
+import org.jetbrains.kotlin.util.Logger
 import org.jetbrains.kotlin.utils.DFS
 import java.io.File
 import org.jetbrains.kotlin.konan.file.File as KFile
@@ -95,13 +97,36 @@ private val CompilerConfiguration.expectActualLinker: Boolean
 
 class KotlinFileSerializedData(val metadata: ByteArray, val irData: SerializedIrFile)
 
+private fun IrMessageLogger?.toResolverLogger(): Logger {
+    if (this == null) return DummyLogger
+
+    return object : Logger {
+        override fun log(message: String) {
+            report(IrMessageLogger.Severity.INFO, message, null)
+        }
+
+        override fun error(message: String) {
+            report(IrMessageLogger.Severity.ERROR, message, null)
+        }
+
+        override fun warning(message: String) {
+            report(IrMessageLogger.Severity.WARNING, message, null)
+        }
+
+        override fun fatal(message: String): Nothing {
+            report(IrMessageLogger.Severity.ERROR, message, null)
+            kotlin.error("FATAL ERROR: $message")
+        }
+    }
+}
+
 fun generateKLib(
     project: Project,
     files: List<KtFile>,
     analyzer: AbstractAnalyzerWithCompilerReport,
     configuration: CompilerConfiguration,
-    allDependencies: KotlinLibraryResolveResult,
-    friendDependencies: List<KotlinLibrary>,
+    dependencies: Collection<String>,
+    friendDependencies: Collection<String>,
     irFactory: IrFactory,
     outputKlibPath: String,
     nopack: Boolean,
@@ -142,8 +167,8 @@ fun generateKLib(
     }
 
     val depsDescriptors =
-        ModulesStructure(project, MainModule.SourceFiles(files), analyzer, configuration, allDependencies, friendDependencies)
-
+        ModulesStructure(project, MainModule.SourceFiles(files), analyzer, configuration, dependencies, friendDependencies)
+    val allDependencies = depsDescriptors.allDependencies
     val (psi2IrContext, hasErrors) = runAnalysisAndPreparePsi2Ir(depsDescriptors, irFactory, errorPolicy)
     val irBuiltIns = psi2IrContext.irBuiltIns
     val functionFactory = IrFunctionFactory(irBuiltIns, psi2IrContext.symbolTable)
@@ -163,7 +188,7 @@ fun generateKLib(
         serializedIrFiles?.let { ICData(it, errorPolicy.allowErrors) }
     )
 
-    sortDependencies(allDependencies.getFullList(), depsDescriptors.descriptors).map {
+    sortDependencies(allDependencies, depsDescriptors.descriptors).map {
         irLinker.deserializeOnlyHeaderModule(depsDescriptors.getModuleDescriptor(it), it)
     }
 
@@ -189,7 +214,7 @@ fun generateKLib(
         psi2IrContext.bindingContext,
         files,
         outputKlibPath,
-        allDependencies.getFullList(),
+        allDependencies.map { it.library },
         moduleFragment,
         expectDescriptorToSymbol,
         icData,
@@ -209,8 +234,9 @@ data class IrModuleInfo(
     val moduleFragmentToUniqueName: Map<IrModuleFragment, String>,
 )
 
-private fun sortDependencies(dependencies: List<KotlinLibrary>, mapping: Map<KotlinLibrary, ModuleDescriptor>): Collection<KotlinLibrary> {
+private fun sortDependencies(resolvedDependencies: List<KotlinResolvedLibrary>, mapping: Map<KotlinLibrary, ModuleDescriptor>): Collection<KotlinLibrary> {
     val m2l = mapping.map { it.value to it.key }.toMap()
+    val dependencies = resolvedDependencies.map { it.library }
 
     return DFS.topologicalOrder(dependencies) { m ->
         val descriptor = mapping[m] ?: error("No descriptor found for library ${m.libraryName}")
@@ -223,13 +249,14 @@ fun loadIr(
     mainModule: MainModule,
     analyzer: AbstractAnalyzerWithCompilerReport,
     configuration: CompilerConfiguration,
-    allDependencies: KotlinLibraryResolveResult,
-    friendDependencies: List<KotlinLibrary>,
+    dependencies: Collection<String>,
+    friendDependencies: Collection<String>,
     irFactory: IrFactory,
 ): IrModuleInfo {
-    val depsDescriptors = ModulesStructure(project, mainModule, analyzer, configuration, allDependencies, friendDependencies)
+    val depsDescriptors = ModulesStructure(project, mainModule, analyzer, configuration, dependencies, friendDependencies)
     val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
     val messageLogger = configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None
+    val allDependencies = depsDescriptors.allDependencies
 
     when (mainModule) {
         is MainModule.SourceFiles -> {
@@ -244,7 +271,7 @@ fun loadIr(
             val moduleFragmentToUniqueName = mutableMapOf<IrModuleFragment, String>()
             val irLinker =
                 JsIrLinker(psi2IrContext.moduleDescriptor, messageLogger, irBuiltIns, symbolTable, functionFactory, feContext, null)
-            val deserializedModuleFragments = sortDependencies(allDependencies.getFullList(), depsDescriptors.descriptors).map { klib ->
+            val deserializedModuleFragments = sortDependencies(allDependencies, depsDescriptors.descriptors).map { klib ->
                 irLinker.deserializeIrModuleHeader(depsDescriptors.getModuleDescriptor(klib), klib).also { moduleFragment ->
                     klib.manifestProperties.getProperty(KLIB_PROPERTY_JS_OUTPUT_NAME)?.let {
                         moduleFragmentToUniqueName[moduleFragment] = it
@@ -269,7 +296,9 @@ fun loadIr(
             return IrModuleInfo(moduleFragment, deserializedModuleFragments, irBuiltIns, symbolTable, irLinker, moduleFragmentToUniqueName)
         }
         is MainModule.Klib -> {
-            val moduleDescriptor = depsDescriptors.getModuleDescriptor(mainModule.lib)
+            val mainModuleLib = depsDescriptors.allDependencies.find { it.library.libraryFile.canonicalPath == mainModule.libPath }?.library
+                ?: error("No module with ${mainModule.libPath} found")
+            val moduleDescriptor = depsDescriptors.getModuleDescriptor(mainModuleLib)
             val mangler = JsManglerDesc
             val signaturer = IdSignatureDescriptor(mangler)
             val symbolTable = SymbolTable(signaturer, irFactory)
@@ -282,9 +311,9 @@ fun loadIr(
 
             val moduleFragmentToUniqueName = mutableMapOf<IrModuleFragment, String>()
 
-            val deserializedModuleFragments = sortDependencies(allDependencies.getFullList(), depsDescriptors.descriptors).map { klib ->
+            val deserializedModuleFragments = sortDependencies(allDependencies, depsDescriptors.descriptors).map { klib ->
                 val strategy =
-                    if (klib == mainModule.lib)
+                    if (klib == mainModuleLib)
                         DeserializationStrategy.ALL
                     else
                         DeserializationStrategy.EXPLICITLY_EXPORTED
@@ -382,7 +411,7 @@ fun getModuleDescriptorByLibrary(current: KotlinLibrary, mapping: Map<String, Mo
 
 sealed class MainModule {
     class SourceFiles(val files: List<KtFile>) : MainModule()
-    class Klib(val lib: KotlinLibrary) : MainModule()
+    class Klib(val libPath: String) : MainModule()
 }
 
 private class ModulesStructure(
@@ -390,17 +419,30 @@ private class ModulesStructure(
     private val mainModule: MainModule,
     private val analyzer: AbstractAnalyzerWithCompilerReport,
     val compilerConfiguration: CompilerConfiguration,
-    val allDependencies: KotlinLibraryResolveResult,
-    private val friendDependencies: List<KotlinLibrary>
+    dependencies: Collection<String>,
+    friendDependenciesPaths: Collection<String>
 ) {
+    val allDependencies = jsResolveLibraries(
+        dependencies,
+        compilerConfiguration[JSConfigurationKeys.REPOSITORIES] ?: emptyList(),
+        compilerConfiguration[IrMessageLogger.IR_MESSAGE_LOGGER].toResolverLogger()
+    ).getFullResolvedList()
+
+    val friendDependencies = allDependencies.run {
+        val friendAbsolutePaths = friendDependenciesPaths.map { File(it).canonicalPath }
+        filter {
+            it.library.libraryFile.absolutePath in friendAbsolutePaths
+        }
+    }
+
     val moduleDependencies: Map<KotlinLibrary, List<KotlinLibrary>> = run {
-        val transitives = allDependencies.getFullResolvedList()
+        val transitives = allDependencies
         transitives.associate { klib ->
             klib.library to klib.resolvedDependencies.map { d -> d.library }
         }.toMap()
     }
 
-    val builtInsDep = allDependencies.getFullList().find { it.isBuiltIns }
+    val builtInsDep = allDependencies.find { it.library.isBuiltIns }
 
     class JsFrontEndResult(val moduleDescriptor: ModuleDescriptor, val bindingContext: BindingContext, val hasErrors: Boolean)
 
@@ -413,8 +455,8 @@ private class ModulesStructure(
                 files,
                 project,
                 compilerConfiguration,
-                allDependencies.getFullList().map { getModuleDescriptor(it) },
-                friendDependencies.map { getModuleDescriptor(it) },
+                allDependencies.map { getModuleDescriptor(it.library) },
+                friendDependencies.map { getModuleDescriptor(it.library) },
                 analyzer.targetEnvironment,
                 thisIsBuiltInsModule = builtInModuleDescriptor == null,
                 customBuiltInsModule = builtInModuleDescriptor
@@ -470,7 +512,7 @@ private class ModulesStructure(
 
     val builtInModuleDescriptor =
         if (builtInsDep != null)
-            getModuleDescriptor(builtInsDep)
+            getModuleDescriptor(builtInsDep.library)
         else
             null // null in case compiling builtInModule itself
 }

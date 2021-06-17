@@ -22,8 +22,6 @@ import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.TranslationUnit
 import org.jetbrains.kotlin.js.test.engines.ExternalTool
 import org.jetbrains.kotlin.js.test.engines.SpiderMonkeyEngine
-import org.jetbrains.kotlin.library.resolver.impl.KotlinLibraryResolverResultImpl
-import org.jetbrains.kotlin.library.resolver.impl.KotlinResolvedLibraryImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -140,7 +138,7 @@ abstract class BasicWasmBoxTest(
             phaseConfig = phaseConfig,
             irFactory = IrFactoryImpl,
             // TODO: Bypass the resolver fow wasm.
-            allDependencies = KotlinLibraryResolverResultImpl(listOf(KotlinResolvedLibraryImpl(wasmRuntimeKlib))),
+            dependencies = listOf(System.getProperty("kotlin.wasm.stdlib.path")!!),
             friendDependencies = emptyList(),
             exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction)))
         )

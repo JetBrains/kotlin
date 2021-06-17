@@ -18,8 +18,10 @@ import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
-import org.jetbrains.kotlin.cli.js.messageCollectorLogger
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
@@ -43,6 +45,7 @@ import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.util.DummyLogger
+import org.jetbrains.kotlin.util.Logger
 import java.io.File
 
 object GenerationUtils {
@@ -138,6 +141,17 @@ object GenerationUtils {
 
         generationState.factory.done()
         return generationState
+    }
+
+    private fun messageCollectorLogger(collector: MessageCollector) = object : Logger {
+        override fun warning(message: String) = collector.report(CompilerMessageSeverity.STRONG_WARNING, message)
+        override fun error(message: String) = collector.report(CompilerMessageSeverity.ERROR, message)
+        override fun log(message: String) = collector.report(CompilerMessageSeverity.LOGGING, message)
+        override fun fatal(message: String): Nothing {
+            collector.report(CompilerMessageSeverity.ERROR, message)
+            (collector as? GroupingMessageCollector)?.flush()
+            kotlin.error(message)
+        }
     }
 
     private fun compileFilesUsingStandardMode(
