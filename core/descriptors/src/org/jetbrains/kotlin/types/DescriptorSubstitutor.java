@@ -84,7 +84,7 @@ public class DescriptorSubstitutor {
         for (TypeParameterDescriptor descriptor : typeParameters) {
             TypeParameterDescriptorImpl substituted = substitutedMap.get(descriptor);
             for (KotlinType upperBound : descriptor.getUpperBounds()) {
-                KotlinType substitutedBound = substitutor.substitute(upperBound, Variance.IN_VARIANCE);
+                KotlinType substitutedBound = substitutor.substitute(upperBound, Variance.OUT_VARIANCE);
                 if (substitutedBound == null) return null;
 
                 if (substitutedBound != upperBound && wereChanges != null) {
