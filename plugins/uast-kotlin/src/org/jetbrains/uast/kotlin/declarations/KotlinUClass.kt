@@ -24,12 +24,9 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClassForScript
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.uast.*
 import org.jetbrains.uast.internal.acceptList
-import org.jetbrains.uast.kotlin.declarations.KotlinUMethod
 import org.jetbrains.uast.visitor.UastVisitor
 
 abstract class AbstractKotlinUClass(givenParent: UElement?) : KotlinAbstractUElement(givenParent), UClassTypeSpecific, UAnchorOwner {
@@ -173,76 +170,6 @@ open class KotlinUClass private constructor(
         }
     }
 
-}
-
-open class KotlinConstructorUMethod(
-    private val ktClass: KtClassOrObject?,
-    override val psi: PsiMethod,
-    kotlinOrigin: KtDeclaration?,
-    givenParent: UElement?
-) : KotlinUMethod(psi, kotlinOrigin, givenParent) {
-
-    constructor(
-        ktClass: KtClassOrObject?,
-        psi: KtLightMethod,
-        givenParent: UElement?
-    ):this(ktClass, psi, psi.kotlinOrigin, givenParent)
-
-    val isPrimary: Boolean
-        get() = sourcePsi.let { it is KtPrimaryConstructor || it is KtClassOrObject }
-
-    override val uastBody: UExpression? by lz {
-        val delegationCall: KtCallElement? = sourcePsi.let {
-            when {
-                isPrimary -> ktClass?.superTypeListEntries?.firstIsInstanceOrNull<KtSuperTypeCallEntry>()
-                it is KtSecondaryConstructor -> it.getDelegationCall()
-                else -> null
-            }
-        }
-        val bodyExpressions = getBodyExpressions()
-        if (delegationCall == null && bodyExpressions.isEmpty()) return@lz null
-        KotlinLazyUBlockExpression(this) { uastParent ->
-            SmartList<UExpression>().apply {
-                delegationCall?.let {
-                    add(KotlinUFunctionCallExpression(it, uastParent))
-                }
-                bodyExpressions.forEach {
-                    add(KotlinConverter.convertOrEmpty(it, uastParent))
-                }
-            }
-        }
-    }
-
-    override val uastAnchor: KotlinUIdentifier by lazy {
-        KotlinUIdentifier(
-            psi.nameIdentifier,
-            if (isPrimary) ktClass?.nameIdentifier else (sourcePsi as? KtSecondaryConstructor)?.getConstructorKeyword(),
-            this
-        )
-    }
-
-    override val javaPsi = psi
-
-    open protected fun getBodyExpressions(): List<KtExpression> {
-        if (isPrimary) return getInitializers()
-        val bodyExpression = (sourcePsi as? KtFunction)?.bodyExpression ?: return emptyList()
-        if (bodyExpression is KtBlockExpression) return bodyExpression.statements
-        return listOf(bodyExpression)
-    }
-
-    protected fun getInitializers() = ktClass?.getAnonymousInitializers()?.mapNotNull { it.body } ?: emptyList()
-
-}
-
-// This class was created as a workaround for KT-21617 to be the only constructor which includes `init` block
-// when there is no primary constructors in the class.
-// It is expected to have only one constructor of this type in a UClass.
-class KotlinSecondaryConstructorWithInitializersUMethod(
-        ktClass: KtClassOrObject?,
-        psi: KtLightMethod,
-        givenParent: UElement?
-) : KotlinConstructorUMethod(ktClass, psi, givenParent) {
-    override fun getBodyExpressions(): List<KtExpression> = getInitializers() + super.getBodyExpressions()
 }
 
 class KotlinUAnonymousClass(
