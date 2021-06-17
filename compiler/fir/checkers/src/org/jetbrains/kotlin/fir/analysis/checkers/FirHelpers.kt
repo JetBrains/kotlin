@@ -12,14 +12,9 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
-import org.jetbrains.kotlin.fir.analysis.diagnostics.modalityModifier
-import org.jetbrains.kotlin.fir.analysis.diagnostics.overrideModifier
-import org.jetbrains.kotlin.fir.analysis.diagnostics.visibilityModifier
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
@@ -527,6 +522,7 @@ val ConeTypeProjection.isConflictingOrNotInvariant: Boolean get() = kind != Proj
 
 fun checkTypeMismatch(
     lValueOriginalType: ConeKotlinType,
+    assignment: FirVariableAssignment?,
     rValue: FirExpression,
     context: CheckerContext,
     source: FirSourceElement,
@@ -535,24 +531,15 @@ fun checkTypeMismatch(
 ) {
     var lValueType = lValueOriginalType
     var rValueType = rValue.typeRef.coneType
-    val typeContext = context.session.typeContext
-
-    val diagnosticFactory = when {
-        isInitializer -> {
-            FirErrors.INITIALIZER_TYPE_MISMATCH
-        }
-        source.kind is FirFakeSourceElementKind.DesugaredIncrementOrDecrement -> {
-            if (!lValueType.isNullable && rValueType.isNullable) {
-                val tempType = rValueType
-                rValueType = lValueType
-                lValueType = tempType
-            }
-            FirErrors.RESULT_TYPE_MISMATCH
-        }
-        else -> {
-            FirErrors.ASSIGNMENT_TYPE_MISMATCH
+    if (source.kind is FirFakeSourceElementKind.DesugaredIncrementOrDecrement) {
+        if (!lValueType.isNullable && rValueType.isNullable) {
+            val tempType = rValueType
+            rValueType = lValueType
+            lValueType = tempType
         }
     }
+
+    val typeContext = context.session.typeContext
 
     if (!isSubtypeForTypeMismatch(typeContext, subtype = rValueType, supertype = lValueType)) {
         if (rValueType is ConeClassLikeType &&
@@ -568,10 +555,30 @@ fun checkTypeMismatch(
             // TODO: remove after fix of KT-45989
             return
         }
-        if (rValue.isNullLiteral && lValueType.nullability == ConeNullability.NOT_NULL) {
-            reporter.reportOn(rValue.source, FirErrors.NULL_FOR_NONNULL_TYPE, context)
-        } else {
-            reporter.reportOn(source, diagnosticFactory, lValueType, rValueType, context)
+        val resolvedSymbol = assignment?.calleeReference?.toResolvedCallableSymbol() as? FirPropertySymbol
+        when {
+            resolvedSymbol != null && lValueType is ConeCapturedType && lValueType.constructor.projection.kind.let {
+                it == ProjectionKind.STAR || it == ProjectionKind.OUT
+            } -> {
+                reporter.reportOn(assignment.source, FirErrors.SETTER_PROJECTED_OUT, resolvedSymbol, context)
+            }
+            rValue.isNullLiteral && lValueType.nullability == ConeNullability.NOT_NULL -> {
+                reporter.reportOn(rValue.source, FirErrors.NULL_FOR_NONNULL_TYPE, context)
+            }
+            isInitializer -> {
+                reporter.reportOn(source, FirErrors.INITIALIZER_TYPE_MISMATCH, lValueType, rValueType, context)
+            }
+            source.kind is FirFakeSourceElementKind.DesugaredIncrementOrDecrement -> {
+                if (!lValueType.isNullable && rValueType.isNullable) {
+                    val tempType = rValueType
+                    rValueType = lValueType
+                    lValueType = tempType
+                }
+                reporter.reportOn(source, FirErrors.RESULT_TYPE_MISMATCH, lValueType, rValueType, context)
+            }
+            else -> {
+                reporter.reportOn(source, FirErrors.ASSIGNMENT_TYPE_MISMATCH, lValueType, rValueType, context)
+            }
         }
     }
 }
