@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 private val RETENTION_CLASS_ID = ClassId.fromString("kotlin/annotation/Retention")
@@ -87,4 +88,26 @@ private val DEFAULT_USE_SITE_TARGETS: Set<AnnotationUseSiteTarget> =
 
 fun FirAnnotatedDeclaration.hasAnnotation(classId: ClassId): Boolean {
     return annotations.any { it.toAnnotationClassId() == classId }
+}
+
+fun FirAnnotationContainer.getAnnotationByFqName(fqName: FqName): FirAnnotationCall? {
+    return annotations.find {
+        (it.annotationTypeRef.coneType as? ConeClassLikeType)?.lookupTag?.classId?.asSingleFqName() == fqName
+    }
+}
+
+fun FirAnnotationCall.findArgumentByName(name: Name): FirExpression? {
+    val argumentMapping = argumentMapping
+    if (argumentMapping != null) {
+        return argumentMapping.keys.find { argumentMapping[it]?.name == name }?.unwrapArgument()
+    }
+    // NB: we have to consider both cases, because deserializer does not create argument mapping
+    for (argument in arguments) {
+        if (argument is FirNamedArgumentExpression && argument.name == name) {
+            return argument.expression
+        }
+    }
+    // I'm lucky today!
+    // TODO: this line is still needed. However it should be replaced with 'return null'
+    return arguments.singleOrNull()
 }

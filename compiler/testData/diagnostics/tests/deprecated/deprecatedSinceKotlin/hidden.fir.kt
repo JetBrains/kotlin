@@ -28,7 +28,7 @@ val valNext = Unit
 
 fun usage() {
     ClassCur()
-    funCur()
+    <!INVISIBLE_REFERENCE!>funCur<!>()
     valCur
 
     ClassNext()

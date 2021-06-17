@@ -13894,6 +13894,22 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/deprecated")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Deprecated {
+        @Test
+        public void testAllFilesPresentInDeprecated() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/deprecated"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+        }
+
+        @Test
+        @TestMetadata("deprecatedSinceKotlin.kt")
+        public void testDeprecatedSinceKotlin() throws Exception {
+            runTest("compiler/testData/codegen/box/deprecated/deprecatedSinceKotlin.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/destructuringDeclInLambdaParam")
     @TestDataPath("$PROJECT_ROOT")
     public class DestructuringDeclInLambdaParam {
