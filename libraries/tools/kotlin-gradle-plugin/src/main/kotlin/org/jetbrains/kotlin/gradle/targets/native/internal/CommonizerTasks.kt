@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
@@ -98,10 +99,23 @@ internal val Project.commonizeNativeDistributionHierarchicallyTask: TaskProvider
         if (!isHierarchicalCommonizationEnabled) return null
         return rootProject.locateOrRegisterTask(
             "commonizeNativeDistribution",
-            invokeWhenRegistered = { commonizeTask.dependsOn(this) },
+            invokeWhenRegistered = { rootProject.commonizeTask.dependsOn(this); cleanNativeDistributionCommonizationTask },
             configureTask = {
                 group = "interop"
                 description = "Invokes the commonizer on platform libraries provided by the Kotlin/Native distribution"
+            }
+        )
+    }
+
+internal val Project.cleanNativeDistributionCommonizationTask: TaskProvider<Delete>?
+    get() {
+        val commonizeNativeDistributionTask = commonizeNativeDistributionHierarchicallyTask ?: return null
+        return rootProject.locateOrRegisterTask(
+            "cleanNativeDistributionCommonization",
+            configureTask = {
+                group = "interop"
+                description = "Deletes all previously commonized klib's from the Kotlin/Native distribution"
+                delete(commonizeNativeDistributionTask.map { it.getRootOutputDirectory() })
             }
         )
     }

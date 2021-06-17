@@ -29,7 +29,6 @@ internal class NativeDistributionCommonizationCache(
     ) {
         if (!project.isNativeDistributionCommonizationCacheEnabled) {
             logInfo("Cache disabled")
-            return commonizer.commonizeNativeDistribution(konanHome, outputDirectory, outputTargets, logLevel)
         }
 
         val cachedOutputTargets = outputTargets
@@ -37,25 +36,26 @@ internal class NativeDistributionCommonizationCache(
             .onEach { outputTarget -> logInfo("Cache hit: $outputTarget already commonized") }
             .toSet()
 
-        val missingOutputTargets = outputTargets - cachedOutputTargets
+        val enqueuedOutputTargets = if (project.isNativeDistributionCommonizationCacheEnabled) outputTargets - cachedOutputTargets
+        else outputTargets
 
-        if (canReturnFast(konanHome, missingOutputTargets)) {
+        if (canReturnFast(konanHome, enqueuedOutputTargets)) {
             logInfo("All available targets are commonized already - Nothing to do")
             return
         }
 
-        missingOutputTargets
+        enqueuedOutputTargets
             .map { outputTarget -> resolveCommonizedDirectory(outputDirectory, outputTarget) }
             .forEach { commonizedDirectory -> if (commonizedDirectory.exists()) commonizedDirectory.deleteRecursively() }
 
         commonizer.commonizeNativeDistribution(
-            konanHome, outputDirectory, missingOutputTargets, logLevel
+            konanHome, outputDirectory, enqueuedOutputTargets, logLevel
         )
 
-        missingOutputTargets
+        enqueuedOutputTargets
             .map { outputTarget -> resolveCommonizedDirectory(outputDirectory, outputTarget) }
             .filter { commonizedDirectory -> commonizedDirectory.isDirectory }
-            .forEach { commonizedDirectory -> commonizedDirectory.resolve(".success").isFile }
+            .forEach { commonizedDirectory -> commonizedDirectory.resolve(".success").createNewFile() }
     }
 
     private fun isCached(directory: File): Boolean {

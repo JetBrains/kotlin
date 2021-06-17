@@ -46,11 +46,11 @@ internal fun commonizeTarget(
     inputs: TargetDependent<CirTreeRoot?>,
     output: CommonizerTarget
 ): CirRootNode? {
-    parameters.logger.progress(output, "Commonized declarations from ${inputs.targets}") {
-        val availableTrees = inputs.filterNonNull()
-        /* Nothing to merge */
-        if (availableTrees.size == 0) return null
+    val availableTrees = inputs.filterNonNull()
+    /* Nothing to merge */
+    if (availableTrees.size == 0) return null
 
+    parameters.logger.progress(output, "Commonized declarations from ${inputs.targets}") {
         val classifiers = CirKnownClassifiers(
             commonizedNodes = CirCommonizedClassifierNodes.default(),
             commonDependencies = parameters.dependencyClassifiers(output)

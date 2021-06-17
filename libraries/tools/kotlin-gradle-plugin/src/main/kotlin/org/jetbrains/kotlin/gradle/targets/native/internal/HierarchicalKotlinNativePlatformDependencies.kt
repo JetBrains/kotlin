@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.targets.metadata.getMetadataCompilationForSourceSet
 import org.jetbrains.kotlin.gradle.utils.filesProvider
+import java.io.File
 
 internal fun Project.setUpHierarchicalKotlinNativePlatformDependencies() {
     val kotlin = multiplatformExtensionOrNull ?: return
@@ -35,12 +36,12 @@ internal fun Project.getNativeDistributionDependencies(target: CommonizerTarget)
 }
 
 private fun Project.getOriginalPlatformLibrariesFor(target: LeafCommonizerTarget): FileCollection {
-    return project.filesProvider { konanDistribution.platformLibsDir.resolve(target.konanTarget.name).listFiles().orEmpty().toSet() }
+    return project.filesProvider { konanDistribution.platformLibsDir.resolve(target.konanTarget.name).listLibraryFiles().toSet() }
 }
 
 private fun HierarchicalNativeDistributionCommonizerTask.getCommonizedPlatformLibrariesFor(target: SharedCommonizerTarget): FileCollection {
     val targetOutputDirectory = CommonizerOutputFileLayout.resolveCommonizedDirectory(getRootOutputDirectory(), target)
-    return project.filesProvider { targetOutputDirectory.listFiles().orEmpty().toList() }.builtBy(this)
+    return project.filesProvider { targetOutputDirectory.listLibraryFiles() }.builtBy(this)
 }
 
 private fun HierarchicalNativeDistributionCommonizerTask.getCommonizedDependenciesFor(target: CommonizerTarget): FileCollection {
@@ -64,3 +65,6 @@ private fun Project.addDependencies(sourceSet: KotlinSourceSet, libraries: FileC
 
 private val Project.konanDistribution: KonanDistribution
     get() = KonanDistribution(project.file(konanHome))
+
+private fun File.listLibraryFiles(): List<File> = listFiles().orEmpty()
+    .filter { it.isDirectory || it.extension == "klib" }

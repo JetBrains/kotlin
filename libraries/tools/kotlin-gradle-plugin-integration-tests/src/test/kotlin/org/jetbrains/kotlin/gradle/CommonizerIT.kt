@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.kotlin.gradle.internals.DISABLED_NATIVE_TARGETS_REPORTER_WARNING_PREFIX
 import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectories
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
+import kotlin.test.fail
 
 class CommonizerIT : BaseGradleIT() {
     override val defaultGradleVersion: GradleVersionRequired = GradleVersionRequired.FOR_MPP_SUPPORT
@@ -17,26 +20,30 @@ class CommonizerIT : BaseGradleIT() {
         private const val commonizerOutput = "Preparing commonized Kotlin/Native libraries"
     }
 
-    @Ignore // TODO NOW
     @Test
     fun `test commonizeNativeDistributionWithIosLinuxWindows`() {
         with(Project("commonizeNativeDistributionWithIosLinuxWindows")) {
-            build(":p1:commonize", "-Pkotlin.mpp.enableNativeDistributionCommonizationCache=false") {
-                assertTasksExecuted(":p1:commonizeNativeDistribution")
+            build(":cleanNativeDistributionCommonization") {
+                assertSuccessful()
+            }
+
+            build("commonize", "-Pkotlin.mpp.enableNativeDistributionCommonizationCache=false") {
+                assertTasksExecuted(":commonizeNativeDistribution")
                 assertContains(DISABLED_NATIVE_TARGETS_REPORTER_WARNING_PREFIX)
                 assertContains(commonizerOutput)
                 assertSuccessful()
             }
 
-            build(":p1:commonize", "--rerun-tasks", "-Pkotlin.mpp.enableNativeDistributionCommonizationCache=true") {
-                assertTasksExecuted(":p1:commonizeNativeDistribution")
+            build("commonize", "--rerun-tasks", "-Pkotlin.mpp.enableNativeDistributionCommonizationCache=true") {
+                assertTasksExecuted(":commonizeNativeDistribution")
                 assertContains("Native Distribution Commonization: Cache hit")
+                assertContains("Native Distribution Commonization: All available targets are commonized already")
                 assertNotContains(commonizerOutput)
                 assertSuccessful()
             }
 
-            build(":p1:commonize", "--rerun-tasks", "-Pkotlin.mpp.enableNativeDistributionCommonizationCache=false") {
-                assertTasksExecuted(":p1:commonizeNativeDistribution")
+            build("commonize", "--rerun-tasks", "-Pkotlin.mpp.enableNativeDistributionCommonizationCache=false") {
+                assertTasksExecuted(":commonizeNativeDistribution")
                 assertContains("Native Distribution Commonization: Cache disabled")
                 assertContains(commonizerOutput)
                 assertSuccessful()
