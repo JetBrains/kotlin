@@ -4,4 +4,5 @@ UFile (package = )
             UBlockExpression
                 [!] UnknownKotlinExpression (PROPERTY)
                 UReturnExpression
-                    [!] UnknownKotlinExpression (POSTFIX_EXPRESSION)
+                    UPostfixExpression (operator = !!)
+                        USimpleNameReferenceExpression (identifier = s)

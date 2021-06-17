@@ -326,6 +326,7 @@ internal object FirKotlinConverter : BaseKotlinConverter {
                     }
                 }
                 is KtPrefixExpression -> expr<UPrefixExpression>(build(::KotlinUPrefixExpression))
+                is KtPostfixExpression -> expr<UPostfixExpression>(build(::KotlinUPostfixExpression))
 
                 else -> expr<UExpression>(build(::UnknownKotlinExpression))
             }

@@ -1,7 +1,7 @@
 UFile (package = ) [public final class PropertyReferencesKt {...]
     UClass (name = PropertyReferencesKt) [public final class PropertyReferencesKt {...}]
         UMethod (name = properties) [public static final fun properties() : void {...}]
-            UBlockExpression [{...}] = Undetermined
+            UBlockExpression [{...}] = external mutableProp()
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)] = Undetermined
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)] = Undetermined
                 UBinaryExpression (operator = =) [a.mutableProp = 1] = Undetermined
@@ -18,10 +18,13 @@ UFile (package = ) [public final class PropertyReferencesKt {...]
                     UQualifiedReferenceExpression [a.mutableProp] = external mutableProp()
                         USimpleNameReferenceExpression (identifier = a) [a] = external a()
                         USimpleNameReferenceExpression (identifier = mutableProp) [mutableProp] = external mutableProp()
-                [!] UnknownKotlinExpression (POSTFIX_EXPRESSION) [[!] UnknownKotlinExpression (POSTFIX_EXPRESSION)] = Undetermined
+                UPostfixExpression (operator = --) [a.mutableProp--] = external mutableProp()
+                    UQualifiedReferenceExpression [a.mutableProp] = external mutableProp()
+                        USimpleNameReferenceExpression (identifier = a) [a] = external a()
+                        USimpleNameReferenceExpression (identifier = mutableProp) [mutableProp] = external mutableProp()
         UMethod (name = ext) [public static final fun ext($this$ext: A) : void {...}]
             UParameter (name = $this$ext) [var $this$ext: A]
-            UBlockExpression [{...}] = Undetermined
+            UBlockExpression [{...}] = external mutableProp()
                 [!] UnknownKotlinExpression (PROPERTY) [[!] UnknownKotlinExpression (PROPERTY)] = Undetermined
                 UBinaryExpression (operator = =) [mutableProp = 1] = Undetermined
                     USimpleNameReferenceExpression (identifier = mutableProp) [mutableProp] = external mutableProp()
@@ -31,7 +34,8 @@ UFile (package = ) [public final class PropertyReferencesKt {...]
                     USimpleNameReferenceExpression (identifier = x) [x] = external x()
                 UPrefixExpression (operator = ++) [++mutableProp] = Undetermined
                     USimpleNameReferenceExpression (identifier = mutableProp) [mutableProp] = external mutableProp()
-                [!] UnknownKotlinExpression (POSTFIX_EXPRESSION) [[!] UnknownKotlinExpression (POSTFIX_EXPRESSION)] = Undetermined
+                UPostfixExpression (operator = --) [mutableProp--] = external mutableProp()
+                    USimpleNameReferenceExpression (identifier = mutableProp) [mutableProp] = external mutableProp()
     UClass (name = A) [public final class A {...}]
         UField (name = privateProp) [private var privateProp: int = 0]
             ULiteralExpression (value = 0) [0] = (long)0

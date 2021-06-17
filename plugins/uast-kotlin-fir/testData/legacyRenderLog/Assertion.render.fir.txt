@@ -1,6 +1,6 @@
 public final class AssertionKt {
     public static final fun foo() : java.lang.String {
         [!] UnknownKotlinExpression (PROPERTY)
-        return [!] UnknownKotlinExpression (POSTFIX_EXPRESSION)
+        return s!!
     }
 }

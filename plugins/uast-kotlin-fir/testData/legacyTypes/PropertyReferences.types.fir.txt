@@ -18,7 +18,10 @@ UFile (package = ) [public final class PropertyReferencesKt {...]
                     UQualifiedReferenceExpression [a.mutableProp] : PsiType:int
                         USimpleNameReferenceExpression (identifier = a) [a] : PsiType:void
                         USimpleNameReferenceExpression (identifier = mutableProp) [mutableProp] : PsiType:int
-                [!] UnknownKotlinExpression (POSTFIX_EXPRESSION) [[!] UnknownKotlinExpression (POSTFIX_EXPRESSION)]
+                UPostfixExpression (operator = --) [a.mutableProp--] : PsiType:int
+                    UQualifiedReferenceExpression [a.mutableProp] : PsiType:int
+                        USimpleNameReferenceExpression (identifier = a) [a] : PsiType:void
+                        USimpleNameReferenceExpression (identifier = mutableProp) [mutableProp] : PsiType:int
         UMethod (name = ext) [public static final fun ext($this$ext: A) : void {...}]
             UParameter (name = $this$ext) [var $this$ext: A]
             UBlockExpression [{...}] : PsiType:int
@@ -31,7 +34,8 @@ UFile (package = ) [public final class PropertyReferencesKt {...]
                     USimpleNameReferenceExpression (identifier = x) [x] : PsiType:int
                 UPrefixExpression (operator = ++) [++mutableProp] : PsiType:int
                     USimpleNameReferenceExpression (identifier = mutableProp) [mutableProp] : PsiType:int
-                [!] UnknownKotlinExpression (POSTFIX_EXPRESSION) [[!] UnknownKotlinExpression (POSTFIX_EXPRESSION)]
+                UPostfixExpression (operator = --) [mutableProp--] : PsiType:int
+                    USimpleNameReferenceExpression (identifier = mutableProp) [mutableProp] : PsiType:int
     UClass (name = A) [public final class A {...}]
         UField (name = privateProp) [private var privateProp: int = 0]
             ULiteralExpression (value = 0) [0] : PsiType:int
