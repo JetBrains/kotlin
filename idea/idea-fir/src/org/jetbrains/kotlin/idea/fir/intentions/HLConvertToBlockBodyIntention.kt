@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.idea.fir.applicators.ApplicabilityRanges
 import org.jetbrains.kotlin.idea.formatter.adjustLineIndent
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.types.KtClassErrorType
-import org.jetbrains.kotlin.idea.frontend.api.types.KtType
-import org.jetbrains.kotlin.idea.util.resultingWhens
 import org.jetbrains.kotlin.idea.util.setType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
@@ -29,7 +27,6 @@ class HLConvertToBlockBodyIntention :
     AbstractHLIntention<KtDeclarationWithBody, HLConvertToBlockBodyIntention.Input>(KtDeclarationWithBody::class, applicator) {
 
     class Input(
-        val returnType: KtType,
         val returnTypeIsUnit: Boolean,
         val returnTypeIsNothing: Boolean,
         val returnTypeString: String,
@@ -58,7 +55,6 @@ class HLConvertToBlockBodyIntention :
             val returnType = declaration.getReturnKtType().approximateToSuperPublicDenotableOrSelf()
             val bodyType = body.getKtType()
             return Input(
-                returnType,
                 returnType.isUnit,
                 returnType.isNothing,
                 returnType.render(),
@@ -104,9 +100,8 @@ class HLConvertToBlockBodyIntention :
         private fun generateBody(body: KtExpression, input: Input, returnsValue: Boolean): KtExpression {
             val factory = KtPsiFactory(body)
             if (input.bodyTypeIsUnit && body is KtNameReferenceExpression) return factory.createEmptyBody()
-            val unitWhenAsResult = input.bodyTypeIsUnit && body.resultingWhens().isNotEmpty()
             val needReturn = returnsValue && (!input.bodyTypeIsUnit && !input.bodyTypeIsNothing)
-            return if (needReturn || unitWhenAsResult) {
+            return if (needReturn) {
                 val annotatedExpr = body as? KtAnnotatedExpression
                 val returnedExpr = annotatedExpr?.baseExpression ?: body
                 val block = factory.createSingleStatementBlock(factory.createExpressionByPattern("return $0", returnedExpr))
