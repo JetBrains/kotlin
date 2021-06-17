@@ -26,38 +26,45 @@ interface UastResolveApiTestBase : FirUastPluginSelection {
             ?: throw IllegalStateException("No facade found at ${uFile.asRefNames()}")
         val test = facade.methods.find { it.name == "test" }
             ?: throw IllegalStateException("Target function not found at ${uFile.asRefNames()}")
-        val resolvedOperators: MutableList<PsiMethod> = mutableListOf()
+        val resolvedBinaryOperators: MutableList<PsiMethod> = mutableListOf()
         test.accept(object : UastVisitor {
             override fun visitElement(node: UElement): Boolean {
                 return false
             }
 
             override fun visitBinaryExpression(node: UBinaryExpression): Boolean {
-                node.resolveOperator()?.let { resolvedOperators.add(it) }
+                node.resolveOperator()?.let { resolvedBinaryOperators.add(it) }
                 return false
             }
         })
         // TODO: Handle FirEqualityOperatorCall in KtFirCallResolver#resolveCall(KtBinaryExpression)
         if (!isFirUastPlugin) {
-            Assert.assertEquals("Expect != (String.equals)", 1, resolvedOperators.size)
-            val op = resolvedOperators.single()
+            Assert.assertEquals("Expect != (String.equals)", 1, resolvedBinaryOperators.size)
+            val op = resolvedBinaryOperators.single()
             Assert.assertEquals("equals", op.name)
         }
 
         val kt44412 = facade.methods.find { it.name == "kt44412" }
             ?: throw IllegalStateException("Target function not found at ${uFile.asRefNames()}")
-        resolvedOperators.clear()
+        resolvedBinaryOperators.clear()
+        val resolvedUnaryOperators: MutableList<PsiMethod> = mutableListOf()
         kt44412.accept(object : UastVisitor {
             override fun visitElement(node: UElement): Boolean {
                 return false
             }
 
             override fun visitBinaryExpression(node: UBinaryExpression): Boolean {
-                node.resolveOperator()?.let { resolvedOperators.add(it) }
+                node.resolveOperator()?.let { resolvedBinaryOperators.add(it) }
+                return false
+            }
+
+            override fun visitPrefixExpression(node: UPrefixExpression): Boolean {
+                node.resolveOperator()?.let { resolvedUnaryOperators.add(it) }
                 return false
             }
         })
-        Assert.assertEquals("Kotlin built-in >= (int.compareTo) and == (int.equals) are invisible", 0, resolvedOperators.size)
+        Assert.assertEquals("Kotlin built-in >= (int.compareTo) and == (int.equals) are invisible", 0, resolvedBinaryOperators.size)
+        Assert.assertEquals("Kotlin built-in ++ (int.inc) is invisible", 0, resolvedUnaryOperators.size)
     }
 
     fun checkCallbackForIf(filePath: String, uFile: UFile) {

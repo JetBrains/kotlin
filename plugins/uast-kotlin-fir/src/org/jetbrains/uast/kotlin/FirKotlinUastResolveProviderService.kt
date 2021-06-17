@@ -30,6 +30,11 @@ interface FirKotlinUastResolveProviderService : BaseKotlinUastResolveProviderSer
                     return ktElement.resolveCall()?.toPsiMethod()
                 }
             }
+            is KtUnaryExpression -> {
+                analyseForUast(ktElement) {
+                    return ktElement.resolveCall()?.toPsiMethod()
+                }
+            }
             else ->
                 return null
         }
