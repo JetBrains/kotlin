@@ -187,11 +187,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             messageCollectorLogger(configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY] ?: error("Could not find message collector"))
         )
 
-        val friendAbsolutePaths = friendLibraries.map { File(it).absolutePath }
-        val friendDependencies = resolvedLibraries.getFullList().filter {
-            it.libraryFile.absolutePath in friendAbsolutePaths
-        }
-
         if (arguments.irProduceKlibDir || arguments.irProduceKlibFile) {
             if (arguments.irProduceKlibFile) {
                 require(outputFile.extension == KLIB_FILE_EXTENSION) { "Please set up .klib file as output" }
@@ -202,8 +197,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 files = sourcesFiles,
                 analyzer = AnalyzerWithCompilerReport(config.configuration),
                 configuration = config.configuration,
-                allDependencies = resolvedLibraries,
-                friendDependencies = friendDependencies,
+                dependencies = libraries,
+                friendDependencies = friendLibraries,
                 irFactory = PersistentIrFactory(), // TODO IrFactoryImpl?
                 outputKlibPath = outputFile.path,
                 nopack = arguments.irProduceKlibDir,
@@ -235,8 +230,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     config.configuration,
                     PhaseConfig(wasmPhases),
                     IrFactoryImpl,
-                    allDependencies = resolvedLibraries,
-                    friendDependencies = friendDependencies,
+                    dependencies = libraries,
+                    friendDependencies = friendLibraries,
                     exportedDeclarations = setOf(FqName("main"))
                 )
                 val outputWasmFile = outputFile.withReplacedExtensionOrNull(outputFile.extension, "wasm")!!
@@ -262,8 +257,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 config.configuration,
                 phaseConfig,
                 if (arguments.irDceDriven) PersistentIrFactory() else IrFactoryImpl,
-                allDependencies = resolvedLibraries,
-                friendDependencies = friendDependencies,
+                dependencies = libraries,
+                friendDependencies = friendLibraries,
                 mainArguments = mainCallArguments,
                 generateFullJs = !arguments.irDce,
                 generateDceJs = arguments.irDce,

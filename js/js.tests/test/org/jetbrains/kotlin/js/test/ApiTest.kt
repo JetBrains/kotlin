@@ -83,8 +83,8 @@ class ApiTest : KotlinTestWithEnvironment() {
                 MainModule.Klib(resolvedLibraries.getFullList().single()),
                 AnalyzerWithCompilerReport(configuration),
                 configuration,
-                resolvedLibraries,
-                listOf(),
+                listOf(fullRuntimeKlib),
+                emptyList(),
                 IrFactoryImpl,
             ).module.descriptor.packagesSerialized()
         }

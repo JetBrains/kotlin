@@ -68,6 +68,8 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.util.DummyLogger
+import org.jetbrains.kotlin.util.Logger
 import org.jetbrains.kotlin.utils.DFS
 import java.io.File
 import org.jetbrains.kotlin.konan.file.File as KFile
@@ -95,13 +97,36 @@ private val CompilerConfiguration.expectActualLinker: Boolean
 
 class KotlinFileSerializedData(val metadata: ByteArray, val irData: SerializedIrFile)
 
+private fun IrMessageLogger?.toResolverLogger(): Logger {
+    if (this == null) return DummyLogger
+
+    return object : Logger {
+        override fun log(message: String) {
+            report(IrMessageLogger.Severity.INFO, message, null)
+        }
+
+        override fun error(message: String) {
+            report(IrMessageLogger.Severity.ERROR, message, null)
+        }
+
+        override fun warning(message: String) {
+            report(IrMessageLogger.Severity.WARNING, message, null)
+        }
+
+        override fun fatal(message: String): Nothing {
+            report(IrMessageLogger.Severity.ERROR, message, null)
+            kotlin.error("FATAL ERROR: $message")
+        }
+    }
+}
+
 fun generateKLib(
     project: Project,
     files: List<KtFile>,
     analyzer: AbstractAnalyzerWithCompilerReport,
     configuration: CompilerConfiguration,
-    allDependencies: KotlinLibraryResolveResult,
-    friendDependencies: List<KotlinLibrary>,
+    dependencies: Collection<String>,
+    friendDependencies: Collection<String>,
     irFactory: IrFactory,
     outputKlibPath: String,
     nopack: Boolean,
@@ -142,8 +167,8 @@ fun generateKLib(
     }
 
     val depsDescriptors =
-        ModulesStructure(project, MainModule.SourceFiles(files), analyzer, configuration, allDependencies, friendDependencies)
-
+        ModulesStructure(project, MainModule.SourceFiles(files), analyzer, configuration, dependencies, friendDependencies)
+    val allDependencies = depsDescriptors.allDependencies
     val (psi2IrContext, hasErrors) = runAnalysisAndPreparePsi2Ir(depsDescriptors, irFactory, errorPolicy)
     val irBuiltIns = psi2IrContext.irBuiltIns
     val functionFactory = IrFunctionFactory(irBuiltIns, psi2IrContext.symbolTable)
@@ -223,13 +248,14 @@ fun loadIr(
     mainModule: MainModule,
     analyzer: AbstractAnalyzerWithCompilerReport,
     configuration: CompilerConfiguration,
-    allDependencies: KotlinLibraryResolveResult,
-    friendDependencies: List<KotlinLibrary>,
+    dependencies: Collection<String>,
+    friendDependencies: Collection<String>,
     irFactory: IrFactory,
 ): IrModuleInfo {
-    val depsDescriptors = ModulesStructure(project, mainModule, analyzer, configuration, allDependencies, friendDependencies)
+    val depsDescriptors = ModulesStructure(project, mainModule, analyzer, configuration, dependencies, friendDependencies)
     val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
     val messageLogger = configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None
+    val allDependencies = depsDescriptors.allDependencies
 
     when (mainModule) {
         is MainModule.SourceFiles -> {
@@ -390,9 +416,21 @@ private class ModulesStructure(
     private val mainModule: MainModule,
     private val analyzer: AbstractAnalyzerWithCompilerReport,
     val compilerConfiguration: CompilerConfiguration,
-    val allDependencies: KotlinLibraryResolveResult,
-    private val friendDependencies: List<KotlinLibrary>
+    val dependencies: Collection<String>,
+    friendDependenciesPaths: Collection<String>
 ) {
+    val allDependencies = jsResolveLibraries(
+        dependencies,
+        compilerConfiguration[JSConfigurationKeys.REPOSITORIES] ?: emptyList(),
+        compilerConfiguration[IrMessageLogger.IR_MESSAGE_LOGGER].toResolverLogger()
+    )
+
+    private val friendAbsolutePaths = friendDependenciesPaths.map { File(it).absolutePath }
+    val friendDependencies = allDependencies.getFullList().filter {
+        it.libraryFile.absolutePath in friendAbsolutePaths
+    }
+
+
     val moduleDependencies: Map<KotlinLibrary, List<KotlinLibrary>> = run {
         val transitives = allDependencies.getFullResolvedList()
         transitives.associate { klib ->
