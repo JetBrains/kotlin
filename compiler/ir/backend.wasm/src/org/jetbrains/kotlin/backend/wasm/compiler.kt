@@ -19,8 +19,6 @@ import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.noUnboundLeft
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
-import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi2ir.generators.generateTypicalIrProviderList
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToBinary
@@ -36,13 +34,13 @@ fun compileWasm(
     configuration: CompilerConfiguration,
     phaseConfig: PhaseConfig,
     irFactory: IrFactory,
-    allDependencies: KotlinLibraryResolveResult,
-    friendDependencies: List<KotlinLibrary>,
+    dependencies: Collection<String>,
+    friendDependencies: Collection<String>,
     exportedDeclarations: Set<FqName> = emptySet()
 ): WasmCompilerResult {
     val (moduleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) =
         loadIr(
-            project, mainModule, analyzer, configuration, allDependencies, friendDependencies,
+            project, mainModule, analyzer, configuration, dependencies, friendDependencies,
             irFactory, verifySignatures = false
         )
 

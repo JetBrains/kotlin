@@ -22,8 +22,6 @@ import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.noUnboundLeft
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
-import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.name.FqName
 
 class CompilerResult(
@@ -45,8 +43,8 @@ fun compile(
     configuration: CompilerConfiguration,
     phaseConfig: PhaseConfig,
     irFactory: IrFactory,
-    allDependencies: KotlinLibraryResolveResult,
-    friendDependencies: List<KotlinLibrary>,
+    dependencies: Collection<String>,
+    friendDependencies: Collection<String>,
     mainArguments: List<String>?,
     exportedDeclarations: Set<FqName> = emptySet(),
     generateFullJs: Boolean = true,
@@ -65,7 +63,7 @@ fun compile(
     safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null,
 ): CompilerResult {
     val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer, moduleToName) =
-        loadIr(project, mainModule, analyzer, configuration, allDependencies, friendDependencies, irFactory, verifySignatures)
+        loadIr(project, mainModule, analyzer, configuration, dependencies, friendDependencies, irFactory, verifySignatures)
 
     val moduleDescriptor = moduleFragment.descriptor
 

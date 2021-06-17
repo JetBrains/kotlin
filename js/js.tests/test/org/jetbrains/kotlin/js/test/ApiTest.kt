@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.js.test
 
 import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.js.messageCollectorLogger
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -16,7 +14,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.EnumEntrySyntheticClassDescriptor
 import org.jetbrains.kotlin.ir.backend.js.MainModule
-import org.jetbrains.kotlin.ir.backend.js.jsResolveLibraries
 import org.jetbrains.kotlin.ir.backend.js.loadIr
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
@@ -72,19 +69,16 @@ class ApiTest : KotlinTestWithEnvironment() {
         get() {
             val fullRuntimeKlib: String = System.getProperty("kotlin.js.full.stdlib.path")
 
-            val resolvedLibraries =
-                jsResolveLibraries(listOf(File(fullRuntimeKlib).absolutePath), emptyList(), messageCollectorLogger(MessageCollector.NONE))
-
             val project = environment.project
             val configuration = environment.configuration
 
             return loadIr(
                 project,
-                MainModule.Klib(resolvedLibraries.getFullList().single()),
+                MainModule.Klib(File(fullRuntimeKlib).canonicalPath),
                 AnalyzerWithCompilerReport(configuration),
                 configuration,
-                resolvedLibraries,
-                listOf(),
+                listOf(fullRuntimeKlib),
+                emptyList(),
                 IrFactoryImpl,
                 verifySignatures = true
             ).module.descriptor.packagesSerialized()
