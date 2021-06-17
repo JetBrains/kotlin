@@ -47,20 +47,18 @@ fun KGPBaseTest.project(
 
     val gradleRunner = GradleRunner
         .create()
-        .withDebug(enableGradleDebug)
         .withProjectDir(projectPath.toFile())
         .withTestKitDir(testKitDir.toAbsolutePath().toFile())
         .withGradleVersion(gradleVersion.version)
-        .also {
-            if (forceOutput) it.forwardOutput()
-        }
 
     val testProject = TestProject(
         gradleRunner,
         projectName,
         buildOptions,
         projectPath,
-        gradleVersion
+        gradleVersion,
+        enableGradleDebug,
+        forceOutput
     )
     testProject.test()
     return testProject
@@ -71,8 +69,8 @@ fun KGPBaseTest.project(
  */
 fun TestProject.build(
     vararg buildArguments: String,
-    forceOutput: Boolean = false,
-    enableGradleDebug: Boolean = false,
+    forceOutput: Boolean = this.forceOutput,
+    enableGradleDebug: Boolean = this.enableGradleDebug,
     assertions: BuildResult.() -> Unit = {}
 ) {
     val allBuildArguments = commonBuildSetup(buildArguments.toList())
@@ -91,8 +89,8 @@ fun TestProject.build(
  */
 fun TestProject.buildAndFail(
     vararg buildArguments: String,
-    forceOutput: Boolean = false,
-    enableGradleDebug: Boolean = false,
+    forceOutput: Boolean = this.forceOutput,
+    enableGradleDebug: Boolean = this.enableGradleDebug,
     assertions: BuildResult.() -> Unit = {}
 ) {
     val allBuildArguments = commonBuildSetup(buildArguments.toList())
@@ -133,7 +131,9 @@ class TestProject(
     val projectName: String,
     val buildOptions: KGPBaseTest.BuildOptions,
     val projectPath: Path,
-    val gradleVersion: GradleVersion
+    val gradleVersion: GradleVersion,
+    val enableGradleDebug: Boolean,
+    val forceOutput: Boolean
 ) {
     val rootBuildGradle: Path get() = projectPath.resolve("build.gradle")
     val settingsGradle: Path get() = projectPath.resolve("settings.gradle")
