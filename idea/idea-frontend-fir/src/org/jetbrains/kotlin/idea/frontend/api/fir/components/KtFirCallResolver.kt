@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.idea.references.FirReferenceResolveHelper
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtUnaryExpression
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal class KtFirCallResolver(
@@ -42,6 +43,20 @@ internal class KtFirCallResolver(
             is FirFunctionCall -> resolveCall(fir)
             is FirComparisonExpression -> resolveCall(fir.compareToCall)
             is FirEqualityOperatorCall -> null // TODO
+            else -> null
+        }
+    }
+
+    override fun resolveCall(call: KtUnaryExpression): KtCall? = withValidityAssertion {
+        when (val fir = call.getOrBuildFir(firResolveState)) {
+            is FirFunctionCall -> resolveCall(fir)
+            is FirBlock -> {
+                // Desugared increment or decrement block. See [BaseFirBuilder#generateIncrementOrDecrementBlock]
+                // There would be corresponding inc()/dec() call that is assigned back to a temp variable.
+                val prefix = fir.statements.filterIsInstance<FirVariableAssignment>().find { it.rValue is FirFunctionCall }
+                (prefix?.rValue as? FirFunctionCall)?.let { resolveCall(it) }
+            }
+            is FirCheckNotNullCall -> null // TODO
             else -> null
         }
     }
