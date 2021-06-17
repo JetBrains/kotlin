@@ -43,6 +43,10 @@
          <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-jdk8"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-jvm-minimal-for-test"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-project-model"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-test"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-test-annotations-common"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-test-common"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-test-junit"/>
          <trust file="kotlin-native-prebuilt-.*" regex="true"/>
          <trust file=".*-javadoc[.]jar" regex="true"/>
          <trust file=".*-sources[.]jar" regex="true"/>
