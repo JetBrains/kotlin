@@ -405,8 +405,8 @@ if (attachedIntellijVersion != null) {
 
 if (attachedIntellijVersion > "202") {
     kotlinIde "kotlin.fir-all-tests/kotlin.fir-all-tests.iml"
-    kotlinIde "kotlin.resources-descriptors.iml"
-    kotlinIde "kotlin.resources-fir.iml"
+    kotlinIde "resources-fe10/kotlin.resources-fe10.iml"
+    kotlinIde "resources-fir/kotlin.resources-fir.iml"
 }
 
 if (!buildProperties.getBoolean("disableKotlinPluginModules", false) && attachedIntellijVersion == null) {
