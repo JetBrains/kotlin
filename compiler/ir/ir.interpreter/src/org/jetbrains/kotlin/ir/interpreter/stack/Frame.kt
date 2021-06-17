@@ -123,7 +123,7 @@ internal class SubFrame(val owner: IrElement) {
 
     // Methods to work with memory
     fun addVariable(variable: Variable) {
-        memory += variable
+        memory.add(0, variable)
     }
 
     private fun getVariable(symbol: IrSymbol): Variable? = memory.firstOrNull { it.symbol == symbol }

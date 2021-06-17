@@ -183,7 +183,11 @@ internal class CallStack {
 
     fun storeUpValues(state: StateWithClosure) {
         // TODO save only necessary declarations
-        state.upValues.addAll(currentFrame.getAll().toMutableList())
+        currentFrame.getAll().reversed().forEach { variable ->
+            // TODO replace list with map
+            val index = state.upValues.indexOfFirst { it.symbol == variable.symbol }
+            if (index == -1) state.upValues.add(variable) else state.upValues[index] = variable
+        }
     }
 
     fun loadUpValues(state: StateWithClosure) {

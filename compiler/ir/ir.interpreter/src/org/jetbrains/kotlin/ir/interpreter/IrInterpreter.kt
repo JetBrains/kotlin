@@ -187,26 +187,27 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         callStack.dropSubFrame() // drop intermediate frame that contains variables for default arg evaluation
         callStack.newFrame(irFunction)
         callStack.addInstruction(SimpleInstruction(irFunction))
+
+        // 3. load up values onto stack; do it at first to set low priority of these variables
+        if (dispatchReceiver is StateWithClosure) callStack.loadUpValues(dispatchReceiver)
+        if (extensionReceiver is StateWithClosure) callStack.loadUpValues(extensionReceiver)
+        if (irFunction.isLocal) callStack.copyUpValuesFromPreviousFrame()
+
         // TODO: if using KTypeState then it's class must be corresponding
         // `call.type` is used in check cast and emptyArray
         callStack.addVariable(Variable(irFunction.symbol, KTypeState(call.type, irBuiltIns.anyClass.owner)))
 
-        // 3. store arguments in memory (remap args on actual names)
+        // 4. store arguments in memory (remap args on actual names)
         irFunction.getDispatchReceiver()?.let { dispatchReceiver?.let { receiver -> callStack.addVariable(Variable(it, receiver)) } }
         irFunction.getExtensionReceiver()?.let { callStack.addVariable(Variable(it, extensionReceiver ?: valueArguments.removeFirst())) }
         irFunction.valueParameters.forEach { callStack.addVariable(Variable(it.symbol, valueArguments.removeFirst())) }
 
-        // 4. store reified type parameters
+        // 5. store reified type parameters
         irFunction.typeParameters.filter { it.isReified }
             .forEach { callStack.addVariable(Variable(it.symbol, KTypeState(call.getTypeArgument(it.index)!!, irBuiltIns.anyClass.owner))) }
 
-        // 5. load outer class object
+        // 6. load outer class object
         if (dispatchReceiver is Complex && irFunction.parentClassOrNull?.isInner == true) dispatchReceiver.loadOuterClassesInto(callStack)
-
-        // 6. load up values onto stack
-        if (dispatchReceiver is StateWithClosure) callStack.loadUpValues(dispatchReceiver)
-        if (extensionReceiver is StateWithClosure) callStack.loadUpValues(extensionReceiver)
-        if (irFunction.isLocal) callStack.copyUpValuesFromPreviousFrame()
 
         callInterceptor.interceptCall(call, irFunction, args) {
             callStack.addInstruction(CompoundInstruction(irFunction))
@@ -259,6 +260,8 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         callStack.dropSubFrame()
         callStack.newFrame(constructor)
         callStack.addInstruction(SimpleInstruction(constructor))
+        if (irClass.isLocal) callStack.loadUpValues(objectState as StateWithClosure)
+
         callStack.addVariable(Variable(constructorCall.getThisReceiver(), objectState))
         constructor.valueParameters.forEachIndexed { i, param -> callStack.addVariable(Variable(param.symbol, valueArguments[i])) }
 
@@ -274,16 +277,15 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         if (outerClass != null) {
             val outerClassVar = Variable(irClass.parentAsClass.thisReceiver!!.symbol, outerClass)
             (objectState as Complex).outerClass = outerClassVar
-            if (superReceiver != receiverSymbol) {
+            if (superReceiver?.owner?.type != receiverSymbol.owner.type) {
                 // This check is needed to test that this inner class is not subclass of its outer.
                 // If it is true and if we add the next symbol, it will interfere with super symbol in memory.
                 // In other case, we need this variable when inner class has inner super class.
                 callStack.addVariable(Variable(receiverSymbol, outerClass))
+                // used to get information from outer class
+                objectState.loadOuterClassesInto(callStack, constructorCall.getThisReceiver())
             }
-            // used to get information from outer class
-            objectState.loadOuterClassesInto(callStack)
         }
-        if (irClass.isLocal) callStack.loadUpValues(objectState as StateWithClosure)
 
         callInterceptor.interceptConstructor(constructorCall, valueArguments) {
             callStack.addInstruction(CompoundInstruction(constructor))
