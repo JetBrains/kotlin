@@ -138,6 +138,16 @@ class TestProject(
     val rootBuildGradle: Path get() = projectPath.resolve("build.gradle")
     val settingsGradle: Path get() = projectPath.resolve("settings.gradle")
     val gradleProperties: Path get() = projectPath.resolve("gradle.properties")
+    val localProperties: Path get() = projectPath.resolve("local.properties")
+
+    fun classesDir(
+        sourceSet: String = "main",
+        language: String = "kotlin"
+    ): Path = projectPath.resolve("build/classes/$language/$sourceSet/")
+
+    fun kotlinClassesDir(
+        sourceSet: String = "main"
+    ): Path = classesDir(sourceSet, language = "kotlin")
 }
 
 private fun TestProject.commonBuildSetup(
