@@ -6,6 +6,6 @@ sealed class Subtype<A1, B1> {
 }
 
 fun <A, B> unsafeCast(value: A): B {
-    val proof: Subtype<A, B> = <!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>Subtype.Trivial()<!>
+    val proof: Subtype<A, B> = Subtype.Trivial()
     return proof.cast(value)
 }
