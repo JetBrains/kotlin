@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.defaultType
 
 /** Represents a progression type in the Kotlin stdlib. */
-internal sealed class ProgressionType(
+sealed class ProgressionType(
     val elementClass: IrClass,
     val stepClass: IrClass,
     val minValueAsLong: Long,

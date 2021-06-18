@@ -94,11 +94,11 @@ val forLoopsPhase = makeIrFilePhase(
  *   }
  * ```
  */
-class ForLoopsLowering(val context: CommonBackendContext) : BodyLoweringPass {
+class ForLoopsLowering(val context: CommonBackendContext, val loopBodyTransformer: ForLoopBodyTransformer? = null) : BodyLoweringPass {
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val oldLoopToNewLoop = mutableMapOf<IrLoop, IrLoop>()
-        val transformer = RangeLoopTransformer(context, container as IrSymbolOwner, oldLoopToNewLoop)
+        val transformer = RangeLoopTransformer(context, container as IrSymbolOwner, oldLoopToNewLoop, loopBodyTransformer)
         irBody.transformChildrenVoid(transformer)
 
         // Update references in break/continue.
@@ -111,10 +111,46 @@ class ForLoopsLowering(val context: CommonBackendContext) : BodyLoweringPass {
     }
 }
 
+/**
+ * Abstract class for additional for-loop bodies transformations.
+ */
+abstract class ForLoopBodyTransformer : IrElementTransformerVoid() {
+    protected lateinit var mainLoopVariable: IrVariable
+    protected lateinit var loopHeader: ForLoopHeader
+    protected lateinit var loopVariableComponents: Map<Int, IrVariable>
+    protected lateinit var context: CommonBackendContext
+
+    open fun initialize(
+        context: CommonBackendContext,
+        loopVariable: IrVariable,
+        forLoopHeader: ForLoopHeader,
+        loopComponents: Map<Int, IrVariable>
+    ) {
+        this.context = context
+        mainLoopVariable = loopVariable
+        loopHeader = forLoopHeader
+        loopVariableComponents = loopComponents
+    }
+
+    fun transform(
+        context: CommonBackendContext,
+        irExpression: IrExpression,
+        loopVariable: IrVariable,
+        forLoopHeader: ForLoopHeader,
+        loopComponents: Map<Int, IrVariable>
+    ) {
+        initialize(context, loopVariable, forLoopHeader, loopComponents)
+        irExpression.transformChildrenVoid(this)
+    }
+
+    open fun shouldTransform(context: CommonBackendContext) = true
+}
+
 private class RangeLoopTransformer(
     val context: CommonBackendContext,
     val container: IrSymbolOwner,
-    val oldLoopToNewLoop: MutableMap<IrLoop, IrLoop>
+    val oldLoopToNewLoop: MutableMap<IrLoop, IrLoop>,
+    val loopBodyTransformer: ForLoopBodyTransformer? = null
 ) : IrElementTransformerVoidWithContext() {
 
     private val headerInfoBuilder = DefaultHeaderInfoBuilder(context, this::getScopeOwnerSymbol)
@@ -256,6 +292,9 @@ private class RangeLoopTransformer(
             } else {
                 it
             }
+        }
+        if (newBody != null && loopBodyTransformer != null && loopBodyTransformer.shouldTransform(context)) {
+            loopBodyTransformer.transform(context, newBody, mainLoopVariable, loopHeader, loopVariableComponents)
         }
 
         return loopHeader.buildLoop(context.createIrBuilder(getScopeOwnerSymbol(), loop.startOffset, loop.endOffset), loop, newBody)

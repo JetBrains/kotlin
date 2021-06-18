@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /** Builds a [HeaderInfo] for iteration over iterables using the `get / []` operator and an index. */
-internal abstract class IndexedGetIterationHandler(
+abstract class IndexedGetIterationHandler(
     protected val context: CommonBackendContext,
     private val canCacheLast: Boolean
 ) : ExpressionHandler {
