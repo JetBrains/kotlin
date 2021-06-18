@@ -205,6 +205,9 @@ class EnumClassConstructorBodyTransformer(val context: JsCommonBackendContext) :
                 for (i in 0..1) {
                     putValueArgument(i, builder.irGet(constructor.valueParameters[i]))
                 }
+                for (i in 0 until expression.typeArgumentsCount) {
+                    putTypeArgument(i, expression.getTypeArgument(i))
+                }
             }
 
         override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
@@ -217,6 +220,9 @@ class EnumClassConstructorBodyTransformer(val context: JsCommonBackendContext) :
                 }
                 for (i in 0 until expression.valueArgumentsCount) {
                     putValueArgument(valueArgIdx++, expression.getValueArgument(i))
+                }
+                for (i in 0 until expression.typeArgumentsCount) {
+                    putTypeArgument(i, expression.getTypeArgument(i))
                 }
             }
         }
