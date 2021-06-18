@@ -345,8 +345,8 @@ class DiagnosticReporterByTrackingStrategy(
 
     override fun constraintError(error: ConstraintSystemError) {
         when (error.javaClass) {
-            NewConstraintError::class.java -> {
-                error as NewConstraintError
+            NewConstraintError::class.java, NewConstraintWarning::class.java -> {
+                error as NewConstraintMismatch
                 val position = error.position.from
                 val argument =
                     when (position) {
@@ -356,8 +356,9 @@ class DiagnosticReporterByTrackingStrategy(
                         is LambdaArgumentConstraintPositionImpl -> position.lambda.atom
                         else -> null
                     }
-                val typeMismatchDiagnostic = if (error.isWarning) TYPE_MISMATCH_WARNING else TYPE_MISMATCH
-                val report = if (error.isWarning) trace::reportDiagnosticOnce else trace::report
+                val isWarning = error is NewConstraintWarning
+                val typeMismatchDiagnostic = if (isWarning) TYPE_MISMATCH_WARNING else TYPE_MISMATCH
+                val report = if (isWarning) trace::reportDiagnosticOnce else trace::report
                 argument?.let {
                     it.safeAs<LambdaKotlinCallArgument>()?.let lambda@{ lambda ->
                         val parameterTypes = lambda.parametersTypes?.toList() ?: return@lambda
@@ -365,7 +366,7 @@ class DiagnosticReporterByTrackingStrategy(
                         val lambdaExpression = lambda.psiExpression as? KtLambdaExpression ?: return@lambda
                         val parameter = lambdaExpression.valueParameters.getOrNull(index) ?: return@lambda
                         val diagnosticFactory =
-                            if (error.isWarning) EXPECTED_PARAMETER_TYPE_MISMATCH_WARNING else EXPECTED_PARAMETER_TYPE_MISMATCH
+                            if (isWarning) EXPECTED_PARAMETER_TYPE_MISMATCH_WARNING else EXPECTED_PARAMETER_TYPE_MISMATCH
                         report(diagnosticFactory.on(parameter, error.upperKotlinType))
                         return
                     }
@@ -398,7 +399,7 @@ class DiagnosticReporterByTrackingStrategy(
 
                 (position as? ExplicitTypeParameterConstraintPositionImpl)?.let {
                     val typeArgumentReference = (it.typeArgument as SimpleTypeArgumentImpl).typeReference
-                    val diagnosticFactory = if (error.isWarning) UPPER_BOUND_VIOLATED_WARNING else UPPER_BOUND_VIOLATED
+                    val diagnosticFactory = if (isWarning) UPPER_BOUND_VIOLATED_WARNING else UPPER_BOUND_VIOLATED
                     report(diagnosticFactory.on(typeArgumentReference, error.upperKotlinType, error.lowerKotlinType))
                 }
 
@@ -570,7 +571,7 @@ class DiagnosticReporterByTrackingStrategy(
         }
     }
 
-    private fun reportConstantTypeMismatch(constraintError: NewConstraintError, expression: KtExpression): Boolean {
+    private fun reportConstantTypeMismatch(constraintError: NewConstraintMismatch, expression: KtExpression): Boolean {
         if (expression is KtConstantExpression) {
             val module = context.scope.ownerDescriptor.module
             val constantValue = constantExpressionEvaluator.evaluateToConstantValue(expression, trace, context.expectedType)
@@ -583,5 +584,5 @@ class DiagnosticReporterByTrackingStrategy(
 
 }
 
-val NewConstraintError.upperKotlinType get() = upperType as KotlinType
-val NewConstraintError.lowerKotlinType get() = lowerType as KotlinType
+val NewConstraintMismatch.upperKotlinType get() = upperType as KotlinType
+val NewConstraintMismatch.lowerKotlinType get() = lowerType as KotlinType
