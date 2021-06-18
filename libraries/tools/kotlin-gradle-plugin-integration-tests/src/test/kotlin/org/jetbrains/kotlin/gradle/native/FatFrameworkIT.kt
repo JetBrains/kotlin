@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.native
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.GradleVersionRequired
 import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
+import org.jetbrains.kotlin.gradle.util.addBeforeSubstring
 import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.util.runProcess
@@ -142,6 +143,54 @@ class FatFrameworkIT : BaseGradleIT() {
             build("fat") {
                 assertFailed()
                 assertContains("Cannot add a binary with platform family 'osx' to the fat framework")
+            }
+        }
+    }
+
+    @Test
+    fun testCustomName() {
+        with(transformProjectWithPluginsDsl("smoke", directoryPrefix = "native-fat-framework")) {
+            gradleBuildScript().modify {
+                it.addBeforeSubstring("baseName = \"custom\"\n","from(frameworksToMerge)")
+            }
+
+            build("fat") {
+                val binary = fileInWorkingDir("build/fat-framework/custom.framework/custom")
+                with(runProcess(listOf("otool", "-D", binary.absolutePath), project.projectDir)) {
+                    assertSuccessful()
+                    assertTrue { output.lines().any { it.contains("@rpath/custom.framework/custom") } }
+                }
+            }
+        }
+    }
+
+    @Test
+    fun testDifferentTypes() {
+        with(transformProjectWithPluginsDsl("smoke", directoryPrefix = "native-fat-framework")) {
+            gradleBuildScript().modify {
+                it.checkedReplace("iosArm32()", "iosArm32{binaries.framework {isStatic = true}}")
+                    .checkedReplace("iosArm64()", "iosArm64{binaries.framework {isStatic = false}}")
+                    .checkedReplace("iosX64()", "iosX64{binaries.framework {isStatic = false}}")
+                    .addBeforeSubstring("//", "binaries.framework(listOf(DEBUG))")
+            }
+            build("fat") {
+                assertFailed()
+                assertContains("All input frameworks must be either static or dynamic")
+            }
+        }
+    }
+
+    @Test
+    fun testAllStatic() {
+        with(transformProjectWithPluginsDsl("smoke", directoryPrefix = "native-fat-framework")) {
+            gradleBuildScript().modify {
+                it.checkedReplace("iosArm32()", "iosArm32{binaries.framework {isStatic = true}}")
+                    .checkedReplace("iosArm64()", "iosArm64{binaries.framework {isStatic = true}}")
+                    .checkedReplace("iosX64()", "iosX64{binaries.framework {isStatic = true}}")
+                    .addBeforeSubstring("//", "binaries.framework(listOf(DEBUG))")
+            }
+            build("fat") {
+                assertSuccessful()
             }
         }
     }
