@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.extractTypeParameters
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -278,6 +279,11 @@ class InlineClassLowering(val context: CommonBackendContext) {
 
                             for ((index, valueParameter) in parameters.withIndex()) {
                                 putValueArgument(index, irGet(valueParameter))
+                            }
+
+                            val typeParameters = extractTypeParameters(function.parentAsClass) + function.typeParameters
+                            for ((index, typeParameter) in typeParameters.withIndex()) {
+                                putTypeArgument(index, IrSimpleTypeImpl(typeParameter.symbol, false, emptyList(), emptyList()))
                             }
                         }
                     )
