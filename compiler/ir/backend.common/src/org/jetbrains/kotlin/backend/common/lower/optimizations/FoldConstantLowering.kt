@@ -273,7 +273,8 @@ class FoldConstantLowering(
                             next.startOffset, next.endOffset, context.irBuiltIns.stringType, constToString(next)
                         )
                         else -> folded[folded.size - 1] = IrConstImpl.string(
-                            last.startOffset, next.endOffset, context.irBuiltIns.stringType,
+                            // Inlined strings may have `last.startOffset > next.endOffset`
+                            Math.min(last.startOffset, next.startOffset), Math.max(last.endOffset, next.endOffset), context.irBuiltIns.stringType,
                             constToString(last) + constToString(next)
                         )
                     }
