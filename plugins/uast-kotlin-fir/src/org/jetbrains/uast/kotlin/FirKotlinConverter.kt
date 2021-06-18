@@ -19,10 +19,12 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.uast.*
 import org.jetbrains.uast.expressions.UInjectionHost
+import org.jetbrains.uast.kotlin.declarations.FirKotlinUAnnotation
 
 internal object FirKotlinConverter : BaseKotlinConverter {
     override fun convertAnnotation(annotationEntry: KtAnnotationEntry, givenParent: UElement?): UAnnotation {
-        TODO("Not yet implemented")
+        // TODO: need to polish/implement annotations more
+        return FirKotlinUAnnotation(annotationEntry, givenParent)
     }
 
     internal fun convertDeclarationOrElement(
