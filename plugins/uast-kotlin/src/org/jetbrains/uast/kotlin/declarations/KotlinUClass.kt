@@ -42,35 +42,6 @@ class KotlinUClass(
             else -> KotlinUClass(psi, containingElement)
         }
     }
-
-}
-
-class KotlinUAnonymousClass(
-        psi: PsiAnonymousClass,
-        givenParent: UElement?
-) : AbstractKotlinUClass(givenParent), UAnonymousClass, PsiAnonymousClass by psi {
-
-    override val psi: PsiAnonymousClass = unwrap<UAnonymousClass, PsiAnonymousClass>(psi)
-
-    override val javaPsi: PsiAnonymousClass = psi
-
-    override val sourcePsi: KtClassOrObject? = ktClass
-
-    override fun getOriginalElement(): PsiElement? = super<AbstractKotlinUClass>.getOriginalElement()
-
-    override fun getSuperClass(): UClass? = super<AbstractKotlinUClass>.getSuperClass()
-    override fun getFields(): Array<UField> = super<AbstractKotlinUClass>.getFields()
-    override fun getMethods(): Array<UMethod> = super<AbstractKotlinUClass>.getMethods()
-    override fun getInitializers(): Array<UClassInitializer> = super<AbstractKotlinUClass>.getInitializers()
-    override fun getInnerClasses(): Array<UClass> = super<AbstractKotlinUClass>.getInnerClasses()
-
-    override fun getContainingFile(): PsiFile = unwrapFakeFileForLightClass(psi.containingFile)
-
-    override val uastAnchor by lazy {
-        val ktClassOrObject = (psi.originalElement as? KtLightClass)?.kotlinOrigin as? KtObjectDeclaration ?: return@lazy null
-        KotlinUIdentifier(ktClassOrObject.getObjectKeyword(), this)
-        }
-
 }
 
 class KotlinScriptUClass(

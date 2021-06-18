@@ -5,6 +5,7 @@
 
 package org.jetbrains.uast.kotlin
 
+import com.intellij.psi.PsiAnonymousClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -25,7 +26,7 @@ class FirKotlinUClass(
     companion object {
         fun create(psi: KtLightClass, givenParent: UElement?): UClass {
             return when (psi) {
-                // TODO: PsiAnonymousClass
+                is PsiAnonymousClass -> KotlinUAnonymousClass(psi, givenParent)
                 // TODO: Script
                 else ->
                     FirKotlinUClass(psi, givenParent)
@@ -33,7 +34,5 @@ class FirKotlinUClass(
         }
     }
 }
-
-// TODO: FirKotlinUAnonymousClass or FirKotlinUAnonymousObject ?
 
 // TODO: FirKotlinScriptUClass
