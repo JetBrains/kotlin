@@ -164,6 +164,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
 
         // outer classes can be used in default args evaluation
         if (isReceiver() && state is Complex) state.loadOuterClassesInto(callStack)
+        callStack.pushState(state)
     }
 
     private fun interpretCall(call: IrCall) {
@@ -176,9 +177,9 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
 
         val owner = call.symbol.owner
         // 1. load evaluated arguments from stack
-        val dispatchReceiver = owner.getDispatchReceiver()?.let { callStack.getState(it) }
-        val extensionReceiver = owner.getExtensionReceiver()?.let { callStack.getState(it) }
-        val valueArguments = owner.valueParameters.map { callStack.getState(it.symbol) }.toMutableList()
+        val valueArguments = owner.valueParameters.map { callStack.popState() }.reversed().toMutableList()
+        val extensionReceiver = owner.getExtensionReceiver()?.let { callStack.popState() }
+        val dispatchReceiver = owner.getDispatchReceiver()?.let { callStack.popState() }
 
         // 2. get correct function for interpretation
         val irFunction = dispatchReceiver?.getIrFunctionByIrCall(call) ?: call.symbol.owner
@@ -199,7 +200,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
 
         // 4. store arguments in memory (remap args on actual names)
         irFunction.getDispatchReceiver()?.let { dispatchReceiver?.let { receiver -> callStack.addVariable(Variable(it, receiver)) } }
-        irFunction.getExtensionReceiver()?.let { callStack.addVariable(Variable(it, extensionReceiver ?: valueArguments.removeFirst())) }
+        irFunction.getExtensionReceiver()?.let { callStack.addVariable(Variable(it, extensionReceiver ?: callStack.getState(it))) }
         irFunction.valueParameters.forEach { callStack.addVariable(Variable(it.symbol, valueArguments.removeFirst())) }
 
         // 5. store reified type parameters
@@ -240,7 +241,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
 
     private fun interpretConstructorCall(constructorCall: IrFunctionAccessExpression) {
         val constructor = constructorCall.symbol.owner
-        val valueArguments = constructor.valueParameters.map { callStack.getState(it.symbol) }
+        val valueArguments = constructor.valueParameters.map { callStack.popState() }.reversed()
         val irClass = constructor.parentAsClass
         val receiverSymbol = constructor.dispatchReceiverParameter?.symbol
 
@@ -255,7 +256,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         }
 
         if (irClass.isLocal) callStack.storeUpValues(objectState as StateWithClosure)
-        val outerClass = receiverSymbol?.let { callStack.getState(it) }
+        val outerClass = receiverSymbol?.let { callStack.popState() }
 
         callStack.dropSubFrame()
         callStack.newFrame(constructor)
@@ -603,8 +604,8 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
     private fun interpretFunctionReference(reference: IrFunctionReference) {
         val irFunction = reference.symbol.owner
 
-        val dispatchReceiver = reference.dispatchReceiver?.let { callStack.getState(irFunction.getDispatchReceiver()!!) }
-        val extensionReceiver = reference.extensionReceiver?.let { callStack.getState(irFunction.getExtensionReceiver()!!) }
+        val dispatchReceiver = reference.dispatchReceiver?.let { callStack.popState() }
+        val extensionReceiver = reference.extensionReceiver?.let { callStack.popState() }
 
         callStack.dropSubFrame()
 
@@ -618,10 +619,9 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
     }
 
     private fun interpretPropertyReference(propertyReference: IrPropertyReference) {
-        val receiverSymbol = propertyReference.getter?.owner?.let { it.getDispatchReceiver() ?: it.getExtensionReceiver() }
         // it is impossible to get KProperty2 through ::, so only one receiver can be not null (or both null)
         val receiver = (propertyReference.dispatchReceiver ?: propertyReference.extensionReceiver)
-            ?.let { callStack.getState(receiverSymbol!!) }
+            ?.let { callStack.popState() }
 
         callStack.dropSubFrame()
         val propertyState = KPropertyState(propertyReference, receiver)

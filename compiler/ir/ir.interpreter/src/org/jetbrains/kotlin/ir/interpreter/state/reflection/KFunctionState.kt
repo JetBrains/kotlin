@@ -83,13 +83,13 @@ internal class KFunctionState(
                 val dispatchParameter = irFunction.dispatchReceiverParameter
                 val extensionParameter = irFunction.extensionReceiverParameter
 
-                if (dispatchParameter != null && getField(dispatchParameter.symbol) == null) {
+                if (dispatchParameter != null) {
                     dispatchReceiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, dispatchParameter.type, dispatchParameter.symbol)
-                    (this@impl.valueParameters as MutableList).add(dispatchParameter)
+                    if (getField(dispatchParameter.symbol) == null) (this@impl.valueParameters as MutableList).add(dispatchParameter)
                 }
-                if (extensionParameter != null && getField(extensionParameter.symbol) == null) {
+                if (extensionParameter != null) {
                     extensionReceiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, extensionParameter.type, extensionParameter.symbol)
-                    (this@impl.valueParameters as MutableList).add(extensionParameter)
+                    if (getField(extensionParameter.symbol) == null) (this@impl.valueParameters as MutableList).add(extensionParameter)
                 }
                 irFunction.valueParameters.forEach {
                     putArgument(it, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, it.type, it.symbol))

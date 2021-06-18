@@ -157,31 +157,34 @@ private fun unfoldValueParameters(expression: IrFunctionAccessExpression, callSt
 
     val valueParametersSymbols = irFunction.valueParameters.map { it.symbol }
 
-    // interpret defaults for null arguments (at the end)
-    (expression.valueArgumentsCount - 1 downTo 0).forEach { index ->
-        if (expression.getValueArgument(index) != null) return@forEach
-        callStack.addInstruction(SimpleInstruction(valueParametersSymbols[index].owner))
-
-        getDefaultForParameterAt(index)
-            ?.let { callStack.addInstruction(CompoundInstruction(it)) }
-            ?: expression.getVarargType(index)?.let { // case when value parameter is vararg and it is missing
-                callStack.addInstruction(SimpleInstruction(IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, it)))
-            }
-    }
-
-    // interpret not null arguments (after evaluation of arguments)
-    expression.dispatchReceiver?.let { callStack.addInstruction(SimpleInstruction(irFunction.dispatchReceiverParameter!!)) }
-    expression.extensionReceiver?.let { callStack.addInstruction(SimpleInstruction(irFunction.extensionReceiverParameter!!)) }
-    (0 until expression.valueArgumentsCount).forEach {
-        if (expression.getValueArgument(it) != null) callStack.addInstruction(SimpleInstruction(irFunction.valueParameters[it]))
-    }
-
     // evaluate arguments
-    (expression.valueArgumentsCount - 1 downTo 0).forEach {
-        callStack.addInstruction(CompoundInstruction(expression.getValueArgument(it)))
+    (expression.valueArgumentsCount - 1 downTo 0).forEach { index ->
+        when {
+            expression.getValueArgument(index) != null -> {
+                // interpret arguments that were passed
+                callStack.addInstruction(SimpleInstruction(irFunction.valueParameters[index]))
+                callStack.addInstruction(CompoundInstruction(expression.getValueArgument(index)))
+            }
+            else -> {
+                // interpret defaults for null arguments
+                callStack.addInstruction(SimpleInstruction(valueParametersSymbols[index].owner))
+
+                getDefaultForParameterAt(index)
+                    ?.let { callStack.addInstruction(CompoundInstruction(it)) }
+                    ?: expression.getVarargType(index)?.let { // case when value parameter is vararg and it is missing
+                        callStack.addInstruction(SimpleInstruction(IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, it)))
+                    }
+            }
+        }
     }
-    expression.extensionReceiver?.let { callStack.addInstruction(CompoundInstruction(it)) }
-    expression.dispatchReceiver?.let { callStack.addInstruction(CompoundInstruction(it)) }
+    expression.extensionReceiver?.let {
+        callStack.addInstruction(SimpleInstruction(irFunction.extensionReceiverParameter!!))
+        callStack.addInstruction(CompoundInstruction(it))
+    }
+    expression.dispatchReceiver?.let {
+        callStack.addInstruction(SimpleInstruction(irFunction.dispatchReceiverParameter!!))
+        callStack.addInstruction(CompoundInstruction(it))
+    }
 }
 
 private fun unfoldInstanceInitializerCall(instanceInitializerCall: IrInstanceInitializerCall, callStack: CallStack) {
@@ -378,7 +381,7 @@ private fun unfoldStringConcatenation(expression: IrStringConcatenation, environ
                 val toStringCall = state.createToStringIrCall()
                 callStack.newSubFrame(toStringCall)
                 callStack.addInstruction(SimpleInstruction(toStringCall))
-                callStack.addVariable(Variable(toStringCall.symbol.owner.dispatchReceiverParameter!!.symbol, state))
+                callStack.pushState(state)
             }
         }
     }
