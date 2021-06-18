@@ -60,12 +60,24 @@ external internal fun parkInternal(id: Int, timeoutMicroseconds: Long, process: 
 external internal fun getWorkerNameInternal(id: Int): String?
 
 @ExportForCppRuntime
-internal fun ThrowWorkerUnsupported(): Unit =
-        throw UnsupportedOperationException("Workers are not supported")
+internal fun ThrowWorkerAlreadyTerminated(): Unit =
+        throw IllegalStateException("Worker is already terminated")
 
 @ExportForCppRuntime
-internal fun ThrowWorkerInvalidState(): Unit =
-        throw IllegalStateException("Illegal transfer state")
+internal fun ThrowWrongWorkerOrAlreadyTerminated(): Unit =
+        throw IllegalStateException("Worker is not current or already terminated")
+
+@ExportForCppRuntime
+internal fun ThrowCannotTransferOwnership(): Unit =
+        throw IllegalStateException("Unable to transfer object: it is still owned elsewhere")
+
+@ExportForCppRuntime
+internal fun ThrowFutureInvalidState(): Unit =
+        throw IllegalStateException("Future is in an invalid state")
+
+@ExportForCppRuntime
+internal fun ThrowWorkerUnsupported(): Unit =
+        throw UnsupportedOperationException("Workers are not supported")
 
 @ExportForCppRuntime
 internal fun WorkerLaunchpad(function: () -> Any?) = function()

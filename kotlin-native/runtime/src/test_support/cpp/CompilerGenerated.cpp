@@ -113,7 +113,19 @@ RUNTIME_NORETURN OBJ_GETTER(WorkerLaunchpad, KRef) {
     throw std::runtime_error("Not implemented for tests");
 }
 
-void RUNTIME_NORETURN ThrowWorkerInvalidState() {
+void RUNTIME_NORETURN ThrowWorkerAlreadyTerminated() {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+void RUNTIME_NORETURN ThrowWrongWorkerOrAlreadyTerminated() {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+void RUNTIME_NORETURN ThrowCannotTransferOwnership() {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+void RUNTIME_NORETURN ThrowFutureInvalidState() {
     throw std::runtime_error("Not implemented for tests");
 }
 

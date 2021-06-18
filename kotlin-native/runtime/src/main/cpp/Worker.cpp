@@ -40,7 +40,10 @@ using namespace kotlin;
 
 extern "C" {
 
-RUNTIME_NORETURN void ThrowWorkerInvalidState();
+RUNTIME_NORETURN void ThrowWorkerAlreadyTerminated();
+RUNTIME_NORETURN void ThrowWrongWorkerOrAlreadyTerminated();
+RUNTIME_NORETURN void ThrowCannotTransferOwnership();
+RUNTIME_NORETURN void ThrowFutureInvalidState();
 RUNTIME_NORETURN void ThrowWorkerUnsupported();
 OBJ_GETTER(WorkerLaunchpad, KRef);
 
@@ -202,7 +205,7 @@ KNativePtr transfer(ObjHolder* holder, KInt mode) {
   void* result = CreateStablePointer(holder->obj());
   if (!ClearSubgraphReferences(holder->obj(), mode == CHECKED)) {
     DisposeStablePointer(result);
-    ThrowWorkerInvalidState();
+    ThrowCannotTransferOwnership();
   }
   holder->clear();
   return result;
@@ -430,14 +433,14 @@ class State {
   // Returns `true` if something was indeed processed.
   bool processQueueUnlocked(KInt id) {
     // Can only process queue of the current worker.
-    if (::g_worker == nullptr || id != ::g_worker->id()) ThrowWorkerInvalidState();
+    if (::g_worker == nullptr || id != ::g_worker->id()) ThrowWrongWorkerOrAlreadyTerminated();
     JobKind kind = ::g_worker->processQueueElement(false);
     return kind != JOB_NONE && kind != JOB_TERMINATE;
   }
 
   bool parkUnlocked(KInt id, KLong timeoutMicroseconds, KBoolean process) {
       // Can only park current worker.
-      if (::g_worker == nullptr || id != ::g_worker->id()) ThrowWorkerInvalidState();
+      if (::g_worker == nullptr || id != ::g_worker->id()) ThrowWrongWorkerOrAlreadyTerminated();
       return ::g_worker->park(timeoutMicroseconds, process);
   }
 
@@ -453,7 +456,11 @@ class State {
     {
       Locker locker(&lock_);
       auto it = futures_.find(id);
-      if (it == futures_.end()) ThrowWorkerInvalidState();
+      if (it == futures_.end()) {
+        // Caller checks [stateOfFutureUnlocked] first, so this code is reachable
+        // only when trying to consume future twice concurrently.
+        ThrowFutureInvalidState();
+      }
       future = it->second;
     }
 
@@ -477,7 +484,7 @@ class State {
         Locker locker(&lock_);
         auto it = workers_.find(id);
         if (it == workers_.end()) {
-            ThrowWorkerInvalidState();
+            ThrowWorkerAlreadyTerminated();
         }
         DerefStablePointer(it->second->name(), nameHolder.slot());
     }
@@ -643,7 +650,7 @@ KInt startWorker(KBoolean errorReporting, KRef customName) {
 }
 
 KInt currentWorker() {
-  if (g_worker == nullptr) ThrowWorkerInvalidState();
+  if (g_worker == nullptr) ThrowWorkerAlreadyTerminated();
   return ::g_worker->id();
 }
 
@@ -652,13 +659,13 @@ KInt execute(KInt id, KInt transferMode, KRef producer, KNativePtr jobFunction) 
   WorkerLaunchpad(producer, holder.slot());
   KNativePtr jobArgument = transfer(&holder, transferMode);
   Future* future = theState()->addJobToWorkerUnlocked(id, jobFunction, jobArgument, false, transferMode);
-  if (future == nullptr) ThrowWorkerInvalidState();
+  if (future == nullptr) ThrowWorkerAlreadyTerminated();
   return future->id();
 }
 
 void executeAfter(KInt id, KRef job, KLong afterMicroseconds) {
   if (!theState()->executeJobAfterInWorkerUnlocked(id, job, afterMicroseconds))
-    ThrowWorkerInvalidState();
+    ThrowWorkerAlreadyTerminated();
 }
 
 KBoolean processQueue(KInt id) {
@@ -684,7 +691,7 @@ OBJ_GETTER(getWorkerName, KInt id) {
 KInt requestTermination(KInt id, KBoolean processScheduledJobs) {
   Future* future = theState()->addJobToWorkerUnlocked(
       id, nullptr, nullptr, /* toFront = */ !processScheduledJobs, UNCHECKED);
-  if (future == nullptr) ThrowWorkerInvalidState();
+  if (future == nullptr) ThrowWorkerAlreadyTerminated();
   return future->id();
 }
 
