@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_WITH_IR_EVALUATOR
 LineBreakpoint created at evPropertyRefExpr.kt:8
 Run Java
 Connected to the target VM

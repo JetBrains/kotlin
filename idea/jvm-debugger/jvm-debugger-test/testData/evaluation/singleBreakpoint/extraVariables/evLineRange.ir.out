@@ -1,0 +1,15 @@
+// IGNORE_BACKEND: JVM_IR_WITH_OLD_EVALUATOR, JVM_IR_WITH_IR_EVALUATOR
+LineBreakpoint created at evLineRange.kt:15
+Run Java
+Connected to the target VM
+evLineRange.kt:15
+Compile bytecode for a2.prop
+ frame    = main:15, EvLineRangeKt {evLineRange}
+   local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = evLineRange.kt, 7)
+   local    = a1: evLineRange.A = {evLineRange.A@uniqueID} (sp = evLineRange.kt, 8)
+   local    = a2: evLineRange.A = {evLineRange.A@uniqueID} (sp = evLineRange.kt, 9)
+   local    = a3: evLineRange.A = {evLineRange.A@uniqueID} (sp = evLineRange.kt, 10)
+   local    = i1: int = 1 (sp = evLineRange.kt, 13)
+Disconnected from the target VM
+
+Process finished with exit code 0

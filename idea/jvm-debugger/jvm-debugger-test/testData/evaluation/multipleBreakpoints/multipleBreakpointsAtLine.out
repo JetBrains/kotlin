@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_WITH_IR_EVALUATOR, JVM_IR_WITH_IR_EVALUATOR
 LineBreakpoint created at multipleBreakpointsAtLine.kt:9 lambdaOrdinal = -1
 LineBreakpoint created at multipleBreakpointsAtLine.kt:14 lambdaOrdinal = 1
 LineBreakpoint created at multipleBreakpointsAtLine.kt:19 lambdaOrdinal = 2

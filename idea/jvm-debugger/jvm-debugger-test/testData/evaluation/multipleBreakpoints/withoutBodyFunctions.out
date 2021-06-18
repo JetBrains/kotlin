@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_WITH_IR_EVALUATOR, JVM_IR_WITH_IR_EVALUATOR
 FunctionBreakpoint created at withoutBodyFunctions.kt:9
 FunctionBreakpoint created at withoutBodyFunctions.kt:15
 LineBreakpoint created at withoutBodyFunctions.kt:21
