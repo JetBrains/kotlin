@@ -5,6 +5,7 @@
 
 package kotlin.js
 
+@OptIn(JsIntrinsic::class)
 internal fun equals(obj1: dynamic, obj2: dynamic): Boolean {
     if (obj1 == null) {
         return obj2 == null
@@ -40,6 +41,7 @@ private fun hasOwnPrototypeProperty(o: Any, name: String): Boolean {
     return JsObject.getPrototypeOf(o).hasOwnProperty(name).unsafeCast<Boolean>()
 }
 
+@OptIn(JsIntrinsic::class)
 internal fun hashCode(obj: dynamic): Int {
     if (obj == null)
         return 0
@@ -56,9 +58,10 @@ internal fun hashCode(obj: dynamic): Int {
 private const val POW_2_32 = 4294967296.0
 private const val OBJECT_HASH_CODE_PROPERTY_NAME = "kotlinHashCodeValue$"
 
+@OptIn(JsIntrinsic::class)
 internal fun getObjectHashCode(obj: dynamic): Int {
-    if (!jsIn(OBJECT_HASH_CODE_PROPERTY_NAME, obj)) {
-        var hash = jsBitwiseOr(js("Math").random() * POW_2_32, 0) // Make 32-bit singed integer.
+    if (!jsInIntrinsic(OBJECT_HASH_CODE_PROPERTY_NAME, obj)) {
+        var hash = jsBitOr(js("Math").random() * POW_2_32, 0) // Make 32-bit singed integer.
         var descriptor = js("new Object()")
         descriptor.value = hash
         descriptor.enumerable = false

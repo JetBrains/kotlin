@@ -21,10 +21,11 @@ internal fun numberToLong(a: dynamic): Long = if (a is Long) a else fromNumber(a
 
 internal fun toLong(a: dynamic): Long = fromInt(a)
 
+@OptIn(JsIntrinsic::class)
 internal fun doubleToInt(a: Double): Int = when {
     a > 2147483647 -> 2147483647
     a < -2147483648 -> -2147483648
-    else -> jsBitwiseOr(a, 0)
+    else -> jsBitOr(a, 0)
 }
 
 internal fun numberToChar(a: dynamic) = Char(numberToInt(a).toUShort())

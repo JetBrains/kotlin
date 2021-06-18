@@ -6,8 +6,9 @@
 package kotlin.js
 
 // TODO: Polyfill
+@OptIn(JsIntrinsic::class)
 internal fun imul(a_local: Int, b_local: Int): Int {
-    val lhs = jsBitwiseAnd(a_local, js("0xffff0000")).toDouble() * jsBitwiseAnd(b_local, 0xffff).toDouble()
-    val rhs = jsBitwiseAnd(a_local, 0xffff).toDouble() * b_local.toDouble()
-    return jsBitwiseOr(lhs + rhs, 0)
+    val lhs = jsBitAnd(a_local, js("0xffff0000")).toDouble() * jsBitAnd(b_local, 0xffff).toDouble()
+    val rhs = jsBitAnd(a_local, 0xffff).toDouble() * b_local.toDouble()
+    return jsBitOr(lhs + rhs, 0)
 }

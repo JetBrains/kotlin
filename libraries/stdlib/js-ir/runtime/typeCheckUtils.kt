@@ -74,6 +74,7 @@ public fun isInterface(ctor: dynamic, IType: dynamic): Boolean {
 }
 */
 
+@OptIn(JsIntrinsic::class)
 internal fun isSuspendFunction(obj: dynamic, arity: Int): Boolean {
     if (jsTypeOf(obj) == "function") {
         @Suppress("DEPRECATED_IDENTITY_EQUALS")
@@ -83,6 +84,7 @@ internal fun isSuspendFunction(obj: dynamic, arity: Int): Boolean {
     return false
 }
 
+@OptIn(JsIntrinsic::class)
 internal fun isObject(obj: dynamic): Boolean {
     val objTypeOf = jsTypeOf(obj)
 
@@ -91,7 +93,7 @@ internal fun isObject(obj: dynamic): Boolean {
         "number" -> true
         "boolean" -> true
         "function" -> true
-        else -> jsInstanceOf(obj, js("Object"))
+        else -> jsInstanceOfIntrinsic(obj, js("Object"))
     }
 }
 
@@ -113,17 +115,30 @@ internal fun isChar(@Suppress("UNUSED_PARAMETER") c: Any): Boolean {
 
 // TODO: Distinguish Boolean/Byte and Short/Char
 internal fun isBooleanArray(a: dynamic): Boolean = isJsArray(a) && a.`$type$` === "BooleanArray"
-internal fun isByteArray(a: dynamic): Boolean = jsInstanceOf(a, js("Int8Array"))
-internal fun isShortArray(a: dynamic): Boolean = jsInstanceOf(a, js("Int16Array"))
+
+@OptIn(JsIntrinsic::class)
+internal fun isByteArray(a: dynamic): Boolean = jsInstanceOfIntrinsic(a, js("Int8Array"))
+
+@OptIn(JsIntrinsic::class)
+internal fun isShortArray(a: dynamic): Boolean = jsInstanceOfIntrinsic(a, js("Int16Array"))
+
 internal fun isCharArray(a: dynamic): Boolean = isJsArray(a) && a.`$type$` === "CharArray"
-internal fun isIntArray(a: dynamic): Boolean = jsInstanceOf(a, js("Int32Array"))
-internal fun isFloatArray(a: dynamic): Boolean = jsInstanceOf(a, js("Float32Array"))
-internal fun isDoubleArray(a: dynamic): Boolean = jsInstanceOf(a, js("Float64Array"))
+
+@OptIn(JsIntrinsic::class)
+internal fun isIntArray(a: dynamic): Boolean = jsInstanceOfIntrinsic(a, js("Int32Array"))
+
+@OptIn(JsIntrinsic::class)
+internal fun isFloatArray(a: dynamic): Boolean = jsInstanceOfIntrinsic(a, js("Float32Array"))
+
+@OptIn(JsIntrinsic::class)
+internal fun isDoubleArray(a: dynamic): Boolean = jsInstanceOfIntrinsic(a, js("Float64Array"))
+
 internal fun isLongArray(a: dynamic): Boolean = isJsArray(a) && a.`$type$` === "LongArray"
 
 
 internal fun jsGetPrototypeOf(jsClass: dynamic) = js("Object").getPrototypeOf(jsClass)
 
+@OptIn(JsIntrinsic::class)
 internal fun jsIsType(obj: dynamic, jsClass: dynamic): Boolean {
     if (jsClass === js("Object")) {
         return isObject(obj)
@@ -133,13 +148,13 @@ internal fun jsIsType(obj: dynamic, jsClass: dynamic): Boolean {
         return false
     }
 
-    if (jsTypeOf(jsClass) == "function" && jsInstanceOf(obj, jsClass)) {
+    if (jsTypeOf(jsClass) == "function" && jsInstanceOfIntrinsic(obj, jsClass)) {
         return true
     }
 
     var proto = jsGetPrototypeOf(jsClass)
     var constructor = proto?.constructor
-    if (constructor != null && jsIn("${'$'}metadata${'$'}", constructor)) {
+    if (constructor != null && jsInIntrinsic("${'$'}metadata${'$'}", constructor)) {
         var metadata = constructor.`$metadata$`
         if (metadata.kind === "object") {
             return obj === jsClass
@@ -150,7 +165,7 @@ internal fun jsIsType(obj: dynamic, jsClass: dynamic): Boolean {
 
     // In WebKit (JavaScriptCore) for some interfaces from DOM typeof returns "object", nevertheless they can be used in RHS of instanceof
     if (klassMetadata == null) {
-        return jsInstanceOf(obj, jsClass)
+        return jsInstanceOfIntrinsic(obj, jsClass)
     }
 
     if (klassMetadata.kind === "interface" && obj.constructor != null) {
@@ -160,8 +175,10 @@ internal fun jsIsType(obj: dynamic, jsClass: dynamic): Boolean {
     return false
 }
 
+@OptIn(JsIntrinsic::class)
 internal fun isNumber(a: dynamic) = jsTypeOf(a) == "number" || a is Long
 
+@OptIn(JsIntrinsic::class)
 internal fun isComparable(value: dynamic): Boolean {
     var type = jsTypeOf(value)
 
@@ -171,5 +188,6 @@ internal fun isComparable(value: dynamic): Boolean {
            isInterface(value, Comparable::class.js)
 }
 
+@OptIn(JsIntrinsic::class)
 internal fun isCharSequence(value: dynamic): Boolean =
     jsTypeOf(value) == "string" || isInterface(value, CharSequence::class.js)

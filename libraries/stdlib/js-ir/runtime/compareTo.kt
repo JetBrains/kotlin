@@ -8,6 +8,7 @@ package kotlin.js
 
 // Adopted from misc.js
 
+@OptIn(JsIntrinsic::class)
 internal fun compareTo(a: dynamic, b: dynamic): Int = when (jsTypeOf(a)) {
     "number" -> when {
         jsTypeOf(b) == "number" ->

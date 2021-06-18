@@ -342,6 +342,7 @@ internal fun fromInt(value: Int) = Long(value, if (value < 0) -1 else 0)
  * Returns zero if this `Double` value is `NaN`, [Long.MIN_VALUE] if it's less than `Long.MIN_VALUE`,
  * [Long.MAX_VALUE] if it's bigger than `Long.MAX_VALUE`.
  */
+@OptIn(JsIntrinsic::class)
 internal fun fromNumber(value: Double): Long {
     if (value.isNaN()) {
         return ZERO;
@@ -354,8 +355,8 @@ internal fun fromNumber(value: Double): Long {
     } else {
         val twoPwr32 = TWO_PWR_32_DBL_
         return Long(
-            jsBitwiseOr(value.rem(twoPwr32), 0),
-            jsBitwiseOr(value / twoPwr32, 0)
+            jsBitOr(value.rem(twoPwr32), 0),
+            jsBitOr(value / twoPwr32, 0)
         )
     }
 }
