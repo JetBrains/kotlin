@@ -12,69 +12,15 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.uast.*
-import org.jetbrains.uast.internal.acceptList
-import org.jetbrains.uast.visitor.UastVisitor
-
-// TODO: can be commonized once annotation is handled
-sealed class AbstractFirKotlinUClass(
-    givenParent: UElement?
-) : KotlinAbstractUElement(givenParent), UClass, UAnchorOwner {
-    override val uAnnotations: List<UAnnotation>
-        get() {
-            // TODO: Not yet implemented
-            return emptyList()
-        }
-
-    override val uastDeclarations: List<UDeclaration> by lz {
-        mutableListOf<UDeclaration>().apply {
-            addAll(fields)
-            addAll(initializers)
-            addAll(methods)
-            addAll(innerClasses)
-        }
-    }
-
-    abstract val ktClass: KtClassOrObject?
-
-    override val uastSuperTypes: List<UTypeReferenceExpression>
-        get() = ktClass?.superTypeListEntries.orEmpty().mapNotNull { it.typeReference }.map {
-            KotlinUTypeReferenceExpression(it, this)
-        }
-
-    val delegateExpressions: List<UExpression>
-        get() = ktClass?.superTypeListEntries.orEmpty()
-            .filterIsInstance<KtDelegatedSuperTypeEntry>()
-            .map { KotlinSupertypeDelegationUExpression(it, this) }
-
-    override fun accept(visitor: UastVisitor) {
-        if (visitor.visitClass(this)) return
-        delegateExpressions.acceptList(visitor)
-        uAnnotations.acceptList(visitor)
-        uastDeclarations.acceptList(visitor)
-        visitor.afterVisitClass(this)
-    }
-
-    companion object {
-        fun create(psi: KtLightClass, givenParent: UElement?): UClass {
-            return when (psi) {
-                // TODO: PsiAnonymousClass
-                // TODO: Script
-                else ->
-                    FirKotlinUClass(psi, givenParent)
-            }
-        }
-    }
-}
 
 // TODO: can be commonized once *KotlinUClass is commonized
 class FirKotlinUClass(
     override val javaPsi: KtLightClass,
     givenParent: UElement?,
-) : AbstractFirKotlinUClass(givenParent), PsiClass by javaPsi {
+) : AbstractKotlinUClass(givenParent), PsiClass by javaPsi {
     override val ktClass: KtClassOrObject? = javaPsi.kotlinOrigin
 
     override val psi = unwrap<UClass, PsiClass>(javaPsi)
@@ -167,6 +113,17 @@ class FirKotlinUClass(
             }
 
         return result.toTypedArray()
+    }
+
+    companion object {
+        fun create(psi: KtLightClass, givenParent: UElement?): UClass {
+            return when (psi) {
+                // TODO: PsiAnonymousClass
+                // TODO: Script
+                else ->
+                    FirKotlinUClass(psi, givenParent)
+            }
+        }
     }
 }
 

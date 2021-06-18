@@ -26,54 +26,10 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.uast.*
-import org.jetbrains.uast.internal.acceptList
-import org.jetbrains.uast.visitor.UastVisitor
 
-abstract class AbstractKotlinUClass(givenParent: UElement?) : KotlinAbstractUElement(givenParent), UClassTypeSpecific, UAnchorOwner {
-
-    override val uastDeclarations by lz {
-        mutableListOf<UDeclaration>().apply {
-            addAll(fields)
-            addAll(initializers)
-            addAll(methods)
-            addAll(innerClasses)
-        }
-    }
-
-    open val ktClass: KtClassOrObject? get() = (psi as? KtLightClass)?.kotlinOrigin
-
-    override val uastSuperTypes: List<UTypeReferenceExpression>
-        get() = ktClass?.superTypeListEntries.orEmpty().mapNotNull { it.typeReference }.map {
-            KotlinUTypeReferenceExpression(it, this)
-        }
-
-    val delegateExpressions: List<UExpression>
-        get() = ktClass?.superTypeListEntries.orEmpty()
-            .filterIsInstance<KtDelegatedSuperTypeEntry>()
-            .map { KotlinSupertypeDelegationUExpression(it, this) }
-
-    override fun accept(visitor: UastVisitor) {
-        if (visitor.visitClass(this)) return
-        delegateExpressions.acceptList(visitor)
-        uAnnotations.acceptList(visitor)
-        uastDeclarations.acceptList(visitor)
-        visitor.afterVisitClass(this)
-    }
-
-    override val uAnnotations: List<UAnnotation> by lz {
-        (sourcePsi as? KtModifierListOwner)?.annotationEntries.orEmpty().map {
-            baseResolveProviderService.baseKotlinConverter.convertAnnotation(it, this)
-        }
-    }
-
-    override fun equals(other: Any?) = other is AbstractKotlinUClass && psi == other.psi
-    override fun hashCode() = psi.hashCode()
-
-}
-
-open class KotlinUClass private constructor(
-        psi: KtLightClass,
-        givenParent: UElement?
+open class KotlinUClass(
+    psi: KtLightClass,
+    givenParent: UElement?
 ) : AbstractKotlinUClass(givenParent), PsiClass by psi {
 
     final override val ktClass = psi.kotlinOrigin
