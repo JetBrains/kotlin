@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.lower.FinallyBlocksLowering
 import org.jetbrains.kotlin.backend.konan.lower.InitializersLowering
 import org.jetbrains.kotlin.backend.konan.lower.StringConcatenationLowering
+import org.jetbrains.kotlin.backend.konan.optimizations.KonanBCEForLoopBodyTransformer
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
@@ -257,8 +258,10 @@ internal val rangeContainsLoweringPhase = makeKonanFileLoweringPhase(
         description = "Optimizes calls to contains() for ClosedRanges"
 )
 
-internal val forLoopsPhase = makeKonanFileLoweringPhase(
-        ::ForLoopsLowering,
+internal val forLoopsPhase = makeKonanFileOpPhase(
+        { context, irFile ->
+            ForLoopsLowering(context, KonanBCEForLoopBodyTransformer()).lower(irFile)
+        },
         name = "ForLoops",
         description = "For loops lowering"
 )
