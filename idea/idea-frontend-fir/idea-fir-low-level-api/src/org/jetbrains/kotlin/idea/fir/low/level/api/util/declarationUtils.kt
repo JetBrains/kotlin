@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.api.InvalidFirElementTypeExce
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
-import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 

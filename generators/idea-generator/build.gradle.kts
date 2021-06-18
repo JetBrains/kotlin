@@ -15,6 +15,7 @@ dependencies {
     testCompile(projectTests(":idea:idea-fir-performance-tests"))
     testCompile(projectTests(":idea:idea-frontend-fir"))
     testCompile(projectTests(":idea:idea-frontend-fir:idea-fir-low-level-api"))
+    testCompile(projectTests(":idea:idea-frontend-fir:fir-low-level-api-ide-impl"))
     testCompile(projectTests(":idea:idea-fir-fe10-binding"))
     testCompile(projectTests(":j2k"))
     testCompile(projectTests(":nj2k"))
@@ -35,6 +36,7 @@ dependencies {
     testCompile(projectTests(":kotlinx-serialization-ide-plugin"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(projectTests(":compiler:tests-spec"))
+    testApiJUnit5()
 }
 
 val generateIdeaTests by generator("org.jetbrains.kotlin.generators.tests.idea.GenerateTestsKt")

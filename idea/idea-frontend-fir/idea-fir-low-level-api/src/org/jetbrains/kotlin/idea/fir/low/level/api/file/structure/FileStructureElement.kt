@@ -235,14 +235,14 @@ internal class NonReanalyzableDeclarationStructureElement(
         private val recorder = object : FirElementsRecorder() {
             override fun visitProperty(property: FirProperty, data: MutableMap<KtElement, FirElement>) {
                 val psi = property.psi as? KtProperty ?: return super.visitProperty(property, data)
-                if (!FileElementFactory.isReanalyzableContainer(psi) || !declarationCanBeLazilyResolved(psi)) {
+                if (!isReanalyzableContainer(psi) || !declarationCanBeLazilyResolved(psi)) {
                     super.visitProperty(property, data)
                 }
             }
 
             override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: MutableMap<KtElement, FirElement>) {
                 val psi = simpleFunction.psi as? KtNamedFunction ?: return super.visitSimpleFunction(simpleFunction, data)
-                if (!FileElementFactory.isReanalyzableContainer(psi) || !declarationCanBeLazilyResolved(psi)) {
+                if (!isReanalyzableContainer(psi) || !declarationCanBeLazilyResolved(psi)) {
                     super.visitSimpleFunction(simpleFunction, data)
                 }
             }

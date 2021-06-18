@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.diagnostic
 
-import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirRealSourceElementKind
 import org.jetbrains.kotlin.fir.SessionConfiguration
@@ -15,42 +14,40 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.DiagnosticCheckerFilter
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.collectDiagnosticsForFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
-import org.jetbrains.kotlin.idea.fir.low.level.api.createResolveStateForNoCaching
+import org.jetbrains.kotlin.idea.fir.low.level.api.compiler.based.FrontendApiSingleTestDataFileTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.BeforeElementDiagnosticCollectionHandler
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.SingleNonLocalDeclarationDiagnosticRetriever
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.fir.PersistentCheckerContextFactory
 import org.jetbrains.kotlin.idea.fir.low.level.api.renderWithClassName
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSession
 import org.jetbrains.kotlin.psi.KtFile
-import java.io.File
+import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.assertions
 
 /**
  * Check that every declaration is visited exactly one time during diagnostic collection
  */
-abstract class AbstractDiagnosticTraversalCounterTest : KotlinLightCodeInsightFixtureTestCase() {
-    override fun isFirPlugin(): Boolean = true
+abstract class AbstractDiagnosticTraversalCounterTest : FrontendApiSingleTestDataFileTest() {
+    private var handler: BeforeElementTestDiagnosticCollectionHandler? = null
 
-    fun doTest(path: String) {
-        val testDataFile = File(path)
-        val ktFile = myFixture.configureByText(testDataFile.name, FileUtil.loadFile(testDataFile)) as KtFile
+    @OptIn(SessionConfiguration::class)
+    override fun FirIdeSession.configureSession() {
+        handler = BeforeElementTestDiagnosticCollectionHandler()
+        register(BeforeElementDiagnosticCollectionHandler::class, handler!!)
+    }
 
-        val handler = BeforeElementTestDiagnosticCollectionHandler()
-
-        @OptIn(SessionConfiguration::class)
-        val resolveState = createResolveStateForNoCaching(ktFile.getModuleInfo()) {
-            register(BeforeElementDiagnosticCollectionHandler::class, handler)
-        }
-
+    override fun doTest(ktFile: KtFile, module: TestModule, resolveState: FirModuleResolveState, testServices: TestServices) {
         // we should get diagnostics before we resolve the whole file by  ktFile.getOrBuildFir
         ktFile.collectDiagnosticsForFile(resolveState, DiagnosticCheckerFilter.ONLY_COMMON_CHECKERS)
 
         val firFile = ktFile.getOrBuildFir(resolveState)
 
-        val errorElements = collectErrorElements(firFile, handler)
+        val errorElements = collectErrorElements(firFile, handler!!)
 
         if (errorElements.isNotEmpty()) {
             val zeroElements = errorElements.filter { it.second == 0 }
@@ -71,8 +68,9 @@ abstract class AbstractDiagnosticTraversalCounterTest : KotlinLightCodeInsightFi
                     )
                 }
             }
-            fail(message)
+            testServices.assertions.fail { message }
         }
+        handler = null
     }
 
     private fun collectErrorElements(

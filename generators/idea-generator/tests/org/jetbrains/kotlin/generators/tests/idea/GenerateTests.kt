@@ -87,11 +87,8 @@ import org.jetbrains.kotlin.idea.fir.inspections.AbstractHLInspectionTest
 import org.jetbrains.kotlin.idea.fir.inspections.AbstractHLLocalInspectionTest
 import org.jetbrains.kotlin.idea.fir.intentions.AbstractHLIntentionTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.*
-import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostic.AbstractDiagnosticTraversalCounterTest
-import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostic.AbstractFirContextCollectionTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostic.compiler.based.AbstractDiagnosisCompilerTestDataSpecTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostic.compiler.based.AbstractDiagnosisCompilerTestDataTest
-import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.AbstractFileStructureAndOutOfBlockModificationTrackerConsistencyTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.AbstractFileStructureTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.resolve.AbstractInnerDeclarationsResolvePhaseTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.AbstractSessionsInvalidationTest
@@ -109,6 +106,9 @@ import org.jetbrains.kotlin.idea.fir.frontend.api.symbols.AbstractSymbolByFqName
 import org.jetbrains.kotlin.idea.fir.frontend.api.symbols.AbstractSymbolByPsiTest
 import org.jetbrains.kotlin.idea.fir.frontend.api.symbols.AbstractSymbolByReferenceTest
 import org.jetbrains.kotlin.idea.fir.inspections.AbstractFe10BindingIntentionTest
+import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostic.AbstractDiagnosticTraversalCounterTest
+import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostic.AbstractFirContextCollectionTest
+//import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.AbstractFileStructureAndOutOfBlockModificationTrackerConsistencyTest
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyTest
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyWithLibTest
 import org.jetbrains.kotlin.idea.highlighter.*
@@ -183,9 +183,11 @@ import org.jetbrains.kotlinx.serialization.idea.AbstractSerializationPluginIdeDi
 import org.jetbrains.kotlinx.serialization.idea.AbstractSerializationQuickFixTest
 import org.jetbrains.uast.test.kotlin.*
 import org.jetbrains.kotlin.spec.utils.tasks.detectDirsWithTestsMapFileOnly
+import org.jetbrains.kotlin.test.generators.generateTestGroupSuiteWithJUnit5
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
+
     generateTestGroupSuite(args) {
         val excludedFirTestdataPattern = "^(.+)\\.fir\\.kts?\$"
 
@@ -1047,99 +1049,20 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("idea/idea-frontend-fir/idea-fir-low-level-api/tests", "idea/testData") {
-            testClass<AbstractFirLazyResolveTest> {
-                model("fir/lazyResolve", extension = "test", singleClass = true, filenameStartsLowerCase = true)
-            }
-        }
 
-        testGroup("idea/idea-frontend-fir/idea-fir-low-level-api/tests", "compiler/fir/raw-fir/psi2fir/testData") {
-            testClass<AbstractFirLazyBodiesCalculatorTest> {
-                model("rawBuilder", testMethod = "doTest")
-            }
-        }
-
-        testGroup("idea/idea-frontend-fir/idea-fir-low-level-api/tests", "idea/idea-frontend-fir/idea-fir-low-level-api/testdata") {
-            testClass<AbstractFirMultiModuleLazyResolveTest> {
-                model("multiModuleLazyResolve", recursive = false, extension = null)
-            }
-            testClass<AbstractFirSealedInheritorsTest> {
-                model("resolveSealed", recursive = false, extension = null)
-            }
-            testClass<AbstractFirOnAirResolveTest> {
-                model("onAirResolve")
-            }
-            testClass<AbstractFirLazyDeclarationResolveTest> {
-                model("lazyResolve")
-            }
-            testClass<AbstractFirLibraryModuleDeclarationResolveTest> {
-                model("libraryModuleResolve", recursive = false)
-            }
+        testGroup("idea/idea-frontend-fir/fir-low-level-api-ide-impl/tests", "idea/idea-frontend-fir/idea-fir-low-level-api/testdata") {
             testClass<AbstractProjectWideOutOfBlockKotlinModificationTrackerTest> {
                 model("outOfBlockProjectWide")
             }
-            testClass<AbstractFileStructureAndOutOfBlockModificationTrackerConsistencyTest> {
-                model("outOfBlockProjectWide")
-            }
-            testClass<AbstractFileStructureTest> {
-                model("fileStructure")
-            }
-            testClass<AbstractFirContextCollectionTest> {
-                model("fileStructure")
-            }
-            testClass<AbstractDiagnosticTraversalCounterTest> {
-                model("diagnosticTraversalCounter")
-            }
+//
+//            testClass<AbstractFileStructureAndOutOfBlockModificationTrackerConsistencyTest> {
+//                model("outOfBlockProjectWide")
+//            }
+
             testClass<AbstractSessionsInvalidationTest> {
                 model("sessionInvalidation", recursive = false, extension = null)
             }
-            testClass<AbstractInnerDeclarationsResolvePhaseTest> {
-                model("innerDeclarationsResolve")
-            }
-            testClass<AbstractPartialRawFirBuilderTestCase> {
-                model("partialRawBuilder", testMethod = "doRawFirTest")
-            }
         }
-
-        testGroup(
-            "idea/idea-frontend-fir/idea-fir-low-level-api/tests",
-            "compiler/fir/analysis-tests/testData",
-        ) {
-            testClass<AbstractDiagnosisCompilerTestDataTest>(suiteTestClassName = "DiagnosisCompilerFirTestdataTestGenerated") {
-                model("resolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
-                model("resolveWithStdlib", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME, )
-            }
-        }
-
-        testGroup(
-            "idea/idea-frontend-fir/idea-fir-low-level-api/tests",
-            "compiler/testData",
-        ) {
-            testClass<AbstractDiagnosisCompilerTestDataTest>(suiteTestClassName = "DiagnosisCompilerTestFE10TestdataTestGenerated") {
-                model(
-                    "diagnostics/tests",
-                    excludedPattern = excludedFirTestdataPattern,
-                )
-                model(
-                    "diagnostics/testsWithStdLib",
-                    excludedPattern = excludedFirTestdataPattern,
-                    excludeDirs = listOf("native")
-                )
-            }
-        }
-
-
-        testGroup("idea/idea-frontend-fir/idea-fir-low-level-api/tests", testDataRoot = GeneralConfiguration.SPEC_TESTDATA_PATH
-        ) {
-            testClass<AbstractDiagnosisCompilerTestDataSpecTest>(suiteTestClassName = "FirIdeSpecTest") {
-                model(
-                    "diagnostics",
-                    excludeDirs = listOf("helpers") + detectDirsWithTestsMapFileOnly("diagnostics"),
-                    excludedPattern = excludedFirTestdataPattern,
-                )
-            }
-        }
-
 
         testGroup("idea/idea-fir/tests", "idea") {
             testClass<AbstractFirHighlightingTest> {

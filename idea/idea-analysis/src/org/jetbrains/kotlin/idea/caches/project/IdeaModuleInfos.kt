@@ -191,7 +191,7 @@ internal fun TargetPlatform.canDependOn(other: IdeaModuleInfo, isHmppEnabled: Bo
     }
 }
 
-interface ModuleSourceInfo : IdeaModuleInfo, TrackableModuleInfo {
+interface ModuleSourceInfo : IdeaModuleInfo, TrackableModuleInfo, ModuleSourceInfoBase {
     val module: Module
 
     override val expectedBy: List<ModuleSourceInfo>
@@ -418,7 +418,7 @@ data class LibrarySourceInfo(override val project: Project, val library: Library
 }
 
 //TODO: (module refactoring) there should be separate SdkSourceInfo but there are no kotlin source in existing sdks for now :)
-data class SdkInfo(override val project: Project, val sdk: Sdk) : IdeaModuleInfo {
+data class SdkInfo(override val project: Project, val sdk: Sdk) : IdeaModuleInfo, SdkInfoBase {
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.LIBRARY
 
@@ -442,8 +442,8 @@ data class SdkInfo(override val project: Project, val sdk: Sdk) : IdeaModuleInfo
 
     override val capabilities: Map<ModuleCapability<*>, Any?>
         get() = when (this.sdk.sdkType) {
-            is JavaSdk -> super.capabilities + mapOf(JDK_CAPABILITY to true)
-            else -> super.capabilities
+            is JavaSdk -> super<IdeaModuleInfo>.capabilities + mapOf(JDK_CAPABILITY to true)
+            else -> super<IdeaModuleInfo>.capabilities
         }
 }
 

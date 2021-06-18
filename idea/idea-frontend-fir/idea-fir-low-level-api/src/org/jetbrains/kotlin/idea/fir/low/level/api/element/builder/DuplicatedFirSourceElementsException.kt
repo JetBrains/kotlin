@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.element.builder
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.idea.util.getElementTextInContext
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.KtElement
 
 class DuplicatedFirSourceElementsException(

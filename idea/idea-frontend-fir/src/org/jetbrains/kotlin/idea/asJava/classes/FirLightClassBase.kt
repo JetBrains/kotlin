@@ -38,9 +38,9 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.idea.frontend.api.tokens.HackToForceAllowRunningAnalyzeOnEDT
 import org.jetbrains.kotlin.idea.frontend.api.tokens.hackyAllowRunningOnEdt
-import org.jetbrains.kotlin.trackers.createProjectWideOutOfBlockModificationTracker
 import javax.swing.Icon
 
 abstract class FirLightClassBase protected constructor(manager: PsiManager) : LightElement(manager, KotlinLanguage.INSTANCE), PsiClass,

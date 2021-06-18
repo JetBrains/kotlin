@@ -49,7 +49,7 @@ abstract class AbstractKotlinCompilerTest {
         }
     }
 
-    private val configuration: TestConfigurationBuilder.() -> Unit = {
+    protected val configuration: TestConfigurationBuilder.() -> Unit = {
         assertions = JUnit5Assertions
         defaultConfiguration()
         configure(this)

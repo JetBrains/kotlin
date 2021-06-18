@@ -106,14 +106,14 @@ class FirFrontendFacade(
 
         return FirOutputArtifactImpl(session, filesMap, firAnalyzerFacade)
     }
+}
 
-    private fun TargetPlatform.getAnalyzerServices(): PlatformDependentAnalyzerServices {
-        return when {
-            isJvm() -> JvmPlatformAnalyzerServices
-            isJs() -> JsPlatformAnalyzerServices
-            isNative() -> NativePlatformAnalyzerServices
-            isCommon() -> CommonPlatformAnalyzerServices
-            else -> error("Unknown target platform: $this")
-        }
+fun TargetPlatform.getAnalyzerServices(): PlatformDependentAnalyzerServices {
+    return when {
+        isJvm() -> JvmPlatformAnalyzerServices
+        isJs() -> JsPlatformAnalyzerServices
+        isNative() -> NativePlatformAnalyzerServices
+        isCommon() -> CommonPlatformAnalyzerServices
+        else -> error("Unknown target platform: $this")
     }
 }

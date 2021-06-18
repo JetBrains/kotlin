@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.sessions
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.OrderRootType
+import org.jetbrains.kotlin.analyzer.LibraryModuleInfo
 import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.analyzer.ModuleSourceInfoBase
+import org.jetbrains.kotlin.analyzer.SdkInfoBase
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.*
@@ -27,12 +29,11 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirPhaseCheckingPhaseManage
 import org.jetbrains.kotlin.fir.resolve.transformers.FirPhaseManager
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.*
-import org.jetbrains.kotlin.idea.caches.project.*
-import org.jetbrains.kotlin.idea.caches.resolve.IDEPackagePartProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
 import org.jetbrains.kotlin.idea.fir.low.level.api.IdeFirPhaseManager
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveStateConfigurator
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.stateConfigurator
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCacheImpl
 import org.jetbrains.kotlin.idea.fir.low.level.api.fir.caches.FirThreadSafeCachesFactory
@@ -44,8 +45,6 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirThreadSafeSymbolProviderWrapper
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.checkCanceled
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.createScopeForModuleLibraries
-import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.name.Name
@@ -59,23 +58,23 @@ internal object FirIdeSessionFactory {
     fun createSourcesSession(
         project: Project,
         configurator: FirModuleResolveStateConfigurator,
-        moduleInfo: ModuleSourceInfo,
+        moduleInfo: ModuleSourceInfoBase,
         builtinsAndCloneableSession: FirIdeBuiltinsAndCloneableSession,
         firPhaseRunner: FirPhaseRunner,
         sessionInvalidator: FirSessionInvalidator,
         builtinTypes: BuiltinTypes,
-        sessionsCache: MutableMap<ModuleSourceInfo, FirIdeSourcesSession>,
+        sessionsCache: MutableMap<ModuleSourceInfoBase, FirIdeSourcesSession>,
         isRootModule: Boolean,
         librariesCache: LibrariesCache,
         configureSession: (FirIdeSession.() -> Unit)? = null
     ): FirIdeSourcesSession {
         sessionsCache[moduleInfo]?.let { return it }
-        val languageVersionSettings = moduleInfo.module.languageVersionSettings
+        val languageVersionSettings = project.stateConfigurator.getLanguageVersionSettings(moduleInfo)
         val scopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
         val firBuilder = FirFileBuilder(scopeProvider, firPhaseRunner)
-        val searchScope = ModuleProductionSourceScope(moduleInfo.module)
+        val searchScope = project.stateConfigurator.getModuleSourceScope(moduleInfo)
         val dependentModules = moduleInfo.dependenciesWithoutSelf()
-            .filterIsInstanceTo<ModuleSourceInfo, MutableList<ModuleSourceInfo>>(mutableListOf())
+            .filterIsInstanceTo<ModuleSourceInfoBase, MutableList<ModuleSourceInfoBase>>(mutableListOf())
         val session = FirIdeSourcesSession(dependentModules, project, searchScope, firBuilder, builtinTypes)
         sessionsCache[moduleInfo] = session
 
@@ -87,7 +86,7 @@ internal object FirIdeSessionFactory {
             val cache = ModuleFileCacheImpl(this)
             val firPhaseManager = IdeFirPhaseManager(FirLazyDeclarationResolver(firFileBuilder), cache, sessionInvalidator)
 
-            registerIdeComponents()
+            registerIdeComponents(project)
             registerCommonComponents(languageVersionSettings)
             registerResolveComponents()
 
@@ -161,7 +160,7 @@ internal object FirIdeSessionFactory {
     }
 
     fun createLibrarySession(
-        mainModuleInfo: ModuleSourceInfo,
+        mainModuleInfo: ModuleSourceInfoBase,
         project: Project,
         builtinsAndCloneableSession: FirIdeBuiltinsAndCloneableSession,
         builtinTypes: BuiltinTypes,
@@ -170,18 +169,18 @@ internal object FirIdeSessionFactory {
         configureSession: (FirIdeSession.() -> Unit)?,
     ): FirIdeLibrariesSession = librariesCache.cached(mainModuleInfo) {
         checkCanceled()
-        val searchScope = createScopeForModuleLibraries(mainModuleInfo.module)
+        val searchScope = project.stateConfigurator.createScopeForModuleLibraries(mainModuleInfo)
         val javaClassFinder = JavaClassFinderImpl().apply {
             setProjectInstance(project)
             setScope(searchScope)
         }
-        val packagePartProvider = IDEPackagePartProvider(searchScope)
+        val packagePartProvider = project.stateConfigurator.createPackagePartsProvider(searchScope)
 
         val kotlinClassFinder = VirtualFileFinderFactory.getInstance(project).create(searchScope)
         FirIdeLibrariesSession(project, searchScope, builtinTypes).apply session@{
             val mainModuleData = FirModuleInfoBasedModuleData(mainModuleInfo).apply { bindSession(this@session) }
 
-            registerIdeComponents()
+            registerIdeComponents(project)
             register(FirPhaseManager::class, FirPhaseCheckingPhaseManager)
             registerCommonComponents(languageVersionSettings)
             registerJavaSpecificResolveComponents()
@@ -190,15 +189,7 @@ internal object FirIdeSessionFactory {
 
             val kotlinScopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
 
-            val moduleDataProvider = DependencyListForCliModule.build(
-                mainModuleInfo.name,
-                mainModuleInfo.platform,
-                mainModuleInfo.analyzerServices
-            ) {
-                dependencies(mainModuleInfo.dependenciesWithoutSelf().extractLibraryPaths())
-                friendDependencies(mainModuleInfo.modulesWhoseInternalsAreVisible().extractLibraryPaths())
-                dependsOnDependencies(mainModuleInfo.expectedBy.extractLibraryPaths())
-            }.moduleDataProvider
+            val moduleDataProvider = project.stateConfigurator.createModuleDataProvider(mainModuleInfo)
 
             moduleDataProvider.allModuleData.forEach { it.bindSession(this@session) }
 
@@ -230,35 +221,6 @@ internal object FirIdeSessionFactory {
         }
     }
 
-    private fun Sequence<ModuleInfo>.extractLibraryPaths(): List<Path> {
-        return fold(mutableListOf()) { acc, moduleInfo ->
-            moduleInfo.extractLibraryPaths(acc)
-            acc
-        }
-    }
-
-    private fun Iterable<ModuleInfo>.extractLibraryPaths(): List<Path> {
-        return fold(mutableListOf()) { acc, moduleInfo ->
-            moduleInfo.extractLibraryPaths(acc)
-            acc
-        }
-    }
-
-    private fun ModuleInfo.extractLibraryPaths(destination: MutableList<Path>) {
-        when (this) {
-            is SdkInfo -> {
-                sdk.rootProvider.getFiles(OrderRootType.CLASSES).mapNotNullTo(destination) {
-                    Paths.get(it.fileSystem.extractPresentableUrl(it.path)).normalize()
-                }
-            }
-            is LibraryInfo -> {
-                getLibraryRoots().mapTo(destination) {
-                    Paths.get(it).normalize()
-                }
-            }
-        }
-    }
-
 
     fun createBuiltinsAndCloneableSession(
         project: Project,
@@ -277,7 +239,7 @@ internal object FirIdeSessionFactory {
             ).apply {
                 bindSession(this@session)
             }
-            registerIdeComponents()
+            registerIdeComponents(project)
             register(FirPhaseManager::class, FirPhaseCheckingPhaseManager)
             registerCommonComponents(languageVersionSettings)
 
@@ -296,10 +258,10 @@ internal object FirIdeSessionFactory {
         }
     }
 
-    private fun FirIdeSession.registerIdeComponents() {
+    private fun FirIdeSession.registerIdeComponents(project: Project) {
         register(IdeSessionComponents::class, IdeSessionComponents.create(this))
         register(FirCachesFactory::class, FirThreadSafeCachesFactory)
-        register(SealedClassInheritorsProvider::class, SealedClassInheritorsProviderIdeImpl())
+        register(SealedClassInheritorsProvider::class, project.stateConfigurator.createSealedInheritorsProvider())
     }
 }
 

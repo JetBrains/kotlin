@@ -5,32 +5,22 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.resolve
 
-import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
-import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirOfType
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.getResolveState
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.fir.low.level.api.compiler.based.FrontendApiSingleTestDataFileTest
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import java.io.File
+import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.TestServices
 
-abstract class AbstractInnerDeclarationsResolvePhaseTest : KotlinLightCodeInsightFixtureTestCase() {
-    override fun isFirPlugin(): Boolean = true
-    fun doTest(path: String) {
-        val testDataFile = File(path)
-        val ktFile = myFixture.configureByText(testDataFile.name, FileUtil.loadFile(testDataFile)) as KtFile
-
-        val resolveState = ktFile.getResolveState()
+abstract class AbstractInnerDeclarationsResolvePhaseTest : FrontendApiSingleTestDataFileTest() {
+    override fun doTest(ktFile: KtFile, module: TestModule, resolveState: FirModuleResolveState, testServices: TestServices) {
         val firFile = ktFile.getOrBuildFirOfType<FirFile>(resolveState)
 
         val actual = firFile.render(FirRenderer.RenderMode.WithResolvePhases)
-        val expectedFileName = testDataFile.name.replace(".kt", ".fir.txt")
-        KotlinTestUtils.assertEqualsToFile(testDataFile.parentFile.resolve(expectedFileName), actual)
+        KotlinTestUtils.assertEqualsToFile(testDataFileSibling(".fir.txt"), actual)
     }
 }

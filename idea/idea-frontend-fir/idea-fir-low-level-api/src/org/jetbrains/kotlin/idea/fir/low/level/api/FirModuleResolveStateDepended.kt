@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.InternalForInline
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
@@ -34,11 +34,11 @@ internal class FirModuleResolveStateDepended(
 ) : FirModuleResolveState() {
 
     override val project: Project get() = originalState.project
-    override val moduleInfo: IdeaModuleInfo get() = originalState.moduleInfo
+    override val moduleInfo: ModuleInfo get() = originalState.moduleInfo
     override val rootModuleSession get() = originalState.rootModuleSession
     private val fileStructureCache get() = originalState.fileStructureCache
 
-    override fun getSessionFor(moduleInfo: IdeaModuleInfo): FirSession =
+    override fun getSessionFor(moduleInfo: ModuleInfo): FirSession =
         originalState.getSessionFor(moduleInfo)
 
     override fun getOrBuildFirFor(element: KtElement): FirElement {

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.findSourceNonLocalFirDeclaration
-import org.jetbrains.kotlin.idea.util.getElementTextInContext
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.*
 import java.util.concurrent.ConcurrentHashMap
 

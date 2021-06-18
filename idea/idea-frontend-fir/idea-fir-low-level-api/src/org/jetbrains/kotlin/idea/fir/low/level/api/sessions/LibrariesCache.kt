@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.sessions
 
-import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
+import org.jetbrains.kotlin.analyzer.ModuleSourceInfoBase
 import java.util.concurrent.ConcurrentHashMap
 
-internal inline class LibrariesCache(private val cache: ConcurrentHashMap<ModuleSourceInfo, FirIdeLibrariesSession> = ConcurrentHashMap()) {
-    fun cached(moduleSourceInfo: ModuleSourceInfo, create: (ModuleSourceInfo) -> FirIdeLibrariesSession): FirIdeLibrariesSession =
+internal inline class LibrariesCache(private val cache: ConcurrentHashMap<ModuleSourceInfoBase, FirIdeLibrariesSession> = ConcurrentHashMap()) {
+    fun cached(moduleSourceInfo: ModuleSourceInfoBase, create: (ModuleSourceInfoBase) -> FirIdeLibrariesSession): FirIdeLibrariesSession =
         cache.computeIfAbsent(moduleSourceInfo, create)
 }

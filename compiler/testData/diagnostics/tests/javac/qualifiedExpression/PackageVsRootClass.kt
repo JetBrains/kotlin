@@ -1,4 +1,3 @@
-// FIR_IDE_IGNORE
 // FIR_IDENTICAL
 // FILE: a/b.java
 package a;

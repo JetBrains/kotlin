@@ -11,6 +11,7 @@ import com.sun.management.HotSpotDiagnosticMXBean
 import junit.framework.Assert
 import org.jetbrains.kotlin.idea.caches.project.LibraryModificationTracker
 import org.jetbrains.kotlin.idea.fir.executeOnPooledThreadInReadAction
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.KotlinOutOfBlockModificationTrackerFactory
 import org.jetbrains.kotlin.idea.fir.low.level.api.trackers.KotlinFirOutOfBlockModificationTrackerFactory
 import org.jetbrains.kotlin.idea.frontend.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSessionProvider
@@ -22,7 +23,6 @@ import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
-import org.jetbrains.kotlin.trackers.KotlinOutOfBlockModificationTrackerFactory
 import java.io.File
 import java.lang.management.ManagementFactory
 import java.nio.file.Path

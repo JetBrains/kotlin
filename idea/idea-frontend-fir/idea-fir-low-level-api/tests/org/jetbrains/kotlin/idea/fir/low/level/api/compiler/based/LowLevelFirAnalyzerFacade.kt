@@ -9,13 +9,17 @@ import org.jetbrains.kotlin.fir.analysis.AbstractFirAnalyzerFacade
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.backend.Fir2IrResult
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.transformers.FirSealedClassInheritorsProcessor
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.collectDiagnosticsForFile
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.resolvedFirToPhase
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.model.TestFile
 
 class LowLevelFirAnalyzerFacade(
@@ -26,12 +30,22 @@ class LowLevelFirAnalyzerFacade(
     override val scopeSession: ScopeSession get() = shouldNotBeCalled()
 
     override fun runCheckers(): Map<FirFile, List<FirDiagnostic<*>>> {
+        findSealedInheritors()
+
         return allFirFiles.values.associateWith { firFile ->
             val ktFile = firFile.psi as KtFile
             val diagnostics = ktFile.collectDiagnosticsForFile(resolveState, diagnosticCheckerFilter)
             @Suppress("UNCHECKED_CAST")
             diagnostics.toList() as List<FirDiagnostic<*>>
         }
+    }
+
+    private fun findSealedInheritors() {
+        allFirFiles.values.forEach {
+            it.resolvedFirToPhase(FirResolvePhase.SUPER_TYPES, resolveState)
+        }
+        val sealedProcessor = FirSealedClassInheritorsProcessor(allFirFiles.values.first().moduleData.session, ScopeSession())
+        sealedProcessor.process(allFirFiles.values)
     }
 
     override fun runResolution(): List<FirFile> = shouldNotBeCalled()

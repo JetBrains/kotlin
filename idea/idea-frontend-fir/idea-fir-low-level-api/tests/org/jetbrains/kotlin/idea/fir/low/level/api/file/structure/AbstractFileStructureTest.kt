@@ -5,71 +5,85 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.file.structure
 
-import com.intellij.openapi.application.runUndoTransparentWriteAction
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiComment
-import com.intellij.psi.util.collectDescendantsOfType
-import com.intellij.psi.util.forEachDescendantOfType
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveStateImpl
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getResolveState
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.fir.low.level.api.compiler.based.FrontendApiSingleTestDataFileTest
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import java.io.File
+import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.TestServices
 
-abstract class AbstractFileStructureTest : KotlinLightCodeInsightFixtureTestCase() {
-    override fun isFirPlugin(): Boolean = true
+abstract class AbstractFileStructureTest : FrontendApiSingleTestDataFileTest() {
 
-    fun doTest(path: String) {
-        val testDataFile = File(path)
-        val initialFileText = FileUtil.loadFile(testDataFile)
-        val ktFile = myFixture.configureByText(testDataFile.name, initialFileText) as KtFile
+    override fun doTest(ktFile: KtFile, module: TestModule, resolveState: FirModuleResolveState, testServices: TestServices) {
         val fileStructure = ktFile.getFileStructure()
         val allStructureElements = fileStructure.getAllStructureElements(ktFile)
         val declarationToStructureElement = allStructureElements.associateBy { it.psi }
-        runUndoTransparentWriteAction {
-            ktFile.collectDescendantsOfType<PsiComment>().forEach { it.delete() }
-            ktFile.forEachDescendantOfType<KtDeclaration> { ktDeclaration ->
-                val structureElement = declarationToStructureElement[ktDeclaration] ?: return@forEachDescendantOfType
-                val comment = structureElement.createComment()
-                when (ktDeclaration) {
-                    is KtClassOrObject -> {
-                        val lBrace = ktDeclaration.body?.lBrace
-                        if (lBrace != null) {
-                            ktDeclaration.body!!.addAfter(comment, lBrace)
-                        } else {
-                            ktDeclaration.parent.addAfter(comment, ktDeclaration)
-                        }
+
+        val elementToComment = mutableMapOf<PsiElement, String>()
+        ktFile.forEachDescendantOfType<KtDeclaration> { ktDeclaration ->
+            val structureElement = declarationToStructureElement[ktDeclaration] ?: return@forEachDescendantOfType
+            val comment = structureElement.createComment()
+            when (ktDeclaration) {
+                is KtClassOrObject -> {
+                    val lBrace = ktDeclaration.body?.lBrace
+                    if (lBrace != null) {
+                        elementToComment[lBrace] = comment
+                    } else {
+                        elementToComment[ktDeclaration] = comment
                     }
-                    is KtFunction -> {
-                        val lBrace = ktDeclaration.bodyBlockExpression?.lBrace
-                        if (lBrace != null) {
-                            ktDeclaration.bodyBlockExpression!!.addAfter(comment, lBrace)
-                        } else {
-                            ktDeclaration.parent.addAfter(comment, ktDeclaration)
-                        }
-                    }
-                    is KtProperty -> {
-                        val initializerOrTypeReference = ktDeclaration.initializer ?:  ktDeclaration.typeReference
-                        if (initializerOrTypeReference != null) {
-                            ktDeclaration.addAfter(comment, initializerOrTypeReference)
-                        } else {
-                            ktDeclaration.parent.addAfter(comment, ktDeclaration)
-                        }
-                    }
-                    is KtTypeAlias -> {
-                        ktDeclaration.addAfter(comment, ktDeclaration.getTypeReference())
-                    }
-                    else -> error("Unsupported declaration $ktDeclaration")
                 }
+                is KtFunction -> {
+                    val lBrace = ktDeclaration.bodyBlockExpression?.lBrace
+                    if (lBrace != null) {
+                        elementToComment[lBrace] = comment
+                    } else {
+                        elementToComment[ktDeclaration] = comment
+                    }
+                }
+                is KtProperty -> {
+                    val initializerOrTypeReference = ktDeclaration.initializer ?: ktDeclaration.typeReference
+                    if (initializerOrTypeReference != null) {
+                        elementToComment[initializerOrTypeReference] = comment
+                    } else {
+                        elementToComment[ktDeclaration] = comment
+                    }
+                }
+                is KtTypeAlias -> {
+                    elementToComment[ktDeclaration.getTypeReference()!!] = comment
+                }
+                else -> error("Unsupported declaration $ktDeclaration")
             }
         }
-        KotlinTestUtils.assertEqualsToFile(testDataFile, ktFile.text)
+
+
+        val text = buildString {
+            ktFile.accept(object : PsiElementVisitor() {
+                override fun visitElement(element: PsiElement) {
+                    if (element is LeafPsiElement) {
+                        append(element.text)
+                    }
+                    element.acceptChildren(this)
+                    elementToComment[element]?.let {
+                        append(it)
+                    }
+                }
+
+                override fun visitComment(comment: PsiComment) {}
+            })
+        }
+
+        KotlinTestUtils.assertEqualsToFile(testDataPath, text)
     }
 
-    private fun FileStructureElement.createComment(): PsiComment {
-        val text = """/* ${this::class.simpleName!!} */"""
-        return KtPsiFactory(psi.project).createComment(text)
+    private fun FileStructureElement.createComment(): String {
+        return """/* ${this::class.simpleName!!} */"""
     }
 
     private fun KtFile.getFileStructure(): FileStructure {

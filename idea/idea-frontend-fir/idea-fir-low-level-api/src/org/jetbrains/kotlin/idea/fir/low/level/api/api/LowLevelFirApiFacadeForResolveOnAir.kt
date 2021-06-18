@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.api
 
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.psi.util.parentOfType
-import com.intellij.psi.util.parentsOfType
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataCo
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveStateDepended
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveStateImpl
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.DeclarationCopyBuilder.withBodyFrom
@@ -36,9 +34,12 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.buildFileFirAnno
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.buildFirUserTypeRef
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSourcesSession
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.getElementTextInContext
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.originalDeclaration
 import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.idea.util.ifTrue
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.parentOfType
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.parentsOfType
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor

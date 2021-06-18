@@ -1,4 +1,3 @@
-// FIR_IDE_IGNORE
 // SKIP_JAVAC
 // FILE: A.java
 public class A {

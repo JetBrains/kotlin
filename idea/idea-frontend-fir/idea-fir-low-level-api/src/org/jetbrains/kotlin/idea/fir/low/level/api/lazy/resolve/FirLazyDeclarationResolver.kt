@@ -27,6 +27,10 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.util.checkCanceled
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.ensurePhase
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.findSourceNonLocalFirDeclaration
 import org.jetbrains.kotlin.idea.util.ifTrue
+import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.*
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.*
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
 internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBuilder) {
     /**
@@ -305,13 +309,13 @@ internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBui
         val scopeSession = ScopeSession()
         var currentPhase = maxOf(designation.declaration.resolvePhase, FirResolvePhase.IMPORTS)
 
-        val firProviderInterceptor = onAirCreatedDeclaration.ifTrue {
+        val firProviderInterceptor = if(onAirCreatedDeclaration) {
             FirProviderInterceptorForIDE.createForFirElement(
                 session = designation.firFile.moduleData.session,
                 firFile = designation.firFile,
                 element = designation.declaration
             )
-        }
+        } else null
 
         while (currentPhase < FirResolvePhase.BODY_RESOLVE) {
             currentPhase = currentPhase.next

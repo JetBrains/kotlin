@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.idea.asJava.*
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.idea.frontend.api.tokens.HackToForceAllowRunningAnalyzeOnEDT
 import org.jetbrains.kotlin.idea.frontend.api.analyse
 import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
@@ -30,7 +31,6 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
-import org.jetbrains.kotlin.trackers.createProjectWideOutOfBlockModificationTracker
 import java.util.*
 
 fun getOrCreateFirLightClass(classOrObject: KtClassOrObject): KtLightClass? =

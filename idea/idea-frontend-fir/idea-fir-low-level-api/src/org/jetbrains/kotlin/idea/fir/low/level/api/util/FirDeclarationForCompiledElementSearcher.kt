@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.KtDeclarationAndFirDeclarationEqualityChecker
-import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 

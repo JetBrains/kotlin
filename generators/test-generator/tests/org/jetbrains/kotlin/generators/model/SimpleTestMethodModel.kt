@@ -41,7 +41,11 @@ open class SimpleTestMethodModel(
             val found = matcher.find()
             assert(found) { file.name + " isn't matched by regex " + filenamePattern.pattern() }
             assert(matcher.groupCount() >= 1) { filenamePattern.pattern() }
-            val extractedName = matcher.group(1) ?: error("extractedName should not be null: " + filenamePattern.pattern())
+            val extractedName = try {
+                matcher.group(1) ?: error("extractedName should not be null: " + filenamePattern.pattern())
+            } catch (e: Throwable) {
+                throw IllegalStateException("Error generating test ${file.name}", e)
+            }
             val unescapedName = if (rootDir == file.parentFile) {
                 extractedName
             } else {

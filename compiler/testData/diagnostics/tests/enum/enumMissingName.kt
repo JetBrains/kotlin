@@ -1,4 +1,3 @@
-// FIR_IDE_IGNORE
 // FIR_IDENTICAL
 // Error: name should present
 enum class<!SYNTAX!><!>(val rgb : Int) {

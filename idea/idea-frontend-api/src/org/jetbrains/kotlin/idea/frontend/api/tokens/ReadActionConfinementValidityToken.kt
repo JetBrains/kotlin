@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.idea.frontend.api.tokens
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.idea.frontend.api.*
-import org.jetbrains.kotlin.trackers.createProjectWideOutOfBlockModificationTracker
 import kotlin.reflect.KClass
 
 class ReadActionConfinementValidityToken(project: Project) : ValidityToken() {

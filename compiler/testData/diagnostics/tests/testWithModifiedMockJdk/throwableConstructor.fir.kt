@@ -1,4 +1,3 @@
-// FIR_IDE_IGNORE
 // !JDK_KIND: MODIFIED_MOCK_JDK
 abstract class A : Throwable(1.0) {}
 

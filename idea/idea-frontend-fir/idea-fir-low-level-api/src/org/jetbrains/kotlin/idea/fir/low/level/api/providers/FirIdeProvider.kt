@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.providers
 
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analyzer.ModuleSourceInfoBase
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
@@ -19,7 +20,6 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.DeclarationProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveStateConfigurator
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.name.Name
 internal class FirIdeProvider(
     project: Project,
     val session: FirSession,
-    moduleInfo: ModuleSourceInfo,
+    moduleInfo: ModuleSourceInfoBase,
     val kotlinScopeProvider: FirKotlinScopeProvider,
     firFileBuilder: FirFileBuilder,
     val cache: ModuleFileCache,

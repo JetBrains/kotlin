@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.api
 
+import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.renderWithType
-import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
-import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirIdeResolveStateService
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.InternalForInline
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.ResolveType
@@ -24,13 +23,13 @@ import kotlin.reflect.KClass
  * Returns [FirModuleResolveState] which corresponds to containing module
  */
 fun KtElement.getResolveState(): FirModuleResolveState =
-    getModuleInfo().getResolveState()
+    getModuleInfo().getResolveState(project)
 
 /**
  * Returns [FirModuleResolveState] which corresponds to containing module
  */
-fun IdeaModuleInfo.getResolveState(): FirModuleResolveState =
-    FirIdeResolveStateService.getInstance(project!!).getResolveState(this)
+fun ModuleInfo.getResolveState(project: Project): FirModuleResolveState =
+    FirIdeResolveStateService.getInstance(project).getResolveState(this)
 
 
 /**

@@ -11,6 +11,8 @@ dependencies {
     compileOnly(project(":core:compiler.common"))
     compileOnly(project(":core:compiler.common.jvm"))
     compileOnly(project(":idea:idea-frontend-independent"))
+    compileOnly(project(":idea:idea-frontend-fir:idea-fir-low-level-api"))
+    compileOnly(project(":idea:idea-frontend-independent"))
     compileOnly(intellijCoreDep())
     compileOnly(intellijDep())
     compileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl") }

@@ -17,11 +17,12 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiModificationTracker
+import org.jetbrains.kotlin.analyzer.ModuleSourceInfoBase
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.fir.HLIndexHelper
 import org.jetbrains.kotlin.idea.fir.api.fixes.diagnosticFixFactory
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.createScopeForModuleLibraries
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.stateConfigurator
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.diagnostics.KtFirDiagnostic
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.addImportToFile
@@ -149,8 +150,11 @@ internal class ImportQuickFix(
         }
 
         private fun createSearchScope(element: PsiElement): GlobalSearchScope {
-            val contentScope = element.getModuleInfo().contentScope()
-            val librariesScope = element.module?.let(::createScopeForModuleLibraries)
+            val moduleInfo = element.getModuleInfo()
+            val contentScope = moduleInfo.contentScope()
+            //todo do not use internal stateConfigurator here
+            val librariesScope = element.module?.project?.stateConfigurator
+                ?.createScopeForModuleLibraries(moduleInfo as ModuleSourceInfoBase)
                 ?: GlobalSearchScope.EMPTY_SCOPE
 
             return contentScope.uniteWith(librariesScope)

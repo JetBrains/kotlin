@@ -47,24 +47,25 @@ internal object FileElementFactory {
             firFileLockProvider,
         )
     }
-
-    /**
-     * should be consistent with [createFileStructureElement]
-     */
-    fun isReanalyzableContainer(
-        ktDeclaration: KtDeclaration,
-    ): Boolean = when (ktDeclaration) {
-        is KtNamedFunction -> ktDeclaration.isReanalyzableContainer()
-        is KtProperty -> ktDeclaration.isReanalyzableContainer()
-        else -> false
-    }
-
-    private fun KtNamedFunction.isReanalyzableContainer() =
-        name != null && hasExplicitTypeOrUnit
-
-    private fun KtProperty.isReanalyzableContainer() =
-        name != null && typeReference != null
-
-    private val KtNamedFunction.hasExplicitTypeOrUnit
-        get() = hasBlockBody() || typeReference != null
 }
+
+/**
+ * should be consistent with [createFileStructureElement]
+ */
+//TODO make internal
+fun isReanalyzableContainer(
+    ktDeclaration: KtDeclaration,
+): Boolean = when (ktDeclaration) {
+    is KtNamedFunction -> ktDeclaration.isReanalyzableContainer()
+    is KtProperty -> ktDeclaration.isReanalyzableContainer()
+    else -> false
+}
+
+private fun KtNamedFunction.isReanalyzableContainer() =
+    name != null && hasExplicitTypeOrUnit
+
+private fun KtProperty.isReanalyzableContainer() =
+    name != null && typeReference != null
+
+private val KtNamedFunction.hasExplicitTypeOrUnit
+    get() = hasBlockBody() || typeReference != null
