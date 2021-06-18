@@ -1986,6 +1986,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             runTest("compiler/testData/ir/irText/types/intersectionType3_OI.kt");
         }
 
+        @TestMetadata("intersectionTypeInSamType.kt")
+        public void testIntersectionTypeInSamType() throws Exception {
+            runTest("compiler/testData/ir/irText/types/intersectionTypeInSamType.kt");
+        }
+
         @TestMetadata("kt36143.kt")
         public void testKt36143() throws Exception {
             runTest("compiler/testData/ir/irText/types/kt36143.kt");

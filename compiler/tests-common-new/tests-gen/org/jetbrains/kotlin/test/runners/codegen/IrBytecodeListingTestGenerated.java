@@ -2019,6 +2019,18 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         }
 
         @Test
+        @TestMetadata("nonApproxToValidSupertype.kt")
+        public void testNonApproxToValidSupertype() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/sam/nonApproxToValidSupertype.kt");
+        }
+
+        @Test
+        @TestMetadata("nonApproxToValidSupertype2.kt")
+        public void testNonApproxToValidSupertype2() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/sam/nonApproxToValidSupertype2.kt");
+        }
+
+        @Test
         @TestMetadata("reusedSamWrapperClasses.kt")
         public void testReusedSamWrapperClasses() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/sam/reusedSamWrapperClasses.kt");
