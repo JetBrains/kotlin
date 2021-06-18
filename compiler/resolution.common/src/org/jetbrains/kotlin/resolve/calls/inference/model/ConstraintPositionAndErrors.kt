@@ -91,12 +91,24 @@ object SimpleConstraintSystemConstraintPosition : ConstraintPosition()
 
 sealed class ConstraintSystemError(val applicability: CandidateApplicability)
 
+sealed interface NewConstraintMismatch {
+    val lowerType: KotlinTypeMarker
+    val upperType: KotlinTypeMarker
+    val position: IncorporationConstraintPosition
+}
+
 class NewConstraintError(
-    val lowerType: KotlinTypeMarker,
-    val upperType: KotlinTypeMarker,
-    val position: IncorporationConstraintPosition,
-    val isWarning: Boolean = false
-) : ConstraintSystemError(if (position.from is ReceiverConstraintPosition<*>) INAPPLICABLE_WRONG_RECEIVER else INAPPLICABLE)
+    override val lowerType: KotlinTypeMarker,
+    override val upperType: KotlinTypeMarker,
+    override val position: IncorporationConstraintPosition,
+) : ConstraintSystemError(if (position.from is ReceiverConstraintPosition<*>) INAPPLICABLE_WRONG_RECEIVER else INAPPLICABLE),
+    NewConstraintMismatch
+
+class NewConstraintWarning(
+    override val lowerType: KotlinTypeMarker,
+    override val upperType: KotlinTypeMarker,
+    override val position: IncorporationConstraintPosition,
+) : ConstraintSystemError(RESOLVED), NewConstraintMismatch
 
 class CapturedTypeFromSubtyping(
     val typeVariable: TypeVariableMarker,
@@ -122,4 +134,4 @@ object LowerPriorityToPreserveCompatibility : ConstraintSystemError(RESOLVED_NEE
 fun Constraint.isExpectedTypePosition() =
     position.from is ExpectedTypeConstraintPosition<*> || position.from is DelegatedPropertyConstraintPosition<*>
 
-fun NewConstraintError.transformToWarning() = NewConstraintError(lowerType, upperType, position, isWarning = true)
+fun NewConstraintError.transformToWarning() = NewConstraintWarning(lowerType, upperType, position)

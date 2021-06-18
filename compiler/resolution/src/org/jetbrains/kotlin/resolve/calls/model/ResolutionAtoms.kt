@@ -248,10 +248,13 @@ sealed class CallResolutionResult(
     fun completedDiagnostic(substitutor: NewTypeSubstitutor): List<KotlinCallDiagnostic> {
         return diagnostics.map {
             val error = it.constraintSystemError ?: return@map it
-            if (error !is NewConstraintError) return@map it
+            if (error !is NewConstraintMismatch) return@map it
             val lowerType = error.lowerType.safeAs<KotlinType>()?.unwrap() ?: return@map it
             val newLowerType = substitutor.safeSubstitute(lowerType.unCapture())
-            NewConstraintError(newLowerType, error.upperType, error.position, error.isWarning).asDiagnostic()
+            when (error) {
+                is NewConstraintError -> NewConstraintError(newLowerType, error.upperType, error.position).asDiagnostic()
+                is NewConstraintWarning -> NewConstraintWarning(newLowerType, error.upperType, error.position).asDiagnostic()
+            }
         }
     }
 
