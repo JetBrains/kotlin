@@ -405,7 +405,7 @@ private val localDelegatedPropertiesLoweringPhase = makeBodyLoweringPhase(
 )
 
 private val localDeclarationsLoweringPhase = makeBodyLoweringPhase(
-    ::LocalDeclarationsLowering,
+    { context -> LocalDeclarationsLowering(context, suggestUniqueNames = false) },
     name = "LocalDeclarationsLowering",
     description = "Move local declarations into nearest declaration container",
     prerequisite = setOf(sharedVariablesLoweringPhase, localDelegatedPropertiesLoweringPhase)

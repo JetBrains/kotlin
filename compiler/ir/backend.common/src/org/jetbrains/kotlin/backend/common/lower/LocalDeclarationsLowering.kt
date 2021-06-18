@@ -76,7 +76,8 @@ object BOUND_RECEIVER_PARAMETER : IrDeclarationOriginImpl("BOUND_RECEIVER_PARAME
 class LocalDeclarationsLowering(
     val context: CommonBackendContext,
     val localNameProvider: LocalNameProvider = LocalNameProvider.DEFAULT,
-    val visibilityPolicy: VisibilityPolicy = VisibilityPolicy.DEFAULT
+    val visibilityPolicy: VisibilityPolicy = VisibilityPolicy.DEFAULT,
+    val suggestUniqueNames: Boolean = true, // When `true` appends a `-#index` suffix to lifted declaration names
 ) :
     BodyLoweringPass {
 
@@ -562,7 +563,7 @@ class LocalDeclarationsLowering(
             localFunctions[declaration]?.let {
                 val baseName = if (declaration.name.isSpecial) "lambda" else declaration.name
                 if (it.index >= 0)
-                    return "$baseName-${it.index}"
+                    return if (suggestUniqueNames) "$baseName-${it.index}" else "$baseName"
             }
 
             return localNameProvider.localName(declaration)
