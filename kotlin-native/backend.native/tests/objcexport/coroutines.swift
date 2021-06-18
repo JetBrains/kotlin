@@ -95,6 +95,40 @@ private func testCall() throws {
     try testSuspendFuncAsync(doThrow: true)
 }
 
+private func testCallSuspendFunChain(doSuspend: Bool, doThrow: Bool) throws {
+    class C {}
+    let expectedResult = C()
+
+    var completionCalled = 0
+    var result: AnyObject? = nil
+    var error: Error? = nil
+
+    CoroutinesKt.suspendFun(result: expectedResult, doSuspend: doSuspend, doThrow: doThrow) { _resultOuter, _errorOuter in
+        CoroutinesKt.suspendFun(result: expectedResult, doSuspend: doSuspend, doThrow: doThrow) { _result, _error in
+            completionCalled += 1
+            result = _result as AnyObject?
+            error = _error
+        }
+    }
+
+    try assertEquals(actual: completionCalled, expected: 1)
+
+    if doThrow {
+        try assertNil(result)
+        try assertTrue(error?.kotlinException is CoroutineException)
+    } else {
+        try assertSame(actual: result, expected: expectedResult)
+        try assertNil(error)
+    }
+}
+
+private func testCallChain() throws {
+    try testCallSuspendFunChain(doSuspend: true, doThrow: false)
+    try testCallSuspendFunChain(doSuspend: false, doThrow: false)
+    try testCallSuspendFunChain(doSuspend: true, doThrow: true)
+    try testCallSuspendFunChain(doSuspend: false, doThrow: true)
+}
+
 private class SuspendFunImpl : SuspendFun {
     class E : Error {}
 
@@ -336,6 +370,7 @@ class CoroutinesTests : SimpleTestProvider {
 
         test("TestCallSimple", testCallSimple)
         test("TestCall", testCall)
+        test("TestCallChain", testCallChain)
         test("TestOverride", testOverride)
         test("TestBridges", testBridges)
         test("TestImplicitThrows1", testImplicitThrows1)

@@ -9,6 +9,7 @@
 #import <Foundation/NSException.h>
 #import <Foundation/NSObject.h>
 
+#import "Memory.h"
 #import "ObjCExport.h"
 #import "ObjCExportErrors.h"
 
@@ -16,7 +17,9 @@ typedef void (^Completion)(id _Nullable, NSError* _Nullable);
 
 extern "C" void Kotlin_ObjCExport_runCompletionSuccess(KRef completionHolder, KRef result) {
   Completion completion = (Completion)GetAssociatedObject(completionHolder);
-  completion(Kotlin_ObjCExport_refToObjC(result), nullptr);
+  id objCResult = Kotlin_ObjCExport_refToObjC(result);
+  kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
+  completion(objCResult, nullptr);
 }
 
 extern "C" void Kotlin_ObjCExport_runCompletionFailure(
@@ -26,6 +29,7 @@ extern "C" void Kotlin_ObjCExport_runCompletionFailure(
 ) {
   id error = Kotlin_ObjCExport_ExceptionAsNSError(exception, exceptionTypes);
   Completion completion = (Completion)GetAssociatedObject(completionHolder);
+  kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
   completion(nullptr, error);
 }
 
