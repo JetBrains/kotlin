@@ -218,6 +218,12 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
     }
 
     @Test
+    @TestMetadata("kt47328.kt")
+    public void testKt47328() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/kt47328.kt");
+    }
+
+    @Test
     @TestMetadata("noCollectionStubMethodsInInterface.kt")
     public void testNoCollectionStubMethodsInInterface() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/noCollectionStubMethodsInInterface.kt");

@@ -1,0 +1,27 @@
+@kotlin.Metadata
+public interface A {
+    // source: 'kt47328.kt'
+    public abstract method getX(): int
+}
+
+@kotlin.Metadata
+public final class B {
+    // source: 'kt47328.kt'
+    public final @kotlin.jvm.JvmField field x: int
+    public method <init>(p0: int): void
+}
+
+@kotlin.Metadata
+public final class C {
+    // source: 'kt47328.kt'
+    public final @kotlin.jvm.JvmField @org.jetbrains.annotations.NotNull field d: A
+    public method <init>(@org.jetbrains.annotations.NotNull p0: A): void
+}
+
+@kotlin.Metadata
+public final class E {
+    // source: 'kt47328.kt'
+    private final field ax: int
+    public method <init>(@org.jetbrains.annotations.NotNull p0: C): void
+    public final method getAx(): int
+}

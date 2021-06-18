@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.requiresMangling
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -34,7 +33,6 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
-import java.util.*
 
 class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
     override fun lower(irFile: IrFile) {
@@ -85,18 +83,20 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
                 backingField?.origin == JvmLoweredDeclarationOrigin.COMPANION_PROPERTY_BACKING_FIELD
     }
 
-    private fun IrBuilderWithScope.substituteSetter(irProperty: IrProperty, expression: IrCall): IrExpression =
-        patchReceiver(
+    private fun IrBuilderWithScope.substituteSetter(irProperty: IrProperty, expression: IrCall): IrExpression {
+        val backingField = irProperty.resolveFakeOverride()!!.backingField!!
+        return patchReceiver(
             irSetField(
-                expression.dispatchReceiver,
-                irProperty.resolveFakeOverride()!!.backingField!!,
+                patchFieldAccessReceiver(expression, irProperty),
+                backingField,
                 expression.getValueArgument(0)!!
             )
         )
+    }
 
     private fun IrBuilderWithScope.substituteGetter(irProperty: IrProperty, expression: IrCall): IrExpression {
         val backingField = irProperty.resolveFakeOverride()!!.backingField!!
-        val value = irGetField(expression.dispatchReceiver, backingField)
+        val value = irGetField(patchFieldAccessReceiver(expression, irProperty), backingField)
         return if (irProperty.isLateinit) {
             irBlock {
                 val tmpVal = irTemporary(value)
@@ -112,6 +112,17 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
         }
     }
 
+    private fun IrBuilderWithScope.patchFieldAccessReceiver(expression: IrCall, irProperty: IrProperty): IrExpression? {
+        val receiver = expression.dispatchReceiver
+        if (receiver != null) {
+            val propertyParent = irProperty.parent
+            if (propertyParent is IrClass && propertyParent.symbol != receiver.type.classifierOrNull) {
+                return irImplicitCast(receiver, propertyParent.defaultType)
+            }
+        }
+        return receiver
+    }
+
     private fun IrBuilderWithScope.patchReceiver(expression: IrFieldAccessExpression): IrExpression =
         if (expression.symbol.owner.isStatic && expression.receiver != null) {
             irBlock {
@@ -123,7 +134,7 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
             expression
         }
 
-    private fun lowerProperty(declaration: IrProperty, kind: ClassKind): List<IrDeclaration>? =
+    private fun lowerProperty(declaration: IrProperty, kind: ClassKind): List<IrDeclaration> =
         ArrayList<IrDeclaration>(4).apply {
             val field = declaration.backingField
 
