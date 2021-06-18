@@ -85,3 +85,58 @@ FILE: upperBoundViolated.kt
         public get(): R|NumberPhile<kotlin/Int>|
     public final val np2: R|NumberPhile<ERROR CLASS: Cannot infer argument for type parameter T>| = <Inapplicable(INAPPLICABLE): /NumberPhile.NumberPhile>#<R|ERROR CLASS: Cannot infer argument for type parameter T|>(String(Test))
         public get(): R|NumberPhile<ERROR CLASS: Cannot infer argument for type parameter T>|
+    public final class Test1<S1 : R|Test1<S1, K>|, K : R|kotlin/Any|> : R|kotlin/Any| {
+        public constructor<S1 : R|Test1<S1, K>|, K : R|kotlin/Any|>(): R|Test1<S1, K>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Test2<S2 : R|Test1<S2, *>|> : R|kotlin/Any| {
+        public constructor<S2 : R|Test1<S2, *>|>(): R|Test2<S2>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Test3<S3 : R|Test3<S3, in K>|, K : R|kotlin/Any|> : R|kotlin/Any| {
+        public constructor<S3 : R|Test3<S3, in K>|, K : R|kotlin/Any|>(): R|Test3<S3, K>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Test4<S4 : R|Test3<S4, out kotlin/Any>|> : R|kotlin/Any| {
+        public constructor<S4 : R|Test3<S4, out kotlin/Any>|>(): R|Test4<S4>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Test5<S5 : R|Test5<S5, in K>|, K : R|kotlin/Any|> : R|kotlin/Any| {
+        public constructor<S5 : R|Test5<S5, in K>|, K : R|kotlin/Any|>(): R|Test5<S5, K>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Test6<S6 : R|Test5<S6, in kotlin/Any>|> : R|kotlin/Any| {
+        public constructor<S6 : R|Test5<S6, in kotlin/Any>|>(): R|Test6<S6>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Test7<S7 : R|Test7<S7, in K>|, K : R|kotlin/CharSequence|> : R|kotlin/Any| {
+        public constructor<S7 : R|Test7<S7, in K>|, K : R|kotlin/CharSequence|>(): R|Test7<S7, K>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Test8<S8 : R|Test7<S8, in kotlin/Any>|> : R|kotlin/Any| {
+        public constructor<S8 : R|Test7<S8, in kotlin/Any>|>(): R|Test8<S8>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Class<V : R|kotlin/Any|> : R|kotlin/Any| {
+        public constructor<V : R|kotlin/Any|>(): R|Class<V>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final typealias Alias<V1> = R|(Class<V1>) -> kotlin/Boolean|

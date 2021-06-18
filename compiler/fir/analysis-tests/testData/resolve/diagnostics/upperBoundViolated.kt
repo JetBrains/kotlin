@@ -50,3 +50,19 @@ val test8 = NL<<!UPPER_BOUND_VIOLATED!>String<!>>()
 class NumberPhile<T: Number>(x: T)
 val np1 = NumberPhile(10)
 val np2 = NumberPhile(<!ARGUMENT_TYPE_MISMATCH!>"Test"<!>)
+
+class Test1<S1 : Test1<S1, K>, K : Any>
+class Test2<S2 : Test1<S2, *>>
+
+class Test3<S3 : Test3<S3, in K>, K : Any>
+class Test4<S4 : Test3<<!UPPER_BOUND_VIOLATED!>S4<!>, out Any>>
+
+class Test5<S5 : Test5<S5, in K>, K : Any>
+class Test6<S6 : Test5<S6, in Any>>
+
+class Test7<S7 : Test7<S7, in K>, K : CharSequence>
+class Test8<S8 : Test7<S8, <!UPPER_BOUND_VIOLATED!>in Any<!>>>
+
+class Class<V : Any>
+typealias Alias <V1> = (Class<V1>) -> Boolean
+

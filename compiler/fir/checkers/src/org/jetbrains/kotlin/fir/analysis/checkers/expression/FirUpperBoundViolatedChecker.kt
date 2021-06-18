@@ -47,7 +47,10 @@ object FirUpperBoundViolatedClassChecker : FirBasicDeclarationChecker() {
             checkUpperBoundViolated(declaration.expandedTypeRef, context, reporter, isIgnoreTypeParameters = true)
         } else if (declaration is FirCallableDeclaration<*>) {
             if (declaration.returnTypeRef.source?.kind !is FirFakeSourceElementKind) {
-                checkUpperBoundViolated(declaration.returnTypeRef, context, reporter)
+                checkUpperBoundViolated(
+                    declaration.returnTypeRef, context, reporter,
+                    isIgnoreTypeParameters = context.containingDeclarations.lastOrNull() is FirTypeAlias
+                )
             }
         }
     }
@@ -163,6 +166,14 @@ private fun checkUpperBoundViolated(
             substitution[typeParameterSymbol] = typeArgument.typeRef.coneType
         } else if (typeArgument is ConeKotlinType) {
             substitution[typeParameterSymbol] = typeArgument.type
+        } else if (typeArgument is ConeTypeProjection) {
+            val typeArgumentType = typeArgument.type
+            if (typeArgumentType != null) {
+                substitution[typeParameterSymbol] = typeArgumentType
+            } else {
+                substitution[typeParameterSymbol] =
+                    ConeStubType(ConeTypeVariable("", typeParameterSymbol.toLookupTag()), ConeNullability.NOT_NULL)
+            }
         }
     }
 
@@ -186,7 +197,12 @@ private fun checkUpperBoundViolated(
                 typeArgumentSource = typeRef.source
             }
         } else {
-            typeArgument = type.typeArguments[index] as? ConeKotlinType
+            val localTypeArgument = type.typeArguments[index]
+            if (localTypeArgument is ConeKotlinType) {
+                typeArgument = localTypeArgument
+            } else if (localTypeArgument is ConeKotlinTypeProjection) {
+                typeArgument = localTypeArgument.type
+            }
             val typeArgumentRefAndSource = typeArgumentRefsAndSources?.elementAtOrNull(index)
             if (typeArgumentRefAndSource != null) {
                 typeArgumentTypeRef = typeArgumentRefAndSource.typeRef
@@ -202,10 +218,17 @@ private fun checkUpperBoundViolated(
 
         if (typeArgument != null && typeArgumentSource != null) {
             if (!isIgnoreTypeParameters || (typeArgument.typeArguments.isEmpty() && typeArgument !is ConeTypeParameterType)) {
-                val intersection = typeSystemContext.intersectTypes(typeParameterSymbols[index].fir.bounds.map { it.coneType }) as? ConeKotlinType
+                val intersection =
+                    typeSystemContext.intersectTypes(typeParameterSymbols[index].fir.bounds.map { it.coneType }) as? ConeKotlinType
                 if (intersection != null) {
                     val upperBound = substitutor.substituteOrSelf(intersection)
-                    if (!AbstractTypeChecker.isSubtypeOf(typeSystemContext, typeArgument.type, upperBound, stubTypesEqualToAnything = false)) {
+                    if (!AbstractTypeChecker.isSubtypeOf(
+                            typeSystemContext,
+                            typeArgument.type,
+                            upperBound,
+                            stubTypesEqualToAnything = true
+                        )
+                    ) {
                         val factory =
                             if (isTypeAlias) FirErrors.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION else FirErrors.UPPER_BOUND_VIOLATED
                         reporter.reportOn(typeArgumentSource, factory, upperBound, typeArgument.type, context)
