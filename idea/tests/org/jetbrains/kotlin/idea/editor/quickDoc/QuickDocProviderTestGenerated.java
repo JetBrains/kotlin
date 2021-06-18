@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -196,6 +196,11 @@ public class QuickDocProviderTestGenerated extends AbstractQuickDocProviderTest 
     @TestMetadata("OnEnumValuesFunction.kt")
     public void testOnEnumValuesFunction() throws Exception {
         runTest("idea/testData/editor/quickDoc/OnEnumValuesFunction.kt");
+    }
+
+    @TestMetadata("OnFunctionDeclarationWithGFMTable.kt")
+    public void testOnFunctionDeclarationWithGFMTable() throws Exception {
+        runTest("idea/testData/editor/quickDoc/OnFunctionDeclarationWithGFMTable.kt");
     }
 
     @TestMetadata("OnFunctionDeclarationWithPackage.kt")
