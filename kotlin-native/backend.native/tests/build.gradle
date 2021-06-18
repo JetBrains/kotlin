@@ -1996,6 +1996,11 @@ task when_with_try1(type: KonanLocalTest) {
     source = "codegen/branching/when_with_try1.kt"
 }
 
+task arraysForLoops(type: KonanLocalTest) {
+    disabled = (project.testTarget == 'wasm32') // Uses exceptions.
+    source = "codegen/bce/arraysForLoops.kt"
+}
+
 task bool_yes(type: KonanLocalTest) {
     source = "codegen/function/boolean.kt"
 }
