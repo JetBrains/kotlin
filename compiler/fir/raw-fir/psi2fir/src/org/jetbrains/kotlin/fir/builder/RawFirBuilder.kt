@@ -740,7 +740,10 @@ open class RawFirBuilder(
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Source
                 name = file.name
-                packageFqName = context.packageFqName
+                packageDirective = buildPackageDirective {
+                    packageFqName = context.packageFqName
+                    source = file.packageDirective?.toFirPsiSourceElement()
+                }
                 for (annotationEntry in file.annotationEntries) {
                     annotations += annotationEntry.convert<FirAnnotationCall>()
                 }

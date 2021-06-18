@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.FirPackageDirective
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
@@ -289,6 +290,10 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     open fun transformFile(file: FirFile, data: D): FirFile {
         return transformElement(file, data)
+    }
+
+    open fun transformPackageDirective(packageDirective: FirPackageDirective, data: D): FirPackageDirective {
+        return transformElement(packageDirective, data)
     }
 
     open fun transformAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: D): FirStatement {
@@ -801,6 +806,10 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     final override fun visitFile(file: FirFile, data: D): FirFile {
         return transformFile(file, data)
+    }
+
+    final override fun visitPackageDirective(packageDirective: FirPackageDirective, data: D): FirPackageDirective {
+        return transformPackageDirective(packageDirective, data)
     }
 
     final override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: D): FirStatement {

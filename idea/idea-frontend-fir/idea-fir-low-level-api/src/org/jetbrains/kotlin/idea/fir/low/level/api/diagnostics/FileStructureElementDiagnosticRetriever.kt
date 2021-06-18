@@ -112,6 +112,7 @@ internal object FileDiagnosticRetriever : FileStructureElementDiagnosticRetrieve
             withSuppressedDiagnostics(file) {
                 visitWithDeclaration(file) {
                     file.annotations.forEach { it.accept(this, data) }
+                    file.packageDirective.accept(this, data)
                     file.imports.forEach { it.accept(this, data) }
                     // do not visit declarations here
                 }

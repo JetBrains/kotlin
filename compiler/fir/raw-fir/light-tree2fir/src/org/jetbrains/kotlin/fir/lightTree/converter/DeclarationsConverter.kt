@@ -90,10 +90,13 @@ class DeclarationsConverter(
         val importList = mutableListOf<FirImport>()
         val firDeclarationList = mutableListOf<FirDeclaration>()
         context.packageFqName = FqName.ROOT
+        var packageDirective: FirPackageDirective? = null
         file.forEachChildren {
             when (it.tokenType) {
                 FILE_ANNOTATION_LIST -> fileAnnotationList += convertFileAnnotationList(it)
-                PACKAGE_DIRECTIVE -> context.packageFqName = convertPackageName(it)
+                PACKAGE_DIRECTIVE -> {
+                    packageDirective = convertPackageDirective(it).also { context.packageFqName = it.packageFqName }
+                }
                 IMPORT_LIST -> importList += convertImportDirectives(it)
                 CLASS -> firDeclarationList += convertClass(it)
                 FUN -> firDeclarationList += convertFunctionDeclaration(it) as FirDeclaration
@@ -108,7 +111,7 @@ class DeclarationsConverter(
             origin = FirDeclarationOrigin.Source
             moduleData = baseModuleData
             name = fileName
-            packageFqName = context.packageFqName
+            this.packageDirective = packageDirective ?: buildPackageDirective { packageFqName = context.packageFqName }
             annotations += fileAnnotationList
             imports += importList
             declarations += firDeclarationList
@@ -151,7 +154,7 @@ class DeclarationsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parsePackageName
      */
-    private fun convertPackageName(packageNode: LighterASTNode): FqName {
+    private fun convertPackageDirective(packageNode: LighterASTNode): FirPackageDirective {
         var packageName: FqName = FqName.ROOT
         packageNode.forEachChildren {
             when (it.tokenType) {
@@ -159,7 +162,10 @@ class DeclarationsConverter(
                 DOT_QUALIFIED_EXPRESSION, REFERENCE_EXPRESSION -> packageName = FqName(it.getAsStringWithoutBacktick())
             }
         }
-        return packageName
+        return buildPackageDirective {
+            packageFqName = packageName
+            source = packageNode.toFirSourceElement()
+        }
     }
 
     private fun convertImportAlias(importAlias: LighterASTNode): String? {

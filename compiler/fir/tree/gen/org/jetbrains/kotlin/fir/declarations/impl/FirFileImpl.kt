@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations.impl
 
 import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.FirPackageDirective
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
@@ -15,7 +16,6 @@ import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -30,10 +30,10 @@ internal class FirFileImpl(
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
     override val annotations: MutableList<FirAnnotationCall>,
+    override var packageDirective: FirPackageDirective,
     override val imports: MutableList<FirImport>,
     override val declarations: MutableList<FirDeclaration>,
     override val name: String,
-    override val packageFqName: FqName,
 ) : FirFile() {
     override val symbol: FirFileSymbol = FirFileSymbol()
 
@@ -43,12 +43,14 @@ internal class FirFileImpl(
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
+        packageDirective.accept(visitor, data)
         imports.forEach { it.accept(visitor, data) }
         declarations.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirFileImpl {
         transformAnnotations(transformer, data)
+        packageDirective = packageDirective.transform(transformer, data)
         transformImports(transformer, data)
         transformDeclarations(transformer, data)
         return this
