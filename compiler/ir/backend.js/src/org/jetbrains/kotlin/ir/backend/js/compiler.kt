@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
+import org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -54,6 +55,7 @@ fun compile(
     propertyLazyInitialization: Boolean,
     legacyPropertyAccess: Boolean = false,
     baseClassIntoMetadata: Boolean = false,
+    lowerPerModule: Boolean = false,
 ): CompilerResult {
     val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer, moduleToName) =
         loadIr(project, mainModule, analyzer, configuration, allDependencies, friendDependencies, irFactory)
@@ -116,7 +118,17 @@ fun compile(
         )
         return transformer.generateModule(allModules)
     } else {
-        jsPhases.invokeToplevel(phaseConfig, context, allModules)
+        if (lowerPerModule) {
+            val controller = WholeWorldStageController()
+            check(irFactory is PersistentIrFactory)
+            irFactory.stageController = controller
+            allModules.forEach {
+                lowerPreservingIcData(it, context, controller)
+            }
+        } else {
+            jsPhases.invokeToplevel(phaseConfig, context, allModules)
+        }
+
         val transformer = IrModuleToJsTransformer(
             context,
             mainArguments,
@@ -128,6 +140,24 @@ fun compile(
         )
         return transformer.generateModule(allModules)
     }
+}
+
+fun lowerPreservingIcData(module: IrModuleFragment, context: JsIrBackendContext, controller: WholeWorldStageController) {
+    // Lower all the things
+    controller.currentStage = 0
+
+    pirLowerings.forEachIndexed { i, lowering ->
+        controller.currentStage = i + 1
+        when (lowering) {
+            is DeclarationLowering ->
+                lowering.declarationTransformer(context).lower(module)
+            is BodyLowering ->
+                lowering.bodyLowering(context).lower(module)
+            // else -> TODO what about other lowerings?
+        }
+    }
+
+    controller.currentStage = pirLowerings.size + 1
 }
 
 fun generateJsCode(

@@ -439,6 +439,13 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
             coroutineClass.addFakeOverrides(context.irBuiltIns, implementedMembers)
 
+            // TODO constructing fake overrides on lowered declaration is tricky.
+            coroutineClass.declarations.transformFlat {
+                if (it is IrProperty && it.isFakeOverride) {
+                    listOfNotNull(it.getter, it.setter)
+                } else null
+            }
+
             // TODO: find out whether Kotlin/Native needs this call
             initializeStateMachine(listOf(coroutineConstructor), coroutineClassThis)
 

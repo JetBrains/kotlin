@@ -49,11 +49,13 @@ abstract class BasicIrBoxTest(
 
     private fun getBoolean(s: String, default: Boolean) = System.getProperty(s)?.let { parseBoolean(it) } ?: default
 
+    private val lowerPerModule: Boolean = getBoolean("kotlin.js.ir.lowerPerModule")
+
     override val skipRegularMode: Boolean = getBoolean("kotlin.js.ir.skipRegularMode")
 
-    override val runIrDce: Boolean = getBoolean("kotlin.js.ir.dce", true)
+    override val runIrDce: Boolean = !lowerPerModule && getBoolean("kotlin.js.ir.dce", true)
 
-    override val runIrPir: Boolean = getBoolean("kotlin.js.ir.pir", true)
+    override val runIrPir: Boolean = !lowerPerModule && getBoolean("kotlin.js.ir.pir", true)
 
     val runEs6Mode: Boolean = getBoolean("kotlin.js.ir.es6", false)
 
@@ -131,13 +133,14 @@ abstract class BasicIrBoxTest(
             }
 
             if (!skipRegularMode) {
+                val irFactory = if (lowerPerModule) PersistentIrFactory() else IrFactoryImpl
                 val compiledModule = compile(
                     project = config.project,
                     mainModule = MainModule.SourceFiles(filesToCompile),
                     analyzer = AnalyzerWithCompilerReport(config.configuration),
                     configuration = config.configuration,
                     phaseConfig = phaseConfig,
-                    irFactory = IrFactoryImpl,
+                    irFactory = irFactory,
                     allDependencies = resolvedLibraries,
                     friendDependencies = emptyList(),
                     mainArguments = mainCallParameters.run { if (shouldBeGenerated()) arguments() else null },
@@ -147,6 +150,7 @@ abstract class BasicIrBoxTest(
                     es6mode = runEs6Mode,
                     multiModule = splitPerModule || perModule,
                     propertyLazyInitialization = propertyLazyInitialization,
+                    lowerPerModule = lowerPerModule
                 )
 
                 compiledModule.jsCode!!.writeTo(outputFile, config)
