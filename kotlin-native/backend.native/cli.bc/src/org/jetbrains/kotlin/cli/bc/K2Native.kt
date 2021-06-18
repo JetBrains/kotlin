@@ -293,6 +293,10 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                         GC.SAME_THREAD_MARK_AND_SWEEP
                     }
                 })
+                if (memoryModel != MemoryModel.EXPERIMENTAL && arguments.gcAggressive) {
+                    configuration.report(ERROR, "-Xgc-aggressive is only supported for -memory-model experimental")
+                }
+                put(GARBAGE_COLLECTOR_AGRESSIVE, arguments.gcAggressive)
             }
         }
     }

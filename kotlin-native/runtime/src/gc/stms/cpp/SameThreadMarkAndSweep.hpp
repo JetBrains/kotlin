@@ -63,7 +63,7 @@ public:
         size_t safePointsCounter_ = 0;
     };
 
-    SameThreadMarkAndSweep() noexcept {}
+    SameThreadMarkAndSweep() noexcept;
     ~SameThreadMarkAndSweep() = default;
 
     void SetThreshold(size_t value) noexcept { threshold_ = value; }
@@ -78,8 +78,8 @@ public:
 private:
     mm::ObjectFactory<SameThreadMarkAndSweep>::FinalizerQueue PerformFullGC() noexcept;
 
-    size_t threshold_ = 1000;
-    size_t allocationThresholdBytes_ = 10000;
+    size_t threshold_ = 100000;  // Roughly 1 safepoint per 10ms (on a subset of examples on one particular machine).
+    size_t allocationThresholdBytes_ = 10 * 1024 * 1024;  // 10MiB by default.
     bool autoTune_ = false;
 };
 

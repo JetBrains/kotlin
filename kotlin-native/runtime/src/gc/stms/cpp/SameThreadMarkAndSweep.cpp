@@ -109,6 +109,14 @@ void gc::SameThreadMarkAndSweep::ThreadData::SafePointRegular(size_t weight) noe
     safePointsCounter_ += weight;
 }
 
+gc::SameThreadMarkAndSweep::SameThreadMarkAndSweep() noexcept {
+    if (Kotlin_getGcAggressive()) {
+        // TODO: Make it even more aggressive and run on a subset of backend.native tests.
+        threshold_ = 1000;
+        allocationThresholdBytes_ = 10000;
+    }
+}
+
 mm::ObjectFactory<gc::SameThreadMarkAndSweep>::FinalizerQueue gc::SameThreadMarkAndSweep::PerformFullGC() noexcept {
     bool didSuspend = mm::SuspendThreads();
     if (!didSuspend) {

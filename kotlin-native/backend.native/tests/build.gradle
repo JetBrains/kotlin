@@ -109,6 +109,13 @@ tasks.withType(RunExternalTestGroup.class).configureEach {
 
 ext.isExperimentalMM = project.globalTestArgs.contains("-memory-model") && project.globalTestArgs.contains("experimental")
 
+if (ext.isExperimentalMM) {
+    // TODO: Make it more aggressive and only turn it on for a subset of tests.
+    tasks.withType(KonanCompileNativeBinary.class).configureEach {
+        extraOpts "-Xgc-aggressive"
+    }
+}
+
 allprojects {
     // Root directories for test output (logs, compiled files, statistics etc). Only single path must be in each set.
     // backend.native/tests
@@ -5029,6 +5036,7 @@ if (UtilsKt.getTestTargetSupportsCodeCoverage(project)) {
                 baseDir "$testOutputCoverage/$binaryName"
                 entryPoint "coverage.basic.program.main"
                 extraOpts "-Xcoverage", "-Xcoverage-file=$profrawFile"
+                extraOpts project.globalTestArgs
             }
         }
     }
@@ -5051,6 +5059,7 @@ if (UtilsKt.getTestTargetSupportsCodeCoverage(project)) {
                 baseDir "$testOutputCoverage/$binaryName"
                 entryPoint "coverage.basic.library.main"
                 extraOpts "-Xcoverage-file=$profrawFile", "-Xlibrary-to-cover=${konanArtifacts.lib_to_cover.getArtifactByTarget(target.name)}"
+                extraOpts project.globalTestArgs
             }
         }
     }
@@ -5066,6 +5075,7 @@ if (UtilsKt.getTestTargetSupportsCodeCoverage(project)) {
                 baseDir "$testOutputCoverage/$binaryName"
                 entryPoint "coverage.basic.controlflow.main"
                 extraOpts "-Xcoverage", "-Xcoverage-file=$profrawFile"
+                extraOpts project.globalTestArgs
             }
         }
     }
@@ -5081,6 +5091,7 @@ if (UtilsKt.getTestTargetSupportsCodeCoverage(project)) {
                 baseDir "$testOutputCoverage/$binaryName"
                 entryPoint "coverage.basic.jumps.main"
                 extraOpts "-Xcoverage", "-Xcoverage-file=$profrawFile"
+                extraOpts project.globalTestArgs
             }
         }
     }
@@ -5096,6 +5107,7 @@ if (UtilsKt.getTestTargetSupportsCodeCoverage(project)) {
                 baseDir "$testOutputCoverage/$binaryName"
                 entryPoint "coverage.basic.smoke0.main"
                 extraOpts "-Xcoverage", "-Xcoverage-file=$profrawFile"
+                extraOpts project.globalTestArgs
             }
         }
     }
@@ -5111,6 +5123,7 @@ if (UtilsKt.getTestTargetSupportsCodeCoverage(project)) {
                 baseDir "$testOutputCoverage/$binaryName"
                 entryPoint "coverage.basic.smoke1.main"
                 extraOpts "-Xcoverage", "-Xcoverage-file=$profrawFile"
+                extraOpts project.globalTestArgs
             }
         }
     }

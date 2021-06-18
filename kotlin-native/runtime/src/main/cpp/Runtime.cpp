@@ -31,11 +31,16 @@ struct InitNode {
   InitNode* next;
 };
 
-// This global is overriden by the compiler.
+// These globals are overriden by the compiler.
 RUNTIME_WEAK DestroyRuntimeMode Kotlin_destroyRuntimeMode = DESTROY_RUNTIME_ON_SHUTDOWN;
+RUNTIME_WEAK KInt Kotlin_gcAggressive = 0;
 
 DestroyRuntimeMode Kotlin_getDestroyRuntimeMode() {
     return Kotlin_destroyRuntimeMode;
+}
+
+bool Kotlin_getGcAggressive() {
+    return Kotlin_gcAggressive != 0;
 }
 
 namespace {

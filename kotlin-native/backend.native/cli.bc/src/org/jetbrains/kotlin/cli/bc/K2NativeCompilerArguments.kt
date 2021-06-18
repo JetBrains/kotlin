@@ -308,6 +308,9 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value="-Xgc", valueDescription = "<gc>", description = "GC to use, 'noop' and 'stms' are currently supported. Works only with -memory-model experimental")
     var gc: String? = null
 
+    @Argument(value="-Xgc-aggressive", description = "Make GC agressive. Works only with -memory-model experimental")
+    var gcAggressive: Boolean = false
+
     override fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> =
             super.configureAnalysisFlags(collector).also {
                 val useExperimental = it[AnalysisFlags.useExperimental] as List<*>
