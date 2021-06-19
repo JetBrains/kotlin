@@ -29,9 +29,9 @@ class FirKotlinUMethod(
             psi: KtLightMethod,
             givenParent: UElement?
         ): UMethod {
-            return when (psi) {
+            return when (val kotlinOrigin = psi.kotlinOrigin) {
                 is KtConstructor<*> ->
-                    FirKotlinConstructorUMethod(psi.containingClassOrObject, psi, givenParent)
+                    FirKotlinConstructorUMethod(kotlinOrigin.containingClassOrObject, psi, givenParent)
                 // TODO: FirKotlinUAnnotationMethod
                 else ->
                     FirKotlinUMethod(psi, givenParent)
@@ -48,14 +48,8 @@ class FirKotlinUMethod(
                 is KtFunction ->
                     LightClassUtil.getLightClassMethod(sourcePsi)
                 else -> null
-            } ?: return null
-            return when (sourcePsi) {
-                is KtConstructor<*> ->
-                    FirKotlinConstructorUMethod(sourcePsi.containingClassOrObject, javaPsi, sourcePsi, givenParent)
-                // TODO: FirKotlinUAnnotationMethod
-                else ->
-                    FirKotlinUMethod(javaPsi, sourcePsi, givenParent)
-            }
+            } as? KtLightMethod ?: return null
+            return create(javaPsi, givenParent)
         }
     }
 }
