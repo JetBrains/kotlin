@@ -24,7 +24,6 @@ dependencies {
     testApi(projectTests(":compiler:tests-compiler-utils"))
     testApi(projectTests(":compiler:tests-common-new"))
 
-    testCompile(projectTests(":jps-plugin"))
     testCompile(commonDep("junit:junit"))
 
     testCompile(intellijDep()) { includeJars("util", "idea", "idea_rt", rootProject = rootProject) }
@@ -33,6 +32,8 @@ dependencies {
     testCompile(intellijPluginDep("java")) { includeJars("jps-builders") }
     testCompile(jpsStandalone()) { includeJars("jps-model") }
     testCompile(jpsBuildTest())
+
+    testRuntimeOnly(compile(intellijCoreDep()) { includeJars("intellij-core") })
 
     testCompile("org.junit.platform:junit-platform-launcher:${commonVer("org.junit.platform", "")}")
 }
