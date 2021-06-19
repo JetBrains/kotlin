@@ -66,9 +66,10 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
 
     override fun interceptCall(call: IrCall, irFunction: IrFunction, args: List<State>, defaultAction: () -> Unit) {
         val isInlineOnly = irFunction.hasAnnotation(FqName("kotlin.internal.InlineOnly"))
+        val isSyntheticDefault = irFunction.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER
         val receiver = if (irFunction.dispatchReceiverParameter != null) args[0] else null
         when {
-            receiver is Wrapper && !isInlineOnly -> receiver.getMethod(irFunction).invokeMethod(irFunction, args)
+            receiver is Wrapper && !isInlineOnly && !isSyntheticDefault -> receiver.getMethod(irFunction).invokeMethod(irFunction, args)
             Wrapper.mustBeHandledWithWrapper(irFunction) -> Wrapper.getStaticMethod(irFunction).invokeMethod(irFunction, args)
             handleIntrinsicMethods(irFunction) -> return
             receiver.mustBeHandledAsReflection(call) -> Wrapper.getReflectionMethod(irFunction).invokeMethod(irFunction, args)

@@ -23,6 +23,12 @@ internal class KPropertyState(val property: IrProperty, override val irClass: Ir
     private var _parameters: List<KParameter>? = null
     private var _returnType: KType? = null
 
+    fun convertGetterToKFunctionState(): KFunctionState {
+        val getterClass = irClass.getIrClassOfReflection("getter")
+        val functionType = getterClass.superTypes.single { it.classOrNull?.owner?.name?.asString() == "Function1" }
+        return KFunctionState(property.getter!!, functionType.classOrNull!!.owner)
+    }
+
     fun getParameters(callInterceptor: CallInterceptor): List<KParameter> {
         if (_parameters != null) return _parameters!!
         val kParameterIrClass = irClass.getIrClassOfReflectionFromList("parameters")

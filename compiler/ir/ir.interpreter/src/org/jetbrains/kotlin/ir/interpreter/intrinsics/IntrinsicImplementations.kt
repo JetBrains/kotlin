@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.interpreter.*
 import org.jetbrains.kotlin.ir.interpreter.exceptions.handleUserException
 import org.jetbrains.kotlin.ir.interpreter.exceptions.stop
@@ -227,16 +228,17 @@ internal object ArrayConstructor : IntrinsicBase() {
         val size = callStack.getState(sizeSymbol).asInt()
 
         val initSymbol = irFunction.valueParameters[1].symbol
-        val function = when (val state = callStack.getState(initSymbol)) {
-            is KFunctionState -> state.irFunction.apply { callStack.loadUpValues(state) }
-            is KPropertyState -> state.property.getter
-            else -> TODO("Unsupported `init` in array constructor: $state")
-        } as IrSimpleFunction
+        val state = callStack.getState(initSymbol).let {
+            (it as? KFunctionState) ?: (it as KPropertyState).convertGetterToKFunctionState()
+        }
+        // if property was converted, then we must replace symbol in memory to get correct receiver later
+        callStack.setState(initSymbol, state)
 
         for (i in size - 1 downTo 0) {
-            val call = IrCallImpl.fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, function.returnType, function.symbol)
-            val arg = IrConstImpl.int(UNDEFINED_OFFSET, UNDEFINED_OFFSET, environment.irBuiltIns.intType, i)
-            if (function.correspondingPropertySymbol == null) call.putValueArgument(0, arg) else call.extensionReceiver = arg
+            val invoke = state.invokeSymbol.owner as IrSimpleFunction
+            val call = IrCallImpl.fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, invoke.returnType, invoke.symbol)
+            call.dispatchReceiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, initSymbol)
+            call.putValueArgument(0, IrConstImpl.int(UNDEFINED_OFFSET, UNDEFINED_OFFSET, environment.irBuiltIns.intType, i))
             instructions += CompoundInstruction(call)
         }
 

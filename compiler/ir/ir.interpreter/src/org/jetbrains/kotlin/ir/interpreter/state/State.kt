@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.interpreter.state
 
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -93,5 +94,6 @@ internal fun State.checkNullability(
 }
 
 internal fun State?.mustBeHandledAsReflection(call: IrCall): Boolean {
+    if (call.symbol.owner.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) return false
     return this is ReflectionState && !(this is KFunctionState && call.symbol.owner.name == OperatorNameConventions.INVOKE)
 }

@@ -5,24 +5,32 @@
 
 package org.jetbrains.kotlin.ir.interpreter
 
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterError
 import org.jetbrains.kotlin.ir.interpreter.exceptions.handleUserException
 import org.jetbrains.kotlin.ir.interpreter.exceptions.verify
 import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.*
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.isSubtypeOf
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.name.Name
 
 internal fun IrExpression.handleAndDropResult(callStack: CallStack, dropOnlyUnit: Boolean = false) {
     val dropResult = fun() {
@@ -38,10 +46,10 @@ internal fun unfoldInstruction(element: IrElement?, environment: IrInterpreterEn
         null -> return
         is IrSimpleFunction -> unfoldFunction(element, environment)
         is IrConstructor -> unfoldConstructor(element, callStack)
-        is IrCall -> unfoldCall(element, callStack)
-        is IrConstructorCall -> unfoldConstructorCall(element, callStack)
-        is IrEnumConstructorCall -> unfoldConstructorCall(element, callStack)
-        is IrDelegatingConstructorCall -> unfoldConstructorCall(element, callStack)
+        is IrCall -> unfoldCall(element, environment)
+        is IrConstructorCall -> unfoldConstructorCall(element, environment)
+        is IrEnumConstructorCall -> unfoldConstructorCall(element, environment)
+        is IrDelegatingConstructorCall -> unfoldConstructorCall(element, environment)
         is IrInstanceInitializerCall -> unfoldInstanceInitializerCall(element, callStack)
         is IrField -> unfoldField(element, callStack)
         is IrBody -> unfoldBody(element, callStack)
@@ -109,81 +117,147 @@ private fun unfoldConstructor(constructor: IrConstructor, callStack: CallStack) 
     }
 }
 
-private fun unfoldCall(call: IrCall, callStack: CallStack) {
-    unfoldValueParameters(call, callStack)
+private fun unfoldCall(call: IrCall, environment: IrInterpreterEnvironment) {
+    unfoldValueParameters(call, environment)
 }
 
 // This function is responsible for IrConstructorCall, IrDelegatingConstructorCall and IrEnumConstructorCall
-private fun unfoldConstructorCall(constructorCall: IrFunctionAccessExpression, callStack: CallStack) {
-    unfoldValueParameters(constructorCall, callStack)
+private fun unfoldConstructorCall(constructorCall: IrFunctionAccessExpression, environment: IrInterpreterEnvironment) {
+    unfoldValueParameters(constructorCall, environment)
 }
 
-private fun unfoldValueParameters(expression: IrFunctionAccessExpression, callStack: CallStack) {
+private fun unfoldValueParameters(expression: IrFunctionAccessExpression, environment: IrInterpreterEnvironment) {
+    val callStack = environment.callStack
     val irFunction = expression.symbol.owner
-    // new sub frame is used to store value arguments, in case then they are used in default args evaluation
-    callStack.newSubFrame(expression)
-    callStack.addInstruction(SimpleInstruction(expression))
 
-    fun getDefaultForParameterAt(index: Int): IrExpression? {
-        fun IrExpressionBody.replaceGetValueFromOtherClass(): IrExpressionBody {
-            return this.deepCopyWithSymbols(irFunction).transform(
-                object : IrElementTransformerVoid() {
-                    override fun visitGetValue(expression: IrGetValue): IrExpression {
-                        val parameter = expression.symbol.owner as? IrValueParameter ?: return super.visitGetValue(expression)
-                        if (parameter.parent == irFunction) return super.visitGetValue(expression)
-                        val newParameter = when (val indexInParameters = parameter.index) {
-                            -1 -> (irFunction.dispatchReceiverParameter ?: irFunction.extensionReceiverParameter)!!
-                            else -> irFunction.valueParameters[indexInParameters]
+    val hasDefaults = (0 until expression.valueArgumentsCount).any { expression.getValueArgument(it) == null }
+    if (hasDefaults) {
+        val visibility = if (expression is IrEnumConstructorCall || expression is IrDelegatingConstructorCall) DescriptorVisibilities.LOCAL else irFunction.visibility
+        val defaultFun = IrFunctionImpl(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
+            IrSimpleFunctionSymbolImpl(), Name.identifier(irFunction.name.asString() + "\$default"),
+            visibility, Modality.FINAL, irFunction.returnType,
+            isInline = false, isExternal = false, isTailrec = false, isSuspend = false, isOperator = true, isInfix = false, isExpect = false
+        )
+        defaultFun.parent = irFunction.parent
+        expression.dispatchReceiver?.let {
+            defaultFun.dispatchReceiverParameter = irFunction.dispatchReceiverParameter!!//.deepCopyWithSymbols(defaultFun)
+        }
+        expression.extensionReceiver?.let {
+            defaultFun.extensionReceiverParameter = irFunction.extensionReceiverParameter!!//.deepCopyWithSymbols(defaultFun)
+        }
+        val parameters = mutableListOf<IrValueDeclaration>()
+        (0 until expression.valueArgumentsCount).forEach {
+            if (expression.getValueArgument(it) != null) {
+                val param = irFunction.valueParameters[it]//.deepCopyWithSymbols(defaultFun)
+                defaultFun.valueParameters += param
+                parameters += param
+            }
+        }
+
+        val callToDefault = IrCallImpl.fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, defaultFun.returnType, defaultFun.symbol)
+        expression.dispatchReceiver?.let {
+            callToDefault.dispatchReceiver = it
+        }
+        expression.extensionReceiver?.let {
+            callToDefault.extensionReceiver = it
+        }
+        var index = 0
+        (0 until expression.valueArgumentsCount).forEach {
+            if (expression.getValueArgument(it) != null) {
+                callToDefault.putValueArgument(index++, expression.getValueArgument(it))
+            }
+        }
+
+        fun getDefaultForParameterAt(index: Int): IrExpression? {
+            fun IrExpressionBody.replaceGetValueFromOtherClass(owner: IrFunction): IrExpressionBody {
+                if (this.expression is IrConst<*>) return this
+                return this.deepCopyWithSymbols(owner).transform(
+                    object : IrElementTransformerVoid() {
+                        override fun visitGetValue(expression: IrGetValue): IrExpression {
+                            val parameter = expression.symbol.owner as? IrValueParameter ?: return super.visitGetValue(expression)
+                            if (parameter.parent != owner) return super.visitGetValue(expression)
+                            val newParameter = when (val indexInParameters = parameter.index) {
+                                -1 -> (irFunction.dispatchReceiverParameter ?: irFunction.extensionReceiverParameter)!!
+                                else -> parameters[indexInParameters]//parameters[indexInParameters]
+                            }
+                            return IrGetValueImpl(expression.startOffset, expression.endOffset, expression.type, newParameter.symbol)
                         }
-                        return IrGetValueImpl(expression.startOffset, expression.endOffset, expression.type, newParameter.symbol)
-                    }
-                }, null
-            )
-        }
-
-        fun IrValueParameter.getDefault(): IrExpressionBody? {
-            if (defaultValue != null) return defaultValue
-            val overriddenDefault = (this.parent as? IrSimpleFunction)?.overriddenSymbols
-                ?.map { it.owner.valueParameters[this.index] }
-                ?.firstNotNullOfOrNull { it.getDefault() }
-
-            if (overriddenDefault == null || overriddenDefault.expression is IrConst<*>) return overriddenDefault
-
-            return overriddenDefault.replaceGetValueFromOtherClass()
-        }
-
-        return irFunction.valueParameters[index].getDefault()?.expression
-    }
-
-    val valueParametersSymbols = irFunction.valueParameters.map { it.symbol }
-
-    // evaluate arguments
-    (expression.valueArgumentsCount - 1 downTo 0).forEach { index ->
-        when {
-            expression.getValueArgument(index) != null -> {
-                // interpret arguments that were passed
-                callStack.addInstruction(SimpleInstruction(irFunction.valueParameters[index]))
-                callStack.addInstruction(CompoundInstruction(expression.getValueArgument(index)))
+                    }, null
+                )//.deepCopyWithSymbols(defaultFun) TODO ???
             }
-            else -> {
-                // interpret defaults for null arguments
-                callStack.addInstruction(SimpleInstruction(valueParametersSymbols[index].owner))
 
-                getDefaultForParameterAt(index)
-                    ?.let { callStack.addInstruction(CompoundInstruction(it)) }
-                    ?: expression.getVarargType(index)?.let { // case when value parameter is vararg and it is missing
-                        callStack.addInstruction(SimpleInstruction(IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, it)))
-                    }
+            fun IrValueParameter.getDefault(): IrExpressionBody? {
+                if (defaultValue != null) return defaultValue?.replaceGetValueFromOtherClass(this.parent as IrFunction)
+                return (this.parent as? IrSimpleFunction)?.overriddenSymbols
+                    ?.map { it.owner.valueParameters[this.index] }
+                    ?.firstOrNull { it.getDefault() != null }?.let { it.getDefault()?.replaceGetValueFromOtherClass(it.parent as IrFunction) }
             }
+
+            return irFunction.valueParameters[index].getDefault()?.expression
         }
-    }
-    expression.extensionReceiver?.let {
-        callStack.addInstruction(SimpleInstruction(irFunction.extensionReceiverParameter!!))
-        callStack.addInstruction(CompoundInstruction(it))
-    }
-    expression.dispatchReceiver?.let {
-        callStack.addInstruction(SimpleInstruction(irFunction.dispatchReceiverParameter!!))
-        callStack.addInstruction(CompoundInstruction(it))
+
+        val newExpression = when (expression) {
+            is IrCall -> IrCallImpl.fromSymbolOwner(expression.startOffset, expression.endOffset, expression.type, expression.symbol)
+            is IrConstructorCall -> IrConstructorCallImpl.fromSymbolOwner(expression.type, expression.symbol)
+            is IrDelegatingConstructorCall -> IrDelegatingConstructorCallImpl(0, 0, expression.type, expression.symbol, expression.typeArgumentsCount, expression.valueArgumentsCount)
+            is IrEnumConstructorCall -> IrEnumConstructorCallImpl(0, 0, expression.type, expression.symbol, expression.typeArgumentsCount, expression.valueArgumentsCount)
+            else -> TODO()
+        }
+
+        expression.dispatchReceiver?.let {
+            newExpression.dispatchReceiver = IrGetValueImpl(0, 0, defaultFun.dispatchReceiverParameter!!.type, defaultFun.dispatchReceiverParameter!!.symbol)
+        }
+        expression.extensionReceiver?.let {
+            newExpression.extensionReceiver = IrGetValueImpl(0, 0, defaultFun.extensionReceiverParameter!!.type, defaultFun.extensionReceiverParameter!!.symbol)
+        }
+        val variablesForDefault = mutableListOf<IrVariable>()
+        index = 0
+        (0 until expression.valueArgumentsCount).forEach {
+            val arg = if (expression.getValueArgument(it) != null) {
+                IrGetValueImpl(0, 0, defaultFun.valueParameters[index].type, defaultFun.valueParameters[index++].symbol)
+            } else {
+                val init = getDefaultForParameterAt(it)
+                    ?: expression.getVarargType(it)?.let { // case when value parameter is vararg and it is missing
+                        IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, it)
+                    }
+                val variable = IrVariableImpl(
+                    0, 0, IrDeclarationOrigin.IR_TEMPORARY_VARIABLE, IrVariableSymbolImpl(),
+                    irFunction.valueParameters[it].name, irFunction.valueParameters[it].type, isVar = false, isConst = false, isLateinit = false
+                )
+                variablesForDefault += variable
+                parameters += variable
+                variable.initializer = init
+                IrGetValueImpl(0, 0, variable.type, variable.symbol)
+
+            }
+            newExpression.putValueArgument(it, arg)
+        }
+        (0 until expression.typeArgumentsCount).forEach {
+            newExpression.putTypeArgument(it, expression.getTypeArgument(it))
+        }
+
+
+        defaultFun.body = IrBlockBodyImpl(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+            variablesForDefault + IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, defaultFun.returnType, defaultFun.symbol, newExpression)
+        )
+
+        callStack.addInstruction(CompoundInstruction(callToDefault))
+    } else {
+        // new sub frame is used to store value arguments, in case then they are used in default args evaluation
+        callStack.newSubFrame(expression) // TODO drop
+        callStack.addInstruction(SimpleInstruction(expression))
+
+        fun IrValueParameter.schedule(arg: IrExpression?) {
+            callStack.addInstruction(SimpleInstruction(this))
+            callStack.addInstruction(CompoundInstruction(arg))
+        }
+        (expression.valueArgumentsCount - 1 downTo 0).forEach {
+            irFunction.valueParameters[it].schedule(expression.getValueArgument(it))
+        }
+        expression.extensionReceiver?.let { irFunction.extensionReceiverParameter!!.schedule(it) }
+        expression.dispatchReceiver?.let { irFunction.dispatchReceiverParameter!!.schedule(it) }
     }
 }
 

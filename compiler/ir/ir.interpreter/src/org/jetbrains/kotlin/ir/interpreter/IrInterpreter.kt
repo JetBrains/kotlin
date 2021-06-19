@@ -159,9 +159,6 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
             IllegalArgumentException("Parameter specified as non-null is null: method $method, parameter $parameter")
         } ?: return
 
-        //must add value argument in current stack because it can be used later as default argument
-        callStack.addVariable(Variable(valueParameter.symbol, state))
-
         // outer classes can be used in default args evaluation
         if (isReceiver() && state is Complex) state.loadOuterClassesInto(callStack)
         callStack.pushState(state)
@@ -177,7 +174,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
 
         val owner = call.symbol.owner
         // 1. load evaluated arguments from stack
-        val valueArguments = owner.valueParameters.map { callStack.popState() }.reversed().toMutableList()
+        val valueArguments = owner.valueParameters.map { callStack.popState() }.reversed()
         val extensionReceiver = owner.getExtensionReceiver()?.let { callStack.popState() }
         val dispatchReceiver = owner.getDispatchReceiver()?.let { callStack.popState() }
 
@@ -201,7 +198,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         // 4. store arguments in memory (remap args on actual names)
         irFunction.getDispatchReceiver()?.let { dispatchReceiver?.let { receiver -> callStack.addVariable(Variable(it, receiver)) } }
         irFunction.getExtensionReceiver()?.let { callStack.addVariable(Variable(it, extensionReceiver ?: callStack.getState(it))) }
-        irFunction.valueParameters.forEach { callStack.addVariable(Variable(it.symbol, valueArguments.removeFirst())) }
+        irFunction.valueParameters.forEachIndexed { i, param -> callStack.addVariable(Variable(param.symbol, valueArguments[i])) }
 
         // 5. store reified type parameters
         irFunction.typeParameters.filter { it.isReified }
