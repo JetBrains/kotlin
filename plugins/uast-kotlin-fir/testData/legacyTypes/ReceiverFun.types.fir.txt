@@ -11,4 +11,5 @@ UFile (package = ) [public final class ReceiverFunKt {...]
                 UReturnExpression [return [!] UnknownKotlinExpression (CALL_EXPRESSION)] : PsiType:Void
                     [!] UnknownKotlinExpression (CALL_EXPRESSION) [[!] UnknownKotlinExpression (CALL_EXPRESSION)]
     UClass (name = MyReceiverAnnotation) [public abstract annotation MyReceiverAnnotation {...}]
-        UMethod (name = name) [public abstract fun name() : java.lang.String = UastEmptyExpression]
+        UAnnotationMethod (name = name) [public abstract fun name() : java.lang.String = UastEmptyExpression]
+            ULiteralExpression (value = "") [""] : PsiType:String

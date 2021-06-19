@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.uast.*
-import org.jetbrains.uast.kotlin.*
 import org.jetbrains.uast.kotlin.psi.UastFakeLightMethod
 
 open class KotlinUMethod(
@@ -51,20 +50,6 @@ open class KotlinUMethod(
             else
                 KotlinUMethod(psi, containingElement)
         }
-    }
-}
-
-open class KotlinUAnnotationMethod(
-    psi: KtLightMethod,
-    givenParent: UElement?
-) : KotlinUMethod(psi, psi.kotlinOrigin, givenParent), UAnnotationMethod {
-
-    override val psi: KtLightMethod = unwrap<UMethod, KtLightMethod>(psi)
-
-    override val uastDefaultValue by lz {
-        val annotationParameter = sourcePsi as? KtParameter ?: return@lz null
-        val defaultValue = annotationParameter.defaultValue ?: return@lz null
-        getLanguagePlugin().convertElement(defaultValue, this) as? UExpression
     }
 }
 

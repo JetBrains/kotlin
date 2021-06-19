@@ -1,7 +1,7 @@
 Test -> [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
 A -> UClass (name = A)
 MyAnnotation -> UClass (name = MyAnnotation)
-text -> UMethod (name = text)
+text -> UAnnotationMethod (name = text)
 String -> [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
 MyAnnotation -> [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
 B -> UClass (name = B)

@@ -11,4 +11,5 @@ UFile (package = )
                 UReturnExpression
                     [!] UnknownKotlinExpression (CALL_EXPRESSION)
     UClass (name = MyReceiverAnnotation)
-        UMethod (name = name)
+        UAnnotationMethod (name = name)
+            ULiteralExpression (value = "")

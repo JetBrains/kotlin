@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.uast.*
 
 class FirKotlinUMethod(
@@ -29,10 +30,12 @@ class FirKotlinUMethod(
             psi: KtLightMethod,
             givenParent: UElement?
         ): UMethod {
-            return when (val kotlinOrigin = psi.kotlinOrigin) {
-                is KtConstructor<*> ->
+            val kotlinOrigin = psi.kotlinOrigin
+            return when {
+                kotlinOrigin is KtConstructor<*> ->
                     FirKotlinConstructorUMethod(kotlinOrigin.containingClassOrObject, psi, givenParent)
-                // TODO: FirKotlinUAnnotationMethod
+                kotlinOrigin is KtParameter && kotlinOrigin.getParentOfType<KtClass>(true)?.isAnnotation() == true ->
+                    FirKotlinUAnnotationMethod(psi, givenParent)
                 else ->
                     FirKotlinUMethod(psi, givenParent)
             }
