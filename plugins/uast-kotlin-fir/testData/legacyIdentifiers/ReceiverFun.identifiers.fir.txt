@@ -1,5 +1,5 @@
 MyReceiverAnnotation -> UClass (name = MyReceiverAnnotation)
-name -> UMethod (name = name)
+name -> UAnnotationMethod (name = name)
 String -> [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
 MyReceiverAnnotation -> [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
 String -> [!] UnknownKotlinExpression (REFERENCE_EXPRESSION)
