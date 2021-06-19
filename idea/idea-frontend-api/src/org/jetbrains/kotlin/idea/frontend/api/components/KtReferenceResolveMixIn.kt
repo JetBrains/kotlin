@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.idea.frontend.api.components
 
 import org.jetbrains.kotlin.idea.frontend.api.KtSymbolBasedReference
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.idea.references.KtReference
-import org.jetbrains.kotlin.idea.references.KtSimpleReference
 
 interface KtReferenceResolveMixIn : KtAnalysisSessionMixIn {
     fun KtReference.resolveToSymbols(): Collection<KtSymbol> {

@@ -42,11 +42,9 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
 class KtSimpleNameReferenceDescriptorsImpl(
     expression: KtSimpleNameExpression
 ) : KtSimpleNameReference(expression), KtDescriptorsBasedReference {
+
     override fun doCanBeReferenceTo(candidateTarget: PsiElement): Boolean =
         canBeReferenceTo(candidateTarget)
-
-    override fun isReferenceToWithoutExtensionChecking(candidateTarget: PsiElement): Boolean =
-        matchesTarget(candidateTarget)
 
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
         return SmartList<DeclarationDescriptor>().apply {

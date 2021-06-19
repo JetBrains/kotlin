@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,16 +15,9 @@ abstract class SyntheticPropertyAccessorReference(
     expression: KtNameReferenceExpression,
     val getter: Boolean
 ) : KtSimpleReference<KtNameReferenceExpression>(expression) {
-
-    override fun isReferenceTo(element: PsiElement): Boolean {
-        if (element !is PsiMethod || !isAccessorName(element.name)) return false
-        if (!getter && expression.readWriteAccess(true) == ReferenceAccess.READ) return false
-        return additionalIsReferenceToChecker(element)
-    }
-
     protected abstract fun additionalIsReferenceToChecker(element: PsiElement): Boolean
 
-    private fun isAccessorName(name: String): Boolean {
+    protected fun isAccessorName(name: String): Boolean {
         if (getter) {
             return name.startsWith("get") || name.startsWith("is")
         }

@@ -47,8 +47,9 @@ internal class KtFirSimpleNameReference(
         return true // TODO
     }
 
-    override fun isReferenceToWithoutExtensionChecking(candidateTarget: PsiElement): Boolean {
-        return resolve() == candidateTarget //todo
+
+    override fun isReferenceTo(element: PsiElement): Boolean {
+        return resolve() == element //todo
     }
 
     override fun handleElementRename(newElementName: String): PsiElement? {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,31 +8,16 @@ package org.jetbrains.kotlin.idea.references
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiReference
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 abstract class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleReference<KtSimpleNameExpression>(expression) {
-    override fun isReferenceTo(element: PsiElement): Boolean {
-        if (!doCanBeReferenceTo(element)) return false
-
-
-        @Suppress("DEPRECATION") // compatibility with 191
-        for (extension in Extensions.getArea(element.project).getExtensionPoint(SimpleNameReferenceExtension.EP_NAME).extensions) {
-            if (extension.isReferenceTo(this, element)) return true
-        }
-
-        return isReferenceToWithoutExtensionChecking(element)
-    }
-
     protected abstract fun doCanBeReferenceTo(candidateTarget: PsiElement): Boolean
-    protected abstract fun isReferenceToWithoutExtensionChecking(candidateTarget: PsiElement): Boolean
 
     override fun getRangeInElement(): TextRange {
         val element = element.getReferencedNameElement()
