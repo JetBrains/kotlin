@@ -112,6 +112,12 @@ abstract class ResolutionDiagnostic(candidateApplicability: CandidateApplicabili
     }
 }
 
+class ContextReceiverAmbiguity : ResolutionDiagnostic(RESOLVED_WITH_ERROR) {
+    override fun report(reporter: DiagnosticReporter) {
+        reporter.onCall(this)
+    }
+}
+
 // todo error for this access from nested class
 class VisibilityError(val invisibleMember: DeclarationDescriptorWithVisibility) : ResolutionDiagnostic(RUNTIME_ERROR) {
     override fun report(reporter: DiagnosticReporter) {

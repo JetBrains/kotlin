@@ -67,6 +67,10 @@ sealed class TowerData {
     class OnlyImplicitReceiver(val implicitReceiver: ReceiverValueWithSmartCastInfo) : TowerData()
     class TowerLevel(val level: ScopeTowerLevel) : TowerData()
     class BothTowerLevelAndImplicitReceiver(val level: ScopeTowerLevel, val implicitReceiver: ReceiverValueWithSmartCastInfo) : TowerData()
+    class BothTowerLevelAndContextReceiversGroup(
+        val level: ScopeTowerLevel,
+        val contextReceiversGroup: List<ReceiverValueWithSmartCastInfo>
+    ) : TowerData()
     // Has the same meaning as BothTowerLevelAndImplicitReceiver, but it's only used for names lookup, so it doesn't need implicit receiver
     class ForLookupForNoExplicitReceiver(val level: ScopeTowerLevel) : TowerData()
 }
@@ -222,9 +226,16 @@ class TowerResolver {
                     }
                     is ScopeResolutionStep.ContextReceiversGroupsResolution -> if (scope is LexicalScope) {
                         val contextReceiversGroup = implicitScopeTower.getContextReceivers(scope)
+
                         if (contextReceiversGroup.isNotEmpty()) {
                             TowerData.TowerLevel(ContextReceiversGroupScopeTowerLevel(implicitScopeTower, contextReceiversGroup))
                                 .process()?.let { return it }
+                            TowerData.BothTowerLevelAndContextReceiversGroup(syntheticLevel, contextReceiversGroup).process()
+                                ?.let { return it }
+                            for (nonLocalLevel in nonLocalLevels) {
+                                TowerData.BothTowerLevelAndContextReceiversGroup(nonLocalLevel, contextReceiversGroup).process()
+                                    ?.let { return it }
+                            }
                         }
                     }
                     is ScopeResolutionStep.ImportingScopesResolution -> if (scope is ImportingScope) {

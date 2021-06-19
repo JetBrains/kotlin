@@ -10577,15 +10577,9 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 }
 
                 @Test
-                @TestMetadata("ambiguityInGroupSimple.kt")
-                public void testAmbiguityInGroupSimple() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/ambiguityInGroupSimple.kt");
-                }
-
-                @Test
-                @TestMetadata("ambiguityInGroupWithInheritance.kt")
-                public void testAmbiguityInGroupWithInheritance() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/ambiguityInGroupWithInheritance.kt");
+                @TestMetadata("ambiguityInGroup.kt")
+                public void testAmbiguityInGroup() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/ambiguityInGroup.kt");
                 }
 
                 @Test
