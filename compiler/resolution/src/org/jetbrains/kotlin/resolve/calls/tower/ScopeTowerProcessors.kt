@@ -153,6 +153,31 @@ private class NoExplicitReceiverScopeTowerProcessor<C : Candidate>(
             ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
             data.implicitReceiver
         )
+        is TowerData.BothTowerLevelAndContextReceiversGroup -> {
+            val collected = mutableListOf<CandidateWithBoundDispatchReceiver>()
+            val receiversWithCandidates = mutableMapOf<ReceiverValueWithSmartCastInfo, List<CandidateWithBoundDispatchReceiver>>()
+            for (contextReceiver in data.contextReceiversGroup) {
+                val collectedFromReceiver = data.level.collectCandidates(contextReceiver).toMutableList()
+                collectedFromReceiver.removeIf { collectedCandidate ->
+                    val duplicate = collected.find { it.descriptor == collectedCandidate.descriptor }
+                    if (duplicate != null) {
+                        duplicate.diagnostics.add(ContextReceiverAmbiguity())
+                        true
+                    } else {
+                        false
+                    }
+                }
+                collected.addAll(collectedFromReceiver)
+                receiversWithCandidates[contextReceiver] = collectedFromReceiver
+            }
+            receiversWithCandidates.flatMap {
+                createCandidates(
+                    it.value,
+                    ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
+                    it.key
+                )
+            }
+        }
         else -> emptyList()
     }
 
