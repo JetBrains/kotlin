@@ -22,8 +22,6 @@ import org.jetbrains.kotlin.idea.frontend.api.isValid
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithVisibility
-import org.jetbrains.kotlin.idea.util.ifTrue
-import org.jetbrains.kotlin.idea.util.module
 
 internal abstract class FirLightMethod(
     lightMemberOrigin: LightMemberOrigin?,
@@ -95,10 +93,13 @@ internal abstract class FirLightMethod(
 
         if (effectiveVisibilityIfNotInternal != Visibilities.Internal) return defaultName
 
-        val moduleName = module?.name ?: return defaultName
+        //TODO
+//        val moduleName = module?.name ?: return defaultName
 
-        if (hasPublishedApiAnnotation(annotationUseSiteTarget)) return defaultName
+        return defaultName
 
-        return KotlinTypeMapper.InternalNameMapper.mangleInternalName(defaultName, moduleName)
+//        if (hasPublishedApiAnnotation(annotationUseSiteTarget)) return defaultName
+//
+//        return KotlinTypeMapper.InternalNameMapper.mangleInternalName(defaultName, moduleName)
     }
 }

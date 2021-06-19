@@ -21,7 +21,10 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.DeclarationProvider
+import org.jetbrains.kotlin.idea.fir.low.level.api.KtPackageProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveStateConfigurator
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.stateConfigurator
+import org.jetbrains.kotlin.idea.fir.low.level.api.createPackageProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.name.ClassId
@@ -37,11 +40,9 @@ internal class FirIdeProvider(
     firFileBuilder: FirFileBuilder,
     val cache: ModuleFileCache,
     private val declarationProvider: DeclarationProvider,
+    private val packageExistenceChecker: KtPackageProvider,
 ) : FirProvider() {
     override val symbolProvider: FirSymbolProvider = SymbolProvider()
-
-    private val packageExistenceChecker = ServiceManager.getService(project, FirModuleResolveStateConfigurator::class.java)
-        .createPackageExistingCheckerForModule(moduleInfo)
 
     private val providerHelper = FirProviderHelper(
         cache,

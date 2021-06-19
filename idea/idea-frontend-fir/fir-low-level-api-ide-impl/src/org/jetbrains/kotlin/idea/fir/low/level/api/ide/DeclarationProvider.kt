@@ -11,6 +11,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.stubs.StubIndexKey
 import org.jetbrains.kotlin.idea.fir.low.level.api.DeclarationProvider
+import org.jetbrains.kotlin.idea.fir.low.level.api.KtDeclarationProviderFactory
 import org.jetbrains.kotlin.idea.stubindex.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -19,7 +20,11 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
 
-internal class DeclarationProviderByIndexesImpl(val project: Project, private val scope: GlobalSearchScope) : DeclarationProvider() {
+internal class DeclarationProviderByIndexesImpl(
+    val project: Project,
+    override val searchScope: GlobalSearchScope
+) : DeclarationProvider() {
+
     private val stubIndex: StubIndex = StubIndex.getInstance()
 
     private inline fun <INDEX_KEY : Any, reified PSI : PsiElement> firstMatchingOrNull(
@@ -29,7 +34,7 @@ internal class DeclarationProviderByIndexesImpl(val project: Project, private va
     ): PSI? {
         var result: PSI? = null
         stubIndex.processElements(
-            stubKey, key, project, scope, PSI::class.java,
+            stubKey, key, project, searchScope, PSI::class.java,
         ) { candidate ->
             if (filter(candidate)) {
                 result = candidate
@@ -40,12 +45,39 @@ internal class DeclarationProviderByIndexesImpl(val project: Project, private va
         return result
     }
 
-    override fun getClassByClassId(classId: ClassId) = firstMatchingOrNull(
+
+    override fun getClassesByClassId(classId: ClassId): Collection<KtClassOrObject> {
+        return listOfNotNull(getClassByClassId(classId))//todo
+    }
+
+    override fun getTypeAliasesByClassId(classId: ClassId): Collection<KtTypeAlias> {
+        return listOfNotNull(getTypeAliasByClassId(classId))//todo
+    }
+
+    override fun getTypeAliasNamesInPackage(packageFqName: FqName): Set<Name> {
+        return KotlinTopLevelTypeAliasByPackageIndex
+            .getInstance()[packageFqName.asStringForIndexes(), project, searchScope]
+            .mapNotNullTo(mutableSetOf()) { it.nameAsName }
+    }
+
+    override fun getPropertyNamesInPackage(packageFqName: FqName): Set<Name> {
+        return KotlinTopLevelPropertyByPackageIndex
+            .getInstance()[packageFqName.asStringForIndexes(), project, searchScope]
+            .mapNotNullTo(mutableSetOf()) { it.nameAsName }
+    }
+
+    override fun getFunctionsNamesInPackage(packageFqName: FqName): Set<Name> {
+        return KotlinTopLevelFunctionByPackageIndex
+            .getInstance()[packageFqName.asStringForIndexes(), project, searchScope]
+            .mapNotNullTo(mutableSetOf()) { it.nameAsName }
+    }
+
+    private fun getClassByClassId(classId: ClassId) = firstMatchingOrNull(
         KotlinFullClassNameIndex.KEY,
         classId.asStringForIndexes(),
     ) { candidate -> candidate.containingKtFile.packageFqName == classId.packageFqName }
 
-    override fun getTypeAliasByClassId(classId: ClassId): KtTypeAlias? = firstMatchingOrNull<String, KtTypeAlias>(
+    private fun getTypeAliasByClassId(classId: ClassId): KtTypeAlias? = firstMatchingOrNull<String, KtTypeAlias>(
         KotlinTopLevelTypeAliasFqNameIndex.KEY,
         key = classId.asStringForIndexes(),
     ) { candidate -> candidate.containingKtFile.packageFqName == classId.packageFqName }
@@ -55,15 +87,15 @@ internal class DeclarationProviderByIndexesImpl(val project: Project, private va
         )
 
     override fun getTopLevelProperties(callableId: CallableId): Collection<KtProperty> =
-        KotlinTopLevelPropertyFqnNameIndex.getInstance()[callableId.asStringForIndexes(), project, scope]
+        KotlinTopLevelPropertyFqnNameIndex.getInstance()[callableId.asStringForIndexes(), project, searchScope]
 
     override fun getTopLevelFunctions(callableId: CallableId): Collection<KtNamedFunction> =
-        KotlinTopLevelFunctionFqnNameIndex.getInstance()[callableId.asStringForIndexes(), project, scope]
+        KotlinTopLevelFunctionFqnNameIndex.getInstance()[callableId.asStringForIndexes(), project, searchScope]
 
 
     override fun getClassNamesInPackage(packageFqName: FqName): Set<Name> =
         KotlinTopLevelClassByPackageIndex.getInstance()
-            .get(packageFqName.asStringForIndexes(), project, scope)
+            .get(packageFqName.asStringForIndexes(), project, searchScope)
             .mapNotNullTo(hashSetOf()) { it.nameAsName }
 
 
@@ -76,5 +108,11 @@ internal class DeclarationProviderByIndexesImpl(val project: Project, private va
 
         private fun ClassId.asStringForIndexes(): String =
             asSingleFqName().asStringForIndexes()
+    }
+}
+
+class KtDeclarationProviderFactoryIdeImpl(private val project: Project) : KtDeclarationProviderFactory() {
+    override fun createDeclarationProvider(searchScope: GlobalSearchScope): DeclarationProvider {
+        return DeclarationProviderByIndexesImpl(project, searchScope)
     }
 }

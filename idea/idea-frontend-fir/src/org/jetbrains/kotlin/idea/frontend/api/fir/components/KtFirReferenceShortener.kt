@@ -8,9 +8,6 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.components
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.SmartPsiElementPointer
-import com.intellij.psi.impl.source.PostprocessReformattingAspect
-import com.intellij.psi.util.parentsOfType
-import com.intellij.util.containers.addIfNotNull
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
@@ -49,6 +46,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacadeForResolveOnAir
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerContextProvider
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.parentsOfType
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.components.KtReferenceShortener
 import org.jetbrains.kotlin.idea.frontend.api.components.ShortenCommand
@@ -58,9 +56,8 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
-import org.jetbrains.kotlin.psi.psiUtil.unwrapNullability
+import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal class KtFirReferenceShortener(
     override val analysisSession: KtFirAnalysisSession,
@@ -459,8 +456,8 @@ private class ShortenCommandImpl(
         for (nameToImport in importsToAdd) {
             addImportToFile(targetFile.project, targetFile, nameToImport)
         }
-
-        PostprocessReformattingAspect.getInstance(targetFile.project).disablePostprocessFormattingInside {
+//todo
+//        PostprocessReformattingAspect.getInstance(targetFile.project).disablePostprocessFormattingInside {
             for (typePointer in typesToShorten) {
                 val type = typePointer.element ?: continue
                 type.deleteQualifier()
@@ -470,7 +467,7 @@ private class ShortenCommandImpl(
                 val call = callPointer.element ?: continue
                 call.deleteQualifier()
             }
-        }
+//        }
     }
 }
 

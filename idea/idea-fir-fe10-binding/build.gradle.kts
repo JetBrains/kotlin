@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     implementation(project(":idea:idea-frontend-fir"))
+    implementation(project(":idea"))
 
     testImplementation(projectTests(":idea:idea-fir"))
     testImplementation(projectTests(":idea:idea-frontend-independent"))

@@ -22,15 +22,12 @@ import org.jetbrains.kotlin.fir.analysis.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.session.FirModuleInfoBasedModuleData
-import org.jetbrains.kotlin.idea.fir.low.level.api.DeclarationProvider
-import org.jetbrains.kotlin.idea.fir.low.level.api.FirIdeResolveStateService
-import org.jetbrains.kotlin.idea.fir.low.level.api.PackageExistenceChecker
+import org.jetbrains.kotlin.idea.fir.low.level.api.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.*
-import org.jetbrains.kotlin.idea.fir.low.level.api.createResolveStateForNoCaching
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSession
 import org.jetbrains.kotlin.idea.fir.low.level.api.test.base.DeclarationProviderTestImpl
 import org.jetbrains.kotlin.idea.fir.low.level.api.test.base.KotlinOutOfBlockModificationTrackerFactoryTestImpl
-import org.jetbrains.kotlin.idea.fir.low.level.api.test.base.PackageExistenceCheckerTestImpl
+import org.jetbrains.kotlin.idea.fir.low.level.api.test.base.KtPackageProviderTestImpl
 import org.jetbrains.kotlin.idea.fir.low.level.api.test.base.SealedClassInheritorsProviderTestImpl
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
@@ -39,6 +36,7 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
+import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.test.TestConfiguration
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.testConfiguration
@@ -125,15 +123,6 @@ abstract class FrontendApiTestWithTestdata : AbstractKotlinCompilerTest() {
 
             val configurator = object : FirModuleResolveStateConfigurator() {
                 private val sealedClassInheritorsProvider = SealedClassInheritorsProviderTestImpl()
-                private val packageExistenceChecker = PackageExistenceCheckerTestImpl(sourcesScope, ktFiles.values)
-
-                override fun createDeclarationProvider(scope: GlobalSearchScope): DeclarationProvider {
-                    return DeclarationProviderTestImpl(scope, ktFiles.values)
-                }
-
-                override fun createPackageExistingCheckerForModule(moduleInfo: ModuleInfo): PackageExistenceChecker {
-                    return packageExistenceChecker
-                }
 
                 override fun createPackagePartsProvider(scope: GlobalSearchScope): PackagePartProvider {
                     return packagePartProviderFactory.invoke(scope)
@@ -188,6 +177,16 @@ abstract class FrontendApiTestWithTestdata : AbstractKotlinCompilerTest() {
                     KotlinOutOfBlockModificationTrackerFactory::class.java,
                     KotlinOutOfBlockModificationTrackerFactoryTestImpl::class.java
                 )
+                registerService(KtDeclarationProviderFactory::class.java, object : KtDeclarationProviderFactory() {
+                    override fun createDeclarationProvider(searchScope: GlobalSearchScope): DeclarationProvider {
+                        return DeclarationProviderTestImpl(searchScope, ktFiles.values)
+                    }
+                })
+                registerService(KtPackageProviderFactory::class.java, object : KtPackageProviderFactory() {
+                    override fun createPackageProvider(searchScope: GlobalSearchScope): KtPackageProvider {
+                        return KtPackageProviderTestImpl(searchScope, ktFiles.values)
+                    }
+                })
             }
 
 

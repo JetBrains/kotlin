@@ -11,6 +11,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.file.PsiPackageImpl
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.idea.fir.low.level.api.createPackageProvider
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
@@ -18,7 +19,6 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.symbolPointer
-import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
 import org.jetbrains.kotlin.name.FqName
 
 class KtFirPackageSymbol(
@@ -47,5 +47,5 @@ class KtPackage(
 ) : PsiPackageImpl(manager, fqName.asString().replace('/', '.')) {
     override fun copy() = KtPackage(manager, fqName, scope)
 
-    override fun isValid(): Boolean = PackageIndexUtil.packageExists(fqName, scope, project)
+    override fun isValid(): Boolean = project.createPackageProvider(scope).isPackageExists(fqName)
 }

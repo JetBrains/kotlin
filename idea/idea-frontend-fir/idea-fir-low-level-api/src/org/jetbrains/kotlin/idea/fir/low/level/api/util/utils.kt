@@ -126,7 +126,7 @@ internal inline fun <T> cachedValue(project: Project, vararg dependencies: Any, 
 internal fun <T> psiModificationTrackerBasedCachedValue(project: Project, createValue: () -> T) =
     cachedValue(project, PsiModificationTracker.MODIFICATION_COUNT, createValue = createValue)
 
-internal fun KtElement.getElementTextInContext(): String {
+fun KtElement.getElementTextInContext(): String {
     val context = parentOfType<KtImportDirective>()
         ?: parentOfType<KtPackageDirective>()
         ?: containingDeclarationForPseudocode
@@ -148,13 +148,13 @@ internal fun KtElement.getElementTextInContext(): String {
 
 private const val ELEMENT_TAG = "ELEMENT"
 
-internal inline fun <reified T : PsiElement> PsiElement.parentOfType(withSelf: Boolean = false): T? {
+inline fun <reified T : PsiElement> PsiElement.parentOfType(withSelf: Boolean = false): T? {
     return PsiTreeUtil.getParentOfType(this, T::class.java, !withSelf)
 }
 
-internal fun <T : PsiElement> PsiElement.parentsOfType(clazz: Class<out T>, withSelf: Boolean = true): Sequence<T> {
+fun <T : PsiElement> PsiElement.parentsOfType(clazz: Class<out T>, withSelf: Boolean = true): Sequence<T> {
     return (if (withSelf) parentsWithSelf else parents).filterIsInstance(clazz)
 }
 
-internal inline fun <reified T : PsiElement> PsiElement.parentsOfType(withSelf: Boolean = true): Sequence<T> =
+inline fun <reified T : PsiElement> PsiElement.parentsOfType(withSelf: Boolean = true): Sequence<T> =
     parentsOfType(T::class.java, withSelf)

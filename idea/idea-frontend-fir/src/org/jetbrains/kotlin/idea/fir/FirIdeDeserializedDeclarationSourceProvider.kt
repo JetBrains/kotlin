@@ -10,13 +10,15 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.idea.fir.FirIdeDeserializedDeclarationSourceProvider.scope
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.KtDeclarationAndFirDeclarationEqualityChecker
+import org.jetbrains.kotlin.idea.fir.low.level.api.createDeclarationProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSession
-import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
-import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex
-import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelPropertyFqnNameIndex
-import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelTypeAliasFqNameIndex
+
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFunction
@@ -41,11 +43,8 @@ object FirIdeDeserializedDeclarationSourceProvider {
         project: Project
     ): PsiElement? {
         val candidates = if (function.isTopLevel) {
-            KotlinTopLevelFunctionFqnNameIndex.getInstance().get(
-                function.symbol.callableId.asSingleFqName().asString(),
-                project,
-                function.scope(project)
-            ).filter(KtNamedFunction::isCompiled)
+            project.createDeclarationProvider(function.scope(project)).getTopLevelFunctions(function.symbol.callableId)
+                .filter(KtNamedFunction::isCompiled)
         } else {
             function.containingKtClass(project)?.body?.functions
                 ?.filter { it.name == function.name.asString() && it.isCompiled() }
@@ -57,11 +56,7 @@ object FirIdeDeserializedDeclarationSourceProvider {
 
     private fun provideSourceForProperty(property: FirProperty, project: Project): PsiElement? {
         val candidates = if (property.isTopLevel) {
-            KotlinTopLevelPropertyFqnNameIndex.getInstance().get(
-                property.symbol.callableId.asSingleFqName().asString(),
-                project,
-                property.scope(project)
-            )
+            project.createDeclarationProvider(property.scope(project)).getTopLevelFunctions(property.symbol.callableId)
         } else {
             property.containingKtClass(project)?.declarations
                 ?.filter { it.name == property.name.asString() }
@@ -75,11 +70,7 @@ object FirIdeDeserializedDeclarationSourceProvider {
         classByClassId(klass.symbol.classId, klass.scope(project), project)
 
     private fun provideSourceForTypeAlias(alias: FirTypeAlias, project: Project): PsiElement? {
-        val candidates = KotlinTopLevelTypeAliasFqNameIndex.getInstance().get(
-            alias.symbol.classId.asStringForUsingInIndexes(),
-            project,
-            alias.scope(project)
-        )
+        val candidates = project.createDeclarationProvider(alias.scope(project)).getTypeAliasesByClassId(alias.symbol.classId)
         return candidates.firstOrNull(KtElement::isCompiled)
     }
 
@@ -119,21 +110,17 @@ object FirIdeDeserializedDeclarationSourceProvider {
         unwrapFakeOverrides().containingClass()?.classId?.let { classByClassId(it, scope(project), project) }
 
     private fun classByClassId(classId: ClassId, scope: GlobalSearchScope, project: Project): KtClassOrObject? {
-        val fqName = classId.asStringForUsingInIndexes().let { classIdMapping[it] ?: it }
-        return KotlinFullClassNameIndex.getInstance().get(
-            fqName,
-            project,
-            scope
-        ).firstOrNull(KtElement::isCompiled)
+        val correctedClassId = classIdMapping[classId] ?: classId
+        return project.createDeclarationProvider(scope)
+            .getClassesByClassId(correctedClassId)
+            .firstOrNull(KtElement::isCompiled)
     }
 
     private val FirCallableDeclaration<*>.isTopLevel
         get() = symbol.callableId.className == null
 
-    private fun ClassId.asStringForUsingInIndexes() = asString().replace('/', '.')
-
     private val classIdMapping = (0..23).associate { i ->
-        "kotlin.Function$i" to "kotlin.jvm.functions.Function$i"
+        StandardClassIds.FunctionN(i) to ClassId(FqName("kotlin.jvm.functions"), Name.identifier("Function$i"))
     }
 }
 

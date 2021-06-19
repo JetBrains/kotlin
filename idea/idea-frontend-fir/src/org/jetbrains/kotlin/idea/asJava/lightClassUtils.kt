@@ -10,3 +10,7 @@ import org.jetbrains.kotlin.idea.frontend.api.tokens.hackyAllowRunningOnEdt
 
 @OptIn(HackToForceAllowRunningAnalyzeOnEDT::class)
 internal inline fun <E> allowLightClassesOnEdt(action: () -> E): E = hackyAllowRunningOnEdt(action)
+
+internal inline fun <T> Boolean.ifTrue(body: () -> T?): T? = if (this) body() else null
+
+internal inline fun <T> Boolean.ifFalse(body: () -> T?): T? = if (!this) body() else null

@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 
 internal class DeclarationProviderTestImpl(
-    searchScope: GlobalSearchScope,
+    override val searchScope: GlobalSearchScope,
     ktFiles: Collection<KtFile>
 ) : DeclarationProvider() {
 

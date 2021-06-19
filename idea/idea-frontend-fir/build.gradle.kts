@@ -14,13 +14,9 @@ dependencies {
     compile(project(":compiler:fir:java"))
     compile(project(":compiler:fir:jvm"))
     compile(project(":idea:idea-frontend-fir:idea-fir-low-level-api"))
-    compile(project(":idea:idea-frontend-fir:fir-low-level-api-ide-impl"))
-    compile(intellijDep())
+    compile(project(":idea:idea-frontend-api"))
+    compile(project(":compiler:light-classes"))
     compile(intellijCoreDep())
-
-// <temp>
-    compile(project(":idea:idea-core"))
-// </temp>
 
     testCompile(project(":idea:idea-fir"))
     testCompile(intellijDep())
@@ -34,7 +30,7 @@ dependencies {
     testCompile(commonDep("junit:junit"))
     testCompile(projectTests(":idea:idea-frontend-independent"))
 
-    compile(intellijPluginDep("java"))
+//    compile(intellijPluginDep("java"))
 }
 
 sourceSets {

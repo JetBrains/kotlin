@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.idea.fir.low.level.api.DeclarationProvider
-import org.jetbrains.kotlin.idea.fir.low.level.api.PackageExistenceChecker
+import org.jetbrains.kotlin.idea.fir.low.level.api.KtPackageProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.FirElementFinder
@@ -29,14 +29,14 @@ internal class FirProviderHelper(
     private val cache: ModuleFileCache,
     private val firFileBuilder: FirFileBuilder,
     private val declarationProvider: DeclarationProvider,
-    private val packageExistenceChecker: PackageExistenceChecker,
+    private val packageProvider: KtPackageProvider,
 ) {
     fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration<*>? {
         if (classId.isLocal) return null
         return executeOrReturnDefaultValueOnPCE(null) {
             cache.classifierByClassId.computeIfAbsent(classId) {
-                val ktClass = when (val klass = declarationProvider.getClassByClassId(classId)) {
-                    null -> declarationProvider.getTypeAliasByClassId(classId)
+                val ktClass = when (val klass = declarationProvider.getClassesByClassId(classId).firstOrNull()) {
+                    null -> declarationProvider.getTypeAliasesByClassId(classId).firstOrNull()
                     else -> if (klass.getClassId() == null) null else klass
                 } ?: return@computeIfAbsent Optional.empty()
                 val firFile = firFileBuilder.buildRawFirFileWithCaching(ktClass.containingKtFile, cache, preferLazyBodies = true)
@@ -86,5 +86,5 @@ internal class FirProviderHelper(
     }
 
     fun getPackage(fqName: FqName): FqName? =
-        fqName.takeIf(packageExistenceChecker::isPackageExists)
+        fqName.takeIf(packageProvider::isPackageExists)
 }

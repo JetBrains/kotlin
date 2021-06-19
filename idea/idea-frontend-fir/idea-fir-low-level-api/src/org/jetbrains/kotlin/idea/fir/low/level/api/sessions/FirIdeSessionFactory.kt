@@ -97,7 +97,8 @@ internal object FirIdeSessionFactory {
                 scopeProvider,
                 firFileBuilder,
                 cache,
-                configurator.createDeclarationProvider(searchScope),
+                project.createDeclarationProvider(searchScope),
+                project.createPackageProvider(searchScope),
             )
 
             register(FirProvider::class, provider)

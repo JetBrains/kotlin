@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.idea.caches.project.SdkInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.caches.resolve.IDEPackagePartProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.DeclarationProvider
-import org.jetbrains.kotlin.idea.fir.low.level.api.PackageExistenceChecker
+import org.jetbrains.kotlin.idea.fir.low.level.api.KtPackageProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveStateConfigurator
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
@@ -32,12 +32,6 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 class FirModuleResolveStateConfiguratorIdeImpl(private val project: Project) : FirModuleResolveStateConfigurator() {
-    override fun createDeclarationProvider(scope: GlobalSearchScope): DeclarationProvider =
-        DeclarationProviderByIndexesImpl(project, scope)
-
-    override fun createPackageExistingCheckerForModule(moduleInfo: ModuleInfo): PackageExistenceChecker =
-        PackageExistenceCheckerIdeImpl(project, moduleInfo)
-
     override fun createPackagePartsProvider(scope: GlobalSearchScope): PackagePartProvider =
         IDEPackagePartProvider(scope)
 

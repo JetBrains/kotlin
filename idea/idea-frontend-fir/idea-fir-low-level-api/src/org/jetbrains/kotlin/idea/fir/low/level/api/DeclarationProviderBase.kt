@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api
 
+import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.project.Project
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -15,13 +18,25 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtTypeAlias
 
 abstract class DeclarationProvider {
-    abstract fun getClassByClassId(classId: ClassId): KtClassOrObject?
+    abstract val searchScope: GlobalSearchScope
 
-    abstract fun getTypeAliasByClassId(classId: ClassId): KtTypeAlias?
-
-    abstract fun getTopLevelProperties(callableId: CallableId): Collection<KtProperty>
-
-    abstract fun getTopLevelFunctions(callableId: CallableId): Collection<KtNamedFunction>
+    abstract fun getClassesByClassId(classId: ClassId): Collection<KtClassOrObject>
+    abstract fun getTypeAliasesByClassId(classId: ClassId): Collection<KtTypeAlias>
 
     abstract fun getClassNamesInPackage(packageFqName: FqName): Set<Name>
+    abstract fun getTypeAliasNamesInPackage(packageFqName: FqName): Set<Name>
+
+    abstract fun getTopLevelProperties(callableId: CallableId): Collection<KtProperty>
+    abstract fun getTopLevelFunctions(callableId: CallableId): Collection<KtNamedFunction>
+
+    abstract fun getPropertyNamesInPackage(packageFqName: FqName): Set<Name>
+    abstract fun getFunctionsNamesInPackage(packageFqName: FqName): Set<Name>
 }
+
+abstract class KtDeclarationProviderFactory {
+    abstract fun createDeclarationProvider(searchScope: GlobalSearchScope): DeclarationProvider
+}
+
+fun Project.createDeclarationProvider(searchScope: GlobalSearchScope): DeclarationProvider =
+    ServiceManager.getService(this, KtDeclarationProviderFactory::class.java)
+        .createDeclarationProvider(searchScope)

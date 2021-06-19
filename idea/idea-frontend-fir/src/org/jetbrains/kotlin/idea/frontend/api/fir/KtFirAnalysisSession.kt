@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirOverrideInfoProvi
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbolProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.threadLocal
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
-import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -110,7 +109,7 @@ private constructor(
     val rootModuleSession: FirSession get() = firResolveState.rootModuleSession
     val firSymbolProvider: FirSymbolProvider get() = rootModuleSession.symbolProvider
     val targetPlatform: TargetPlatform get() = rootModuleSession.moduleData.platform
-    val searchScope: GlobalSearchScope = KotlinSourceFilterScope.projectSourceAndClassFiles(element.resolveScope, project)
+    val searchScope: GlobalSearchScope = element.resolveScope//todo
 
     companion object {
         @InvalidWayOfUsingAnalysisSession
