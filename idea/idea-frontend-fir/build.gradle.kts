@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.ideaExt.idea
 
 plugins {
     kotlin("jvm")
@@ -7,9 +6,6 @@ plugins {
 
 dependencies {
     compile(project(":compiler:psi"))
-    compile(project(":idea:idea-frontend-independent"))
-    compile(project(":idea:idea-frontend-api"))
-    compile(project(":idea:idea-core"))
     compile(project(":compiler:fir:fir2ir"))
     compile(project(":compiler:ir.tree"))
     compile(project(":compiler:fir:resolve"))

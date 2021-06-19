@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithModali
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtIconProvider.getIcon
+import org.jetbrains.kotlin.idea.KtIconProvider.getIcon
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.nameOrAnonymous
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
