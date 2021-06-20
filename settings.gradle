@@ -441,8 +441,6 @@ if (!buildProperties.getBoolean("disableKotlinPluginModules", false) && attached
             ":idea:jvm-debugger:jvm-debugger-test",
             ":idea:scripting-support",
             ":idea:idea-frontend-independent",
-            ":idea:idea-frontend-fir",
-            ":idea:idea-frontend-api",
             ":libraries:tools:new-project-wizard",
             ":idea:idea-new-project-wizard",
             ":libraries:tools:new-project-wizard:new-project-wizard-cli",
@@ -471,9 +469,7 @@ if (!buildProperties.getBoolean("disableKotlinPluginModules", false) && attached
             ":prepare:formatter",
             ":plugins:annotation-based-compiler-plugins-ide-support",
             ":plugins:parcelize:parcelize-ide",
-            ":idea:idea-frontend-fir:idea-fir-low-level-api",
             ":idea:idea-frontend-fir:fir-low-level-api-ide-impl",
-            ":idea:idea-frontend-fir:idea-frontend-fir-generator",
             ":idea:idea-fir-performance-tests",
             ":plugins:lint", // TODO will this module be removed with other IDE modules?
             ":compiler:android-tests", // TODO will this module be removed with other IDE modules?
@@ -499,7 +495,11 @@ if (!buildProperties.getBoolean("disableKotlinPluginModules", false) && attached
     logger.info("Old Kotlin plugin modules are disabled")
 }
 
-include ":generators:frontend-api-generator"
+include ":generators:frontend-api-generator",
+        ":idea:idea-frontend-fir:idea-fir-low-level-api",
+        ":idea:idea-frontend-fir:idea-frontend-fir-generator",
+        ":idea:idea-frontend-fir",
+        ":idea:idea-frontend-api"
 
 if (buildProperties.inJpsBuildIdeaSync) {
     include ":kotlin-stdlib:jps-build"
