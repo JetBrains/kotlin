@@ -816,6 +816,7 @@ tasks {
 
     register("distTest") {
         dependsOn("compilerTest")
+        dependsOn("frontendApiTests")
         dependsOn("toolsTest")
         dependsOn("gradlePluginTest")
         dependsOn("examplesTest")
@@ -877,14 +878,22 @@ tasks {
         dependsOn("dist")
         dependsOn(
             ":idea:idea-fir:test",
-            ":idea:idea-frontend-api:test",
-            ":idea:idea-frontend-fir:test",
-            ":idea:idea-frontend-fir:idea-fir-low-level-api:test",
             ":idea:idea-frontend-fir:idea-fir-low-level-api:test-ide-impl",
             ":plugins:uast-kotlin-fir:test",
             ":idea:idea-fir-fe10-binding:test"
         )
     }
+
+    register("frontendApiTests") {
+        dependsOn("dist")
+        dependsOn(
+            ":idea:idea-frontend-api:test",
+            ":idea:idea-frontend-fir:test",
+            ":idea:idea-frontend-fir:idea-fir-low-level-api:test"
+        )
+    }
+    
+    
 
     register("android-ide-tests") {
         dependsOn("dist")
