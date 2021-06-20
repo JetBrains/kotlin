@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.idea.fir.frontend.api.symbols.AbstractSymbolByFqName
 import org.jetbrains.kotlin.idea.fir.frontend.api.symbols.AbstractSymbolByPsiTest
 import org.jetbrains.kotlin.idea.fir.frontend.api.symbols.AbstractSymbolByReferenceTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirLazyBodiesCalculatorTest
-import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirLazyDeclarationResolveTest
+//import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirLazyDeclarationResolveTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirOnAirResolveTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractPartialRawFirBuilderTestCase
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostic.AbstractDiagnosticTraversalCounterTest
@@ -90,9 +90,9 @@ fun main(args: Array<String>) {
             testClass<AbstractFirOnAirResolveTest> {
                 model("onAirResolve")
             }
-            testClass<AbstractFirLazyDeclarationResolveTest> {
-                model("lazyResolve")
-            }
+//            testClass<AbstractFirLazyDeclarationResolveTest> {
+//                model("lazyResolve")
+//            }
 
             testClass<AbstractFileStructureTest> {
                 model("fileStructure")
