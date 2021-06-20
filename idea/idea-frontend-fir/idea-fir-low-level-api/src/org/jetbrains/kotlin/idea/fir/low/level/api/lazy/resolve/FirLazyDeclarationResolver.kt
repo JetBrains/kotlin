@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.LazyTransformerF
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.checkCanceled
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.ensurePhase
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.findSourceNonLocalFirDeclaration
-import org.jetbrains.kotlin.idea.util.ifTrue
 import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.*
 import org.jetbrains.kotlin.psi.*
@@ -160,7 +159,7 @@ internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBui
 
             val transformersToApply = designations.mapNotNull {
                 val needToResolve = it.resolvePhaseForAllDeclarations(includeDeclarationPhase = false) < currentPhase
-                needToResolve.ifTrue {
+                if (needToResolve) {
                     LazyTransformerFactory.createLazyTransformer(
                         phase = currentPhase,
                         designation = it,
@@ -172,7 +171,7 @@ internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBui
                         firProviderInterceptor = null,
                         checkPCE = checkPCE,
                     )
-                }
+                } else null
             }
             if (transformersToApply.isEmpty()) continue
 

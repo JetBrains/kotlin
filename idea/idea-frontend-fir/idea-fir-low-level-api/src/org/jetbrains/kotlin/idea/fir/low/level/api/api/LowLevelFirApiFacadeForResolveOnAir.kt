@@ -36,8 +36,6 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSourcesSession
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.getElementTextInContext
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.originalDeclaration
-import org.jetbrains.kotlin.idea.util.getElementTextInContext
-import org.jetbrains.kotlin.idea.util.ifTrue
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.parentOfType
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.parentsOfType
 import org.jetbrains.kotlin.psi.*
@@ -252,7 +250,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         val isInBodyReplacement = isInBodyReplacement(nonLocalDeclaration, replacement)
 
         return state.rootModuleSession.cache.firFileLockProvider.runCustomResolveUnderLock(originalFirFile, true) {
-            val copiedFirDeclaration = isInBodyReplacement.ifTrue {
+            val copiedFirDeclaration = if (isInBodyReplacement) {
                 when (originalDeclaration) {
                     is FirSimpleFunction ->
                         originalDeclaration.withBodyFrom(newDeclarationWithReplacement as FirSimpleFunction)
@@ -263,7 +261,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
                     is FirTypeAlias -> newDeclarationWithReplacement
                     else -> error("Not supported type ${originalDeclaration::class.simpleName}")
                 }
-            } ?: newDeclarationWithReplacement
+            } else newDeclarationWithReplacement
 
             val onAirDesignation = FirDeclarationDesignationWithFile(
                 path = originalDesignation.path,

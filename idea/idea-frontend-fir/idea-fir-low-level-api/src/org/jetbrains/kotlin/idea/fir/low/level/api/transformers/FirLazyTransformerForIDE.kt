@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.transformers
 
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignation

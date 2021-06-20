@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.getContainingFile
-import org.jetbrains.kotlin.idea.util.ifFalse
 
 class FirDeclarationDesignationWithFile(
     path: List<FirDeclaration>,
@@ -77,7 +76,7 @@ private fun collectDesignationPath(declaration: FirDeclaration): List<FirDeclara
     require(containingClass is FirRegularClass) {
         "FirRegularClass as containing declaration expected but found ${containingClass.renderWithType()}"
     }
-    return containingClass.isLocal.ifFalse { containingClass.collectForNonLocal().asReversed() }
+    return if (!containingClass.isLocal) containingClass.collectForNonLocal().asReversed() else null
 }
 
 fun FirDeclaration.collectDesignation(firFile: FirFile): FirDeclarationDesignationWithFile =

@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.idea.asJava.applyIf
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.tryCollectDesignation
 import org.jetbrains.kotlin.idea.frontend.api.components.KtTypeRendererOptions
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.idea.util.ifTrue
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.renderer.render
 
@@ -201,7 +200,7 @@ internal class ConeTypeIdeRenderer(
             else -> error("Invalid declaration ${declaration.renderWithType()}")
         } ?: return listOf(declaration)
 
-        return containingClass.isLocal.ifTrue { containingClass.collectForLocal().reversed() }
+        return if(containingClass.isLocal) { containingClass.collectForLocal().reversed() } else null
     }
 
     private fun StringBuilder.renderTypeConstructorAndArguments(type: ConeClassLikeType) {

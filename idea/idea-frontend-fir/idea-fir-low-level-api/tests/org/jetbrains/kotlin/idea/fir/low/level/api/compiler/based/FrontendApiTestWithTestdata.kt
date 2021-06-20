@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.test.base.DeclarationProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.test.base.KotlinOutOfBlockModificationTrackerFactoryTestImpl
 import org.jetbrains.kotlin.idea.fir.low.level.api.test.base.KtPackageProviderTestImpl
 import org.jetbrains.kotlin.idea.fir.low.level.api.test.base.SealedClassInheritorsProviderTestImpl
+import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -129,7 +130,13 @@ abstract class FrontendApiTestWithTestdata : AbstractKotlinCompilerTest() {
         if (ignoreTest(filePath, configuration)) {
             return
         }
-        super.runTest(filePath)
+        val oldEnableDeepEnsure = FirLazyTransformerForIDE.enableDeepEnsure
+        try {
+            FirLazyTransformerForIDE.enableDeepEnsure = true
+            super.runTest(filePath)
+        } finally {
+            FirLazyTransformerForIDE.enableDeepEnsure = oldEnableDeepEnsure
+        }
     }
 
     private fun ignoreTest(filePath: String, configuration: TestConfiguration): Boolean {
