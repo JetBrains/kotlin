@@ -26,7 +26,7 @@ fun renderJavaClass(renderer: FirRenderer, javaClass: FirJavaClass, session: Fir
     renderer.visitMemberDeclaration(javaClass)
     renderer.renderSupertypes(javaClass)
     renderer.renderInBraces {
-        val renderedDeclarations = mutableListOf<FirDeclaration>()
+        val renderedDeclarations = mutableListOf<FirDeclaration<*>>()
 
         fun renderAndCache(symbol: FirCallableSymbol<*>) {
             val enhanced = symbol.fir

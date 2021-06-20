@@ -98,7 +98,7 @@ internal fun FirValueParameter.transformVarargTypeToArrayType() {
     }
 }
 
-internal fun FirTypedDeclaration.transformTypeToArrayType() {
+internal fun FirTypedDeclaration<*>.transformTypeToArrayType() {
     val returnTypeRef = this.returnTypeRef
     require(returnTypeRef is FirResolvedTypeRef)
     // If the delegated type is already resolved, it means we have already created a resolved array type for this vararg type declaration.

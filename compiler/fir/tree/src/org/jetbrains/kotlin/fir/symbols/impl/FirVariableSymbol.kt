@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-open class FirVariableSymbol<D : FirVariable<D>>(override val callableId: CallableId) : FirCallableSymbol<D>() {
+open class FirVariableSymbol<E : FirVariable<E>>(override val callableId: CallableId) : FirCallableSymbol<E>() {
     constructor(name: Name) : this(CallableId(name))  // TODO?
 }
 

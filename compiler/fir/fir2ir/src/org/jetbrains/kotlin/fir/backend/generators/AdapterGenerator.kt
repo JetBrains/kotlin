@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.backend.*
+import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
+import org.jetbrains.kotlin.fir.backend.Fir2IrConversionScope
+import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.backend.convertWithOffsets
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -32,7 +34,10 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.isUnit
+import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 
@@ -172,7 +177,7 @@ internal class AdapterGenerator(
     ): IrSimpleFunction {
         val returnType = type.arguments.last().typeOrNull!!
         val parameterTypes = type.arguments.dropLast(1).map { it.typeOrNull!! }
-        val firMemberAdaptee = firAdaptee as FirMemberDeclaration
+        val firMemberAdaptee = firAdaptee as FirMemberDeclaration<*>
         return irFactory.createFunction(
             startOffset, endOffset,
             IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE,
@@ -292,7 +297,7 @@ internal class AdapterGenerator(
                 boundDispatchReceiver != null -> irCall.dispatchReceiver = receiverValue
                 boundExtensionReceiver != null -> irCall.extensionReceiver = receiverValue
             }
-        } else if (callableReferenceAccess.explicitReceiver is FirResolvedQualifier && ((firAdaptee as? FirMemberDeclaration)?.isStatic != true)) {
+        } else if (callableReferenceAccess.explicitReceiver is FirResolvedQualifier && ((firAdaptee as? FirMemberDeclaration<*>)?.isStatic != true)) {
             // Unbound callable reference 'A::foo'
             val adaptedReceiverParameter = adapterFunction.valueParameters[0]
             val adaptedReceiverValue = IrGetValueImpl(

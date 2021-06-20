@@ -22,7 +22,7 @@ abstract class CheckerContext {
 
     // Context
     abstract val implicitReceiverStack: ImplicitReceiverStack
-    abstract val containingDeclarations: List<FirDeclaration>
+    abstract val containingDeclarations: List<FirDeclaration<*>>
     abstract val qualifiedAccessOrAnnotationCalls: List<FirStatement>
     abstract val getClassCalls: List<FirGetClassCall>
 
@@ -62,7 +62,7 @@ abstract class CheckerContext {
  *   the closest setter, while we want to keep searching for a getter.
  */
 
-inline fun <reified T : FirDeclaration> CheckerContext.findClosest(check: (T) -> Boolean = { true }): T? {
+inline fun <reified T : FirDeclaration<*>> CheckerContext.findClosest(check: (T) -> Boolean = { true }): T? {
     for (it in containingDeclarations.asReversed()) {
         return (it as? T)?.takeIf(check) ?: continue
     }

@@ -9,14 +9,13 @@ import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirRenderer
-import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousInitializerSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getResolveState
@@ -34,14 +33,11 @@ internal fun FirBasedSymbol<*>.name(): String = when (this) {
     is FirCallableSymbol<*> -> callableId.callableName.asString()
     is FirClassLikeSymbol<*> -> classId.shortClassName.asString()
     is FirAnonymousInitializerSymbol -> "<init>"
+    is FirFileSymbol -> "<FILE>"
     else -> error("unknown symbol ${this::class.simpleName}")
 }
 
-internal fun FirDeclaration.name(): String = when (this) {
-    is FirSymbolOwner<*> -> symbol.name()
-    is FirFile -> "<FILE>"
-    else -> error("unknown declaration ${this::class.simpleName}")
-}
+internal fun FirDeclaration<*>.name(): String = symbol.name()
 
 internal inline fun <R> resolveWithClearCaches(
     context: KtElement,

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-sealed class FirFunction<F : FirFunction<F>> : FirPureAbstractElement(), FirCallableDeclaration<F>, FirTargetElement, FirTypeParameterRefsOwner, FirControlFlowGraphOwner, FirStatement {
+sealed class FirFunction<E : FirFunction<E>> : FirPureAbstractElement(), FirCallableDeclaration<E>, FirTargetElement, FirTypeParameterRefsOwner, FirControlFlowGraphOwner, FirStatement {
     abstract override val source: FirSourceElement?
     abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase
@@ -34,7 +34,7 @@ sealed class FirFunction<F : FirFunction<F>> : FirPureAbstractElement(), FirCall
     abstract override val receiverTypeRef: FirTypeRef?
     abstract override val typeParameters: List<FirTypeParameterRef>
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
-    abstract override val symbol: FirFunctionSymbol<F>
+    abstract override val symbol: FirFunctionSymbol<E>
     abstract val valueParameters: List<FirValueParameter>
     abstract val body: FirBlock?
 
@@ -56,15 +56,15 @@ sealed class FirFunction<F : FirFunction<F>> : FirPureAbstractElement(), FirCall
 
     abstract fun replaceBody(newBody: FirBlock?)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirFunction<F>
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirFunction<E>
 
-    abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirFunction<F>
+    abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirFunction<E>
 
-    abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirFunction<F>
+    abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirFunction<E>
 
-    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirFunction<F>
+    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirFunction<E>
 
-    abstract fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirFunction<F>
+    abstract fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirFunction<E>
 
-    abstract fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirFunction<F>
+    abstract fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirFunction<E>
 }

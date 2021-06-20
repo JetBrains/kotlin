@@ -16,5 +16,5 @@ import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
 interface FirTowerDataContextCollector {
     fun addFileContext(file: FirFile, context: FirTowerDataContext)
     fun addStatementContext(statement: FirStatement, context: FirTowerDataContext)
-    fun addDeclarationContext(declaration: FirDeclaration, context: FirTowerDataContext)
+    fun addDeclarationContext(declaration: FirDeclaration<*>, context: FirTowerDataContext)
 }

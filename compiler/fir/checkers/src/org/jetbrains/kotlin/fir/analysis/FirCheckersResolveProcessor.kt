@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveProcessor
@@ -30,7 +29,7 @@ class FirCheckersRunnerTransformer(private val diagnosticCollector: AbstractDiag
         return element
     }
 
-    override fun transformFile(file: FirFile, data: Nothing?): FirDeclaration {
+    override fun transformFile(file: FirFile, data: Nothing?): FirFile {
         val reporter = DiagnosticReporterFactory.createReporter()
         diagnosticCollector.collectDiagnostics(file, reporter)
         return file

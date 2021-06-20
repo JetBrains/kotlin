@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirPluginKey
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 
-data class GeneratedClass(val klass: FirRegularClass, val owner: FirAnnotatedDeclaration)
+data class GeneratedClass(val klass: FirRegularClass, val owner: FirAnnotatedDeclaration<*>)
 
 abstract class GeneratedClassIndex : FirSessionComponent {
     companion object {
@@ -23,7 +23,7 @@ abstract class GeneratedClassIndex : FirSessionComponent {
         }
     }
 
-    abstract fun registerClass(klass: FirRegularClass, owner: FirAnnotatedDeclaration)
+    abstract fun registerClass(klass: FirRegularClass, owner: FirAnnotatedDeclaration<*>)
     abstract operator fun get(key: FirPluginKey): List<GeneratedClass>
 }
 
@@ -33,7 +33,7 @@ val FirSession.generatedClassIndex: GeneratedClassIndex by FirSession.sessionCom
 private class GeneratedClassIndexImpl : GeneratedClassIndex() {
     private val index: ArrayListMultimap<FirPluginKey, GeneratedClass> = ArrayListMultimap.create()
 
-    override fun registerClass(klass: FirRegularClass, owner: FirAnnotatedDeclaration) {
+    override fun registerClass(klass: FirRegularClass, owner: FirAnnotatedDeclaration<*>) {
         val key = (klass.origin as FirDeclarationOrigin.Plugin).key
         index.put(key, GeneratedClass(klass, owner))
     }

@@ -41,10 +41,10 @@ abstract class FirProvider : FirSessionComponent {
     abstract fun getFirFilesByPackage(fqName: FqName): List<FirFile>
 
     @FirProviderInternals
-    abstract fun recordGeneratedClass(owner: FirAnnotatedDeclaration, klass: FirRegularClass)
+    abstract fun recordGeneratedClass(owner: FirAnnotatedDeclaration<*>, klass: FirRegularClass)
 
     @FirProviderInternals
-    abstract fun recordGeneratedMember(owner: FirAnnotatedDeclaration, klass: FirDeclaration)
+    abstract fun recordGeneratedMember(owner: FirAnnotatedDeclaration<*>, klass: FirDeclaration<*>)
 
     abstract fun getClassNamesInPackage(fqName: FqName): Set<Name>
 }

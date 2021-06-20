@@ -11,6 +11,6 @@ import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.ir.util.IdSignature
 
 interface Fir2IrSignatureComposer {
-    fun composeSignature(declaration: FirDeclaration, containingClass: ConeClassLikeLookupTag? = null): IdSignature?
+    fun composeSignature(declaration: FirDeclaration<*>, containingClass: ConeClassLikeLookupTag? = null): IdSignature?
     fun composeAccessorSignature(property: FirProperty, isSetter: Boolean, containingClass: ConeClassLikeLookupTag? = null): IdSignature?
 }

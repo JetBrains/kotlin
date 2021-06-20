@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.resolve.transformers.plugin
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.extensions.registeredPluginAnnotations
@@ -35,7 +34,7 @@ class FirAnnotationArgumentsResolveTransformerAdapter(session: FirSession, scope
         return element
     }
 
-    override fun transformFile(file: FirFile, data: Any?): FirDeclaration {
+    override fun transformFile(file: FirFile, data: Any?): FirFile {
         if (!hasAnnotations || !predicateBasedProvider.fileHasPluginAnnotations(file)) return file
         return file.transform(transformer, ResolutionMode.ContextIndependent)
     }

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
@@ -39,7 +38,7 @@ internal fun checkConstantArguments(
         }
         expression is FirConstExpression<*>
                 || expressionSymbol is FirEnumEntry
-                || (expressionSymbol as? FirMemberDeclaration)?.isConst == true
+                || (expressionSymbol as? FirMemberDeclaration<*>)?.isConst == true
                 || expressionSymbol is FirConstructor && classKindOfParent == ClassKind.ANNOTATION_CLASS -> {
             //DO NOTHING
         }
@@ -84,8 +83,8 @@ internal fun checkConstantArguments(
         expressionSymbol is FirField -> {
             //TODO: fix checking of Java fields initializer
             if (
-                !(expressionSymbol as FirMemberDeclaration).status.isStatic
-                || (expressionSymbol as FirMemberDeclaration).status.modality != Modality.FINAL
+                !(expressionSymbol as FirMemberDeclaration<*>).status.isStatic
+                || (expressionSymbol as FirMemberDeclaration<*>).status.modality != Modality.FINAL
             )
                 return ConstantArgumentKind.NOT_CONST
         }
@@ -189,7 +188,7 @@ internal fun checkConstantArguments(
     return null
 }
 
-private fun FirTypedDeclaration?.getReferencedClass(session: FirSession): FirSymbolOwner<*>? =
+private fun FirTypedDeclaration<*>?.getReferencedClass(session: FirSession): FirDeclaration<*>? =
     this?.returnTypeRef
         ?.coneTypeSafe<ConeLookupTagBasedType>()
         ?.lookupTag

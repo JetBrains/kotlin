@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.isInfix
 
 object FirInfixFunctionDeclarationChecker : FirMemberDeclarationChecker() {
-    override fun check(declaration: FirMemberDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    override fun check(declaration: FirMemberDeclaration<*>, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration is FirSimpleFunction && declaration.isInfix) {
             if (declaration.valueParameters.size != 1 || !hasExtensionOrDispatchReceiver(declaration, context)) {
                 reporter.reportOn(declaration.source, FirErrors.INAPPLICABLE_INFIX_MODIFIER, context)

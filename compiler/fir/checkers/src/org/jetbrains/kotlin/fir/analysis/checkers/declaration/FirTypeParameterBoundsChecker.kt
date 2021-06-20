@@ -34,7 +34,7 @@ object FirTypeParameterBoundsChecker : FirTypeParameterChecker() {
         checkFinalUpperBounds(declaration, containingDeclaration, context, reporter)
         checkExtensionFunctionTypeBound(declaration, context, reporter)
 
-        if (containingDeclaration.safeAs<FirMemberDeclaration>()?.isInlineOnly() != true) {
+        if (containingDeclaration.safeAs<FirMemberDeclaration<*>>()?.isInlineOnly() != true) {
             checkOnlyOneTypeParameterBound(declaration, context, reporter)
         }
 
@@ -47,7 +47,7 @@ object FirTypeParameterBoundsChecker : FirTypeParameterChecker() {
 
     private fun checkFinalUpperBounds(
         declaration: FirTypeParameter,
-        containingDeclaration: FirDeclaration,
+        containingDeclaration: FirDeclaration<*>,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
@@ -71,7 +71,7 @@ object FirTypeParameterBoundsChecker : FirTypeParameterChecker() {
 
     private fun checkTypeAliasBound(
         declaration: FirTypeParameter,
-        containingDeclaration: FirDeclaration,
+        containingDeclaration: FirDeclaration<*>,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {

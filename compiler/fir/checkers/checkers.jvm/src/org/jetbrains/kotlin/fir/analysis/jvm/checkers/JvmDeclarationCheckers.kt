@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers
 
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirMemberDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration.FirJvmExternalDeclarationChecker
 
 object JvmDeclarationCheckers : DeclarationCheckers() {

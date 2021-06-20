@@ -161,7 +161,7 @@ class Fir2IrConverter(
         return irClass
     }
 
-    private fun delegatedMembers(irClass: IrClass): List<FirDeclaration> {
+    private fun delegatedMembers(irClass: IrClass): List<FirDeclaration<*>> {
         return irClass.declarations.filter {
             it.origin == IrDeclarationOrigin.DELEGATED_MEMBER
         }.mapNotNull {
@@ -172,7 +172,7 @@ class Fir2IrConverter(
     // Sort declarations so that all non-synthetic declarations are before synthetic ones.
     // This is needed because converting synthetic fields for implementation delegation needs to know
     // existing declarations in the class to avoid adding redundant delegated members.
-    private fun syntheticPropertiesLast(declarations: List<FirDeclaration>): Iterable<FirDeclaration> {
+    private fun syntheticPropertiesLast(declarations: List<FirDeclaration<*>>): Iterable<FirDeclaration<*>> {
         return declarations.sortedBy { it !is FirField && it.isSynthetic }
     }
 
@@ -196,7 +196,7 @@ class Fir2IrConverter(
     }
 
     private fun processMemberDeclaration(
-        declaration: FirDeclaration,
+        declaration: FirDeclaration<*>,
         containingClass: FirClass<*>?,
         parent: IrDeclarationParent
     ): IrDeclaration? {

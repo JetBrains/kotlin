@@ -85,6 +85,6 @@ private val USE_SITE_TARGET_NAME_MAP = mapOf(
 private val DEFAULT_USE_SITE_TARGETS: Set<AnnotationUseSiteTarget> =
     USE_SITE_TARGET_NAME_MAP.values.fold(setOf<AnnotationUseSiteTarget>()) { a, b -> a + b } - setOf(AnnotationUseSiteTarget.FILE)
 
-fun FirAnnotatedDeclaration.hasAnnotation(classId: ClassId): Boolean {
+fun FirAnnotatedDeclaration<*>.hasAnnotation(classId: ClassId): Boolean {
     return annotations.any { it.toAnnotationClassId() == classId }
 }

@@ -22,7 +22,7 @@ object FirJavaVisibilityChecker : FirVisibilityChecker() {
         declarationVisibility: Visibility,
         symbol: FirBasedSymbol<*>,
         useSiteFile: FirFile,
-        containingDeclarations: List<FirDeclaration>,
+        containingDeclarations: List<FirDeclaration<*>>,
         dispatchReceiver: ReceiverValue?,
         session: FirSession
     ): Boolean {

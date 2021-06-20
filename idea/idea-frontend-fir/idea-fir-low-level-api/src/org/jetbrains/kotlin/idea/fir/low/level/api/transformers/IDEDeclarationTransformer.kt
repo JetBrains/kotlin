@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.transformers
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.resolve.transformers.FirAbstractPhaseTransformer
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignation
 
@@ -19,21 +17,21 @@ internal class IDEDeclarationTransformer(private val designation: FirDeclaration
     private var isInsideTargetDeclaration: Boolean = false
     private var designationPassed: Boolean = false
 
-    inline fun <K : FirDeclaration, D> visitDeclarationContent(
+    inline fun <D> visitDeclarationContent(
         visitor: FirVisitor<Unit, D>,
-        declaration: K,
+        declaration: FirDeclaration<*>,
         data: D,
-        default: () -> K
-    ) = processDeclarationContent(declaration, default) {
+        default: () -> FirDeclaration<*>
+    ): FirDeclaration<*> = processDeclarationContent(declaration, default) {
         it.accept(visitor, data)
     }
 
-    inline fun <K : FirDeclaration, D> transformDeclarationContent(
+    inline fun <D> transformDeclarationContent(
         transformer: FirDefaultTransformer<D>,
-        declaration: K,
+        declaration: FirDeclaration<*>,
         data: D,
-        default: () -> K
-    ): K = processDeclarationContent(declaration, default) { toTransform ->
+        default: () -> FirDeclaration<*>
+    ): FirDeclaration<*> = processDeclarationContent(declaration, default) { toTransform ->
         toTransform.transform<FirElement, D>(transformer, data).also { transformed ->
             check(transformed === toTransform) {
                 "become $transformed `${transformed.render()}`, was ${toTransform}: `${toTransform.render()}`"
@@ -41,11 +39,11 @@ internal class IDEDeclarationTransformer(private val designation: FirDeclaration
         }
     }
 
-    inline fun <K : FirDeclaration> processDeclarationContent(
-        declaration: K,
-        default: () -> K,
-        applyToDesignated: (FirDeclaration) -> Unit,
-    ): K {
+    private inline fun processDeclarationContent(
+        declaration: FirDeclaration<*>,
+        default: () -> FirDeclaration<*>,
+        applyToDesignated: (FirDeclaration<*>) -> Unit,
+    ): FirDeclaration<*> {
         //It means that we are inside the target declaration
         if (isInsideTargetDeclaration) {
             return default()

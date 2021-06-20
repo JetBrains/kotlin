@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnonymousFunctionExpression
@@ -413,13 +412,13 @@ class ControlFlowGraphBuilder {
         return popGraph()
     }
 
-    fun prepareForLocalClassMembers(members: Collection<FirSymbolOwner<*>>) {
+    fun prepareForLocalClassMembers(members: Collection<FirDeclaration<*>>) {
         members.forEachMember {
             enterToLocalClassesMembers[it.symbol] = lastNodes.topOrNull()
         }
     }
 
-    fun cleanAfterForLocalClassMembers(members: Collection<FirSymbolOwner<*>>) {
+    fun cleanAfterForLocalClassMembers(members: Collection<FirDeclaration<*>>) {
         members.forEachMember {
             enterToLocalClassesMembers.remove(it.symbol)
         }
@@ -1362,7 +1361,7 @@ class ControlFlowGraphBuilder {
 
     // ----------------------------------- Utils -----------------------------------
 
-    private inline fun Collection<FirSymbolOwner<*>>.forEachMember(block: (FirSymbolOwner<*>) -> Unit) {
+    private inline fun Collection<FirDeclaration<*>>.forEachMember(block: (FirDeclaration<*>) -> Unit) {
         for (member in this) {
             for (callableDeclaration in member.unwrap()) {
                 block(callableDeclaration)
@@ -1370,7 +1369,7 @@ class ControlFlowGraphBuilder {
         }
     }
 
-    private fun FirSymbolOwner<*>.unwrap(): List<FirSymbolOwner<*>> =
+    private fun FirDeclaration<*>.unwrap(): List<FirDeclaration<*>> =
         when (this) {
             is FirFunction<*>, is FirAnonymousInitializer -> listOf(this)
             is FirProperty -> listOfNotNull(this.getter, this.setter, this)
@@ -1384,4 +1383,4 @@ class ControlFlowGraphBuilder {
 
 }
 
-fun FirDeclaration?.isLocalClassOrAnonymousObject() = ((this as? FirRegularClass)?.isLocal == true) || this is FirAnonymousObject
+fun FirDeclaration<*>?.isLocalClassOrAnonymousObject() = ((this as? FirRegularClass)?.isLocal == true) || this is FirAnonymousObject

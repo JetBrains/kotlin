@@ -65,8 +65,8 @@ internal object DeclarationCopyBuilder {
     }
 
     private fun FirDeclarationBuilder.initDeclaration(
-        originalDeclaration: FirDeclaration,
-        builtDeclaration: FirDeclaration,
+        originalDeclaration: FirDeclaration<*>,
+        builtDeclaration: FirDeclaration<*>,
     ) {
         resolvePhase = minOf(originalDeclaration.resolvePhase, FirResolvePhase.DECLARATIONS)
         source = builtDeclaration.source

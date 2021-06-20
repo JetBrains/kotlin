@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -17,8 +18,9 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-sealed interface FirAnnotatedDeclaration : FirDeclaration, FirAnnotationContainer {
+sealed interface FirAnnotatedDeclaration<E : FirAnnotatedDeclaration<E>> : FirDeclaration<E>, FirAnnotationContainer {
     override val source: FirSourceElement?
+    override val symbol: FirBasedSymbol<E>
     override val moduleData: FirModuleData
     override val resolvePhase: FirResolvePhase
     override val origin: FirDeclarationOrigin
@@ -33,5 +35,5 @@ sealed interface FirAnnotatedDeclaration : FirDeclaration, FirAnnotationContaine
 
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnnotatedDeclaration
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnnotatedDeclaration<E>
 }

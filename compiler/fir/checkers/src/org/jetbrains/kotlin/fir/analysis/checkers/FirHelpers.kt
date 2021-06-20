@@ -12,9 +12,6 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
-import org.jetbrains.kotlin.fir.analysis.diagnostics.modalityModifier
-import org.jetbrains.kotlin.fir.analysis.diagnostics.overrideModifier
-import org.jetbrains.kotlin.fir.analysis.diagnostics.visibilityModifier
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -35,7 +32,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.psi.KtParameter.VAL_VAR_TOKEN_SET
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
@@ -134,7 +134,7 @@ inline fun <reified T : Any> FirQualifiedAccessExpression.getDeclaration(): T? {
  * Returns the ClassLikeDeclaration where the Fir object has been defined
  * or null if no proper declaration has been found.
  */
-fun FirSymbolOwner<*>.getContainingClass(context: CheckerContext): FirClassLikeDeclaration<*>? =
+fun FirDeclaration<*>.getContainingClass(context: CheckerContext): FirClassLikeDeclaration<*>? =
     this.safeAs<FirCallableMemberDeclaration<*>>()?.containingClass()?.toSymbol(context.session)?.fir
 
 fun FirClassLikeSymbol<*>.outerClass(context: CheckerContext): FirClassLikeSymbol<*>? {
@@ -232,9 +232,9 @@ fun FirClass<*>.modality(): Modality? {
 }
 
 /**
- * returns implicit modality by FirMemberDeclaration
+ * returns implicit modality by FirMemberDeclaration<*>
  */
-fun FirMemberDeclaration.implicitModality(context: CheckerContext): Modality {
+fun FirMemberDeclaration<*>.implicitModality(context: CheckerContext): Modality {
     if (this is FirRegularClass && (this.classKind == ClassKind.CLASS || this.classKind == ClassKind.OBJECT)) {
         if (this.classKind == ClassKind.INTERFACE) return Modality.ABSTRACT
         return Modality.FINAL
@@ -263,7 +263,7 @@ fun FirMemberDeclaration.implicitModality(context: CheckerContext): Modality {
     return Modality.FINAL
 }
 
-private fun FirDeclaration.hasBody(): Boolean = when (this) {
+private fun FirDeclaration<*>.hasBody(): Boolean = when (this) {
     is FirSimpleFunction -> this.body != null && this.body !is FirEmptyExpressionBlock
     is FirProperty -> this.setter?.body !is FirEmptyExpressionBlock? || this.getter?.body !is FirEmptyExpressionBlock?
     else -> false
@@ -379,7 +379,7 @@ private fun lowerThanBound(context: ConeInferenceContext, argument: ConeKotlinTy
     return false
 }
 
-fun FirMemberDeclaration.isInlineOnly(): Boolean = isInline && hasAnnotation(INLINE_ONLY_ANNOTATION_CLASS_ID)
+fun FirMemberDeclaration<*>.isInlineOnly(): Boolean = isInline && hasAnnotation(INLINE_ONLY_ANNOTATION_CLASS_ID)
 
 fun isSubtypeForTypeMismatch(context: ConeInferenceContext, subtype: ConeKotlinType, supertype: ConeKotlinType): Boolean {
     val subtypeFullyExpanded = subtype.fullyExpandedType(context.session)
@@ -508,7 +508,7 @@ private val FirSimpleFunction.matchesDataClassSyntheticMemberSignatures: Boolean
             (this.name == HASHCODE_NAME && matchesHashCodeSignature) ||
             (this.name == OperatorNameConventions.TO_STRING && matchesToStringSignature)
 
-private fun FirSymbolOwner<*>.getContainingClass(sessionHolder: SessionHolder): FirClassLikeDeclaration<*>? =
+private fun FirDeclaration<*>.getContainingClass(sessionHolder: SessionHolder): FirClassLikeDeclaration<*>? =
     this.safeAs<FirCallableMemberDeclaration<*>>()?.containingClass()?.toSymbol(sessionHolder.session)?.fir
 
 // NB: we intentionally do not check return types

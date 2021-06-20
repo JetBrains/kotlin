@@ -92,12 +92,12 @@ internal class FirIdeProvider(
 
 
     @FirProviderInternals
-    override fun recordGeneratedClass(owner: FirAnnotatedDeclaration, klass: FirRegularClass) {
+    override fun recordGeneratedClass(owner: FirAnnotatedDeclaration<*>, klass: FirRegularClass) {
         TODO()
     }
 
     @FirProviderInternals
-    override fun recordGeneratedMember(owner: FirAnnotatedDeclaration, klass: FirDeclaration) {
+    override fun recordGeneratedMember(owner: FirAnnotatedDeclaration<*>, klass: FirDeclaration<*>) {
         TODO()
     }
 

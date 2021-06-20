@@ -38,7 +38,7 @@ internal class FirRegularClassImpl(
     override val typeParameters: MutableList<FirTypeParameterRef>,
     override var status: FirDeclarationStatus,
     override val classKind: ClassKind,
-    override val declarations: MutableList<FirDeclaration>,
+    override val declarations: MutableList<FirDeclaration<*>>,
     override val scopeProvider: FirScopeProvider,
     override val name: Name,
     override val symbol: FirRegularClassSymbol,

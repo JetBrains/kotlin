@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirProjectionRelationChecker : FirBasicDeclarationChecker() {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    override fun check(declaration: FirDeclaration<*>, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration is FirPropertyAccessor) {
             return
         }

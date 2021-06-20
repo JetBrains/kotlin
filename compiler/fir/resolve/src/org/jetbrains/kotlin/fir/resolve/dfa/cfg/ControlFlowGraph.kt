@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 
-class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val kind: Kind) {
+class ControlFlowGraph(val declaration: FirDeclaration<*>?, val name: String, val kind: Kind) {
     private var _nodes: MutableList<CFGNode<*>> = mutableListOf()
 
     val nodes: List<CFGNode<*>>

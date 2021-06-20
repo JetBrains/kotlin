@@ -74,7 +74,7 @@ class FirScopeWithFakeOverrideTypeCalculator(
         return delegate.getClassifierNames()
     }
 
-    private fun updateReturnType(declaration: FirTypedDeclaration) {
+    private fun updateReturnType(declaration: FirTypedDeclaration<*>) {
         if (declaration !is FirCallableMemberDeclaration<*>) return
         if (declaration.isSubstitutionOverride || declaration.isIntersectionOverride) {
             fakeOverrideTypeCalculator.computeReturnType(declaration)

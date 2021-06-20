@@ -12,15 +12,14 @@ import org.jetbrains.kotlin.descriptors.ClassKind.ENUM_CLASS
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.*
-import org.jetbrains.kotlin.fir.analysis.checkers.checkConstantArguments
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.name.StandardClassIds.primitiveArrayTypeByElementType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.name.StandardClassIds.primitiveArrayTypeByElementType
 import org.jetbrains.kotlin.name.StandardClassIds.unsignedArrayTypeByElementType
 
 object FirAnnotationClassDeclarationChecker : FirRegularClassChecker() {
@@ -44,7 +43,7 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker() {
         }
     }
 
-    private fun checkAnnotationClassMember(member: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    private fun checkAnnotationClassMember(member: FirDeclaration<*>, context: CheckerContext, reporter: DiagnosticReporter) {
         when {
             member is FirConstructor && member.isPrimary -> {
                 for (parameter in member.valueParameters) {

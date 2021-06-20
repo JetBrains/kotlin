@@ -9,4 +9,4 @@ import org.jetbrains.kotlin.metadata.deserialization.VersionRequirementTable
 
 object FirVersionRequirementsTableKey : FirDeclarationDataKey()
 
-var FirDeclaration.versionRequirementsTable: VersionRequirementTable? by FirDeclarationDataRegistry.data(FirVersionRequirementsTableKey)
+var FirDeclaration<*>.versionRequirementsTable: VersionRequirementTable? by FirDeclarationDataRegistry.data(FirVersionRequirementsTableKey)

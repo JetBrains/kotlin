@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkersComponent
-import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.declarations.*
 
@@ -78,7 +77,7 @@ class DeclarationCheckersDiagnosticComponent(
         checkers.allBasicDeclarationCheckers.check(anonymousInitializer, data, reporter)
     }
 
-    private fun <D : FirDeclaration> Collection<FirDeclarationChecker<D>>.check(
+    private fun <D : FirDeclaration<*>> Collection<FirDeclarationChecker<D>>.check(
         declaration: D,
         context: CheckerContext,
         reporter: DiagnosticReporter

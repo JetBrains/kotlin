@@ -40,7 +40,7 @@ private data class FirSinceKotlinValue(
     val wasExperimentalMarkerClasses: List<FirRegularClassSymbol>
 )
 
-fun FirAnnotatedDeclaration.checkSinceKotlinVersionAccessibility(context: CheckerContext): FirSinceKotlinAccessibility {
+fun FirAnnotatedDeclaration<*>.checkSinceKotlinVersionAccessibility(context: CheckerContext): FirSinceKotlinAccessibility {
     val value = getOwnSinceKotlinVersion(context.session)
     val version = value?.apiVersion
     val languageVersionSettings = context.session.languageVersionSettings
@@ -59,11 +59,11 @@ fun FirAnnotatedDeclaration.checkSinceKotlinVersionAccessibility(context: Checke
     return FirSinceKotlinAccessibility.NotAccessible(version)
 }
 
-private fun FirAnnotatedDeclaration.getOwnSinceKotlinVersion(session: FirSession): FirSinceKotlinValue? {
+private fun FirAnnotatedDeclaration<*>.getOwnSinceKotlinVersion(session: FirSession): FirSinceKotlinValue? {
     var result: FirSinceKotlinValue? = null
 
     // TODO: use-site targeted annotations
-    fun FirAnnotatedDeclaration.consider() {
+    fun FirAnnotatedDeclaration<*>.consider() {
         val sinceKotlinSingleArgument = getAnnotationByFqName(SINCE_KOTLIN_FQ_NAME)?.arguments?.singleOrNull()
         val apiVersion = ((sinceKotlinSingleArgument as? FirConstExpression<*>)?.value as? String)?.let(ApiVersion.Companion::parse)
         if (apiVersion != null) {
@@ -90,7 +90,7 @@ private fun FirAnnotatedDeclaration.getOwnSinceKotlinVersion(session: FirSession
     return result
 }
 
-private fun FirAnnotatedDeclaration.loadWasExperimentalMarkerClasses(): List<FirRegularClassSymbol> {
+private fun FirAnnotatedDeclaration<*>.loadWasExperimentalMarkerClasses(): List<FirRegularClassSymbol> {
     val wasExperimental = getAnnotationByFqName(OptInNames.WAS_EXPERIMENTAL_FQ_NAME) ?: return emptyList()
     val annotationClasses = wasExperimental.findArgumentByName(OptInNames.WAS_EXPERIMENTAL_ANNOTATION_CLASS) ?: return emptyList()
     return annotationClasses.extractClassesFromArgument()

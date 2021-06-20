@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
-import kotlinx.collections.immutable.PersistentList
-import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
@@ -17,7 +14,7 @@ import org.jetbrains.kotlin.utils.keysToMap
 class LocalClassesNavigationInfo(
     val parentForClass: Map<FirClassLikeDeclaration<*>, FirClassLikeDeclaration<*>?>,
     private val parentClassForFunction: Map<FirCallableMemberDeclaration<*>, FirClassLikeDeclaration<*>>,
-    val allMembers: List<FirSymbolOwner<*>>
+    val allMembers: List<FirDeclaration<*>>
 ) {
     val designationMap: Map<FirCallableMemberDeclaration<*>, List<FirClassLikeDeclaration<*>>> by lazy {
         parentClassForFunction.keys.keysToMap {
@@ -48,7 +45,7 @@ fun FirClassLikeDeclaration<*>.collectLocalClassesNavigationInfo(): LocalClasses
 private class NavigationInfoVisitor : FirDefaultVisitor<Unit, Any?>() {
     val resultingMap: MutableMap<FirCallableMemberDeclaration<*>, FirClassLikeDeclaration<*>> = mutableMapOf()
     val parentForClass: MutableMap<FirClassLikeDeclaration<*>, FirClassLikeDeclaration<*>?> = mutableMapOf()
-    val allMembers: MutableList<FirSymbolOwner<*>> = mutableListOf()
+    val allMembers: MutableList<FirDeclaration<*>> = mutableListOf()
     private val currentPath: MutableList<FirClassLikeDeclaration<*>> = mutableListOf()
 
     override fun visitElement(element: FirElement, data: Any?) {}

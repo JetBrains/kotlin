@@ -58,10 +58,10 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.TO_STRING
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class DataClassMembersGenerator(val components: Fir2IrComponents) {
 
-    fun generateInlineClassMembers(klass: FirClass<*>, irClass: IrClass): List<FirDeclaration> =
+    fun generateInlineClassMembers(klass: FirClass<*>, irClass: IrClass): List<FirDeclaration<*>> =
         MyDataClassMethodsGenerator(irClass, klass.symbol.toLookupTag(), IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER).generate(klass)
 
-    fun generateDataClassMembers(klass: FirClass<*>, irClass: IrClass): List<FirDeclaration> =
+    fun generateDataClassMembers(klass: FirClass<*>, irClass: IrClass): List<FirDeclaration<*>> =
         MyDataClassMethodsGenerator(irClass, klass.symbol.toLookupTag(), IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER).generate(klass)
 
     fun generateDataClassComponentBody(irFunction: IrFunction, lookupTag: ConeClassLikeLookupTag) =
@@ -175,14 +175,14 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
                     (this.name == HASHCODE_NAME && matchesHashCodeSignature) ||
                     (this.name == TO_STRING && matchesToStringSignature)
 
-        fun generate(klass: FirClass<*>): List<FirDeclaration> {
+        fun generate(klass: FirClass<*>): List<FirDeclaration<*>> {
             val propertyParametersCount = irClass.primaryConstructor?.explicitParameters?.size ?: 0
             val properties = irClass.properties.filter { it.backingField != null }.take(propertyParametersCount).toList()
             if (properties.isEmpty()) {
                 return emptyList()
             }
 
-            val result = mutableListOf<FirDeclaration>()
+            val result = mutableListOf<FirDeclaration<*>>()
 
             val contributedFunctionsInThisType = klass.declarations.mapNotNull {
                 if (it is FirSimpleFunction && it.matchesDataClassSyntheticMemberSignatures) {

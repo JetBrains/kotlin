@@ -20,6 +20,7 @@ interface FieldContainer {
 }
 
 interface AbstractElement : FieldContainer, KindOwner {
+    val name: String
     val fields: Set<Field>
     val parents: List<AbstractElement>
     val typeArguments: List<TypeArgument>
@@ -41,7 +42,7 @@ interface AbstractElement : FieldContainer, KindOwner {
     override val allParents: List<KindOwner> get() = parents
 }
 
-class Element(val name: String, kind: Kind) : AbstractElement {
+class Element(override val name: String, kind: Kind) : AbstractElement {
     companion object {
         private val allowedKinds = setOf(
             Implementation.Kind.Interface,

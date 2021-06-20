@@ -273,4 +273,4 @@ class FirStubTypeTransformer(
 private val BUILDER_INFERENCE_ANNOTATION_CLASS_ID = ClassId.topLevel(BUILDER_INFERENCE_ANNOTATION_FQ_NAME)
 
 fun FirElement.hasBuilderInferenceAnnotation(): Boolean =
-    (this as? FirAnnotatedDeclaration)?.hasAnnotation(BUILDER_INFERENCE_ANNOTATION_CLASS_ID) == true
+    (this as? FirAnnotatedDeclaration<*>)?.hasAnnotation(BUILDER_INFERENCE_ANNOTATION_CLASS_ID) == true

@@ -48,7 +48,7 @@ interface FirSyntaxChecker<in D : FirElement, P : PsiElement> {
     fun checkLightTree(element: D, source: FirSourceElement, context: CheckerContext, reporter: DiagnosticReporter)
 }
 
-abstract class FirDeclarationSyntaxChecker<in D : FirDeclaration, P : PsiElement> :
+abstract class FirDeclarationSyntaxChecker<in D : FirDeclaration<*>, P : PsiElement> :
     FirDeclarationChecker<D>(),
     FirSyntaxChecker<D, P> {
     final override fun check(declaration: D, context: CheckerContext, reporter: DiagnosticReporter) {

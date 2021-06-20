@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.name.Name
 
 class AllOpenTopLevelDeclarationsGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     override fun generateClasses(
-        annotatedDeclaration: FirDeclaration,
-        owners: List<FirAnnotatedDeclaration>
+        annotatedDeclaration: FirDeclaration<*>,
+        owners: List<FirAnnotatedDeclaration<*>>
     ): List<GeneratedDeclaration<FirRegularClass>> {
         val file = owners.first() as FirFile
         val klass = annotatedDeclaration as? FirRegularClass ?: return emptyList()
@@ -50,7 +50,7 @@ class AllOpenTopLevelDeclarationsGenerator(session: FirSession) : FirDeclaration
         return listOf(GeneratedDeclaration(newClass, file))
     }
 
-    override fun generateMembersForGeneratedClass(generatedClass: GeneratedClass): List<FirDeclaration> {
+    override fun generateMembersForGeneratedClass(generatedClass: GeneratedClass): List<FirDeclaration<*>> {
         val klass = generatedClass.klass
         val function = buildSimpleFunction {
             moduleData = session.moduleData
@@ -69,8 +69,8 @@ class AllOpenTopLevelDeclarationsGenerator(session: FirSession) : FirDeclaration
     }
 
     override fun generateMembers(
-        annotatedDeclaration: FirDeclaration,
-        owners: List<FirAnnotatedDeclaration>
+        annotatedDeclaration: FirDeclaration<*>,
+        owners: List<FirAnnotatedDeclaration<*>>
     ): List<GeneratedDeclaration<*>> {
         return emptyList()
     }

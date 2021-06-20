@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolved
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectData
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -59,7 +59,7 @@ fun FirFunction<*>.constructFunctionalTypeRef(isSuspend: Boolean = false): FirRe
             )
         )
     }
-    val rawReturnType = (this as FirTypedDeclaration).returnTypeRef.coneType
+    val rawReturnType = (this as FirTypedDeclaration<*>).returnTypeRef.coneType
 
     val functionalType = createFunctionalType(parameters, receiverTypeRef?.coneType, rawReturnType, isSuspend = isSuspend)
 
@@ -155,7 +155,7 @@ internal fun typeForReifiedParameterReference(parameterReferenceBuilder: FirReso
     return resultType.resolvedTypeFromPrototype(typeParameterSymbol.constructType(emptyArray(), false))
 }
 
-internal fun typeForQualifierByDeclaration(declaration: FirDeclaration, resultType: FirTypeRef, session: FirSession): FirTypeRef? {
+internal fun typeForQualifierByDeclaration(declaration: FirDeclaration<*>, resultType: FirTypeRef, session: FirSession): FirTypeRef? {
     if (declaration is FirTypeAlias) {
         val expandedDeclaration = declaration.expandedConeType?.lookupTag?.toSymbol(session)?.fir ?: return null
         return typeForQualifierByDeclaration(expandedDeclaration, resultType, session)
@@ -413,7 +413,7 @@ fun FirFunction<*>.getAsForbiddenNamedArgumentsTarget(session: FirSession): Forb
             }
         }
     }
-    if (this is FirMemberDeclaration && status.isExpect) {
+    if (this is FirMemberDeclaration<*> && status.isExpect) {
         return ForbiddenNamedArgumentsTarget.EXPECTED_CLASS_MEMBER
     }
     return when (origin) {

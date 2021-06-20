@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.extractArgumentTypeRefAndSource
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
@@ -28,7 +29,7 @@ object FirClassVarianceChecker : FirClassChecker() {
         }
 
         for (member in declaration.declarations) {
-            if (member is FirMemberDeclaration) {
+            if (member is FirMemberDeclaration<*>) {
                 if (Visibilities.isPrivate(member.status.visibility)) {
                     continue
                 }

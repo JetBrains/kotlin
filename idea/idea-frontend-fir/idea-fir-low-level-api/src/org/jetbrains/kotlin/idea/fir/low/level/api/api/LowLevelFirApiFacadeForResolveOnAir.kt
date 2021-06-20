@@ -235,7 +235,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         }
 
         val originalDeclaration = nonLocalDeclaration.getOrBuildFir(state)
-        check(originalDeclaration is FirDeclaration) { "Invalid original declaration type ${originalDeclaration::class.simpleName}" }
+        check(originalDeclaration is FirDeclaration<*>) { "Invalid original declaration type ${originalDeclaration::class.simpleName}" }
 
         val originalDesignation = originalDeclaration.collectDesignation()
 

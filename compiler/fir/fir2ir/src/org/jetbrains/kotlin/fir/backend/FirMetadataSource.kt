@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.name.Name
 
 sealed class FirMetadataSource : MetadataSource {
-    abstract val fir: FirDeclaration
+    abstract val fir: FirDeclaration<*>
 
     val declarationSiteSession: FirSession
         get() = fir.moduleData.session

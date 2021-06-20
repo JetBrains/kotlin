@@ -112,7 +112,7 @@ object FirReservedUnderscoreExpressionChecker : FirBasicExpressionChecker() {
 }
 
 object FirReservedUnderscoreDeclarationChecker : FirBasicDeclarationChecker() {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    override fun check(declaration: FirDeclaration<*>, context: CheckerContext, reporter: DiagnosticReporter) {
         if (
             declaration is FirClass<*> ||
             declaration is FirFunction<*> ||
@@ -141,7 +141,7 @@ object FirReservedUnderscoreDeclarationChecker : FirBasicDeclarationChecker() {
 }
 
 private fun reportIfUnderscore(
-    declaration: FirDeclaration,
+    declaration: FirDeclaration<*>,
     context: CheckerContext,
     reporter: DiagnosticReporter,
     isSingleUnderscoreAllowed: Boolean = false

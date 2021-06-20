@@ -16,8 +16,9 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignation
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.isResolvedForAllDeclarations
 import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.updateResolvedPhaseForDeclarationAndChildren
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.*
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.ensureDesignation
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.ensurePhase
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.isTargetCallableDeclarationAndInPhase
 
 /**
  * Transform designation into CONTRACTS declaration. Affects only for target declaration and it's children
@@ -40,13 +41,13 @@ internal class FirDesignatedContractsResolveTransformerForIDE(
         }
     }
 
-    override fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): FirDeclaration =
+    override fun transformDeclarationContent(declaration: FirDeclaration<*>, data: ResolutionMode): FirDeclaration<*> =
         ideDeclarationTransformer.transformDeclarationContent(this, declaration, data) {
             designation.declaration.updateResolvedPhaseForDeclarationAndChildren(FirResolvePhase.CONTRACTS)
             super.transformDeclarationContent(declaration, data)
         }
 
-    override fun needReplacePhase(firDeclaration: FirDeclaration): Boolean =
+    override fun needReplacePhase(firDeclaration: FirDeclaration<*>): Boolean =
         ideDeclarationTransformer.needReplacePhase && firDeclaration !is FirFile && super.needReplacePhase(firDeclaration)
 
     override fun transformDeclaration(phaseRunner: FirPhaseRunner) {
@@ -65,7 +66,7 @@ internal class FirDesignatedContractsResolveTransformerForIDE(
         ensureResolvedDeep(designation.declaration)
     }
 
-    override fun ensureResolved(declaration: FirDeclaration) {
+    override fun ensureResolved(declaration: FirDeclaration<*>) {
         when (declaration) {
             is FirSimpleFunction, is FirConstructor, is FirAnonymousInitializer ->
                 declaration.ensurePhase(FirResolvePhase.CONTRACTS)

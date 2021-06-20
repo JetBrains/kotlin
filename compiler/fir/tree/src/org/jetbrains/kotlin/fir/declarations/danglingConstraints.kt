@@ -16,10 +16,10 @@ data class DanglingTypeConstraint(val name: Name, val source: FirSourceElement)
 private object DanglingTypeConstraintsKey : FirDeclarationDataKey()
 
 var <T> T.danglingTypeConstraints: List<DanglingTypeConstraint>?
-        where T : FirDeclaration, T : FirTypeParameterRefsOwner
+        where T : FirDeclaration<T>, T : FirTypeParameterRefsOwner
         by FirDeclarationDataRegistry.data(DanglingTypeConstraintsKey)
 
-fun FirDeclaration.getDanglingTypeConstraintsOrEmpty(): List<DanglingTypeConstraint> {
+fun FirDeclaration<*>.getDanglingTypeConstraintsOrEmpty(): List<DanglingTypeConstraint> {
     val res = when (this) {
         is FirRegularClass -> danglingTypeConstraints
         is FirSimpleFunction -> danglingTypeConstraints

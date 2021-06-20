@@ -12,16 +12,13 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.ThreadSafe
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtFile
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.locks.ReentrantLock
-import java.util.concurrent.locks.ReentrantReadWriteLock
-import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.ThreadSafe
-import kotlin.concurrent.withLock
 
 /**
  * Caches mapping [KtFile] -> [FirFile] of module [moduleInfo]
@@ -48,13 +45,13 @@ internal abstract class ModuleFileCache {
      */
     abstract fun fileCached(file: KtFile, createValue: () -> FirFile): FirFile
 
-    abstract fun getContainerFirFile(declaration: FirDeclaration): FirFile?
+    abstract fun getContainerFirFile(declaration: FirDeclaration<*>): FirFile?
 
     abstract fun getCachedFirFile(ktFile: KtFile): FirFile?
 
     abstract val firFileLockProvider: LockProvider<FirFile>
 
-    inline fun <D : FirDeclaration, R> withReadLockOn(declaration: D, action: (D) -> R): R {
+    inline fun <D : FirDeclaration<*>, R> withReadLockOn(declaration: D, action: (D) -> R): R {
         val file = getContainerFirFile(declaration)
             ?: error("No fir file found for\n${declaration.render()}")
         return firFileLockProvider.withReadLock(file) { action(declaration) }
@@ -72,7 +69,7 @@ internal class ModuleFileCacheImpl(override val session: FirSession) : ModuleFil
 
     override fun getCachedFirFile(ktFile: KtFile): FirFile? = ktFileToFirFile[ktFile]
 
-    override fun getContainerFirFile(declaration: FirDeclaration): FirFile? {
+    override fun getContainerFirFile(declaration: FirDeclaration<*>): FirFile? {
         val ktFile = declaration.psi?.containingFile as? KtFile ?: return null
         return getCachedFirFile(ktFile)
     }

@@ -8,23 +8,14 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirRenderer
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.renderWithType
-import org.jetbrains.kotlin.fir.resolve.firProvider
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
-import org.jetbrains.kotlin.idea.frontend.api.fir.buildSymbol
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.getElementTextInContext
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.psi.KtDeclaration
 
-internal fun KtFirSymbol<FirMemberDeclaration>.getModality(
+internal fun KtFirSymbol<FirMemberDeclaration<*>>.getModality(
     phase: FirResolvePhase = FirResolvePhase.STATUS,
     defaultModality: Modality? = null
 ) =
@@ -35,7 +26,7 @@ internal fun KtFirSymbol<FirMemberDeclaration>.getModality(
     }
 
 
-private fun FirDeclaration.invalidModalityError(): Nothing {
+private fun FirDeclaration<*>.invalidModalityError(): Nothing {
     error(
         """|Symbol modality should not be null, looks like the FIR symbol was not properly resolved
                    |
@@ -46,7 +37,7 @@ private fun FirDeclaration.invalidModalityError(): Nothing {
 }
 
 
-internal fun <F : FirMemberDeclaration> KtFirSymbol<F>.getVisibility(phase: FirResolvePhase = FirResolvePhase.STATUS): Visibility =
+internal fun <F : FirMemberDeclaration<F>> KtFirSymbol<F>.getVisibility(phase: FirResolvePhase = FirResolvePhase.STATUS): Visibility =
     firRef.withFir(phase) { fir -> fir.visibility }
 
 internal fun KtFirSymbol<FirCallableDeclaration<*>>.getCallableIdIfNonLocal(): CallableId? =

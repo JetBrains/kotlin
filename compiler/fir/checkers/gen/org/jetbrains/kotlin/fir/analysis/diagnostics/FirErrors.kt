@@ -218,15 +218,15 @@ object FirErrors {
     val EXPERIMENTAL_ANNOTATION_WITH_WRONG_RETENTION by error0<KtAnnotationEntry>()
 
     // Exposed visibility
-    val EXPOSED_TYPEALIAS_EXPANDED_TYPE by error3<KtNamedDeclaration, EffectiveVisibility, FirMemberDeclaration, EffectiveVisibility>(SourceElementPositioningStrategies.DECLARATION_NAME)
-    val EXPOSED_FUNCTION_RETURN_TYPE by error3<KtNamedDeclaration, EffectiveVisibility, FirMemberDeclaration, EffectiveVisibility>(SourceElementPositioningStrategies.DECLARATION_NAME)
-    val EXPOSED_RECEIVER_TYPE by error3<KtTypeReference, EffectiveVisibility, FirMemberDeclaration, EffectiveVisibility>()
-    val EXPOSED_PROPERTY_TYPE by error3<KtNamedDeclaration, EffectiveVisibility, FirMemberDeclaration, EffectiveVisibility>(SourceElementPositioningStrategies.DECLARATION_NAME)
-    val EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR by warning3<KtNamedDeclaration, EffectiveVisibility, FirMemberDeclaration, EffectiveVisibility>(SourceElementPositioningStrategies.DECLARATION_NAME)
-    val EXPOSED_PARAMETER_TYPE by error3<KtParameter, EffectiveVisibility, FirMemberDeclaration, EffectiveVisibility>()
-    val EXPOSED_SUPER_INTERFACE by error3<KtTypeReference, EffectiveVisibility, FirMemberDeclaration, EffectiveVisibility>()
-    val EXPOSED_SUPER_CLASS by error3<KtTypeReference, EffectiveVisibility, FirMemberDeclaration, EffectiveVisibility>()
-    val EXPOSED_TYPE_PARAMETER_BOUND by error3<KtTypeReference, EffectiveVisibility, FirMemberDeclaration, EffectiveVisibility>()
+    val EXPOSED_TYPEALIAS_EXPANDED_TYPE by error3<KtNamedDeclaration, EffectiveVisibility, FirMemberDeclaration<*>, EffectiveVisibility>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val EXPOSED_FUNCTION_RETURN_TYPE by error3<KtNamedDeclaration, EffectiveVisibility, FirMemberDeclaration<*>, EffectiveVisibility>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val EXPOSED_RECEIVER_TYPE by error3<KtTypeReference, EffectiveVisibility, FirMemberDeclaration<*>, EffectiveVisibility>()
+    val EXPOSED_PROPERTY_TYPE by error3<KtNamedDeclaration, EffectiveVisibility, FirMemberDeclaration<*>, EffectiveVisibility>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR by warning3<KtNamedDeclaration, EffectiveVisibility, FirMemberDeclaration<*>, EffectiveVisibility>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val EXPOSED_PARAMETER_TYPE by error3<KtParameter, EffectiveVisibility, FirMemberDeclaration<*>, EffectiveVisibility>()
+    val EXPOSED_SUPER_INTERFACE by error3<KtTypeReference, EffectiveVisibility, FirMemberDeclaration<*>, EffectiveVisibility>()
+    val EXPOSED_SUPER_CLASS by error3<KtTypeReference, EffectiveVisibility, FirMemberDeclaration<*>, EffectiveVisibility>()
+    val EXPOSED_TYPE_PARAMETER_BOUND by error3<KtTypeReference, EffectiveVisibility, FirMemberDeclaration<*>, EffectiveVisibility>()
 
     // Modifiers
     val INAPPLICABLE_INFIX_MODIFIER by error0<PsiElement>()
@@ -313,7 +313,7 @@ object FirErrors {
     val ONLY_ONE_CLASS_BOUND_ALLOWED by error0<KtTypeReference>()
     val REPEATED_BOUND by error0<KtTypeReference>()
     val CONFLICTING_UPPER_BOUNDS by error1<KtNamedDeclaration, FirTypeParameterSymbol>()
-    val NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER by error2<KtSimpleNameExpression, Name, FirDeclaration>()
+    val NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER by error2<KtSimpleNameExpression, Name, FirDeclaration<*>>()
     val BOUND_ON_TYPE_ALIAS_PARAMETER_NOT_ALLOWED by error0<KtTypeReference>()
     val REIFIED_TYPE_PARAMETER_NO_INLINE by error0<KtTypeParameter>(SourceElementPositioningStrategies.REIFIED_MODIFIER)
     val TYPE_PARAMETERS_NOT_ALLOWED by error0<KtDeclaration>(SourceElementPositioningStrategies.TYPE_PARAMETERS_LIST)
@@ -338,7 +338,7 @@ object FirErrors {
     val EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS by error1<PsiElement, ConeKotlinType>()
 
     // overrides
-    val NOTHING_TO_OVERRIDE by error1<KtModifierListOwner, FirMemberDeclaration>(SourceElementPositioningStrategies.OVERRIDE_MODIFIER)
+    val NOTHING_TO_OVERRIDE by error1<KtModifierListOwner, FirMemberDeclaration<*>>(SourceElementPositioningStrategies.OVERRIDE_MODIFIER)
     val CANNOT_WEAKEN_ACCESS_PRIVILEGE by error3<KtModifierListOwner, Visibility, FirCallableDeclaration<*>, Name>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
     val CANNOT_CHANGE_ACCESS_PRIVILEGE by error3<KtModifierListOwner, Visibility, FirCallableDeclaration<*>, Name>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
     val OVERRIDING_FINAL_MEMBER by error2<KtNamedDeclaration, FirCallableDeclaration<*>, Name>(SourceElementPositioningStrategies.OVERRIDE_MODIFIER)
@@ -350,13 +350,13 @@ object FirErrors {
     val MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED by error2<KtClassOrObject, FirClass<*>, FirCallableDeclaration<*>>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val OVERRIDING_FINAL_MEMBER_BY_DELEGATION by error2<KtClassOrObject, FirCallableDeclaration<*>, FirCallableDeclaration<*>>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE by warning2<KtClassOrObject, FirCallableDeclaration<*>, FirCallableDeclaration<*>>(SourceElementPositioningStrategies.DECLARATION_NAME)
-    val RETURN_TYPE_MISMATCH_ON_OVERRIDE by error2<KtNamedDeclaration, FirMemberDeclaration, FirMemberDeclaration>(SourceElementPositioningStrategies.DECLARATION_RETURN_TYPE)
-    val PROPERTY_TYPE_MISMATCH_ON_OVERRIDE by error2<KtNamedDeclaration, FirMemberDeclaration, FirMemberDeclaration>(SourceElementPositioningStrategies.DECLARATION_RETURN_TYPE)
-    val VAR_TYPE_MISMATCH_ON_OVERRIDE by error2<KtNamedDeclaration, FirMemberDeclaration, FirMemberDeclaration>(SourceElementPositioningStrategies.DECLARATION_RETURN_TYPE)
-    val VAR_OVERRIDDEN_BY_VAL by error2<KtNamedDeclaration, FirMemberDeclaration, FirMemberDeclaration>(SourceElementPositioningStrategies.VAL_OR_VAR_NODE)
+    val RETURN_TYPE_MISMATCH_ON_OVERRIDE by error2<KtNamedDeclaration, FirMemberDeclaration<*>, FirMemberDeclaration<*>>(SourceElementPositioningStrategies.DECLARATION_RETURN_TYPE)
+    val PROPERTY_TYPE_MISMATCH_ON_OVERRIDE by error2<KtNamedDeclaration, FirMemberDeclaration<*>, FirMemberDeclaration<*>>(SourceElementPositioningStrategies.DECLARATION_RETURN_TYPE)
+    val VAR_TYPE_MISMATCH_ON_OVERRIDE by error2<KtNamedDeclaration, FirMemberDeclaration<*>, FirMemberDeclaration<*>>(SourceElementPositioningStrategies.DECLARATION_RETURN_TYPE)
+    val VAR_OVERRIDDEN_BY_VAL by error2<KtNamedDeclaration, FirMemberDeclaration<*>, FirMemberDeclaration<*>>(SourceElementPositioningStrategies.VAL_OR_VAR_NODE)
     val NON_FINAL_MEMBER_IN_FINAL_CLASS by warning0<KtNamedDeclaration>(SourceElementPositioningStrategies.OPEN_MODIFIER)
     val NON_FINAL_MEMBER_IN_OBJECT by warning0<KtNamedDeclaration>(SourceElementPositioningStrategies.OPEN_MODIFIER)
-    val VIRTUAL_MEMBER_HIDDEN by error2<KtNamedDeclaration, FirMemberDeclaration, FirRegularClass>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val VIRTUAL_MEMBER_HIDDEN by error2<KtNamedDeclaration, FirMemberDeclaration<*>, FirRegularClass>(SourceElementPositioningStrategies.DECLARATION_NAME)
 
     // Redeclarations
     val MANY_COMPANION_OBJECTS by error0<KtObjectDeclaration>(SourceElementPositioningStrategies.COMPANION_OBJECT)
@@ -369,11 +369,11 @@ object FirErrors {
     val LOCAL_INTERFACE_NOT_ALLOWED by error1<KtNamedDeclaration, Name>(SourceElementPositioningStrategies.DECLARATION_NAME)
 
     // Functions
-    val ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS by error2<KtFunction, FirMemberDeclaration, FirClass<*>>(SourceElementPositioningStrategies.MODALITY_MODIFIER)
-    val ABSTRACT_FUNCTION_WITH_BODY by error1<KtFunction, FirMemberDeclaration>(SourceElementPositioningStrategies.MODALITY_MODIFIER)
-    val NON_ABSTRACT_FUNCTION_WITH_NO_BODY by error1<KtFunction, FirMemberDeclaration>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
-    val PRIVATE_FUNCTION_WITH_NO_BODY by error1<KtFunction, FirMemberDeclaration>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
-    val NON_MEMBER_FUNCTION_NO_BODY by error1<KtFunction, FirMemberDeclaration>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
+    val ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS by error2<KtFunction, FirMemberDeclaration<*>, FirClass<*>>(SourceElementPositioningStrategies.MODALITY_MODIFIER)
+    val ABSTRACT_FUNCTION_WITH_BODY by error1<KtFunction, FirMemberDeclaration<*>>(SourceElementPositioningStrategies.MODALITY_MODIFIER)
+    val NON_ABSTRACT_FUNCTION_WITH_NO_BODY by error1<KtFunction, FirMemberDeclaration<*>>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
+    val PRIVATE_FUNCTION_WITH_NO_BODY by error1<KtFunction, FirMemberDeclaration<*>>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
+    val NON_MEMBER_FUNCTION_NO_BODY by error1<KtFunction, FirMemberDeclaration<*>>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
     val FUNCTION_DECLARATION_WITH_NO_NAME by error0<KtFunction>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
     val ANONYMOUS_FUNCTION_WITH_NAME by error0<KtFunction>()
     val ANONYMOUS_FUNCTION_PARAMETER_WITH_DEFAULT_VALUE by error0<KtParameter>(SourceElementPositioningStrategies.PARAMETER_DEFAULT_VALUE)
@@ -392,7 +392,7 @@ object FirErrors {
     val FUN_INTERFACE_WITH_SUSPEND_FUNCTION by error0<KtDeclaration>(SourceElementPositioningStrategies.FUN_INTERFACE)
 
     // Properties & accessors
-    val ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS by error2<KtModifierListOwner, FirMemberDeclaration, FirClass<*>>(SourceElementPositioningStrategies.MODALITY_MODIFIER)
+    val ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS by error2<KtModifierListOwner, FirMemberDeclaration<*>, FirClass<*>>(SourceElementPositioningStrategies.MODALITY_MODIFIER)
     val PRIVATE_PROPERTY_IN_INTERFACE by error0<KtProperty>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
     val ABSTRACT_PROPERTY_WITH_INITIALIZER by error0<KtExpression>()
     val PROPERTY_INITIALIZER_IN_INTERFACE by error0<KtExpression>()

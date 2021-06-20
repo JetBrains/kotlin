@@ -43,9 +43,9 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
 
     final override val session: FirSession get() = components.session
 
-    protected open fun needReplacePhase(firDeclaration: FirDeclaration): Boolean = transformerPhase > firDeclaration.resolvePhase
+    protected open fun needReplacePhase(firDeclaration: FirDeclaration<*>): Boolean = transformerPhase > firDeclaration.resolvePhase
 
-    fun replaceDeclarationResolvePhaseIfNeeded(firDeclaration: FirDeclaration, newResolvePhase: FirResolvePhase) {
+    fun replaceDeclarationResolvePhaseIfNeeded(firDeclaration: FirDeclaration<*>, newResolvePhase: FirResolvePhase) {
         if (needReplacePhase(firDeclaration) && newResolvePhase > firDeclaration.resolvePhase) {
             firDeclaration.replaceResolvePhase(newResolvePhase)
         }
@@ -100,9 +100,9 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
 
         override val file: FirFile get() = context.file
         override val implicitReceiverStack: ImplicitReceiverStack get() = context.implicitReceiverStack
-        override val containingDeclarations: List<FirDeclaration> get() = context.containers
+        override val containingDeclarations: List<FirDeclaration<*>> get() = context.containers
         override val returnTypeCalculator: ReturnTypeCalculator get() = context.returnTypeCalculator
-        override val container: FirDeclaration get() = context.containerIfAny!!
+        override val container: FirDeclaration<*> get() = context.containerIfAny!!
 
         override val noExpectedType: FirTypeRef = buildImplicitTypeRef()
         override val symbolProvider: FirSymbolProvider = session.symbolProvider

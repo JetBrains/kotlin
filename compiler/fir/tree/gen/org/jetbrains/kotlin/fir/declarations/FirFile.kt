@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirFile : FirPureAbstractElement(), FirAnnotatedDeclaration {
+abstract class FirFile : FirPureAbstractElement(), FirAnnotatedDeclaration<FirFile> {
     abstract override val source: FirSourceElement?
     abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase
@@ -26,9 +27,10 @@ abstract class FirFile : FirPureAbstractElement(), FirAnnotatedDeclaration {
     abstract override val attributes: FirDeclarationAttributes
     abstract override val annotations: List<FirAnnotationCall>
     abstract val imports: List<FirImport>
-    abstract val declarations: List<FirDeclaration>
+    abstract val declarations: List<FirDeclaration<*>>
     abstract val name: String
     abstract val packageFqName: FqName
+    abstract override val symbol: FirFileSymbol
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitFile(this, data)
 

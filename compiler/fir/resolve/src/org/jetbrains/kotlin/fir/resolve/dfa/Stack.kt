@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSymbolOwner
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 
@@ -76,12 +76,12 @@ class SymbolBasedNodeStorage<T, N : CFGNode<T>> : Stack<N>() where T : FirElemen
     override fun top(): N = stack.top()
 
     override fun pop(): N = stack.pop().also {
-        map.remove((it.fir as FirSymbolOwner<*>).symbol)
+        map.remove((it.fir as FirDeclaration<*>).symbol)
     }
 
     override fun push(value: N) {
         stack.push(value)
-        map[(value.fir as FirSymbolOwner<*>).symbol] = value
+        map[(value.fir as FirDeclaration<*>).symbol] = value
     }
 
     operator fun get(key: FirBasedSymbol<*>): N? {

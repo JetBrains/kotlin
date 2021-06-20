@@ -97,7 +97,7 @@ class Fir2IrDeclarationStorage(
     // For pure fields (from Java) only
     private val fieldToPropertyCache = ConcurrentHashMap<Pair<FirField, IrDeclarationParent>, IrProperty>()
 
-    private val delegatedReverseCache = ConcurrentHashMap<IrDeclaration, FirDeclaration>()
+    private val delegatedReverseCache = ConcurrentHashMap<IrDeclaration, FirDeclaration<*>>()
 
     private val fieldCache = ConcurrentHashMap<FirField, IrField>()
 
@@ -411,7 +411,7 @@ class Fir2IrDeclarationStorage(
         delegatedReverseCache[irFunction] = function
     }
 
-    fun originalDeclarationForDelegated(irDeclaration: IrDeclaration): FirDeclaration? = delegatedReverseCache[irDeclaration]
+    fun originalDeclarationForDelegated(irDeclaration: IrDeclaration): FirDeclaration<*>? = delegatedReverseCache[irDeclaration]
 
     internal fun declareIrSimpleFunction(
         signature: IdSignature?,
@@ -1266,7 +1266,7 @@ class Fir2IrDeclarationStorage(
     }
 
     private fun IrMutableAnnotationContainer.convertAnnotationsFromLibrary(firAnnotationContainer: FirAnnotationContainer) {
-        if ((firAnnotationContainer as? FirDeclaration)?.isFromLibrary == true ||
+        if ((firAnnotationContainer as? FirDeclaration<*>)?.isFromLibrary == true ||
             (firAnnotationContainer is FirCallableMemberDeclaration<*> && firAnnotationContainer.isSubstitutionOrIntersectionOverride)
         ) {
             annotationGenerator.generate(this, firAnnotationContainer)

@@ -5,11 +5,17 @@
 
 package org.jetbrains.kotlin.fir.lazy
 
-import org.jetbrains.kotlin.fir.backend.*
+import org.jetbrains.kotlin.fir.backend.ConversionTypeContext
+import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
+import org.jetbrains.kotlin.fir.backend.generateOverriddenAccessorSymbols
+import org.jetbrains.kotlin.fir.backend.toIrType
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.symbols.Fir2IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -28,12 +34,12 @@ class Fir2IrLazyPropertyAccessor(
     firParentClass: FirRegularClass,
     symbol: Fir2IrSimpleFunctionSymbol,
     isFakeOverride: Boolean
-) : AbstractFir2IrLazyFunction<FirMemberDeclaration>(components, startOffset, endOffset, origin, symbol, isFakeOverride) {
+) : AbstractFir2IrLazyFunction<FirMemberDeclaration<*>>(components, startOffset, endOffset, origin, symbol, isFakeOverride) {
     init {
         symbol.bind(this)
     }
 
-    override val fir: FirMemberDeclaration
+    override val fir: FirMemberDeclaration<*>
         get() = firAccessor ?: firParentProperty
 
     // TODO: investigate why some deserialized properties are inline

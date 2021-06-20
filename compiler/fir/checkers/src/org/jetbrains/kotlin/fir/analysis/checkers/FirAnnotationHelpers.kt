@@ -60,11 +60,11 @@ fun FirRegularClass.getAllowedAnnotationTargets(): Set<KotlinTarget> {
     }
 }
 
-fun FirAnnotatedDeclaration.getRetentionAnnotation(): FirAnnotationCall? {
+fun FirAnnotatedDeclaration<*>.getRetentionAnnotation(): FirAnnotationCall? {
     return getAnnotationByFqName(StandardNames.FqNames.retention)
 }
 
-fun FirAnnotatedDeclaration.getTargetAnnotation(): FirAnnotationCall? {
+fun FirAnnotatedDeclaration<*>.getTargetAnnotation(): FirAnnotationCall? {
     return getAnnotationByFqName(StandardNames.FqNames.target)
 }
 

@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.analysis.cfa.*
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -32,7 +31,7 @@ import org.jetbrains.kotlin.fir.types.coneType
 
 object UnusedChecker : FirControlFlowChecker() {
     override fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter, context: CheckerContext) {
-        if ((graph.declaration as? FirSymbolOwner<*>)?.getContainingClass(context)?.takeIf {
+        if (graph.declaration?.getContainingClass(context)?.takeIf {
                 !it.symbol.classId.isLocal
             } != null
         ) return

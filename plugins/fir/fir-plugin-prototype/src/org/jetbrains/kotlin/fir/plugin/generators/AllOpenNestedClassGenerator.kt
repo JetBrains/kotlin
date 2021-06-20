@@ -33,8 +33,8 @@ import org.jetbrains.kotlin.name.Name
 
 class AllOpenNestedClassGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     override fun generateClasses(
-        annotatedDeclaration: FirDeclaration,
-        owners: List<FirAnnotatedDeclaration>
+        annotatedDeclaration: FirDeclaration<*>,
+        owners: List<FirAnnotatedDeclaration<*>>
     ): List<GeneratedDeclaration<FirRegularClass>> {
         val owner = annotatedDeclaration as? FirRegularClass ?: return emptyList()
         val newClass = buildRegularClass {
@@ -56,7 +56,7 @@ class AllOpenNestedClassGenerator(session: FirSession) : FirDeclarationGeneratio
         return listOf(GeneratedDeclaration(newClass, owner))
     }
 
-    override fun generateMembersForGeneratedClass(generatedClass: GeneratedClass): List<FirDeclaration> {
+    override fun generateMembersForGeneratedClass(generatedClass: GeneratedClass): List<FirDeclaration<*>> {
         val klass = generatedClass.klass
 
         val classId = klass.symbol.classId
@@ -92,8 +92,8 @@ class AllOpenNestedClassGenerator(session: FirSession) : FirDeclarationGeneratio
     }
 
     override fun generateMembers(
-        annotatedDeclaration: FirDeclaration,
-        owners: List<FirAnnotatedDeclaration>
+        annotatedDeclaration: FirDeclaration<*>,
+        owners: List<FirAnnotatedDeclaration<*>>
     ): List<GeneratedDeclaration<*>> {
         return emptyList()
     }

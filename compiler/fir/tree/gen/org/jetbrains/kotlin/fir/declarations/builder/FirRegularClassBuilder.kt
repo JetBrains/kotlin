@@ -45,7 +45,7 @@ open class FirRegularClassBuilder : FirClassBuilder, FirTypeParameterRefsOwnerBu
     override val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
     open lateinit var status: FirDeclarationStatus
     override lateinit var classKind: ClassKind
-    override val declarations: MutableList<FirDeclaration> = mutableListOf()
+    override val declarations: MutableList<FirDeclaration<*>> = mutableListOf()
     override lateinit var scopeProvider: FirScopeProvider
     open lateinit var name: Name
     open lateinit var symbol: FirRegularClassSymbol

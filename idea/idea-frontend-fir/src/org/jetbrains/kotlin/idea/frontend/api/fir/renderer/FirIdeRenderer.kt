@@ -28,14 +28,14 @@ import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 internal class FirIdeRenderer private constructor(
-    private var containingDeclaration: FirDeclaration?,
+    private var containingDeclaration: FirDeclaration<*>?,
     private val options: KtDeclarationRendererOptions,
     private val session: FirSession
 ) : FirVisitor<Unit, StringBuilder>() {
 
     private val typeIdeRenderer: ConeTypeIdeRenderer = ConeTypeIdeRenderer(session, options.typeRendererOptions)
 
-    private fun StringBuilder.renderAnnotations(annotated: FirAnnotatedDeclaration) {
+    private fun StringBuilder.renderAnnotations(annotated: FirAnnotatedDeclaration<*>) {
         if (RendererModifier.ANNOTATIONS in options.modifiers) {
             renderAnnotations(typeIdeRenderer, annotated.annotations, session)
         }
@@ -58,7 +58,7 @@ internal class FirIdeRenderer private constructor(
         return renderType(approximatedIfNeeded, annotations)
     }
 
-    private fun StringBuilder.renderName(declaration: FirDeclaration) {
+    private fun StringBuilder.renderName(declaration: FirDeclaration<*>) {
         if (declaration is FirAnonymousObject) {
             append("<no name provided>")
             return
@@ -109,7 +109,7 @@ internal class FirIdeRenderer private constructor(
         renderModifier(RendererModifier.MODALITY in options.modifiers, modality.name.toLowerCaseAsciiOnly())
     }
 
-    private fun FirMemberDeclaration.implicitModalityWithoutExtensions(containingDeclaration: FirDeclaration?): Modality {
+    private fun FirMemberDeclaration<*>.implicitModalityWithoutExtensions(containingDeclaration: FirDeclaration<*>?): Modality {
         if (this is FirRegularClass) {
             return if (classKind == ClassKind.INTERFACE) Modality.ABSTRACT else Modality.FINAL
         }
@@ -126,7 +126,7 @@ internal class FirIdeRenderer private constructor(
 
     private fun StringBuilder.renderModalityForCallable(
         callable: FirCallableMemberDeclaration<*>,
-        containingDeclaration: FirDeclaration?
+        containingDeclaration: FirDeclaration<*>?
     ) {
         val modality = callable.modality ?: return
         val isTopLevel = containingDeclaration == null
@@ -148,13 +148,13 @@ internal class FirIdeRenderer private constructor(
         }
     }
 
-    private fun StringBuilder.renderMemberModifiers(declaration: FirMemberDeclaration) {
+    private fun StringBuilder.renderMemberModifiers(declaration: FirMemberDeclaration<*>) {
         renderModifier(declaration.isExternal, "external")
         renderModifier(RendererModifier.EXPECT in options.modifiers && declaration.isExpect, "expect")
         renderModifier(RendererModifier.ACTUAL in options.modifiers && declaration.isActual, "actual")
     }
 
-    private fun StringBuilder.renderAdditionalModifiers(firMember: FirMemberDeclaration) {
+    private fun StringBuilder.renderAdditionalModifiers(firMember: FirMemberDeclaration<*>) {
         val isOperator =
             firMember.isOperator//TODO make similar to functionDescriptor.overriddenDescriptors.none { it.isOperator }
         val isInfix =
@@ -167,7 +167,7 @@ internal class FirIdeRenderer private constructor(
         renderModifier(RendererModifier.OPERATOR in options.modifiers && isOperator, "operator")
     }
 
-    private fun StringBuilder.renderSuspendModifier(functionDescriptor: FirMemberDeclaration) {
+    private fun StringBuilder.renderSuspendModifier(functionDescriptor: FirMemberDeclaration<*>) {
         renderModifier(functionDescriptor.isSuspend, "suspend")
     }
 
@@ -377,14 +377,14 @@ internal class FirIdeRenderer private constructor(
             renderWhereSuffix(typeParameters)
         }
 
-        fun FirDeclaration.isDefaultPrimaryConstructor() =
+        fun FirDeclaration<*>.isDefaultPrimaryConstructor() =
             this is FirConstructor &&
                     isPrimary &&
                     valueParameters.isEmpty() &&
                     !hasBody &&
                     (visibility == Visibilities.DEFAULT_VISIBILITY || regularClass.classKind == ClassKind.OBJECT)
 
-        fun FirDeclaration.skipDeclarationForEnumClass(): Boolean {
+        fun FirDeclaration<*>.skipDeclarationForEnumClass(): Boolean {
             if (this is FirConstructor) return isPrimary && valueParameters.isEmpty()
             if (this !is FirSimpleFunction) return false
 
@@ -440,14 +440,14 @@ internal class FirIdeRenderer private constructor(
         tabbedString = oldTabbedString
     }
 
-    private inline fun underContainingDeclaration(firDeclaration: FirDeclaration, body: () -> Unit) {
+    private inline fun underContainingDeclaration(firDeclaration: FirDeclaration<*>, body: () -> Unit) {
         val oldContainingDeclaration = containingDeclaration
         containingDeclaration = firDeclaration
         body()
         containingDeclaration = oldContainingDeclaration
     }
 
-    private inline fun StringBuilder.underBlockDeclaration(firDeclaration: FirDeclaration, withBrackets: Boolean = true, body: () -> Unit) {
+    private inline fun StringBuilder.underBlockDeclaration(firDeclaration: FirDeclaration<*>, withBrackets: Boolean = true, body: () -> Unit) {
         val oldLength = length
         if (withBrackets) append(" {")
         val unchangedLength = length
@@ -469,7 +469,7 @@ internal class FirIdeRenderer private constructor(
 
     private fun StringBuilder.appendTabs() = append(tabbedString)
 
-    private fun underBlockDeclaration(firDeclaration: FirDeclaration, firBlock: FirBlock, data: StringBuilder) {
+    private fun underBlockDeclaration(firDeclaration: FirDeclaration<*>, firBlock: FirBlock, data: StringBuilder) {
         data.underBlockDeclaration(firDeclaration) {
             firBlock.accept(this, data)
         }
@@ -502,8 +502,8 @@ internal class FirIdeRenderer private constructor(
 
     companion object {
         fun render(
-            firDeclaration: FirDeclaration,
-            containingDeclaration: FirDeclaration?,
+            firDeclaration: FirDeclaration<*>,
+            containingDeclaration: FirDeclaration<*>?,
             options: KtDeclarationRendererOptions,
             session: FirSession
         ): String {
@@ -679,7 +679,7 @@ internal class FirIdeRenderer private constructor(
     }
 
 
-    private fun getClassifierKindPrefix(classifier: FirDeclaration): String = when (classifier) {
+    private fun getClassifierKindPrefix(classifier: FirDeclaration<*>): String = when (classifier) {
         is FirTypeAlias -> "typealias"
         is FirRegularClass ->
             if (classifier.isCompanion) {

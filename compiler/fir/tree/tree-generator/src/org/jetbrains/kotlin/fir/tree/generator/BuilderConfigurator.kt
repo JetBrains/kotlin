@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.tree.generator.util.traverseParents
 object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTreeBuilder) {
     fun configureBuilders() = with(firTreeBuilder) {
         val declarationBuilder by builder {
-            fields from declaration
+            fields from declaration without "symbol"
         }
 
         val annotationContainerBuilder by builder {

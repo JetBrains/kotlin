@@ -5,16 +5,11 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve
 
-import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
-import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.runCustomResolveUnderLock
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.containingKtFileIfAny
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.getContainingFile
 
 enum class ResolveType {
@@ -34,7 +29,7 @@ enum class ResolveType {
 }
 
 internal fun FirLazyDeclarationResolver.lazyResolveDeclaration(
-    firDeclaration: FirDeclaration,
+    firDeclaration: FirDeclaration<*>,
     moduleFileCache: ModuleFileCache,
     toResolveType: ResolveType,
     scopeSession: ScopeSession,

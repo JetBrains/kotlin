@@ -53,7 +53,7 @@ internal class FirDesignatedSupertypeResolverTransformerForIDE(
         ) {
         val declarationTransformer = IDEDeclarationTransformer(classDesignation)
 
-        override fun visitDeclarationContent(declaration: FirDeclaration, data: Any?) {
+        override fun visitDeclarationContent(declaration: FirDeclaration<*>, data: Any?) {
             declarationTransformer.visitDeclarationContent(this, declaration, data) {
                 super.visitDeclarationContent(declaration, data)
                 declaration
@@ -64,7 +64,7 @@ internal class FirDesignatedSupertypeResolverTransformerForIDE(
     private inner class DesignatedFirApplySupertypesTransformer(classDesignation: FirDeclarationDesignation) :
         FirApplySupertypesTransformer(supertypeComputationSession) {
 
-        override fun needReplacePhase(firDeclaration: FirDeclaration): Boolean =
+        override fun needReplacePhase(firDeclaration: FirDeclaration<*>): Boolean =
             firDeclaration !is FirFile && super.needReplacePhase(firDeclaration)
 
         override fun transformRegularClass(regularClass: FirRegularClass, data: Any?): FirStatement {
@@ -79,15 +79,15 @@ internal class FirDesignatedSupertypeResolverTransformerForIDE(
             else super.transformAnonymousObject(anonymousObject, data)
         }
 
-        override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Any?): FirDeclaration {
+        override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Any?): FirStatement {
             return if (typeAlias.resolvePhase >= FirResolvePhase.SUPER_TYPES)
-                transformDeclarationContent(typeAlias, data)
+                transformDeclarationContent(typeAlias, data) as FirTypeAlias
             else super.transformTypeAlias(typeAlias, data)
         }
 
         val declarationTransformer = IDEDeclarationTransformer(classDesignation)
 
-        override fun transformDeclarationContent(declaration: FirDeclaration, data: Any?): FirDeclaration {
+        override fun transformDeclarationContent(declaration: FirDeclaration<*>, data: Any?): FirDeclaration<*> {
             return declarationTransformer.transformDeclarationContent(this, declaration, data) {
                 super.transformDeclarationContent(declaration, data)
             }
@@ -95,7 +95,7 @@ internal class FirDesignatedSupertypeResolverTransformerForIDE(
     }
 
     private fun collect(designation: FirDeclarationDesignationWithFile): Collection<FirDeclarationDesignationWithFile> {
-        val visited = mutableMapOf<FirDeclaration, FirDeclarationDesignationWithFile>()
+        val visited = mutableMapOf<FirDeclaration<*>, FirDeclarationDesignationWithFile>()
         val toVisit = mutableListOf<FirDeclarationDesignationWithFile>()
 
         toVisit.add(designation)
@@ -178,7 +178,7 @@ internal class FirDesignatedSupertypeResolverTransformerForIDE(
         ensureResolvedDeep(designation.declaration)
     }
 
-    override fun ensureResolved(declaration: FirDeclaration) {
+    override fun ensureResolved(declaration: FirDeclaration<*>) {
         when (declaration) {
             is FirFunction<*>, is FirProperty, is FirEnumEntry, is FirField, is FirAnonymousInitializer -> Unit
             is FirRegularClass -> {

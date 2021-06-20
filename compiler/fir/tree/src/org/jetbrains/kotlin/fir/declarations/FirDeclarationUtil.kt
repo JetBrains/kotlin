@@ -53,39 +53,40 @@ inline val FirRegularClass.isData get() = status.isData
 inline val FirRegularClass.canHaveAbstractDeclaration: Boolean
     get() = isAbstract || isSealed || isEnumClass
 
-inline val FirMemberDeclaration.modality get() = status.modality
-inline val FirMemberDeclaration.isAbstract get() = status.modality == Modality.ABSTRACT
-inline val FirMemberDeclaration.isOpen get() = status.modality == Modality.OPEN
-inline val FirMemberDeclaration.isFinal: Boolean
+inline val FirMemberDeclaration<*>.modality get() = status.modality
+inline val FirMemberDeclaration<*>.isAbstract get() = status.modality == Modality.ABSTRACT
+inline val FirMemberDeclaration<*>.isOpen get() = status.modality == Modality.OPEN
+inline val FirMemberDeclaration<*>.isFinal: Boolean
     get() {
         // member with unspecified modality is final
         val modality = status.modality ?: return true
         return modality == Modality.FINAL
     }
 
-inline val FirMemberDeclaration.visibility: Visibility get() = status.visibility
-inline val FirMemberDeclaration.effectiveVisibility: EffectiveVisibility
+inline val FirMemberDeclaration<*>.visibility: Visibility get() = status.visibility
+inline val FirMemberDeclaration<*>.effectiveVisibility: EffectiveVisibility
     get() = (status as? FirResolvedDeclarationStatus)?.effectiveVisibility
         ?: error("Effective visibility for ${render(FirRenderer.RenderMode.NoBodies)} must be resolved")
 
-inline val FirMemberDeclaration.allowsToHaveFakeOverride: Boolean
+inline val FirMemberDeclaration<*>.allowsToHaveFakeOverride: Boolean
     get() = !Visibilities.isPrivate(visibility) && visibility != Visibilities.InvisibleFake
 
-inline val FirMemberDeclaration.isActual get() = status.isActual
-inline val FirMemberDeclaration.isExpect get() = status.isExpect
-inline val FirMemberDeclaration.isInner get() = status.isInner
-inline val FirMemberDeclaration.isStatic get() = status.isStatic
-inline val FirMemberDeclaration.isOverride: Boolean get() = status.isOverride
-inline val FirMemberDeclaration.isOperator: Boolean get() = status.isOperator
-inline val FirMemberDeclaration.isInfix: Boolean get() = status.isInfix
-inline val FirMemberDeclaration.isInline: Boolean get() = status.isInline
-inline val FirMemberDeclaration.isTailRec: Boolean get() = status.isTailRec
-inline val FirMemberDeclaration.isExternal: Boolean get() = status.isExternal
-inline val FirMemberDeclaration.isSuspend: Boolean get() = status.isSuspend
-inline val FirMemberDeclaration.isConst: Boolean get() = status.isConst
-inline val FirMemberDeclaration.isLateInit: Boolean get() = status.isLateInit
-inline val FirMemberDeclaration.isFromSealedClass: Boolean get() = status.isFromSealedClass
-inline val FirMemberDeclaration.isFromEnumClass: Boolean get() = status.isFromEnumClass
+inline val FirMemberDeclaration<*>.isActual get() = status.isActual
+inline val FirMemberDeclaration<*>.isExpect get() = status.isExpect
+inline val FirMemberDeclaration<*>.isInner get() = status.isInner
+inline val FirMemberDeclaration<*>.isStatic get() = status.isStatic
+inline val FirMemberDeclaration<*>.isOverride: Boolean get() = status.isOverride
+inline val FirMemberDeclaration<*>.isOperator: Boolean get() = status.isOperator
+inline val FirMemberDeclaration<*>.isInfix: Boolean get() = status.isInfix
+inline val FirMemberDeclaration<*>.isInline: Boolean get() = status.isInline
+inline val FirMemberDeclaration<*>.isTailRec: Boolean get() = status.isTailRec
+inline val FirMemberDeclaration<*>.isExternal: Boolean get() = status.isExternal
+inline val FirMemberDeclaration<*>.isSuspend: Boolean get() = status.isSuspend
+inline val FirMemberDeclaration<*>.isConst: Boolean get() = status.isConst
+inline val FirMemberDeclaration<*>.isLateInit: Boolean get() = status.isLateInit
+inline val FirMemberDeclaration<*>.isFromSealedClass: Boolean get() = status.isFromSealedClass
+inline val FirMemberDeclaration<*>.isFromEnumClass: Boolean get() = status.isFromEnumClass
+inline val FirMemberDeclaration<*>.isFun: Boolean get() = status.isFun
 
 inline val FirFunction<*>.hasBody get() = body != null
 
@@ -103,14 +104,14 @@ inline val FirPropertyAccessor.allowsToHaveFakeOverride: Boolean
 inline val FirClassLikeDeclaration<*>.isLocal get() = symbol.classId.isLocal
 inline val FirCallableMemberDeclaration<*>.isLocal get() = status.visibility == Visibilities.Local
 
-fun FirRegularClassBuilder.addDeclaration(declaration: FirDeclaration) {
+fun FirRegularClassBuilder.addDeclaration(declaration: FirDeclaration<*>) {
     declarations += declaration
     if (companionObject == null && declaration is FirRegularClass && declaration.isCompanion) {
         companionObject = declaration
     }
 }
 
-fun FirRegularClassBuilder.addDeclarations(declarations: Collection<FirDeclaration>) {
+fun FirRegularClassBuilder.addDeclarations(declarations: Collection<FirDeclaration<*>>) {
     declarations.forEach(this::addDeclaration)
 }
 
@@ -166,12 +167,12 @@ fun FirRegularClass.collectEnumEntries(): Collection<FirEnumEntry> {
     return declarations.filterIsInstance<FirEnumEntry>()
 }
 
-fun FirFile.addDeclaration(declaration: FirDeclaration) {
+fun FirFile.addDeclaration(declaration: FirDeclaration<*>) {
     require(this is FirFileImpl)
     declarations += declaration
 }
 
-fun FirRegularClass.addDeclaration(declaration: FirDeclaration) {
+fun FirRegularClass.addDeclaration(declaration: FirDeclaration<*>) {
     @Suppress("LiftReturnOrAssignment")
     when (this) {
         is FirRegularClassImpl -> declarations += declaration
@@ -189,7 +190,7 @@ var FirRegularClass.moduleName: String? by FirDeclarationDataRegistry.data(Modul
 
 var FirTypeAlias.sourceElement: SourceElement? by FirDeclarationDataRegistry.data(SourceElementKey)
 
-val FirMemberDeclaration.containerSource: SourceElement?
+val FirMemberDeclaration<*>.containerSource: SourceElement?
     get() = when (this) {
         is FirCallableMemberDeclaration<*> -> containerSource
         is FirRegularClass -> sourceElement
@@ -230,9 +231,9 @@ val FirQualifiedAccess.referredPropertySymbol: FirPropertySymbol?
         return reference.resolvedSymbol as? FirPropertySymbol
     }
 
-inline val FirDeclaration.isJava: Boolean
+inline val FirDeclaration<*>.isJava: Boolean
     get() = origin == FirDeclarationOrigin.Java
-inline val FirDeclaration.isFromLibrary: Boolean
+inline val FirDeclaration<*>.isFromLibrary: Boolean
     get() = origin == FirDeclarationOrigin.Library
-inline val FirDeclaration.isSynthetic: Boolean
+inline val FirDeclaration<*>.isSynthetic: Boolean
     get() = origin == FirDeclarationOrigin.Synthetic

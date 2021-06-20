@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.fir
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.PersistentCheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollectorVisitor
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.idea.fir.low.level.api.ContextByDesignationCollector
@@ -24,13 +27,13 @@ private class ContextCollectingDiagnosticCollectorVisitor private constructor(
     private val contextCollector = object : ContextByDesignationCollector<PersistentCheckerContext>(designation) {
         override fun getCurrentContext(): PersistentCheckerContext = context
 
-        override fun goToNestedDeclaration(declaration: FirDeclaration) {
+        override fun goToNestedDeclaration(declaration: FirDeclaration<*>) {
             declaration.accept(this@ContextCollectingDiagnosticCollectorVisitor, null)
         }
     }
 
     override fun visitNestedElements(element: FirElement) {
-        if (element is FirDeclaration) {
+        if (element is FirDeclaration<*>) {
             contextCollector.nextStep()
         } else {
             element.accept(this, null)
@@ -52,7 +55,7 @@ internal object PersistenceContextCollector {
     fun collectContext(
         sessionHolder: SessionHolder,
         firFile: FirFile,
-        declaration: FirDeclaration,
+        declaration: FirDeclaration<*>,
     ): PersistentCheckerContext {
         val isLocal = when (declaration) {
             is FirClassLikeDeclaration<*> -> declaration.symbol.classId.isLocal

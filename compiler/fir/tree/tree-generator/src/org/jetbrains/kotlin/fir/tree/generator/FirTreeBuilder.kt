@@ -15,7 +15,6 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val reference = element("Reference", Reference)
     val label = element("Label", Other)
 
-    val symbolOwner = element("SymbolOwner", Other)
     val resolvable = sealedElement("Resolvable", Expression)
 
     val targetElement = element("TargetElement", Other)
@@ -29,11 +28,11 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val expression = element("Expression", Expression, statement)
     val declaration = sealedElement("Declaration", Declaration)
     val annotatedDeclaration = sealedElement("AnnotatedDeclaration", Declaration, declaration, annotationContainer)
-    val anonymousInitializer = element("AnonymousInitializer", Declaration, declaration, symbolOwner, controlFlowGraphOwner)
+    val anonymousInitializer = element("AnonymousInitializer", Declaration, declaration, controlFlowGraphOwner)
     val typedDeclaration = sealedElement("TypedDeclaration", Declaration, annotatedDeclaration)
-    val callableDeclaration = sealedElement("CallableDeclaration", Declaration, typedDeclaration, symbolOwner)
+    val callableDeclaration = sealedElement("CallableDeclaration", Declaration, typedDeclaration)
     val typeParameterRef = element("TypeParameterRef", Declaration)
-    val typeParameter = element("TypeParameter", Declaration, typeParameterRef, annotatedDeclaration, symbolOwner)
+    val typeParameter = element("TypeParameter", Declaration, typeParameterRef, annotatedDeclaration)
     val typeParameterRefsOwner = sealedElement("TypeParameterRefsOwner", Declaration)
     val typeParametersOwner = sealedElement("TypeParametersOwner", Declaration, typeParameterRefsOwner)
     val memberDeclaration = sealedElement("MemberDeclaration", Declaration, annotatedDeclaration, typeParameterRefsOwner)
@@ -45,7 +44,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val field = element("Field", Declaration, variable, typeParametersOwner, callableMemberDeclaration)
     val enumEntry = element("EnumEntry", Declaration, variable, callableMemberDeclaration)
 
-    val classLikeDeclaration = sealedElement("ClassLikeDeclaration", Declaration, annotatedDeclaration, statement, symbolOwner)
+    val classLikeDeclaration = sealedElement("ClassLikeDeclaration", Declaration, annotatedDeclaration, statement)
     val klass = sealedElement("Class", Declaration, classLikeDeclaration, statement, typeParameterRefsOwner)
     val regularClass = element("RegularClass", Declaration, memberDeclaration, typeParameterRefsOwner, controlFlowGraphOwner, klass)
     val typeAlias = element("TypeAlias", Declaration, classLikeDeclaration, memberDeclaration, typeParametersOwner)

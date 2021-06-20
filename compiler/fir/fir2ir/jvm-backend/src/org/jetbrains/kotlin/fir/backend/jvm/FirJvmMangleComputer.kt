@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.backend.common.serialization.mangle.collectForMangle
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.firProvider
-import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -29,9 +29,9 @@ open class FirJvmMangleComputer(
     private val builder: StringBuilder,
     private val mode: MangleMode,
     private val session: FirSession
-) : FirVisitor<Unit, Boolean>(), KotlinMangleComputer<FirDeclaration> {
+) : FirVisitor<Unit, Boolean>(), KotlinMangleComputer<FirDeclaration<*>> {
 
-    private val typeParameterContainer = ArrayList<FirMemberDeclaration>(4)
+    private val typeParameterContainer = ArrayList<FirMemberDeclaration<*>>(4)
 
     private var isRealExpect = false
 
@@ -79,7 +79,7 @@ open class FirJvmMangleComputer(
         }
     }
 
-    private fun FirDeclaration.visitParent() {
+    private fun FirDeclaration<*>.visitParent() {
         val (parentPackageFqName, parentClassId) = when (this) {
             is FirCallableMemberDeclaration<*> -> this.containingClass()?.classId?.let { it.packageFqName to it } ?: return
             is FirClassLikeDeclaration<*> -> this.symbol.classId.let { it.packageFqName to it.outerClassId }
@@ -98,7 +98,7 @@ open class FirJvmMangleComputer(
         }
     }
 
-    private fun FirDeclaration.mangleSimpleDeclaration(name: String) {
+    private fun FirDeclaration<*>.mangleSimpleDeclaration(name: String) {
         val l = builder.length
         visitParent()
 
@@ -109,11 +109,11 @@ open class FirJvmMangleComputer(
         builder.appendName(name)
     }
 
-    private fun FirFunction<*>.mangleFunction(isCtor: Boolean, isStatic: Boolean, container: FirDeclaration) {
+    private fun FirFunction<*>.mangleFunction(isCtor: Boolean, isStatic: Boolean, container: FirDeclaration<*>) {
 
-        isRealExpect = isRealExpect || (this as? FirMemberDeclaration)?.isExpect == true
+        isRealExpect = isRealExpect || (this as? FirMemberDeclaration<*>)?.isExpect == true
 
-        if (container is FirMemberDeclaration) {
+        if (container is FirMemberDeclaration<*>) {
             typeParameterContainer.add(container)
         }
         visitParent()
@@ -164,7 +164,7 @@ open class FirJvmMangleComputer(
         }
     }
 
-    private fun FirTypeParameter.effectiveParent(): FirMemberDeclaration {
+    private fun FirTypeParameter.effectiveParent(): FirMemberDeclaration<*> {
         for (parent in typeParameterContainer) {
             if (this in parent.typeParameters) {
                 return parent
@@ -315,7 +315,7 @@ open class FirJvmMangleComputer(
     override fun visitConstructor(constructor: FirConstructor, data: Boolean) =
         constructor.mangleFunction(isCtor = true, isStatic = false, constructor)
 
-    override fun computeMangle(declaration: FirDeclaration): String {
+    override fun computeMangle(declaration: FirDeclaration<*>): String {
         declaration.accept(this, true)
         return builder.toString()
     }

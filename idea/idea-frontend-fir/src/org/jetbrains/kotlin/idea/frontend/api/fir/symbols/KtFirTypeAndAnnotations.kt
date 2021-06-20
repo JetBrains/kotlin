@@ -7,9 +7,10 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.transformers.resolveSupertypesInTheAir
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.ResolveType
-import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.annotations.KtFirAnnotationCall
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.FirRefWithValidityCheck
@@ -17,9 +18,10 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotationCall
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtTypeAndAnnotations
+import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 
-internal class KtFirTypeAndAnnotations<T : FirDeclaration>(
+internal class KtFirTypeAndAnnotations<T : FirDeclaration<*>>(
     private val containingDeclaration: FirRefWithValidityCheck<T>,
     typeResolvePhase: FirResolvePhase,
     _builder: KtSymbolByFirBuilder,
@@ -82,7 +84,7 @@ private fun List<FirTypeRef>.mapToTypeAndAnnotations(
     KtSimpleFirTypeAndAnnotations(typeRef.coneType, annotations, builder, containingDeclaration.token)
 }
 
-internal fun FirRefWithValidityCheck<FirTypedDeclaration>.returnTypeAndAnnotations(
+internal fun FirRefWithValidityCheck<FirTypedDeclaration<*>>.returnTypeAndAnnotations(
     typeResolvePhase: FirResolvePhase,
     builder: KtSymbolByFirBuilder
 ) = KtFirTypeAndAnnotations(this, typeResolvePhase, builder) { it.returnTypeRef }

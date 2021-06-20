@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.fir.resolve.transformers.contracts
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
@@ -150,7 +150,7 @@ class ConeEffectExtractor(
         }
     }
 
-    private fun FirContractDescriptionOwner.isAccessorOf(declaration: FirSymbolOwner<*>): Boolean {
+    private fun FirContractDescriptionOwner.isAccessorOf(declaration: FirDeclaration<*>): Boolean {
         return declaration is FirProperty && (declaration.getter == this || declaration.setter == this)
     }
 

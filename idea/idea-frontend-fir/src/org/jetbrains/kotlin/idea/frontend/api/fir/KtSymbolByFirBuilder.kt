@@ -14,10 +14,10 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirFieldImpl
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
-import org.jetbrains.kotlin.fir.resolve.calls.originalConstructorIfTypeAlias
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
-import org.jetbrains.kotlin.fir.resolve.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.calls.originalConstructorIfTypeAlias
 import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
@@ -27,7 +27,10 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.createPackageProvider
-import org.jetbrains.kotlin.idea.frontend.api.*
+import org.jetbrains.kotlin.idea.frontend.api.KtStarProjectionTypeArgument
+import org.jetbrains.kotlin.idea.frontend.api.KtTypeArgument
+import org.jetbrains.kotlin.idea.frontend.api.KtTypeArgumentWithVariance
+import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.*
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
@@ -50,7 +53,7 @@ internal class KtSymbolByFirBuilder private constructor(
     resolveState: FirModuleResolveState,
     override val token: ValidityToken,
     val withReadOnlyCaching: Boolean,
-    private val symbolsCache: BuilderCache<FirDeclaration, KtSymbol>,
+    private val symbolsCache: BuilderCache<FirDeclaration<*>, KtSymbol>,
     private val filesCache: BuilderCache<FirFile, KtFileSymbol>,
     private val backingFieldCache: BuilderCache<FirBackingFieldSymbol, KtBackingFieldSymbol>,
     private val typesCache: BuilderCache<ConeKotlinType, KtType>,
@@ -97,7 +100,7 @@ internal class KtSymbolByFirBuilder private constructor(
     }
 
 
-    fun buildSymbol(fir: FirDeclaration): KtSymbol {
+    fun buildSymbol(fir: FirDeclaration<*>): KtSymbol {
         return when (fir) {
             is FirClassLikeDeclaration<*> -> classifierBuilder.buildClassLikeSymbol(fir)
             is FirTypeParameter -> classifierBuilder.buildTypeParameterSymbol(fir)
@@ -397,7 +400,7 @@ private class BuilderCache<From, To: Any> private constructor(
 }
 
 internal fun FirElement.buildSymbol(builder: KtSymbolByFirBuilder) =
-    (this as? FirDeclaration)?.let(builder::buildSymbol)
+    (this as? FirDeclaration<*>)?.let(builder::buildSymbol)
 
-internal fun FirDeclaration.buildSymbol(builder: KtSymbolByFirBuilder) =
+internal fun FirDeclaration<*>.buildSymbol(builder: KtSymbolByFirBuilder) =
     builder.buildSymbol(this)

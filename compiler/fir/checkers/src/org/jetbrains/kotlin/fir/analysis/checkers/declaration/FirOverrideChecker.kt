@@ -90,8 +90,8 @@ object FirOverrideChecker : FirClassChecker() {
         overriddenSymbols: List<FirCallableSymbol<*>>,
     ): FirCallableDeclaration<*>? {
         for (overridden in overriddenSymbols) {
-            if (overridden.fir !is FirMemberDeclaration) continue
-            val modality = (overridden.fir as FirMemberDeclaration).status.modality
+            if (overridden.fir !is FirMemberDeclaration<*>) continue
+            val modality = (overridden.fir as FirMemberDeclaration<*>).status.modality
             val isEffectivelyFinal = modality == null || modality == Modality.FINAL
             if (isEffectivelyFinal) {
                 return overridden.fir
@@ -102,7 +102,7 @@ object FirOverrideChecker : FirClassChecker() {
 
     private fun FirProperty.checkMutability(
         overriddenSymbols: List<FirCallableSymbol<*>>,
-    ): FirMemberDeclaration? {
+    ): FirMemberDeclaration<*>? {
         if (isVar) return null
         return overriddenSymbols.find { (it.fir as? FirProperty)?.isVar == true }?.fir?.safeAs()
     }
@@ -113,8 +113,8 @@ object FirOverrideChecker : FirClassChecker() {
         context: CheckerContext
     ) {
         val visibilities = overriddenSymbols.mapNotNull {
-            if (it.fir !is FirMemberDeclaration) return@mapNotNull null
-            it to (it.fir as FirMemberDeclaration).visibility
+            if (it.fir !is FirMemberDeclaration<*>) return@mapNotNull null
+            it to (it.fir as FirMemberDeclaration<*>).visibility
         }.sortedBy { pair ->
             // Regard `null` compare as Int.MIN so that we can report CANNOT_CHANGE_... first deterministically
             Visibilities.compare(visibility, pair.second) ?: Int.MIN_VALUE
@@ -137,7 +137,7 @@ object FirOverrideChecker : FirClassChecker() {
         overriddenSymbols: List<FirCallableSymbol<*>>,
         typeCheckerContext: AbstractTypeCheckerContext,
         context: CheckerContext,
-    ): FirMemberDeclaration? {
+    ): FirMemberDeclaration<*>? {
         val overridingReturnType = returnTypeRef.coneType
 
         // Don't report *_ON_OVERRIDE diagnostics according to an error return type. That should be reported separately.
@@ -232,13 +232,13 @@ object FirOverrideChecker : FirClassChecker() {
     }
 
     @Suppress("UNUSED_PARAMETER") // TODO: delete me after implementing body
-    private fun DiagnosticReporter.reportNothingToOverride(declaration: FirMemberDeclaration, context: CheckerContext) {
+    private fun DiagnosticReporter.reportNothingToOverride(declaration: FirMemberDeclaration<*>, context: CheckerContext) {
         // TODO: not ready yet, e.g., Collections
         // reportOn(declaration.source, FirErrors.NOTHING_TO_OVERRIDE, declaration, context)
     }
 
     private fun DiagnosticReporter.reportOverridingFinalMember(
-        overriding: FirMemberDeclaration,
+        overriding: FirMemberDeclaration<*>,
         overridden: FirCallableDeclaration<*>,
         context: CheckerContext
     ) {
@@ -248,15 +248,15 @@ object FirOverrideChecker : FirClassChecker() {
     }
 
     private fun DiagnosticReporter.reportVarOverriddenByVal(
-        overriding: FirMemberDeclaration,
-        overridden: FirMemberDeclaration,
+        overriding: FirMemberDeclaration<*>,
+        overridden: FirMemberDeclaration<*>,
         context: CheckerContext
     ) {
         reportOn(overriding.source, FirErrors.VAR_OVERRIDDEN_BY_VAL, overriding, overridden, context)
     }
 
     private fun DiagnosticReporter.reportCannotWeakenAccessPrivilege(
-        overriding: FirMemberDeclaration,
+        overriding: FirMemberDeclaration<*>,
         overridden: FirCallableDeclaration<*>,
         context: CheckerContext
     ) {
@@ -272,7 +272,7 @@ object FirOverrideChecker : FirClassChecker() {
     }
 
     private fun DiagnosticReporter.reportCannotChangeAccessPrivilege(
-        overriding: FirMemberDeclaration,
+        overriding: FirMemberDeclaration<*>,
         overridden: FirCallableDeclaration<*>,
         context: CheckerContext
     ) {
@@ -288,24 +288,24 @@ object FirOverrideChecker : FirClassChecker() {
     }
 
     private fun DiagnosticReporter.reportReturnTypeMismatchOnFunction(
-        overriding: FirMemberDeclaration,
-        overridden: FirMemberDeclaration,
+        overriding: FirMemberDeclaration<*>,
+        overridden: FirMemberDeclaration<*>,
         context: CheckerContext
     ) {
         reportOn(overriding.source, FirErrors.RETURN_TYPE_MISMATCH_ON_OVERRIDE, overriding, overridden, context)
     }
 
     private fun DiagnosticReporter.reportTypeMismatchOnProperty(
-        overriding: FirMemberDeclaration,
-        overridden: FirMemberDeclaration,
+        overriding: FirMemberDeclaration<*>,
+        overridden: FirMemberDeclaration<*>,
         context: CheckerContext
     ) {
         reportOn(overriding.source, FirErrors.PROPERTY_TYPE_MISMATCH_ON_OVERRIDE, overriding, overridden, context)
     }
 
     private fun DiagnosticReporter.reportTypeMismatchOnVariable(
-        overriding: FirMemberDeclaration,
-        overridden: FirMemberDeclaration,
+        overriding: FirMemberDeclaration<*>,
+        overridden: FirMemberDeclaration<*>,
         context: CheckerContext
     ) {
         reportOn(overriding.source, FirErrors.VAR_TYPE_MISMATCH_ON_OVERRIDE, overriding, overridden, context)

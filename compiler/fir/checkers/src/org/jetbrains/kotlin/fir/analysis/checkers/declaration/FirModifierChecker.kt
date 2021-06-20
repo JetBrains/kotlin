@@ -107,7 +107,7 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
         secondModifier: FirModifier<*>,
         reporter: DiagnosticReporter,
         reportedNodes: MutableSet<FirModifier<*>>,
-        owner: FirDeclaration?,
+        owner: FirDeclaration<*>?,
         context: CheckerContext
     ) {
         val firstToken = firstModifier.token
@@ -137,7 +137,7 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
 
     private fun checkModifiers(
         list: FirModifierList,
-        owner: FirDeclaration,
+        owner: FirDeclaration<*>,
         reporter: DiagnosticReporter,
         context: CheckerContext
     ) {
@@ -156,7 +156,7 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
         }
     }
 
-    private fun isDeclarationMappedToSourceCorrectly(declaration: FirDeclaration, source: FirSourceElement): Boolean =
+    private fun isDeclarationMappedToSourceCorrectly(declaration: FirDeclaration<*>, source: FirSourceElement): Boolean =
         when (source.elementType) {
             KtNodeTypes.CLASS -> declaration is FirClass<*>
             KtNodeTypes.OBJECT_DECLARATION -> declaration is FirClass<*>
@@ -166,7 +166,7 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
             else -> true
         }
 
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    override fun check(declaration: FirDeclaration<*>, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration is FirFile) return
 
         val source = declaration.source ?: return

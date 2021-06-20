@@ -27,18 +27,18 @@ abstract class FirDeclarationGenerationExtension(session: FirSession) : FirPredi
     final override val extensionType: KClass<out FirExtension> = FirDeclarationGenerationExtension::class
 
     abstract fun generateClasses(
-        annotatedDeclaration: FirDeclaration,
-        owners: List<FirAnnotatedDeclaration>
+        annotatedDeclaration: FirDeclaration<*>,
+        owners: List<FirAnnotatedDeclaration<*>>
     ): List<GeneratedDeclaration<FirRegularClass>>
 
-    abstract fun generateMembersForGeneratedClass(generatedClass: GeneratedClass): List<FirDeclaration>
+    abstract fun generateMembersForGeneratedClass(generatedClass: GeneratedClass): List<FirDeclaration<*>>
 
     abstract fun generateMembers(
-        annotatedDeclaration: FirDeclaration,
-        owners: List<FirAnnotatedDeclaration>
+        annotatedDeclaration: FirDeclaration<*>,
+        owners: List<FirAnnotatedDeclaration<*>>
     ): List<GeneratedDeclaration<*>>
 
-    data class GeneratedDeclaration<out T : FirDeclaration>(val newDeclaration: T, val owner: FirAnnotatedDeclaration)
+    data class GeneratedDeclaration<out T : FirDeclaration<*>>(val newDeclaration: T, val owner: FirAnnotatedDeclaration<*>)
 
     fun interface Factory : FirExtension.Factory<FirDeclarationGenerationExtension>
 }

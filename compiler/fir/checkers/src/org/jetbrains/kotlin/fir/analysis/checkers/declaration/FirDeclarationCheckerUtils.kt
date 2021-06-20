@@ -42,7 +42,7 @@ private inline fun isInsideSpecificClass(
             context.containingDeclarations.asReversed().any { it is FirRegularClass && predicate.invoke(it) }
 }
 
-internal fun FirMemberDeclaration.isEffectivelyExpect(
+internal fun FirMemberDeclaration<*>.isEffectivelyExpect(
     containingClass: FirRegularClass?,
     context: CheckerContext,
 ): Boolean {
@@ -51,7 +51,7 @@ internal fun FirMemberDeclaration.isEffectivelyExpect(
     return containingClass != null && isInsideExpectClass(containingClass, context)
 }
 
-internal fun FirMemberDeclaration.isEffectivelyExternal(
+internal fun FirMemberDeclaration<*>.isEffectivelyExternal(
     containingClass: FirRegularClass?,
     context: CheckerContext,
 ): Boolean {
@@ -75,7 +75,7 @@ internal fun FirMemberDeclaration.isEffectivelyExternal(
 
 // TODO: check class too
 internal fun checkExpectDeclarationVisibilityAndBody(
-    declaration: FirMemberDeclaration,
+    declaration: FirMemberDeclaration<*>,
     source: FirSourceElement,
     reporter: DiagnosticReporter,
     context: CheckerContext
@@ -191,14 +191,14 @@ internal fun FirRegularClass.isInlineOrValueClass(): Boolean {
     return isInline || hasModifier(KtTokens.VALUE_KEYWORD)
 }
 
-internal val FirDeclaration.isEnumEntryInitializer: Boolean
+internal val FirDeclaration<*>.isEnumEntryInitializer: Boolean
     get() {
         if (this !is FirConstructor || !this.isPrimary) return false
         return (containingClassAttr as? ConeClassLookupTagWithFixedSymbol)?.symbol?.fir?.classKind == ClassKind.ENUM_ENTRY
     }
 
-// contract: returns(true) implies (this is FirMemberDeclaration)
-internal val FirDeclaration.isLocalMember: Boolean
+// contract: returns(true) implies (this is FirMemberDeclaration<*>)
+internal val FirDeclaration<*>.isLocalMember: Boolean
     get() = when (this) {
         is FirProperty -> this.isLocal
         is FirRegularClass -> this.isLocal

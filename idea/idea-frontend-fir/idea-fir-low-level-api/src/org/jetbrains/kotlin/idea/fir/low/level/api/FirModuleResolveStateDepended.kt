@@ -59,13 +59,13 @@ internal class FirModuleResolveStateDepended(
     override fun getOrBuildFirFile(ktFile: KtFile): FirFile =
         originalState.getOrBuildFirFile(ktFile)
 
-    override fun <D : FirDeclaration> resolveFirToPhase(declaration: D, toPhase: FirResolvePhase): D =
+    override fun <D : FirDeclaration<*>> resolveFirToPhase(declaration: D, toPhase: FirResolvePhase): D =
         originalState.resolveFirToPhase(declaration, toPhase)
 
-    override fun <D : FirDeclaration> resolveFirToResolveType(declaration: D, type: ResolveType): D =
+    override fun <D : FirDeclaration<*>> resolveFirToResolveType(declaration: D, type: ResolveType): D =
         originalState.resolveFirToResolveType(declaration, type)
 
-    override fun tryGetCachedFirFile(declaration: FirDeclaration, cache: ModuleFileCache): FirFile? {
+    override fun tryGetCachedFirFile(declaration: FirDeclaration<*>, cache: ModuleFileCache): FirFile? {
         val ktFile = declaration.containingKtFileIfAny ?: return null
         cache.getCachedFirFile(ktFile)?.let { return it }
         ktFile.originalKtFile?.let(cache::getCachedFirFile)?.let { return it }
@@ -79,11 +79,11 @@ internal class FirModuleResolveStateDepended(
         TODO("Diagnostics are not implemented for depended state")
 
     @OptIn(InternalForInline::class)
-    override fun findSourceFirDeclaration(ktDeclaration: KtLambdaExpression): FirDeclaration =
+    override fun findSourceFirDeclaration(ktDeclaration: KtLambdaExpression): FirDeclaration<*> =
         originalState.findSourceFirDeclaration(ktDeclaration)
 
     @OptIn(InternalForInline::class)
-    override fun findSourceFirDeclaration(ktDeclaration: KtDeclaration): FirDeclaration =
+    override fun findSourceFirDeclaration(ktDeclaration: KtDeclaration): FirDeclaration<*> =
         originalState.findSourceFirDeclaration(ktDeclaration)
 
     @OptIn(InternalForInline::class)

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.scopes
 
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
@@ -81,7 +81,7 @@ class FirUnstableSmartcastTypeScope(
         return ProcessorAction.NEXT
     }
 
-    fun isSymbolFromUnstableSmartcast(symbol: AbstractFirBasedSymbol<*>) = symbol in symbolsFromUnstableSmartcast
+    fun isSymbolFromUnstableSmartcast(symbol: FirBasedSymbol<*>) = symbol in symbolsFromUnstableSmartcast
 
     fun markSymbolFromUnstableSmartcast(symbol: FirCallableSymbol<*>) {
         symbolsFromUnstableSmartcast += symbol

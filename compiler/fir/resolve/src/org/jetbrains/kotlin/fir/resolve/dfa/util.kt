@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.fir.resolve.dfa
 
 import kotlinx.collections.immutable.PersistentMap
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.contracts.description.ConeBooleanConstantReference
 import org.jetbrains.kotlin.fir.contracts.description.ConeConstantReference
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
@@ -95,7 +95,7 @@ internal val FirExpression.coneType: ConeKotlinType
 internal val FirElement.symbol: FirBasedSymbol<*>?
     get() = when (this) {
         is FirResolvable -> symbol
-        is FirSymbolOwner<*> -> symbol
+        is FirDeclaration<*> -> symbol
         is FirWhenSubjectExpression -> whenRef.value.subject?.symbol
         is FirSafeCallExpression -> regularQualifiedAccess.symbol
         else -> null

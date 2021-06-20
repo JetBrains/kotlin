@@ -231,13 +231,13 @@ open class FirBodyResolveTransformer(
 
     // ------------------------------------- Declarations -------------------------------------
 
-    override fun transformDeclaration(declaration: FirDeclaration, data: ResolutionMode): FirDeclaration {
+    override fun <T : FirDeclaration<T>> transformDeclaration(declaration: FirDeclaration<T>, data: ResolutionMode): FirDeclaration<T> {
         return declarationsTransformer.transformDeclaration(declaration, data)
     }
 
     open fun transformDeclarationContent(
-        declaration: FirDeclaration, data: ResolutionMode
-    ): FirDeclaration {
+        declaration: FirDeclaration<*>, data: ResolutionMode
+    ): FirDeclaration<*> {
         return transformElement(declaration, data)
     }
 
@@ -248,7 +248,7 @@ open class FirBodyResolveTransformer(
         return declarationsTransformer.transformDeclarationStatus(declarationStatus, data)
     }
 
-    override fun transformEnumEntry(enumEntry: FirEnumEntry, data: ResolutionMode): FirDeclaration {
+    override fun transformEnumEntry(enumEntry: FirEnumEntry, data: ResolutionMode): FirEnumEntry {
         return declarationsTransformer.transformEnumEntry(enumEntry, data)
     }
 
@@ -256,7 +256,7 @@ open class FirBodyResolveTransformer(
         return declarationsTransformer.transformProperty(property, data)
     }
 
-    override fun transformField(field: FirField, data: ResolutionMode): FirDeclaration {
+    override fun transformField(field: FirField, data: ResolutionMode): FirField {
         return declarationsTransformer.transformField(field, data)
     }
 
@@ -292,14 +292,14 @@ open class FirBodyResolveTransformer(
         return declarationsTransformer.transformFunction(function, data)
     }
 
-    override fun transformConstructor(constructor: FirConstructor, data: ResolutionMode): FirDeclaration {
+    override fun transformConstructor(constructor: FirConstructor, data: ResolutionMode): FirConstructor {
         return declarationsTransformer.transformConstructor(constructor, data)
     }
 
     override fun transformAnonymousInitializer(
         anonymousInitializer: FirAnonymousInitializer,
         data: ResolutionMode
-    ): FirDeclaration {
+    ): FirAnonymousInitializer {
         return declarationsTransformer.transformAnonymousInitializer(anonymousInitializer, data)
     }
 
@@ -321,7 +321,7 @@ open class FirBodyResolveTransformer(
         return declarationsTransformer.transformValueParameter(valueParameter, data)
     }
 
-    override fun transformTypeAlias(typeAlias: FirTypeAlias, data: ResolutionMode): FirDeclaration {
+    override fun transformTypeAlias(typeAlias: FirTypeAlias, data: ResolutionMode): FirTypeAlias {
         return declarationsTransformer.transformTypeAlias(typeAlias, data)
     }
 

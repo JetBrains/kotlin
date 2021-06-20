@@ -35,7 +35,7 @@ internal class FirAnonymousObjectImpl(
     override val typeParameters: MutableList<FirTypeParameterRef>,
     override val classKind: ClassKind,
     override val superTypeRefs: MutableList<FirTypeRef>,
-    override val declarations: MutableList<FirDeclaration>,
+    override val declarations: MutableList<FirDeclaration<*>>,
     override val annotations: MutableList<FirAnnotationCall>,
     override val scopeProvider: FirScopeProvider,
     override val symbol: FirAnonymousObjectSymbol,

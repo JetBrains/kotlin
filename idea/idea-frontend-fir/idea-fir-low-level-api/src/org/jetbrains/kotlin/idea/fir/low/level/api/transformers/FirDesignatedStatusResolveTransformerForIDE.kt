@@ -32,10 +32,10 @@ internal class FirDesignatedStatusResolveTransformerForIDE(
 
         val designationTransformer = IDEDeclarationTransformer(designation)
 
-        override fun needReplacePhase(firDeclaration: FirDeclaration): Boolean =
+        override fun needReplacePhase(firDeclaration: FirDeclaration<*>): Boolean =
             firDeclaration !is FirFile && super.needReplacePhase(firDeclaration)
 
-        override fun transformDeclarationContent(declaration: FirDeclaration, data: FirResolvedDeclarationStatus?): FirDeclaration =
+        override fun transformDeclarationContent(declaration: FirDeclaration<*>, data: FirResolvedDeclarationStatus?): FirDeclaration<*> =
             designationTransformer.transformDeclarationContent(this, declaration, data) {
                 super.transformDeclarationContent(declaration, data)
             }
@@ -57,7 +57,7 @@ internal class FirDesignatedStatusResolveTransformerForIDE(
         ensureResolvedDeep(designation.declaration)
     }
 
-    override fun ensureResolved(declaration: FirDeclaration) {
+    override fun ensureResolved(declaration: FirDeclaration<*>) {
         if (declaration !is FirAnonymousInitializer) {
             declaration.ensurePhase(FirResolvePhase.STATUS)
         }

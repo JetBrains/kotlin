@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api
 
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.realPsi
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.withFirDeclaration
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.ResolveType
@@ -27,13 +30,13 @@ import org.junit.jupiter.api.parallel.ExecutionMode
 @Execution(ExecutionMode.SAME_THREAD)
 abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingleFileTest() {
 
-    private fun FirFile.findResolveMe(): FirDeclaration {
+    private fun FirFile.findResolveMe(): FirDeclaration<*> {
         val visitor = object : FirVisitorVoid() {
-            var result: FirDeclaration? = null
+            var result: FirDeclaration<*>? = null
             override fun visitElement(element: FirElement) {
                 if (result != null) return
                 val declaration = element.realPsi as? KtDeclaration
-                if (element is FirDeclaration && declaration != null && declaration.name == "resolveMe") {
+                if (element is FirDeclaration<*> && declaration != null && declaration.name == "resolveMe") {
                     result = element
                     return
                 }

@@ -19,7 +19,7 @@ internal object FileElementFactory {
      * should be consistent with [isReanalyzableContainer]
      */
     fun createFileStructureElement(
-        firDeclaration: FirDeclaration,
+        firDeclaration: FirDeclaration<*>,
         ktDeclaration: KtDeclaration,
         firFile: FirFile,
         firFileLockProvider: LockProvider<FirFile>,

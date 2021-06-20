@@ -376,9 +376,9 @@ class MultiModuleHtmlFirDump(private val outputRoot: File) {
                     visitElement(regularClass)
                 }
 
-                fun indexDeclaration(symbolOwner: FirSymbolOwner<*>) {
-                    symbols[symbolOwner.symbol] = location
-                    symbolIds[symbolOwner.symbol] = symbolCounter++
+                fun indexDeclaration(declaration: FirDeclaration<*>) {
+                    symbols[declaration.symbol] = location
+                    symbolIds[declaration.symbol] = symbolCounter++
                 }
 
                 override fun <F : FirVariable<F>> visitVariable(variable: FirVariable<F>) {
@@ -912,7 +912,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         }
     }
 
-    private fun FlowContent.generate(memberDeclaration: FirMemberDeclaration) {
+    private fun FlowContent.generate(memberDeclaration: FirMemberDeclaration<*>) {
         when (memberDeclaration) {
             is FirEnumEntry -> generate(memberDeclaration)
             is FirRegularClass -> generate(memberDeclaration)
@@ -1524,7 +1524,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 is FirConstExpression<*> -> generate(expression)
                 is FirReturnExpression -> {
                     span("return-label") {
-                        symbolRef((expression.target.labeledElement as? FirSymbolOwner<*>)?.symbol) {
+                        symbolRef(expression.target.labeledElement.symbol) {
                             +"^"
                             +(expression.target.labelName ?: "")
                         }
@@ -1682,7 +1682,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         }
     }
 
-    private fun FlowContent.generateDeclarations(declarations: List<FirDeclaration>) {
+    private fun FlowContent.generateDeclarations(declarations: List<FirDeclaration<*>>) {
         if (declarations.isNotEmpty()) {
             +" {"
             br
@@ -1767,10 +1767,10 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         }
     }
 
-    private fun FlowContent.generate(declaration: FirDeclaration) {
+    private fun FlowContent.generate(declaration: FirDeclaration<*>) {
         when (declaration) {
             is FirAnonymousInitializer -> generate(declaration)
-            is FirMemberDeclaration -> generate(declaration)
+            is FirMemberDeclaration<*> -> generate(declaration)
             else -> unsupported(declaration)
         }
     }

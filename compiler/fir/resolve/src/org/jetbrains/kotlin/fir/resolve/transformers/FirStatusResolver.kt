@@ -38,7 +38,7 @@ class FirStatusResolver(
     }
 
     fun resolveStatus(
-        declaration: FirDeclaration,
+        declaration: FirDeclaration<*>,
         containingClass: FirClass<*>?,
         containingProperty: FirProperty?,
         isLocal: Boolean
@@ -130,7 +130,7 @@ class FirStatusResolver(
     }
 
     private inline fun resolveStatus(
-        declaration: FirDeclaration,
+        declaration: FirDeclaration<*>,
         status: FirDeclarationStatus,
         containingClass: FirClass<*>?,
         containingProperty: FirProperty?,
@@ -195,7 +195,7 @@ class FirStatusResolver(
     }
 
     private fun resolveVisibility(
-        declaration: FirDeclaration,
+        declaration: FirDeclaration<*>,
         containingClass: FirClass<*>?,
         containingProperty: FirProperty?,
         overriddenStatuses: List<FirResolvedDeclarationStatusImpl>
@@ -219,7 +219,7 @@ class FirStatusResolver(
     }
 
     private fun resolveModality(
-        declaration: FirDeclaration,
+        declaration: FirDeclaration<*>,
         containingClass: FirClass<*>?,
     ): Modality {
         return when (declaration) {
@@ -255,7 +255,7 @@ private val <F : FirClass<F>> FirClass<F>.modality: Modality?
         else -> error("Unknown kind of class: ${this::class}")
     }
 
-private fun FirDeclaration.hasOwnBodyOrAccessorBody(): Boolean {
+private fun FirDeclaration<*>.hasOwnBodyOrAccessorBody(): Boolean {
     return when (this) {
         is FirSimpleFunction -> this.body != null
         is FirProperty -> this.initializer != null || this.getter?.body != null || this.setter?.body != null
@@ -264,4 +264,4 @@ private fun FirDeclaration.hasOwnBodyOrAccessorBody(): Boolean {
 }
 
 private object PublishedApiEffectiveVisibilityKey : FirDeclarationDataKey()
-var FirDeclaration.publishedApiEffectiveVisibility: EffectiveVisibility? by FirDeclarationDataRegistry.data(PublishedApiEffectiveVisibilityKey)
+var FirDeclaration<*>.publishedApiEffectiveVisibility: EffectiveVisibility? by FirDeclarationDataRegistry.data(PublishedApiEffectiveVisibilityKey)

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -23,12 +22,12 @@ fun FirBasedSymbol<*>.ensureResolved(
     // TODO: Decide which one session should be used and probably get rid of the parameter if use-site session is not needed
     @Suppress("UNUSED_PARAMETER") useSiteSession: FirSession,
 ) {
-    val session = (fir as FirDeclaration).moduleData.session
+    val session = fir.moduleData.session
     val phaseManager = session.phaseManager
     phaseManager.ensureResolved(this, requiredPhase)
 }
 
-fun FirSymbolOwner<*>.ensureResolved(
+fun FirDeclaration<*>.ensureResolved(
     requiredPhase: FirResolvePhase,
     useSiteSession: FirSession,
 ) {
@@ -38,7 +37,6 @@ fun FirSymbolOwner<*>.ensureResolved(
 fun FirBasedSymbol<*>.ensureResolvedForCalls(
     useSiteSession: FirSession,
 ) {
-    val fir = fir as FirDeclaration
     if (fir.resolvePhase >= FirResolvePhase.DECLARATIONS) return
 
 //    val requiredPhase = when (fir) {

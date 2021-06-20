@@ -87,7 +87,7 @@ class DeclarationsConverter(
 
         val fileAnnotationList = mutableListOf<FirAnnotationCall>()
         val importList = mutableListOf<FirImport>()
-        val firDeclarationList = mutableListOf<FirDeclaration>()
+        val firDeclarationList = mutableListOf<FirDeclaration<*>>()
         context.packageFqName = FqName.ROOT
         file.forEachChildren {
             when (it.tokenType) {
@@ -95,7 +95,7 @@ class DeclarationsConverter(
                 PACKAGE_DIRECTIVE -> context.packageFqName = convertPackageName(it)
                 IMPORT_LIST -> importList += convertImportDirectives(it)
                 CLASS -> firDeclarationList += convertClass(it)
-                FUN -> firDeclarationList += convertFunctionDeclaration(it) as FirDeclaration
+                FUN -> firDeclarationList += convertFunctionDeclaration(it) as FirDeclaration<*>
                 PROPERTY -> firDeclarationList += convertPropertyDeclaration(it)
                 TYPEALIAS -> firDeclarationList += convertTypeAlias(it)
                 OBJECT_DECLARATION -> firDeclarationList += convertClass(it)
@@ -358,7 +358,7 @@ class DeclarationsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseClassOrObject
      */
-    private fun convertClass(classNode: LighterASTNode): FirDeclaration {
+    private fun convertClass(classNode: LighterASTNode): FirDeclaration<*> {
         var modifiers = Modifier()
         var classKind: ClassKind = ClassKind.CLASS //TODO
         var identifier: String? = null
@@ -730,12 +730,12 @@ class DeclarationsConverter(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseClassBody
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseEnumClassBody
      */
-    private fun convertClassBody(classBody: LighterASTNode, classWrapper: ClassWrapper): List<FirDeclaration> {
+    private fun convertClassBody(classBody: LighterASTNode, classWrapper: ClassWrapper): List<FirDeclaration<*>> {
         return classBody.forEachChildrenReturnList { node, container ->
             when (node.tokenType) {
                 ENUM_ENTRY -> container += convertEnumEntry(node, classWrapper)
                 CLASS -> container += convertClass(node)
-                FUN -> container += convertFunctionDeclaration(node, classWrapper) as FirDeclaration
+                FUN -> container += convertFunctionDeclaration(node, classWrapper) as FirDeclaration<*>
                 PROPERTY -> container += convertPropertyDeclaration(node, classWrapper)
                 TYPEALIAS -> container += convertTypeAlias(node)
                 OBJECT_DECLARATION -> container += convertClass(node)
@@ -826,7 +826,7 @@ class DeclarationsConverter(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseMemberDeclarationRest
      * at INIT keyword
      */
-    private fun convertAnonymousInitializer(anonymousInitializer: LighterASTNode): FirDeclaration {
+    private fun convertAnonymousInitializer(anonymousInitializer: LighterASTNode): FirDeclaration<*> {
         var firBlock: FirBlock? = null
         anonymousInitializer.forEachChildren {
             when (it.tokenType) {
@@ -949,7 +949,7 @@ class DeclarationsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeAlias
      */
-    private fun convertTypeAlias(typeAlias: LighterASTNode): FirDeclaration {
+    private fun convertTypeAlias(typeAlias: LighterASTNode): FirDeclaration<*> {
         var modifiers = Modifier()
         var identifier: String? = null
         lateinit var firType: FirTypeRef
@@ -985,7 +985,7 @@ class DeclarationsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseProperty
      */
-    fun convertPropertyDeclaration(property: LighterASTNode, classWrapper: ClassWrapper? = null): FirDeclaration {
+    fun convertPropertyDeclaration(property: LighterASTNode, classWrapper: ClassWrapper? = null): FirDeclaration<*> {
         var modifiers = Modifier()
         var identifier: String? = null
         val firTypeParameters = mutableListOf<FirTypeParameter>()
@@ -1991,7 +1991,7 @@ class DeclarationsConverter(
         typeParameters: List<FirTypeParameter>,
         typeConstraints: List<TypeConstraint>,
         to: T
-    ) where T : FirDeclaration, T : FirTypeParameterRefsOwner {
+    ) where T : FirDeclaration<T>, T : FirTypeParameterRefsOwner {
         val typeParamNames = typeParameters.map { it.name }.toSet()
         val result = typeConstraints.mapNotNull { constraint ->
             val name = constraint.identifier.nameAsSafeName()

@@ -99,7 +99,7 @@ object FirIdeDeserializedDeclarationSourceProvider {
         return null
     }
 
-    private fun FirDeclaration.scope(project: Project): GlobalSearchScope {
+    private fun FirDeclaration<*>.scope(project: Project): GlobalSearchScope {
         return GlobalSearchScope.allScope(project)
         /* TODO:
          val session = session as? FirLibrarySession
@@ -150,5 +150,5 @@ fun FirElement.findPsi(session: FirSession): PsiElement? =
  * For data classes & enums generated members like `copy` `componentN`, `values` it will return corresponding enum/data class
  * Otherwise, behaves the same way as [findPsi] returns exact PSI declaration corresponding to passed [FirDeclaration]
  */
-fun FirDeclaration.findReferencePsi(): PsiElement? =
+fun FirDeclaration<*>.findReferencePsi(): PsiElement? =
     psi ?: FirIdeDeserializedDeclarationSourceProvider.findPsi(this, (moduleData.session as FirIdeSession).project)

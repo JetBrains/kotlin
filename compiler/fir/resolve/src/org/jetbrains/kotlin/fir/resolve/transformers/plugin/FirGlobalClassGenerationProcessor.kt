@@ -10,7 +10,10 @@ import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.addDeclaration
-import org.jetbrains.kotlin.fir.extensions.*
+import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
+import org.jetbrains.kotlin.fir.extensions.declarationGenerators
+import org.jetbrains.kotlin.fir.extensions.extensionService
+import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirProviderInternals
@@ -34,7 +37,7 @@ class FirGlobalClassGenerationProcessor(
     }
 
     private fun generateClasses(
-        declarations: List<Pair<FirAnnotatedDeclaration, List<FirAnnotatedDeclaration>>>,
+        declarations: List<Pair<FirAnnotatedDeclaration<*>, List<FirAnnotatedDeclaration<*>>>>,
         extension: FirDeclarationGenerationExtension,
     ): List<FirRegularClass> {
         val newClasses = mutableListOf<FirRegularClass>()
@@ -47,8 +50,8 @@ class FirGlobalClassGenerationProcessor(
     @OptIn(FirProviderInternals::class)
     private fun generateClass(
         extension: FirDeclarationGenerationExtension,
-        declaration: FirAnnotatedDeclaration,
-        owners: List<FirAnnotatedDeclaration>,
+        declaration: FirAnnotatedDeclaration<*>,
+        owners: List<FirAnnotatedDeclaration<*>>,
         newClasses: MutableList<FirRegularClass>
     ) {
         val generatedClasses = extension.generateClasses(declaration, owners)

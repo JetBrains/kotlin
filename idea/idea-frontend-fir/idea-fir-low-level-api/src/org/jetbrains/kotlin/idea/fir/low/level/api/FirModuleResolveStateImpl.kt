@@ -11,10 +11,12 @@ import org.jetbrains.kotlin.analyzer.ModuleSourceInfoBase
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.realPsi
-import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.InternalForInline
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
@@ -31,8 +33,10 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.lazyResolveDecla
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSessionProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSourcesSession
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.*
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.FirDeclarationForCompiledElementSearcher
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.FirElementFinder
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.findSourceNonLocalFirDeclaration
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.*
 
 internal class FirModuleResolveStateImpl(
@@ -70,7 +74,7 @@ internal class FirModuleResolveStateImpl(
     override fun getOrBuildFirFile(ktFile: KtFile): FirFile =
         firFileBuilder.buildRawFirFileWithCaching(ktFile, rootModuleSession.cache, preferLazyBodies = false)
 
-    override fun tryGetCachedFirFile(declaration: FirDeclaration, cache: ModuleFileCache): FirFile? =
+    override fun tryGetCachedFirFile(declaration: FirDeclaration<*>, cache: ModuleFileCache): FirFile? =
         cache.getContainerFirFile(declaration)
 
     override fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<FirPsiDiagnostic> =
@@ -80,21 +84,20 @@ internal class FirModuleResolveStateImpl(
         diagnosticsCollector.collectDiagnosticsForFile(ktFile, filter)
 
     @OptIn(InternalForInline::class)
-    override fun findSourceFirDeclaration(ktDeclaration: KtDeclaration): FirDeclaration =
+    override fun findSourceFirDeclaration(ktDeclaration: KtDeclaration): FirDeclaration<*> =
         findSourceFirDeclarationByExpression(ktDeclaration)
 
     @OptIn(InternalForInline::class)
-    override fun findSourceFirDeclaration(ktDeclaration: KtLambdaExpression): FirDeclaration =
+    override fun findSourceFirDeclaration(ktDeclaration: KtLambdaExpression): FirDeclaration<*> =
         findSourceFirDeclarationByExpression(ktDeclaration)
 
     /**
      * [ktDeclaration] should be either [KtDeclaration] or [KtLambdaExpression]
      */
-    private fun findSourceFirDeclarationByExpression(ktDeclaration: KtExpression): FirDeclaration {
+    private fun findSourceFirDeclarationByExpression(ktDeclaration: KtExpression): FirDeclaration<*> {
         require(ktDeclaration.getModuleInfo() is ModuleSourceInfoBase) {
             "Declaration should have ModuleSourceInfo, instead it had ${ktDeclaration.getModuleInfo()}"
         }
-
         val nonLocalNamedDeclaration = ktDeclaration.getNonLocalContainingOrThisDeclaration()
             ?: error("Declaration should have non-local container${ktDeclaration.getElementTextInContext()}")
 
@@ -113,7 +116,7 @@ internal class FirModuleResolveStateImpl(
             toPhase = FirResolvePhase.BODY_RESOLVE,
             checkPCE = false, /*TODO*/
         )
-        val firDeclaration = FirElementFinder.findElementIn<FirDeclaration>(nonLocalFirForNamedDeclaration) { firDeclaration ->
+        val firDeclaration = FirElementFinder.findElementIn<FirDeclaration<*>>(nonLocalFirForNamedDeclaration) { firDeclaration ->
             when (val realPsi = firDeclaration.realPsi) {
                 is KtObjectLiteralExpression -> realPsi.objectDeclaration == ktDeclaration
                 is KtFunctionLiteral -> realPsi.parent == ktDeclaration
@@ -125,7 +128,7 @@ internal class FirModuleResolveStateImpl(
     }
 
     @OptIn(InternalForInline::class)
-    override fun findSourceFirCompiledDeclaration(ktDeclaration: KtDeclaration): FirDeclaration {
+    override fun findSourceFirCompiledDeclaration(ktDeclaration: KtDeclaration): FirDeclaration<*> {
         require(ktDeclaration.containingKtFile.isCompiled) {
             "This method will only work on compiled declarations, but this declaration is not compiled: ${ktDeclaration.getElementTextInContext()}"
         }
@@ -142,7 +145,7 @@ internal class FirModuleResolveStateImpl(
         }
     }
 
-    override fun <D : FirDeclaration> resolveFirToPhase(declaration: D, toPhase: FirResolvePhase): D {
+    override fun <D : FirDeclaration<*>> resolveFirToPhase(declaration: D, toPhase: FirResolvePhase): D {
         if (toPhase == FirResolvePhase.RAW_FIR) return declaration
         val fileCache = when (val session = declaration.moduleData.session) {
             is FirIdeSourcesSession -> session.cache
@@ -158,7 +161,7 @@ internal class FirModuleResolveStateImpl(
         return declaration
     }
 
-    override fun <D : FirDeclaration> resolveFirToResolveType(declaration: D, type: ResolveType): D {
+    override fun <D : FirDeclaration<*>> resolveFirToResolveType(declaration: D, type: ResolveType): D {
         if (type == ResolveType.NoResolve) return declaration
         val fileCache = when (val session = declaration.moduleData.session) {
             is FirIdeSourcesSession -> session.cache

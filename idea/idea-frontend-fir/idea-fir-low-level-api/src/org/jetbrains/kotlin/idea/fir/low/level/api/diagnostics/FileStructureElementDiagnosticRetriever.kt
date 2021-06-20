@@ -24,7 +24,7 @@ internal abstract class FileStructureElementDiagnosticRetriever {
 }
 
 internal class SingleNonLocalDeclarationDiagnosticRetriever(
-    private val structureElementDeclaration: FirDeclaration
+    private val structureElementDeclaration: FirDeclaration<*>
 ) : FileStructureElementDiagnosticRetriever() {
     override fun retrieve(
         firFile: FirFile,
@@ -41,13 +41,13 @@ internal class SingleNonLocalDeclarationDiagnosticRetriever(
     }
 
     private class Visitor(
-        private val structureElementDeclaration: FirDeclaration,
+        private val structureElementDeclaration: FirDeclaration<*>,
         context: PersistentCheckerContext,
         components: List<AbstractDiagnosticCollectorComponent>
     ) : FirIdeDiagnosticVisitor(context, components) {
         private var insideAlwaysVisitableDeclarations = 0
 
-        override fun shouldVisitDeclaration(declaration: FirDeclaration): Boolean {
+        override fun shouldVisitDeclaration(declaration: FirDeclaration<*>): Boolean {
             if (declaration.shouldVisitWithNestedDeclarations()) {
                 insideAlwaysVisitableDeclarations++
             }
@@ -64,7 +64,7 @@ internal class SingleNonLocalDeclarationDiagnosticRetriever(
             }
         }
 
-        private fun FirDeclaration.shouldVisitWithNestedDeclarations(): Boolean {
+        private fun FirDeclaration<*>.shouldVisitWithNestedDeclarations(): Boolean {
             if (shouldDiagnosticsAlwaysBeCheckedOn(this)) return true
             return when (this) {
                 is FirAnonymousInitializer -> true
@@ -75,7 +75,7 @@ internal class SingleNonLocalDeclarationDiagnosticRetriever(
             }
         }
 
-        override fun onDeclarationExit(declaration: FirDeclaration) {
+        override fun onDeclarationExit(declaration: FirDeclaration<*>) {
             if (declaration.shouldVisitWithNestedDeclarations()) {
                 insideAlwaysVisitableDeclarations--
             }

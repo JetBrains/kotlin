@@ -13,7 +13,7 @@ abstract class ContextByDesignationCollector<C : Any>(private val designation: F
     private val designationState = FirDesignationState(designation)
 
     protected abstract fun getCurrentContext(): C
-    protected abstract fun goToNestedDeclaration(declaration: FirDeclaration)
+    protected abstract fun goToNestedDeclaration(declaration: FirDeclaration<*>)
 
     fun getCollectedContext(): C {
         return context
@@ -47,14 +47,14 @@ private class FirDesignationState(val designation: FirDeclarationDesignation) {
 
     fun canGoNext(): Boolean = currentIndex < designation.path.size
 
-    val currentDeclarationIfPresent: FirDeclaration?
+    val currentDeclarationIfPresent: FirDeclaration<*>?
         get() = when (currentIndex) {
             in designation.path.indices -> designation.path[currentIndex]
             designation.path.size -> designation.declaration
             else -> null
         }
 
-    val currentDeclaration: FirDeclaration
+    val currentDeclaration: FirDeclaration<*>
         get() = currentDeclarationIfPresent
             ?: error("Went inside target declaration")
 

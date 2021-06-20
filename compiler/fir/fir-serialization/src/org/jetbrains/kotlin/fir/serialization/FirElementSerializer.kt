@@ -58,7 +58,7 @@ import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 class FirElementSerializer private constructor(
     private val session: FirSession,
     private val scopeSession: ScopeSession,
-    private val containingDeclaration: FirDeclaration?,
+    private val containingDeclaration: FirDeclaration<*>?,
     private val typeParameters: Interner<FirTypeParameter>,
     private val extension: FirSerializerExtension,
     private val typeTable: MutableTypeTable,
@@ -681,7 +681,7 @@ class FirElementSerializer private constructor(
             }
             is ConeTypeParameterType -> {
                 val typeParameter = type.lookupTag.typeParameterSymbol.fir
-                if (typeParameter in (containingDeclaration as? FirMemberDeclaration)?.typeParameters ?: emptyList()) {
+                if (typeParameter in (containingDeclaration as? FirMemberDeclaration<*>)?.typeParameters ?: emptyList()) {
                     builder.typeParameterName = getSimpleNameIndex(typeParameter.name)
                 } else {
                     builder.typeParameter = getTypeParameterId(typeParameter)
@@ -820,7 +820,7 @@ class FirElementSerializer private constructor(
         )
     }
 
-    private fun createChildSerializer(declaration: FirDeclaration): FirElementSerializer =
+    private fun createChildSerializer(declaration: FirDeclaration<*>): FirElementSerializer =
         FirElementSerializer(
             session, scopeSession, declaration, Interner(typeParameters), extension,
             typeTable, versionRequirementTable, serializeTypeTableToFunction = false,
@@ -832,7 +832,7 @@ class FirElementSerializer private constructor(
 
     private fun useTypeTable(): Boolean = extension.shouldUseTypeTable()
 
-    private fun FirDeclaration.hasInlineClassTypesInSignature(): Boolean {
+    private fun FirDeclaration<*>.hasInlineClassTypesInSignature(): Boolean {
         // TODO
         return false
     }
@@ -927,7 +927,7 @@ class FirElementSerializer private constructor(
     }
 
 
-    private fun normalizeVisibility(declaration: FirMemberDeclaration): Visibility {
+    private fun normalizeVisibility(declaration: FirMemberDeclaration<*>): Visibility {
         return declaration.visibility.normalize()
     }
 

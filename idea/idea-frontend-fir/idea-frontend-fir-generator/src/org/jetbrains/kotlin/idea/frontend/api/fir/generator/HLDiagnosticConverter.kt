@@ -185,7 +185,7 @@ private object FirToKtConversionCreator {
             importsToAdd = listOf("org.jetbrains.kotlin.fir.declarations.FirRegularClass")
         ),
         FirMemberDeclaration::class to HLFunctionCallConversion(
-            "firSymbolBuilder.buildSymbol({0} as FirDeclaration)",
+            "firSymbolBuilder.buildSymbol({0} as FirDeclaration<*>)",
             KtSymbol::class.createType(),
             importsToAdd = listOf("org.jetbrains.kotlin.fir.declarations.FirDeclaration")
         ),

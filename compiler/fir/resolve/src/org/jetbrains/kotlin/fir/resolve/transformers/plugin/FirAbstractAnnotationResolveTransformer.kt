@@ -26,16 +26,16 @@ internal abstract class FirAbstractAnnotationResolveTransformer<D, S>(
 
     protected lateinit var scope: FirScope
 
-    override fun transformFile(file: FirFile, data: D): FirDeclaration {
+    override fun transformFile(file: FirFile, data: D): FirFile {
         scope = FirCompositeScope(createImportingScopes(file, session, scopeSession, useCaching = false))
         val state = beforeChildren(file)
         file.transformDeclarations(this, data)
         afterChildren(state)
-        return transformAnnotatedDeclaration(file, data)
+        return transformAnnotatedDeclaration(file, data) as FirFile
     }
 
-    override fun transformProperty(property: FirProperty, data: D): FirDeclaration {
-        return transformAnnotatedDeclaration(property, data)
+    override fun transformProperty(property: FirProperty, data: D): FirProperty {
+        return transformAnnotatedDeclaration(property, data) as FirProperty
     }
 
     override fun transformRegularClass(
@@ -55,23 +55,23 @@ internal abstract class FirAbstractAnnotationResolveTransformer<D, S>(
     override fun transformSimpleFunction(
         simpleFunction: FirSimpleFunction,
         data: D
-    ): FirDeclaration {
+    ): FirSimpleFunction {
         return transformAnnotatedDeclaration(simpleFunction, data).also {
             val state = beforeChildren(simpleFunction)
             simpleFunction.transformValueParameters(this, data)
             afterChildren(state)
-        }
+        } as FirSimpleFunction
     }
 
     override fun transformConstructor(
         constructor: FirConstructor,
         data: D
-    ): FirDeclaration {
+    ): FirConstructor {
         return transformAnnotatedDeclaration(constructor, data).also {
             val state = beforeChildren(constructor)
             constructor.transformValueParameters(this, data)
             afterChildren(state)
-        }
+        } as FirConstructor
     }
 
     override fun transformValueParameter(
@@ -82,8 +82,8 @@ internal abstract class FirAbstractAnnotationResolveTransformer<D, S>(
         return transformAnnotatedDeclaration(valueParameter, data) as FirStatement
     }
 
-    override fun transformTypeAlias(typeAlias: FirTypeAlias, data: D): FirDeclaration {
-        return transformAnnotatedDeclaration(typeAlias, data)
+    override fun transformTypeAlias(typeAlias: FirTypeAlias, data: D): FirTypeAlias {
+        return transformAnnotatedDeclaration(typeAlias, data) as FirTypeAlias
     }
 
     override fun transformTypeRef(typeRef: FirTypeRef, data: D): FirTypeRef {
@@ -91,12 +91,12 @@ internal abstract class FirAbstractAnnotationResolveTransformer<D, S>(
         return transformAnnotationContainer(typeRef, data) as FirTypeRef
     }
 
-    override fun transformAnnotatedDeclaration(
-        annotatedDeclaration: FirAnnotatedDeclaration,
+    override fun <T : FirAnnotatedDeclaration<T>> transformAnnotatedDeclaration(
+        annotatedDeclaration: FirAnnotatedDeclaration<T>,
         data: D
-    ): FirDeclaration {
+    ): FirAnnotatedDeclaration<T> {
         @Suppress("UNCHECKED_CAST")
-        return transformAnnotationContainer(annotatedDeclaration, data) as FirDeclaration
+        return transformAnnotationContainer(annotatedDeclaration, data) as FirAnnotatedDeclaration<T>
     }
 
     override fun transformAnnotationContainer(
@@ -110,7 +110,7 @@ internal abstract class FirAbstractAnnotationResolveTransformer<D, S>(
         return element
     }
 
-    protected open fun beforeChildren(declaration: FirAnnotatedDeclaration): S? {
+    protected open fun beforeChildren(declaration: FirAnnotatedDeclaration<*>): S? {
         return null
     }
 

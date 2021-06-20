@@ -113,7 +113,7 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
 //                        errorDeclaration.psi?.let { println(it) }
 //                    }
 
-                    override fun visitDeclaration(declaration: FirDeclaration) {
+                    override fun <T : FirDeclaration<T>> visitDeclaration(declaration: FirDeclaration<T>) {
                         normalDeclarations++
                         declaration.acceptChildren(this)
                     }

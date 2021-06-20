@@ -26,5 +26,5 @@ interface FirDeclarationBuilder {
     abstract var resolvePhase: FirResolvePhase
     abstract var origin: FirDeclarationOrigin
     abstract var attributes: FirDeclarationAttributes
-    fun build(): FirDeclaration
+    fun build(): FirDeclaration<*>
 }

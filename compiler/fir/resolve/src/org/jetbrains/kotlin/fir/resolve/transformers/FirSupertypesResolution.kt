@@ -102,13 +102,13 @@ open class FirApplySupertypesTransformer(
         return element
     }
 
-    protected open fun needReplacePhase(firDeclaration: FirDeclaration): Boolean = FirResolvePhase.SUPER_TYPES > firDeclaration.resolvePhase
+    protected open fun needReplacePhase(firDeclaration: FirDeclaration<*>): Boolean = FirResolvePhase.SUPER_TYPES > firDeclaration.resolvePhase
 
-    protected open fun transformDeclarationContent(declaration: FirDeclaration, data: Any?): FirDeclaration {
-        return declaration.transformChildren(this, null) as FirDeclaration
+    protected open fun transformDeclarationContent(declaration: FirDeclaration<*>, data: Any?): FirDeclaration<*> {
+        return declaration.transformChildren(this, null) as FirDeclaration<*>
     }
 
-    override fun transformFile(file: FirFile, data: Any?): FirDeclaration {
+    override fun transformFile(file: FirFile, data: Any?): FirFile {
         if (needReplacePhase(file)) {
             file.replaceResolvePhase(FirResolvePhase.SUPER_TYPES)
         }
@@ -148,7 +148,7 @@ open class FirApplySupertypesTransformer(
         return status.supertypeRefs
     }
 
-    override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Any?): FirDeclaration {
+    override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Any?): FirStatement {
         if (typeAlias.expandedTypeRef is FirResolvedTypeRef) {
             if (needReplacePhase(typeAlias)) {
                 typeAlias.replaceResolvePhase(FirResolvePhase.SUPER_TYPES)
@@ -171,7 +171,7 @@ open class FirApplySupertypesTransformer(
 }
 
 private fun FirClassLikeDeclaration<*>.typeParametersScope(): FirScope? {
-    if (this !is FirMemberDeclaration || typeParameters.isEmpty()) return null
+    if (this !is FirMemberDeclaration<*> || typeParameters.isEmpty()) return null
     return FirMemberTypeParameterScope(this)
 }
 
@@ -311,7 +311,7 @@ open class FirSupertypeResolverVisitor(
         return resolvedTypesRefs
     }
 
-    open fun visitDeclarationContent(declaration: FirDeclaration, data: Any?) {
+    open fun visitDeclarationContent(declaration: FirDeclaration<*>, data: Any?) {
         declaration.acceptChildren(this, null)
     }
 

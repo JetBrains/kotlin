@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.name.Name
 
 class PersistentCheckerContext private constructor(
     override val implicitReceiverStack: PersistentImplicitReceiverStack,
-    override val containingDeclarations: PersistentList<FirDeclaration>,
+    override val containingDeclarations: PersistentList<FirDeclaration<*>>,
     override val qualifiedAccessOrAnnotationCalls: PersistentList<FirStatement>,
     override val getClassCalls: PersistentList<FirGetClassCall>,
     override val sessionHolder: SessionHolder,
@@ -58,7 +58,7 @@ class PersistentCheckerContext private constructor(
         )
     }
 
-    fun addDeclaration(declaration: FirDeclaration): PersistentCheckerContext {
+    fun addDeclaration(declaration: FirDeclaration<*>): PersistentCheckerContext {
         return PersistentCheckerContext(
             implicitReceiverStack,
             containingDeclarations.add(declaration),

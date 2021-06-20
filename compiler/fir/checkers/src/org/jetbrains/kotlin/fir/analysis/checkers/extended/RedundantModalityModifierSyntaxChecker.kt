@@ -21,13 +21,13 @@ import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.modality
 import org.jetbrains.kotlin.psi.KtDeclaration
 
-object RedundantModalityModifierSyntaxChecker : FirDeclarationSyntaxChecker<FirMemberDeclaration, KtDeclaration>() {
+object RedundantModalityModifierSyntaxChecker : FirDeclarationSyntaxChecker<FirMemberDeclaration<*>, KtDeclaration>() {
 
-    override fun isApplicable(element: FirMemberDeclaration, source: FirSourceElement): Boolean =
+    override fun isApplicable(element: FirMemberDeclaration<*>, source: FirSourceElement): Boolean =
         source.kind !is FirFakeSourceElementKind
 
     override fun checkLightTree(
-        element: FirMemberDeclaration,
+        element: FirMemberDeclaration<*>,
         source: FirSourceElement,
         context: CheckerContext,
         reporter: DiagnosticReporter

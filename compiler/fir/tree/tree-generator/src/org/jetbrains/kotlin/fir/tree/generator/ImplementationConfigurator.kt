@@ -495,6 +495,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         noImpl(userTypeRef)
 
+        impl(file) {
+            default("symbol", "FirFileSymbol()")
+        }
+
         noImpl(argumentList)
     }
 

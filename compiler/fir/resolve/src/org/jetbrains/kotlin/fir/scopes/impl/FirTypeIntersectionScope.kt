@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
-import java.util.*
-import kotlin.collections.HashSet
 
 class FirTypeIntersectionScope private constructor(
     session: FirSession,
@@ -98,7 +96,7 @@ class FirTypeIntersectionScope private constructor(
             val maxByVisibility = findMemberWithMaxVisibility(allMembersWithScope)
             val extractBothWaysWithPrivate = extractBothWaysOverridable(maxByVisibility, allMembersWithScope)
             val extractedOverrides = extractBothWaysWithPrivate.filterNotTo(mutableListOf()) {
-                Visibilities.isPrivate((it.member.fir as FirMemberDeclaration).visibility)
+                Visibilities.isPrivate((it.member.fir as FirMemberDeclaration<*>).visibility)
             }.takeIf { it.isNotEmpty() } ?: extractBothWaysWithPrivate
             val baseMembersForIntersection = extractedOverrides.calcBaseMembersForIntersectionOverride()
             if (baseMembersForIntersection.size > 1) {
@@ -189,7 +187,7 @@ class FirTypeIntersectionScope private constructor(
         var hasAbstract = false
 
         for ((member) in extractedOverridden) {
-            when ((member.fir as FirMemberDeclaration).modality) {
+            when ((member.fir as FirMemberDeclaration<*>).modality) {
                 Modality.FINAL -> return Modality.FINAL
                 Modality.SEALED -> {
                     // Members should not be sealed. But, that will be reported as WRONG_MODIFIER_TARGET, and here we shouldn't raise an
@@ -220,7 +218,7 @@ class FirTypeIntersectionScope private constructor(
         val realOverridden = extractedOverridden.flatMap { realOverridden(it.member, it.baseScope, processDirectOverridden) }
         val filteredOverridden = filterOutOverridden(realOverridden, processDirectOverridden)
 
-        return filteredOverridden.minOf { (it.member.fir as FirMemberDeclaration).modality ?: Modality.ABSTRACT }
+        return filteredOverridden.minOf { (it.member.fir as FirMemberDeclaration<*>).modality ?: Modality.ABSTRACT }
     }
 
     private fun <D : FirCallableSymbol<*>> realOverridden(
@@ -298,7 +296,7 @@ class FirTypeIntersectionScope private constructor(
     ): Visibility {
         var maxVisibility: Visibility = Visibilities.Private
         for ((override) in extractedOverrides) {
-            val visibility = (override.fir as FirMemberDeclaration).visibility
+            val visibility = (override.fir as FirMemberDeclaration<*>).visibility
             // TODO: There is more complex logic at org.jetbrains.kotlin.resolve.OverridingUtil.resolveUnknownVisibilityForMember
             // TODO: and org.jetbrains.kotlin.resolve.OverridingUtil.findMaxVisibility
             val compare = Visibilities.compare(visibility, maxVisibility) ?: return Visibilities.DEFAULT_VISIBILITY

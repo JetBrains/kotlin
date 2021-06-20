@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.originalIfFakeOverride
 import org.jetbrains.kotlin.fir.render
@@ -16,14 +18,14 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.utils.FirRefWithValidityCheck
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolOrigin
 
-internal interface KtFirSymbol<out F : FirDeclaration> : KtSymbol, ValidityTokenOwner {
+internal interface KtFirSymbol<out F : FirDeclaration<*>> : KtSymbol, ValidityTokenOwner {
     val firRef: FirRefWithValidityCheck<F>
 
     override val origin: KtSymbolOrigin get() = firRef.withFir { it.ktSymbolOrigin() }
 }
 
 
-private tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (origin) {
+private tailrec fun FirDeclaration<*>.ktSymbolOrigin(): KtSymbolOrigin = when (origin) {
     FirDeclarationOrigin.Source -> {
         if (source?.kind == FirFakeSourceElementKind.DataClassGeneratedMembers
             || source?.kind == FirFakeSourceElementKind.EnumGeneratedDeclaration
@@ -58,5 +60,5 @@ private tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (orig
 }
 
 
-class InvalidFirDeclarationOriginForSymbol(declaration: FirDeclaration) :
+class InvalidFirDeclarationOriginForSymbol(declaration: FirDeclaration<*>) :
     IllegalStateException("Invalid FirDeclarationOrigin ${declaration.origin::class.simpleName} for ${declaration.render()}")

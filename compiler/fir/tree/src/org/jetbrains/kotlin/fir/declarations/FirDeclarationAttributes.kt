@@ -37,7 +37,7 @@ class FirDeclarationAttributes : AttributeArrayOwner<FirDeclarationDataKey, Any>
  * Example of adding new attribute for declaration:
  *
  *    object SomeKey : FirDeclarationDataKey()
- *    var FirDeclaration.someString: String? by FirDeclarationDataRegistry.data(SomeKey)
+ *    var FirDeclaration<*>.someString: String? by FirDeclarationDataRegistry.data(SomeKey)
  */
 object FirDeclarationDataRegistry : TypeRegistry<FirDeclarationDataKey, Any>() {
     fun <K : FirDeclarationDataKey> data(key: K): DeclarationDataAccessor {
@@ -54,12 +54,12 @@ object FirDeclarationDataRegistry : TypeRegistry<FirDeclarationDataKey, Any>() {
         private val dataAccessor: NullableArrayMapAccessor<FirDeclarationDataKey, Any, *>,
         val key: KClass<out FirDeclarationDataKey>
     ) {
-        operator fun <V> getValue(thisRef: FirDeclaration, property: KProperty<*>): V? {
+        operator fun <V> getValue(thisRef: FirDeclaration<*>, property: KProperty<*>): V? {
             @Suppress("UNCHECKED_CAST")
             return dataAccessor.getValue(thisRef.attributes, property) as? V
         }
 
-        operator fun <V> setValue(thisRef: FirDeclaration, property: KProperty<*>, value: V?) {
+        operator fun <V> setValue(thisRef: FirDeclaration<*>, property: KProperty<*>, value: V?) {
             thisRef.attributes[key] = value
         }
     }

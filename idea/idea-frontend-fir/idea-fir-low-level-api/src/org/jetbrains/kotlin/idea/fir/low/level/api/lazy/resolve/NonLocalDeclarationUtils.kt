@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
-internal fun FirDeclaration.getKtDeclarationForFirElement(): KtDeclaration {
+internal fun FirDeclaration<*>.getKtDeclarationForFirElement(): KtDeclaration {
     require(this !is FirFile)
 
     val ktDeclaration = (psi as? KtDeclaration) ?: run {

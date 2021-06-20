@@ -42,7 +42,7 @@ class FirAnonymousObjectBuilder : FirDeclarationBuilder, FirClassBuilder, FirAnn
     override val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
     override lateinit var classKind: ClassKind
     override val superTypeRefs: MutableList<FirTypeRef> = mutableListOf()
-    override val declarations: MutableList<FirDeclaration> = mutableListOf()
+    override val declarations: MutableList<FirDeclaration<*>> = mutableListOf()
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override lateinit var scopeProvider: FirScopeProvider
     lateinit var symbol: FirAnonymousObjectSymbol

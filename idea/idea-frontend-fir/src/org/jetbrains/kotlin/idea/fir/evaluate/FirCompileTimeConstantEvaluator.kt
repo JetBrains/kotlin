@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.resolve.constants.evaluate.CompileTimeType
@@ -204,7 +204,7 @@ internal class FirCompileTimeConstantEvaluator {
             buildConstExpression(source, this, value as T)
 
     private fun FirFunctionCall.getOriginalFunction(): FirCallableDeclaration<*>? {
-        val symbol: AbstractFirBasedSymbol<*>? = when (val reference = calleeReference) {
+        val symbol: FirBasedSymbol<*>? = when (val reference = calleeReference) {
             is FirResolvedNamedReference -> reference.resolvedSymbol
             else -> null
         }

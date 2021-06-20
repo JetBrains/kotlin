@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 
 abstract class BeforeElementDiagnosticCollectionHandler: FirSessionComponent {
     open fun beforeCollectingForElement(element: FirElement) {}
-    open fun beforeGoingNestedDeclaration(declaration: FirDeclaration, context: PersistentCheckerContext) {}
+    open fun beforeGoingNestedDeclaration(declaration: FirDeclaration<*>, context: PersistentCheckerContext) {}
 }
 
 val FirSession.beforeElementDiagnosticCollectionHandler: BeforeElementDiagnosticCollectionHandler? by FirSession.nullableSessionComponentAccessor()

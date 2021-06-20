@@ -14,9 +14,9 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirProviderInternals
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
-import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -78,16 +78,16 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
     }
 
     @FirProviderInternals
-    override fun recordGeneratedClass(owner: FirAnnotatedDeclaration, klass: FirRegularClass) {
+    override fun recordGeneratedClass(owner: FirAnnotatedDeclaration<*>, klass: FirRegularClass) {
         klass.accept(FirRecorder, FirRecorderData(state, owner.file, session.nameConflictsTracker))
     }
 
     @FirProviderInternals
-    override fun recordGeneratedMember(owner: FirAnnotatedDeclaration, klass: FirDeclaration) {
+    override fun recordGeneratedMember(owner: FirAnnotatedDeclaration<*>, klass: FirDeclaration<*>) {
         klass.accept(FirRecorder, FirRecorderData(state, owner.file, session.nameConflictsTracker))
     }
 
-    private val FirAnnotatedDeclaration.file: FirFile
+    private val FirAnnotatedDeclaration<*>.file: FirFile
         get() = when (this) {
             is FirFile -> this
             is FirRegularClass -> getFirClassifierContainerFile(this.symbol.classId)

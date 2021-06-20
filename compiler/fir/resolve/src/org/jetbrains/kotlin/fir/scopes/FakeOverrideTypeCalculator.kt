@@ -16,16 +16,16 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
 abstract class FakeOverrideTypeCalculator {
-    abstract fun computeReturnType(declaration: FirTypedDeclaration): FirTypeRef
+    abstract fun computeReturnType(declaration: FirTypedDeclaration<*>): FirTypeRef
 
     object DoNothing : FakeOverrideTypeCalculator() {
-        override fun computeReturnType(declaration: FirTypedDeclaration): FirTypeRef {
+        override fun computeReturnType(declaration: FirTypedDeclaration<*>): FirTypeRef {
             return declaration.returnTypeRef
         }
     }
 
     object Forced : FakeOverrideTypeCalculator() {
-        override fun computeReturnType(declaration: FirTypedDeclaration): FirResolvedTypeRef {
+        override fun computeReturnType(declaration: FirTypedDeclaration<*>): FirResolvedTypeRef {
             (declaration.returnTypeRef as? FirResolvedTypeRef)?.let { return it }
             val (substitutor, baseSymbol) = declaration.attributes.fakeOverrideSubstitution ?: error("")
             val baseDeclaration = baseSymbol.fir as FirTypedDeclaration

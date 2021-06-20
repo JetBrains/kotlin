@@ -39,8 +39,8 @@ class AllOpenVisibilityTransformer(session: FirSession) : FirStatusTransformerEx
     }
 
     override fun transformStatus(
-        declaration: FirDeclaration,
-        owners: List<FirAnnotatedDeclaration>,
+        declaration: FirDeclaration<*>,
+        owners: List<FirAnnotatedDeclaration<*>>,
         status: FirDeclarationStatus
     ): FirDeclarationStatus {
         val visibility = findVisibility(declaration, owners) ?: return status
@@ -48,7 +48,7 @@ class AllOpenVisibilityTransformer(session: FirSession) : FirStatusTransformerEx
         return status.transform(visibility = visibility)
     }
 
-    private fun findVisibility(declaration: FirDeclaration, owners: List<FirAnnotatedDeclaration>): Visibility? {
+    private fun findVisibility(declaration: FirDeclaration<*>, owners: List<FirAnnotatedDeclaration<*>>): Visibility? {
         (declaration as? FirAnnotatedDeclaration)?.visibilityFromAnnotation()?.let { return it }
         for (owner in owners) {
             owner.visibilityFromAnnotation()?.let { return it }
@@ -56,7 +56,7 @@ class AllOpenVisibilityTransformer(session: FirSession) : FirStatusTransformerEx
         return null
     }
 
-    private fun FirAnnotatedDeclaration.visibilityFromAnnotation(): Visibility? {
+    private fun FirAnnotatedDeclaration<*>.visibilityFromAnnotation(): Visibility? {
         val annotation = annotations.firstOrNull {
             it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.classId == AllPublicClassId
         } ?: return null

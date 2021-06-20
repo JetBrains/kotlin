@@ -30,7 +30,7 @@ class FirGlobalExtensionStatusProcessor(
             val declarations = provider.getSymbolsWithOwnersByPredicate(extension.predicate)
             for ((declaration, owners) in declarations) {
                 // TODO: maybe replace with visitor?
-                if (declaration is FirMemberDeclaration) {
+                if (declaration is FirMemberDeclaration<*>) {
                     val newStatus = extension.transformStatus(declaration, owners, declaration.status)
                     declaration.transformStatus(ReplaceStatus, newStatus)
                 }
@@ -49,7 +49,7 @@ class FirTransformerBasedExtensionStatusProcessor(
         private val extensions = session.extensionService.statusTransformerExtensions
         private val predicateBasedProvider = session.predicateBasedProvider
 
-        private fun FirMemberDeclaration.updateStatus() {
+        private fun FirMemberDeclaration<*>.updateStatus() {
             if (extensions.isEmpty()) return
             val owners = predicateBasedProvider.getOwnersOfDeclaration(this)
             requireNotNull(owners)
@@ -64,7 +64,7 @@ class FirTransformerBasedExtensionStatusProcessor(
             return element
         }
 
-        override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Nothing?): FirDeclaration {
+        override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Nothing?): FirTypeAlias {
             typeAlias.updateStatus()
             return typeAlias
         }
@@ -75,29 +75,29 @@ class FirTransformerBasedExtensionStatusProcessor(
             return regularClass
         }
 
-        override fun transformConstructor(constructor: FirConstructor, data: Nothing?): FirDeclaration {
+        override fun transformConstructor(constructor: FirConstructor, data: Nothing?): FirConstructor {
             constructor.updateStatus()
             return constructor
         }
 
-        override fun transformProperty(property: FirProperty, data: Nothing?): FirDeclaration {
+        override fun transformProperty(property: FirProperty, data: Nothing?): FirProperty {
             property.updateStatus()
             property.transformGetter(this, data)
             property.transformSetter(this, data)
             return property
         }
 
-        override fun transformField(field: FirField, data: Nothing?): FirDeclaration {
+        override fun transformField(field: FirField, data: Nothing?): FirField {
             field.updateStatus()
             return field
         }
 
-        override fun transformEnumEntry(enumEntry: FirEnumEntry, data: Nothing?): FirDeclaration {
+        override fun transformEnumEntry(enumEntry: FirEnumEntry, data: Nothing?): FirEnumEntry {
             enumEntry.updateStatus()
             return enumEntry
         }
 
-        override fun transformSimpleFunction(simpleFunction: FirSimpleFunction, data: Nothing?): FirDeclaration {
+        override fun transformSimpleFunction(simpleFunction: FirSimpleFunction, data: Nothing?): FirSimpleFunction {
             simpleFunction.updateStatus()
             return simpleFunction
         }

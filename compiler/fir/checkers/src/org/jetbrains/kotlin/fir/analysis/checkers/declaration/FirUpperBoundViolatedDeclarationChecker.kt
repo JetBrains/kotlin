@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.declarations.*
 
 object FirUpperBoundViolatedDeclarationChecker : FirBasicDeclarationChecker() {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    override fun check(declaration: FirDeclaration<*>, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration is FirClass<*>) {
             for (typeParameter in declaration.typeParameters) {
                 if (typeParameter is FirTypeParameter) {

@@ -19,7 +19,7 @@ internal open class FirIdeDiagnosticVisitor(
     private val beforeElementDiagnosticCollectionHandler = context.session.beforeElementDiagnosticCollectionHandler
 
     override fun visitNestedElements(element: FirElement) {
-        if (element is FirDeclaration) {
+        if (element is FirDeclaration<*>) {
             beforeElementDiagnosticCollectionHandler?.beforeGoingNestedDeclaration(element, context)
         }
         super.visitNestedElements(element)

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 import kotlin.properties.ReadWriteProperty
 
-abstract class AbstractFir2IrLazyFunction<F : FirMemberDeclaration>(
+abstract class AbstractFir2IrLazyFunction<F : FirMemberDeclaration<*>>(
     components: Fir2IrComponents,
     override val startOffset: Int,
     override val endOffset: Int,

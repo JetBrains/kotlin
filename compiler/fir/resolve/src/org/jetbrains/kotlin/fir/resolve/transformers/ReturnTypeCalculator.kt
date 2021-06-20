@@ -6,19 +6,19 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 
 interface ReturnTypeCalculator {
-    fun tryCalculateReturnType(declaration: FirTypedDeclaration): FirResolvedTypeRef
+    fun tryCalculateReturnType(declaration: FirTypedDeclaration<*>): FirResolvedTypeRef
 }
 
 class ReturnTypeCalculatorForFullBodyResolve : ReturnTypeCalculator {
-    override fun tryCalculateReturnType(declaration: FirTypedDeclaration): FirResolvedTypeRef {
+    override fun tryCalculateReturnType(declaration: FirTypedDeclaration<*>): FirResolvedTypeRef {
         val returnTypeRef = declaration.returnTypeRef
         if (returnTypeRef is FirResolvedTypeRef) return returnTypeRef
         if (declaration.origin.fromSupertypes) {

@@ -32,7 +32,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             designation: FirDeclarationDesignation,
             rootNonLocalDeclaration: KtDeclaration,
             replacement: RawFirReplacement?
-        ): FirDeclaration {
+        ): FirDeclaration<*> {
             val replacementApplier = replacement?.Applier()
             val builder = RawFirNonLocalDeclarationBuilder(
                 session = session,
@@ -51,7 +51,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             scopeProvider: FirScopeProvider,
             designation: FirDeclarationDesignation,
             rootNonLocalDeclaration: KtDeclaration,
-        ): FirDeclaration {
+        ): FirDeclaration<*> {
             val functionsToRebind = when (val originalDeclaration = designation.declaration) {
                 is FirSimpleFunction -> setOf(originalDeclaration)
                 is FirProperty -> setOfNotNull(originalDeclaration.getter, originalDeclaration.setter)
@@ -102,7 +102,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
         }
     }
 
-    private fun moveNext(iterator: Iterator<FirDeclaration>, containingClass: FirRegularClass?): FirDeclaration {
+    private fun moveNext(iterator: Iterator<FirDeclaration<*>>, containingClass: FirRegularClass?): FirDeclaration<*> {
         if (!iterator.hasNext()) {
             val visitor = VisitorWithReplacement()
             return when (declarationToBuild) {
@@ -112,7 +112,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                     visitor.convertProperty(declarationToBuild, ownerSymbol, ownerTypeArgumentsCount)
                 }
                 else -> visitor.convertElement(declarationToBuild)
-            } as FirDeclaration
+            } as FirDeclaration<*>
         }
 
         val parent = iterator.next()

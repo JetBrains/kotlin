@@ -40,7 +40,7 @@ internal class FirTowerDataContextAllElementsCollector : FirTowerDataContextColl
         elementsToContext[closestStatementInBlock] = context
     }
 
-    override fun addDeclarationContext(declaration: FirDeclaration, context: FirTowerDataContext) {
+    override fun addDeclarationContext(declaration: FirDeclaration<*>, context: FirTowerDataContext) {
         val psi = declaration.psi as? KtElement ?: return
         elementsToContext[psi] = context
     }

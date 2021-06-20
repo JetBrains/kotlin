@@ -10,7 +10,10 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirProviderInterceptor
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.*
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.createReturnTypeCalculatorForIDE
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignationWithFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculator
@@ -46,12 +49,12 @@ internal class FirDesignatedBodyResolveTransformerForIDE(
 ) {
     private val ideDeclarationTransformer = IDEDeclarationTransformer(designation)
 
-    override fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): FirDeclaration =
+    override fun transformDeclarationContent(declaration: FirDeclaration<*>, data: ResolutionMode): FirDeclaration<*> =
         ideDeclarationTransformer.transformDeclarationContent(this, declaration, data) {
             super.transformDeclarationContent(declaration, data)
         }
 
-    override fun needReplacePhase(firDeclaration: FirDeclaration): Boolean =
+    override fun needReplacePhase(firDeclaration: FirDeclaration<*>): Boolean =
         ideDeclarationTransformer.needReplacePhase && firDeclaration !is FirFile && super.needReplacePhase(firDeclaration)
 
     override fun transformDeclaration(phaseRunner: FirPhaseRunner) {
@@ -73,7 +76,7 @@ internal class FirDesignatedBodyResolveTransformerForIDE(
         ensureResolvedDeep(designation.declaration)
     }
 
-    override fun ensureResolved(declaration: FirDeclaration) {
+    override fun ensureResolved(declaration: FirDeclaration<*>) {
         when (declaration) {
             is FirSimpleFunction, is FirConstructor, is FirTypeAlias, is FirField, is FirAnonymousInitializer ->
                 declaration.ensurePhase(FirResolvePhase.BODY_RESOLVE)

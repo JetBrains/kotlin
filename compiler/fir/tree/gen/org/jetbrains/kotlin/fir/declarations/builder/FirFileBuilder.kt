@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.impl.FirFileImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.FqName
 
@@ -35,7 +36,7 @@ class FirFileBuilder : FirAnnotationContainerBuilder {
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     val imports: MutableList<FirImport> = mutableListOf()
-    val declarations: MutableList<FirDeclaration> = mutableListOf()
+    val declarations: MutableList<FirDeclaration<*>> = mutableListOf()
     lateinit var name: String
     lateinit var packageFqName: FqName
 

@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 interface FirModuleVisibilityChecker : FirSessionComponent {
-    fun isInFriendModule(declaration: FirMemberDeclaration): Boolean
+    fun isInFriendModule(declaration: FirMemberDeclaration<*>): Boolean
 }
 
 abstract class FirVisibilityChecker : FirSessionComponent {
@@ -34,7 +34,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
             declarationVisibility: Visibility,
             symbol: FirBasedSymbol<*>,
             useSiteFile: FirFile,
-            containingDeclarations: List<FirDeclaration>,
+            containingDeclarations: List<FirDeclaration<*>>,
             dispatchReceiver: ReceiverValue?,
             session: FirSession
         ): Boolean {
@@ -42,13 +42,13 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         }
     }
 
-    fun <T> isVisible(
-        declaration: T,
+    fun isVisible(
+        declaration: FirMemberDeclaration<*>,
         candidate: Candidate
-    ): Boolean where T : FirMemberDeclaration, T : FirSymbolOwner<*> {
+    ): Boolean {
         if (declaration is FirCallableDeclaration<*> && (declaration.isIntersectionOverride || declaration.isSubstitutionOverride)) {
             @Suppress("UNCHECKED_CAST")
-            return isVisible(declaration.originalIfFakeOverride() as T, candidate)
+            return isVisible(declaration.originalIfFakeOverride() as FirMemberDeclaration<*>, candidate)
         }
 
         val callInfo = candidate.callInfo
@@ -59,13 +59,13 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         return isVisible(declaration, session, useSiteFile, containingDeclarations, candidate.dispatchReceiverValue)
     }
 
-    fun <T> isVisible(
-        declaration: T,
+    fun isVisible(
+        declaration: FirMemberDeclaration<*>,
         session: FirSession,
         useSiteFile: FirFile,
-        containingDeclarations: List<FirDeclaration>,
+        containingDeclarations: List<FirDeclaration<*>>,
         dispatchReceiver: ReceiverValue?
-    ): Boolean where T : FirMemberDeclaration, T : FirSymbolOwner<*> {
+    ): Boolean {
         val provider = session.firProvider
         val symbol = declaration.symbol
         return when (declaration.visibility) {
@@ -124,13 +124,13 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         declarationVisibility: Visibility,
         symbol: FirBasedSymbol<*>,
         useSiteFile: FirFile,
-        containingDeclarations: List<FirDeclaration>,
+        containingDeclarations: List<FirDeclaration<*>>,
         dispatchReceiver: ReceiverValue?,
         session: FirSession
     ): Boolean
 
     private fun canSeePrivateMemberOf(
-        containingDeclarationOfUseSite: List<FirDeclaration>,
+        containingDeclarationOfUseSite: List<FirDeclaration<*>>,
         ownerId: ClassId,
         session: FirSession
     ): Boolean {
@@ -195,7 +195,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
     }
 
     protected fun canSeeProtectedMemberOf(
-        containingDeclarationOfUseSite: List<FirDeclaration>,
+        containingDeclarationOfUseSite: List<FirDeclaration<*>>,
         dispatchReceiver: ReceiverValue?,
         ownerId: ClassId, session: FirSession
     ): Boolean {

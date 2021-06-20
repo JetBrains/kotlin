@@ -13,7 +13,10 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.firProvider
-import org.jetbrains.kotlin.fir.resolve.transformers.*
+import org.jetbrains.kotlin.fir.resolve.transformers.AdapterForResolveProcessor
+import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveProcessor
+import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
+import org.jetbrains.kotlin.fir.resolve.transformers.TransformImplicitType
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.runContractResolveForLocalClass
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.symbols.impl.FirAccessorSymbol
@@ -198,7 +201,7 @@ private class ReturnTypeCalculatorWithJump(
 
     var outerBodyResolveContext: BodyResolveContext? = null
 
-    override fun tryCalculateReturnType(declaration: FirTypedDeclaration): FirResolvedTypeRef {
+    override fun tryCalculateReturnType(declaration: FirTypedDeclaration<*>): FirResolvedTypeRef {
         if (declaration is FirValueParameter && declaration.returnTypeRef is FirImplicitTypeRef) {
             // TODO?
             declaration.transformReturnTypeRef(
@@ -305,9 +308,9 @@ open class FirDesignatedBodyResolveTransformerForReturnTypeCalculator(
 ) {
     var lastResult: FirElement? = null
 
-    override fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): FirDeclaration {
+    override fun transformDeclarationContent(declaration: FirDeclaration<*>, data: ResolutionMode): FirDeclaration<*> {
         if (designation.hasNext()) {
-            val result = designation.next().transform<FirDeclaration, ResolutionMode>(this, data)
+            val result = designation.next().transform<FirDeclaration<*>, ResolutionMode>(this, data)
             if (!designation.hasNext() && lastResult == null) {
                 lastResult = result
             }

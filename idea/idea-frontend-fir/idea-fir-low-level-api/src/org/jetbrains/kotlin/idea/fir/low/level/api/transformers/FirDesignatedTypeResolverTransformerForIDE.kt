@@ -32,10 +32,11 @@ internal class FirDesignatedTypeResolverTransformerForIDE(
     private val declarationTransformer = IDEDeclarationTransformer(designation)
 
     override fun <E : FirElement> transformElement(element: E, data: Any?): E {
-        return if (element is FirDeclaration && (element is FirRegularClass || element is FirFile)) {
+        return if (element is FirDeclaration<*> && (element is FirRegularClass || element is FirFile)) {
+            @Suppress("UNCHECKED_CAST")
             declarationTransformer.transformDeclarationContent(this, element, data) {
                 super.transformElement(element, data)
-            }
+            } as E
         } else {
             super.transformElement(element, data)
         }
@@ -57,7 +58,7 @@ internal class FirDesignatedTypeResolverTransformerForIDE(
         ensureResolvedDeep(designation.declaration)
     }
 
-    override fun ensureResolved(declaration: FirDeclaration) {
+    override fun ensureResolved(declaration: FirDeclaration<*>) {
         if (declaration !is FirAnonymousInitializer) {
             declaration.ensurePhase(FirResolvePhase.TYPES)
         }

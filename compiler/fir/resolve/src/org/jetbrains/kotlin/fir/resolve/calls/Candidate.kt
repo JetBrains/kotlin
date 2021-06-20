@@ -48,7 +48,7 @@ data class CallInfo(
     val typeArguments: List<FirTypeProjection>,
     val session: FirSession,
     val containingFile: FirFile,
-    val containingDeclarations: List<FirDeclaration>,
+    val containingDeclarations: List<FirDeclaration<*>>,
 
     val candidateForCommonInvokeReceiver: Candidate? = null,
 

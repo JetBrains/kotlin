@@ -57,7 +57,7 @@ object FirImportsChecker : FirFileChecker() {
         if (classId != null) {
             val classFir = classId.resolveToClass(context) ?: return
             if (classFir.classKind.isSingleton) return
-            
+
             if (!classFir.canBeImported(context, importedName)) {
                 reporter.reportOn(import.source, FirErrors.CANNOT_BE_IMPORTED, importedName, context)
             }

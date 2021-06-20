@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -20,14 +19,14 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-sealed class FirClassLikeDeclaration<F : FirClassLikeDeclaration<F>> : FirPureAbstractElement(), FirAnnotatedDeclaration, FirStatement, FirSymbolOwner<F> {
+sealed class FirClassLikeDeclaration<E : FirClassLikeDeclaration<E>> : FirPureAbstractElement(), FirAnnotatedDeclaration<E>, FirStatement {
     abstract override val source: FirSourceElement?
     abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
     abstract override val annotations: List<FirAnnotationCall>
-    abstract override val symbol: FirClassLikeSymbol<F>
+    abstract override val symbol: FirClassLikeSymbol<E>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitClassLikeDeclaration(this, data)
 
@@ -37,5 +36,5 @@ sealed class FirClassLikeDeclaration<F : FirClassLikeDeclaration<F>> : FirPureAb
 
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirClassLikeDeclaration<F>
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirClassLikeDeclaration<E>
 }

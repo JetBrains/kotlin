@@ -19,7 +19,9 @@ import org.jetbrains.kotlin.fir.expressions.argumentMapping
 import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
+import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
+import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.resolve.AnnotationTargetList
 import org.jetbrains.kotlin.resolve.AnnotationTargetLists
 
@@ -28,7 +30,7 @@ object FirAnnotationChecker : FirAnnotatedDeclarationChecker() {
     private val deprecatedSinceKotlinClassId = FqName("kotlin.DeprecatedSinceKotlin")
 
     override fun check(
-        declaration: FirAnnotatedDeclaration,
+        declaration: FirAnnotatedDeclaration<*>,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
@@ -54,7 +56,7 @@ object FirAnnotationChecker : FirAnnotatedDeclarationChecker() {
     }
 
     private fun checkAnnotationTarget(
-        declaration: FirAnnotatedDeclaration,
+        declaration: FirAnnotatedDeclaration<*>,
         annotation: FirAnnotationCall,
         context: CheckerContext,
         reporter: DiagnosticReporter
@@ -106,7 +108,7 @@ object FirAnnotationChecker : FirAnnotatedDeclarationChecker() {
     }
 
     private fun checkAnnotationUseSiteTarget(
-        annotated: FirAnnotatedDeclaration,
+        annotated: FirAnnotatedDeclaration<*>,
         annotation: FirAnnotationCall,
         target: AnnotationUseSiteTarget,
         context: CheckerContext,
@@ -195,7 +197,7 @@ object FirAnnotationChecker : FirAnnotatedDeclarationChecker() {
         }
     }
 
-    private fun getActualTargetList(annotated: FirDeclaration): AnnotationTargetList {
+    private fun getActualTargetList(annotated: FirDeclaration<*>): AnnotationTargetList {
         return when (annotated) {
             is FirRegularClass -> {
                 AnnotationTargetList(

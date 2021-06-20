@@ -45,7 +45,7 @@ data class SessionHolderImpl(override val session: FirSession, override val scop
 abstract class BodyResolveComponents : SessionHolder {
     abstract val returnTypeCalculator: ReturnTypeCalculator
     abstract val implicitReceiverStack: ImplicitReceiverStack
-    abstract val containingDeclarations: List<FirDeclaration>
+    abstract val containingDeclarations: List<FirDeclaration<*>>
     abstract val fileImportsScope: List<FirScope>
     abstract val towerDataElements: List<FirTowerDataElement>
     abstract val towerDataContext: FirTowerDataContext
@@ -53,7 +53,7 @@ abstract class BodyResolveComponents : SessionHolder {
     abstract val noExpectedType: FirTypeRef
     abstract val symbolProvider: FirSymbolProvider
     abstract val file: FirFile
-    abstract val container: FirDeclaration
+    abstract val container: FirDeclaration<*>
     abstract val resolutionStageRunner: ResolutionStageRunner
     abstract val samResolver: FirSamResolver
     abstract val callResolver: FirCallResolver
@@ -211,7 +211,7 @@ data class ImplicitReceivers(
 
 fun SessionHolder.collectImplicitReceivers(
     type: ConeKotlinType?,
-    owner: FirDeclaration
+    owner: FirDeclaration<*>
 ): ImplicitReceivers {
     if (type == null) return ImplicitReceivers(null, emptyList())
 

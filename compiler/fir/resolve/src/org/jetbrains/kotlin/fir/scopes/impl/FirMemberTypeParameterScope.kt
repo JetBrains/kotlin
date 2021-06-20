@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.scopes.FirTypeParameterScope
 import org.jetbrains.kotlin.name.Name
 
-class FirMemberTypeParameterScope(callableMember: FirMemberDeclaration) : FirTypeParameterScope() {
+class FirMemberTypeParameterScope(callableMember: FirMemberDeclaration<*>) : FirTypeParameterScope() {
     override val typeParameters: Map<Name, List<FirTypeParameter>> =
         callableMember.typeParameters.filterIsInstance<FirTypeParameter>().groupBy { it.name }
 }

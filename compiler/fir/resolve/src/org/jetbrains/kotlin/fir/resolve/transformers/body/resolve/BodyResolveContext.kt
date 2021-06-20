@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
-import kotlinx.collections.immutable.PersistentList
-import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.PrivateForInline
@@ -73,12 +71,12 @@ class BodyResolveContext(
         get() = towerDataContextsForClassParts.towerDataContextForCallableReferences
 
     @set:PrivateForInline
-    var containers: MutableList<FirDeclaration> = mutableListOf()
+    var containers: MutableList<FirDeclaration<*>> = mutableListOf()
 
     @set:PrivateForInline
     var containingClass: FirRegularClass? = null
 
-    val containerIfAny: FirDeclaration?
+    val containerIfAny: FirDeclaration<*>?
         get() = containers.lastOrNull()
 
     @set:PrivateForInline
@@ -107,7 +105,7 @@ class BodyResolveContext(
     }
 
     @PrivateForInline
-    inline fun <T> withContainer(declaration: FirDeclaration, f: () -> T): T {
+    inline fun <T> withContainer(declaration: FirDeclaration<*>, f: () -> T): T {
         containers.add(declaration)
         return try {
             f()
@@ -222,7 +220,7 @@ class BodyResolveContext(
     }
 
     @PrivateForInline
-    inline fun <T> withTypeParametersOf(declaration: FirMemberDeclaration, l: () -> T): T {
+    inline fun <T> withTypeParametersOf(declaration: FirMemberDeclaration<*>, l: () -> T): T {
         if (declaration.typeParameters.isEmpty()) return l()
         val scope = FirMemberTypeParameterScope(declaration)
         return withTowerDataCleanup {
@@ -231,7 +229,7 @@ class BodyResolveContext(
         }
     }
 
-    private fun FirMemberDeclaration.typeParameterScope(): FirMemberTypeParameterScope? {
+    private fun FirMemberDeclaration<*>.typeParameterScope(): FirMemberTypeParameterScope? {
         if (typeParameters.isEmpty()) return null
         return FirMemberTypeParameterScope(this)
     }

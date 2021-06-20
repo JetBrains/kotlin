@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
@@ -218,7 +218,7 @@ private val NO_NAME_PROVIDED = Name.special("<no name provided>")
 // explicitly.
 // - see tests with `fun () {}`.
 // you can't redeclare something that has no name.
-private fun FirDeclaration.isCollectable() = when (this) {
+private fun FirDeclaration<*>.isCollectable() = when (this) {
     is FirSimpleFunction -> source?.kind !is FirFakeSourceElementKind && name != NO_NAME_PROVIDED
     is FirRegularClass -> name != NO_NAME_PROVIDED
     else -> true
@@ -230,10 +230,10 @@ private fun FirDeclaration.isCollectable() = when (this) {
 open class FirDeclarationInspector(
     protected val presenter: FirDeclarationPresenter = FirDefaultDeclarationPresenter()
 ) {
-    val otherDeclarations = mutableMapOf<String, MutableList<FirDeclaration>>()
+    val otherDeclarations = mutableMapOf<String, MutableList<FirDeclaration<*>>>()
     val functionDeclarations = mutableMapOf<String, MutableList<FirSimpleFunction>>()
 
-    fun collect(declaration: FirDeclaration) {
+    fun collect(declaration: FirDeclaration<*>) {
         when {
             !declaration.isCollectable() -> {}
             declaration is FirSimpleFunction -> collectFunction(presenter.represent(declaration), declaration)
@@ -243,7 +243,7 @@ open class FirDeclarationInspector(
         }
     }
 
-    protected open fun collectNonFunctionDeclaration(key: String, declaration: FirDeclaration): MutableList<FirDeclaration> =
+    protected open fun collectNonFunctionDeclaration(key: String, declaration: FirDeclaration<*>): MutableList<FirDeclaration<*>> =
         otherDeclarations.getOrPut(key) {
             mutableListOf()
         }.also {
@@ -257,7 +257,7 @@ open class FirDeclarationInspector(
             it.add(declaration)
         }
 
-    fun contains(declaration: FirDeclaration) = when (declaration) {
+    fun contains(declaration: FirDeclaration<*>) = when (declaration) {
         is FirSimpleFunction -> presenter.represent(declaration) in functionDeclarations
         is FirRegularClass -> presenter.represent(declaration) in otherDeclarations
         is FirTypeAlias -> presenter.represent(declaration) in otherDeclarations

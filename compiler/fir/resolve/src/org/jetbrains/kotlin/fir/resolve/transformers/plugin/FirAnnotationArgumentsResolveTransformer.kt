@@ -56,7 +56,7 @@ private class FirDeclarationsResolveTransformerForArgumentAnnotations(
     override fun transformAnonymousInitializer(
         anonymousInitializer: FirAnonymousInitializer,
         data: ResolutionMode
-    ): FirDeclaration {
+    ): FirAnonymousInitializer {
         return anonymousInitializer
     }
 
@@ -67,7 +67,7 @@ private class FirDeclarationsResolveTransformerForArgumentAnnotations(
         return simpleFunction.transformAnnotations(this, data)
     }
 
-    override fun transformConstructor(constructor: FirConstructor, data: ResolutionMode): FirDeclaration {
+    override fun transformConstructor(constructor: FirConstructor, data: ResolutionMode): FirConstructor {
         return constructor.transformAnnotations(this, data)
     }
 
@@ -85,7 +85,7 @@ private class FirDeclarationsResolveTransformerForArgumentAnnotations(
     override fun transformPropertyAccessor(
         propertyAccessor: FirPropertyAccessor,
         data: ResolutionMode
-    ): FirDeclaration {
+    ): FirPropertyAccessor {
         propertyAccessor.transformAnnotations(this, data)
         return propertyAccessor
     }

@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.*
-import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -160,7 +162,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             stack.push((function.name ?: ANONYMOUS_NAME))
             if (function.equalsToken != null) {
                 function.bodyExpression!!.firstOfTypeWithRender<FirReturnExpression>(function.equalsToken) { this.result.typeRef }
-                    ?: function.firstOfTypeWithRender<FirTypedDeclaration>(function.equalsToken) { this.returnTypeRef }
+                    ?: function.firstOfTypeWithRender<FirTypedDeclaration<*>>(function.equalsToken) { this.returnTypeRef }
             }
             super.visitNamedFunction(function)
             stack.pop()

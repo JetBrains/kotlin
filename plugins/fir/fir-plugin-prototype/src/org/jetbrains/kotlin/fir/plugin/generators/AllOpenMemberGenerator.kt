@@ -23,19 +23,19 @@ import org.jetbrains.kotlin.name.Name
 
 class AllOpenMemberGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     override fun generateClasses(
-        annotatedDeclaration: FirDeclaration,
-        owners: List<FirAnnotatedDeclaration>
+        annotatedDeclaration: FirDeclaration<*>,
+        owners: List<FirAnnotatedDeclaration<*>>
     ): List<GeneratedDeclaration<FirRegularClass>> {
         return emptyList()
     }
 
-    override fun generateMembersForGeneratedClass(generatedClass: GeneratedClass): List<FirDeclaration> {
+    override fun generateMembersForGeneratedClass(generatedClass: GeneratedClass): List<FirDeclaration<*>> {
         return emptyList()
     }
 
     override fun generateMembers(
-        annotatedDeclaration: FirDeclaration,
-        owners: List<FirAnnotatedDeclaration>
+        annotatedDeclaration: FirDeclaration<*>,
+        owners: List<FirAnnotatedDeclaration<*>>
     ): List<GeneratedDeclaration<*>> {
         if (annotatedDeclaration !is FirProperty) return emptyList()
         val owner = owners.last() as? FirRegularClass ?: return emptyList()

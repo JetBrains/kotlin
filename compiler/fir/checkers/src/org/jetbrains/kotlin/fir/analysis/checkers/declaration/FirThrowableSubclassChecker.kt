@@ -38,6 +38,6 @@ object FirThrowableSubclassChecker : FirClassChecker() {
     private fun FirClass<*>.hasGenericOuterDeclaration(context: CheckerContext) =
         classId.isLocal && context.containingDeclarations.anyIsGeneric()
 
-    private fun Collection<FirDeclaration>.anyIsGeneric() =
+    private fun Collection<FirDeclaration<*>>.anyIsGeneric() =
         any { it is FirTypeParameterRefsOwner && it.typeParameters.isNotEmpty() }
 }

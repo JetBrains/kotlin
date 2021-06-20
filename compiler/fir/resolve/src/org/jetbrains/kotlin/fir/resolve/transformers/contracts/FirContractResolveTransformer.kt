@@ -101,7 +101,7 @@ open class FirContractResolveTransformer(
             setter?.updatePhase()
         }
 
-        override fun transformField(field: FirField, data: ResolutionMode): FirDeclaration {
+        override fun transformField(field: FirField, data: ResolutionMode): FirField {
             field.updatePhase()
             return field
         }
@@ -251,17 +251,17 @@ open class FirContractResolveTransformer(
         override fun transformAnonymousInitializer(
             anonymousInitializer: FirAnonymousInitializer,
             data: ResolutionMode
-        ): FirDeclaration {
+        ): FirAnonymousInitializer {
             anonymousInitializer.updatePhase()
             return anonymousInitializer
         }
 
-        override fun transformConstructor(constructor: FirConstructor, data: ResolutionMode): FirDeclaration {
+        override fun transformConstructor(constructor: FirConstructor, data: ResolutionMode): FirConstructor {
             constructor.updatePhase()
             return constructor
         }
 
-        override fun transformEnumEntry(enumEntry: FirEnumEntry, data: ResolutionMode): FirDeclaration {
+        override fun transformEnumEntry(enumEntry: FirEnumEntry, data: ResolutionMode): FirEnumEntry {
             enumEntry.updatePhase()
             return enumEntry
         }
@@ -275,7 +275,7 @@ open class FirContractResolveTransformer(
         private val FirContractDescriptionOwner.hasContractToResolve: Boolean
             get() = contractDescription is FirLegacyRawContractDescription || contractDescription is FirRawContractDescription
 
-        private fun FirDeclaration.updatePhase() {
+        private fun FirDeclaration<*>.updatePhase() {
             transformer.replaceDeclarationResolvePhaseIfNeeded(this, FirResolvePhase.CONTRACTS)
         }
     }

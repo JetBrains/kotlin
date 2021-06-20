@@ -25,8 +25,8 @@ abstract class FirStatusTransformerExtension(session: FirSession) : FirPredicate
     final override val extensionType: KClass<out FirExtension> = FirStatusTransformerExtension::class
 
     abstract fun transformStatus(
-        declaration: FirDeclaration,
-        owners: List<FirAnnotatedDeclaration>,
+        declaration: FirDeclaration<*>,
+        owners: List<FirAnnotatedDeclaration<*>>,
         status: FirDeclarationStatus
     ): FirDeclarationStatus
 

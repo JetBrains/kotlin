@@ -17,7 +17,7 @@ internal class FileStructureElementDiagnosticsCollector private constructor(priv
     }
 
     fun collectForStructureElement(
-        firDeclaration: FirDeclaration,
+        firDeclaration: FirDeclaration<*>,
         createVisitor: (components: List<AbstractDiagnosticCollectorComponent>) -> CheckerRunningDiagnosticCollectorVisitor,
     ): FileStructureElementDiagnosticList {
         val reporter = FirIdeDiagnosticReporter()

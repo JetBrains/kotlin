@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.FirLabel
-import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.FirTargetElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
@@ -151,8 +150,6 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitLabel(label: FirLabel, data: D): R  = visitElement(label, data)
 
-    open fun <E> visitSymbolOwner(symbolOwner: FirSymbolOwner<E>, data: D): R where E : FirSymbolOwner<E>, E : FirDeclaration  = visitElement(symbolOwner, data)
-
     open fun visitResolvable(resolvable: FirResolvable, data: D): R  = visitElement(resolvable, data)
 
     open fun visitTargetElement(targetElement: FirTargetElement, data: D): R  = visitElement(targetElement, data)
@@ -167,15 +164,15 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitExpression(expression: FirExpression, data: D): R  = visitElement(expression, data)
 
-    open fun visitDeclaration(declaration: FirDeclaration, data: D): R  = visitElement(declaration, data)
+    open fun <E : FirDeclaration<E>> visitDeclaration(declaration: FirDeclaration<E>, data: D): R  = visitElement(declaration, data)
 
-    open fun visitAnnotatedDeclaration(annotatedDeclaration: FirAnnotatedDeclaration, data: D): R  = visitElement(annotatedDeclaration, data)
+    open fun <E : FirAnnotatedDeclaration<E>> visitAnnotatedDeclaration(annotatedDeclaration: FirAnnotatedDeclaration<E>, data: D): R  = visitElement(annotatedDeclaration, data)
 
     open fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: D): R  = visitElement(anonymousInitializer, data)
 
-    open fun visitTypedDeclaration(typedDeclaration: FirTypedDeclaration, data: D): R  = visitElement(typedDeclaration, data)
+    open fun <E : FirTypedDeclaration<E>> visitTypedDeclaration(typedDeclaration: FirTypedDeclaration<E>, data: D): R  = visitElement(typedDeclaration, data)
 
-    open fun <F : FirCallableDeclaration<F>> visitCallableDeclaration(callableDeclaration: FirCallableDeclaration<F>, data: D): R  = visitElement(callableDeclaration, data)
+    open fun <E : FirCallableDeclaration<E>> visitCallableDeclaration(callableDeclaration: FirCallableDeclaration<E>, data: D): R  = visitElement(callableDeclaration, data)
 
     open fun visitTypeParameterRef(typeParameterRef: FirTypeParameterRef, data: D): R  = visitElement(typeParameterRef, data)
 
@@ -185,11 +182,11 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitTypeParametersOwner(typeParametersOwner: FirTypeParametersOwner, data: D): R  = visitElement(typeParametersOwner, data)
 
-    open fun visitMemberDeclaration(memberDeclaration: FirMemberDeclaration, data: D): R  = visitElement(memberDeclaration, data)
+    open fun <E : FirMemberDeclaration<E>> visitMemberDeclaration(memberDeclaration: FirMemberDeclaration<E>, data: D): R  = visitElement(memberDeclaration, data)
 
-    open fun <F : FirCallableMemberDeclaration<F>> visitCallableMemberDeclaration(callableMemberDeclaration: FirCallableMemberDeclaration<F>, data: D): R  = visitElement(callableMemberDeclaration, data)
+    open fun <E : FirCallableMemberDeclaration<E>> visitCallableMemberDeclaration(callableMemberDeclaration: FirCallableMemberDeclaration<E>, data: D): R  = visitElement(callableMemberDeclaration, data)
 
-    open fun <F : FirVariable<F>> visitVariable(variable: FirVariable<F>, data: D): R  = visitElement(variable, data)
+    open fun <E : FirVariable<E>> visitVariable(variable: FirVariable<E>, data: D): R  = visitElement(variable, data)
 
     open fun visitValueParameter(valueParameter: FirValueParameter, data: D): R  = visitElement(valueParameter, data)
 
@@ -199,15 +196,15 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitEnumEntry(enumEntry: FirEnumEntry, data: D): R  = visitElement(enumEntry, data)
 
-    open fun <F : FirClassLikeDeclaration<F>> visitClassLikeDeclaration(classLikeDeclaration: FirClassLikeDeclaration<F>, data: D): R  = visitElement(classLikeDeclaration, data)
+    open fun <E : FirClassLikeDeclaration<E>> visitClassLikeDeclaration(classLikeDeclaration: FirClassLikeDeclaration<E>, data: D): R  = visitElement(classLikeDeclaration, data)
 
-    open fun <F : FirClass<F>> visitClass(klass: FirClass<F>, data: D): R  = visitElement(klass, data)
+    open fun <E : FirClass<E>> visitClass(klass: FirClass<E>, data: D): R  = visitElement(klass, data)
 
     open fun visitRegularClass(regularClass: FirRegularClass, data: D): R  = visitElement(regularClass, data)
 
     open fun visitTypeAlias(typeAlias: FirTypeAlias, data: D): R  = visitElement(typeAlias, data)
 
-    open fun <F : FirFunction<F>> visitFunction(function: FirFunction<F>, data: D): R  = visitElement(function, data)
+    open fun <E : FirFunction<E>> visitFunction(function: FirFunction<E>, data: D): R  = visitElement(function, data)
 
     open fun visitContractDescriptionOwner(contractDescriptionOwner: FirContractDescriptionOwner, data: D): R  = visitElement(contractDescriptionOwner, data)
 

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isEnumEntryInitializer
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClass
@@ -98,7 +97,7 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker() {
             //     INSTANCE(EnumCompanion2.foo())
             //   }
             // find an accessed context within the same enum class.
-            (it as? FirSymbolOwner<*>)?.getContainingClass(context) == enumClass
+            it.getContainingClass(context) == enumClass
         } ?: return
 
         val enumMemberProperties = enumClass.declarations.filterIsInstance<FirProperty>()

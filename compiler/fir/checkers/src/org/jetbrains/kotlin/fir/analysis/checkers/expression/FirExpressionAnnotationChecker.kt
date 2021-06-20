@@ -22,7 +22,7 @@ object FirExpressionAnnotationChecker : FirBasicExpressionChecker() {
     override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
         // Declarations are checked separately
         // See KT-33658 about annotations on non-expression statements
-        if (expression is FirDeclaration ||
+        if (expression is FirDeclaration<*> ||
             expression !is FirExpression ||
             expression is FirBlock && expression.source?.kind == FirFakeSourceElementKind.DesugaredForLoop
         ) return

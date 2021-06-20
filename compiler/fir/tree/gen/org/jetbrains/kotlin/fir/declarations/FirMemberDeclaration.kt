@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -16,8 +17,9 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-sealed interface FirMemberDeclaration : FirAnnotatedDeclaration, FirTypeParameterRefsOwner {
+sealed interface FirMemberDeclaration<E : FirMemberDeclaration<E>> : FirAnnotatedDeclaration<E>, FirTypeParameterRefsOwner {
     override val source: FirSourceElement?
+    override val symbol: FirBasedSymbol<E>
     override val moduleData: FirModuleData
     override val resolvePhase: FirResolvePhase
     override val origin: FirDeclarationOrigin
@@ -34,9 +36,9 @@ sealed interface FirMemberDeclaration : FirAnnotatedDeclaration, FirTypeParamete
 
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirMemberDeclaration
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirMemberDeclaration<E>
 
-    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirMemberDeclaration
+    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirMemberDeclaration<E>
 
-    fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirMemberDeclaration
+    fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirMemberDeclaration<E>
 }

@@ -49,12 +49,12 @@ internal class FirDesignatedImplicitTypesTransformerForIDE(
 ) {
     private val ideDeclarationTransformer = IDEDeclarationTransformer(designation)
 
-    override fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): FirDeclaration =
+    override fun transformDeclarationContent(declaration: FirDeclaration<*>, data: ResolutionMode): FirDeclaration<*> =
         ideDeclarationTransformer.transformDeclarationContent(this, declaration, data) {
             super.transformDeclarationContent(declaration, data)
         }
 
-    override fun needReplacePhase(firDeclaration: FirDeclaration): Boolean =
+    override fun needReplacePhase(firDeclaration: FirDeclaration<*>): Boolean =
         ideDeclarationTransformer.needReplacePhase && firDeclaration !is FirFile && super.needReplacePhase(firDeclaration)
 
     override fun transformDeclaration(phaseRunner: FirPhaseRunner) {
@@ -78,7 +78,7 @@ internal class FirDesignatedImplicitTypesTransformerForIDE(
         ensureResolvedDeep(designation.declaration)
     }
 
-    override fun ensureResolved(declaration: FirDeclaration) {
+    override fun ensureResolved(declaration: FirDeclaration<*>) {
         when (declaration) {
             is FirSimpleFunction -> check(declaration.returnTypeRef is FirResolvedTypeRef)
             is FirField -> check(declaration.returnTypeRef is FirResolvedTypeRef)

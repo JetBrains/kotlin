@@ -30,7 +30,7 @@ abstract class FirAnonymousObject : FirClass<FirAnonymousObject>(), FirControlFl
     abstract override val typeParameters: List<FirTypeParameterRef>
     abstract override val classKind: ClassKind
     abstract override val superTypeRefs: List<FirTypeRef>
-    abstract override val declarations: List<FirDeclaration>
+    abstract override val declarations: List<FirDeclaration<*>>
     abstract override val annotations: List<FirAnnotationCall>
     abstract override val scopeProvider: FirScopeProvider
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?

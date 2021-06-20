@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.idea.fir.low.level.api.ideSessionComponents
 import org.jetbrains.kotlin.ir.util.IdSignature
 
-internal inline fun <reified D : FirDeclaration> FirScope.findDeclarationWithSignature(
+internal inline fun <reified D : FirDeclaration<*>> FirScope.findDeclarationWithSignature(
     signature: IdSignature,
     firSession: FirSession,
     processor: FirScope.((FirBasedSymbol<*>) -> Unit) -> Unit
@@ -31,7 +31,7 @@ internal inline fun <reified D : FirDeclaration> FirScope.findDeclarationWithSig
     return foundSymbol
 }
 
-internal inline fun <reified D : FirDeclaration> Collection<FirCallableSymbol<*>>.findDeclarationWithSignatureBySymbols(
+internal inline fun <reified D : FirDeclaration<*>> Collection<FirCallableSymbol<*>>.findDeclarationWithSignatureBySymbols(
     signature: IdSignature,
     firSession: FirSession
 ): D? {
@@ -45,7 +45,7 @@ internal inline fun <reified D : FirDeclaration> Collection<FirCallableSymbol<*>
     return null
 }
 
-internal fun FirDeclaration.createSignature(): IdSignature {
+internal fun FirDeclaration<*>.createSignature(): IdSignature {
     val signatureComposer = moduleData.session.ideSessionComponents.signatureComposer
     return signatureComposer.composeSignature(this)
         ?: error("Could not compose signature for ${this.renderWithType(FirRenderer.RenderMode.WithResolvePhases)}, looks like it is private or local")

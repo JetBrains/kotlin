@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
-import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.declarationCanBeLazilyResolved
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.replaceFirst
 import org.jetbrains.kotlin.psi.*
@@ -30,12 +29,12 @@ internal object FileStructureUtil {
 
     fun replaceDeclaration(firFile: FirFile, from: FirCallableDeclaration<*>, to: FirCallableDeclaration<*>) {
         val declarations = if (from.symbol.callableId.className == null) {
-            firFile.declarations as MutableList<FirDeclaration>
+            firFile.declarations as MutableList<FirDeclaration<*>>
         } else {
             val classLikeLookupTag = from.containingClass()
                 ?: error("Class name should not be null for non-top-level & non-local declarations, but was null for\n${from.render()}")
             val containingClass = classLikeLookupTag.toSymbol(firFile.moduleData.session)?.fir as FirRegularClass
-            containingClass.declarations as MutableList<FirDeclaration>
+            containingClass.declarations as MutableList<FirDeclaration<*>>
         }
         declarations.replaceFirst(from, to)
     }

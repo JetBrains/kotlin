@@ -18,11 +18,11 @@ import org.jetbrains.kotlin.fir.resolve.createFunctionalType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupportedCallableReferenceTarget
 import org.jetbrains.kotlin.fir.resolve.inference.extractInputOutputTypesFromCallableReferenceExpectedType
 import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.components.SuspendConversionStrategy
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
@@ -407,6 +407,6 @@ private fun FirVariable<*>.canBeMutableReference(candidate: Candidate): Boolean 
     if (this is FirField) return true
     val original = this.unwrapFakeOverrides()
     return original.source?.kind == FirFakeSourceElementKind.PropertyFromParameter ||
-            (original.setter is FirMemberDeclaration &&
+            (original.setter is FirMemberDeclaration<*> &&
                     candidate.callInfo.session.visibilityChecker.isVisible(original.setter!!, candidate))
 }

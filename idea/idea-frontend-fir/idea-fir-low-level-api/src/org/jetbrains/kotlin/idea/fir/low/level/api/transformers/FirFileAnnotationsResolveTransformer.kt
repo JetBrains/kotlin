@@ -36,7 +36,7 @@ internal class FirFileAnnotationsResolveTransformer(
     firTowerDataContextCollector = firTowerDataContextCollector
 ), FirLazyTransformerForIDE {
 
-    override fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): FirDeclaration {
+    override fun transformDeclarationContent(declaration: FirDeclaration<*>, data: ResolutionMode): FirDeclaration<*> {
         require(declaration is FirFile) { "Unexpected declaration ${declaration::class.simpleName}" }
         annotations.forEach {
             if (it.resolveStatus != FirAnnotationResolveStatus.Resolved) {
@@ -54,7 +54,7 @@ internal class FirFileAnnotationsResolveTransformer(
         check(annotations.all { it.resolveStatus == FirAnnotationResolveStatus.Resolved }) { "Annotation was not resolved" }
     }
 
-    override fun ensureResolved(declaration: FirDeclaration) = error("Not implemented")
+    override fun ensureResolved(declaration: FirDeclaration<*>) = error("Not implemented")
 
-    override fun needReplacePhase(firDeclaration: FirDeclaration): Boolean = false
+    override fun needReplacePhase(firDeclaration: FirDeclaration<*>): Boolean = false
 }

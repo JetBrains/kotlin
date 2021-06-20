@@ -17,9 +17,8 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.references.*
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -27,6 +26,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.Printer
@@ -211,7 +211,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     }
 
     override fun <F : FirCallableDeclaration<F>> visitCallableDeclaration(callableDeclaration: FirCallableDeclaration<F>) {
-        if (callableDeclaration is FirMemberDeclaration) {
+        if (callableDeclaration is FirMemberDeclaration<*>) {
             visitMemberDeclaration(callableDeclaration)
         } else {
             callableDeclaration.annotations.renderAnnotations()
@@ -248,7 +248,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         callableDeclaration.renderContractDescription()
     }
 
-    private fun FirDeclaration.renderContractDescription() {
+    private fun FirDeclaration<*>.renderContractDescription() {
         val contractDescription = (this as? FirContractDescriptionOwner)?.contractDescription ?: return
         pushIndent()
         contractDescription.accept(this@FirRenderer)
@@ -268,7 +268,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         return itself + "[${effectiveVisibility.name}]"
     }
 
-    private fun FirMemberDeclaration.modalityAsString(): String {
+    private fun FirMemberDeclaration<*>.modalityAsString(): String {
         return modality?.name?.toLowerCaseAsciiOnly() ?: run {
             if (this is FirCallableMemberDeclaration<*> && this.isOverride) {
                 "open?"
@@ -298,7 +298,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         typeParameterRef.symbol.fir.accept(this)
     }
 
-    override fun visitMemberDeclaration(memberDeclaration: FirMemberDeclaration) {
+    override fun <E : FirMemberDeclaration<E>> visitMemberDeclaration(memberDeclaration: FirMemberDeclaration<E>) {
         memberDeclaration.annotations.renderAnnotations()
         if (memberDeclaration !is FirProperty || !memberDeclaration.isLocal) {
             // we can't access session.effectiveVisibilityResolver from here!
@@ -384,7 +384,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         }
     }
 
-    override fun visitDeclaration(declaration: FirDeclaration) {
+    override fun <E : FirDeclaration<E>> visitDeclaration(declaration: FirDeclaration<E>) {
         declaration.renderDeclarationData()
         print(
             when (declaration) {
@@ -402,19 +402,19 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         )
     }
 
-    private fun FirDeclaration.renderDeclarationData() {
+    private fun FirDeclaration<*>.renderDeclarationData() {
         renderDeclarationResolvePhaseIfNeeded()
         renderDeclarationAttributesIfNeeded()
         renderDeclarationOriginIfNeeded()
     }
 
-    private fun FirDeclaration.renderDeclarationResolvePhaseIfNeeded() {
+    private fun FirDeclaration<*>.renderDeclarationResolvePhaseIfNeeded() {
         if (mode.renderDeclarationResolvePhase) {
             print("[${resolvePhase}] ")
         }
     }
 
-    private fun FirDeclaration.renderDeclarationAttributesIfNeeded() {
+    private fun FirDeclaration<*>.renderDeclarationAttributesIfNeeded() {
         if (mode.renderDeclarationAttributes && attributes.isNotEmpty()) {
             val attributes = getAttributesWithValues().mapNotNull { (klass, value) ->
                 value?.let { klass.simpleName to value.renderAsDeclarationAttributeValue() }
@@ -423,13 +423,13 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         }
     }
 
-    private fun FirDeclaration.renderDeclarationOriginIfNeeded() {
+    private fun FirDeclaration<*>.renderDeclarationOriginIfNeeded() {
         if (mode.renderDeclarationOrigin) {
             print("[$origin] ")
         }
     }
 
-    private fun FirDeclaration.getAttributesWithValues(): List<Pair<KClass<out FirDeclarationDataKey>, Any?>> {
+    private fun FirDeclaration<*>.getAttributesWithValues(): List<Pair<KClass<out FirDeclarationDataKey>, Any?>> {
         val attributesMap = FirDeclarationDataRegistry.allValuesThreadUnsafeForRendering()
         return attributesMap.entries.sortedBy { it.key.simpleName }.map { (klass, index) -> klass to attributes[index] }
     }
@@ -441,7 +441,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     }
 
 
-    private fun List<FirDeclaration>.renderDeclarations() {
+    private fun List<FirDeclaration<*>>.renderDeclarations() {
         renderInBraces {
             for (declaration in this) {
                 declaration.accept(this@FirRenderer)
@@ -681,7 +681,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         print("\$subj\$")
     }
 
-    override fun visitTypedDeclaration(typedDeclaration: FirTypedDeclaration) {
+    override fun <E : FirTypedDeclaration<E>> visitTypedDeclaration(typedDeclaration: FirTypedDeclaration<E>) {
         visitDeclaration(typedDeclaration)
     }
 

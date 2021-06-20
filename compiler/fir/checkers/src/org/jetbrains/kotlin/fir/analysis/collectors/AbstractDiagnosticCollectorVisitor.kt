@@ -24,8 +24,8 @@ abstract class AbstractDiagnosticCollectorVisitor(
     @set:PrivateForInline var context: PersistentCheckerContext,
 ) : FirDefaultVisitor<Unit, Nothing?>() {
 
-    protected open fun shouldVisitDeclaration(declaration: FirDeclaration) = true
-    protected open fun onDeclarationExit(declaration: FirDeclaration) {}
+    protected open fun shouldVisitDeclaration(declaration: FirDeclaration<*>) = true
+    protected open fun onDeclarationExit(declaration: FirDeclaration<*>) {}
 
     protected open fun visitNestedElements(element: FirElement) {
         element.acceptChildren(this, null)
@@ -204,7 +204,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
     }
 
     protected inline fun visitWithDeclaration(
-        declaration: FirDeclaration,
+        declaration: FirDeclaration<*>,
         block: () -> Unit = { visitNestedElements(declaration) }
     ) {
         if (shouldVisitDeclaration(declaration)) {
@@ -216,7 +216,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
         }
     }
 
-    private fun visitWithDeclarationAndReceiver(declaration: FirDeclaration, labelName: Name?, receiverTypeRef: FirTypeRef?) {
+    private fun visitWithDeclarationAndReceiver(declaration: FirDeclaration<*>, labelName: Name?, receiverTypeRef: FirTypeRef?) {
         visitWithDeclaration(declaration) {
             withLabelAndReceiverType(
                 labelName,
@@ -265,7 +265,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
 
     @OptIn(PrivateForInline::class)
-    inline fun <R> withDeclaration(declaration: FirDeclaration, block: () -> R): R {
+    inline fun <R> withDeclaration(declaration: FirDeclaration<*>, block: () -> R): R {
         val existingContext = context
         context = context.addDeclaration(declaration)
         try {
@@ -279,7 +279,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
     @OptIn(PrivateForInline::class)
     inline fun <R> withLabelAndReceiverType(
         labelName: Name?,
-        owner: FirDeclaration,
+        owner: FirDeclaration<*>,
         type: ConeKotlinType?,
         block: () -> R
     ): R {

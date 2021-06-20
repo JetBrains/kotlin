@@ -9,10 +9,9 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.firProvider
 
-fun FirDeclaration.getContainingFile(): FirFile? {
+fun FirDeclaration<*>.getContainingFile(): FirFile? {
     val provider = moduleData.session.firProvider
     return when (this) {
         is FirFile -> this

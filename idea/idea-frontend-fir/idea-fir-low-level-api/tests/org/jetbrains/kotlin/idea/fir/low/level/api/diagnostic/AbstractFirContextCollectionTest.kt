@@ -57,9 +57,9 @@ abstract class AbstractFirContextCollectionTest : AbstractLowLevelApiSingleFileT
         }
     }
 
-    private fun FileStructureElement.getFirDeclaration(): FirDeclaration = when (this) {
+    private fun FileStructureElement.getFirDeclaration(): FirDeclaration<*> = when (this) {
         is NonReanalyzableDeclarationStructureElement -> fir
-        is ReanalyzableStructureElement<*, *> -> firSymbol.fir as FirDeclaration
+        is ReanalyzableStructureElement<*, *> -> firSymbol.fir
         is RootStructureElement -> firFile
     }
 
@@ -68,10 +68,10 @@ abstract class AbstractFirContextCollectionTest : AbstractLowLevelApiSingleFileT
         private val assertions: AssertionsService
     ) :
         BeforeElementDiagnosticCollectionHandler() {
-        lateinit var elementsToCheckContext: List<FirDeclaration>
+        lateinit var elementsToCheckContext: List<FirDeclaration<*>>
         lateinit var firFile: FirFile
 
-        override fun beforeGoingNestedDeclaration(declaration: FirDeclaration, context: PersistentCheckerContext) {
+        override fun beforeGoingNestedDeclaration(declaration: FirDeclaration<*>, context: PersistentCheckerContext) {
             if (declaration is FirFile) {
                 return
             }
@@ -93,8 +93,8 @@ abstract class AbstractFirContextCollectionTest : AbstractLowLevelApiSingleFileT
         private fun PersistentImplicitReceiverStack.asString() =
             joinToString { it.boundSymbol.name() }
 
-        private fun PersistentList<FirDeclaration>.asString() =
-            joinToString(transform = FirDeclaration::name)
+        private fun PersistentList<FirDeclaration<*>>.asString() =
+            joinToString(transform = FirDeclaration<*>::name)
     }
 }
 

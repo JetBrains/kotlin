@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object FirInlineDeclarationChecker : FirMemberDeclarationChecker() {
-    override fun check(declaration: FirMemberDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    override fun check(declaration: FirMemberDeclaration<*>, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!declaration.isInline) return
         // local inline functions are prohibited
         if (declaration.isLocalMember) return
@@ -283,7 +283,7 @@ object FirInlineDeclarationChecker : FirMemberDeclarationChecker() {
         private fun FirBasedSymbol<*>.isDefinedInInlineFunction(): Boolean {
             return when (val fir = this.fir) {
                 is FirAnonymousFunction -> true
-                is FirMemberDeclaration -> fir.isLocalMember
+                is FirMemberDeclaration<*> -> fir.isLocalMember
                 is FirAnonymousObject -> true
                 is FirRegularClass -> fir.classId.isLocal
                 else -> error("Unknown callable declaration type: ${fir.render()}")

@@ -12,28 +12,28 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.signaturer.FirMangler
 
 @NoMutableState
-class FirJvmKotlinMangler(private val session: FirSession) : AbstractKotlinMangler<FirDeclaration>(), FirMangler {
+class FirJvmKotlinMangler(private val session: FirSession) : AbstractKotlinMangler<FirDeclaration<*>>(), FirMangler {
 
-    override val FirDeclaration.mangleString: String
+    override val FirDeclaration<*>.mangleString: String
         get() = getMangleComputer(MangleMode.FULL).computeMangle(this)
 
-    override val FirDeclaration.signatureString: String
+    override val FirDeclaration<*>.signatureString: String
         get() = getMangleComputer(MangleMode.SIGNATURE).computeMangle(this)
 
-    override val FirDeclaration.fqnString: String
+    override val FirDeclaration<*>.fqnString: String
         get() = getMangleComputer(MangleMode.FQNAME).computeMangle(this)
 
-    override fun FirDeclaration.isExported(): Boolean = true
+    override fun FirDeclaration<*>.isExported(): Boolean = true
 
-    override fun getExportChecker(): KotlinExportChecker<FirDeclaration> {
-        return object : KotlinExportChecker<FirDeclaration> {
-            override fun check(declaration: FirDeclaration, type: SpecialDeclarationType): Boolean = true
+    override fun getExportChecker(): KotlinExportChecker<FirDeclaration<*>> {
+        return object : KotlinExportChecker<FirDeclaration<*>> {
+            override fun check(declaration: FirDeclaration<*>, type: SpecialDeclarationType): Boolean = true
 
-            override fun FirDeclaration.isPlatformSpecificExported(): Boolean = true
+            override fun FirDeclaration<*>.isPlatformSpecificExported(): Boolean = true
         }
     }
 
-    override fun getMangleComputer(mode: MangleMode): KotlinMangleComputer<FirDeclaration> {
+    override fun getMangleComputer(mode: MangleMode): KotlinMangleComputer<FirDeclaration<*>> {
         return FirJvmMangleComputer(StringBuilder(256), mode, session)
     }
 }
