@@ -199,7 +199,7 @@ open class CocoapodsExtension(private val project: Project) {
         // Empty string will lead to an attempt to create two podDownload tasks.
         // One is original podDownload and second is podDownload + pod.name
         require(name.isNotEmpty()) { "Please provide not empty pod name to avoid ambiguity" }
-        val dependency = CocoapodsDependency(name, name.split("/")[0])
+        val dependency = CocoapodsDependency(name, name.asModuleName())
         dependency.configure()
         addToPods(dependency)
     }

@@ -697,9 +697,7 @@ class CocoaPodsIT : BaseGradleIT() {
         with(project.gradleBuildScript()) {
             addPod(
                 podName,
-                """source = url("$repo", $flatten)
-                  |moduleName = "Pod_with_dashes"
-            """.trimMargin()
+                "source = url(\"$repo\", $flatten)"
             )
         }
         hooks.addHook {
