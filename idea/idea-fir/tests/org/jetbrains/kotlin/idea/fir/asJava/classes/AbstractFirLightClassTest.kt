@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.idea.fir.findUsages.doTestWithFIRFlagsByPath
 import org.jetbrains.kotlin.idea.caches.resolve.PsiElementChecker
 import org.jetbrains.kotlin.idea.caches.resolve.findClass
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
+import org.jetbrains.kotlin.idea.fir.invalidateCaches
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.psi.KtFile
@@ -23,6 +24,11 @@ abstract class AbstractFirLightClassTest : KotlinLightCodeInsightFixtureTestCase
 
     fun doTest(path: String) = doTestWithFIRFlagsByPath(path) {
         doTestImpl()
+    }
+
+    override fun tearDown() {
+        project.invalidateCaches(file as? KtFile)
+        super.tearDown()
     }
 
     private fun doTestImpl() {
