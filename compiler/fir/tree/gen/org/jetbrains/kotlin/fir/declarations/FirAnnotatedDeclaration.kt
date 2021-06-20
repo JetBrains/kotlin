@@ -18,14 +18,14 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-sealed interface FirAnnotatedDeclaration<E : FirAnnotatedDeclaration<E>> : FirDeclaration<E>, FirAnnotationContainer {
-    override val source: FirSourceElement?
-    override val symbol: FirBasedSymbol<E>
-    override val moduleData: FirModuleData
-    override val resolvePhase: FirResolvePhase
-    override val origin: FirDeclarationOrigin
-    override val attributes: FirDeclarationAttributes
-    override val annotations: List<FirAnnotationCall>
+sealed class FirAnnotatedDeclaration<E : FirAnnotatedDeclaration<E>> : FirDeclaration<E>(), FirAnnotationContainer {
+    abstract override val source: FirSourceElement?
+    abstract override val symbol: FirBasedSymbol<E>
+    abstract override val moduleData: FirModuleData
+    abstract override val resolvePhase: FirResolvePhase
+    abstract override val origin: FirDeclarationOrigin
+    abstract override val attributes: FirDeclarationAttributes
+    abstract override val annotations: List<FirAnnotationCall>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnnotatedDeclaration(this, data)
 
@@ -33,7 +33,7 @@ sealed interface FirAnnotatedDeclaration<E : FirAnnotatedDeclaration<E>> : FirDe
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
         transformer.transformAnnotatedDeclaration(this, data) as E
 
-    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
+    abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnnotatedDeclaration<E>
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnnotatedDeclaration<E>
 }

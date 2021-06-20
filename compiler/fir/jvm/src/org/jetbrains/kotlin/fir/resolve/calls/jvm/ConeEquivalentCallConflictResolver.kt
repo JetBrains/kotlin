@@ -68,7 +68,7 @@ class ConeEquivalentCallConflictResolver(
         return when (declaration) {
             is FirSimpleFunction -> createFlatSignature(call, declaration)
             is FirConstructor -> createFlatSignature(call, declaration)
-            is FirVariable<*> -> createFlatSignature(call, declaration as FirVariable<*>)
+            is FirVariable<*> -> createFlatSignature(call, declaration)
             else -> error("Not supported: $declaration")
         }
     }

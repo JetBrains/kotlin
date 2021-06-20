@@ -42,7 +42,7 @@ private inline fun isInsideSpecificClass(
             context.containingDeclarations.asReversed().any { it is FirRegularClass && predicate.invoke(it) }
 }
 
-internal fun FirMemberDeclaration<*>.isEffectivelyExpect(
+internal fun FirStatusOwner.isEffectivelyExpect(
     containingClass: FirRegularClass?,
     context: CheckerContext,
 ): Boolean {
@@ -51,7 +51,7 @@ internal fun FirMemberDeclaration<*>.isEffectivelyExpect(
     return containingClass != null && isInsideExpectClass(containingClass, context)
 }
 
-internal fun FirMemberDeclaration<*>.isEffectivelyExternal(
+internal fun FirStatusOwner.isEffectivelyExternal(
     containingClass: FirRegularClass?,
     context: CheckerContext,
 ): Boolean {
@@ -75,7 +75,7 @@ internal fun FirMemberDeclaration<*>.isEffectivelyExternal(
 
 // TODO: check class too
 internal fun checkExpectDeclarationVisibilityAndBody(
-    declaration: FirMemberDeclaration<*>,
+    declaration: FirStatusOwner,
     source: FirSourceElement,
     reporter: DiagnosticReporter,
     context: CheckerContext

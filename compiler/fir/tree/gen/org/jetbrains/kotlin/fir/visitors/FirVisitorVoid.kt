@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirStatusOwner
 import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -222,8 +222,8 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(typeParametersOwner)
     }
 
-    open fun <E : FirMemberDeclaration<E>> visitMemberDeclaration(memberDeclaration: FirMemberDeclaration<E>) {
-        visitElement(memberDeclaration)
+    open fun visitStatusOwner(statusOwner: FirStatusOwner) {
+        visitElement(statusOwner)
     }
 
     open fun <E : FirCallableMemberDeclaration<E>> visitCallableMemberDeclaration(callableMemberDeclaration: FirCallableMemberDeclaration<E>) {
@@ -734,8 +734,8 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitTypeParametersOwner(typeParametersOwner)
     }
 
-    final override fun <E : FirMemberDeclaration<E>> visitMemberDeclaration(memberDeclaration: FirMemberDeclaration<E>, data: Nothing?) {
-        visitMemberDeclaration(memberDeclaration)
+    final override fun visitStatusOwner(statusOwner: FirStatusOwner, data: Nothing?) {
+        visitStatusOwner(statusOwner)
     }
 
     final override fun <E : FirCallableMemberDeclaration<E>> visitCallableMemberDeclaration(callableMemberDeclaration: FirCallableMemberDeclaration<E>, data: Nothing?) {

@@ -7,15 +7,16 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -23,7 +24,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-sealed class FirVariable<E : FirVariable<E>> : FirPureAbstractElement(), FirCallableDeclaration<E>, FirAnnotatedDeclaration<E>, FirStatement {
+sealed class FirVariable<E : FirVariable<E>> : FirCallableMemberDeclaration<E>(), FirStatement {
     abstract override val source: FirSourceElement?
     abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase
@@ -31,6 +32,10 @@ sealed class FirVariable<E : FirVariable<E>> : FirPureAbstractElement(), FirCall
     abstract override val attributes: FirDeclarationAttributes
     abstract override val returnTypeRef: FirTypeRef
     abstract override val receiverTypeRef: FirTypeRef?
+    abstract override val typeParameters: List<FirTypeParameterRef>
+    abstract override val status: FirDeclarationStatus
+    abstract override val containerSource: DeserializedContainerSource?
+    abstract override val dispatchReceiverType: ConeKotlinType?
     abstract val name: Name
     abstract override val symbol: FirVariableSymbol<E>
     abstract val initializer: FirExpression?
@@ -59,6 +64,10 @@ sealed class FirVariable<E : FirVariable<E>> : FirPureAbstractElement(), FirCall
     abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirVariable<E>
 
     abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirVariable<E>
+
+    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirVariable<E>
+
+    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirVariable<E>
 
     abstract fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirVariable<E>
 

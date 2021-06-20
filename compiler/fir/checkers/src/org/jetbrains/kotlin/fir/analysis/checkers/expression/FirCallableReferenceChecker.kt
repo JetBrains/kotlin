@@ -47,7 +47,7 @@ object FirCallableReferenceChecker : FirQualifiedAccessExpressionChecker() {
             reporter.reportOn(source, FirErrors.CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR, context)
         }
         if ((referredDeclaration as? FirCallableMemberDeclaration<*>)?.isExtensionMember == true &&
-            (referredDeclaration as? FirMemberDeclaration<*>)?.isLocalMember == false
+            !referredDeclaration.isLocalMember
         ) {
             reporter.reportOn(source, FirErrors.EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED, referredDeclaration, context)
         }

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.symbols.impl
 
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirStatusOwner
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.name.CallableId
@@ -18,7 +18,7 @@ abstract class FirCallableSymbol<D : FirCallableDeclaration<D>> : FirBasedSymbol
     override fun toString(): String = "${this::class.simpleName} $callableId"
 }
 
-val FirCallableSymbol<*>.isStatic: Boolean get() = (fir as? FirMemberDeclaration<*>)?.status?.isStatic == true
+val FirCallableSymbol<*>.isStatic: Boolean get() = (fir as? FirStatusOwner)?.status?.isStatic == true
 
 val FirCallableSymbol<*>.isExtension: Boolean
     get() = when (fir) {

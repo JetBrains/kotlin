@@ -41,14 +41,14 @@ abstract class FirDefaultPropertyAccessor(
     origin,
     FirDeclarationAttributes(),
     propertyTypeRef,
-    valueParameters,
-    body = null,
     status = if (effectiveVisibility == null)
         FirDeclarationStatusImpl(visibility, Modality.FINAL)
     else
         FirResolvedDeclarationStatusImpl(visibility, Modality.FINAL, effectiveVisibility),
     containerSource = null,
     dispatchReceiverType = null,
+    valueParameters,
+    body = null,
     contractDescription = FirEmptyContractDescription,
     symbol,
     isGetter,

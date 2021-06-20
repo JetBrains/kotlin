@@ -251,12 +251,10 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
                 TypeOfCall.PROPERTY_GETTER.nameToRender
             }
             is FirFunction<*> -> buildString {
-                if (fir is FirCallableMemberDeclaration<*>) {
-                    if (fir.status.isInline) append("inline ")
-                    if (fir.status.isInfix) append("infix ")
-                    if (fir.status.isOperator) append("operator ")
-                    if (fir.receiverTypeRef != null) append("extension ")
-                }
+                if (fir.status.isInline) append("inline ")
+                if (fir.status.isInfix) append("infix ")
+                if (fir.status.isOperator) append("operator ")
+                if (fir.receiverTypeRef != null) append("extension ")
                 append(TypeOfCall.FUNCTION.nameToRender)
             }
             else -> TypeOfCall.OTHER.nameToRender

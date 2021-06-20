@@ -100,7 +100,7 @@ object CheckDispatchReceiver : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         val explicitReceiverExpression = callInfo.explicitReceiver
         if (explicitReceiverExpression.isSuperCall()) {
-            val status = candidate.symbol.fir as? FirMemberDeclaration<*>
+            val status = candidate.symbol.fir as? FirStatusOwner
             if (status?.modality == Modality.ABSTRACT) {
                 sink.reportDiagnostic(ResolvedWithLowPriority)
             }
@@ -196,7 +196,7 @@ internal object CheckVisibility : CheckerStage() {
         val visibilityChecker = callInfo.session.visibilityChecker
         val symbol = candidate.symbol
         val declaration = symbol.fir
-        if (declaration is FirMemberDeclaration<*>) {
+        if (declaration is FirStatusOwner) {
             if (!checkVisibility(declaration, sink, candidate, visibilityChecker)) {
                 return
             }
@@ -215,7 +215,7 @@ internal object CheckVisibility : CheckerStage() {
         }
     }
 
-    private suspend fun <T : FirMemberDeclaration<*>> checkVisibility(
+    private suspend fun <T : FirStatusOwner> checkVisibility(
         declaration: T,
         sink: CheckerSink,
         candidate: Candidate,

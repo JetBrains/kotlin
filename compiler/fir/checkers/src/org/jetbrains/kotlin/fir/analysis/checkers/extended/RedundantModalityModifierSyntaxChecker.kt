@@ -17,21 +17,23 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_MODALIT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.modalityModifier
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirStatusOwner
 import org.jetbrains.kotlin.fir.declarations.modality
 import org.jetbrains.kotlin.psi.KtDeclaration
 
-object RedundantModalityModifierSyntaxChecker : FirDeclarationSyntaxChecker<FirMemberDeclaration<*>, KtDeclaration>() {
+object RedundantModalityModifierSyntaxChecker : FirDeclarationSyntaxChecker<FirDeclaration<*>, KtDeclaration>() {
 
-    override fun isApplicable(element: FirMemberDeclaration<*>, source: FirSourceElement): Boolean =
-        source.kind !is FirFakeSourceElementKind
+    override fun isApplicable(element: FirDeclaration<*>, source: FirSourceElement): Boolean =
+        source.kind !is FirFakeSourceElementKind && element is FirStatusOwner
 
     override fun checkLightTree(
-        element: FirMemberDeclaration<*>,
+        element: FirDeclaration<*>,
         source: FirSourceElement,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
+        require(element is FirStatusOwner)
         val modality = element.modality ?: return
         if (
             modality == Modality.FINAL

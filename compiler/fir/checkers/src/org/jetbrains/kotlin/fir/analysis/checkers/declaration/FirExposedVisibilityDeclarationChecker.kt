@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 // TODO: check why coneTypeSafe is necessary at some points inside
-object FirExposedVisibilityDeclarationChecker : FirMemberDeclarationChecker() {
-    override fun check(declaration: FirMemberDeclaration<*>, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker() {
+    override fun check(declaration: FirDeclaration<*>, context: CheckerContext, reporter: DiagnosticReporter) {
         when (declaration) {
             is FirTypeAlias -> checkTypeAlias(declaration, reporter, context)
             is FirProperty -> checkProperty(declaration, reporter, context)
@@ -103,7 +103,7 @@ object FirExposedVisibilityDeclarationChecker : FirMemberDeclarationChecker() {
     }
 
     private fun checkFunction(declaration: FirFunction<*>, reporter: DiagnosticReporter, context: CheckerContext) {
-        val functionVisibility = (declaration as FirMemberDeclaration<*>).effectiveVisibility
+        val functionVisibility = (declaration as FirStatusOwner).effectiveVisibility
 
         if (functionVisibility == EffectiveVisibility.Local) return
         if (declaration !is FirConstructor) {
@@ -193,14 +193,14 @@ object FirExposedVisibilityDeclarationChecker : FirMemberDeclarationChecker() {
     private fun ConeKotlinType.findVisibilityExposure(
         context: CheckerContext,
         base: EffectiveVisibility
-    ): FirMemberDeclaration<*>? {
+    ): FirStatusOwner? {
         val type = this as? ConeClassLikeType ?: return null
         val fir = type.fullyExpandedType(context.session).lookupTag.toSymbol(context.session)?.let { firSymbol ->
             firSymbol.ensureResolved(FirResolvePhase.DECLARATIONS, context.session)
             firSymbol.fir
         } ?: return null
 
-        if (fir is FirMemberDeclaration<*>) {
+        if (fir is FirStatusOwner) {
             val effectiveVisibility = fir.effectiveVisibility
             when (effectiveVisibility.relation(base, context.session.typeContext)) {
                 EffectiveVisibility.Permissiveness.LESS,

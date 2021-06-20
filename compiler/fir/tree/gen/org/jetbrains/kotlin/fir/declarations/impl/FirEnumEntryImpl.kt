@@ -36,14 +36,14 @@ internal class FirEnumEntryImpl(
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
     override var returnTypeRef: FirTypeRef,
-    override val name: Name,
-    override val symbol: FirVariableSymbol<FirEnumEntry>,
-    override var initializer: FirExpression?,
-    override val annotations: MutableList<FirAnnotationCall>,
     override val typeParameters: MutableList<FirTypeParameterRef>,
     override var status: FirDeclarationStatus,
     override val containerSource: DeserializedContainerSource?,
     override val dispatchReceiverType: ConeKotlinType?,
+    override val name: Name,
+    override val symbol: FirVariableSymbol<FirEnumEntry>,
+    override var initializer: FirExpression?,
+    override val annotations: MutableList<FirAnnotationCall>,
 ) : FirEnumEntry() {
     override val receiverTypeRef: FirTypeRef? get() = null
     override val delegate: FirExpression? get() = null
@@ -60,17 +60,17 @@ internal class FirEnumEntryImpl(
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         returnTypeRef.accept(visitor, data)
-        initializer?.accept(visitor, data)
-        annotations.forEach { it.accept(visitor, data) }
         typeParameters.forEach { it.accept(visitor, data) }
         status.accept(visitor, data)
+        initializer?.accept(visitor, data)
+        annotations.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
         transformReturnTypeRef(transformer, data)
-        transformInitializer(transformer, data)
         transformTypeParameters(transformer, data)
         transformStatus(transformer, data)
+        transformInitializer(transformer, data)
         transformOtherChildren(transformer, data)
         return this
     }
@@ -81,6 +81,16 @@ internal class FirEnumEntryImpl(
     }
 
     override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
+        return this
+    }
+
+    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
+        typeParameters.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
+        status = status.transform(transformer, data)
         return this
     }
 
@@ -103,16 +113,6 @@ internal class FirEnumEntryImpl(
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
         annotations.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
-        typeParameters.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
-        status = status.transform(transformer, data)
         return this
     }
 

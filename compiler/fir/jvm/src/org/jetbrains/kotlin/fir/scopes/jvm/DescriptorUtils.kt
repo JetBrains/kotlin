@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 fun FirFunction<*>.computeJvmSignature(typeConversion: (FirTypeRef) -> ConeKotlinType? = FirTypeRef::coneTypeSafe): String? {
-    if (this !is FirCallableMemberDeclaration<*>) return null
     val containingClass = containingClass() ?: return null
 
     return SignatureBuildingComponents.signature(containingClass.classId, computeJvmDescriptor(typeConversion = typeConversion))

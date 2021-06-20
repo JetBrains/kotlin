@@ -31,16 +31,15 @@ import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-object FirInlineDeclarationChecker : FirMemberDeclarationChecker() {
-    override fun check(declaration: FirMemberDeclaration<*>, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirInlineDeclarationChecker : FirFunctionChecker() {
+    override fun check(declaration: FirFunction<*>, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!declaration.isInline) return
         // local inline functions are prohibited
         if (declaration.isLocalMember) return
         if (declaration !is FirPropertyAccessor && declaration !is FirSimpleFunction) return
 
         val effectiveVisibility = declaration.effectiveVisibility
-        val function = declaration as FirFunction<*>
-        checkInlineFunctionBody(function, effectiveVisibility, context, reporter)
+        checkInlineFunctionBody(declaration, effectiveVisibility, context, reporter)
     }
 
     private fun checkInlineFunctionBody(
@@ -186,7 +185,9 @@ object FirInlineDeclarationChecker : FirMemberDeclarationChecker() {
 
         private fun FirQualifiedAccess.partOfCall(context: CheckerContext): Boolean {
             if (this !is FirExpression) return false
-            val containingQualifiedAccess = context.qualifiedAccessOrAnnotationCalls.getOrNull(context.qualifiedAccessOrAnnotationCalls.size - 2) ?: return false
+            val containingQualifiedAccess = context.qualifiedAccessOrAnnotationCalls.getOrNull(
+                context.qualifiedAccessOrAnnotationCalls.size - 2
+            ) ?: return false
             if (this == (containingQualifiedAccess as? FirQualifiedAccess)?.explicitReceiver) return true
             val call = containingQualifiedAccess as? FirCall ?: return false
             return call.arguments.any { it.unwrapArgument() == this }
@@ -283,7 +284,7 @@ object FirInlineDeclarationChecker : FirMemberDeclarationChecker() {
         private fun FirBasedSymbol<*>.isDefinedInInlineFunction(): Boolean {
             return when (val fir = this.fir) {
                 is FirAnonymousFunction -> true
-                is FirMemberDeclaration<*> -> fir.isLocalMember
+                is FirStatusOwner -> fir.isLocalMember
                 is FirAnonymousObject -> true
                 is FirRegularClass -> fir.classId.isLocal
                 else -> error("Unknown callable declaration type: ${fir.render()}")

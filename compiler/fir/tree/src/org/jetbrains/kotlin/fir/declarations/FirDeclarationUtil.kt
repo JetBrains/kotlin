@@ -43,7 +43,6 @@ inline val FirClass<*>.isInterface: Boolean
 inline val FirClass<*>.isEnumClass: Boolean
     get() = classKind == ClassKind.ENUM_CLASS
 
-inline val FirRegularClass.modality get() = status.modality
 inline val FirRegularClass.isSealed get() = status.modality == Modality.SEALED
 inline val FirRegularClass.isAbstract get() = status.modality == Modality.ABSTRACT
 inline val FirRegularClass.isFun get() = status.isFun
@@ -53,46 +52,45 @@ inline val FirRegularClass.isData get() = status.isData
 inline val FirRegularClass.canHaveAbstractDeclaration: Boolean
     get() = isAbstract || isSealed || isEnumClass
 
-inline val FirMemberDeclaration<*>.modality get() = status.modality
-inline val FirMemberDeclaration<*>.isAbstract get() = status.modality == Modality.ABSTRACT
-inline val FirMemberDeclaration<*>.isOpen get() = status.modality == Modality.OPEN
-inline val FirMemberDeclaration<*>.isFinal: Boolean
+inline val FirStatusOwner.modality get() = status.modality
+inline val FirStatusOwner.isAbstract get() = status.modality == Modality.ABSTRACT
+inline val FirStatusOwner.isOpen get() = status.modality == Modality.OPEN
+inline val FirStatusOwner.isFinal: Boolean
     get() {
         // member with unspecified modality is final
         val modality = status.modality ?: return true
         return modality == Modality.FINAL
     }
 
-inline val FirMemberDeclaration<*>.visibility: Visibility get() = status.visibility
-inline val FirMemberDeclaration<*>.effectiveVisibility: EffectiveVisibility
+inline val FirStatusOwner.visibility: Visibility get() = status.visibility
+inline val FirStatusOwner.effectiveVisibility: EffectiveVisibility
     get() = (status as? FirResolvedDeclarationStatus)?.effectiveVisibility
         ?: error("Effective visibility for ${render(FirRenderer.RenderMode.NoBodies)} must be resolved")
 
-inline val FirMemberDeclaration<*>.allowsToHaveFakeOverride: Boolean
+inline val FirStatusOwner.allowsToHaveFakeOverride: Boolean
     get() = !Visibilities.isPrivate(visibility) && visibility != Visibilities.InvisibleFake
 
-inline val FirMemberDeclaration<*>.isActual get() = status.isActual
-inline val FirMemberDeclaration<*>.isExpect get() = status.isExpect
-inline val FirMemberDeclaration<*>.isInner get() = status.isInner
-inline val FirMemberDeclaration<*>.isStatic get() = status.isStatic
-inline val FirMemberDeclaration<*>.isOverride: Boolean get() = status.isOverride
-inline val FirMemberDeclaration<*>.isOperator: Boolean get() = status.isOperator
-inline val FirMemberDeclaration<*>.isInfix: Boolean get() = status.isInfix
-inline val FirMemberDeclaration<*>.isInline: Boolean get() = status.isInline
-inline val FirMemberDeclaration<*>.isTailRec: Boolean get() = status.isTailRec
-inline val FirMemberDeclaration<*>.isExternal: Boolean get() = status.isExternal
-inline val FirMemberDeclaration<*>.isSuspend: Boolean get() = status.isSuspend
-inline val FirMemberDeclaration<*>.isConst: Boolean get() = status.isConst
-inline val FirMemberDeclaration<*>.isLateInit: Boolean get() = status.isLateInit
-inline val FirMemberDeclaration<*>.isFromSealedClass: Boolean get() = status.isFromSealedClass
-inline val FirMemberDeclaration<*>.isFromEnumClass: Boolean get() = status.isFromEnumClass
-inline val FirMemberDeclaration<*>.isFun: Boolean get() = status.isFun
+inline val FirStatusOwner.isActual: Boolean get() = status.isActual
+inline val FirStatusOwner.isExpect: Boolean get() = status.isExpect
+inline val FirStatusOwner.isInner: Boolean get() = status.isInner
+inline val FirStatusOwner.isStatic: Boolean get() = status.isStatic
+inline val FirStatusOwner.isOverride: Boolean get() = status.isOverride
+inline val FirStatusOwner.isOperator: Boolean get() = status.isOperator
+inline val FirStatusOwner.isInfix: Boolean get() = status.isInfix
+inline val FirStatusOwner.isInline: Boolean get() = status.isInline
+inline val FirStatusOwner.isTailRec: Boolean get() = status.isTailRec
+inline val FirStatusOwner.isExternal: Boolean get() = status.isExternal
+inline val FirStatusOwner.isSuspend: Boolean get() = status.isSuspend
+inline val FirStatusOwner.isConst: Boolean get() = status.isConst
+inline val FirStatusOwner.isLateInit: Boolean get() = status.isLateInit
+inline val FirStatusOwner.isFromSealedClass: Boolean get() = status.isFromSealedClass
+inline val FirStatusOwner.isFromEnumClass: Boolean get() = status.isFromEnumClass
+inline val FirStatusOwner.isFun: Boolean get() = status.isFun
 
 inline val FirFunction<*>.hasBody get() = body != null
 
 inline val FirPropertyAccessor.modality get() = status.modality
 inline val FirPropertyAccessor.visibility get() = status.visibility
-inline val FirPropertyAccessor.isInline get() = status.isInline
 inline val FirPropertyAccessor.isExternal get() = status.isExternal
 inline val FirPropertyAccessor.hasBody get() = body != null
 
@@ -190,7 +188,7 @@ var FirRegularClass.moduleName: String? by FirDeclarationDataRegistry.data(Modul
 
 var FirTypeAlias.sourceElement: SourceElement? by FirDeclarationDataRegistry.data(SourceElementKey)
 
-val FirMemberDeclaration<*>.containerSource: SourceElement?
+val FirStatusOwner.containerSource: SourceElement?
     get() = when (this) {
         is FirCallableMemberDeclaration<*> -> containerSource
         is FirRegularClass -> sourceElement

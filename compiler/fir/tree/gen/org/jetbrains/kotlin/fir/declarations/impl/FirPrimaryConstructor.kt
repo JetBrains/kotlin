@@ -38,10 +38,10 @@ internal class FirPrimaryConstructor(
     override var returnTypeRef: FirTypeRef,
     override var receiverTypeRef: FirTypeRef?,
     override val typeParameters: MutableList<FirTypeParameterRef>,
-    override val valueParameters: MutableList<FirValueParameter>,
     override var status: FirDeclarationStatus,
     override val containerSource: DeserializedContainerSource?,
     override val dispatchReceiverType: ConeKotlinType?,
+    override val valueParameters: MutableList<FirValueParameter>,
     override val annotations: MutableList<FirAnnotationCall>,
     override val symbol: FirConstructorSymbol,
     override var delegatedConstructor: FirDelegatedConstructorCall?,
@@ -58,9 +58,9 @@ internal class FirPrimaryConstructor(
         returnTypeRef.accept(visitor, data)
         receiverTypeRef?.accept(visitor, data)
         typeParameters.forEach { it.accept(visitor, data) }
+        status.accept(visitor, data)
         controlFlowGraphReference?.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
-        status.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
         delegatedConstructor?.accept(visitor, data)
         body?.accept(visitor, data)
@@ -70,9 +70,9 @@ internal class FirPrimaryConstructor(
         transformReturnTypeRef(transformer, data)
         transformReceiverTypeRef(transformer, data)
         transformTypeParameters(transformer, data)
+        transformStatus(transformer, data)
         controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         transformValueParameters(transformer, data)
-        transformStatus(transformer, data)
         transformAnnotations(transformer, data)
         transformDelegatedConstructor(transformer, data)
         transformBody(transformer, data)
@@ -94,13 +94,13 @@ internal class FirPrimaryConstructor(
         return this
     }
 
-    override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirPrimaryConstructor {
-        valueParameters.transformInplace(transformer, data)
+    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirPrimaryConstructor {
+        status = status.transform(transformer, data)
         return this
     }
 
-    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirPrimaryConstructor {
-        status = status.transform(transformer, data)
+    override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirPrimaryConstructor {
+        valueParameters.transformInplace(transformer, data)
         return this
     }
 

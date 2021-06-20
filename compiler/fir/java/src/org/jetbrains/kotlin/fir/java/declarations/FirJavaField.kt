@@ -41,7 +41,7 @@ class FirJavaField @FirImplementationDetail constructor(
     override var status: FirDeclarationStatus,
     override val isVar: Boolean,
     annotationBuilder: () -> List<FirAnnotationCall>,
-    override val typeParameters: MutableList<FirTypeParameter>,
+    override val typeParameters: MutableList<FirTypeParameterRef>,
     override var initializer: FirExpression?,
     override val dispatchReceiverType: ConeKotlinType?,
     override val attributes: FirDeclarationAttributes,

@@ -234,7 +234,7 @@ fun FirClass<*>.modality(): Modality? {
 /**
  * returns implicit modality by FirMemberDeclaration<*>
  */
-fun FirMemberDeclaration<*>.implicitModality(context: CheckerContext): Modality {
+fun FirStatusOwner.implicitModality(context: CheckerContext): Modality {
     if (this is FirRegularClass && (this.classKind == ClassKind.CLASS || this.classKind == ClassKind.OBJECT)) {
         if (this.classKind == ClassKind.INTERFACE) return Modality.ABSTRACT
         return Modality.FINAL
@@ -257,6 +257,7 @@ fun FirMemberDeclaration<*>.implicitModality(context: CheckerContext): Modality 
         && klass.classKind == ClassKind.INTERFACE
         && tree.visibilityModifier(source.lighterASTNode)?.tokenType != KtTokens.PRIVATE_KEYWORD
     ) {
+        require(this is FirDeclaration<*>)
         return if (this.hasBody()) Modality.OPEN else Modality.ABSTRACT
     }
 
@@ -379,7 +380,7 @@ private fun lowerThanBound(context: ConeInferenceContext, argument: ConeKotlinTy
     return false
 }
 
-fun FirMemberDeclaration<*>.isInlineOnly(): Boolean = isInline && hasAnnotation(INLINE_ONLY_ANNOTATION_CLASS_ID)
+fun FirStatusOwner.isInlineOnly(): Boolean = isInline && (this as FirAnnotatedDeclaration<*>).hasAnnotation(INLINE_ONLY_ANNOTATION_CLASS_ID)
 
 fun isSubtypeForTypeMismatch(context: ConeInferenceContext, subtype: ConeKotlinType, supertype: ConeKotlinType): Boolean {
     val subtypeFullyExpanded = subtype.fullyExpandedType(context.session)

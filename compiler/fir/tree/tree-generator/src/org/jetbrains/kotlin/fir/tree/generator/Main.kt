@@ -13,7 +13,7 @@ import java.io.File
 
 fun main(args: Array<String>) {
     val generationPath = args.firstOrNull()?.let { File(it) }
-        ?: File("compiler/fir/tree/gen").absoluteFile
+        ?: File("../../tree/gen").canonicalFile
 
     NodeConfigurator.configureFields()
     detectBaseTransformerTypes(FirTreeBuilder)

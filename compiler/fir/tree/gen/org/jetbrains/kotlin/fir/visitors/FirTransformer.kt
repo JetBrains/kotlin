@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirStatusOwner
 import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -223,8 +223,8 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformElement(typeParametersOwner, data)
     }
 
-    open fun <E : FirMemberDeclaration<E>> transformMemberDeclaration(memberDeclaration: FirMemberDeclaration<E>, data: D): FirMemberDeclaration<E> {
-        return transformElement(memberDeclaration, data)
+    open fun transformStatusOwner(statusOwner: FirStatusOwner, data: D): FirStatusOwner {
+        return transformElement(statusOwner, data)
     }
 
     open fun <E : FirCallableMemberDeclaration<E>> transformCallableMemberDeclaration(callableMemberDeclaration: FirCallableMemberDeclaration<E>, data: D): FirCallableMemberDeclaration<E> {
@@ -735,8 +735,8 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformTypeParametersOwner(typeParametersOwner, data)
     }
 
-    final override fun <E : FirMemberDeclaration<E>> visitMemberDeclaration(memberDeclaration: FirMemberDeclaration<E>, data: D): FirMemberDeclaration<E> {
-        return transformMemberDeclaration(memberDeclaration, data)
+    final override fun visitStatusOwner(statusOwner: FirStatusOwner, data: D): FirStatusOwner {
+        return transformStatusOwner(statusOwner, data)
     }
 
     final override fun <E : FirCallableMemberDeclaration<E>> visitCallableMemberDeclaration(callableMemberDeclaration: FirCallableMemberDeclaration<E>, data: D): FirCallableMemberDeclaration<E> {

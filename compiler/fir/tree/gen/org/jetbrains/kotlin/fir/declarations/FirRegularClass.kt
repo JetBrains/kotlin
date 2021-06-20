@@ -22,19 +22,19 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirRegularClass : FirMemberDeclaration<FirRegularClass>, FirTypeParameterRefsOwner, FirControlFlowGraphOwner, FirClass<FirRegularClass>() {
+abstract class FirRegularClass : FirClass<FirRegularClass>(), FirStatusOwner, FirControlFlowGraphOwner {
     abstract override val source: FirSourceElement?
     abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
-    abstract override val annotations: List<FirAnnotationCall>
     abstract override val typeParameters: List<FirTypeParameterRef>
-    abstract override val status: FirDeclarationStatus
-    abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract override val classKind: ClassKind
     abstract override val declarations: List<FirDeclaration<*>>
+    abstract override val annotations: List<FirAnnotationCall>
     abstract override val scopeProvider: FirScopeProvider
+    abstract override val status: FirDeclarationStatus
+    abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract val name: Name
     abstract override val symbol: FirRegularClassSymbol
     abstract val companionObject: FirRegularClass?
@@ -53,13 +53,13 @@ abstract class FirRegularClass : FirMemberDeclaration<FirRegularClass>, FirTypeP
 
     abstract override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirRegularClass
-
     abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirRegularClass
 
-    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirRegularClass
-
     abstract override fun <D> transformDeclarations(transformer: FirTransformer<D>, data: D): FirRegularClass
+
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirRegularClass
+
+    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirRegularClass
 
     abstract fun <D> transformCompanionObject(transformer: FirTransformer<D>, data: D): FirRegularClass
 

@@ -554,7 +554,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
     val OVERRIDES by object : DiagnosticGroup("overrides") {
         val NOTHING_TO_OVERRIDE by error<KtModifierListOwner>(PositioningStrategy.OVERRIDE_MODIFIER) {
-            parameter<FirMemberDeclaration<*>>("declaration")
+            parameter<FirStatusOwner>("declaration")
         }
 
         val CANNOT_WEAKEN_ACCESS_PRIVILEGE by error<KtModifierListOwner>(PositioningStrategy.VISIBILITY_MODIFIER) {
@@ -607,25 +607,25 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
 
         val RETURN_TYPE_MISMATCH_ON_OVERRIDE by error<KtNamedDeclaration>(PositioningStrategy.DECLARATION_RETURN_TYPE) {
-            parameter<FirMemberDeclaration<*>>("function")
-            parameter<FirMemberDeclaration<*>>("superFunction")
+            parameter<FirStatusOwner>("function")
+            parameter<FirStatusOwner>("superFunction")
         }
         val PROPERTY_TYPE_MISMATCH_ON_OVERRIDE by error<KtNamedDeclaration>(PositioningStrategy.DECLARATION_RETURN_TYPE) {
-            parameter<FirMemberDeclaration<*>>("property")
-            parameter<FirMemberDeclaration<*>>("superProperty")
+            parameter<FirStatusOwner>("property")
+            parameter<FirStatusOwner>("superProperty")
         }
         val VAR_TYPE_MISMATCH_ON_OVERRIDE by error<KtNamedDeclaration>(PositioningStrategy.DECLARATION_RETURN_TYPE) {
-            parameter<FirMemberDeclaration<*>>("variable")
-            parameter<FirMemberDeclaration<*>>("superVariable")
+            parameter<FirStatusOwner>("variable")
+            parameter<FirStatusOwner>("superVariable")
         }
         val VAR_OVERRIDDEN_BY_VAL by error<KtNamedDeclaration>(PositioningStrategy.VAL_OR_VAR_NODE) {
-            parameter<FirMemberDeclaration<*>>("overridingDeclaration")
-            parameter<FirMemberDeclaration<*>>("overriddenDeclaration")
+            parameter<FirStatusOwner>("overridingDeclaration")
+            parameter<FirStatusOwner>("overriddenDeclaration")
         }
         val NON_FINAL_MEMBER_IN_FINAL_CLASS by warning<KtNamedDeclaration>(PositioningStrategy.OPEN_MODIFIER)
         val NON_FINAL_MEMBER_IN_OBJECT by warning<KtNamedDeclaration>(PositioningStrategy.OPEN_MODIFIER)
         val VIRTUAL_MEMBER_HIDDEN by error<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME) {
-            parameter<FirMemberDeclaration<*>>("declared")
+            parameter<FirStatusOwner>("declared")
             parameter<FirRegularClass>("overriddenContainer")
         }
     }
@@ -652,21 +652,21 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
     val FUNCTIONS by object : DiagnosticGroup("Functions") {
         val ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS by error<KtFunction>(PositioningStrategy.MODALITY_MODIFIER) {
-            parameter<FirMemberDeclaration<*>>("function")
+            parameter<FirStatusOwner>("function")
             parameter<FirClass<*>>("containingClass")
         }
         val ABSTRACT_FUNCTION_WITH_BODY by error<KtFunction>(PositioningStrategy.MODALITY_MODIFIER) {
-            parameter<FirMemberDeclaration<*>>("function")
+            parameter<FirStatusOwner>("function")
         }
         val NON_ABSTRACT_FUNCTION_WITH_NO_BODY by error<KtFunction>(PositioningStrategy.DECLARATION_SIGNATURE) {
-            parameter<FirMemberDeclaration<*>>("function")
+            parameter<FirStatusOwner>("function")
         }
         val PRIVATE_FUNCTION_WITH_NO_BODY by error<KtFunction>(PositioningStrategy.VISIBILITY_MODIFIER) {
-            parameter<FirMemberDeclaration<*>>("function")
+            parameter<FirStatusOwner>("function")
         }
 
         val NON_MEMBER_FUNCTION_NO_BODY by error<KtFunction>(PositioningStrategy.DECLARATION_SIGNATURE) {
-            parameter<FirMemberDeclaration<*>>("function")
+            parameter<FirStatusOwner>("function")
         }
 
         val FUNCTION_DECLARATION_WITH_NO_NAME by error<KtFunction>(PositioningStrategy.DECLARATION_SIGNATURE)
@@ -696,7 +696,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
     val PROPERTIES_AND_ACCESSORS by object : DiagnosticGroup("Properties & accessors") {
         val ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS by error<KtModifierListOwner>(PositioningStrategy.MODALITY_MODIFIER) {
-            parameter<FirMemberDeclaration<*>>("property")
+            parameter<FirStatusOwner>("property")
             parameter<FirClass<*>>("containingClass")
         }
         val PRIVATE_PROPERTY_IN_INTERFACE by error<KtProperty>(PositioningStrategy.VISIBILITY_MODIFIER)
@@ -1032,7 +1032,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
 private val exposedVisibilityDiagnosticInit: DiagnosticBuilder.() -> Unit = {
     parameter<EffectiveVisibility>("elementVisibility")
-    parameter<FirMemberDeclaration<*>>("restrictingDeclaration")
+    parameter<FirStatusOwner>("restrictingDeclaration")
     parameter<EffectiveVisibility>("restrictingVisibility")
 }
 

@@ -220,7 +220,7 @@ class BodyResolveContext(
     }
 
     @PrivateForInline
-    inline fun <T> withTypeParametersOf(declaration: FirMemberDeclaration<*>, l: () -> T): T {
+    inline fun <T> withTypeParametersOf(declaration: FirStatusOwner, l: () -> T): T {
         if (declaration.typeParameters.isEmpty()) return l()
         val scope = FirMemberTypeParameterScope(declaration)
         return withTowerDataCleanup {
@@ -229,7 +229,7 @@ class BodyResolveContext(
         }
     }
 
-    private fun FirMemberDeclaration<*>.typeParameterScope(): FirMemberTypeParameterScope? {
+    private fun FirStatusOwner.typeParameterScope(): FirMemberTypeParameterScope? {
         if (typeParameters.isEmpty()) return null
         return FirMemberTypeParameterScope(this)
     }

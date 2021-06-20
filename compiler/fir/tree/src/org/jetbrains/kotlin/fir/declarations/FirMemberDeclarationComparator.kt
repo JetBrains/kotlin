@@ -9,10 +9,10 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.types.FirTypeRefComparator
 import org.jetbrains.kotlin.name.Name
 
-object FirMemberDeclarationComparator : Comparator<FirMemberDeclaration<*>> {
+object FirMemberDeclarationComparator : Comparator<FirStatusOwner> {
     // Comparing different kinds of callable members by assigning distinct priorities to those members.
-    object TypeAndNameComparator : Comparator<FirMemberDeclaration<*>> {
-        private val FirMemberDeclaration<*>.priority: Int
+    object TypeAndNameComparator : Comparator<FirStatusOwner> {
+        private val FirStatusOwner.priority: Int
             get() = when (this) {
                 is FirEnumEntry -> 7
                 is FirConstructor -> 6
@@ -21,9 +21,11 @@ object FirMemberDeclarationComparator : Comparator<FirMemberDeclaration<*>> {
                 is FirFunction<*> -> 3
                 is FirClass<*> -> 2
                 is FirTypeAlias -> 1
+                is FirErrorProperty -> 0
+                is FirValueParameter -> 0
             }
 
-        private val FirMemberDeclaration<*>.name: Name
+        private val FirStatusOwner.name: Name
             get() = when (this) {
                 is FirCallableMemberDeclaration<*> ->
                     this.symbol.callableId.callableName
@@ -33,7 +35,7 @@ object FirMemberDeclarationComparator : Comparator<FirMemberDeclaration<*>> {
                     this.name
             }
 
-        override fun compare(a: FirMemberDeclaration<*>, b: FirMemberDeclaration<*>): Int {
+        override fun compare(a: FirStatusOwner, b: FirStatusOwner): Int {
             val priorityDiff = a.priority - b.priority
             if (priorityDiff != 0) {
                 return priorityDiff
@@ -50,7 +52,7 @@ object FirMemberDeclarationComparator : Comparator<FirMemberDeclaration<*>> {
         }
     }
 
-    override fun compare(a: FirMemberDeclaration<*>, b: FirMemberDeclaration<*>): Int {
+    override fun compare(a: FirStatusOwner, b: FirStatusOwner): Int {
         if (a is FirCallableMemberDeclaration<*> && b is FirCallableMemberDeclaration<*>) {
             return FirCallableMemberDeclarationComparator.compare(a, b)
         }

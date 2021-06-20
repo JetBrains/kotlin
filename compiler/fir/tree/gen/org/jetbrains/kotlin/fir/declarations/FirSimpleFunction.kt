@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirSimpleFunction : FirFunction<FirSimpleFunction>(), FirCallableMemberDeclaration<FirSimpleFunction>, FirContractDescriptionOwner, FirTypeParametersOwner {
+abstract class FirSimpleFunction : FirFunction<FirSimpleFunction>(), FirContractDescriptionOwner, FirTypeParametersOwner {
     abstract override val source: FirSourceElement?
     abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase
@@ -32,12 +32,12 @@ abstract class FirSimpleFunction : FirFunction<FirSimpleFunction>(), FirCallable
     abstract override val attributes: FirDeclarationAttributes
     abstract override val returnTypeRef: FirTypeRef
     abstract override val receiverTypeRef: FirTypeRef?
-    abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
-    abstract override val valueParameters: List<FirValueParameter>
-    abstract override val body: FirBlock?
     abstract override val status: FirDeclarationStatus
     abstract override val containerSource: DeserializedContainerSource?
     abstract override val dispatchReceiverType: ConeKotlinType?
+    abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
+    abstract override val valueParameters: List<FirValueParameter>
+    abstract override val body: FirBlock?
     abstract override val contractDescription: FirContractDescription
     abstract val name: Name
     abstract override val symbol: FirNamedFunctionSymbol
@@ -68,11 +68,11 @@ abstract class FirSimpleFunction : FirFunction<FirSimpleFunction>(), FirCallable
 
     abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirSimpleFunction
 
+    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirSimpleFunction
+
     abstract override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirSimpleFunction
 
     abstract override fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirSimpleFunction
-
-    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirSimpleFunction
 
     abstract override fun <D> transformContractDescription(transformer: FirTransformer<D>, data: D): FirSimpleFunction
 

@@ -52,8 +52,8 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
         }
 
         private fun isExpectAndActual(declaration1: FirDeclaration<*>, declaration2: FirDeclaration<*>): Boolean {
-            if (declaration1 !is FirMemberDeclaration<*>) return false
-            if (declaration2 !is FirMemberDeclaration<*>) return false
+            if (declaration1 !is FirStatusOwner) return false
+            if (declaration2 !is FirStatusOwner) return false
             return (declaration1.status.isExpect && declaration2.status.isActual) ||
                     (declaration1.status.isActual && declaration2.status.isExpect)
         }
@@ -90,7 +90,7 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
             if (areCompatibleMainFunctions(declaration, containingFile, conflicting, actualConflictingFile)) return
             if (isExpectAndActual(declaration, conflicting)) return
             if (
-                conflicting is FirMemberDeclaration<*> &&
+                conflicting is FirStatusOwner &&
                 !session.visibilityChecker.isVisible(conflicting, session, containingFile, emptyList(), null)
             ) return
             declarationConflictingSymbols.getOrPut(declaration) { SmartSet.create() }.add(conflictingSymbol)

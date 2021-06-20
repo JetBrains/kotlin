@@ -29,7 +29,7 @@ object FirClassVarianceChecker : FirClassChecker() {
         }
 
         for (member in declaration.declarations) {
-            if (member is FirMemberDeclaration<*>) {
+            if (member is FirStatusOwner) {
                 if (Visibilities.isPrivate(member.status.visibility)) {
                     continue
                 }

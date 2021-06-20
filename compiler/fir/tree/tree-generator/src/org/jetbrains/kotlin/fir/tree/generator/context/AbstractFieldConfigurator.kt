@@ -76,6 +76,10 @@ abstract class AbstractFieldConfigurator<T : AbstractFirTreeBuilder>(private val
         fun shouldBeAnInterface() {
             element.kind = Implementation.Kind.Interface
         }
+
+        fun shouldBeAbstractClass() {
+            element.kind = Implementation.Kind.AbstractClass
+        }
     }
 
     fun Element.configure(block: ConfigureContext.() -> Unit) {

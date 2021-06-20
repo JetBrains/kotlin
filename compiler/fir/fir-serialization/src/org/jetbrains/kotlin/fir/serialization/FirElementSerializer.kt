@@ -681,7 +681,7 @@ class FirElementSerializer private constructor(
             }
             is ConeTypeParameterType -> {
                 val typeParameter = type.lookupTag.typeParameterSymbol.fir
-                if (typeParameter in (containingDeclaration as? FirMemberDeclaration<*>)?.typeParameters ?: emptyList()) {
+                if (typeParameter in (containingDeclaration as? FirStatusOwner)?.typeParameters ?: emptyList()) {
                     builder.typeParameterName = getSimpleNameIndex(typeParameter.name)
                 } else {
                     builder.typeParameter = getTypeParameterId(typeParameter)
@@ -927,7 +927,7 @@ class FirElementSerializer private constructor(
     }
 
 
-    private fun normalizeVisibility(declaration: FirMemberDeclaration<*>): Visibility {
+    private fun normalizeVisibility(declaration: FirStatusOwner): Visibility {
         return declaration.visibility.normalize()
     }
 

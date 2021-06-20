@@ -41,12 +41,12 @@ open class FirRegularClassBuilder : FirClassBuilder, FirTypeParameterRefsOwnerBu
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
-    open lateinit var status: FirDeclarationStatus
     override lateinit var classKind: ClassKind
     override val declarations: MutableList<FirDeclaration<*>> = mutableListOf()
+    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override lateinit var scopeProvider: FirScopeProvider
+    open lateinit var status: FirDeclarationStatus
     open lateinit var name: Name
     open lateinit var symbol: FirRegularClassSymbol
     open var companionObject: FirRegularClass? = null
@@ -59,12 +59,12 @@ open class FirRegularClassBuilder : FirClassBuilder, FirTypeParameterRefsOwnerBu
             resolvePhase,
             origin,
             attributes,
-            annotations,
             typeParameters,
-            status,
             classKind,
             declarations,
+            annotations,
             scopeProvider,
+            status,
             name,
             symbol,
             companionObject,
@@ -93,12 +93,12 @@ inline fun buildRegularClassCopy(original: FirRegularClass, init: FirRegularClas
     copyBuilder.resolvePhase = original.resolvePhase
     copyBuilder.origin = original.origin
     copyBuilder.attributes = original.attributes.copy()
-    copyBuilder.annotations.addAll(original.annotations)
     copyBuilder.typeParameters.addAll(original.typeParameters)
-    copyBuilder.status = original.status
     copyBuilder.classKind = original.classKind
     copyBuilder.declarations.addAll(original.declarations)
+    copyBuilder.annotations.addAll(original.annotations)
     copyBuilder.scopeProvider = original.scopeProvider
+    copyBuilder.status = original.status
     copyBuilder.name = original.name
     copyBuilder.symbol = original.symbol
     copyBuilder.companionObject = original.companionObject

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirStatusOwner
 import org.jetbrains.kotlin.fir.declarations.modality
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
@@ -102,7 +102,7 @@ class ConeOverloadConflictResolver(
         }
 
         if (discriminateAbstracts) {
-            val filtered = candidates.filterTo(mutableSetOf()) { (it.symbol.fir as? FirMemberDeclaration<*>)?.modality != Modality.ABSTRACT }
+            val filtered = candidates.filterTo(mutableSetOf()) { (it.symbol.fir as? FirStatusOwner)?.modality != Modality.ABSTRACT }
             when (filtered.size) {
                 1 -> return filtered
                 0, candidates.size -> {

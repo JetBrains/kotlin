@@ -11,6 +11,17 @@ import org.jetbrains.kotlin.fir.tree.generator.model.Implementation
 import org.jetbrains.kotlin.fir.tree.generator.model.ImplementationWithArg
 import org.jetbrains.kotlin.fir.tree.generator.model.KindOwner
 
+/*
+ * Assume that we have element `E` with parents `P1, P2`
+ *
+ * Introduce variables E, P1, P2. If variable `X` is true then `X` is class, otherwise it is interface
+ *
+ * Build 2SAT function for it: (E || !P1) && (E || !P2) && (!P1 || !P2)
+ * Simple explanation:
+ *   if `P1` is a class then `E` also should be a class
+ *   if `P1` is a class then `P2` can not be a class (because both of them a parents of E`
+ */
+
 fun configureInterfacesAndAbstractClasses(builder: AbstractFirTreeBuilder) {
     val elements = collectElements(builder)
     val elementMapping = ElementMapping(elements)
@@ -21,7 +32,7 @@ fun configureInterfacesAndAbstractClasses(builder: AbstractFirTreeBuilder) {
     updateSealedKinds(elements)
 }
 
-private class ElementMapping(elements: Collection<KindOwner>) {
+private class ElementMapping(val elements: Collection<KindOwner>) {
     private val varToElements: Map<Int, KindOwner> = elements.mapIndexed { index, element -> 2 * index to element.origin }.toMap() +
             elements.mapIndexed { index, element -> 2 * index + 1 to element }.toMap()
     private val elementsToVar: Map<KindOwner, Int> = elements.mapIndexed { index, element -> element.origin to index }.toMap()
@@ -89,17 +100,38 @@ private fun updateSealedKinds(elements: Collection<KindOwner>) {
 }
 
 private fun processRequirementsFromConfig(solution: MutableList<Boolean>, elementMapping: ElementMapping) {
-    fun processParents(element: KindOwner) {
+    fun forceParentsToBeInterfaces(element: KindOwner) {
         val origin = element.origin
-        solution[elementMapping[origin]] = false
-        origin.allParents.forEach { processParents(it) }
+        val index = elementMapping[origin]
+        if (!solution[index]) return
+        solution[index] = false
+        origin.allParents.forEach { forceParentsToBeInterfaces(it) }
+    }
+
+    fun forceInheritorsToBeClasses(element: KindOwner) {
+        val queue = ArrayDeque<KindOwner>()
+        queue.add(element)
+        while (queue.isNotEmpty()) {
+            val e = queue.removeFirst().origin
+            val index = elementMapping[e]
+            if (solution[index]) continue
+            solution[index] = true
+            for (inheritor in elementMapping.elements) {
+                if (e in inheritor.allParents.map { it.origin }) {
+                    queue.add(inheritor)
+                }
+            }
+        }
     }
 
     for (index in solution.indices) {
         val element = elementMapping[index * 2]
-        if (element.kind != Implementation.Kind.Interface) continue
-        if (!solution[index]) continue
-        processParents(element)
+        val kind = element.kind ?: continue
+        if (kind.isInterface) {
+            forceParentsToBeInterfaces(element)
+        } else {
+            forceInheritorsToBeClasses(element)
+        }
     }
 }
 

@@ -39,6 +39,9 @@ internal class FirPropertyImpl(
     override val attributes: FirDeclarationAttributes,
     override var returnTypeRef: FirTypeRef,
     override var receiverTypeRef: FirTypeRef?,
+    override var status: FirDeclarationStatus,
+    override val containerSource: DeserializedContainerSource?,
+    override val dispatchReceiverType: ConeKotlinType?,
     override val name: Name,
     override var initializer: FirExpression?,
     override var delegate: FirExpression?,
@@ -47,12 +50,9 @@ internal class FirPropertyImpl(
     override var getter: FirPropertyAccessor?,
     override var setter: FirPropertyAccessor?,
     override val annotations: MutableList<FirAnnotationCall>,
-    override val typeParameters: MutableList<FirTypeParameter>,
-    override val containerSource: DeserializedContainerSource?,
-    override val dispatchReceiverType: ConeKotlinType?,
     override val symbol: FirPropertySymbol,
     override val isLocal: Boolean,
-    override var status: FirDeclarationStatus,
+    override val typeParameters: MutableList<FirTypeParameter>,
 ) : FirProperty() {
     override val isVal: Boolean get() = !isVar
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
@@ -67,25 +67,25 @@ internal class FirPropertyImpl(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         returnTypeRef.accept(visitor, data)
         receiverTypeRef?.accept(visitor, data)
+        status.accept(visitor, data)
         initializer?.accept(visitor, data)
         delegate?.accept(visitor, data)
         getter?.accept(visitor, data)
         setter?.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
-        typeParameters.forEach { it.accept(visitor, data) }
         controlFlowGraphReference?.accept(visitor, data)
-        status.accept(visitor, data)
+        typeParameters.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
         transformReturnTypeRef(transformer, data)
         transformReceiverTypeRef(transformer, data)
+        transformStatus(transformer, data)
         transformInitializer(transformer, data)
         transformDelegate(transformer, data)
         transformGetter(transformer, data)
         transformSetter(transformer, data)
         transformTypeParameters(transformer, data)
-        transformStatus(transformer, data)
         transformOtherChildren(transformer, data)
         return this
     }
@@ -97,6 +97,11 @@ internal class FirPropertyImpl(
 
     override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
         receiverTypeRef = receiverTypeRef?.transform(transformer, data)
+        return this
+    }
+
+    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
+        status = status.transform(transformer, data)
         return this
     }
 
@@ -127,11 +132,6 @@ internal class FirPropertyImpl(
 
     override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
         typeParameters.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
-        status = status.transform(transformer, data)
         return this
     }
 

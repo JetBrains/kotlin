@@ -42,7 +42,7 @@ class DeclarationCheckersDiagnosticComponent(
     }
 
     override fun visitTypeAlias(typeAlias: FirTypeAlias, data: CheckerContext) {
-        checkers.allMemberDeclarationCheckers.check(typeAlias, data, reporter)
+        checkers.allTypeAliasCheckers.check(typeAlias, data, reporter)
     }
 
     override fun visitConstructor(constructor: FirConstructor, data: CheckerContext) {

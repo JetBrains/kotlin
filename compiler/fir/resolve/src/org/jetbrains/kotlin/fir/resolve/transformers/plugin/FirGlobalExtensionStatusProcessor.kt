@@ -30,7 +30,7 @@ class FirGlobalExtensionStatusProcessor(
             val declarations = provider.getSymbolsWithOwnersByPredicate(extension.predicate)
             for ((declaration, owners) in declarations) {
                 // TODO: maybe replace with visitor?
-                if (declaration is FirMemberDeclaration<*>) {
+                if (declaration is FirStatusOwner) {
                     val newStatus = extension.transformStatus(declaration, owners, declaration.status)
                     declaration.transformStatus(ReplaceStatus, newStatus)
                 }
@@ -49,9 +49,9 @@ class FirTransformerBasedExtensionStatusProcessor(
         private val extensions = session.extensionService.statusTransformerExtensions
         private val predicateBasedProvider = session.predicateBasedProvider
 
-        private fun FirMemberDeclaration<*>.updateStatus() {
+        private fun FirStatusOwner.updateStatus() {
             if (extensions.isEmpty()) return
-            val owners = predicateBasedProvider.getOwnersOfDeclaration(this)
+            val owners = predicateBasedProvider.getOwnersOfDeclaration(this as FirAnnotatedDeclaration<*>)
             requireNotNull(owners)
             var status = this.status
             for (extension in extensions) {

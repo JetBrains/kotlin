@@ -13,8 +13,10 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -30,6 +32,10 @@ abstract class FirValueParameter : FirVariable<FirValueParameter>(), FirControlF
     abstract override val attributes: FirDeclarationAttributes
     abstract override val returnTypeRef: FirTypeRef
     abstract override val receiverTypeRef: FirTypeRef?
+    abstract override val typeParameters: List<FirTypeParameterRef>
+    abstract override val status: FirDeclarationStatus
+    abstract override val containerSource: DeserializedContainerSource?
+    abstract override val dispatchReceiverType: ConeKotlinType?
     abstract override val name: Name
     abstract override val symbol: FirVariableSymbol<FirValueParameter>
     abstract override val initializer: FirExpression?
@@ -65,6 +71,10 @@ abstract class FirValueParameter : FirVariable<FirValueParameter>(), FirControlF
     abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirValueParameter
 
     abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirValueParameter
+
+    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirValueParameter
+
+    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirValueParameter
 
     abstract override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirValueParameter
 

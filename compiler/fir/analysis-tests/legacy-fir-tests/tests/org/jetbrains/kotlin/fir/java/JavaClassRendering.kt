@@ -23,7 +23,8 @@ fun renderJavaClass(renderer: FirRenderer, javaClass: FirJavaClass, session: Fir
 
     val staticScope = javaClass.scopeProvider.getStaticScope(javaClass, session, ScopeSession())
 
-    renderer.visitMemberDeclaration(javaClass)
+    renderer.renderAnnotations(javaClass)
+    renderer.visitStatusOwner(javaClass)
     renderer.renderSupertypes(javaClass)
     renderer.renderInBraces {
         val renderedDeclarations = mutableListOf<FirDeclaration<*>>()

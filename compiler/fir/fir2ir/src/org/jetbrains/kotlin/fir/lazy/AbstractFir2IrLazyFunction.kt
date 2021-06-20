@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.lazy
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.declareThisReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.*
@@ -27,7 +28,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 import kotlin.properties.ReadWriteProperty
 
-abstract class AbstractFir2IrLazyFunction<F : FirMemberDeclaration<*>>(
+abstract class AbstractFir2IrLazyFunction<F : FirCallableMemberDeclaration<*>>(
     components: Fir2IrComponents,
     override val startOffset: Int,
     override val endOffset: Int,

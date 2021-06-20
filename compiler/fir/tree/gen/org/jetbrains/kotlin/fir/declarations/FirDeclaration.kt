@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.visitors.*
@@ -16,13 +17,13 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-sealed interface FirDeclaration<E : FirDeclaration<E>> : FirElement {
-    override val source: FirSourceElement?
-    val symbol: FirBasedSymbol<E>
-    val moduleData: FirModuleData
-    val resolvePhase: FirResolvePhase
-    val origin: FirDeclarationOrigin
-    val attributes: FirDeclarationAttributes
+sealed class FirDeclaration<E : FirDeclaration<E>> : FirPureAbstractElement(), FirElement {
+    abstract override val source: FirSourceElement?
+    abstract val symbol: FirBasedSymbol<E>
+    abstract val moduleData: FirModuleData
+    abstract val resolvePhase: FirResolvePhase
+    abstract val origin: FirDeclarationOrigin
+    abstract val attributes: FirDeclarationAttributes
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitDeclaration(this, data)
 
@@ -30,5 +31,5 @@ sealed interface FirDeclaration<E : FirDeclaration<E>> : FirElement {
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
         transformer.transformDeclaration(this, data) as E
 
-    fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
+    abstract fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 }

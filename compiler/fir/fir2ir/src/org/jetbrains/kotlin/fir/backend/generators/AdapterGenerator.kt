@@ -177,7 +177,7 @@ internal class AdapterGenerator(
     ): IrSimpleFunction {
         val returnType = type.arguments.last().typeOrNull!!
         val parameterTypes = type.arguments.dropLast(1).map { it.typeOrNull!! }
-        val firMemberAdaptee = firAdaptee as FirMemberDeclaration<*>
+        val firMemberAdaptee = firAdaptee as FirStatusOwner
         return irFactory.createFunction(
             startOffset, endOffset,
             IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE,
@@ -297,7 +297,7 @@ internal class AdapterGenerator(
                 boundDispatchReceiver != null -> irCall.dispatchReceiver = receiverValue
                 boundExtensionReceiver != null -> irCall.extensionReceiver = receiverValue
             }
-        } else if (callableReferenceAccess.explicitReceiver is FirResolvedQualifier && ((firAdaptee as? FirMemberDeclaration<*>)?.isStatic != true)) {
+        } else if (callableReferenceAccess.explicitReceiver is FirResolvedQualifier && ((firAdaptee as? FirStatusOwner)?.isStatic != true)) {
             // Unbound callable reference 'A::foo'
             val adaptedReceiverParameter = adapterFunction.valueParameters[0]
             val adaptedReceiverValue = IrGetValueImpl(

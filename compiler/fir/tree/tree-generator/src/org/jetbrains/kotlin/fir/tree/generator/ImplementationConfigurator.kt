@@ -500,6 +500,30 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         noImpl(argumentList)
+
+        val implementationsWithoutStatusAndTypeParameters = listOf(
+            "FirAnonymousFunctionImpl",
+            "FirValueParameterImpl",
+            "FirDefaultSetterValueParameter",
+            "FirErrorPropertyImpl",
+            "FirErrorFunctionImpl"
+        )
+
+        configureFieldInAllImplementations(
+            "status",
+            implementationPredicate = { it.type in implementationsWithoutStatusAndTypeParameters }
+        ) {
+            default(it, "FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS")
+            useTypes(resolvedDeclarationStatusImplType)
+        }
+
+        configureFieldInAllImplementations(
+            "typeParameters",
+            implementationPredicate = { it.type != "FirAnonymousFunctionImpl" && it.type in implementationsWithoutStatusAndTypeParameters }
+        ) {
+            defaultEmptyList(it)
+            useTypes(resolvedDeclarationStatusImplType)
+        }
     }
 
     private fun configureAllImplementations() {

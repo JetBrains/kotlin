@@ -33,14 +33,15 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
         if (element is FirConstructor && source.kind is FirFakeSourceElementKind) return
         if (source is FirFakeSourceElement) return
         if (
-            element !is FirMemberDeclaration<*>
+            element !is FirStatusOwner
             && !(element is FirPropertyAccessor && element.visibility == context.containingPropertyVisibility)
         ) return
 
         val visibilityModifier = source.treeStructure.visibilityModifier(source.lighterASTNode)
         val explicitVisibility = (visibilityModifier?.tokenType as? KtModifierKeywordToken)?.toVisibilityOrNull()
         val implicitVisibility = element.implicitVisibility(context)
-        val containingMemberDeclaration = context.findClosest<FirMemberDeclaration<*>>()
+        val containingMemberDeclaration = context.findClosest<FirStatusOwner>()
+        require(containingMemberDeclaration is FirDeclaration<*>?)
 
         val redundantVisibility = when {
             explicitVisibility == implicitVisibility -> implicitVisibility
@@ -105,7 +106,7 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
     }
 
     private fun FirFunction<*>.visibility(): Visibility? {
-        (symbol.fir as? FirMemberDeclaration<*>)?.visibility?.let {
+        (symbol.fir as? FirStatusOwner)?.visibility?.let {
             return it
         }
 

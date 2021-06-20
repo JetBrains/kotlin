@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirField : FirVariable<FirField>(), FirTypeParametersOwner, FirCallableMemberDeclaration<FirField> {
+abstract class FirField : FirVariable<FirField>() {
     abstract override val source: FirSourceElement?
     abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase
@@ -31,6 +31,10 @@ abstract class FirField : FirVariable<FirField>(), FirTypeParametersOwner, FirCa
     abstract override val attributes: FirDeclarationAttributes
     abstract override val returnTypeRef: FirTypeRef
     abstract override val receiverTypeRef: FirTypeRef?
+    abstract override val typeParameters: List<FirTypeParameterRef>
+    abstract override val status: FirDeclarationStatus
+    abstract override val containerSource: DeserializedContainerSource?
+    abstract override val dispatchReceiverType: ConeKotlinType?
     abstract override val name: Name
     abstract override val symbol: FirVariableSymbol<FirField>
     abstract override val initializer: FirExpression?
@@ -41,10 +45,6 @@ abstract class FirField : FirVariable<FirField>(), FirTypeParametersOwner, FirCa
     abstract override val getter: FirPropertyAccessor?
     abstract override val setter: FirPropertyAccessor?
     abstract override val annotations: List<FirAnnotationCall>
-    abstract override val typeParameters: List<FirTypeParameter>
-    abstract override val status: FirDeclarationStatus
-    abstract override val containerSource: DeserializedContainerSource?
-    abstract override val dispatchReceiverType: ConeKotlinType?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitField(this, data)
 
@@ -64,6 +64,10 @@ abstract class FirField : FirVariable<FirField>(), FirTypeParametersOwner, FirCa
 
     abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirField
 
+    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirField
+
+    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirField
+
     abstract override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirField
 
     abstract override fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirField
@@ -73,10 +77,6 @@ abstract class FirField : FirVariable<FirField>(), FirTypeParametersOwner, FirCa
     abstract override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirField
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirField
-
-    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirField
-
-    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirField
 
     abstract override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirField
 }

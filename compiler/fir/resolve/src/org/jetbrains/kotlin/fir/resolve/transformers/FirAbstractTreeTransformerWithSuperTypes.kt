@@ -88,7 +88,7 @@ abstract class FirAbstractTreeTransformerWithSuperTypes(
         }
     }
 
-    protected fun FirMemberDeclaration<*>.addTypeParametersScope() {
+    protected fun FirStatusOwner.addTypeParametersScope() {
         if (typeParameters.isNotEmpty()) {
             scopes.add(FirMemberTypeParameterScope(this))
         }

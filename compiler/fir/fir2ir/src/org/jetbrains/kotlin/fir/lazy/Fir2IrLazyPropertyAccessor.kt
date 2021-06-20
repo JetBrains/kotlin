@@ -34,12 +34,12 @@ class Fir2IrLazyPropertyAccessor(
     firParentClass: FirRegularClass,
     symbol: Fir2IrSimpleFunctionSymbol,
     isFakeOverride: Boolean
-) : AbstractFir2IrLazyFunction<FirMemberDeclaration<*>>(components, startOffset, endOffset, origin, symbol, isFakeOverride) {
+) : AbstractFir2IrLazyFunction<FirCallableMemberDeclaration<*>>(components, startOffset, endOffset, origin, symbol, isFakeOverride) {
     init {
         symbol.bind(this)
     }
 
-    override val fir: FirMemberDeclaration<*>
+    override val fir: FirCallableMemberDeclaration<*>
         get() = firAccessor ?: firParentProperty
 
     // TODO: investigate why some deserialized properties are inline

@@ -74,13 +74,13 @@ class Implementation(val element: Element, val name: String?) : FieldContainer, 
     val fieldsWithoutDefault by lazy { allFields.filter { it.defaultValueInImplementation == null } }
     val fieldsWithDefault by lazy { allFields.filter { it.defaultValueInImplementation != null } }
 
-    enum class Kind(val title: String, val hasLeafBuilder: Boolean) {
-        Interface("interface", false),
-        FinalClass("class", true),
-        OpenClass("open class", true),
-        AbstractClass("abstract class", false),
-        SealedClass("sealed class", false),
-        SealedInterface("sealed interface", false),
-        Object("object", false)
+    enum class Kind(val title: String, val hasLeafBuilder: Boolean, val isInterface: Boolean) {
+        Interface("interface", hasLeafBuilder = false, isInterface = true),
+        FinalClass("class", hasLeafBuilder = true, isInterface = false),
+        OpenClass("open class", hasLeafBuilder = true, isInterface = false),
+        AbstractClass("abstract class", hasLeafBuilder = false, isInterface = false),
+        SealedClass("sealed class", hasLeafBuilder = false, isInterface = false),
+        SealedInterface("sealed interface", hasLeafBuilder = false, isInterface = true),
+        Object("object", hasLeafBuilder = false, isInterface = false),
     }
 }

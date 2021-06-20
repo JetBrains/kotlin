@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirProperty : FirVariable<FirProperty>(), FirTypeParametersOwner, FirControlFlowGraphOwner, FirCallableMemberDeclaration<FirProperty> {
+abstract class FirProperty : FirVariable<FirProperty>(), FirTypeParametersOwner, FirControlFlowGraphOwner {
     abstract override val source: FirSourceElement?
     abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase
@@ -33,6 +33,9 @@ abstract class FirProperty : FirVariable<FirProperty>(), FirTypeParametersOwner,
     abstract override val attributes: FirDeclarationAttributes
     abstract override val returnTypeRef: FirTypeRef
     abstract override val receiverTypeRef: FirTypeRef?
+    abstract override val status: FirDeclarationStatus
+    abstract override val containerSource: DeserializedContainerSource?
+    abstract override val dispatchReceiverType: ConeKotlinType?
     abstract override val name: Name
     abstract override val initializer: FirExpression?
     abstract override val delegate: FirExpression?
@@ -42,14 +45,11 @@ abstract class FirProperty : FirVariable<FirProperty>(), FirTypeParametersOwner,
     abstract override val getter: FirPropertyAccessor?
     abstract override val setter: FirPropertyAccessor?
     abstract override val annotations: List<FirAnnotationCall>
-    abstract override val typeParameters: List<FirTypeParameter>
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
-    abstract override val containerSource: DeserializedContainerSource?
-    abstract override val dispatchReceiverType: ConeKotlinType?
     abstract override val symbol: FirPropertySymbol
     abstract val backingFieldSymbol: FirBackingFieldSymbol
     abstract val isLocal: Boolean
-    abstract override val status: FirDeclarationStatus
+    abstract override val typeParameters: List<FirTypeParameter>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitProperty(this, data)
 
@@ -71,6 +71,8 @@ abstract class FirProperty : FirVariable<FirProperty>(), FirTypeParametersOwner,
 
     abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirProperty
 
+    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirProperty
+
     abstract override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirProperty
 
     abstract override fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirProperty
@@ -82,8 +84,6 @@ abstract class FirProperty : FirVariable<FirProperty>(), FirTypeParametersOwner,
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirProperty
 
     abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirProperty
-
-    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirProperty
 
     abstract override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirProperty
 }

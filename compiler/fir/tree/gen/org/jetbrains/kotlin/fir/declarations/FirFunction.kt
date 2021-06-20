@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.FirTargetElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -15,7 +14,9 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -23,7 +24,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-sealed class FirFunction<E : FirFunction<E>> : FirPureAbstractElement(), FirCallableDeclaration<E>, FirTargetElement, FirTypeParameterRefsOwner, FirControlFlowGraphOwner, FirStatement {
+sealed class FirFunction<E : FirFunction<E>> : FirCallableMemberDeclaration<E>(), FirTargetElement, FirControlFlowGraphOwner, FirStatement {
     abstract override val source: FirSourceElement?
     abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase
@@ -33,6 +34,9 @@ sealed class FirFunction<E : FirFunction<E>> : FirPureAbstractElement(), FirCall
     abstract override val returnTypeRef: FirTypeRef
     abstract override val receiverTypeRef: FirTypeRef?
     abstract override val typeParameters: List<FirTypeParameterRef>
+    abstract override val status: FirDeclarationStatus
+    abstract override val containerSource: DeserializedContainerSource?
+    abstract override val dispatchReceiverType: ConeKotlinType?
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract override val symbol: FirFunctionSymbol<E>
     abstract val valueParameters: List<FirValueParameter>
@@ -63,6 +67,8 @@ sealed class FirFunction<E : FirFunction<E>> : FirPureAbstractElement(), FirCall
     abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirFunction<E>
 
     abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirFunction<E>
+
+    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirFunction<E>
 
     abstract fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirFunction<E>
 

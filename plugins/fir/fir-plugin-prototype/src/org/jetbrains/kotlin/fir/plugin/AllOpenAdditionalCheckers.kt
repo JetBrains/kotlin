@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.plugin
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirMemberDeclarationChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirSimpleFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
 import org.jetbrains.kotlin.fir.declarations.FirPluginKey
 import org.jetbrains.kotlin.fir.plugin.checkers.DummyNameChecker
@@ -17,6 +17,7 @@ class AllOpenAdditionalCheckers(session: FirSession) : FirAdditionalCheckersExte
         get() = AllOpenPluginKey
 
     override val declarationCheckers: DeclarationCheckers = object : DeclarationCheckers() {
-        override val memberDeclarationCheckers: Set<FirMemberDeclarationChecker> = setOf(DummyNameChecker)
+                override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>
+            get() = setOf(DummyNameChecker)
     }
 }
