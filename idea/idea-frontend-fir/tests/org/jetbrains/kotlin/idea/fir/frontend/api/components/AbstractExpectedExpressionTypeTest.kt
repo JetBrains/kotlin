@@ -5,26 +5,19 @@
 
 package org.jetbrains.kotlin.idea.fir.frontend.api.components
 
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.idea.fir.executeOnPooledThreadInReadAction
+import org.jetbrains.kotlin.idea.fir.test.framework.AbstractKtIdeaTestWithSingleTestFileTest
+import org.jetbrains.kotlin.idea.fir.test.framework.expressionMarkerProvider
 import org.jetbrains.kotlin.idea.frontend.api.analyse
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.utils.IgnoreTests
-import java.io.File
+import org.jetbrains.kotlin.test.services.TestModuleStructure
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractExpectedExpressionTypeTest : KotlinLightCodeInsightFixtureTestCase() {
-    override fun isFirPlugin() = true
-
-    protected fun doTest(path: String) {
-        val testDataFile = File(path)
-        val ktFile = myFixture.configureByText(testDataFile.name, FileUtil.loadFile(testDataFile)) as KtFile
-
-        val expressionAtCaret = ktFile.findElementAt(myFixture.caretOffset)?.parentOfType<KtExpression>()
-            ?: error("No element was found at caret or no <caret> is present in the test file")
+abstract class AbstractExpectedExpressionTypeTest : AbstractKtIdeaTestWithSingleTestFileTest() {
+    override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
+        val expressionAtCaret = testServices.expressionMarkerProvider.getElementOfTypAtCaret(ktFile) as KtExpression
 
         val actualExpectedTypeText: String? = executeOnPooledThreadInReadAction {
             analyse(ktFile) {
@@ -32,20 +25,11 @@ abstract class AbstractExpectedExpressionTypeTest : KotlinLightCodeInsightFixtur
             }
         }
 
-        IgnoreTests.runTestWithFixMeSupport(testDataFile.toPath()) {
-            KotlinTestUtils.assertEqualsToFile(File(path), testDataFile.getTextWithActualType(actualExpectedTypeText))
+        val actual = buildString {
+            appendLine("expression: ${expressionAtCaret.text}")
+            appendLine("expected type: $actualExpectedTypeText")
         }
-    }
 
-    private fun File.getTextWithActualType(actualType: String?) : String {
-        val text = FileUtil.loadFile(this)
-        val textWithoutTypeDirective = text.split('\n')
-            .filterNot { it.startsWith(EXPECTED_TYPE_TEXT_DIRECTIVE) }
-            .joinToString(separator = "\n")
-        return "$textWithoutTypeDirective\n$EXPECTED_TYPE_TEXT_DIRECTIVE $actualType"
-    }
-
-    companion object {
-        private const val EXPECTED_TYPE_TEXT_DIRECTIVE = "// EXPECTED_TYPE:"
+        testServices.assertions.assertEqualsToFile(testDataFileSibling(".txt"), actual)
     }
 }

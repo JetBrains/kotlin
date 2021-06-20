@@ -7,14 +7,18 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.api
 
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.ModuleSourceInfoBase
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
+import org.jetbrains.kotlin.fir.java.FirJavaElementFinder
 import org.jetbrains.kotlin.idea.fir.low.level.api.DeclarationProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.KtPackageProvider
+import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSourcesSession
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtElement
 
@@ -28,6 +32,8 @@ abstract class FirModuleResolveStateConfigurator {
     abstract fun createScopeForModuleLibraries(moduleInfo: ModuleSourceInfoBase): GlobalSearchScope
     abstract fun createSealedInheritorsProvider(): SealedClassInheritorsProvider
     abstract fun getModuleInfoFor(element: KtElement): ModuleInfo
+
+    abstract fun configureSourceSession(session: FirSession)
 }
 
 val Project.stateConfigurator: FirModuleResolveStateConfigurator

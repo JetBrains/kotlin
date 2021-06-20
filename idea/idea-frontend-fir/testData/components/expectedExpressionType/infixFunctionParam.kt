@@ -4,4 +4,3 @@ fun x() {
 
 infix fun Int.toCall(y: String): Char = 'a'
 
-// EXPECTED_TYPE: kotlin/String

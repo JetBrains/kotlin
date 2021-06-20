@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.sessions
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElementFinder
 import org.jetbrains.kotlin.analyzer.LibraryModuleInfo
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.ModuleSourceInfoBase
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
+import org.jetbrains.kotlin.fir.java.FirJavaElementFinder
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinDeserializedJvmSymbolsProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
@@ -77,7 +79,6 @@ internal object FirIdeSessionFactory {
             .filterIsInstanceTo<ModuleSourceInfoBase, MutableList<ModuleSourceInfoBase>>(mutableListOf())
         val session = FirIdeSourcesSession(dependentModules, project, searchScope, firBuilder, builtinTypes)
         sessionsCache[moduleInfo] = session
-
 
         return session.apply session@{
             val moduleData = FirModuleInfoBasedModuleData(moduleInfo).apply { bindSession(this@session) }
@@ -155,8 +156,8 @@ internal object FirIdeSessionFactory {
                     registerExtendedCommonCheckers()
                 }
             }.configure()
-
             configureSession?.invoke(this)
+            project.stateConfigurator.configureSourceSession(this)
         }
     }
 

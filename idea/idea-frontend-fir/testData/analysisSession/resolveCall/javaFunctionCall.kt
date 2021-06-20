@@ -1,6 +1,12 @@
+// FILE: call.kt
 fun call() {
     val javaClass = JavaClass()
-    javaClass.<selection>javaMethod()</selection>
+    javaClass.<expr>javaMethod()</expr>
+}
+
+// FILE: JavaClass.java
+class JavaClass {
+    void javaMethod() {}
 }
 
 // CALL: KtFunctionCall: targetFunction = /JavaClass.javaMethod(): kotlin.Unit

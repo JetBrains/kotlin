@@ -6,29 +6,25 @@
 package org.jetbrains.kotlin.idea.fir.frontend.api.components
 
 import org.jetbrains.kotlin.idea.fir.executeOnPooledThreadInReadAction
+import org.jetbrains.kotlin.idea.fir.test.framework.AbstractKtIdeaTestWithSingleTestFileTest
+import org.jetbrains.kotlin.idea.fir.test.framework.expressionMarkerProvider
 import org.jetbrains.kotlin.idea.frontend.api.analyse
-import org.jetbrains.kotlin.idea.fir.test.framework.AbstractKtIdeaTest
-import org.jetbrains.kotlin.idea.fir.test.framework.TestFileStructure
-import org.jetbrains.kotlin.idea.fir.test.framework.TestStructureExpectedDataBlock
-import org.jetbrains.kotlin.idea.fir.test.framework.TestStructureRenderer
-import org.jetbrains.kotlin.idea.util.application.executeOnPooledThread
 import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.services.TestModuleStructure
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractHLExpressionTypeTest : AbstractKtIdeaTest() {
-    override fun doTestByFileStructure(fileStructure: TestFileStructure) {
-        val expression = fileStructure.mainFile.selectedExpression as KtExpression?
-            ?: error("Selected expression was not provided")
+abstract class AbstractHLExpressionTypeTest : AbstractKtIdeaTestWithSingleTestFileTest() {
+    override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
+        val expression = testServices.expressionMarkerProvider.getSelectedElement(ktFile) as KtExpression
         val type = executeOnPooledThreadInReadAction {
             analyse(expression) { expression.getKtType().render() }
         }
-        val actual = TestStructureRenderer.render(
-            fileStructure,
-            TestStructureExpectedDataBlock(
-                "expression: ${expression.text}",
-                "type: $type"
-            )
-        )
-        KotlinTestUtils.assertEqualsToFile(fileStructure.filePath.toFile(), actual)
+        val actual = buildString {
+            appendLine("expression: ${expression.text}")
+            appendLine("type: $type")
+        }
+        testServices.assertions.assertEqualsToFile(testDataFileSibling(".txt"), actual)
     }
 }

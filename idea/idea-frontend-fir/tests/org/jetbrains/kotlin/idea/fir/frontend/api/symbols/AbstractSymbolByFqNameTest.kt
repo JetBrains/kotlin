@@ -7,12 +7,24 @@ package org.jetbrains.kotlin.idea.fir.frontend.api.symbols
 
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.fir.frontend.api.SymbolByFqName
-import org.jetbrains.kotlin.idea.fir.test.framework.TestFileStructure
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractSymbolByFqNameTest : AbstractSymbolTest() {
-    override fun KtAnalysisSession.collectSymbols(fileStructure: TestFileStructure): List<KtSymbol> {
-        val symbolData = SymbolByFqName.getSymbolDataFromFile(fileStructure.filePath)
+    override fun KtAnalysisSession.collectSymbols(ktFile: KtFile, testServices: TestServices): List<KtSymbol> {
+        val symbolData = SymbolByFqName.getSymbolDataFromFile(testDataPath)
         return with(symbolData) { toSymbols() }
+    }
+
+    override fun configureTest(builder: TestConfigurationBuilder) {
+        super.configureTest(builder)
+        with(builder) {
+            defaultDirectives {
+                +JvmEnvironmentConfigurationDirectives.WITH_STDLIB
+            }
+        }
     }
 }

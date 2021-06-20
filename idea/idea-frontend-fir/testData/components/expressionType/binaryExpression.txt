@@ -1,0 +1,2 @@
+expression: 1 + 2
+type: kotlin.Int

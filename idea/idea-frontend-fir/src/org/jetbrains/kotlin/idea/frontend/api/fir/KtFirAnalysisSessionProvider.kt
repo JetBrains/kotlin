@@ -41,7 +41,7 @@ class KtFirAnalysisSessionProvider(private val project: Project) : KtAnalysisSes
     }
 
     @TestOnly
-    fun clearCaches() {
+    override fun clearCaches() {
         cache.clear()
     }
 }

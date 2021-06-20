@@ -3,4 +3,3 @@ fun foo() {
     y = x.a<caret>v
 }
 
-// EXPECTED_TYPE: kotlin/Int

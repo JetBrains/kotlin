@@ -12,6 +12,7 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Computable
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.frontend.api.tokens.AlwaysAccessibleValidityTokenFactory
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ReadActionConfinementValidityTokenFactory
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityTokenFactory
@@ -64,6 +65,9 @@ abstract class KtAnalysisSessionProvider : Disposable {
             noWriteActionInAnalyseCallChecker.afterLeavingAnalysisContext()
         }
     }
+
+    @TestOnly
+    abstract fun clearCaches()
 
     override fun dispose() {}
 

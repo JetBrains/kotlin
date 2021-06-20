@@ -31,6 +31,7 @@ dependencies {
     testCompile(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
     testCompile(project(":kotlin-test:kotlin-test-junit"))
     testApiJUnit5()
+    testCompile(project(":kotlin-reflect"))
 }
 
 sourceSets {

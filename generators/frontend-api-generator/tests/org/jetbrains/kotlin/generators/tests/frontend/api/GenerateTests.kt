@@ -6,6 +6,16 @@
 package org.jetbrains.kotlin.generators.tests.frontend.api
 
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
+import org.jetbrains.kotlin.idea.fir.frontend.api.components.AbstractExpectedExpressionTypeTest
+import org.jetbrains.kotlin.idea.fir.frontend.api.components.AbstractHLExpressionTypeTest
+import org.jetbrains.kotlin.idea.fir.frontend.api.components.AbstractOverriddenDeclarationProviderTest
+import org.jetbrains.kotlin.idea.fir.frontend.api.components.AbstractRendererTest
+import org.jetbrains.kotlin.idea.fir.frontend.api.fir.AbstractResolveCallTest
+import org.jetbrains.kotlin.idea.fir.frontend.api.scopes.AbstractFileScopeTest
+import org.jetbrains.kotlin.idea.fir.frontend.api.scopes.AbstractMemberScopeByFqNameTest
+import org.jetbrains.kotlin.idea.fir.frontend.api.symbols.AbstractSymbolByFqNameTest
+import org.jetbrains.kotlin.idea.fir.frontend.api.symbols.AbstractSymbolByPsiTest
+import org.jetbrains.kotlin.idea.fir.frontend.api.symbols.AbstractSymbolByReferenceTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirLazyBodiesCalculatorTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirLazyDeclarationResolveTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirOnAirResolveTest
@@ -26,6 +36,50 @@ fun main(args: Array<String>) {
 
 
     generateTestGroupSuiteWithJUnit5(args) {
+
+        testGroup("idea/idea-frontend-fir/tests", "idea/idea-frontend-fir/testData") {
+            testClass<AbstractResolveCallTest> {
+                model("analysisSession/resolveCall")
+            }
+
+            testClass<AbstractMemberScopeByFqNameTest> {
+                model("memberScopeByFqName")
+            }
+
+            testClass<AbstractFileScopeTest> {
+                model("fileScopeTest", extension = "kt")
+            }
+
+            testClass<AbstractSymbolByPsiTest> {
+                model("symbols/symbolByPsi")
+            }
+
+            testClass<AbstractSymbolByFqNameTest> {
+                model("symbols/symbolByFqName")
+            }
+
+            // todo
+//            testClass<AbstractSymbolByReferenceTest> {
+//                model("symbols/symbolByReference")
+//            }
+
+            testClass<AbstractExpectedExpressionTypeTest> {
+                model("components/expectedExpressionType")
+            }
+
+            testClass<AbstractOverriddenDeclarationProviderTest> {
+                model("components/overridenDeclarations")
+            }
+
+            testClass<AbstractHLExpressionTypeTest> {
+                model("components/expressionType")
+            }
+
+            testClass<AbstractRendererTest> {
+                model("components/declarationRenderer")
+            }
+        }
+
         testGroup("idea/idea-frontend-fir/idea-fir-low-level-api/tests", "compiler/fir/raw-fir/psi2fir/testData") {
             testClass<AbstractFirLazyBodiesCalculatorTest> {
                 model("rawBuilder", testMethod = "doTest")

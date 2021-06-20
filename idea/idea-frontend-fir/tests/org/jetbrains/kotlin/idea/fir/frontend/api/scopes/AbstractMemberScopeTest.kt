@@ -10,11 +10,12 @@ import org.jetbrains.kotlin.idea.fir.frontend.api.SymbolByFqName
 import org.jetbrains.kotlin.idea.fir.frontend.api.symbols.AbstractSymbolByFqNameTest
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
-import org.jetbrains.kotlin.idea.fir.test.framework.TestFileStructure
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractMemberScopeByFqNameTest : AbstractSymbolByFqNameTest() {
-    override fun KtAnalysisSession.collectSymbols(fileStructure: TestFileStructure): List<KtSymbol> {
-        val symbolData = SymbolByFqName.getSymbolDataFromFile(fileStructure.filePath)
+    override fun KtAnalysisSession.collectSymbols(ktFile: KtFile, testServices: TestServices): List<KtSymbol> {
+        val symbolData = SymbolByFqName.getSymbolDataFromFile(testDataPath)
         val symbols = with(symbolData) { toSymbols() }
         val classSymbol = symbols.singleOrNull() as? KtClassOrObjectSymbol
             ?: error("Should be a single class symbol, but $symbols found")

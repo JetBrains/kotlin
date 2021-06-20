@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.idea.fir.frontend.api.fir
 
-import com.intellij.openapi.editor.CaretState
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import com.intellij.testFramework.LightCodeInsightTestCase
-import org.jetbrains.kotlin.idea.fir.addExternalTestFiles
 import org.jetbrains.kotlin.idea.fir.executeOnPooledThreadInReadAction
+import org.jetbrains.kotlin.idea.fir.test.framework.AbstractKtSingleModuleTest
+import org.jetbrains.kotlin.idea.fir.test.framework.expressionMarkerProvider
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.analyse
 import org.jetbrains.kotlin.idea.frontend.api.calls.KtCall
@@ -20,54 +18,26 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionLikeSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
-import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.psi.KtCallExpression
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtValueArgument
-import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.util.KtTestUtil
-import java.io.File
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.test.services.TestModuleStructure
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.assertions
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.javaGetter
 
+abstract class AbstractResolveCallTest : AbstractKtSingleModuleTest() {
+    override fun doTestByFileStructure(ktFiles: List<KtFile>, moduleStructure: TestModuleStructure, testServices: TestServices) {
+        val ktFile = ktFiles.first()
+        val expression = testServices.expressionMarkerProvider.getSelectedElement(ktFile)
 
-abstract class AbstractResolveCallTest : @Suppress("DEPRECATION") LightCodeInsightTestCase() {
-    override fun getTestDataPath(): String = KtTestUtil.getHomeDirectory() + "/"
-
-    protected fun doTest(path: String) {
-        addExternalTestFiles(path)
-        configureByFile(path)
-        val elements = editor.caretModel.caretsAndSelections.map { selection ->
-            getSingleSelectedElement(selection)
-        }
-
-        val actualText = executeOnPooledThreadInReadAction {
-            val callInfos = analyse(file as KtFile) {
-                elements.map { resolveCall(it) }
+        val actual = executeOnPooledThreadInReadAction {
+            analyse(ktFile) {
+                resolveCall(expression)?.stringRepresentation()
             }
-
-            if (callInfos.isEmpty()) {
-                error("There are should be at least one call selected")
-            }
-
-            val textWithoutLatestComments = run {
-                val rawText = File(path).readText()
-                """(?m)^// CALL:\s.*$""".toRegex().replace(rawText, "").trimEnd()
-            }
-            buildString {
-                append(textWithoutLatestComments)
-                append("\n\n")
-                analyse(file as KtFile) {
-                    callInfos.joinTo(this@buildString, separator = "\n") { info ->
-                        "// CALL: ${info?.stringRepresentation()}"
-                    }
-                }
-            }
-        }
-        KotlinTestUtils.assertEqualsToFile(File(path), actualText)
+        } ?: "null"
+        testServices.assertions.assertEqualsToFile(testDataFileSibling(".txt"), actual)
     }
 
     private fun KtAnalysisSession.resolveCall(element: PsiElement): KtCall? = when (element) {
@@ -77,21 +47,6 @@ abstract class AbstractResolveCallTest : @Suppress("DEPRECATION") LightCodeInsig
         else -> error("Selected should be either KtCallExpression or KtBinaryExpression but was $element")
     }
 
-
-    private fun getSingleSelectedElement(selection: CaretState): PsiElement {
-        val selectionRange = selection.getTextRange()
-        val elements = file.elementsInRange(selectionRange)
-        if (elements.size != 1) {
-            val selectionText = file.text.substring(selectionRange.startOffset, selectionRange.endOffset)
-            error("Single element should be found for selection `$selectionText`, but $elements were found")
-        }
-        return elements.first()
-    }
-
-    private fun CaretState.getTextRange() = TextRange.create(
-        editor.logicalPositionToOffset(selectionStart!!),
-        editor.logicalPositionToOffset(selectionEnd!!)
-    )
 }
 
 private fun KtCall.stringRepresentation(): String {

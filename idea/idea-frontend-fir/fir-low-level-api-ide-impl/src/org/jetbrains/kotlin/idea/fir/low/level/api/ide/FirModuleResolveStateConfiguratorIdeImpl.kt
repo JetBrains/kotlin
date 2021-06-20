@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analyzer.ModuleSourceInfoBase
 import org.jetbrains.kotlin.analyzer.SdkInfoBase
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
 import org.jetbrains.kotlin.fir.dependenciesWithoutSelf
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
@@ -98,5 +99,8 @@ class FirModuleResolveStateConfiguratorIdeImpl(private val project: Project) : F
 
     override fun getModuleInfoFor(element: KtElement): ModuleInfo {
         return element.getModuleInfo()
+    }
+
+    override fun configureSourceSession(session: FirSession) {
     }
 }

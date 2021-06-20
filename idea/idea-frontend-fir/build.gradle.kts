@@ -18,19 +18,35 @@ dependencies {
     compile(project(":compiler:light-classes"))
     compile(intellijCoreDep())
 
-    testCompile(project(":idea:idea-fir"))
-    testCompile(intellijDep())
-    testCompile(intellijCoreDep())
-    testCompile(toolsJar())
-    testCompile(project(":kotlin-reflect"))
-    testCompile(projectTests(":idea"))
+    testCompile(projectTests(":idea:idea-frontend-fir:idea-fir-low-level-api"))
     testCompile(projectTests(":compiler:tests-common"))
-    testCompile(projectTests(":idea:idea-test-framework"))
+    testCompile(projectTests(":compiler:test-infrastructure-utils"))
+    testCompile(projectTests(":compiler:test-infrastructure"))
+    testCompile(projectTests(":compiler:tests-common-new"))
+    testCompile(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
     testCompile(project(":kotlin-test:kotlin-test-junit"))
-    testCompile(commonDep("junit:junit"))
-    testCompile(projectTests(":idea:idea-frontend-independent"))
+    testCompile(toolsJar())
+    testApiJUnit5()
 
-//    compile(intellijPluginDep("java"))
+    testRuntimeOnly(intellijDep()) {
+        includeJars(
+            "jps-model",
+            "extensions",
+            "util",
+            "platform-api",
+            "platform-impl",
+            "idea",
+            "guava",
+            "trove4j",
+            "asm-all",
+            "log4j",
+            "jdom",
+            "streamex",
+            "bootstrap",
+            "jna",
+            rootProject = rootProject
+        )
+    }
 }
 
 sourceSets {
@@ -38,18 +54,14 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest {
+projectTest(jUnit5Enabled = true) {
     dependsOn(":dist")
     workingDir = rootDir
-    val useFirIdeaPlugin = kotlinBuildProperties.useFirIdeaPlugin
-    doFirst {
-        if (!useFirIdeaPlugin) {
-            error("Test task in the module should be executed with -Pidea.fir.plugin=true")
-        }
-    }
+    useJUnitPlatform()
 }
 
 testsJar()
+
 
 val generatorClasspath by configurations.creating
 

@@ -6,4 +6,3 @@ fun x() {
 
 fun <T> toCall(x: T, y: T): Char = 'a'
 
-// EXPECTED_TYPE: kotlin/Int

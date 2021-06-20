@@ -5,37 +5,40 @@
 
 package org.jetbrains.kotlin.idea.fir.frontend.api.components
 
-import com.intellij.psi.util.parentOfType
-import com.intellij.psi.util.parentsOfType
 import org.jetbrains.kotlin.idea.fir.executeOnPooledThreadInReadAction
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.parentsOfType
+import org.jetbrains.kotlin.idea.fir.test.framework.*
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.analyse
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSyntheticJavaPropertySymbol
-import org.jetbrains.kotlin.idea.fir.test.framework.AbstractKtIdeaTest
-import org.jetbrains.kotlin.idea.fir.test.framework.TestFileStructure
-import org.jetbrains.kotlin.idea.fir.test.framework.TestStructureExpectedDataBlock
-import org.jetbrains.kotlin.idea.fir.test.framework.TestStructureRenderer
 import org.jetbrains.kotlin.idea.frontend.api.components.KtTypeRendererOptions
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.services.TestModuleStructure
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractOverriddenDeclarationProviderTest : AbstractKtIdeaTest() {
-    override fun doTestByFileStructure(fileStructure: TestFileStructure) {
-        val signatures = executeOnPooledThreadInReadAction {
-            analyse(fileStructure.mainKtFile) {
-                val symbol = getElementOfTypeAtCaret<KtDeclaration>().getSymbol() as KtCallableSymbol
+abstract class AbstractOverriddenDeclarationProviderTest : AbstractKtSingleModuleTest() {
+    override fun doTestByFileStructure(ktFiles: List<KtFile>, moduleStructure: TestModuleStructure, testServices: TestServices) {
+        val declaration = testServices.expressionMarkerProvider.getElementOfTypAtCaret<KtDeclaration>(ktFiles.first())
+
+        val actual = executeOnPooledThreadInReadAction {
+            analyse(ktFiles.first()) {
+                val symbol = declaration.getSymbol() as KtCallableSymbol
                 val allOverriddenSymbols = symbol.getAllOverriddenSymbols().map { renderSignature(it) }
                 val directlyOverriddenSymbols = symbol.getDirectlyOverriddenSymbols().map { renderSignature(it) }
-                listOf(
-                    TestStructureExpectedDataBlock("ALL:", allOverriddenSymbols),
-                    TestStructureExpectedDataBlock("DIRECT:", directlyOverriddenSymbols),
-                )
+                buildString {
+                    appendLine("ALL:")
+                    allOverriddenSymbols.forEach { appendLine("  $it") }
+                    appendLine("DIRECT:")
+                    directlyOverriddenSymbols.forEach { appendLine("  $it") }
+                }
             }
         }
-        val actual = TestStructureRenderer.render(fileStructure, signatures)
-        KotlinTestUtils.assertEqualsToFile(fileStructure.filePath.toFile(), actual)
+        testServices.assertions.assertEqualsToFile(testDataFileSibling(".txt"), actual)
     }
 
     private fun KtAnalysisSession.renderSignature(symbol: KtCallableSymbol): String = buildString {

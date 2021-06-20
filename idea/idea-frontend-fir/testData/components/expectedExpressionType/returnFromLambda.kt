@@ -7,4 +7,3 @@ fun x(): Int {
 
 fun receiveLambda(x: () -> Int){}
 
-// EXPECTED_TYPE: kotlin/Int

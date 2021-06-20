@@ -6,4 +6,3 @@ fun x() {
 
 fun toCall(x: Int, y: String, z: Boolean): Char = 'a'
 
-// EXPECTED_TYPE: kotlin/Boolean

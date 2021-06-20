@@ -1,0 +1,1 @@
+KtFunctionCall: targetFunction = /to(<receiver>: A, other: B): A

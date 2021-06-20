@@ -1,0 +1,1 @@
+KtFunctionCall: targetFunction = /function(<receiver>: kotlin.String, a: kotlin.Int): kotlin.Unit

@@ -40,7 +40,7 @@ private object CheckersFactory {
         useExtendedCheckers: Boolean
     ): List<AbstractDiagnosticCollectorComponent> {
         val moduleInfo = session.moduleData.moduleSourceInfo
-        val platform = moduleInfo.platform.componentPlatforms.single()
+        val platform = moduleInfo.platform.componentPlatforms.first()
         val declarationCheckers = createDeclarationCheckers(useExtendedCheckers, platform)
         val expressionCheckers = createExpressionCheckers(useExtendedCheckers)
         val typeCheckers = createTypeCheckers(useExtendedCheckers)

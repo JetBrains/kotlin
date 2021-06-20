@@ -70,7 +70,6 @@ import org.jetbrains.kotlin.idea.editor.AbstractMultiLineStringIndentTest
 import org.jetbrains.kotlin.idea.editor.backspaceHandler.AbstractBackspaceHandlerTest
 import org.jetbrains.kotlin.idea.editor.quickDoc.AbstractQuickDocProviderTest
 import org.jetbrains.kotlin.idea.filters.AbstractKotlinExceptionFilterTest
-import org.jetbrains.kotlin.idea.fir.AbstractKtDeclarationAndFirDeclarationEqualityChecker
 import org.jetbrains.kotlin.idea.fir.asJava.classes.AbstractFirClassLoadingTest
 import org.jetbrains.kotlin.idea.fir.asJava.classes.AbstractFirLightClassTest
 import org.jetbrains.kotlin.idea.fir.asJava.classes.AbstractFirLightFacadeClassTest
@@ -86,29 +85,13 @@ import org.jetbrains.kotlin.idea.fir.highlighter.AbstractFirHighlightingTest
 import org.jetbrains.kotlin.idea.fir.inspections.AbstractHLInspectionTest
 import org.jetbrains.kotlin.idea.fir.inspections.AbstractHLLocalInspectionTest
 import org.jetbrains.kotlin.idea.fir.intentions.AbstractHLIntentionTest
-import org.jetbrains.kotlin.idea.fir.low.level.api.*
-import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostic.compiler.based.AbstractDiagnosisCompilerTestDataSpecTest
-import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostic.compiler.based.AbstractDiagnosisCompilerTestDataTest
-import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.AbstractFileStructureTest
-import org.jetbrains.kotlin.idea.fir.low.level.api.resolve.AbstractInnerDeclarationsResolvePhaseTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.AbstractSessionsInvalidationTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.trackers.AbstractProjectWideOutOfBlockKotlinModificationTrackerTest
 import org.jetbrains.kotlin.idea.fir.quickfix.AbstractHighLevelQuickFixMultiFileTest
 import org.jetbrains.kotlin.idea.fir.quickfix.AbstractHighLevelQuickFixTest
 import org.jetbrains.kotlin.idea.fir.resolve.AbstractFirReferenceResolveTest
 import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
-import org.jetbrains.kotlin.idea.frontend.api.components.*
-import org.jetbrains.kotlin.idea.fir.frontend.api.fir.AbstractResolveCallTest
-import org.jetbrains.kotlin.idea.fir.frontend.api.scopes.AbstractFileScopeTest
-import org.jetbrains.kotlin.idea.fir.frontend.api.scopes.AbstractMemberScopeByFqNameTest
-import org.jetbrains.kotlin.idea.fir.frontend.api.symbols.AbstractMemoryLeakInSymbolsTest
-import org.jetbrains.kotlin.idea.fir.frontend.api.symbols.AbstractSymbolByFqNameTest
-import org.jetbrains.kotlin.idea.fir.frontend.api.symbols.AbstractSymbolByPsiTest
-import org.jetbrains.kotlin.idea.fir.frontend.api.symbols.AbstractSymbolByReferenceTest
 import org.jetbrains.kotlin.idea.fir.inspections.AbstractFe10BindingIntentionTest
-import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostic.AbstractDiagnosticTraversalCounterTest
-import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostic.AbstractFirContextCollectionTest
-//import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.AbstractFileStructureAndOutOfBlockModificationTrackerConsistencyTest
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyTest
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyWithLibTest
 import org.jetbrains.kotlin.idea.highlighter.*
@@ -995,59 +978,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("idea/idea-frontend-fir/tests", "idea/idea-frontend-fir/testData") {
-            testClass<AbstractKtDeclarationAndFirDeclarationEqualityChecker> {
-                model("ktDeclarationAndFirDeclarationEqualityChecker")
-            }
 
-            testClass<AbstractResolveCallTest> {
-                model("analysisSession/resolveCall")
-            }
-
-            testClass<AbstractMemberScopeByFqNameTest> {
-                model("memberScopeByFqName")
-            }
-
-            testClass<AbstractFileScopeTest> {
-                model("fileScopeTest", extension = "kt")
-            }
-
-            testClass<AbstractSymbolByPsiTest> {
-                model("symbols/symbolByPsi")
-            }
-
-            testClass<AbstractSymbolByFqNameTest> {
-                model("symbols/symbolByFqName")
-            }
-
-            testClass<AbstractSymbolByReferenceTest> {
-                model("symbols/symbolByReference")
-            }
-
-            testClass<AbstractMemoryLeakInSymbolsTest> {
-                model("symbolMemoryLeak")
-            }
-
-            testClass<AbstractReturnExpressionTargetTest> {
-                model("components/returnExpressionTarget")
-            }
-
-            testClass<AbstractExpectedExpressionTypeTest> {
-                model("components/expectedExpressionType")
-            }
-
-            testClass<AbstractOverriddenDeclarationProviderTest> {
-                model("components/overridenDeclarations")
-            }
-
-            testClass<AbstractHLExpressionTypeTest> {
-                model("components/expressionType")
-            }
-
-            testClass<AbstractRendererTest> {
-                model("components/declarationRenderer")
-            }
-        }
 
 
         testGroup("idea/idea-frontend-fir/fir-low-level-api-ide-impl/tests", "idea/idea-frontend-fir/idea-fir-low-level-api/testdata") {

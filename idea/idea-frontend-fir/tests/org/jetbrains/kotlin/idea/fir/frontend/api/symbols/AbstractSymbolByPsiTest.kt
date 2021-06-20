@@ -6,14 +6,16 @@
 package org.jetbrains.kotlin.idea.fir.frontend.api.symbols
 
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
-import org.jetbrains.kotlin.idea.fir.test.framework.TestFileStructure
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
+import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractSymbolByPsiTest : AbstractSymbolTest() {
-    override fun KtAnalysisSession.collectSymbols(fileStructure: TestFileStructure): List<KtSymbol> =
-        fileStructure.mainKtFile.collectDescendantsOfType<KtDeclaration>().map { declaration ->
+    override fun KtAnalysisSession.collectSymbols(ktFile: KtFile, testServices: TestServices): List<KtSymbol> {
+        return ktFile.collectDescendantsOfType<KtDeclaration>().map { declaration ->
             declaration.getSymbol()
         }
+    }
 }

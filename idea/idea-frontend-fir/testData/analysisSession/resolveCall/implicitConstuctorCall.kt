@@ -1,7 +1,7 @@
 class A
 
 fun call() {
-    val a = <selection>A()</selection>
+    val a = <expr>A()</expr>
 }
 
 // CALL: KtFunctionCall: targetFunction = <constructor>(): A

@@ -7,13 +7,14 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.test.base
 
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.util.SimpleModificationTracker
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analyzer.ModuleSourceInfoBase
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.KotlinOutOfBlockModificationTrackerFactory
 
 internal class KotlinOutOfBlockModificationTrackerFactoryTestImpl : KotlinOutOfBlockModificationTrackerFactory() {
     private val projectWide = SimpleModificationTracker()
     private val library = SimpleModificationTracker()
-    private val forModule = mutableMapOf<ModuleSourceInfoBase, ModificationTracker>()
+    private val forModule = mutableMapOf<ModuleSourceInfoBase, SimpleModificationTracker>()
 
     override fun createProjectWideOutOfBlockModificationTracker(): ModificationTracker {
         return projectWide
@@ -26,5 +27,12 @@ internal class KotlinOutOfBlockModificationTrackerFactoryTestImpl : KotlinOutOfB
 
     override fun createLibraryOutOfBlockModificationTracker(): ModificationTracker {
         return library
+    }
+
+    @TestOnly
+    override fun incrementModificationsCount() {
+        projectWide.incModificationCount()
+        library.incModificationCount()
+        forModule.values.forEach { it.incModificationCount() }
     }
 }

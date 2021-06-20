@@ -1,5 +1,5 @@
 fun x() {
-    <selection>foo(1)</selection>
+    <expr>foo(1)</expr>
 }
 
 fun foo(){}

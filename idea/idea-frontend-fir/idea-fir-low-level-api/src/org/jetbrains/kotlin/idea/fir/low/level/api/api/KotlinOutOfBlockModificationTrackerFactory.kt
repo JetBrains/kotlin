@@ -9,6 +9,7 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.ModuleSourceInfoBase
 
@@ -17,6 +18,9 @@ abstract class KotlinOutOfBlockModificationTrackerFactory {
     abstract fun createProjectWideOutOfBlockModificationTracker(): ModificationTracker
     abstract fun createModuleWithoutDependenciesOutOfBlockModificationTracker(moduleInfo: ModuleSourceInfoBase): ModificationTracker
     abstract fun createLibraryOutOfBlockModificationTracker(): ModificationTracker
+
+    @TestOnly
+    abstract fun incrementModificationsCount()
 }
 
 fun Project.createProjectWideOutOfBlockModificationTracker() =

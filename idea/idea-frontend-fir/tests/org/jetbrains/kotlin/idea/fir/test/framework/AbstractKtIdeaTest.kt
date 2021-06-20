@@ -5,96 +5,116 @@
 
 package org.jetbrains.kotlin.idea.fir.test.framework
 
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.psi.PsiElement
-import com.intellij.psi.util.parentOfType
-import org.jetbrains.kotlin.idea.fir.test.framework.SelectedExpressionProvider
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import com.intellij.mock.MockProject
+import com.intellij.psi.PsiElementFinder
+import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
+import org.jetbrains.kotlin.fir.session.FirModuleInfoBasedModuleData
+import org.jetbrains.kotlin.idea.fir.low.level.api.compiler.based.FirModuleResolveStateConfiguratorForSingleModuleTestImpl
+import org.jetbrains.kotlin.idea.fir.low.level.api.compiler.based.TestModuleInfo
+import org.jetbrains.kotlin.idea.fir.low.level.api.compiler.based.registerTestServices
 import org.jetbrains.kotlin.idea.fir.test.framework.*
-import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.idea.frontend.api.InvalidWayOfUsingAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSessionProvider
+import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSessionProvider
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
-import java.io.File
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.testConfiguration
+import org.jetbrains.kotlin.test.frontend.fir.FirModuleInfoProvider
+import org.jetbrains.kotlin.test.frontend.fir.firModuleInfoProvider
+import org.jetbrains.kotlin.test.model.DependencyKind
+import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.impl.TemporaryDirectoryManagerImpl
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.TestInfo
+import java.nio.file.Path
+import java.nio.file.Paths
+import kotlin.io.path.nameWithoutExtension
 
-abstract class AbstractKtIdeaTest : KotlinLightCodeInsightFixtureTestCase() {
-    protected open val allowedDirectives: List<TestFileDirective<*>> = emptyList()
+abstract class AbstractKtIdeaTest {
+    private lateinit var testInfo: KotlinTestInfo
 
-    protected fun doTest(path: String) {
-        val testDataFile = File(path)
-        val text = FileUtil.loadFile(testDataFile)
-        val testFileStructure = createTestFileStructure(text, testDataFile)
-        doTestByFileStructure(testFileStructure)
+    private val configure: TestConfigurationBuilder.() -> Unit = {
+        globalDefaults {
+            frontend = FrontendKinds.FIR
+            targetPlatform = JvmPlatforms.defaultJvmPlatform
+            dependencyKind = DependencyKind.Source
+        }
+        useConfigurators(
+            ::CommonEnvironmentConfigurator,
+            ::JvmEnvironmentConfigurator,
+        )
+        assertions = JUnit5Assertions
+        useAdditionalService<TemporaryDirectoryManager>(::TemporaryDirectoryManagerImpl)
+
+        useSourcePreprocessor(::ExpressionMarkersSourceFilePreprocessor)
+        useAdditionalService(::ExpressionMarkerProvider)
+        useAdditionalService(::FirModuleInfoProvider)
+
+        configureTest(this)
+
+        this.testInfo = this@AbstractKtIdeaTest.testInfo
     }
 
-    private fun createTestFileStructure(text: String, testDataFile: File): TestFileStructure {
-        val files = FileSplitter.splitIntoFiles(text, testDataFile.name)
-        val mainFile = createTestFile(files.first(), isMainFile = true)
-        val testFiles = files.drop(1).map { file ->
-            createTestFile(file, isMainFile = false)
+    protected lateinit var testDataPath: Path
+
+    protected fun testDataFileSibling(extension: String): Path {
+        val extensionWithDot = "." + extension.removePrefix(".")
+        return testDataPath.resolveSibling(testDataPath.nameWithoutExtension + extensionWithDot)
+    }
+
+    open fun configureTest(builder: TestConfigurationBuilder) {}
+
+
+    @OptIn(InvalidWayOfUsingAnalysisSession::class)
+    protected fun runTest(path: String) {
+        testDataPath = Paths.get(path)
+        val testConfiguration = testConfiguration(path, configure)
+        val testServices = testConfiguration.testServices
+        val moduleStructure = testConfiguration.moduleStructureExtractor.splitTestDataByModules(
+            path,
+            testConfiguration.directives,
+        ).also {
+            testConfiguration.testServices.register(TestModuleStructure::class, it)
         }
-        val directives = parseDirectives(text)
-        return TestFileStructure(
-            filePath = testDataFile.toPath(),
-            caretPosition = getCaretPosition(text),
-            directives = directives,
-            mainFile = mainFile as TestFile.KtTestRootFile,
-            otherFiles = testFiles
+
+        val singleModule = moduleStructure.modules.single()
+        val project = testServices.compilerConfigurationProvider.getProject(singleModule)
+        val ktFiles = testServices.sourceFileProvider.getKtFilesForSourceFiles(singleModule.files, project)
+
+        PsiElementFinder.EP.getPoint(project).unregisterExtension(JavaElementFinder::class.java)
+
+        val moduleInfo = TestModuleInfo(singleModule)
+        testServices.firModuleInfoProvider.registerModuleData(singleModule, FirModuleInfoBasedModuleData(moduleInfo))
+        val configurator = FirModuleResolveStateConfiguratorForSingleModuleTestImpl(testServices, singleModule, ktFiles, moduleInfo)
+
+        with(project as MockProject) {
+            registerTestServices(configurator, ktFiles)
+            registerService(KtAnalysisSessionProvider::class.java, KtFirAnalysisSessionProvider::class.java)
+        }
+
+        doTestByFileStructure(ktFiles.values.toList(), moduleStructure, testServices)
+    }
+
+    abstract fun doTestByFileStructure(ktFiles: List<KtFile>, moduleStructure: TestModuleStructure, testServices: TestServices)
+
+    @BeforeEach
+    fun initTestInfo(testInfo: TestInfo) {
+        this.testInfo = KotlinTestInfo(
+            className = testInfo.testClass.orElseGet(null)?.name ?: "_undefined_",
+            methodName = testInfo.testMethod.orElseGet(null)?.name ?: "_testUndefined_",
+            tags = testInfo.tags
         )
     }
 
-    private fun getCaretPosition(text: String) = text.indexOfOrNull(KtTest.CARET_SYMBOL)
-
-    private fun parseDirectives(text: String): TestFileDirectives {
-        val directives = text.lineSequence().mapNotNull(::extractDirectiveIfAny)
-        return TestFileDirectives(directives.toMap())
-    }
-
-    private fun extractDirectiveIfAny(line: String): Pair<String, Any>? {
-        val directive = allowedDirectives.firstOrNull { directive -> line.startsWith(directive.name) } ?: return null
-        val value = line.substringAfter(directive.name).trim()
-        val parsedValue = directive.parse(value)
-            ?: error("Invalid ${directive.name} value `$value`")
-        return directive.name to parsedValue
-    }
-
-    private fun createTestFile(file: FileSplitter.FileNameWithText, isMainFile: Boolean): TestFile {
-        return if (isMainFile) {
-            val (ktFile, expression) = SelectedExpressionProvider.getFileWithSelectedExpressions(file.text) {
-                myFixture.configureByText(file.name, it) as KtFile
-            }
-            TestFile.KtTestRootFile(ktFile, expression)
-        } else {
-            TestFile.createByPsiFile(myFixture.addFileToProject(file.name, file.text))
-        }
-    }
-
-    protected inline fun <reified P : PsiElement> getElementOfTypeAtCaret(): P =
-        file.findElementAt(myFixture.caretOffset)
-            ?.parentOfType<P>()
-            ?: error("No ${P::class.simpleName} found at caret with position ${myFixture.caretOffset}")
-
-    abstract fun doTestByFileStructure(fileStructure: TestFileStructure)
+    protected fun getCaretPosition(text: String) = text.indexOfOrNull(KtTest.CARET_SYMBOL)
 }
 
-private object FileSplitter {
-    data class FileNameWithText(val name: String, val text: String)
 
-    fun splitIntoFiles(text: String, defaultName: String): List<FileNameWithText> {
-        val result = mutableListOf<FileNameWithText>()
-        val stopAt = text.indexOfOrNull(KtTest.RESULT_DIRECTIVE) ?: text.length
-        var index = text.indexOfOrNull(KtTest.FILE_DIRECTIVE) ?: return listOf(FileNameWithText(defaultName, text.substring(0, stopAt).trim()))
-        while (index < stopAt) {
-            val eolIndex = text.indexOfOrNull("\n", index) ?: text.length
-            val fileName = text.substring(index + KtTest.FILE_DIRECTIVE.length, eolIndex).trim()
-            val nextFileIndex = text.indexOfOrNull(KtTest.FILE_DIRECTIVE, index + 1) ?: stopAt
-            val fileText = text.substring(eolIndex, nextFileIndex).trim()
-            index = nextFileIndex
-            result += FileNameWithText(fileName, fileText)
-        }
-        return result
-    }
-}
-
-private fun String.indexOfOrNull(substring: String) =
+fun String.indexOfOrNull(substring: String) =
     indexOf(substring).takeIf { it >= 0 }
 
 private fun String.indexOfOrNull(substring: String, startingIndex: Int) =

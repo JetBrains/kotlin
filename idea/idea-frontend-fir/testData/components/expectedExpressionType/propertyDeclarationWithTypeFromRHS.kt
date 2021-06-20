@@ -3,4 +3,3 @@ class C {
     var y = a<caret>v
 }
 
-// EXPECTED_TYPE: kotlin/String

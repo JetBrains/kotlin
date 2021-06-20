@@ -3,7 +3,3 @@ fun x(): Int {
        <expr>break</expr>
     }
 }
-
-// RESULT
-// expression: break
-// type: kotlin.Nothing

@@ -9,18 +9,23 @@ import com.intellij.mock.MockProject
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
+import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.ModuleSourceInfoBase
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
+import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
+import org.jetbrains.kotlin.fir.java.FirJavaElementFinder
 import org.jetbrains.kotlin.fir.session.FirModuleInfoBasedModuleData
 import org.jetbrains.kotlin.idea.fir.low.level.api.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.*
@@ -74,23 +79,6 @@ abstract class FrontendApiTestWithTestdata : AbstractKotlinCompilerTest() {
     open fun TestConfigurationBuilder.configureTest() {}
 
 
-    private class TestModuleInfo(
-        val testModule: TestModule,
-    ) : ModuleInfo, ModuleSourceInfoBase {
-        override val name: Name get() = Name.identifier(testModule.name)
-
-        override fun dependencies(): List<ModuleInfo> {
-            return emptyList()
-        }
-
-        override val platform: TargetPlatform
-            get() = testModule.targetPlatform
-
-        override val analyzerServices: PlatformDependentAnalyzerServices
-            get() = testModule.targetPlatform.getAnalyzerServices()
-    }
-
-
     inner class LowLevelFirFrontendFacade(
         testServices: TestServices
     ) : FrontendFacade<FirOutputArtifact>(testServices, FrontendKinds.FIR) {
@@ -101,104 +89,28 @@ abstract class FrontendApiTestWithTestdata : AbstractKotlinCompilerTest() {
             get() = listOf(FirDiagnosticsDirectives)
 
         override fun analyze(module: TestModule): FirOutputArtifact {
-            val moduleInfoProvider = testServices.firModuleInfoProvider
-            val compilerConfigurationProvider = testServices.compilerConfigurationProvider
-
-            val project = compilerConfigurationProvider.getProject(module)
-
+            val project = testServices.compilerConfigurationProvider.getProject(module)
+            val ktFiles = testServices.sourceFileProvider.getKtFilesForSourceFiles(module.files, project)
             PsiElementFinder.EP.getPoint(project).unregisterExtension(JavaElementFinder::class.java)
 
-            val ktFiles = testServices.sourceFileProvider.getKtFilesForSourceFiles(module.files, project)
-
-            val languageVersionSettings = module.languageVersionSettings
-            val packagePartProviderFactory = compilerConfigurationProvider.getPackagePartProviderFactory(module)
-
-            val configuration = compilerConfigurationProvider.getCompilerConfiguration(module)
-
-            val librariesScope = ProjectScope.getLibrariesScope(project)
-            val sourcesScope = TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, ktFiles.values)
             val moduleInfo = TestModuleInfo(module)
-            moduleInfoProvider.registerModuleData(module, FirModuleInfoBasedModuleData(moduleInfo))
-
-
-            val configurator = object : FirModuleResolveStateConfigurator() {
-                private val sealedClassInheritorsProvider = SealedClassInheritorsProviderTestImpl()
-
-                override fun createPackagePartsProvider(scope: GlobalSearchScope): PackagePartProvider {
-                    return packagePartProviderFactory.invoke(scope)
-                }
-
-                override fun createModuleDataProvider(moduleInfo: ModuleSourceInfoBase): ModuleDataProvider {
-                    require(moduleInfo is TestModuleInfo)
-                    return DependencyListForCliModule.build(
-                        moduleInfo.name,
-                        moduleInfo.platform,
-                        moduleInfo.analyzerServices
-                    ) {
-                        dependencies(configuration.jvmModularRoots.map { it.toPath() })
-                        dependencies(configuration.jvmClasspathRoots.map { it.toPath() })
-
-                        friendDependencies(configuration[JVMConfigurationKeys.FRIEND_PATHS] ?: emptyList())
-
-                        sourceDependencies(moduleInfoProvider.getRegularDependentSourceModules(module))
-                        sourceFriendsDependencies(moduleInfoProvider.getDependentFriendSourceModules(module))
-                        sourceDependsOnDependencies(moduleInfoProvider.getDependentDependsOnSourceModules(module))
-                    }.moduleDataProvider
-                }
-
-                override fun getLanguageVersionSettings(moduleInfo: ModuleSourceInfoBase): LanguageVersionSettings {
-                    return languageVersionSettings
-                }
-
-                override fun getModuleSourceScope(moduleInfo: ModuleSourceInfoBase): GlobalSearchScope {
-                    return sourcesScope
-                }
-
-                override fun createScopeForModuleLibraries(moduleInfo: ModuleSourceInfoBase): GlobalSearchScope {
-                    return librariesScope
-                }
-
-                override fun createSealedInheritorsProvider(): SealedClassInheritorsProvider {
-                    return sealedClassInheritorsProvider
-                }
-
-                override fun getModuleInfoFor(element: KtElement): ModuleInfo {
-                    return moduleInfo
-                }
-            }
+            testServices.firModuleInfoProvider.registerModuleData(module, FirModuleInfoBasedModuleData(moduleInfo))
+            val configurator = FirModuleResolveStateConfiguratorForSingleModuleTestImpl(testServices, module, ktFiles, moduleInfo)
 
             with(project as MockProject) {
-                registerService(
-                    FirModuleResolveStateConfigurator::class.java,
-                    configurator
-                )
-                registerService(FirIdeResolveStateService::class.java)
-                registerService(
-                    KotlinOutOfBlockModificationTrackerFactory::class.java,
-                    KotlinOutOfBlockModificationTrackerFactoryTestImpl::class.java
-                )
-                registerService(KtDeclarationProviderFactory::class.java, object : KtDeclarationProviderFactory() {
-                    override fun createDeclarationProvider(searchScope: GlobalSearchScope): DeclarationProvider {
-                        return DeclarationProviderTestImpl(searchScope, ktFiles.values)
-                    }
-                })
-                registerService(KtPackageProviderFactory::class.java, object : KtPackageProviderFactory() {
-                    override fun createPackageProvider(searchScope: GlobalSearchScope): KtPackageProvider {
-                        return KtPackageProviderTestImpl(searchScope, ktFiles.values)
-                    }
-                })
+                registerTestServices(configurator, ktFiles)
             }
-
 
             val resolveState = createResolveStateForNoCaching(moduleInfo, project) { configureSession() }
             return getArtifact(module, testServices, ktFiles, resolveState)
                 ?: FirOutputArtifactImpl(
                     resolveState.rootModuleSession,
                     emptyMap(),
-                    FirAnalyzerFacade(resolveState.rootModuleSession, languageVersionSettings)
+                    FirAnalyzerFacade(resolveState.rootModuleSession, configurator.getLanguageVersionSettings(moduleInfo))
                 )
         }
     }
+
 
     protected open fun FirIdeSession.configureSession() {}
 
@@ -234,4 +146,114 @@ abstract class FrontendApiTestWithTestdata : AbstractKotlinCompilerTest() {
 
         return false
     }
+}
+
+class TestModuleInfo(
+    val testModule: TestModule,
+) : ModuleInfo, ModuleSourceInfoBase {
+    override val name: Name get() = Name.identifier(testModule.name)
+
+    override fun dependencies(): List<ModuleInfo> {
+        return emptyList()
+    }
+
+    override val platform: TargetPlatform
+        get() = testModule.targetPlatform
+
+    override val analyzerServices: PlatformDependentAnalyzerServices
+        get() = testModule.targetPlatform.getAnalyzerServices()
+}
+
+
+class FirModuleResolveStateConfiguratorForSingleModuleTestImpl(
+    private val testServices: TestServices,
+    private val testModule: TestModule,
+    private val ktFiles: Map<TestFile, KtFile>,
+    private val moduleInfo: ModuleInfo,
+) : FirModuleResolveStateConfigurator() {
+    val moduleInfoProvider = testServices.firModuleInfoProvider
+    val compilerConfigurationProvider = testServices.compilerConfigurationProvider
+
+    val project = compilerConfigurationProvider.getProject(testModule)
+
+    val languageVersionSettings = testModule.languageVersionSettings
+    val packagePartProviderFactory = compilerConfigurationProvider.getPackagePartProviderFactory(testModule)
+
+    val configuration = compilerConfigurationProvider.getCompilerConfiguration(testModule)
+
+    val librariesScope = ProjectScope.getLibrariesScope(project)
+    val sourcesScope = TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, ktFiles.values)
+
+    private val sealedClassInheritorsProvider = SealedClassInheritorsProviderTestImpl()
+
+    override fun createPackagePartsProvider(scope: GlobalSearchScope): PackagePartProvider {
+        return packagePartProviderFactory.invoke(scope)
+    }
+
+    override fun createModuleDataProvider(moduleInfo: ModuleSourceInfoBase): ModuleDataProvider {
+        return DependencyListForCliModule.build(
+            moduleInfo.name,
+            moduleInfo.platform,
+            moduleInfo.analyzerServices
+        ) {
+            dependencies(configuration.jvmModularRoots.map { it.toPath() })
+            dependencies(configuration.jvmClasspathRoots.map { it.toPath() })
+
+            friendDependencies(configuration[JVMConfigurationKeys.FRIEND_PATHS] ?: emptyList())
+
+            sourceDependencies(moduleInfoProvider.getRegularDependentSourceModules(testModule))
+            sourceFriendsDependencies(moduleInfoProvider.getDependentFriendSourceModules(testModule))
+            sourceDependsOnDependencies(moduleInfoProvider.getDependentDependsOnSourceModules(testModule))
+        }.moduleDataProvider
+    }
+
+    override fun getLanguageVersionSettings(moduleInfo: ModuleSourceInfoBase): LanguageVersionSettings {
+        return languageVersionSettings
+    }
+
+    override fun getModuleSourceScope(moduleInfo: ModuleSourceInfoBase): GlobalSearchScope {
+        return sourcesScope
+    }
+
+    override fun createScopeForModuleLibraries(moduleInfo: ModuleSourceInfoBase): GlobalSearchScope {
+        return librariesScope
+    }
+
+    override fun createSealedInheritorsProvider(): SealedClassInheritorsProvider {
+        return sealedClassInheritorsProvider
+    }
+
+    override fun getModuleInfoFor(element: KtElement): ModuleInfo {
+        return moduleInfo
+    }
+
+    override fun configureSourceSession(session: FirSession) {
+        @Suppress("IncorrectParentDisposable")
+        PsiElementFinder.EP.getPoint(project).registerExtension(FirJavaElementFinder(session, project), project)
+    }
+}
+
+fun MockProject.registerTestServices(
+    configurator: FirModuleResolveStateConfiguratorForSingleModuleTestImpl,
+    ktFiles: Map<TestFile, KtFile>
+) {
+    registerService(
+        FirModuleResolveStateConfigurator::class.java,
+        configurator
+    )
+    registerService(FirIdeResolveStateService::class.java)
+    registerService(
+        KotlinOutOfBlockModificationTrackerFactory::class.java,
+        KotlinOutOfBlockModificationTrackerFactoryTestImpl::class.java
+    )
+    registerService(KtDeclarationProviderFactory::class.java, object : KtDeclarationProviderFactory() {
+        override fun createDeclarationProvider(searchScope: GlobalSearchScope): DeclarationProvider {
+            return DeclarationProviderTestImpl(searchScope, ktFiles.values)
+        }
+    })
+    registerService(KtPackageProviderFactory::class.java, object : KtPackageProviderFactory() {
+        override fun createPackageProvider(searchScope: GlobalSearchScope): KtPackageProvider {
+            return KtPackageProviderTestImpl(searchScope, ktFiles.values)
+        }
+    })
 }
