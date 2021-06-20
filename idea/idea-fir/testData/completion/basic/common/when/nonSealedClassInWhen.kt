@@ -18,4 +18,3 @@ fun foo(e: SEALED) {
 // EXIST: is SomeClass
 // EXIST: SomeObject
 // EXIST: { lookupString: "else -> "}
-// FIR_COMPARISON

@@ -1,4 +1,3 @@
-// FIR_COMPARISON
 annotation class SHello
 
 fun foo(@S<caret>) { }

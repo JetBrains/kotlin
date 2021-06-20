@@ -13,4 +13,3 @@ fun foo(e: NON_SEALED) {
 // EXIST: BBBB
 // EXIST: { lookupString: "is CCCC", tailText: "<*> -> " }
 // EXIST: { lookupString: "else -> "}
-// FIR_COMPARISON

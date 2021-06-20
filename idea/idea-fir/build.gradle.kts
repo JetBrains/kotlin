@@ -6,6 +6,8 @@ plugins {
 dependencies {
     compile(project(":plugins:uast-kotlin-fir"))
     compile(project(":idea:idea-frontend-fir"))
+    compile(project(":idea:idea-frontend-fir:fir-low-level-api-ide-impl"))
+
     compile(project(":idea:formatter"))
     compile(intellijDep())
     compile(intellijCoreDep())

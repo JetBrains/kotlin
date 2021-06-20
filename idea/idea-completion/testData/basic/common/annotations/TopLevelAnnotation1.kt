@@ -1,4 +1,3 @@
-// FIR_COMPARISON
 package java
 
 annotation class Hello

@@ -1,4 +1,3 @@
-// FIR_COMPARISON
 package some
 
 annotation class AnnComplete
@@ -9,4 +8,3 @@ class Multiplier {
 }
 
 // ELEMENT: AnnComplete
-// FIR_COMPARISON
