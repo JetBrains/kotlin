@@ -32,8 +32,8 @@ interface E : A<String> {
 }
 
 interface F : A<String?> {
-    override fun foo(x: String): String
-    override fun bar(x: String?): String?
+    <!NOTHING_TO_OVERRIDE!>override<!> fun foo(x: String): String
+    <!NOTHING_TO_OVERRIDE!>override<!> fun bar(x: String?): String?
 }
 
 interface G<T3 : Any> : A<T3> {

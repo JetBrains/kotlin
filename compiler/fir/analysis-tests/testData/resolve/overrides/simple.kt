@@ -9,7 +9,7 @@ open class A {
 class B : A() {
     override fun foo(): B = this
     fun <!VIRTUAL_MEMBER_HIDDEN!>bar<!>(): B = this // Missing 'override'
-    override fun buz(p: B): B = this //No override as B not :> A
+    <!NOTHING_TO_OVERRIDE!>override<!> fun buz(p: B): B = this //No override as B not :> A
 
     fun test() {
         foo()

@@ -19,13 +19,13 @@ fun test(z: Int, c: Char) {}
 }<!>
 
 <!REDECLARATION!>class B : <!FINAL_SUPERTYPE, SUPERTYPE_NOT_INITIALIZED!>A<!> {
-    <!CONFLICTING_OVERLOADS!>override fun rest(s: String)<!> {}
+    <!CONFLICTING_OVERLOADS!><!NOTHING_TO_OVERRIDE!>override<!> fun rest(s: String)<!> {}
 
     <!CONFLICTING_OVERLOADS!>fun rest(s: String)<!> {}
 
     fun rest(l: Long) {}
 
-    override val u = 310
+    <!NOTHING_TO_OVERRIDE!>override<!> val u = 310
 }<!>
 
 <!REDECLARATION!>interface B<!>

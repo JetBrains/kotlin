@@ -25,7 +25,7 @@ interface B {
 interface Foo
 
 expect abstract class AbstractClass : Foo {
-    abstract override fun foo()
+    abstract <!NOTHING_TO_OVERRIDE!>override<!> fun foo()
 
     abstract fun bar()
 

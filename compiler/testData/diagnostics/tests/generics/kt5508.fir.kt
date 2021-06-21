@@ -11,7 +11,7 @@ abstract class A<T> {
             // while for being a correct override it should be A<A<T>.B<S>>.B<A<T>.B<S>.C<U>>
             // It happens because at the beginning we search implicit arguments for an outer classes through supertypes
             // See TypeResolver.computeImplicitOuterClassArguments for clarifications
-            override fun foo(x: B<C<U>>)  {
+            <!NOTHING_TO_OVERRIDE!>override<!> fun foo(x: B<C<U>>)  {
                 throw UnsupportedOperationException()
             }
 

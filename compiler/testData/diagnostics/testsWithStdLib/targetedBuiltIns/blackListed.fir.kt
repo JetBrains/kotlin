@@ -2,7 +2,7 @@
 
 abstract class A : MutableList<String> {
     override fun sort(/*0*/ p0: java.util.Comparator<in String>) {
-        super.<!UNRESOLVED_REFERENCE!>sort<!>(p0)
+        super.sort(p0)
     }
 }
 

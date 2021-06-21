@@ -3,7 +3,7 @@
 
 interface A : MutableCollection<String> {
     // Override of deprecated function could be marked as deprecated too
-    override fun nonExistingMethod(x: String) = ""
+    <!NOTHING_TO_OVERRIDE!>override<!> fun nonExistingMethod(x: String) = ""
 }
 
 fun foo(x: MutableCollection<Int>, y: Collection<String>, z: A) {

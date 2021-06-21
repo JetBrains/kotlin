@@ -18,7 +18,7 @@ open class D {
 }
 
 class E : D() {
-    internal override fun self() = this
+    internal <!NOTHING_TO_OVERRIDE!>override<!> fun self() = this
 
     fun test() {
         val s : E = self()

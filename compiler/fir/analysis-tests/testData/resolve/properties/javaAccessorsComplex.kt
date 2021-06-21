@@ -6,8 +6,8 @@ public interface JA<E> {
 // FILE: main.kt
 
 interface KB<F> {
-    override fun getFoo(): F
-    override fun getBar(): F
+    <!NOTHING_TO_OVERRIDE!>override<!> fun getFoo(): F
+    <!NOTHING_TO_OVERRIDE!>override<!> fun getBar(): F
 }
 
 interface D1 : JA<String>, KB<String>

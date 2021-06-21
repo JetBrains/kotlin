@@ -58,7 +58,17 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
     fun isEqualTypes(candidateTypeRef: FirTypeRef, baseTypeRef: FirTypeRef, substitutor: ConeSubstitutor): Boolean {
         candidateTypeRef.ensureResolvedTypeDeclaration(session, requiredPhase = FirResolvePhase.TYPES)
         baseTypeRef.ensureResolvedTypeDeclaration(session, requiredPhase = FirResolvePhase.TYPES)
+        if (candidateTypeRef is FirErrorTypeRef && baseTypeRef is FirErrorTypeRef) {
+            return maybeEqualErrorTypes(candidateTypeRef, baseTypeRef)
+        }
         return isEqualTypes(candidateTypeRef.coneType, baseTypeRef.coneType, substitutor)
+    }
+
+    private fun maybeEqualErrorTypes(ref1: FirErrorTypeRef, ref2: FirErrorTypeRef): Boolean {
+        val delegated1 = ref1.delegatedTypeRef as? FirUserTypeRef ?: return false
+        val delegated2 = ref2.delegatedTypeRef as? FirUserTypeRef ?: return false
+        if (delegated1.qualifier.size != delegated2.qualifier.size) return false
+        return delegated1.qualifier.zip(delegated2.qualifier).all { (l, r) -> l.name == r.name }
     }
 
 
