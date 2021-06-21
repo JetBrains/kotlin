@@ -10,11 +10,13 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.parents
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isReadOfCrossinline
 import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
+import org.jetbrains.kotlin.backend.jvm.ir.hasChild
 import org.jetbrains.kotlin.codegen.coroutines.COROUTINE_LABEL_FIELD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
@@ -47,25 +49,8 @@ internal val suspendLambdaPhase = makeIrFilePhase(
 )
 
 private fun IrFunction.capturesCrossinline(): Boolean {
-    var result = false
-    accept(object : IrElementVisitorVoid {
-        override fun visitElement(element: IrElement) {
-            if (!result) element.acceptChildren(this, null)
-        }
-
-        override fun visitFunction(declaration: IrFunction) {
-            functions.add(declaration)
-            super.visitFunction(declaration)
-            functions.remove(declaration)
-        }
-
-        override fun visitGetValue(expression: IrGetValue) {
-            result = result || (expression.isReadOfCrossinline() && expression.symbol.owner.parent !in functions)
-        }
-
-        private val functions = mutableSetOf<IrFunction>()
-    }, null)
-    return result
+    val parents = parents.toSet()
+    return hasChild { it is IrGetValue && it.isReadOfCrossinline() && it.symbol.owner.parent in parents }
 }
 
 internal abstract class SuspendLoweringUtils(protected val context: JvmBackendContext) {
