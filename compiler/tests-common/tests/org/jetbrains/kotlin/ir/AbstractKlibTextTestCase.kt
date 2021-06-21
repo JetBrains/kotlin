@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import junit.framework.TestCase
+import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataIncrementalSerializer
@@ -134,7 +135,7 @@ abstract class AbstractKlibTextTestCase : CodegenTestCase() {
     protected fun serializeModule(irModuleFragment: IrModuleFragment, bindingContext: BindingContext, stdlib: KotlinLibrary, containsErrorCode: Boolean, expectActualSymbols: MutableMap<DeclarationDescriptor, IrSymbol>, skipExpect: Boolean): String {
         val ktFiles = myFiles.psiFiles
         val serializedIr =
-            JsIrModuleSerializer(IrMessageLogger.None, irModuleFragment.irBuiltins, expectActualSymbols, skipExpect).serializedIrModule(
+            JsIrModuleSerializer(IrMessageLogger.None, irModuleFragment.irBuiltins, expectActualSymbols, CompatibilityMode.CURRENT, skipExpect).serializedIrModule(
                 irModuleFragment
             )
 
