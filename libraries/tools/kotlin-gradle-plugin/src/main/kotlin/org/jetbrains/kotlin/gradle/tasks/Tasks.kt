@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.IncrementalCompilerRunner
 import org.jetbrains.kotlin.library.impl.isKotlinLibrary
 import org.jetbrains.kotlin.utils.JsLibraryUtils
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
@@ -459,15 +460,19 @@ abstract class KotlinCompile @Inject constructor(
     @get:Input
     abstract val useClasspathSnapshot: Property<Boolean>
 
-    final override val kotlinJavaToolchainProvider: Provider<KotlinJavaToolchainProvider> = objects
+    @get:Internal
+    internal val defaultKotlinJavaToolchain: Provider<KotlinJavaToolchainProvider> = objects
         .propertyWithNewInstance(
-            project.gradle
+            project.gradle,
+            { this }
         )
+
+    final override val kotlinJavaToolchainProvider: Provider<KotlinJavaToolchain> = defaultKotlinJavaToolchain.cast()
 
     @get:Internal
     override val compilerRunner: Provider<GradleCompilerRunner> = objects.propertyWithConvention(
         // From Gradle 6.6 better to replace flatMap with provider.zip()
-        kotlinJavaToolchainProvider.flatMap { toolchain ->
+        defaultKotlinJavaToolchain.flatMap { toolchain ->
             objects.property(gradleCompileTaskProvider.map {
                 GradleCompilerRunner(
                     it,
@@ -535,7 +540,7 @@ abstract class KotlinCompile @Inject constructor(
             javaPackagePrefix,
             args,
             environment,
-            kotlinJavaToolchainProvider.get().providedJvm.get().javaHome
+            defaultKotlinJavaToolchain.get().providedJvm.get().javaHome
         )
     }
 

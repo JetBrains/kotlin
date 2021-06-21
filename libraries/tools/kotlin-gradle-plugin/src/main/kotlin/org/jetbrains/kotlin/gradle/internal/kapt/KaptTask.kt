@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.gradle.utils.propertyWithNewInstance
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.io.File
 import java.util.concurrent.Callable
 import java.util.jar.JarFile
@@ -124,10 +125,14 @@ abstract class KaptTask @Inject constructor(
     @get:Internal
     abstract val classpath: ConfigurableFileCollection
 
-    final override val kotlinJavaToolchainProvider: Provider<KotlinJavaToolchainProvider> = objectFactory
+    @get:Internal
+    internal val defaultKotlinJavaToolchain: Provider<KotlinJavaToolchainProvider> = objectFactory
         .propertyWithNewInstance(
-            project.gradle
+            project.gradle,
+            { null }
         )
+
+    final override val kotlinJavaToolchainProvider: Provider<KotlinJavaToolchain> = defaultKotlinJavaToolchain.cast()
 
     @Suppress("unused", "DeprecatedCallableAddReplaceWith")
     @Deprecated(

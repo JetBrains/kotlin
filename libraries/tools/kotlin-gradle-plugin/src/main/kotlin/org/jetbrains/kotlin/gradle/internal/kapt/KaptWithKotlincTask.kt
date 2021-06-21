@@ -117,7 +117,7 @@ abstract class KaptWithKotlincTask @Inject constructor(
 
         val compilerRunner = GradleCompilerRunner(
             taskProvider.get(),
-            kotlinJavaToolchainProvider.get().currentJvmJdkToolsJar.orNull
+            defaultKotlinJavaToolchain.get().currentJvmJdkToolsJar.orNull
         )
         compilerRunner.runJvmCompilerAsync(
             sourcesToCompile = emptyList(),
@@ -126,7 +126,7 @@ abstract class KaptWithKotlincTask @Inject constructor(
             javaPackagePrefix = javaPackagePrefix.orNull,
             args = args,
             environment = environment,
-            jdkHome = kotlinJavaToolchainProvider.get().providedJvm.get().javaHome
+            jdkHome = defaultKotlinJavaToolchain.get().providedJvm.get().javaHome
         )
     }
 }

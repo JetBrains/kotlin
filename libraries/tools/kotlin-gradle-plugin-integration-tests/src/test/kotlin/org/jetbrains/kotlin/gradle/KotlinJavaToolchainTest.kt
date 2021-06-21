@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.JavaVersion
 import org.gradle.api.logging.LogLevel
 import org.gradle.internal.jvm.JavaInfo
 import org.gradle.internal.jvm.Jvm
@@ -62,7 +63,10 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             projectName = "simple".fullProjectName,
             gradleVersion = gradleVersion,
         ) {
-            useJdk9ToCompile()
+            useJdkToCompile(
+                getJdk9Path(),
+                JavaVersion.VERSION_1_9
+            )
 
             build("assemble") {
                 assertJdkHomeIsUsingJdk(getJdk9().javaHomeRealPath)
@@ -84,7 +88,10 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             if (shouldUseToolchain(gradleVersion)) {
                 useToolchainExtension(11)
             } else {
-                useJdk9ToCompile()
+                useJdkToCompile(
+                    getJdk9Path(),
+                    JavaVersion.VERSION_1_9
+                )
             }
 
             build("assemble")
@@ -100,7 +107,10 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             if (shouldUseToolchain(gradleVersion)) {
                 useToolchainExtension(11)
             } else {
-                useJdk9ToCompile()
+                useJdkToCompile(
+                    getJdk9Path(),
+                    JavaVersion.VERSION_1_9
+                )
             }
 
             build("assemble") {
@@ -124,7 +134,10 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             if (shouldUseToolchain(gradleVersion)) {
                 useToolchainExtension(11)
             } else {
-                useJdk9ToCompile()
+                useJdkToCompile(
+                    getJdk9Path(),
+                    JavaVersion.VERSION_1_9
+                )
             }
             build("assemble")
         }
@@ -153,7 +166,10 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             if (shouldUseToolchain(gradleVersion)) {
                 useToolchainExtension(11)
             } else {
-                useJdk9ToCompile()
+                useJdkToCompile(
+                    getJdk9Path(),
+                    JavaVersion.VERSION_1_9
+                )
             }
             gradleProperties.append(
                 "kapt.workers.isolation = none"
@@ -202,7 +218,10 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             if (shouldUseToolchain(gradleVersion)) {
                 useToolchainExtension(11)
             } else {
-                useJdk9ToCompile()
+                useJdkToCompile(
+                    getJdk9Path(),
+                    JavaVersion.VERSION_1_9
+                )
             }
 
             build("assemble")
@@ -218,7 +237,10 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             if (shouldUseToolchain(gradleVersion)) {
                 useToolchainExtension(11)
             } else {
-                useJdk9ToCompile()
+                useJdkToCompile(
+                    getJdk9Path(),
+                    JavaVersion.VERSION_1_9
+                )
             }
 
             build("assemble") {
@@ -272,8 +294,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
     internal fun jdkHomeIsDeprecated(gradleVersion: GradleVersion) {
         project(
             projectName = "simple".fullProjectName,
-            gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+            gradleVersion = gradleVersion
         ) {
             //language=Groovy
             rootBuildGradle.append(
@@ -340,14 +361,95 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @DisplayName("Should set 'jvmTarget' option if user does not specify it explicitly via jdk setter")
+    @GradleTest
+    internal fun shouldSetJvmTargetNonSpecifiedByUserViaSetJdk(gradleVersion: GradleVersion) {
+        project(
+            projectName = "simple".fullProjectName,
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+        ) {
+            useJdkToCompile(
+                getJdk11Path(),
+                JavaVersion.VERSION_11
+            )
+
+            build("build") {
+                assertOutputContains("-jvm-target 11")
+                assertOutputDoesNotContain("-jvm-target 1.8")
+            }
+        }
+    }
+
+    @DisplayName("Should not override user specified 'jvmTarget' option via jdk setter")
+    @GradleTest
+    internal fun shouldNotOverrideUserJvmTargetViaSetJDK(gradleVersion: GradleVersion) {
+        project(
+            projectName = "simple".fullProjectName,
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+        ) {
+            setJvmTarget("1.8")
+
+            useJdkToCompile(
+                getJdk11Path(),
+                JavaVersion.VERSION_11
+            )
+
+            build("build") {
+                assertOutputContains("-jvm-target 1.8")
+                assertOutputDoesNotContain("-jvm-target 11")
+            }
+        }
+    }
+
+    @DisplayName("Should set 'jvmTarget' option if user does not specify it explicitly via toolchain setter")
+    @GradleTestVersions(minVersion = "6.7.1")
+    @GradleTest
+    internal fun shouldSetJvmTargetNonSpecifiedByUserViaToolchain(gradleVersion: GradleVersion) {
+        project(
+            projectName = "simple".fullProjectName,
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+        ) {
+            useToolchainToCompile(11)
+
+            build("build") {
+                assertOutputContains("-jvm-target 11")
+                assertOutputDoesNotContain("-jvm-target 1.8")
+            }
+        }
+    }
+
+    @DisplayName("Should not override user specified 'jvmTarget' option via toolchain setter")
+    @GradleTestVersions(minVersion = "6.7.1")
+    @GradleTest
+    internal fun shouldNotOverrideUserSpecifiedJvmTargetViaToolchain(gradleVersion: GradleVersion) {
+        project(
+            projectName = "simple".fullProjectName,
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+        ) {
+            setJvmTarget("1.8")
+            useToolchainToCompile(11)
+
+            build("build") {
+                assertOutputContains("-jvm-target 1.8")
+                assertOutputDoesNotContain("-jvm-target 11")
+            }
+        }
+    }
+
     private fun BuildResult.assertJdkHomeIsUsingJdk(
         javaexecPath: String
     ) = assertOutputContains("[KOTLIN] Kotlin compilation 'jdkHome' argument: $javaexecPath")
 
     private fun getUserJdk(): JavaInfo = Jvm.forHome(File(System.getenv("JAVA_HOME")))
     private fun getJdk9(): JavaInfo = Jvm.forHome(File(System.getenv("JDK_9")))
+    private fun getJdk11(): JavaInfo = Jvm.forHome(File(System.getenv("JDK_11")))
     // replace required for windows paths so Groovy will not complain about unexpected char '\'
     private fun getJdk9Path(): String = getJdk9().javaHome.absolutePath.replace("\\", "\\\\")
+    private fun getJdk11Path(): String = getJdk11().javaHome.absolutePath.replace("\\", "\\\\")
     private val JavaInfo.javaHomeRealPath
         get() = javaHome
             .toPath()
@@ -357,7 +459,26 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
 
     private val String.fullProjectName get() = "kotlin-java-toolchain/$this"
 
-    private fun TestProject.useJdk9ToCompile() {
+    private fun TestProject.setJvmTarget(
+        jvmTarget: String
+    ) {
+        //language=Groovy
+        rootBuildGradle.append(
+            """
+            
+            tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+                 kotlinOptions {
+                      jvmTarget = "$jvmTarget"
+                 }            
+            }
+            """.trimIndent()
+        )
+    }
+
+    private fun TestProject.useJdkToCompile(
+        jdkPath: String,
+        jdkVersion: JavaVersion
+    ) {
         //language=Groovy
         rootBuildGradle.append(
             """
@@ -368,8 +489,8 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
                  .withType(UsesKotlinJavaToolchain.class)
                  .configureEach {
                       it.kotlinJavaToolchain.jdk.use(
-                           "${getJdk9Path()}",
-                           JavaVersion.VERSION_1_9
+                           "$jdkPath",
+                           JavaVersion.${jdkVersion.name}
                       )
                  }
             """.trimIndent()
