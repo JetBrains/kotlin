@@ -279,17 +279,33 @@ private class PropertyReferenceLowering(val context: JvmBackendContext) : IrElem
     // Example: `C::property` -> `Reflection.property1(PropertyReference1Impl(C::class, "property", "getProperty()LType;"))`.
     private fun createReflectedKProperty(expression: IrCallableReference<*>): IrExpression {
         assert(expression.dispatchReceiver == null && expression.extensionReceiver == null) {
+            // TODO: technically can with `generateOptimizedCallableReferenceSuperClasses` - use the 5-argument constructor
             "cannot create a reflected KProperty if the reference has a bound receiver: ${expression.render()}"
         }
         val referenceKind = propertyReferenceKindFor(expression)
         return context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset).run {
             irCall(referenceKind.wrapper).apply {
-                val constructor = referenceKind.implSymbol.constructors.single { it.owner.valueParameters.size == 3 }
-                putValueArgument(0, irCall(constructor).apply {
-                    putValueArgument(0, calculateOwner(expression.propertyContainer, this@PropertyReferenceLowering.context))
-                    putValueArgument(1, irString(expression.referencedName.asString()))
-                    putValueArgument(2, computeSignatureString(expression))
-                })
+                val container = expression.propertyContainer
+                val name = irString(expression.referencedName.asString())
+                val signature = computeSignatureString(expression)
+                val impl = when {
+                    this@PropertyReferenceLowering.context.state.generateOptimizedCallableReferenceSuperClasses ->
+                        irCall(referenceKind.implSymbol.constructors.single { it.owner.valueParameters.size == 4 }).apply {
+                            val kClass = calculateOwnerKClass(container, this@PropertyReferenceLowering.context)
+                            val isPackage = (container is IrClass && container.isFileClass) || container is IrPackageFragment
+                            putValueArgument(0, kClassToJavaClass(kClass, this@PropertyReferenceLowering.context))
+                            putValueArgument(1, name)
+                            putValueArgument(2, signature)
+                            putValueArgument(3, irInt(if (isPackage) 1 else 0))
+                        }
+                    else ->
+                        irCall(referenceKind.implSymbol.constructors.single { it.owner.valueParameters.size == 3 }).apply {
+                            putValueArgument(0, calculateOwner(container, this@PropertyReferenceLowering.context))
+                            putValueArgument(1, name)
+                            putValueArgument(2, signature)
+                        }
+                }
+                putValueArgument(0, impl)
             }
         }
     }
