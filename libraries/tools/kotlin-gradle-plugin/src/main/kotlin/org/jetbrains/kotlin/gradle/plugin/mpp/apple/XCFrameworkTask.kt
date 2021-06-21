@@ -57,9 +57,17 @@ internal class XCFrameworkTaskHolder(
     }
 }
 
-class XCFrameworkConfig internal constructor(
+class XCFrameworkConfig {
     private val taskHolders: List<XCFrameworkTaskHolder>
-) {
+
+    constructor(project: Project, xcFrameworkName: String) {
+        taskHolders = NativeBuildType.values().map { buildType ->
+            XCFrameworkTaskHolder.create(project, xcFrameworkName, buildType)
+        }
+    }
+
+    constructor(project: Project) : this(project, project.name)
+
     /**
      * Adds the specified frameworks in this XCFramework.
      */
@@ -79,13 +87,7 @@ class XCFrameworkConfig internal constructor(
     }
 }
 
-fun Project.XCFramework(
-    xcFrameworkName: String = name
-) = XCFrameworkConfig(
-    NativeBuildType.values().map { buildType ->
-        XCFrameworkTaskHolder.create(this, xcFrameworkName, buildType)
-    }
-)
+fun Project.XCFramework(xcFrameworkName: String = name) = XCFrameworkConfig(this, xcFrameworkName)
 
 private fun Project.parentAssembleXCFrameworkTask(xcFrameworkName: String): TaskProvider<Task> =
     locateOrRegisterTask(lowerCamelCaseName("assemble", xcFrameworkName, "XCFramework")) {
