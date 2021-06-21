@@ -10,8 +10,8 @@ FILE: class.kt
         private final [BODY_RESOLVE] val y: <ERROR TYPE REF: Symbol not found for C> = this@R|/B|.R|/B.q|()
             [BODY_RESOLVE] private get(): <ERROR TYPE REF: Symbol not found for C>
 
-        public final [BODY_RESOLVE] fun foo([BODY_RESOLVE] a: <ERROR TYPE REF: Symbol not found for A>): <ERROR TYPE REF: Unresolved name: with> {
-            ^foo <Unresolved name: with>#(R|<local>/a|, <L> = [BODY_RESOLVE] with@fun <anonymous>(): <ERROR TYPE REF: Unresolved name: bar> <inline=Unknown>  {
+        public final [BODY_RESOLVE] fun foo([BODY_RESOLVE] a: <ERROR TYPE REF: Symbol not found for A>): <ERROR TYPE REF: Cannot infer argument for type parameter R> {
+            ^foo <Inapplicable(INAPPLICABLE): kotlin/with>#<R|ERROR CLASS: Cannot infer argument for type parameter T|, R|ERROR CLASS: Cannot infer argument for type parameter R|>(R|<local>/a|, <L> = [BODY_RESOLVE] with@fun <ERROR TYPE REF: Cannot infer argument for type parameter T>.<anonymous>(): <ERROR TYPE REF: Cannot infer argument for type parameter R> <inline=Unknown, kind=EXACTLY_ONCE>  {
                 ^ <Unresolved name: bar>#(String(a), this@R|/B|.R|/B.y|)
             }
             )

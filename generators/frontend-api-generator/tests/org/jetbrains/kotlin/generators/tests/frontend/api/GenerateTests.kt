@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostic.AbstractFirContext
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostic.compiler.based.AbstractDiagnosisCompilerTestDataSpecTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostic.compiler.based.AbstractDiagnosisCompilerTestDataTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.AbstractFileStructureTest
+import org.jetbrains.kotlin.idea.fir.low.level.api.resolve.AbstractInnerDeclarationsResolvePhaseTest
 import org.jetbrains.kotlin.spec.utils.GeneralConfiguration
 import org.jetbrains.kotlin.spec.utils.tasks.detectDirsWithTestsMapFileOnly
 import org.jetbrains.kotlin.test.generators.generateTestGroupSuiteWithJUnit5
@@ -105,6 +106,10 @@ fun main(args: Array<String>) {
 
             testClass<AbstractDiagnosticTraversalCounterTest> {
                 model("diagnosticTraversalCounter")
+            }
+
+            testClass<AbstractInnerDeclarationsResolvePhaseTest> {
+                model("innerDeclarationsResolve")
             }
 
             testClass<AbstractPartialRawFirBuilderTestCase> {
