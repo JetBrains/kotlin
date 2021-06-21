@@ -12,8 +12,6 @@ dependencies {
     compile(kotlinStdlib("jdk8"))
 
     testCompile(projectTests(":generators:test-generator"))
-    testCompile(projectTests(":plugins:parcelize:parcelize-ide"))
-    testCompile(projectTests(":kotlinx-serialization-ide-plugin"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(projectTests(":compiler:tests-spec"))
     testCompile(projectTests(":idea-frontend-fir:idea-fir-low-level-api"))
