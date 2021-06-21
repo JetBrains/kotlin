@@ -216,16 +216,20 @@ abstract class XCFrameworkTask : DefaultTask() {
                 else -> null
             }
         }
-        createXCFramework(frameworksForXCFramework, outputXCFrameworkFile)
+        createXCFramework(frameworksForXCFramework, outputXCFrameworkFile, buildType)
     }
 
-    private fun createXCFramework(frameworks: List<File>, output: File) {
+    private fun createXCFramework(frameworks: List<File>, output: File, buildType: NativeBuildType) {
         if (output.exists()) output.deleteRecursively()
 
         val cmdArgs = mutableListOf("xcodebuild", "-create-xcframework")
         frameworks.forEach { framework ->
             cmdArgs.add("-framework")
             cmdArgs.add(framework.path)
+            if (buildType == NativeBuildType.DEBUG) {
+                cmdArgs.add("-debug-symbols")
+                cmdArgs.add(framework.path + ".dSYM")
+            }
         }
         cmdArgs.add("-output")
         cmdArgs.add(output.path)
