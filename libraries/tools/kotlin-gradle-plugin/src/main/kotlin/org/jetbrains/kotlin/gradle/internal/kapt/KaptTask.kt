@@ -126,7 +126,7 @@ abstract class KaptTask @Inject constructor(
     abstract val classpath: ConfigurableFileCollection
 
     @get:Internal
-    internal val defaultKotlinJavaToolchain: Provider<KotlinJavaToolchainProvider> = objectFactory
+    internal val defaultKotlinJavaToolchain: Provider<DefaultKotlinJavaToolchain> = objectFactory
         .propertyWithNewInstance(
             project.gradle,
             { null }

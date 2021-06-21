@@ -27,7 +27,7 @@ import java.io.File
 import javax.inject.Inject
 import kotlin.reflect.full.functions
 
-internal abstract class KotlinJavaToolchainProvider @Inject constructor(
+internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
     private val objects: ObjectFactory,
     projectLayout: ProjectLayout,
     gradle: Gradle,

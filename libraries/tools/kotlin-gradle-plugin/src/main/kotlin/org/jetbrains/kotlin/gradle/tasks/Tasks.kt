@@ -461,7 +461,7 @@ abstract class KotlinCompile @Inject constructor(
     abstract val useClasspathSnapshot: Property<Boolean>
 
     @get:Internal
-    internal val defaultKotlinJavaToolchain: Provider<KotlinJavaToolchainProvider> = objects
+    internal val defaultKotlinJavaToolchain: Provider<DefaultKotlinJavaToolchain> = objects
         .propertyWithNewInstance(
             project.gradle,
             { this }
