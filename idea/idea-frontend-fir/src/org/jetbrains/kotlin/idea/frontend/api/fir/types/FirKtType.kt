@@ -83,7 +83,7 @@ internal class KtFirFunctionalType(
 
     override val hasReceiver: Boolean
         get() = withValidityAssertion {
-            coneType.receiverType(firBuilder.rootSession) != null
+            coneType.receiverType(builder.rootSession) != null
         }
 
     override val parameterTypes: List<KtType> by cached {
