@@ -888,7 +888,11 @@ void* workerRoutine(void* argument) {
   // to see there's already a worker created for this thread.
   ::g_worker = worker;
   Kotlin_initRuntimeIfNeeded();
-  SwitchThreadState(worker->memoryState(), ThreadState::kRunnable);
+
+  // Only run this routine in the runnable state. The moment between this routine exiting and thread
+  // destructors running will be spent in the native state. `Kotlin_deinitRuntimeCallback` ensures
+  // that runtime deinitialization switches back to the runnable state.
+  kotlin::ThreadStateGuard guard(worker->memoryState(), ThreadState::kRunnable);
 
   do {
     if (worker->processQueueElement(true) == JOB_TERMINATE) break;

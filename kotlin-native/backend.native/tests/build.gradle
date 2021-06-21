@@ -714,8 +714,7 @@ task runtime_basic_simd(type: KonanLocalTest) {
 }
 
 task runtime_worker_random(type: KonanLocalTest) {
-    enabled = (project.testTarget != 'wasm32') && // Uses workers.
-        !(isExperimentalMM && project.testTarget == 'mingw_x64')  // TODO: Fix Experimental MM performance on Windows.
+    enabled = (project.testTarget != 'wasm32') // Uses workers.
     source = "runtime/basic/worker_random.kt"
 }
 
@@ -888,8 +887,7 @@ standaloneTest("cleaner_in_tls_worker") {
 }
 
 standaloneTest("worker_bound_reference0") {
-    enabled = (project.testTarget != 'wasm32') && // Workers need pthreads.
-        !(isExperimentalMM && project.testTarget == 'mingw_x64')  // TODO: Fix Experimental MM performance on Windows.
+    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
     source = "runtime/concurrent/worker_bound_reference0.kt"
     flags = ['-tr']
 }
@@ -901,15 +899,13 @@ task worker0(type: KonanLocalTest) {
 }
 
 task worker1(type: KonanLocalTest) {
-    enabled = (project.testTarget != 'wasm32') && // Workers need pthreads.
-        !(isExperimentalMM && project.testTarget == 'mingw_x64')  // TODO: Fix Experimental MM performance on Windows.
+    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
     goldValue = "OK\n"
     source = "runtime/workers/worker1.kt"
 }
 
 task worker2(type: KonanLocalTest) {
-    enabled = (project.testTarget != 'wasm32') && // Workers need pthreads.
-        !(isExperimentalMM && project.testTarget == 'mingw_x64')  // TODO: Fix Experimental MM performance on Windows.
+    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
     goldValue = "OK\n"
     source = "runtime/workers/worker2.kt"
 }
@@ -964,8 +960,7 @@ task worker10(type: KonanLocalTest) {
 }
 
 task worker11(type: KonanLocalTest) {
-    enabled = (project.testTarget != 'wasm32') && // Workers need pthreads.
-        !(isExperimentalMM && project.testTarget == 'mingw_x64')  // TODO: Fix Experimental MM performance on Windows.
+    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
     goldValue = "OK\n"
     source = "runtime/workers/worker11.kt"
 }
@@ -1033,8 +1028,7 @@ task freeze6(type: KonanLocalTest) {
 }
 
 task atomic0(type: KonanLocalTest) {
-    enabled = (project.testTarget != 'wasm32') && // Workers need pthreads.
-        !(isExperimentalMM && project.testTarget == 'mingw_x64')  // TODO: Fix Experimental MM performance on Windows.
+    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
     goldValue = "35\n" + "20\n" + "OK\n"
     source = "runtime/workers/atomic0.kt"
 }
@@ -2831,8 +2825,7 @@ task initializers5(type: KonanLocalTest) {
 }
 
 task initializers6(type: KonanLocalTest) {
-    disabled = (project.testTarget == 'wasm32') || // Needs workers.
-        (isExperimentalMM && project.testTarget == 'mingw_x64')  // TODO: Fix Experimental MM performance on Windows.
+    disabled = (project.testTarget == 'wasm32') // Needs workers.
     source = "runtime/basic/initializers6.kt"
 }
 
