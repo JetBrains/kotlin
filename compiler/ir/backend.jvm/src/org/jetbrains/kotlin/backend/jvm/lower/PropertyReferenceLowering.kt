@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.parentClassId
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
+import org.jetbrains.kotlin.backend.jvm.ir.hasChild
 import org.jetbrains.kotlin.backend.jvm.ir.irArrayOf
 import org.jetbrains.kotlin.backend.jvm.ir.needsAccessor
 import org.jetbrains.kotlin.backend.jvm.lower.FunctionReferenceLowering.Companion.calculateOwner
@@ -28,7 +29,6 @@ import org.jetbrains.kotlin.codegen.inline.loadCompiledInlineFunction
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.usesLocalExceptParameterNullCheck
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
@@ -274,17 +273,7 @@ private class PropertyReferenceLowering(val context: JvmBackendContext) : IrElem
             return loadCompiledInlineFunction(containerId, signature.asmMethod, isSuspend, hasMangledReturnType, context.state)
                 .node.usesLocalExceptParameterNullCheck(localIndex)
         }
-
-        var result = false
-        accept(object : IrElementVisitorVoid {
-            override fun visitElement(element: IrElement) =
-                if (result) Unit else element.acceptChildren(this, null)
-
-            override fun visitGetValue(expression: IrGetValue) {
-                if (expression.symbol == valueParameters[index].symbol) result = true
-            }
-        }, null)
-        return result
+        return hasChild { it is IrGetValue && it.symbol == valueParameters[index].symbol }
     }
 
     // Assuming that the only functions that take PROPERTY_REFERENCE_FOR_DELEGATE-kind references are getValue,
@@ -292,18 +281,14 @@ private class PropertyReferenceLowering(val context: JvmBackendContext) : IrElem
     private val usesPropertyParameterCache = ConcurrentHashMap<IrSymbol, Boolean>()
 
     override fun visitCall(expression: IrCall): IrExpression {
-        if (!expression.symbol.owner.isInline) {
-            // Can't optimize if the function can start using the reference later.
-            // TODO: optimize if callee is in the same file? this requires removing the null check from it,
-            //       or at least providing *some* non-null fake property value.
-            return super.visitCall(expression)
-        }
-
+        // Don't generate entries in `$$delegatedProperties` if they won't be used for anything. This is only possible
+        // for inline functions, since for non-inline ones we need to provide some non-null value, and if they're not
+        // in the same file, they can start using it without forcing a recompilation of this file.
+        if (!expression.symbol.owner.isInline) return super.visitCall(expression)
         for (index in expression.symbol.owner.valueParameters.indices) {
             val value = expression.getValueArgument(index)
             if (value is IrCallableReference<*> && value.origin == IrStatementOrigin.PROPERTY_REFERENCE_FOR_DELEGATE) {
                 if (!usesPropertyParameterCache.getOrPut(expression.symbol) { expression.symbol.owner.usesParameter(index) }) {
-                    // Don't generate an entry in `$$delegatedProperties`, it won't be used anyway.
                     expression.putValueArgument(index, IrConstImpl.constNull(value.startOffset, value.endOffset, value.type))
                 }
             }
