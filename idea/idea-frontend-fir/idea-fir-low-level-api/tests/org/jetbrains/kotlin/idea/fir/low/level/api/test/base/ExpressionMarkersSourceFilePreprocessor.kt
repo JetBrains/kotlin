@@ -3,9 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.fir.test.framework
+package org.jetbrains.kotlin.idea.fir.low.level.api.test.base
 
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.PrivateForInline
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.parentOfType
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -52,18 +53,20 @@ internal class ExpressionMarkersSourceFilePreprocessor(testServices: TestService
     }
 }
 
-internal class ExpressionMarkerProvider(testServices: TestServices) : TestService {
+class ExpressionMarkerProvider(testServices: TestServices) : TestService {
     private val selected = mutableMapOf<String, TextRange>()
-    private val atCaret = mutableMapOf<String, Int>()
+    @PrivateForInline val atCaret = mutableMapOf<String, Int>()
 
     fun addSelectedExpression(file: TestFile, range: TextRange) {
         selected[file.relativePath] = range
     }
 
+    @OptIn(PrivateForInline::class)
     fun addCaret(file: TestFile, caret: Int) {
         atCaret[file.relativePath] = caret
     }
 
+    @OptIn(PrivateForInline::class)
     inline fun <reified P : KtElement> getElementOfTypAtCaret(file: KtFile): P {
         val offset = atCaret[file.name]
             ?: error("No caret found in file")
@@ -84,4 +87,4 @@ internal class ExpressionMarkerProvider(testServices: TestServices) : TestServic
     }
 }
 
-internal val TestServices.expressionMarkerProvider: ExpressionMarkerProvider by TestServices.testServiceAccessor()
+val TestServices.expressionMarkerProvider: ExpressionMarkerProvider by TestServices.testServiceAccessor()

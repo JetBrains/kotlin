@@ -17,6 +17,11 @@ import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousInitializerSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.getModuleInfo
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.getResolveState
+import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSession
+import org.jetbrains.kotlin.psi.KtElement
 
 internal fun Project.allModules() = ModuleManager.getInstance(this).modules.toList()
 
@@ -36,4 +41,13 @@ internal fun FirDeclaration.name(): String = when (this) {
     is FirSymbolOwner<*> -> symbol.name()
     is FirFile -> "<FILE>"
     else -> error("unknown declaration ${this::class.simpleName}")
+}
+
+internal inline fun <R> resolveWithClearCaches(
+    context: KtElement,
+    noinline configureSession: FirIdeSession.() -> Unit = {},
+    action: (FirModuleResolveState) -> R,
+): R {
+    val resolveState = createResolveStateForNoCaching(context.getModuleInfo(), context.project, configureSession)
+    return action(resolveState)
 }

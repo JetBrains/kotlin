@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.idea.fir.frontend.api.fir
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.fir.executeOnPooledThreadInReadAction
-import org.jetbrains.kotlin.idea.fir.test.framework.AbstractKtSingleModuleTest
-import org.jetbrains.kotlin.idea.fir.test.framework.expressionMarkerProvider
+import org.jetbrains.kotlin.idea.fir.frontend.api.test.framework.AbstractHLApiSingleModuleTest
+import org.jetbrains.kotlin.idea.fir.low.level.api.test.base.expressionMarkerProvider
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.analyse
 import org.jetbrains.kotlin.idea.frontend.api.calls.KtCall
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.test.services.TestModuleStructure
+import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import kotlin.reflect.KProperty1
@@ -27,8 +27,8 @@ import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.javaGetter
 
-abstract class AbstractResolveCallTest : AbstractKtSingleModuleTest() {
-    override fun doTestByFileStructure(ktFiles: List<KtFile>, moduleStructure: TestModuleStructure, testServices: TestServices) {
+abstract class AbstractResolveCallTest : AbstractHLApiSingleModuleTest() {
+    override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
         val ktFile = ktFiles.first()
         val expression = testServices.expressionMarkerProvider.getSelectedElement(ktFile)
 

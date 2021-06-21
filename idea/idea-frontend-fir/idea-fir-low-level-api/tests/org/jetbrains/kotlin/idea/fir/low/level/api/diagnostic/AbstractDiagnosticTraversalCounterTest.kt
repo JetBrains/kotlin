@@ -15,62 +15,62 @@ import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.DiagnosticCheckerFilter
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.collectDiagnosticsForFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
-import org.jetbrains.kotlin.idea.fir.low.level.api.compiler.based.FrontendApiSingleTestDataFileTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.BeforeElementDiagnosticCollectionHandler
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.SingleNonLocalDeclarationDiagnosticRetriever
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.fir.PersistentCheckerContextFactory
 import org.jetbrains.kotlin.idea.fir.low.level.api.renderWithClassName
-import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSession
+import org.jetbrains.kotlin.idea.fir.low.level.api.resolveWithClearCaches
+import org.jetbrains.kotlin.idea.fir.low.level.api.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
 /**
  * Check that every declaration is visited exactly one time during diagnostic collection
  */
-abstract class AbstractDiagnosticTraversalCounterTest : FrontendApiSingleTestDataFileTest() {
-    private var handler: BeforeElementTestDiagnosticCollectionHandler? = null
+abstract class AbstractDiagnosticTraversalCounterTest  : AbstractLowLevelApiSingleFileTest() {
+    override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
+        val handler = BeforeElementTestDiagnosticCollectionHandler()
+        resolveWithClearCaches(
+            ktFile,
+            configureSession = {
+                @OptIn(SessionConfiguration::class)
+                register(BeforeElementDiagnosticCollectionHandler::class, handler)
+            }
+        ) { resolveState ->
+            // we should get diagnostics before we resolve the whole file by  ktFile.getOrBuildFir
+            ktFile.collectDiagnosticsForFile(resolveState, DiagnosticCheckerFilter.ONLY_COMMON_CHECKERS)
 
-    @OptIn(SessionConfiguration::class)
-    override fun FirIdeSession.configureSession() {
-        handler = BeforeElementTestDiagnosticCollectionHandler()
-        register(BeforeElementDiagnosticCollectionHandler::class, handler!!)
-    }
+            val firFile = ktFile.getOrBuildFir(resolveState)
 
-    override fun doTest(ktFile: KtFile, module: TestModule, resolveState: FirModuleResolveState, testServices: TestServices) {
-        // we should get diagnostics before we resolve the whole file by  ktFile.getOrBuildFir
-        ktFile.collectDiagnosticsForFile(resolveState, DiagnosticCheckerFilter.ONLY_COMMON_CHECKERS)
+            val errorElements = collectErrorElements(firFile, handler)
 
-        val firFile = ktFile.getOrBuildFir(resolveState)
-
-        val errorElements = collectErrorElements(firFile, handler!!)
-
-        if (errorElements.isNotEmpty()) {
-            val zeroElements = errorElements.filter { it.second == 0 }
-            val nonZeroElements = errorElements.filter { it.second > 1 }
-            val message = buildString {
-                if (zeroElements.isNotEmpty()) {
-                    appendLine(
-                        """ |The following elements were not visited 
+            if (errorElements.isNotEmpty()) {
+                val zeroElements = errorElements.filter { it.second == 0 }
+                val nonZeroElements = errorElements.filter { it.second > 1 }
+                val message = buildString {
+                    if (zeroElements.isNotEmpty()) {
+                        appendLine(
+                            """ |The following elements were not visited 
                             |${zeroElements.joinToString(separator = "\n\n") { it.first.source?.kind.toString() + " <> " + it.first.renderWithClassName() }}
                              """.trimMargin()
-                    )
-                }
-                if (nonZeroElements.isNotEmpty()) {
-                    appendLine(
-                        """ |The following elements were visited more than one time
+                        )
+                    }
+                    if (nonZeroElements.isNotEmpty()) {
+                        appendLine(
+                            """ |The following elements were visited more than one time
                             |${nonZeroElements.joinToString(separator = "\n\n") { it.second.toString() + " times " + it.first.source?.kind.toString() + " <> " + it.first.renderWithClassName() }}
                              """.trimMargin()
-                    )
+                        )
+                    }
                 }
+                testServices.assertions.fail { message }
             }
-            testServices.assertions.fail { message }
+
         }
-        handler = null
     }
 
     private fun collectErrorElements(

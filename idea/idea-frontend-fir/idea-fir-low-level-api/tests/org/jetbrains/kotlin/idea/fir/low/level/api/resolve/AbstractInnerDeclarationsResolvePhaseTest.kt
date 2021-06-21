@@ -8,19 +8,20 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.resolve
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirOfType
-import org.jetbrains.kotlin.idea.fir.low.level.api.compiler.based.FrontendApiSingleTestDataFileTest
+import org.jetbrains.kotlin.idea.fir.low.level.api.resolveWithClearCaches
+import org.jetbrains.kotlin.idea.fir.low.level.api.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 
-abstract class AbstractInnerDeclarationsResolvePhaseTest : FrontendApiSingleTestDataFileTest() {
-    override fun doTest(ktFile: KtFile, module: TestModule, resolveState: FirModuleResolveState, testServices: TestServices) {
-        val firFile = ktFile.getOrBuildFirOfType<FirFile>(resolveState)
-
-        val actual = firFile.render(FirRenderer.RenderMode.WithResolvePhases)
-        KotlinTestUtils.assertEqualsToFile(testDataFileSibling(".fir.txt"), actual)
+abstract class AbstractInnerDeclarationsResolvePhaseTest : AbstractLowLevelApiSingleFileTest() {
+    override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
+        resolveWithClearCaches(ktFile) { resolveState ->
+            val firFile = ktFile.getOrBuildFirOfType<FirFile>(resolveState)
+            val actual = firFile.render(FirRenderer.RenderMode.WithResolvePhases)
+            KotlinTestUtils.assertEqualsToFile(testDataFileSibling(".fir.txt"), actual)
+        }
     }
 }

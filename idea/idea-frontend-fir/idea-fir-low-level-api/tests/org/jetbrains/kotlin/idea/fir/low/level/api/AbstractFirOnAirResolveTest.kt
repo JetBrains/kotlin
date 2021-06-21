@@ -7,22 +7,19 @@ package org.jetbrains.kotlin.idea.fir.low.level.api
 
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacadeForResolveOnAir
-import org.jetbrains.kotlin.idea.fir.low.level.api.compiler.based.FrontendApiSingleTestDataFileTest
+import org.jetbrains.kotlin.idea.fir.low.level.api.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.psi.KtAnnotated
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFileAnnotationList
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.util.findElementByCommentPrefix
 
-abstract class AbstractFirOnAirResolveTest : FrontendApiSingleTestDataFileTest() {
-
-    override fun doTest(ktFile: KtFile, module: TestModule, resolveState: FirModuleResolveState, testServices: TestServices) {
-
+abstract class AbstractFirOnAirResolveTest : AbstractLowLevelApiSingleFileTest() {
+    override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
         fun fixUpAnnotations(element: KtElement): KtElement = when (element) {
             is KtAnnotated -> element.annotationEntries.firstOrNull() ?: element
             is KtFileAnnotationList -> element.annotationEntries.first()
@@ -34,9 +31,11 @@ abstract class AbstractFirOnAirResolveTest : FrontendApiSingleTestDataFileTest()
 
         check(place::class == onAir::class)
 
-        check(resolveState is FirModuleResolveStateImpl)
-        val firElement = LowLevelFirApiFacadeForResolveOnAir.onAirResolveElement(resolveState, place, onAir)
-        val rendered = firElement.render(FirRenderer.RenderMode.WithResolvePhases)
-        KotlinTestUtils.assertEqualsToFile(testDataFileSibling(".txt"), rendered)
+        resolveWithClearCaches(ktFile) { resolveState ->
+            check(resolveState is FirModuleResolveStateImpl)
+            val firElement = LowLevelFirApiFacadeForResolveOnAir.onAirResolveElement(resolveState, place, onAir)
+            val rendered = firElement.render(FirRenderer.RenderMode.WithResolvePhases)
+            KotlinTestUtils.assertEqualsToFile(testDataFileSibling(".txt"), rendered)
+        }
     }
 }

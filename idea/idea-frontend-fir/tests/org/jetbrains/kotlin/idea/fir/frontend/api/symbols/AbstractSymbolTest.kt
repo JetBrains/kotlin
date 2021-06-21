@@ -6,20 +6,20 @@
 package org.jetbrains.kotlin.idea.fir.frontend.api.symbols
 
 import org.jetbrains.kotlin.idea.fir.analyseOnPooledThreadInReadAction
-import org.jetbrains.kotlin.idea.fir.test.framework.AbstractKtIdeaTestWithSingleTestFileTest
+import org.jetbrains.kotlin.idea.fir.frontend.api.test.framework.AbstractHLApiSingleFileTest
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.services.TestModuleStructure
+import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractSymbolTest : AbstractKtIdeaTestWithSingleTestFileTest() {
+abstract class AbstractSymbolTest : AbstractHLApiSingleFileTest() {
     abstract fun KtAnalysisSession.collectSymbols(ktFile: KtFile, testServices: TestServices): List<KtSymbol>
 
-    override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
+    override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
         val createPointers = false //TODO !fileStructure.directives.isDirectivePresent(DIRECTIVES.DO_NOT_CHECK_SYMBOL_RESTORE)
         val pointersWithRendered = analyseOnPooledThreadInReadAction(ktFile) {
             collectSymbols(ktFile, testServices).map { symbol ->

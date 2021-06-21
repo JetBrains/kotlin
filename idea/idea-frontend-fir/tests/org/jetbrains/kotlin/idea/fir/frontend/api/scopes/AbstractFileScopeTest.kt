@@ -6,18 +6,16 @@
 package org.jetbrains.kotlin.idea.fir.frontend.api.scopes
 
 import org.jetbrains.kotlin.idea.fir.executeOnPooledThreadInReadAction
-import org.jetbrains.kotlin.idea.fir.test.framework.AbstractKtIdeaTestWithSingleTestFileTest
+import org.jetbrains.kotlin.idea.fir.frontend.api.test.framework.AbstractHLApiSingleFileTest
 import org.jetbrains.kotlin.idea.frontend.api.analyse
 import org.jetbrains.kotlin.idea.frontend.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.services.TestModuleStructure
+import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
-import java.io.File
 
-abstract class AbstractFileScopeTest : AbstractKtIdeaTestWithSingleTestFileTest() {
-    override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
+abstract class AbstractFileScopeTest : AbstractHLApiSingleFileTest() {
+    override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
         val actual = executeOnPooledThreadInReadAction {
             analyse(ktFile) {
                 val symbol = ktFile.getFileSymbol()

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.fir.frontend.api.symbols
 
-import org.jetbrains.kotlin.idea.fir.test.framework.expressionMarkerProvider
+import org.jetbrains.kotlin.idea.fir.low.level.api.test.base.expressionMarkerProvider
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.references.mainReference

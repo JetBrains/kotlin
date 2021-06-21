@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.fir.test.framework
+package org.jetbrains.kotlin.idea.fir.low.level.api.test.base
 
 import com.intellij.mock.MockProject
 import com.intellij.psi.PsiElementFinder
@@ -12,10 +12,6 @@ import org.jetbrains.kotlin.fir.session.FirModuleInfoBasedModuleData
 import org.jetbrains.kotlin.idea.fir.low.level.api.compiler.based.FirModuleResolveStateConfiguratorForSingleModuleTestImpl
 import org.jetbrains.kotlin.idea.fir.low.level.api.compiler.based.TestModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.compiler.based.registerTestServices
-import org.jetbrains.kotlin.idea.fir.test.framework.*
-import org.jetbrains.kotlin.idea.frontend.api.InvalidWayOfUsingAnalysisSession
-import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSessionProvider
-import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSessionProvider
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -34,7 +30,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.nameWithoutExtension
 
-abstract class AbstractKtIdeaTest {
+abstract class AbstractLowLevelApiTest {
     private lateinit var testInfo: KotlinTestInfo
 
     private val configure: TestConfigurationBuilder.() -> Unit = {
@@ -56,7 +52,7 @@ abstract class AbstractKtIdeaTest {
 
         configureTest(this)
 
-        this.testInfo = this@AbstractKtIdeaTest.testInfo
+        this.testInfo = this@AbstractLowLevelApiTest.testInfo
     }
 
     protected lateinit var testDataPath: Path
@@ -69,7 +65,6 @@ abstract class AbstractKtIdeaTest {
     open fun configureTest(builder: TestConfigurationBuilder) {}
 
 
-    @OptIn(InvalidWayOfUsingAnalysisSession::class)
     protected fun runTest(path: String) {
         testDataPath = Paths.get(path)
         val testConfiguration = testConfiguration(path, configure)
@@ -93,13 +88,15 @@ abstract class AbstractKtIdeaTest {
 
         with(project as MockProject) {
             registerTestServices(configurator, ktFiles)
-            registerService(KtAnalysisSessionProvider::class.java, KtFirAnalysisSessionProvider::class.java)
+            registerServicesForProject(this)
         }
 
         doTestByFileStructure(ktFiles.values.toList(), moduleStructure, testServices)
     }
 
-    abstract fun doTestByFileStructure(ktFiles: List<KtFile>, moduleStructure: TestModuleStructure, testServices: TestServices)
+    protected open fun registerServicesForProject(project: MockProject) {}
+
+    protected abstract fun doTestByFileStructure(ktFiles: List<KtFile>, moduleStructure: TestModuleStructure, testServices: TestServices)
 
     @BeforeEach
     fun initTestInfo(testInfo: TestInfo) {
@@ -109,8 +106,6 @@ abstract class AbstractKtIdeaTest {
             tags = testInfo.tags
         )
     }
-
-    protected fun getCaretPosition(text: String) = text.indexOfOrNull(KtTest.CARET_SYMBOL)
 }
 
 

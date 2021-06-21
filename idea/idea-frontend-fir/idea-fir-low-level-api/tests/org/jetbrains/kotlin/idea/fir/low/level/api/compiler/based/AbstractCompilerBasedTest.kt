@@ -56,7 +56,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.nameWithoutExtension
 
-abstract class FrontendApiTestWithTestdata : AbstractKotlinCompilerTest() {
+abstract class AbstractCompilerBasedTest : AbstractKotlinCompilerTest() {
     final override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
             frontend = FrontendKinds.FIR
@@ -68,13 +68,6 @@ abstract class FrontendApiTestWithTestdata : AbstractKotlinCompilerTest() {
         defaultConfiguration(this)
         unregisterAllFacades()
         useFrontendFacades(::LowLevelFirFrontendFacade)
-    }
-
-    protected lateinit var testDataPath: Path
-
-    protected fun testDataFileSibling(extension: String): Path {
-        val extensionWithDot = "." + extension.removePrefix(".")
-        return testDataPath.resolveSibling(testDataPath.nameWithoutExtension + extensionWithDot)
     }
 
     open fun TestConfigurationBuilder.configureTest() {}
@@ -102,30 +95,22 @@ abstract class FrontendApiTestWithTestdata : AbstractKotlinCompilerTest() {
                 registerTestServices(configurator, ktFiles)
             }
 
-            val resolveState = createResolveStateForNoCaching(moduleInfo, project) { configureSession() }
-            return getArtifact(module, testServices, ktFiles, resolveState)
-                ?: FirOutputArtifactImpl(
-                    resolveState.rootModuleSession,
-                    emptyMap(),
-                    FirAnalyzerFacade(resolveState.rootModuleSession, configurator.getLanguageVersionSettings(moduleInfo))
-                )
+            val resolveState = createResolveStateForNoCaching(moduleInfo, project)
+
+            val allFirFiles = ktFiles.map { (testFile, psiFile) ->
+                testFile to psiFile.getOrBuildFirFile(resolveState)
+            }.toMap()
+
+            val diagnosticCheckerFilter = if (FirDiagnosticsDirectives.WITH_EXTENDED_CHECKERS in module.directives) {
+                DiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS
+            } else DiagnosticCheckerFilter.ONLY_COMMON_CHECKERS
+
+            val analyzerFacade = LowLevelFirAnalyzerFacade(resolveState, allFirFiles, diagnosticCheckerFilter)
+            return LowLevelFirOutputArtifact(resolveState.rootModuleSession, analyzerFacade)
         }
     }
 
-
-    protected open fun FirIdeSession.configureSession() {}
-
-    protected abstract fun getArtifact(
-        module: TestModule,
-        testServices: TestServices,
-        ktFiles: Map<TestFile, KtFile>,
-        resolveState: FirModuleResolveState
-    ): FirOutputArtifact?
-
-
     override fun runTest(filePath: String) {
-        testDataPath = Paths.get(filePath)
-
         val configuration = testConfiguration(filePath, configuration)
         if (ignoreTest(filePath, configuration)) {
             return
