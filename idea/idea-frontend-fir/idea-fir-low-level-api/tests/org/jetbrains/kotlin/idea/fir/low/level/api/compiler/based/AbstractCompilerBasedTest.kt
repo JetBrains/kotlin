@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.compiler.based
 
 import com.intellij.mock.MockProject
+import com.intellij.openapi.Disposable
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
@@ -89,7 +90,7 @@ abstract class AbstractCompilerBasedTest : AbstractKotlinCompilerTest() {
 
             val moduleInfo = TestModuleInfo(module)
             testServices.firModuleInfoProvider.registerModuleData(module, FirModuleInfoBasedModuleData(moduleInfo))
-            val configurator = FirModuleResolveStateConfiguratorForSingleModuleTestImpl(testServices, module, ktFiles, moduleInfo)
+            val configurator = FirModuleResolveStateConfiguratorForSingleModuleTestImpl(testServices, module, ktFiles, moduleInfo, project)
 
             with(project as MockProject) {
                 registerTestServices(configurator, ktFiles)
@@ -162,6 +163,7 @@ class FirModuleResolveStateConfiguratorForSingleModuleTestImpl(
     private val testModule: TestModule,
     private val ktFiles: Map<TestFile, KtFile>,
     private val moduleInfo: ModuleInfo,
+    private val parentDisposable: Disposable,
 ) : FirModuleResolveStateConfigurator() {
     val moduleInfoProvider = testServices.firModuleInfoProvider
     val compilerConfigurationProvider = testServices.compilerConfigurationProvider
@@ -220,8 +222,7 @@ class FirModuleResolveStateConfiguratorForSingleModuleTestImpl(
     }
 
     override fun configureSourceSession(session: FirSession) {
-        @Suppress("IncorrectParentDisposable")
-        PsiElementFinder.EP.getPoint(project).registerExtension(FirJavaElementFinder(session, project), project)
+        PsiElementFinder.EP.getPoint(project).registerExtension(FirJavaElementFinder(session, project), parentDisposable)
     }
 }
 

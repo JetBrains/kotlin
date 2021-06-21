@@ -32,6 +32,26 @@ dependencies {
     testCompile(project(":kotlin-test:kotlin-test-junit"))
     testApiJUnit5()
     testCompile(project(":kotlin-reflect"))
+
+    testRuntimeOnly(intellijDep()) {
+        includeJars(
+            "jps-model",
+            "extensions",
+            "util",
+            "platform-api",
+            "platform-impl",
+            "idea",
+            "guava",
+            "trove4j",
+            "asm-all",
+            "log4j",
+            "jdom",
+            "streamex",
+            "bootstrap",
+            "jna",
+            rootProject = rootProject
+        )
+    }
 }
 
 sourceSets {
