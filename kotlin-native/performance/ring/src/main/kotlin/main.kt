@@ -212,7 +212,8 @@ class RingLauncher : Launcher() {
                     "LinkedListWithAtomicsBenchmark" to BenchmarkEntryWithInit.create(::LinkedListWithAtomicsBenchmark, { ensureNext() }),
                     "Inheritance.baseCalls" to BenchmarkEntryWithInit.create(::InheritanceBenchmark, { baseCalls() }),
                     "ChainableBenchmark.testChainable" to BenchmarkEntryWithInit.create(::ChainableBenchmark, { testChainable() }),
-                    "BunnymarkBenchmark.testBunnymark" to BenchmarkEntryWithInit.create(::BunnymarkBenchmark, { testBunnymark() })
+                    "BunnymarkBenchmark.testBunnymark" to BenchmarkEntryWithInit.create(::BunnymarkBenchmark, { testBunnymark() }),
+                    "ArrayCopyBenchmark.copyInSameArray" to BenchmarkEntryWithInit.create(::ArrayCopyBenchmark, { copyInSameArray() })
             )
     )
 }
