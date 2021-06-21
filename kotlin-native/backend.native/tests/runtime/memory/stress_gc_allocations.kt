@@ -8,10 +8,11 @@ import kotlin.native.concurrent.*
 import kotlin.native.internal.MemoryUsageInfo
 
 object Blackhole {
-    private val hole = AtomicLong(0)
+    // On MIPS `AtomicLong` does not support `addAndGet`. TODO: Fix it.
+    private val hole = AtomicInt(0)
 
     fun consume(value: Any) {
-        hole.addAndGet(value.hashCode())
+        hole.addAndGet(value.hashCode().toInt())
     }
 
     fun discharge() {
@@ -50,8 +51,8 @@ fun test() {
     val value: Byte = 42
     // Try to make sure each page is written
     val stride = 4096
-    // Limit memory usage at ~200MiB
-    val rssDiffLimit: Long = 200_000_000
+    // Limit memory usage at ~500MiB. This limit was exercised by -Xallocator=mimalloc and legacy MM.
+    val rssDiffLimit: Long = 500_000_000
     // Trigger GC after ~100MiB are allocated
     val retainLimit: Long = 100_000_000
     val progressReportsCount = 100
