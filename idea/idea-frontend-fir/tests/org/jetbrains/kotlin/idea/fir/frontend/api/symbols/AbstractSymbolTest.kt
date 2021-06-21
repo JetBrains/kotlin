@@ -5,22 +5,38 @@
 
 package org.jetbrains.kotlin.idea.fir.frontend.api.symbols
 
+import com.intellij.DynamicBundle
+import com.intellij.core.CoreApplicationEnvironment
+import com.intellij.openapi.components.ServiceManager
+import com.intellij.psi.impl.smartPointers.SmartPointerAnchorProvider
 import org.jetbrains.kotlin.idea.fir.analyseOnPooledThreadInReadAction
 import org.jetbrains.kotlin.idea.fir.frontend.api.test.framework.AbstractHLApiSingleFileTest
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.KotlinOutOfBlockModificationTrackerFactory
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
+import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractSymbolTest : AbstractHLApiSingleFileTest() {
+    override fun configureTest(builder: TestConfigurationBuilder) {
+        super.configureTest(builder)
+        with(builder) {
+            useDirectives(SymbolTestDirectives)
+        }
+    }
+
     abstract fun KtAnalysisSession.collectSymbols(ktFile: KtFile, testServices: TestServices): List<KtSymbol>
 
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
-        val createPointers = false //TODO !fileStructure.directives.isDirectivePresent(DIRECTIVES.DO_NOT_CHECK_SYMBOL_RESTORE)
+        val createPointers = SymbolTestDirectives.DO_NOT_CHECK_SYMBOL_RESTORE !in module.directives
         val pointersWithRendered = analyseOnPooledThreadInReadAction(ktFile) {
             collectSymbols(ktFile, testServices).map { symbol ->
                 PointerWithRenderedSymbol(
@@ -65,8 +81,16 @@ abstract class AbstractSymbolTest : AbstractHLApiSingleFileTest() {
     }
 
     private fun doOutOfBlockModification(ktFile: KtFile) {
-        //TODO
+        ServiceManager.getService(ktFile.project, KotlinOutOfBlockModificationTrackerFactory::class.java)
+            .incrementModificationsCount()
     }
+}
+
+private object SymbolTestDirectives : SimpleDirectivesContainer() {
+    val DO_NOT_CHECK_SYMBOL_RESTORE by directive(
+        description = "Symbol restoring for some symbols in current test is not yet supported yet",
+        applicability = DirectiveApplicability.Global
+    )
 }
 
 private data class PointerWithRenderedSymbol(val pointer: KtSymbolPointer<*>?, val rendered: String)

@@ -14,6 +14,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.psi.FileContextProvider;
 import com.intellij.psi.augment.PsiAugmentProvider;
+import com.intellij.psi.impl.smartPointers.SmartPointerAnchorProvider;
 import com.intellij.psi.meta.MetaDataContributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,6 +42,7 @@ public class KotlinCoreApplicationEnvironment extends JavaCoreApplicationEnviron
         registerApplicationExtensionPoint(ContainerProvider.EP_NAME, ContainerProvider.class);
 
         registerApplicationExtensionPoint(MetaLanguage.EP_NAME, MetaLanguage.class);
+        registerApplicationExtensionPoint(SmartPointerAnchorProvider.EP_NAME, SmartPointerAnchorProvider.class);
 
         IdeaExtensionPoints.INSTANCE.registerVersionSpecificAppExtensionPoints(ApplicationManager.getApplication().getExtensionArea());
     }
