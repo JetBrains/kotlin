@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":idea:idea-frontend-fir"))
+    implementation(project(":idea-frontend-fir"))
     implementation(project(":idea"))
 
     testRuntime(project(":idea:idea-fir"))

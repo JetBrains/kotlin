@@ -887,9 +887,9 @@ tasks {
     register("frontendApiTests") {
         dependsOn("dist")
         dependsOn(
-            ":idea:idea-frontend-api:test",
-            ":idea:idea-frontend-fir:test",
-            ":idea:idea-frontend-fir:idea-fir-low-level-api:test"
+            ":idea-frontend-api:test",
+            ":idea-frontend-fir:test",
+            ":idea-frontend-fir:idea-fir-low-level-api:test"
         )
     }
     

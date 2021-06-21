@@ -13,12 +13,12 @@ dependencies {
     compile(project(":compiler:fir:checkers:checkers.jvm"))
     compile(project(":compiler:fir:java"))
     compile(project(":compiler:fir:jvm"))
-    compile(project(":idea:idea-frontend-fir:idea-fir-low-level-api"))
-    compile(project(":idea:idea-frontend-api"))
+    compile(project(":idea-frontend-fir:idea-fir-low-level-api"))
+    compile(project(":idea-frontend-api"))
     compile(project(":compiler:light-classes"))
     compile(intellijCoreDep())
 
-    testCompile(projectTests(":idea:idea-frontend-fir:idea-fir-low-level-api"))
+    testCompile(projectTests(":idea-frontend-fir:idea-fir-low-level-api"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(projectTests(":compiler:test-infrastructure-utils"))
     testCompile(projectTests(":compiler:test-infrastructure"))
@@ -66,7 +66,7 @@ testsJar()
 val generatorClasspath by configurations.creating
 
 dependencies {
-    generatorClasspath(project("idea-frontend-fir-generator"))
+    generatorClasspath(project(":idea-frontend-fir:idea-frontend-fir-generator"))
 }
 
 val generateCode by tasks.registering(NoDebugJavaExec::class) {

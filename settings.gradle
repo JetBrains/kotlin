@@ -496,10 +496,10 @@ if (!buildProperties.getBoolean("disableKotlinPluginModules", false) && attached
 }
 
 include ":generators:frontend-api-generator",
-        ":idea:idea-frontend-fir:idea-fir-low-level-api",
-        ":idea:idea-frontend-fir:idea-frontend-fir-generator",
-        ":idea:idea-frontend-fir",
-        ":idea:idea-frontend-api"
+        ":idea-frontend-fir:idea-fir-low-level-api",
+        ":idea-frontend-fir:idea-frontend-fir-generator",
+        ":idea-frontend-fir",
+        ":idea-frontend-api"
 
 if (buildProperties.inJpsBuildIdeaSync) {
     include ":kotlin-stdlib:jps-build"
@@ -674,6 +674,12 @@ project(':js:js.engines').projectDir = "$rootDir/js/js.engines" as File
 project(':kotlinx-serialization-compiler-plugin').projectDir = file("$rootDir/plugins/kotlin-serialization/kotlin-serialization-compiler")
 project(':kotlin-serialization').projectDir = file("$rootDir/libraries/tools/kotlin-serialization")
 project(':kotlin-serialization-unshaded').projectDir = file("$rootDir/libraries/tools/kotlin-serialization-unshaded")
+
+project(":idea-frontend-fir:idea-fir-low-level-api").projectDir = "$rootDir/idea/idea-frontend-fir/idea-fir-low-level-api" as File
+project(":idea-frontend-fir:idea-frontend-fir-generator").projectDir = "$rootDir/idea/idea-frontend-fir/idea-frontend-fir-generator" as File
+project(":idea-frontend-fir").projectDir = "$rootDir/idea/idea-frontend-fir" as File
+project(":idea-frontend-api").projectDir = "$rootDir/idea/idea-frontend-api" as File
+
 
 // Uncomment to use locally built protobuf-relocated
 // includeBuild("dependencies/protobuf")

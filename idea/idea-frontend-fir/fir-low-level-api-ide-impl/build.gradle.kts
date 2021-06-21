@@ -5,9 +5,9 @@ plugins {
 
 dependencies {
     compile(project(":compiler:psi"))
-    compile(project(            ":idea:idea-frontend-fir:idea-fir-low-level-api"))
+    compile(project(            ":idea-frontend-fir:idea-fir-low-level-api"))
     compile(project(":idea:idea-frontend-independent"))
-    compile(project(":idea:idea-frontend-api"))
+    compile(project(":idea-frontend-api"))
     compile(project(":idea:idea-core"))
     compile(project(":compiler:fir:fir2ir"))
     compile(project(":compiler:fir:fir2ir:jvm-backend"))
@@ -27,7 +27,7 @@ dependencies {
 // </temp>
 
 // <neededFor>`AbstractFirLazyResolveTest` uses fir implementation of references which are not in classpath otherwise
-    testRuntimeOnly(project(":idea:idea-frontend-fir"))
+    testRuntimeOnly(project(":idea-frontend-fir"))
 // </neededFor>
     testCompile(projectTests(":compiler:test-infrastructure-utils"))
     testCompile(projectTests(":compiler:test-infrastructure"))
