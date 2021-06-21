@@ -148,22 +148,29 @@ class DelegatedPropertyOptimizer {
                 //
                 //   AASTORE
                 //
-                // With the caveat that we might create a class instead of a package as the `KDeclarationContainer`.
+                // With the caveat that we might create a class instead of a package as the `KDeclarationContainer`,
+                // and with optimized references the Java class is passed to the constructor without wrapping.
                 current = matchRange(current) {
                     aload(slot)
                     index = iconst()
                     new(PROPERTY_REFERENCE_CLASSES)
                     dup()
-                    // Either getOrCreateKotlinPackage(class, module) or getOrCreateKotlinClass(class)
                     ldc() // java class
-                    optional {
-                        ldc() // module name
-                    }
-                    invokestatic("kotlin/jvm/internal/Reflection")
-                    ldc() // name
-                    ldc() // signature
-                    invokespecial("<init>", "(Lkotlin/reflect/KDeclarationContainer;Ljava/lang/String;Ljava/lang/String;)V")
-                    invokestatic("kotlin/jvm/internal/Reflection")
+                    either(
+                        {
+                            optional { ldc() } // module name, if package
+                            invokestatic("kotlin/jvm/internal/Reflection") // getOrCreateKotlinPackage or getOrCreateKotlinClass
+                            ldc() // name
+                            ldc() // signature
+                            invokespecial("<init>", "(Lkotlin/reflect/KDeclarationContainer;Ljava/lang/String;Ljava/lang/String;)V")
+                        }, {
+                            ldc() // name
+                            ldc() // signature
+                            iconst() // flags
+                            invokespecial("<init>", "(Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V")
+                        }
+                    )
+                    invokestatic("kotlin/jvm/internal/Reflection") // (property|mutableProperty)[012]
                     aastore()
                 } ?: break
 
@@ -239,10 +246,15 @@ private class InstructionMatcher(var current: AbstractInsnNode?) {
     }
 
     inline fun optional(block: () -> Unit) {
+        either(block) {}
+    }
+
+    inline fun either(first: () -> Unit, second: () -> Unit) {
         val start = current
-        block()
+        first()
         if (current == null) {
             current = start
+            second()
         }
     }
 
