@@ -25,6 +25,7 @@ dependencies {
     implementation(project(":idea:idea-frontend-api"))
     implementation(project(":idea:idea-frontend-fir"))
 
+    testRuntime(project(":idea:idea-fir"))
     testImplementation(commonDep("junit:junit"))
     testCompileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl") }
     testImplementation(projectTests(":compiler:tests-common"))
