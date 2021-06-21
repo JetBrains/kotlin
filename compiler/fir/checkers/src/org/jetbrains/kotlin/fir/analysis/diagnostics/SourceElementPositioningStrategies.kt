@@ -118,6 +118,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.SUSPEND_MODIFIER
     )
 
+    val DATA_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.DATA_MODIFIER,
+        PositioningStrategies.DATA_MODIFIER
+    )
+
     val OPERATOR = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.OPERATOR,
         PositioningStrategies.OPERATOR

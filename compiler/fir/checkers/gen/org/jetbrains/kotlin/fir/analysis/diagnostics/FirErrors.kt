@@ -345,6 +345,7 @@ object FirErrors {
     // overrides
     val NOTHING_TO_OVERRIDE by error1<KtModifierListOwner, FirMemberDeclaration>(SourceElementPositioningStrategies.OVERRIDE_MODIFIER)
     val CANNOT_OVERRIDE_INVISIBLE_MEMBER by error2<KtNamedDeclaration, FirCallableDeclaration<*>, FirCallableDeclaration<*>>(SourceElementPositioningStrategies.OVERRIDE_MODIFIER)
+    val DATA_CLASS_OVERRIDE_CONFLICT by error2<KtClassOrObject, FirCallableDeclaration<*>, FirCallableDeclaration<*>>(SourceElementPositioningStrategies.DATA_MODIFIER)
     val CANNOT_WEAKEN_ACCESS_PRIVILEGE by error3<KtModifierListOwner, Visibility, FirCallableDeclaration, Name>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
     val CANNOT_CHANGE_ACCESS_PRIVILEGE by error3<KtModifierListOwner, Visibility, FirCallableDeclaration, Name>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
     val OVERRIDING_FINAL_MEMBER by error2<KtNamedDeclaration, FirCallableDeclaration, Name>(SourceElementPositioningStrategies.OVERRIDE_MODIFIER)

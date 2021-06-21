@@ -576,6 +576,11 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirCallableDeclaration<*>>("baseMember")
         }
 
+        val DATA_CLASS_OVERRIDE_CONFLICT by error<KtClassOrObject>(PositioningStrategy.DATA_MODIFIER) {
+            parameter<FirCallableDeclaration<*>>("overridingMember")
+            parameter<FirCallableDeclaration<*>>("baseMember")
+        }
+
         val CANNOT_WEAKEN_ACCESS_PRIVILEGE by error<KtModifierListOwner>(PositioningStrategy.VISIBILITY_MODIFIER) {
             parameter<Visibility>("overridingVisibility")
             parameter<FirCallableDeclaration>("overridden")

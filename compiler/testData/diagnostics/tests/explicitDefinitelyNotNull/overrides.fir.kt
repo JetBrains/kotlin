@@ -5,10 +5,10 @@ interface A<T> {
     fun bar(x: T!!): T!!
 }
 
-//interface B<T1> : A<T1> {
-//    override fun foo(x: T1): T1
-//    override fun bar(x: T1!!): T1!!
-//}
+interface B<T1> : A<T1> {
+    override fun foo(x: T1): T1
+    override fun bar(x: T1!!): T1!!
+}
 
 interface C<T2> : A<T2> {
     override fun foo(x: T2!!): T2!!

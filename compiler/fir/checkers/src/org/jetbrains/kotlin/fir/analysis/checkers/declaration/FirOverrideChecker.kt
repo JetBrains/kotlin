@@ -202,6 +202,20 @@ object FirOverrideChecker : FirClassChecker() {
             }
             val kind = member.source?.kind
             // Only report if the current member has real source or it's a member property declared inside the primary constructor.
+
+            if (kind is FirFakeSourceElementKind.DataClassGeneratedMembers) {
+                overriddenMemberSymbols.find { (it.fir as? FirCallableMemberDeclaration<*>)?.isFinal == true }?.let { base ->
+                    reporter.reportOn(
+                        containingClass.source,
+                        FirErrors.DATA_CLASS_OVERRIDE_CONFLICT,
+                        member,
+                        base.fir,
+                        context
+                    )
+                }
+                return
+            }
+
             if (kind !is FirRealSourceElementKind && kind !is FirFakeSourceElementKind.PropertyFromParameter) return
 
             val overridden = overriddenMemberSymbols.first().originalOrSelf()

@@ -1,4 +1,3 @@
-// fir reports NOTHING_TO_OVERRIDE because it keeps only one definition of p.Base
 // MODULE: m1
 // FILE: x.kt
 package p

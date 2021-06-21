@@ -1857,10 +1857,19 @@ internal class NothingToOverrideImpl(
 internal class CannotOverrideInvisibleMemberImpl(
     override val overridingMember: KtCallableSymbol,
     override val baseMember: KtCallableSymbol,
-    firDiagnostic: FirPsiDiagnostic<*>,
+    firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.CannotOverrideInvisibleMember(), KtAbstractFirDiagnostic<KtNamedDeclaration> {
-    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
+internal class DataClassOverrideConflictImpl(
+    override val overridingMember: KtCallableSymbol,
+    override val baseMember: KtCallableSymbol,
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.DataClassOverrideConflict(), KtAbstractFirDiagnostic<KtClassOrObject> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
 internal class CannotWeakenAccessPrivilegeImpl(
@@ -1895,63 +1904,63 @@ internal class OverridingFinalMemberImpl(
 internal class ReturnTypeMismatchOnInheritanceImpl(
     override val conflictingDeclaration1: KtCallableSymbol,
     override val conflictingDeclaration2: KtCallableSymbol,
-    firDiagnostic: FirPsiDiagnostic<*>,
+    firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.ReturnTypeMismatchOnInheritance(), KtAbstractFirDiagnostic<KtClassOrObject> {
-    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
 internal class PropertyTypeMismatchOnInheritanceImpl(
     override val conflictingDeclaration1: KtCallableSymbol,
     override val conflictingDeclaration2: KtCallableSymbol,
-    firDiagnostic: FirPsiDiagnostic<*>,
+    firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.PropertyTypeMismatchOnInheritance(), KtAbstractFirDiagnostic<KtClassOrObject> {
-    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
 internal class VarTypeMismatchOnInheritanceImpl(
     override val conflictingDeclaration1: KtCallableSymbol,
     override val conflictingDeclaration2: KtCallableSymbol,
-    firDiagnostic: FirPsiDiagnostic<*>,
+    firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.VarTypeMismatchOnInheritance(), KtAbstractFirDiagnostic<KtClassOrObject> {
-    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
 internal class ReturnTypeMismatchByDelegationImpl(
     override val delegateDeclaration: KtCallableSymbol,
     override val baseDeclaration: KtCallableSymbol,
-    firDiagnostic: FirPsiDiagnostic<*>,
+    firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.ReturnTypeMismatchByDelegation(), KtAbstractFirDiagnostic<KtClassOrObject> {
-    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
 internal class PropertyTypeMismatchByDelegationImpl(
     override val delegateDeclaration: KtCallableSymbol,
     override val baseDeclaration: KtCallableSymbol,
-    firDiagnostic: FirPsiDiagnostic<*>,
+    firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.PropertyTypeMismatchByDelegation(), KtAbstractFirDiagnostic<KtClassOrObject> {
-    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
 internal class VarOverriddenByValByDelegationImpl(
     override val delegateDeclaration: KtCallableSymbol,
     override val baseDeclaration: KtCallableSymbol,
-    firDiagnostic: FirPsiDiagnostic<*>,
+    firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.VarOverriddenByValByDelegation(), KtAbstractFirDiagnostic<KtClassOrObject> {
-    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
 internal class ConflictingInheritedMembersImpl(
     override val conflictingDeclarations: List<KtCallableSymbol>,
-    firDiagnostic: FirPsiDiagnostic<*>,
+    firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.ConflictingInheritedMembers(), KtAbstractFirDiagnostic<KtClassOrObject> {
-    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
 internal class AbstractMemberNotImplementedImpl(
