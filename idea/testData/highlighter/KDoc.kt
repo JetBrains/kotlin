@@ -1,3 +1,5 @@
+// IGNORE_FIR
+
 /**
  * @param <info descr="null" textAttributesKey="KDOC_LINK">x</info> foo and <info descr="null" textAttributesKey="KDOC_LINK">[baz]</info>
  * @param <info descr="null" textAttributesKey="KDOC_LINK">y</info> bar

@@ -1,3 +1,4 @@
+// IGNORE_FIR
 // EXPECTED_DUPLICATED_HIGHLIGHTING
 
 interface <info textAttributesKey="KOTLIN_TRAIT">FunctionLike</info> {

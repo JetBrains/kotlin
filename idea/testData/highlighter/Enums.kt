@@ -1,3 +1,5 @@
+// IGNORE_FIR
+
 package testing
 
 <info textAttributesKey="KOTLIN_BUILTIN_ANNOTATION">enum</info> class <info textAttributesKey="KOTLIN_ENUM">Test</info> {

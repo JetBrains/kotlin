@@ -1,3 +1,5 @@
+// IGNORE_FIR
+
 fun <info textAttributesKey="KOTLIN_FUNCTION_DECLARATION">test</info>() {
     <info textAttributesKey="KOTLIN_CONSTRUCTOR">Test</info>("text", "text")() // BUG
 }
