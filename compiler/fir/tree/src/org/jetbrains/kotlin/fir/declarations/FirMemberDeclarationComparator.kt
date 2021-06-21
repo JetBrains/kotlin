@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.types.FirTypeRefComparator
 import org.jetbrains.kotlin.name.Name

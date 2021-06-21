@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers.plugin
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.addDeclaration
+import org.jetbrains.kotlin.fir.declarations.utils.addDeclaration
 import org.jetbrains.kotlin.fir.declarations.validate
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators

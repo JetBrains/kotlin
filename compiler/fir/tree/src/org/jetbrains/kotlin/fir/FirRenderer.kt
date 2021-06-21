@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.contracts.*
 import org.jetbrains.kotlin.fir.contracts.description.ConeContractRenderer
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.references.*

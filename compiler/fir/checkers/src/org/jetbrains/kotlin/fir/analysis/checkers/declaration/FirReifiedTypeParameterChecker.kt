@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isInline
 
 object FirReifiedTypeParameterChecker : FirTypeParameterChecker() {
     override fun check(declaration: FirTypeParameter, context: CheckerContext, reporter: DiagnosticReporter) {

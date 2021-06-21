@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.declarations.isLateInit
-import org.jetbrains.kotlin.fir.declarations.referredPropertySymbol
+import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
+import org.jetbrains.kotlin.fir.declarations.utils.referredPropertySymbol
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference

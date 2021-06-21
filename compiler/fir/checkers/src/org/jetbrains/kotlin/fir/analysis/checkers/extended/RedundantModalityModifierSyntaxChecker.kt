@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirStatusOwner
-import org.jetbrains.kotlin.fir.declarations.modality
+import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.psi.KtDeclaration
 
 object RedundantModalityModifierSyntaxChecker : FirDeclarationSyntaxChecker<FirDeclaration<*>, KtDeclaration>() {

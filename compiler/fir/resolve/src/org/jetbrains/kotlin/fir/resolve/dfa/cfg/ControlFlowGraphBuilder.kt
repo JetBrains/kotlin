@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference

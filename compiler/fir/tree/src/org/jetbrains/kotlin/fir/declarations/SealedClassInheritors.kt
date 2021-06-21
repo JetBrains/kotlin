@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.declarations.utils.isSealed
 import org.jetbrains.kotlin.name.ClassId
 
 

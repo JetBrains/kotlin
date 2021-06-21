@@ -15,6 +15,9 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.utils.addDeclarations
+import org.jetbrains.kotlin.fir.declarations.utils.moduleName
+import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider.Companion.CLONE
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider.Companion.CLONEABLE_CLASS_ID

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls.jvm
 
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.resolve.calls.AbstractConeCallConflictResolver
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents

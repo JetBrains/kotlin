@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirStatusOwner
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
-import org.jetbrains.kotlin.fir.declarations.expandedConeType
+import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.moduleVisibilityChecker
 import org.jetbrains.kotlin.fir.resolve.ScopeSession

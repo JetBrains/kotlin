@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.fir.backend.generators.CallAndReferenceGenerator
 import org.jetbrains.kotlin.fir.backend.generators.DataClassMembersGenerator
 import org.jetbrains.kotlin.fir.backend.generators.FakeOverrideGenerator
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
+import org.jetbrains.kotlin.fir.declarations.utils.primaryConstructor
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.ScopeSession

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 import kotlinx.collections.immutable.toImmutableList
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isFromVararg
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall

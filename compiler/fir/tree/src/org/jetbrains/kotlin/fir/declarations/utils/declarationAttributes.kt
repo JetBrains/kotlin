@@ -3,9 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.declarations
+package org.jetbrains.kotlin.fir.declarations.utils
 
 import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.fir.declarations.*
 
 private object IsFromVarargKey : FirDeclarationDataKey()
 private object IsReferredViaField : FirDeclarationDataKey()

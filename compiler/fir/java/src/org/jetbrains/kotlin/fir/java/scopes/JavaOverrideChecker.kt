@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.fir.java.scopes
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
+import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.enhancement.readOnlyToMutable
 import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible

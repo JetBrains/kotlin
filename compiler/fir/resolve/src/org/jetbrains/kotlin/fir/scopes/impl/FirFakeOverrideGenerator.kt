@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverrideAttr
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor

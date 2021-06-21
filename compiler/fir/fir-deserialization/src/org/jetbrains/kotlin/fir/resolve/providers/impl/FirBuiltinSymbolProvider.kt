@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.utils.addDeclaration
 import org.jetbrains.kotlin.fir.deserialization.FirBuiltinAnnotationDeserializer
 import org.jetbrains.kotlin.fir.deserialization.FirConstDeserializer
 import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext

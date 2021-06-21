@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.isOpen
+import org.jetbrains.kotlin.fir.declarations.utils.isOpen
 import org.jetbrains.kotlin.lexer.KtTokens
 
 object FirOpenMemberChecker : FirClassChecker() {

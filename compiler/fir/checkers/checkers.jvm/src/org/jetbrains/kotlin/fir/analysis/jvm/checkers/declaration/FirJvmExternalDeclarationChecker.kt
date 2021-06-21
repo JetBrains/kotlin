@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isExternal
 import org.jetbrains.kotlin.lexer.KtTokens
 
 object FirJvmExternalDeclarationChecker : FirBasicDeclarationChecker() {

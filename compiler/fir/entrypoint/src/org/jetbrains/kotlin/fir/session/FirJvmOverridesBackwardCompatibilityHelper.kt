@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClass
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.dispatchReceiverTypeOrNull
 import org.jetbrains.kotlin.fir.originalOrSelf
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions

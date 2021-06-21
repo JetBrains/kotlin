@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleMode
 import org.jetbrains.kotlin.backend.common.serialization.mangle.collectForMangler
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.symbolProvider

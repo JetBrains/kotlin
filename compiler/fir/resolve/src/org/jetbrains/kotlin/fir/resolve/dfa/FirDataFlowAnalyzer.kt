@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.contracts.description.ConeConditionalEffectDecla
 import org.jetbrains.kotlin.fir.contracts.description.ConeConstantReference
 import org.jetbrains.kotlin.fir.contracts.description.ConeReturnsEffectDeclaration
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference

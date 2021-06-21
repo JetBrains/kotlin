@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.dfa
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.referredPropertySymbol
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.resolve.dfa.FirLocalVariableAssignmentAnalyzer.Companion.MiniFlow.Companion.join
