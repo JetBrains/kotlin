@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.load.java
 
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.findValueForMostSpecificFqname
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.storage.StorageManager
 
 val JSPECIFY_ANNOTATIONS_PACKAGE = FqName("org.jspecify.nullness")
 val CHECKER_FRAMEWORK_COMPATQUAL_ANNOTATIONS_PACKAGE = FqName("org.checkerframework.checker.nullness.compatqual")
@@ -84,7 +86,7 @@ fun getReportLevelForAnnotation(
     }
 }
 
-interface NullabilityAnnotationStates<T : Any> {
+interface NullabilityAnnotationStates<out T : Any> {
     operator fun get(fqName: FqName): T?
 
     fun singleOrNull(): Pair<FqName, T>?
@@ -95,12 +97,13 @@ interface NullabilityAnnotationStates<T : Any> {
 }
 
 class NullabilityAnnotationStatesImpl<T : Any>(val states: Map<FqName, T>) : NullabilityAnnotationStates<T> {
-    private val cache = mutableMapOf<FqName, T?>()
+    val storageManager = LockBasedStorageManager("Java nullability annotation states")
 
-    override operator fun get(fqName: FqName): T? {
-        if (fqName in cache) return cache[fqName]
-        return fqName.findValueForMostSpecificFqname(states).also { cache[fqName] = it }
+    private val cache = storageManager.createMemoizedFunctionWithNullableValues<FqName, T> {
+        it.findValueForMostSpecificFqname(states)
     }
+
+    override operator fun get(fqName: FqName) = cache(fqName)
 
     override fun singleOrNull() = states.entries.singleOrNull()?.toPair()
 }
