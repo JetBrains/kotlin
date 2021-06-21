@@ -185,6 +185,13 @@ class JvmBackendContext(
             functionSymbolMap[staticReplacement.symbol] = newStaticReplacement.symbol
         }
 
+        for ((methodReplacement, original) in inlineClassReplacements.originalFunctionForMethodReplacement) {
+            if (methodReplacement !is IrSimpleFunction) continue
+            val newOriginal = functionSymbolMap[original.symbol]?.owner ?: continue
+            val newMethodReplacement = inlineClassReplacements.getReplacementFunction(newOriginal) ?: continue
+            functionSymbolMap[methodReplacement.symbol] = newMethodReplacement.symbol
+        }
+
         for ((original, suspendView) in suspendFunctionOriginalToView) {
             val newOriginal = functionSymbolMap[original.symbol]?.owner ?: continue
             val newSuspendView = suspendFunctionOriginalToView[newOriginal] ?: continue

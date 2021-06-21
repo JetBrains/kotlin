@@ -18421,6 +18421,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("inlineInCompanion.kt")
+        public void testInlineInCompanion() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineInCompanion.kt");
+        }
+
+        @Test
         @TestMetadata("iterateOverArrayOfInlineClassValues.kt")
         public void testIterateOverArrayOfInlineClassValues() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/iterateOverArrayOfInlineClassValues.kt");

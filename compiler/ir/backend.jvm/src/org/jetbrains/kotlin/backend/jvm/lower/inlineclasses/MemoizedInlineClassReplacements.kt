@@ -45,6 +45,7 @@ class MemoizedInlineClassReplacements(
     private val propertyMap = ConcurrentHashMap<IrPropertySymbol, IrProperty>()
 
     internal val originalFunctionForStaticReplacement: MutableMap<IrFunction, IrFunction> = ConcurrentHashMap()
+    internal val originalFunctionForMethodReplacement: MutableMap<IrFunction, IrFunction> = ConcurrentHashMap()
 
     /**
      * Get a replacement for a function or a constructor.
@@ -181,6 +182,7 @@ class MemoizedInlineClassReplacements(
 
     private fun createMethodReplacement(function: IrFunction): IrSimpleFunction =
         buildReplacement(function, function.origin) {
+            originalFunctionForMethodReplacement[this] = function
             require(function.dispatchReceiverParameter != null && function is IrSimpleFunction)
             dispatchReceiverParameter = function.dispatchReceiverParameter?.copyTo(this, index = -1)
             extensionReceiverParameter = function.extensionReceiverParameter?.copyTo(this, index = -1, name = Name.identifier("\$receiver"))
