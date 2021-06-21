@@ -5,33 +5,33 @@ digraph boundSmartcastsInBranches_kt {
 
     subgraph cluster_0 {
         color=red
-        0 [label="Enter class A" style="filled" fillcolor=red];
-        1 [label="Part of class initialization"];
-        2 [label="Exit class A" style="filled" fillcolor=red];
+        0 [label="Enter function <init>" style="filled" fillcolor=red];
+        1 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        2 [label="Exit function <init>" style="filled" fillcolor=red];
     }
-    0 -> {1} [color=green];
-    1 -> {2} [style=dotted];
-    1 -> {6} [color=green];
-    1 -> {6} [style=dashed];
+    0 -> {1};
+    1 -> {2};
 
     subgraph cluster_1 {
         color=red
-        3 [label="Enter function <init>" style="filled" fillcolor=red];
-        4 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
-        5 [label="Exit function <init>" style="filled" fillcolor=red];
+        3 [label="Enter property" style="filled" fillcolor=red];
+        4 [label="Const: String()"];
+        5 [label="Exit property" style="filled" fillcolor=red];
     }
     3 -> {4};
     4 -> {5};
+    5 -> {8} [color=green];
 
     subgraph cluster_2 {
         color=red
-        6 [label="Enter property" style="filled" fillcolor=red];
-        7 [label="Const: String()"];
-        8 [label="Exit property" style="filled" fillcolor=red];
+        6 [label="Enter class A" style="filled" fillcolor=red];
+        7 [label="Part of class initialization"];
+        8 [label="Exit class A" style="filled" fillcolor=red];
     }
-    6 -> {7};
-    7 -> {8};
-    8 -> {2} [color=green];
+    6 -> {7} [color=green];
+    7 -> {8} [style=dotted];
+    7 -> {3} [color=green];
+    7 -> {3} [style=dashed];
 
     subgraph cluster_3 {
         color=red

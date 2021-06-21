@@ -90,4 +90,4 @@ FILE: main.kt
         }
 
     }
-    @R|annotations/WithInt|(Int(24)) @R|annotations/VeryComplex|(Float(3.14), Double(6.67E-11), Boolean(false), Long(123456789012345), Null(null)) @R|annotations/WithInt|(Int(24)) @R|annotations/VeryComplex|(Float(3.14), Double(6.67E-11), Boolean(false), Long(123456789012345), Null(null)) public final typealias Third = R|@R|annotations/Simple|()  test/Second|
+    @R|annotations/WithInt|(Int(24)) @R|annotations/VeryComplex|(Float(3.14), Double(6.67E-11), Boolean(false), Long(123456789012345), Null(null)) public final typealias Third = R|@R|annotations/Simple|()  test/Second|

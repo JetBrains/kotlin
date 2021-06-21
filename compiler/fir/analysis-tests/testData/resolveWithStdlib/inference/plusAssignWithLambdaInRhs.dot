@@ -52,33 +52,33 @@ digraph plusAssignWithLambdaInRhs_kt {
 
     subgraph cluster_4 {
         color=red
-        16 [label="Enter class A" style="filled" fillcolor=red];
-        17 [label="Part of class initialization"];
-        18 [label="Exit class A" style="filled" fillcolor=red];
+        16 [label="Enter function <init>" style="filled" fillcolor=red];
+        17 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        18 [label="Exit function <init>" style="filled" fillcolor=red];
     }
-    16 -> {17} [color=green];
-    17 -> {18} [style=dotted];
-    17 -> {22} [color=green];
-    17 -> {22} [style=dashed];
+    16 -> {17};
+    17 -> {18};
 
     subgraph cluster_5 {
         color=red
-        19 [label="Enter function <init>" style="filled" fillcolor=red];
-        20 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
-        21 [label="Exit function <init>" style="filled" fillcolor=red];
+        19 [label="Enter property" style="filled" fillcolor=red];
+        20 [label="Access variable R|<local>/executor|"];
+        21 [label="Exit property" style="filled" fillcolor=red];
     }
     19 -> {20};
     20 -> {21};
+    21 -> {24} [color=green];
 
     subgraph cluster_6 {
         color=red
-        22 [label="Enter property" style="filled" fillcolor=red];
-        23 [label="Access variable R|<local>/executor|"];
-        24 [label="Exit property" style="filled" fillcolor=red];
+        22 [label="Enter class A" style="filled" fillcolor=red];
+        23 [label="Part of class initialization"];
+        24 [label="Exit class A" style="filled" fillcolor=red];
     }
-    22 -> {23};
-    23 -> {24};
-    24 -> {18} [color=green];
+    22 -> {23} [color=green];
+    23 -> {24} [style=dotted];
+    23 -> {19} [color=green];
+    23 -> {19} [style=dashed];
 
     subgraph cluster_7 {
         color=red

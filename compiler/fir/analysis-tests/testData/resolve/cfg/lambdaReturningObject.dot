@@ -33,19 +33,19 @@ digraph lambdaReturningObject_kt {
 
     subgraph cluster_4 {
         color=red
-        8 [label="Enter class IrStarProjectionImpl" style="filled" fillcolor=red];
-        9 [label="Exit class IrStarProjectionImpl" style="filled" fillcolor=red];
+        8 [label="Enter function <init>" style="filled" fillcolor=red];
+        9 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        10 [label="Exit function <init>" style="filled" fillcolor=red];
     }
-    8 -> {9} [color=green];
+    8 -> {9};
+    9 -> {10};
 
     subgraph cluster_5 {
         color=red
-        10 [label="Enter function <init>" style="filled" fillcolor=red];
-        11 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
-        12 [label="Exit function <init>" style="filled" fillcolor=red];
+        11 [label="Enter class IrStarProjectionImpl" style="filled" fillcolor=red];
+        12 [label="Exit class IrStarProjectionImpl" style="filled" fillcolor=red];
     }
-    10 -> {11};
-    11 -> {12};
+    11 -> {12} [color=green];
 
     subgraph cluster_6 {
         color=red

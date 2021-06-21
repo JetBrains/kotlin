@@ -148,45 +148,45 @@ digraph returns_kt {
 
     subgraph cluster_14 {
         color=red
-        50 [label="Enter class A" style="filled" fillcolor=red];
-        51 [label="Exit class A" style="filled" fillcolor=red];
+        50 [label="Enter function foo" style="filled" fillcolor=red];
+        51 [label="Exit function foo" style="filled" fillcolor=red];
     }
-    50 -> {51} [color=green];
+    50 -> {51};
 
     subgraph cluster_15 {
         color=red
-        52 [label="Enter function foo" style="filled" fillcolor=red];
-        53 [label="Exit function foo" style="filled" fillcolor=red];
+        52 [label="Enter class A" style="filled" fillcolor=red];
+        53 [label="Exit class A" style="filled" fillcolor=red];
     }
-    52 -> {53};
+    52 -> {53} [color=green];
 
     subgraph cluster_16 {
         color=red
-        54 [label="Enter class B" style="filled" fillcolor=red];
-        55 [label="Exit class B" style="filled" fillcolor=red];
+        54 [label="Enter function bar" style="filled" fillcolor=red];
+        55 [label="Exit function bar" style="filled" fillcolor=red];
     }
-    54 -> {55} [color=green];
+    54 -> {55};
 
     subgraph cluster_17 {
         color=red
-        56 [label="Enter function bar" style="filled" fillcolor=red];
-        57 [label="Exit function bar" style="filled" fillcolor=red];
+        56 [label="Enter class B" style="filled" fillcolor=red];
+        57 [label="Exit class B" style="filled" fillcolor=red];
     }
-    56 -> {57};
+    56 -> {57} [color=green];
 
     subgraph cluster_18 {
         color=red
-        58 [label="Enter class C" style="filled" fillcolor=red];
-        59 [label="Exit class C" style="filled" fillcolor=red];
+        58 [label="Enter function baz" style="filled" fillcolor=red];
+        59 [label="Exit function baz" style="filled" fillcolor=red];
     }
-    58 -> {59} [color=green];
+    58 -> {59};
 
     subgraph cluster_19 {
         color=red
-        60 [label="Enter function baz" style="filled" fillcolor=red];
-        61 [label="Exit function baz" style="filled" fillcolor=red];
+        60 [label="Enter class C" style="filled" fillcolor=red];
+        61 [label="Exit class C" style="filled" fillcolor=red];
     }
-    60 -> {61};
+    60 -> {61} [color=green];
 
     subgraph cluster_20 {
         color=red

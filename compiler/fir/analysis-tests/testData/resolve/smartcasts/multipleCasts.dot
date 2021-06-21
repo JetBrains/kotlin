@@ -5,31 +5,31 @@ digraph multipleCasts_kt {
 
     subgraph cluster_0 {
         color=red
-        0 [label="Enter class A" style="filled" fillcolor=red];
-        1 [label="Exit class A" style="filled" fillcolor=red];
+        0 [label="Enter function foo" style="filled" fillcolor=red];
+        1 [label="Exit function foo" style="filled" fillcolor=red];
     }
-    0 -> {1} [color=green];
+    0 -> {1};
 
     subgraph cluster_1 {
         color=red
-        2 [label="Enter function foo" style="filled" fillcolor=red];
-        3 [label="Exit function foo" style="filled" fillcolor=red];
+        2 [label="Enter class A" style="filled" fillcolor=red];
+        3 [label="Exit class A" style="filled" fillcolor=red];
     }
-    2 -> {3};
+    2 -> {3} [color=green];
 
     subgraph cluster_2 {
         color=red
-        4 [label="Enter class B" style="filled" fillcolor=red];
-        5 [label="Exit class B" style="filled" fillcolor=red];
+        4 [label="Enter function foo" style="filled" fillcolor=red];
+        5 [label="Exit function foo" style="filled" fillcolor=red];
     }
-    4 -> {5} [color=green];
+    4 -> {5};
 
     subgraph cluster_3 {
         color=red
-        6 [label="Enter function foo" style="filled" fillcolor=red];
-        7 [label="Exit function foo" style="filled" fillcolor=red];
+        6 [label="Enter class B" style="filled" fillcolor=red];
+        7 [label="Exit class B" style="filled" fillcolor=red];
     }
-    6 -> {7};
+    6 -> {7} [color=green];
 
     subgraph cluster_4 {
         color=red

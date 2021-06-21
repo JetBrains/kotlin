@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration<*>, context: CheckerContext, reporter: DiagnosticReporter) {
         when (declaration) {
+            is FirAnonymousFunction -> return
             is FirTypeAlias -> checkTypeAlias(declaration, reporter, context)
             is FirProperty -> checkProperty(declaration, reporter, context)
             is FirFunction<*> -> checkFunction(declaration, reporter, context)

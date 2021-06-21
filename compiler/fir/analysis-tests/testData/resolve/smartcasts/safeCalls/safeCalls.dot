@@ -74,31 +74,31 @@ digraph safeCalls_kt {
 
     subgraph cluster_6 {
         color=red
-        25 [label="Enter class A" style="filled" fillcolor=red];
-        26 [label="Exit class A" style="filled" fillcolor=red];
+        25 [label="Enter function bar" style="filled" fillcolor=red];
+        26 [label="Exit function bar" style="filled" fillcolor=red];
     }
-    25 -> {26} [color=green];
+    25 -> {26};
 
     subgraph cluster_7 {
         color=red
-        27 [label="Enter function bar" style="filled" fillcolor=red];
-        28 [label="Exit function bar" style="filled" fillcolor=red];
+        27 [label="Enter function bool" style="filled" fillcolor=red];
+        28 [label="Exit function bool" style="filled" fillcolor=red];
     }
     27 -> {28};
 
     subgraph cluster_8 {
         color=red
-        29 [label="Enter function bool" style="filled" fillcolor=red];
-        30 [label="Exit function bool" style="filled" fillcolor=red];
+        29 [label="Enter function id" style="filled" fillcolor=red];
+        30 [label="Exit function id" style="filled" fillcolor=red];
     }
     29 -> {30};
 
     subgraph cluster_9 {
         color=red
-        31 [label="Enter function id" style="filled" fillcolor=red];
-        32 [label="Exit function id" style="filled" fillcolor=red];
+        31 [label="Enter class A" style="filled" fillcolor=red];
+        32 [label="Exit class A" style="filled" fillcolor=red];
     }
-    31 -> {32};
+    31 -> {32} [color=green];
 
     subgraph cluster_10 {
         color=red

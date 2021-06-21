@@ -5,31 +5,31 @@ digraph boundSmartcasts_kt {
 
     subgraph cluster_0 {
         color=red
-        0 [label="Enter class A" style="filled" fillcolor=red];
-        1 [label="Exit class A" style="filled" fillcolor=red];
+        0 [label="Enter function foo" style="filled" fillcolor=red];
+        1 [label="Exit function foo" style="filled" fillcolor=red];
     }
-    0 -> {1} [color=green];
+    0 -> {1};
 
     subgraph cluster_1 {
         color=red
-        2 [label="Enter function foo" style="filled" fillcolor=red];
-        3 [label="Exit function foo" style="filled" fillcolor=red];
+        2 [label="Enter class A" style="filled" fillcolor=red];
+        3 [label="Exit class A" style="filled" fillcolor=red];
     }
-    2 -> {3};
+    2 -> {3} [color=green];
 
     subgraph cluster_2 {
         color=red
-        4 [label="Enter class B" style="filled" fillcolor=red];
-        5 [label="Exit class B" style="filled" fillcolor=red];
+        4 [label="Enter function bar" style="filled" fillcolor=red];
+        5 [label="Exit function bar" style="filled" fillcolor=red];
     }
-    4 -> {5} [color=green];
+    4 -> {5};
 
     subgraph cluster_3 {
         color=red
-        6 [label="Enter function bar" style="filled" fillcolor=red];
-        7 [label="Exit function bar" style="filled" fillcolor=red];
+        6 [label="Enter class B" style="filled" fillcolor=red];
+        7 [label="Exit class B" style="filled" fillcolor=red];
     }
-    6 -> {7};
+    6 -> {7} [color=green];
 
     subgraph cluster_4 {
         color=red
@@ -316,33 +316,33 @@ digraph boundSmartcasts_kt {
 
     subgraph cluster_27 {
         color=red
-        115 [label="Enter class D" style="filled" fillcolor=red];
-        116 [label="Part of class initialization"];
-        117 [label="Exit class D" style="filled" fillcolor=red];
+        115 [label="Enter function <init>" style="filled" fillcolor=red];
+        116 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        117 [label="Exit function <init>" style="filled" fillcolor=red];
     }
-    115 -> {116} [color=green];
-    116 -> {117} [style=dotted];
-    116 -> {121} [color=green];
-    116 -> {121} [style=dashed];
+    115 -> {116};
+    116 -> {117};
 
     subgraph cluster_28 {
         color=red
-        118 [label="Enter function <init>" style="filled" fillcolor=red];
-        119 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
-        120 [label="Exit function <init>" style="filled" fillcolor=red];
+        118 [label="Enter property" style="filled" fillcolor=red];
+        119 [label="Access variable R|<local>/any|"];
+        120 [label="Exit property" style="filled" fillcolor=red];
     }
     118 -> {119};
     119 -> {120};
+    120 -> {123} [color=green];
 
     subgraph cluster_29 {
         color=red
-        121 [label="Enter property" style="filled" fillcolor=red];
-        122 [label="Access variable R|<local>/any|"];
-        123 [label="Exit property" style="filled" fillcolor=red];
+        121 [label="Enter class D" style="filled" fillcolor=red];
+        122 [label="Part of class initialization"];
+        123 [label="Exit class D" style="filled" fillcolor=red];
     }
-    121 -> {122};
-    122 -> {123};
-    123 -> {117} [color=green];
+    121 -> {122} [color=green];
+    122 -> {123} [style=dotted];
+    122 -> {118} [color=green];
+    122 -> {118} [style=dashed];
 
     subgraph cluster_30 {
         color=red

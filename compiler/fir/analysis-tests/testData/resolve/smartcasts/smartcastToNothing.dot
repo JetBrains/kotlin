@@ -116,47 +116,47 @@ digraph smartcastToNothing_kt {
 
     subgraph cluster_10 {
         color=red
-        38 [label="Enter class A" style="filled" fillcolor=red];
-        39 [label="Part of class initialization"];
-        40 [label="Part of class initialization"];
-        41 [label="Exit class A" style="filled" fillcolor=red];
+        38 [label="Enter function <init>" style="filled" fillcolor=red];
+        39 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        40 [label="Exit function <init>" style="filled" fillcolor=red];
     }
-    38 -> {39} [color=green];
-    39 -> {40} [style=dotted];
-    39 -> {45} [color=green];
-    39 -> {45} [style=dashed];
-    40 -> {41} [style=dotted];
-    40 -> {48} [color=green];
-    40 -> {48} [style=dashed];
+    38 -> {39};
+    39 -> {40};
 
     subgraph cluster_11 {
         color=red
-        42 [label="Enter function <init>" style="filled" fillcolor=red];
-        43 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
-        44 [label="Exit function <init>" style="filled" fillcolor=red];
+        41 [label="Enter property" style="filled" fillcolor=red];
+        42 [label="Const: Int(1)"];
+        43 [label="Exit property" style="filled" fillcolor=red];
     }
+    41 -> {42};
     42 -> {43};
-    43 -> {44};
+    43 -> {49} [color=green];
 
     subgraph cluster_12 {
         color=red
-        45 [label="Enter property" style="filled" fillcolor=red];
-        46 [label="Const: Int(1)"];
-        47 [label="Exit property" style="filled" fillcolor=red];
+        44 [label="Enter property" style="filled" fillcolor=red];
+        45 [label="Const: Boolean(true)"];
+        46 [label="Exit property" style="filled" fillcolor=red];
     }
+    44 -> {45};
     45 -> {46};
-    46 -> {47};
-    47 -> {40} [color=green];
+    46 -> {50} [color=green];
 
     subgraph cluster_13 {
         color=red
-        48 [label="Enter property" style="filled" fillcolor=red];
-        49 [label="Const: Boolean(true)"];
-        50 [label="Exit property" style="filled" fillcolor=red];
+        47 [label="Enter class A" style="filled" fillcolor=red];
+        48 [label="Part of class initialization"];
+        49 [label="Part of class initialization"];
+        50 [label="Exit class A" style="filled" fillcolor=red];
     }
-    48 -> {49};
-    49 -> {50};
-    50 -> {41} [color=green];
+    47 -> {48} [color=green];
+    48 -> {49} [style=dotted];
+    48 -> {41} [color=green];
+    48 -> {41} [style=dashed];
+    49 -> {50} [style=dotted];
+    49 -> {44} [color=green];
+    49 -> {44} [style=dashed];
 
     subgraph cluster_14 {
         color=red

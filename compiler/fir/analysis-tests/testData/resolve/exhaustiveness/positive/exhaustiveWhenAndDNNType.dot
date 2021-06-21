@@ -5,35 +5,35 @@ digraph exhaustiveWhenAndDNNType_kt {
 
     subgraph cluster_0 {
         color=red
-        0 [label="Enter class SomeEnum" style="filled" fillcolor=red];
-        1 [label="Exit class SomeEnum" style="filled" fillcolor=red];
+        0 [label="Enter function <init>" style="filled" fillcolor=red];
+        1 [label="Delegated constructor call: super<R|kotlin/Enum<SomeEnum>|>()"];
+        2 [label="Exit function <init>" style="filled" fillcolor=red];
     }
-    0 -> {1} [color=green];
+    0 -> {1};
+    1 -> {2};
 
     subgraph cluster_1 {
         color=red
-        2 [label="Enter function <init>" style="filled" fillcolor=red];
-        3 [label="Delegated constructor call: super<R|kotlin/Enum<SomeEnum>|>()"];
-        4 [label="Exit function <init>" style="filled" fillcolor=red];
+        3 [label="Enter class SomeEnum" style="filled" fillcolor=red];
+        4 [label="Exit class SomeEnum" style="filled" fillcolor=red];
     }
-    2 -> {3};
-    3 -> {4};
+    3 -> {4} [color=green];
 
     subgraph cluster_2 {
         color=red
-        5 [label="Enter class B" style="filled" fillcolor=red];
-        6 [label="Exit class B" style="filled" fillcolor=red];
+        5 [label="Enter function <init>" style="filled" fillcolor=red];
+        6 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        7 [label="Exit function <init>" style="filled" fillcolor=red];
     }
-    5 -> {6} [color=green];
+    5 -> {6};
+    6 -> {7};
 
     subgraph cluster_3 {
         color=red
-        7 [label="Enter function <init>" style="filled" fillcolor=red];
-        8 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
-        9 [label="Exit function <init>" style="filled" fillcolor=red];
+        8 [label="Enter class B" style="filled" fillcolor=red];
+        9 [label="Exit class B" style="filled" fillcolor=red];
     }
-    7 -> {8};
-    8 -> {9};
+    8 -> {9} [color=green];
 
     subgraph cluster_4 {
         color=red
