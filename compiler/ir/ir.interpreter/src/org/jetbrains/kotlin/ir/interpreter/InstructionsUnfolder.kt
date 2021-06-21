@@ -46,10 +46,10 @@ internal fun unfoldInstruction(element: IrElement?, environment: IrInterpreterEn
         null -> return
         is IrSimpleFunction -> unfoldFunction(element, environment)
         is IrConstructor -> unfoldConstructor(element, callStack)
-        is IrCall -> unfoldCall(element, environment)
-        is IrConstructorCall -> unfoldConstructorCall(element, environment)
-        is IrEnumConstructorCall -> unfoldConstructorCall(element, environment)
-        is IrDelegatingConstructorCall -> unfoldConstructorCall(element, environment)
+        is IrCall -> unfoldValueParameters(element, callStack)
+        is IrConstructorCall -> unfoldValueParameters(element, callStack)
+        is IrEnumConstructorCall -> unfoldValueParameters(element, callStack)
+        is IrDelegatingConstructorCall -> unfoldValueParameters(element, callStack)
         is IrInstanceInitializerCall -> unfoldInstanceInitializerCall(element, callStack)
         is IrField -> unfoldField(element, callStack)
         is IrBody -> unfoldBody(element, callStack)
@@ -117,17 +117,7 @@ private fun unfoldConstructor(constructor: IrConstructor, callStack: CallStack) 
     }
 }
 
-private fun unfoldCall(call: IrCall, environment: IrInterpreterEnvironment) {
-    unfoldValueParameters(call, environment)
-}
-
-// This function is responsible for IrConstructorCall, IrDelegatingConstructorCall and IrEnumConstructorCall
-private fun unfoldConstructorCall(constructorCall: IrFunctionAccessExpression, environment: IrInterpreterEnvironment) {
-    unfoldValueParameters(constructorCall, environment)
-}
-
-private fun unfoldValueParameters(expression: IrFunctionAccessExpression, environment: IrInterpreterEnvironment) {
-    val callStack = environment.callStack
+private fun unfoldValueParameters(expression: IrFunctionAccessExpression, callStack: CallStack) {
     val irFunction = expression.symbol.owner
 
     val hasDefaults = (0 until expression.valueArgumentsCount).any { expression.getValueArgument(it) == null }
@@ -245,8 +235,6 @@ private fun unfoldValueParameters(expression: IrFunctionAccessExpression, enviro
 
         callStack.addInstruction(CompoundInstruction(callToDefault))
     } else {
-        // new sub frame is used to store value arguments, in case then they are used in default args evaluation
-        callStack.newSubFrame(expression) // TODO drop
         callStack.addInstruction(SimpleInstruction(expression))
 
         fun IrValueParameter.schedule(arg: IrExpression?) {
@@ -433,7 +421,6 @@ private fun unfoldThrow(expression: IrThrow, callStack: CallStack) {
 
 private fun unfoldStringConcatenation(expression: IrStringConcatenation, environment: IrInterpreterEnvironment) {
     val callStack = environment.callStack
-    callStack.newSubFrame(expression)
     callStack.addInstruction(SimpleInstruction(expression))
 
     // this callback is used to check the need for an explicit toString call
@@ -453,7 +440,6 @@ private fun unfoldStringConcatenation(expression: IrStringConcatenation, environ
                     return callStack.pushState(result.toState(environment.irBuiltIns.stringType))
                 }
                 val toStringCall = state.createToStringIrCall()
-                callStack.newSubFrame(toStringCall)
                 callStack.addInstruction(SimpleInstruction(toStringCall))
                 callStack.pushState(state)
             }
@@ -475,7 +461,6 @@ private fun unfoldComposite(element: IrComposite, callStack: CallStack) {
 
 private fun unfoldFunctionReference(reference: IrFunctionReference, callStack: CallStack) {
     val function = reference.symbol.owner
-    callStack.newSubFrame(reference)
     callStack.addInstruction(SimpleInstruction(reference))
 
     reference.dispatchReceiver?.let { callStack.addInstruction(SimpleInstruction(function.dispatchReceiverParameter!!)) }
@@ -487,7 +472,6 @@ private fun unfoldFunctionReference(reference: IrFunctionReference, callStack: C
 
 private fun unfoldPropertyReference(propertyReference: IrPropertyReference, callStack: CallStack) {
     val getter = propertyReference.getter!!.owner
-    callStack.newSubFrame(propertyReference)
     callStack.addInstruction(SimpleInstruction(propertyReference))
 
     propertyReference.dispatchReceiver?.let { callStack.addInstruction(SimpleInstruction(getter.dispatchReceiverParameter!!)) }

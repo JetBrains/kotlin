@@ -81,7 +81,6 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
     internal fun withNewCallStack(call: IrCall, init: IrInterpreter.() -> Any?): State {
         return with(IrInterpreter(environment.copyWithNewCallStack(), bodyMap)) {
             callStack.newFrame(call.symbol.owner)
-            callStack.newSubFrame(call)
             init()
 
             while (!callStack.hasNoInstructions()) {
@@ -159,8 +158,6 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
             IllegalArgumentException("Parameter specified as non-null is null: method $method, parameter $parameter")
         } ?: return
 
-        // outer classes can be used in default args evaluation
-        if (isReceiver() && state is Complex) state.loadOuterClassesInto(callStack)
         callStack.pushState(state)
     }
 
@@ -182,7 +179,6 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         val irFunction = dispatchReceiver?.getIrFunctionByIrCall(call) ?: call.symbol.owner
         val args = listOfNotNull(dispatchReceiver.getThisOrSuperReceiver(irFunction), extensionReceiver) + valueArguments
 
-        callStack.dropSubFrame() // drop intermediate frame that contains variables for default arg evaluation
         callStack.newFrame(irFunction)
         callStack.addInstruction(SimpleInstruction(irFunction))
 
@@ -255,7 +251,6 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         if (irClass.isLocal) callStack.storeUpValues(objectState as StateWithClosure)
         val outerClass = receiverSymbol?.let { callStack.popState() }
 
-        callStack.dropSubFrame()
         callStack.newFrame(constructor)
         callStack.addInstruction(SimpleInstruction(constructor))
         if (irClass.isLocal) callStack.loadUpValues(objectState as StateWithClosure)
@@ -291,7 +286,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
     }
 
     private fun interpretDelegatingConstructorCall(constructorCall: IrDelegatingConstructorCall) {
-        if (constructorCall.symbol.owner.parent == irBuiltIns.anyClass.owner) return callStack.dropSubFrame()
+        if (constructorCall.symbol.owner.parent == irBuiltIns.anyClass.owner) return
         interpretConstructorCall(constructorCall)
     }
 
@@ -588,7 +583,6 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
             }
         }
 
-        callStack.dropSubFrame()
         callStack.pushState(result.reversed().joinToString(separator = "").toState(expression.type))
     }
 
@@ -604,8 +598,6 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         val dispatchReceiver = reference.dispatchReceiver?.let { callStack.popState() }
         val extensionReceiver = reference.extensionReceiver?.let { callStack.popState() }
 
-        callStack.dropSubFrame()
-
         val function = KFunctionState(
             reference,
             dispatchReceiver?.let { Variable(irFunction.getDispatchReceiver()!!, it) },
@@ -617,10 +609,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
 
     private fun interpretPropertyReference(propertyReference: IrPropertyReference) {
         // it is impossible to get KProperty2 through ::, so only one receiver can be not null (or both null)
-        val receiver = (propertyReference.dispatchReceiver ?: propertyReference.extensionReceiver)
-            ?.let { callStack.popState() }
-
-        callStack.dropSubFrame()
+        val receiver = (propertyReference.dispatchReceiver ?: propertyReference.extensionReceiver)?.let { callStack.popState() }
         val propertyState = KPropertyState(propertyReference, receiver)
 
         fun List<IrTypeParameter>.addToFields() {
