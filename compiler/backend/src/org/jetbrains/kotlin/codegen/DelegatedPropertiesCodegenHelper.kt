@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.inline.loadCompiledInlineFunction
-import org.jetbrains.kotlin.codegen.optimization.nullCheck.isCheckParameterIsNotNull
+import org.jetbrains.kotlin.codegen.optimization.nullCheck.usesLocalExceptParameterNullCheck
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -17,10 +17,6 @@ import org.jetbrains.kotlin.resolve.FunctionImportedFromObject
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForReturnType
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
-import org.jetbrains.org.objectweb.asm.Opcodes
-import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
-import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import org.jetbrains.org.objectweb.asm.tree.VarInsnNode
 
 class DelegatedPropertiesCodegenHelper(private val state: GenerationState) {
 
@@ -75,20 +71,7 @@ class DelegatedPropertiesCodegenHelper(private val state: GenerationState) {
         val asmMethod = state.typeMapper.mapAsmMethod(calleeDescriptor)
         val isMangled = requiresFunctionNameManglingForReturnType(calleeDescriptor)
         val methodNode = loadCompiledInlineFunction(containerId, asmMethod, calleeDescriptor.isSuspend, isMangled, state).node
-        return isMetadataParameterUsedInCompiledMethodBody(metadataParameterIndex, methodNode)
-    }
-
-    private fun isMetadataParameterUsedInCompiledMethodBody(metadataParameterIndex: Int, methodNode: MethodNode): Boolean =
-        methodNode.instructions.toArray().any { insn ->
-            insn is VarInsnNode && insn.opcode == Opcodes.ALOAD && insn.`var` == metadataParameterIndex &&
-                    !isParameterNullCheckArgument(insn)
-        }
-
-    private fun isParameterNullCheckArgument(insn: AbstractInsnNode): Boolean {
-        val next1 = insn.next
-        val next2 = next1.next
-        return next1 != null && next2 != null &&
-                next1.opcode == Opcodes.LDC && next2.isCheckParameterIsNotNull()
+        return methodNode.usesLocalExceptParameterNullCheck(metadataParameterIndex)
     }
 
     private fun getMetadataParameterIndex(calleeDescriptor: FunctionDescriptor): Int {

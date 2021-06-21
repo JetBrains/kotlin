@@ -436,6 +436,14 @@ internal fun AbstractInsnNode.isCheckNotNull() =
                 desc == "(Ljava/lang/Object;)V"
     }
 
+fun MethodNode.usesLocalExceptParameterNullCheck(index: Int): Boolean =
+    instructions.toArray().any {
+        it is VarInsnNode && it.opcode == Opcodes.ALOAD && it.`var` == index && !it.isParameterCheckedForNull()
+    }
+
+internal fun AbstractInsnNode.isParameterCheckedForNull(): Boolean =
+    next?.takeIf { it.opcode == Opcodes.LDC }?.next?.isCheckParameterIsNotNull() == true
+
 internal fun AbstractInsnNode.isCheckParameterIsNotNull() =
     isInsn<MethodInsnNode>(Opcodes.INVOKESTATIC) {
         owner == IntrinsicMethods.INTRINSICS_CLASS_NAME &&
