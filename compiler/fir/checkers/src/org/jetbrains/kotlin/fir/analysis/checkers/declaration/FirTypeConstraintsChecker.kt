@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
-import org.jetbrains.kotlin.fir.declarations.getDanglingTypeConstraintsOrEmpty
+import org.jetbrains.kotlin.fir.declarations.utils.getDanglingTypeConstraintsOrEmpty
 
 object FirTypeConstraintsChecker : FirBasicDeclarationChecker() {
 
