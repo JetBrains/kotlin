@@ -119,10 +119,13 @@ val rootComponent = componentFactory.adhoc("root").apply {
 }
 
 
+val kotlinTestCapability = "$group:kotlin-test:$version" // add to variants with explicit capabilities when the default one is needed, too
 val baseCapability = "$group:kotlin-test-framework:$version"
 val implCapability = "$group:kotlin-test-framework-impl:$version"
 
 val jvmTestFrameworks = listOf("junit", "junit5", "testng")
+
+val frameworkCapabilities = mutableSetOf<String>()
 
 jvmTestFrameworks.forEach { framework ->
     val (apiVariant, runtimeVariant) = listOf("api", "runtime").map { usage ->
@@ -134,7 +137,9 @@ jvmTestFrameworks.forEach { framework ->
                 attribute(KotlinPlatformType.attribute, KotlinPlatformType.jvm)
             }
             outgoing.capability(baseCapability)  // C0
-            outgoing.capability("$group:kotlin-test-framework-$framework:$version") // C0
+            outgoing.capability(
+                "$group:kotlin-test-framework-$framework:$version".also { frameworkCapabilities.add(it) }
+            ) // C0
         }
     }
     runtimeVariant.extendsFrom(apiVariant)
@@ -186,6 +191,18 @@ jvmTestFrameworks.forEach { framework ->
             mapToMavenScope("runtime")
         }
     }.let { components.add(it) }
+}
+
+/**
+ * When a consumer's dependency requires a specific test framework (like with auto framework selection), their configurations requesting
+ * "common" artifacts (such as `*DependenciesMetadata` in MPP) should choose this variant anyway. Otherwise, choosing this variant
+ * (from a "pure", capability-less dependency on `kotlin-test` appearing transitively in the dependency graph) along with some
+ * capability-providing *platform* variant leads to incompatible variants being chosen together, causing dependency resolution errors,
+ * see KTIJ-6098
+ */
+commonVariant.apply {
+    frameworkCapabilities.forEach(outgoing::capability)
+    outgoing.capability(kotlinTestCapability)
 }
 
 val (jsApi, jsRuntime) = listOf("api", "runtime").map { usage ->

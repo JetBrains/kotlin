@@ -163,6 +163,21 @@ class KotlinSpecificDependenciesIT : BaseGradleIT() {
                     "jvmAndJsTestCompileOnlyDependenciesMetadata" to listOf("kotlin-test-common"),
                     "jvmAndJsTestImplementationDependenciesMetadata" to listOf("!kotlin-test-common"),
                 )
+            ),
+            TestCase(
+                /**
+                 * Check that in a single-platform project the common metadata configurations resolve the
+                 * framework-specific dependency (inferred as JUnit) correctly to the common artifact
+                 * KTIJ-6098
+                 */
+                Project("mpp-single-jvm-target"),
+                listOf("commonTestImplementation"),
+                mapOf(
+                    "compileTestKotlinJvm" to listOf("kotlin-test-junit"),
+                ),
+                mapOf(
+                    "commonTestImplementationDependenciesMetadata" to listOf("kotlin-test-common", "kotlin-test-annotations-common")
+                )
             )
         ).forEach { testCase ->
             with(testCase) {
