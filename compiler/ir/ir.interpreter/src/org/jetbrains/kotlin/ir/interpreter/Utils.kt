@@ -7,23 +7,23 @@ package org.jetbrains.kotlin.ir.interpreter
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.builtins.UnsignedType
-import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.interpreter.exceptions.handleUserException
 import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.wrap
-import org.jetbrains.kotlin.ir.interpreter.state.*
+import org.jetbrains.kotlin.ir.interpreter.state.Primitive
+import org.jetbrains.kotlin.ir.interpreter.state.State
+import org.jetbrains.kotlin.ir.interpreter.state.Wrapper
+import org.jetbrains.kotlin.ir.interpreter.state.isSubtypeOf
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KTypeState
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
@@ -42,31 +42,6 @@ internal fun IrFunction.getReceiver(): IrSymbol? = this.getDispatchReceiver() ?:
 
 internal fun IrFunctionAccessExpression.getThisReceiver(): IrValueSymbol = this.symbol.owner.parentAsClass.thisReceiver!!.symbol
 
-internal fun State.toIrExpression(expression: IrExpression): IrExpression {
-    val start = expression.startOffset
-    val end = expression.endOffset
-    val type = expression.type.makeNotNull()
-    return when (this) {
-        is Primitive<*> ->
-            when {
-                this.value == null -> this.value.toIrConst(type, start, end)
-                type.isPrimitiveType() || type.isString() -> this.value.toIrConst(type, start, end)
-                else -> expression // TODO support for arrays
-            }
-        is ExceptionState -> {
-            IrErrorExpressionImpl(expression.startOffset, expression.endOffset, expression.type, "\n" + this.getFullDescription())
-        }
-        is Complex -> {
-            val stateType = this.irClass.defaultType
-            when {
-                stateType.isUnsignedType() -> (this.fields.single().state as Primitive<*>).value.toIrConst(type, start, end)
-                else -> expression
-            }
-        }
-        else -> expression // TODO support
-    }
-}
-
 /**
  * Convert object from outer world to state
  */
@@ -80,45 +55,6 @@ internal fun Any?.toState(irType: IrType): State {
         else -> irType.classOrNull?.owner?.let { Wrapper(this, it) } ?: Wrapper(this)
     }
 }
-
-fun Any?.toIrConstOrNull(irType: IrType, startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET): IrConst<*>? {
-    if (this == null) return IrConstImpl.constNull(startOffset, endOffset, irType)
-
-    val constType = irType.makeNotNull()
-    return when (irType.getPrimitiveType()) {
-        PrimitiveType.BOOLEAN -> IrConstImpl.boolean(startOffset, endOffset, constType, this as Boolean)
-        PrimitiveType.CHAR -> IrConstImpl.char(startOffset, endOffset, constType, this as Char)
-        PrimitiveType.BYTE -> IrConstImpl.byte(startOffset, endOffset, constType, (this as Number).toByte())
-        PrimitiveType.SHORT -> IrConstImpl.short(startOffset, endOffset, constType, (this as Number).toShort())
-        PrimitiveType.INT -> IrConstImpl.int(startOffset, endOffset, constType, (this as Number).toInt())
-        PrimitiveType.FLOAT -> IrConstImpl.float(startOffset, endOffset, constType, (this as Number).toFloat())
-        PrimitiveType.LONG -> IrConstImpl.long(startOffset, endOffset, constType, (this as Number).toLong())
-        PrimitiveType.DOUBLE -> IrConstImpl.double(startOffset, endOffset, constType, (this as Number).toDouble())
-        null -> when (constType.getUnsignedType()) {
-            UnsignedType.UBYTE -> IrConstImpl.byte(startOffset, endOffset, constType, (this as Number).toByte())
-            UnsignedType.USHORT -> IrConstImpl.short(startOffset, endOffset, constType, (this as Number).toShort())
-            UnsignedType.UINT -> IrConstImpl.int(startOffset, endOffset, constType, (this as Number).toInt())
-            UnsignedType.ULONG -> IrConstImpl.long(startOffset, endOffset, constType, (this as Number).toLong())
-            null -> when {
-                constType.isString() -> IrConstImpl.string(startOffset, endOffset, constType, this as String)
-                else -> null
-            }
-        }
-    }
-}
-
-fun Any?.toIrConst(irType: IrType, startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET): IrConst<*> =
-    toIrConstOrNull(irType, startOffset, endOffset)
-        ?: throw UnsupportedOperationException("Unsupported const element type ${irType.makeNotNull().render()}")
-
-fun Any?.toIrConst(
-    irType: IrType, irBuiltIns: IrBuiltIns,
-    startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET
-): IrConst<*> =
-    toIrConstOrNull(irType, startOffset, endOffset) ?: run {
-        if (irType == irBuiltIns.stringType) IrConstImpl.string(startOffset, endOffset, irType.makeNotNull(), this as String)
-        else throw UnsupportedOperationException("Unsupported const element type ${irType.makeNotNull().render()}")
-    }
 
 @Suppress("UNCHECKED_CAST")
 internal fun <T> IrConst<T>.toPrimitive(): Primitive<T> = when {
@@ -275,4 +211,39 @@ internal fun IrType.getOnlyName(): String {
 
 internal fun IrFieldAccessExpression.accessesTopLevelOrObjectField(): Boolean {
     return this.receiver == null || (this.receiver?.type?.classifierOrNull?.owner as? IrClass)?.isObject == true
+}
+
+internal fun IrFunctionAccessExpression.getFunctionThatContainsDefaults(): IrFunction {
+    val irFunction = this.symbol.owner
+    fun IrValueParameter.lookup(): IrFunction? {
+        return defaultValue?.let { this.parent as IrFunction }
+            ?: (this.parent as? IrSimpleFunction)?.overriddenSymbols
+                ?.map { it.owner.valueParameters[this.index] }
+                ?.firstNotNullOfOrNull { it.lookup() }
+    }
+
+    return (0 until this.valueArgumentsCount)
+        .first { this.getValueArgument(it) == null }
+        .let { irFunction.valueParameters[it].lookup() ?: irFunction }
+}
+
+internal fun IrValueParameter.getDefaultWithActualParameters(
+    newParent: IrFunction, actualParameters: List<IrValueDeclaration?>
+): IrExpression? {
+    val expression = this.defaultValue?.expression
+    if (expression is IrConst<*>) return expression
+
+    val parameterOwner = this.parent as IrFunction
+    val transformer = object : IrElementTransformerVoid() {
+        override fun visitGetValue(expression: IrGetValue): IrExpression {
+            val parameter = expression.symbol.owner as? IrValueParameter ?: return super.visitGetValue(expression)
+            if (parameter.parent != parameterOwner) return super.visitGetValue(expression)
+            val newParameter = when (parameter.index) {
+                -1 -> newParent.dispatchReceiverParameter ?: newParent.extensionReceiverParameter
+                else -> actualParameters[parameter.index]
+            }
+            return IrGetValueImpl(expression.startOffset, expression.endOffset, expression.type, newParameter!!.symbol)
+        }
+    }
+    return expression?.deepCopyWithSymbols(newParent)?.transform(transformer, null)
 }

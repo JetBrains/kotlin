@@ -7,11 +7,8 @@ package org.jetbrains.kotlin.ir.interpreter
 
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.interpreter.builtins.interpretBinaryFunction
 import org.jetbrains.kotlin.ir.interpreter.builtins.interpretTernaryFunction
 import org.jetbrains.kotlin.ir.interpreter.builtins.interpretUnaryFunction
@@ -24,7 +21,6 @@ import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.*
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KTypeState
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isArray
@@ -55,9 +51,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
     private val bodyMap: Map<IdSignature, IrBody> = interpreter.bodyMap
 
     override fun interceptProxy(irFunction: IrFunction, valueArguments: List<Variable>, expectedResultClass: Class<*>): Any? {
-        val irCall = IrCallImpl.fromSymbolOwner(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET, irFunction.returnType, irFunction.symbol as IrSimpleFunctionSymbol
-        )
+        val irCall = irFunction.createCall()
         return interpreter.withNewCallStack(irCall) {
             this@withNewCallStack.environment.callStack.addInstruction(SimpleInstruction(irCall))
             valueArguments.forEach { this@withNewCallStack.environment.callStack.pushState(it.state) }
@@ -186,7 +180,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
 
     private fun calculateRangeTo(type: IrType, args: List<State>) {
         val constructor = type.classOrNull!!.owner.constructors.first()
-        val constructorCall = IrConstructorCallImpl.fromSymbolOwner(constructor.returnType, constructor.symbol)
+        val constructorCall = constructor.createConstructorCall()
         val constructorValueParameters = constructor.valueParameters.map { it.symbol }
 
         val primitiveValueParameters = args.map { it as Primitive<*> }

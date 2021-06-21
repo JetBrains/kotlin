@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.ir.interpreter.intrinsics
 
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.interpreter.*
+import org.jetbrains.kotlin.ir.interpreter.createCall
+import org.jetbrains.kotlin.ir.interpreter.createGetValue
+import org.jetbrains.kotlin.ir.interpreter.toIrConst
 import org.jetbrains.kotlin.ir.interpreter.exceptions.handleUserException
 import org.jetbrains.kotlin.ir.interpreter.exceptions.stop
 import org.jetbrains.kotlin.ir.interpreter.state.*
@@ -235,10 +234,9 @@ internal object ArrayConstructor : IntrinsicBase() {
         callStack.setState(initSymbol, state)
 
         for (i in size - 1 downTo 0) {
-            val invoke = state.invokeSymbol.owner as IrSimpleFunction
-            val call = IrCallImpl.fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, invoke.returnType, invoke.symbol)
-            call.dispatchReceiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, initSymbol)
-            call.putValueArgument(0, IrConstImpl.int(UNDEFINED_OFFSET, UNDEFINED_OFFSET, environment.irBuiltIns.intType, i))
+            val call = (state.invokeSymbol.owner as IrSimpleFunction).createCall()
+            call.dispatchReceiver = initSymbol.owner.createGetValue()
+            call.putValueArgument(0, i.toIrConst(environment.irBuiltIns.intType))
             instructions += CompoundInstruction(call)
         }
 
@@ -292,10 +290,10 @@ internal object AssertIntrinsic : IntrinsicBase() {
     override fun unwind(irFunction: IrFunction, environment: IrInterpreterEnvironment): List<Instruction> {
         if (irFunction.valueParameters.size == 1) return listOf(customEvaluateInstruction(irFunction, environment))
 
-        val messageLambda = environment.callStack.getState(irFunction.valueParameters.last().symbol) as KFunctionState
-        val function = messageLambda.irFunction as IrSimpleFunction
-        environment.callStack.loadUpValues(messageLambda)
-        val call = IrCallImpl.fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, function.returnType, function.symbol)
+        val lambdaParameter = irFunction.valueParameters.last()
+        val lambdaState = environment.callStack.getState(lambdaParameter.symbol) as KFunctionState
+        val call = (lambdaState.invokeSymbol.owner as IrSimpleFunction).createCall()
+        call.dispatchReceiver = lambdaParameter.createGetValue()
 
         return listOf(customEvaluateInstruction(irFunction, environment), CompoundInstruction(call))
     }
