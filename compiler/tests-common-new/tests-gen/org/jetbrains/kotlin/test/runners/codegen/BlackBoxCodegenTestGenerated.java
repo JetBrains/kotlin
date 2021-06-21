@@ -13939,6 +13939,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         public void testWithDefaultParameters() throws Exception {
             runTest("compiler/testData/codegen/box/delegation/withDefaultParameters.kt");
         }
+
+        @Test
+        @TestMetadata("withDefaultsMultipleFilesOrder.kt")
+        public void testWithDefaultsMultipleFilesOrder() throws Exception {
+            runTest("compiler/testData/codegen/box/delegation/withDefaultsMultipleFilesOrder.kt");
+        }
     }
 
     @Nested
