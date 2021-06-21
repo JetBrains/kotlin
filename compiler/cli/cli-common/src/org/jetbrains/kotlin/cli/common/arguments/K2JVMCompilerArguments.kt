@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.cli.common.arguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
+import kotlin.reflect.KVisibility
 
 class K2JVMCompilerArguments : CommonCompilerArguments() {
     companion object {
@@ -75,7 +76,10 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-module-name", valueDescription = "<name>", description = "Name of the generated .kotlin_module file")
     var moduleName: String? by NullableStringFreezableVar(null)
 
-    @GradleOption(DefaultValues.JvmTargetVersions::class)
+    @GradleOption(
+        value = DefaultValues.JvmTargetVersions::class,
+        backingFieldVisibility = KVisibility.INTERNAL
+    )
     @Argument(
         value = "-jvm-target",
         valueDescription = "<version>",

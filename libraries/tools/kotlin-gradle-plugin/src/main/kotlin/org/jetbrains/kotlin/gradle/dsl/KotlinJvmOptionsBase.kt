@@ -52,7 +52,7 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
 
     override var jdkHome: kotlin.String? = null
 
-    private var jvmTargetField: kotlin.String? = null
+    internal var jvmTargetField: kotlin.String? = null
     override var jvmTarget: kotlin.String
         get() = jvmTargetField ?: "1.8"
         set(value) {
