@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.codegen.parentClassId
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.irArrayOf
 import org.jetbrains.kotlin.backend.jvm.ir.needsAccessor
@@ -21,15 +22,20 @@ import org.jetbrains.kotlin.backend.jvm.lower.FunctionReferenceLowering.Companio
 import org.jetbrains.kotlin.backend.jvm.lower.FunctionReferenceLowering.Companion.calculateOwnerKClass
 import org.jetbrains.kotlin.backend.jvm.lower.FunctionReferenceLowering.Companion.kClassToJavaClass
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
+import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.hasMangledReturnType
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.isInlineClassFieldGetter
+import org.jetbrains.kotlin.codegen.inline.loadCompiledInlineFunction
+import org.jetbrains.kotlin.codegen.optimization.nullCheck.usesLocalExceptParameterNullCheck
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
@@ -41,11 +47,13 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
+import java.util.concurrent.ConcurrentHashMap
 
 internal val propertyReferencePhase = makeIrFilePhase(
     ::PropertyReferenceLowering,
@@ -254,6 +262,54 @@ private class PropertyReferenceLowering(val context: JvmBackendContext) : IrElem
 
     override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference): IrExpression =
         cachedKProperty(expression)
+
+    private fun IrSimpleFunction.usesParameter(index: Int): Boolean {
+        parentClassId?.let { containerId ->
+            // This function was imported from a jar. Didn't run the inline class lowering yet though - have to map manually.
+            val replaced = context.inlineClassReplacements.getReplacementFunction(this) ?: this
+            val signature = context.methodSignatureMapper.mapSignatureSkipGeneric(replaced)
+            val localIndex = signature.valueParameters.take(index + if (replaced.extensionReceiverParameter != null) 1 else 0)
+                .sumOf { it.asmType.size } + (if (replaced.dispatchReceiverParameter != null) 1 else 0)
+            // Null checks are removed during inlining, so we can ignore them.
+            return loadCompiledInlineFunction(containerId, signature.asmMethod, isSuspend, hasMangledReturnType, context.state)
+                .node.usesLocalExceptParameterNullCheck(localIndex)
+        }
+
+        var result = false
+        accept(object : IrElementVisitorVoid {
+            override fun visitElement(element: IrElement) =
+                if (result) Unit else element.acceptChildren(this, null)
+
+            override fun visitGetValue(expression: IrGetValue) {
+                if (expression.symbol == valueParameters[index].symbol) result = true
+            }
+        }, null)
+        return result
+    }
+
+    // Assuming that the only functions that take PROPERTY_REFERENCE_FOR_DELEGATE-kind references are getValue,
+    // setValue, and provideDelegate, there is only one valid index for each symbol, so we don't need it in the key.
+    private val usesPropertyParameterCache = ConcurrentHashMap<IrSymbol, Boolean>()
+
+    override fun visitCall(expression: IrCall): IrExpression {
+        if (!expression.symbol.owner.isInline) {
+            // Can't optimize if the function can start using the reference later.
+            // TODO: optimize if callee is in the same file? this requires removing the null check from it,
+            //       or at least providing *some* non-null fake property value.
+            return super.visitCall(expression)
+        }
+
+        for (index in expression.symbol.owner.valueParameters.indices) {
+            val value = expression.getValueArgument(index)
+            if (value is IrCallableReference<*> && value.origin == IrStatementOrigin.PROPERTY_REFERENCE_FOR_DELEGATE) {
+                if (!usesPropertyParameterCache.getOrPut(expression.symbol) { expression.symbol.owner.usesParameter(index) }) {
+                    // Don't generate an entry in `$$delegatedProperties`, it won't be used anyway.
+                    expression.putValueArgument(index, IrConstImpl.constNull(value.startOffset, value.endOffset, value.type))
+                }
+            }
+        }
+        return super.visitCall(expression)
+    }
 
     private fun cachedKProperty(expression: IrCallableReference<*>): IrExpression {
         expression.transformChildrenVoid()

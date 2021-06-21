@@ -55,8 +55,6 @@ final class H2$Companion$property$2 {
 @kotlin.Metadata
 public final class H2$Companion {
     // source: 'delegatedPropertiesInCompanionObject.kt'
-    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
-    static method <clinit>(): void
     private method <init>(): void
     public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
     public final @org.jetbrains.annotations.NotNull method getProperty(): java.lang.String
