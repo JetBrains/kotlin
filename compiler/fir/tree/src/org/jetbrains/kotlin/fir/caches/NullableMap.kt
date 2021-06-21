@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.PrivateForInline
  */
 @OptIn(PrivateForInline::class)
 @JvmInline
-internal value class NullableMap<KEY, VALUE>(private val map: MutableMap<KEY, Any> = HashMap()) {
+internal value class NullableMap<K, V>(private val map: MutableMap<K, Any> = HashMap()) {
 
     /**
      * Get value if it is present in map
@@ -20,15 +20,15 @@ internal value class NullableMap<KEY, VALUE>(private val map: MutableMap<KEY, An
      * [orElse] can modify the map inside
      */
     @Suppress("UNCHECKED_CAST")
-    inline fun getOrElse(key: KEY, orElse: () -> VALUE): VALUE =
+    inline fun getOrElse(key: K, orElse: () -> V): V =
         when (val value = map[key]) {
             null -> orElse()
             NullValue -> null
             else -> value
-        } as VALUE
+        } as V
 
     @Suppress("NOTHING_TO_INLINE")
-    inline operator fun set(key: KEY, value: VALUE) {
+    inline operator fun set(key: K, value: V) {
         map[key] = value ?: NullValue
     }
 }
