@@ -30,6 +30,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -87,6 +88,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -108,6 +110,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -129,6 +132,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -150,6 +154,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -171,6 +176,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -192,6 +198,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -213,6 +220,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -234,6 +242,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -255,6 +264,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -276,6 +286,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -297,6 +308,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -318,6 +330,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -339,6 +352,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: true
   isOverride: false
@@ -360,6 +374,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -381,6 +396,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -402,6 +418,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -423,6 +440,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: true
   isOverride: false
@@ -444,6 +462,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -465,6 +484,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -486,6 +506,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -507,6 +528,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -528,6 +550,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -549,6 +572,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -570,6 +594,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -591,6 +616,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -612,6 +638,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -633,6 +660,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -654,6 +682,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -675,6 +704,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -696,6 +726,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -717,6 +748,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -738,6 +770,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -759,6 +792,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -780,6 +814,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -801,6 +836,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -822,6 +858,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -843,6 +880,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -864,6 +902,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -885,6 +924,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -906,6 +946,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -927,6 +968,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -948,6 +990,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: true
   isOverride: false
@@ -969,6 +1012,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -990,6 +1034,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -1011,6 +1056,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -1032,6 +1078,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -1053,6 +1100,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -1074,6 +1122,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -1095,6 +1144,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -1116,6 +1166,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -1137,6 +1188,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -1158,6 +1210,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -1179,6 +1232,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -1200,6 +1254,7 @@ KtFirFunctionSymbol:
   dispatchType: java/lang/String
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: false
   isOverride: false
@@ -1218,9 +1273,10 @@ KtFirFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin/CharSequence.get
-  dispatchType: kotlin/CharSequence
+  dispatchType: @EnhancedNullability kotlin/CharSequence
   isExtension: false
   isExternal: false
+  isInfix: false
   isInline: false
   isOperator: true
   isOverride: false
