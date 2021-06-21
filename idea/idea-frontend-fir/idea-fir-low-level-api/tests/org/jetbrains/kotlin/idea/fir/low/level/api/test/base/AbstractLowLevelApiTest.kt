@@ -26,29 +26,14 @@ import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.impl.TemporaryDirectoryManagerImpl
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInfo
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.nameWithoutExtension
 
-abstract class AbstractLowLevelApiTest {
+abstract class AbstractLowLevelApiTest: TestWithDisposable() {
     private lateinit var testInfo: KotlinTestInfo
-
-    private var _disposable: Disposable? = null
-    protected val disposable: Disposable get() = _disposable!!
-
-    @BeforeEach
-    private fun intiDisposable(testInfo: TestInfo) {
-        _disposable = Disposer.newDisposable("disposable for ${testInfo.displayName}")
-    }
-
-    @AfterEach
-    private fun disposeDisposable() {
-        _disposable?.let { Disposer.dispose(it) }
-        _disposable = null
-    }
 
     private val configure: TestConfigurationBuilder.() -> Unit = {
         globalDefaults {

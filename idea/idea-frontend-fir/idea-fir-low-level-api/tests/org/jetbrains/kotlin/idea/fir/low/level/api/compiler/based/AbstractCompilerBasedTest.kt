@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.compiler.based
 
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
@@ -53,11 +54,28 @@ import org.jetbrains.kotlin.test.frontend.fir.*
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.*
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.TestInfo
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.nameWithoutExtension
 
 abstract class AbstractCompilerBasedTest : AbstractKotlinCompilerTest() {
+    private var _disposable: Disposable? = null
+    protected val disposable: Disposable get() = _disposable!!
+
+    @BeforeEach
+    private fun intiDisposable(testInfo: TestInfo) {
+        _disposable = Disposer.newDisposable("disposable for ${testInfo.displayName}")
+    }
+
+    @AfterEach
+    private fun disposeDisposable() {
+        _disposable?.let { Disposer.dispose(it) }
+        _disposable = null
+    }
+
     final override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
             frontend = FrontendKinds.FIR
@@ -90,7 +108,8 @@ abstract class AbstractCompilerBasedTest : AbstractKotlinCompilerTest() {
 
             val moduleInfo = TestModuleInfo(module)
             testServices.firModuleInfoProvider.registerModuleData(module, FirModuleInfoBasedModuleData(moduleInfo))
-            val configurator = FirModuleResolveStateConfiguratorForSingleModuleTestImpl(testServices, module, ktFiles, moduleInfo, project)
+            val configurator =
+                FirModuleResolveStateConfiguratorForSingleModuleTestImpl(testServices, module, ktFiles, moduleInfo, disposable)
 
             with(project as MockProject) {
                 registerTestServices(configurator, ktFiles)
