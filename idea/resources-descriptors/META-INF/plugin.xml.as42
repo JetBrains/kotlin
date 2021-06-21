@@ -5,10 +5,12 @@
   <description><![CDATA[
 The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
 <br>
-<a href="http://kotlinlang.org/docs/tutorials/getting-started.html">Getting Started in IntelliJ IDEA</a><br>
-<a href="http://kotlinlang.org/docs/tutorials/kotlin-android.html">Getting Started in Android Studio</a><br>
+<a href="https://kotlinlang.org/docs/home.html">Documentation</a><br>
+<a href="https://www.youtube.com/channel/UCP7uiEZIqci43m22KDl0sNw">YouTube channel</a><br>
 <a href="http://slack.kotlinlang.org/">Public Slack</a><br>
-<a href="https://youtrack.jetbrains.com/issues/KT">Issue tracker</a><br>
+<a href="https://blog.jetbrains.com/kotlin/">Blog</a><br>
+<a href="https://twitter.com/kotlin">Twitter</a><br>
+<a href="https://kotl.in/issue">Issue tracker</a><br>
 ]]></description>
   <version>@snapshot@</version>
   <vendor url="http://www.jetbrains.com">JetBrains</vendor>
@@ -16,22 +18,24 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
   <idea-version since-build="202.6397.94" until-build="202.*"/>
 
   <change-notes><![CDATA[
-    <h3>1.5.20-RC</h3>
-    <ul>
-      <li>Parallel compilation of Kotlin sources is controlled by --parallel Gradle property. The `kotlin.parallel.tasks.in.project` property is deprecated.</li>
-      <li>The Gradle plugin option `kotlinOptions.jdkHome` is deprecated. The JDK location can be set via tasks that implement the `UsesKotlinJavaToolchain` interface.</li>
-      <li>Aligned behavior of stdlib functions `isLowerCase`/`isUpperCase` and `digitToInt` across platforms.</li>
-    </ul>
-    Learn more in the <a href="https://github.com/JetBrains/kotlin/releases/tag/v1.5.20-RC">changelog</a>.
-    <br><br>
-    <h3>1.5.20-M1</h3>
+    <h3>1.5.20</h3>
     <ul>
       <li>String concatenation uses invokedynamic on JVM by default.</li>
       <li>Annotations on function type parameters are emitted to the bytecode on JVM 1.8+.</li>
-      <li>Kotlin/Native: improved performance of Array.copyInto inside one array.</li>
+      <li>Support calling Lombok-generated Java methods from Kotlin code in the same module.</li>
+      <li>Kotlin/Native: improved performance of `Array.copyInto` inside one array.</li>
+      <li>Kotlin/Native: opt-in export of KDoc comments to the generated Objective-C headers with the `-Xexport-kdoc` compiler option.</li>
       <li>Experimental caching of annotation processors' classloaders.</li>
+      <li>Parallel compilation of Kotlin sources is controlled by `--parallel` Gradle property. The `kotlin.parallel.tasks.in.project` property is deprecated.</li>
+      <li>Aligned behavior of stdlib functions `isLowerCase`/`isUpperCase` and `digitToInt` across platforms.</li>
     </ul>
-    Learn more in the <a href="https://github.com/JetBrains/kotlin/releases/tag/v1.5.20-M1">changelog</a>.
+    For more details, see <a href="https://kotlinlang.org/docs/whatsnew1520.html?utm_source=ide&utm_medium=change-notes&utm_campaign=1-5-20-release">What’s New in Kotlin 1.5.20</a> and <a href="https://blog.jetbrains.com/kotlin/2021/06/kotlin-1-5-20-released/?utm_source=ide&utm_medium=change-notes&utm_campaign=1-5-20-release">this blog post</a>
+    <br><br>
+    <h3>1.5.10</h3>
+    Released: <b>May 24, 2021</b>
+    <br>
+    A bug fix release for Kotlin 1.5.0.
+    Learn more in the <a href="https://github.com/JetBrains/kotlin/releases/tag/v1.5.10/">changelog</a>.
     <br><br>
     <h3>1.5.0</h3>
     Released: <b>May 5, 2021</b>
