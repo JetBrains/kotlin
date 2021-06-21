@@ -359,8 +359,10 @@ class CallExpressionResolver(
             KotlinTypeInfo {
         var initialDataFlowInfoForArguments = context.dataFlowInfo
         val receiverDataFlowValue = (receiver as? ReceiverValue)?.let { dataFlowValueFactory.createDataFlowValue(it, context) }
-        val receiverCanBeNull = receiverDataFlowValue != null &&
-                initialDataFlowInfoForArguments.getStableNullability(receiverDataFlowValue).canBeNull()
+
+        val receiverCanBeNull = receiverDataFlowValue != null && initialDataFlowInfoForArguments.getStableNullability(receiverDataFlowValue).canBeNull()
+        val shouldNullifySafeCallType =
+            receiverCanBeNull || context.languageVersionSettings.supportsFeature(LanguageFeature.SafeCallsAreAlwaysNullable)
 
         val callOperationNode = AstLoadingFilter.forceAllowTreeLoading(element.qualified.containingFile, ThrowableComputable {
             element.node
@@ -368,11 +370,12 @@ class CallExpressionResolver(
 
         if (receiverDataFlowValue != null && element.safe) {
             // Additional "receiver != null" information should be applied if we consider a safe call
-            if (receiverCanBeNull) {
+            if (shouldNullifySafeCallType) {
                 initialDataFlowInfoForArguments = initialDataFlowInfoForArguments.disequate(
                     receiverDataFlowValue, DataFlowValue.nullValue(builtIns), languageVersionSettings
                 )
-            } else {
+            }
+            if (!receiverCanBeNull) {
                 reportUnnecessarySafeCall(context.trace, receiver.type, callOperationNode, receiver)
             }
         }
@@ -393,7 +396,7 @@ class CallExpressionResolver(
 
         val selectorType = selectorTypeInfo.type
         if (selectorType != null) {
-            if (element.safe && receiverCanBeNull) {
+            if (element.safe && shouldNullifySafeCallType) {
                 selectorTypeInfo = selectorTypeInfo.replaceType(TypeUtils.makeNullable(selectorType))
             }
             // TODO : this is suspicious: remove this code?

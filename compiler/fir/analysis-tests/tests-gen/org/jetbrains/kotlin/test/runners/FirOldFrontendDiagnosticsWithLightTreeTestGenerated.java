@@ -27417,6 +27417,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 }
 
                 @Test
+                @TestMetadata("safeCallIsAlwaysNullable.kt")
+                public void testSafeCallIsAlwaysNullable() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/safecalls/safeCallIsAlwaysNullable.kt");
+                }
+
+                @Test
                 @TestMetadata("simple.kt")
                 public void testSimple() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/smartCasts/safecalls/simple.kt");
