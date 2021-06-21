@@ -2085,9 +2085,11 @@ open class RawFirBuilder(
                 val receiver = expression.receiverExpression.toFirExpression("Incorrect receiver expression")
 
                 if (expression is KtSafeQualifiedExpression) {
+                    @OptIn(FirImplementationDetail::class)
+                    firSelector.replaceSource(expression.toFirSourceElement(FirFakeSourceElementKind.DesugaredSafeCallExpression))
                     return firSelector.wrapWithSafeCall(
                         receiver,
-                        expression.toFirSourceElement(FirFakeSourceElementKind.DesugaredSafeCallExpression)
+                        expression.toFirSourceElement()
                     )
                 }
 

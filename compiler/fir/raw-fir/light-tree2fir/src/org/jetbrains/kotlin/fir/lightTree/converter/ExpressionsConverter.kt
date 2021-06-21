@@ -494,9 +494,11 @@ class ExpressionsConverter(
 
         (firSelector as? FirQualifiedAccess)?.let {
             if (isSafe) {
+                @OptIn(FirImplementationDetail::class)
+                it.replaceSource(dotQualifiedExpression.toFirSourceElement(FirFakeSourceElementKind.DesugaredSafeCallExpression))
                 return it.wrapWithSafeCall(
                     firReceiver!!,
-                    dotQualifiedExpression.toFirSourceElement(FirFakeSourceElementKind.DesugaredSafeCallExpression)
+                    dotQualifiedExpression.toFirSourceElement()
                 )
             }
 
