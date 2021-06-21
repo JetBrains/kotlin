@@ -1039,4 +1039,83 @@ TEST_F(SameThreadMarkAndSweepTest, MultipleMutatorsWeaks) {
     }
 }
 
-// TODO: Attaching new threads while GC is in progress.
+TEST_F(SameThreadMarkAndSweepTest, NewThreadsWhileRequestingCollection) {
+    KStdVector<Mutator> mutators(kDefaultThreadCount);
+    KStdVector<ObjHeader*> globals(2 * kDefaultThreadCount);
+    KStdVector<ObjHeader*> locals(2 * kDefaultThreadCount);
+    KStdVector<ObjHeader*> reachables(2 * kDefaultThreadCount);
+    KStdVector<ObjHeader*> unreachables(2 * kDefaultThreadCount);
+
+    auto expandRootSet = [&globals, &locals, &reachables, &unreachables](mm::ThreadData& threadData, Mutator& mutator, int i) {
+        auto& global = mutator.AddGlobalRoot();
+        auto& local = mutator.AddStackRoot();
+        auto& reachable = AllocateObject(threadData);
+        auto& unreachable = AllocateObject(threadData);
+        local->field1 = reachable.header();
+        globals[i] = global.header();
+        locals[i] = local.header();
+        reachables[i] = reachable.header();
+        unreachables[i] = unreachable.header();
+    };
+
+    for (int i = 0; i < kDefaultThreadCount; ++i) {
+        mutators[i]
+                .Execute([i, expandRootSet](mm::ThreadData& threadData, Mutator& mutator) { expandRootSet(threadData, mutator, i); })
+                .wait();
+    }
+
+    KStdVector<std::future<void>> gcFutures(kDefaultThreadCount);
+
+    gcFutures[0] = mutators[0].Execute([](mm::ThreadData& threadData, Mutator& mutator) { threadData.gc().PerformFullGC(); });
+
+    // Spin until thread suspension is requested.
+    while (!mm::IsThreadSuspensionRequested()) {
+    }
+
+    // Now start attaching new threads.
+    KStdVector<Mutator> newMutators(kDefaultThreadCount);
+    KStdVector<std::future<void>> attachFutures(kDefaultThreadCount);
+
+    for (int i = 0; i < kDefaultThreadCount; ++i) {
+        attachFutures[i] = newMutators[i].Execute([i, expandRootSet](mm::ThreadData& threadData, Mutator& mutator) { expandRootSet(threadData, mutator, i + kDefaultThreadCount); });
+    }
+
+    // All the other threads are stopping at safe points.
+    for (int i = 1; i < kDefaultThreadCount; ++i) {
+        gcFutures[i] =
+                mutators[i].Execute([](mm::ThreadData& threadData, Mutator& mutator) { threadData.gc().SafePointFunctionEpilogue(); });
+    }
+
+    // GC will be completed first
+    for (auto& future : gcFutures) {
+        future.wait();
+    }
+
+    // Only then will the new threads be allowed to attach.
+    for (auto& future : attachFutures) {
+        future.wait();
+    }
+
+    // Old mutators don't even see alive objects from the new threads yet (as the latter ones have not published anything).
+
+    KStdVector<ObjHeader*> expectedAlive;
+    for (int i = 0; i < kDefaultThreadCount; ++i) {
+        expectedAlive.push_back(globals[i]);
+        expectedAlive.push_back(locals[i]);
+        expectedAlive.push_back(reachables[i]);
+    }
+
+    for (auto& mutator : mutators) {
+        EXPECT_THAT(mutator.Alive(), testing::UnorderedElementsAreArray(expectedAlive));
+    }
+
+    for (int i = 0; i < kDefaultThreadCount; ++i) {
+        KStdVector<ObjHeader*> aliveForThisThread(expectedAlive.begin(), expectedAlive.end());
+        aliveForThisThread.push_back(globals[kDefaultThreadCount + i]);
+        aliveForThisThread.push_back(locals[kDefaultThreadCount + i]);
+        aliveForThisThread.push_back(reachables[kDefaultThreadCount + i]);
+        // Unreachables for new threads were not collected.
+        aliveForThisThread.push_back(unreachables[kDefaultThreadCount + i]);
+        EXPECT_THAT(newMutators[i].Alive(), testing::UnorderedElementsAreArray(aliveForThisThread));
+    }
+}
