@@ -7,61 +7,20 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
-import org.jetbrains.kotlin.commonizer.LeafCommonizerTarget
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.commonizer.allLeaves
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.CompilationSourceSetUtil.compilationsBySourceSets
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
-import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllSourceSetsDependingOn
-import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
 
 internal fun Project.getCommonizerTarget(sourceSet: KotlinSourceSet): CommonizerTarget? {
-    val kotlin = multiplatformExtensionOrNull ?: return null
-    val sourceSetsDependingOnThisSourceSet = kotlin.resolveAllSourceSetsDependingOn(sourceSet)
-        .filterNot(::isOrphanSourceSet)
-
-    if (sourceSetsDependingOnThisSourceSet.isEmpty()) {
-        return getLeafCommonizerTarget(sourceSet)
-    }
-
-    val dependeeCommonizerTargets = sourceSetsDependingOnThisSourceSet
-        .map { sourceSetDependingOnThisSourceSet -> getCommonizerTarget(sourceSetDependingOnThisSourceSet) ?: return null }
-        .toSet()
+    val compilationTargets = compilationsBySourceSets(this)[sourceSet].orEmpty()
+        .filter { compilation -> compilation !is KotlinMetadataCompilation }
+        .map { compilation -> getCommonizerTarget(compilation) ?: return null }
 
     return when {
-        dependeeCommonizerTargets.isEmpty() -> throw IllegalStateException()
-        dependeeCommonizerTargets.size == 1 -> dependeeCommonizerTargets.single()
-        else -> SharedCommonizerTarget(dependeeCommonizerTargets.allLeaves())
+        compilationTargets.isEmpty() -> null
+        compilationTargets.size == 1 -> compilationTargets.single()
+        else -> SharedCommonizerTarget(compilationTargets.allLeaves())
     }
 }
-
-private fun Project.getLeafCommonizerTarget(sourceSet: KotlinSourceSet): LeafCommonizerTarget? {
-    val konanTargets = compilationsBySourceSets(this)[sourceSet].orEmpty()
-        .flatMap { compilation -> compilation.konanTargets }
-
-    return if (konanTargets.size == 1) LeafCommonizerTarget(konanTargets.single())
-
-    /*
-    Can even be more than one, when added using `KotlinCompilation.source`. Still returning null, since this
-    does not represent a 'proper' source set hierarchy
-     */
-    else null
-}
-
-private fun Project.isOrphanSourceSet(sourceSet: KotlinSourceSet): Boolean {
-    return compilationsBySourceSets(this)[sourceSet].orEmpty().isEmpty()
-}
-
-private val KotlinCompilation<*>.konanTargets: Set<KonanTarget>
-    get() {
-        return when (this) {
-            is KotlinSharedNativeCompilation -> konanTargets.toSet()
-            is KotlinNativeCompilation -> setOf(konanTarget)
-            else -> emptySet()
-        }
-    }
-

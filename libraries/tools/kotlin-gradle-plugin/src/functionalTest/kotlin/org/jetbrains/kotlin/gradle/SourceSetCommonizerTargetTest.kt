@@ -9,8 +9,10 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.Project
+import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
+import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.targets.native.internal.getCommonizerTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
@@ -27,6 +29,7 @@ class SourceSetCommonizerTargetTest {
     @BeforeTest
     fun setup() {
         project = ProjectBuilder.builder().build()
+        project.extensions.getByType(ExtraPropertiesExtension::class.java).set("kotlin.mpp.enableCompatibilityMetadataVariant", "false")
         project.plugins.apply("kotlin-multiplatform")
         kotlin = project.extensions.getByName("kotlin") as KotlinMultiplatformExtension
 
@@ -175,7 +178,10 @@ class SourceSetCommonizerTargetTest {
             target.compilations.getByName("main").source(nativeMain)
         }
 
-        assertNull(project.getCommonizerTarget(nativeMain), "Expected no commonizer target, since no real source set hierarchy is given")
+        assertEquals(
+            SharedCommonizerTarget(setOf(linux1.konanTarget, linux2.konanTarget)),
+            project.getCommonizerTarget(nativeMain)
+        )
     }
 
     @Test
