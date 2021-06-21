@@ -177,4 +177,32 @@ class SourceSetCommonizerTargetTest {
 
         assertNull(project.getCommonizerTarget(nativeMain), "Expected no commonizer target, since no real source set hierarchy is given")
     }
+
+    @Test
+    fun `orphan source sets are ignored`() {
+        val linux1 = kotlin.linuxX64("linux1")
+        val linux2 = kotlin.linuxArm64("linux2")
+        val nativeMain = kotlin.sourceSets.create("nativeMain")
+        val linux1Main = kotlin.sourceSets.getByName("linux1Main")
+        val linux2Main = kotlin.sourceSets.getByName("linux2Main")
+        val orphan = kotlin.sourceSets.create("orphan")
+
+        linux1Main.dependsOn(nativeMain)
+        linux2Main.dependsOn(nativeMain)
+        orphan.dependsOn(nativeMain)
+
+        assertEquals(CommonizerTarget(linux1.konanTarget, linux2.konanTarget), project.getCommonizerTarget(nativeMain))
+    }
+
+    @Test
+    fun `orphan source sets only`() {
+        val nativeMain = kotlin.sourceSets.create("nativeMain")
+        val orphan1 = kotlin.sourceSets.create("orphan1")
+        val orphan2 = kotlin.sourceSets.create("orphan2")
+
+        orphan1.dependsOn(nativeMain)
+        orphan2.dependsOn(nativeMain)
+
+        assertEquals(null, project.getCommonizerTarget(nativeMain))
+    }
 }
