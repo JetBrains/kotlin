@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.Variance
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -379,7 +380,7 @@ private class BuilderCache<From, To: Any> private constructor(
     private val cache: ConcurrentMap<From, To>,
     private val isReadOnly: Boolean
 ) {
-    constructor() : this(cache = MapMaker().weakKeys().makeMap(), isReadOnly = false)
+    constructor() : this(ConcurrentHashMap<From, To>(), isReadOnly = false)
 
     fun createReadOnlyCopy(): BuilderCache<From, To> {
         check(!isReadOnly) { "Cannot create readOnly BuilderCache from a readonly one" }
