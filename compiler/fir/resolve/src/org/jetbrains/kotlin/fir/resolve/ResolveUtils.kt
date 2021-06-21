@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -343,8 +344,11 @@ fun FirSafeCallExpression.propagateTypeFromQualifiedAccessAfterNullCheck(
 ) {
     val receiverType = nullableReceiverExpression.typeRef.coneTypeSafe<ConeKotlinType>()
     val typeAfterNullCheck = regularQualifiedAccess.expressionTypeOrUnitForAssignment() ?: return
-    val isReceiverActuallyNullable = receiverType != null && session.typeContext.run { receiverType.isNullableType() }
-
+    val isReceiverActuallyNullable = if (session.languageVersionSettings.supportsFeature(LanguageFeature.SafeCallsAreAlwaysNullable)) {
+        true
+    } else {
+        receiverType != null && session.typeContext.run { receiverType.isNullableType() }
+    }
     val resultingType =
         if (isReceiverActuallyNullable)
             typeAfterNullCheck.withNullability(ConeNullability.NULLABLE, session.typeContext)
