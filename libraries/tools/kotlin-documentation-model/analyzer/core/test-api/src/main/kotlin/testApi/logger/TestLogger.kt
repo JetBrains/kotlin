@@ -46,34 +46,3 @@ class TestLogger(private val logger: DokkaLogger) : DokkaLogger {
         logger.error(message)
     }
 }
-
-class FilteringLogger(
-    private val minLevel: Level,
-    private val downstream: DokkaLogger
-) : DokkaLogger {
-    enum class Level { Debug, Info, Progress, Warn, Error }
-
-    override var warningsCount: Int by downstream::warningsCount
-
-    override var errorsCount by downstream::errorsCount
-
-    override fun debug(message: String) {
-        if (minLevel <= Level.Debug) downstream.debug(message)
-    }
-
-    override fun info(message: String) {
-        if (minLevel <= Level.Info) downstream.info(message)
-    }
-
-    override fun progress(message: String) {
-        if (minLevel <= Level.Progress) downstream.progress(message)
-    }
-
-    override fun warn(message: String) {
-        if (minLevel <= Level.Warn) downstream.warn(message)
-    }
-
-    override fun error(message: String) {
-        if (minLevel <= Level.Error) downstream.error(message)
-    }
-}
