@@ -43,10 +43,7 @@ public:
 
     bool IsCurrentThreadRegistered() const noexcept { return currentThreadDataNode_ != nullptr; }
 
-    class TestSupport {
-    public:
-        static void ClearCurrentThreadData() { currentThreadDataNode_ = nullptr; }
-    };
+    static void ClearCurrentThreadData() { currentThreadDataNode_ = nullptr; }
 
 private:
     friend class GlobalData;
