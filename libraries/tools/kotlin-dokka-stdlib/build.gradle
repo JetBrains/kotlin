@@ -53,6 +53,7 @@ setupCallDokka.doLast {
             pAnt().ant_exe.path,
             "-f", file("build-docs.xml").path,
             "v2",
+            "-Dgithub_revision=${pKotlinBig().github_revision}",
             "-Dkotlin_root=${pKotlinBig().kotlin_root}",
             "-Dkotlin_libs=${pKotlinBig().kotlin_libs}",
             "-Dkotlin_native_root=${pKotlinNative().kotlin_native_root}",
