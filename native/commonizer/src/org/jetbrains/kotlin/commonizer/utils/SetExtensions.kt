@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.commonizer.utils
 
 infix fun <T> Set<T>.isSubsetOf(other: Set<T>): Boolean {
-    if (this === other) return true
+    if (this == other) return true
     return other.containsAll(this)
 }
 
