@@ -718,24 +718,6 @@ __attribute__((swift_name("Kt43599Kt")))
 @property (class, readonly) NSString *topLevelLateinitProperty __attribute__((swift_name("topLevelLateinitProperty")));
 @end;
 
-__attribute__((swift_name("Host")))
-@protocol KtHost
-@required
-@property (readonly) NSString *test __attribute__((swift_name("test")));
-@end;
-
-__attribute__((swift_name("AbstractHost")))
-@interface KtAbstractHost : KtBase <KtHost>
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
-+ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-@end;
-
-__attribute__((objc_subclassing_restricted))
-__attribute__((swift_name("Kt46431Kt")))
-@interface KtKt46431Kt : KtBase
-+ (id<KtHost>)createAbstractHost __attribute__((swift_name("createAbstractHost()")));
-@end;
-
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("KT43780TestObject")))
 @interface KtKT43780TestObject : KtBase
@@ -814,6 +796,24 @@ __attribute__((swift_name("KT43780Enum.Companion")))
 + (instancetype)companion __attribute__((swift_name("init()")));
 @property (class, readonly, getter=shared) KtKT43780EnumCompanion *shared __attribute__((swift_name("shared")));
 @property (readonly) int32_t x __attribute__((swift_name("x")));
+@end;
+
+__attribute__((swift_name("Host")))
+@protocol KtHost
+@required
+@property (readonly) NSString *test __attribute__((swift_name("test")));
+@end;
+
+__attribute__((swift_name("AbstractHost")))
+@interface KtAbstractHost : KtBase <KtHost>
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("Kt46431Kt")))
+@interface KtKt46431Kt : KtBase
++ (id<KtHost>)createAbstractHost __attribute__((swift_name("createAbstractHost()")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
