@@ -65,6 +65,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CAN_BE_VAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CAPTURED_MEMBER_VAL_INITIALIZATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CAPTURED_VAL_INITIALIZATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CATCH_PARAMETER_WITH_DEFAULT_VALUE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CLASS_CANNOT_BE_EXTENDED_DIRECTLY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CLASS_IN_SUPERTYPE_FOR_ENUM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CLASS_LITERAL_LHS_NOT_A_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPONENT_FUNCTION_AMBIGUITY
@@ -453,6 +454,7 @@ class FirDefaultErrorMessages {
             map.put(SUPERTYPE_INITIALIZED_IN_INTERFACE, "Interfaces cannot initialize supertypes")
             map.put(INTERFACE_WITH_SUPERCLASS, "An interface cannot inherit from a class")
             map.put(FINAL_SUPERTYPE, "This type is final, so it cannot be inherited from")
+            map.put(CLASS_CANNOT_BE_EXTENDED_DIRECTLY, "Class {0} cannot be extended directly", SYMBOL)
             map.put(SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE, "Extension function type is not allowed as supertypes")
             map.put(SINGLETON_IN_SUPERTYPE, "Cannot inherit from a singleton")
             map.put(NULLABLE_SUPERTYPE, "A supertype cannot be nullable")

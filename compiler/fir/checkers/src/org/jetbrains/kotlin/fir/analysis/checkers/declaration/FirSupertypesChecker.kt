@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirSupertypesChecker : FirClassChecker() {
@@ -105,6 +106,10 @@ object FirSupertypesChecker : FirClassChecker() {
                             }
                         }
                     }
+                }
+
+                if (symbol is FirRegularClassSymbol && symbol.classId == StandardClassIds.Enum) {
+                    reporter.reportOn(superTypeRef.source, FirErrors.CLASS_CANNOT_BE_EXTENDED_DIRECTLY, symbol, context)
                 }
             }
         }

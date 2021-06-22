@@ -124,6 +124,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val SUPERTYPE_INITIALIZED_IN_INTERFACE by error<KtTypeReference>()
         val INTERFACE_WITH_SUPERCLASS by error<KtTypeReference>()
         val FINAL_SUPERTYPE by error<KtTypeReference>()
+        val CLASS_CANNOT_BE_EXTENDED_DIRECTLY by error<KtTypeReference> {
+            parameter<FirRegularClassSymbol>("classSymbol")
+        }
         val SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE by error<KtTypeReference>()
         val SINGLETON_IN_SUPERTYPE by error<KtTypeReference>()
         val NULLABLE_SUPERTYPE by error<KtTypeReference>(PositioningStrategy.QUESTION_MARK_BY_TYPE)

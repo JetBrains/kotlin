@@ -351,6 +351,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.CLASS_CANNOT_BE_EXTENDED_DIRECTLY) { firDiagnostic ->
+        ClassCannotBeExtendedDirectlyImpl(
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a.fir),
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE) { firDiagnostic ->
         SupertypeIsExtensionFunctionTypeImpl(
             firDiagnostic as FirPsiDiagnostic,

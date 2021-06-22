@@ -134,6 +134,7 @@ object FirErrors {
     val SUPERTYPE_INITIALIZED_IN_INTERFACE by error0<KtTypeReference>()
     val INTERFACE_WITH_SUPERCLASS by error0<KtTypeReference>()
     val FINAL_SUPERTYPE by error0<KtTypeReference>()
+    val CLASS_CANNOT_BE_EXTENDED_DIRECTLY by error1<KtTypeReference, FirRegularClassSymbol>()
     val SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE by error0<KtTypeReference>()
     val SINGLETON_IN_SUPERTYPE by error0<KtTypeReference>()
     val NULLABLE_SUPERTYPE by error0<KtTypeReference>(SourceElementPositioningStrategies.QUESTION_MARK_BY_TYPE)
