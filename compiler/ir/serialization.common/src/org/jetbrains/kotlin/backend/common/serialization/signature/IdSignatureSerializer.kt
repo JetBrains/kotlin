@@ -144,6 +144,10 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
             setExpected(declaration.isExpect)
         }
 
+        override fun visitScript(declaration: IrScript) {
+            collectParents(declaration)
+        }
+
         override fun visitProperty(declaration: IrProperty) {
             collectParents(declaration)
             isTopLevelPrivate = isTopLevelPrivate || declaration.isTopLevelPrivate
