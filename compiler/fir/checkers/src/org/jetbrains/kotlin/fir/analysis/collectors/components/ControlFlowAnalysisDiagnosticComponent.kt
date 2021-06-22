@@ -51,7 +51,6 @@ class ControlFlowAnalysisDiagnosticComponent(
 
     override fun visitFunction(function: FirFunction, data: CheckerContext) {
         val graph = function.controlFlowGraphReference?.controlFlowGraph ?: return
-
         controlFlowAnalyzer.analyzeFunction(function, graph, data, reporter)
     }
 
@@ -61,7 +60,6 @@ class ControlFlowAnalysisDiagnosticComponent(
 
     override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: CheckerContext) {
         val graph = propertyAccessor.controlFlowGraphReference?.controlFlowGraph ?: return
-
         controlFlowAnalyzer.analyzePropertyAccessor(propertyAccessor, graph, data, reporter)
     }
 

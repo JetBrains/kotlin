@@ -130,7 +130,7 @@ class PathAwarePropertyInitializationInfo(
 }
 
 class PropertyInitializationInfoCollector(
-    private val localProperties: Set<FirPropertySymbol>,
+    private val properties: Set<FirPropertySymbol>,
     private val declaredVariableCollector: DeclaredVariableCollector = DeclaredVariableCollector(),
 ) : ControlFlowGraphVisitor<PathAwarePropertyInitializationInfo, Collection<Pair<EdgeLabel, PathAwarePropertyInitializationInfo>>>() {
     override fun visitNode(
@@ -148,7 +148,7 @@ class PropertyInitializationInfoCollector(
     ): PathAwarePropertyInitializationInfo {
         val dataForNode = visitNode(node, data)
         val symbol = node.fir.referredPropertySymbol ?: return dataForNode
-        return if (symbol !in localProperties) {
+        return if (symbol !in properties) {
             dataForNode
         } else {
             processVariableWithAssignment(dataForNode, symbol)

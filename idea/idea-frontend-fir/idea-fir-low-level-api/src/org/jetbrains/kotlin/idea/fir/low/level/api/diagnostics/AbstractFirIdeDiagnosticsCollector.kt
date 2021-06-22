@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.collectors.components.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmDeclarationCheckers
-import org.jetbrains.kotlin.fir.checkers.*
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.moduleSourceInfo
 import org.jetbrains.kotlin.platform.SimplePlatform
@@ -50,13 +49,14 @@ private object CheckersFactory {
             if (!useExtendedCheckers) {
                 add(ErrorNodeDiagnosticCollectorComponent(session, reporter))
             }
+            // NB: the component for declaration checkers should precede the CFA component.
+            // See comments in [PropertyInitializationInfoCache] for more details.
             add(DeclarationCheckersDiagnosticComponent(session, reporter, declarationCheckers))
             add(ExpressionCheckersDiagnosticComponent(session, reporter, expressionCheckers))
             typeCheckers?.let { add(TypeCheckersDiagnosticComponent(session, reporter, it)) }
             add(ControlFlowAnalysisDiagnosticComponent(session, reporter, declarationCheckers))
         }
     }
-
 
     private fun createDeclarationCheckers(useExtendedCheckers: Boolean, platform: SimplePlatform): DeclarationCheckers {
         return if (useExtendedCheckers) {
@@ -83,7 +83,6 @@ private object CheckersFactory {
         createDeclarationCheckers: MutableList<DeclarationCheckers>.() -> Unit
     ): DeclarationCheckers =
         createDeclarationCheckers(buildList(createDeclarationCheckers))
-
 
     @OptIn(CheckersComponentInternal::class)
     private fun createDeclarationCheckers(declarationCheckers: List<DeclarationCheckers>): DeclarationCheckers {
