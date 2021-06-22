@@ -52,14 +52,14 @@ class InvalidContentModuleAndPackageDocumentationReaderTest : AbstractContextMod
     private val contextA by lazy {
         DokkaContext.create(
             configuration = configurationBuilderA.build(),
-            logger = DokkaConsoleLogger,
+            logger = DokkaConsoleLogger(),
             pluginOverrides = emptyList()
         )
     }
     private val contextB by lazy {
         DokkaContext.create(
             configuration = configurationBuilderB.build(),
-            logger = DokkaConsoleLogger,
+            logger = DokkaConsoleLogger(),
             pluginOverrides = emptyList()
         )
     }

@@ -116,7 +116,7 @@ class FailOnWarningTest : BaseAbstractTest() {
 }
 
 private class ZeroErrorOrWarningCountDokkaLogger(
-    logger: DokkaLogger = DokkaConsoleLogger
+    logger: DokkaLogger = DokkaConsoleLogger()
 ) : DokkaLogger by logger {
     override var warningsCount: Int = 0
     override var errorsCount: Int = 0

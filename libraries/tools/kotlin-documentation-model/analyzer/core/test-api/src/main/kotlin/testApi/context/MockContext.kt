@@ -5,6 +5,7 @@ import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.plugability.DokkaPlugin
 import org.jetbrains.dokka.plugability.ExtensionPoint
 import org.jetbrains.dokka.utilities.DokkaConsoleLogger
+import org.jetbrains.dokka.utilities.LoggingLevel
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.memberProperties
@@ -31,7 +32,7 @@ class MockContext(
 
     override fun <T : Any, E : ExtensionPoint<T>> single(point: E): T = get(point).single()
 
-    override val logger = DokkaConsoleLogger
+    override val logger = DokkaConsoleLogger(LoggingLevel.DEBUG)
 
     override val configuration: DokkaConfiguration
         get() = testConfiguration ?: throw IllegalStateException("This mock context doesn't provide configuration")
