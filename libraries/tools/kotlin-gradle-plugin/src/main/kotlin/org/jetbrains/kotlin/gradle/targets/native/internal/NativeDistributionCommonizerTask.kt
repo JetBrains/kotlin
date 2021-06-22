@@ -47,7 +47,7 @@ internal open class NativeDistributionCommonizerTask : DefaultTask() {
         .resolve(KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR)
 
     @get:OutputDirectories
-    @Suppress("unused") // Only for up-to-date checker. The directory with the original platform libs.
+    @Suppress("unused") // Only for up-to-date checker.
     val outputDirectories: Set<File>
         get() {
             val rootOutputDirectory = getRootOutputDirectory()
@@ -69,12 +69,12 @@ internal open class NativeDistributionCommonizerTask : DefaultTask() {
     internal val commonizerRunner = KotlinNativeCommonizerToolRunner(project)
 
     @get:Classpath
-    @Suppress("unused") // Only for up-to-date checker. The directory with the original platform libs.
+    @Suppress("unused") // Only for up-to-date checker.
     internal val commonizerClasspath: Set<File>
         get() = commonizerRunner.classpath
 
     @get:Input
-    @Suppress("unused") // Only for up-to-date checker. The directory with the original platform libs.
+    @Suppress("unused") // Only for up-to-date checker.
     internal val commonizerJvmArgs: List<String>
         get() = commonizerRunner.getCustomJvmArgs()
 
