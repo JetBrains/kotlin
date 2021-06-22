@@ -347,12 +347,7 @@ if (attachedIntellijVersion != null) {
     kotlinIde "compiler-plugins/scripting-ide-services/kotlin.compiler-plugins.scripting-ide-services.iml"
     kotlinIde "compiler-plugins/scripting/kotlin.compiler-plugins.scripting.iml"
     kotlinIde "core/kotlin.core.iml"
-    kotlinIde "fir-fe10-binding/kotlin.fir.fir-fe10-binding.iml"
-    kotlinIde "fir/kotlin.fir.iml"
-    kotlinIde "fir-low-level-api/kotlin.fir.fir-low-level-api.iml"
     kotlinIde "formatter/kotlin.formatter.iml"
-    kotlinIde "frontend-api/kotlin.fir.frontend-api.iml"
-    kotlinIde "frontend-fir/kotlin.fir.frontend-fir.iml"
     kotlinIde "frontend-independent/kotlin.fir.frontend-independent.iml"
     kotlinIde "frontend-independent/tests/kotlin.fir.frontend-independent.tests.iml"
     kotlinIde "generators/kotlin.generators.iml"
@@ -401,16 +396,23 @@ if (attachedIntellijVersion != null) {
     kotlinIde "test-framework/kotlin.test-framework.iml"
     kotlinIde "tests-common/kotlin.tests-common.iml"
     kotlinIde "uast/uast-kotlin-base/kotlin.uast.uast-kotlin-base.iml"
-    kotlinIde "uast/uast-kotlin-fir/kotlin.uast.uast-kotlin-fir.iml"
     kotlinIde "uast/uast-kotlin-idea-base/kotlin.uast.uast-kotlin-idea-base.iml"
     kotlinIde "uast/uast-kotlin-idea/kotlin.uast.uast-kotlin-idea.iml"
     kotlinIde "uast/uast-kotlin/kotlin.uast.uast-kotlin.iml"
 }
 
 if (attachedIntellijVersion > "202") {
-    kotlinIde "kotlin.fir-all-tests/kotlin.fir-all-tests.iml"
     kotlinIde "resources-fe10/kotlin.resources-fe10.iml"
+}
+
+if (attachedIntellijVersion == "211") { // Latest available platform in scope of KT release cycle
+    kotlinIde "kotlin.fir-all-tests/kotlin.fir-all-tests.iml"
     kotlinIde "resources-fir/kotlin.resources-fir.iml"
+    kotlinIde "fir-fe10-binding/kotlin.fir.fir-fe10-binding.iml"
+    kotlinIde "fir/kotlin.fir.iml"
+    kotlinIde "fir-low-level-api-ide-impl/kotlin.fir.fir-low-level-api-ide-impl.iml"
+    kotlinIde "uast/uast-kotlin-fir/kotlin.uast.uast-kotlin-fir.iml"
+
 }
 
 if (!buildProperties.getBoolean("disableKotlinPluginModules", false) && attachedIntellijVersion == null) {
