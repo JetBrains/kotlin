@@ -10,14 +10,14 @@ import JsError
 @JsName("Boolean")
 internal external fun nativeBoolean(obj: Any?): Boolean
 
-internal fun booleanInExternalLog(obj: dynamic) {
+internal fun booleanInExternalLog(name: String, obj: dynamic) {
     if (jsTypeOf(obj) != "boolean") {
-        console.asDynamic().error("Boolean expected, but actual:", obj)
+        console.asDynamic().error("Boolean expected for '$name', but actual:", obj)
     }
 }
 
-internal fun booleanInExternalException(obj: dynamic) {
+internal fun booleanInExternalException(name: String, obj: dynamic) {
     if (jsTypeOf(obj) != "boolean") {
-        throw JsError("Boolean expected, but actual: $obj")
+        throw JsError("Boolean expected for '$name', but actual: $obj")
     }
 }

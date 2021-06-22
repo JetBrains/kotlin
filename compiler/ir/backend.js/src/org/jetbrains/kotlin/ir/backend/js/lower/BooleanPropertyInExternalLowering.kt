@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.interpreter.toIrConst
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -77,7 +78,8 @@ class BooleanPropertyInExternalLowering(
                 val call = JsIrBuilder.buildCall(
                     target = function!!
                 ).apply {
-                    putValueArgument(0, irGet(tmp))
+                    putValueArgument(0, property.name.identifier.toIrConst(context.irBuiltIns.stringType))
+                    putValueArgument(1, irGet(tmp))
                 }
 
                 +call
