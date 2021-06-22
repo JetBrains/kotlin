@@ -2686,10 +2686,10 @@ internal class UselessIsCheckImpl(
 }
 
 internal class ExpectedConditionImpl(
-    firDiagnostic: FirPsiDiagnostic<*>,
+    firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.ExpectedCondition(), KtAbstractFirDiagnostic<KtWhenCondition> {
-    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
 internal class NoElseInWhenImpl(
@@ -2711,6 +2711,14 @@ internal class ElseMisplacedInWhenImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.ElseMisplacedInWhen(), KtAbstractFirDiagnostic<KtWhenEntry> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
+internal class IllegalDeclarationInWhenSubjectImpl(
+    override val illegalReason: String,
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.IllegalDeclarationInWhenSubject(), KtAbstractFirDiagnostic<KtProperty> {
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
