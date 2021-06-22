@@ -21,10 +21,8 @@ import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.*
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.*
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.util.*
 
 internal interface Instruction {
@@ -179,28 +177,33 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         val irFunction = dispatchReceiver?.getIrFunctionByIrCall(call) ?: call.symbol.owner
         val args = listOfNotNull(dispatchReceiver.getThisOrSuperReceiver(irFunction), extensionReceiver) + valueArguments
 
+        // 3. evaluate reified type arguments; must do it here, before new frame, because outer type arguments can be loaded at this point
+        val reifiedTypeArguments = irFunction.typeParameters.filter { it.isReified }
+            .map {
+                val reifiedType = call.getTypeArgument(it.index)!!.getTypeIfReified(callStack)
+                Variable(it.symbol, KTypeState(reifiedType, irBuiltIns.anyClass.owner))
+            }
+
         callStack.newFrame(irFunction)
         callStack.addInstruction(SimpleInstruction(irFunction))
 
-        // 3. load up values onto stack; do it at first to set low priority of these variables
+        // 4. load up values onto stack; do it at first to set low priority of these variables
         if (dispatchReceiver is StateWithClosure) callStack.loadUpValues(dispatchReceiver)
         if (extensionReceiver is StateWithClosure) callStack.loadUpValues(extensionReceiver)
         if (irFunction.isLocal) callStack.copyUpValuesFromPreviousFrame()
 
+        // 5. store arguments in memory (remap args on actual names)
+        irFunction.getDispatchReceiver()?.let { dispatchReceiver?.let { receiver -> callStack.addVariable(Variable(it, receiver)) } }
+        irFunction.getExtensionReceiver()?.let { callStack.addVariable(Variable(it, extensionReceiver ?: callStack.getState(it))) }
+        irFunction.valueParameters.forEachIndexed { i, param -> callStack.addVariable(Variable(param.symbol, valueArguments[i])) }
         // TODO: if using KTypeState then it's class must be corresponding
         // `call.type` is used in check cast and emptyArray
         callStack.addVariable(Variable(irFunction.symbol, KTypeState(call.type, irBuiltIns.anyClass.owner)))
 
-        // 4. store arguments in memory (remap args on actual names)
-        irFunction.getDispatchReceiver()?.let { dispatchReceiver?.let { receiver -> callStack.addVariable(Variable(it, receiver)) } }
-        irFunction.getExtensionReceiver()?.let { callStack.addVariable(Variable(it, extensionReceiver ?: callStack.getState(it))) }
-        irFunction.valueParameters.forEachIndexed { i, param -> callStack.addVariable(Variable(param.symbol, valueArguments[i])) }
+        // 6. store reified type parameters
+        reifiedTypeArguments.forEach { callStack.addVariable(it) }
 
-        // 5. store reified type parameters
-        irFunction.typeParameters.filter { it.isReified }
-            .forEach { callStack.addVariable(Variable(it.symbol, KTypeState(call.getTypeArgument(it.index)!!, irBuiltIns.anyClass.owner))) }
-
-        // 6. load outer class object
+        // 7. load outer class object
         if (dispatchReceiver is Complex && irFunction.parentClassOrNull?.isInner == true) dispatchReceiver.loadOuterClassesInto(callStack)
 
         callInterceptor.interceptCall(call, irFunction, args) {
@@ -444,25 +447,10 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
     }
 
     private fun interpretTypeOperatorCall(expression: IrTypeOperatorCall) {
-        fun IrClassifierSymbol.getTypeFromStack(): IrType {
-            return (callStack.getState(this) as KTypeState).irType
-        }
-
-        fun IrType.replaceArgumentIfReified(): IrType {
-            if (this !is IrSimpleType) return this
-            val argument = this.arguments.singleOrNull()?.typeOrNull?.classifierOrNull
-            return when {
-                argument is IrTypeParameterSymbol && argument.owner.isReified -> {
-                    this.buildSimpleType { arguments = listOf(argument.getTypeFromStack() as IrTypeArgument) }
-                }
-                else -> this
-            }
-        }
-
         val typeClassifier = expression.typeOperand.classifierOrFail
         val isReified = (typeClassifier.owner as? IrTypeParameter)?.isReified == true
         val isErased = typeClassifier.owner is IrTypeParameter && !isReified
-        val typeOperand = (if (isReified) typeClassifier.getTypeFromStack() else expression.typeOperand).replaceArgumentIfReified()
+        val typeOperand = expression.typeOperand.getTypeIfReified(callStack)
 
         val state = callStack.popState()
         when (expression.operator) {
@@ -472,6 +460,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
             }
             IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_CAST -> {
                 when {
+                    // this first check is performed inside `isSubtypeOf` but repeated here to create separate exception
                     state.isNull() && !typeOperand.isNullable() -> NullPointerException().handleUserException(environment)
                     !isErased && !state.isSubtypeOf(typeOperand) -> {
                         val castedClassName = state.irClass.fqNameWhenAvailable
@@ -487,11 +476,11 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
                 }
             }
             IrTypeOperator.INSTANCEOF -> {
-                val isInstance = state.isSubtypeOf(typeOperand) || isErased
+                val isInstance = isErased || state.isSubtypeOf(typeOperand)
                 callStack.pushState(isInstance.toState(irBuiltIns.booleanType))
             }
             IrTypeOperator.NOT_INSTANCEOF -> {
-                val isInstance = state.isSubtypeOf(typeOperand) || isErased
+                val isInstance = isErased || state.isSubtypeOf(typeOperand)
                 callStack.pushState((!isInstance).toState(irBuiltIns.booleanType))
             }
             IrTypeOperator.IMPLICIT_NOTNULL -> {

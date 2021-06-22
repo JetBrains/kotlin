@@ -30,6 +30,7 @@ internal fun State.wrap(callInterceptor: CallInterceptor, remainArraysAsIs: Bool
         is ExceptionState -> this
         is Wrapper -> this.value
         is Primitive<*> -> when {
+            this.isNull() -> null
             this.type.isArray() || this.type.isPrimitiveArray() -> if (remainArraysAsIs) this else this.value
             else -> this.value
         }
@@ -43,10 +44,10 @@ internal fun State.wrap(callInterceptor: CallInterceptor, remainArraysAsIs: Bool
  * Prepare state object to be passed in outer world
  */
 internal fun List<State>.wrap(callInterceptor: CallInterceptor, irFunction: IrFunction, methodType: MethodType? = null): List<Any?> {
-    val name = irFunction.fqNameWhenAvailable?.asString()
+    val name = irFunction.fqNameWhenAvailable?.asString() ?: ""
     return this.mapIndexed { index, state ->
         // don't get arrays from Primitive in case of "set" and "Pair.<init>"; information about type will be lost
-        val unwrapArrays = name?.let { (it == "kotlin.Array.set" && index != 0) || it == "kotlin.Pair.<init>" } ?: false
+        val unwrapArrays = (name == "kotlin.Array.set" && index != 0) || name == "kotlin.Pair.<init>" || name == "kotlin.internal.ir.CHECK_NOT_NULL"
         state.wrap(callInterceptor, unwrapArrays, methodType?.parameterType(index))
     }
 }

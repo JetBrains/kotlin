@@ -267,8 +267,12 @@ internal object ArrayConstructor : IntrinsicBase() {
             }
         }
 
-        val type = environment.callStack.getState(irFunction.symbol) as KTypeState
-        environment.callStack.pushState(arrayValue.toPrimitiveStateArray(type.irType))
+        val state = irFunction.valueParameters.getOrNull(1)?.symbol?.let { environment.callStack.getState(it) as StateWithClosure }
+        val typeFromMemory = (environment.callStack.getState(irFunction.symbol) as KTypeState).irType
+        val type = state?.let {
+            typeFromMemory.getTypeIfReified { typeSymbol -> (it.upValues.single { it.symbol == typeSymbol }.state as KTypeState).irType }
+        }
+        environment.callStack.pushState(arrayValue.toPrimitiveStateArray(type ?: typeFromMemory))
     }
 }
 

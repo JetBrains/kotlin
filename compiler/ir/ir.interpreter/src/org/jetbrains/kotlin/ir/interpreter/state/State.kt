@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.ir.interpreter.state
 
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterEnvironment
 import org.jetbrains.kotlin.ir.interpreter.exceptions.handleUserException
@@ -53,16 +50,17 @@ internal fun State.asBooleanOrNull() = (this as? Primitive<*>)?.value as? Boolea
 internal fun State.asStringOrNull() = (this as Primitive<*>).value as? String
 
 internal fun State.isSubtypeOf(other: IrType): Boolean {
+    if (this.isNull() && other.isNullable()) return true
     if (this is Primitive<*> && this.value == null) return other.isNullable()
     if (this is ExceptionState) return this.isSubtypeOf(other.classOrNull!!.owner)
 
-    if (this is Primitive<*> && this.type.isArray() && other.isArray()) {
+    if (this is Primitive<*> && (this.type.isArray() || this.type.isNullableArray()) && (other.isArray() || other.isNullableArray())) {
         fun IrType.arraySubtypeCheck(other: IrType): Boolean {
             if (other !is IrSimpleType || this !is IrSimpleType) return false
             val thisArgument = this.arguments.single().typeOrNull ?: return false
             val otherArgument = other.arguments.single().typeOrNull ?: return other.arguments.single() is IrStarProjection
             if (thisArgument.isArray() && otherArgument.isArray()) return thisArgument.arraySubtypeCheck(otherArgument)
-            if (otherArgument.classOrNull == null) return false
+            if (otherArgument.classOrNull == null) return true
             return thisArgument.classOrNull?.isSubtypeOfClass(otherArgument.classOrNull!!) ?: false
         }
         return this.type.arraySubtypeCheck(other)

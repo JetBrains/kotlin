@@ -13,10 +13,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.interpreter.exceptions.handleUserException
 import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.wrap
-import org.jetbrains.kotlin.ir.interpreter.state.Primitive
-import org.jetbrains.kotlin.ir.interpreter.state.State
-import org.jetbrains.kotlin.ir.interpreter.state.Wrapper
-import org.jetbrains.kotlin.ir.interpreter.state.isSubtypeOf
+import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
+import org.jetbrains.kotlin.ir.interpreter.state.*
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KTypeState
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
@@ -246,4 +244,29 @@ internal fun IrValueParameter.getDefaultWithActualParameters(
         }
     }
     return expression?.deepCopyWithSymbols(newParent)?.transform(transformer, null)
+}
+
+internal fun IrType.getTypeIfReified(callStack: CallStack): IrType {
+    return this.getTypeIfReified { (callStack.getState(it) as KTypeState).irType }
+}
+
+internal fun IrType.getTypeIfReified(getType: (IrClassifierSymbol) -> IrType): IrType {
+    if (this !is IrSimpleType) return this
+
+    val owner = this.classifierOrNull?.owner
+    if (owner is IrTypeParameter && owner.isReified) {
+        return (getType(owner.symbol) as IrSimpleType)
+            .buildSimpleType { hasQuestionMark = this.hasQuestionMark || this@getTypeIfReified.hasQuestionMark }
+    }
+
+    val newArguments = this.arguments.map {
+        val type = it.typeOrNull ?: return@map it
+        val typeOwner = type.classifierOrNull?.owner
+        if (typeOwner is IrTypeParameter && !typeOwner.isReified) return@map it
+        type.getTypeIfReified(getType) as IrTypeArgument
+    }
+    return this.buildSimpleType {
+        hasQuestionMark = this.hasQuestionMark || this@getTypeIfReified.hasQuestionMark
+        arguments = newArguments
+    }
 }
