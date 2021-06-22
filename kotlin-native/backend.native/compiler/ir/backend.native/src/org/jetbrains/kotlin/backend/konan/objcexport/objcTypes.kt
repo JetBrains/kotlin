@@ -30,9 +30,13 @@ sealed class ObjCReferenceType : ObjCType()
 sealed class ObjCNonNullReferenceType : ObjCReferenceType()
 
 data class ObjCNullableReferenceType(
-        val nonNullType: ObjCNonNullReferenceType
+        val nonNullType: ObjCNonNullReferenceType,
+        val isNullableResult: Boolean = false
 ) : ObjCReferenceType() {
-    override fun render(attrsAndName: String) = nonNullType.render(" _Nullable".withAttrsAndName(attrsAndName))
+    override fun render(attrsAndName: String): String {
+        val attribute = if (isNullableResult) objcNullableResultAttribute else objcNullableAttribute
+        return nonNullType.render(" $attribute".withAttrsAndName(attrsAndName))
+    }
 }
 
 data class ObjCClassType(
@@ -139,7 +143,7 @@ data class ObjCPointerType(
 ) : ObjCType() {
     override fun render(attrsAndName: String) =
             pointee.render("*${if (nullable) {
-                " _Nullable".withAttrsAndName(attrsAndName)
+                " $objcNullableAttribute".withAttrsAndName(attrsAndName)
             } else {
                 attrsAndName
             }}")
@@ -208,7 +212,5 @@ internal fun ObjCType.makeNullableIfReferenceOrPointer(): ObjCType = when (this)
     is ObjCNullableReferenceType, is ObjCRawType, is ObjCPrimitiveType, ObjCVoidType -> this
 }
 
-internal fun ObjCReferenceType.makeNullable(): ObjCNullableReferenceType = when (this) {
-    is ObjCNonNullReferenceType -> ObjCNullableReferenceType(this)
-    is ObjCNullableReferenceType -> this
-}
+const val objcNullableAttribute = "_Nullable"
+const val objcNullableResultAttribute = "_Nullable_result"
