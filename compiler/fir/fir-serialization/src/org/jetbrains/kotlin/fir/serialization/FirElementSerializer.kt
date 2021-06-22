@@ -27,14 +27,15 @@ import org.jetbrains.kotlin.fir.resolve.calls.varargElementType
 import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.resolve.inference.suspendFunctionTypeToFunctionTypeWithContinuation
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
 import org.jetbrains.kotlin.fir.scopes.processAllFunctions
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
 import org.jetbrains.kotlin.fir.serialization.constant.EnumValue
 import org.jetbrains.kotlin.fir.serialization.constant.IntValue
 import org.jetbrains.kotlin.fir.serialization.constant.StringValue
 import org.jetbrains.kotlin.fir.serialization.constant.toConstantValue
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitNullableAnyTypeRef
@@ -48,6 +49,7 @@ import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTabl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.RequireKotlinConstants
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
@@ -221,7 +223,29 @@ class FirElementSerializer private constructor(
 
         fun addDeclarationIfNeeded(symbol: FirCallableSymbol<*>) {
             val declaration = symbol.fir as? FirCallableMemberDeclaration<*> ?: return
-            if (declaration.isSubstitutionOrIntersectionOverride) return
+            if (declaration.isIntersectionOverride) {
+                // This part is a kind of hack for case like
+                //
+                // interface A {
+                //    fun foo(): String?
+                // }
+                //
+                // interface B : A {
+                //     override fun foo(): String?
+                // }
+                //
+                // abstract class C(a: A) : B, A by a
+                // We should serialize C::foo as it works almost like real declarations, but currently it's hidden behind intersection scope
+                // UseSiteScope(C) = DeclaredScope(C) + FirIntersectionScope(UseSiteScope(B), DelegatedScope(a))
+                //
+                // That should be fixed by putting delegated members closer to declared scope
+                // See KT-47413
+                (declaration.symbol as? FirIntersectionCallableSymbol)?.intersections?.firstOrNull {
+                    it.fir.delegatedWrapperData != null
+                }?.let(::addDeclarationIfNeeded)
+                return
+            }
+            if (declaration.isSubstitutionOverride) return
 
             // non-intersection or substitution fake override
             if (!declaration.isStatic && declaration.dispatchReceiverClassOrNull() != this@declarations.symbol.toLookupTag()) return

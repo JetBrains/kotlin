@@ -13779,6 +13779,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("differentModules.kt")
+        public void testDifferentModules() throws Exception {
+            runTest("compiler/testData/codegen/box/delegation/differentModules.kt");
+        }
+
+        @Test
         @TestMetadata("genericProperty.kt")
         public void testGenericProperty() throws Exception {
             runTest("compiler/testData/codegen/box/delegation/genericProperty.kt");
