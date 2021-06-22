@@ -14,13 +14,11 @@ import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.llvm.computeFullName
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
@@ -288,6 +286,53 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
             }
 
             functionReferenceClass.superTypes += superTypes
+            if (!isLambda) {
+                fun addOverrideInner(name: String, value: IrBuilderWithScope.(IrFunction) -> IrExpression) {
+                    val overridden = functionReferenceClass.superTypes.mapNotNull { superType ->
+                        superType.getClass()
+                                ?.declarations
+                                ?.filterIsInstance<IrSimpleFunction>()
+                                ?.singleOrNull { it.name.asString() == name }
+                                ?.symbol
+                    }
+                    require(overridden.isNotEmpty())
+                    val function = functionReferenceClass.addFunction {
+                        startOffset = SYNTHETIC_OFFSET
+                        endOffset = SYNTHETIC_OFFSET
+                        this.name = Name.identifier(name)
+                        modality = Modality.FINAL
+                        returnType = overridden[0].owner.returnType
+                    }
+                    function.createDispatchReceiverParameter()
+                    function.overriddenSymbols += overridden
+                    function.body = context.createIrBuilder(function.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
+                        +irReturn(
+                                value(function)
+                        )
+                    }
+                }
+
+                fun addOverride(name: String, value: IrBuilderWithScope.() -> IrExpression) {
+                    addOverrideInner(name) { _ -> value() }
+                }
+
+                val kTypeGenerator = KTypeGenerator(context, irFile, functionReference)
+                addOverride("computeReturnType") { with(kTypeGenerator) { irKType(referencedFunction.returnType) } }
+                addOverride("computeArity") { irInt(unboundFunctionParameters.size + if (functionReferenceTarget.isSuspend) 1 else 0) }
+                addOverride("computeFlags") { irInt(getFlags()) }
+                val name = ((functionReferenceTarget as? IrSimpleFunction)?.attributeOwnerId as? IrSimpleFunction)?.name
+                        ?: functionReferenceTarget.name
+                addOverride("computeName") { irString(name.asString()) }
+                addOverride("computeFqName") { irString(functionReferenceTarget.computeFullName()) }
+
+
+                val receiver = boundFunctionParameters.singleOrNull()
+                if (receiver?.descriptor is ReceiverParameterDescriptor) {
+                    addOverrideInner("computeReceiver") { f ->
+                        irGetField(irGet(f.dispatchReceiverParameter!!), argumentToPropertiesMap[receiver]!!)
+                    }
+                }
+            }
 
             functionReferenceClass.addFakeOverrides(context.typeSystem)
 
@@ -315,27 +360,13 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
                             type = parameter.type.substitute(typeArgumentsMap))
                 }
 
-                val kTypeGenerator = KTypeGenerator(context, irFile, functionReference)
                 body = context.createIrBuilder(symbol, startOffset, endOffset).irBlockBody {
                     val superConstructor = when {
                         isKSuspendFunction -> kSuspendFunctionImplConstructorSymbol.owner
                         isLambda -> irBuiltIns.anyClass.owner.constructors.single()
                         else -> kFunctionImplConstructorSymbol.owner
                     }
-                    +irDelegatingConstructorCall(superConstructor).apply applyIrDelegationConstructorCall@ {
-                        if (isLambda) return@applyIrDelegationConstructorCall
-                        val name = ((functionReferenceTarget as? IrSimpleFunction)?.attributeOwnerId as? IrSimpleFunction)?.name
-                                ?: functionReferenceTarget.name
-                        val needReceiver = boundFunctionParameters.singleOrNull()?.descriptor is ReceiverParameterDescriptor
-                        val receiver = if (needReceiver) irGet(valueParameters.single()) else irNull()
-                        val arity = unboundFunctionParameters.size + if (functionReferenceTarget.isSuspend) 1 else 0
-                        putValueArgument(0, irString(name.asString()))
-                        putValueArgument(1, irString(functionReferenceTarget.computeFullName()))
-                        putValueArgument(2, receiver)
-                        putValueArgument(3, irInt(arity))
-                        putValueArgument(4, irInt(getFlags()))
-                        putValueArgument(5, with(kTypeGenerator) { irKType(referencedFunction.returnType) })
-                    }
+                    +irDelegatingConstructorCall(superConstructor)
                     +IrInstanceInitializerCallImpl(startOffset, endOffset, functionReferenceClass.symbol, irBuiltIns.unitType)
                     // Save all arguments to fields.
                     boundFunctionParameters.forEachIndexed { index, parameter ->
