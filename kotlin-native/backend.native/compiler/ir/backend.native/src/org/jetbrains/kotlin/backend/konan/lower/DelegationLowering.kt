@@ -105,20 +105,19 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
             override fun visitPropertyReference(expression: IrPropertyReference): IrExpression {
                 expression.transformChildrenVoid(this)
 
-                val kTypeGenerator = KTypeGenerator(context, irFile, expression)
                 val startOffset = expression.startOffset
                 val endOffset = expression.endOffset
                 val irBuilder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, startOffset, endOffset)
                 irBuilder.run {
                     val receiversCount = listOf(expression.dispatchReceiver, expression.extensionReceiver).count { it != null }
                     return when (receiversCount) {
-                        1 -> createKProperty(expression, kTypeGenerator, this) // Has receiver.
+                        1 -> createKProperty(expression, this) // Has receiver.
 
                         2 -> error("Callable reference to properties with two receivers is not allowed: ${expression.symbol.owner.name}")
 
                         else -> { // Cache KProperties with no arguments.
                             val field = kProperties.getOrPut(expression.symbol.owner) {
-                                createKProperty(expression, kTypeGenerator, this) to kProperties.size
+                                createKProperty(expression, this) to kProperties.size
                             }
 
                             irCall(arrayItemGetter).apply {
@@ -171,7 +170,6 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
 
     private fun createKProperty(
             expression: IrPropertyReference,
-            kTypeGenerator: KTypeGenerator,
             irBuilder: IrBuilderWithScope
     ): IrExpression {
         val startOffset = expression.startOffset
@@ -252,11 +250,10 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
                     isMutable     = setterCallableReference != null)
             val initializer = irCall(symbol.owner, constructorTypeArguments).apply {
                 putValueArgument(0, irString(expression.symbol.owner.name.asString()))
-                putValueArgument(1, with(kTypeGenerator) { irKType(returnType) })
                 if (getterCallableReference != null)
-                    putValueArgument(2, getterCallableReference)
+                    putValueArgument(1, getterCallableReference)
                 if (setterCallableReference != null)
-                    putValueArgument(3, setterCallableReference)
+                    putValueArgument(2, setterCallableReference)
             }
             +initializer
         }
