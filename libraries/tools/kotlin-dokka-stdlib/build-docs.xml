@@ -10,11 +10,14 @@
   <property name="dokka.format" value="kotlin-website-html"/>
 
   <property name="kotlin_root" location="IT_IS_SET_FROM_GRADLE1"/>
-  <property name="kotlin_sources" location="IT_IS_SET_FROM_GRADLE2"/>
-  <property name="kotlin_libs" location="IS_IS_SET_FROM_GRADLE3"/>
+  <property name="kotlin_libs" location="IS_IS_SET_FROM_GRADLE2"/>
 
-  <property name="kotlin_native_root" location="IT_IS_SET_FROM_GRADLE6"/>
-  <property name="kotlin_native_linux" location="IT_IS_SET_FROM_GRADLE7"/>
+  <property name="kotlin_builtins_dir" location="${kotlin_root}/core/builtins"/>
+  <property name="kotlin_stdlib_dir" location="${kotlin_root}/libraries/stdlib"/>
+  <property name="kotlin_test_dir" location="${kotlin_root}/libraries/kotlin.test"/>
+
+  <property name="kotlin_native_root" location="IT_IS_SET_FROM_GRADLE3"/>
+  <property name="kotlin_native_libs" location="IT_IS_SET_FROM_GRADLE4"/>
 
   <property name="language.version" value="1.5"/>
 
@@ -39,7 +42,7 @@
   </path>
 
   <path id="stdlib-native.classpath">
-    <pathelement location="${kotlin_native_linux}/klib/common/stdlib"/>
+    <pathelement location="${kotlin_native_libs}/klib/common/stdlib"/>
   </path>
 
   <path id="kotlin-test-jvm.classpath">
@@ -72,12 +75,12 @@
     <!--<pathelement location="${basedir}/lib/junit-4.11.jar"/>-->
   </path>
 
-  <property name="stdlib-samples" location="${kotlin_root}/libraries/stdlib/samples/test"/>
+  <property name="stdlib-samples" location="${kotlin_stdlib_dir}/samples/test"/>
 
   <!-- TODO: one file for all modules? -->
-  <property name="stdlib-include-md" location="${kotlin_root}/libraries/stdlib/src/Module.md"/>
+  <property name="stdlib-include-md" location="${kotlin_stdlib_dir}/src/Module.md"/>
 
-  <property name="kotlin-test-include-md" location="${kotlin_root}/libraries/kotlin.test/Module.md"/>
+  <property name="kotlin-test-include-md" location="${kotlin_test_dir}/Module.md"/>
 
   <target name="v2">
     <delete dir="${docs.output}/kotlin-stdlib" failonerror="false"/>
@@ -101,10 +104,12 @@
               includeRootPackage="false"
               sincekotlin="1.0">
 
-        <sourceroot path="${kotlin_root}/core/builtins/native"/>
-        <sourceroot path="${kotlin_root}/core/builtins/src"/>
+        <sourceroot path="${kotlin_builtins_dir}/native"/>
+        <sourceroot path="${kotlin_builtins_dir}/src"/>
 
-        <sourceroot path="${kotlin_sources}/kotlin-stdlib-common"/>
+        <sourceroot path="${kotlin_stdlib_dir}/common/src"/>
+        <sourceroot path="${kotlin_stdlib_dir}/src"/>
+        <sourceroot path="${kotlin_stdlib_dir}/unsigned/src"/>
 
         <target value="Common"/>
         <target value="JVM"/>
@@ -125,14 +130,12 @@
                   languageVersion="${language.version}"
                   includeRootPackage="false">
 
-        <sourceroot path="${kotlin_sources}/kotlin-stdlib"/>
+        <sourceroot path="${kotlin_builtins_dir}/native"/>
+        <sourceroot path="${kotlin_builtins_dir}/src"/>
+        <sourceroot path="${kotlin_stdlib_dir}/jvm/runtime"/>
+        <sourceroot path="${kotlin_stdlib_dir}/jvm/src"/>
 
         <sourceroot path="${kotlin_root}/core/reflection.jvm/src"/>
-        <sourceroot path="${kotlin_root}/libraries/stdlib/jvm/runtime/kotlin/jvm/annotations"/>
-        <sourceroot path="${kotlin_root}/libraries/stdlib/jvm/runtime/kotlin/jvm/JvmClassMapping.kt"/>
-        <sourceroot path="${kotlin_root}/libraries/stdlib/jvm/runtime/kotlin/jvm/PurelyImplements.kt"/>
-        <sourceroot path="${kotlin_root}/libraries/stdlib/jvm/runtime/kotlin/TypeAliases.kt"/>
-        <sourceroot path="${kotlin_root}/libraries/stdlib/jvm/runtime/kotlin/text/TypeAliases.kt"/>
 
         <packageoptions prefix="kotlin.reflect.jvm.internal" suppress="true"/>
         <packageoptions prefix="kotlin.jvm.functions" suppress="true"/>
@@ -155,7 +158,7 @@
                   languageVersion="${language.version}"
                   includeRootPackage="false">
 
-        <sourceroot path="${kotlin_sources}/kotlin-stdlib-jdk7"/>
+        <sourceroot path="${kotlin_stdlib_dir}/jdk7/src"/>
 
         <packageoptions prefix="kotlin.reflect.jvm.internal" suppress="true"/>
         <packageoptions prefix="kotlin.jvm.internal" suppress="true"/>
@@ -179,7 +182,7 @@
                   languageVersion="${language.version}"
                   includeRootPackage="false">
 
-        <sourceroot path="${kotlin_sources}/kotlin-stdlib-jdk8"/>
+        <sourceroot path="${kotlin_stdlib_dir}/jdk8/src"/>
 
         <packageoptions prefix="kotlin.reflect.jvm.internal" suppress="true"/>
         <packageoptions prefix="kotlin.jvm.internal" suppress="true"/>
@@ -204,7 +207,27 @@
                   includeRootPackage="false"
                   sincekotlin="1.1">
 
-        <sourceroot path="${kotlin_sources}/kotlin-stdlib-js"/>
+        <sourceroot path="${kotlin_stdlib_dir}/js/src"/>
+        <sourceroot path="${kotlin_stdlib_dir}/js-v1/src"/>
+
+        <sourceroot path="${kotlin_builtins_dir}/native/kotlin/Comparable.kt"/>
+        <sourceroot path="${kotlin_builtins_dir}/native/kotlin/Enum.kt"/>
+
+        <sourceroot path="${kotlin_builtins_dir}/native/kotlin/Iterator.kt"/>
+        <sourceroot path="${kotlin_builtins_dir}/native/kotlin/Collections.kt"/>
+        <sourceroot path="${kotlin_builtins_dir}/native/kotlin/CharSequence.kt"/>
+        <sourceroot path="${kotlin_builtins_dir}/native/kotlin/Annotation.kt"/>
+
+        <sourceroot path="${kotlin_builtins_dir}/src/kotlin/annotation/Annotations.kt"/>
+        <sourceroot path="${kotlin_builtins_dir}/src/kotlin/Function.kt"/>
+        <sourceroot path="${kotlin_builtins_dir}/src/kotlin/Iterators.kt"/>
+        <sourceroot path="${kotlin_builtins_dir}/src/kotlin/Range.kt"/>
+        <sourceroot path="${kotlin_builtins_dir}/src/kotlin/Progressions.kt"/>
+        <sourceroot path="${kotlin_builtins_dir}/src/kotlin/ProgressionIterators.kt"/>
+        <sourceroot path="${kotlin_builtins_dir}/src/kotlin/Ranges.kt"/>
+        <sourceroot path="${kotlin_builtins_dir}/src/kotlin/internal/InternalAnnotations.kt"/>
+        <sourceroot path="${kotlin_builtins_dir}/src/kotlin/internal/progressionUtil.kt"/>
+        <sourceroot path="${kotlin_builtins_dir}/src/kotlin/Unit.kt"/>
 
         <!--<sourcelink path=".." url="http://github.com/JetBrains/kotlin/blob/${github.revision}" linesuffix="#L"/>-->
 
@@ -276,8 +299,8 @@
               languageVersion="${language.version}"
               includeRootPackage="false"
               sincekotlin="1.0">
-        <sourceroot path="${kotlin_root}/libraries/kotlin.test/common/src/main/kotlin"/>
-        <sourceroot path="${kotlin_root}/libraries/kotlin.test/annotations-common/src/main/kotlin"/>
+        <sourceroot path="${kotlin_test_dir}/common/src/main/kotlin"/>
+        <sourceroot path="${kotlin_test_dir}/annotations-common/src/main/kotlin"/>
 
         <target value="Common" />
         <target value="JVM"/>
@@ -294,7 +317,7 @@
                 classpathref="kotlin-test-jvm.classpath"
                 languageVersion="${language.version}"
                 includeRootPackage="false">
-            <sourceroot path="${kotlin_root}/libraries/kotlin.test/jvm/src/main/kotlin"/>
+            <sourceroot path="${kotlin_test_dir}/jvm/src/main/kotlin"/>
 
             <target value="JVM" />
             <packageoptions prefix="org.junit" skipdeprecated="true"/>
@@ -310,7 +333,7 @@
               classpathref="kotlin-test-junit.classpath"
               languageVersion="${language.version}"
               includeRootPackage="false">
-        <sourceroot path="${kotlin_root}/libraries/kotlin.test/junit/src/main/kotlin"/>
+        <sourceroot path="${kotlin_test_dir}/junit/src/main/kotlin"/>
 
         <!--<target value="JVM" />-->
         <target value="JUnit"/>
@@ -327,7 +350,7 @@
               classpathref="kotlin-test-junit5.classpath"
               languageVersion="${language.version}"
               includeRootPackage="false">
-        <sourceroot path="${kotlin_root}/libraries/kotlin.test/junit5/src/main/kotlin"/>
+        <sourceroot path="${kotlin_test_dir}/junit5/src/main/kotlin"/>
 
         <!--<target value="JVM" />-->
         <target value="JUnit5"/>
@@ -345,7 +368,7 @@
               classpathref="kotlin-test-testng.classpath"
               languageVersion="${language.version}"
               includeRootPackage="false">
-        <sourceroot path="${kotlin_root}/libraries/kotlin.test/testng/src/main/kotlin"/>
+        <sourceroot path="${kotlin_test_dir}/testng/src/main/kotlin"/>
 
         <!--<target value="JVM" />-->
         <target value="TestNG"/>
@@ -363,7 +386,7 @@
               languageVersion="${language.version}"
               includeRootPackage="false"
               sincekotlin="1.1">
-        <sourceroot path="${kotlin_root}/libraries/kotlin.test/js/src/main/kotlin"/>
+        <sourceroot path="${kotlin_test_dir}/js/src/main/kotlin"/>
 
         <packageoptions prefix="org.junit" skipdeprecated="true"/>
         <target value="JS" />

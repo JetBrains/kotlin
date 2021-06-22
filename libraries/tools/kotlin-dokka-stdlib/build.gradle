@@ -1,6 +1,5 @@
 plugins {
     id "de.undercouch.download" version "4.1.1"
-    id 'com.github.jk1.tcdeps' version '1.2'
     id "base"
 }
 
@@ -34,22 +33,11 @@ def pKotlinNative() { return project('kotlin_native').extensions }
 task extractAll(dependsOn: [setupDokka])
 
 extractAll.dependsOn project('kotlin_big').tasks.getByName('extractLibs')
-extractAll.dependsOn project('kotlin_big').tasks.getByName('extractSources')
-extractAll.dependsOn project('kotlin_big').tasks.getByName('extractKotlinSources')
-extractAll.dependsOn project('kotlin_native').tasks.getByName('extractKotlinNative')
+extractAll.dependsOn project('kotlin_native').tasks.getByName('extractLibs')
 extractAll.dependsOn project('ant').tasks.getByName('extractAnt')
 
-task cleanupSources(type: Delete) {
-    dependsOn extractAll
-    doFirst {
-        def base = file("${pKotlinNative().kotlin_native_root}/runtime/src/main/kotlin")
-        delete(files("$base/kotlin/Functions.kt", "$base/kotlin/coroutines/SuspendFunctions.kt",
-                "$base/kotlin/reflect/KFunctions.kt"))
-    }
-}
-
 task setupCallDokka() { }
-task callDokka(type: Exec, dependsOn: [extractAll, setupCallDokka, cleanupSources]) {
+task callDokka(type: Exec, dependsOn: [extractAll, setupCallDokka]) {
     workingDir = projectDir
     // -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005
     environment("ANT_OPTS", "-Xmx3G")
@@ -67,9 +55,8 @@ setupCallDokka.doLast {
             "-f", file("build-docs.xml").path,
             "v2",
             "-Dkotlin_root=${pKotlinBig().kotlin_root}",
-            "-Dkotlin_sources=${pKotlinBig().kotlin_sources}",
             "-Dkotlin_libs=${pKotlinBig().kotlin_libs}",
             "-Dkotlin_native_root=${pKotlinNative().kotlin_native_root}",
-            "-Dkotlin_native_linux=${pKotlinNative().kotlin_native_bin_linux}",
+            "-Dkotlin_native_libs=${pKotlinNative().kotlin_native_libs}",
     ]
 }
