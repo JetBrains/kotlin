@@ -99,7 +99,7 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
 
     private fun analyzeLoopHeader(loopHeader: ForLoopHeader): BoundsCheckAnalysisResult {
         analysisResult = BoundsCheckAnalysisResult(false, null)
-        when(loopHeader) {
+        when (loopHeader) {
             is ProgressionLoopHeader ->
                 when (loopHeader.headerInfo.direction) {
                     ProgressionDirection.INCREASING -> {
