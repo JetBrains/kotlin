@@ -504,6 +504,7 @@ open class MarkdownParser(
             kDocTag: KDocTag?,
             externalDri: (String) -> DRI?,
             kdocLocation: String?,
+            parseWithChildren: Boolean = true
         ): DocumentationNode {
             return if (kDocTag == null) {
                 DocumentationNode(emptyList())
@@ -517,7 +518,7 @@ open class MarkdownParser(
                 }
 
                 val allTags =
-                    listOf(kDocTag) + if (kDocTag.canHaveParent()) getAllKDocTags(findParent(kDocTag)) else emptyList()
+                    listOf(kDocTag) + if (kDocTag.canHaveParent() && parseWithChildren) getAllKDocTags(findParent(kDocTag)) else emptyList()
                 DocumentationNode(
                     allTags.map {
                         when (it.knownTag) {
