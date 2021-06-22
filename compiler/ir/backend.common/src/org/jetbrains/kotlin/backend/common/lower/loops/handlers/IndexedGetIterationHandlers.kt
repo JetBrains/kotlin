@@ -81,7 +81,7 @@ internal class ArrayIterationHandler(context: CommonBackendContext) : IndexedGet
         get() = getClass()!!.getPropertyGetter("size")!!.owner
 
     private val getFunctionName: Name
-        get() = context.ir.symbols.getWithoutBCName ?: OperatorNameConventions.GET
+        get() = context.ir.symbols.getWithoutBoundCheckName ?: OperatorNameConventions.GET
 
     override val IrType.getFunction
         get() = getClass()!!.functions.single {

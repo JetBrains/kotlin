@@ -2,6 +2,8 @@
  * Copyright 2010-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
+package codegen.bce.arraysForLoops
+
 import kotlin.test.*
 
 @Test fun forEachIndexedTest() {
@@ -159,7 +161,7 @@ import kotlin.test.*
 @Test fun forRangeToWithStep() {
     val array = Array(10) { 0L }
     val array1 = Array(3) { 0L }
-    var j = 4
+    var j = 8
 
     assertFailsWith<ArrayIndexOutOfBoundsException> {
         for (i in 0..array.size - 1 step 2) {
@@ -202,7 +204,7 @@ import kotlin.test.*
 @Test fun forUntilWithStep() {
     val array = CharArray(10) { '0' }
     val array1 = CharArray(3) { '0' }
-    var j = 4
+    var j = 8
 
     assertFailsWith<ArrayIndexOutOfBoundsException> {
         for (i in 0 until array.size step 2) {
@@ -213,7 +215,7 @@ import kotlin.test.*
 
     assertFailsWith<ArrayIndexOutOfBoundsException> {
         for (i in 0 until array.size step 2) {
-            array[i + 1] = '6'
+            array[i + 3] = '6'
         }
     }
 
@@ -239,7 +241,7 @@ import kotlin.test.*
 @Test fun forDownToWithStep() {
     val array = Array(10) { 0L }
     val array1 = Array(3) { 0L }
-    var j = 4
+    var j = 8
 
     assertFailsWith<ArrayIndexOutOfBoundsException> {
         for (i in array.size - 1 downTo 0 step 2) {
@@ -282,7 +284,7 @@ import kotlin.test.*
 @Test fun forIndiciesWithStep() {
     val array = Array(10) { 0L }
     val array1 = Array(3) { 0L }
-    var j = 4
+    var j = 8
 
     assertFailsWith<ArrayIndexOutOfBoundsException> {
         for (i in array.indices step 2) {
@@ -307,7 +309,7 @@ import kotlin.test.*
 @Test fun forWithIndex() {
     val array = Array(10) { 100 }
     val array1 = Array(3) { 0 }
-    var j = 4
+    var j = 8
 
     assertFailsWith<ArrayIndexOutOfBoundsException> {
         for ((index, value) in array.withIndex()) {
@@ -329,7 +331,7 @@ import kotlin.test.*
     }
 
     assertFailsWith<ArrayIndexOutOfBoundsException> {
-        for ((i, v) in (0..array.size + 1 step 2).withIndex()) {
+        for ((i, v) in (0..array.size + 30 step 2).withIndex()) {
             array[i] = 6
         }
     }
@@ -344,7 +346,7 @@ import kotlin.test.*
 @Test fun forReversed() {
     val array = Array(10) { 100 }
     val array1 = Array(3) { 0 }
-    var j = 4
+    var j = 8
 
     assertFailsWith<ArrayIndexOutOfBoundsException> {
         for (i in (0..array.size-1).reversed()) {

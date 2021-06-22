@@ -43,8 +43,8 @@ import org.jetbrains.kotlin.types.Variance
 import kotlin.properties.Delegates
 
 object KonanNameConventions {
-    val setWithoutBC = Name.special("<setWithoutBC>")
-    val getWithoutBC = Name.special("<getWithoutBC>")
+    val setWithoutBoundCheck = Name.special("<setWithoutBoundCheck>")
+    val getWithoutBoundCheck = Name.special("<getWithoutBoundCheck>")
 }
 
 // This is what Context collects about IR.
@@ -575,9 +575,9 @@ internal class KonanSymbols(
     val topLevelSuite    = getKonanTestClass("TopLevelSuite")
     val testFunctionKind = getKonanTestClass("TestFunctionKind")
 
-    override val getWithoutBCName: Name? = KonanNameConventions.getWithoutBC
+    override val getWithoutBoundCheckName: Name? = KonanNameConventions.getWithoutBoundCheck
 
-    override val setWithoutBCName: Name? = KonanNameConventions.setWithoutBC
+    override val setWithoutBoundCheckName: Name? = KonanNameConventions.setWithoutBoundCheck
 
     private val testFunctionKindCache = TestProcessor.FunctionKind.values().associate {
         val symbol = if (it.runtimeKindString.isEmpty())
