@@ -21,7 +21,9 @@ kotlin {
     linuxX64()
     linuxArm64()
 
-    macos()
+    macosX64()
+    macosArm64()
+
     ios()
 
     mingwX64("windowsX64")
@@ -37,7 +39,9 @@ kotlin {
     val linuxX64Main by sourceSets.getting
     val linuxArm64Main by sourceSets.getting
     val appleMain by sourceSets.creating
-    val macosMain by sourceSets.getting
+    val macosMain by sourceSets.creating
+    val macosX64Main by sourceSets.getting
+    val macosArm64Main by sourceSets.getting
     val iosMain by sourceSets.getting
     val windowsMain by sourceSets.creating
     val windowsX64Main by sourceSets.getting
@@ -51,7 +55,10 @@ kotlin {
                 -appleAndLinuxMain {
                     -appleMain {
                         -iosMain
-                        -macosMain
+                        -macosMain {
+                            -macosX64Main
+                            -macosArm64Main
+                        }
                     }
                     -linuxMain {
                         -linuxArm64Main

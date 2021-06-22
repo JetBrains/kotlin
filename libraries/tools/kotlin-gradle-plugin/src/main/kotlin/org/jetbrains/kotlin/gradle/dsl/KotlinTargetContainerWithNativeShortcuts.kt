@@ -54,32 +54,13 @@ interface KotlinTargetContainerWithNativeShortcuts : KotlinTargetContainerWithPr
         return DefaultSourceSets(main, test)
     }
 
-    fun macos(
-        namePrefix: String = "macos",
-        configure: KotlinNativeTarget.() -> Unit = {}
-    ) {
-        val targets = listOf(
-            macosX64("${namePrefix}X64"),
-            macosArm64("${namePrefix}Arm64")
-        )
-
-        createIntermediateSourceSets(namePrefix, targets.defaultSourceSets(), mostCommonSourceSets())
-        targets.forEach { it.configure() }
-    }
-
-    fun macos() = macos("macos") { }
-    fun macos(namePrefix: String) = macos(namePrefix) { }
-    fun macos(namePrefix: String, configure: Closure<*>) = macos(namePrefix) { ConfigureUtil.configure(configure, this) }
-    fun macos(configure: Closure<*>) = macos { ConfigureUtil.configure(configure, this) }
-
     fun ios(
         namePrefix: String = "ios",
         configure: KotlinNativeTarget.() -> Unit = {}
     ) {
         val targets = listOf(
             iosArm64("${namePrefix}Arm64"),
-            iosX64("${namePrefix}X64"),
-            iosSimulatorArm64("${namePrefix}SimulatorArm64")
+            iosX64("${namePrefix}X64")
         )
         createIntermediateSourceSets(namePrefix, targets.defaultSourceSets(), mostCommonSourceSets())
         targets.forEach { it.configure() }
@@ -96,8 +77,7 @@ interface KotlinTargetContainerWithNativeShortcuts : KotlinTargetContainerWithPr
     ) {
         val targets = listOf(
             tvosArm64("${namePrefix}Arm64"),
-            tvosX64("${namePrefix}X64"),
-            tvosSimulatorArm64("${namePrefix}SimulatorArm64")
+            tvosX64("${namePrefix}X64")
         )
         createIntermediateSourceSets(namePrefix, targets.defaultSourceSets(), mostCommonSourceSets())
         targets.forEach { it.configure() }
@@ -115,7 +95,6 @@ interface KotlinTargetContainerWithNativeShortcuts : KotlinTargetContainerWithPr
         val device32 = watchosArm32("${namePrefix}Arm32")
         val device64 = watchosArm64("${namePrefix}Arm64")
         val simulatorX64 = watchosX64("${namePrefix}X64")
-        val simulatorArm64 = watchosSimulatorArm64("${namePrefix}SimulatorArm64")
         val deviceTargets = listOf(device32, device64)
 
         val deviceSourceSets = createIntermediateSourceSets(
@@ -125,11 +104,11 @@ interface KotlinTargetContainerWithNativeShortcuts : KotlinTargetContainerWithPr
 
         createIntermediateSourceSets(
             namePrefix,
-            listOf(deviceSourceSets, simulatorX64.defaultSourceSets(), simulatorArm64.defaultSourceSets()),
+            listOf(deviceSourceSets, simulatorX64.defaultSourceSets()),
             mostCommonSourceSets()
         )
 
-        listOf(device32, device64, simulatorX64, simulatorArm64).forEach { it.configure() }
+        listOf(device32, device64, simulatorX64).forEach { it.configure() }
     }
 
     fun watchos() = watchos("watchos") { }
