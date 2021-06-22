@@ -2379,7 +2379,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.EXPECTED_CONDITION) { firDiagnostic ->
         ExpectedConditionImpl(
-            firDiagnostic as FirPsiDiagnostic<*>,
+            firDiagnostic as FirPsiDiagnostic,
             token,
         )
     }
@@ -2400,6 +2400,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.ELSE_MISPLACED_IN_WHEN) { firDiagnostic ->
         ElseMisplacedInWhenImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.ILLEGAL_DECLARATION_IN_WHEN_SUBJECT) { firDiagnostic ->
+        IllegalDeclarationInWhenSubjectImpl(
+            firDiagnostic.a,
             firDiagnostic as FirPsiDiagnostic,
             token,
         )

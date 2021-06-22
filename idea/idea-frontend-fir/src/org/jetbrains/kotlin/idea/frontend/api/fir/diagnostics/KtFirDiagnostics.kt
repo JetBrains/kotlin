@@ -1693,6 +1693,11 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ElseMisplacedInWhen::class
     }
 
+    abstract class IllegalDeclarationInWhenSubject : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = IllegalDeclarationInWhenSubject::class
+        abstract val illegalReason: String
+    }
+
     abstract class TypeParameterIsNotAnExpression : KtFirDiagnostic<KtSimpleNameExpression>() {
         override val diagnosticClass get() = TypeParameterIsNotAnExpression::class
         abstract val typeParameter: KtTypeParameterSymbol

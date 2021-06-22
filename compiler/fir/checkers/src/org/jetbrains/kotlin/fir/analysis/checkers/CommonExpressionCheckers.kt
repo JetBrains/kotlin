@@ -61,6 +61,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         get() = setOf(
             FirExhaustiveWhenChecker,
             FirWhenConditionChecker,
+            FirWhenSubjectChecker,
         )
 
     override val loopExpressionCheckers: Set<FirLoopExpressionChecker>

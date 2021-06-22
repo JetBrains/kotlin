@@ -11,18 +11,18 @@ fun testSimpleValInWhenSubject() {
 }
 
 fun testValWithoutInitializerWhenSubject() {
-    when (val y: Any) {
+    when (<!ILLEGAL_DECLARATION_IN_WHEN_SUBJECT!>val y: Any<!>) {
         is String -> <!UNINITIALIZED_VARIABLE!>y<!>.<!UNRESOLVED_REFERENCE!>length<!>
     }
 }
 
 fun testVarInWhenSubject() {
-    when (var y = foo()) {
+    when (<!ILLEGAL_DECLARATION_IN_WHEN_SUBJECT!>var y = foo()<!>) {
         is String -> y.length
     }
 }
 
 fun testDelegatedValInWhenSubject() {
-    when (val y by lazy { 42 }) {
+    when (<!ILLEGAL_DECLARATION_IN_WHEN_SUBJECT!>val y by lazy { 42 }<!>) {
     }
 }
