@@ -119,7 +119,6 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
         get() = defaultJavaToolchainSetter
             ?: throw GradleException("Toolchain support is available from $TOOLCHAIN_SUPPORTED_VERSION")
 
-
     private abstract class JvmTargetUpdater(
         private val kotlinCompileTaskProvider: () -> KotlinCompileTask<KotlinJvmOptionsBase>?
     ) {

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.tasks
 
+import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.*
@@ -46,6 +47,7 @@ import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithTransitiveClosure
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.report.ReportingSettings
@@ -428,6 +430,25 @@ abstract class KotlinCompile @Inject constructor(
     UsesKotlinJavaToolchain {
 
     class Configurator(kotlinCompilation: KotlinCompilationData<*>) : AbstractKotlinCompile.Configurator<KotlinCompile>(kotlinCompilation) {
+        override fun configure(task: KotlinCompile) {
+            super.configure(task)
+
+            val compileJavaTaskProvider = when (compilation) {
+                is KotlinJvmCompilation -> compilation.compileJavaTaskProvider
+                is KotlinJvmAndroidCompilation -> compilation.compileJavaTaskProvider
+                is KotlinWithJavaCompilation -> compilation.compileJavaTaskProvider
+                else -> null
+            }
+
+            if (compileJavaTaskProvider != null) {
+                task.associatedJavaCompileTaskTargetCompatibility.set(
+                    compileJavaTaskProvider.map { it.targetCompatibility }
+                )
+                task.associatedJavaCompileTaskName.set(
+                    compileJavaTaskProvider.map { it.name }
+                )
+            }
+        }
     }
 
     @get:Internal
@@ -482,6 +503,15 @@ abstract class KotlinCompile @Inject constructor(
         }
     )
 
+    @get:Internal
+    internal abstract val associatedJavaCompileTaskTargetCompatibility: Property<String>
+
+    @get:Internal
+    internal abstract val associatedJavaCompileTaskName: Property<String>
+
+    @get:Internal
+    internal abstract val jvmTargetValidationMode: Property<PropertiesProvider.JvmTargetValidationMode>
+
     init {
         incremental = true
     }
@@ -510,6 +540,8 @@ abstract class KotlinCompile @Inject constructor(
 
     override fun callCompilerAsync(args: K2JVMCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
         sourceRoots as SourceRoots.ForJvm
+
+        validateKotlinAndJavaHasSameTargetCompatibility(args)
 
         val messageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors)
         val outputItemCollector = OutputItemsCollectorImpl()
@@ -542,6 +574,23 @@ abstract class KotlinCompile @Inject constructor(
             environment,
             defaultKotlinJavaToolchain.get().providedJvm.get().javaHome
         )
+    }
+
+    private fun validateKotlinAndJavaHasSameTargetCompatibility(args: K2JVMCompilerArguments) {
+        associatedJavaCompileTaskTargetCompatibility.orNull?.let { targetCompatibility ->
+            val normalizedJavaVersion = if (targetCompatibility == "1.9") "9" else targetCompatibility
+            if (normalizedJavaVersion != args.jvmTarget) {
+                val javaTaskName = associatedJavaCompileTaskName.get()
+                val errorMessage = "'$javaTaskName' task (current target is $targetCompatibility) and " +
+                        "'$name' task (current target is ${args.jvmTarget}) " +
+                        "jvm target compatibility should be set to the same Java version."
+                when (jvmTargetValidationMode.get()) {
+                    PropertiesProvider.JvmTargetValidationMode.ERROR -> throw GradleException(errorMessage)
+                    PropertiesProvider.JvmTargetValidationMode.WARNING -> logger.warn(errorMessage)
+                    else -> Unit
+                }
+            }
+        }
     }
 
     @get:Input

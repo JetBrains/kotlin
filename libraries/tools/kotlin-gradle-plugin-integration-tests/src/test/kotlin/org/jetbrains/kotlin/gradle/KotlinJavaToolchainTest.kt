@@ -34,28 +34,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
-    @GradleTestVersions(minVersion = "6.7.1")
-    @GradleTest
-    @DisplayName("Default Kotlin toolchain should still allow to set Java source and target compatibility")
-    internal fun shouldNotFailWithDefaultJdkAndCompatibility(gradleVersion: GradleVersion) {
-        project(
-            projectName = "simple".fullProjectName,
-            gradleVersion = gradleVersion
-        ) {
-            //language=Groovy
-            rootBuildGradle.append(
-                """
-                
-                sourceCompatibility = JavaVersion.VERSION_1_8
-                targetCompatibility = JavaVersion.VERSION_1_8
-                """.trimIndent()
-            )
-
-            build("assemble")
-        }
-    }
-
-    @GradleTestVersions(maxVersion = "6.6.1")
     @GradleTest
     @DisplayName("Should use provided jdk location to compile Kotlin sources")
     internal fun customJdkHomeLocation(gradleVersion: GradleVersion) {
@@ -63,6 +41,8 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             projectName = "simple".fullProjectName,
             gradleVersion = gradleVersion,
         ) {
+            setJavaCompilationCompatibility(JavaVersion.VERSION_1_9)
+
             useJdkToCompile(
                 getJdk9Path(),
                 JavaVersion.VERSION_1_9
@@ -88,6 +68,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             if (shouldUseToolchain(gradleVersion)) {
                 useToolchainExtension(11)
             } else {
+                setJavaCompilationCompatibility(JavaVersion.VERSION_1_9)
                 useJdkToCompile(
                     getJdk9Path(),
                     JavaVersion.VERSION_1_9
@@ -107,6 +88,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             if (shouldUseToolchain(gradleVersion)) {
                 useToolchainExtension(11)
             } else {
+                setJavaCompilationCompatibility(JavaVersion.VERSION_1_9)
                 useJdkToCompile(
                     getJdk9Path(),
                     JavaVersion.VERSION_1_9
@@ -134,6 +116,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             if (shouldUseToolchain(gradleVersion)) {
                 useToolchainExtension(11)
             } else {
+                setJavaCompilationCompatibility(JavaVersion.VERSION_1_9)
                 useJdkToCompile(
                     getJdk9Path(),
                     JavaVersion.VERSION_1_9
@@ -440,6 +423,173 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @DisplayName("Should produce warning if java and kotlin jvm targets are different")
+    @GradleTestVersions(minVersion = "6.7.1")
+    @GradleTest
+    internal fun shouldWarnIfJavaAndKotlinJvmTargetsAreDifferent(gradleVersion: GradleVersion) {
+        project(
+            projectName = "kotlinJavaProject".fullProjectName,
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.WARN)
+        ) {
+            setJavaCompilationCompatibility(JavaVersion.VERSION_1_8)
+            useToolchainToCompile(11)
+
+            build("assemble") {
+                assertOutputContains(
+                    "'compileJava' task (current target is 1.8) and 'compileKotlin' task (current target is 11) jvm target compatibility " +
+                            "should be set to the same Java version."
+                )
+            }
+        }
+    }
+
+    @DisplayName("Should fail the build if verification mode is 'error' and kotlin and java targets are different")
+    @GradleTestVersions(minVersion = "6.7.1")
+    @GradleTest
+    internal fun shouldFailBuildIfJavaAndKotlinJvmTargetsAreDifferent(gradleVersion: GradleVersion) {
+        project(
+            projectName = "kotlinJavaProject".fullProjectName,
+            gradleVersion = gradleVersion
+        ) {
+            setJavaCompilationCompatibility(JavaVersion.VERSION_1_8)
+            useToolchainToCompile(11)
+            //language=properties
+            gradleProperties.append(
+                """
+                kotlin.jvm.target.validation.mode = error
+                """.trimIndent()
+            )
+
+            buildAndFail("assemble") {
+                assertOutputContains(
+                    "'compileJava' task (current target is 1.8) and 'compileKotlin' task (current target is 11) jvm target compatibility " +
+                            "should be set to the same Java version."
+                )
+            }
+        }
+    }
+
+    @DisplayName("Should ignore if verification mode is 'ignore' and kotlin and java targets are different")
+    @GradleTestVersions(minVersion = "6.7.1")
+    @GradleTest
+    internal fun shouldNotPrintAnythingIfJavaAndKotlinJvmTargetsAreDifferent(
+        gradleVersion: GradleVersion
+    ) {
+        project(
+            projectName = "kotlinJavaProject".fullProjectName,
+            gradleVersion = gradleVersion
+        ) {
+            setJavaCompilationCompatibility(JavaVersion.VERSION_1_8)
+            useToolchainToCompile(11)
+            //language=properties
+            gradleProperties.append(
+                """
+                kotlin.jvm.target.validation.mode = ignore
+                """.trimIndent()
+            )
+
+            build("assemble") {
+                assertOutputDoesNotContain(
+                    "'compileJava' task (current target is 1.8) and 'compileKotlin' task (current target is 11) jvm target compatibility " +
+                            "should be set to the same Java version."
+                )
+            }
+        }
+    }
+
+    @DisplayName("Should not produce warning when java and kotlin jvm targets are the same")
+    @GradleTestVersions(minVersion = "6.7.1")
+    @GradleTest
+    internal fun shouldNotWarnOnJavaAndKotlinSameJvmTargets(gradleVersion: GradleVersion) {
+        project(
+            projectName = "kotlinJavaProject".fullProjectName,
+            gradleVersion = gradleVersion
+        ) {
+            useToolchainToCompile(11)
+
+            build("build") {
+                assertOutputDoesNotContain(
+                    "'compileJava' task (current target is 1.8) and 'compileKotlin' task (current target is 11) jvm target compatibility " +
+                            "should be set to the same Java version."
+                )
+            }
+        }
+    }
+
+    @DisplayName("Should produce Java-Kotlin jvm target incompatibility warning only for related tasks")
+    @GradleTestVersions(minVersion = "6.7.1")
+    @GradleTest
+    internal fun shouldProduceJavaKotlinJvmTargetDifferenceWarningOnlyForRelatedTasks(
+        gradleVersion: GradleVersion
+    ) {
+        project(
+            projectName = "kotlinJavaProject".fullProjectName,
+            gradleVersion = gradleVersion
+        ) {
+            useToolchainToCompile(11)
+
+            JavaVersion.VERSION_1_8
+            //language=Groovy
+            rootBuildGradle.append(
+                """
+                
+                tasks
+                .matching {
+                    it instanceof JavaCompile && it.name == "compileTestJava"
+                }
+                .configureEach {
+                    sourceCompatibility = JavaVersion.VERSION_1_8
+                    targetCompatibility = JavaVersion.VERSION_1_8
+                }
+                
+                """.trimIndent()
+            )
+
+            build("build") {
+                assertOutputContains(
+                    "'compileTestJava' task (current target is 1.8) and 'compileTestKotlin' task (current target is 11) jvm target " +
+                            "compatibility should be set to the same Java version."
+                )
+                assertOutputDoesNotContain(
+                    "'compileJava' task (current target is 1.8) and 'compileKotlin' task (current target is 11) jvm target compatibility " +
+                            "should be set to the same Java version."
+                )
+            }
+        }
+    }
+
+    @DisplayName("Setting toolchain via java extension should also affect Kotlin compilations")
+    @GradleTestVersions(minVersion = "6.7.1")
+    @GradleTest
+    internal fun settingToolchainViaJavaShouldAlsoWork(gradleVersion: GradleVersion) {
+        project(
+            projectName = "kotlinJavaProject".fullProjectName,
+            gradleVersion = gradleVersion
+        ) {
+            //language=groovy
+            rootBuildGradle.append(
+                """
+                
+                java {
+                    toolchain {
+                        languageVersion.set(JavaLanguageVersion.of(11))
+                    }
+                }
+                
+                """.trimIndent()
+            )
+            //language=properties
+            gradleProperties.append(
+                """
+                kotlin.jvm.target.validation.mode = error
+                """.trimIndent()
+            )
+
+            build("build")
+        }
+    }
+
     private fun BuildResult.assertJdkHomeIsUsingJdk(
         javaexecPath: String
     ) = assertOutputContains("[KOTLIN] Kotlin compilation 'jdkHome' argument: $javaexecPath")
@@ -471,6 +621,22 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
                       jvmTarget = "$jvmTarget"
                  }            
             }
+            """.trimIndent()
+        )
+    }
+
+    private fun TestProject.setJavaCompilationCompatibility(
+        target: JavaVersion
+    ) {
+        //language=Groovy
+        rootBuildGradle.append(
+            """
+
+            tasks.withType(JavaCompile.class).configureEach {
+                sourceCompatibility = JavaVersion.${target.name}
+                targetCompatibility = JavaVersion.${target.name}
+            }
+            
             """.trimIndent()
         )
     }

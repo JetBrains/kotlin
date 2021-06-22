@@ -42,6 +42,7 @@ internal fun PropertiesProvider.mapKotlinTaskProperties(task: AbstractKotlinComp
                 task.kotlinOptions.useFir = true
             }
         }
+        task.jvmTargetValidationMode.set(jvmTargetValidationMode)
     }
 
     if (task is Kotlin2JsCompile) {
@@ -340,6 +341,13 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val kotlinTestInferJvmVariant: Boolean
         get() = booleanProperty("kotlin.test.infer.jvm.variant") ?: true
 
+    enum class JvmTargetValidationMode {
+        IGNORE, WARNING, ERROR
+    }
+
+    val jvmTargetValidationMode: JvmTargetValidationMode
+        get() = enumProperty("kotlin.jvm.target.validation.mode", JvmTargetValidationMode.WARNING)
+
     private fun propertyWithDeprecatedVariant(propName: String, deprecatedPropName: String): String? {
         val deprecatedProperty = property(deprecatedPropName)
         if (deprecatedProperty != null) {
@@ -350,6 +358,11 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     private fun booleanProperty(propName: String): Boolean? =
         property(propName)?.toBoolean()
+
+    private inline fun <reified T : Enum<T>> enumProperty(
+        propName: String,
+        defaultValue: T
+    ): T = property(propName)?.let { enumValueOf<T>(it.toUpperCase()) } ?: defaultValue
 
     private fun property(propName: String): String? =
         if (project.hasProperty(propName)) {
