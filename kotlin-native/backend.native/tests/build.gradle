@@ -949,7 +949,11 @@ task worker8(type: KonanLocalTest) {
 
 task worker9(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
-    goldValue = "zzz\n42\nOK\nfirst 2\nsecond 3\nfrozen OK\n"
+    if (isExperimentalMM) {
+        goldValue = "zzz\n42\nOK\nfirst 2\nsecond 3\nunfrozen OK\nfrozen OK\n"
+    } else {
+        goldValue = "zzz\n42\nOK\nfirst 2\nsecond 3\nfrozen OK\n"
+    }
     source = "runtime/workers/worker9.kt"
 }
 

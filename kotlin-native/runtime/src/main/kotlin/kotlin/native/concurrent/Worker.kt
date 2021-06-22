@@ -106,7 +106,7 @@ public inline class Worker @PublishedApi internal constructor(val id: Int) {
      */
     public fun executeAfter(afterMicroseconds: Long = 0, operation: () -> Unit): Unit {
         val current = currentInternal()
-        if (current != id && !operation.isFrozen) throw IllegalStateException("Job for another worker must be frozen")
+        if (Platform.memoryModel != MemoryModel.EXPERIMENTAL && current != id && !operation.isFrozen) throw IllegalStateException("Job for another worker must be frozen")
         if (afterMicroseconds < 0) throw IllegalArgumentException("Timeout parameter must be non-negative")
         executeAfterInternal(id, operation, afterMicroseconds)
     }

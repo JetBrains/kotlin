@@ -43,9 +43,15 @@ fun withLock(op: () -> Unit) {
 
 @Test fun runTest3() {
     val worker = Worker.start()
-    assertFailsWith<IllegalStateException> {
+    if (Platform.memoryModel == MemoryModel.EXPERIMENTAL) {
         worker.executeAfter {
-            println("shall not happen")
+            println("unfrozen OK")
+        }
+    } else {
+        assertFailsWith<IllegalStateException> {
+            worker.executeAfter {
+                println("shall not happen")
+            }
         }
     }
     assertFailsWith<IllegalArgumentException> {
