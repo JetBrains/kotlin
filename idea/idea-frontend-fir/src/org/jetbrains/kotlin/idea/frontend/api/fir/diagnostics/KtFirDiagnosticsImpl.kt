@@ -329,6 +329,15 @@ internal class CreatingAnInstanceOfAbstractClassImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class FunctionCallExpectedImpl(
+    override val functionName: String,
+    override val hasValueParameters: Boolean,
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.FunctionCallExpected(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class SuperIsNotAnExpressionImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,

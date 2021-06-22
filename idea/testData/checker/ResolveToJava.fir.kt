@@ -18,8 +18,8 @@ fun test(l : List<Int>) {
 
   val f : java.io.File? = null
 
-  Collections.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: emptyList">emptyList</error>
-  Collections.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: emptyList">emptyList</error><Int>
+  Collections.<error descr="[FUNCTION_CALL_EXPECTED] Function invocation 'emptyList()' expected">emptyList</error>
+  Collections.<error descr="[FUNCTION_CALL_EXPECTED] Function invocation 'emptyList()' expected">emptyList</error><<error descr="[CANNOT_INFER_PARAMETER_TYPE] cannot infer a type for this parameter. Please specify it explicitly.">Int</error>>
   Collections.emptyList<Int>()
   Collections.<error descr="[NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER] T">emptyList</error>()
 

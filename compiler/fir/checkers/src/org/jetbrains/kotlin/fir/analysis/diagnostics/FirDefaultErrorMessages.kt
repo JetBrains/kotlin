@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.AMBI
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.DECLARATION_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FIR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FQ_NAMES_IN_TYPES
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FUNCTION_PARAMETERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.NOT_RENDERED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.NULLABLE_STRING
@@ -149,6 +150,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXTENSION_PROPERT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FINAL_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FINAL_UPPER_BOUND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FORBIDDEN_VARARG_PARAMETER_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUNCTION_CALL_EXPECTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUNCTION_DECLARATION_WITH_NO_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUN_INTERFACE_ABSTRACT_METHOD_WITH_DEFAULT_VALUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUN_INTERFACE_ABSTRACT_METHOD_WITH_TYPE_PARAMETERS
@@ -443,6 +445,7 @@ class FirDefaultErrorMessages {
                 TO_STRING
             )
             map.put(CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS, "Cannot create an instance of an abstract class")
+            map.put(FUNCTION_CALL_EXPECTED, "Function invocation ''{0}({1})'' expected", TO_STRING, FUNCTION_PARAMETERS)
 
             // Supertypes
             map.put(ENUM_AS_SUPERTYPE, "Enum as supertype")

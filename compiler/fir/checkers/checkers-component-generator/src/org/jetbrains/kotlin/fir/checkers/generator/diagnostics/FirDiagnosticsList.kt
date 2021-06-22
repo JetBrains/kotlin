@@ -102,6 +102,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
     val CALL_RESOLUTION by object : DiagnosticGroup("Call resolution") {
         val CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS by error<KtExpression>()
+        val FUNCTION_CALL_EXPECTED by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
+            parameter<String>("functionName")
+            parameter<Boolean>("hasValueParameters")
+        }
     }
 
     val SUPER by object : DiagnosticGroup("Super") {

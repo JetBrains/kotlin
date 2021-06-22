@@ -119,4 +119,6 @@ object FirDiagnosticRenderers {
     val NOT_RENDERED = Renderer<Any?> {
         ""
     }
+
+    val FUNCTION_PARAMETERS = Renderer { hasValueParameters: Boolean -> if (hasValueParameters) "..." else "" }
 }
