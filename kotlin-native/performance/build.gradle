@@ -90,6 +90,7 @@ subprojects { proj ->
         }
     }
     proj.repositories {
+        mavenCentral()
         maven {
             url proj.ext["bootstrapKotlinRepo"]
         }
