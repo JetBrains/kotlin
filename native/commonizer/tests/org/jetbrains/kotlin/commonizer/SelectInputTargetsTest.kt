@@ -10,14 +10,14 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
-class DefaultInputTargetsSelectorTest {
+class SelectInputTargetsTest {
 
     @Test
     fun `missing leaf targets`() {
         val inputTargets = setOf(LeafCommonizerTarget("a"), LeafCommonizerTarget("b"))
 
         val exception = assertFailsWith<IllegalArgumentException> {
-            DefaultInputTargetsSelector(inputTargets, parseCommonizerTarget("(a, b, c)") as SharedCommonizerTarget)
+            selectInputTargets(inputTargets, parseCommonizerTarget("(a, b, c)") as SharedCommonizerTarget)
         }
 
         assertTrue(
@@ -43,17 +43,17 @@ class DefaultInputTargetsSelectorTest {
 
         assertEquals(
             setOf(LeafCommonizerTarget("a"), LeafCommonizerTarget("b")),
-            DefaultInputTargetsSelector(inputTargets, parseCommonizerTarget("(a, b)") as SharedCommonizerTarget)
+            selectInputTargets(inputTargets, parseCommonizerTarget("(a, b)") as SharedCommonizerTarget)
         )
 
         assertEquals(
             setOf(LeafCommonizerTarget("a"), LeafCommonizerTarget("b"), LeafCommonizerTarget("c")),
-            DefaultInputTargetsSelector(inputTargets, parseCommonizerTarget("(a, b, c)") as SharedCommonizerTarget)
+            selectInputTargets(inputTargets, parseCommonizerTarget("(a, b, c)") as SharedCommonizerTarget)
         )
 
         assertEquals(
             setOf(LeafCommonizerTarget("a"), LeafCommonizerTarget("b"), parseCommonizerTarget("(c, d)")),
-            DefaultInputTargetsSelector(inputTargets, parseCommonizerTarget("(a, b, c, d)") as SharedCommonizerTarget)
+            selectInputTargets(inputTargets, parseCommonizerTarget("(a, b, c, d)") as SharedCommonizerTarget)
         )
     }
 
@@ -70,17 +70,17 @@ class DefaultInputTargetsSelectorTest {
 
         assertEquals(
             setOf("(a, b, c, d)", "f").map(::parseCommonizerTarget).toSet(),
-            DefaultInputTargetsSelector(inputTargets, parseCommonizerTarget("(a, b, c, d, f)") as SharedCommonizerTarget)
+            selectInputTargets(inputTargets, parseCommonizerTarget("(a, b, c, d, f)") as SharedCommonizerTarget)
         )
 
         assertEquals(
             setOf("(a, b, c, d)", "(c, d, e)").map(::parseCommonizerTarget).toSet(),
-            DefaultInputTargetsSelector(inputTargets, parseCommonizerTarget("(a, b, c, d, e)") as SharedCommonizerTarget)
+            selectInputTargets(inputTargets, parseCommonizerTarget("(a, b, c, d, e)") as SharedCommonizerTarget)
         )
 
         assertEquals(
             setOf("(a, b, c, d)", "(c, d, e)", "f").map(::parseCommonizerTarget).toSet(),
-            DefaultInputTargetsSelector(inputTargets, parseCommonizerTarget("(a, b, c, d, e, f)") as SharedCommonizerTarget)
+            selectInputTargets(inputTargets, parseCommonizerTarget("(a, b, c, d, e, f)") as SharedCommonizerTarget)
         )
     }
 
@@ -88,7 +88,7 @@ class DefaultInputTargetsSelectorTest {
     fun `empty outputTarget`() {
         assertEquals(
             emptySet(),
-            DefaultInputTargetsSelector(emptySet(), parseCommonizerTarget("()") as SharedCommonizerTarget)
+            selectInputTargets(emptySet(), parseCommonizerTarget("()") as SharedCommonizerTarget)
         )
     }
 
@@ -96,7 +96,7 @@ class DefaultInputTargetsSelectorTest {
     fun `single leaf outputTarget`() {
         assertEquals(
             setOf(LeafCommonizerTarget("a")),
-            DefaultInputTargetsSelector(setOf(LeafCommonizerTarget("a")), parseCommonizerTarget("(a)") as SharedCommonizerTarget)
+            selectInputTargets(setOf(LeafCommonizerTarget("a")), parseCommonizerTarget("(a)") as SharedCommonizerTarget)
         )
     }
 
@@ -104,7 +104,7 @@ class DefaultInputTargetsSelectorTest {
     fun `exact output available`() {
         assertEquals(
             setOf(parseCommonizerTarget("(a, b)"), parseCommonizerTarget("(c, d)")),
-            DefaultInputTargetsSelector(
+            selectInputTargets(
                 setOf("a", "b", "c", "d", "(a, b)", "(c, d)", "(a, b, c, d)").map(::parseCommonizerTarget).toSet(),
                 parseCommonizerTarget("(a, b, c, d)") as SharedCommonizerTarget
             )

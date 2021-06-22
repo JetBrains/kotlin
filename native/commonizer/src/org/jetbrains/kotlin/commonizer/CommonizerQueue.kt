@@ -22,8 +22,7 @@ internal fun CommonizerQueue(parameters: CommonizerParameters): CommonizerQueue 
             CommonizerQueue.Deserializer { deserializeTarget(parameters, target) }
         },
         commonizer = { inputs, output -> commonizeTarget(parameters, inputs, output) },
-        serializer = { declarations, outputTarget -> serializeTarget(parameters, declarations, outputTarget) },
-        inputTargetsSelector = DefaultInputTargetsSelector
+        serializer = { declarations, outputTarget -> serializeTarget(parameters, declarations, outputTarget) }
     )
 }
 
@@ -33,7 +32,6 @@ internal class CommonizerQueue(
     private val deserializers: TargetDependent<Deserializer>,
     private val commonizer: Commonizer,
     private val serializer: Serializer,
-    private val inputTargetsSelector: InputTargetsSelector
 ) {
 
     fun interface Deserializer {
@@ -116,7 +114,7 @@ internal class CommonizerQueue(
     }
 
     private fun registerTargetDependencies(outputTarget: OutputCommonizerTarget) {
-        targetDependencies[outputTarget] = inputTargetsSelector(outputTargets + deserializers.targets, outputTarget)
+        targetDependencies[outputTarget] = selectInputTargets(outputTargets + deserializers.targets, outputTarget)
     }
 
     private fun removeTargetDependencies(target: OutputCommonizerTarget) {

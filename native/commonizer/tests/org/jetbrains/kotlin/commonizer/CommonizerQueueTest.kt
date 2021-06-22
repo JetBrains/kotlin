@@ -25,7 +25,6 @@ class CommonizerQueueTest {
             ) { CommonizerQueue.Deserializer { null } },
             commonizer = { _, _ -> null },
             serializer = { _, _ -> },
-            inputTargetsSelector = DefaultInputTargetsSelector
         )
 
         assertEquals(
@@ -104,7 +103,6 @@ class CommonizerQueueTest {
                 CirRootNode(CommonizedGroup(0), storageManager.createNullableLazyValue { CirRoot.create(output) })
             },
             serializer = { _, _ -> },
-            inputTargetsSelector = DefaultInputTargetsSelector
         )
 
         queue.invokeAll()
@@ -121,14 +119,14 @@ class CommonizerQueueTest {
 
         val abInvocation = commonizerInvocations.single { it.output == abOutputTarget }
         assertEquals(
-            DefaultInputTargetsSelector(providedTargets + outputTargets, abOutputTarget),
+            selectInputTargets(providedTargets + outputTargets, abOutputTarget),
             abInvocation.inputs.targets.toSet(),
             "Expected commonizer being invoked with selected targets for abInvocation"
         )
 
         val abcInvocation = commonizerInvocations.single { it.output == abcOutputTarget }
         assertEquals(
-            DefaultInputTargetsSelector(providedTargets + outputTargets, abcOutputTarget),
+            selectInputTargets(providedTargets + outputTargets, abcOutputTarget),
             abcInvocation.inputs.targets.toSet(),
             "Expected commonizer being invoked with selected targets for abcInvocation"
         )

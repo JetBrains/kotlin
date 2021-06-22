@@ -8,34 +8,20 @@ package org.jetbrains.kotlin.commonizer
 import org.jetbrains.kotlin.commonizer.utils.isProperSubsetOf
 import org.jetbrains.kotlin.commonizer.utils.isSubsetOf
 
-internal fun interface InputTargetsSelector {
-    operator fun invoke(inputTargets: Set<CommonizerTarget>, outputTarget: SharedCommonizerTarget): Set<CommonizerTarget>
-}
+internal fun selectInputTargets(inputTargets: Set<CommonizerTarget>, outputTarget: SharedCommonizerTarget): Set<CommonizerTarget> {
+    val subsetInputTargets = inputTargets
+        .filter { inputTarget -> inputTarget != outputTarget && inputTarget.allLeaves() isSubsetOf outputTarget.allLeaves() }
+        .sortedBy { it.allLeaves().size }
 
-internal operator fun InputTargetsSelector.invoke(
-    parameters: CommonizerParameters,
-    outputTarget: SharedCommonizerTarget
-): Set<CommonizerTarget> {
-    return invoke(parameters.outputTargets + parameters.targetProviders.targets, outputTarget)
-}
-
-internal object DefaultInputTargetsSelector : InputTargetsSelector {
-    override fun invoke(inputTargets: Set<CommonizerTarget>, outputTarget: SharedCommonizerTarget): Set<CommonizerTarget> {
-
-        val subsetInputTargets = inputTargets
-            .filter { inputTarget -> inputTarget != outputTarget && inputTarget.allLeaves() isSubsetOf outputTarget.allLeaves() }
-            .sortedBy { it.allLeaves().size }
-
-        val disjointSubsetInputTargets = subsetInputTargets
-            .filter { inputTarget ->
-                subsetInputTargets.none { potentialSuperSet -> inputTarget.allLeaves() isProperSubsetOf potentialSuperSet.allLeaves() }
-            }
-
-        return outputTarget.allLeaves().fold(setOf()) { selectedInputTargets, outputLeafTarget ->
-            if (outputLeafTarget in selectedInputTargets.allLeaves()) return@fold selectedInputTargets
-            selectedInputTargets + (disjointSubsetInputTargets.firstOrNull { inputTarget -> outputLeafTarget in inputTarget.allLeaves() }
-                ?: failedSelectingInputTargets(inputTargets, outputTarget))
+    val disjointSubsetInputTargets = subsetInputTargets
+        .filter { inputTarget ->
+            subsetInputTargets.none { potentialSuperSet -> inputTarget.allLeaves() isProperSubsetOf potentialSuperSet.allLeaves() }
         }
+
+    return outputTarget.allLeaves().fold(setOf()) { selectedInputTargets, outputLeafTarget ->
+        if (outputLeafTarget in selectedInputTargets.allLeaves()) return@fold selectedInputTargets
+        selectedInputTargets + (disjointSubsetInputTargets.firstOrNull { inputTarget -> outputLeafTarget in inputTarget.allLeaves() }
+            ?: failedSelectingInputTargets(inputTargets, outputTarget))
     }
 }
 
