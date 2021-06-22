@@ -11,28 +11,63 @@ interface DokkaLogger {
 }
 
 fun DokkaLogger.report() {
-    if (DokkaConsoleLogger.warningsCount > 0 || DokkaConsoleLogger.errorsCount > 0) {
-        info("Generation completed with ${DokkaConsoleLogger.warningsCount} warning" +
-                (if(DokkaConsoleLogger.warningsCount == 1) "" else "s") +
-                " and ${DokkaConsoleLogger.errorsCount} error" +
-                if(DokkaConsoleLogger.errorsCount == 1) "" else "s"
+    if (warningsCount > 0 || errorsCount > 0) {
+        info(
+            "Generation completed with $warningsCount warning" +
+                    (if (warningsCount == 1) "" else "s") +
+                    " and $errorsCount error" +
+                    if (errorsCount == 1) "" else "s"
         )
     } else {
-        info("generation completed successfully")
+        info("Generation completed successfully")
     }
 }
 
-object DokkaConsoleLogger : DokkaLogger {
+enum class LoggingLevel(val index: Int) {
+    DEBUG(0), PROGRESS(1), INFO(2), WARN(3), ERROR(4);
+}
+
+/**
+ * Used to decouple the transport layer from logger and make it convenient for testing
+ */
+fun interface MessageEmitter : (String) -> Unit {
+    companion object {
+        val consoleEmitter: MessageEmitter = MessageEmitter { message -> println(message) }
+    }
+}
+
+class DokkaConsoleLogger(
+    val minLevel: LoggingLevel = LoggingLevel.DEBUG,
+    private val emitter: MessageEmitter = MessageEmitter.consoleEmitter
+) : DokkaLogger {
     override var warningsCount: Int = 0
     override var errorsCount: Int = 0
 
-    override fun debug(message: String)= println(message)
+    override fun debug(message: String) {
+        if (shouldBeDisplayed(LoggingLevel.DEBUG)) emitter(message)
+    }
 
-    override fun progress(message: String) = println("PROGRESS: $message")
+    override fun progress(message: String) {
+        if (shouldBeDisplayed(LoggingLevel.PROGRESS)) emitter("PROGRESS: $message")
+    }
 
-    override fun info(message: String) = println(message)
+    override fun info(message: String) {
+        if (shouldBeDisplayed(LoggingLevel.INFO)) emitter(message)
+    }
 
-    override fun warn(message: String) = println("WARN: $message").also { warningsCount++ }
+    override fun warn(message: String) {
+        if (shouldBeDisplayed(LoggingLevel.WARN)) {
+            emitter("WARN: $message")
+        }
+        warningsCount++
+    }
 
-    override fun error(message: String) = println("ERROR: $message").also { errorsCount++ }
+    override fun error(message: String) {
+        if (shouldBeDisplayed(LoggingLevel.ERROR)) {
+            emitter("ERROR: $message")
+        }
+        errorsCount++
+    }
+
+    private fun shouldBeDisplayed(messageLevel: LoggingLevel): Boolean = messageLevel.index >= minLevel.index
 }

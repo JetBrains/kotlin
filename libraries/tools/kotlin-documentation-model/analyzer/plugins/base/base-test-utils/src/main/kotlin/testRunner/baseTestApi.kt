@@ -12,6 +12,7 @@ import org.jetbrains.dokka.testApi.logger.TestLogger
 import org.jetbrains.dokka.testApi.testRunner.*
 import org.jetbrains.dokka.utilities.DokkaConsoleLogger
 import org.jetbrains.dokka.utilities.DokkaLogger
+import org.jetbrains.dokka.utilities.LoggingLevel
 
 class BaseDokkaTestGenerator(
     configuration: DokkaConfiguration,
@@ -101,7 +102,7 @@ class BaseTestBuilder : TestBuilder<BaseTestMethods>() {
     )
 }
 
-abstract class BaseAbstractTest(logger: TestLogger = TestLogger(DokkaConsoleLogger)) : AbstractTest<BaseTestMethods, BaseTestBuilder, BaseDokkaTestGenerator>(
+abstract class BaseAbstractTest(logger: TestLogger = TestLogger(DokkaConsoleLogger(LoggingLevel.DEBUG))) : AbstractTest<BaseTestMethods, BaseTestBuilder, BaseDokkaTestGenerator>(
     ::BaseTestBuilder,
     ::BaseDokkaTestGenerator,
     logger,

@@ -39,7 +39,7 @@ class ContextModuleAndPackageDocumentationReaderTest3 : AbstractContextModuleAnd
     private val context by lazy {
         DokkaContext.create(
             configuration = configurationBuilder.build(),
-            logger = DokkaConsoleLogger,
+            logger = DokkaConsoleLogger(),
             pluginOverrides = emptyList()
         )
     }
