@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAMES
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.backend.generators.DelegatedMemberGenerator
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
@@ -103,8 +102,6 @@ class Fir2IrDeclarationStorage(
     private val fieldCache = ConcurrentHashMap<FirField, IrField>()
 
     private val localStorage by threadLocal { Fir2IrLocalStorage() }
-
-    private val delegatedMemberGenerator = DelegatedMemberGenerator(components)
 
     private fun areCompatible(firFunction: FirFunction, irFunction: IrFunction): Boolean {
         if (firFunction is FirSimpleFunction && irFunction is IrSimpleFunction) {
@@ -891,7 +888,7 @@ class Fir2IrDeclarationStorage(
     fun createIrFieldAndDelegatedMembers(field: FirField, owner: FirClass, irClass: IrClass): IrField {
         val irField = createIrField(field, origin = IrDeclarationOrigin.DELEGATE)
         irField.setAndModifyParent(irClass)
-        delegatedMemberGenerator.generate(irField, field, owner, irClass)
+        components.delegatedMemberGenerator.generate(irField, field, owner, irClass)
         return irField
     }
 

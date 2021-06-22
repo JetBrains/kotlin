@@ -58,6 +58,8 @@ internal class ClassMemberGenerator(
                 }
             }
             fakeOverrideGenerator.bindOverriddenSymbols(irClass.declarations)
+            components.delegatedMemberGenerator.bindDelegatedMembersOverriddenSymbols(irClass)
+
             klass.declarations.forEach { declaration ->
                 when {
                     declaration is FirTypeAlias -> {

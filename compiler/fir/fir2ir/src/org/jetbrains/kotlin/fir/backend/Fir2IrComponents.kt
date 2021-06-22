@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.backend
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.generators.AnnotationGenerator
 import org.jetbrains.kotlin.fir.backend.generators.CallAndReferenceGenerator
+import org.jetbrains.kotlin.fir.backend.generators.DelegatedMemberGenerator
 import org.jetbrains.kotlin.fir.backend.generators.FakeOverrideGenerator
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -35,4 +36,5 @@ interface Fir2IrComponents {
     val annotationGenerator: AnnotationGenerator
     val callGenerator: CallAndReferenceGenerator
     val fakeOverrideGenerator: FakeOverrideGenerator
+    val delegatedMemberGenerator: DelegatedMemberGenerator
 }

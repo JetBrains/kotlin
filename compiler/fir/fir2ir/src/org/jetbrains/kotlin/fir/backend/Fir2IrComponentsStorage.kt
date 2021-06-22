@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.backend
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.generators.AnnotationGenerator
 import org.jetbrains.kotlin.fir.backend.generators.CallAndReferenceGenerator
+import org.jetbrains.kotlin.fir.backend.generators.DelegatedMemberGenerator
 import org.jetbrains.kotlin.fir.backend.generators.FakeOverrideGenerator
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
@@ -35,6 +36,7 @@ class Fir2IrComponentsStorage(
     override lateinit var annotationGenerator: AnnotationGenerator
     override lateinit var callGenerator: CallAndReferenceGenerator
     override lateinit var fakeOverrideGenerator: FakeOverrideGenerator
+    override lateinit var delegatedMemberGenerator: DelegatedMemberGenerator
 
     override val lock: IrLock
         get() = symbolTable.lock
