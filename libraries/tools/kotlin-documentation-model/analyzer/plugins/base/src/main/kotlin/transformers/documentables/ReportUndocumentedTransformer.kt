@@ -159,6 +159,6 @@ internal class ReportUndocumentedTransformer : DocumentableTransformer {
         val packageName = documentable.dri.packageName ?: return null
         return dokkaSourceSet.perPackageOptions
             .filter { packageOptions -> Regex(packageOptions.matchingRegex).matches(packageName) }
-            .maxBy { packageOptions -> packageOptions.matchingRegex.length }
+            .maxByOrNull { packageOptions -> packageOptions.matchingRegex.length }
     }
 }
