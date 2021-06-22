@@ -176,7 +176,7 @@ internal object FirIdeSessionFactory {
             setProjectInstance(project)
             setScope(searchScope)
         }
-        val packagePartProvider = project.stateConfigurator.createPackagePartsProvider(searchScope)
+        val packagePartProvider = project.stateConfigurator.createPackagePartsProvider(mainModuleInfo, searchScope)
 
         val kotlinClassFinder = VirtualFileFinderFactory.getInstance(project).create(searchScope)
         FirIdeLibrariesSession(project, searchScope, builtinTypes).apply session@{

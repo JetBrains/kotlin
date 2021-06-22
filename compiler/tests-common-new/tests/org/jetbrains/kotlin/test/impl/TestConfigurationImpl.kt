@@ -33,6 +33,7 @@ class TestConfigurationImpl(
     environmentConfigurators: List<Constructor<EnvironmentConfigurator>>,
 
     additionalSourceProviders: List<Constructor<AdditionalSourceProvider>>,
+    preAnalysisHandlers: List<Constructor<PreAnalysisHandler>>,
     moduleStructureTransformers: List<ModuleStructureTransformer>,
     metaTestConfigurators: List<Constructor<MetaTestConfigurator>>,
     afterAnalysisCheckers: List<Constructor<AfterAnalysisChecker>>,
@@ -69,6 +70,9 @@ class TestConfigurationImpl(
                 configurator.additionalServices.forEach { testServices.register(it) }
             }
         }
+
+    override val preAnalysisHandlers: List<PreAnalysisHandler> =
+        preAnalysisHandlers.map { it.invoke(testServices) }
 
     override val moduleStructureExtractor: ModuleStructureExtractor = ModuleStructureExtractorImpl(
         testServices,

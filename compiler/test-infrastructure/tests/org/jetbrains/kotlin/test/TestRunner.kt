@@ -52,6 +52,7 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
             throw exception
         }
 
+
         testConfiguration.metaTestConfigurators.forEach {
             if (it.shouldSkipTest()) return
         }
@@ -62,6 +63,11 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
         val modules = moduleStructure.modules
         val dependencyProvider = DependencyProviderImpl(services, modules)
         services.registerDependencyProvider(dependencyProvider)
+
+        testConfiguration.preAnalysisHandlers.forEach { preprocessor ->
+            preprocessor.preprocessModuleStructure(moduleStructure)
+        }
+
         var failedException: WrappedException? = null
         try {
             for (module in modules) {

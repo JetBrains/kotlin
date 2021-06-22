@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.MetaTestConfigurator
 import org.jetbrains.kotlin.test.services.ModuleStructureExtractor
+import org.jetbrains.kotlin.test.services.PreAnalysisHandler
 import org.jetbrains.kotlin.test.services.TestServices
 
 typealias Constructor<T> = (TestServices) -> T
@@ -25,6 +26,8 @@ abstract class TestConfiguration {
     abstract val defaultRegisteredDirectives: RegisteredDirectives
 
     abstract val moduleStructureExtractor: ModuleStructureExtractor
+
+    abstract val preAnalysisHandlers: List<PreAnalysisHandler>
 
     abstract val metaTestConfigurators: List<MetaTestConfigurator>
 

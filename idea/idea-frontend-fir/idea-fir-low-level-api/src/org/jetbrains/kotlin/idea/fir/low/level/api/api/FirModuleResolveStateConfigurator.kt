@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtElement
 
 abstract class FirModuleResolveStateConfigurator {
-    abstract fun createPackagePartsProvider(scope: GlobalSearchScope): PackagePartProvider
+    abstract fun createPackagePartsProvider(moduleInfo: ModuleSourceInfoBase, scope: GlobalSearchScope): PackagePartProvider
 
     abstract fun createModuleDataProvider(moduleInfo: ModuleSourceInfoBase): ModuleDataProvider
 

@@ -3,6 +3,10 @@ plugins {
     id("jps-compatible")
 }
 
+kotlin {
+    explicitApiWarning()
+}
+
 dependencies {
     compileOnly(project(":kotlin-reflect-api"))
 
