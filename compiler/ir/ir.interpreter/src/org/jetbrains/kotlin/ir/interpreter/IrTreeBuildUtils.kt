@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
@@ -28,6 +27,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.name.Name
 internal val TEMP_CLASS_FOR_INTERPRETER = object : IrDeclarationOriginImpl("TEMP_CLASS_FOR_INTERPRETER") {}
 internal val TEMP_FUNCTION_FOR_INTERPRETER = object : IrDeclarationOriginImpl("TEMP_FUNCTION_FOR_INTERPRETER") {}
 
-fun Any?.toIrConstOrNull(irType: IrType, startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET): IrConst<*>? {
+fun Any?.toIrConstOrNull(irType: IrType, startOffset: Int = SYNTHETIC_OFFSET, endOffset: Int = SYNTHETIC_OFFSET): IrConst<*>? {
     if (this == null) return IrConstImpl.constNull(startOffset, endOffset, irType)
 
     val constType = irType.makeNotNull()
@@ -61,13 +61,13 @@ fun Any?.toIrConstOrNull(irType: IrType, startOffset: Int = UNDEFINED_OFFSET, en
     }
 }
 
-fun Any?.toIrConst(irType: IrType, startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET): IrConst<*> =
+fun Any?.toIrConst(irType: IrType, startOffset: Int = SYNTHETIC_OFFSET, endOffset: Int = SYNTHETIC_OFFSET): IrConst<*> =
     toIrConstOrNull(irType, startOffset, endOffset)
         ?: throw UnsupportedOperationException("Unsupported const element type ${irType.makeNotNull().render()}")
 
 fun Any?.toIrConst(
     irType: IrType, irBuiltIns: IrBuiltIns,
-    startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET
+    startOffset: Int = SYNTHETIC_OFFSET, endOffset: Int = SYNTHETIC_OFFSET
 ): IrConst<*> =
     toIrConstOrNull(irType, startOffset, endOffset) ?: run {
         if (irType == irBuiltIns.stringType) IrConstImpl.string(startOffset, endOffset, irType.makeNotNull(), this as String)
@@ -101,30 +101,30 @@ internal fun State.toIrExpression(expression: IrExpression): IrExpression {
 
 internal fun IrFunction.createCall(): IrCall {
     this as IrSimpleFunction
-    return IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, returnType, symbol, typeParameters.size, valueParameters.size)
+    return IrCallImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, returnType, symbol, typeParameters.size, valueParameters.size)
 }
 
 internal fun IrConstructor.createConstructorCall(): IrConstructorCall {
-    return IrConstructorCallImpl.fromSymbolOwner(returnType, symbol)
+    return IrConstructorCallImpl.fromSymbolOwner(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, returnType, symbol)
 }
 
 internal fun IrValueDeclaration.createGetValue(): IrGetValue {
-    return IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, this.type, this.symbol)
+    return IrGetValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, this.type, this.symbol)
 }
 
 internal fun IrValueDeclaration.createTempVariable(): IrVariable {
     return IrVariableImpl(
-        UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.IR_TEMPORARY_VARIABLE, IrVariableSymbolImpl(),
+        SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrDeclarationOrigin.IR_TEMPORARY_VARIABLE, IrVariableSymbolImpl(),
         this.name, this.type, isVar = false, isConst = false, isLateinit = false
     )
 }
 
 internal fun IrClass.createGetObject(): IrGetObjectValue {
-    return IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, this.defaultType, this.symbol)
+    return IrGetObjectValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, this.defaultType, this.symbol)
 }
 
 internal fun IrFunction.createReturn(value: IrExpression): IrReturn {
-    return IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, this.returnType, this.symbol, value)
+    return IrReturnImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, this.returnType, this.symbol, value)
 }
 
 internal fun createTempFunction(
@@ -134,29 +134,29 @@ internal fun createTempFunction(
     visibility: DescriptorVisibility = DescriptorVisibilities.PUBLIC
 ): IrSimpleFunction {
     return IrFunctionImpl(
-        UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, IrSimpleFunctionSymbolImpl(), name, visibility, Modality.FINAL, type,
+        SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, origin, IrSimpleFunctionSymbolImpl(), name, visibility, Modality.FINAL, type,
         isInline = false, isExternal = false, isTailrec = false, isSuspend = false, isOperator = true, isInfix = false, isExpect = false
     )
 }
 
 internal fun createTempClass(name: Name, origin: IrDeclarationOrigin = TEMP_CLASS_FOR_INTERPRETER): IrClass {
     return IrFactoryImpl.createClass(
-        UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, IrClassSymbolImpl(), name,
+        SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, origin, IrClassSymbolImpl(), name,
         ClassKind.CLASS, DescriptorVisibilities.PRIVATE, Modality.FINAL
     )
 }
 
 internal fun List<IrStatement>.wrapWithBlockBody(): IrBlockBody {
-    return IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, this)
+    return IrBlockBodyImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, this)
 }
 
 internal fun IrFunctionAccessExpression.shallowCopy(copyTypeArguments: Boolean = true): IrFunctionAccessExpression {
     return when (this) {
-        is IrCall -> IrCallImpl.fromSymbolOwner(startOffset, endOffset, type, symbol)
-        is IrConstructorCall -> IrConstructorCallImpl.fromSymbolOwner(type, symbol)
-        is IrDelegatingConstructorCall -> IrDelegatingConstructorCallImpl.fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, symbol)
+        is IrCall -> symbol.owner.createCall()
+        is IrConstructorCall -> symbol.owner.createConstructorCall()
+        is IrDelegatingConstructorCall -> IrDelegatingConstructorCallImpl.fromSymbolOwner(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, type, symbol)
         is IrEnumConstructorCall ->
-            IrEnumConstructorCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, symbol, typeArgumentsCount, valueArgumentsCount)
+            IrEnumConstructorCallImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, type, symbol, typeArgumentsCount, valueArgumentsCount)
         else -> TODO("Expression $this cannot be copied")
     }.apply {
         if (copyTypeArguments) {
