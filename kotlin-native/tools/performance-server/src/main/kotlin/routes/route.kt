@@ -104,13 +104,13 @@ data class TCBuildInfo(val buildNumber: String, val branch: String, val startTim
                        val finishTime: String, val buildType: String?)
 
 data class BuildRegister(val buildId: String, val teamCityUser: String, val teamCityPassword: String,
-                         val bundleSize: String?, val fileWithResult: String) {
+                         val bundleSize: String?, val fileWithResult: String, val buildNumberSuffix: String?) {
     companion object {
         fun create(json: String): BuildRegister {
             val requestDetails = JSON.parse<BuildRegister>(json)
             // Parse method doesn't create real instance with all methods. So create it by hands.
             return BuildRegister(requestDetails.buildId, requestDetails.teamCityUser, requestDetails.teamCityPassword,
-                    requestDetails.bundleSize, requestDetails.fileWithResult)
+                    requestDetails.bundleSize, requestDetails.fileWithResult, requestDetails.buildNumberSuffix)
         }
     }
 
@@ -182,7 +182,8 @@ data class BuildRegister(val buildId: String, val teamCityUser: String, val team
                     "${format(currentTime.getUTCMinutes())}" +
                     "${format(currentTime.getUTCSeconds())}" +
                     "${if (timeZone > 0) "+" else "-"}${format(timeZone)}${format(0)}"
-            TCBuildInfo(buildNumber!!, branch!!, startTime!!, finishTime, buildType)
+            val resultBuildNumber = buildNumberSuffix?.let { "$buildNumber($it)" } ?: buildNumber!!
+            TCBuildInfo(resultBuildNumber, branch!!, startTime!!, finishTime, buildType)
         }
     }
 }
@@ -206,7 +207,8 @@ internal fun <T> orderedValues(values: List<T>, buildElement: (T) -> CompositeBu
                                 Int.MAX_VALUE
                         },
                         { buildElement(it).first?.let { if (it == "DEV") 0 else 1 } ?: 0 }, // Develop and release builds
-                        { buildElement(it).second.substringAfterLast("-").toDouble() } // build counter
+                        { buildElement(it).second.substringAfterLast("-").substringBefore("(").toDouble() }, // build counter
+                        { buildElement(it).second.contains("(") } // build suffix
                 )
         )
 
@@ -398,6 +400,7 @@ fun router() {
             var buildsCountToShow = 200
             var beforeDate: String? = null
             var afterDate: String? = null
+            var buildSuffix: String? = null
 
             // Parse parameters from request if it exists.
             if (request.query != undefined) {
@@ -428,13 +431,16 @@ fun router() {
                 if (request.query.after != undefined) {
                     afterDate = decodeURIComponent(request.query.after)
                 }
+                if (request.query.buildSuffix != undefined) {
+                    buildSuffix = request.query.buildSuffix
+                }
             }
 
             getBuildsNumbers(type, branch, target, buildsCountToShow, buildInfoIndex, beforeDate, afterDate).then { buildNumbers ->
                 if (aggregation == "geomean") {
                     // Get geometric mean for samples.
                     benchmarksDispatcher.getGeometricMean(metric, target, buildNumbers, normalize,
-                            excludeNames).then { geoMeansValues ->
+                            excludeNames, buildSuffix).then { geoMeansValues ->
                         success(orderedValues(geoMeansValues, { it -> it.first }, branch == "master")
                                 .map { it.first.second to it.second })
                     }.catch { errorResponse ->
@@ -443,7 +449,7 @@ fun router() {
                         reject()
                     }
                 } else {
-                    benchmarksDispatcher.getSamples(metric, target, samples, buildsCountToShow, buildNumbers, normalize)
+                    benchmarksDispatcher.getSamples(metric, target, samples, buildsCountToShow, buildNumbers, normalize, buildSuffix)
                             .then { geoMeansValues ->
                         success(orderedValues(geoMeansValues, { it -> it.first }, branch == "master")
                                 .map { it.first.second to it.second })

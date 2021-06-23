@@ -253,6 +253,7 @@ task registerBuild(type: BuildRegister) {
         dist = (new File(dist)).isAbsolute() ? dist : "${project.getProjectDir()}/$dist"
         bundleSize = (new File(dist)).directorySize()
     }
+    buildNumberSuffix = project.findProperty('buildNumberSuffix')
 }
 
 task registerExternalBuild(type: BuildRegister) {
