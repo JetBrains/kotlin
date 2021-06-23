@@ -459,6 +459,7 @@ internal class MapBuilder<K, V> private constructor(
         fun hasNext(): Boolean = index < map.length
 
         fun remove() {
+            check(lastIndex != -1) { "Call next() before removing element from the iterator." }
             map.checkIsMutable()
             map.removeKeyAt(lastIndex)
             lastIndex = -1
