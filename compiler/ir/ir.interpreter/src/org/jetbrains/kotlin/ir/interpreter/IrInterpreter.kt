@@ -319,11 +319,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
     }
 
     private fun interpretReturn(expression: IrReturn) {
-        val function = expression.returnTargetSymbol.owner as? IrFunction
-        function?.tryResetFunctionBody()
-        if (function.checkCast(environment)) {
-            callStack.returnFromFrameWithResult(expression)
-        }
+        callStack.returnFromFrameWithResult(expression)
     }
 
     private fun interpretWhile(loop: IrWhileLoop) {

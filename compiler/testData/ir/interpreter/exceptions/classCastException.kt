@@ -47,13 +47,13 @@ const val b2 = <!EVALUATED: `2`!>safeClassCast("10")<!>
 const val c1 = <!EVALUATED: `1`!>unsafeClassCast<Int>()<!>
 const val c2 = <!WAS_NOT_EVALUATED: `
 Exception java.lang.ClassCastException: kotlin.Int cannot be cast to kotlin.String
-	at ClassCastExceptionKt.unsafeClassCast(classCastException.kt:21)
+	at ClassCastExceptionKt.unsafeClassCast(classCastException.kt:19)
 	at ClassCastExceptionKt.<clinit>(classCastException.kt:48)`!>unsafeClassCast<String>()<!>
 
 const val d1 = A<Int>().<!EVALUATED: `1`!>unsafeCast()<!>
 const val d2 = A<String>().<!WAS_NOT_EVALUATED: `
 Exception java.lang.ClassCastException: kotlin.Int cannot be cast to kotlin.String
-	at ClassCastExceptionKt.A.unsafeCast(classCastException.kt:36)
+	at ClassCastExceptionKt.A.unsafeCast(classCastException.kt:35)
 	at ClassCastExceptionKt.<clinit>(classCastException.kt:51)`!>unsafeCast()<!>
 
 const val stringList = getIntList<List<String>>().<!WAS_NOT_EVALUATED: `

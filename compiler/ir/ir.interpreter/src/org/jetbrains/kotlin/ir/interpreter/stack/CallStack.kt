@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.interpreter.stack
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
@@ -55,8 +56,9 @@ internal class CallStack {
 
     fun returnFromFrameWithResult(irReturn: IrReturn) {
         val result = popState()
+        val returnTarget = irReturn.returnTargetSymbol.owner
         var frameOwner = currentFrameOwner
-        while (frameOwner != irReturn.returnTargetSymbol.owner) {
+        while (frameOwner != returnTarget) {
             when (frameOwner) {
                 is IrTry -> {
                     dropSubFrame()
@@ -75,16 +77,15 @@ internal class CallStack {
                 }
                 else -> {
                     dropSubFrame()
-                    if (currentFrame.hasNoSubFrames() && frameOwner != irReturn.returnTargetSymbol.owner) dropFrame()
+                    if (currentFrame.hasNoSubFrames() && frameOwner != returnTarget) dropFrame()
                     frameOwner = currentFrameOwner
                 }
             }
         }
 
-        dropFrame()
-        // check that last frame is not a function itself; use case for proxyInterpret
-        if (frames.size == 0) newFrame(irReturn) // just stub frame
-        pushState(result)
+        currentFrame.dropInstructions()
+        addInstruction(SimpleInstruction(returnTarget))
+        if (returnTarget !is IrConstructor) pushState(result)
     }
 
     fun unrollInstructionsForBreakContinue(breakOrContinue: IrBreakContinue) {
