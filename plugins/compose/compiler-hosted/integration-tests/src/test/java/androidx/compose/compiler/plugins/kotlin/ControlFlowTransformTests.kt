@@ -46,13 +46,56 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     )
 
     @Test
+    fun testAND(): Unit = controlFlow(
+        """
+            @NonRestartableComposable
+            @Composable
+            fun Example() {
+                B() && B()
+            }
+        """,
+        """
+            @NonRestartableComposable
+            @Composable
+            fun Example(%composer: Composer?, %changed: Int) {
+              %composer.startReplaceableGroup(<>)
+              sourceInformation(%composer, "C(Example)<B()>,<B()>:Test.kt")
+              val tmp0_group = B(%composer, 0) && B(%composer, 0)
+              tmp0_group
+              %composer.endReplaceableGroup()
+            }
+        """
+    )
+
+    @Test
+    fun testOR(): Unit = controlFlow(
+        """
+            @NonRestartableComposable
+            @Composable
+            fun Example() {
+                B() || B()
+            }
+        """,
+        """
+            @NonRestartableComposable
+            @Composable
+            fun Example(%composer: Composer?, %changed: Int) {
+              %composer.startReplaceableGroup(<>)
+              sourceInformation(%composer, "C(Example)<B()>,<B()>:Test.kt")
+              val tmp0_group = B(%composer, 0) || B(%composer, 0)
+              tmp0_group
+              %composer.endReplaceableGroup()
+            }
+        """
+    )
+
+    @Test
     fun testIfWithCallsInBranch(): Unit = controlFlow(
         """
             @NonRestartableComposable @Composable
             fun Example(x: Int) {
-                // Composable calls in the result blocks, so we can determine static number of
-                // groups executed. This means we put a group around the "then" and the implicit
-                // "else" blocks
+                // Only one composable call in the result blocks, so we can just generate
+                // a single group around the whole expression.
                 if (x > 0) {
                     A()
                 }
@@ -63,15 +106,9 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>)
-              sourceInformation(%composer, "C(Example):Test.kt")
+              sourceInformation(%composer, "C(Example)<A()>:Test.kt")
               if (x > 0) {
-                %composer.startReplaceableGroup(<>)
-                sourceInformation(%composer, "<A()>")
                 A(%composer, 0)
-                %composer.endReplaceableGroup()
-              } else {
-                %composer.startReplaceableGroup(<>)
-                %composer.endReplaceableGroup()
               }
               %composer.endReplaceableGroup()
             }
@@ -516,8 +553,9 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
         """
             @NonRestartableComposable @Composable
             fun Example(x: Int?) {
-                // the composable call is made conditionally, which means it is like an if, but one
-                // with static groups, so no wrapping group needed.
+                // The composable call is made conditionally, which means it is like an if with
+                // only one result having a composable call, so we just generate a single group
+                // around the whole expression.
                 x?.A()
             }
         """,
@@ -526,21 +564,8 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             @Composable
             fun Example(x: Int?, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>)
-              sourceInformation(%composer, "C(Example):Test.kt")
-              val tmp0_safe_receiver = x
-              when {
-                tmp0_safe_receiver == null -> {
-                  %composer.startReplaceableGroup(<>)
-                  %composer.endReplaceableGroup()
-                  null
-                }
-                else -> {
-                  %composer.startReplaceableGroup(<>)
-                  sourceInformation(%composer, "<A()>")
-                  tmp0_safe_receiver.A(%composer, 0b1110 and %changed)
-                  %composer.endReplaceableGroup()
-                }
-              }
+              sourceInformation(%composer, "C(Example)<A()>:Test.kt")
+              x?.A(%composer, 0b1110 and %changed)
               %composer.endReplaceableGroup()
             }
         """
@@ -551,8 +576,9 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
         """
             @NonRestartableComposable @Composable
             fun Example(x: Int?) {
-                // the composable call is made conditionally, which means it is like an if, but one
-                // with static groups, so no wrapping group needed.
+                // The composable call is made conditionally, which means it is like an if, but with
+                // only one result having a composable call, so we just generate a single group
+                // around the whole expression.
                 val y = x ?: R()
             }
         """,
@@ -561,22 +587,17 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             @Composable
             fun Example(x: Int?, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>)
-              sourceInformation(%composer, "C(Example):Test.kt")
+              sourceInformation(%composer, "C(Example)<R()>:Test.kt")
               val y = val tmp0_elvis_lhs = x
-              when {
+              val tmp0_group = when {
                 tmp0_elvis_lhs == null -> {
-                  %composer.startReplaceableGroup(<>)
-                  sourceInformation(%composer, "<R()>")
-                  val tmp0_group = R(%composer, 0)
-                  %composer.endReplaceableGroup()
-                  tmp0_group
+                  R(%composer, 0)
                 }
                 else -> {
-                  %composer.startReplaceableGroup(<>)
-                  %composer.endReplaceableGroup()
                   tmp0_elvis_lhs
                 }
               }
+              tmp0_group
               %composer.endReplaceableGroup()
             }
         """
@@ -871,17 +892,11 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>)
-              sourceInformation(%composer, "C(Example):Test.kt")
+              sourceInformation(%composer, "C(Example)<A()>:Test.kt")
               if (x > 0) {
-                %composer.startReplaceableGroup(<>)
-                sourceInformation(%composer, "<A()>")
                 A(%composer, 0)
                 %composer.endReplaceableGroup()
-                %composer.endReplaceableGroup()
                 return
-              } else {
-                %composer.startReplaceableGroup(<>)
-                %composer.endReplaceableGroup()
               }
               print("hello")
               %composer.endReplaceableGroup()
@@ -934,23 +949,18 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int): Int {
               %composer.startReplaceableGroup(<>)
-              sourceInformation(%composer, "C(Example):Test.kt")
+              sourceInformation(%composer, "C(Example)<A()>:Test.kt")
               if (x > 0) {
-                %composer.startReplaceableGroup(<>)
-                sourceInformation(%composer, "<A()>")
                 A(%composer, 0)
                 val tmp1_return = 1
                 %composer.endReplaceableGroup()
-                %composer.endReplaceableGroup()
                 return tmp1_return
-              } else {
-                %composer.startReplaceableGroup(<>)
-                %composer.endReplaceableGroup()
               }
               val tmp0 = 2
               %composer.endReplaceableGroup()
               return tmp0
             }
+
         """
     )
 
@@ -1027,17 +1037,15 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             fun Example(x: Int, %composer: Composer?, %changed: Int): Int {
               %composer.startReplaceableGroup(<>)
               sourceInformation(%composer, "C(Example)<R()>:Test.kt")
+              %composer.startReplaceableGroup(<>)
+              sourceInformation(%composer, "<R()>")
               if (x > 0) {
-                %composer.startReplaceableGroup(<>)
-                sourceInformation(%composer, "<R()>")
                 val tmp1_return = R(%composer, 0)
                 %composer.endReplaceableGroup()
                 %composer.endReplaceableGroup()
                 return tmp1_return
-              } else {
-                %composer.startReplaceableGroup(<>)
-                %composer.endReplaceableGroup()
               }
+              %composer.endReplaceableGroup()
               val tmp0 = R(%composer, 0)
               %composer.endReplaceableGroup()
               return tmp0
@@ -1604,10 +1612,8 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>)
-              sourceInformation(%composer, "C(Example):Test.kt")
+              sourceInformation(%composer, "C(Example)<A()>:Test.kt")
               if (x > 0) {
-                %composer.startReplaceableGroup(<>)
-                sourceInformation(%composer, "<A()>")
                 %composer.startReplaceableGroup(<>)
                 sourceInformation(%composer, "*<A()>")
                 while (x > 0) {
@@ -1615,10 +1621,6 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 }
                 %composer.endReplaceableGroup()
                 A(%composer, 0)
-                %composer.endReplaceableGroup()
-              } else {
-                %composer.startReplaceableGroup(<>)
-                %composer.endReplaceableGroup()
               }
               %composer.endReplaceableGroup()
             }
@@ -1643,18 +1645,12 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>)
-              sourceInformation(%composer, "C(Example):Test.kt")
+              sourceInformation(%composer, "C(Example)<A()>,*<A()>:Test.kt")
               if (x > 0) {
-                %composer.startReplaceableGroup(<>)
-                sourceInformation(%composer, "<A()>,*<A()>")
                 A(%composer, 0)
                 while (x > 0) {
                   A(%composer, 0)
                 }
-                %composer.endReplaceableGroup()
-              } else {
-                %composer.startReplaceableGroup(<>)
-                %composer.endReplaceableGroup()
               }
               %composer.endReplaceableGroup()
             }
@@ -1678,17 +1674,11 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>)
-              sourceInformation(%composer, "C(Example):Test.kt")
+              sourceInformation(%composer, "C(Example)*<A()>:Test.kt")
               if (x > 0) {
-                %composer.startReplaceableGroup(<>)
-                sourceInformation(%composer, "*<A()>")
                 while (x > 0) {
                   A(%composer, 0)
                 }
-                %composer.endReplaceableGroup()
-              } else {
-                %composer.startReplaceableGroup(<>)
-                %composer.endReplaceableGroup()
               }
               %composer.endReplaceableGroup()
             }
@@ -1953,16 +1943,10 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
               %composer.startReplaceableGroup(<>)
               sourceInformation(%composer, "C(Example):Test.kt")
               if (x > 0) {
-                %composer.startReplaceableGroup(<>)
-                sourceInformation(%composer, "")
                 %composer.startMovableGroup(<>, x)
                 sourceInformation(%composer, "<A()>")
                 A(%composer, 0)
                 %composer.endMovableGroup()
-                %composer.endReplaceableGroup()
-              } else {
-                %composer.startReplaceableGroup(<>)
-                %composer.endReplaceableGroup()
               }
               %composer.endReplaceableGroup()
             }
@@ -1987,19 +1971,13 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>)
-              sourceInformation(%composer, "C(Example):Test.kt")
+              sourceInformation(%composer, "C(Example)<A(b)>:Test.kt")
               if (x > 0) {
-                %composer.startReplaceableGroup(<>)
-                sourceInformation(%composer, "<A(b)>")
                 %composer.startMovableGroup(<>, x)
                 sourceInformation(%composer, "<A(a)>")
                 A(a, %composer, 0)
                 %composer.endMovableGroup()
                 A(b, %composer, 0)
-                %composer.endReplaceableGroup()
-              } else {
-                %composer.startReplaceableGroup(<>)
-                %composer.endReplaceableGroup()
               }
               %composer.endReplaceableGroup()
             }
@@ -2024,19 +2002,13 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>)
-              sourceInformation(%composer, "C(Example):Test.kt")
+              sourceInformation(%composer, "C(Example)<A(a)>:Test.kt")
               if (x > 0) {
-                %composer.startReplaceableGroup(<>)
-                sourceInformation(%composer, "<A(a)>")
                 A(a, %composer, 0)
                 %composer.startMovableGroup(<>, x)
                 sourceInformation(%composer, "<A(b)>")
                 A(b, %composer, 0)
                 %composer.endMovableGroup()
-                %composer.endReplaceableGroup()
-              } else {
-                %composer.startReplaceableGroup(<>)
-                %composer.endReplaceableGroup()
               }
               %composer.endReplaceableGroup()
             }
@@ -2142,10 +2114,8 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             fun Example(x: Int, %composer: Composer?, %changed: Int): Int {
               %composer.startReplaceableGroup(<>)
               sourceInformation(%composer, "C(Example):Test.kt")
-              val tmp0 = if (x > 0) {
-                %composer.startReplaceableGroup(<>)
-                sourceInformation(%composer, "")
-                val tmp4_group =
+              val tmp0 =
+              val tmp4_group = if (x > 0) {
                 val tmp3_group = if (%composer.startReplaceableGroup(<>)
                 sourceInformation(%composer, "<B()>")
                 val tmp1_group = B(%composer, 0)
@@ -2156,13 +2126,10 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.endReplaceableGroup()
                 tmp2_group) 2 else 3
                 tmp3_group
-                %composer.endReplaceableGroup()
-                tmp4_group
               } else {
-                %composer.startReplaceableGroup(<>)
-                %composer.endReplaceableGroup()
                 4
               }
+              tmp4_group
               %composer.endReplaceableGroup()
               return tmp0
             }
@@ -2295,30 +2262,25 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
               }
               if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                 val tmp0_safe_receiver = x
+                %composer.startReplaceableGroup(<>)
+                sourceInformation(%composer, "*<A(b)>")
                 when {
                   tmp0_safe_receiver == null -> {
-                    %composer.startReplaceableGroup(<>)
-                    %composer.endReplaceableGroup()
                     null
                   }
                   else -> {
-                    %composer.startReplaceableGroup(<>)
-                    sourceInformation(%composer, "*<A(b)>")
                     tmp0_safe_receiver.let { it: Int ->
+                      %composer.startReplaceableGroup(<>)
+                      sourceInformation(%composer, "<A(a)>")
                       if (it > 0) {
-                        %composer.startReplaceableGroup(<>)
-                        sourceInformation(%composer, "<A(a)>")
                         A(a, %composer, 0)
-                        %composer.endReplaceableGroup()
-                      } else {
-                        %composer.startReplaceableGroup(<>)
-                        %composer.endReplaceableGroup()
                       }
+                      %composer.endReplaceableGroup()
                       A(b, %composer, 0)
                     }
-                    %composer.endReplaceableGroup()
                   }
                 }
+                %composer.endReplaceableGroup()
                 A(c, %composer, 0)
               } else {
                 %composer.skipToGroupEnd()
