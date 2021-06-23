@@ -724,9 +724,13 @@ abstract class Kotlin2JsCompile @Inject constructor(
     }
 
     internal abstract class LibraryFilterCachingService : BuildService<BuildServiceParameters.None>, AutoCloseable {
-        private val cache = ConcurrentHashMap<File, Boolean>()
+        internal data class LibraryFilterCacheKey(val dependency: File, val irEnabled: Boolean, val preIrDisabled: Boolean)
 
-        fun getOrCompute(key: File, compute: (File) -> Boolean) = cache.computeIfAbsent(key, compute)
+        private val cache = ConcurrentHashMap<LibraryFilterCacheKey, Boolean>()
+
+        fun getOrCompute(key: LibraryFilterCacheKey, compute: (File) -> Boolean) = cache.computeIfAbsent(key) {
+            compute(it.dependency)
+        }
 
         override fun close() {
             cache.clear()
@@ -821,6 +825,13 @@ abstract class Kotlin2JsCompile @Inject constructor(
             "-Xir-produce-klib-file"
         ).any(freeCompilerArgs::contains)
 
+    private val File.asLibraryFilterCacheKey: LibraryFilterCachingService.LibraryFilterCacheKey
+        get() = LibraryFilterCachingService.LibraryFilterCacheKey(
+            this,
+            irEnabled = kotlinOptions.isIrBackendEnabled(),
+            preIrDisabled = kotlinOptions.isPreIrBackendDisabled()
+        )
+
     // Kotlin/JS can operate in 3 modes:
     //  1) purely pre-IR backend
     //  2) purely IR backend
@@ -842,7 +853,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
     @get:Internal
     protected val libraryFilter: (File) -> Boolean
         get() = { file ->
-            libraryCache.get().getOrCompute(file, libraryFilterBody)
+            libraryCache.get().getOrCompute(file.asLibraryFilterCacheKey, libraryFilterBody)
         }
 
     @get:Internal
