@@ -26,7 +26,7 @@ fun case1() {
     val z = JavaEnum.Val_1
     val when2 = <!NO_ELSE_IN_WHEN!>when<!> (z) {
         JavaEnum.Val_1 -> { }
-        JavaEnum.Val_1 -> { }
+        <!DUPLICATE_LABEL_IN_WHEN!>JavaEnum.Val_1<!> -> { }
     }
 
 }
@@ -37,7 +37,7 @@ fun case2() {
     val b = false
     val when2: Any = <!NO_ELSE_IN_WHEN!>when<!> (b) {
         false -> { }
-        false -> { }
+        <!DUPLICATE_LABEL_IN_WHEN!>false<!> -> { }
     }
 }
 
@@ -47,7 +47,7 @@ fun case3() {
     val a = false
     val when2: Any = <!NO_ELSE_IN_WHEN!>when<!> (a) {
         true -> { }
-        true -> { }
+        <!DUPLICATE_LABEL_IN_WHEN!>true<!> -> { }
     }
 }
 
@@ -58,7 +58,7 @@ fun case4() {
     val when2 = <!NO_ELSE_IN_WHEN!>when<!> (x){
         is  SClass.A ->{ }
         is  SClass.B ->{ }
-        is  SClass.B ->{ }
+        is  <!DUPLICATE_LABEL_IN_WHEN!>SClass.B<!> ->{ }
     }
 }
 
