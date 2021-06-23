@@ -96,7 +96,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
     private val sessionFlagFile = config.projectFiles.sessionFlagFile
     private val compilerFullClasspath = config.compilerFullClasspath
     private val compilerClassName = config.compilerClassName
-    private val compilerArgs = config.compilerArgs
+    private val compilerArgs = config.compilerArgs.let { if (config.reportingSettings.reportMetrics) it + "-Xperf=silent" else it }
     private val isVerbose = config.isVerbose
     private val incrementalCompilationEnvironment = config.incrementalCompilationEnvironment
     private val incrementalModuleInfo = config.incrementalModuleInfo

@@ -568,7 +568,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
     @NotNull
     @Override
-    protected CommonCompilerPerformanceManager getPerformanceManager() {
+    protected CommonCompilerPerformanceManager getDefaultPerformanceManager() {
         return performanceManager;
     }
 

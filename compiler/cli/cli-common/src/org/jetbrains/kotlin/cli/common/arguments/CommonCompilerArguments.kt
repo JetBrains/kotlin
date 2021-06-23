@@ -184,15 +184,15 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var properIeee754Comparisons by FreezableVar(false)
 
-    @Argument(value = "-Xreport-perf", description = "Report detailed performance statistics")
-    var reportPerf: Boolean by FreezableVar(false)
-
     @Argument(
-        value = "-Xdump-perf",
-        valueDescription = "<path>",
-        description = "Dump detailed performance statistics to the specified file"
+        value = "-Xperf",
+        valueDescription = "{silent|stdout|<path>}",
+        description = "Collect performance statistics:\n" +
+                "-Xperf=silent  Just enable collecting (might be useful for environments which launch compiler in-process)" +
+                "-Xperf=stdout  Write performance report to stdout" +
+                "-Xperf=<path>  Write performance report to designated <path>"
     )
-    var dumpPerf: String? by NullableStringFreezableVar(null)
+    var perf: String? by FreezableVar(null)
 
     @Argument(
         value = "-Xmetadata-version",

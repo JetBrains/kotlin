@@ -43,9 +43,10 @@ import java.io.PrintStream
 
 abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
 
-    protected abstract val performanceManager: CommonCompilerPerformanceManager
+    protected abstract val defaultPerformanceManager: CommonCompilerPerformanceManager
 
-    protected open fun createPerformanceManager(arguments: A, services: Services): CommonCompilerPerformanceManager = performanceManager
+    protected open fun createPerformanceManager(arguments: A, services: Services): CommonCompilerPerformanceManager =
+        services[CommonCompilerPerformanceManager::class.java] ?: defaultPerformanceManager
 
     // Used in CompilerRunnerUtil#invokeExecMethod, in Eclipse plugin (KotlinCLICompiler) and in kotlin-gradle-plugin (GradleCompilerRunner)
     fun execAndOutputXml(errStream: PrintStream, services: Services, vararg args: String): ExitCode {
@@ -59,9 +60,8 @@ abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
 
     public override fun execImpl(messageCollector: MessageCollector, services: Services, arguments: A): ExitCode {
         val performanceManager = createPerformanceManager(arguments, services)
-        if (arguments.reportPerf || arguments.dumpPerf != null) {
-            performanceManager.enableCollectingPerformanceStatistics()
-        }
+        val perfReportingMode = PerfReportingMode.parse(arguments.perf)
+        if (perfReportingMode != null) performanceManager.enableCollectingPerformanceStatistics()
 
         val configuration = CompilerConfiguration()
 
@@ -90,17 +90,22 @@ abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
                 val code = doExecute(arguments, configuration, rootDisposable, paths)
 
                 performanceManager.notifyCompilationFinished()
-                if (arguments.reportPerf) {
-                    collector.report(INFO, "PERF: " + performanceManager.getTargetInfo())
-                    for (measurement in performanceManager.getMeasurementResults()) {
-                        collector.report(INFO, "PERF: " + measurement.render(), null)
+
+                when (perfReportingMode) {
+                    PerfReportingMode.Silent, null -> { // do nothing
+                    }
+
+                    is PerfReportingMode.DumpToFile -> {
+                        performanceManager.dumpPerformanceReport(perfReportingMode.file)
+                    }
+
+                    PerfReportingMode.Stdout -> {
+                        collector.report(INFO, "PERF: " + performanceManager.getTargetInfo())
+                        for (measurement in performanceManager.getMeasurementResults()) {
+                            collector.report(INFO, "PERF: " + measurement.render(), null)
+                        }
                     }
                 }
-
-                if (arguments.dumpPerf != null) {
-                    performanceManager.dumpPerformanceReport(File(arguments.dumpPerf!!))
-                }
-
                 return if (collector.hasErrors()) COMPILATION_ERROR else code
             } catch (e: CompilationCanceledException) {
                 collector.reportCompilationCancelled(e)

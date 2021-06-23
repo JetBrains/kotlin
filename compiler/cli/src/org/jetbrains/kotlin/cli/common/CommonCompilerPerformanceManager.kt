@@ -115,8 +115,13 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
         )
     }
 
+    fun createPerformanceReport(): String = buildString {
+        append("$presentableName performance report\n")
+        measurements.map { it.render() }.sorted().forEach { append("$it\n") }
+    }
+
     fun dumpPerformanceReport(destination: File) {
-        destination.writeBytes(createPerformanceReport())
+        destination.writeBytes(createPerformanceReport().toByteArray())
     }
 
     private fun recordGcTime() {
@@ -150,14 +155,33 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
         PerformanceCounter.report { s -> measurements += PerformanceCounterMeasurement(s) }
     }
 
-    private fun createPerformanceReport(): ByteArray = buildString {
-        append("$presentableName performance report\n")
-        measurements.map { it.render() }.sorted().forEach { append("$it\n") }
-    }.toByteArray()
-
     open fun notifyRepeat(total: Int, number: Int) {}
 
     private data class GCData(val name: String, val collectionTime: Long, val collectionCount: Long) {
         constructor(bean: GarbageCollectorMXBean) : this(bean.name, bean.collectionTime, bean.collectionCount)
     }
+
+    companion object {
+
+    }
 }
+
+sealed class PerfReportingMode {
+    object Silent : PerfReportingMode()
+    object Stdout : PerfReportingMode()
+    class DumpToFile(val file: File) : PerfReportingMode()
+
+    companion object {
+        fun parse(text: String?): PerfReportingMode? {
+            if (text == null) return null
+
+            return when {
+                text == "silent" -> Silent
+                text == "stdout" -> Stdout
+                else -> DumpToFile(File(text))
+            }
+        }
+
+    }
+}
+

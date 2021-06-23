@@ -255,7 +255,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
     override fun createArguments(): K2JVMCompilerArguments = K2JVMCompilerArguments().apply {
         if (System.getenv("KOTLIN_REPORT_PERF") != null) {
-            reportPerf = true
+            perf = "stdout"
         }
     }
 
@@ -263,7 +263,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
     override fun createMetadataVersion(versionArray: IntArray): BinaryVersion = JvmMetadataVersion(*versionArray)
 
-    protected class K2JVMCompilerPerformanceManager : CommonCompilerPerformanceManager("Kotlin to JVM Compiler")
+    class K2JVMCompilerPerformanceManager : CommonCompilerPerformanceManager("Kotlin to JVM Compiler")
 
     companion object {
         @JvmStatic
@@ -273,14 +273,14 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
     }
 
-    override val performanceManager: CommonCompilerPerformanceManager
+    override val defaultPerformanceManager: CommonCompilerPerformanceManager
         get() = error("Unsupported")
 
     override fun createPerformanceManager(arguments: K2JVMCompilerArguments, services: Services): CommonCompilerPerformanceManager {
-        val externalManager = services[CommonCompilerPerformanceManager::class.java]
-        if (externalManager != null) return externalManager
-        val argument = arguments.profileCompilerCommand ?: return K2JVMCompilerPerformanceManager()
-        return ProfilingCompilerPerformanceManager.create(argument)
+        return if (arguments.profileCompilerCommand != null)
+            ProfilingCompilerPerformanceManager.create(arguments.profileCompilerCommand!!)
+        else
+            super.createPerformanceManager(arguments, services)
     }
 }
 

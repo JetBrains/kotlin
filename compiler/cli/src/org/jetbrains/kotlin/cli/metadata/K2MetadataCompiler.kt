@@ -39,7 +39,7 @@ import java.io.File
 
 class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
 
-    override val performanceManager = K2MetadataCompilerPerformanceManager()
+    override val defaultPerformanceManager = K2MetadataCompilerPerformanceManager()
 
     override fun createArguments() = K2MetadataCompilerArguments()
 
