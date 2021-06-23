@@ -435,6 +435,13 @@ internal class NotASupertypeImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class TypeArgumentsRedundantInSuperQualifierImpl(
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.TypeArgumentsRedundantInSuperQualifier(), KtAbstractFirDiagnostic<KtElement> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class SuperclassNotAccessibleFromInterfaceImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,

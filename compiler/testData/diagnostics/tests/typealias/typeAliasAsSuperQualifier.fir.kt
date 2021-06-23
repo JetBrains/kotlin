@@ -22,8 +22,8 @@ class TestSuperForBase : B() {
     override fun foo() {
         super<Base>.foo()
         super<B>.foo()
-        super<<!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>MyBase<!>>.<!UNRESOLVED_REFERENCE!>foo<!>()
-        <!NOT_A_SUPERTYPE!>super<U><!>.foo()
+        super<<!NOT_A_SUPERTYPE!>MyBase<!>>.foo()
+        super<<!NOT_A_SUPERTYPE!>U<!>>.foo()
     }
 }
 
@@ -34,8 +34,8 @@ class TestSuperForGenericBase<T> : GB<T>() {
     override fun foo() {
         super<GenericBase>.foo()
         super<GB>.foo()
-        super<<!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>MyBase<!>>.<!UNRESOLVED_REFERENCE!>foo<!>()
-        super<<!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>MyBaseInt<!>>.<!UNRESOLVED_REFERENCE!>foo<!>() // Type arguments don't matter here
-        <!NOT_A_SUPERTYPE!>super<U><!>.foo()
+        super<<!NOT_A_SUPERTYPE!>MyBase<!>>.foo()
+        super<<!NOT_A_SUPERTYPE!>MyBaseInt<!>>.foo() // Type arguments don't matter here
+        super<<!NOT_A_SUPERTYPE!>U<!>>.foo()
     }
 }

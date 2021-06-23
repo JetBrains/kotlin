@@ -390,6 +390,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TOO_MANY_ARGUMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TOPLEVEL_TYPEALIASES_ONLY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPEALIAS_SHOULD_EXPAND_TO_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_CANT_BE_USED_FOR_CONST_VAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETERS_IN_ENUM
@@ -540,6 +541,7 @@ class FirDefaultErrorMessages {
 
             // Supertypes
             map.put(NOT_A_SUPERTYPE, "Not an immediate supertype")
+            map.put(TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER, "Type arguments do not need to be specified in a 'super' qualifier")
             map.put(SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE, "Superclass is not accessible from interface")
             map.put(
                 QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE,

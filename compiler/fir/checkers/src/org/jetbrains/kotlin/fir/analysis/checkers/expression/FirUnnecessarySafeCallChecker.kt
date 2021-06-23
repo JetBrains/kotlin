@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.fir.types.isUnit
 object FirUnnecessarySafeCallChecker : FirSafeCallExpressionChecker() {
     override fun check(expression: FirSafeCallExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         val receiverType = expression.receiver.typeRef.coneType.fullyExpandedType(context.session)
-        if (receiverType.isUnit) {
+        if (receiverType.isUnit || expression.receiver.source?.elementType == KtNodeTypes.SUPER_EXPRESSION) {
             reporter.reportOn(expression.source, FirErrors.UNEXPECTED_SAFE_CALL, context)
             return
         }

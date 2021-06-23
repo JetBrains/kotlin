@@ -370,12 +370,14 @@ private fun ConeSimpleDiagnostic.getFactory(source: FirSourceElement): FirDiagno
         DiagnosticKind.NoReceiverAllowed -> FirErrors.NO_RECEIVER_ALLOWED
         DiagnosticKind.IsEnumEntry -> FirErrors.IS_ENUM_ENTRY
         DiagnosticKind.EnumEntryAsType -> FirErrors.ENUM_ENTRY_AS_TYPE
+        DiagnosticKind.NotASupertype -> FirErrors.NOT_A_SUPERTYPE
+        DiagnosticKind.SuperNotAvailable -> FirErrors.SUPER_NOT_AVAILABLE
         DiagnosticKind.UnresolvedSupertype,
         DiagnosticKind.UnresolvedExpandedType,
         DiagnosticKind.Other -> FirErrors.OTHER_ERROR
-        else -> throw IllegalArgumentException("Unsupported diagnostic kind: $kind at $javaClass")
     }
 }
+
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
 private fun FirDiagnosticFactory0.createOn(

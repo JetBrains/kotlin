@@ -375,6 +375,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER) { firDiagnostic ->
+        TypeArgumentsRedundantInSuperQualifierImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE) { firDiagnostic ->
         SuperclassNotAccessibleFromInterfaceImpl(
             firDiagnostic as FirPsiDiagnostic,
