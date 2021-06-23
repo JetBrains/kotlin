@@ -26,12 +26,16 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.inference.FirStubInferenceSession
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.transformers.*
+import org.jetbrains.kotlin.fir.resolve.transformers.InvocationKindTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.StoreReceiver
+import org.jetbrains.kotlin.fir.resolve.transformers.firClassLike
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
+import org.jetbrains.kotlin.fir.visitors.TransformData
+import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
@@ -490,10 +494,16 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         equalityOperatorCall: FirEqualityOperatorCall,
         data: ResolutionMode
     ): FirStatement {
-        val result = (equalityOperatorCall.transformChildren(transformer, ResolutionMode.ContextIndependent) as FirEqualityOperatorCall)
-            .also { it.resultType = equalityOperatorCall.typeRef.resolvedTypeFromPrototype(builtinTypes.booleanType.type) }
-        dataFlowAnalyzer.exitEqualityOperatorCall(result)
-        return result
+        // Currently, we use expectedType=Any? for both operands
+        // In FE1.0, it's only used for the right
+        // But it seems a bit inconsistent (see KT-47409)
+        // Also it's kind of complicated to transform different arguments with different expectType considering current FIR structure
+        equalityOperatorCall.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
+        equalityOperatorCall.argumentList.transformArguments(transformer, withExpectedType(builtinTypes.nullableAnyType))
+        equalityOperatorCall.resultType = equalityOperatorCall.typeRef.resolvedTypeFromPrototype(builtinTypes.booleanType.type)
+
+        dataFlowAnalyzer.exitEqualityOperatorCall(equalityOperatorCall)
+        return equalityOperatorCall
     }
 
     private inline fun <T> resolveCandidateForAssignmentOperatorCall(block: () -> T): T {
