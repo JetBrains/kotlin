@@ -1405,7 +1405,6 @@ class CocoaPodsIT : BaseGradleIT() {
         fun installPodGen() {
             if (cocoapodsInstallationRequired) {
                 if (cocoapodsInstallationAllowed) {
-                    WorkaroundForXcode12_3.apply()
                     gem("install", "--install-dir", cocoapodsInstallationRoot.absolutePath, "cocoapods", "cocoapods-generate")
                 } else {
                     fail(
@@ -1417,14 +1416,6 @@ class CocoaPodsIT : BaseGradleIT() {
                         """.trimIndent()
                     )
                 }
-            }
-        }
-
-        @AfterClass
-        @JvmStatic
-        fun disposeWorkarounds() {
-            if (cocoapodsInstallationRequired && cocoapodsInstallationAllowed) {
-                WorkaroundForXcode12_3.dispose()
             }
         }
 
@@ -1468,36 +1459,6 @@ class CocoaPodsIT : BaseGradleIT() {
                 "Process 'gem ${args.joinToString(separator = " ")}' exited with error code ${result.exitCode}. See log for details."
             }
             return result.output
-        }
-
-        // Workaround the issue with Ruby paths for Xcode 12.3.
-        // See: https://github.com/CocoaPods/CocoaPods/issues/10286#issuecomment-750403566
-        private object WorkaroundForXcode12_3 {
-            private val xcodeRubyRoot = File(
-                "/Applications/Xcode.app/Contents/Developer/Platforms/" +
-                        "MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library" +
-                        "/Frameworks/Ruby.framework/Versions/2.6/usr/include/ruby-2.6.0"
-            )
-            private val original = xcodeRubyRoot.resolve("universal-darwin20").toPath()
-            private var link: Path? = null
-
-            fun apply() {
-                val linkFile = xcodeRubyRoot.resolve("universal-darwin19")
-                if (!linkFile.exists() && Files.exists(original)) {
-                    Files.createSymbolicLink(linkFile.toPath(), original)
-                    linkFile.deleteOnExit()
-                    link = linkFile.toPath()
-                }
-            }
-
-            fun dispose() {
-                link?.let { link ->
-                    // We created the link, so now we should delete it.
-                    if (Files.isSymbolicLink(link) && Files.readSymbolicLink(link) == original) {
-                        Files.delete(link)
-                    }
-                }
-            }
         }
     }
 }
