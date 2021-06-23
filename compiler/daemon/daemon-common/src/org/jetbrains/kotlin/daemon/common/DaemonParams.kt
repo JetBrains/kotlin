@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.daemon.common
 
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
-import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import java.io.File
 import java.io.Serializable
 import java.lang.management.ManagementFactory
@@ -255,7 +254,7 @@ data class CompilerId(
 }
 
 
-fun isDaemonEnabled(): Boolean = CompilerSystemProperties.COMPILE_DAEMON_ENABLED_PROPERTY.toBooleanLenient()
+fun isDaemonEnabled(): Boolean = CompilerSystemProperties.COMPILE_DAEMON_ENABLED_PROPERTY.value != null
 
 fun configureDaemonJVMOptions(opts: DaemonJVMOptions,
                               vararg additionalParams: String,
@@ -347,12 +346,8 @@ fun configureDaemonOptions(opts: DaemonOptions): DaemonOptions {
                     "Unrecognized daemon options passed via property ${CompilerSystemProperties.COMPILE_DAEMON_OPTIONS_PROPERTY.property}: " + unrecognized.joinToString(" ") +
                     "\nSupported options: " + opts.mappers.joinToString(", ", transform = { it.names.first() }))
     }
-    if (CompilerSystemProperties.COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY.toBooleanLenient()) {
-        opts.verbose = true
-    }
-    if (CompilerSystemProperties.COMPILE_DAEMON_REPORT_PERF_PROPERTY.toBooleanLenient()) {
-        opts.reportPerf = true
-    }
+    CompilerSystemProperties.COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY.value?.let { opts.verbose = true }
+    CompilerSystemProperties.COMPILE_DAEMON_REPORT_PERF_PROPERTY.value?.let { opts.reportPerf = true }
     return opts
 }
 
