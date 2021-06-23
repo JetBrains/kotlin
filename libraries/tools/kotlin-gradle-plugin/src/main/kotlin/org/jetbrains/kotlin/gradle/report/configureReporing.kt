@@ -75,6 +75,8 @@ private fun configurePlainTextReportWriter(
     val ts = SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(Calendar.getInstance().time)
     val reportFile = reportDir.resolve("${gradle.rootProject.name}-build-$ts.txt")
 
+    reportFile.createNewFile()
+
     return PlainTextBuildReportWriter(
         outputFile = reportFile,
         printMetrics = reportingSettings.includeMetricsInReport,

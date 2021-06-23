@@ -135,8 +135,7 @@ internal fun reportArgumentsIgnoredGenerally(
         K2JVMCompilerArguments::pluginClasspaths,
         K2JVMCompilerArguments::useJavac,
         K2JVMCompilerArguments::compileJava,
-        K2JVMCompilerArguments::reportPerf,
-        K2JVMCompilerArguments::dumpPerf
+        K2JVMCompilerArguments::perf
     )
 
 internal fun reportArgumentsIgnoredFromRefinement(
