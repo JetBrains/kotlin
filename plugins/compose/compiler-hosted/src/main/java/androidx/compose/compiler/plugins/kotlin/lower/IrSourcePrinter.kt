@@ -784,7 +784,15 @@ private class IrSourcePrinterVisitor(
             }
             IrStatementOrigin.SAFE_CALL -> {
                 val lhs = expression.statements[0] as IrVariable
-                val rhs = expression.statements[1] as IrWhen
+                val rhsStatement = expression.statements[1]
+                val rhs = when (rhsStatement) {
+                    is IrBlock -> {
+                        rhsStatement.statements[1]
+                    }
+                    else -> {
+                        rhsStatement
+                    }
+                } as IrWhen
                 val call = rhs.branches.last().result as? IrCall
                 if (call == null) {
                     expression.statements.printJoin("\n")

@@ -3133,7 +3133,7 @@ class ComposableFunctionBodyTransformer(
         // composable call in it, we can avoid creating a group for it since it is not
         // conditionally executed.
         var needsWrappingGroup = false
-        var someResultsHaveCalls = false
+        var resultsWithCalls = 0
         var hasElseBranch = false
 
         val transformed = IrWhenImpl(
@@ -3153,7 +3153,9 @@ class ComposableFunctionBodyTransformer(
                     condScopes.add(Scope.BranchScope())
                     resultScopes.add(resultScope)
 
-                    someResultsHaveCalls = someResultsHaveCalls || resultScope.hasComposableCalls
+                    if (resultScope.hasComposableCalls)
+                        resultsWithCalls++
+
                     transformed.branches.add(
                         IrElseBranchImpl(
                             it.startOffset,
@@ -3177,7 +3179,9 @@ class ComposableFunctionBodyTransformer(
                     // it doesn't necessitate a group
                     needsWrappingGroup =
                         needsWrappingGroup || (index != 0 && condScope.hasComposableCalls)
-                    someResultsHaveCalls = someResultsHaveCalls || resultScope.hasComposableCalls
+                    if (resultScope.hasComposableCalls)
+                        resultsWithCalls++
+
                     transformed.branches.add(
                         IrBranchImpl(
                             it.startOffset,
@@ -3196,7 +3200,7 @@ class ComposableFunctionBodyTransformer(
         // statement in a group entirely, which we will do if the conditions have calls in them.
         // NOTE: we might also be able to assume that the when is exhaustive if it has a non-unit
         // resulting type, since the type system should enforce that.
-        if (!hasElseBranch && someResultsHaveCalls && !needsWrappingGroup) {
+        if (!hasElseBranch && resultsWithCalls > 1 && !needsWrappingGroup) {
             condScopes.add(Scope.BranchScope())
             resultScopes.add(Scope.BranchScope())
             transformed.branches.add(
@@ -3223,15 +3227,15 @@ class ComposableFunctionBodyTransformer(
 
         forEachWith(transformed.branches, condScopes, resultScopes) { it, condScope, resultScope ->
             // If the conditional block doesn't have a composable call in it, we don't need
-            // to geneerate a group around it because we will be generating one around the entire
+            // to generate a group around it because we will be generating one around the entire
             // if statement
             if (needsWrappingGroup && condScope.hasComposableCalls) {
                 it.condition = it.condition.asReplaceableGroup(condScope)
             }
             if (
-                // if no wrapping group but some results have calls, we have to have every result
-                // be a group so that we have a consistent number of groups during execution
-                (someResultsHaveCalls && !needsWrappingGroup) ||
+                // if no wrapping group but more than one result have calls, we have to have every
+                // result be a group so that we have a consistent number of groups during execution
+                (resultsWithCalls > 1 && !needsWrappingGroup) ||
                 // if we are wrapping the if with a group, then we only need to add a group when
                 // the block has composable calls
                 (needsWrappingGroup && resultScope.hasComposableCalls)
@@ -3240,7 +3244,9 @@ class ComposableFunctionBodyTransformer(
             }
         }
 
-        return if (needsWrappingGroup) {
+        return if (resultsWithCalls == 1) {
+            transformed.asCoalescableGroup(resultScopes.single { it.hasComposableCalls })
+        } else if (needsWrappingGroup) {
             transformed.asCoalescableGroup(whenScope)
         } else {
             transformed
@@ -3536,10 +3542,10 @@ class ComposableFunctionBodyTransformer(
                 if (withGroups) {
                     hasComposableCallsWithGroups = true
                 }
-                if (coalescableChild != null) {
+                if (coalescableChilds.isNotEmpty()) {
                     // if a call happens after the coalescable child group, then we should
                     // realize the group of the coalescable child
-                    shouldRealizeCoalescableChild = true
+                    coalescableChilds.last().shouldRealize = true
                 }
             }
 
@@ -3563,12 +3569,13 @@ class ComposableFunctionBodyTransformer(
                 makeEnd: () -> IrExpression
             ) {
                 addProvisionalSourceLocations(scope.sourceLocations)
-                coalescableChild = scope
-                realizeCoalescableChildGroup = {
-                    scope.realizeGroup(makeEnd)
-                    realizeGroup()
-                    realizeCoalescableChildGroup = { }
-                }
+                coalescableChilds.add(
+                    CoalescableGroupInfo(
+                        scope,
+                        realizeGroup,
+                        makeEnd
+                    )
+                )
             }
 
             open fun calculateHasSourceInformation(sourceInformationEnabled: Boolean): Boolean =
@@ -3611,10 +3618,8 @@ class ComposableFunctionBodyTransformer(
             }
 
             fun realizeCoalescableGroup() {
-                if (shouldRealizeCoalescableChild) {
-                    realizeCoalescableChildGroup()
-                } else {
-                    coalescableChild?.realizeCoalescableGroup()
+                coalescableChilds.forEach {
+                    it.realize()
                 }
             }
 
@@ -3633,10 +3638,28 @@ class ComposableFunctionBodyTransformer(
                 private set
             var hasJump = false
                 protected set
-            private var realizeCoalescableChildGroup = {}
-            private var shouldRealizeCoalescableChild = false
-            private var coalescableChild: BlockScope? = null
+            private var coalescableChilds = mutableListOf<CoalescableGroupInfo>()
+
+            class CoalescableGroupInfo(
+                private val scope: BlockScope,
+                private val realizeGroup: () -> Unit,
+                private val makeEnd: () -> IrExpression
+            ) {
+                var shouldRealize = false
+                private var realized = false
+                fun realize() {
+                    if (realized) return
+                    realized = true
+                    if (shouldRealize) {
+                        scope.realizeGroup(makeEnd)
+                        realizeGroup()
+                    } else {
+                        scope.realizeCoalescableGroup()
+                    }
+                }
+            }
         }
+
         class ClassScope(name: Name) : Scope("class ${name.asString()}")
         class PropertyScope(name: Name) : Scope("val ${name.asString()}")
         class FieldScope(name: Name) : Scope("field ${name.asString()}")
