@@ -938,3 +938,16 @@ abstract class AbstractKotlin2JsGradlePluginIT(val irBackend: Boolean) : BaseGra
                 Gson().fromJson(it.readText(), PackageJson::class.java)
             }
 }
+
+class GeneralKotlin2JsGradlePluginIT : BaseGradleIT() {
+    @Test
+    fun testJsBothModeWithTests() = with(Project("kotlin-js-both-mode-with-tests")) {
+        setupWorkingDir()
+        gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+
+        build("build") {
+            assertSuccessful()
+            assertNoWarnings()
+        }
+    }
+}
