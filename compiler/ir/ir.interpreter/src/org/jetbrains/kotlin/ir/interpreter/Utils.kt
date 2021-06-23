@@ -270,3 +270,13 @@ internal fun IrType.getTypeIfReified(getType: (IrClassifierSymbol) -> IrType): I
         arguments = newArguments
     }
 }
+
+internal fun IrFunctionAccessExpression.getSuperEnumCall(): IrEnumConstructorCall {
+    val name = this.symbol.owner.parentClassOrNull?.fqNameWhenAvailable?.asString()
+    if (this is IrEnumConstructorCall && name == "kotlin.Enum") return this
+    return when (val delegatingCall = this.symbol.owner.body?.statements?.get(0)) {
+        is IrFunctionAccessExpression -> delegatingCall.getSuperEnumCall()
+        is IrTypeOperatorCall -> (delegatingCall.argument as IrFunctionAccessExpression).getSuperEnumCall()
+        else -> TODO("$delegatingCall is unexpected")
+    }
+}

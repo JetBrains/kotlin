@@ -415,26 +415,25 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         callInterceptor.interceptEnumEntry(enumEntry) {
             val enumClass = enumEntry.symbol.owner.parentAsClass
             val enumEntries = enumClass.declarations.filterIsInstance<IrEnumEntry>()
-            val enumSuperCall = (enumClass.primaryConstructor?.body?.statements?.firstOrNull() as? IrEnumConstructorCall)
+            val enumInitializer = enumEntry.initializerExpression?.expression
+                ?: throw InterpreterError("Initializer at enum entry ${enumEntry.fqNameWhenAvailable} is null")
+            val enumConstructorCall = enumInitializer as? IrEnumConstructorCall
+                ?: (enumInitializer as IrBlock).statements.filterIsInstance<IrEnumConstructorCall>().single()
+            val enumSuperCall = enumConstructorCall.getSuperEnumCall()
 
             val cleanEnumSuperCall = fun() {
-                enumSuperCall?.apply { (0 until this.valueArgumentsCount).forEach { putValueArgument(it, null) } } // restore to null
+                enumSuperCall.apply { (0 until this.valueArgumentsCount).forEach { putValueArgument(it, null) } } // restore to null
                 callStack.popState()    // result of constructor must be dropped, because next instruction will be `IrGetEnumValue`
                 callStack.dropSubFrame()
             }
 
-            if (enumEntries.isNotEmpty() && enumSuperCall != null) {
+            if (enumEntries.isNotEmpty()) {
                 val valueArguments = listOf(
                     enumEntry.name.asString().toIrConst(irBuiltIns.stringType),
                     enumEntries.indexOf(enumEntry).toIrConst(irBuiltIns.intType)
                 )
                 valueArguments.forEachIndexed { index, irConst -> enumSuperCall.putValueArgument(index, irConst) }
             }
-
-            val enumInitializer = enumEntry.initializerExpression?.expression
-                ?: throw InterpreterError("Initializer at enum entry ${enumEntry.fqNameWhenAvailable} is null")
-            val enumConstructorCall = enumInitializer as? IrEnumConstructorCall
-                ?: (enumInitializer as IrBlock).statements.filterIsInstance<IrEnumConstructorCall>().single()
 
             val enumClassObject = Variable(enumConstructorCall.getThisReceiver(), Common(enumEntry.correspondingClass ?: enumClass))
             environment.mapOfEnums[enumEntry.symbol] = enumClassObject.state as Complex
