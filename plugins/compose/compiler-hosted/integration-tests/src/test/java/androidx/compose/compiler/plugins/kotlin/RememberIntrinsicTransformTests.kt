@@ -64,19 +64,17 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
             fun app(x: Boolean, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>)
               sourceInformation(%composer, "C(app)<rememb...>:Test.kt")
-              val a = if (x) {
-                %composer.startReplaceableGroup(<>)
-                val tmp0_group = %composer.cache(false) {
+              val a = %composer.startReplaceableGroup(<>)
+              val tmp0_group = if (x) {
+                %composer.cache(false) {
                   val tmp0_return = 1
                   tmp0_return
                 }
-                %composer.endReplaceableGroup()
-                tmp0_group
               } else {
-                %composer.startReplaceableGroup(<>)
-                %composer.endReplaceableGroup()
                 2
               }
+              %composer.endReplaceableGroup()
+              tmp0_group
               val b = remember({
                 val tmp0_return = 2
                 tmp0_return
@@ -534,15 +532,10 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
               if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                 A(%composer, 0)
                 if (condition) {
-                  %composer.startReplaceableGroup(<>)
                   val foo = %composer.cache(false) {
                     val tmp0_return = Foo()
                     tmp0_return
                   }
-                  %composer.endReplaceableGroup()
-                } else {
-                  %composer.startReplaceableGroup(<>)
-                  %composer.endReplaceableGroup()
                 }
               } else {
                 %composer.skipToGroupEnd()
@@ -573,24 +566,18 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
             @Composable
             fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test):Test.kt")
+              sourceInformation(%composer, "C(Test)<A()>,<rememb...>:Test.kt")
               val %dirty = %changed
               if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(condition)) 0b0100 else 0b0010
               }
               if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                 if (condition) {
-                  %composer.startReplaceableGroup(<>)
-                  sourceInformation(%composer, "<A()>,<rememb...>")
                   A(%composer, 0)
                   val foo = remember({
                     val tmp0_return = Foo()
                     tmp0_return
                   }, %composer, 0)
-                  %composer.endReplaceableGroup()
-                } else {
-                  %composer.startReplaceableGroup(<>)
-                  %composer.endReplaceableGroup()
                 }
               } else {
                 %composer.skipToGroupEnd()

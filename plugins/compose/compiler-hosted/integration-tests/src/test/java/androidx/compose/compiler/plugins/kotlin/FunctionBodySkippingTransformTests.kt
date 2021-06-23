@@ -3009,29 +3009,20 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
             @Composable
             fun Test(cond: Boolean, %composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test):Test.kt")
+              sourceInformation(%composer, "C(Test)<B()>:Test.kt")
               val %dirty = %changed
               if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(cond)) 0b0100 else 0b0010
               }
               if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                %composer.startReplaceableGroup(<>)
+                sourceInformation(%composer, "<A()>")
                 if (cond) {
-                  %composer.startReplaceableGroup(<>)
-                  sourceInformation(%composer, "<A()>")
                   A(%composer, 0)
-                  %composer.endReplaceableGroup()
-                } else {
-                  %composer.startReplaceableGroup(<>)
-                  %composer.endReplaceableGroup()
                 }
+                %composer.endReplaceableGroup()
                 if (cond) {
-                  %composer.startReplaceableGroup(<>)
-                  sourceInformation(%composer, "<B()>")
                   B(%composer, 0)
-                  %composer.endReplaceableGroup()
-                } else {
-                  %composer.startReplaceableGroup(<>)
-                  %composer.endReplaceableGroup()
                 }
               } else {
                 %composer.skipToGroupEnd()
