@@ -76,9 +76,12 @@ abstract class KaptGenerateStubsTask : KotlinCompile(KotlinJvmOptionsImpl()) {
     @get:Internal
     lateinit var generatedSourcesDirs: List<File>
 
-    @get:Classpath
-    @get:InputFiles
+    @get:Internal("Not an input, just passed as kapt args. ")
     abstract val kaptClasspath: ConfigurableFileCollection
+
+    /* Used as input as empty kapt classpath should not trigger stub generation, but a non-empty one should. */
+    @Input
+    fun getIfKaptClasspathIsPresent() = !kaptClasspath.isEmpty
 
     @get:Classpath
     @get:InputFiles
