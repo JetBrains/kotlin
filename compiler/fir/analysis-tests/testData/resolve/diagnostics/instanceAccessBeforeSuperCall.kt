@@ -37,7 +37,7 @@ class F(var a: Int, b: Int, closure: () -> Unit, instance: F?) {
         val a = 10
         <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>
         test(<!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>)
-        <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>.<!UNRESOLVED_REFERENCE!>a<!> = 20
+        <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>.a = 20
     }, <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>) {
         this.a = 30
     }

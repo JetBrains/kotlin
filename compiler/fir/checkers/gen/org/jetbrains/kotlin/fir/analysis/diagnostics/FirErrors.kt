@@ -151,6 +151,7 @@ object FirErrors {
 
     // Supertypes
     val NOT_A_SUPERTYPE by error0<PsiElement>()
+    val TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER by warning0<KtElement>()
     val SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE by error0<PsiElement>()
     val QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE by error1<KtTypeReference, FirBasedSymbol<*>>()
     val SUPERTYPE_INITIALIZED_IN_INTERFACE by error0<KtTypeReference>()

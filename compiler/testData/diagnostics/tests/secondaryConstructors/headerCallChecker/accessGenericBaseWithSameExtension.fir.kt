@@ -8,6 +8,6 @@ fun Base<Int>.foo() {
         constructor() : super(foo1(<!ARGUMENT_TYPE_MISMATCH!>""<!>))
         constructor(x: Int) : super(foo1(1))
         constructor(x: Int, y: Int) : super(this@foo.foo1(12))
-        constructor(x: Int, y: Int, z: Int) : super(this<!UNRESOLVED_LABEL!>@B<!>.<!UNRESOLVED_REFERENCE!>foo1<!>(""))
+        constructor(x: Int, y: Int, z: Int) : super(this<!UNRESOLVED_LABEL!>@B<!>.foo1(""))
     }
 }

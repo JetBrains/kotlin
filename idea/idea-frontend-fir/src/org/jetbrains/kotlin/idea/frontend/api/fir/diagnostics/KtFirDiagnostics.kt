@@ -290,6 +290,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = NotASupertype::class
     }
 
+    abstract class TypeArgumentsRedundantInSuperQualifier : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = TypeArgumentsRedundantInSuperQualifier::class
+    }
+
     abstract class SuperclassNotAccessibleFromInterface : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = SuperclassNotAccessibleFromInterface::class
     }
