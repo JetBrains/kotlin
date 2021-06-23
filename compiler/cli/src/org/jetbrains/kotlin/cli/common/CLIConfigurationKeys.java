@@ -51,6 +51,10 @@ public class CLIConfigurationKeys {
     public static final CompilerConfigurationKey<Integer> REPEAT_COMPILE_MODULES =
             CompilerConfigurationKey.create("debug key for profiling, repeats compileModules");
 
+    // used in FIR IDE uast tests
+    public static final CompilerConfigurationKey<File> PATH_TO_KOTLIN_COMPILER_JAR =
+            CompilerConfigurationKey.create("jar of Kotlin compiler in Kotlin plugin");
+
     private CLIConfigurationKeys() {
     }
 }
