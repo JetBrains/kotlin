@@ -13,6 +13,7 @@ import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.jps.incremental.ModuleLevelBuilder
 import org.jetbrains.jps.incremental.messages.CustomBuilderMessage
+import org.jetbrains.kotlin.config.SettingConstants
 
 /**
  * Based on [org.jetbrains.jps.backwardRefs.JavaBackwardReferenceIndexBuilder]
@@ -41,7 +42,7 @@ class KotlinCompilerReferenceIndexBuilder : ModuleLevelBuilder(BuilderCategory.C
 
             if (allAreDummyOrCompiled) {
                 context.processMessage(
-                    CustomBuilderMessage(BUILDER_ID, MESSAGE_TYPE, module.name)
+                    CustomBuilderMessage(SettingConstants.KOTLIN_COMPILER_REFERENCE_INDEX_BUILDER_ID, MESSAGE_TYPE, module.name)
                 )
             }
         }
@@ -53,6 +54,5 @@ class KotlinCompilerReferenceIndexBuilder : ModuleLevelBuilder(BuilderCategory.C
 
     companion object {
         private const val MESSAGE_TYPE = "processed module"
-        const val BUILDER_ID = "kotlin.compiler.ref.index"
     }
 }
