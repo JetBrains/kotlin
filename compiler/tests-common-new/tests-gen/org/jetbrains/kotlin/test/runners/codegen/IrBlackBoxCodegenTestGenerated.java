@@ -22389,6 +22389,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("notFoundClasses.kt")
+        public void testNotFoundClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/javaInterop/notFoundClasses.kt");
+        }
+
+        @Test
         @TestMetadata("protectedField.kt")
         public void testProtectedField() throws Exception {
             runTest("compiler/testData/codegen/box/javaInterop/protectedField.kt");
