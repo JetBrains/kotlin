@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
@@ -80,13 +82,23 @@ class SubpluginEnvironment(
             val subpluginOptionsProvider = subplugin.applyToCompilation(kotlinCompilation)
             val subpluginId = subplugin.getCompilerPluginId()
 
-            kotlinCompilation.compileKotlinTaskProvider.configure {
+            val configureKotlinTask: (KotlinCompile<*>) -> Unit = {
                 val pluginOptions = it.getPluginOptions()
                 val subpluginOptions = subpluginOptionsProvider.get()
                 for (option in subpluginOptions) {
                     pluginOptions.addPluginArgument(subpluginId, option)
                 }
                 it.registerSubpluginOptionsAsInputs(subpluginId, subpluginOptions)
+            }
+
+            kotlinCompilation.compileKotlinTaskProvider.configure(configureKotlinTask)
+
+            if (kotlinCompilation is KotlinJsIrCompilation) {
+                kotlinCompilation.binaries.all {
+                    if (it is JsIrBinary) {
+                        it.linkTask.configure(configureKotlinTask)
+                    }
+                }
             }
 
             project.logger.kotlinDebug("Subplugin $pluginId loaded")
