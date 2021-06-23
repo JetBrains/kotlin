@@ -26,6 +26,7 @@ open class BuildRegister : DefaultTask() {
     var onlyBranch: String? = null
 
     var bundleSize: Int? = null
+    var buildNumberSuffix: String? = null
     var fileWithResult: String = "nativeReport.json"
 
     val performanceServer = "https://kotlin-native-perf-summary.labs.jb.gg"
@@ -78,6 +79,7 @@ open class BuildRegister : DefaultTask() {
             append("\"teamCityPassword\":\"$teamCityPassword\",")
             append("\"fileWithResult\":\"$fileWithResult\",")
             append("\"bundleSize\": ${bundleSize?.let { "\"$bundleSize\"" } ?: bundleSize}}")
+            append("\"buildNumberSuffix\": ${buildNumberSuffix?.let { "\"$buildNumberSuffix\"" } ?: buildNumberSuffix}}")
         }
         if (onlyBranch == null || onlyBranch == branch) {
             println(sendPostRequest("$performanceServer/register", requestBody))

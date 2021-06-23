@@ -100,7 +100,10 @@ class BenchmarksIndexesDispatcher(connector: ElasticSearchConnector, val feature
     // Get benchmarks values of needed metric for choosen build number.
     fun getSamples(metricName: String, featureValue: String = "", samples: List<String>, buildsCountToShow: Int,
                    buildNumbers: Iterable<CompositeBuildNumber>? = null,
-                   normalize: Boolean = false): Promise<List<Pair<CompositeBuildNumber, Array<Double?>>>> {
+                   normalize: Boolean = false, withSuffix: String? = null): Promise<List<Pair<CompositeBuildNumber, Array<Double?>>>> {
+
+        val filteredBuilds = buildNumbers?.filter { buildNumberIsIncluded(it, withSuffix) }
+
         val queryDescription = """
             {
                 "_source": ["buildNumber"],
@@ -108,7 +111,7 @@ class BenchmarksIndexesDispatcher(connector: ElasticSearchConnector, val feature
                 "query": {
                     "bool": {
                         "must": [ 
-                            ${buildNumbers.str { builds ->
+                            ${filteredBuilds.str { builds ->
             """
                             { "terms" : { "buildNumber" : [${builds.map { "\"${it.second}\"" }.joinToString()}] } },""" }
         }
@@ -255,10 +258,18 @@ class BenchmarksIndexesDispatcher(connector: ElasticSearchConnector, val feature
         }
     }
 
+    private fun buildNumberIsIncluded(build: CompositeBuildNumber, withSuffix: String?) =
+            withSuffix?.let {
+                build.second.contains(withSuffix)
+            } ?: !build.second.contains("(")
+
+
     // Get geometric mean for benchmarks values of needed metric.
     fun getGeometricMean(metricName: String, featureValue: String = "",
                          buildNumbers: Iterable<CompositeBuildNumber>? = null, normalize: Boolean = false,
-                         excludeNames: List<String> = emptyList()): Promise<List<Pair<CompositeBuildNumber, List<Double?>>>> {
+                         excludeNames: List<String> = emptyList(), withSuffix: String? = null): Promise<List<Pair<CompositeBuildNumber, List<Double?>>>> {
+
+        val filteredBuilds = buildNumbers?.filter { buildNumberIsIncluded(it, withSuffix) }
 
         // Filter only with metric or also with names.
         val filterBenchmarks = if (excludeNames.isEmpty())
@@ -282,7 +293,7 @@ class BenchmarksIndexesDispatcher(connector: ElasticSearchConnector, val feature
                     }
                 }, """
         } }
-                ${buildNumbers.str { builds ->
+                ${filteredBuilds.str { builds ->
             """
                 "aggs" : {
                     "builds": {
@@ -325,7 +336,7 @@ class BenchmarksIndexesDispatcher(connector: ElasticSearchConnector, val feature
                                 }
                             }
                         
-                           ${buildNumbers.str {
+                           ${filteredBuilds.str {
             """ }
                         }"""
         } }
@@ -343,7 +354,8 @@ class BenchmarksIndexesDispatcher(connector: ElasticSearchConnector, val feature
                         ?.getObjectOrNull("buckets")
                         ?: error("Wrong response:\n$responseString")
                 buildNumbers.map {
-                    it to listOf(buckets
+                    it to if (buildNumberIsIncluded(it, withSuffix))
+                        listOf(buckets
                             .getObject(it.second)
                             .getObject("metric_build")
                             .getObject("metric_samples")
@@ -352,7 +364,9 @@ class BenchmarksIndexesDispatcher(connector: ElasticSearchConnector, val feature
                             .getObjectOrNull("geom_mean")
                             ?.getPrimitive("value")
                             ?.double
-                    )
+                        )
+                    else
+                        listOf(null)
                 }
             } ?: listOf((null to "golden") to listOf(aggregations
                     .getObject("metric_build")

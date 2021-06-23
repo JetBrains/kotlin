@@ -113,7 +113,7 @@ open class RunKotlinNativeTask @Inject constructor(private val linkTask: Task,
         val filterRegexArgs = filterRegex.splitCommaSeparatedOption("-fr")
         val regexes = filterRegexArgs.map { it.toRegex() }
         val benchmarksToRun = if (filterArgs.isNotEmpty() || regexes.isNotEmpty()) {
-            benchmarks.filter { benchmark -> benchmark in filterArgs || regexes.any { it.matches(benchmark) } }
+            benchmarks.filter { benchmark -> benchmark in filterArgs || regexes.any { it.matches(benchmark) } }.filter { it.isNotEmpty() }
         } else benchmarks.filter { !it.isEmpty() }
 
         val results = benchmarksToRun.flatMap { benchmark ->
