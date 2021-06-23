@@ -25,26 +25,26 @@ import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLookupTagWithFixedSymbol
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens
 
-internal fun isInsideExpectClass(containingClass: FirRegularClass, context: CheckerContext): Boolean {
-    return isInsideSpecificClass(containingClass, context) { klass -> klass.isExpect }
+internal fun isInsideExpectClass(containingClass: FirClass, context: CheckerContext): Boolean {
+    return isInsideSpecificClass(containingClass, context) { klass -> klass is FirRegularClass && klass.isExpect }
 }
 
-internal fun isInsideExternalClass(containingClass: FirRegularClass, context: CheckerContext): Boolean {
-    return isInsideSpecificClass(containingClass, context) { klass -> klass.isExternal }
+internal fun isInsideExternalClass(containingClass: FirClass, context: CheckerContext): Boolean {
+    return isInsideSpecificClass(containingClass, context) { klass -> klass is FirRegularClass && klass.isExternal }
 }
 
 // Note that the class that contains the currently visiting declaration will *not* be in the context's containing declarations *yet*.
 private inline fun isInsideSpecificClass(
-    containingClass: FirRegularClass,
+    containingClass: FirClass,
     context: CheckerContext,
-    predicate: (FirRegularClass) -> Boolean
+    predicate: (FirClass) -> Boolean
 ): Boolean {
     return predicate.invoke(containingClass) ||
             context.containingDeclarations.asReversed().any { it is FirRegularClass && predicate.invoke(it) }
 }
 
 internal fun FirMemberDeclaration.isEffectivelyExpect(
-    containingClass: FirRegularClass?,
+    containingClass: FirClass?,
     context: CheckerContext,
 ): Boolean {
     if (this.isExpect) return true
@@ -53,7 +53,7 @@ internal fun FirMemberDeclaration.isEffectivelyExpect(
 }
 
 internal fun FirMemberDeclaration.isEffectivelyExternal(
-    containingClass: FirRegularClass?,
+    containingClass: FirClass?,
     context: CheckerContext,
 ): Boolean {
     if (this.isExternal) return true
@@ -93,7 +93,7 @@ internal fun checkExpectDeclarationVisibilityAndBody(
 
 // Matched FE 1.0's [DeclarationsChecker#checkPropertyInitializer].
 internal fun checkPropertyInitializer(
-    containingClass: FirRegularClass?,
+    containingClass: FirClass?,
     property: FirProperty,
     modifierList: FirModifierList?,
     isInitialized: Boolean,

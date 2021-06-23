@@ -30,8 +30,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.lexer.KtTokens
 
 // See old FE's [DeclarationsChecker]
-object FirMemberPropertiesChecker : FirRegularClassChecker() {
-    override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirMemberPropertiesChecker : FirClassChecker() {
+    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         val memberPropertySymbols = declaration.declarations.filterIsInstance<FirProperty>().map { it.symbol }.toSet()
         val initializedInConstructor =
             mutableMapOf<FirPropertySymbol, EventOccurrencesRange>().withDefault { EventOccurrencesRange.ZERO }
@@ -59,7 +59,7 @@ object FirMemberPropertiesChecker : FirRegularClassChecker() {
     }
 
     private fun collectPropertyInitialization(
-        klass: FirRegularClass,
+        klass: FirClass,
         memberPropertySymbols: Set<FirPropertySymbol>,
         initializedInConstructor: MutableMap<FirPropertySymbol, EventOccurrencesRange>,
         initializedInInitOrOtherProperty: MutableMap<FirPropertySymbol, EventOccurrencesRange>
@@ -144,7 +144,7 @@ object FirMemberPropertiesChecker : FirRegularClassChecker() {
     }
 
     private fun checkProperty(
-        containingDeclaration: FirRegularClass,
+        containingDeclaration: FirClass,
         property: FirProperty,
         isInitialized: Boolean,
         context: CheckerContext,
@@ -182,7 +182,7 @@ object FirMemberPropertiesChecker : FirRegularClassChecker() {
             }
 
             if (isAbstract) {
-                if (!containingDeclaration.canHaveAbstractDeclaration) {
+                if (containingDeclaration is FirRegularClass && !containingDeclaration.canHaveAbstractDeclaration) {
                     property.source?.let {
                         reporter.reportOn(
                             it,
@@ -216,7 +216,12 @@ object FirMemberPropertiesChecker : FirRegularClassChecker() {
         }
     }
 
-    private fun FirRegularClass.collectDeadEndDeclarations(): Set<FirElement> {
+    private fun FirClass.collectDeadEndDeclarations(): Set<FirElement> {
+        val controlFlowGraphReference = when (this) {
+            is FirAnonymousObject -> this.controlFlowGraphReference
+            is FirRegularClass -> this.controlFlowGraphReference
+            else -> null
+        }
         val cfg = controlFlowGraphReference?.controlFlowGraph ?: return emptySet()
         return cfg.exitNode.incomingEdges.keys
             .map { it.fir }

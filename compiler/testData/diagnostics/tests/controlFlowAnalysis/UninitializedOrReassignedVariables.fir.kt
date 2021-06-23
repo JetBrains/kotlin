@@ -264,7 +264,7 @@ class ClassObject() {
 fun foo() {
     val a = object {
         val x : Int
-        val y : Int
+        <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val y : Int<!>
         val z : Int
         init {
             x = 1
@@ -282,7 +282,7 @@ class TestObjectExpression() {
     fun foo() {
         val a = object {
             val x : Int
-            val y : Int
+            <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val y : Int<!>
             init {
                 if (true)
                     x = 12
