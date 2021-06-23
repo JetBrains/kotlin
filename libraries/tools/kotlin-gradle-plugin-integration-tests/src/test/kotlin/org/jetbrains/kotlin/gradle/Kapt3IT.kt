@@ -27,6 +27,7 @@ import org.junit.Test
 import java.io.File
 import java.util.regex.Pattern
 import java.util.zip.ZipFile
+import java.util.zip.ZipOutputStream
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -815,6 +816,32 @@ open class Kapt3IT : Kapt3BaseIT() {
             build("assemble", options = buildOptions) {
                 assertSuccessful()
             }
+        }
+    }
+
+    /* Regression test for https://youtrack.jetbrains.com/issue/KT-47347. */
+    @Test
+    fun testChangesToKaptConfigurationDoNotTriggerStubGeneration() {
+        val project = Project("localAnnotationProcessor", directoryPrefix = "kapt2")
+
+        project.build("build") {
+            assertSuccessful()
+        }
+
+        ZipOutputStream(project.projectDir.resolve("fake_processor.jar").outputStream()).close()
+        project.projectDir.resolve("example/build.gradle").appendText(
+            """
+            
+            dependencies {
+                kapt files("../fake_processor.jar")
+            }
+        """.trimIndent()
+        )
+
+        project.build("build") {
+            assertSuccessful()
+            assertTasksExecuted(":example:kaptKotlin")
+            assertTasksUpToDate(":example:kaptGenerateStubsKotlin")
         }
     }
 }
