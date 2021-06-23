@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.commonizer.hierarchical
 
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest
 import org.jetbrains.kotlin.commonizer.assertCommonized
+import org.junit.Test
 
 class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesCommonizationTest() {
 
@@ -19,6 +20,17 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
 
         result.assertCommonized("(a, b)", "expect class X")
     }
+
+    fun `test commonization of class and typeAlias`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+            simpleSingleSourceTarget("a", "class X")
+            simpleSingleSourceTarget("b", "typealias X = Int")
+        }
+
+        result.assertCommonized("(a, b)", "expect class X")
+    }
+
 
     fun `test commonization of typeAlias and class hierarchically`() {
         val result = commonize {
@@ -265,6 +277,150 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
                 expect class AB expect constructor()
                 expect typealias V = AB
                 expect class Y
+            """.trimIndent()
+        )
+    }
+
+    fun `test return types`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+
+            simpleSingleSourceTarget(
+                "a", """
+                    class X 
+                    fun createX(): X
+                """.trimIndent()
+            )
+
+            simpleSingleSourceTarget(
+                "b", """
+                    class B
+                    typealias X = B
+                    fun createX(): X
+                """.trimIndent()
+            )
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                expect class X expect constructor()
+                expect fun createX(): X
+            """.trimIndent()
+        )
+    }
+
+    fun `test parameterized types`() {
+        val result = commonize {
+            outputTarget("(a, b)", "(c, d)", "(a, b, c, d)")
+            registerDependency("a", "b", "c", "d", "(a, b)", "(c, d)", "(a, b, c, d)") {
+                source("class Box<T>")
+            }
+            simpleSingleSourceTarget(
+                "a", """
+                    class X
+                    fun createBox(): Box<X>
+                """.trimIndent()
+            )
+            simpleSingleSourceTarget(
+                "b", """
+                    class B
+                    typealias X = B
+                    fun createBox(): Box<X>
+                """.trimIndent()
+            )
+            simpleSingleSourceTarget(
+                "c", """
+                    class CD
+                    typealias X = CD
+                    fun createBox(): Box<X>
+                """.trimIndent()
+            )
+            simpleSingleSourceTarget(
+                "d", """
+                    class CD
+                    typealias X = CD
+                    fun createBox(): Box<X>
+                """.trimIndent()
+            )
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                expect class X expect constructor()
+                expect fun createBox(): Box<X>
+            """.trimIndent()
+        )
+
+        result.assertCommonized(
+            "(c, d)", """
+                expect class CD expect constructor()
+                typealias X = CD
+                expect fun createBox(): Box<X>
+            """.trimIndent()
+        )
+
+        result.assertCommonized(
+            "(a, b, c, d)", """
+                expect class X expect constructor()
+                expect fun createBox(): Box<X>
+            """.trimIndent()
+        )
+    }
+
+    @Test
+    fun `test supertype from dependency`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+            registerDependency("a", "b", "(a, b)") {
+                source("interface SuperClass")
+            }
+
+            simpleSingleSourceTarget(
+                "a", """
+                    class A: SuperClass
+                    typealias X = A
+                """.trimIndent()
+            )
+
+            simpleSingleSourceTarget(
+                "b", """
+                    class X: SuperClass
+                """.trimIndent()
+            )
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                expect class X expect constructor(): SuperClass
+            """.trimIndent()
+        )
+    }
+
+    @Test
+    fun `test supertype from sources`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+
+            simpleSingleSourceTarget(
+                "a", """
+                    interface SuperClass
+                    class A: SuperClass
+                    typealias X = A
+                """.trimIndent()
+            )
+
+            simpleSingleSourceTarget(
+                "b", """
+                    interface SuperClass
+                    class X: SuperClass
+                """.trimIndent()
+            )
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                expect interface SuperClass
+                expect class X expect constructor(): SuperClass
             """.trimIndent()
         )
     }
