@@ -1,11 +1,11 @@
-import org.jetbrains.ValidatePublications
-import org.jetbrains.configureDokkaVersion
+import org.jetbrains.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") apply false
     id("java")
-    id("org.jetbrains.dokka") version "1.4.10.2"
+    id("org.jetbrains.dokka") version "1.4.32"
+    id("io.github.gradle-nexus.publish-plugin")
 }
 
 val dokka_version: String by project
@@ -55,16 +55,13 @@ subprojects {
         val dokkaOutputDir = "$buildDir/dokka"
 
         dokkaHtml {
+            onlyIf { !isLocalPublication }
             outputDirectory.set(file(dokkaOutputDir))
         }
 
-        val deleteDokkaOutputDir by registering(Delete::class) {
-            delete(dokkaOutputDir)
-        }
-
         register<Jar>("javadocJar") {
-            dependsOn(deleteDokkaOutputDir, dokkaHtml)
             archiveClassifier.set("javadoc")
+            dependsOn(dokkaHtml)
             from(dokkaOutputDir)
         }
     }
@@ -80,3 +77,18 @@ tasks.whenTaskAdded {
 
 println("Publication version: $dokka_version")
 tasks.register<ValidatePublications>("validatePublications")
+
+nexusPublishing {
+    repositories {
+        sonatype {
+            username.set(System.getenv("SONATYPE_USER"))
+            password.set(System.getenv("SONATYPE_PASSWORD"))
+        }
+    }
+}
+
+tasks.maybeCreate("dokkaPublish").run {
+    if (publicationChannels.any { it.isMavenRepository }) {
+        finalizedBy(tasks.named("closeAndReleaseSonatypeStagingRepository"))
+    }
+}
