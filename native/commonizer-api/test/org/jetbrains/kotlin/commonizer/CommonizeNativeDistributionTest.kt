@@ -43,6 +43,29 @@ class CommonizeNativeDistributionTest {
     }
 
     @Test
+    fun `commonize - unix platforms`() {
+        val unixTarget = CommonizerTarget(
+            LINUX_X64, LINUX_ARM64,
+            MACOS_X64, MACOS_ARM64,
+            IOS_X64, IOS_ARM64,
+            WATCHOS_ARM64, WATCHOS_ARM32, WATCHOS_X86,
+            TVOS_ARM64, TVOS_X64
+        )
+
+        CliCommonizer(this::class.java.classLoader).commonizeNativeDistribution(
+            konanHome = konanHome,
+            outputTargets = setOf(unixTarget),
+            outputDirectory = temporaryOutputDirectory.root,
+            logLevel = CommonizerLogLevel.Info
+        )
+
+        assertTrue(
+            resolveCommonizedDirectory(temporaryOutputDirectory.root, unixTarget).isDirectory,
+            "Expected directory for $unixTarget"
+        )
+    }
+
+    @Test
     fun `commonize - no outputTargets specified`() {
         CliCommonizer(this::class.java.classLoader).commonizeNativeDistribution(
             konanHome = konanHome,
