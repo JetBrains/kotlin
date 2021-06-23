@@ -1,3 +1,4 @@
+
 RAW_FIR:
 FILE: classMembers.kt
     public? final? [RAW_FIR] class A : R|kotlin/Any| {

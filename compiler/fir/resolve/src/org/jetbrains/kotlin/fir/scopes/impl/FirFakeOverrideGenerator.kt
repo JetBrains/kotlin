@@ -7,15 +7,12 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.copy
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.moduleData
-import org.jetbrains.kotlin.fir.originalForSubstitutionOverrideAttr
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
@@ -115,6 +112,7 @@ object FirFakeOverrideGenerator {
             typeParameters += configureAnnotationsTypeParametersAndSignature(
                 session, baseFunction, newParameterTypes, newTypeParameters, newReceiverType, newReturnType, fakeOverrideSubstitution
             ).filterIsInstance<FirTypeParameter>()
+            deprecation = baseFunction.deprecation
         }
     }
 
@@ -153,6 +151,7 @@ object FirFakeOverrideGenerator {
             resolvePhase = baseConstructor.resolvePhase
             source = baseConstructor.source
             attributes = baseConstructor.attributes.copy()
+            deprecation = baseConstructor.deprecation
         }.apply {
             originalForSubstitutionOverrideAttr = baseConstructor
         }
@@ -310,6 +309,7 @@ object FirFakeOverrideGenerator {
                 newReturnType,
                 fakeOverrideSubstitution
             )
+            deprecation = baseProperty.deprecation
         }
     }
 
@@ -462,6 +462,7 @@ object FirFakeOverrideGenerator {
             delegateGetter = getter
             delegateSetter = setter
             status = baseProperty.status
+            deprecation = getDeprecationsFromAccessors(getter, setter, session.languageVersionSettings.apiVersion)
         }.symbol
     }
 

@@ -97,7 +97,8 @@ object FirSessionFactory {
             dependencyList.moduleDataProvider,
             librariesScope,
             project,
-            getPackagePartProvider(librariesScope)
+            getPackagePartProvider(librariesScope),
+            languageVersionSettings
         )
 
         val mainModuleData = FirModuleDataImpl(

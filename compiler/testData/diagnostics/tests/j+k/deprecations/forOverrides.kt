@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: J.java
 public interface J {
     @Deprecated

@@ -219,7 +219,7 @@ fun case_1(value_1: Int?) {
 // TESTCASE NUMBER: 2
 fun case_2(value_1: Number?) {
     case_2_1(value_1)
-    value_1.toByte()
+    value_1.<!DEPRECATION_ERROR!>toByte<!>()
     case_2_2(value_1)
     value_1.inv()
 }
@@ -278,25 +278,25 @@ fun case_5(value_1: Int?, value_2: Int?) {
 fun case_6(value_1: Number?, value_2: Number?) {
     when {
         case_6_1(value_1) -> {
-            value_1.toByte()
+            value_1.<!DEPRECATION_ERROR!>toByte<!>()
             when { case_6_2(value_1) -> value_1.inv() }
         }
     }
     when {
         !case_6_3(value_2) -> {
-            value_2.toByte()
+            value_2.<!DEPRECATION_ERROR!>toByte<!>()
             when { !case_6_4(value_2) -> value_2.inv() }
         }
     }
     when {
         case_6_5(value_2) != null -> {
-            value_2.toByte()
+            value_2.<!DEPRECATION_ERROR!>toByte<!>()
             when { case_6_6(value_2) != null -> value_2.inv() }
         }
     }
     when {
         case_6_7(value_2) == null -> {
-            value_2.toByte()
+            value_2.<!DEPRECATION_ERROR!>toByte<!>()
             when { case_6_8(value_2) == null -> value_2.inv() }
         }
     }

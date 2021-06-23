@@ -28,6 +28,7 @@ abstract class FirRegularClass : FirClass(), FirMemberDeclaration, FirControlFlo
     abstract override val resolvePhase: FirResolvePhase
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
+    abstract override val deprecation: DeprecationsPerUseSite?
     abstract override val typeParameters: List<FirTypeParameterRef>
     abstract override val classKind: ClassKind
     abstract override val declarations: List<FirDeclaration>
@@ -48,6 +49,8 @@ abstract class FirRegularClass : FirClass(), FirMemberDeclaration, FirControlFlo
         transformer.transformRegularClass(this, data) as E
 
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
+
+    abstract override fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?)
 
     abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
 

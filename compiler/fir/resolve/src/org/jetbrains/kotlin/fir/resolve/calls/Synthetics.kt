@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.getDeprecationsFromAccessors
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.scopes.*
@@ -117,6 +118,7 @@ class FirSyntheticPropertiesScope(
             )
             delegateGetter = getter
             delegateSetter = matchingSetter
+            deprecation = getDeprecationsFromAccessors(getter, matchingSetter, session.languageVersionSettings.apiVersion)
         }
         val syntheticSymbol = property.symbol
         (baseScope as? FirUnstableSmartcastTypeScope)?.apply {

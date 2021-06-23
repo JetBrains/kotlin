@@ -37,30 +37,30 @@ class PropertyHolder {
 }
 
 fun PropertyHolder.extFunction() {
-    test2 = "ext"
-    test1
+    test2 <!DEPRECATION!>=<!> "ext"
+    <!DEPRECATION!>test1<!>
 }
 
 fun fn() {
-    PropertyHolder().test1
-    PropertyHolder().test2
-    PropertyHolder().test2 = ""
+    PropertyHolder().<!DEPRECATION!>test1<!>
+    PropertyHolder().<!DEPRECATION!>test2<!>
+    PropertyHolder().test2 <!DEPRECATION!>=<!> ""
 
-    PropertyHolder().test3
+    PropertyHolder().<!DEPRECATION!>test3<!>
     PropertyHolder().test3 = ""
 
     PropertyHolder().test4
-    PropertyHolder().test4 = ""
+    PropertyHolder().test4 <!DEPRECATION!>=<!> ""
 
-    val a = PropertyHolder().x
-    val b = PropertyHolder().name
-    PropertyHolder().name = "value"
+    val a = PropertyHolder().<!DEPRECATION!>x<!>
+    val b = PropertyHolder().<!DEPRECATION!>name<!>
+    PropertyHolder().name <!DEPRECATION!>=<!> "value"
 
     val d = PropertyHolder().valDelegate
     PropertyHolder().varDelegate = 1
 }
 
 fun literals() {
-    PropertyHolder::test1
-    PropertyHolder::name
+    PropertyHolder::<!DEPRECATION!>test1<!>
+    PropertyHolder::<!DEPRECATION!>name<!>
 }

@@ -77,6 +77,7 @@ class JavaClassUseSiteMemberScope(
                 delegateGetter = getterSymbol.fir
                 delegateSetter = setterSymbol?.fir
                 status = getterSymbol.fir.status.copy(newModality = chooseModalityForAccessor(property, delegateGetter))
+                deprecation = getDeprecationsFromAccessors(delegateGetter, delegateSetter, session.languageVersionSettings.apiVersion)
             }.symbol
         }
     }

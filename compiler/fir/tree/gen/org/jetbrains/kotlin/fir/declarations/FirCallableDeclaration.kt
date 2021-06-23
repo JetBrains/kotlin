@@ -27,6 +27,7 @@ sealed class FirCallableDeclaration : FirTypedDeclaration() {
     abstract override val annotations: List<FirAnnotationCall>
     abstract override val returnTypeRef: FirTypeRef
     abstract val receiverTypeRef: FirTypeRef?
+    abstract val deprecation: DeprecationsPerUseSite?
     abstract override val symbol: FirCallableSymbol<out FirCallableDeclaration>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitCallableDeclaration(this, data)
@@ -40,6 +41,8 @@ sealed class FirCallableDeclaration : FirTypedDeclaration() {
     abstract override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
 
     abstract fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?)
+
+    abstract fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirCallableDeclaration
 

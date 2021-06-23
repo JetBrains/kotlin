@@ -47,6 +47,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
 ) : FirRegularClass() {
     override val hasLazyNestedClassifiers: Boolean get() = true
     override val controlFlowGraphReference: FirControlFlowGraphReference? get() = null
+    override var deprecation: DeprecationsPerUseSite? = null
 
     init {
         symbol.bind(this)
@@ -67,6 +68,10 @@ class FirJavaClass @FirImplementationDetail internal constructor(
 
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
         resolvePhase = newResolvePhase
+    }
+
+    override fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?) {
+        deprecation = newDeprecation
     }
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {}

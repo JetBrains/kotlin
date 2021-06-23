@@ -7,14 +7,14 @@ abstract class A : MutableList<String> {
 }
 
 fun foo(x: MutableList<String>, y: java.util.ArrayList<String>, z: A, p: java.util.Comparator<in String>) {
-    x.sort(p)
+    x.<!DEPRECATION_ERROR!>sort<!>(p)
     y.sort(p)
 
     z.sort(p)
 }
 
 fun bar(x: MutableList<String>, y: java.util.ArrayList<String>, z: A) {
-    x.sort { a, b -> a.length - b.length }
+    x.<!DEPRECATION_ERROR!>sort<!> { a, b -> a.length - b.length }
     y.sort { a, b -> a.length - b.length }
 
     z.sort { a, b -> a.length - b.length }

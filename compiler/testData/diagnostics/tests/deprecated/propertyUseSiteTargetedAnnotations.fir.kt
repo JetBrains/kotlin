@@ -17,15 +17,15 @@ class PropertyHolder {
 fun fn() {
     val holder = PropertyHolder()
 
-    holder.a1
-    holder.a2
-    holder.withGetter
-    holder.withSetter = "A"
+    holder.<!DEPRECATION!>a1<!>
+    holder.<!DEPRECATION!>a2<!>
+    holder.<!DEPRECATION!>withGetter<!>
+    holder.withSetter <!DEPRECATION!>=<!> "A"
 }
 
 fun literals() {
-    PropertyHolder::a1
-    PropertyHolder::a2
-    PropertyHolder::withGetter
+    PropertyHolder::<!DEPRECATION!>a1<!>
+    PropertyHolder::<!DEPRECATION!>a2<!>
+    PropertyHolder::<!DEPRECATION!>withGetter<!>
     PropertyHolder::withSetter
 }

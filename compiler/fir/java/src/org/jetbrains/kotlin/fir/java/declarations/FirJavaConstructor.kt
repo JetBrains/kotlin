@@ -41,6 +41,7 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     override val dispatchReceiverType: ConeKotlinType?,
 ) : FirConstructor() {
     override val receiverTypeRef: FirTypeRef? get() = null
+    override var deprecation: DeprecationsPerUseSite? = null
 
     init {
         symbol.bind(this)
@@ -132,6 +133,9 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     }
 
     override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {}
+    override fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?) {
+        deprecation = newDeprecation
+    }
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {}
 

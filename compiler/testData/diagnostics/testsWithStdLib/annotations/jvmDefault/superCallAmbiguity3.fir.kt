@@ -1,6 +1,6 @@
 // !JVM_TARGET: 1.8
 interface A {
-    @JvmDefault
+    @<!DEPRECATION!>JvmDefault<!>
     fun test() {
 
     }

@@ -2,7 +2,7 @@
 // !JVM_DEFAULT_MODE: enable
 
 interface A {
-    @JvmDefault
+    @<!DEPRECATION!>JvmDefault<!>
     fun test() {}
 }
 

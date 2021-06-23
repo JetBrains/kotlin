@@ -1,6 +1,6 @@
-// FIR_IDE_IGNORE
 // !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
 // SKIP_JAVAC
+// ALLOW_KOTLIN_PACKAGE
 
 // FILE: uint.kt
 

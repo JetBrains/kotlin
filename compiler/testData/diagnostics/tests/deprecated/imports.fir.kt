@@ -5,4 +5,4 @@ class C {
     fun use() {}
 }
 
-fun useAlias(c : C2) { c.use() }
+fun useAlias(c : <!DEPRECATION!>C2<!>) { c.use() }

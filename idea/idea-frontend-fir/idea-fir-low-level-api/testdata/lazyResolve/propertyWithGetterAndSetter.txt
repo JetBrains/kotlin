@@ -1,3 +1,4 @@
+
 RAW_FIR:
 FILE: propertyWithGetterAndSetter.kt
     public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| {

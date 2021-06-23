@@ -1,3 +1,4 @@
+
 RAW_FIR:
 FILE: superTypes.kt
     public? open [RAW_FIR] class A : R|kotlin/Any| {

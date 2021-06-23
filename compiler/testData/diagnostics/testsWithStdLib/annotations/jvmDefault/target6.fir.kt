@@ -2,27 +2,27 @@
 
 interface B {
 
-    @JvmDefault
+    @<!DEPRECATION!>JvmDefault<!>
     fun test() {}
 
-    @JvmDefault
+    @<!DEPRECATION!>JvmDefault<!>
     abstract fun test2(s: String = "")
 
-    @JvmDefault
+    @<!DEPRECATION!>JvmDefault<!>
     abstract fun test3()
 
 
-    @JvmDefault
+    @<!DEPRECATION!>JvmDefault<!>
     abstract val prop: String
 
-    @JvmDefault
+    @<!DEPRECATION!>JvmDefault<!>
     abstract val prop2: String
 
-    @JvmDefault
+    @<!DEPRECATION!>JvmDefault<!>
     val prop3: String
         get() = ""
 
-    @JvmDefault
+    @<!DEPRECATION!>JvmDefault<!>
     var prop4: String
         get() = ""
         set(value) {}

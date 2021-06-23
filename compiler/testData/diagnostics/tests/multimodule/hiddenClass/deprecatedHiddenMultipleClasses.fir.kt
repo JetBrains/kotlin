@@ -28,7 +28,7 @@ import p1.*
 import p2.A
 import p3.*
 
-fun test(a: A) {
+fun test(a: <!DEPRECATION_ERROR!>A<!>) {
     a.<!UNRESOLVED_REFERENCE!>v1<!>
     a.v2
     a.<!UNRESOLVED_REFERENCE!>v3<!>

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirFieldBuilder
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -59,6 +60,9 @@ class FirJavaField @FirImplementationDetail constructor(
 
     override val annotations: List<FirAnnotationCall> by lazy { annotationBuilder() }
 
+    override val deprecation: DeprecationsPerUseSite by lazy {
+        annotations.getDeprecationInfosFromAnnotations(moduleData.session.languageVersionSettings.apiVersion, fromJava = true)
+    }
 
     override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirField {
         returnTypeRef = returnTypeRef.transformSingle(transformer, data)
@@ -133,6 +137,8 @@ class FirJavaField @FirImplementationDetail constructor(
     }
 
     override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {}
+
+    override fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?) {}
 
     override fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirField {
         return this

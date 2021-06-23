@@ -2,21 +2,21 @@
 
 abstract class A {
 
-    @JvmDefault
+    @<!DEPRECATION!>JvmDefault<!>
     fun test() {}
 
-    @JvmDefault
+    @<!DEPRECATION!>JvmDefault<!>
     abstract fun test2(s: String = "")
 
-    @JvmDefault
+    @<!DEPRECATION!>JvmDefault<!>
     abstract fun test3()
 }
 
 object B {
 
-    @JvmDefault
+    @<!DEPRECATION!>JvmDefault<!>
     fun test() {}
 
-    @JvmDefault
+    @<!DEPRECATION!>JvmDefault<!>
     fun test2(s: String = "") {}
 }

@@ -217,6 +217,18 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = NoThis::class
     }
 
+    abstract class DeprecationError : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = DeprecationError::class
+        abstract val reference: KtSymbol
+        abstract val message: String
+    }
+
+    abstract class Deprecation : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = Deprecation::class
+        abstract val reference: KtSymbol
+        abstract val message: String
+    }
+
     abstract class CreatingAnInstanceOfAbstractClass : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = CreatingAnInstanceOfAbstractClass::class
     }

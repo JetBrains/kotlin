@@ -31,6 +31,7 @@ sealed class FirVariable : FirCallableMemberDeclaration(), FirStatement {
     abstract override val attributes: FirDeclarationAttributes
     abstract override val returnTypeRef: FirTypeRef
     abstract override val receiverTypeRef: FirTypeRef?
+    abstract override val deprecation: DeprecationsPerUseSite?
     abstract override val typeParameters: List<FirTypeParameterRef>
     abstract override val status: FirDeclarationStatus
     abstract override val containerSource: DeserializedContainerSource?
@@ -56,6 +57,8 @@ sealed class FirVariable : FirCallableMemberDeclaration(), FirStatement {
     abstract override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
 
     abstract override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?)
+
+    abstract override fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?)
 
     abstract fun replaceInitializer(newInitializer: FirExpression?)
 

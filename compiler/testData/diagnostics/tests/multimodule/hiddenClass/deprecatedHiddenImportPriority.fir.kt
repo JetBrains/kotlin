@@ -31,7 +31,7 @@ fun test(a: <!UNRESOLVED_REFERENCE!>A<!>) {
 import p1.A
 import p2.*
 
-fun test(a: A) {
+fun test(a: <!DEPRECATION_ERROR!>A<!>) {
     a.m1()
     a.<!UNRESOLVED_REFERENCE!>m2<!>()
 }

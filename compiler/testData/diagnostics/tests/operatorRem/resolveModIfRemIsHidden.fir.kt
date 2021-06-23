@@ -9,7 +9,7 @@ object A {
 }
 
 fun test() {
-    takeString(<!ARGUMENT_TYPE_MISMATCH!>A % 123<!>)
+    takeString(<!ARGUMENT_TYPE_MISMATCH!>A <!INVISIBLE_REFERENCE!>%<!> 123<!>)
 }
 
 fun takeString(s: String) {}

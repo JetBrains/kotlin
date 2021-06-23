@@ -63,6 +63,9 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     override val receiverTypeRef: FirTypeRef?
         get() = null
 
+    override val deprecation: DeprecationsPerUseSite
+        get() = EmptyDeprecationsPerUseSite
+
     override val initializer: FirExpression?
         get() = null
 
@@ -153,6 +156,10 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     }
 
     override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {
+    }
+
+    override fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?) {
+
     }
 
     override fun replaceInitializer(newInitializer: FirExpression?) {

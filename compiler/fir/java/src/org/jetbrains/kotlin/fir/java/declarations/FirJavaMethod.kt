@@ -84,6 +84,9 @@ class FirJavaMethod @FirImplementationDetail constructor(
 
     override val annotations: List<FirAnnotationCall> by lazy { annotationBuilder() }
 
+    //not used actually, because get 'enhanced' into regular FirSimpleFunction
+    override var deprecation: DeprecationsPerUseSite? = null
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         returnTypeRef.accept(visitor, data)
         receiverTypeRef?.accept(visitor, data)
@@ -156,6 +159,10 @@ class FirJavaMethod @FirImplementationDetail constructor(
     override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {
     }
 
+    override fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?) {
+        deprecation = newDeprecation
+    }
+
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
         controlFlowGraphReference = newControlFlowGraphReference
     }
@@ -194,6 +201,13 @@ class FirJavaMethodBuilder : FirFunctionBuilder, FirTypeParametersOwnerBuilder, 
     override var resolvePhase: FirResolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
     lateinit var annotationBuilder: () -> List<FirAnnotationCall>
 
+    @Deprecated("Modification of 'deprecation' has no impact for FirJavaFunctionBuilder", level = DeprecationLevel.HIDDEN)
+    override var deprecation: DeprecationsPerUseSite?
+        get() = throw IllegalStateException()
+        set(_) {
+            throw IllegalStateException()
+        }
+
     @Deprecated("Modification of 'containerSource' has no impact for FirJavaFunctionBuilder", level = DeprecationLevel.HIDDEN)
     override var containerSource: DeserializedContainerSource?
         get() = throw IllegalStateException()
@@ -222,7 +236,7 @@ class FirJavaMethodBuilder : FirFunctionBuilder, FirTypeParametersOwnerBuilder, 
             status,
             symbol,
             annotationBuilder,
-            dispatchReceiverType,
+            dispatchReceiverType
         )
     }
 }

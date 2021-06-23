@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 import java.io.InputStream
 
 fun InputStream.test() {

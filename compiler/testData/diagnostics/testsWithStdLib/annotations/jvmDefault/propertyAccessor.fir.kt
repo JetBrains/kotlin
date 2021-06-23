@@ -3,7 +3,7 @@
 
 interface B {
 
-    @JvmDefault
+    @<!DEPRECATION!>JvmDefault<!>
     val prop1: String
     <!WRONG_ANNOTATION_TARGET!>@JvmDefault<!> get() = ""
 

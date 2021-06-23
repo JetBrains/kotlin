@@ -29,7 +29,8 @@ class FirSyntheticProperty(
     override val status: FirDeclarationStatus,
     override var resolvePhase: FirResolvePhase,
     override val getter: FirSyntheticPropertyAccessor,
-    override val setter: FirSyntheticPropertyAccessor? = null
+    override val setter: FirSyntheticPropertyAccessor? = null,
+    override val deprecation: DeprecationsPerUseSite? = null
 ) : FirProperty() {
     init {
         symbol.bind(this)
@@ -142,6 +143,10 @@ class FirSyntheticProperty(
     }
 
     override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {
+        throw AssertionError("Mutation of synthetic property isn't supported")
+    }
+
+    override fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?) {
         throw AssertionError("Mutation of synthetic property isn't supported")
     }
 

@@ -4,7 +4,7 @@ public interface I {
 }
 
 fun foo(javaClass: JavaClass) {
-    javaClass.doSomething1 { bar() }
+    javaClass.<!DEPRECATION!>doSomething1<!> { bar() }
     javaClass.doSomething2 { bar() }
 }
 

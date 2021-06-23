@@ -1,6 +1,6 @@
 // !JVM_TARGET: 1.8
 interface A {
-    @JvmDefault
+    @<!DEPRECATION!>JvmDefault<!>
     fun test() {
     }
 }
@@ -16,7 +16,7 @@ interface B{
 
 
 interface C : A, B {
-    @JvmDefault
+    @<!DEPRECATION!>JvmDefault<!>
     override fun test() {
         super<B>.test()
         super<A>.test()
@@ -24,7 +24,7 @@ interface C : A, B {
 }
 
 interface D : B, A {
-    @JvmDefault
+    @<!DEPRECATION!>JvmDefault<!>
     override fun test() {
         super<B>.test()
         super<A>.test()

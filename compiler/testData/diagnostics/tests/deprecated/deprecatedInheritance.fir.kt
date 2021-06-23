@@ -112,9 +112,9 @@ fun use(
         e2: E2, w2: W2, ew2: EW2, hew2: HEW2,
         explicitError: ExplicitError
 ) {
-    wd.f()
-    ed.f()
-    hd.f()
+    wd.<!DEPRECATION!>f<!>()
+    ed.<!DEPRECATION_ERROR!>f<!>()
+    hd.<!INVISIBLE_REFERENCE!>f<!>()
 
     we.f()
     wh.f()
@@ -131,10 +131,10 @@ fun use(
     nwe2.f()
     nwe3.f()
 
-    e2.f()
-    w2.f()
+    e2.<!DEPRECATION_ERROR!>f<!>()
+    w2.<!DEPRECATION!>f<!>()
     ew2.f()
     hew2.f()
 
-    explicitError.f()
+    explicitError.<!DEPRECATION_ERROR!>f<!>()
 }

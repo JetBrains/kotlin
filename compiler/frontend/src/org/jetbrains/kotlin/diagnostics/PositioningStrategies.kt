@@ -955,6 +955,7 @@ object PositioningStrategies {
                 is KtOperationExpression -> element.operationReference
                 is KtWhenConditionInRange -> element.operationReference
                 is KtAnnotationEntry -> element.calleeExpression ?: element
+                is KtTypeReference -> (element.typeElement as? KtNullableType)?.innerType ?: element
                 else -> element
             }
             while (locateReferencedName && result is KtParenthesizedExpression) {

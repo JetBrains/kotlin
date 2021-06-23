@@ -94,20 +94,20 @@ fun use(
         sdh: SDH, edh: EDH, ned: NED,
         diff: Diff
 ) {
-    warningDeprecated.p
-    warningDeprecated.p = 1
+    warningDeprecated.<!DEPRECATION!>p<!>
+    warningDeprecated.p <!DEPRECATION!>=<!> 1
 
-    errorDeprecated.p
-    errorDeprecated.p = 1
+    errorDeprecated.<!DEPRECATION_ERROR!>p<!>
+    errorDeprecated.p <!DEPRECATION_ERROR!>=<!> 1
 
-    getterDeprecated.p
+    getterDeprecated.<!DEPRECATION!>p<!>
     getterDeprecated.p = 1
 
     setterDeprecated.p
-    setterDeprecated.p = 1
+    setterDeprecated.p <!DEPRECATION!>=<!> 1
 
-    hiddenDeprecated.p
-    hiddenDeprecated.p = 1
+    hiddenDeprecated.<!INVISIBLE_REFERENCE!>p<!>
+    hiddenDeprecated.<!INVISIBLE_REFERENCE!>p<!> = 1
 
     wd.p
     wd.p = 1
@@ -130,6 +130,6 @@ fun use(
     ned.p
     ned.p = 1
 
-    diff.p
-    diff.p = 1
+    diff.<!DEPRECATION_ERROR!>p<!>
+    diff.<!INVISIBLE_REFERENCE!>p<!> = 1
 }

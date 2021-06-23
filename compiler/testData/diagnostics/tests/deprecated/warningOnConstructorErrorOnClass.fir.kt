@@ -3,6 +3,6 @@
 @Deprecated("error", level = DeprecationLevel.ERROR)
 class Foo @Deprecated("warning", level = DeprecationLevel.WARNING) constructor()
 
-fun test1() = Foo()
+fun test1() = <!DEPRECATION_ERROR!>Foo<!>()
 
-fun test2(): Foo = Foo()
+fun test2(): <!DEPRECATION_ERROR!>Foo<!> = <!DEPRECATION_ERROR!>Foo<!>()

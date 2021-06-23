@@ -522,6 +522,13 @@ object LightTreePositioningStrategies {
             if (node.tokenType in nodeTypesWithOperation) {
                 return markElement(tree.operationReference(node) ?: node, startOffset, endOffset, tree, node)
             }
+            if (node.tokenType == KtNodeTypes.TYPE_REFERENCE) {
+                val nodeToMark =
+                    tree.findChildByType(node, KtNodeTypes.NULLABLE_TYPE)
+                        ?.let { tree.findChildByType(it, KtNodeTypes.USER_TYPE) }
+                        ?: node
+                return markElement(nodeToMark, startOffset, endOffset, tree, node)
+            }
             if (node.tokenType != KtNodeTypes.DOT_QUALIFIED_EXPRESSION &&
                 node.tokenType != KtNodeTypes.SAFE_ACCESS_EXPRESSION &&
                 node.tokenType != KtNodeTypes.CALLABLE_REFERENCE_EXPRESSION

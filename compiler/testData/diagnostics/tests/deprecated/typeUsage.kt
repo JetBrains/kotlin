@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 @Deprecated("Class")
 open class Obsolete {
     fun use() {}

@@ -25,6 +25,7 @@ abstract class FirTypeAlias : FirClassLikeDeclaration(), FirMemberDeclaration, F
     abstract override val resolvePhase: FirResolvePhase
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
+    abstract override val deprecation: DeprecationsPerUseSite?
     abstract override val status: FirDeclarationStatus
     abstract override val typeParameters: List<FirTypeParameter>
     abstract val name: Name
@@ -39,6 +40,8 @@ abstract class FirTypeAlias : FirClassLikeDeclaration(), FirMemberDeclaration, F
         transformer.transformTypeAlias(this, data) as E
 
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
+
+    abstract override fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?)
 
     abstract fun replaceExpandedTypeRef(newExpandedTypeRef: FirTypeRef)
 

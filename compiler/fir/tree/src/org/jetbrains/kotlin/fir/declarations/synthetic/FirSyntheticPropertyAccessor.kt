@@ -48,6 +48,9 @@ class FirSyntheticPropertyAccessor(
 
     override val receiverTypeRef: FirTypeRef?
         get() = null
+    
+    override val deprecation: DeprecationsPerUseSite?
+        get() = delegate.deprecation
 
     override val valueParameters: List<FirValueParameter>
         get() = delegate.valueParameters
@@ -132,6 +135,10 @@ class FirSyntheticPropertyAccessor(
     }
 
     override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {
+        throw AssertionError("Mutation of synthetic property accessor isn't supported")
+    }
+
+    override fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?) {
         throw AssertionError("Mutation of synthetic property accessor isn't supported")
     }
 

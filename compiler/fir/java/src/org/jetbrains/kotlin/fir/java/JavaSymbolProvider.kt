@@ -212,6 +212,7 @@ class JavaSymbolProvider(
         parentClassEffectiveVisibilityCache.remove(classSymbol)
         firJavaClass.convertSuperTypes(javaClass, javaTypeParameterStack)
         firJavaClass.addAnnotationsFrom(this@JavaSymbolProvider.session, javaClass, javaTypeParameterStack)
+        firJavaClass.replaceDeprecation(firJavaClass.getDeprecationInfos(session.languageVersionSettings.apiVersion))
         return firJavaClass
     }
 

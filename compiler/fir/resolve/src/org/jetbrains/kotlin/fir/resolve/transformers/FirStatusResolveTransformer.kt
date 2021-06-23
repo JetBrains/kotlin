@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.firProvider
@@ -103,6 +104,7 @@ open class FirStatusResolveTransformer(
          */
         if (computationStatus != StatusComputationSession.StatusComputationStatus.Computed) {
             regularClass.transformStatus(this, statusResolver.resolveStatus(regularClass, containingClass, isLocal = false))
+            calculateDeprecations(regularClass)
         }
         return transformClass(regularClass, data).also {
             statusComputationSession.endComputing(regularClass)
@@ -311,6 +313,7 @@ abstract class AbstractFirStatusResolveTransformer(
     ): FirStatement {
         typeAlias.typeParameters.forEach { transformDeclaration(it, data) }
         typeAlias.transformStatus(this, statusResolver.resolveStatus(typeAlias, containingClass, isLocal = false))
+        calculateDeprecations(typeAlias)
         return transformDeclaration(typeAlias, data) as FirTypeAlias
     }
 
@@ -467,6 +470,7 @@ abstract class AbstractFirStatusResolveTransformer(
         data: FirResolvedDeclarationStatus?
     ): FirStatement {
         constructor.transformStatus(this, statusResolver.resolveStatus(constructor, containingClass, isLocal = false))
+        calculateDeprecations(constructor)
         return transformDeclaration(constructor, data) as FirStatement
     }
 
@@ -478,6 +482,7 @@ abstract class AbstractFirStatusResolveTransformer(
             simpleFunction.replaceResolvePhase(transformerPhase)
         }
         simpleFunction.transformStatus(this, statusResolver.resolveStatus(simpleFunction, containingClass, isLocal = false))
+        calculateDeprecations(simpleFunction)
         return transformDeclaration(simpleFunction, data) as FirStatement
     }
 
@@ -492,7 +497,7 @@ abstract class AbstractFirStatusResolveTransformer(
 
         property.getter?.let { transformPropertyAccessor(it, property) }
         property.setter?.let { transformPropertyAccessor(it, property) }
-
+        calculateDeprecations(property)
         return property
     }
 
@@ -501,6 +506,7 @@ abstract class AbstractFirStatusResolveTransformer(
         data: FirResolvedDeclarationStatus?
     ): FirStatement {
         field.transformStatus(this, statusResolver.resolveStatus(field, containingClass, isLocal = false))
+        calculateDeprecations(field)
         return transformDeclaration(field, data) as FirField
     }
 
@@ -509,6 +515,7 @@ abstract class AbstractFirStatusResolveTransformer(
         data: FirResolvedDeclarationStatus?
     ): FirStatement {
         enumEntry.transformStatus(this, statusResolver.resolveStatus(enumEntry, containingClass, isLocal = false))
+        calculateDeprecations(enumEntry)
         return transformDeclaration(enumEntry, data) as FirEnumEntry
     }
 
@@ -516,6 +523,7 @@ abstract class AbstractFirStatusResolveTransformer(
         valueParameter: FirValueParameter,
         data: FirResolvedDeclarationStatus?
     ): FirStatement {
+        calculateDeprecations(valueParameter)
         @Suppress("UNCHECKED_CAST")
         return transformDeclaration(valueParameter, data) as FirStatement
     }
@@ -529,5 +537,17 @@ abstract class AbstractFirStatusResolveTransformer(
 
     override fun transformBlock(block: FirBlock, data: FirResolvedDeclarationStatus?): FirStatement {
         return block
+    }
+
+    protected fun calculateDeprecations(regularClass: FirClassLikeDeclaration) {
+        if (regularClass.deprecation == null) {
+            regularClass.replaceDeprecation(regularClass.getDeprecationInfos(session.languageVersionSettings.apiVersion))
+        }
+    }
+
+    protected fun calculateDeprecations(simpleFunction: FirCallableDeclaration) {
+        if (simpleFunction.deprecation == null) {
+            simpleFunction.replaceDeprecation(simpleFunction.getDeprecationInfos(session.languageVersionSettings.apiVersion))
+        }
     }
 }

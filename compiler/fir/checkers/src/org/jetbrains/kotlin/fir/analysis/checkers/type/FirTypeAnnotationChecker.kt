@@ -12,10 +12,13 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
 object FirTypeAnnotationChecker : FirTypeRefChecker() {
     override fun check(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (typeRef !is FirResolvedTypeRef) return
+
         for (annotation in typeRef.annotations) {
             withSuppressedDiagnostics(annotation, context) {
                 val annotationTargets = annotation.getAllowedAnnotationTargets(context.session)
