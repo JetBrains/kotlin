@@ -7,8 +7,8 @@ class Outer {
     class Nested {
         fun f() = <!UNRESOLVED_REFERENCE!>function<!>()
         fun g() = <!UNRESOLVED_REFERENCE!>property<!>
-        fun h() = this<!UNRESOLVED_LABEL!>@Outer<!>.<!UNRESOLVED_REFERENCE!>function<!>()
-        fun i() = this<!UNRESOLVED_LABEL!>@Outer<!>.<!UNRESOLVED_REFERENCE!>property<!>
+        fun h() = this<!UNRESOLVED_LABEL!>@Outer<!>.function()
+        fun i() = this<!UNRESOLVED_LABEL!>@Outer<!>.property
     }
     
     inner class Inner {

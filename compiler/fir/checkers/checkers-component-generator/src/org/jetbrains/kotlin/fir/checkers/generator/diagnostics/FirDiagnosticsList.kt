@@ -117,6 +117,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val ENUM_AS_SUPERTYPE by error<PsiElement>()
         val RECURSION_IN_SUPERTYPES by error<PsiElement>()
         val NOT_A_SUPERTYPE by error<PsiElement>()
+        val TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER by warning<KtElement>()
         val SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE by error<PsiElement>()
         val QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE by error<KtTypeReference> {
             parameter<FirClass>("otherSuperType")

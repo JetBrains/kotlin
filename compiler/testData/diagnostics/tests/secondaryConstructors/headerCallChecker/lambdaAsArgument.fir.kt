@@ -8,8 +8,8 @@ class A {
     constructor() : this(
             {
                 <!ARGUMENT_TYPE_MISMATCH, TYPE_MISMATCH!><!UNRESOLVED_REFERENCE!>foo<!>() +
-                <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>.<!UNRESOLVED_REFERENCE!>foo<!>() +
-                this<!UNRESOLVED_LABEL!>@A<!>.<!UNRESOLVED_REFERENCE!>foo<!>() +
+                <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>.foo() +
+                this<!UNRESOLVED_LABEL!>@A<!>.foo() +
                 <!UNRESOLVED_REFERENCE!>foobar<!>()<!>
             })
 }

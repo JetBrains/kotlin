@@ -6,12 +6,12 @@ interface Trait {
 
 class Outer : Trait {
     class Nested {
-        val t = this<!UNRESOLVED_LABEL!>@Outer<!>.<!UNRESOLVED_REFERENCE!>bar<!>()
-        val s = super@Outer.<!UNRESOLVED_REFERENCE!>bar<!>()
+        val t = this<!UNRESOLVED_LABEL!>@Outer<!>.bar()
+        val s = super<!UNRESOLVED_LABEL!>@Outer<!>.bar()
         
         inner class NestedInner {
-            val t = this<!UNRESOLVED_LABEL!>@Outer<!>.<!UNRESOLVED_REFERENCE!>bar<!>()
-            val s = super@Outer.<!UNRESOLVED_REFERENCE!>bar<!>()
+            val t = this<!UNRESOLVED_LABEL!>@Outer<!>.bar()
+            val s = super<!UNRESOLVED_LABEL!>@Outer<!>.bar()
         }
     }
     

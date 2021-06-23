@@ -1,12 +1,12 @@
 FILE: superNotAvailable.kt
     public final fun R|kotlin/String|.f(): R|kotlin/Unit| {
-        super<<ERROR TYPE REF: No super type>>@f#.<Unresolved name: compareTo>#(String())
-        super<<ERROR TYPE REF: No super type>>.<Unresolved name: compareTo>#(String())
+        <Super not available>#.<Unresolved name: compareTo>#(String())
+        <Super not available>#.<Unresolved name: compareTo>#(String())
     }
     public final fun foo(): R|kotlin/Unit| {
-        super<<ERROR TYPE REF: No super type>>
-        super<<ERROR TYPE REF: No super type>>.<Unresolved name: foo>#()
-        super<R|kotlin/Nothing|>.<Unresolved name: foo>#()
+        <Super not allowed>#
+        <Super not available>#.<Unresolved name: foo>#()
+        <Super not available>#.<Unresolved name: foo>#()
     }
     public final class A : R|kotlin/Any| {
         public constructor(): R|A| {

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // http://youtrack.jetbrains.net/issue/KT-413
 
 open class A {
