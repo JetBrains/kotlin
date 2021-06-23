@@ -11,7 +11,7 @@
       <option name="taskNames">
         <list>
           <option value=":compiler:fir:checkers:generateCheckersComponents" />
-          <option value=":idea:idea-frontend-fir:generateCode" />
+          <option value=":idea-frontend-fir:generateCode" />
         </list>
       </option>
       <option name="vmOptions" value="" />
