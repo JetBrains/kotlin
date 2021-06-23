@@ -34445,9 +34445,19 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/when/stringOptimization/duplicatingItemsSameHashCode3.kt");
             }
 
+            @TestMetadata("enhancedNullability.kt")
+            public void testEnhancedNullability() throws Exception {
+                runTest("compiler/testData/codegen/box/when/stringOptimization/enhancedNullability.kt");
+            }
+
             @TestMetadata("expression.kt")
             public void testExpression() throws Exception {
                 runTest("compiler/testData/codegen/box/when/stringOptimization/expression.kt");
+            }
+
+            @TestMetadata("flexibleNullability.kt")
+            public void testFlexibleNullability() throws Exception {
+                runTest("compiler/testData/codegen/box/when/stringOptimization/flexibleNullability.kt");
             }
 
             @TestMetadata("nullability.kt")

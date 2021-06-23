@@ -9,10 +9,11 @@ import org.jetbrains.kotlin.codegen.`when`.SwitchCodegen.Companion.preferLookupO
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isTrueConst
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
-import java.util.*
 
 // TODO: eliminate the temporary variable
 class SwitchGenerator(private val expression: IrWhen, private val data: BlockInfo, private val codegen: ExpressionCodegen) {
@@ -446,9 +447,19 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
                 hashAndSwitchLabels.add(ValueToLabel(key, Label()))
         }
 
-        // Using a switch, the subject string has to be traversed at least twice (hash + comparison * N, where N is #strings hashed into the
-        // same bucket). The optimization isn't better than an IF cascade when #switch-targets <= 2.
-        override fun shouldOptimize() = hashAndSwitchLabels.size > 2
+        // Using a switch, the subject string has to be traversed at least twice
+        // (hash + comparison * N, where N is #strings hashed into the same bucket).
+        // The optimization isn't better than an IF cascade when #switch-targets <= 2.
+        //
+        // Generate "optimized" version for @EnhancedNullability subject type
+        // to model 1.0 behavior causing NPE in case of null value.
+        // TODO make 'when' with String subject behavior consistent.
+        // see:
+        //  box/when/stringOptimization/enhancedNullability.kt
+        //  box/when/stringOptimization/flexibleNullability.kt
+        override fun shouldOptimize() =
+            hashAndSwitchLabels.size > 2 ||
+                    subject.type.hasAnnotation(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION) && hashAndSwitchLabels.isNotEmpty()
 
         override fun genSwitch() {
             with(codegen) {

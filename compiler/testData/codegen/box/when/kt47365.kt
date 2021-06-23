@@ -1,4 +1,5 @@
 // WITH_RUNTIME
+// IGNORE_BACKEND: WASM
 
 enum class EType {
     A

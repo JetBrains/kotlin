@@ -42768,9 +42768,21 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Test
+            @TestMetadata("enhancedNullability.kt")
+            public void testEnhancedNullability() throws Exception {
+                runTest("compiler/testData/codegen/box/when/stringOptimization/enhancedNullability.kt");
+            }
+
+            @Test
             @TestMetadata("expression.kt")
             public void testExpression() throws Exception {
                 runTest("compiler/testData/codegen/box/when/stringOptimization/expression.kt");
+            }
+
+            @Test
+            @TestMetadata("flexibleNullability.kt")
+            public void testFlexibleNullability() throws Exception {
+                runTest("compiler/testData/codegen/box/when/stringOptimization/flexibleNullability.kt");
             }
 
             @Test
