@@ -22,23 +22,22 @@ import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.jps.indices.IgnoredFileIndex
 import org.jetbrains.jps.indices.ModuleExcludeIndex
 import org.jetbrains.jps.model.JpsModel
+import org.jetbrains.kotlin.config.SettingConstants
 import java.io.File
 
-private val KOTLIN_DATA_CONTAINER = "kotlin-data-container"
-
-object KotlinDataContainerTargetType : BuildTargetType<KotlinDataContainerTarget>(KOTLIN_DATA_CONTAINER) {
+object KotlinDataContainerTargetType : BuildTargetType<KotlinDataContainerTarget>(SettingConstants.KOTLIN_DATA_CONTAINER_ID) {
     override fun computeAllTargets(model: JpsModel): List<KotlinDataContainerTarget> = listOf(KotlinDataContainerTarget)
 
     override fun createLoader(model: JpsModel): BuildTargetLoader<KotlinDataContainerTarget> =
         object : BuildTargetLoader<KotlinDataContainerTarget>() {
-            override fun createTarget(targetId: String): KotlinDataContainerTarget? = KotlinDataContainerTarget
+            override fun createTarget(targetId: String): KotlinDataContainerTarget = KotlinDataContainerTarget
         }
 }
 
 // Fake target to store data per project for incremental compilation
 object KotlinDataContainerTarget : BuildTarget<BuildRootDescriptor>(KotlinDataContainerTargetType) {
-    override fun getId(): String? = KOTLIN_DATA_CONTAINER
-    override fun getPresentableName(): String = KOTLIN_DATA_CONTAINER
+    override fun getId(): String = SettingConstants.KOTLIN_DATA_CONTAINER_ID
+    override fun getPresentableName(): String = SettingConstants.KOTLIN_DATA_CONTAINER_ID
 
     override fun computeRootDescriptors(
         model: JpsModel?,
@@ -50,7 +49,7 @@ object KotlinDataContainerTarget : BuildTarget<BuildRootDescriptor>(KotlinDataCo
     override fun getOutputRoots(context: CompileContext): Collection<File> {
         val dataManager = context.projectDescriptor.dataManager
         val storageRoot = dataManager.dataPaths.dataStorageRoot
-        return listOf(File(storageRoot, KOTLIN_DATA_CONTAINER))
+        return listOf(File(storageRoot, SettingConstants.KOTLIN_DATA_CONTAINER_ID))
     }
 
     override fun findRootDescriptor(rootId: String?, rootIndex: BuildRootIndex?): BuildRootDescriptor? = null
@@ -58,5 +57,5 @@ object KotlinDataContainerTarget : BuildTarget<BuildRootDescriptor>(KotlinDataCo
     override fun computeDependencies(
         targetRegistry: BuildTargetRegistry?,
         outputIndex: TargetOutputIndex?
-    ): Collection<BuildTarget<*>>? = listOf()
+    ): Collection<BuildTarget<*>> = listOf()
 }
