@@ -65,6 +65,8 @@ abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
 
         val configuration = CompilerConfiguration()
 
+        configuration.put(CLIConfigurationKeys.ORIGINAL_MESSAGE_COLLECTOR_KEY, messageCollector)
+
         val collector = GroupingMessageCollector(messageCollector, arguments.allWarningsAsErrors).also {
             configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, it)
         }
