@@ -11,11 +11,12 @@ import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
 import org.jetbrains.kotlin.ir.interpreter.getDispatchReceiver
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.Common
+import org.jetbrains.kotlin.ir.interpreter.state.State
 import org.jetbrains.kotlin.ir.interpreter.toState
 import org.jetbrains.kotlin.ir.util.isFakeOverriddenFromAny
 
 internal class CommonProxy private constructor(override val state: Common, override val callInterceptor: CallInterceptor) : Proxy {
-    private fun defaultEquals(other: Proxy): Boolean = this.state === other.state
+    private fun defaultEquals(other: Any?): Boolean = if (other is Proxy) this.state === other.state else false
     private fun defaultHashCode(): Int = System.identityHashCode(state)
     private fun defaultToString(): String = "${state.irClass.internalName()}@" + hashCode().toString(16).padStart(8, '0')
 
@@ -32,14 +33,14 @@ internal class CommonProxy private constructor(override val state: Common, overr
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is Proxy) return false
+        if (other == null) return false
 
         val valueArguments = mutableListOf<Variable>()
         val equalsFun = state.getEqualsFunction()
         if (equalsFun.isFakeOverriddenFromAny() || equalsFun.wasAlreadyCalled()) return defaultEquals(other)
 
         equalsFun.getDispatchReceiver()!!.let { valueArguments.add(Variable(it, state)) }
-        valueArguments.add(Variable(equalsFun.valueParameters.single().symbol, other.state))
+        valueArguments.add(Variable(equalsFun.valueParameters.single().symbol, if (other is Proxy) other.state else other as State))
 
         return callInterceptor.interceptProxy(equalsFun, valueArguments) as Boolean
     }

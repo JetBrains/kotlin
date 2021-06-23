@@ -45,6 +45,14 @@ internal fun State.wrap(callInterceptor: CallInterceptor, remainArraysAsIs: Bool
  */
 internal fun List<State>.wrap(callInterceptor: CallInterceptor, irFunction: IrFunction, methodType: MethodType? = null): List<Any?> {
     val name = irFunction.fqNameWhenAvailable?.asString() ?: ""
+    if (name == "kotlin.internal.ir.EQEQ" && this.any { it is Common }) {
+        // in case of custom `equals` it is important not to lose information obout type
+        // so all states remain as is, only common will be converted to Proxy
+        return mapIndexed { index, state ->
+            if (state !is Common) return@mapIndexed state
+            state.wrap(callInterceptor, remainArraysAsIs = true, methodType?.parameterType(index))
+        }
+    }
     return this.mapIndexed { index, state ->
         // don't get arrays from Primitive in case of "set" and "Pair.<init>"; information about type will be lost
         val unwrapArrays = (name == "kotlin.Array.set" && index != 0) || name == "kotlin.Pair.<init>" || name == "kotlin.internal.ir.CHECK_NOT_NULL"
