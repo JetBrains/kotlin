@@ -9,13 +9,13 @@ import org.gradle.internal.os.OperatingSystem
 
 
 fun Test.configureTestDistribution(configure: TestDistributionExtension.() -> Unit = {}) {
-    if (extensions.findByType(TestDistributionExtension::class.java) == null) return
-
     val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild
+    val testDistributionEnabled =
+        project.findProperty("kotlin.build.test.distribution.enabled")?.toString()?.toBoolean() ?: false
 
     useJUnitPlatform()
     extensions.configure(TestDistributionExtension::class.java) {
-        enabled.set(true)
+        enabled.set(testDistributionEnabled)
         maxRemoteExecutors.set(20)
         if (isTeamcityBuild) {
             requirements.set(setOf("os=${OperatingSystem.current().familyName}"))

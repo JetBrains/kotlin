@@ -33,12 +33,12 @@ buildscript {
 }
 
 plugins {
-    id "com.gradle.enterprise" version "3.6.2"
+    id "com.gradle.enterprise" version "3.6.3"
+    id "com.gradle.enterprise.test-distribution" version "2.1"
     id "com.gradle.common-custom-user-data-gradle-plugin" version "1.4" apply false
 }
 
 def buildProperties = BuildPropertiesKt.getKotlinBuildPropertiesForSettings(settings)
-def projectVersions = file("./gradle/versions.properties").text
 
 if (buildProperties.buildScanServer != null) {
     apply plugin: com.gradle.CommonCustomUserDataGradlePlugin
