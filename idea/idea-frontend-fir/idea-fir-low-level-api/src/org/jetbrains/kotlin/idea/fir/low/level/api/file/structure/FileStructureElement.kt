@@ -41,6 +41,7 @@ internal class KtToFirMapping(firElement: FirElement, recorder: FirElementsRecor
 
     private val userTypeMapping = ConcurrentHashMap<KtUserType, FirElement>()
     fun getElement(ktElement: KtElement, state: FirModuleResolveState): FirElement? {
+
         mapping[ktElement]?.let { return it }
 
         val userType = when (ktElement) {

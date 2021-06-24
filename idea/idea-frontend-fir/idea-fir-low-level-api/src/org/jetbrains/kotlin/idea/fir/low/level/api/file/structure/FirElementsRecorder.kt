@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.file.structure
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.fir.FirRealPsiSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
-import org.jetbrains.kotlin.fir.realPsi
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -90,9 +92,12 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
     }
 
     private fun cacheElement(element: FirElement, cache: MutableMap<KtElement, FirElement>) {
-        (element.realPsi as? KtElement)?.let { psi ->
-            cache(psi, element, cache)
-        }
+        val psi = element.source
+            ?.takeIf {
+                it.kind == FirFakeSourceElementKind.ReferenceInAtomicQualifiedAccess || it is FirRealPsiSourceElement
+            }.psi as? KtElement
+            ?: return
+        cache(psi, element, cache)
     }
 
     companion object {

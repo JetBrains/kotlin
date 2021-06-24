@@ -2222,7 +2222,7 @@ open class RawFirBuilder(
                 val sourceElement = expression.toFirSourceElement()
                 source = sourceElement
                 calleeReference = buildExplicitThisReference {
-                    source = sourceElement.fakeElement(FirFakeSourceElementKind.ExplicitThisOrSuperReference)
+                    source = sourceElement.fakeElement(FirFakeSourceElementKind.ReferenceInAtomicQualifiedAccess)
                     labelName = expression.getLabelName()
                 }
             }
@@ -2234,7 +2234,7 @@ open class RawFirBuilder(
             return buildQualifiedAccessExpression {
                 this.source = theSource
                 calleeReference = buildExplicitSuperReference {
-                    source = theSource.fakeElement(FirFakeSourceElementKind.ExplicitThisOrSuperReference)
+                    source = theSource.fakeElement(FirFakeSourceElementKind.ReferenceInAtomicQualifiedAccess)
                     labelName = expression.getLabelName()
                     superTypeRef = superType.toFirOrImplicitType()
                 }

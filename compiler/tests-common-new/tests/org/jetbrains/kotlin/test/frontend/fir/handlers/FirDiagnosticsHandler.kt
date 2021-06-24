@@ -52,6 +52,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         private val allowedKindsForDebugInfo = setOf(
             FirRealSourceElementKind,
             FirFakeSourceElementKind.DesugaredCompoundAssignment,
+            FirFakeSourceElementKind.ReferenceInAtomicQualifiedAccess,
         )
     }
 
