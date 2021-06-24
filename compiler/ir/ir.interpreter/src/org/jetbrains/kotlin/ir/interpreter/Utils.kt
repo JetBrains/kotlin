@@ -180,6 +180,7 @@ internal fun IrFunction?.checkCast(environment: IrInterpreterEnvironment): Boole
 
     if (!actualState.isSubtypeOf(expectedType)) {
         val convertibleClassName = environment.callStack.popState().irClass.fqNameWhenAvailable
+        environment.callStack.dropFrame() // current frame is pointing on function and is redundant
         ClassCastException("$convertibleClassName cannot be cast to ${expectedType.render()}").handleUserException(environment)
         return false
     }
