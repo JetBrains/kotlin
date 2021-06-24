@@ -6,7 +6,7 @@ import kotlin.test.*
 
 import kotlin.native.concurrent.*
 
-fun main(args : Array<String>) {
+fun mainLegacyMM() {
     assertFailsWith<InvalidMutabilityException> {
         setUnhandledExceptionHook { _ -> println("wrong") }
     }
@@ -19,4 +19,26 @@ fun main(args : Array<String>) {
     assertNull(old)
 
     throw Error("an error")
+}
+
+fun mainExperimentalMM() {
+    val unset = setUnhandledExceptionHook { _ -> println("ok") }
+    assertNull(unset)
+
+    val x = 42
+    val old = setUnhandledExceptionHook {
+        throwable: Throwable -> println("value $x: ${throwable::class.simpleName}")
+    }
+
+    assertNotNull(old)
+
+    throw Error("an error")
+}
+
+fun main() {
+    if (Platform.memoryModel == MemoryModel.EXPERIMENTAL) {
+        mainExperimentalMM()
+    } else {
+        mainLegacyMM()
+    }
 }
