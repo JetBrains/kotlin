@@ -2403,14 +2403,17 @@ standaloneTest("check_stacktrace_format") {
 }
 
 standaloneTest("stack_trace_inline") {
-    // TODO: Enable after the test has been fixed.
-    disabled = !isAppleTarget(project) || project.globalTestArgs.contains('-opt') || (project.testTarget == 'ios_arm64')
+    disabled = !isAppleTarget(project) || project.globalTestArgs.contains('-opt') || (project.testTarget == 'ios_arm64') ||
+            // KT-47405
+            (project.testTarget == 'ios_simulator_arm64') || (project.testTarget == 'watchos_simulator_arm64')
     flags = ['-g', '-Xg-generate-debug-trampoline=enable']
     source = "runtime/exceptions/stack_trace_inline.kt"
 }
 
 standaloneTest("kt-37572") {
-    disabled = !isAppleTarget(project) || project.globalTestArgs.contains('-opt') || (project.testTarget == 'ios_arm64')
+    disabled = !isAppleTarget(project) || project.globalTestArgs.contains('-opt') || (project.testTarget == 'ios_arm64') ||
+            // KT-47408
+            (project.testTarget == 'ios_simulator_arm64') || (project.testTarget == 'watchos_simulator_arm64')
     flags = ['-g']
     source = "runtime/exceptions/kt-37572.kt"
 }
