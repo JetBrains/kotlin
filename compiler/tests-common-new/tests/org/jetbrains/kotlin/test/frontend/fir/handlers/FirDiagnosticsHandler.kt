@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
+import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
@@ -166,6 +168,18 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
 
                 super.visitFunctionCall(functionCall)
             }
+
+            override fun visitSafeCallExpression(safeCallExpression: FirSafeCallExpression) {
+                result.addIfNotNull(
+                    createCallDiagnosticIfExpected(
+                        safeCallExpression,
+                        safeCallExpression.regularQualifiedAccess.calleeReference as FirNamedReference,
+                        diagnosedRangesToDiagnosticNames
+                    )
+                )
+
+                super.visitSafeCallExpression(safeCallExpression)
+            }
         }.let(firFile::accept)
         globalMetadataInfoHandler.addMetadataInfosForFile(
             testFile,
@@ -201,11 +215,12 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         }
 
     private fun DebugInfoDiagnosticFactory1.getPositionedElement(sourceElement: FirSourceElement): FirSourceElement {
+        val elementType = sourceElement.elementType
         return if (this === DebugInfoDiagnosticFactory1.CALL
-            && sourceElement.elementType == KtNodeTypes.DOT_QUALIFIED_EXPRESSION
+            && (elementType == KtNodeTypes.DOT_QUALIFIED_EXPRESSION || elementType == KtNodeTypes.SAFE_ACCESS_EXPRESSION)
         ) {
             if (sourceElement is FirPsiSourceElement) {
-                val psi = (sourceElement.psi as KtDotQualifiedExpression).selectorExpression
+                val psi = (sourceElement.psi as KtQualifiedExpression).selectorExpression
                 psi?.let { FirRealPsiSourceElement(it) } ?: sourceElement
             } else {
                 val tree = sourceElement.treeStructure
