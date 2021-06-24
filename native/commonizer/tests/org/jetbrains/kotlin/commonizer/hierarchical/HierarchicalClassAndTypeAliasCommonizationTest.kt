@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.commonizer.hierarchical
 
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest
 import org.jetbrains.kotlin.commonizer.assertCommonized
+import org.junit.Ignore
 import org.junit.Test
 
 class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesCommonizationTest() {
@@ -281,7 +282,8 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
         )
     }
 
-    fun `test return types`() {
+    @Suppress("unused")
+    fun `ignored KT-47432 - test return types`() {
         val result = commonize {
             outputTarget("(a, b)")
 
@@ -309,7 +311,8 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
         )
     }
 
-    fun `test parameters`() {
+    @Suppress("unused")
+    fun `ignored KT-47432 - test function parameters`() {
         val result = commonize {
             outputTarget("(a, b)")
 
