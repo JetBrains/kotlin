@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -21,13 +20,9 @@ import org.jetbrains.kotlin.ir.expressions.IrSetField
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
-import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 
 internal val renameFieldsPhase = makeIrFilePhase(
@@ -38,63 +33,48 @@ internal val renameFieldsPhase = makeIrFilePhase(
 
 private class RenameFieldsLowering(val context: CommonBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        val collector = FieldNameCollector()
-        irFile.acceptVoid(collector)
+        val fields = mutableListOf<IrField>()
+        irFile.accept(FieldCollector, fields)
+        fields.sortBy {
+            when {
+                // We never rename public ABI fields (public and protected visibility) since they are accessible from Java
+                // even in cases when Kotlin code would prefer an accessor. (And in some cases, such as enum entries and const
+                // fields, Kotlin references the fields directly too.) Therefore we consider such fields first, in order to make
+                // sure it'll claim its original name. There can be multiple such fields, in which case they will cause a platform
+                // declaration clash if they map to the same JVM type - nothing we can do about that.
+                it.visibility.isPublicAPI -> 0
+                // If there are non-public non-static and static (moved from companion) fields with the same name, we try to make
+                // static properties retain their original names first, since this is what the old JVM backend did. However this
+                // can easily be changed without any major binary compatibility consequences (ignoring Java reflection).
+                it.isStatic -> 1
+                else -> 2
+            }
+        }
 
         val newNames = mutableMapOf<IrField, Name>()
-        for ((_, fields) in collector.nameToField) {
-            if (fields.size < 2) continue
-
-            var count = 0
-            // We never rename fields that are part of public ABI (backing fields of const, lateinit, and JvmField properties).
-            // Therefore we consider such fields first, in order to make sure it'll claim its original name.
-            // If there are non-static and static (moved from companion) fields with the same name, we try to make static properties retain
-            // their original names first, since this is what the old JVM backend did. However this can easily be changed without any
-            // major binary compatibility consequences (modulo access to private members via Java reflection).
-            for (field in fields.sortedBy {
-                when {
-                    it.isPublicAbi() -> 0
-                    it.isStatic -> 1
-                    else -> 2
-                }
-            }) {
-                val oldName = field.name
-                val newName = if (count == 0) oldName else Name.identifier(oldName.asString() + "$$count")
-                count++
-
-                if (field.isPublicAbi()) continue
-
-                newNames[field] = newName
+        val count = hashMapOf<Pair<IrDeclarationParent, Name>, Int>()
+        for (field in fields) {
+            val key = field.parent to field.name
+            val index = count[key] ?: 0
+            if (index != 0 && !field.visibility.isPublicAPI) {
+                newNames[field] = Name.identifier("${field.name}$$index")
             }
+            count[key] = index + 1
         }
 
         val renamer = FieldRenamer(newNames)
         irFile.transform(renamer, null)
-
         irFile.transform(FieldAccessTransformer(renamer.newSymbols), null)
     }
-
-    private fun IrField.isPublicAbi(): Boolean {
-        if (!visibility.isPublicAPI) return false
-        val correspondingProperty = correspondingPropertySymbol?.owner
-        return isJvmField ||
-                origin == IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE ||
-                correspondingProperty != null && (correspondingProperty.isLateinit || correspondingProperty.isConst)
-    }
-
-    private val IrField.isJvmField: Boolean
-        get() = hasAnnotation(JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME)
 }
 
-private class FieldNameCollector : IrElementVisitorVoid {
-    val nameToField = mutableMapOf<Pair<IrDeclarationParent, Name>, MutableList<IrField>>()
-
-    override fun visitElement(element: IrElement) {
-        element.acceptChildrenVoid(this)
+private object FieldCollector : IrElementVisitor<Unit, MutableList<IrField>> {
+    override fun visitElement(element: IrElement, data: MutableList<IrField>) {
+        element.acceptChildren(this, data)
     }
 
-    override fun visitField(declaration: IrField) {
-        nameToField.getOrPut(declaration.parent to declaration.name) { mutableListOf() }.add(declaration)
+    override fun visitField(declaration: IrField, data: MutableList<IrField>) {
+        data.add(declaration)
     }
 }
 

@@ -12147,6 +12147,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/enum/modifierFlags.kt");
         }
 
+        @TestMetadata("nameClashWithCompanion.kt")
+        public void testNameClashWithCompanion() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/nameClashWithCompanion.kt");
+        }
+
         @TestMetadata("nameConflict.kt")
         public void testNameConflict() throws Exception {
             runTest("compiler/testData/codegen/box/enum/nameConflict.kt");
