@@ -24,10 +24,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.isSubclassOf
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -282,11 +279,11 @@ private class CallsiteRedirectionTransformer(private val context: JsIrBackendCon
             }
 
             val readThis = expression.run {
-                if (data!! is IrConstructor) {
-                    val thisReceiver = klass.thisReceiver!!
+                if (data is IrConstructor) {
+                    val thisReceiver = data.constructedClass.thisReceiver!!
                     IrGetValueImpl(startOffset, endOffset, thisReceiver.type, thisReceiver.symbol)
                 } else {
-                    val lastValueParameter = data.valueParameters.last()
+                    val lastValueParameter = data!!.valueParameters.last()
                     IrGetValueImpl(startOffset, endOffset, lastValueParameter.type, lastValueParameter.symbol)
                 }
             }
