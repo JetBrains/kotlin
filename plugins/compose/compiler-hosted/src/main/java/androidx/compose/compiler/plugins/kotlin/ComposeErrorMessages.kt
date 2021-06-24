@@ -89,6 +89,10 @@ class ComposeErrorMessages : DefaultErrorMessages.Extension {
             "Composable properties are not able to have backing fields"
         )
         MAP.put(
+            ComposeErrors.ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE,
+            "Abstract Composable functions cannot have parameters with default values"
+        )
+        MAP.put(
             ComposeErrors.COMPOSABLE_FUN_MAIN,
             "Composable main functions are not currently supported"
         )

@@ -16,6 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import androidx.compose.compiler.plugins.kotlin.ComposeErrors.ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE
 import androidx.compose.compiler.plugins.kotlin.ComposeErrors.COMPOSABLE_FUN_MAIN
 import androidx.compose.compiler.plugins.kotlin.ComposeErrors.COMPOSABLE_PROPERTY_BACKING_FIELD
 import androidx.compose.compiler.plugins.kotlin.ComposeErrors.COMPOSABLE_SUSPEND_FUN
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -93,6 +95,17 @@ class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContain
             context.trace.report(
                 COMPOSABLE_SUSPEND_FUN.on(declaration.nameIdentifier ?: declaration)
             )
+        }
+
+        if (hasComposableAnnotation && descriptor.modality == Modality.ABSTRACT) {
+            declaration.valueParameters.forEach {
+                val defaultValue = it.defaultValue
+                if (defaultValue != null) {
+                    context.trace.report(
+                        ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE.on(defaultValue)
+                    )
+                }
+            }
         }
         val params = descriptor.valueParameters
         val ktparams = declaration.valueParameters
