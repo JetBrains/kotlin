@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.ir.types.isUnsignedType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import java.lang.invoke.MethodHandle
 
 internal interface CallInterceptor {
@@ -79,7 +78,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
         val irConstructor = constructorCall.symbol.owner
         val irClass = irConstructor.parentAsClass
         when {
-            Wrapper.mustBeHandledWithWrapper(irClass) || irClass.fqNameWhenAvailable!!.startsWith(Name.identifier("java")) -> {
+            Wrapper.mustBeHandledWithWrapper(irClass) || irClass.fqName.startsWith("java") -> {
                 Wrapper.getConstructorMethod(irConstructor).invokeMethod(irConstructor, args)
                 when {
                     irClass.isSubclassOfThrowable() -> (receiver as ExceptionState).copyFieldsFrom(callStack.popState() as Wrapper)

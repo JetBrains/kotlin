@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.ir.interpreter.intrinsics
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.interpreter.Instruction
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterEnvironment
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.interpreter.fqName
 
 internal object IntrinsicEvaluator {
     fun unwindInstructions(irFunction: IrFunction, environment: IrInterpreterEnvironment): List<Instruction>? {
-        val fqName = irFunction.fqNameWhenAvailable.toString()
+        val fqName = irFunction.fqName
         return when {
             EmptyArray.canHandleFunctionWithName(fqName, irFunction.origin) -> EmptyArray.unwind(irFunction, environment)
             ArrayOf.canHandleFunctionWithName(fqName, irFunction.origin) -> ArrayOf.unwind(irFunction, environment)

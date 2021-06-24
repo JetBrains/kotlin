@@ -11,9 +11,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrGetObjectValue
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.interpreter.compileTimeAnnotation
-import org.jetbrains.kotlin.ir.interpreter.contractsDslAnnotation
-import org.jetbrains.kotlin.ir.interpreter.evaluateIntrinsicAnnotation
+import org.jetbrains.kotlin.ir.interpreter.*
 import org.jetbrains.kotlin.ir.interpreter.hasAnnotation
 import org.jetbrains.kotlin.ir.interpreter.isUnsigned
 import org.jetbrains.kotlin.ir.types.isAny
@@ -84,7 +82,7 @@ enum class EvaluationMode(protected val mustCheckBody: Boolean) {
     fun IrDeclaration.isMarkedAsCompileTime() = isMarkedWith(compileTimeAnnotation)
     private fun IrDeclaration.isContract() = isMarkedWith(contractsDslAnnotation)
     private fun IrDeclaration.isMarkedAsEvaluateIntrinsic() = isMarkedWith(evaluateIntrinsicAnnotation)
-    protected fun IrDeclaration.isCompileTimeTypeAlias() = this.parentClassOrNull?.fqNameWhenAvailable?.asString() in compileTimeTypeAliases
+    protected fun IrDeclaration.isCompileTimeTypeAlias() = this.parentClassOrNull?.fqName in compileTimeTypeAliases
 
     protected fun IrDeclaration.isMarkedWith(annotation: FqName): Boolean {
         if (this is IrClass && this.isCompanion) return false

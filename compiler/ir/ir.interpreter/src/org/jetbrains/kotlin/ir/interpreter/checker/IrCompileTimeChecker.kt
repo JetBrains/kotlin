@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.interpreter.accessesTopLevelOrObjectField
+import org.jetbrains.kotlin.ir.interpreter.fqName
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -132,7 +133,7 @@ class IrCompileTimeChecker(
     override fun visitGetField(expression: IrGetField, data: Nothing?): Boolean {
         val owner = expression.symbol.owner
         val property = owner.correspondingPropertySymbol?.owner
-        val fqName = owner.fqNameForIrSerialization
+        val fqName = owner.fqName
         fun isJavaStaticWithPrimitiveOrString(): Boolean {
             return owner.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && owner.isStatic &&
                     (owner.type.isPrimitiveType() || owner.type.isStringClassType())
@@ -140,7 +141,7 @@ class IrCompileTimeChecker(
         return when {
             // TODO fix later; used it here because java boolean resolves very strange,
             //  its type is flexible (so its not primitive) and there is no initializer at backing field
-            fqName.toString().let { it == "java.lang.Boolean.FALSE" || it == "java.lang.Boolean.TRUE" } -> true
+            fqName == "java.lang.Boolean.FALSE" || fqName == "java.lang.Boolean.TRUE" -> true
             isJavaStaticWithPrimitiveOrString() -> owner.initializer?.accept(this, data) == true
             expression.receiver == null -> property?.isConst == true && owner.initializer?.accept(this, null) == true
             owner.origin == IrDeclarationOrigin.PROPERTY_BACKING_FIELD && property?.isConst == true -> {

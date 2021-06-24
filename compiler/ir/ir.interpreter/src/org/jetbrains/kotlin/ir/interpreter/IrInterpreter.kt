@@ -151,7 +151,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
 
         state.checkNullability(valueParameter.type, environment) {
             if (isReceiver()) return@checkNullability NullPointerException()
-            val method = irFunction.getCapitalizedFileName() + "." + irFunction.fqNameWhenAvailable
+            val method = irFunction.getCapitalizedFileName() + "." + irFunction.fqName
             val parameter = valueParameter.name
             IllegalArgumentException("Parameter specified as non-null is null: method $method, parameter $parameter")
         } ?: return
@@ -414,7 +414,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
             val enumClass = enumEntry.symbol.owner.parentAsClass
             val enumEntries = enumClass.declarations.filterIsInstance<IrEnumEntry>()
             val enumInitializer = enumEntry.initializerExpression?.expression
-                ?: throw InterpreterError("Initializer at enum entry ${enumEntry.fqNameWhenAvailable} is null")
+                ?: throw InterpreterError("Initializer at enum entry ${enumEntry.fqName} is null")
             val enumConstructorCall = enumInitializer as? IrEnumConstructorCall
                 ?: (enumInitializer as IrBlock).statements.filterIsInstance<IrEnumConstructorCall>().single()
             val enumSuperCall = enumConstructorCall.getSuperEnumCall()
@@ -460,7 +460,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
                     // this first check is performed inside `isSubtypeOf` but repeated here to create separate exception
                     state.isNull() && !typeOperand.isNullable() -> NullPointerException().handleUserException(environment)
                     !isErased && !state.isSubtypeOf(typeOperand) -> {
-                        val castedClassName = state.irClass.fqNameWhenAvailable
+                        val castedClassName = state.irClass.fqName
                         ClassCastException("$castedClassName cannot be cast to ${typeOperand.render()}").handleUserException(environment)
                     }
                     else -> callStack.pushState(state)

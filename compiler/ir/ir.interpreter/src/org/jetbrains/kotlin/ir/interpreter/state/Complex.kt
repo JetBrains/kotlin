@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.ir.interpreter.state
 
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.interpreter.fqName
 import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.overrides
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 
@@ -19,9 +19,7 @@ internal interface Complex : State {
     var superWrapperClass: Wrapper?
     var outerClass: Variable?
 
-    fun irClassFqName(): String {
-        return irClass.fqNameForIrSerialization.toString()
-    }
+    fun irClassFqName() = irClass.fqName
 
     private fun getIrFunctionFromGivenClass(irClass: IrClass, symbol: IrFunctionSymbol): IrFunction? {
         val propertyGetters = irClass.declarations.filterIsInstance<IrProperty>().mapNotNull { it.getter }

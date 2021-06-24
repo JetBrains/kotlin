@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.interpreter
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
@@ -23,7 +24,6 @@ import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.lang.invoke.MethodType
@@ -31,6 +31,12 @@ import java.lang.invoke.MethodType
 val compileTimeAnnotation = FqName("kotlin.CompileTimeCalculation")
 val evaluateIntrinsicAnnotation = FqName("kotlin.EvaluateIntrinsic")
 val contractsDslAnnotation = FqName("kotlin.internal.ContractsDsl")
+
+internal val IrElement.fqName: String
+    get() = when (this) {
+        is IrExpression -> (this as? IrSymbolOwner)?.symbol?.owner?.fqName ?: ""
+        else -> (this as? IrDeclarationWithName)?.fqNameWhenAvailable?.asString() ?: ""
+    }
 
 internal fun IrFunction.getDispatchReceiver(): IrValueParameterSymbol? = this.dispatchReceiverParameter?.symbol
 
@@ -75,7 +81,7 @@ fun IrAnnotationContainer.getAnnotation(annotation: FqName): IrConstructorCall {
 }
 
 internal fun IrAnnotationContainer.getEvaluateIntrinsicValue(): String? {
-    if (this is IrClass && this.fqNameWhenAvailable?.startsWith(Name.identifier("java")) == true) return this.fqNameWhenAvailable?.asString()
+    if (this is IrClass && this.fqName.startsWith("java")) return this.fqName
     if (!this.hasAnnotation(evaluateIntrinsicAnnotation)) return null
     return (this.getAnnotation(evaluateIntrinsicAnnotation).getValueArgument(0) as IrConst<*>).value.toString()
 }
@@ -129,10 +135,10 @@ fun IrFunctionAccessExpression.getVarargType(index: Int): IrType? {
 internal fun IrFunction.getCapitalizedFileName() = this.file.name.replace(".kt", "Kt").capitalizeAsciiOnly()
 
 internal fun IrType.isUnsigned() = this.getUnsignedType() != null
-internal fun IrType.isFunction() = this.getClass()?.fqNameWhenAvailable?.asString()?.startsWith("kotlin.Function") ?: false
-internal fun IrType.isKFunction() = this.getClass()?.fqNameWhenAvailable?.asString()?.startsWith("kotlin.reflect.KFunction") ?: false
+internal fun IrType.isFunction() = this.getClass()?.fqName?.startsWith("kotlin.Function") ?: false
+internal fun IrType.isKFunction() = this.getClass()?.fqName?.startsWith("kotlin.reflect.KFunction") ?: false
 internal fun IrType.isTypeParameter() = classifierOrNull is IrTypeParameterSymbol
-internal fun IrType.isThrowable() = this.getClass()?.fqNameWhenAvailable?.asString() == "kotlin.Throwable"
+internal fun IrType.isThrowable() = this.getClass()?.fqName == "kotlin.Throwable"
 internal fun IrClass.isSubclassOfThrowable(): Boolean {
     return generateSequence(this) { irClass ->
         if (irClass.defaultType.isAny()) return@generateSequence null
@@ -142,8 +148,7 @@ internal fun IrClass.isSubclassOfThrowable(): Boolean {
 
 internal fun IrType.isUnsignedArray(): Boolean {
     if (this !is IrSimpleType || classifier !is IrClassSymbol) return false
-    val fqName = (classifier.owner as IrDeclarationWithName).fqNameWhenAvailable?.asString()
-    return fqName in setOf("kotlin.UByteArray", "kotlin.UShortArray", "kotlin.UIntArray", "kotlin.ULongArray")
+    return classifier.owner.fqName in setOf("kotlin.UByteArray", "kotlin.UShortArray", "kotlin.UIntArray", "kotlin.ULongArray")
 }
 
 internal fun IrType.isPrimitiveArray(): Boolean {
@@ -179,7 +184,7 @@ internal fun IrFunction?.checkCast(environment: IrInterpreterEnvironment): Boole
     if (actualState is Primitive<*> && actualState.value == null) return true // this is handled in checkNullability
 
     if (!actualState.isSubtypeOf(expectedType)) {
-        val convertibleClassName = environment.callStack.popState().irClass.fqNameWhenAvailable
+        val convertibleClassName = environment.callStack.popState().irClass.fqName
         environment.callStack.dropFrame() // current frame is pointing on function and is redundant
         ClassCastException("$convertibleClassName cannot be cast to ${expectedType.render()}").handleUserException(environment)
         return false
@@ -278,7 +283,7 @@ internal fun IrType.getTypeIfReified(getType: (IrClassifierSymbol) -> IrType): I
 }
 
 internal fun IrFunctionAccessExpression.getSuperEnumCall(): IrEnumConstructorCall {
-    val name = this.symbol.owner.parentClassOrNull?.fqNameWhenAvailable?.asString()
+    val name = this.symbol.owner.parentClassOrNull?.fqName
     if (this is IrEnumConstructorCall && name == "kotlin.Enum") return this
     return when (val delegatingCall = this.symbol.owner.body?.statements?.get(0)) {
         is IrFunctionAccessExpression -> delegatingCall.getSuperEnumCall()

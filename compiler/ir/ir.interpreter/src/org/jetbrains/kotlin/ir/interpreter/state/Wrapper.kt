@@ -73,7 +73,7 @@ internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex 
 
     // This method is used to get correct java method name
     private fun getJavaOriginalName(irFunction: IrFunction): String? {
-        return when (irFunction.getLastOverridden().fqNameWhenAvailable?.asString()) {
+        return when (irFunction.getLastOverridden().fqName) {
             "kotlin.collections.Map.<get-entries>" -> "entrySet"
             "kotlin.collections.Map.<get-keys>" -> "keySet"
             "kotlin.CharSequence.get" -> "charAt"
@@ -111,8 +111,8 @@ internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex 
             javaClassToIrClass += javaClass to irClass
         }
 
-        private fun IrDeclarationWithName.getSignature(): String? {
-            val fqName = this.fqNameWhenAvailable?.asString()
+        private fun IrDeclarationWithName.getSignature(): String {
+            val fqName = this.fqName
             return when (this) {
                 is IrFunction -> {
                     val receiver = (dispatchReceiverParameter ?: extensionReceiverParameter)?.type?.getOnlyName()?.let { "$it." } ?: ""
@@ -127,10 +127,10 @@ internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex 
         }
 
         fun mustBeHandledWithWrapper(declaration: IrDeclarationWithName): Boolean {
-            val fqName = declaration.fqNameWhenAvailable?.asString()
+            val fqName = declaration.fqName
             return when (declaration) {
                 is IrFunction -> declaration.getSignature() in intrinsicFunctionToHandler
-                else -> fqName in intrinsicClasses || fqName?.startsWith("java") == true
+                else -> fqName in intrinsicClasses || fqName.startsWith("java")
             }
         }
 
@@ -204,15 +204,15 @@ internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex 
 
         private fun IrType.getClass(asObject: Boolean): Class<out Any> {
             val owner = this.classOrNull?.owner
-            val fqName = owner?.fqNameWhenAvailable?.asString()
+            val fqName = owner?.fqName
             val notNullType = this.makeNotNull()
             //TODO check if primitive array is possible here
             return when {
                 notNullType.isPrimitiveType() || notNullType.isString() -> getPrimitiveClass(notNullType, asObject)!!
                 notNullType.isArray() -> {
-                    val argumentFqName = (this as IrSimpleType).arguments.single().typeOrNull?.classOrNull?.owner?.fqNameWhenAvailable
+                    val argumentFqName = (this as IrSimpleType).arguments.single().typeOrNull?.classOrNull?.owner?.fqName
                     when {
-                        argumentFqName != null && argumentFqName.asString() != "kotlin.Any" -> argumentFqName.let { Class.forName("[L$it;") }
+                        argumentFqName != null && argumentFqName != "kotlin.Any" -> argumentFqName.let { Class.forName("[L$it;") }
                         else -> Array<Any?>::class.java
                     }
                 }

@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.interpreter.state.reflection.KTypeState
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.types.Variance
 import java.util.*
 
@@ -84,7 +83,7 @@ internal object EnumValues : IntrinsicBase() {
     }
 
     private fun getEnumClass(irFunction: IrFunction, environment: IrInterpreterEnvironment): IrClass {
-        return when (irFunction.fqNameWhenAvailable.toString()) {
+        return when (irFunction.fqName) {
             "kotlin.enumValues" -> {
                 val kType = environment.callStack.getState(irFunction.typeParameters.first().symbol) as KTypeState
                 kType.irType.classOrNull!!.owner
@@ -114,7 +113,7 @@ internal object EnumValueOf : IntrinsicBase() {
     }
 
     private fun getEnumClass(irFunction: IrFunction, environment: IrInterpreterEnvironment): IrClass {
-        return when (irFunction.fqNameWhenAvailable.toString()) {
+        return when (irFunction.fqName) {
             "kotlin.enumValueOf" -> {
                 val kType = environment.callStack.getState(irFunction.typeParameters.first().symbol) as KTypeState
                 kType.irType.classOrNull!!.owner
@@ -128,7 +127,7 @@ internal object EnumValueOf : IntrinsicBase() {
         val enumEntryName = environment.callStack.getState(irFunction.valueParameters.first().symbol).asString()
         val enumEntry = enumClass.declarations.filterIsInstance<IrEnumEntry>().singleOrNull { it.name.asString() == enumEntryName }
         if (enumEntry == null) {
-            IllegalArgumentException("No enum constant ${enumClass.fqNameWhenAvailable}.$enumEntryName").handleUserException(environment)
+            IllegalArgumentException("No enum constant ${enumClass.fqName}.$enumEntryName").handleUserException(environment)
         }
         return enumEntry
     }
@@ -194,7 +193,7 @@ internal object JsPrimitives : IntrinsicBase() {
     }
 
     override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {
-        when (irFunction.fqNameWhenAvailable.toString()) {
+        when (irFunction.fqName) {
             "kotlin.Long.<init>" -> {
                 val low = environment.callStack.getState(irFunction.valueParameters[0].symbol).asInt()
                 val high = environment.callStack.getState(irFunction.valueParameters[1].symbol).asInt()

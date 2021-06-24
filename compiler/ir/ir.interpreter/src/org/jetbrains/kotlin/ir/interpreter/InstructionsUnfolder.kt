@@ -88,7 +88,7 @@ private fun unfoldFunction(function: IrSimpleFunction, environment: IrInterprete
 }
 
 private fun unfoldConstructor(constructor: IrConstructor, callStack: CallStack) {
-    when (constructor.fqNameWhenAvailable?.asString()) {
+    when (constructor.fqName) {
         "kotlin.Enum.<init>", "kotlin.Throwable.<init>" -> {
             val irClass = constructor.parentAsClass
             val receiverSymbol = irClass.thisReceiver!!.symbol

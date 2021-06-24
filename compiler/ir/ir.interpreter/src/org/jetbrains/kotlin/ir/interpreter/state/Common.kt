@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.interpreter.createCall
+import org.jetbrains.kotlin.ir.interpreter.fqName
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.types.isNullableAny
-import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.nameForIrSerialization
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.name.Name
@@ -72,6 +72,6 @@ internal class Common private constructor(override val irClass: IrClass, overrid
     }
 
     override fun toString(): String {
-        return "Common(obj='${irClass.fqNameForIrSerialization}', values=$fields)"
+        return "Common(obj='${irClass.fqName}', values=$fields)"
     }
 }
