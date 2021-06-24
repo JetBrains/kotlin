@@ -346,7 +346,7 @@ class BlockDecomposerTransformer(
 
                 val newLoopCondition = newCondition.statements.last() as IrExpression
                 val newLoopBody = IrBlockImpl(
-                    newCondition.startOffset,
+                    newBody?.startOffset ?: newCondition.startOffset,
                     newBody?.endOffset ?: newCondition.endOffset,
                     newBody?.type ?: unitType
                 ).apply {
