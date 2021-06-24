@@ -1,1 +1,1 @@
-Value read 7 return Bar
+Value read 8 return Bar

@@ -957,4 +957,52 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
             runTest("idea/testData/resolve/references/packageReference/kotlinPackageSecondQualifier.kt");
         }
     }
+
+    @TestMetadata("idea/testData/resolve/references/qualifiedAccess")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class QualifiedAccess extends AbstractFirReferenceResolveTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInQualifiedAccess() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/resolve/references/qualifiedAccess"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("callableReference1.kt")
+        public void testCallableReference1() throws Exception {
+            runTest("idea/testData/resolve/references/qualifiedAccess/callableReference1.kt");
+        }
+
+        @TestMetadata("callableReference2.kt")
+        public void testCallableReference2() throws Exception {
+            runTest("idea/testData/resolve/references/qualifiedAccess/callableReference2.kt");
+        }
+
+        @TestMetadata("callableReference3.kt")
+        public void testCallableReference3() throws Exception {
+            runTest("idea/testData/resolve/references/qualifiedAccess/callableReference3.kt");
+        }
+
+        @TestMetadata("ResolveFirstPackageOfFullyQualifiedReference.kt")
+        public void testResolveFirstPackageOfFullyQualifiedReference() throws Exception {
+            runTest("idea/testData/resolve/references/qualifiedAccess/ResolveFirstPackageOfFullyQualifiedReference.kt");
+        }
+
+        @TestMetadata("ResolveFullyQualifiedCompanionObject.kt")
+        public void testResolveFullyQualifiedCompanionObject() throws Exception {
+            runTest("idea/testData/resolve/references/qualifiedAccess/ResolveFullyQualifiedCompanionObject.kt");
+        }
+
+        @TestMetadata("ResolveOuterClassOfFullyQualifiedReference.kt")
+        public void testResolveOuterClassOfFullyQualifiedReference() throws Exception {
+            runTest("idea/testData/resolve/references/qualifiedAccess/ResolveOuterClassOfFullyQualifiedReference.kt");
+        }
+
+        @TestMetadata("ResolvePackageOfFullyQualifiedReference.kt")
+        public void testResolvePackageOfFullyQualifiedReference() throws Exception {
+            runTest("idea/testData/resolve/references/qualifiedAccess/ResolvePackageOfFullyQualifiedReference.kt");
+        }
+    }
 }

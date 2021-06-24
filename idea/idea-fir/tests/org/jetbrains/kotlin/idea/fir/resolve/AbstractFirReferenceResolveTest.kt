@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.idea.fir.resolve
 
-import org.jetbrains.kotlin.idea.completion.test.configureWithExtraFile
 import org.jetbrains.kotlin.idea.fir.invalidateCaches
 import org.jetbrains.kotlin.idea.resolve.AbstractReferenceResolveTest
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.utils.IgnoreTests
 
 abstract class AbstractFirReferenceResolveTest : AbstractReferenceResolveTest() {
     override fun isFirPlugin(): Boolean = true
@@ -22,14 +20,5 @@ abstract class AbstractFirReferenceResolveTest : AbstractReferenceResolveTest() 
     override fun tearDown() {
         project.invalidateCaches(myFixture.file as? KtFile)
         super.tearDown()
-    }
-
-    override fun doTest(path: String) {
-        assert(path.endsWith(".kt")) { path }
-        myFixture.configureWithExtraFile(path, ".Data")
-
-        IgnoreTests.runTestIfNotDisabledByFileDirective(testDataFile().toPath(), IgnoreTests.DIRECTIVES.IGNORE_FIR) {
-            performChecks()
-        }
     }
 }
