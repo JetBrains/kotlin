@@ -32,7 +32,6 @@ public final class FileSignature extends
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
     initFields();
-    int mutable_bitField0_ = 0;
     org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
         org.jetbrains.kotlin.protobuf.ByteString.newOutput();
     org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
@@ -51,12 +50,6 @@ public final class FileSignature extends
                                    extensionRegistry, tag)) {
               done = true;
             }
-            break;
-          }
-          case 10: {
-            org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
-            bitField0_ |= 0x00000001;
-            path_ = bs;
             break;
           }
         }
@@ -92,51 +85,7 @@ public final class FileSignature extends
     return PARSER;
   }
 
-  private int bitField0_;
-  public static final int PATH_FIELD_NUMBER = 1;
-  private java.lang.Object path_;
-  /**
-   * <code>required string path = 1;</code>
-   */
-  public boolean hasPath() {
-    return ((bitField0_ & 0x00000001) == 0x00000001);
-  }
-  /**
-   * <code>required string path = 1;</code>
-   */
-  public java.lang.String getPath() {
-    java.lang.Object ref = path_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      org.jetbrains.kotlin.protobuf.ByteString bs = 
-          (org.jetbrains.kotlin.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      if (bs.isValidUtf8()) {
-        path_ = s;
-      }
-      return s;
-    }
-  }
-  /**
-   * <code>required string path = 1;</code>
-   */
-  public org.jetbrains.kotlin.protobuf.ByteString
-      getPathBytes() {
-    java.lang.Object ref = path_;
-    if (ref instanceof java.lang.String) {
-      org.jetbrains.kotlin.protobuf.ByteString b = 
-          org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      path_ = b;
-      return b;
-    } else {
-      return (org.jetbrains.kotlin.protobuf.ByteString) ref;
-    }
-  }
-
   private void initFields() {
-    path_ = "";
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -144,10 +93,6 @@ public final class FileSignature extends
     if (isInitialized == 1) return true;
     if (isInitialized == 0) return false;
 
-    if (!hasPath()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
     memoizedIsInitialized = 1;
     return true;
   }
@@ -155,9 +100,6 @@ public final class FileSignature extends
   public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
     getSerializedSize();
-    if (((bitField0_ & 0x00000001) == 0x00000001)) {
-      output.writeBytes(1, getPathBytes());
-    }
     output.writeRawBytes(unknownFields);
   }
 
@@ -167,10 +109,6 @@ public final class FileSignature extends
     if (size != -1) return size;
 
     size = 0;
-    if (((bitField0_ & 0x00000001) == 0x00000001)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeBytesSize(1, getPathBytes());
-    }
     size += unknownFields.size();
     memoizedSerializedSize = size;
     return size;
@@ -265,8 +203,6 @@ public final class FileSignature extends
 
     public Builder clear() {
       super.clear();
-      path_ = "";
-      bitField0_ = (bitField0_ & ~0x00000001);
       return this;
     }
 
@@ -288,33 +224,17 @@ public final class FileSignature extends
 
     public org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature buildPartial() {
       org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature result = new org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature(this);
-      int from_bitField0_ = bitField0_;
-      int to_bitField0_ = 0;
-      if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
-        to_bitField0_ |= 0x00000001;
-      }
-      result.path_ = path_;
-      result.bitField0_ = to_bitField0_;
       return result;
     }
 
     public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature other) {
       if (other == org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature.getDefaultInstance()) return this;
-      if (other.hasPath()) {
-        bitField0_ |= 0x00000001;
-        path_ = other.path_;
-        
-      }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
       return this;
     }
 
     public final boolean isInitialized() {
-      if (!hasPath()) {
-        
-        return false;
-      }
       return true;
     }
 
@@ -333,83 +253,6 @@ public final class FileSignature extends
           mergeFrom(parsedMessage);
         }
       }
-      return this;
-    }
-    private int bitField0_;
-
-    private java.lang.Object path_ = "";
-    /**
-     * <code>required string path = 1;</code>
-     */
-    public boolean hasPath() {
-      return ((bitField0_ & 0x00000001) == 0x00000001);
-    }
-    /**
-     * <code>required string path = 1;</code>
-     */
-    public java.lang.String getPath() {
-      java.lang.Object ref = path_;
-      if (!(ref instanceof java.lang.String)) {
-        org.jetbrains.kotlin.protobuf.ByteString bs =
-            (org.jetbrains.kotlin.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          path_ = s;
-        }
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
-    }
-    /**
-     * <code>required string path = 1;</code>
-     */
-    public org.jetbrains.kotlin.protobuf.ByteString
-        getPathBytes() {
-      java.lang.Object ref = path_;
-      if (ref instanceof String) {
-        org.jetbrains.kotlin.protobuf.ByteString b = 
-            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        path_ = b;
-        return b;
-      } else {
-        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
-      }
-    }
-    /**
-     * <code>required string path = 1;</code>
-     */
-    public Builder setPath(
-        java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000001;
-      path_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>required string path = 1;</code>
-     */
-    public Builder clearPath() {
-      bitField0_ = (bitField0_ & ~0x00000001);
-      path_ = getDefaultInstance().getPath();
-      
-      return this;
-    }
-    /**
-     * <code>required string path = 1;</code>
-     */
-    public Builder setPathBytes(
-        org.jetbrains.kotlin.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000001;
-      path_ = value;
-      
       return this;
     }
 

@@ -40,6 +40,21 @@ message AccessorIdSignature {
 message FileLocalIdSignature {
   required int32 container = 1;
   required int64 local_id = 2;
+  optional int32 file = 3;
+}
+
+message LoweredIdSignature {
+  required int32 parent_signature = 1;
+  required int32 stage = 2;
+  required int32 index = 3;
+}
+
+message FileSignature {
+}
+
+message ScopeLocalIdSignature {
+  required int32 id = 1;
+  optional int32 file = 2;
 }
 
 message IdSignature {
@@ -48,6 +63,11 @@ message IdSignature {
     FileLocalIdSignature private_sig = 2;
     AccessorIdSignature accessor_sig = 3;
     int32 scoped_local_sig = 4;
+
+    // JS IC related stuff below. Proto indices 100+ were chosen due to compatibility considerations.
+    LoweredIdSignature ic_sig = 105;
+    FileSignature file_sig = 106;
+    ScopeLocalIdSignature external_scoped_local_sig = 107;
   }
 }
 
@@ -107,6 +127,12 @@ message IrBlock {
   optional int32 origin_name = 2;
 }
 
+message IrReturnableBlock {
+  repeated IrStatement statement = 1;
+  optional int32 origin_name = 2;
+  optional int64 inline_function_symbol = 3;
+}
+
 message MemberAccessCommon {
   optional IrExpression dispatch_receiver = 1;
   optional IrExpression extension_receiver = 2;
@@ -133,6 +159,10 @@ message IrFunctionReference {
   optional int32 origin_name = 2;
   required MemberAccessCommon member_access = 3;
   optional int64 reflection_target_symbol = 4;
+}
+
+message IrRawFunctionReference {
+  required int64 symbol = 1;
 }
 
 message IrLocalDelegatedPropertyReference {
@@ -238,6 +268,11 @@ message Loop {
 
 message IrReturn {
   required int64 return_target = 1;
+  required IrExpression value = 2;
+}
+
+message IrReturnableBlockReturn {
+  required uint32 upCnt = 1;
   required IrExpression value = 2;
 }
 
@@ -402,6 +437,10 @@ message IrOperation {
     // Error code
     IrErrorExpression error_expression = 34;
     IrErrorCallExpression error_call_expression = 35;
+
+    IrRawFunctionReference raw_function_reference = 36;
+    IrReturnableBlock returnable_block = 37;
+    IrReturnableBlockReturn returnable_block_return = 38;
   }
 }
 
@@ -493,12 +532,15 @@ message IrValueParameter {
   required int64 name_type = 2;
   optional int32 vararg_element_type = 3;
   optional int32 default_value = 4;
+  optional int32 index = 5;
 }
 
 message IrTypeParameter {
   required IrDeclarationBase base = 1;
   required int32 name = 2;
   repeated int32 super_type = 3 [packed=true];
+  optional int32 index = 4;
+  optional bool isGlobal = 5;
 }
 
 message IrClass {

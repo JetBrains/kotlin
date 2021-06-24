@@ -27,78 +27,7 @@ public final class IrValueParameter extends
   }
 
   private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
-  private IrValueParameter(
-      org.jetbrains.kotlin.protobuf.CodedInputStream input,
-      org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
-      throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-    initFields();
-    int mutable_bitField0_ = 0;
-    org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
-        org.jetbrains.kotlin.protobuf.ByteString.newOutput();
-    org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
-        org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-            unknownFieldsOutput, 1);
-    try {
-      boolean done = false;
-      while (!done) {
-        int tag = input.readTag();
-        switch (tag) {
-          case 0:
-            done = true;
-            break;
-          default: {
-            if (!parseUnknownField(input, unknownFieldsCodedOutput,
-                                   extensionRegistry, tag)) {
-              done = true;
-            }
-            break;
-          }
-          case 10: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.Builder subBuilder = null;
-            if (((bitField0_ & 0x00000001) == 0x00000001)) {
-              subBuilder = base_.toBuilder();
-            }
-            base_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.PARSER, extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(base_);
-              base_ = subBuilder.buildPartial();
-            }
-            bitField0_ |= 0x00000001;
-            break;
-          }
-          case 16: {
-            bitField0_ |= 0x00000002;
-            nameType_ = input.readInt64();
-            break;
-          }
-          case 24: {
-            bitField0_ |= 0x00000004;
-            varargElementType_ = input.readInt32();
-            break;
-          }
-          case 32: {
-            bitField0_ |= 0x00000008;
-            defaultValue_ = input.readInt32();
-            break;
-          }
-        }
-      }
-    } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
-      throw e.setUnfinishedMessage(this);
-    } catch (java.io.IOException e) {
-      throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
-          e.getMessage()).setUnfinishedMessage(this);
-    } finally {
-      try {
-        unknownFieldsCodedOutput.flush();
-      } catch (java.io.IOException e) {
-      // Should not happen
-      } finally {
-        unknownFields = unknownFieldsOutput.toByteString();
-      }
-      makeExtensionsImmutable();
-    }
-  }
+  public static final int INDEX_FIELD_NUMBER = 5;
   public static org.jetbrains.kotlin.protobuf.Parser<IrValueParameter> PARSER =
       new org.jetbrains.kotlin.protobuf.AbstractParser<IrValueParameter>() {
     public IrValueParameter parsePartialFrom(
@@ -174,12 +103,104 @@ public final class IrValueParameter extends
   public int getDefaultValue() {
     return defaultValue_;
   }
+  private int index_;
+  private IrValueParameter(
+      org.jetbrains.kotlin.protobuf.CodedInputStream input,
+      org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+      throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+    initFields();
+    int mutable_bitField0_ = 0;
+    org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
+        org.jetbrains.kotlin.protobuf.ByteString.newOutput();
+    org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
+        org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
+            unknownFieldsOutput, 1);
+    try {
+      boolean done = false;
+      while (!done) {
+        int tag = input.readTag();
+        switch (tag) {
+          case 0:
+            done = true;
+            break;
+          default: {
+            if (!parseUnknownField(input, unknownFieldsCodedOutput,
+                                   extensionRegistry, tag)) {
+              done = true;
+            }
+            break;
+          }
+          case 10: {
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.Builder subBuilder = null;
+            if (((bitField0_ & 0x00000001) == 0x00000001)) {
+              subBuilder = base_.toBuilder();
+            }
+            base_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.PARSER, extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom(base_);
+              base_ = subBuilder.buildPartial();
+            }
+            bitField0_ |= 0x00000001;
+            break;
+          }
+          case 16: {
+            bitField0_ |= 0x00000002;
+            nameType_ = input.readInt64();
+            break;
+          }
+          case 24: {
+            bitField0_ |= 0x00000004;
+            varargElementType_ = input.readInt32();
+            break;
+          }
+          case 32: {
+            bitField0_ |= 0x00000008;
+            defaultValue_ = input.readInt32();
+            break;
+          }
+          case 40: {
+            bitField0_ |= 0x00000010;
+            index_ = input.readInt32();
+            break;
+          }
+        }
+      }
+    } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+      throw e.setUnfinishedMessage(this);
+    } catch (java.io.IOException e) {
+      throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
+          e.getMessage()).setUnfinishedMessage(this);
+    } finally {
+      try {
+        unknownFieldsCodedOutput.flush();
+      } catch (java.io.IOException e) {
+      // Should not happen
+      } finally {
+        unknownFields = unknownFieldsOutput.toByteString();
+      }
+      makeExtensionsImmutable();
+    }
+  }
+
+  /**
+   * <code>optional int32 index = 5;</code>
+   */
+  public boolean hasIndex() {
+    return ((bitField0_ & 0x00000010) == 0x00000010);
+  }
+  /**
+   * <code>optional int32 index = 5;</code>
+   */
+  public int getIndex() {
+    return index_;
+  }
 
   private void initFields() {
     base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.getDefaultInstance();
     nameType_ = 0L;
     varargElementType_ = 0;
     defaultValue_ = 0;
+    index_ = 0;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -218,6 +239,9 @@ public final class IrValueParameter extends
     if (((bitField0_ & 0x00000008) == 0x00000008)) {
       output.writeInt32(4, defaultValue_);
     }
+    if (((bitField0_ & 0x00000010) == 0x00000010)) {
+      output.writeInt32(5, index_);
+    }
     output.writeRawBytes(unknownFields);
   }
 
@@ -242,6 +266,10 @@ public final class IrValueParameter extends
     if (((bitField0_ & 0x00000008) == 0x00000008)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeInt32Size(4, defaultValue_);
+    }
+    if (((bitField0_ & 0x00000010) == 0x00000010)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeInt32Size(5, index_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -335,18 +363,7 @@ public final class IrValueParameter extends
       return new Builder();
     }
 
-    public Builder clear() {
-      super.clear();
-      base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.getDefaultInstance();
-      bitField0_ = (bitField0_ & ~0x00000001);
-      nameType_ = 0L;
-      bitField0_ = (bitField0_ & ~0x00000002);
-      varargElementType_ = 0;
-      bitField0_ = (bitField0_ & ~0x00000004);
-      defaultValue_ = 0;
-      bitField0_ = (bitField0_ & ~0x00000008);
-      return this;
-    }
+    private int index_ ;
 
     public Builder clone() {
       return create().mergeFrom(buildPartial());
@@ -362,6 +379,21 @@ public final class IrValueParameter extends
         throw newUninitializedMessageException(result);
       }
       return result;
+    }
+
+    public Builder clear() {
+      super.clear();
+      base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.getDefaultInstance();
+      bitField0_ = (bitField0_ & ~0x00000001);
+      nameType_ = 0L;
+      bitField0_ = (bitField0_ & ~0x00000002);
+      varargElementType_ = 0;
+      bitField0_ = (bitField0_ & ~0x00000004);
+      defaultValue_ = 0;
+      bitField0_ = (bitField0_ & ~0x00000008);
+      index_ = 0;
+      bitField0_ = (bitField0_ & ~0x00000010);
+      return this;
     }
 
     public org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter buildPartial() {
@@ -384,27 +416,12 @@ public final class IrValueParameter extends
         to_bitField0_ |= 0x00000008;
       }
       result.defaultValue_ = defaultValue_;
+      if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
+        to_bitField0_ |= 0x00000010;
+      }
+      result.index_ = index_;
       result.bitField0_ = to_bitField0_;
       return result;
-    }
-
-    public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter other) {
-      if (other == org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.getDefaultInstance()) return this;
-      if (other.hasBase()) {
-        mergeBase(other.getBase());
-      }
-      if (other.hasNameType()) {
-        setNameType(other.getNameType());
-      }
-      if (other.hasVarargElementType()) {
-        setVarargElementType(other.getVarargElementType());
-      }
-      if (other.hasDefaultValue()) {
-        setDefaultValue(other.getDefaultValue());
-      }
-      setUnknownFields(
-          getUnknownFields().concat(other.unknownFields));
-      return this;
     }
 
     public final boolean isInitialized() {
@@ -588,12 +605,66 @@ public final class IrValueParameter extends
       
       return this;
     }
+
+    public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter other) {
+      if (other == org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.getDefaultInstance()) return this;
+      if (other.hasBase()) {
+        mergeBase(other.getBase());
+      }
+      if (other.hasNameType()) {
+        setNameType(other.getNameType());
+      }
+      if (other.hasVarargElementType()) {
+        setVarargElementType(other.getVarargElementType());
+      }
+      if (other.hasDefaultValue()) {
+        setDefaultValue(other.getDefaultValue());
+      }
+      if (other.hasIndex()) {
+        setIndex(other.getIndex());
+      }
+      setUnknownFields(
+          getUnknownFields().concat(other.unknownFields));
+      return this;
+    }
+
     /**
      * <code>optional int32 default_value = 4;</code>
      */
     public Builder clearDefaultValue() {
       bitField0_ = (bitField0_ & ~0x00000008);
       defaultValue_ = 0;
+
+      return this;
+    }
+
+    /**
+     * <code>optional int32 index = 5;</code>
+     */
+    public boolean hasIndex() {
+      return ((bitField0_ & 0x00000010) == 0x00000010);
+    }
+    /**
+     * <code>optional int32 index = 5;</code>
+     */
+    public int getIndex() {
+      return index_;
+    }
+    /**
+     * <code>optional int32 index = 5;</code>
+     */
+    public Builder setIndex(int value) {
+      bitField0_ |= 0x00000010;
+      index_ = value;
+      
+      return this;
+    }
+    /**
+     * <code>optional int32 index = 5;</code>
+     */
+    public Builder clearIndex() {
+      bitField0_ = (bitField0_ & ~0x00000010);
+      index_ = 0;
       
       return this;
     }

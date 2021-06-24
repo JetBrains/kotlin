@@ -27,92 +27,7 @@ public final class IrTypeParameter extends
   }
 
   private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
-  private IrTypeParameter(
-      org.jetbrains.kotlin.protobuf.CodedInputStream input,
-      org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
-      throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-    initFields();
-    int mutable_bitField0_ = 0;
-    org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
-        org.jetbrains.kotlin.protobuf.ByteString.newOutput();
-    org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
-        org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-            unknownFieldsOutput, 1);
-    try {
-      boolean done = false;
-      while (!done) {
-        int tag = input.readTag();
-        switch (tag) {
-          case 0:
-            done = true;
-            break;
-          default: {
-            if (!parseUnknownField(input, unknownFieldsCodedOutput,
-                                   extensionRegistry, tag)) {
-              done = true;
-            }
-            break;
-          }
-          case 10: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.Builder subBuilder = null;
-            if (((bitField0_ & 0x00000001) == 0x00000001)) {
-              subBuilder = base_.toBuilder();
-            }
-            base_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.PARSER, extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(base_);
-              base_ = subBuilder.buildPartial();
-            }
-            bitField0_ |= 0x00000001;
-            break;
-          }
-          case 16: {
-            bitField0_ |= 0x00000002;
-            name_ = input.readInt32();
-            break;
-          }
-          case 24: {
-            if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
-              superType_ = new java.util.ArrayList<java.lang.Integer>();
-              mutable_bitField0_ |= 0x00000004;
-            }
-            superType_.add(input.readInt32());
-            break;
-          }
-          case 26: {
-            int length = input.readRawVarint32();
-            int limit = input.pushLimit(length);
-            if (!((mutable_bitField0_ & 0x00000004) == 0x00000004) && input.getBytesUntilLimit() > 0) {
-              superType_ = new java.util.ArrayList<java.lang.Integer>();
-              mutable_bitField0_ |= 0x00000004;
-            }
-            while (input.getBytesUntilLimit() > 0) {
-              superType_.add(input.readInt32());
-            }
-            input.popLimit(limit);
-            break;
-          }
-        }
-      }
-    } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
-      throw e.setUnfinishedMessage(this);
-    } catch (java.io.IOException e) {
-      throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
-          e.getMessage()).setUnfinishedMessage(this);
-    } finally {
-      if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
-        superType_ = java.util.Collections.unmodifiableList(superType_);
-      }
-      try {
-        unknownFieldsCodedOutput.flush();
-      } catch (java.io.IOException e) {
-      // Should not happen
-      } finally {
-        unknownFields = unknownFieldsOutput.toByteString();
-      }
-      makeExtensionsImmutable();
-    }
-  }
+  public static final int INDEX_FIELD_NUMBER = 4;
   public static org.jetbrains.kotlin.protobuf.Parser<IrTypeParameter> PARSER =
       new org.jetbrains.kotlin.protobuf.AbstractParser<IrTypeParameter>() {
     public IrTypeParameter parsePartialFrom(
@@ -181,11 +96,139 @@ public final class IrTypeParameter extends
     return superType_.get(index);
   }
   private int superTypeMemoizedSerializedSize = -1;
+  public static final int ISGLOBAL_FIELD_NUMBER = 5;
+  private int index_;
+  private boolean isGlobal_;
+  private IrTypeParameter(
+      org.jetbrains.kotlin.protobuf.CodedInputStream input,
+      org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+      throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+    initFields();
+    int mutable_bitField0_ = 0;
+    org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
+        org.jetbrains.kotlin.protobuf.ByteString.newOutput();
+    org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
+        org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
+            unknownFieldsOutput, 1);
+    try {
+      boolean done = false;
+      while (!done) {
+        int tag = input.readTag();
+        switch (tag) {
+          case 0:
+            done = true;
+            break;
+          default: {
+            if (!parseUnknownField(input, unknownFieldsCodedOutput,
+                                   extensionRegistry, tag)) {
+              done = true;
+            }
+            break;
+          }
+          case 10: {
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.Builder subBuilder = null;
+            if (((bitField0_ & 0x00000001) == 0x00000001)) {
+              subBuilder = base_.toBuilder();
+            }
+            base_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.PARSER, extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom(base_);
+              base_ = subBuilder.buildPartial();
+            }
+            bitField0_ |= 0x00000001;
+            break;
+          }
+          case 16: {
+            bitField0_ |= 0x00000002;
+            name_ = input.readInt32();
+            break;
+          }
+          case 24: {
+            if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+              superType_ = new java.util.ArrayList<java.lang.Integer>();
+              mutable_bitField0_ |= 0x00000004;
+            }
+            superType_.add(input.readInt32());
+            break;
+          }
+          case 26: {
+            int length = input.readRawVarint32();
+            int limit = input.pushLimit(length);
+            if (!((mutable_bitField0_ & 0x00000004) == 0x00000004) && input.getBytesUntilLimit() > 0) {
+              superType_ = new java.util.ArrayList<java.lang.Integer>();
+              mutable_bitField0_ |= 0x00000004;
+            }
+            while (input.getBytesUntilLimit() > 0) {
+              superType_.add(input.readInt32());
+            }
+            input.popLimit(limit);
+            break;
+          }
+          case 32: {
+            bitField0_ |= 0x00000004;
+            index_ = input.readInt32();
+            break;
+          }
+          case 40: {
+            bitField0_ |= 0x00000008;
+            isGlobal_ = input.readBool();
+            break;
+          }
+        }
+      }
+    } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+      throw e.setUnfinishedMessage(this);
+    } catch (java.io.IOException e) {
+      throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
+          e.getMessage()).setUnfinishedMessage(this);
+    } finally {
+      if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+        superType_ = java.util.Collections.unmodifiableList(superType_);
+      }
+      try {
+        unknownFieldsCodedOutput.flush();
+      } catch (java.io.IOException e) {
+      // Should not happen
+      } finally {
+        unknownFields = unknownFieldsOutput.toByteString();
+      }
+      makeExtensionsImmutable();
+    }
+  }
+
+  /**
+   * <code>optional int32 index = 4;</code>
+   */
+  public boolean hasIndex() {
+    return ((bitField0_ & 0x00000004) == 0x00000004);
+  }
+
+  /**
+   * <code>optional int32 index = 4;</code>
+   */
+  public int getIndex() {
+    return index_;
+  }
+
+  /**
+   * <code>optional bool isGlobal = 5;</code>
+   */
+  public boolean hasIsGlobal() {
+    return ((bitField0_ & 0x00000008) == 0x00000008);
+  }
+  /**
+   * <code>optional bool isGlobal = 5;</code>
+   */
+  public boolean getIsGlobal() {
+    return isGlobal_;
+  }
 
   private void initFields() {
     base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.getDefaultInstance();
     name_ = 0;
     superType_ = java.util.Collections.emptyList();
+    index_ = 0;
+    isGlobal_ = false;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -225,6 +268,12 @@ public final class IrTypeParameter extends
     for (int i = 0; i < superType_.size(); i++) {
       output.writeInt32NoTag(superType_.get(i));
     }
+    if (((bitField0_ & 0x00000004) == 0x00000004)) {
+      output.writeInt32(4, index_);
+    }
+    if (((bitField0_ & 0x00000008) == 0x00000008)) {
+      output.writeBool(5, isGlobal_);
+    }
     output.writeRawBytes(unknownFields);
   }
 
@@ -255,6 +304,14 @@ public final class IrTypeParameter extends
             .computeInt32SizeNoTag(dataSize);
       }
       superTypeMemoizedSerializedSize = dataSize;
+    }
+    if (((bitField0_ & 0x00000004) == 0x00000004)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeInt32Size(4, index_);
+    }
+    if (((bitField0_ & 0x00000008) == 0x00000008)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeBoolSize(5, isGlobal_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -348,16 +405,7 @@ public final class IrTypeParameter extends
       return new Builder();
     }
 
-    public Builder clear() {
-      super.clear();
-      base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.getDefaultInstance();
-      bitField0_ = (bitField0_ & ~0x00000001);
-      name_ = 0;
-      bitField0_ = (bitField0_ & ~0x00000002);
-      superType_ = java.util.Collections.emptyList();
-      bitField0_ = (bitField0_ & ~0x00000004);
-      return this;
-    }
+    private int index_ ;
 
     public Builder clone() {
       return create().mergeFrom(buildPartial());
@@ -374,48 +422,20 @@ public final class IrTypeParameter extends
       }
       return result;
     }
+    private boolean isGlobal_ ;
 
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter buildPartial() {
-      org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter result = new org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter(this);
-      int from_bitField0_ = bitField0_;
-      int to_bitField0_ = 0;
-      if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
-        to_bitField0_ |= 0x00000001;
-      }
-      result.base_ = base_;
-      if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
-        to_bitField0_ |= 0x00000002;
-      }
-      result.name_ = name_;
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        superType_ = java.util.Collections.unmodifiableList(superType_);
-        bitField0_ = (bitField0_ & ~0x00000004);
-      }
-      result.superType_ = superType_;
-      result.bitField0_ = to_bitField0_;
-      return result;
-    }
-
-    public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter other) {
-      if (other == org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter.getDefaultInstance()) return this;
-      if (other.hasBase()) {
-        mergeBase(other.getBase());
-      }
-      if (other.hasName()) {
-        setName(other.getName());
-      }
-      if (!other.superType_.isEmpty()) {
-        if (superType_.isEmpty()) {
-          superType_ = other.superType_;
-          bitField0_ = (bitField0_ & ~0x00000004);
-        } else {
-          ensureSuperTypeIsMutable();
-          superType_.addAll(other.superType_);
-        }
-        
-      }
-      setUnknownFields(
-          getUnknownFields().concat(other.unknownFields));
+    public Builder clear() {
+      super.clear();
+      base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.getDefaultInstance();
+      bitField0_ = (bitField0_ & ~0x00000001);
+      name_ = 0;
+      bitField0_ = (bitField0_ & ~0x00000002);
+      superType_ = java.util.Collections.emptyList();
+      bitField0_ = (bitField0_ & ~0x00000004);
+      index_ = 0;
+      bitField0_ = (bitField0_ & ~0x00000008);
+      isGlobal_ = false;
+      bitField0_ = (bitField0_ & ~0x00000010);
       return this;
     }
 
@@ -602,12 +622,136 @@ public final class IrTypeParameter extends
       
       return this;
     }
+
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter buildPartial() {
+      org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter result = new org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter(this);
+      int from_bitField0_ = bitField0_;
+      int to_bitField0_ = 0;
+      if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+        to_bitField0_ |= 0x00000001;
+      }
+      result.base_ = base_;
+      if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+        to_bitField0_ |= 0x00000002;
+      }
+      result.name_ = name_;
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        superType_ = java.util.Collections.unmodifiableList(superType_);
+        bitField0_ = (bitField0_ & ~0x00000004);
+      }
+      result.superType_ = superType_;
+      if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+        to_bitField0_ |= 0x00000004;
+      }
+      result.index_ = index_;
+      if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
+        to_bitField0_ |= 0x00000008;
+      }
+      result.isGlobal_ = isGlobal_;
+      result.bitField0_ = to_bitField0_;
+      return result;
+    }
+
+    public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter other) {
+      if (other == org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter.getDefaultInstance()) return this;
+      if (other.hasBase()) {
+        mergeBase(other.getBase());
+      }
+      if (other.hasName()) {
+        setName(other.getName());
+      }
+      if (!other.superType_.isEmpty()) {
+        if (superType_.isEmpty()) {
+          superType_ = other.superType_;
+          bitField0_ = (bitField0_ & ~0x00000004);
+        } else {
+          ensureSuperTypeIsMutable();
+          superType_.addAll(other.superType_);
+        }
+
+      }
+      if (other.hasIndex()) {
+        setIndex(other.getIndex());
+      }
+      if (other.hasIsGlobal()) {
+        setIsGlobal(other.getIsGlobal());
+      }
+      setUnknownFields(
+          getUnknownFields().concat(other.unknownFields));
+      return this;
+    }
+
     /**
      * <code>repeated int32 super_type = 3 [packed = true];</code>
      */
     public Builder clearSuperType() {
       superType_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000004);
+
+      return this;
+    }
+
+    /**
+     * <code>optional int32 index = 4;</code>
+     */
+    public boolean hasIndex() {
+      return ((bitField0_ & 0x00000008) == 0x00000008);
+    }
+
+    /**
+     * <code>optional int32 index = 4;</code>
+     */
+    public int getIndex() {
+      return index_;
+    }
+
+    /**
+     * <code>optional int32 index = 4;</code>
+     */
+    public Builder setIndex(int value) {
+      bitField0_ |= 0x00000008;
+      index_ = value;
+
+      return this;
+    }
+
+    /**
+     * <code>optional int32 index = 4;</code>
+     */
+    public Builder clearIndex() {
+      bitField0_ = (bitField0_ & ~0x00000008);
+      index_ = 0;
+
+      return this;
+    }
+
+    /**
+     * <code>optional bool isGlobal = 5;</code>
+     */
+    public boolean hasIsGlobal() {
+      return ((bitField0_ & 0x00000010) == 0x00000010);
+    }
+    /**
+     * <code>optional bool isGlobal = 5;</code>
+     */
+    public boolean getIsGlobal() {
+      return isGlobal_;
+    }
+    /**
+     * <code>optional bool isGlobal = 5;</code>
+     */
+    public Builder setIsGlobal(boolean value) {
+      bitField0_ |= 0x00000010;
+      isGlobal_ = value;
+      
+      return this;
+    }
+    /**
+     * <code>optional bool isGlobal = 5;</code>
+     */
+    public Builder clearIsGlobal() {
+      bitField0_ = (bitField0_ & ~0x00000010);
+      isGlobal_ = false;
       
       return this;
     }
