@@ -325,9 +325,11 @@ class IrDeclarationDeserializer(
                     superTypes = proto.superTypeList.map { deserializeIrType(it) }
 
                     withExternalValue(isExternal) {
+                        val oldDeclarations = declarations.toSet()
                         proto.declarationList
                             .filterNot { isSkippableFakeOverride(it, this) }
-                            .mapNotNullTo(declarations) { declProto -> deserializeDeclaration(declProto) }
+                            // On JVM, deserialization may fill bodies of existing declarations, so avoid adding duplicates.
+                            .mapNotNullTo(declarations) { declProto -> deserializeDeclaration(declProto).takeIf { it !in oldDeclarations } }
                     }
 
                     thisReceiver = deserializeIrValueParameter(proto.thisReceiver, -1)
