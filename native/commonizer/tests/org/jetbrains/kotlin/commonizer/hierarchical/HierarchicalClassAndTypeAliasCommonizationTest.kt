@@ -340,7 +340,8 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
         )
     }
 
-    fun `test parameters with non-commonized TA expanding to a commonized type`() {
+    @Suppress("unused")
+    fun `ignored KT-47433 - test parameters with non-commonized TA expanding to a commonized type`() {
         val result = commonize {
             outputTarget("(a, b)")
 
