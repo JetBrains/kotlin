@@ -32,7 +32,7 @@ class JsSingleAbstractMethodLowering(context: JsIrBackendContext) : SingleAbstra
     private var enclosingBodyContainer: IrDeclaration? = null
 
     override fun lower(irFile: IrFile) {
-        super<SingleAbstractMethodLowering>.lower(irFile)
+        super<BodyLoweringPass>.lower(irFile)
     }
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
