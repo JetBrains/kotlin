@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.persistent.carriers.DeclarationCarri
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 interface PersistentIrDeclarationBase<T : DeclarationCarrier> : PersistentIrElementBase<T>, IrDeclaration, DeclarationCarrier {
@@ -31,6 +32,8 @@ interface PersistentIrDeclarationBase<T : DeclarationCarrier> : PersistentIrElem
     override var originField: IrDeclarationOrigin
 
     override var annotationsField: List<IrConstructorCall>
+
+    var signature: IdSignature?
 
     // TODO reduce boilerplate
     override var parent: IrDeclarationParent

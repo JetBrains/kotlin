@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.util.IdSignature
 
 open class StageController(open val currentStage: Int = 0) {
     open fun lazyLower(declaration: IrDeclaration) {}
@@ -28,4 +29,7 @@ open class StageController(open val currentStage: Int = 0) {
     open fun <T> unrestrictDeclarationListsAccess(fn: () -> T): T = fn()
 
     open fun canAccessDeclarationsOf(irClass: IrClass): Boolean = true
+
+    // Used in JS IC. Declarations created during lowerings need meaningful signatures.
+    open fun createSignature(parentSignature: IdSignature): IdSignature? = null
 }

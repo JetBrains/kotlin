@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.persistent.PersistentIrBlockBody
 import org.jetbrains.kotlin.ir.expressions.persistent.PersistentIrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.types.Variance
@@ -22,6 +23,9 @@ import org.jetbrains.kotlin.types.Variance
 class PersistentIrFactory : IrFactory {
 
     override var stageController = StageController()
+
+    @Suppress("UNUSED_PARAMETER")
+    fun currentSignature(declaration: IrDeclaration): IdSignature? = null
 
     override fun createAnonymousInitializer(
         startOffset: Int,

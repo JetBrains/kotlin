@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.types.impl.ReturnTypeIsNotInitializedException
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
@@ -48,6 +49,8 @@ internal abstract class PersistentIrFunctionCommon(
 ) : IrSimpleFunction(),
     PersistentIrDeclarationBase<FunctionCarrier>,
     FunctionCarrier {
+
+    override var signature: IdSignature? = factory.currentSignature(this)
 
     override var lastModified: Int = factory.stageController.currentStage
     override var loweredUpTo: Int = factory.stageController.currentStage

@@ -97,6 +97,8 @@ internal object PersistentIrGenerator {
     val IrValueParameterSymbol = irSymbol("IrValueParameterSymbol")
     val IrTypeParameterSymbol = irSymbol("IrTypeParameterSymbol")
 
+    val IdSignature = import("IdSignature", "org.jetbrains.kotlin.ir.util")
+
     // Constructor parameters
 
     val startOffset = +"override val startOffset: Int"
@@ -196,6 +198,8 @@ internal object PersistentIrGenerator {
     )
 
     // Fields
+    val signature = +"override var signature: " + IdSignature + "? = factory.currentSignature(this)"
+
     val lastModified = +"override var lastModified: Int = factory.stageController.currentStage"
     val loweredUpTo = +"override var loweredUpTo: Int = factory.stageController.currentStage"
     val values = +"override var values: Array<" + Carrier + ">? = null"
@@ -207,6 +211,8 @@ internal object PersistentIrGenerator {
     val annotationsField = +"override var annotationsField: List<" + IrConstructorCall + "> = emptyList()"
 
     val commonFields = lines(
+        signature,
+        id,
         lastModified,
         loweredUpTo,
         values,

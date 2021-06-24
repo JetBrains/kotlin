@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
@@ -41,6 +42,8 @@ internal abstract class PersistentIrPropertyCommon(
 ) : IrProperty(),
     PersistentIrDeclarationBase<PropertyCarrier>,
     PropertyCarrier {
+
+    override var signature: IdSignature? = factory.currentSignature(this)
 
     override var lastModified: Int = factory.stageController.currentStage
     override var loweredUpTo: Int = factory.stageController.currentStage

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.persistent.carriers.TypeParameterCar
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
@@ -37,6 +38,8 @@ internal class PersistentIrTypeParameter(
     init {
         symbol.bind(this)
     }
+
+    override var signature: IdSignature? = factory.currentSignature(this)
 
     override var lastModified: Int = factory.stageController.currentStage
     override var loweredUpTo: Int = factory.stageController.currentStage
