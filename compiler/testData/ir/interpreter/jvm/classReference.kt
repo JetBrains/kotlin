@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 package test
 
 import kotlin.reflect.KFunction

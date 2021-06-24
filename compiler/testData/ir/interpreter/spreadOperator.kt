@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 @CompileTimeCalculation
 fun varargSum(quantityToSum: Int, vararg num: Int): Int {
     var sum = 0

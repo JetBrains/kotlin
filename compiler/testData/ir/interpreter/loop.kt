@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 @CompileTimeCalculation
 fun loop(toInc: Int, start: Int, end: Int): Int {
     var result = toInc
