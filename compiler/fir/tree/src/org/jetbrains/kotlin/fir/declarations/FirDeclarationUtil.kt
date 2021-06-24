@@ -116,6 +116,12 @@ fun FirRegularClassBuilder.addDeclarations(declarations: Collection<FirDeclarati
 
 val FirTypeAlias.expandedConeType: ConeClassLikeType? get() = expandedTypeRef.coneTypeSafe()
 
+val FirClassLikeDeclaration<*>.classId
+    get() = when (this) {
+        is FirClass<*> -> symbol.classId
+        is FirTypeAlias -> symbol.classId
+    }
+
 val FirClass<*>.classId get() = symbol.classId
 
 val FirClassSymbol<*>.superConeTypes
