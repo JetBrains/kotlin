@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers
 
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.fir.FirRealSourceElementKind
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
@@ -18,7 +19,7 @@ fun checkUnderscoreDiagnostics(
     reporter: DiagnosticReporter,
     isExpression: Boolean
 ) {
-    if (source != null && source.kind !is FirFakeSourceElementKind) {
+    if (source != null && (source.kind is FirRealSourceElementKind || source.kind is FirFakeSourceElementKind.ReferenceInAtomicQualifiedAccess)) {
         with(SourceNavigator.forSource(source)) {
             if (source.getRawIdentifier()?.isUnderscore == true) {
                 reporter.reportOn(
