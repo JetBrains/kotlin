@@ -374,7 +374,9 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
             }
             expression.accessesTopLevelOrObjectField() -> {
                 val propertyOwner = field.correspondingPropertySymbol?.owner
-                val isConst = propertyOwner?.isConst == true || propertyOwner?.backingField?.initializer?.expression is IrConst<*>
+                val isConst = propertyOwner?.isConst == true ||
+                        propertyOwner?.backingField?.initializer?.expression is IrConst<*> ||
+                        propertyOwner?.parentClassOrNull?.hasAnnotation(compileTimeAnnotation) == true // check if object is marked as compile time
                 verify(isConst) { "Cannot interpret get method on top level non const properties" }
                 callStack.addInstruction(CompoundInstruction(field.initializer?.expression))
             }
