@@ -184,6 +184,7 @@ class FirCallResolver(
         return ResolutionResult(info, result.currentApplicability, reducedCandidates)
     }
 
+    @OptIn(FirImplementationDetail::class)
     fun <T : FirQualifiedAccess> resolveVariableAccessAndSelectCandidate(qualifiedAccess: T): FirStatement {
         val callee = qualifiedAccess.calleeReference as? FirSimpleNamedReference ?: return qualifiedAccess
 
@@ -197,7 +198,7 @@ class FirCallResolver(
 
         val result = collectCandidates(qualifiedAccess, callee.name)
         val reducedCandidates = result.candidates
-        val nameReference = createResolvedNamedReference(
+        val namedReference = createResolvedNamedReference(
             callee,
             callee.name,
             result.info,
@@ -217,15 +218,15 @@ class FirCallResolver(
             qualifiedResolver.reset()
         }
 
-        val referencedSymbol = when (nameReference) {
-            is FirResolvedNamedReference -> nameReference.resolvedSymbol
-            is FirNamedReferenceWithCandidate -> nameReference.candidateSymbol
+        val referencedSymbol = when (namedReference) {
+            is FirResolvedNamedReference -> namedReference.resolvedSymbol
+            is FirNamedReferenceWithCandidate -> namedReference.candidateSymbol
             else -> null
         }
 
-        val diagnostic = when (nameReference) {
-            is FirErrorReferenceWithCandidate -> nameReference.diagnostic
-            is FirErrorNamedReference -> nameReference.diagnostic
+        val diagnostic = when (namedReference) {
+            is FirErrorReferenceWithCandidate -> namedReference.diagnostic
+            is FirErrorNamedReference -> namedReference.diagnostic
             else -> null
         }
 
@@ -237,21 +238,24 @@ class FirCallResolver(
             referencedSymbol is FirClassLikeSymbol<*> -> {
                 return components.buildResolvedQualifierForClass(
                     referencedSymbol,
-                    nameReference.source,
+                    namedReference.source,
                     qualifiedAccess.typeArguments,
                     diagnostic
                 )
             }
             referencedSymbol is FirTypeParameterSymbol && referencedSymbol.fir.isReified -> {
                 return buildResolvedReifiedParameterReference {
-                    source = nameReference.source
+                    source = namedReference.source
                     symbol = referencedSymbol
                     typeRef = typeForReifiedParameterReference(this)
                 }
             }
         }
 
-        var resultExpression = qualifiedAccess.transformCalleeReference(StoreNameReference, nameReference)
+        if (namedReference.source == qualifiedAccess.source) {
+            namedReference.replaceSource(namedReference.source?.fakeElement(FirFakeSourceElementKind.ReferenceInAtomicQualifiedAccess))
+        }
+        var resultExpression = qualifiedAccess.transformCalleeReference(StoreNameReference, namedReference)
         if (reducedCandidates.size == 1) {
             val candidate = reducedCandidates.single()
             resultExpression = resultExpression.transformDispatchReceiver(StoreReceiver, candidate.dispatchReceiverExpression())

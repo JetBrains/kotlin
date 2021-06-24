@@ -83,9 +83,10 @@ sealed class FirFakeSourceElementKind : FirSourceElementKind() {
 
     object ImplicitInvokeCall : FirFakeSourceElementKind()
 
-    // this/super expressions have FirThisReference/FirSuperReference
-    // with a fake sources which refers to this this/super expression
-    object ExplicitThisOrSuperReference : FirFakeSourceElementKind()
+    // Consider an atomic qualified access like `i`. In the FIR tree, both the FirQualifiedAccessExpression and its calleeReference uses
+    // `i` as the source. Hence, this fake kind is set on the `calleeReference` to make sure no PSI element is shared by multiple FIR
+    // elements. This also applies to `this` and `super` references.
+    object ReferenceInAtomicQualifiedAccess : FirFakeSourceElementKind()
 
     // for enum classes we have valueOf & values functions generated
     // with a fake sources which refers to this the enum class
@@ -266,13 +267,46 @@ sealed class FirPsiSourceElement(val psi: PsiElement) : FirSourceElement() {
             return element.textRange.endOffset
         }
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as FirPsiSourceElement
+
+        if (psi != other.psi) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return psi.hashCode()
+    }
 }
 
 class FirRealPsiSourceElement(psi: PsiElement) : FirPsiSourceElement(psi) {
     override val kind: FirSourceElementKind get() = FirRealSourceElementKind
 }
 
-class FirFakeSourceElement(psi: PsiElement, override val kind: FirFakeSourceElementKind) : FirPsiSourceElement(psi)
+class FirFakeSourceElement(psi: PsiElement, override val kind: FirFakeSourceElementKind) : FirPsiSourceElement(psi) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        if (!super.equals(other)) return false
+
+        other as FirFakeSourceElement
+
+        if (kind != other.kind) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = super.hashCode()
+        result = 31 * result + kind.hashCode()
+        return result
+    }
+}
 
 fun FirSourceElement.fakeElement(newKind: FirFakeSourceElementKind): FirSourceElement {
     return when (this) {
@@ -309,6 +343,30 @@ class FirLightSourceElement(
         if (treeStructure !is FirPsiSourceElement.WrappedTreeStructure) return null
         val node = treeStructure.unwrap(lighterASTNode)
         return node.psi?.toFirPsiSourceElement(kind)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as FirLightSourceElement
+
+        if (lighterASTNode != other.lighterASTNode) return false
+        if (startOffset != other.startOffset) return false
+        if (endOffset != other.endOffset) return false
+        if (treeStructure != other.treeStructure) return false
+        if (kind != other.kind) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = lighterASTNode.hashCode()
+        result = 31 * result + startOffset
+        result = 31 * result + endOffset
+        result = 31 * result + treeStructure.hashCode()
+        result = 31 * result + kind.hashCode()
+        return result
     }
 }
 
