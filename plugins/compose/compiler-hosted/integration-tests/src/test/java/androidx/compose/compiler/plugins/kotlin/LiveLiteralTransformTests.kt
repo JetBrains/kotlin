@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
+import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.junit.Test
@@ -564,6 +565,7 @@ class LiveLiteralTransformTests : AbstractIrTransformTest() {
         module: IrModuleFragment,
         generatorContext: GeneratorContext,
         irLinker: IrDeserializer,
+        diagnosticReporter: IrMessageLogger,
         symbols: BuiltinSymbolsBase
     ) {
         val pluginContext = IrPluginContextImpl(
@@ -574,6 +576,7 @@ class LiveLiteralTransformTests : AbstractIrTransformTest() {
             typeTranslator = generatorContext.typeTranslator,
             irBuiltIns = generatorContext.irBuiltIns,
             linker = irLinker,
+            diagnosticReporter = diagnosticReporter,
             symbols = symbols
         )
         @Suppress("DEPRECATION")

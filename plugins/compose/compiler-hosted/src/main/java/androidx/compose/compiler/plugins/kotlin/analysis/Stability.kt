@@ -33,7 +33,9 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetObjectValue
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.types.IrErrorType
@@ -47,6 +49,7 @@ import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isAny
+import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.isString
@@ -54,7 +57,7 @@ import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.getInlinedClass
+import org.jetbrains.kotlin.ir.util.getInlineClassUnderlyingType
 import org.jetbrains.kotlin.ir.util.isEnumClass
 import org.jetbrains.kotlin.ir.util.isEnumEntry
 import org.jetbrains.kotlin.ir.util.isFunctionOrKFunction
@@ -453,5 +456,45 @@ class StabilityInferencer(val context: IrPluginContext) {
             }
             else -> stability
         }
+    }
+}
+
+/**
+ * Returns inline class for given class or null of type is not inlined
+ * TODO: Make this configurable for different backends (currently implements logic of JS BE)
+ */
+// From Kotin's InlineClasses.kt
+private fun IrType.getInlinedClass(): IrClass? {
+    if (this is IrSimpleType) {
+        val erased = erase(this) ?: return null
+        if (erased.isInline) {
+            if (this.isMarkedNullable()) {
+                var fieldType: IrType
+                var fieldInlinedClass = erased
+                while (true) {
+                    fieldType = getInlineClassUnderlyingType(fieldInlinedClass)
+                    if (fieldType.isMarkedNullable()) {
+                        return null
+                    }
+
+                    fieldInlinedClass = fieldType.getInlinedClass() ?: break
+                }
+            }
+
+            return erased
+        }
+    }
+    return null
+}
+
+// From Kotin's InlineClasses.kt
+private tailrec fun erase(type: IrType): IrClass? {
+    val classifier = type.classifierOrFail
+
+    return when (classifier) {
+        is IrClassSymbol -> classifier.owner
+        is IrScriptSymbol -> null // TODO: check if correct
+        is IrTypeParameterSymbol -> erase(classifier.owner.superTypes.first())
+        else -> error(classifier)
     }
 }
