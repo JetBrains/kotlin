@@ -309,6 +309,62 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
         )
     }
 
+    fun `test parameters`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+
+            simpleSingleSourceTarget(
+                "a", """
+                    class X 
+                    fun useX(x: X) = Unit
+                """.trimIndent()
+            )
+
+            simpleSingleSourceTarget(
+                "b", """
+                    class B
+                    typealias X = B
+                    fun useX(x: X) = Unit
+                """.trimIndent()
+            )
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                expect class X expect constructor()
+                expect fun useX(x: X)
+            """.trimIndent()
+        )
+    }
+
+    fun `test parameters with non-commonized TA expanding to a commonized type`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+
+            simpleSingleSourceTarget(
+                "a", """
+                    class X 
+                    fun useX(x: X) = Unit
+                """.trimIndent()
+            )
+
+            simpleSingleSourceTarget(
+                "b", """
+                    class X
+                    typealias B = X
+                    fun useX(x: B) = Unit
+                """.trimIndent()
+            )
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                expect class X expect constructor()
+                expect fun useX(x: X)
+            """.trimIndent()
+        )
+    }
+
     fun `test parameterized types`() {
         val result = commonize {
             outputTarget("(a, b)", "(c, d)", "(a, b, c, d)")
