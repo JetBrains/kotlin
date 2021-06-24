@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
-import org.jetbrains.kotlin.ir.interpreter.checker.IrCompileTimeChecker
 import org.jetbrains.kotlin.ir.util.copyTypeAndValueArgumentsFrom
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.model.TestFile
@@ -47,7 +47,12 @@ private class Evaluator(private val interpreter: IrInterpreter, private val glob
                     is IrErrorExpression -> this.description
                     else -> TODO("unsupported type ${this::class.java}")
                 }
-                val metaInfo = IrInterpreterCodeMetaInfo(this.startOffset, this.endOffset, message, isError)
+                val startOffset = when {
+                    // this additional check is needed to unify rendering from old and new frontends
+                    original is IrCall && original.symbol.owner.fqNameWhenAvailable?.asString() == "kotlin.internal.ir.CHECK_NOT_NULL" -> endOffset - 2
+                    else -> startOffset
+                }
+                val metaInfo = IrInterpreterCodeMetaInfo(startOffset, this.endOffset, message, isError)
                 globalMetadataInfoHandler.addMetadataInfosForFile(testFile, listOf(metaInfo))
                 return if (this !is IrErrorExpression) this else original
             }

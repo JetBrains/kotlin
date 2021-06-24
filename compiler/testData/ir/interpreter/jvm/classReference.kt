@@ -11,8 +11,8 @@ class A(val a: Int, val b: String) {
     fun Int.funWithExtension(other: Int) = this + other
 }
 
-const val aSimpleName = <!EVALUATED: `A`!>A::class.simpleName!!<!>
-const val aQualifiedName = <!EVALUATED: `test.A`!>A::class.qualifiedName!!<!>
+const val aSimpleName = A::class.simpleName<!EVALUATED: `A`!>!!<!>
+const val aQualifiedName = A::class.qualifiedName<!EVALUATED: `test.A`!>!!<!>
 //const val aMembers = A::class.members.joinToString() TODO -> `val test.A.a: kotlin.Int, val test.A.b: kotlin.String, val test.A.(kotlin.String.)propertyWithExtension: kotlin.Int, fun test.A.(kotlin.Int.)funWithExtension(kotlin.Int): kotlin.Int, fun test.A.equals(kotlin.Any?): kotlin.Boolean, fun test.A.hashCode(): kotlin.Int, fun test.A.toString(): kotlin.String`
 const val aConstructors = A::class.constructors.<!EVALUATED: `fun <init>(kotlin.Int, kotlin.String): test.A`!>joinToString()<!>
 const val aVisibility = A::class.visibility.<!EVALUATED: `PUBLIC`!>toString()<!>

@@ -9,8 +9,8 @@ const val contains2 = mapOf(1 to "1", 2 to "2", 3 to "3").<!EVALUATED: `true`!>c
 const val contains3 = mapOf(1 to "1", 2 to "2", 3 to "3").<!EVALUATED: `false`!>contains<Any, String>("1")<!>
 const val contains4 = mapOf(1 to "1", 2 to "2", 3 to "3").<!EVALUATED: `true`!>containsValue("1")<!>
 
-const val get1 = <!EVALUATED: `1`!>mapOf(1 to "1", 2 to "2", 3 to "3").get(1)!!<!>
-const val get2 = <!EVALUATED: `2`!>mapOf(1 to "1", 2 to "2", 3 to "3")[2]!!<!>
+const val get1 = mapOf(1 to "1", 2 to "2", 3 to "3").get(1)<!EVALUATED: `1`!>!!<!>
+const val get2 = mapOf(1 to "1", 2 to "2", 3 to "3")[2]<!EVALUATED: `2`!>!!<!>
 const val get3 = mapOf(1 to "1", 2 to "2", 3 to "3")[0].<!EVALUATED: `null`!>toString()<!>
 
 const val keys = mapOf(1 to "1", 2 to "2", 3 to "3").keys.<!EVALUATED: `3`!>size<!>
