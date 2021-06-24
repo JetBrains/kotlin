@@ -100,7 +100,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
         project("customJdk", gradleVersion) {
             buildAndFail("build") {
                 assertOutputContains("Unresolved reference: stream")
-                assertOutputDoesNotContain("AutoCloseable")
+                assertOutputDoesNotContain("Unresolved reference: AutoCloseable")
             }
         }
     }
