@@ -369,7 +369,8 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
         )
     }
 
-    fun `test parameterized types`() {
+    @Suppress("unused")
+    fun `ignored KT-47434 - test parameterized return type`() {
         val result = commonize {
             outputTarget("(a, b)", "(c, d)", "(a, b, c, d)")
             registerDependency("a", "b", "c", "d", "(a, b)", "(c, d)", "(a, b, c, d)") {
