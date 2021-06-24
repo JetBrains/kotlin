@@ -117,8 +117,8 @@ class DescriptorByIdSignatureFinder(
                             if (isConstructorName(current)) addAll(classDescriptor.constructors)
                             addAll(memberScope.getContributedFunctions(current, NoLookupLocation.FROM_BACKEND))
                             addAll(memberScope.getContributedVariables(current, NoLookupLocation.FROM_BACKEND))
-                            addAll(classDescriptor.staticScope.getContributedDescriptors { it == current })
                         }
+                        addAll(classDescriptor.staticScope.getContributedDescriptors().filter { it.name == current })
                     }
                 }
             }

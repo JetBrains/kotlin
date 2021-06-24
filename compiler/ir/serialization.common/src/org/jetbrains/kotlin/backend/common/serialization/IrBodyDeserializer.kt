@@ -443,7 +443,7 @@ class IrBodyDeserializer(
         val origin = if (proto.hasOriginName()) deserializeIrStatementOrigin(proto.originName) else null
 
         val superQualifier = if (access.hasSuper()) {
-            declarationDeserializer.deserializeIrSymbolAndRemap(access.symbol) as IrClassSymbol
+            declarationDeserializer.deserializeIrSymbolAndRemap(access.`super`) as IrClassSymbol
         } else null
         val receiver = if (access.hasReceiver()) {
             deserializeExpression(access.receiver)
@@ -549,7 +549,7 @@ class IrBodyDeserializer(
         val access = proto.fieldAccess
         val symbol = declarationDeserializer.deserializeIrSymbolAndRemap(access.symbol) as IrFieldSymbol
         val superQualifier = if (access.hasSuper()) {
-            declarationDeserializer.deserializeIrSymbolAndRemap(access.symbol) as IrClassSymbol
+            declarationDeserializer.deserializeIrSymbolAndRemap(access.`super`) as IrClassSymbol
         } else null
         val receiver = if (access.hasReceiver()) {
             deserializeExpression(access.receiver)

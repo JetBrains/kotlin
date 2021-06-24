@@ -361,7 +361,9 @@ open class IrFileSerializer(
             is IrReturnableBlockSymbol ->
                 BinarySymbolData.SymbolKind.RETURNABLE_BLOCK_SYMBOL
             is IrFieldSymbol ->
-                if (symbol.owner.correspondingPropertySymbol?.owner.let { it == null || it.isDelegated })
+                if (symbol.owner.correspondingPropertySymbol?.owner.let {
+                        it == null || it.isDelegated || it.getter == null && it.setter == null
+                    })
                     BinarySymbolData.SymbolKind.STANDALONE_FIELD_SYMBOL
                 else
                     BinarySymbolData.SymbolKind.FIELD_SYMBOL

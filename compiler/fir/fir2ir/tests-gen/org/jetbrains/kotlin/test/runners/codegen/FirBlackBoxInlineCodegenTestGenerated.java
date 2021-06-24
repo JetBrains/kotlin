@@ -4119,6 +4119,12 @@ public class FirBlackBoxInlineCodegenTestGenerated extends AbstractFirBlackBoxIn
         }
 
         @Test
+        @TestMetadata("importedJavaStaticField.kt")
+        public void testImportedJavaStaticField() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/simple/importedJavaStaticField.kt");
+        }
+
+        @Test
         @TestMetadata("inlineCallInInlineLambda.kt")
         public void testInlineCallInInlineLambda() throws Exception {
             runTest("compiler/testData/codegen/boxInline/simple/inlineCallInInlineLambda.kt");
