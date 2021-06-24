@@ -313,20 +313,17 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
     // Compute stubs that should be generated, compare based on signature
     private fun generateRelevantStubMethods(irClass: IrClass): List<IrSimpleFunction> {
         val classStubFuns = collectionStubComputer.stubsForCollectionClasses(irClass)
-            .flatMap { createStubFuns(irClass, it) }
+            .flatMap { it.createStubFuns(irClass) }
+        if (classStubFuns.isEmpty()) return classStubFuns
 
-        val superClassStubSignatures = computeStubsForSuperClasses(irClass)
-            .flatMap { createStubFuns(irClass, it) }
+        val alreadyPresent = computeStubsForSuperClasses(irClass)
+            .flatMap { it.createStubFuns(irClass) }
             .mapTo(HashSet()) { it.toJvmSignature() }
 
-        return classStubFuns
-            .filter { it.toJvmSignature() !in superClassStubSignatures }
-            .associateBy { it.toJvmSignature() }
-            .values.toList()
+        return classStubFuns.filter { alreadyPresent.add(it.toJvmSignature()) }
     }
 
-    private fun createStubFuns(irClass: IrClass, stubs: StubsForCollectionClass): List<IrSimpleFunction> {
-        val (readOnlyClass, mutableClass, candidatesForStubs) = stubs
+    private fun StubsForCollectionClass.createStubFuns(irClass: IrClass): List<IrSimpleFunction> {
         val substitutionMap = computeSubstitutionMap(readOnlyClass.owner, mutableClass.owner, irClass)
         return candidatesForStubs.map { function ->
             createStubMethod(function, irClass, substitutionMap)
@@ -349,7 +346,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
     private fun computeStubsForSuperClass(superClass: IrClass): List<StubsForCollectionClass> {
         val superClassStubs = collectionStubComputer.stubsForCollectionClasses(superClass)
 
-        if (superClass.modality != Modality.ABSTRACT) return superClassStubs
+        if (superClassStubs.isEmpty() || superClass.modality != Modality.ABSTRACT) return superClassStubs
 
         // An abstract superclass might contain an abstract function declaration that effectively overrides a stub to be generated,
         // and thus have no non-abstract stub.
@@ -362,19 +359,18 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
         if (abstractFunsByNameAndArity.isEmpty()) return superClassStubs
 
         return superClassStubs.map {
-            val (readOnlyClass, mutableClass, candidatesForStubs) = it
             // NB here we should build a stub in substitution context of the given superclass.
             // Resulting stub can be different from a stub created in substitution context of the "current" class
             // in case of (partially) specialized generic superclass.
-            val substitutionMap = computeSubstitutionMap(readOnlyClass.owner, mutableClass.owner, superClass)
-            val filteredCandidates = candidatesForStubs.filter { candidateFun ->
+            val substitutionMap = computeSubstitutionMap(it.readOnlyClass.owner, it.mutableClass.owner, superClass)
+            val filteredCandidates = it.candidatesForStubs.filter { candidateFun ->
                 val stubMethod = createStubMethod(candidateFun, superClass, substitutionMap)
                 val stubNameAndArity = stubMethod.nameAndArity
                 abstractFunsByNameAndArity[stubNameAndArity].orEmpty().none { abstractFun ->
                     isEffectivelyOverriddenBy(stubMethod, abstractFun)
                 }
             }
-            FilteredStubsForCollectionClass(readOnlyClass, mutableClass, filteredCandidates)
+            FilteredStubsForCollectionClass(it.readOnlyClass, it.mutableClass, filteredCandidates)
         }
     }
 
@@ -400,10 +396,6 @@ internal interface StubsForCollectionClass {
     val mutableClass: IrClassSymbol
     val candidatesForStubs: Collection<IrSimpleFunction>
 }
-
-internal operator fun StubsForCollectionClass.component1() = readOnlyClass
-internal operator fun StubsForCollectionClass.component2() = mutableClass
-internal operator fun StubsForCollectionClass.component3() = candidatesForStubs
 
 internal class CollectionStubComputer(val context: JvmBackendContext) {
 
@@ -442,15 +434,14 @@ internal class CollectionStubComputer(val context: JvmBackendContext) {
             // In the ideal world, it should be enough to check that
             // the given member function 'f' from 'MC' doesn't override anything from 'C'.
 
-            mutableClass.functions
-                .map { it.owner }
+            mutableClass.owner.functions
                 .filter { memberFun ->
                     !memberFun.isFakeOverride ||
                             (memberFun.modality == Modality.ABSTRACT && memberFun.overriddenSymbols.none { overriddenFun ->
                                 overriddenFun.owner.parentAsClass.symbol == readOnlyClass
                             })
                 }
-                .toHashSet()
+                .toList()
         }
     }
 
@@ -478,12 +469,11 @@ internal class CollectionStubComputer(val context: JvmBackendContext) {
 
     private fun computeStubsForCollectionClasses(irClass: IrClass): List<StubsForCollectionClass> {
         if (irClass.isFromJava()) return emptyList()
-        val stubs = preComputedStubs.filter { (readOnlyClass, mutableClass) ->
-            !irClass.symbol.isSubtypeOfClass(mutableClass) &&
-                    irClass.superTypes.any { it.isSubtypeOfClass(readOnlyClass) }
+        val stubs = preComputedStubs.filter {
+            irClass.symbol.isStrictSubtypeOfClass(it.readOnlyClass) && !irClass.symbol.isSubtypeOfClass(it.mutableClass)
         }
-        return stubs.filter { (readOnlyClass) ->
-            stubs.none { readOnlyClass != it.readOnlyClass && it.readOnlyClass.isSubtypeOfClass(readOnlyClass) }
+        return stubs.filter {
+            stubs.none { other -> it.readOnlyClass != other.readOnlyClass && other.readOnlyClass.isSubtypeOfClass(it.readOnlyClass) }
         }
     }
 }

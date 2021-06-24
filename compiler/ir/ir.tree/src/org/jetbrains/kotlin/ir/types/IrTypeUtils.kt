@@ -21,15 +21,14 @@ fun IrClassifierSymbol.superTypes(): List<IrType> = when (this) {
     else -> emptyList()
 }
 
-fun IrClassifierSymbol.isSubtypeOfClass(superClass: IrClassSymbol): Boolean {
-    if (FqNameEqualityChecker.areEqual(this, superClass)) return true
-    return superTypes().any { it.isSubtypeOfClass(superClass) }
-}
+fun IrClassifierSymbol.isSubtypeOfClass(superClass: IrClassSymbol): Boolean =
+    FqNameEqualityChecker.areEqual(this, superClass) || isStrictSubtypeOfClass(superClass)
 
-fun IrType.isSubtypeOfClass(superClass: IrClassSymbol): Boolean {
-    if (this !is IrSimpleType) return false
-    return classifier.isSubtypeOfClass(superClass)
-}
+fun IrClassifierSymbol.isStrictSubtypeOfClass(superClass: IrClassSymbol): Boolean =
+    superTypes().any { it.isSubtypeOfClass(superClass) }
+
+fun IrType.isSubtypeOfClass(superClass: IrClassSymbol): Boolean =
+    this is IrSimpleType && classifier.isSubtypeOfClass(superClass)
 
 fun IrType.isSubtypeOf(superType: IrType, irBuiltIns: IrBuiltIns): Boolean {
     return AbstractTypeChecker.isSubtypeOf(
