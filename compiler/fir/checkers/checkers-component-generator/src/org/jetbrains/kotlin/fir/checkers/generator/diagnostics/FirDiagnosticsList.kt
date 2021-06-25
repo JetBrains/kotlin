@@ -171,7 +171,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         // TODO: change it to KtSuperTypeEntry when possible (after re-targeter implementation)
         val SUPERTYPE_NOT_INITIALIZED by error<KtTypeReference>()
         val SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR by error<PsiElement>()
-        val DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR by warning<PsiElement>()
+        val DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR by error<PsiElement>()
         val PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS by error<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME)
         val EXPLICIT_DELEGATION_CALL_REQUIRED by error<PsiElement>(PositioningStrategy.SECONDARY_CONSTRUCTOR_DELEGATION_CALL)
         val SEALED_CLASS_CONSTRUCTOR_CALL by error<PsiElement>()
