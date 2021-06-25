@@ -127,7 +127,7 @@ object FirErrors {
     // Unresolved
     val INVISIBLE_REFERENCE by error1<PsiElement, FirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val UNRESOLVED_REFERENCE by error1<PsiElement, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
-    val UNRESOLVED_LABEL by error0<PsiElement>()
+    val UNRESOLVED_LABEL by error0<PsiElement>(SourceElementPositioningStrategies.LABEL)
     val DESERIALIZATION_ERROR by error0<PsiElement>()
     val ERROR_FROM_JAVA_RESOLUTION by error0<PsiElement>()
     val MISSING_STDLIB_CLASS by error0<PsiElement>()
