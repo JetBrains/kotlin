@@ -4633,6 +4633,12 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
         }
 
         @Test
+        @TestMetadata("monitorEnterExit.kt")
+        public void testMonitorEnterExit() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/special/monitorEnterExit.kt");
+        }
+
+        @Test
         @TestMetadata("plusAssign.kt")
         public void testPlusAssign() throws Exception {
             runTest("compiler/testData/codegen/boxInline/special/plusAssign.kt");
