@@ -3970,6 +3970,11 @@ createInterop("withSpaces") {
     it.defFile generateWithSpaceDefFile()
 }
 
+createInterop("exceptions_throwThroughBridge") {
+    it.defFile "interop/exceptions/throwThroughBridge.def"
+    it.extraOpts "-Xcompile-source", "$projectDir/interop/exceptions/throwThroughBridgeInterop.cpp"
+}
+
 /**
  * Creates a task for the interop test. Configures runner and adds library and test build tasks.
  */
@@ -4208,8 +4213,7 @@ interopTest("interop_threadStates") {
 
 interopTest("interop_threadStates_callbacksWithExceptions") {
     disabled = (project.testTarget == 'wasm32') || // No interop for wasm yet.
-            !isExperimentalMM || // No thread state switching in the legacy MM.
-            project.globalTestArgs.contains('-opt') // TODO: Fix this test for -opt.
+            !isExperimentalMM // No thread state switching in the legacy MM.
     source = "interop/threadStates/callbacksWithExceptions.kt"
     interop = "threadStates"
 }
@@ -4709,6 +4713,15 @@ dynamicTest("interop_memory_leaks") {
     flags = ['-Xdestroy-runtime-mode=legacy'] // Runtime cannot be destroyed with interop with on-shutdown.
     expectedExitStatusChecker = { it != 0 }
     outputChecker = { s -> s.contains("Memory leaks detected, 1 objects leaked!") }
+}
+
+dynamicTest("interop_exceptions_throwThroughBridge") {
+    source = "interop/exceptions/throwThroughBridge.kt"
+    cSource = "$projectDir/interop/exceptions/throwThroughBridge.cpp"
+    clangTool = "clang++"
+    expectedExitStatusChecker = { it != 0 }
+    outputChecker = { s -> !s.contains("Should not happen") }
+    interop = "exceptions_throwThroughBridge"
 }
 
 tasks.register("library_mismatch", KonanDriverTest) {

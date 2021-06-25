@@ -483,6 +483,8 @@ internal fun buildNativeLibrary(
         //
         // Note that PCH and the *.c file should be compiled with the same optimization level.
         add("-O2")
+        // Allow throwing exceptions through generated stubs.
+        add("-fexceptions")
         addAll(additionalCompilerOpts)
         addAll(getCompilerFlagsForVfsOverlay(arguments.headerFilterPrefix.toTypedArray(), def))
         addAll(when (language) {

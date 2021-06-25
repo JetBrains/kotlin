@@ -40,8 +40,9 @@ class CStubsManager(private val target: KonanTarget) {
             val cSourcePath = cSource.absolutePath
 
             val clangCommand = clang.clangC(
-                *compilerOptions.toTypedArray(), "-O2",
-                cSourcePath, "-emit-llvm", "-c", "-o", bitcode.absolutePath
+                    *compilerOptions.toTypedArray(), "-O2",
+                    "-fexceptions", // Allow throwing exceptions through generated stubs.
+                    cSourcePath, "-emit-llvm", "-c", "-o", bitcode.absolutePath
             )
             if (dumpBridges) {
                 println("CSTUBS for ${language}")
