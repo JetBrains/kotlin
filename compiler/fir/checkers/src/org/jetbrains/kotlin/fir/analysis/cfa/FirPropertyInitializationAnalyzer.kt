@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.declarations.utils.referredPropertySymbol
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
@@ -72,15 +71,15 @@ object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChec
         ): Boolean {
             if (symbol.fir.isVal && node.fir in capturedWrites) {
                 if (symbol.fir.isLocal) {
-                    reporter.reportOn(node.fir.lValue.source, FirErrors.CAPTURED_VAL_INITIALIZATION, symbol, context)
+                    reporter.reportOn(node.fir.source, FirErrors.CAPTURED_VAL_INITIALIZATION, symbol, context)
                 } else {
-                    reporter.reportOn(node.fir.lValue.source, FirErrors.CAPTURED_MEMBER_VAL_INITIALIZATION, symbol, context)
+                    reporter.reportOn(node.fir.source, FirErrors.CAPTURED_MEMBER_VAL_INITIALIZATION, symbol, context)
                 }
                 return true
             }
             val kind = info[symbol] ?: EventOccurrencesRange.ZERO
             if (symbol.fir.isVal && kind.canBeRevisited()) {
-                reporter.reportOn(node.fir.lValue.source, FirErrors.VAL_REASSIGNMENT, symbol, context)
+                reporter.reportOn(node.fir.source, FirErrors.VAL_REASSIGNMENT, symbol, context)
                 return true
             }
             return false
