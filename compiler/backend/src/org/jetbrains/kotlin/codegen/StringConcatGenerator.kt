@@ -22,6 +22,7 @@ import java.lang.StringBuilder
 class StringConcatGenerator(val mode: JvmStringConcat, val mv: InstructionAdapter) {
 
     private val template = StringBuilder("")
+    private val specialSymbolsInTemplate = arrayListOf<String>()
     private val paramTypes = arrayListOf<Type>()
     private var justFlushed = false
 
@@ -42,7 +43,16 @@ class StringConcatGenerator(val mode: JvmStringConcat, val mv: InstructionAdapte
         if (mode == JvmStringConcat.INDY_WITH_CONSTANTS) {
             when (stackValue) {
                 is StackValue.Constant -> {
-                    template.append(stackValue.value)
+                    val value = stackValue.value
+                    if (value is String && (value.contains("\u0001") || value.contains("\u0002"))) {
+                        template.append("\u0002") //reference to special symbols added on next line
+                        specialSymbolsInTemplate.add(value)
+                    } else if (value is Char && (value == 1.toChar() || value == 2.toChar())) {
+                        template.append("\u0002") //reference to special symbols added on next line
+                        specialSymbolsInTemplate.add(value.toString())
+                    } else {
+                        template.append(value)
+                    }
                     return
                 }
                 TRUE -> {
@@ -104,7 +114,7 @@ class StringConcatGenerator(val mode: JvmStringConcat, val mv: InstructionAdapte
                     "makeConcatWithConstants",
                     Type.getMethodDescriptor(JAVA_STRING_TYPE, *paramTypes.toTypedArray()),
                     bootstrap,
-                    arrayOf(template.toString())
+                    arrayOf(template.toString()) + specialSymbolsInTemplate
                 )
             } else {
                 val bootstrap = Handle(
@@ -123,6 +133,7 @@ class StringConcatGenerator(val mode: JvmStringConcat, val mv: InstructionAdapte
                 )
             }
             template.clear()
+            specialSymbolsInTemplate.clear()
             paramTypes.clear()
             paramTypes.add(JAVA_STRING_TYPE)
             template.append("\u0001")
