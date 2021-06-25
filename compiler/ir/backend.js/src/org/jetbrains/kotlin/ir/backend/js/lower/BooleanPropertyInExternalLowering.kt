@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.interpreter.toIrConst
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -27,6 +28,7 @@ class BooleanPropertyInExternalLowering(
 ) : BodyLoweringPass {
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
+        if (!context.safeExternalBoolean && context.safeExternalBooleanDiagnostic == null) return
         irBody.transformChildrenVoid(
             ExternalBooleanPropertyProcessor(
                 context
@@ -78,7 +80,10 @@ class BooleanPropertyInExternalLowering(
                 val call = JsIrBuilder.buildCall(
                     target = function!!
                 ).apply {
-                    putValueArgument(0, property.name.identifier.toIrConst(context.irBuiltIns.stringType))
+                    putValueArgument(
+                        0,
+                        property.fqNameWhenAvailable?.asString().toIrConst(context.irBuiltIns.stringType)
+                    )
                     putValueArgument(1, irGet(tmp))
                 }
 
