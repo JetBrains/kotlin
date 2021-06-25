@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.isError
+import org.jetbrains.kotlin.types.typeUtil.isBoolean
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.math.BigInteger
@@ -387,10 +388,37 @@ private class ConstantExpressionEvaluatorVisitor(
 
         val compileTimeConstant = expression.accept(this, expectedType ?: TypeUtils.NO_EXPECTED_TYPE)
         if (compileTimeConstant != null) {
+            if (shouldSkipComplexBooleanValue(expression, compileTimeConstant)) {
+                return null
+            }
             trace.record(BindingContext.COMPILE_TIME_VALUE, expression, compileTimeConstant)
             return compileTimeConstant
         }
         return null
+    }
+
+    @Suppress("warnings")
+    private fun shouldSkipComplexBooleanValue(
+        expression: KtExpression,
+        constant: CompileTimeConstant<*>
+    ): Boolean {
+        if (constant.isError) return false
+        val constantValue = constant.toConstantValue(builtIns.booleanType)
+        if (!constantValue.getType(constantExpressionEvaluator.module).isBoolean()) return false
+        if (expression is KtConstantExpression || constant.parameters.usesVariableAsConstant) return false
+
+        if (languageVersionSettings.supportsFeature(LanguageFeature.ProhibitSimplificationOfNonTrivialConstBooleanExpressions)) {
+            return true
+        } else {
+            val parent = expression.parent
+            if (
+                parent is KtWhenConditionWithExpression ||
+                parent is KtContainerNode && (parent.parent is KtWhileExpression || parent.parent is KtDoWhileExpression)
+            ) {
+                trace.report(Errors.NON_TRIVIAL_BOOLEAN_CONSTANT.on(expression, constantValue.value as Boolean))
+            }
+            return false
+        }
     }
 
     private val stringExpressionEvaluator = object : KtVisitor<TypedCompileTimeConstant<String>, Nothing?>() {

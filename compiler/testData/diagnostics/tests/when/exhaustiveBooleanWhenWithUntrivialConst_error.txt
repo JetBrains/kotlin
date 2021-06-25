@@ -1,0 +1,9 @@
+package
+
+public const val TRUE: kotlin.Boolean = true
+public const val s1: kotlin.String = "s1"
+public const val s2: kotlin.String = "s2"
+public fun test_0(/*0*/ b: kotlin.Boolean): kotlin.String
+public fun test_1(/*0*/ b: kotlin.Boolean): kotlin.String
+public fun test_2(/*0*/ b: kotlin.Boolean): kotlin.String
+public fun test_3(/*0*/ b: kotlin.Boolean): kotlin.String

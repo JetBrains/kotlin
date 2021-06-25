@@ -4980,6 +4980,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("loopWithNonTrivialBooleanConst_error.kt")
+            public void testLoopWithNonTrivialBooleanConst_error() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/loopWithNonTrivialBooleanConst_error.kt");
+            }
+
+            @Test
+            @TestMetadata("loopWithNonTrivialBooleanConst_warning.kt")
+            public void testLoopWithNonTrivialBooleanConst_warning() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/loopWithNonTrivialBooleanConst_warning.kt");
+            }
+
+            @Test
             @TestMetadata("mainWithWarningOnUnusedParam.kt")
             public void testMainWithWarningOnUnusedParam() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/mainWithWarningOnUnusedParam.kt");
@@ -31059,6 +31071,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             @TestMetadata("ExhaustiveBooleanNullable.kt")
             public void testExhaustiveBooleanNullable() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/when/ExhaustiveBooleanNullable.kt");
+            }
+
+            @Test
+            @TestMetadata("exhaustiveBooleanWhenWithUntrivialConst_error.kt")
+            public void testExhaustiveBooleanWhenWithUntrivialConst_error() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/when/exhaustiveBooleanWhenWithUntrivialConst_error.kt");
+            }
+
+            @Test
+            @TestMetadata("exhaustiveBooleanWhenWithUntrivialConst_warning.kt")
+            public void testExhaustiveBooleanWhenWithUntrivialConst_warning() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/when/exhaustiveBooleanWhenWithUntrivialConst_warning.kt");
             }
 
             @Test
