@@ -521,6 +521,8 @@ private val FirSimpleFunction.matchesHashCodeSignature: Boolean
 private val FirSimpleFunction.matchesToStringSignature: Boolean
     get() = valueParameters.isEmpty()
 
+val Name.isDelegated: Boolean get() = asString().startsWith("<\$\$delegate_")
+
 val ConeTypeProjection.isConflictingOrNotInvariant: Boolean get() = kind != ProjectionKind.INVARIANT || this is ConeKotlinTypeConflictingProjection
 
 fun checkTypeMismatch(

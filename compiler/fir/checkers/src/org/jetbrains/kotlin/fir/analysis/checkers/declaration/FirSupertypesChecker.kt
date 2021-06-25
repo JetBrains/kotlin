@@ -7,17 +7,14 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.analysis.checkers.checkInconsistentTypeParameters
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.extractTypeRefAndSourceFromTypeArgument
-import org.jetbrains.kotlin.fir.analysis.checkers.isConflictingOrNotInvariant
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.modality
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -85,6 +82,9 @@ object FirSupertypesChecker : FirClassChecker() {
 
                 val fullyExpandedType = coneType.fullyExpandedType(context.session)
                 val symbol = fullyExpandedType.toSymbol(context.session)
+                if (symbol is FirRegularClassSymbol && symbol.classId == StandardClassIds.Enum) {
+                    reporter.reportOn(superTypeRef.source, FirErrors.CLASS_CANNOT_BE_EXTENDED_DIRECTLY, symbol, context)
+                }
 
                 if (coneType.typeArguments.isNotEmpty()) {
                     for ((index, typeArgument) in coneType.typeArguments.withIndex()) {
@@ -107,9 +107,19 @@ object FirSupertypesChecker : FirClassChecker() {
                         }
                     }
                 }
+            }
+        }
 
-                if (symbol is FirRegularClassSymbol && symbol.classId == StandardClassIds.Enum) {
-                    reporter.reportOn(superTypeRef.source, FirErrors.CLASS_CANNOT_BE_EXTENDED_DIRECTLY, symbol, context)
+        for (subDeclaration in declaration.declarations) {
+            if (subDeclaration is FirField) {
+                if (subDeclaration.visibility == Visibilities.Local &&
+                    subDeclaration.name.isSpecial &&
+                    subDeclaration.name.isDelegated
+                ) {
+                    val subDeclFir = subDeclaration.returnTypeRef.toRegularClass(context.session)
+                    if (subDeclFir is FirRegularClass && subDeclFir.classKind != ClassKind.INTERFACE) {
+                        reporter.reportOn(subDeclaration.returnTypeRef.source, FirErrors.DELEGATION_NOT_TO_INTERFACE, context)
+                    }
                 }
             }
         }

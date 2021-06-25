@@ -121,6 +121,10 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = DelegationInInterface::class
     }
 
+    abstract class DelegationNotToInterface : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = DelegationNotToInterface::class
+    }
+
     abstract class NestedClassNotAllowed : KtFirDiagnostic<KtNamedDeclaration>() {
         override val diagnosticClass get() = NestedClassNotAllowed::class
         abstract val declaration: String

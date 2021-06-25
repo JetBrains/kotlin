@@ -92,6 +92,7 @@ object FirErrors {
     val NOT_A_LOOP_LABEL by error0<PsiElement>()
     val VARIABLE_EXPECTED by error0<PsiElement>(SourceElementPositioningStrategies.ASSIGNMENT_LHS)
     val DELEGATION_IN_INTERFACE by error0<PsiElement>()
+    val DELEGATION_NOT_TO_INTERFACE by error0<PsiElement>()
     val NESTED_CLASS_NOT_ALLOWED by error1<KtNamedDeclaration, String>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val INCORRECT_CHARACTER_LITERAL by error0<PsiElement>()
     val EMPTY_CHARACTER_LITERAL by error0<PsiElement>()

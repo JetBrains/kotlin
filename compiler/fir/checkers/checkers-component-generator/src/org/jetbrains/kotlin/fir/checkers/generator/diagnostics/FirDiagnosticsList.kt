@@ -60,6 +60,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val NOT_A_LOOP_LABEL by error<PsiElement>()
         val VARIABLE_EXPECTED by error<PsiElement>(PositioningStrategy.ASSIGNMENT_LHS)
         val DELEGATION_IN_INTERFACE by error<PsiElement>()
+        val DELEGATION_NOT_TO_INTERFACE by error<PsiElement>()
         val NESTED_CLASS_NOT_ALLOWED by error<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME) {
             parameter<String>("declaration")
         }

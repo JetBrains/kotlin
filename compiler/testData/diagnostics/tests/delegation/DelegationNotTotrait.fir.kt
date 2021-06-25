@@ -2,7 +2,7 @@ open class Foo() {
 
 }
 
-class Barrr() : <!SUPERTYPE_NOT_INITIALIZED!>Foo<!> by Foo() {}
+class Barrr() : <!DELEGATION_NOT_TO_INTERFACE, SUPERTYPE_NOT_INITIALIZED!>Foo<!> by Foo() {}
 
 interface T {}
 
@@ -12,4 +12,4 @@ open enum class EN() {
   A
 }
 
-class Test2(e : EN) : EN by e {}
+class Test2(e : EN) : <!DELEGATION_NOT_TO_INTERFACE!>EN<!> by e {}
