@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -87,7 +87,7 @@ fun dumpIrElement(actionState: ActionState, data: IrElement, @Suppress("UNUSED_P
         dumpText = data.dump()
     }
 
-    val title = "-- IR for $elementName $beforeOrAfterStr ${actionState.phase.description}\n"
+    val title = "// --- IR for $elementName $beforeOrAfterStr ${actionState.phase.description}\n"
     return title + dumpText
 }
 
@@ -101,7 +101,11 @@ fun <Data, Context> dumpToFile(
         val directoryPath = actionState.config.dumpToDirectory ?: return
         val dumpContent = dumper(actionState, data, context) ?: return
 
-        val directoryFile = File(directoryPath)
+        // TODO in JVM BE most of lowerings run per file and "dump" is called per file,
+        //  so each run of this function overwrites dump written for the previous one.
+        val directoryFile =
+            File(directoryPath +
+                         ((data as? IrModuleFragment)?.let { "/" + it.name.asString().removeSurrounding("<", ">") } ?: ""))
         if (!directoryFile.isDirectory)
             if (!directoryFile.mkdirs())
                 error("Can't create directory for IR dumps at $directoryPath")
@@ -109,7 +113,10 @@ fun <Data, Context> dumpToFile(
         // Make dump files in a directory sorted by ID
         val phaseIdFormatted = "%02d".format(actionState.phaseCount)
 
-        val fileName = "${phaseIdFormatted}_${actionState.phase.name}.$fileExtension"
+        val dumpStrategy = System.getProperty("org.jetbrains.kotlin.compiler.ir.dump.strategy")
+        val extPrefix = if (dumpStrategy == "KotlinLike") "kt." else ""
+
+        val fileName = "${phaseIdFormatted}_${actionState.phase.name}.$extPrefix$fileExtension"
 
         File(directoryFile, fileName).writeText(dumpContent)
     }
