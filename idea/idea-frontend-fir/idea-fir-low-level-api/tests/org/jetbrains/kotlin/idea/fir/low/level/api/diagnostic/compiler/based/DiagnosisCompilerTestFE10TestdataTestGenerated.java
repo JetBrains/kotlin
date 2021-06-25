@@ -2237,6 +2237,7 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 runTest("compiler/testData/diagnostics/tests/callableReference/deprecatedCompanionReceiverInParentheses.kt");
             }
 
+            @Test
             @TestMetadata("ea81649_errorPropertyLHS.kt")
             public void testEa81649_errorPropertyLHS() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/ea81649_errorPropertyLHS.kt");
@@ -23284,6 +23285,7 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 runTest("compiler/testData/diagnostics/tests/resolve/propertyInCompanionOfEnum.kt");
             }
 
+            @Test
             @TestMetadata("resolveAnnotatedLambdaArgument.kt")
             public void testResolveAnnotatedLambdaArgument() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/resolve/resolveAnnotatedLambdaArgument.kt");
