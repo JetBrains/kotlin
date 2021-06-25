@@ -37,11 +37,6 @@ open class YarnRootExtension(
     val yarnSetupTask: YarnSetupTask
         get() = project.tasks.getByName(YarnSetupTask.NAME) as YarnSetupTask
 
-    var disableWorkspaces: Boolean by Property(false)
-
-    val useWorkspaces: Boolean
-        get() = !disableWorkspaces
-
     val rootPackageJsonTaskProvider: TaskProvider<RootPackageJsonTask>
         get() = project.tasks
             .withType(RootPackageJsonTask::class.java)
