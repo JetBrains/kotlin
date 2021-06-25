@@ -39,6 +39,11 @@ public class Jdk9BlackBoxCodegenTestGenerated extends AbstractJdk9BlackBoxCodege
         runTest("compiler/testData/codegen/java9/box/concatDynamic200.kt");
     }
 
+    @TestMetadata("concatDynamic200Long.kt")
+    public void testConcatDynamic200Long() throws Exception {
+        runTest("compiler/testData/codegen/java9/box/concatDynamic200Long.kt");
+    }
+
     @TestMetadata("concatDynamic201.kt")
     public void testConcatDynamic201() throws Exception {
         runTest("compiler/testData/codegen/java9/box/concatDynamic201.kt");
@@ -47,6 +52,11 @@ public class Jdk9BlackBoxCodegenTestGenerated extends AbstractJdk9BlackBoxCodege
     @TestMetadata("concatDynamicIndy200.kt")
     public void testConcatDynamicIndy200() throws Exception {
         runTest("compiler/testData/codegen/java9/box/concatDynamicIndy200.kt");
+    }
+
+    @TestMetadata("concatDynamicIndy200Long.kt")
+    public void testConcatDynamicIndy200Long() throws Exception {
+        runTest("compiler/testData/codegen/java9/box/concatDynamicIndy200Long.kt");
     }
 
     @TestMetadata("concatDynamicIndy201.kt")

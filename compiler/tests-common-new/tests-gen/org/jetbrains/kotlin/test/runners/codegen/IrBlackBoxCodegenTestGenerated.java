@@ -39719,6 +39719,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("concatDynamicWithConstants.kt")
+        public void testConcatDynamicWithConstants() throws Exception {
+            runTest("compiler/testData/codegen/box/strings/concatDynamicWithConstants.kt");
+        }
+
+        @Test
+        @TestMetadata("concatDynamicWithSpecialSymbols.kt")
+        public void testConcatDynamicWithSpecialSymbols() throws Exception {
+            runTest("compiler/testData/codegen/box/strings/concatDynamicWithSpecialSymbols.kt");
+        }
+
+        @Test
         @TestMetadata("constInStringTemplate.kt")
         public void testConstInStringTemplate() throws Exception {
             runTest("compiler/testData/codegen/box/strings/constInStringTemplate.kt");

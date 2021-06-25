@@ -26110,6 +26110,16 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/strings"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
+        @TestMetadata("concatDynamicWithConstants.kt")
+        public void testConcatDynamicWithConstants() throws Exception {
+            runTest("compiler/testData/codegen/box/strings/concatDynamicWithConstants.kt");
+        }
+
+        @TestMetadata("concatDynamicWithSpecialSymbols.kt")
+        public void testConcatDynamicWithSpecialSymbols() throws Exception {
+            runTest("compiler/testData/codegen/box/strings/concatDynamicWithSpecialSymbols.kt");
+        }
+
         @TestMetadata("constInStringTemplate.kt")
         public void testConstInStringTemplate() throws Exception {
             runTest("compiler/testData/codegen/box/strings/constInStringTemplate.kt");

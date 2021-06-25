@@ -24,6 +24,7 @@ class StringConcatGenerator(val mode: JvmStringConcat, val mv: InstructionAdapte
     private val template = StringBuilder("")
     private val specialSymbolsInTemplate = arrayListOf<String>()
     private val paramTypes = arrayListOf<Type>()
+    private var paramSlots = 0
     private var justFlushed = false
 
     @JvmOverloads
@@ -84,8 +85,9 @@ class StringConcatGenerator(val mode: JvmStringConcat, val mv: InstructionAdapte
         } else {
             justFlushed = false
             paramTypes.add(type)
+            paramSlots += type.size
             template.append("\u0001")
-            if (paramTypes.size == 200) {
+            if (paramSlots >= 200) {
                 // Concatenate current arguments into string
                 // because of `StringConcatFactory` limitation add use it as new argument for further processing:
                 // "The number of parameter slots in {@code concatType} is less than or equal to 200"
@@ -132,11 +134,15 @@ class StringConcatGenerator(val mode: JvmStringConcat, val mv: InstructionAdapte
                     arrayOf()
                 )
             }
+            //clear old template
             template.clear()
             specialSymbolsInTemplate.clear()
             paramTypes.clear()
+
+            //add just flushed string
             paramTypes.add(JAVA_STRING_TYPE)
             template.append("\u0001")
+            paramSlots = JAVA_STRING_TYPE.size
         }
     }
 
