@@ -942,7 +942,7 @@ open class RawFirBuilder(
 
         override fun visitObjectLiteralExpression(expression: KtObjectLiteralExpression, data: Unit): FirElement {
             val objectDeclaration = expression.objectDeclaration
-            return withChildClassName(ANONYMOUS_OBJECT_NAME) {
+            return withChildClassName(ANONYMOUS_OBJECT_NAME, forceLocalContext = true) {
                 buildAnonymousObject {
                     source = objectDeclaration.toFirSourceElement()
                     moduleData = baseModuleData

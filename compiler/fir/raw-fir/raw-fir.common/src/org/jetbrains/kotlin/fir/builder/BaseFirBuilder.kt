@@ -102,10 +102,12 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
 
     fun callableIdForName(name: Name) =
         when {
+            context.className.shortNameOrSpecial() == ANONYMOUS_OBJECT_NAME -> CallableId(ANONYMOUS_CLASS_ID, name)
+            context.className.isRoot && !context.inLocalContext -> CallableId(context.packageFqName, name)
             context.inLocalContext -> {
                 val pathFqName =
                     context.firFunctionTargets.fold(
-                        if (context.className == FqName.ROOT) context.packageFqName else context.currentClassId.asSingleFqName()
+                        if (context.className.isRoot) context.packageFqName else context.currentClassId.asSingleFqName()
                     ) { result, firFunctionTarget ->
                         if (firFunctionTarget.isLambda || firFunctionTarget.labelName == null)
                             result
@@ -114,8 +116,6 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                     }
                 CallableId(name, pathFqName)
             }
-            context.className == FqName.ROOT -> CallableId(context.packageFqName, name)
-            context.className.shortName() == ANONYMOUS_OBJECT_NAME -> CallableId(ANONYMOUS_CLASS_ID, name)
             else -> CallableId(context.packageFqName, context.className, name)
         }
 

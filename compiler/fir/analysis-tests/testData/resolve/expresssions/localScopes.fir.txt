@@ -32,7 +32,7 @@ FILE: localScopes.kt
 
         }
 
-        R|<local>/anonymous|.R|<local>/baz|()
+        R|<local>/anonymous|.R|/<anonymous>.baz|()
         R|<local>/anonymous|.R|/Bar.foo|()
         local final class DerivedLocal : R|BaseLocal| {
             public constructor(): R|DerivedLocal| {
