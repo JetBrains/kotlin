@@ -125,8 +125,5 @@ private class CleanerImpl(
     private val cleanPtr: NativePtr,
 ): Cleaner {}
 
-@GCUnsafeCall("Kotlin_Any_isShareable")
-external private fun Any?.isShareable(): Boolean
-
 @GCUnsafeCall("CreateStablePointer")
 external private fun createStablePointer(obj: Any): NativePtr

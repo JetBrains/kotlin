@@ -14,6 +14,9 @@ import kotlin.native.identityHashCode
 import kotlin.reflect.KClass
 import kotlinx.cinterop.*
 
+@GCUnsafeCall("Kotlin_Any_isShareable")
+external internal fun Any?.isShareable(): Boolean
+
 // Implementation details.
 
 @GCUnsafeCall("Kotlin_Worker_stateOfFuture")
