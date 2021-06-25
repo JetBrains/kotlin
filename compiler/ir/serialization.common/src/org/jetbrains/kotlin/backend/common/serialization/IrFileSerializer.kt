@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.declarations.*
@@ -1292,7 +1290,7 @@ open class IrFileSerializer(
         val proto = ProtoField.newBuilder()
             .setBase(serializeIrDeclarationBase(field, FieldFlags.encode(field)))
             .setNameType(serializeNameAndType(field.name, field.type))
-        if (!skipMutableState) {
+        if (!skipMutableState && !(bodiesOnlyForInlines && (field.parent as? IrDeclarationWithVisibility)?.visibility != DescriptorVisibilities.LOCAL)) {
             val initializer = field.initializer?.expression
             if (initializer != null) {
                 proto.initializer = serializeIrExpressionBody(initializer)
@@ -1431,8 +1429,11 @@ open class IrFileSerializer(
     open fun backendSpecificSerializeAllMembers(irClass: IrClass) = false
 
     fun memberNeedsSerialization(member: IrDeclaration): Boolean {
-        assert(member.parent is IrClass)
-        if (backendSpecificSerializeAllMembers(member.parent as IrClass)) return true
+        val parent = member.parent
+        require(parent is IrClass)
+        if (backendSpecificSerializeAllMembers(parent)) return true
+        if (bodiesOnlyForInlines && member is IrAnonymousInitializer && parent.visibility != DescriptorVisibilities.LOCAL)
+            return false
 
         return (!member.isFakeOverride)
     }
