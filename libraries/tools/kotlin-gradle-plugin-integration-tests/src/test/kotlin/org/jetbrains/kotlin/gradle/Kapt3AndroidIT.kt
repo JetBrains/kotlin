@@ -323,6 +323,33 @@ abstract class Kapt3AndroidIT : Kapt3BaseIT() {
         }
     }
 
+    @Test
+    fun testStaticDslOptionsPassedToKapt() = with(Project("android-dagger", directoryPrefix = "kapt2")) {
+        setupWorkingDir()
+
+        gradleBuildScript(subproject = "app").appendText(
+            """
+
+            apply plugin: 'kotlin-kapt'
+
+            android {
+                defaultConfig {
+                    javaCompileOptions {
+                        annotationProcessorOptions {
+                            arguments += ["enable.some.test.option": "true"]
+                        }
+                    }
+                }
+            }
+            """.trimIndent()
+        )
+
+        build(":app:kaptDebugKotlin") {
+            assertSuccessful()
+            assertContainsRegex(Regex("AP options.*enable\\.some\\.test\\.option=true"))
+        }
+    }
+
     private fun setupDataBinding(project: Project) {
         project.setupWorkingDir()
 
