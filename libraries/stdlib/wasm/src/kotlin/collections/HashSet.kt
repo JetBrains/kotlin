@@ -28,3 +28,5 @@ actual open class HashSet<E> : MutableSet<E> {
     actual override fun retainAll(elements: Collection<E>): Boolean = TODO("Wasm stdlib: HashSet")
     actual override fun clear() { TODO("Wasm stdlib: HashSet") }
 }
+
+fun <E> arrayOfUninitializedElements(size: Int): Array<E> = @Suppress("UNCHECKED_CAST") Array<Any?>(size) as Array<E>

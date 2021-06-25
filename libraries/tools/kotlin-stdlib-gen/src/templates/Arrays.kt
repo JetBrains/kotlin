@@ -920,7 +920,24 @@ object ArrayOps : TemplateGroupBase() {
                     }
                 }
                 on(Backend.Wasm) {
-                    body { """TODO("Wasm stdlib: $signature")""" }
+                    body {
+                        """
+                        AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)
+                        val rangeSize = endIndex - startIndex
+                        AbstractList.checkRangeIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
+                        
+                        if (this !== destination || destinationOffset <= startIndex) {
+                            for (index in 0 until rangeSize) {
+                                destination[destinationOffset + index] = this[startIndex + index]
+                            }
+                        } else {
+                            for (index in rangeSize - 1 downTo 0) {
+                                destination[destinationOffset + index] = this[startIndex + index]
+                            }
+                        }
+                        return destination
+                        """
+                    }
                 }
             }
         }
@@ -1048,9 +1065,6 @@ object ArrayOps : TemplateGroupBase() {
             this.copyInto(result, 0, fromIndex, toIndex.coerceAtMost(size))
             return result
             """
-        }
-        on(Backend.Wasm) {
-            body { """TODO("Wasm stdlib: $signature")""" }
         }
     }
 
@@ -1646,7 +1660,13 @@ object ArrayOps : TemplateGroupBase() {
                     "arrayFill(this, fromIndex, toIndex, element)"
                 }
                 on(Backend.Wasm) {
-                    body { """TODO("Wasm stdlib: $signature")""" }
+                    body {
+                        """
+                        for (index in fromIndex..toIndex) {
+                            this[index] = element    
+                        }
+                        """
+                    }
                 }
             }
             on(Platform.Common) {
