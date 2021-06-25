@@ -16,11 +16,10 @@ import org.jetbrains.kotlin.name.Name
 abstract class AbstractConstructorProcessor<A : ConstructorAnnotation> : Processor {
 
     override fun contribute(classDescriptor: ClassDescriptor, partsBuilder: SyntheticPartsBuilder) {
-        val valueParameters = getPropertiesForParameters(classDescriptor).map { property ->
-            LombokValueParameter(property.name, property.type)
-        }
-
         getAnnotation(classDescriptor)?.let { annotation ->
+            val valueParameters = getPropertiesForParameters(classDescriptor).map { property ->
+                LombokValueParameter(property.name, property.type)
+            }
             if (annotation.staticName == null) {
                 val constructor = classDescriptor.createJavaConstructor(
                     valueParameters = valueParameters,
