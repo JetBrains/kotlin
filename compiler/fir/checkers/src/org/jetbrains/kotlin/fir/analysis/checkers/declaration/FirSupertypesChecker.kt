@@ -7,9 +7,10 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.analysis.checkers.*
+import org.jetbrains.kotlin.fir.analysis.checkers.checkInconsistentTypeParameters
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.extractTypeRefAndSourceFromTypeArgument
+import org.jetbrains.kotlin.fir.analysis.checkers.isConflictingOrNotInvariant
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
@@ -21,7 +22,6 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirSupertypesChecker : FirClassChecker() {
@@ -107,6 +107,10 @@ object FirSupertypesChecker : FirClassChecker() {
                     }
                 }
             }
+        }
+
+        if (declaration is FirRegularClass && declaration.superTypeRefs.size > 1) {
+            checkInconsistentTypeParameters(listOf(Pair(null, declaration)), context, reporter, declaration.source, true)
         }
     }
 }

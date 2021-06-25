@@ -140,6 +140,16 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("type")
         }
         val PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE by error<KtModifierListOwner>(PositioningStrategy.VARIANCE_MODIFIER)
+        val INCONSISTENT_TYPE_PARAMETER_VALUES by error<KtClass>(PositioningStrategy.SUPERTYPES_LIST) {
+            parameter<FirTypeParameterSymbol>("typeParameter")
+            parameter<FirRegularClassSymbol>("type")
+            parameter<Collection<ConeKotlinType>>("bounds")
+        }
+        val INCONSISTENT_TYPE_PARAMETER_BOUNDS by error<PsiElement> {
+            parameter<FirTypeParameterSymbol>("typeParameter")
+            parameter<FirRegularClassSymbol>("type")
+            parameter<Collection<ConeKotlinType>>("bounds")
+        }
     }
 
     val CONSTRUCTOR_PROBLEMS by object : DiagnosticGroup("Constructor problems") {

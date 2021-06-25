@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface A
 interface B: A
 interface D

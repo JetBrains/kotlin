@@ -316,6 +316,20 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ProjectionInImmediateArgumentToSupertype::class
     }
 
+    abstract class InconsistentTypeParameterValues : KtFirDiagnostic<KtClass>() {
+        override val diagnosticClass get() = InconsistentTypeParameterValues::class
+        abstract val typeParameter: KtTypeParameterSymbol
+        abstract val type: KtClassLikeSymbol
+        abstract val bounds: List<KtType>
+    }
+
+    abstract class InconsistentTypeParameterBounds : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = InconsistentTypeParameterBounds::class
+        abstract val typeParameter: KtTypeParameterSymbol
+        abstract val type: KtClassLikeSymbol
+        abstract val bounds: List<KtType>
+    }
+
     abstract class ConstructorInObject : KtFirDiagnostic<KtDeclaration>() {
         override val diagnosticClass get() = ConstructorInObject::class
     }

@@ -494,6 +494,26 @@ internal class ProjectionInImmediateArgumentToSupertypeImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class InconsistentTypeParameterValuesImpl(
+    override val typeParameter: KtTypeParameterSymbol,
+    override val type: KtClassLikeSymbol,
+    override val bounds: List<KtType>,
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.InconsistentTypeParameterValues(), KtAbstractFirDiagnostic<KtClass> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
+internal class InconsistentTypeParameterBoundsImpl(
+    override val typeParameter: KtTypeParameterSymbol,
+    override val type: KtClassLikeSymbol,
+    override val bounds: List<KtType>,
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.InconsistentTypeParameterBounds(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class ConstructorInObjectImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,

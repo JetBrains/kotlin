@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface IA {
     fun method(): String
     val propVal: String

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.REND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOLS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_COLLECTION_OF_TYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.TO_STRING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.VARIABLE_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.VISIBILITY
@@ -171,6 +172,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_ENUM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_MODIFIERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_TYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_TYPES_WARNING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCONSISTENT_TYPE_PARAMETER_BOUNDS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCONSISTENT_TYPE_PARAMETER_VALUES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFERENCE_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFIX_MODIFIER_REQUIRED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION
@@ -466,6 +469,20 @@ class FirDefaultErrorMessages {
                 RENDER_TYPE
             )
             map.put(PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE, "Projections are not allowed for immediate arguments of a supertype")
+            map.put(
+                INCONSISTENT_TYPE_PARAMETER_VALUES,
+                "Type parameter {0} of ''{1}'' has inconsistent values: {2}",
+                SYMBOL,
+                SYMBOL,
+                RENDER_COLLECTION_OF_TYPES
+            )
+            map.put(
+                INCONSISTENT_TYPE_PARAMETER_BOUNDS,
+                "Type parameter {0} of ''{1}'' has inconsistent bounds: {2}",
+                SYMBOL,
+                SYMBOL,
+                RENDER_COLLECTION_OF_TYPES
+            )
 
             // Constructor problems
             map.put(CONSTRUCTOR_IN_OBJECT, "Constructors are not allowed for objects")

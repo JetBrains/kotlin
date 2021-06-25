@@ -38,6 +38,12 @@ object FirDiagnosticRenderers {
         }
     }
 
+    val RENDER_COLLECTION_OF_TYPES = Renderer { types: Collection<ConeKotlinType> ->
+        types.joinToString(separator = ", ") { type ->
+            RENDER_TYPE.render(type)
+        }
+    }
+
     val TO_STRING = Renderer { element: Any? ->
         element.toString()
     }

@@ -425,6 +425,28 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.INCONSISTENT_TYPE_PARAMETER_VALUES) { firDiagnostic ->
+        InconsistentTypeParameterValuesImpl(
+            firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(firDiagnostic.a.fir),
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.b.fir),
+            firDiagnostic.c.map { coneKotlinType ->
+                firSymbolBuilder.typeBuilder.buildKtType(coneKotlinType)
+            },
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.INCONSISTENT_TYPE_PARAMETER_BOUNDS) { firDiagnostic ->
+        InconsistentTypeParameterBoundsImpl(
+            firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(firDiagnostic.a.fir),
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.b.fir),
+            firDiagnostic.c.map { coneKotlinType ->
+                firSymbolBuilder.typeBuilder.buildKtType(coneKotlinType)
+            },
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.CONSTRUCTOR_IN_OBJECT) { firDiagnostic ->
         ConstructorInObjectImpl(
             firDiagnostic as FirPsiDiagnostic,
