@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.lightTree.converter
 import com.intellij.lang.LighterASTNode
 import com.intellij.psi.TokenType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
+import org.jetbrains.kotlin.psi.stubs.elements.KtNameReferenceExpressionElementType
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -196,7 +198,7 @@ class ExpressionsConverter(
                 buildSingleExpressionBlock(buildErrorExpression(null, ConeSimpleDiagnostic("Lambda has no body", DiagnosticKind.Syntax)))
             }
             context.firFunctionTargets.removeLast()
-        }.also { 
+        }.also {
             target.bind(it)
         }
         return buildAnonymousFunctionExpression {
@@ -306,7 +308,7 @@ class ExpressionsConverter(
                 else -> if (it.isExpression()) leftArgAsFir = getAsFirExpression(it, "No left operand")
             }
         }
-        
+
         return buildTypeOperatorCall {
             source = binaryExpression.toFirSourceElement()
             operation = operationTokenName.toFirOperation()
@@ -478,7 +480,7 @@ class ExpressionsConverter(
     private fun convertQualifiedExpression(dotQualifiedExpression: LighterASTNode): FirExpression {
         var isSelector = false
         var isSafe = false
-        var firSelector: FirExpression = buildErrorExpression(null, ConeSimpleDiagnostic("Qualified expression without selector", DiagnosticKind.Syntax)) //after dot
+        var firSelector: FirExpression? = null
         var firReceiver: FirExpression? = null //before dot
         dotQualifiedExpression.forEachChildren {
             when (it.tokenType) {
@@ -488,10 +490,26 @@ class ExpressionsConverter(
                     isSelector = true
                 }
                 else -> {
-                    if (isSelector && it.tokenType != TokenType.ERROR_ELEMENT)
-                        firSelector = getAsFirExpression(it, "Incorrect selector expression")
-                    else
-                        firReceiver = getAsFirExpression(it, "Incorrect receiver expression")
+                    val isEffectiveSelector = isSelector && it.tokenType != TokenType.ERROR_ELEMENT
+                    val firExpression =
+                        getAsFirExpression<FirExpression>(it, "Incorrect ${if (isEffectiveSelector) "selector" else "receiver"} expression")
+                    if (isEffectiveSelector) {
+                        firSelector =
+                            if (it.tokenType is KtNameReferenceExpressionElementType || it.tokenType == KtNodeTypes.CALL_EXPRESSION) {
+                                firExpression
+                            } else {
+                                buildErrorExpression {
+                                    source = it.toFirSourceElement()
+                                    diagnostic = ConeSimpleDiagnostic(
+                                        "The expression cannot be a selector (occur after a dot)",
+                                        DiagnosticKind.IllegalSelector
+                                    )
+                                    expression = firExpression
+                                }
+                            }
+                    } else {
+                        firReceiver = firExpression
+                    }
                 }
             }
         }
@@ -511,7 +529,11 @@ class ExpressionsConverter(
             @OptIn(FirImplementationDetail::class)
             it.replaceSource(dotQualifiedExpression.toFirSourceElement())
         }
-        return firSelector
+
+        return firSelector ?: buildErrorExpression(
+            null,
+            ConeSimpleDiagnostic("Qualified expression without selector", DiagnosticKind.Syntax)
+        )
     }
 
     /**
@@ -687,7 +709,7 @@ class ExpressionsConverter(
                         buildWhenBranch {
                             source = entrySource
                             condition = firCondition
-                            result = branch 
+                            result = branch
                         }
                     } else {
                         val firCondition = entry.toFirWhenConditionWithoutSubject()

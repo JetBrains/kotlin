@@ -226,6 +226,10 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val hasValueParameters: Boolean
     }
 
+    abstract class IllegalSelector : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = IllegalSelector::class
+    }
+
     abstract class SuperIsNotAnExpression : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = SuperIsNotAnExpression::class
     }

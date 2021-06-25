@@ -579,8 +579,9 @@ fun checkTypeMismatch(
 }
 
 internal fun checkCondition(condition: FirExpression, context: CheckerContext, reporter: DiagnosticReporter) {
-    val coneType = condition.typeRef.coneType.lowerBoundIfFlexible()
-    if (coneType !is ConeKotlinErrorType &&
+    val coneType = condition.typeRef.coneTypeSafe<ConeKotlinType>()?.lowerBoundIfFlexible()
+    if (coneType != null &&
+        coneType !is ConeKotlinErrorType &&
         !coneType.isSubtypeOf(context.session.typeContext, context.session.builtinTypes.booleanType.type)
     ) {
         reporter.reportOn(condition.source, FirErrors.CONDITION_TYPE_MISMATCH, coneType, context)

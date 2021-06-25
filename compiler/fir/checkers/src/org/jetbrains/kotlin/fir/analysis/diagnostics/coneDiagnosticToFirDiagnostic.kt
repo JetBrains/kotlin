@@ -360,6 +360,7 @@ private fun ConeSimpleDiagnostic.getFactory(source: FirSourceElement): FirDiagno
         DiagnosticKind.IllegalEscape -> FirErrors.ILLEGAL_ESCAPE
         DiagnosticKind.RecursiveTypealiasExpansion -> FirErrors.RECURSIVE_TYPEALIAS_EXPANSION
         DiagnosticKind.LoopInSupertype -> FirErrors.CYCLIC_INHERITANCE_HIERARCHY
+        DiagnosticKind.IllegalSelector -> FirErrors.ILLEGAL_SELECTOR
         DiagnosticKind.UnresolvedSupertype,
         DiagnosticKind.UnresolvedExpandedType,
         DiagnosticKind.Other -> FirErrors.OTHER_ERROR

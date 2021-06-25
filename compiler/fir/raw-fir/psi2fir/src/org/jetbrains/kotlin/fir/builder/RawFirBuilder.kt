@@ -33,10 +33,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
-import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
-import org.jetbrains.kotlin.fir.types.impl.FirTypePlaceholderProjection
+import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
@@ -201,11 +198,37 @@ open class RawFirBuilder(
         private fun KtExpression?.toFirExpression(
             errorReason: String,
             kind: DiagnosticKind = DiagnosticKind.ExpressionExpected,
-        ): FirExpression =
-            if (stubMode) buildExpressionStub()
-            else convertSafe() ?: buildErrorExpression(
-                this?.toFirSourceElement(), ConeSimpleDiagnostic(errorReason, kind),
-            )
+        ): FirExpression {
+            if (stubMode) {
+                return buildExpressionStub()
+            } else {
+                val result = this.convertSafe<FirExpression>()
+                if (result != null) {
+                    if (this != null &&
+                        this !is KtNameReferenceExpression &&
+                        this !is KtCallExpression &&
+                        this !is KtConstantExpression &&
+                        getQualifiedExpressionForSelector() != null
+                    ) {
+                        return buildErrorExpression {
+                            source = toFirSourceElement()
+                            diagnostic =
+                                ConeSimpleDiagnostic(
+                                    "The expression cannot be a selector (occur after a dot)",
+                                    DiagnosticKind.IllegalSelector
+                                )
+                            expression = result
+                        }
+                    }
+
+                    return result
+                }
+
+                return buildErrorExpression(
+                    this?.toFirSourceElement(), ConeSimpleDiagnostic(errorReason, kind),
+                )
+            }
+        }
 
         private inline fun KtExpression.toFirStatement(errorReasonLazy: () -> String): FirStatement =
             convertSafe() ?: buildErrorExpression(this.toFirSourceElement(), ConeSimpleDiagnostic(errorReasonLazy(), DiagnosticKind.Syntax))

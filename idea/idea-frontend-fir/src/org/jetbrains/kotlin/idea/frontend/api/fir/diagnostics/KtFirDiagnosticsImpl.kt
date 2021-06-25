@@ -338,6 +338,13 @@ internal class FunctionCallExpectedImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class IllegalSelectorImpl(
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.IllegalSelector(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class SuperIsNotAnExpressionImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,

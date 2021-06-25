@@ -163,6 +163,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.GETTER_VISIBILITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_FUNCTION_AMBIGUITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_CONST_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_KOTLIN_VERSION_STRING_VALUE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_SELECTOR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_UNDERSCORE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_CANDIDATE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_FILE_TARGET
@@ -446,6 +447,7 @@ class FirDefaultErrorMessages {
             )
             map.put(CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS, "Cannot create an instance of an abstract class")
             map.put(FUNCTION_CALL_EXPECTED, "Function invocation ''{0}({1})'' expected", TO_STRING, FUNCTION_PARAMETERS)
+            map.put(ILLEGAL_SELECTOR, "The expression cannot be a selector (occur after a dot)")
 
             // Supertypes
             map.put(ENUM_AS_SUPERTYPE, "Enum as supertype")
