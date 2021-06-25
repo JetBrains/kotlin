@@ -293,6 +293,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             return facade.getTypeInfo(left, contextWithNoExpectedType).clearType();
         }
 
+        DefinitelyNotNullDeprecationKt.reportDeprecatedDefinitelyNotNullSyntax(expression, right, context);
+
         IElementType operationType = expression.getOperationReference().getReferencedNameElementType();
 
         boolean allowBareTypes = BARE_TYPES_ALLOWED.contains(operationType);
