@@ -60,6 +60,8 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
             context.trace.record(BindingContext.DATAFLOW_INFO_AFTER_CONDITION, expression, newDataFlowInfo)
         }
 
+        expression.reportDeprecatedDefinitelyNotNullSyntax(expression.typeReference, contextWithExpectedType)
+
         val resultTypeInfo = components.dataFlowAnalyzer.checkType(
             typeInfo.replaceType(components.builtIns.booleanType),
             expression,
