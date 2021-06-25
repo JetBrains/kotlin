@@ -283,6 +283,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.ACTUAL_DECLARATION_NAME
     )
 
+    val LABEL = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.LABEL,
+        PositioningStrategies.LABEL
+    )
+
     // TODO
     val INCOMPATIBLE_DECLARATION = DEFAULT
 

@@ -940,6 +940,12 @@ object PositioningStrategies {
         }
     }
 
+    val LABEL: PositioningStrategy<KtElement> = object : PositioningStrategy<KtElement>() {
+        override fun mark(element: KtElement): List<TextRange> {
+            return super.mark((element as? KtExpressionWithLabel)?.labelQualifier ?: element)
+        }
+    }
+
     /**
      * @param locateReferencedName whether to remove any nested parentheses while locating the reference element. This is useful for
      * diagnostics on super and unresolved references. For example, with the following, only the part inside the parentheses should be

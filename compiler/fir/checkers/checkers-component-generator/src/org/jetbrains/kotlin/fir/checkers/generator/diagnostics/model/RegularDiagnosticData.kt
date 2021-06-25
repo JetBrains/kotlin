@@ -101,7 +101,7 @@ enum class PositioningStrategy(private val strategy: String? = null) {
     UNREACHABLE_CODE,
     INLINE_PARAMETER_MODIFIER,
     ABSTRACT_MODIFIER,
-
+    LABEL,
     ;
 
     val expressionToCreate get() = "SourceElementPositioningStrategies.${strategy ?: name}"
