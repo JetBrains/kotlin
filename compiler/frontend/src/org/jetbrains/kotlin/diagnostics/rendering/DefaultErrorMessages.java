@@ -601,6 +601,7 @@ public class DefaultErrorMessages {
         MAP.put(UNUSED_TYPEALIAS_PARAMETER, "Type alias parameter {0} is not used in the expanded type {1} and does not affect type checking", NAME, RENDER_TYPE);
         MAP.put(EXPANDED_TYPE_CANNOT_BE_CONSTRUCTED, "Expanded type {0} contains non-invariant projections in top-level arguments and cannot be constructed", RENDER_TYPE);
         MAP.put(EXPANDED_TYPE_CANNOT_BE_INHERITED, "Expanded type {0} contains non-invariant projections in top-level arguments and cannot be inherited from", RENDER_TYPE);
+        MAP.put(DEPRECATED_SYNTAX_WITH_DEFINITELY_NOT_NULL, "Applying ''!!'' to the whole as/is expression without parentheses is deprecated. Please, put parentheses explicitly");
 
         MAP.put(MODIFIER_LIST_NOT_ALLOWED, "Modifiers and annotations are not allowed here, because there are other modifiers or annotations outside of parenthesis");
 
