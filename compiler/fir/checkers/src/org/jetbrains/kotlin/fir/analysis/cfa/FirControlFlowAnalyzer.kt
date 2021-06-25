@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkersComponent
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 
 class FirControlFlowAnalyzer(
@@ -28,6 +25,19 @@ class FirControlFlowAnalyzer(
     fun analyzeClassInitializer(klass: FirClass, graph: ControlFlowGraph, context: CheckerContext, reporter: DiagnosticReporter) {
         if (graph.owner != null) return
         cfaCheckers.forEach { it.analyze(graph, reporter, context) }
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun analyzeAnonymousInitializer(
+        anonymousInitializer: FirAnonymousInitializer,
+        graph: ControlFlowGraph,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ) {
+        if (graph.owner != null) return
+
+        cfaCheckers.forEach { it.analyze(graph, reporter, context) }
+        runAssignmentCfaCheckers(graph, reporter, context)
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -61,9 +71,9 @@ class FirControlFlowAnalyzer(
     }
 
     private fun runAssignmentCfaCheckers(graph: ControlFlowGraph, reporter: DiagnosticReporter, context: CheckerContext) {
-        val (properties, capturedWrites) = LocalPropertyAndCapturedWriteCollector.collect(graph)
-        if (properties.isEmpty()) return
-        val data = context.propertyInitializationInfoCache.getOrCollectPropertyInitializationInfo(graph, properties)
-        variableAssignmentCheckers.forEach { it.analyze(graph, reporter, data, properties, capturedWrites, context) }
+        val (accessedProperties, localProperties, capturedWrites) = PropertyAndCapturedWriteCollector.collect(graph)
+        if (accessedProperties.isEmpty()) return
+        val data = context.propertyInitializationInfoCache.getOrCollectPropertyInitializationInfo(graph, localProperties)
+        variableAssignmentCheckers.forEach { it.analyze(graph, reporter, data, localProperties, capturedWrites, context) }
     }
 }

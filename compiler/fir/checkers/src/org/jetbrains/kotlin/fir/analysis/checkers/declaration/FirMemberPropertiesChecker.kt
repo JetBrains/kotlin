@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.analysis.cfa.LocalPropertyAndCapturedWriteCollector
+import org.jetbrains.kotlin.fir.analysis.cfa.PropertyAndCapturedWriteCollector
 import org.jetbrains.kotlin.fir.analysis.cfa.PropertyInitializationInfo
 import org.jetbrains.kotlin.fir.analysis.checkers.contains
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -58,6 +58,9 @@ object FirMemberPropertiesChecker : FirRegularClassChecker() {
                     innerDeclaration.initializer != null ||
                             initializedInConstructor.getValue(symbol).isDefinitelyVisited() ||
                             initializedInInitOrOtherProperty.getValue(symbol).isDefinitelyVisited()
+                if (isInitialized) {
+                    context.propertyInitializationInfoCache.recordInitializedMemberProperty(symbol)
+                }
                 checkProperty(declaration, innerDeclaration, isInitialized, context, reporter, !reachedDeadEnd)
             }
             reachedDeadEnd = reachedDeadEnd || deadEnds.contains(innerDeclaration)
@@ -104,10 +107,10 @@ object FirMemberPropertiesChecker : FirRegularClassChecker() {
             val delegatedInfo = delegatedConstructor?.let { constructorToData.getValue(it) } ?: PropertyInitializationInfo.EMPTY
 
             // Consider local properties in the [graph] as well so that variable assignment checkers in CFA can use the cached data.
-            val (localProperties, _) = LocalPropertyAndCapturedWriteCollector.collect(graph)
+            val (accessedPropertySymbols, _, _) = PropertyAndCapturedWriteCollector.collect(graph)
             val data = context.propertyInitializationInfoCache.getOrCollectPropertyInitializationInfo(
                 graph,
-                memberPropertySymbols + localProperties,
+                memberPropertySymbols + accessedPropertySymbols,
                 caching = true
             )
             val infoAtExitNode = data[graph.exitNode]?.get(NormalPath) ?: PropertyInitializationInfo.EMPTY

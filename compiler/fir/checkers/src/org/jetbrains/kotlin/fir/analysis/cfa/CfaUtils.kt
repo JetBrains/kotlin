@@ -46,6 +46,7 @@ abstract class EventOccurrencesRangeInfo<E : EventOccurrencesRangeInfo<E, K>, K 
     }
 }
 
+// TODO: differentiate property w/ different receiver
 class PropertyInitializationInfo(
     map: PersistentMap<FirPropertySymbol, EventOccurrencesRange> = persistentMapOf()
 ) : EventOccurrencesRangeInfo<PropertyInitializationInfo, FirPropertySymbol>(map) {
@@ -60,19 +61,20 @@ class PropertyInitializationInfo(
         ::EMPTY
 }
 
-class LocalPropertyAndCapturedWriteCollector private constructor() : ControlFlowGraphVisitorVoid() {
+class PropertyAndCapturedWriteCollector private constructor() : ControlFlowGraphVisitorVoid() {
     companion object {
-        fun collect(graph: ControlFlowGraph): Pair<Set<FirPropertySymbol>, Set<FirVariableAssignment>> {
-            val collector = LocalPropertyAndCapturedWriteCollector()
+        fun collect(graph: ControlFlowGraph): Triple<Set<FirPropertySymbol>, Set<FirPropertySymbol>, Set<FirVariableAssignment>> {
+            val collector = PropertyAndCapturedWriteCollector()
             graph.traverse(TraverseDirection.Forward, collector)
-            return collector.symbols.keys to collector.capturedWrites
+            return Triple(collector.accessedPropertySymbols, collector.localPropertySymbols.keys, collector.capturedWrites)
         }
     }
 
-    // Mapping from a property symbol to its declaration context
-    // `true` if the (local) property is declared in the currently visited function.
+    // Mapping from a local property symbol to its declaration context
+    // `true` if the local property is declared in the currently visited function.
     // `false` if it is declared in a lambda or a local function (inside the currently visited function).
-    private val symbols: MutableMap<FirPropertySymbol, Boolean> = mutableMapOf()
+    private val localPropertySymbols: MutableMap<FirPropertySymbol, Boolean> = mutableMapOf()
+    private val accessedPropertySymbols: MutableSet<FirPropertySymbol> = mutableSetOf()
 
     private val lambdaOrLocalFunctionStack: MutableList<FirFunction> = mutableListOf()
     private val capturedWrites: MutableSet<FirVariableAssignment> = mutableSetOf()
@@ -80,7 +82,8 @@ class LocalPropertyAndCapturedWriteCollector private constructor() : ControlFlow
     override fun visitNode(node: CFGNode<*>) {}
 
     override fun visitVariableDeclarationNode(node: VariableDeclarationNode) {
-        symbols[node.fir.symbol] = lambdaOrLocalFunctionStack.lastOrNull() == null
+        localPropertySymbols[node.fir.symbol] = lambdaOrLocalFunctionStack.lastOrNull() == null
+        accessedPropertySymbols.add(node.fir.symbol)
     }
 
     override fun visitPostponedLambdaEnterNode(node: PostponedLambdaEnterNode) {
@@ -103,15 +106,28 @@ class LocalPropertyAndCapturedWriteCollector private constructor() : ControlFlow
         // Check if this variable assignment is inside a lambda or a local function.
         if (lambdaOrLocalFunctionStack.isEmpty()) return
 
-        // Check if the assigned variable doesn't belong to any lambda or local function.
         val symbol = node.fir.referredPropertySymbol ?: return
-        if (symbol !in symbols || symbols[symbol] == false) return
+        accessedPropertySymbols.add(symbol)
 
         // If all nested declarations are lambdas that are invoked in-place (according to the contract),
         // this variable assignment is not a captured write.
         if (lambdaOrLocalFunctionStack.all { it is FirAnonymousFunction && it.invocationKind.isInPlace }) return
 
+        // Member property: could be captured member `val` initialization
+        if (!symbol.fir.isLocal && symbol.fir.isVal) {
+            capturedWrites.add(node.fir)
+            return
+        }
+
+        // Check if the assigned variable doesn't belong to any lambda or local function.
+        if (symbol !in localPropertySymbols || localPropertySymbols[symbol] == false) return
+
         capturedWrites.add(node.fir)
+    }
+
+    override fun visitQualifiedAccessNode(node: QualifiedAccessNode) {
+        val symbol = node.fir.referredPropertySymbol ?: return
+        accessedPropertySymbols.add(symbol)
     }
 }
 

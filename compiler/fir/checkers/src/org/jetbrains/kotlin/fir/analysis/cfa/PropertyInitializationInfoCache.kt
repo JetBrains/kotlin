@@ -10,7 +10,10 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
 /**
- * A Cache that maintains mapping from CFG to collected property initialization info.
+ * A Cache that maintains
+ *   1) mapping from CFG to collected property initialization info
+ *   2) initialized status of member properties
+ *
  * [FirMemberPropertiesChekcer] will analyze constructors, anonymous initializers, and property initializers to determine if member
  * properties are initialized. To avoid redundant control-flow analysis, that checker will collect information for member properties
  * as well as local properties. Then, when [FirControlFlowAnalyzer] wants to analyze those functions again, the cache will be used.
@@ -19,8 +22,13 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
  * We will do so only for constructors, anonymous initializers, and property initializers visited ahead by [FirMemberPropertiesChecker].
  */
 class PropertyInitializationInfoCache private constructor() {
+    // Mappings from CFG to collected (local and member) property initialization info
     private val propertyInitializationInfoCache: MutableMap<ControlFlowGraph, Map<CFGNode<*>, PathAwarePropertyInitializationInfo>> =
         mutableMapOf()
+
+    // Cached initialization info for member properties (after analyzing constructors, anonymous initializers, and property initializers)
+    // The absence/presence means that the member property of interest is un/initialized, respectively.
+    private val memberPropertyInitializationCache: MutableSet<FirPropertySymbol> = mutableSetOf()
 
     fun getOrCollectPropertyInitializationInfo(
         graph: ControlFlowGraph,
@@ -38,6 +46,14 @@ class PropertyInitializationInfoCache private constructor() {
                 PropertyInitializationInfoCollector(properties).getData(graph)
             }
         }
+    }
+
+    fun recordInitializedMemberProperty(property: FirPropertySymbol) {
+        memberPropertyInitializationCache.add(property)
+    }
+
+    fun isInitializedMemberProperty(property: FirPropertySymbol): Boolean {
+        return property in memberPropertyInitializationCache
     }
 
     /**

@@ -35,7 +35,7 @@ object UnusedChecker : FirControlFlowChecker() {
                 !it.symbol.classId.isLocal
             } != null
         ) return
-        val (properties, _) = LocalPropertyAndCapturedWriteCollector.collect(graph)
+        val (properties, _) = PropertyAndCapturedWriteCollector.collect(graph)
         if (properties.isEmpty()) return
 
         val data = ValueWritesWithoutReading(context.session, properties).getData(graph)

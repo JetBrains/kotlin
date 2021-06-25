@@ -7,15 +7,15 @@ class Outer {
             this@Outer.outerProp
 
             this@Outer.outerProp = "1"
-            outerProp = "2" // do not repeat the same diagnostic with this receiver of outer class
-            outer.outerProp = "3"
+            <!VAL_REASSIGNMENT!>outerProp<!> = "2" // do not repeat the same diagnostic with this receiver of outer class
+            <!VAL_REASSIGNMENT!>outer.outerProp<!> = "3"
 
             innerProp = "4" + inner.innerProp
-            this@Inner.innerProp = "5"
-            innerProp = "6" // do not repeat the same diagnostic with this receiver
-            this@Inner.innerProp = "7"
+            <!VAL_REASSIGNMENT!>this@Inner.innerProp<!> = "5"
+            <!VAL_REASSIGNMENT!>innerProp<!> = "6" // do not repeat the same diagnostic with this receiver
+            <!VAL_REASSIGNMENT!>this@Inner.innerProp<!> = "7"
 
-            inner.innerProp = "8"
+            <!VAL_REASSIGNMENT!>inner.innerProp<!> = "8"
         }
     }
 }

@@ -9,11 +9,13 @@ import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.contracts.description.canBeRevisited
 import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.declarations.utils.referredPropertySymbol
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
@@ -42,7 +44,7 @@ object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChec
 
     private class PropertyReporter(
         val data: Map<CFGNode<*>, PathAwarePropertyInitializationInfo>,
-        val localProperties: Set<FirPropertySymbol>,
+        val properties: Set<FirPropertySymbol>,
         val capturedWrites: Set<FirVariableAssignment>,
         val reporter: DiagnosticReporter,
         val context: CheckerContext
@@ -69,7 +71,10 @@ object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChec
             symbol: FirPropertySymbol,
             node: VariableAssignmentNode
         ): Boolean {
-            if (symbol.fir.isVal && node.fir in capturedWrites) {
+            // We're interested in `val` property only.
+            if (!symbol.fir.isVal) return false
+
+            if (node.fir in capturedWrites) {
                 if (symbol.fir.isLocal) {
                     reporter.reportOn(node.fir.source, FirErrors.CAPTURED_VAL_INITIALIZATION, symbol, context)
                 } else {
@@ -77,8 +82,54 @@ object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChec
                 }
                 return true
             }
+
+            // ------ Member properties
+
+            if (!symbol.fir.isLocal) {
+                // Member `val` property can be initialized in constructors, anonymous initializers, or initializers of other properties.
+                // Otherwise, this is a forbidden `val` assignment.
+                var assignmentContextAllowedForMemberProperty: FirDeclaration? = null
+                var cfg: ControlFlowGraph? = node.owner
+                while (assignmentContextAllowedForMemberProperty == null && cfg != null) {
+                    assignmentContextAllowedForMemberProperty = when (val declaration = cfg.declaration) {
+                        is FirAnonymousInitializer,
+                        is FirConstructor,
+                        is FirProperty -> declaration
+                        else -> null
+                    }
+                    cfg = cfg.owner
+                }
+                // Double-check if the assignment context belongs to the containing class of the property of interest.
+                if (assignmentContextAllowedForMemberProperty != null) {
+                    val propertyContainingClass = symbol.fir.getContainingClass(context) as? FirClass
+                    if (propertyContainingClass?.declarations?.contains(assignmentContextAllowedForMemberProperty) == false) {
+                        // Otherwise, that is a nested one, e.g.,
+                        // ```
+                        //   init {
+                        //     prop = object {
+                        //       init {
+                        //         p = v
+                        //       }
+                        //     }
+                        //   }
+                        // ```
+                        assignmentContextAllowedForMemberProperty = null
+                    }
+                }
+                if (assignmentContextAllowedForMemberProperty == null &&
+                    context.propertyInitializationInfoCache.isInitializedMemberProperty(symbol)
+                ) {
+                    reporter.reportOn(node.fir.source, FirErrors.VAL_REASSIGNMENT, symbol, context)
+                    return true
+                }
+
+            }
+
+            // ------ Local properties in general
+            // Or member properties in allowed assignment context
+
             val kind = info[symbol] ?: EventOccurrencesRange.ZERO
-            if (symbol.fir.isVal && kind.canBeRevisited()) {
+            if (kind.canBeRevisited()) {
                 reporter.reportOn(node.fir.source, FirErrors.VAL_REASSIGNMENT, symbol, context)
                 return true
             }
@@ -87,7 +138,7 @@ object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChec
 
         override fun visitQualifiedAccessNode(node: QualifiedAccessNode) {
             val symbol = getPropertySymbol(node) ?: return
-            if (symbol !in localProperties) return
+            if (symbol !in properties) return
             if (symbol.fir.isLateInit) return
             val pathAwareInfo = data.getValue(node)
             for (info in pathAwareInfo.values) {

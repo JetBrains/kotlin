@@ -228,13 +228,13 @@ class Outer() {
 
     inner class Inner() {
         init {
-            a++
+            <!VAL_REASSIGNMENT!>a<!>++
             b++
         }
     }
 
     fun foo() {
-        a++
+        <!VAL_REASSIGNMENT!>a<!>++
         b++
     }
 }
@@ -343,6 +343,6 @@ fun test(m : M) {
 }
 
 fun test1(m : M) {
-    m.x++
+    <!VAL_REASSIGNMENT!>m.x<!>++
     m.y--
 }
