@@ -59,6 +59,11 @@ public class Jdk9BlackBoxCodegenTestGenerated extends AbstractJdk9BlackBoxCodege
         runTest("compiler/testData/codegen/java9/box/concatDynamicInlineClasses.kt");
     }
 
+    @TestMetadata("concatDynamicSpecialSymbols.kt")
+    public void testConcatDynamicSpecialSymbols() throws Exception {
+        runTest("compiler/testData/codegen/java9/box/concatDynamicSpecialSymbols.kt");
+    }
+
     @TestMetadata("concatDynamicWithInline.kt")
     public void testConcatDynamicWithInline() throws Exception {
         runTest("compiler/testData/codegen/java9/box/concatDynamicWithInline.kt");

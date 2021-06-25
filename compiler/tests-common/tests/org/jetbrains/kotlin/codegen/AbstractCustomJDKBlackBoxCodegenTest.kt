@@ -92,5 +92,6 @@ internal fun runJvmInstance(
 
     val process = ProcessBuilder(*command).inheritIO().start()
     process.waitFor(1, TimeUnit.MINUTES)
+    process.outputStream.flush()
     AbstractBlackBoxCodegenTest.assertEquals(0, process.exitValue())
 }
