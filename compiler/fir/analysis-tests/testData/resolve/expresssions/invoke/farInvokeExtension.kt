@@ -2,7 +2,7 @@
 
 fun x() {}
 
-operator fun Int.invoke(): Foo = <!UNRESOLVED_LABEL!>this@Foo<!>
+operator fun Int.invoke(): Foo = this<!UNRESOLVED_LABEL!>@Foo<!>
 
 class Foo {
 

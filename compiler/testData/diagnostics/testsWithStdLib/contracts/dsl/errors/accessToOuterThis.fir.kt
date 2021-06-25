@@ -10,13 +10,13 @@ class Foo {
     inner class Bar {
         fun good() {
             contract {
-                <!ERROR_IN_CONTRACT_DESCRIPTION!>returns() implies (<!UNRESOLVED_LABEL!>this@Bar<!> != null)<!>
+                <!ERROR_IN_CONTRACT_DESCRIPTION!>returns() implies (this<!UNRESOLVED_LABEL!>@Bar<!> != null)<!>
             }
         }
 
         fun badOuter() {
             contract {
-                <!ERROR_IN_CONTRACT_DESCRIPTION!>returns() implies (<!UNRESOLVED_LABEL!>this@Foo<!> != null)<!>
+                <!ERROR_IN_CONTRACT_DESCRIPTION!>returns() implies (this<!UNRESOLVED_LABEL!>@Foo<!> != null)<!>
             }
         }
 
@@ -34,7 +34,7 @@ class Foo {
 
         fun A?.badWithReceiver() {
             contract {
-                <!ERROR_IN_CONTRACT_DESCRIPTION!>returns() implies (<!UNRESOLVED_LABEL!>this@Bar<!> != null)<!>
+                <!ERROR_IN_CONTRACT_DESCRIPTION!>returns() implies (this<!UNRESOLVED_LABEL!>@Bar<!> != null)<!>
             }
         }
     }
