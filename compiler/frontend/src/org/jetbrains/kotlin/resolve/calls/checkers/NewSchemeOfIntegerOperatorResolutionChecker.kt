@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.types.lowerIfFlexible
 
 object NewSchemeOfIntegerOperatorResolutionChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
@@ -30,7 +31,7 @@ object NewSchemeOfIntegerOperatorResolutionChecker : CallChecker {
                 valueParameter.varargElementType ?: continue
             } else {
                 valueParameter.type
-            }.unwrap()
+            }.unwrap().lowerIfFlexible()
             for (argument in arguments.arguments) {
                 val expression = argument.getArgumentExpression() ?: continue
                 val compileTimeValue =
