@@ -42,6 +42,10 @@ class IrVerifier(private val assertions: Assertions) : IrElementVisitorVoid {
             require(elements.add(element)) { "Non-unique element: ${element.render()}" }
             element.acceptChildrenVoid(this)
         }
+
+        override fun visitCall(expression: IrCall) {
+            visitElement(expression)
+        }
     }
 
     fun verifyWithAssert(irFile: IrFile) {
@@ -52,6 +56,10 @@ class IrVerifier(private val assertions: Assertions) : IrElementVisitorVoid {
 
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
+    }
+
+    override fun visitCall(expression: IrCall) {
+        expression.acceptChildrenVoid(this)
     }
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)

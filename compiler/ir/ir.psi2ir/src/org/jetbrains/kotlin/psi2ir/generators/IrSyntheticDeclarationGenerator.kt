@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.util.withScope
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -35,6 +36,10 @@ class IrSyntheticDeclarationGenerator(context: GeneratorContext) : IrElementVisi
 
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
+    }
+
+    override fun visitCall(expression: IrCall) {
+        expression.acceptChildrenVoid(this)
     }
 
     private fun collectDescriptors(descriptor: ClassDescriptor): MutableList<DeclarationDescriptor> {

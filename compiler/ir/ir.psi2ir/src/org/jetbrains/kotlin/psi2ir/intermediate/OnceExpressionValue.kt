@@ -28,12 +28,6 @@ inline fun generateExpressionValue(type: IrType, crossinline generate: () -> IrE
         override fun load(): IrExpression = generate()
     }
 
-inline fun generateDelegatedValue(type: IrType, crossinline generateValue: () -> IntermediateValue) =
-    object : ExpressionValue(type) {
-        val lazyDelegate by lazy { generateValue() }
-        override fun load(): IrExpression = lazyDelegate.load()
-    }
-
 class OnceExpressionValue(val irExpression: IrExpression) : LValue, AssignmentReceiver {
     private var instantiated = false
 

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -65,34 +66,28 @@ class StatementGenerator(
     fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
     fun generateStatement(ktElement: KtElement): IrStatement =
-        ktElement.genStmt()
-
-    fun generateStatements(ktStatements: List<KtExpression>, to: IrStatementContainer) =
-        ktStatements.mapTo(to.statements) { generateStatement(it) }
-
-    fun generateExpression(ktExpression: KtExpression): IrExpression =
-        ktExpression.genExpr()
-
-    private fun KtElement.genStmt(): IrStatement =
         try {
-            deparenthesize().accept(this@StatementGenerator, null)
+            ktElement.deparenthesize().accept(this@StatementGenerator, null)
         } catch (e: BackendException) {
             throw e
         } catch (e: ErrorExpressionException) {
             throw e
         } catch (e: Throwable) {
-            ErrorExpressionGenerator(this@StatementGenerator).generateErrorExpression(this, e)
+            ErrorExpressionGenerator(this@StatementGenerator).generateErrorExpression(ktElement, e)
         }
 
-    private fun KtElement.genExpr(): IrExpression =
-        when (val irStatement = genStmt()) {
+    fun generateStatements(ktStatements: List<KtExpression>, to: IrStatementContainer) =
+        ktStatements.mapTo(to.statements) { generateStatement(it) }
+
+    fun generateExpression(ktElement: KtElement): IrExpression =
+        when (val irStatement = generateStatement(ktElement)) {
             is IrExpression ->
                 irStatement
             is IrDeclaration ->
                 IrBlockImpl(
                     irStatement.startOffset,
                     irStatement.endOffset,
-                    this@StatementGenerator.context.irBuiltIns.unitType,
+                    context.irBuiltIns.unitType,
                     null,
                     listOf(irStatement)
                 )
@@ -122,7 +117,7 @@ class StatementGenerator(
             property.startOffsetSkippingComments, property.endOffset, IrDeclarationOrigin.DEFINED,
             variableDescriptor,
             variableDescriptor.type.toIrType(),
-            property.initializer?.genExpr()
+            property.initializer?.let { generateExpression(it) }
         )
     }
 
@@ -141,7 +136,7 @@ class StatementGenerator(
             context.irBuiltIns.unitType, IrStatementOrigin.DESTRUCTURING_DECLARATION
         )
         val ktInitializer = multiDeclaration.initializer!!
-        val containerValue = scope.createTemporaryVariableInBlock(context, ktInitializer.genExpr(), irBlock, "container")
+        val containerValue = scope.createTemporaryVariableInBlock(context, generateExpression(ktInitializer), irBlock, "container")
 
         declareComponentVariablesInBlock(multiDeclaration, irBlock, containerValue)
 
@@ -185,7 +180,7 @@ class StatementGenerator(
         val irBlock = IrBlockImpl(expression.startOffsetSkippingComments, expression.endOffset, returnType.toIrType())
 
         expression.statements.forEach {
-            irBlock.statements.add(it.genStmt())
+            irBlock.statements.add(generateStatement(it))
         }
 
         return irBlock
@@ -193,10 +188,11 @@ class StatementGenerator(
 
     override fun visitReturnExpression(expression: KtReturnExpression, data: Nothing?): IrStatement {
         val returnTarget = getReturnExpressionTarget(expression)
-        val irReturnedExpression = expression.returnedExpression?.genExpr() ?: IrGetObjectValueImpl(
-            expression.startOffsetSkippingComments, expression.endOffset, context.irBuiltIns.unitType,
-            context.symbolTable.referenceClass(context.builtIns.unit)
-        )
+        val irReturnedExpression = expression.returnedExpression?.let { generateExpression(it) }
+            ?: IrGetObjectValueImpl(
+                expression.startOffsetSkippingComments, expression.endOffset, context.irBuiltIns.unitType,
+                context.symbolTable.referenceClass(context.builtIns.unit)
+            )
         return IrReturnImpl(
             expression.startOffsetSkippingComments, expression.endOffset, context.irBuiltIns.nothingType,
             context.symbolTable.referenceFunction(returnTarget), irReturnedExpression
@@ -231,7 +227,7 @@ class StatementGenerator(
             expression.startOffsetSkippingComments,
             expression.endOffset,
             context.irBuiltIns.nothingType,
-            expression.thrownExpression!!.genExpr()
+            generateExpression(expression.thrownExpression!!)
         )
     }
 
@@ -254,7 +250,7 @@ class StatementGenerator(
         val endOffset = expression.endOffset
 
         val resultType = getTypeInferredByFrontendOrFail(expression).toIrType()
-        val entries = expression.entries.map { it.genExpr() }.postprocessStringTemplateEntries()
+        val entries = expression.entries.map { generateExpression(it) }.postprocessStringTemplateEntries()
 
         return when (entries.size) {
             0 -> IrConstImpl.string(startOffset, endOffset, resultType, "")
@@ -311,7 +307,7 @@ class StatementGenerator(
         IrConstImpl.string(entry.startOffsetSkippingComments, entry.endOffset, context.irBuiltIns.stringType, entry.unescapedValue)
 
     override fun visitStringTemplateEntryWithExpression(entry: KtStringTemplateEntryWithExpression, data: Nothing?): IrStatement =
-        entry.expression!!.genExpr()
+        generateExpression(entry.expression!!)
 
     override fun visitSimpleNameExpression(expression: KtSimpleNameExpression, data: Nothing?): IrExpression {
         val resolvedCall = getResolvedCall(expression)
