@@ -9,15 +9,17 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
-import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
 import org.jetbrains.kotlin.codegen.IrExpressionLambda
 import org.jetbrains.kotlin.codegen.JvmKotlinType
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.ValueKind
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.*
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
@@ -195,16 +197,8 @@ class IrDefaultLambda(
     needReification: Boolean,
     sourceCompiler: IrSourceCompilerForInline
 ) : DefaultLambda(lambdaClassType, capturedArgs, irValueParameter.isCrossinline, offset, needReification, sourceCompiler) {
-    private val typeArguments: MutableList<IrType> =
-        (irValueParameter.type as IrSimpleType).arguments.mapTo(mutableListOf()) { (it as IrTypeProjection).type }.apply {
-            // Suspend function references: `suspend (A) -> B` => `invoke(A, Continuation<B>): Any?`
-            // TODO: default suspend lambdas are currently uninlinable due to having a state machine
-            if (irValueParameter.type.isSuspendFunction()) {
-                val context = sourceCompiler.codegen.context
-                set(size - 1, context.ir.symbols.continuationClass.typeWith(get(size - 1)))
-                add(context.irBuiltIns.anyNType)
-            }
-        }
+
+    private val typeArguments: MutableList<IrType>
 
     override val invokeMethodParameters: List<KotlinType>
         get() = typeArguments.dropLast(1).map { it.toIrBasedKotlinType() }
@@ -213,9 +207,28 @@ class IrDefaultLambda(
         get() = typeArguments.last().toIrBasedKotlinType()
 
     init {
+        val context = sourceCompiler.codegen.context
+
+        typeArguments =
+            (irValueParameter.type as IrSimpleType).arguments
+                .mapTo(mutableListOf()) {
+                    when (it) {
+                        is IrTypeProjection -> it.type
+                        else -> context.irBuiltIns.anyNType
+                    }
+                }
+                .apply {
+                    // Suspend function references: `suspend (A) -> B` => `invoke(A, Continuation<B>): Any?`
+                    // TODO: default suspend lambdas are currently uninlinable due to having a state machine
+                    if (irValueParameter.type.isSuspendFunction()) {
+                        set(size - 1, context.ir.symbols.continuationClass.typeWith(get(size - 1)))
+                        add(context.irBuiltIns.anyNType)
+                    }
+                }
+
         val base = if (isPropertyReference) OperatorNameConventions.GET.asString() else OperatorNameConventions.INVOKE.asString()
         val name = InlineClassAbi.hashSuffix(
-            sourceCompiler.codegen.context.state.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures,
+            context.state.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures,
             typeArguments.dropLast(1),
             typeArguments.last().takeIf { it.isInlineClassType() }
         )?.let { "$base-$it" } ?: base
@@ -223,7 +236,7 @@ class IrDefaultLambda(
         //       it would be better to map to a non-erased signature if not a property reference.
         if (loadInvoke(sourceCompiler, base, Method(name, AsmTypes.OBJECT_TYPE, Array(typeArguments.size - 1) { AsmTypes.OBJECT_TYPE }))) {
             // If the loaded method is `invoke(Object, ...) -> Object`, then it expects boxed parameters and returns a boxed value.
-            typeArguments.replaceAll { sourceCompiler.codegen.context.irBuiltIns.anyNType }
+            typeArguments.replaceAll { context.irBuiltIns.anyNType }
         }
     }
 }
