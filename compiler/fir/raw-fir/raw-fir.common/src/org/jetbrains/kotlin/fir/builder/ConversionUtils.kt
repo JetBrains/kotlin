@@ -81,11 +81,10 @@ fun escapedStringToCharacter(text: String): CharacterWithDiagnostic {
         5 -> {
             // unicode escape
             if (escape[0] == 'u') {
-                try {
-                    val intValue = Integer.valueOf(escape.substring(1), 16)
-                    return CharacterWithDiagnostic(intValue.toInt().toChar())
-                } catch (e: NumberFormatException) {
-                    // Will be reported below
+                val intValue = escape.substring(1).toIntOrNull(16)
+                // If error occurs it will be reported below
+                if (intValue != null) {
+                    return CharacterWithDiagnostic(intValue.toChar())
                 }
             }
         }
