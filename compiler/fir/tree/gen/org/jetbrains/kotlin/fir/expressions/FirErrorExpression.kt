@@ -22,6 +22,7 @@ abstract class FirErrorExpression : FirExpression(), FirDiagnosticHolder {
     abstract override val typeRef: FirTypeRef
     abstract override val annotations: List<FirAnnotationCall>
     abstract override val diagnostic: ConeDiagnostic
+    abstract val expression: FirExpression?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitErrorExpression(this, data)
 

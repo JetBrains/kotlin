@@ -99,6 +99,10 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +body(nullable = true, withReplace = true).withTransform()
         }
 
+        errorExpression.configure {
+            +field("expression", expression, nullable = true)
+        }
+
         errorFunction.configure {
             +symbol("FirErrorFunctionSymbol")
             +typeParameters

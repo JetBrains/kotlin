@@ -152,6 +152,10 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             defaultNull("label")
         }
 
+        builder(errorExpression) {
+            defaultNull("expression")
+        }
+
         builder(errorLoop) {
             defaultNull("label")
         }
