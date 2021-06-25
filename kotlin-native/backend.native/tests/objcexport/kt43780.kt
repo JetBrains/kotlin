@@ -35,3 +35,28 @@ enum class KT43780Enum {
         val x = 11
     }
 }
+
+class ClassWithInternalCompanion {
+    internal companion object {
+        val x = 12
+    }
+
+    val y = 13
+}
+
+class ClassWithPrivateCompanion {
+    private companion object {
+        val x = 14
+    }
+
+    val y = 15
+}
+
+// Shouldn't be exported at all:
+internal class InternalClassWithCompanion {
+    companion object
+}
+
+private class PrivateClassWithCompanion {
+    companion object
+}

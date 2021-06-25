@@ -78,7 +78,7 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
                 methods += ObjCGetterForObjectInstance(namer.getObjectPropertySelector(descriptor), irClassSymbol)
             }
 
-            if (descriptor.needCompanionObjectProperty(namer)) {
+            if (descriptor.needCompanionObjectProperty(namer, mapper)) {
                 methods += ObjCGetterForObjectInstance(namer.getCompanionObjectPropertySelector(descriptor),
                         symbolTable.referenceClass(descriptor.companionObjectDescriptor!!))
             }

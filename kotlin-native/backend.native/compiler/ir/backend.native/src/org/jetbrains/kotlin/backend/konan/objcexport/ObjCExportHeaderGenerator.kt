@@ -352,7 +352,7 @@ internal class ObjCExportTranslatorImpl(
                         }
                     }
 
-            if (descriptor.needCompanionObjectProperty(namer)) {
+            if (descriptor.needCompanionObjectProperty(namer, mapper)) {
                 add {
                     ObjCProperty(
                             ObjCExportNamer.companionObjectPropertyName, null,
@@ -1326,8 +1326,15 @@ private fun computeSuperClassType(descriptor: ClassDescriptor): KotlinType? = de
 
 internal const val OBJC_SUBCLASSING_RESTRICTED = "objc_subclassing_restricted"
 
-internal fun ClassDescriptor.needCompanionObjectProperty(namer: ObjCExportNamer) = hasCompanionObject &&
-        (kind != ClassKind.ENUM_CLASS || enumEntries.all { namer.getEnumEntrySelector(it) != ObjCExportNamer.companionObjectPropertyName })
+internal fun ClassDescriptor.needCompanionObjectProperty(namer: ObjCExportNamer, mapper: ObjCExportMapper): Boolean {
+    val companionObject = companionObjectDescriptor
+    if (companionObject == null || !mapper.shouldBeExposed(companionObject)) return false
+
+    if (kind == ClassKind.ENUM_CLASS && enumEntries.any { namer.getEnumEntrySelector(it) == ObjCExportNamer.companionObjectPropertyName })
+        return false // 'companion' property would clash with enum entry, don't generate it.
+
+    return true
+}
 
 
 private fun Deprecation.toDeprecationAttribute(): String {
