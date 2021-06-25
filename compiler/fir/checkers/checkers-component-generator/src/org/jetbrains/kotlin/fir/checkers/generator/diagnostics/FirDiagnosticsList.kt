@@ -165,7 +165,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val CONSTRUCTOR_IN_INTERFACE by error<KtDeclaration>(PositioningStrategy.DECLARATION_SIGNATURE)
         val NON_PRIVATE_CONSTRUCTOR_IN_ENUM by error<PsiElement>()
         val NON_PRIVATE_OR_PROTECTED_CONSTRUCTOR_IN_SEALED by error<PsiElement>()
-        val CYCLIC_CONSTRUCTOR_DELEGATION_CALL by warning<PsiElement>()
+        val CYCLIC_CONSTRUCTOR_DELEGATION_CALL by error<PsiElement>()
         val PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED by warning<PsiElement>(PositioningStrategy.SECONDARY_CONSTRUCTOR_DELEGATION_CALL)
 
         // TODO: change it to KtSuperTypeEntry when possible (after re-targeter implementation)
