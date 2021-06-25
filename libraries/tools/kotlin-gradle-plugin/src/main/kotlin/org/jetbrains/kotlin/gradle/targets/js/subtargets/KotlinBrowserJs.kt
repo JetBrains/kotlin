@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.subtargets
 
 import org.gradle.api.Task
+import org.gradle.api.file.RelativePath
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackDevtool
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion.Companion.choose
+import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -193,6 +195,16 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
             )
         ) {
             it.from(processResourcesTask)
+            val kotlinTask = compilation.compileKotlinTaskProvider
+            (kotlinTask.get() as Kotlin2JsCompile).dependencies.distinct().forEach { dependency ->
+                it.from(project.zipTree(dependency)) { spec ->
+                    spec.include("resources/**")
+                    spec.eachFile { fcd ->
+                        fcd.relativePath = RelativePath(true, *fcd.relativePath.segments.drop(1).toTypedArray())
+                    }
+                    spec.includeEmptyDirs = false
+                }
+            }
             it.into(distribution.directory)
         }
 

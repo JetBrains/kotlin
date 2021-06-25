@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Task
+import org.gradle.api.file.RelativePath
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Copy
 import org.gradle.language.base.plugins.LifecycleBasePlugin
@@ -24,8 +25,10 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackDevtool
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion.Companion.choose
+import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
+import org.jetbrains.kotlin.library.impl.KLIB_DEFAULT_COMPONENT_NAME
 import java.io.File
 import javax.inject.Inject
 
@@ -171,6 +174,16 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     )
                 ) {
                     it.from(processResourcesTask)
+                    val kotlinTask = compilation.compileKotlinTaskProvider
+                    (kotlinTask.get() as Kotlin2JsCompile).dependencies.distinct().forEach { dependency ->
+                        it.from(project.zipTree(dependency)) { spec ->
+                            spec.include("${KLIB_DEFAULT_COMPONENT_NAME}/resources/**")
+                            spec.eachFile { fcd ->
+                                fcd.relativePath = RelativePath(true, *fcd.relativePath.segments.drop(2).toTypedArray())
+                            }
+                            spec.includeEmptyDirs = false
+                        }
+                    }
                     it.into(binary.distribution.directory)
                 }
 

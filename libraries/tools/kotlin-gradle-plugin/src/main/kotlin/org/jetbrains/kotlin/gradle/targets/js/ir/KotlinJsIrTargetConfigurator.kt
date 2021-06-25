@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.attributes.Usage
+import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -15,11 +17,14 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
+import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
 import org.jetbrains.kotlin.gradle.utils.isParentOf
 import org.jetbrains.kotlin.gradle.utils.klibModuleName
+import org.jetbrains.kotlin.library.impl.KLIB_DEFAULT_COMPONENT_NAME
 import java.io.File
+import java.util.concurrent.Callable
 
 open class KotlinJsIrTargetConfigurator() :
     KotlinOnlyTargetConfigurator<KotlinJsIrCompilation, KotlinJsIrTarget>(true, true),
@@ -59,7 +64,15 @@ open class KotlinJsIrTargetConfigurator() :
     }
 
     override fun createArchiveTasks(target: KotlinJsIrTarget): TaskProvider<out Zip> {
-        return super.createArchiveTasks(target).apply {
+        return target.project.registerTask<Jar>(target.artifactsTaskName) {
+            it.description = "Assembles an archive containing the main classes."
+            it.group = BasePlugin.BUILD_GROUP
+            val output = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).output
+            it.from(output.classesDirs)
+            it.from(Callable { output.resourcesDir }) { spec ->
+                spec.into("${KLIB_DEFAULT_COMPONENT_NAME}/resources")
+            }
+        }.apply {
             configure { it.archiveExtension.set(KLIB_TYPE) }
         }
     }
