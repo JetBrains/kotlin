@@ -211,4 +211,48 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
         """
         )
     }
+
+    fun testInterfaceComposablesWithDefaultParameters() {
+        doTest(
+            """
+            import androidx.compose.runtime.Composable
+            interface A {
+                @Composable fun foo(x: Int = <!ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE!>0<!>)
+            }
+        """
+        )
+    }
+
+    fun testAbstractComposablesWithDefaultParameters() {
+        doTest(
+            """
+            import androidx.compose.runtime.Composable
+            abstract class A {
+                @Composable abstract fun foo(x: Int = <!ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE!>0<!>)
+            }
+        """
+        )
+    }
+
+    fun testInterfaceComposablesWithoutDefaultParameters() {
+        doTest(
+            """
+            import androidx.compose.runtime.Composable
+            interface A {
+                @Composable fun foo(x: Int)
+            }
+        """
+        )
+    }
+
+    fun testAbstractComposablesWithoutDefaultParameters() {
+        doTest(
+            """
+            import androidx.compose.runtime.Composable
+            abstract class A {
+                @Composable abstract fun foo(x: Int)
+            }
+        """
+        )
+    }
 }
