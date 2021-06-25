@@ -28,6 +28,7 @@ class Companion {
 }
 
 enum class KT43780Enum {
+    OTHER_ENTRY,
     COMPANION;
 
     companion object {

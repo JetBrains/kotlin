@@ -34,6 +34,7 @@ private func testNameClash() throws {
     try assertTrue(object5 === KT43780Enum.Companion())
     let enumEntry : KT43780Enum = KT43780Enum.companion
     try assertEquals(actual: enumEntry.name, expected: "COMPANION")
+    try assertEquals(actual: KT43780Enum.otherEntry.name, expected: "OTHER_ENTRY")
 }
 
 
