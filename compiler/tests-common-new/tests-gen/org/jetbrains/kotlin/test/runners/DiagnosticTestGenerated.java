@@ -31098,6 +31098,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("ExhaustivePlatformBoolean.kt")
+            public void testExhaustivePlatformBoolean() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/when/ExhaustivePlatformBoolean.kt");
+            }
+
+            @Test
             @TestMetadata("ExhaustivePlatformEnum.kt")
             public void testExhaustivePlatformEnum() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnum.kt");
