@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -53,7 +52,6 @@ internal class FirValueParameterImpl(
     override var status: FirDeclarationStatus = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
     override val initializer: FirExpression? get() = null
     override val delegate: FirExpression? get() = null
-    override val delegateFieldSymbol: FirDelegateFieldSymbol<FirValueParameter>? get() = null
     override val isVar: Boolean get() = false
     override val isVal: Boolean get() = true
     override val getter: FirPropertyAccessor? get() = null
@@ -62,7 +60,6 @@ internal class FirValueParameterImpl(
 
     init {
         symbol.bind(this)
-        delegateFieldSymbol?.bind(this)
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {

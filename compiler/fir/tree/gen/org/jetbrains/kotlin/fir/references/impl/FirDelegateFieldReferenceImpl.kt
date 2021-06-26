@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 internal class FirDelegateFieldReferenceImpl(
     override val source: FirSourceElement?,
     override val candidateSymbol: FirBasedSymbol<*>?,
-    override val resolvedSymbol: FirDelegateFieldSymbol<*>,
+    override val resolvedSymbol: FirDelegateFieldSymbol,
 ) : FirDelegateFieldReference() {
     override val name: Name get() = Name.identifier("\$delegate")
 

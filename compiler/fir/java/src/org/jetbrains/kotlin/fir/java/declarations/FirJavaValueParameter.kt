@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -68,9 +67,6 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
         get() = null
 
     override val delegate: FirExpression?
-        get() = null
-
-    override val delegateFieldSymbol: FirDelegateFieldSymbol<FirValueParameter>?
         get() = null
 
     override val getter: FirPropertyAccessor?

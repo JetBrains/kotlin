@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -39,7 +38,6 @@ abstract class FirEnumEntry : FirVariable<FirEnumEntry>() {
     abstract override val symbol: FirVariableSymbol<FirEnumEntry>
     abstract override val initializer: FirExpression?
     abstract override val delegate: FirExpression?
-    abstract override val delegateFieldSymbol: FirDelegateFieldSymbol<FirEnumEntry>?
     abstract override val isVar: Boolean
     abstract override val isVal: Boolean
     abstract override val getter: FirPropertyAccessor?

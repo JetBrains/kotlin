@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -44,7 +43,6 @@ internal class FirDefaultSetterValueParameter(
     override val symbol: FirVariableSymbol<FirValueParameter>,
     override var initializer: FirExpression?,
     override var delegate: FirExpression?,
-    override val delegateFieldSymbol: FirDelegateFieldSymbol<FirValueParameter>?,
     override val isVar: Boolean,
     override val isVal: Boolean,
     override var getter: FirPropertyAccessor?,
@@ -62,7 +60,6 @@ internal class FirDefaultSetterValueParameter(
 
     init {
         symbol.bind(this)
-        delegateFieldSymbol?.bind(this)
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {

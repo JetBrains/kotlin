@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -40,7 +39,6 @@ abstract class FirErrorProperty : FirVariable<FirErrorProperty>(), FirDiagnostic
     abstract override val name: Name
     abstract override val initializer: FirExpression?
     abstract override val delegate: FirExpression?
-    abstract override val delegateFieldSymbol: FirDelegateFieldSymbol<FirErrorProperty>?
     abstract override val isVar: Boolean
     abstract override val isVal: Boolean
     abstract override val getter: FirPropertyAccessor?

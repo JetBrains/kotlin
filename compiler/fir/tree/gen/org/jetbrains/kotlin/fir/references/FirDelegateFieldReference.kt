@@ -21,7 +21,7 @@ abstract class FirDelegateFieldReference : FirResolvedNamedReference() {
     abstract override val source: FirSourceElement?
     abstract override val name: Name
     abstract override val candidateSymbol: FirBasedSymbol<*>?
-    abstract override val resolvedSymbol: FirDelegateFieldSymbol<*>
+    abstract override val resolvedSymbol: FirDelegateFieldSymbol
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitDelegateFieldReference(this, data)
 

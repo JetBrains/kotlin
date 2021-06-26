@@ -312,7 +312,7 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
     receiver: FirExpression?
 ) {
     if (delegateBuilder == null) return
-    val delegateFieldSymbol = FirDelegateFieldSymbol<FirProperty>(symbol.callableId).also {
+    val delegateFieldSymbol = FirDelegateFieldSymbol(symbol.callableId).also {
         this.delegateFieldSymbol = it
     }
 

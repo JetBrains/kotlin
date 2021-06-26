@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -49,7 +48,6 @@ class FirDefaultSetterValueParameterBuilder : FirAnnotationContainerBuilder {
     lateinit var symbol: FirVariableSymbol<FirValueParameter>
     var initializer: FirExpression? = null
     var delegate: FirExpression? = null
-    var delegateFieldSymbol: FirDelegateFieldSymbol<FirValueParameter>? = null
     var isVar: Boolean = false
     var isVal: Boolean = true
     var getter: FirPropertyAccessor? = null
@@ -74,7 +72,6 @@ class FirDefaultSetterValueParameterBuilder : FirAnnotationContainerBuilder {
             symbol,
             initializer,
             delegate,
-            delegateFieldSymbol,
             isVar,
             isVal,
             getter,

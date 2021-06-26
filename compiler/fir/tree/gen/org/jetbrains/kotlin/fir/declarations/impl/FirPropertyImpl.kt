@@ -45,12 +45,12 @@ internal class FirPropertyImpl(
     override val name: Name,
     override var initializer: FirExpression?,
     override var delegate: FirExpression?,
-    override val delegateFieldSymbol: FirDelegateFieldSymbol<FirProperty>?,
     override val isVar: Boolean,
     override var getter: FirPropertyAccessor?,
     override var setter: FirPropertyAccessor?,
     override val annotations: MutableList<FirAnnotationCall>,
     override val symbol: FirPropertySymbol,
+    override val delegateFieldSymbol: FirDelegateFieldSymbol?,
     override val isLocal: Boolean,
     override val typeParameters: MutableList<FirTypeParameter>,
 ) : FirProperty() {
@@ -59,9 +59,9 @@ internal class FirPropertyImpl(
     override val backingFieldSymbol: FirBackingFieldSymbol = FirBackingFieldSymbol(symbol.callableId)
 
     init {
-        delegateFieldSymbol?.bind(this)
         symbol.bind(this)
         backingFieldSymbol.bind(this)
+        delegateFieldSymbol?.bind(this)
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {

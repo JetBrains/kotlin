@@ -53,7 +53,7 @@ class FirSyntheticProperty(
     override val delegate: FirExpression?
         get() = null
 
-    override val delegateFieldSymbol: FirDelegateFieldSymbol<FirProperty>?
+    override val delegateFieldSymbol: FirDelegateFieldSymbol?
         get() = null
 
     override val isLocal: Boolean

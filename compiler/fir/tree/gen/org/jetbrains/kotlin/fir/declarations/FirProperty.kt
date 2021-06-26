@@ -39,7 +39,6 @@ abstract class FirProperty : FirVariable<FirProperty>(), FirTypeParametersOwner,
     abstract override val name: Name
     abstract override val initializer: FirExpression?
     abstract override val delegate: FirExpression?
-    abstract override val delegateFieldSymbol: FirDelegateFieldSymbol<FirProperty>?
     abstract override val isVar: Boolean
     abstract override val isVal: Boolean
     abstract override val getter: FirPropertyAccessor?
@@ -48,6 +47,7 @@ abstract class FirProperty : FirVariable<FirProperty>(), FirTypeParametersOwner,
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract override val symbol: FirPropertySymbol
     abstract val backingFieldSymbol: FirBackingFieldSymbol
+    abstract val delegateFieldSymbol: FirDelegateFieldSymbol?
     abstract val isLocal: Boolean
     abstract override val typeParameters: List<FirTypeParameter>
 

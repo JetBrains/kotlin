@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirFieldBuilder
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -125,9 +124,6 @@ class FirJavaField @FirImplementationDetail constructor(
     }
 
     override val delegate: FirExpression?
-        get() = null
-
-    override val delegateFieldSymbol: FirDelegateFieldSymbol<FirField>?
         get() = null
 
     override var containerSource: DeserializedContainerSource? = null

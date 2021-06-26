@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -51,14 +50,12 @@ internal class FirErrorPropertyImpl(
     override var status: FirDeclarationStatus = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
     override val initializer: FirExpression? get() = null
     override val delegate: FirExpression? get() = null
-    override val delegateFieldSymbol: FirDelegateFieldSymbol<FirErrorProperty>? get() = null
     override val isVar: Boolean get() = false
     override val isVal: Boolean get() = true
     override val getter: FirPropertyAccessor? get() = null
     override val setter: FirPropertyAccessor? get() = null
 
     init {
-        delegateFieldSymbol?.bind(this)
         symbol.bind(this)
     }
 

@@ -33,7 +33,7 @@ class FirIntersectionOverridePropertySymbol(
 
 class FirBackingFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirProperty>(callableId)
 
-class FirDelegateFieldSymbol<D : FirVariable<D>>(callableId: CallableId) : FirVariableSymbol<D>(callableId) {
+class FirDelegateFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirProperty>(callableId) {
     val delegate: FirExpression
         get() = fir.delegate!!
 }

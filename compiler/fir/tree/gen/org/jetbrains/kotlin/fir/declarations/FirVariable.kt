@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -40,7 +39,6 @@ sealed class FirVariable<E : FirVariable<E>> : FirCallableMemberDeclaration<E>()
     abstract override val symbol: FirVariableSymbol<E>
     abstract val initializer: FirExpression?
     abstract val delegate: FirExpression?
-    abstract val delegateFieldSymbol: FirDelegateFieldSymbol<E>?
     abstract val isVar: Boolean
     abstract val isVal: Boolean
     abstract val getter: FirPropertyAccessor?

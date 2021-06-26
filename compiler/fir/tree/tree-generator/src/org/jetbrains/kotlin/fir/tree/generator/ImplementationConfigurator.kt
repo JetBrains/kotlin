@@ -206,7 +206,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 "receiverTypeRef",
                 "initializer",
                 "delegate",
-                "delegateFieldSymbol",
                 "getter", "setter",
                 withGetter = true
             )
@@ -221,13 +220,13 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             }
             publicImplementation()
 
-            defaultNull("delegateFieldSymbol", "receiverTypeRef", "delegate", "getter", "setter", withGetter = true)
+            defaultNull("receiverTypeRef", "delegate", "getter", "setter", withGetter = true)
         }
 
         impl(enumEntry) {
             defaultTrue("isVal", withGetter = true)
             defaultFalse("isVar", withGetter = true)
-            defaultNull("delegateFieldSymbol", "receiverTypeRef", "delegate", "getter", "setter", withGetter = true)
+            defaultNull("receiverTypeRef", "delegate", "getter", "setter", withGetter = true)
         }
 
         impl(namedArgumentExpression) {
@@ -455,7 +454,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         impl(valueParameter) {
             defaultTrue("isVal", withGetter = true)
             defaultFalse("isVar", withGetter = true)
-            defaultNull("getter", "setter", "initializer", "delegate", "receiverTypeRef", "delegateFieldSymbol", withGetter = true)
+            defaultNull("getter", "setter", "initializer", "delegate", "receiverTypeRef", withGetter = true)
         }
 
         impl(valueParameter, "FirDefaultSetterValueParameter") {

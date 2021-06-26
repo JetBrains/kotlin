@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -49,14 +48,12 @@ class FirFieldImpl @FirImplementationDetail constructor(
 ) : FirField() {
     override val receiverTypeRef: FirTypeRef? get() = null
     override val delegate: FirExpression? get() = null
-    override val delegateFieldSymbol: FirDelegateFieldSymbol<FirField>? get() = null
     override val isVal: Boolean get() = !isVar
     override val getter: FirPropertyAccessor? get() = null
     override val setter: FirPropertyAccessor? get() = null
 
     init {
         symbol.bind(this)
-        delegateFieldSymbol?.bind(this)
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {

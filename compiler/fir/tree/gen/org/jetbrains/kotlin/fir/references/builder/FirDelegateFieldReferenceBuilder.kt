@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.name.Name
 class FirDelegateFieldReferenceBuilder {
     var source: FirSourceElement? = null
     var candidateSymbol: FirBasedSymbol<*>? = null
-    lateinit var resolvedSymbol: FirDelegateFieldSymbol<*>
+    lateinit var resolvedSymbol: FirDelegateFieldSymbol
 
     fun build(): FirDelegateFieldReference {
         return FirDelegateFieldReferenceImpl(
