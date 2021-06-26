@@ -37,4 +37,4 @@ package bar
 
 import foo.Base
 
-class E : <!SEALED_SUPERTYPE!>Base<!>()
+class E : <!SEALED_INHERITOR_IN_DIFFERENT_PACKAGE!>Base<!>()

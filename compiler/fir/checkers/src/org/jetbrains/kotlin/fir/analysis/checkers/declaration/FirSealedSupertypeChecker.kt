@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.classId
+import org.jetbrains.kotlin.fir.declarations.utils.isSealed
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
@@ -29,20 +31,37 @@ object FirSealedSupertypeChecker : FirClassChecker() {
     }
 
     private fun checkGlobalDeclaration(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
-        for (it in declaration.superTypeRefs) {
-            val classId = it.coneType.classId ?: continue
+        val subclassPackage = declaration.classId.packageFqName
+        val subClassSession = declaration.moduleData.session
+        for (superTypeRef in declaration.superTypeRefs) {
+            val classId = superTypeRef.coneType.classId ?: continue
 
             if (classId.isLocal) {
                 continue
             }
 
-            val fir = context.session.symbolProvider.getClassLikeSymbolByFqName(classId)
+            val superClass = context.session.symbolProvider.getClassLikeSymbolByFqName(classId)
                 ?.fir.safeAs<FirRegularClass>()
                 ?: continue
 
-            if (fir.status.modality == Modality.SEALED && declaration.classId.packageFqName != fir.classId.packageFqName) {
-                reporter.reportOn(it.source, FirErrors.SEALED_SUPERTYPE, context)
+            if (!superClass.isSealed) continue
+            if (superClass.origin == FirDeclarationOrigin.Java) {
+                reporter.reportOn(superTypeRef.source, FirErrors.CLASS_INHERITS_JAVA_SEALED_CLASS, context)
                 continue
+            }
+            val superClassPackage = superClass.classId.packageFqName
+            if (superClassPackage != subclassPackage) {
+                reporter.reportOn(
+                    superTypeRef.source,
+                    FirErrors.SEALED_INHERITOR_IN_DIFFERENT_PACKAGE,
+                    subclassPackage,
+                    superClassPackage,
+                    context
+                )
+            }
+            if (superClass.moduleData.session != subClassSession) {
+                // TODO: implement logic like in org.jetbrains.kotlin.resolve.checkers.SealedInheritorInSameModuleChecker for MPP support.
+                reporter.reportOn(superTypeRef.source, FirErrors.SEALED_INHERITOR_IN_DIFFERENT_MODULE, context)
             }
         }
     }
