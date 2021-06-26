@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-41215
 
 // FILE: Base.java

@@ -88,6 +88,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CAPTURED_MEMBER_V
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CAPTURED_VAL_INITIALIZATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CATCH_PARAMETER_WITH_DEFAULT_VALUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CLASS_CANNOT_BE_EXTENDED_DIRECTLY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CLASS_INHERITS_JAVA_SEALED_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CLASS_IN_SUPERTYPE_FOR_ENUM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CLASS_LITERAL_LHS_NOT_A_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT
@@ -372,6 +373,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_TYPE_MISMA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_TYPE_MISMATCH_ON_INHERITANCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_TYPE_MISMATCH_ON_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SEALED_CLASS_CONSTRUCTOR_CALL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SEALED_INHERITOR_IN_DIFFERENT_MODULE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SEALED_INHERITOR_IN_DIFFERENT_PACKAGE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SEALED_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SEALED_SUPERTYPE_IN_LOCAL_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_INLINE_CLASS
@@ -570,6 +573,15 @@ class FirDefaultErrorMessages {
             map.put(CLASS_IN_SUPERTYPE_FOR_ENUM, "Enum class cannot inherit from classes")
             map.put(SEALED_SUPERTYPE, "This type is sealed, so it can be inherited by only its own nested classes or objects")
             map.put(SEALED_SUPERTYPE_IN_LOCAL_CLASS, "Local class cannot extend a sealed class")
+            map.put(
+                SEALED_INHERITOR_IN_DIFFERENT_PACKAGE,
+                "Inheritor of sealed class or interface declared in package {0} but it must be in package {1} where base class is declared",
+                TO_STRING,
+                TO_STRING
+            )
+            map.put(SEALED_INHERITOR_IN_DIFFERENT_MODULE, "Inheritance of sealed classes or interfaces from different module is prohibited")
+            map.put(CLASS_INHERITS_JAVA_SEALED_CLASS, "Inheritance of java sealed classes is prohibited")
+
             map.put(SUPERTYPE_NOT_A_CLASS_OR_INTERFACE, "Supertype is not a class or interface", TO_STRING)
             map.put(CYCLIC_INHERITANCE_HIERARCHY, "There's a cycle in the inheritance hierarchy for this type")
             map.put(

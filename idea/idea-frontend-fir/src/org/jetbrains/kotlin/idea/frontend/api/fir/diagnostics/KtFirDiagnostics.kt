@@ -341,6 +341,20 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = SealedSupertypeInLocalClass::class
     }
 
+    abstract class SealedInheritorInDifferentPackage : KtFirDiagnostic<KtTypeReference>() {
+        override val diagnosticClass get() = SealedInheritorInDifferentPackage::class
+        abstract val subclassPackage: FqName
+        abstract val basePackage: FqName
+    }
+
+    abstract class SealedInheritorInDifferentModule : KtFirDiagnostic<KtTypeReference>() {
+        override val diagnosticClass get() = SealedInheritorInDifferentModule::class
+    }
+
+    abstract class ClassInheritsJavaSealedClass : KtFirDiagnostic<KtTypeReference>() {
+        override val diagnosticClass get() = ClassInheritsJavaSealedClass::class
+    }
+
     abstract class SupertypeNotAClassOrInterface : KtFirDiagnostic<KtElement>() {
         override val diagnosticClass get() = SupertypeNotAClassOrInterface::class
         abstract val reason: String
