@@ -450,6 +450,26 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.SEALED_INHERITOR_IN_DIFFERENT_PACKAGE) { firDiagnostic ->
+        SealedInheritorInDifferentPackageImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.SEALED_INHERITOR_IN_DIFFERENT_MODULE) { firDiagnostic ->
+        SealedInheritorInDifferentModuleImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.CLASS_INHERITS_JAVA_SEALED_CLASS) { firDiagnostic ->
+        ClassInheritsJavaSealedClassImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.SUPERTYPE_NOT_A_CLASS_OR_INTERFACE) { firDiagnostic ->
         SupertypeNotAClassOrInterfaceImpl(
             firDiagnostic.a,

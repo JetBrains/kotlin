@@ -160,6 +160,12 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val CLASS_IN_SUPERTYPE_FOR_ENUM by error<KtTypeReference>()
         val SEALED_SUPERTYPE by error<KtTypeReference>()
         val SEALED_SUPERTYPE_IN_LOCAL_CLASS by error<KtTypeReference>()
+        val SEALED_INHERITOR_IN_DIFFERENT_PACKAGE by error<KtTypeReference> {
+            parameter<FqName>("subclassPackage")
+            parameter<FqName>("basePackage")
+        }
+        val SEALED_INHERITOR_IN_DIFFERENT_MODULE by error<KtTypeReference>()
+        val CLASS_INHERITS_JAVA_SEALED_CLASS by error<KtTypeReference>()
         val SUPERTYPE_NOT_A_CLASS_OR_INTERFACE by error<KtElement> {
             parameter<String>("reason")
         }
