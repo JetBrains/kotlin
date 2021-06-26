@@ -245,7 +245,7 @@ object FirFakeOverrideGenerator {
             buildValueParameterCopy(valueParameter) {
                 origin = FirDeclarationOrigin.SubstitutionOverride
                 returnTypeRef = valueParameter.returnTypeRef.withReplacedConeType(newType)
-                symbol = FirVariableSymbol(valueParameter.symbol.callableId)
+                symbol = FirValueParameterSymbol(valueParameter.name)
             }
         }
     }

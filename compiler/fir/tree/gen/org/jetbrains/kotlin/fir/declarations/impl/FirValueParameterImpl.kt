@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
@@ -40,8 +40,8 @@ internal class FirValueParameterImpl(
     override val containerSource: DeserializedContainerSource?,
     override val dispatchReceiverType: ConeKotlinType?,
     override val name: Name,
-    override val symbol: FirVariableSymbol<FirValueParameter>,
     override val annotations: MutableList<FirAnnotationCall>,
+    override val symbol: FirValueParameterSymbol,
     override var defaultValue: FirExpression?,
     override val isCrossinline: Boolean,
     override val isNoinline: Boolean,

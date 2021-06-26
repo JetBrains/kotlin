@@ -382,7 +382,7 @@ class JavaSymbolProvider(
             javaField.isEnumEntry -> buildEnumEntry {
                 source = (javaField as? JavaElementImpl<*>)?.psi?.toFirPsiSourceElement()
                 moduleData = this@JavaSymbolProvider.baseModuleData
-                symbol = FirVariableSymbol(fieldId)
+                symbol = FirEnumEntrySymbol(fieldId)
                 name = fieldName
                 status = FirResolvedDeclarationStatusImpl(
                     javaField.visibility,

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
@@ -45,7 +45,6 @@ class FirDefaultSetterValueParameterBuilder : FirAnnotationContainerBuilder {
     var receiverTypeRef: FirTypeRef? = null
     var containerSource: DeserializedContainerSource? = null
     var dispatchReceiverType: ConeKotlinType? = null
-    lateinit var symbol: FirVariableSymbol<FirValueParameter>
     var initializer: FirExpression? = null
     var delegate: FirExpression? = null
     var isVar: Boolean = false
@@ -53,6 +52,7 @@ class FirDefaultSetterValueParameterBuilder : FirAnnotationContainerBuilder {
     var getter: FirPropertyAccessor? = null
     var setter: FirPropertyAccessor? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    lateinit var symbol: FirValueParameterSymbol
     var defaultValue: FirExpression? = null
     var isCrossinline: Boolean = false
     var isNoinline: Boolean = false
@@ -69,7 +69,6 @@ class FirDefaultSetterValueParameterBuilder : FirAnnotationContainerBuilder {
             receiverTypeRef,
             containerSource,
             dispatchReceiverType,
-            symbol,
             initializer,
             delegate,
             isVar,
@@ -77,6 +76,7 @@ class FirDefaultSetterValueParameterBuilder : FirAnnotationContainerBuilder {
             getter,
             setter,
             annotations,
+            symbol,
             defaultValue,
             isCrossinline,
             isNoinline,

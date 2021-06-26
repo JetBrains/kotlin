@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
@@ -36,7 +36,6 @@ abstract class FirValueParameter : FirVariable<FirValueParameter>(), FirControlF
     abstract override val containerSource: DeserializedContainerSource?
     abstract override val dispatchReceiverType: ConeKotlinType?
     abstract override val name: Name
-    abstract override val symbol: FirVariableSymbol<FirValueParameter>
     abstract override val initializer: FirExpression?
     abstract override val delegate: FirExpression?
     abstract override val isVar: Boolean
@@ -45,6 +44,7 @@ abstract class FirValueParameter : FirVariable<FirValueParameter>(), FirControlF
     abstract override val setter: FirPropertyAccessor?
     abstract override val annotations: List<FirAnnotationCall>
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
+    abstract override val symbol: FirValueParameterSymbol
     abstract val defaultValue: FirExpression?
     abstract val isCrossinline: Boolean
     abstract val isNoinline: Boolean

@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.resolve.withExpectedType
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
 import org.jetbrains.kotlin.fir.symbols.constructStarProjectedType
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
@@ -676,7 +676,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                                     origin = FirDeclarationOrigin.Source
                                     returnTypeRef = singleParameterType.toFirResolvedTypeRef()
                                     this.name = name
-                                    symbol = FirVariableSymbol(name)
+                                    symbol = FirValueParameterSymbol(name)
                                     isCrossinline = false
                                     isNoinline = false
                                     isVararg = false

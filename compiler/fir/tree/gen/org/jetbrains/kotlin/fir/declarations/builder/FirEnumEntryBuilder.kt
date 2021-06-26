@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.impl.FirEnumEntryImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
@@ -45,9 +45,9 @@ class FirEnumEntryBuilder : FirAnnotationContainerBuilder {
     var containerSource: DeserializedContainerSource? = null
     var dispatchReceiverType: ConeKotlinType? = null
     lateinit var name: Name
-    lateinit var symbol: FirVariableSymbol<FirEnumEntry>
     var initializer: FirExpression? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    lateinit var symbol: FirEnumEntrySymbol
 
     override fun build(): FirEnumEntry {
         return FirEnumEntryImpl(
@@ -62,9 +62,9 @@ class FirEnumEntryBuilder : FirAnnotationContainerBuilder {
             containerSource,
             dispatchReceiverType,
             name,
-            symbol,
             initializer,
             annotations,
+            symbol,
         )
     }
 

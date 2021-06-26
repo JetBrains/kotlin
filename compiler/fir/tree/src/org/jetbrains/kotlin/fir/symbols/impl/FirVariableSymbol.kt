@@ -5,19 +5,14 @@
 
 package org.jetbrains.kotlin.fir.symbols.impl
 
-import org.jetbrains.kotlin.fir.declarations.FirErrorProperty
-import org.jetbrains.kotlin.fir.declarations.FirField
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirVariable
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-open class FirVariableSymbol<E : FirVariable<E>>(override val callableId: CallableId) : FirCallableSymbol<E>() {
-    constructor(name: Name) : this(CallableId(name))  // TODO?
-}
+sealed class FirVariableSymbol<E : FirVariable<E>>(override val callableId: CallableId) : FirCallableSymbol<E>()
 
 open class FirPropertySymbol(
     callableId: CallableId,
@@ -39,6 +34,13 @@ class FirDelegateFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirProp
 }
 
 class FirFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirField>(callableId)
+
+class FirEnumEntrySymbol(callableId: CallableId) : FirVariableSymbol<FirEnumEntry>(callableId)
+
+class FirValueParameterSymbol(name: Name) : FirVariableSymbol<FirValueParameter>(CallableId(name)) {
+    val name: Name
+        get() = callableId.callableName
+}
 
 class FirErrorPropertySymbol(
     val diagnostic: ConeDiagnostic

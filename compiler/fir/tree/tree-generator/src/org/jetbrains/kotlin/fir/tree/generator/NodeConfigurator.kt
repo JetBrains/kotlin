@@ -46,11 +46,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +annotations
         }
 
-//        symbolOwner.configure {
-//            withArg("DE, symbolOwner, declaration)
-//            +symbolWithPackage("fir.symbols", "FirBasedSymbol", "DE)
-//        }
-
         typeParameterRef.configure {
             +symbol(typeParameterSymbolType.type)
         }
@@ -383,6 +378,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         valueParameter.configure {
             parentArg(variable, "E", valueParameter)
+            +symbol("FirValueParameterSymbol")
             +field("defaultValue", expression, nullable = true)
             generateBooleanFields("crossinline", "noinline", "vararg")
         }
@@ -408,6 +404,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         enumEntry.configure {
             parentArg(variable, "E", enumEntry)
+            +symbol("FirEnumEntrySymbol")
         }
 
         field.configure {
@@ -417,7 +414,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         anonymousInitializer.configure {
             parentArg(declaration, "E", anonymousInitializer)
             +body(nullable = true)
-            +symbol(anonymousInitializerSymbolType.type)
+            +symbol("FirAnonymousInitializerSymbol")
         }
 
         file.configure {
@@ -426,7 +423,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +declarations.withTransform()
             +stringField("name")
             +field("packageFqName", fqNameType)
-            +symbol(fileSymbolType.type)
+            +symbol("FirFileSymbol")
         }
 
         import.configure {

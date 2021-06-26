@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
@@ -45,8 +45,8 @@ open class FirValueParameterBuilder : FirAnnotationContainerBuilder {
     open var containerSource: DeserializedContainerSource? = null
     open var dispatchReceiverType: ConeKotlinType? = null
     open lateinit var name: Name
-    open lateinit var symbol: FirVariableSymbol<FirValueParameter>
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    open lateinit var symbol: FirValueParameterSymbol
     open var defaultValue: FirExpression? = null
     open var isCrossinline: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     open var isNoinline: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
@@ -63,8 +63,8 @@ open class FirValueParameterBuilder : FirAnnotationContainerBuilder {
             containerSource,
             dispatchReceiverType,
             name,
-            symbol,
             annotations,
+            symbol,
             defaultValue,
             isCrossinline,
             isNoinline,
@@ -97,8 +97,8 @@ inline fun buildValueParameterCopy(original: FirValueParameter, init: FirValuePa
     copyBuilder.containerSource = original.containerSource
     copyBuilder.dispatchReceiverType = original.dispatchReceiverType
     copyBuilder.name = original.name
-    copyBuilder.symbol = original.symbol
     copyBuilder.annotations.addAll(original.annotations)
+    copyBuilder.symbol = original.symbol
     copyBuilder.defaultValue = original.defaultValue
     copyBuilder.isCrossinline = original.isCrossinline
     copyBuilder.isNoinline = original.isNoinline

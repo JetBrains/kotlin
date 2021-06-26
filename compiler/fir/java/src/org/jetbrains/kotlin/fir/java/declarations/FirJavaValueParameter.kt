@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -34,7 +34,7 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     override val attributes: FirDeclarationAttributes,
     override var returnTypeRef: FirTypeRef,
     override val name: Name,
-    override val symbol: FirVariableSymbol<FirValueParameter>,
+    override val symbol: FirValueParameterSymbol,
     annotationBuilder: () -> List<FirAnnotationCall>,
     override var defaultValue: FirExpression?,
     override val isVararg: Boolean,
@@ -182,7 +182,7 @@ class FirJavaValueParameterBuilder {
             attributes,
             returnTypeRef,
             name,
-            symbol = FirVariableSymbol(name),
+            symbol = FirValueParameterSymbol(name),
             annotationBuilder,
             defaultValue,
             isVararg,
