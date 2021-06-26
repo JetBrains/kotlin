@@ -56,7 +56,7 @@ open class RawFirBuilder(
 
     private val stubMode get() = mode == RawFirBuilderMode.STUBS
 
-    protected open fun bindFunctionTarget(target: FirFunctionTarget, function: FirFunction<*>) = target.bind(function)
+    protected open fun bindFunctionTarget(target: FirFunctionTarget, function: FirFunction) = target.bind(function)
 
     var mode: RawFirBuilderMode = builderMode
         private set
@@ -219,7 +219,7 @@ open class RawFirBuilder(
             owner: KtClassOrObject,
             ownerClassBuilder: FirClassBuilder,
             ownerTypeParameters: List<FirTypeParameterRef>
-        ): FirDeclaration<*> {
+        ): FirDeclaration {
             return when (this) {
                 is KtSecondaryConstructor -> {
                     disabledLazyMode {
@@ -515,7 +515,7 @@ open class RawFirBuilder(
             }
         }
 
-        private fun <T> KtTypeParameterListOwner.fillDanglingConstraintsTo(to: T) where T : FirDeclaration<T>, T : FirTypeParameterRefsOwner {
+        private fun <T> KtTypeParameterListOwner.fillDanglingConstraintsTo(to: T) where T : FirDeclaration, T : FirTypeParameterRefsOwner {
             val typeParamNames = typeParameters.mapNotNull { it.nameAsName }.toSet()
             val result = typeConstraints.mapNotNull { constraint ->
                 constraint.subjectTypeParameterName?.getReferencedNameAsName()?.let { name ->
@@ -731,7 +731,7 @@ open class RawFirBuilder(
                     }
                 }
                 for (declaration in file.declarations) {
-                    declarations += declaration.convert<FirDeclaration<*>>()
+                    declarations += declaration.convert<FirDeclaration>()
                 }
             }
         }
@@ -739,7 +739,7 @@ open class RawFirBuilder(
         private fun KtEnumEntry.toFirEnumEntry(
             delegatedEnumSelfTypeRef: FirResolvedTypeRef,
             ownerClassHasDefaultConstructor: Boolean
-        ): FirDeclaration<*> {
+        ): FirDeclaration {
             val ktEnumEntry = this@toFirEnumEntry
             return buildEnumEntry {
                 source = toFirSourceElement()

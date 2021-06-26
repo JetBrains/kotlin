@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
-import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
@@ -250,7 +249,7 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
             is FirProperty -> {
                 TypeOfCall.PROPERTY_GETTER.nameToRender
             }
-            is FirFunction<*> -> buildString {
+            is FirFunction -> buildString {
                 if (fir.status.isInline) append("inline ")
                 if (fir.status.isInfix) append("infix ")
                 if (fir.status.isOperator) append("operator ")

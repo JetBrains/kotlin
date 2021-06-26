@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirValueParameter : FirVariable<FirValueParameter>(), FirControlFlowGraphOwner {
+abstract class FirValueParameter : FirVariable(), FirControlFlowGraphOwner {
     abstract override val source: FirSourceElement?
     abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase

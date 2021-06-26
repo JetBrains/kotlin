@@ -53,7 +53,7 @@ internal class FirDesignatedSupertypeResolverTransformerForIDE(
         ) {
         val declarationTransformer = IDEDeclarationTransformer(classDesignation)
 
-        override fun visitDeclarationContent(declaration: FirDeclaration<*>, data: Any?) {
+        override fun visitDeclarationContent(declaration: FirDeclaration, data: Any?) {
             declarationTransformer.visitDeclarationContent(this, declaration, data) {
                 super.visitDeclarationContent(declaration, data)
                 declaration
@@ -64,7 +64,7 @@ internal class FirDesignatedSupertypeResolverTransformerForIDE(
     private inner class DesignatedFirApplySupertypesTransformer(classDesignation: FirDeclarationDesignation) :
         FirApplySupertypesTransformer(supertypeComputationSession) {
 
-        override fun needReplacePhase(firDeclaration: FirDeclaration<*>): Boolean =
+        override fun needReplacePhase(firDeclaration: FirDeclaration): Boolean =
             firDeclaration !is FirFile && super.needReplacePhase(firDeclaration)
 
         override fun transformRegularClass(regularClass: FirRegularClass, data: Any?): FirStatement {
@@ -87,7 +87,7 @@ internal class FirDesignatedSupertypeResolverTransformerForIDE(
 
         val declarationTransformer = IDEDeclarationTransformer(classDesignation)
 
-        override fun transformDeclarationContent(declaration: FirDeclaration<*>, data: Any?): FirDeclaration<*> {
+        override fun transformDeclarationContent(declaration: FirDeclaration, data: Any?): FirDeclaration {
             return declarationTransformer.transformDeclarationContent(this, declaration, data) {
                 super.transformDeclarationContent(declaration, data)
             }
@@ -95,7 +95,7 @@ internal class FirDesignatedSupertypeResolverTransformerForIDE(
     }
 
     private fun collect(designation: FirDeclarationDesignationWithFile): Collection<FirDeclarationDesignationWithFile> {
-        val visited = mutableMapOf<FirDeclaration<*>, FirDeclarationDesignationWithFile>()
+        val visited = mutableMapOf<FirDeclaration, FirDeclarationDesignationWithFile>()
         val toVisit = mutableListOf<FirDeclarationDesignationWithFile>()
 
         toVisit.add(designation)
@@ -122,7 +122,7 @@ internal class FirDesignatedSupertypeResolverTransformerForIDE(
                 if (value !is SupertypeComputationStatus.Computed) continue
                 for (reference in value.supertypeRefs) {
                     val classLikeDeclaration = reference.type.toSymbol(session)?.fir
-                    if (classLikeDeclaration !is FirClassLikeDeclaration<*>) continue
+                    if (classLikeDeclaration !is FirClassLikeDeclaration) continue
                     if (classLikeDeclaration is FirJavaClass) continue
                     if (visited.containsKey(classLikeDeclaration)) continue
                     val containingFile = moduleFileCache.getContainerFirFile(classLikeDeclaration) ?: continue
@@ -157,9 +157,9 @@ internal class FirDesignatedSupertypeResolverTransformerForIDE(
             "Invalid resolve phase of file. Should be IMPORTS but found ${designation.firFile.resolvePhase}"
         }
 
-        val targetDesignation = if (designation.declaration !is FirClassLikeDeclaration<*>) {
+        val targetDesignation = if (designation.declaration !is FirClassLikeDeclaration) {
             val resolvableTarget = designation.path.lastOrNull() ?: return
-            check(resolvableTarget is FirClassLikeDeclaration<*>)
+            check(resolvableTarget is FirClassLikeDeclaration)
             val targetPath = designation.path.dropLast(1)
             FirDeclarationDesignationWithFile(targetPath, resolvableTarget, designation.firFile)
         } else designation
@@ -178,9 +178,9 @@ internal class FirDesignatedSupertypeResolverTransformerForIDE(
         ensureResolvedDeep(designation.declaration)
     }
 
-    override fun ensureResolved(declaration: FirDeclaration<*>) {
+    override fun ensureResolved(declaration: FirDeclaration) {
         when (declaration) {
-            is FirFunction<*>, is FirProperty, is FirEnumEntry, is FirField, is FirAnonymousInitializer -> Unit
+            is FirFunction, is FirProperty, is FirEnumEntry, is FirField, is FirAnonymousInitializer -> Unit
             is FirRegularClass -> {
                 declaration.ensurePhase(FirResolvePhase.SUPER_TYPES)
                 check(declaration.superTypeRefs.all { it is FirResolvedTypeRef })

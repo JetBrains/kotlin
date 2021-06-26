@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 
 object FirThrowableSubclassChecker : FirClassChecker() {
-    override fun check(declaration: FirClass<*>, context: CheckerContext, reporter: DiagnosticReporter) {
+    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!declaration.hasThrowableSupertype(context))
             return
 
@@ -35,12 +35,12 @@ object FirThrowableSubclassChecker : FirClassChecker() {
         }
     }
 
-    private fun FirClass<*>.hasThrowableSupertype(context: CheckerContext) =
+    private fun FirClass.hasThrowableSupertype(context: CheckerContext) =
         superConeTypes.any { it !is ConeClassErrorType && it.isSubtypeOfThrowable(context.session) }
 
-    private fun FirClass<*>.hasGenericOuterDeclaration(context: CheckerContext) =
+    private fun FirClass.hasGenericOuterDeclaration(context: CheckerContext) =
         classId.isLocal && context.containingDeclarations.anyIsGeneric()
 
-    private fun Collection<FirDeclaration<*>>.anyIsGeneric() =
+    private fun Collection<FirDeclaration>.anyIsGeneric() =
         any { it is FirTypeParameterRefsOwner && it.typeParameters.isNotEmpty() }
 }

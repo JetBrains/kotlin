@@ -11,7 +11,10 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClass
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.containingClass
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.dispatchReceiverTypeOrNull
 import org.jetbrains.kotlin.fir.originalOrSelf
@@ -50,7 +53,7 @@ object FirJvmOverridesBackwardCompatibilityHelper : FirOverridesBackwardCompatib
         visitedSymbols: MutableSet<FirCallableSymbol<*>>,
         context: CheckerContext
     ): Boolean {
-        val fir = symbol.fir as? FirCallableMemberDeclaration<*> ?: return false
+        val fir = symbol.fir as? FirCallableMemberDeclaration ?: return false
         if (fir.isFinal) return false
 
         if (symbol in visitedSymbols) return true

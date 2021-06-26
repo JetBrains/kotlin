@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.idea.fir.evaluate
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.argument
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -203,11 +206,11 @@ internal class FirCompileTimeConstantEvaluator {
             @Suppress("UNCHECKED_CAST")
             buildConstExpression(source, this, value as T)
 
-    private fun FirFunctionCall.getOriginalFunction(): FirCallableDeclaration<*>? {
+    private fun FirFunctionCall.getOriginalFunction(): FirCallableDeclaration? {
         val symbol: FirBasedSymbol<*>? = when (val reference = calleeReference) {
             is FirResolvedNamedReference -> reference.resolvedSymbol
             else -> null
         }
-        return symbol?.fir as? FirCallableDeclaration<*>
+        return symbol?.fir as? FirCallableDeclaration
     }
 }

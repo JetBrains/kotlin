@@ -18,7 +18,7 @@ object FirContractChecker : FirFunctionChecker() {
     // TODO: The message should vary. Migrate this to [ConeEffectExtractor] when creating fine-grained errors.
     private const val UNEXPECTED_CONSTRUCTION = "unexpected construction in contract description"
 
-    override fun check(declaration: FirFunction<*>, context: CheckerContext, reporter: DiagnosticReporter) {
+    override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration !is FirContractDescriptionOwner ||
             declaration.contractDescription !is FirResolvedContractDescription
         ) {

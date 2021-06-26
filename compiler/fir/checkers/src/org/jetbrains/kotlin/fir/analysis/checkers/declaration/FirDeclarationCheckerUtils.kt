@@ -184,7 +184,7 @@ private val FirProperty.hasAccessorImplementation: Boolean
     get() = (getter !is FirDefaultPropertyAccessor && getter?.hasBody == true) ||
             (setter !is FirDefaultPropertyAccessor && setter?.hasBody == true)
 
-internal val FirClass<*>.canHaveOpenMembers: Boolean get() = modality() != Modality.FINAL || classKind == ClassKind.ENUM_CLASS
+internal val FirClass.canHaveOpenMembers: Boolean get() = modality() != Modality.FINAL || classKind == ClassKind.ENUM_CLASS
 
 internal fun FirRegularClass.isInlineOrValueClass(): Boolean {
     if (this.classKind != ClassKind.CLASS) return false
@@ -192,14 +192,14 @@ internal fun FirRegularClass.isInlineOrValueClass(): Boolean {
     return isInline || hasModifier(KtTokens.VALUE_KEYWORD)
 }
 
-internal val FirDeclaration<*>.isEnumEntryInitializer: Boolean
+internal val FirDeclaration.isEnumEntryInitializer: Boolean
     get() {
         if (this !is FirConstructor || !this.isPrimary) return false
         return (containingClassAttr as? ConeClassLookupTagWithFixedSymbol)?.symbol?.fir?.classKind == ClassKind.ENUM_ENTRY
     }
 
 // contract: returns(true) implies (this is FirMemberDeclaration<*>)
-internal val FirDeclaration<*>.isLocalMember: Boolean
+internal val FirDeclaration.isLocalMember: Boolean
     get() = when (this) {
         is FirProperty -> this.isLocal
         is FirRegularClass -> this.isLocal
@@ -207,7 +207,7 @@ internal val FirDeclaration<*>.isLocalMember: Boolean
         else -> false
     }
 
-internal val FirCallableMemberDeclaration<*>.isExtensionMember: Boolean
+internal val FirCallableMemberDeclaration.isExtensionMember: Boolean
     get() {
         return receiverTypeRef != null && dispatchReceiverType != null
     }

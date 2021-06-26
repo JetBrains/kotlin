@@ -59,7 +59,7 @@ class FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculatorImpl(
     returnTypeCalculator,
     outerBodyResolveContext
 ) {
-    private val declarationDesignation = designation.filterIsInstance<FirDeclaration<*>>()
+    private val declarationDesignation = designation.filterIsInstance<FirDeclaration>()
 
     override fun transformSimpleFunction(
         simpleFunction: FirSimpleFunction,

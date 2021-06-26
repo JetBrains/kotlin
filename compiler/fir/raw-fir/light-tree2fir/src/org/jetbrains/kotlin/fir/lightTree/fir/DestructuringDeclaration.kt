@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.lightTree.converter.generateDestructuringBlock
 
 data class DestructuringDeclaration(
     val isVar: Boolean,
-    val entries: List<FirVariable<*>?>,
+    val entries: List<FirVariable?>,
     val initializer: FirExpression,
     val source: FirSourceElement
 ) {

@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtCallElement
 
 internal class KtFirAnnotationCall(
-    private val containingDeclaration: FirRefWithValidityCheck<FirDeclaration<*>>,
+    private val containingDeclaration: FirRefWithValidityCheck<FirDeclaration>,
     annotationCall: FirAnnotationCall
 ) : KtAnnotationCall() {
 

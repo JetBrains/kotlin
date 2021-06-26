@@ -26,11 +26,11 @@ import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.SmartSet
 
 abstract class SupertypeSupplier {
-    abstract fun forClass(firClass: FirClass<*>, useSiteSession: FirSession): List<ConeClassLikeType>
+    abstract fun forClass(firClass: FirClass, useSiteSession: FirSession): List<ConeClassLikeType>
     abstract fun expansionForTypeAlias(typeAlias: FirTypeAlias, useSiteSession: FirSession): ConeClassLikeType?
 
     object Default : SupertypeSupplier() {
-        override fun forClass(firClass: FirClass<*>, useSiteSession: FirSession): List<ConeClassLikeType> {
+        override fun forClass(firClass: FirClass, useSiteSession: FirSession): List<ConeClassLikeType> {
             if (!firClass.isLocal) {
                 // for local classes the phase may not be updated till that moment
                 firClass.ensureResolved(FirResolvePhase.SUPER_TYPES, useSiteSession)
@@ -46,7 +46,7 @@ abstract class SupertypeSupplier {
 }
 
 fun lookupSuperTypes(
-    klass: FirClass<*>,
+    klass: FirClass,
     lookupInterfaces: Boolean,
     deep: Boolean,
     useSiteSession: FirSession,
@@ -58,7 +58,7 @@ fun lookupSuperTypes(
     }
 }
 
-fun FirClass<*>.isThereLoopInSupertypes(session: FirSession): Boolean {
+fun FirClass.isThereLoopInSupertypes(session: FirSession): Boolean {
     val visitedSymbols: MutableSet<FirClassifierSymbol<*>> = SmartSet.create()
     val inProcess: MutableSet<FirClassifierSymbol<*>> = mutableSetOf()
 
@@ -72,7 +72,7 @@ fun FirClass<*>.isThereLoopInSupertypes(session: FirSession): Boolean {
         }
 
         when (val fir = current.fir) {
-            is FirClass<*> -> {
+            is FirClass -> {
                 fir.superConeTypes.forEach {
                     it.lookupTag.toSymbol(session)?.let(::dfs)
                 }
@@ -142,7 +142,7 @@ fun createSubstitution(
 fun ConeClassLikeType.wrapSubstitutionScopeIfNeed(
     session: FirSession,
     useSiteMemberScope: FirTypeScope,
-    declaration: FirClassLikeDeclaration<*>,
+    declaration: FirClassLikeDeclaration,
     builder: ScopeSession,
     derivedClass: FirRegularClass
 ): FirTypeScope {

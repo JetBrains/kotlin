@@ -59,7 +59,7 @@ class FirJvmSerializerExtension(
     private val jvmDefaultMode = state.jvmDefaultMode
 
     override fun shouldUseTypeTable(): Boolean = useTypeTable
-    override fun shouldSerializeFunction(function: FirFunction<*>): Boolean {
+    override fun shouldSerializeFunction(function: FirFunction): Boolean {
         return classBuilderMode != ClassBuilderMode.ABI ||
                 function !is FirSimpleFunction || function.visibility != Visibilities.Private
     }
@@ -77,7 +77,7 @@ class FirJvmSerializerExtension(
     }
 
     override fun serializeClass(
-        klass: FirClass<*>,
+        klass: FirClass,
         proto: ProtoBuf.Class.Builder,
         versionRequirementTable: MutableVersionRequirementTable,
         childSerializer: FirElementSerializer
@@ -103,7 +103,7 @@ class FirJvmSerializerExtension(
     // Interfaces which have @JvmDefault members somewhere in the hierarchy need the compiler 1.2.40+
     // so that the generated bridges in subclasses would call the super members correctly
     private fun writeVersionRequirementForJvmDefaultIfNeeded(
-        klass: FirClass<*>,
+        klass: FirClass,
         builder: ProtoBuf.Class.Builder,
         versionRequirementTable: MutableVersionRequirementTable
     ) {
@@ -182,7 +182,7 @@ class FirJvmSerializerExtension(
     }
 
     override fun serializeFunction(
-        function: FirFunction<*>,
+        function: FirFunction,
         proto: ProtoBuf.Function.Builder,
         versionRequirementTable: MutableVersionRequirementTable?,
         childSerializer: FirElementSerializer
@@ -208,7 +208,7 @@ class FirJvmSerializerExtension(
         }
     }
 
-    private fun FirFunction<*>.needsInlineParameterNullCheckRequirement(): Boolean =
+    private fun FirFunction.needsInlineParameterNullCheckRequirement(): Boolean =
         this is FirSimpleFunction && isInline && !isSuspend && !isParamAssertionsDisabled &&
                 !Visibilities.isPrivate(visibility) &&
                 (valueParameters.any { it.returnTypeRef.coneType.isBuiltinFunctionalType(session) } ||
@@ -284,7 +284,7 @@ class FirJvmSerializerExtension(
         bindings.get(slice, key) ?: globalBindings.get(slice, key)
 
     private inner class SignatureSerializer {
-        fun methodSignature(function: FirFunction<*>?, method: Method): JvmProtoBuf.JvmMethodSignature? {
+        fun methodSignature(function: FirFunction?, method: Method): JvmProtoBuf.JvmMethodSignature? {
             val builder = JvmProtoBuf.JvmMethodSignature.newBuilder()
             if (function == null || (function as? FirSimpleFunction)?.name?.asString() != method.name) {
                 builder.name = stringTable.getStringIndex(method.name)
@@ -297,7 +297,7 @@ class FirJvmSerializerExtension(
 
         // We don't write those signatures which can be trivially reconstructed from already serialized data
         // TODO: make JvmStringTable implement NameResolver and use JvmProtoBufUtil#getJvmMethodSignature instead
-        private fun requiresSignature(function: FirFunction<*>, desc: String): Boolean {
+        private fun requiresSignature(function: FirFunction, desc: String): Boolean {
             val sb = StringBuilder()
             sb.append("(")
             val receiverTypeRef = function.receiverTypeRef
@@ -375,9 +375,9 @@ class FirJvmSerializerExtension(
     }
 
     companion object {
-        val METHOD_FOR_FIR_FUNCTION = JvmSerializationBindings.SerializationMappingSlice.create<FirFunction<*>, Method>()
+        val METHOD_FOR_FIR_FUNCTION = JvmSerializationBindings.SerializationMappingSlice.create<FirFunction, Method>()
         val FIELD_FOR_PROPERTY = JvmSerializationBindings.SerializationMappingSlice.create<FirProperty, Pair<Type, String>>()
-        val SYNTHETIC_METHOD_FOR_FIR_VARIABLE = JvmSerializationBindings.SerializationMappingSlice.create<FirVariable<*>, Method>()
+        val SYNTHETIC_METHOD_FOR_FIR_VARIABLE = JvmSerializationBindings.SerializationMappingSlice.create<FirVariable, Method>()
     }
 
 }

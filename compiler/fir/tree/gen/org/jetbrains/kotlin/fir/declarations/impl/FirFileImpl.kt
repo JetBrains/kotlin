@@ -31,7 +31,7 @@ internal class FirFileImpl(
     override val attributes: FirDeclarationAttributes,
     override val annotations: MutableList<FirAnnotationCall>,
     override val imports: MutableList<FirImport>,
-    override val declarations: MutableList<FirDeclaration<*>>,
+    override val declarations: MutableList<FirDeclaration>,
     override val name: String,
     override val packageFqName: FqName,
 ) : FirFile() {

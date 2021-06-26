@@ -45,7 +45,7 @@ internal class KtFirVisibilityChecker(
 
         return useSiteFile.firRef.withFir { useSiteFirFile ->
             val containers = nonLocalContainingDeclaration
-                ?.getOrBuildFirSafe<FirCallableDeclaration<*>>(analysisSession.firResolveState)
+                ?.getOrBuildFirSafe<FirCallableDeclaration>(analysisSession.firResolveState)
                 ?.collectDesignation()
                 ?.path
                 .orEmpty()

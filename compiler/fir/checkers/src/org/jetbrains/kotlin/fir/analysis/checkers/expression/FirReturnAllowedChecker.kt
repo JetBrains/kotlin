@@ -27,7 +27,7 @@ object FirReturnAllowedChecker : FirReturnExpressionChecker() {
         }
 
         val containingDeclaration = context.containingDeclarations.last()
-        if (containingDeclaration is FirFunction<*> && containingDeclaration.body is FirSingleExpressionBlock) {
+        if (containingDeclaration is FirFunction && containingDeclaration.body is FirSingleExpressionBlock) {
             reporter.reportOn(source, FirErrors.RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY, context)
         }
     }
@@ -36,8 +36,8 @@ object FirReturnAllowedChecker : FirReturnExpressionChecker() {
         for (containingDeclaration in context.containingDeclarations.asReversed()) {
             when (containingDeclaration) {
                 // return from member of local class or anonymous object
-                is FirClass<*> -> return false
-                is FirFunction<*> -> {
+                is FirClass -> return false
+                is FirFunction -> {
                     when {
                         containingDeclaration.symbol == targetSymbol -> return true
                         containingDeclaration is FirAnonymousFunction -> {

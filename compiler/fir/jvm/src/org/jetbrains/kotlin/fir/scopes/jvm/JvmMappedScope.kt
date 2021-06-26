@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.name.Name
 
 class JvmMappedScope(
     private val session: FirSession,
-    private val firKotlinClass: FirClass<*>,
+    private val firKotlinClass: FirClass,
     private val firJavaClass: FirRegularClass,
     private val declaredMemberScope: FirScope,
     private val javaMappedClassUseSiteScope: FirTypeScope,

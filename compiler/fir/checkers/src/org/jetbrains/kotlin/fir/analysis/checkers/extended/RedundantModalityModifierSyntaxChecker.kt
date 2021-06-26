@@ -22,13 +22,13 @@ import org.jetbrains.kotlin.fir.declarations.FirStatusOwner
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.psi.KtDeclaration
 
-object RedundantModalityModifierSyntaxChecker : FirDeclarationSyntaxChecker<FirDeclaration<*>, KtDeclaration>() {
+object RedundantModalityModifierSyntaxChecker : FirDeclarationSyntaxChecker<FirDeclaration, KtDeclaration>() {
 
-    override fun isApplicable(element: FirDeclaration<*>, source: FirSourceElement): Boolean =
+    override fun isApplicable(element: FirDeclaration, source: FirSourceElement): Boolean =
         source.kind !is FirFakeSourceElementKind && element is FirStatusOwner
 
     override fun checkLightTree(
-        element: FirDeclaration<*>,
+        element: FirDeclaration,
         source: FirSourceElement,
         context: CheckerContext,
         reporter: DiagnosticReporter
@@ -37,7 +37,7 @@ object RedundantModalityModifierSyntaxChecker : FirDeclarationSyntaxChecker<FirD
         val modality = element.modality ?: return
         if (
             modality == Modality.FINAL
-            && (context.containingDeclarations.last() as? FirClass<*>)?.classKind == ClassKind.INTERFACE
+            && (context.containingDeclarations.last() as? FirClass)?.classKind == ClassKind.INTERFACE
         ) return
 
         if (source.treeStructure.modalityModifier(source.lighterASTNode) == null) return

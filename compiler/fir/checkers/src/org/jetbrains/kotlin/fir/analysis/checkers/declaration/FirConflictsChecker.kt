@@ -28,9 +28,9 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
 
     private class DeclarationInspector : FirDeclarationInspector() {
 
-        val declarationConflictingSymbols: HashMap<FirDeclaration<*>, SmartSet<FirBasedSymbol<*>>> = hashMapOf()
+        val declarationConflictingSymbols: HashMap<FirDeclaration, SmartSet<FirBasedSymbol<*>>> = hashMapOf()
 
-        override fun collectNonFunctionDeclaration(key: String, declaration: FirDeclaration<*>): MutableList<FirDeclaration<*>> =
+        override fun collectNonFunctionDeclaration(key: String, declaration: FirDeclaration): MutableList<FirDeclaration> =
             super.collectNonFunctionDeclaration(key, declaration).also {
                 collectLocalConflicts(declaration, it)
             }
@@ -40,7 +40,7 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
                 collectLocalConflicts(declaration, it)
             }
 
-        private fun collectLocalConflicts(declaration: FirDeclaration<*>, conflicting: List<FirDeclaration<*>>) {
+        private fun collectLocalConflicts(declaration: FirDeclaration, conflicting: List<FirDeclaration>) {
             val localConflicts = SmartSet.create<FirBasedSymbol<*>>()
             for (otherDeclaration in conflicting) {
                 if (otherDeclaration != declaration && !isExpectAndActual(declaration, otherDeclaration)) {
@@ -51,7 +51,7 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
             declarationConflictingSymbols[declaration] = localConflicts
         }
 
-        private fun isExpectAndActual(declaration1: FirDeclaration<*>, declaration2: FirDeclaration<*>): Boolean {
+        private fun isExpectAndActual(declaration1: FirDeclaration, declaration2: FirDeclaration): Boolean {
             if (declaration1 !is FirStatusOwner) return false
             if (declaration2 !is FirStatusOwner) return false
             return (declaration1.status.isExpect && declaration2.status.isActual) ||
@@ -59,7 +59,7 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
         }
 
         private fun areCompatibleMainFunctions(
-            declaration1: FirDeclaration<*>, file1: FirFile, declaration2: FirDeclaration<*>, file2: FirFile?
+            declaration1: FirDeclaration, file1: FirFile, declaration2: FirDeclaration, file2: FirFile?
         ): Boolean {
             // TODO: proper main function detector
             if (declaration1 !is FirSimpleFunction || declaration2 !is FirSimpleFunction) return false
@@ -68,7 +68,7 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
         }
 
         private fun collectExternalConflict(
-            declaration: FirDeclaration<*>,
+            declaration: FirDeclaration,
             declarationPresentation: String,
             containingFile: FirFile,
             conflictingSymbol: FirBasedSymbol<*>,
@@ -97,7 +97,7 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
         }
 
         fun collectWithExternalConflicts(
-            declaration: FirDeclaration<*>,
+            declaration: FirDeclaration,
             containingFile: FirFile,
             session: FirSession,
             packageMemberScope: FirPackageMemberScope
@@ -127,7 +127,7 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
                         }
                     }
                 }
-                is FirVariable<*> -> {
+                is FirVariable -> {
                     declarationName = declaration.name
                     if (!declarationName.isSpecial) {
                         packageMemberScope.processPropertiesByName(declarationName) {
@@ -200,7 +200,7 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
         }
     }
 
-    override fun check(declaration: FirDeclaration<*>, context: CheckerContext, reporter: DiagnosticReporter) {
+    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         val inspector = DeclarationInspector()
 
         when (declaration) {
@@ -238,7 +238,7 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
     }
 }
 
-private fun FirDeclarationPresenter.represent(declaration: FirDeclaration<*>): String? =
+private fun FirDeclarationPresenter.represent(declaration: FirDeclaration): String? =
     when (declaration) {
         is FirSimpleFunction -> represent(declaration)
         is FirRegularClass -> represent(declaration)
@@ -267,7 +267,7 @@ class FirNameConflictsTracker : FirNameConflictsTrackerComponent() {
     }
 }
 
-private fun FirDeclaration<*>.onConstructors(action: (ctor: FirConstructor) -> Unit) {
+private fun FirDeclaration.onConstructors(action: (ctor: FirConstructor) -> Unit) {
 
     class ClassConstructorVisitor : FirVisitorVoid() {
         override fun visitElement(element: FirElement) {}

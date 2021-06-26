@@ -137,7 +137,7 @@ private val CfgRenderMode = FirRenderer.RenderMode(
     renderAnnotation = false,
 )
 
-private fun FirFunction<*>.name(): String = when (this) {
+private fun FirFunction.name(): String = when (this) {
     is FirSimpleFunction -> name.asString()
     is FirAnonymousFunction -> "anonymousFunction"
     is FirConstructor -> "<init>"

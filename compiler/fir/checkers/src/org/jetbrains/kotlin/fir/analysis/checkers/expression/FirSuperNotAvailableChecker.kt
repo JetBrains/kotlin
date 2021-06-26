@@ -19,7 +19,7 @@ object FirSuperNotAvailableChecker : FirQualifiedAccessExpressionChecker() {
         if (expression.calleeReference.safeAs<FirSuperReference>()?.hadExplicitTypeInSource() != true) return
 
         val isInsideClass = context.containingDeclarations.any {
-            it is FirClass<*>
+            it is FirClass
         }
 
         if (!isInsideClass) {

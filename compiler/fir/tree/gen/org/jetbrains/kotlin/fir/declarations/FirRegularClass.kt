@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirRegularClass : FirClass<FirRegularClass>(), FirStatusOwner, FirControlFlowGraphOwner {
+abstract class FirRegularClass : FirClass(), FirStatusOwner, FirControlFlowGraphOwner {
     abstract override val source: FirSourceElement?
     abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase
@@ -30,7 +30,7 @@ abstract class FirRegularClass : FirClass<FirRegularClass>(), FirStatusOwner, Fi
     abstract override val attributes: FirDeclarationAttributes
     abstract override val typeParameters: List<FirTypeParameterRef>
     abstract override val classKind: ClassKind
-    abstract override val declarations: List<FirDeclaration<*>>
+    abstract override val declarations: List<FirDeclaration>
     abstract override val annotations: List<FirAnnotationCall>
     abstract override val scopeProvider: FirScopeProvider
     abstract override val status: FirDeclarationStatus

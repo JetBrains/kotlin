@@ -35,11 +35,11 @@ class FirContractResolveTransformerAdapter(session: FirSession, scopeSession: Sc
     }
 }
 
-fun <F : FirClassLikeDeclaration<F>> F.runContractResolveForLocalClass(
+fun <F : FirClassLikeDeclaration> F.runContractResolveForLocalClass(
     session: FirSession,
     scopeSession: ScopeSession,
     outerBodyResolveContext: BodyResolveContext,
-    targetedClasses: Set<FirClassLikeDeclaration<*>>
+    targetedClasses: Set<FirClassLikeDeclaration>
 ): F {
     val newContext = outerBodyResolveContext.createSnapshotForLocalClasses(
         ReturnTypeCalculatorForFullBodyResolve(),

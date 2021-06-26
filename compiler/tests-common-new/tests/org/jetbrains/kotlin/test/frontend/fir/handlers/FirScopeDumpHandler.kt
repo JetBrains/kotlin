@@ -111,7 +111,7 @@ class FirScopeDumpHandler(testServices: TestServices) : FirAnalysisHandler(testS
         }
     }
 
-    private fun SmartPrinter.printInfo(declaration: FirCallableMemberDeclaration<*>, counter: SymbolCounter) {
+    private fun SmartPrinter.printInfo(declaration: FirCallableMemberDeclaration, counter: SymbolCounter) {
         print("[${declaration.origin}]: ")
         print(declaration.render(FirRenderer.RenderMode.NoBodies).trim())
         print(" from ${declaration.dispatchReceiverType?.render()}")

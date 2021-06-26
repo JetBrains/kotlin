@@ -23,7 +23,7 @@ abstract class CheckerContext {
 
     // Context
     abstract val implicitReceiverStack: ImplicitReceiverStack
-    abstract val containingDeclarations: List<FirDeclaration<*>>
+    abstract val containingDeclarations: List<FirDeclaration>
     abstract val qualifiedAccessOrAnnotationCalls: List<FirStatement>
     abstract val getClassCalls: List<FirGetClassCall>
 

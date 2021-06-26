@@ -26,10 +26,6 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.LazyTransformerF
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.checkCanceled
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.ensurePhase
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.findSourceNonLocalFirDeclaration
-import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.*
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.*
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
 internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBuilder) {
     /**
@@ -84,7 +80,7 @@ internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBui
         ).transformDeclaration(firFileBuilder.firPhaseRunner)
     }
 
-    private fun FirDeclaration<*>.isValidForResolve(): Boolean = when (origin) {
+    private fun FirDeclaration.isValidForResolve(): Boolean = when (origin) {
         is FirDeclarationOrigin.Source,
         is FirDeclarationOrigin.ImportedFromObject,
         is FirDeclarationOrigin.Delegated,
@@ -190,7 +186,7 @@ internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBui
      * @param firDeclarationToResolve target non-local declaration
      */
     fun lazyResolveDeclaration(
-        firDeclarationToResolve: FirDeclaration<*>,
+        firDeclarationToResolve: FirDeclaration,
         moduleFileCache: ModuleFileCache,
         scopeSession: ScopeSession,
         toPhase: FirResolvePhase,

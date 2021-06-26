@@ -9,7 +9,6 @@ import com.google.common.collect.Sets
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -19,6 +18,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.FirElementFinder
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.executeOrReturnDefaultValueOnPCE
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -31,7 +31,7 @@ internal class FirProviderHelper(
     private val declarationProvider: DeclarationProvider,
     private val packageProvider: KtPackageProvider,
 ) {
-    fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration<*>? {
+    fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration? {
         if (classId.isLocal) return null
         return executeOrReturnDefaultValueOnPCE(null) {
             cache.classifierByClassId.computeIfAbsent(classId) {
@@ -40,7 +40,7 @@ internal class FirProviderHelper(
                     else -> if (klass.getClassId() == null) null else klass
                 } ?: return@computeIfAbsent Optional.empty()
                 val firFile = firFileBuilder.buildRawFirFileWithCaching(ktClass.containingKtFile, cache, preferLazyBodies = true)
-                val classifier = FirElementFinder.findElementIn<FirClassLikeDeclaration<*>>(firFile) { classifier ->
+                val classifier = FirElementFinder.findElementIn<FirClassLikeDeclaration>(firFile) { classifier ->
                     classifier.symbol.classId == classId
                 }
                     ?: error("Classifier $classId was found in file ${ktClass.containingKtFile.virtualFilePath} but was not found in FirFile")
@@ -79,7 +79,7 @@ internal class FirProviderHelper(
 
     private fun FirFile.collectCallableDeclarationsTo(list: MutableList<FirCallableSymbol<*>>, name: Name) {
         declarations.mapNotNullTo(list) { declaration ->
-            if (declaration is FirCallableDeclaration<*> && declaration.symbol.callableId.callableName == name) {
+            if (declaration is FirCallableDeclaration && declaration.symbol.callableId.callableName == name) {
                 declaration.symbol
             } else null
         }

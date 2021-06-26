@@ -100,14 +100,14 @@ abstract class AbstractConeCallConflictResolver(
         return when (val declaration = call.symbol.fir) {
             is FirSimpleFunction -> createFlatSignature(call, declaration)
             is FirConstructor -> createFlatSignature(call, declaration)
-            is FirVariable<*> -> createFlatSignature(call, declaration)
-            is FirClass<*> -> createFlatSignature(call, declaration)
+            is FirVariable -> createFlatSignature(call, declaration)
+            is FirClass -> createFlatSignature(call, declaration)
             is FirTypeAlias -> createFlatSignature(call, declaration)
             else -> error("Not supported: $declaration")
         }
     }
 
-    protected fun createFlatSignature(call: Candidate, variable: FirVariable<*>): FlatSignature<Candidate> {
+    protected fun createFlatSignature(call: Candidate, variable: FirVariable): FlatSignature<Candidate> {
         return FlatSignature(
             call,
             (variable as? FirProperty)?.typeParameters?.map { it.symbol.toLookupTag() }.orEmpty(),
@@ -155,14 +155,14 @@ abstract class AbstractConeCallConflictResolver(
 
     private fun computeParameterTypes(
         call: Candidate,
-        function: FirFunction<*>
+        function: FirFunction
     ): List<ConeKotlinType> {
         return listOfNotNull(function.receiverTypeRef?.coneType) +
                 (call.resultingTypeForCallableReference?.typeArguments?.map { it as ConeKotlinType }
                     ?: call.argumentMapping?.map { it.value.argumentType() }.orEmpty())
     }
 
-    private fun createFlatSignature(call: Candidate, klass: FirClassLikeDeclaration<*>): FlatSignature<Candidate> {
+    private fun createFlatSignature(call: Candidate, klass: FirClassLikeDeclaration): FlatSignature<Candidate> {
         return FlatSignature(
             call,
             (klass as? FirTypeParameterRefsOwner)?.typeParameters?.map { it.symbol.toLookupTag() }.orEmpty(),

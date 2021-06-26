@@ -5,12 +5,13 @@
 
 package org.jetbrains.kotlin.fir.declarations.comparators
 
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.types.FirTypeRefComparator
 
-object FirCallableMemberDeclarationComparator : Comparator<FirCallableMemberDeclaration<*>> {
-    override fun compare(a: FirCallableMemberDeclaration<*>, b: FirCallableMemberDeclaration<*>): Int {
+object FirCallableMemberDeclarationComparator : Comparator<FirCallableMemberDeclaration> {
+    override fun compare(a: FirCallableMemberDeclaration, b: FirCallableMemberDeclaration): Int {
         val typeAndNameDiff = FirMemberDeclarationComparator.TypeAndNameComparator.compare(a, b)
         if (typeAndNameDiff != 0) {
             return typeAndNameDiff
@@ -34,8 +35,8 @@ object FirCallableMemberDeclarationComparator : Comparator<FirCallableMemberDecl
         }
 
         // Compare the value parameters for functions.
-        if (a is FirFunction<*>) {
-            require(b is FirFunction<*>) {
+        if (a is FirFunction) {
+            require(b is FirFunction) {
                 "TypeAndNameComparator is inconsistent: ${a.render()} v.s. ${b.render()}"
             }
             val valueParameterSizeDiff = a.valueParameters.size - b.valueParameters.size

@@ -25,7 +25,7 @@ class AllOpenSupertypeGenerator(session: FirSession) : FirSupertypeGenerationExt
     }
 
     override fun computeAdditionalSupertypes(
-        classLikeDeclaration: FirClassLikeDeclaration<*>,
+        classLikeDeclaration: FirClassLikeDeclaration,
         resolvedSupertypes: List<FirTypeRef>
     ): List<FirResolvedTypeRef> {
         return listOf(

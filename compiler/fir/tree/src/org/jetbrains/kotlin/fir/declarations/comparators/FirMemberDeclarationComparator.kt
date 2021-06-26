@@ -20,8 +20,8 @@ object FirMemberDeclarationComparator : Comparator<FirStatusOwner> {
                 is FirConstructor -> 6
                 is FirProperty -> 5
                 is FirField -> 4
-                is FirFunction<*> -> 3
-                is FirClass<*> -> 2
+                is FirFunction -> 3
+                is FirClass -> 2
                 is FirTypeAlias -> 1
                 is FirErrorProperty -> 0
                 is FirValueParameter -> 0
@@ -29,9 +29,9 @@ object FirMemberDeclarationComparator : Comparator<FirStatusOwner> {
 
         private val FirStatusOwner.name: Name
             get() = when (this) {
-                is FirCallableMemberDeclaration<*> ->
+                is FirCallableMemberDeclaration ->
                     this.symbol.callableId.callableName
-                is FirClass<*> ->
+                is FirClass ->
                     this.classId.shortClassName
                 is FirTypeAlias ->
                     this.name
@@ -55,7 +55,7 @@ object FirMemberDeclarationComparator : Comparator<FirStatusOwner> {
     }
 
     override fun compare(a: FirStatusOwner, b: FirStatusOwner): Int {
-        if (a is FirCallableMemberDeclaration<*> && b is FirCallableMemberDeclaration<*>) {
+        if (a is FirCallableMemberDeclaration && b is FirCallableMemberDeclaration) {
             return FirCallableMemberDeclarationComparator.compare(a, b)
         }
 
@@ -66,8 +66,8 @@ object FirMemberDeclarationComparator : Comparator<FirStatusOwner> {
 
         // Note that names are already compared. Check other details per kind.
         when (a) {
-            is FirClass<*> -> {
-                require(b is FirClass<*>) {
+            is FirClass -> {
+                require(b is FirClass) {
                     "priority is inconsistent: ${a.render()} v.s. ${b.render()}"
                 }
                 return a.classId.packageFqName.asString().compareTo(b.classId.packageFqName.asString())

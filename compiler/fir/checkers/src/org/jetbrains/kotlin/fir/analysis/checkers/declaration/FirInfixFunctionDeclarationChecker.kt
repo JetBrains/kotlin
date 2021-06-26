@@ -9,10 +9,13 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirStatusOwner
 
 object FirInfixFunctionDeclarationChecker : FirBasicDeclarationChecker() {
-    override fun check(declaration: FirDeclaration<*>, context: CheckerContext, reporter: DiagnosticReporter) {
+    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if ((declaration as? FirStatusOwner)?.status?.isInfix != true) return
         if (declaration is FirSimpleFunction) {
             if (declaration.valueParameters.size != 1 || !hasExtensionOrDispatchReceiver(declaration, context)) {
@@ -28,6 +31,6 @@ object FirInfixFunctionDeclarationChecker : FirBasicDeclarationChecker() {
         context: CheckerContext
     ): Boolean {
         if (function.receiverTypeRef != null) return true
-        return context.containingDeclarations.lastOrNull() is FirClass<*>
+        return context.containingDeclarations.lastOrNull() is FirClass
     }
 }

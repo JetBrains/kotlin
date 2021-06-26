@@ -33,7 +33,7 @@ internal class FirDesignatedContractsResolveTransformerForIDE(
     private val ideDeclarationTransformer = IDEDeclarationTransformer(designation)
 
     override val declarationsTransformer: FirDeclarationsResolveTransformer = object : FirDeclarationsContractResolveTransformer(this) {
-        override fun transformDeclarationContent(firClass: FirClass<*>, data: ResolutionMode) {
+        override fun transformDeclarationContent(firClass: FirClass, data: ResolutionMode) {
             ideDeclarationTransformer.transformDeclarationContent(this, firClass, data) {
                 super.transformDeclarationContent(firClass, data)
                 firClass
@@ -41,13 +41,13 @@ internal class FirDesignatedContractsResolveTransformerForIDE(
         }
     }
 
-    override fun transformDeclarationContent(declaration: FirDeclaration<*>, data: ResolutionMode): FirDeclaration<*> =
+    override fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): FirDeclaration =
         ideDeclarationTransformer.transformDeclarationContent(this, declaration, data) {
             designation.declaration.updateResolvedPhaseForDeclarationAndChildren(FirResolvePhase.CONTRACTS)
             super.transformDeclarationContent(declaration, data)
         }
 
-    override fun needReplacePhase(firDeclaration: FirDeclaration<*>): Boolean =
+    override fun needReplacePhase(firDeclaration: FirDeclaration): Boolean =
         ideDeclarationTransformer.needReplacePhase && firDeclaration !is FirFile && super.needReplacePhase(firDeclaration)
 
     override fun transformDeclaration(phaseRunner: FirPhaseRunner) {
@@ -66,7 +66,7 @@ internal class FirDesignatedContractsResolveTransformerForIDE(
         ensureResolvedDeep(designation.declaration)
     }
 
-    override fun ensureResolved(declaration: FirDeclaration<*>) {
+    override fun ensureResolved(declaration: FirDeclaration) {
         when (declaration) {
             is FirSimpleFunction, is FirConstructor, is FirAnonymousInitializer ->
                 declaration.ensurePhase(FirResolvePhase.CONTRACTS)
@@ -75,7 +75,7 @@ internal class FirDesignatedContractsResolveTransformerForIDE(
                 declaration.getter?.ensurePhase(FirResolvePhase.CONTRACTS)
                 declaration.setter?.ensurePhase(FirResolvePhase.CONTRACTS)
             }
-            is FirClass<*>, is FirTypeAlias, is FirEnumEntry, is FirField -> Unit
+            is FirClass, is FirTypeAlias, is FirEnumEntry, is FirField -> Unit
             else -> error("Unexpected type: ${declaration::class.simpleName}")
         }
     }

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.symbols
 
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 
-abstract class FirBasedSymbol<E : FirDeclaration<E>> {
+abstract class FirBasedSymbol<E : FirDeclaration> {
     private var _fir: E? = null
 
     val fir: E

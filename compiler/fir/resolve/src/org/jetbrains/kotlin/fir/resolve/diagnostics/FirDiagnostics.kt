@@ -113,7 +113,7 @@ class ConeInstanceAccessBeforeSuperCall(val target: String) : ConeDiagnostic() {
     override val reason: String get() = "Cannot access ''${target}'' before superclass constructor has been called"
 }
 
-class ConeUnsupportedCallableReferenceTarget(val fir: FirCallableDeclaration<*>) : ConeDiagnostic() {
+class ConeUnsupportedCallableReferenceTarget(val fir: FirCallableDeclaration) : ConeDiagnostic() {
     override val reason: String get() = "Unsupported declaration for callable reference: ${fir.render()}"
 }
 

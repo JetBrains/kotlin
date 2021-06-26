@@ -64,17 +64,17 @@ fun ControlFlowGraphBuilder.createFieldInitializerExitNode(fir: FirField): Field
 fun ControlFlowGraphBuilder.createFieldInitializerEnterNode(fir: FirField): FieldInitializerEnterNode =
     FieldInitializerEnterNode(currentGraph, fir, levelCounter, createId())
 
-fun ControlFlowGraphBuilder.createFunctionEnterNode(fir: FirFunction<*>): FunctionEnterNode =
+fun ControlFlowGraphBuilder.createFunctionEnterNode(fir: FirFunction): FunctionEnterNode =
     FunctionEnterNode(currentGraph, fir, levelCounter, createId()).also {
         currentGraph.enterNode = it
     }
 
-fun ControlFlowGraphBuilder.createFunctionExitNode(fir: FirFunction<*>): FunctionExitNode =
+fun ControlFlowGraphBuilder.createFunctionExitNode(fir: FirFunction): FunctionExitNode =
     FunctionExitNode(currentGraph, fir, levelCounter, createId()).also {
         currentGraph.exitNode = it
     }
 
-fun ControlFlowGraphBuilder.createLocalFunctionDeclarationNode(fir: FirFunction<*>): LocalFunctionDeclarationNode =
+fun ControlFlowGraphBuilder.createLocalFunctionDeclarationNode(fir: FirFunction): LocalFunctionDeclarationNode =
     LocalFunctionDeclarationNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createBinaryOrEnterNode(fir: FirBinaryLogicExpression): BinaryOrEnterNode =
@@ -233,10 +233,10 @@ fun ControlFlowGraphBuilder.createAnonymousObjectExpressionExitNode(fir: FirAnon
 fun ControlFlowGraphBuilder.createUnionFunctionCallArgumentsNode(fir: FirElement): UnionFunctionCallArgumentsNode =
     UnionFunctionCallArgumentsNode(currentGraph, fir, levelCounter, createId())
 
-fun ControlFlowGraphBuilder.createClassEnterNode(fir: FirClass<*>): ClassEnterNode =
+fun ControlFlowGraphBuilder.createClassEnterNode(fir: FirClass): ClassEnterNode =
     ClassEnterNode(currentGraph, fir, levelCounter, createId())
 
-fun ControlFlowGraphBuilder.createClassExitNode(fir: FirClass<*>): ClassExitNode =
+fun ControlFlowGraphBuilder.createClassExitNode(fir: FirClass): ClassExitNode =
     ClassExitNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createLocalClassExitNode(fir: FirRegularClass): LocalClassExitNode =

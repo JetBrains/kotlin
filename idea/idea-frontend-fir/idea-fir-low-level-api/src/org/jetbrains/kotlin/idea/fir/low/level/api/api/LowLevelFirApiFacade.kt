@@ -43,7 +43,7 @@ fun ModuleInfo.getResolveState(project: Project): FirModuleResolveState =
 inline fun <R> KtDeclaration.withFirDeclaration(
     resolveState: FirModuleResolveState,
     phase: FirResolvePhase = FirResolvePhase.RAW_FIR,
-    action: (FirDeclaration<*>) -> R
+    action: (FirDeclaration) -> R
 ): R {
     val firDeclaration = if (containingKtFile.isCompiled) {
         resolveState.findSourceFirCompiledDeclaration(this)
@@ -71,7 +71,7 @@ inline fun <R> KtDeclaration.withFirDeclaration(
 inline fun <R> KtDeclaration.withFirDeclaration(
     resolveState: FirModuleResolveState,
     resolveType: ResolveType = ResolveType.NoResolve,
-    action: (FirDeclaration<*>) -> R
+    action: (FirDeclaration) -> R
 ): R {
     val firDeclaration = resolveState.findSourceFirDeclaration(this)
     firDeclaration.resolvedFirToType(resolveType, resolveState)
@@ -88,7 +88,7 @@ inline fun <R> KtDeclaration.withFirDeclaration(
  * Otherwise, some threading problems may arise,
  */
 @OptIn(InternalForInline::class)
-inline fun <reified F : FirDeclaration<*>, R> KtDeclaration.withFirDeclarationOfType(
+inline fun <reified F : FirDeclaration, R> KtDeclaration.withFirDeclarationOfType(
     resolveState: FirModuleResolveState,
     phase: FirResolvePhase = FirResolvePhase.RAW_FIR,
     action: (F) -> R
@@ -106,7 +106,7 @@ inline fun <reified F : FirDeclaration<*>, R> KtDeclaration.withFirDeclarationOf
  * Otherwise, some threading problems may arise,
  */
 @OptIn(InternalForInline::class)
-inline fun <reified F : FirDeclaration<*>, R> KtLambdaExpression.withFirDeclarationOfType(
+inline fun <reified F : FirDeclaration, R> KtLambdaExpression.withFirDeclarationOfType(
     resolveState: FirModuleResolveState,
     action: (F) -> R
 ): R {
@@ -119,7 +119,7 @@ inline fun <reified F : FirDeclaration<*>, R> KtLambdaExpression.withFirDeclarat
  * Executes [action] with given [FirDeclaration] under read action, so resolve **is not possible** inside [action]
  * [FirDeclaration] passed to [action] will be resolved at least to [phase] when executing [action] on it
  */
-fun <D : FirDeclaration<*>, R> D.withFirDeclaration(
+fun <D : FirDeclaration, R> D.withFirDeclaration(
     resolveState: FirModuleResolveState,
     phase: FirResolvePhase = FirResolvePhase.RAW_FIR,
     action: (D) -> R,
@@ -132,7 +132,7 @@ fun <D : FirDeclaration<*>, R> D.withFirDeclaration(
  * Executes [action] with given [FirDeclaration] under read action, so resolve **is not possible** inside [action]
  * [FirDeclaration] passed to [action] will be resolved at least to [phase] when executing [action] on it
  */
-fun <D : FirDeclaration<*>, R> D.withFirDeclaration(
+fun <D : FirDeclaration, R> D.withFirDeclaration(
     type: ResolveType,
     resolveState: FirModuleResolveState,
     action: (D) -> R,
@@ -144,7 +144,7 @@ fun <D : FirDeclaration<*>, R> D.withFirDeclaration(
 /**
  * Executes [action] with given [FirDeclaration] under write lock, so resolve **is possible** inside [action]
  */
-fun <D : FirDeclaration<*>, R> D.withFirDeclarationInWriteLock(
+fun <D : FirDeclaration, R> D.withFirDeclarationInWriteLock(
     resolveState: FirModuleResolveState,
     phase: FirResolvePhase = FirResolvePhase.RAW_FIR,
     action: (D) -> R,
@@ -156,7 +156,7 @@ fun <D : FirDeclaration<*>, R> D.withFirDeclarationInWriteLock(
 /**
  * Executes [action] with given [FirDeclaration] under write lock, so resolve **is possible** inside [action]
  */
-fun <D : FirDeclaration<*>, R> D.withFirDeclarationInWriteLock(
+fun <D : FirDeclaration, R> D.withFirDeclarationInWriteLock(
     resolveState: FirModuleResolveState,
     resolveType: ResolveType = ResolveType.BodyResolveWithChildren,
     action: (D) -> R,
@@ -187,7 +187,7 @@ fun KtFile.collectDiagnosticsForFile(
  *
  * Should not be called form [withFirDeclaration], [withFirDeclarationOfType] functions, as it it may cause deadlock
  */
-fun <D : FirDeclaration<*>> D.resolvedFirToPhase(
+fun <D : FirDeclaration> D.resolvedFirToPhase(
     phase: FirResolvePhase,
     resolveState: FirModuleResolveState
 ): D =
@@ -198,7 +198,7 @@ fun <D : FirDeclaration<*>> D.resolvedFirToPhase(
  *
  * Should not be called form [withFirDeclaration], [withFirDeclarationOfType] functions, as it it may cause deadlock
  */
-fun <D : FirDeclaration<*>> D.resolvedFirToType(
+fun <D : FirDeclaration> D.resolvedFirToType(
     type: ResolveType,
     resolveState: FirModuleResolveState
 ): D =

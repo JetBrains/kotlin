@@ -33,7 +33,7 @@ class FirStaticScope(private val delegateScope: FirScope) : FirScope(), FirConta
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         delegateScope.processPropertiesByName(name) {
-            if ((it.fir as? FirCallableMemberDeclaration<*>)?.isStatic == true) {
+            if ((it.fir as? FirCallableMemberDeclaration)?.isStatic == true) {
                 processor(it)
             }
         }

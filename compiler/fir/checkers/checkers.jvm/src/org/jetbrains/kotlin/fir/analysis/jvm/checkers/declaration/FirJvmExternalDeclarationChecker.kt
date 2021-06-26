@@ -17,14 +17,14 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExternal
 import org.jetbrains.kotlin.lexer.KtTokens
 
 object FirJvmExternalDeclarationChecker : FirBasicDeclarationChecker() {
-    override fun check(declaration: FirDeclaration<*>, context: CheckerContext, reporter: DiagnosticReporter) {
+    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration !is FirStatusOwner) return
         if (!declaration.isExternal) return
         val source = declaration.source ?: return
         if (source.kind is FirFakeSourceElementKind) return
 
         // WRONG_MODIFIER_TARGET on external constructor is intentionally NOT covered in this checker.
-        if (declaration !is FirFunction<*>) {
+        if (declaration !is FirFunction) {
             val target = when (declaration) {
                 is FirProperty -> "property"
                 is FirRegularClass -> "class"

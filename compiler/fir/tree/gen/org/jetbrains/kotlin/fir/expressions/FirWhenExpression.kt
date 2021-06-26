@@ -23,7 +23,7 @@ abstract class FirWhenExpression : FirExpression(), FirResolvable {
     abstract override val annotations: List<FirAnnotationCall>
     abstract override val calleeReference: FirReference
     abstract val subject: FirExpression?
-    abstract val subjectVariable: FirVariable<*>?
+    abstract val subjectVariable: FirVariable?
     abstract val branches: List<FirWhenBranch>
     abstract val exhaustivenessStatus: ExhaustivenessStatus?
     abstract val usedAsExpression: Boolean

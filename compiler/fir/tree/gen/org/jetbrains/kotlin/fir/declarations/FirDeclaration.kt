@@ -17,9 +17,9 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-sealed class FirDeclaration<E : FirDeclaration<E>> : FirPureAbstractElement(), FirElement {
+sealed class FirDeclaration : FirPureAbstractElement(), FirElement {
     abstract override val source: FirSourceElement?
-    abstract val symbol: FirBasedSymbol<E>
+    abstract val symbol: FirBasedSymbol<out FirDeclaration>
     abstract val moduleData: FirModuleData
     abstract val resolvePhase: FirResolvePhase
     abstract val origin: FirDeclarationOrigin

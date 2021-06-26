@@ -42,7 +42,6 @@ internal abstract class FirAbstractAnnotationResolveTransformer<D, S>(
         regularClass: FirRegularClass,
         data: D
     ): FirStatement {
-        @Suppress("UNCHECKED_CAST")
         return transformAnnotatedDeclaration(regularClass, data).also {
             val state = beforeChildren(regularClass)
             regularClass.transformDeclarations(this, data)
@@ -78,7 +77,6 @@ internal abstract class FirAbstractAnnotationResolveTransformer<D, S>(
         valueParameter: FirValueParameter,
         data: D
     ): FirStatement {
-        @Suppress("UNCHECKED_CAST")
         return transformAnnotatedDeclaration(valueParameter, data) as FirStatement
     }
 
@@ -87,16 +85,14 @@ internal abstract class FirAbstractAnnotationResolveTransformer<D, S>(
     }
 
     override fun transformTypeRef(typeRef: FirTypeRef, data: D): FirTypeRef {
-        @Suppress("UNCHECKED_CAST")
         return transformAnnotationContainer(typeRef, data) as FirTypeRef
     }
 
-    override fun <T : FirAnnotatedDeclaration<T>> transformAnnotatedDeclaration(
-        annotatedDeclaration: FirAnnotatedDeclaration<T>,
+    override fun transformAnnotatedDeclaration(
+        annotatedDeclaration: FirAnnotatedDeclaration,
         data: D
-    ): FirAnnotatedDeclaration<T> {
-        @Suppress("UNCHECKED_CAST")
-        return transformAnnotationContainer(annotatedDeclaration, data) as FirAnnotatedDeclaration<T>
+    ): FirAnnotatedDeclaration {
+        return transformAnnotationContainer(annotatedDeclaration, data) as FirAnnotatedDeclaration
     }
 
     override fun transformAnnotationContainer(
@@ -110,7 +106,7 @@ internal abstract class FirAbstractAnnotationResolveTransformer<D, S>(
         return element
     }
 
-    protected open fun beforeChildren(declaration: FirAnnotatedDeclaration<*>): S? {
+    protected open fun beforeChildren(declaration: FirAnnotatedDeclaration): S? {
         return null
     }
 

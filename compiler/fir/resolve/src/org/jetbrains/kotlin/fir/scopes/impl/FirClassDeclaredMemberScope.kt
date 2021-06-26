@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.name.Name
 
 class FirClassDeclaredMemberScope(
     val useSiteSession: FirSession,
-    klass: FirClass<*>,
+    klass: FirClass,
     useLazyNestedClassifierScope: Boolean = false,
     existingNames: List<Name>? = null,
     symbolProvider: FirSymbolProvider? = null
@@ -34,10 +34,10 @@ class FirClassDeclaredMemberScope(
         val result = mutableMapOf<Name, MutableList<FirCallableSymbol<*>>>()
         loop@ for (declaration in klass.declarations) {
             when (declaration) {
-                is FirCallableMemberDeclaration<*> -> {
+                is FirCallableMemberDeclaration -> {
                     val name = when (declaration) {
                         is FirConstructor -> CONSTRUCTOR_NAME
-                        is FirVariable<*> -> if (declaration.isSynthetic) continue@loop else declaration.name
+                        is FirVariable -> if (declaration.isSynthetic) continue@loop else declaration.name
                         is FirSimpleFunction -> declaration.name
                         else -> continue@loop
                     }

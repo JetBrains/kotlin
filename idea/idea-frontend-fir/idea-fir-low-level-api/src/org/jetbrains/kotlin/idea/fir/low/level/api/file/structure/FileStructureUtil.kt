@@ -27,14 +27,14 @@ internal object FileStructureUtil {
         else -> false
     }
 
-    fun replaceDeclaration(firFile: FirFile, from: FirCallableDeclaration<*>, to: FirCallableDeclaration<*>) {
+    fun replaceDeclaration(firFile: FirFile, from: FirCallableDeclaration, to: FirCallableDeclaration) {
         val declarations = if (from.symbol.callableId.className == null) {
-            firFile.declarations as MutableList<FirDeclaration<*>>
+            firFile.declarations as MutableList<FirDeclaration>
         } else {
             val classLikeLookupTag = from.containingClass()
                 ?: error("Class name should not be null for non-top-level & non-local declarations, but was null for\n${from.render()}")
             val containingClass = classLikeLookupTag.toSymbol(firFile.moduleData.session)?.fir as FirRegularClass
-            containingClass.declarations as MutableList<FirDeclaration<*>>
+            containingClass.declarations as MutableList<FirDeclaration>
         }
         declarations.replaceFirst(from, to)
     }
@@ -42,8 +42,8 @@ internal object FileStructureUtil {
     inline fun <R> withDeclarationReplaced(
         firFile: FirFile,
         cache: ModuleFileCache,
-        from: FirCallableDeclaration<*>,
-        to: FirCallableDeclaration<*>,
+        from: FirCallableDeclaration,
+        to: FirCallableDeclaration,
         action: () -> R,
     ): R {
         cache.firFileLockProvider.withWriteLock(firFile) { replaceDeclaration(firFile, from, to) }

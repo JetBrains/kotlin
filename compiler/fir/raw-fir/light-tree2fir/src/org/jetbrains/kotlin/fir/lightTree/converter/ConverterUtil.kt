@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.lightTree.converter
 
 import com.intellij.lang.LighterASTNode
 import com.intellij.psi.tree.IElementType
-import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeType
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.descriptors.Modality
@@ -107,7 +106,7 @@ inline fun isClassLocal(classNode: LighterASTNode, getParent: LighterASTNode.() 
 fun generateDestructuringBlock(
     moduleData: FirModuleData,
     multiDeclaration: DestructuringDeclaration,
-    container: FirVariable<*>,
+    container: FirVariable,
     tmpVariable: Boolean
 ): FirBlock {
     return buildBlock {

@@ -7,12 +7,10 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
-import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.idea.frontend.api.components.KtClassTypeBuilder
 import org.jetbrains.kotlin.idea.frontend.api.components.KtTypeCreator
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
@@ -36,7 +34,7 @@ internal class KtFirTypeCreator(
             is KtClassTypeBuilder.BySymbol -> {
                 val symbol = builder.symbol
                 check(symbol is KtFirSymbol<*>)
-                symbol.firRef.withFir { (it as FirClassLikeDeclaration<*>).symbol.toLookupTag() }
+                symbol.firRef.withFir { (it as FirClassLikeDeclaration).symbol.toLookupTag() }
             }
         }
 

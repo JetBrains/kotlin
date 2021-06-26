@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.Name
 
-class FirNestedClassifierScope(val klass: FirClass<*>, val useSiteSession: FirSession) : FirScope(), FirContainingNamesAwareScope {
+class FirNestedClassifierScope(val klass: FirClass, val useSiteSession: FirSession) : FirScope(), FirContainingNamesAwareScope {
     private val classIndex: Map<Name, FirRegularClassSymbol> = run {
         val result = mutableMapOf<Name, FirRegularClassSymbol>()
         for (declaration in klass.declarations) {

@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirAnonymousObject : FirClass<FirAnonymousObject>(), FirControlFlowGraphOwner {
+abstract class FirAnonymousObject : FirClass(), FirControlFlowGraphOwner {
     abstract override val source: FirSourceElement?
     abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase
@@ -30,7 +30,7 @@ abstract class FirAnonymousObject : FirClass<FirAnonymousObject>(), FirControlFl
     abstract override val typeParameters: List<FirTypeParameterRef>
     abstract override val classKind: ClassKind
     abstract override val superTypeRefs: List<FirTypeRef>
-    abstract override val declarations: List<FirDeclaration<*>>
+    abstract override val declarations: List<FirDeclaration>
     abstract override val annotations: List<FirAnnotationCall>
     abstract override val scopeProvider: FirScopeProvider
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?

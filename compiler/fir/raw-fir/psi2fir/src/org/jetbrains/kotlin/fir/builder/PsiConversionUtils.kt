@@ -84,7 +84,7 @@ internal fun Array<KtWhenCondition>.toFirWhenCondition(
 internal fun generateDestructuringBlock(
     moduleData: FirModuleData,
     multiDeclaration: KtDestructuringDeclaration,
-    container: FirVariable<*>,
+    container: FirVariable,
     tmpVariable: Boolean,
     extractAnnotationsTo: KtAnnotated.(FirAnnotationContainerBuilder) -> Unit,
     toFirOrImplicitTypeRef: KtTypeReference?.() -> FirTypeRef,

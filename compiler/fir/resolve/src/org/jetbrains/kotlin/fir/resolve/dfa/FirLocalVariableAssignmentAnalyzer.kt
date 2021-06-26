@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.name.Name
  *  queries after the traversal is done.
  **/
 internal class FirLocalVariableAssignmentAnalyzer(
-    private val assignedLocalVariablesByFunction: Map<FirFunction<*>, AssignedLocalVariables>
+    private val assignedLocalVariablesByFunction: Map<FirFunction, AssignedLocalVariables>
 ) {
     /**
      * Stack storing concurrent lambda arguments for the current visited anonymous function. For example
@@ -80,7 +80,7 @@ internal class FirLocalVariableAssignmentAnalyzer(
         ephemeralConcurrentlyAssignedLocalVariables.clear()
     }
 
-    fun enterLocalFunction(function: FirFunction<*>) {
+    fun enterLocalFunction(function: FirFunction) {
         val eventOccurrencesRange: EventOccurrencesRange? = (function as? FirAnonymousFunction)?.invocationKind
         // carry on concurrently modified variables from the current scope
         val concurrentlyAssignedLocalVariables = concurrentlyAssignedLocalVariablesStack.last().toMutableSet()
@@ -108,7 +108,7 @@ internal class FirLocalVariableAssignmentAnalyzer(
         }
     }
 
-    fun exitLocalFunction(function: FirFunction<*>) {
+    fun exitLocalFunction(function: FirFunction) {
         val eventOccurrencesRange: EventOccurrencesRange? = (function as? FirAnonymousFunction)?.invocationKind
         concurrentlyAssignedLocalVariablesStack.removeLast()
         when (eventOccurrencesRange) {
@@ -210,14 +210,14 @@ internal class FirLocalVariableAssignmentAnalyzer(
          * By the way, since local variables are not resolved at this point, we manually track local variable declarations and resolve them along
          * the way so that shadowed names are handled correctly.
          */
-        fun analyzeFunction(rootFunction: FirFunction<*>): FirLocalVariableAssignmentAnalyzer {
+        fun analyzeFunction(rootFunction: FirFunction): FirLocalVariableAssignmentAnalyzer {
             return FirLocalVariableAssignmentAnalyzer(computeAssignedLocalVariables(rootFunction))
         }
 
         /**
          * Computes a mini CFG and returns the map tracking assigned local variables at each potentially concurrent local/lambda function.
          */
-        private fun computeAssignedLocalVariables(firFunction: FirFunction<*>): Map<FirFunction<*>, AssignedLocalVariables> {
+        private fun computeAssignedLocalVariables(firFunction: FirFunction): Map<FirFunction, AssignedLocalVariables> {
             val startFlow = MiniFlow.start()
             val data = MiniCfgBuilder.MiniCfgData(startFlow)
             MiniCfgBuilder().visitElement(firFunction, data)
@@ -253,7 +253,7 @@ internal class FirLocalVariableAssignmentAnalyzer(
                 handleFunctionFork(simpleFunction, data)
             }
 
-            private fun handleFunctionFork(function: FirFunction<*>, data: MiniCfgData) {
+            private fun handleFunctionFork(function: FirFunction, data: MiniCfgData) {
                 val currentFlow = data.flow ?: return
                 val functionFork = currentFlow.fork()
                 data.flow = functionFork
@@ -350,7 +350,7 @@ internal class FirLocalVariableAssignmentAnalyzer(
 
             class MiniCfgData(var flow: MiniFlow?) {
                 val variableDeclarations: ArrayDeque<MutableMap<Name, FirProperty>> = ArrayDeque(listOf(mutableMapOf()))
-                val localFunctionToAssignedLocalVariables: MutableMap<FirFunction<*>, AssignedLocalVariables> = mutableMapOf()
+                val localFunctionToAssignedLocalVariables: MutableMap<FirFunction, AssignedLocalVariables> = mutableMapOf()
                 fun resolveLocalVariable(name: Name): FirProperty? {
                     return variableDeclarations.asReversed().firstNotNullOfOrNull { it[name] }
                 }

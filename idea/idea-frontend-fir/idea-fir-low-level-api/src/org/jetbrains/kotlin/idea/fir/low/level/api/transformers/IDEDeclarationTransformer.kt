@@ -19,19 +19,19 @@ internal class IDEDeclarationTransformer(private val designation: FirDeclaration
 
     inline fun <D> visitDeclarationContent(
         visitor: FirVisitor<Unit, D>,
-        declaration: FirDeclaration<*>,
+        declaration: FirDeclaration,
         data: D,
-        default: () -> FirDeclaration<*>
-    ): FirDeclaration<*> = processDeclarationContent(declaration, default) {
+        default: () -> FirDeclaration
+    ): FirDeclaration = processDeclarationContent(declaration, default) {
         it.accept(visitor, data)
     }
 
     inline fun <D> transformDeclarationContent(
         transformer: FirDefaultTransformer<D>,
-        declaration: FirDeclaration<*>,
+        declaration: FirDeclaration,
         data: D,
-        default: () -> FirDeclaration<*>
-    ): FirDeclaration<*> = processDeclarationContent(declaration, default) { toTransform ->
+        default: () -> FirDeclaration
+    ): FirDeclaration = processDeclarationContent(declaration, default) { toTransform ->
         toTransform.transform<FirElement, D>(transformer, data).also { transformed ->
             check(transformed === toTransform) {
                 "become $transformed `${transformed.render()}`, was ${toTransform}: `${toTransform.render()}`"
@@ -40,10 +40,10 @@ internal class IDEDeclarationTransformer(private val designation: FirDeclaration
     }
 
     private inline fun processDeclarationContent(
-        declaration: FirDeclaration<*>,
-        default: () -> FirDeclaration<*>,
-        applyToDesignated: (FirDeclaration<*>) -> Unit,
-    ): FirDeclaration<*> {
+        declaration: FirDeclaration,
+        default: () -> FirDeclaration,
+        applyToDesignated: (FirDeclaration) -> Unit,
+    ): FirDeclaration {
         //It means that we are inside the target declaration
         if (isInsideTargetDeclaration) {
             return default()

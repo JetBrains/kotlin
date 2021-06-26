@@ -39,7 +39,9 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.isFunctionTypeOrSubtype
+import org.jetbrains.kotlin.ir.util.isInterface
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.psi2ir.generators.hasNoSideEffects
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
@@ -388,7 +390,7 @@ class CallAndReferenceGenerator(
                         this.declarationStorage.getIrConstructorSymbol(it)
                     } ?: run {
                         // Fallback for FirReferencePlaceholderForResolvedAnnotations from jar
-                        val fir = coneType.lookupTag.toSymbol(session)?.fir as? FirClass<*>
+                        val fir = coneType.lookupTag.toSymbol(session)?.fir as? FirClass
                         var constructorSymbol: FirConstructorSymbol? = null
                         fir?.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true)?.processDeclaredConstructors {
                             if (it.fir.isPrimary && constructorSymbol == null) {
@@ -463,7 +465,7 @@ class CallAndReferenceGenerator(
         }
     }
 
-    private fun FirFunctionCall.buildSubstitutorByCalledFunction(function: FirFunction<*>?): ConeSubstitutor? {
+    private fun FirFunctionCall.buildSubstitutorByCalledFunction(function: FirFunction?): ConeSubstitutor? {
         if (function == null) return null
         val map = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
         for ((index, typeParameter) in function.typeParameters.withIndex()) {

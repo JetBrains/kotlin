@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getModuleInfo
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.getResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSession
 import org.jetbrains.kotlin.psi.KtElement
 
@@ -37,7 +36,7 @@ internal fun FirBasedSymbol<*>.name(): String = when (this) {
     else -> error("unknown symbol ${this::class.simpleName}")
 }
 
-internal fun FirDeclaration<*>.name(): String = symbol.name()
+internal fun FirDeclaration.name(): String = symbol.name()
 
 internal inline fun <R> resolveWithClearCaches(
     context: KtElement,

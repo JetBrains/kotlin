@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirConstructor
+import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
@@ -13,7 +16,7 @@ import org.jetbrains.kotlin.ir.util.parentClassOrNull
 class Fir2IrConversionScope {
     private val parentStack = mutableListOf<IrDeclarationParent>()
 
-    private val containingFirClassStack = mutableListOf<FirClass<*>>()
+    private val containingFirClassStack = mutableListOf<FirClass>()
 
     fun <T : IrDeclarationParent?> withParent(parent: T, f: T.() -> Unit): T {
         if (parent == null) return parent
@@ -25,7 +28,7 @@ class Fir2IrConversionScope {
 
     fun containingFileIfAny(): IrFile? = parentStack.getOrNull(0) as? IrFile
 
-    fun withContainingFirClass(containingFirClass: FirClass<*>, f: () -> Unit) {
+    fun withContainingFirClass(containingFirClass: FirClass, f: () -> Unit) {
         containingFirClassStack += containingFirClass
         f()
         containingFirClassStack.removeAt(containingFirClassStack.size - 1)
@@ -48,7 +51,7 @@ class Fir2IrConversionScope {
         return declaration
     }
 
-    fun containerFirClass(): FirClass<*>? = containingFirClassStack.lastOrNull()
+    fun containerFirClass(): FirClass? = containingFirClassStack.lastOrNull()
 
     private val functionStack = mutableListOf<IrFunction>()
 

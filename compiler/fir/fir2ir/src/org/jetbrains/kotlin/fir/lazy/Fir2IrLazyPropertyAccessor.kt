@@ -9,7 +9,10 @@ import org.jetbrains.kotlin.fir.backend.ConversionTypeContext
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.generateOverriddenAccessorSymbols
 import org.jetbrains.kotlin.fir.backend.toIrType
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.symbols.Fir2IrSimpleFunctionSymbol
@@ -35,12 +38,12 @@ class Fir2IrLazyPropertyAccessor(
     firParentClass: FirRegularClass,
     symbol: Fir2IrSimpleFunctionSymbol,
     isFakeOverride: Boolean
-) : AbstractFir2IrLazyFunction<FirCallableMemberDeclaration<*>>(components, startOffset, endOffset, origin, symbol, isFakeOverride) {
+) : AbstractFir2IrLazyFunction<FirCallableMemberDeclaration>(components, startOffset, endOffset, origin, symbol, isFakeOverride) {
     init {
         symbol.bind(this)
     }
 
-    override val fir: FirCallableMemberDeclaration<*>
+    override val fir: FirCallableMemberDeclaration
         get() = firAccessor ?: firParentProperty
 
     // TODO: investigate why some deserialized properties are inline

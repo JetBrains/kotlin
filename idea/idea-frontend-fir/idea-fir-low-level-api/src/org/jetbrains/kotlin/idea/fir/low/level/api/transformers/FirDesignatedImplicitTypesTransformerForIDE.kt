@@ -49,12 +49,12 @@ internal class FirDesignatedImplicitTypesTransformerForIDE(
 ) {
     private val ideDeclarationTransformer = IDEDeclarationTransformer(designation)
 
-    override fun transformDeclarationContent(declaration: FirDeclaration<*>, data: ResolutionMode): FirDeclaration<*> =
+    override fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): FirDeclaration =
         ideDeclarationTransformer.transformDeclarationContent(this, declaration, data) {
             super.transformDeclarationContent(declaration, data)
         }
 
-    override fun needReplacePhase(firDeclaration: FirDeclaration<*>): Boolean =
+    override fun needReplacePhase(firDeclaration: FirDeclaration): Boolean =
         ideDeclarationTransformer.needReplacePhase && firDeclaration !is FirFile && super.needReplacePhase(firDeclaration)
 
     override fun transformDeclaration(phaseRunner: FirPhaseRunner) {
@@ -62,7 +62,7 @@ internal class FirDesignatedImplicitTypesTransformerForIDE(
         designation.declaration.updateResolvedPhaseForDeclarationAndChildren(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
         if (designation.isTargetCallableDeclarationAndInPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)) return
 
-        val callableDeclaration = designation.declaration as? FirCallableDeclaration<*>
+        val callableDeclaration = designation.declaration as? FirCallableDeclaration
         if (callableDeclaration != null) {
             if (callableDeclaration.returnTypeRef is FirResolvedTypeRef) return
             callableDeclaration.ensurePhase(FirResolvePhase.CONTRACTS)
@@ -78,11 +78,11 @@ internal class FirDesignatedImplicitTypesTransformerForIDE(
         ensureResolvedDeep(designation.declaration)
     }
 
-    override fun ensureResolved(declaration: FirDeclaration<*>) {
+    override fun ensureResolved(declaration: FirDeclaration) {
         when (declaration) {
             is FirSimpleFunction -> check(declaration.returnTypeRef is FirResolvedTypeRef)
             is FirField -> check(declaration.returnTypeRef is FirResolvedTypeRef)
-            is FirClass<*>, is FirConstructor, is FirTypeAlias, is FirEnumEntry, is FirAnonymousInitializer -> Unit
+            is FirClass, is FirConstructor, is FirTypeAlias, is FirEnumEntry, is FirAnonymousInitializer -> Unit
             is FirProperty -> {
                 check(declaration.returnTypeRef is FirResolvedTypeRef)
                 //Not resolved for some getters and setters #KT-46995

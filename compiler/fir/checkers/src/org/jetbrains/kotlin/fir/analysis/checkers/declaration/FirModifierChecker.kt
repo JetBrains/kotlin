@@ -107,7 +107,7 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
         secondModifier: FirModifier<*>,
         reporter: DiagnosticReporter,
         reportedNodes: MutableSet<FirModifier<*>>,
-        owner: FirDeclaration<*>?,
+        owner: FirDeclaration?,
         context: CheckerContext
     ) {
         val firstToken = firstModifier.token
@@ -126,7 +126,7 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
                 reporter.reportDeprecatedModifierPair(secondModifier, secondToken, firstToken, context)
             }
             CompatibilityType.INCOMPATIBLE, CompatibilityType.COMPATIBLE_FOR_CLASSES -> {
-                if (compatibilityType == CompatibilityType.COMPATIBLE_FOR_CLASSES && owner is FirClass<*>) {
+                if (compatibilityType == CompatibilityType.COMPATIBLE_FOR_CLASSES && owner is FirClass) {
                     return
                 }
                 if (reportedNodes.add(firstModifier)) reporter.reportIncompatibleModifiers(firstModifier, firstToken, secondToken, context)
@@ -137,7 +137,7 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
 
     private fun checkModifiers(
         list: FirModifierList,
-        owner: FirDeclaration<*>,
+        owner: FirDeclaration,
         reporter: DiagnosticReporter,
         context: CheckerContext
     ) {
@@ -156,17 +156,17 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
         }
     }
 
-    private fun isDeclarationMappedToSourceCorrectly(declaration: FirDeclaration<*>, source: FirSourceElement): Boolean =
+    private fun isDeclarationMappedToSourceCorrectly(declaration: FirDeclaration, source: FirSourceElement): Boolean =
         when (source.elementType) {
-            KtNodeTypes.CLASS -> declaration is FirClass<*>
-            KtNodeTypes.OBJECT_DECLARATION -> declaration is FirClass<*>
+            KtNodeTypes.CLASS -> declaration is FirClass
+            KtNodeTypes.OBJECT_DECLARATION -> declaration is FirClass
             KtNodeTypes.PROPERTY -> declaration is FirProperty
             KtNodeTypes.VALUE_PARAMETER -> declaration is FirValueParameter
             // TODO more FIR-PSI relations possibly have to be added
             else -> true
         }
 
-    override fun check(declaration: FirDeclaration<*>, context: CheckerContext, reporter: DiagnosticReporter) {
+    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration is FirFile) return
 
         val source = declaration.source ?: return

@@ -28,7 +28,7 @@ class FirTypeResolveProcessor(
     override val transformer = FirTypeResolveTransformer(session, scopeSession)
 }
 
-fun <F : FirClassLikeDeclaration<F>> F.runTypeResolvePhaseForLocalClass(
+fun <F : FirClassLikeDeclaration> F.runTypeResolvePhaseForLocalClass(
     session: FirSession,
     scopeSession: ScopeSession,
     currentScopeList: List<FirScope>,

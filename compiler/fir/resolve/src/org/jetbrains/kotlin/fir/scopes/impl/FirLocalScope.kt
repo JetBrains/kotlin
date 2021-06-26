@@ -12,11 +12,14 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirVariable
-import org.jetbrains.kotlin.fir.util.PersistentMultimap
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.util.PersistentMultimap
 import org.jetbrains.kotlin.name.Name
 
 class FirLocalScope private constructor(
@@ -38,7 +41,7 @@ class FirLocalScope private constructor(
         )
     }
 
-    fun storeVariable(variable: FirVariable<*>): FirLocalScope {
+    fun storeVariable(variable: FirVariable): FirLocalScope {
         return FirLocalScope(
             properties.put(variable.name, variable.symbol), functions, classes
         )

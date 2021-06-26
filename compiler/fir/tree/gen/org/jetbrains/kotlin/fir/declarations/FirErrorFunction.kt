@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirErrorFunction : FirFunction<FirErrorFunction>(), FirDiagnosticHolder {
+abstract class FirErrorFunction : FirFunction(), FirDiagnosticHolder {
     abstract override val source: FirSourceElement?
     abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase

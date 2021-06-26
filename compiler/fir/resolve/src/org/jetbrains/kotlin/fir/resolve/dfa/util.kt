@@ -95,7 +95,7 @@ internal val FirExpression.coneType: ConeKotlinType
 internal val FirElement.symbol: FirBasedSymbol<*>?
     get() = when (this) {
         is FirResolvable -> symbol
-        is FirDeclaration<*> -> symbol
+        is FirDeclaration -> symbol
         is FirWhenSubjectExpression -> whenRef.value.subject?.symbol
         is FirSafeCallExpression -> regularQualifiedAccess.symbol
         else -> null

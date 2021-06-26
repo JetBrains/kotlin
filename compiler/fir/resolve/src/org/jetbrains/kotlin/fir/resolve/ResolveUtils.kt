@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.types.SmartcastStability
 fun List<FirQualifierPart>.toTypeProjections(): Array<ConeTypeProjection> =
     asReversed().flatMap { it.typeArgumentList.typeArguments.map { typeArgument -> typeArgument.toConeTypeProjection() } }.toTypedArray()
 
-fun FirFunction<*>.constructFunctionalTypeRef(isSuspend: Boolean = false): FirResolvedTypeRef {
+fun FirFunction.constructFunctionalTypeRef(isSuspend: Boolean = false): FirResolvedTypeRef {
     val receiverTypeRef = when (this) {
         is FirSimpleFunction -> receiverTypeRef
         is FirAnonymousFunction -> receiverTypeRef
@@ -60,7 +60,7 @@ fun FirFunction<*>.constructFunctionalTypeRef(isSuspend: Boolean = false): FirRe
             )
         )
     }
-    val rawReturnType = (this as FirTypedDeclaration<*>).returnTypeRef.coneType
+    val rawReturnType = (this as FirTypedDeclaration).returnTypeRef.coneType
 
     val functionalType = createFunctionalType(parameters, receiverTypeRef?.coneType, rawReturnType, isSuspend = isSuspend)
 
@@ -156,7 +156,7 @@ internal fun typeForReifiedParameterReference(parameterReferenceBuilder: FirReso
     return resultType.resolvedTypeFromPrototype(typeParameterSymbol.constructType(emptyArray(), false))
 }
 
-internal fun typeForQualifierByDeclaration(declaration: FirDeclaration<*>, resultType: FirTypeRef, session: FirSession): FirTypeRef? {
+internal fun typeForQualifierByDeclaration(declaration: FirDeclaration, resultType: FirTypeRef, session: FirSession): FirTypeRef? {
     if (declaration is FirTypeAlias) {
         val expandedDeclaration = declaration.expandedConeType?.lookupTag?.toSymbol(session)?.fir ?: return null
         return typeForQualifierByDeclaration(expandedDeclaration, resultType, session)
@@ -401,11 +401,11 @@ private fun initialTypeOfCandidate(candidate: Candidate, typeRef: FirResolvedTyp
     return candidate.substitutor.substituteOrSelf(typeRef.type)
 }
 
-fun FirCallableDeclaration<*>.getContainingClass(session: FirSession): FirRegularClass? = this.containingClassAttr?.let { lookupTag ->
+fun FirCallableDeclaration.getContainingClass(session: FirSession): FirRegularClass? = this.containingClassAttr?.let { lookupTag ->
     session.symbolProvider.getSymbolByLookupTag(lookupTag)?.fir as? FirRegularClass
 }
 
-fun FirFunction<*>.getAsForbiddenNamedArgumentsTarget(session: FirSession): ForbiddenNamedArgumentsTarget? {
+fun FirFunction.getAsForbiddenNamedArgumentsTarget(session: FirSession): ForbiddenNamedArgumentsTarget? {
     if (this is FirConstructor && this.isPrimary) {
         this.getContainingClass(session)?.let { containingClass ->
             if (containingClass.classKind == ClassKind.ANNOTATION_CLASS) {
@@ -446,4 +446,4 @@ fun FirFunction<*>.getAsForbiddenNamedArgumentsTarget(session: FirSession): Forb
 // TODO: handle functions with non-stable parameter names, see also
 //  org.jetbrains.kotlin.fir.serialization.FirElementSerializer.functionProto
 //  org.jetbrains.kotlin.fir.serialization.FirElementSerializer.constructorProto
-fun FirFunction<*>.getHasStableParameterNames(session: FirSession): Boolean = getAsForbiddenNamedArgumentsTarget(session) == null
+fun FirFunction.getHasStableParameterNames(session: FirSession): Boolean = getAsForbiddenNamedArgumentsTarget(session) == null

@@ -24,7 +24,7 @@ abstract class AbstractDiagnosticCollector(
     override val scopeSession: ScopeSession = ScopeSession(),
     protected val createComponents: (DiagnosticReporter) -> List<AbstractDiagnosticCollectorComponent>,
 ) : SessionHolder {
-    fun collectDiagnostics(firDeclaration: FirDeclaration<*>, reporter: DiagnosticReporter) {
+    fun collectDiagnostics(firDeclaration: FirDeclaration, reporter: DiagnosticReporter) {
         val components = createComponents(reporter)
         val visitor = createVisitor(components)
         firDeclaration.accept(visitor, null)

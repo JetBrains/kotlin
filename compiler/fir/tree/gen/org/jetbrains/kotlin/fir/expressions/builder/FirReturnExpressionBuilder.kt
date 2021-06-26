@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 class FirReturnExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: FirSourceElement? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    lateinit var target: FirTarget<FirFunction<*>>
+    lateinit var target: FirTarget<FirFunction>
     lateinit var result: FirExpression
 
     override fun build(): FirReturnExpression {

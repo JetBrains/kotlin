@@ -64,7 +64,7 @@ class ControlFlowGraphBuilder {
 
     // ----------------------------------- Node caches -----------------------------------
 
-    private val exitTargetsForReturn: SymbolBasedNodeStorage<FirFunction<*>, FunctionExitNode> = SymbolBasedNodeStorage()
+    private val exitTargetsForReturn: SymbolBasedNodeStorage<FirFunction, FunctionExitNode> = SymbolBasedNodeStorage()
     private val exitTargetsForTry: Stack<CFGNode<*>> = stackOf()
     private val exitsOfAnonymousFunctions: MutableMap<FirFunctionSymbol<*>, FunctionExitNode> = mutableMapOf()
     private val enterToLocalClassesMembers: MutableMap<FirBasedSymbol<*>, CFGNode<*>?> = mutableMapOf()
@@ -167,7 +167,7 @@ class ControlFlowGraphBuilder {
 
     // ----------------------------------- Regular function -----------------------------------
 
-    fun enterFunction(function: FirFunction<*>): Triple<FunctionEnterNode, LocalFunctionDeclarationNode?, CFGNode<*>?> {
+    fun enterFunction(function: FirFunction): Triple<FunctionEnterNode, LocalFunctionDeclarationNode?, CFGNode<*>?> {
         require(function !is FirAnonymousFunction)
         val name = when (function) {
             is FirSimpleFunction -> function.name.asString()
@@ -214,7 +214,7 @@ class ControlFlowGraphBuilder {
         return Triple(enterNode, localFunctionNode, previousNode)
     }
 
-    fun exitFunction(function: FirFunction<*>): Pair<FunctionExitNode, ControlFlowGraph> {
+    fun exitFunction(function: FirFunction): Pair<FunctionExitNode, ControlFlowGraph> {
         require(function !is FirAnonymousFunction)
         val exitNode = exitTargetsForReturn.pop()
         popAndAddEdge(exitNode)
@@ -377,7 +377,7 @@ class ControlFlowGraphBuilder {
         popGraph()
     }
 
-    fun exitClass(klass: FirClass<*>): ControlFlowGraph {
+    fun exitClass(klass: FirClass): ControlFlowGraph {
         exitClass()
         val name = when (klass) {
             is FirAnonymousObject -> "<anonymous object>"
@@ -413,13 +413,13 @@ class ControlFlowGraphBuilder {
         return popGraph()
     }
 
-    fun prepareForLocalClassMembers(members: Collection<FirDeclaration<*>>) {
+    fun prepareForLocalClassMembers(members: Collection<FirDeclaration>) {
         members.forEachMember {
             enterToLocalClassesMembers[it.symbol] = lastNodes.topOrNull()
         }
     }
 
-    fun cleanAfterForLocalClassMembers(members: Collection<FirDeclaration<*>>) {
+    fun cleanAfterForLocalClassMembers(members: Collection<FirDeclaration>) {
         members.forEachMember {
             enterToLocalClassesMembers.remove(it.symbol)
         }
@@ -458,8 +458,8 @@ class ControlFlowGraphBuilder {
         }
     }
 
-    fun visitLocalClassFunctions(klass: FirClass<*>, node: CFGNodeWithCfgOwner<*>) {
-        klass.declarations.filterIsInstance<FirFunction<*>>().forEach { function ->
+    fun visitLocalClassFunctions(klass: FirClass, node: CFGNodeWithCfgOwner<*>) {
+        klass.declarations.filterIsInstance<FirFunction>().forEach { function ->
             val functionGraph = function.controlFlowGraphReference?.controlFlowGraph
             if (functionGraph != null && functionGraph.owner == null) {
                 addEdge(node, functionGraph.enterNode, preferredKind = EdgeKind.CfgForward)
@@ -1362,7 +1362,7 @@ class ControlFlowGraphBuilder {
 
     // ----------------------------------- Utils -----------------------------------
 
-    private inline fun Collection<FirDeclaration<*>>.forEachMember(block: (FirDeclaration<*>) -> Unit) {
+    private inline fun Collection<FirDeclaration>.forEachMember(block: (FirDeclaration) -> Unit) {
         for (member in this) {
             for (callableDeclaration in member.unwrap()) {
                 block(callableDeclaration)
@@ -1370,9 +1370,9 @@ class ControlFlowGraphBuilder {
         }
     }
 
-    private fun FirDeclaration<*>.unwrap(): List<FirDeclaration<*>> =
+    private fun FirDeclaration.unwrap(): List<FirDeclaration> =
         when (this) {
-            is FirFunction<*>, is FirAnonymousInitializer -> listOf(this)
+            is FirFunction, is FirAnonymousInitializer -> listOf(this)
             is FirProperty -> listOfNotNull(this.getter, this.setter, this)
             else -> emptyList()
         }
@@ -1384,4 +1384,4 @@ class ControlFlowGraphBuilder {
 
 }
 
-fun FirDeclaration<*>?.isLocalClassOrAnonymousObject() = ((this as? FirRegularClass)?.isLocal == true) || this is FirAnonymousObject
+fun FirDeclaration?.isLocalClassOrAnonymousObject() = ((this as? FirRegularClass)?.isLocal == true) || this is FirAnonymousObject

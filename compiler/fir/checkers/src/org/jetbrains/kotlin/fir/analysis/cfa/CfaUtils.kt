@@ -74,7 +74,7 @@ class LocalPropertyAndCapturedWriteCollector private constructor() : ControlFlow
     // `false` if it is declared in a lambda or a local function (inside the currently visited function).
     private val symbols: MutableMap<FirPropertySymbol, Boolean> = mutableMapOf()
 
-    private val lambdaOrLocalFunctionStack: MutableList<FirFunction<*>> = mutableListOf()
+    private val lambdaOrLocalFunctionStack: MutableList<FirFunction> = mutableListOf()
     private val capturedWrites: MutableSet<FirVariableAssignment> = mutableSetOf()
 
     override fun visitNode(node: CFGNode<*>) {}
@@ -266,7 +266,7 @@ class DeclaredVariableCollector {
     val declaredVariablesPerElement: SetMultimap<FirStatement, FirPropertySymbol> = setMultimapOf()
 
     fun enterCapturingStatement(statement: FirStatement): Set<FirPropertySymbol> {
-        assert(statement is FirLoop || statement is FirClass<*> || statement is FirFunction<*>)
+        assert(statement is FirLoop || statement is FirClass || statement is FirFunction)
         if (statement !in declaredVariablesPerElement) {
             statement.accept(visitor, null)
         }
@@ -274,7 +274,7 @@ class DeclaredVariableCollector {
     }
 
     fun exitCapturingStatement(statement: FirStatement) {
-        assert(statement is FirLoop || statement is FirClass<*> || statement is FirFunction<*>)
+        assert(statement is FirLoop || statement is FirClass || statement is FirFunction)
         declaredVariablesPerElement.removeKey(statement)
     }
 

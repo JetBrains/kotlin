@@ -65,15 +65,15 @@ internal object DeclarationCopyBuilder {
     }
 
     private fun FirDeclarationBuilder.initDeclaration(
-        originalDeclaration: FirDeclaration<*>,
-        builtDeclaration: FirDeclaration<*>,
+        originalDeclaration: FirDeclaration,
+        builtDeclaration: FirDeclaration,
     ) {
         resolvePhase = minOf(originalDeclaration.resolvePhase, FirResolvePhase.DECLARATIONS)
         source = builtDeclaration.source
         moduleData = originalDeclaration.moduleData
     }
 
-    private fun FirFunction<*>.reassignAllReturnTargets(from: FirFunction<*>) {
+    private fun FirFunction.reassignAllReturnTargets(from: FirFunction) {
         this.accept(object : FirVisitorVoid() {
             override fun visitElement(element: FirElement) {
                 if (element is FirReturnExpression && element.target.labeledElement == from) {

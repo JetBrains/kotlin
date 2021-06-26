@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-sealed class FirVariable<E : FirVariable<E>> : FirCallableMemberDeclaration<E>(), FirStatement {
+sealed class FirVariable : FirCallableMemberDeclaration(), FirStatement {
     abstract override val source: FirSourceElement?
     abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase
@@ -36,7 +36,7 @@ sealed class FirVariable<E : FirVariable<E>> : FirCallableMemberDeclaration<E>()
     abstract override val containerSource: DeserializedContainerSource?
     abstract override val dispatchReceiverType: ConeKotlinType?
     abstract val name: Name
-    abstract override val symbol: FirVariableSymbol<E>
+    abstract override val symbol: FirVariableSymbol<out FirVariable>
     abstract val initializer: FirExpression?
     abstract val delegate: FirExpression?
     abstract val isVar: Boolean
@@ -59,23 +59,23 @@ sealed class FirVariable<E : FirVariable<E>> : FirCallableMemberDeclaration<E>()
 
     abstract fun replaceInitializer(newInitializer: FirExpression?)
 
-    abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirVariable<E>
+    abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirVariable
 
-    abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirVariable<E>
+    abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirVariable
 
-    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirVariable<E>
+    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirVariable
 
-    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirVariable<E>
+    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirVariable
 
-    abstract fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirVariable<E>
+    abstract fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirVariable
 
-    abstract fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirVariable<E>
+    abstract fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirVariable
 
-    abstract fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirVariable<E>
+    abstract fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirVariable
 
-    abstract fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirVariable<E>
+    abstract fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirVariable
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirVariable<E>
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirVariable
 
-    abstract fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirVariable<E>
+    abstract fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirVariable
 }

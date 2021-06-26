@@ -30,7 +30,7 @@ internal fun FirNamedReference.getReferencedElementType(): ConeKotlinType {
         is FirErrorNamedReference -> FirReferenceResolveHelper.getFirSymbolsByErrorNamedReference(this)
         else -> error("Unexpected ${this::class}")
     }
-    val firCallableDeclaration = symbols.singleOrNull()?.fir as? FirCallableDeclaration<*>
+    val firCallableDeclaration = symbols.singleOrNull()?.fir as? FirCallableDeclaration
     return firCallableDeclaration?.returnTypeRef?.coneType
         ?: ConeClassErrorType(ConeUnresolvedNameError(name))
 }

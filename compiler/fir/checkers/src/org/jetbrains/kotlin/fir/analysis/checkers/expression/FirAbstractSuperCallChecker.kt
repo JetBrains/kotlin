@@ -33,7 +33,7 @@ object FirAbstractSuperCallChecker : FirQualifiedAccessExpressionChecker() {
 
         if (closestClass.classKind == ClassKind.CLASS) {
             // handles all the FirSimpleFunction/FirProperty/etc.
-            val item = expression.getDeclaration<FirCallableMemberDeclaration<*>>()
+            val item = expression.getDeclaration<FirCallableMemberDeclaration>()
                 ?: return
 
             val declaration = item.getContainingClass(context).safeAs<FirRegularClass>()

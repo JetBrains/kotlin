@@ -153,7 +153,7 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
         return FirJavaField(
             source,
             moduleData,
-            symbol as FirFieldSymbol,
+            symbol,
             name,
             resolvePhase,
             returnTypeRef,

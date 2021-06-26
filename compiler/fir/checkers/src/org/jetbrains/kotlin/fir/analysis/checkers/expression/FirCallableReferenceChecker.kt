@@ -13,7 +13,10 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirConstructor
+import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
@@ -46,7 +49,7 @@ object FirCallableReferenceChecker : FirQualifiedAccessExpressionChecker() {
         if (referredDeclaration is FirConstructor && referredDeclaration.getContainingClass(context.session)?.classKind == ClassKind.ANNOTATION_CLASS) {
             reporter.reportOn(source, FirErrors.CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR, context)
         }
-        if ((referredDeclaration as? FirCallableMemberDeclaration<*>)?.isExtensionMember == true &&
+        if ((referredDeclaration as? FirCallableMemberDeclaration)?.isExtensionMember == true &&
             !referredDeclaration.isLocalMember
         ) {
             reporter.reportOn(source, FirErrors.EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED, referredDeclaration, context)

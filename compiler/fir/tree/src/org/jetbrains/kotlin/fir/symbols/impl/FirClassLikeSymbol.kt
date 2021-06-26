@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-sealed class FirClassLikeSymbol<D : FirClassLikeDeclaration<D>>(
+sealed class FirClassLikeSymbol<D : FirClassLikeDeclaration>(
     val classId: ClassId
 ) : FirClassifierSymbol<D>() {
     abstract override fun toLookupTag(): ConeClassLikeLookupTag
@@ -19,7 +19,7 @@ sealed class FirClassLikeSymbol<D : FirClassLikeDeclaration<D>>(
     override fun toString(): String = "${this::class.simpleName} ${classId.asString()}"
 }
 
-sealed class FirClassSymbol<C : FirClass<C>>(classId: ClassId) : FirClassLikeSymbol<C>(classId) {
+sealed class FirClassSymbol<C : FirClass>(classId: ClassId) : FirClassLikeSymbol<C>(classId) {
     private val lookupTag =
         if (classId.isLocal) ConeClassLookupTagWithFixedSymbol(classId, this)
         else ConeClassLikeLookupTagImpl(classId)

@@ -18,9 +18,9 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-sealed class FirAnnotatedDeclaration<E : FirAnnotatedDeclaration<E>> : FirDeclaration<E>(), FirAnnotationContainer {
+sealed class FirAnnotatedDeclaration : FirDeclaration(), FirAnnotationContainer {
     abstract override val source: FirSourceElement?
-    abstract override val symbol: FirBasedSymbol<E>
+    abstract override val symbol: FirBasedSymbol<out FirDeclaration>
     abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase
     abstract override val origin: FirDeclarationOrigin
@@ -35,5 +35,5 @@ sealed class FirAnnotatedDeclaration<E : FirAnnotatedDeclaration<E>> : FirDeclar
 
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnnotatedDeclaration<E>
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnnotatedDeclaration
 }

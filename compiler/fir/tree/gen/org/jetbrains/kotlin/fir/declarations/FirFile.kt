@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirFile : FirAnnotatedDeclaration<FirFile>() {
+abstract class FirFile : FirAnnotatedDeclaration() {
     abstract override val source: FirSourceElement?
     abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase
@@ -26,7 +26,7 @@ abstract class FirFile : FirAnnotatedDeclaration<FirFile>() {
     abstract override val attributes: FirDeclarationAttributes
     abstract override val annotations: List<FirAnnotationCall>
     abstract val imports: List<FirImport>
-    abstract val declarations: List<FirDeclaration<*>>
+    abstract val declarations: List<FirDeclaration>
     abstract val name: String
     abstract val packageFqName: FqName
     abstract override val symbol: FirFileSymbol

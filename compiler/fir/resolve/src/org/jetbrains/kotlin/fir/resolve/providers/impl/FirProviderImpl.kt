@@ -78,16 +78,16 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
     }
 
     @FirProviderInternals
-    override fun recordGeneratedClass(owner: FirAnnotatedDeclaration<*>, klass: FirRegularClass) {
+    override fun recordGeneratedClass(owner: FirAnnotatedDeclaration, klass: FirRegularClass) {
         klass.accept(FirRecorder, FirRecorderData(state, owner.file, session.nameConflictsTracker))
     }
 
     @FirProviderInternals
-    override fun recordGeneratedMember(owner: FirAnnotatedDeclaration<*>, klass: FirDeclaration<*>) {
+    override fun recordGeneratedMember(owner: FirAnnotatedDeclaration, klass: FirDeclaration) {
         klass.accept(FirRecorder, FirRecorderData(state, owner.file, session.nameConflictsTracker))
     }
 
-    private val FirAnnotatedDeclaration<*>.file: FirFile
+    private val FirAnnotatedDeclaration.file: FirFile
         get() = when (this) {
             is FirFile -> this
             is FirRegularClass -> getFirClassifierContainerFile(this.symbol.classId)
@@ -139,7 +139,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
             data.state.callableContainerMap[symbol] = data.file
         }
 
-        private inline fun <reified D : FirCallableMemberDeclaration<D>, S : FirCallableSymbol<D>> registerCallable(
+        private inline fun <reified D : FirCallableMemberDeclaration, S : FirCallableSymbol<D>> registerCallable(
             symbol: S,
             data: FirRecorderData,
             map: MutableMap<CallableId, List<S>>
@@ -176,7 +176,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
 
     private class State {
         val fileMap = mutableMapOf<FqName, List<FirFile>>()
-        val classifierMap = mutableMapOf<ClassId, FirClassLikeDeclaration<*>>()
+        val classifierMap = mutableMapOf<ClassId, FirClassLikeDeclaration>()
         val classifierContainerFileMap = mutableMapOf<ClassId, FirFile>()
         val classesInPackage = mutableMapOf<FqName, MutableSet<Name>>()
         val functionMap = mutableMapOf<CallableId, List<FirNamedFunctionSymbol>>()
@@ -208,7 +208,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
         return state.fileMap[fqName].orEmpty()
     }
 
-    override fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration<*>? {
+    override fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration? {
         require(!classId.isLocal) {
             "Local $classId should never be used to find its corresponding classifier"
         }

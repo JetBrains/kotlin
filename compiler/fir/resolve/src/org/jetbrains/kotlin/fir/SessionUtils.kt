@@ -23,7 +23,7 @@ val FirSession.typeContext: ConeInferenceContext
  * Returns the list of functions that overridden by given
  */
 fun FirSimpleFunction.lowestVisibilityAmongOverrides(
-    containingClass: FirClass<*>,
+    containingClass: FirClass,
     session: FirSession,
     scopeSession: ScopeSession
 ): Visibility {

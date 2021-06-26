@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
 
     override fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter, context: CheckerContext) {
-        val function = graph.declaration as? FirFunction<*> ?: return
+        val function = graph.declaration as? FirFunction ?: return
         val graphRef = function.controlFlowGraphReference as FirControlFlowGraphReferenceImpl
         val dataFlowInfo = graphRef.dataFlowInfo
         if (function !is FirContractDescriptionOwner || dataFlowInfo == null) return
@@ -72,7 +72,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
     private fun isWrongConditionOnNode(
         node: CFGNode<*>,
         effectDeclaration: ConeConditionalEffectDeclaration,
-        function: FirFunction<*>,
+        function: FirFunction,
         logicSystem: LogicSystem<PersistentFlow>,
         dataFlowInfo: DataFlowInfo,
         context: CheckerContext
@@ -150,7 +150,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
     }
 
     private fun ConeBooleanExpression.buildTypeStatements(
-        function: FirFunction<*>,
+        function: FirFunction,
         logicSystem: LogicSystem<*>,
         variableStorage: VariableStorage,
         flow: Flow,
@@ -216,7 +216,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
     private val CheckerContext.containingProperty: FirProperty?
         get() = (containingDeclarations.asReversed().firstOrNull { it is FirProperty } as? FirProperty)
 
-    private fun FirFunction<*>.getParameterType(symbol: FirBasedSymbol<*>, context: CheckerContext): ConeKotlinType? {
+    private fun FirFunction.getParameterType(symbol: FirBasedSymbol<*>, context: CheckerContext): ConeKotlinType? {
         val typeRef = if (this.symbol == symbol) {
             if (symbol is FirPropertyAccessorSymbol) {
                 context.containingProperty?.receiverTypeRef
@@ -229,7 +229,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
         return typeRef?.coneType
     }
 
-    private fun FirFunction<*>.getParameterSymbol(index: Int, context: CheckerContext): FirBasedSymbol<*> {
+    private fun FirFunction.getParameterSymbol(index: Int, context: CheckerContext): FirBasedSymbol<*> {
         return if (index == -1) {
             if (symbol !is FirPropertyAccessorSymbol) {
                 symbol

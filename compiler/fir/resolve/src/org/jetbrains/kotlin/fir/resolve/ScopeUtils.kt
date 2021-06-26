@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolved
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
-import org.jetbrains.kotlin.fir.scopes.FirUnstableSmartcastTypeScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.fir.scopes.FirUnstableSmartcastTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirScopeWithFakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScope
@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.types.SmartcastStability
 
 fun FirExpressionWithSmartcast.smartcastScope(
     useSiteSession: FirSession,
@@ -62,7 +61,7 @@ private fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: Scope
         is ConeKotlinErrorType -> null
         is ConeClassLikeType -> {
             val fullyExpandedType = fullyExpandedType(useSiteSession)
-            val fir = fullyExpandedType.lookupTag.toSymbol(useSiteSession)?.fir as? FirClass<*> ?: return null
+            val fir = fullyExpandedType.lookupTag.toSymbol(useSiteSession)?.fir as? FirClass ?: return null
 
             fir.symbol.ensureResolved(requiredPhase, useSiteSession)
 
@@ -97,7 +96,7 @@ private fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: Scope
 }
 
 
-fun FirClass<*>.defaultType(): ConeClassLikeType =
+fun FirClass.defaultType(): ConeClassLikeType =
     when (this) {
         is FirRegularClass -> defaultType()
         is FirAnonymousObject -> defaultType()

@@ -31,20 +31,20 @@ open class FirJvmMangleComputer(
     private val builder: StringBuilder,
     private val mode: MangleMode,
     private val session: FirSession
-) : FirVisitor<Unit, Boolean>(), KotlinMangleComputer<FirDeclaration<*>> {
+) : FirVisitor<Unit, Boolean>(), KotlinMangleComputer<FirDeclaration> {
 
     private val typeParameterContainer = ArrayList<FirStatusOwner>(4)
 
     private var isRealExpect = false
 
-    open fun FirFunction<*>.platformSpecificFunctionName(): String? = null
+    open fun FirFunction.platformSpecificFunctionName(): String? = null
 
-    open fun FirFunction<*>.platformSpecificSuffix(): String? =
+    open fun FirFunction.platformSpecificSuffix(): String? =
         if (this is FirSimpleFunction && name.asString() == "main")
             this@FirJvmMangleComputer.session.firProvider.getFirCallableContainerFile(symbol)?.name
         else null
 
-    open fun FirFunction<*>.specialValueParamPrefix(param: FirValueParameter): String = ""
+    open fun FirFunction.specialValueParamPrefix(param: FirValueParameter): String = ""
 
     private fun addReturnType(): Boolean = false
 
@@ -81,10 +81,10 @@ open class FirJvmMangleComputer(
         }
     }
 
-    private fun FirDeclaration<*>.visitParent() {
+    private fun FirDeclaration.visitParent() {
         val (parentPackageFqName, parentClassId) = when (this) {
-            is FirCallableMemberDeclaration<*> -> this.containingClass()?.classId?.let { it.packageFqName to it } ?: return
-            is FirClassLikeDeclaration<*> -> this.symbol.classId.let { it.packageFqName to it.outerClassId }
+            is FirCallableMemberDeclaration -> this.containingClass()?.classId?.let { it.packageFqName to it } ?: return
+            is FirClassLikeDeclaration -> this.symbol.classId.let { it.packageFqName to it.outerClassId }
             else -> return
         }
         if (parentClassId != null && !parentClassId.isLocal) {
@@ -100,7 +100,7 @@ open class FirJvmMangleComputer(
         }
     }
 
-    private fun FirDeclaration<*>.mangleSimpleDeclaration(name: String) {
+    private fun FirDeclaration.mangleSimpleDeclaration(name: String) {
         val l = builder.length
         visitParent()
 
@@ -111,7 +111,7 @@ open class FirJvmMangleComputer(
         builder.appendName(name)
     }
 
-    private fun FirFunction<*>.mangleFunction(isCtor: Boolean, isStatic: Boolean, container: FirDeclaration<*>) {
+    private fun FirFunction.mangleFunction(isCtor: Boolean, isStatic: Boolean, container: FirDeclaration) {
 
         isRealExpect = isRealExpect || (this as? FirStatusOwner)?.isExpect == true
 
@@ -138,7 +138,7 @@ open class FirJvmMangleComputer(
         mangleSignature(isCtor, isStatic)
     }
 
-    private fun FirFunction<*>.mangleSignature(isCtor: Boolean, isStatic: Boolean) {
+    private fun FirFunction.mangleSignature(isCtor: Boolean, isStatic: Boolean) {
         if (!mode.signature) {
             return
         }
@@ -171,7 +171,7 @@ open class FirJvmMangleComputer(
             if (this in parent.typeParameters) {
                 return parent
             }
-            if (parent is FirCallableDeclaration<*>) {
+            if (parent is FirCallableDeclaration) {
                 val overriddenFir = parent.originalForSubstitutionOverride
                 if (overriddenFir is FirTypeParametersOwner && this in overriddenFir.typeParameters) {
                     return parent
@@ -317,7 +317,7 @@ open class FirJvmMangleComputer(
     override fun visitConstructor(constructor: FirConstructor, data: Boolean) =
         constructor.mangleFunction(isCtor = true, isStatic = false, constructor)
 
-    override fun computeMangle(declaration: FirDeclaration<*>): String {
+    override fun computeMangle(declaration: FirDeclaration): String {
         declaration.accept(this, true)
         return builder.toString()
     }

@@ -25,12 +25,12 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 // TODO: check why coneTypeSafe is necessary at some points inside
 object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker() {
-    override fun check(declaration: FirDeclaration<*>, context: CheckerContext, reporter: DiagnosticReporter) {
+    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         when (declaration) {
             is FirAnonymousFunction -> return
             is FirTypeAlias -> checkTypeAlias(declaration, reporter, context)
             is FirProperty -> checkProperty(declaration, reporter, context)
-            is FirFunction<*> -> checkFunction(declaration, reporter, context)
+            is FirFunction -> checkFunction(declaration, reporter, context)
             is FirRegularClass -> checkClass(declaration, reporter, context)
         }
     }
@@ -106,7 +106,7 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker() {
         }
     }
 
-    private fun checkFunction(declaration: FirFunction<*>, reporter: DiagnosticReporter, context: CheckerContext) {
+    private fun checkFunction(declaration: FirFunction, reporter: DiagnosticReporter, context: CheckerContext) {
         val functionVisibility = (declaration as FirStatusOwner).effectiveVisibility
 
         if (functionVisibility == EffectiveVisibility.Local) return
@@ -141,7 +141,7 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker() {
                 }
             }
         }
-        checkMemberReceiver(declaration.receiverTypeRef, declaration as? FirCallableMemberDeclaration<*>, reporter, context)
+        checkMemberReceiver(declaration.receiverTypeRef, declaration as? FirCallableMemberDeclaration, reporter, context)
     }
 
     private fun checkProperty(declaration: FirProperty, reporter: DiagnosticReporter, context: CheckerContext) {
@@ -172,7 +172,7 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker() {
 
     private fun checkMemberReceiver(
         typeRef: FirTypeRef?,
-        memberDeclaration: FirCallableMemberDeclaration<*>?,
+        memberDeclaration: FirCallableMemberDeclaration?,
         reporter: DiagnosticReporter,
         context: CheckerContext
     ) {

@@ -44,7 +44,7 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker() {
         }
     }
 
-    private fun checkAnnotationClassMember(member: FirDeclaration<*>, context: CheckerContext, reporter: DiagnosticReporter) {
+    private fun checkAnnotationClassMember(member: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         when {
             member is FirConstructor && member.isPrimary -> {
                 for (parameter in member.valueParameters) {

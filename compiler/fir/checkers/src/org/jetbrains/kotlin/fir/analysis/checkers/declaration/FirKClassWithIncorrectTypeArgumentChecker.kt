@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeTypeParameterInQualifiedAccess
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.inference.isKClassType
@@ -21,7 +23,7 @@ import org.jetbrains.kotlin.fir.types.*
 object FirKClassWithIncorrectTypeArgumentChecker : FirFileChecker() {
     override fun check(declaration: FirFile, context: CheckerContext, reporter: DiagnosticReporter) {
         for (topLevelDeclaration in declaration.declarations) {
-            if (topLevelDeclaration is FirCallableMemberDeclaration<*>) {
+            if (topLevelDeclaration is FirCallableMemberDeclaration) {
                 checkTopLevelDeclaration(topLevelDeclaration, context, reporter)
             }
         }
@@ -31,7 +33,7 @@ object FirKClassWithIncorrectTypeArgumentChecker : FirFileChecker() {
     //  bad:  fun <T> test1() = T::class
     //  okay: fun <T: Any> test2() = T::class
     private fun checkTopLevelDeclaration(
-        declaration: FirCallableMemberDeclaration<*>,
+        declaration: FirCallableMemberDeclaration,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {

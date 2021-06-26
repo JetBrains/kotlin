@@ -30,13 +30,13 @@ import org.junit.jupiter.api.parallel.ExecutionMode
 @Execution(ExecutionMode.SAME_THREAD)
 abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingleFileTest() {
 
-    private fun FirFile.findResolveMe(): FirDeclaration<*> {
+    private fun FirFile.findResolveMe(): FirDeclaration {
         val visitor = object : FirVisitorVoid() {
-            var result: FirDeclaration<*>? = null
+            var result: FirDeclaration? = null
             override fun visitElement(element: FirElement) {
                 if (result != null) return
                 val declaration = element.realPsi as? KtDeclaration
-                if (element is FirDeclaration<*> && declaration != null && declaration.name == "resolveMe") {
+                if (element is FirDeclaration && declaration != null && declaration.name == "resolveMe") {
                     result = element
                     return
                 }
@@ -76,8 +76,8 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingle
                 when (resolveType) {
                     ResolveType.CallableReturnType,
                     ResolveType.CallableBodyResolve,
-                    ResolveType.CallableContracts -> if (declarationToResolve !is FirCallableDeclaration<*>) return@resolveWithClearCaches
-                    ResolveType.ClassSuperTypes -> if (declarationToResolve !is FirClassLikeDeclaration<*>) return@resolveWithClearCaches
+                    ResolveType.CallableContracts -> if (declarationToResolve !is FirCallableDeclaration) return@resolveWithClearCaches
+                    ResolveType.ClassSuperTypes -> if (declarationToResolve !is FirClassLikeDeclaration) return@resolveWithClearCaches
                     else -> {
                     }
                 }

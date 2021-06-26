@@ -29,7 +29,7 @@ class DeclarationCheckersDiagnosticComponent(
         checkers.allPropertyCheckers.check(property, data, reporter)
     }
 
-    override fun <F : FirClass<F>> visitClass(klass: FirClass<F>, data: CheckerContext) {
+    override fun visitClass(klass: FirClass, data: CheckerContext) {
         checkers.allClassCheckers.check(klass, data, reporter)
     }
 
@@ -77,7 +77,7 @@ class DeclarationCheckersDiagnosticComponent(
         checkers.allBasicDeclarationCheckers.check(anonymousInitializer, data, reporter)
     }
 
-    private fun <D : FirDeclaration<*>> Collection<FirDeclarationChecker<D>>.check(
+    private fun <D : FirDeclaration> Collection<FirDeclarationChecker<D>>.check(
         declaration: D,
         context: CheckerContext,
         reporter: DiagnosticReporter

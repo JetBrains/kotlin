@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 
 class JavaClassMembersEnhancementScope(
@@ -65,14 +64,14 @@ class JavaClassMembersEnhancementScope(
         return super.processFunctionsByName(name, processor)
     }
 
-    private fun FirCallableMemberDeclaration<*>.overriddenMembers(name: Name): List<FirCallableMemberDeclaration<*>> {
+    private fun FirCallableMemberDeclaration.overriddenMembers(name: Name): List<FirCallableMemberDeclaration> {
         val backMap = overrideBindCache.getOrPut(name) {
             useSiteMemberScope
                 .overrideByBase
                 .toList()
                 .groupBy({ (_, key) -> key }, { (value) -> value })
         }
-        return backMap[this.symbol]?.map { it.fir as FirCallableMemberDeclaration<*> } ?: emptyList()
+        return backMap[this.symbol]?.map { it.fir as FirCallableMemberDeclaration } ?: emptyList()
     }
 
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {

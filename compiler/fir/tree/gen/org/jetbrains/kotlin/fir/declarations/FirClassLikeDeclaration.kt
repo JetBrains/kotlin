@@ -18,14 +18,14 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-sealed class FirClassLikeDeclaration<E : FirClassLikeDeclaration<E>> : FirAnnotatedDeclaration<E>(), FirStatement {
+sealed class FirClassLikeDeclaration : FirAnnotatedDeclaration(), FirStatement {
     abstract override val source: FirSourceElement?
     abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
     abstract override val annotations: List<FirAnnotationCall>
-    abstract override val symbol: FirClassLikeSymbol<E>
+    abstract override val symbol: FirClassLikeSymbol<out FirClassLikeDeclaration>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitClassLikeDeclaration(this, data)
 
@@ -35,5 +35,5 @@ sealed class FirClassLikeDeclaration<E : FirClassLikeDeclaration<E>> : FirAnnota
 
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirClassLikeDeclaration<E>
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirClassLikeDeclaration
 }

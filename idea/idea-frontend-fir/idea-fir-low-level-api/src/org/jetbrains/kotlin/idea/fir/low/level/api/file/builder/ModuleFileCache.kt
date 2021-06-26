@@ -31,7 +31,7 @@ internal abstract class ModuleFileCache {
      * Maps [ClassId] to corresponding classifiers
      * If classifier with required [ClassId] is not found in given module then map contains [Optional.EMPTY]
      */
-    abstract val classifierByClassId: ConcurrentHashMap<ClassId, Optional<FirClassLikeDeclaration<*>>>
+    abstract val classifierByClassId: ConcurrentHashMap<ClassId, Optional<FirClassLikeDeclaration>>
 
     /**
      * Maps [CallableId] to corresponding callable
@@ -45,13 +45,13 @@ internal abstract class ModuleFileCache {
      */
     abstract fun fileCached(file: KtFile, createValue: () -> FirFile): FirFile
 
-    abstract fun getContainerFirFile(declaration: FirDeclaration<*>): FirFile?
+    abstract fun getContainerFirFile(declaration: FirDeclaration): FirFile?
 
     abstract fun getCachedFirFile(ktFile: KtFile): FirFile?
 
     abstract val firFileLockProvider: LockProvider<FirFile>
 
-    inline fun <D : FirDeclaration<*>, R> withReadLockOn(declaration: D, action: (D) -> R): R {
+    inline fun <D : FirDeclaration, R> withReadLockOn(declaration: D, action: (D) -> R): R {
         val file = getContainerFirFile(declaration)
             ?: error("No fir file found for\n${declaration.render()}")
         return firFileLockProvider.withReadLock(file) { action(declaration) }
@@ -61,7 +61,7 @@ internal abstract class ModuleFileCache {
 internal class ModuleFileCacheImpl(override val session: FirSession) : ModuleFileCache() {
     private val ktFileToFirFile = ConcurrentCollectionFactory.createConcurrentIdentityMap<KtFile, FirFile>()
 
-    override val classifierByClassId: ConcurrentHashMap<ClassId, Optional<FirClassLikeDeclaration<*>>> = ConcurrentHashMap()
+    override val classifierByClassId: ConcurrentHashMap<ClassId, Optional<FirClassLikeDeclaration>> = ConcurrentHashMap()
     override val callableByCallableId: ConcurrentHashMap<CallableId, List<FirCallableSymbol<*>>> = ConcurrentHashMap()
 
     override fun fileCached(file: KtFile, createValue: () -> FirFile): FirFile =
@@ -69,7 +69,7 @@ internal class ModuleFileCacheImpl(override val session: FirSession) : ModuleFil
 
     override fun getCachedFirFile(ktFile: KtFile): FirFile? = ktFileToFirFile[ktFile]
 
-    override fun getContainerFirFile(declaration: FirDeclaration<*>): FirFile? {
+    override fun getContainerFirFile(declaration: FirDeclaration): FirFile? {
         val ktFile = declaration.psi?.containingFile as? KtFile ?: return null
         return getCachedFirFile(ktFile)
     }

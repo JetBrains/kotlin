@@ -22,14 +22,14 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 
-typealias FirBasicDeclarationChecker = FirDeclarationChecker<FirDeclaration<*>>
-typealias FirFunctionChecker = FirDeclarationChecker<FirFunction<*>>
+typealias FirBasicDeclarationChecker = FirDeclarationChecker<FirDeclaration>
+typealias FirFunctionChecker = FirDeclarationChecker<FirFunction>
 typealias FirSimpleFunctionChecker = FirDeclarationChecker<FirSimpleFunction>
 typealias FirPropertyChecker = FirDeclarationChecker<FirProperty>
-typealias FirClassChecker = FirDeclarationChecker<FirClass<*>>
+typealias FirClassChecker = FirDeclarationChecker<FirClass>
 typealias FirRegularClassChecker = FirDeclarationChecker<FirRegularClass>
 typealias FirConstructorChecker = FirDeclarationChecker<FirConstructor>
 typealias FirFileChecker = FirDeclarationChecker<FirFile>
 typealias FirTypeParameterChecker = FirDeclarationChecker<FirTypeParameter>
-typealias FirAnnotatedDeclarationChecker = FirDeclarationChecker<FirAnnotatedDeclaration<*>>
+typealias FirAnnotatedDeclarationChecker = FirDeclarationChecker<FirAnnotatedDeclaration>
 typealias FirTypeAliasChecker = FirDeclarationChecker<FirTypeAlias>

@@ -45,7 +45,7 @@ data class SessionHolderImpl(override val session: FirSession, override val scop
 abstract class BodyResolveComponents : SessionHolder {
     abstract val returnTypeCalculator: ReturnTypeCalculator
     abstract val implicitReceiverStack: ImplicitReceiverStack
-    abstract val containingDeclarations: List<FirDeclaration<*>>
+    abstract val containingDeclarations: List<FirDeclaration>
     abstract val fileImportsScope: List<FirScope>
     abstract val towerDataElements: List<FirTowerDataElement>
     abstract val towerDataContext: FirTowerDataContext
@@ -53,7 +53,7 @@ abstract class BodyResolveComponents : SessionHolder {
     abstract val noExpectedType: FirTypeRef
     abstract val symbolProvider: FirSymbolProvider
     abstract val file: FirFile
-    abstract val container: FirDeclaration<*>
+    abstract val container: FirDeclaration
     abstract val resolutionStageRunner: ResolutionStageRunner
     abstract val samResolver: FirSamResolver
     abstract val callResolver: FirCallResolver
@@ -211,22 +211,22 @@ data class ImplicitReceivers(
 
 fun SessionHolder.collectImplicitReceivers(
     type: ConeKotlinType?,
-    owner: FirDeclaration<*>
+    owner: FirDeclaration
 ): ImplicitReceivers {
     if (type == null) return ImplicitReceivers(null, emptyList())
 
     val implicitCompanionValues = mutableListOf<ImplicitReceiverValue<*>>()
     val implicitReceiverValue = when (owner) {
-        is FirClass<*> -> {
+        is FirClass -> {
             val towerElementsForClass = collectTowerDataElementsForClass(owner, type)
             implicitCompanionValues.addAll(towerElementsForClass.implicitCompanionValues)
 
             towerElementsForClass.thisReceiver
         }
-        is FirFunction<*> -> {
+        is FirFunction -> {
             ImplicitExtensionReceiverValue(owner.symbol, type, session, scopeSession)
         }
-        is FirVariable<*> -> {
+        is FirVariable -> {
             ImplicitExtensionReceiverValue(owner.symbol, type, session, scopeSession)
         }
         else -> {
@@ -236,7 +236,7 @@ fun SessionHolder.collectImplicitReceivers(
     return ImplicitReceivers(implicitReceiverValue, implicitCompanionValues)
 }
 
-fun SessionHolder.collectTowerDataElementsForClass(owner: FirClass<*>, defaultType: ConeKotlinType): TowerElementsForClass {
+fun SessionHolder.collectTowerDataElementsForClass(owner: FirClass, defaultType: ConeKotlinType): TowerElementsForClass {
     val allImplicitCompanionValues = mutableListOf<ImplicitReceiverValue<*>>()
 
     val companionObject = (owner as? FirRegularClass)?.companionObject
@@ -279,7 +279,7 @@ fun SessionHolder.collectTowerDataElementsForClass(owner: FirClass<*>, defaultTy
     )
 }
 
-private fun FirClass<*>.staticScope(sessionHolder: SessionHolder) =
+private fun FirClass.staticScope(sessionHolder: SessionHolder) =
     scopeProvider.getStaticScope(this, sessionHolder.session, sessionHolder.scopeSession)
 
 class TowerElementsForClass(

@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirAnonymousInitializer : FirDeclaration<FirAnonymousInitializer>(), FirControlFlowGraphOwner {
+abstract class FirAnonymousInitializer : FirDeclaration(), FirControlFlowGraphOwner {
     abstract override val source: FirSourceElement?
     abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase

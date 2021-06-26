@@ -57,7 +57,7 @@ class FirImplicitTypeBodyResolveTransformerAdapter(session: FirSession, scopeSes
     }
 }
 
-fun <F : FirClassLikeDeclaration<F>> F.runContractAndBodiesResolutionForLocalClass(
+fun <F : FirClassLikeDeclaration> F.runContractAndBodiesResolutionForLocalClass(
     components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
     resolutionMode: ResolutionMode,
     localClassesNavigationInfo: LocalClassesNavigationInfo,
@@ -155,7 +155,7 @@ open class FirImplicitAwareBodyResolveTransformer(
         }
     }
 
-    private fun <D : FirCallableMemberDeclaration<D>> computeCachedTransformationResult(
+    private fun <D : FirCallableMemberDeclaration> computeCachedTransformationResult(
         member: D,
         transform: () -> D
     ): D {
@@ -188,7 +188,7 @@ private class ReturnTypeCalculatorWithJump(
     private val session: FirSession,
     private val scopeSession: ScopeSession,
     val implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession,
-    val designationMapForLocalClasses: Map<FirCallableMemberDeclaration<*>, List<FirClassLikeDeclaration<*>>> = mapOf(),
+    val designationMapForLocalClasses: Map<FirCallableMemberDeclaration, List<FirClassLikeDeclaration>> = mapOf(),
     val createTransformer: (
         designation: Iterator<FirElement>,
         session: FirSession,
@@ -201,7 +201,7 @@ private class ReturnTypeCalculatorWithJump(
 
     var outerBodyResolveContext: BodyResolveContext? = null
 
-    override fun tryCalculateReturnType(declaration: FirTypedDeclaration<*>): FirResolvedTypeRef {
+    override fun tryCalculateReturnType(declaration: FirTypedDeclaration): FirResolvedTypeRef {
         if (declaration is FirValueParameter && declaration.returnTypeRef is FirImplicitTypeRef) {
             // TODO?
             declaration.transformReturnTypeRef(
@@ -215,7 +215,7 @@ private class ReturnTypeCalculatorWithJump(
         val returnTypeRef = declaration.returnTypeRef
         if (returnTypeRef is FirResolvedTypeRef) return returnTypeRef
 
-        require(declaration is FirCallableMemberDeclaration<*>) { "${declaration::class}: ${declaration.render()}" }
+        require(declaration is FirCallableMemberDeclaration) { "${declaration::class}: ${declaration.render()}" }
 
         if (declaration is FirSyntheticProperty) {
             return tryCalculateReturnType(declaration.getter.delegate)
@@ -246,7 +246,7 @@ private class ReturnTypeCalculatorWithJump(
         }
     }
 
-    private fun computeReturnTypeRef(declaration: FirCallableMemberDeclaration<*>): FirResolvedTypeRef {
+    private fun computeReturnTypeRef(declaration: FirCallableMemberDeclaration): FirResolvedTypeRef {
         val symbol = declaration.symbol
         val provider = session.firProvider
 
@@ -281,7 +281,7 @@ private class ReturnTypeCalculatorWithJump(
 
         designation.first().transform<FirElement, ResolutionMode>(transformer, ResolutionMode.ContextDependent)
 
-        val transformedDeclaration = transformer.lastResult as? FirCallableMemberDeclaration<*>
+        val transformedDeclaration = transformer.lastResult as? FirCallableMemberDeclaration
             ?: error("Unexpected lastResult: ${transformer.lastResult?.render()}")
 
         val newReturnTypeRef = transformedDeclaration.returnTypeRef
@@ -308,9 +308,9 @@ open class FirDesignatedBodyResolveTransformerForReturnTypeCalculator(
 ) {
     var lastResult: FirElement? = null
 
-    override fun transformDeclarationContent(declaration: FirDeclaration<*>, data: ResolutionMode): FirDeclaration<*> {
+    override fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): FirDeclaration {
         if (designation.hasNext()) {
-            val result = designation.next().transform<FirDeclaration<*>, ResolutionMode>(this, data)
+            val result = designation.next().transform<FirDeclaration, ResolutionMode>(this, data)
             if (!designation.hasNext() && lastResult == null) {
                 lastResult = result
             }
@@ -344,7 +344,7 @@ class ImplicitBodyResolveComputationSession {
 
     fun storeResult(
         symbol: FirCallableSymbol<*>,
-        transformedDeclaration: FirCallableMemberDeclaration<*>
+        transformedDeclaration: FirCallableMemberDeclaration
     ) {
         require(implicitBodyResolveStatusMap[symbol] == ImplicitBodyResolveComputationStatus.Computing) {
             "Unexpected static in storeResult for $symbol: ${implicitBodyResolveStatusMap[symbol]}"
@@ -365,6 +365,6 @@ internal sealed class ImplicitBodyResolveComputationStatus {
 
     class Computed(
         val resolvedTypeRef: FirResolvedTypeRef,
-        val transformedDeclaration: FirCallableMemberDeclaration<*>
+        val transformedDeclaration: FirCallableMemberDeclaration
     ) : ImplicitBodyResolveComputationStatus()
 }

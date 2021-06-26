@@ -31,7 +31,7 @@ class KtAnalysisSessionFe10BindingHolder private constructor(
 
     val firResolveState: FirModuleResolveState get() = firAnalysisSession.firResolveState
 
-    fun buildClassLikeSymbol(fir: FirClassLikeDeclaration<*>): KtClassLikeSymbol =
+    fun buildClassLikeSymbol(fir: FirClassLikeDeclaration): KtClassLikeSymbol =
         firAnalysisSession.firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(fir)
 
     fun buildKtType(coneType: FirTypeRef): KtType =
@@ -40,7 +40,7 @@ class KtAnalysisSessionFe10BindingHolder private constructor(
     fun buildSymbol(firElement: FirElement): KtSymbol? = firElement.buildSymbol(firAnalysisSession.firSymbolBuilder)
 
     @Suppress("UNCHECKED_CAST", "NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
-    inline fun <T : FirDeclaration<*>, R> withFir(ktSymbol: KtSymbol, crossinline action: (T) -> R) =
+    inline fun <T : FirDeclaration, R> withFir(ktSymbol: KtSymbol, crossinline action: (T) -> R) =
         (ktSymbol as KtFirSymbol<T>).firRef.withFir(action = action)
 
     fun toSignature(ktSymbol: KtSymbol): IdSignature = (ktSymbol as KtFirSymbol<*>).firRef.withFir { it.createSignature() }

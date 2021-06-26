@@ -27,7 +27,7 @@ internal class FirWhenExpressionImpl(
     override val annotations: MutableList<FirAnnotationCall>,
     override var calleeReference: FirReference,
     override var subject: FirExpression?,
-    override var subjectVariable: FirVariable<*>?,
+    override var subjectVariable: FirVariable?,
     override val branches: MutableList<FirWhenBranch>,
     override var exhaustivenessStatus: ExhaustivenessStatus?,
     override val usedAsExpression: Boolean,

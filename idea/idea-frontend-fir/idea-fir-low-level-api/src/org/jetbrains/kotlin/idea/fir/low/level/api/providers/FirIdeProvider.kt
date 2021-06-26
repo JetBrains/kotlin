@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.providers
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.ModuleSourceInfoBase
 import org.jetbrains.kotlin.fir.FirSession
@@ -22,9 +21,6 @@ import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.DeclarationProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.KtPackageProvider
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveStateConfigurator
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.stateConfigurator
-import org.jetbrains.kotlin.idea.fir.low.level.api.createPackageProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.name.ClassId
@@ -53,7 +49,7 @@ internal class FirIdeProvider(
 
     override val isPhasedFirAllowed: Boolean get() = true
 
-    override fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration<*>? =
+    override fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration? =
         providerHelper.getFirClassifierByFqName(classId)
 
     override fun getFirClassifierContainerFile(fqName: ClassId): FirFile {
@@ -92,12 +88,12 @@ internal class FirIdeProvider(
 
 
     @FirProviderInternals
-    override fun recordGeneratedClass(owner: FirAnnotatedDeclaration<*>, klass: FirRegularClass) {
+    override fun recordGeneratedClass(owner: FirAnnotatedDeclaration, klass: FirRegularClass) {
         TODO()
     }
 
     @FirProviderInternals
-    override fun recordGeneratedMember(owner: FirAnnotatedDeclaration<*>, klass: FirDeclaration<*>) {
+    override fun recordGeneratedMember(owner: FirAnnotatedDeclaration, klass: FirDeclaration) {
         TODO()
     }
 

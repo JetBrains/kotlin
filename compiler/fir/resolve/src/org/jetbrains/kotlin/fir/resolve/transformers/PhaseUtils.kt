@@ -27,7 +27,7 @@ fun FirBasedSymbol<*>.ensureResolved(
     phaseManager.ensureResolved(this, requiredPhase)
 }
 
-fun FirDeclaration<*>.ensureResolved(
+fun FirDeclaration.ensureResolved(
     requiredPhase: FirResolvePhase,
     useSiteSession: FirSession,
 ) {
@@ -40,7 +40,7 @@ fun FirBasedSymbol<*>.ensureResolvedForCalls(
     if (fir.resolvePhase >= FirResolvePhase.DECLARATIONS) return
 
 //    val requiredPhase = when (fir) {
-//        is FirFunction<*>, is FirProperty -> FirResolvePhase.CONTRACTS
+//        is FirFunction, is FirProperty -> FirResolvePhase.CONTRACTS
 //        else -> FirResolvePhase.STATUS
 //    }
 //

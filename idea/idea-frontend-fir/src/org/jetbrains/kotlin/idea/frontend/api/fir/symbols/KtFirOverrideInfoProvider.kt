@@ -35,9 +35,9 @@ class KtFirOverrideInfoProvider(
         require(memberSymbol is KtFirSymbol<*>)
         require(classSymbol is KtFirSymbol<*>)
         return memberSymbol.firRef.withFir { memberFir ->
-            if (memberFir !is FirCallableMemberDeclaration<*>) return@withFir false
+            if (memberFir !is FirCallableMemberDeclaration) return@withFir false
             classSymbol.firRef.withFir inner@{ parentClassFir ->
-                if (parentClassFir !is FirClass<*>) return@inner false
+                if (parentClassFir !is FirClass) return@inner false
                 memberFir.isVisibleInClass(parentClassFir)
             }
         }
@@ -47,9 +47,9 @@ class KtFirOverrideInfoProvider(
         require(memberSymbol is KtFirSymbol<*>)
         require(parentClassSymbol is KtFirSymbol<*>)
         return memberSymbol.firRef.withFir { memberFir ->
-            if (memberFir !is FirCallableMemberDeclaration<*>) return@withFir null
+            if (memberFir !is FirCallableMemberDeclaration) return@withFir null
             parentClassSymbol.firRef.withFir inner@{ parentClassFir ->
-                if (parentClassFir !is FirClass<*>) return@inner null
+                if (parentClassFir !is FirClass) return@inner null
                 memberFir.getImplementationStatus(SessionHolderImpl(firAnalysisSession.rootModuleSession, ScopeSession()), parentClassFir)
             }
         }
@@ -58,7 +58,7 @@ class KtFirOverrideInfoProvider(
     override fun getOriginalContainingClassForOverride(symbol: KtCallableSymbol): KtClassOrObjectSymbol? {
         require(symbol is KtFirSymbol<*>)
         return symbol.firRef.withFir { firDeclaration ->
-            if (firDeclaration !is FirCallableMemberDeclaration<*>) return@withFir null
+            if (firDeclaration !is FirCallableMemberDeclaration) return@withFir null
             with(analysisSession) {
                 getOriginalOverriddenSymbol(firDeclaration)?.containingClass()?.classId?.getCorrespondingToplevelClassOrObjectSymbol()
             }
@@ -68,7 +68,7 @@ class KtFirOverrideInfoProvider(
     override fun getOriginalOverriddenSymbol(symbol: KtCallableSymbol): KtCallableSymbol? {
         require(symbol is KtFirSymbol<*>)
         return symbol.firRef.withFir { firDeclaration ->
-            if (firDeclaration !is FirCallableMemberDeclaration<*>) return@withFir null
+            if (firDeclaration !is FirCallableMemberDeclaration) return@withFir null
             with(analysisSession) {
                 getOriginalOverriddenSymbol(firDeclaration)
                     ?.buildSymbol((analysisSession as KtFirAnalysisSession).firSymbolBuilder) as KtCallableSymbol?
@@ -76,7 +76,7 @@ class KtFirOverrideInfoProvider(
         }
     }
 
-    private fun getOriginalOverriddenSymbol(member: FirCallableMemberDeclaration<*>): FirCallableMemberDeclaration<*>? {
+    private fun getOriginalOverriddenSymbol(member: FirCallableMemberDeclaration): FirCallableMemberDeclaration? {
         val originalForSubstitutionOverride = member.originalForSubstitutionOverride
         if (originalForSubstitutionOverride != null) return getOriginalOverriddenSymbol(originalForSubstitutionOverride)
 

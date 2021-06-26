@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
@@ -41,10 +41,10 @@ class FirFieldImpl @FirImplementationDetail constructor(
     override val containerSource: DeserializedContainerSource?,
     override val dispatchReceiverType: ConeKotlinType?,
     override val name: Name,
-    override val symbol: FirVariableSymbol<FirField>,
     override var initializer: FirExpression?,
     override val isVar: Boolean,
     override val annotations: MutableList<FirAnnotationCall>,
+    override val symbol: FirFieldSymbol,
 ) : FirField() {
     override val receiverTypeRef: FirTypeRef? get() = null
     override val delegate: FirExpression? get() = null

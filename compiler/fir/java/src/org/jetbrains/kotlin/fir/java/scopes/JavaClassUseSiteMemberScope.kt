@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
-import org.jetbrains.kotlin.fir.java.declarations.*
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
+import org.jetbrains.kotlin.fir.java.declarations.buildJavaMethodCopy
+import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameterCopy
 import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.*
@@ -385,11 +387,11 @@ class JavaClassUseSiteMemberScope(
         }
     }
 
-    private fun FirFunction<*>.computeJvmSignature(): String? {
+    private fun FirFunction.computeJvmSignature(): String? {
         return computeJvmSignature { it.toConeKotlinTypeProbablyFlexible(session, typeParameterStack) }
     }
 
-    private fun FirFunction<*>.computeJvmDescriptor(customName: String? = null, includeReturnType: Boolean = false): String {
+    private fun FirFunction.computeJvmDescriptor(customName: String? = null, includeReturnType: Boolean = false): String {
         return computeJvmDescriptor(customName, includeReturnType) {
             it.toConeKotlinTypeProbablyFlexible(
                 session,

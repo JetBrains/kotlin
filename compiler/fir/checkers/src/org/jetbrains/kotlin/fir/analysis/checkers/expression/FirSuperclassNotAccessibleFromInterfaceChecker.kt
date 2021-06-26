@@ -44,7 +44,7 @@ object FirSuperclassNotAccessibleFromInterfaceChecker : FirQualifiedAccessExpres
      * Returns the ClassLikeDeclaration where the function has been defined
      * or null if no proper declaration has been found.
      */
-    private fun getClassLikeDeclaration(functionCall: FirQualifiedAccessExpression, context: CheckerContext): FirClassLikeDeclaration<*>? {
+    private fun getClassLikeDeclaration(functionCall: FirQualifiedAccessExpression, context: CheckerContext): FirClassLikeDeclaration? {
         return functionCall.calleeReference.safeAs<FirResolvedNamedReference>()?.resolvedSymbol?.fir?.getContainingClass(context)
     }
 }

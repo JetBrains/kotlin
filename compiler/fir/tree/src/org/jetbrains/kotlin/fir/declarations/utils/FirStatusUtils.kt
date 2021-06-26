@@ -45,12 +45,12 @@ inline val FirStatusOwner.isFromSealedClass: Boolean get() = status.isFromSealed
 inline val FirStatusOwner.isFromEnumClass: Boolean get() = status.isFromEnumClass
 inline val FirStatusOwner.isFun: Boolean get() = status.isFun
 
-inline val FirClassLikeDeclaration<*>.isLocal: Boolean get() = symbol.classId.isLocal
+inline val FirClassLikeDeclaration.isLocal: Boolean get() = symbol.classId.isLocal
 
-inline val FirClass<*>.isInterface: Boolean
+inline val FirClass.isInterface: Boolean
     get() = classKind == ClassKind.INTERFACE
 
-inline val FirClass<*>.isEnumClass: Boolean
+inline val FirClass.isEnumClass: Boolean
     get() = classKind == ClassKind.ENUM_CLASS
 
 inline val FirRegularClass.isSealed: Boolean get() = status.modality == Modality.SEALED
@@ -61,7 +61,7 @@ inline val FirRegularClass.canHaveAbstractDeclaration: Boolean
 inline val FirRegularClass.isCompanion: Boolean get() = status.isCompanion
 inline val FirRegularClass.isData: Boolean get() = status.isData
 
-inline val FirFunction<*>.hasBody: Boolean get() = body != null
+inline val FirFunction.hasBody: Boolean get() = body != null
 
 inline val FirPropertyAccessor.hasBody: Boolean get() = body != null
 inline val FirPropertyAccessor.allowsToHaveFakeOverride: Boolean get() = visibility.allowsToHaveFakeOverride

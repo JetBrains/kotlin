@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirStatusOwner
 import org.jetbrains.kotlin.fir.moduleData
 
 class FirJvmModuleVisibilityChecker(private val session: FirSession) : FirModuleVisibilityChecker {
-    override fun <T> isInFriendModule(declaration: T): Boolean where T : FirStatusOwner, T : FirDeclaration<*> {
+    override fun <T> isInFriendModule(declaration: T): Boolean where T : FirStatusOwner, T : FirDeclaration {
         val useSiteModuleData = session.moduleData
         val declarationModuleData = declaration.moduleData
         return useSiteModuleData == declarationModuleData || declarationModuleData in useSiteModuleData.friendDependencies

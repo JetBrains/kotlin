@@ -44,14 +44,14 @@ abstract class FirModuleResolveState {
     /**
      * Try get [FirFile] from the cache in undefined phase
      */
-    internal abstract fun tryGetCachedFirFile(declaration: FirDeclaration<*>, cache: ModuleFileCache): FirFile?
+    internal abstract fun tryGetCachedFirFile(declaration: FirDeclaration, cache: ModuleFileCache): FirFile?
 
     internal abstract fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<FirPsiDiagnostic>
 
     internal abstract fun collectDiagnosticsForFile(ktFile: KtFile, filter: DiagnosticCheckerFilter): Collection<FirPsiDiagnostic>
 
-    internal inline fun <D : FirDeclaration<*>, R> withLock(declaration: D, declarationLockType: DeclarationLockType, action: (D) -> R): R {
-        val originalDeclaration = (declaration as? FirCallableDeclaration<*>)?.unwrapFakeOverrides() ?: declaration
+    internal inline fun <D : FirDeclaration, R> withLock(declaration: D, declarationLockType: DeclarationLockType, action: (D) -> R): R {
+        val originalDeclaration = (declaration as? FirCallableDeclaration)?.unwrapFakeOverrides() ?: declaration
         val session = originalDeclaration.moduleData.session
         return when {
             originalDeclaration.origin == FirDeclarationOrigin.Source && session is FirIdeSourcesSession -> {
@@ -67,12 +67,12 @@ abstract class FirModuleResolveState {
     @InternalForInline
     abstract fun findSourceFirDeclaration(
         ktDeclaration: KtDeclaration,
-    ): FirDeclaration<*>
+    ): FirDeclaration
 
     @InternalForInline
     abstract fun findSourceFirDeclaration(
         ktDeclaration: KtLambdaExpression,
-    ): FirDeclaration<*>
+    ): FirDeclaration
 
     /**
      * Looks for compiled non-local [ktDeclaration] declaration by querying its classId/callableId from the SymbolProvider.
@@ -82,10 +82,10 @@ abstract class FirModuleResolveState {
     @InternalForInline
     abstract fun findSourceFirCompiledDeclaration(
         ktDeclaration: KtDeclaration
-    ): FirDeclaration<*>
+    ): FirDeclaration
 
 
-    internal abstract fun <D : FirDeclaration<*>> resolveFirToPhase(declaration: D, toPhase: FirResolvePhase): D
+    internal abstract fun <D : FirDeclaration> resolveFirToPhase(declaration: D, toPhase: FirResolvePhase): D
 
-    internal abstract fun <D : FirDeclaration<*>> resolveFirToResolveType(declaration: D, type: ResolveType): D
+    internal abstract fun <D : FirDeclaration> resolveFirToResolveType(declaration: D, type: ResolveType): D
 }

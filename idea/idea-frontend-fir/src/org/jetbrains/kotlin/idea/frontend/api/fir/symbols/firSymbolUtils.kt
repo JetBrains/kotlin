@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirRenderer
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirStatusOwner
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.psi
@@ -20,7 +23,7 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 internal fun <F> KtFirSymbol<F>.getModality(
     phase: FirResolvePhase = FirResolvePhase.STATUS,
     defaultModality: Modality? = null
-): Modality where F : FirDeclaration<*>, F : FirStatusOwner {
+): Modality where F : FirDeclaration, F : FirStatusOwner {
     return firRef.withFir(phase) { fir ->
         fir.modality
             ?: defaultModality
@@ -28,7 +31,7 @@ internal fun <F> KtFirSymbol<F>.getModality(
     }
 }
 
-private fun FirDeclaration<*>.invalidModalityError(): Nothing {
+private fun FirDeclaration.invalidModalityError(): Nothing {
     error(
         """|Symbol modality should not be null, looks like the FIR symbol was not properly resolved
                    |
@@ -41,8 +44,8 @@ private fun FirDeclaration<*>.invalidModalityError(): Nothing {
 
 internal fun <F> KtFirSymbol<F>.getVisibility(
     phase: FirResolvePhase = FirResolvePhase.STATUS
-): Visibility where F : FirStatusOwner, F : FirDeclaration<*> =
+): Visibility where F : FirStatusOwner, F : FirDeclaration =
     firRef.withFir(phase) { fir -> fir.visibility }
 
-internal fun KtFirSymbol<FirCallableDeclaration<*>>.getCallableIdIfNonLocal(): CallableId? =
+internal fun KtFirSymbol<FirCallableDeclaration>.getCallableIdIfNonLocal(): CallableId? =
     firRef.withFir { fir -> fir.symbol.callableId.takeUnless { it.isLocal } }

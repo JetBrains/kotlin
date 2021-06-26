@@ -45,7 +45,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
 
     override fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter, context: CheckerContext) {
         val session = context.session
-        val function = (graph.declaration as? FirFunction<*>) ?: return
+        val function = (graph.declaration as? FirFunction) ?: return
         if (function !is FirContractDescriptionOwner) return
         if (function.contractDescription.coneEffects?.any { it is ConeCallsEffectDeclaration } != true) return
 
@@ -153,7 +153,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
         }
     }
 
-    private class CapturedLambdaFinder(val rootFunction: FirFunction<*>) : ControlFlowGraphVisitor<Unit, IllegalScopeContext>() {
+    private class CapturedLambdaFinder(val rootFunction: FirFunction) : ControlFlowGraphVisitor<Unit, IllegalScopeContext>() {
 
         override fun visitNode(node: CFGNode<*>, data: IllegalScopeContext) {}
 
@@ -303,7 +303,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
         return this?.coneTypeSafe<ConeKotlinType>()?.isBuiltinFunctionalType(session) == true
     }
 
-    private val FirFunction<*>.contractDescription: FirContractDescription?
+    private val FirFunction.contractDescription: FirContractDescription?
         get() = (this as? FirContractDescriptionOwner)?.contractDescription
 
     private fun FirContractDescription?.getParameterCallsEffectDeclaration(index: Int): ConeCallsEffectDeclaration? {
@@ -327,7 +327,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
         return getParameterCallsEffectDeclaration(index)?.kind
     }
 
-    private fun FirFunction<*>.isInPlaceLambda(): Boolean {
+    private fun FirFunction.isInPlaceLambda(): Boolean {
         return this is FirAnonymousFunction && this.isLambda && this.invocationKind != null
     }
 

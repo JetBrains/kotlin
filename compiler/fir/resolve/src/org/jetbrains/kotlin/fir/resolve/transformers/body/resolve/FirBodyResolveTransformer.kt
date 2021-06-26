@@ -231,13 +231,13 @@ open class FirBodyResolveTransformer(
 
     // ------------------------------------- Declarations -------------------------------------
 
-    override fun <T : FirDeclaration<T>> transformDeclaration(declaration: FirDeclaration<T>, data: ResolutionMode): FirDeclaration<T> {
+    override fun transformDeclaration(declaration: FirDeclaration, data: ResolutionMode): FirDeclaration {
         return declarationsTransformer.transformDeclaration(declaration, data)
     }
 
     open fun transformDeclarationContent(
-        declaration: FirDeclaration<*>, data: ResolutionMode
-    ): FirDeclaration<*> {
+        declaration: FirDeclaration, data: ResolutionMode
+    ): FirDeclaration {
         return transformElement(declaration, data)
     }
 
@@ -285,8 +285,8 @@ open class FirBodyResolveTransformer(
         return declarationsTransformer.transformSimpleFunction(simpleFunction, data)
     }
 
-    override fun <F : FirFunction<F>> transformFunction(
-        function: FirFunction<F>,
+    override fun transformFunction(
+        function: FirFunction,
         data: ResolutionMode
     ): FirStatement {
         return declarationsTransformer.transformFunction(function, data)

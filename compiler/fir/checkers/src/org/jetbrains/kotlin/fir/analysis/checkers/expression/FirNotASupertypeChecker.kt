@@ -38,10 +38,10 @@ object FirNotASupertypeChecker : FirQualifiedAccessExpressionChecker() {
      * item like FirRegularClass or FirAnonymousObject
      * or null if no such item could be found.
      */
-    private fun CheckerContext.findClosestClass(label: String?): FirClass<*>? {
+    private fun CheckerContext.findClosestClass(label: String?): FirClass? {
         for (it in containingDeclarations.reversed()) {
             if (it is FirRegularClass || it is FirAnonymousObject) {
-                val firClass = it as FirClass<*>
+                val firClass = it as FirClass
                 val className = firClass.symbol.classId.shortClassName
                 if (label == null || (!className.isSpecial && className.identifier == label)) {
                     return firClass

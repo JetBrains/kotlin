@@ -15,13 +15,13 @@ interface FirElementAwareStringTable : StringTable {
     fun getQualifiedClassNameIndex(classId: ClassId): Int =
         getQualifiedClassNameIndex(classId.asString(), classId.isLocal)
 
-    fun getFqNameIndex(classLikeDeclaration: FirClassLikeDeclaration<*>): Int {
+    fun getFqNameIndex(classLikeDeclaration: FirClassLikeDeclaration): Int {
         val classId = classLikeDeclaration.symbol.classId.takeIf { !it.isLocal }
-            ?: getLocalClassIdReplacement(classLikeDeclaration as FirClass<*>)
+            ?: getLocalClassIdReplacement(classLikeDeclaration as FirClass)
             ?: throw IllegalStateException("Cannot get FQ name of local class: ${classLikeDeclaration.render()}")
 
         return getQualifiedClassNameIndex(classId)
     }
 
-    fun getLocalClassIdReplacement(firClass: FirClass<*>): ClassId? = null
+    fun getLocalClassIdReplacement(firClass: FirClass): ClassId? = null
 }

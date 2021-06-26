@@ -18,14 +18,14 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.utils.FirRefWithValidityCheck
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolOrigin
 
-internal interface KtFirSymbol<out F : FirDeclaration<*>> : KtSymbol, ValidityTokenOwner {
+internal interface KtFirSymbol<out F : FirDeclaration> : KtSymbol, ValidityTokenOwner {
     val firRef: FirRefWithValidityCheck<F>
 
     override val origin: KtSymbolOrigin get() = firRef.withFir { it.ktSymbolOrigin() }
 }
 
 
-private tailrec fun FirDeclaration<*>.ktSymbolOrigin(): KtSymbolOrigin = when (origin) {
+private tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (origin) {
     FirDeclarationOrigin.Source -> {
         if (source?.kind == FirFakeSourceElementKind.DataClassGeneratedMembers
             || source?.kind == FirFakeSourceElementKind.EnumGeneratedDeclaration
@@ -47,18 +47,18 @@ private tailrec fun FirDeclaration<*>.ktSymbolOrigin(): KtSymbolOrigin = when (o
         }
     }
     FirDeclarationOrigin.ImportedFromObject -> {
-        val importedFromObjectData = (this as FirCallableDeclaration<*>).importedFromObjectData
+        val importedFromObjectData = (this as FirCallableDeclaration).importedFromObjectData
             ?: error("Declaration has ImportedFromObject origin, but no importedFromObjectData present")
 
         importedFromObjectData.original.ktSymbolOrigin()
     }
     else -> {
-        val overridden = (this as? FirCallableDeclaration<*>)?.originalIfFakeOverride()
+        val overridden = (this as? FirCallableDeclaration)?.originalIfFakeOverride()
             ?: throw InvalidFirDeclarationOriginForSymbol(this)
         overridden.ktSymbolOrigin()
     }
 }
 
 
-class InvalidFirDeclarationOriginForSymbol(declaration: FirDeclaration<*>) :
+class InvalidFirDeclarationOriginForSymbol(declaration: FirDeclaration) :
     IllegalStateException("Invalid FirDeclarationOrigin ${declaration.origin::class.simpleName} for ${declaration.render()}")

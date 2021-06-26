@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.types.Variance
 
 // TODO replace with structural type comparison?
 object KtDeclarationAndFirDeclarationEqualityChecker {
-    fun representsTheSameDeclaration(psi: KtFunction, fir: FirFunction<*>): Boolean {
+    fun representsTheSameDeclaration(psi: KtFunction, fir: FirFunction): Boolean {
         if ((fir.receiverTypeRef != null) != (psi.receiverTypeReference != null)) return false
         if (fir.receiverTypeRef != null
             && !isTheSameTypes(
@@ -176,7 +176,7 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
     }
 
     @TestOnly
-    fun renderFir(firFunction: FirFunction<*>): String = buildString {
+    fun renderFir(firFunction: FirFunction): String = buildString {
         appendLine("receiver: ${firFunction.receiverTypeRef?.renderTypeAsKotlinType()}")
         firFunction.valueParameters.forEach { parameter ->
             appendLine("${parameter.name}: ${parameter.returnTypeRef.renderTypeAsKotlinType()}")
@@ -185,19 +185,19 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
     }
 
     private object DummyScopeProvider : FirScopeProvider() {
-        override fun getUseSiteMemberScope(klass: FirClass<*>, useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope {
+        override fun getUseSiteMemberScope(klass: FirClass, useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope {
             shouldNotBeCalled()
         }
 
         override fun getStaticMemberScopeForCallables(
-            klass: FirClass<*>,
+            klass: FirClass,
             useSiteSession: FirSession,
             scopeSession: ScopeSession
         ): FirScope? {
             shouldNotBeCalled()
         }
 
-        override fun getNestedClassifierScope(klass: FirClass<*>, useSiteSession: FirSession, scopeSession: ScopeSession): FirScope? {
+        override fun getNestedClassifierScope(klass: FirClass, useSiteSession: FirSession, scopeSession: ScopeSession): FirScope? {
             shouldNotBeCalled()
         }
 

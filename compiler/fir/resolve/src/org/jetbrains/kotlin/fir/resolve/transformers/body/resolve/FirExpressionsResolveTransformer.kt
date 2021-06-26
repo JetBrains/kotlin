@@ -524,7 +524,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     }
 
     private fun ConeClassLikeType.inheritTypeArguments(
-        base: FirClassLikeDeclaration<*>,
+        base: FirClassLikeDeclaration,
         arguments: Array<out ConeTypeProjection>
     ): Array<out ConeTypeProjection>? {
         val firClass = lookupTag.toSymbol(session)?.fir ?: return null
@@ -533,14 +533,14 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             base -> arguments
             is FirTypeAlias -> firClass.inheritTypeArguments(firClass.expandedTypeRef, base, arguments)
             // TODO: if many supertypes, check consistency
-            is FirClass<*> -> firClass.superTypeRefs.mapNotNull { firClass.inheritTypeArguments(it, base, arguments) }.firstOrNull()
+            is FirClass -> firClass.superTypeRefs.mapNotNull { firClass.inheritTypeArguments(it, base, arguments) }.firstOrNull()
             else -> null
         }
     }
 
     private fun FirTypeParameterRefsOwner.inheritTypeArguments(
         typeRef: FirTypeRef,
-        base: FirClassLikeDeclaration<*>,
+        base: FirClassLikeDeclaration,
         arguments: Array<out ConeTypeProjection>
     ): Array<out ConeTypeProjection>? {
         val type = typeRef.coneTypeSafe<ConeClassLikeType>() ?: return null
@@ -911,7 +911,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             is FirResolvedNamedReference, is FirErrorNamedReference -> return delegatedConstructorCall
         }
         val containers = components.context.containers
-        val containingClass = containers[containers.lastIndex - 1] as FirClass<*>
+        val containingClass = containers[containers.lastIndex - 1] as FirClass
         val containingConstructor = containers.last() as FirConstructor
         if (delegatedConstructorCall.isSuper && delegatedConstructorCall.constructedTypeRef is FirImplicitTypeRef) {
             val superClass = containingClass.superTypeRefs.firstOrNull {

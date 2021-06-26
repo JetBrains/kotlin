@@ -36,7 +36,7 @@ class FirFileBuilder : FirAnnotationContainerBuilder {
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     val imports: MutableList<FirImport> = mutableListOf()
-    val declarations: MutableList<FirDeclaration<*>> = mutableListOf()
+    val declarations: MutableList<FirDeclaration> = mutableListOf()
     lateinit var name: String
     lateinit var packageFqName: FqName
 

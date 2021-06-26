@@ -24,10 +24,10 @@ import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.psi.KtDeclaration
 
-object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<FirDeclaration<*>, KtDeclaration>() {
+object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<FirDeclaration, KtDeclaration>() {
 
     override fun checkLightTree(
-        element: FirDeclaration<*>,
+        element: FirDeclaration,
         source: FirSourceElement,
         context: CheckerContext,
         reporter: DiagnosticReporter
@@ -43,7 +43,7 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
         val explicitVisibility = (visibilityModifier?.tokenType as? KtModifierKeywordToken)?.toVisibilityOrNull()
         val implicitVisibility = element.implicitVisibility(context)
         val containingMemberDeclaration = context.findClosest<FirStatusOwner>()
-        require(containingMemberDeclaration is FirDeclaration<*>?)
+        require(containingMemberDeclaration is FirDeclaration?)
 
         val redundantVisibility = when {
             explicitVisibility == implicitVisibility -> implicitVisibility
@@ -62,7 +62,7 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
         reporter.reportOn(source, FirErrors.REDUNDANT_VISIBILITY_MODIFIER, context)
     }
 
-    private fun FirDeclaration<*>.implicitVisibility(context: CheckerContext): Visibility {
+    private fun FirDeclaration.implicitVisibility(context: CheckerContext): Visibility {
         return when {
             this is FirPropertyAccessor && isSetter && status.isOverride -> this.visibility
 
@@ -83,7 +83,7 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
             }
 
             this is FirSimpleFunction
-                    && context.containingDeclarations.last() is FirClass<*>
+                    && context.containingDeclarations.last() is FirClass
                     && this.isOverride -> findFunctionVisibility(this, context)
 
             else -> Visibilities.DEFAULT_VISIBILITY
@@ -107,7 +107,7 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
         return visibility
     }
 
-    private fun FirFunction<*>.visibility(): Visibility? {
+    private fun FirFunction.visibility(): Visibility? {
         (symbol.fir as? FirStatusOwner)?.visibility?.let {
             return it
         }

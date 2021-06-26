@@ -27,7 +27,7 @@ fun renderJavaClass(renderer: FirRenderer, javaClass: FirJavaClass, session: Fir
     renderer.visitStatusOwner(javaClass)
     renderer.renderSupertypes(javaClass)
     renderer.renderInBraces {
-        val renderedDeclarations = mutableListOf<FirDeclaration<*>>()
+        val renderedDeclarations = mutableListOf<FirDeclaration>()
 
         fun renderAndCache(symbol: FirCallableSymbol<*>) {
             val enhanced = symbol.fir
@@ -42,7 +42,7 @@ fun renderJavaClass(renderer: FirRenderer, javaClass: FirJavaClass, session: Fir
             if (declaration in renderedDeclarations) continue
 
             val scopeToUse =
-                if (declaration is FirCallableMemberDeclaration<*> && declaration.status.isStatic)
+                if (declaration is FirCallableMemberDeclaration && declaration.status.isStatic)
                     staticScope
                 else
                     memberScope

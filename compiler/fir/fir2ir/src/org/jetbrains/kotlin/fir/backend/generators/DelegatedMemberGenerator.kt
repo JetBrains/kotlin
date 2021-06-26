@@ -5,19 +5,26 @@
 
 package org.jetbrains.kotlin.fir.backend.generators
 
-import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.backend.*
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
+import org.jetbrains.kotlin.fir.backend.generateOverriddenAccessorSymbols
+import org.jetbrains.kotlin.fir.backend.generateOverriddenFunctionSymbols
+import org.jetbrains.kotlin.fir.backend.generateOverriddenPropertySymbols
+import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirField
+import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.isJavaDefault
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.unwrapDelegateTarget
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.isNothing
+import org.jetbrains.kotlin.ir.types.isUnit
 
 /**
  * A generator for delegated members from implementation by delegation.
@@ -31,7 +38,7 @@ internal class DelegatedMemberGenerator(
 ) : Fir2IrComponents by components {
 
     // Generate delegated members for [subClass]. The synthetic field [irField] has the super interface type.
-    fun generate(irField: IrField, firField: FirField, firSubClass: FirClass<*>, subClass: IrClass) {
+    fun generate(irField: IrField, firField: FirField, firSubClass: FirClass, subClass: IrClass) {
         val subClassLookupTag = firSubClass.symbol.toLookupTag()
 
         val subClassScope = firSubClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true)
@@ -79,7 +86,7 @@ internal class DelegatedMemberGenerator(
 
     private fun generateDelegatedFunction(
         subClass: IrClass,
-        firSubClass: FirClass<*>,
+        firSubClass: FirClass,
         irField: IrField,
         superFunction: IrSimpleFunction,
         delegateOverride: FirSimpleFunction
@@ -151,7 +158,7 @@ internal class DelegatedMemberGenerator(
 
     private fun generateDelegatedProperty(
         subClass: IrClass,
-        firSubClass: FirClass<*>,
+        firSubClass: FirClass,
         irField: IrField,
         superProperty: IrProperty,
         firDelegateProperty: FirProperty

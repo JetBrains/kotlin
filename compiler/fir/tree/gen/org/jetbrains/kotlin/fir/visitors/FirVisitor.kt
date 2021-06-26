@@ -164,15 +164,15 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitExpression(expression: FirExpression, data: D): R  = visitElement(expression, data)
 
-    open fun <E : FirDeclaration<E>> visitDeclaration(declaration: FirDeclaration<E>, data: D): R  = visitElement(declaration, data)
+    open fun visitDeclaration(declaration: FirDeclaration, data: D): R  = visitElement(declaration, data)
 
-    open fun <E : FirAnnotatedDeclaration<E>> visitAnnotatedDeclaration(annotatedDeclaration: FirAnnotatedDeclaration<E>, data: D): R  = visitElement(annotatedDeclaration, data)
+    open fun visitAnnotatedDeclaration(annotatedDeclaration: FirAnnotatedDeclaration, data: D): R  = visitElement(annotatedDeclaration, data)
 
     open fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: D): R  = visitElement(anonymousInitializer, data)
 
-    open fun <E : FirTypedDeclaration<E>> visitTypedDeclaration(typedDeclaration: FirTypedDeclaration<E>, data: D): R  = visitElement(typedDeclaration, data)
+    open fun visitTypedDeclaration(typedDeclaration: FirTypedDeclaration, data: D): R  = visitElement(typedDeclaration, data)
 
-    open fun <E : FirCallableDeclaration<E>> visitCallableDeclaration(callableDeclaration: FirCallableDeclaration<E>, data: D): R  = visitElement(callableDeclaration, data)
+    open fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration, data: D): R  = visitElement(callableDeclaration, data)
 
     open fun visitTypeParameterRef(typeParameterRef: FirTypeParameterRef, data: D): R  = visitElement(typeParameterRef, data)
 
@@ -184,9 +184,9 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitStatusOwner(statusOwner: FirStatusOwner, data: D): R  = visitElement(statusOwner, data)
 
-    open fun <E : FirCallableMemberDeclaration<E>> visitCallableMemberDeclaration(callableMemberDeclaration: FirCallableMemberDeclaration<E>, data: D): R  = visitElement(callableMemberDeclaration, data)
+    open fun visitCallableMemberDeclaration(callableMemberDeclaration: FirCallableMemberDeclaration, data: D): R  = visitElement(callableMemberDeclaration, data)
 
-    open fun <E : FirVariable<E>> visitVariable(variable: FirVariable<E>, data: D): R  = visitElement(variable, data)
+    open fun visitVariable(variable: FirVariable, data: D): R  = visitElement(variable, data)
 
     open fun visitValueParameter(valueParameter: FirValueParameter, data: D): R  = visitElement(valueParameter, data)
 
@@ -196,15 +196,15 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitEnumEntry(enumEntry: FirEnumEntry, data: D): R  = visitElement(enumEntry, data)
 
-    open fun <E : FirClassLikeDeclaration<E>> visitClassLikeDeclaration(classLikeDeclaration: FirClassLikeDeclaration<E>, data: D): R  = visitElement(classLikeDeclaration, data)
+    open fun visitClassLikeDeclaration(classLikeDeclaration: FirClassLikeDeclaration, data: D): R  = visitElement(classLikeDeclaration, data)
 
-    open fun <E : FirClass<E>> visitClass(klass: FirClass<E>, data: D): R  = visitElement(klass, data)
+    open fun visitClass(klass: FirClass, data: D): R  = visitElement(klass, data)
 
     open fun visitRegularClass(regularClass: FirRegularClass, data: D): R  = visitElement(regularClass, data)
 
     open fun visitTypeAlias(typeAlias: FirTypeAlias, data: D): R  = visitElement(typeAlias, data)
 
-    open fun <E : FirFunction<E>> visitFunction(function: FirFunction<E>, data: D): R  = visitElement(function, data)
+    open fun visitFunction(function: FirFunction, data: D): R  = visitElement(function, data)
 
     open fun visitContractDescriptionOwner(contractDescriptionOwner: FirContractDescriptionOwner, data: D): R  = visitElement(contractDescriptionOwner, data)
 

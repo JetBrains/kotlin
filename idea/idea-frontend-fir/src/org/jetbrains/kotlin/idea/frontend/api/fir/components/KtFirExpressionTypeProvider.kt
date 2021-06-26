@@ -30,7 +30,7 @@ internal class KtFirExpressionTypeProvider(
     override val token: ValidityToken,
 ) : KtExpressionTypeProvider(), KtFirAnalysisSessionComponent {
     override fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KtType = withValidityAssertion {
-        val firDeclaration = declaration.getOrBuildFirOfType<FirCallableDeclaration<*>>(firResolveState)
+        val firDeclaration = declaration.getOrBuildFirOfType<FirCallableDeclaration>(firResolveState)
         firDeclaration.returnTypeRef.coneType.asKtType()
     }
 

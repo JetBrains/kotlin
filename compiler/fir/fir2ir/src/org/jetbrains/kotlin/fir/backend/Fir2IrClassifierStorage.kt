@@ -16,7 +16,10 @@ import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.*
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.symbols.Fir2IrClassSymbol
+import org.jetbrains.kotlin.fir.symbols.Fir2IrEnumEntrySymbol
+import org.jetbrains.kotlin.fir.symbols.Fir2IrTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -118,14 +121,14 @@ class Fir2IrClassifierStorage(
         }
     }
 
-    private fun IrClass.declareTypeParameters(klass: FirClass<*>) {
+    private fun IrClass.declareTypeParameters(klass: FirClass) {
         if (klass is FirRegularClass) {
             preCacheTypeParameters(klass)
             setTypeParameters(klass)
         }
     }
 
-    private fun IrClass.declareSupertypes(klass: FirClass<*>) {
+    private fun IrClass.declareSupertypes(klass: FirClass) {
         superTypes = klass.superTypeRefs.map { superTypeRef -> superTypeRef.toIrType() }
     }
 
@@ -133,13 +136,13 @@ class Fir2IrClassifierStorage(
         inlineClassRepresentation = computeInlineClassRepresentation(klass)
     }
 
-    private fun IrClass.declareSupertypesAndTypeParameters(klass: FirClass<*>): IrClass {
+    private fun IrClass.declareSupertypesAndTypeParameters(klass: FirClass): IrClass {
         declareTypeParameters(klass)
         declareSupertypes(klass)
         return this
     }
 
-    fun getCachedIrClass(klass: FirClass<*>): IrClass? {
+    fun getCachedIrClass(klass: FirClass): IrClass? {
         return if (klass is FirAnonymousObject || klass is FirRegularClass && klass.visibility == Visibilities.Local) {
             localStorage.getLocalClass(klass)
         } else {
@@ -148,12 +151,12 @@ class Fir2IrClassifierStorage(
     }
 
     internal fun getCachedLocalClass(lookupTag: ConeClassLikeLookupTag): IrClass? {
-        return localStorage.getLocalClass(lookupTag.toSymbol(session)!!.fir as FirClass<*>)
+        return localStorage.getLocalClass(lookupTag.toSymbol(session)!!.fir as FirClass)
     }
 
     private fun FirRegularClass.enumClassModality(): Modality {
         return when {
-            declarations.any { it is FirCallableMemberDeclaration<*> && it.modality == Modality.ABSTRACT } -> {
+            declarations.any { it is FirCallableMemberDeclaration && it.modality == Modality.ABSTRACT } -> {
                 Modality.ABSTRACT
             }
             declarations.any { it is FirEnumEntry && it.initializer != null } -> {
@@ -165,7 +168,7 @@ class Fir2IrClassifierStorage(
         }
     }
 
-    private fun createIrClass(klass: FirClass<*>, parent: IrDeclarationParent? = null): IrClass {
+    private fun createIrClass(klass: FirClass, parent: IrDeclarationParent? = null): IrClass {
         // NB: klass can be either FirRegularClass or FirAnonymousObject
         if (klass is FirAnonymousObject) {
             return createIrAnonymousObject(klass, irParent = parent)

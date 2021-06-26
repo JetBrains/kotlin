@@ -24,7 +24,10 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvide
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider.Companion.CLONEABLE_CLASS_ID
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
+import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeAttributes
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -192,8 +195,8 @@ fun deserializeClassToSymbol(
         addCloneForArrayIfNeeded(classId, context.dispatchReceiver)
         addSerializableIfNeeded(classId)
 
-        declarations.sortWith(object : Comparator<FirDeclaration<*>> {
-            override fun compare(a: FirDeclaration<*>, b: FirDeclaration<*>): Int {
+        declarations.sortWith(object : Comparator<FirDeclaration> {
+            override fun compare(a: FirDeclaration, b: FirDeclaration): Int {
                 // Reorder members based on their type and name only.
                 // See FE 1.0's [DeserializedMemberScope#addMembers].
                 if (a is FirStatusOwner && b is FirStatusOwner) {

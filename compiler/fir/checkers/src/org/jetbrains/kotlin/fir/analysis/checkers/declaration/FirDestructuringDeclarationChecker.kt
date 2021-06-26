@@ -66,7 +66,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker() {
         val originalDestructuringDeclarationOrInitializerSource = originalDestructuringDeclarationOrInitializer.source ?: return
         val originalDestructuringDeclarationType =
             when (originalDestructuringDeclarationOrInitializer) {
-                is FirVariable<*> -> originalDestructuringDeclarationOrInitializer.returnTypeRef.coneTypeSafe<ConeKotlinType>()
+                is FirVariable -> originalDestructuringDeclarationOrInitializer.returnTypeRef.coneTypeSafe<ConeKotlinType>()
                 is FirExpression -> originalDestructuringDeclarationOrInitializer.typeRef.coneTypeSafe<ConeKotlinType>()
                 else -> null
             } ?: return
@@ -109,7 +109,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker() {
         reference: FirErrorNamedReference,
         property: FirProperty,
         componentCall: FirComponentCall,
-        destructuringDeclaration: FirVariable<*>,
+        destructuringDeclaration: FirVariable,
         reporter: DiagnosticReporter,
         context: CheckerContext
     ) {
@@ -181,6 +181,6 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker() {
                 else -> this
             }
 
-    private val FirQualifiedAccessExpression.resolvedVariable: FirVariable<*>?
-        get() = ((calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirVariableSymbol)?.fir as? FirVariable<*>
+    private val FirQualifiedAccessExpression.resolvedVariable: FirVariable?
+        get() = ((calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirVariableSymbol)?.fir as? FirVariable
 }

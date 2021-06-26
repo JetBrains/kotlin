@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.declarations.utils
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -19,13 +19,13 @@ import org.jetbrains.kotlin.name.ClassId
 
 val FirTypeAlias.expandedConeType: ConeClassLikeType? get() = expandedTypeRef.coneTypeSafe()
 
-val FirClassLikeDeclaration<*>.classId
+val FirClassLikeDeclaration.classId
     get() = when (this) {
-        is FirClass<*> -> symbol.classId
+        is FirClass -> symbol.classId
         is FirTypeAlias -> symbol.classId
     }
 
-val FirClass<*>.classId: ClassId get() = symbol.classId
+val FirClass.classId: ClassId get() = symbol.classId
 
 val FirClassSymbol<*>.superConeTypes: List<ConeClassLikeType>
     get() = when (this) {
@@ -33,22 +33,22 @@ val FirClassSymbol<*>.superConeTypes: List<ConeClassLikeType>
         is FirAnonymousObjectSymbol -> fir.superConeTypes
     }
 
-val FirClass<*>.superConeTypes: List<ConeClassLikeType> get() = superTypeRefs.mapNotNull { it.coneTypeSafe() }
+val FirClass.superConeTypes: List<ConeClassLikeType> get() = superTypeRefs.mapNotNull { it.coneTypeSafe() }
 
-val FirClass<*>.anonymousInitializers: List<FirAnonymousInitializer>
+val FirClass.anonymousInitializers: List<FirAnonymousInitializer>
     get() = declarations.filterIsInstance<FirAnonymousInitializer>()
 
-val FirClass<*>.constructors: List<FirConstructor>
+val FirClass.constructors: List<FirConstructor>
     get() = declarations.filterIsInstance<FirConstructor>()
 
 val FirConstructor.delegatedThisConstructor: FirConstructor?
     get() = delegatedConstructor?.takeIf { it.isThis }
         ?.let { (it.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol?.fir as? FirConstructor }
 
-val FirClass<*>.constructorsSortedByDelegation: List<FirConstructor>
+val FirClass.constructorsSortedByDelegation: List<FirConstructor>
     get() = constructors.sortedWith(ConstructorDelegationComparator)
 
-val FirClass<*>.primaryConstructor: FirConstructor?
+val FirClass.primaryConstructor: FirConstructor?
     get() = constructors.find(FirConstructor::isPrimary)
 
 fun FirRegularClass.collectEnumEntries(): Collection<FirEnumEntry> {
@@ -62,11 +62,11 @@ val FirQualifiedAccess.referredPropertySymbol: FirPropertySymbol?
         return reference.resolvedSymbol as? FirPropertySymbol
     }
 
-inline val FirDeclaration<*>.isJava: Boolean
+inline val FirDeclaration.isJava: Boolean
     get() = origin == FirDeclarationOrigin.Java
-inline val FirDeclaration<*>.isFromLibrary: Boolean
+inline val FirDeclaration.isFromLibrary: Boolean
     get() = origin == FirDeclarationOrigin.Library
-inline val FirDeclaration<*>.isSynthetic: Boolean
+inline val FirDeclaration.isSynthetic: Boolean
     get() = origin == FirDeclarationOrigin.Synthetic
 
 private object ConstructorDelegationComparator : Comparator<FirConstructor> {

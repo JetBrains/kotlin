@@ -21,17 +21,17 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-sealed class FirClass<E : FirClass<E>> : FirClassLikeDeclaration<E>(), FirStatement, FirTypeParameterRefsOwner {
+sealed class FirClass : FirClassLikeDeclaration(), FirStatement, FirTypeParameterRefsOwner {
     abstract override val source: FirSourceElement?
     abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
     abstract override val typeParameters: List<FirTypeParameterRef>
-    abstract override val symbol: FirClassSymbol<E>
+    abstract override val symbol: FirClassSymbol<out FirClass>
     abstract val classKind: ClassKind
     abstract val superTypeRefs: List<FirTypeRef>
-    abstract val declarations: List<FirDeclaration<*>>
+    abstract val declarations: List<FirDeclaration>
     abstract override val annotations: List<FirAnnotationCall>
     abstract val scopeProvider: FirScopeProvider
 
@@ -45,11 +45,11 @@ sealed class FirClass<E : FirClass<E>> : FirClassLikeDeclaration<E>(), FirStatem
 
     abstract fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>)
 
-    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirClass<E>
+    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirClass
 
-    abstract fun <D> transformSuperTypeRefs(transformer: FirTransformer<D>, data: D): FirClass<E>
+    abstract fun <D> transformSuperTypeRefs(transformer: FirTransformer<D>, data: D): FirClass
 
-    abstract fun <D> transformDeclarations(transformer: FirTransformer<D>, data: D): FirClass<E>
+    abstract fun <D> transformDeclarations(transformer: FirTransformer<D>, data: D): FirClass
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirClass<E>
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirClass
 }

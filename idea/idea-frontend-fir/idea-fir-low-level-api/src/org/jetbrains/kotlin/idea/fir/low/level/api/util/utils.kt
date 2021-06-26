@@ -67,7 +67,7 @@ internal inline fun checkCanceled() {
 internal val FirElement.isErrorElement
     get() = this is FirDiagnosticHolder
 
-internal val FirDeclaration<*>.ktDeclaration: KtDeclaration
+internal val FirDeclaration.ktDeclaration: KtDeclaration
     get() {
         val psi = psi
             ?: error("PSI element was not found for${render()}")
@@ -85,7 +85,7 @@ internal val FirDeclaration<*>.ktDeclaration: KtDeclaration
         }
     }
 
-internal val FirDeclaration<*>.containingKtFileIfAny: KtFile?
+internal val FirDeclaration.containingKtFileIfAny: KtFile?
     get() = psi?.containingFile as? KtFile
 
 

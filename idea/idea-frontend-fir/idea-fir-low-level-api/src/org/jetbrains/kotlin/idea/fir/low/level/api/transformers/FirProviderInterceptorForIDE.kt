@@ -19,22 +19,22 @@ internal class FirProviderInterceptorForIDE private constructor(
     private val firFile: FirFile,
     private val session: FirSession,
     private val symbolSet: Set<FirClassLikeSymbol<*>>,
-    private val classIdToElementMap: Map<ClassId, FirClassLikeDeclaration<*>>
+    private val classIdToElementMap: Map<ClassId, FirClassLikeDeclaration>
 ) : FirProviderInterceptor {
 
     override fun getFirClassifierContainerFileIfAny(symbol: FirClassLikeSymbol<*>): FirFile? =
         if (symbolSet.contains(symbol)) firFile else session.firProvider.getFirClassifierContainerFileIfAny(symbol)
 
-    override fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration<*>? =
+    override fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration? =
         classIdToElementMap[classId] ?: session.firProvider.getFirClassifierByFqName(classId)
 
     companion object {
         fun createForFirElement(session: FirSession, firFile: FirFile, element: FirElement): FirProviderInterceptor {
             val nodeInfoCollector = object : FirVisitorVoid() {
                 val symbolSet = mutableSetOf<FirClassLikeSymbol<*>>()
-                val classIdToElementMap = mutableMapOf<ClassId, FirClassLikeDeclaration<*>>()
+                val classIdToElementMap = mutableMapOf<ClassId, FirClassLikeDeclaration>()
                 override fun visitElement(element: FirElement) {
-                    if (element is FirClassLikeDeclaration<*>) {
+                    if (element is FirClassLikeDeclaration) {
                         symbolSet.add(element.symbol)
                         classIdToElementMap[element.symbol.classId] = element
                     }

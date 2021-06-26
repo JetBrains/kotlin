@@ -42,5 +42,5 @@ interface FirFunctionBuilder : FirDeclarationBuilder, FirAnnotationContainerBuil
     abstract var dispatchReceiverType: ConeKotlinType?
     abstract val valueParameters: MutableList<FirValueParameter>
     abstract var body: FirBlock?
-    override fun build(): FirFunction<*>
+    override fun build(): FirFunction
 }

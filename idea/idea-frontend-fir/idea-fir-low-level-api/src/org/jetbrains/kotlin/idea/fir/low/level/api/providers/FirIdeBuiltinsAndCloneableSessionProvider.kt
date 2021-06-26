@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 internal class FirIdeBuiltinsAndCloneableSessionProvider(override val symbolProvider: FirSymbolProvider) : FirProvider() {
-    override fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration<*>? =
+    override fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration? =
         symbolProvider.getClassLikeSymbolByFqName(classId)?.fir
 
     override fun getFirClassifierContainerFile(fqName: ClassId): FirFile = shouldNotBeCalled()
@@ -25,10 +25,10 @@ internal class FirIdeBuiltinsAndCloneableSessionProvider(override val symbolProv
     override fun getFirFilesByPackage(fqName: FqName): List<FirFile> = emptyList()
 
     @FirProviderInternals
-    override fun recordGeneratedClass(owner: FirAnnotatedDeclaration<*>, klass: FirRegularClass) = shouldNotBeCalled()
+    override fun recordGeneratedClass(owner: FirAnnotatedDeclaration, klass: FirRegularClass) = shouldNotBeCalled()
 
     @FirProviderInternals
-    override fun recordGeneratedMember(owner: FirAnnotatedDeclaration<*>, klass: FirDeclaration<*>) = shouldNotBeCalled()
+    override fun recordGeneratedMember(owner: FirAnnotatedDeclaration, klass: FirDeclaration) = shouldNotBeCalled()
 
     override fun getClassNamesInPackage(fqName: FqName): Set<Name> = shouldNotBeCalled()
 

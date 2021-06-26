@@ -11,25 +11,25 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 
 abstract class FirScopeProvider {
     abstract fun getUseSiteMemberScope(
-        klass: FirClass<*>,
+        klass: FirClass,
         useSiteSession: FirSession,
         scopeSession: ScopeSession
     ): FirTypeScope
 
     abstract fun getStaticMemberScopeForCallables(
-        klass: FirClass<*>,
+        klass: FirClass,
         useSiteSession: FirSession,
         scopeSession: ScopeSession
     ): FirScope?
 
     abstract fun getNestedClassifierScope(
-        klass: FirClass<*>,
+        klass: FirClass,
         useSiteSession: FirSession,
         scopeSession: ScopeSession
     ): FirScope?
 
     fun getStaticScope(
-        klass: FirClass<*>,
+        klass: FirClass,
         useSiteSession: FirSession,
         scopeSession: ScopeSession
     ): FirScope? {

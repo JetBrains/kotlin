@@ -48,15 +48,15 @@ internal class KtFirSymbolDeclarationOverridesProvider(
         return overriddenElement.map { analysisSession.firSymbolBuilder.callableBuilder.buildCallableSymbol(it.fir) }
     }
 
-    private fun FirTypeScope.processCallableByName(declaration: FirDeclaration<*>) = when (declaration) {
+    private fun FirTypeScope.processCallableByName(declaration: FirDeclaration) = when (declaration) {
         is FirSimpleFunction -> processFunctionsByName(declaration.name) { }
         is FirProperty -> processPropertiesByName(declaration.name) { }
         else -> error { "Invalid FIR symbol to process: ${declaration::class}" }
     }
 
     private fun FirTypeScope.processAllOverriddenDeclarations(
-        declaration: FirDeclaration<*>,
-        processor: (FirCallableDeclaration<*>) -> Unit
+        declaration: FirDeclaration,
+        processor: (FirCallableDeclaration) -> Unit
     ) = when (declaration) {
         is FirSimpleFunction -> processOverriddenFunctions(declaration.symbol) { symbol ->
             processor.invoke(symbol.fir)
@@ -70,8 +70,8 @@ internal class KtFirSymbolDeclarationOverridesProvider(
     }
 
     private fun FirTypeScope.processDirectOverriddenDeclarations(
-        declaration: FirDeclaration<*>,
-        processor: (FirCallableDeclaration<*>) -> Unit
+        declaration: FirDeclaration,
+        processor: (FirCallableDeclaration) -> Unit
     ) = when (declaration) {
         is FirSimpleFunction -> processDirectOverriddenFunctionsWithBaseScope(declaration.symbol) { symbol, _ ->
             processor.invoke(symbol.fir)
@@ -86,7 +86,7 @@ internal class KtFirSymbolDeclarationOverridesProvider(
 
     private inline fun <T : KtSymbol> processOverrides(
         callableSymbol: T,
-        crossinline process: (FirTypeScope, FirDeclaration<*>) -> Unit
+        crossinline process: (FirTypeScope, FirDeclaration) -> Unit
     ) {
         require(callableSymbol is KtFirSymbol<*>)
         val containingDeclaration = with(analysisSession) {
@@ -100,7 +100,7 @@ internal class KtFirSymbolDeclarationOverridesProvider(
     private inline fun processOverrides(
         containingDeclaration: KtFirNamedClassOrObjectSymbol,
         callableSymbol: KtFirSymbol<*>,
-        crossinline process: (FirTypeScope, FirDeclaration<*>) -> Unit
+        crossinline process: (FirTypeScope, FirDeclaration) -> Unit
     ) {
         containingDeclaration.firRef.withFir(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) { firContainer ->
             callableSymbol.firRef.withFirUnsafe { firCallableDeclaration ->

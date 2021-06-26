@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 
-fun FirClassLikeDeclaration<*>.fullyExpandedClass(useSiteSession: FirSession): FirRegularClass? {
+fun FirClassLikeDeclaration.fullyExpandedClass(useSiteSession: FirSession): FirRegularClass? {
     if (this is FirTypeAlias) return this.expandedConeType?.lookupTag?.toSymbol(useSiteSession)?.fir?.fullyExpandedClass(useSiteSession)
     if (this is FirRegularClass) return this
     error("Not supported: $this")

@@ -35,7 +35,7 @@ class FirWhenExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBui
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     var calleeReference: FirReference = FirStubReference
     var subject: FirExpression? = null
-    var subjectVariable: FirVariable<*>? = null
+    var subjectVariable: FirVariable? = null
     val branches: MutableList<FirWhenBranch> = mutableListOf()
     var exhaustivenessStatus: ExhaustivenessStatus? = null
     var usedAsExpression: Boolean by kotlin.properties.Delegates.notNull<Boolean>()

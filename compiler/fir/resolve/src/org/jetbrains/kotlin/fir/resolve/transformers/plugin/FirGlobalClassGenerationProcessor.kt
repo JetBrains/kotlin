@@ -37,7 +37,7 @@ class FirGlobalClassGenerationProcessor(
     }
 
     private fun generateClasses(
-        declarations: List<Pair<FirAnnotatedDeclaration<*>, List<FirAnnotatedDeclaration<*>>>>,
+        declarations: List<Pair<FirAnnotatedDeclaration, List<FirAnnotatedDeclaration>>>,
         extension: FirDeclarationGenerationExtension,
     ): List<FirRegularClass> {
         val newClasses = mutableListOf<FirRegularClass>()
@@ -50,8 +50,8 @@ class FirGlobalClassGenerationProcessor(
     @OptIn(FirProviderInternals::class)
     private fun generateClass(
         extension: FirDeclarationGenerationExtension,
-        declaration: FirAnnotatedDeclaration<*>,
-        owners: List<FirAnnotatedDeclaration<*>>,
+        declaration: FirAnnotatedDeclaration,
+        owners: List<FirAnnotatedDeclaration>,
         newClasses: MutableList<FirRegularClass>
     ) {
         val generatedClasses = extension.generateClasses(declaration, owners)

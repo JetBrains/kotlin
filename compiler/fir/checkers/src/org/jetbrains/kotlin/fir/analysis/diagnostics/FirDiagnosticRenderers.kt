@@ -60,7 +60,7 @@ object FirDiagnosticRenderers {
     val NAME = Renderer { element: FirElement ->
         when (element) {
             is FirStatusOwner -> DECLARATION_NAME.render(element)
-            is FirCallableDeclaration<*> -> element.symbol.callableId.callableName.asString()
+            is FirCallableDeclaration -> element.symbol.callableId.callableName.asString()
             else -> "???"
         }
     }
@@ -83,7 +83,7 @@ object FirDiagnosticRenderers {
         name.asString()
     }
 
-    val RENDER_CLASS_OR_OBJECT = Renderer { firClass: FirClass<*> ->
+    val RENDER_CLASS_OR_OBJECT = Renderer { firClass: FirClass ->
         val name = firClass.classId.relativeClassName.asString()
         val classOrObject = if (firClass is FirRegularClass) "Class" else "Object"
         "$classOrObject $name"

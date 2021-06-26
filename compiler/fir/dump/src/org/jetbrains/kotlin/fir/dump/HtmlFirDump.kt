@@ -378,12 +378,12 @@ class MultiModuleHtmlFirDump(private val outputRoot: File) {
                     visitElement(regularClass)
                 }
 
-                fun indexDeclaration(declaration: FirDeclaration<*>) {
+                fun indexDeclaration(declaration: FirDeclaration) {
                     symbols[declaration.symbol] = location
                     symbolIds[declaration.symbol] = symbolCounter++
                 }
 
-                override fun <F : FirVariable<F>> visitVariable(variable: FirVariable<F>) {
+                override fun visitVariable(variable: FirVariable) {
                     indexDeclaration(variable)
                     visitElement(variable)
                 }
@@ -919,7 +919,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
             is FirEnumEntry -> generate(statusOwner)
             is FirRegularClass -> generate(statusOwner)
             is FirSimpleFunction -> generate(statusOwner)
-            is FirProperty -> if (statusOwner.isLocal) generate(statusOwner as FirVariable<*>) else generate(statusOwner)
+            is FirProperty -> if (statusOwner.isLocal) generate(statusOwner as FirVariable) else generate(statusOwner)
             is FirConstructor -> generate(statusOwner)
             is FirTypeAlias -> generate(statusOwner)
             else -> unsupported(statusOwner)
@@ -962,7 +962,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         +"> "
     }
 
-    private fun FlowContent.generateReceiver(declaration: FirCallableDeclaration<*>) {
+    private fun FlowContent.generateReceiver(declaration: FirCallableDeclaration) {
         generateReceiver(declaration.receiverTypeRef)
     }
 
@@ -1047,7 +1047,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
             is FirWhenExpression -> generate(statement, isStatement = true)
             is FirTryExpression -> generate(statement, isStatement = true)
             is FirExpression -> iline { generate(statement) }
-            is FirVariable<*> -> iline { generate(statement) }
+            is FirVariable -> iline { generate(statement) }
             is FirVariableAssignment -> iline { generate(statement) }
             else -> unsupported(statement)
         }
@@ -1072,7 +1072,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         }
     }
 
-    private fun FlowContent.generate(variable: FirVariable<*>) {
+    private fun FlowContent.generate(variable: FirVariable) {
         if (variable.isVal) {
             keyword("val ")
         } else {
@@ -1112,7 +1112,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         }
     }
 
-    private fun FlowContent.describeVerbose(symbol: FirCallableSymbol<*>, fir: FirFunction<*>) {
+    private fun FlowContent.describeVerbose(symbol: FirCallableSymbol<*>, fir: FirFunction) {
         describeTypeParameters(fir)
 
         fir.receiverTypeRef?.let {
@@ -1131,7 +1131,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         generate(fir.returnTypeRef)
     }
 
-    private fun FlowContent.describeVerbose(symbol: FirCallableSymbol<*>, fir: FirVariable<*>) {
+    private fun FlowContent.describeVerbose(symbol: FirCallableSymbol<*>, fir: FirVariable) {
         if (fir is FirTypeParametersOwner) describeTypeParameters(fir)
 
         fir.receiverTypeRef?.let {
@@ -1684,7 +1684,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         }
     }
 
-    private fun FlowContent.generateDeclarations(declarations: List<FirDeclaration<*>>) {
+    private fun FlowContent.generateDeclarations(declarations: List<FirDeclaration>) {
         if (declarations.isNotEmpty()) {
             +" {"
             br
@@ -1769,7 +1769,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         }
     }
 
-    private fun FlowContent.generate(declaration: FirDeclaration<*>) {
+    private fun FlowContent.generate(declaration: FirDeclaration) {
         when (declaration) {
             is FirAnonymousInitializer -> generate(declaration)
             is FirStatusOwner -> generate(declaration as FirStatusOwner)

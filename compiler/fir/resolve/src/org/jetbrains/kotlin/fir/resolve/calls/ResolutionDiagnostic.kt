@@ -26,12 +26,12 @@ class MixingNamedAndPositionArguments(override val argument: FirExpression) : In
 
 class TooManyArguments(
     val argument: FirExpression,
-    val function: FirFunction<*>
+    val function: FirFunction
 ) : ResolutionDiagnostic(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR)
 
 class NamedArgumentNotAllowed(
     override val argument: FirExpression,
-    val function: FirFunction<*>,
+    val function: FirFunction,
     val forbiddenNamedArgumentsTarget: ForbiddenNamedArgumentsTarget
 ) : InapplicableArgumentDiagnostic()
 
@@ -50,12 +50,12 @@ class NonVarargSpread(override val argument: FirExpression) : InapplicableArgume
 
 class NoValueForParameter(
     val valueParameter: FirValueParameter,
-    val function: FirFunction<*>
+    val function: FirFunction
 ) : ResolutionDiagnostic(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR)
 
 class NameNotFound(
     val argument: FirNamedArgumentExpression,
-    val function: FirFunction<*>
+    val function: FirFunction
 ) : ResolutionDiagnostic(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR)
 
 object InapplicableCandidate : ResolutionDiagnostic(INAPPLICABLE)

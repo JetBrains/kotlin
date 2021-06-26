@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.api
 
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -235,7 +234,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         }
 
         val originalDeclaration = nonLocalDeclaration.getOrBuildFir(state)
-        check(originalDeclaration is FirDeclaration<*>) { "Invalid original declaration type ${originalDeclaration::class.simpleName}" }
+        check(originalDeclaration is FirDeclaration) { "Invalid original declaration type ${originalDeclaration::class.simpleName}" }
 
         val originalDesignation = originalDeclaration.collectDesignation()
 

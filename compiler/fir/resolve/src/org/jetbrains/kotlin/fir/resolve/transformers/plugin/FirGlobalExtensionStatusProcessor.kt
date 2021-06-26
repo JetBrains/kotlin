@@ -51,7 +51,7 @@ class FirTransformerBasedExtensionStatusProcessor(
 
         private fun FirStatusOwner.updateStatus() {
             if (extensions.isEmpty()) return
-            val owners = predicateBasedProvider.getOwnersOfDeclaration(this as FirAnnotatedDeclaration<*>)
+            val owners = predicateBasedProvider.getOwnersOfDeclaration(this as FirAnnotatedDeclaration)
             requireNotNull(owners)
             var status = this.status
             for (extension in extensions) {

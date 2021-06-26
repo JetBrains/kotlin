@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.name.Name
 open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) : FirPartialBodyResolveTransformer(transformer) {
     private val statusResolver: FirStatusResolver = FirStatusResolver(session, scopeSession)
 
-    private fun FirDeclaration<*>.visibilityForApproximation(): Visibility {
+    private fun FirDeclaration.visibilityForApproximation(): Visibility {
         if (this !is FirStatusOwner) return Visibilities.Local
         val container = context.containers.getOrNull(context.containers.size - 2)
         val containerVisibility =
@@ -69,7 +69,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         }
     }
 
-    private fun transformDeclarationContent(declaration: FirDeclaration<*>, data: ResolutionMode): FirDeclaration<*> {
+    private fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): FirDeclaration {
         transformer.firTowerDataContextCollector?.addDeclarationContext(declaration, context.towerDataContext)
         transformer.replaceDeclarationResolvePhaseIfNeeded(declaration, transformerPhase)
         return transformer.transformDeclarationContent(declaration, data)
@@ -82,10 +82,10 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         return ((data as? ResolutionMode.WithStatus)?.status ?: declarationStatus)
     }
 
-    private fun prepareSignatureForBodyResolve(callableMember: FirCallableMemberDeclaration<*>) {
+    private fun prepareSignatureForBodyResolve(callableMember: FirCallableMemberDeclaration) {
         callableMember.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
         callableMember.transformReceiverTypeRef(transformer, ResolutionMode.ContextIndependent)
-        if (callableMember is FirFunction<*>) {
+        if (callableMember is FirFunction) {
             callableMember.valueParameters.forEach {
                 it.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
                 it.transformVarargTypeToArrayType()
@@ -342,8 +342,8 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         }
     }
 
-    private fun FirDeclaration<*>.resolveStatus(
-        containingClass: FirClass<*>? = null,
+    private fun FirDeclaration.resolveStatus(
+        containingClass: FirClass? = null,
         containingProperty: FirProperty? = null,
     ): FirDeclarationStatus {
         val containingDeclaration = context.containerIfAny
@@ -487,7 +487,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         val containingDeclaration = context.containerIfAny
         return context.withSimpleFunction(simpleFunction) {
             // TODO: I think it worth creating something like runAllPhasesForLocalFunction
-            if (containingDeclaration != null && containingDeclaration !is FirClass<*>) {
+            if (containingDeclaration != null && containingDeclaration !is FirClass) {
                 // For class members everything should be already prepared
                 prepareSignatureForBodyResolve(simpleFunction)
                 simpleFunction.transformStatus(this, simpleFunction.resolveStatus().mode())
@@ -500,7 +500,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         }
     }
 
-    private fun <F : FirFunction<F>> transformFunctionWithGivenSignature(
+    private fun <F : FirFunction> transformFunctionWithGivenSignature(
         function: F,
         resolutionMode: ResolutionMode,
     ): F {
@@ -534,8 +534,8 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         return result
     }
 
-    override fun <F : FirFunction<F>> transformFunction(
-        function: FirFunction<F>,
+    override fun transformFunction(
+        function: FirFunction,
         data: ResolutionMode
     ): FirStatement {
         val functionIsNotAnalyzed = transformerPhase != function.resolvePhase
@@ -545,7 +545,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         @Suppress("UNCHECKED_CAST")
         return transformDeclarationContent(function, data).also {
             if (functionIsNotAnalyzed) {
-                val result = it as FirFunction<*>
+                val result = it as FirFunction
                 val controlFlowGraphReference = dataFlowAnalyzer.exitFunction(result)
                 result.replaceControlFlowGraphReference(controlFlowGraphReference)
             }
@@ -807,7 +807,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         return this
     }
 
-    private fun storeVariableReturnType(variable: FirVariable<*>) {
+    private fun storeVariableReturnType(variable: FirVariable) {
         val initializer = variable.initializer
         if (variable.returnTypeRef is FirImplicitTypeRef) {
             val resultType = when {

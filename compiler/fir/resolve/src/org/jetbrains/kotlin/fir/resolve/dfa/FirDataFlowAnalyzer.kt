@@ -213,7 +213,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
     // ----------------------------------- Named function -----------------------------------
 
-    fun enterFunction(function: FirFunction<*>) {
+    fun enterFunction(function: FirFunction) {
         if (function is FirAnonymousFunction) {
             enterAnonymousFunction(function)
             return
@@ -226,7 +226,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         functionEnterNode.mergeIncomingFlow(shouldForkFlow = previousNode != null)
     }
 
-    fun exitFunction(function: FirFunction<*>): FirControlFlowGraphReference {
+    fun exitFunction(function: FirFunction): FirControlFlowGraphReference {
         if (function is FirAnonymousFunction) {
             return exitAnonymousFunction(function)
         }
@@ -297,7 +297,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     }
 
     fun exitRegularClass(klass: FirRegularClass): ControlFlowGraph {
-        if (klass.isLocal && components.container !is FirClass<*>) return exitLocalClass(klass)
+        if (klass.isLocal && components.container !is FirClass) return exitLocalClass(klass)
         return graphBuilder.exitClass(klass)
     }
 
@@ -1337,10 +1337,10 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
     // ------------------------------------------------------ Utils ------------------------------------------------------
 
-    private fun getOrCreateLocalVariableAssignmentAnalyzer(firFunction: FirFunction<*>): FirLocalVariableAssignmentAnalyzer? {
+    private fun getOrCreateLocalVariableAssignmentAnalyzer(firFunction: FirFunction): FirLocalVariableAssignmentAnalyzer? {
         // Only return analyzer for nested functions so that we won't waste time on functions that don't contain any lambda or local
         // function.
-        val rootFunction = components.containingDeclarations.firstIsInstanceOrNull<FirFunction<*>>() ?: return null
+        val rootFunction = components.containingDeclarations.firstIsInstanceOrNull<FirFunction>() ?: return null
         if (rootFunction == firFunction) return null
         return context.firLocalVariableAssignmentAnalyzer ?: FirLocalVariableAssignmentAnalyzer.analyzeFunction(rootFunction).also {
             context.firLocalVariableAssignmentAnalyzer = it

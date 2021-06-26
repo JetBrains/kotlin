@@ -30,14 +30,14 @@ var FirRegularClass.moduleName: String? by FirDeclarationDataRegistry.data(Modul
 data class DanglingTypeConstraint(val name: Name, val source: FirSourceElement)
 
 var <T> T.danglingTypeConstraints: List<DanglingTypeConstraint>?
-        where T : FirDeclaration<T>, T : FirTypeParameterRefsOwner
+        where T : FirDeclaration, T : FirTypeParameterRefsOwner
         by FirDeclarationDataRegistry.data(DanglingTypeConstraintsKey)
 
 // ----------------------------------- Utils -----------------------------------
 
 val FirStatusOwner.containerSource: SourceElement?
     get() = when (this) {
-        is FirCallableMemberDeclaration<*> -> containerSource
+        is FirCallableMemberDeclaration -> containerSource
         is FirRegularClass -> sourceElement
         is FirTypeAlias -> sourceElement
     }
@@ -62,7 +62,7 @@ val FirProperty.hasBackingField: Boolean
         }
     }
 
-fun FirDeclaration<*>.getDanglingTypeConstraintsOrEmpty(): List<DanglingTypeConstraint> {
+fun FirDeclaration.getDanglingTypeConstraintsOrEmpty(): List<DanglingTypeConstraint> {
     return when (this) {
         is FirRegularClass -> danglingTypeConstraints
         is FirSimpleFunction -> danglingTypeConstraints

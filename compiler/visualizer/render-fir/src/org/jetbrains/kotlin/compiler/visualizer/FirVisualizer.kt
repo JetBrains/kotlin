@@ -163,7 +163,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             stack.push((function.name ?: ANONYMOUS_NAME))
             if (function.equalsToken != null) {
                 function.bodyExpression!!.firstOfTypeWithRender<FirReturnExpression>(function.equalsToken) { this.result.typeRef }
-                    ?: function.firstOfTypeWithRender<FirTypedDeclaration<*>>(function.equalsToken) { this.returnTypeRef }
+                    ?: function.firstOfTypeWithRender<FirTypedDeclaration>(function.equalsToken) { this.returnTypeRef }
             }
             super.visitNamedFunction(function)
             stack.pop()
@@ -171,7 +171,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
 
         private fun renderVariableType(variable: KtVariableDeclaration) {
             stack.addName(variable.nameAsSafeName)
-            variable.firstOfTypeWithRender<FirVariable<*>>(variable.nameIdentifier)
+            variable.firstOfTypeWithRender<FirVariable>(variable.nameIdentifier)
             variable.acceptChildren(this)
         }
 
@@ -193,7 +193,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         override fun visitParameter(parameter: KtParameter) {
             stack.addName(parameter.nameAsSafeName)
             if ((parameter.isLoopParameter && parameter.destructuringDeclaration == null) || parameter.ownerFunction is KtPropertyAccessor) {
-                parameter.firstOfTypeWithRender<FirVariable<*>>(parameter.nameIdentifier)
+                parameter.firstOfTypeWithRender<FirVariable>(parameter.nameIdentifier)
             }
             super.visitParameter(parameter)
         }
@@ -450,7 +450,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             }
         }
 
-        private inline fun <reified D : FirCallableDeclaration<*>> D.originalIfFakeOverrideOrDelegated(): D? {
+        private inline fun <reified D : FirCallableDeclaration> D.originalIfFakeOverrideOrDelegated(): D? {
             return when (origin) {
                 FirDeclarationOrigin.SubstitutionOverride, FirDeclarationOrigin.IntersectionOverride -> originalIfFakeOverride()
                 FirDeclarationOrigin.Delegated -> delegatedWrapperData!!.wrapped
@@ -458,7 +458,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             }
         }
 
-        private inline fun <reified D : FirCallableDeclaration<*>> D.getOriginal(): D {
+        private inline fun <reified D : FirCallableDeclaration> D.getOriginal(): D {
             var current = this
             var next = this.originalIfFakeOverrideOrDelegated() ?: this
             while (current != next) {
@@ -469,7 +469,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         private fun renderImplicitReceiver(symbol: FirBasedSymbol<*>, psi: PsiElement?) {
-            val receiverType = (symbol.fir as? FirCallableMemberDeclaration<*>)?.dispatchReceiverType ?: return
+            val receiverType = (symbol.fir as? FirCallableMemberDeclaration)?.dispatchReceiverType ?: return
             val implicitReceiverIndex = implicitReceivers.indexOf(receiverType)
             if (implicitReceiverIndex != -1) addAnnotation("this@$implicitReceiverIndex", psi)
         }
@@ -492,7 +492,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                 .append(original.returnTypeRef.coneType.tryToRenderConeAsFunctionType())
         }
 
-        private fun renderVariable(variable: FirVariable<*>, data: StringBuilder) {
+        private fun renderVariable(variable: FirVariable, data: StringBuilder) {
             when {
                 variable is FirEnumEntry -> {
                     data.append("enum entry ")
@@ -661,7 +661,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             valueParameter.defaultValue?.let { data.append(" = ...") }
         }
 
-        override fun <F : FirVariable<F>> visitVariable(variable: FirVariable<F>, data: StringBuilder) {
+        override fun visitVariable(variable: FirVariable, data: StringBuilder) {
             data.append(variable.returnTypeRef.render())
         }
 
@@ -686,7 +686,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                         .append(fir.dispatchReceiverType?.tryToRenderConeAsFunctionType())
                 }
                 symbol is FirFieldSymbol -> renderField(symbol.fir, data)
-                else -> (symbol.fir as? FirVariable<*>)?.let { renderVariable(it, data) }
+                else -> (symbol.fir as? FirVariable)?.let { renderVariable(it, data) }
             }
         }
 
@@ -698,7 +698,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                 is FirNamedFunctionSymbol -> {
                     renderFunctionSymbol(symbol, data)
 
-                    val fir = symbol.firUnsafe<FirFunction<*>>()
+                    val fir = symbol.firUnsafe<FirFunction>()
                     visitValueParameters(fir.valueParameters, data)
                     data.append(": ")
                     fir.returnTypeRef.accept(this, data)
@@ -843,7 +843,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         private fun FirBasedSymbol<*>.isLocalDeclaration(): Boolean {
             return when (val fir = this.fir) {
                 is FirConstructor -> fir.returnTypeRef.coneType.isLocal()
-                is FirCallableDeclaration<*> -> {
+                is FirCallableDeclaration -> {
                     fir.dispatchReceiverClassOrNull()?.toFirRegularClass(session)?.isLocal ?: false
                 }
                 else -> false

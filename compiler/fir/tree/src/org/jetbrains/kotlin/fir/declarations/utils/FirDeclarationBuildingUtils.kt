@@ -29,23 +29,23 @@ fun FirTypeParameterBuilder.addDefaultBoundIfNecessary(isFlexible: Boolean = fal
     }
 }
 
-fun FirRegularClassBuilder.addDeclaration(declaration: FirDeclaration<*>) {
+fun FirRegularClassBuilder.addDeclaration(declaration: FirDeclaration) {
     declarations += declaration
     if (companionObject == null && declaration is FirRegularClass && declaration.isCompanion) {
         companionObject = declaration
     }
 }
 
-fun FirRegularClassBuilder.addDeclarations(declarations: Collection<FirDeclaration<*>>) {
+fun FirRegularClassBuilder.addDeclarations(declarations: Collection<FirDeclaration>) {
     declarations.forEach(this::addDeclaration)
 }
 
-fun FirFile.addDeclaration(declaration: FirDeclaration<*>) {
+fun FirFile.addDeclaration(declaration: FirDeclaration) {
     require(this is FirFileImpl)
     declarations += declaration
 }
 
-fun FirRegularClass.addDeclaration(declaration: FirDeclaration<*>) {
+fun FirRegularClass.addDeclaration(declaration: FirDeclaration) {
     @Suppress("LiftReturnOrAssignment")
     when (this) {
         is FirRegularClassImpl -> declarations += declaration

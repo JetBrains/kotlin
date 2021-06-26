@@ -48,7 +48,7 @@ object FirTypeParameterBoundsChecker : FirTypeParameterChecker() {
 
     private fun checkFinalUpperBounds(
         declaration: FirTypeParameter,
-        containingDeclaration: FirDeclaration<*>,
+        containingDeclaration: FirDeclaration,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
@@ -72,7 +72,7 @@ object FirTypeParameterBoundsChecker : FirTypeParameterChecker() {
 
     private fun checkTypeAliasBound(
         declaration: FirTypeParameter,
-        containingDeclaration: FirDeclaration<*>,
+        containingDeclaration: FirDeclaration,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {

@@ -27,7 +27,7 @@ internal fun KtDeclaration.findSourceNonLocalFirDeclaration(
     firSymbolProvider: FirSymbolProvider,
     moduleFileCache: ModuleFileCache,
     containerFirFile: FirFile? = null
-): FirDeclaration<*> {
+): FirDeclaration {
     //TODO test what way faster
     findSourceNonLocalFirDeclarationByProvider(firFileBuilder, firSymbolProvider, moduleFileCache, containerFirFile)?.let { return it }
     findSourceOfNonLocalFirDeclarationByTraversingWholeTree(firFileBuilder, moduleFileCache, containerFirFile)?.let { return it }
@@ -38,23 +38,23 @@ internal fun KtDeclaration.findFirDeclarationForAnyFirSourceDeclaration(
     firFileBuilder: FirFileBuilder,
     firSymbolProvider: FirSymbolProvider,
     moduleFileCache: ModuleFileCache
-): FirDeclaration<*> {
+): FirDeclaration {
     val nonLocalDeclaration = getNonLocalContainingOrThisDeclaration()
         ?.findSourceNonLocalFirDeclaration(firFileBuilder, firSymbolProvider, moduleFileCache)
         ?: firFileBuilder.buildRawFirFileWithCaching(containingKtFile, moduleFileCache, preferLazyBodies = true)
     val originalDeclaration = originalDeclaration
-    val fir = FirElementFinder.findElementIn<FirDeclaration<*>>(nonLocalDeclaration) { firDeclaration ->
+    val fir = FirElementFinder.findElementIn<FirDeclaration>(nonLocalDeclaration) { firDeclaration ->
         firDeclaration.psi == this || firDeclaration.psi == originalDeclaration
     }
     return fir
         ?: error("FirDeclaration was not found for\n${getElementTextInContext()}")
 }
 
-internal inline fun <reified F : FirDeclaration<*>> KtDeclaration.findFirDeclarationForAnyFirSourceDeclarationOfType(
+internal inline fun <reified F : FirDeclaration> KtDeclaration.findFirDeclarationForAnyFirSourceDeclarationOfType(
     firFileBuilder: FirFileBuilder,
     firSymbolProvider: FirSymbolProvider,
     moduleFileCache: ModuleFileCache
-): FirDeclaration<*> {
+): FirDeclaration {
     val fir = findFirDeclarationForAnyFirSourceDeclaration(firFileBuilder, firSymbolProvider, moduleFileCache)
     if (fir !is F) throw InvalidFirElementTypeException(this, F::class, fir::class)
     return fir
@@ -64,7 +64,7 @@ private fun KtDeclaration.findSourceOfNonLocalFirDeclarationByTraversingWholeTre
     firFileBuilder: FirFileBuilder,
     moduleFileCache: ModuleFileCache,
     containerFirFile: FirFile?,
-): FirDeclaration<*>? {
+): FirDeclaration? {
     val firFile = containerFirFile ?: firFileBuilder.buildRawFirFileWithCaching(containingKtFile, moduleFileCache, preferLazyBodies = true)
     val originalDeclaration = originalDeclaration
     return FirElementFinder.findElementIn(firFile, goInside = { it is FirRegularClass }) { firDeclaration ->
@@ -77,7 +77,7 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
     firSymbolProvider: FirSymbolProvider,
     moduleFileCache: ModuleFileCache,
     containerFirFile: FirFile?
-): FirDeclaration<*>? {
+): FirDeclaration? {
     val candidate = when {
         this is KtClassOrObject -> findFir(firSymbolProvider)
         this is KtNamedDeclaration && (this is KtProperty || this is KtNamedFunction) -> {
@@ -117,7 +117,7 @@ private val ORIGINAL_KT_FILE_KEY = com.intellij.openapi.util.Key<KtFile>("ORIGIN
 var KtFile.originalKtFile by UserDataProperty(ORIGINAL_KT_FILE_KEY)
 
 
-private fun KtClassLikeDeclaration.findFir(firSymbolProvider: FirSymbolProvider): FirClassLikeDeclaration<*>? {
+private fun KtClassLikeDeclaration.findFir(firSymbolProvider: FirSymbolProvider): FirClassLikeDeclaration? {
     val classId = getClassId() ?: return null
     return executeWithoutPCE {
         firSymbolProvider.getClassLikeSymbolByFqName(classId)?.fir as? FirRegularClass
@@ -125,5 +125,5 @@ private fun KtClassLikeDeclaration.findFir(firSymbolProvider: FirSymbolProvider)
 }
 
 
-val FirDeclaration<*>.isGeneratedDeclaration
+val FirDeclaration.isGeneratedDeclaration
     get() = realPsi == null

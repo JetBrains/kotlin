@@ -112,17 +112,17 @@ object FirReservedUnderscoreExpressionChecker : FirBasicExpressionChecker() {
 }
 
 object FirReservedUnderscoreDeclarationChecker : FirBasicDeclarationChecker() {
-    override fun check(declaration: FirDeclaration<*>, context: CheckerContext, reporter: DiagnosticReporter) {
+    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (
-            declaration is FirClass<*> ||
-            declaration is FirFunction<*> ||
+            declaration is FirClass ||
+            declaration is FirFunction ||
             declaration is FirTypeParameter ||
             declaration is FirProperty ||
             declaration is FirTypeAlias
         ) {
             reportIfUnderscore(declaration, context, reporter)
 
-            if (declaration is FirFunction<*>) {
+            if (declaration is FirFunction) {
                 for (parameter in declaration.valueParameters) {
                     reportIfUnderscore(
                         parameter,
@@ -141,7 +141,7 @@ object FirReservedUnderscoreDeclarationChecker : FirBasicDeclarationChecker() {
 }
 
 private fun reportIfUnderscore(
-    declaration: FirDeclaration<*>,
+    declaration: FirDeclaration,
     context: CheckerContext,
     reporter: DiagnosticReporter,
     isSingleUnderscoreAllowed: Boolean = false
@@ -160,7 +160,7 @@ private fun reportIfUnderscore(
 
     val returnOrReceiverTypeRef = when (declaration) {
         is FirValueParameter -> declaration.returnTypeRef.source
-        is FirFunction<*> -> declaration.receiverTypeRef?.source
+        is FirFunction -> declaration.receiverTypeRef?.source
         else -> null
     }
 

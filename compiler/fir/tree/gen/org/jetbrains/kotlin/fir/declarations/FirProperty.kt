@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirProperty : FirVariable<FirProperty>(), FirTypeParametersOwner, FirControlFlowGraphOwner {
+abstract class FirProperty : FirVariable(), FirTypeParametersOwner, FirControlFlowGraphOwner {
     abstract override val source: FirSourceElement?
     abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase

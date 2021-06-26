@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 interface FirModuleVisibilityChecker : FirSessionComponent {
-    fun <T> isInFriendModule(declaration: T): Boolean where T : FirStatusOwner, T : FirDeclaration<*>
+    fun <T> isInFriendModule(declaration: T): Boolean where T : FirStatusOwner, T : FirDeclaration
 }
 
 abstract class FirVisibilityChecker : FirSessionComponent {
@@ -35,7 +35,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
             declarationVisibility: Visibility,
             symbol: FirBasedSymbol<*>,
             useSiteFile: FirFile,
-            containingDeclarations: List<FirDeclaration<*>>,
+            containingDeclarations: List<FirDeclaration>,
             dispatchReceiver: ReceiverValue?,
             session: FirSession
         ): Boolean {
@@ -47,7 +47,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         declaration: FirStatusOwner,
         candidate: Candidate
     ): Boolean {
-        if (declaration is FirCallableDeclaration<*> && (declaration.isIntersectionOverride || declaration.isSubstitutionOverride)) {
+        if (declaration is FirCallableDeclaration && (declaration.isIntersectionOverride || declaration.isSubstitutionOverride)) {
             @Suppress("UNCHECKED_CAST")
             return isVisible(declaration.originalIfFakeOverride() as FirStatusOwner, candidate)
         }
@@ -64,10 +64,10 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         declaration: FirStatusOwner,
         session: FirSession,
         useSiteFile: FirFile,
-        containingDeclarations: List<FirDeclaration<*>>,
+        containingDeclarations: List<FirDeclaration>,
         dispatchReceiver: ReceiverValue?
     ): Boolean {
-        require(declaration is FirDeclaration<*>)
+        require(declaration is FirDeclaration)
         val provider = session.firProvider
         val symbol = declaration.symbol
         return when (declaration.visibility) {
@@ -126,13 +126,13 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         declarationVisibility: Visibility,
         symbol: FirBasedSymbol<*>,
         useSiteFile: FirFile,
-        containingDeclarations: List<FirDeclaration<*>>,
+        containingDeclarations: List<FirDeclaration>,
         dispatchReceiver: ReceiverValue?,
         session: FirSession
     ): Boolean
 
     private fun canSeePrivateMemberOf(
-        containingDeclarationOfUseSite: List<FirDeclaration<*>>,
+        containingDeclarationOfUseSite: List<FirDeclaration>,
         ownerId: ClassId,
         session: FirSession
     ): Boolean {
@@ -141,7 +141,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         }
 
         for (declaration in containingDeclarationOfUseSite) {
-            if (declaration !is FirClass<*>) continue
+            if (declaration !is FirClass) continue
             val boundSymbol = declaration.symbol
             if (boundSymbol.classId.isSame(ownerId)) {
                 return true
@@ -163,7 +163,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
     }
 
     private fun canSeeProtectedMemberOf(
-        containingUseSiteClass: FirClass<*>,
+        containingUseSiteClass: FirClass,
         dispatchReceiver: ReceiverValue?,
         ownerId: ClassId, session: FirSession
     ): Boolean {
@@ -175,7 +175,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         return containingUseSiteClass.isSubClass(ownerId, session)
     }
 
-    private fun FirClass<*>.isSubClass(ownerId: ClassId, session: FirSession): Boolean {
+    private fun FirClass.isSubClass(ownerId: ClassId, session: FirSession): Boolean {
         if (classId.isSame(ownerId)) return true
 
         return lookupSuperTypes(this, lookupInterfaces = true, deep = true, session).any { superType ->
@@ -197,14 +197,14 @@ abstract class FirVisibilityChecker : FirSessionComponent {
     }
 
     protected fun canSeeProtectedMemberOf(
-        containingDeclarationOfUseSite: List<FirDeclaration<*>>,
+        containingDeclarationOfUseSite: List<FirDeclaration>,
         dispatchReceiver: ReceiverValue?,
         ownerId: ClassId, session: FirSession
     ): Boolean {
         if (canSeePrivateMemberOf(containingDeclarationOfUseSite, ownerId, session)) return true
 
         for (containingDeclaration in containingDeclarationOfUseSite) {
-            if (containingDeclaration !is FirClass<*>) continue
+            if (containingDeclaration !is FirClass) continue
             val boundSymbol = containingDeclaration.symbol
             if (canSeeProtectedMemberOf(boundSymbol.fir, dispatchReceiver, ownerId, session)) return true
         }

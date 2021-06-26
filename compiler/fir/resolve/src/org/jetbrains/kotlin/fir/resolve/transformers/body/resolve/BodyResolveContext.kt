@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.name.Name
 class BodyResolveContext(
     val returnTypeCalculator: ReturnTypeCalculator,
     val dataFlowAnalyzerContext: DataFlowAnalyzerContext<PersistentFlow>,
-    val targetedLocalClasses: Set<FirClassLikeDeclaration<*>> = emptySet(),
+    val targetedLocalClasses: Set<FirClassLikeDeclaration> = emptySet(),
     val outerLocalClassForNested: MutableMap<FirClassLikeSymbol<*>, FirClassLikeSymbol<*>> = mutableMapOf()
 ) {
     val fileImportsScope: MutableList<FirScope> = mutableListOf()
@@ -74,12 +74,12 @@ class BodyResolveContext(
         get() = towerDataContextsForClassParts.towerDataContextForCallableReferences
 
     @set:PrivateForInline
-    var containers: MutableList<FirDeclaration<*>> = mutableListOf()
+    var containers: MutableList<FirDeclaration> = mutableListOf()
 
     @set:PrivateForInline
     var containingClass: FirRegularClass? = null
 
-    val containerIfAny: FirDeclaration<*>?
+    val containerIfAny: FirDeclaration?
         get() = containers.lastOrNull()
 
     @set:PrivateForInline
@@ -108,7 +108,7 @@ class BodyResolveContext(
     }
 
     @PrivateForInline
-    inline fun <T> withContainer(declaration: FirDeclaration<*>, f: () -> T): T {
+    inline fun <T> withContainer(declaration: FirDeclaration, f: () -> T): T {
         containers.add(declaration)
         return try {
             f()
@@ -204,7 +204,7 @@ class BodyResolveContext(
     @PrivateForInline
     private inline fun <T> withLabelAndReceiverType(
         labelName: Name?,
-        owner: FirCallableDeclaration<*>,
+        owner: FirCallableDeclaration,
         type: ConeKotlinType?,
         holder: SessionHolder,
         f: () -> T
@@ -272,12 +272,12 @@ class BodyResolveContext(
 
     @OptIn(PrivateForInline::class)
     fun storeClassIfNotNested(klass: FirRegularClass) {
-        if (containerIfAny is FirClass<*>) return
+        if (containerIfAny is FirClass) return
         updateLastScope { storeClass(klass) }
     }
 
     @OptIn(PrivateForInline::class)
-    fun storeVariable(variable: FirVariable<*>) {
+    fun storeVariable(variable: FirVariable) {
         updateLastScope { storeVariable(variable) }
     }
 
@@ -315,7 +315,7 @@ class BodyResolveContext(
     @OptIn(PrivateForInline::class)
     fun createSnapshotForLocalClasses(
         returnTypeCalculator: ReturnTypeCalculator,
-        targetedLocalClasses: Set<FirClassLikeDeclaration<*>>
+        targetedLocalClasses: Set<FirClassLikeDeclaration>
     ): BodyResolveContext =
         BodyResolveContext(returnTypeCalculator, dataFlowAnalyzerContext, targetedLocalClasses, outerLocalClassForNested).apply {
             file = this@BodyResolveContext.file
@@ -386,7 +386,7 @@ class BodyResolveContext(
     }
 
     fun <T> withScopesForClass(
-        owner: FirClass<*>,
+        owner: FirClass,
         holder: SessionHolder,
         f: () -> T
     ): T {
@@ -447,7 +447,7 @@ class BodyResolveContext(
     }
 
     private fun FirConstructor.scopesWithPrimaryConstructorParameters(
-        ownerClass: FirClass<*>
+        ownerClass: FirClass
     ): Pair<FirLocalScope, FirLocalScope> {
         var parameterScope = FirLocalScope()
         var allScope = FirLocalScope()
@@ -467,7 +467,7 @@ class BodyResolveContext(
         simpleFunction: FirSimpleFunction,
         f: () -> T
     ): T {
-        if (containerIfAny !is FirClass<*>) {
+        if (containerIfAny !is FirClass) {
             storeFunction(simpleFunction)
         }
 
@@ -478,7 +478,7 @@ class BodyResolveContext(
 
     @OptIn(PrivateForInline::class)
     fun <T> forFunctionBody(
-        function: FirFunction<*>,
+        function: FirFunction,
         holder: SessionHolder,
         f: () -> T
     ): T {

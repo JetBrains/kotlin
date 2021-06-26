@@ -90,7 +90,7 @@ class Fir2IrVisitor(
         }
     }
 
-    private fun FirDeclaration<*>.toIrDeclaration(): IrDeclaration =
+    private fun FirDeclaration.toIrDeclaration(): IrDeclaration =
         accept(this@Fir2IrVisitor, null) as IrDeclaration
 
     // ==================================================================================

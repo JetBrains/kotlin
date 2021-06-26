@@ -27,13 +27,13 @@ private class ContextCollectingDiagnosticCollectorVisitor private constructor(
     private val contextCollector = object : ContextByDesignationCollector<PersistentCheckerContext>(designation) {
         override fun getCurrentContext(): PersistentCheckerContext = context
 
-        override fun goToNestedDeclaration(declaration: FirDeclaration<*>) {
+        override fun goToNestedDeclaration(declaration: FirDeclaration) {
             declaration.accept(this@ContextCollectingDiagnosticCollectorVisitor, null)
         }
     }
 
     override fun visitNestedElements(element: FirElement) {
-        if (element is FirDeclaration<*>) {
+        if (element is FirDeclaration) {
             contextCollector.nextStep()
         } else {
             element.accept(this, null)
@@ -55,11 +55,11 @@ internal object PersistenceContextCollector {
     fun collectContext(
         sessionHolder: SessionHolder,
         firFile: FirFile,
-        declaration: FirDeclaration<*>,
+        declaration: FirDeclaration,
     ): PersistentCheckerContext {
         val isLocal = when (declaration) {
-            is FirClassLikeDeclaration<*> -> declaration.symbol.classId.isLocal
-            is FirCallableDeclaration<*> -> declaration.symbol.callableId.isLocal
+            is FirClassLikeDeclaration -> declaration.symbol.classId.isLocal
+            is FirCallableDeclaration -> declaration.symbol.callableId.isLocal
             else -> error("Unsupported declaration ${declaration.renderWithType()}")
         }
         require(!isLocal) {

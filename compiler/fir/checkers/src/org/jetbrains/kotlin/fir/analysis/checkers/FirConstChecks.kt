@@ -189,7 +189,7 @@ internal fun checkConstantArguments(
     return null
 }
 
-private fun FirTypedDeclaration<*>?.getReferencedClass(session: FirSession): FirDeclaration<*>? =
+private fun FirTypedDeclaration?.getReferencedClass(session: FirSession): FirDeclaration? =
     this?.returnTypeRef
         ?.coneTypeSafe<ConeLookupTagBasedType>()
         ?.lookupTag

@@ -190,7 +190,7 @@ private fun processConstructors(
                     } else basicScope
                 }
                 is FirClassSymbol -> {
-                    val firClass = matchedSymbol.fir as FirClass<*>
+                    val firClass = matchedSymbol.fir as FirClass
                     if (firClass.classKind == ClassKind.INTERFACE) null
                     else firClass.scopeForClass(
                         substitutor, session, bodyResolveComponents.scopeSession

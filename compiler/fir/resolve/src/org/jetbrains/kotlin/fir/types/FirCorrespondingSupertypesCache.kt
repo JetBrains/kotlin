@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
-import org.jetbrains.kotlin.types.model.TypeSystemContext
 
 @ThreadSafeMutableState
 class FirCorrespondingSupertypesCache(private val session: FirSession) : FirSessionComponent {
@@ -60,7 +59,7 @@ class FirCorrespondingSupertypesCache(private val session: FirSession) : FirSess
     ): Map<ConeClassLikeLookupTag, List<ConeClassLikeType>>? {
         val resultingMap = HashMap<ConeClassLikeLookupTag, List<ConeClassLikeType>>()
 
-        val subtypeFirClass: FirClassLikeDeclaration<*> = subtypeLookupTag.toSymbol(session)?.fir ?: return null
+        val subtypeFirClass: FirClassLikeDeclaration = subtypeLookupTag.toSymbol(session)?.fir ?: return null
 
         val defaultType = subtypeLookupTag.constructClassType(
             (subtypeFirClass as? FirTypeParameterRefsOwner)?.typeParameters?.map {

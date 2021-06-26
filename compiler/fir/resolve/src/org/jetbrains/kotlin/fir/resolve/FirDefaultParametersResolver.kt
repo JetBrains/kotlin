@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 class FirDefaultParametersResolver : FirSessionComponent {
     fun declaresDefaultValue(
         valueParameter: FirValueParameter,
-        function: FirFunction<*>,
+        function: FirFunction,
         originScope: FirScope?,
         index: Int,
     ): Boolean {

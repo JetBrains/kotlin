@@ -15,10 +15,10 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.withFirDeclarationOfType
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
-import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
+import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -45,7 +45,7 @@ internal class KtFirSymbolProvider(
     }
 
     override fun getFunctionLikeSymbol(psi: KtNamedFunction): KtFunctionLikeSymbol = withValidityAssertion {
-        psi.withFirDeclarationOfType<FirFunction<*>, KtFunctionLikeSymbol>(resolveState) { fir ->
+        psi.withFirDeclarationOfType<FirFunction, KtFunctionLikeSymbol>(resolveState) { fir ->
             when (fir) {
                 is FirSimpleFunction -> firSymbolBuilder.functionLikeBuilder.buildFunctionSymbol(fir)
                 is FirAnonymousFunction -> firSymbolBuilder.functionLikeBuilder.buildAnonymousFunctionSymbol(fir)
@@ -104,7 +104,7 @@ internal class KtFirSymbolProvider(
     }
 
     override fun getClassOrObjectSymbol(psi: KtClassOrObject): KtClassOrObjectSymbol = withValidityAssertion {
-        psi.withFirDeclarationOfType<FirClass<*>, KtClassOrObjectSymbol>(resolveState) {
+        psi.withFirDeclarationOfType<FirClass, KtClassOrObjectSymbol>(resolveState) {
             firSymbolBuilder.classifierBuilder.buildClassOrObjectSymbol(it)
         }
     }

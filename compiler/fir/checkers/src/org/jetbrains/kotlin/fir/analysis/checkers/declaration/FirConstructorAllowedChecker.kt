@@ -14,14 +14,16 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirConstructor
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.lexer.KtTokens
 
 object FirConstructorAllowedChecker : FirConstructorChecker() {
     override fun check(declaration: FirConstructor, context: CheckerContext, reporter: DiagnosticReporter) {
-        val containingClass = context.containingDeclarations.lastOrNull() as? FirClass<*> ?: return
+        val containingClass = context.containingDeclarations.lastOrNull() as? FirClass ?: return
         val source = declaration.source
         val elementType = source?.elementType
         if (elementType != KtNodeTypes.PRIMARY_CONSTRUCTOR && elementType != KtNodeTypes.SECONDARY_CONSTRUCTOR) {

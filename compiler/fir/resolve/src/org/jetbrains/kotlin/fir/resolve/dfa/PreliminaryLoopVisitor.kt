@@ -18,7 +18,7 @@ class PreliminaryLoopVisitor {
     private val reassignedVariablesPerElement: SetMultimap<FirStatement, Name> = setMultimapOf()
 
     fun enterCapturingStatement(statement: FirStatement): Set<Name> {
-        assert(statement is FirLoop || statement is FirClass<*> || statement is FirFunction<*>)
+        assert(statement is FirLoop || statement is FirClass || statement is FirFunction)
         if (statement !in reassignedVariablesPerElement) {
             statement.accept(visitor, null)
         }
@@ -26,7 +26,7 @@ class PreliminaryLoopVisitor {
     }
 
     fun exitCapturingStatement(statement: FirStatement) {
-        assert(statement is FirLoop || statement is FirClass<*> || statement is FirFunction<*>)
+        assert(statement is FirLoop || statement is FirClass || statement is FirFunction)
         reassignedVariablesPerElement.removeKey(statement)
     }
 

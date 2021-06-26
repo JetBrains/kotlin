@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.fir.java.scopes
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
@@ -17,9 +20,9 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractOverrideChecker
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.StandardClassIds
 
 class JavaOverrideChecker internal constructor(
     private val session: FirSession,
@@ -98,7 +101,7 @@ class JavaOverrideChecker internal constructor(
             argument is ConeKotlinTypeProjection && argument.type.isTypeParameterDependent()
         }
 
-    private fun FirCallableMemberDeclaration<*>.isTypeParameterDependent(): Boolean =
+    private fun FirCallableMemberDeclaration.isTypeParameterDependent(): Boolean =
         typeParameters.isNotEmpty() || returnTypeRef.isTypeParameterDependent() ||
                 receiverTypeRef.isTypeParameterDependent() ||
                 this is FirSimpleFunction && valueParameters.any { it.returnTypeRef.isTypeParameterDependent() }
@@ -124,7 +127,7 @@ class JavaOverrideChecker internal constructor(
         }
     }
 
-    private fun FirCallableMemberDeclaration<*>.extractTypeParametersTo(result: MutableCollection<FirTypeParameterRef>) {
+    private fun FirCallableMemberDeclaration.extractTypeParametersTo(result: MutableCollection<FirTypeParameterRef>) {
         result += typeParameters
         returnTypeRef.extractTypeParametersTo(result)
         receiverTypeRef?.extractTypeParametersTo(result)
@@ -134,8 +137,8 @@ class JavaOverrideChecker internal constructor(
     }
 
     override fun buildTypeParametersSubstitutorIfCompatible(
-        overrideCandidate: FirCallableMemberDeclaration<*>,
-        baseDeclaration: FirCallableMemberDeclaration<*>
+        overrideCandidate: FirCallableMemberDeclaration,
+        baseDeclaration: FirCallableMemberDeclaration
     ): ConeSubstitutor {
         if (!overrideCandidate.isTypeParameterDependent() && !baseDeclaration.isTypeParameterDependent()) {
             return ConeSubstitutor.Empty
@@ -159,7 +162,7 @@ class JavaOverrideChecker internal constructor(
         }
     }
 
-    override fun isOverriddenProperty(overrideCandidate: FirCallableMemberDeclaration<*>, baseDeclaration: FirProperty): Boolean {
+    override fun isOverriddenProperty(overrideCandidate: FirCallableMemberDeclaration, baseDeclaration: FirProperty): Boolean {
         if (baseDeclaration.modality == Modality.FINAL) return false
         val receiverTypeRef = baseDeclaration.receiverTypeRef
         return when (overrideCandidate) {

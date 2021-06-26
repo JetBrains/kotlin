@@ -374,7 +374,7 @@ class JavaSymbolProvider(
         classId: ClassId,
         javaTypeParameterStack: JavaTypeParameterStack,
         dispatchReceiver: ConeClassLikeType
-    ): FirDeclaration<*> {
+    ): FirDeclaration {
         val fieldName = javaField.name
         val fieldId = CallableId(classId.packageFqName, classId.relativeClassName, fieldName)
         val returnType = javaField.type

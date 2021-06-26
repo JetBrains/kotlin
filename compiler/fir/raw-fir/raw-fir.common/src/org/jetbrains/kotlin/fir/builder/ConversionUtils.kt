@@ -261,7 +261,7 @@ fun generateAccessExpression(
         }
     }
 
-fun generateResolvedAccessExpression(source: FirSourceElement?, variable: FirVariable<*>): FirQualifiedAccessExpression =
+fun generateResolvedAccessExpression(source: FirSourceElement?, variable: FirVariable): FirQualifiedAccessExpression =
     buildQualifiedAccessExpression {
         this.source = source
         calleeReference = buildResolvedNamedReference {
@@ -273,7 +273,7 @@ fun generateResolvedAccessExpression(source: FirSourceElement?, variable: FirVar
 
 fun generateTemporaryVariable(
     moduleData: FirModuleData, source: FirSourceElement?, name: Name, initializer: FirExpression, typeRef: FirTypeRef? = null,
-): FirVariable<*> =
+): FirVariable =
     buildProperty {
         this.source = source
         this.moduleData = moduleData
@@ -291,7 +291,7 @@ fun generateTemporaryVariable(
 
 fun generateTemporaryVariable(
     moduleData: FirModuleData, source: FirSourceElement?, specialName: String, initializer: FirExpression,
-): FirVariable<*> = generateTemporaryVariable(moduleData, source, Name.special("<$specialName>"), initializer)
+): FirVariable = generateTemporaryVariable(moduleData, source, Name.special("<$specialName>"), initializer)
 
 val FirClassBuilder.ownerRegularOrAnonymousObjectSymbol
     get() = when (this) {

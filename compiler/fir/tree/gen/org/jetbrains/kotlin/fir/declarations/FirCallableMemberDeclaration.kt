@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-sealed class FirCallableMemberDeclaration<E : FirCallableMemberDeclaration<E>> : FirCallableDeclaration<E>(), FirStatusOwner {
+sealed class FirCallableMemberDeclaration : FirCallableDeclaration(), FirStatusOwner {
     abstract override val source: FirSourceElement?
     abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase
@@ -29,7 +29,7 @@ sealed class FirCallableMemberDeclaration<E : FirCallableMemberDeclaration<E>> :
     abstract override val annotations: List<FirAnnotationCall>
     abstract override val returnTypeRef: FirTypeRef
     abstract override val receiverTypeRef: FirTypeRef?
-    abstract override val symbol: FirCallableSymbol<E>
+    abstract override val symbol: FirCallableSymbol<out FirCallableDeclaration>
     abstract override val typeParameters: List<FirTypeParameterRef>
     abstract override val status: FirDeclarationStatus
     abstract val containerSource: DeserializedContainerSource?
@@ -47,13 +47,13 @@ sealed class FirCallableMemberDeclaration<E : FirCallableMemberDeclaration<E>> :
 
     abstract override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirCallableMemberDeclaration<E>
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirCallableMemberDeclaration
 
-    abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirCallableMemberDeclaration<E>
+    abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirCallableMemberDeclaration
 
-    abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirCallableMemberDeclaration<E>
+    abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirCallableMemberDeclaration
 
-    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirCallableMemberDeclaration<E>
+    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirCallableMemberDeclaration
 
-    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirCallableMemberDeclaration<E>
+    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirCallableMemberDeclaration
 }

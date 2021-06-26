@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.fir.symbols.impl
 
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirStatusOwner
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirStatusOwner
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.name.CallableId
 
-abstract class FirCallableSymbol<D : FirCallableDeclaration<D>> : FirBasedSymbol<D>() {
+abstract class FirCallableSymbol<D : FirCallableDeclaration> : FirBasedSymbol<D>() {
     abstract val callableId: CallableId
 
     override fun toString(): String = "${this::class.simpleName} $callableId"

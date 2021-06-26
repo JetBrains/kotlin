@@ -43,19 +43,19 @@ fun ConeClassLikeType.isPrimitiveNumberType(): Boolean = lookupTag.classId in PR
 fun ConeClassLikeType.isPrimitiveUnsignedNumberType(): Boolean = lookupTag.classId in PRIMITIVE_UNSIGNED_NUMBER_CLASS_IDS
 fun ConeClassLikeType.isPrimitiveNumberOrUnsignedNumberType(): Boolean = isPrimitiveNumberType() || isPrimitiveUnsignedNumberType()
 
-fun FirClass<*>.isDouble(): Boolean = classId == StandardClassIds.Double
-fun FirClass<*>.isFloat(): Boolean = classId == StandardClassIds.Float
-fun FirClass<*>.isLong(): Boolean = classId == StandardClassIds.Long
-fun FirClass<*>.isInt(): Boolean = classId == StandardClassIds.Int
-fun FirClass<*>.isShort(): Boolean = classId == StandardClassIds.Short
-fun FirClass<*>.isByte(): Boolean = classId == StandardClassIds.Byte
-fun FirClass<*>.isBoolean(): Boolean = classId == StandardClassIds.Boolean
-fun FirClass<*>.isChar(): Boolean = classId == StandardClassIds.Char
+fun FirClass.isDouble(): Boolean = classId == StandardClassIds.Double
+fun FirClass.isFloat(): Boolean = classId == StandardClassIds.Float
+fun FirClass.isLong(): Boolean = classId == StandardClassIds.Long
+fun FirClass.isInt(): Boolean = classId == StandardClassIds.Int
+fun FirClass.isShort(): Boolean = classId == StandardClassIds.Short
+fun FirClass.isByte(): Boolean = classId == StandardClassIds.Byte
+fun FirClass.isBoolean(): Boolean = classId == StandardClassIds.Boolean
+fun FirClass.isChar(): Boolean = classId == StandardClassIds.Char
 
-fun FirClass<*>.isPrimitiveType(): Boolean = isPrimitiveNumberOrUnsignedNumberType() || isBoolean() || isByte() || isShort() || isChar()
-fun FirClass<*>.isPrimitiveNumberType(): Boolean = classId in PRIMITIVE_NUMBER_CLASS_IDS
-fun FirClass<*>.isPrimitiveUnsignedNumberType(): Boolean = classId in PRIMITIVE_UNSIGNED_NUMBER_CLASS_IDS
-fun FirClass<*>.isPrimitiveNumberOrUnsignedNumberType(): Boolean = isPrimitiveNumberType() || isPrimitiveUnsignedNumberType()
+fun FirClass.isPrimitiveType(): Boolean = isPrimitiveNumberOrUnsignedNumberType() || isBoolean() || isByte() || isShort() || isChar()
+fun FirClass.isPrimitiveNumberType(): Boolean = classId in PRIMITIVE_NUMBER_CLASS_IDS
+fun FirClass.isPrimitiveUnsignedNumberType(): Boolean = classId in PRIMITIVE_UNSIGNED_NUMBER_CLASS_IDS
+fun FirClass.isPrimitiveNumberOrUnsignedNumberType(): Boolean = isPrimitiveNumberType() || isPrimitiveUnsignedNumberType()
 
 private val PRIMITIVE_NUMBER_CLASS_IDS: Set<ClassId> = setOf(
     StandardClassIds.Double, StandardClassIds.Float, StandardClassIds.Long, StandardClassIds.Int,

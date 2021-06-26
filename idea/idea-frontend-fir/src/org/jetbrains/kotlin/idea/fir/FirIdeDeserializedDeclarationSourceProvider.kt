@@ -10,11 +10,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.idea.fir.FirIdeDeserializedDeclarationSourceProvider.scope
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.KtDeclarationAndFirDeclarationEqualityChecker
 import org.jetbrains.kotlin.idea.fir.low.level.api.createDeclarationProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSession
-
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -31,7 +29,7 @@ object FirIdeDeserializedDeclarationSourceProvider {
         return when (fir) {
             is FirSimpleFunction -> provideSourceForFunction(fir, project)
             is FirProperty -> provideSourceForProperty(fir, project)
-            is FirClass<*> -> provideSourceForClass(fir, project)
+            is FirClass -> provideSourceForClass(fir, project)
             is FirTypeAlias -> provideSourceForTypeAlias(fir, project)
             is FirConstructor -> provideSourceForConstructor(fir, project)
             else -> null
@@ -66,7 +64,7 @@ object FirIdeDeserializedDeclarationSourceProvider {
         return candidates.firstOrNull(KtElement::isCompiled)
     }
 
-    private fun provideSourceForClass(klass: FirClass<*>, project: Project): PsiElement? =
+    private fun provideSourceForClass(klass: FirClass, project: Project): PsiElement? =
         classByClassId(klass.symbol.classId, klass.scope(project), project)
 
     private fun provideSourceForTypeAlias(alias: FirTypeAlias, project: Project): PsiElement? {
@@ -84,7 +82,7 @@ object FirIdeDeserializedDeclarationSourceProvider {
         return constructor.unwrapFakeOverrides().chooseCorrespondingPsi(containingKtClass.secondaryConstructors)
     }
 
-    private fun FirFunction<*>.chooseCorrespondingPsi(
+    private fun FirFunction.chooseCorrespondingPsi(
         candidates: Collection<KtFunction>
     ): KtFunction? {
         if (candidates.isEmpty()) return null
@@ -99,14 +97,14 @@ object FirIdeDeserializedDeclarationSourceProvider {
         return null
     }
 
-    private fun FirDeclaration<*>.scope(project: Project): GlobalSearchScope {
+    private fun FirDeclaration.scope(project: Project): GlobalSearchScope {
         return GlobalSearchScope.allScope(project)
         /* TODO:
          val session = session as? FirLibrarySession
          return session?.scope ?: GlobalSearchScope.allScope(project)*/
     }
 
-    private fun FirCallableDeclaration<*>.containingKtClass(project: Project): KtClassOrObject? =
+    private fun FirCallableDeclaration.containingKtClass(project: Project): KtClassOrObject? =
         unwrapFakeOverrides().containingClass()?.classId?.let { classByClassId(it, scope(project), project) }
 
     private fun classByClassId(classId: ClassId, scope: GlobalSearchScope, project: Project): KtClassOrObject? {
@@ -116,7 +114,7 @@ object FirIdeDeserializedDeclarationSourceProvider {
             .firstOrNull(KtElement::isCompiled)
     }
 
-    private val FirCallableDeclaration<*>.isTopLevel
+    private val FirCallableDeclaration.isTopLevel
         get() = symbol.callableId.className == null
 
     private val classIdMapping = (0..23).associate { i ->
@@ -150,5 +148,5 @@ fun FirElement.findPsi(session: FirSession): PsiElement? =
  * For data classes & enums generated members like `copy` `componentN`, `values` it will return corresponding enum/data class
  * Otherwise, behaves the same way as [findPsi] returns exact PSI declaration corresponding to passed [FirDeclaration]
  */
-fun FirDeclaration<*>.findReferencePsi(): PsiElement? =
+fun FirDeclaration.findReferencePsi(): PsiElement? =
     psi ?: FirIdeDeserializedDeclarationSourceProvider.findPsi(this, (moduleData.session as FirIdeSession).project)

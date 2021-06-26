@@ -76,12 +76,12 @@ class SymbolBasedNodeStorage<T, N : CFGNode<T>> : Stack<N>() where T : FirElemen
     override fun top(): N = stack.top()
 
     override fun pop(): N = stack.pop().also {
-        map.remove((it.fir as FirDeclaration<*>).symbol)
+        map.remove((it.fir as FirDeclaration).symbol)
     }
 
     override fun push(value: N) {
         stack.push(value)
-        map[(value.fir as FirDeclaration<*>).symbol] = value
+        map[(value.fir as FirDeclaration).symbol] = value
     }
 
     operator fun get(key: FirBasedSymbol<*>): N? {

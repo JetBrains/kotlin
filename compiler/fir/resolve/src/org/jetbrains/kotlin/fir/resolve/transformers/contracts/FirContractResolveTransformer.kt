@@ -59,7 +59,7 @@ open class FirContractResolveTransformer(
                 return simpleFunction
             }
             val containingDeclaration = context.containerIfAny
-            if (containingDeclaration != null && containingDeclaration !is FirClass<*>) {
+            if (containingDeclaration != null && containingDeclaration !is FirClass) {
                 simpleFunction.replaceReturnTypeRef(
                     simpleFunction.returnTypeRef.errorTypeFromPrototype(
                         ConeContractDescriptionError("Local function can not be used in contract description")
@@ -224,7 +224,7 @@ open class FirContractResolveTransformer(
             }
         }
 
-        open fun transformDeclarationContent(firClass: FirClass<*>, data: ResolutionMode) {
+        open fun transformDeclarationContent(firClass: FirClass, data: ResolutionMode) {
             firClass.transformDeclarations(this, data)
         }
 
@@ -275,7 +275,7 @@ open class FirContractResolveTransformer(
         private val FirContractDescriptionOwner.hasContractToResolve: Boolean
             get() = contractDescription is FirLegacyRawContractDescription || contractDescription is FirRawContractDescription
 
-        private fun FirDeclaration<*>.updatePhase() {
+        private fun FirDeclaration.updatePhase() {
             transformer.replaceDeclarationResolvePhaseIfNeeded(this, FirResolvePhase.CONTRACTS)
         }
     }

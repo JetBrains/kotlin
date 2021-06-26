@@ -49,12 +49,12 @@ internal class FirDesignatedBodyResolveTransformerForIDE(
 ) {
     private val ideDeclarationTransformer = IDEDeclarationTransformer(designation)
 
-    override fun transformDeclarationContent(declaration: FirDeclaration<*>, data: ResolutionMode): FirDeclaration<*> =
+    override fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): FirDeclaration =
         ideDeclarationTransformer.transformDeclarationContent(this, declaration, data) {
             super.transformDeclarationContent(declaration, data)
         }
 
-    override fun needReplacePhase(firDeclaration: FirDeclaration<*>): Boolean =
+    override fun needReplacePhase(firDeclaration: FirDeclaration): Boolean =
         ideDeclarationTransformer.needReplacePhase && firDeclaration !is FirFile && super.needReplacePhase(firDeclaration)
 
     override fun transformDeclaration(phaseRunner: FirPhaseRunner) {
@@ -62,7 +62,7 @@ internal class FirDesignatedBodyResolveTransformerForIDE(
         designation.declaration.updateResolvedPhaseForDeclarationAndChildren(FirResolvePhase.BODY_RESOLVE)
         if (designation.isTargetCallableDeclarationAndInPhase(FirResolvePhase.BODY_RESOLVE)) return
 
-        (designation.declaration as? FirCallableDeclaration<*>)?.ensurePhase(FirResolvePhase.CONTRACTS)
+        (designation.declaration as? FirCallableDeclaration)?.ensurePhase(FirResolvePhase.CONTRACTS)
         designation.ensurePhaseForClasses(FirResolvePhase.STATUS)
 
         phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.BODY_RESOLVE) {
@@ -76,7 +76,7 @@ internal class FirDesignatedBodyResolveTransformerForIDE(
         ensureResolvedDeep(designation.declaration)
     }
 
-    override fun ensureResolved(declaration: FirDeclaration<*>) {
+    override fun ensureResolved(declaration: FirDeclaration) {
         when (declaration) {
             is FirSimpleFunction, is FirConstructor, is FirTypeAlias, is FirField, is FirAnonymousInitializer ->
                 declaration.ensurePhase(FirResolvePhase.BODY_RESOLVE)
@@ -85,7 +85,7 @@ internal class FirDesignatedBodyResolveTransformerForIDE(
                 declaration.getter?.ensurePhase(FirResolvePhase.BODY_RESOLVE)
                 declaration.setter?.ensurePhase(FirResolvePhase.BODY_RESOLVE)
             }
-            is FirEnumEntry, is FirClass<*> -> Unit
+            is FirEnumEntry, is FirClass -> Unit
             else -> error("Unexpected type: ${declaration::class.simpleName}")
         }
     }

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.types.isArrayType
 internal class FirArrayOfCallTransformer {
     private val FirFunctionCall.isArrayOfCall: Boolean
         get() {
-            val function: FirCallableDeclaration<*> = getOriginalFunction() ?: return false
+            val function: FirCallableDeclaration = getOriginalFunction() ?: return false
             return function is FirSimpleFunction &&
                     function.returnTypeRef.isArrayType &&
                     isArrayOf(function, arguments) &&
@@ -67,11 +67,11 @@ internal class FirArrayOfCallTransformer {
     }
 }
 
-private fun FirFunctionCall.getOriginalFunction(): FirCallableDeclaration<*>? {
+private fun FirFunctionCall.getOriginalFunction(): FirCallableDeclaration? {
     val symbol: FirBasedSymbol<*>? = when (val reference = calleeReference) {
         is FirResolvedNamedReference -> reference.resolvedSymbol
         is FirNamedReferenceWithCandidate -> reference.candidateSymbol
         else -> null
     }
-    return symbol?.fir as? FirCallableDeclaration<*>
+    return symbol?.fir as? FirCallableDeclaration
 }

@@ -32,7 +32,7 @@ abstract class FirAbstractTreeTransformerWithSuperTypes(
     protected val scopes = mutableListOf<FirScope>()
     protected val towerScope = FirCompositeScope(scopes.asReversed())
 
-    protected open fun needReplacePhase(firDeclaration: FirDeclaration<*>): Boolean = transformerPhase > firDeclaration.resolvePhase
+    protected open fun needReplacePhase(firDeclaration: FirDeclaration): Boolean = transformerPhase > firDeclaration.resolvePhase
 
     protected inline fun <T> withScopeCleanup(crossinline l: () -> T): T {
         val sizeBefore = scopes.size
@@ -46,7 +46,7 @@ abstract class FirAbstractTreeTransformerWithSuperTypes(
     }
 
     protected fun resolveNestedClassesSupertypes(
-        firClass: FirClass<*>,
+        firClass: FirClass,
         data: Any?
     ): FirStatement {
         if (needReplacePhase(firClass)) {
@@ -84,7 +84,7 @@ abstract class FirAbstractTreeTransformerWithSuperTypes(
 
             // Note that annotations are still visited here
             // again, although there's no need in it
-            transformDeclarationContent(firClass, data) as FirClass<*>
+            transformDeclarationContent(firClass, data) as FirClass
         }
     }
 
@@ -94,7 +94,7 @@ abstract class FirAbstractTreeTransformerWithSuperTypes(
         }
     }
 
-    open fun transformDeclarationContent(declaration: FirDeclaration<*>, data: Any?): FirDeclaration<*> {
+    open fun transformDeclarationContent(declaration: FirDeclaration, data: Any?): FirDeclaration {
         return transformElement(declaration, data)
     }
 }

@@ -75,7 +75,7 @@ class FirMetadataSerializer(
         }
     }
 
-    private fun FirFunction<*>.copyToFreeAnonymousFunction(): FirAnonymousFunction {
+    private fun FirFunction.copyToFreeAnonymousFunction(): FirAnonymousFunction {
         val function = this
         return buildAnonymousFunction {
             val typeParameterSet = function.typeParameters.filterIsInstanceTo(mutableSetOf<FirTypeParameter>())
