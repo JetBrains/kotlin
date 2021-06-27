@@ -14,8 +14,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.descriptors.IrAbstractFunctionFactory
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.linkage.KotlinIrLinkerInternalException
 import org.jetbrains.kotlin.ir.symbols.*
@@ -42,7 +41,7 @@ abstract class KotlinIrLinker(
     internal val expectSymbols = mutableMapOf<IdSignature, IrSymbol>()
     internal val actualSymbols = mutableMapOf<IdSignature, IrSymbol>()
 
-    internal val modulesWithReachableTopLevels = mutableSetOf<ModuleDeserializationState>()
+    internal val modulesWithReachableTopLevels = mutableSetOf<IrModuleDeserializer>()
 
     // TODO: replace with Map<Name, IrModuleDeserializer>
     protected val deserializersForModules = mutableMapOf<ModuleDescriptor, IrModuleDeserializer>()
@@ -97,10 +96,10 @@ abstract class KotlinIrLinker(
 
     private fun deserializeAllReachableTopLevels() {
         while (modulesWithReachableTopLevels.isNotEmpty()) {
-            val moduleDeserializationState = modulesWithReachableTopLevels.first()
-            modulesWithReachableTopLevels.remove(moduleDeserializationState)
+            val moduleDeserializer = modulesWithReachableTopLevels.first()
+            modulesWithReachableTopLevels.remove(moduleDeserializer)
 
-            moduleDeserializationState.deserializeReachableDeclarations()
+            moduleDeserializer.deserializeReachableDeclarations()
         }
     }
 
