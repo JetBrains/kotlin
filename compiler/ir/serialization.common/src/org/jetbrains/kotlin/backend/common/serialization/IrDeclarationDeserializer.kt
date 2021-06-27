@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrPublicSymbolBase
@@ -56,23 +58,24 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter a
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter as ProtoValueParameter
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable as ProtoVariable
 
-
 class IrDeclarationDeserializer(
     builtIns: IrBuiltIns,
     private val symbolTable: SymbolTable,
-    private val irFactory: IrFactory,
+    val irFactory: IrFactory,
     private val fileReader: IrLibraryFile,
-    file: IrFile,
-    private val allowErrorNodes: Boolean,
+    private val file: IrFile,
+    val allowErrorNodes: Boolean,
     private val deserializeInlineFunctions: Boolean,
     private var deserializeBodies: Boolean,
     val symbolDeserializer: IrSymbolDeserializer,
     private val platformFakeOverrideClassFilter: FakeOverrideClassFilter,
     private val fakeOverrideBuilder: FakeOverrideBuilder,
     private val skipMutableState: Boolean = false,
+    additionalStatementOriginIndex: Map<String, IrStatementOrigin> = emptyMap(),
+    allowErrorStatementOrigins: Boolean = false,
 ) {
 
-    val bodyDeserializer = IrBodyDeserializer(builtIns, allowErrorNodes, irFactory, fileReader, this)
+    val bodyDeserializer = IrBodyDeserializer(builtIns, allowErrorNodes, irFactory, fileReader, this, statementOriginIndex + additionalStatementOriginIndex, allowErrorStatementOrigins)
 
     private fun deserializeName(index: Int): Name {
         val name = fileReader.deserializeString(index)
@@ -699,6 +702,11 @@ class IrDeclarationDeserializer(
         private val allKnownDeclarationOrigins = IrDeclarationOrigin::class.nestedClasses.toList()
         private val declarationOriginIndex =
             allKnownDeclarationOrigins.map { it.objectInstance as IrDeclarationOriginImpl }.associateBy { it.name }
+
+
+        private val allKnownStatementOrigins = IrStatementOrigin::class.nestedClasses.toList()
+        private val statementOriginIndex =
+            allKnownStatementOrigins.mapNotNull { it.objectInstance as? IrStatementOriginImpl }.associateBy { it.debugName }
     }
 
     fun deserializeIrDeclarationOrigin(protoName: Int): IrDeclarationOriginImpl {
@@ -714,9 +722,9 @@ class IrDeclarationDeserializer(
             IR_CLASS -> deserializeIrClass(proto.irClass)
             IR_FUNCTION -> deserializeIrFunction(proto.irFunction)
             IR_PROPERTY -> deserializeIrProperty(proto.irProperty)
-            IR_TYPE_PARAMETER -> error("Unreachable execution Type Parameter") // deserializeIrTypeParameter(proto.irTypeParameter)
+            IR_TYPE_PARAMETER -> deserializeIrTypeParameter(proto.irTypeParameter, proto.irTypeParameter.index, proto.irTypeParameter.isGlobal)
             IR_VARIABLE -> deserializeIrVariable(proto.irVariable)
-            IR_VALUE_PARAMETER -> error("Unreachable execution Value Parameter") // deserializeIrValueParameter(proto.irValueParameter)
+            IR_VALUE_PARAMETER -> deserializeIrValueParameter(proto.irValueParameter, proto.irValueParameter.index)
             IR_ENUM_ENTRY -> deserializeIrEnumEntry(proto.irEnumEntry)
             IR_LOCAL_DELEGATED_PROPERTY -> deserializeIrLocalDelegatedProperty(proto.irLocalDelegatedProperty)
             IR_TYPE_ALIAS -> deserializeIrTypeAlias(proto.irTypeAlias)

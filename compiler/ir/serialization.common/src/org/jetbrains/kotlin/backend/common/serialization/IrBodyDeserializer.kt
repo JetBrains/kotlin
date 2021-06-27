@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.serialization
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrConst.ValueCase.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrOperation.OperationCase.*
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement.StatementCase
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrVarargElement.VarargElementCase
 import org.jetbrains.kotlin.ir.IrElement
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -41,6 +43,8 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorExpression
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression as ProtoExpression
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionExpression as ProtoFunctionExpression
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionReference as ProtoFunctionReference
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference as ProtoRawFunctionReference
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock as ProtoReturnableBlock
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetClass as ProtoGetClass
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetEnumValue as ProtoGetEnumValue
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetField as ProtoGetField
@@ -75,6 +79,8 @@ class IrBodyDeserializer(
     private val irFactory: IrFactory,
     private val fileReader: IrLibraryFile,
     private val declarationDeserializer: IrDeclarationDeserializer,
+    private val statementOriginIndex: Map<String, IrStatementOrigin>,
+    private val allowErrorStatementOrigins: Boolean,
 ) {
 
     private val fileLoops = mutableMapOf<Int, IrLoop>()
@@ -154,6 +160,37 @@ class IrBodyDeserializer(
         }
 
         return IrBlockImpl(start, end, type, origin, statements)
+    }
+
+    private val returnableBlockStack = ArrayDeque<IrReturnableBlockSymbol>()
+
+    private inline fun <T> withReturnableBlock(symbol: IrReturnableBlockSymbol, fn: () -> T): T {
+        returnableBlockStack.addLast(symbol)
+        try {
+            return fn()
+        } finally {
+            returnableBlockStack.removeLast()
+        }
+    }
+
+    private fun cntToReturnableBlockSymbol(upCnt: Int) = returnableBlockStack[returnableBlockStack.size - upCnt]
+
+    private fun deserializeReturnableBlock(proto: ProtoReturnableBlock, start: Int, end: Int, type: IrType): IrReturnableBlock {
+
+        val symbol = IrReturnableBlockSymbolImpl()
+
+        val inlineFunctionSymbol = if (proto.hasInlineFunctionSymbol()) {
+            declarationDeserializer.deserializeIrSymbolAndRemap(proto.inlineFunctionSymbol) as IrFunctionSymbol
+        } else null
+
+        val statements = withReturnableBlock(symbol) {
+            proto.statementList.map {
+                deserializeStatement(it) as IrStatement
+            }
+        }
+
+        val origin = if (proto.hasOriginName()) deserializeIrStatementOrigin(proto.originName) else null
+        return IrReturnableBlockImpl(start, end, type, symbol, origin, statements, inlineFunctionSymbol)
     }
 
     private fun deserializeMemberAccessCommon(access: IrMemberAccessExpression<*>, proto: ProtoMemberAccessCommon) {
@@ -387,6 +424,14 @@ class IrBodyDeserializer(
         return callable
     }
 
+    private fun deserializeRawFunctionReference(
+        proto: ProtoRawFunctionReference,
+        start: Int, end: Int, type: IrType
+    ): IrRawFunctionReference {
+        val symbol = declarationDeserializer.deserializeIrSymbolAndRemap(proto.symbol) as IrFunctionSymbol
+        return IrRawFunctionReferenceImpl(start, end, type, symbol)
+    }
+
     private fun deserializeGetClass(proto: ProtoGetClass, start: Int, end: Int, type: IrType): IrGetClass {
         val argument = deserializeExpression(proto.argument)
         return IrGetClassImpl(start, end, type, argument)
@@ -490,6 +535,12 @@ class IrBodyDeserializer(
 
     private fun deserializeReturn(proto: ProtoReturn, start: Int, end: Int): IrReturn {
         val symbol = declarationDeserializer.deserializeIrSymbolAndRemap(proto.returnTarget) as IrReturnTargetSymbol
+        val value = deserializeExpression(proto.value)
+        return IrReturnImpl(start, end, builtIns.nothingType, symbol, value)
+    }
+
+    private fun deserializeReturnableBlockReturn(proto: IrReturnableBlockReturn, start: Int, end: Int): IrReturn {
+        val symbol = cntToReturnableBlockSymbol(proto.upCnt)
         val value = deserializeExpression(proto.value)
         return IrReturnImpl(start, end, builtIns.nothingType, symbol, value)
     }
@@ -803,6 +854,9 @@ class IrBodyDeserializer(
             ERROR_EXPRESSION -> deserializeErrorExpression(proto.errorExpression, start, end, type)
             ERROR_CALL_EXPRESSION -> deserializeErrorCallExpression(proto.errorCallExpression, start, end, type)
             OPERATION_NOT_SET -> error("Expression deserialization not implemented: ${proto.operationCase}")
+            RAW_FUNCTION_REFERENCE -> deserializeRawFunctionReference(proto.rawFunctionReference, start, end, type)
+            RETURNABLE_BLOCK -> deserializeReturnableBlock(proto.returnableBlock, start, end, type)
+            RETURNABLE_BLOCK_RETURN -> deserializeReturnableBlockReturn(proto.returnableBlockReturn, start, end)
         }
 
     fun deserializeExpression(proto: ProtoExpression): IrExpression {
@@ -823,16 +877,8 @@ class IrBodyDeserializer(
                 it.startsWith(componentPrefix) -> {
                     IrStatementOrigin.COMPONENT_N.withIndex(it.removePrefix(componentPrefix).toInt())
                 }
-                else -> statementOriginIndex[it] ?: error("Unexpected statement origin: $it")
+                else -> statementOriginIndex[it] ?: if (allowErrorStatementOrigins) object : IrStatementOriginImpl(it) {} else error("Unexpected statement origin: $it")
             }
         }
-    }
-
-    companion object {
-
-        private val allKnownStatementOrigins = IrStatementOrigin::class.nestedClasses.toList()
-
-        private val statementOriginIndex =
-            allKnownStatementOrigins.mapNotNull { it.objectInstance as? IrStatementOriginImpl }.associateBy { it.debugName }
     }
 }

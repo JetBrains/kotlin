@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
+import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
@@ -70,7 +71,12 @@ class FileDeserializationState(
 
     val symbolDeserializer =
         IrSymbolDeserializer(
-            linker.symbolTable, fileReader, fileProto.actualList, ::addIdSignature, linker::handleExpectActualMapping
+            linker.symbolTable,
+            fileReader,
+            file.symbol,
+            fileProto.actualList,
+            ::addIdSignature,
+            linker::handleExpectActualMapping,
         ) { idSig, symbolKind ->
             assert(idSig.isPublic)
 
