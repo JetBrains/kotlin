@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.name.FqName
 
 sealed class IdSignature {
@@ -216,6 +217,93 @@ sealed class IdSignature {
             other is ScopeLocalDeclaration && id == other.id
 
         override fun hashCode(): Int = id
+    }
+
+    class GlobalFileLocalSignature(val container: IdSignature, val id: Long, val filePath: String) : IdSignature() {
+        override val isPublic: Boolean get() = true
+
+        override fun packageFqName(): FqName = container.packageFqName()
+
+        override fun topLevelSignature(): IdSignature {
+            val topLevelContainer = container.topLevelSignature()
+            if (topLevelContainer === container) {
+                if (topLevelContainer is PublicSignature && topLevelContainer.declarationFqName.isEmpty()) {
+                    // private top level
+                    return this
+                }
+            }
+            return topLevelContainer
+        }
+
+        override fun nearestPublicSig(): IdSignature = container.nearestPublicSig()
+
+        override fun render(): String = "${container.render()}:$id from ${filePath.split('/').last()}"
+
+        override fun equals(other: Any?): Boolean =
+            other is GlobalFileLocalSignature && id == other.id && container == other.container && filePath == other.filePath
+
+        override fun hashCode(): Int = (container.hashCode() * 31 + id.hashCode()) * 31 + filePath.hashCode()
+    }
+
+    // Used to reference local variable and value parameters in function
+    class GlobalScopeLocalDeclaration(val id: Int, val description: String = "<no description>", val filePath: String) : IdSignature() {
+        override val isPublic: Boolean get() = false
+
+        override val hasTopLevel: Boolean get() = false
+
+        override fun topLevelSignature(): IdSignature = error("Is not supported for Local ID")
+
+        override fun nearestPublicSig(): IdSignature = error("Is not supported for Local ID")
+
+        override fun packageFqName(): FqName = error("Is not supported for Local ID")
+
+        override fun render(): String = "#$id"
+
+        override fun equals(other: Any?): Boolean =
+            other is GlobalScopeLocalDeclaration && id == other.id && filePath == other.filePath
+
+        override fun hashCode(): Int = id * 31 + filePath.hashCode()
+    }
+
+    class LoweredDeclarationSignature(val original: IdSignature, val stage: Int, val index: Int): IdSignature() {
+        override val isPublic: Boolean get() = true
+
+        override val hasTopLevel: Boolean get() = false
+
+        override fun topLevelSignature(): IdSignature = this
+
+        override fun nearestPublicSig(): IdSignature = this
+
+        override fun packageFqName(): FqName = original.packageFqName()
+
+        override fun render(): String = "ic#$stage:${original.render()}-$index"
+
+        override fun equals(other: Any?): Boolean {
+            return other is LoweredDeclarationSignature && original == other.original && stage == other.stage && index == other.index
+        }
+
+        override fun hashCode(): Int {
+            return (index * 31 + stage) * 31 + original.hashCode()
+        }
+    }
+
+    class FileSignature(val symbol: IrFileSymbol): IdSignature() {
+        override val isPublic: Boolean get() = false
+
+        override val hasTopLevel: Boolean get() = false
+
+        override fun topLevelSignature(): IdSignature = error("Is not supported for files")
+
+        override fun nearestPublicSig(): IdSignature = error("Is not supported for files")
+
+        override fun packageFqName(): FqName = error("Is not supported for files")
+
+        override fun render(): String = "#${symbol.owner.fileEntry.name}"
+
+        override fun equals(other: Any?): Boolean =
+            other is FileSignature && symbol == other.symbol
+
+        override fun hashCode(): Int = symbol.hashCode()
     }
 }
 
