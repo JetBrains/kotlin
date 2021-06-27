@@ -16,20 +16,16 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
-import org.jetbrains.kotlin.codegen.DescriptorAsmUtil
-import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.isNeedClassReificationMarker
 import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.inline.InlineUtil
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.*
+import kotlin.math.max
 
 private data class Condition(
     val mask: Int, val constant: Int,
@@ -39,25 +35,6 @@ private data class Condition(
 ) {
     val expandNotDelete = mask and constant != 0
     val varIndex = varInsNode?.`var` ?: 0
-}
-
-fun extractDefaultLambdaOffsetAndDescriptor(
-    jvmSignature: JvmMethodSignature,
-    functionDescriptor: FunctionDescriptor
-): Map<Int, ValueParameterDescriptor> {
-    val valueParameters = jvmSignature.valueParameters
-    val containingDeclaration = functionDescriptor.containingDeclaration
-    val kind =
-        if (DescriptorUtils.isInterface(containingDeclaration)) OwnerKind.DEFAULT_IMPLS
-        else OwnerKind.getMemberOwnerKind(containingDeclaration)
-    val parameterOffsets = parameterOffsets(DescriptorAsmUtil.isStaticMethod(kind, functionDescriptor), valueParameters)
-    val valueParameterOffset = valueParameters.takeWhile { it.kind != JvmMethodParameterKind.VALUE }.size
-
-    return functionDescriptor.valueParameters.filter {
-        InlineUtil.isInlineParameter(it) && it.declaresDefaultValue()
-    }.associateBy {
-        parameterOffsets[valueParameterOffset + it.index]
-    }
 }
 
 class ExtractedDefaultLambda(val type: Type, val capturedArgs: Array<Type>, val offset: Int, val needReification: Boolean)
@@ -201,4 +178,69 @@ private fun defaultLambdaFakeCallStub(args: Array<Type>, lambdaOffset: Int): Met
         Type.getMethodDescriptor(Type.VOID_TYPE, *args),
         false
     )
+}
+
+fun loadDefaultLambdaBody(classBytes: ByteArray, classType: Type, isPropertyReference: Boolean): SMAPAndMethodNode {
+    // In general we can't know what the correct unboxed `invoke` is, and what Kotlin types its arguments have,
+    // as the type of this object may be any subtype of the parameter's type. All we know is that Function<N>
+    // has to have a `invoke` that takes `Object`s and returns an `Object`; everything else needs to be figured
+    // out from its contents. TODO: for > 22 arguments, the only argument is an array. `MethodInliner` can't do that.
+    val invokeName = if (isPropertyReference) OperatorNameConventions.GET.asString() else OperatorNameConventions.INVOKE.asString()
+    val invokeNode = getMethodNode(classBytes, classType) {
+        it.name == invokeName && it.returnType == AsmTypes.OBJECT_TYPE && it.argumentTypes.all { arg -> arg == AsmTypes.OBJECT_TYPE }
+    } ?: error("can't find erased invoke '$invokeName(Object...): Object' in default lambda '${classType.internalName}'")
+    return if (invokeNode.node.access.and(Opcodes.ACC_BRIDGE) == 0)
+        invokeNode
+    else
+        invokeNode.node.inlineBridge(classBytes, classType)
+}
+
+private fun MethodNode.inlineBridge(classBytes: ByteArray, classType: Type): SMAPAndMethodNode {
+    // If the erased invoke is a bridge, we need to locate the unboxed invoke and inline it. As mentioned above,
+    // we don't know what the Kotlin types of its arguments/returned value are, so we can't generate our own
+    // boxing/unboxing code; luckily, the bridge already has that.
+    val invokeInsn = instructions.singleOrNull { it is MethodInsnNode && it.owner == classType.internalName } as MethodInsnNode?
+        ?: error("no single invoke of method on this in '${name}${desc}' of default lambda '${classType.internalName}'")
+    val targetMethod = Method(invokeInsn.name, invokeInsn.desc)
+    val target = getMethodNode(classBytes, classType, targetMethod)
+        ?: error("can't find non-bridge invoke '$targetMethod' in default lambda '${classType.internalName}")
+
+    // Store unboxed/casted arguments in the correct variable slots
+    val targetArgs = targetMethod.argumentTypes
+    val targetArgsSize = targetArgs.sumOf { it.size } + if (target.node.access.and(Opcodes.ACC_STATIC) == 0) 1 else 0
+    var offset = targetArgsSize
+    for (type in targetArgs.reversed()) {
+        offset -= type.size
+        instructions.insertBefore(invokeInsn, VarInsnNode(type.getOpcode(Opcodes.ISTORE), offset))
+    }
+    if (target.node.access.and(Opcodes.ACC_STATIC) == 0) {
+        instructions.insertBefore(invokeInsn, InsnNode(Opcodes.POP)) // this
+    }
+
+    // Remap returns and ranges for arguments' LVT entries
+    val invokeLabel = LabelNode()
+    val returnLabel = LabelNode()
+    instructions.insertBefore(invokeInsn, invokeLabel)
+    instructions.insert(invokeInsn, returnLabel)
+    for (insn in target.node.instructions) {
+        if (insn.opcode in Opcodes.IRETURN..Opcodes.RETURN) {
+            target.node.instructions.set(insn, JumpInsnNode(Opcodes.GOTO, returnLabel))
+        }
+    }
+    for (local in target.node.localVariables) {
+        if (local.index < targetArgsSize) {
+            local.start = invokeLabel
+            local.end = returnLabel
+        }
+    }
+
+    // Insert contents of the method into the bridge
+    instructions.filterIsInstance<LineNumberNode>().forEach { instructions.remove(it) } // those are not meaningful
+    instructions.insertBefore(invokeInsn, target.node.instructions)
+    instructions.remove(invokeInsn)
+    localVariables = target.node.localVariables
+    tryCatchBlocks = target.node.tryCatchBlocks
+    maxLocals = max(maxLocals, target.node.maxLocals)
+    maxStack = max(maxStack, target.node.maxStack)
+    return SMAPAndMethodNode(this, target.classSMAP)
 }

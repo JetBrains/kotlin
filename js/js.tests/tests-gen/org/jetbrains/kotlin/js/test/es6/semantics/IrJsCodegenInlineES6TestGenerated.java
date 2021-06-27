@@ -1540,6 +1540,11 @@ public class IrJsCodegenInlineES6TestGenerated extends AbstractIrJsCodegenInline
                     runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/differentInvokeSignature2.kt");
                 }
 
+                @TestMetadata("differentInvokeSignature3.kt")
+                public void testDifferentInvokeSignature3() throws Exception {
+                    runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/differentInvokeSignature3.kt");
+                }
+
                 @TestMetadata("functionImportedFromObject.kt")
                 public void testFunctionImportedFromObject() throws Exception {
                     runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/functionImportedFromObject.kt");
