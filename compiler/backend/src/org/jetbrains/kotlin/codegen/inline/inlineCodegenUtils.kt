@@ -85,7 +85,7 @@ private const val INLINE_MARKER_AFTER_INLINE_SUSPEND_ID = 7
 private const val INLINE_MARKER_BEFORE_UNBOX_INLINE_CLASS = 8
 private const val INLINE_MARKER_AFTER_UNBOX_INLINE_CLASS = 9
 
-internal inline fun getMethodNode(classData: ByteArray, classType: Type, crossinline match: (Method, Int) -> Boolean): SMAPAndMethodNode? {
+internal inline fun getMethodNode(classData: ByteArray, classType: Type, crossinline match: (Method) -> Boolean): SMAPAndMethodNode? {
     var node: MethodNode? = null
     var sourceFile: String? = null
     var sourceMap: String? = null
@@ -96,7 +96,7 @@ internal inline fun getMethodNode(classData: ByteArray, classType: Type, crossin
         }
 
         override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<String>?): MethodVisitor? {
-            if (!match(Method(name, desc), access)) return null
+            if (!match(Method(name, desc))) return null
             node?.let { existing ->
                 throw AssertionError("Can't find proper '$name' method for inline: ambiguity between '${existing.name + existing.desc}' and '${name + desc}'")
             }
@@ -112,7 +112,7 @@ internal inline fun getMethodNode(classData: ByteArray, classType: Type, crossin
 }
 
 internal fun getMethodNode(classData: ByteArray, classType: Type, method: Method): SMAPAndMethodNode? =
-    getMethodNode(classData, classType) { it, _ -> it == method }
+    getMethodNode(classData, classType) { it == method }
 
 internal fun Collection<MethodNode>.lineNumberRange(): Pair<Int, Int> {
     var minLine = Int.MAX_VALUE

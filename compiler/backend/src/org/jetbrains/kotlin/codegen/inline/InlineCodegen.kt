@@ -33,9 +33,9 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
     protected val invocationParamBuilder = ParametersBuilder.newBuilder()
     protected val expressionMap = linkedMapOf<Int, FunctionalArgument>()
-    protected val maskValues = ArrayList<Int>()
-    protected var maskStartIndex = -1
-    protected var methodHandleInDefaultMethodIndex = -1
+    private val maskValues = ArrayList<Int>()
+    private var maskStartIndex = -1
+    private var methodHandleInDefaultMethodIndex = -1
 
     protected fun generateStub(text: String, codegen: BaseExpressionCodegen) {
         leaveTemps()
@@ -71,11 +71,16 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     private fun inlineCall(nodeAndSmap: SMAPAndMethodNode, isInlineOnly: Boolean): InlineResult {
         val node = nodeAndSmap.node
         if (maskStartIndex != -1) {
-            for (lambda in extractDefaultLambdas(node)) {
-                invocationParamBuilder.buildParameters().getParameterByDeclarationSlot(lambda.offset).functionalArgument = lambda
-                val prev = expressionMap.put(lambda.offset, lambda)
-                assert(prev == null) { "Lambda with offset ${lambda.offset} already exists: $prev" }
-                if (lambda.needReification) {
+            val infos = expandMaskConditionsAndUpdateVariableNodes(
+                node, maskStartIndex, maskValues, methodHandleInDefaultMethodIndex, computeDefaultLambdaOffsets()
+            )
+            val parameters = invocationParamBuilder.buildParameters()
+            for (info in infos) {
+                val lambda = DefaultLambda(info, sourceCompiler)
+                parameters.getParameterByDeclarationSlot(info.offset).functionalArgument = lambda
+                val prev = expressionMap.put(info.offset, lambda)
+                assert(prev == null) { "Lambda with offset ${info.offset} already exists: $prev" }
+                if (info.needReification) {
                     lambda.reifiedTypeParametersUsages.mergeAll(reifiedTypeInliner.reifyInstructions(lambda.node.node))
                 }
                 rememberCapturedForDefaultLambda(lambda)
@@ -136,15 +141,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         return result
     }
 
-    abstract fun extractDefaultLambdas(node: MethodNode): List<DefaultLambda>
-
-    protected inline fun <T> extractDefaultLambdas(
-        node: MethodNode, parameters: Map<Int, T>, block: ExtractedDefaultLambda.(T) -> DefaultLambda
-    ): List<DefaultLambda> = expandMaskConditionsAndUpdateVariableNodes(
-        node, maskStartIndex, maskValues, methodHandleInDefaultMethodIndex, parameters.keys
-    ).map {
-        it.block(parameters[it.offset]!!)
-    }
+    abstract fun computeDefaultLambdaOffsets(): Set<Int>
 
     private fun generateAndInsertFinallyBlocks(
         intoNode: MethodNode,
