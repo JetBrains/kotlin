@@ -92,10 +92,6 @@ class MethodInliner(
     ): InlineResult {
         //analyze body
         var transformedNode = markPlacesForInlineAndRemoveInlinable(node, returnLabels, finallyDeepShift)
-        if (inliningContext.isInliningLambda && isDefaultLambdaWithReification(inliningContext.lambdaInfo!!)) {
-            //TODO maybe move reification in one place
-            inliningContext.root.inlineMethodReifier.reifyInstructions(transformedNode)
-        }
 
         //substitute returns with "goto end" instruction to keep non local returns in lambdas
         val end = linkedLabel()
@@ -321,10 +317,17 @@ class MethodInliner(
                     } else {
                         super.visitMethodInsn(opcode, owner, name, desc, itf)
                     }
-                } else if ((!inliningContext.isInliningLambda || isDefaultLambdaWithReification(inliningContext.lambdaInfo!!)) &&
-                    ReifiedTypeInliner.isNeedClassReificationMarker(MethodInsnNode(opcode, owner, name, desc, false))
-                ) {
-                    //we shouldn't process here content of inlining lambda it should be reified at external level except default lambdas
+                } else if (ReifiedTypeInliner.isNeedClassReificationMarker(MethodInsnNode(opcode, owner, name, desc, false))) {
+                    // Consider this arrangement:
+                    //     inline fun <reified T> f(x: () -> Unit = { /* uses `T` in a local class */ }) = x()
+                    //     inline fun <reified V> g() = f<...> { /* uses `V` in a local class */ }
+                    // When inlining `f` into `g`, we need to erase class reification markers from `f` and the default lambda
+                    // (they will be recreated by `handleAnonymousObjectRegeneration` above if `T` is instantiated with another
+                    // reified type parameter), but not from the lambda passed to `f` in `g` (as reified type parameters inside
+                    // it do not belong to `f`, thus we cannot substitute them yet).
+                    if (inliningContext.isInliningLambda && inliningContext.lambdaInfo !is DefaultLambda) {
+                        super.visitMethodInsn(opcode, owner, name, desc, itf)
+                    }
                 } else {
                     super.visitMethodInsn(opcode, owner, name, desc, itf)
                 }
@@ -348,9 +351,6 @@ class MethodInliner(
         surroundInvokesWithSuspendMarkersIfNeeded(resultNode)
         return resultNode
     }
-
-    private fun isDefaultLambdaWithReification(lambdaInfo: LambdaInfo) =
-        lambdaInfo is DefaultLambda && lambdaInfo.needReification
 
     private fun prepareNode(node: MethodNode, finallyDeepShift: Int): MethodNode {
         node.instructions.resetLabels()
