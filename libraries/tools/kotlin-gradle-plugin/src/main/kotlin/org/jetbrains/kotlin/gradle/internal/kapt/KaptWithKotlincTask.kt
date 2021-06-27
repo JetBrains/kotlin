@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.internal
 
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
@@ -30,7 +31,8 @@ import javax.inject.Inject
 abstract class KaptWithKotlincTask @Inject constructor(
     objectFactory: ObjectFactory
 ) : KaptTask(objectFactory),
-    CompilerArgumentAwareWithInput<K2JVMCompilerArguments> {
+    CompilerArgumentAwareWithInput<K2JVMCompilerArguments>,
+    CompileUsingKotlinDaemonWithNormalization {
 
     class Configurator(kotlinCompileTask: KotlinCompile): KaptTask.Configurator<KaptWithKotlincTask>(kotlinCompileTask) {
         override fun configure(task: KaptWithKotlincTask) {
@@ -57,6 +59,8 @@ abstract class KaptWithKotlincTask @Inject constructor(
     )
 
     override fun createCompilerArgs(): K2JVMCompilerArguments = K2JVMCompilerArguments()
+
+    abstract override val kotlinDaemonJvmArguments: ListProperty<String>
 
     @get:Internal
     internal abstract val compileKotlinArgumentsContributor: Property<CompilerArgumentsContributor<K2JVMCompilerArguments>>
@@ -117,7 +121,8 @@ abstract class KaptWithKotlincTask @Inject constructor(
 
         val compilerRunner = GradleCompilerRunner(
             taskProvider.get(),
-            defaultKotlinJavaToolchain.get().currentJvmJdkToolsJar.orNull
+            defaultKotlinJavaToolchain.get().currentJvmJdkToolsJar.orNull,
+            normalizedKotlinDaemonJvmArguments.orNull
         )
         compilerRunner.runJvmCompilerAsync(
             sourcesToCompile = emptyList(),

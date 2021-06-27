@@ -62,7 +62,8 @@ internal class GradleKotlinCompilerWorkArguments(
     val taskPath: String,
     val reportingSettings: ReportingSettings,
     val kotlinScriptExtensions: Array<String>,
-    val allWarningsAsErrors: Boolean
+    val allWarningsAsErrors: Boolean,
+    val daemonJvmArgs: List<String>?
 ) : Serializable {
     companion object {
         const val serialVersionUID: Long = 0
@@ -105,6 +106,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
     private val buildDir = config.projectFiles.buildDir
     private val metrics = if (reportingSettings.reportMetrics) BuildMetricsReporterImpl() else DoNothingBuildMetricsReporter
     private var icLogLines: List<String> = emptyList()
+    private val daemonJvmArgs = config.daemonJvmArgs
 
     private val log: KotlinLogger =
         TaskLoggers.get(taskPath)?.let { GradleKotlinLogger(it).apply { debug("Using '$taskPath' logger") } }
@@ -175,7 +177,8 @@ internal class GradleKotlinCompilerWork @Inject constructor(
                         sessionFlagFile,
                         compilerFullClasspath,
                         daemonMessageCollector,
-                        isDebugEnabled = isDebugEnabled
+                        isDebugEnabled = isDebugEnabled,
+                        daemonJvmArgs = daemonJvmArgs
                     )
                 } catch (e: Throwable) {
                     log.error("Caught an exception trying to connect to Kotlin Daemon:")

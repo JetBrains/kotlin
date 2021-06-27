@@ -509,6 +509,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
                 KaptWithoutKotlincTask.Configurator(kotlinCompileTask).configure(kaptTask)
             } else {
                 KaptWithKotlincTask.Configurator(kotlinCompileTask).configure(kaptTask as KaptWithKotlincTask)
+                PropertiesProvider(project).mapKotlinDaemonProperties(kaptTask)
             }
 
             kaptTask.stubsDir.set(getKaptStubsDir())

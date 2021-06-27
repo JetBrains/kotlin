@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.js.calculateJsCompilerType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSingleTargetPreset
+import org.jetbrains.kotlin.gradle.tasks.CompileUsingKotlinDaemon
+import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
@@ -71,6 +73,24 @@ open class KotlinTopLevelExtension (internal val project: Project) {
     fun jvmToolchain(action: Action<Any>) {
         toolchainSupport.applyToolchain(action)
     }
+
+    /**
+     * Configures Kotlin daemon JVM arguments for all tasks in this project.
+     *
+     * **Note**: In case other projects are using different JVM arguments, new instance of Kotlin daemon will be started.
+     */
+    @get:JvmSynthetic
+    var kotlinDaemonJvmArgs: List<String>
+        @Deprecated("", level = DeprecationLevel.ERROR)
+        get() = throw UnsupportedOperationException()
+        set(value) {
+            project
+                .tasks
+                .withType<CompileUsingKotlinDaemon>()
+                .configureEach {
+                    it.kotlinDaemonJvmArguments.set(value)
+                }
+        }
 
     var explicitApi: ExplicitApiMode? = null
 
