@@ -543,40 +543,43 @@ class DurationTest {
                 assertEquals("-$actual", (-duration).toString())
         }
 
-        test(Duration.days(101), "101d")
-        test(Duration.days(45.3), "45.3d")
-        test(Duration.days(45), "45.0d")
+        test(Duration.days(101), "2424h")
+        test(Duration.days(45.3), "1087h 12m") // 1080h + 7.2h
+        test(Duration.days(45), "1080h")
 
         test(Duration.days(40.5), "972h")
-        test(Duration.hours(40) + Duration.minutes(15), "40.3h", "40.2h")
-        test(Duration.hours(40), "40.0h")
+        test(Duration.hours(40) + Duration.minutes(15), "40h 15m")
+        test(Duration.hours(40), "40h")
 
-        test(Duration.hours(12.5), "750m")
-        test(Duration.minutes(30), "30.0m")
-        test(Duration.minutes(17.5), "17.5m")
+        test(Duration.hours(12.5), "12h 30m")
+        test(Duration.hours(12) + Duration.seconds(15), "12h 0m 15s")
+        test(Duration.hours(12) + Duration.nanoseconds(1), "12h 0m 0.000000001s")
+        test(Duration.minutes(30), "30m")
+        test(Duration.minutes(17.5), "17m 30s")
 
-        test(Duration.minutes(16.5), "990s")
-        test(Duration.seconds(90.36), "90.4s")
-        test(Duration.seconds(50), "50.0s")
-        test(Duration.seconds(1.3), "1.30s")
-        test(Duration.seconds(1), "1.00s")
+        test(Duration.minutes(16.5), "16m 30s")
+        test(Duration.seconds(1097.1), "18m 17.099999999s") // Double to Long ns truncation!
+        test(Duration.seconds(90.36), "1m 30.360s")
+        test(Duration.seconds(50), "50s")
+        test(Duration.seconds(1.3), "1.300s")
+        test(Duration.seconds(1), "1s")
 
-        test(Duration.seconds(0.5), "500ms")
-        test(Duration.milliseconds(40.2), "40.2ms")
-        test(Duration.milliseconds(4.225), "4.23ms", "4.22ms")
-        test(Duration.milliseconds(4.245), "4.25ms")
-        test(Duration.milliseconds(1), "1.00ms")
+        test(Duration.seconds(0.5), "0.500s")
+        test(Duration.milliseconds(40.2), "0.040200s")
+        test(Duration.milliseconds(4.225), "0.004225s")
+        test(Duration.milliseconds(4.245), "0.004245s")
+        test(Duration.milliseconds(1), "0.001s")
 
-        test(Duration.milliseconds(0.75), "750us")
-        test(Duration.microseconds(75.35), "75.4us", "75.3us")
-        test(Duration.microseconds(7.25), "7.25us")
-        test(Duration.microseconds(1.035), "1.04us", "1.03us")
-        test(Duration.microseconds(1.005), "1.01us", "1.00us")
+        test(Duration.milliseconds(0.75), "0.000750s")
+        test(Duration.microseconds(75.35), "0.000075350s")
+        test(Duration.microseconds(7.25), "0.000007250s")
+        test(Duration.microseconds(1.035), "0.000001035s")
+        test(Duration.microseconds(1.005), "0.000001004s") // Double to Long ns truncation!
 
-        test(Duration.nanoseconds(950.5), "951ns", "950ns")
-        test(Duration.nanoseconds(85.23), "85.0ns")
-        test(Duration.nanoseconds(8.235), "8.00ns")
-        test(Duration.nanoseconds(1.3), "1.00ns")
+        test(Duration.nanoseconds(950.5), "0.000000950s")
+        test(Duration.nanoseconds(85.23), "0.000000085s")
+        test(Duration.nanoseconds(8.235), "0.000000008s")
+        test(Duration.nanoseconds(1.3), "0.000000001s")
 
         // equal to zero
 //        test(Duration.nanoseconds(0.75), "0.75ns")
@@ -586,9 +589,9 @@ class DurationTest {
 //        test(Duration.nanoseconds(0.0000035), "0.0000035ns")
 
         test(Duration.ZERO, "0s")
-        test(Duration.days(365) * 10000, "3650000d")
-        test(Duration.days(300) * 100000, "3.00e+7d")
-        test(Duration.days(365) * 100000, "3.65e+7d")
+        test(Duration.days(365) * 10000, "87600000h")
+        test(Duration.days(300) * 100000, "720000000h")
+        test(Duration.days(365) * 100000, "876000000h")
 
         // all infinite
 //        val universeAge = Duration.days(365.25) * 13.799e9

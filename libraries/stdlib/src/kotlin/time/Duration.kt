@@ -639,15 +639,25 @@ public value class Duration internal constructor(private val rawValue: Long) : C
     public fun toLongMilliseconds(): Long = inWholeMilliseconds
 
     /**
-     * Returns a string representation of this duration value expressed in the unit which yields the most compact and readable number value.
+     * Returns a string representation of this duration value
+     * expressed as a combination of numeric components, each in its own unit.
+     *
+     * Each component is a number followed by the unit abbreviated name: `d`, `h`, `m`, `s`:
+     * `5h`, `1d 12h`, `1h 0m 30.3340s`.
+     * The last component, usually seconds, can be a number with a fractional part.
+     *
+     * If the duration is less than a second, it is represented as a single number
+     * with one of sub-second units: `ms` (milliseconds), `us` (microseconds), or `ns` (nanoseconds):
+     * `140.884ms`, `500us`, `24ns`.
+     *
+     * A negative duration is prefixed with `-` sign and, if it consists of multiple components, surrounded with parentheses:
+     * `-12m` and `-(1h 30m)`.
      *
      * Special cases:
-     *  - zero duration is formatted as `"0s"`
-     *  - the infinite duration is formatted as `"Infinity"` without unit
-     *  - very small durations (less than 1e-15 s) are expressed in seconds and formatted in scientific notation
-     *  - very big durations (more than 1e+7 days) are expressed in days and formatted in scientific notation
+     *  - an infinite duration is formatted as `"Infinity"` or `"-Infinity"` without a unit.
      *
-     * @return the value of duration in the automatically determined unit followed by that unit abbreviated name: `d`, `h`, `m`, `s`, `ms`, `us`, or `ns`.
+     * It's recommended to use [toIsoString] that uses more strict ISO-8601 format instead of this `toString`
+     * when you want to convert a duration to a string in cases of serialization, interchange, etc.
      *
      * @sample samples.time.Durations.toStringDefault
      */
@@ -656,27 +666,41 @@ public value class Duration internal constructor(private val rawValue: Long) : C
         INFINITE.rawValue -> "Infinity"
         NEG_INFINITE.rawValue -> "-Infinity"
         else -> {
-            val absNs = absoluteValue.toDouble(DurationUnit.NANOSECONDS)
-            var scientific = false
-            var maxDecimals = 0
-            val unit = when {
-                absNs < 1e-6 -> DurationUnit.SECONDS.also { scientific = true }
-                absNs < 1 -> DurationUnit.NANOSECONDS.also { maxDecimals = 7 }
-                absNs < 1e3 -> DurationUnit.NANOSECONDS
-                absNs < 1e6 -> DurationUnit.MICROSECONDS
-                absNs < 1e9 -> DurationUnit.MILLISECONDS
-                absNs < 1000e9 -> DurationUnit.SECONDS
-                absNs < 60_000e9 -> DurationUnit.MINUTES
-                absNs < 3600_000e9 -> DurationUnit.HOURS
-                absNs < 86400e9 * 1e7 -> DurationUnit.DAYS
-                else -> DurationUnit.DAYS.also { scientific = true }
+            buildString {
+                if (isNegative()) append('-')
+                absoluteValue.run {
+                    toComponents { _, minutes, seconds, nanoseconds ->
+                        val hours = inWholeHours
+                        val hasHours = hours != 0L
+                        val hasSeconds = seconds != 0 || nanoseconds != 0
+                        if (hasHours) {
+                            append(hours)
+                            append('h')
+                        }
+                        if (minutes != 0 || (hasSeconds && hasHours)) {
+                            if (length > 1) append(' ')
+                            append(minutes)
+                            append('m')
+                        }
+                        if (hasSeconds) {
+                            if (length > 1) append(' ')
+                            append(seconds)
+                            if (nanoseconds != 0) {
+                                append('.')
+                                when {
+                                    (nanoseconds % 1_000_000 == 0) ->
+                                        append((nanoseconds / 1_000_000).toString().padStart(3, '0'))
+                                    (nanoseconds % 1_000 == 0) ->
+                                        append((nanoseconds / 1_000).toString().padStart(6, '0'))
+                                    else ->
+                                        append(nanoseconds.toString().padStart(9, '0'))
+                                }
+                            }
+                            append('s')
+                        }
+                    }
+                }
             }
-            val value = toDouble(unit)
-            when {
-                scientific -> formatScientific(value)
-                maxDecimals > 0 -> formatUpToDecimals(value, maxDecimals)
-                else -> formatToExactDecimals(value, precision(abs(value)))
-            } + unit.shortName()
         }
     }
 
