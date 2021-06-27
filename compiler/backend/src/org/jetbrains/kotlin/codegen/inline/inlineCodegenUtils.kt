@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
+import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.util.Printer
 import org.jetbrains.org.objectweb.asm.util.Textifier
@@ -84,40 +85,18 @@ private const val INLINE_MARKER_AFTER_INLINE_SUSPEND_ID = 7
 private const val INLINE_MARKER_BEFORE_UNBOX_INLINE_CLASS = 8
 private const val INLINE_MARKER_AFTER_UNBOX_INLINE_CLASS = 9
 
-internal fun getMethodNode(
-    classData: ByteArray,
-    methodName: String,
-    methodDescriptor: String,
-    classType: Type,
-    signatureAmbiguity: Boolean = false
-): SMAPAndMethodNode? {
-    val cr = ClassReader(classData)
+internal inline fun getMethodNode(classData: ByteArray, classType: Type, crossinline match: (Method, Int) -> Boolean): SMAPAndMethodNode? {
     var node: MethodNode? = null
-    val debugInfo = arrayOfNulls<String>(2)
-
-    cr.accept(object : ClassVisitor(Opcodes.API_VERSION) {
+    var sourceFile: String? = null
+    var sourceMap: String? = null
+    ClassReader(classData).accept(object : ClassVisitor(Opcodes.API_VERSION) {
         override fun visitSource(source: String?, debug: String?) {
-            super.visitSource(source, debug)
-            debugInfo[0] = source
-            debugInfo[1] = debug
+            sourceFile = source
+            sourceMap = debug
         }
 
-        override fun visitMethod(
-            access: Int,
-            name: String,
-            desc: String,
-            signature: String?,
-            exceptions: Array<String>?
-        ): MethodVisitor? {
-            if (methodName != name || (signatureAmbiguity && access.and(Opcodes.ACC_SYNTHETIC) != 0)) return null
-
-            if (methodDescriptor != desc) {
-                val sameNumberOfParameters = Type.getArgumentTypes(methodDescriptor).size == Type.getArgumentTypes(desc).size
-                if (!signatureAmbiguity || !sameNumberOfParameters) {
-                    return null
-                }
-            }
-
+        override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<String>?): MethodVisitor? {
+            if (!match(Method(name, desc), access)) return null
             node?.let { existing ->
                 throw AssertionError("Can't find proper '$name' method for inline: ambiguity between '${existing.name + existing.desc}' and '${name + desc}'")
             }
@@ -126,14 +105,14 @@ internal fun getMethodNode(
         }
     }, ClassReader.SKIP_FRAMES or if (GENERATE_SMAP) 0 else ClassReader.SKIP_DEBUG)
 
-    if (node == null) {
-        return null
+    return node?.let{
+        val (first, last) = listOfNotNull(it).lineNumberRange()
+        SMAPAndMethodNode(it, SMAPParser.parseOrCreateDefault(sourceMap, sourceFile, classType.internalName, first, last))
     }
-
-    val (first, last) = listOfNotNull(node).lineNumberRange()
-    val smap = SMAPParser.parseOrCreateDefault(debugInfo[1], debugInfo[0], classType.internalName, first, last)
-    return SMAPAndMethodNode(node!!, smap)
 }
+
+internal fun getMethodNode(classData: ByteArray, classType: Type, method: Method): SMAPAndMethodNode? =
+    getMethodNode(classData, classType) { it, _ -> it == method }
 
 internal fun Collection<MethodNode>.lineNumberRange(): Pair<Int, Int> {
     var minLine = Int.MAX_VALUE
