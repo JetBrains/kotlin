@@ -1,5 +1,6 @@
 // DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: SPREAD_OPERATOR
+// Doesn't fail on WASM backend if lambdas return Int. Need to investigate futher.
+// WASM_MUTE_REASON: UNIT_ISSUES
 // !LANGUAGE: +UseCorrectExecutionOrderForVarargArguments
 // WITH_RUNTIME
 // KJS_WITH_FULL_RUNTIME

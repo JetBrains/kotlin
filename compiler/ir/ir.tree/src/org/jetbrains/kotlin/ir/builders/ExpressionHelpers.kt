@@ -135,6 +135,9 @@ fun IrBuilderWithScope.irGet(variable: IrValueDeclaration) = irGet(variable.type
 fun IrBuilderWithScope.irSet(variable: IrValueSymbol, value: IrExpression, origin: IrStatementOrigin = IrStatementOrigin.EQ) =
     IrSetValueImpl(startOffset, endOffset, context.irBuiltIns.unitType, variable, value, origin)
 
+fun IrBuilderWithScope.irSet(variable: IrValueDeclaration, value: IrExpression, origin: IrStatementOrigin = IrStatementOrigin.EQ) =
+    irSet(variable.symbol, value, origin)
+
 fun IrBuilderWithScope.irGetField(receiver: IrExpression?, field: IrField) =
     IrGetFieldImpl(startOffset, endOffset, field.symbol, field.type, receiver)
 

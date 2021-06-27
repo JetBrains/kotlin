@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.wasm
 
 import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -29,6 +30,8 @@ class WasmSymbols(
 
     private val wasmInternalPackage: PackageViewDescriptor =
         context.module.getPackage(FqName("kotlin.wasm.internal"))
+    private val collectionsPackage: PackageViewDescriptor =
+        context.module.getPackage(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME)
 
     override val throwNullPointerException = getInternalFunction("THROW_NPE")
     override val throwISE = getInternalFunction("THROW_ISE")
@@ -151,6 +154,9 @@ class WasmSymbols(
             }.symbol
         }
     }
+
+    val arraysCopyInto = findFunctions(collectionsPackage.memberScope, Name.identifier("copyInto"))
+        .map { symbolTable.referenceSimpleFunction(it) }
 
     override fun functionN(n: Int): IrClassSymbol =
         functionNInterfaces[n]

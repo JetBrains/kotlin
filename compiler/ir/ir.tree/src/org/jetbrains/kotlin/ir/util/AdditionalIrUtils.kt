@@ -233,7 +233,7 @@ private fun IrClass.getPropertyDeclaration(name: String): IrProperty? {
     return properties.firstOrNull()
 }
 
-private fun IrClass.getSimpleFunction(name: String): IrSimpleFunctionSymbol? =
+fun IrClass.getSimpleFunction(name: String): IrSimpleFunctionSymbol? =
     findDeclaration<IrSimpleFunction> { it.name.asString() == name }?.symbol
 
 fun IrClass.getPropertyGetter(name: String): IrSimpleFunctionSymbol? =
