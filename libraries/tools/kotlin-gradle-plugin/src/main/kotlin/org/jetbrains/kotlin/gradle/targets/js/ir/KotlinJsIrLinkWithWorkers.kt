@@ -27,6 +27,7 @@ constructor(
                 GradleCompilerRunnerWithWorkers(
                     it,
                     null,
+                    normalizedKotlinDaemonJvmArguments.orNull,
                     workerExecutor
                 ) as GradleCompilerRunner
             }

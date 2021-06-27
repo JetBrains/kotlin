@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat.Compan
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion
 import org.jetbrains.kotlin.gradle.targets.native.DisabledNativeTargetsReporter
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.CompileUsingKotlinDaemon
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
@@ -48,6 +49,12 @@ internal fun PropertiesProvider.mapKotlinTaskProperties(task: AbstractKotlinComp
     if (task is Kotlin2JsCompile) {
         incrementalJs?.let { task.incremental = it }
         incrementalJsKlib?.let { task.incrementalJsKlib = it }
+    }
+}
+
+internal fun PropertiesProvider.mapKotlinDaemonProperties(task: CompileUsingKotlinDaemon) {
+    kotlinDaemonJvmArgs?.let {
+        task.kotlinDaemonJvmArguments.set(it.split("\\s+".toRegex()))
     }
 }
 
@@ -347,6 +354,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     val jvmTargetValidationMode: JvmTargetValidationMode
         get() = enumProperty("kotlin.jvm.target.validation.mode", JvmTargetValidationMode.WARNING)
+
+    val kotlinDaemonJvmArgs: String?
+        get() = property("kotlin.daemon.jvmargs")
 
     private fun propertyWithDeprecatedVariant(propName: String, deprecatedPropName: String): String? {
         val deprecatedProperty = property(deprecatedPropName)

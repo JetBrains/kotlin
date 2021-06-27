@@ -47,14 +47,32 @@ object KotlinCompilerRunnerUtils {
         isDebugEnabled: Boolean,
         daemonOptions: DaemonOptions = configureDaemonOptions(),
         additionalJvmParams: Array<String> = arrayOf()
-    ): CompileServiceSession? {
-        val daemonJVMOptions = configureDaemonJVMOptions(
+    ): CompileServiceSession? = newDaemonConnection(
+        compilerId,
+        clientAliveFlagFile,
+        sessionAliveFlagFile,
+        messageCollector,
+        isDebugEnabled,
+        daemonOptions,
+        configureDaemonJVMOptions(
             *additionalJvmParams,
             inheritMemoryLimits = true,
             inheritOtherJvmOptions = false,
             inheritAdditionalProperties = true
         )
+    )
 
+    @Synchronized
+    @JvmStatic
+    fun newDaemonConnection(
+        compilerId: CompilerId,
+        clientAliveFlagFile: File,
+        sessionAliveFlagFile: File,
+        messageCollector: MessageCollector,
+        isDebugEnabled: Boolean,
+        daemonOptions: DaemonOptions = configureDaemonOptions(),
+        daemonJVMOptions: DaemonJVMOptions
+    ): CompileServiceSession? {
         val daemonReportMessages = ArrayList<DaemonReportMessage>()
         val daemonReportingTargets = DaemonReportingTargets(messages = daemonReportMessages)
 
