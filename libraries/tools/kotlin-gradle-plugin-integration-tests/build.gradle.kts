@@ -172,26 +172,29 @@ val simpleTestsTask = tasks.register<Test>("kgpSimpleTests") {
     }
 }
 
+// Daemon tests could run only sequentially as they could not be shared between parallel test builds
+val daemonsTestsTask = tasks.register<Test>("kgpDaemonTests") {
+    group = KGP_TEST_TASKS_GROUP
+    description = "Run only Gradle and Kotlin daemon tests for Kotlin Gradle Plugin"
+    maxParallelForks = 1
+
+    mustRunAfter(simpleTestsTask)
+
+    useJUnitPlatform {
+        includeTags("DaemonsKGP")
+        includeEngines("junit-jupiter")
+    }
+}
+
 tasks.named<Task>("check") {
     dependsOn("testAdvanceGradleVersion")
-    dependsOn(simpleTestsTask)
+    dependsOn(simpleTestsTask, daemonsTestsTask)
     if (isTeamcityBuild) {
         dependsOn("testAdvanceGradleVersionMppAndAndroid")
         dependsOn("testMppAndAndroid")
         dependsOn("testNative")
         dependsOn("testAdvanceGradleVersionNative")
         finalizedBy(cleanTestKitCacheTask)
-    }
-}
-
-val kgpJunit5Tests = tasks.register<Test>("kgpJunit5Tests") {
-    group = KGP_TEST_TASKS_GROUP
-    description = "Run only JUnit 5 tests for Kotlin Gradle Plugin"
-    maxParallelForks = (Runtime.getRuntime().availableProcessors() / 4).coerceAtLeast(1)
-
-    useJUnitPlatform {
-        includeTags("JUnit5")
-        includeEngines("junit-jupiter")
     }
 }
 
@@ -224,7 +227,7 @@ tasks.withType<Test> {
 
     val shouldApplyJunitPlatform = name !in setOf(
         simpleTestsTask.name,
-        kgpJunit5Tests.name
+        daemonsTestsTask.name
     )
     if (shouldApplyJunitPlatform) {
         maxHeapSize = "512m"
