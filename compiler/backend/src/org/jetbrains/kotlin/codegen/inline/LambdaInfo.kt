@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.Label
+import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
 
@@ -98,10 +99,10 @@ abstract class DefaultLambda(
         isPropertyReference = superName in PROPERTY_REFERENCE_SUPER_CLASSES
         isFunctionReference = superName == FUNCTION_REFERENCE.internalName || superName == FUNCTION_REFERENCE_IMPL.internalName
 
-        val constructorDescriptor = Type.getMethodDescriptor(Type.VOID_TYPE, *capturedArgs)
-        val constructor = getMethodNode(classBytes, "<init>", constructorDescriptor, lambdaClassType)?.node
+        val constructorMethod = Method("<init>", Type.VOID_TYPE, capturedArgs)
+        val constructor = getMethodNode(classBytes, lambdaClassType, constructorMethod)?.node
         assert(constructor != null || capturedArgs.isEmpty()) {
-            "Can't find non-default constructor <init>$constructorDescriptor for default lambda $lambdaClassType"
+            "can't find constructor '$constructorMethod' for default lambda '${lambdaClassType.internalName}'"
         }
         // This only works for primitives but not inline classes, since information about the Kotlin type of the bound
         // receiver is not present anywhere. This is why with JVM_IR the constructor argument of bound references
@@ -127,15 +128,18 @@ abstract class DefaultLambda(
 
     // Returns whether the loaded invoke is erased, i.e. the name equals the fallback and all types are `Object`.
     protected fun loadInvoke(sourceCompiler: SourceCompilerForInline, erasedName: String, actualMethod: Method): Boolean {
-        val classBytes = loadClass(sourceCompiler)
-        // TODO: `signatureAmbiguity = true` ignores the argument types from `invokeMethod` and only looks at the count.
-        node = getMethodNode(classBytes, actualMethod.name, actualMethod.descriptor, lambdaClassType, signatureAmbiguity = true)
-            ?: getMethodNode(classBytes, erasedName, actualMethod.descriptor, lambdaClassType, signatureAmbiguity = true)
-                    ?: error("Can't find method '$actualMethod' in '${lambdaClassType.internalName}'")
+        node = getMethodNodeImprecise(loadClass(sourceCompiler), lambdaClassType, actualMethod, erasedName)
+            ?: error("Can't find method '$actualMethod' in '${lambdaClassType.internalName}'")
         return invokeMethod.run { name == erasedName && returnType == OBJECT_TYPE && argumentTypes.all { it == OBJECT_TYPE } }
     }
 
     private companion object {
+        fun getMethodNodeImprecise(classBytes: ByteArray, classType: Type, method: Method, erasedName: String) =
+            getMethodNode(classBytes, classType) { it, access ->
+                (it.name == method.name || it.name == erasedName) &&
+                        it.argumentTypes.size == method.argumentTypes.size && access.and(Opcodes.ACC_SYNTHETIC) == 0
+            }
+
         val PROPERTY_REFERENCE_SUPER_CLASSES =
             listOf(
                 PROPERTY_REFERENCE0, PROPERTY_REFERENCE1, PROPERTY_REFERENCE2,

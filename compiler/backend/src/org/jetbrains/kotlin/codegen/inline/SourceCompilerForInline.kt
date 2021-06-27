@@ -78,12 +78,12 @@ fun loadCompiledInlineFunction(
     state: GenerationState
 ): SMAPAndMethodNode {
     val containerType = AsmUtil.asmTypeByClassId(containerId)
-    val bytes = state.inlineCache.classBytes.getOrPut(containerType.internalName) {
-        findVirtualFile(state, containerId)?.contentsToByteArray()
-            ?: throw IllegalStateException("Couldn't find declaration file for $containerId")
-    }
     val resultInCache = state.inlineCache.methodNodeById.getOrPut(MethodId(containerType.descriptor, asmMethod)) {
-        getMethodNode(containerType, bytes, asmMethod.name, asmMethod.descriptor, isSuspend, isMangled)
+        val bytes = state.inlineCache.classBytes.getOrPut(containerType.internalName) {
+            findVirtualFile(state, containerId)?.contentsToByteArray()
+                ?: throw IllegalStateException("Couldn't find declaration file for $containerId")
+        }
+        getMethodNode(containerType, bytes, asmMethod, isSuspend, isMangled)
     }
     return SMAPAndMethodNode(cloneMethodNode(resultInCache.node), resultInCache.classSMAP)
 }
@@ -91,25 +91,24 @@ fun loadCompiledInlineFunction(
 private fun getMethodNode(
     owner: Type,
     bytes: ByteArray,
-    name: String,
-    descriptor: String,
+    method: Method,
     isSuspend: Boolean,
     isMangled: Boolean
 ): SMAPAndMethodNode {
-    getMethodNode(owner, bytes, name, descriptor, isSuspend)?.let { return it }
+    getMethodNode(owner, bytes, method, isSuspend)?.let { return it }
     if (isMangled) {
         // Compatibility with old inline class ABI versions.
-        val dashIndex = name.indexOf('-')
-        val nameWithoutManglingSuffix = if (dashIndex > 0) name.substring(0, dashIndex) else name
-        if (nameWithoutManglingSuffix != name) {
-            getMethodNode(owner, bytes, nameWithoutManglingSuffix, descriptor, isSuspend)?.let { return it }
+        val dashIndex = method.name.indexOf('-')
+        val nameWithoutManglingSuffix = if (dashIndex > 0) method.name.substring(0, dashIndex) else method.name
+        if (nameWithoutManglingSuffix != method.name) {
+            getMethodNode(owner, bytes, Method(nameWithoutManglingSuffix, method.descriptor), isSuspend)?.let { return it }
         }
-        getMethodNode(owner, bytes, "$nameWithoutManglingSuffix-impl", descriptor, isSuspend)?.let { return it }
+        getMethodNode(owner, bytes, Method("$nameWithoutManglingSuffix-impl", method.descriptor), isSuspend)?.let { return it }
     }
-    throw IllegalStateException("couldn't find inline method $owner.$name$descriptor")
+    throw IllegalStateException("couldn't find inline method $owner.$method")
 }
 
 // If an `inline suspend fun` has a state machine, it should have a `$$forInline` version without one.
-private fun getMethodNode(owner: Type, bytes: ByteArray, name: String, descriptor: String, isSuspend: Boolean) =
-    (if (isSuspend) getMethodNode(bytes, name + FOR_INLINE_SUFFIX, descriptor, owner) else null)
-        ?: getMethodNode(bytes, name, descriptor, owner)
+private fun getMethodNode(owner: Type, bytes: ByteArray, method: Method, isSuspend: Boolean) =
+    (if (isSuspend) getMethodNode(bytes, owner, Method(method.name + FOR_INLINE_SUFFIX, method.descriptor)) else null)
+        ?: getMethodNode(bytes, owner, method)
