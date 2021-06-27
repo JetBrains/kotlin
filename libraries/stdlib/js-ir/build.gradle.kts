@@ -150,8 +150,11 @@ tasks.withType<KotlinCompile<*>>().configureEach {
 
 val compileKotlinJs by tasks.existing(KotlinCompile::class) {
     kotlinOptions.freeCompilerArgs += "-Xir-module-name=kotlin"
-}
 
+    if (!kotlinBuildProperties.disableWerror) {
+        kotlinOptions.allWarningsAsErrors = true
+    }
+}
 
 val compileTestKotlinJs by tasks.existing(KotlinCompile::class) {
     val sources: FileCollection = kotlin.sourceSets["commonTest"].kotlin
