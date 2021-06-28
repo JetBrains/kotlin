@@ -895,6 +895,12 @@ public class JvmIrAgainstOldBoxInlineTestGenerated extends AbstractJvmIrAgainstO
         }
 
         @Test
+        @TestMetadata("jvmInlineIntoTwoMethods.kt")
+        public void testJvmInlineIntoTwoMethods() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/assert/jvmInlineIntoTwoMethods.kt");
+        }
+
+        @Test
         @TestMetadata("jvmInlineUsedAsNoinline.kt")
         public void testJvmInlineUsedAsNoinline() throws Exception {
             runTest("compiler/testData/codegen/boxInline/assert/jvmInlineUsedAsNoinline.kt");

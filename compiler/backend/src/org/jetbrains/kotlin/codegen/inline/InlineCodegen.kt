@@ -121,7 +121,9 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
         // In case `codegen.visitor` is `<clinit>`, initializer for the `$assertionsDisabled` field
         // needs to be inserted before the code that actually uses it.
-        generateAssertFieldIfNeeded(info)
+        if (info.generateAssertField) {
+            generateAssertField()
+        }
 
         val shouldSpillStack = node.requiresEmptyStackOnEntry()
         if (shouldSpillStack) {
@@ -193,7 +195,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         processor.substituteLocalVarTable(intoNode)
     }
 
-    protected abstract fun generateAssertFieldIfNeeded(info: RootInliningContext)
+    protected abstract fun generateAssertField()
 
     private fun isInlinedToInlineFunInKotlinRuntime(): Boolean {
         val codegen = this.codegen as? ExpressionCodegen ?: return false

@@ -51,11 +51,8 @@ class PsiInlineCodegen(
         state.languageVersionSettings, state.unifiedNullChecks
     ),
 ), CallGenerator {
-    override fun generateAssertFieldIfNeeded(info: RootInliningContext) {
-        if (info.generateAssertField) {
-            codegen.parentCodegen.generateAssertField()
-        }
-    }
+    override fun generateAssertField() =
+        codegen.parentCodegen.generateAssertField()
 
     override fun genCallInner(
         callableMethod: Callable,
