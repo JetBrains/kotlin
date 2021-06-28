@@ -18,18 +18,17 @@
 
 package kotlin.reflect.jvm
 
+import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import java.lang.reflect.*
 import kotlin.reflect.*
-import kotlin.reflect.javaType as stdlibJavaType
 import kotlin.reflect.full.companionObject
-import kotlin.reflect.full.functions
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.internal.KPackageImpl
 import kotlin.reflect.jvm.internal.KTypeImpl
 import kotlin.reflect.jvm.internal.asKCallableImpl
 import kotlin.reflect.jvm.internal.asKPropertyImpl
-import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
+import kotlin.reflect.javaType as stdlibJavaType
 
 // Kotlin reflection -> Java reflection
 
@@ -110,31 +109,33 @@ private fun Member.getKPackage(): KDeclarationContainer? =
         else -> null
     }
 
+private inline fun <T : KFunction<*>> Method.toKotlin(functionProvider: (Collection<KCallable<*>>) -> Collection<T>): T? {
+    if (Modifier.isStatic(modifiers)) {
+        val kotlinPackage = getKPackage()
+        if (kotlinPackage != null) {
+            return functionProvider(kotlinPackage.members).firstOrNull { it.javaMethod == this }
+        }
+
+        // For static bridge method generated for a @JvmStatic function in the companion object, also try to find the latter
+        val companion = declaringClass.kotlin.companionObject
+        if (companion != null) {
+            functionProvider(companion.members).firstOrNull {
+                val m = it.javaMethod
+                m != null && m.name == this.name &&
+                        m.parameterTypes.contentEquals(this.parameterTypes) && m.returnType == this.returnType
+            }?.let { return it }
+        }
+    }
+
+    return functionProvider(declaringClass.kotlin.members).firstOrNull { it.javaMethod == this }
+}
+
 /**
  * Returns a [KFunction] instance corresponding to the given Java [Method] instance,
  * or `null` if this method cannot be represented by a Kotlin function.
  */
 val Method.kotlinFunction: KFunction<*>?
-    get() {
-        if (Modifier.isStatic(modifiers)) {
-            val kotlinPackage = getKPackage()
-            if (kotlinPackage != null) {
-                return kotlinPackage.members.filterIsInstance<KFunction<*>>().firstOrNull { it.javaMethod == this }
-            }
-
-            // For static bridge method generated for a @JvmStatic function in the companion object, also try to find the latter
-            val companion = declaringClass.kotlin.companionObject
-            if (companion != null) {
-                companion.functions.firstOrNull {
-                    val m = it.javaMethod
-                    m != null && m.name == this.name &&
-                            m.parameterTypes!!.contentEquals(this.parameterTypes) && m.returnType == this.returnType
-                }?.let { return it }
-            }
-        }
-
-        return declaringClass.kotlin.functions.firstOrNull { it.javaMethod == this }
-    }
+    get() = toKotlin { it.filterIsInstance<KFunction<*>>() }
 
 /**
  * Returns a [KFunction] instance corresponding to the given Java [Constructor] instance,
@@ -145,3 +146,17 @@ val <T : Any> Constructor<T>.kotlinFunction: KFunction<T>?
     get() {
         return declaringClass.kotlin.constructors.firstOrNull { it.javaConstructor == this }
     }
+
+/**
+ * Returns a [KProperty.Getter] instance corresponding to the given Java [Method] instance,
+ * or null if this method cannot be represented by a Kotlin getter.
+ */
+val Method.kotlinGetter: KProperty.Getter<*>?
+    get() = toKotlin { it.filterIsInstance<KProperty<*>>().map { func -> func.getter } }
+
+/**
+ * Returns a [KMutableProperty.Setter] instance corresponding to the given Java [Method] instance,
+ * or null if this method cannot be represented by a Kotlin setter.
+ */
+val Method.kotlinSetter: KMutableProperty.Setter<*>?
+    get() = toKotlin { it.filterIsInstance<KMutableProperty<*>>().map { func -> func.setter } }
