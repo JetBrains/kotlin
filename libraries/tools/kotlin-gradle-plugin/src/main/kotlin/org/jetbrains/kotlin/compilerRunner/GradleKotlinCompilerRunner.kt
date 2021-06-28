@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.compilerRunner
 import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logger
+import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
+import org.gradle.internal.build.IncludedBuildState
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -31,9 +33,10 @@ import org.jetbrains.kotlin.gradle.utils.newTmpFile
 import org.jetbrains.kotlin.gradle.utils.relativeOrCanonical
 import org.jetbrains.kotlin.incremental.IncrementalModuleEntry
 import org.jetbrains.kotlin.incremental.IncrementalModuleInfo
+import org.jetbrains.kotlin.incremental.mergeIncrementalModuleInfo
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
-import java.io.File
+import java.io.*
 import java.lang.ref.WeakReference
 
 internal const val KOTLIN_COMPILER_EXECUTION_STRATEGY_PROPERTY = "kotlin.compiler.execution.strategy"
@@ -289,7 +292,7 @@ internal open class GradleCompilerRunner(
                 }
             }
 
-            return IncrementalModuleInfo(
+            val incrementalModuleInfo = IncrementalModuleInfo(
                 projectRoot = gradle.rootProject.projectDir,
                 rootProjectBuildDir = gradle.rootProject.buildDir,
                 dirToModule = dirToModule,
@@ -301,6 +304,50 @@ internal open class GradleCompilerRunner(
                 cachedGradle = WeakReference(gradle)
                 cachedModulesInfo = it
             }
+
+            var mergedIncrementalModuleInfo = incrementalModuleInfo
+
+            if (gradle.rootProject.gradle.includedBuilds.isNotEmpty()) {
+                val includedBuilds = gradle.rootProject.gradle.includedBuilds
+                    .filter { it is IncludedBuildState }
+                    .map { it as IncludedBuildState }
+
+                includedBuilds.forEach { build ->
+                    deserializeIncrementalModule(build.configuredBuild)?.apply {
+                        mergedIncrementalModuleInfo = mergeIncrementalModuleInfo(
+                            mainModuleInfo = mergedIncrementalModuleInfo,
+                            includedBuildModuleInfo = this
+                        )
+                    }
+                }
+            }
+
+            return mergedIncrementalModuleInfo.also {
+                cachedGradle = WeakReference(gradle)
+                cachedModulesInfo = it
+                serializeIncrementalModule(gradle, it)
+            }
+        }
+
+        private const val INCREMENTAL_TASK_DATA = "kotlin.incremental.taskdata.incremental-module-info"
+
+        // Since the kotlin-gradle-plugin in main-build and included-build are not loaded by the same classloader.
+        // We need to serialize IncrementalModuleInfo to memory to avoid class cast error.
+        private fun serializeIncrementalModule(gradle: Gradle, incrementalModuleInfo: IncrementalModuleInfo) {
+            val ext = gradle.rootProject.extensions.getByType(ExtraPropertiesExtension::class.java)
+            val output = ByteArrayOutputStream()
+
+            ObjectOutputStream(output).writeObject(incrementalModuleInfo)
+            ext.set(INCREMENTAL_TASK_DATA, output.toByteArray())
+        }
+
+        private fun deserializeIncrementalModule(gradle: Gradle): IncrementalModuleInfo? {
+            val ext = gradle.rootProject.extensions.getByType(ExtraPropertiesExtension::class.java)
+            if (!ext.has(INCREMENTAL_TASK_DATA)) {
+                return null
+            }
+            val input = ByteArrayInputStream(ext.get(INCREMENTAL_TASK_DATA) as ByteArray)
+            return ObjectInputStream(input).readObject() as? IncrementalModuleInfo
         }
 
         private fun jarForSourceSet(project: Project, sourceSetName: String): File? {
