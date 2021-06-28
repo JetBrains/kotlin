@@ -1090,7 +1090,7 @@ public class DefaultErrorMessages {
 
         MAP.put(NO_CONTEXT_RECEIVER, "No required context receiver found: {0}", TO_STRING);
         MAP.put(MULTIPLE_ARGUMENTS_APPLICABLE_FOR_CONTEXT_RECEIVER, "Multiple arguments applicable for context receiver: {0}", TO_STRING);
-        MAP.put(AMBIBIGUOS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER, "With implicit context receiver, call is ambiguous. Specify the receiver explicitly");
+        MAP.put(AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER, "With implicit context receiver, call is ambiguous. Specify the receiver explicitly");
 
         MAP.setImmutable();
 

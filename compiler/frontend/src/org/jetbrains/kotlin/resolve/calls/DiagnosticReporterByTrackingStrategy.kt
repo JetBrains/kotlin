@@ -113,7 +113,7 @@ class DiagnosticReporterByTrackingStrategy(
             }
             ContextReceiverAmbiguity::class.java -> {
                 val callElement = psiKotlinCall.psiCall.callElement
-                trace.report(AMBIBIGUOS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER.on(callElement))
+                trace.report(AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER.on(callElement))
             }
         }
     }
