@@ -317,10 +317,12 @@ func testExceptions() throws {
         try assertTrue(error.kotlinException is MyError)
     }
 
+#if !NOOP_GC
     try assertFalse(TestThrowingConstructorRelease.deinitialized)
     try testThrowing { try TestThrowingConstructorRelease(doThrow: true) }
     ValuesKt.gc()
     try assertTrue(TestThrowingConstructorRelease.deinitialized)
+#endif
 
     try testThrowing { try Throwing(doThrow: true) }
 
@@ -781,8 +783,10 @@ func setAssociatedObject(object: AnyObject, value: AnyObject) {
 }
 
 func testWeakRefs() throws {
+#if !NOOP_GC
     try testWeakRefs0(frozen: false)
     try testWeakRefs0(frozen: true)
+#endif
 }
 
 func testWeakRefs0(frozen: Bool) throws {
@@ -1123,6 +1127,7 @@ class TestSharedRefs {
         try testLambdaSimple()
         try testObjectPartialRelease()
 
+#if !NOOP_GC
         try testBackgroundRefCount(createObject: { $0.createLambda() })
         try testBackgroundRefCount(createObject: { $0.createRegularObject() })
         try testBackgroundRefCount(createObject: { $0.createCollection() })
@@ -1137,6 +1142,7 @@ class TestSharedRefs {
 
         try testRememberNewObject(createObject: { $0.createFrozenRegularObject() })
         try testRememberNewObject(createObject: { $0.createFrozenCollection() })
+#endif
 
         usleep(300 * 1000)
     }
