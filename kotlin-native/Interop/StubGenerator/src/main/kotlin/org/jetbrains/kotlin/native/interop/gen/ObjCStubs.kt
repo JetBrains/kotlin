@@ -148,7 +148,22 @@ private class ObjCMethodStubBuilder(
     fun isDefaultConstructor(): Boolean =
             method.isInit && method.parameters.isEmpty()
 
+    private fun deprecateObjCAlloc() {
+        // Motivation: 'alloc' and 'allocWithZone:' Obj-C methods were never intended to be directly accessible
+        // in Kotlin.
+        // Using these methods in Kotlin is error-prone: init methods are not accessible,
+        // so a call to alloc method is likely not followed by a call to an init method,
+        // which is usually a mistake.
+        // Swift also doesn't allow calling Obj-C alloc methods.
+        // Removing them gracefully, via the deprecation cycle:
+        if (method.isAlloc()) {
+            annotations += AnnotationStub.Deprecated.deprecatedObjCAlloc
+        }
+    }
+
     override fun build(): List<FunctionalStub> {
+        deprecateObjCAlloc()
+
         val replacement = if (method.isInit) {
             val parameters = method.getKotlinParameters(context, forConstructorOrFactory = true)
             when (container) {
@@ -242,6 +257,9 @@ private fun deprecatedInit(className: String, initParameterNames: List<String>, 
     val replaceWith = "$replacement(${initParameterNames.joinToString { it.asSimpleName() }})"
     return AnnotationStub.Deprecated("Use $replacementKind instead", replaceWith, DeprecationLevel.ERROR)
 }
+
+private fun ObjCMethod.isAlloc(): Boolean =
+        this.isClass && (this.selector == "alloc" || this.selector == "allocWithZone:")
 
 internal val ObjCMethod.kotlinName: String
     get() {

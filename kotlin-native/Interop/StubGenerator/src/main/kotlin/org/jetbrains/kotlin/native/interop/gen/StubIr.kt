@@ -238,6 +238,12 @@ sealed class AnnotationStub(val classifier: Classifier) {
                     "",
                     DeprecationLevel.WARNING
             )
+
+            val deprecatedObjCAlloc = Deprecated(
+                    "Use constructor or factory method instead",
+                    "",
+                    DeprecationLevel.WARNING
+            )
         }
     }
 
