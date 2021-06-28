@@ -524,7 +524,11 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         if (isDynamicBinaryOperator(expression))
             generateDynamicBinaryExpression(expression)
         else
-            generateCall(getResolvedCall(expression)!!, expression, origin)
+            CallGenerator(statementGenerator)
+                .generateCall(
+                    expression.startOffsetSkippingComments, expression.endOffset,
+                    statementGenerator.pregenerateCall(getResolvedCall(expression)!!), origin
+                )
 
     private fun generatePrefixOperatorAsCall(expression: KtPrefixExpression, origin: IrStatementOrigin): IrExpression {
         val resolvedCall = getResolvedCall(expression)!!
