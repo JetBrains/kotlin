@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
+import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.report.ReportingSettings
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.DEVELOPMENT
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.gradle.utils.getAllDependencies
 import org.jetbrains.kotlin.gradle.utils.getCacheDirectory
 import org.jetbrains.kotlin.gradle.utils.getDependenciesCacheDirectories
 import org.jetbrains.kotlin.incremental.ChangedFiles
+import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import java.io.File
 import javax.inject.Inject
 
@@ -92,6 +94,9 @@ abstract class KotlinJsIrLink @Inject constructor(
     }
 
     override fun callCompilerAsync(args: K2JSCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
+        KotlinBuildStatsService.applyIfInitialised {
+            it.report(BooleanMetrics.JS_IR_INCREMENTAL, incrementalJsIr)
+        }
         if (incrementalJsIr) {
             val visitedCompilations = mutableSetOf<KotlinCompilation<*>>()
             val allCacheDirectories = mutableSetOf<File>()
