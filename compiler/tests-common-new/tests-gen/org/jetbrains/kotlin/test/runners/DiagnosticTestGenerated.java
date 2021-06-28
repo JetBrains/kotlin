@@ -21197,6 +21197,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("intermediateRecursion.kt")
+                public void testIntermediateRecursion() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/intermediateRecursion.kt");
+                }
+
+                @Test
                 @TestMetadata("nonGenericRawMember.kt")
                 public void testNonGenericRawMember() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/nonGenericRawMember.kt");
