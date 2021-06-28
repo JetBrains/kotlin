@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinDeserializedJvmSymbolsProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirDependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
@@ -102,6 +103,38 @@ internal object FirIdeSessionFactory {
             register(FirPhaseManager::class, firPhaseManager)
 
             @OptIn(ExperimentalStdlibApi::class)
+            val dependentProviders = buildList {
+                add(
+                    createLibrarySession(
+                        moduleInfo,
+                        project,
+                        builtinsAndCloneableSession,
+                        builtinTypes,
+                        librariesCache,
+                        languageVersionSettings = languageVersionSettings,
+                        configureSession = configureSession,
+                    ).symbolProvider
+                )
+                dependentModules
+                    .mapTo(this) {
+                        createSourcesSession(
+                            project,
+                            configurator,
+                            it,
+                            builtinsAndCloneableSession,
+                            firPhaseRunner,
+                            sessionInvalidator,
+                            builtinTypes,
+                            sessionsCache,
+                            isRootModule = false,
+                            librariesCache,
+                            configureSession = configureSession,
+                        ).symbolProvider
+                    }
+            }
+
+            val dependencyProvider = DependentModuleProviders(this, dependentProviders)
+
             register(
                 FirSymbolProvider::class,
                 FirModuleWithDependenciesSymbolProvider(
@@ -110,38 +143,11 @@ internal object FirIdeSessionFactory {
                         provider.symbolProvider,
                         JavaSymbolProvider(this@session, moduleData, project, searchScope),
                     ),
-                    dependentProviders = buildList {
-                        add(
-                            createLibrarySession(
-                                moduleInfo,
-                                project,
-                                builtinsAndCloneableSession,
-                                builtinTypes,
-                                librariesCache,
-                                languageVersionSettings = languageVersionSettings,
-                                configureSession = configureSession,
-                            ).symbolProvider
-                        )
-                        dependentModules
-                            .mapTo(this) {
-                                createSourcesSession(
-                                    project,
-                                    configurator,
-                                    it,
-                                    builtinsAndCloneableSession,
-                                    firPhaseRunner,
-                                    sessionInvalidator,
-                                    builtinTypes,
-                                    sessionsCache,
-                                    isRootModule = false,
-                                    librariesCache,
-                                    configureSession = configureSession,
-                                ).symbolProvider
-                            }
-                    }
+                    dependencyProvider
                 )
             )
 
+            register(FirDependenciesSymbolProvider::class, dependencyProvider)
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
 
             registerJavaSpecificResolveComponents()

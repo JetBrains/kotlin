@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.registerExtensions
 import org.jetbrains.kotlin.fir.java.*
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinDeserializedJvmSymbolsProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirDependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.*
@@ -175,7 +176,7 @@ object FirSessionFactory {
             )
 
             register(
-                FirDependenciesSymbolProviderImpl::class,
+                FirDependenciesSymbolProvider::class,
                 dependenciesSymbolProvider
             )
 

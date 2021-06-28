@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.providers.impl
 
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.caches.*
+import org.jetbrains.kotlin.fir.resolve.providers.FirDependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
@@ -20,7 +21,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 @ThreadSafeMutableState
-open class FirDependenciesSymbolProviderImpl(session: FirSession) : FirSymbolProvider(session) {
+open class FirDependenciesSymbolProviderImpl(session: FirSession) : FirDependenciesSymbolProvider(session) {
     private val classCache = session.firCachesFactory.createCache(::computeClass)
     private val topLevelCallableCache = session.firCachesFactory.createCache(::computeTopLevelCallables)
     private val topLevelFunctionCache = session.firCachesFactory.createCache(::computeTopLevelFunctions)
