@@ -66,6 +66,8 @@ class DeallocRetainTests : SimpleTestProvider {
     override init() {
         super.init()
 
+#if !NOOP_GC
         test("Test1", test1)
+#endif
     }
 }
