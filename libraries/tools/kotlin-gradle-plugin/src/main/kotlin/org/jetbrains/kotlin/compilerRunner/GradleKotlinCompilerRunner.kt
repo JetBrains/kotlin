@@ -4,6 +4,7 @@
  */
 
 package org.jetbrains.kotlin.compilerRunner
+
 import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logger
@@ -137,13 +138,27 @@ internal open class GradleCompilerRunner(
         // Here we perform the work which is repeated in compiler in order to obtain correct values. This extra work could be avoided when
         // compiler would report metrics by itself via JMX
         KotlinBuildStatsService.applyIfInitialised {
-            if (compilerArgs is K2JVMCompilerArguments) {
-                KotlinBuildStatsService.getInstance()?.apply {
-                    val args = K2JVMCompilerArguments()
-                    parseCommandLineArguments(argsArray.toList(), args)
-                    report(BooleanMetrics.JVM_COMPILER_IR_MODE, args.useIR)
-                    report(StringMetrics.JVM_DEFAULTS, args.jvmDefault)
-                    report(StringMetrics.USE_OLD_BACKEND, args.useOldBackend.toString())
+            when (compilerArgs) {
+                is K2JVMCompilerArguments -> {
+                    KotlinBuildStatsService.getInstance()?.apply {
+                        val args = K2JVMCompilerArguments()
+                        parseCommandLineArguments(argsArray.toList(), args)
+                        report(BooleanMetrics.JVM_COMPILER_IR_MODE, args.useIR)
+                        report(StringMetrics.JVM_DEFAULTS, args.jvmDefault)
+                        report(StringMetrics.USE_OLD_BACKEND, args.useOldBackend.toString())
+                    }
+                }
+                is K2JSCompilerArguments -> {
+                    KotlinBuildStatsService.getInstance()?.apply {
+                        val args = K2JSCompilerArguments()
+                        parseCommandLineArguments(argsArray.toList(), args)
+                        if (!args.isPreIrBackendDisabled() || args.irProduceJs) {
+                            report(BooleanMetrics.JS_SOURCE_MAP, args.sourceMap)
+                        }
+                        if (args.irProduceJs) {
+                            report(StringMetrics.JS_PROPERTY_LAZY_INITIALIZATION, args.irPropertyLazyInitialization.toString())
+                        }
+                    }
                 }
             }
         }
