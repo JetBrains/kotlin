@@ -29,6 +29,10 @@ internal fun Project.setupKotlinNativePlatformDependencies() {
         showMissingNativeStdlibWarning()
     }
 
+    if (isAllowCommonizer()) {
+        checkNotNull(commonizeNativeDistributionTask) { "Missing commonizeNativeDistributionTask" }
+    }
+
     kotlin.sourceSets.forEach { sourceSet ->
         val target = getCommonizerTarget(sourceSet) ?: return@forEach
         addDependencies(sourceSet, getNativeDistributionDependencies(target))
