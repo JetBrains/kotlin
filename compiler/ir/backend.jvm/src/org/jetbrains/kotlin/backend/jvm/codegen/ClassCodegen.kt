@@ -197,22 +197,19 @@ class ClassCodegen private constructor(
         }
     }
 
-
     fun generateAssertFieldIfNeeded(generatingClInit: Boolean): IrExpression? {
         if (irClass.hasAssertionsDisabledField(context))
             return null
         val topLevelClass = generateSequence(this) { it.parentClassCodegen }.last().irClass
         val field = irClass.buildAssertionsDisabledField(context, topLevelClass)
-        generateField(field)
-        // Normally, `InitializersLowering` would move the initializer to <clinit>, but
-        // it's obviously too late for that.
-        val init = IrSetFieldImpl(
-            field.startOffset, field.endOffset, field.symbol, null,
-            field.initializer!!.expression, context.irBuiltIns.unitType
-        )
+        irClass.declarations.add(0, field)
+        // Normally, `InitializersLowering` would move the initializer to <clinit>, but it's obviously too late for that.
+        val init = with(field) {
+            IrSetFieldImpl(startOffset, endOffset, symbol, null, initializer!!.expression, context.irBuiltIns.unitType)
+        }
         if (generatingClInit) {
-            // Too late to modify the IR; have to ask the currently active `ExpressionCodegen`
-            // to generate this statement directly.
+            // Too late to modify the IR; have to ask the currently active `ExpressionCodegen` to generate this statement
+            // directly. At least we know that nothing before this point uses the field.
             return init
         }
         val classInitializer = irClass.functions.singleOrNull { it.name.asString() == "<clinit>" } ?: irClass.addFunction {
@@ -221,6 +218,7 @@ class ClassCodegen private constructor(
         }.apply {
             body = IrBlockBodyImpl(startOffset, endOffset)
         }
+        // Should be initialized first in case some inline function call in `<clinit>` also uses assertions.
         (classInitializer.body as IrBlockBody).statements.add(0, init)
         return null
     }

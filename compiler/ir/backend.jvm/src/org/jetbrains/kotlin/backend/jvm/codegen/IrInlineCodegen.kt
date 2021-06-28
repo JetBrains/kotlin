@@ -46,13 +46,11 @@ class IrInlineCodegen(
     InlineCodegen<ExpressionCodegen>(codegen, state, signature, typeParameterMappings, sourceCompiler, reifiedTypeInliner),
     IrInlineCallGenerator {
 
-    override fun generateAssertFieldIfNeeded(info: RootInliningContext) {
-        if (info.generateAssertField) {
-            // May be inlining code into `<clinit>`, in which case it's too late to modify the IR and
-            // `generateAssertFieldIfNeeded` will return a statement for which we need to emit bytecode.
-            val isClInit = info.callSiteInfo.method.name == "<clinit>"
-            codegen.classCodegen.generateAssertFieldIfNeeded(isClInit)?.accept(codegen, BlockInfo())?.discard()
-        }
+    override fun generateAssertField() {
+        // May be inlining code into `<clinit>`, in which case it's too late to modify the IR and
+        // `generateAssertFieldIfNeeded` will return a statement for which we need to emit bytecode.
+        val isClInit = sourceCompiler.inlineCallSiteInfo.method.name == "<clinit>"
+        codegen.classCodegen.generateAssertFieldIfNeeded(isClInit)?.accept(codegen, BlockInfo())?.discard()
     }
 
     override fun genValueAndPut(
