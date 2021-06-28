@@ -10,6 +10,8 @@ interface C2 : Common {
 
 fun Common.supertypeExtension() {}
 
+fun <T : Common> T.supertypeExtensionGeneric() {}
+
 context(Common)
 fun supertypeContextual() {}
 
@@ -18,5 +20,6 @@ fun test() {
     supertypeMember()
     member()
     supertypeExtension()
+    supertypeExtensionGeneric()
     supertypeContextual()
 }
