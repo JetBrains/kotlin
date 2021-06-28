@@ -894,6 +894,10 @@ class KotlinTypeMapper @JvmOverloads constructor(
                 writeParameter(sw, JvmMethodParameterKind.THIS, thisIfNeeded, f)
             }
 
+            for (contextReceiverParameter in f.contextReceiverParameters) {
+                writeParameter(sw, JvmMethodParameterKind.CONTEXT_RECEIVER, contextReceiverParameter.type, f)
+            }
+
             val receiverParameter = f.extensionReceiverParameter
             if (receiverParameter != null) {
                 writeParameter(sw, JvmMethodParameterKind.RECEIVER, receiverParameter.type, f)

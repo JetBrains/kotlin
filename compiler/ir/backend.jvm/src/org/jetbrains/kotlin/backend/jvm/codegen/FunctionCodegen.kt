@@ -253,10 +253,15 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
         receiver?.let {
             frameMap.enter(it, context.typeMapper.mapTypeAsDeclaration(it.type))
         }
+        val contextReceivers = valueParameters.subList(0, contextReceiverParametersCount)
+        for (contextReceiver in contextReceivers) {
+            frameMap.enter(contextReceiver, context.typeMapper.mapType(contextReceiver.type))
+        }
         extensionReceiverParameter?.let {
             frameMap.enter(it, context.typeMapper.mapType(it))
         }
-        for (parameter in valueParameters) {
+        val regularParameters = valueParameters.subList(contextReceiverParametersCount, valueParameters.size)
+        for (parameter in regularParameters) {
             frameMap.enter(parameter, context.typeMapper.mapType(parameter.type))
         }
         return frameMap
