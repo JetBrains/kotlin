@@ -3,6 +3,7 @@ package
 public fun supertypeContextual(): kotlin.Unit
 public fun test(): kotlin.Unit
 public fun Common.supertypeExtension(): kotlin.Unit
+public fun </*0*/ T : Common> T.supertypeExtensionGeneric(): kotlin.Unit
 
 public interface C1 : Common {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
