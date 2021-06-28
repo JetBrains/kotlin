@@ -27,6 +27,10 @@ class LookupMap(storage: File) : BasicMap<LookupSymbolKey, Collection<Int>>(stor
         storage.append(LookupSymbolKey(name, scope), listOf(fileId))
     }
 
+    fun append(lookup: LookupSymbolKey, fileIds: Collection<Int>) {
+        storage.append(lookup, fileIds)
+    }
+
     operator fun get(key: LookupSymbolKey): Collection<Int>? = storage[key]
 
     operator fun set(key: LookupSymbolKey, fileIds: Set<Int>) {
