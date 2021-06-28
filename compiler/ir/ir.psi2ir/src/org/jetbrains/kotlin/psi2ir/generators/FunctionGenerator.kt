@@ -328,6 +328,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
 
         val contextReceiversNumber = ktContextReceiverParameterElements.size
         assert(functionDescriptor.contextReceiverParameters.size == contextReceiversNumber)
+        irFunction.contextReceiverParametersCount = contextReceiversNumber
         irFunction.valueParameters += functionDescriptor.contextReceiverParameters.mapIndexed { i, additionalReceiver ->
             declareParameter(additionalReceiver, ktContextReceiverParameterElements[i], irFunction, null, i)
         }

@@ -1888,7 +1888,7 @@ public abstract class StackValue {
                     if (kind == JvmMethodParameterKind.VALUE) {
                         break;
                     }
-                    if (kind == JvmMethodParameterKind.RECEIVER || kind == JvmMethodParameterKind.THIS) {
+                    if (kind == JvmMethodParameterKind.CONTEXT_RECEIVER || kind == JvmMethodParameterKind.RECEIVER || kind == JvmMethodParameterKind.THIS) {
                         return false;
                     }
                 }

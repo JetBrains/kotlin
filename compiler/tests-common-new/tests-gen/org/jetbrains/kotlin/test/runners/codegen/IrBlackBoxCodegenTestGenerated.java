@@ -16068,6 +16068,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("contextAndExtensionSameName.kt")
+            public void testContextAndExtensionSameName() throws Exception {
+                runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/contextAndExtensionSameName.kt");
+            }
+
+            @Test
             @TestMetadata("dp.kt")
             public void testDp() throws Exception {
                 runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/dp.kt");
