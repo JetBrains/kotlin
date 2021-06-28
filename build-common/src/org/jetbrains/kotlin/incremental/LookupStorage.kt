@@ -81,8 +81,9 @@ open class LookupStorage(
             val key = LookupSymbolKey(lookupSymbol.name, lookupSymbol.scope)
             val paths = lookups[lookupSymbol]
             val fileIds = paths.mapTo(TreeSet()) { pathToId[it]!! }
-            fileIds.addAll(lookupMap[key] ?: emptySet())
-            lookupMap[key] = fileIds
+            val oldFileIds = lookupMap[key] ?: emptySet()
+            fileIds.addAll(oldFileIds)
+            if (fileIds != oldFileIds) lookupMap[key] = fileIds
         }
     }
 
@@ -161,13 +162,13 @@ open class LookupStorage(
         }
 
         for (lookup in lookupMap.keys) {
-            val fileIds = lookupMap[lookup]!!.mapNotNull { oldIdToNewId[it] }.toSet()
+            val oldFileIds = lookupMap[lookup]!!
+            val fileIds = oldFileIds.mapNotNull { oldIdToNewId[it] }.toSet()
 
             if (fileIds.isEmpty()) {
                 lookupMap.remove(lookup)
-            }
-            else {
-                lookupMap[lookup] = fileIds
+            } else {
+                if (fileIds != oldFileIds) lookupMap[lookup] = fileIds
             }
         }
     }
