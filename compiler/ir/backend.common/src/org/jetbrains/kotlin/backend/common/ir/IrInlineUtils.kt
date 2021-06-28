@@ -18,15 +18,13 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnableBlockImpl
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.util.explicitParameters
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.isVararg
-import org.jetbrains.kotlin.ir.util.statements
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 sealed class IrInlinable
-class IrInvokable(val invokable: IrValueDeclaration) : IrInlinable()
+class IrInvokable(val invokable: IrValueDeclaration, val original: IrExpression, val type: IrType) : IrInlinable()
 class IrInlinableLambda(val function: IrSimpleFunction, val boundReceiver: IrValueDeclaration?) : IrInlinable()
 
 // Return the underlying function for a lambda argument without bound or default parameters or varargs.
@@ -52,8 +50,8 @@ private fun IrExpression.asInlinableLambda(builder: IrStatementsBuilder<*>): IrI
     return IrInlinableLambda(function, reference.extensionReceiver?.let { builder.irTemporary(it) })
 }
 
-fun IrExpression.asInlinable(builder: IrStatementsBuilder<*>): IrInlinable =
-    asInlinableLambda(builder) ?: IrInvokable(builder.irTemporary(this))
+fun IrExpression.asInlinable(builder: IrStatementsBuilder<*>, functionType: IrType): IrInlinable =
+    asInlinableLambda(builder) ?: IrInvokable(builder.irTemporary(this), this, functionType)
 
 private fun createParameterMapping(source: IrFunction, target: IrFunction): Map<IrValueParameter, IrValueParameter> {
     val sourceParameters = source.explicitParameters
@@ -109,11 +107,13 @@ fun IrInlinable.inline(target: IrDeclarationParent, arguments: List<IrValueDecla
             function.inline(target, listOfNotNull(boundReceiver) + arguments)
 
         is IrInvokable -> {
-            val invoke = invokable.type.getClass()!!.functions.single { it.name == OperatorNameConventions.INVOKE }
-            IrCallImpl(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, invoke.returnType, invoke.symbol,
-                typeArgumentsCount = 0, valueArgumentsCount = arguments.size,
-            ).apply {
+            val invoke = type.getClass()?.functions?.singleOrNull { it.name == OperatorNameConventions.INVOKE }
+                ?: throw AssertionError("no invoke() in type ${type.render()}")
+            assert(invoke.valueParameters.size == arguments.size) {
+                "expected ${invoke.valueParameters.size} arguments, got ${arguments.size}"
+            }
+            // TODO: this type is unsubstituted
+            IrCallImpl.fromSymbolOwner(original.startOffset, original.endOffset, invoke.returnType, invoke.symbol).apply {
                 dispatchReceiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, invokable.symbol)
                 for ((index, argument) in arguments.withIndex()) {
                     putValueArgument(index, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, argument.symbol))

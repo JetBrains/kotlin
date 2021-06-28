@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
@@ -78,7 +77,7 @@ private class ArrayConstructorTransformer(
                 putValueArgument(0, irGet(sizeVar))
             })
 
-            val generator = invokable.asInlinable(this)
+            val generator = invokable.asInlinable(this, expression.symbol.owner.valueParameters[1].type)
             +irWhile().apply {
                 condition = irCall(context.irBuiltIns.lessFunByOperandType[index.type.classifierOrFail]!!).apply {
                     putValueArgument(0, irGet(index))
@@ -89,7 +88,7 @@ private class ArrayConstructorTransformer(
                     +irCall(result.type.getClass()!!.functions.single { it.name == OperatorNameConventions.SET }).apply {
                         dispatchReceiver = irGet(result)
                         putValueArgument(0, irGet(tempIndex))
-                        putValueArgument(1, generator.inline(parent, listOf(tempIndex)).patchDeclarationParents(scope.getLocalDeclarationParent()))
+                        putValueArgument(1, generator.inline(parent, listOf(tempIndex)))
                     }
                     val inc = index.type.getClass()!!.functions.single { it.name == OperatorNameConventions.INC }
                     +irSet(index.symbol, irCallOp(inc.symbol, index.type, irGet(index)))

@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
@@ -77,38 +76,22 @@ private class AssertionLowering(private val context: JvmBackendContext) :
         if (!function.isAssert)
             return super.visitCall(expression, data)
 
-        val mode = context.state.assertionsMode
-        if (mode == JVMAssertionsMode.ALWAYS_DISABLE)
-            return IrCompositeImpl(expression.startOffset, expression.endOffset, context.irBuiltIns.unitType)
-
-        context.createIrBuilder(expression.symbol).run {
-            at(expression)
-            val assertCondition = expression.getValueArgument(0)!!
-            val lambdaArgument = if (function.valueParameters.size == 2) expression.getValueArgument(1) else null
-
-            return if (mode == JVMAssertionsMode.ALWAYS_ENABLE) {
-                checkAssertion(assertCondition, lambdaArgument)
-            } else {
-                require(mode == JVMAssertionsMode.JVM && data != null)
-                irIfThen(
-                    irNot(getAssertionDisabled(this, data)),
-                    checkAssertion(assertCondition, lambdaArgument)
-                )
+        val constructor = context.ir.symbols.assertionErrorConstructor
+        val assertCondition = expression.getValueArgument(0)!!.transform(this, data)
+        val lazyMessage = if (function.valueParameters.size == 2) expression.getValueArgument(1) else null
+        context.createIrBuilder(expression.symbol, expression.startOffset, expression.endOffset).run {
+            val throwIfFalse = irBlock {
+                val message = lazyMessage?.asInlinable(this, function.valueParameters[1].type)?.inline(parent)
+                    ?: irString("Assertion failed")
+                +irIfThen(irNot(assertCondition), irThrow(irCall(constructor).apply { putValueArgument(0, message) }))
+            }
+            return when (this@AssertionLowering.context.state.assertionsMode) {
+                JVMAssertionsMode.ALWAYS_ENABLE -> throwIfFalse
+                JVMAssertionsMode.ALWAYS_DISABLE -> irComposite {}
+                else -> irIfThen(irNot(getAssertionDisabled(this, data!!)), throwIfFalse)
             }
         }
     }
-
-    private fun IrBuilderWithScope.checkAssertion(assertCondition: IrExpression, lambdaArgument: IrExpression?) =
-        irBlock {
-            val generator = lambdaArgument?.asInlinable(this)
-            val constructor = this@AssertionLowering.context.ir.symbols.assertionErrorConstructor
-            val throwError = irThrow(irCall(constructor).apply {
-                val message = generator?.inline(parent)?.patchDeclarationParents(scope.getLocalDeclarationParent())
-                    ?: irString("Assertion failed")
-                putValueArgument(0, message)
-            })
-            +irIfThen(irNot(assertCondition), throwError)
-        }
 
     private fun getAssertionDisabled(irBuilder: IrBuilderWithScope, data: ClassInfo): IrExpression {
         if (data.assertionsDisabledField == null)
