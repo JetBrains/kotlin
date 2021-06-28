@@ -1,3 +1,4 @@
+// FIR_IDE_IGNORE
 // FIR_IDENTICAL
 // MODULE: m1
 // FILE: test/Foo.java
