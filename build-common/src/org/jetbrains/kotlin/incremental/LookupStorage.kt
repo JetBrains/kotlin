@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.incremental
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -28,11 +29,14 @@ import org.jetbrains.kotlin.utils.keysToMap
 import java.io.File
 import java.io.IOException
 import java.util.*
+import kotlin.system.measureTimeMillis
 
 open class LookupStorage(
     targetDataDir: File,
     pathConverter: FileToPathConverter
 ) : BasicMapsOwner(targetDataDir) {
+    val LOG = Logger.getInstance("#org.jetbrains.kotlin.jps.build.KotlinBuilder")
+
     companion object {
         private val DELETED_TO_SIZE_TRESHOLD = 0.5
         private val MINIMUM_GARBAGE_COLLECTIBLE_SIZE = 10000
@@ -41,6 +45,7 @@ open class LookupStorage(
     private val countersFile = "counters".storageFile
     private val idToFile = registerMap(IdToFileMap("id-to-file".storageFile, pathConverter))
     private val fileToId = registerMap(FileToIdMap("file-to-id".storageFile, pathConverter))
+//    private val fileEnumerator = PersistentStringEnumerator("fileEnumerator".storageFile)
     private val lookupMap = registerMap(LookupMap("lookups".storageFile))
 
     @Volatile
@@ -66,23 +71,58 @@ open class LookupStorage(
     fun get(lookupSymbol: LookupSymbol): Collection<String> {
         val key = LookupSymbolKey(lookupSymbol.name, lookupSymbol.scope)
         val fileIds = lookupMap[key] ?: return emptySet()
+        val paths = mutableSetOf<String>()
+        val filtered = mutableSetOf<Int>()
 
-        return fileIds.mapNotNull {
-            // null means it's outdated
-            idToFile[it]?.path
+        for (fileId in fileIds) {
+            val path = idToFile[fileId]?.path
+
+            if(path != null) {
+                paths.add(path)
+                filtered.add(fileId)
+            }
+
         }
+
+        if (size > MINIMUM_GARBAGE_COLLECTIBLE_SIZE && filtered.size.toDouble() / fileIds.size.toDouble() < DELETED_TO_SIZE_TRESHOLD) {
+            lookupMap[key] = filtered
+        }
+
+        return paths
+
+//        val filteredFileIds = fileIds.filter { it in idToFile }.toSet()
+//        if (size > MINIMUM_GARBAGE_COLLECTIBLE_SIZE && filteredFileIds.size.toDouble() / fileIds.size.toDouble() < DELETED_TO_SIZE_TRESHOLD) {
+//            if (fileIds != filteredFileIds) lookupMap[key] = filteredFileIds
+//        }
+//
+//
+//        return filteredFileIds.mapNotNull {
+//            // null means it's outdated
+//            idToFile[it]?.path
+//        }
     }
 
     @Synchronized
     fun addAll(lookups: MultiMap<LookupSymbol, String>, allPaths: Set<String>) {
+        //проинвертировать MultiMap<LookupSymbol, String>
+        //LOG.debug("===")
         val pathToId = allPaths.sorted().keysToMap { addFileIfNeeded(File(it)) }
+        //LOG.debug("All pathsToId: $pathToId")
 
         for (lookupSymbol in lookups.keySet().sorted()) {
             val key = LookupSymbolKey(lookupSymbol.name, lookupSymbol.scope)
             val paths = lookups[lookupSymbol]
+
+            //LOG.debug("symbol: ${lookupSymbol.name}(${lookupSymbol.scope})")
+            //val keysInt = lookupMap[key] ?: emptySet()
+            //LOG.debug("before: ${keysInt.map { idToFile[it]?.path }}")
+            //LOG.debug("paths: $paths")
+
             val fileIds = paths.mapTo(TreeSet()) { pathToId[it]!! }
-            fileIds.addAll(lookupMap[key] ?: emptySet())
-            lookupMap[key] = fileIds
+
+
+            lookupMap.append(key, fileIds)
+            //LOG.debug("after: ${(lookupMap[key] ?: emptyList()).map { idToFile[it]?.path }}")
         }
     }
 
@@ -121,8 +161,7 @@ open class LookupStorage(
 
                 countersFile.writeText("$size\n$deletedCount")
             }
-        }
-        finally {
+        } finally {
             super.flush(memoryCachesOnly)
         }
     }
@@ -138,41 +177,48 @@ open class LookupStorage(
     }
 
     private fun removeGarbageIfNeeded(force: Boolean = false) {
-        if (force || (size > MINIMUM_GARBAGE_COLLECTIBLE_SIZE && deletedCount.toDouble() / size > DELETED_TO_SIZE_TRESHOLD)) {
+        if (force && (size > MINIMUM_GARBAGE_COLLECTIBLE_SIZE && deletedCount.toDouble() / size > DELETED_TO_SIZE_TRESHOLD)) {
             doRemoveGarbage()
         }
     }
 
     private fun doRemoveGarbage() {
-        for (hash in lookupMap.keys) {
-            lookupMap[hash] = lookupMap[hash]!!.filter { it in idToFile }.toSet()
-        }
-
-        val oldFileToId = fileToId.toMap()
-        val oldIdToNewId = HashMap<Int, Int>(oldFileToId.size)
-        idToFile.clean()
-        fileToId.clean()
-        size = 0
-        deletedCount = 0
-
-        for ((file, oldId) in oldFileToId.entries.sortedBy { it.key.path }) {
-            val newId = addFileIfNeeded(file)
-            oldIdToNewId[oldId] = newId
-        }
-
-        for (lookup in lookupMap.keys) {
-            val fileIds = lookupMap[lookup]!!.mapNotNull { oldIdToNewId[it] }.toSet()
-
-            if (fileIds.isEmpty()) {
-                lookupMap.remove(lookup)
+        val timeInMillis = measureTimeMillis {
+            for (hash in lookupMap.keys) {
+                val dirtyFileIds = lookupMap[hash]!!
+                val filteredFileIds = dirtyFileIds.filter { it in idToFile }.toSet()
+                if (dirtyFileIds != filteredFileIds) lookupMap[hash] = filteredFileIds
             }
-            else {
-                lookupMap[lookup] = fileIds
-            }
+
+//            val oldFileToId = fileToId.toMap()
+//            val oldIdToNewId = HashMap<Int, Int>(oldFileToId.size)
+//            idToFile.clean()
+//            fileToId.clean()
+//            size = 0
+            deletedCount = 0
+
+            // надо ли? почему это нужно?
+            //TODO clean (не перерегистрируем id)
+//            for ((file, oldId) in oldFileToId.entries.sortedBy { it.key.path }) {
+//                val newId = addFileIfNeeded(file)
+//                oldIdToNewId[oldId] = newId
+//            }
+//
+//            for (lookup in lookupMap.keys) {
+//                val fileIds = lookupMap[lookup]!!.mapNotNull { oldIdToNewId[it] }.toSet()
+//
+//                if (fileIds.isEmpty()) {
+//                    lookupMap.remove(lookup)
+//                } else {
+//                    lookupMap[lookup] = fileIds
+//                }
+//            }
         }
+        LOG.debug(">>Garbage removed in $timeInMillis ms")
     }
 
-    @TestOnly fun forceGC() {
+    @TestOnly
+    fun forceGC() {
         removeGarbageIfNeeded(force = true)
         flush(false)
     }
