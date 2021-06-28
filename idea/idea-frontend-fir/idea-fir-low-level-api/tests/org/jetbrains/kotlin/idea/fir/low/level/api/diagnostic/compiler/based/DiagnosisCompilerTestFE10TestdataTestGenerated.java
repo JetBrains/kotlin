@@ -21437,6 +21437,18 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 }
 
                 @Test
+                @TestMetadata("intermediateRecursion.kt")
+                public void testIntermediateRecursion() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/intermediateRecursion.kt");
+                }
+
+                @Test
+                @TestMetadata("kt47459.kt")
+                public void testKt47459() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/kt47459.kt");
+                }
+
+                @Test
                 @TestMetadata("nonGenericRawMember.kt")
                 public void testNonGenericRawMember() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/nonGenericRawMember.kt");

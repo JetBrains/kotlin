@@ -206,7 +206,7 @@ private fun KotlinType.extractTypeParametersFromUpperBounds(
     } else {
         val typeParameters = (constructor.declarationDescriptor as? ClassifierDescriptorWithTypeParameters)?.declaredTypeParameters
         for ((i, argument) in arguments.withIndex()) {
-            val typeParameter = typeParameters?.get(i)
+            val typeParameter = typeParameters?.getOrNull(i) // TODO: support inner classes' type parameters
             val isTypeParameterVisited = typeParameter != null && visitedTypeParameters != null && typeParameter in visitedTypeParameters
             if (isTypeParameterVisited || argument.isStarProjection) continue
             if (argument.type.constructor.declarationDescriptor in to || argument.type.constructor == baseType.constructor) continue
