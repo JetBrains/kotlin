@@ -207,7 +207,7 @@ class TestModuleSourceInfo(
         get() = Name.identifier(testModule.name)
 
     override fun dependencies(): List<ModuleInfo> =
-        testModule.regularDependencies
+        testModule.allDependencies
             .map { moduleInfoProvider.getModuleInfo(it.moduleName) }
 
     override val expectedBy: List<ModuleInfo>
