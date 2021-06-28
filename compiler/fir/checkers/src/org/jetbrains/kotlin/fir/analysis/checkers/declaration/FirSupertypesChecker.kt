@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -72,44 +73,94 @@ object FirSupertypesChecker : FirClassChecker() {
                     }
                 }
 
-                for (annotation in superTypeRef.annotations) {
-                    withSuppressedDiagnostics(annotation, context) {
-                        if (annotation.useSiteTarget != null) {
-                            reporter.reportOn(annotation.source, FirErrors.ANNOTATION_ON_SUPERCLASS, context)
-                        }
-                    }
-                }
+                checkAnnotationOnSuperclass(superTypeRef, context, reporter)
 
                 val fullyExpandedType = coneType.fullyExpandedType(context.session)
                 val symbol = fullyExpandedType.toSymbol(context.session)
-                if (symbol is FirRegularClassSymbol && symbol.classId == StandardClassIds.Enum) {
-                    reporter.reportOn(superTypeRef.source, FirErrors.CLASS_CANNOT_BE_EXTENDED_DIRECTLY, symbol, context)
-                }
+
+                checkClassCannotBeExtendedDirectly(symbol, reporter, superTypeRef, context)
 
                 if (coneType.typeArguments.isNotEmpty()) {
-                    for ((index, typeArgument) in coneType.typeArguments.withIndex()) {
-                        if (typeArgument.isConflictingOrNotInvariant) {
-                            val (_, argSource) = extractArgumentTypeRefAndSource(superTypeRef, index) ?: continue
-                            reporter.reportOn(
-                                argSource ?: superTypeRef.source,
-                                FirErrors.PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE,
-                                context
-                            )
-                        }
-                    }
+                    checkProjectionInImmediateArgumentToSupertype(coneType, superTypeRef, reporter, context)
                 } else {
-                    if (symbol is FirRegularClassSymbol && symbol.fir.classKind == ClassKind.INTERFACE) {
-                        for (typeArgument in fullyExpandedType.typeArguments) {
-                            if (typeArgument.isConflictingOrNotInvariant) {
-                                reporter.reportOn(superTypeRef.source, FirErrors.EXPANDED_TYPE_CANNOT_BE_INHERITED, coneType, context)
-                                break
-                            }
-                        }
-                    }
+                    checkExpandedTypeCannotBeInherited(symbol, fullyExpandedType, reporter, superTypeRef, coneType, context)
                 }
             }
         }
 
+        checkDelegationNotToInterface(declaration, context, reporter)
+
+        if (declaration is FirRegularClass && declaration.superTypeRefs.size > 1) {
+            checkInconsistentTypeParameters(listOf(Pair(null, declaration)), context, reporter, declaration.source, true)
+        }
+    }
+
+    private fun checkAnnotationOnSuperclass(
+        superTypeRef: FirTypeRef,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ) {
+        for (annotation in superTypeRef.annotations) {
+            withSuppressedDiagnostics(annotation, context) {
+                if (annotation.useSiteTarget != null) {
+                    reporter.reportOn(annotation.source, FirErrors.ANNOTATION_ON_SUPERCLASS, context)
+                }
+            }
+        }
+    }
+
+    private fun checkClassCannotBeExtendedDirectly(
+        symbol: AbstractFirBasedSymbol<*>?,
+        reporter: DiagnosticReporter,
+        superTypeRef: FirTypeRef,
+        context: CheckerContext
+    ) {
+        if (symbol is FirRegularClassSymbol && symbol.classId == StandardClassIds.Enum) {
+            reporter.reportOn(superTypeRef.source, FirErrors.CLASS_CANNOT_BE_EXTENDED_DIRECTLY, symbol, context)
+        }
+    }
+
+    private fun checkProjectionInImmediateArgumentToSupertype(
+        coneType: ConeKotlinType,
+        superTypeRef: FirTypeRef,
+        reporter: DiagnosticReporter,
+        context: CheckerContext
+    ) {
+        for ((index, typeArgument) in coneType.typeArguments.withIndex()) {
+            if (typeArgument.isConflictingOrNotInvariant) {
+                val (_, argSource) = extractArgumentTypeRefAndSource(superTypeRef, index) ?: continue
+                reporter.reportOn(
+                    argSource ?: superTypeRef.source,
+                    FirErrors.PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE,
+                    context
+                )
+            }
+        }
+    }
+
+    private fun checkExpandedTypeCannotBeInherited(
+        symbol: AbstractFirBasedSymbol<*>?,
+        fullyExpandedType: ConeKotlinType,
+        reporter: DiagnosticReporter,
+        superTypeRef: FirTypeRef,
+        coneType: ConeKotlinType,
+        context: CheckerContext
+    ) {
+        if (symbol is FirRegularClassSymbol && symbol.fir.classKind == ClassKind.INTERFACE) {
+            for (typeArgument in fullyExpandedType.typeArguments) {
+                if (typeArgument.isConflictingOrNotInvariant) {
+                    reporter.reportOn(superTypeRef.source, FirErrors.EXPANDED_TYPE_CANNOT_BE_INHERITED, coneType, context)
+                    break
+                }
+            }
+        }
+    }
+
+    private fun checkDelegationNotToInterface(
+        declaration: FirClass<*>,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ) {
         for (subDeclaration in declaration.declarations) {
             if (subDeclaration is FirField) {
                 if (subDeclaration.visibility == Visibilities.Local &&
@@ -122,10 +173,6 @@ object FirSupertypesChecker : FirClassChecker() {
                     }
                 }
             }
-        }
-
-        if (declaration is FirRegularClass && declaration.superTypeRefs.size > 1) {
-            checkInconsistentTypeParameters(listOf(Pair(null, declaration)), context, reporter, declaration.source, true)
         }
     }
 }
