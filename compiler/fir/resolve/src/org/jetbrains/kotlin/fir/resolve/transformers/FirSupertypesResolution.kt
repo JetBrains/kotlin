@@ -102,7 +102,7 @@ open class FirApplySupertypesTransformer(
         return element
     }
 
-    protected open fun needReplacePhase(firDeclaration: FirDeclaration) = FirResolvePhase.SUPER_TYPES > firDeclaration.resolvePhase
+    protected open fun needReplacePhase(firDeclaration: FirDeclaration): Boolean = FirResolvePhase.SUPER_TYPES > firDeclaration.resolvePhase
 
     protected open fun transformDeclarationContent(declaration: FirDeclaration, data: Any?): FirDeclaration {
         return declaration.transformChildren(this, null) as FirDeclaration
