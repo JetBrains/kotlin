@@ -346,7 +346,7 @@ internal fun TypeParameterDescriptor.getErasedUpperBound(
 ): KotlinType {
     val visitedTypeParameters = typeAttr.visitedTypeParameters
 
-    if (visitedTypeParameters != null && this in visitedTypeParameters) return defaultValue()
+    if (visitedTypeParameters != null && original in visitedTypeParameters) return defaultValue()
 
     /*
      * We should do erasure of containing type parameters with their erasure to avoid creating inconsistent types.
