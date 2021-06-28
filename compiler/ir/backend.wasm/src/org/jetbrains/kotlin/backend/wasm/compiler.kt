@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.loadIr
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
+import org.jetbrains.kotlin.ir.util.noUnboundLeft
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
@@ -55,20 +56,19 @@ fun compileWasm(
 
     // Load declarations referenced during `context` initialization
     allModules.forEach {
-        val irProviders = generateTypicalIrProviderList(it.descriptor, irBuiltIns, symbolTable, deserializer)
-        ExternalDependenciesGenerator(symbolTable, irProviders)
-            .generateUnboundSymbolsAsDependencies()
+        ExternalDependenciesGenerator(symbolTable, listOf(deserializer)).generateUnboundSymbolsAsDependencies()
     }
 
     val irFiles = allModules.flatMap { it.files }
-
     moduleFragment.files.clear()
     moduleFragment.files += irFiles
 
     // Create stubs
-    val irProviders = generateTypicalIrProviderList(moduleDescriptor, irBuiltIns, symbolTable, deserializer)
-    ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
+    ExternalDependenciesGenerator(symbolTable, listOf(deserializer)).generateUnboundSymbolsAsDependencies()
     moduleFragment.patchDeclarationParents()
+
+    deserializer.postProcess()
+    symbolTable.noUnboundLeft("Unbound symbols at the end of linker")
 
     wasmPhases.invokeToplevel(phaseConfig, context, moduleFragment)
 
