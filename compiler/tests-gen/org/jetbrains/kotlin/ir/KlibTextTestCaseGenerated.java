@@ -38,6 +38,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
         }
 
+        @TestMetadata("47424.kt")
+        public void test47424() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/47424.kt");
+        }
+
         @TestMetadata("abstractMembers.kt")
         public void testAbstractMembers() throws Exception {
             runTest("compiler/testData/ir/irText/classes/abstractMembers.kt");

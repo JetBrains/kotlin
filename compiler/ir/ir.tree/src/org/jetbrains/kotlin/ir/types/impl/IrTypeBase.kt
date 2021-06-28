@@ -107,15 +107,10 @@ class IrCapturedType(
         return other is IrCapturedType
                 && captureStatus == other.captureStatus
                 && lowerType == other.lowerType
-                && constructor.argument == other.constructor.argument
-                && constructor.typeParameter == other.constructor.typeParameter
-                && constructor.superTypes == other.constructor.superTypes
+                && constructor === other.constructor
     }
 
     override fun hashCode(): Int {
-        return (((captureStatus.hashCode() * 31
-                + (lowerType?.hashCode() ?: 0)) * 31
-                + constructor.argument.hashCode()) * 31
-                + constructor.typeParameter.hashCode()) + constructor.superTypes.hashCode()
+        return (captureStatus.hashCode() * 31 + (lowerType?.hashCode() ?: 0)) * 31 + constructor.hashCode()
     }
 }

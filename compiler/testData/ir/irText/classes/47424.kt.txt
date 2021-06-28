@@ -1,0 +1,33 @@
+package com.example
+
+interface Aa {
+
+}
+
+interface Ab<T : Ab<T>> : Aa {
+
+}
+
+interface Ba {
+
+}
+
+interface Bb<T : Bb<T>> : Ab<T>, Ba {
+
+}
+
+interface Ca {
+  abstract val b: Ba
+    abstract get
+
+}
+
+interface Cb {
+  abstract val b: Bb<*>
+    abstract get
+
+}
+
+interface C : Cb, Ca {
+
+}
