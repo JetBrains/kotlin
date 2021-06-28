@@ -1064,6 +1064,11 @@ standaloneTest("lazy3") {
     source = "runtime/workers/lazy3.kt"
 }
 
+task lazy4(type: KonanLocalTest) {
+    enabled = (project.testTarget != 'wasm32') // Workers need pthreads. Need exceptions
+    source = "runtime/workers/lazy4.kt"
+}
+
 task mutableData1(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') // Workers need pthreads. Need exceptions
     source = "runtime/workers/mutableData1.kt"

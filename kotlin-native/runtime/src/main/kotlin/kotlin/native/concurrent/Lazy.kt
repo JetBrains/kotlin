@@ -9,6 +9,8 @@ import kotlin.native.internal.Frozen
 
 internal class FreezeAwareLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
     private val value_ = FreezableAtomicReference<Any?>(UNINITIALIZED)
+    // This cannot be made atomic because of the legacy MM. See https://github.com/JetBrains/kotlin-native/pull/3944
+    // So it must be protected by the lock below.
     private var initializer_: (() -> T)? = initializer
     private val lock_ = Lock()
 
@@ -46,9 +48,10 @@ internal class FreezeAwareLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
 
     override val value: T
         get() {
-            return if (isFrozen) {
+            return if (isShareable()) {
+                // TODO: This is probably a big performance problem for lazy with the new MM. Address it.
                 locked(lock_) {
-                    getOrInit(true)
+                    getOrInit(isFrozen)
                 }
             } else {
                 getOrInit(false)
