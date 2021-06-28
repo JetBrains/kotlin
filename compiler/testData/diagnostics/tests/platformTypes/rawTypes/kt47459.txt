@@ -1,0 +1,34 @@
+package
+
+public fun foo(/*0*/ markerManager: MarkerManager): kotlin.Unit
+
+public/*package*/ abstract class MapObjectManager</*0*/ C : MapObjectManager<(raw) MapObjectManager<*>.Collection>.Collection!> {
+    public/*package*/ constructor MapObjectManager</*0*/ C : MapObjectManager<(raw) MapObjectManager<*>.Collection>.Collection!>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun getCollection(/*0*/ id: kotlin.String!): C!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public open inner class Collection /*captured type parameters: /*0*/ C : MapObjectManager<(raw) MapObjectManager<*>.Collection>.Collection!*/ {
+        public constructor Collection()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public open class MarkerManager : MapObjectManager<MarkerManager.Collection!> {
+    public constructor MarkerManager()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun getCollection(/*0*/ id: kotlin.String!): MarkerManager.Collection!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public open inner class Collection : MapObjectManager<(raw) MapObjectManager<*>.Collection!>.Collection {
+        public constructor Collection()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open fun setOnMarkerClickListener(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
