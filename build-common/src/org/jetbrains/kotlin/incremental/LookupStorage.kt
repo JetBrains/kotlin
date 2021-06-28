@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.utils.keysToMap
 import java.io.File
 import java.io.IOException
 import java.util.*
-import kotlin.system.measureTimeMillis
 
 open class LookupStorage(
     targetDataDir: File,
@@ -50,15 +49,11 @@ open class LookupStorage(
     @Volatile
     private var size: Int = 0
 
-    @Volatile
-    private var deletedCount: Int = 0
-
     init {
         try {
             if (countersFile.exists()) {
                 val lines = countersFile.readLines()
                 size = lines[0].toInt()
-                deletedCount = lines[1].toInt()
             }
         } catch (e: Exception) {
             throw IOException("Could not read $countersFile", e)
@@ -108,7 +103,6 @@ open class LookupStorage(
             val id = fileToId[file] ?: continue
             idToFile.remove(id)
             fileToId.remove(file)
-            deletedCount++
         }
     }
 
@@ -119,7 +113,6 @@ open class LookupStorage(
         }
 
         size = 0
-        deletedCount = 0
 
         super.clean()
     }
@@ -127,15 +120,13 @@ open class LookupStorage(
     @Synchronized
     override fun flush(memoryCachesOnly: Boolean) {
         try {
-            removeGarbageIfNeeded()
-
             if (size > 0) {
                 if (!countersFile.exists()) {
                     countersFile.parentFile.mkdirs()
                     countersFile.createNewFile()
                 }
 
-                countersFile.writeText("$size\n$deletedCount")
+                countersFile.writeText("$size\n")
             }
         } finally {
             super.flush(memoryCachesOnly)
@@ -152,28 +143,37 @@ open class LookupStorage(
         return id
     }
 
-    private fun removeGarbageIfNeeded(force: Boolean = false) {
-        if (force && (size > MINIMUM_GARBAGE_COLLECTIBLE_SIZE && deletedCount.toDouble() / size > DELETED_TO_SIZE_TRESHOLD)) {
-            doRemoveGarbage()
+    private fun removeGarbageForTests() {
+        for (hash in lookupMap.keys) {
+            lookupMap[hash] = lookupMap[hash]!!.filter { it in idToFile }.toSet()
         }
-    }
 
-    private fun doRemoveGarbage() {
-        val timeInMillis = measureTimeMillis {
-            for (hash in lookupMap.keys) {
-                val dirtyFileIds = lookupMap[hash]!!
-                val filteredFileIds = dirtyFileIds.filter { it in idToFile }.toSet()
-                if (dirtyFileIds != filteredFileIds) lookupMap[hash] = filteredFileIds
+        val oldFileToId = fileToId.toMap()
+        val oldIdToNewId = HashMap<Int, Int>(oldFileToId.size)
+        idToFile.clean()
+        fileToId.clean()
+        size = 0
+
+        for ((file, oldId) in oldFileToId.entries.sortedBy { it.key.path }) {
+            val newId = addFileIfNeeded(file)
+            oldIdToNewId[oldId] = newId
+        }
+
+        for (lookup in lookupMap.keys) {
+            val fileIds = lookupMap[lookup]!!.mapNotNull { oldIdToNewId[it] }.toSet()
+
+            if (fileIds.isEmpty()) {
+                lookupMap.remove(lookup)
+            } else {
+                lookupMap[lookup] = fileIds
             }
-
-            deletedCount = 0
         }
-        LOG.debug(">>Garbage removed in $timeInMillis ms")
     }
+
 
     @TestOnly
     fun forceGC() {
-        removeGarbageIfNeeded(force = true)
+        removeGarbageForTests()
         flush(false)
     }
 
