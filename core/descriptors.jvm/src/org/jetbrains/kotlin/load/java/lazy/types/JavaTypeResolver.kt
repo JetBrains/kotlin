@@ -213,7 +213,7 @@ class JavaTypeResolver(
                  * but it's wrong because Foo<*> isn't subtype of Foo<Foo<*>> in accordance with declared upper bound of Foo.
                  * So we should create Foo<*> in this case (CapturedType(*) is really subtype of Foo<CapturedType(*)>).
                  */
-                if (hasTypeParameterRecursiveBounds(parameter, selfConstructor = null, attr.upperBoundOfTypeParameter))
+                if (hasTypeParameterRecursiveBounds(parameter, selfConstructor = null, attr.visitedTypeParameters))
                     return@map StarProjectionImpl(parameter)
 
                 // Some activity for preventing recursion in cases like `class A<T extends A, F extends T>`
@@ -309,11 +309,12 @@ data class JavaTypeAttributes(
     val howThisTypeIsUsed: TypeUsage,
     val flexibility: JavaTypeFlexibility = INFLEXIBLE,
     val isForAnnotationParameter: Boolean = false,
-    // Current type is upper bound of this type parameter
-    val upperBoundOfTypeParameter: TypeParameterDescriptor? = null
+    // we use it to prevent happening a recursion while compute type parameter's upper bounds
+    val visitedTypeParameters: Set<TypeParameterDescriptor>? = null
 ) {
     fun withFlexibility(flexibility: JavaTypeFlexibility) = copy(flexibility = flexibility)
-    fun withTypeParameter(upperBoundOfTypeParameter: TypeParameterDescriptor) = copy(upperBoundOfTypeParameter = upperBoundOfTypeParameter)
+    fun withNewVisitedTypeParameter(typeParameter: TypeParameterDescriptor) =
+        copy(visitedTypeParameters = if (visitedTypeParameters != null) visitedTypeParameters + typeParameter else setOf(typeParameter))
 }
 
 enum class JavaTypeFlexibility {
@@ -328,7 +329,7 @@ fun TypeUsage.toAttributes(
 ) = JavaTypeAttributes(
     this,
     isForAnnotationParameter = isForAnnotationParameter,
-    upperBoundOfTypeParameter = upperBoundForTypeParameter
+    visitedTypeParameters = upperBoundForTypeParameter?.let(::setOf)
 )
 
 // Definition:
@@ -343,9 +344,9 @@ internal fun TypeParameterDescriptor.getErasedUpperBound(
     typeAttr: JavaTypeAttributes,
     defaultValue: (() -> KotlinType) = { ErrorUtils.createErrorType("Can't compute erased upper bound of type parameter `$this`") }
 ): KotlinType {
-    if (this === typeAttr.upperBoundOfTypeParameter) return defaultValue()
+    val visitedTypeParameters = typeAttr.visitedTypeParameters
 
-    val newTypeAttr = if (typeAttr.upperBoundOfTypeParameter == null) typeAttr.withTypeParameter(this) else typeAttr
+    if (visitedTypeParameters != null && this in visitedTypeParameters) return defaultValue()
 
     /*
      * We should do erasure of containing type parameters with their erasure to avoid creating inconsistent types.
@@ -353,13 +354,13 @@ internal fun TypeParameterDescriptor.getErasedUpperBound(
      * but it's wrong type: projection(*) != projection(Any).
      * So we should substitute erasure of the corresponding type parameter: `Foo<Foo<Any>, Any>` or `Foo<Foo<*>, *>`.
      */
-    val erasedUpperBounds = defaultType.extractTypeParametersFromUpperBounds(typeAttr.upperBoundOfTypeParameter).associate {
-        val boundProjection = if (it !== typeAttr.upperBoundOfTypeParameter) {
+    val erasedUpperBounds = defaultType.extractTypeParametersFromUpperBounds(visitedTypeParameters).associate {
+        val boundProjection = if (visitedTypeParameters == null || it !in visitedTypeParameters) {
             RawSubstitution.computeProjection(
                 it,
                 // if erasure happens due to invalid arguments number, use star projections instead
                 if (isRaw) typeAttr else typeAttr.withFlexibility(INFLEXIBLE),
-                if (it !== typeAttr.upperBoundOfTypeParameter) it.getErasedUpperBound(isRaw, newTypeAttr) else it.starProjectionType()
+                it.getErasedUpperBound(isRaw, typeAttr.withNewVisitedTypeParameter(this))
             )
         } else makeStarProjection(it, typeAttr)
 
@@ -374,21 +375,21 @@ internal fun TypeParameterDescriptor.getErasedUpperBound(
             erasedUpperBoundsSubstitutor,
             erasedUpperBounds,
             OUT_VARIANCE,
-            typeAttr.upperBoundOfTypeParameter
+            typeAttr.visitedTypeParameters
         )
     }
 
-    val stopAt = typeAttr.upperBoundOfTypeParameter ?: this
+    val stopAt = typeAttr.visitedTypeParameters ?: setOf(this)
     var current = firstUpperBound.constructor.declarationDescriptor as TypeParameterDescriptor
 
-    while (current != stopAt) {
+    while (current !in stopAt) {
         val nextUpperBound = current.upperBounds.first()
         if (nextUpperBound.constructor.declarationDescriptor is ClassDescriptor) {
             return nextUpperBound.replaceArgumentsWithStarProjectionOrMapped(
                 erasedUpperBoundsSubstitutor,
                 erasedUpperBounds,
                 OUT_VARIANCE,
-                typeAttr.upperBoundOfTypeParameter
+                typeAttr.visitedTypeParameters
             )
         }
 
