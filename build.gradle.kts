@@ -1133,7 +1133,7 @@ fun Project.configureJvmProject(javaHome: String, javaVersion: String) {
     }
 
     tasks.withType<KotlinCompile> {
-        kotlinOptions.jdkHome = javaHome.takeUnless { kotlinBuildProperties.suppressJdkHomeWarning }
+        kotlinOptions.jdkHome = javaHome
         kotlinOptions.jvmTarget = javaVersion
         kotlinOptions.freeCompilerArgs += "-Xjvm-default=compatibility"
     }
