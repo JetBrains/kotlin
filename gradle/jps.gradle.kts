@@ -155,8 +155,6 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
                 settings {
                     ideArtifacts {
                         kotlinCompilerJar()
-                        
-                        kotlinPluginJar()
 
                         kotlinReflectJar()
 
@@ -168,11 +166,7 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
 
                         kotlinDaemonClientJar()
 
-                        kotlinJpsPluginJar()
-
                         kotlinc()
-
-                        ideaPlugin()
 
                         dist()
                     }
