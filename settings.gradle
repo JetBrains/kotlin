@@ -323,10 +323,10 @@ if (!buildProperties.inJpsBuildIdeaSync) {
 }
 
 void kotlinIde(String imlPath) {
-    File imlFile = new File("kotlin-ide/kotlin/${imlPath}")
-    imlFile = imlFile.exists() ? imlFile : new File("kotlin-ide/${imlPath}")
-    imlFile = imlFile.exists() ? imlFile : new File("kotlin-ide/intellij/community/${imlPath}")
-    imlFile = imlFile.exists() ? imlFile : new File("kotlin-ide/intellij/${imlPath}")
+    File imlFile = new File("${rootDir}/kotlin-ide/kotlin/${imlPath}")
+    imlFile = imlFile.exists() ? imlFile : new File("${rootDir}/kotlin-ide/${imlPath}")
+    imlFile = imlFile.exists() ? imlFile : new File("${rootDir}/kotlin-ide/intellij/community/${imlPath}")
+    imlFile = imlFile.exists() ? imlFile : new File("${rootDir}/kotlin-ide/intellij/${imlPath}")
     assert imlFile.exists()
     String fileName = imlFile.name
     String projectName = ":kotlin-ide.${fileName.substring(0, fileName.length() - ".iml".length())}"
