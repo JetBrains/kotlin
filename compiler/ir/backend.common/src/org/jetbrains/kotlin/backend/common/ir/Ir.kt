@@ -150,11 +150,11 @@ abstract class Symbols<out T : CommonBackendContext>(
     val doubleArrayType get() = doubleArray.owner.defaultType
     val booleanArrayType get() = booleanArray.owner.defaultType
 
-    val primitiveArrays get() = irBuiltIns.primitiveArrays
+    val primitiveArrays get() = irBuiltIns.primitiveTypesToPrimitiveArrays
     val primitiveArraysToPrimitiveTypes get() = irBuiltIns.primitiveArraysToPrimitiveTypes
-    val unsignedArrays get() = irBuiltIns.unsignedArrays
+    val unsignedArrays get() = irBuiltIns.unsignedTypesToUnsignedArrays
 
-    val arrays = primitiveArrays + unsignedArrays + array
+    val arrays = primitiveArrays.values + unsignedArrays.values + array
 
     val collection get() = irBuiltIns.collectionClass
     val set get() = irBuiltIns.setClass

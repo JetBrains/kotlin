@@ -128,7 +128,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
             ).toMap()
 
     private fun intrinsicsThatShouldHaveBeenLowered() =
-        (symbols.primitiveArrays.map { primitiveClassSymbol ->
+        (symbols.primitiveArrays.map { (_, primitiveClassSymbol) ->
             val name = primitiveClassSymbol.owner.name.asString()
             // IntArray -> intArrayOf
             val arrayOfFunName = name.decapitalizeAsciiOnly() + "Of"

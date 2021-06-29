@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
@@ -109,11 +110,11 @@ abstract class IrBuiltIns {
     abstract val booleanArray: IrClassSymbol
 
     abstract val primitiveArraysToPrimitiveTypes: Map<IrClassSymbol, PrimitiveType>
-    abstract val primitiveArrays: Set<IrClassSymbol>
+    abstract val primitiveTypesToPrimitiveArrays: Map<PrimitiveType, IrClassSymbol>
     abstract val primitiveArrayElementTypes: Map<IrClassSymbol, IrType?>
     abstract val primitiveArrayForType: Map<IrType?, IrClassSymbol>
 
-    abstract val unsignedArrays: Set<IrClassSymbol>
+    abstract val unsignedTypesToUnsignedArrays: Map<UnsignedType, IrClassSymbol>
 
     abstract val lessFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
     abstract val lessOrEqualFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
@@ -157,8 +158,12 @@ abstract class IrBuiltIns {
     abstract fun suspendFunctionN(arity: Int): IrClass
     abstract fun kSuspendFunctionN(arity: Int): IrClass
 
+    // TODO: drop variants from segments, add helper from whole fqn
     abstract fun findFunctions(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): Iterable<IrSimpleFunctionSymbol>
+    abstract fun findFunctions(name: Name, packageFqName: FqName): Iterable<IrSimpleFunctionSymbol>
     abstract fun findClass(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): IrClassSymbol?
+    abstract fun findClass(name: Name, packageFqName: FqName): IrClassSymbol?
+    abstract fun findBuiltInClassMemberFunctions(builtInClass: IrClassSymbol, name: Name): Iterable<IrSimpleFunctionSymbol>
 
     abstract fun getBinaryOperator(name: Name, lhsType: IrType, rhsType: IrType): IrSimpleFunctionSymbol
     abstract fun getUnaryOperator(name: Name, receiverType: IrType): IrSimpleFunctionSymbol

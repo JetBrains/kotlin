@@ -240,7 +240,7 @@ abstract class DataClassMembersGenerator(
         getIrProperty(property).backingField!!
 
     val IrClassifierSymbol?.isArrayOrPrimitiveArray: Boolean
-        get() = this == context.irBuiltIns.arrayClass || this in context.irBuiltIns.primitiveArrays
+        get() = this == context.irBuiltIns.arrayClass || this in context.irBuiltIns.primitiveArraysToPrimitiveTypes
 
     abstract fun declareSimpleFunction(startOffset: Int, endOffset: Int, functionDescriptor: FunctionDescriptor): IrFunction
 

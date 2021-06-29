@@ -48,15 +48,8 @@ import org.jetbrains.kotlin.types.checker.intersectTypes
 import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
-import kotlin.collections.Map
 import kotlin.collections.contains
-import kotlin.collections.get
-import kotlin.collections.listOf
-import kotlin.collections.mapOf
-import kotlin.collections.mapTo
 import kotlin.collections.set
-import kotlin.collections.toMap
-import kotlin.collections.zip
 
 
 class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
@@ -443,7 +436,7 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         return memberScope.findSingleFunction(Name.identifier("to$targetTypeName"))
     }
 
-    private val primitiveTypeMapping = context.irBuiltInsOverDescriptors.run { primitiveTypes.zip(primitiveIrTypes).toMap() }
+    private val primitiveTypeMapping: Map<SimpleType, IrType> = context.irBuiltInsOverDescriptors.run { primitiveTypes.zip(primitiveIrTypes).toMap() }
     private fun kotlinTypeToIrType(kotlinType: KotlinType?) = kotlinType?.let { primitiveTypeMapping[it] }
 
     private fun generateComparisonOperator(ktExpression: KtBinaryExpression, origin: IrStatementOrigin): IrExpression {

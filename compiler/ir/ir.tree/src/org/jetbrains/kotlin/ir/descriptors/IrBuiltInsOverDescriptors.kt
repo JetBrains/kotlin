@@ -325,7 +325,7 @@ class IrBuiltInsOverDescriptors(
     )
 
     // TODO switch to IrType
-    val primitiveTypes = listOf(bool, char, byte, short, int, float, long, double)
+    val primitiveTypes = listOf(bool, builtIns.charType, builtIns.byteType, short, int, float, long, double)
     override val primitiveIrTypes = listOf(booleanType, charType, byteType, shortType, intType, floatType, longType, doubleType)
     override val primitiveIrTypesWithComparisons = listOf(charType, byteType, shortType, intType, floatType, longType, doubleType)
     override val primitiveFloatingPointIrTypes = listOf(floatType, doubleType)
@@ -340,12 +340,15 @@ class IrBuiltInsOverDescriptors(
     override val booleanArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.BOOLEAN).toIrSymbol()
 
     override val primitiveArraysToPrimitiveTypes = PrimitiveType.values().associate { builtIns.getPrimitiveArrayClassDescriptor(it).toIrSymbol() to it }
-    override val primitiveArrays = primitiveArraysToPrimitiveTypes.keys
+    override val primitiveTypesToPrimitiveArrays = primitiveArraysToPrimitiveTypes.map { (k, v) -> v to k }.toMap()
     override val primitiveArrayElementTypes = primitiveArraysToPrimitiveTypes.mapValues { primitiveTypeToIrType[it.value] }
     override val primitiveArrayForType = primitiveArrayElementTypes.asSequence().associate { it.value to it.key }
 
-    override val unsignedArrays: Set<IrClassSymbol> = UnsignedType.values().mapNotNullTo(mutableSetOf()) { unsignedType ->
-        builtIns.builtInsModule.findClassAcrossModuleDependencies(unsignedType.arrayClassId)?.toIrSymbol()
+    override val unsignedTypesToUnsignedArrays: Map<UnsignedType, IrClassSymbol> by lazy {
+        UnsignedType.values().mapNotNull { unsignedType ->
+            val array = builtIns.builtInsModule.findClassAcrossModuleDependencies(unsignedType.arrayClassId)?.toIrSymbol()
+            if (array == null) null else unsignedType to array
+        }.toMap()
     }
 
     override val lessFunByOperandType = primitiveIrTypesWithComparisons.defineComparisonOperatorForEachIrType(BuiltInOperatorNames.LESS)
@@ -409,11 +412,27 @@ class IrBuiltInsOverDescriptors(
             symbolTable.referenceSimpleFunction(it)
         }
 
+    override fun findFunctions(name: Name, packageFqName: FqName): Iterable<IrSimpleFunctionSymbol> =
+        builtIns.builtInsModule.getPackage(packageFqName).memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).map {
+            symbolTable.referenceSimpleFunction(it)
+        }
+
     override fun findClass(name: Name, vararg packageNameSegments: String): IrClassSymbol? =
         (builtInsPackage(*packageNameSegments).getContributedClassifier(
             name,
             NoLookupLocation.FROM_BACKEND
         ) as? ClassDescriptor)?.let { symbolTable.referenceClass(it) }
+
+    override fun findClass(name: Name, packageFqName: FqName): IrClassSymbol? =
+        (builtIns.builtInsModule.getPackage(packageFqName).memberScope.getContributedClassifier(
+            name,
+            NoLookupLocation.FROM_BACKEND
+        ) as? ClassDescriptor)?.let { symbolTable.referenceClass(it) }
+
+    override fun findBuiltInClassMemberFunctions(builtInClass: IrClassSymbol, name: Name): Iterable<IrSimpleFunctionSymbol> =
+        builtInClass.descriptor.unsubstitutedMemberScope
+            .getContributedFunctions(name, NoLookupLocation.FROM_BACKEND)
+            .map { symbolTable.referenceSimpleFunction(it) }
 
     private val binaryOperatorCache = mutableMapOf<Triple<Name, IrType, IrType>, IrSimpleFunctionSymbol>()
 
@@ -504,7 +523,7 @@ class IrBuiltInsOverDescriptors(
     override fun suspendFunctionN(arity: Int): IrClass = functionFactory.suspendFunctionN(arity)
     override fun kSuspendFunctionN(arity: Int): IrClass = functionFactory.kSuspendFunctionN(arity)
 
-    override val getProgressionLastElementByReturnType: Map<IrClassifierSymbol?, IrSimpleFunctionSymbol> =
+    override val getProgressionLastElementByReturnType: Map<IrClassifierSymbol?, IrSimpleFunctionSymbol> by lazy {
         builtInsPackage("kotlin", "internal")
             .getContributedFunctions(Name.identifier("getProgressionLastElement"), NoLookupLocation.FROM_BACKEND)
             .filter { it.containingDeclaration !is BuiltInsPackageFragment }
@@ -514,6 +533,7 @@ class IrBuiltInsOverDescriptors(
                 klass to function
             }
             .toMap()
+    }
 }
 
 private inline fun MemberScope.findFirstFunction(name: String, predicate: (CallableMemberDescriptor) -> Boolean) =
