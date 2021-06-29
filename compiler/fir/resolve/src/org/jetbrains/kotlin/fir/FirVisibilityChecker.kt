@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 interface FirModuleVisibilityChecker : FirSessionComponent {
-    fun <T> isInFriendModule(declaration: T): Boolean where T : FirStatusOwner, T : FirDeclaration
+    fun <T> isInFriendModule(declaration: T): Boolean where T : FirMemberDeclaration, T : FirDeclaration
 }
 
 abstract class FirVisibilityChecker : FirSessionComponent {
@@ -44,12 +44,12 @@ abstract class FirVisibilityChecker : FirSessionComponent {
     }
 
     fun isVisible(
-        declaration: FirStatusOwner,
+        declaration: FirMemberDeclaration,
         candidate: Candidate
     ): Boolean {
         if (declaration is FirCallableDeclaration && (declaration.isIntersectionOverride || declaration.isSubstitutionOverride)) {
             @Suppress("UNCHECKED_CAST")
-            return isVisible(declaration.originalIfFakeOverride() as FirStatusOwner, candidate)
+            return isVisible(declaration.originalIfFakeOverride() as FirMemberDeclaration, candidate)
         }
 
         val callInfo = candidate.callInfo
@@ -61,7 +61,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
     }
 
     fun isVisible(
-        declaration: FirStatusOwner,
+        declaration: FirMemberDeclaration,
         session: FirSession,
         useSiteFile: FirFile,
         containingDeclarations: List<FirDeclaration>,

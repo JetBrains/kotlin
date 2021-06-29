@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirStatusOwner
+import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.calls.ExpressionReceiverValue
 import org.jetbrains.kotlin.fir.visibilityChecker
@@ -55,7 +55,7 @@ internal class KtFirVisibilityChecker(
                 ?.let { ExpressionReceiverValue(it) }
 
             candidateSymbol.firRef.withFir { candidateFirSymbol ->
-                require(candidateFirSymbol is FirStatusOwner) {
+                require(candidateFirSymbol is FirMemberDeclaration) {
                     "$candidateFirSymbol must be a FirStatusOwner and FirSymbolOwner; it were ${candidateFirSymbol::class} instead"
                 }
 

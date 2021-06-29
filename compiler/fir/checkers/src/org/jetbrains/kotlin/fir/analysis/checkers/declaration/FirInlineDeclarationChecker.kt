@@ -288,7 +288,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
         private fun FirBasedSymbol<*>.isDefinedInInlineFunction(): Boolean {
             return when (val fir = this.fir) {
                 is FirAnonymousFunction -> true
-                is FirStatusOwner -> fir.isLocalMember
+                is FirMemberDeclaration -> fir.isLocalMember
                 is FirAnonymousObject -> true
                 is FirRegularClass -> fir.classId.isLocal
                 else -> error("Unknown callable declaration type: ${fir.render()}")

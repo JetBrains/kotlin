@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 object FirCyclicTypeBoundsChecker : FirBasicDeclarationChecker() {
 
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (declaration !is FirStatusOwner) return
+        if (declaration !is FirMemberDeclaration) return
         if (declaration is FirConstructor || declaration is FirTypeAlias) return
 
         val processed = mutableSetOf<Name>()

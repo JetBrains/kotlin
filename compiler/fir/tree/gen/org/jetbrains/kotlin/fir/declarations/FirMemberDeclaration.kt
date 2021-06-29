@@ -14,18 +14,18 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-sealed interface FirStatusOwner : FirTypeParameterRefsOwner {
+sealed interface FirMemberDeclaration : FirTypeParameterRefsOwner {
     override val source: FirSourceElement?
     override val typeParameters: List<FirTypeParameterRef>
     val status: FirDeclarationStatus
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitStatusOwner(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitMemberDeclaration(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformStatusOwner(this, data) as E
+        transformer.transformMemberDeclaration(this, data) as E
 
-    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirStatusOwner
+    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirMemberDeclaration
 
-    fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirStatusOwner
+    fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirMemberDeclaration
 }

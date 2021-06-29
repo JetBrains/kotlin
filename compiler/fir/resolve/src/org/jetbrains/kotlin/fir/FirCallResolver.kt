@@ -598,7 +598,7 @@ class FirCallResolver(
                     createResolvedReferenceWithoutCandidateForLocalVariables &&
                     explicitReceiver?.typeRef?.coneTypeSafe<ConeIntegerLiteralType>() == null &&
                     coneSymbol is FirVariableSymbol &&
-                    (coneSymbol !is FirPropertySymbol || (coneSymbol.fir as FirStatusOwner).typeParameters.isEmpty())
+                    (coneSymbol !is FirPropertySymbol || (coneSymbol.fir as FirMemberDeclaration).typeParameters.isEmpty())
                 ) {
                     return buildResolvedNamedReference {
                         this.source = source

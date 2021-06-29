@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirStatusOwner
+import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.moduleData
@@ -32,7 +32,7 @@ enum class FirImportingScopeFilter {
         if (this == ALL) return true
         // TODO: also check DeprecationLevel.HIDDEN and required Kotlin version
         val fir = symbol.fir
-        if (fir !is  FirStatusOwner) return false
+        if (fir !is  FirMemberDeclaration) return false
         val isVisible = when (fir.status.visibility) {
             // When importing from the same module, status may be unknown because the status resolver depends on super types
             // to determine visibility for functions, so it may not have finished yet. Since we only care about classes,

@@ -198,7 +198,7 @@ internal val KtType.nullabilityType: NullabilityType
         } ?: NullabilityType.Unknown
 
 
-internal fun FirStatusOwner.computeSimpleModality(): Set<String> {
+internal fun FirMemberDeclaration.computeSimpleModality(): Set<String> {
     require(this !is FirConstructor)
 
     val modifier = when (modality) {

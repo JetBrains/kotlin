@@ -235,7 +235,7 @@ fun FirClass.modality(): Modality? {
 /**
  * returns implicit modality by FirMemberDeclaration<*>
  */
-fun FirStatusOwner.implicitModality(context: CheckerContext): Modality {
+fun FirMemberDeclaration.implicitModality(context: CheckerContext): Modality {
     if (this is FirRegularClass && (this.classKind == ClassKind.CLASS || this.classKind == ClassKind.OBJECT)) {
         if (this.classKind == ClassKind.INTERFACE) return Modality.ABSTRACT
         return Modality.FINAL
@@ -381,7 +381,7 @@ private fun lowerThanBound(context: ConeInferenceContext, argument: ConeKotlinTy
     return false
 }
 
-fun FirStatusOwner.isInlineOnly(): Boolean = isInline && (this as FirAnnotatedDeclaration).hasAnnotation(INLINE_ONLY_ANNOTATION_CLASS_ID)
+fun FirMemberDeclaration.isInlineOnly(): Boolean = isInline && (this as FirAnnotatedDeclaration).hasAnnotation(INLINE_ONLY_ANNOTATION_CLASS_ID)
 
 fun isSubtypeForTypeMismatch(context: ConeInferenceContext, subtype: ConeKotlinType, supertype: ConeKotlinType): Boolean {
     val subtypeFullyExpanded = subtype.fullyExpandedType(context.session)

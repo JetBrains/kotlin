@@ -39,7 +39,7 @@ internal fun checkConstantArguments(
         }
         expression is FirConstExpression<*>
                 || expressionSymbol is FirEnumEntry
-                || (expressionSymbol as? FirStatusOwner)?.isConst == true
+                || (expressionSymbol as? FirMemberDeclaration)?.isConst == true
                 || expressionSymbol is FirConstructor && classKindOfParent == ClassKind.ANNOTATION_CLASS -> {
             //DO NOTHING
         }
@@ -84,8 +84,8 @@ internal fun checkConstantArguments(
         expressionSymbol is FirField -> {
             //TODO: fix checking of Java fields initializer
             if (
-                !(expressionSymbol as FirStatusOwner).status.isStatic
-                || (expressionSymbol as FirStatusOwner).status.modality != Modality.FINAL
+                !(expressionSymbol as FirMemberDeclaration).status.isStatic
+                || (expressionSymbol as FirMemberDeclaration).status.modality != Modality.FINAL
             )
                 return ConstantArgumentKind.NOT_CONST
         }

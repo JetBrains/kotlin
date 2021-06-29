@@ -199,7 +199,7 @@ fun deserializeClassToSymbol(
             override fun compare(a: FirDeclaration, b: FirDeclaration): Int {
                 // Reorder members based on their type and name only.
                 // See FE 1.0's [DeserializedMemberScope#addMembers].
-                if (a is FirStatusOwner && b is FirStatusOwner) {
+                if (a is FirMemberDeclaration && b is FirMemberDeclaration) {
                     return FirMemberDeclarationComparator.TypeAndNameComparator.compare(a, b)
                 }
                 return 0

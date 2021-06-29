@@ -35,8 +35,8 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val typeParameter = element("TypeParameter", Declaration, typeParameterRef, annotatedDeclaration)
     val typeParameterRefsOwner = sealedElement("TypeParameterRefsOwner", Declaration)
     val typeParametersOwner = sealedElement("TypeParametersOwner", Declaration, typeParameterRefsOwner)
-    val statusOwner = sealedElement("StatusOwner", Declaration, typeParameterRefsOwner)
-    val callableMemberDeclaration = sealedElement("CallableMemberDeclaration", Declaration, callableDeclaration, statusOwner)
+    val memberDeclaration = sealedElement("MemberDeclaration", Declaration, typeParameterRefsOwner)
+    val callableMemberDeclaration = sealedElement("CallableMemberDeclaration", Declaration, callableDeclaration, memberDeclaration)
 
     val variable = sealedElement("Variable", Declaration, callableMemberDeclaration, statement)
     val valueParameter = element("ValueParameter", Declaration, variable, controlFlowGraphOwner)
@@ -46,8 +46,8 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
 
     val classLikeDeclaration = sealedElement("ClassLikeDeclaration", Declaration, annotatedDeclaration, statement)
     val klass = sealedElement("Class", Declaration, classLikeDeclaration, statement, typeParameterRefsOwner)
-    val regularClass = element("RegularClass", Declaration, klass, statusOwner, controlFlowGraphOwner)
-    val typeAlias = element("TypeAlias", Declaration, classLikeDeclaration, statusOwner, typeParametersOwner)
+    val regularClass = element("RegularClass", Declaration, klass, memberDeclaration, controlFlowGraphOwner)
+    val typeAlias = element("TypeAlias", Declaration, classLikeDeclaration, memberDeclaration, typeParametersOwner)
 
     val function = sealedElement("Function", Declaration, callableMemberDeclaration, targetElement, controlFlowGraphOwner, statement)
 

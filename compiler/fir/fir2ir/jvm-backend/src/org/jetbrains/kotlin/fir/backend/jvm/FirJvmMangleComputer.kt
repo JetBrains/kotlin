@@ -33,7 +33,7 @@ open class FirJvmMangleComputer(
     private val session: FirSession
 ) : FirVisitor<Unit, Boolean>(), KotlinMangleComputer<FirDeclaration> {
 
-    private val typeParameterContainer = ArrayList<FirStatusOwner>(4)
+    private val typeParameterContainer = ArrayList<FirMemberDeclaration>(4)
 
     private var isRealExpect = false
 
@@ -113,9 +113,9 @@ open class FirJvmMangleComputer(
 
     private fun FirFunction.mangleFunction(isCtor: Boolean, isStatic: Boolean, container: FirDeclaration) {
 
-        isRealExpect = isRealExpect || (this as? FirStatusOwner)?.isExpect == true
+        isRealExpect = isRealExpect || (this as? FirMemberDeclaration)?.isExpect == true
 
-        if (container is FirStatusOwner) {
+        if (container is FirMemberDeclaration) {
             typeParameterContainer.add(container)
         }
         visitParent()
@@ -166,7 +166,7 @@ open class FirJvmMangleComputer(
         }
     }
 
-    private fun FirTypeParameter.effectiveParent(): FirStatusOwner {
+    private fun FirTypeParameter.effectiveParent(): FirMemberDeclaration {
         for (parent in typeParameterContainer) {
             if (this in parent.typeParameters) {
                 return parent

@@ -914,15 +914,15 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         }
     }
 
-    private fun FlowContent.generate(statusOwner: FirStatusOwner) {
-        when (statusOwner) {
-            is FirEnumEntry -> generate(statusOwner)
-            is FirRegularClass -> generate(statusOwner)
-            is FirSimpleFunction -> generate(statusOwner)
-            is FirProperty -> if (statusOwner.isLocal) generate(statusOwner as FirVariable) else generate(statusOwner)
-            is FirConstructor -> generate(statusOwner)
-            is FirTypeAlias -> generate(statusOwner)
-            else -> unsupported(statusOwner)
+    private fun FlowContent.generate(memberDeclaration: FirMemberDeclaration) {
+        when (memberDeclaration) {
+            is FirEnumEntry -> generate(memberDeclaration)
+            is FirRegularClass -> generate(memberDeclaration)
+            is FirSimpleFunction -> generate(memberDeclaration)
+            is FirProperty -> if (memberDeclaration.isLocal) generate(memberDeclaration as FirVariable) else generate(memberDeclaration)
+            is FirConstructor -> generate(memberDeclaration)
+            is FirTypeAlias -> generate(memberDeclaration)
+            else -> unsupported(memberDeclaration)
         }
     }
 
@@ -1772,7 +1772,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     private fun FlowContent.generate(declaration: FirDeclaration) {
         when (declaration) {
             is FirAnonymousInitializer -> generate(declaration)
-            is FirStatusOwner -> generate(declaration as FirStatusOwner)
+            is FirMemberDeclaration -> generate(declaration as FirMemberDeclaration)
             else -> unsupported(declaration)
         }
     }

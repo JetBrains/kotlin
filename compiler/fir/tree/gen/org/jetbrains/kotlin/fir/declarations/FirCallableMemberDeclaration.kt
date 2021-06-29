@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-sealed class FirCallableMemberDeclaration : FirCallableDeclaration(), FirStatusOwner {
+sealed class FirCallableMemberDeclaration : FirCallableDeclaration(), FirMemberDeclaration {
     abstract override val source: FirSourceElement?
     abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase

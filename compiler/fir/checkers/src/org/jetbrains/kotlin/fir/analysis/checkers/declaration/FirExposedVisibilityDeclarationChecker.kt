@@ -107,7 +107,7 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker() {
     }
 
     private fun checkFunction(declaration: FirFunction, reporter: DiagnosticReporter, context: CheckerContext) {
-        val functionVisibility = (declaration as FirStatusOwner).effectiveVisibility
+        val functionVisibility = (declaration as FirMemberDeclaration).effectiveVisibility
 
         if (functionVisibility == EffectiveVisibility.Local) return
         if (declaration !is FirConstructor) {
@@ -197,14 +197,14 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker() {
     private fun ConeKotlinType.findVisibilityExposure(
         context: CheckerContext,
         base: EffectiveVisibility
-    ): FirStatusOwner? {
+    ): FirMemberDeclaration? {
         val type = this as? ConeClassLikeType ?: return null
         val fir = type.fullyExpandedType(context.session).lookupTag.toSymbol(context.session)?.let { firSymbol ->
             firSymbol.ensureResolved(FirResolvePhase.DECLARATIONS, context.session)
             firSymbol.fir
         } ?: return null
 
-        if (fir is FirStatusOwner) {
+        if (fir is FirMemberDeclaration) {
             val effectiveVisibility = fir.effectiveVisibility
             when (effectiveVisibility.relation(base, context.session.typeContext)) {
                 EffectiveVisibility.Permissiveness.LESS,

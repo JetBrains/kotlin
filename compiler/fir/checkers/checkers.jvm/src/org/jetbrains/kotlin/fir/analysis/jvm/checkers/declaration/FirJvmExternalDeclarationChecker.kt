@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 
 object FirJvmExternalDeclarationChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (declaration !is FirStatusOwner) return
+        if (declaration !is FirMemberDeclaration) return
         if (!declaration.isExternal) return
         val source = declaration.source ?: return
         if (source.kind is FirFakeSourceElementKind) return

@@ -50,7 +50,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     private val statusResolver: FirStatusResolver = FirStatusResolver(session, scopeSession)
 
     private fun FirDeclaration.visibilityForApproximation(): Visibility {
-        if (this !is FirStatusOwner) return Visibilities.Local
+        if (this !is FirMemberDeclaration) return Visibilities.Local
         val container = context.containers.getOrNull(context.containers.size - 2)
         val containerVisibility =
             if (container == null) Visibilities.Public
@@ -93,13 +93,13 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         }
     }
 
-    protected fun createTypeParameterScope(declaration: FirStatusOwner): FirMemberTypeParameterScope? {
+    protected fun createTypeParameterScope(declaration: FirMemberDeclaration): FirMemberTypeParameterScope? {
         if (declaration.typeParameters.isEmpty()) return null
         doTransformTypeParameters(declaration)
         return FirMemberTypeParameterScope(declaration)
     }
 
-    private fun doTransformTypeParameters(declaration: FirStatusOwner) {
+    private fun doTransformTypeParameters(declaration: FirMemberDeclaration) {
         for (typeParameter in declaration.typeParameters) {
             (typeParameter as? FirTypeParameter)?.let { transformer.replaceDeclarationResolvePhaseIfNeeded(it, FirResolvePhase.STATUS) }
             typeParameter.transformChildren(transformer, ResolutionMode.ContextIndependent)

@@ -104,7 +104,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +typeParameters
         }
 
-        statusOwner.configure {
+        memberDeclaration.configure {
             +status.withTransform()
         }
 

@@ -110,7 +110,7 @@ internal class FirIdeRenderer private constructor(
         renderModifier(RendererModifier.MODALITY in options.modifiers, modality.name.toLowerCaseAsciiOnly())
     }
 
-    private fun FirStatusOwner.implicitModalityWithoutExtensions(containingDeclaration: FirDeclaration?): Modality {
+    private fun FirMemberDeclaration.implicitModalityWithoutExtensions(containingDeclaration: FirDeclaration?): Modality {
         if (this is FirRegularClass) {
             return if (classKind == ClassKind.INTERFACE) Modality.ABSTRACT else Modality.FINAL
         }
@@ -149,13 +149,13 @@ internal class FirIdeRenderer private constructor(
         }
     }
 
-    private fun StringBuilder.renderMemberModifiers(declaration: FirStatusOwner) {
+    private fun StringBuilder.renderMemberModifiers(declaration: FirMemberDeclaration) {
         renderModifier(declaration.isExternal, "external")
         renderModifier(RendererModifier.EXPECT in options.modifiers && declaration.isExpect, "expect")
         renderModifier(RendererModifier.ACTUAL in options.modifiers && declaration.isActual, "actual")
     }
 
-    private fun StringBuilder.renderAdditionalModifiers(firMember: FirStatusOwner) {
+    private fun StringBuilder.renderAdditionalModifiers(firMember: FirMemberDeclaration) {
         val isOperator =
             firMember.isOperator//TODO make similar to functionDescriptor.overriddenDescriptors.none { it.isOperator }
         val isInfix =
@@ -168,7 +168,7 @@ internal class FirIdeRenderer private constructor(
         renderModifier(RendererModifier.OPERATOR in options.modifiers && isOperator, "operator")
     }
 
-    private fun StringBuilder.renderSuspendModifier(functionDescriptor: FirStatusOwner) {
+    private fun StringBuilder.renderSuspendModifier(functionDescriptor: FirMemberDeclaration) {
         renderModifier(functionDescriptor.isSuspend, "suspend")
     }
 
