@@ -28,5 +28,5 @@ FILE: test.kt
         lval res1: R|kotlin/String| = R|<local>/descriptor|.R|/WrappedPropertyDescriptor.setter|
         lval res2: <ERROR TYPE REF: Unresolved name: getSetter> = R|<local>/descriptor|.<Unresolved name: getSetter>#()
         lval res3: R|kotlin/Boolean| = R|<local>/descriptor|.R|/WrappedPropertyDescriptor.isDelegated|
-        lval res4: <ERROR TYPE REF: Unresolved name: isDelegated> = R|<local>/descriptor|.<Unresolved name: isDelegated>#()
+        lval res4: <ERROR TYPE REF: Expression 'isDelegated' of type 'kotlin/Boolean' cannot be invoked as a function> = R|<local>/descriptor|.<Expression 'isDelegated' of type 'kotlin/Boolean' cannot be invoked as a function>#()
     }

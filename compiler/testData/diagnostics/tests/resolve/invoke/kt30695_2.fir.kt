@@ -26,7 +26,7 @@ val Cls.extensionProperty: MemberInvokeOwner
 
 fun testNullableReceiver(nullable: Cls?) {
     nullable?.extensionProperty()
-    nullable.<!UNRESOLVED_REFERENCE!>extensionProperty<!>()
+    nullable.<!FUNCTION_EXPECTED!>extensionProperty<!>()
 }
 
 fun testNotNullableReceiver(notNullable: Cls) {

@@ -3,12 +3,12 @@
 // FILE: Ann.java
 
 public @interface Ann {
-    String value()
+    String value();
 }
 
 // FILE: main.kt
 
 fun test(ann: Ann) {
     ann.value
-    ann.<!UNRESOLVED_REFERENCE!>value<!>() // should be an error
+    ann.<!FUNCTION_EXPECTED!>value<!>() // should be an error
 }

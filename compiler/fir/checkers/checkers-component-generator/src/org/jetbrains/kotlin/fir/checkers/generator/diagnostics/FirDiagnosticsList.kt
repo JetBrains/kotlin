@@ -120,6 +120,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val ILLEGAL_SELECTOR by error<PsiElement>()
         val NO_RECEIVER_ALLOWED by error<PsiElement>()
+        val FUNCTION_EXPECTED by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
+            parameter<String>("expression")
+            parameter<ConeKotlinType>("type")
+        }
     }
 
     val SUPER by object : DiagnosticGroup("Super") {

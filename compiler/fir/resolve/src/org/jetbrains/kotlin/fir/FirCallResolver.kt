@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.tower.FirTowerResolver
 import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerResolveManager
+import org.jetbrains.kotlin.fir.resolve.dfa.symbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.inference.ResolvedCallableReferenceAtom
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
@@ -84,6 +85,14 @@ class FirCallResolver(
         val name = functionCall.calleeReference.name
         val result = collectCandidates(functionCall, name)
 
+        var forceCandidates: Collection<Candidate>? = null
+        if (result.candidates.isEmpty()) {
+            val newResult = collectCandidates(functionCall, name, CallKind.VariableAccess)
+            if (newResult.candidates.isNotEmpty()) {
+                forceCandidates = newResult.candidates
+            }
+        }
+
         val nameReference = createResolvedNamedReference(
             functionCall.calleeReference,
             name,
@@ -91,6 +100,8 @@ class FirCallResolver(
             result.candidates,
             result.applicability,
             functionCall.explicitReceiver,
+            expectedCallKind = if (forceCandidates != null) CallKind.VariableAccess else null,
+            expectedCandidates = forceCandidates
         )
 
         val resultExpression = functionCall.transformCalleeReference(StoreNameReference, nameReference)
@@ -147,7 +158,7 @@ class FirCallResolver(
 
         val info = CallInfo(
             qualifiedAccess,
-            if (qualifiedAccess is FirFunctionCall || forceCallKind == CallKind.Function) CallKind.Function else CallKind.VariableAccess,
+            forceCallKind ?: if (qualifiedAccess is FirFunctionCall) CallKind.Function else CallKind.VariableAccess,
             name,
             explicitReceiver,
             argumentList,
@@ -229,7 +240,7 @@ class FirCallResolver(
             reducedCandidates,
             result.applicability,
             qualifiedAccess.explicitReceiver,
-            functionCallExpected = functionCallExpected
+            expectedCallKind = if (functionCallExpected) CallKind.Function else null
         )
 
         val referencedSymbol = when (nameReference) {
@@ -576,38 +587,66 @@ class FirCallResolver(
         applicability: CandidateApplicability,
         explicitReceiver: FirExpression? = null,
         createResolvedReferenceWithoutCandidateForLocalVariables: Boolean = true,
-        functionCallExpected: Boolean = false
+        expectedCallKind: CallKind? = null,
+        expectedCandidates: Collection<Candidate>? = null
     ): FirNamedReference {
         val source = reference.source
         return when {
-            functionCallExpected -> {
+            expectedCallKind != null -> {
                 fun isValueParametersNotEmpty(candidate: Candidate): Boolean {
                     return (candidate.symbol.fir as? FirFunction)?.valueParameters?.size?.let { it > 0 } ?: false
                 }
 
                 val candidate = candidates.singleOrNull()
+
+                val diagnostic = if (expectedCallKind == CallKind.Function) {
+                    ConeFunctionCallExpectedError(
+                        name,
+                        candidate?.let { isValueParametersNotEmpty(it) } ?: candidates.any { isValueParametersNotEmpty(it) })
+                } else {
+                    val singleExpectedCandidate = expectedCandidates?.singleOrNull()
+                    if (singleExpectedCandidate?.symbol?.fir is FirRegularClass) {
+                        ConeUnresolvedNameError(name)
+                        // TODO: ConeResolutionToClassifierError()
+                    } else {
+                        val coneType = explicitReceiver?.typeRef?.coneType
+                        if (coneType != null && !coneType.isUnit) {
+                            ConeFunctionExpectedError(
+                                name.asString(),
+                                (singleExpectedCandidate?.symbol?.fir as? FirTypedDeclaration)?.returnTypeRef?.coneType ?: coneType
+                            )
+                        } else {
+                            ConeUnresolvedNameError(name)
+                        }
+                    }
+                }
+
                 if (candidate != null) {
                     createErrorReferenceWithExistingCandidate(
                         candidate,
-                        ConeFunctionCallExpectedError(name, isValueParametersNotEmpty(candidate)),
+                        diagnostic,
                         source,
                         transformer.resolutionContext,
                         components.resolutionStageRunner
                     )
                 } else {
-                    buildErrorReference(
-                        callInfo,
-                        ConeFunctionCallExpectedError(name, candidates.any { isValueParametersNotEmpty(it) }),
-                        source
-                    )
+                    buildErrorReference(callInfo, diagnostic, source)
                 }
             }
 
-            candidates.isEmpty() -> buildErrorReference(
-                callInfo,
-                ConeUnresolvedNameError(name),
-                source
-            )
+            candidates.isEmpty() -> {
+                val diagnostic = if (name.asString() == "invoke" && explicitReceiver is FirConstExpression<*>) {
+                    ConeFunctionExpectedError(explicitReceiver.value?.toString() ?: "", explicitReceiver.typeRef.coneType)
+                } else {
+                    ConeUnresolvedNameError(name)
+                }
+
+                buildErrorReference(
+                    callInfo,
+                    diagnostic,
+                    source
+                )
+            }
 
             candidates.size > 1 -> buildErrorReference(
                 callInfo,

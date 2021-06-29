@@ -32,7 +32,7 @@ FILE: threeReceivers.kt
             }
 
         public final fun R|FooBar|.chk(buz: R|Buz|): R|kotlin/Unit| {
-            R|<local>/buz|.<Unresolved name: foobar>#()
+            R|<local>/buz|.<Expression 'foobar' of type 'Bar' cannot be invoked as a function>#()
         }
 
     }

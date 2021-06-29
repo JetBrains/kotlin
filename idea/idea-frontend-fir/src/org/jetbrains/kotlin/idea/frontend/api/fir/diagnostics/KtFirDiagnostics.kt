@@ -257,6 +257,12 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = NoReceiverAllowed::class
     }
 
+    abstract class FunctionExpected : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = FunctionExpected::class
+        abstract val expression: String
+        abstract val type: KtType
+    }
+
     abstract class SuperIsNotAnExpression : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = SuperIsNotAnExpression::class
     }

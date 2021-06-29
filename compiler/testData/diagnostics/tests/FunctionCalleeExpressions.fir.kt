@@ -50,25 +50,25 @@ fun main(args : Array<String>) {
     checkSubtype<Int>(b)
     <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>fooT2<!>()(1) // : Any?
 
-    <!UNRESOLVED_REFERENCE!>1<!>()
-    <!UNRESOLVED_REFERENCE!>1<!>{}
-    <!UNRESOLVED_REFERENCE!>1<!>(){}
+    <!FUNCTION_EXPECTED!>1<!>()
+    <!FUNCTION_EXPECTED!>1<!>{}
+    <!FUNCTION_EXPECTED!>1<!>(){}
 }
 
 fun f() :  Int.() -> Unit = {}
 
 fun main1() {
-    1.(<!UNRESOLVED_REFERENCE!>fun Int.() = 1<!>)();
+    1.(<!FUNCTION_EXPECTED!>fun Int.() = 1<!>)();
     {1}();
     (fun (x : Int) = x)(1)
-    1.(<!UNRESOLVED_REFERENCE!>fun Int.(x : Int) = x<!>)(1);
+    1.(<!FUNCTION_EXPECTED!>fun Int.(x : Int) = x<!>)(1);
     l@{1}()
-    1.((<!UNRESOLVED_REFERENCE!>fun Int.() = 1<!>))()
-    1.(<!UNRESOLVED_REFERENCE!>f()<!>)()
-    1.<!UNRESOLVED_REFERENCE!>if(true){f()}else{f()}<!>()
-    1.<!UNRESOLVED_REFERENCE!>if(true)(fun Int.() {})else{f()}<!>()
+    1.((<!FUNCTION_EXPECTED!>fun Int.() = 1<!>))()
+    1.(<!FUNCTION_EXPECTED!>f()<!>)()
+    1.<!FUNCTION_EXPECTED!>if(true){f()}else{f()}<!>()
+    1.<!FUNCTION_EXPECTED!>if(true)(fun Int.() {})else{f()}<!>()
 
-    1.<!UNRESOLVED_REFERENCE!>"sdf"<!>()
+    1.<!FUNCTION_EXPECTED!>"sdf"<!>()
 
     1.<!ILLEGAL_SELECTOR!>"sdf"<!>
     1.<!ILLEGAL_SELECTOR!>{}<!>
@@ -78,7 +78,7 @@ fun main1() {
 fun test() {
     {x : Int -> 1}(<!NO_VALUE_FOR_PARAMETER!>)<!>;
     (fun Int.() = 1)(<!NO_VALUE_FOR_PARAMETER!>)<!>
-    "sd".(<!UNRESOLVED_REFERENCE!>fun Int.() = 1<!>)()
+    "sd".(<!FUNCTION_EXPECTED!>fun Int.() = 1<!>)()
     val i : Int? = null
     i.(<!UNRESOLVED_REFERENCE!>fun Int.() = 1<!>)();
     <!INAPPLICABLE_CANDIDATE!>{}<!><Int>()

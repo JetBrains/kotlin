@@ -14,7 +14,7 @@ fun test(t: T) {
 }
 
 fun test1(t: T?) {
-    t.<!UNRESOLVED_REFERENCE!>f<!>(1) // todo resolve f as value and report UNSAFE_CALL
+    t.<!FUNCTION_EXPECTED!>f<!>(1) // todo resolve f as value and report UNSAFE_CALL
     t?.<!UNSAFE_IMPLICIT_INVOKE_CALL!>f<!>(1)
     t<!UNSAFE_CALL!>.<!>f?.invoke(1)
     t?.f?.invoke(1)

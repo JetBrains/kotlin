@@ -381,6 +381,15 @@ internal class NoReceiverAllowedImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class FunctionExpectedImpl(
+    override val expression: String,
+    override val type: KtType,
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.FunctionExpected(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class SuperIsNotAnExpressionImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
