@@ -11,7 +11,10 @@ import org.apache.maven.settings.Settings
 import org.apache.maven.settings.SettingsUtils
 import org.apache.maven.settings.TrackableBase
 import org.apache.maven.settings.building.*
+import org.apache.maven.wagon.Wagon
+import org.codehaus.plexus.DefaultContainerConfiguration
 import org.codehaus.plexus.DefaultPlexusContainer
+import org.codehaus.plexus.classworlds.ClassWorld
 import org.eclipse.aether.RepositorySystem
 import org.eclipse.aether.RepositorySystemSession
 import org.eclipse.aether.artifact.Artifact
@@ -99,7 +102,12 @@ internal class AetherResolveSession(
             WagonTransporterFactory::class.java
         )
 
-        val container = DefaultPlexusContainer()
+        val container = DefaultPlexusContainer(DefaultContainerConfiguration().apply {
+            val realmId = "wagon"
+            classWorld = ClassWorld(realmId, Wagon::class.java.classLoader)
+            realm = classWorld.getRealm(realmId)
+        })
+
         locator.setServices(
             WagonProvider::class.java,
             PlexusWagonProvider(container)
