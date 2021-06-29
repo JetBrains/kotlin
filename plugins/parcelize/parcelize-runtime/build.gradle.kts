@@ -5,7 +5,7 @@ plugins {
     id("jps-compatible")
 }
 
-jvmTarget = "1.6"
+project.updateJvmTarget("1.6")
 
 dependencies {
     compile(kotlinStdlib())

@@ -2,12 +2,13 @@ description = 'Kotlin Standard Library JDK 7 extension'
 
 apply plugin: 'kotlin'
 
-configureJvm6Project(project)
+JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_1_7)
+JvmToolchain.updateJvmTarget(project, "1.6")
+LibrariesCommon.disableDeprecatedJvmTargetWarning(project)
+
 configurePublishing(project)
 configureSourcesJar()
 configureJavadocJar()
-
-ext.javaHome = JDK_17
 
 sourceSets {
     main {
@@ -66,10 +67,6 @@ artifacts {
     archives modularJar
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
-    kotlinOptions.jdkHome = JDK_17
-}
-
 compileKotlin {
     kotlinOptions.freeCompilerArgs = [
             "-Xallow-kotlin-package",
@@ -97,17 +94,11 @@ compileTestKotlin {
 
 configureJvmIrBackend(project)
 
-compileJava9Sources(project, 'kotlin.stdlib.jdk7')
-
-test {
-    executable = "$JDK_17/bin/java"
-}
+LibrariesCommon.configureJava9Compilation(project, 'kotlin.stdlib.jdk7')
 
 task testJdk6Tests(type: Test) {
     dependsOn(':kotlin-stdlib:testClasses')
     group = "verification"
-
-    executable = "$JDK_17/bin/java"
 
     doFirst {
         testClassesDirs = project(':kotlin-stdlib').sourceSets.test.output
@@ -121,12 +112,9 @@ task testJdk6Tests(type: Test) {
 task testNoJdk7(type: Test, dependsOn: noJdk7TestClasses) {
     group = "verification"
 
-    executable = "$JDK_17/bin/java"
-
     testClassesDirs = sourceSets.noJdk7Test.output.classesDirs
     classpath = sourceSets.noJdk7Test.runtimeClasspath
 }
-
 
 check.dependsOn testJdk6Tests, testNoJdk7
 

@@ -3,12 +3,6 @@ apply plugin: 'jps-compatible'
 
 configurePublishing(project)
 
-compileJava {
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
-    options.fork = false
-}
-
 pill {
     variant = 'FULL'
 }
@@ -45,5 +39,3 @@ ArtifactsKt.noDefaultJar(project)
 ArtifactsKt.runtimeJar(project, EmbeddableKt.rewriteDefaultJarDepsToShadedCompiler(project, {}), {})
 configureSourcesJar()
 configureJavadocJar()
-
-test.executable = "${JDK_18}/bin/java"

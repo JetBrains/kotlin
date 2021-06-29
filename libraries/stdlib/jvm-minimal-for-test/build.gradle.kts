@@ -7,8 +7,7 @@ plugins {
     `maven-publish`
 }
 
-jvmTarget = "1.6"
-javaHome = rootProject.extra["JDK_16"] as String
+project.configureJvmToolchain(JdkMajorVersion.JDK_1_6)
 
 val builtins by configurations.creating {
     isCanBeResolved = true
@@ -52,11 +51,6 @@ val copySources by task<Sync> {
                  "kotlin/contracts/Effect.kt",
                  "kotlin/annotations/Experimental.kt")
     into(File(buildDir, "src"))
-}
-
-tasks.withType<JavaCompile> {
-    sourceCompatibility = "1.6"
-    targetCompatibility = "1.6"
 }
 
 tasks.withType<KotlinCompile> {

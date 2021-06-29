@@ -37,9 +37,11 @@ object SeparateJavaProcessHelper {
 
     private fun initJdkProcess() {
         println("Configuring JDK6 Test server...")
-        val jdkPath = System.getenv("JDK_16") ?: error("JDK_16 is not optional to run this test")
+        val jdkPath = System.getProperty("JDK_16") ?: error("JDK_16 is not optional to run this test")
 
         val executable = File(jdkPath, "bin/java").canonicalPath
+        assert(File(executable).exists()) { "Not a JDK path: $jdkPath"}
+
         val main = "org.jetbrains.kotlin.test.clientserver.TestProcessServer"
         val classpath =
             System.getProperty("kotlin.test.box.in.separate.process.server.classpath") ?: System.getProperty("java.class.path")

@@ -3,7 +3,7 @@ plugins {
     kotlin("jvm")
 }
 
-jvmTarget = "1.8"
+project.updateJvmTarget("1.8")
 
 val allTestsRuntime by configurations.creating
 val testCompile by configurations

@@ -4,7 +4,7 @@ apply plugin: 'kotlin-platform-common'
 
 configurePublishing(project)
 
-jvmTarget = "1.6"
+JvmToolchain.updateJvmTarget(project, "1.6")
 
 def commonSrcDir = "../src"
 def commonTestSrcDir = "../test"

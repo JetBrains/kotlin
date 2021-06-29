@@ -2,13 +2,9 @@ description = 'Kotlin Standard Library JDK 8 extension'
 
 apply plugin: 'kotlin'
 
-configureJvm6Project(project)
 configurePublishing(project)
 configureSourcesJar()
 configureJavadocJar()
-
-ext.javaHome = JDK_18
-ext.jvmTarget = "1.8"
 
 dependencies {
     compile project(':kotlin-stdlib')
@@ -59,11 +55,6 @@ artifacts {
     archives modularJar
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
-    kotlinOptions.jdkHome = JDK_18
-    kotlinOptions.jvmTarget = 1.8
-}
-
 compileKotlin {
     kotlinOptions.freeCompilerArgs = [
             "-Xallow-kotlin-package",
@@ -87,18 +78,12 @@ compileTestKotlin {
 
 configureJvmIrBackend(project)
 
-compileJava9Sources(project, 'kotlin.stdlib.jdk8')
-
-test {
-    executable = "$JDK_18/bin/java"
-}
+LibrariesCommon.configureJava9Compilation(project, 'kotlin.stdlib.jdk8')
 
 task testJdk6Tests(type: Test) { thisTask ->
     dependsOn(':kotlin-stdlib:testClasses')
     check.dependsOn(thisTask)
     group = "verification"
-
-    executable = "$JDK_18/bin/java"
 
     doFirst {
         testClassesDirs = project(':kotlin-stdlib').sourceSets.test.output
@@ -109,13 +94,12 @@ task testJdk6Tests(type: Test) { thisTask ->
     }
 }
 
-
-[9, 10, 11].forEach { v ->
-    task(type: Test, "jdk${v}Test") { thisTask ->
+[JdkMajorVersion.JDK_9, JdkMajorVersion.JDK_10, JdkMajorVersion.JDK_11].forEach { jvmVersion ->
+    tasks.register("jdk${jvmVersion.majorVersion}Test", Test) { thisTask ->
         check.dependsOn(thisTask)
         group = "verification"
-        executable = "${project.property("JDK_$v")}/bin/java"
-        if (v > 9)
-            enabled(file(executable).parentFile.isDirectory())
+        thisTask.javaLauncher.set(
+                JvmToolchain.getToolchainLauncherFor(project, jvmVersion)
+        )
     }
 }

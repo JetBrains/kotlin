@@ -9,7 +9,7 @@ dependencies {
     compile(kotlinStdlib())
 }
 
-jvmTarget = "1.6"
+project.updateJvmTarget("1.6")
 
 sourceSets {
     "main" { projectDefault() }

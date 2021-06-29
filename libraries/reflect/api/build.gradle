@@ -2,7 +2,8 @@ description = ''
 
 apply plugin: 'kotlin'
 
-configureJvm6Project(project)
+JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_1_6)
+LibrariesCommon.disableDeprecatedJvmTargetWarning(project)
 
 def includeJava9 = BuildPropertiesExtKt.getIncludeJava9(project.kotlinBuildProperties)
 
@@ -32,8 +33,9 @@ dependencies {
 }
 
 if (includeJava9) {
-    compileJava9Sources(
-            project, 'kotlin.reflect',
+    LibrariesCommon.configureJava9Compilation(
+            project,
+            'kotlin.reflect',
             [sourceSets.main.output, configurations.compileOnly.filter {
                 !it.name.contains("kotlin-stdlib")
             }]

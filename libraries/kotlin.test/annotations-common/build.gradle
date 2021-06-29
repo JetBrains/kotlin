@@ -2,7 +2,7 @@ description = 'Kotlin Test Annotations Common'
 
 apply plugin: 'kotlin-platform-common'
 
-jvmTarget = "1.6"
+JvmToolchain.updateJvmTarget(project, "1.6")
 
 dependencies {
     compile kotlinStdlib("common")

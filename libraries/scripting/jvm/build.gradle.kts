@@ -3,9 +3,7 @@ plugins {
     id("jps-compatible")
 }
 
-val JDK_16: String by project
-jvmTarget = "1.6"
-javaHome = JDK_16
+project.configureJvmToolchain(JdkMajorVersion.JDK_1_6)
 
 dependencies {
     compile(project(":kotlin-script-runtime"))
@@ -24,10 +22,6 @@ tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
         "-Xallow-kotlin-package",
         "-Xsuppress-deprecated-jvm-target-warning"
     )
-}
-
-tasks.withType<Test> {
-    executable = "$JDK_16/bin/java"
 }
 
 publish()

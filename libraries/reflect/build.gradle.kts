@@ -20,9 +20,11 @@ plugins {
     java
 }
 
-val JDK_16: String by rootProject.extra
-
-callGroovy("configureJavaOnlyJvm6Project", project)
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(6))
+    }
+}
 
 publish()
 
@@ -150,9 +152,19 @@ val proguard by task<CacheableProguardTask> {
     injars(mapOf("filter" to "!META-INF/**,!**/*.kotlin_builtins"), proguardAdditionalInJars)
     outjars(proguardOutput)
 
-    jdkHome = File(JDK_16)
+    javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_6))
     libraryjars(mapOf("filter" to "!META-INF/versions/**"), proguardDeps)
-    libraryjars(firstFromJavaHomeThatExists("jre/lib/rt.jar", "../Classes/classes.jar", jdkHome = jdkHome!!))
+    libraryjars(
+        project.files(
+            javaLauncher.map {
+                firstFromJavaHomeThatExists(
+                    "jre/lib/rt.jar",
+                    "../Classes/classes.jar",
+                    jdkHome = it.metadata.installationPath.asFile
+                )
+            }
+        )
+    )
 
     configuration("$core/reflection.jvm/reflection.pro")
 }

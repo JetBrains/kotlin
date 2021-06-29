@@ -6,12 +6,6 @@ dependencies {
     embedded(project(":kotlinx-serialization-compiler-plugin")) { transitive = false }
 }
 
-compileJava {
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
-    options.fork = false
-}
-
 TaskProvider<Jar> jar = tasks.named("jar")
 jar.configure {
     manifestAttributes(manifest, project)

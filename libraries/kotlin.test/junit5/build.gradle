@@ -2,10 +2,6 @@ description = 'Kotlin Test JUnit 5'
 
 apply plugin: 'kotlin-platform-jvm'
 
-configureJvm6Project(project)
-ext.javaHome = JDK_18
-ext.jvmTarget = "1.8"
-
 def includeJava9 = BuildPropertiesExtKt.getIncludeJava9(project.kotlinBuildProperties)
 
 sourceSets {
@@ -34,11 +30,6 @@ jar {
 configureSourcesJar()
 configureJavadocJar()
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
-    kotlinOptions.jdkHome = JDK_18
-    kotlinOptions.jvmTarget = 1.8
-}
-
 compileKotlin {
     kotlinOptions.freeCompilerArgs = [
         "-Xallow-kotlin-package",
@@ -57,10 +48,9 @@ compileTestKotlin {
 configureJvmIrBackend(project)
 
 if (includeJava9) {
-    compileJava9Sources(project, 'kotlin.test.junit5')
+    LibrariesCommon.configureJava9Compilation(project, 'kotlin.test.junit5')
 }
 
 test {
     useJUnitPlatform()
-    executable = "$JDK_18/bin/java"
 }

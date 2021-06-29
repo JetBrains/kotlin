@@ -2,7 +2,9 @@ description 'Kotlin Script Runtime'
 
 apply plugin: 'kotlin'
 
-configureJvm6Project(project)
+JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_1_6)
+LibrariesCommon.disableDeprecatedJvmTargetWarning(project)
+
 configurePublishing(project)
 
 dependencies {

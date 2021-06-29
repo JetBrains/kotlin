@@ -1,5 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import proguard.gradle.ProGuardTask
+import org.gradle.internal.jvm.Jvm
 
 description = "Kotlin \"main\" script definition"
 
@@ -8,7 +8,6 @@ plugins {
     id("jps-compatible")
 }
 
-val JDK_18: String by rootProject.extra
 val jarBaseName = property("archivesBaseName") as String
 
 val localPackagesToRelocate =
@@ -88,13 +87,28 @@ val proguard by task<CacheableProguardTask> {
 
     outjars(fileFrom(buildDir, "libs", "$jarBaseName-$version-after-proguard.jar"))
 
-    jdkHome = File(JDK_18)
+    javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_8))
+
     libraryjars(mapOf("filter" to "!META-INF/versions/**"), proguardLibraryJars)
     libraryjars(
         files(
-            firstFromJavaHomeThatExists("jre/lib/rt.jar", "../Classes/classes.jar", jdkHome = jdkHome!!),
-            firstFromJavaHomeThatExists("jre/lib/jsse.jar", "../Classes/jsse.jar", jdkHome = jdkHome!!),
-            toolsJarFile(jdkHome = jdkHome!!)
+            javaLauncher.map {
+                firstFromJavaHomeThatExists(
+                    "jre/lib/rt.jar",
+                    "../Classes/classes.jar",
+                    jdkHome = it.metadata.installationPath.asFile
+                )
+            },
+            javaLauncher.map {
+                firstFromJavaHomeThatExists(
+                    "jre/lib/jsse.jar",
+                    "../Classes/jsse.jar",
+                    jdkHome = it.metadata.installationPath.asFile
+                )
+            },
+            javaLauncher.map {
+                Jvm.forHome(it.metadata.installationPath.asFile).toolsJar
+            }
         )
     )
 }

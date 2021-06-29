@@ -595,8 +595,8 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
     ) = assertOutputContains("[KOTLIN] Kotlin compilation 'jdkHome' argument: $javaexecPath")
 
     private fun getUserJdk(): JavaInfo = Jvm.forHome(File(System.getenv("JAVA_HOME")))
-    private fun getJdk9(): JavaInfo = Jvm.forHome(File(System.getenv("JDK_9")))
-    private fun getJdk11(): JavaInfo = Jvm.forHome(File(System.getenv("JDK_11")))
+    private fun getJdk9(): JavaInfo = Jvm.forHome(File(System.getProperty("jdk9Home")))
+    private fun getJdk11(): JavaInfo = Jvm.forHome(File(System.getProperty("jdk11Home")))
     // replace required for windows paths so Groovy will not complain about unexpected char '\'
     private fun getJdk9Path(): String = getJdk9().javaHome.absolutePath.replace("\\", "\\\\")
     private fun getJdk11Path(): String = getJdk11().javaHome.absolutePath.replace("\\", "\\\\")

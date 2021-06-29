@@ -13,6 +13,8 @@ import org.gradle.api.artifacts.*
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
+import org.gradle.internal.jvm.Jvm
+import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.kotlin.dsl.accessors.runtime.addDependencyTo
 import org.gradle.kotlin.dsl.closureOf
 import org.gradle.kotlin.dsl.exclude
@@ -287,14 +289,16 @@ fun Project.firstFromJavaHomeThatExists(vararg paths: String, jdkHome: File = Fi
 
 fun Project.toolsJarApi(): Any =
     if (kotlinBuildProperties.isInJpsBuildIdeaSync)
-        files(toolsJarFile() ?: error("tools.jar is not found!"))
+        toolsJar()
     else
         dependencies.project(":dependencies:tools-jar-api")
 
-fun Project.toolsJar(): FileCollection = files(toolsJarFile() ?: error("tools.jar is not found!"))
-
-fun Project.toolsJarFile(jdkHome: File = File(this.property("JDK_18") as String)): File? =
-    firstFromJavaHomeThatExists("lib/tools.jar", jdkHome = jdkHome)
+fun Project.toolsJar(): FileCollection = files(
+    getToolchainLauncherFor(JdkMajorVersion.JDK_1_8)
+        .map {
+            Jvm.forHome(it.metadata.installationPath.asFile).toolsJar ?: throw GradleException("tools.jar not found!")
+        }
+)
 
 val compilerManifestClassPath
     get() = "annotations-13.0.jar kotlin-stdlib.jar kotlin-reflect.jar kotlin-script-runtime.jar trove4j.jar"

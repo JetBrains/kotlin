@@ -2,6 +2,8 @@
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.Project
+import org.gradle.api.artifacts.DependencySubstitution
+import org.gradle.api.artifacts.component.ProjectComponentSelector
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
@@ -77,6 +79,24 @@ private fun Project.compilerShadowJar(taskName: String, body: ShadowJar.() -> Un
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         from(compilerJar)
         body()
+    }
+}
+
+fun Project.configureShadowJarSubstitutionInCompileClasspath() {
+    val substitutionMap = mapOf(":kotlin-reflect" to ":kotlin-reflect-api")
+
+    fun configureSubstitution(substitution: DependencySubstitution) {
+        val requestedProject = (substitution.requested as? ProjectComponentSelector)?.projectPath ?: return
+        val replacementProject = substitutionMap[requestedProject] ?: return
+        substitution.useTarget(project(replacementProject), "Non-default shadow jars should not be used in compile classpath")
+    }
+
+    sourceSets.all {
+        for (configName in listOf(compileOnlyConfigurationName, compileClasspathConfigurationName)) {
+            configurations.getByName(configName).resolutionStrategy.dependencySubstitution {
+                all(::configureSubstitution)
+            }
+        }
     }
 }
 

@@ -1,5 +1,4 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.pill.PillExtension
 
 plugins {
@@ -198,11 +197,6 @@ tasks.named<Task>("check") {
     }
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jdkHome = rootProject.extra["JDK_18"] as String
-    kotlinOptions.jvmTarget = "1.8"
-}
-
 tasks.withType<Test> {
     val noTestProperty = project.providers.gradleProperty("noTest")
     onlyIf { !noTestProperty.isPresent }
@@ -210,17 +204,22 @@ tasks.withType<Test> {
     dependsOn(":kotlin-gradle-plugin:validatePlugins")
     dependsOnKotlinGradlePluginInstall()
 
-    executable = "${rootProject.extra["JDK_18"]!!}/bin/java"
-
     systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
     systemProperty("runnerGradleVersion", gradle.gradleVersion)
-    systemProperty("jdk9Home", rootProject.extra["JDK_9"] as String)
-    systemProperty("jdk10Home", rootProject.extra["JDK_10"] as String)
-    systemProperty("jdk11Home", rootProject.extra["JDK_11"] as String)
 
+    val jdk9Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_9).map { it.metadata.installationPath.asFile.absolutePath }
+    val jdk10Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_10).map { it.metadata.installationPath.asFile.absolutePath }
+    val jdk11Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_11).map { it.metadata.installationPath.asFile.absolutePath }
     val mavenLocalRepo = project.providers.systemProperty("maven.repo.local").forUseAtConfigurationTime().orNull
-    if (mavenLocalRepo != null) {
-        systemProperty("maven.repo.local", mavenLocalRepo)
+
+    // Query required JDKs paths only on execution phase to avoid triggering auto-download on project configuration phase
+    doFirst {
+        systemProperty("jdk9Home", jdk9Provider.get())
+        systemProperty("jdk10Home", jdk10Provider.get())
+        systemProperty("jdk11Home", jdk11Provider.get())
+        if (mavenLocalRepo != null) {
+            systemProperty("maven.repo.local", mavenLocalRepo)
+        }
     }
 
     useAndroidSdk()

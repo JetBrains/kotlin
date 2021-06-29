@@ -3,12 +3,6 @@ apply plugin: 'jps-compatible'
 
 configureGradlePluginPublishing(project)
 
-compileJava {
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
-    options.fork = false
-}
-
 pill {
     variant = 'FULL'
 }
@@ -60,5 +54,3 @@ pluginBundle {
 }
 
 configurePluginMarkers(project)
-
-test.executable = "${JDK_18}/bin/java"

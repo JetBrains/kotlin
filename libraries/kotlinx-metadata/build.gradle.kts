@@ -11,8 +11,7 @@ pill {
     variant = PillExtension.Variant.FULL
 }
 
-jvmTarget = "1.6"
-javaHome = rootProject.extra["JDK_16"] as String
+project.configureJvmToolchain(JdkMajorVersion.JDK_1_6)
 
 sourceSets {
     "main" { projectDefault() }

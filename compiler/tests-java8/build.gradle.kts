@@ -23,7 +23,6 @@ sourceSets {
 }
 
 projectTest(parallel = true) {
-    executable = "${rootProject.extra["JDK_18"]!!}/bin/java"
     dependsOn(":dist")
     workingDir = rootDir
     systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))

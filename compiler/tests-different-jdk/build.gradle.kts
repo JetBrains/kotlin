@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -28,40 +26,45 @@ sourceSets {
 }
 
 fun Project.codegenTest(
-    target: Int, jvm: Int,
-    jdk: String = "JDK_${if (jvm <= 8) "1" else ""}$jvm",
-    body: Test.() -> Unit
-) {
-    codegenTest(target, jvm.toString(), jdk, body = body)
-}
-
-fun Project.codegenTest(
-    target: Int, jvm: String, jdk: String,
+    target: Int,
+    jdk: JdkMajorVersion,
+    jvm: String = jdk.majorVersion.toString(),
     targetInTestClass: String = "$target",
-    body: Test.() -> Unit
-): TaskProvider<Test> = projectTest("codegenTarget${targetInTestClass}Jvm${jvm}Test", jUnit5Enabled = true) {
+    body: Test.() -> Unit = {}
+): TaskProvider<Test> = projectTest(
+    taskName = "codegenTarget${targetInTestClass}Jvm${jvm}Test",
+    jUnit5Enabled = true
+) {
     dependsOn(":dist")
     workingDir = rootDir
 
     val testName = "JvmTarget${targetInTestClass}OnJvm${jvm}"
     filter.includeTestsMatching("org.jetbrains.kotlin.codegen.jdk.$testName")
 
+    javaLauncher.set(project.getToolchainLauncherFor(jdk))
+
     systemProperty("kotlin.test.default.jvm.target", "${if (target <= 8) "1." else ""}$target")
     body()
     doFirst {
-        val jdkPath = project.findProperty(jdk) ?: error("$jdk is not optional to run this test")
-        executable = "$jdkPath/bin/java"
-        println("Running tests with $target target and $executable")
+        logger.warn("Running tests with $target target and ${javaLauncher.get().metadata.installationPath.asFile}")
     }
     group = "verification"
 }
 
-codegenTest(target = 6, jvm = 6, jdk = "JDK_18") {
+codegenTest(
+    target = 6,
+    jdk = JdkMajorVersion.JDK_1_8,
+    jvm = JdkMajorVersion.JDK_1_6.majorVersion.toString()
+) {
     dependsOn(testJvm6ServerRuntime)
 
     doFirst {
         systemProperty("kotlin.test.default.jvm.target", "1.6")
         systemProperty("kotlin.test.java.compilation.target", "1.6")
+        systemProperty(
+            "JDK_16",
+            project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_6).get().metadata.installationPath.asFile.absolutePath
+        )
 
         val port = project.findProperty("kotlin.compiler.codegen.tests.port") ?: "5100"
         systemProperty("kotlin.test.box.in.separate.process.port", port)
@@ -70,37 +73,36 @@ codegenTest(target = 6, jvm = 6, jdk = "JDK_18") {
 }
 
 //JDK 8
-codegenTest(target = 6, jvm = 8) {}
+codegenTest(target = 6, jdk = JdkMajorVersion.JDK_1_8)
 
 // This is default one and is executed in default build configuration
-codegenTest(target = 8, jvm = 8) {}
+codegenTest(target = 8, jdk = JdkMajorVersion.JDK_1_8)
 
 //JDK 11
-codegenTest(target = 6, jvm = 11) {}
+codegenTest(target = 6, jdk = JdkMajorVersion.JDK_11)
 
-codegenTest(target = 8, jvm = 11) {}
+codegenTest(target = 8, jdk = JdkMajorVersion.JDK_11)
 
-codegenTest(target = 11, jvm = 11) {}
+codegenTest(target = 11, jdk = JdkMajorVersion.JDK_11)
 
 //JDK 15
-codegenTest(target = 6, jvm = 15) {}
+codegenTest(target = 6, jdk = JdkMajorVersion.JDK_15)
 
-codegenTest(target = 8, jvm = 15) {}
+codegenTest(target = 8, jdk = JdkMajorVersion.JDK_15)
 
-codegenTest(target = 15, jvm = 15) {
+codegenTest(target = 15, jdk = JdkMajorVersion.JDK_15) {
     systemProperty("kotlin.test.box.d8.disable", true)
 }
 
 //..also add this two tasks to build after adding fresh jdks to build agents
-val mostRecentJdk = JdkMajorVersion.values().last().name
+val mostRecentJdk = JdkMajorVersion.values().last()
 
 //LAST JDK from JdkMajorVersion available on machine
-codegenTest(target = 6, jvm = "Last", jdk = mostRecentJdk) {}
-
-codegenTest(target = 8, jvm = "Last", jdk = mostRecentJdk) {}
+codegenTest(target = 6, jvm = "Last", jdk = mostRecentJdk)
+codegenTest(target = 8, jvm = "Last", jdk = mostRecentJdk)
 
 codegenTest(
-    mostRecentJdk.substringAfter('_').toInt(),
+    target = mostRecentJdk.majorVersion,
     targetInTestClass = "Last",
     jvm = "Last",
     jdk = mostRecentJdk

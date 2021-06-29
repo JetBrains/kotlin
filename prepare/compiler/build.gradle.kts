@@ -1,5 +1,6 @@
 @file:Suppress("HasPlatformType")
 
+import org.gradle.internal.jvm.Jvm
 import java.util.regex.Pattern.quote
 
 description = "Kotlin Compiler"
@@ -265,7 +266,7 @@ val packCompiler by task<Jar> {
 val proguard by task<CacheableProguardTask> {
     dependsOn(packCompiler)
 
-    jdkHome = File(JDK_18)
+    javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_8))
 
     configuration("$projectDir/compiler.pro")
 
@@ -291,9 +292,23 @@ val proguard by task<CacheableProguardTask> {
     libraryjars(mapOf("filter" to "!META-INF/versions/**"), proguardLibraries)
     libraryjars(
         files(
-            firstFromJavaHomeThatExists("jre/lib/rt.jar", "../Classes/classes.jar", jdkHome = jdkHome!!),
-            firstFromJavaHomeThatExists("jre/lib/jsse.jar", "../Classes/jsse.jar", jdkHome = jdkHome!!),
-            toolsJarFile(jdkHome = jdkHome!!)
+            javaLauncher.map {
+                firstFromJavaHomeThatExists(
+                    "jre/lib/rt.jar",
+                    "../Classes/classes.jar",
+                    jdkHome = it.metadata.installationPath.asFile
+                )
+            },
+            javaLauncher.map {
+                firstFromJavaHomeThatExists(
+                    "jre/lib/jsse.jar",
+                    "../Classes/jsse.jar",
+                    jdkHome = it.metadata.installationPath.asFile
+                )
+            },
+            javaLauncher.map {
+                Jvm.forHome(it.metadata.installationPath.asFile).toolsJar
+            }
         )
     )
 

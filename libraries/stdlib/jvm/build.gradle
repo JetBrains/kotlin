@@ -4,7 +4,9 @@ apply plugin: 'kotlin-platform-jvm'
 
 archivesBaseName = 'kotlin-stdlib'
 
-configureJvm6Project(project)
+JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_1_6)
+LibrariesCommon.disableDeprecatedJvmTargetWarning(project)
+
 configurePublishing(project)
 configureJavadocJar()
 configureSourcesJar()
@@ -37,6 +39,8 @@ sourceSets {
         }
     }
 }
+
+LibrariesCommon.configureJava9Compilation(project, 'kotlin.stdlib', [sourceSets.main.output])
 
 configurations {
     commonSources
@@ -126,9 +130,6 @@ compileKotlin {
         moduleName = "kotlin-stdlib"
     }
 }
-
-
-compileJava9Sources(project, 'kotlin.stdlib', [sourceSets.main.output])
 
 compileTestKotlin {
     kotlinOptions {
