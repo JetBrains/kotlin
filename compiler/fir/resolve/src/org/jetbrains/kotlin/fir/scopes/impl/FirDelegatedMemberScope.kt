@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
-class FirNewDelegatedMemberScope(
+class FirDelegatedMemberScope(
     private val session: FirSession,
     private val scopeSession: ScopeSession,
     private val containingClass: FirClass<*>,
