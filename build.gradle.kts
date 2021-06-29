@@ -511,7 +511,7 @@ allprojects {
                 useIR = true
             }
 
-            if (useJvmFir && this@allprojects.name !in projectsWithDisabledFirBootstrap) {
+            if (useJvmFir && this@allprojects.path !in projectsWithDisabledFirBootstrap) {
                 freeCompilerArgs += "-Xuse-fir"
                 freeCompilerArgs += "-Xabi-stability=stable"
             }
