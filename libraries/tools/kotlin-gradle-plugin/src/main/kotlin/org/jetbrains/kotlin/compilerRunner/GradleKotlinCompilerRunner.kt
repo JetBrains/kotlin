@@ -307,6 +307,7 @@ internal open class GradleCompilerRunner(
 
             var mergedIncrementalModuleInfo = incrementalModuleInfo
 
+            // compat with gradle composing build. See https://youtrack.jetbrains.com/issue/KT-47511 for more details.
             if (gradle.rootProject.gradle.includedBuilds.isNotEmpty()) {
                 val includedBuilds = gradle.rootProject.gradle.includedBuilds
                     .filter { it is IncludedBuildState }
