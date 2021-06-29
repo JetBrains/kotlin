@@ -543,13 +543,17 @@ class DurationTest {
                 assertEquals("-$actual", (-duration).toString())
         }
 
-        test(Duration.days(101), "2424h")
-        test(Duration.days(45.3), "1087h 12m") // 1080h + 7.2h
-        test(Duration.days(45), "1080h")
+        test(Duration.days(101), "101d")
+        test(Duration.days(45.3), "45d 7h 12m") // 0.3d == 7.2h
+        test(Duration.days(45), "45d")
 
-        test(Duration.days(40.5), "972h")
-        test(Duration.hours(40) + Duration.minutes(15), "40h 15m")
-        test(Duration.hours(40), "40h")
+        test(Duration.days(40.5), "40d 12h")
+        test(Duration.days(40) + Duration.minutes(20), "40d 0h 20m")
+        test(Duration.days(40) + Duration.seconds(20), "40d 0h 0m 20s")
+        test(Duration.days(40) + Duration.nanoseconds(100), "40d 0h 0m 0.000000100s")
+
+        test(Duration.hours(40) + Duration.minutes(15), "1d 16h 15m")
+        test(Duration.hours(40), "1d 16h")
 
         test(Duration.hours(12.5), "12h 30m")
         test(Duration.hours(12) + Duration.seconds(15), "12h 0m 15s")
@@ -589,9 +593,10 @@ class DurationTest {
 //        test(Duration.nanoseconds(0.0000035), "0.0000035ns")
 
         test(Duration.ZERO, "0s")
-        test(Duration.days(365) * 10000, "87600000h")
-        test(Duration.days(300) * 100000, "720000000h")
-        test(Duration.days(365) * 100000, "876000000h")
+        test(Duration.days(365) * 10000, "3650000d")
+        test(Duration.days(300) * 100000, "30000000d")
+        test(Duration.days(365) * 100000, "36500000d")
+        test(Duration.milliseconds(MAX_MILLIS - 1), "53375995583d 15h 36m 27.902s") // max finite value
 
         // all infinite
 //        val universeAge = Duration.days(365.25) * 13.799e9

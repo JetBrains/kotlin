@@ -25,8 +25,8 @@ class Durations {
 
     @Sample
     fun toStringDefault() {
-        assertPrints(Duration.days(45), "1080h")
-        assertPrints(Duration.days(1.5), "36h")
+        assertPrints(Duration.days(45), "45d")
+        assertPrints(Duration.days(1.5), "1d 12h")
         assertPrints(Duration.minutes(1230), "20h 30m")
         assertPrints(Duration.minutes(920), "15h 20m")
         assertPrints(Duration.seconds(1.546), "1.546s")
