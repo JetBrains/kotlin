@@ -15,9 +15,15 @@ import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolved
 import org.jetbrains.kotlin.fir.scopes.*
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.isMarkedNullable
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 
 class FirNewDelegatedMemberScope(
     private val session: FirSession,
@@ -168,3 +174,40 @@ class FirNewDelegatedMemberScope(
 private object MultipleDelegatesWithTheSameSignatureKey : FirDeclarationDataKey()
 
 var FirCallableDeclaration<*>.multipleDelegatesWithTheSameSignature: Boolean? by FirDeclarationDataRegistry.data(MultipleDelegatesWithTheSameSignatureKey)
+
+private object DelegatedWrapperDataKey : FirDeclarationDataKey()
+class DelegatedWrapperData<D : FirCallableDeclaration<*>>(
+    val wrapped: D,
+    val containingClass: ConeClassLikeLookupTag,
+    val delegateField: FirField,
+)
+var <D : FirCallableDeclaration<*>>
+        D.delegatedWrapperData: DelegatedWrapperData<D>? by FirDeclarationDataRegistry.data(DelegatedWrapperDataKey)
+
+
+// From the definition of function interfaces in the Java specification (pt. 9.8):
+// "methods that are members of I that do not have the same signature as any public instance method of the class Object"
+// It means that if an interface declares `int hashCode()` then the method won't be taken into account when
+// checking if the interface is SAM.
+fun FirSimpleFunction.isPublicInAny(): Boolean {
+    if (name.asString() !in PUBLIC_METHOD_NAMES_IN_ANY) return false
+
+    return when (name.asString()) {
+        "hashCode", "toString" -> valueParameters.isEmpty()
+        "equals" -> valueParameters.singleOrNull()?.hasTypeOf(StandardClassIds.Any, allowNullable = true) == true
+        else -> error("Unexpected method name: $name")
+    }
+}
+
+fun FirValueParameter.hasTypeOf(classId: ClassId, allowNullable: Boolean): Boolean {
+    val classLike = when (val type = returnTypeRef.coneType) {
+        is ConeClassLikeType -> type
+        is ConeFlexibleType -> type.upperBound as? ConeClassLikeType ?: return false
+        else -> return false
+    }
+
+    if (classLike.isMarkedNullable && !allowNullable) return false
+    return classLike.lookupTag.classId == classId
+}
+
+private val PUBLIC_METHOD_NAMES_IN_ANY = setOf("equals", "hashCode", "toString")
