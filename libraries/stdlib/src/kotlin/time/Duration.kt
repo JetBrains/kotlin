@@ -692,19 +692,16 @@ public value class Duration internal constructor(private val rawValue: Long) : C
                         }
                         if (hasSeconds) {
                             if (length > 1) append(' ')
-                            append(seconds)
-                            if (nanoseconds != 0) {
-                                append('.')
-                                when {
-                                    (nanoseconds % 1_000_000 == 0) ->
-                                        append((nanoseconds / 1_000_000).toString().padStart(3, '0'))
-                                    (nanoseconds % 1_000 == 0) ->
-                                        append((nanoseconds / 1_000).toString().padStart(6, '0'))
-                                    else ->
-                                        append(nanoseconds.toString().padStart(9, '0'))
-                                }
+                            when {
+                                seconds != 0 || hasDays || hasHours || hasMinutes ->
+                                    appendFractional(seconds, nanoseconds, "s")
+                                nanoseconds >= 1_000_000 ->
+                                    appendFractional(nanoseconds / 1_000_000, nanoseconds % 1_000_000 * 1_000, "ms")
+                                nanoseconds >= 1_000 ->
+                                    appendFractional(nanoseconds / 1_000, nanoseconds % 1_000 * 1_000_000, "us")
+                                else ->
+                                    append(nanoseconds).append("ns")
                             }
-                            append('s')
                         }
                     }
                 }
@@ -712,11 +709,18 @@ public value class Duration internal constructor(private val rawValue: Long) : C
         }
     }
 
-    private fun precision(value: Double): Int = when {
-        value < 1 -> 3
-        value < 10 -> 2
-        value < 100 -> 1
-        else -> 0
+    private fun StringBuilder.appendFractional(whole: Int, nanoFractional: Int, unit: String) {
+        append(whole)
+        if (nanoFractional != 0) {
+            append('.')
+            val nanoString = nanoFractional.toString().padStart(9, '0')
+            when {
+                nanoFractional % 1_000_000 == 0 -> appendRange(nanoString, 0, 3)
+                nanoFractional % 1_000 == 0 -> appendRange(nanoString, 0, 6)
+                else -> append(nanoString)
+            }
+        }
+        append(unit)
     }
 
     /**
@@ -771,17 +775,7 @@ public value class Duration internal constructor(private val rawValue: Long) : C
                 append(minutes).append('M')
             }
             if (hasSeconds || (!hasHours && !hasMinutes)) {
-                append(seconds)
-                if (nanoseconds != 0) {
-                    append('.')
-                    val nss = nanoseconds.toString().padStart(9, '0')
-                    when {
-                        nanoseconds % 1_000_000 == 0 -> appendRange(nss, 0, 3)
-                        nanoseconds % 1_000 == 0 -> appendRange(nss, 0, 6)
-                        else -> append(nss)
-                    }
-                }
-                append('S')
+                appendFractional(seconds, nanoseconds, "S")
             }
         }
     }
