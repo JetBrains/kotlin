@@ -12,7 +12,7 @@ This repository contains sources of:
 
 # What this repository is not
 
-There are other activities around the language residing if different repositories.
+There are other activities around the language residing in different repositories.
 
 * Kotlin language support in [IntelliJ Kotlin plugin](https://plugins.jetbrains.com/plugin/6954-kotlin) comprising the compiler and IDE specifics (code highlighting,
 intentions, inspections, refactorings, etc.).\
