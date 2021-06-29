@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.references
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.idea.fir.getCalleeSymbol
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirSafe
@@ -13,8 +14,6 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.buildSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
-import org.jetbrains.kotlin.psi.KtCallExpression
-import org.jetbrains.kotlin.psi.KtExpression
 
 class KtFirArrayAccessReference(
     expression: KtArrayAccessExpression
@@ -25,15 +24,5 @@ class KtFirArrayAccessReference(
         return listOfNotNull(fir.getCalleeSymbol()?.fir?.buildSymbol(firSymbolBuilder))
     }
 
-    override fun moveFunctionLiteralOutsideParentheses(callExpression: KtCallExpression) {
-        TODO("Not yet implemented")
-    }
-
-    override fun canMoveLambdaOutsideParentheses(callExpression: KtCallExpression): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    override fun doRenameImplicitConventionalCall(newName: String?): KtExpression {
-        TODO("Not yet implemented")
-    }
+    override fun handleElementRename(newElementName: String): PsiElement = TODO("Not yet implemented")
 }
