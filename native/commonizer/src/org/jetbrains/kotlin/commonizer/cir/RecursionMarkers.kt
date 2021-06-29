@@ -25,9 +25,12 @@ object CirClassRecursionMarker : CirClass, CirRecursionMarker {
         set(_) = unsupported()
 }
 
-object CirClassifierRecursionMarker : CirClassifier, CirRecursionMarker {
+object CirTypeAliasRecursionMarker : CirTypeAlias, CirRecursionMarker {
+    override val underlyingType: CirClassOrTypeAliasType get() = unsupported()
+    override val expandedType: CirClassType get() = unsupported()
     override val annotations get() = unsupported()
     override val name get() = unsupported()
     override val typeParameters get() = unsupported()
     override val visibility get() = unsupported()
+    override val isLiftedUp: Boolean get() = unsupported()
 }

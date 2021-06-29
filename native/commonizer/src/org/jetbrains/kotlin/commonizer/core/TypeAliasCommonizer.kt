@@ -17,11 +17,11 @@ import org.jetbrains.kotlin.descriptors.Modality
  * Secondary (less optimistic) branch:
  * - Make sure that all TAs are identical, so the resulting TA can be lifted up into "common" fragment.
  */
-class TypeAliasCommonizer(classifiers: CirKnownClassifiers) : AbstractStandardCommonizer<CirTypeAlias, CirClassifier>() {
+class TypeAliasCommonizer(classifiers: CirKnownClassifiers) : AbstractStandardCommonizer<CirTypeAlias, CirTypeAlias>() {
     private val primary = TypeAliasShortCircuitingCommonizer(classifiers)
     private val secondary = TypeAliasLiftingUpCommonizer(classifiers)
 
-    override fun commonizationResult(): CirClassifier = primary.resultOrNull ?: secondary.result
+    override fun commonizationResult(): CirTypeAlias = primary.resultOrNull ?: secondary.result
 
     override fun initialize(first: CirTypeAlias) = Unit
 

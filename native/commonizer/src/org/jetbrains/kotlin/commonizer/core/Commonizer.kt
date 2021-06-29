@@ -10,6 +10,16 @@ interface Commonizer<T, R> {
     fun commonizeWith(next: T): Boolean
 }
 
+fun <T, R> Commonizer<T, R>.commonize(values: List<T>): R? {
+    /* Fast path: If commonizer supports StatelessCommonizer interface */
+    if (this is StatelessCommonizerAdapter) {
+        return commonize(values)
+    }
+
+    values.forEach { value -> if (!commonizeWith(value)) return null }
+    return result
+}
+
 abstract class AbstractStandardCommonizer<T, R> : Commonizer<T, R> {
     private enum class State {
         EMPTY,
