@@ -91,7 +91,7 @@ class JavaScopeProvider(
                     lookupSuperTypes(regularClass, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession)
 
             val superTypeScopes = superTypes.mapNotNull {
-                it.scopeForSupertype(useSiteSession, scopeSession, subClass = regularClass, declaredScope, delegateFields = null)
+                it.scopeForSupertype(useSiteSession, scopeSession, subClass = regularClass)
             }
 
             JavaClassUseSiteMemberScope(
