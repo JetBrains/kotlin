@@ -83,5 +83,5 @@ fun test() {
     i.(<!UNRESOLVED_REFERENCE!>fun Int.() = 1<!>)();
     <!INAPPLICABLE_CANDIDATE!>{}<!><Int>()
     1<!UNNECESSARY_SAFE_CALL!>?.<!>(<!UNRESOLVED_REFERENCE!>fun Int.() = 1<!>)()
-    1.<!UNRESOLVED_REFERENCE!>{}<!>()
+    1.<!NO_RECEIVER_ALLOWED!>{}<!>()
 }

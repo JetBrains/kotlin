@@ -211,25 +211,31 @@ open class RawFirBuilder(
                 return buildExpressionStub()
             } else {
                 val result = this.convertSafe<FirExpression>()
+
                 if (result != null) {
-                    if (this != null &&
-                        this !is KtNameReferenceExpression &&
-                        this !is KtCallExpression &&
-                        this !is KtConstantExpression &&
-                        getQualifiedExpressionForSelector() != null
-                    ) {
-                        return buildErrorExpression {
-                            source = toFirSourceElement()
-                            diagnostic =
-                                ConeSimpleDiagnostic(
-                                    "The expression cannot be a selector (occur after a dot)",
-                                    DiagnosticKind.IllegalSelector
-                                )
-                            expression = result
-                        }
+                    if (this == null) {
+                        return result
                     }
 
-                    return result
+                    val callExpressionCallee = (this as? KtCallExpression)?.calleeExpression?.unwrapParenthesesLabelsAndAnnotations()
+
+                    if (this is KtNameReferenceExpression ||
+                        this is KtConstantExpression ||
+                        (this is KtCallExpression && callExpressionCallee !is KtLambdaExpression) ||
+                        getQualifiedExpressionForSelector() == null
+                    ) {
+                        return result
+                    }
+
+                    return buildErrorExpression {
+                        source = callExpressionCallee?.toFirSourceElement() ?: toFirSourceElement()
+                        diagnostic =
+                            ConeSimpleDiagnostic(
+                                "The expression cannot be a selector (occur after a dot)",
+                                if (callExpressionCallee == null) DiagnosticKind.IllegalSelector else DiagnosticKind.NoReceiverAllowed
+                            )
+                        expression = result
+                    }
                 }
 
                 return buildErrorExpression(

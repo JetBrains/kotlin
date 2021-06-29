@@ -272,6 +272,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_ACTUAL_FOR_EXP
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_COMPANION_OBJECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_ELSE_IN_WHEN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_GET_METHOD
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_RECEIVER_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_SET_METHOD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_THIS
@@ -496,6 +497,7 @@ class FirDefaultErrorMessages {
             map.put(CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS, "Cannot create an instance of an abstract class")
             map.put(FUNCTION_CALL_EXPECTED, "Function invocation ''{0}({1})'' expected", TO_STRING, FUNCTION_PARAMETERS)
             map.put(ILLEGAL_SELECTOR, "The expression cannot be a selector (occur after a dot)")
+            map.put(NO_RECEIVER_ALLOWED, "No receiver can be passed to this function or property")
 
             // Supertypes
             map.put(NOT_A_SUPERTYPE, "Not an immediate supertype")

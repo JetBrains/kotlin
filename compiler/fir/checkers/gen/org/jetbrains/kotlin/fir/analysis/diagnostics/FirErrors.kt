@@ -132,6 +132,7 @@ object FirErrors {
     val CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS by error0<KtExpression>()
     val FUNCTION_CALL_EXPECTED by error2<PsiElement, String, Boolean>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val ILLEGAL_SELECTOR by error0<PsiElement>()
+    val NO_RECEIVER_ALLOWED by error0<PsiElement>()
 
     // Super
     val SUPER_IS_NOT_AN_EXPRESSION by error0<PsiElement>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)

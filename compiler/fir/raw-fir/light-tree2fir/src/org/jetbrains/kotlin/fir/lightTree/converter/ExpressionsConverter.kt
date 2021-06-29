@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.lightTree.converter
 import com.intellij.lang.LighterASTNode
 import com.intellij.psi.TokenType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
-import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -504,15 +503,18 @@ class ExpressionsConverter(
                     val firExpression =
                         getAsFirExpression<FirExpression>(it, "Incorrect ${if (isEffectiveSelector) "selector" else "receiver"} expression")
                     if (isEffectiveSelector) {
+                        val callExpressionCallee = if (it.tokenType == CALL_EXPRESSION) it.getFirstChildExpressionUnwrapped() else null
                         firSelector =
-                            if (it.tokenType is KtNameReferenceExpressionElementType || it.tokenType == KtNodeTypes.CALL_EXPRESSION) {
+                            if (it.tokenType is KtNameReferenceExpressionElementType ||
+                                (it.tokenType == CALL_EXPRESSION && callExpressionCallee?.tokenType != LAMBDA_EXPRESSION)
+                            ) {
                                 firExpression
                             } else {
                                 buildErrorExpression {
-                                    source = it.toFirSourceElement()
+                                    source = callExpressionCallee?.toFirSourceElement() ?: it.toFirSourceElement()
                                     diagnostic = ConeSimpleDiagnostic(
                                         "The expression cannot be a selector (occur after a dot)",
-                                        DiagnosticKind.IllegalSelector
+                                        if (callExpressionCallee == null) DiagnosticKind.IllegalSelector else DiagnosticKind.NoReceiverAllowed
                                     )
                                     expression = firExpression
                                 }

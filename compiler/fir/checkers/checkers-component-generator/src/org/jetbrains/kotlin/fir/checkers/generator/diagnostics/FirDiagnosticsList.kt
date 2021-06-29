@@ -119,6 +119,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Boolean>("hasValueParameters")
         }
         val ILLEGAL_SELECTOR by error<PsiElement>()
+        val NO_RECEIVER_ALLOWED by error<PsiElement>()
     }
 
     val SUPER by object : DiagnosticGroup("Super") {

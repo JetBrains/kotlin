@@ -23,6 +23,7 @@ enum class DiagnosticKind {
     NoThis,
     IllegalConstExpression,
     IllegalSelector,
+    NoReceiverAllowed,
     IllegalUnderscore,
     DeserializationError,
     InferenceError,

@@ -374,6 +374,13 @@ internal class IllegalSelectorImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class NoReceiverAllowedImpl(
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.NoReceiverAllowed(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class SuperIsNotAnExpressionImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
