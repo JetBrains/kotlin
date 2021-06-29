@@ -9,10 +9,9 @@ import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaClassDescriptor
-import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.lombok.config.LombokConfig
 import org.jetbrains.kotlin.lombok.processor.*
+import org.jetbrains.kotlin.lombok.utils.getJavaClass
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.SyntheticJavaPartsProvider
 import java.util.*
@@ -64,12 +63,8 @@ class LombokSyntheticJavaPartsProvider(config: LombokConfig) : SyntheticJavaPart
         addNonExistent(result, constructors)
     }
 
-    //we process only local java files
-    private fun extractClass(descriptor: ClassDescriptor): JavaClassImpl? =
-        (descriptor as? LazyJavaClassDescriptor)?.jClass as? JavaClassImpl
-
     private fun getSyntheticParts(descriptor: ClassDescriptor): SyntheticParts =
-        extractClass(descriptor)?.let { _ ->
+        descriptor.getJavaClass()?.let { _ ->
             partsCache.getOrPut(descriptor) {
                 computeSyntheticParts(descriptor)
             }
