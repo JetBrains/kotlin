@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.isIntersectionOverride
 import org.jetbrains.kotlin.fir.isJavaDefault
-import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
-import org.jetbrains.kotlin.fir.scopes.impl.unwrapDelegateTarget
+import org.jetbrains.kotlin.fir.scopes.processAllFunctions
+import org.jetbrains.kotlin.fir.scopes.processAllProperties
+import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -43,7 +43,7 @@ internal class DelegatedMemberGenerator(
         subClassScope.processAllFunctions { functionSymbol ->
             val unwrapped =
                 functionSymbol
-                    .unwrapDelegateTarget(subClassLookupTag, subClassScope::getDirectOverriddenFunctions, firField, firSubClass)
+                    .unwrapDelegateTarget(subClassLookupTag, firField)
                     ?: return@processAllFunctions
 
             val member =
@@ -67,7 +67,7 @@ internal class DelegatedMemberGenerator(
 
             val unwrapped =
                 propertySymbol
-                    .unwrapDelegateTarget(subClassLookupTag, subClassScope::getDirectOverriddenProperties, firField, firSubClass)
+                    .unwrapDelegateTarget(subClassLookupTag, firField)
                     ?: return@processAllProperties
 
             val member = declarationStorage.getIrPropertySymbol(unwrapped.symbol).owner as? IrProperty
@@ -203,14 +203,9 @@ internal class DelegatedMemberGenerator(
 
 private fun <S : FirCallableSymbol<D>, D : FirCallableMemberDeclaration> S.unwrapDelegateTarget(
     subClassLookupTag: ConeClassLikeLookupTag,
-    directOverridden: S.() -> List<S>,
     firField: FirField,
-    firSubClass: FirClass,
 ): D? {
-    firSubClass.hashCode()
-    val unwrappedIntersectionSymbol = this.unwrapIntersectionOverride(directOverridden) ?: return null
-
-    val callable = unwrappedIntersectionSymbol.fir as? D ?: return null
+    val callable = this.fir as? D ?: return null
 
     val delegatedWrapperData = callable.delegatedWrapperData ?: return null
     if (delegatedWrapperData.containingClass != subClassLookupTag) return null
@@ -223,9 +218,4 @@ private fun <S : FirCallableSymbol<D>, D : FirCallableMemberDeclaration> S.unwra
 
     @Suppress("UNCHECKED_CAST")
     return wrappedSymbol.unwrapCallRepresentative().fir as D
-}
-
-private fun <S : FirCallableSymbol<*>> S.unwrapIntersectionOverride(directOverridden: S.() -> List<S>): S? {
-    if (this.fir.isIntersectionOverride) return directOverridden().firstOrNull { it.fir.delegatedWrapperData != null }
-    return this
 }
