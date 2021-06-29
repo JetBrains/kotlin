@@ -599,14 +599,26 @@ public final class JvmIr {
 
     /**
      * <code>repeated bytes type = 1;</code>
+     *
+     * <pre>
+     * TODO: optimize the representation.
+     * </pre>
      */
     java.util.List<org.jetbrains.kotlin.protobuf.ByteString> getTypeList();
     /**
      * <code>repeated bytes type = 1;</code>
+     *
+     * <pre>
+     * TODO: optimize the representation.
+     * </pre>
      */
     int getTypeCount();
     /**
      * <code>repeated bytes type = 1;</code>
+     *
+     * <pre>
+     * TODO: optimize the representation.
+     * </pre>
      */
     org.jetbrains.kotlin.protobuf.ByteString getType(int index);
 
@@ -780,6 +792,10 @@ public final class JvmIr {
     private java.util.List<org.jetbrains.kotlin.protobuf.ByteString> type_;
     /**
      * <code>repeated bytes type = 1;</code>
+     *
+     * <pre>
+     * TODO: optimize the representation.
+     * </pre>
      */
     public java.util.List<org.jetbrains.kotlin.protobuf.ByteString>
         getTypeList() {
@@ -787,12 +803,20 @@ public final class JvmIr {
     }
     /**
      * <code>repeated bytes type = 1;</code>
+     *
+     * <pre>
+     * TODO: optimize the representation.
+     * </pre>
      */
     public int getTypeCount() {
       return type_.size();
     }
     /**
      * <code>repeated bytes type = 1;</code>
+     *
+     * <pre>
+     * TODO: optimize the representation.
+     * </pre>
      */
     public org.jetbrains.kotlin.protobuf.ByteString getType(int index) {
       return type_.get(index);
@@ -1166,6 +1190,10 @@ public final class JvmIr {
       }
       /**
        * <code>repeated bytes type = 1;</code>
+       *
+       * <pre>
+       * TODO: optimize the representation.
+       * </pre>
        */
       public java.util.List<org.jetbrains.kotlin.protobuf.ByteString>
           getTypeList() {
@@ -1173,18 +1201,30 @@ public final class JvmIr {
       }
       /**
        * <code>repeated bytes type = 1;</code>
+       *
+       * <pre>
+       * TODO: optimize the representation.
+       * </pre>
        */
       public int getTypeCount() {
         return type_.size();
       }
       /**
        * <code>repeated bytes type = 1;</code>
+       *
+       * <pre>
+       * TODO: optimize the representation.
+       * </pre>
        */
       public org.jetbrains.kotlin.protobuf.ByteString getType(int index) {
         return type_.get(index);
       }
       /**
        * <code>repeated bytes type = 1;</code>
+       *
+       * <pre>
+       * TODO: optimize the representation.
+       * </pre>
        */
       public Builder setType(
           int index, org.jetbrains.kotlin.protobuf.ByteString value) {
@@ -1198,6 +1238,10 @@ public final class JvmIr {
       }
       /**
        * <code>repeated bytes type = 1;</code>
+       *
+       * <pre>
+       * TODO: optimize the representation.
+       * </pre>
        */
       public Builder addType(org.jetbrains.kotlin.protobuf.ByteString value) {
         if (value == null) {
@@ -1210,6 +1254,10 @@ public final class JvmIr {
       }
       /**
        * <code>repeated bytes type = 1;</code>
+       *
+       * <pre>
+       * TODO: optimize the representation.
+       * </pre>
        */
       public Builder addAllType(
           java.lang.Iterable<? extends org.jetbrains.kotlin.protobuf.ByteString> values) {
@@ -1221,6 +1269,10 @@ public final class JvmIr {
       }
       /**
        * <code>repeated bytes type = 1;</code>
+       *
+       * <pre>
+       * TODO: optimize the representation.
+       * </pre>
        */
       public Builder clearType() {
         type_ = java.util.Collections.emptyList();

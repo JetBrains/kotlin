@@ -15,6 +15,7 @@ message XStatementOrExpression {
 }
 
 message AuxTables {
+  // TODO: optimize the representation.
   repeated bytes type = 1;
   repeated bytes signature = 2;
   repeated bytes string = 3;

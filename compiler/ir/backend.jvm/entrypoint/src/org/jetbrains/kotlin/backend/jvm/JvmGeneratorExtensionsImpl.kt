@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.ir.createParameterDeclarations
-import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
+import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.backend.jvm.lower.SingletonObjectJvmStaticTransformer
 import org.jetbrains.kotlin.backend.jvm.serialization.deserializeClassFromByteArray
 import org.jetbrains.kotlin.backend.jvm.serialization.deserializeIrFileFromByteArray
@@ -211,7 +211,7 @@ open class JvmGeneratorExtensionsImpl(
     }
 
     override fun registerDeclarations(symbolTable: SymbolTable) {
-        val signatureComputer = IdSignatureSerializer(JvmIrMangler)
+        val signatureComputer = PublicIdSignatureComputer(JvmIrMangler)
         specialAnnotationConstructors.forEach { constructor ->
             symbolTable.declareConstructorWithSignature(signatureComputer.composePublicIdSignature(constructor), constructor.symbol)
         }

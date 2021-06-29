@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.ByteString
 
 class JvmIrSerializerSession(

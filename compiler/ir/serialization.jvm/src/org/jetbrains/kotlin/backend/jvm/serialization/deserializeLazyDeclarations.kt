@@ -9,25 +9,20 @@ import org.jetbrains.kotlin.backend.common.overrides.DefaultFakeOverrideClassFil
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideDeclarationTable
 import org.jetbrains.kotlin.backend.common.overrides.FileLocalAwareLinker
-import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinder
-import org.jetbrains.kotlin.backend.common.serialization.IrDeclarationDeserializer
-import org.jetbrains.kotlin.backend.common.serialization.IrLibraryFile
-import org.jetbrains.kotlin.backend.common.serialization.IrSymbolDeserializer
+import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
-import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
 import org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.LazyIrFactory
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
-import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
-import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.protobuf.ByteString
@@ -53,9 +48,14 @@ fun deserializeClassFromByteArray(
             JvmDescriptorMangler(null),
             DescriptorByIdSignatureFinder.LookupMode.MODULE_WITH_DEPENDENCIES
         )
+
+    // Only needed for local signature computation.
+    val dummyIrFile = IrFileImpl(NaiveSourceBasedFileEntryImpl("<unknown>"), IrFileSymbolImpl(), irClass.packageFqName!!)
+
     val symbolDeserializer = IrSymbolDeserializer(
         symbolTable,
         irLibraryFile,
+        fileSymbol = dummyIrFile.symbol,
         /* TODO */ actuals = emptyList(),
         enqueueLocalTopLevelDeclaration = {}, // just link to it in symbolTable
         handleExpectActualMapping = { _, _ -> TODO() },
@@ -103,9 +103,14 @@ fun deserializeIrFileFromByteArray(
             JvmDescriptorMangler(null),
             DescriptorByIdSignatureFinder.LookupMode.MODULE_WITH_DEPENDENCIES
         )
+
+    // Only needed for local signature computation.
+    val dummyIrFile = IrFileImpl(NaiveSourceBasedFileEntryImpl("<unknown>"), IrFileSymbolImpl(), facadeClass.packageFqName!!)
+
     val symbolDeserializer = IrSymbolDeserializer(
         symbolTable,
         irLibraryFile,
+        fileSymbol = dummyIrFile.symbol,
         /* TODO */ actuals = emptyList(),
         enqueueLocalTopLevelDeclaration = {}, // just link to it in symbolTable
         handleExpectActualMapping = { _, _ -> TODO() },
@@ -193,7 +198,6 @@ fun makeSimpleFakeOverrideBuilder(
     irBuiltIns: IrBuiltIns,
     symbolDeserializer: IrSymbolDeserializer
 ): FakeOverrideBuilder {
-    val signatureSerializer = IdSignatureSerializer(JvmIrMangler)
     return FakeOverrideBuilder(
         object : FileLocalAwareLinker {
             override fun tryReferencingPropertyByLocalSignature(parent: IrDeclaration, idSignature: IdSignature): IrPropertySymbol =
@@ -205,9 +209,9 @@ fun makeSimpleFakeOverrideBuilder(
                 symbolDeserializer.referenceSimpleFunctionByLocalSignature(idSignature)
         },
         symbolTable,
-        signatureSerializer,
+        JvmIrMangler,
         irBuiltIns,
-        fakeOverrideDeclarationTable = PrePopulatedDeclarationTable(symbolDeserializer.deserializedSymbols, signatureSerializer)
+        fakeOverrideDeclarationTable = PrePopulatedDeclarationTable(symbolDeserializer.deserializedSymbols)
     )
 }
 
@@ -233,9 +237,8 @@ private fun buildFakeOverridesForLocalClasses(
 }
 
 class PrePopulatedDeclarationTable(
-    sig2symbol: Map<IdSignature, IrSymbol>,
-    signatureSerializer: IdSignatureSerializer
-) : FakeOverrideDeclarationTable(signatureSerializer) {
+    sig2symbol: Map<IdSignature, IrSymbol>
+) : FakeOverrideDeclarationTable(JvmIrMangler) {
     private val symbol2Sig = sig2symbol.entries.associate { (x, y) -> y to x }
 
     override fun tryComputeBackendSpecificSignature(declaration: IrDeclaration): IdSignature? {

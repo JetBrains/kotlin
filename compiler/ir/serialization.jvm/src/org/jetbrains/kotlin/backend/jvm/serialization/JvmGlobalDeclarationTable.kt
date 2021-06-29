@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.GlobalDeclarationTable
-import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 
-class JvmGlobalDeclarationTable : GlobalDeclarationTable(IdSignatureSerializer(JvmIrMangler), JvmIrMangler)
+class JvmGlobalDeclarationTable : GlobalDeclarationTable(JvmIrMangler)
