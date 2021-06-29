@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.firClassLike
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.impl.multipleDelegatesWithTheSameSignature
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -438,6 +439,11 @@ fun FirCallableMemberDeclaration.isVisibleInClass(parentClass: FirClass): Boolea
 fun FirCallableMemberDeclaration.getImplementationStatus(sessionHolder: SessionHolder, parentClass: FirClass): ImplementationStatus {
     val containingClass = getContainingClass(sessionHolder)
     val symbol = this.symbol
+
+    if (this.multipleDelegatesWithTheSameSignature == true && containingClass == parentClass) {
+        return ImplementationStatus.AMBIGUOUSLY_INHERITED
+    }
+
     if (symbol is FirIntersectionCallableSymbol) {
         if (containingClass === parentClass && symbol.subjectToManyNotImplemented(sessionHolder)) {
             return ImplementationStatus.AMBIGUOUSLY_INHERITED

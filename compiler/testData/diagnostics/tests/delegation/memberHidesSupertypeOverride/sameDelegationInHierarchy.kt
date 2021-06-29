@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 public interface Base {
     fun test() = "Base"
 }

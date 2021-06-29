@@ -51,7 +51,7 @@ abstract class Test8 : IGeneric<String> by CGeneric<String>(), IInt
 
 abstract <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class Test10<!> : IInt by CInt(), IStr by CStr(), IAny by CAny()
 
-abstract <!DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE!>class Test11<!> : IInt, IStr by CStr(), IAny by CAny()
+abstract <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class Test11<!> : IInt, IStr by CStr(), IAny by CAny()
 
 abstract class Test12 : IInt, IStr, IAny by CAny()
 

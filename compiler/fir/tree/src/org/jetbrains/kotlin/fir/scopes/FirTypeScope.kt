@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.fir.scopes
 
+import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.isIntersectionOverride
+import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.Name
@@ -140,24 +143,56 @@ inline fun FirTypeScope.processDirectlyOverriddenProperties(
     processor(overridden)
 }
 
-fun FirTypeScope.getDirectOverriddenFunctions(function: FirNamedFunctionSymbol): List<FirNamedFunctionSymbol> {
+fun FirTypeScope.getDirectOverriddenMembers(
+    member: FirCallableSymbol<*>,
+    unwrapIntersectionAndSubstitutionOverride: Boolean = false,
+): List<FirCallableSymbol<out FirCallableMemberDeclaration>> =
+    when (member) {
+        is FirNamedFunctionSymbol -> getDirectOverriddenFunctions(member, unwrapIntersectionAndSubstitutionOverride)
+        is FirPropertySymbol -> getDirectOverriddenProperties(member, unwrapIntersectionAndSubstitutionOverride)
+        else -> emptyList()
+    }
+
+fun FirTypeScope.getDirectOverriddenFunctions(
+    function: FirNamedFunctionSymbol,
+    unwrapIntersectionAndSubstitutionOverride: Boolean = false,
+): List<FirNamedFunctionSymbol> {
     val overriddenFunctions = mutableSetOf<FirNamedFunctionSymbol>()
 
     processDirectlyOverriddenFunctions(function) {
-        overriddenFunctions.add(it)
+        overriddenFunctions.addOverridden(it, unwrapIntersectionAndSubstitutionOverride)
         ProcessorAction.NEXT
     }
 
     return overriddenFunctions.toList()
 }
 
-fun FirTypeScope.getDirectOverriddenProperties(property: FirPropertySymbol): List<FirPropertySymbol> {
+fun FirTypeScope.getDirectOverriddenProperties(
+    property: FirPropertySymbol,
+    unwrapIntersectionAndSubstitutionOverride: Boolean = false,
+): List<FirPropertySymbol> {
     val overriddenProperties = mutableSetOf<FirPropertySymbol>()
 
     processDirectlyOverriddenProperties(property) {
-        overriddenProperties.add(it)
+        overriddenProperties.addOverridden(it, unwrapIntersectionAndSubstitutionOverride)
         ProcessorAction.NEXT
     }
 
     return overriddenProperties.toList()
+}
+
+private inline fun <reified D : FirCallableSymbol<*>> MutableCollection<D>.addOverridden(
+    symbol: D,
+    unwrapIntersectionAndSubstitutionOverride: Boolean
+) {
+    if (unwrapIntersectionAndSubstitutionOverride) {
+        if (symbol is FirIntersectionCallableSymbol) {
+            @Suppress("UNCHECKED_CAST")
+            addAll(symbol.intersections as Collection<D>)
+        } else {
+            add(symbol.originalForSubstitutionOverride ?: symbol)
+        }
+    } else {
+        add(symbol)
+    }
 }

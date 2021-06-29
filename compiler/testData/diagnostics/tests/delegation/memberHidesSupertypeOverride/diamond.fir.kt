@@ -35,7 +35,7 @@ fun box(): String {
 
     }
 
-    <!MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED!>object<!> : Base2 by Impl2(), Base3 by Impl3(), Base by Impl() {
+    <!DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE, MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>object<!> : Base2 by Impl2(), Base3 by Impl3(), Base by Impl() {
 
     }
 
