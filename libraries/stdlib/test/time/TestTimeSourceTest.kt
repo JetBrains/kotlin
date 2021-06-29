@@ -51,12 +51,12 @@ class TestTimeSourceTest {
         val mark = timeSource.markNow()
 
         repeat(10_000) {
-            timeSource += Duration.nanoseconds(0.9)
+            timeSource += Duration.nanoseconds(0.4)
 
             assertEquals(Duration.ZERO, mark.elapsedNow())
         }
 
         timeSource += Duration.nanoseconds(1.9)
-        assertEquals(Duration.nanoseconds(1), mark.elapsedNow())
+        assertEquals(Duration.nanoseconds(2), mark.elapsedNow())
     }
 }

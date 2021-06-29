@@ -466,10 +466,10 @@ class DurationTest {
         assertEquals("PT0.001S", Duration.milliseconds(1).toIsoString())
         assertEquals("PT0.000001S", Duration.microseconds(1).toIsoString())
         assertEquals("PT0.000000001S", Duration.nanoseconds(1).toIsoString())
+        assertEquals("PT0.000000001S", Duration.nanoseconds(0.9).toIsoString())
 
         // rounded to zero
         assertEquals("PT0S", Duration.nanoseconds(0.1).toIsoString())
-        assertEquals("PT0S", Duration.nanoseconds(0.9).toIsoString())
 
         // several units combined
         assertEquals("PT24H1M", (Duration.days(1) + Duration.minutes(1)).toIsoString())
@@ -558,7 +558,7 @@ class DurationTest {
         test(Duration.minutes(17.5), "17m 30s")
 
         test(Duration.minutes(16.5), "16m 30s")
-        test(Duration.seconds(1097.1), "18m 17.099999999s") // Double to Long ns truncation!
+        test(Duration.seconds(1097.1), "18m 17.100s")
         test(Duration.seconds(90.36), "1m 30.360s")
         test(Duration.seconds(50), "50s")
         test(Duration.seconds(1.3), "1.300s")
@@ -574,9 +574,9 @@ class DurationTest {
         test(Duration.microseconds(75.35), "0.000075350s")
         test(Duration.microseconds(7.25), "0.000007250s")
         test(Duration.microseconds(1.035), "0.000001035s")
-        test(Duration.microseconds(1.005), "0.000001004s") // Double to Long ns truncation!
+        test(Duration.microseconds(1.005), "0.000001005s")
 
-        test(Duration.nanoseconds(950.5), "0.000000950s")
+        test(Duration.nanoseconds(950.5), "0.000000951s")
         test(Duration.nanoseconds(85.23), "0.000000085s")
         test(Duration.nanoseconds(8.235), "0.000000008s")
         test(Duration.nanoseconds(1.3), "0.000000001s")
