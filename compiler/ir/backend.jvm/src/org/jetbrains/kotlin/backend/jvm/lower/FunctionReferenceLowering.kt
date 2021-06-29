@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -153,6 +154,10 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         }
         val irDirectCall = rewriteDirectInvokeToFunctionReference(irInvokeCall, lastFunRef)
             ?: return null
+
+        // We track instances of IrFunctionImpl corresponding to direct invoked lambdas,
+        // so we can perform optimization on it later in ExpressionCodegen.kt
+        if (callee is IrFunctionImpl) context.directInvokedLambdas.add(callee.attributeOwnerId)
         val newBlock = IrBlockImpl(irBlock.startOffset, irBlock.endOffset, irDirectCall.type)
         newBlock.statements.addAll(irBlock.statements)
         newBlock.statements[newBlock.statements.lastIndex] = irDirectCall

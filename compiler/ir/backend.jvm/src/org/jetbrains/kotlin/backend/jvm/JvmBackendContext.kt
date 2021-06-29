@@ -134,6 +134,8 @@ class JvmBackendContext(
 
     val inlineMethodGenerationLock = Any()
 
+    val directInvokedLambdas = mutableListOf<IrAttributeContainer>()
+
     init {
         state.mapInlineClass = { descriptor ->
             typeMapper.mapType(referenceClass(descriptor).defaultType)

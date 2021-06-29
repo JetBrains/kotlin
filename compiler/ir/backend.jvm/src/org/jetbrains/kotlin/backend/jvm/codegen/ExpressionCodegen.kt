@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.*
@@ -302,9 +303,14 @@ class ExpressionCodegen(
 
         // Do not generate non-null checks for suspend functions. When resumed the arguments
         // will be null and the actual values are taken from the continuation.
-
         if (irFunction.isSuspend)
             return
+
+        // As a small optimization, don't generate nullability assertions in methods for directly invoked lambdas
+        if (irFunction is IrFunctionImpl && irFunction.attributeOwnerId in context.directInvokedLambdas) {
+            context.directInvokedLambdas.remove(irFunction.attributeOwnerId)
+            return
+        }
 
         irFunction.extensionReceiverParameter?.let { generateNonNullAssertion(it) }
 
