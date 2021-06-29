@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.incremental
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -33,6 +34,7 @@ open class LookupStorage(
     targetDataDir: File,
     pathConverter: FileToPathConverter
 ) : BasicMapsOwner(targetDataDir) {
+    val LOG = Logger.getInstance("#org.jetbrains.kotlin.jps.build.KotlinBuilder")
     companion object {
         private val DELETED_TO_SIZE_TRESHOLD = 0.5
         private val MINIMUM_GARBAGE_COLLECTIBLE_SIZE = 10000
@@ -75,9 +77,11 @@ open class LookupStorage(
 
     @Synchronized
     fun addAll(lookups: MultiMap<LookupSymbol, String>, allPaths: Set<String>) {
+        LOG.debug("===")
         val pathToId = allPaths.sorted().keysToMap { addFileIfNeeded(File(it)) }
 
         for (lookupSymbol in lookups.keySet().sorted()) {
+            LOG.debug("s: ${lookupSymbol.name}(${lookupSymbol.scope}) -- f: $allPaths")
             val key = LookupSymbolKey(lookupSymbol.name, lookupSymbol.scope)
             val paths = lookups[lookupSymbol]
             val fileIds = paths.mapTo(TreeSet()) { pathToId[it]!! }
