@@ -19,7 +19,7 @@ class TemporaryDirectoryManagerImpl(testServices: TestServices) : TemporaryDirec
         KtTestUtil.tmpDirForTest(testInfo.className, testInfo.methodName)
     }
 
-    override fun createTempDirectory(name: String): File {
+    override fun getOrCreateTempDirectory(name: String): File {
         return cache.getOrPut(name) { KtTestUtil.tmpDir(rootTempDir, name) }
     }
 

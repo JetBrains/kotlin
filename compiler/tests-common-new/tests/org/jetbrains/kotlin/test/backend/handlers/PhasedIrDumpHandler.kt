@@ -9,12 +9,12 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.createTempDirectory
+import org.jetbrains.kotlin.test.services.getOrCreateTempDirectory
 
 class PhasedIrDumpHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
         if (CodegenTestDirectives.DUMP_IR_FOR_GIVEN_PHASES !in module.directives) return
-        val dumpDirectory = testServices.createTempDirectory(DUMPED_IR_FOLDER_NAME)
+        val dumpDirectory = testServices.getOrCreateTempDirectory(DUMPED_IR_FOLDER_NAME)
         val dumpFiles = dumpDirectory.resolve(module.name).listFiles() ?: return
         val testFile = module.files.first()
         val testDirectory = testFile.originalFile.parentFile

@@ -20,7 +20,7 @@ class CompiledClassesManager(val testServices: TestServices) : TestService {
 
     fun getCompiledKotlinDirForModule(module: TestModule, classFileFactory: ClassFileFactory? = null): File {
         return compiledKotlinCache.getOrPut(module) {
-            val outputDir = testServices.createTempDirectory("module_${module.name}_kotlin-classes")
+            val outputDir = testServices.getOrCreateTempDirectory("module_${module.name}_kotlin-classes")
 
             @Suppress("NAME_SHADOWING")
             val classFileFactory = classFileFactory
@@ -39,7 +39,7 @@ class CompiledClassesManager(val testServices: TestServices) : TestService {
 
     fun getOrCreateCompiledJavaDirForModule(module: TestModule): File {
         return compiledJavaCache.getOrPut(module) {
-            testServices.createTempDirectory("module_${module.name}_java-classes")
+            testServices.getOrCreateTempDirectory("module_${module.name}_java-classes")
         }
     }
 }
