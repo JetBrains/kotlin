@@ -26,18 +26,17 @@ val relocatedJarContents by configurations.creating
 val embedded by configurations
 
 dependencies {
-    compileOnly("org.apache.ivy:ivy:2.5.0")
     compileOnly(project(":compiler:cli-common"))
     compileOnly(project(":kotlin-scripting-jvm-host-unshaded"))
-    compileOnly(project(":kotlin-scripting-dependencies"))
+    compileOnly(project(":kotlin-scripting-dependencies-maven"))
     runtimeOnly(project(":kotlin-scripting-compiler-embeddable"))
     runtimeOnly(kotlinStdlib())
     runtimeOnly(project(":kotlin-reflect"))
     embedded(project(":kotlin-scripting-common")) { isTransitive = false }
     embedded(project(":kotlin-scripting-jvm")) { isTransitive = false }
     embedded(project(":kotlin-scripting-jvm-host-unshaded")) { isTransitive = false }
-    embedded(project(":kotlin-scripting-dependencies")) { isTransitive = false }
-    embedded("org.apache.ivy:ivy:2.5.0")
+    embedded(project(":kotlin-scripting-dependencies-maven-all"))
+    embedded("org.slf4j:slf4j-nop:1.7.30")
     embedded(commonDep("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm")) {
         isTransitive = false
         attributes {

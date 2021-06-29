@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.mainKts
 
 import org.jetbrains.kotlin.mainKts.impl.Directories
-import org.jetbrains.kotlin.mainKts.impl.IvyResolver
 import java.io.File
 import java.nio.ByteBuffer
 import java.security.MessageDigest
@@ -15,6 +14,7 @@ import kotlin.script.dependencies.ScriptDependenciesResolver
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.dependencies.*
+import kotlin.script.experimental.dependencies.maven.MavenDependenciesResolver
 import kotlin.script.experimental.host.FileBasedScriptSource
 import kotlin.script.experimental.host.FileScriptSource
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -101,7 +101,7 @@ fun configureConstructorArgsFromMainArgs(context: ScriptEvaluationConfigurationR
 }
 
 class MainKtsConfigurator : RefineScriptCompilationConfigurationHandler {
-    private val resolver = CompoundDependenciesResolver(FileSystemDependenciesResolver(), IvyResolver())
+    private val resolver = CompoundDependenciesResolver(FileSystemDependenciesResolver(), MavenDependenciesResolver())
 
     override operator fun invoke(context: ScriptConfigurationRefinementContext): ResultWithDiagnostics<ScriptCompilationConfiguration> =
         processAnnotations(context)
