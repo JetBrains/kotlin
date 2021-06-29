@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.GradleVersionRequired
+import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
 import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -62,15 +63,15 @@ class XCFrameworkIT : BaseGradleIT() {
     @Test
     fun `assemble other XCFramework for ios targets`() {
         with(Project("appleXCFramework")) {
-            build("assembleSharedXCFramework") {
+            build("assembleXCFramework") {
                 assertSuccessful()
                 assertTasksExecuted(":shared:linkReleaseFrameworkIosArm64")
                 assertTasksExecuted(":shared:linkReleaseFrameworkIosX64")
-                assertTasksExecuted(":shared:assembleSharedReleaseXCFramework")
+                assertTasksExecuted(":shared:assembleReleaseXCFramework")
                 assertFileExists("/shared/build/XCFrameworks/release/shared.xcframework")
                 assertTasksExecuted(":shared:linkDebugFrameworkIosArm64")
                 assertTasksExecuted(":shared:linkDebugFrameworkIosX64")
-                assertTasksExecuted(":shared:assembleSharedDebugXCFramework")
+                assertTasksExecuted(":shared:assembleDebugXCFramework")
                 assertFileExists("/shared/build/XCFrameworks/debug/shared.xcframework")
             }
         }
@@ -82,10 +83,26 @@ class XCFrameworkIT : BaseGradleIT() {
             build("tasks") {
                 assertSuccessful()
                 assertTasksNotRegistered(
-                    ":shared:assembleSharedDebugXCFramework",
-                    ":shared:assembleSharedReleaseXCFramework",
-                    ":shared:assembleSharedXCFramework"
+                    ":shared:assembleDebugXCFramework",
+                    ":shared:assembleReleaseXCFramework",
+                    ":shared:assembleXCFramework"
                 )
+            }
+        }
+    }
+
+    @Test
+    fun `check configuration error if two XCFrameworks were registered with same name`() {
+        with(transformProjectWithPluginsDsl("appleXCFramework")) {
+            with(gradleBuildScript("shared")) {
+                var text = readText()
+                text = text.replace("XCFramework(\"sdk\")", "XCFramework()")
+                writeText(text)
+            }
+
+            build("tasks") {
+                assertFailed()
+                assertContains("Cannot add task 'assembleReleaseXCFramework' as a task with that name already exists.")
             }
         }
     }

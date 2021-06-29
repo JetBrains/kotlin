@@ -41,6 +41,7 @@ internal class XCFrameworkTaskHolder(
 ) {
     companion object {
         fun create(project: Project, xcFrameworkName: String, buildType: NativeBuildType): XCFrameworkTaskHolder {
+            require(xcFrameworkName.isNotBlank())
 
             val parentTask = project.parentAssembleXCFrameworkTask(xcFrameworkName)
             val task = project.registerAssembleXCFrameworkTask(xcFrameworkName, buildType)
@@ -89,8 +90,11 @@ class XCFrameworkConfig {
 
 fun Project.XCFramework(xcFrameworkName: String = name) = XCFrameworkConfig(this, xcFrameworkName)
 
+private fun Project.eraseIfDefault(xcFrameworkName: String) =
+    if (name == xcFrameworkName) "" else xcFrameworkName
+
 private fun Project.parentAssembleXCFrameworkTask(xcFrameworkName: String): TaskProvider<Task> =
-    locateOrRegisterTask(lowerCamelCaseName("assemble", xcFrameworkName, "XCFramework")) {
+    locateOrRegisterTask(lowerCamelCaseName("assemble", eraseIfDefault(xcFrameworkName), "XCFramework")) {
         it.group = "build"
         it.description = "Assemble all types of registered '$xcFrameworkName' XCFramework"
     }
@@ -99,10 +103,9 @@ private fun Project.registerAssembleXCFrameworkTask(
     xcFrameworkName: String,
     buildType: NativeBuildType
 ): TaskProvider<XCFrameworkTask> {
-    require(xcFrameworkName.isNotBlank())
     val taskName = lowerCamelCaseName(
         "assemble",
-        xcFrameworkName,
+        eraseIfDefault(xcFrameworkName),
         buildType.getName(),
         "XCFramework"
     )
