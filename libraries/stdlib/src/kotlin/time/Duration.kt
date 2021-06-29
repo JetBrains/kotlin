@@ -670,15 +670,22 @@ public value class Duration internal constructor(private val rawValue: Long) : C
             buildString {
                 if (isNegative()) append('-')
                 absoluteValue.run {
-                    toComponents { _, minutes, seconds, nanoseconds ->
-                        val hours = inWholeHours
-                        val hasHours = hours != 0L
+                    toComponents { _, hours, minutes, seconds, nanoseconds ->
+                        val days = inWholeDays
+                        val hasDays = days != 0L
+                        val hasHours = hours != 0
+                        val hasMinutes = minutes != 0
                         val hasSeconds = seconds != 0 || nanoseconds != 0
-                        if (hasHours) {
+                        if (hasDays) {
+                            append(days)
+                            append('d')
+                        }
+                        if (hasHours || (hasDays && (hasMinutes || hasSeconds))) {
+                            if (length > 1) append(' ')
                             append(hours)
                             append('h')
                         }
-                        if (minutes != 0 || (hasSeconds && hasHours)) {
+                        if (hasMinutes || (hasSeconds && (hasHours || hasDays))) {
                             if (length > 1) append(' ')
                             append(minutes)
                             append('m')
