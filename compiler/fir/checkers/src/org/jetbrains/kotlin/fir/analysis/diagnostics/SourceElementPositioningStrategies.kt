@@ -257,4 +257,9 @@ object SourceElementPositioningStrategies {
         LightTreePositioningStrategies.IMPORT_LAST_NAME,
         PositioningStrategies.IMPORT_LAST_NAME
     )
+
+    val LABEL = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.LABEL,
+        PositioningStrategies.LABEL
+    )
 }

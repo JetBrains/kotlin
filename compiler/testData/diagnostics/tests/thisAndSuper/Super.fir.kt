@@ -10,34 +10,34 @@ open class C() {
 class A<E>() : C(), T {
 
     fun test() {
-        super
-        super<T>
+        <!SUPER_IS_NOT_AN_EXPRESSION!>super<!>
+        <!SUPER_IS_NOT_AN_EXPRESSION!>super<T><!>
         super.foo()
         super<T>.foo()
         super<C>.bar()
         super<T>@A.foo()
         super<C>@A.bar()
-        super<<!OTHER_ERROR, OTHER_ERROR!>E<!>>.<!UNRESOLVED_REFERENCE!>bar<!>()
-        super<<!OTHER_ERROR, OTHER_ERROR!>E<!>>@A.<!UNRESOLVED_REFERENCE!>bar<!>()
-        <!NOT_A_SUPERTYPE!>super<Int><!>.<!UNRESOLVED_REFERENCE!>foo<!>()
+        super<<!NOT_A_SUPERTYPE!>E<!>>.bar()
+        super<<!NOT_A_SUPERTYPE!>E<!>>@A.bar()
+        super<<!NOT_A_SUPERTYPE!>Int<!>>.foo()
         super<<!SYNTAX!><!>>.<!UNRESOLVED_REFERENCE!>foo<!>()
-        <!NOT_A_SUPERTYPE!>super<() -> Unit><!>.<!UNRESOLVED_REFERENCE!>foo<!>()
-        <!NOT_A_SUPERTYPE!>super<Unit><!>.<!UNRESOLVED_REFERENCE!>foo<!>()
-        super<T>@B.foo()
-        super<C>@B.bar()
+        super<<!NOT_A_SUPERTYPE!>() -> Unit<!>>.foo()
+        super<<!NOT_A_SUPERTYPE!>Unit<!>>.foo()
+        super<T><!UNRESOLVED_LABEL!>@B<!>.foo()
+        super<C><!UNRESOLVED_LABEL!>@B<!>.bar()
     }
 
     inner class B : T {
         fun test() {
             super<T>.foo();
-            <!NOT_A_SUPERTYPE!>super<C><!>.bar()
+            super<<!NOT_A_SUPERTYPE!>C<!>>.bar()
             super<C>@A.bar()
             super<T>@A.foo()
             super<T>@B.foo()
-            <!NOT_A_SUPERTYPE!>super<C>@B<!>.<!UNRESOLVED_REFERENCE!>foo<!>()
+            super<<!NOT_A_SUPERTYPE!>C<!>>@B.foo()
             super.foo()
-            super
-            super<T>
+            <!SUPER_IS_NOT_AN_EXPRESSION!>super<!>
+            <!SUPER_IS_NOT_AN_EXPRESSION!>super<T><!>
         }
     }
 }
@@ -49,9 +49,9 @@ interface G<T> {
 class CG : G<Int> {
     fun test() {
         super<G>.foo() // OK
-        super<G<Int>>.foo() // Warning
-        super<G<E>>.foo() // Error
-        super<G<String>>.foo() // Error
+        super<G<!TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER!><Int><!>>.foo() // Warning
+        super<<!NOT_A_SUPERTYPE!>G<E><!>>.foo() // Error
+        super<<!NOT_A_SUPERTYPE!>G<String><!>>.foo() // Error
     }
 }
 

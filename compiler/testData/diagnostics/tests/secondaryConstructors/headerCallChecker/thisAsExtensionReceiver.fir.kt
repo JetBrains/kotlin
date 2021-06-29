@@ -10,6 +10,6 @@ class A {
             <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>.foobar() +
             <!UNRESOLVED_REFERENCE!>prop<!> +
             <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>.prop +
-            <!UNRESOLVED_LABEL!>this@A<!>.prop<!>
+            this<!UNRESOLVED_LABEL!>@A<!>.prop<!>
     )
 }

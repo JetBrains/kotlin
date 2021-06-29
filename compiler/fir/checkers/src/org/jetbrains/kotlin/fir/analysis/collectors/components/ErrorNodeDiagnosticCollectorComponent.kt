@@ -15,10 +15,13 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.declarations.FirErrorImport
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInstanceAccessBeforeSuperCall
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
@@ -64,18 +67,19 @@ class ErrorNodeDiagnosticCollectorComponent(
 
         // If the receiver cannot be resolved, we skip reporting any further problems for this call.
         if (qualifiedAccessOrAnnotationCall is FirQualifiedAccess) {
-            if (qualifiedAccessOrAnnotationCall.dispatchReceiver.hasUnresolvedNameError() ||
-                qualifiedAccessOrAnnotationCall.extensionReceiver.hasUnresolvedNameError() ||
-                qualifiedAccessOrAnnotationCall.explicitReceiver.hasUnresolvedNameError()
+            if (qualifiedAccessOrAnnotationCall.dispatchReceiver.cannotBeResolved() ||
+                qualifiedAccessOrAnnotationCall.extensionReceiver.cannotBeResolved() ||
+                qualifiedAccessOrAnnotationCall.explicitReceiver.cannotBeResolved()
             ) return
         }
 
         reportFirDiagnostic(errorNamedReference.diagnostic, source, reporter, data, qualifiedAccessOrAnnotationCall?.source)
     }
 
-    private fun FirExpression?.hasUnresolvedNameError(): Boolean {
-        return when ((this?.typeRef as? FirErrorTypeRef)?.diagnostic) {
-            is ConeUnresolvedNameError -> true
+    private fun FirExpression?.cannotBeResolved(): Boolean {
+        return when (val diagnostic = (this?.typeRef as? FirErrorTypeRef)?.diagnostic) {
+            is ConeUnresolvedNameError, is ConeInstanceAccessBeforeSuperCall -> true
+            is ConeSimpleDiagnostic -> diagnostic.kind == DiagnosticKind.NotASupertype || diagnostic.kind == DiagnosticKind.SuperNotAvailable || diagnostic.kind == DiagnosticKind.UnresolvedLabel
             else -> false
         }
     }

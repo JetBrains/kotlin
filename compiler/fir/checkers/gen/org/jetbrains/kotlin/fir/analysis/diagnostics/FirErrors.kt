@@ -110,7 +110,7 @@ object FirErrors {
     // Unresolved
     val INVISIBLE_REFERENCE by error1<PsiElement, FirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val UNRESOLVED_REFERENCE by error1<PsiElement, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
-    val UNRESOLVED_LABEL by error0<PsiElement>()
+    val UNRESOLVED_LABEL by error0<PsiElement>(SourceElementPositioningStrategies.LABEL)
     val DESERIALIZATION_ERROR by error0<PsiElement>()
     val ERROR_FROM_JAVA_RESOLUTION by error0<PsiElement>()
     val UNKNOWN_CALLABLE_KIND by error0<PsiElement>()
@@ -130,6 +130,7 @@ object FirErrors {
     val ENUM_AS_SUPERTYPE by error0<PsiElement>()
     val RECURSION_IN_SUPERTYPES by error0<PsiElement>()
     val NOT_A_SUPERTYPE by error0<PsiElement>()
+    val TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER by warning0<KtElement>()
     val SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE by error0<PsiElement>()
     val QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE by error1<KtTypeReference, FirClass>()
     val SUPERTYPE_INITIALIZED_IN_INTERFACE by error0<KtTypeReference>()

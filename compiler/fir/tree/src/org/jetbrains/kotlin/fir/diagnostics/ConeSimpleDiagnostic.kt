@@ -35,6 +35,8 @@ enum class DiagnosticKind {
     UnknownCallableKind,
     IllegalProjectionUsage,
     MissingStdlibClass,
+    NotASupertype,
+    SuperNotAvailable,
 
     LoopInSupertype,
     RecursiveTypealiasExpansion,
