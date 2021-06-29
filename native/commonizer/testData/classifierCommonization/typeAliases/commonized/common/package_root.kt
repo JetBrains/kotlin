@@ -40,7 +40,7 @@ typealias U = A // same nullability of the RHS class
 expect class V // different nullability of the RHS class
 typealias W = A // same nullability of the RHS TA
 expect class X // different nullability of the RHS TA
-typealias Y = V // TA at the RHS with the different nullability of own RHS
+expect class Y // TA at the RHS with the different nullability of own RHS
 
 // Supertypes:
 expect class FILE expect constructor(): kotlinx.cinterop.CStructVar

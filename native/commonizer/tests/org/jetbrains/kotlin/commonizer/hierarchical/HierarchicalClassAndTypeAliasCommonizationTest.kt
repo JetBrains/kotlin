@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.commonizer.hierarchical
 
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest
 import org.jetbrains.kotlin.commonizer.assertCommonized
-import org.junit.Ignore
 import org.junit.Test
 
 class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesCommonizationTest() {
@@ -248,7 +247,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
             "(a, b)", """
                 expect class AB expect constructor()
                 expect class V
-                typealias Y = V
+                expect class Y
             """.trimIndent()
         )
     }
@@ -283,7 +282,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
     }
 
     @Suppress("unused")
-    fun `ignored KT-47432 - test return types`() {
+    fun `test return types`() {
         val result = commonize {
             outputTarget("(a, b)")
 
@@ -312,7 +311,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
     }
 
     @Suppress("unused")
-    fun `ignored KT-47432 - test function parameters`() {
+    fun `test function parameters`() {
         val result = commonize {
             outputTarget("(a, b)")
 
@@ -370,7 +369,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
     }
 
     @Suppress("unused")
-    fun `ignored KT-47434 - test parameterized return type`() {
+    fun `test parameterized return type`() {
         val result = commonize {
             outputTarget("(a, b)", "(c, d)", "(a, b, c, d)")
             registerDependency("a", "b", "c", "d", "(a, b)", "(c, d)", "(a, b, c, d)") {
@@ -424,6 +423,69 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
             "(a, b, c, d)", """
                 expect class X expect constructor()
                 expect fun createBox(): Box<X>
+            """.trimIndent()
+        )
+    }
+
+    fun `test boxed parameter in function`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+
+            simpleSingleSourceTarget(
+                "a", """
+                    class Box<T>
+                    class X
+                    fun useBox(x: Box<X>)
+                """.trimIndent()
+            )
+
+            simpleSingleSourceTarget(
+                "b", """
+                    class Box<T>
+                    class B 
+                    typealias X = B
+                    fun useBox(x: Box<X>)
+                """.trimIndent()
+            )
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                expect class Box<T> expect constructor()
+                expect class X expect constructor()
+                expect fun useBox(x: Box<X>)
+            """.trimIndent()
+        )
+    }
+
+    fun `test boxed parameter in function - TA expansion not commonized`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+
+            simpleSingleSourceTarget(
+                "a", """
+                    class Box<T>
+                    class A
+                    typealias X = A
+                    fun useBox(x: Box<X>)
+                """.trimIndent()
+            )
+
+            simpleSingleSourceTarget(
+                "b", """
+                    class Box<T>
+                    class B 
+                    typealias X = B
+                    fun useBox(x: Box<X>)
+                """.trimIndent()
+            )
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                expect class Box<T> expect constructor()
+                expect class X expect constructor()
+                expect fun useBox(x: Box<X>)
             """.trimIndent()
         )
     }
@@ -482,6 +544,38 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
             "(a, b)", """
                 expect interface SuperClass
                 expect class X expect constructor(): SuperClass
+            """.trimIndent()
+        )
+    }
+
+    fun `todo - test boxed function using TA and expanded type`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+
+            simpleSingleSourceTarget(
+                "a", """
+                    class Box<T>
+                    class A
+                    typealias X = A
+                    fun x(x: Box<X>)
+                """.trimIndent()
+            )
+
+            simpleSingleSourceTarget(
+                "b", """
+                    class Box<T>
+                    class B
+                    typealias X = B
+                    fun x(x: Box<B>)
+                """.trimIndent()
+            )
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                expect class Box<T> expect constructor()
+                expect class X expect constructor()
+                expect fun x(x: Box<X>)
             """.trimIndent()
         )
     }
