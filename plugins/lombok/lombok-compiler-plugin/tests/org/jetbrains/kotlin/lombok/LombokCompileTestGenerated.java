@@ -173,4 +173,22 @@ public class LombokCompileTestGenerated extends AbstractLombokCompileTest {
     public void testWith() throws Exception {
         runTest("plugins/lombok/lombok-compiler-plugin/testData/compile/with.kt");
     }
+
+    @TestMetadata("plugins/lombok/lombok-compiler-plugin/testData/compile/processErrors")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ProcessErrors extends AbstractLombokCompileTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInProcessErrors() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/lombok/lombok-compiler-plugin/testData/compile/processErrors"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("annotationTypes.kt")
+        public void testAnnotationTypes() throws Exception {
+            runTest("plugins/lombok/lombok-compiler-plugin/testData/compile/processErrors/annotationTypes.kt");
+        }
+    }
 }

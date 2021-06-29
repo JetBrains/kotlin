@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassConstructorDescriptor
+import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaClassDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.isJavaField
+import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
@@ -89,10 +91,15 @@ private fun CallableDescriptor.makeValueParameter(param: LombokValueParameter, i
     )
 }
 
-fun ClassDescriptor.getJavaFields(): List<PropertyDescriptor> =
-    this.unsubstitutedMemberScope.getVariableNames()
-        .map {
-            this.unsubstitutedMemberScope.getContributedVariables(it, NoLookupLocation.FROM_SYNTHETIC_SCOPE).single()
-        }.filter { it.isJavaField }
+fun ClassDescriptor.getJavaFields(): List<PropertyDescriptor> {
+    val variableNames = getJavaClass()?.fields?.map { it.name } ?: emptyList()
+    return variableNames
+        .mapNotNull { this.unsubstitutedMemberScope.getContributedVariables(it, NoLookupLocation.FROM_SYNTHETIC_SCOPE).singleOrNull() }
+        .filter { it.isJavaField }
+}
 
 fun KotlinType.isPrimitiveBoolean(): Boolean = this is SimpleTypeMarker && isBoolean()
+
+//we process local java files only
+fun ClassDescriptor.getJavaClass(): JavaClassImpl? =
+    (this as? LazyJavaClassDescriptor)?.jClass as? JavaClassImpl
