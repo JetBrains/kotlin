@@ -606,7 +606,13 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         data: ResolutionMode,
     ): FirStatement {
         val resolved = components.typeResolverTransformer.withAllowedBareTypes {
-            typeOperatorCall.transformConversionTypeRef(transformer, ResolutionMode.ContextIndependent)
+            if (typeOperatorCall.operation == FirOperation.IS || typeOperatorCall.operation == FirOperation.NOT_IS) {
+                components.typeResolverTransformer.withIsOperandOfIsOperator {
+                    typeOperatorCall.transformConversionTypeRef(transformer, ResolutionMode.ContextIndependent)
+                }
+            } else {
+                typeOperatorCall.transformConversionTypeRef(transformer, ResolutionMode.ContextIndependent)
+            }
         }.transformTypeOperatorCallChildren()
 
         val conversionTypeRef = resolved.conversionTypeRef.withTypeArgumentsForBareType(resolved.argument)

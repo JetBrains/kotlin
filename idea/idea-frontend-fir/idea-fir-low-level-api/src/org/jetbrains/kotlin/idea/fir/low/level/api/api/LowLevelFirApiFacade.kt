@@ -82,6 +82,25 @@ inline fun <R> KtDeclaration.withFirDeclaration(
  * Creates [FirDeclaration] by [KtDeclaration] and executes an [action] on it
  * [FirDeclaration] passed to [action] will be resolved at least to [phase] when executing [action] on it
  *
+ * If resulted [FirDeclaration] is not [F] returns null without executing the action
+ *
+ * [FirDeclaration] passed to [action] should not be leaked outside [action] lambda
+ * Otherwise, some threading problems may arise,
+ */
+@OptIn(InternalForInline::class)
+inline fun <reified F : FirDeclaration, R> KtDeclaration.withFirDeclarationOfTypeOrNull(
+    resolveState: FirModuleResolveState,
+    phase: FirResolvePhase = FirResolvePhase.RAW_FIR,
+    action: (F) -> R
+): R? = withFirDeclaration(resolveState, phase) { firDeclaration ->
+    if (firDeclaration !is F) return null
+    action(firDeclaration)
+}
+
+/**
+ * Creates [FirDeclaration] by [KtDeclaration] and executes an [action] on it
+ * [FirDeclaration] passed to [action] will be resolved at least to [phase] when executing [action] on it
+ *
  * If resulted [FirDeclaration] is not [F] throws [InvalidFirElementTypeException]
  *
  * [FirDeclaration] passed to [action] should not be leaked outside [action] lambda

@@ -259,12 +259,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.UNKNOWN_CALLABLE_KIND) { firDiagnostic ->
-        UnknownCallableKindImpl(
-            firDiagnostic as FirPsiDiagnostic,
-            token,
-        )
-    }
     add(FirErrors.MISSING_STDLIB_CLASS) { firDiagnostic ->
         MissingStdlibClassImpl(
             firDiagnostic as FirPsiDiagnostic,
@@ -304,18 +298,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     add(FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL) { firDiagnostic ->
         InstanceAccessBeforeSuperCallImpl(
             firDiagnostic.a,
-            firDiagnostic as FirPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirErrors.ENUM_AS_SUPERTYPE) { firDiagnostic ->
-        EnumAsSupertypeImpl(
-            firDiagnostic as FirPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirErrors.RECURSION_IN_SUPERTYPES) { firDiagnostic ->
-        RecursionInSupertypesImpl(
             firDiagnostic as FirPsiDiagnostic,
             token,
         )
@@ -2352,6 +2334,18 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
         UselessIsCheckImpl(
             firDiagnostic.a,
             firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.IS_ENUM_ENTRY) { firDiagnostic ->
+        IsEnumEntryImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.ENUM_ENTRY_AS_TYPE) { firDiagnostic ->
+        EnumEntryAsTypeImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )
     }

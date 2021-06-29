@@ -25,14 +25,11 @@ enum class DiagnosticKind {
     IllegalUnderscore,
     DeserializationError,
     InferenceError,
-    EnumAsSupertype,
-    RecursionInSupertypes,
     RecursionInImplicitTypes,
     Java,
     SuperNotAllowed,
     ValueParameterWithNoTypeAnnotation,
     CannotInferParameterType,
-    UnknownCallableKind,
     IllegalProjectionUsage,
     MissingStdlibClass,
 
@@ -49,6 +46,9 @@ enum class DiagnosticKind {
     IntLiteralOutOfRange,
     FloatLiteralOutOfRange,
     WrongLongSuffix,
+
+    IsEnumEntry,
+    EnumEntryAsType,
 
     Other
 }

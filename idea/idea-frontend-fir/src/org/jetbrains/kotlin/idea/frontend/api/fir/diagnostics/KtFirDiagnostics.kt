@@ -204,10 +204,6 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ErrorFromJavaResolution::class
     }
 
-    abstract class UnknownCallableKind : KtFirDiagnostic<PsiElement>() {
-        override val diagnosticClass get() = UnknownCallableKind::class
-    }
-
     abstract class MissingStdlibClass : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = MissingStdlibClass::class
     }
@@ -235,14 +231,6 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
     abstract class InstanceAccessBeforeSuperCall : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = InstanceAccessBeforeSuperCall::class
         abstract val target: String
-    }
-
-    abstract class EnumAsSupertype : KtFirDiagnostic<PsiElement>() {
-        override val diagnosticClass get() = EnumAsSupertype::class
-    }
-
-    abstract class RecursionInSupertypes : KtFirDiagnostic<PsiElement>() {
-        override val diagnosticClass get() = RecursionInSupertypes::class
     }
 
     abstract class NotASupertype : KtFirDiagnostic<PsiElement>() {
@@ -1658,6 +1646,14 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
     abstract class UselessIsCheck : KtFirDiagnostic<KtElement>() {
         override val diagnosticClass get() = UselessIsCheck::class
         abstract val compileTimeCheckResult: Boolean
+    }
+
+    abstract class IsEnumEntry : KtFirDiagnostic<KtTypeReference>() {
+        override val diagnosticClass get() = IsEnumEntry::class
+    }
+
+    abstract class EnumEntryAsType : KtFirDiagnostic<KtTypeReference>() {
+        override val diagnosticClass get() = EnumEntryAsType::class
     }
 
     abstract class NoElseInWhen : KtFirDiagnostic<KtWhenExpression>() {
