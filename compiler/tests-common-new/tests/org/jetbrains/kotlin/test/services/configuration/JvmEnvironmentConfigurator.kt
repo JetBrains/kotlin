@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.test.services.configuration
 
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.psi.PsiJavaModule.MODULE_INFO_FILE
+import org.jetbrains.kotlin.backend.common.phaser.AnyNamedPhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
+import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.jvm.addModularRootIfNotNull
@@ -23,6 +26,8 @@ import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.MockLibraryUtil.compileJavaFilesLibraryToJar
 import org.jetbrains.kotlin.test.TestJavacVersion
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.backend.handlers.PhasedIrDumpHandler
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.ALL_JAVA_AS_BINARY
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.ASSERTIONS_MODE
@@ -44,6 +49,7 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.NO_UNIFIE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.PARAMETERS_METADATA
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
+import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.model.DependencyDescription
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.TestFile
@@ -247,6 +253,10 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
         if (LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE in module.directives) {
             configuration.put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, true)
         }
+
+        if (CodegenTestDirectives.DUMP_IR_FOR_GIVEN_PHASES in module.directives) {
+            configuration.putCustomPhaseConfigWithEnabledDump(module)
+        }
     }
 
     private fun addJavaSourceRootsByJavaModules(configuration: CompilerConfiguration, moduleInfoFiles: List<TestFile>) {
@@ -345,6 +355,19 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
             //
             // in compiler/tests-different-jdk/build.gradle.kts
             configuration.put(JVMConfigurationKeys.JVM_TARGET, customDefaultTarget)
+        }
+    }
+
+    private fun CompilerConfiguration.putCustomPhaseConfigWithEnabledDump(module: TestModule) {
+        val dumpDirectory = testServices.createTempDirectory(PhasedIrDumpHandler.DUMPED_IR_FOLDER_NAME)
+        val phases = module.directives[CodegenTestDirectives.DUMP_IR_FOR_GIVEN_PHASES].toSet()
+        if (phases.isNotEmpty()) {
+            val phaseConfig = PhaseConfig(
+                jvmPhases,
+                toDumpStateAfter = phases,
+                dumpToDirectory = dumpDirectory.absolutePath
+            )
+            put(CLIConfigurationKeys.PHASE_CONFIG, phaseConfig)
         }
     }
 

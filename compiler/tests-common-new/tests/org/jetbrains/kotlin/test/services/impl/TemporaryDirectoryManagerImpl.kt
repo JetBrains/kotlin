@@ -13,16 +13,18 @@ import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 
 class TemporaryDirectoryManagerImpl(testServices: TestServices) : TemporaryDirectoryManager(testServices) {
+    private val cache = mutableMapOf<String, File>()
     private val rootTempDir: File = run {
         val testInfo = testServices.testInfo
         KtTestUtil.tmpDirForTest(testInfo.className, testInfo.methodName)
     }
 
     override fun createTempDirectory(name: String): File {
-        return KtTestUtil.tmpDir(rootTempDir, name)
+        return cache.getOrPut(name) { KtTestUtil.tmpDir(rootTempDir, name) }
     }
 
     override fun cleanupTemporaryDirectories() {
+        cache.clear()
         FileUtil.delete(rootTempDir)
     }
 }

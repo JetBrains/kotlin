@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.directives
 
+import org.jetbrains.kotlin.backend.common.phaser.AnyNamedPhase
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.handlers.*
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
@@ -114,6 +115,11 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
 
     val SKIP_KT_DUMP by directive(
         description = "Skips check pretty kt IR dump (disables ${IrPrettyKotlinDumpHandler::class})"
+    )
+
+    val DUMP_IR_FOR_GIVEN_PHASES by valueDirective<AnyNamedPhase>(
+        description = "Dumps backend IR after given lowerings (enables ${PhasedIrDumpHandler::class})",
+        parser = { error("Cannot parse value $it for \"DUMP_IR_FOR_GIVEN_PHASES\" directive. All arguments must be specified via code in test system") }
     )
 
     val TREAT_AS_ONE_FILE by directive(
