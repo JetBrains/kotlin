@@ -55,9 +55,19 @@ public class IrCompileAgainstJvmAbiTestGenerated extends AbstractIrCompileAgains
         runTest("plugins/jvm-abi-gen/testData/compile/inlineCapture/");
     }
 
+    @TestMetadata("inlineNoRegeneration")
+    public void testInlineNoRegeneration() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compile/inlineNoRegeneration/");
+    }
+
     @TestMetadata("inlineReifiedFunction")
     public void testInlineReifiedFunction() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compile/inlineReifiedFunction/");
+    }
+
+    @TestMetadata("innerObjectRegeneration")
+    public void testInnerObjectRegeneration() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compile/innerObjectRegeneration/");
     }
 
     @TestMetadata("privateOnlyConstructors")

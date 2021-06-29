@@ -76,11 +76,10 @@ public class InlineUtil {
 
     public static boolean isInPublicInlineScope(@Nullable DeclarationDescriptor descriptor) {
         if (descriptor == null) return false;
-        if (isInline(descriptor)) {
-            if (!(descriptor instanceof DeclarationDescriptorWithVisibility))
-                return false;
+        if (isInline(descriptor) && descriptor instanceof DeclarationDescriptorWithVisibility) {
             DescriptorVisibility visibility = ((DeclarationDescriptorWithVisibility) descriptor).getVisibility();
-            return !DescriptorVisibilities.isPrivate(visibility);
+            if (!DescriptorVisibilities.isPrivate(visibility))
+                return true;
         }
         return isInPublicInlineScope(descriptor.getContainingDeclaration());
     }

@@ -13,10 +13,7 @@ import org.jetbrains.kotlin.backend.jvm.codegen.representativeUpperBound
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.config.JvmDefaultMode
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
-import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
@@ -431,13 +428,17 @@ private val IrDeclaration.original: IrDeclaration
 // (determined *before* lowering), or null if the given declaration is not in the scope of an inline function.
 val IrDeclaration.inlineScopeVisibility: DescriptorVisibility?
     get() {
-        var owner = original
-        while (true) {
+        var owner: IrDeclaration? = original
+        var result: DescriptorVisibility? = null
+        while (owner != null) {
             if (owner is IrFunction && owner.isInline) {
-                return owner.visibility
+                if (!DescriptorVisibilities.isPrivate(owner.visibility))
+                    return owner.visibility
+                result = owner.visibility
             }
-            owner = owner.parent.safeAs<IrDeclaration>()?.original ?: return null
+            owner = owner.parent.safeAs<IrDeclaration>()?.original
         }
+        return result
     }
 
 // True for declarations which are in the scope of an externally visible inline function.
