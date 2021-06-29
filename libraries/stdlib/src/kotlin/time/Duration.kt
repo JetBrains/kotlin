@@ -9,6 +9,7 @@ import kotlin.contracts.*
 import kotlin.jvm.JvmInline
 import kotlin.math.abs
 import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 import kotlin.math.sign
 
 /**
@@ -816,11 +817,11 @@ public fun Long.toDuration(unit: DurationUnit): Duration {
 public fun Double.toDuration(unit: DurationUnit): Duration {
     val valueInNs = convertDurationUnit(this, unit, DurationUnit.NANOSECONDS)
     require(!valueInNs.isNaN()) { "Duration value cannot be NaN." }
-    val nanos = valueInNs.toLong()
+    val nanos = valueInNs.roundToLong()
     return if (nanos in -MAX_NANOS..MAX_NANOS) {
         durationOfNanos(nanos)
     } else {
-        val millis = convertDurationUnit(this, unit, DurationUnit.MILLISECONDS).toLong()
+        val millis = convertDurationUnit(this, unit, DurationUnit.MILLISECONDS).roundToLong()
         durationOfMillisNormalized(millis)
     }
 }
