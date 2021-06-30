@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.modality
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.scope
@@ -28,7 +30,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 class FirDelegatedMemberScope(
     private val session: FirSession,
     private val scopeSession: ScopeSession,
-    private val containingClass: FirClass<*>,
+    private val containingClass: FirClass,
     private val declaredMemberScope: FirScope,
     private val delegateFields: List<FirField>,
 ) : FirScope() {
@@ -173,15 +175,15 @@ class FirDelegatedMemberScope(
 
 private object MultipleDelegatesWithTheSameSignatureKey : FirDeclarationDataKey()
 
-var FirCallableDeclaration<*>.multipleDelegatesWithTheSameSignature: Boolean? by FirDeclarationDataRegistry.data(MultipleDelegatesWithTheSameSignatureKey)
+var FirCallableDeclaration.multipleDelegatesWithTheSameSignature: Boolean? by FirDeclarationDataRegistry.data(MultipleDelegatesWithTheSameSignatureKey)
 
 private object DelegatedWrapperDataKey : FirDeclarationDataKey()
-class DelegatedWrapperData<D : FirCallableDeclaration<*>>(
+class DelegatedWrapperData<D : FirCallableDeclaration>(
     val wrapped: D,
     val containingClass: ConeClassLikeLookupTag,
     val delegateField: FirField,
 )
-var <D : FirCallableDeclaration<*>>
+var <D : FirCallableDeclaration>
         D.delegatedWrapperData: DelegatedWrapperData<D>? by FirDeclarationDataRegistry.data(DelegatedWrapperDataKey)
 
 
