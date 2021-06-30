@@ -1,3 +1,4 @@
+// !LANGUAGE: -SafeCallsAreAlwaysNullable
 // See KT-10913 Bogus unreachable code warning
 
 fun fn() : String? = null

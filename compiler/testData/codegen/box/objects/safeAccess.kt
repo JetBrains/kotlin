@@ -5,4 +5,4 @@ object Test {
     val a = "OK"
 }
 
-fun box(): String = Test?.a
+fun box(): String? = Test?.a

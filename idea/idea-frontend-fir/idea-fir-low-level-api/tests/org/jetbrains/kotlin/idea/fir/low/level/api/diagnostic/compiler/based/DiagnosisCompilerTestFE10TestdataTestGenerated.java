@@ -681,6 +681,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
         }
 
         @Test
+        @TestMetadata("SafeCallNonNullReceiver2.kt")
+        public void testSafeCallNonNullReceiver2() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/SafeCallNonNullReceiver2.kt");
+        }
+
+        @Test
         @TestMetadata("SafeCallNonNullReceiverReturnNull.kt")
         public void testSafeCallNonNullReceiverReturnNull() throws Exception {
             runTest("compiler/testData/diagnostics/tests/SafeCallNonNullReceiverReturnNull.kt");
