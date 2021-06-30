@@ -519,7 +519,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                         irString(callee.originalName.asString())
                     }
                     createLegacyMethodOverride(irSymbols.functionReferenceGetOwner.owner) {
-                        calculateOwner(callee.parent, backendContext)
+                        calculateOwner(callee.parent)
                     }
                 }
 
@@ -632,8 +632,8 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             }
             if (!isLambda && useOptimizedSuperClass) {
                 val callableReferenceTarget = adaptedReferenceOriginalTarget ?: callee
-                val owner = calculateOwnerKClass(callableReferenceTarget.parent, backendContext)
-                call.putValueArgument(index++, kClassToJavaClass(owner, backendContext))
+                val owner = calculateOwnerKClass(callableReferenceTarget.parent)
+                call.putValueArgument(index++, kClassToJavaClass(owner))
                 call.putValueArgument(index++, irString(callableReferenceTarget.originalName.asString()))
                 call.putValueArgument(index++, generateSignature(callableReferenceTarget.symbol))
                 call.putValueArgument(index, irInt(getFunctionReferenceFlags(callableReferenceTarget)))
@@ -808,31 +808,31 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 startOffset, endOffset, context.irBuiltIns.kClassClass.starProjectedType, context.irBuiltIns.kClassClass, classType
             )
 
-        internal fun IrBuilderWithScope.kClassToJavaClass(kClassReference: IrExpression, context: JvmBackendContext) =
-            irGet(context.ir.symbols.javaLangClass.starProjectedType, null, context.ir.symbols.kClassJava.owner.getter!!.symbol).apply {
+        internal fun JvmIrBuilder.kClassToJavaClass(kClassReference: IrExpression) =
+            irGet(irSymbols.javaLangClass.starProjectedType, null, irSymbols.kClassJava.owner.getter!!.symbol).apply {
                 extensionReceiver = kClassReference
             }
 
-        internal fun IrBuilderWithScope.javaClassReference(classType: IrType, context: JvmBackendContext) =
-            kClassToJavaClass(kClassReference(classType), context)
+        internal fun JvmIrBuilder.javaClassReference(classType: IrType) =
+            kClassToJavaClass(kClassReference(classType))
 
-        internal fun IrBuilderWithScope.calculateOwner(irContainer: IrDeclarationParent, context: JvmBackendContext): IrExpression {
-            val kClass = calculateOwnerKClass(irContainer, context)
+        internal fun JvmIrBuilder.calculateOwner(irContainer: IrDeclarationParent): IrExpression {
+            val kClass = calculateOwnerKClass(irContainer)
 
             if ((irContainer as? IrClass)?.isFileClass != true && irContainer !is IrPackageFragment)
                 return kClass
 
-            return irCall(context.ir.symbols.getOrCreateKotlinPackage).apply {
-                putValueArgument(0, kClassToJavaClass(kClass, context))
+            return irCall(irSymbols.getOrCreateKotlinPackage).apply {
+                putValueArgument(0, kClassToJavaClass(kClass))
                 // Note that this name is not used in reflection. There should be the name of the referenced declaration's
                 // module instead, but there's no nice API to obtain that name here yet
                 // TODO: write the referenced declaration's module name and use it in reflection
-                putValueArgument(1, irString(context.state.moduleName))
+                putValueArgument(1, irString(backendContext.state.moduleName))
             }
         }
 
-        internal fun IrBuilderWithScope.calculateOwnerKClass(irContainer: IrDeclarationParent, context: JvmBackendContext): IrExpression =
-            kClassReference(getOwnerKClassType(irContainer, context))
+        internal fun JvmIrBuilder.calculateOwnerKClass(irContainer: IrDeclarationParent): IrExpression =
+            kClassReference(getOwnerKClassType(irContainer, backendContext))
 
         internal fun getOwnerKClassType(irContainer: IrDeclarationParent, context: JvmBackendContext): IrType =
             if (irContainer is IrClass) irContainer.defaultType
