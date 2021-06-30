@@ -1,6 +1,6 @@
+// !LANGUAGE: -AbstractClassMemberNotImplementedWithIntermediateAbstractClass
 // IGNORE_BACKEND_FIR: JVM_IR
 
-// Note: this test will fail in Kotlin 1.6 (see AbstractClassMemberNotImplementedWithIntermediateAbstractClass feature)
 interface A {
     fun foo(): Any
 }
