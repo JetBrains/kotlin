@@ -120,11 +120,6 @@ private class AssertionLowering(private val context: JvmBackendContext) :
         get() = name.asString() == "assert" && getPackageFragment()?.fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME
 }
 
-private fun IrBuilderWithScope.getJavaClass(backendContext: JvmBackendContext, irClass: IrClass) =
-    with(FunctionReferenceLowering) {
-        javaClassReference(irClass.defaultType, backendContext)
-    }
-
 fun IrClass.buildAssertionsDisabledField(backendContext: JvmBackendContext, topLevelClass: IrClass) =
     factory.buildField {
         name = Name.identifier(ASSERTIONS_DISABLED_FIELD_NAME)
@@ -138,7 +133,9 @@ fun IrClass.buildAssertionsDisabledField(backendContext: JvmBackendContext, topL
         field.initializer = backendContext.createJvmIrBuilder(this.symbol).run {
             at(field)
             irExprBody(irNot(irCall(irSymbols.desiredAssertionStatus).apply {
-                dispatchReceiver = getJavaClass(backendContext, topLevelClass)
+                dispatchReceiver = with(FunctionReferenceLowering) {
+                    javaClassReference(topLevelClass.defaultType)
+                }
             }))
         }
     }

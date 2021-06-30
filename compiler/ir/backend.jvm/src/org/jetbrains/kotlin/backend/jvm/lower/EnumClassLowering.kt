@@ -162,7 +162,7 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
                             IrSyntheticBodyKind.ENUM_VALUEOF ->
                                 irCall(backendContext.ir.symbols.enumValueOfFunction).apply {
                                     putValueArgument(0, with(FunctionReferenceLowering) {
-                                        javaClassReference(irClass.defaultType, backendContext)
+                                        javaClassReference(irClass.defaultType)
                                     })
                                     putValueArgument(1, irGet(declaration.valueParameters[0]))
                                 }
