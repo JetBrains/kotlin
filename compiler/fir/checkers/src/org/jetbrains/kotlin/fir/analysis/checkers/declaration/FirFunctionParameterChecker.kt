@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOnWithSuppression
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -39,6 +40,7 @@ object FirFunctionParameterChecker : FirFunctionChecker() {
     }
 
     private fun checkParameterTypes(function: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (function is FirAnonymousFunction) return
         for (valueParameter in function.valueParameters) {
             val returnTypeRef = valueParameter.returnTypeRef
             if (returnTypeRef !is FirErrorTypeRef) continue
