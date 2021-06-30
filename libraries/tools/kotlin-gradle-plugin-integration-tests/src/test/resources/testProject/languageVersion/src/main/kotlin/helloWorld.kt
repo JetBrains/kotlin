@@ -1,7 +1,1 @@
-fun breakInWhen() {
-    while (true) {
-        when {
-            true -> break
-        }
-    }
-}
+fun <T> f(t: T): T!! = t!!

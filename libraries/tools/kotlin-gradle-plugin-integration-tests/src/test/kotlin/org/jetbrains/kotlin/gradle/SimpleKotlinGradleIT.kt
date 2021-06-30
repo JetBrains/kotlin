@@ -67,7 +67,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
     fun testLanguageVersion(gradleVersion: GradleVersion) {
         project("languageVersion", gradleVersion) {
             buildAndFail("build") {
-                assertOutputContains("'break' and 'continue' are not allowed in 'when' statements")
+                assertOutputContains("The feature \"definitely not null type parameters\" is only available since language version 1.6")
             }
         }
     }
