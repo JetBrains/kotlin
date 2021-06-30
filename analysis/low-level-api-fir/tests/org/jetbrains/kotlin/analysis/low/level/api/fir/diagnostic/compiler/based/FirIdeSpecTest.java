@@ -33,64 +33,49 @@ public class FirIdeSpecTest extends AbstractDiagnosisCompilerTestDataSpecTest {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
         }
 
+        @Nested
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/annotations")
         @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class Annotations extends AbstractDiagnosisCompilerTestDataSpecTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-            }
-
+        public class Annotations {
+            @Test
             public void testAllFilesPresentInAnnotations() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/annotations"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
             }
 
+            @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/annotations/annotation-targets")
             @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class Annotation_targets extends AbstractDiagnosisCompilerTestDataSpecTest {
-                private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-                }
-
+            public class Annotation_targets {
+                @Test
                 public void testAllFilesPresentInAnnotation_targets() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/annotations/annotation-targets"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                 }
             }
         }
 
+        @Nested
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/built-in-types-and-their-semantics")
         @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class Built_in_types_and_their_semantics extends AbstractDiagnosisCompilerTestDataSpecTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-            }
-
+        public class Built_in_types_and_their_semantics {
+            @Test
             public void testAllFilesPresentInBuilt_in_types_and_their_semantics() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/built-in-types-and-their-semantics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
             }
 
+            @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/built-in-types-and-their-semantics/built-in-integer-types-1")
             @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class Built_in_integer_types_1 extends AbstractDiagnosisCompilerTestDataSpecTest {
-                private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-                }
-
+            public class Built_in_integer_types_1 {
+                @Test
                 public void testAllFilesPresentInBuilt_in_integer_types_1() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/built-in-types-and-their-semantics/built-in-integer-types-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                 }
 
+                @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/built-in-types-and-their-semantics/built-in-integer-types-1/integer-type-widening")
                 @TestDataPath("$PROJECT_ROOT")
-                @RunWith(JUnit3RunnerWithInners.class)
-                public static class Integer_type_widening extends AbstractDiagnosisCompilerTestDataSpecTest {
-                    private void runTest(String testDataFilePath) throws Exception {
-                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-                    }
-
+                public class Integer_type_widening {
+                    @Test
                     public void testAllFilesPresentInInteger_type_widening() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/built-in-types-and-their-semantics/built-in-integer-types-1/integer-type-widening"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                     }
@@ -215,26 +200,20 @@ public class FirIdeSpecTest extends AbstractDiagnosisCompilerTestDataSpecTest {
                 }
             }
 
+            @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/performing-analysis-on-the-control-flow-graph")
             @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class Performing_analysis_on_the_control_flow_graph extends AbstractDiagnosisCompilerTestDataSpecTest {
-                private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-                }
-
+            public class Performing_analysis_on_the_control_flow_graph {
+                @Test
                 public void testAllFilesPresentInPerforming_analysis_on_the_control_flow_graph() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/performing-analysis-on-the-control-flow-graph"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                 }
 
+                @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/performing-analysis-on-the-control-flow-graph/variable-initialization-analysis")
                 @TestDataPath("$PROJECT_ROOT")
-                @RunWith(JUnit3RunnerWithInners.class)
-                public static class Variable_initialization_analysis extends AbstractDiagnosisCompilerTestDataSpecTest {
-                    private void runTest(String testDataFilePath) throws Exception {
-                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-                    }
-
+                public class Variable_initialization_analysis {
+                    @Test
                     public void testAllFilesPresentInVariable_initialization_analysis() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/performing-analysis-on-the-control-flow-graph/variable-initialization-analysis"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                     }
@@ -242,14 +221,11 @@ public class FirIdeSpecTest extends AbstractDiagnosisCompilerTestDataSpecTest {
             }
         }
 
+        @Nested
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis.control-flow-graph.expressions-1.conditional-expressions")
         @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class Control__and_data_flow_analysis_control_flow_graph_expressions_1_conditional_expressions extends AbstractDiagnosisCompilerTestDataSpecTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-            }
-
+        public class Control__and_data_flow_analysis_control_flow_graph_expressions_1_conditional_expressions {
+            @Test
             public void testAllFilesPresentInControl__and_data_flow_analysis_control_flow_graph_expressions_1_conditional_expressions() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis.control-flow-graph.expressions-1.conditional-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
             }
@@ -622,55 +598,43 @@ public class FirIdeSpecTest extends AbstractDiagnosisCompilerTestDataSpecTest {
                         }
                     }
 
+                    @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/nested-and-inner-classifiers")
                     @TestDataPath("$PROJECT_ROOT")
-                    @RunWith(JUnit3RunnerWithInners.class)
-                    public static class Nested_and_inner_classifiers extends AbstractDiagnosisCompilerTestDataSpecTest {
-                        private void runTest(String testDataFilePath) throws Exception {
-                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-                        }
-
+                    public class Nested_and_inner_classifiers {
+                        @Test
                         public void testAllFilesPresentInNested_and_inner_classifiers() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/nested-and-inner-classifiers"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                         }
                     }
                 }
 
+                @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/classifier-initialization")
                 @TestDataPath("$PROJECT_ROOT")
-                @RunWith(JUnit3RunnerWithInners.class)
-                public static class Classifier_initialization extends AbstractDiagnosisCompilerTestDataSpecTest {
-                    private void runTest(String testDataFilePath) throws Exception {
-                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-                    }
-
+                public class Classifier_initialization {
+                    @Test
                     public void testAllFilesPresentInClassifier_initialization() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/classifier-initialization"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                     }
                 }
 
+                @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/data-class-declaration")
                 @TestDataPath("$PROJECT_ROOT")
-                @RunWith(JUnit3RunnerWithInners.class)
-                public static class Data_class_declaration extends AbstractDiagnosisCompilerTestDataSpecTest {
-                    private void runTest(String testDataFilePath) throws Exception {
-                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-                    }
-
+                public class Data_class_declaration {
+                    @Test
                     public void testAllFilesPresentInData_class_declaration() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/data-class-declaration"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                     }
                 }
             }
 
+            @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/function-declaration")
             @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class Function_declaration extends AbstractDiagnosisCompilerTestDataSpecTest {
-                private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-                }
-
+            public class Function_declaration {
+                @Test
                 public void testAllFilesPresentInFunction_declaration() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/function-declaration"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                 }
@@ -721,28 +685,22 @@ public class FirIdeSpecTest extends AbstractDiagnosisCompilerTestDataSpecTest {
                     }
                 }
 
+                @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/property-declaration/property-initialization")
                 @TestDataPath("$PROJECT_ROOT")
-                @RunWith(JUnit3RunnerWithInners.class)
-                public static class Property_initialization extends AbstractDiagnosisCompilerTestDataSpecTest {
-                    private void runTest(String testDataFilePath) throws Exception {
-                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-                    }
-
+                public class Property_initialization {
+                    @Test
                     public void testAllFilesPresentInProperty_initialization() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/property-declaration/property-initialization"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                     }
                 }
             }
 
+            @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/type-alias")
             @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class Type_alias extends AbstractDiagnosisCompilerTestDataSpecTest {
-                private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-                }
-
+            public class Type_alias {
+                @Test
                 public void testAllFilesPresentInType_alias() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/type-alias"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                 }
@@ -872,6 +830,36 @@ public class FirIdeSpecTest extends AbstractDiagnosisCompilerTestDataSpecTest {
                                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.unit/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                             }
                         }
+                    }
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/call-and-property-access-expressions")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Call_and_property_access_expressions {
+                @Test
+                public void testAllFilesPresentInCall_and_property_access_expressions() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/call-and-property-access-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @Nested
+                @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/call-and-property-access-expressions/callable-references")
+                @TestDataPath("$PROJECT_ROOT")
+                public class Callable_references {
+                    @Test
+                    public void testAllFilesPresentInCallable_references() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/call-and-property-access-expressions/callable-references"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                    }
+                }
+
+                @Nested
+                @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/call-and-property-access-expressions/navigation-operators")
+                @TestDataPath("$PROJECT_ROOT")
+                public class Navigation_operators {
+                    @Test
+                    public void testAllFilesPresentInNavigation_operators() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/call-and-property-access-expressions/navigation-operators"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                     }
                 }
             }
@@ -1942,6 +1930,26 @@ public class FirIdeSpecTest extends AbstractDiagnosisCompilerTestDataSpecTest {
                                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/equality-expressions/value-equality-expressions/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                             }
                         }
+                    }
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/function-literals")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Function_literals {
+                @Test
+                public void testAllFilesPresentInFunction_literals() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/function-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @Nested
+                @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/function-literals/lambda-literals")
+                @TestDataPath("$PROJECT_ROOT")
+                public class Lambda_literals {
+                    @Test
+                    public void testAllFilesPresentInLambda_literals() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/function-literals/lambda-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                     }
                 }
             }
@@ -3356,6 +3364,26 @@ public class FirIdeSpecTest extends AbstractDiagnosisCompilerTestDataSpecTest {
         }
 
         @Nested
+        @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/inheritance")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Inheritance {
+            @Test
+            public void testAllFilesPresentInInheritance() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/inheritance"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+
+            @Nested
+            @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Overriding {
+                @Test
+                public void testAllFilesPresentInOverriding() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution")
         @TestDataPath("$PROJECT_ROOT")
         public class Overload_resolution {
@@ -4357,6 +4385,16 @@ public class FirIdeSpecTest extends AbstractDiagnosisCompilerTestDataSpecTest {
             }
 
             @Nested
+            @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/c-level-partition")
+            @TestDataPath("$PROJECT_ROOT")
+            public class C_level_partition {
+                @Test
+                public void testAllFilesPresentInC_level_partition() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/c-level-partition"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+            }
+
+            @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/callables-and-invoke-convention")
             @TestDataPath("$PROJECT_ROOT")
             public class Callables_and_invoke_convention {
@@ -4853,14 +4891,11 @@ public class FirIdeSpecTest extends AbstractDiagnosisCompilerTestDataSpecTest {
                     }
                 }
 
+                @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call/rationale")
                 @TestDataPath("$PROJECT_ROOT")
-                @RunWith(JUnit3RunnerWithInners.class)
-                public static class Rationale extends AbstractDiagnosisCompilerTestDataSpecTest {
-                    private void runTest(String testDataFilePath) throws Exception {
-                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-                    }
-
+                public class Rationale {
+                    @Test
                     public void testAllFilesPresentInRationale() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call/rationale"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                     }
@@ -5137,6 +5172,16 @@ public class FirIdeSpecTest extends AbstractDiagnosisCompilerTestDataSpecTest {
         }
 
         @Nested
+        @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overloadable-operators")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Overloadable_operators {
+            @Test
+            public void testAllFilesPresentInOverloadable_operators() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overloadable-operators"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements")
         @TestDataPath("$PROJECT_ROOT")
         public class Statements {
@@ -5264,14 +5309,11 @@ public class FirIdeSpecTest extends AbstractDiagnosisCompilerTestDataSpecTest {
                     }
                 }
 
+                @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/simple-assignments")
                 @TestDataPath("$PROJECT_ROOT")
-                @RunWith(JUnit3RunnerWithInners.class)
-                public static class Simple_assignments extends AbstractDiagnosisCompilerTestDataSpecTest {
-                    private void runTest(String testDataFilePath) throws Exception {
-                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-                    }
-
+                public class Simple_assignments {
+                    @Test
                     public void testAllFilesPresentInSimple_assignments() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/simple-assignments"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                     }
@@ -5422,14 +5464,11 @@ public class FirIdeSpecTest extends AbstractDiagnosisCompilerTestDataSpecTest {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-inference"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
             }
 
+            @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-inference/local-type-inference")
             @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class Local_type_inference extends AbstractDiagnosisCompilerTestDataSpecTest {
-                private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-                }
-
+            public class Local_type_inference {
+                @Test
                 public void testAllFilesPresentInLocal_type_inference() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-inference/local-type-inference"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                 }
@@ -5496,14 +5535,11 @@ public class FirIdeSpecTest extends AbstractDiagnosisCompilerTestDataSpecTest {
                     }
                 }
 
+                @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-types")
                 @TestDataPath("$PROJECT_ROOT")
-                @RunWith(JUnit3RunnerWithInners.class)
-                public static class Smart_cast_types extends AbstractDiagnosisCompilerTestDataSpecTest {
-                    private void runTest(String testDataFilePath) throws Exception {
-                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-                    }
-
+                public class Smart_cast_types {
+                    @Test
                     public void testAllFilesPresentInSmart_cast_types() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-types"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                     }
@@ -5654,6 +5690,16 @@ public class FirIdeSpecTest extends AbstractDiagnosisCompilerTestDataSpecTest {
                                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-for-intersection-types/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                             }
                         }
+                    }
+                }
+
+                @Nested
+                @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-for-nullable-types")
+                @TestDataPath("$PROJECT_ROOT")
+                public class Subtyping_for_nullable_types {
+                    @Test
+                    public void testAllFilesPresentInSubtyping_for_nullable_types() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-for-nullable-types"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                     }
                 }
 
@@ -5893,14 +5939,11 @@ public class FirIdeSpecTest extends AbstractDiagnosisCompilerTestDataSpecTest {
                     }
                 }
 
+                @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/type-parameters")
                 @TestDataPath("$PROJECT_ROOT")
-                @RunWith(JUnit3RunnerWithInners.class)
-                public static class Type_parameters extends AbstractDiagnosisCompilerTestDataSpecTest {
-                    private void runTest(String testDataFilePath) throws Exception {
-                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-                    }
-
+                public class Type_parameters {
+                    @Test
                     public void testAllFilesPresentInType_parameters() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/type-parameters"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                     }
