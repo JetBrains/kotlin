@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.resolve.isUnderlyingPropertyOfInlineClass
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.types.TypeUtils
 import java.lang.reflect.Field
+import java.lang.reflect.Member
+import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import kotlin.jvm.internal.CallableReference
 import kotlin.reflect.KFunction
@@ -77,12 +79,22 @@ internal abstract class KPropertyImpl<out V> private constructor(
 
     val javaField: Field? get() = _javaField()
 
-    protected fun computeDelegateField(): Field? =
-        if (descriptor.isDelegated) javaField else null
+    protected fun computeDelegateSource(): Member? {
+        if (!descriptor.isDelegated) return null
+        val jvmSignature = RuntimeTypeMapper.mapPropertySignature(descriptor)
+        if (jvmSignature is KotlinProperty && jvmSignature.signature.hasDelegateMethod()) {
+            val method = jvmSignature.signature.delegateMethod
+            if (!method.hasName() || !method.hasDesc()) return null
+            val name = jvmSignature.nameResolver.getString(method.name)
+            val desc = jvmSignature.nameResolver.getString(method.desc)
+            return container.findMethodBySignature(name, desc)
+        }
+        return javaField
+    }
 
-    protected fun getDelegate(field: Field?, receiver: Any?): Any? =
+    protected fun getDelegateImpl(fieldOrMethod: Member?, receiver1: Any?, receiver2: Any?): Any? =
         try {
-            if (receiver === EXTENSION_PROPERTY_DELEGATE) {
+            if (receiver1 === EXTENSION_PROPERTY_DELEGATE || receiver2 === EXTENSION_PROPERTY_DELEGATE) {
                 if (descriptor.extensionReceiverParameter == null) {
                     throw RuntimeException(
                         "'$this' is not an extension property and thus getExtensionDelegate() " +
@@ -90,7 +102,20 @@ internal abstract class KPropertyImpl<out V> private constructor(
                     )
                 }
             }
-            field?.get(receiver)
+
+            val realReceiver1 = (if (isBound) boundReceiver else receiver1).takeIf { it !== EXTENSION_PROPERTY_DELEGATE }
+            val realReceiver2 = (if (isBound) receiver1 else receiver2).takeIf { it !== EXTENSION_PROPERTY_DELEGATE }
+            when (fieldOrMethod) {
+                null -> null
+                is Field -> fieldOrMethod.get(realReceiver1)
+                is Method -> when (fieldOrMethod.parameterTypes.size) {
+                    0 -> fieldOrMethod.invoke(null)
+                    1 -> fieldOrMethod.invoke(null, realReceiver1 ?: defaultPrimitiveValue(fieldOrMethod.parameterTypes[0]))
+                    2 -> fieldOrMethod.invoke(null, realReceiver1, realReceiver2 ?: defaultPrimitiveValue(fieldOrMethod.parameterTypes[1]))
+                    else -> throw AssertionError("delegate method $fieldOrMethod should take 0, 1, or 2 parameters")
+                }
+                else -> throw AssertionError("delegate field/method $fieldOrMethod neither field nor method")
+            }
         } catch (e: IllegalAccessException) {
             throw IllegalPropertyDelegateAccessException(e)
         }
