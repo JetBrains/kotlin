@@ -3,21 +3,25 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.ir.types
+package org.jetbrains.kotlin.backend.jvm.ir
 
+import org.jetbrains.kotlin.backend.jvm.JvmSymbols
+import org.jetbrains.kotlin.backend.jvm.codegen.isRawType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classFqName
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
+import org.jetbrains.kotlin.ir.types.removeAnnotations
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.FlexibleTypeBoundsChecker
 import org.jetbrains.kotlin.types.model.FlexibleTypeMarker
 
-// TODO: extract properly to JVM-specific modules
 internal interface IrJvmFlexibleType : FlexibleTypeMarker {
     val lowerBound: IrSimpleType
     val upperBound: IrSimpleType
@@ -64,30 +68,25 @@ private class IrJvmFlexibleTypeImpl(
         }
 }
 
-internal val FLEXIBLE_NULLABILITY_FQN = FqName("kotlin.internal.ir.FlexibleNullability")
-internal val FLEXIBLE_MUTABILITY_FQN = FqName("kotlin.internal.ir.FlexibleMutability")
-internal val RAW_TYPE_FQN = FqName("kotlin.internal.ir.RawType")
-
 internal fun IrType.isWithFlexibleNullability(): Boolean =
-    hasAnnotation(FLEXIBLE_NULLABILITY_FQN)
+    hasAnnotation(JvmSymbols.FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME)
 
 internal fun IrType.isWithFlexibleMutability(): Boolean =
-    hasAnnotation(FLEXIBLE_MUTABILITY_FQN)
-
-internal fun IrType.isRaw(): Boolean =
-    hasAnnotation(RAW_TYPE_FQN)
+    hasAnnotation(JvmSymbols.FLEXIBLE_MUTABILITY_ANNOTATION_FQ_NAME)
 
 internal fun IrType.asJvmFlexibleType(builtIns: IrBuiltIns): FlexibleTypeMarker? {
     if (this !is IrSimpleType || annotations.isEmpty()) return null
 
     val nullability = isWithFlexibleNullability()
     val mutability = isWithFlexibleMutability()
-    val raw = isRaw()
+    val raw = isRawType()
     if (!nullability && !mutability && !raw) return null
 
     val baseType = this.removeAnnotations { irCtorCall ->
         val fqName = irCtorCall.type.classFqName
-        fqName == FLEXIBLE_NULLABILITY_FQN || fqName == FLEXIBLE_MUTABILITY_FQN || fqName == RAW_TYPE_FQN
+        fqName == JvmSymbols.FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME ||
+                fqName == JvmSymbols.FLEXIBLE_MUTABILITY_ANNOTATION_FQ_NAME ||
+                fqName == JvmSymbols.RAW_TYPE_ANNOTATION_FQ_NAME
     } as IrSimpleType
 
     return IrJvmFlexibleTypeImpl(baseType, builtIns, nullability, mutability, raw)
