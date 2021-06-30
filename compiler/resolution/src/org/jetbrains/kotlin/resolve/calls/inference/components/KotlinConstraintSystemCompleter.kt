@@ -299,40 +299,8 @@ class KotlinConstraintSystemCompleter(
                     return true
                 }
 
-                hasDeclaredUpperBoundSelfTypes(variableWithConstraints) -> {
-                    fixVariable(this, variableWithConstraints, topLevelAtoms)
-                    return true
-                }
-
                 else -> processVariableWhenNotEnoughInformation(this, variableWithConstraints, topLevelAtoms, diagnosticsHolder)
             }
-        }
-
-        return false
-    }
-
-    private fun ConstraintSystemCompletionContext.hasDeclaredUpperBoundSelfTypes(variable: VariableWithConstraints): Boolean {
-        val constraints = variable.constraints
-        return constraints.isNotEmpty() && constraints.all {
-            it.position.from is DeclaredUpperBoundConstraintPosition<*> && isSelfType(it.type.typeConstructor())
-        }
-    }
-
-    private fun ConstraintSystemCompletionContext.isSelfType(typeConstructor: TypeConstructorMarker): Boolean {
-        if (typeConstructor.isTypeParameterTypeConstructor()) {
-            val supertype = typeConstructor.supertypes().firstOrNull() ?: return false
-            return isSelfType(supertype.typeConstructor())
-        }
-
-        val parametersCount = typeConstructor.parametersCount()
-        if (parametersCount == 0) return false
-
-        for (parameterId in 0 until parametersCount) {
-            val parameter = typeConstructor.getParameter(parameterId)
-            if (parameter.upperBoundCount() != 1) return false
-
-            val upperBound = parameter.getUpperBound(0)
-            if (upperBound.typeConstructor() == typeConstructor) return true
         }
 
         return false

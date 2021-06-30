@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode.PARTIAL
+import org.jetbrains.kotlin.resolve.calls.inference.hasDeclaredUpperBoundSelfTypes
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.DeclaredUpperBoundConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
@@ -48,6 +49,7 @@ class VariableFixationFinder(
         FROM_INCORPORATION_OF_DECLARED_UPPER_BOUND,
         READY_FOR_FIXATION_UPPER,
         READY_FOR_FIXATION_LOWER,
+        READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES,
         READY_FOR_FIXATION,
         READY_FOR_FIXATION_REIFIED,
     }
@@ -61,6 +63,7 @@ class VariableFixationFinder(
     ): TypeVariableFixationReadiness = when {
         !notFixedTypeVariables.contains(variable) ||
                 dependencyProvider.isVariableRelatedToTopLevelType(variable) -> TypeVariableFixationReadiness.FORBIDDEN
+        hasDeclaredUpperBoundSelfTypes(variable) -> TypeVariableFixationReadiness.READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES
         !variableHasProperArgumentConstraints(variable) -> TypeVariableFixationReadiness.WITHOUT_PROPER_ARGUMENT_CONSTRAINT
         hasDependencyToOtherTypeVariables(variable) -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY
         variableHasTrivialOrNonProperConstraints(variable) -> TypeVariableFixationReadiness.WITH_TRIVIAL_OR_NON_PROPER_CONSTRAINTS
@@ -165,6 +168,11 @@ class VariableFixationFinder(
         return constraints.any {
             it.kind.isLower() && isProperArgumentConstraint(it) && !it.type.typeConstructor().isNothingConstructor()
         }
+    }
+
+    private fun Context.hasDeclaredUpperBoundSelfTypes(variable: TypeConstructorMarker): Boolean {
+        val constraints = notFixedTypeVariables[variable]?.constraints ?: return false
+        return constraints.isNotEmpty() && constraints.all(::hasDeclaredUpperBoundSelfTypes)
     }
 }
 

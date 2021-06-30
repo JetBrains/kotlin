@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.isCaptured
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.*
+import org.jetbrains.kotlin.types.model.TypeArgumentMarker
 import org.jetbrains.kotlin.types.model.TypeVariableTypeConstructorMarker
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
@@ -182,8 +183,8 @@ fun KotlinType.getImmediateSuperclassNotAny(): KotlinType? {
 fun KotlinType.asTypeProjection(): TypeProjection = TypeProjectionImpl(this)
 fun KotlinType.contains(predicate: (UnwrappedType) -> Boolean) = TypeUtils.contains(this, predicate)
 
-fun KotlinType.replaceArgumentsWithStarProjections() = replaceArgumentsWith(::StarProjectionImpl)
-fun KotlinType.replaceArgumentsWithNothing() = replaceArgumentsWith { it.builtIns.nothingType.asTypeProjection() }
+fun KotlinType.replaceArgumentsWithStarProjections() = replaceArgumentsByParametersWith(::StarProjectionImpl)
+fun KotlinType.replaceArgumentsWithNothing() = replaceArgumentsByParametersWith { it.builtIns.nothingType.asTypeProjection() }
 
 fun KotlinType.extractTypeParametersFromUpperBounds(visitedTypeParameters: Set<TypeParameterDescriptor>?): Set<TypeParameterDescriptor> =
     mutableSetOf<TypeParameterDescriptor>().also { extractTypeParametersFromUpperBounds(this, it, visitedTypeParameters) }
@@ -247,7 +248,7 @@ fun KotlinType.replaceArgumentsWithStarProjectionOrMapped(
     variance: Variance,
     visitedTypeParameters: Set<TypeParameterDescriptor>?
 ) =
-    replaceArgumentsWith { typeParameterDescriptor ->
+    replaceArgumentsByParametersWith { typeParameterDescriptor ->
         val argument = arguments.getOrNull(typeParameterDescriptor.index)
         val isTypeParameterVisited = visitedTypeParameters != null && typeParameterDescriptor in visitedTypeParameters
         if (!isTypeParameterVisited && argument != null && argument.type.constructor in substitutionMap) {
@@ -256,23 +257,28 @@ fun KotlinType.replaceArgumentsWithStarProjectionOrMapped(
     }.let { substitutor.safeSubstitute(it, variance) }
 
 
-inline fun KotlinType.replaceArgumentsWith(replacement: (TypeParameterDescriptor) -> TypeProjection): KotlinType {
+inline fun KotlinType.replaceArgumentsByParametersWith(replacement: (TypeParameterDescriptor) -> TypeProjection): KotlinType {
     val unwrapped = unwrap()
     return when (unwrapped) {
         is FlexibleType -> KotlinTypeFactory.flexibleType(
-            unwrapped.lowerBound.replaceArgumentsWith(replacement),
-            unwrapped.upperBound.replaceArgumentsWith(replacement)
+            unwrapped.lowerBound.replaceArgumentsByParametersWith(replacement),
+            unwrapped.upperBound.replaceArgumentsByParametersWith(replacement)
         )
-        is SimpleType -> unwrapped.replaceArgumentsWith(replacement)
+        is SimpleType -> unwrapped.replaceArgumentsByParametersWith(replacement)
     }.inheritEnhancement(unwrapped)
 }
 
-inline fun SimpleType.replaceArgumentsWith(replacement: (TypeParameterDescriptor) -> TypeProjection): SimpleType {
+inline fun SimpleType.replaceArgumentsByParametersWith(replacement: (TypeParameterDescriptor) -> TypeProjection): SimpleType {
     if (constructor.parameters.isEmpty() || constructor.declarationDescriptor == null) return this
 
     val newArguments = constructor.parameters.map(replacement)
 
     return replace(newArguments)
+}
+
+inline fun SimpleType.replaceArgumentsByExistingArgumentsWith(replacement: (TypeArgumentMarker) -> TypeArgumentMarker): SimpleType {
+    if (arguments.isEmpty()) return this
+    return replace(newArguments = arguments.map { replacement(it) as TypeProjection })
 }
 
 fun KotlinType.containsTypeAliasParameters(): Boolean =

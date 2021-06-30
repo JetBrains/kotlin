@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
-import org.jetbrains.kotlin.resolve.calls.inference.CapturedTypeConstructor
 import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.isInlineClass
@@ -25,10 +24,7 @@ import org.jetbrains.kotlin.resolve.substitutedUnderlyingType
 import org.jetbrains.kotlin.resolve.unsubstitutedUnderlyingType
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.*
-import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
-import org.jetbrains.kotlin.types.typeUtil.contains
-import org.jetbrains.kotlin.types.typeUtil.hasTypeParameterRecursiveBounds
-import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
+import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.types.typeUtil.isSignedOrUnsignedNumberType as classicIsSignedOrUnsignedNumberType
 
@@ -210,6 +206,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return this.parameters[index]
     }
 
+    override fun TypeConstructorMarker.getParameters(): List<TypeParameterMarker> {
+        require(this is TypeConstructor, this::errorMessage)
+        return this.parameters
+    }
+
     override fun TypeConstructorMarker.supertypes(): Collection<KotlinTypeMarker> {
         require(this is TypeConstructor, this::errorMessage)
         return this.supertypes
@@ -240,9 +241,9 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return this.typeConstructor
     }
 
-    override fun TypeParameterMarker.hasRecursiveBounds(selfConstructor: TypeConstructorMarker): Boolean {
+    override fun TypeParameterMarker.hasRecursiveBounds(selfConstructor: TypeConstructorMarker?): Boolean {
         require(this is TypeParameterDescriptor, this::errorMessage)
-        require(selfConstructor is TypeConstructor, this::errorMessage)
+        require(selfConstructor is TypeConstructor?, this::errorMessage)
 
         return hasTypeParameterRecursiveBounds(this, selfConstructor)
     }
@@ -526,6 +527,12 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         require(this is SimpleType, this::errorMessage)
         @Suppress("UNCHECKED_CAST")
         return this.replace(newArguments as List<TypeProjection>)
+    }
+
+    override fun SimpleTypeMarker.replaceArguments(replacement: (TypeArgumentMarker) -> TypeArgumentMarker): SimpleTypeMarker {
+        require(this is SimpleType, this::errorMessage)
+        @Suppress("UNCHECKED_CAST")
+        return this.replaceArgumentsByExistingArgumentsWith(replacement)
     }
 
     override fun DefinitelyNotNullTypeMarker.original(): SimpleTypeMarker {

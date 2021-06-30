@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator.ResolveDirection
+import org.jetbrains.kotlin.resolve.calls.inference.hasDeclaredUpperBoundSelfTypes
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -210,8 +211,9 @@ class ResultTypeResolver(
     }
 
     private fun Context.findSuperType(variableWithConstraints: VariableWithConstraints): KotlinTypeMarker? {
-        val upperConstraints =
-            variableWithConstraints.constraints.filter { it.kind == ConstraintKind.UPPER && this@findSuperType.isProperTypeForFixation(it.type) }
+        val upperConstraints = variableWithConstraints.constraints.filter {
+            it.kind == ConstraintKind.UPPER && (hasDeclaredUpperBoundSelfTypes(it) || isProperTypeForFixation(it.type))
+        }
         if (upperConstraints.isNotEmpty()) {
             val intersectionUpperType = intersectTypes(upperConstraints.map { it.type })
             val resultIsActuallyIntersection = intersectionUpperType.typeConstructor().isIntersection()
@@ -238,7 +240,7 @@ class ResultTypeResolver(
 
             return typeApproximator.approximateToSubType(
                 upperType,
-                TypeApproximatorConfiguration.InternalTypesApproximation
+                TypeApproximatorConfiguration.InternalAndSelfTypesApproximation
             ) ?: upperType
         }
         return null

@@ -139,6 +139,8 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun TypeConstructorMarker.getParameter(index: Int) = getTypeParameters(this)[index].symbol
 
+    override fun TypeConstructorMarker.getParameters() = getTypeParameters(this).map { it.symbol }
+
     override fun TypeConstructorMarker.supertypes(): Collection<KotlinTypeMarker> {
         return when (this) {
             is IrCapturedType.Constructor -> superTypes
@@ -179,10 +181,10 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         return false
     }
 
-    override fun TypeParameterMarker.hasRecursiveBounds(selfConstructor: TypeConstructorMarker): Boolean {
+    override fun TypeParameterMarker.hasRecursiveBounds(selfConstructor: TypeConstructorMarker?): Boolean {
         for (i in 0 until this.upperBoundCount()) {
             val upperBound = this.getUpperBound(i)
-            if (upperBound.containsTypeConstructor(selfConstructor) && upperBound.typeConstructor() == selfConstructor) {
+            if (upperBound.containsTypeConstructor(this.getTypeConstructor()) && (selfConstructor == null || upperBound.typeConstructor() == selfConstructor)) {
                 return true
             }
         }

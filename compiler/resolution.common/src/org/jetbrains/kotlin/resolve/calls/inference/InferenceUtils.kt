@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference
 
+import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
+import org.jetbrains.kotlin.resolve.calls.inference.model.DeclaredUpperBoundConstraintPosition
 import org.jetbrains.kotlin.types.model.*
 
 fun ConstraintStorage.buildCurrentSubstitutor(
@@ -45,4 +47,12 @@ fun ConstraintStorage.buildNotFixedVariablesToNonSubtypableTypesSubstitutor(
     return context.typeSubstitutorByTypeConstructor(
         notFixedTypeVariables.mapValues { context.createStubTypeForTypeVariablesInSubtyping(it.value.typeVariable) }
     )
+}
+
+fun TypeSystemInferenceExtensionContext.hasDeclaredUpperBoundSelfTypes(constraint: Constraint): Boolean {
+    val typeConstructor = constraint.type.typeConstructor()
+
+    return constraint.position.from is DeclaredUpperBoundConstraintPosition<*>
+            && (typeConstructor.getParameters().any { it.hasRecursiveBounds(typeConstructor) }
+            || typeConstructor.getTypeParameterClassifier()?.hasRecursiveBounds() == true)
 }

@@ -239,6 +239,15 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         }
     }
 
+    override fun TypeConstructorMarker.getParameters(): List<TypeParameterMarker> {
+        return when (val symbol = toClassLikeSymbol()) {
+            is FirAnonymousObjectSymbol -> symbol.fir.typeParameters.map { it.symbol.toLookupTag() }
+            is FirRegularClassSymbol -> symbol.fir.typeParameters.map { it.symbol.toLookupTag() }
+            is FirTypeAliasSymbol -> symbol.fir.typeParameters.map { it.symbol.toLookupTag() }
+            else -> error("Unexpected FirClassLikeSymbol $symbol for ${this::class}, with classId ${(this as? ConeClassLikeLookupTag)?.classId}")
+        }
+    }
+
     private fun TypeConstructorMarker.toClassLikeSymbol(): FirClassLikeSymbol<*>? = (this as? ConeClassLikeLookupTag)?.toSymbol(session)
 
     override fun TypeConstructorMarker.supertypes(): Collection<ConeKotlinType> {
@@ -297,11 +306,11 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return this
     }
 
-    override fun TypeParameterMarker.hasRecursiveBounds(selfConstructor: TypeConstructorMarker): Boolean {
+    override fun TypeParameterMarker.hasRecursiveBounds(selfConstructor: TypeConstructorMarker?): Boolean {
         require(this is ConeTypeParameterLookupTag)
         return this.typeParameterSymbol.fir.bounds.any { typeRef ->
             typeRef.coneType.contains { it.typeConstructor() == this.getTypeConstructor() }
-                    && typeRef.coneType.typeConstructor() == selfConstructor
+                    && (selfConstructor == null || typeRef.coneType.typeConstructor() == selfConstructor)
         }
     }
 
