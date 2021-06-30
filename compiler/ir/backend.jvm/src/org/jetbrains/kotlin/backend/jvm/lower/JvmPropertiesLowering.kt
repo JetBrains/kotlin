@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.ir.eraseTypeParameters
 import org.jetbrains.kotlin.backend.jvm.ir.needsAccessor
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.hasMangledReturnType
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.requiresMangling
@@ -27,7 +28,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
+import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -157,73 +158,54 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
         accessor != null && !property.needsAccessor(accessor)
 
     private fun createSyntheticMethodForAnnotations(declaration: IrProperty): IrSimpleFunction =
-        backendContext.irFactory.buildFun {
-            origin = JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS
-            name = Name.identifier(computeSyntheticMethodName(declaration))
-            visibility = declaration.visibility
-            modality = Modality.OPEN
+        backendContext.createSyntheticMethodForProperty(
+            declaration,
+            JvmAbi.ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX,
+            JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS,
+            // TODO: technically JVM permits having fields with same name but different type, so we could potentially
+            //   generate two properties like that; should this be the getter's return type instead?
             returnType = backendContext.irBuiltIns.unitType
-        }.apply {
-            declaration.getter?.extensionReceiverParameter?.let { extensionReceiver ->
-                extensionReceiverParameter = extensionReceiver.copyTo(
-                    this,
-                    type = extensionReceiver.type.erasePropertyAnnotationsExtensionReceiverType()
-                )
-            }
-
+        ).apply {
             body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
-            parent = declaration.parent
-
             annotations = declaration.annotations
+        }
+
+    companion object {
+        private fun JvmBackendContext.createSyntheticMethodForProperty(
+            declaration: IrProperty,
+            suffix: String,
+            origin: IrDeclarationOrigin,
+            returnType: IrType = IrUninitializedType
+        ) = irFactory.buildFun {
+            name = Name.identifier(computeSyntheticMethodName(declaration, suffix))
+            modality = Modality.OPEN
+            visibility = declaration.visibility
+            this.origin = origin
+            this.returnType = returnType
+        }.apply {
+            declaration.getter?.extensionReceiverParameter?.let {
+                // Synthetic methods don't get generic type signatures anyway, so not exactly useful to preserve type parameters.
+                extensionReceiverParameter = it.copyTo(this, type = it.type.eraseTypeParameters())
+            }
+            parent = declaration.parent
             metadata = declaration.metadata
         }
 
-    private fun IrType.erasePropertyAnnotationsExtensionReceiverType(): IrType {
-        // Use raw type of extension receiver to avoid generic signature,
-        // which should not be generated for '...$annotations' method.
-        if (this !is IrSimpleType) {
-            throw AssertionError("Unexpected property receiver type: $this")
-        }
-        val erasedType = if (isArray()) {
-            when (val arg0 = arguments[0]) {
-                is IrStarProjection -> {
-                    // 'Array<*>' becomes 'Array<*>'
-                    this
+        private fun JvmBackendContext.computeSyntheticMethodName(property: IrProperty, suffix: String): String {
+            val baseName =
+                if (state.languageVersionSettings.supportsFeature(LanguageFeature.UseGetterNameForPropertyAnnotationsMethodOnJvm)) {
+                    val getter = property.getter
+                    if (getter != null) {
+                        val needsMangling =
+                            getter.extensionReceiverParameter?.type?.requiresMangling == true ||
+                                    (state.functionsWithInlineClassReturnTypesMangled && getter.hasMangledReturnType)
+                        val mangled = if (needsMangling) inlineClassReplacements.getReplacementFunction(getter) else null
+                        methodSignatureMapper.mapFunctionName(mangled ?: getter)
+                    } else JvmAbi.getterName(property.name.asString())
+                } else {
+                    property.name.asString()
                 }
-                is IrTypeProjection -> {
-                    // 'Array<VARIANCE TYPE>' becomes 'Array<VARIANCE erase(TYPE)>'
-                    classifier.typeWithArguments(
-                        listOf(makeTypeProjection(arg0.type.erasePropertyAnnotationsExtensionReceiverType(), arg0.variance))
-                    )
-                }
-                else ->
-                    throw AssertionError("Unexpected type argument: $arg0")
-            }
-        } else {
-            classifier.typeWith()
+            return baseName + suffix
         }
-        return erasedType
-            .withHasQuestionMark(this.hasQuestionMark)
-            .addAnnotations(this.annotations)
-    }
-
-    private fun computeSyntheticMethodName(property: IrProperty): String {
-        val baseName =
-            if (backendContext.state.languageVersionSettings.supportsFeature(LanguageFeature.UseGetterNameForPropertyAnnotationsMethodOnJvm)) {
-                val getter = property.getter
-                if (getter != null) {
-                    val needsMangling =
-                        getter.extensionReceiverParameter?.type?.requiresMangling == true ||
-                                (backendContext.state.functionsWithInlineClassReturnTypesMangled && getter.hasMangledReturnType)
-
-                    backendContext.methodSignatureMapper.mapFunctionName(
-                        if (needsMangling) backendContext.inlineClassReplacements.getReplacementFunction(getter) ?: getter
-                        else getter
-                    )
-                } else JvmAbi.getterName(property.name.asString())
-            } else {
-                property.name.asString()
-            }
-        return JvmAbi.getSyntheticMethodNameForAnnotatedProperty(baseName)
     }
 }
