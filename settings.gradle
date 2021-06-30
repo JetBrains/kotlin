@@ -400,6 +400,7 @@ if (attachedIntellijVersion != null) {
     kotlinIde "tests-common/kotlin.tests-common.iml"
     kotlinIde "uast/uast-kotlin-base/kotlin.uast.uast-kotlin-base.iml"
     kotlinIde "uast/uast-kotlin-idea-base/kotlin.uast.uast-kotlin-idea-base.iml"
+    kotlinIde "uast/uast-kotlin-idea-fir/kotlin.uast.uast-kotlin-idea-fir.iml"
     kotlinIde "uast/uast-kotlin-idea/kotlin.uast.uast-kotlin-idea.iml"
     kotlinIde "uast/uast-kotlin/kotlin.uast.uast-kotlin.iml"
 }
