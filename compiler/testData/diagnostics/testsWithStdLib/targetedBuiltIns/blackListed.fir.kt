@@ -1,8 +1,8 @@
 // FULL_JDK
 
 abstract class A : MutableList<String> {
-    override fun sort(/*0*/ p0: java.util.Comparator<in String>) {
-        super.sort(p0)
+    <!NOTHING_TO_OVERRIDE!>override<!> fun sort(/*0*/ p0: java.util.Comparator<in String>) {
+        super.<!UNRESOLVED_REFERENCE!>sort<!>(p0)
     }
 }
 

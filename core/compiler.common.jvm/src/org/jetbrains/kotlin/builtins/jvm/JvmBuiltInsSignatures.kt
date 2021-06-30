@@ -98,8 +98,7 @@ object JvmBuiltInsSignatures {
 
                     inJavaUtil(
                         "List",
-                        "replaceAll(Ljava/util/function/UnaryOperator;)V",
-                        "sort(Ljava/util/Comparator;)V"
+                        "replaceAll(Ljava/util/function/UnaryOperator;)V"
                     ) +
 
                     inJavaUtil(
