@@ -77,6 +77,7 @@ object FirDiagnosticRenderers {
             is FirTypeAlias -> declaration.name
             is FirEnumEntry -> declaration.name
             is FirField -> declaration.name
+            is FirValueParameter -> declaration.name
             is FirConstructor -> return@Renderer "constructor"
             else -> return@Renderer "???"
         }
