@@ -165,6 +165,8 @@ class KonanConfigKeys {
         val PROPERTY_LAZY_INITIALIZATION: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("lazy top level properties initialization")
         val WORKER_EXCEPTION_HANDLING: CompilerConfigurationKey<WorkerExceptionHandling> = CompilerConfigurationKey.create("unhandled exception processing in Worker.executeAfter")
+        val EXTERNAL_DEPENDENCIES: CompilerConfigurationKey<String?> =
+                CompilerConfigurationKey.create("use external dependencies to enhance IR linker error messages")
     }
 }
 

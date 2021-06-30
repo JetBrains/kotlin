@@ -142,6 +142,15 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     )
     var exportedLibraries: Array<String>? = null
 
+    @Argument(
+            value = "-Xexternal-dependencies",
+            valueDescription = "<path>",
+            description = "Path to the file containing external dependencies.\n" +
+                    "External dependencies are required for verbose output in case of IR linker errors,\n" +
+                    "but they do not affect compilation at all."
+    )
+    var externalDependencies: String? = null
+
     @Argument(value="-Xfake-override-validator", description = "Enable IR fake override validator")
     var fakeOverrideValidator: Boolean = false
 

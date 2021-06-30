@@ -338,6 +338,8 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                         WorkerExceptionHandling.LEGACY
                     }
                 })
+
+                arguments.externalDependencies?.let { put(EXTERNAL_DEPENDENCIES, it) }
             }
         }
     }
