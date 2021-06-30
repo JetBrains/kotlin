@@ -1,6 +1,13 @@
 Change Log
 ==========
 
+## Version 0.10.0
+
+_2021-06-29_
+
+**New**
+* Support Kotlin 1.5.20.
+
 ## Version 0.9.0
 
 _2021-06-02_
