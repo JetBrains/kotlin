@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.descriptors.konan.klibModuleOrigin
-import org.jetbrains.kotlin.descriptors.konan.kotlinLibrary
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
@@ -120,11 +119,11 @@ internal class KonanIrLinker(
 
     private inner class KonanInteropModuleDeserializer(
             moduleDescriptor: ModuleDescriptor,
-            klib: KotlinLibrary,
+            override val klib: KotlinLibrary,
             private val isLibraryCached: Boolean
     ) : IrModuleDeserializer(moduleDescriptor, klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT) {
         init {
-            assert(moduleDescriptor.kotlinLibrary.isInteropLibrary())
+            assert(klib.isInteropLibrary())
         }
 
         private val descriptorByIdSignatureFinder = DescriptorByIdSignatureFinder(
