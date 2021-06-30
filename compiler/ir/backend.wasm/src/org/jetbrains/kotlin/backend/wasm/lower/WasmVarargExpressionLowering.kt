@@ -42,6 +42,8 @@ internal class WasmVarargExpressionLowering(
 
         val primaryConstructor
             get() = arrayClass.primaryConstructor!!
+        val constructors
+            get() = arrayClass.constructors
 
         val setMethod
             get() = arrayClass.getSimpleFunction("set")!!.owner
@@ -65,6 +67,7 @@ internal class WasmVarargExpressionLowering(
 
                 return func?.owner ?: throw IllegalArgumentException("copyInto is not found for ${arrayType.render()}")
             }
+
     }
 
     private fun IrBlockBuilder.irCreateArray(size: IrExpression, arrDescr: ArrayDescr) =
@@ -83,7 +86,7 @@ internal class WasmVarargExpressionLowering(
         // Returns an expression which calculates size of this spread.
         abstract fun IrBlockBuilder.irSize(): IrExpression
 
-        // Adds code into the current block which copies this spread into destArr. Returns nothing.
+        // Adds code into the current block which copies this spread into destArr.
         // If indexVar is present uses it as a start index in the destination array.
         abstract fun IrBlockBuilder.irCopyInto(destArr: IrVariable, indexVar: IrVariable?)
 
@@ -155,6 +158,14 @@ internal class WasmVarargExpressionLowering(
         }
 
     override fun visitVararg(expression: IrVararg): IrExpression {
+        // Optimization in case if we have a single spread element
+        if (expression.elements.size == 1 && expression.elements.first() is IrSpreadElement) {
+            val spreadExpr = (expression.elements.first() as IrSpreadElement).expression
+            if (isImmediatelyCreatedArray(spreadExpr))
+                return spreadExpr.transform(this, null)
+        }
+
+        // Lower nested varargs
         val irVararg = super.visitVararg(expression) as IrVararg
 
         // Create temporary variable for each element and emit them all at once to preserve
@@ -244,6 +255,21 @@ internal class WasmVarargExpressionLowering(
 
     private fun IrBlockBuilder.irIntPlus(rhs: IrExpression, lhs: IrExpression): IrExpression =
         irIntPlus(rhs, lhs, this@WasmVarargExpressionLowering.context)
+
+    private fun isImmediatelyCreatedArray(expr: IrExpression): Boolean =
+        when (expr) {
+            is IrFunctionAccessExpression -> {
+                val arrDescr = ArrayDescr(expr.type, context)
+                expr.symbol.owner in arrDescr.constructors || expr.symbol == context.wasmSymbols.arrayOfNulls
+            }
+            is IrTypeOperatorCall -> isImmediatelyCreatedArray(expr.argument)
+            is IrComposite ->
+                expr.statements.size == 1 &&
+                        expr.statements[0] is IrExpression &&
+                        isImmediatelyCreatedArray(expr.statements[0] as IrExpression)
+            is IrVararg -> true // Vararg always produces a fresh array
+            else -> false
+        }
 }
 
 private fun IrBlockBuilder.irIntPlus(rhs: IrExpression, lhs: IrExpression, wasmContext: WasmBackendContext): IrExpression {
