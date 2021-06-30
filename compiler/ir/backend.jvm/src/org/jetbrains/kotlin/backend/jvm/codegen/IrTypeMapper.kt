@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.ir.types.isKClass as isKClassImpl
 import org.jetbrains.kotlin.ir.util.isSuspendFunction as isSuspendFunctionImpl
 
 class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapperBase(), TypeMappingContext<JvmSignatureWriter> {
-    override val typeSystem: IrTypeSystemContext = IrTypeSystemContextImpl(context.irBuiltIns)
+    override val typeSystem: IrTypeSystemContext = context.typeSystem
     override val typeContext: TypeSystemCommonBackendContextForTypeMapping = IrTypeCheckerContextForTypeMapping(typeSystem, context)
 
     override fun mapClass(classifier: ClassifierDescriptor): Type =

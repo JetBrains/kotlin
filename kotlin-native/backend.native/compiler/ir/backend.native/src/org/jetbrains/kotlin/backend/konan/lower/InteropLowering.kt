@@ -80,6 +80,7 @@ private abstract class BaseInteropIrTransformer(private val context: Context) : 
         return object : KotlinStubs {
             override val irBuiltIns get() = context.irBuiltIns
             override val symbols get() = context.ir.symbols
+            override val typeSystem: IrTypeSystemContext get() = context.typeSystem
 
             val klib: KonanLibrary? get() {
                 return (element as? IrCall)?.symbol?.owner?.konanLibrary as? KonanLibrary

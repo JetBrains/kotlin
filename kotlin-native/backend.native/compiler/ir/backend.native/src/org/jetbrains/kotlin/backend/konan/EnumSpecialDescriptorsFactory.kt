@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irCall
@@ -32,9 +31,11 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.typeWith
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.module
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 
 internal object DECLARATION_ORIGIN_ENUM : IrDeclarationOriginImpl("ENUM")
@@ -203,7 +204,7 @@ internal class EnumSpecialDeclarationsFactory(val context: Context) {
         )
 
         implObject.superTypes += context.irBuiltIns.anyType
-        implObject.addFakeOverrides(context.irBuiltIns)
+        implObject.addFakeOverrides(context.typeSystem)
 
         val itemGetterSymbol = findItemGetterSymbol()
         val enumEntriesMap = enumEntriesMap(enumClass)

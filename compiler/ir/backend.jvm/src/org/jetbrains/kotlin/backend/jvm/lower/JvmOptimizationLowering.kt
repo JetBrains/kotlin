@@ -280,7 +280,7 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
                     return context.createIrBuilder(expression.symbol, expression.startOffset, expression.endOffset).irBlock(expression) {
                         if (backingField.isStatic && receiver != null) {
                             // If the field is static, evaluate the receiver for potential side effects.
-                            +receiver.coerceToUnit(context.irBuiltIns)
+                            +receiver.coerceToUnit(context.irBuiltIns, this@JvmOptimizationLowering.context.typeSystem)
                         }
                         if (accessor.valueParameters.size > 0) {
                             +irSetField(

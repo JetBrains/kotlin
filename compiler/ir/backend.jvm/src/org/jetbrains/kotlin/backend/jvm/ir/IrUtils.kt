@@ -219,10 +219,8 @@ fun IrDeclaration.isInCurrentModule(): Boolean =
 // "not learned through smartcasting".
 fun IrExpression.isSmartcastFromHigherThanNullable(context: JvmBackendContext): Boolean {
     return when (this) {
-        is IrTypeOperatorCall -> operator == IrTypeOperator.IMPLICIT_CAST && !argument.type.isSubtypeOf(
-            type.makeNullable(),
-            context.irBuiltIns
-        )
+        is IrTypeOperatorCall ->
+            operator == IrTypeOperator.IMPLICIT_CAST && !argument.type.isSubtypeOf(type.makeNullable(), context.typeSystem)
         is IrGetValue -> {
             // Check if the variable initializer is smartcast. In FIR, if the subject of a `when` is smartcast,
             // the IMPLICIT_CAST is in the initializer of the variable for the subject.

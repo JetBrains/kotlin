@@ -6,14 +6,13 @@
 package org.jetbrains.kotlin.ir.types
 
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 
 class IrTypeSystemContextWithAdditionalAxioms(
-    override val irBuiltIns: IrBuiltIns,
+    typeSystem: IrTypeSystemContext,
     firstParameters: List<IrTypeParameter>,
     secondParameters: List<IrTypeParameter>
-) : IrTypeSystemContext {
+) : IrTypeSystemContext by typeSystem {
     init {
         assert(firstParameters.size == secondParameters.size) {
             "different length of type parameter lists: $firstParameters vs $secondParameters"

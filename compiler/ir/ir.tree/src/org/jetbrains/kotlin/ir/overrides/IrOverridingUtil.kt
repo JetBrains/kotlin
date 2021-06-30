@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.collectAndFilterRealOverrides
@@ -98,7 +97,7 @@ fun buildFakeOverrideMember(superType: IrType, member: IrOverridableMember, claz
 // to use abstract overridable member interfaces.
 
 class IrOverridingUtil(
-    private val irBuiltIns: IrBuiltIns,
+    private val typeSystem: IrTypeSystemContext,
     private val fakeOverrideBuilder: FakeOverrideBuilderStrategy
 ) {
     private val originals = mutableMapOf<IrOverridableMember, IrOverridableMember>()
@@ -446,7 +445,7 @@ class IrOverridingUtil(
         AbstractTypeChecker.equalTypes(this as AbstractTypeCheckerContext, a, b)
 
     private fun createTypeChecker(a: List<IrTypeParameter>, b: List<IrTypeParameter>) =
-        IrTypeCheckerContext(IrTypeSystemContextWithAdditionalAxioms(irBuiltIns, a, b))
+        IrTypeCheckerContext(IrTypeSystemContextWithAdditionalAxioms(typeSystem, a, b))
 
     private fun isReturnTypeMoreSpecific(
         a: IrOverridableMember,
@@ -677,7 +676,7 @@ class IrOverridingUtil(
         val typeCheckerContext =
             IrTypeCheckerContext(
                 IrTypeSystemContextWithAdditionalAxioms(
-                    irBuiltIns,
+                    typeSystem,
                     superTypeParameters,
                     subTypeParameters
                 )

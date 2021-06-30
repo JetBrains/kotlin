@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.builders.irImplicitCast
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -62,7 +61,7 @@ class GenericReturnTypeLowering(val context: WasmBackendContext) : FileLoweringP
 
         if (erasedReturnType != call.type) {
             if (callType.isNothing()) return call
-            if (erasedReturnType.isSubtypeOf(callType, context.irBuiltIns)) return call
+            if (erasedReturnType.isSubtypeOf(callType, context.typeSystem)) return call
 
             // Erase type parameter from call return type
             val newCall = irCall(

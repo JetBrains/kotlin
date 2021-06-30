@@ -91,7 +91,7 @@ open class JvmIrCodegenFactory(
         val irLinker = JvmIrLinker(
             psi2irContext.moduleDescriptor,
             messageLogger,
-            psi2irContext.irBuiltIns,
+            JvmIrTypeSystemContext(psi2irContext.irBuiltIns),
             symbolTable,
             functionFactory,
             frontEndContext,

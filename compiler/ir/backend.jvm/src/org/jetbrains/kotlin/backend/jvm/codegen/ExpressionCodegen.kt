@@ -1443,7 +1443,7 @@ class ExpressionCodegen(
         val reifiedTypeInliner = ReifiedTypeInliner(
             mappings,
             IrInlineIntrinsicsSupport(context, typeMapper),
-            IrTypeSystemContextImpl(context.irBuiltIns),
+            context.typeSystem,
             state.languageVersionSettings,
             state.unifiedNullChecks,
         )

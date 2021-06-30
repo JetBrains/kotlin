@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.ir.backend.jvm.serialization
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
-import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
-import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.konan.KlibModuleOrigin
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -18,9 +16,9 @@ import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.IrAbstractFunctionFactory
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
@@ -37,15 +35,15 @@ import org.jetbrains.kotlin.name.Name
 class JvmIrLinker(
     currentModule: ModuleDescriptor?,
     messageLogger: IrMessageLogger,
-    builtIns: IrBuiltIns,
+    typeSystem: IrTypeSystemContext,
     symbolTable: SymbolTable,
     override val functionalInterfaceFactory: IrAbstractFunctionFactory,
     override val translationPluginContext: TranslationPluginContext?,
     private val stubGenerator: DeclarationStubGenerator,
     private val manglerDesc: JvmManglerDesc
-) : KotlinIrLinker(currentModule, messageLogger, builtIns, symbolTable, emptyList()) {
+) : KotlinIrLinker(currentModule, messageLogger, typeSystem.irBuiltIns, symbolTable, emptyList()) {
 
-    override val fakeOverrideBuilder = FakeOverrideBuilder(this, symbolTable, JvmManglerIr, builtIns)
+    override val fakeOverrideBuilder = FakeOverrideBuilder(this, symbolTable, JvmManglerIr, typeSystem)
 
     private val javaName = Name.identifier("java")
 

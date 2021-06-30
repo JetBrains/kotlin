@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
@@ -329,6 +331,9 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
 
     override val irBuiltIns
         get() = ir.irModule.irBuiltins
+
+    override val typeSystem: IrTypeSystemContext
+        get() = IrTypeSystemContextImpl(irBuiltIns)
 
     val interopBuiltIns by lazy {
         InteropBuiltIns(this.builtIns)

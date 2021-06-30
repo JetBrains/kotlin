@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.overrides.IrOverridingUtil
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.KotlinMangler
@@ -69,12 +70,12 @@ class FakeOverrideBuilder(
     val linker: FileLocalAwareLinker,
     val symbolTable: SymbolTable,
     mangler: KotlinMangler.IrMangler,
-    irBuiltIns: IrBuiltIns,
+    typeSystem: IrTypeSystemContext,
     val platformSpecificClassFilter: FakeOverrideClassFilter = DefaultFakeOverrideClassFilter
 ) : FakeOverrideBuilderStrategy() {
     private val haveFakeOverrides = mutableSetOf<IrClass>()
 
-    private val irOverridingUtil = IrOverridingUtil(irBuiltIns, this)
+    private val irOverridingUtil = IrOverridingUtil(typeSystem, this)
 
     // TODO: The declaration table is needed for the signaturer.
     private val fakeOverrideDeclarationTable = FakeOverrideDeclarationTable(mangler)

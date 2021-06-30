@@ -17,7 +17,10 @@ import org.jetbrains.kotlin.backend.wasm.ir2wasm.erasedUpperBound
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -94,7 +97,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         // Inlined values have no type information on runtime.
         // But since they are final we can compute type checks on compile time.
         if (fromType.isInlined()) {
-            val result = fromType.erasedType.isSubtypeOf(toType.erasedType, builtIns)
+            val result = fromType.erasedType.isSubtypeOf(toType.erasedType, context.typeSystem)
             return builder.irBoolean(result)
         }
 
@@ -173,7 +176,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
             }
         }
 
-        if (fromType.erasedType.isSubtypeOf(toType.erasedType, context.irBuiltIns)) {
+        if (fromType.erasedType.isSubtypeOf(toType.erasedType, context.typeSystem)) {
             return value
         }
         if (toType.isNothing()) {
@@ -213,7 +216,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         val toType = expression.typeOperand
         val fromType = expression.argument.type
 
-        if (fromType.erasedType.isSubtypeOf(expression.type.erasedType, context.irBuiltIns)) {
+        if (fromType.erasedType.isSubtypeOf(expression.type.erasedType, context.typeSystem)) {
             return narrowType(fromType, expression.type, expression.argument)
         }
 

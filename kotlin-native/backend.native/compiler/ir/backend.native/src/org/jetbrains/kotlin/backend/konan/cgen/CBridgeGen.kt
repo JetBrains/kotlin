@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal interface KotlinStubs {
     val irBuiltIns: IrBuiltIns
+    val typeSystem: IrTypeSystemContext
     val symbols: KonanSymbols
     val target: KonanTarget
     val language: String
@@ -1221,7 +1222,7 @@ private class ObjCBlockPointerValuePassing(
             +irReturn(callBlock(blockPointer, arguments))
         }
 
-        irClass.addFakeOverrides(stubs.irBuiltIns)
+        irClass.addFakeOverrides(stubs.typeSystem)
 
         stubs.addKotlin(irClass)
         return constructor

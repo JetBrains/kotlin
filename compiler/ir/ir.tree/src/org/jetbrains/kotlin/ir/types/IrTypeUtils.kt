@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 
 fun IrClassifierSymbol.superTypes(): List<IrType> = when (this) {
     is IrClassSymbol -> owner.superTypes
@@ -30,13 +29,8 @@ fun IrClassifierSymbol.isStrictSubtypeOfClass(superClass: IrClassSymbol): Boolea
 fun IrType.isSubtypeOfClass(superClass: IrClassSymbol): Boolean =
     this is IrSimpleType && classifier.isSubtypeOfClass(superClass)
 
-fun IrType.isSubtypeOf(superType: IrType, irBuiltIns: IrBuiltIns): Boolean {
-    return AbstractTypeChecker.isSubtypeOf(
-        IrTypeCheckerContext(IrTypeSystemContextImpl(irBuiltIns)) as AbstractTypeCheckerContext,
-        this,
-        superType
-    )
-}
+fun IrType.isSubtypeOf(superType: IrType, typeSystem: IrTypeSystemContext): Boolean =
+    AbstractTypeChecker.isSubtypeOf(IrTypeCheckerContext(typeSystem), this, superType)
 
 fun IrType.isNullable(): Boolean =
     when (this) {
