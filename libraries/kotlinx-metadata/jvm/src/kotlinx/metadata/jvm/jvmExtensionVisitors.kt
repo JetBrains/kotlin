@@ -213,6 +213,19 @@ open class JvmPropertyExtensionVisitor @JvmOverloads constructor(
     }
 
     /**
+     * Visits the JVM signature of a synthetic method which is generated when a delegated property's delegate object is
+     * optimized out, e.g. because it is constant; in that case, a copy of that object can be obtained on demand by calling
+     * this method. It takes up to two arguments - the property's receivers.
+     *
+     * Example: `JvmMethodSignature("getX$delegate", "(LMyClass;)LMyDelegate;")`
+     *
+     * @param signature the signature of the synthetic method
+     */
+    open fun visitSyntheticMethodForDelegate(signature: JvmMethodSignature?) {
+        delegate?.visitSyntheticMethodForDelegate(signature)
+    }
+
+    /**
      * Visits the end of JVM extensions for the property.
      */
     open fun visitEnd() {

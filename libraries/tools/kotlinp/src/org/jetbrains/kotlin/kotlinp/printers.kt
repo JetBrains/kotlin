@@ -103,6 +103,7 @@ private fun visitProperty(
         var jvmGetterSignature: JvmMemberSignature? = null
         var jvmSetterSignature: JvmMemberSignature? = null
         var jvmSyntheticMethodForAnnotationsSignature: JvmMemberSignature? = null
+        var jvmSyntheticMethodForDelegateSignature: JvmMemberSignature? = null
         var isMovedFromInterfaceCompanion: Boolean = false
 
         override fun visitReceiverParameterType(flags: Flags): KmTypeVisitor? =
@@ -138,6 +139,10 @@ private fun visitProperty(
                 override fun visitSyntheticMethodForAnnotations(signature: JvmMethodSignature?) {
                     jvmSyntheticMethodForAnnotationsSignature = signature
                 }
+
+                override fun visitSyntheticMethodForDelegate(signature: JvmMethodSignature?) {
+                    jvmSyntheticMethodForDelegateSignature = signature
+                }
             }
         }
 
@@ -157,6 +162,9 @@ private fun visitProperty(
             }
             if (jvmSyntheticMethodForAnnotationsSignature != null) {
                 sb.appendLine("  // synthetic method for annotations: $jvmSyntheticMethodForAnnotationsSignature")
+            }
+            if (jvmSyntheticMethodForDelegateSignature != null) {
+                sb.appendLine("  // synthetic method for delegate: $jvmSyntheticMethodForDelegateSignature")
             }
             if (isMovedFromInterfaceCompanion) {
                 sb.appendLine("  // is moved from interface companion")

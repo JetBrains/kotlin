@@ -105,6 +105,7 @@ internal class JvmPropertyExtension : JvmPropertyExtensionVisitor(), KmPropertyE
     var getterSignature: JvmMethodSignature? = null
     var setterSignature: JvmMethodSignature? = null
     var syntheticMethodForAnnotations: JvmMethodSignature? = null
+    var syntheticMethodForDelegate: JvmMethodSignature? = null
 
     override fun visit(
         jvmFlags: Flags,
@@ -122,10 +123,15 @@ internal class JvmPropertyExtension : JvmPropertyExtensionVisitor(), KmPropertyE
         this.syntheticMethodForAnnotations = signature
     }
 
+    override fun visitSyntheticMethodForDelegate(signature: JvmMethodSignature?) {
+        this.syntheticMethodForDelegate = signature
+    }
+
     override fun accept(visitor: KmPropertyExtensionVisitor) {
         require(visitor is JvmPropertyExtensionVisitor)
         visitor.visit(jvmFlags, fieldSignature, getterSignature, setterSignature)
         visitor.visitSyntheticMethodForAnnotations(syntheticMethodForAnnotations)
+        visitor.visitSyntheticMethodForDelegate(syntheticMethodForDelegate)
         visitor.visitEnd()
     }
 }
