@@ -11,6 +11,7 @@ import org.gradle.api.Project
 import org.gradle.api.XmlProvider
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.ProjectDependency
+import org.gradle.api.artifacts.ResolvedDependency
 import org.gradle.api.attributes.Usage
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
@@ -133,7 +134,7 @@ private fun associateDependenciesWithActualModuleDependencies(
         }
     )
 
-    val resolvedDependencies by lazy {
+    val resolvedDependencies: Map<Triple<String?, String, String?>, ResolvedDependency> by lazy {
         // don't resolve if no project dependencies on MPP projects are found
         targetDependenciesConfiguration.resolvedConfiguration.lenientConfiguration.allModuleDependencies.associateBy {
             Triple(it.moduleGroup, it.moduleName, it.moduleVersion)
@@ -185,7 +186,7 @@ private fun associateDependenciesWithActualModuleDependencies(
                     )
                 }
                 else -> {
-                    val resolvedDependency = resolvedDependencies[Triple(dependency.group!!, dependency.name, dependency.version!!)]
+                    val resolvedDependency = resolvedDependencies[Triple(dependency.group, dependency.name, dependency.version)]
                         ?: return@associate noMapping
 
                     if (resolvedDependency.moduleArtifacts.isEmpty() && resolvedDependency.children.size == 1) {
