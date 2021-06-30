@@ -57,7 +57,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 interface MetadataSerializer {
     fun serialize(metadata: MetadataSource): Pair<MessageLite, JvmStringTable>?
-    fun bindMethodMetadata(metadata: MetadataSource.Property, signature: Method)
+    fun bindPropertyMetadata(metadata: MetadataSource.Property, signature: Method, origin: IrDeclarationOrigin)
     fun bindMethodMetadata(metadata: MetadataSource.Function, signature: Method)
     fun bindFieldMetadata(metadata: MetadataSource.Property, signature: Pair<Type, String>)
 }
@@ -391,12 +391,7 @@ class ClassCodegen private constructor(
         jvmSignatureClashDetector.trackMethod(method, RawSignature(node.name, node.desc, MemberKind.METHOD))
 
         when (val metadata = method.metadata) {
-            is MetadataSource.Property -> {
-                assert(method.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS) {
-                    "MetadataSource.Property on IrFunction should only be used for synthetic \$annotations methods: ${method.render()}"
-                }
-                metadataSerializer.bindMethodMetadata(metadata, Method(node.name, node.desc))
-            }
+            is MetadataSource.Property -> metadataSerializer.bindPropertyMetadata(metadata, Method(node.name, node.desc), method.origin)
             is MetadataSource.Function -> metadataSerializer.bindMethodMetadata(metadata, Method(node.name, node.desc))
             null -> Unit
             else -> error("Incorrect metadata source $metadata for:\n${method.dump()}")

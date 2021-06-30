@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.backend.jvm
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.MetadataSerializer
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.fir.FirSession
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
@@ -188,9 +190,16 @@ class FirMetadataSerializer(
         return message to serializer!!.stringTable as JvmStringTable
     }
 
-    override fun bindMethodMetadata(metadata: MetadataSource.Property, signature: Method) {
+    override fun bindPropertyMetadata(metadata: MetadataSource.Property, signature: Method, origin: IrDeclarationOrigin) {
         val fir = (metadata as FirMetadataSource.Property).fir
-        context.state.globalSerializationBindings.put(FirJvmSerializerExtension.SYNTHETIC_METHOD_FOR_FIR_VARIABLE, fir, signature)
+        val slice = when (origin) {
+            JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS ->
+                FirJvmSerializerExtension.SYNTHETIC_METHOD_FOR_FIR_VARIABLE
+            IrDeclarationOrigin.PROPERTY_DELEGATE ->
+                FirJvmSerializerExtension.DELEGATE_METHOD_FOR_FIR_VARIABLE
+            else -> throw IllegalStateException("invalid origin $origin for property-related method $signature")
+        }
+        context.state.globalSerializationBindings.put(slice, fir, signature)
     }
 
     override fun bindMethodMetadata(metadata: MetadataSource.Function, signature: Method) {

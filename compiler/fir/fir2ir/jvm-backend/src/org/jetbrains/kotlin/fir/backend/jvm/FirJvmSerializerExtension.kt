@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
@@ -229,12 +230,15 @@ class FirJvmSerializerExtension(
 
         val field = getBinding(FIELD_FOR_PROPERTY, property)
         val syntheticMethod = getBinding(SYNTHETIC_METHOD_FOR_FIR_VARIABLE, property)
+        val delegateMethod = getBinding(DELEGATE_METHOD_FOR_FIR_VARIABLE, property)
+        assert(property.delegate != null || delegateMethod == null) { "non-delegated property ${property.render()} has delegate method" }
 
         val signature = signatureSerializer.propertySignature(
             property,
             field?.second,
             field?.first?.descriptor,
             if (syntheticMethod != null) signatureSerializer.methodSignature(null, syntheticMethod) else null,
+            if (delegateMethod != null) signatureSerializer.methodSignature(null, delegateMethod) else null,
             if (getterMethod != null) signatureSerializer.methodSignature(null, getterMethod) else null,
             if (setterMethod != null) signatureSerializer.methodSignature(null, setterMethod) else null
         )
@@ -334,6 +338,7 @@ class FirJvmSerializerExtension(
             fieldName: String?,
             fieldDesc: String?,
             syntheticMethod: JvmProtoBuf.JvmMethodSignature?,
+            delegateMethod: JvmProtoBuf.JvmMethodSignature?,
             getter: JvmProtoBuf.JvmMethodSignature?,
             setter: JvmProtoBuf.JvmMethodSignature?
         ): JvmProtoBuf.JvmPropertySignature? {
@@ -346,6 +351,10 @@ class FirJvmSerializerExtension(
 
             if (syntheticMethod != null) {
                 signature.syntheticMethod = syntheticMethod
+            }
+
+            if (delegateMethod != null) {
+                signature.delegateMethod = delegateMethod
             }
 
             if (getter != null) {
@@ -378,6 +387,7 @@ class FirJvmSerializerExtension(
         val METHOD_FOR_FIR_FUNCTION = JvmSerializationBindings.SerializationMappingSlice.create<FirFunction, Method>()
         val FIELD_FOR_PROPERTY = JvmSerializationBindings.SerializationMappingSlice.create<FirProperty, Pair<Type, String>>()
         val SYNTHETIC_METHOD_FOR_FIR_VARIABLE = JvmSerializationBindings.SerializationMappingSlice.create<FirVariable, Method>()
+        val DELEGATE_METHOD_FOR_FIR_VARIABLE = JvmSerializationBindings.SerializationMappingSlice.create<FirVariable, Method>()
     }
 
 }

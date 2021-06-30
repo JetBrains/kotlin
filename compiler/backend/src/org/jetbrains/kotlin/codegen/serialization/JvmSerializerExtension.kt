@@ -255,12 +255,15 @@ class JvmSerializerExtension @JvmOverloads constructor(
 
         val field = getBinding(FIELD_FOR_PROPERTY, descriptor)
         val syntheticMethod = getBinding(SYNTHETIC_METHOD_FOR_PROPERTY, descriptor)
+        val delegateMethod = getBinding(DELEGATE_METHOD_FOR_PROPERTY, descriptor)
+        assert(descriptor.isDelegated || delegateMethod == null) { "non-delegated property $descriptor has delegate method" }
 
         val signature = signatureSerializer.propertySignature(
             descriptor,
             field?.second,
             field?.first?.descriptor,
             if (syntheticMethod != null) signatureSerializer.methodSignature(null, syntheticMethod) else null,
+            if (delegateMethod != null) signatureSerializer.methodSignature(null, delegateMethod) else null,
             if (getterMethod != null) signatureSerializer.methodSignature(null, getterMethod) else null,
             if (setterMethod != null) signatureSerializer.methodSignature(null, setterMethod) else null
         )
@@ -359,6 +362,7 @@ class JvmSerializerExtension @JvmOverloads constructor(
             fieldName: String?,
             fieldDesc: String?,
             syntheticMethod: JvmProtoBuf.JvmMethodSignature?,
+            delegateMethod: JvmProtoBuf.JvmMethodSignature?,
             getter: JvmProtoBuf.JvmMethodSignature?,
             setter: JvmProtoBuf.JvmMethodSignature?
         ): JvmProtoBuf.JvmPropertySignature? {
@@ -371,6 +375,10 @@ class JvmSerializerExtension @JvmOverloads constructor(
 
             if (syntheticMethod != null) {
                 signature.syntheticMethod = syntheticMethod
+            }
+
+            if (delegateMethod != null) {
+                signature.delegateMethod = delegateMethod
             }
 
             if (getter != null) {
