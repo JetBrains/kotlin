@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
+import org.jetbrains.kotlin.backend.jvm.lower.JvmPropertiesLowering.Companion.createSyntheticMethodForPropertyDelegate
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -17,8 +19,10 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrPropertyReferenceImpl
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
 
@@ -80,29 +84,53 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
     private val IrStatement.isStdlibCall: Boolean
         get() = this is IrCall && symbol.owner.getPackageFragment()?.fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME
 
-    override fun visitProperty(declaration: IrProperty): IrStatement {
-        if (!declaration.isDelegated || declaration.isFakeOverride) return super.visitProperty(declaration)
+    override fun visitClass(declaration: IrClass): IrStatement {
+        declaration.transformChildren(this, null)
+        declaration.transformDeclarationsFlat {
+            (it as? IrProperty)?.transform()
+        }
+        return declaration
+    }
 
-        val oldField = declaration.backingField
+    private fun IrProperty.transform(): List<IrDeclaration>? {
+        if (!isDelegated || isFakeOverride) return null
+
+        val oldField = backingField
         val delegate = oldField?.initializer?.expression
         if (delegate !is IrPropertyReference ||
-            declaration.getter?.returnsResultOfStdlibCall == false ||
-            declaration.setter?.returnsResultOfStdlibCall == false
-        ) return super.visitProperty(declaration)
+            getter?.returnsResultOfStdlibCall == false ||
+            setter?.returnsResultOfStdlibCall == false
+        ) return null
 
-        declaration.backingField = (delegate.dispatchReceiver ?: delegate.extensionReceiver)?.let { receiver ->
+        backingField = (delegate.dispatchReceiver ?: delegate.extensionReceiver)?.let { receiver ->
             context.irFactory.buildField {
                 updateFrom(oldField)
-                name = Name.identifier("${declaration.name}\$receiver")
+                name = Name.identifier("${this@transform.name}\$receiver")
                 type = receiver.type
             }.apply {
                 parent = oldField.parent
                 initializer = context.irFactory.createExpressionBody(receiver.transform(this@PropertyReferenceDelegationTransformer, null))
             }
         }
-        declaration.getter?.apply { body = accessorBody(delegate, declaration.backingField) }
-        declaration.setter?.apply { body = accessorBody(delegate, declaration.backingField) }
-        return declaration
+        getter?.apply { body = accessorBody(delegate, backingField) }
+        setter?.apply { body = accessorBody(delegate, backingField) }
+
+        val delegateMethod = context.createSyntheticMethodForPropertyDelegate(this).apply {
+            body = context.createJvmIrBuilder(symbol).run {
+                val propertyOwner = if (getter?.dispatchReceiverParameter != null) irGet(valueParameters[0]) else null
+                val boundReceiver = backingField?.let { irGetField(propertyOwner, it) }
+                irExprBody(with(delegate) {
+                    val origin = PropertyReferenceLowering.REFLECTED_PROPERTY_REFERENCE
+                    IrPropertyReferenceImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, field, getter, setter, origin)
+                }.apply {
+                    when {
+                        delegate.dispatchReceiver != null -> dispatchReceiver = boundReceiver
+                        delegate.extensionReceiver != null -> extensionReceiver = boundReceiver
+                    }
+                })
+            }
+        }
+        return listOf(this, delegateMethod)
     }
 
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty): IrStatement {

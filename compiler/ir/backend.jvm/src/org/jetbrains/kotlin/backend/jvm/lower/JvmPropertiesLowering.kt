@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -164,7 +163,7 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
             JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS,
             // TODO: technically JVM permits having fields with same name but different type, so we could potentially
             //   generate two properties like that; should this be the getter's return type instead?
-            returnType = backendContext.irBuiltIns.unitType
+            isStatic = true, returnType = backendContext.irBuiltIns.unitType
         ).apply {
             body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
             annotations = declaration.annotations
@@ -175,7 +174,8 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
             declaration: IrProperty,
             suffix: String,
             origin: IrDeclarationOrigin,
-            returnType: IrType = IrUninitializedType
+            isStatic: Boolean,
+            returnType: IrType
         ) = irFactory.buildFun {
             name = Name.identifier(computeSyntheticMethodName(declaration, suffix))
             modality = Modality.OPEN
@@ -183,13 +183,27 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
             this.origin = origin
             this.returnType = returnType
         }.apply {
-            declaration.getter?.extensionReceiverParameter?.let {
-                // Synthetic methods don't get generic type signatures anyway, so not exactly useful to preserve type parameters.
-                extensionReceiverParameter = it.copyTo(this, type = it.type.eraseTypeParameters())
-            }
+            var index = 0
+            valueParameters = listOfNotNull(
+                declaration.getter?.dispatchReceiverParameter?.takeIf { !isStatic }?.let {
+                    // Synthetic methods don't get generic type signatures anyway, so not exactly useful to preserve type parameters.
+                    it.copyTo(this, type = it.type.eraseTypeParameters(), index = index++)
+                },
+                declaration.getter?.extensionReceiverParameter?.let {
+                    it.copyTo(this, type = it.type.eraseTypeParameters(), index = index)
+                }
+            )
             parent = declaration.parent
             metadata = declaration.metadata
         }
+
+        fun JvmBackendContext.createSyntheticMethodForPropertyDelegate(declaration: IrProperty) =
+            createSyntheticMethodForProperty(
+                declaration,
+                JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX,
+                IrDeclarationOrigin.PROPERTY_DELEGATE,
+                isStatic = false, returnType = irBuiltIns.anyNType
+            )
 
         private fun JvmBackendContext.computeSyntheticMethodName(property: IrProperty, suffix: String): String {
             val baseName =

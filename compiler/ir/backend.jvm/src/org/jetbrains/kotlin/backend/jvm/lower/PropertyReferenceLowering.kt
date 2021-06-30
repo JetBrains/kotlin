@@ -60,7 +60,10 @@ internal val propertyReferencePhase = makeIrFilePhase(
     prerequisite = setOf(functionReferencePhase, suspendLambdaPhase, propertyReferenceDelegationPhase)
 )
 
-private class PropertyReferenceLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
+internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
+    // Marking a property reference with this origin causes it to not generate a class.
+    object REFLECTED_PROPERTY_REFERENCE : IrStatementOriginImpl("REFLECTED_PROPERTY_REFERENCE")
+
     // TODO: join IrLocalDelegatedPropertyReference and IrPropertyReference via the class hierarchy?
     private val IrMemberAccessExpression<*>.getter: IrSimpleFunctionSymbol?
         get() = (this as? IrPropertyReference)?.getter ?: (this as? IrLocalDelegatedPropertyReference)?.getter
@@ -299,6 +302,8 @@ private class PropertyReferenceLowering(val context: JvmBackendContext) : IrElem
 
     private fun cachedKProperty(expression: IrCallableReference<*>): IrExpression {
         expression.transformChildrenVoid()
+        if (expression.origin == REFLECTED_PROPERTY_REFERENCE)
+            return createReflectedKProperty(expression)
         if (expression.origin != IrStatementOrigin.PROPERTY_REFERENCE_FOR_DELEGATE)
             return createSpecializedKProperty(expression)
 
