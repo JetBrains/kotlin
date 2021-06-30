@@ -208,6 +208,9 @@ object FirAnnotationChecker : FirAnnotatedDeclarationChecker() {
                     KotlinTarget.classActualTargets(annotated.classKind, annotated.isInner, annotated.isCompanion, annotated.isLocal)
                 )
             }
+            is FirEnumEntry -> AnnotationTargetList(
+                KotlinTarget.classActualTargets(ClassKind.ENUM_ENTRY, annotated.isInner, isCompanionObject = false, isLocalClass = false)
+            )
             is KtDestructuringDeclarationEntry -> TargetLists.T_LOCAL_VARIABLE
             is FirProperty -> {
                 when {
