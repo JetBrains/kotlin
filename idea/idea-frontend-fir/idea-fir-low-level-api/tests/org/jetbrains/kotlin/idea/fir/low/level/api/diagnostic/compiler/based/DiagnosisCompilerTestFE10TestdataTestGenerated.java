@@ -9452,6 +9452,18 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("isAsOperators.kt")
+            public void testIsAsOperators() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/explicitDefinitelyNotNull/isAsOperators.kt");
+            }
+
+            @Test
+            @TestMetadata("isAsOperatorsEnabled.kt")
+            public void testIsAsOperatorsEnabled() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/explicitDefinitelyNotNull/isAsOperatorsEnabled.kt");
+            }
+
+            @Test
             @TestMetadata("notApplicable.kt")
             public void testNotApplicable() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/explicitDefinitelyNotNull/notApplicable.kt");

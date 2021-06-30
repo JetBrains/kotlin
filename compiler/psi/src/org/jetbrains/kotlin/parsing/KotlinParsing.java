@@ -833,7 +833,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         PsiBuilder.Marker reference = mark();
         PsiBuilder.Marker typeReference = mark();
-        parseUserType(/* forAnnotation */ true);
+        parseUserType(/* allowNotNullTypeParameter */ false);
         typeReference.done(TYPE_REFERENCE);
         reference.done(CONSTRUCTOR_CALLEE);
 
@@ -2055,14 +2055,22 @@ public class KotlinParsing extends AbstractKotlinParsing {
         parseTypeRef(TokenSet.EMPTY);
     }
 
+    void parseTypeRefWithoutDefinitelyNotNull() {
+        parseTypeRef(TokenSet.EMPTY, /* allowNotNullTypeParameters */ false);
+    }
+
     void parseTypeRef(TokenSet extraRecoverySet) {
-        PsiBuilder.Marker typeRefMarker = parseTypeRefContents(extraRecoverySet);
+        parseTypeRef(extraRecoverySet, /* allowNotNullTypeParameters */ true);
+    }
+
+    private void parseTypeRef(TokenSet extraRecoverySet, boolean allowNotNullTypeParameters) {
+        PsiBuilder.Marker typeRefMarker = parseTypeRefContents(extraRecoverySet, allowNotNullTypeParameters);
         typeRefMarker.done(TYPE_REFERENCE);
     }
 
     // The extraRecoverySet is needed for the foo(bar<x, 1, y>(z)) case, to tell whether we should stop
     // on expression-indicating symbols or not
-    private PsiBuilder.Marker parseTypeRefContents(TokenSet extraRecoverySet) {
+    private PsiBuilder.Marker parseTypeRefContents(TokenSet extraRecoverySet, boolean allowNotNullTypeParameters) {
         PsiBuilder.Marker typeRefMarker = mark();
 
         parseTypeModifierList();
@@ -2078,14 +2086,14 @@ public class KotlinParsing extends AbstractKotlinParsing {
             dynamicType.done(DYNAMIC_TYPE);
         }
         else if (at(IDENTIFIER) || at(PACKAGE_KEYWORD) || atParenthesizedMutableForPlatformTypes(0)) {
-            parseUserType(/* forAnnotation */ false);
+            parseUserType(allowNotNullTypeParameters);
         }
         else if (at(LPAR)) {
             PsiBuilder.Marker functionOrParenthesizedType = mark();
 
             // This may be a function parameter list or just a parenthesized type
             advance(); // LPAR
-            parseTypeRefContents(TokenSet.EMPTY).drop(); // parenthesized types, no reference element around it is needed
+            parseTypeRefContents(TokenSet.EMPTY, allowNotNullTypeParameters).drop(); // parenthesized types, no reference element around it is needed
 
             if (at(RPAR)) {
                 advance(); // RPAR
@@ -2175,7 +2183,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *    - (Mutable)List<Foo>!
      *    - Array<(out) Foo>!
      */
-    private void parseUserType(boolean forAnnotation) {
+    private void parseUserType(boolean allowNotNullTypeParameter) {
         PsiBuilder.Marker userType = mark();
 
         if (at(PACKAGE_KEYWORD)) {
@@ -2221,7 +2229,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         userType.done(USER_TYPE);
 
-        if (!forAnnotation && at(EXCLEXCL)) {
+        if (allowNotNullTypeParameter && at(EXCLEXCL)) {
             PsiBuilder.Marker definitelyNotNull = userType.precede();
             advance(); // !!
             definitelyNotNull.done(DEFINITELY_NOT_NULL_TYPE);
