@@ -14,7 +14,7 @@ var Any?.isNotNull: Boolean
     set(value) {
         contract {
             returns() implies (this@isNotNull != null)
-            require(this != null)
+            <!ERROR_IN_CONTRACT_DESCRIPTION!>require(this != null)<!>
         }
     }
 
