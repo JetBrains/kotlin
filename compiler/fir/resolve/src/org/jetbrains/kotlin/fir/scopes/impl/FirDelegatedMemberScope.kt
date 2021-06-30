@@ -33,7 +33,7 @@ class FirDelegatedMemberScope(
     private val containingClass: FirClass,
     private val declaredMemberScope: FirScope,
     private val delegateFields: List<FirField>,
-) : FirScope() {
+) : FirScope(), FirContainingNamesAwareScope {
     private val dispatchReceiverType = containingClass.defaultType()
     private val overrideChecker = FirStandardOverrideChecker(session)
 
@@ -171,6 +171,31 @@ class FirDelegatedMemberScope(
             result += delegatedSymbol
         }
     }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    private val callableNamesLazy: Set<Name> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        buildSet {
+            addAll(declaredMemberScope.getContainingCallableNamesIfPresent())
+
+            delegateFields.flatMapTo(this) {
+                buildScope(it)?.getCallableNames() ?: emptySet()
+            }
+        }
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    private val classifierNamesLazy: Set<Name> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        buildSet {
+            addAll(declaredMemberScope.getContainingClassifierNamesIfPresent())
+
+            delegateFields.flatMapTo(this) {
+                buildScope(it)?.getClassifierNames() ?: emptySet()
+            }
+        }
+    }
+
+    override fun getCallableNames(): Set<Name> = callableNamesLazy
+    override fun getClassifierNames(): Set<Name> = classifierNamesLazy
 }
 
 private object MultipleDelegatesWithTheSameSignatureKey : FirDeclarationDataKey()
