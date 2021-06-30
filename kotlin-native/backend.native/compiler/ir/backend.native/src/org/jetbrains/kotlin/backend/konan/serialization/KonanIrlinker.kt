@@ -20,11 +20,9 @@ import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideClassFilter
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
-import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
 import org.jetbrains.kotlin.backend.konan.CachedLibraries
 import org.jetbrains.kotlin.backend.konan.descriptors.isInteropLibrary
 import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForCEnumAndCStructStubs
-import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
@@ -208,7 +206,7 @@ internal class KonanIrLinker(
             val descriptor = resolveDescriptor(idSig)
             val actualModule = descriptor.module
             if (actualModule !== moduleDescriptor) {
-                val moduleDeserializer = deserializersForModules[actualModule] ?: error("No module deserializer for $actualModule")
+                val moduleDeserializer = deserializersForModules[actualModule.name.asString()] ?: error("No module deserializer for $actualModule")
                 moduleDeserializer.addModuleReachableTopLevel(idSig)
                 return symbolTable.referenceClassFromLinker(idSig)
             }
@@ -220,18 +218,17 @@ internal class KonanIrLinker(
         override val moduleDependencies: Collection<IrModuleDeserializer> = emptyList()
     }
 
+    private val String.isForwardDeclarationModuleName: Boolean get() = this == "<forward declarations>"
+
     val modules: Map<String, IrModuleFragment>
         get() = mutableMapOf<String, IrModuleFragment>().apply {
             deserializersForModules
-                    .filter { !it.key.isForwardDeclarationModule && it.value.moduleDescriptor !== currentModule }
-                    .forEach { this.put(it.key.konanLibrary!!.libraryName, it.value.moduleFragment) }
+                    .filter { !it.key.isForwardDeclarationModuleName && it.value.moduleDescriptor !== currentModule }
+                    .forEach {
+                        val klib = it.value.klib as? KotlinLibrary ?: error("Expected to be KotlinLibrary (${it.key})")
+                        this[klib.libraryName] = it.value.moduleFragment
+                    }
         }
-    class KonanPluginContext(
-            override val moduleDescriptor: ModuleDescriptor,
-            override val symbolTable: ReferenceSymbolTable,
-            override val typeTranslator: TypeTranslator,
-            override val irBuiltIns: IrBuiltIns
-    ):TranslationPluginContext
 }
 
 class KonanIrModuleFragmentImpl(

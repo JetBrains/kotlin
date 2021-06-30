@@ -275,7 +275,11 @@ fun loadIr(
             val irLinker =
                 JsIrLinker(psi2IrContext.moduleDescriptor, messageLogger, irBuiltIns, symbolTable, functionFactory, feContext, null)
             val deserializedModuleFragments = sortDependencies(allDependencies, depsDescriptors.descriptors).map { klib ->
-                irLinker.deserializeIrModuleHeader(depsDescriptors.getModuleDescriptor(klib), klib).also { moduleFragment ->
+                irLinker.deserializeIrModuleHeader(
+                    depsDescriptors.getModuleDescriptor(klib),
+                    klib,
+                    deserializationStrategy = DeserializationStrategy.EXPLICITLY_EXPORTED
+                ).also { moduleFragment ->
                     klib.manifestProperties.getProperty(KLIB_PROPERTY_JS_OUTPUT_NAME)?.let {
                         moduleFragmentToUniqueName[moduleFragment] = it
                     }

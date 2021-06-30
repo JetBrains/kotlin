@@ -139,7 +139,7 @@ open class JvmIrCodegenFactory(
                 // We have to ensure that deserializer for built-ins module is created
                 irLinker.deserializeIrModuleHeader(it.builtIns.builtInsModule, null)
             }
-            irLinker.deserializeIrModuleHeader(it, kotlinLibrary)
+            irLinker.deserializeIrModuleHeader(it, kotlinLibrary, _moduleName = it.name.asString())
         }
         val irProviders = listOf(irLinker)
 

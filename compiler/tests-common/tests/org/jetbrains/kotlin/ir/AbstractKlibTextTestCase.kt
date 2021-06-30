@@ -64,6 +64,7 @@ abstract class AbstractKlibTextTestCase : CodegenTestCase() {
 
     companion object {
         val SKIP_KLIB_TEST = Regex("""// SKIP_KLIB_TEST""")
+        const val MODULE_NAME = "testModule"
     }
 
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
@@ -83,7 +84,7 @@ abstract class AbstractKlibTextTestCase : CodegenTestCase() {
             listOfNotNull(writeJavaFiles(files)),
             files
         )
-        configuration.put(CommonConfigurationKeys.MODULE_NAME, "testModule")
+        configuration.put(CommonConfigurationKeys.MODULE_NAME, MODULE_NAME)
         myEnvironment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JS_CONFIG_FILES)
     }
 
@@ -194,7 +195,7 @@ abstract class AbstractKlibTextTestCase : CodegenTestCase() {
             metadata = serializedMetadata,
             dataFlowGraph = null,
             manifestProperties = properties,
-            moduleName = irModuleFragment.name.asString(),
+            moduleName = MODULE_NAME,
             nopack = true,
             perFile = false,
             output = klibDir.canonicalPath,

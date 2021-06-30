@@ -125,7 +125,7 @@ internal fun Context.psiToIr(
                         isProducingLibrary -> linker.deserializeOnlyHeaderModule(dependency, kotlinLibrary)
                         kotlinLibrary != null && config.cachedLibraries.isLibraryCached(kotlinLibrary) ->
                             linker.deserializeHeadersWithInlineBodies(dependency, kotlinLibrary)
-                        else -> linker.deserializeIrModuleHeader(dependency, kotlinLibrary)
+                        else -> linker.deserializeIrModuleHeader(dependency, kotlinLibrary, dependency.name.asString())
                     }
                 }
                 if (dependencies.size == dependenciesCount) break
