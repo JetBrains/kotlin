@@ -673,7 +673,6 @@ class DeclarationsConverter(
                         classKind = ClassKind.ENUM_ENTRY
                         scopeProvider = baseScopeProvider
                         symbol = FirAnonymousObjectSymbol()
-                        annotations += modifiers.annotations
                         val enumClassWrapper = ClassWrapper(
                             enumEntryName, modifiers, ClassKind.ENUM_ENTRY, this,
                             hasPrimaryConstructor = true,

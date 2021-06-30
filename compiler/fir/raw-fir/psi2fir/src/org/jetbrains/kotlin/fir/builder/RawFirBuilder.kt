@@ -793,7 +793,6 @@ open class RawFirBuilder(
                             scopeProvider = this@RawFirBuilder.baseScopeProvider
                             symbol = FirAnonymousObjectSymbol()
 
-                            extractAnnotationsTo(this)
                             val delegatedEntrySelfType = buildResolvedTypeRef {
                                 type =
                                     ConeClassLikeTypeImpl(this@buildAnonymousObject.symbol.toLookupTag(), emptyArray(), isNullable = false)

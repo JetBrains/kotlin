@@ -29,14 +29,14 @@ FILE: annotation.kt
             super<R|kotlin/Enum<My>|>()
         }
 
-        @base() public final static enum entry FIRST: R|My| = @base() object : R|My| {
+        @base() public final static enum entry FIRST: R|My| = object : R|My| {
             private constructor(): R|<anonymous>| {
                 super<R|My|>()
             }
 
         }
 
-        @base() public final static enum entry SECOND: R|My| = @base() object : R|My| {
+        @base() public final static enum entry SECOND: R|My| = object : R|My| {
             private constructor(): R|<anonymous>| {
                 super<R|My|>()
             }
