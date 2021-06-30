@@ -66,6 +66,41 @@ class CommonizeNativeDistributionTest {
     }
 
     @Test
+    fun `commonize - apple platforms`() {
+        val iosTarget = CommonizerTarget(IOS_ARM64, IOS_X64, IOS_SIMULATOR_ARM64)
+        val watchosTarget = CommonizerTarget(WATCHOS_ARM64, WATCHOS_X64, WATCHOS_SIMULATOR_ARM64)
+        val macosTarget = CommonizerTarget(MACOS_X64, MACOS_ARM64)
+        val appleTarget = SharedCommonizerTarget(iosTarget.konanTargets + watchosTarget.konanTargets + macosTarget.konanTargets)
+
+        CliCommonizer(this::class.java.classLoader).commonizeNativeDistribution(
+            konanHome = konanHome,
+            outputTargets = setOf(iosTarget, watchosTarget, macosTarget, appleTarget),
+            outputDirectory = temporaryOutputDirectory.root,
+            logLevel = CommonizerLogLevel.Info
+        )
+
+        assertTrue(
+            resolveCommonizedDirectory(temporaryOutputDirectory.root, iosTarget).isDirectory,
+            "Expected directory for $iosTarget"
+        )
+
+        assertTrue(
+            resolveCommonizedDirectory(temporaryOutputDirectory.root, watchosTarget).isDirectory,
+            "Expected directory for $watchosTarget"
+        )
+
+        assertTrue(
+            resolveCommonizedDirectory(temporaryOutputDirectory.root, macosTarget).isDirectory,
+            "Expected directory for $macosTarget"
+        )
+
+        assertTrue(
+            resolveCommonizedDirectory(temporaryOutputDirectory.root, appleTarget).isDirectory,
+            "Expected directory for $appleTarget"
+        )
+    }
+
+    @Test
     fun `commonize - no outputTargets specified`() {
         CliCommonizer(this::class.java.classLoader).commonizeNativeDistribution(
             konanHome = konanHome,
