@@ -879,9 +879,12 @@ internal class CacheBuilder(val project: Project, val binary: NativeBinary, val 
                 .map { KonanTarget.predefinedTargets.getValue(it) }
 
         // Targets with well-tested static caches that can be enabled by default.
-        // TODO: Move it to konan.properties.
+        // TODO: There is a corresponding property in konan.properties (optInCacheableTargets),
+        //  but naïve implementation makes build slower because it makes reading of konan.properties significantly more frequent.
+        //  One possible solution is to use [Gradle Build service](https://docs.gradle.org/current/userguide/build_services.html).
+        //  Tracking issue: https://youtrack.jetbrains.com/issue/KT-47529
         private val targetsWithStableStaticCaches =
-            setOf(KonanTarget.IOS_X64, KonanTarget.MACOS_X64)
+            setOf(KonanTarget.IOS_X64, KonanTarget.MACOS_X64, KonanTarget.IOS_SIMULATOR_ARM64, KonanTarget.MACOS_ARM64)
 
         internal fun cacheWorksFor(target: KonanTarget, project: Project) =
             target in getCacheableTargets(project)
