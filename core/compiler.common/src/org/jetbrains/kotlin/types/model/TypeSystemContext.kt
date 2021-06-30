@@ -175,6 +175,7 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
     fun KotlinTypeMarker.removeExactAnnotation(): KotlinTypeMarker
 
     fun SimpleTypeMarker.replaceArguments(newArguments: List<TypeArgumentMarker>): SimpleTypeMarker
+    fun SimpleTypeMarker.replaceArguments(replacement: (TypeArgumentMarker) -> TypeArgumentMarker): SimpleTypeMarker
 
     fun KotlinTypeMarker.hasExactAnnotation(): Boolean
     fun KotlinTypeMarker.hasNoInferAnnotation(): Boolean
@@ -248,6 +249,22 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
      * In future once we have only FIR (or FE 1.0 behavior is fixed) this method should be inlined to the use-site
      */
     fun SimpleTypeMarker.createConstraintPartForLowerBoundAndFlexibleTypeVariable(): KotlinTypeMarker
+
+    fun createCapturedStarProjectionForSelfType(
+        typeVariable: TypeVariableTypeConstructorMarker,
+        selfType: SimpleTypeMarker,
+    ): SimpleTypeMarker? {
+        val typeParameter = typeVariable.typeParameter ?: return null
+        val starProjection = createStarProjection(typeParameter)
+        val superType = selfType.replaceArguments {
+            val constructor = it.getType().typeConstructor()
+            if (constructor is TypeVariableTypeConstructorMarker && constructor == typeVariable) {
+                starProjection
+            } else it
+        }
+
+        return createCapturedType(starProjection, listOf(superType), lowerType = null, CaptureStatus.FROM_EXPRESSION)
+    }
 }
 
 
@@ -313,12 +330,14 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
 
     fun TypeConstructorMarker.parametersCount(): Int
     fun TypeConstructorMarker.getParameter(index: Int): TypeParameterMarker
+    fun TypeConstructorMarker.getParameters(): List<TypeParameterMarker>
     fun TypeConstructorMarker.supertypes(): Collection<KotlinTypeMarker>
     fun TypeConstructorMarker.isIntersection(): Boolean
     fun TypeConstructorMarker.isClassTypeConstructor(): Boolean
     fun TypeConstructorMarker.isInterface(): Boolean
     fun TypeConstructorMarker.isIntegerLiteralTypeConstructor(): Boolean
     fun TypeConstructorMarker.isLocalType(): Boolean
+    fun TypeConstructorMarker.getTypeParameterClassifier(): TypeParameterMarker?
 
     val TypeVariableTypeConstructorMarker.typeParameter: TypeParameterMarker?
 
@@ -327,7 +346,7 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun TypeParameterMarker.getUpperBound(index: Int): KotlinTypeMarker
     fun TypeParameterMarker.getUpperBounds(): List<KotlinTypeMarker>
     fun TypeParameterMarker.getTypeConstructor(): TypeConstructorMarker
-    fun TypeParameterMarker.hasRecursiveBounds(selfConstructor: TypeConstructorMarker): Boolean
+    fun TypeParameterMarker.hasRecursiveBounds(selfConstructor: TypeConstructorMarker? = null): Boolean
 
     fun areEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean
 

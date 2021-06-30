@@ -404,6 +404,15 @@ abstract class AbstractTypeApproximator(
 
             if (argument.isStarProjection()) continue
 
+            val argumentTypeConstructor = argument.getType().typeConstructor()
+
+            if (argumentTypeConstructor is TypeVariableTypeConstructorMarker && conf.selfTypesWithTypeVariablesToCapturedStarProjection) {
+                // If we have Self<TypeVariable(T)> where T is bounded by Self<T>, we approximate it to CapturedType(*) to satisfy constraints
+                if (argumentTypeConstructor.typeParameter?.hasRecursiveBounds(type.typeConstructor()) == true) {
+                    return createCapturedStarProjectionForSelfType(argumentTypeConstructor, type)
+                }
+            }
+
             val effectiveVariance = AbstractTypeChecker.effectiveVariance(parameter.getVariance(), argument.getVariance())
 
             val argumentType = newArguments[index]?.getType() ?: argument.getType()

@@ -24,6 +24,7 @@ open class TypeApproximatorConfiguration {
     open val intersection: IntersectionStrategy = IntersectionStrategy.TO_COMMON_SUPERTYPE
     open val intersectionTypesInContravariantPositions = false
     open val localTypes = false
+    open val selfTypesWithTypeVariablesToCapturedStarProjection = false
 
     open val typeVariable: (TypeVariableTypeConstructorMarker) -> Boolean = { false }
     open fun capturedType(ctx: TypeSystemInferenceExtensionContext, type: CapturedTypeMarker): Boolean =
@@ -71,6 +72,12 @@ open class TypeApproximatorConfiguration {
     object InternalTypesApproximation : AbstractCapturedTypesApproximation(CaptureStatus.FROM_EXPRESSION) {
         override val integerLiteralType: Boolean get() = true
         override val intersectionTypesInContravariantPositions: Boolean get() = true
+    }
+
+    object InternalAndSelfTypesApproximation : AbstractCapturedTypesApproximation(CaptureStatus.FROM_EXPRESSION) {
+        override val integerLiteralType: Boolean get() = true
+        override val intersectionTypesInContravariantPositions: Boolean get() = true
+        override val selfTypesWithTypeVariablesToCapturedStarProjection = true
     }
 
     object FinalApproximationAfterResolutionAndInference :

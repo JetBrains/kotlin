@@ -41,7 +41,7 @@ class ClassicTypeSystemContextForCS(override val builtIns: KotlinBuiltIns) : Typ
         captureStatus: CaptureStatus
     ): CapturedTypeMarker {
         require(lowerType is UnwrappedType?, lowerType::errorMessage)
-        require(constructorProjection is TypeProjectionImpl, constructorProjection::errorMessage)
+        require(constructorProjection is TypeProjectionBase, constructorProjection::errorMessage)
 
         @Suppress("UNCHECKED_CAST")
         val newCapturedTypeConstructor = NewCapturedTypeConstructor(
@@ -49,7 +49,7 @@ class ClassicTypeSystemContextForCS(override val builtIns: KotlinBuiltIns) : Typ
             constructorSupertypes as List<UnwrappedType>
         )
         return NewCapturedType(
-            CaptureStatus.FOR_INCORPORATION,
+            captureStatus,
             newCapturedTypeConstructor,
             lowerType = lowerType
         )

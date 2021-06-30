@@ -89,6 +89,9 @@ fun <T : ConeKotlinType> T.withArguments(arguments: Array<out ConeTypeProjection
     }
 }
 
+fun <T : ConeKotlinType> T.withArguments(replacement: (ConeTypeProjection) -> ConeTypeProjection, typeSystemContext: ConeTypeContext) =
+    withArguments(typeArguments.map(replacement).toTypedArray(), typeSystemContext)
+
 fun <T : ConeKotlinType> T.withAttributes(attributes: ConeAttributes, typeSystemContext: ConeTypeContext): T {
     if (this.attributes == attributes) {
         return this
