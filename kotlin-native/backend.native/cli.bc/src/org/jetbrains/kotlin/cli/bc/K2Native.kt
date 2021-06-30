@@ -332,6 +332,8 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                         RuntimeAssertsMode.IGNORE
                     }
                 })
+
+                arguments.externalDependencies?.let { put(EXTERNAL_DEPENDENCIES, it) }
             }
         }
     }
