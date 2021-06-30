@@ -1,26 +1,26 @@
 expect class A()
 // Lifted up type aliases:
 typealias B = A // class at the RHS
-typealias C = A // TA at the RHS, expanded to the same class
-typealias C2 = A // 2x TA at the RHS, expanded to the same class
-typealias C3 = A // 3x TA at the RHS, expanded to the same class
+typealias C = B // TA lifted up as is
+typealias C2 = C // TA lifted up as is
+typealias C3 = C2 // TA lifted up as is
 
 typealias D = A // class/TA expanded to the same class at the RHS
-typealias E = A // different TAs expanded to the same class at the RHS
+typealias E = B // different TAs use common type from TA-chain
 
 typealias F = List<String> // parameterized type at the RHS
 typealias H<T> = List<T> // TA with own parameters
 
 typealias I2<T> = List<T>
-typealias I3<R> = List<R>
-typealias I4 = List<String>
+typealias I3<R> = I2<R>
+typealias I4 = I2<String>
 
 typealias I5<V, K> = Map<K, V>
-typealias I6<T, R> = Map<R, T>
+typealias I6<T, R> = I5<T, R>
 
 typealias I7<K, V> = Map<K, V>
-typealias I8<T, R> = Map<R, T>
-typealias I9<Q, W> = Map<W, Q>
+typealias I8<T, R> = I7<R, T>
+typealias I9<Q, W> = I8<Q, W>
 
 typealias J<T> = Function<T> // function type at the RHS
 typealias M = () -> Unit // same return type
@@ -38,14 +38,14 @@ expect class T
 typealias U = A // same nullability of the RHS class
 
 expect class V // different nullability of the RHS class
-typealias W = A // same nullability of the RHS TA
+typealias W = U // same nullability of the RHS TA
 expect class X // different nullability of the RHS TA
 expect class Y // TA at the RHS with the different nullability of own RHS
 
 // Supertypes:
 expect class FILE expect constructor(): kotlinx.cinterop.CStructVar
 
-typealias uuid_t = kotlinx.cinterop.CArrayPointer<kotlinx.cinterop.UByteVar>
+typealias uuid_t = __darwin_uuid_t
 typealias __darwin_uuid_t = kotlinx.cinterop.CArrayPointer<kotlinx.cinterop.UByteVar>
 
 expect val uuid: uuid_t

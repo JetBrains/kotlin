@@ -548,6 +548,69 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
         )
     }
 
+    @Test
+    fun `test typealias to numbers`() {
+        val result = commonize {
+            outputTarget("(a, b)", "(c, d)", "(a, b, c, d)")
+
+            simpleSingleSourceTarget(
+                "a", """
+                    typealias Proxy = Long
+                    typealias X = Proxy
+                    val x: X
+                """.trimIndent()
+            )
+
+            simpleSingleSourceTarget(
+                "b", """
+                    typealias Proxy = Long
+                    typealias X = Proxy
+                    val x: X
+                """.trimIndent()
+            )
+
+            simpleSingleSourceTarget(
+                "c", """
+                    typealias Proxy = Int
+                    typealias X = Proxy
+                    val x: X
+                """.trimIndent()
+            )
+
+            simpleSingleSourceTarget(
+                "d", """
+                    typealias Proxy = Short
+                    typealias X = Proxy
+                    val x: X
+                """.trimIndent()
+            )
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                typealias Proxy = Long
+                typealias X = Proxy
+                expect val x: X
+            """.trimIndent()
+        )
+
+        result.assertCommonized(
+            "(c, d)", """
+                expect class Proxy
+                typealias X = Proxy
+                expect val x: X
+            """.trimIndent()
+        )
+
+        result.assertCommonized(
+            "(a, b, c, d)", """
+                expect class Proxy
+                typealias X = Proxy
+                expect val x: X
+            """.trimIndent()
+        )
+    }
+
     fun `todo - test boxed function using TA and expanded type`() {
         val result = commonize {
             outputTarget("(a, b)")
