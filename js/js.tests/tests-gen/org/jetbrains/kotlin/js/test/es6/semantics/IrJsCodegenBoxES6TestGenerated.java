@@ -9536,6 +9536,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
             runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnother.kt");
         }
 
+        @TestMetadata("delegateToAnotherCustom.kt")
+        public void testDelegateToAnotherCustom() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnotherCustom.kt");
+        }
+
         @TestMetadata("delegateToAnotherMutable.kt")
         public void testDelegateToAnotherMutable() throws Exception {
             runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnotherMutable.kt");
