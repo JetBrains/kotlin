@@ -132,6 +132,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         if (visibility == DescriptorVisibilities.INTERNAL &&
             origin != JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR &&
             origin != JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS &&
+            origin != IrDeclarationOrigin.PROPERTY_DELEGATE &&
             !isPublishedApi()
         ) {
             return originalFunction.takeIf { it != this }
