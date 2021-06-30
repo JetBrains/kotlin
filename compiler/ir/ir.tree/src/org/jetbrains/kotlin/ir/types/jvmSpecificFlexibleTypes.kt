@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.types
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.hasAnnotation
@@ -26,7 +27,8 @@ private class IrJvmFlexibleTypeImpl(
     val irType: IrSimpleType,
     val builtIns: IrBuiltIns,
     val nullability: Boolean,
-    val mutability: Boolean
+    val mutability: Boolean,
+    val raw: Boolean,
 ) : IrJvmFlexibleType {
     override val lowerBound: IrSimpleType
         get() = irType.buildSimpleType {
@@ -55,12 +57,16 @@ private class IrJvmFlexibleTypeImpl(
                     else -> error("Mutability-flexible type with unknown classifier: ${irType.render()}, FQ name: $readonlyClassFqName")
                 }
             }
+            if (raw) {
+                arguments = List(arguments.size) { IrStarProjectionImpl }
+            }
             kotlinType = null
         }
 }
 
 internal val FLEXIBLE_NULLABILITY_FQN = FqName("kotlin.internal.ir.FlexibleNullability")
 internal val FLEXIBLE_MUTABILITY_FQN = FqName("kotlin.internal.ir.FlexibleMutability")
+internal val RAW_TYPE_FQN = FqName("kotlin.internal.ir.RawType")
 
 internal fun IrType.isWithFlexibleNullability(): Boolean =
     hasAnnotation(FLEXIBLE_NULLABILITY_FQN)
@@ -68,17 +74,21 @@ internal fun IrType.isWithFlexibleNullability(): Boolean =
 internal fun IrType.isWithFlexibleMutability(): Boolean =
     hasAnnotation(FLEXIBLE_MUTABILITY_FQN)
 
+internal fun IrType.isRaw(): Boolean =
+    hasAnnotation(RAW_TYPE_FQN)
+
 internal fun IrType.asJvmFlexibleType(builtIns: IrBuiltIns): FlexibleTypeMarker? {
     if (this !is IrSimpleType || annotations.isEmpty()) return null
 
     val nullability = isWithFlexibleNullability()
     val mutability = isWithFlexibleMutability()
-    if (!nullability && !mutability) return null
+    val raw = isRaw()
+    if (!nullability && !mutability && !raw) return null
 
     val baseType = this.removeAnnotations { irCtorCall ->
         val fqName = irCtorCall.type.classFqName
-        fqName == FLEXIBLE_NULLABILITY_FQN || fqName == FLEXIBLE_MUTABILITY_FQN
+        fqName == FLEXIBLE_NULLABILITY_FQN || fqName == FLEXIBLE_MUTABILITY_FQN || fqName == RAW_TYPE_FQN
     } as IrSimpleType
 
-    return IrJvmFlexibleTypeImpl(baseType, builtIns, nullability, mutability)
+    return IrJvmFlexibleTypeImpl(baseType, builtIns, nullability, mutability, raw)
 }
