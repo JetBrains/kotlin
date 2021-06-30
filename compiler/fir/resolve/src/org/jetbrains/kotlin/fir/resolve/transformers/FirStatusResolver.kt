@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class FirStatusResolver(
     val session: FirSession,
@@ -179,17 +180,26 @@ class FirStatusResolver(
         )
         val effectiveVisibility = parentEffectiveVisibility.lowerBound(selfEffectiveVisibility, session.typeContext)
         val annotations = ((containingProperty ?: declaration) as? FirAnnotatedDeclaration)?.annotations ?: emptyList()
-        if (annotations.any { it.typeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.classId == StandardClassIds.PublishedApi }) {
-            val publishedApiSelfEffectiveVisibility = visibility.toEffectiveVisibility(
+
+        val hasPublishedApiAnnotation = annotations.any {
+            it.typeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.classId == StandardClassIds.PublishedApi
+        }
+
+        var selfPublishedEffectiveVisibility = runIf(hasPublishedApiAnnotation) {
+            visibility.toEffectiveVisibility(
                 containingClass?.symbol?.toLookupTag(), forClass = declaration is FirClass, ownerIsPublishedApi = true
             )
-            val parentPublishedEffectiveVisibility = when {
-                containingProperty != null -> containingProperty.publishedApiEffectiveVisibility
-                containingClass is FirRegularClass -> containingClass.publishedApiEffectiveVisibility
-                else -> null
-            } ?: parentEffectiveVisibility
+        }
+        var parentPublishedEffectiveVisibility = when {
+            containingProperty != null -> containingProperty.publishedApiEffectiveVisibility
+            containingClass is FirRegularClass -> containingClass.publishedApiEffectiveVisibility
+            else -> null
+        }
+        if (selfPublishedEffectiveVisibility != null || parentPublishedEffectiveVisibility != null) {
+            selfPublishedEffectiveVisibility = selfPublishedEffectiveVisibility ?: selfEffectiveVisibility
+            parentPublishedEffectiveVisibility = parentPublishedEffectiveVisibility ?: parentEffectiveVisibility
             declaration.publishedApiEffectiveVisibility = parentPublishedEffectiveVisibility.lowerBound(
-                publishedApiSelfEffectiveVisibility,
+                selfPublishedEffectiveVisibility,
                 session.typeContext
             )
         }
