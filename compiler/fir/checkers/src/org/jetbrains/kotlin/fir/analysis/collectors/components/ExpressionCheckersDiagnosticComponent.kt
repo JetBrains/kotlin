@@ -26,7 +26,7 @@ class ExpressionCheckersDiagnosticComponent(
     }
 
     override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: CheckerContext) {
-        checkers.allBasicExpressionCheckers.check(constExpression, data, reporter)
+        checkers.allConstExpressionCheckers.check(constExpression, data, reporter)
     }
 
     override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: CheckerContext) {
@@ -42,11 +42,11 @@ class ExpressionCheckersDiagnosticComponent(
     }
 
     override fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess, data: CheckerContext) {
-        checkers.allQualifiedAccessExpressionCheckers.check(callableReferenceAccess, data, reporter)
+        checkers.allCallableReferenceAccessCheckers.check(callableReferenceAccess, data, reporter)
     }
 
     override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: CheckerContext) {
-        checkers.allBasicExpressionCheckers.check(thisReceiverExpression, data, reporter)
+        checkers.allThisReceiverExpressionCheckers.check(thisReceiverExpression, data, reporter)
     }
 
     override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: CheckerContext) {
@@ -58,11 +58,11 @@ class ExpressionCheckersDiagnosticComponent(
     }
 
     override fun visitWhileLoop(whileLoop: FirWhileLoop, data: CheckerContext) {
-        checkers.allLoopExpressionCheckers.check(whileLoop, data, reporter)
+        checkers.allWhileLoopCheckers.check(whileLoop, data, reporter)
     }
 
     override fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: CheckerContext) {
-        checkers.allLoopExpressionCheckers.check(doWhileLoop, data, reporter)
+        checkers.allDoWhileLoopCheckers.check(doWhileLoop, data, reporter)
     }
 
     override fun visitErrorLoop(errorLoop: FirErrorLoop, data: CheckerContext) {
@@ -74,7 +74,7 @@ class ExpressionCheckersDiagnosticComponent(
     }
 
     override fun visitArrayOfCall(arrayOfCall: FirArrayOfCall, data: CheckerContext) {
-        checkers.allBasicExpressionCheckers.check(arrayOfCall, data, reporter)
+        checkers.allArrayOfCallCheckers.check(arrayOfCall, data, reporter)
     }
 
     override fun visitStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall, data: CheckerContext) {
@@ -98,7 +98,7 @@ class ExpressionCheckersDiagnosticComponent(
     }
 
     override fun visitClassReferenceExpression(classReferenceExpression: FirClassReferenceExpression, data: CheckerContext) {
-        checkers.allBasicExpressionCheckers.check(classReferenceExpression, data, reporter)
+        checkers.allClassReferenceExpressionCheckers.check(classReferenceExpression, data, reporter)
     }
 
     override fun visitGetClassCall(getClassCall: FirGetClassCall, data: CheckerContext) {

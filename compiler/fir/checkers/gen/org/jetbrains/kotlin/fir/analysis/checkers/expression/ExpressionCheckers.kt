@@ -37,6 +37,13 @@ abstract class ExpressionCheckers {
     open val stringConcatenationCallCheckers: Set<FirStringConcatenationCallChecker> = emptySet()
     open val typeOperatorCallCheckers: Set<FirTypeOperatorCallChecker> = emptySet()
     open val resolvedQualifierCheckers: Set<FirResolvedQualifierChecker> = emptySet()
+    open val constExpressionCheckers: Set<FirConstExpressionChecker> = emptySet()
+    open val callableReferenceAccessCheckers: Set<FirCallableReferenceAccessChecker> = emptySet()
+    open val thisReceiverExpressionCheckers: Set<FirThisReceiverExpressionChecker> = emptySet()
+    open val whileLoopCheckers: Set<FirWhileLoopChecker> = emptySet()
+    open val doWhileLoopCheckers: Set<FirDoWhileLoopChecker> = emptySet()
+    open val arrayOfCallCheckers: Set<FirArrayOfCallChecker> = emptySet()
+    open val classReferenceExpressionCheckers: Set<FirClassReferenceExpressionChecker> = emptySet()
 
     @CheckersComponentInternal internal val allBasicExpressionCheckers: Set<FirBasicExpressionChecker> get() = basicExpressionCheckers
     @CheckersComponentInternal internal val allQualifiedAccessCheckers: Set<FirQualifiedAccessChecker> get() = qualifiedAccessCheckers + basicExpressionCheckers
@@ -58,4 +65,11 @@ abstract class ExpressionCheckers {
     @CheckersComponentInternal internal val allStringConcatenationCallCheckers: Set<FirStringConcatenationCallChecker> get() = stringConcatenationCallCheckers + basicExpressionCheckers
     @CheckersComponentInternal internal val allTypeOperatorCallCheckers: Set<FirTypeOperatorCallChecker> get() = typeOperatorCallCheckers + basicExpressionCheckers
     @CheckersComponentInternal internal val allResolvedQualifierCheckers: Set<FirResolvedQualifierChecker> get() = resolvedQualifierCheckers + basicExpressionCheckers
+    @CheckersComponentInternal internal val allConstExpressionCheckers: Set<FirConstExpressionChecker> get() = constExpressionCheckers + basicExpressionCheckers
+    @CheckersComponentInternal internal val allCallableReferenceAccessCheckers: Set<FirCallableReferenceAccessChecker> get() = callableReferenceAccessCheckers + qualifiedAccessExpressionCheckers + basicExpressionCheckers + qualifiedAccessCheckers
+    @CheckersComponentInternal internal val allThisReceiverExpressionCheckers: Set<FirThisReceiverExpressionChecker> get() = thisReceiverExpressionCheckers + qualifiedAccessExpressionCheckers + basicExpressionCheckers + qualifiedAccessCheckers
+    @CheckersComponentInternal internal val allWhileLoopCheckers: Set<FirWhileLoopChecker> get() = whileLoopCheckers + loopExpressionCheckers + basicExpressionCheckers
+    @CheckersComponentInternal internal val allDoWhileLoopCheckers: Set<FirDoWhileLoopChecker> get() = doWhileLoopCheckers + loopExpressionCheckers + basicExpressionCheckers
+    @CheckersComponentInternal internal val allArrayOfCallCheckers: Set<FirArrayOfCallChecker> get() = arrayOfCallCheckers + basicExpressionCheckers
+    @CheckersComponentInternal internal val allClassReferenceExpressionCheckers: Set<FirClassReferenceExpressionChecker> get() = classReferenceExpressionCheckers + basicExpressionCheckers
 }
