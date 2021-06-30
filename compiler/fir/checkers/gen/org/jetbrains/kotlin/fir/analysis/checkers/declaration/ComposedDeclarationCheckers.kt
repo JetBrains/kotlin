@@ -37,6 +37,18 @@ class ComposedDeclarationCheckers : DeclarationCheckers() {
         get() = _annotatedDeclarationCheckers
     override val typeAliasCheckers: Set<FirTypeAliasChecker>
         get() = _typeAliasCheckers
+    override val anonymousFunctionCheckers: Set<FirAnonymousFunctionChecker>
+        get() = _anonymousFunctionCheckers
+    override val propertyAccessorCheckers: Set<FirPropertyAccessorChecker>
+        get() = _propertyAccessorCheckers
+    override val valueParameterCheckers: Set<FirValueParameterChecker>
+        get() = _valueParameterCheckers
+    override val enumEntryCheckers: Set<FirEnumEntryChecker>
+        get() = _enumEntryCheckers
+    override val anonymousObjectCheckers: Set<FirAnonymousObjectChecker>
+        get() = _anonymousObjectCheckers
+    override val anonymousInitializerCheckers: Set<FirAnonymousInitializerChecker>
+        get() = _anonymousInitializerCheckers
     override val controlFlowAnalyserCheckers: Set<FirControlFlowChecker>
         get() = _controlFlowAnalyserCheckers
     override val variableAssignmentCfaBasedCheckers: Set<AbstractFirPropertyInitializationChecker>
@@ -53,6 +65,12 @@ class ComposedDeclarationCheckers : DeclarationCheckers() {
     private val _typeParameterCheckers: MutableSet<FirTypeParameterChecker> = mutableSetOf()
     private val _annotatedDeclarationCheckers: MutableSet<FirAnnotatedDeclarationChecker> = mutableSetOf()
     private val _typeAliasCheckers: MutableSet<FirTypeAliasChecker> = mutableSetOf()
+    private val _anonymousFunctionCheckers: MutableSet<FirAnonymousFunctionChecker> = mutableSetOf()
+    private val _propertyAccessorCheckers: MutableSet<FirPropertyAccessorChecker> = mutableSetOf()
+    private val _valueParameterCheckers: MutableSet<FirValueParameterChecker> = mutableSetOf()
+    private val _enumEntryCheckers: MutableSet<FirEnumEntryChecker> = mutableSetOf()
+    private val _anonymousObjectCheckers: MutableSet<FirAnonymousObjectChecker> = mutableSetOf()
+    private val _anonymousInitializerCheckers: MutableSet<FirAnonymousInitializerChecker> = mutableSetOf()
     private val _controlFlowAnalyserCheckers: MutableSet<FirControlFlowChecker> = mutableSetOf()
     private val _variableAssignmentCfaBasedCheckers: MutableSet<AbstractFirPropertyInitializationChecker> = mutableSetOf()
 
@@ -69,6 +87,12 @@ class ComposedDeclarationCheckers : DeclarationCheckers() {
         _typeParameterCheckers += checkers.typeParameterCheckers
         _annotatedDeclarationCheckers += checkers.annotatedDeclarationCheckers
         _typeAliasCheckers += checkers.typeAliasCheckers
+        _anonymousFunctionCheckers += checkers.anonymousFunctionCheckers
+        _propertyAccessorCheckers += checkers.propertyAccessorCheckers
+        _valueParameterCheckers += checkers.valueParameterCheckers
+        _enumEntryCheckers += checkers.enumEntryCheckers
+        _anonymousObjectCheckers += checkers.anonymousObjectCheckers
+        _anonymousInitializerCheckers += checkers.anonymousInitializerCheckers
         _controlFlowAnalyserCheckers += checkers.controlFlowAnalyserCheckers
         _variableAssignmentCfaBasedCheckers += checkers.variableAssignmentCfaBasedCheckers
     }

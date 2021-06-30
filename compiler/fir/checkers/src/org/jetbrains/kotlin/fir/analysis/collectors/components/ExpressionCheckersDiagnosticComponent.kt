@@ -21,11 +21,6 @@ class ExpressionCheckersDiagnosticComponent(
     reporter: DiagnosticReporter,
     private val checkers: ExpressionCheckers = session.checkersComponent.expressionCheckers,
 ) : AbstractDiagnosticCollectorComponent(session, reporter) {
-
-    override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: CheckerContext) {
-        checkers.allAnonymousFunctionAsExpressionCheckers.check(anonymousFunction, data, reporter)
-    }
-
     override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: CheckerContext) {
         checkers.allTypeOperatorCallCheckers.check(typeOperatorCall, data, reporter)
     }

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isUnit
 
-object FirPropertyAccessorChecker : FirPropertyChecker() {
+object FirPropertyAccessorsTypesChecker : FirPropertyChecker() {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
         checkGetter(declaration, context, reporter)
         checkSetter(declaration, context, reporter)

@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.typeParametersList
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.psi.KtFunction
 
-object FirAnonymousFunctionSyntaxChecker : FirExpressionSyntaxChecker<FirAnonymousFunction, KtFunction>() {
+object FirAnonymousFunctionSyntaxChecker : FirDeclarationSyntaxChecker<FirAnonymousFunction, KtFunction>() {
     override fun checkPsi(
         element: FirAnonymousFunction,
         source: FirPsiSourceElement,

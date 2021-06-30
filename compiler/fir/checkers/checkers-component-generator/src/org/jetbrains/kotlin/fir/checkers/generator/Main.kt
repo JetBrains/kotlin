@@ -43,7 +43,6 @@ fun main(args: Array<String>) {
         alias<FirGetClassCall>("GetClassCallChecker")
         alias<FirSafeCallExpression>("SafeCallExpressionChecker")
         alias<FirEqualityOperatorCall>("EqualityOperatorCallChecker")
-        alias<FirAnonymousFunction>("AnonymousFunctionAsExpressionChecker")
         alias<FirStringConcatenationCall>("StringConcatenationCallChecker")
         alias<FirTypeOperatorCall>("TypeOperatorCallChecker")
         alias<FirResolvedQualifier>("ResolvedQualifierChecker")
@@ -62,6 +61,12 @@ fun main(args: Array<String>) {
         alias<FirTypeParameter>("FirTypeParameterChecker")
         alias<FirAnnotatedDeclaration>("FirAnnotatedDeclarationChecker")
         alias<FirTypeAlias>("TypeAliasChecker")
+        alias<FirAnonymousFunction>("AnonymousFunctionChecker")
+        alias<FirPropertyAccessor>("PropertyAccessorChecker")
+        alias<FirValueParameter>("ValueParameterChecker")
+        alias<FirEnumEntry>("EnumEntryChecker")
+        alias<FirAnonymousObject>("AnonymousObjectChecker")
+        alias<FirAnonymousInitializer>("AnonymousInitializerChecker")
 
         additional(
             fieldName = "controlFlowAnalyserCheckers",

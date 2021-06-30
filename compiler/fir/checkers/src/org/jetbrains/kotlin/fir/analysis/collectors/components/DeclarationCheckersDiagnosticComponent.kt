@@ -50,15 +50,15 @@ class DeclarationCheckersDiagnosticComponent(
     }
 
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: CheckerContext) {
-        checkers.allAnnotatedDeclarationCheckers.check(anonymousFunction, data, reporter)
+        checkers.allAnonymousFunctionCheckers.check(anonymousFunction, data, reporter)
     }
 
     override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: CheckerContext) {
-        checkers.allAnnotatedDeclarationCheckers.check(propertyAccessor, data, reporter)
+        checkers.allPropertyAccessorCheckers.check(propertyAccessor, data, reporter)
     }
 
     override fun visitValueParameter(valueParameter: FirValueParameter, data: CheckerContext) {
-        checkers.allAnnotatedDeclarationCheckers.check(valueParameter, data, reporter)
+        checkers.allValueParameterCheckers.check(valueParameter, data, reporter)
     }
 
     override fun visitTypeParameter(typeParameter: FirTypeParameter, data: CheckerContext) {
@@ -66,15 +66,15 @@ class DeclarationCheckersDiagnosticComponent(
     }
 
     override fun visitEnumEntry(enumEntry: FirEnumEntry, data: CheckerContext) {
-        checkers.allBasicDeclarationCheckers.check(enumEntry, data, reporter)
+        checkers.allEnumEntryCheckers.check(enumEntry, data, reporter)
     }
 
     override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: CheckerContext) {
-        checkers.allClassCheckers.check(anonymousObject, data, reporter)
+        checkers.allAnonymousObjectCheckers.check(anonymousObject, data, reporter)
     }
 
     override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: CheckerContext) {
-        checkers.allBasicDeclarationCheckers.check(anonymousInitializer, data, reporter)
+        checkers.allAnonymousInitializerCheckers.check(anonymousInitializer, data, reporter)
     }
 
     private fun <D : FirDeclaration> Collection<FirDeclarationChecker<D>>.check(

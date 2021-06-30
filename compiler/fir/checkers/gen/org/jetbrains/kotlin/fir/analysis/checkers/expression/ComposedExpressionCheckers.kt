@@ -47,8 +47,6 @@ class ComposedExpressionCheckers : ExpressionCheckers() {
         get() = _safeCallExpressionCheckers
     override val equalityOperatorCallCheckers: Set<FirEqualityOperatorCallChecker>
         get() = _equalityOperatorCallCheckers
-    override val anonymousFunctionAsExpressionCheckers: Set<FirAnonymousFunctionAsExpressionChecker>
-        get() = _anonymousFunctionAsExpressionCheckers
     override val stringConcatenationCallCheckers: Set<FirStringConcatenationCallChecker>
         get() = _stringConcatenationCallCheckers
     override val typeOperatorCallCheckers: Set<FirTypeOperatorCallChecker>
@@ -73,7 +71,6 @@ class ComposedExpressionCheckers : ExpressionCheckers() {
     private val _getClassCallCheckers: MutableSet<FirGetClassCallChecker> = mutableSetOf()
     private val _safeCallExpressionCheckers: MutableSet<FirSafeCallExpressionChecker> = mutableSetOf()
     private val _equalityOperatorCallCheckers: MutableSet<FirEqualityOperatorCallChecker> = mutableSetOf()
-    private val _anonymousFunctionAsExpressionCheckers: MutableSet<FirAnonymousFunctionAsExpressionChecker> = mutableSetOf()
     private val _stringConcatenationCallCheckers: MutableSet<FirStringConcatenationCallChecker> = mutableSetOf()
     private val _typeOperatorCallCheckers: MutableSet<FirTypeOperatorCallChecker> = mutableSetOf()
     private val _resolvedQualifierCheckers: MutableSet<FirResolvedQualifierChecker> = mutableSetOf()
@@ -97,7 +94,6 @@ class ComposedExpressionCheckers : ExpressionCheckers() {
         _getClassCallCheckers += checkers.getClassCallCheckers
         _safeCallExpressionCheckers += checkers.safeCallExpressionCheckers
         _equalityOperatorCallCheckers += checkers.equalityOperatorCallCheckers
-        _anonymousFunctionAsExpressionCheckers += checkers.anonymousFunctionAsExpressionCheckers
         _stringConcatenationCallCheckers += checkers.stringConcatenationCallCheckers
         _typeOperatorCallCheckers += checkers.typeOperatorCallCheckers
         _resolvedQualifierCheckers += checkers.resolvedQualifierCheckers
