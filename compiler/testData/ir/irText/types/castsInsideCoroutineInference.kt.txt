@@ -23,7 +23,7 @@ suspend fun <T : Any?> FlowCollector<T>.invokeSafely(action: @ExtensionFunctionT
 
 @OptIn(markerClass = [ExperimentalTypeInference::class])
 inline fun <T : Any?> unsafeFlow(@BuilderInference crossinline block: @ExtensionFunctionType SuspendFunction1<FlowCollector<T>, Unit>): Flow<T> {
-  TODO()
+  return TODO()
 }
 
 @Deprecated(message = "binary compatibility with a version w/o FlowCollector receiver", level = DeprecationLevel.HIDDEN)
@@ -85,12 +85,12 @@ class SafeCollector<T : Any?> : FlowCollector<T> {
 
 @OptIn(markerClass = [ExperimentalTypeInference::class])
 fun <T : Any?> flow(@BuilderInference block: @ExtensionFunctionType SuspendFunction1<FlowCollector<T>, Unit>): Flow<T> {
-  TODO()
+  return TODO()
 }
 
 @OptIn(markerClass = [ExperimentalTypeInference::class])
 suspend fun <R : Any?> flowScope(@BuilderInference block: @ExtensionFunctionType SuspendFunction1<CoroutineScope, R>): R {
-  TODO()
+  return TODO()
 }
 
 suspend inline fun <T : Any?> Flow<T>.collect(crossinline action: SuspendFunction1<@ParameterName(name = "value") T, Unit>) {
@@ -128,7 +128,7 @@ interface ReceiveChannel<out E : Any?> {
 
 @OptIn(markerClass = [ExperimentalTypeInference::class])
 fun <E : Any?> CoroutineScope.produce(@BuilderInference block: @ExtensionFunctionType SuspendFunction1<ProducerScope<E>, Unit>): ReceiveChannel<E> {
-  TODO()
+  return TODO()
 }
 
 interface ProducerScope<in E : Any?> : CoroutineScope, SendChannel<E> {

@@ -103,13 +103,13 @@ L2 [after local declaration]:
     mark({ return })
     r({ return }) -> <v1>
     mark(let { return })
-    call(let { return }, let|<v0>, <v1>)
+    call(let { return }, let|<v0>, <v1>) -> <v2>
 L6 [before inlined declaration]:
     inlined({ return })                                                                             NEXT:[<SINK>]
 L5 [result of call]:
 L7 [after inlined declaration]:
     mark(f(null?.let { return }))                                                                   PREV:[jf(L5)]
-    call(f(null?.let { return }), f|!<v2>) -> <v3>
+    call(f(null?.let { return }), f|<v2>) -> <v3>
     mark(doSomething())
     call(doSomething(), doSomething) -> <v4>
 L1:
@@ -163,28 +163,28 @@ L0:
     magic[FAKE_INITIALIZER](x: Any?) -> <v0>
     w(x|<v0>)
     mark(x?.let { return true })
-    jf(L2)                                                        NEXT:[mark(x?.let { return true } ?: false), r(x) -> <v1>]
+    jf(L2)                                                       NEXT:[mark(x?.let { return true } ?: false), r(x) -> <v1>]
     r(x) -> <v1>
     mark({ return true })
     r({ return true }) -> <v2>
     mark(let { return true })
-    call(let { return true }, let|<v1>, <v2>)
+    call(let { return true }, let|<v1>, <v2>) -> <v3>
 L3 [before inlined declaration]:
-    inlined({ return true })                                      NEXT:[<SINK>]
+    inlined({ return true })                                     NEXT:[<SINK>]
 L2 [result of call]:
 L4 [after inlined declaration]:
-    mark(x?.let { return true } ?: false)                         PREV:[jf(L2)]
-    jt(L7|!<v3>)                                                  NEXT:[r(false) -> <v4>, merge(x?.let { return true } ?: false|!<v3>, <v4>) -> <v5>]
+    mark(x?.let { return true } ?: false)                        PREV:[jf(L2)]
+    jt(L7|<v3>)                                                  NEXT:[r(false) -> <v4>, merge(x?.let { return true } ?: false|<v3>, <v4>) -> <v5>]
     r(false) -> <v4>
 L7 [after elvis operator]:
-    merge(x?.let { return true } ?: false|!<v3>, <v4>) -> <v5>    PREV:[jt(L7|!<v3>), r(false) -> <v4>]
+    merge(x?.let { return true } ?: false|<v3>, <v4>) -> <v5>    PREV:[jt(L7|<v3>), r(false) -> <v4>]
     ret(*|<v5>) L1
 L1:
-    <END>                                                         NEXT:[<SINK>]                                                                          PREV:[ret(*|<v0>) L1, ret(*|<v5>) L1]
+    <END>                                                        NEXT:[<SINK>]                                                                         PREV:[ret(*|<v0>) L1, ret(*|<v5>) L1]
 error:
-    <ERROR>                                                       PREV:[]
+    <ERROR>                                                      PREV:[]
 sink:
-    <SINK>                                                        PREV:[<ERROR>, <END>, inlined({ return true })]
+    <SINK>                                                       PREV:[<ERROR>, <END>, inlined({ return true })]
 =====================
 == inlined anonymous_2 ==
 {

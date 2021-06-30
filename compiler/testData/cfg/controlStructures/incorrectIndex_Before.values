@@ -28,8 +28,8 @@ fun test(name: String?, flag: Boolean): Boolean {
                                                                                                                                 <v1>: Boolean                    NEW: magic[FAKE_INITIALIZER](flag: Boolean) -> <v1>
 name                                                                                                                            <v2>: String                     NEW: r(name) -> <v2>
 { if (flag) { s.add(it) } else { s.remove(it) } return true }                                                                   <v3>: {<: (String) -> Nothing}   NEW: r({ if (flag) { s.add(it) } else { s.remove(it) } return true }) -> <v3>
-let { if (flag) { s.add(it) } else { s.remove(it) } return true }                                                               !<v4>: *
-name?.let { if (flag) { s.add(it) } else { s.remove(it) } return true }                                                         !<v4>: *                         COPY
+let { if (flag) { s.add(it) } else { s.remove(it) } return true }                                                               <v4>: *                          NEW: call(let { if (flag) { s.add(it) } else { s.remove(it) } return true }, let|<v2>, <v3>) -> <v4>
+name?.let { if (flag) { s.add(it) } else { s.remove(it) } return true }                                                         <v4>: *                          COPY
 false                                                                                                                           <v5>: Boolean                    NEW: r(false) -> <v5>
 return false                                                                                                                    !<v6>: *
 { name?.let { if (flag) { s.add(it) } else { s.remove(it) } return true } return false }                                        !<v6>: *                         COPY

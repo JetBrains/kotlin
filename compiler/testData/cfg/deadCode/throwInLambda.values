@@ -20,10 +20,10 @@ fun foo(): String {
 ---------------------
 fn()                                                                     <v0>: String                     NEW: call(fn(), fn) -> <v0>
 { throw Exception() }                                                    <v1>: {<: (String) -> Nothing}   NEW: r({ throw Exception() }) -> <v1>
-let { throw Exception() }                                                !<v2>: *
-fn()?.let { throw Exception() }                                          !<v2>: *                         COPY
+let { throw Exception() }                                                <v2>: AND{Boolean, String}       NEW: call(let { throw Exception() }, let|<v0>, <v1>) -> <v2>
+fn()?.let { throw Exception() }                                          <v2>: AND{Boolean, String}       COPY
 "unreachable?"                                                           <v3>: String                     NEW: r("unreachable?") -> <v3>
-fn()?.let { throw Exception() } ?: "unreachable?"                        <v4>: String                     NEW: merge(fn()?.let { throw Exception() } ?: "unreachable?"|!<v2>, <v3>) -> <v4>
+fn()?.let { throw Exception() } ?: "unreachable?"                        <v4>: String                     NEW: merge(fn()?.let { throw Exception() } ?: "unreachable?"|<v2>, <v3>) -> <v4>
 x                                                                        <v5>: String                     NEW: r(x) -> <v5>
 return x                                                                 !<v6>: *
 { val x = fn()?.let { throw Exception() } ?: "unreachable?" return x }   !<v6>: *                         COPY
@@ -48,10 +48,10 @@ return ""                                                                       
 fn() ?: return ""                                                                              <v3>: String                     NEW: merge(fn() ?: return ""|<v0>, !<v2>) -> <v3>
 x                                                                                              <v4>: String                     NEW: r(x) -> <v4>
 { throw Exception() }                                                                          <v5>: {<: (String) -> Nothing}   NEW: r({ throw Exception() }) -> <v5>
-let { throw Exception() }                                                                      !<v6>: *
-x?.let { throw Exception() }                                                                   !<v6>: *                         COPY
+let { throw Exception() }                                                                      <v6>: AND{Boolean, String}       NEW: call(let { throw Exception() }, let|<v4>, <v5>) -> <v6>
+x?.let { throw Exception() }                                                                   <v6>: AND{Boolean, String}       COPY
 "unreachable"                                                                                  <v7>: String                     NEW: r("unreachable") -> <v7>
-x?.let { throw Exception() } ?: "unreachable"                                                  <v8>: String                     NEW: merge(x?.let { throw Exception() } ?: "unreachable"|!<v6>, <v7>) -> <v8>
+x?.let { throw Exception() } ?: "unreachable"                                                  <v8>: String                     NEW: merge(x?.let { throw Exception() } ?: "unreachable"|<v6>, <v7>) -> <v8>
 y                                                                                              <v9>: String                     NEW: r(y) -> <v9>
 return y                                                                                       !<v10>: *
 { val x = fn() ?: return "" val y = x?.let { throw Exception() } ?: "unreachable" return y }   !<v10>: *                        COPY

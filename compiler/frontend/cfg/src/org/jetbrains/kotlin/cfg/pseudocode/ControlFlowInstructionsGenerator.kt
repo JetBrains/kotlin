@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.cfg.pseudocode
 
 import com.intellij.util.containers.Stack
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cfg.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.BlockScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
@@ -383,14 +382,13 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
             receiverValues: Map<PseudoValue, ReceiverValue>,
             arguments: Map<PseudoValue, ValueParameterDescriptor>
         ): CallInstruction {
-            val returnType = resolvedCall.resultingDescriptor.returnType
             val instruction = CallInstruction(
                 valueElement,
                 currentScope,
                 resolvedCall,
                 receiverValues,
                 arguments,
-                if (returnType != null && KotlinBuiltIns.isNothing(returnType)) null else valueFactory
+                valueFactory
             )
             add(instruction)
             return instruction

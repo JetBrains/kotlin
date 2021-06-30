@@ -18,7 +18,7 @@ fun bar(s: String?, t: String?): String {
     when {
       EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
       else -> tmp0_safe_receiver.let<String, Nothing?>(block = local fun <anonymous>(it: String): Nothing? {
-        { // BLOCK
+        return { // BLOCK
           val tmp0_safe_receiver: String? = t
           when {
             EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
@@ -27,7 +27,7 @@ fun bar(s: String?, t: String?): String {
             }
 )
           }
-        } /*~> Unit */
+        }
       }
 )
     }

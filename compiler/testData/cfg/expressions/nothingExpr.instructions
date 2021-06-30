@@ -45,10 +45,10 @@ L0:
 -   call(doSomething(), doSomething|<v1>) -> <v2>         PREV:[]
 -   mark(bar().doSomething())                             PREV:[]
 -   mark(bar())                                           PREV:[]
--   call(bar(), bar)                                      PREV:[]
+-   call(bar(), bar) -> <v3>                              PREV:[]
 -   jmp(error)                                            NEXT:[<ERROR>]                                               PREV:[]
 -   mark(doSomething())                                   PREV:[]
--   call(doSomething(), doSomething|!<v3>) -> <v4>        PREV:[]
+-   call(doSomething(), doSomething|<v3>) -> <v4>         PREV:[]
 L1:
   1 <END>                                                 NEXT:[<SINK>]                                                PREV:[]
 error:

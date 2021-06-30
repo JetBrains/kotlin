@@ -50,7 +50,7 @@ FILE fqName:<root> fileName:/SafeLetWithReturn.kt
                   FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.String) returnType:kotlin.Nothing?
                     VALUE_PARAMETER name:it index:0 type:kotlin.String
                     BLOCK_BODY
-                      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                      RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.String): kotlin.Nothing? declared in <root>.bar'
                         BLOCK type=kotlin.Nothing? origin=SAFE_CALL
                           VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.String? [val]
                             GET_VAR 't: kotlin.String? declared in <root>.bar' type=kotlin.String? origin=null

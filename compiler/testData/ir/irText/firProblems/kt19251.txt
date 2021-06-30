@@ -11,7 +11,8 @@ FILE fqName:<root> fileName:/test.kt
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:@[FlexibleNullability] kotlin.String?) returnType:@[FlexibleNullability] kotlin.String?
               VALUE_PARAMETER name:it index:0 type:@[FlexibleNullability] kotlin.String?
               BLOCK_BODY
-                CALL 'public final fun TODO (): kotlin.Nothing [inline] declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: @[FlexibleNullability] kotlin.String?): @[FlexibleNullability] kotlin.String? declared in <root>.box'
+                  CALL 'public final fun TODO (): kotlin.Nothing [inline] declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
           CALL 'public open fun computeIfAbsent (p0: @[EnhancedNullability] K of kotlin.collections.MutableMap, p1: @[EnhancedNullability] java.util.function.Function<in @[EnhancedNullability] K of kotlin.collections.MutableMap, out @[EnhancedNullability] V of kotlin.collections.MutableMap>): @[EnhancedNullability] V of kotlin.collections.MutableMap declared in kotlin.collections.MutableMap' type=@[EnhancedNullability] kotlin.String origin=null

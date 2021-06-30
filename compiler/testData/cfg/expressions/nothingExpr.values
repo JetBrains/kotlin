@@ -13,12 +13,12 @@ fun foo() {
     bar().doSomething()
 }
 ---------------------
-null                                           <v0>: *    NEW: r(null) -> <v0>                               
-null!!                                         <v1>: *    NEW: magic[NOT_NULL_ASSERTION](null!!|<v0>) -> <v1>
-doSomething()                                  <v2>: *    NEW: call(doSomething(), doSomething|<v1>) -> <v2> 
-null!!.doSomething()                           <v2>: *    COPY                                               
-bar()                                          !<v3>: *                                                      
-doSomething()                                  <v4>: *    NEW: call(doSomething(), doSomething|!<v3>) -> <v4>
-bar().doSomething()                            <v4>: *    COPY                                               
-{ null!!.doSomething() bar().doSomething() }   <v4>: *    COPY                                               
+null                                           <v0>: *   NEW: r(null) -> <v0>
+null!!                                         <v1>: *   NEW: magic[NOT_NULL_ASSERTION](null!!|<v0>) -> <v1>
+doSomething()                                  <v2>: *   NEW: call(doSomething(), doSomething|<v1>) -> <v2>
+null!!.doSomething()                           <v2>: *   COPY
+bar()                                          <v3>: *   NEW: call(bar(), bar) -> <v3>
+doSomething()                                  <v4>: *   NEW: call(doSomething(), doSomething|<v3>) -> <v4>
+bar().doSomething()                            <v4>: *   COPY
+{ null!!.doSomething() bar().doSomething() }   <v4>: *   COPY
 =====================

@@ -3,7 +3,7 @@ interface CPointed {
 }
 
 inline fun <reified T : CPointed> CPointed.reinterpret(): T {
-  TODO()
+  return TODO()
 }
 
 class CInt32VarX<T : Any?> : CPointed {
@@ -18,7 +18,7 @@ class CInt32VarX<T : Any?> : CPointed {
 typealias CInt32Var = CInt32VarX<Int>
 var <T_INT : Int> CInt32VarX<T_INT>.value: T_INT
   get(): T_INT {
-    TODO()
+    return TODO()
   }
   set(value: T_INT) {
   }

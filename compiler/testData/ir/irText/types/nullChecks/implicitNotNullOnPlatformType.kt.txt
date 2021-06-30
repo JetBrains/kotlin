@@ -10,23 +10,23 @@ class MySet : Set<String> {
 
   override val size: Int
     override get(): Int {
-      TODO()
+      return TODO()
     }
 
   override operator fun contains(element: String): Boolean {
-    TODO()
+    return TODO()
   }
 
   override fun containsAll(elements: Collection<String>): Boolean {
-    TODO()
+    return TODO()
   }
 
   override fun isEmpty(): Boolean {
-    TODO()
+    return TODO()
   }
 
   override operator fun iterator(): Iterator<String> {
-    TODO()
+    return TODO()
   }
 
 }

@@ -1,5 +1,5 @@
 fun <R : Number> Number.convert(): R {
-  TODO()
+  return TODO()
 }
 
 fun foo(arg: Number) {
