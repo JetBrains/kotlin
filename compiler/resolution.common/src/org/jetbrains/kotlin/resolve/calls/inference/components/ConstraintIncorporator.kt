@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
+import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
@@ -42,6 +43,8 @@ class ConstraintIncorporator(
 
     // \alpha is typeVariable, \beta -- other type variable registered in ConstraintStorage
     fun incorporate(c: Context, typeVariable: TypeVariableMarker, constraint: Constraint) {
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
+
         // we shouldn't incorporate recursive constraint -- It is too dangerous
         if (c.areThereRecursiveConstraints(typeVariable, constraint)) return
 
