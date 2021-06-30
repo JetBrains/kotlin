@@ -82,6 +82,10 @@ internal class JvmMetadataExtensions : MetadataExtensions {
             if (propertySignature != null && propertySignature.hasSyntheticMethod()) propertySignature.syntheticMethod else null
         ext.visitSyntheticMethodForAnnotations(syntheticMethod?.run { JvmMethodSignature(c[name], c[desc]) })
 
+        val delegateMethod =
+            if (propertySignature != null && propertySignature.hasDelegateMethod()) propertySignature.delegateMethod else null
+        ext.visitSyntheticMethodForDelegate(delegateMethod?.run { JvmMethodSignature(c[name], c[desc]) })
+
         ext.visitEnd()
     }
 
@@ -180,8 +184,11 @@ internal class JvmMetadataExtensions : MetadataExtensions {
     ): KmPropertyExtensionVisitor? {
         if (type != JvmPropertyExtensionVisitor.TYPE) return null
         return object : JvmPropertyExtensionVisitor() {
-            var jvmFlags: Flags = ProtoBuf.Property.getDefaultInstance().getExtension(JvmProtoBuf.flags)
-            var signature: JvmProtoBuf.JvmPropertySignature.Builder? = null
+            private var jvmFlags: Flags = ProtoBuf.Property.getDefaultInstance().getExtension(JvmProtoBuf.flags)
+            private var signatureOrNull: JvmProtoBuf.JvmPropertySignature.Builder? = null
+
+            private val signature: JvmProtoBuf.JvmPropertySignature.Builder
+                get() = signatureOrNull ?: JvmProtoBuf.JvmPropertySignature.newBuilder().also { signatureOrNull = it }
 
             override fun visit(
                 jvmFlags: Flags,
@@ -190,44 +197,38 @@ internal class JvmMetadataExtensions : MetadataExtensions {
                 setterSignature: JvmMethodSignature?
             ) {
                 this.jvmFlags = jvmFlags
-
-                if (fieldSignature == null && getterSignature == null && setterSignature == null) return
-
-                if (signature == null) {
-                    signature = JvmProtoBuf.JvmPropertySignature.newBuilder()
+                if (fieldSignature != null) {
+                    signature.field = JvmProtoBuf.JvmFieldSignature.newBuilder().also { field ->
+                        field.name = c[fieldSignature.name]
+                        field.desc = c[fieldSignature.desc]
+                    }.build()
                 }
-                signature!!.apply {
-                    if (fieldSignature != null) {
-                        field = JvmProtoBuf.JvmFieldSignature.newBuilder().also { field ->
-                            field.name = c[fieldSignature.name]
-                            field.desc = c[fieldSignature.desc]
-                        }.build()
-                    }
-                    if (getterSignature != null) {
-                        getter = getterSignature.toJvmMethodSignature(c)
-                    }
-                    if (setterSignature != null) {
-                        setter = setterSignature.toJvmMethodSignature(c)
-                    }
+                if (getterSignature != null) {
+                    signature.getter = getterSignature.toJvmMethodSignature(c)
+                }
+                if (setterSignature != null) {
+                    signature.setter = setterSignature.toJvmMethodSignature(c)
                 }
             }
 
             override fun visitSyntheticMethodForAnnotations(signature: JvmMethodSignature?) {
                 if (signature == null) return
 
-                if (this.signature == null) {
-                    this.signature = JvmProtoBuf.JvmPropertySignature.newBuilder()
-                }
+                this.signature.syntheticMethod = signature.toJvmMethodSignature(c)
+            }
 
-                this.signature!!.syntheticMethod = signature.toJvmMethodSignature(c)
+            override fun visitSyntheticMethodForDelegate(signature: JvmMethodSignature?) {
+                if (signature == null) return
+
+                this.signature.delegateMethod = signature.toJvmMethodSignature(c)
             }
 
             override fun visitEnd() {
                 if (jvmFlags != ProtoBuf.Property.getDefaultInstance().getExtension(JvmProtoBuf.flags)) {
                     proto.setExtension(JvmProtoBuf.flags, jvmFlags)
                 }
-                if (signature != null) {
-                    proto.setExtension(JvmProtoBuf.propertySignature, signature!!.build())
+                if (signatureOrNull != null) {
+                    proto.setExtension(JvmProtoBuf.propertySignature, signature.build())
                 }
             }
         }
