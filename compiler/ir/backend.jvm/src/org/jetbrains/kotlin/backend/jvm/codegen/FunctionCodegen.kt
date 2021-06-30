@@ -135,8 +135,6 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
             irFunction.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS ->
                 false
             irFunction is IrConstructor && irFunction.parentAsClass.shouldNotGenerateConstructorParameterAnnotations() ->
-                // Not generating parameter annotations for default stubs fixes KT-7892, though
-                // this certainly looks like a workaround for a javac bug.
                 false
             else ->
                 true
@@ -310,6 +308,8 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
     companion object {
         internal val methodOriginsWithoutAnnotations =
             setOf(
+                // Not generating parameter annotations for default stubs fixes KT-7892, though
+                // this certainly looks like a workaround for a javac bug.
                 IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
                 JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
                 IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
@@ -319,6 +319,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
                 JvmLoweredDeclarationOrigin.ABSTRACT_BRIDGE_STUB,
                 JvmLoweredDeclarationOrigin.TO_ARRAY,
                 IrDeclarationOrigin.IR_BUILTINS_STUB,
+                IrDeclarationOrigin.PROPERTY_DELEGATE,
             )
     }
 }
