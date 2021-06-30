@@ -80,7 +80,7 @@ internal abstract class FirBaseTowerResolveTask(
     protected fun FirScope.toScopeTowerLevel(
         extensionReceiver: ReceiverValue? = null,
         extensionsOnly: Boolean = false,
-        includeInnerConstructors: Boolean = true
+        includeInnerConstructors: Boolean = extensionReceiver != null,
     ): ScopeTowerLevel = ScopeTowerLevel(
         session, components, this,
         extensionReceiver, extensionsOnly, includeInnerConstructors

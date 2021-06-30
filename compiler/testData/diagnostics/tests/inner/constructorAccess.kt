@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class Outer1 {
     class Nested
 

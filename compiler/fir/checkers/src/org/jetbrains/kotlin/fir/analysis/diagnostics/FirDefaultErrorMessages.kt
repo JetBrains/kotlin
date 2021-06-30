@@ -329,6 +329,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REIFIED_TYPE_PARA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REPEATED_BOUND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REPEATED_MODIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RESERVED_MEMBER_INSIDE_INLINE_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RESOLUTION_TO_CLASSIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RESULT_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_NOT_ALLOWED
@@ -501,6 +502,11 @@ class FirDefaultErrorMessages {
             map.put(
                 FUNCTION_EXPECTED,
                 "Expression ''{0}'' of type {1} cannot be invoked as a function. The function 'invoke()' is not found", TO_STRING, RENDER_TYPE
+            )
+            map.put(
+                RESOLUTION_TO_CLASSIFIER,
+                "Constructor of inner class {0} can be called only with receiver of containing class",
+                SYMBOL
             )
             map.put(ILLEGAL_SELECTOR, "The expression cannot be a selector (occur after a dot)")
             map.put(NO_RECEIVER_ALLOWED, "No receiver can be passed to this function or property")

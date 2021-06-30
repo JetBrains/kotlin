@@ -134,6 +134,7 @@ object FirErrors {
     val ILLEGAL_SELECTOR by error0<PsiElement>()
     val NO_RECEIVER_ALLOWED by error0<PsiElement>()
     val FUNCTION_EXPECTED by error2<PsiElement, String, ConeKotlinType>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
+    val RESOLUTION_TO_CLASSIFIER by error1<PsiElement, FirRegularClassSymbol>()
 
     // Super
     val SUPER_IS_NOT_AN_EXPRESSION by error0<PsiElement>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)

@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.tower.FirTowerResolver
 import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerResolveManager
-import org.jetbrains.kotlin.fir.resolve.dfa.symbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.inference.ResolvedCallableReferenceAtom
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
@@ -605,15 +604,20 @@ class FirCallResolver(
                         candidate?.let { isValueParametersNotEmpty(it) } ?: candidates.any { isValueParametersNotEmpty(it) })
                 } else {
                     val singleExpectedCandidate = expectedCandidates?.singleOrNull()
-                    if (singleExpectedCandidate?.symbol?.fir is FirRegularClass) {
-                        ConeUnresolvedNameError(name)
-                        // TODO: ConeResolutionToClassifierError()
+
+                    var fir = singleExpectedCandidate?.symbol?.fir
+                    if (fir is FirTypeAlias) {
+                        fir = (fir.expandedTypeRef.coneType.fullyExpandedType(session).toSymbol(session) as? FirRegularClassSymbol)?.fir
+                    }
+
+                    if (fir is FirRegularClass) {
+                        ConeResolutionToClassifierError(fir.symbol)
                     } else {
                         val coneType = explicitReceiver?.typeRef?.coneType
                         if (coneType != null && !coneType.isUnit) {
                             ConeFunctionExpectedError(
                                 name.asString(),
-                                (singleExpectedCandidate?.symbol?.fir as? FirTypedDeclaration)?.returnTypeRef?.coneType ?: coneType
+                                (fir as? FirTypedDeclaration)?.returnTypeRef?.coneType ?: coneType
                             )
                         } else {
                             ConeUnresolvedNameError(name)
