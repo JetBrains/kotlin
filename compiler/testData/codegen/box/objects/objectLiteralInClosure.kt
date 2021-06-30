@@ -1,3 +1,4 @@
+// !LANGUAGE: -PrivateInFileEffectiveVisibility
 package p
 
 private class C(val y: Int) {
