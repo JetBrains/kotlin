@@ -86,6 +86,10 @@ message JvmPropertySignature {
 
   optional JvmMethodSignature getter = 3;
   optional JvmMethodSignature setter = 4;
+
+  // The delegate field of delegated properties may be optimized out; `getDelegate` should
+  // then call this method instead
+  optional JvmMethodSignature delegate_method = 5;
 }
 
 extend Constructor {

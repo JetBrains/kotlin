@@ -1104,6 +1104,11 @@ open class ProtoCompareGenerated(
             if (!checkEquals(old.setter, new.setter)) return false
         }
 
+        if (old.hasDelegateMethod() != new.hasDelegateMethod()) return false
+        if (old.hasDelegateMethod()) {
+            if (!checkEquals(old.delegateMethod, new.delegateMethod)) return false
+        }
+
         return true
     }
 
@@ -2351,6 +2356,10 @@ fun JvmProtoBuf.JvmPropertySignature.hashCode(stringIndexes: (Int) -> Int, fqNam
 
     if (hasSetter()) {
         hashCode = 31 * hashCode + setter.hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
+    if (hasDelegateMethod()) {
+        hashCode = 31 * hashCode + delegateMethod.hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
     return hashCode
