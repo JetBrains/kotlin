@@ -10,10 +10,13 @@ import groovy.lang.Closure
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.artifacts.*
+import org.gradle.api.artifacts.component.ModuleComponentIdentifier
+import org.gradle.api.artifacts.component.ModuleComponentSelector
+import org.gradle.api.artifacts.result.DependencyResult
+import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
-import org.gradle.api.logging.Logger
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
@@ -33,7 +36,7 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.isAllowCommonizer
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.klibModuleName
 import org.jetbrains.kotlin.gradle.utils.listFilesOrEmpty
-import org.jetbrains.kotlin.gradle.utils.newProperty
+import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.konan.properties.resolvablePropertyList
 import org.jetbrains.kotlin.konan.properties.saveToFile
@@ -44,12 +47,15 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.project.model.LanguageSettings
+import org.jetbrains.kotlin.utils.ResolvedDependency as KResolvedDependency
+import org.jetbrains.kotlin.utils.ResolvedDependencyId as KResolvedDependencyId
+import org.jetbrains.kotlin.utils.ResolvedDependenciesSupport as KResolvedDependenciesSupport
+import org.jetbrains.kotlin.utils.ResolvedDependencyArtifactPath as KResolvedDependencyArtifactPath
+import org.jetbrains.kotlin.utils.ResolvedDependencyVersion as KResolvedDependencyVersion
 import java.io.File
-import java.nio.charset.StandardCharsets
-import java.security.MessageDigest
+import java.nio.file.Files
 import javax.inject.Inject
 import org.jetbrains.kotlin.konan.file.File as KFile
-import org.jetbrains.kotlin.util.Logger as KLogger
 
 // TODO: It's just temporary tasks used while KN isn't integrated with Big Kotlin compilation infrastructure.
 // region Useful extensions
@@ -112,9 +118,10 @@ private fun FileCollection.filterOutPublishableInteropLibs(project: Project): Fi
  *      for it (NO-SOURCE check). So we need to take this case into account
  *      and skip libraries that were not compiled. See also: GH-2617 (K/N repo).
  */
-private fun Collection<File>.filterKlibsPassedToCompiler(): List<File> = filter {
-    (it.extension == "klib" || it.isDirectory) && it.exists()
-}
+private val File.isKlibPassedToCompiler: Boolean
+    get() = (extension == "klib" || isDirectory) && exists()
+
+private fun Collection<File>.filterKlibsPassedToCompiler(): List<File> = filter { it.isKlibPassedToCompiler }
 
 // endregion
 abstract class AbstractKotlinNativeCompile<T : KotlinCommonToolOptions, K : KotlinNativeCompilationData<*>> : AbstractCompile() {
@@ -604,7 +611,10 @@ constructor(
     override fun buildCompilerArgs(): List<String> = mutableListOf<String>().apply {
         addAll(super.buildCompilerArgs())
 
-        addAll(CacheBuilder(project, binary, konanTarget).buildCompilerArgs())
+        val externalDependenciesArgs = ExternalDependenciesBuilder(project, binary).buildCompilerArgs()
+        addAll(externalDependenciesArgs)
+
+        addAll(CacheBuilder(project, binary, konanTarget, externalDependenciesArgs).buildCompilerArgs())
 
         addKey("-tr", processTests)
         addArgIfNotNull("-entry", entryPoint)
@@ -678,12 +688,154 @@ constructor(
         validatedExportedLibraries()
         super.compile()
     }
-
-    companion object {
-    }
 }
 
-internal class CacheBuilder(val project: Project, val binary: NativeBinary, val konanTarget: KonanTarget) {
+@Suppress("FunctionName")
+internal class ExternalDependenciesBuilder(val project: Project, val binary: NativeBinary) {
+    private val compilation: KotlinNativeCompilation
+        get() = binary.compilation
+
+    private val compileDependencyConfiguration: Configuration
+        get() = project.configurations.getByName(compilation.compileDependencyConfigurationName)
+
+    fun buildCompilerArgs(): List<String> {
+        val konanVersion = Distribution(project.konanHome).compilerVersion?.let(CompilerVersion.Companion::fromString)
+            ?: project.konanVersion
+
+        if (!konanVersion.isAtLeast(1, 6, 0)) return emptyList()
+
+        val modules = buildDependencies()
+        if (modules.isEmpty()) return emptyList()
+
+        val dependenciesFile = Files.createTempFile("kotlin-native-external-dependencies", ".deps").toAbsolutePath().toFile()
+        dependenciesFile.deleteOnExit()
+        dependenciesFile.writeText(KResolvedDependenciesSupport.serialize(modules))
+
+        return listOf("-Xexternal-dependencies=${dependenciesFile.path}")
+    }
+
+    private fun buildDependencies(): Collection<KResolvedDependency> {
+        // Collect all artifacts.
+        val moduleNameToArtifactPaths: MutableMap</* unique name*/ String, MutableSet<KResolvedDependencyArtifactPath>> = mutableMapOf()
+        compileDependencyConfiguration.incoming.artifacts.artifacts.mapNotNull { resolvedArtifact ->
+            val uniqueName = (resolvedArtifact.id.componentIdentifier as? ModuleComponentIdentifier)?.uniqueName ?: return@mapNotNull null
+            val artifactPath = resolvedArtifact.file.absolutePath
+
+            moduleNameToArtifactPaths.getOrPut(uniqueName) { mutableSetOf() } += KResolvedDependencyArtifactPath(artifactPath)
+        }
+
+        // The build system may express the single module as two modules where the first one is a common
+        // module without artifacts and the second one is a platform-specific module with mandatory artifact.
+        // Example: "org.jetbrains.kotlinx:atomicfu" (common) and "org.jetbrains.kotlinx:atomicfu-macosx64" (platform-specific).
+        // Both such modules should be merged into a single module with just two names:
+        // "org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-macosx64)".
+        val moduleIdsToMerge: MutableMap</* platform-specific */ KResolvedDependencyId, /* common */ KResolvedDependencyId> = mutableMapOf()
+
+        // Collect plain modules.
+        val plainModules: MutableMap<KResolvedDependencyId, KResolvedDependency> = mutableMapOf()
+        fun processModule(resolvedDependency: DependencyResult, incomingDependencyId: KResolvedDependencyId) {
+            if (resolvedDependency !is ResolvedDependencyResult) return
+
+            val requestedModule = resolvedDependency.requested as? ModuleComponentSelector ?: return
+            val selectedModule = resolvedDependency.selected
+            val selectedModuleId = selectedModule.id as? ModuleComponentIdentifier ?: return
+
+            val moduleId = KResolvedDependencyId(selectedModuleId.uniqueName)
+            val module = plainModules.getOrPut(moduleId) {
+                val artifactPaths = moduleId.uniqueNames.asSequence()
+                    .mapNotNull { uniqueName -> moduleNameToArtifactPaths[uniqueName] }
+                    .firstOrNull()
+                    .orEmpty()
+
+                KResolvedDependency(
+                    id = moduleId,
+                    selectedVersion = KResolvedDependencyVersion(selectedModuleId.version),
+                    requestedVersionsByIncomingDependencies = mutableMapOf(), // To be filled in just below.
+                    artifactPaths = artifactPaths.toMutableSet()
+                )
+            }
+
+            // Record the requested version of the module by the current incoming dependency.
+            module.requestedVersionsByIncomingDependencies[incomingDependencyId] = KResolvedDependencyVersion(requestedModule.version)
+
+            // TODO: Use [ResolvedDependencyResult.resolvedVariant.externalVariant] to find a connection between platform-specific
+            //  and common modules when "resolvedVariant" and "externalVariant" graduate from incubating state.
+            if (module.artifactPaths.isNotEmpty()) {
+                val originModuleId = resolvedDependency.from.id as? ModuleComponentIdentifier
+                if (originModuleId != null
+                    && selectedModuleId.group == originModuleId.group
+                    && selectedModuleId.module.startsWith(originModuleId.module)
+                    && selectedModuleId.version == originModuleId.version
+                ) {
+                    // These two modules should be merged.
+                    moduleIdsToMerge[moduleId] = KResolvedDependencyId(originModuleId.uniqueName)
+                }
+            }
+
+            selectedModule.dependencies.forEach { processModule(it, incomingDependencyId = moduleId) }
+        }
+
+        compileDependencyConfiguration.incoming.resolutionResult.root.dependencies.forEach { dependencyResult ->
+            processModule(dependencyResult, incomingDependencyId = KResolvedDependencyId.SOURCE_CODE_MODULE_ID)
+        }
+
+        if (moduleIdsToMerge.isEmpty())
+            return plainModules.values
+
+        // Do merge.
+        val replacedModules: MutableMap</* old module ID */ KResolvedDependencyId, /* new module */ KResolvedDependency> = mutableMapOf()
+        moduleIdsToMerge.forEach { (platformSpecificModuleId, commonModuleId) ->
+            val platformSpecificModule = plainModules.getValue(platformSpecificModuleId)
+            val commonModule = plainModules.getValue(commonModuleId)
+
+            val replacementModuleId = KResolvedDependencyId(platformSpecificModuleId.uniqueNames + commonModuleId.uniqueNames)
+            val replacementModule = KResolvedDependency(
+                id = replacementModuleId,
+                visibleAsFirstLevelDependency = commonModule.visibleAsFirstLevelDependency,
+                selectedVersion = commonModule.selectedVersion,
+                requestedVersionsByIncomingDependencies = mutableMapOf<KResolvedDependencyId, KResolvedDependencyVersion>().apply {
+                    this += commonModule.requestedVersionsByIncomingDependencies
+                    this += platformSpecificModule.requestedVersionsByIncomingDependencies - commonModuleId
+                },
+                artifactPaths = mutableSetOf<KResolvedDependencyArtifactPath>().apply {
+                    this += commonModule.artifactPaths
+                    this += platformSpecificModule.artifactPaths
+                }
+            )
+
+            replacedModules[platformSpecificModuleId] = replacementModule
+            replacedModules[commonModuleId] = replacementModule
+        }
+
+        // Assemble new modules together (without "replaced" and with "replacements").
+        val mergedModules: MutableMap<KResolvedDependencyId, KResolvedDependency> = mutableMapOf()
+        mergedModules += plainModules - replacedModules.keys
+        replacedModules.values.forEach { replacementModule -> mergedModules[replacementModule.id] = replacementModule }
+
+        // Fix references to point to "replacement" modules instead of "replaced" modules.
+        mergedModules.values.forEach { module ->
+            module.requestedVersionsByIncomingDependencies.mapNotNull { (replacedModuleId, requestedVersion) ->
+                val replacementModuleId = replacedModules[replacedModuleId]?.id ?: return@mapNotNull null
+                Triple(replacedModuleId, replacementModuleId, requestedVersion)
+            }.forEach { (replacedModuleId, replacementModuleId, requestedVersion) ->
+                module.requestedVersionsByIncomingDependencies.remove(replacedModuleId)
+                module.requestedVersionsByIncomingDependencies[replacementModuleId] = requestedVersion
+            }
+        }
+
+        return mergedModules.values
+    }
+
+    private val ModuleComponentIdentifier.uniqueName: String
+        get() = "$group:$module"
+}
+
+internal class CacheBuilder(
+    val project: Project,
+    val binary: NativeBinary,
+    val konanTarget: KonanTarget,
+    val externalDependenciesArgs: List<String>
+) {
 
     private val nativeSingleFileResolveStrategy: SingleFileKlibResolveStrategy
         get() = CompilerSingleFileKlibResolveAllowingIrProvidersStrategy(
@@ -777,6 +929,7 @@ internal class CacheBuilder(val project: Project, val binary: NativeBinary, val 
             )
             if (debuggable)
                 args += "-g"
+            args += externalDependenciesArgs
             args += "-Xadd-cache=${library.libraryFile.absolutePath}"
             args += "-Xcache-directory=${cacheDirectory.absolutePath}"
             args += "-Xcache-directory=${rootCacheDirectory.absolutePath}"
