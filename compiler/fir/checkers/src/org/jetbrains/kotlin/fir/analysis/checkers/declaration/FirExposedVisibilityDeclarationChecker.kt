@@ -110,7 +110,7 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker() {
         val functionVisibility = (declaration as FirMemberDeclaration).effectiveVisibility
 
         if (functionVisibility == EffectiveVisibility.Local) return
-        if (declaration !is FirConstructor) {
+        if (declaration !is FirConstructor && declaration !is FirPropertyAccessor) {
             val restricting = declaration.returnTypeRef.coneTypeSafe<ConeKotlinType>()
                 ?.findVisibilityExposure(context, functionVisibility)
             if (restricting != null) {

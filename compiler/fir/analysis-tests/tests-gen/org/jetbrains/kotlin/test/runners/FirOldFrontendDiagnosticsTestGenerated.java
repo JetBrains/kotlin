@@ -30930,6 +30930,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             public void testLackOfInvisibleSetterOfJavaClassInSamePackage() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/visibility/lackOfInvisibleSetterOfJavaClassInSamePackage.kt");
             }
+
+            @Test
+            @TestMetadata("protectedInternal.kt")
+            public void testProtectedInternal() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/protectedInternal.kt");
+            }
         }
 
         @Nested
