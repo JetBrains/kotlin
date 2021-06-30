@@ -14,6 +14,10 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.classId
+import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
@@ -29,7 +33,7 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 object FirImplementationMismatchChecker : FirClassChecker() {
 
-    override fun check(declaration: FirClass<*>, context: CheckerContext, reporter: DiagnosticReporter) {
+    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         val source = declaration.source ?: return
         val sourceKind = source.kind
         if (sourceKind is FirFakeSourceElementKind && sourceKind != FirFakeSourceElementKind.EnumInitializer) return
@@ -48,38 +52,41 @@ object FirImplementationMismatchChecker : FirClassChecker() {
             classScope.processFunctionsByName(name) { checkInheritanceClash(declaration, context, dedupReporter, typeCheckerContext, it) }
             classScope.processPropertiesByName(name) {
                 checkInheritanceClash(declaration, context, dedupReporter, typeCheckerContext, it)
-                checkValOverrideVar(declaration, context, dedupReporter, it)
+                checkValOverridesVar(declaration, context, dedupReporter, it)
             }
             checkConflictingMembers(declaration, context, dedupReporter, classScope, name)
         }
     }
 
     private fun checkInheritanceClash(
-        containingClass: FirClass<*>,
+        containingClass: FirClass,
         context: CheckerContext,
         reporter: DiagnosticReporter,
         typeCheckerContext: ConeTypeCheckerContext,
         symbol: FirCallableSymbol<*>
     ) {
-        fun reportTypeMismatch(member1: FirCallableDeclaration<*>, member2: FirCallableDeclaration<*>, isDelegation: Boolean) {
-            val error = if (member1 is FirProperty && member2 is FirProperty) {
-                if (member1.isVar || member2.isVar) {
-                    FirErrors.VAR_TYPE_MISMATCH_ON_INHERITANCE
-                } else {
-                    if (isDelegation) FirErrors.PROPERTY_TYPE_MISMATCH_BY_DELEGATION
-                    else FirErrors.PROPERTY_TYPE_MISMATCH_ON_INHERITANCE
+        fun reportTypeMismatch(member1: FirCallableDeclaration, member2: FirCallableDeclaration, isDelegation: Boolean) {
+            val error = when {
+                member1 is FirProperty && member2 is FirProperty -> {
+                    if (member1.isVar || member2.isVar) {
+                        FirErrors.VAR_TYPE_MISMATCH_ON_INHERITANCE
+                    } else {
+                        if (isDelegation) FirErrors.PROPERTY_TYPE_MISMATCH_BY_DELEGATION
+                        else FirErrors.PROPERTY_TYPE_MISMATCH_ON_INHERITANCE
+                    }
                 }
-            } else {
-                if (isDelegation) FirErrors.RETURN_TYPE_MISMATCH_BY_DELEGATION
-                else FirErrors.RETURN_TYPE_MISMATCH_ON_INHERITANCE
+                else -> {
+                    if (isDelegation) FirErrors.RETURN_TYPE_MISMATCH_BY_DELEGATION
+                    else FirErrors.RETURN_TYPE_MISMATCH_ON_INHERITANCE
+                }
             }
             reporter.reportOn(containingClass.source, error, member1, member2, context)
         }
 
         fun canOverride(
-            inheritedMember: FirCallableDeclaration<*>,
+            inheritedMember: FirCallableDeclaration,
             inheritedType: ConeKotlinType,
-            baseMember: FirCallableDeclaration<*>,
+            baseMember: FirCallableDeclaration,
             baseType: ConeKotlinType
         ): Boolean {
             val inheritedTypeSubstituted = inheritedType.substituteTypeParameters(inheritedMember, baseMember, context)
@@ -89,8 +96,6 @@ object FirImplementationMismatchChecker : FirClassChecker() {
                 AbstractTypeChecker.isSubtypeOf(typeCheckerContext, inheritedTypeSubstituted, baseType)
         }
 
-
-
         if (symbol.callableId.classId != containingClass.classId) return
         if (symbol !is FirIntersectionCallableSymbol) return
         val withTypes = symbol.intersections.map {
@@ -99,8 +104,8 @@ object FirImplementationMismatchChecker : FirClassChecker() {
 
         if (withTypes.any { it.second is ConeKotlinErrorType }) return
 
-        var delegation: FirCallableDeclaration<*>? = null
-        val implementations = mutableListOf<FirCallableDeclaration<*>>()
+        var delegation: FirCallableDeclaration? = null
+        val implementations = mutableListOf<FirCallableDeclaration>()
 
         for (intSymbol in symbol.intersections) {
             val fir = intSymbol.fir
@@ -108,26 +113,24 @@ object FirImplementationMismatchChecker : FirClassChecker() {
                 delegation = fir
                 break
             }
-            if (!(fir as FirCallableMemberDeclaration<*>).isAbstract) {
+            if (!(fir as FirCallableMemberDeclaration).isAbstract) {
                 implementations.add(fir)
             }
         }
 
-        run {
-            var clash: Pair<FirCallableDeclaration<*>, FirCallableDeclaration<*>>? = null
-            val compatible = withTypes.any { (m1, type1) ->
-                withTypes.all { (m2, type2) ->
-                    val result = canOverride(m1, type1, m2, type2)
-                    if (!result && clash == null && !canOverride(m2, type2, m1, type1)) {
-                        clash = m1 to m2
-                    }
-                    result
+        var someClash: Pair<FirCallableDeclaration, FirCallableDeclaration>? = null
+        val compatible = withTypes.any { (m1, type1) ->
+            withTypes.all { (m2, type2) ->
+                val result = canOverride(m1, type1, m2, type2)
+                if (!result && someClash == null && !canOverride(m2, type2, m1, type1)) {
+                    someClash = m1 to m2
                 }
+                result
             }
-            clash?.takeIf { !compatible }?.let { (m1, m2) ->
-                reportTypeMismatch(m1, m2, false)
-                return@checkInheritanceClash
-            }
+        }
+        someClash?.takeIf { !compatible }?.let { (m1, m2) ->
+            reportTypeMismatch(m1, m2, false)
+            return@checkInheritanceClash
         }
 
         if (delegation != null || implementations.isNotEmpty()) {
@@ -142,8 +145,8 @@ object FirImplementationMismatchChecker : FirClassChecker() {
         }
     }
 
-    private fun checkValOverrideVar(
-        containingClass: FirClass<*>,
+    private fun checkValOverridesVar(
+        containingClass: FirClass,
         context: CheckerContext,
         reporter: DiagnosticReporter,
         symbol: FirVariableSymbol<*>
@@ -156,7 +159,7 @@ object FirImplementationMismatchChecker : FirClassChecker() {
             fir.isVal && fir.delegatedWrapperData?.containingClass?.classId == containingClass.classId
         }
 
-        val delegatedVal = delegates.singleOrNull() ?: return
+        val delegatedVal = delegates.firstOrNull() ?: return
         val baseVar = others.find {
             it is FirPropertySymbol && it.fir.isVar
         }
@@ -167,7 +170,7 @@ object FirImplementationMismatchChecker : FirClassChecker() {
     }
 
     private fun checkConflictingMembers(
-        containingClass: FirClass<*>,
+        containingClass: FirClass,
         context: CheckerContext,
         reporter: DiagnosticReporter,
         scope: FirTypeScope,
@@ -187,18 +190,20 @@ object FirImplementationMismatchChecker : FirClassChecker() {
             function.valueParameters.map { it.returnTypeRef.coneType }
         }.values
 
-        val clash = sameArgumentGroups.mapNotNull { fs ->
+        val clashes = sameArgumentGroups.mapNotNull { fs ->
             fs.zipWithNext().find { (m1, m2) ->
                 m1.isSuspend != m2.isSuspend || m1.typeParameters.size != m2.typeParameters.size
             }
-        }.firstOrNull() ?: return
+        }
 
-        reporter.reportOn(containingClass.source, FirErrors.CONFLICTING_INHERITED_MEMBERS, clash.toList(), context)
+        clashes.forEach {
+            reporter.reportOn(containingClass.source, FirErrors.CONFLICTING_INHERITED_MEMBERS, it.toList(), context)
+        }
     }
 
     private fun ConeKotlinType.substituteTypeParameters(
-        fromDeclaration: FirCallableDeclaration<*>,
-        toDeclaration: FirCallableDeclaration<*>,
+        fromDeclaration: FirCallableDeclaration,
+        toDeclaration: FirCallableDeclaration,
         context: CheckerContext
     ): ConeKotlinType {
         val fromParams = (fromDeclaration as? FirTypeParametersOwner)?.typeParameters ?: return this

@@ -572,13 +572,13 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         
         val CANNOT_OVERRIDE_INVISIBLE_MEMBER by error<KtNamedDeclaration>(PositioningStrategy.OVERRIDE_MODIFIER) {
-            parameter<FirCallableDeclaration<*>>("overridingMember")
-            parameter<FirCallableDeclaration<*>>("baseMember")
+            parameter<FirCallableDeclaration>("overridingMember")
+            parameter<FirCallableDeclaration>("baseMember")
         }
 
         val DATA_CLASS_OVERRIDE_CONFLICT by error<KtClassOrObject>(PositioningStrategy.DATA_MODIFIER) {
-            parameter<FirCallableDeclaration<*>>("overridingMember")
-            parameter<FirCallableDeclaration<*>>("baseMember")
+            parameter<FirCallableDeclaration>("overridingMember")
+            parameter<FirCallableDeclaration>("baseMember")
         }
 
         val CANNOT_WEAKEN_ACCESS_PRIVILEGE by error<KtModifierListOwner>(PositioningStrategy.VISIBILITY_MODIFIER) {
@@ -598,37 +598,37 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
 
         val RETURN_TYPE_MISMATCH_ON_INHERITANCE by error<KtClassOrObject>(PositioningStrategy.DECLARATION_NAME) {
-            parameter<FirCallableDeclaration<*>>("conflictingDeclaration1")
-            parameter<FirCallableDeclaration<*>>("conflictingDeclaration2")
+            parameter<FirCallableDeclaration>("conflictingDeclaration1")
+            parameter<FirCallableDeclaration>("conflictingDeclaration2")
         }
 
         val PROPERTY_TYPE_MISMATCH_ON_INHERITANCE by error<KtClassOrObject>(PositioningStrategy.DECLARATION_NAME) {
-            parameter<FirCallableDeclaration<*>>("conflictingDeclaration1")
-            parameter<FirCallableDeclaration<*>>("conflictingDeclaration2")
+            parameter<FirCallableDeclaration>("conflictingDeclaration1")
+            parameter<FirCallableDeclaration>("conflictingDeclaration2")
         }
 
         val VAR_TYPE_MISMATCH_ON_INHERITANCE by error<KtClassOrObject>(PositioningStrategy.DECLARATION_NAME) {
-            parameter<FirCallableDeclaration<*>>("conflictingDeclaration1")
-            parameter<FirCallableDeclaration<*>>("conflictingDeclaration2")
+            parameter<FirCallableDeclaration>("conflictingDeclaration1")
+            parameter<FirCallableDeclaration>("conflictingDeclaration2")
         }
 
         val RETURN_TYPE_MISMATCH_BY_DELEGATION by error<KtClassOrObject>(PositioningStrategy.DECLARATION_NAME) {
-            parameter<FirCallableDeclaration<*>>("delegateDeclaration")
-            parameter<FirCallableDeclaration<*>>("baseDeclaration")
+            parameter<FirCallableDeclaration>("delegateDeclaration")
+            parameter<FirCallableDeclaration>("baseDeclaration")
         }
 
         val PROPERTY_TYPE_MISMATCH_BY_DELEGATION by error<KtClassOrObject>(PositioningStrategy.DECLARATION_NAME) {
-            parameter<FirCallableDeclaration<*>>("delegateDeclaration")
-            parameter<FirCallableDeclaration<*>>("baseDeclaration")
+            parameter<FirCallableDeclaration>("delegateDeclaration")
+            parameter<FirCallableDeclaration>("baseDeclaration")
         }
 
         val VAR_OVERRIDDEN_BY_VAL_BY_DELEGATION by error<KtClassOrObject>(PositioningStrategy.DECLARATION_NAME) {
-            parameter<FirCallableDeclaration<*>>("delegateDeclaration")
-            parameter<FirCallableDeclaration<*>>("baseDeclaration")
+            parameter<FirCallableDeclaration>("delegateDeclaration")
+            parameter<FirCallableDeclaration>("baseDeclaration")
         }
 
         val CONFLICTING_INHERITED_MEMBERS by error<KtClassOrObject>(PositioningStrategy.DECLARATION_NAME) {
-            parameter<List<FirCallableDeclaration<*>>>("conflictingDeclarations")
+            parameter<List<FirCallableDeclaration>>("conflictingDeclarations")
         }
 
         val ABSTRACT_MEMBER_NOT_IMPLEMENTED by error<KtClassOrObject>(PositioningStrategy.DECLARATION_NAME) {

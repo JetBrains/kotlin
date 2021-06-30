@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.overridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
@@ -111,7 +112,7 @@ object FirOverrideChecker : FirClassChecker() {
     }
 
     private fun FirCallableMemberDeclaration.checkVisibility(
-        containingClass: FirClass<*>,
+        containingClass: FirClass,
         reporter: DiagnosticReporter,
         overriddenSymbols: List<FirCallableSymbol<*>>,
         context: CheckerContext
@@ -139,7 +140,7 @@ object FirOverrideChecker : FirClassChecker() {
         val containingDeclarations = context.containingDeclarations + containingClass
         val visibilityChecker = context.session.visibilityChecker
         val hasVisibleBase = overriddenSymbols.any {
-            val fir = it.fir as? FirCallableMemberDeclaration<*> ?: return@any true
+            val fir = it.fir as? FirCallableMemberDeclaration ?: return@any true
             visibilityChecker.isVisible(fir, context.session, file, containingDeclarations, null)
         }
         if (!hasVisibleBase) {
@@ -204,7 +205,7 @@ object FirOverrideChecker : FirClassChecker() {
             // Only report if the current member has real source or it's a member property declared inside the primary constructor.
 
             if (kind is FirFakeSourceElementKind.DataClassGeneratedMembers) {
-                overriddenMemberSymbols.find { (it.fir as? FirCallableMemberDeclaration<*>)?.isFinal == true }?.let { base ->
+                overriddenMemberSymbols.find { (it.fir as? FirCallableMemberDeclaration)?.isFinal == true }?.let { base ->
                     reporter.reportOn(
                         containingClass.source,
                         FirErrors.DATA_CLASS_OVERRIDE_CONFLICT,
