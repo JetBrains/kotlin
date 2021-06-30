@@ -10649,6 +10649,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("overloadPriority.kt")
+                public void testOverloadPriority() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/overloadPriority.kt");
+                }
+
+                @Test
                 @TestMetadata("plusMatrix.kt")
                 public void testPlusMatrix() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/plusMatrix.kt");

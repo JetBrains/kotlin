@@ -10643,6 +10643,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("overloadPriority.kt")
+                public void testOverloadPriority() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/overloadPriority.kt");
+                }
+
+                @Test
                 @TestMetadata("plusMatrix.kt")
                 public void testPlusMatrix() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/plusMatrix.kt");
