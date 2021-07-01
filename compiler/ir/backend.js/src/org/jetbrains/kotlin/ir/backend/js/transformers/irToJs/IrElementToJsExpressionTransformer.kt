@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -40,7 +40,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
 
     override fun visitVararg(expression: IrVararg, context: JsGenerationContext): JsExpression {
         assert(expression.elements.none { it is IrSpreadElement })
-        return JsArrayLiteral(expression.elements.map { it.accept(this, context) })
+        return JsArrayLiteral(expression.elements.map { it.accept(this, context) }).withSource(expression, context)
     }
 
     override fun visitExpressionBody(body: IrExpressionBody, context: JsGenerationContext): JsExpression =
@@ -64,7 +64,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             is IrConstKind.Char -> throw IllegalStateException("Char const should have been lowered at this point")
             is IrConstKind.Float -> JsDoubleLiteral(toDoubleConst(kind.valueOf(expression)))
             is IrConstKind.Double -> JsDoubleLiteral(kind.valueOf(expression))
-        }
+        }.withSource(expression, context)
     }
 
     private fun toDoubleConst(f: Float) = if (f.isInfinite() || f.isNaN()) f.toDouble() else f.toString().toDouble()
@@ -94,19 +94,19 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             return JsNameRef(
                 field.getJsNameOrKotlinName().identifier,
                 context.getNameForClass(fieldParent).makeRef()
-            )
+            ).withSource(expression, context)
         }
 
         if (fieldParent is IrClass && fieldParent.isInline) {
-            return expression.receiver!!.accept(this, context)
+            return expression.receiver!!.accept(this, context).withSource(expression, context)
         }
         val fieldName = context.getNameForField(field)
-        return JsNameRef(fieldName, expression.receiver?.accept(this, context))
+        return JsNameRef(fieldName, expression.receiver?.accept(this, context)).withSource(expression, context)
     }
 
     override fun visitGetValue(expression: IrGetValue, context: JsGenerationContext): JsExpression {
-        if (expression.symbol.owner.isThisReceiver()) return JsThisRef()
-        return context.getNameForValueDeclaration(expression.symbol.owner).makeRef()
+        if (expression.symbol.owner.isThisReceiver()) return JsThisRef().withSource(expression, context)
+        return context.getNameForValueDeclaration(expression.symbol.owner).makeRef().withSource(expression, context)
     }
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, context: JsGenerationContext): JsExpression {
@@ -114,20 +114,20 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         assert(obj.kind == ClassKind.OBJECT)
         assert(obj.isEffectivelyExternal()) { "Non external IrGetObjectValue must be lowered" }
 
-        return context.getRefForExternalClass(obj)
+        return context.getRefForExternalClass(obj).withSource(expression, context)
     }
 
     override fun visitSetField(expression: IrSetField, context: JsGenerationContext): JsExpression {
         val fieldName = context.getNameForField(expression.symbol.owner)
         val dest = JsNameRef(fieldName, expression.receiver?.accept(this, context))
         val source = expression.value.accept(this, context)
-        return jsAssignment(dest, source)
+        return jsAssignment(dest, source).withSource(expression, context)
     }
 
     override fun visitSetValue(expression: IrSetValue, context: JsGenerationContext): JsExpression {
         val ref = JsNameRef(context.getNameForValueDeclaration(expression.symbol.owner))
         val value = expression.value.accept(this, context)
-        return JsBinaryOperation(JsBinaryOperator.ASG, ref, value)
+        return JsBinaryOperation(JsBinaryOperator.ASG, ref, value).withSource(expression, context)
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, context: JsGenerationContext): JsExpression {
@@ -143,14 +143,14 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             assert(constructor.isPrimary) {
                 "Delegation to secondary inline constructors must be lowered into simple function calls"
             }
-            return JsBinaryOperation(JsBinaryOperator.ASG, thisRef, arguments.single())
+            return JsBinaryOperation(JsBinaryOperator.ASG, thisRef, arguments.single()).withSource(expression, context)
         }
 
         return if (context.staticContext.backendContext.es6mode) {
             JsInvocation(JsNameRef("super"), arguments)
         } else {
             JsInvocation(callFuncRef, listOf(thisRef) + arguments)
-        }
+        }.withSource(expression, context)
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall, context: JsGenerationContext): JsExpression {
@@ -190,7 +190,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
                 val ref = context.getNameForClass(klass).makeRef()
                 JsNew(ref, arguments)
             }
-        }
+        }.withSource(expression, context)
     }
 
     override fun visitCall(expression: IrCall, context: JsGenerationContext): JsExpression {
@@ -200,7 +200,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
 
             val lastStatement = statements.last()
             if (statements.size == 1) {
-                if (lastStatement is JsExpressionStatement) return lastStatement.expression
+                if (lastStatement is JsExpressionStatement) return lastStatement.expression.withSource(expression, context)
             }
 
             val newStatements = statements.toMutableList()
@@ -216,10 +216,10 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             }
 
             val syntheticFunction = JsFunction(emptyScope, JsBlock(newStatements), "")
-            return JsInvocation(syntheticFunction)
+            return JsInvocation(syntheticFunction).withSource(expression, context)
 
         }
-        return translateCall(expression, context, this)
+        return translateCall(expression, context, this).withSource(expression, context)
     }
 
     override fun visitWhen(expression: IrWhen, context: JsGenerationContext): JsExpression {
@@ -239,11 +239,11 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         return when (expression.operator) {
             IrTypeOperator.REINTERPRET_CAST -> expression.argument.accept(this, data)
             else -> error("All type operator calls except REINTERPRET_CAST should be lowered at this point: ${expression.operator}")
-        }
+        }.withSource(expression, data)
     }
 
     override fun visitDynamicMemberExpression(expression: IrDynamicMemberExpression, data: JsGenerationContext): JsExpression =
-        JsNameRef(expression.memberName, expression.receiver.accept(this, data))
+        JsNameRef(expression.memberName, expression.receiver.accept(this, data)).withSource(expression, data)
 
     override fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression, data: JsGenerationContext): JsExpression =
         when (expression.operator) {
@@ -294,7 +294,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
                 )
 
             else -> error("Unexpected operator ${expression.operator}: ${expression.render()}")
-        }
+        }.withSource(expression, data)
 
     override fun visitRawFunctionReference(expression: IrRawFunctionReference, data: JsGenerationContext): JsExpression {
         val name = when (val function = expression.symbol.owner) {
@@ -302,7 +302,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             is IrSimpleFunction -> data.getNameForStaticFunction(function)
             else -> error("Unexpected function kind")
         }
-        return JsNameRef(name)
+        return JsNameRef(name).withSource(expression, data)
     }
 
     private fun prefixOperation(operator: JsUnaryOperator, expression: IrDynamicOperatorExpression, data: JsGenerationContext) =

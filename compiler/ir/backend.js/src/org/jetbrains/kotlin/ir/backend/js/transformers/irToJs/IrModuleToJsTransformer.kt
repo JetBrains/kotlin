@@ -136,6 +136,7 @@ class IrModuleToJsTransformer(
             globalNameScope = namer.globalNames
         )
         val rootContext = JsGenerationContext(
+            currentFile = null,
             currentFunction = null,
             staticContext = staticContext,
             localNames = LocalNameGenerator(NameScope.EmptyScope)
