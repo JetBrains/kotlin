@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -284,8 +284,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 ),
             )
 
-            val jsCode = if (arguments.irDce && !arguments.irDceDriven) compiledModule.dceJsCode!! else compiledModule.jsCode!!
-            outputFile.writeText(jsCode.mainModule)
+            val jsCode = if (arguments.irDce && !arguments.irDceDriven) compiledModule.outputsAfterDce!! else compiledModule.outputs!!
+            outputFile.writeText(jsCode.jsCode)
             jsCode.dependencies.forEach { (name, content) ->
                 outputFile.resolveSibling("$name.js").writeText(content)
             }
