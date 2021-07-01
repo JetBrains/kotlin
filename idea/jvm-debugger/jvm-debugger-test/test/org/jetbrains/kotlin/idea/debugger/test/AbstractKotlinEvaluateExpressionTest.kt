@@ -13,9 +13,7 @@ import com.intellij.debugger.engine.evaluation.TextWithImportsImpl
 import com.intellij.debugger.engine.evaluation.expression.EvaluatorBuilderImpl
 import com.intellij.debugger.impl.DebuggerContextImpl
 import com.intellij.debugger.impl.DebuggerContextImpl.createDebuggerContext
-import com.intellij.debugger.impl.OutputChecker
 import com.intellij.debugger.ui.impl.watch.NodeDescriptorImpl
-import com.intellij.openapi.application.ex.PathManagerEx.getTestDataPath
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.ui.treeStructure.Tree
 import com.intellij.xdebugger.impl.ui.tree.ValueMarkup
@@ -226,16 +224,6 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDescriptorTestCaseWi
         } catch (e: Throwable) {
             exceptions[expression] = e
         }
-    }
-
-    override fun initOutputChecker(): OutputChecker {
-        return KotlinOutputChecker(
-            getTestDataPath(),
-            testAppPath,
-            appOutputPath,
-            targetBackend(),
-            getExpectedOutputFile()
-        )
     }
 
     override fun throwExceptionsIfAny() {

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_WITH_IR_EVALUATOR, JVM_IR_WITH_IR_EVALUATOR
 LineBreakpoint created at imports.kt:10
 Run Java
 Connected to the target VM

@@ -7,11 +7,15 @@ package org.jetbrains.kotlin.idea.debugger.evaluate.compilation
 
 import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.backend.common.output.OutputFile
+import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
+import org.jetbrains.kotlin.backend.jvm.JvmIrFragmentCodegenFactory
+import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.CodeFragmentCodegen.Companion.getSharedTypeIfApplicable
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -90,19 +94,15 @@ class CodeFragmentCompiler(private val executionContext: ExecutionContext, priva
         val defaultReturnType = moduleDescriptor.builtIns.unitType
         val returnType = getReturnType(codeFragment, bindingContext, defaultReturnType)
 
-        val compilerConfiguration = CompilerConfiguration()
-        compilerConfiguration.languageVersionSettings = codeFragment.languageVersionSettings
+        val fragmentCompilerBackend = executionContext.debugProcess.getUserData(KOTLIN_EVALUATOR_FRAGMENT_COMPILER_BACKEND)
 
-        val generationState = GenerationState.Builder(
-            project, ClassBuilderFactories.BINARIES, moduleDescriptorWrapper,
-            bindingContext, filesToCompile, compilerConfiguration
-        ).apply {
-            val fragmentCompilerBackend = executionContext.debugProcess.getUserData(KOTLIN_EVALUATOR_FRAGMENT_COMPILER_BACKEND)
+        val compilerConfiguration = CompilerConfiguration().apply {
+            languageVersionSettings = codeFragment.languageVersionSettings
             if (fragmentCompilerBackend == FragmentCompilerBackend.JVM_IR) {
-                codegenFactory(TODO("Not implemented yet: EE-IR Fragment Compiler"))
+                // TODO: Do not understand the implications of this, but enforced by assertions in JvmIrCodegen
+                put(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT, true)
             }
-            generateDeclaredClassFilter(GeneratedClassFilterForCodeFragment(codeFragment))
-        }.build()
+        }
 
         val parameterInfo = CodeFragmentParameterAnalyzer(executionContext, codeFragment, bindingContext, status).analyze()
         val (classDescriptor, methodDescriptor) = createDescriptorsForCodeFragment(
@@ -112,6 +112,16 @@ class CodeFragmentCompiler(private val executionContext: ExecutionContext, priva
 
         val codegenInfo = CodeFragmentCodegenInfo(classDescriptor, methodDescriptor, parameterInfo.parameters)
         CodeFragmentCodegen.setCodeFragmentInfo(codeFragment, codegenInfo)
+
+        val generationState = GenerationState.Builder(
+            project, ClassBuilderFactories.BINARIES, moduleDescriptorWrapper,
+            bindingContext, filesToCompile, compilerConfiguration
+        ).apply {
+            if (fragmentCompilerBackend == FragmentCompilerBackend.JVM_IR) {
+                codegenFactory(JvmIrFragmentCodegenFactory(codegenInfo, PhaseConfig(jvmPhases)))
+            }
+            generateDeclaredClassFilter(GeneratedClassFilterForCodeFragment(codeFragment))
+        }.build()
 
         try {
             KotlinCodegenFacade.compileCorrectFiles(generationState)
@@ -271,6 +281,13 @@ private class EvaluatorModuleDescriptor(
     val moduleDescriptor: ModuleDescriptor,
     resolveSession: ResolveSession
 ) : ModuleDescriptor by moduleDescriptor {
+
+    // NOTE: Without this override, psi2ir complains when introducing new symbol for
+    // when creating an IrFileImpl in `createEmptyIrFile`.
+    override fun getOriginal(): DeclarationDescriptor {
+        return this
+    }
+
     private val declarationProvider = object : PackageMemberDeclarationProvider {
         override fun getPackageFiles() = listOf(codeFragment)
         override fun containsFile(file: KtFile) = file == codeFragment

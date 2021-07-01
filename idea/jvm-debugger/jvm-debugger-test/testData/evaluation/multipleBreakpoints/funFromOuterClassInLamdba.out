@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_WITH_IR_EVALUATOR, JVM_IR_WITH_IR_EVALUATOR
 LineBreakpoint created at funFromOuterClassInLamdba.kt:20
 LineBreakpoint created at funFromOuterClassInLamdba.kt:28
 LineBreakpoint created at funFromOuterClassInLamdba.kt:36

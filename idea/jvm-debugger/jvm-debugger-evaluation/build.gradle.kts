@@ -9,6 +9,7 @@ dependencies {
     compile(project(":idea:idea-core"))
     compile(project(":idea:idea-j2k"))
     compile(project(":idea:jvm-debugger:jvm-debugger-util"))
+    implementation(project(":compiler:backend.jvm:backend.jvm.entrypoint"))
 
     compileOnly(toolsJarApi())
     compileOnly(intellijPluginDep("java"))

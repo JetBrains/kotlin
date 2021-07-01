@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.psi2ir
 
+import org.jetbrains.kotlin.codegen.CodeFragmentCodegenInfo
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -26,11 +27,9 @@ import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.noUnboundLeft
+import org.jetbrains.kotlin.psi.KtBlockCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
-import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
-import org.jetbrains.kotlin.psi2ir.generators.ModuleGenerator
-import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
+import org.jetbrains.kotlin.psi2ir.generators.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.utils.SmartList
 
@@ -88,6 +87,34 @@ class Psi2IrTranslator(
 
         postprocessingSteps.forEach { it.invoke(irModule) }
 //        assert(context.symbolTable.allUnbound.isEmpty()) // TODO: fix IrPluginContext to make it not produce additional external reference
+
+        // TODO: remove it once plugin API improved
+        moduleGenerator.generateUnboundSymbolsAsDependencies(irProviders)
+        deserializers.forEach { it.postProcess() }
+
+        return irModule
+    }
+
+    // TODO - De-duplicate this code from generateModuleFragment
+    fun generateEvaluatorModuleFragment(
+        context: GeneratorContext,
+        ktFile: KtBlockCodeFragment,
+        irProviders: List<IrProvider>,
+        linkerExtensions: Collection<IrDeserializer.IrLinkerExtension>,
+        codegenInfo: CodeFragmentCodegenInfo
+    ): IrModuleFragment {
+        val moduleGenerator = FragmentModuleGenerator(context)
+        val irModule = moduleGenerator.generateEvaluatorModuleFragment(ktFile, codegenInfo)
+
+        val deserializers = irProviders.filterIsInstance<IrDeserializer>()
+        deserializers.forEach { it.init(irModule, linkerExtensions) }
+
+        moduleGenerator.generateUnboundSymbolsAsDependencies(irProviders)
+
+        deserializers.forEach { it.postProcess() }
+        context.symbolTable.noUnboundLeft("Unbound symbols not allowed\n")
+
+        postprocessingSteps.forEach { it.invoke(irModule) }
 
         // TODO: remove it once plugin API improved
         moduleGenerator.generateUnboundSymbolsAsDependencies(irProviders)

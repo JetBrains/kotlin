@@ -1,0 +1,11 @@
+// IGNORE_BACKEND: JVM_IR_WITH_OLD_EVALUATOR, JVM_IR_WITH_IR_EVALUATOR
+LineBreakpoint created at evPropertyRefExpr.kt:8
+Run Java
+Connected to the target VM
+evPropertyRefExpr.kt:8
+Compile bytecode for prop
+ frame    = test:8, A {evPropertyRefExpr}
+   this     = this =
+Disconnected from the target VM
+
+Process finished with exit code 0

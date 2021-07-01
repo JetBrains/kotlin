@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_WITH_IR_EVALUATOR, JVM_IR_WITH_IR_EVALUATOR
 LineBreakpoint created at whenEntry.kt:10
 LineBreakpoint created at whenEntry.kt:18
 LineBreakpoint created at whenEntry.kt:26

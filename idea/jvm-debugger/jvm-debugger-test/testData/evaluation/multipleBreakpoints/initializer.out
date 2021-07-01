@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_WITH_IR_EVALUATOR, JVM_IR_WITH_IR_EVALUATOR
 LineBreakpoint created at initializer.kt:12
 LineBreakpoint created at initializer.kt:18 lambdaOrdinal = -1
 Run Java
