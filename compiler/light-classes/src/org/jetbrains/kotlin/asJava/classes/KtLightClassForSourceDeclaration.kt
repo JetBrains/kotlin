@@ -570,6 +570,7 @@ fun KtClassOrObject.shouldNotBeVisibleAsLightClass(): Boolean {
     if (isLocal) {
         if (containingFile.virtualFile == null) return true
         if (hasParseErrorsAround(this) || PsiUtilCore.hasErrorElementChild(this)) return true
+        if (classDeclaredInUnexpectedPosition(this)) return true
     }
 
     if (isEnumEntryWithoutBody(this)) {
@@ -577,6 +578,23 @@ fun KtClassOrObject.shouldNotBeVisibleAsLightClass(): Boolean {
     }
 
     return false
+}
+
+/**
+ * If class is declared in some strange context (for example, in expression like `10 < class A`),
+ * we don't want to try to build a light class for it.
+ *
+ * The expression itself is incorrect and won't compile, but the parser is able the parse the class nonetheless.
+ *
+ * This does not concern objects, since object literals are expressions and can be used almost anywhere.
+ */
+private fun classDeclaredInUnexpectedPosition(classOrObject: KtClassOrObject): Boolean {
+    if (classOrObject is KtObjectDeclaration) return false
+
+    val classParent = classOrObject.parent
+
+    return classParent !is KtBlockExpression &&
+            classParent !is KtDeclarationContainer
 }
 
 private fun isEnumEntryWithoutBody(classOrObject: KtClassOrObject): Boolean {
