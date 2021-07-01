@@ -1,16 +1,17 @@
-// !LANGUAGE: +StrictJavaNullabilityAssertions -ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
+// !LANGUAGE: +StrictJavaNullabilityAssertions +ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
 // TARGET_BACKEND: JVM
-// See KT-8135
-// We could generate runtime assertion on call site for 'generic<NOT_NULL_TYPE>()' below.
+// IGNORE_BACKEND: JVM
+// IGNORE_BACKEND_FIR: JVM_IR
+// IGNORE_LIGHT_ANALYSIS
 
 // FILE: box.kt
 fun box(): String {
     try {
         J().test()
-        return "OK"
+        return "Fail: SHOULD throw exception"
     }
     catch (e: Throwable) {
-        return "Fail: SHOULD NOT throw"
+        return "OK"
     }
 }
 
