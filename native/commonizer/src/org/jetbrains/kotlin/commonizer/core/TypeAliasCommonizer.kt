@@ -40,7 +40,7 @@ private class TypeAliasShortCircuitingCommonizer(
     private lateinit var name: CirName
     private val typeParameters = TypeParameterListCommonizer(classifiers)
     private var underlyingType: CirClassOrTypeAliasType? = null // null means not computed yet
-    private val expandedType = TypeCommonizer(classifiers)
+    private val expandedType = TypeCommonizer(classifiers).asCommonizer()
     private val visibility = VisibilityCommonizer.lowering()
 
     override fun commonizationResult() = CirTypeAlias.create(
@@ -70,7 +70,7 @@ private class TypeAliasShortCircuitingCommonizer(
 private class TypeAliasLiftingUpCommonizer(classifiers: CirKnownClassifiers) : AbstractStandardCommonizer<CirTypeAlias, CirTypeAlias>() {
     private lateinit var name: CirName
     private val typeParameters = TypeParameterListCommonizer(classifiers)
-    private val underlyingType = TypeCommonizer(classifiers)
+    private val underlyingType = TypeCommonizer(classifiers).asCommonizer()
     private val visibility = VisibilityCommonizer.lowering()
 
     override fun commonizationResult(): CirTypeAlias {

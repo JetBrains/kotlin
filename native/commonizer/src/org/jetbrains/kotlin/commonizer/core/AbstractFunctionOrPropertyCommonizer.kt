@@ -19,7 +19,7 @@ abstract class AbstractFunctionOrPropertyCommonizer<T : CirFunctionOrProperty>(
     protected val modality = ModalityCommonizer()
     protected val visibility = VisibilityCommonizer.lowering()
     protected val extensionReceiver = ExtensionReceiverCommonizer(classifiers)
-    protected val returnType = TypeCommonizer(classifiers)
+    protected val returnType = TypeCommonizer(classifiers).asCommonizer()
     protected lateinit var kind: CallableMemberDescriptor.Kind
     protected val typeParameters = TypeParameterListCommonizer(classifiers)
 

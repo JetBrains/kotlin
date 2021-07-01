@@ -480,13 +480,13 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
         super.doTestFailure(*variants, shouldFailOnFirstVariant = shouldFailOnFirstVariant)
     }
 
-    override fun createCommonizer() = TypeCommonizer(classifiers)
+    override fun createCommonizer() = TypeCommonizer(classifiers).asCommonizer()
 
     override fun areEqual(a: CirType?, b: CirType?) = (a === b) || (a != null && b != null && areEqual(classifiers, a, b))
 
     companion object {
         fun areEqual(classifiers: CirKnownClassifiers, a: CirType, b: CirType): Boolean =
-            TypeCommonizer(classifiers).run { commonizeWith(a) && commonizeWith(b) }
+            TypeCommonizer(classifiers).asCommonizer().run { commonizeWith(a) && commonizeWith(b) }
 
         private fun CirKnownClassifiers.classNode(classId: CirEntityId, computation: () -> CirClassNode) =
             commonizedNodes.classNode(classId) ?: computation()

@@ -143,7 +143,7 @@ internal class CommonizationVisitor(
         supertypesMap: Map<CirType, CommonizedGroup<CirType>>?
     ) {
         val commonSupertypes = supertypesMap?.values?.compactMapNotNull { supertypesGroup ->
-            commonize(supertypesGroup, TypeCommonizer(classifiers))
+            commonize(supertypesGroup, TypeCommonizer(classifiers).asCommonizer())
         }.orEmpty()
 
         supertypes = commonSupertypes

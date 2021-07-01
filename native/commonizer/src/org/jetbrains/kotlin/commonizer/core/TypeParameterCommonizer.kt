@@ -39,5 +39,5 @@ class TypeParameterCommonizer(classifiers: CirKnownClassifiers) : AbstractStanda
 }
 
 private class TypeParameterUpperBoundsCommonizer(classifiers: CirKnownClassifiers) : AbstractListCommonizer<CirType, CirType>(
-    singleElementCommonizerFactory = { TypeCommonizer(classifiers) }
+    singleElementCommonizerFactory = { TypeCommonizer(classifiers).asCommonizer() }
 )

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.commonizer.utils.isNull
 
 class ValueParameterCommonizer(classifiers: CirKnownClassifiers) : AbstractStandardCommonizer<CirValueParameter, CirValueParameter>() {
     private lateinit var name: CirName
-    private val returnType = TypeCommonizer(classifiers)
+    private val returnType = TypeCommonizer(classifiers).asCommonizer()
     private var varargElementType: CirType? = null
     private var isCrossinline = true
     private var isNoinline = true
