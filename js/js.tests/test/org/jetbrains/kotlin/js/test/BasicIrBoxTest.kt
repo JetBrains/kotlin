@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -162,9 +162,9 @@ abstract class BasicIrBoxTest(
                     verifySignatures = !skipMangleVerification
                 )
 
-                compiledModule.jsCode!!.writeTo(outputFile, config)
+                compiledModule.outputs!!.writeTo(outputFile, config)
 
-                compiledModule.dceJsCode?.writeTo(dceOutputFile, config)
+                compiledModule.outputsAfterDce?.writeTo(dceOutputFile, config)
 
                 if (generateDts) {
                     val dtsFile = outputFile.withReplacedExtensionOrNull("_v5.js", ".d.ts")!!
@@ -192,7 +192,7 @@ abstract class BasicIrBoxTest(
                     safeExternalBoolean = safeExternalBoolean,
                     safeExternalBooleanDiagnostic = safeExternalBooleanDiagnostic,
                     verifySignatures = !skipMangleVerification
-                ).jsCode!!.writeTo(pirOutputFile, config)
+                ).outputs!!.writeTo(pirOutputFile, config)
             }
         } else {
             generateKLib(
@@ -223,9 +223,9 @@ abstract class BasicIrBoxTest(
         return all.filter { it.name in phases }.toSet()
     }
 
-    private fun JsCode.writeTo(outputFile: File, config: JsConfig) {
+    private fun CompilationOutputs.writeTo(outputFile: File, config: JsConfig) {
         val wrappedCode =
-            wrapWithModuleEmulationMarkers(mainModule, moduleId = config.moduleId, moduleKind = config.moduleKind)
+            wrapWithModuleEmulationMarkers(jsCode, moduleId = config.moduleId, moduleKind = config.moduleKind)
         outputFile.write(wrappedCode)
 
         val dependencyPaths = mutableListOf<String>()

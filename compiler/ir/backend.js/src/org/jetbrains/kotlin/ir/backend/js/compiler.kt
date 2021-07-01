@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -27,12 +27,12 @@ import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.name.FqName
 
 class CompilerResult(
-    val jsCode: JsCode?,
-    val dceJsCode: JsCode?,
+    val outputs: CompilationOutputs?,
+    val outputsAfterDce: CompilationOutputs?,
     val tsDefinitions: String? = null
 )
 
-class JsCode(val mainModule: String, val dependencies: Iterable<Pair<String, String>> = emptyList())
+class CompilationOutputs(val jsCode: String, val dependencies: Iterable<Pair<String, String>> = emptyList())
 
 fun compile(
     project: Project,
@@ -174,5 +174,5 @@ fun generateJsCode(
     jsPhases.invokeToplevel(PhaseConfig(jsPhases), context, listOf(moduleFragment))
 
     val transformer = IrModuleToJsTransformer(context, null, true, nameTables)
-    return transformer.generateModule(listOf(moduleFragment)).jsCode!!.mainModule
+    return transformer.generateModule(listOf(moduleFragment)).outputs!!.jsCode
 }
