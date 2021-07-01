@@ -1,12 +1,12 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.ir.backend.js.CompilerResult
-import org.jetbrains.kotlin.ir.backend.js.JsCode
+import org.jetbrains.kotlin.ir.backend.js.CompilationOutputs
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.eliminateDeadDeclarations
 import org.jetbrains.kotlin.ir.backend.js.export.ExportModelGenerator
@@ -72,7 +72,7 @@ class IrModuleToJsTransformer(
         return CompilerResult(jsCode, dceJsCode, dts)
     }
 
-    private fun generateWrappedModuleBody(modules: Iterable<IrModuleFragment>, exportedModule: ExportedModule, namer: NameTables): JsCode {
+    private fun generateWrappedModuleBody(modules: Iterable<IrModuleFragment>, exportedModule: ExportedModule, namer: NameTables): CompilationOutputs {
         if (multiModule) {
 
             val refInfo = buildCrossModuleReferenceInfo(modules)
@@ -104,9 +104,9 @@ class IrModuleToJsTransformer(
                 )
             }.reversed()
 
-            return JsCode(mainModule, dependencies)
+            return CompilationOutputs(mainModule, dependencies)
         } else {
-            return JsCode(
+            return CompilationOutputs(
                 generateWrappedModuleBody2(
                     modules,
                     emptyList(),
