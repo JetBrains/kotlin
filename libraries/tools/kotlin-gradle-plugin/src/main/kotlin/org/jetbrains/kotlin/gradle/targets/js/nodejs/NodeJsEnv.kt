@@ -11,7 +11,8 @@ data class NodeJsEnv(
 
     val platformName: String,
     val architectureName: String,
-    val ivyDependency: String
+    val ivyDependency: String,
+    val downloadBaseUrl: String
 ) {
     val isWindows: Boolean
         get() = platformName == "win"
