@@ -16,19 +16,31 @@
 
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
-import org.jetbrains.kotlin.backend.jvm.codegen.*
-import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.Type
 
 object Clone : IntrinsicMethod() {
-    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo) = with(codegen) {
-        val result = expression.dispatchReceiver!!.accept(this, data).materialized()
-        assert(!AsmUtil.isPrimitive(result.type)) { "clone() of primitive type" }
-        val opcode = if (expression is IrCall && expression.superQualifierSymbol != null) Opcodes.INVOKESPECIAL else Opcodes.INVOKEVIRTUAL
-        mv.visitMethodInsn(opcode, "java/lang/Object", "clone", "()Ljava/lang/Object;", false)
-        MaterialValue(codegen, AsmTypes.OBJECT_TYPE, context.irBuiltIns.anyNType)
+
+    private val CLONEABLE_TYPE = Type.getObjectType("java/lang/Cloneable")
+
+    override fun toCallable(
+        expression: IrFunctionAccessExpression,
+        signature: JvmMethodSignature,
+        context: JvmBackendContext
+    ): IrIntrinsicFunction {
+        val isSuperCall = expression is IrCall && expression.superQualifierSymbol != null
+        val opcode = if (isSuperCall) Opcodes.INVOKESPECIAL else Opcodes.INVOKEVIRTUAL
+        val newSignature = signature.newReturnType(AsmTypes.OBJECT_TYPE)
+        val argTypes0 = expression.argTypes(context)
+        // Don't upcast receiver to java.lang.Cloneable, since 'clone' is protected in java.lang.Object.
+        val argTypes = if (isSuperCall || argTypes0[0] == CLONEABLE_TYPE) listOf(AsmTypes.OBJECT_TYPE) else argTypes0
+        return IrIntrinsicFunction.create(expression, newSignature, context, argTypes) { mv ->
+            mv.visitMethodInsn(opcode, "java/lang/Object", "clone", "()Ljava/lang/Object;", false)
+        }
     }
 }
