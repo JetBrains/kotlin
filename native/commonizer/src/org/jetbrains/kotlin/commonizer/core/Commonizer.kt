@@ -11,11 +11,6 @@ interface Commonizer<T, R> {
 }
 
 fun <T, R> Commonizer<T, R>.commonize(values: List<T>): R? {
-    /* Fast path: If commonizer supports StatelessCommonizer interface */
-    if (this is StatelessCommonizerAdapter) {
-        return commonize(values)
-    }
-
     values.forEach { value -> if (!commonizeWith(value)) return null }
     return result
 }

@@ -10,52 +10,49 @@ import org.jetbrains.kotlin.commonizer.cir.CirClassType
 import org.jetbrains.kotlin.commonizer.cir.CirTypeAliasType
 import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 
-internal class ClassOrTypeAliasTypeStatelessCommonizer(
+internal class ClassOrTypeAliasTypeAssociativeCommonizer(
     private val classifiers: CirKnownClassifiers
-) : StatelessCommonizer<CirClassOrTypeAliasType, CirClassOrTypeAliasType> {
+) : AssociativeCommonizer<CirClassOrTypeAliasType> {
 
-    override fun commonize(values: List<CirClassOrTypeAliasType>): CirClassOrTypeAliasType? {
-        if (values.isEmpty()) return null
-        values.singleOrNull()?.let { return it }
-
-        val classTypes = values.filterIsInstance<CirClassType>()
-        val typeAliasTypes = values.filterIsInstance<CirTypeAliasType>()
-        val expandedTypeAliasTypes = typeAliasTypes.map { it.expandedType() }
-
-        if (values.all { it is CirClassType }) {
-            return ClassTypeCommonizer(classifiers).commonize(classTypes)
+    override fun commonize(first: CirClassOrTypeAliasType, second: CirClassOrTypeAliasType): CirClassOrTypeAliasType? {
+        if (first is CirClassType && second is CirClassType) {
+            return ClassTypeCommonizer(classifiers).commonize(listOf(first, second))
         }
 
-        if (values.all { it is CirTypeAliasType }) {
+        if (first is CirTypeAliasType && second is CirTypeAliasType) {
             /*
             In case regular type-alias-type commonization fails, we try to expand all type-aliases and
             try our luck with commonizing those class types
              */
-            return TypeAliasTypeCommonizer(classifiers).commonize(typeAliasTypes)
-                ?: ClassTypeCommonizer(classifiers).commonize(expandedTypeAliasTypes)
+            return TypeAliasTypeCommonizer(classifiers).commonize(listOf(first, second))
+                ?: ClassTypeCommonizer(classifiers).commonize(listOf(first.expandedType(), second.expandedType()))
+        }
+
+        val classType = when {
+            first is CirClassType -> first
+            second is CirClassType -> second
+            else -> return null
+        }
+
+        val typeAliasType = when {
+            first is CirTypeAliasType -> first
+            second is CirTypeAliasType -> second
+            else -> return null
         }
 
         /*
-        There are type-alias types & class types enqueued for commonization.
-        We reduce all classes to a common representation and all type aliases to a common representation.
+        TypeAliasCommonizer will be able to figure out if the typealias will be represented as expect class in common.
+        If so, re-use this class type, otherwise: try to expand the typeAlias
          */
-        val commonizedClass = ClassTypeCommonizer(classifiers).commonize(classTypes) ?: return null
-        val commonizedTypeAlias = TypeAliasTypeCommonizer(classifiers).commonize(typeAliasTypes)
+        val typeAliasClassType = TypeAliasTypeCommonizer(classifiers).commonize(listOf(typeAliasType))?.expandedType()
+            ?: typeAliasType.expandedType()
 
-        if (commonizedTypeAlias != null) {
-            return ClassTypeCommonizer(classifiers).commonize(listOf(commonizedClass, commonizedTypeAlias.expandedType()))
-        }
-
-        /*
-        If type-alias type commonization failed:
-        Last attempt: Try to commonize all type-alias expansions with the commonized class
-         */
-        return ClassTypeCommonizer(classifiers).commonize(expandedTypeAliasTypes + commonizedClass)
+        return ClassTypeCommonizer(classifiers).commonize(listOf(classType, typeAliasClassType))
     }
 }
 
 internal class ClassOrTypeAliasTypeCommonizer(classifiers: CirKnownClassifiers) :
-    StatelessCommonizerAdapter<CirClassOrTypeAliasType, CirClassOrTypeAliasType>(ClassOrTypeAliasTypeStatelessCommonizer(classifiers))
+    AssociativeCommonizerAdapter<CirClassOrTypeAliasType>(ClassOrTypeAliasTypeAssociativeCommonizer(classifiers))
 
 internal tailrec fun CirClassOrTypeAliasType.expandedType(): CirClassType = when (this) {
     is CirClassType -> this
