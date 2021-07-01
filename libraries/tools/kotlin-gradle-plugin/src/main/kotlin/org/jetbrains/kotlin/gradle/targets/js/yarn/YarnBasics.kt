@@ -39,11 +39,17 @@ abstract class YarnBasics : NpmApi {
             val arguments = args +
                     if (logger.isDebugEnabled) "--verbose" else ""
 
+            val nodeExecutable = nodeJs.requireConfigured().nodeExecutable
+            exec.environment(
+                "PATH",
+                "$nodeExecutable${File.pathSeparator}${System.getenv("PATH")}"
+            )
+
             if (isStandalone) {
                 exec.executable = command
                 exec.args = arguments
             } else {
-                exec.executable = nodeJs.requireConfigured().nodeExecutable
+                exec.executable = nodeExecutable
                 exec.args = listOf(command) + arguments
             }
 
