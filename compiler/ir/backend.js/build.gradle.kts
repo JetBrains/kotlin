@@ -14,6 +14,7 @@ dependencies {
     compile(project(":compiler:ir.tree.persistent"))
     compile(project(":js:js.ast"))
     compile(project(":js:js.frontend"))
+    compile(project(":js:js.sourcemap"))
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 }
