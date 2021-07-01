@@ -282,15 +282,15 @@ open class KtLightClassForFacadeImpl constructor(
         }
 
         fun createForSyntheticFile(
-            manager: PsiManager,
             facadeClassFqName: FqName,
             file: KtFile
         ): KtLightClassForFacade {
+            val project = file.project
             // TODO: refactor, using cached value doesn't make sense for this case
-            val cachedValue = CachedValuesManager.getManager(manager.project).createCachedValue(
-                LightClassDataProviderForFileFacade.ByFile(manager.project, facadeClassFqName, file), false
+            val cachedValue = CachedValuesManager.getManager(project).createCachedValue(
+                LightClassDataProviderForFileFacade.ByFile(project, facadeClassFqName, file), false
             )
-            return KtLightClassForFacadeImpl(manager, facadeClassFqName, cachedValue, listOf(file))
+            return KtLightClassForFacadeImpl(PsiManager.getInstance(project), facadeClassFqName, cachedValue, listOf(file))
         }
     }
 }

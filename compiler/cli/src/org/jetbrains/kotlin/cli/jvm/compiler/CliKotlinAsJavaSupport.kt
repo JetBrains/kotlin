@@ -129,4 +129,7 @@ class CliKotlinAsJavaSupport(
             PsiSearchScopeUtil.isInScope(searchScope, it)
         }.orEmpty()
     }
+
+    override fun createFacadeForSyntheticFile(facadeClassFqName: FqName, file: KtFile): PsiClass =
+        error("Should not be called")
 }

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.scopes
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.idea.fir.low.level.api.createDeclarationProvider
@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.jvm.isJvm
 
 internal class KtFirPackageScope(
     override val fqName: FqName,
@@ -73,9 +74,23 @@ internal class KtFirPackageScope(
     }
 
     override fun getPackageSymbols(nameFilter: KtScopeNameFilter): Sequence<KtPackageSymbol> = withValidityAssertion {
-        packageProvider.getJavaAndKotlinSubPackageFqNames(fqName, targetPlatform)
-            .filter(nameFilter)
-            .map { builder.createPackageSymbol(fqName.child(it)) }
-            .asSequence()
+        sequence {
+            if (targetPlatform.isJvm()) {
+                val javaPackage = JavaPsiFacade.getInstance(project).findPackage(fqName.asString())
+                if (javaPackage != null) {
+                    for (psiPackage in javaPackage.getSubPackages(searchScope)) {
+                        val fqName = FqName(psiPackage.qualifiedName)
+                        if (nameFilter(fqName.shortName())) {
+                            yield(builder.createPackageSymbol(fqName))
+                        }
+                    }
+                }
+            }
+            packageProvider.getKotlinSubPackageFqNames(fqName).forEach {
+                if (nameFilter(it)) {
+                    yield(builder.createPackageSymbol(fqName.child(it)))
+                }
+            }
+        }
     }
 }

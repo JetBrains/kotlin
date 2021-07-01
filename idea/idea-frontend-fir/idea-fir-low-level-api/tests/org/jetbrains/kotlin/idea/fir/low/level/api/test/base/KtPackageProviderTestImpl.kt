@@ -9,7 +9,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.idea.fir.low.level.api.KtPackageProvider
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtFile
 
 internal class KtPackageProviderTestImpl(
@@ -22,7 +21,7 @@ internal class KtPackageProviderTestImpl(
         return filesInScope.any { it.packageFqName == packageFqName }
     }
 
-    override fun getJavaAndKotlinSubPackageFqNames(packageFqName: FqName, targetPlatform: TargetPlatform): Set<Name> {
+    override fun getKotlinSubPackageFqNames(packageFqName: FqName): Set<Name> {
         TODO("Not yet implemented")
     }
 }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.test.base
 
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.fir.low.level.api.DeclarationProvider
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -58,6 +59,17 @@ internal class DeclarationProviderTestImpl(
             .flatMap { it.declarations }
             .filterIsInstance<KtNamedFunction>()
             .mapNotNullTo(mutableSetOf()) { it.nameAsName }
+
+    override fun getFacadeFilesInPackage(packageFqName: FqName): Collection<KtFile> =
+        filesByPackage(packageFqName)
+            .filter { file -> file.hasTopLevelCallables() }
+            .toSet()
+
+    override fun findFilesForFacade(facadeFqName: FqName): Collection<KtFile> {
+        if (facadeFqName.shortNameOrSpecial().isSpecial) return emptyList()
+        return getFacadeFilesInPackage(facadeFqName.parent()) //TODO Not work correctly for classes with JvmPackageName
+            .filter { it.javaFileFacadeFqName == facadeFqName }
+    }
 
     override fun getTopLevelProperties(callableId: CallableId): Collection<KtProperty> =
         filesByPackage(callableId.packageName)

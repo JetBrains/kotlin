@@ -7,31 +7,33 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.compiler.based
 
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
-import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.ModuleSourceInfoBase
+import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
-import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
-import org.jetbrains.kotlin.fir.java.FirJavaElementFinder
 import org.jetbrains.kotlin.fir.session.FirModuleInfoBasedModuleData
+import org.jetbrains.kotlin.idea.asJava.IDEKotlinAsJavaFirSupport
 import org.jetbrains.kotlin.idea.fir.low.level.api.*
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.*
-import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSession
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.DiagnosticCheckerFilter
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveStateConfigurator
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.KotlinOutOfBlockModificationTrackerFactory
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirFile
+import org.jetbrains.kotlin.idea.fir.low.level.api.test.base.*
+import org.jetbrains.kotlin.idea.fir.low.level.api.test.base.AbstractLowLevelApiTest.Companion.reRegisterJavaElementFinder
 import org.jetbrains.kotlin.idea.fir.low.level.api.test.base.DeclarationProviderTestImpl
 import org.jetbrains.kotlin.idea.fir.low.level.api.test.base.KotlinOutOfBlockModificationTrackerFactoryTestImpl
 import org.jetbrains.kotlin.idea.fir.low.level.api.test.base.KtPackageProviderTestImpl
@@ -44,22 +46,21 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
-import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.test.TestConfiguration
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.testConfiguration
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
-import org.jetbrains.kotlin.test.frontend.fir.*
+import org.jetbrains.kotlin.test.frontend.fir.FirModuleInfoProvider
+import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
+import org.jetbrains.kotlin.test.frontend.fir.firModuleInfoProvider
+import org.jetbrains.kotlin.test.frontend.fir.getAnalyzerServices
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInfo
-import java.nio.file.Path
-import java.nio.file.Paths
-import kotlin.io.path.nameWithoutExtension
 
 abstract class AbstractCompilerBasedTest : AbstractKotlinCompilerTest() {
     private var _disposable: Disposable? = null
@@ -104,7 +105,8 @@ abstract class AbstractCompilerBasedTest : AbstractKotlinCompilerTest() {
         override fun analyze(module: TestModule): FirOutputArtifact {
             val project = testServices.compilerConfigurationProvider.getProject(module)
             val ktFiles = testServices.sourceFileProvider.getKtFilesForSourceFiles(module.files, project)
-            PsiElementFinder.EP.getPoint(project).unregisterExtension(JavaElementFinder::class.java)
+
+            reRegisterJavaElementFinder(project)
 
             val moduleInfo = TestModuleInfo(module)
             testServices.firModuleInfoProvider.registerModuleData(module, FirModuleInfoBasedModuleData(moduleInfo))
@@ -241,7 +243,6 @@ class FirModuleResolveStateConfiguratorForSingleModuleTestImpl(
     }
 
     override fun configureSourceSession(session: FirSession) {
-        PsiElementFinder.EP.getPoint(project).registerExtension(FirJavaElementFinder(session, project), parentDisposable)
     }
 }
 

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 
 abstract class KtPackageProvider {
     abstract fun isPackageExists(packageFqName: FqName): Boolean
-    abstract fun getJavaAndKotlinSubPackageFqNames(packageFqName: FqName, targetPlatform: TargetPlatform): Set<Name>
+    abstract fun getKotlinSubPackageFqNames(packageFqName: FqName): Set<Name>
 }
 
 abstract class KtPackageProviderFactory {
