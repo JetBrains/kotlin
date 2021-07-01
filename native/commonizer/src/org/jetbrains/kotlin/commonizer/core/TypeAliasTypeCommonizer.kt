@@ -63,7 +63,7 @@ internal class TypeAliasTypeCommonizer(private val classifiers: CirKnownClassifi
                 override fun build(typeAliasId: CirEntityId, arguments: List<CirTypeProjection>, isMarkedNullable: Boolean) =
                     CirClassType.createInterned(
                         classId = typeAliasId,
-                        outerType = null, // there can't be outer type // TODO NOW!!!
+                        outerType = null, // there can't be outer type
                         visibility = commonClass.visibility,
                         arguments = arguments,
                         isMarkedNullable = isMarkedNullable

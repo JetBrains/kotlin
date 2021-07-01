@@ -1,4 +1,6 @@
 const val property1 = 42
+expect val property2: Int
+expect val property3: Int
 expect val property4: Int
 
 const val property5: Byte = 42

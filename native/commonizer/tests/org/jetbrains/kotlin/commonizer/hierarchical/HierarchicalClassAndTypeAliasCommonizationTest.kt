@@ -557,7 +557,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
                 "a", """
                     typealias Proxy = Long
                     typealias X = Proxy
-                    val x: X
+                    const val x: X = 42L
                 """.trimIndent()
             )
 
@@ -565,7 +565,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
                 "b", """
                     typealias Proxy = Long
                     typealias X = Proxy
-                    val x: X
+                    const val x: X = 42L
                 """.trimIndent()
             )
 
@@ -573,7 +573,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
                 "c", """
                     typealias Proxy = Int
                     typealias X = Proxy
-                    val x: X
+                    const val x: X = 42
                 """.trimIndent()
             )
 
@@ -581,7 +581,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
                 "d", """
                     typealias Proxy = Short
                     typealias X = Proxy
-                    val x: X
+                    const val x: X = 42
                 """.trimIndent()
             )
         }
@@ -590,7 +590,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
             "(a, b)", """
                 typealias Proxy = Long
                 typealias X = Proxy
-                expect val x: X
+                const val x: X = 42L
             """.trimIndent()
         )
 
