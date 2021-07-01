@@ -61,13 +61,14 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
         fun collectSymbol(symbol: FirCallableSymbol<*>) {
             val fir = symbol.fir as? FirCallableMemberDeclaration ?: return
 
-            if (fir.delegatedWrapperData != null) {
+            val delegatedWrapperData = fir.delegatedWrapperData
+            if (delegatedWrapperData != null) {
                 val directOverriddenMembers = classScope.getDirectOverriddenMembers(
                     symbol,
                     unwrapIntersectionAndSubstitutionOverride = true
                 )
 
-                val delegatedTo = fir.delegatedWrapperData!!.wrapped.unwrapFakeOverrides()
+                val delegatedTo = delegatedWrapperData.wrapped.unwrapFakeOverrides()
 
                 if (symbol.fir.multipleDelegatesWithTheSameSignature == true) {
                     manyImplementationsDelegationSymbols.add(symbol)

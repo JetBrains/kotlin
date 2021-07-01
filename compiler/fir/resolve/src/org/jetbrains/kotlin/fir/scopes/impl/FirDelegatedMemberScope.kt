@@ -42,7 +42,7 @@ class FirDelegatedMemberScope(
         val result = mutableListOf<FirNamedFunctionSymbol>()
 
         for (delegateField in delegateFields) {
-            processFunctionsFromSpecificField(delegateField, name, result)
+            collectFunctionsFromSpecificField(delegateField, name, result)
         }
 
         result.forEach(processor)
@@ -53,7 +53,7 @@ class FirDelegatedMemberScope(
         return delegateField.returnTypeRef.coneType.scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing)
     }
 
-    private fun processFunctionsFromSpecificField(
+    private fun collectFunctionsFromSpecificField(
         delegateField: FirField,
         name: Name,
         result: MutableList<FirNamedFunctionSymbol>
@@ -109,7 +109,7 @@ class FirDelegatedMemberScope(
 
         val result = mutableListOf<FirPropertySymbol>()
         for (delegateField in delegateFields) {
-            processPropertiesFromSpecificField(delegateField, name, result)
+            collectPropertiesFromSpecificField(delegateField, name, result)
         }
 
         result.forEach(processor)
@@ -123,7 +123,7 @@ class FirDelegatedMemberScope(
         declaredMemberScope.processDeclaredConstructors(processor)
     }
 
-    private fun processPropertiesFromSpecificField(
+    private fun collectPropertiesFromSpecificField(
         delegateField: FirField,
         name: Name,
         result: MutableList<FirPropertySymbol>
