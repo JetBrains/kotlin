@@ -35,7 +35,8 @@ interface NpmApi {
         services: ServiceRegistry,
         logger: Logger,
         nodeJs: NodeJsRootExtension,
-        yarnHome: File,
+        command: String,
+        isStandalone: Boolean,
         npmProjects: Collection<KotlinCompilationNpmResolution>,
         cliArgs: List<String>
     )

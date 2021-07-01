@@ -71,7 +71,8 @@ class YarnWorkspaces : YarnBasics() {
         services: ServiceRegistry,
         logger: Logger,
         nodeJs: NodeJsRootExtension,
-        yarnHome: File,
+        command: String,
+        isStandalone: Boolean,
         npmProjects: Collection<KotlinCompilationNpmResolution>,
         cliArgs: List<String>
     ) {
@@ -81,7 +82,8 @@ class YarnWorkspaces : YarnBasics() {
             services,
             logger,
             nodeJs,
-            yarnHome,
+            command,
+            isStandalone,
             nodeJsWorldDir,
             NpmApi.resolveOperationDescription("yarn"),
             cliArgs

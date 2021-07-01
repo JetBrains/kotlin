@@ -11,6 +11,7 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.internal.ConfigurationPhaseAware
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlatform
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.implementing
@@ -33,6 +34,10 @@ open class YarnRootExtension(
 
     var downloadBaseUrl by Property("https://github.com/yarnpkg/yarn/releases/download")
     var version by Property("1.22.10")
+
+    var command by Property("yarn")
+
+    var download by Property(true)
 
     val yarnSetupTaskProvider: TaskProvider<YarnSetupTask>
         get() = project.tasks
@@ -77,16 +82,33 @@ open class YarnRootExtension(
     override fun finalizeConfiguration(): YarnEnv {
         val cleanableStore = CleanableStore[installationDir.path]
 
+        val isWindows = NodeJsPlatform.name == NodeJsPlatform.WIN
+
+        val home = cleanableStore["yarn-v$version"].use()
+
+        fun getExecutable(command: String, customCommand: String, windowsExtension: String): String {
+            val finalCommand = if (isWindows && customCommand == command) "$command.$windowsExtension" else customCommand
+            return if (download)
+                home
+                    .resolve("bin/yarn.js").absolutePath
+            else
+                finalCommand
+        }
         return YarnEnv(
             downloadUrl = downloadBaseUrl,
             cleanableStore = cleanableStore,
-            home = cleanableStore["yarn-v$version"].use(),
+            home = home,
+            executable = getExecutable("yarn", command, "cmd"),
+            standalone = !download,
             ivyDependency = "com.yarnpkg:yarn:$version@tar.gz"
         )
     }
 
     internal fun executeSetup() {
         NodeJsRootPlugin.apply(project).executeSetup()
+
+        if (!download) return
+
         val yarnSetupTask = yarnSetupTaskProvider.get()
         yarnSetupTask.actions.forEach {
             it.execute(yarnSetupTask)

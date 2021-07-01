@@ -12,5 +12,7 @@ data class YarnEnv(
     val downloadUrl: String,
     val cleanableStore: CleanableStore,
     val home: File,
-    val ivyDependency: String
+    val executable: String,
+    val ivyDependency: String,
+    val standalone: Boolean
 )

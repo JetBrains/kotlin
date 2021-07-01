@@ -6,12 +6,10 @@
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.Project
-import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.logging.Logger
 import org.gradle.internal.service.ServiceRegistry
 import org.jetbrains.kotlin.gradle.internal.execWithProgress
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency.Scope.PEER
@@ -31,16 +29,24 @@ abstract class YarnBasics : NpmApi {
         services: ServiceRegistry,
         logger: Logger,
         nodeJs: NodeJsRootExtension,
-        yarnHome: File,
+        command: String,
+        isStandalone: Boolean,
         dir: File,
         description: String,
         args: List<String>
     ) {
         services.execWithProgress(description) { exec ->
-            exec.executable = nodeJs.requireConfigured().nodeExecutable
-            exec.args = listOf(yarnHome.resolve("bin/yarn.js").absolutePath) +
-                    args +
+            val arguments = args +
                     if (logger.isDebugEnabled) "--verbose" else ""
+
+            if (isStandalone) {
+                exec.executable = command
+                exec.args = arguments
+            } else {
+                exec.executable = nodeJs.requireConfigured().nodeExecutable
+                exec.args = listOf(command) + arguments
+            }
+
             exec.workingDir = dir
         }
 

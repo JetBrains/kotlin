@@ -230,11 +230,13 @@ internal class KotlinRootNpmResolver internal constructor(
                     .values
                     .flatMap { it.npmProjects }
 
+                val yarnConfigured = yarn.requireConfigured()
                 nodeJs.packageManager.resolveRootProject(
                     services,
                     logger,
                     nodeJs,
-                    yarn.requireConfigured().home,
+                    yarnConfigured.executable,
+                    yarnConfigured.standalone,
                     allNpmPackages,
                     args
                 )
