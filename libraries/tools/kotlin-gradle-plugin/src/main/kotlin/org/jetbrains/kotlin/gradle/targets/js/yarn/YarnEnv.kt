@@ -11,5 +11,6 @@ import java.io.File
 data class YarnEnv(
     val downloadUrl: String,
     val cleanableStore: CleanableStore,
-    val home: File
+    val home: File,
+    val ivyDependency: String
 )

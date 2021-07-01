@@ -5,17 +5,20 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
-import de.undercouch.gradle.tasks.download.DownloadAction
 import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.CacheableTask
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.*
+import org.jetbrains.kotlin.gradle.logging.kotlinInfo
+import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
+import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import java.io.File
+import java.net.URI
 
 @CacheableTask
 open class YarnSetupTask : DefaultTask() {
+    @Transient
     private val settings = project.yarn
     private val env by lazy { settings.requireConfigured() }
 
@@ -32,19 +35,46 @@ open class YarnSetupTask : DefaultTask() {
         description = "Download and install a local yarn version"
     }
 
-    @TaskAction
-    fun setup() {
-        val dir = temporaryDir
-        val tar = download(dir)
-        extract(tar, destination)
+    val ivyDependency: String
+        @Input get() = env.ivyDependency
+
+    @Transient
+    @get:Internal
+    internal lateinit var configuration: Provider<Configuration>
+
+    private val _yarnDist by lazy {
+        configuration.get().files.single()
     }
 
-    private fun download(tar: File): File {
-        val action = DownloadAction(project)
-        action.src(downloadUrl)
-        action.dest(tar)
-        action.execute()
-        return action.outputFiles.singleOrNull() ?: error("Cannot get downloaded file $downloadUrl")
+    @Suppress("unused") // as it called by Gradle before task execution and used to resolve artifact
+    @get:Classpath
+    val yarnDist: File
+        get() {
+            val repo = project.repositories.ivy { repo ->
+                repo.name = "Yarn Distributions at ${downloadUrl}"
+                repo.url = URI(downloadUrl)
+                repo.patternLayout {
+                    it.artifact("v[revision]/[artifact](-v[revision]).[ext]")
+                }
+                repo.metadataSources { it.artifact() }
+                repo.content { it.includeModule("com.yarnpkg", "yarn") }
+            }
+            val startDownloadTime = System.currentTimeMillis()
+            val dist = _yarnDist
+            val downloadDuration = System.currentTimeMillis() - startDownloadTime
+            if (downloadDuration > 0) {
+                KotlinBuildStatsService.getInstance()
+                    ?.report(NumericalMetrics.ARTIFACTS_DOWNLOAD_SPEED, dist.length() * 1000 / downloadDuration)
+            }
+            project.repositories.remove(repo)
+            return dist
+        }
+
+    @TaskAction
+    fun setup() {
+        logger.kotlinInfo("Using node distribution from '$yarnDist'")
+
+        extract(yarnDist, destination.parentFile) // parent because archive contains name already
     }
 
     private fun extract(archive: File, destination: File) {

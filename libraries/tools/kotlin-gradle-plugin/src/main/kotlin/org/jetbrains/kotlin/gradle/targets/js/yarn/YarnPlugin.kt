@@ -32,6 +32,11 @@ open class YarnPlugin : Plugin<Project> {
 
         registerTask<YarnSetupTask>(YarnSetupTask.NAME) {
             it.dependsOn(nodeJs.nodeJsSetupTaskProvider)
+
+            it.configuration = provider {
+                this.project.configurations.detachedConfiguration(this.project.dependencies.create(it.ivyDependency))
+                    .also { conf -> conf.isTransitive = false }
+            }
         }
 
         val rootClean = project.rootProject.tasks.named(BasePlugin.CLEAN_TASK_NAME)

@@ -76,9 +76,10 @@ open class YarnRootExtension(
         val cleanableStore = CleanableStore[installationDir.path]
 
         return YarnEnv(
-            downloadUrl = "$downloadBaseUrl/v$version/yarn-v$version.tar.gz",
+            downloadUrl = downloadBaseUrl,
             cleanableStore = cleanableStore,
-            home = cleanableStore["yarn-v$version"].use()
+            home = cleanableStore["yarn-v$version"].use(),
+            ivyDependency = "com.yarnpkg:yarn:$version@tar.gz"
         )
     }
 
