@@ -18,8 +18,10 @@ abstract class NodeJsSetupTask : DefaultTask() {
     @Transient
     private val settings = NodeJsRootPlugin.apply(project.rootProject)
     private val env by lazy { settings.requireConfigured() }
-    private val archiveOperations = ArchiveOperationsCompat(project)
+
     private val shouldDownload = settings.download
+
+    private val archiveOperations = ArchiveOperationsCompat(project)
 
     @get:Inject
     internal open val fs: FileSystemOperations
