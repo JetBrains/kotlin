@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 
 class ExtensionReceiverCommonizer(classifiers: CirKnownClassifiers) :
     AbstractNullableCommonizer<CirExtensionReceiver, CirExtensionReceiver, CirType, CirType>(
-        wrappedCommonizerFactory = { TypeCommonizer(classifiers) },
+        wrappedCommonizerFactory = { TypeCommonizer(classifiers).asCommonizer() },
         extractor = { it.type },
         builder = { receiverType ->
             CirExtensionReceiver.create(

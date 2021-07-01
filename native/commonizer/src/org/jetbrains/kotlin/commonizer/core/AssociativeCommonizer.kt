@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.commonizer.core
 
-internal interface AssociativeCommonizer<T> {
+interface AssociativeCommonizer<T> {
     fun commonize(first: T, second: T): T?
 }
 
-internal open class AssociativeCommonizerAdapter<T : Any>(
+fun <T : Any> AssociativeCommonizer<T>.asCommonizer(): AssociativeCommonizerAdapter<T> = AssociativeCommonizerAdapter(this)
+
+open class AssociativeCommonizerAdapter<T : Any>(
     private val commonizer: AssociativeCommonizer<T>
 ) : AbstractStandardCommonizer<T, T>() {
 

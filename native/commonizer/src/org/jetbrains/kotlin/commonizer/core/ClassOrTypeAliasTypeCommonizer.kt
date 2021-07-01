@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.commonizer.cir.CirClassType
 import org.jetbrains.kotlin.commonizer.cir.CirTypeAliasType
 import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 
-internal class ClassOrTypeAliasTypeAssociativeCommonizer(
+internal class ClassOrTypeAliasTypeCommonizer(
     private val classifiers: CirKnownClassifiers
 ) : AssociativeCommonizer<CirClassOrTypeAliasType> {
 
@@ -50,9 +50,6 @@ internal class ClassOrTypeAliasTypeAssociativeCommonizer(
         return ClassTypeCommonizer(classifiers).commonize(listOf(classType, typeAliasClassType))
     }
 }
-
-internal class ClassOrTypeAliasTypeCommonizer(classifiers: CirKnownClassifiers) :
-    AssociativeCommonizerAdapter<CirClassOrTypeAliasType>(ClassOrTypeAliasTypeAssociativeCommonizer(classifiers))
 
 internal tailrec fun CirClassOrTypeAliasType.expandedType(): CirClassType = when (this) {
     is CirClassType -> this

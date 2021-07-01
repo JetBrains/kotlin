@@ -16,7 +16,7 @@ class TypeArgumentCommonizer(
 ) : AbstractStandardCommonizer<CirTypeProjection, CirTypeProjection>() {
     private var isStar = false
     private lateinit var projectionKind: Variance
-    private val type = TypeCommonizer(classifiers)
+    private val type = TypeCommonizer(classifiers).asCommonizer()
 
     override fun commonizationResult() = if (isStar) CirStarTypeProjection else CirRegularTypeProjection(
         projectionKind = projectionKind,
