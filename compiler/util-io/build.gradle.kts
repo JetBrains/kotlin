@@ -6,6 +6,7 @@ plugins {
 dependencies {
     implementation(kotlinStdlib())
     testImplementation(commonDep("junit:junit"))
+    testImplementation(kotlin("test"))
 }
 
 sourceSets {
