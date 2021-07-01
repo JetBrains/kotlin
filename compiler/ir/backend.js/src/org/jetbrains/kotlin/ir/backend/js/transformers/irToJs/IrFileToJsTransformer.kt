@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.js.backend.ast.JsGlobalBlock
 
 class IrFileToJsTransformer : BaseIrElementToJsNodeTransformer<JsBlock, JsGenerationContext> {
     override fun visitFile(declaration: IrFile, data: JsGenerationContext): JsBlock {
-        val fileContext = data.newDeclaration()
+        val fileContext = data.newFile(declaration)
         val block = JsGlobalBlock()
 
         declaration.declarations.forEach {
