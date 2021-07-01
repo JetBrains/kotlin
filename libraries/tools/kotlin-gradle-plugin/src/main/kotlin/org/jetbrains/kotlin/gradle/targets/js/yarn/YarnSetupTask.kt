@@ -12,6 +12,8 @@ import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.utils.ArchiveOperationsCompat
+import org.jetbrains.kotlin.gradle.utils.FileSystemOperationsCompat
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import java.io.File
 import java.net.URI
@@ -21,6 +23,8 @@ open class YarnSetupTask : DefaultTask() {
     @Transient
     private val settings = project.yarn
     private val env by lazy { settings.requireConfigured() }
+    private val fileSystemOperations = FileSystemOperationsCompat(project)
+    private val archiveOperations = ArchiveOperationsCompat(project)
 
     @Suppress("MemberVisibilityCanBePrivate")
     val downloadUrl
@@ -48,27 +52,26 @@ open class YarnSetupTask : DefaultTask() {
 
     @Suppress("unused") // as it called by Gradle before task execution and used to resolve artifact
     @get:Classpath
-    val yarnDist: File
-        get() {
-            val repo = project.repositories.ivy { repo ->
-                repo.name = "Yarn Distributions at ${downloadUrl}"
-                repo.url = URI(downloadUrl)
-                repo.patternLayout {
-                    it.artifact("v[revision]/[artifact](-v[revision]).[ext]")
-                }
-                repo.metadataSources { it.artifact() }
-                repo.content { it.includeModule("com.yarnpkg", "yarn") }
+    val yarnDist: File by lazy {
+        val repo = project.repositories.ivy { repo ->
+            repo.name = "Yarn Distributions at ${downloadUrl}"
+            repo.url = URI(downloadUrl)
+            repo.patternLayout {
+                it.artifact("v[revision]/[artifact](-v[revision]).[ext]")
             }
-            val startDownloadTime = System.currentTimeMillis()
-            val dist = _yarnDist
-            val downloadDuration = System.currentTimeMillis() - startDownloadTime
-            if (downloadDuration > 0) {
-                KotlinBuildStatsService.getInstance()
-                    ?.report(NumericalMetrics.ARTIFACTS_DOWNLOAD_SPEED, dist.length() * 1000 / downloadDuration)
-            }
-            project.repositories.remove(repo)
-            return dist
+            repo.metadataSources { it.artifact() }
+            repo.content { it.includeModule("com.yarnpkg", "yarn") }
         }
+        val startDownloadTime = System.currentTimeMillis()
+        val dist = _yarnDist
+        val downloadDuration = System.currentTimeMillis() - startDownloadTime
+        if (downloadDuration > 0) {
+            KotlinBuildStatsService.getInstance()
+                ?.report(NumericalMetrics.ARTIFACTS_DOWNLOAD_SPEED, dist.length() * 1000 / downloadDuration)
+        }
+        project.repositories.remove(repo)
+        dist
+    }
 
     @TaskAction
     fun setup() {
@@ -79,8 +82,8 @@ open class YarnSetupTask : DefaultTask() {
 
     private fun extract(archive: File, destination: File) {
         val dirInTar = archive.name.removeSuffix(".tar.gz")
-        project.copy {
-            it.from(project.tarTree(archive))
+        fileSystemOperations.copy {
+            it.from(archiveOperations.tarTree(archive))
             it.into(destination)
             it.includeEmptyDirs = false
             it.eachFile { fileCopy ->
