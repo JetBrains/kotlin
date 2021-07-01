@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -574,9 +574,8 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false, privat
     override fun visitSpreadElement(spread: IrSpreadElement, data: Nothing?): String =
         "SPREAD_ELEMENT"
 
-    // TODO do we need a special support for IrReturnableBlock here?
     override fun visitBlock(expression: IrBlock, data: Nothing?): String =
-        "BLOCK type=${expression.type.render()} origin=${expression.origin}"
+        "${if (expression is IrReturnableBlock) "RETURNABLE_" else ""}BLOCK type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitComposite(expression: IrComposite, data: Nothing?): String =
         "COMPOSITE type=${expression.type.render()} origin=${expression.origin}"
