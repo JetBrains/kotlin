@@ -4,7 +4,16 @@
  */
 
 #include <cstdarg>
+
 #include "Porting.h"
+#include "StackTrace.hpp"
+
+namespace {
+
+// TODO: Enable stacktraces for asserts when stacktrace printing is more mature.
+inline constexpr bool kEnableStacktraces = false;
+
+} // namespace
 
 RUNTIME_NORETURN void RuntimeAssertFailed(const char* location, const char* format, ...) {
     char buf[1024];
@@ -27,7 +36,9 @@ RUNTIME_NORETURN void RuntimeAssertFailed(const char* location, const char* form
 
     konan::consoleErrorUtf8(buf, konan::strnlen(buf, sizeof(buf)));
     konan::consoleErrorf("\n");
-    // TODO: Write the stacktrace.
+    if constexpr (kEnableStacktraces) {
+        kotlin::PrintStackTraceStderr();
+    }
     konan::abort();
 }
 

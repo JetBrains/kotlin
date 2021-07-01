@@ -22,7 +22,7 @@
 #include <type_traits>
 
 #include "KAssert.h"
-#include "Exceptions.h"
+#include "StackTrace.hpp"
 #include "Memory.h"
 #include "Natives.h"
 #include "Types.h"
@@ -41,7 +41,7 @@ KInt Kotlin_Any_hashCode(KConstRef thiz) {
 }
 
 OBJ_GETTER(Kotlin_getStackTraceStrings, KConstRef stackTrace) {
-  RETURN_RESULT_OF(GetStackTraceStrings, stackTrace);
+    RETURN_RESULT_OF(kotlin::GetStackTraceStrings, stackTrace);
 }
 
 // TODO: consider handling it with compiler magic instead.
