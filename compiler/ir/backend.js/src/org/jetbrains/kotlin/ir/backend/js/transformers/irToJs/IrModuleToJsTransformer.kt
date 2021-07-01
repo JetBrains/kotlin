@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
-import org.jetbrains.kotlin.ir.backend.js.CompilerResult
 import org.jetbrains.kotlin.ir.backend.js.CompilationOutputs
+import org.jetbrains.kotlin.ir.backend.js.CompilerResult
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.eliminateDeadDeclarations
 import org.jetbrains.kotlin.ir.backend.js.export.ExportModelGenerator
@@ -19,9 +19,17 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.isInterface
+import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
+import org.jetbrains.kotlin.js.backend.NoOpSourceLocationConsumer
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
+import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
+import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
+import org.jetbrains.kotlin.js.sourceMap.SourceMapBuilderConsumer
+import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.jetbrains.kotlin.utils.DFS
+import java.io.File
 
 class IrModuleToJsTransformer(
     private val backendContext: JsIrBackendContext,
@@ -104,16 +112,14 @@ class IrModuleToJsTransformer(
                 )
             }.reversed()
 
-            return CompilationOutputs(mainModule, dependencies)
+            return CompilationOutputs(mainModule.jsCode, mainModule.sourceMap, dependencies)
         } else {
-            return CompilationOutputs(
-                generateWrappedModuleBody2(
-                    modules,
-                    emptyList(),
-                    exportedModule,
-                    namer,
-                    EmptyCrossModuleReferenceInfo
-                )
+            return generateWrappedModuleBody2(
+                modules,
+                emptyList(),
+                exportedModule,
+                namer,
+                EmptyCrossModuleReferenceInfo
             )
         }
     }
@@ -124,7 +130,7 @@ class IrModuleToJsTransformer(
         exportedModule: ExportedModule,
         namer: NameTables,
         refInfo: CrossModuleReferenceInfo
-    ): String {
+    ): CompilationOutputs {
 
         val nameGenerator = refInfo.withReferenceTracking(
             IrNamerImpl(newNameTables = namer, backendContext),
@@ -188,7 +194,41 @@ class IrModuleToJsTransformer(
             )
         }
 
-        return program.toString()
+        val jsCode = TextOutputImpl()
+
+        val configuration = backendContext.configuration
+        val sourceMapPrefix = configuration.get(JSConfigurationKeys.SOURCE_MAP_PREFIX, "")
+        val sourceMapsEnabled = configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP)
+
+        val sourceMapBuilder = SourceMap3Builder(null, jsCode, sourceMapPrefix)
+        val sourceMapBuilderConsumer =
+            if (sourceMapsEnabled) {
+                val sourceRoots = configuration.get(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, emptyList<String>()).map(::File)
+                val generateRelativePathsInSourceMap = sourceMapPrefix.isEmpty() && sourceRoots.isEmpty()
+                val outputDir = if (generateRelativePathsInSourceMap) configuration.get(JSConfigurationKeys.OUTPUT_DIR) else null
+
+                val pathResolver = SourceFilePathResolver(sourceRoots, outputDir)
+
+                val sourceMapContentEmbedding =
+                    configuration.get(JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES, SourceMapSourceEmbedding.INLINING)
+
+                SourceMapBuilderConsumer(
+                    File("."),
+                    sourceMapBuilder,
+                    pathResolver,
+                    sourceMapContentEmbedding == SourceMapSourceEmbedding.ALWAYS,
+                    sourceMapContentEmbedding != SourceMapSourceEmbedding.NEVER
+                )
+            } else {
+                null
+            }
+
+        program.accept(JsToStringGenerationVisitor(jsCode, sourceMapBuilderConsumer ?: NoOpSourceLocationConsumer))
+
+        return CompilationOutputs(
+            jsCode.toString(),
+            if(sourceMapsEnabled) sourceMapBuilder.build() else null
+        )
     }
 
     private fun IrModuleFragment.externalModuleName(): String {
