@@ -10,16 +10,18 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 enum class JdkMajorVersion(
     val majorVersion: Int,
+    val targetName: String = majorVersion.toString(),
+    val overrideMajorVersion: Int? = null,
     private val mandatory: Boolean = true
 ) {
-    JDK_1_6(6),
-    JDK_1_7(7),
-    JDK_1_8(8),
+    JDK_1_6(6, targetName = "1.6", overrideMajorVersion = 8),
+    JDK_1_7(7, targetName = "1.7", overrideMajorVersion = 8),
+    JDK_1_8(8, targetName = "1.8"),
     JDK_9(9),
-    JDK_10(10, false),
-    JDK_11(11, false),
-    JDK_15(15, false),
-    JDK_16(16, false);
+    JDK_10(10, mandatory = false),
+    JDK_11(11, mandatory = false),
+    JDK_15(15, mandatory = false),
+    JDK_16(16, mandatory = false);
 
     fun isMandatory(): Boolean = mandatory
 }
@@ -34,9 +36,19 @@ fun Project.configureJvmToolchain(
     plugins.withId("org.jetbrains.kotlin.jvm") {
         val kotlinExtension = extensions.getByType<KotlinTopLevelExtension>()
 
-        kotlinExtension.jvmToolchain {
-            (this as JavaToolchainSpec).languageVersion
-                .set(JavaLanguageVersion.of(jdkVersion.majorVersion))
+        if (project.kotlinBuildProperties.isObsoleteJdkOverrideEnabled &&
+            jdkVersion.overrideMajorVersion != null
+        ) {
+            kotlinExtension.jvmToolchain {
+                (this as JavaToolchainSpec).languageVersion
+                    .set(JavaLanguageVersion.of(jdkVersion.overrideMajorVersion))
+            }
+            updateJvmTarget(jdkVersion.targetName)
+        } else {
+            kotlinExtension.jvmToolchain {
+                (this as JavaToolchainSpec).languageVersion
+                    .set(JavaLanguageVersion.of(jdkVersion.majorVersion))
+            }
         }
 
         tasks

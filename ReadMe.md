@@ -56,6 +56,10 @@ Alternatively, it is still possible to only provide required JDKs via environmen
 from environmental variables - disable Gradle toolchain auto-detection by passing `-Porg.gradle.java.installations.auto-detect=false` option
 (or put it into `$GRADLE_USER_HOME/gradle.properties`).
 
+For local development, if you're not working on bytecode generation or the standard library, it's OK to avoid installing JDK 1.6 and JDK 1.7.
+Add `kotlin.build.isObsoleteJdkOverrideEnabled=true` to the `local.properties` file, so build will only use JDK 1.8+. Note, that in this
+case, build will have Gradle remote build cache misses for some tasks. 
+
 Note: The JDK 6 for MacOS is not available on Oracle's site. You can install it by
 
 ```bash
