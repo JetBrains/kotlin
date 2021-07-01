@@ -67,9 +67,8 @@ abstract class NodeJsSetupTask : DefaultTask() {
     }
 
     init {
-        @Suppress("LeakingThis")
         onlyIf {
-            shouldDownload && !File(env.nodeExecutable).isFile
+            shouldDownload
         }
     }
 

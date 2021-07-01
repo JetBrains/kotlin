@@ -30,7 +30,7 @@ open class YarnPlugin : Plugin<Project> {
         val yarnRootExtension = this.extensions.create(YarnRootExtension.YARN, YarnRootExtension::class.java, this)
         val nodeJs = NodeJsRootPlugin.apply(this)
 
-        registerTask<YarnSetupTask>(YarnSetupTask.NAME) {
+        val setupTask = registerTask<YarnSetupTask>(YarnSetupTask.NAME) {
             it.dependsOn(nodeJs.nodeJsSetupTaskProvider)
 
             it.configuration = provider {
@@ -50,6 +50,7 @@ open class YarnPlugin : Plugin<Project> {
 
         tasks.named(KotlinNpmInstallTask.NAME).configure {
             it.dependsOn(rootPackageJson)
+            it.dependsOn(setupTask)
         }
 
         tasks.register("yarn" + CleanDataTask.NAME_SUFFIX, CleanDataTask::class.java) {

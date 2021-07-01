@@ -34,8 +34,10 @@ open class YarnRootExtension(
     var downloadBaseUrl by Property("https://github.com/yarnpkg/yarn/releases/download")
     var version by Property("1.22.10")
 
-    val yarnSetupTask: YarnSetupTask
-        get() = project.tasks.getByName(YarnSetupTask.NAME) as YarnSetupTask
+    val yarnSetupTaskProvider: TaskProvider<YarnSetupTask>
+        get() = project.tasks
+            .withType(YarnSetupTask::class.java)
+            .named(YarnSetupTask.NAME)
 
     val rootPackageJsonTaskProvider: TaskProvider<RootPackageJsonTask>
         get() = project.tasks
@@ -85,9 +87,9 @@ open class YarnRootExtension(
 
     internal fun executeSetup() {
         NodeJsRootPlugin.apply(project).executeSetup()
-
-        if (!finalizeConfiguration().home.isDirectory) {
-            yarnSetupTask.setup()
+        val yarnSetupTask = yarnSetupTaskProvider.get()
+        yarnSetupTask.actions.forEach {
+            it.execute(yarnSetupTask)
         }
     }
 

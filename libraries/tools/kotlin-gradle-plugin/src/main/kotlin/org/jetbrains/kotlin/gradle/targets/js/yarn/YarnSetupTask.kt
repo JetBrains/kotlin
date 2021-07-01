@@ -72,7 +72,7 @@ open class YarnSetupTask : DefaultTask() {
 
     @TaskAction
     fun setup() {
-        logger.kotlinInfo("Using node distribution from '$yarnDist'")
+        logger.kotlinInfo("Using yarn distribution from '$yarnDist'")
 
         extract(yarnDist, destination.parentFile) // parent because archive contains name already
     }
