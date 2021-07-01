@@ -32,7 +32,11 @@ class CompilerResult(
     val tsDefinitions: String? = null
 )
 
-class CompilationOutputs(val jsCode: String, val dependencies: Iterable<Pair<String, String>> = emptyList())
+class CompilationOutputs(
+    val jsCode: String,
+    val sourceMap: String? = null,
+    val dependencies: Iterable<Pair<String, CompilationOutputs>> = emptyList()
+)
 
 fun compile(
     project: Project,

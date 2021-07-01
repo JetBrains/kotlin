@@ -62,7 +62,7 @@ public class SourceMap3Builder implements SourceMapBuilder {
         @SuppressWarnings("unchecked")
         JsonObject json = new JsonObject();
         json.getProperties().put("version", new JsonNumber(3));
-        json.getProperties().put("file", new JsonString(generatedFile.getName()));
+        if (generatedFile != null) json.getProperties().put("file", new JsonString(generatedFile.getName()));
         appendSources(json);
         appendSourcesContent(json);
         json.getProperties().put("names", new JsonArray());

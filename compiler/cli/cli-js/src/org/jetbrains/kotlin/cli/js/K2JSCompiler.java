@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -516,7 +516,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     }
 
     @NotNull
-    private static String calculateSourceMapSourceRoot(
+    static String calculateSourceMapSourceRoot(
             @NotNull MessageCollector messageCollector,
             @NotNull K2JSCompilerArguments arguments
     ) {
