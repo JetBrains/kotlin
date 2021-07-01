@@ -171,15 +171,18 @@ class IncrementalJsCompilerRunner(
         args: K2JSCompilerArguments,
         caches: IncrementalJsCachesManager,
         services: Services,
-        messageCollector: MessageCollector
+        messageCollector: MessageCollector,
+        reporter: BuildReporter
     ): ExitCode {
         val freeArgsBackup = args.freeArgs
 
+        val compiler = K2JSCompiler()
         return try {
             args.freeArgs += sourcesToCompile.map { it.absolutePath }
-            K2JSCompiler().exec(messageCollector, services, args)
+            compiler.exec(messageCollector, services, args)
         } finally {
             args.freeArgs = freeArgsBackup
+            reporter.reportCompilerPerformance(compiler.defaultPerformanceManager)
         }
     }
 

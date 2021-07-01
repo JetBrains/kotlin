@@ -377,15 +377,19 @@ class IncrementalJvmCompilerRunner(
         args: K2JVMCompilerArguments,
         caches: IncrementalJvmCachesManager,
         services: Services,
-        messageCollector: MessageCollector
+        messageCollector: MessageCollector,
+        reporter: BuildReporter
     ): ExitCode {
         val compiler = K2JVMCompiler()
         val freeArgsBackup = args.freeArgs.toList()
-        args.freeArgs += sourcesToCompile.map { it.absolutePath }
-        args.allowNoSourceFiles = true
-        val exitCode = compiler.exec(messageCollector, services, args)
-        args.freeArgs = freeArgsBackup
-        return exitCode
+        try {
+            args.freeArgs += sourcesToCompile.map { it.absolutePath }
+            args.allowNoSourceFiles = true
+            return compiler.exec(messageCollector, services, args)
+        } finally {
+            args.freeArgs = freeArgsBackup
+            reporter.reportCompilerPerformance(compiler.defaultPerformanceManager)
+        }
     }
 }
 

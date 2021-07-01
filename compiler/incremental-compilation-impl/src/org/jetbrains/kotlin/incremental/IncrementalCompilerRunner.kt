@@ -244,8 +244,19 @@ abstract class IncrementalCompilerRunner<
         args: Args,
         caches: CacheManager,
         services: Services,
-        messageCollector: MessageCollector
+        messageCollector: MessageCollector,
+        reporter: BuildReporter
     ): ExitCode
+
+    fun BuildReporter.reportCompilerPerformance(performanceManager: CommonCompilerPerformanceManager) {
+        val relevantMeasurements = performanceManager.getMeasurementResults().filter {
+            it is CompilerInitializationMeasurement || it is CodeAnalysisMeasurement || it is CodeGenerationMeasurement || it is PerformanceCounterMeasurement
+        }
+
+        report {
+            "Compiler perf stats:\n" + relevantMeasurements.joinToString(separator = "\n") { "  ${it.render()}" }
+        }
+    }
 
     private fun compileIncrementally(
         args: Args,
@@ -301,7 +312,7 @@ abstract class IncrementalCompilerRunner<
             val messageCollectorAdapter = MessageCollectorToOutputItemsCollectorAdapter(bufferingMessageCollector, outputItemsCollector)
 
             exitCode = reporter.measure(buildTimeMode) {
-                runCompiler(sourcesToCompile.toSet(), args, caches, services, messageCollectorAdapter)
+                runCompiler(sourcesToCompile.toSet(), args, caches, services, messageCollectorAdapter, reporter)
             }
 
             val generatedFiles = outputItemsCollector.outputs.map(SimpleOutputItem::toGeneratedFile)
@@ -318,16 +329,6 @@ abstract class IncrementalCompilerRunner<
 
             reporter.reportCompileIteration(compilationMode is CompilationMode.Incremental, sourcesToCompile, exitCode)
             bufferingMessageCollector.flush(originalMessageCollector)
-
-            services[CommonCompilerPerformanceManager::class.java]?.apply {
-                val relevantMeasurements = this.getMeasurementResults().filter {
-                    it is CompilerInitializationMeasurement || it is CodeAnalysisMeasurement || it is CodeGenerationMeasurement
-                }
-
-                reporter.report {
-                    "Compiler perf stats:\n" + relevantMeasurements.joinToString(separator = "\n") { "  ${it.render()}" }
-                }
-            }
 
             if (exitCode != ExitCode.OK) break
 
