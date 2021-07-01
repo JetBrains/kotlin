@@ -43,7 +43,7 @@ import java.io.PrintStream
 
 abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
 
-    protected abstract val defaultPerformanceManager: CommonCompilerPerformanceManager
+    abstract val defaultPerformanceManager: CommonCompilerPerformanceManager
 
     protected open fun createPerformanceManager(arguments: A, services: Services): CommonCompilerPerformanceManager =
         services[CommonCompilerPerformanceManager::class.java] ?: defaultPerformanceManager
