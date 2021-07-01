@@ -284,10 +284,10 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 ),
             )
 
-            val jsCode = if (arguments.irDce && !arguments.irDceDriven) compiledModule.outputsAfterDce!! else compiledModule.outputs!!
-            outputFile.writeText(jsCode.jsCode)
-            jsCode.dependencies.forEach { (name, content) ->
-                outputFile.resolveSibling("$name.js").writeText(content)
+            val outputs = if (arguments.irDce && !arguments.irDceDriven) compiledModule.outputsAfterDce!! else compiledModule.outputs!!
+            outputFile.write(outputs)
+            outputs.dependencies.forEach { (name, content) ->
+                outputFile.resolveSibling("$name.js").write(content)
             }
             if (arguments.generateDts) {
                 val dtsFile = outputFile.withReplacedExtensionOrNull(outputFile.extension, "d.ts")!!
@@ -296,6 +296,15 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         }
 
         return OK
+    }
+
+    private fun File.write(outputs: CompilationOutputs) {
+        writeText(outputs.jsCode)
+        outputs.sourceMap?.let {
+            val mapFile = resolveSibling("$name.map")
+            appendText("\n//# sourceMappingURL=${mapFile.name}")
+            mapFile.writeText(it)
+        }
     }
 
     override fun setupPlatformSpecificArgumentsAndServices(
@@ -310,9 +319,22 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         }
         configuration.put(JSConfigurationKeys.TARGET, EcmaVersion.defaultVersion())
 
-        // TODO: Support source maps
         if (arguments.sourceMap) {
-            messageCollector.report(WARNING, "source-map argument is not supported yet", null)
+            configuration.put(JSConfigurationKeys.SOURCE_MAP, true)
+            if (arguments.sourceMapPrefix != null) {
+                configuration.put(JSConfigurationKeys.SOURCE_MAP_PREFIX, arguments.sourceMapPrefix!!)
+            }
+
+            var sourceMapSourceRoots = arguments.sourceMapBaseDirs
+            if (sourceMapSourceRoots == null && StringUtil.isNotEmpty(arguments.sourceMapPrefix)) {
+                sourceMapSourceRoots = K2JSCompiler.calculateSourceMapSourceRoot(messageCollector, arguments)
+            }
+
+            if (sourceMapSourceRoots != null) {
+                val sourceMapSourceRootList = StringUtil.split(sourceMapSourceRoots, File.pathSeparator)
+                configuration.put(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, sourceMapSourceRootList)
+            }
+
         } else {
             if (arguments.sourceMapPrefix != null) {
                 messageCollector.report(WARNING, "source-map-prefix argument has no effect without source map", null)

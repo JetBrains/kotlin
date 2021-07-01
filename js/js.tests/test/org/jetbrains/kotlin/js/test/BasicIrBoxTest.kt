@@ -223,8 +223,8 @@ abstract class BasicIrBoxTest(
 
         val dependencyPaths = mutableListOf<String>()
 
-        dependencies.forEach { (moduleId, code) ->
-            val wrappedCode = wrapWithModuleEmulationMarkers(code, config.moduleKind, moduleId)
+        dependencies.forEach { (moduleId, outputs) ->
+            val wrappedCode = wrapWithModuleEmulationMarkers(outputs.jsCode, config.moduleKind, moduleId)
             val dependencyPath = outputFile.absolutePath.replace("_v5.js", "-${moduleId}_v5.js")
             dependencyPaths += dependencyPath
             File(dependencyPath).write(wrappedCode)
