@@ -110,7 +110,8 @@ open class NodeJsRootExtension(@Transient val rootProject: Project) : Configurat
             nodeExecutable = getExecutable("node", nodeCommand, "exe"),
             platformName = platform,
             architectureName = architecture,
-            ivyDependency = getIvyDependency()
+            ivyDependency = getIvyDependency(),
+            downloadBaseUrl = nodeDownloadBaseUrl
         )
     }
 
