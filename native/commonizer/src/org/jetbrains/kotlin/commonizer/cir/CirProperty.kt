@@ -13,7 +13,7 @@ interface CirProperty : CirFunctionOrProperty, CirLiftedUpDeclaration {
     val isExternal: Boolean
     val isVar: Boolean
     val isLateInit: Boolean
-    var isConst: Boolean
+    val isConst: Boolean
     val isDelegate: Boolean
     val getter: CirPropertyGetter?
     val setter: CirPropertySetter?

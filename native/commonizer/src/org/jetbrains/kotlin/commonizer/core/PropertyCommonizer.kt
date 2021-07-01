@@ -22,11 +22,6 @@ class PropertyCommonizer(classifiers: CirKnownClassifiers) : AbstractFunctionOrP
         val constCommonizationState = constCommonizationState
         val constCompileTimeInitializer = (constCommonizationState as? ConstSameValue)?.compileTimeInitializer
 
-        if (constCommonizationState is ConstMultipleValues) {
-            // fix all commonized properties to make then non-const
-            constCommonizationState.properties.forEach { it.isConst = false }
-        }
-
         return CirProperty.create(
             annotations = emptyList(),
             name = name,
@@ -73,23 +68,20 @@ class PropertyCommonizer(classifiers: CirKnownClassifiers) : AbstractFunctionOrP
             when (constCommonizationState) {
                 NonConst -> {
                     // previous property was not constant
-                    return false
+                    this.constCommonizationState = NonConst
                 }
                 is Const -> {
-                    // previous property was constant
-                    constCommonizationState.properties += next
-
                     if (constCommonizationState is ConstSameValue) {
                         if (constCommonizationState.compileTimeInitializer != next.compileTimeInitializer) {
                             // const properties have different constants
-                            this.constCommonizationState = ConstMultipleValues(constCommonizationState)
+                            this.constCommonizationState = ConstMultipleValues()
                         }
                     }
                 }
             }
         } else if (constCommonizationState != NonConst) {
             // previous property was constant but this one is not
-            return false
+            this.constCommonizationState = NonConst
         }
 
         val result = super.doCommonizeWith(next)
@@ -105,9 +97,7 @@ class PropertyCommonizer(classifiers: CirKnownClassifiers) : AbstractFunctionOrP
     private sealed class ConstCommonizationState {
         object NonConst : ConstCommonizationState()
 
-        abstract class Const : ConstCommonizationState() {
-            val properties: MutableList<CirProperty> = mutableListOf()
-        }
+        abstract class Const : ConstCommonizationState()
 
         class ConstSameValue(val compileTimeInitializer: CirConstantValue) : Const() {
             init {
@@ -115,10 +105,6 @@ class PropertyCommonizer(classifiers: CirKnownClassifiers) : AbstractFunctionOrP
             }
         }
 
-        class ConstMultipleValues(previous: ConstSameValue) : Const() {
-            init {
-                properties += previous.properties
-            }
-        }
+        class ConstMultipleValues : Const()
     }
 }
