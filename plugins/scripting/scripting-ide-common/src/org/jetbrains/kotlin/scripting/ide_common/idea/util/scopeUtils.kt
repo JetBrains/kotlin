@@ -5,13 +5,13 @@
 
 @file:JvmName("ScopeUtils")
 
-package org.jetbrains.kotlin.idea.util
+package org.jetbrains.kotlin.scripting.ide_common.idea.util
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
 import org.jetbrains.kotlin.idea.FrontendInternals
-import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
-import org.jetbrains.kotlin.idea.resolve.frontendService
+import org.jetbrains.kotlin.scripting.ide_common.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.scripting.ide_common.idea.resolve.frontendService
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile

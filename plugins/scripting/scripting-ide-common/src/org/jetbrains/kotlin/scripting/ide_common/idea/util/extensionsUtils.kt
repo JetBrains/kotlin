@@ -5,7 +5,7 @@
 
 @file:JvmName("ExtensionUtils")
 
-package org.jetbrains.kotlin.idea.util
+package org.jetbrains.kotlin.scripting.ide_common.idea.util
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.types.KotlinType

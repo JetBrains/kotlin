@@ -5,7 +5,7 @@
 
 @file:JvmName("ImportsUtils")
 
-package org.jetbrains.kotlin.idea.imports
+package org.jetbrains.kotlin.scripting.ide_common.idea.util
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
