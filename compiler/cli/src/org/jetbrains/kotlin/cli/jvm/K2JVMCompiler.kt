@@ -227,7 +227,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
         val sourceFiles = environment.getSourceFiles()
         configuration[CLIConfigurationKeys.PERF_MANAGER]?.notifyCompilerInitialized(
-            sourceFiles.size, environment.countLinesOfCode(sourceFiles), targetDescription
+            sourceFiles, targetDescription
         )
 
         return if (messageCollector.hasErrors()) null else environment

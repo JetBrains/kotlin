@@ -329,11 +329,6 @@ class KotlinCoreEnvironment private constructor(
     val project: Project
         get() = projectEnvironment.project
 
-    internal fun countLinesOfCode(sourceFiles: List<KtFile>): Int =
-        sourceFiles.sumBy { sourceFile ->
-            val text = sourceFile.text
-            StringUtil.getLineBreakCount(text) + (if (StringUtil.endsWithLineBreak(text)) 0 else 1)
-        }
 
     private fun updateClasspathFromRootsIndex(index: JvmDependenciesIndex) {
         index.indexedRoots.forEach {
