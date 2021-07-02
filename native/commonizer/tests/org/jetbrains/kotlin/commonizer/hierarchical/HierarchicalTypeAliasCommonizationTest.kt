@@ -101,4 +101,65 @@ class HierarchicalTypeAliasCommonizationTest : AbstractInlineSourcesCommonizatio
         result.assertCommonized("(a, b, c, d)", """expect class x expect constructor()""")
         result.assertCommonized("(a, b, c, d, e, f)", """expect class x expect constructor()""")
     }
+
+
+    fun `test typealias chain`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+
+            simpleSingleSourceTarget(
+                "a", """
+                    typealias A<N, M> = Map<N, M>
+                    typealias B = A<String, Int>
+                """.trimIndent()
+            )
+
+            simpleSingleSourceTarget(
+                "b", """
+                    typealias A<N, M> = Map<N, M>
+                    typealias B = A<String, Int>
+                """.trimIndent()
+            )
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                typealias A<N, M> = Map<N, M>
+                typealias B = A<String, Int>
+            """.trimIndent()
+        )
+    }
+
+    fun `KT-47574 - test long typealias chain`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+
+            simpleSingleSourceTarget(
+                "a", """
+                    typealias A<N, M> = Map<N, M>
+                    typealias B<N, M> = A<N, M>
+                    typealias C<N> = B<N, Int>
+                    typealias D = C<String>
+                """.trimIndent()
+            )
+
+            simpleSingleSourceTarget(
+                "b", """
+                    typealias A<N, M> = Map<N, M>
+                    typealias B<N, M> = A<N, M>
+                    typealias C<N> = B<N, Int>
+                    typealias D = C<String>
+                """.trimIndent()
+            )
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                typealias A<N, M> = Map<N, M>
+                typealias B<N, M> = A<N, M>
+                typealias C<N> = B<N, Int>
+                typealias D = C<String>
+            """.trimIndent()
+        )
+    }
 }
