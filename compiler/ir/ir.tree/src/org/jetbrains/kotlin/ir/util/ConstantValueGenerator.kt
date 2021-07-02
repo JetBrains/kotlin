@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -170,7 +172,7 @@ abstract class ConstantValueGenerator(
             val irArgument = generateConstantOrAnnotationValueAsExpression(
                 UNDEFINED_OFFSET,
                 UNDEFINED_OFFSET,
-                argumentValue,
+                adjustAnnotationArgumentValue(argumentValue, valueParameter),
                 valueParameter.type,
                 valueParameter.varargElementType
             )
@@ -180,6 +182,16 @@ abstract class ConstantValueGenerator(
         }
 
         return irCall
+    }
+
+    private fun adjustAnnotationArgumentValue(value: ConstantValue<*>, parameter: ValueParameterDescriptor): ConstantValue<*> {
+        // In Java source code, annotation argument for an array-typed parameter can be a single value instead of an array.
+        // In that case, wrap it into an array manually. Ideally, this should be fixed in the code which loads Java annotation arguments,
+        // but it would require resolving the annotation class on each request of an annotation argument.
+        if (KotlinBuiltIns.isArrayOrPrimitiveArray(parameter.type) && value !is ArrayValue) {
+            return ArrayValue(listOf(value)) { parameter.type }
+        }
+        return value
     }
 
     private fun KotlinType.getArrayElementType() = builtIns.getArrayElementType(this)
