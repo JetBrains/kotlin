@@ -595,7 +595,6 @@ class DeclarationsConverter(
 
                     annotations += modifiers.annotations
                     this.superTypeRefs += superTypeRefs
-                    this@buildAnonymousObjectExpression.typeRef = delegatedSelfType
 
                     val classWrapper = ClassWrapper(
                         SpecialNames.NO_NAME_PROVIDED, modifiers, ClassKind.OBJECT, this,

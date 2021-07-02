@@ -982,7 +982,8 @@ open class RawFirBuilder(
                         scopeProvider = baseScopeProvider
                         symbol = FirAnonymousObjectSymbol()
                         context.applyToActualCapturedTypeParameters(false) {
-                        typeParameters += buildOuterClassTypeParameterRef { symbol = it } }
+                            typeParameters += buildOuterClassTypeParameterRef { symbol = it }
+                        }
                         val delegatedSelfType = objectDeclaration.toDelegatedSelfType(this)
                         registerSelfType(delegatedSelfType)
                         objectDeclaration.extractAnnotationsTo(this)
@@ -993,7 +994,6 @@ open class RawFirBuilder(
                             ClassKind.CLASS,
                             containerTypeParameters = emptyList()
                         )
-                        this@buildAnonymousObjectExpression.typeRef = delegatedSelfType
 
                         for (declaration in objectDeclaration.declarations) {
                             declarations += declaration.toFirDeclaration(
