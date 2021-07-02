@@ -618,6 +618,12 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             }
 
             @Test
+            @TestMetadata("javaAnnotationWithSingleArrayArgument.kt")
+            public void testJavaAnnotationWithSingleArrayArgument() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/annotations/javaAnnotationWithSingleArrayArgument.kt");
+            }
+
+            @Test
             @TestMetadata("localDelegatedPropertiesWithAnnotations.kt")
             public void testLocalDelegatedPropertiesWithAnnotations() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/annotations/localDelegatedPropertiesWithAnnotations.kt");
