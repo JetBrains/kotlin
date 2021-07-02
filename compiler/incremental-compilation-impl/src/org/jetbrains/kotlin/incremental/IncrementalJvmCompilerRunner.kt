@@ -388,7 +388,7 @@ class IncrementalJvmCompilerRunner(
             return compiler.exec(messageCollector, services, args)
         } finally {
             args.freeArgs = freeArgsBackup
-            reporter.reportCompilerPerformance(compiler.defaultPerformanceManager)
+            reporter.report { compiler.defaultPerformanceManager.renderCompilerPerformance() }
         }
     }
 }

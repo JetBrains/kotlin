@@ -248,15 +248,6 @@ abstract class IncrementalCompilerRunner<
         reporter: BuildReporter
     ): ExitCode
 
-    fun BuildReporter.reportCompilerPerformance(performanceManager: CommonCompilerPerformanceManager) {
-        val relevantMeasurements = performanceManager.getMeasurementResults().filter {
-            it is CompilerInitializationMeasurement || it is CodeAnalysisMeasurement || it is CodeGenerationMeasurement || it is PerformanceCounterMeasurement
-        }
-
-        report {
-            "Compiler perf stats:\n" + relevantMeasurements.joinToString(separator = "\n") { "  ${it.render()}" }
-        }
-    }
 
     private fun compileIncrementally(
         args: Args,

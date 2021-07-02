@@ -159,6 +159,14 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
     companion object {
 
     }
+
+    fun renderCompilerPerformance(): String {
+        val relevantMeasurements = getMeasurementResults().filter {
+            it is CompilerInitializationMeasurement || it is CodeAnalysisMeasurement || it is CodeGenerationMeasurement || it is PerformanceCounterMeasurement
+        }
+
+        return "Compiler perf stats:\n" + relevantMeasurements.joinToString(separator = "\n") { "  ${it.render()}" }
+    }
 }
 
 sealed class PerfReportingMode {
@@ -179,4 +187,6 @@ sealed class PerfReportingMode {
 
     }
 }
+
+
 
