@@ -176,7 +176,7 @@ extern "C" struct SourceInfo Kotlin_getSourceInfo(void* addr) {
           if (lineNumber == 0)
             return 0;
           CSRange range = CSSourceInfoGetRange(ref);
-          SYM_LOG("ref(%p .. %p) [{\n", (void *)rangeRef.location,  (void *)(range.location + range.length));
+          SYM_LOG("ref(%p .. %p) [{\n", (void *)range.location,  (void *)(range.location + range.length));
           SYM_DUMP(ref);
           SYM_DUMP(CSSourceInfoGetSymbol(ref));
           const char* fileName = CSSourceInfoGetPath(ref);
