@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,10 +10,8 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrBreak
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrLoop
-import org.jetbrains.kotlin.ir.expressions.IrWhen
+import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
@@ -304,6 +302,7 @@ class NameTables(
 class LocalNameGenerator(parentScope: NameScope) : IrElementVisitorVoid {
     val variableNames = NameTable<IrDeclarationWithName>(parentScope)
     val localLoopNames = NameTable<IrLoop>()
+    val localReturnableBlockNames = NameTable<IrReturnableBlock>()
 
     private val breakableDeque: Deque<IrExpression> = LinkedList()
 
@@ -325,6 +324,15 @@ class LocalNameGenerator(parentScope: NameScope) : IrElementVisitorVoid {
         }
 
         super.visitBreak(jump)
+    }
+
+    override fun visitReturn(expression: IrReturn) {
+        val targetSymbol = expression.returnTargetSymbol
+        if (targetSymbol is IrReturnableBlockSymbol) {
+            persistReturnableBlockName(SYNTHETIC_BLOCK_LABEL, targetSymbol.owner)
+        }
+
+        super.visitReturn(expression)
     }
 
     override fun visitWhen(expression: IrWhen) {
@@ -352,6 +360,10 @@ class LocalNameGenerator(parentScope: NameScope) : IrElementVisitorVoid {
     private fun persistLoopName(label: String, loop: IrLoop) {
         localLoopNames.declareFreshName(loop, label)
     }
+
+    private fun persistReturnableBlockName(label: String, loop: IrReturnableBlock) {
+        localReturnableBlockNames.declareFreshName(loop, label)
+    }
 }
 
 
@@ -373,3 +385,4 @@ fun sanitizeName(name: String): String {
 }
 
 private const val SYNTHETIC_LOOP_LABEL = "\$l\$break"
+private const val SYNTHETIC_BLOCK_LABEL = "\$l\$block"

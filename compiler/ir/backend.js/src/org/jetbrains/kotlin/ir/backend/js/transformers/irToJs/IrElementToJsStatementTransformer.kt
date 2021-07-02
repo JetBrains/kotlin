@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.util.constructedClassType
+import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.js.backend.ast.*
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
@@ -28,8 +30,19 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
         return JsBlock(body.statements.map { it.accept(this, context) })
     }
 
-    override fun visitBlock(expression: IrBlock, context: JsGenerationContext): JsBlock {
-        return JsBlock(expression.statements.map { it.accept(this, context) })
+    override fun visitBlock(expression: IrBlock, context: JsGenerationContext): JsStatement {
+        val newContext = (expression as? IrReturnableBlock)?.inlineFunctionSymbol?.let {
+            context.newFile(it.owner.file, context.currentFunction, context.localNames)
+        } ?: context
+
+        val block = JsBlock(expression.statements.map { it.accept(this, newContext) })
+
+        if (expression is IrReturnableBlock) {
+            val label = context.getNameForReturnableBlock(expression)
+            if (label != null) return JsLabel(label, block)
+        }
+
+        return block
     }
 
     override fun visitComposite(expression: IrComposite, context: JsGenerationContext): JsStatement {
@@ -72,7 +85,16 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     }
 
     override fun visitReturn(expression: IrReturn, context: JsGenerationContext): JsStatement {
-        return expression.value.maybeOptimizeIntoSwitch(context) { JsReturn(it) }.withSource(expression, context)
+        val targetSymbol = expression.returnTargetSymbol
+        val lastStatementTransformer: (JsExpression) -> JsStatement =
+            if (targetSymbol is IrReturnableBlockSymbol) {
+                // TODO assert that value is Unit?
+                { JsBreak(context.getNameForReturnableBlock(targetSymbol.owner)!!.makeRef()) }
+            } else {
+                { JsReturn(it) }
+            }
+
+        return expression.value.maybeOptimizeIntoSwitch(context, lastStatementTransformer).withSource(expression, context)
     }
 
     override fun visitThrow(expression: IrThrow, context: JsGenerationContext): JsStatement {
