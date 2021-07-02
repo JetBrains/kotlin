@@ -677,6 +677,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 returnType = referenceReturnType
                 isSuspend = callee.isSuspend
             }.apply {
+                metadata = functionReferenceClass.metadata
                 overriddenSymbols += superMethod.symbol
                 dispatchReceiverParameter = buildReceiverParameter(
                     this,
