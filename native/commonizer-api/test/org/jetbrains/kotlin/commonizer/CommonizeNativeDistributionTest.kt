@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.commonizer
 
 import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout.resolveCommonizedDirectory
 import org.jetbrains.kotlin.commonizer.utils.konanHome
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
+import org.junit.Assume.assumeTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -67,6 +69,7 @@ class CommonizeNativeDistributionTest {
 
     @Test
     fun `commonize - apple platforms`() {
+        assumeTrue("Test is only supported on macos", HostManager.hostIsMac)
         val iosTarget = CommonizerTarget(IOS_ARM64, IOS_X64, IOS_SIMULATOR_ARM64)
         val watchosTarget = CommonizerTarget(WATCHOS_ARM64, WATCHOS_X64, WATCHOS_SIMULATOR_ARM64)
         val macosTarget = CommonizerTarget(MACOS_X64, MACOS_ARM64)
