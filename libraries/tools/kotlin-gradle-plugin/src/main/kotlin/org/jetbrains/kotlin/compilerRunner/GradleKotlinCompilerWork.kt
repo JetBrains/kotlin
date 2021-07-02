@@ -270,8 +270,12 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             kotlinScriptExtensions = kotlinScriptExtensions
         )
         val servicesFacade = GradleCompilerServicesFacadeImpl(log, bufferingMessageCollector)
+        val compilationResults = GradleCompilationResults(log, projectRootFile)
         return metrics.measure(BuildTime.NON_INCREMENTAL_COMPILATION_DAEMON) {
-            daemon.compile(sessionId, compilerArgs, compilationOptions, servicesFacade, compilationResults = null)
+            daemon.compile(sessionId, compilerArgs, compilationOptions, servicesFacade, compilationResults)
+        }.also {
+            metrics.addMetrics(compilationResults.buildMetrics)
+            icLogLines = compilationResults.icLogLines
         }
     }
 

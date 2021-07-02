@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.cli.common
 
+import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.util.PerformanceCounter
 import java.io.File
 import java.lang.management.GarbageCollectorMXBean
@@ -26,6 +28,7 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
     private var irGenerationStart: Long = 0
 
     private var targetDescription: String? = null
+    private var sourceFiles: List<KtFile>? = null
     protected var files: Int? = null
     protected var lines: Int? = null
 
@@ -42,12 +45,19 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
 
     private fun deltaTime(start: Long): Long = PerformanceCounter.currentTime() - start
 
-    open fun notifyCompilerInitialized(files: Int, lines: Int, targetDescription: String) {
+    private fun countLinesOfCode(sourceFiles: List<KtFile>): Int =
+        sourceFiles.sumBy { sourceFile ->
+            val text = sourceFile.text
+            StringUtil.getLineBreakCount(text) + (if (StringUtil.endsWithLineBreak(text)) 0 else 1)
+        }
+
+    open fun notifyCompilerInitialized(sourceFiles: List<KtFile>, targetDescription: String) {
         if (!isEnabled) return
         recordInitializationTime()
 
-        this.files = files
-        this.lines = lines
+        this.sourceFiles = sourceFiles
+        this.files = sourceFiles.size
+        this.lines = countLinesOfCode(sourceFiles)
         this.targetDescription = targetDescription
     }
 
@@ -159,5 +169,13 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
 
     private data class GCData(val name: String, val collectionTime: Long, val collectionCount: Long) {
         constructor(bean: GarbageCollectorMXBean) : this(bean.name, bean.collectionTime, bean.collectionCount)
+    }
+
+    fun renderCompilerPerformance(): String {
+        val relevantMeasurements = getMeasurementResults().filter {
+            it is CompilerInitializationMeasurement || it is CodeAnalysisMeasurement || it is CodeGenerationMeasurement || it is PerformanceCounterMeasurement
+        }
+
+        return "Compiler perf stats:\n" + relevantMeasurements.joinToString(separator = "\n") { "  ${it.render()}" }
     }
 }

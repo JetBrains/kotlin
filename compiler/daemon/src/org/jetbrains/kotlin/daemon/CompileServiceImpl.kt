@@ -326,7 +326,12 @@ abstract class CompileServiceImplBase(
             }
             CompilerMode.NON_INCREMENTAL_COMPILER -> {
                 doCompile(sessionId, daemonReporter, tracer = null) { _, _ ->
-                    compiler.exec(messageCollector, Services.EMPTY, k2PlatformArgs)
+                    val exitCode = compiler.exec(messageCollector, Services.EMPTY, k2PlatformArgs)
+
+                    val perfString = compiler.defaultPerformanceManager.renderCompilerPerformance()
+                    (compilationResults as CompilationResults).add(CompilationResultCategory.BUILD_REPORT_LINES.code, arrayListOf(perfString))
+
+                    exitCode
                 }
             }
             CompilerMode.INCREMENTAL_COMPILER -> {

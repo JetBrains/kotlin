@@ -43,9 +43,9 @@ import java.io.PrintStream
 
 abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
 
-    protected abstract val performanceManager: CommonCompilerPerformanceManager
+    abstract val defaultPerformanceManager: CommonCompilerPerformanceManager
 
-    protected open fun createPerformanceManager(arguments: A, services: Services): CommonCompilerPerformanceManager = performanceManager
+    protected open fun createPerformanceManager(arguments: A, services: Services): CommonCompilerPerformanceManager = defaultPerformanceManager
 
     // Used in CompilerRunnerUtil#invokeExecMethod, in Eclipse plugin (KotlinCLICompiler) and in kotlin-gradle-plugin (GradleCompilerRunner)
     fun execAndOutputXml(errStream: PrintStream, services: Services, vararg args: String): ExitCode {

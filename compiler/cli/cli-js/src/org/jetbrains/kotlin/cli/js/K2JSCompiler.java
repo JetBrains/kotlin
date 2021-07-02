@@ -99,7 +99,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         doMain(new K2JSCompiler(), args);
     }
 
-    private final K2JSCompilerPerformanceManager performanceManager = new K2JSCompilerPerformanceManager();
+    final K2JSCompilerPerformanceManager performanceManager = new K2JSCompilerPerformanceManager();
 
     @NotNull
     @Override
@@ -564,7 +564,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
     @NotNull
     @Override
-    protected CommonCompilerPerformanceManager getPerformanceManager() {
+    public CommonCompilerPerformanceManager getDefaultPerformanceManager() {
         return performanceManager;
     }
 

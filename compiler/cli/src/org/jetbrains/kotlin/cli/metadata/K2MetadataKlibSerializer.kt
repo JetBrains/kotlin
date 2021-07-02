@@ -48,20 +48,25 @@ import java.io.File
 internal class K2MetadataKlibSerializer(private val metadataVersion: BuiltInsBinaryVersion) {
     fun serialize(environment: KotlinCoreEnvironment) {
         val configuration = environment.configuration
+        val performanceManager = configuration.getNotNull(CLIConfigurationKeys.PERF_MANAGER)
 
         val dependencyContainer = KlibMetadataDependencyContainer(
             configuration,
             LockBasedStorageManager("K2MetadataKlibSerializer")
         )
 
+        performanceManager.notifyAnalysisStarted()
         val analyzer = runCommonAnalysisForSerialization(environment, true, dependencyContainer)
+        performanceManager.notifyAnalysisFinished()
 
         if (analyzer == null || analyzer.hasErrors()) return
 
         val (_, moduleDescriptor) = analyzer.analysisResult
 
+        performanceManager.notifyGenerationStarted()
         val destDir = checkNotNull(environment.destDir)
         performSerialization(configuration, moduleDescriptor, destDir, environment.project)
+        performanceManager.notifyGenerationFinished()
     }
 
     private fun performSerialization(

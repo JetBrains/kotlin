@@ -40,7 +40,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
     override fun createMetadataVersion(versionArray: IntArray): BinaryVersion = KlibMetadataVersion(*versionArray)
 
-    override val performanceManager:CommonCompilerPerformanceManager by lazy {
+    override val defaultPerformanceManager: CommonCompilerPerformanceManager by lazy {
         K2NativeCompilerPerformanceManager()
     }
 
