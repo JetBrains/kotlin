@@ -143,7 +143,7 @@ private class JsonParser(val content: String) {
     fun parse(): JsonNode {
         val result = parseNode()
         skipSpaces()
-        if (charCode != -1) throw error("End of input expected")
+        if (charCode != -1) error("End of input expected")
         return result
     }
 

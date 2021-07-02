@@ -134,7 +134,7 @@ fun validateIsExternal(packageFragment: IrPackageFragment) {
 fun validateNestedExternalDeclarations(declaration: IrDeclaration, isExternalTopLevel: Boolean) {
     fun IrPossiblyExternalDeclaration.checkExternal() {
         if (isExternal != isExternalTopLevel) {
-            throw error("isExternal validation failed for declaration ${declaration.render()}")
+            error("isExternal validation failed for declaration ${declaration.render()}")
         }
     }
 

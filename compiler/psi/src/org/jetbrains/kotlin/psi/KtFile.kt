@@ -190,7 +190,7 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
             return stub
         }
 
-        throw error("Illegal stub for KtFile: type=${this.javaClass}, stub=${stub?.javaClass} name=$name")
+        error("Illegal stub for KtFile: type=${this.javaClass}, stub=${stub?.javaClass} name=$name")
     }
 
     override fun getClasses(): Array<PsiClass> {

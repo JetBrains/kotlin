@@ -292,7 +292,7 @@ private object DiagnoseUnknownModuleInfoReporter {
                             else -> errorInModulesResolver(message)
                         }
                     }
-                    else -> throw errorInModulesResolver(message)
+                    else -> errorInModulesResolver(message)
                 }
             }
             name.contains(ResolverForProject.resolverForScriptDependenciesName) -> errorInScriptDependenciesInfoResolver(message)

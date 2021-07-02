@@ -59,7 +59,7 @@ fun findLastVersions(packages: List<PackageInformation>): List<Package> {
                     .filter { it.preRelease == null && it.build == null }
                     .maxOrNull()
                     ?.toString()
-                    ?: throw error("There is no applicable version for ${packageInformation.name}")
+                    ?: error("There is no applicable version for ${packageInformation.name}")
                 is HardcodedPackageInformation -> packageInformation.version
             }
 
