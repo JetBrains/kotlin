@@ -71,6 +71,11 @@ class JsGenerationContext(
         return JsName(name)
     }
 
+    fun getNameForReturnableBlock(block: IrReturnableBlock): JsName? {
+        val name = localNames!!.localReturnableBlockNames.names[block] ?: return null
+        return JsName(name)
+    }
+
     private fun isCoroutineDoResume(): Boolean {
         val overriddenSymbols = (currentFunction as? IrSimpleFunction)?.overriddenSymbols ?: return false
         return overriddenSymbols.any {

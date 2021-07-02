@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -130,25 +131,30 @@ class SecondaryConstructorLowering(val context: JsIrBackendContext) : Declaratio
         delegate.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
             statements += (constructorBody.deepCopyWithSymbols(delegate) as IrStatementContainer).statements
             statements += JsIrBuilder.buildReturn(delegate.symbol, JsIrBuilder.buildGetValue(thisParam.symbol), context.irBuiltIns.nothingType)
-            transformChildrenVoid(ThisUsageReplaceTransformer(delegate.symbol, oldValueParameters.zip(delegate.valueParameters).toMap()))
+            transformChildrenVoid(ThisUsageReplaceTransformer(constructor.symbol, delegate.symbol, oldValueParameters.zip(delegate.valueParameters).toMap()))
         }
     }
 
 
     private class ThisUsageReplaceTransformer(
+        val constructor: IrConstructorSymbol,
         val function: IrFunctionSymbol,
         val symbolMapping: Map<IrValueParameter, IrValueParameter>
     ) : IrElementTransformerVoid() {
 
         val newThisSymbol = symbolMapping.values.last().symbol
 
-        override fun visitReturn(expression: IrReturn): IrExpression = IrReturnImpl(
-            expression.startOffset,
-            expression.endOffset,
-            expression.type,
-            function,
-            IrGetValueImpl(expression.startOffset, expression.endOffset, newThisSymbol.owner.type, newThisSymbol)
-        )
+        override fun visitReturn(expression: IrReturn): IrExpression =
+            if (expression.returnTargetSymbol != constructor)
+                expression
+            else
+                IrReturnImpl(
+                    expression.startOffset,
+                    expression.endOffset,
+                    expression.type,
+                    function,
+                    IrGetValueImpl(expression.startOffset, expression.endOffset, newThisSymbol.owner.type, newThisSymbol)
+                )
 
         override fun visitGetValue(expression: IrGetValue) = symbolMapping[expression.symbol.owner]?.let {
             expression.run { IrGetValueImpl(startOffset, endOffset, type, it.symbol, origin) }
