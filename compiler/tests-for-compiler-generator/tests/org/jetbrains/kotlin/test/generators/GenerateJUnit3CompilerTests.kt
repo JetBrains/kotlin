@@ -43,8 +43,6 @@ import org.jetbrains.kotlin.lexer.kotlin.AbstractKotlinLexerTest
 import org.jetbrains.kotlin.modules.xml.AbstractModuleXmlParserTest
 import org.jetbrains.kotlin.multiplatform.AbstractMultiPlatformIntegrationTest
 import org.jetbrains.kotlin.parsing.AbstractParsingTest
-import org.jetbrains.kotlin.renderer.AbstractDescriptorRendererTest
-import org.jetbrains.kotlin.renderer.AbstractFunctionDescriptorInExpressionRendererTest
 import org.jetbrains.kotlin.repl.AbstractReplInterpreterTest
 import org.jetbrains.kotlin.resolve.AbstractResolveTest
 import org.jetbrains.kotlin.resolve.annotation.AbstractAnnotationParameterTest
@@ -265,14 +263,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
 
             testClass<AbstractIrCompileKotlinAgainstKotlinJdk15Test> {
                 model("compileKotlinAgainstKotlinJdk15", targetBackend = TargetBackend.JVM_IR)
-            }
-
-            testClass<AbstractDescriptorRendererTest> {
-                model("renderer")
-            }
-
-            testClass<AbstractFunctionDescriptorInExpressionRendererTest> {
-                model("renderFunctionDescriptorInExpression")
             }
 
             testClass<AbstractModuleXmlParserTest> {
