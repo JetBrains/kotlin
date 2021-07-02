@@ -59,8 +59,8 @@ dependencies {
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testCompile(intellijDep()) {
         includeJars(
-            "testFramework",
-            "testFramework.core",
+            "testFramework", // needed for parsing tests
+            "platform-ide-util-io", // needed for CLI process utils in KotlinIntegrationTestBase
             rootProject = rootProject
         )
     }
@@ -72,27 +72,16 @@ dependencies {
     }
     testCompile(intellijDep()) {
         includeJars(
-            "jps-model",
-            "extensions",
-            "util",
-            "platform-api",
-            "platform-impl",
-            "idea",
-            "idea_rt",
             "guava",
             "trove4j",
             "asm-all",
             "log4j",
             "jdom",
-            "streamex",
-            "bootstrap",
             rootProject = rootProject
         )
         isTransitive = false
     }
 
-    testCompile(intellijDep()) { includeJars("platform-util-ui", "platform-concurrency", "platform-objectSerializer") }
-    testCompile(intellijDep()) { includeJars("platform-ide-util-io") }
     testApiJUnit5()
 }
 
