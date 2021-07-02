@@ -229,8 +229,10 @@ data class ReceiverType(
     val receiverIndex: Int,
     val implicitValue: ReceiverValue? = null
 ) {
+    @Suppress("unused") // Used in intellij-community
     val implicit: Boolean get() = implicitValue != null
 
+    @Suppress("unused") // Used in intellij-community
     fun extractDslMarkers() =
         implicitValue?.let(DslMarkerUtils::extractDslMarkerFqNames)?.all()
             ?: DslMarkerUtils.extractDslMarkerFqNames(type)

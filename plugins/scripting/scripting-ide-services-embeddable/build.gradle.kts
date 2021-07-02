@@ -4,7 +4,7 @@ plugins { java }
 
 dependencies {
     embedded(project(":kotlin-scripting-ide-services-unshaded")) { isTransitive = false }
-    embedded(project(":idea:ide-common")) { isTransitive = false }
+    embedded(project(":kotlin-scripting-ide-common")) { isTransitive = false }
     runtimeOnly(project(":kotlin-script-runtime"))
     runtimeOnly(kotlinStdlib())
     runtimeOnly(project(":kotlin-scripting-common"))

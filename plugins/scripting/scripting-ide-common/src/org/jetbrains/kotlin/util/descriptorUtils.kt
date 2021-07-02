@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -55,21 +55,6 @@ fun descriptorsEqualWithSubstitution(
         if (!typeChecker.equalTypes(param1.type, param2.type)) return false
     }
     return true
-}
-
-fun ClassDescriptor.findCallableMemberBySignature(
-    signature: CallableMemberDescriptor,
-    allowOverridabilityConflicts: Boolean = false
-): CallableMemberDescriptor? {
-    val descriptorKind = if (signature is FunctionDescriptor) DescriptorKindFilter.FUNCTIONS else DescriptorKindFilter.VARIABLES
-    return defaultType.memberScope
-        .getContributedDescriptors(descriptorKind)
-        .filterIsInstance<CallableMemberDescriptor>()
-        .firstOrNull {
-            if (it.containingDeclaration != this) return@firstOrNull false
-            val overridability = OverridingUtil.DEFAULT.isOverridableBy(it as CallableDescriptor, signature, null).result
-            overridability == OVERRIDABLE || (allowOverridabilityConflicts && overridability == CONFLICT)
-        }
 }
 
 fun TypeConstructor.supertypesWithAny(): Collection<KotlinType> {
