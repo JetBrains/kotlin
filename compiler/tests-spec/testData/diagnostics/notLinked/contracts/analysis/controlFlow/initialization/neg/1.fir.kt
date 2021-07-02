@@ -42,8 +42,8 @@ class case_5 {
     <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var value_5: Int<!>
     init {
         funWithAtMostOnceCallsInPlace { value_1 = 1 }
-        funWithUnknownCallsInPlace { value_2 = 1 }
-        funWithAtLeastOnceCallsInPlace { value_3 = 1 }
+        funWithUnknownCallsInPlace { <!VAL_REASSIGNMENT!>value_2<!> = 1 }
+        funWithAtLeastOnceCallsInPlace { <!VAL_REASSIGNMENT!>value_3<!> = 1 }
         funWithAtMostOnceCallsInPlace { value_4 = 2 }
         funWithUnknownCallsInPlace { value_5 = 3 }
     }

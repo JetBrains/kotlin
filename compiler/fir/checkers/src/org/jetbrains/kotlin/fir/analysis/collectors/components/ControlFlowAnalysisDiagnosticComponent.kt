@@ -41,7 +41,13 @@ class ControlFlowAnalysisDiagnosticComponent(
         controlFlowAnalyzer.analyzeClassInitializer(klass, graph, data, reporter)
     }
 
+    override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: CheckerContext) {
+        val graph = anonymousInitializer.controlFlowGraphReference?.controlFlowGraph ?: return
+        controlFlowAnalyzer.analyzeAnonymousInitializer(anonymousInitializer, graph, data, reporter)
+    }
+
     // ------------------------------- Property initializer -------------------------------
+
     override fun visitProperty(property: FirProperty, data: CheckerContext) {
         val graph = property.controlFlowGraphReference?.controlFlowGraph ?: return
         controlFlowAnalyzer.analyzePropertyInitializer(property, graph, data, reporter)
@@ -51,7 +57,6 @@ class ControlFlowAnalysisDiagnosticComponent(
 
     override fun visitFunction(function: FirFunction, data: CheckerContext) {
         val graph = function.controlFlowGraphReference?.controlFlowGraph ?: return
-
         controlFlowAnalyzer.analyzeFunction(function, graph, data, reporter)
     }
 
@@ -61,7 +66,6 @@ class ControlFlowAnalysisDiagnosticComponent(
 
     override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: CheckerContext) {
         val graph = propertyAccessor.controlFlowGraphReference?.controlFlowGraph ?: return
-
         controlFlowAnalyzer.analyzePropertyAccessor(propertyAccessor, graph, data, reporter)
     }
 

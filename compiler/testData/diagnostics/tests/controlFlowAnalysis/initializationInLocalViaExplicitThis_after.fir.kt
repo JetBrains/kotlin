@@ -10,9 +10,9 @@ class Test {
 
         run {
             // Not sure do we need diagnostic also here
-            this@Test.str = "B"
+            <!VAL_REASSIGNMENT!>this@Test.str<!> = "B"
         }
 
-        str = "C"
+        <!VAL_REASSIGNMENT!>str<!> = "C"
     }
 }

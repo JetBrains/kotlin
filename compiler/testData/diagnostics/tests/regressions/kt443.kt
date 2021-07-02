@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // KT-443 Write allowed to super.val
 
 open class M() {

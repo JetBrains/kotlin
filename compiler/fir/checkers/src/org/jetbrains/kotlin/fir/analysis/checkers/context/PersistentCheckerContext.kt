@@ -9,6 +9,7 @@ import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.PersistentSet
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
+import org.jetbrains.kotlin.fir.analysis.cfa.PropertyInitializationInfoCache
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
@@ -25,18 +26,24 @@ class PersistentCheckerContext private constructor(
     override val getClassCalls: PersistentList<FirGetClassCall>,
     override val sessionHolder: SessionHolder,
     override val returnTypeCalculator: ReturnTypeCalculator,
+    override val propertyInitializationInfoCache: PropertyInitializationInfoCache,
     override val suppressedDiagnostics: PersistentSet<String>,
     override val allInfosSuppressed: Boolean,
     override val allWarningsSuppressed: Boolean,
     override val allErrorsSuppressed: Boolean
 ) : CheckerContext() {
-    constructor(sessionHolder: SessionHolder, returnTypeCalculator: ReturnTypeCalculator) : this(
+    constructor(
+        sessionHolder: SessionHolder,
+        returnTypeCalculator: ReturnTypeCalculator,
+        propertyInitializationInfoCache: PropertyInitializationInfoCache
+    ) : this(
         PersistentImplicitReceiverStack(),
         persistentListOf(),
         persistentListOf(),
         persistentListOf(),
         sessionHolder,
         returnTypeCalculator,
+        propertyInitializationInfoCache,
         persistentSetOf(),
         allInfosSuppressed = false,
         allWarningsSuppressed = false,
@@ -51,6 +58,7 @@ class PersistentCheckerContext private constructor(
             getClassCalls,
             sessionHolder,
             returnTypeCalculator,
+            propertyInitializationInfoCache,
             suppressedDiagnostics,
             allInfosSuppressed,
             allWarningsSuppressed,
@@ -66,6 +74,7 @@ class PersistentCheckerContext private constructor(
             getClassCalls,
             sessionHolder,
             returnTypeCalculator,
+            propertyInitializationInfoCache,
             suppressedDiagnostics,
             allInfosSuppressed,
             allWarningsSuppressed,
@@ -81,6 +90,7 @@ class PersistentCheckerContext private constructor(
             getClassCalls,
             sessionHolder,
             returnTypeCalculator,
+            propertyInitializationInfoCache,
             suppressedDiagnostics,
             allInfosSuppressed,
             allWarningsSuppressed,
@@ -96,6 +106,7 @@ class PersistentCheckerContext private constructor(
             getClassCalls.add(getClassCall),
             sessionHolder,
             returnTypeCalculator,
+            propertyInitializationInfoCache,
             suppressedDiagnostics,
             allInfosSuppressed,
             allWarningsSuppressed,
@@ -117,6 +128,7 @@ class PersistentCheckerContext private constructor(
             getClassCalls,
             sessionHolder,
             returnTypeCalculator,
+            propertyInitializationInfoCache,
             suppressedDiagnostics.addAll(diagnosticNames),
             this.allInfosSuppressed || allInfosSuppressed,
             this.allWarningsSuppressed || allWarningsSuppressed,

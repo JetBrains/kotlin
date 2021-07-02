@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.fir.analysis.cfa.PropertyAndCapturedWriteCollector
 import org.jetbrains.kotlin.fir.analysis.cfa.PropertyInitializationInfo
-import org.jetbrains.kotlin.fir.analysis.cfa.PropertyInitializationInfoCollector
 import org.jetbrains.kotlin.fir.analysis.checkers.contains
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
@@ -40,7 +40,13 @@ object FirMemberPropertiesChecker : FirRegularClassChecker() {
 
         // If all member properties have its own initializer, we don't need to collect property initialization info at all.
         if (memberPropertySymbols.any { it.fir.initializer == null }) {
-            collectPropertyInitialization(declaration, memberPropertySymbols, initializedInConstructor, initializedInInitOrOtherProperty)
+            collectPropertyInitialization(
+                declaration,
+                memberPropertySymbols,
+                initializedInConstructor,
+                initializedInInitOrOtherProperty,
+                context
+            )
         }
 
         val deadEnds = declaration.collectDeadEndDeclarations()
@@ -52,6 +58,9 @@ object FirMemberPropertiesChecker : FirRegularClassChecker() {
                     innerDeclaration.initializer != null ||
                             initializedInConstructor.getValue(symbol).isDefinitelyVisited() ||
                             initializedInInitOrOtherProperty.getValue(symbol).isDefinitelyVisited()
+                if (isInitialized) {
+                    context.propertyInitializationInfoCache.recordInitializedMemberProperty(symbol)
+                }
                 checkProperty(declaration, innerDeclaration, isInitialized, context, reporter, !reachedDeadEnd)
             }
             reachedDeadEnd = reachedDeadEnd || deadEnds.contains(innerDeclaration)
@@ -62,7 +71,8 @@ object FirMemberPropertiesChecker : FirRegularClassChecker() {
         klass: FirRegularClass,
         memberPropertySymbols: Set<FirPropertySymbol>,
         initializedInConstructor: MutableMap<FirPropertySymbol, EventOccurrencesRange>,
-        initializedInInitOrOtherProperty: MutableMap<FirPropertySymbol, EventOccurrencesRange>
+        initializedInInitOrOtherProperty: MutableMap<FirPropertySymbol, EventOccurrencesRange>,
+        context: CheckerContext,
     ) {
         // A property is known to be initialized only if it is initialized
         //   1) with its own initializing expression;
@@ -96,7 +106,13 @@ object FirMemberPropertiesChecker : FirRegularClassChecker() {
         ) {
             val delegatedInfo = delegatedConstructor?.let { constructorToData.getValue(it) } ?: PropertyInitializationInfo.EMPTY
 
-            val data = PropertyInitializationInfoCollector(memberPropertySymbols).getData(graph)
+            // Consider local properties in the [graph] as well so that variable assignment checkers in CFA can use the cached data.
+            val (accessedPropertySymbols, _, _) = PropertyAndCapturedWriteCollector.collect(graph)
+            val data = context.propertyInitializationInfoCache.getOrCollectPropertyInitializationInfo(
+                graph,
+                memberPropertySymbols + accessedPropertySymbols,
+                caching = true
+            )
             val infoAtExitNode = data[graph.exitNode]?.get(NormalPath) ?: PropertyInitializationInfo.EMPTY
 
             // NB: it's not [merge], which is conducted at merging points, such as loop condition or when conditions.

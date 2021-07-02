@@ -796,7 +796,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val UNINITIALIZED_ENUM_COMPANION by error<KtSimpleNameExpression>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<FirRegularClassSymbol>("enumClass")
         }
-        val VAL_REASSIGNMENT by error<KtExpression> {
+        val VAL_REASSIGNMENT by error<KtExpression>(PositioningStrategy.ASSIGNMENT_LHS) {
             parameter<FirVariableSymbol<*>>("variable")
         }
         val VAL_REASSIGNMENT_VIA_BACKING_FIELD by warning<KtExpression> {
@@ -805,10 +805,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val VAL_REASSIGNMENT_VIA_BACKING_FIELD_ERROR by error<KtExpression> {
             parameter<FirPropertySymbol>("property")
         }
-        val CAPTURED_VAL_INITIALIZATION by error<KtExpression> {
+        val CAPTURED_VAL_INITIALIZATION by error<KtExpression>(PositioningStrategy.ASSIGNMENT_LHS) {
             parameter<FirPropertySymbol>("property")
         }
-        val CAPTURED_MEMBER_VAL_INITIALIZATION by error<KtExpression> {
+        val CAPTURED_MEMBER_VAL_INITIALIZATION by error<KtExpression>(PositioningStrategy.ASSIGNMENT_LHS) {
             parameter<FirPropertySymbol>("property")
         }
         val WRONG_INVOCATION_KIND by warning<PsiElement> {
