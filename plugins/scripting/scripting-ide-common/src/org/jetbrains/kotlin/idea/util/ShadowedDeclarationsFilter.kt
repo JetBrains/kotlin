@@ -66,39 +66,14 @@ class ShadowedDeclarationsFilter(
     fun <TDescriptor : DeclarationDescriptor> filter(declarations: Collection<TDescriptor>): Collection<TDescriptor> =
         declarations.groupBy { signature(it) }.values.flatMap { group -> filterEqualSignatureGroup(group) }
 
-    fun <TDescriptor : DeclarationDescriptor> createNonImportedDeclarationsFilter(
-        importedDeclarations: Collection<DeclarationDescriptor>
-    ): (Collection<TDescriptor>) -> Collection<TDescriptor> {
-        val importedDeclarationsSet = importedDeclarations.toSet()
-        val importedDeclarationsBySignature = importedDeclarationsSet.groupBy { signature(it) }
-
-        return filter@{ declarations ->
-            // optimization
-            if (declarations.size == 1 && importedDeclarationsBySignature[signature(declarations.single())] == null) return@filter declarations
-
-            val nonImportedDeclarations = declarations.filter { it !in importedDeclarationsSet }
-
-            val notShadowed = HashSet<DeclarationDescriptor>()
-            // same signature non-imported declarations from different packages do not shadow each other
-            for ((pair, group) in nonImportedDeclarations.groupBy { signature(it) to packageName(it) }) {
-                val imported = importedDeclarationsBySignature[pair.first]
-                val all = if (imported != null) group + imported else group
-                notShadowed.addAll(filterEqualSignatureGroup(all, descriptorsToImport = group))
-            }
-            declarations.filter { it in notShadowed }
-        }
-    }
-
-    private fun signature(descriptor: DeclarationDescriptor): Any = when (descriptor) {
+    fun signature(descriptor: DeclarationDescriptor): Any = when (descriptor) {
         is SimpleFunctionDescriptor -> FunctionSignature(descriptor)
         is VariableDescriptor -> descriptor.name
         is ClassDescriptor -> descriptor.importableFqName ?: descriptor
         else -> descriptor
     }
 
-    private fun packageName(descriptor: DeclarationDescriptor) = descriptor.importableFqName?.parent()
-
-    private fun <TDescriptor : DeclarationDescriptor> filterEqualSignatureGroup(
+    fun <TDescriptor : DeclarationDescriptor> filterEqualSignatureGroup(
         descriptors: Collection<TDescriptor>,
         descriptorsToImport: Collection<TDescriptor> = emptyList()
     ): Collection<TDescriptor> {
