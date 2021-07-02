@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.contracts.description.ConeConditionalEffectDecla
 import org.jetbrains.kotlin.fir.contracts.description.ConeConstantReference
 import org.jetbrains.kotlin.fir.contracts.description.ConeReturnsEffectDeclaration
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -214,6 +215,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     // ----------------------------------- Named function -----------------------------------
 
     fun enterFunction(function: FirFunction) {
+        if (function is FirDefaultPropertyAccessor) return
         if (function is FirAnonymousFunction) {
             enterAnonymousFunction(function)
             return
@@ -226,7 +228,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         functionEnterNode.mergeIncomingFlow(shouldForkFlow = previousNode != null)
     }
 
-    fun exitFunction(function: FirFunction): FirControlFlowGraphReference {
+    fun exitFunction(function: FirFunction): FirControlFlowGraphReference? {
+        if (function is FirDefaultPropertyAccessor) return null
         if (function is FirAnonymousFunction) {
             return exitAnonymousFunction(function)
         }

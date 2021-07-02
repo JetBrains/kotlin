@@ -52,6 +52,7 @@ internal class FirPropertyImpl(
     override val symbol: FirPropertySymbol,
     override val delegateFieldSymbol: FirDelegateFieldSymbol?,
     override val isLocal: Boolean,
+    override var initializerAndAccessorsAreResolved: Boolean,
     override val typeParameters: MutableList<FirTypeParameter>,
 ) : FirProperty() {
     override val isVal: Boolean get() = !isVar
@@ -159,5 +160,9 @@ internal class FirPropertyImpl(
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
         controlFlowGraphReference = newControlFlowGraphReference
+    }
+
+    override fun replaceInitializerAndAccessorsAreResolved(newInitializerAndAccessorsAreResolved: Boolean) {
+        initializerAndAccessorsAreResolved = newInitializerAndAccessorsAreResolved
     }
 }

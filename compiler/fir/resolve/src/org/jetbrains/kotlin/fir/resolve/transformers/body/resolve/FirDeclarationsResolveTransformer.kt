@@ -107,7 +107,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     }
 
     override fun transformEnumEntry(enumEntry: FirEnumEntry, data: ResolutionMode): FirEnumEntry {
-        if (enumEntry.resolvePhase == transformerPhase) return enumEntry
+        if (implicitTypeOnly || enumEntry.initializerResolved) return enumEntry
         transformer.replaceDeclarationResolvePhaseIfNeeded(enumEntry, transformerPhase)
         return context.forEnumEntry {
             (enumEntry.transformChildren(this, data) as FirEnumEntry)
@@ -126,11 +126,8 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         }
 
         val returnTypeRef = property.returnTypeRef
+        if (property.initializerAndAccessorsAreResolved) return property
         if (returnTypeRef !is FirImplicitTypeRef && implicitTypeOnly) return property
-        if (property.resolvePhase == transformerPhase) return property
-        if (property.resolvePhase == FirResolvePhase.BODY_RESOLVE || property.resolvePhase == transformerPhase) {
-            return property
-        }
 
         property.transformReceiverTypeRef(transformer, ResolutionMode.ContextIndependent)
         dataFlowAnalyzer.enterProperty(property)
@@ -158,6 +155,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             dataFlowAnalyzer.exitProperty(property)?.let {
                 property.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(it))
             }
+            property.replaceInitializerAndAccessorsAreResolved(true)
             property
         }
     }
@@ -165,9 +163,8 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     override fun transformField(field: FirField, data: ResolutionMode): FirField {
         val returnTypeRef = field.returnTypeRef
         if (implicitTypeOnly) return field
-        if (field.resolvePhase == FirResolvePhase.BODY_RESOLVE || field.resolvePhase == transformerPhase) {
-            return field
-        }
+        if (field.initializerResolved) return field
+
         dataFlowAnalyzer.enterField(field)
         return withFullBodyResolve {
             context.withField(field) {
@@ -394,23 +391,17 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         regularClass: FirRegularClass,
         data: ResolutionMode
     ): FirRegularClass {
-        val notAnalyzed = regularClass.resolvePhase < transformerPhase
-
-        if (notAnalyzed) {
-            dataFlowAnalyzer.enterClass()
-        }
+        dataFlowAnalyzer.enterClass()
 
         val result = context.withRegularClass(regularClass, components) {
             transformDeclarationContent(regularClass, data) as FirRegularClass
         }
 
-        if (notAnalyzed) {
-            if (!implicitTypeOnly) {
-                val controlFlowGraph = dataFlowAnalyzer.exitRegularClass(result)
-                result.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(controlFlowGraph))
-            } else {
-                dataFlowAnalyzer.exitClass()
-            }
+        if (!implicitTypeOnly) {
+            val controlFlowGraph = dataFlowAnalyzer.exitRegularClass(result)
+            result.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(controlFlowGraph))
+        } else {
+            dataFlowAnalyzer.exitClass()
         }
 
         return result
@@ -476,7 +467,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         simpleFunction: FirSimpleFunction,
         data: ResolutionMode
     ): FirSimpleFunction {
-        if (simpleFunction.resolvePhase == FirResolvePhase.BODY_RESOLVE || simpleFunction.resolvePhase == transformerPhase) {
+        if (simpleFunction.bodyResolved) {
             return simpleFunction
         }
         val returnTypeRef = simpleFunction.returnTypeRef
@@ -540,7 +531,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         function: FirFunction,
         data: ResolutionMode
     ): FirStatement {
-        val functionIsNotAnalyzed = transformerPhase != function.resolvePhase
+        val functionIsNotAnalyzed = !function.bodyResolved
         if (functionIsNotAnalyzed) {
             dataFlowAnalyzer.enterFunction(function)
         }
@@ -892,4 +883,10 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             return valueParameter
         }
     }
+
+    private val FirVariable.initializerResolved: Boolean
+        get() = initializer?.typeRef is FirResolvedTypeRef
+
+    private val FirFunction.bodyResolved: Boolean
+        get() = body?.typeRef is FirResolvedTypeRef
 }

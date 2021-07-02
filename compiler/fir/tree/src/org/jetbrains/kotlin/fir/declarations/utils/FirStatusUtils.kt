@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.fir.declarations.utils
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.render
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 inline val FirMemberDeclaration.modality: Modality? get() = status.modality
 inline val FirMemberDeclaration.isAbstract: Boolean get() = status.modality == Modality.ABSTRACT

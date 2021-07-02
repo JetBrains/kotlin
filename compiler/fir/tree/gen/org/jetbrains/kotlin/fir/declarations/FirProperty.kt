@@ -49,6 +49,7 @@ abstract class FirProperty : FirVariable(), FirTypeParametersOwner, FirControlFl
     abstract val backingFieldSymbol: FirBackingFieldSymbol
     abstract val delegateFieldSymbol: FirDelegateFieldSymbol?
     abstract val isLocal: Boolean
+    abstract val initializerAndAccessorsAreResolved: Boolean
     abstract override val typeParameters: List<FirTypeParameter>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitProperty(this, data)
@@ -66,6 +67,8 @@ abstract class FirProperty : FirVariable(), FirTypeParametersOwner, FirControlFl
     abstract override fun replaceInitializer(newInitializer: FirExpression?)
 
     abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
+
+    abstract fun replaceInitializerAndAccessorsAreResolved(newInitializerAndAccessorsAreResolved: Boolean)
 
     abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirProperty
 

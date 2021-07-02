@@ -407,8 +407,7 @@ abstract class AbstractFirStatusResolveTransformer(
             forceResolveStatusesOfSupertypes(regularClass)
             return
         }
-        if (regularClass.resolvePhase > FirResolvePhase.STATUS) return
-        val firProvider = session.firProvider
+        if (regularClass.origin != FirDeclarationOrigin.Source) return
         val statusComputationStatus = statusComputationSession[regularClass]
         if (!statusComputationStatus.requiresComputation) return
 
@@ -425,6 +424,7 @@ abstract class AbstractFirStatusResolveTransformer(
             }
             reverse()
         } else buildList<FirDeclaration> {
+            val firProvider = regularClass.moduleData.session.firProvider
             val outerClasses = generateSequence(symbol.classId) { classId ->
                 classId.outerClassId
             }.mapTo(mutableListOf()) { firProvider.getFirClassifierByFqName(it) }

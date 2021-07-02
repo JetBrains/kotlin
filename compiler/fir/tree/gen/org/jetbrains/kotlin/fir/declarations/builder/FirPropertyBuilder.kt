@@ -59,6 +59,7 @@ class FirPropertyBuilder : FirDeclarationBuilder, FirTypeParametersOwnerBuilder,
     lateinit var symbol: FirPropertySymbol
     var delegateFieldSymbol: FirDelegateFieldSymbol? = null
     var isLocal: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
+    var initializerAndAccessorsAreResolved: Boolean = false
     override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
 
     override fun build(): FirProperty {
@@ -83,6 +84,7 @@ class FirPropertyBuilder : FirDeclarationBuilder, FirTypeParametersOwnerBuilder,
             symbol,
             delegateFieldSymbol,
             isLocal,
+            initializerAndAccessorsAreResolved,
             typeParameters,
         )
     }
@@ -123,6 +125,7 @@ inline fun buildPropertyCopy(original: FirProperty, init: FirPropertyBuilder.() 
     copyBuilder.symbol = original.symbol
     copyBuilder.delegateFieldSymbol = original.delegateFieldSymbol
     copyBuilder.isLocal = original.isLocal
+    copyBuilder.initializerAndAccessorsAreResolved = original.initializerAndAccessorsAreResolved
     copyBuilder.typeParameters.addAll(original.typeParameters)
     return copyBuilder.apply(init).build()
 }

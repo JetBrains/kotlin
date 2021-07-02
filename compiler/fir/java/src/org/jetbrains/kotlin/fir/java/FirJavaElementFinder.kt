@@ -96,7 +96,7 @@ class FirJavaElementFinder(
         )
 
         val superTypeRefs = when {
-            firClass.resolvePhase > FirResolvePhase.SUPER_TYPES -> firClass.superTypeRefs
+            firClass.superTypeRefs.all { it is FirResolvedTypeRef } -> firClass.superTypeRefs
             else -> firClass.resolveSupertypesInTheAir(session)
         }
 

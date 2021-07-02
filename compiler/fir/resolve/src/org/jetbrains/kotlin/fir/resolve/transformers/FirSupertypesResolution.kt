@@ -436,14 +436,14 @@ class SupertypeComputationSession {
 
     val supertypesSupplier: SupertypeSupplier = object : SupertypeSupplier() {
         override fun forClass(firClass: FirClass, useSiteSession: FirSession): List<ConeClassLikeType> {
-            if (firClass.resolvePhase > FirResolvePhase.SUPER_TYPES) return firClass.superConeTypes
+            if (firClass.superTypeRefs.all { it is FirResolvedTypeRef }) return firClass.superConeTypes
             return (getSupertypesComputationStatus(firClass) as? SupertypeComputationStatus.Computed)?.supertypeRefs?.mapNotNull {
                 it.coneTypeSafe<ConeClassLikeType>()
             }.orEmpty()
         }
 
         override fun expansionForTypeAlias(typeAlias: FirTypeAlias, useSiteSession: FirSession): ConeClassLikeType? {
-            if (typeAlias.resolvePhase > FirResolvePhase.SUPER_TYPES) return typeAlias.expandedConeType
+            if (typeAlias.expandedTypeRef is FirResolvedTypeRef) return typeAlias.expandedConeType
             return (getSupertypesComputationStatus(typeAlias) as? SupertypeComputationStatus.Computed)
                 ?.supertypeRefs
                 ?.getOrNull(0)?.coneTypeSafe()
