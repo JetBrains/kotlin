@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.commonizer
 
 import com.intellij.openapi.Disposable
-import com.intellij.testFramework.PlatformTestUtil.lowercaseFirstLetter
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.common.CommonDependenciesContainer
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices

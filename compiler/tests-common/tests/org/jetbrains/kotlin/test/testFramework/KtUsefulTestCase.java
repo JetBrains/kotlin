@@ -5,38 +5,28 @@
 
 package org.jetbrains.kotlin.test.testFramework;
 
-import com.intellij.codeInsight.CodeInsightSettings;
-import com.intellij.concurrency.IdeaForkJoinWorkerThreadFactory;
-import com.intellij.diagnostic.PerformanceWatcher;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.application.impl.ApplicationInfoImpl;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
 import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.codeStyle.CodeStyleSettings;
-import com.intellij.psi.impl.DocumentCommitProcessor;
-import com.intellij.psi.impl.DocumentCommitThread;
-import com.intellij.psi.impl.source.PostprocessReformattingAspect;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
-import com.intellij.testFramework.*;
 import com.intellij.util.*;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.PeekableIterator;
 import com.intellij.util.containers.PeekableIteratorWrapper;
-import com.intellij.util.indexing.FileBasedIndex;
-import com.intellij.util.indexing.FileBasedIndexImpl;
 import com.intellij.util.lang.CompoundRuntimeException;
 import gnu.trove.Equality;
 import gnu.trove.THashSet;
@@ -63,7 +53,6 @@ import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 @SuppressWarnings("ALL")
@@ -79,9 +68,6 @@ public abstract class KtUsefulTestCase extends TestCase {
 
     private Application application;
 
-    static {
-        IdeaForkJoinWorkerThreadFactory.setupPoisonFactory();
-    }
     protected static final Logger LOG = Logger.getInstance(KtUsefulTestCase.class);
 
     @NotNull
@@ -93,14 +79,12 @@ public abstract class KtUsefulTestCase extends TestCase {
     private String myTempDir;
 
     private static final String DEFAULT_SETTINGS_EXTERNALIZED;
-    private static final CodeInsightSettings defaultSettings = new CodeInsightSettings();
     static {
         // Radar #5755208: Command line Java applications need a way to launch without a Dock icon.
         System.setProperty("apple.awt.UIElement", "true");
 
         try {
             Element oldS = new Element("temp");
-            defaultSettings.writeExternal(oldS);
             DEFAULT_SETTINGS_EXTERNALIZED = JDOMUtil.writeElement(oldS);
         }
         catch (Exception e) {
@@ -176,7 +160,7 @@ public abstract class KtUsefulTestCase extends TestCase {
 
         boolean isStressTest = isStressTest();
         ApplicationInfoImpl.setInStressTest(isStressTest);
-
+        Registry.getInstance().markAsLoaded();
         // turn off Disposer debugging for performance tests
         Disposer.setDebugMode(!isStressTest);
     }
@@ -285,39 +269,6 @@ public abstract class KtUsefulTestCase extends TestCase {
         componentKeyStrokeMap.clear();
         Map<?, ?> containerMap = ReflectionUtil.getField(manager.getClass(), manager, Hashtable.class, "containerMap");
         containerMap.clear();
-    }
-
-    static void doCheckForSettingsDamage(@NotNull CodeStyleSettings oldCodeStyleSettings, @NotNull CodeStyleSettings currentCodeStyleSettings) {
-        final CodeInsightSettings settings = CodeInsightSettings.getInstance();
-        // don't use method references here to make stack trace reading easier
-        //noinspection Convert2MethodRef
-        new RunAll()
-                .append(() -> {
-                    try {
-                        checkCodeInsightSettingsEqual(defaultSettings, settings);
-                    }
-                    catch (AssertionError error) {
-                        CodeInsightSettings clean = new CodeInsightSettings();
-                        for (Field field : clean.getClass().getFields()) {
-                            try {
-                                ReflectionUtil.copyFieldValue(clean, settings, field);
-                            }
-                            catch (Exception ignored) {
-                            }
-                        }
-                        throw error;
-                    }
-                })
-                .append(() -> {
-                    currentCodeStyleSettings.getIndentOptions(StdFileTypes.JAVA);
-                    try {
-                        checkCodeStyleSettingsEqual(oldCodeStyleSettings, currentCodeStyleSettings);
-                    }
-                    finally {
-                        currentCodeStyleSettings.clearCodeStyleSettings();
-                    }
-                })
-                .run();
     }
 
     @NotNull
@@ -725,10 +676,6 @@ public abstract class KtUsefulTestCase extends TestCase {
         Assert.fail(value + " should be equal to one of " + Arrays.toString(values));
     }
 
-    public static void printThreadDump() {
-        PerformanceWatcher.dumpThreadsToConsole("Thread dump:");
-    }
-
     public static void assertEmpty(@NotNull Object[] array) {
         assertOrderedEquals(array);
     }
@@ -885,27 +832,6 @@ public abstract class KtUsefulTestCase extends TestCase {
         }
     }
 
-    private static void checkCodeStyleSettingsEqual(@NotNull CodeStyleSettings expected, @NotNull CodeStyleSettings settings) {
-        if (!expected.equals(settings)) {
-            Element oldS = new Element("temp");
-            expected.writeExternal(oldS);
-            Element newS = new Element("temp");
-            settings.writeExternal(newS);
-
-            String newString = JDOMUtil.writeElement(newS);
-            String oldString = JDOMUtil.writeElement(oldS);
-            Assert.assertEquals("Code style settings damaged", oldString, newString);
-        }
-    }
-
-    private static void checkCodeInsightSettingsEqual(@NotNull CodeInsightSettings oldSettings, @NotNull CodeInsightSettings settings) {
-        if (!oldSettings.equals(settings)) {
-            Element newS = new Element("temp");
-            settings.writeExternal(newS);
-            Assert.assertEquals("Code insight settings damaged", DEFAULT_SETTINGS_EXTERNALIZED, JDOMUtil.writeElement(newS));
-        }
-    }
-
     /**
      * @return true for a test which performs A LOT of computations.
      * Such test should typically avoid performing expensive checks, e.g. data structure consistency complex validations.
@@ -923,13 +849,6 @@ public abstract class KtUsefulTestCase extends TestCase {
 
     private static boolean containsStressWords(@Nullable String name) {
         return name != null && (name.contains("Stress") || name.contains("Slow"));
-    }
-
-    public static void doPostponedFormatting(@NotNull Project project) {
-        DocumentUtil.writeInRunUndoTransparentAction(() -> {
-            PsiDocumentManager.getInstance(project).commitAllDocuments();
-            PostprocessReformattingAspect.getInstance(project).doPostponedFormatting();
-        });
     }
 
     protected void assertNoThrowable(@NotNull Runnable closure) {

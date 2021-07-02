@@ -17,7 +17,7 @@ import java.nio.file.Paths
 
 abstract class AbstractLightTree2FirConverterTestCase : AbstractRawFirBuilderTestCase() {
 
-    override fun doTest(filePath: String) {
+    fun doTest(filePath: String) {
         val firFile = LightTree2Fir(
             session = FirSessionFactory.createEmptySession(),
             scopeProvider = StubFirScopeProvider,

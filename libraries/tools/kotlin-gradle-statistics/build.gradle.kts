@@ -16,7 +16,9 @@ sourceSets {
         if (kotlinBuildProperties.isJpsBuildEnabled || kotlinBuildProperties.useFir) {
             none()
         } else {
-            projectDefault()
+            none()
+
+//            projectDefault()
         }
     }
 }

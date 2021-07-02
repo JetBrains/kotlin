@@ -7,11 +7,7 @@ package org.jetbrains.kotlin.test;
 
 import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.editor.Caret;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -130,16 +126,6 @@ public class KotlinTestUtils {
         CompilerConfiguration configuration = new CompilerConfiguration();
         configuration.put(CommonConfigurationKeys.MODULE_NAME, TEST_MODULE_NAME);
 
-        if ("true".equals(System.getProperty("kotlin.ni"))) {
-            // Enable new inference for tests which do not declare their own language version settings
-            CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, new CompilerTestLanguageVersionSettings(
-                    Collections.emptyMap(),
-                    LanguageVersionSettingsImpl.DEFAULT.getApiVersion(),
-                    LanguageVersionSettingsImpl.DEFAULT.getLanguageVersion(),
-                    Collections.emptyMap()
-            ));
-        }
-
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, new MessageCollector() {
             @Override
             public void clear() {
@@ -248,29 +234,6 @@ public class KotlinTestUtils {
             }
         }
         JvmResolveUtil.analyze(ktFiles, environment);
-    }
-
-    public static void assertEqualsToFile(@NotNull File expectedFile, @NotNull Editor editor) {
-        assertEqualsToFile(expectedFile, editor, true);
-    }
-
-    public static void assertEqualsToFile(@NotNull File expectedFile, @NotNull Editor editor, Boolean enableSelectionTags) {
-        Caret caret = editor.getCaretModel().getCurrentCaret();
-        List<TagsTestDataUtil.TagInfo> tags = Lists.newArrayList(
-                new TagsTestDataUtil.TagInfo<>(caret.getOffset(), true, "caret")
-        );
-
-        if (enableSelectionTags) {
-            int selectionStart = caret.getSelectionStart();
-            int selectionEnd = caret.getSelectionEnd();
-
-            tags.add(new TagsTestDataUtil.TagInfo<>(selectionStart, true, "selection"));
-            tags.add(new TagsTestDataUtil.TagInfo<>(selectionEnd, false, "selection"));
-        }
-
-        String afterText = TagsTestDataUtil.insertTagsInText(tags, editor.getDocument().getText(), (TagsTestDataUtil.TagInfo t) -> null);
-
-        assertEqualsToFile(expectedFile, afterText);
     }
 
     public static void assertEqualsToFile(@NotNull Path expectedFile, @NotNull String actual) {
@@ -387,31 +350,6 @@ public class KotlinTestUtils {
         Assert.assertTrue("Exactly two files expected: ", files.size() == 2);
 
         return files;
-    }
-
-    public static String getLastCommentedLines(@NotNull Document document) {
-        List<CharSequence> resultLines = new ArrayList<>();
-        for (int i = document.getLineCount() - 1; i >= 0; i--) {
-            int lineStart = document.getLineStartOffset(i);
-            int lineEnd = document.getLineEndOffset(i);
-            if (document.getCharsSequence().subSequence(lineStart, lineEnd).toString().trim().isEmpty()) {
-                continue;
-            }
-
-            if ("//".equals(document.getCharsSequence().subSequence(lineStart, lineStart + 2).toString())) {
-                resultLines.add(document.getCharsSequence().subSequence(lineStart + 2, lineEnd));
-            }
-            else {
-                break;
-            }
-        }
-        Collections.reverse(resultLines);
-        StringBuilder result = new StringBuilder();
-        for (CharSequence line : resultLines) {
-            result.append(line).append("\n");
-        }
-        result.delete(result.length() - 1, result.length());
-        return result.toString();
     }
 
     public enum CommentType {

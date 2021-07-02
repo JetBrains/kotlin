@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.incremental.parsing
 
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.junit.After
 import org.junit.Before
@@ -138,6 +137,6 @@ class ClassesFqNamesTest : KtUsefulTestCase() {
 
         val expected = expectedClasses.sorted().joinToString("\n")
         val actual = classesFqNames(setOf(testKt)).sorted().joinToString("\n")
-        UsefulTestCase.assertEquals(expected, actual)
+        assertEquals(expected, actual)
     }
 }

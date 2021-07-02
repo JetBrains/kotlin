@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.utils.KotlinPaths;
 import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.regex.Pattern;
 
 @WithMutedInDatabaseRunTest
@@ -97,7 +96,7 @@ public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
         return content;
     }
 
-    private void check(String testDataDir, String baseName, String content) throws IOException {
+    private void check(String testDataDir, String baseName, String content) {
         File expectedFile = new File(testDataDir, baseName + ".expected");
         String normalizedContent = normalizeOutput(new File(testDataDir), content);
 
@@ -162,7 +161,7 @@ public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
         }
 
         @Override
-        public void onTextAvailable(ProcessEvent event, Key outputType) {
+        public void onTextAvailable(@NotNull ProcessEvent event, @NotNull Key outputType) {
             if (outputType == ProcessOutputTypes.STDERR) {
                 err.append(event.getText());
             }
@@ -175,6 +174,6 @@ public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
         }
 
         @Override
-        public void processTerminated(ProcessEvent event) {}
+        public void processTerminated(@NotNull ProcessEvent event) {}
     }
 }

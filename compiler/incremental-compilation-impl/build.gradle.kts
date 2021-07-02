@@ -26,7 +26,7 @@ dependencies {
     testCompile(intellijDep()) { includeJars("log4j", "jdom") }
     testRuntime(project(":kotlin-reflect"))
     testRuntime(project(":core:descriptors.runtime"))
-    testRuntime(intellijDep()) { includeJars("lz4-java", rootProject = rootProject) }
+    testRuntime(intellijDep()) { includeJars("lz4-java", "jna", rootProject = rootProject) }
 }
 
 sourceSets {

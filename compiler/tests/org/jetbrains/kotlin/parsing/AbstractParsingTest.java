@@ -16,9 +16,6 @@
 
 package org.jetbrains.kotlin.parsing;
 
-import com.intellij.openapi.fileTypes.FileTypeManager;
-import com.intellij.openapi.fileTypes.FileTypeRegistry;
-import com.intellij.openapi.util.Getter;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.psi.PsiErrorElement;
@@ -135,22 +132,5 @@ public abstract class AbstractParsingTest extends KtParsingTestCase {
         else {
             return createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(filePath)), fileContent);
         }
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-
-        // Temp workaround for setting FileTypeRegistry.ourInstanceGetter to CoreFileTypeRegistry forever
-        // Reproducible with pattern test kind:
-        // org.jetbrains.kotlin.parsing.JetParsingTestGenerated$Psi||org.jetbrains.kotlin.codegen.TestlibTest||org.jetbrains.kotlin.completion.MultiFileJvmBasicCompletionTestGenerated
-
-        //noinspection AssignmentToStaticFieldFromInstanceMethod
-        FileTypeRegistry.ourInstanceGetter = new Getter<FileTypeRegistry>() {
-            @Override
-            public FileTypeRegistry get() {
-                return FileTypeManager.getInstance();
-            }
-        };
     }
 }

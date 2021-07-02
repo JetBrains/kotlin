@@ -16,38 +16,15 @@
 
 package org.jetbrains.kotlin.test.testFramework;
 
-import com.intellij.core.CoreEncodingProjectManager;
-import com.intellij.mock.MockApplication;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.fileTypes.FileTypeManager;
-import com.intellij.openapi.vfs.encoding.EncodingManager;
-import org.picocontainer.MutablePicoContainer;
+import com.intellij.mock.MockProject;
 
 public abstract class KtPlatformLiteFixture extends KtUsefulTestCase {
-    protected MockProjectEx myProject;
-
-    public static MockApplication getApplication() {
-        return (MockApplication) ApplicationManager.getApplication();
-    }
-
-    public void initApplication() {
-        MockApplication instance = new MockApplication(getTestRootDisposable());
-        ApplicationManager.setApplication(instance, FileTypeManager::getInstance, getTestRootDisposable());
-        getApplication().registerService(EncodingManager.class, CoreEncodingProjectManager.class);
-    }
+    protected MockProject myProject;
 
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
         clearFields(this);
         myProject = null;
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <T> T registerComponentInstance(MutablePicoContainer container, Class<T> key, T implementation) {
-        Object old = container.getComponentInstance(key);
-        container.unregisterComponent(key);
-        container.registerComponentInstance(key, implementation);
-        return (T)old;
     }
 }

@@ -34,6 +34,7 @@ dependencies {
     testCompile(jpsBuildTest())
 
     testRuntimeOnly(compile(intellijCoreDep()) { includeJars("intellij-core") })
+    testRuntimeOnly(compile(intellijDep()) { includeJars("jna", rootProject = rootProject) })
 
     testCompile("org.junit.platform:junit-platform-launcher:${commonVer("org.junit.platform", "")}")
 }

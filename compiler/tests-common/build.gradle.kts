@@ -57,13 +57,6 @@ dependencies {
     testCompileOnly(project(":kotlin-reflect-api"))
     testCompileOnly(toolsJar())
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    testCompile(intellijDep()) {
-        includeJars(
-            "testFramework", // needed for parsing tests
-            "platform-ide-util-io", // needed for CLI process utils in KotlinIntegrationTestBase
-            rootProject = rootProject
-        )
-    }
     Platform[202] {
         testCompile(intellijDep()) { includeJars("intellij-deps-fastutil-8.3.1-1") }
     }
@@ -77,6 +70,7 @@ dependencies {
             "asm-all",
             "log4j",
             "jdom",
+            "jna",
             rootProject = rootProject
         )
         isTransitive = false
