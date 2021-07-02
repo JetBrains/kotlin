@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
-import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
-import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderersScripting
-import org.jetbrains.kotlin.idea.util.getResolutionScope
+import org.jetbrains.kotlin.scripting.ide_common.idea.codeInsight.ReferenceVariantsHelper
+import org.jetbrains.kotlin.scripting.ide_common.idea.util.CallTypeAndReceiver
+import org.jetbrains.kotlin.scripting.ide_common.idea.util.IdeDescriptorRenderersScripting
+import org.jetbrains.kotlin.scripting.ide_common.idea.util.getResolutionScope
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId

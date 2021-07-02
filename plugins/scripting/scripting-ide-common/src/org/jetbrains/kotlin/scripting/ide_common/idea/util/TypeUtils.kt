@@ -5,7 +5,7 @@
 
 @file:JvmName("TypeUtils")
 
-package org.jetbrains.kotlin.idea.util
+package org.jetbrains.kotlin.scripting.ide_common.idea.util
 
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor

@@ -3,16 +3,15 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.util
+package org.jetbrains.kotlin.scripting.ide_common.idea.util
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.FrontendInternals
-import org.jetbrains.kotlin.idea.imports.importableFqName
-import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
-import org.jetbrains.kotlin.idea.resolve.frontendService
-import org.jetbrains.kotlin.idea.resolve.getDataFlowValueFactory
-import org.jetbrains.kotlin.idea.resolve.getLanguageVersionSettings
+import org.jetbrains.kotlin.scripting.ide_common.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.scripting.ide_common.idea.resolve.frontendService
+import org.jetbrains.kotlin.scripting.ide_common.idea.resolve.getDataFlowValueFactory
+import org.jetbrains.kotlin.scripting.ide_common.idea.resolve.getLanguageVersionSettings
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTraceFilter.Companion.NO_DIAGNOSTICS
@@ -23,12 +22,12 @@ import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
-import org.jetbrains.kotlin.resolve.scopes.ExplicitImportsScope
+import org.jetbrains.kotlin.scripting.ide_common.resolve.scopes.ExplicitImportsScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.utils.addImportingScope
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.util.descriptorsEqualWithSubstitution
+import org.jetbrains.kotlin.scripting.ide_common.util.descriptorsEqualWithSubstitution
 import java.util.*
 
 class ShadowedDeclarationsFilter(
