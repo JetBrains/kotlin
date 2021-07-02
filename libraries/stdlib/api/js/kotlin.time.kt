@@ -343,6 +343,18 @@ public final inline class Duration : kotlin.Comparable<kotlin.time.Duration> {
         public final fun nanoseconds(value: kotlin.Long): kotlin.time.Duration
 
         @kotlin.SinceKotlin(version = "1.5")
+        public final fun parse(value: kotlin.String): kotlin.time.Duration
+
+        @kotlin.SinceKotlin(version = "1.5")
+        public final fun parseIsoString(value: kotlin.String): kotlin.time.Duration
+
+        @kotlin.SinceKotlin(version = "1.5")
+        public final fun parseIsoStringOrNull(value: kotlin.String): kotlin.time.Duration?
+
+        @kotlin.SinceKotlin(version = "1.5")
+        public final fun parseOrNull(value: kotlin.String): kotlin.time.Duration?
+
+        @kotlin.SinceKotlin(version = "1.5")
         public final fun seconds(value: kotlin.Double): kotlin.time.Duration
 
         @kotlin.SinceKotlin(version = "1.5")

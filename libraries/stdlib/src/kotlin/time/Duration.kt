@@ -174,6 +174,63 @@ public value class Duration internal constructor(private val rawValue: Long) : C
         @SinceKotlin("1.5")
         public fun days(value: Double): Duration = value.toDuration(DurationUnit.DAYS)
 
+        /**
+         * Parses a string that represents a duration and returns the parsed [Duration] value.
+         *
+         * The following formats are accepted:
+         *
+         * - ISO-8601 Duration format, e.g. `P1DT2H3M4.058S`, see [toIsoString] and [parseIsoString].
+         * - The format of string returned by the default [Duration.toString] and `toString` in a specific unit,
+         *   e.g. `10s`, `1h 30m` or `-(1h 30m)`.
+         *
+         * @throws IllegalArgumentException if the string doesn't represent a duration in any of the supported formats.
+         */
+        @SinceKotlin("1.5")
+        public fun parse(value: String): Duration = try {
+            parseDuration(value, strictIso = false)
+        } catch (e: IllegalArgumentException) {
+            throw IllegalArgumentException("Invalid duration string format: $value", e.takeIf { it.message != null })
+        }
+
+        /**
+         * Parses a string that represents a duration in ISO-8601 format and returns the parsed [Duration] value.
+         *
+         * @throws IllegalArgumentException if the string doesn't represent a duration in ISO-8601 format.
+         */
+        @SinceKotlin("1.5")
+        public fun parseIsoString(value: String): Duration = try {
+            parseDuration(value, strictIso = true)
+        } catch (e: IllegalArgumentException) {
+            throw IllegalArgumentException("Invalid ISO duration string format: $value", e.takeIf { it.message != null })
+        }
+
+        /**
+         * Parses a string that represents a duration and returns the parsed [Duration] value,
+         * or `null` if the string doesn't represent a duration in any of the supported formats.
+         *
+         * The following formats are accepted:
+         *
+         * - ISO-8601 Duration format, e.g. `P1DT2H3M4.058S`, see [toIsoString] and [parseIsoString].
+         * - The format of string returned by the default [Duration.toString] and `toString` in a specific unit,
+         *   e.g. `10s`, `1h 30m` or `-(1h 30m)`.
+         */
+        @SinceKotlin("1.5")
+        public fun parseOrNull(value: String): Duration? = try {
+            parseDuration(value, strictIso = false)
+        } catch (e: IllegalArgumentException) {
+            null
+        }
+
+        /**
+         * Parses a string that represents a duration in ISO-8601 format and returns the parsed [Duration] value,
+         * or `null` if the string doesn't represent a duration in ISO-8601 format.
+         */
+        @SinceKotlin("1.5")
+        public fun parseIsoStringOrNull(value: String): Duration? = try {
+            parseDuration(value, strictIso = true)
+        } catch (e: IllegalArgumentException) {
+            null
+        }
     }
 
     // arithmetic operators
@@ -1006,6 +1063,98 @@ public inline operator fun Int.times(duration: Duration): Duration = duration * 
 @ExperimentalTime
 @kotlin.internal.InlineOnly
 public inline operator fun Double.times(duration: Duration): Duration = duration * this
+
+
+
+@ExperimentalTime
+private fun parseDuration(value: String, strictIso: Boolean): Duration {
+    val length = value.length
+    if (length == 0) throw IllegalArgumentException("The string is empty")
+    var index = 0
+    var result = Duration.ZERO
+    val infinityString = "Infinity"
+    when (value[index]) {
+        '+', '-' -> index++
+    }
+    when {
+        length <= index ->
+            throw IllegalArgumentException()
+        value[index] == 'P' -> {
+            index++
+            val signedDigits = "+-0123456789."
+            var isTimeComponent = false
+            var prevUnit: DurationUnit? = null
+            while (index < length) {
+                if (value[index] == 'T') {
+                    if (isTimeComponent || index++ == length) throw IllegalArgumentException()
+                    isTimeComponent = true
+                    continue
+                }
+                val component = value.substringWhile(index) { it in signedDigits }
+                if (component.isEmpty()) throw IllegalArgumentException()
+                index += component.length
+                val unitChar = value.getOrElse(index) { throw IllegalArgumentException("Missing unit for value $component") }
+                index++
+                val unit = durationUnitByIsoChar(unitChar, isTimeComponent)
+                if (prevUnit != null && prevUnit <= unit) throw IllegalArgumentException("Unexpected order of duration components")
+                prevUnit = unit
+                if (unit == DurationUnit.SECONDS && '.' in component) {
+                    // TODO: parse fractional part separately
+                    result += component.toDouble().toDuration(unit)
+                } else {
+                    result += component.toLong().toDuration(unit)
+                }
+            }
+        }
+        strictIso ->
+            throw IllegalArgumentException()
+        value.regionMatches(index, infinityString, 0, length = maxOf(length - index, infinityString.length), ignoreCase = true) -> {
+            result = Duration.INFINITE
+        }
+        else -> {
+            // parse default string format
+            val digits = "0123456789."
+            var prevUnit: DurationUnit? = null
+            var afterFirst = false
+            while (index < length) {
+                if (afterFirst) {
+                    index = value.skipWhile(index) { it == ' ' }
+                }
+                afterFirst = true
+                val component = value.substringWhile(index) { it in digits }
+                if (component.isEmpty()) throw IllegalArgumentException()
+                index += component.length
+                val unitName = value.substringWhile(index) { it in 'a'..'z' }
+                index += unitName.length
+                val unit = durationUnitByShortName(unitName)
+                if (prevUnit != null && prevUnit <= unit) throw IllegalArgumentException("Unexpected order of duration components")
+                prevUnit = unit
+                if ('.' in component) {
+                    // TODO: parse fractional part separately
+                    result += component.toDouble().toDuration(unit)
+                    if (index < length) throw IllegalArgumentException("Fractional component must be last")
+                } else {
+                    result += component.toLong().toDuration(unit)
+                }
+            }
+        }
+    }
+    return if (value.startsWith('-')) -result else result
+}
+
+
+
+private inline fun String.substringWhile(startIndex: Int, predicate: (Char) -> Boolean): String =
+    substring(startIndex, skipWhile(startIndex, predicate))
+
+private inline fun String.skipWhile(startIndex: Int, predicate: (Char) -> Boolean): Int {
+    var i = startIndex
+    while (i < length && predicate(this[i])) i++
+    return i
+}
+
+
+
 
 
 // The ranges are chosen so that they are:

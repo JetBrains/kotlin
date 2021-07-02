@@ -76,3 +76,36 @@ internal fun DurationUnit.shortName(): String = when (this) {
     DurationUnit.DAYS -> "d"
     else -> error("Unknown unit: $this")
 }
+
+@SinceKotlin("1.5")
+@ExperimentalTime
+internal fun durationUnitByShortName(shortName: String): DurationUnit = when (shortName) {
+    "ns" -> DurationUnit.NANOSECONDS
+    "us" -> DurationUnit.MICROSECONDS
+    "ms" -> DurationUnit.MILLISECONDS
+    "s" -> DurationUnit.SECONDS
+    "m" -> DurationUnit.MINUTES
+    "h" -> DurationUnit.HOURS
+    "d" -> DurationUnit.DAYS
+    else -> throw IllegalArgumentException("Unknown duration unit short name: $shortName")
+}
+
+@SinceKotlin("1.5")
+@ExperimentalTime
+internal fun durationUnitByIsoChar(isoChar: Char, isTimeComponent: Boolean): DurationUnit =
+    when {
+        !isTimeComponent -> {
+            when (isoChar) {
+                'D' -> DurationUnit.DAYS
+                else -> throw IllegalArgumentException("Invalid or unsupported duration ISO non-time unit: $isoChar")
+            }
+        }
+        else -> {
+            when (isoChar) {
+                'H' -> DurationUnit.HOURS
+                'M' -> DurationUnit.MINUTES
+                'S' -> DurationUnit.SECONDS
+                else -> throw IllegalArgumentException("Invalid duration ISO time unit: $isoChar")
+            }
+        }
+    }
