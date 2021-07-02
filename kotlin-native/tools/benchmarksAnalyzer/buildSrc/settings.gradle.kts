@@ -13,6 +13,6 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.30")
+        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.31")
     }
 }
