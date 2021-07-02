@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.resolve.jvm.annotations.isJvmRecord
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 
@@ -177,4 +178,11 @@ open class JvmGeneratorExtensionsImpl(private val generateFacades: Boolean = tru
 
     override val rawTypeAnnotationConstructor: IrConstructor =
         rawTypeAnnotationClass.constructors.single()
+
+    override fun unwrapSyntheticJavaProperty(descriptor: PropertyDescriptor): Pair<FunctionDescriptor, FunctionDescriptor?>? {
+        if (descriptor is SyntheticJavaPropertyDescriptor) {
+            return descriptor.getMethod to descriptor.setMethod
+        }
+        return null
+    }
 }

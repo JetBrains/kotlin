@@ -38,8 +38,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
-import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 
@@ -501,12 +499,14 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
 
     private fun resolvePropertySymbol(descriptor: PropertyDescriptor, mutable: Boolean): DelegatedPropertySymbols {
         val symbol = context.symbolTable.referenceProperty(descriptor)
-        if (descriptor is SyntheticJavaPropertyDescriptor) {
+        val syntheticJavaProperty = context.extensions.unwrapSyntheticJavaProperty(descriptor)
+        if (syntheticJavaProperty != null) {
+            val (getMethod, setMethod) = syntheticJavaProperty
             // This is the special case of synthetic java properties when requested property doesn't even exist but IR design
             // requires its symbol to be bound so let do that
             // see `irText/declarations/provideDelegate/javaDelegate.kt` and KT-45297
-            val getterSymbol = context.symbolTable.referenceSimpleFunction(descriptor.getMethod)
-            val setterSymbol = if (mutable) descriptor.setMethod?.let {
+            val getterSymbol = context.symbolTable.referenceSimpleFunction(getMethod)
+            val setterSymbol = if (mutable) setMethod?.let {
                 context.symbolTable.referenceSimpleFunction(it)
             } else null
             if (!symbol.isBound) {

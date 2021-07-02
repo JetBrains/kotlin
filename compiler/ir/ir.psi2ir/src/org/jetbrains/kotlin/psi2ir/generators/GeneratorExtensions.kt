@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
@@ -39,4 +40,6 @@ open class GeneratorExtensions : StubGeneratorExtensions() {
         get() = false
 
     open fun getPreviousScripts(): List<IrScriptSymbol>? = null
+
+    open fun unwrapSyntheticJavaProperty(descriptor: PropertyDescriptor): Pair<FunctionDescriptor, FunctionDescriptor?>? = null
 }
