@@ -15,6 +15,7 @@ internal class TypeAliasTypeCommonizer(private val classifiers: CirKnownClassifi
 
     private lateinit var typeAliasId: CirEntityId
     private val arguments = TypeArgumentListCommonizer(classifiers)
+    private val underlyingTypeArguments = TypeArgumentListCommonizer(classifiers)
     private var isMarkedNullable = false
     private var commonizedTypeBuilder: CommonizedTypeAliasTypeBuilder? = null // null means not selected yet
 
@@ -22,6 +23,7 @@ internal class TypeAliasTypeCommonizer(private val classifiers: CirKnownClassifi
         (commonizedTypeBuilder ?: failInEmptyState()).build(
             typeAliasId = typeAliasId,
             arguments = arguments.result,
+            underlyingTypeArguments = underlyingTypeArguments.result,
             isMarkedNullable = isMarkedNullable
         )
 
@@ -50,24 +52,34 @@ internal class TypeAliasTypeCommonizer(private val classifiers: CirKnownClassifi
             }
         }
 
-        return arguments.commonizeWith(next.arguments)
+        return arguments.commonizeWith(next.arguments) &&
+                underlyingTypeArguments.commonizeWith(next.underlyingType.arguments)
     }
 
     // builds a new type for "common" library fragment for the given combination of type alias types in "platform" fragments
     internal interface CommonizedTypeAliasTypeBuilder {
-        fun build(typeAliasId: CirEntityId, arguments: List<CirTypeProjection>, isMarkedNullable: Boolean): CirClassOrTypeAliasType
+        fun build(
+            typeAliasId: CirEntityId,
+            arguments: List<CirTypeProjection>,
+            underlyingTypeArguments: List<CirTypeProjection>,
+            isMarkedNullable: Boolean
+        ): CirClassOrTypeAliasType
 
         companion object {
             // type alias has been commonized to expect class, need to build type for expect class
             fun forClass(commonClass: CirClass) = object : CommonizedTypeAliasTypeBuilder {
-                override fun build(typeAliasId: CirEntityId, arguments: List<CirTypeProjection>, isMarkedNullable: Boolean) =
-                    CirClassType.createInterned(
-                        classId = typeAliasId,
-                        outerType = null, // there can't be outer type
-                        visibility = commonClass.visibility,
-                        arguments = arguments,
-                        isMarkedNullable = isMarkedNullable
-                    )
+                override fun build(
+                    typeAliasId: CirEntityId,
+                    arguments: List<CirTypeProjection>,
+                    underlyingTypeArguments: List<CirTypeProjection>,
+                    isMarkedNullable: Boolean
+                ) = CirClassType.createInterned(
+                    classId = typeAliasId,
+                    outerType = null, // there can't be outer type
+                    visibility = commonClass.visibility,
+                    arguments = arguments,
+                    isMarkedNullable = isMarkedNullable
+                )
             }
 
             // type alias has been commonized to another type alias with the different underlying type, need to build type for
@@ -79,12 +91,16 @@ internal class TypeAliasTypeCommonizer(private val classifiers: CirKnownClassifi
                 override fun build(
                     typeAliasId: CirEntityId,
                     arguments: List<CirTypeProjection>,
+                    underlyingTypeArguments: List<CirTypeProjection>,
                     isMarkedNullable: Boolean
                 ): CirTypeAliasType {
-                    val underlyingTypeWithProperNullability = underlyingType.makeNullableIfNecessary(isMarkedNullable)
+                    val underlyingTypeWithProperNullability = underlyingType
+                        .makeNullableIfNecessary(isMarkedNullable)
+                        .withArguments(underlyingTypeArguments)
+
                     return CirTypeAliasType.createInterned(
                         typeAliasId = typeAliasId,
-                        underlyingType = underlyingTypeWithProperNullability, // TODO replace arguments???
+                        underlyingType = underlyingTypeWithProperNullability,
                         arguments = arguments,
                         isMarkedNullable = isMarkedNullable
                     )

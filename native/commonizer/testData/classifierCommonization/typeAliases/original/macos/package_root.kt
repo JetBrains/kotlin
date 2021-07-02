@@ -7,7 +7,9 @@ typealias C2 = C // TA lifted up as is
 typealias C3 = C2 // TA lifted up as is
 
 typealias D = A // class/TA expanded to the same class at the RHS
+typealias D2 = B
 typealias E = B // different TAs use common type from TA-chain
+typealias E2 = C
 
 typealias F = List<String> // parameterized type at the RHS
 typealias G = List<String> // different parameterized types at the RHS

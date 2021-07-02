@@ -84,6 +84,8 @@ sealed class CirClassOrTypeAliasType : CirSimpleType() {
         if (arguments.isNotEmpty()) arguments.joinTo(builder, prefix = "<", postfix = ">")
         super.appendDescriptionTo(builder)
     }
+
+    abstract fun withArguments(arguments: List<CirTypeProjection>): CirClassOrTypeAliasType
 }
 
 abstract class CirClassType : CirClassOrTypeAliasType(), CirHasVisibility {
@@ -96,6 +98,16 @@ abstract class CirClassType : CirClassOrTypeAliasType(), CirHasVisibility {
             builder.append('.')
         }
         super.appendDescriptionTo(builder, shortNameOnly = outerType != null)
+    }
+
+    override fun withArguments(arguments: List<CirTypeProjection>): CirClassOrTypeAliasType {
+        return createInterned(
+            classId = classifierId,
+            outerType = outerType,
+            visibility = visibility,
+            arguments = arguments,
+            isMarkedNullable = isMarkedNullable
+        )
     }
 
     companion object {
@@ -132,6 +144,15 @@ abstract class CirTypeAliasType : CirClassOrTypeAliasType() {
         super.appendDescriptionTo(builder)
         builder.append(" -> ")
         underlyingType.appendDescriptionTo(builder)
+    }
+
+    override fun withArguments(arguments: List<CirTypeProjection>): CirClassOrTypeAliasType {
+        return createInterned(
+            typeAliasId = classifierId,
+            underlyingType = underlyingType,
+            arguments = arguments,
+            isMarkedNullable = isMarkedNullable
+        )
     }
 
     companion object {
