@@ -65,8 +65,13 @@ class DescriptorMetadataSerializer(
                 serializer!!.packagePartProto(irClass.getPackageFragment()!!.fqName, metadata.descriptors).apply {
                     serializerExtension.serializeJvmPackage(this, type)
                 }.build()
-            is DescriptorMetadataSource.Function ->
-                serializer!!.functionProto(createFreeFakeLambdaDescriptor(metadata.descriptor, context.state.typeApproximator))?.build()
+            is DescriptorMetadataSource.Function -> {
+                val withTypeParameters = createFreeFakeLambdaDescriptor(metadata.descriptor, context.state.typeApproximator)
+                serializationBindings.get(JvmSerializationBindings.METHOD_FOR_FUNCTION, metadata.descriptor)?.let {
+                    serializationBindings.put(JvmSerializationBindings.METHOD_FOR_FUNCTION, withTypeParameters, it)
+                }
+                serializer!!.functionProto(withTypeParameters)?.build()
+            }
             else -> null
         } ?: return null
         return message to serializer!!.stringTable as JvmStringTable

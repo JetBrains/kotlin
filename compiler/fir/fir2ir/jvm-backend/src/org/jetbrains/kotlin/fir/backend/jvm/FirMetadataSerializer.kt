@@ -183,8 +183,13 @@ class FirMetadataSerializer(
                 serializer!!.packagePartProto(irClass.getPackageFragment()!!.fqName, metadata.fir).apply {
                     serializerExtension.serializeJvmPackage(this)
                 }.build()
-            is FirMetadataSource.Function ->
-                serializer!!.functionProto(metadata.fir.copyToFreeAnonymousFunction())?.build()
+            is FirMetadataSource.Function -> {
+                val withTypeParameters = metadata.fir.copyToFreeAnonymousFunction()
+                serializationBindings.get(FirJvmSerializerExtension.METHOD_FOR_FIR_FUNCTION, metadata.fir)?.let {
+                    serializationBindings.put(FirJvmSerializerExtension.METHOD_FOR_FIR_FUNCTION, withTypeParameters, it)
+                }
+                serializer!!.functionProto(withTypeParameters)?.build()
+            }
             else -> null
         } ?: return null
         return message to serializer!!.stringTable as JvmStringTable
