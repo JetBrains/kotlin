@@ -25,23 +25,7 @@ dependencies {
     testApi(projectTests(":compiler:tests-common-jvm6"))
 
     testRuntimeOnly(intellijDep()) {
-        includeJars(
-            "jps-model",
-            "extensions",
-            "util",
-            "platform-api",
-            "platform-impl",
-            "idea",
-            "guava",
-            "trove4j",
-            "asm-all",
-            "log4j",
-            "jdom",
-            "streamex",
-            "bootstrap",
-            "jna",
-            rootProject = rootProject
-        )
+        includeJars("jna", rootProject = rootProject)
     }
 
     Platform[202] {
