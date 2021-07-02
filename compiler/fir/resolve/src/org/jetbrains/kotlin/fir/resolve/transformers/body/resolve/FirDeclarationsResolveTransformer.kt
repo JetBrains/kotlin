@@ -307,6 +307,8 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         if (returnTypeRef is FirImplicitTypeRef) {
             storeVariableReturnType(this)
             enhancedTypeRef = returnTypeRef
+            // We need update type of getter for case when its type was approximated
+            getter?.replaceReturnTypeRef(enhancedTypeRef)
         }
         setter?.let {
             if (it.valueParameters[0].returnTypeRef is FirImplicitTypeRef) {
