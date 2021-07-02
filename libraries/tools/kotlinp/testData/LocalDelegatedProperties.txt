@@ -22,13 +22,6 @@ public final class Class : kotlin/Any {
 
   // module name: test-module
 }
-// Class$f$1.class
-// ------------------------------------------
-lambda {
-
-  // signature: invoke()V
-  local final fun g(): kotlin/Unit
-}
 // Delegate.class
 // ------------------------------------------
 public final class Delegate<T#0 /* T */> : kotlin/Any {

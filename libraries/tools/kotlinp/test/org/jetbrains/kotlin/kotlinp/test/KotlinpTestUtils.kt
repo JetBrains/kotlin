@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.checkers.setupLanguageVersionSettingsForCompilerTest
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.GenerationUtils
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.jvm.compiler.AbstractLoadJavaTest
 import org.jetbrains.kotlin.kotlinp.Kotlinp
 import org.jetbrains.kotlin.kotlinp.KotlinpSettings
@@ -74,6 +75,7 @@ fun compileAndPrintAllFiles(file: File, disposable: Disposable, tmpdir: File, co
 private fun compile(file: File, disposable: Disposable, tmpdir: File, forEachOutputFile: (File) -> Unit) {
     val content = file.readText()
     val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK)
+    configuration.put(JVMConfigurationKeys.IR, true)
     AbstractLoadJavaTest.updateConfigurationWithDirectives(content, configuration)
     val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     setupLanguageVersionSettingsForCompilerTests(content, environment)

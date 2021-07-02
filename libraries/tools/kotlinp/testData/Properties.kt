@@ -8,5 +8,7 @@ class C(val constructorParam: String = "") {
 
     val <T : Number> T.delegated: List<Nothing> by null
 
+    val withOptimizedDelegate by C::getterOnlyVal
+
     operator fun Nothing?.getValue(x: Any?, y: Any?) = emptyList<Nothing>()
 }
