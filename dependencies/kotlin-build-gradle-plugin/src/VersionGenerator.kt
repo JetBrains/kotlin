@@ -82,11 +82,9 @@ open class VersionGenerator : DefaultTask() {
     open val buildNumber = project.findProperty("build.number")?.toString()
 
     @Input
-    open val meta = (project.findProperty("konanMetaVersion") as? String ?: kotlinNativeProperties["konanMetaVersion"])?.let{ MetaVersion.valueOf(it.toString().toUpperCase()) } ?: MetaVersion.DEV
-
-    private val versionPattern = Pattern.compile(
-        "^(\\d+)\\.(\\d+)(?:\\.(\\d+))?(?:-(\\p{Alpha}\\p{Alnum}*))?(?:-(\\d+))?$"
-    )
+    open val meta = (project.findProperty("konanMetaVersion") as? String
+        ?: kotlinNativeProperties["konanMetaVersion"])?.let { MetaVersion.valueOf(it.toString().toUpperCase()) }
+        ?: MetaVersion.DEV
 
     fun defaultVersionFileLocation() {
         versionFile = if (kotlinNativeVersionInResources)
