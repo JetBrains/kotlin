@@ -284,6 +284,11 @@ include ":compiler:fir:cones",
         ":compiler:fir:analysis-tests",
         ":compiler:fir:analysis-tests:legacy-fir-tests"
 
+include ":kotlin-scripting-ide-services-unshaded",
+        ":kotlin-scripting-ide-services-test",
+        ":kotlin-scripting-ide-services",
+        ":kotlin-scripting-ide-common"
+
 include ":compiler:test-infrastructure",
         ":compiler:test-infrastructure-utils",
         ":compiler:tests-common-new"
@@ -319,7 +324,8 @@ if (!buildProperties.inJpsBuildIdeaSync) {
             ":prepare:ide-plugin-dependencies:low-level-api-fir-for-ide",
             ":prepare:ide-plugin-dependencies:high-level-api-for-ide",
             ":prepare:ide-plugin-dependencies:high-level-api-fir-for-ide",
-            ":prepare:ide-plugin-dependencies:high-level-api-fir-tests-for-ide"
+            ":prepare:ide-plugin-dependencies:high-level-api-fir-tests-for-ide",
+            ":prepare:ide-plugin-dependencies:kotlin-scripting-ide-common-for-ide"
 }
 
 void kotlinIde(String imlPath) {
@@ -460,9 +466,6 @@ if (!buildProperties.getBoolean("disableKotlinPluginModules", false) && attached
             ":noarg-ide-plugin",
             ":allopen-ide-plugin",
             ":jps-plugin",
-            ":kotlin-scripting-ide-services-unshaded",
-            ":kotlin-scripting-ide-services-test",
-            ":kotlin-scripting-ide-services",
             ":kotlinx-serialization-ide-plugin",
             ":kotlin-jps-plugin",
             ":generators:idea-generator",
@@ -491,9 +494,6 @@ if (!buildProperties.getBoolean("disableKotlinPluginModules", false) && attached
     project(':plugins:kapt3-idea').projectDir = "$rootDir/plugins/kapt3/kapt3-idea" as File
     project(':allopen-ide-plugin').projectDir = "$rootDir/plugins/allopen/allopen-ide" as File
     project(':noarg-ide-plugin').projectDir = "$rootDir/plugins/noarg/noarg-ide" as File
-    project(':kotlin-scripting-ide-services-unshaded').projectDir = "$rootDir/plugins/scripting/scripting-ide-services" as File
-    project(':kotlin-scripting-ide-services-test').projectDir = "$rootDir/plugins/scripting/scripting-ide-services-test" as File
-    project(':kotlin-scripting-ide-services').projectDir = "$rootDir/plugins/scripting/scripting-ide-services-embeddable" as File
     project(':kotlinx-serialization-ide-plugin').projectDir = file("$rootDir/plugins/kotlin-serialization/kotlin-serialization-ide")
     project(':kotlin-jps-plugin').projectDir = "$rootDir/prepare/jps-plugin" as File
     project(':sam-with-receiver-ide-plugin').projectDir = "$rootDir/plugins/sam-with-receiver/sam-with-receiver-ide" as File
@@ -689,6 +689,10 @@ project(":idea-frontend-fir:idea-frontend-fir-generator").projectDir = "$rootDir
 project(":idea-frontend-fir").projectDir = "$rootDir/idea/idea-frontend-fir" as File
 project(":idea-frontend-api").projectDir = "$rootDir/idea/idea-frontend-api" as File
 
+project(':kotlin-scripting-ide-services-unshaded').projectDir = "$rootDir/plugins/scripting/scripting-ide-services" as File
+project(':kotlin-scripting-ide-services-test').projectDir = "$rootDir/plugins/scripting/scripting-ide-services-test" as File
+project(':kotlin-scripting-ide-services').projectDir = "$rootDir/plugins/scripting/scripting-ide-services-embeddable" as File
+project(':kotlin-scripting-ide-common').projectDir = "$rootDir/plugins/scripting/scripting-ide-common" as File
 
 // Uncomment to use locally built protobuf-relocated
 // includeBuild("dependencies/protobuf")

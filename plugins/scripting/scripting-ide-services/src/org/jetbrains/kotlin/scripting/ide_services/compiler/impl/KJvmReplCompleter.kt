@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderersScripting
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -414,11 +414,11 @@ private class KJvmReplCompleter(
         }
 
         private val RENDERER =
-            IdeDescriptorRenderers.SOURCE_CODE.withOptions {
+            IdeDescriptorRenderersScripting.SOURCE_CODE.withOptions {
                 this.classifierNamePolicy =
                     ClassifierNamePolicy.SHORT
                 this.typeNormalizer =
-                    IdeDescriptorRenderers.APPROXIMATE_FLEXIBLE_TYPES
+                    IdeDescriptorRenderersScripting.APPROXIMATE_FLEXIBLE_TYPES
                 this.parameterNameRenderingPolicy =
                     ParameterNameRenderingPolicy.NONE
                 this.renderDefaultAnnotationArguments = false

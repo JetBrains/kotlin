@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class KotlinResolutionFacadeForRepl(
     private val environment: KotlinCoreEnvironment,
@@ -30,13 +29,6 @@ class KotlinResolutionFacadeForRepl(
     ResolutionFacade {
     override val project: Project
         get() = environment.project
-
-    override fun analyze(
-        element: KtElement,
-        bodyResolveMode: BodyResolveMode
-    ): BindingContext {
-        throw UnsupportedOperationException()
-    }
 
     override val moduleDescriptor: ModuleDescriptor = provider.getService(ModuleDescriptor::class.java)
 
@@ -69,18 +61,10 @@ class KotlinResolutionFacadeForRepl(
         throw UnsupportedOperationException()
     }
 
-    override fun analyze(elements: Collection<KtElement>, bodyResolveMode: BodyResolveMode): BindingContext {
-        throw UnsupportedOperationException()
-    }
-
     override fun analyzeWithAllCompilerChecks(
         elements: Collection<KtElement>,
         callback: DiagnosticSink.DiagnosticsCallback?
     ): AnalysisResult {
-        throw UnsupportedOperationException()
-    }
-
-    override fun resolveToDescriptor(declaration: KtDeclaration, bodyResolveMode: BodyResolveMode): DeclarationDescriptor {
         throw UnsupportedOperationException()
     }
 

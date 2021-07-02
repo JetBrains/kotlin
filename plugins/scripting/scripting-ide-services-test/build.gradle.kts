@@ -27,7 +27,7 @@ dependencies {
 
     testRuntimeOnly(project(":kotlin-compiler"))
     testRuntimeOnly(commonDep("org.jetbrains.intellij.deps", "trove4j"))
-    testRuntimeOnly(project(":idea:ide-common")) { isTransitive = false }
+    testRuntimeOnly(project(":kotlin-scripting-ide-common")) { isTransitive = false }
 
     embeddableTestRuntime(project(":kotlin-scripting-ide-services", configuration="runtimeElements"))
     embeddableTestRuntime(project(":kotlin-scripting-compiler-impl-embeddable", configuration="runtimeElements"))
