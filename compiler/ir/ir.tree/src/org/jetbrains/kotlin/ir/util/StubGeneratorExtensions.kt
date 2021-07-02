@@ -20,6 +20,8 @@ open class StubGeneratorExtensions {
 
     open fun generateFacadeClass(irFactory: IrFactory, source: DeserializedContainerSource): IrClass? = null
 
+    open fun getContainerSource(descriptor: DeclarationDescriptor): DeserializedContainerSource? = null
+
     open fun isPropertyWithPlatformField(descriptor: PropertyDescriptor): Boolean = false
 
     open fun isStaticFunction(descriptor: FunctionDescriptor): Boolean = false

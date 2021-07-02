@@ -87,7 +87,7 @@ abstract class DeclarationStubGenerator(
     fun generateOrGetFacadeClass(descriptor: DeclarationDescriptor): IrClass? {
         val directMember = descriptor.safeAs<PropertyAccessorDescriptor>()?.correspondingProperty ?: descriptor
         val packageFragment = directMember.containingDeclaration as? PackageFragmentDescriptor ?: return null
-        val containerSource = directMember.safeAs<DescriptorWithContainerSource>()?.containerSource ?: return null
+        val containerSource = extensions.getContainerSource(directMember) ?: return null
         return facadeClassMap.getOrPut(containerSource) {
             extensions.generateFacadeClass(symbolTable.irFactory, containerSource)?.also { facade ->
                 val packageStub = generateOrGetEmptyExternalPackageFragmentStub(packageFragment)

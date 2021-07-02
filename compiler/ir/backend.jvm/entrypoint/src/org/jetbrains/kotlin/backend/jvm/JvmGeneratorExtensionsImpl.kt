@@ -44,9 +44,11 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.resolve.jvm.annotations.isJvmRecord
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 open class JvmGeneratorExtensionsImpl(private val generateFacades: Boolean = true) : GeneratorExtensions(), JvmGeneratorExtensions {
     override val classNameOverride: MutableMap<IrClass, JvmClassName> = mutableMapOf()
@@ -76,6 +78,10 @@ open class JvmGeneratorExtensionsImpl(private val generateFacades: Boolean = tru
             IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
         else
             IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
+
+    override fun getContainerSource(descriptor: DeclarationDescriptor): DeserializedContainerSource? {
+        return descriptor.safeAs<DescriptorWithContainerSource>()?.containerSource
+    }
 
     override fun generateFacadeClass(irFactory: IrFactory, source: DeserializedContainerSource): IrClass? {
         if (!generateFacades || source !is JvmPackagePartSource) return null

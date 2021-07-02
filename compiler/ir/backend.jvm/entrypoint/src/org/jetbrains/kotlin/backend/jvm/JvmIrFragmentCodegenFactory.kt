@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.analyzer.hasJdkCapability
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
-import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.backend.jvm.ir.getKtFile
@@ -17,9 +15,11 @@ import org.jetbrains.kotlin.codegen.CodeFragmentCodegenInfo
 import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.KlibModuleOrigin
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil.getFileClassInfoNoResolve
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrLinker
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmManglerDesc
@@ -31,6 +31,10 @@ import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.descriptors.IrFunctionFactory
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
+import org.jetbrains.kotlin.load.kotlin.toSourceElement
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.psi.KtBlockCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
@@ -39,6 +43,9 @@ import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
 import org.jetbrains.kotlin.psi2ir.generators.FragmentCompilerSymbolTableDecorator
 import org.jetbrains.kotlin.psi2ir.preprocessing.SourceDeclarationsPreprocessor
 import org.jetbrains.kotlin.resolve.CleanableBindingContext
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.resolve.source.PsiSourceFile
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 // Copied and modified from JvmIrCodegenFactory. The vision is that, as we
 // understand the requirements of the fragment codegen more I feel we may be
@@ -68,7 +75,28 @@ class JvmIrFragmentCodegenFactory(
             FragmentCompilerSymbolTableDecorator(JvmIdSignatureDescriptor(mangler), IrFactoryImpl, JvmNameProvider, codegenInfo)
         val psi2ir = Psi2IrTranslator(state.languageVersionSettings, Psi2IrConfiguration())
         val messageLogger = state.configuration[IrMessageLogger.IR_MESSAGE_LOGGER] ?: IrMessageLogger.None
-        val jvmGeneratorExtensions = JvmGeneratorExtensionsImpl()
+        val jvmGeneratorExtensions = object : JvmGeneratorExtensionsImpl() {
+            override fun getContainerSource(descriptor: DeclarationDescriptor): DeserializedContainerSource? {
+                val containingFile = (descriptor.toSourceElement.containingFile as? PsiSourceFile)?.psiFile as? KtFile ?: return super.getContainerSource(descriptor)
+                val fileClassInfo = getFileClassInfoNoResolve(containingFile)
+                val fileClassName = JvmClassName.byFqNameWithoutInnerClasses(fileClassInfo.fileClassFqName)
+                val facadeClassName = JvmClassName.byFqNameWithoutInnerClasses(fileClassInfo.facadeClassFqName)
+                return JvmPackagePartSource(fileClassName, facadeClassName, ProtoBuf.Package.getDefaultInstance(), object : NameResolver {
+                    override fun getString(index: Int): String {
+                        TODO("Not yet implemented")
+                    }
+
+                    override fun getQualifiedClassName(index: Int): String {
+                        TODO("Not yet implemented")
+                    }
+
+                    override fun isLocalClassName(index: Int): Boolean {
+                        TODO("Not yet implemented")
+                    }
+
+                })
+            }
+        }
         val psi2irContext = psi2ir.createGeneratorContext(state.module, state.bindingContext, symbolTable, jvmGeneratorExtensions)
         val pluginExtensions = IrGenerationExtension.getInstances(state.project)
         val functionFactory = IrFunctionFactory(psi2irContext.irBuiltIns, symbolTable)
@@ -97,36 +125,7 @@ class JvmIrFragmentCodegenFactory(
             mangler
         )
 
-        val pluginContext by lazy {
-            psi2irContext.run {
-                val symbols = BuiltinSymbolsBase(irBuiltIns, moduleDescriptor.builtIns, symbolTable.lazyWrapper)
-                IrPluginContextImpl(
-                    moduleDescriptor,
-                    bindingContext,
-                    languageVersionSettings,
-                    symbolTable,
-                    typeTranslator,
-                    irBuiltIns,
-                    irLinker,
-                    messageLogger,
-                    symbols
-                )
-            }
-        }
-
         SourceDeclarationsPreprocessor(psi2irContext).run(files)
-
-        for (extension in pluginExtensions) {
-            psi2ir.addPostprocessingStep { module ->
-                val old = stubGenerator.unboundSymbolGeneration
-                try {
-                    stubGenerator.unboundSymbolGeneration = true
-                    extension.generate(module, pluginContext)
-                } finally {
-                    stubGenerator.unboundSymbolGeneration = old
-                }
-            }
-        }
 
         val dependencies = psi2irContext.moduleDescriptor.collectAllDependencyModulesTransitively().map {
             val kotlinLibrary = (it.getCapability(KlibModuleOrigin.CAPABILITY) as? DeserializedKlibModuleOrigin)?.library

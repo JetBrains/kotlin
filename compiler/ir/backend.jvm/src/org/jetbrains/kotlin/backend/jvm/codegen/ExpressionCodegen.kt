@@ -452,7 +452,9 @@ class ExpressionCodegen(
         }
 
         val callee = expression.symbol.owner
-        require(callee.parent is IrClass) { "Unhandled intrinsic in ExpressionCodegen: ${callee.render()}" }
+        require(callee.parent is IrClass) {
+            "Unhandled intrinsic in ExpressionCodegen: ${callee.render()}"
+        }
         val callable = methodSignatureMapper.mapToCallableMethod(expression, irFunction)
         val callGenerator = getOrCreateCallGenerator(expression, data, callable.signature)
         val isSuspensionPoint = expression.isSuspensionPoint()
