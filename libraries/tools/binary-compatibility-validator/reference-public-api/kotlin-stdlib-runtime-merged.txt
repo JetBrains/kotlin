@@ -5714,6 +5714,10 @@ public final class kotlin/time/Duration$Companion {
 	public final fun nanoseconds-UwyO8pc (D)J
 	public final fun nanoseconds-UwyO8pc (I)J
 	public final fun nanoseconds-UwyO8pc (J)J
+	public final fun parse-UwyO8pc (Ljava/lang/String;)J
+	public final fun parseIsoString-UwyO8pc (Ljava/lang/String;)J
+	public final fun parseIsoStringOrNull-FghU774 (Ljava/lang/String;)Lkotlin/time/Duration;
+	public final fun parseOrNull-FghU774 (Ljava/lang/String;)Lkotlin/time/Duration;
 	public final fun seconds-UwyO8pc (D)J
 	public final fun seconds-UwyO8pc (I)J
 	public final fun seconds-UwyO8pc (J)J

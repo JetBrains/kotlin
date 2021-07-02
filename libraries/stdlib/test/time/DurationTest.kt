@@ -454,38 +454,51 @@ class DurationTest {
     }
 
     @Test
-    fun toIsoString() {
+    fun isoStringFormatAndParse() {
+        fun test(duration: Duration, vararg isoStrings: String) {
+            assertEquals(isoStrings.first(), duration.toIsoString())
+            for (isoString in isoStrings) {
+                assertEquals(duration, Duration.parseIsoString(isoString), isoString)
+                assertEquals(duration, Duration.parse(isoString), isoString)
+                assertEquals(duration, Duration.parseIsoStringOrNull(isoString), isoString)
+                assertEquals(duration, Duration.parseOrNull(isoString), isoString)
+            }
+        }
+
         // zero
-        assertEquals("PT0S", Duration.ZERO.toIsoString())
+        test(Duration.ZERO, "PT0S", "P0D", "PT0H", "PT0M", "P0DT0H", "PT0H0M", "PT0H0S")
 
         // single unit
-        assertEquals("PT24H", Duration.days(1).toIsoString())
-        assertEquals("PT1H", Duration.hours(1).toIsoString())
-        assertEquals("PT1M", Duration.minutes(1).toIsoString())
-        assertEquals("PT1S", Duration.seconds(1).toIsoString())
-        assertEquals("PT0.001S", Duration.milliseconds(1).toIsoString())
-        assertEquals("PT0.000001S", Duration.microseconds(1).toIsoString())
-        assertEquals("PT0.000000001S", Duration.nanoseconds(1).toIsoString())
-        assertEquals("PT0.000000001S", Duration.nanoseconds(0.9).toIsoString())
+        test(Duration.days(1), "PT24H", "P1D", "PT1440M", "PT86400S")
+        test(Duration.hours(1), "PT1H")
+        test(Duration.minutes(1), "PT1M")
+        test(Duration.seconds(1), "PT1S")
+        test(Duration.milliseconds(1), "PT0.001S")
+        test(Duration.microseconds(1), "PT0.000001S")
+        test(Duration.nanoseconds(1), "PT0.000000001S", "PT0.0000000009S")
+        test(Duration.nanoseconds(0.9), "PT0.000000001S")
 
         // rounded to zero
-        assertEquals("PT0S", Duration.nanoseconds(0.1).toIsoString())
+        test(Duration.nanoseconds(0.1), "PT0S")
+        test(Duration.ZERO, "PT0S", "PT0.0000000004S")
 
         // several units combined
-        assertEquals("PT24H1M", (Duration.days(1) + Duration.minutes(1)).toIsoString())
-        assertEquals("PT24H0M1S", (Duration.days(1) + Duration.seconds(1)).toIsoString())
-        assertEquals("PT24H0M0.001S", (Duration.days(1) + Duration.milliseconds(1)).toIsoString())
-        assertEquals("PT1H30M", (Duration.hours(1) + Duration.minutes(30)).toIsoString())
-        assertEquals("PT1H0M0.500S", (Duration.hours(1) + Duration.milliseconds(500)).toIsoString())
-        assertEquals("PT2M0.500S", (Duration.minutes(2) + Duration.milliseconds(500)).toIsoString())
-        assertEquals("PT1M30.500S", (Duration.milliseconds(90_500)).toIsoString())
+        test(Duration.days(1) + Duration.minutes(1), "PT24H1M")
+        test(Duration.days(1) + Duration.seconds(1), "PT24H0M1S")
+        test(Duration.days(1) + Duration.milliseconds(1), "PT24H0M0.001S")
+        test(Duration.hours(1) + Duration.minutes(30), "PT1H30M")
+        test(Duration.hours(1) + Duration.milliseconds(500), "PT1H0M0.500S")
+        test(Duration.minutes(2) + Duration.milliseconds(500), "PT2M0.500S")
+        test(Duration.milliseconds(90_500), "PT1M30.500S")
 
         // negative
-        assertEquals("-PT23H45M", (-Duration.days(1) + Duration.minutes(15)).toIsoString())
-        assertEquals("-PT24H15M", (-Duration.days(1) - Duration.minutes(15)).toIsoString())
+        test(-Duration.days(1) + Duration.minutes(15), "-PT23H45M", "PT-23H-45M", "PT-24H15M")
+        test(-Duration.days(1) - Duration.minutes(15), "-PT24H15M", "PT-24H-15M", "-PT25H-45M")
+        test(Duration.ZERO, "PT0S", "P1DT-24H", "PT-1H60M", "-PT1M-60S")
 
         // infinite
-        assertEquals("PT9999999999999H", Duration.INFINITE.toIsoString())
+        test(Duration.INFINITE, "PT9999999999999H", "PT10000000000000H")
+        test(-Duration.INFINITE, "-PT9999999999999H", "-PT10000000000000H")
     }
 
     @Test
