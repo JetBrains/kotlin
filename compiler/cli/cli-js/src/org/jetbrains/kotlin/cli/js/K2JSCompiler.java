@@ -174,6 +174,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             @Nullable KotlinPaths paths
     ) {
         MessageCollector messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
+        CommonCompilerPerformanceManager performanceManager = configuration.getNotNull(CLIConfigurationKeys.PERF_MANAGER);
 
         ExitCode exitCode = OK;
 
@@ -233,7 +234,10 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
         File outputFile = new File(arguments.getOutputFile());
 
-        configuration.put(CommonConfigurationKeys.MODULE_NAME, FileUtil.getNameWithoutExtension(outputFile));
+        String moduleName = FileUtil.getNameWithoutExtension(outputFile);
+        configuration.put(CommonConfigurationKeys.MODULE_NAME, moduleName);
+
+        performanceManager.notifyCompilerInitialized(sourcesFiles, moduleName);
 
         JsConfig config = new JsConfig(project, configuration);
         JsConfig.Reporter reporter = new JsConfig.Reporter() {
@@ -251,6 +255,8 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             return COMPILATION_ERROR;
         }
 
+        performanceManager.notifyAnalysisStarted();
+
         AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(
                 messageCollector, CommonConfigurationKeysKt.getLanguageVersionSettings(configuration)
         );
@@ -264,6 +270,8 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         AnalysisResult analysisResult = analyzerWithCompilerReport.getAnalysisResult();
         assert analysisResult instanceof JsAnalysisResult : "analysisResult should be instance of JsAnalysisResult, but " + analysisResult;
         JsAnalysisResult jsAnalysisResult = (JsAnalysisResult) analysisResult;
+
+        performanceManager.notifyAnalysisFinished();
 
         File outputPrefixFile = null;
         if (arguments.getOutputPrefix() != null) {
@@ -302,6 +310,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         MainCallParameters mainCallParameters = createMainCallParameters(arguments.getMain());
         TranslationResult translationResult;
 
+        performanceManager.notifyGenerationStarted();
         try {
             //noinspection unchecked
             translationResult = translate(reporter, sourcesFiles, jsAnalysisResult, mainCallParameters, config);
@@ -309,6 +318,8 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         catch (Exception e) {
             throw ExceptionUtilsKt.rethrow(e);
         }
+
+        performanceManager.notifyGenerationFinished();
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
