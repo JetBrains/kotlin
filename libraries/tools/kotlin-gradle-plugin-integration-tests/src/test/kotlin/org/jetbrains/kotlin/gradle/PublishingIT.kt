@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Artifacts publication")
-@SimpleGradlePluginTests
 class PublishingIT : KGPBaseTest() {
 
     private val String.fullProjectName get() = "publishing/$this"
