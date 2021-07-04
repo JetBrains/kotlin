@@ -20,7 +20,7 @@ class Durations {
         assertPrints(Duration.seconds(86420).toIsoString(), "PT24H0M20S")
         assertPrints(Duration.days(2).toIsoString(), "PT48H")
         assertPrints(Duration.ZERO.toIsoString(), "PT0S")
-        assertPrints(Duration.INFINITE.toIsoString(), "PT2147483647H")
+        assertPrints(Duration.INFINITE.toIsoString(), "PT9999999999999H")
     }
 
     @Sample

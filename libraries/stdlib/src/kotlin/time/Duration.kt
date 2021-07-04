@@ -764,8 +764,14 @@ public value class Duration internal constructor(private val rawValue: Long) : C
     public fun toIsoString(): String = buildString {
         if (isNegative()) append('-')
         append("PT")
-        absoluteValue.toComponents { hours, minutes, seconds, nanoseconds ->
-            val hasHours = hours != 0
+        val absoluteValue = this@Duration.absoluteValue
+        absoluteValue.toComponents { _, minutes, seconds, nanoseconds ->
+            var hours = absoluteValue.inWholeHours
+            if (isInfinite()) {
+                // use large enough value instead of Long.MAX_VALUE
+                hours = 9_999_999_999_999
+            }
+            val hasHours = hours != 0L
             val hasSeconds = seconds != 0 || nanoseconds != 0
             val hasMinutes = minutes != 0 || (hasSeconds && hasHours)
             if (hasHours) {
