@@ -1,4 +1,4 @@
-public final class B <E extends java.lang.Object> extends java.lang.Object {
+public final class B <E> {
     public final class C implements A<E> {
     }
 
