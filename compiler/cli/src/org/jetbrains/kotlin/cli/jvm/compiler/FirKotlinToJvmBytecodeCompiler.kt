@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.fir.analysis.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
+import org.jetbrains.kotlin.fir.java.FirJavaElementFinder
 import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.fir.session.FirSessionFactory.createSessionWithDependencies
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvider
@@ -65,7 +66,11 @@ object FirKotlinToJvmBytecodeCompiler {
             "ATTENTION!\n This build uses in-dev FIR: \n  -Xuse-fir"
         )
 
-        PsiElementFinder.EP.getPoint(project).unregisterExtension(JavaElementFinder::class.java)
+
+        val psiFinderExtensionPoint = PsiElementFinder.EP.getPoint(project)
+        if (psiFinderExtensionPoint.extensionList.any { it is JavaElementFinder }) {
+            psiFinderExtensionPoint.unregisterExtension(JavaElementFinder::class.java)
+        }
 
         val projectConfiguration = environment.configuration
         val localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
@@ -213,7 +218,6 @@ object FirKotlinToJvmBytecodeCompiler {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
             outputs[module] = generationState
 
-            PsiElementFinder.EP.getPoint(project).unregisterExtension(JavaElementFinder::class.java)
             Disposer.dispose(environment.project)
         }
 
