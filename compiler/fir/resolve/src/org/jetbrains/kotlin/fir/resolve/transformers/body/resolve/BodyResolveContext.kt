@@ -418,6 +418,16 @@ class BodyResolveContext(
         val scopeForConstructorHeader =
             staticsAndCompanion.addNonLocalScopeIfNotNull(typeParameterScope)
 
+        /*
+         * Scope for enum entries is equal to initial scope for constructor header
+         *
+         * The only difference that we add value parameters to local scope for constructors
+         *   and should not do this for enum entries
+         */
+
+        @Suppress("UnnecessaryVariable")
+        val scopeForEnumEntries = scopeForConstructorHeader
+
         val newTowerDataContextForStaticNestedClasses =
             if ((owner as? FirRegularClass)?.classKind?.isSingleton == true)
                 forMembersResolution
@@ -437,6 +447,7 @@ class BodyResolveContext(
             newTowerDataContextForStaticNestedClasses,
             statics,
             scopeForConstructorHeader,
+            scopeForEnumEntries,
             primaryConstructorPureParametersScope,
             primaryConstructorAllParametersScope
         )
@@ -569,7 +580,7 @@ class BodyResolveContext(
     @OptIn(PrivateForInline::class)
     inline fun <T> forEnumEntry(
         f: () -> T
-    ): T = withTowerDataMode(FirTowerDataMode.CONSTRUCTOR_HEADER, f)
+    ): T = withTowerDataMode(FirTowerDataMode.ENUM_ENTRY, f)
 
     @OptIn(PrivateForInline::class)
     inline fun <T> withAnonymousInitializer(

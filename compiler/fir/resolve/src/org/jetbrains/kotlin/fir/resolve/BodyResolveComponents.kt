@@ -152,6 +152,7 @@ enum class FirTowerDataMode {
     NESTED_CLASS,
     COMPANION_OBJECT,
     CONSTRUCTOR_HEADER,
+    ENUM_ENTRY,
     SPECIAL,
 }
 
@@ -160,6 +161,7 @@ class FirTowerDataContextsForClassParts(
     forNestedClasses: FirTowerDataContext? = null,
     forCompanionObject: FirTowerDataContext? = null,
     forConstructorHeaders: FirTowerDataContext? = null,
+    forEnumEntries: FirTowerDataContext? = null,
     val primaryConstructorPureParametersScope: FirLocalScope? = null,
     val primaryConstructorAllParametersScope: FirLocalScope? = null,
 ) {
@@ -170,6 +172,7 @@ class FirTowerDataContextsForClassParts(
         modeMap[NESTED_CLASS] = forNestedClasses
         modeMap[COMPANION_OBJECT] = forCompanionObject
         modeMap[CONSTRUCTOR_HEADER] = forConstructorHeaders
+        modeMap[ENUM_ENTRY] = forEnumEntries
     }
 
     var mode: FirTowerDataMode = MEMBER_DECLARATION
