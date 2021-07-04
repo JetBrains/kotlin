@@ -37,7 +37,7 @@ class CoroutinesReferenceValuesTest {
 
     @Test
     fun testBadClass() {
-        val bad = suspend {
+        val bad = suspend() {
             checkBadClassTwice()
             getBadClassViaSuspend()
         }
