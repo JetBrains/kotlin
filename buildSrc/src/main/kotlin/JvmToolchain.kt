@@ -77,20 +77,24 @@ fun Project.configureJvmToolchain(
 fun Project.configureJavaOnlyToolchain(
     jdkVersion: JdkMajorVersion
 ) {
-    plugins.withId("java-library") {
+    plugins.withId("java-base") {
         val javaExtension = extensions.getByType<JavaPluginExtension>()
         if (shouldOverrideObsoleteJdk(jdkVersion)) {
-            javaExtension.toolchain.languageVersion.set(
-                JavaLanguageVersion.of(jdkVersion.overrideMajorVersion!!)
-            )
+            javaExtension.toolchain {
+                languageVersion.set(
+                    JavaLanguageVersion.of(jdkVersion.overrideMajorVersion!!)
+                )
+            }
             tasks.withType<JavaCompile>().configureEach {
                 targetCompatibility = jdkVersion.targetName
                 sourceCompatibility = jdkVersion.targetName
             }
         } else {
-            javaExtension.toolchain.languageVersion.set(
-                JavaLanguageVersion.of(jdkVersion.majorVersion)
-            )
+            javaExtension.toolchain {
+                languageVersion.set(
+                    JavaLanguageVersion.of(jdkVersion.majorVersion)
+                )
+            }
         }
     }
 }
