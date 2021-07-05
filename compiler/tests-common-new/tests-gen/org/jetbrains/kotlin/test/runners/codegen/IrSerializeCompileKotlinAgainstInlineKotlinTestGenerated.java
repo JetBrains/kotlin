@@ -3914,6 +3914,12 @@ public class IrSerializeCompileKotlinAgainstInlineKotlinTestGenerated extends Ab
             runTest("compiler/testData/codegen/boxInline/reified/packages.kt");
         }
 
+        @Test
+        @TestMetadata("singletonLambda.kt")
+        public void testSingletonLambda() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/reified/singletonLambda.kt");
+        }
+
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/reified/checkCast")
         @TestDataPath("$PROJECT_ROOT")
