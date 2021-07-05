@@ -3156,6 +3156,11 @@ public class IrJsCodegenInlineTestGenerated extends AbstractIrJsCodegenInlineTes
             runTest("compiler/testData/codegen/boxInline/reified/nonCapturingObjectInLambda.kt");
         }
 
+        @TestMetadata("singletonLambda.kt")
+        public void testSingletonLambda() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/reified/singletonLambda.kt");
+        }
+
         @TestMetadata("compiler/testData/codegen/boxInline/reified/checkCast")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
