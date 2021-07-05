@@ -318,7 +318,7 @@ object Mapping : TemplateGroupBase() {
             doc { "Returns a single sequence of all elements from results of [transform] function being invoked on each element of original sequence." }
             returns("Sequence<R>")
             body {
-                "return FlatteningSequence(this, transform, Iterable<R>::iterator)"
+                "return FlatteningToIterableSequence(this, transform, { it })"
             }
         }
     }
