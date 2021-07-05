@@ -19,10 +19,10 @@ class SomeClass {
 fun doSomething() {
     val it = SomeClass()
     it.addItem("Test")
-    it.items.add("Fest")
+    it.items.<!UNRESOLVED_REFERENCE!>add<!>("Fest")
 
     val itemsSize = it.items.size
-    val shmitemsSize = it.<!INVISIBLE_REFERENCE!>shmitems<!>.size
+    val shmitemsSize = it.<!NONE_APPLICABLE!>shmitems<!>.<!UNRESOLVED_REFERENCE!>size<!>
     val balalitemsSize = it.balalitems.size
     val rhymetemsSize = it.rhymetems.size
 }

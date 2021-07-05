@@ -57,7 +57,19 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         val containingDeclarations = callInfo.containingDeclarations
         val session = callInfo.session
 
-        return isVisible(declaration, session, useSiteFile, containingDeclarations, candidate.dispatchReceiverValue)
+        if (candidate.mustBeInvisible) {
+            return false
+        }
+
+        val visible = isVisible(declaration, session, useSiteFile, containingDeclarations, candidate.dispatchReceiverValue)
+
+        if (visible) {
+            candidate.possiblyInvisibleDependentCandidate?.let {
+                it.mustBeInvisible = true
+            }
+        }
+
+        return visible
     }
 
     fun isVisible(
@@ -70,19 +82,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         require(declaration is FirDeclaration)
         val provider = session.firProvider
         val symbol = declaration.symbol
-        var visibility = declaration.visibility
-
-        if (declaration is FirProperty) {
-            declaration.getter?.let { getter ->
-                val difference = getter.visibility.compareTo(visibility)
-
-                if (difference != null && difference > 0) {
-                    visibility = getter.visibility
-                }
-            }
-        }
-
-        return when (visibility) {
+        return when (declaration.visibility) {
             Visibilities.Internal -> {
                 declaration.moduleData == session.moduleData || session.moduleVisibilityChecker?.isInFriendModule(declaration) == true
             }
@@ -124,7 +124,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
             }
 
             else -> platformVisibilityCheck(
-                visibility,
+                declaration.visibility,
                 symbol,
                 useSiteFile,
                 containingDeclarations,

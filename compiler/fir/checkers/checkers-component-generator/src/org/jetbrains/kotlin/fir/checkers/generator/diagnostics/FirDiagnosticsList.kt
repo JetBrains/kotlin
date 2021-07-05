@@ -751,10 +751,11 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
         }
-        val REDUNDANT_GETTER_TYPE_CHANGE by error<KtTypeReference> {
+        val REDUNDANT_GETTER_TYPE_CHANGE by warning<KtTypeReference> {
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
         }
+        val REDUNDANT_GETTER_VISIBILITY_CHANGE by warning<KtModifierListOwner>(PositioningStrategy.VISIBILITY_MODIFIER)
         val ACCESSOR_FOR_DELEGATED_PROPERTY by error<KtPropertyAccessor>()
     }
 

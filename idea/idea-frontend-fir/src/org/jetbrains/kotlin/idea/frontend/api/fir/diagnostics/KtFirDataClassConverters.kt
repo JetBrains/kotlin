@@ -2118,17 +2118,15 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
         )
     }
     add(FirErrors.REDUNDANT_GETTER_TYPE_CHANGE) { firDiagnostic ->
-        WrongGetterReturnTypeImpl(
+        RedundantGetterTypeChangeImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
             firDiagnostic as FirPsiDiagnostic,
             token,
         )
     }
-    add(FirErrors.REDUNDANT_GETTER_TYPE_CHANGE) { firDiagnostic ->
-        RedundantGetterTypeChangeImpl(
-            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
-            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+    add(FirErrors.REDUNDANT_GETTER_VISIBILITY_CHANGE) { firDiagnostic ->
+        RedundantGetterVisibilityChangeImpl(
             firDiagnostic as FirPsiDiagnostic,
             token,
         )

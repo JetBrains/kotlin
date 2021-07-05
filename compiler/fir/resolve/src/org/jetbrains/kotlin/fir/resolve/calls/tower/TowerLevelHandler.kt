@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
+import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 
@@ -78,8 +81,32 @@ private class TowerScopeLevelProcessor(
         scope: FirScope,
         builtInExtensionFunctionReceiverValue: ReceiverValue?
     ) {
+        // if we are about to consume a property
+        // candidate where the property has a
+        // getter with a more permissive visibility,
+        // we should prepare a separate candidate
+        // for that getter;
+
+        // this candidate will be checked by
+        // VisibilityChecker after the main one
+        // and will be disabled if the property
+        // can be accessed directly
+
+        var dependentGetterCandidate: Candidate? = null
+
+        if (symbol is FirPropertySymbol) {
+            dependentGetterCandidate = consumePropertyGetterIfNeeded(
+                symbol.fir,
+                dispatchReceiverValue,
+                extensionReceiverValue,
+                scope,
+                builtInExtensionFunctionReceiverValue
+            )
+        }
+
         resultCollector.consumeCandidate(
-            group, candidateFactory.createCandidate(
+            group,
+            candidateFactory.createCandidate(
                 callInfo,
                 symbol,
                 explicitReceiverKind,
@@ -87,7 +114,47 @@ private class TowerScopeLevelProcessor(
                 dispatchReceiverValue,
                 extensionReceiverValue,
                 builtInExtensionFunctionReceiverValue
-            ), candidateFactory.context
+            ).apply {
+                possiblyInvisibleDependentCandidate = dependentGetterCandidate
+            },
+            candidateFactory.context
+        )
+
+        // it's important to collect the getter
+        // after its property so that VisibilityChecker
+        // is able to check the property visibility first
+        // and disable the getter
+        dependentGetterCandidate?.let {
+            resultCollector.consumeCandidate(group, it, candidateFactory.context)
+        }
+    }
+
+    private fun consumePropertyGetterIfNeeded(
+        property: FirProperty,
+        dispatchReceiverValue: ReceiverValue?,
+        extensionReceiverValue: ReceiverValue?,
+        scope: FirScope,
+        builtInExtensionFunctionReceiverValue: ReceiverValue?
+    ): Candidate? {
+        val getter = property.getter ?: return null
+
+        // right now a getter can't have
+        // a visibility smaller than the
+        // property
+        if (getter.visibility == property.visibility) {
+            return null
+        }
+
+        // so here the getter has a greater
+        // visibility
+        return candidateFactory.createCandidate(
+            callInfo,
+            getter.symbol,
+            explicitReceiverKind,
+            scope,
+            dispatchReceiverValue,
+            extensionReceiverValue,
+            builtInExtensionFunctionReceiverValue
         )
     }
 

@@ -427,6 +427,7 @@ object FirErrors {
     val WRONG_SETTER_RETURN_TYPE by error0<KtTypeReference>()
     val WRONG_GETTER_RETURN_TYPE by error2<KtTypeReference, ConeKotlinType, ConeKotlinType>()
     val REDUNDANT_GETTER_TYPE_CHANGE by error2<KtTypeReference, ConeKotlinType, ConeKotlinType>()
+    val REDUNDANT_GETTER_VISIBILITY_CHANGE by error0<KtModifierListOwner>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
     val ACCESSOR_FOR_DELEGATED_PROPERTY by error0<KtPropertyAccessor>()
 
     // Multi-platform projects

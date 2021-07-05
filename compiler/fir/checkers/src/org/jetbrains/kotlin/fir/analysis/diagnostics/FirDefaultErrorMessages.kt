@@ -279,6 +279,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_ANNOTAT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_CALL_OF_CONVERSION_METHOD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_EXPLICIT_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_GETTER_TYPE_CHANGE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_GETTER_VISIBILITY_CHANGE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_MODALITY_MODIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_MODIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_OPEN_IN_INTERFACE
@@ -1043,6 +1044,10 @@ class FirDefaultErrorMessages {
                 "Getter visibility is the same as the visibility of the property, but its return type is different. There's no need in it, so, please, change ''{1}'' to ''{0}''",
                 RENDER_TYPE,
                 RENDER_TYPE
+            )
+            map.put(
+                REDUNDANT_GETTER_VISIBILITY_CHANGE,
+                "This getter has the same return type as the property, so there is no need in it"
             )
             map.put(ACCESSOR_FOR_DELEGATED_PROPERTY, "Delegated property cannot have accessors with non-default implementations")
 

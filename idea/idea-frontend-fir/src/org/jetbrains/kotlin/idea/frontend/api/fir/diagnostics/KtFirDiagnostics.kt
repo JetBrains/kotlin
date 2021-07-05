@@ -1498,6 +1498,10 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val actualType: KtType
     }
 
+    abstract class RedundantGetterVisibilityChange : KtFirDiagnostic<KtModifierListOwner>() {
+        override val diagnosticClass get() = RedundantGetterVisibilityChange::class
+    }
+
     abstract class AccessorForDelegatedProperty : KtFirDiagnostic<KtPropertyAccessor>() {
         override val diagnosticClass get() = AccessorForDelegatedProperty::class
     }

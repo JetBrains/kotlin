@@ -75,6 +75,11 @@ object FirPropertyAccessorsTypesChecker : FirPropertyChecker() {
                         context
                     )
                 }
+            } else if (
+                property.returnTypeRef.coneType == getterReturnType &&
+                getter.visibility != property.visibility
+            ) {
+                reporter.reportOn(getter.source, FirErrors.REDUNDANT_GETTER_VISIBILITY_CHANGE, context)
             }
         }
     }
