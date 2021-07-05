@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.declarations.lazy.LazyIrFactory
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -31,6 +32,7 @@ fun deserializeClassFromByteArray(
     byteArray: ByteArray,
     stubGenerator: DeclarationStubGenerator,
     irClass: IrClass,
+    typeSystemContext: IrTypeSystemContext,
     allowErrorNodes: Boolean,
 ) {
     val irBuiltIns = stubGenerator.irBuiltIns
@@ -73,19 +75,21 @@ fun deserializeClassFromByteArray(
         deserializeBodies = true,
         symbolDeserializer,
         DefaultFakeOverrideClassFilter,
-        makeSimpleFakeOverrideBuilder(symbolTable, irBuiltIns, symbolDeserializer)
+        makeSimpleFakeOverrideBuilder(symbolTable, typeSystemContext, symbolDeserializer),
+        compatibilityMode = CompatibilityMode.CURRENT,
     )
 
     deserializer.deserializeIrClass(irProto.irClass)
 
     ExternalDependenciesGenerator(stubGenerator.symbolTable, listOf(stubGenerator)).generateUnboundSymbolsAsDependencies()
-    buildFakeOverridesForLocalClasses(stubGenerator.symbolTable, stubGenerator.irBuiltIns, symbolDeserializer, irClass)
+    buildFakeOverridesForLocalClasses(stubGenerator.symbolTable, typeSystemContext, symbolDeserializer, irClass)
 }
 
 fun deserializeIrFileFromByteArray(
     byteArray: ByteArray,
     stubGenerator: DeclarationStubGenerator,
     facadeClass: IrClass,
+    typeSystemContext: IrTypeSystemContext,
     allowErrorNodes: Boolean,
 ) {
     val irBuiltIns = stubGenerator.irBuiltIns
@@ -121,7 +125,7 @@ fun deserializeIrFileFromByteArray(
 
     val lazyIrFactory = LazyIrFactory(irBuiltIns.irFactory)
 
-    val fakeOverrideBuilder = makeSimpleFakeOverrideBuilder(symbolTable, irBuiltIns, symbolDeserializer)
+    val fakeOverrideBuilder = makeSimpleFakeOverrideBuilder(symbolTable, typeSystemContext, symbolDeserializer)
 
     val deserializer = IrDeclarationDeserializer(
         irBuiltIns, symbolTable, lazyIrFactory, irLibraryFile, facadeClass,
@@ -130,14 +134,15 @@ fun deserializeIrFileFromByteArray(
         deserializeBodies = true,
         symbolDeserializer,
         DefaultFakeOverrideClassFilter,
-        fakeOverrideBuilder
+        fakeOverrideBuilder,
+        compatibilityMode = CompatibilityMode.CURRENT,
     )
     for (declarationProto in irProto.declarationList) {
         deserializer.deserializeDeclaration(declarationProto)
     }
 
     ExternalDependenciesGenerator(stubGenerator.symbolTable, listOf(stubGenerator)).generateUnboundSymbolsAsDependencies()
-    buildFakeOverridesForLocalClasses(stubGenerator.symbolTable, stubGenerator.irBuiltIns, symbolDeserializer, facadeClass)
+    buildFakeOverridesForLocalClasses(stubGenerator.symbolTable, typeSystemContext, symbolDeserializer, facadeClass)
 }
 
 private class IrLibraryFileFromAnnotation(
@@ -195,7 +200,7 @@ private fun referencePublicSymbol(
 // TODO: implement properly
 fun makeSimpleFakeOverrideBuilder(
     symbolTable: SymbolTable,
-    irBuiltIns: IrBuiltIns,
+    typeSystemContext: IrTypeSystemContext,
     symbolDeserializer: IrSymbolDeserializer
 ): FakeOverrideBuilder {
     return FakeOverrideBuilder(
@@ -210,18 +215,18 @@ fun makeSimpleFakeOverrideBuilder(
         },
         symbolTable,
         JvmIrMangler,
-        irBuiltIns,
+        typeSystemContext,
         fakeOverrideDeclarationTable = PrePopulatedDeclarationTable(symbolDeserializer.deserializedSymbols)
     )
 }
 
 private fun buildFakeOverridesForLocalClasses(
     symbolTable: SymbolTable,
-    irBuiltIns: IrBuiltIns,
+    typeSystemContext: IrTypeSystemContext,
     symbolDeserializer: IrSymbolDeserializer,
     toplevel: IrClass
 ) {
-    val builder = makeSimpleFakeOverrideBuilder(symbolTable, irBuiltIns, symbolDeserializer)
+    val builder = makeSimpleFakeOverrideBuilder(symbolTable, typeSystemContext, symbolDeserializer)
     toplevel.acceptChildrenVoid(object : IrElementVisitorVoid {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
@@ -229,7 +234,7 @@ private fun buildFakeOverridesForLocalClasses(
 
         override fun visitClass(declaration: IrClass) {
             if (declaration.visibility == DescriptorVisibilities.LOCAL) {
-                builder.provideFakeOverrides(declaration)
+                builder.provideFakeOverrides(declaration, CompatibilityMode.CURRENT)
             }
             super.visitClass(declaration)
         }

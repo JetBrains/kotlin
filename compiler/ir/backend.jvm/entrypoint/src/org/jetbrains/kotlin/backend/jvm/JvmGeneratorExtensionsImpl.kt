@@ -118,7 +118,9 @@ open class JvmGeneratorExtensionsImpl(
         allowErrorNodes: Boolean
     ): Boolean {
         val serializedIr = (irClass.source as? KotlinJvmBinarySourceElement)?.binaryClass?.classHeader?.serializedIr ?: return false
-        deserializeClassFromByteArray(serializedIr, stubGenerator, irClass, allowErrorNodes)
+        deserializeClassFromByteArray(
+            serializedIr, stubGenerator, irClass, JvmIrTypeSystemContext(stubGenerator.irBuiltIns), allowErrorNodes
+        )
         irClass.transform(SingletonObjectJvmStaticTransformer(stubGenerator.irBuiltIns, cachedFields), null)
         return true
     }
@@ -130,7 +132,9 @@ open class JvmGeneratorExtensionsImpl(
         allowErrorNodes: Boolean
     ): Boolean {
         val serializedIr = (irClass.source as? JvmPackagePartSource)?.knownJvmBinaryClass?.classHeader?.serializedIr ?: return false
-        deserializeIrFileFromByteArray(serializedIr, stubGenerator, irClass, allowErrorNodes)
+        deserializeIrFileFromByteArray(
+            serializedIr, stubGenerator, irClass, JvmIrTypeSystemContext(stubGenerator.irBuiltIns), allowErrorNodes
+        )
         irClass.transform(SingletonObjectJvmStaticTransformer(stubGenerator.irBuiltIns, cachedFields), null)
         return true
     }

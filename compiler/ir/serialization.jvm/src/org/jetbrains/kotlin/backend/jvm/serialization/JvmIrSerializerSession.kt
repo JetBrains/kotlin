@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.serialization
 
+import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer
 import org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr
@@ -21,7 +22,9 @@ class JvmIrSerializerSession(
     expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
     externallyVisibleOnly: Boolean = true,
     skipExpects: Boolean = false,
-) : IrFileSerializer(messageLogger, declarationTable, expectDescriptorToSymbol, externallyVisibleOnly, skipExpects) {
+) : IrFileSerializer(
+    messageLogger, declarationTable, expectDescriptorToSymbol, CompatibilityMode.CURRENT, externallyVisibleOnly, skipExpects
+) {
 
     // Usage protocol: construct an instance, call only one of `serializeIrFile()` and `serializeTopLevelClass()` only once.
 
