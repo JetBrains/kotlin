@@ -40,7 +40,7 @@ abstract class BuildMetaInfoFactory<T : BuildMetaInfo>(private val metaInfoClass
     ): T
 
     fun create(args: CommonCompilerArguments): T {
-        val languageVersion = args.languageVersion?.let((LanguageVersion)::fromVersionString) ?: LanguageVersion.LATEST_STABLE
+        val languageVersion = args.languageVersion?.let { LanguageVersion.fromVersionString(it) } ?: LanguageVersion.LATEST_STABLE
 
         return create(
             isEAP = languageVersion.isPreRelease(),
@@ -51,7 +51,7 @@ abstract class BuildMetaInfoFactory<T : BuildMetaInfo>(private val metaInfoClass
             ownVersion = OWN_VERSION,
             coroutinesVersion = COROUTINES_VERSION,
             multiplatformVersion = MULTIPLATFORM_VERSION,
-            metadataVersionArray = args.metadataVersion?.let((BinaryVersion)::parseVersionArray)
+            metadataVersionArray = args.metadataVersion?.let { BinaryVersion.parseVersionArray(it) }
         )
     }
 

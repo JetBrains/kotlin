@@ -103,7 +103,7 @@ abstract class DefaultAuthorizableClient<ServerType : ServerBase>(
     }
 
     override fun sendNoReplyMessage(msg: AnyMessage<out ServerType>) {
-        writeActor.offer(SendNoreplyMessageQuery(msg))
+        writeActor.trySend(SendNoreplyMessageQuery(msg))
     }
 
     override suspend fun <T> readMessage(id: Int): T {

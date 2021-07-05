@@ -66,3 +66,11 @@ runtimeJar()
 sourcesJar()
 
 javadocJar()
+
+tasks {
+    val compileKotlin by existing(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class) {
+        kotlinOptions {
+            freeCompilerArgs += "-Xopt-in=kotlinx.coroutines.DelicateCoroutinesApi"
+        }
+    }
+}
