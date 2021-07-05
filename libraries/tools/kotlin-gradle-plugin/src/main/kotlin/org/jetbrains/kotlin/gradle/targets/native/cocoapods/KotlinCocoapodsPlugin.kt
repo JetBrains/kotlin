@@ -18,6 +18,9 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.addExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency.PodLocation.*
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.ARCHS_PROPERTY
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.CONFIGURATION_PROPERTY
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.PLATFORM_PROPERTY
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
@@ -88,8 +91,9 @@ private val CocoapodsDependency.toPodDownloadTaskName: String
     )
 
 internal val Project.shouldUseSyntheticProjectSettings: Boolean
-    get() = (findProperty(KotlinCocoapodsPlugin.TARGET_PROPERTY) == null &&
-            findProperty(KotlinCocoapodsPlugin.CONFIGURATION_PROPERTY) == null)
+    get() = (project.findProperty(PLATFORM_PROPERTY) == null &&
+            project.findProperty(ARCHS_PROPERTY) == null &&
+            project.findProperty(CONFIGURATION_PROPERTY) == null)
 
 private val KotlinNativeTarget.toValidSDK: String
     get() = when (konanTarget) {
@@ -174,7 +178,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         requestedBuildType: NativeBuildType,
         requestedPlatforms: List<KonanTarget>
     ) {
-        val fatTargets = requestedPlatforms.associate { it to kotlinExtension.targetsForPlatform(it) }
+        val fatTargets = requestedPlatforms.associateWith { kotlinExtension.targetsForPlatform(it) }
 
         check(fatTargets.values.any { it.isNotEmpty() }) {
             "The project must have a target for at least one of the following platforms: " +
@@ -188,10 +192,10 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
 
         val fatFrameworkTask = project.registerTask<FatFrameworkTask>("fatFramework") { task ->
             task.group = TASK_GROUP
-            task.description = "Creates a fat framework for ARM32 and ARM64 architectures"
+            task.description = "Creates a fat framework for requested architectures"
             task.destinationDir = project.cocoapodsBuildDirs.fatFramework(requestedBuildType)
 
-            fatTargets.forEach { _, targets ->
+            fatTargets.forEach { (_, targets) ->
                 targets.singleOrNull()?.let {
                     task.from(it.binaries.getFramework(POD_FRAMEWORK_PREFIX, requestedBuildType))
                 }
@@ -221,8 +225,29 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         kotlinExtension: KotlinMultiplatformExtension,
         cocoapodsExtension: CocoapodsExtension
     ) = project.whenEvaluated {
-        val requestedTargetName = project.findProperty(TARGET_PROPERTY)?.toString() ?: return@whenEvaluated
         val xcodeConfiguration = project.findProperty(CONFIGURATION_PROPERTY)?.toString() ?: return@whenEvaluated
+        val platforms = project.findProperty(PLATFORM_PROPERTY)?.toString()?.split(",", " ")?.filter { it.isNotBlank() }
+        val archs = project.findProperty(ARCHS_PROPERTY)?.toString()?.split(",", " ")?.filter { it.isNotBlank() }
+
+        if (platforms == null || archs == null) {
+            check(project.findProperty(TARGET_PROPERTY) == null) {
+                """
+                $TARGET_PROPERTY property was dropped in favor of $PLATFORM_PROPERTY and $ARCHS_PROPERTY. 
+                Podspec file might be outdated. Sync project with Gradle files or run the 'podspec' task manually to regenerate it.
+                """.trimIndent()
+            }
+            return@whenEvaluated
+        }
+
+        check(platforms.size == 1) {
+            "$PLATFORM_PROPERTY has to contain a single value only. If building for multiple platforms is required, consider using XCFrameworks"
+        }
+
+        val platform = platforms.first()
+
+        val nativeTargets = getNativeTargets(platform, archs)
+
+        check(nativeTargets.isNotEmpty()) { "Could not identify native targets for platform: '$platform' and architectures: '$archs'" }
 
         val requestedBuildType = cocoapodsExtension.xcodeConfigurationToNativeBuildType[xcodeConfiguration]
 
@@ -233,24 +258,94 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         """.trimIndent()
         }
 
-        // We create a fat framework only for device platforms which have several
-        // device architectures: iosArm64, iosArm32, watchosArm32 and watchosArm64.
-        val frameworkPlatforms: List<KonanTarget> = when (requestedTargetName) {
-            KOTLIN_TARGET_FOR_IOS_DEVICE -> listOf(IOS_ARM64, IOS_ARM32)
-            KOTLIN_TARGET_FOR_WATCHOS_DEVICE -> listOf(WATCHOS_ARM32, WATCHOS_ARM64)
-            // A request parameter can be comma separated list of targets.
-            else -> requestedTargetName.split(",").map { HostManager().targetByName(it) }.toList()
-        }
-
-        val frameworkTargets = frameworkPlatforms.flatMap { kotlinExtension.targetsForPlatform(it) }
+        val frameworkTargets = nativeTargets.flatMap { kotlinExtension.targetsForPlatform(it) }
         if (frameworkTargets.size == 1) {
             // Fast path: there is only one device target. There is no need to build a fat framework.
             createSyncForRegularFramework(project, kotlinExtension, requestedBuildType, frameworkTargets.single().konanTarget)
         } else {
             // There are several device targets so we need to build a fat framework.
-            createSyncForFatFramework(project, kotlinExtension, requestedBuildType, frameworkPlatforms)
+            createSyncForFatFramework(project, kotlinExtension, requestedBuildType, nativeTargets)
         }
     }
+
+    private fun getNativeTargets(platform: String, archs: List<String>): List<KonanTarget> {
+        class UnknownArchitectureException(platform: String, arch: String) :
+            IllegalArgumentException("Architecture $arch is not supported for platform $platform")
+
+        val targets: MutableSet<KonanTarget> = mutableSetOf()
+
+        when (platform) {
+
+            "iphoneos" -> {
+                targets.addAll(archs.map { arch ->
+                    when (arch) {
+                        "arm64", "arm64e" -> IOS_ARM64
+                        "armv7", "armv7s" -> IOS_ARM32
+                        else -> throw UnknownArchitectureException(platform, arch)
+                    }
+                })
+            }
+            "iphonesimulator" -> {
+                targets.addAll(archs.map { arch ->
+                    when (arch) {
+                        "arm64", "arm64e" -> IOS_SIMULATOR_ARM64
+                        "x86_64" -> IOS_X64
+                        else -> throw UnknownArchitectureException(platform, arch)
+                    }
+                })
+            }
+            "watchos" -> {
+                targets.addAll(archs.map { arch ->
+                    when (arch) {
+                        "armv7k" -> WATCHOS_ARM32
+                        "arm64_32" -> WATCHOS_ARM64
+                        else -> throw UnknownArchitectureException(platform, arch)
+                    }
+                })
+            }
+            "watchsimulator" -> {
+                targets.addAll(archs.map { arch ->
+                    when (arch) {
+                        "arm64", "arm64e" -> WATCHOS_SIMULATOR_ARM64
+                        "i386" -> WATCHOS_X86
+                        "x86_64" -> WATCHOS_X64
+                        else -> throw UnknownArchitectureException(platform, arch)
+                    }
+                })
+            }
+            "appletvos" -> {
+                targets.addAll(archs.map { arch ->
+                    when (arch) {
+                        "arm64", "arm64e" -> TVOS_ARM64
+                        else -> throw UnknownArchitectureException(platform, arch)
+                    }
+                })
+            }
+            "appletvsimulator" -> {
+                targets.addAll(archs.map { arch ->
+                    when (arch) {
+                        "arm64", "arm64e" -> TVOS_SIMULATOR_ARM64
+                        "x86_64" -> TVOS_X64
+                        else -> throw UnknownArchitectureException(platform, arch)
+                    }
+                })
+            }
+            "macosx" -> {
+                targets.addAll(archs.map { arch ->
+                    when (arch) {
+                        "arm64" -> MACOS_ARM64
+                        "x86_64" -> MACOS_X64
+                        else -> throw UnknownArchitectureException(platform, arch)
+                    }
+                })
+            }
+
+            else -> throw IllegalArgumentException("Platform $platform is not supported")
+        }
+
+        return targets.toList()
+    }
+
 
     private fun createInterops(
         project: Project,
@@ -590,7 +685,9 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
 
         // We don't move these properties in PropertiesProvider because
         // they are not intended to be overridden in local.properties.
+        const val PLATFORM_PROPERTY = "kotlin.native.cocoapods.platform"
         const val TARGET_PROPERTY = "kotlin.native.cocoapods.target"
+        const val ARCHS_PROPERTY = "kotlin.native.cocoapods.archs"
         const val CONFIGURATION_PROPERTY = "kotlin.native.cocoapods.configuration"
 
         const val CFLAGS_PROPERTY = "kotlin.native.cocoapods.cflags"
@@ -598,11 +695,6 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         const val FRAMEWORK_PATHS_PROPERTY = "kotlin.native.cocoapods.paths.frameworks"
 
         const val GENERATE_WRAPPER_PROPERTY = "kotlin.native.cocoapods.generate.wrapper"
-
-        // Used in Xcode script phase to indicate that the framework is being built for a device
-        // so we should generate a fat framework with arm32 and arm64 binaries.
-        const val KOTLIN_TARGET_FOR_IOS_DEVICE = "ios_arm"
-        const val KOTLIN_TARGET_FOR_WATCHOS_DEVICE = "watchos_arm"
 
         val isAvailableToProduceSynthetic: Boolean by lazy {
             if (!HostManager.hostIsMac) {

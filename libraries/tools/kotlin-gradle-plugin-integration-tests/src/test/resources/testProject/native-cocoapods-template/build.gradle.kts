@@ -15,6 +15,9 @@ group = "org.jetbrains.kotlin.sample.native"
 version = "1.0"
 
 kotlin {
+    sourceSets["commonMain"].dependencies {
+        implementation(kotlin("stdlib-common"))
+    }
     iosX64("iOS")
     cocoapods {
         homepage = "https://github.com/JetBrains/kotlin"
