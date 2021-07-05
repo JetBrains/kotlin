@@ -115,23 +115,6 @@ public abstract class DynamicBundle extends AbstractBundle {
   public static ResourceBundle getBundle(@NotNull String baseName, @NotNull Class<?> formClass) {
     DynamicBundle dynamic = ourBundlesForForms.computeIfAbsent(baseName, s -> new DynamicBundle(s) {});
     ResourceBundle rb = dynamic.getResourceBundle(formClass.getClassLoader());
-
-    if (BundleBase.SHOW_LOCALIZED_MESSAGES) {
-      return new ResourceBundle() {
-        @Override
-        protected Object handleGetObject(@NotNull String key) {
-          Object get = rb.getObject(key);
-          assert get instanceof String : "Language bundles should contain only strings";
-          return BundleBase.appendLocalizationMarker((String)get);
-        }
-
-        @NotNull
-        @Override
-        public Enumeration<String> getKeys() {
-          return rb.getKeys();
-        }
-      };
-    }
     return rb;
   }
 }
