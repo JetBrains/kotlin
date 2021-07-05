@@ -285,7 +285,6 @@ fun convertJpsModule(imlFile: File, jpsModule: JpsModule): String {
         |
         |tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile> {
         |    kotlinOptions.freeCompilerArgs = listOf($compilerArgs)
-        |    kotlinOptions.jdkHome = rootProject.extra["JDK_11"] as String
         |    kotlinOptions.useOldBackend = true // KT-45697
         |}
         |
