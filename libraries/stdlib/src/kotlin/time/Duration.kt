@@ -7,10 +7,7 @@ package kotlin.time
 
 import kotlin.contracts.*
 import kotlin.jvm.JvmInline
-import kotlin.math.abs
-import kotlin.math.roundToInt
-import kotlin.math.roundToLong
-import kotlin.math.sign
+import kotlin.math.*
 
 /**
  * Represents the amount of time one instant of time is away from another instant.
@@ -1080,13 +1077,13 @@ private fun parseDuration(value: String, strictIso: Boolean): Duration {
         length <= index ->
             throw IllegalArgumentException()
         value[index] == 'P' -> {
-            index++
+            if (++index == length) throw IllegalArgumentException()
             val signedDigits = "+-0123456789."
             var isTimeComponent = false
             var prevUnit: DurationUnit? = null
             while (index < length) {
                 if (value[index] == 'T') {
-                    if (isTimeComponent || index++ == length) throw IllegalArgumentException()
+                    if (isTimeComponent || ++index == length) throw IllegalArgumentException()
                     isTimeComponent = true
                     continue
                 }
@@ -1098,11 +1095,13 @@ private fun parseDuration(value: String, strictIso: Boolean): Duration {
                 val unit = durationUnitByIsoChar(unitChar, isTimeComponent)
                 if (prevUnit != null && prevUnit <= unit) throw IllegalArgumentException("Unexpected order of duration components")
                 prevUnit = unit
-                if (unit == DurationUnit.SECONDS && '.' in component) {
-                    // TODO: parse fractional part separately
-                    result += component.toDouble().toDuration(unit)
+                val dotIndex = component.indexOf('.')
+                if (unit == DurationUnit.SECONDS && dotIndex > 0) {
+                    val whole = component.substring(0, dotIndex)
+                    result += parseOverLongIsoComponent(whole).toDuration(unit)
+                    result += component.substring(dotIndex).toDouble().toDuration(unit)
                 } else {
-                    result += component.toLong().toDuration(unit)
+                    result += parseOverLongIsoComponent(component).toDuration(unit)
                 }
             }
         }
@@ -1129,9 +1128,11 @@ private fun parseDuration(value: String, strictIso: Boolean): Duration {
                 val unit = durationUnitByShortName(unitName)
                 if (prevUnit != null && prevUnit <= unit) throw IllegalArgumentException("Unexpected order of duration components")
                 prevUnit = unit
-                if ('.' in component) {
-                    // TODO: parse fractional part separately
-                    result += component.toDouble().toDuration(unit)
+                val dotIndex = component.indexOf('.')
+                if (dotIndex > 0) {
+                    val whole = component.substring(0, dotIndex)
+                    result += whole.toLong().toDuration(unit)
+                    result += component.substring(dotIndex).toDouble().toDuration(unit)
                     if (index < length) throw IllegalArgumentException("Fractional component must be last")
                 } else {
                     result += component.toLong().toDuration(unit)
@@ -1140,6 +1141,18 @@ private fun parseDuration(value: String, strictIso: Boolean): Duration {
         }
     }
     return if (value.startsWith('-')) -result else result
+}
+
+
+private fun parseOverLongIsoComponent(value: String): Long {
+    val length = value.length
+    var startIndex = 0
+    if (length > 0 && value[0] in "+-") startIndex++
+    if ((length - startIndex) > 16 && (startIndex..value.lastIndex).all { value[it] in '0'..'9' }) {
+        // all chars are digits, but more than ceiling(log10(MAX_MILLIS / 1000)) of them
+        return if (value[0] == '-') Long.MIN_VALUE else Long.MAX_VALUE
+    }
+    return value.toLong()
 }
 
 
