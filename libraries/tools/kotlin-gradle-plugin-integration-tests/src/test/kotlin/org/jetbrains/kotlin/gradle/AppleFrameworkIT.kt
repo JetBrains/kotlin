@@ -33,7 +33,8 @@ class AppleFrameworkIT : BaseGradleIT() {
             val options: BuildOptions = defaultBuildOptions().copy(
                 customEnvironmentVariables = mapOf(
                     "CONFIGURATION" to "debug",
-                    "SDK_NAME" to "iphoneos123"
+                    "SDK_NAME" to "iphoneos123",
+                    "NATIVE_ARCH" to "armv7"
                 )
             )
             build("assembleDebugAppleFrameworkForXcodeIosArm64", options = options) {
@@ -72,6 +73,7 @@ class AppleFrameworkIT : BaseGradleIT() {
                 customEnvironmentVariables = mapOf(
                     "CONFIGURATION" to "Debug",
                     "SDK_NAME" to "iphoneos",
+                    "NATIVE_ARCH" to "armv7",
                     "EXPANDED_CODE_SIGN_IDENTITY" to "-",
                     "TARGET_BUILD_DIR" to "testBuildDir",
                     "FRAMEWORKS_FOLDER_PATH" to "testFrameworksDir"
@@ -103,7 +105,8 @@ class AppleFrameworkIT : BaseGradleIT() {
             val options: BuildOptions = defaultBuildOptions().copy(
                 customEnvironmentVariables = mapOf(
                     "CONFIGURATION" to "Debug",
-                    "SDK_NAME" to "iphoneos"
+                    "SDK_NAME" to "iphoneos",
+                    "NATIVE_ARCH" to "armv7"
                 )
             )
             build("tasks", options = options) {
