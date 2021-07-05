@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
-import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.diagnostics.rendering.LanguageFeatureMessageRenderer
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers.RENDER_POSITION_VARIANCE
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers.STRING
@@ -159,7 +158,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUN_INTERFACE_CON
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUN_INTERFACE_WITH_SUSPEND_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.GENERIC_THROWABLE_SUBCLASS
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.GETTER_VISIBILITY_SMALLER_THAN_PROPERTY_VISIBILITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_FUNCTION_AMBIGUITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_CONST_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_KOTLIN_VERSION_STRING_VALUE
@@ -279,6 +278,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_ANNOTATION_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_CALL_OF_CONVERSION_METHOD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_EXPLICIT_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_GETTER_TYPE_CHANGE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_MODALITY_MODIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_MODIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_OPEN_IN_INTERFACE
@@ -1023,7 +1023,10 @@ class FirDefaultErrorMessages {
                 RENDER_TYPE
             )
             map.put(INITIALIZER_TYPE_MISMATCH, "Initializer type mismatch: expected {0}, actual {1}", RENDER_TYPE, RENDER_TYPE)
-            map.put(GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY, "Getter visibility must be the same as property visibility")
+            map.put(
+                GETTER_VISIBILITY_SMALLER_THAN_PROPERTY_VISIBILITY,
+                "Getter visibility must be more permissive or the same as property visibility"
+            )
             map.put(
                 SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY,
                 "Setter visibility must be the same or less permissive than property visibility"
@@ -1031,7 +1034,13 @@ class FirDefaultErrorMessages {
             map.put(WRONG_SETTER_RETURN_TYPE, "Setter return type must be Unit")
             map.put(
                 WRONG_GETTER_RETURN_TYPE,
-                "Getter return type must be equal to the type of the property, i.e. ''{0}''",
+                "Getter return type must be a supertype of the type of the property, which is ''{0}''",
+                RENDER_TYPE,
+                RENDER_TYPE
+            )
+            map.put(
+                REDUNDANT_GETTER_TYPE_CHANGE,
+                "Getter visibility is the same as the visibility of the property, but its return type is different. There's no need in it, so, please, change ''{1}'' to ''{0}''",
                 RENDER_TYPE,
                 RENDER_TYPE
             )

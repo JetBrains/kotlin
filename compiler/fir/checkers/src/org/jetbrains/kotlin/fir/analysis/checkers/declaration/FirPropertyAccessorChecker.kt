@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.findClosestClassOrObject
+import org.jetbrains.kotlin.fir.analysis.checkers.isSubtypeOf
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.canHaveAbstractDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isOpen
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isUnit
@@ -34,8 +36,9 @@ object FirPropertyAccessorsTypesChecker : FirPropertyChecker() {
 
         withSuppressedDiagnostics(getter, context) {
             checkAccessorForDelegatedProperty(property, getter, context, reporter)
-            if (getter.visibility != property.visibility) {
-                reporter.reportOn(getter.source, FirErrors.GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY, context)
+            val difference = getter.visibility.compareTo(property.visibility)
+            if (difference != null && difference < 0) {
+                reporter.reportOn(getter.source, FirErrors.GETTER_VISIBILITY_SMALLER_THAN_PROPERTY_VISIBILITY, context)
             }
             if (property.symbol.callableId.classId != null && getter.body != null && property.delegate == null) {
                 if (isLegallyAbstract(property, context)) {
@@ -50,10 +53,27 @@ object FirPropertyAccessorsTypesChecker : FirPropertyChecker() {
             if (propertyType is ConeClassErrorType || getterReturnType is ConeClassErrorType) {
                 return
             }
-            if (getterReturnType != property.returnTypeRef.coneType) {
+
+            if (!property.returnTypeRef.coneType.isSubtypeOf(context.session.typeContext, getterReturnType)) {
                 val getterReturnTypeSource = getterReturnTypeRef.source
                 withSuppressedDiagnostics(getterReturnTypeRef, context) {
                     reporter.reportOn(getterReturnTypeSource, FirErrors.WRONG_GETTER_RETURN_TYPE, propertyType, getterReturnType, context)
+                }
+            }
+
+            if (
+                property.returnTypeRef.coneType != getterReturnType &&
+                getter.visibility == property.visibility
+            ) {
+                val getterReturnTypeSource = getterReturnTypeRef.source
+                withSuppressedDiagnostics(getterReturnTypeRef, context) {
+                    reporter.reportOn(
+                        getterReturnTypeSource,
+                        FirErrors.REDUNDANT_GETTER_TYPE_CHANGE,
+                        propertyType,
+                        getterReturnType,
+                        context
+                    )
                 }
             }
         }

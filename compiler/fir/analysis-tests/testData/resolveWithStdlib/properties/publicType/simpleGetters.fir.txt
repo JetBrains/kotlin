@@ -1,0 +1,28 @@
+FILE: simpleGetters.kt
+    public final class SomeClass : R|kotlin/Any| {
+        public constructor(): R|SomeClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final val items: <ERROR TYPE REF: Unresolved name: mutableListOf> = <Unresolved name: mutableListOf>#<R|kotlin/String|>()
+            public get(): R|kotlin/collections/List<kotlin/String>| {
+                ^ this@R|/SomeClass|.F|/SomeClass.items|
+            }
+
+        public final fun addItem(item: R|kotlin/String|): R|kotlin/Unit| {
+            this@R|/SomeClass|.R|/SomeClass.items|.<Unresolved name: add>#(R|<local>/item|)
+        }
+
+        private final val shmitems: <ERROR TYPE REF: Unresolved name: mutableListOf> = <Unresolved name: mutableListOf>#<R|kotlin/String|>()
+            protected get(): R|kotlin/collections/List<kotlin/String>| {
+                ^ this@R|/SomeClass|.F|/SomeClass.shmitems|
+            }
+
+    }
+    public final fun doSomething(): R|kotlin/Unit| {
+        lval it: R|SomeClass| = R|/SomeClass.SomeClass|()
+        R|<local>/it|.R|/SomeClass.addItem|(String(Test))
+        R|<local>/it|.R|/SomeClass.items|.<Unresolved name: add>#(String(Fest))
+        lval itemsSize: <ERROR TYPE REF: Unresolved name: size> = R|<local>/it|.R|/SomeClass.items|.<Unresolved name: size>#
+        lval shmitemsSize: <ERROR TYPE REF: Unresolved name: size> = R|<local>/it|.<HIDDEN: /SomeClass.shmitems is invisible>#.<Unresolved name: size>#
+    }

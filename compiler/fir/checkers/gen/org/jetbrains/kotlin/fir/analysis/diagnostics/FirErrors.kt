@@ -422,10 +422,11 @@ object FirErrors {
     val CONST_VAL_WITH_NON_CONST_INITIALIZER by error0<KtExpression>()
     val WRONG_SETTER_PARAMETER_TYPE by error2<KtTypeReference, ConeKotlinType, ConeKotlinType>()
     val INITIALIZER_TYPE_MISMATCH by error2<KtProperty, ConeKotlinType, ConeKotlinType>(SourceElementPositioningStrategies.PROPERTY_INITIALIZER)
-    val GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY by error0<KtModifierListOwner>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
+    val GETTER_VISIBILITY_SMALLER_THAN_PROPERTY_VISIBILITY by error0<KtModifierListOwner>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
     val SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY by error0<KtModifierListOwner>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
     val WRONG_SETTER_RETURN_TYPE by error0<KtTypeReference>()
     val WRONG_GETTER_RETURN_TYPE by error2<KtTypeReference, ConeKotlinType, ConeKotlinType>()
+    val REDUNDANT_GETTER_TYPE_CHANGE by error2<KtTypeReference, ConeKotlinType, ConeKotlinType>()
     val ACCESSOR_FOR_DELEGATED_PROPERTY by error0<KtPropertyAccessor>()
 
     // Multi-platform projects

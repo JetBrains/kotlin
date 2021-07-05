@@ -70,7 +70,19 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         require(declaration is FirDeclaration)
         val provider = session.firProvider
         val symbol = declaration.symbol
-        return when (declaration.visibility) {
+        var visibility = declaration.visibility
+
+        if (declaration is FirProperty) {
+            declaration.getter?.let { getter ->
+                val difference = getter.visibility.compareTo(visibility)
+
+                if (difference != null && difference > 0) {
+                    visibility = getter.visibility
+                }
+            }
+        }
+
+        return when (visibility) {
             Visibilities.Internal -> {
                 declaration.moduleData == session.moduleData || session.moduleVisibilityChecker?.isInFriendModule(declaration) == true
             }
@@ -112,7 +124,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
             }
 
             else -> platformVisibilityCheck(
-                declaration.visibility,
+                visibility,
                 symbol,
                 useSiteFile,
                 containingDeclarations,

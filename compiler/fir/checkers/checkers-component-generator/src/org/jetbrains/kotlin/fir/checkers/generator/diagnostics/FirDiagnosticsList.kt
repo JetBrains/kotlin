@@ -744,10 +744,14 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
         }
-        val GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY by error<KtModifierListOwner>(PositioningStrategy.VISIBILITY_MODIFIER)
+        val GETTER_VISIBILITY_SMALLER_THAN_PROPERTY_VISIBILITY by error<KtModifierListOwner>(PositioningStrategy.VISIBILITY_MODIFIER)
         val SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY by error<KtModifierListOwner>(PositioningStrategy.VISIBILITY_MODIFIER)
         val WRONG_SETTER_RETURN_TYPE by error<KtTypeReference>()
         val WRONG_GETTER_RETURN_TYPE by error<KtTypeReference> {
+            parameter<ConeKotlinType>("expectedType")
+            parameter<ConeKotlinType>("actualType")
+        }
+        val REDUNDANT_GETTER_TYPE_CHANGE by error<KtTypeReference> {
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
         }

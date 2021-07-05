@@ -1474,8 +1474,8 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val actualType: KtType
     }
 
-    abstract class GetterVisibilityDiffersFromPropertyVisibility : KtFirDiagnostic<KtModifierListOwner>() {
-        override val diagnosticClass get() = GetterVisibilityDiffersFromPropertyVisibility::class
+    abstract class GetterVisibilitySmallerThanPropertyVisibility : KtFirDiagnostic<KtModifierListOwner>() {
+        override val diagnosticClass get() = GetterVisibilitySmallerThanPropertyVisibility::class
     }
 
     abstract class SetterVisibilityInconsistentWithPropertyVisibility : KtFirDiagnostic<KtModifierListOwner>() {
@@ -1488,6 +1488,12 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class WrongGetterReturnType : KtFirDiagnostic<KtTypeReference>() {
         override val diagnosticClass get() = WrongGetterReturnType::class
+        abstract val expectedType: KtType
+        abstract val actualType: KtType
+    }
+
+    abstract class RedundantGetterTypeChange : KtFirDiagnostic<KtTypeReference>() {
+        override val diagnosticClass get() = RedundantGetterTypeChange::class
         abstract val expectedType: KtType
         abstract val actualType: KtType
     }

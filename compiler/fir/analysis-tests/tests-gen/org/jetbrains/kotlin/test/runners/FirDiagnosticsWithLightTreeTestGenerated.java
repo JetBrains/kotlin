@@ -5421,6 +5421,32 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         }
 
         @Nested
+        @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Properties {
+            @Test
+            public void testAllFilesPresentInProperties() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @Nested
+            @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType")
+            @TestDataPath("$PROJECT_ROOT")
+            public class PublicType {
+                @Test
+                public void testAllFilesPresentInPublicType() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                }
+
+                @Test
+                @TestMetadata("simpleGetters.kt")
+                public void testSimpleGetters() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/simpleGetters.kt");
+                }
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/reinitializations")
         @TestDataPath("$PROJECT_ROOT")
         public class Reinitializations {

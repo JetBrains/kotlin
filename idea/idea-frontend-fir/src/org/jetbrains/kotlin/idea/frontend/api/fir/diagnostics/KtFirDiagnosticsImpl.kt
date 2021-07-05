@@ -2384,10 +2384,10 @@ internal class InitializerTypeMismatchImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
-internal class GetterVisibilityDiffersFromPropertyVisibilityImpl(
+internal class GetterVisibilitySmallerThanPropertyVisibilityImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.GetterVisibilityDiffersFromPropertyVisibility(), KtAbstractFirDiagnostic<KtModifierListOwner> {
+) : KtFirDiagnostic.GetterVisibilitySmallerThanPropertyVisibility(), KtAbstractFirDiagnostic<KtModifierListOwner> {
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
@@ -2411,6 +2411,15 @@ internal class WrongGetterReturnTypeImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.WrongGetterReturnType(), KtAbstractFirDiagnostic<KtTypeReference> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
+internal class RedundantGetterTypeChangeImpl(
+    override val expectedType: KtType,
+    override val actualType: KtType,
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.RedundantGetterTypeChange(), KtAbstractFirDiagnostic<KtTypeReference> {
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 

@@ -2091,8 +2091,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY) { firDiagnostic ->
-        GetterVisibilityDiffersFromPropertyVisibilityImpl(
+    add(FirErrors.GETTER_VISIBILITY_SMALLER_THAN_PROPERTY_VISIBILITY) { firDiagnostic ->
+        GetterVisibilitySmallerThanPropertyVisibilityImpl(
             firDiagnostic as FirPsiDiagnostic,
             token,
         )
@@ -2111,6 +2111,22 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.WRONG_GETTER_RETURN_TYPE) { firDiagnostic ->
         WrongGetterReturnTypeImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.REDUNDANT_GETTER_TYPE_CHANGE) { firDiagnostic ->
+        WrongGetterReturnTypeImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.REDUNDANT_GETTER_TYPE_CHANGE) { firDiagnostic ->
+        RedundantGetterTypeChangeImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
             firDiagnostic as FirPsiDiagnostic,
