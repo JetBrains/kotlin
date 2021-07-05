@@ -1,3 +1,4 @@
+// JSPECIFY_STATE: warn
 // ALLOW_KOTLIN_PACKAGE
 
 // FILE: sandbox/module-info.java

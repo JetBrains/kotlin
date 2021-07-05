@@ -1,3 +1,4 @@
+// JSPECIFY_STATE: warn
 
 // FILE: IgnoreAnnotations.java
 import org.jspecify.nullness.*;
