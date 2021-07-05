@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.load.java
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.findValueForMostSpecificFqname
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.storage.MemoizedFunctionToNullable
 import org.jetbrains.kotlin.storage.StorageManager
 
 val JSPECIFY_ANNOTATIONS_PACKAGE = FqName("org.jspecify.nullness")
@@ -72,7 +73,7 @@ fun getDefaultReportLevelForAnnotation(annotationFqName: FqName) =
 
 fun getReportLevelForAnnotation(
     annotation: FqName,
-    configuredReportLevels: NullabilityAnnotationStates<out ReportLevel>,
+    configuredReportLevels: NullabilityAnnotationStates<ReportLevel>,
     configuredKotlinVersion: KotlinVersion = KotlinVersion.CURRENT
 ): ReportLevel {
     configuredReportLevels[annotation]?.let { return it }
@@ -89,8 +90,6 @@ fun getReportLevelForAnnotation(
 interface NullabilityAnnotationStates<out T : Any> {
     operator fun get(fqName: FqName): T?
 
-    fun singleOrNull(): Pair<FqName, T>?
-
     companion object {
         val EMPTY: NullabilityAnnotationStates<Nothing> = NullabilityAnnotationStatesImpl(emptyMap())
     }
@@ -104,6 +103,4 @@ class NullabilityAnnotationStatesImpl<T : Any>(val states: Map<FqName, T>) : Nul
     }
 
     override operator fun get(fqName: FqName) = cache(fqName)
-
-    override fun singleOrNull() = states.entries.singleOrNull()?.toPair()
 }

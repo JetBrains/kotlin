@@ -16,7 +16,7 @@ class AllNullabilityAnnotationsAreSetUpTest : KtUsefulTestCase() {
         val annotationsRawMap = (NULLABILITY_ANNOTATION_SETTINGS as NullabilityAnnotationStatesImpl).states
         assert(NULLABILITY_ANNOTATIONS.all { annotation -> annotationsRawMap.keys.any { annotation.isChildOf(it) } }) {
             val missedAnnotations = NULLABILITY_ANNOTATIONS.filter { annotation ->
-                annotationsRawMap.keys.none { annotation.isChildOf(it) }
+                annotationsRawMap.keys.none { annotation == it || annotation.isChildOf(it) }
             }
             "Not all nullability annotations are presented in `nullabilityAnnotationSettings`. Missed annotations: $missedAnnotations"
         }
@@ -24,8 +24,8 @@ class AllNullabilityAnnotationsAreSetUpTest : KtUsefulTestCase() {
 
     fun testAllSetUpAnnotationsArePresent() {
         val annotationsRawMap = (NULLABILITY_ANNOTATION_SETTINGS as NullabilityAnnotationStatesImpl).states
-        assert(annotationsRawMap.keys.all { annotationsPackage ->
-            NULLABILITY_ANNOTATIONS.any { it.isChildOf(annotationsPackage) }
+        assert(annotationsRawMap.keys.all { annotations ->
+            NULLABILITY_ANNOTATIONS.any { it == annotations || it.isChildOf(annotations) }
         }) {
             val missedAnnotations = annotationsRawMap.keys.filter { annotationsPackage ->
                 NULLABILITY_ANNOTATIONS.none { it.isChildOf(annotationsPackage) }

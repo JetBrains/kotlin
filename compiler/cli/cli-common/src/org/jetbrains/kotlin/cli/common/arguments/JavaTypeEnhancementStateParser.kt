@@ -65,25 +65,30 @@ class JavaTypeEnhancementStateParser(
         }
     }
 
-    private fun parseNullabilityAnnotationReportLevels(nullabilityAnnotations: Array<String>?): NullabilityAnnotationStates<out ReportLevel> {
+    private fun parseNullabilityAnnotationReportLevels(item: String): Pair<FqName, ReportLevel>? {
+        if (!item.startsWith("@")) {
+            reportUnrecognizedReportLevel(item, NULLABILITY_ANNOTATIONS_COMPILER_OPTION)
+            return null
+        }
+
+        val (name, state) = parseAnnotationWithReportLevel(item, NULLABILITY_ANNOTATIONS_COMPILER_OPTION) ?: return null
+
+        return name to state
+    }
+
+    private fun parseNullabilityAnnotationReportLevels(nullabilityAnnotations: Array<String>?): NullabilityAnnotationStates<ReportLevel> {
         if (nullabilityAnnotations.isNullOrEmpty())
             return NullabilityAnnotationStates.EMPTY
 
         val annotationsWithReportLevels = mutableMapOf<FqName, ReportLevel>()
-        val compilerOption = "-Xnullability-annotations"
 
         for (item in nullabilityAnnotations) {
-            if (!item.startsWith("@")) {
-                reportUnrecognizedReportLevel(item, compilerOption)
-                continue
-            }
-
-            val (name, state) = parseAnnotationWithReportLevel(item, compilerOption) ?: continue
+            val (name, state) = parseNullabilityAnnotationReportLevels(item) ?: continue
             val current = annotationsWithReportLevels[name]
             if (current == null) {
                 annotationsWithReportLevels[name] = state
             } else if (current != state) {
-                reportDuplicateAnnotation("@$name:${current.description}", item, compilerOption)
+                reportDuplicateAnnotation("@$name:${current.description}", item, NULLABILITY_ANNOTATIONS_COMPILER_OPTION)
                 continue
             }
         }
@@ -93,7 +98,7 @@ class JavaTypeEnhancementStateParser(
 
     private fun parseJspecifyReportLevel(
         jspecifyState: String?,
-        nullabilityAnnotationReportLevels: NullabilityAnnotationStates<out ReportLevel>
+        nullabilityAnnotationReportLevels: NullabilityAnnotationStates<ReportLevel>
     ): ReportLevel {
         if (jspecifyState == null)
             return getReportLevelForAnnotation(JSPECIFY_ANNOTATIONS_PACKAGE, nullabilityAnnotationReportLevels, kotlinVersion)
@@ -198,8 +203,9 @@ class JavaTypeEnhancementStateParser(
 
     companion object {
         private val DEFAULT = JavaTypeEnhancementStateParser(MessageCollector.NONE, KotlinVersion.CURRENT)
+        private const val NULLABILITY_ANNOTATIONS_COMPILER_OPTION = "-Xnullability-annotations"
 
-        fun parsePlainNullabilityAnnotationReportLevels(nullabilityAnnotations: String) =
-            DEFAULT.parseNullabilityAnnotationReportLevels(arrayOf(nullabilityAnnotations)).singleOrNull()
+        fun parsePlainNullabilityAnnotationReportLevels(nullabilityAnnotations: String): Pair<FqName, ReportLevel> =
+            DEFAULT.parseNullabilityAnnotationReportLevels(nullabilityAnnotations)!!
     }
 }
