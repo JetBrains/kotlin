@@ -721,8 +721,9 @@ public value class Duration internal constructor(private val rawValue: Long) : C
         INFINITE.rawValue -> "Infinity"
         NEG_INFINITE.rawValue -> "-Infinity"
         else -> {
+            val isNegative = isNegative()
             buildString {
-                if (isNegative()) append('-')
+                if (isNegative) append('-')
                 absoluteValue.run {
                     toComponents { _, hours, minutes, seconds, nanoseconds ->
                         val days = inWholeDays
@@ -730,22 +731,21 @@ public value class Duration internal constructor(private val rawValue: Long) : C
                         val hasHours = hours != 0
                         val hasMinutes = minutes != 0
                         val hasSeconds = seconds != 0 || nanoseconds != 0
+                        var components = 0
                         if (hasDays) {
-                            append(days)
-                            append('d')
+                            append(days).append('d')
+                            components++
                         }
                         if (hasHours || (hasDays && (hasMinutes || hasSeconds))) {
-                            if (length > 1) append(' ')
-                            append(hours)
-                            append('h')
+                            if (components++ > 0) append(' ')
+                            append(hours).append('h')
                         }
                         if (hasMinutes || (hasSeconds && (hasHours || hasDays))) {
-                            if (length > 1) append(' ')
-                            append(minutes)
-                            append('m')
+                            if (components++ > 0) append(' ')
+                            append(minutes).append('m')
                         }
                         if (hasSeconds) {
-                            if (length > 1) append(' ')
+                            if (components++ > 0) append(' ')
                             when {
                                 seconds != 0 || hasDays || hasHours || hasMinutes ->
                                     appendFractional(seconds, nanoseconds, "s")
@@ -757,6 +757,7 @@ public value class Duration internal constructor(private val rawValue: Long) : C
                                     append(nanoseconds).append("ns")
                             }
                         }
+                        if (isNegative && components > 1) insert(1, '(').append(')')
                     }
                 }
             }
@@ -1065,7 +1066,7 @@ public inline operator fun Double.times(duration: Duration): Duration = duration
 
 @ExperimentalTime
 private fun parseDuration(value: String, strictIso: Boolean): Duration {
-    val length = value.length
+    var length = value.length
     if (length == 0) throw IllegalArgumentException("The string is empty")
     var index = 0
     var result = Duration.ZERO
@@ -1073,9 +1074,10 @@ private fun parseDuration(value: String, strictIso: Boolean): Duration {
     when (value[index]) {
         '+', '-' -> index++
     }
+    val isNegative = value.startsWith('-')
     when {
         length <= index ->
-            throw IllegalArgumentException()
+            throw IllegalArgumentException("No components")
         value[index] == 'P' -> {
             if (++index == length) throw IllegalArgumentException()
             val signedDigits = "+-0123456789."
@@ -1115,8 +1117,13 @@ private fun parseDuration(value: String, strictIso: Boolean): Duration {
             val digits = "0123456789."
             var prevUnit: DurationUnit? = null
             var afterFirst = false
+            var allowSpaces = !isNegative
+            if (isNegative && value[index] == '(' && value.last() == ')') {
+                allowSpaces = true
+                if (++index == --length) throw IllegalArgumentException("No components")
+            }
             while (index < length) {
-                if (afterFirst) {
+                if (afterFirst && allowSpaces) {
                     index = value.skipWhile(index) { it == ' ' }
                 }
                 afterFirst = true
@@ -1140,7 +1147,7 @@ private fun parseDuration(value: String, strictIso: Boolean): Duration {
             }
         }
     }
-    return if (value.startsWith('-')) -result else result
+    return if (isNegative) -result else result
 }
 
 

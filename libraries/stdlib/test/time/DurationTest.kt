@@ -564,17 +564,30 @@ class DurationTest {
 
     @Test
     fun parseAndFormatDefault() {
+        fun testParsing(string: String, expectedDuration: Duration) {
+            assertEquals(expectedDuration, Duration.parse(string), string)
+            assertEquals(expectedDuration, Duration.parseOrNull(string), string)
+        }
+
         fun test(duration: Duration, vararg expected: String) {
             val actual = duration.toString()
             assertEquals(expected.first(), actual)
 
-            if (duration > Duration.ZERO) {
-                assertEquals("-$actual", (-duration).toString())
+            if (duration.isPositive()) {
+                if (' ' in actual) {
+                    assertEquals("-($actual)", (-duration).toString())
+                } else {
+                    assertEquals("-$actual", (-duration).toString())
+                }
             }
 
             for (string in expected) {
-                assertEquals(duration, Duration.parse(string), string)
-                assertEquals(duration, Duration.parseOrNull(string), string)
+                testParsing(string, duration)
+                if (duration.isPositive() && duration.isFinite()) {
+                    testParsing("-($string)", -duration)
+                    if (' ' !in string)
+                        testParsing("-$string", -duration)
+                }
             }
         }
 
@@ -642,7 +655,8 @@ class DurationTest {
 //        test(universeAge, "5.04e+12d")
 //        test(planckTime, "5.40e-44s")
 //        test(Duration.nanoseconds(Double.MAX_VALUE), "2.08e+294d")
-        test(Duration.INFINITE, "Infinity")
+        test(Duration.INFINITE, "Infinity", "53375995583d 20h", "+Infinity")
+        test(-Duration.INFINITE, "-Infinity", "-(53375995583d 20h)")
     }
 
     @Test
@@ -652,7 +666,7 @@ class DurationTest {
             "1234567890123456789012ns", "Inf", "-Infinity value",
             "1s ", " 1s",
             "1d 1m 1h", "1s 2s",
-            "-12m -15s",
+            "-12m 15s", "-12m -15s", "(12m 30s)", "-()", "()", "-(12m 30s",
             "12.5m 11.5s", ".2s", "0.1553.39m",
             "P+12+34D", "P12-34D", "PT1234567890-1234567890S",
             " P1D", "PT1S ",
