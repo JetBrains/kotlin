@@ -127,8 +127,6 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
             override fun visitCall(expression: IrCall, data: IrClass?): IrExpression {
                 expression.transformChildren(this, data)
 
-                removeIntTypeSafeCastsForEquality(expression)
-
                 if (expression.symbol.owner.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) {
                     if (data == null) return expression
                     val simpleFunction = (expression.symbol.owner as? IrSimpleFunction) ?: return expression
@@ -148,121 +146,59 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
                     if (left.isNullConst() && right is IrConst<*> || right.isNullConst() && left is IrConst<*>)
                         return IrConstImpl.constFalse(expression.startOffset, expression.endOffset, context.irBuiltIns.booleanType)
 
-                    val safeCallLeft = parseSafeCall(left)
-                    if (safeCallLeft != null && right.type.isJvmPrimitive()) {
-                        return rewriteSafeCallEqeqPrimitive(safeCallLeft, right, expression)
+                    if (expression.symbol == context.irBuiltIns.eqeqSymbol) {
+                        if (right.type.isJvmPrimitive()) {
+                            parseSafeCall(left)?.let { return rewriteSafeCallEqeqPrimitive(it, expression) }
+                        }
+                        if (left.type.isJvmPrimitive()) {
+                            parseSafeCall(right)?.let { return rewritePrimitiveEqeqSafeCall(it, expression) }
+                        }
                     }
-
-                    val safeCallRight = parseSafeCall(right)
-                    if (safeCallRight != null && left.type.isJvmPrimitive()) {
-                        return rewritePrimitiveEqeqSafeCall(left, safeCallRight, expression)
-                    }
-
-                    return expression
                 }
 
                 return expression
             }
 
-            private fun rewriteSafeCallEqeqPrimitive(safeCall: SafeCallInfo, primitive: IrExpression, eqeqCall: IrCall): IrExpression =
-                context.createJvmIrBuilder(safeCall.scopeSymbol).run {
-                    // Fuze safe call with primitive equality to avoid boxing the primitive.
-                    // 'a?.<...> == p' becomes:
-                    //      {
-                    //          val tmp = a
-                    //          when {
-                    //              tmp == null -> false
-                    //              else -> tmp == p
-                    //          }
-                    //      }
-                    irBlock {
-                        +safeCall.tmpVal
-                        +irWhen(
-                            eqeqCall.type,
-                            listOf(
-                                irBranch(safeCall.ifNullBranch.condition, irFalse()),
-                                irElseBranch(
-                                    irCall(eqeqCall.symbol).apply {
-                                        putValueArgument(0, safeCall.ifNotNullBranch.result)
-                                        putValueArgument(1, primitive)
-                                    }
-                                )
-                            )
-                        )
-                    }
+            private fun IrBuilderWithScope.ifSafe(safeCall: SafeCallInfo, expr: IrExpression): IrExpression =
+                irBlock(origin = IrStatementOrigin.SAFE_CALL) {
+                    +safeCall.tmpVal
+                    +irIfThenElse(expr.type, safeCall.ifNullBranch.condition, irFalse(), expr)
                 }
 
-            private fun rewritePrimitiveEqeqSafeCall(primitive: IrExpression, safeCall: SafeCallInfo, eqeqCall: IrCall): IrExpression =
+            // Fuse safe call with primitive equality to avoid boxing the primitive. `a?.x == p`:
+            //     { val tmp = a; if (tmp == null) null else tmp.x } == p`
+            // is transformed to:
+            //     { val tmp = a; if (tmp == null) false else tmp.x == p }
+            // Note that the original IR implied that `p` is always evaluated, but the rewritten version
+            // only does so if `a` is not null. This is how the old backend does it, and it's consistent
+            // with `a?.x?.equals(p)`.
+            private fun rewriteSafeCallEqeqPrimitive(safeCall: SafeCallInfo, eqeqCall: IrCall): IrExpression =
                 context.createJvmIrBuilder(safeCall.scopeSymbol).run {
-                    // Fuze safe call with primitive equality to avoid boxing the primitive.
-                    // 'p == a?.<...>' becomes:
-                    //      {
-                    //          val tmp_p = p               // should evaluate 'p' before 'a'
-                    //          val tmp = a
-                    //          when {
-                    //              tmp == null -> false
-                    //              else -> tmp_p == tmp
-                    //          }
-                    //      }
-                    // 'tmp_p' above could be elided if 'p' is a variable or a constant.
-                    irBlock {
-                        val lhs =
-                            if (primitive.isTrivial())
-                                primitive
-                            else {
-                                val tmp = irTemporary(primitive)
-                                irGet(tmp)
-                            }
-                        +safeCall.tmpVal
-                        +irWhen(
-                            eqeqCall.type,
-                            listOf(
-                                irBranch(safeCall.ifNullBranch.condition, irFalse()),
-                                irElseBranch(
-                                    irCall(eqeqCall.symbol).apply {
-                                        putValueArgument(0, lhs)
-                                        putValueArgument(1, safeCall.ifNotNullBranch.result)
-                                    }
-                                )
-                            )
-                        )
-                    }
+                    ifSafe(safeCall, eqeqCall.apply { putValueArgument(0, safeCall.ifNotNullBranch.result) })
                 }
 
-            private fun IrType.isByteOrShort() = isByte() || isShort()
-
-            // For `==` and `!=`, get rid of safe calls to convert `Byte?` or `Short?` to `Int?`.
-            // For equality, we do not need to perform such conversions as the builtin for equality
-            // will handle it. Having the safe call leads to unnecessary null checks and boxing.
-            private fun removeIntTypeSafeCastsForEquality(expression: IrCall) {
-                if (expression.origin == IrStatementOrigin.EQEQ || expression.origin == IrStatementOrigin.EXCLEQ) {
-                    for (i in 0 until expression.valueArgumentsCount) {
-                        if (expression.getValueArgument(i)!!.type.makeNotNull().isInt()) {
-                            val argument = expression.getValueArgument(i)!!
-                            if (argument is IrBlock && argument.origin == IrStatementOrigin.SAFE_CALL) {
-                                if (argument.statements.size == 2) {
-                                    val variable = argument.statements[0]
-                                    if (variable is IrVariable && variable.type.makeNotNull().isByteOrShort()) {
-                                        val whenExpression = argument.statements[1]
-                                        if (whenExpression is IrWhen && whenExpression.branches.size == 2) {
-                                            val secondBranch = whenExpression.branches[1]
-                                            if (secondBranch is IrElseBranch && secondBranch.result is IrCall) {
-                                                val conversion = secondBranch.result as IrCall
-                                                if (conversion.symbol.owner.name.asString() == "toInt" &&
-                                                    conversion.dispatchReceiver is IrGetValue &&
-                                                    (conversion.dispatchReceiver as IrGetValue).symbol.owner == variable
-                                                ) {
-                                                    expression.putValueArgument(i, variable.initializer)
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+            // Fuse safe call with primitive equality to avoid boxing the primitive. 'p == a?.x':
+            //     p == { val tmp = a; if (tmp == null) null else tmp.x }
+            // is transformed to:
+            //     { val tmp_p = p; { val tmp = a; if (tmp == null) false else p == tmp } }
+            // Note that `p` is evaluated even if `a` is null, which is again consistent with both the old backend
+            // and `p.equals(a?.x)`.
+            private fun rewritePrimitiveEqeqSafeCall(safeCall: SafeCallInfo, eqeqCall: IrCall): IrExpression =
+                context.createJvmIrBuilder(safeCall.scopeSymbol).run {
+                    val primitive = eqeqCall.getValueArgument(0)!!
+                    if (primitive.isTrivial()) {
+                        ifSafe(safeCall, eqeqCall.apply { putValueArgument(1, safeCall.ifNotNullBranch.result) })
+                    } else {
+                        // The extra block for `p`'s variable is intentional as adding it into the inner block
+                        // would make it no longer look like a safe call to `IfNullExpressionFusionLowering`.
+                        irBlock {
+                            +ifSafe(safeCall, eqeqCall.apply {
+                                putValueArgument(0, irGet(irTemporary(primitive)))
+                                putValueArgument(1, safeCall.ifNotNullBranch.result)
+                            })
                         }
                     }
                 }
-            }
 
             private fun optimizePropertyAccess(
                 expression: IrCall,
