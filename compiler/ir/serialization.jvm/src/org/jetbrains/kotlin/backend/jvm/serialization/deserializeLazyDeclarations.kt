@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.LazyIrFactory
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
@@ -42,7 +41,8 @@ fun deserializeClassFromByteArray(
         irProto.auxTables.typeList,
         irProto.auxTables.signatureList,
         irProto.auxTables.stringList,
-        irProto.auxTables.bodyList
+        irProto.auxTables.bodyList,
+        irProto.auxTables.debugInfoList
     )
     val descriptorFinder =
         DescriptorByIdSignatureFinder(
@@ -99,7 +99,8 @@ fun deserializeIrFileFromByteArray(
         irProto.auxTables.typeList,
         irProto.auxTables.signatureList,
         irProto.auxTables.stringList,
-        irProto.auxTables.bodyList
+        irProto.auxTables.bodyList,
+        irProto.auxTables.debugInfoList
     )
     val descriptorFinder =
         DescriptorByIdSignatureFinder(
@@ -146,10 +147,11 @@ fun deserializeIrFileFromByteArray(
 }
 
 private class IrLibraryFileFromAnnotation(
-    val types: List<ByteString>,
-    val signatures: List<ByteString>,
-    val strings: List<ByteString>,
-    val bodies: List<ByteString>,
+    private val types: List<ByteString>,
+    private val signatures: List<ByteString>,
+    private val strings: List<ByteString>,
+    private val bodies: List<ByteString>,
+    private val debugInfo: List<ByteString>
 ) : IrLibraryFile() {
     override fun irDeclaration(index: Int): ByteArray {
         error("This method is never supposed to be called")
@@ -159,6 +161,7 @@ private class IrLibraryFileFromAnnotation(
     override fun signature(index: Int): ByteArray = signatures[index].toByteArray()
     override fun string(index: Int): ByteArray = strings[index].toByteArray()
     override fun body(index: Int): ByteArray = bodies[index].toByteArray()
+    override fun debugInfo(index: Int): ByteArray = debugInfo[index].toByteArray()
 }
 
 private fun referencePublicSymbol(

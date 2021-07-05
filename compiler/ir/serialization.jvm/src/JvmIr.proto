@@ -20,6 +20,7 @@ message AuxTables {
   repeated bytes signature = 2;
   repeated bytes string = 3;
   repeated bytes body = 4;
+  repeated bytes debug_info = 5;
 }
 
 message JvmIrFile {

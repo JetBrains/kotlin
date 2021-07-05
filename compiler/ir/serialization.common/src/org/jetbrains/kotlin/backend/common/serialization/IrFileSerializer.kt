@@ -149,7 +149,7 @@ open class IrFileSerializer(
 
     protected val protoBodyArray = mutableListOf<XStatementOrExpression>()
 
-    private val protoDebugInfoArray = arrayListOf<String>()
+    protected val protoDebugInfoArray = arrayListOf<String>()
 
     sealed class XStatementOrExpression {
         abstract fun toByteArray(): ByteArray

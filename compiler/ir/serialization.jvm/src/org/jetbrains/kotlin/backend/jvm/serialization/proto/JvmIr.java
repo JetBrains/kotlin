@@ -660,6 +660,19 @@ public final class JvmIr {
      * <code>repeated bytes body = 4;</code>
      */
     org.jetbrains.kotlin.protobuf.ByteString getBody(int index);
+
+    /**
+     * <code>repeated bytes debug_info = 5;</code>
+     */
+    java.util.List<org.jetbrains.kotlin.protobuf.ByteString> getDebugInfoList();
+    /**
+     * <code>repeated bytes debug_info = 5;</code>
+     */
+    int getDebugInfoCount();
+    /**
+     * <code>repeated bytes debug_info = 5;</code>
+     */
+    org.jetbrains.kotlin.protobuf.ByteString getDebugInfo(int index);
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.backend.jvm.serialization.proto.AuxTables}
@@ -743,6 +756,14 @@ public final class JvmIr {
               body_.add(input.readBytes());
               break;
             }
+            case 42: {
+              if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+                debugInfo_ = new java.util.ArrayList<org.jetbrains.kotlin.protobuf.ByteString>();
+                mutable_bitField0_ |= 0x00000010;
+              }
+              debugInfo_.add(input.readBytes());
+              break;
+            }
           }
         }
       } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -762,6 +783,9 @@ public final class JvmIr {
         }
         if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
           body_ = java.util.Collections.unmodifiableList(body_);
+        }
+        if (((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+          debugInfo_ = java.util.Collections.unmodifiableList(debugInfo_);
         }
         try {
           unknownFieldsCodedOutput.flush();
@@ -888,11 +912,34 @@ public final class JvmIr {
       return body_.get(index);
     }
 
+    public static final int DEBUG_INFO_FIELD_NUMBER = 5;
+    private java.util.List<org.jetbrains.kotlin.protobuf.ByteString> debugInfo_;
+    /**
+     * <code>repeated bytes debug_info = 5;</code>
+     */
+    public java.util.List<org.jetbrains.kotlin.protobuf.ByteString>
+        getDebugInfoList() {
+      return debugInfo_;
+    }
+    /**
+     * <code>repeated bytes debug_info = 5;</code>
+     */
+    public int getDebugInfoCount() {
+      return debugInfo_.size();
+    }
+    /**
+     * <code>repeated bytes debug_info = 5;</code>
+     */
+    public org.jetbrains.kotlin.protobuf.ByteString getDebugInfo(int index) {
+      return debugInfo_.get(index);
+    }
+
     private void initFields() {
       type_ = java.util.Collections.emptyList();
       signature_ = java.util.Collections.emptyList();
       string_ = java.util.Collections.emptyList();
       body_ = java.util.Collections.emptyList();
+      debugInfo_ = java.util.Collections.emptyList();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -918,6 +965,9 @@ public final class JvmIr {
       }
       for (int i = 0; i < body_.size(); i++) {
         output.writeBytes(4, body_.get(i));
+      }
+      for (int i = 0; i < debugInfo_.size(); i++) {
+        output.writeBytes(5, debugInfo_.get(i));
       }
       output.writeRawBytes(unknownFields);
     }
@@ -963,6 +1013,15 @@ public final class JvmIr {
         }
         size += dataSize;
         size += 1 * getBodyList().size();
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < debugInfo_.size(); i++) {
+          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeBytesSizeNoTag(debugInfo_.get(i));
+        }
+        size += dataSize;
+        size += 1 * getDebugInfoList().size();
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -1066,6 +1125,8 @@ public final class JvmIr {
         bitField0_ = (bitField0_ & ~0x00000004);
         body_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000008);
+        debugInfo_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000010);
         return this;
       }
 
@@ -1108,6 +1169,11 @@ public final class JvmIr {
           bitField0_ = (bitField0_ & ~0x00000008);
         }
         result.body_ = body_;
+        if (((bitField0_ & 0x00000010) == 0x00000010)) {
+          debugInfo_ = java.util.Collections.unmodifiableList(debugInfo_);
+          bitField0_ = (bitField0_ & ~0x00000010);
+        }
+        result.debugInfo_ = debugInfo_;
         return result;
       }
 
@@ -1150,6 +1216,16 @@ public final class JvmIr {
           } else {
             ensureBodyIsMutable();
             body_.addAll(other.body_);
+          }
+          
+        }
+        if (!other.debugInfo_.isEmpty()) {
+          if (debugInfo_.isEmpty()) {
+            debugInfo_ = other.debugInfo_;
+            bitField0_ = (bitField0_ & ~0x00000010);
+          } else {
+            ensureDebugInfoIsMutable();
+            debugInfo_.addAll(other.debugInfo_);
           }
           
         }
@@ -1493,6 +1569,78 @@ public final class JvmIr {
       public Builder clearBody() {
         body_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000008);
+        
+        return this;
+      }
+
+      private java.util.List<org.jetbrains.kotlin.protobuf.ByteString> debugInfo_ = java.util.Collections.emptyList();
+      private void ensureDebugInfoIsMutable() {
+        if (!((bitField0_ & 0x00000010) == 0x00000010)) {
+          debugInfo_ = new java.util.ArrayList<org.jetbrains.kotlin.protobuf.ByteString>(debugInfo_);
+          bitField0_ |= 0x00000010;
+         }
+      }
+      /**
+       * <code>repeated bytes debug_info = 5;</code>
+       */
+      public java.util.List<org.jetbrains.kotlin.protobuf.ByteString>
+          getDebugInfoList() {
+        return java.util.Collections.unmodifiableList(debugInfo_);
+      }
+      /**
+       * <code>repeated bytes debug_info = 5;</code>
+       */
+      public int getDebugInfoCount() {
+        return debugInfo_.size();
+      }
+      /**
+       * <code>repeated bytes debug_info = 5;</code>
+       */
+      public org.jetbrains.kotlin.protobuf.ByteString getDebugInfo(int index) {
+        return debugInfo_.get(index);
+      }
+      /**
+       * <code>repeated bytes debug_info = 5;</code>
+       */
+      public Builder setDebugInfo(
+          int index, org.jetbrains.kotlin.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureDebugInfoIsMutable();
+        debugInfo_.set(index, value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated bytes debug_info = 5;</code>
+       */
+      public Builder addDebugInfo(org.jetbrains.kotlin.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureDebugInfoIsMutable();
+        debugInfo_.add(value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated bytes debug_info = 5;</code>
+       */
+      public Builder addAllDebugInfo(
+          java.lang.Iterable<? extends org.jetbrains.kotlin.protobuf.ByteString> values) {
+        ensureDebugInfoIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, debugInfo_);
+        
+        return this;
+      }
+      /**
+       * <code>repeated bytes debug_info = 5;</code>
+       */
+      public Builder clearDebugInfo() {
+        debugInfo_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000010);
         
         return this;
       }

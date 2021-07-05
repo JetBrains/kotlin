@@ -54,6 +54,7 @@ class JvmIrSerializerSession(
         protoIdSignatureArray.forEach { proto.addSignature(it.toByteString()) }
         protoStringArray.forEach { proto.addString(ByteString.copyFromUtf8(it)) }
         protoBodyArray.forEach { proto.addBody(ByteString.copyFrom(it.toByteArray())) }
+        protoDebugInfoArray.forEach { proto.addDebugInfo(ByteString.copyFromUtf8(it)) }
         return proto.build()
     }
 }
