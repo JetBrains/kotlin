@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTests
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
+import org.jetbrains.kotlin.gradle.tooling.BuildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.tooling.buildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinAbiVersion
@@ -186,7 +187,7 @@ class BuildKotlinToolingMetadataTest {
     }
 
     private fun getKotlinToolingMetadata(): KotlinToolingMetadata {
-        val task = project.buildKotlinToolingMetadataTask!!.get()
-        return task.getKotlinToolingMetadata()
+        val task = project.buildKotlinToolingMetadataTask?.get() ?: error("No ${BuildKotlinToolingMetadataTask.defaultTaskName} task")
+        return task.kotlinToolingMetadata
     }
 }
