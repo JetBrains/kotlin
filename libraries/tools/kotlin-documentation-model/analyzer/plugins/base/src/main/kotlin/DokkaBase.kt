@@ -188,7 +188,7 @@ class DokkaBase : DokkaPlugin() {
     }
 
     val rootCreator by extending {
-        htmlPreprocessors with RootCreator
+        htmlPreprocessors with RootCreator applyIf { !delayTemplateSubstitution }
     }
 
     val defaultSamplesTransformer by extending {
