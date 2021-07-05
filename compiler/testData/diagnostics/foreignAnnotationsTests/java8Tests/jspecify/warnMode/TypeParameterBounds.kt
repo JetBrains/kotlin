@@ -1,3 +1,4 @@
+// JSPECIFY_STATE: warn
 // FILE: A.java
 import org.jspecify.nullness.*;
 
