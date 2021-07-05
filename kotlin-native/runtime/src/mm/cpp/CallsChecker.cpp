@@ -3,6 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
+#ifndef KONAN_NO_EXTERNAL_CALLS_CHECKER
 #include <string_view>
 #include <cstring>
 
@@ -376,3 +377,4 @@ extern "C" RUNTIME_NOTHROW void Kotlin_mm_checkStateAtExternalFunctionCall(const
     RuntimeFail("Expected kNative thread state at call of function %s by function %s", callee, caller);
 }
 
+#endif // KONAN_NO_EXTERNAL_CALLS_CHECKER
