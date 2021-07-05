@@ -37,15 +37,22 @@ private object XcodeEnvironment {
     val target: KonanTarget?
         get() {
             val sdk = System.getenv("SDK_NAME") ?: return null
+            val isForArm = System.getenv("NATIVE_ARCH")?.startsWith("arm") ?: false
 
-            //todo support simulator architecture for Apple Silicon
-            return when {
+            return if (isForArm) when {
                 sdk.startsWith("iphoneos") -> KonanTarget.IOS_ARM64
-                sdk.startsWith("iphonesimulator") -> KonanTarget.IOS_X64
+                sdk.startsWith("iphonesimulator") -> KonanTarget.IOS_SIMULATOR_ARM64
                 sdk.startsWith("watchos") -> KonanTarget.WATCHOS_ARM64
-                sdk.startsWith("watchsimulator") -> KonanTarget.WATCHOS_X64
+                sdk.startsWith("watchsimulator") -> KonanTarget.WATCHOS_SIMULATOR_ARM64
                 sdk.startsWith("appletvos") -> KonanTarget.TVOS_ARM64
+                sdk.startsWith("appletvsimulator") -> KonanTarget.TVOS_SIMULATOR_ARM64
+                sdk.startsWith("macosx") -> KonanTarget.MACOS_ARM64
+                else -> null
+            } else when {
+                sdk.startsWith("iphonesimulator") -> KonanTarget.IOS_X64
+                sdk.startsWith("watchsimulator") -> KonanTarget.WATCHOS_X64
                 sdk.startsWith("appletvsimulator") -> KonanTarget.TVOS_X64
+                sdk.startsWith("macosx") -> KonanTarget.MACOS_X64
                 else -> null
             }
         }
