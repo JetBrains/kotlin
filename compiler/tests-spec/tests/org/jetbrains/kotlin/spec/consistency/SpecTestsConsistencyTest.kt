@@ -12,27 +12,19 @@ import org.jetbrains.kotlin.spec.utils.SpecTestLinkedType
 import org.jetbrains.kotlin.spec.utils.TestArea
 import org.jetbrains.kotlin.spec.utils.parsers.CommonParser.parseLinkedSpecTest
 import org.jetbrains.kotlin.spec.utils.spec.SpecSentencesStorage
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.MethodSource
 import java.io.File
+import java.util.stream.Stream
 
 @TestDataPath("\$PROJECT_ROOT/compiler/tests-spec/testData/")
-@RunWith(com.intellij.testFramework.Parameterized::class)
 class SpecTestsConsistencyTest : TestCase() {
-    @org.junit.runners.Parameterized.Parameter
-    lateinit var testFilePath: String
-
     companion object {
         private val specSentencesStorage = SpecSentencesStorage()
 
-        @org.junit.runners.Parameterized.Parameters(name = "{0}")
         @JvmStatic
-        fun getTestFiles() = emptyList<Array<Any>>()
-
-        @com.intellij.testFramework.Parameterized.Parameters(name = "{0}")
-        @JvmStatic
-        fun getTestFiles(@Suppress("UNUSED_PARAMETER") klass: Class<*>): List<Array<String>> {
-            val testFiles = mutableListOf<Array<String>>()
+        fun getTestFiles(): Stream<String> {
+            val testFiles = mutableListOf<String>()
 
             TestArea.values().forEach { testArea ->
                 val testDataPath =
@@ -40,17 +32,18 @@ class SpecTestsConsistencyTest : TestCase() {
 
                 testFiles += File(testDataPath).let { testsDir ->
                     testsDir.walkTopDown().filter { it.extension == "kt" }.map {
-                        arrayOf(it.relativeTo(File(GeneralConfiguration.SPEC_TESTDATA_PATH)).path.replace("/", "$"))
+                        it.relativeTo(File(GeneralConfiguration.SPEC_TESTDATA_PATH)).path.replace("/", "$")
                     }.toList()
                 }
             }
 
-            return testFiles
+            return testFiles.stream()
         }
     }
 
-    @Test
-    fun doTest() {
+    @ParameterizedTest
+    @MethodSource("getTestFiles")
+    fun doTest(testFilePath: String) {
         val file = File("${GeneralConfiguration.SPEC_TESTDATA_PATH}/${testFilePath.replace("$", "/")}")
         val specSentences = specSentencesStorage.getLatest() ?: return
         val test = parseLinkedSpecTest(file.canonicalPath, mapOf("main" to file.readText()))
