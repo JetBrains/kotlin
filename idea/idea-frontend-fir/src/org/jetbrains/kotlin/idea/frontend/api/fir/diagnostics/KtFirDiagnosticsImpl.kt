@@ -2730,6 +2730,13 @@ internal class ElseMisplacedInWhenImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class DuplicateLabelInWhenImpl(
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.DuplicateLabelInWhen(), KtAbstractFirDiagnostic<KtElement> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class TypeParameterIsNotAnExpressionImpl(
     override val typeParameter: KtTypeParameterSymbol,
     firDiagnostic: FirPsiDiagnostic,

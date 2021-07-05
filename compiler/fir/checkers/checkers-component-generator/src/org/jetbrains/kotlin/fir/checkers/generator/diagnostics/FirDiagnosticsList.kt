@@ -872,6 +872,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val INVALID_IF_AS_EXPRESSION by error<KtIfExpression>(PositioningStrategy.IF_EXPRESSION)
         val ELSE_MISPLACED_IN_WHEN by error<KtWhenEntry>(PositioningStrategy.ELSE_ENTRY)
+        val DUPLICATE_LABEL_IN_WHEN by warning<KtElement>()
     }
 
     val CONTEXT_TRACKING by object : DiagnosticGroup("Context tracking") {

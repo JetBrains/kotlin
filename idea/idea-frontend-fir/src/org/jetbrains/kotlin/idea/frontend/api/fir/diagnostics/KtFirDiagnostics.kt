@@ -1688,6 +1688,10 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ElseMisplacedInWhen::class
     }
 
+    abstract class DuplicateLabelInWhen : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = DuplicateLabelInWhen::class
+    }
+
     abstract class TypeParameterIsNotAnExpression : KtFirDiagnostic<KtSimpleNameExpression>() {
         override val diagnosticClass get() = TypeParameterIsNotAnExpression::class
         abstract val typeParameter: KtTypeParameterSymbol
