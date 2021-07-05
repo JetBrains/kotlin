@@ -454,7 +454,7 @@ class DurationTest {
     }
 
     @Test
-    fun isoStringFormatAndParse() {
+    fun parseAndFormatIsoString() {
         fun test(duration: Duration, vararg isoStrings: String) {
             assertEquals(isoStrings.first(), duration.toIsoString())
             for (isoString in isoStrings) {
@@ -497,12 +497,30 @@ class DurationTest {
         test(Duration.ZERO, "PT0S", "P1DT-24H", "PT-1H60M", "-PT1M-60S")
 
         // infinite
-        test(Duration.INFINITE, "PT9999999999999H", "PT10000000000000H")
-        test(-Duration.INFINITE, "-PT9999999999999H", "-PT10000000000000H")
+        test(Duration.INFINITE, "PT9999999999999H", "PT10000000000000H", "-PT-9999999999999H", "-PT-1234567890123456789012S")
+        test(-Duration.INFINITE, "-PT9999999999999H", "-PT10000000000000H", "PT-1234567890123456789012S")
     }
 
     @Test
-    fun toStringInUnits() {
+    fun parseIsoStringFailing() {
+        for (invalidValue in listOf(
+            "", " ", "P", "PT", "P1DT", "P1", "PT1", "0", "+P", "+", "-", "h", "H", "something",
+            "1m", "1d", "2d 11s", "Infinity", "-Infinity",
+            "P+12+34D", "P12-34D", "PT1234567890-1234567890S",
+            " P1D", "PT1S ",
+            "P1Y", "P1M", "P1S", "PT1D", "PT1Y",
+            "PT1S2S", "PT1S2H",
+            "P9999999999999DT-9999999999999H",
+            "PT1.5H", "PT0.5D", "PT.5S", "PT0.25.25S",
+        )) {
+            assertNull(Duration.parseIsoStringOrNull(invalidValue), invalidValue)
+            assertFailsWith<IllegalArgumentException>(invalidValue) { Duration.parseIsoString(invalidValue) }
+        }
+
+    }
+
+    @Test
+    fun formatInUnits() {
         var d = with(Duration) {
             days(1) + hours(15) + minutes(31) + seconds(45) +
             milliseconds(678) + microseconds(920) + nanoseconds(516.34)
@@ -545,28 +563,32 @@ class DurationTest {
 
 
     @Test
-    fun toStringDefault() {
-        fun test(duration: Duration, vararg expectedOptions: String) {
+    fun parseAndFormatDefault() {
+        fun test(duration: Duration, vararg expected: String) {
             val actual = duration.toString()
+            assertEquals(expected.first(), actual)
 
-            if (!expectedOptions.contains(actual)) {
-                assertEquals<Any>(expectedOptions.toList(), duration.toString())
-            }
-            if (duration > Duration.ZERO)
+            if (duration > Duration.ZERO) {
                 assertEquals("-$actual", (-duration).toString())
+            }
+
+            for (string in expected) {
+                assertEquals(duration, Duration.parse(string), string)
+                assertEquals(duration, Duration.parseOrNull(string), string)
+            }
         }
 
-        test(Duration.days(101), "101d")
-        test(Duration.days(45.3), "45d 7h 12m") // 0.3d == 7.2h
+        test(Duration.days(101), "101d", "2424h")
+        test(Duration.days(45.3), "45d 7h 12m", "45.3d", "45d 7.2h") // 0.3d == 7.2h
         test(Duration.days(45), "45d")
 
-        test(Duration.days(40.5), "40d 12h")
-        test(Duration.days(40) + Duration.minutes(20), "40d 0h 20m")
-        test(Duration.days(40) + Duration.seconds(20), "40d 0h 0m 20s")
-        test(Duration.days(40) + Duration.nanoseconds(100), "40d 0h 0m 0.000000100s")
+        test(Duration.days(40.5), "40d 12h", "40.5d", "40d 720m")
+        test(Duration.days(40) + Duration.minutes(20), "40d 0h 20m", "40d 20m", "40d 1200s")
+        test(Duration.days(40) + Duration.seconds(20), "40d 0h 0m 20s", "40d 20s")
+        test(Duration.days(40) + Duration.nanoseconds(100), "40d 0h 0m 0.000000100s", "40d 100ns")
 
-        test(Duration.hours(40) + Duration.minutes(15), "1d 16h 15m")
-        test(Duration.hours(40), "1d 16h")
+        test(Duration.hours(40) + Duration.minutes(15), "1d 16h 15m", "40h 15m")
+        test(Duration.hours(40), "1d 16h", "40h")
 
         test(Duration.hours(12.5), "12h 30m")
         test(Duration.hours(12) + Duration.seconds(15), "12h 0m 15s")
@@ -584,7 +606,7 @@ class DurationTest {
         test(Duration.seconds(0.5), "500ms")
         test(Duration.milliseconds(40.2), "40.200ms")
         test(Duration.milliseconds(4.225), "4.225ms")
-        test(Duration.milliseconds(4.24501), "4.245010ms")
+        test(Duration.milliseconds(4.24501), "4.245010ms", "4ms 245us 10ns")
         test(Duration.milliseconds(1), "1ms")
 
         test(Duration.milliseconds(0.75), "750us")
@@ -592,10 +614,12 @@ class DurationTest {
         test(Duration.microseconds(7.25), "7.250us")
         test(Duration.microseconds(1.035), "1.035us")
         test(Duration.microseconds(1.005), "1.005us")
+        test(Duration.nanoseconds(1800), "1.800us", "1800ns", "0.0000000005h")
 
         test(Duration.nanoseconds(950.5), "951ns")
         test(Duration.nanoseconds(85.23), "85ns")
         test(Duration.nanoseconds(8.235), "8ns")
+        test(Duration.nanoseconds(1), "1ns", "0.9ns", "0.001us", "0.0009us")
         test(Duration.nanoseconds(1.3), "1ns")
         test(Duration.nanoseconds(0.75), "1ns")
         test(Duration.nanoseconds(0.7512), "1ns")
@@ -605,7 +629,7 @@ class DurationTest {
 //        test(Duration.nanoseconds(0.0034), "0.0034ns")
 //        test(Duration.nanoseconds(0.0000035), "0.0000035ns")
 
-        test(Duration.ZERO, "0s")
+        test(Duration.ZERO, "0s", "0.4ns", "0000.0000ns")
         test(Duration.days(365) * 10000, "3650000d")
         test(Duration.days(300) * 100000, "30000000d")
         test(Duration.days(365) * 100000, "36500000d")
@@ -619,6 +643,27 @@ class DurationTest {
 //        test(planckTime, "5.40e-44s")
 //        test(Duration.nanoseconds(Double.MAX_VALUE), "2.08e+294d")
         test(Duration.INFINITE, "Infinity")
+    }
+
+    @Test
+    fun parseDefaultFailing() {
+        for (invalidValue in listOf(
+            "", " ", "P", "PT", "P1DT", "P1", "PT1", "0", "+P", "+", "-", "h", "H", "something",
+            "1234567890123456789012ns", "Inf", "-Infinity value",
+            "1s ", " 1s",
+            "1d 1m 1h", "1s 2s",
+            "-12m -15s",
+            "12.5m 11.5s", ".2s", "0.1553.39m",
+            "P+12+34D", "P12-34D", "PT1234567890-1234567890S",
+            " P1D", "PT1S ",
+            "P1Y", "P1M", "P1S", "PT1D", "PT1Y",
+            "PT1S2S", "PT1S2H",
+            "P9999999999999DT-9999999999999H",
+            "PT1.5H", "PT0.5D", "PT.5S", "PT0.25.25S",
+        )) {
+            assertNull(Duration.parseOrNull(invalidValue), invalidValue)
+            assertFailsWith<IllegalArgumentException>(invalidValue) { Duration.parse(invalidValue) }
+        }
     }
 
 }
