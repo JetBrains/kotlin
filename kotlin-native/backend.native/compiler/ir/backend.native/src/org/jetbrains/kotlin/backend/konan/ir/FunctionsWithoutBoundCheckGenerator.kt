@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 // Generate additional functions for array set and get operators without bounds checking.
-internal class FunctionsWithoutBCGenerator(val context: KonanBackendContext) {
+internal class FunctionsWithoutBoundCheckGenerator(val context: KonanBackendContext) {
     private val symbols = context.ir.symbols
 
     private fun generateFunction(baseFunction: IrSimpleFunction, functionName: Name) =
@@ -55,7 +55,7 @@ internal class FunctionsWithoutBCGenerator(val context: KonanBackendContext) {
                 val setWithoutBEAnnotations = baseFunction.annotations.map { annotation ->
                     annotation.deepCopyWithSymbols().also { copy ->
                         if (copy.isAnnotationWithEqualFqName(KonanFqNames.gcUnsafeCall)) {
-                            val value = "${annotation.getAnnotationStringValue("callee")}_without_BC"
+                            val value = "${annotation.getAnnotationStringValue("callee")}_without_BoundCheck"
                             copy.putValueArgument(0,
                                     IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.stringType, value))
                         }
@@ -69,10 +69,10 @@ internal class FunctionsWithoutBCGenerator(val context: KonanBackendContext) {
         val arraysClasses = symbols.primitiveArrays.values + symbols.array
         arraysClasses.forEach { classSymbol ->
             val setFunction = classSymbol.owner.functions.single { it.name == OperatorNameConventions.SET }
-            classSymbol.owner.addMember(generateFunction(setFunction, KonanNameConventions.setWithoutBC))
+            classSymbol.owner.addMember(generateFunction(setFunction, KonanNameConventions.setWithoutBoundCheck))
 
             val getFunction = classSymbol.owner.functions.single { it.descriptor.name == OperatorNameConventions.GET }
-            classSymbol.owner.addMember(generateFunction(getFunction, KonanNameConventions.getWithoutBC))
+            classSymbol.owner.addMember(generateFunction(getFunction, KonanNameConventions.getWithoutBoundCheck))
         }
     }
 }

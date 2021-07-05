@@ -208,7 +208,7 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
     abstract inner class ArrayHandle(val arraySymbol: IrClassSymbol) {
         val setMethodSymbol = with(arraySymbol.owner.functions) {
             // For unsigned types use set method.
-            singleOrNull { it.name == KonanNameConventions.setWithoutBC } ?: single { it.name == OperatorNameConventions.SET }
+            singleOrNull { it.name == KonanNameConventions.setWithoutBoundCheck } ?: single { it.name == OperatorNameConventions.SET }
         }
         val sizeGetterSymbol = arraySymbol.getPropertyGetter("size")!!
         val copyIntoSymbol = symbols.copyInto[arraySymbol.descriptor]!!

@@ -115,35 +115,14 @@ class ForLoopsLowering(val context: CommonBackendContext, val loopBodyTransforme
  * Abstract class for additional for-loop bodies transformations.
  */
 abstract class ForLoopBodyTransformer : IrElementTransformerVoid() {
-    protected lateinit var mainLoopVariable: IrVariable
-    protected lateinit var loopHeader: ForLoopHeader
-    protected lateinit var loopVariableComponents: Map<Int, IrVariable>
-    protected lateinit var context: CommonBackendContext
 
-    open fun initialize(
-        context: CommonBackendContext,
-        loopVariable: IrVariable,
-        forLoopHeader: ForLoopHeader,
-        loopComponents: Map<Int, IrVariable>
-    ) {
-        this.context = context
-        mainLoopVariable = loopVariable
-        loopHeader = forLoopHeader
-        loopVariableComponents = loopComponents
-    }
-
-    fun transform(
+    abstract fun transform(
         context: CommonBackendContext,
         irExpression: IrExpression,
         loopVariable: IrVariable,
         forLoopHeader: ForLoopHeader,
         loopComponents: Map<Int, IrVariable>
-    ) {
-        initialize(context, loopVariable, forLoopHeader, loopComponents)
-        irExpression.transformChildrenVoid(this)
-    }
-
-    open fun shouldTransform(context: CommonBackendContext) = true
+    )
 }
 
 private class RangeLoopTransformer(
@@ -159,6 +138,7 @@ private class RangeLoopTransformer(
     fun getScopeOwnerSymbol() = currentScope?.scope?.scopeOwnerSymbol ?: container.symbol
 
     override fun visitBlock(expression: IrBlock): IrExpression {
+        val returnExpression = super.visitBlock(expression) as IrBlock
         // LoopExpressionGenerator in psi2ir lowers `for (loopVar in <someIterable>) { // Loop body }` into an IrBlock with origin FOR_LOOP.
         // This block has 2 statements:
         //
@@ -175,13 +155,11 @@ private class RangeLoopTransformer(
         // `withIndex()` call, a progression such as `10 downTo 1`). However in some cases (e.g., for `withIndex()`), we also need to
         // examine the while loop to determine if we CAN optimize the loop.
         if (expression.origin != IrStatementOrigin.FOR_LOOP) {
-            return super.visitBlock(expression)  // Not a for-loop block.
+            return returnExpression  // Not a for-loop block.
         }
 
-        val returnExpression = super.visitBlock(expression) as IrBlock
-
         with(returnExpression.statements) {
-            assert(size == 2) { "Expected 2 statements in for-loop block, was:\n${expression.dump()}" }
+            assert(size == 2) { "Expected 2 statements in for-loop block, was:\n${returnExpression.dump()}" }
             val iteratorVariable = get(0) as IrVariable
             assert(iteratorVariable.origin == IrDeclarationOrigin.FOR_LOOP_ITERATOR) { "Expected FOR_LOOP_ITERATOR origin for iterator variable, was:\n${iteratorVariable.dump()}" }
             val loopHeader = headerProcessor.extractHeader(iteratorVariable)
@@ -295,7 +273,7 @@ private class RangeLoopTransformer(
                 it
             }
         }
-        if (newBody != null && loopBodyTransformer != null && loopBodyTransformer.shouldTransform(context)) {
+        if (newBody != null && loopBodyTransformer != null) {
             loopBodyTransformer.transform(context, newBody, mainLoopVariable, loopHeader, loopVariableComponents)
         }
 

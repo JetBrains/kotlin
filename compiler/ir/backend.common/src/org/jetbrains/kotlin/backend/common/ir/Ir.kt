@@ -335,9 +335,9 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, irBuiltIns:
 
     open val unsafeCoerceIntrinsic: IrSimpleFunctionSymbol? = null
 
-    open val getWithoutBCName: Name? = null
+    open val getWithoutBoundCheckName: Name? = null
 
-    open val setWithoutBCName: Name? = null
+    open val setWithoutBoundCheckName: Name? = null
 
     companion object {
         fun isLateinitIsInitializedPropertyGetter(symbol: IrFunctionSymbol): Boolean =
