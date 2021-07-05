@@ -15,6 +15,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.DependencySet
 import org.gradle.api.artifacts.ExternalDependency
+import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.api.tasks.testing.Test
 import org.gradle.api.tasks.testing.junit.JUnitOptions
@@ -47,7 +48,7 @@ internal fun customizeKotlinDependencies(project: Project) {
         configureKotlinTestDependency(project)
     }
     configureDefaultVersionsResolutionStrategy(project)
-    excludeStdlibCommonFromJvmCompilationsAndSourceSets(project)
+    excludeStdlibCommonFromPlatformCompilations(project)
 }
 
 private fun configureDefaultVersionsResolutionStrategy(project: Project) {
@@ -63,20 +64,28 @@ private fun configureDefaultVersionsResolutionStrategy(project: Project) {
 }
 
 //region stdlib
-private fun excludeStdlibCommonFromJvmCompilationsAndSourceSets(project: Project) {
+private fun excludeStdlibCommonFromPlatformCompilations(project: Project) {
     val multiplatformExtension = project.multiplatformExtensionOrNull ?: return
 
-    multiplatformExtension.targets.withType(KotlinJvmTarget::class.java).all { jvmTarget ->
-        val configurationsNamesToExcludeStdlibFrom: MutableList<String> = mutableListOf()
-        jvmTarget.compilations.forEach {
-            configurationsNamesToExcludeStdlibFrom += it.compileDependencyConfigurationName
-            configurationsNamesToExcludeStdlibFrom += it.runtimeDependencyConfigurationName
-            configurationsNamesToExcludeStdlibFrom += it.defaultSourceSet.apiMetadataConfigurationName
-            configurationsNamesToExcludeStdlibFrom += it.defaultSourceSet.implementationMetadataConfigurationName
-        }
+    multiplatformExtension.targets.matching { it !is KotlinMetadataTarget }.all {
+        it.excludeStdlibCommonFromPlatformCompilations()
+    }
+}
 
-        configurationsNamesToExcludeStdlibFrom.forEach {
-            project.configurations.getByName(it).exclude(
+// there several JVM-like targets, like KotlinWithJava, or KotlinAndroid, and they don't have common supertype
+// aside from KotlinTarget
+private fun KotlinTarget.excludeStdlibCommonFromPlatformCompilations() {
+    compilations.all {
+        listOfNotNull(
+            it.compileDependencyConfigurationName,
+            it.defaultSourceSet.apiMetadataConfigurationName,
+            it.defaultSourceSet.implementationMetadataConfigurationName,
+            (it as? KotlinCompilationToRunnableFiles<*>)?.runtimeDependencyConfigurationName,
+
+            // Additional configurations for (old) jvmWithJava-preset. Remove it when we drop it completely
+            (it as? KotlinWithJavaCompilation<*>)?.apiConfigurationName
+        ).forEach { configurationName ->
+            project.configurations.getByName(configurationName).exclude(
                 mapOf("group" to "org.jetbrains.kotlin", "module" to "kotlin-stdlib-common")
             )
         }

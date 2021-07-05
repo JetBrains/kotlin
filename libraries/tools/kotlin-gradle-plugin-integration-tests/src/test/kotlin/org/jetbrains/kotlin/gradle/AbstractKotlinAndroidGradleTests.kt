@@ -293,13 +293,6 @@ open class KotlinAndroid36GradleIT : KotlinAndroid34GradleIT() {
         testResolveAllConfigurations("lib") {
             assertSuccessful()
 
-            // commonMain:
-            assertContains(">> :lib:debugCompileClasspath --> kotlin-stdlib-common-$kotlinVersion.jar")
-            assertContains(">> :lib:releaseCompileClasspath --> kotlin-stdlib-common-$kotlinVersion.jar")
-            assertContains(">> :lib:debugAndroidTestCompileClasspath --> kotlin-stdlib-common-$kotlinVersion.jar")
-            assertContains(">> :lib:debugUnitTestCompileClasspath --> kotlin-stdlib-common-$kotlinVersion.jar")
-            assertContains(">> :lib:releaseUnitTestCompileClasspath --> kotlin-stdlib-common-$kotlinVersion.jar")
-
             // androidLibDebug:
             assertContains(">> :lib:debugCompileClasspath --> kotlin-reflect-$kotlinVersion.jar")
             assertNotContains(">> :lib:releaseCompileClasspath --> kotlin-reflect-$kotlinVersion.jar")
