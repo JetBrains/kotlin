@@ -20,11 +20,7 @@ plugins {
     java
 }
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(6))
-    }
-}
+configureJavaOnlyToolchain(JdkMajorVersion.JDK_1_6)
 
 publish()
 

@@ -1,5 +1,6 @@
 @file:JvmName("JvmToolchain")
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.toolchain.*
@@ -24,11 +25,20 @@ enum class JdkMajorVersion(
     JDK_16(16, mandatory = false);
 
     fun isMandatory(): Boolean = mandatory
+
+    companion object {
+        fun fromMajorVersion(majorVersion: Int) = values().first { it.majorVersion == majorVersion }
+    }
 }
 
 fun Project.configureJvmDefaultToolchain() {
     configureJvmToolchain(JdkMajorVersion.JDK_1_8)
 }
+
+fun Project.shouldOverrideObsoleteJdk(
+    jdkVersion: JdkMajorVersion
+): Boolean = kotlinBuildProperties.isObsoleteJdkOverrideEnabled &&
+        jdkVersion.overrideMajorVersion != null
 
 fun Project.configureJvmToolchain(
     jdkVersion: JdkMajorVersion
@@ -36,12 +46,10 @@ fun Project.configureJvmToolchain(
     plugins.withId("org.jetbrains.kotlin.jvm") {
         val kotlinExtension = extensions.getByType<KotlinTopLevelExtension>()
 
-        if (project.kotlinBuildProperties.isObsoleteJdkOverrideEnabled &&
-            jdkVersion.overrideMajorVersion != null
-        ) {
+        if (shouldOverrideObsoleteJdk(jdkVersion)) {
             kotlinExtension.jvmToolchain {
                 (this as JavaToolchainSpec).languageVersion
-                    .set(JavaLanguageVersion.of(jdkVersion.overrideMajorVersion))
+                    .set(JavaLanguageVersion.of(jdkVersion.overrideMajorVersion!!))
             }
             updateJvmTarget(jdkVersion.targetName)
         } else {
@@ -63,6 +71,66 @@ fun Project.configureJvmToolchain(
         tasks.withType<KotlinCompile>().configureEach {
             kotlinOptions.freeCompilerArgs += "-Xjvm-default=compatibility"
         }
+    }
+}
+
+fun Project.configureJavaOnlyToolchain(
+    jdkVersion: JdkMajorVersion
+) {
+    plugins.withId("java-library") {
+        val javaExtension = extensions.getByType<JavaPluginExtension>()
+        if (shouldOverrideObsoleteJdk(jdkVersion)) {
+            javaExtension.toolchain.languageVersion.set(
+                JavaLanguageVersion.of(jdkVersion.overrideMajorVersion!!)
+            )
+            tasks.withType<JavaCompile>().configureEach {
+                targetCompatibility = jdkVersion.targetName
+                sourceCompatibility = jdkVersion.targetName
+            }
+        } else {
+            javaExtension.toolchain.languageVersion.set(
+                JavaLanguageVersion.of(jdkVersion.majorVersion)
+            )
+        }
+    }
+}
+
+fun KotlinCompile.configureTaskToolchain(
+    jdkVersion: JdkMajorVersion
+) {
+    if (project.shouldOverrideObsoleteJdk(jdkVersion)) {
+        kotlinJavaToolchain.toolchain.use(
+            project.getToolchainLauncherFor(
+                JdkMajorVersion.fromMajorVersion(
+                    jdkVersion.overrideMajorVersion!!
+                )
+            )
+        )
+        kotlinOptions {
+            jvmTarget = jdkVersion.targetName
+        }
+    } else {
+        kotlinJavaToolchain.toolchain.use(
+            project.getToolchainLauncherFor(jdkVersion)
+        )
+    }
+}
+
+fun JavaCompile.configureTaskToolchain(
+    jdkVersion: JdkMajorVersion
+) {
+    if (project.shouldOverrideObsoleteJdk(jdkVersion)) {
+        javaCompiler.set(
+            project.getToolchainCompilerFor(
+                JdkMajorVersion.fromMajorVersion(
+                    jdkVersion.overrideMajorVersion!!
+                )
+            )
+        )
+        targetCompatibility = jdkVersion.targetName
+        sourceCompatibility = jdkVersion.targetName
+    } else {
+        javaCompiler.set(project.getToolchainCompilerFor(jdkVersion))
     }
 }
 

@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.gradle.tasks.UsesKotlinJavaToolchain
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm")
@@ -8,15 +8,15 @@ plugins {
 // Only compilation tasks should use JDK 1.6
 project.disableDeprecatedJvmTargetWarning()
 tasks
-    .matching { it.name == "compileKotlin" && it is UsesKotlinJavaToolchain }
+    .matching { it.name == "compileKotlin" && it is KotlinCompile }
     .configureEach {
-        (this as UsesKotlinJavaToolchain).kotlinJavaToolchain.toolchain.use(project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_6))
+        (this as KotlinCompile).configureTaskToolchain(JdkMajorVersion.JDK_1_6)
     }
 
 tasks
     .matching { it.name == "compileJava" && it is JavaCompile }
     .configureEach {
-        (this as JavaCompile).javaCompiler.set(project.getToolchainCompilerFor(JdkMajorVersion.JDK_1_6))
+        (this as JavaCompile).configureTaskToolchain(JdkMajorVersion.JDK_1_6)
     }
 
 dependencies {
