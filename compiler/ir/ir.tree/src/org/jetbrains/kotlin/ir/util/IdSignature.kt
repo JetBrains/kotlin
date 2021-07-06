@@ -95,8 +95,9 @@ sealed class IdSignature {
             other is CommonSignature && packageFqName == other.packageFqName && declarationFqName == other.declarationFqName &&
                     id == other.id && mask == other.mask
 
-        override fun hashCode(): Int =
-            ((packageFqName.hashCode() * 31 + declarationFqName.hashCode()) * 31 + id.hashCode()) * 31 + mask.hashCode()
+        private val hashCode = ((packageFqName.hashCode() * 31 + declarationFqName.hashCode()) * 31 + id.hashCode()) * 31 + mask.hashCode()
+
+        override fun hashCode(): Int = hashCode
     }
 
     class CompositeSignature(val container: IdSignature, val inner: IdSignature) : IdSignature() {
@@ -155,7 +156,9 @@ sealed class IdSignature {
             if (other is AccessorSignature) accessorSignature == other.accessorSignature
             else accessorSignature == other
 
-        override fun hashCode(): Int = accessorSignature.hashCode()
+        private val hashCode = accessorSignature.hashCode()
+
+        override fun hashCode(): Int = hashCode
     }
 
     class FileSignature(val fileSymbol: IrFileSymbol) : IdSignature() {
@@ -281,11 +284,9 @@ sealed class IdSignature {
             return true
         }
 
-        override fun hashCode(): Int {
-            var result = memberSignature.hashCode()
-            result = 31 * result + overriddenSignatures.hashCode()
-            return result
-        }
+        private val hashCode = 31 * memberSignature.hashCode() + overriddenSignatures.hashCode()
+
+        override fun hashCode(): Int = hashCode
     }
 
     class FileLocalSignature(val container: IdSignature, val id: Long, val description: String? = null) : IdSignature() {
@@ -311,7 +312,9 @@ sealed class IdSignature {
         override fun equals(other: Any?): Boolean =
             other is FileLocalSignature && id == other.id && container == other.container
 
-        override fun hashCode(): Int = container.hashCode() * 31 + id.hashCode()
+        private val hashCode = container.hashCode() * 31 + id.hashCode()
+
+        override fun hashCode(): Int = hashCode
     }
 
     // Used to reference local variable and value parameters in function
@@ -360,7 +363,9 @@ sealed class IdSignature {
         override fun equals(other: Any?): Boolean =
             other is GlobalFileLocalSignature && id == other.id && container == other.container && filePath == other.filePath
 
-        override fun hashCode(): Int = (container.hashCode() * 31 + id.hashCode()) * 31 + filePath.hashCode()
+        private val hashCode = (container.hashCode() * 31 + id.hashCode()) * 31 + filePath.hashCode()
+
+        override fun hashCode(): Int = hashCode
     }
 
     // Used to reference local variable and value parameters in function
@@ -375,18 +380,20 @@ sealed class IdSignature {
 
         override fun packageFqName(): FqName = error("Is not supported for Local ID")
 
-        override fun render(): String = "#$id"
+        override fun render(): String = "#$id from ${filePath.split('/').last()}"
 
         override fun equals(other: Any?): Boolean =
             other is GlobalScopeLocalDeclaration && id == other.id && filePath == other.filePath
 
-        override fun hashCode(): Int = id * 31 + filePath.hashCode()
+        private val hashCode = id * 31 + filePath.hashCode()
+
+        override fun hashCode(): Int = hashCode
     }
 
     class LoweredDeclarationSignature(val original: IdSignature, val stage: Int, val index: Int) : IdSignature() {
         override val isPubliclyVisible: Boolean get() = true
 
-        override val hasTopLevel: Boolean get() = false
+        override val hasTopLevel: Boolean get() = true
 
         override fun topLevelSignature(): IdSignature = this
 
@@ -400,9 +407,9 @@ sealed class IdSignature {
             return other is LoweredDeclarationSignature && original == other.original && stage == other.stage && index == other.index
         }
 
-        override fun hashCode(): Int {
-            return (index * 31 + stage) * 31 + original.hashCode()
-        }
+        private val hashCode = (index * 31 + stage) * 31 + original.hashCode()
+
+        override fun hashCode(): Int = hashCode
     }
 }
 
