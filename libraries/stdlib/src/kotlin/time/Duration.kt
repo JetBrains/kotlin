@@ -783,7 +783,10 @@ public value class Duration internal constructor(private val rawValue: Long) : C
      * and formatted with the specified [decimals] number of digits after decimal point.
      *
      * Special cases:
-     *  - the infinite duration is formatted as `"Infinity"` without unit
+     *  - an infinite duration is formatted as `"Infinity"` or `"-Infinity"` without a unit.
+     *
+     * @param decimals the number of digits after decimal point to show. The value must be non-negative.
+     * No more than 12 decimals will be shown, even if a larger number is requested.
      *
      * @return the value of duration in the specified [unit] followed by that unit abbreviated name: `d`, `h`, `m`, `s`, `ms`, `us`, or `ns`.
      *
@@ -795,10 +798,7 @@ public value class Duration internal constructor(private val rawValue: Long) : C
         require(decimals >= 0) { "decimals must be not negative, but was $decimals" }
         val number = toDouble(unit)
         if (number.isInfinite()) return number.toString()
-        return when {
-            abs(number) < 1e14 -> formatToExactDecimals(number, decimals.coerceAtMost(12))
-            else -> formatScientific(number)
-        } + unit.shortName()
+        return formatToExactDecimals(number, decimals.coerceAtMost(12)) + unit.shortName()
     }
 
 
@@ -1212,4 +1212,3 @@ private fun millisToNanos(millis: Long): Long = millis * NANOS_IN_MILLIS
 
 internal expect fun formatToExactDecimals(value: Double, decimals: Int): String
 internal expect fun formatUpToDecimals(value: Double, decimals: Int): String
-internal expect fun formatScientific(value: Double): String

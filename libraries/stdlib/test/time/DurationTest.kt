@@ -9,6 +9,7 @@ package test.time
 
 import test.numbers.assertAlmostEquals
 import kotlin.math.nextDown
+import kotlin.math.pow
 import kotlin.native.concurrent.SharedImmutable
 import kotlin.test.*
 import kotlin.time.*
@@ -520,7 +521,7 @@ class DurationTest {
     }
 
     @Test
-    fun formatInUnits() {
+    fun parseAndFormatInUnits() {
         var d = with(Duration) {
             days(1) + hours(15) + minutes(31) + seconds(45) +
             milliseconds(678) + microseconds(920) + nanoseconds(516.34)
@@ -529,6 +530,13 @@ class DurationTest {
         fun test(unit: DurationUnit, vararg representations: String) {
             assertFails { d.toString(unit, -1) }
             assertEquals(representations.toList(), representations.indices.map { d.toString(unit, it) })
+            for ((decimals, string) in representations.withIndex()) {
+                val d1 = Duration.parse(string)
+                assertEquals(d1, Duration.parseOrNull(string))
+                if (!(d1 == d || (d1 - d).absoluteValue <= (0.5 * 10.0.pow(-decimals)).toDuration(unit))) {
+                    fail("Parsed value $d1 (from $string) is too far from the real value $d")
+                }
+            }
         }
 
         test(DurationUnit.DAYS, "2d", "1.6d", "1.65d", "1.647d")
@@ -553,7 +561,13 @@ class DurationTest {
 
         assertEquals("0.500000000000s", Duration.seconds(0.5).toString(DurationUnit.SECONDS, 100))
         assertEquals("99999000000000.000000000000ns", Duration.seconds(99_999).toString(DurationUnit.NANOSECONDS, 15))
-        assertEquals("1.00e+14ns", Duration.seconds(100_000).toString(DurationUnit.NANOSECONDS, 9))
+        assertContains(
+            listOf(
+                "-4611686018427388000000000.000000000000ns",
+                "-4611686018427387904000000.000000000000ns"
+            ),
+            (-Duration.milliseconds(MAX_MILLIS - 1)).toString(DurationUnit.NANOSECONDS, 15)
+        )
 
         d = Duration.INFINITE
         test(DurationUnit.DAYS, "Infinity", "Infinity")
