@@ -108,15 +108,10 @@ OBJ_GETTER(Kotlin_Long_toStringRadix, KLong value, KInt radix) {
 }
 
 OBJ_GETTER(Kotlin_DurationValue_formatToExactDecimals, KDouble value, KInt decimals) {
-  char cstring[32];
+  char cstring[40]; // log(2^62*1_000_000) + 2 (sign, decimal point) + 12 (max decimals)
   konan::snprintf(cstring, sizeof(cstring), "%.*f", decimals, value);
   RETURN_RESULT_OF(CreateStringFromCString, cstring)
 }
 
-OBJ_GETTER(Kotlin_DurationValue_formatScientificImpl, KDouble value) {
-  char cstring[16];
-  konan::snprintf(cstring, sizeof(cstring), "%.2e", value);
-  RETURN_RESULT_OF(CreateStringFromCString, cstring)
-}
 
 } // extern "C"
