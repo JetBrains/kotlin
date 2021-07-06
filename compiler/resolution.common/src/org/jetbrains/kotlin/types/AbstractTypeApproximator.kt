@@ -406,7 +406,9 @@ abstract class AbstractTypeApproximator(
 
             val argumentTypeConstructor = argument.getType().typeConstructor()
 
-            if (argumentTypeConstructor is TypeVariableTypeConstructorMarker && conf.selfTypesWithTypeVariablesToCapturedStarProjection) {
+            val isTypeInferenceForSelfTypesSupported =
+                languageVersionSettings.supportsFeature(LanguageFeature.TypeInferenceOnCallsWithSelfTypes)
+            if (isTypeInferenceForSelfTypesSupported && argumentTypeConstructor is TypeVariableTypeConstructorMarker && conf.selfTypesWithTypeVariablesToCapturedStarProjection) {
                 // If we have Self<TypeVariable(T)> where T is bounded by Self<T>, we approximate it to CapturedType(*) to satisfy constraints
                 if (argumentTypeConstructor.typeParameter?.hasRecursiveBounds(type.typeConstructor()) == true) {
                     return createCapturedStarProjectionForSelfType(argumentTypeConstructor, type)

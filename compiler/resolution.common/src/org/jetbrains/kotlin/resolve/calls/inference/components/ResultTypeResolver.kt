@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator.ResolveDirection
 import org.jetbrains.kotlin.resolve.calls.inference.hasDeclaredUpperBoundSelfTypes
@@ -16,7 +18,8 @@ import org.jetbrains.kotlin.types.model.*
 
 class ResultTypeResolver(
     val typeApproximator: AbstractTypeApproximator,
-    val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle
+    val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle,
+    private val languageVersionSettings: LanguageVersionSettings
 ) {
     interface Context : TypeSystemInferenceExtensionContext {
         fun isProperType(type: KotlinTypeMarker): Boolean
@@ -211,8 +214,11 @@ class ResultTypeResolver(
     }
 
     private fun Context.findSuperType(variableWithConstraints: VariableWithConstraints): KotlinTypeMarker? {
+        val isTypeInferenceForSelfTypesSupported =
+            languageVersionSettings.supportsFeature(LanguageFeature.TypeInferenceOnCallsWithSelfTypes)
         val upperConstraints = variableWithConstraints.constraints.filter {
-            it.kind == ConstraintKind.UPPER && (hasDeclaredUpperBoundSelfTypes(it) || isProperTypeForFixation(it.type))
+            it.kind == ConstraintKind.UPPER
+                    && ((isTypeInferenceForSelfTypesSupported && hasDeclaredUpperBoundSelfTypes(it)) || isProperTypeForFixation(it.type))
         }
         if (upperConstraints.isNotEmpty()) {
             val intersectionUpperType = intersectTypes(upperConstraints.map { it.type })

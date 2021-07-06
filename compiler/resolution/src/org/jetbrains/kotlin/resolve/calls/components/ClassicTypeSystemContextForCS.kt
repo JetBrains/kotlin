@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector
 import org.jetbrains.kotlin.resolve.calls.inference.components.EmptySubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
@@ -20,7 +22,10 @@ import org.jetbrains.kotlin.types.checker.NewCapturedTypeConstructor
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
-class ClassicTypeSystemContextForCS(override val builtIns: KotlinBuiltIns) : TypeSystemInferenceExtensionContextDelegate,
+class ClassicTypeSystemContextForCS(
+    override val builtIns: KotlinBuiltIns,
+    private val languageVersionSettings: LanguageVersionSettings
+) : TypeSystemInferenceExtensionContextDelegate,
     ClassicTypeSystemContext,
     BuiltInsProvider {
 
@@ -43,13 +48,16 @@ class ClassicTypeSystemContextForCS(override val builtIns: KotlinBuiltIns) : Typ
         require(lowerType is UnwrappedType?, lowerType::errorMessage)
         require(constructorProjection is TypeProjectionBase, constructorProjection::errorMessage)
 
+        val isTypeInferenceForSelfTypesSupported =
+            languageVersionSettings.supportsFeature(LanguageFeature.TypeInferenceOnCallsWithSelfTypes)
+
         @Suppress("UNCHECKED_CAST")
         val newCapturedTypeConstructor = NewCapturedTypeConstructor(
             constructorProjection,
             constructorSupertypes as List<UnwrappedType>
         )
         return NewCapturedType(
-            captureStatus,
+            if (isTypeInferenceForSelfTypesSupported) captureStatus else CaptureStatus.FOR_INCORPORATION,
             newCapturedTypeConstructor,
             lowerType = lowerType
         )
@@ -109,5 +117,5 @@ fun NewConstraintSystemImpl(
     constraintInjector: ConstraintInjector,
     builtIns: KotlinBuiltIns
 ): NewConstraintSystemImpl {
-    return NewConstraintSystemImpl(constraintInjector, ClassicTypeSystemContextForCS(builtIns))
+    return NewConstraintSystemImpl(constraintInjector, ClassicTypeSystemContextForCS(builtIns, constraintInjector.languageVersionSettings))
 }

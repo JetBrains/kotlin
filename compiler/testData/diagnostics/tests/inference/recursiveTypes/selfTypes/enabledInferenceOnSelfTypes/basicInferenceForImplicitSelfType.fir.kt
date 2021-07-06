@@ -1,3 +1,5 @@
+// !LANGUAGE: +TypeInferenceOnCallsWithSelfTypes
+
 class Builder<B : Builder<B>> {
     fun <T : B> test(): T = TODO()
 
