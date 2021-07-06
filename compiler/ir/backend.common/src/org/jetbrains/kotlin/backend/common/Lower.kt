@@ -150,11 +150,14 @@ private class BodyLoweringVisitor(
 
     override fun visitBody(body: IrBody, data: IrDeclaration?) {
         if (withLocalDeclarations) body.acceptChildren(this, null)
-        if (allowDeclarationModification) {
-            loweringPass.lower(body, data!!)
-        } else {
-            data!!.factory.stageController.bodyLowering {
+        val stageController = data!!.factory.stageController
+        stageController.restrictTo(data) {
+            if (allowDeclarationModification) {
                 loweringPass.lower(body, data)
+            } else {
+                stageController.bodyLowering {
+                    loweringPass.lower(body, data)
+                }
             }
         }
     }
