@@ -515,7 +515,9 @@ class DurationTest {
             "PT1.5H", "PT0.5D", "PT.5S", "PT0.25.25S",
         )) {
             assertNull(Duration.parseIsoStringOrNull(invalidValue), invalidValue)
-            assertFailsWith<IllegalArgumentException>(invalidValue) { Duration.parseIsoString(invalidValue) }
+            assertFailsWith<IllegalArgumentException>(invalidValue) { Duration.parseIsoString(invalidValue) }.let { e ->
+                assertContains(e.message!!, "'$invalidValue'")
+            }
         }
 
     }
@@ -690,7 +692,9 @@ class DurationTest {
             "PT1.5H", "PT0.5D", "PT.5S", "PT0.25.25S",
         )) {
             assertNull(Duration.parseOrNull(invalidValue), invalidValue)
-            assertFailsWith<IllegalArgumentException>(invalidValue) { Duration.parse(invalidValue) }
+            assertFailsWith<IllegalArgumentException>(invalidValue) { Duration.parse(invalidValue) }.let { e ->
+                assertContains(e.message!!, "'$invalidValue'")
+            }
         }
     }
 
