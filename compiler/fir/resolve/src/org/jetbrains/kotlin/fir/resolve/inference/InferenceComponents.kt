@@ -26,7 +26,7 @@ class InferenceComponents(val session: FirSession) : FirSessionComponent {
         approximator,
         session.languageVersionSettings,
     )
-    val resultTypeResolver = ResultTypeResolver(approximator, trivialConstraintTypeInferenceOracle)
+    val resultTypeResolver = ResultTypeResolver(approximator, trivialConstraintTypeInferenceOracle, session.languageVersionSettings)
     val variableFixationFinder = VariableFixationFinder(trivialConstraintTypeInferenceOracle, session.languageVersionSettings)
     val postponedArgumentInputTypesResolver =
         PostponedArgumentInputTypesResolver(resultTypeResolver, variableFixationFinder, ConeConstraintSystemUtilContext)

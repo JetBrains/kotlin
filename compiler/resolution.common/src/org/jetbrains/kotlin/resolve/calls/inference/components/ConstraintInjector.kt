@@ -21,7 +21,7 @@ import kotlin.math.max
 class ConstraintInjector(
     val constraintIncorporator: ConstraintIncorporator,
     val typeApproximator: AbstractTypeApproximator,
-    private val languageVersionSettings: LanguageVersionSettings,
+    val languageVersionSettings: LanguageVersionSettings,
 ) {
     private val ALLOWED_DEPTH_DELTA_FOR_INCORPORATION = 1
 

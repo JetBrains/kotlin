@@ -1,3 +1,5 @@
+// !LANGUAGE: +TypeInferenceOnCallsWithSelfTypes
+
 fun test() {
     <!DEBUG_INFO_EXPRESSION_TYPE("WriterAppender.Builder1<*>")!>WriterAppender.newBuilder()<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("WriterAppender.Builder1<out WriterAppender.Builder1<*>>")!>WriterAppender.Builder1()<!>

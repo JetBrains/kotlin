@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 
 class SimpleConstraintSystemImpl(constraintInjector: ConstraintInjector, builtIns: KotlinBuiltIns) : SimpleConstraintSystem {
-    val system = NewConstraintSystemImpl(constraintInjector, ClassicTypeSystemContextForCS(builtIns))
+    val system = NewConstraintSystemImpl(constraintInjector, ClassicTypeSystemContextForCS(builtIns, constraintInjector.languageVersionSettings))
     val csBuilder: ConstraintSystemBuilder =
         system.getBuilder()
 

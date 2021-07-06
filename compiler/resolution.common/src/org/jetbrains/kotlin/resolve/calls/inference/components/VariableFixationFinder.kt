@@ -57,13 +57,17 @@ class VariableFixationFinder(
     private val inferenceCompatibilityModeEnabled: Boolean
         get() = languageVersionSettings.supportsFeature(LanguageFeature.InferenceCompatibility)
 
+    private val isTypeInferenceForSelfTypesSupported: Boolean
+        get() = languageVersionSettings.supportsFeature(LanguageFeature.TypeInferenceOnCallsWithSelfTypes)
+
     private fun Context.getTypeVariableReadiness(
         variable: TypeConstructorMarker,
         dependencyProvider: TypeVariableDependencyInformationProvider,
     ): TypeVariableFixationReadiness = when {
         !notFixedTypeVariables.contains(variable) ||
                 dependencyProvider.isVariableRelatedToTopLevelType(variable) -> TypeVariableFixationReadiness.FORBIDDEN
-        hasDeclaredUpperBoundSelfTypes(variable) -> TypeVariableFixationReadiness.READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES
+        isTypeInferenceForSelfTypesSupported && hasDeclaredUpperBoundSelfTypes(variable) ->
+            TypeVariableFixationReadiness.READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES
         !variableHasProperArgumentConstraints(variable) -> TypeVariableFixationReadiness.WITHOUT_PROPER_ARGUMENT_CONSTRAINT
         hasDependencyToOtherTypeVariables(variable) -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY
         variableHasTrivialOrNonProperConstraints(variable) -> TypeVariableFixationReadiness.WITH_TRIVIAL_OR_NON_PROPER_CONSTRAINTS
