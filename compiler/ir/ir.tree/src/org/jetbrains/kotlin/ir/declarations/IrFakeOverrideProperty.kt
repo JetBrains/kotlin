@@ -16,4 +16,6 @@ interface IrFakeOverrideProperty : IrDeclaration {
     var setter: IrSimpleFunction?
 
     fun acquireSymbol(symbol: IrPropertySymbol): IrProperty
+
+    val isBound: Boolean
 }
