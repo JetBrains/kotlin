@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
+import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
@@ -116,9 +117,20 @@ open class KotlinJsIrTargetConfigurator() :
 
             compilation.binaries
                 .withType(JsIrBinary::class.java)
-                .all {
-                    it.linkTask.configure { linkTask ->
+                .all { binary ->
+                    binary.linkTask.configure { linkTask ->
                         linkTask.kotlinOptions.configureOptions()
+
+                        val rootDir = binary.project.rootDir
+                        linkTask.kotlinOptions.freeCompilerArgs += listOf(
+                            "-source-map-base-dirs",
+                            rootDir.absolutePath
+                        )
+
+                        linkTask.kotlinOptions.freeCompilerArgs += listOf(
+                            "-source-map-prefix",
+                            rootDir.toRelativeString(binary.compilation.npmProject.dist) + File.separator
+                        )
                     }
                 }
         }
