@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.render
 
-class JsUniqIdClashTracker : IdSignatureClashTracker {
+class JsUniqIdClashTracker() : IdSignatureClashTracker {
     private val committedIdSignatures = mutableMapOf<IdSignature, IrDeclaration>()
 
     override fun commit(declaration: IrDeclaration, signature: IdSignature) {
@@ -34,8 +34,8 @@ class JsUniqIdClashTracker : IdSignatureClashTracker {
     }
 }
 
-class JsGlobalDeclarationTable(builtIns: IrBuiltIns) :
-    GlobalDeclarationTable(JsManglerIr, JsUniqIdClashTracker()) {
+class JsGlobalDeclarationTable(builtIns: IrBuiltIns, tracker: IdSignatureClashTracker = JsUniqIdClashTracker()) :
+    GlobalDeclarationTable(JsManglerIr, tracker) {
     init {
         loadKnownBuiltins(builtIns)
     }
