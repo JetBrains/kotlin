@@ -164,7 +164,17 @@ fun Project.getToolchainLauncherFor(
     jdkVersion: JdkMajorVersion
 ): Provider<JavaLauncher> {
     val service = project.extensions.getByType<JavaToolchainService>()
+    val jdkVersionWithOverride = project.getJdkVersionWithOverride(jdkVersion)
     return service.launcherFor {
-        this.languageVersion.set(JavaLanguageVersion.of(jdkVersion.majorVersion))
+        this.languageVersion.set(JavaLanguageVersion.of(jdkVersionWithOverride.majorVersion))
+    }
+}
+
+
+fun Project.getJdkVersionWithOverride(jdkVersion: JdkMajorVersion): JdkMajorVersion {
+    return if (project.shouldOverrideObsoleteJdk(jdkVersion)) {
+        JdkMajorVersion.fromMajorVersion(jdkVersion.overrideMajorVersion!!)
+    } else {
+        jdkVersion
     }
 }
