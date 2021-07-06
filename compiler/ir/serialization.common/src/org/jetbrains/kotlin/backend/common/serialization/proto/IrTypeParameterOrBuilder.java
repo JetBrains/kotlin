@@ -39,20 +39,20 @@ public interface IrTypeParameterOrBuilder extends
   int getSuperType(int index);
 
   /**
-   * <code>optional int32 index = 4;</code>
+   * <code>optional int32 index = 104;</code>
    */
   boolean hasIndex();
   /**
-   * <code>optional int32 index = 4;</code>
+   * <code>optional int32 index = 104;</code>
    */
   int getIndex();
 
   /**
-   * <code>optional bool isGlobal = 5;</code>
+   * <code>optional bool isGlobal = 105;</code>
    */
   boolean hasIsGlobal();
   /**
-   * <code>optional bool isGlobal = 5;</code>
+   * <code>optional bool isGlobal = 105;</code>
    */
   boolean getIsGlobal();
 }

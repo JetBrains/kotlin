@@ -92,12 +92,12 @@ public final class IrTypeParameter extends
             input.popLimit(limit);
             break;
           }
-          case 32: {
+          case 832: {
             bitField0_ |= 0x00000004;
             index_ = input.readInt32();
             break;
           }
-          case 40: {
+          case 840: {
             bitField0_ |= 0x00000008;
             isGlobal_ = input.readBool();
             break;
@@ -192,31 +192,31 @@ public final class IrTypeParameter extends
   }
   private int superTypeMemoizedSerializedSize = -1;
 
-  public static final int INDEX_FIELD_NUMBER = 4;
+  public static final int INDEX_FIELD_NUMBER = 104;
   private int index_;
   /**
-   * <code>optional int32 index = 4;</code>
+   * <code>optional int32 index = 104;</code>
    */
   public boolean hasIndex() {
     return ((bitField0_ & 0x00000004) == 0x00000004);
   }
   /**
-   * <code>optional int32 index = 4;</code>
+   * <code>optional int32 index = 104;</code>
    */
   public int getIndex() {
     return index_;
   }
 
-  public static final int ISGLOBAL_FIELD_NUMBER = 5;
+  public static final int ISGLOBAL_FIELD_NUMBER = 105;
   private boolean isGlobal_;
   /**
-   * <code>optional bool isGlobal = 5;</code>
+   * <code>optional bool isGlobal = 105;</code>
    */
   public boolean hasIsGlobal() {
     return ((bitField0_ & 0x00000008) == 0x00000008);
   }
   /**
-   * <code>optional bool isGlobal = 5;</code>
+   * <code>optional bool isGlobal = 105;</code>
    */
   public boolean getIsGlobal() {
     return isGlobal_;
@@ -268,10 +268,10 @@ public final class IrTypeParameter extends
       output.writeInt32NoTag(superType_.get(i));
     }
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
-      output.writeInt32(4, index_);
+      output.writeInt32(104, index_);
     }
     if (((bitField0_ & 0x00000008) == 0x00000008)) {
-      output.writeBool(5, isGlobal_);
+      output.writeBool(105, isGlobal_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -306,11 +306,11 @@ public final class IrTypeParameter extends
     }
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt32Size(4, index_);
+        .computeInt32Size(104, index_);
     }
     if (((bitField0_ & 0x00000008) == 0x00000008)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeBoolSize(5, isGlobal_);
+        .computeBoolSize(105, isGlobal_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -688,19 +688,19 @@ public final class IrTypeParameter extends
 
     private int index_ ;
     /**
-     * <code>optional int32 index = 4;</code>
+     * <code>optional int32 index = 104;</code>
      */
     public boolean hasIndex() {
       return ((bitField0_ & 0x00000008) == 0x00000008);
     }
     /**
-     * <code>optional int32 index = 4;</code>
+     * <code>optional int32 index = 104;</code>
      */
     public int getIndex() {
       return index_;
     }
     /**
-     * <code>optional int32 index = 4;</code>
+     * <code>optional int32 index = 104;</code>
      */
     public Builder setIndex(int value) {
       bitField0_ |= 0x00000008;
@@ -709,7 +709,7 @@ public final class IrTypeParameter extends
       return this;
     }
     /**
-     * <code>optional int32 index = 4;</code>
+     * <code>optional int32 index = 104;</code>
      */
     public Builder clearIndex() {
       bitField0_ = (bitField0_ & ~0x00000008);
@@ -720,19 +720,19 @@ public final class IrTypeParameter extends
 
     private boolean isGlobal_ ;
     /**
-     * <code>optional bool isGlobal = 5;</code>
+     * <code>optional bool isGlobal = 105;</code>
      */
     public boolean hasIsGlobal() {
       return ((bitField0_ & 0x00000010) == 0x00000010);
     }
     /**
-     * <code>optional bool isGlobal = 5;</code>
+     * <code>optional bool isGlobal = 105;</code>
      */
     public boolean getIsGlobal() {
       return isGlobal_;
     }
     /**
-     * <code>optional bool isGlobal = 5;</code>
+     * <code>optional bool isGlobal = 105;</code>
      */
     public Builder setIsGlobal(boolean value) {
       bitField0_ |= 0x00000010;
@@ -741,7 +741,7 @@ public final class IrTypeParameter extends
       return this;
     }
     /**
-     * <code>optional bool isGlobal = 5;</code>
+     * <code>optional bool isGlobal = 105;</code>
      */
     public Builder clearIsGlobal() {
       bitField0_ = (bitField0_ & ~0x00000010);

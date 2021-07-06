@@ -81,7 +81,7 @@ public final class IrValueParameter extends
             defaultValue_ = input.readInt32();
             break;
           }
-          case 40: {
+          case 840: {
             bitField0_ |= 0x00000010;
             index_ = input.readInt32();
             break;
@@ -180,16 +180,16 @@ public final class IrValueParameter extends
     return defaultValue_;
   }
 
-  public static final int INDEX_FIELD_NUMBER = 5;
+  public static final int INDEX_FIELD_NUMBER = 105;
   private int index_;
   /**
-   * <code>optional int32 index = 5;</code>
+   * <code>optional int32 index = 105;</code>
    */
   public boolean hasIndex() {
     return ((bitField0_ & 0x00000010) == 0x00000010);
   }
   /**
-   * <code>optional int32 index = 5;</code>
+   * <code>optional int32 index = 105;</code>
    */
   public int getIndex() {
     return index_;
@@ -240,7 +240,7 @@ public final class IrValueParameter extends
       output.writeInt32(4, defaultValue_);
     }
     if (((bitField0_ & 0x00000010) == 0x00000010)) {
-      output.writeInt32(5, index_);
+      output.writeInt32(105, index_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -269,7 +269,7 @@ public final class IrValueParameter extends
     }
     if (((bitField0_ & 0x00000010) == 0x00000010)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt32Size(5, index_);
+        .computeInt32Size(105, index_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -637,19 +637,19 @@ public final class IrValueParameter extends
 
     private int index_ ;
     /**
-     * <code>optional int32 index = 5;</code>
+     * <code>optional int32 index = 105;</code>
      */
     public boolean hasIndex() {
       return ((bitField0_ & 0x00000010) == 0x00000010);
     }
     /**
-     * <code>optional int32 index = 5;</code>
+     * <code>optional int32 index = 105;</code>
      */
     public int getIndex() {
       return index_;
     }
     /**
-     * <code>optional int32 index = 5;</code>
+     * <code>optional int32 index = 105;</code>
      */
     public Builder setIndex(int value) {
       bitField0_ |= 0x00000010;
@@ -658,7 +658,7 @@ public final class IrValueParameter extends
       return this;
     }
     /**
-     * <code>optional int32 index = 5;</code>
+     * <code>optional int32 index = 105;</code>
      */
     public Builder clearIndex() {
       bitField0_ = (bitField0_ & ~0x00000010);

@@ -81,7 +81,7 @@ class IrBodyDeserializer(
     private val fileReader: IrLibraryFile,
     private val declarationDeserializer: IrDeclarationDeserializer,
     private val statementOriginIndex: Map<String, IrStatementOrigin>,
-    private val allowErrorStatementOrigins: Boolean,
+    private val allowErrorStatementOrigins: Boolean, // TODO: support InlinerExpressionLocationHint
 ) {
 
     private val fileLoops = mutableMapOf<Int, IrLoop>()
@@ -174,7 +174,10 @@ class IrBodyDeserializer(
         }
     }
 
-    private fun cntToReturnableBlockSymbol(upCnt: Int) = returnableBlockStack[returnableBlockStack.size - upCnt]
+    private fun cntToReturnableBlockSymbol(upCnt: Int) = if (upCnt > returnableBlockStack.size) {
+        // TODO: fix lowerings
+        IrReturnableBlockSymbolImpl()
+    } else returnableBlockStack[returnableBlockStack.size - upCnt]
 
     private fun deserializeReturnableBlock(proto: ProtoReturnableBlock, start: Int, end: Int, type: IrType): IrReturnableBlock {
 
@@ -204,7 +207,7 @@ class IrBodyDeserializer(
         }
 
         proto.typeArgumentList.mapIndexed { i, arg ->
-            access.putTypeArgument(i, declarationDeserializer.deserializeIrType(arg))
+            access.putTypeArgument(i, declarationDeserializer.deserializeNullableIrType(arg))
         }
 
         if (proto.hasDispatchReceiver()) {

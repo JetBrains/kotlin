@@ -87,7 +87,7 @@ open class DeclarationTable(globalTable: GlobalDeclarationTable) {
         return table.getOrPut(declaration) { builder() }
     }
 
-    fun signatureByDeclaration(declaration: IrDeclaration, compatibleMode: Boolean): IdSignature {
+    open fun signatureByDeclaration(declaration: IrDeclaration, compatibleMode: Boolean): IdSignature {
         return computeSignatureByDeclaration(declaration, compatibleMode)
     }
 

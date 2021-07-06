@@ -331,29 +331,29 @@ public interface IrOperationOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorCallExpression getErrorCallExpression();
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 36;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 136;</code>
    */
   boolean hasRawFunctionReference();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 36;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 136;</code>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference getRawFunctionReference();
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 37;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 137;</code>
    */
   boolean hasReturnableBlock();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 37;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 137;</code>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock getReturnableBlock();
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn returnable_block_return = 38;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn returnable_block_return = 138;</code>
    */
   boolean hasReturnableBlockReturn();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn returnable_block_return = 38;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn returnable_block_return = 138;</code>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn getReturnableBlockReturn();
 }

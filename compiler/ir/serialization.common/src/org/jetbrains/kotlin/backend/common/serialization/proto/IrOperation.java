@@ -514,9 +514,9 @@ public final class IrOperation extends
             operationCase_ = 35;
             break;
           }
-          case 290: {
+          case 1090: {
             org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference.Builder subBuilder = null;
-            if (operationCase_ == 36) {
+            if (operationCase_ == 136) {
               subBuilder = ((org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference) operation_).toBuilder();
             }
             operation_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference.PARSER, extensionRegistry);
@@ -524,12 +524,12 @@ public final class IrOperation extends
               subBuilder.mergeFrom((org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference) operation_);
               operation_ = subBuilder.buildPartial();
             }
-            operationCase_ = 36;
+            operationCase_ = 136;
             break;
           }
-          case 298: {
+          case 1098: {
             org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock.Builder subBuilder = null;
-            if (operationCase_ == 37) {
+            if (operationCase_ == 137) {
               subBuilder = ((org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock) operation_).toBuilder();
             }
             operation_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock.PARSER, extensionRegistry);
@@ -537,12 +537,12 @@ public final class IrOperation extends
               subBuilder.mergeFrom((org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock) operation_);
               operation_ = subBuilder.buildPartial();
             }
-            operationCase_ = 37;
+            operationCase_ = 137;
             break;
           }
-          case 306: {
+          case 1106: {
             org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn.Builder subBuilder = null;
-            if (operationCase_ == 38) {
+            if (operationCase_ == 138) {
               subBuilder = ((org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn) operation_).toBuilder();
             }
             operation_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn.PARSER, extensionRegistry);
@@ -550,7 +550,7 @@ public final class IrOperation extends
               subBuilder.mergeFrom((org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn) operation_);
               operation_ = subBuilder.buildPartial();
             }
-            operationCase_ = 38;
+            operationCase_ = 138;
             break;
           }
         }
@@ -627,9 +627,9 @@ public final class IrOperation extends
     FUNCTION_EXPRESSION(33),
     ERROR_EXPRESSION(34),
     ERROR_CALL_EXPRESSION(35),
-    RAW_FUNCTION_REFERENCE(36),
-    RETURNABLE_BLOCK(37),
-    RETURNABLE_BLOCK_RETURN(38),
+    RAW_FUNCTION_REFERENCE(136),
+    RETURNABLE_BLOCK(137),
+    RETURNABLE_BLOCK_RETURN(138),
     OPERATION_NOT_SET(0);
     private int value = 0;
     private OperationCase(int value) {
@@ -672,9 +672,9 @@ public final class IrOperation extends
         case 33: return FUNCTION_EXPRESSION;
         case 34: return ERROR_EXPRESSION;
         case 35: return ERROR_CALL_EXPRESSION;
-        case 36: return RAW_FUNCTION_REFERENCE;
-        case 37: return RETURNABLE_BLOCK;
-        case 38: return RETURNABLE_BLOCK_RETURN;
+        case 136: return RAW_FUNCTION_REFERENCE;
+        case 137: return RETURNABLE_BLOCK;
+        case 138: return RETURNABLE_BLOCK_RETURN;
         case 0: return OPERATION_NOT_SET;
         default: throw new java.lang.IllegalArgumentException(
           "Value is undefined for this oneof enum.");
@@ -1294,52 +1294,52 @@ public final class IrOperation extends
     return org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorCallExpression.getDefaultInstance();
   }
 
-  public static final int RAW_FUNCTION_REFERENCE_FIELD_NUMBER = 36;
+  public static final int RAW_FUNCTION_REFERENCE_FIELD_NUMBER = 136;
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 36;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 136;</code>
    */
   public boolean hasRawFunctionReference() {
-    return operationCase_ == 36;
+    return operationCase_ == 136;
   }
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 36;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 136;</code>
    */
   public org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference getRawFunctionReference() {
-    if (operationCase_ == 36) {
+    if (operationCase_ == 136) {
        return (org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference) operation_;
     }
     return org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference.getDefaultInstance();
   }
 
-  public static final int RETURNABLE_BLOCK_FIELD_NUMBER = 37;
+  public static final int RETURNABLE_BLOCK_FIELD_NUMBER = 137;
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 37;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 137;</code>
    */
   public boolean hasReturnableBlock() {
-    return operationCase_ == 37;
+    return operationCase_ == 137;
   }
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 37;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 137;</code>
    */
   public org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock getReturnableBlock() {
-    if (operationCase_ == 37) {
+    if (operationCase_ == 137) {
        return (org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock) operation_;
     }
     return org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock.getDefaultInstance();
   }
 
-  public static final int RETURNABLE_BLOCK_RETURN_FIELD_NUMBER = 38;
+  public static final int RETURNABLE_BLOCK_RETURN_FIELD_NUMBER = 138;
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn returnable_block_return = 38;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn returnable_block_return = 138;</code>
    */
   public boolean hasReturnableBlockReturn() {
-    return operationCase_ == 38;
+    return operationCase_ == 138;
   }
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn returnable_block_return = 38;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn returnable_block_return = 138;</code>
    */
   public org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn getReturnableBlockReturn() {
-    if (operationCase_ == 38) {
+    if (operationCase_ == 138) {
        return (org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn) operation_;
     }
     return org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn.getDefaultInstance();
@@ -1687,14 +1687,14 @@ public final class IrOperation extends
     if (operationCase_ == 35) {
       output.writeMessage(35, (org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorCallExpression) operation_);
     }
-    if (operationCase_ == 36) {
-      output.writeMessage(36, (org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference) operation_);
+    if (operationCase_ == 136) {
+      output.writeMessage(136, (org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference) operation_);
     }
-    if (operationCase_ == 37) {
-      output.writeMessage(37, (org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock) operation_);
+    if (operationCase_ == 137) {
+      output.writeMessage(137, (org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock) operation_);
     }
-    if (operationCase_ == 38) {
-      output.writeMessage(38, (org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn) operation_);
+    if (operationCase_ == 138) {
+      output.writeMessage(138, (org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn) operation_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -1845,17 +1845,17 @@ public final class IrOperation extends
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeMessageSize(35, (org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorCallExpression) operation_);
     }
-    if (operationCase_ == 36) {
+    if (operationCase_ == 136) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(36, (org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference) operation_);
+        .computeMessageSize(136, (org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference) operation_);
     }
-    if (operationCase_ == 37) {
+    if (operationCase_ == 137) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(37, (org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock) operation_);
+        .computeMessageSize(137, (org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock) operation_);
     }
-    if (operationCase_ == 38) {
+    if (operationCase_ == 138) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(38, (org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn) operation_);
+        .computeMessageSize(138, (org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn) operation_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -2088,13 +2088,13 @@ public final class IrOperation extends
       if (operationCase_ == 35) {
         result.operation_ = operation_;
       }
-      if (operationCase_ == 36) {
+      if (operationCase_ == 136) {
         result.operation_ = operation_;
       }
-      if (operationCase_ == 37) {
+      if (operationCase_ == 137) {
         result.operation_ = operation_;
       }
-      if (operationCase_ == 38) {
+      if (operationCase_ == 138) {
         result.operation_ = operation_;
       }
       result.bitField0_ = to_bitField0_;
@@ -4792,22 +4792,22 @@ public final class IrOperation extends
     }
 
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 36;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 136;</code>
      */
     public boolean hasRawFunctionReference() {
-      return operationCase_ == 36;
+      return operationCase_ == 136;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 36;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 136;</code>
      */
     public org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference getRawFunctionReference() {
-      if (operationCase_ == 36) {
+      if (operationCase_ == 136) {
         return (org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference) operation_;
       }
       return org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference.getDefaultInstance();
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 36;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 136;</code>
      */
     public Builder setRawFunctionReference(org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference value) {
       if (value == null) {
@@ -4815,24 +4815,24 @@ public final class IrOperation extends
       }
       operation_ = value;
 
-      operationCase_ = 36;
+      operationCase_ = 136;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 36;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 136;</code>
      */
     public Builder setRawFunctionReference(
         org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference.Builder builderForValue) {
       operation_ = builderForValue.build();
 
-      operationCase_ = 36;
+      operationCase_ = 136;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 36;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 136;</code>
      */
     public Builder mergeRawFunctionReference(org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference value) {
-      if (operationCase_ == 36 &&
+      if (operationCase_ == 136 &&
           operation_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference.getDefaultInstance()) {
         operation_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference.newBuilder((org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference) operation_)
             .mergeFrom(value).buildPartial();
@@ -4840,14 +4840,14 @@ public final class IrOperation extends
         operation_ = value;
       }
 
-      operationCase_ = 36;
+      operationCase_ = 136;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 36;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 136;</code>
      */
     public Builder clearRawFunctionReference() {
-      if (operationCase_ == 36) {
+      if (operationCase_ == 136) {
         operationCase_ = 0;
         operation_ = null;
         
@@ -4856,22 +4856,22 @@ public final class IrOperation extends
     }
 
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 37;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 137;</code>
      */
     public boolean hasReturnableBlock() {
-      return operationCase_ == 37;
+      return operationCase_ == 137;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 37;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 137;</code>
      */
     public org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock getReturnableBlock() {
-      if (operationCase_ == 37) {
+      if (operationCase_ == 137) {
         return (org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock) operation_;
       }
       return org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock.getDefaultInstance();
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 37;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 137;</code>
      */
     public Builder setReturnableBlock(org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock value) {
       if (value == null) {
@@ -4879,24 +4879,24 @@ public final class IrOperation extends
       }
       operation_ = value;
 
-      operationCase_ = 37;
+      operationCase_ = 137;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 37;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 137;</code>
      */
     public Builder setReturnableBlock(
         org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock.Builder builderForValue) {
       operation_ = builderForValue.build();
 
-      operationCase_ = 37;
+      operationCase_ = 137;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 37;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 137;</code>
      */
     public Builder mergeReturnableBlock(org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock value) {
-      if (operationCase_ == 37 &&
+      if (operationCase_ == 137 &&
           operation_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock.getDefaultInstance()) {
         operation_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock.newBuilder((org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock) operation_)
             .mergeFrom(value).buildPartial();
@@ -4904,14 +4904,14 @@ public final class IrOperation extends
         operation_ = value;
       }
 
-      operationCase_ = 37;
+      operationCase_ = 137;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 37;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 137;</code>
      */
     public Builder clearReturnableBlock() {
-      if (operationCase_ == 37) {
+      if (operationCase_ == 137) {
         operationCase_ = 0;
         operation_ = null;
         
@@ -4920,22 +4920,22 @@ public final class IrOperation extends
     }
 
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn returnable_block_return = 38;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn returnable_block_return = 138;</code>
      */
     public boolean hasReturnableBlockReturn() {
-      return operationCase_ == 38;
+      return operationCase_ == 138;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn returnable_block_return = 38;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn returnable_block_return = 138;</code>
      */
     public org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn getReturnableBlockReturn() {
-      if (operationCase_ == 38) {
+      if (operationCase_ == 138) {
         return (org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn) operation_;
       }
       return org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn.getDefaultInstance();
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn returnable_block_return = 38;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn returnable_block_return = 138;</code>
      */
     public Builder setReturnableBlockReturn(org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn value) {
       if (value == null) {
@@ -4943,24 +4943,24 @@ public final class IrOperation extends
       }
       operation_ = value;
 
-      operationCase_ = 38;
+      operationCase_ = 138;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn returnable_block_return = 38;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn returnable_block_return = 138;</code>
      */
     public Builder setReturnableBlockReturn(
         org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn.Builder builderForValue) {
       operation_ = builderForValue.build();
 
-      operationCase_ = 38;
+      operationCase_ = 138;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn returnable_block_return = 38;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn returnable_block_return = 138;</code>
      */
     public Builder mergeReturnableBlockReturn(org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn value) {
-      if (operationCase_ == 38 &&
+      if (operationCase_ == 138 &&
           operation_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn.getDefaultInstance()) {
         operation_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn.newBuilder((org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn) operation_)
             .mergeFrom(value).buildPartial();
@@ -4968,14 +4968,14 @@ public final class IrOperation extends
         operation_ = value;
       }
 
-      operationCase_ = 38;
+      operationCase_ = 138;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn returnable_block_return = 38;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn returnable_block_return = 138;</code>
      */
     public Builder clearReturnableBlockReturn() {
-      if (operationCase_ == 38) {
+      if (operationCase_ == 138) {
         operationCase_ = 0;
         operation_ = null;
         
