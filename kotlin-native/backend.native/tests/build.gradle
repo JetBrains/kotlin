@@ -4281,6 +4281,48 @@ interopTest("interop_cppSkia") {
     goldValue = "17 17\n"
 }
 
+/**
+ * Check that compiler properly reports linker options that aren't supported by LLD.
+ * @param withImportLibrary create an import library if true. Thus, LLD shoudn't complain.
+ * @param shouldShowWarning compiler should show warning from LLD if true.
+ * @param compilerFlags additional flags that will be passed to Kotlin/Native.
+ */
+void driverCheckLldCompatibilityTest(String taskName, boolean withImportLibrary, boolean shouldShowWarning, List<String> compilerFlags) {
+    tasks.register(taskName, KonanDriverTest) {
+        source = "interop/mingw_dll_linkage/main.kt"
+
+        flags = ["-linker-option", "-lrary", "-linker-option", "-L", "-linker-option", "$buildDir/$taskName"] +
+                compilerFlags
+
+        compilerMessages = true
+        goldValue = "lld doesn't support linking directly against"
+        outputChecker = { out ->
+            shouldShowWarning ? out.contains(goldValue) : !out.contains(goldValue)
+        }
+
+        doBeforeBuild {
+            mkdir("$buildDir/$taskName")
+            execClangForCompilerTests(project.target) {
+                args "$projectDir/interop/mingw_dll_linkage/library.c"
+                args '-shared', '-o', "$buildDir/$taskName/library.dll"
+                if (withImportLibrary) {
+                    args "-Wl,--out-implib", "-Wl,$buildDir/$taskName/library.dll.a"
+                }
+            }
+            copy {
+                from("$buildDir/$taskName/library.dll")
+                into("$testOutputLocal/$name/$target/")
+            }
+        }
+    }
+}
+
+if (isWindowsTarget(project)) {
+    driverCheckLldCompatibilityTest("driver_lld_with_import_library", true, false, [])
+    driverCheckLldCompatibilityTest("driver_lld_without_import_library", false, true, [])
+    driverCheckLldCompatibilityTest("driver_lld_without_import_library_no_check", false, false, ["-Xcheck-compatibility-with-lld=disable"])
+}
+
 /*
 TODO: This test isn't run automatically
 task interop_echo_server(type: RunInteropKonanTest) {
