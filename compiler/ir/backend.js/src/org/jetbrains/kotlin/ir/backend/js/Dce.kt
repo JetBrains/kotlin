@@ -143,7 +143,9 @@ private fun processUselessDeclarations(
                     // Remove annotations for `findAssociatedObject` feature, which reference objects eliminated by the DCE.
                     // Otherwise `JsClassGenerator.generateAssociatedKeyProperties` will try to reference the object factory (which is removed).
                     // That will result in an error from the Namer. It cannot generate a name for an absent declaration.
-                    declaration.annotations = declaration.annotations.filter { it.shouldKeepAnnotation() }
+                    if (declaration.annotations.any { !it.shouldKeepAnnotation() }) {
+                        declaration.annotations = declaration.annotations.filter { it.shouldKeepAnnotation() }
+                    }
                 }
 
                 // TODO bring back the primary constructor fix

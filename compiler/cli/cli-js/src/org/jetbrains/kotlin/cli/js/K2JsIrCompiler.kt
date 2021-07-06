@@ -39,6 +39,8 @@ import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.backend.js.ic.buildCache
+import org.jetbrains.kotlin.ir.backend.js.ic.checkCaches
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.js.config.*
@@ -192,6 +194,43 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             it.libraryFile.absolutePath in friendAbsolutePaths
         }
 
+        val icCaches = configureLibraries(arguments.cacheDirectories)
+
+        if (arguments.irBuildCache) {
+            messageCollector.report(INFO, "")
+            messageCollector.report(INFO, "Building cache:")
+            messageCollector.report(INFO, "to: ${outputFilePath}")
+            messageCollector.report(INFO, arguments.cacheDirectories ?: "")
+            messageCollector.report(INFO, resolvedLibraries.getFullList().map { it.libraryName }.toString())
+
+            val includes = arguments.includes!!
+
+            // TODO: deduplicate
+            val mainModule = run {
+                if (sourcesFiles.isNotEmpty()) {
+                    messageCollector.report(ERROR, "Source files are not supported when -Xinclude is present")
+                }
+                val allLibraries = resolvedLibraries.getFullList()
+                val mainLib = allLibraries.find { it.libraryFile.absolutePath == File(includes).absolutePath }!!
+                MainModule.Klib(mainLib)
+            }
+
+            val start = System.currentTimeMillis()
+            buildCache(
+                cachePath = outputFilePath,
+                project = projectJs,
+                mainModule = mainModule,
+                analyzer = AnalyzerWithCompilerReport(config.configuration),
+                configuration = config.configuration,
+                allDependencies = resolvedLibraries,
+                friendDependencies = friendDependencies,
+                icCache = checkCaches(resolvedLibraries, icCaches, skipLib = mainModule.lib.libraryFile.absolutePath)
+            )
+
+            messageCollector.report(INFO, "IC cache building duration: ${System.currentTimeMillis() - start}ms")
+            return OK
+        }
+
         if (arguments.irProduceKlibDir || arguments.irProduceKlibFile) {
             if (arguments.irProduceKlibFile) {
                 require(outputFile.extension == KLIB_FILE_EXTENSION) { "Please set up .klib file as output" }
@@ -212,6 +251,9 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         }
 
         if (arguments.irProduceJs) {
+            messageCollector.report(INFO,"Produce executable: $outputFilePath")
+            messageCollector.report(INFO, arguments.cacheDirectories ?: "")
+
             val phaseConfig = createPhaseConfig(jsPhases, arguments, messageCollector)
 
             val includes = arguments.includes
@@ -255,6 +297,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 return OK
             }
 
+            val start = System.currentTimeMillis()
+
             val compiledModule = compile(
                 projectJs,
                 mainModule,
@@ -277,7 +321,12 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 propertyLazyInitialization = arguments.irPropertyLazyInitialization,
                 legacyPropertyAccess = arguments.irLegacyPropertyAccess,
                 baseClassIntoMetadata = arguments.irBaseClassInMetadata,
+                lowerPerModule = icCaches.isNotEmpty(),
+                useStdlibCache = icCaches.isNotEmpty(),
+                icCache = if (icCaches.isNotEmpty()) checkCaches(resolvedLibraries, icCaches, skipLib = (mainModule as MainModule.Klib).lib.libraryFile.absolutePath).data else emptyMap(),
             )
+
+            messageCollector.report(INFO, "Executable production duration: ${System.currentTimeMillis() - start}ms")
 
             val outputs = if (arguments.irDce && !arguments.irDceDriven) compiledModule.outputsAfterDce!! else compiledModule.outputs!!
             outputFile.write(outputs)

@@ -49,6 +49,7 @@ class JsIrBackendContext(
     val propertyLazyInitialization: Boolean = false,
     val legacyPropertyAccess: Boolean = false,
     val baseClassIntoMetadata: Boolean = false,
+    override val mapping: JsMapping = JsMapping(symbolTable.irFactory)
 ) : JsCommonBackendContext {
     val fileToInitializationFuns: MutableMap<IrFile, IrSimpleFunction?> = mutableMapOf()
     val fileToInitializerPureness: MutableMap<IrFile, Boolean> = mutableMapOf()
@@ -124,8 +125,6 @@ class JsIrBackendContext(
 
     val testRoots: Map<IrModuleFragment, IrSimpleFunction>
         get() = testContainerFuns
-
-    override val mapping = JsMapping(irFactory)
 
     override val inlineClassesUtils = JsInlineClassesUtils(this)
 
