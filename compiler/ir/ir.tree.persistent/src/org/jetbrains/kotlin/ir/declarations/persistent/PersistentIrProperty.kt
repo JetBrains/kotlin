@@ -80,6 +80,9 @@ internal class PersistentIrFakeOverrideProperty(
     override val descriptor
         get() = _symbol?.descriptor ?: this.toIrBasedDescriptor()
 
+    override val isBound: Boolean
+        get() = _symbol != null
+
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun acquireSymbol(symbol: IrPropertySymbol): IrProperty {
         assert(_symbol == null) { "$this already has symbol _symbol" }
