@@ -16,8 +16,7 @@ import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
 
 interface FunctionalArgument
 
-abstract class LambdaInfo(@JvmField val isCrossInline: Boolean) : FunctionalArgument {
-
+abstract class LambdaInfo : FunctionalArgument {
     abstract val isBoundCallableReference: Boolean
 
     abstract val isSuspend: Boolean
@@ -66,7 +65,7 @@ abstract class LambdaInfo(@JvmField val isCrossInline: Boolean) : FunctionalArgu
 object NonInlineableArgumentForInlineableParameterCalledInSuspend : FunctionalArgument
 object NonInlineableArgumentForInlineableSuspendParameter : FunctionalArgument
 
-abstract class ExpressionLambda(isCrossInline: Boolean) : LambdaInfo(isCrossInline) {
+abstract class ExpressionLambda : LambdaInfo() {
     fun generateLambdaBody(sourceCompiler: SourceCompilerForInline) {
         node = sourceCompiler.generateLambdaBody(this, reifiedTypeParametersUsages)
         node.node.preprocessSuspendMarkers(forInline = true, keepFakeContinuation = false)
@@ -76,11 +75,10 @@ abstract class ExpressionLambda(isCrossInline: Boolean) : LambdaInfo(isCrossInli
 abstract class DefaultLambda(
     final override val lambdaClassType: Type,
     capturedArgs: Array<Type>,
-    isCrossinline: Boolean,
     val offset: Int,
     val needReification: Boolean,
     sourceCompiler: SourceCompilerForInline
-) : LambdaInfo(isCrossinline) {
+) : LambdaInfo() {
     final override val isSuspend
         get() = false // TODO: it should probably be true sometimes, but it never was
     final override val isBoundCallableReference: Boolean

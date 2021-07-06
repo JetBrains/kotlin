@@ -558,21 +558,17 @@ class MethodInliner(
                             )
                         } else if (fieldInsnNode.isCheckAssertionsStatus()) {
                             fieldInsnNode.owner = inlineCallSiteInfo.ownerClassName
-                            if (inliningContext.isInliningLambda) {
-                                if (inliningContext.lambdaInfo!!.isCrossInline) {
-                                    assert(inliningContext.parent?.parent is RegeneratedClassContext) {
-                                        "$inliningContext grandparent shall be RegeneratedClassContext but got ${inliningContext.parent?.parent}"
-                                    }
-                                    inliningContext.parent!!.parent!!.generateAssertField = true
-                                } else {
-                                    assert(inliningContext.parent != null) {
-                                        "$inliningContext parent shall not be null"
-                                    }
-                                    inliningContext.parent!!.generateAssertField = true
-                                }
-                            } else {
-                                inliningContext.generateAssertField = true
-                            }
+                            when {
+                                // In inline function itself:
+                                inliningContext.parent == null -> inliningContext
+                                // In method of regenerated object - field should already exist:
+                                inliningContext.parent is RegeneratedClassContext -> inliningContext.parent
+                                // In lambda inlined into the root function:
+                                inliningContext.parent.parent == null -> inliningContext.parent
+                                // In lambda inlined into a method of a regenerated object:
+                                else -> inliningContext.parent.parent as? RegeneratedClassContext
+                                    ?: throw AssertionError("couldn't find class for \$assertionsDisabled (context = $inliningContext)")
+                            }.generateAssertField = true
                         }
                     }
 

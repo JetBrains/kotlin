@@ -181,7 +181,7 @@ class PsiInlineCodegen(
         }
     }
 
-    var activeLambda: LambdaInfo? = null
+    var activeLambda: PsiExpressionLambda? = null
         private set
 
     private fun putClosureParametersOnStack(next: PsiExpressionLambda, receiverValue: StackValue?) {
@@ -210,9 +210,9 @@ private val FunctionDescriptor.explicitParameters
 class PsiExpressionLambda(
     expression: KtExpression,
     private val state: GenerationState,
-    isCrossInline: Boolean,
+    val isCrossInline: Boolean,
     override val isBoundCallableReference: Boolean
-) : ExpressionLambda(isCrossInline) {
+) : ExpressionLambda() {
     override val lambdaClassType: Type
 
     override val invokeMethod: Method
@@ -308,7 +308,7 @@ class PsiDefaultLambda(
     offset: Int,
     needReification: Boolean,
     sourceCompiler: SourceCompilerForInline
-) : DefaultLambda(lambdaClassType, capturedArgs, parameterDescriptor.isCrossinline, offset, needReification, sourceCompiler) {
+) : DefaultLambda(lambdaClassType, capturedArgs, offset, needReification, sourceCompiler) {
     private val invokeMethodDescriptor: FunctionDescriptor
 
     override val invokeMethodParameters: List<KotlinType?>
