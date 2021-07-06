@@ -111,14 +111,6 @@ class PsiInlineCodegen(
         hiddenParameters.clear()
     }
 
-    /*lambda or callable reference*/
-    private fun isInliningParameter(expression: KtExpression, valueParameterDescriptor: ValueParameterDescriptor): Boolean {
-        //TODO deparenthesize typed
-        val deparenthesized = KtPsiUtil.deparenthesize(expression)
-
-        return InlineUtil.isInlineParameter(valueParameterDescriptor) && isInlinableParameterExpression(deparenthesized)
-    }
-
     override fun genValueAndPut(
         valueParameterDescriptor: ValueParameterDescriptor?,
         argumentExpression: KtExpression,
@@ -130,7 +122,9 @@ class PsiInlineCodegen(
                     "which cannot be declared in Kotlin and thus be inline: $codegen"
         }
 
-        if (isInliningParameter(argumentExpression, valueParameterDescriptor)) {
+        val isInlineParameter = InlineUtil.isInlineParameter(valueParameterDescriptor)
+        //TODO deparenthesize typed
+        if (isInlineParameter && isInlinableParameterExpression(KtPsiUtil.deparenthesize(argumentExpression))) {
             rememberClosure(argumentExpression, parameterType.type, valueParameterDescriptor)
         } else {
             val value = codegen.gen(argumentExpression)
@@ -191,15 +185,6 @@ class PsiInlineCodegen(
         putCapturedToLocalVal(stackValue, activeLambda!!.capturedVars[paramIndex], stackValue.kotlinType)
 
     override fun reorderArgumentsIfNeeded(actualArgsWithDeclIndex: List<ArgumentAndDeclIndex>, valueParameterTypes: List<Type>) = Unit
-
-    override fun computeDefaultLambdaOffsets(): Set<Int> {
-        val contextKind = (sourceCompiler as PsiSourceCompilerForInline).context.contextKind
-        return parameterOffsets(DescriptorAsmUtil.isStaticMethod(contextKind, functionDescriptor), jvmSignature.valueParameters)
-            .drop(jvmSignature.valueParameters.indexOfFirst { it.kind == JvmMethodParameterKind.VALUE })
-            .filterIndexedTo(mutableSetOf()) { index, _ ->
-                functionDescriptor.valueParameters[index].let { InlineUtil.isInlineParameter(it) && it.declaresDefaultValue() }
-            }
-    }
 }
 
 private val FunctionDescriptor.explicitParameters
