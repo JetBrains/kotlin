@@ -139,4 +139,7 @@ class IrFakeOverrideFunctionImpl(
         symbol.bind(this)
         return this
     }
+
+    override val isBound: Boolean
+        get() = _symbol != null
 }
