@@ -186,7 +186,7 @@ public value class Duration internal constructor(private val rawValue: Long) : C
         public fun parse(value: String): Duration = try {
             parseDuration(value, strictIso = false)
         } catch (e: IllegalArgumentException) {
-            throw IllegalArgumentException("Invalid duration string format: $value", e.takeIf { it.message != null })
+            throw IllegalArgumentException("Invalid duration string format: '$value'.", e)
         }
 
         /**
@@ -198,7 +198,7 @@ public value class Duration internal constructor(private val rawValue: Long) : C
         public fun parseIsoString(value: String): Duration = try {
             parseDuration(value, strictIso = true)
         } catch (e: IllegalArgumentException) {
-            throw IllegalArgumentException("Invalid ISO duration string format: $value", e.takeIf { it.message != null })
+            throw IllegalArgumentException("Invalid ISO duration string format: '$value'.", e)
         }
 
         /**
