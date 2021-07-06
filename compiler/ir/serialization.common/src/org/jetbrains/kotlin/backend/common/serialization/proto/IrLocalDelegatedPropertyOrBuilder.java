@@ -26,11 +26,11 @@ public interface IrLocalDelegatedPropertyOrBuilder extends
   long getNameType();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable delegate = 3;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable delegate = 3;</code>
    */
   boolean hasDelegate();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable delegate = 3;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable delegate = 3;</code>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable getDelegate();
 

@@ -438,9 +438,9 @@ message IrOperation {
     IrErrorExpression error_expression = 34;
     IrErrorCallExpression error_call_expression = 35;
 
-    IrRawFunctionReference raw_function_reference = 36;
-    IrReturnableBlock returnable_block = 37;
-    IrReturnableBlockReturn returnable_block_return = 38;
+    IrRawFunctionReference raw_function_reference = 136;
+    IrReturnableBlock returnable_block = 137;
+    IrReturnableBlockReturn returnable_block_return = 138;
   }
 }
 
@@ -508,7 +508,7 @@ message IrField {
 message IrLocalDelegatedProperty {
   required IrDeclarationBase base = 1;
   required int64 name_type = 2;
-  required IrVariable delegate = 3;
+  optional IrVariable delegate = 3;
   optional IrFunction getter = 4;
   optional IrFunction setter = 5;
 }
@@ -532,15 +532,15 @@ message IrValueParameter {
   required int64 name_type = 2;
   optional int32 vararg_element_type = 3;
   optional int32 default_value = 4;
-  optional int32 index = 5;
+  optional int32 index = 105;
 }
 
 message IrTypeParameter {
   required IrDeclarationBase base = 1;
   required int32 name = 2;
   repeated int32 super_type = 3 [packed=true];
-  optional int32 index = 4;
-  optional bool isGlobal = 5;
+  optional int32 index = 104;
+  optional bool isGlobal = 105;
 }
 
 message IrClass {

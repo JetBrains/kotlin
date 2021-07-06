@@ -138,4 +138,8 @@ class CurrentModuleWithICDeserializer(
         get() = delegate.moduleDependencies
     override val isCurrent: Boolean
         get() = delegate.isCurrent
+
+    override fun fileDeserializers(): Collection<IrFileDeserializer> {
+        return delegate.fileDeserializers()
+    }
 }

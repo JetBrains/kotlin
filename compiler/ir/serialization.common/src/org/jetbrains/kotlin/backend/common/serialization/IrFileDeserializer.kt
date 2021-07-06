@@ -35,7 +35,7 @@ class IrFileDeserializer(
 
     private var annotations: List<ProtoConstructorCall>? = fileProto.annotationList
 
-    internal fun deserializeDeclaration(idSig: IdSignature): IrDeclaration {
+    fun deserializeDeclaration(idSig: IdSignature): IrDeclaration {
         return declarationDeserializer.deserializeDeclaration(loadTopLevelDeclarationProto(idSig)).also {
             file.declarations += it
         }
@@ -66,6 +66,7 @@ class FileDeserializationState(
     allowErrorNodes: Boolean,
     deserializeInlineFunctions: Boolean,
     moduleDeserializer: IrModuleDeserializer,
+    useGlobalSignatures: Boolean,
     handleNoModuleDeserializerFound: (IdSignature, ModuleDescriptor, Collection<IrModuleDeserializer>) -> IrModuleDeserializer,
 ) {
 
@@ -77,6 +78,7 @@ class FileDeserializationState(
             fileProto.actualList,
             ::addIdSignature,
             linker::handleExpectActualMapping,
+            useGlobalSignatures = useGlobalSignatures,
         ) { idSig, symbolKind ->
             assert(idSig.isPublic)
 
@@ -163,7 +165,7 @@ internal fun IrLibraryFile.deserializeString(index: Int): String = WobblyTF8.dec
 internal fun IrLibraryFile.deserializeFqName(fqn: List<Int>): String =
     fqn.joinToString(".", transform = ::deserializeString)
 
-internal fun IrLibraryFile.createFile(module: IrModuleFragment, fileProto: ProtoFile): IrFile {
+fun IrLibraryFile.createFile(module: IrModuleFragment, fileProto: ProtoFile): IrFile {
     val fileName = fileProto.fileEntry.name
     val fileEntry = NaiveSourceBasedFileEntryImpl(fileName, fileProto.fileEntry.lineStartOffsetList.toIntArray())
     val fqName = FqName(deserializeFqName(fileProto.fqNameList))
