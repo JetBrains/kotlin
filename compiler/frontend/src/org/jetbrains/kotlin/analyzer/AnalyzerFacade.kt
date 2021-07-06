@@ -144,24 +144,29 @@ class LazyModuleDependencies<M : ModuleInfo>(
 ) : ModuleDependencies {
 
     private val dependencies = storageManager.createLazyValue {
-
         val moduleDescriptors = mutableSetOf<ModuleDescriptorImpl>()
         firstDependency?.let {
+            module.assertModuleDependencyIsCorrect(it)
             moduleDescriptors.add(resolverForProject.descriptorForModule(it))
         }
         val moduleDescriptor = resolverForProject.descriptorForModule(module)
         val dependencyOnBuiltIns = module.dependencyOnBuiltIns()
         if (dependencyOnBuiltIns == ModuleInfo.DependencyOnBuiltIns.AFTER_SDK) {
-            moduleDescriptors.add(moduleDescriptor.builtIns.builtInsModule)
+            val builtInsModule = moduleDescriptor.builtIns.builtInsModule
+            module.assertModuleDependencyIsCorrect(builtInsModule)
+            moduleDescriptors.add(builtInsModule)
         }
         for (dependency in module.dependencies()) {
             if (dependency == firstDependency) continue
+            module.assertModuleDependencyIsCorrect(dependency)
 
             @Suppress("UNCHECKED_CAST")
             moduleDescriptors.add(resolverForProject.descriptorForModule(dependency as M))
         }
         if (dependencyOnBuiltIns == ModuleInfo.DependencyOnBuiltIns.LAST) {
-            moduleDescriptors.add(moduleDescriptor.builtIns.builtInsModule)
+            val builtInsModule = moduleDescriptor.builtIns.builtInsModule
+            module.assertModuleDependencyIsCorrect(builtInsModule)
+            moduleDescriptors.add(builtInsModule)
         }
         moduleDescriptors.toList()
     }
@@ -170,6 +175,7 @@ class LazyModuleDependencies<M : ModuleInfo>(
 
     override val directExpectedByDependencies by storageManager.createLazyValue {
         module.expectedBy.map {
+            module.assertModuleDependencyIsCorrect(it)
             @Suppress("UNCHECKED_CAST")
             resolverForProject.descriptorForModule(it as M)
         }
@@ -177,6 +183,7 @@ class LazyModuleDependencies<M : ModuleInfo>(
 
     override val allExpectedByDependencies: Set<ModuleDescriptorImpl> by storageManager.createLazyValue {
         collectAllExpectedByModules(module).mapTo(HashSet<ModuleDescriptorImpl>()) {
+            module.assertModuleDependencyIsCorrect(it)
             @Suppress("UNCHECKED_CAST")
             resolverForProject.descriptorForModule(it as M)
         }
@@ -185,10 +192,22 @@ class LazyModuleDependencies<M : ModuleInfo>(
     override val modulesWhoseInternalsAreVisible: Set<ModuleDescriptorImpl>
         get() =
             module.modulesWhoseInternalsAreVisible().mapTo(LinkedHashSet()) {
+                module.assertModuleDependencyIsCorrect(it)
                 @Suppress("UNCHECKED_CAST")
                 resolverForProject.descriptorForModule(it as M)
             }
 
+    companion object {
+        private fun ModuleInfo.assertModuleDependencyIsCorrect(dependency: ModuleDescriptor) {
+            assertModuleDependencyIsCorrect(dependency.getCapability(ModuleInfo.Capability) ?: return)
+        }
+
+        private fun ModuleInfo.assertModuleDependencyIsCorrect(dependency: ModuleInfo) {
+            assert(dependency !is DerivedModuleInfo || this is DerivedModuleInfo) {
+                "Derived module infos may not be referenced from regular ones"
+            }
+        }
+    }
 }
 
 interface PackageOracle {
