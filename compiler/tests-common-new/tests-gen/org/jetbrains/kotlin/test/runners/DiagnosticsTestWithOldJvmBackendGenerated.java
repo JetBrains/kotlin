@@ -652,6 +652,22 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/typeOf")
+    @TestDataPath("$PROJECT_ROOT")
+    public class TypeOf {
+        @Test
+        public void testAllFilesPresentInTypeOf() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/typeOf"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_OLD, true);
+        }
+
+        @Test
+        @TestMetadata("suspendType.kt")
+        public void testSuspendType() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJvmBackend/typeOf/suspendType.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/valueClasses")
     @TestDataPath("$PROJECT_ROOT")
     public class ValueClasses {

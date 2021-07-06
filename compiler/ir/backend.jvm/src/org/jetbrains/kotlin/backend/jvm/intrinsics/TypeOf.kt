@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.intrinsics
 import org.jetbrains.kotlin.backend.jvm.codegen.BlockInfo
 import org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.backend.jvm.codegen.IrInlineIntrinsicsSupport
+import org.jetbrains.kotlin.backend.jvm.codegen.fileParent
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
 import org.jetbrains.kotlin.codegen.inline.generateTypeOf
 import org.jetbrains.kotlin.codegen.putReifiedOperationMarkerIfTypeIsReifiedParameter
@@ -19,7 +20,8 @@ object TypeOf : IntrinsicMethod() {
         if (putReifiedOperationMarkerIfTypeIsReifiedParameter(type, ReifiedTypeInliner.OperationKind.TYPE_OF)) {
             mv.aconst(null) // see ReifiedTypeInliner.processTypeOf
         } else {
-            typeMapper.typeSystem.generateTypeOf(mv, type, IrInlineIntrinsicsSupport(context, typeMapper))
+            val support = IrInlineIntrinsicsSupport(context, typeMapper, expression, codegen.irFunction.fileParent)
+            typeMapper.typeSystem.generateTypeOf(mv, type, support)
         }
         expression.onStack
     }

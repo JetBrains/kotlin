@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.TYPEOF_SUSPEND_TYPE
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.org.objectweb.asm.Type
@@ -31,7 +33,9 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 class IrInlineIntrinsicsSupport(
     private val context: JvmBackendContext,
-    private val typeMapper: IrTypeMapper
+    private val typeMapper: IrTypeMapper,
+    private val reportErrorsOn: IrExpression,
+    private val containingFile: IrFile,
 ) : ReifiedTypeInliner.IntrinsicsSupport<IrType> {
     override val state: GenerationState
         get() = context.state
@@ -107,4 +111,8 @@ class IrInlineIntrinsicsSupport(
     }
 
     override fun toKotlinType(type: IrType): KotlinType = type.toIrBasedKotlinType()
+
+    override fun reportSuspendTypeUnsupported() {
+        context.psiErrorBuilder.at(reportErrorsOn, containingFile).report(TYPEOF_SUSPEND_TYPE)
+    }
 }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
+import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
@@ -89,6 +90,10 @@ fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.generateTypeOf(
     }
 
     v.invokestatic(REFLECTION, methodName, signature, false)
+
+    if (intrinsicsSupport.toKotlinType(type).isSuspendFunctionType) {
+        intrinsicsSupport.reportSuspendTypeUnsupported()
+    }
 
     if (intrinsicsSupport.state.stableTypeOf) {
         if (intrinsicsSupport.isMutableCollectionType(type)) {

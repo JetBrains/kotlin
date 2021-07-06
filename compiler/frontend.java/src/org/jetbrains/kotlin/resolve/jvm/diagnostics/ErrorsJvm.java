@@ -175,6 +175,8 @@ public interface ErrorsJvm {
     DiagnosticFactory0<PsiElement> VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> JVM_INLINE_WITHOUT_VALUE_CLASS = DiagnosticFactory0.create(ERROR);
 
+    DiagnosticFactory0<PsiElement> TYPEOF_SUSPEND_TYPE = DiagnosticFactory0.create(ERROR);
+
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {
         {

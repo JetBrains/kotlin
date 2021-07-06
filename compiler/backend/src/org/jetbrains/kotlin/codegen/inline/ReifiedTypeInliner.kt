@@ -73,6 +73,8 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
         fun isMutableCollectionType(type: KT): Boolean
 
         fun toKotlinType(type: KT): KotlinType
+
+        fun reportSuspendTypeUnsupported()
     }
 
     companion object {

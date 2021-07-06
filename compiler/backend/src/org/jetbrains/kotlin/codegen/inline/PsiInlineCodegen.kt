@@ -43,11 +43,12 @@ class PsiInlineCodegen(
     typeParameterMappings: TypeParameterMappings<KotlinType>,
     sourceCompiler: SourceCompilerForInline,
     private val methodOwner: Type,
-    private val actualDispatchReceiver: Type
+    private val actualDispatchReceiver: Type,
+    reportErrorsOn: KtElement,
 ) : InlineCodegen<ExpressionCodegen>(
     codegen, state, signature, typeParameterMappings, sourceCompiler,
     ReifiedTypeInliner(
-        typeParameterMappings, PsiInlineIntrinsicsSupport(state), codegen.typeSystem,
+        typeParameterMappings, PsiInlineIntrinsicsSupport(state, reportErrorsOn), codegen.typeSystem,
         state.languageVersionSettings, state.unifiedNullChecks
     ),
 ), CallGenerator {
