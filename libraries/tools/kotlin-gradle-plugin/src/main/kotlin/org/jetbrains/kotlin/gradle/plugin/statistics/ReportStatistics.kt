@@ -12,6 +12,8 @@ data class CompileStatData(
     val taskName: String?,
     val taskResult: String,
     val duration: Long,
+    val tags: List<String>,
+    val changes: List<String>,
     val statData: Map<String, Long>
 )
 

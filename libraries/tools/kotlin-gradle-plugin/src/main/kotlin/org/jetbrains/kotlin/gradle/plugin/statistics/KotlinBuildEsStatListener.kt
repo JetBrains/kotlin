@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.stat.CompileStatData
 import org.jetbrains.kotlin.gradle.plugin.stat.ReportStatistics
+import org.jetbrains.kotlin.incremental.ChangedFiles
 
 enum class TaskExecutionState {
     SKIPPED,
@@ -51,13 +52,28 @@ class KotlinBuildEsStatListener(val projectName: String) : OperationCompletionLi
     }
 
     private fun reportData(taskPath: String, duration: Long, taskResult: TaskExecutionState) {
-        val statData = TaskExecutionResults[taskPath]?.buildMetrics?.buildTimes?.asMap()?.mapKeys { (key, _) -> key.name } ?: emptyMap()
+        if (!availableForStat(taskPath)) {
+            return;
+        }
+        val taskExecutionResult = TaskExecutionResults[taskPath]
+        val statData = taskExecutionResult?.buildMetrics?.buildTimes?.asMap()?.mapKeys { (key, _) -> key.name } ?: emptyMap()
+        val changedFiles = taskExecutionResult?.taskInfo?.changedFiles
+        val changes = when (changedFiles) {
+            is ChangedFiles.Known -> changedFiles.modified.map { it.absolutePath } + changedFiles.removed.map { it.absolutePath }
+            is ChangedFiles.Dependencies -> changedFiles.modified.map { it.absolutePath } + changedFiles.removed.map { it.absolutePath }
+            else -> emptyList<String>()
 
+        }
         val compileStatData = CompileStatData(
             duration = duration, taskResult = taskResult.name, label = label,
-            statData = statData, projectName = projectName, taskName = taskPath
+            statData = statData, projectName = projectName, taskName = taskPath, changes = changes,
+            tags = taskExecutionResult?.taskInfo?.properties?.map { it.name } ?: emptyList()
         )
         reportStatistics.report(compileStatData)
+    }
+
+    private fun availableForStat(taskPath: String): Boolean {
+        return taskPath.contains("compileKotlin")
     }
 
     override fun afterExecute(task: Task, taskState: TaskState) {
