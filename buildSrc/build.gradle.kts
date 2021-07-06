@@ -155,7 +155,7 @@ dependencies {
     implementation("net.sf.proguard:proguard-gradle:6.2.2")
     implementation("org.jetbrains.intellij.deps:asm-all:8.0.1")
 
-    implementation("gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext:0.5")
+    implementation("gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext:1.0.1")
 
     implementation("org.gradle:test-retry-gradle-plugin:1.2.0")
     implementation("com.gradle.enterprise:test-distribution-gradle-plugin:2.1")

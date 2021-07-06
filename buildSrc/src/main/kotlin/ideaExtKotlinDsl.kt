@@ -24,16 +24,16 @@ fun ProjectSettings.compiler(block: IdeaCompilerConfiguration.() -> Unit) =
 fun ProjectSettings.delegateActions(block: ActionDelegationConfig.() -> Unit) =
     (this@delegateActions as ExtensionAware).extensions.configure(block)
 
-fun ProjectSettings.runConfigurations(block: DefaultRunConfigurationContainer.() -> Unit) =
+fun ProjectSettings.runConfigurations(block: RunConfigurationContainer.() -> Unit) =
     (this@runConfigurations as ExtensionAware).extensions.configure("runConfigurations", block)
 
-inline fun <reified T: RunConfiguration> DefaultRunConfigurationContainer.defaults(noinline block: T.() -> Unit) =
+inline fun <reified T: RunConfiguration> RunConfigurationContainer.defaults(noinline block: T.() -> Unit) =
     defaults(T::class.java, block)
 
-fun DefaultRunConfigurationContainer.junit(name: String, block: JUnit.() -> Unit) =
+fun RunConfigurationContainer.junit(name: String, block: JUnit.() -> Unit) =
     create(name, JUnit::class.java, block)
 
-fun DefaultRunConfigurationContainer.application(name: String, block: Application.() -> Unit) =
+fun RunConfigurationContainer.application(name: String, block: Application.() -> Unit) =
     create(name, Application::class.java, block)
 
 fun ProjectSettings.ideArtifacts(block: NamedDomainObjectContainer<org.jetbrains.gradle.ext.TopLevelArtifact>.() -> Unit) =
