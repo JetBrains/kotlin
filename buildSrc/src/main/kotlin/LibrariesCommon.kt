@@ -61,7 +61,7 @@ private class Java9AdditionalArgumentsProvider(
 }
 
 fun Project.disableDeprecatedJvmTargetWarning() {
-    if (!kotlinBuildProperties.disableWerror) {
+    if (!kotlinBuildProperties.useFir && !kotlinBuildProperties.disableWerror) {
         val tasksWithWarnings: List<String> by rootProject.extra
         tasks.withType<KotlinCompile>().configureEach {
             if (!tasksWithWarnings.contains(path)) {
