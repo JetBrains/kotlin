@@ -351,7 +351,12 @@ val coreLibProjects = listOfNotNull(
 val projectsWithDisabledFirBootstrap = coreLibProjects + listOf(
     ":kotlin-gradle-plugin",
     ":kotlinx-metadata",
-    ":kotlinx-metadata-jvm"
+    ":kotlinx-metadata-jvm",
+    // For some reason stdlib isn't imported correctly for this module
+    // Probably it's related to kotlin-test module usage
+    ":kotlin-gradle-statistics",
+    // Requires serialization plugin
+    ":wasm:wasm.ir"
 )
 
 val gradlePluginProjects = listOf(
