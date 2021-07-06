@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVari
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeVariableForLambdaReturnType
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstraintPosition
-import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParameterConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.typeContext
@@ -75,7 +74,7 @@ private fun ConeDiagnostic.toFirDiagnostic(
         FirErrors.NO_TYPE_ARGUMENTS_ON_RHS.createOn(qualifiedAccessSource ?: source, this.desiredCount, this.type)
     is ConeSimpleDiagnostic -> when (source.kind) {
         is FirFakeSourceElementKind -> null
-        else -> this.getFactory(source)?.createOn(qualifiedAccessSource ?: source)
+        else -> this.getFactory(source).createOn(qualifiedAccessSource ?: source)
     }
     is ConeInstanceAccessBeforeSuperCall -> FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL.createOn(source, this.target)
     is ConeStubDiagnostic -> null
@@ -322,7 +321,7 @@ private fun ConstraintSystemError.toDiagnostic(
 private val NewConstraintError.lowerConeType: ConeKotlinType get() = lowerType as ConeKotlinType
 private val NewConstraintError.upperConeType: ConeKotlinType get() = upperType as ConeKotlinType
 
-private fun ConeSimpleDiagnostic.getFactory(source: FirSourceElement): FirDiagnosticFactory0? {
+private fun ConeSimpleDiagnostic.getFactory(source: FirSourceElement): FirDiagnosticFactory0 {
     @Suppress("UNCHECKED_CAST")
     return when (kind) {
         DiagnosticKind.Syntax -> FirErrors.SYNTAX
@@ -365,7 +364,6 @@ private fun ConeSimpleDiagnostic.getFactory(source: FirSourceElement): FirDiagno
         DiagnosticKind.UnresolvedSupertype,
         DiagnosticKind.UnresolvedExpandedType,
         DiagnosticKind.Other -> FirErrors.OTHER_ERROR
-        DiagnosticKind.NotRootCause -> null
         else -> throw IllegalArgumentException("Unsupported diagnostic kind: $kind at $javaClass")
     }
 }

@@ -707,8 +707,7 @@ class ExpressionsConverter(
         whenEntryNodes.mapTo(whenEntries) {
             convertWhenEntry(
                 it,
-                subject.takeIf { hasSubject },
-                hasSubjectVariable = subjectVariable != null
+                subject.takeIf { hasSubject }
             )
         }
         return buildWhenExpression {
@@ -756,8 +755,7 @@ class ExpressionsConverter(
      */
     private fun convertWhenEntry(
         whenEntry: LighterASTNode,
-        whenRefWithSubject: FirExpressionRef<FirWhenExpression>?,
-        hasSubjectVariable: Boolean
+        whenRefWithSubject: FirExpressionRef<FirWhenExpression>?
     ): WhenEntry {
         var isElse = false
         var firBlock: FirBlock = buildEmptyExpressionBlock()
@@ -765,8 +763,8 @@ class ExpressionsConverter(
         whenEntry.forEachChildren {
             when (it.tokenType) {
                 WHEN_CONDITION_EXPRESSION -> conditions += convertWhenConditionExpression(it, whenRefWithSubject)
-                WHEN_CONDITION_IN_RANGE -> conditions += convertWhenConditionInRange(it, whenRefWithSubject, hasSubjectVariable)
-                WHEN_CONDITION_IS_PATTERN -> conditions += convertWhenConditionIsPattern(it, whenRefWithSubject, hasSubjectVariable)
+                WHEN_CONDITION_IN_RANGE -> conditions += convertWhenConditionInRange(it, whenRefWithSubject)
+                WHEN_CONDITION_IS_PATTERN -> conditions += convertWhenConditionIsPattern(it, whenRefWithSubject)
                 ELSE_KEYWORD -> isElse = true
                 BLOCK -> firBlock = declarationsConverter.convertBlock(it)
                 else -> if (it.isExpression()) firBlock = declarationsConverter.convertBlock(it)
@@ -809,8 +807,7 @@ class ExpressionsConverter(
 
     private fun convertWhenConditionInRange(
         whenCondition: LighterASTNode,
-        whenRefWithSubject: FirExpressionRef<FirWhenExpression>?,
-        hasSubjectVariable: Boolean
+        whenRefWithSubject: FirExpressionRef<FirWhenExpression>?
     ): FirExpression {
         var isNegate = false
         var firExpression: FirExpression? = null
@@ -838,8 +835,7 @@ class ExpressionsConverter(
                 source = whenCondition.toFirSourceElement()
                 diagnostic = ConeSimpleDiagnostic(
                     "No expression in condition with expression",
-                    // A subject variable without initializer should be highlighted only at the subject expression.
-                    if (hasSubjectVariable) DiagnosticKind.NotRootCause else DiagnosticKind.ExpressionExpected
+                    DiagnosticKind.ExpressionExpected
                 )
             }
         }
@@ -859,8 +855,7 @@ class ExpressionsConverter(
 
     private fun convertWhenConditionIsPattern(
         whenCondition: LighterASTNode,
-        whenRefWithSubject: FirExpressionRef<FirWhenExpression>?,
-        hasSubjectVariable: Boolean
+        whenRefWithSubject: FirExpressionRef<FirWhenExpression>?
     ): FirExpression {
         lateinit var firOperation: FirOperation
         lateinit var firType: FirTypeRef
@@ -881,8 +876,7 @@ class ExpressionsConverter(
                 source = whenCondition.toFirSourceElement()
                 diagnostic = ConeSimpleDiagnostic(
                     "No expression in condition with expression",
-                    // A subject variable without initializer should be highlighted only at the subject expression.
-                    if (hasSubjectVariable) DiagnosticKind.NotRootCause else DiagnosticKind.ExpressionExpected
+                    DiagnosticKind.ExpressionExpected
                 )
             }
         }

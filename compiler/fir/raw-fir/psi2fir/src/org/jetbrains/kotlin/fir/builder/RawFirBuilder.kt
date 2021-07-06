@@ -320,8 +320,7 @@ open class RawFirBuilder(
                 )
             }
             val name = this.getArgumentName()?.asName
-            val expression = this.getArgumentExpression()
-            val firExpression = when (expression) {
+            val firExpression = when (val expression = this.getArgumentExpression()) {
                 is KtConstantExpression, is KtStringTemplateExpression -> {
                     expression.accept(this@Visitor, Unit) as FirExpression
                 }
@@ -580,7 +579,7 @@ open class RawFirBuilder(
             container.argumentList = argumentList
         }
 
-        fun KtClassOrObject.extractSuperTypeListEntriesTo(
+        private fun KtClassOrObject.extractSuperTypeListEntriesTo(
             container: FirClassBuilder,
             delegatedSelfTypeRef: FirTypeRef?,
             delegatedEnumSuperTypeRef: FirTypeRef?,
@@ -1754,9 +1753,7 @@ open class RawFirBuilder(
                                     ?: ktCondition)
                                     .toFirExpression(
                                         "No expression in condition with expression",
-                                        // A subject variable without initializer should be highlighted only at the subject expression.
-                                        if (ktSubjectExpression is KtVariableDeclaration) DiagnosticKind.NotRootCause
-                                        else DiagnosticKind.ExpressionExpected
+                                        DiagnosticKind.ExpressionExpected
                                     )
                                 result = branchBody
                             }
