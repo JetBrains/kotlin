@@ -22,7 +22,7 @@ sourceSets {
 }
 
 dependencies {
-    compile kotlinStdlib()
+    api kotlinStdlib()
     compileOnly project(':core:descriptors')
     compileOnly project(':core:descriptors.jvm')
     compileOnly project(':core:deserialization')
@@ -69,5 +69,4 @@ task java9Jar(type: Jar) {
 
 artifacts {
     archives java9Jar
-    runtime java9Jar
 }

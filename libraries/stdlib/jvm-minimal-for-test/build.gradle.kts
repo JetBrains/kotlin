@@ -17,11 +17,6 @@ val builtins by configurations.creating {
     }
 }
 
-val runtime by configurations
-val runtimeJar by configurations.creating {
-    runtime.extendsFrom(this)
-}
-
 dependencies {
     compileOnly(project(":kotlin-stdlib"))
     builtins(project(":core:builtins"))

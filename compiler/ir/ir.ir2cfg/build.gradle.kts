@@ -5,9 +5,9 @@ plugins {
 }
 
 dependencies {
-    compile(project(":compiler:util"))
-    compile(project(":compiler:frontend"))
-    compile(project(":compiler:ir.tree"))
+    api(project(":compiler:util"))
+    api(project(":compiler:frontend"))
+    api(project(":compiler:ir.tree"))
 }
 
 sourceSets {

@@ -14,8 +14,8 @@ sourceSets {
 
 dependencies {
     expectedBy project(':kotlin-test:kotlin-test-annotations-common')
-    compile project(':kotlin-test:kotlin-test-jvm')
-    compile('junit:junit:4.12')
+    api project(':kotlin-test:kotlin-test-jvm')
+    api('junit:junit:4.12')
 }
 
 

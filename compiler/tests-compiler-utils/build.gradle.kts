@@ -5,31 +5,31 @@ plugins {
 }
 
 dependencies {
-    testCompile(kotlinStdlib("jdk8"))
-    testCompile(project(":kotlin-scripting-compiler"))
-    testCompile(project(":core:descriptors"))
-    testCompile(project(":core:descriptors.jvm"))
-    testCompile(project(":core:deserialization"))
-    testCompile(project(":compiler:util"))
-    testCompile(project(":compiler:tests-mutes"))
-    testCompile(project(":compiler:backend"))
-    testCompile(project(":compiler:ir.ir2cfg"))
-    testCompile(project(":compiler:frontend"))
-    testCompile(project(":compiler:frontend.java"))
-    testCompile(project(":compiler:util"))
-    testCompile(project(":compiler:psi"))
-    testCompile(project(":compiler:cli-common"))
-    testCompile(project(":compiler:cli"))
-    testCompile(project(":compiler:cli-js"))
-    testCompile(project(":compiler:serialization"))
-    testCompile(project(":compiler:fir:entrypoint"))
-    testCompile(project(":compiler:backend.jvm.entrypoint"))
-    testCompile(projectTests(":compiler:test-infrastructure-utils"))
-    testCompile(project(":kotlin-preloader"))
-    testCompile(commonDep("com.android.tools:r8"))
+    testApi(kotlinStdlib("jdk8"))
+    testApi(project(":kotlin-scripting-compiler"))
+    testApi(project(":core:descriptors"))
+    testApi(project(":core:descriptors.jvm"))
+    testApi(project(":core:deserialization"))
+    testApi(project(":compiler:util"))
+    testApi(project(":compiler:tests-mutes"))
+    testApi(project(":compiler:backend"))
+    testApi(project(":compiler:ir.ir2cfg"))
+    testApi(project(":compiler:frontend"))
+    testApi(project(":compiler:frontend.java"))
+    testApi(project(":compiler:util"))
+    testApi(project(":compiler:psi"))
+    testApi(project(":compiler:cli-common"))
+    testApi(project(":compiler:cli"))
+    testApi(project(":compiler:cli-js"))
+    testApi(project(":compiler:serialization"))
+    testApi(project(":compiler:fir:entrypoint"))
+    testApi(project(":compiler:backend.jvm.entrypoint"))
+    testApi(projectTests(":compiler:test-infrastructure-utils"))
+    testApi(project(":kotlin-preloader"))
+    testApi(commonDep("com.android.tools:r8"))
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
-    testCompile(intellijDep()) {
+    testApi(intellijDep()) {
         includeJars(
             "jps-model",
             "extensions",

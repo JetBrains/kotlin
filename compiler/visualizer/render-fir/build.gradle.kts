@@ -4,9 +4,9 @@ plugins {
 }
 
 dependencies {
-    compile(project(":compiler:fir:raw-fir:psi2fir"))
-    compile(project(":compiler:fir:resolve"))
-    compile(project(":compiler:visualizer:common"))
+    api(project(":compiler:fir:raw-fir:psi2fir"))
+    api(project(":compiler:fir:resolve"))
+    api(project(":compiler:visualizer:common"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 }
 

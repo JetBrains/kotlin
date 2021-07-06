@@ -5,28 +5,28 @@ plugins {
 }
 
 dependencies {
-    compile(project(":core:descriptors"))
-    compile(project(":core:descriptors.jvm"))
-    compile(project(":core:deserialization"))
-    compile(project(":compiler:util"))
-    compile(project(":compiler:frontend"))
-    compile(project(":compiler:frontend.java"))
-    compile(project(":compiler:cli"))
-    compile(project(":compiler:cli-js"))
-    compile(project(":kotlin-build-common"))
-    compile(project(":daemon-common"))
+    api(project(":core:descriptors"))
+    api(project(":core:descriptors.jvm"))
+    api(project(":core:deserialization"))
+    api(project(":compiler:util"))
+    api(project(":compiler:frontend"))
+    api(project(":compiler:frontend.java"))
+    api(project(":compiler:cli"))
+    api(project(":compiler:cli-js"))
+    api(project(":kotlin-build-common"))
+    api(project(":daemon-common"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
-    testCompile(commonDep("junit:junit"))
-    testCompile(project(":kotlin-test:kotlin-test-junit"))
-    testCompile(kotlinStdlib())
-    testCompile(projectTests(":kotlin-build-common"))
-    testCompile(projectTests(":compiler:tests-common"))
-    testCompile(intellijCoreDep()) { includeJars("intellij-core") }
-    testCompile(intellijDep()) { includeJars("log4j", "jdom") }
-    testRuntime(project(":kotlin-reflect"))
-    testRuntime(project(":core:descriptors.runtime"))
-    testRuntime(intellijDep()) { includeJars("lz4-java", "jna", rootProject = rootProject) }
+    testApi(commonDep("junit:junit"))
+    testApi(project(":kotlin-test:kotlin-test-junit"))
+    testApi(kotlinStdlib())
+    testApi(projectTests(":kotlin-build-common"))
+    testApi(projectTests(":compiler:tests-common"))
+    testApi(intellijCoreDep()) { includeJars("intellij-core") }
+    testApi(intellijDep()) { includeJars("log4j", "jdom") }
+    testRuntimeOnly(project(":kotlin-reflect"))
+    testRuntimeOnly(project(":core:descriptors.runtime"))
+    testRuntimeOnly(intellijDep()) { includeJars("lz4-java", "jna", rootProject = rootProject) }
 }
 
 sourceSets {

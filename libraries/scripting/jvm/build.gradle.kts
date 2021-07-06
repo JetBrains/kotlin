@@ -6,10 +6,10 @@ plugins {
 project.configureJvmToolchain(JdkMajorVersion.JDK_1_6)
 
 dependencies {
-    compile(project(":kotlin-script-runtime"))
-    compile(kotlinStdlib())
-    compile(project(":kotlin-scripting-common"))
-    testCompile(commonDep("junit"))
+    api(project(":kotlin-script-runtime"))
+    api(kotlinStdlib())
+    api(project(":kotlin-scripting-common"))
+    testApi(commonDep("junit"))
 }
 
 sourceSets {

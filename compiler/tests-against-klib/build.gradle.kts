@@ -7,8 +7,8 @@ plugins {
 }
 
 dependencies {
-    compile(kotlinStdlib())
-    testCompile(projectTests(":generators:test-generator"))
+    api(kotlinStdlib())
+    testApi(projectTests(":generators:test-generator"))
     testApi(projectTests(":compiler:tests-common"))
 
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }

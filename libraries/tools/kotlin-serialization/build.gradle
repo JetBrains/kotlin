@@ -9,7 +9,7 @@ pill {
 
 dependencies {
     compileOnly project(':kotlin-gradle-plugin')
-    compile project(':kotlin-gradle-plugin-api')
+    api project(':kotlin-gradle-plugin-api')
 
     compileOnly kotlinStdlib()
     compileOnly project(path: ':kotlin-compiler-embeddable', configuration: 'runtimeJar')

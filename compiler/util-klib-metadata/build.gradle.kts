@@ -11,9 +11,9 @@ dependencies {
     compileOnly(project(":core:deserialization"))
     compileOnly(project(":compiler:serialization"))
 
-    compile(kotlinStdlib())
-    compile(project(":kotlin-util-io"))
-    compile(project(":kotlin-util-klib"))
+    api(kotlinStdlib())
+    api(project(":kotlin-util-io"))
+    api(project(":kotlin-util-klib"))
 }
 
 sourceSets {

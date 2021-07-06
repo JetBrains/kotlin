@@ -142,14 +142,14 @@ fun DependencyHandler.jpsLikeJarDependency(
         JpsDepScope.COMPILE -> {
             if (exported) {
                 add("api", dependencyNotation, dependencyConfiguration)
-                add("testCompile", dependencyNotation, dependencyConfiguration)
+                add("testApi", dependencyNotation, dependencyConfiguration)
             } else {
                 add("implementation", dependencyNotation, dependencyConfiguration)
             }
         }
         JpsDepScope.TEST -> {
             if (exported) {
-                add("testCompile", dependencyNotation, dependencyConfiguration)
+                add("testApi", dependencyNotation, dependencyConfiguration)
             } else {
                 add("testImplementation", dependencyNotation, dependencyConfiguration)
             }
@@ -160,7 +160,7 @@ fun DependencyHandler.jpsLikeJarDependency(
         JpsDepScope.PROVIDED -> {
             if (exported) {
                 add("compileOnlyApi", dependencyNotation, dependencyConfiguration)
-                add("testCompile", dependencyNotation, dependencyConfiguration)
+                add("testApi", dependencyNotation, dependencyConfiguration)
             } else {
                 add("compileOnly", dependencyNotation, dependencyConfiguration)
                 add("testImplementation", dependencyNotation, dependencyConfiguration)

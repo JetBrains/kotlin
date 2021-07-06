@@ -12,13 +12,13 @@ dependencies {
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
-    testCompile(project(":compiler:backend"))
-    testCompile(project(":compiler:cli"))
-    testCompile(projectTests(":compiler:tests-common"))
-    testCompile(commonDep("junit:junit"))
+    testApi(project(":compiler:backend"))
+    testApi(project(":compiler:cli"))
+    testApi(projectTests(":compiler:tests-common"))
+    testApi(commonDep("junit:junit"))
     testCompileOnly(project(":kotlin-compiler"))
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    testCompile(project(":kotlin-scripting-jvm-host-unshaded"))
+    testApi(project(":kotlin-scripting-jvm-host-unshaded"))
     testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testRuntimeOnly(intellijDep()) { includeJars("platform-concurrency") }
 }

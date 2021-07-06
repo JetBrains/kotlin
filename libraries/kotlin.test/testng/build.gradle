@@ -15,8 +15,8 @@ sourceSets {
 
 dependencies {
     expectedBy project(':kotlin-test:kotlin-test-annotations-common')
-    compile project(':kotlin-test:kotlin-test-jvm')
-    compile('org.testng:testng:6.13.1')
+    api project(':kotlin-test:kotlin-test-jvm')
+    api('org.testng:testng:6.13.1')
     if (includeJava9) {
         java9CompileOnly('org.testng:testng:7.0.0')
     }

@@ -5,8 +5,8 @@ apply plugin: 'kotlin-platform-common'
 JvmToolchain.updateJvmTarget(project, "1.6")
 
 dependencies {
-    compile kotlinStdlib("common")
-    testCompile project(":kotlin-test:kotlin-test-common")
+    api kotlinStdlib("common")
+    testApi project(":kotlin-test:kotlin-test-common")
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.dsl.KotlinCompile) {

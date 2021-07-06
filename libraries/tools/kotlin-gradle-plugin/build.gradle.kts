@@ -102,7 +102,7 @@ dependencies {
 }
 
 if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
-    configurations.compile.get().exclude("com.android.tools.external.com-intellij", "intellij-core")
+    configurations.api.get().exclude("com.android.tools.external.com-intellij", "intellij-core")
 }
 
 noDefaultJar()

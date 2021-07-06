@@ -8,8 +8,8 @@ plugins {
 project.updateJvmTarget("1.6")
 
 dependencies {
-    compile(kotlinStdlib())
-    compile(project(":kotlin-android-extensions-runtime"))
+    api(kotlinStdlib())
+    api(project(":kotlin-android-extensions-runtime"))
     compileOnly(commonDep("com.google.android", "android"))
 }
 

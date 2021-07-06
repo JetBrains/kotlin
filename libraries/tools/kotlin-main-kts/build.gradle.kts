@@ -17,7 +17,8 @@ val localPackagesToRelocate =
 
 val proguardLibraryJars by configurations.creating {
     attributes {
-        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_API))
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
     }
 }
 
@@ -120,7 +121,7 @@ val resultJar by task<Jar> {
     }
 }
 
-addArtifact("runtime", resultJar)
+addArtifact("apiElements", resultJar)
 addArtifact("runtimeElements", resultJar)
 addArtifact("archives", resultJar)
 

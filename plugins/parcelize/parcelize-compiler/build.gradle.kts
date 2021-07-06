@@ -9,7 +9,7 @@ val robolectricClasspath by configurations.creating
 val parcelizeRuntimeForTests by configurations.creating
 
 dependencies {
-    testCompile(intellijCoreDep()) { includeJars("intellij-core") }
+    testApi(intellijCoreDep()) { includeJars("intellij-core") }
 
     compileOnly(project(":compiler:util"))
     compileOnly(project(":compiler:plugin-api"))
@@ -22,18 +22,18 @@ dependencies {
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeJars("asm-all", rootProject = rootProject) }
 
-    testCompile(project(":compiler:util"))
-    testCompile(project(":compiler:backend"))
-    testCompile(project(":compiler:ir.backend.common"))
-    testCompile(project(":compiler:backend.jvm"))
-    testCompile(project(":compiler:cli"))
-    testCompile(project(":plugins:parcelize:parcelize-runtime"))
-    testCompile(project(":kotlin-android-extensions-runtime"))
-    testCompile(projectTests(":compiler:tests-common"))
-    testCompile(project(":kotlin-test:kotlin-test-jvm"))
-    testCompile(commonDep("junit:junit"))
+    testApi(project(":compiler:util"))
+    testApi(project(":compiler:backend"))
+    testApi(project(":compiler:ir.backend.common"))
+    testApi(project(":compiler:backend.jvm"))
+    testApi(project(":compiler:cli"))
+    testApi(project(":plugins:parcelize:parcelize-runtime"))
+    testApi(project(":kotlin-android-extensions-runtime"))
+    testApi(projectTests(":compiler:tests-common"))
+    testApi(project(":kotlin-test:kotlin-test-jvm"))
+    testApi(commonDep("junit:junit"))
 
-    testRuntime(intellijPluginDep("junit"))
+    testRuntimeOnly(intellijPluginDep("junit"))
 
     robolectricClasspath(commonDep("org.robolectric", "robolectric"))
     robolectricClasspath("org.robolectric:android-all:4.4_r1-robolectric-1")

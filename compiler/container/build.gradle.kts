@@ -4,17 +4,17 @@ plugins {
 }
 
 dependencies {
-    compile(project(":core:util.runtime"))
-    compile(commonDep("javax.inject"))
+    api(project(":core:util.runtime"))
+    api(commonDep("javax.inject"))
     compileOnly(kotlinStdlib())
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    testCompile(kotlinStdlib())
+    testApi(kotlinStdlib())
     testCompileOnly("org.jetbrains:annotations:13.0")
-    testCompile(project(":kotlin-test:kotlin-test-jvm"))
-    testCompile(project(":kotlin-test:kotlin-test-junit"))
-    testCompile(commonDep("junit:junit"))
+    testApi(project(":kotlin-test:kotlin-test-jvm"))
+    testApi(project(":kotlin-test:kotlin-test-junit"))
+    testApi(commonDep("junit:junit"))
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    testRuntime(intellijDep()) { includeJars("trove4j", "util") }
+    testRuntimeOnly(intellijDep()) { includeJars("trove4j", "util") }
 }
 
 sourceSets {

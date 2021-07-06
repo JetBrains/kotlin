@@ -37,7 +37,7 @@ val shadows by configurations.creating {
     isTransitive = false
 }
 configurations.getByName("compileOnly").extendsFrom(shadows)
-configurations.getByName("testCompile").extendsFrom(shadows)
+configurations.getByName("testApi").extendsFrom(shadows)
 
 dependencies {
     api(kotlinStdlib())

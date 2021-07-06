@@ -16,7 +16,7 @@ val shadows: Configuration by configurations.creating {
     isTransitive = false
 }
 configurations.getByName("compileOnly").extendsFrom(shadows)
-configurations.getByName("testCompile").extendsFrom(shadows)
+configurations.getByName("testApi").extendsFrom(shadows)
 
 dependencies {
     // Should come before compiler dependencies, see comment in "compiler/build.gradle.kts"
@@ -38,6 +38,7 @@ dependencies {
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "asm-all", rootProject = rootProject) }
 
+    testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testRuntimeOnly(project(":kotlin-compiler"))
 
     testImplementation(commonDep("junit:junit"))

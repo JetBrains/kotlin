@@ -6,8 +6,10 @@ plugins {
 project.updateJvmTarget("1.8")
 
 val allTestsRuntime by configurations.creating
-val testCompile by configurations
-testCompile.extendsFrom(allTestsRuntime)
+
+val testApi by configurations
+testApi.extendsFrom(allTestsRuntime)
+
 val embeddableTestRuntime by configurations.creating {
     extendsFrom(allTestsRuntime)
     attributes {
@@ -18,11 +20,11 @@ val embeddableTestRuntime by configurations.creating {
 
 dependencies {
     allTestsRuntime(commonDep("junit"))
-    testCompile(kotlinStdlib("jdk8"))
-    testCompile(project(":kotlin-scripting-ide-services-unshaded"))
-    testCompile(project(":kotlin-scripting-compiler"))
-    testCompile(project(":kotlin-scripting-dependencies-maven"))
-    testCompile(project(":compiler:cli"))
+    testApi(kotlinStdlib("jdk8"))
+    testApi(project(":kotlin-scripting-ide-services-unshaded"))
+    testApi(project(":kotlin-scripting-compiler"))
+    testApi(project(":kotlin-scripting-dependencies-maven"))
+    testApi(project(":compiler:cli"))
 
     testImplementation(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
     testImplementation(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core-jvm"))
@@ -30,9 +32,9 @@ dependencies {
     testRuntimeOnly(commonDep("org.jetbrains.intellij.deps", "trove4j"))
     testRuntimeOnly(project(":kotlin-scripting-ide-common")) { isTransitive = false }
 
-    embeddableTestRuntime(project(":kotlin-scripting-ide-services", configuration="runtimeElements"))
-    embeddableTestRuntime(project(":kotlin-scripting-compiler-impl-embeddable", configuration="runtimeElements"))
-    embeddableTestRuntime(project(":kotlin-scripting-dependencies", configuration="runtimeElements"))
+    embeddableTestRuntime(project(":kotlin-scripting-ide-services"))
+    embeddableTestRuntime(project(":kotlin-scripting-compiler-impl-embeddable"))
+    embeddableTestRuntime(project(":kotlin-scripting-dependencies"))
     embeddableTestRuntime(project(":kotlin-scripting-dependencies-maven-all"))
     embeddableTestRuntime(kotlinStdlib("jdk8"))
     embeddableTestRuntime(testSourceSet.output)

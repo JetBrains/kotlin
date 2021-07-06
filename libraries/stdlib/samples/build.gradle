@@ -1,8 +1,8 @@
 apply plugin: 'kotlin'
 
 dependencies {
-    compile project(':kotlin-stdlib-jdk8')
-    testCompile project(':kotlin-test:kotlin-test-junit')
+    api project(':kotlin-stdlib-jdk8')
+    testApi project(':kotlin-test:kotlin-test-junit')
 }
 
 sourceSets {

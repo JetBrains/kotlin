@@ -6,9 +6,9 @@ configurations {
 }
 
 dependencies {
-    compile("org.jetbrains.kotlinx:binary-compatibility-validator:0.7.1")
+    api("org.jetbrains.kotlinx:binary-compatibility-validator:0.7.1")
 
-    testCompile project(':kotlin-test:kotlin-test-junit')
+    testApi project(':kotlin-test:kotlin-test-junit')
 
     testArtifacts project(':kotlin-stdlib')
     testArtifacts project(':kotlin-stdlib-jdk7')

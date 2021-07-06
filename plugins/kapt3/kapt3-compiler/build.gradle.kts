@@ -8,18 +8,18 @@ plugins {
 
 dependencies {
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    testRuntime(intellijDep())
+    testImplementation(intellijDep())
     testCompileOnly(intellijDep()) { includeJars("idea", "idea_rt") }
     testCompileOnly(intellijDep()) { includeJars("platform-api", "platform-impl") }
 
-    testRuntime(intellijPluginDep("java"))
+    testImplementation(intellijPluginDep("java"))
 
-    compile(project(":compiler:util"))
-    compile(project(":compiler:cli"))
-    compile(project(":compiler:backend"))
-    compile(project(":compiler:frontend"))
-    compile(project(":compiler:frontend.java"))
-    compile(project(":compiler:plugin-api"))
+    api(project(":compiler:util"))
+    api(project(":compiler:cli"))
+    api(project(":compiler:backend"))
+    api(project(":compiler:frontend"))
+    api(project(":compiler:frontend.java"))
+    api(project(":compiler:plugin-api"))
 
     compileOnly(toolsJarApi())
     compileOnly(project(":kotlin-annotation-processing-cli"))
@@ -28,11 +28,11 @@ dependencies {
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeJars("asm-all", rootProject = rootProject) }
 
-    testCompile(projectTests(":compiler:tests-common"))
-    testCompile(project(":kotlin-annotation-processing-base"))
-    testCompile(projectTests(":kotlin-annotation-processing-base"))
-    testCompile(commonDep("junit:junit"))
-    testCompile(project(":kotlin-annotation-processing-runtime"))
+    testApi(projectTests(":compiler:tests-common"))
+    testApi(project(":kotlin-annotation-processing-base"))
+    testApi(projectTests(":kotlin-annotation-processing-base"))
+    testApi(commonDep("junit:junit"))
+    testApi(project(":kotlin-annotation-processing-runtime"))
 
     testCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())

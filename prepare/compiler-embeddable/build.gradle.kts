@@ -29,8 +29,8 @@ dependencies {
     Platform[203].orHigher {
         runtimeOnly(commonDep("net.java.dev.jna", "jna"))
     }
-    testCompile(commonDep("junit:junit"))
-    testCompile(project(":kotlin-test:kotlin-test-junit"))
+    testApi(commonDep("junit:junit"))
+    testApi(project(":kotlin-test:kotlin-test-junit"))
     testCompilationClasspath(kotlinStdlib())
 }
 

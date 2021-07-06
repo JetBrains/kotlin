@@ -6,17 +6,17 @@ plugins {
 }
 
 dependencies {
-    compile(project(":kotlin-build-common"))
+    api(project(":kotlin-build-common"))
     compileOnly(project(":compiler:cli-common"))
     compileOnly(project(":kotlin-preloader"))
     compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":daemon-common"))
     compileOnly(project(":daemon-common-new"))
-    compile(projectRuntimeJar(":kotlin-daemon-client"))
+    api(projectRuntimeJar(":kotlin-daemon-client"))
     compileOnly(project(":compiler:util"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     runtimeOnly(projectRuntimeJar(":kotlin-compiler-embeddable"))
-    compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
+    api(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
 }
 
 sourceSets {

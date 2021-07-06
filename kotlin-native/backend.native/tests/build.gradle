@@ -41,14 +41,13 @@ configurations {
     update_tests
     update_stdlib_tests
 
-    compile
-    nopPluginCompile
-    compile.extendsFrom nopPluginCompile
+    nopPluginApi
+    api.extendsFrom nopPluginApi
 }
 
 dependencies {
-    compile 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7'
-    cli_bc project(path: ':kotlin-native:backend.native', configuration: 'cli_bc')
+    api 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7'
+    cli_bc project(path: ':kotlin-native:backend.native', configuration: 'cli_bcApiElements')
 }
 ext.testOutputRoot = rootProject.file("test.output").absolutePath
 ext.externalTestsDir = project.file("build/external")
@@ -5814,23 +5813,23 @@ pluginTest("runtime_basic_init", "nopPlugin") {
 }
 
 dependencies {
-    nopPluginCompile project(kotlinCompilerModule)
-    nopPluginCompile project(":native:kotlin-native-utils")
-    nopPluginCompile project(":core:descriptors")
-    nopPluginCompile project(":compiler:ir.tree")
-    nopPluginCompile project(":compiler:ir.tree.impl")
-    nopPluginCompile project(":compiler:ir.backend.common")
-    nopPluginCompile project(":compiler:util")
-    nopPluginCompile project(":native:frontend.native")
-    nopPluginCompile project(":compiler:cli-common")
-    nopPluginCompile project(":compiler:cli")
-    nopPluginCompile project(":kotlin-util-klib")
-    nopPluginCompile project(":kotlin-util-klib-metadata")
-    nopPluginCompile project(":compiler:ir.serialization.common")
+    nopPluginApi project(kotlinCompilerModule)
+    nopPluginApi project(":native:kotlin-native-utils")
+    nopPluginApi project(":core:descriptors")
+    nopPluginApi project(":compiler:ir.tree")
+    nopPluginApi project(":compiler:ir.tree.impl")
+    nopPluginApi project(":compiler:ir.backend.common")
+    nopPluginApi project(":compiler:util")
+    nopPluginApi project(":native:frontend.native")
+    nopPluginApi project(":compiler:cli-common")
+    nopPluginApi project(":compiler:cli")
+    nopPluginApi project(":kotlin-util-klib")
+    nopPluginApi project(":kotlin-util-klib-metadata")
+    nopPluginApi project(":compiler:ir.serialization.common")
 
-    compile project(kotlinCompilerModule)
-    compile project(path: ':kotlin-native:backend.native', configuration: 'cli_bc')
-    compile 'junit:junit:4.12'
+    api project(kotlinCompilerModule)
+    api project(path: ':kotlin-native:backend.native', configuration: 'cli_bcApiElements')
+    api 'junit:junit:4.12'
 }
 
 project.tasks.named("test").configure {

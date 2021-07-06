@@ -6,9 +6,9 @@ plugins {
 project.updateJvmTarget("1.6")
 
 dependencies {
-    compile(kotlinStdlib())
+    api(kotlinStdlib())
     compileOnly(project(":kotlin-reflect-api"))
-    testCompile(commonDep("junit"))
+    testApi(commonDep("junit"))
 }
 
 sourceSets {

@@ -18,7 +18,7 @@ val depenencyProjects = arrayOf(
 
 dependencies {
     depenencyProjects.forEach {
-        testCompile(projectTests(it))
+        testApi(projectTests(it))
         jpsTest(project(it, configuration = "jpsTest"))
     }
 

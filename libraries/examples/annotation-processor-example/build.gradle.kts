@@ -13,7 +13,7 @@ pill {
 }
 
 dependencies {
-    compile(kotlinStdlib())
+    api(kotlinStdlib())
 }
 
 sourceSets {

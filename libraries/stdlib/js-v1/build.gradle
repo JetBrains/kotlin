@@ -68,7 +68,7 @@ sourceSets {
 dependencies {
     expectedBy project(":kotlin-stdlib-common")
     commonSources project(path: ":kotlin-stdlib-common", configuration: "sources")
-    testCompile project(':kotlin-test:kotlin-test-js')
+    testApi project(':kotlin-test:kotlin-test-js')
 }
 
 task prepareComparableSource(type: Copy) {
@@ -322,7 +322,6 @@ task distSourcesJar(type: Jar) {
 }
 
 artifacts {
-    runtime libraryJarWithIr
     publishedRuntime libraryJarWithIr
     publishedRuntime sourcesJar
     sources sourcesJar

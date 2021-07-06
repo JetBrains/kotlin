@@ -38,12 +38,12 @@ sourceSets {
 }
 
 configurations {
-    noJdk7TestCompile.extendsFrom(testCompile)
+    noJdk7TestApi.extendsFrom(testApi)
 }
 
 dependencies {
-    compile project(':kotlin-stdlib')
-    testCompile project(':kotlin-test:kotlin-test-junit')
+    api project(':kotlin-stdlib')
+    testApi project(':kotlin-test:kotlin-test-junit')
 }
 
 jar {

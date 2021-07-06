@@ -50,6 +50,7 @@ configurations {
         }
     }
     compileOnly.extendsFrom(builtins)
+    testCompileOnly.extendsFrom(builtins)
 }
 
 dependencies {
@@ -57,9 +58,9 @@ dependencies {
 
     commonSources project(path: ":kotlin-stdlib-common", configuration: "sources")
 
-    compile group: 'org.jetbrains', name: 'annotations', version:'13.0'
+    api group: 'org.jetbrains', name: 'annotations', version:'13.0'
 
-    testCompile project(':kotlin-test:kotlin-test-junit')
+    testApi project(':kotlin-test:kotlin-test-junit')
 
     builtins project(':core:builtins')
 }

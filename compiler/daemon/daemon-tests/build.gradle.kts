@@ -9,23 +9,23 @@ plugins {
 val ktorExcludesForDaemon: List<Pair<String, String>> by rootProject.extra
 
 dependencies {
-    testCompile(project(":kotlin-test:kotlin-test-jvm"))
-    testCompile(kotlinStdlib())
-    testCompile(commonDep("junit:junit"))
+    testApi(project(":kotlin-test:kotlin-test-jvm"))
+    testApi(kotlinStdlib())
+    testApi(commonDep("junit:junit"))
     testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
     testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
-    testCompile(projectRuntimeJar(":kotlin-daemon-client"))
-    testCompile(projectRuntimeJar(":kotlin-daemon-client-new"))
+    testApi(projectRuntimeJar(":kotlin-daemon-client"))
+    testApi(projectRuntimeJar(":kotlin-daemon-client-new"))
     testCompileOnly(project(":kotlin-daemon"))
-    testCompile(projectTests(":compiler:tests-common"))
-    testCompile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
-    testCompile(commonDep("io.ktor", "ktor-network")) {
+    testApi(projectTests(":compiler:tests-common"))
+    testApi(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
+    testApi(commonDep("io.ktor", "ktor-network")) {
         ktorExcludesForDaemon.forEach { (group, module) ->
             exclude(group = group, module = module)
         }
     }
-    testRuntime(project(":kotlin-daemon"))
-    testRuntime(intellijCoreDep()) { includeJars("intellij-core") }
+    testImplementation(project(":kotlin-daemon"))
+    testImplementation(intellijCoreDep()) { includeJars("intellij-core") }
 }
 
 sourceSets {

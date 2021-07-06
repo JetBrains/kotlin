@@ -10,7 +10,7 @@ configurations {
 dependencies {
     expectedBy project(':kotlin-test:kotlin-test-common')
     expectedBy project(':kotlin-test:kotlin-test-annotations-common')
-    compile kotlinStdlib("js")
+    api kotlinStdlib("js")
 }
 
 compileKotlin2Js {
@@ -73,7 +73,6 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 }
 
 artifacts {
-    runtime libraryJarWithIr
     archives libraryJarWithIr
     distLibrary libraryJarWithIr
     archives sourcesJar

@@ -5,16 +5,16 @@ plugins {
 val embeddableTestRuntime by configurations.creating
 
 dependencies {
-    testCompile(commonDep("junit"))
+    testApi(commonDep("junit"))
 
-    testCompile(project(":kotlin-scripting-js"))
-    testCompile(project(":compiler:plugin-api"))
-    testCompile(project(":kotlin-scripting-compiler"))
-    testCompile(project(":compiler:cli"))
-    testCompile(project(":compiler:backend.js"))
-    testCompile(project(":compiler:ir.tree.impl"))
-    testCompile(project(":js:js.engines"))
-    testCompile(intellijCoreDep()) { includeJars("intellij-core") }
+    testApi(project(":kotlin-scripting-js"))
+    testApi(project(":compiler:plugin-api"))
+    testApi(project(":kotlin-scripting-compiler"))
+    testApi(project(":compiler:cli"))
+    testApi(project(":compiler:backend.js"))
+    testApi(project(":compiler:ir.tree.impl"))
+    testApi(project(":js:js.engines"))
+    testApi(intellijCoreDep()) { includeJars("intellij-core") }
     testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testRuntimeOnly(intellijDep()) {
         includeJars("idea", "idea_rt", "log4j", "guava", "jdom", rootProject = rootProject)

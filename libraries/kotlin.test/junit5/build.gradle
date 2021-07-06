@@ -14,10 +14,10 @@ project.ext["jpsLibraryPath"] = rootProject.distLibDir
 
 dependencies {
     expectedBy project(':kotlin-test:kotlin-test-annotations-common')
-    compile project(':kotlin-test:kotlin-test-jvm')
+    api project(':kotlin-test:kotlin-test-jvm')
 
-    compile("org.junit.jupiter:junit-jupiter-api:5.0.0")
-    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.2.0")
+    api("org.junit.jupiter:junit-jupiter-api:5.0.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.2.0")
 }
 
 jar {

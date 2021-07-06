@@ -4,13 +4,13 @@ plugins {
 }
 
 dependencies {
-    compile(project(":compiler:cli-common"))
-    compile(project(":kotlin-build-common"))
-    compile(kotlinStdlib())
+    api(project(":compiler:cli-common"))
+    api(project(":kotlin-build-common"))
+    api(kotlinStdlib())
     compileOnly(project(":js:js.config"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }
-    compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) {
+    api(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) {
         isTransitive = false
     }
 }

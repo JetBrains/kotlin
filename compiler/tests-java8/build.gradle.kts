@@ -6,13 +6,13 @@ plugins {
 }
 
 dependencies {
-    testCompile(project(":kotlin-scripting-compiler"))
-    testCompile(projectTests(":compiler:tests-common"))
+    testApi(project(":kotlin-scripting-compiler"))
+    testApi(projectTests(":compiler:tests-common"))
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    testCompile(projectTests(":generators:test-generator"))
-    testRuntime(project(":kotlin-reflect"))
+    testApi(projectTests(":generators:test-generator"))
+    testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(toolsJar())
-    testRuntime(intellijDep())
+    testRuntimeOnly(intellijDep())
     testRuntimeOnly(intellijPluginDep("java"))
     if (isIdeaActive) testRuntimeOnly(files("${rootProject.projectDir}/dist/kotlinc/lib/kotlin-reflect.jar"))
 }

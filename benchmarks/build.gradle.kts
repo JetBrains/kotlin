@@ -9,15 +9,15 @@ plugins {
 }
 
 dependencies {
-    compile(kotlinStdlib())
-    compile(project(":compiler:frontend"))
-    compile(projectTests(":compiler:tests-common"))
-    compile(project(":compiler:cli"))
-    compile(intellijCoreDep()) { includeJars("intellij-core") }
-    compile(jpsStandalone()) { includeJars("jps-model") }
-    compile(intellijPluginDep("java"))
-    compile(intellijDep()) { includeIntellijCoreJarDependencies(project) }
-    compile("org.jetbrains.kotlinx:kotlinx-benchmark-runtime:$benchmarks_version")
+    api(kotlinStdlib())
+    api(project(":compiler:frontend"))
+    api(projectTests(":compiler:tests-common"))
+    api(project(":compiler:cli"))
+    api(intellijCoreDep()) { includeJars("intellij-core") }
+    api(jpsStandalone()) { includeJars("jps-model") }
+    api(intellijPluginDep("java"))
+    api(intellijDep()) { includeIntellijCoreJarDependencies(project) }
+    api("org.jetbrains.kotlinx:kotlinx-benchmark-runtime:$benchmarks_version")
 }
 
 sourceSets {

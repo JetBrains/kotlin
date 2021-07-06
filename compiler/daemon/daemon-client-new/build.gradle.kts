@@ -37,10 +37,10 @@ dependencies {
     nativePlatformVariants.forEach {
         embedded(commonDep("net.rubygrapefruit", "native-platform", "-$it"))
     }
-    compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) {
+    api(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) {
         isTransitive = false
     }
-    compile(commonDep("io.ktor", "ktor-network")) {
+    api(commonDep("io.ktor", "ktor-network")) {
         ktorExcludesForDaemon.forEach { (group, module) ->
             exclude(group = group, module = module)
         }

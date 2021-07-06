@@ -6,8 +6,8 @@ plugins {
 description = "Common klib reader and writer"
 
 dependencies {
-    compile(kotlinStdlib())
-    compile(project(":kotlin-util-io"))
+    api(kotlinStdlib())
+    api(project(":kotlin-util-io"))
     testImplementation(commonDep("junit:junit"))
 }
 

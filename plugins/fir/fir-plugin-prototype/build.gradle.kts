@@ -4,29 +4,29 @@ plugins {
 }
 
 dependencies {
-    compile(project(":compiler:fir:cones"))
-    compile(project(":compiler:fir:tree"))
-    compile(project(":compiler:fir:resolve"))
-    compile(project(":compiler:fir:checkers"))
-    compile(project(":compiler:frontend"))
+    api(project(":compiler:fir:cones"))
+    api(project(":compiler:fir:tree"))
+    api(project(":compiler:fir:resolve"))
+    api(project(":compiler:fir:checkers"))
+    api(project(":compiler:frontend"))
 
     compileOnly(project(":kotlin-reflect-api"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
 
-    testCompile(intellijDep())
+    testApi(intellijDep())
 
-    testCompile(commonDep("junit:junit"))
+    testApi(commonDep("junit:junit"))
     testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
     testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
-    testCompile(projectTests(":compiler:tests-common"))
-    testCompile(project(":compiler:fir:checkers"))
-    testCompile(project(":compiler:fir:checkers:checkers.jvm"))
-    testCompile(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
-    testCompile(project(":compiler:frontend"))
+    testApi(projectTests(":compiler:tests-common"))
+    testApi(project(":compiler:fir:checkers"))
+    testApi(project(":compiler:fir:checkers:checkers.jvm"))
+    testApi(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
+    testApi(project(":compiler:frontend"))
 
     testCompileOnly(project(":kotlin-reflect-api"))
-    testRuntime(project(":kotlin-reflect"))
-    testRuntime(project(":core:descriptors.runtime"))
+    testRuntimeOnly(project(":kotlin-reflect"))
+    testRuntimeOnly(project(":core:descriptors.runtime"))
 
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }

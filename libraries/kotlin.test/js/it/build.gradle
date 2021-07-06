@@ -12,7 +12,7 @@ apply plugin: 'kotlin-platform-js'
 
 configurations {
     nodeModules {
-        extendsFrom compile
+        extendsFrom api
         attributes {
             attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, KotlinUsages.KOTLIN_RUNTIME))
             attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
@@ -21,7 +21,7 @@ configurations {
 }
 
 dependencies {
-    compile project(':kotlin-test:kotlin-test-js')
+    api project(':kotlin-test:kotlin-test-js')
 }
 
 // package.json contains direct links to the builddir

@@ -23,22 +23,22 @@ dependencies {
     compileOnly(intellijPluginDep("Groovy"))
     compileOnly(intellijDep())
 
-    testCompile(project(":compiler:cli"))
-    testCompile(project(":compiler:frontend.java"))
-    testCompile(projectTests(":idea:idea-test-framework")) { isTransitive = false }
-    testCompile(project(":plugins:kapt3-idea"))
-    testCompile(projectTests(":compiler:tests-common"))
-    testCompile(projectTests(":idea"))
-    testCompile(projectTests(":idea:idea-android"))
-    testCompile(project(":kotlin-test:kotlin-test-jvm"))
-    testCompile(commonDep("junit:junit"))
-    testCompile(project(":idea:idea-native")) { isTransitive = false }
-    testCompile(project(":idea:idea-gradle-native")) { isTransitive = false }
+    testApi(project(":compiler:cli"))
+    testApi(project(":compiler:frontend.java"))
+    testApi(projectTests(":idea:idea-test-framework")) { isTransitive = false }
+    testApi(project(":plugins:kapt3-idea"))
+    testApi(projectTests(":compiler:tests-common"))
+    testApi(projectTests(":idea"))
+    testApi(projectTests(":idea:idea-android"))
+    testApi(project(":kotlin-test:kotlin-test-jvm"))
+    testApi(commonDep("junit:junit"))
+    testApi(project(":idea:idea-native")) { isTransitive = false }
+    testApi(project(":idea:idea-gradle-native")) { isTransitive = false }
     testRuntime(project(":native:frontend.native"))
     testRuntime(project(":kotlin-reflect"))
-    testCompile(intellijPluginDep("android"))
-    testCompile(intellijPluginDep("Groovy"))
-    testCompile(intellijDep())
+    testApi(intellijPluginDep("android"))
+    testApi(intellijPluginDep("Groovy"))
+    testApi(intellijDep())
 
     testRuntime(project(":idea:idea-jvm"))
     testRuntime(project(":sam-with-receiver-ide-plugin"))

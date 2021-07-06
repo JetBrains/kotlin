@@ -6,13 +6,13 @@ plugins {
 project.configureJvmToolchain(JdkMajorVersion.JDK_1_6)
 
 dependencies {
-    compile(project(":kotlin-annotations-jvm"))
-    compile(project(":core:descriptors"))
-    compile(project(":core:deserialization"))
+    api(project(":kotlin-annotations-jvm"))
+    api(project(":core:descriptors"))
+    api(project(":core:deserialization"))
     api(project(":core:compiler.common.jvm"))
     api(project(":core:deserialization.common.jvm"))
-    compile(project(":core:util.runtime"))
-    compile(commonDep("javax.inject"))
+    api(project(":core:util.runtime"))
+    api(commonDep("javax.inject"))
 }
 
 sourceSets {

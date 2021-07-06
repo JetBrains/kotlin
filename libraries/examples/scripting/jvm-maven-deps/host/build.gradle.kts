@@ -4,9 +4,9 @@ plugins {
 }
 
 dependencies {
-    compile(project(":examples:scripting-jvm-maven-deps"))
-    compile(project(":kotlin-scripting-jvm-host-unshaded"))
-    compile(kotlinStdlib())
+    api(project(":examples:scripting-jvm-maven-deps"))
+    api(project(":kotlin-scripting-jvm-host-unshaded"))
+    api(kotlinStdlib())
     compileOnly(project(":kotlin-reflect-api"))
     compileOnly(project(":compiler:util"))
 
@@ -14,7 +14,7 @@ dependencies {
     testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":kotlin-scripting-compiler"))
 
-    testCompile(commonDep("junit"))
+    testApi(commonDep("junit"))
 }
 
 sourceSets {

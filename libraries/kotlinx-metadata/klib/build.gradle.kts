@@ -25,10 +25,10 @@ val shadows by configurations.creating {
     isTransitive = false
 }
 configurations.getByName("compileOnly").extendsFrom(shadows)
-configurations.getByName("testCompile").extendsFrom(shadows)
+configurations.getByName("testApi").extendsFrom(shadows)
 
 dependencies {
-    compile(kotlinStdlib())
+    api(kotlinStdlib())
     shadows(project(":kotlinx-metadata"))
     shadows(project(":core:compiler.common"))
     shadows(project(":core:metadata"))

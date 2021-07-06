@@ -150,8 +150,8 @@ sourceSets {
 }
 
 dependencies {
-    compile(project(":kotlin-stdlib"))
-    compile(project(":kotlin-native:Interop:Runtime"))
+    api(project(":kotlin-stdlib"))
+    api(project(":kotlin-native:Interop:Runtime"))
 
     testImplementation(kotlin("test-junit"))
 }

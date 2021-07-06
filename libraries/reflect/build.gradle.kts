@@ -17,7 +17,7 @@ buildscript {
 }
 
 plugins {
-    java
+    `java-library`
 }
 
 configureJavaOnlyToolchain(JdkMajorVersion.JDK_1_6)
@@ -35,10 +35,9 @@ val embedded by configurations
 embedded.isTransitive = false
 
 configurations.getByName("compileOnly").extendsFrom(embedded)
-val mainJar by configurations.creating
 
 dependencies {
-    compile(kotlinStdlib())
+    api(kotlinStdlib())
 
     proguardDeps(kotlinStdlib())
     proguardAdditionalInJars(project(":kotlin-annotations-jvm"))
@@ -256,8 +255,8 @@ dexMethodCount {
 }
 
 artifacts {
-    listOf(mainJar.name, "runtime", "archives", "runtimeElements").forEach { configurationName ->
-        add(configurationName, result.get().outputs.files.singleFile) {
+    listOf("archives", "runtimeElements").forEach { configurationName ->
+        add(configurationName, provider { result.get().outputs.files.singleFile }) {
             builtBy(result)
         }
     }

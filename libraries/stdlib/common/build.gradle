@@ -26,8 +26,8 @@ sourceSets {
 }
 
 dependencies {
-    testCompile project(":kotlin-test:kotlin-test-common")
-    testCompile project(":kotlin-test:kotlin-test-annotations-common")
+    testApi project(":kotlin-test:kotlin-test-common")
+    testApi project(":kotlin-test:kotlin-test-annotations-common")
 }
 
 compileKotlinCommon {

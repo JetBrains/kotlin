@@ -6,9 +6,9 @@ plugins {
 }
 
 dependencies {
-    compile(commonDep("org.apache.ant", "ant"))
-    compile(project(":kotlin-preloader"))
-    compile(kotlinStdlib())
+    api(commonDep("org.apache.ant", "ant"))
+    api(project(":kotlin-preloader"))
+    api(kotlinStdlib())
 }
 
 sourceSets {

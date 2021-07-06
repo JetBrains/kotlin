@@ -12,11 +12,11 @@ pill {
 }
 
 dependencies {
-    compile project(':kotlin-gradle-plugin-api')
+    api project(':kotlin-gradle-plugin-api')
     // Use this dependency instead when building apart from the other modules:
     // compile "org.jetbrains.kotlin:kotlin-gradle-plugin-api:$kotlin_version"
 
-    compile project(':kotlin-test::kotlin-test-junit')
+    api project(':kotlin-test::kotlin-test-junit')
 
     compileOnly kotlinStdlib()
     compileOnly project(':compiler')

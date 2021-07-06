@@ -8,8 +8,8 @@ sourceSets {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion"
-    compile "org.jetbrains.kotlin:kotlin-reflect:$bootstrapKotlinVersion"
+    api "org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion"
+    api "org.jetbrains.kotlin:kotlin-reflect:$bootstrapKotlinVersion"
 }
 
 compileKotlin {

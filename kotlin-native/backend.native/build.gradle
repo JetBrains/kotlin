@@ -75,15 +75,11 @@ configurations {
     trove4j_jar
     kotlinCommonSources
 
-    cli_bcRuntime {
-        extendsFrom compilerRuntime
-        extendsFrom kotlin_script_runtime_jar
+    cli_bcApiElements {
+        extendsFrom cli_bcApi
     }
 
-    cli_bc {
-        extendsFrom cli_bcRuntime
-    }
-    cli_bcCompile.extendsFrom compilerCompile
+    cli_bcApi.extendsFrom compilerApi
 }
 
 dependencies {
@@ -97,30 +93,30 @@ dependencies {
         kotlinCommonSources(it) { transitive = false }
     }
 
-    compilerCompile project(":kotlin-native:utilities:basic-utils")
+    compilerApi project(":kotlin-native:utilities:basic-utils")
 
-    compilerCompile project(kotlinCompilerModule)
-    compilerCompile project(":native:kotlin-native-utils")
-    compilerCompile project(":core:descriptors")
-    compilerCompile project(":compiler:ir.tree")
-    compilerCompile project(":compiler:ir.tree.impl")
-    compilerCompile project(":compiler:ir.backend.common")
-    compilerCompile project(":compiler:util")
-    compilerCompile project(":native:frontend.native")
-    compilerCompile project(":compiler:cli-common")
-    compilerCompile project(":compiler:cli")
-    compilerCompile project(":kotlin-util-klib")
-    compilerCompile project(":kotlin-util-klib-metadata")
-    compilerCompile project(":compiler:ir.serialization.common")
-    compilerCompile project(":compiler:ir.psi2ir")
+    compilerApi project(kotlinCompilerModule)
+    compilerApi project(":native:kotlin-native-utils")
+    compilerApi project(":core:descriptors")
+    compilerApi project(":compiler:ir.tree")
+    compilerApi project(":compiler:ir.tree.impl")
+    compilerApi project(":compiler:ir.backend.common")
+    compilerApi project(":compiler:util")
+    compilerApi project(":native:frontend.native")
+    compilerApi project(":compiler:cli-common")
+    compilerApi project(":compiler:cli")
+    compilerApi project(":kotlin-util-klib")
+    compilerApi project(":kotlin-util-klib-metadata")
+    compilerApi project(":compiler:ir.serialization.common")
+    compilerApi project(":compiler:ir.psi2ir")
     use(LocalDependenciesKt) {
-        compilerCompile(intellijCoreDep()){
+        compilerApi(intellijCoreDep()){
             artifact {
                 name = "intellij-core"
                 type = "jar"
             }
         }
-        compilerCompile(intellijDep()){
+        compilerApi(intellijDep()){
             artifact {
                 name = "util"
                 type = "jar"
@@ -130,13 +126,13 @@ dependencies {
         compileOnly(jpsStandalone())
     }
 
-    compilerCompile kotlinNativeInterop['llvm'].configuration
-    compilerCompile kotlinNativeInterop['files'].configuration
+    compilerApi kotlinNativeInterop['llvm'].configuration
+    compilerApi kotlinNativeInterop['files'].configuration
 
 
-    cli_bcCompile sourceSets.compiler.output
+    cli_bcApi sourceSets.compiler.output
 
-    cli_bc sourceSets.cli_bc.output
+    cli_bcApiElements sourceSets.cli_bc.output
 }
 
 

@@ -12,26 +12,26 @@ val otherCompilerModules = compilerModules.filter { it != path }
 val antLauncherJar by configurations.creating
 
 dependencies {
-    testRuntime(intellijDep()) // Should come before compiler, because of "progarded" stuff needed for tests
+    testImplementation(intellijDep()) // Should come before compiler, because of "progarded" stuff needed for tests
 
-    testCompile(project(":kotlin-script-runtime"))
-    testCompile(project(":kotlin-test:kotlin-test-jvm"))
+    testApi(project(":kotlin-script-runtime"))
+    testApi(project(":kotlin-test:kotlin-test-jvm"))
     
-    testCompile(kotlinStdlib())
+    testApi(kotlinStdlib())
 
-    testCompile(commonDep("junit:junit"))
+    testApi(commonDep("junit:junit"))
     testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
     testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
-    testCompile(projectTests(":compiler:tests-common"))
-    testCompile(projectTests(":compiler:fir:raw-fir:psi2fir"))
-    testCompile(projectTests(":compiler:fir:raw-fir:light-tree2fir"))
-    testCompile(projectTests(":compiler:fir:fir2ir"))
-    testCompile(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
-    testCompile(projectTests(":generators:test-generator"))
-    testCompile(project(":compiler:ir.ir2cfg"))
-    testCompile(project(":compiler:ir.tree")) // used for deepCopyWithSymbols call that is removed by proguard from the compiler TODO: make it more straightforward
-    testCompile(project(":kotlin-scripting-compiler"))
-    testCompile(project(":kotlin-script-util"))
+    testApi(projectTests(":compiler:tests-common"))
+    testApi(projectTests(":compiler:fir:raw-fir:psi2fir"))
+    testApi(projectTests(":compiler:fir:raw-fir:light-tree2fir"))
+    testApi(projectTests(":compiler:fir:fir2ir"))
+    testApi(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
+    testApi(projectTests(":generators:test-generator"))
+    testApi(project(":compiler:ir.ir2cfg"))
+    testApi(project(":compiler:ir.tree")) // used for deepCopyWithSymbols call that is removed by proguard from the compiler TODO: make it more straightforward
+    testApi(project(":kotlin-scripting-compiler"))
+    testApi(project(":kotlin-script-util"))
     testCompileOnly(project(":kotlin-reflect-api"))
     otherCompilerModules.forEach {
         testCompileOnly(project(it))
@@ -41,8 +41,8 @@ dependencies {
 
     testRuntimeOnly(intellijPluginDep("java"))
 
-    testRuntime(project(":kotlin-reflect"))
-    testRuntime(toolsJar())
+    testImplementation(project(":kotlin-reflect"))
+    testImplementation(toolsJar())
 
     antLauncherJar(commonDep("org.apache.ant", "ant"))
     antLauncherJar(toolsJar())

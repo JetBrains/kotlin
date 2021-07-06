@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    compile(kotlinStdlib())
+    api(kotlinStdlib())
 }
 
 project.updateJvmTarget("1.6")

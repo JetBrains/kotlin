@@ -8,7 +8,7 @@ description = "Kotlin Compiler"
 plugins {
     // HACK: java plugin makes idea import dependencies on this project as source (with empty sources however),
     // this prevents reindexing of kotlin-compiler.jar after build on every change in compiler modules
-    java
+    `java-library`
 }
 
 
@@ -38,9 +38,9 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     }
 }
 
-val compile by configurations  // maven plugin writes pom compile scope from compile configuration by default
+val api by configurations
 val proguardLibraries by configurations.creating {
-    extendsFrom(compile)
+    extendsFrom(api)
 }
 
 // Libraries to copy to the lib directory
@@ -135,10 +135,10 @@ configurations.all {
 }
 
 dependencies {
-    compile(kotlinStdlib())
-    compile(project(":kotlin-script-runtime"))
-    compile(project(":kotlin-reflect"))
-    compile(commonDep("org.jetbrains.intellij.deps", "trove4j"))
+    api(kotlinStdlib())
+    api(project(":kotlin-script-runtime"))
+    api(project(":kotlin-reflect"))
+    api(commonDep("org.jetbrains.intellij.deps", "trove4j"))
 
     proguardLibraries(project(":kotlin-annotations-jvm"))
 

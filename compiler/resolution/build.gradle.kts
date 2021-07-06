@@ -4,8 +4,8 @@ plugins {
 }
 
 dependencies {
-    compile(project(":compiler:util"))
-    compile(project(":core:descriptors"))
+    api(project(":compiler:util"))
+    api(project(":core:descriptors"))
     api(project(":compiler:resolution.common"))
     compileOnly(intellijDep()) { includeJars("trove4j") }
 }

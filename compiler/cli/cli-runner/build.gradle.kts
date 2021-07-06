@@ -7,7 +7,7 @@ plugins {
 }
 
 dependencies {
-    compile(kotlinStdlib())
+    api(kotlinStdlib())
 }
 
 sourceSets {

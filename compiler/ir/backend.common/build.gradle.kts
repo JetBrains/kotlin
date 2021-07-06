@@ -4,11 +4,11 @@ plugins {
 }
 
 dependencies {
-    compile(project(":compiler:util"))
-    compile(project(":compiler:frontend"))
-    compile(project(":compiler:backend-common"))
-    compile(project(":compiler:ir.tree"))
-    compile(project(":compiler:ir.interpreter"))
+    api(project(":compiler:util"))
+    api(project(":compiler:frontend"))
+    api(project(":compiler:backend-common"))
+    api(project(":compiler:ir.tree"))
+    api(project(":compiler:ir.interpreter"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 }
 

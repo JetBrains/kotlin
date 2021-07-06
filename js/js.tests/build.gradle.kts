@@ -27,45 +27,45 @@ val testJsRuntime by configurations.creating {
 }
 
 dependencies {
-    testRuntime(intellijDep())
+    testRuntimeOnly(intellijDep())
 
-    testCompile(protobufFull())
-    testCompile(projectTests(":compiler:tests-common"))
+    testApi(protobufFull())
+    testApi(projectTests(":compiler:tests-common"))
     testCompileOnly(project(":compiler:frontend"))
     testCompileOnly(project(":compiler:cli"))
     testCompileOnly(project(":compiler:cli-js"))
     testCompileOnly(project(":compiler:util"))
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testCompileOnly(intellijDep()) { includeJars("idea", "idea_rt", "util") }
-    testCompile(project(":compiler:backend.js"))
-    testCompile(project(":compiler:backend.wasm"))
-    testCompile(project(":js:js.translator"))
-    testCompile(project(":js:js.serializer"))
-    testCompile(project(":js:js.dce"))
-    testCompile(project(":js:js.engines"))
-    testCompile(project(":compiler:incremental-compilation-impl"))
-    testCompile(commonDep("junit:junit"))
-    testCompile(projectTests(":kotlin-build-common"))
-    testCompile(projectTests(":generators:test-generator"))
+    testApi(project(":compiler:backend.js"))
+    testApi(project(":compiler:backend.wasm"))
+    testApi(project(":js:js.translator"))
+    testApi(project(":js:js.serializer"))
+    testApi(project(":js:js.dce"))
+    testApi(project(":js:js.engines"))
+    testApi(project(":compiler:incremental-compilation-impl"))
+    testApi(commonDep("junit:junit"))
+    testApi(projectTests(":kotlin-build-common"))
+    testApi(projectTests(":generators:test-generator"))
 
-    testCompile(intellijCoreDep()) { includeJars("intellij-core") }
-    testCompile(project(":compiler:frontend"))
-    testCompile(project(":compiler:cli"))
-    testCompile(project(":compiler:util"))
+    testApi(intellijCoreDep()) { includeJars("intellij-core") }
+    testApi(project(":compiler:frontend"))
+    testApi(project(":compiler:cli"))
+    testApi(project(":compiler:util"))
 
-    testRuntime(project(":kotlin-reflect"))
+    testRuntimeOnly(project(":kotlin-reflect"))
 
-    testRuntime(intellijDep()) { includeJars("trove4j", "guava", "jdom", rootProject = rootProject) }
+    testRuntimeOnly(intellijDep()) { includeJars("trove4j", "guava", "jdom", rootProject = rootProject) }
 
-    testRuntime(kotlinStdlib())
+    testRuntimeOnly(kotlinStdlib())
     testJsRuntime(kotlinStdlib("js"))
     if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         testJsRuntime(project(":kotlin-test:kotlin-test-js")) // to be sure that kotlin-test-js built before tests runned
     }
-    testRuntime(project(":kotlin-reflect"))
-    testRuntime(project(":kotlin-preloader")) // it's required for ant tests
-    testRuntime(project(":compiler:backend-common"))
-    testRuntime(commonDep("org.fusesource.jansi", "jansi"))
+    testRuntimeOnly(project(":kotlin-reflect"))
+    testRuntimeOnly(project(":kotlin-preloader")) // it's required for ant tests
+    testRuntimeOnly(project(":compiler:backend-common"))
+    testRuntimeOnly(commonDep("org.fusesource.jansi", "jansi"))
     
     antLauncherJar(commonDep("org.apache.ant", "ant"))
     antLauncherJar(toolsJar())

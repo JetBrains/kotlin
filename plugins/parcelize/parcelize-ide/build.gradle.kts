@@ -20,8 +20,8 @@ dependencies {
     compile(intellijPluginDep("gradle"))
     compileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl") }
 
-    testCompile(projectTests(":idea"))
-    testCompile(projectTests(":plugins:parcelize:parcelize-compiler"))
+    testApi(projectTests(":idea"))
+    testApi(projectTests(":plugins:parcelize:parcelize-compiler"))
 
     testRuntime(project(":allopen-ide-plugin"))
     testRuntime(project(":noarg-ide-plugin"))

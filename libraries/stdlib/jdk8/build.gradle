@@ -7,9 +7,9 @@ configureSourcesJar()
 configureJavadocJar()
 
 dependencies {
-    compile project(':kotlin-stdlib')
-    compile project(':kotlin-stdlib-jdk7')
-    testCompile project(':kotlin-test:kotlin-test-junit')
+    api project(':kotlin-stdlib')
+    api project(':kotlin-stdlib-jdk7')
+    testApi project(':kotlin-test:kotlin-test-junit')
 }
 
 sourceSets {

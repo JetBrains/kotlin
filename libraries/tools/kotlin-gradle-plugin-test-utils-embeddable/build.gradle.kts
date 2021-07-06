@@ -9,7 +9,9 @@ import org.gradle.jvm.tasks.Jar
 
 description = "Shaded test jars from compiler for Gradle integration tests"
 
-plugins { `java` }
+plugins {
+    `java-library`
+}
 
 val packedJars by configurations.creating
 
@@ -22,7 +24,7 @@ val projectsToInclude = listOf(
 
 dependencies {
     for (projectName in projectsToInclude) {
-        compile(projectTests(projectName)) { isTransitive = false }
+        api(projectTests(projectName)) { isTransitive = false }
         packedJars(projectTests(projectName)) { isTransitive = false }
     }
 

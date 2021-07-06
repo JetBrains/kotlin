@@ -11,7 +11,7 @@ val embeddableTestRuntime by configurations.creating {
 }
 
 dependencies {
-    testCompile(commonDep("junit"))
+    testApi(commonDep("junit"))
     testCompileOnly(project(":kotlin-scripting-jvm-host-unshaded"))
     testCompileOnly(project(":compiler:cli"))
     testCompileOnly(project(":core:util.runtime"))

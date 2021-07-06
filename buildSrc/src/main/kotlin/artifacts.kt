@@ -33,7 +33,7 @@ import plugins.mainPublicationName
 private const val MAGIC_DO_NOT_CHANGE_TEST_JAR_TASK_NAME = "testJar"
 
 fun Project.testsJar(body: Jar.() -> Unit = {}): Jar {
-    val testsJarCfg = configurations.getOrCreate("tests-jar").extendsFrom(configurations["testCompile"])
+    val testsJarCfg = configurations.getOrCreate("tests-jar").extendsFrom(configurations["testApi"])
 
     return task<Jar>(MAGIC_DO_NOT_CHANGE_TEST_JAR_TASK_NAME) {
         dependsOn("testClasses")

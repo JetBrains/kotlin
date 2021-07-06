@@ -12,7 +12,7 @@ pill {
 }
 
 dependencies {
-    compile(kotlinStdlib())
+    api(kotlinStdlib())
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeJars("asm-all", rootProject = rootProject) }
 }

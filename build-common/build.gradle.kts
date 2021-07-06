@@ -19,11 +19,11 @@ dependencies {
     compileOnly(project(":kotlin-reflect-api"))
 
     testCompileOnly(project(":compiler:cli-common"))
-    testCompile(projectTests(":compiler:tests-common"))
-    testCompile(commonDep("junit:junit"))
-    testCompile(protobufFull())
-    testCompile(kotlinStdlib())
-    testRuntime(project(":kotlin-reflect"))
+    testApi(projectTests(":compiler:tests-common"))
+    testApi(commonDep("junit:junit"))
+    testApi(protobufFull())
+    testApi(kotlinStdlib())
+    testImplementation(project(":kotlin-reflect"))
 }
 
 sourceSets {

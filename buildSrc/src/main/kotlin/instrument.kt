@@ -140,7 +140,7 @@ abstract class IntelliJInstrumentCodeTask : ConventionTask() {
 
     // Instrumentation needs to have access to sources of forms for inclusion
     private val depSourceDirectorySets by lazy {
-        project.configurations["compile"].dependencies.withType(ProjectDependency::class.java)
+        project.configurations["api"].dependencies.withType(ProjectDependency::class.java)
             .map { p -> p.dependencyProject.mainSourceSet.allSource.sourceDirectories }
     }
 

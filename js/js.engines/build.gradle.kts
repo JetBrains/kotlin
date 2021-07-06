@@ -5,10 +5,10 @@ plugins {
 }
 
 dependencies {
-    compile(project(":compiler:util"))
-    compile(project(":js:js.ast"))
-    compile(project(":js:js.translator"))
-    compile(intellijCoreDep()) { includeJars("intellij-core") }
+    api(project(":compiler:util"))
+    api(project(":js:js.ast"))
+    api(project(":js:js.translator"))
+    api(intellijCoreDep()) { includeJars("intellij-core") }
 }
 
 sourceSets {

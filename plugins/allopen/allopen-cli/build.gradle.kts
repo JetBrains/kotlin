@@ -13,10 +13,10 @@ dependencies {
 
     runtimeOnly(kotlinStdlib())
 
-    testCompile(project(":compiler:backend"))
-    testCompile(project(":compiler:cli"))
-    testCompile(projectTests(":compiler:tests-common"))
-    testCompile(commonDep("junit:junit"))
+    testApi(project(":compiler:backend"))
+    testApi(project(":compiler:cli"))
+    testApi(projectTests(":compiler:tests-common"))
+    testApi(commonDep("junit:junit"))
 
     testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
 }

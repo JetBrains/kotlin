@@ -30,8 +30,8 @@ val (wasmSourceSet, wasmApi) = extraSourceSet("wasm")
 
 dependencies {
     // for GeneratorsFileUtil
-    compile(kotlinStdlib("jdk8"))
-    compile(intellijDep()) { includeJars("util") }
+    api(kotlinStdlib("jdk8"))
+    api(intellijDep()) { includeJars("util") }
 
     builtinsApi("org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion") { isTransitive = false }
     evaluateApi(project(":core:deserialization"))
@@ -43,33 +43,33 @@ dependencies {
     protobufApi(kotlinStdlib())
     protobufCompareApi(projectTests(":kotlin-build-common"))
 
-    testCompile(builtinsSourceSet.output)
-    testCompile(evaluateSourceSet.output)
-    testCompile(interpreterSourceSet.output)
-    testCompile(protobufSourceSet.output)
-    testCompile(protobufCompareSourceSet.output)
+    testApi(builtinsSourceSet.output)
+    testApi(evaluateSourceSet.output)
+    testApi(interpreterSourceSet.output)
+    testApi(protobufSourceSet.output)
+    testApi(protobufCompareSourceSet.output)
 
-    testCompile(projectTests(":compiler:cli"))
-    testCompile(projectTests(":compiler:incremental-compilation-impl"))
-    testCompile(projectTests(":plugins:jvm-abi-gen"))
-    testCompile(projectTests(":plugins:android-extensions-compiler"))
-    testCompile(projectTests(":plugins:parcelize:parcelize-compiler"))
-    testCompile(projectTests(":kotlin-annotation-processing"))
-    testCompile(projectTests(":kotlin-annotation-processing-cli"))
-    testCompile(projectTests(":kotlin-allopen-compiler-plugin"))
-    testCompile(projectTests(":kotlin-noarg-compiler-plugin"))
-    testCompile(projectTests(":plugins:lombok:lombok-compiler-plugin"))
-    testCompile(projectTests(":kotlin-sam-with-receiver-compiler-plugin"))
-    testCompile(projectTests(":kotlinx-serialization-compiler-plugin"))
-    testCompile(projectTests(":plugins:fir:fir-plugin-prototype"))
-    testCompile(projectTests(":generators:test-generator"))
+    testApi(projectTests(":compiler:cli"))
+    testApi(projectTests(":compiler:incremental-compilation-impl"))
+    testApi(projectTests(":plugins:jvm-abi-gen"))
+    testApi(projectTests(":plugins:android-extensions-compiler"))
+    testApi(projectTests(":plugins:parcelize:parcelize-compiler"))
+    testApi(projectTests(":kotlin-annotation-processing"))
+    testApi(projectTests(":kotlin-annotation-processing-cli"))
+    testApi(projectTests(":kotlin-allopen-compiler-plugin"))
+    testApi(projectTests(":kotlin-noarg-compiler-plugin"))
+    testApi(projectTests(":plugins:lombok:lombok-compiler-plugin"))
+    testApi(projectTests(":kotlin-sam-with-receiver-compiler-plugin"))
+    testApi(projectTests(":kotlinx-serialization-compiler-plugin"))
+    testApi(projectTests(":plugins:fir:fir-plugin-prototype"))
+    testApi(projectTests(":generators:test-generator"))
     testCompileOnly(project(":kotlin-reflect-api"))
-    testRuntime(intellijDep()) { includeJars("idea_rt") }
-    testRuntime(project(":kotlin-reflect"))
+    testImplementation(intellijDep()) { includeJars("idea_rt") }
+    testImplementation(project(":kotlin-reflect"))
 
     if (Ide.IJ()) {
         testCompileOnly(jpsBuildTest())
-        testCompile(jpsBuildTest())
+        testApi(jpsBuildTest())
     }
 }
 

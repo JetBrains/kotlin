@@ -13,9 +13,9 @@ dependencies {
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":compiler:ir.serialization.js"))
-    compile(project(":kotlin-scripting-common"))
-    compile(project(":kotlin-scripting-jvm"))
-    compile(kotlinStdlib())
+    api(project(":kotlin-scripting-common"))
+    api(project(":kotlin-scripting-jvm"))
+    api(kotlinStdlib())
     compileOnly(project(":kotlin-reflect-api"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeJars("asm-all", rootProject = rootProject) }
@@ -25,14 +25,14 @@ dependencies {
 
     runtimeOnly(project(":kotlin-reflect"))
 
-    testCompile(project(":compiler:frontend"))
-    testCompile(project(":compiler:plugin-api"))
-    testCompile(project(":compiler:util"))
-    testCompile(project(":compiler:cli"))
-    testCompile(project(":compiler:cli-common"))
-    testCompile(project(":compiler:frontend.java"))
-    testCompile(projectTests(":compiler:tests-common"))
-    testCompile(commonDep("junit:junit"))
+    testApi(project(":compiler:frontend"))
+    testApi(project(":compiler:plugin-api"))
+    testApi(project(":compiler:util"))
+    testApi(project(":compiler:cli"))
+    testApi(project(":compiler:cli-common"))
+    testApi(project(":compiler:frontend.java"))
+    testApi(projectTests(":compiler:tests-common"))
+    testApi(commonDep("junit:junit"))
 }
 
 sourceSets {

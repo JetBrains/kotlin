@@ -6,11 +6,11 @@ plugins {
 project.configureJvmToolchain(JdkMajorVersion.JDK_1_6)
 
 dependencies {
-    compile(project(":core:metadata"))
+    api(project(":core:metadata"))
     api(project(":core:deserialization.common"))
-    compile(project(":core:util.runtime"))
-    compile(project(":core:descriptors"))
-    compile(commonDep("javax.inject"))
+    api(project(":core:util.runtime"))
+    api(project(":core:descriptors"))
+    api(commonDep("javax.inject"))
 }
 
 sourceSets {
