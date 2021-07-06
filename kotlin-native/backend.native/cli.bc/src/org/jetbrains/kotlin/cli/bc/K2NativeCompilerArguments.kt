@@ -311,6 +311,13 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value="-Xgc-aggressive", description = "Make GC agressive. Works only with -memory-model experimental")
     var gcAggressive: Boolean = false
 
+    @Argument(
+            value = "-Xcheck-compatibility-with-lld",
+            valueDescription = "{disable|enable}",
+            description = "Check that linker flags are compatible with LLD."
+    )
+    var checkLldCompatibility: String? = null
+
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> =
             super.configureAnalysisFlags(collector, languageVersion).also {
                 val useExperimental = it[AnalysisFlags.useExperimental] as List<*>

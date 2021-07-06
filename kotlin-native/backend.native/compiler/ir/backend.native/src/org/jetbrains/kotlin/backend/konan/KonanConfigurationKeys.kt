@@ -156,6 +156,7 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("when to destroy runtime")
         val GARBAGE_COLLECTOR: CompilerConfigurationKey<GC> = CompilerConfigurationKey.create("gc")
         val GARBAGE_COLLECTOR_AGRESSIVE: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey.create("turn on agressive GC mode")
+        val CHECK_LLD_COMPATIBILITY: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey.create("check compatibility with LLD")
     }
 }
 

@@ -145,6 +145,8 @@ internal class Linker(val context: Context) {
                     BitcodeEmbedding.getLinkerOptions(context.config) +
                     linkerInput.caches.dynamic +
                     libraryProvidedLinkerFlags + additionalLinkerArgs
+
+            checkLldCompatibility()
             val finalOutputCommands = linker.finalLinkCommands(
                     objectFiles = linkerInput.objectFiles,
                     executable = executable,
@@ -174,6 +176,23 @@ internal class Linker(val context: Context) {
             context.reportCompilationError("${e.toolName} invocation reported errors\n$extraUserInfo\n${e.message}")
         }
         return executable
+    }
+
+    private fun checkLldCompatibility() {
+        if (linker is MingwLinker && config.getBoolean(KonanConfigKeys.CHECK_LLD_COMPATIBILITY)) {
+            linker.lldCompatibilityChecker = { command ->
+                command.logWith(context::log)
+                val result = command.getResult(withErrors = true)
+                if (result.exitCode != 0) {
+                    val message = """
+                        Kotlin/Native will switch from ld to LLD linker in future releases and this warning will become an error. 
+                        See https://youtrack.jetbrains.com/issue/KT-47605 for details.
+                        ${result.outputLines.joinToString("\n")}
+                        """.lineSequence().map { it.trim() }.joinToString("\n")
+                    context.reportCompilationWarning(message)
+                }
+            }
+        }
     }
 
     private fun shouldPerformPreLink(caches: CachesToLink, linkerOutputKind: LinkerOutputKind): Boolean {

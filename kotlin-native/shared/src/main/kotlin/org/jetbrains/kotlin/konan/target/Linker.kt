@@ -438,6 +438,11 @@ class MingwLinker(targetProperties: MingwConfigurables)
         return if (dir != null) "$dir/lib/windows/libclang_rt.$libraryName-$targetSuffix.a" else null
     }
 
+    /**
+     * Handle to command that runs LLD -### (i.e. without actual linkage) with arguments from [finalLinkCommands].
+     */
+    var lldCompatibilityChecker: ((Command) -> Unit)? = null
+
     override fun finalLinkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
                                    libraries: List<String>, linkerArgs: List<String>,
                                    optimize: Boolean, debug: Boolean,
@@ -451,10 +456,11 @@ class MingwLinker(targetProperties: MingwConfigurables)
             return staticGnuArCommands(ar, executable, objectFiles, libraries)
 
         val dynamic = kind == LinkerOutputKind.DYNAMIC_LIBRARY
-        return listOf(when {
-                HostManager.hostIsMingw -> Command(linker)
-                else -> Command("wine64", "$linker.exe")
-        }.apply {
+
+        fun Command.constructLinkerArguments(
+                additionalArguments: List<String> = listOf(),
+                skipDefaultArguments: List<String> = listOf()
+        ): Command = apply {
             +listOf("-o", executable)
             +objectFiles
             // --gc-sections flag may affect profiling.
@@ -466,9 +472,28 @@ class MingwLinker(targetProperties: MingwConfigurables)
             +libraries
             if (needsProfileLibrary) +profileLibrary!!
             +linkerArgs
-            +linkerKonanFlags
+            +linkerKonanFlags.filterNot { it in skipDefaultArguments }
             if (mimallocEnabled) +mimallocLinkerDependencies
-        })
+            +additionalArguments
+        }
+
+        if (HostManager.hostIsMingw) {
+            lldCompatibilityChecker?.let { checkLldCompatibiity ->
+                // -### flag allows to avoid actual linkage process.
+                val lldCommand = Command(linker).constructLinkerArguments(
+                        // Add -fuse-ld to the end of the list to override previous appearances.
+                        additionalArguments = listOf("-fuse-ld=$absoluteLldLocation", "-Wl,-###"),
+                        // LLD doesn't support defsym.
+                        skipDefaultArguments = listOf("-Wl,--defsym,__cxa_demangle=Konan_cxa_demangle")
+                )
+                checkLldCompatibiity(lldCommand)
+            }
+        }
+
+        return listOf(when {
+            HostManager.hostIsMingw -> Command(linker)
+            else -> Command("wine64", "$linker.exe")
+        }.constructLinkerArguments())
     }
 }
 

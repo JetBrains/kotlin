@@ -104,7 +104,10 @@ interface AppleConfigurables : Configurables, ClangFlags {
     val absoluteAdditionalToolsDir get() = absolute(additionalToolsDir)
 }
 
-interface MingwConfigurables : Configurables, ClangFlags
+interface MingwConfigurables : Configurables, ClangFlags {
+    val lldLocation get() = targetString("lldLocation")!!
+    val absoluteLldLocation get() = absolute(lldLocation)
+}
 
 interface GccConfigurables : Configurables, ClangFlags {
     val gccToolchain get() = targetString("gccToolchain")
