@@ -2430,6 +2430,13 @@ internal class RedundantGetterVisibilityChangeImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class MoreVisibleGetterWithBodyImpl(
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.MoreVisibleGetterWithBody(), KtAbstractFirDiagnostic<KtPropertyAccessor> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class AccessorForDelegatedPropertyImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,

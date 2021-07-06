@@ -756,6 +756,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("actualType")
         }
         val REDUNDANT_GETTER_VISIBILITY_CHANGE by warning<KtModifierListOwner>(PositioningStrategy.VISIBILITY_MODIFIER)
+        val MORE_VISIBLE_GETTER_WITH_BODY by error<KtPropertyAccessor>()
         val ACCESSOR_FOR_DELEGATED_PROPERTY by error<KtPropertyAccessor>()
     }
 

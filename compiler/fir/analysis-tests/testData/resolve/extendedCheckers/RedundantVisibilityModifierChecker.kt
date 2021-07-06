@@ -75,7 +75,7 @@ open class J {
     }
 
     var buf = 0
-        <!GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY!>private<!> get() = 42
+        <!GETTER_VISIBILITY_SMALLER_THAN_PROPERTY_VISIBILITY, REDUNDANT_GETTER_VISIBILITY_CHANGE!>private<!> get() = 42
         protected set(value) {
             field = value
         }

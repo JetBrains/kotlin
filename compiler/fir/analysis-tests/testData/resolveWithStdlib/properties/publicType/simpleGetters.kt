@@ -1,19 +1,31 @@
 class SomeClass {
     private val items = mutableListOf<String>()
-        public get(): List<String> = field
+        public get(): List<String>
 
     fun addItem(item: String) {
         items.add(item)
     }
 
     private val shmitems = mutableListOf<String>()
-        protected get(): List<String> = field
+        <!MORE_VISIBLE_GETTER_WITH_BODY!>protected get(): List<String> = field<!>
 
     val balalitems = mutableListOf<String>()
         <!GETTER_VISIBILITY_SMALLER_THAN_PROPERTY_VISIBILITY!>protected<!> get(): List<String> = field
 
     val rhymetems = mutableListOf<String>()
         get(): <!REDUNDANT_GETTER_TYPE_CHANGE!>List<String><!> = field
+
+    protected val a = 10
+        public get(): Number
+
+    protected val c = 11
+        <!REDUNDANT_GETTER_VISIBILITY_CHANGE!>public<!> get(): Int
+
+    private val otditems = mutableListOf<String>()
+        <!MORE_VISIBLE_GETTER_WITH_BODY!>public get(): List<String> {
+            println("strelyai, ne otdam")
+            return field
+        }<!>
 }
 
 fun doSomething() {

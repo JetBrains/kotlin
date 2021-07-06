@@ -5,7 +5,7 @@ class A() {
             field = <!ASSIGNMENT_TYPE_MISMATCH!>value<!>
         }
     val y: Int
-        get(): <!WRONG_GETTER_RETURN_TYPE("kotlin/Int; kotlin/String")!>String<!> = "s"
+        get(): <!REDUNDANT_GETTER_TYPE_CHANGE, WRONG_GETTER_RETURN_TYPE("kotlin/Int; kotlin/String")!>String<!> = "s"
     val z: Int
         get() {
             return "s"
@@ -16,7 +16,7 @@ class A() {
             field = v
         }
     val b: Int
-        get(): <!WRONG_GETTER_RETURN_TYPE!>Any<!> = "s"
+        get(): <!REDUNDANT_GETTER_TYPE_CHANGE!>Any<!> = "s"
     val c: Int
         get() {
             return 1
@@ -26,7 +26,7 @@ class A() {
             return field
         }
     val e = 1
-        get(): <!WRONG_GETTER_RETURN_TYPE!>String<!> {
+        get(): <!REDUNDANT_GETTER_TYPE_CHANGE, WRONG_GETTER_RETURN_TYPE!>String<!> {
             return field
         }
 

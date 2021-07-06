@@ -5,9 +5,7 @@ FILE: simpleGetters.kt
         }
 
         private final val items: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>()
-            public get(): R|kotlin/collections/List<kotlin/String>| {
-                ^ this@R|/SomeClass|.F|/SomeClass.items|
-            }
+            public get(): R|kotlin/collections/List<kotlin/String>|
 
         public final fun addItem(item: R|kotlin/String|): R|kotlin/Unit| {
             this@R|/SomeClass|.R|/SomeClass.items|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(R|<local>/item|)
@@ -26,6 +24,18 @@ FILE: simpleGetters.kt
         public final val rhymetems: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>()
             public get(): R|kotlin/collections/List<kotlin/String>| {
                 ^ this@R|/SomeClass|.F|/SomeClass.rhymetems|
+            }
+
+        protected final val a: R|kotlin/Int| = Int(10)
+            public get(): R|kotlin/Number|
+
+        protected final val c: R|kotlin/Int| = Int(11)
+            public get(): R|kotlin/Int|
+
+        private final val otditems: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>()
+            public get(): R|kotlin/collections/List<kotlin/String>| {
+                R|kotlin/io/println|(String(strelyai, ne otdam))
+                ^ this@R|/SomeClass|.F|/SomeClass.otditems|
             }
 
     }

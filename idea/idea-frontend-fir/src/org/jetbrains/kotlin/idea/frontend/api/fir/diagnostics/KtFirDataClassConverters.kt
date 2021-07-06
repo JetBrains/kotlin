@@ -2131,6 +2131,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.MORE_VISIBLE_GETTER_WITH_BODY) { firDiagnostic ->
+        MoreVisibleGetterWithBodyImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.ACCESSOR_FOR_DELEGATED_PROPERTY) { firDiagnostic ->
         AccessorForDelegatedPropertyImpl(
             firDiagnostic as FirPsiDiagnostic,

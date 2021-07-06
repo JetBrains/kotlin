@@ -1585,9 +1585,14 @@ public class KotlinParsing extends AbstractKotlinParsing {
             parseTypeRef();
         }
 
-        parseFunctionContract();
-
-        parseFunctionBody();
+        if (
+            at(CONTRACT_KEYWORD) ||
+            at(LBRACE) ||
+            at(EQ)
+        ) {
+            parseFunctionContract();
+            parseFunctionBody();
+        }
 
         closeDeclarationWithCommentBinders(getterOrSetter, PROPERTY_ACCESSOR, true);
 

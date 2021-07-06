@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.canHaveAbstractDeclaration
-import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
-import org.jetbrains.kotlin.fir.declarations.utils.isOpen
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.coneType
@@ -37,8 +34,15 @@ object FirPropertyAccessorsTypesChecker : FirPropertyChecker() {
         withSuppressedDiagnostics(getter, context) {
             checkAccessorForDelegatedProperty(property, getter, context, reporter)
             val difference = getter.visibility.compareTo(property.visibility)
-            if (difference != null && difference < 0) {
-                reporter.reportOn(getter.source, FirErrors.GETTER_VISIBILITY_SMALLER_THAN_PROPERTY_VISIBILITY, context)
+//            if (difference != null && difference < 0) {
+//                reporter.reportOn(getter.source, FirErrors.GETTER_VISIBILITY_SMALLER_THAN_PROPERTY_VISIBILITY, context)
+//            }
+            if (difference != null) {
+                if (difference < 0) {
+                    reporter.reportOn(getter.source, FirErrors.GETTER_VISIBILITY_SMALLER_THAN_PROPERTY_VISIBILITY, context)
+                } else if (difference > 0 && getter.hasBody) {
+                    reporter.reportOn(getter.source, FirErrors.MORE_VISIBLE_GETTER_WITH_BODY, context)
+                }
             }
             if (property.symbol.callableId.classId != null && getter.body != null && property.delegate == null) {
                 if (isLegallyAbstract(property, context)) {
