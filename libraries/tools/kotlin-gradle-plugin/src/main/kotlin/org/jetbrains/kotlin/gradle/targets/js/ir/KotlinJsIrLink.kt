@@ -98,6 +98,7 @@ abstract class KotlinJsIrLink @Inject constructor(
 
             val cacheBuilder = CacheBuilder(
                 buildDir,
+                compilation as KotlinCompilation<*>,
                 kotlinOptions,
                 libraryFilter,
                 compilerRunner.get(),
@@ -144,6 +145,7 @@ abstract class KotlinJsIrLink @Inject constructor(
             .buildCompilerArgs(
                 project.configurations.getByName(compilation.compileDependencyConfigurationName),
                 compilation.output.classesDirs,
+                compilation,
                 associatedCaches
             )
     }
@@ -169,6 +171,7 @@ abstract class KotlinJsIrLink @Inject constructor(
 
 internal class CacheBuilder(
     private val buildDir: File,
+    private val rootCompilation: KotlinCompilation<*>,
     private val kotlinOptions: KotlinJsOptions,
     private val libraryFilter: (File) -> Boolean,
     private val compilerRunner: GradleCompilerRunner,
@@ -192,6 +195,7 @@ internal class CacheBuilder(
     fun buildCompilerArgs(
         compileClasspath: Configuration,
         additionalForResolve: FileCollection?,
+        compilation: KotlinCompilation<*>,
         associatedCaches: List<File>
     ): List<File> {
 
@@ -216,16 +220,18 @@ internal class CacheBuilder(
                 }
             }
 
-        additionalForResolve?.files?.forEach { file ->
-            val cacheDirectory = rootCacheDirectory.resolve(file.name)
-            cacheDirectory.mkdirs()
-            runCompiler(
-                file,
-                compileClasspath.files,
-                cacheDirectory,
-                (allCacheDirectories + associatedCaches).distinct()
-            )
-            allCacheDirectories.add(cacheDirectory)
+        if (compilation != rootCompilation) {
+            additionalForResolve?.files?.forEach { file ->
+                val cacheDirectory = rootCacheDirectory.resolve(file.name)
+                cacheDirectory.mkdirs()
+                runCompiler(
+                    file,
+                    compileClasspath.files,
+                    cacheDirectory,
+                    (allCacheDirectories + associatedCaches).distinct()
+                )
+                allCacheDirectories.add(cacheDirectory)
+            }
         }
 
         return associatedCaches + allCacheDirectories
