@@ -107,22 +107,5 @@ class ParametersBuilder private constructor() {
         fun newBuilder(): ParametersBuilder {
             return ParametersBuilder()
         }
-
-        @JvmOverloads
-        @JvmStatic
-        fun initializeBuilderFrom(
-            objectType: Type, descriptor: String, inlineLambda: LambdaInfo? = null, isStatic: Boolean = false
-        ): ParametersBuilder {
-            val builder = newBuilder()
-            if (inlineLambda?.hasDispatchReceiver != false && !isStatic) {
-                //skipped this for inlined lambda cause it will be removed
-                builder.addThis(objectType, inlineLambda != null).functionalArgument = inlineLambda
-            }
-
-            for (type in Type.getArgumentTypes(descriptor)) {
-                builder.addNextParameter(type, false)
-            }
-            return builder
-        }
     }
 }

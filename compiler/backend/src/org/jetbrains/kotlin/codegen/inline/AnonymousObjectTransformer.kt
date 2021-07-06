@@ -421,11 +421,13 @@ class AnonymousObjectTransformer(
     }
 
     private fun getMethodParametersWithCaptured(capturedBuilder: ParametersBuilder, sourceNode: MethodNode): Parameters {
-        val builder = ParametersBuilder.initializeBuilderFrom(
-            oldObjectType,
-            sourceNode.desc,
-            isStatic = sourceNode.access and Opcodes.ACC_STATIC != 0
-        )
+        val builder = ParametersBuilder.newBuilder()
+        if (sourceNode.access and Opcodes.ACC_STATIC == 0) {
+            builder.addThis(oldObjectType, skipped = false)
+        }
+        for (type in Type.getArgumentTypes(sourceNode.desc)) {
+            builder.addNextParameter(type, false)
+        }
         for (param in capturedBuilder.listCaptured()) {
             builder.addCapturedParamCopy(param)
         }

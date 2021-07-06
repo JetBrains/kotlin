@@ -18,10 +18,6 @@ import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
 interface FunctionalArgument
 
 abstract class LambdaInfo : FunctionalArgument {
-    abstract val isBoundCallableReference: Boolean
-
-    abstract val isSuspend: Boolean
-
     abstract val lambdaClassType: Type
 
     abstract val invokeMethod: Method
@@ -39,11 +35,17 @@ abstract class LambdaInfo : FunctionalArgument {
 
     val reifiedTypeParametersUsages = ReifiedTypeParametersUsages()
 
-    open val hasDispatchReceiver = true
+    open val hasDispatchReceiver
+        get() = true
 
     fun addAllParameters(remapper: FieldRemapper): Parameters {
-        val builder = ParametersBuilder.initializeBuilderFrom(OBJECT_TYPE, invokeMethod.descriptor, this)
-
+        val builder = ParametersBuilder.newBuilder()
+        if (hasDispatchReceiver) {
+            builder.addThis(lambdaClassType, skipped = true).functionalArgument = this
+        }
+        for (type in Type.getArgumentTypes(invokeMethod.descriptor)) {
+            builder.addNextParameter(type, skipped = false)
+        }
         for (info in capturedVars) {
             val field = remapper.findField(FieldInsnNode(0, info.containingLambdaName, info.fieldName, ""))
                 ?: error("Captured field not found: " + info.containingLambdaName + "." + info.fieldName)
@@ -75,9 +77,9 @@ abstract class ExpressionLambda : LambdaInfo() {
 }
 
 class DefaultLambda(info: ExtractedDefaultLambda, sourceCompiler: SourceCompilerForInline) : LambdaInfo() {
+    val isBoundCallableReference: Boolean
+
     override val lambdaClassType: Type = info.type
-    override val isSuspend: Boolean get() = false // TODO: it should probably be true sometimes, but it never was
-    override val isBoundCallableReference: Boolean
     override val capturedVars: List<CapturedParamDesc>
 
     override val invokeMethod: Method
