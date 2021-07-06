@@ -25,6 +25,7 @@ include("plugins:mathjax")
 include("plugins:gfm")
 include("plugins:gfm:gfm-template-processing")
 include("plugins:jekyll")
+include("plugins:jekyll:jekyll-template-processing")
 include("plugins:kotlin-as-java")
 include("plugins:javadoc")
 
