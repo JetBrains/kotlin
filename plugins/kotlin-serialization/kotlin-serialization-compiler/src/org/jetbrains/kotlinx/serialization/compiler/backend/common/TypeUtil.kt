@@ -161,15 +161,23 @@ fun findTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDescri
 
 fun findStandardKotlinTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDescriptor? {
     val name = when (kType.getJetTypeFqName(false)) {
+        "Z" -> if (kType.isBoolean()) "BooleanSerializer" else return null
+        "B" -> if (kType.isByte()) "ByteSerializer" else return null
+        "S" -> if (kType.isShort()) "ShortSerializer" else return null
+        "I" -> if (kType.isInt()) "IntSerializer" else return null
+        "J" -> if (kType.isLong()) "LongSerializer" else return null
+        "F" -> if (kType.isFloat()) "FloatSerializer" else return null
+        "D" -> if (kType.isDouble()) "DoubleSerializer" else return null
+        "C" -> if (kType.isChar()) "CharSerializer" else return null
         "kotlin.Unit" -> "UnitSerializer"
-        "Z", "kotlin.Boolean" -> "BooleanSerializer"
-        "B", "kotlin.Byte" -> "ByteSerializer"
-        "S", "kotlin.Short" -> "ShortSerializer"
-        "I", "kotlin.Int" -> "IntSerializer"
-        "J", "kotlin.Long" -> "LongSerializer"
-        "F", "kotlin.Float" -> "FloatSerializer"
-        "D", "kotlin.Double" -> "DoubleSerializer"
-        "C", "kotlin.Char" -> "CharSerializer"
+        "kotlin.Boolean" -> "BooleanSerializer"
+        "kotlin.Byte" -> "ByteSerializer"
+        "kotlin.Short" -> "ShortSerializer"
+        "kotlin.Int" -> "IntSerializer"
+        "kotlin.Long" -> "LongSerializer"
+        "kotlin.Float" -> "FloatSerializer"
+        "kotlin.Double" -> "DoubleSerializer"
+        "kotlin.Char" -> "CharSerializer"
         "kotlin.UInt" -> "UIntSerializer"
         "kotlin.ULong" -> "ULongSerializer"
         "kotlin.UByte" -> "UByteSerializer"
