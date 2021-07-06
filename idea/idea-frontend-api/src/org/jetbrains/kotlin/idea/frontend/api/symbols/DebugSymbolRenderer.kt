@@ -15,8 +15,8 @@ import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.KProperty
 import kotlin.reflect.jvm.javaGetter
 
-object DebugSymbolRenderer {
-    fun render(symbol: KtSymbol): String = buildString {
+public object DebugSymbolRenderer {
+    public fun render(symbol: KtSymbol): String = buildString {
         val klass = symbol::class
         appendLine("${klass.simpleName}:")
         klass.members.filterIsInstance<KProperty<*>>().sortedBy { it.name }.forEach { property ->

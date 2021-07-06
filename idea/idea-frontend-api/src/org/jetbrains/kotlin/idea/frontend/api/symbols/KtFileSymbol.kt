@@ -8,6 +8,6 @@ package org.jetbrains.kotlin.idea.frontend.api.symbols
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 
-abstract class KtFileSymbol : KtAnnotatedSymbol {
+public abstract class KtFileSymbol : KtAnnotatedSymbol {
     abstract override fun createPointer(): KtSymbolPointer<KtFileSymbol>
 }

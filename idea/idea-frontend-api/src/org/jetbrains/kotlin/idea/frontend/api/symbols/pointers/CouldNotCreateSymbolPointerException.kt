@@ -5,5 +5,5 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.symbols.pointers
 
-class CanNotCreateSymbolPointerForLocalLibraryDeclarationException(description: String) :
+public class CanNotCreateSymbolPointerForLocalLibraryDeclarationException(description: String) :
     IllegalStateException("Could not create a symbol pointer for local symbol $description")

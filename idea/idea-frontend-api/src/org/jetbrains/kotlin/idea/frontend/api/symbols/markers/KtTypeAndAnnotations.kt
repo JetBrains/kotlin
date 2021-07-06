@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 
-abstract class KtTypeAndAnnotations : ValidityTokenOwner {
-    abstract val type: KtType
-    abstract val annotations: List<KtAnnotationCall>
+public abstract class KtTypeAndAnnotations : ValidityTokenOwner {
+    public abstract val type: KtType
+    public abstract val annotations: List<KtAnnotationCall>
 }

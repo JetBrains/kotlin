@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 
-abstract class KtCompletionCandidateChecker : KtAnalysisSessionComponent() {
-    abstract fun checkExtensionFitsCandidate(
+public abstract class KtCompletionCandidateChecker : KtAnalysisSessionComponent() {
+    public abstract fun checkExtensionFitsCandidate(
         firSymbolForCandidate: KtCallableSymbol,
         originalFile: KtFile,
         nameExpression: KtSimpleNameExpression,
@@ -19,14 +19,14 @@ abstract class KtCompletionCandidateChecker : KtAnalysisSessionComponent() {
     ): KtExtensionApplicabilityResult
 }
 
-enum class KtExtensionApplicabilityResult(val isApplicable: Boolean) {
+public enum class KtExtensionApplicabilityResult(public val isApplicable: Boolean) {
     ApplicableAsExtensionCallable(isApplicable = true),
     ApplicableAsFunctionalVariableCall(isApplicable = true),
     NonApplicable(isApplicable = false),
 }
 
-interface KtCompletionCandidateCheckerMixIn : KtAnalysisSessionMixIn {
-    fun KtCallableSymbol.checkExtensionIsSuitable(
+public interface KtCompletionCandidateCheckerMixIn : KtAnalysisSessionMixIn {
+    public fun KtCallableSymbol.checkExtensionIsSuitable(
         originalPsiFile: KtFile,
         psiFakeCompletionExpression: KtSimpleNameExpression,
         psiReceiverExpression: KtExpression?,

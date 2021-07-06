@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.idea.frontend.api.symbols.markers
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 
-interface KtSymbolWithVisibility {
-    val visibility: Visibility
+public interface KtSymbolWithVisibility {
+    public val visibility: Visibility
 }
 
 
-fun Visibility.isPrivateOrPrivateToThis(): Boolean =
+public fun Visibility.isPrivateOrPrivateToThis(): Boolean =
     this == Visibilities.Private || this == Visibilities.PrivateToThis

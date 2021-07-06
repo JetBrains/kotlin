@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.idea.frontend.api
 
-import kotlin.reflect.KProperty1
-
 @RequiresOptIn
-annotation class ForbidKtResolveInternals
+public annotation class ForbidKtResolveInternals
 
-object ForbidKtResolve {
+public object ForbidKtResolve {
     @OptIn(ForbidKtResolveInternals::class)
-    inline fun <R> forbidResolveIn(actionName: String, action: () -> R): R {
+    public inline fun <R> forbidResolveIn(actionName: String, action: () -> R): R {
         if (resovleIsForbidenInActionWithName.get() != null) return action()
         resovleIsForbidenInActionWithName.set(actionName)
         return try {
@@ -23,5 +21,5 @@ object ForbidKtResolve {
     }
 
     @ForbidKtResolveInternals
-    val resovleIsForbidenInActionWithName: ThreadLocal<String?> = ThreadLocal.withInitial { null }
+    public val resovleIsForbidenInActionWithName: ThreadLocal<String?> = ThreadLocal.withInitial { null }
 }

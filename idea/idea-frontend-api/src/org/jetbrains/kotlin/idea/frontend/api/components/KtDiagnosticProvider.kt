@@ -10,20 +10,20 @@ import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnosticWithPsi
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
-abstract class KtDiagnosticProvider : KtAnalysisSessionComponent() {
-    abstract fun getDiagnosticsForElement(element: KtElement, filter: KtDiagnosticCheckerFilter): Collection<KtDiagnosticWithPsi<*>>
-    abstract fun collectDiagnosticsForFile(ktFile: KtFile, filter: KtDiagnosticCheckerFilter): Collection<KtDiagnosticWithPsi<*>>
+public abstract class KtDiagnosticProvider : KtAnalysisSessionComponent() {
+    public abstract fun getDiagnosticsForElement(element: KtElement, filter: KtDiagnosticCheckerFilter): Collection<KtDiagnosticWithPsi<*>>
+    public abstract fun collectDiagnosticsForFile(ktFile: KtFile, filter: KtDiagnosticCheckerFilter): Collection<KtDiagnosticWithPsi<*>>
 }
 
-interface KtDiagnosticProviderMixIn : KtAnalysisSessionMixIn {
-    fun KtElement.getDiagnostics(filter: KtDiagnosticCheckerFilter): Collection<KtDiagnostic> =
+public interface KtDiagnosticProviderMixIn : KtAnalysisSessionMixIn {
+    public fun KtElement.getDiagnostics(filter: KtDiagnosticCheckerFilter): Collection<KtDiagnostic> =
         analysisSession.diagnosticProvider.getDiagnosticsForElement(this, filter)
 
-    fun KtFile.collectDiagnosticsForFile(filter: KtDiagnosticCheckerFilter): Collection<KtDiagnosticWithPsi<*>> =
+    public fun KtFile.collectDiagnosticsForFile(filter: KtDiagnosticCheckerFilter): Collection<KtDiagnosticWithPsi<*>> =
         analysisSession.diagnosticProvider.collectDiagnosticsForFile(this, filter)
 }
 
-enum class KtDiagnosticCheckerFilter {
+public enum class KtDiagnosticCheckerFilter {
     ONLY_COMMON_CHECKERS,
     ONLY_EXTENDED_CHECKERS,
     EXTENDED_AND_COMMON_CHECKERS,

@@ -10,18 +10,18 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtTypeNullability
 
-abstract class KtTypeProvider : KtAnalysisSessionComponent() {
-    abstract val builtinTypes: KtBuiltinTypes
+public abstract class KtTypeProvider : KtAnalysisSessionComponent() {
+    public abstract val builtinTypes: KtBuiltinTypes
 
-    abstract fun approximateToSuperPublicDenotableType(type: KtType): KtType?
+    public abstract fun approximateToSuperPublicDenotableType(type: KtType): KtType?
 
-    abstract fun buildSelfClassType(symbol: KtNamedClassOrObjectSymbol): KtType
+    public abstract fun buildSelfClassType(symbol: KtNamedClassOrObjectSymbol): KtType
 
-    abstract fun withNullability(type: KtType, newNullability: KtTypeNullability): KtType
+    public abstract fun withNullability(type: KtType, newNullability: KtTypeNullability): KtType
 }
 
-interface KtTypeProviderMixIn : KtAnalysisSessionMixIn {
-    val builtinTypes: KtBuiltinTypes
+public interface KtTypeProviderMixIn : KtAnalysisSessionMixIn {
+    public val builtinTypes: KtBuiltinTypes
         get() = analysisSession.typeProvider.builtinTypes
 
     /**
@@ -30,36 +30,36 @@ interface KtTypeProviderMixIn : KtAnalysisSessionMixIn {
      * Return `null` if the type do not need approximation and can be rendered as is
      * Otherwise, for type `T` return type `S` such `T <: S` and `T` and every it type argument is [org.jetbrains.kotlin.idea.frontend.api.types.KtDenotableType]`
      */
-    fun KtType.approximateToSuperPublicDenotable(): KtType? =
+    public fun KtType.approximateToSuperPublicDenotable(): KtType? =
         analysisSession.typeProvider.approximateToSuperPublicDenotableType(this)
 
-    fun KtType.approximateToSuperPublicDenotableOrSelf(): KtType = approximateToSuperPublicDenotable() ?: this
+    public fun KtType.approximateToSuperPublicDenotableOrSelf(): KtType = approximateToSuperPublicDenotable() ?: this
 
-    fun KtNamedClassOrObjectSymbol.buildSelfClassType(): KtType =
+    public fun KtNamedClassOrObjectSymbol.buildSelfClassType(): KtType =
         analysisSession.typeProvider.buildSelfClassType(this)
 
-    fun KtType.withNullability(newNullability: KtTypeNullability): KtType =
+    public fun KtType.withNullability(newNullability: KtTypeNullability): KtType =
         analysisSession.typeProvider.withNullability(this, newNullability)
 }
 
 @Suppress("PropertyName")
-abstract class KtBuiltinTypes : ValidityTokenOwner {
-    abstract val INT: KtType
-    abstract val LONG: KtType
-    abstract val SHORT: KtType
-    abstract val BYTE: KtType
+public abstract class KtBuiltinTypes : ValidityTokenOwner {
+    public abstract val INT: KtType
+    public abstract val LONG: KtType
+    public abstract val SHORT: KtType
+    public abstract val BYTE: KtType
 
-    abstract val FLOAT: KtType
-    abstract val DOUBLE: KtType
+    public abstract val FLOAT: KtType
+    public abstract val DOUBLE: KtType
 
-    abstract val BOOLEAN: KtType
-    abstract val CHAR: KtType
-    abstract val STRING: KtType
+    public abstract val BOOLEAN: KtType
+    public abstract val CHAR: KtType
+    public abstract val STRING: KtType
 
-    abstract val UNIT: KtType
-    abstract val NOTHING: KtType
-    abstract val ANY: KtType
+    public abstract val UNIT: KtType
+    public abstract val NOTHING: KtType
+    public abstract val ANY: KtType
 
-    abstract val NULLABLE_ANY: KtType
-    abstract val NULLABLE_NOTHING: KtType
+    public abstract val NULLABLE_ANY: KtType
+    public abstract val NULLABLE_NOTHING: KtType
 }

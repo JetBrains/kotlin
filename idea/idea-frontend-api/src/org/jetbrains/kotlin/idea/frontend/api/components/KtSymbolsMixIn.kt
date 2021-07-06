@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.frontend.api.components
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 
-interface KtSymbolsMixIn : KtAnalysisSessionMixIn {
+public interface KtSymbolsMixIn : KtAnalysisSessionMixIn {
     @Suppress("DEPRECATION")
-    fun <S : KtSymbol> KtSymbolPointer<S>.restoreSymbol(): S? = restoreSymbol(analysisSession)
+    public fun <S : KtSymbol> KtSymbolPointer<S>.restoreSymbol(): S? = restoreSymbol(analysisSession)
 }

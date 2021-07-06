@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFileSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.psi.KtExpression
 
-abstract class KtVisibilityChecker : KtAnalysisSessionComponent() {
-    abstract fun isVisible(
+public abstract class KtVisibilityChecker : KtAnalysisSessionComponent() {
+    public abstract fun isVisible(
         candidateSymbol: KtSymbolWithVisibility,
         useSiteFile: KtFileSymbol,
         position: PsiElement,
@@ -19,8 +19,8 @@ abstract class KtVisibilityChecker : KtAnalysisSessionComponent() {
     ): Boolean
 }
 
-interface KtVisibilityCheckerMixIn : KtAnalysisSessionMixIn {
-    fun isVisible(
+public interface KtVisibilityCheckerMixIn : KtAnalysisSessionMixIn {
+    public fun isVisible(
         candidateSymbol: KtSymbolWithVisibility,
         useSiteFile: KtFileSymbol,
         receiverExpression: KtExpression? = null,

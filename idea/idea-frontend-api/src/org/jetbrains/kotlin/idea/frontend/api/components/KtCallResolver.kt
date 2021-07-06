@@ -10,19 +10,19 @@ import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtUnaryExpression
 
-abstract class KtCallResolver : KtAnalysisSessionComponent() {
-    abstract fun resolveCall(call: KtCallExpression): KtCall?
-    abstract fun resolveCall(call: KtBinaryExpression): KtCall?
-    abstract fun resolveCall(call: KtUnaryExpression): KtCall?
+public abstract class KtCallResolver : KtAnalysisSessionComponent() {
+    public abstract fun resolveCall(call: KtCallExpression): KtCall?
+    public abstract fun resolveCall(call: KtBinaryExpression): KtCall?
+    public abstract fun resolveCall(call: KtUnaryExpression): KtCall?
 }
 
-interface KtCallResolverMixIn : KtAnalysisSessionMixIn {
-    fun KtCallExpression.resolveCall(): KtCall? =
+public interface KtCallResolverMixIn : KtAnalysisSessionMixIn {
+    public fun KtCallExpression.resolveCall(): KtCall? =
         analysisSession.callResolver.resolveCall(this)
 
-    fun KtBinaryExpression.resolveCall(): KtCall? =
+    public fun KtBinaryExpression.resolveCall(): KtCall? =
         analysisSession.callResolver.resolveCall(this)
 
-    fun KtUnaryExpression.resolveCall(): KtCall? =
+    public fun KtUnaryExpression.resolveCall(): KtCall? =
         analysisSession.callResolver.resolveCall(this)
 }

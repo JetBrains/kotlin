@@ -14,44 +14,44 @@ import org.jetbrains.kotlin.idea.frontend.api.types.KtTypeNullability
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
 
-abstract class KtTypeCreator : KtAnalysisSessionComponent() {
-    abstract fun buildClassType(builder: KtClassTypeBuilder): KtClassType
+public abstract class KtTypeCreator : KtAnalysisSessionComponent() {
+    public abstract fun buildClassType(builder: KtClassTypeBuilder): KtClassType
 }
 
-interface KtTypeCreatorMixIn : KtAnalysisSessionMixIn
+public interface KtTypeCreatorMixIn : KtAnalysisSessionMixIn
 
 
-inline fun KtTypeCreatorMixIn.buildClassType(
+public inline fun KtTypeCreatorMixIn.buildClassType(
     classId: ClassId,
     build: KtClassTypeBuilder.() -> Unit = {}
 ): KtClassType =
     analysisSession.typesCreator.buildClassType(KtClassTypeBuilder.ByClassId(classId).apply(build))
 
-inline fun KtTypeCreatorMixIn.buildClassType(
+public inline fun KtTypeCreatorMixIn.buildClassType(
     symbol: KtClassOrObjectSymbol,
     build: KtClassTypeBuilder.() -> Unit = {}
 ): KtClassType =
     analysisSession.typesCreator.buildClassType(KtClassTypeBuilder.BySymbol(symbol).apply(build))
 
 
-sealed class KtTypeBuilder
+public sealed class KtTypeBuilder
 
-sealed class KtClassTypeBuilder : KtTypeBuilder() {
+public sealed class KtClassTypeBuilder : KtTypeBuilder() {
     private val _arguments = mutableListOf<KtTypeArgument>()
 
-    var nullability: KtTypeNullability = KtTypeNullability.NON_NULLABLE
+    public var nullability: KtTypeNullability = KtTypeNullability.NON_NULLABLE
 
-    val arguments: List<KtTypeArgument> get() = _arguments
+    public val arguments: List<KtTypeArgument> get() = _arguments
 
-    fun argument(argument: KtTypeArgument) {
+    public fun argument(argument: KtTypeArgument) {
         _arguments += argument
     }
 
-    fun argument(type: KtType, variance: Variance = Variance.INVARIANT) {
+    public fun argument(type: KtType, variance: Variance = Variance.INVARIANT) {
         _arguments += KtTypeArgumentWithVariance(type, variance, type.token)
     }
 
-    class ByClassId(val classId: ClassId) : KtClassTypeBuilder()
-    class BySymbol(val symbol: KtClassOrObjectSymbol) : KtClassTypeBuilder()
+    public class ByClassId(public val classId: ClassId) : KtClassTypeBuilder()
+    public class BySymbol(public val symbol: KtClassOrObjectSymbol) : KtClassTypeBuilder()
 }
 

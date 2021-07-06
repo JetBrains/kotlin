@@ -13,48 +13,48 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
 
-sealed class KtClassifierSymbol : KtSymbol, KtPossiblyNamedSymbol
+public sealed class KtClassifierSymbol : KtSymbol, KtPossiblyNamedSymbol
 
-val KtClassifierSymbol.nameOrAnonymous: Name
+public val KtClassifierSymbol.nameOrAnonymous: Name
     get() = name ?: SpecialNames.ANONYMOUS_FUNCTION
 
-abstract class KtTypeParameterSymbol : KtClassifierSymbol(), KtNamedSymbol {
+public abstract class KtTypeParameterSymbol : KtClassifierSymbol(), KtNamedSymbol {
     abstract override fun createPointer(): KtSymbolPointer<KtTypeParameterSymbol>
 
-    abstract val upperBounds: List<KtType>
-    abstract val variance: Variance
-    abstract val isReified: Boolean
+    public abstract val upperBounds: List<KtType>
+    public abstract val variance: Variance
+    public abstract val isReified: Boolean
 }
 
-sealed class KtClassLikeSymbol : KtClassifierSymbol(), KtSymbolWithKind {
-    abstract val classIdIfNonLocal: ClassId?
+public sealed class KtClassLikeSymbol : KtClassifierSymbol(), KtSymbolWithKind {
+    public abstract val classIdIfNonLocal: ClassId?
 
     abstract override fun createPointer(): KtSymbolPointer<KtClassLikeSymbol>
 }
 
-abstract class KtTypeAliasSymbol : KtClassLikeSymbol(), KtNamedSymbol {
+public abstract class KtTypeAliasSymbol : KtClassLikeSymbol(), KtNamedSymbol {
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.TOP_LEVEL
 
     /**
      * Returns type from right-hand site of type alias
      * If type alias has type parameters, then those type parameters will be present in result type
      */
-    abstract val expandedType: KtType
+    public abstract val expandedType: KtType
 
     abstract override fun createPointer(): KtSymbolPointer<KtTypeAliasSymbol>
 }
 
-sealed class KtClassOrObjectSymbol : KtClassLikeSymbol(),
+public sealed class KtClassOrObjectSymbol : KtClassLikeSymbol(),
     KtAnnotatedSymbol,
     KtSymbolWithMembers {
 
-    abstract val classKind: KtClassKind
-    abstract val superTypes: List<KtTypeAndAnnotations>
+    public abstract val classKind: KtClassKind
+    public abstract val superTypes: List<KtTypeAndAnnotations>
 
     abstract override fun createPointer(): KtSymbolPointer<KtClassOrObjectSymbol>
 }
 
-abstract class KtAnonymousObjectSymbol : KtClassOrObjectSymbol() {
+public abstract class KtAnonymousObjectSymbol : KtClassOrObjectSymbol() {
     final override val classKind: KtClassKind get() = KtClassKind.ANONYMOUS_OBJECT
     final override val classIdIfNonLocal: ClassId? get() = null
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.LOCAL
@@ -63,25 +63,25 @@ abstract class KtAnonymousObjectSymbol : KtClassOrObjectSymbol() {
     abstract override fun createPointer(): KtSymbolPointer<KtAnonymousObjectSymbol>
 }
 
-abstract class KtNamedClassOrObjectSymbol : KtClassOrObjectSymbol(),
+public abstract class KtNamedClassOrObjectSymbol : KtClassOrObjectSymbol(),
     KtSymbolWithTypeParameters,
     KtSymbolWithModality,
     KtSymbolWithVisibility,
     KtNamedSymbol {
 
-    abstract val isInner: Boolean
-    abstract val isData: Boolean
-    abstract val isInline: Boolean
-    abstract val isFun: Boolean
+    public abstract val isInner: Boolean
+    public abstract val isData: Boolean
+    public abstract val isInline: Boolean
+    public abstract val isFun: Boolean
 
-    abstract val isExternal: Boolean
+    public abstract val isExternal: Boolean
 
-    abstract val companionObject: KtNamedClassOrObjectSymbol?
+    public abstract val companionObject: KtNamedClassOrObjectSymbol?
 
     abstract override fun createPointer(): KtSymbolPointer<KtNamedClassOrObjectSymbol>
 }
 
-enum class KtClassKind {
+public enum class KtClassKind {
     CLASS,
     ENUM_CLASS,
     ENUM_ENTRY,
@@ -91,5 +91,5 @@ enum class KtClassKind {
     INTERFACE,
     ANONYMOUS_OBJECT;
 
-    val isObject: Boolean get() = this == OBJECT || this == COMPANION_OBJECT || this == ANONYMOUS_OBJECT
+    public val isObject: Boolean get() = this == OBJECT || this == COMPANION_OBJECT || this == ANONYMOUS_OBJECT
 }

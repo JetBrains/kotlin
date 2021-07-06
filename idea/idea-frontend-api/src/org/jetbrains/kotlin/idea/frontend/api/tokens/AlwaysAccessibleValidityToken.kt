@@ -9,7 +9,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.createProjectWideOutOfBlockModificationTracker
 import kotlin.reflect.KClass
 
-class AlwaysAccessibleValidityToken(project: Project) : ValidityToken() {
+public class AlwaysAccessibleValidityToken(project: Project) : ValidityToken() {
     private val modificationTracker = project.createProjectWideOutOfBlockModificationTracker()
     private val onCreatedTimeStamp = modificationTracker.modificationCount
 
@@ -31,7 +31,7 @@ class AlwaysAccessibleValidityToken(project: Project) : ValidityToken() {
     }
 }
 
-object AlwaysAccessibleValidityTokenFactory : ValidityTokenFactory() {
+public object AlwaysAccessibleValidityTokenFactory : ValidityTokenFactory() {
     override val identifier: KClass<out ValidityToken> = AlwaysAccessibleValidityToken::class
 
     override fun create(project: Project): ValidityToken =

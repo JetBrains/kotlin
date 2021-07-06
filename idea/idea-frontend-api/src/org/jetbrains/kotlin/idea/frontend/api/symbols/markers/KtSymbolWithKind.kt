@@ -10,11 +10,11 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 
-interface KtSymbolWithKind : KtSymbol {
-    val symbolKind: KtSymbolKind
+public interface KtSymbolWithKind : KtSymbol {
+    public val symbolKind: KtSymbolKind
 }
 
-enum class KtSymbolKind {
+public enum class KtSymbolKind {
     TOP_LEVEL, MEMBER, LOCAL, ACCESSOR
 }
 

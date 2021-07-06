@@ -7,6 +7,6 @@ package org.jetbrains.kotlin.idea.frontend.api.components
 
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 
-interface KtAnalysisSessionMixIn {
-    val analysisSession: KtAnalysisSession
+public interface KtAnalysisSessionMixIn {
+    public val analysisSession: KtAnalysisSession
 }

@@ -11,18 +11,18 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtCallElement
 
-abstract class KtAnnotationCall : ValidityTokenOwner {
-    abstract val classId: ClassId?
-    abstract val useSiteTarget: AnnotationUseSiteTarget?
-    abstract val psi: KtCallElement?
-    abstract val arguments: List<KtNamedConstantValue>
+public abstract class KtAnnotationCall : ValidityTokenOwner {
+    public abstract val classId: ClassId?
+    public abstract val useSiteTarget: AnnotationUseSiteTarget?
+    public abstract val psi: KtCallElement?
+    public abstract val arguments: List<KtNamedConstantValue>
 }
 
-data class KtNamedConstantValue(val name: String, val expression: KtConstantValue)
+public data class KtNamedConstantValue(val name: String, val expression: KtConstantValue)
 
-interface KtAnnotatedSymbol : KtSymbol {
-    val annotations: List<KtAnnotationCall>
+public interface KtAnnotatedSymbol : KtSymbol {
+    public val annotations: List<KtAnnotationCall>
 
-    fun containsAnnotation(classId: ClassId): Boolean
-    val annotationClassIds: Collection<ClassId>
+    public fun containsAnnotation(classId: ClassId): Boolean
+    public val annotationClassIds: Collection<ClassId>
 }

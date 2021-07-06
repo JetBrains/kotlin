@@ -17,56 +17,56 @@ import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
-abstract class KtScopeProvider : KtAnalysisSessionComponent() {
-    abstract fun getMemberScope(classSymbol: KtSymbolWithMembers): KtMemberScope
-    abstract fun getStaticMemberScope(symbol: KtSymbolWithMembers): KtScope
+public abstract class KtScopeProvider : KtAnalysisSessionComponent() {
+    public abstract fun getMemberScope(classSymbol: KtSymbolWithMembers): KtMemberScope
+    public abstract fun getStaticMemberScope(symbol: KtSymbolWithMembers): KtScope
 
-    abstract fun getDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtDeclaredMemberScope
-    abstract fun getFileScope(fileSymbol: KtFileSymbol): KtDeclarationScope<KtSymbolWithDeclarations>
-    abstract fun getPackageScope(packageSymbol: KtPackageSymbol): KtPackageScope
-    abstract fun getCompositeScope(subScopes: List<KtScope>): KtCompositeScope
+    public abstract fun getDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtDeclaredMemberScope
+    public abstract fun getFileScope(fileSymbol: KtFileSymbol): KtDeclarationScope<KtSymbolWithDeclarations>
+    public abstract fun getPackageScope(packageSymbol: KtPackageSymbol): KtPackageScope
+    public abstract fun getCompositeScope(subScopes: List<KtScope>): KtCompositeScope
 
-    abstract fun getTypeScope(type: KtType): KtScope?
+    public abstract fun getTypeScope(type: KtType): KtScope?
 
-    abstract fun getScopeContextForPosition(
+    public abstract fun getScopeContextForPosition(
         originalFile: KtFile,
         positionInFakeFile: KtElement
     ): KtScopeContext
 }
 
-interface KtScopeProviderMixIn : KtAnalysisSessionMixIn {
-    fun KtSymbolWithMembers.getMemberScope(): KtMemberScope =
+public interface KtScopeProviderMixIn : KtAnalysisSessionMixIn {
+    public fun KtSymbolWithMembers.getMemberScope(): KtMemberScope =
         analysisSession.scopeProvider.getMemberScope(this)
 
-    fun KtSymbolWithMembers.getDeclaredMemberScope(): KtDeclaredMemberScope =
+    public fun KtSymbolWithMembers.getDeclaredMemberScope(): KtDeclaredMemberScope =
         analysisSession.scopeProvider.getDeclaredMemberScope(this)
 
-    fun KtSymbolWithMembers.getStaticMemberScope(): KtScope =
+    public fun KtSymbolWithMembers.getStaticMemberScope(): KtScope =
         analysisSession.scopeProvider.getStaticMemberScope(this)
 
-    fun KtFileSymbol.getFileScope(): KtDeclarationScope<KtSymbolWithDeclarations> =
+    public fun KtFileSymbol.getFileScope(): KtDeclarationScope<KtSymbolWithDeclarations> =
         analysisSession.scopeProvider.getFileScope(this)
 
-    fun KtPackageSymbol.getPackageScope(): KtPackageScope =
+    public fun KtPackageSymbol.getPackageScope(): KtPackageScope =
         analysisSession.scopeProvider.getPackageScope(this)
 
-    fun List<KtScope>.asCompositeScope(): KtCompositeScope =
+    public fun List<KtScope>.asCompositeScope(): KtCompositeScope =
         analysisSession.scopeProvider.getCompositeScope(this)
 
-    fun KtType.getTypeScope(): KtScope? =
+    public fun KtType.getTypeScope(): KtScope? =
         analysisSession.scopeProvider.getTypeScope(this)
 
-    fun KtFile.getScopeContextForPosition(positionInFakeFile: KtElement): KtScopeContext =
+    public fun KtFile.getScopeContextForPosition(positionInFakeFile: KtElement): KtScopeContext =
         analysisSession.scopeProvider.getScopeContextForPosition(this, positionInFakeFile)
 
-    fun KtFile.getScopeContextForFile(): KtScopeContext =
+    public fun KtFile.getScopeContextForFile(): KtScopeContext =
         analysisSession.scopeProvider.getScopeContextForPosition(this, this)
 }
 
-data class KtScopeContext(val scopes: KtCompositeScope, val implicitReceivers: List<KtImplicitReceiver>)
+public data class KtScopeContext(val scopes: KtCompositeScope, val implicitReceivers: List<KtImplicitReceiver>)
 
-class KtImplicitReceiver(
+public class KtImplicitReceiver(
     override val token: ValidityToken,
-    val type: KtType,
-    val ownerSymbol: KtSymbol
-): ValidityTokenOwner
+    public val type: KtType,
+    public val ownerSymbol: KtSymbol
+) : ValidityTokenOwner

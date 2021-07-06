@@ -23,16 +23,17 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
  *
  * @see org.jetbrains.kotlin.idea.frontend.api.ReadActionConfinementValidityToken
  */
-abstract class KtSymbolPointer<out S : KtSymbol> {
+public abstract class KtSymbolPointer<out S : KtSymbol> {
     /**
      * @return restored symbol (possibly the new symbol instance) if one is still valid, `null` otherwise
      *
      * Consider using [org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession.restoreSymbol]
      */
     @Deprecated("Consider using org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession.restoreSymbol")
-    abstract fun restoreSymbol(analysisSession: KtAnalysisSession): S?
+    public abstract fun restoreSymbol(analysisSession: KtAnalysisSession): S?
 }
 
-inline fun <S : KtSymbol> symbolPointer(crossinline getSymbol: (KtAnalysisSession) -> S?) = object : KtSymbolPointer<S>() {
-    override fun restoreSymbol(analysisSession: KtAnalysisSession): S? = getSymbol(analysisSession)
-}
+public inline fun <S : KtSymbol> symbolPointer(crossinline getSymbol: (KtAnalysisSession) -> S?): KtSymbolPointer<S> =
+    object : KtSymbolPointer<S>() {
+        override fun restoreSymbol(analysisSession: KtAnalysisSession): S? = getSymbol(analysisSession)
+    }

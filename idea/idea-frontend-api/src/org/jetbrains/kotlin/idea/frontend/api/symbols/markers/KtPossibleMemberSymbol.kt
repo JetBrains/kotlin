@@ -7,6 +7,6 @@ package org.jetbrains.kotlin.idea.frontend.api.symbols.markers
 
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 
-interface KtPossibleMemberSymbol {
-    val dispatchType: KtType?
+public interface KtPossibleMemberSymbol {
+    public val dispatchType: KtType?
 }

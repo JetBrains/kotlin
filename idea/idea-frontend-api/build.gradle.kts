@@ -15,6 +15,10 @@ dependencies {
     compile(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
 }
 
+kotlin {
+    explicitApi()
+}
+
 sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }

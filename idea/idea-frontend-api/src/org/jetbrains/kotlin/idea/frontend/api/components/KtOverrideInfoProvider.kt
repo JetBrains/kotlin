@@ -9,24 +9,28 @@ import org.jetbrains.kotlin.util.ImplementationStatus
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
 
-abstract class KtOverrideInfoProvider : KtAnalysisSessionComponent() {
-    abstract fun isVisible(memberSymbol: KtCallableSymbol, classSymbol: KtClassOrObjectSymbol): Boolean
-    abstract fun getImplementationStatus(memberSymbol: KtCallableSymbol, parentClassSymbol: KtClassOrObjectSymbol): ImplementationStatus?
-    abstract fun getOriginalOverriddenSymbol(symbol: KtCallableSymbol): KtCallableSymbol?
-    abstract fun getOriginalContainingClassForOverride(symbol: KtCallableSymbol): KtClassOrObjectSymbol?
+public abstract class KtOverrideInfoProvider : KtAnalysisSessionComponent() {
+    public abstract fun isVisible(memberSymbol: KtCallableSymbol, classSymbol: KtClassOrObjectSymbol): Boolean
+    public abstract fun getImplementationStatus(
+        memberSymbol: KtCallableSymbol,
+        parentClassSymbol: KtClassOrObjectSymbol
+    ): ImplementationStatus?
+
+    public abstract fun getOriginalOverriddenSymbol(symbol: KtCallableSymbol): KtCallableSymbol?
+    public abstract fun getOriginalContainingClassForOverride(symbol: KtCallableSymbol): KtClassOrObjectSymbol?
 }
 
-interface KtMemberSymbolProviderMixin : KtAnalysisSessionMixIn {
+public interface KtMemberSymbolProviderMixin : KtAnalysisSessionMixIn {
 
     /** Checks if the given symbol (possibly a symbol inherited from a super class) is visible in the given class. */
-    fun KtCallableSymbol.isVisibleInClass(classSymbol: KtClassOrObjectSymbol): Boolean =
+    public fun KtCallableSymbol.isVisibleInClass(classSymbol: KtClassOrObjectSymbol): Boolean =
         analysisSession.overrideInfoProvider.isVisible(this, classSymbol)
 
     /**
      * Gets the [ImplementationStatus] of the [this] member symbol in the given [parentClassSymbol]. Or null if this symbol is not a
      * member.
      */
-    fun KtCallableSymbol.getImplementationStatus(parentClassSymbol: KtClassOrObjectSymbol): ImplementationStatus? =
+    public fun KtCallableSymbol.getImplementationStatus(parentClassSymbol: KtClassOrObjectSymbol): ImplementationStatus? =
         analysisSession.overrideInfoProvider.getImplementationStatus(this, parentClassSymbol)
 
     /**
@@ -34,11 +38,11 @@ interface KtMemberSymbolProviderMixin : KtAnalysisSessionMixIn {
      * classes. For example, consider
      *
      * ```
-     * interface A<T> {
-     *   fun foo(t:T)
+     * public interface  A<T> {
+     *   public fun foo(t:T)
      * }
      *
-     * interface B: A<String> {
+     * public interface  B: A<String> {
      * }
      * ```
      *
@@ -49,12 +53,12 @@ interface KtMemberSymbolProviderMixin : KtAnalysisSessionMixIn {
      * Such situation can also happens for intersection symbols (in case of multiple super types containing symbols with identical signature
      * after specialization) and delegation.
      */
-    val KtCallableSymbol.originalOverriddenSymbol: KtCallableSymbol?
+    public val KtCallableSymbol.originalOverriddenSymbol: KtCallableSymbol?
         get() = analysisSession.overrideInfoProvider.getOriginalOverriddenSymbol(this)
 
     /**
      * Gets the class symbol where the given callable symbol is declared. See [originalOverriddenSymbol] for more details.
      */
-    val KtCallableSymbol.originalContainingClassForOverride: KtClassOrObjectSymbol?
+    public val KtCallableSymbol.originalContainingClassForOverride: KtClassOrObjectSymbol?
         get() = analysisSession.overrideInfoProvider.getOriginalContainingClassForOverride(this)
 }

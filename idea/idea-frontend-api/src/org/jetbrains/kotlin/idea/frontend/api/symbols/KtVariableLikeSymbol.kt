@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-sealed class KtVariableLikeSymbol : KtCallableSymbol(), KtNamedSymbol, KtSymbolWithKind {
+public sealed class KtVariableLikeSymbol : KtCallableSymbol(), KtNamedSymbol, KtSymbolWithKind {
     abstract override fun createPointer(): KtSymbolPointer<KtVariableLikeSymbol>
 }
 
@@ -28,8 +28,8 @@ sealed class KtVariableLikeSymbol : KtCallableSymbol(), KtNamedSymbol, KtSymbolW
  *
  * Symbol at caret will be resolved to a [KtBackingFieldSymbol]
  */
-abstract class KtBackingFieldSymbol : KtVariableLikeSymbol() {
-    abstract val owningProperty: KtKotlinPropertySymbol
+public abstract class KtBackingFieldSymbol : KtVariableLikeSymbol() {
+    public abstract val owningProperty: KtKotlinPropertySymbol
 
     final override val name: Name get() = fieldName
     final override val psi: PsiElement? get() = null
@@ -41,29 +41,29 @@ abstract class KtBackingFieldSymbol : KtVariableLikeSymbol() {
 
     abstract override fun createPointer(): KtSymbolPointer<KtVariableLikeSymbol>
 
-    companion object {
+    public companion object {
         private val fieldName = Name.identifier("field")
     }
 }
 
 
-abstract class KtEnumEntrySymbol : KtVariableLikeSymbol(), KtSymbolWithMembers, KtSymbolWithKind {
+public abstract class KtEnumEntrySymbol : KtVariableLikeSymbol(), KtSymbolWithMembers, KtSymbolWithKind {
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.MEMBER
     final override val isExtension: Boolean get() = false
     final override val receiverType: KtTypeAndAnnotations? get() = null
-    abstract val containingEnumClassIdIfNonLocal: ClassId?
+    public abstract val containingEnumClassIdIfNonLocal: ClassId?
 
 
     abstract override fun createPointer(): KtSymbolPointer<KtEnumEntrySymbol>
 }
 
 
-sealed class KtVariableSymbol : KtVariableLikeSymbol() {
-    abstract val isVal: Boolean
+public sealed class KtVariableSymbol : KtVariableLikeSymbol() {
+    public abstract val isVal: Boolean
     abstract override fun createPointer(): KtSymbolPointer<KtVariableSymbol>
 }
 
-abstract class KtJavaFieldSymbol :
+public abstract class KtJavaFieldSymbol :
     KtVariableSymbol(),
     KtSymbolWithModality,
     KtSymbolWithVisibility,
@@ -71,56 +71,56 @@ abstract class KtJavaFieldSymbol :
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.MEMBER
     final override val isExtension: Boolean get() = false
     final override val receiverType: KtTypeAndAnnotations? get() = null
-    abstract val isStatic: Boolean
+    public abstract val isStatic: Boolean
 
     abstract override fun createPointer(): KtSymbolPointer<KtJavaFieldSymbol>
 }
 
-sealed class KtPropertySymbol : KtVariableSymbol(),
+public sealed class KtPropertySymbol : KtVariableSymbol(),
     KtPossibleMemberSymbol,
     KtSymbolWithModality,
     KtSymbolWithVisibility,
     KtAnnotatedSymbol,
     KtSymbolWithKind {
 
-    abstract val hasGetter: Boolean
-    abstract val hasSetter: Boolean
+    public abstract val hasGetter: Boolean
+    public abstract val hasSetter: Boolean
 
-    abstract val getter: KtPropertyGetterSymbol?
-    abstract val setter: KtPropertySetterSymbol?
+    public abstract val getter: KtPropertyGetterSymbol?
+    public abstract val setter: KtPropertySetterSymbol?
 
-    abstract val hasBackingField: Boolean
+    public abstract val hasBackingField: Boolean
 
-    abstract val isOverride: Boolean
-    abstract val isStatic: Boolean
+    public abstract val isOverride: Boolean
+    public abstract val isStatic: Boolean
 
-    abstract val initializer: KtConstantValue?
+    public abstract val initializer: KtConstantValue?
 
     abstract override fun createPointer(): KtSymbolPointer<KtPropertySymbol>
 }
 
-abstract class KtKotlinPropertySymbol : KtPropertySymbol() {
-    abstract val isLateInit: Boolean
+public abstract class KtKotlinPropertySymbol : KtPropertySymbol() {
+    public abstract val isLateInit: Boolean
 
-    abstract val isConst: Boolean
+    public abstract val isConst: Boolean
 
     abstract override fun createPointer(): KtSymbolPointer<KtKotlinPropertySymbol>
 }
 
-abstract class KtSyntheticJavaPropertySymbol : KtPropertySymbol() {
+public abstract class KtSyntheticJavaPropertySymbol : KtPropertySymbol() {
     final override val hasBackingField: Boolean get() = true
     final override val hasGetter: Boolean get() = true
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.MEMBER
 
     abstract override val getter: KtPropertyGetterSymbol
 
-    abstract val javaGetterName: Name
-    abstract val javaSetterName: Name?
+    public abstract val javaGetterName: Name
+    public abstract val javaSetterName: Name?
 
     abstract override fun createPointer(): KtSymbolPointer<KtSyntheticJavaPropertySymbol>
 }
 
-abstract class KtLocalVariableSymbol : KtVariableSymbol(), KtSymbolWithKind {
+public abstract class KtLocalVariableSymbol : KtVariableSymbol(), KtSymbolWithKind {
     final override val callableIdIfNonLocal: CallableId? get() = null
     final override val isExtension: Boolean get() = false
     final override val receiverType: KtTypeAndAnnotations? get() = null
@@ -128,14 +128,14 @@ abstract class KtLocalVariableSymbol : KtVariableSymbol(), KtSymbolWithKind {
     abstract override fun createPointer(): KtSymbolPointer<KtLocalVariableSymbol>
 }
 
-abstract class KtValueParameterSymbol : KtVariableLikeSymbol(), KtSymbolWithKind, KtAnnotatedSymbol {
+public abstract class KtValueParameterSymbol : KtVariableLikeSymbol(), KtSymbolWithKind, KtAnnotatedSymbol {
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.LOCAL
     final override val callableIdIfNonLocal: CallableId? get() = null
     final override val isExtension: Boolean get() = false
     final override val receiverType: KtTypeAndAnnotations? get() = null
 
-    abstract val hasDefaultValue: Boolean
-    abstract val isVararg: Boolean
+    public abstract val hasDefaultValue: Boolean
+    public abstract val isVararg: Boolean
 
     abstract override fun createPointer(): KtSymbolPointer<KtValueParameterSymbol>
 }

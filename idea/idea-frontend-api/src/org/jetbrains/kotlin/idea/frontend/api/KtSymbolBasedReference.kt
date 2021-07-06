@@ -8,6 +8,6 @@ package org.jetbrains.kotlin.idea.frontend.api
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.references.KtReference
 
-interface KtSymbolBasedReference : KtReference {
-    fun KtAnalysisSession.resolveToSymbols(): Collection<KtSymbol>
+public interface KtSymbolBasedReference : KtReference {
+    public fun KtAnalysisSession.resolveToSymbols(): Collection<KtSymbol>
 }

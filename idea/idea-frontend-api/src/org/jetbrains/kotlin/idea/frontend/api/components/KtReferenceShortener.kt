@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtEnumEntrySymbol
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
-enum class ShortenOption {
+public enum class ShortenOption {
     /** Skip shortening references to this symbol. */
     DO_NOT_SHORTEN,
 
@@ -26,8 +26,8 @@ enum class ShortenOption {
     SHORTEN_AND_STAR_IMPORT
 }
 
-abstract class KtReferenceShortener : KtAnalysisSessionComponent() {
-    abstract fun collectShortenings(
+public abstract class KtReferenceShortener : KtAnalysisSessionComponent() {
+    public abstract fun collectShortenings(
         file: KtFile,
         selection: TextRange,
         classShortenOption: (KtClassLikeSymbol) -> ShortenOption,
@@ -35,8 +35,8 @@ abstract class KtReferenceShortener : KtAnalysisSessionComponent() {
     ): ShortenCommand
 }
 
-interface KtReferenceShortenerMixIn : KtAnalysisSessionMixIn {
-    companion object {
+public interface KtReferenceShortenerMixIn : KtAnalysisSessionMixIn {
+    public companion object {
         private val defaultClassShortenOption: (KtClassLikeSymbol) -> ShortenOption = {
             if (it.classIdIfNonLocal?.isNestedClass == true) {
                 ShortenOption.SHORTEN_IF_ALREADY_IMPORTED
@@ -55,7 +55,7 @@ interface KtReferenceShortenerMixIn : KtAnalysisSessionMixIn {
      * Collects possible references to shorten. By default, it shortens a fully-qualified members to the outermost class and does not
      * shorten enum entries.
      */
-    fun collectPossibleReferenceShortenings(
+    public fun collectPossibleReferenceShortenings(
         file: KtFile,
         selection: TextRange = file.textRange,
         classShortenOption: (KtClassLikeSymbol) -> ShortenOption = defaultClassShortenOption,
@@ -63,7 +63,7 @@ interface KtReferenceShortenerMixIn : KtAnalysisSessionMixIn {
     ): ShortenCommand =
         analysisSession.referenceShortener.collectShortenings(file, selection, classShortenOption, callableShortenOption)
 
-    fun collectPossibleReferenceShorteningsInElement(
+    public fun collectPossibleReferenceShorteningsInElement(
         element: KtElement,
         classShortenOption: (KtClassLikeSymbol) -> ShortenOption = defaultClassShortenOption,
         callableShortenOption: (KtCallableSymbol) -> ShortenOption = defaultCallableShortenOption
@@ -76,7 +76,7 @@ interface KtReferenceShortenerMixIn : KtAnalysisSessionMixIn {
         )
 }
 
-interface ShortenCommand {
-    fun invokeShortening()
-    val isEmpty: Boolean
+public interface ShortenCommand {
+    public fun invokeShortening()
+    public val isEmpty: Boolean
 }

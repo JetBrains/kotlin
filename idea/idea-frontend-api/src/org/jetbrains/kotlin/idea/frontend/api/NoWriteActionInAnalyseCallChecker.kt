@@ -10,7 +10,7 @@ import com.intellij.openapi.application.ApplicationListener
 import com.intellij.openapi.application.ApplicationManager
 
 @KtInternalApiMarker
-class NoWriteActionInAnalyseCallChecker(parentDisposable: Disposable) {
+public class NoWriteActionInAnalyseCallChecker(parentDisposable: Disposable) {
     init {
         val listener = object : ApplicationListener {
             override fun writeActionFinished(action: Any) {
@@ -22,17 +22,17 @@ class NoWriteActionInAnalyseCallChecker(parentDisposable: Disposable) {
         ApplicationManager.getApplication().addApplicationListener(listener, parentDisposable)
     }
 
-    fun beforeEnteringAnalysisContext() {
+    public fun beforeEnteringAnalysisContext() {
         currentAnalysisContextEnteringCount.set(currentAnalysisContextEnteringCount.get() + 1)
     }
 
-    fun afterLeavingAnalysisContext() {
+    public fun afterLeavingAnalysisContext() {
         currentAnalysisContextEnteringCount.set(currentAnalysisContextEnteringCount.get() - 1)
     }
 
     private val currentAnalysisContextEnteringCount = ThreadLocal.withInitial { 0 }
 }
 
-class WriteActionStartInsideAnalysisContextException : IllegalStateException(
+public class WriteActionStartInsideAnalysisContextException : IllegalStateException(
     "write action should be never executed inside analysis context (e,g. analyse call)"
 )

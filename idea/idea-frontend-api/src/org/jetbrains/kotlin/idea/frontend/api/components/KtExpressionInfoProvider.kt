@@ -10,14 +10,14 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.psi.KtReturnExpression
 import org.jetbrains.kotlin.psi.KtWhenExpression
 
-abstract class KtExpressionInfoProvider : KtAnalysisSessionComponent() {
-    abstract fun getReturnExpressionTargetSymbol(returnExpression: KtReturnExpression): KtCallableSymbol?
-    abstract fun getWhenMissingCases(whenExpression: KtWhenExpression): List<WhenMissingCase>
+public abstract class KtExpressionInfoProvider : KtAnalysisSessionComponent() {
+    public abstract fun getReturnExpressionTargetSymbol(returnExpression: KtReturnExpression): KtCallableSymbol?
+    public abstract fun getWhenMissingCases(whenExpression: KtWhenExpression): List<WhenMissingCase>
 }
 
-interface KtExpressionInfoProviderMixIn : KtAnalysisSessionMixIn {
-    fun KtReturnExpression.getReturnTargetSymbol(): KtCallableSymbol? =
+public interface KtExpressionInfoProviderMixIn : KtAnalysisSessionMixIn {
+    public fun KtReturnExpression.getReturnTargetSymbol(): KtCallableSymbol? =
         analysisSession.expressionInfoProvider.getReturnExpressionTargetSymbol(this)
 
-    fun KtWhenExpression.getMissingCases(): List<WhenMissingCase> = analysisSession.expressionInfoProvider.getWhenMissingCases(this)
+    public fun KtWhenExpression.getMissingCases(): List<WhenMissingCase> = analysisSession.expressionInfoProvider.getWhenMissingCases(this)
 }

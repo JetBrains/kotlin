@@ -12,19 +12,19 @@ import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import kotlin.reflect.KClass
 
-interface KtDiagnostic : ValidityTokenOwner {
-    val severity: Severity
-    val factoryName: String?
-    val defaultMessage: String
+public interface KtDiagnostic : ValidityTokenOwner {
+    public val severity: Severity
+    public val factoryName: String?
+    public val defaultMessage: String
 }
 
-interface KtDiagnosticWithPsi<out PSI: PsiElement> : KtDiagnostic {
-    val psi: PSI
-    val textRanges: Collection<TextRange>
-    val diagnosticClass: KClass<out KtDiagnosticWithPsi<PSI>>
+public interface KtDiagnosticWithPsi<out PSI : PsiElement> : KtDiagnostic {
+    public val psi: PSI
+    public val textRanges: Collection<TextRange>
+    public val diagnosticClass: KClass<out KtDiagnosticWithPsi<PSI>>
 }
 
-class KtNonBoundToPsiErrorDiagnostic(
+public class KtNonBoundToPsiErrorDiagnostic(
     override val factoryName: String?,
     override val defaultMessage: String,
     override val token: ValidityToken,
@@ -32,6 +32,6 @@ class KtNonBoundToPsiErrorDiagnostic(
     override val severity: Severity get() = Severity.ERROR
 }
 
-fun KtDiagnostic.getDefaultMessageWithFactoryName(): String =
+public fun KtDiagnostic.getDefaultMessageWithFactoryName(): String =
     if (factoryName == null) defaultMessage
     else "[$factoryName] $defaultMessage"

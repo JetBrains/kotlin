@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.psi.*
  *
  * To create analysis session consider using [analyse]
  */
-abstract class KtAnalysisSession(final override val token: ValidityToken) : ValidityTokenOwner,
+public abstract class KtAnalysisSession(final override val token: ValidityToken) : ValidityTokenOwner,
     KtSmartCastProviderMixIn,
     KtCallResolverMixIn,
     KtDiagnosticProviderMixIn,
@@ -50,7 +50,7 @@ abstract class KtAnalysisSession(final override val token: ValidityToken) : Vali
 
     override val analysisSession: KtAnalysisSession get() = this
 
-    abstract fun createContextDependentCopy(originalKtFile: KtFile, elementToReanalyze: KtElement): KtAnalysisSession
+    public abstract fun createContextDependentCopy(originalKtFile: KtFile, elementToReanalyze: KtElement): KtAnalysisSession
 
     internal val smartCastProvider: KtSmartCastProvider get() = smartCastProviderImpl
     protected abstract val smartCastProviderImpl: KtSmartCastProvider
@@ -112,6 +112,8 @@ abstract class KtAnalysisSession(final override val token: ValidityToken) : Vali
     internal val inheritorsProvider: KtInheritorsProvider get() = inheritorsProviderImpl
     protected abstract val inheritorsProviderImpl: KtInheritorsProvider
 
-    @PublishedApi internal val typesCreator: KtTypeCreator get() = typesCreatorImpl
+    @PublishedApi
+    internal val typesCreator: KtTypeCreator
+        get() = typesCreatorImpl
     protected abstract val typesCreatorImpl: KtTypeCreator
 }

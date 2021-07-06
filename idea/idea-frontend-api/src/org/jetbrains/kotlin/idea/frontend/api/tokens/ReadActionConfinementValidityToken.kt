@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.api.createProjectWideOutOfBlo
 import org.jetbrains.kotlin.idea.frontend.api.*
 import kotlin.reflect.KClass
 
-class ReadActionConfinementValidityToken(project: Project) : ValidityToken() {
+public class ReadActionConfinementValidityToken(project: Project) : ValidityToken() {
     private val modificationTracker = project.createProjectWideOutOfBlockModificationTracker()
     private val onCreatedTimeStamp = modificationTracker.modificationCount
 
@@ -48,13 +48,13 @@ class ReadActionConfinementValidityToken(project: Project) : ValidityToken() {
     }
 
 
-    companion object {
+    public companion object {
         @HackToForceAllowRunningAnalyzeOnEDT
-        val allowOnEdt: ThreadLocal<Boolean> = ThreadLocal.withInitial { false }
+        public val allowOnEdt: ThreadLocal<Boolean> = ThreadLocal.withInitial { false }
     }
 }
 
-object ReadActionConfinementValidityTokenFactory : ValidityTokenFactory() {
+public object ReadActionConfinementValidityTokenFactory : ValidityTokenFactory() {
     override val identifier: KClass<out ValidityToken> = ReadActionConfinementValidityToken::class
 
     override fun create(project: Project): ValidityToken = ReadActionConfinementValidityToken(project)
@@ -73,7 +73,7 @@ object ReadActionConfinementValidityTokenFactory : ValidityTokenFactory() {
 }
 
 @RequiresOptIn("All frontend related work should not be allowed to be ran from EDT thread. Only use it as a temporary solution")
-annotation class HackToForceAllowRunningAnalyzeOnEDT
+public annotation class HackToForceAllowRunningAnalyzeOnEDT
 
 /**
  * All frontend related work should not be allowed to be ran from EDT thread. Only use it as a temporary solution.
@@ -82,7 +82,7 @@ annotation class HackToForceAllowRunningAnalyzeOnEDT
  * @see ReadActionConfinementValidityToken
  */
 @HackToForceAllowRunningAnalyzeOnEDT
-inline fun <T> hackyAllowRunningOnEdt(action: () -> T): T {
+public inline fun <T> hackyAllowRunningOnEdt(action: () -> T): T {
     if (ReadActionConfinementValidityToken.allowOnEdt.get()) return action()
     ReadActionConfinementValidityToken.allowOnEdt.set(true)
     try {

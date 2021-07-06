@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.idea.frontend.api.components
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSimpleConstantValue
 import org.jetbrains.kotlin.psi.KtExpression
 
-abstract class KtCompileTimeConstantProvider : KtAnalysisSessionComponent() {
-    abstract fun evaluate(expression: KtExpression): KtSimpleConstantValue<*>?
+public abstract class KtCompileTimeConstantProvider : KtAnalysisSessionComponent() {
+    public abstract fun evaluate(expression: KtExpression): KtSimpleConstantValue<*>?
 }
 
-interface KtCompileTimeConstantProviderMixIn : KtAnalysisSessionMixIn {
-    fun KtExpression.evaluate(): KtSimpleConstantValue<*>? =
+public interface KtCompileTimeConstantProviderMixIn : KtAnalysisSessionMixIn {
+    public fun KtExpression.evaluate(): KtSimpleConstantValue<*>? =
         analysisSession.compileTimeConstantProvider.evaluate(this)
 }

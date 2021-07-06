@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.idea.frontend.api.symbols
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.name.FqName
 
-abstract class KtPackageSymbol : KtSymbol {
-    abstract val fqName: FqName
+public abstract class KtPackageSymbol : KtSymbol {
+    public abstract val fqName: FqName
 
     abstract override fun createPointer(): KtSymbolPointer<KtPackageSymbol>
 }

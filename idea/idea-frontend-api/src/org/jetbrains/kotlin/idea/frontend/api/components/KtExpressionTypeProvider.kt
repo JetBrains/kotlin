@@ -10,33 +10,33 @@ import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
 
-abstract class KtExpressionTypeProvider : KtAnalysisSessionComponent() {
-    abstract fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KtType
-    abstract fun getKtExpressionType(expression: KtExpression): KtType
-    abstract fun getExpectedType(expression: PsiElement): KtType?
-    abstract fun isDefinitelyNull(expression: KtExpression): Boolean
-    abstract fun isDefinitelyNotNull(expression: KtExpression): Boolean
+public abstract class KtExpressionTypeProvider : KtAnalysisSessionComponent() {
+    public abstract fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KtType
+    public abstract fun getKtExpressionType(expression: KtExpression): KtType
+    public abstract fun getExpectedType(expression: PsiElement): KtType?
+    public abstract fun isDefinitelyNull(expression: KtExpression): Boolean
+    public abstract fun isDefinitelyNotNull(expression: KtExpression): Boolean
 }
 
-interface KtExpressionTypeProviderMixIn : KtAnalysisSessionMixIn {
-    fun KtExpression.getKtType(): KtType =
+public interface KtExpressionTypeProviderMixIn : KtAnalysisSessionMixIn {
+    public fun KtExpression.getKtType(): KtType =
         analysisSession.expressionTypeProvider.getKtExpressionType(this)
 
-    fun KtDeclaration.getReturnKtType(): KtType =
+    public fun KtDeclaration.getReturnKtType(): KtType =
         analysisSession.expressionTypeProvider.getReturnTypeForKtDeclaration(this)
 
     /**
      * Returns the expected [KtType] of this [PsiElement] if it is an expression. The returned value should not be a
      * [org.jetbrains.kotlin.idea.frontend.api.types.KtClassErrorType].
      */
-    fun PsiElement.getExpectedType(): KtType? =
+    public fun PsiElement.getExpectedType(): KtType? =
         analysisSession.expressionTypeProvider.getExpectedType(this)
 
     /**
      * Returns `true` if this expression is definitely null, based on declared nullability and smart cast types derived from
      * data-flow analysis facts. Examples:
      * ```
-     *   fun <T : Any> foo(t: T, nt: T?, s: String, ns: String?) {
+     *   public fun <T : Any> foo(t: T, nt: T?, s: String, ns: String?) {
      *     t     // t.isDefinitelyNull()  == false && t.isDefinitelyNotNull()  == true
      *     nt    // nt.isDefinitelyNull() == false && nt.isDefinitelyNotNull() == false
      *     s     // s.isDefinitelyNull()  == false && s.isDefinitelyNotNull()  == true
@@ -54,12 +54,12 @@ interface KtExpressionTypeProviderMixIn : KtAnalysisSessionMixIn {
      * Note that only nullability from "stable" smart cast types is considered. The
      * [spec](https://kotlinlang.org/spec/type-inference.html#smart-cast-sink-stability) provides an explanation on smart cast stability.
      */
-    fun KtExpression.isDefinitelyNull(): Boolean =
+    public fun KtExpression.isDefinitelyNull(): Boolean =
         analysisSession.expressionTypeProvider.isDefinitelyNull(this)
 
     /**
      * Returns `true` if this expression is definitely not null. See [isDefinitelyNull] for examples.
      */
-    fun KtExpression.isDefinitelyNotNull(): Boolean =
+    public fun KtExpression.isDefinitelyNotNull(): Boolean =
         analysisSession.expressionTypeProvider.isDefinitelyNotNull(this)
 }

@@ -13,28 +13,28 @@ import org.jetbrains.kotlin.idea.frontend.api.types.KtType
  * @see KtType
  * @see KtSymbolDeclarationRendererProvider.render
  */
-data class KtTypeRendererOptions(
+public data class KtTypeRendererOptions(
     /**
      * Render type name without package name for not local types
      */
-    val shortQualifiedNames: Boolean = false,
+    public val shortQualifiedNames: Boolean = false,
     /**
-     * Render function types FunctionN using Kotlin function type syntax
-     * @see Function
-     * @sample Function0<Int> returns () -> Int
+     * Render public function types public functionN using Kotlin public function type syntax
+     * @see public function
+     * @sample public function0<Int> returns () -> Int
      */
-    val renderFunctionType: Boolean = true,
+    public val renderFunctionType: Boolean = true,
 
     /**
      * When met type with unresolved qualifier, render it as it is resolved
      * When `true` will render as `UnresolvedQualifier`
      * When `false` will render as "ERROR_TYPE <symbol not found for UnresolvedQualifier>"
      */
-    val renderUnresolvedTypeAsResolved: Boolean = true
+    public val renderUnresolvedTypeAsResolved: Boolean = true
 ) {
-    companion object {
-        val DEFAULT = KtTypeRendererOptions()
-        val SHORT_NAMES = DEFAULT.copy(shortQualifiedNames = true)
+    public companion object {
+        public val DEFAULT: KtTypeRendererOptions = KtTypeRendererOptions()
+        public val SHORT_NAMES: KtTypeRendererOptions = DEFAULT.copy(shortQualifiedNames = true)
     }
 }
 
@@ -43,7 +43,7 @@ data class KtTypeRendererOptions(
  * @see KtSymbol
  * @see KtSymbolDeclarationRendererProvider.render
  */
-data class KtDeclarationRendererOptions(
+public data class KtDeclarationRendererOptions(
     /**
      * Set of modifiers that needed to be rendered
      * @see RendererModifier
@@ -55,7 +55,7 @@ data class KtDeclarationRendererOptions(
      */
     val typeRendererOptions: KtTypeRendererOptions = KtTypeRendererOptions.DEFAULT,
     /**
-     * Render Unit return type for functions
+     * Render Unit return type for public functions
      */
     val renderUnitReturnType: Boolean = false,
     /**
@@ -72,24 +72,24 @@ data class KtDeclarationRendererOptions(
     val approximateTypes: Boolean = false,
 
     /**
-     * Declaration header is something like `abstract class`, `fun`, or `private interface` in a declaration.
+     * Declaration header is something like `public abstract class`, `public fun`, or `private public interface ` in a declaration.
      */
     val renderDeclarationHeader: Boolean = true,
 
     /**
-     * Whether to forcefully add `override` modifier when rendering functions or properties. Note that the [modifiers] option still
+     * Whether to forcefully add `override` modifier when rendering public functions or properties. Note that the [modifiers] option still
      * controls whether `override` is rendered. That is, if [modifiers] don't contain `override`, then this flag does not have any effect.
      */
     val forceRenderingOverrideModifier: Boolean = false,
 
     val renderDefaultParameterValue: Boolean = true,
 ) {
-    companion object {
-        val DEFAULT = KtDeclarationRendererOptions()
+    public companion object {
+        public val DEFAULT: KtDeclarationRendererOptions = KtDeclarationRendererOptions()
     }
 }
 
-enum class RendererModifier(val includeByDefault: Boolean) {
+public enum class RendererModifier(public val includeByDefault: Boolean) {
     VISIBILITY(true),
     MODALITY(true),
     OVERRIDE(true),
@@ -106,29 +106,29 @@ enum class RendererModifier(val includeByDefault: Boolean) {
     OPERATOR(true)
     ;
 
-    companion object {
-        val ALL = values().toSet()
+    public companion object {
+        public val ALL: Set<RendererModifier> = values().toSet()
     }
 }
 
-abstract class KtSymbolDeclarationRendererProvider : KtAnalysisSessionComponent() {
-    abstract fun render(symbol: KtSymbol, options: KtDeclarationRendererOptions): String
-    abstract fun render(type: KtType, options: KtTypeRendererOptions): String
+public abstract class KtSymbolDeclarationRendererProvider : KtAnalysisSessionComponent() {
+    public abstract fun render(symbol: KtSymbol, options: KtDeclarationRendererOptions): String
+    public abstract fun render(type: KtType, options: KtTypeRendererOptions): String
 }
 
 /**
  * Provides services for rendering Symbols and Types into the Kotlin strings
  */
-interface KtSymbolDeclarationRendererMixIn : KtAnalysisSessionMixIn {
+public interface KtSymbolDeclarationRendererMixIn : KtAnalysisSessionMixIn {
     /**
      * Render symbol into the representable Kotlin string
      */
-    fun KtSymbol.render(options: KtDeclarationRendererOptions = KtDeclarationRendererOptions.DEFAULT): String =
+    public fun KtSymbol.render(options: KtDeclarationRendererOptions = KtDeclarationRendererOptions.DEFAULT): String =
         analysisSession.symbolDeclarationRendererProvider.render(this, options)
 
     /**
      * Render kotlin type into the representable Kotlin type string
      */
-    fun KtType.render(options: KtTypeRendererOptions = KtTypeRendererOptions.DEFAULT): String =
+    public fun KtType.render(options: KtTypeRendererOptions = KtTypeRendererOptions.DEFAULT): String =
         analysisSession.symbolDeclarationRendererProvider.render(this, options)
 }

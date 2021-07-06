@@ -9,13 +9,13 @@ import org.jetbrains.kotlin.idea.frontend.api.KtSymbolBasedReference
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.references.KtReference
 
-interface KtReferenceResolveMixIn : KtAnalysisSessionMixIn {
-    fun KtReference.resolveToSymbols(): Collection<KtSymbol> {
+public interface KtReferenceResolveMixIn : KtAnalysisSessionMixIn {
+    public fun KtReference.resolveToSymbols(): Collection<KtSymbol> {
         check(this is KtSymbolBasedReference) { "To get reference symbol the one should be KtSymbolBasedReference" }
         return analysisSession.resolveToSymbols()
     }
 
-    fun KtReference.resolveToSymbol(): KtSymbol? {
+    public fun KtReference.resolveToSymbol(): KtSymbol? {
         check(this is KtSymbolBasedReference) { "To get reference symbol the one should be KtSymbolBasedReference but was ${this::class}" }
         return resolveToSymbols().singleOrNull()
     }

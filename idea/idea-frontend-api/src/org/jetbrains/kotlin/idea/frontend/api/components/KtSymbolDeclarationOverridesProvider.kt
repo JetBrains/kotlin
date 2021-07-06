@@ -9,14 +9,14 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 
-abstract class KtSymbolDeclarationOverridesProvider : KtAnalysisSessionComponent() {
-    abstract fun <T : KtSymbol> getAllOverriddenSymbols(callableSymbol: T): List<KtCallableSymbol>
-    abstract fun <T : KtSymbol> getDirectlyOverriddenSymbols(callableSymbol: T): List<KtCallableSymbol>
+public abstract class KtSymbolDeclarationOverridesProvider : KtAnalysisSessionComponent() {
+    public abstract fun <T : KtSymbol> getAllOverriddenSymbols(callableSymbol: T): List<KtCallableSymbol>
+    public abstract fun <T : KtSymbol> getDirectlyOverriddenSymbols(callableSymbol: T): List<KtCallableSymbol>
 
-    abstract fun getIntersectionOverriddenSymbols(symbol: KtCallableSymbol): Collection<KtCallableSymbol>
+    public abstract fun getIntersectionOverriddenSymbols(symbol: KtCallableSymbol): Collection<KtCallableSymbol>
 }
 
-interface KtSymbolDeclarationOverridesProviderMixIn : KtAnalysisSessionMixIn {
+public interface KtSymbolDeclarationOverridesProviderMixIn : KtAnalysisSessionMixIn {
     /**
      * Return a list of **all** symbols which are overridden by symbol
      *
@@ -26,7 +26,7 @@ interface KtSymbolDeclarationOverridesProviderMixIn : KtAnalysisSessionMixIn {
      *
      * @see getDirectlyOverriddenSymbols
      */
-    fun KtCallableSymbol.getAllOverriddenSymbols(): List<KtCallableSymbol> =
+    public fun KtCallableSymbol.getAllOverriddenSymbols(): List<KtCallableSymbol> =
         analysisSession.symbolDeclarationOverridesProvider.getAllOverriddenSymbols(this)
 
     /**
@@ -38,9 +38,9 @@ interface KtSymbolDeclarationOverridesProviderMixIn : KtAnalysisSessionMixIn {
      *
      *  @see getAllOverriddenSymbols
      */
-    fun KtCallableSymbol.getDirectlyOverriddenSymbols(): List<KtCallableSymbol> =
+    public fun KtCallableSymbol.getDirectlyOverriddenSymbols(): List<KtCallableSymbol> =
         analysisSession.symbolDeclarationOverridesProvider.getDirectlyOverriddenSymbols(this)
 
-    fun KtCallableSymbol.getIntersectionOverriddenSymbols(): Collection<KtCallableSymbol> =
+    public fun KtCallableSymbol.getIntersectionOverriddenSymbols(): Collection<KtCallableSymbol> =
         analysisSession.symbolDeclarationOverridesProvider.getIntersectionOverriddenSymbols(this)
 }

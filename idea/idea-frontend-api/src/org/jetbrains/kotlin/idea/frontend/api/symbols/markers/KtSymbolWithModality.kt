@@ -7,6 +7,6 @@ package org.jetbrains.kotlin.idea.frontend.api.symbols.markers
 
 import org.jetbrains.kotlin.descriptors.Modality
 
-interface KtSymbolWithModality {
-    val modality: Modality
+public interface KtSymbolWithModality {
+    public val modality: Modality
 }

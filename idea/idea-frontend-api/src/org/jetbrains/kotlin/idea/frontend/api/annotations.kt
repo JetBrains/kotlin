@@ -6,4 +6,4 @@
 package org.jetbrains.kotlin.idea.frontend.api
 
 @RequiresOptIn
-annotation class KtInternalApiMarker
+public annotation class KtInternalApiMarker

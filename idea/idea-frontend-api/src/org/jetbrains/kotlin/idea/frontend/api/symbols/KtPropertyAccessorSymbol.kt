@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.name.CallableId
 
-sealed class KtPropertyAccessorSymbol : KtCallableSymbol(),
+public sealed class KtPropertyAccessorSymbol : KtCallableSymbol(),
     KtPossibleMemberSymbol,
     KtSymbolWithModality,
     KtSymbolWithVisibility,
@@ -20,22 +20,22 @@ sealed class KtPropertyAccessorSymbol : KtCallableSymbol(),
     final override val isExtension: Boolean get() = false
     final override val receiverType: KtTypeAndAnnotations? get() = null
 
-    abstract val isDefault: Boolean
-    abstract val isInline: Boolean
-    abstract val isOverride: Boolean
-    abstract val hasBody: Boolean
+    public abstract val isDefault: Boolean
+    public abstract val isInline: Boolean
+    public abstract val isOverride: Boolean
+    public abstract val hasBody: Boolean
 
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.ACCESSOR
 
     abstract override fun createPointer(): KtSymbolPointer<KtPropertyAccessorSymbol>
 }
 
-abstract class KtPropertyGetterSymbol : KtPropertyAccessorSymbol() {
+public abstract class KtPropertyGetterSymbol : KtPropertyAccessorSymbol() {
     abstract override fun createPointer(): KtSymbolPointer<KtPropertyGetterSymbol>
 }
 
-abstract class KtPropertySetterSymbol : KtPropertyAccessorSymbol() {
-    abstract val parameter: KtValueParameterSymbol
+public abstract class KtPropertySetterSymbol : KtPropertyAccessorSymbol() {
+    public abstract val parameter: KtValueParameterSymbol
 
     abstract override fun createPointer(): KtSymbolPointer<KtPropertySetterSymbol>
 }

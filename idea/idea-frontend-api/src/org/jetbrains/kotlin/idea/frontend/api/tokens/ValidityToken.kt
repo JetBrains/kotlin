@@ -8,25 +8,25 @@ package org.jetbrains.kotlin.idea.frontend.api.tokens
 import com.intellij.openapi.project.Project
 import kotlin.reflect.KClass
 
-abstract class ValidityToken {
-    abstract fun isValid(): Boolean
-    abstract fun getInvalidationReason(): String
+public abstract class ValidityToken {
+    public abstract fun isValid(): Boolean
+    public abstract fun getInvalidationReason(): String
 
-    abstract fun isAccessible(): Boolean
-    abstract fun getInaccessibilityReason(): String
+    public abstract fun isAccessible(): Boolean
+    public abstract fun getInaccessibilityReason(): String
 }
 
-abstract class ValidityTokenFactory {
-    abstract val identifier: KClass<out ValidityToken>
-    abstract fun create(project: Project): ValidityToken
+public abstract class ValidityTokenFactory {
+    public abstract val identifier: KClass<out ValidityToken>
+    public abstract fun create(project: Project): ValidityToken
 
-    open fun beforeEnteringAnalysisContext() {}
-    open fun afterLeavingAnalysisContext() {}
+    public open fun beforeEnteringAnalysisContext() {}
+    public open fun afterLeavingAnalysisContext() {}
 }
 
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun ValidityToken.assertIsValidAndAccessible() {
+public inline fun ValidityToken.assertIsValidAndAccessible() {
     if (!isValid()) {
         throw InvalidEntityAccessException("Access to invalid $this: ${getInvalidationReason()}")
     }
@@ -35,8 +35,8 @@ inline fun ValidityToken.assertIsValidAndAccessible() {
     }
 }
 
-abstract class BadEntityAccessException() : IllegalStateException()
+public abstract class BadEntityAccessException() : IllegalStateException()
 
-class InvalidEntityAccessException(override val message: String) : BadEntityAccessException()
-class InaccessibleEntityAccessException(override val message: String) : BadEntityAccessException()
+public class InvalidEntityAccessException(override val message: String) : BadEntityAccessException()
+public class InaccessibleEntityAccessException(override val message: String) : BadEntityAccessException()
 

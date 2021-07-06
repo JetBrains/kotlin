@@ -11,43 +11,43 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtTypeAliasSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.*
 import org.jetbrains.kotlin.name.ClassId
 
-abstract class KtTypeInfoProvider : KtAnalysisSessionComponent() {
-    abstract fun canBeNull(type: KtType): Boolean
+public abstract class KtTypeInfoProvider : KtAnalysisSessionComponent() {
+    public abstract fun canBeNull(type: KtType): Boolean
 }
 
-interface KtTypeInfoProviderMixIn : KtAnalysisSessionMixIn {
+public interface KtTypeInfoProviderMixIn : KtAnalysisSessionMixIn {
     /**
-     * Returns true if a value of this type can potentially be null. This means this type is not a subtype of [Any]. However, it does not
-     * mean one can assign `null` to a variable of this type because it may be unknown if this type can accept `null`. For example, a value
+     * Returns true if a public value of this type can potentially be null. This means this type is not a subtype of [Any]. However, it does not
+     * mean one can assign `null` to a variable of this type because it may be unknown if this type can accept `null`. For example, a public value
      * of type `T:Any?` can potentially be null. But one can not assign `null` to such a variable because the instantiated type may not be
      * nullable.
      */
-    val KtType.canBeNull: Boolean get() = analysisSession.typeInfoProvider.canBeNull(this)
+    public val KtType.canBeNull: Boolean get() = analysisSession.typeInfoProvider.canBeNull(this)
 
     /** Returns true if the type is explicitly marked as nullable. This means it's safe to assign `null` to a variable with this type. */
-    val KtType.isMarkedNullable: Boolean get() = (this as? KtTypeWithNullability)?.nullability == KtTypeNullability.NULLABLE
+    public val KtType.isMarkedNullable: Boolean get() = (this as? KtTypeWithNullability)?.nullability == KtTypeNullability.NULLABLE
 
-    val KtType.isUnit: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.UNIT)
-    val KtType.isInt: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.INT)
-    val KtType.isLong: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.LONG)
-    val KtType.isShort: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.SHORT)
-    val KtType.isByte: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.BYTE)
-    val KtType.isFloat: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.FLOAT)
-    val KtType.isDouble: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.DOUBLE)
-    val KtType.isChar: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.CHAR)
-    val KtType.isBoolean: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.BOOLEAN)
-    val KtType.isString: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.STRING)
-    val KtType.isCharSequence: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.CHAR_SEQUENCE)
-    val KtType.isAny: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.ANY)
-    val KtType.isNothing: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.NOTHING)
+    public val KtType.isUnit: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.UNIT)
+    public val KtType.isInt: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.INT)
+    public val KtType.isLong: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.LONG)
+    public val KtType.isShort: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.SHORT)
+    public val KtType.isByte: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.BYTE)
+    public val KtType.isFloat: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.FLOAT)
+    public val KtType.isDouble: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.DOUBLE)
+    public val KtType.isChar: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.CHAR)
+    public val KtType.isBoolean: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.BOOLEAN)
+    public val KtType.isString: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.STRING)
+    public val KtType.isCharSequence: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.CHAR_SEQUENCE)
+    public val KtType.isAny: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.ANY)
+    public val KtType.isNothing: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.NOTHING)
 
-    val KtType.isUInt: Boolean get() = isClassTypeWithClassId(StandardNames.FqNames.uInt)
-    val KtType.isULong: Boolean get() = isClassTypeWithClassId(StandardNames.FqNames.uLong)
-    val KtType.isUShort: Boolean get() = isClassTypeWithClassId(StandardNames.FqNames.uShort)
-    val KtType.isUByte: Boolean get() = isClassTypeWithClassId(StandardNames.FqNames.uByte)
+    public val KtType.isUInt: Boolean get() = isClassTypeWithClassId(StandardNames.FqNames.uInt)
+    public val KtType.isULong: Boolean get() = isClassTypeWithClassId(StandardNames.FqNames.uLong)
+    public val KtType.isUShort: Boolean get() = isClassTypeWithClassId(StandardNames.FqNames.uShort)
+    public val KtType.isUByte: Boolean get() = isClassTypeWithClassId(StandardNames.FqNames.uByte)
 
     /** Gets the class symbol backing the given type, if available. */
-    val KtType.expandedClassSymbol: KtClassOrObjectSymbol?
+    public val KtType.expandedClassSymbol: KtClassOrObjectSymbol?
         get() {
             return when (this) {
                 is KtNonErrorClassType -> when (val classSymbol = classSymbol) {
@@ -58,18 +58,18 @@ interface KtTypeInfoProviderMixIn : KtAnalysisSessionMixIn {
             }
         }
 
-    fun KtType.isClassTypeWithClassId(classId: ClassId): Boolean {
+    public fun KtType.isClassTypeWithClassId(classId: ClassId): Boolean {
         if (this !is KtNonErrorClassType) return false
         return this.classId == classId
     }
 
-    val KtType.isPrimitive: Boolean
+    public val KtType.isPrimitive: Boolean
         get() {
             if (this !is KtNonErrorClassType) return false
             return this.classId in DefaultTypeClassIds.PRIMITIVES
         }
 
-    val KtType.defaultInitializer: String?
+    public val KtType.defaultInitializer: String?
         get() = when {
             isMarkedNullable -> "null"
             isInt || isLong || isShort || isByte -> "0"
@@ -87,19 +87,19 @@ interface KtTypeInfoProviderMixIn : KtAnalysisSessionMixIn {
         }
 }
 
-object DefaultTypeClassIds {
-    val UNIT = ClassId.topLevel(StandardNames.FqNames.unit.toSafe())
-    val INT = ClassId.topLevel(StandardNames.FqNames._int.toSafe())
-    val LONG = ClassId.topLevel(StandardNames.FqNames._long.toSafe())
-    val SHORT = ClassId.topLevel(StandardNames.FqNames._short.toSafe())
-    val BYTE = ClassId.topLevel(StandardNames.FqNames._byte.toSafe())
-    val FLOAT = ClassId.topLevel(StandardNames.FqNames._float.toSafe())
-    val DOUBLE = ClassId.topLevel(StandardNames.FqNames._double.toSafe())
-    val CHAR = ClassId.topLevel(StandardNames.FqNames._char.toSafe())
-    val BOOLEAN = ClassId.topLevel(StandardNames.FqNames._boolean.toSafe())
-    val STRING = ClassId.topLevel(StandardNames.FqNames.string.toSafe())
-    val CHAR_SEQUENCE = ClassId.topLevel(StandardNames.FqNames.charSequence.toSafe())
-    val ANY = ClassId.topLevel(StandardNames.FqNames.any.toSafe())
-    val NOTHING = ClassId.topLevel(StandardNames.FqNames.nothing.toSafe())
-    val PRIMITIVES = setOf(INT, LONG, SHORT, BYTE, FLOAT, DOUBLE, CHAR, BOOLEAN)
+public object DefaultTypeClassIds {
+    public val UNIT: ClassId = ClassId.topLevel(StandardNames.FqNames.unit.toSafe())
+    public val INT: ClassId = ClassId.topLevel(StandardNames.FqNames._int.toSafe())
+    public val LONG: ClassId = ClassId.topLevel(StandardNames.FqNames._long.toSafe())
+    public val SHORT: ClassId = ClassId.topLevel(StandardNames.FqNames._short.toSafe())
+    public val BYTE: ClassId = ClassId.topLevel(StandardNames.FqNames._byte.toSafe())
+    public val FLOAT: ClassId = ClassId.topLevel(StandardNames.FqNames._float.toSafe())
+    public val DOUBLE: ClassId = ClassId.topLevel(StandardNames.FqNames._double.toSafe())
+    public val CHAR: ClassId = ClassId.topLevel(StandardNames.FqNames._char.toSafe())
+    public val BOOLEAN: ClassId = ClassId.topLevel(StandardNames.FqNames._boolean.toSafe())
+    public val STRING: ClassId = ClassId.topLevel(StandardNames.FqNames.string.toSafe())
+    public val CHAR_SEQUENCE: ClassId = ClassId.topLevel(StandardNames.FqNames.charSequence.toSafe())
+    public val ANY: ClassId = ClassId.topLevel(StandardNames.FqNames.any.toSafe())
+    public val NOTHING: ClassId = ClassId.topLevel(StandardNames.FqNames.nothing.toSafe())
+    public val PRIMITIVES: Set<ClassId> = setOf(INT, LONG, SHORT, BYTE, FLOAT, DOUBLE, CHAR, BOOLEAN)
 }

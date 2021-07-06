@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.idea.frontend.api.calls
 
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionLikeSymbol
 
-fun KtCallTarget.getSuccessCallSymbolOrNull(): KtFunctionLikeSymbol? = when (this) {
+public fun KtCallTarget.getSuccessCallSymbolOrNull(): KtFunctionLikeSymbol? = when (this) {
     is KtSuccessCallTarget -> symbol
     is KtErrorCallTarget -> null
 }
 
-inline fun <reified S : KtFunctionLikeSymbol> KtCall.isSuccessCallOf(predicate: (S) -> Boolean): Boolean {
+public inline fun <reified S : KtFunctionLikeSymbol> KtCall.isSuccessCallOf(predicate: (S) -> Boolean): Boolean {
     if (this !is KtFunctionCall) return false
     val symbol = targetFunction.getSuccessCallSymbolOrNull() ?: return false
     if (symbol !is S) return false
