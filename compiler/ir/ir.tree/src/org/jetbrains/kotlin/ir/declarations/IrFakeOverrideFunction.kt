@@ -14,4 +14,6 @@ interface IrFakeOverrideFunction : IrDeclaration {
     var modality: Modality
 
     fun acquireSymbol(symbol: IrSimpleFunctionSymbol): IrSimpleFunction
+
+    val isBound: Boolean
 }
