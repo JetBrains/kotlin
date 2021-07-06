@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.js.messageCollectorLogger
 import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.backend.js.ic.SerializedIcData
+import org.jetbrains.kotlin.ir.backend.js.ic.prepareSingleLibraryIcCache
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
@@ -29,6 +31,13 @@ import java.lang.Boolean.getBoolean
 private val fullRuntimeKlib: String = System.getProperty("kotlin.js.full.stdlib.path")
 private val defaultRuntimeKlib = System.getProperty("kotlin.js.reduced.stdlib.path")
 private val kotlinTestKLib = System.getProperty("kotlin.js.kotlin.test.path")
+
+// TODO Cache on FS (requires bootstrap)
+private val predefinedKlibHasIcCache = mutableMapOf<String, SerializedIcData?>(
+    File(fullRuntimeKlib).absolutePath to null,
+    File(kotlinTestKLib).absolutePath to null,
+    File(defaultRuntimeKlib).absolutePath to null
+)
 
 abstract class BasicIrBoxTest(
     pathToTestDir: String,
@@ -50,11 +59,15 @@ abstract class BasicIrBoxTest(
 
     private fun getBoolean(s: String, default: Boolean) = System.getProperty(s)?.let { parseBoolean(it) } ?: default
 
-    private val lowerPerModule: Boolean = getBoolean("kotlin.js.ir.lowerPerModule")
+    private val runIcMode: Boolean = getBoolean("kotlin.js.ir.icMode")
+
+    private val lowerPerModule: Boolean = runIcMode || getBoolean("kotlin.js.ir.lowerPerModule")
+
+    private val klibMainModule: Boolean = false || getBoolean("kotlin.js.ir.klibMainModule")
 
     override val skipRegularMode: Boolean = getBoolean("kotlin.js.ir.skipRegularMode")
 
-    override val runIrDce: Boolean = !lowerPerModule && getBoolean("kotlin.js.ir.dce", true)
+    override val runIrDce: Boolean = getBoolean("kotlin.js.ir.dce", true)
 
     override val runIrPir: Boolean = !lowerPerModule && getBoolean("kotlin.js.ir.pir", true)
 
@@ -107,12 +120,33 @@ abstract class BasicIrBoxTest(
 
         val allKlibPaths = (runtimeKlibs + transitiveLibraries.map {
             compilationCache[it] ?: error("Can't find compiled module for dependency $it")
-        }).map { File(it).absolutePath }
+        }).map { File(it).absolutePath }.toMutableList()
+
+        val klibPath = outputFile.absolutePath.replace("_v5.js", "/")
+
+        if (isMainModule && klibMainModule) {
+            val resolvedLibraries = jsResolveLibraries(allKlibPaths, emptyList(), messageCollectorLogger(MessageCollector.NONE))
+
+            generateKLib(
+                project = config.project,
+                files = filesToCompile,
+                analyzer = AnalyzerWithCompilerReport(config.configuration),
+                configuration = config.configuration,
+                allDependencies = resolvedLibraries,
+                friendDependencies = emptyList(),
+                irFactory = IrFactoryImpl,
+                outputKlibPath = klibPath,
+                nopack = true,
+                null
+            )
+
+            allKlibPaths += File(klibPath).absolutePath
+        }
 
         val resolvedLibraries = jsResolveLibraries(allKlibPaths, emptyList(), messageCollectorLogger(MessageCollector.NONE))
 
         val actualOutputFile = outputFile.absolutePath.let {
-            if (!isMainModule) it.replace("_v5.js", "/") else it
+            if (!isMainModule) klibPath else it
         }
 
         if (isMainModule) {
@@ -135,11 +169,42 @@ abstract class BasicIrBoxTest(
                 PhaseConfig(jsPhases)
             }
 
+            val mainModule = if (!klibMainModule) {
+                MainModule.SourceFiles(filesToCompile)
+            } else {
+                val mainLib = resolvedLibraries.getFullList().find { it.libraryFile.absolutePath == File(klibPath).absolutePath }!!
+                MainModule.Klib(mainLib)
+            }
+
             if (!skipRegularMode) {
+                val icCache: Map<String, SerializedIcData> = if (!runIcMode) emptyMap() else {
+                    val map = mutableMapOf<String, SerializedIcData>()
+                    for (klibPath in allKlibPaths) {
+                        val icData = predefinedKlibHasIcCache[klibPath] ?: prepareSingleLibraryIcCache(
+                            project = project,
+                            analyzer = AnalyzerWithCompilerReport(config.configuration),
+                            configuration = config.configuration,
+                            library = resolvedLibraries.getFullList()
+                                .single { it.libraryFile.absolutePath == File(klibPath).absolutePath },
+                            dependencies = resolvedLibraries.filterRoots { it.library.libraryFile.absolutePath == File(klibPath).absolutePath },
+                            icCache = map
+                        )
+
+                        if (klibPath in predefinedKlibHasIcCache) {
+                            predefinedKlibHasIcCache[klibPath] = icData
+                        }
+
+                        map[klibPath] = icData
+                    }
+
+                    map
+                }
+
+
                 val irFactory = if (lowerPerModule) PersistentIrFactory() else IrFactoryImpl
                 val compiledModule = compile(
                     project = config.project,
-                    mainModule = MainModule.SourceFiles(filesToCompile),
+                    mainModule = mainModule,
                     analyzer = AnalyzerWithCompilerReport(config.configuration),
                     configuration = config.configuration,
                     phaseConfig = phaseConfig,
@@ -156,6 +221,8 @@ abstract class BasicIrBoxTest(
                     lowerPerModule = lowerPerModule,
                     safeExternalBoolean = safeExternalBoolean,
                     safeExternalBooleanDiagnostic = safeExternalBooleanDiagnostic,
+                    useStdlibCache = runIcMode,
+                    icCache = icCache,
                 )
 
                 compiledModule.outputs!!.writeTo(outputFile, config)
@@ -172,7 +239,7 @@ abstract class BasicIrBoxTest(
             if (runIrPir && !skipDceDriven) {
                 compile(
                     project = config.project,
-                    mainModule = MainModule.SourceFiles(filesToCompile),
+                    mainModule = mainModule,
                     analyzer = AnalyzerWithCompilerReport(config.configuration),
                     configuration = config.configuration,
                     phaseConfig = phaseConfig,

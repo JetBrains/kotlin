@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 
 import org.jetbrains.kotlin.backend.common.serialization.GlobalDeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.IdSignatureClashTracker
-import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
-import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -17,7 +15,7 @@ import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.render
 
-class JsUniqIdClashTracker : IdSignatureClashTracker {
+class JsUniqIdClashTracker() : IdSignatureClashTracker {
     private val committedIdSignatures = mutableMapOf<IdSignature, IrDeclaration>()
 
     override fun commit(declaration: IrDeclaration, signature: IdSignature) {
@@ -41,8 +39,8 @@ class JsUniqIdClashTracker : IdSignatureClashTracker {
     }
 }
 
-class JsGlobalDeclarationTable(builtIns: IrBuiltIns) :
-    GlobalDeclarationTable(JsManglerIr, JsUniqIdClashTracker()) {
+class JsGlobalDeclarationTable(builtIns: IrBuiltIns, tracker: IdSignatureClashTracker = JsUniqIdClashTracker()) :
+    GlobalDeclarationTable(JsManglerIr, tracker) {
     init {
         loadKnownBuiltins(builtIns)
     }

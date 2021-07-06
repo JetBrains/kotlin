@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.StageController
+import org.jetbrains.kotlin.ir.util.IdSignature
 
 // Only allows to apply a lowering to the whole world and save the result
 class WholeWorldStageController : StageController() {
@@ -15,7 +17,29 @@ class WholeWorldStageController : StageController() {
 
     // TODO assert lowered
 
+    override var currentDeclaration: IrDeclaration? = null
+    private var index: Int = 0
+
     var declarationListsRestricted: Boolean = false
+
+    override fun <T> restrictTo(declaration: IrDeclaration, fn: () -> T): T {
+        val previousCurrentDeclaration = currentDeclaration
+        val previousIndex = index
+
+        currentDeclaration = declaration
+        index = 0
+
+        return try {
+            fn()
+        } finally {
+            currentDeclaration = previousCurrentDeclaration
+            index = previousIndex
+        }
+    }
+
+    override fun createSignature(parentSignature: IdSignature): IdSignature {
+        return IdSignature.LoweredDeclarationSignature(parentSignature, currentStage, index++)
+    }
 
     override fun <T> withStage(stage: Int, fn: () -> T): T {
         val oldStage = currentStage
