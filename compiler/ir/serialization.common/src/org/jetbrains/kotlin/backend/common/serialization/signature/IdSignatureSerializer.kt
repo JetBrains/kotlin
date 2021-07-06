@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.isFacadeClass
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
@@ -203,8 +204,6 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
 open class IdSignatureSerializer(
     private val publicSignatureBuilder: PublicIdSignatureComputer,
     private val table: DeclarationTable,
-    localIndexOffset: Long = 0,
-    scopeIndexOffset: Int = 0,
 ) : IdSignatureComputer {
 
     private val mangler: KotlinMangler.IrMangler = publicSignatureBuilder.mangler
@@ -219,8 +218,8 @@ open class IdSignatureSerializer(
         } else composeFileLocalIdSignature(declaration, compatibleMode)
     }
 
-    private var localIndex: Long = localIndexOffset
-    private var scopeIndex: Int = scopeIndexOffset
+    protected var localIndex: Long = 0
+    protected var scopeIndex: Int = 0
 
     override fun inFile(file: IrFileSymbol?, block: () -> Unit) {
         publicSignatureBuilder.inFile(file, block)
@@ -238,19 +237,19 @@ open class IdSignatureSerializer(
 
         return table.privateDeclarationSignature(declaration, compatibleMode) {
             when (declaration) {
-                is IrValueDeclaration -> IdSignature.ScopeLocalDeclaration(scopeIndex++, declaration.name.asString())
-                is IrAnonymousInitializer -> IdSignature.ScopeLocalDeclaration(scopeIndex++, "ANON INIT")
-                is IrLocalDelegatedProperty -> IdSignature.ScopeLocalDeclaration(scopeIndex++, declaration.name.asString())
+                is IrValueDeclaration -> declaration.createScopeLocalSignature(scopeIndex++, declaration.name.asString())
+                is IrAnonymousInitializer -> declaration.createScopeLocalSignature(scopeIndex++, "ANON INIT")
+                is IrLocalDelegatedProperty -> declaration.createScopeLocalSignature(scopeIndex++, declaration.name.asString())
                 is IrField -> {
                     val p = declaration.correspondingPropertySymbol?.let { composeSignatureForDeclaration(it.owner, true) }
                         ?: composeContainerIdSignature(declaration.parent, compatibleMode)
-                    IdSignature.FileLocalSignature(p, ++localIndex)
+                    declaration.createFileLocalSignature(p, ++localIndex)
                 }
                 is IrSimpleFunction -> {
                     val parent = declaration.parent
                     val p = declaration.correspondingPropertySymbol?.let { composeSignatureForDeclaration(it.owner, true) }
                         ?: composeContainerIdSignature(parent, compatibleMode)
-                    IdSignature.FileLocalSignature(
+                    declaration.createFileLocalSignature(
                         p,
                         if (declaration.isOverridableFunction()) {
                             mangler.run { declaration.signatureMangle() }
@@ -262,7 +261,7 @@ open class IdSignatureSerializer(
                 }
                 is IrProperty -> {
                     val parent = declaration.parent
-                    IdSignature.FileLocalSignature(
+                    declaration.createFileLocalSignature(
                         composeContainerIdSignature(parent, compatibleMode),
 
                         if (declaration.isOverridableProperty()) {
@@ -274,9 +273,21 @@ open class IdSignatureSerializer(
                     )
                 }
                 else -> {
-                    IdSignature.FileLocalSignature(composeContainerIdSignature(declaration.parent, compatibleMode), ++localIndex, declaration.render())
+                    declaration.createFileLocalSignature(
+                        composeContainerIdSignature(declaration.parent, compatibleMode),
+                        ++localIndex,
+                        declaration.render()
+                    )
                 }
             }
         }
+    }
+
+    protected open fun IrDeclaration.createFileLocalSignature(parentSignature: IdSignature, localIndex: Long): IdSignature {
+        return IdSignature.FileLocalSignature(parentSignature, localIndex)
+    }
+
+    protected open fun IrDeclaration.createScopeLocalSignature(scopeIndex: Int, description: String): IdSignature {
+        return IdSignature.ScopeLocalDeclaration(scopeIndex, description)
     }
 }

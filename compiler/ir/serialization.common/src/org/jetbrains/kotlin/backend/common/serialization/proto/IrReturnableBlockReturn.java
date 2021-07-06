@@ -17,16 +17,10 @@ public final class IrReturnableBlockReturn extends
   }
   private IrReturnableBlockReturn(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
 
+  public static final int UPCNT_FIELD_NUMBER = 1;
+  public static final int VALUE_FIELD_NUMBER = 2;
   private static final IrReturnableBlockReturn defaultInstance;
-  public static IrReturnableBlockReturn getDefaultInstance() {
-    return defaultInstance;
-  }
-
-  public IrReturnableBlockReturn getDefaultInstanceForType() {
-    return defaultInstance;
-  }
-
-  private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
+  private static final long serialVersionUID = 0L;
   private IrReturnableBlockReturn(
       org.jetbrains.kotlin.protobuf.CodedInputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -104,9 +98,13 @@ public final class IrReturnableBlockReturn extends
     return PARSER;
   }
 
+  static {
+    defaultInstance = new IrReturnableBlockReturn(true);
+    defaultInstance.initFields();
+  }
+
+  private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
   private int bitField0_;
-  public static final int UPCNT_FIELD_NUMBER = 1;
-  private int upCnt_;
   /**
    * <code>required uint32 upCnt = 1;</code>
    */
@@ -119,8 +117,7 @@ public final class IrReturnableBlockReturn extends
   public int getUpCnt() {
     return upCnt_;
   }
-
-  public static final int VALUE_FIELD_NUMBER = 2;
+  private int upCnt_;
   private org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression value_;
   /**
    * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression value = 2;</code>
@@ -192,7 +189,9 @@ public final class IrReturnableBlockReturn extends
     return size;
   }
 
-  private static final long serialVersionUID = 0L;
+  public static IrReturnableBlockReturn getDefaultInstance() {
+    return defaultInstance;
+  }
   @java.lang.Override
   protected java.lang.Object writeReplace()
       throws java.io.ObjectStreamException {
@@ -259,6 +258,10 @@ public final class IrReturnableBlockReturn extends
   }
   public Builder toBuilder() { return newBuilder(this); }
 
+  public IrReturnableBlockReturn getDefaultInstanceForType() {
+    return defaultInstance;
+  }
+
   /**
    * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn}
    */
@@ -273,8 +276,7 @@ public final class IrReturnableBlockReturn extends
       maybeForceBuilderInitialization();
     }
 
-    private void maybeForceBuilderInitialization() {
-    }
+    private int bitField0_;
     private static Builder create() {
       return new Builder();
     }
@@ -332,22 +334,7 @@ public final class IrReturnableBlockReturn extends
           getUnknownFields().concat(other.unknownFields));
       return this;
     }
-
-    public final boolean isInitialized() {
-      if (!hasUpCnt()) {
-        
-        return false;
-      }
-      if (!hasValue()) {
-        
-        return false;
-      }
-      if (!getValue().isInitialized()) {
-        
-        return false;
-      }
-      return true;
-    }
+    private int upCnt_ ;
 
     public Builder mergeFrom(
         org.jetbrains.kotlin.protobuf.CodedInputStream input,
@@ -366,9 +353,10 @@ public final class IrReturnableBlockReturn extends
       }
       return this;
     }
-    private int bitField0_;
+    private org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression value_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance();
 
-    private int upCnt_ ;
+    private void maybeForceBuilderInitialization() {
+    }
     /**
      * <code>required uint32 upCnt = 1;</code>
      */
@@ -381,26 +369,42 @@ public final class IrReturnableBlockReturn extends
     public int getUpCnt() {
       return upCnt_;
     }
+
+    public final boolean isInitialized() {
+      if (!hasUpCnt()) {
+
+        return false;
+      }
+      if (!hasValue()) {
+
+        return false;
+      }
+      if (!getValue().isInitialized()) {
+
+        return false;
+      }
+      return true;
+    }
+
     /**
      * <code>required uint32 upCnt = 1;</code>
      */
     public Builder setUpCnt(int value) {
       bitField0_ |= 0x00000001;
       upCnt_ = value;
-      
+
       return this;
     }
+
     /**
      * <code>required uint32 upCnt = 1;</code>
      */
     public Builder clearUpCnt() {
       bitField0_ = (bitField0_ & ~0x00000001);
       upCnt_ = 0;
-      
+
       return this;
     }
-
-    private org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression value_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance();
     /**
      * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression value = 2;</code>
      */
@@ -461,11 +465,6 @@ public final class IrReturnableBlockReturn extends
     }
 
     // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn)
-  }
-
-  static {
-    defaultInstance = new IrReturnableBlockReturn(true);
-    defaultInstance.initFields();
   }
 
   // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn)
