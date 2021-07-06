@@ -133,7 +133,7 @@ class IrExpressionLambdaImpl(
     codegen: ExpressionCodegen,
     val reference: IrFunctionReference,
     irValueParameter: IrValueParameter
-) : ExpressionLambda(irValueParameter.isCrossinline), IrExpressionLambda {
+) : ExpressionLambda(), IrExpressionLambda {
     override val isExtensionLambda: Boolean = irValueParameter.type.isExtensionFunctionType
 
     val function: IrFunction
@@ -194,7 +194,7 @@ class IrDefaultLambda(
     offset: Int,
     needReification: Boolean,
     sourceCompiler: IrSourceCompilerForInline
-) : DefaultLambda(lambdaClassType, capturedArgs, irValueParameter.isCrossinline, offset, needReification, sourceCompiler) {
+) : DefaultLambda(lambdaClassType, capturedArgs, offset, needReification, sourceCompiler) {
 
     private val typeArguments: MutableList<IrType>
 

@@ -883,6 +883,12 @@ public class JvmOldAgainstIrBoxInlineTestGenerated extends AbstractJvmOldAgainst
         }
 
         @Test
+        @TestMetadata("jvmCrossinlineRedundant.kt")
+        public void testJvmCrossinlineRedundant() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/assert/jvmCrossinlineRedundant.kt");
+        }
+
+        @Test
         @TestMetadata("jvmCrossinlineSAMDeclarationSite.kt")
         public void testJvmCrossinlineSAMDeclarationSite() throws Exception {
             runTest("compiler/testData/codegen/boxInline/assert/jvmCrossinlineSAMDeclarationSite.kt");
